@@ -1,0 +1,15 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT operator (schema?,role?,comment?,type*,operator*,function*)>
+<!ATTLIST operator name CDATA #IMPLIED>
+<!ATTLIST operator signature CDATA #IMPLIED>
+<!ATTLIST operator ref-type (none|commutator-op|greater-op|less-op|negator-op|sort-op|sort2-op) "none">
+<!ATTLIST operator hashes (true|false) "false">
+<!ATTLIST operator merges (true|false) "false">
+<!ATTLIST operator protected (false|true) "false">

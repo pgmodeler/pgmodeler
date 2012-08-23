@@ -1,0 +1,28 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT function (schema?,role?,comment?,language?,return-type?,parameter*,definition*)>
+<!ATTLIST function name CDATA #IMPLIED>
+<!ATTLIST function returns-setof (true|false) "false">
+<!ATTLIST function window-func (true|false) "false">
+<!ATTLIST function behavior-type CDATA #IMPLIED>
+<!ATTLIST function function-type CDATA #IMPLIED>
+<!ATTLIST function security-type CDATA #IMPLIED>
+<!ATTLIST function execution-cost CDATA #IMPLIED>
+<!ATTLIST function row-amount CDATA #IMPLIED>
+<!ATTLIST function signature CDATA #IMPLIED>
+<!ATTLIST function ref-type (none|validator|handler|inline|input|output|receive|send|tpmodin|tpmodout|analyze|join|restriction|final|transition|operfunc) "none">
+<!ATTLIST function protected (false|true) "false">
+
+<!ELEMENT parameter (type)>
+<!ATTLIST parameter name CDATA #REQUIRED>
+<!ATTLIST parameter default-value CDATA #IMPLIED>
+<!ATTLIST parameter in (true|false) "false">
+<!ATTLIST parameter out (true|false) "false">
+
+<!ELEMENT return-type (type?,parameter*)>

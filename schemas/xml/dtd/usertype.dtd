@@ -1,0 +1,24 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT usertype (schema,role?,comment?,type?, (function+ | parameter+ | enumeration))>
+<!ATTLIST usertype name CDATA #REQUIRED>
+<!ATTLIST usertype configuration (enumeration|composite|base) "enumeration">
+<!ATTLIST usertype internal-length CDATA #IMPLIED>
+<!ATTLIST usertype by-value (true|false) "false">
+<!ATTLIST usertype alignment CDATA #IMPLIED>
+<!ATTLIST usertype storage CDATA #IMPLIED>
+<!ATTLIST usertype element CDATA #IMPLIED>
+<!ATTLIST usertype delimiter CDATA #IMPLIED>
+<!ATTLIST usertype default-value CDATA #IMPLIED>
+<!ATTLIST usertype category CDATA #IMPLIED>
+<!ATTLIST usertype preferred CDATA "false">
+<!ATTLIST usertype protected (false|true) "false">
+
+<!ELEMENT enumeration EMPTY>
+<!ATTLIST enumeration values CDATA #REQUIRED>

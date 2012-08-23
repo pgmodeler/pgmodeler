@@ -1,0 +1,28 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT privileges EMPTY>
+<!ATTLIST privileges select (false|true|grant-op) "false">
+<!ATTLIST privileges insert (false|true|grant-op) "false">
+<!ATTLIST privileges update (false|true|grant-op) "false">
+<!ATTLIST privileges trucate (false|true|grant-op) "false">
+<!ATTLIST privileges references (false|true|grant-op) "false">
+<!ATTLIST privileges trigger (false|true|grant-op) "false">
+<!ATTLIST privileges create (false|true|grant-op) "false">
+<!ATTLIST privileges connect (false|true|grant-op) "false">
+<!ATTLIST privileges temporary (false|true|grant-op) "false">
+<!ATTLIST privileges execute (false|true|grant-op) "false">
+<!ATTLIST privileges usage (false|true|grant-op) "false">
+<!ATTLIST privileges grant-op (false|true|grant-op) "false">
+
+<!ELEMENT grant (object,roles?,privileges)>
+
+<!ELEMENT object EMPTY>
+<!ATTLIST object name CDATA #REQUIRED>
+<!ATTLIST object parent CDATA #IMPLIED>
+<!ATTLIST object type (table|column|view|sequence|database|function|aggregate|langage|schema|tablespace) "table">

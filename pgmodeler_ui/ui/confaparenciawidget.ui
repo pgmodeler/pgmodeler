@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ConfAparenciaWidget</class>
+ <widget class="QWidget" name="ConfAparenciaWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>131</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="confaparencia_grid">
+   <property name="margin">
+    <number>2</number>
+   </property>
+   <property name="spacing">
+    <number>6</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="elemento_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Elemento:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="4">
+    <widget class="QComboBox" name="elemento_cmb">
+     <item>
+      <property name="text">
+       <string>Global: Estilo de fonte</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Global: Descritor de restrições</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Global: Seleção de objetos</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Global: Texto informativo de posição</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Global: Caixa do informativo de posição</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Global: Tipo de objetos</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Global: Arco de cadeado</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Global: Corpo do cadeado</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Tabela: Nome de esquema</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Tabela: Nome de tabela</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Tabela: Caixa de colunas</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Tabela: Caixa de atributos extendidos</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Tabela: Caixa de título</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Regra: Nome de regra</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Regra: Descritor</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Índice: Nome de índice</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Índice: Descritor</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Gatilho: Nome de gatilho</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Gatilho: Descritor</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Visão: Nome de esquema</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Visão: Nome de visão</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Visão: Caixa de referências</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Visão: Caixa de título</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Visão: Alias de tabela / coluna</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Visão: Coluna referenciada</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Visão: Tabela referenciada</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Visão: Descritor de referência</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Caixa de Texto: Corpo</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coluna: Nome de coluna</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coluna: Descritor</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coluna: Incluída / Herdada por relacionamento</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coluna: Protegida</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coluna (pk): Nome de coluna</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coluna (pk): Descritor</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coluna (fk): Nome de coluna</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coluna (fk): Descritor</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coluna (uq): Nome de coluna</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coluna (uq): Descritor</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coluna (nn): Nome de coluna</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Coluna (nn): Descritor</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Relacionamento: Descritor</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Relacionamento: Texto do rótulo</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Relacionamento: Caixa do rótulo</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Relacionamento: Texto do atributo</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Relacionamento: Descritor do atributo</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="fonte_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Fonte:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="4">
+    <widget class="QFontComboBox" name="fonte_cmb">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QDoubleSpinBox" name="tam_fonte_spb">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="minimum">
+        <double>5.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>100.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.500000000000000</double>
+       </property>
+       <property name="value">
+        <double>8.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="unidade_lbl">
+       <property name="text">
+        <string> pt</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="2">
+    <widget class="QCheckBox" name="negrito_chk">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Negrito</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QCheckBox" name="italico_chk">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Itálico</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="cores_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Cores:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="4">
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QToolButton" name="cor1_tb">
+       <property name="minimumSize">
+        <size>
+         <width>60</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>60</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Cor da fonte / preenchimento 1</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="cor2_tb">
+       <property name="minimumSize">
+        <size>
+         <width>60</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>60</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Cor de preenchimento 2</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="cor3_tb">
+       <property name="minimumSize">
+        <size>
+         <width>60</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>60</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Cor da borda</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>188</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="4">
+    <widget class="QCheckBox" name="sublinhado_chk">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Sublinhado</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

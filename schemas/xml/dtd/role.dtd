@@ -1,0 +1,25 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT role (comment?, roles*)>
+<!ATTLIST role name CDATA #REQUIRED>
+<!ATTLIST role superuser (true|false) "false">
+<!ATTLIST role createrole (true|false) "false">
+<!ATTLIST role createdb (true|false) "false">
+<!ATTLIST role inherit (true|false) "false">
+<!ATTLIST role login (true|false) "false">
+<!ATTLIST role connlimit CDATA #IMPLIED>
+<!ATTLIST role encrypted (true|false) "false">
+<!ATTLIST role password CDATA #IMPLIED>
+<!ATTLIST role validity CDATA #IMPLIED>
+<!ATTLIST role sysid CDATA #IMPLIED>
+<!ATTLIST role protected (false|true) "false">
+
+<!ELEMENT roles EMPTY>
+<!ATTLIST roles names CDATA #REQUIRED>
+<!ATTLIST roles role-type (refer|member|admin) "refer">

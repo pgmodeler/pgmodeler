@@ -1,0 +1,31 @@
+<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT pgmodeler (configuration, widget-conf?, session?)>
+
+<!ELEMENT configuration EMPTY>
+<!ATTLIST configuration op-list-size CDATA #REQUIRED>
+<!ATTLIST configuration grid-size CDATA #REQUIRED>
+<!ATTLIST configuration autosave-interval CDATA #IMPLIED>
+<!ATTLIST configuration paper-type CDATA #IMPLIED>
+<!ATTLIST configuration paper-orientation (portrait|landscape) "landscape">
+<!ATTLIST configuration paper-margin CDATA #IMPLIED>
+<!ATTLIST configuration save-session (false|true) "true">
+<!ATTLIST configuration save-widgets (false|true) "true">
+
+<!ELEMENT widget-conf (widget+)>
+<!ELEMENT widget EMPTY>
+<!ATTLIST widget visible (false|true) "true">
+<!ATTLIST widget id CDATA #REQUIRED>
+<!ATTLIST widget type (fileToolbar|editToolbar|viewToolbar|modelToolbar|operationsDock|objectsDock) "fileToolbar">
+<!ATTLIST widget position (left|top|right|bottom) "left">
+ 
+<!ELEMENT session (file+)>
+<!ELEMENT file EMPTY>
+<!ATTLIST file id CDATA #REQUIRED>
+<!ATTLIST file path CDATA #REQUIRED>

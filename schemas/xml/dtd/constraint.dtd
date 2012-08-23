@@ -1,0 +1,20 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT constraint (tablespace?,comment?,columns*,expression?)>
+<!ATTLIST constraint name CDATA #REQUIRED>
+<!ATTLIST constraint type CDATA #REQUIRED>
+<!ATTLIST constraint deferrable (true | false) "false">
+<!ATTLIST constraint defer-type CDATA #IMPLIED>
+<!ATTLIST constraint comparison-type CDATA #IMPLIED>
+<!ATTLIST constraint upd-action CDATA #IMPLIED>
+<!ATTLIST constraint del-action CDATA #IMPLIED>
+<!ATTLIST constraint ref-table CDATA #IMPLIED>
+<!ATTLIST constraint table CDATA #IMPLIED>
+<!ATTLIST constraint factor CDATA #IMPLIED>
+<!ATTLIST constraint protected (false|true) "false">

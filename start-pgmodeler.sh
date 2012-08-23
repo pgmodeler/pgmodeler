@@ -1,0 +1,8 @@
+#/bin/bash
+export PGMODELER_ROOT=`pwd`/build
+export PGMODELER_CONF_DIR=$PGMODELER_ROOT/conf
+export PGMODELER_SCHEMAS_DIR=$PGMODELER_ROOT/schemas
+export PGMODELER_LANG_DIR=$PGMODELER_ROOT/lang
+export LANG=pt_BR.UTF-8
+
+$PGMODELER_ROOT/pgmodeler

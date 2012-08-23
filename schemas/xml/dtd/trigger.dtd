@@ -1,0 +1,22 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT trigger (comment?,condition?,function,columns?)>
+<!ATTLIST trigger name CDATA #REQUIRED>
+<!ATTLIST trigger firing-type CDATA #REQUIRED>
+<!ATTLIST trigger per-line (true | false) "false">
+<!ATTLIST trigger arguments CDATA #IMPLIED>
+<!ATTLIST trigger ins-event (true | false) "false">
+<!ATTLIST trigger del-event (true | false) "false">
+<!ATTLIST trigger upd-event (true | false) "false">
+<!ATTLIST trigger trunc-event (true | false) "false">
+<!ATTLIST trigger protected (false|true) "false">
+<!ATTLIST trigger deferrable (true | false) "false">
+<!ATTLIST trigger defer-type CDATA #IMPLIED>
+<!ATTLIST trigger ref-table CDATA #IMPLIED>
+<!ATTLIST trigger table CDATA #IMPLIED>

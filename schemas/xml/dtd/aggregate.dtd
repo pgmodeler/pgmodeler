@@ -1,0 +1,12 @@
+<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT aggregate (schema,role?,comment?,type*,operator*,function+)>
+<!ATTLIST aggregate name CDATA #REQUIRED>
+<!ATTLIST aggregate initial-cond CDATA #IMPLIED>
+<!ATTLIST aggregate protected (false|true) "false">
