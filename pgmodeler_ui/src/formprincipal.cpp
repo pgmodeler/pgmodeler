@@ -225,11 +225,11 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  connect(modelo_tb, SIGNAL(visibilityChanged(bool)), action_modelo, SLOT(setChecked(bool)));
  connect(action_modelo, SIGNAL(toggled(bool)), modelo_tb, SLOT(setVisible(bool)));
 
- //connect(lista_oper, SIGNAL(visibilityChanged(bool)), this, SLOT(__atualizarEstadoFerramentas(void)));
  connect(action_operacoes, SIGNAL(toggled(bool)), lista_oper, SLOT(setVisible(bool)));
+ connect(lista_oper, SIGNAL(visibilityChanged(bool)), this, SLOT(atualizarDockWidgets(void)));
 
- //connect(visao_objs, SIGNAL(visibilityChanged(bool)), this, SLOT(__atualizarEstadoFerramentas(void)));
  connect(action_visao_objetos, SIGNAL(toggled(bool)), visao_objs, SLOT(setVisible(bool)));
+ connect(visao_objs, SIGNAL(visibilityChanged(bool)), this, SLOT(atualizarDockWidgets(void)));
 
  connect(fconfiguracao, SIGNAL(finished(int)), this, SLOT(atualizarModelos(void)));
  connect(&tm_salvamento, SIGNAL(timeout(void)), this, SLOT(salvarTodosModelos(void)));
@@ -908,9 +908,6 @@ void FormPrincipal::atualizarEstadoFerramentas(bool modelo_fechado)
 {
  bool ativo=!modelo_fechado;
 
- action_operacoes->setChecked(lista_oper->isVisible());
- action_visao_objetos->setChecked(visao_objs->isVisible());
-
  action_imprimir->setEnabled(ativo);
  action_salvar_como->setEnabled(ativo);
  action_salvar_modelo->setEnabled(ativo);
@@ -946,6 +943,8 @@ void FormPrincipal::atualizarDockWidgets(void)
   lista_oper->atualizarListaOperacoes();
   __atualizarEstadoFerramentas();
  }
+ action_operacoes->setChecked(lista_oper->isVisible());
+ action_visao_objetos->setChecked(visao_objs->isVisible());
 }
 //----------------------------------------------------------
 void FormPrincipal::__atualizarDockWidgets(void)

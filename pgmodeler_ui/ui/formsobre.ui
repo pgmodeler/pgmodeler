@@ -317,7 +317,7 @@ border: 1px #ff00ff solid;</string>
           <property name="font">
            <font>
             <family>DejaVu Sans</family>
-            <pointsize>11</pointsize>
+            <pointsize>12</pointsize>
             <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>

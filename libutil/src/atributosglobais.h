@@ -53,7 +53,7 @@ static QString
   DIR_LINGUAS=QString(QDir::currentPath() + QString("/lang")).replace("\\","/");
 
 static const QString
-   VERSAO_PGMODELER="0.1.1",
+   VERSAO_PGMODELER="0.1.2",
 
    SEP_DIRETORIO="/",
    DIR_CONF_PADRAO="defaults", //Nome do diretório o qual guarda as configurações padrão do pgModeler
