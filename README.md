@@ -12,7 +12,7 @@ Follow the pgModeler profile on [Facebook](https://www.facebook.com/pgmodeler) o
 Licensing
 ---------
 
-This software is licensed under GNU General Public License 2.0. See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE.md) for details.
+This software is licensed under GNU General Public License 2.0. See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for details.
 
 Compiling/Installation
 ----------------------
