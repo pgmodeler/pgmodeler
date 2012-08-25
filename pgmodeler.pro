@@ -43,6 +43,6 @@ SUBDIRS = pgmodeler_ui\
 
 SUBDIRS = pgmodeler_ui
 
-sources.files = models schemas lang conf
+sources.files = models schemas lang conf README.md COMPILING.md LICENSE
 sources.path = .
 INSTALLS += sources

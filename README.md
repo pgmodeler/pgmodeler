@@ -7,17 +7,17 @@ PostgreSQL Database Modeler, or simply, pgModeler is an open source CASE tool fo
 
 Please, let me know how the pgModeler is working on your computer! Help to improve this project, give your feedback about the software or report any bug.
 
-Follow the pgModeler profile on Facebook (https://www.facebook.com/pgmodeler) or Twitter (https://twitter.com/pgmodeler) and be up-to-date with new features, fixes and releases.
+Follow the pgModeler profile on [Facebook](https://www.facebook.com/pgmodeler) or [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes and releases.
 
 Licensing
 ---------
 
-This software is licensed under GNU General Public License 2.0. See LICENSE.md (https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE.md) for details.
+This software is licensed under GNU General Public License 2.0. See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE.md) for details.
 
 Compiling/Installation
 ----------------------
 
-For details about compilation and installation process see COMPILING.md (https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md) for details.
+For details about compilation and installation process see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md) for details.
 
 Warning
 -------
@@ -51,4 +51,4 @@ Change History
 Older Releases/Code
 -------------------
 
-The older code and releases of pgModeler can be found at Sourceforge.net at http://sourceforge.net/projects/pgmodeler
+The older code and releases of pgModeler can be found at [Sourceforge.net](http://sourceforge.net/projects/pgmodeler)
