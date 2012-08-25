@@ -100,41 +100,40 @@ void ListaOperacoesWidget::atualizarListaOperacoes(void)
 
    operacoes_tw->insertTopLevelItem(i,item);
    item->setFont(0,fonte);
-   item->setText(0,trUtf8("Objeto: ") +
-                   trUtf8(ObjetoBase::obterNomeTipoObjeto(tipo_obj)));
+   item->setText(0,trUtf8("Objeto: %1").arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj)));
 
    //Aloca um item da lista como o nome do objeto com seu ícone respectivo
    item2=new QTreeWidgetItem(item);
    item2->setIcon(0,QPixmap(QString(":/icones/icones/uid.png")));
    item2->setFont(0,fonte);
-   item2->setText(0,QString::fromUtf8(trUtf8("Nome: ") + nome_obj));
+   item2->setText(0,QString::fromUtf8(trUtf8("Nome: %1").arg(nome_obj)));
 
    //Identifica o tipo da operação executada
    if(tipo_op==Operacao::OBJETO_CRIADO)
    {
     icone_op="criado";
-    nome_op=trUtf8(icone_op);
+    nome_op=trUtf8("criado");
    }
    else if(tipo_op==Operacao::OBJETO_REMOVIDO)
    {
     icone_op="removido";
-    nome_op=trUtf8(icone_op);
+    nome_op=trUtf8("removido");
    }
    else if(tipo_op==Operacao::OBJETO_MODIFICADO)
    {
     icone_op="modificado";
-    nome_op=trUtf8(icone_op);
+    nome_op=trUtf8("modificado");
    }
    else if(tipo_op==Operacao::OBJETO_MOVIMENTADO)
    {
     icone_op="movimentado";
-    nome_op=trUtf8(icone_op);
+    nome_op=trUtf8("movimentado");
    }
    //Aloca um item da lista como sendo o tipo da operação objeto com seu ícone respectivo
    item1=new QTreeWidgetItem(item);
    item1->setIcon(0,QPixmap(QString(":/icones/icones/") + icone_op + QString(".png")));
    item1->setFont(0,fonte);
-   item1->setText(0,trUtf8("Operação: ") + QString::fromUtf8(nome_op));
+   item1->setText(0,trUtf8("Operação: %1").arg(nome_op));
 
    //Expande o novo item para exibir todos os seus filhos
    operacoes_tw->expandItem(item);

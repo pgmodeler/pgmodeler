@@ -1381,17 +1381,17 @@
         <translation>&amp;Close</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="115"/>
+        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="121"/>
         <source>Gerando código-fonte...</source>
         <translation>Generating source code...</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="119"/>
+        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="125"/>
         <source>Iniciando exportação do modelo...</source>
         <translation>Initializing model export...</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="128"/>
+        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="134"/>
         <source>Salvando arquivo &apos;%1&apos;</source>
         <translation>Saving file &apos;%1&apos;</translation>
     </message>
@@ -1404,42 +1404,42 @@
         <translation type="obsolete">Creating tablespace &apos;%1&apos;...</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="159"/>
+        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="165"/>
         <source>Criando objeto &apos;%1&apos; (%2)...</source>
         <translation>Creating object &apos;%1&apos; (%2)...</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="184"/>
+        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="190"/>
         <source>Criando banco de dados &apos;%1&apos;...</source>
         <translation>Creating database &apos;%1&apos;...</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="208"/>
+        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="214"/>
         <source>Conectando ao banco de dados &apos;%1&apos;...</source>
         <translation>Connecting to database &apos;%1&apos;...</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="214"/>
+        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="220"/>
         <source>Criando objetos No banco de dados &apos;%1&apos;...</source>
         <translation>Creating objects on database &apos;%1&apos;...</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="270"/>
+        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="276"/>
         <source>Exportação finalizada com sucesso!</source>
         <translation>Exporting process sucessfuly ended!</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="324"/>
+        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="330"/>
         <source>Falha na exportação!</source>
         <translation>Error on export!</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="376"/>
+        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="382"/>
         <source>Exportar modelo como...</source>
         <translation>Export model as...</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="377"/>
+        <location filename="../pgmodeler_ui/src/formexportacao.cpp" line="383"/>
         <source>Código SQL (*.sql);;Todos os Arquivos (*.*)</source>
         <translation>SQL code (*.sql);;All files (*.*)</translation>
     </message>
@@ -1812,22 +1812,17 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="356"/>
-        <source>http://sourceforge.net/projects/pgmodeler</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="402"/>
+        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="411"/>
         <source>http://twitter.com/pgmodeler</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="439"/>
+        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="457"/>
         <source>http://facebook.com/pgmodeler</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="475"/>
+        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="594"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -1836,7 +1831,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="512"/>
+        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="551"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -1845,16 +1840,21 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="549"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Tahoma&apos;; font-size:10.5pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/pgmodeler&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Sourceforge&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="362"/>
+        <source>https://github.com/pgmodeler/pgmodeler</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="615"/>
+        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="508"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Tahoma&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://github.com/pgmodeler/pgmodeler&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="660"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -1875,7 +1875,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Special thanks to friends of the software development team on Legislative Assembly, Tocantins, Brazil: &lt;span style=&quot; font-weight:600;&quot;&gt;Michel de Almeida&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;Filipe Santana&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;Jonas Nepomuceno&lt;/span&gt;, &lt;span style=&quot; font-weight:600;&quot;&gt;Ricardo Ishibashi&lt;/span&gt; e &lt;span style=&quot; font-weight:600;&quot;&gt;Álvaro Nunes.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="682"/>
+        <location filename="../pgmodeler_ui/ui/formsobre.ui" line="727"/>
         <source>This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License (GPL) as published by the Free Software Foundation; either version 2.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</source>
@@ -2476,37 +2476,69 @@ p, li { white-space: pre-wrap; }
         <translation>Redo</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="103"/>
         <source>Objeto: </source>
-        <translation>Object:</translation>
+        <translation type="obsolete">Object:</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="110"/>
         <source>Nome: </source>
-        <translation>Name:</translation>
+        <translation type="obsolete">Name:</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="137"/>
+        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="103"/>
+        <source>Objeto: %1</source>
+        <translation>Object: %1</translation>
+    </message>
+    <message>
+        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="109"/>
+        <source>Nome: %1</source>
+        <translation>Name: %1</translation>
+    </message>
+    <message>
+        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="115"/>
+        <source>criado</source>
+        <translation>created</translation>
+    </message>
+    <message>
+        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="120"/>
+        <source>removido</source>
+        <translation>removed</translation>
+    </message>
+    <message>
+        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="125"/>
+        <source>modificado</source>
+        <translation>modified</translation>
+    </message>
+    <message>
+        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="130"/>
+        <source>movimentado</source>
+        <translation>moved</translation>
+    </message>
+    <message>
+        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="136"/>
+        <source>Operação: %1</source>
+        <translation>Operation: %1</translation>
+    </message>
+    <message>
         <source>Operação: </source>
-        <translation>Operation:</translation>
+        <translation type="obsolete">Operation:</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="164"/>
+        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="163"/>
         <source>Desfazendo operações...</source>
         <translation>Undoing operations...</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="190"/>
+        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="189"/>
         <source>Refazendo operações...</source>
         <translation>Redoing operations...</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="213"/>
+        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="212"/>
         <source>Exclusão de histórico de operações</source>
         <translation>Operation history exclusion</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="214"/>
+        <location filename="../pgmodeler_ui/src/listaoperacoeswidget.cpp" line="213"/>
         <source>Excluir o histórico de operações executadas é uma ação irreversível, deseja realmente prosseguir?</source>
         <translation>Delete the executed operations history is an irreversible action, do you want to continue?</translation>
     </message>
@@ -2543,7 +2575,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="151"/>
-        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="2212"/>
+        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="2214"/>
         <source>Código-fonte</source>
         <translation>Source code</translation>
     </message>
@@ -2554,7 +2586,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="155"/>
-        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="2205"/>
+        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="2207"/>
         <source>Propriedades</source>
         <translation>Properties</translation>
     </message>
@@ -2565,13 +2597,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="159"/>
-        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="2234"/>
+        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="2236"/>
         <source>Proteger</source>
         <translation>Protect</translation>
     </message>
     <message>
         <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="160"/>
-        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="2229"/>
+        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="2231"/>
         <source>Desproteger</source>
         <translation>Unprotect</translation>
     </message>
@@ -2587,7 +2619,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="164"/>
-        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="2241"/>
+        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="2243"/>
         <source>Excluir</source>
         <translation>Delete</translation>
     </message>
@@ -2683,8 +2715,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="1425"/>
-        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="1810"/>
-        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="1816"/>
+        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="1811"/>
+        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="1817"/>
         <source>Confirmação</source>
         <translation>Confirmation</translation>
     </message>
@@ -2719,17 +2751,17 @@ p, li { white-space: pre-wrap; }
         <translation>Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="1811"/>
+        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="1812"/>
         <source>ATENÇÃO: Remover vários objetos de uma só vez pode provocar invalidações irreversíveis de outros objetos no modelo. Tem certeza de que deseja excluir TODOS os objetos selecionados?</source>
         <translation>CAUTION: Remove multiple objects at once can cause irreversible invalidations from other objects in the model. Do you really want to delete ALL selected objects?</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="1817"/>
+        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="1818"/>
         <source>Tem certeza de que deseja excluir o objeto selecionado?</source>
         <translation>Do you really want to delete the selected object?</translation>
     </message>
     <message>
-        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="2255"/>
+        <location filename="../pgmodeler_ui/src/modelowidget.cpp" line="2257"/>
         <source>Restrições</source>
         <translation>Constraints</translation>
     </message>
