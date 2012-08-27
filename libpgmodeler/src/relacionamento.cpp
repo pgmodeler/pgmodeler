@@ -1494,13 +1494,28 @@ void Relacionamento::adicionarColunasRel11(void)
    copiarColunas(tab_ref, tab_recep, false);
 
    if(identificador)
+   {
+    /* Quando o relacionamento é identificador, serão desprezadas as cardinalidades
+       das tabelas pois, obrigatóriamente a entidade forte tem participação mandatória
+        na entidade fraca, sendo assim, marca a tabela de referência como obrigatória */
+    this->definirTabelaObrigatoria(TABELA_DESTINO, false);
+    this->definirTabelaObrigatoria(TABELA_ORIGEM, false);
+
+    if(tab_ref==this->tabela_orig)
+     this->definirTabelaObrigatoria(TABELA_ORIGEM, true);
+    else
+     this->definirTabelaObrigatoria(TABELA_DESTINO, true);
+
     configurarRelIdentificador(tab_recep);
+   }
 
    adicionarAtributos(tab_recep);
    adicionarRestricoes(tab_recep);
 
    if(identificador)
+   {
     adicionarChaveEstrangeira(tab_ref, tab_recep, TipoAcao::cascade, TipoAcao::cascade);
+   }
    else
    {
     adicionarChaveEstrangeira(tab_ref, tab_recep, TipoAcao::set_null,  TipoAcao::cascade);
@@ -1560,7 +1575,15 @@ void Relacionamento::adicionarColunasRel1n(void)
    copiarColunas(tab_ref, tab_recep, nao_nulo);
 
    if(identificador)
+   {
+    /* Quando o relacionamento é identificador, serão desprezadas as cardinalidades
+       das tabelas pois, obrigatóriamente a entidade forte tem participação mandatória
+        na entidade fraca, sendo assim, marca a tabela de referência como obrigatória */
+    this->definirTabelaObrigatoria(TABELA_ORIGEM, true);
+    this->definirTabelaObrigatoria(TABELA_DESTINO, false);
+
     configurarRelIdentificador(tab_recep);
+   }
 
    adicionarAtributos(tab_recep);
    adicionarRestricoes(tab_recep);

@@ -94,6 +94,9 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
   connect(postergavel_chk, SIGNAL(toggled(bool)), tipo_postergacao_cmb, SLOT(setEnabled(bool)));
   connect(postergavel_chk, SIGNAL(toggled(bool)), tipo_postergacao_lbl, SLOT(setEnabled(bool)));
 
+  connect(identificador_chk, SIGNAL(toggled(bool)), tab_orig_obrig_chk, SLOT(setDisabled(bool)));
+  connect(identificador_chk, SIGNAL(toggled(bool)), tab_dest_obrig_chk, SLOT(setDisabled(bool)));
+
   connect(tab_atributos, SIGNAL(s_linhasRemovidas(void)), this, SLOT(removerObjetos(void)));
   connect(tab_atributos, SIGNAL(s_linhaAdicionada(int)), this, SLOT(adicionarObjeto(void)));
   connect(tab_atributos, SIGNAL(s_linhaEditada(int)), this, SLOT(editarObjeto(int)));
@@ -140,11 +143,11 @@ void RelacionamentoWidget::hideEvent(QHideEvent *evento)
  {
   this->cancelarConfiguracao();
 
-  if(this->novo_obj)
+  /*if(this->novo_obj)
   {
    delete(this->objeto);
    this->objeto=NULL;
-  }
+  }*/
  }
 
  ObjetoBaseWidget::hideEvent(evento);
@@ -650,8 +653,11 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
    relacao->definirTabelaObrigatoria(RelacionamentoBase::TABELA_ORIGEM, false);
    relacao->definirTabelaObrigatoria(RelacionamentoBase::TABELA_DESTINO, false);
 
-   relacao->definirTabelaObrigatoria(RelacionamentoBase::TABELA_ORIGEM, tab_orig_obrig_chk->isChecked());
-   relacao->definirTabelaObrigatoria(RelacionamentoBase::TABELA_DESTINO, tab_dest_obrig_chk->isChecked());
+   if(tab_orig_obrig_chk->isEnabled())
+    relacao->definirTabelaObrigatoria(RelacionamentoBase::TABELA_ORIGEM, tab_orig_obrig_chk->isChecked());
+
+   if(tab_dest_obrig_chk->isEnabled())
+    relacao->definirTabelaObrigatoria(RelacionamentoBase::TABELA_DESTINO, tab_dest_obrig_chk->isChecked());
 
    if(tipo_rel==RelacionamentoBase::RELACIONAMENTO_GEN ||
       tipo_rel==RelacionamentoBase::RELACIONAMENTO_DEP)

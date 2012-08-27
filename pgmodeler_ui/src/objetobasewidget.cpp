@@ -797,6 +797,9 @@ void ObjetoBaseWidget::cancelarConfiguracao(void)
    delete(this->objeto);
    this->objeto=NULL;
   }
+
+  if(lista_op)
+   lista_op->removerUltimaOperacao();
  }
 
  /* Caso o objeto não seja novo, restaura seu estado anterior

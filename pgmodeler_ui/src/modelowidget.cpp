@@ -596,8 +596,8 @@ void ModeloWidget::converterRelacionamentoNN(void)
            *tab_dest=dynamic_cast<Tabela *>(rel->obterTabela(Relacionamento::TABELA_DESTINO));
     Restricao *rest=NULL, *rest_aux=NULL;
     Coluna *col=NULL;
-    bool obrig_orig=rel->tabelaObrigatoria(Relacionamento::TABELA_ORIGEM),
-         obrig_dest=rel->tabelaObrigatoria(Relacionamento::TABELA_DESTINO);
+    bool obrig_orig=true,//rel->tabelaObrigatoria(Relacionamento::TABELA_ORIGEM),
+         obrig_dest=true;//rel->tabelaObrigatoria(Relacionamento::TABELA_DESTINO);
     QString nome_rel, nome_tab, xml_tab;
     QPointF pnt;
     unsigned i=1, idx, qtd, idx1, qtd1, x;
