@@ -1477,16 +1477,24 @@ void Relacionamento::adicionarColunasRel11(void)
    tab_recep=dynamic_cast<Tabela *>(tabela_orig);
   }*/
   //### Caso 4: (1,1) ---<>--- (1,1) (não implementado por quebrar a modelagem) ###
+  TipoAcao acao_del;
 
   tab_ref=dynamic_cast<Tabela *>(this->obterTabelaReferencia());
   tab_recep=dynamic_cast<Tabela *>(this->obterTabelaReceptora());
+
+  //Caso a tabela de referência seja obrigatória seta como RESTRICT a ação de delete na chave estrangeira
+  if((tab_ref==this->tabela_orig && this->tabelaObrigatoria(TABELA_ORIGEM)) ||
+     (tab_ref==this->tabela_dest && this->tabelaObrigatoria(TABELA_DESTINO)))
+    acao_del=TipoAcao::restrict;
+  else
+    acao_del=TipoAcao::set_null;
 
   if(autoRelacionamento())
   {
    adicionarAtributos(tab_recep);
    adicionarRestricoes(tab_recep);
    copiarColunas(tab_ref, tab_recep, false);
-   adicionarChaveEstrangeira(tab_ref, tab_recep, TipoAcao::set_null, TipoAcao::cascade);
+   adicionarChaveEstrangeira(tab_ref, tab_recep, acao_del, TipoAcao::cascade);
    adicionarChaveUnica(tab_ref, tab_recep);
   }
   else
@@ -1518,7 +1526,7 @@ void Relacionamento::adicionarColunasRel11(void)
    }
    else
    {
-    adicionarChaveEstrangeira(tab_ref, tab_recep, TipoAcao::set_null,  TipoAcao::cascade);
+    adicionarChaveEstrangeira(tab_ref, tab_recep, acao_del,  TipoAcao::cascade);
     adicionarChaveUnica(tab_ref, tab_recep);
    }
   }
