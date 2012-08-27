@@ -431,12 +431,12 @@ void ObjetoGrafico::configurarSombraObjeto(void)
   QPolygonF pol;
 
   ret=this->boundingRect();
-  pol.append(QPointF(ret.right(), ret.top()+7.5));
+  pol.append(QPointF(ret.right()-1, ret.top()+7.5));
   pol.append(QPointF(ret.right()+2.5f, ret.top()+7.5f));
   pol.append(QPointF(ret.right()+2.5f, ret.bottom()+2.5f));
   pol.append(QPointF(ret.left()+7.5f, ret.bottom()+2.5f));
-  pol.append(QPointF(ret.left()+7.5f, ret.bottom()));
-  pol.append(ret.bottomRight());
+  pol.append(QPointF(ret.left()+7.5f, ret.bottom()-1));
+  pol.append(QPointF(ret.right()-1, ret.bottom()-1));
   sombra->setPolygon(pol);
   sombra->setPos(0,0);
   sombra->setPen(QColor(0,0,0,100));

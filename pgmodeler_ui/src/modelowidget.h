@@ -112,11 +112,16 @@ class ModeloWidget: public QWidget {
   void resizeEvent(QResizeEvent *);
   void mousePressEvent(QMouseEvent *evento);
   void keyPressEvent(QKeyEvent *evento);
-  void keyReleaseEvent(QKeyEvent *evento);
   void focusInEvent(QFocusEvent *evento);
 
   //Modifica o zoom do viewport quando se pressiona CONTROL e utiliza o wheel do mouse
   void wheelEvent(QWheelEvent * evento);
+
+  /* Filtro de eventos usados quando é necessário desviar eventos de objetos filhos.
+     Um desses desvios é o tratamento do WheelEvent das barras de rolagens do viewport
+     pelo modelo widget, isso faz com que o WheelEvent seja executado no Modelo e não
+     nas barras */
+  bool eventFilter(QObject *objeto, QEvent *evento);
 
   //Cancela a operação de adição de novo objeto (valido apenas para objetos gráficos)
   void cancelarAdicaoObjeto(void);

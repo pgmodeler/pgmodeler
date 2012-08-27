@@ -245,6 +245,9 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  connect(cena, SIGNAL(s_menupopupRequisitado(vector<ObjetoBase*>)), this, SLOT(exibirMenuObjetoTabela(vector<ObjetoBase *>)));
 
  connect(cena, SIGNAL(s_objetoSelecionado(ObjetoGraficoBase*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
+
+ viewport->horizontalScrollBar()->installEventFilter(this);
+ viewport->verticalScrollBar()->installEventFilter(this);
 }
 //----------------------------------------------------------
 ModeloWidget::~ModeloWidget(void)
@@ -273,6 +276,21 @@ void ModeloWidget::resizeEvent(QResizeEvent *)
  cena->setSceneRect(ret);
 }
 //----------------------------------------------------------
+bool ModeloWidget::eventFilter(QObject *objeto, QEvent *evento)
+{
+ //Filtra o evento Wheel caso seja disparado pelas barras de rolagem do viewport
+ if(evento->type() == QEvent::Wheel &&
+    (objeto==viewport->horizontalScrollBar() ||
+    (objeto==viewport->verticalScrollBar())))
+ {
+  //Redireciona o evento para o wheelEvent() do modelo
+  this->wheelEvent(dynamic_cast<QWheelEvent *>(evento));
+  return(true);
+ }
+ else
+  return(QWidget::eventFilter(objeto, evento));
+}
+//----------------------------------------------------------
 void ModeloWidget::keyPressEvent(QKeyEvent *evento)
 {
  //Cancela a ação de inserção do objeto quando ESC é pressionado
@@ -280,25 +298,6 @@ void ModeloWidget::keyPressEvent(QKeyEvent *evento)
  {
   this->cancelarAdicaoObjeto();
   cena->clearSelection();
- }
- /* Quando o usuário pressiona CONTROL bloqueia os sinais
-    das barras de rolagem do viewport pois permite modificar
-    o zoom (quando rola o wheel do mouse) sem que as
-    barras de rolagem movimentem a janela de visão */
- else if(evento->key()==Qt::Key_Control)
- {
-  viewport->horizontalScrollBar()->blockSignals(true);
-  viewport->verticalScrollBar()->blockSignals(true);
- }
-}
-//----------------------------------------------------------
-void ModeloWidget::keyReleaseEvent(QKeyEvent *evento)
-{
- //Restaura a emissão dos sinais pelas barras de rolagem do viewport
- if(evento->key()==Qt::Key_Control)
- {
-  viewport->horizontalScrollBar()->blockSignals(false);
-  viewport->verticalScrollBar()->blockSignals(false);
  }
 }
 //----------------------------------------------------------
@@ -337,20 +336,13 @@ void ModeloWidget::wheelEvent(QWheelEvent * evento)
 {
  if(evento->modifiers()==Qt::ControlModifier)
  {
-  float fator_red=1.0f, fator_amp=1.0f;
-
-  if(this->zoom_atual < 0)
-  { fator_amp=2.0f; fator_red=1.0f; }
-  else if(this->zoom_atual >= 2.0f)
-  { fator_amp=3.0f; fator_red=4.0f; }
-
   //Delta < 0 indica que o usuário rolou o wheel para baixo
   if(evento->delta() < 0)
    //Diminui o zoom
-   this->aplicarZoom(this->zoom_atual - (fator_red * INC_ZOOM));
+   this->aplicarZoom(this->zoom_atual - INC_ZOOM);
   else
    //Aumenta o zoom
-   this->aplicarZoom(this->zoom_atual + (fator_amp * INC_ZOOM));
+   this->aplicarZoom(this->zoom_atual + INC_ZOOM);
  }
 }
 //----------------------------------------------------------
