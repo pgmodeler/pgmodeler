@@ -67,7 +67,8 @@ SOURCES += src/main.cpp \
            src/confconexoeswidget.cpp \
            src/formconfiguracao.cpp \
     src/confbasewidget.cpp \
-    src/formexportacao.cpp
+    src/formexportacao.cpp \
+    src/pgmodelerplugin.cpp
 
 HEADERS += src/formprincipal.h \
            src/modelowidget.h \
@@ -116,7 +117,8 @@ HEADERS += src/formprincipal.h \
     src/confconexoeswidget.h \
     src/confaparenciawidget.h \
     src/confbasewidget.h \
-    src/formexportacao.h
+    src/formexportacao.h \
+    src/pgmodelerplugin.h
 
 FORMS += ui/formprincipal.ui \
          ui/formsobre.ui \
