@@ -281,6 +281,25 @@ void ModeloWidget::keyPressEvent(QKeyEvent *evento)
   this->cancelarAdicaoObjeto();
   cena->clearSelection();
  }
+ /* Quando o usuário pressiona CONTROL bloqueia os sinais
+    das barras de rolagem do viewport pois permite modificar
+    o zoom (quando rola o wheel do mouse) sem que as
+    barras de rolagem movimentem a janela de visão */
+ else if(evento->key()==Qt::Key_Control)
+ {
+  viewport->horizontalScrollBar()->blockSignals(true);
+  viewport->verticalScrollBar()->blockSignals(true);
+ }
+}
+//----------------------------------------------------------
+void ModeloWidget::keyReleaseEvent(QKeyEvent *evento)
+{
+ //Restaura a emissão dos sinais pelas barras de rolagem do viewport
+ if(evento->key()==Qt::Key_Control)
+ {
+  viewport->horizontalScrollBar()->blockSignals(false);
+  viewport->verticalScrollBar()->blockSignals(false);
+ }
 }
 //----------------------------------------------------------
 void ModeloWidget::mousePressEvent(QMouseEvent *evento)
@@ -314,6 +333,27 @@ void ModeloWidget::focusInEvent(QFocusEvent *evento)
  QWidget::focusInEvent(evento);
 }
 //----------------------------------------------------------
+void ModeloWidget::wheelEvent(QWheelEvent * evento)
+{
+ if(evento->modifiers()==Qt::ControlModifier)
+ {
+  float fator_red=1.0f, fator_amp=1.0f;
+
+  if(this->zoom_atual < 0)
+  { fator_amp=2.0f; fator_red=1.0f; }
+  else if(this->zoom_atual >= 2.0f)
+  { fator_amp=3.0f; fator_red=4.0f; }
+
+  //Delta < 0 indica que o usuário rolou o wheel para baixo
+  if(evento->delta() < 0)
+   //Diminui o zoom
+   this->aplicarZoom(this->zoom_atual - (fator_red * INC_ZOOM));
+  else
+   //Aumenta o zoom
+   this->aplicarZoom(this->zoom_atual + (fator_amp * INC_ZOOM));
+ }
+}
+//----------------------------------------------------------
 void ModeloWidget::aplicarZoom(float zoom)
 {
  //Aplica o zoom somente se este for válido
@@ -324,7 +364,9 @@ void ModeloWidget::aplicarZoom(float zoom)
   //Aplica a matriz de escala para ampliar/reduzir a visão
   viewport->scale(zoom, zoom);
   //Armazena o zoom aplicado como atual
-  this->zoom_atual=zoom;
+  this->zoom_atual=zoom; 
+
+  emit s_zoomModificado();
  }
 }
 //----------------------------------------------------------

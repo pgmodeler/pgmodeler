@@ -45,7 +45,7 @@ class ModeloWidget: public QWidget {
  protected:
   //Constantes usadas nas operações de zoom
   static const float ZOOM_MINIMO=0.35f,
-                     ZOOM_MAXIMO=6.0f,
+                     ZOOM_MAXIMO=4.0f,
                      INC_ZOOM=0.05f;
 
   /* Flag que indica se o modelo está em uma operação de recorte.
@@ -112,7 +112,11 @@ class ModeloWidget: public QWidget {
   void resizeEvent(QResizeEvent *);
   void mousePressEvent(QMouseEvent *evento);
   void keyPressEvent(QKeyEvent *evento);
+  void keyReleaseEvent(QKeyEvent *evento);
   void focusInEvent(QFocusEvent *evento);
+
+  //Modifica o zoom do viewport quando se pressiona CONTROL e utiliza o wheel do mouse
+  void wheelEvent(QWheelEvent * evento);
 
   //Cancela a operação de adição de novo objeto (valido apenas para objetos gráficos)
   void cancelarAdicaoObjeto(void);
@@ -217,6 +221,7 @@ class ModeloWidget: public QWidget {
   void s_objetoCriado(void);
   void s_objetoRemovido(void);
   void s_selecaoObjetoAtualizada(void);
+  void s_zoomModificado(void);
 
   friend class FormPrincipal;
   friend class ListaOperacoesWidget;

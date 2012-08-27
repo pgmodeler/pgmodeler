@@ -565,6 +565,8 @@ void FormPrincipal::definirModeloAtual(void)
   connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
   connect(action_exibir_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
   connect(action_exibir_lim_paginas, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
+
+  connect(modelo_atual, SIGNAL(s_zoomModificado(void)), this, SLOT(atualizarEstadoFerramentas(void)));
  }
  else
   this->setWindowTitle(titulo_janela);
@@ -605,9 +607,8 @@ void FormPrincipal::aplicarZoom(void)
   else if(sender()==action_diminuir_zoom && zoom > ModeloWidget::ZOOM_MINIMO)
    zoom-=ModeloWidget::INC_ZOOM;
 
-  action_diminuir_zoom->setEnabled(zoom >= ModeloWidget::ZOOM_MINIMO);
-  action_ampliar_zoom->setEnabled(zoom <= ModeloWidget::ZOOM_MAXIMO);
-
+ /*action_diminuir_zoom->setEnabled(zoom >= ModeloWidget::ZOOM_MINIMO);
+   action_ampliar_zoom->setEnabled(zoom <= ModeloWidget::ZOOM_MAXIMO); */
   modelo_atual->aplicarZoom(zoom);
  }
 }
@@ -933,6 +934,10 @@ void FormPrincipal::atualizarEstadoFerramentas(bool modelo_fechado)
                              modelos_tab->currentIndex()!=(modelos_tab->count()-1));
   action_desfazer->setEnabled(modelo_atual->lista_op->desfazerHabilitado());
   action_refazer->setEnabled(modelo_atual->lista_op->refazerHabilitado());
+
+  action_ampliar_zoom->setEnabled(modelo_atual->zoomAtual() <= ModeloWidget::ZOOM_MAXIMO - ModeloWidget::INC_ZOOM);
+  action_zoom_normal->setEnabled(modelo_atual->zoomAtual()!=0);
+  action_diminuir_zoom->setEnabled(modelo_atual->zoomAtual() >= ModeloWidget::ZOOM_MINIMO + ModeloWidget::INC_ZOOM);
  }
 }
 //----------------------------------------------------------
