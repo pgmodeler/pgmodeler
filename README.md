@@ -1,13 +1,9 @@
-PostgreSQL Database Modeler - pgModeler - Version 0.1.2
--------------------------------------------------------
+PostgreSQL Database Modeler - pgModeler
+---------------------------------------
 
-Developed by: Raphael Araújo e Silva (rkhaotix@gmail.com)
+PostgreSQL Database Modeler, or simply, pgModeler is an open source tool for modeling databases that merges the classical concepts of entity-relationship diagrams with specific features that only PostgreSQL implements. The pgModeler translates the models created by the user to SQL code and apply them onto database clusters from version 8.0 to 9.1.
 
-PostgreSQL Database Modeler, or simply, pgModeler is an open source CASE tool for modeling PostgreSQL databases that merges the classical concepts of modeling using entity-relationship diagrams with specific features that only PostgreSQL implements. The pgModeler translates the models created by the user to SQL code and apply them onto database clusters from version 8.0 to 9.1.
-
-Please, let me know how the pgModeler is working on your computer! Help to improve this project, give your feedback about the software or report any bug.
-
-Follow the pgModeler profile on [Facebook](https://www.facebook.com/pgmodeler) or [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes and releases.
+Please, let me know how the pgModeler is working on your system! Help to improve this project, give your feedback about the software or report any bug at [Issues](https://github.com/pgmodeler/pgmodeler/issues) page. Additionaly, follow the pgModeler profile on [Facebook](https://www.facebook.com/pgmodeler) or [Twitter](https://twitter.com/pgmodeler) and be up-to-date with new features, fixes and releases.
 
 Licensing
 ---------
