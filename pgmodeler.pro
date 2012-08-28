@@ -39,7 +39,8 @@ SUBDIRS = pgmodeler_ui\
           libconexbd \
           libparsers \
           libpgmodeler \
-          libobjrenderer
+          libobjrenderer \
+          plugins/dummyplugin
 
 SUBDIRS = pgmodeler_ui
 

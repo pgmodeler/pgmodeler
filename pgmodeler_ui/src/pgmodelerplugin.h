@@ -26,12 +26,42 @@
 
 #include "modelowidget.h"
 //***********************************************************
-class PgModelerPlugin
-{
+class PgModelerPlugin: public QObject {
  private:
+  Q_OBJECT
+
+  //Instância da classe QLibrary que trata do carregamento bibliotecas em disco
+  QLibrary biblioteca;
+
+  //Armazena o nome do plugin (definido na configuração XML)
+  QString nome_plugin;
+
+  //Armazena o ícone do plugin (definido na configuração do XML)
+  QPixmap icone_plugin;
 
  public:
   PgModelerPlugin(void);
+
+  PgModelerPlugin(const QString &nome_conf);
+
+  //Carrega o plugin através do arquivo XML de configuração
+  void carregarPlugin(const QString &nome_conf);
+
+  //Obtém a versão do plugin
+  QString obterVersaoPlugin(void);
+
+  //Obtém o ícone do plugin
+  QPixmap obterIconePlugin(void);
+
+  //Retorna a versão do pgModela na qual o plugin foi compilada
+  QString obterVersaoPgModeler(void);
+
+ public slots:
+  /* Faz a chamada à função que executa o plugin.
+     O plugin tentará localizar a função na biblioteca através do
+     atributo 'nome_plugin' em maíusculo, caso este símbolo seja
+     encontrado executa a função na biblioteca senão dispara um erro */
+  void executarPlugin(ModeloWidget *modelo);
 };
 //***********************************************************
 #endif
