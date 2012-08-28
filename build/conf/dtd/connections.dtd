@@ -1,0 +1,27 @@
+<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT connections (connection*)>
+
+<!ELEMENT connection EMPTY>
+<!ATTLIST connection alias CDATA #REQUIRED>
+<!ATTLIST connection host CDATA #REQUIRED>
+<!ATTLIST connection dbname CDATA #REQUIRED>
+<!ATTLIST connection port CDATA #REQUIRED>
+<!ATTLIST connection user CDATA #REQUIRED>
+<!ATTLIST connection password CDATA #REQUIRED>
+<!ATTLIST connection connect_timeout CDATA #IMPLIED>
+<!ATTLIST connection options CDATA #IMPLIED>
+<!ATTLIST connection sslmode (disable|allow|prefer|require|verify-ca|verify-full) "disable">
+<!ATTLIST connection sslcert CDATA #IMPLIED>
+<!ATTLIST connection sslkey CDATA #IMPLIED>
+<!ATTLIST connection sslrootcert CDATA #IMPLIED>
+<!ATTLIST connection sslcrl CDATA #IMPLIED>
+<!ATTLIST connection krbsrvname CDATA #IMPLIED>
+<!ATTLIST connection gsslib CDATA #IMPLIED>
+

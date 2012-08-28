@@ -50,6 +50,7 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
   int interv_salvar;
 
   void closeEvent(QCloseEvent *);
+  void carregarPlugins(void);
 
  public:
    FormPrincipal(QWidget *parent = 0, Qt::WindowFlags flags = 0);

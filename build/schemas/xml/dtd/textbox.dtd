@@ -1,0 +1,15 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT textbox (position,comment)>
+<!ATTLIST textbox name CDATA #REQUIRED>
+<!ATTLIST textbox protected (false|true) "false">
+<!ATTLIST textbox italic (false|true) "false">
+<!ATTLIST textbox bold (false|true) "false">
+<!ATTLIST textbox underline (false|true) "false">
+<!ATTLIST textbox color CDATA #IMPLIED>

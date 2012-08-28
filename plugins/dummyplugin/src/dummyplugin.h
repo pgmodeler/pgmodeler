@@ -1,5 +1,5 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
+# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca libobjrenderer
 # Classe: Viewport
 # Descrição: Esta classe deriva a classe QGraphicsScene e implementa a visualização
@@ -21,13 +21,20 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#ifndef DUMMYPLUGIN_H
-#define DUMMYPLUGIN_H
+#ifndef DUMMY_PLUGIN_H
+#define DUMMY_PLUGIN_H
 
-class DummyPlugin
-{
-public:
- DummyPlugin();
+#include "pgmodelerplugin.h"
+//***********************************************************
+class DummyPlugin: public QObject, public PgModelerPlugin {
+ private:
+  Q_OBJECT
+  Q_INTERFACES(PgModelerPlugin)
+
+ public:
+  DummyPlugin(void);
+
+  void executarPlugin(ModeloWidget *modelo);
 };
-
-#endif // DUMMYPLUGIN_H
+//***********************************************************
+#endif

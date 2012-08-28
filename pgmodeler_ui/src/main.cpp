@@ -13,7 +13,8 @@ int main(int argc, char **argv)
   //Obtém os valores das variáveis de ambiente
   QString dir_conf=getenv("PGMODELER_CONF_DIR"),
           dir_sch=getenv("PGMODELER_SCHEMAS_DIR"),
-          dir_lang=getenv("PGMODELER_LANG_DIR");
+          dir_lang=getenv("PGMODELER_LANG_DIR"),
+          dir_plugins=getenv("PGMODELER_PLUGINS_DIR");
 
   /* Caso alguma das variáveis de ambiente esteja setada
      atribui a mesma a configuração global respectiva sobrescrevendo
@@ -26,6 +27,11 @@ int main(int argc, char **argv)
 
   if(!dir_lang.isEmpty())
    AtributosGlobais::DIR_RAIZ_ESQUEMAS=dir_lang.replace("\\","/");
+
+  if(!dir_plugins.isEmpty())
+   AtributosGlobais::DIR_PLUGINS=dir_plugins.replace("\\","/");
+
+  app.addLibraryPath(AtributosGlobais::DIR_PLUGINS);
 
   //Carrega o arquivo de tradução da interface de acordo com o locale do sistema
   tradutor.load(QString("pgmodeler.") + local, AtributosGlobais::DIR_LINGUAS);

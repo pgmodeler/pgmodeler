@@ -31,6 +31,7 @@
 #include "listaobjetoswidget.h"
 #include "formconfiguracao.h"
 #include "formexportacao.h"
+#include "pgmodelerplugin.h"
 
 /* Formulários globais. Como são formulários os mesmos podem ser
    compartilhados e usados em outros arquivos não havendo a necessidade
@@ -81,7 +82,6 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  map<QString, QDockWidget *> dock_wgts;
  map<QString, QToolBar *> toolbars;
  QString tipo;
-
  ConfBaseWidget *conf_wgt=NULL;
  TipoObjetoBase tipos[27]={
           OBJETO_RELACAO_BASE,OBJETO_RELACAO, OBJETO_TABELA, OBJETO_VISAO,
@@ -305,6 +305,15 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 
    itr++;
   }
+ }
+ catch(Excecao &e)
+ {
+  caixa_msg->show(e);
+ }
+
+ try
+ {
+  this->carregarPlugins();
  }
  catch(Excecao &e)
  {
@@ -956,5 +965,21 @@ void FormPrincipal::__atualizarDockWidgets(void)
 {
  lista_oper->atualizarListaOperacoes();
  visao_objs->atualizarVisaoObjetos();
+}
+//----------------------------------------------------------
+void FormPrincipal::carregarPlugins(void)
+{
+ QPluginLoader pl;
+ pl.setFileName(AtributosGlobais::DIR_PLUGINS +
+                AtributosGlobais::SEP_DIRETORIO +
+                QString("libdummyplugin.so"));
+ if(pl.load())
+ {
+  cout << "carregado!" << endl;
+  PgModelerPlugin *plugin=qobject_cast<PgModelerPlugin *>(pl.instance());
+  plugin->executarPlugin(NULL);
+ }
+ else
+  cout << pl.errorString().toStdString() << " : " << pl.fileName().toStdString() << endl;
 }
 //**********************************************************

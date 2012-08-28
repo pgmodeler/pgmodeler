@@ -1,4 +1,5 @@
 CONFIG += ordered
+TEMPLATE = subdirs
 
 unix {
  GLOBAL_INCLUDES = .\
@@ -9,6 +10,12 @@ unix {
 
  GLOBAL_LIBS =  /usr/local/pgsql/lib/libpq.so \
                 -lxml2
+
+ #LIBUTIL = libutil.so
+ #LIBCONEXBD = libconexbd.so
+ #LIBPGMODELER = libpgmodeler.so
+ #LIBOBJRENDERER = libobjrenderer.so
+ #LIBPARSERS = libparsers.so
 }
 
 windows {
@@ -20,6 +27,12 @@ windows {
                "C:/QtSDK/mingw/bin/libxml2.dll"
 
  QMAKE_LFLAGS=-Wl,-enable-auto-import
+
+ #LIBUTIL = util.dll
+ #LIBCONEXBD = conexbd.dll
+ #LIBPGMODELER = pgmodeler.dll
+ #LIBOBJRENDERER = objrender.dll
+ #LIBPARSERS = parsers.dll
 }
 
 INCLUDEPATH = $${GLOBAL_INCLUDES} \
@@ -32,18 +45,17 @@ INCLUDEPATH = $${GLOBAL_INCLUDES} \
 
 LIBS = $${GLOBAL_LIBS}
 
-TEMPLATE = subdirs
-
-SUBDIRS = pgmodeler_ui\
-          libutil \
-          libconexbd \
-          libparsers \
-          libpgmodeler \
-          libobjrenderer \
-          plugins/dummyplugin
+#SUBDIRS = libutil \
+#          libconexbd \
+#          libparsers \
+#          libpgmodeler \
+#          libobjrenderer \
+#          pgmodeler_ui
 
 SUBDIRS = pgmodeler_ui
+
 
 sources.files = models schemas lang conf README.md COMPILING.md LICENSE
 sources.path = .
 INSTALLS += sources
+

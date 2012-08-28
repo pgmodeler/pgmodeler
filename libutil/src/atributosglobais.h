@@ -40,6 +40,7 @@ namespace AtributosGlobais {
      PGMODELER_SCHEMAS_DIR
      PGMODELER_CONF_DIR
      PGMODELER_LANG_DIR
+     PGMODELER_PLUGINS_DIR
 */
 static QString
   /** ticket#1 **/
@@ -50,7 +51,8 @@ static QString
 
   DIR_RAIZ_ESQUEMAS=QString(QDir::currentPath() + QString("/schemas")).replace("\\","/"),
   DIR_CONFIGURACOES=QString(QDir::currentPath() + QString("/conf")).replace("\\","/"),
-  DIR_LINGUAS=QString(QDir::currentPath() + QString("/lang")).replace("\\","/");
+  DIR_LINGUAS=QString(QDir::currentPath() + QString("/lang")).replace("\\","/"),
+  DIR_PLUGINS=QString(QDir::currentPath() + QString("/plugins")).replace("\\","/");
 
 static const QString
    VERSAO_PGMODELER="0.1.2",

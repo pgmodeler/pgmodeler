@@ -1,0 +1,25 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT definition (#PCDATA)>
+<!ATTLIST definition library CDATA #IMPLIED>
+<!ATTLIST definition symbol  CDATA #IMPLIED>
+
+<!ELEMENT comment (#PCDATA)>
+<!ELEMENT condition (#PCDATA)>
+
+<!ELEMENT expression (#PCDATA)>
+<!ATTLIST expression type (none|select-exp|from-exp|simple-exp) "none">
+
+<!ELEMENT position EMPTY>
+<!ATTLIST position x CDATA "0">
+<!ATTLIST position y CDATA "0">
+
+<!ELEMENT columns EMPTY>
+<!ATTLIST columns names CDATA #REQUIRED>
+<!ATTLIST columns ref-type (src-columns|dst-columns) "src-columns">

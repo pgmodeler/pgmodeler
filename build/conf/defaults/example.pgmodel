@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ATENÇÃO: Não modifique este arquivo a não ser que você saiba
+         o que está fazendo. Resultados inesperados podem acontecer
+         caso o código seja alterado deliberadamente.
+
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel author="Raphael Araújo e Silva">
+<schema name="public">
+</schema>
+
+<database name="exampledb" encoding="UTF8">
+	<comment>Example Database Model</comment>
+</database>
+
+	<language name="sql" protected="true"/>
+<function name="trigger_func"
+		window-func="false"
+		returns-setof="false"
+		behavior-type="CALLED ON NULL INPUT"
+		function-type="IMMUTABLE"
+		security-type="SECURITY DEFINER"
+		execution-cost="20"
+		row-amount="2500">
+	<schema name="public"/>
+	<language name="sql" protected="true"/>
+	<return-type>
+	<type name="trigger"/>
+	</return-type>
+	<parameter name="param1" in="true">
+		<type name="integer"/>
+	</parameter>
+	<definition>SELECT 1+1;</definition>
+</function>
+
+<table name="table" oids="false">
+	<schema name="public"/>
+	<position x="20" y="20"/>
+	<column name="column" not-null="true">
+		<type name="serial"/>
+	</column>
+	<column name="column1">
+		<type name="text"/>
+	</column>
+	<column name="column2" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="column3">
+		<type name="text"/>
+	</column>
+	<constraint name="table_pk" type="pk-constr" factor="10" table="public.table">
+		<columns names="column" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="table_uq" type="uq-constr" factor="10" table="public.table">
+		<columns names="column1" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="table_ck" type="ck-constr" table="public.table">
+			<expression> column1 &gt; 0 </expression>
+	</constraint>
+	<index name="index" table="public.table"
+		 concurrent="true" unique="true" fast-update="false"
+		 index-type="hash" factor="90">
+	<idxelement nulls-first="false" asc-order="false">
+		<column name="column1"/>
+	</idxelement>
+	</index>
+</table>
+
+<table name="table1" oids="false" protected="true">
+	<schema name="public"/>
+	<position x="422" y="24"/>
+	<column name="column" not-null="true" protected="true">
+		<type name="serial"/>
+	</column>
+	<column name="column1" protected="true">
+		<type name="text"/>
+	</column>
+	<column name="column2" not-null="true" protected="true">
+		<type name="integer"/>
+	</column>
+	<column name="column3" protected="true">
+		<type name="text"/>
+	</column>
+	<constraint name="table_pk" type="pk-constr" factor="10" protected="true" table="public.table1">
+		<columns names="column" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="table_uq" type="uq-constr" factor="10" protected="true" table="public.table1">
+		<columns names="column1" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="table_ck" type="ck-constr" protected="true" table="public.table1">
+			<expression> column1 &gt; 0 </expression>
+	</constraint>
+	<rule name="rule1" event-type="ON INSERT"
+		 exec-type="ALSO" protected="true">
+		<condition>column1 = 0</condition>
+		<commands>UPDATE public.table1 SET column1 = 1</commands>
+	</rule>
+	<trigger name="trigger1" firing-type="BEFORE" per-line="false"
+		 ins-event="true" del-event="true" upd-event="true" trunc-event="false" protected="true">
+		<function signature="public.trigger_func(integer)"/>
+	</trigger>
+</table>
+
+<relationship name="relationship"
+	 type="rel1n" protected="true"
+	 src-required="false" dst-required="false"
+	 table-name="relationship"
+	 src-table="public.table1"
+	 dst-table="public.table">
+	<column name="attribute">
+		<type name="integer"/>
+	</column>
+        <column name="attribute1">
+		<type name="integer"/>
+	</column>
+	        <column name="attribute2">
+		<type name="integer"/>
+	</column>
+	
+	
+</relationship>
+
+<view name="view" protected="true">
+	<schema name="public"/>
+	<position x="320" y="250"/>
+	<reference table="public.table" column="column1" alias="t1" column-alias="col1"/>
+	<reference table="public.table1" column="column2" alias="t2" column-alias="col2"/>
+	<reference alias="expr">
+		<expression>extract(month from now())</expression>
+	</reference>
+	<reference table="public.table1" alias="t3" column-alias="col3"/>
+<expression type="select-exp">0,1,2,3</expression>
+<expression type="from-exp">3,0</expression>
+</view>
+
+<relationship name="rel_view_table"
+	 type="reltv"
+	 src-required="false" dst-required="false"
+	 src-table="public.view"
+	 dst-table="public.table"/>
+
+<relationship name="rel_view_table1"
+	 type="reltv"
+	 src-required="false" dst-required="false"
+	 src-table="public.view"
+	 dst-table="public.table1"/>
+
+<textbox name="textbox">
+	<position x="20" y="250"/>
+	<comment>Selected Textbox</comment>
+</textbox>
+
+<textbox name="textbox1" protected="true">
+	<position x="20" y="300"/>
+	<comment>Protected Textbox</comment>
+</textbox>
+
+</dbmodel>

@@ -26,42 +26,30 @@
 
 #include "modelowidget.h"
 //***********************************************************
-class PgModelerPlugin: public QObject {
+/* Os plugins no pgModeler deve estar dentro da pasta "plugins"
+   em um diretório próprio (recomenda-se usar o mesmo nome do plugin)
+   e deve possuir a seguinte estrutura básica:
+
+   pgmodeler_root/plugins/
+                         +- pluginA
+                                  +---(lib)*(pluginA.)(so|dll) (biblioteca que represnta o plugin)
+                                  +---plugin.conf              (configuração do plugin)
+                                  +---pluginA.png              (ícone que representa o plugin, deve possuir o mesmo nome
+
+  Obs.: Plugins podem fazer uso de subdiretórios mas qualquer referência a estes devem ser feitas
+        manualmente pelo criado do plugin.
+*/
+
+class PgModelerPlugin {
  private:
-  Q_OBJECT
-
-  //Instância da classe QLibrary que trata do carregamento bibliotecas em disco
-  QLibrary biblioteca;
-
-  //Armazena o nome do plugin (definido na configuração XML)
-  QString nome_plugin;
-
-  //Armazena o ícone do plugin (definido na configuração do XML)
-  QPixmap icone_plugin;
+  QAction *acao;
 
  public:
   PgModelerPlugin(void);
-
-  PgModelerPlugin(const QString &nome_conf);
-
-  //Carrega o plugin através do arquivo XML de configuração
-  void carregarPlugin(const QString &nome_conf);
-
-  //Obtém a versão do plugin
-  QString obterVersaoPlugin(void);
-
-  //Obtém o ícone do plugin
-  QPixmap obterIconePlugin(void);
-
-  //Retorna a versão do pgModela na qual o plugin foi compilada
-  QString obterVersaoPgModeler(void);
-
- public slots:
-  /* Faz a chamada à função que executa o plugin.
-     O plugin tentará localizar a função na biblioteca através do
-     atributo 'nome_plugin' em maíusculo, caso este símbolo seja
-     encontrado executa a função na biblioteca senão dispara um erro */
-  void executarPlugin(ModeloWidget *modelo);
+  virtual ~PgModelerPlugin(void) {}
+  virtual void executarPlugin(ModeloWidget *modelo)=0;
 };
+
+Q_DECLARE_INTERFACE(PgModelerPlugin,"pgmodelerplugin")
 //***********************************************************
 #endif

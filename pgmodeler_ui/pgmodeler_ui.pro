@@ -20,6 +20,24 @@ DESTDIR = ../build
 CODECFORTR = UTF-8
 RESOURCES += res/resources.qrc
 
+#LIBS += $$DESTDIR/lib/$$LIBUTIL \
+#        $$DESTDIR/lib/$$LIBCONEXBD \
+#        $$DESTDIR/lib/$$LIBPARSERS \
+#        $$DESTDIR/lib/$$LIBPGMODELER \
+#        $$DESTDIR/lib/$$LIBOBJRENDERER
+
+QMAKE_POST_LINK+= "cp -r ../schemas/ $$DESTDIR; \
+                   cp -r ../conf/ $$DESTDIR; \
+                   cp -r ../lang/ $$DESTDIR; \
+                   cp ../*.md $$DESTDIR; \
+                   cp ../LICENSE $$DESTDIR;"
+
+QMAKE_DISTCLEAN+= "-r $$DESTDIR/schemas \
+                      $$DESTDIR/conf \
+                      $$DESTDIR/lang \
+                      $$DESTDIR/*.md \
+                      $$DESTDIR/LICENSE"
+
 SOURCES += src/main.cpp \
            src/formprincipal.cpp \
            src/modelowidget.cpp \

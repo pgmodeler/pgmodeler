@@ -1,0 +1,24 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+
+<!-- O elemento <type> é usado para referenciar os tipos base do pgsql e também
+     os tipos criados pelos usuários os quais são armazenados juntamente com 
+     os tipos base. Para se definir um tipo personalizado a tag <usertype>
+     deve ser utilizada. De acordo com a declaração abaixo, um type pode ter o nome
+     na forma [esquema + nome] ou apenas [nome]. A primeira forma é usada para se tratar
+     um tipo personalizado pois é preciso conhecer o esquema ao qual este pertence -->
+<!ELEMENT type EMPTY>
+
+<!ATTLIST type name CDATA #REQUIRED>
+<!ATTLIST type length CDATA #IMPLIED>
+<!ATTLIST type dimension CDATA #IMPLIED>
+<!ATTLIST type precision CDATA #IMPLIED>
+<!ATTLIST type with-timezone (false|true) "false">
+<!ATTLIST type interval-type CDATA #IMPLIED>
+<!ATTLIST type ref-type (none|left-type|right-type|state-type) "none">
