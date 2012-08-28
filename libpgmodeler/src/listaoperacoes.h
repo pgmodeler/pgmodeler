@@ -1,5 +1,5 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
+# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca núcleo libpgsqldbm
 # Classe: ListaOperacoes
 # Descrição:  Definição da classe ListaOperacoes que é usada para

@@ -1,5 +1,5 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
+# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe Referencia que é usada para
 #             para montar a declaração SQL das visões

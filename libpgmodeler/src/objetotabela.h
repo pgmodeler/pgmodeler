@@ -1,5 +1,5 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
+# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe ObjetoTabela que serve como base para
 #             as demais classes as quais são sempre embutidas numa tabela.

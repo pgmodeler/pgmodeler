@@ -1,5 +1,5 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
+# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe CaixaTexto que é usada para
 #             representar graficamente os textos adicionados pelo usuário.

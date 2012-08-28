@@ -1,5 +1,5 @@
 /* 
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
+# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe Esquema que é usado para
 #             representar graficamente os esquemas em banco de dados

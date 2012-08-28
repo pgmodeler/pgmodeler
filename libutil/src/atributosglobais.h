@@ -1,5 +1,5 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
+# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca libutil
 # Descrição:  Definição do namespace AtributosGlobais, um espaço de nomes o qual
 #             armazena uma série de strings estáticas constantes, usadas

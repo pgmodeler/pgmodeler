@@ -1,5 +1,5 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
+# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca pgsqldbm_ui
 # Classe: Aplicacao
 # Descrição: Esta classe é uma derivação da classe QApplication.

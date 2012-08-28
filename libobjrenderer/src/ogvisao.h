@@ -1,5 +1,5 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
+# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca libobjrenderer
 # Classe: OGVisao
 # Descrição: Esta classe deriva a classe ObjetoGrafico e implementa a representação gráfica

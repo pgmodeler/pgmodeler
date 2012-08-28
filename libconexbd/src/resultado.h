@@ -1,5 +1,5 @@
 /*
-# Projeto: Squid-Autoconf
+# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca libconexbd
 # Classe: Resultado
 # Descrição: Esta classe encapsula algumas funções de manipulação de resultados

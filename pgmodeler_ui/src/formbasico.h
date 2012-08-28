@@ -1,5 +1,5 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
+# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca pgsqldbm_ui
 # Classe: FormBasico
 # Descrição: Definição da classe que um container de widgets de configuração
