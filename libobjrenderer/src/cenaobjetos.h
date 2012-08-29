@@ -61,17 +61,6 @@ class CenaObjetos: public QGraphicsScene {
 
   QGraphicsLineItem *linha_rel;
 
-  /* Para minimizar memory leaks e fragmentação da memória,
-     os objetos removidos da cena por padrão não são deletados
-     (vide QGraphicsScene::removeItem()). Por isso, os objetos
-     removidos da cena são armazenandos na lista abaixo e estes
-     por sua vez são deletados efetivamente quando a cena também
-     é deletada. Esta abordagem pode aumentar um pouco o consumo de
-     memória mas diminui o risco de segmentation fault devido a execução
-     de tarefas complexas e interligadas como as da lista de operações e
-     desenho de objetos na cena */
-  vector<ObjetoGrafico *> objs_inativos;
-
   //Método utilitário para alinhar um ponto à grade
   static QPointF alinharPontoGrade(const QPointF &pnt);
 

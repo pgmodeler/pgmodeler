@@ -69,13 +69,6 @@ CenaObjetos::~CenaObjetos(void)
    itens.pop_front();
   }
  }
-
- //Remove todos os objetos inativos da cena
- while(!objs_inativos.empty())
- {
-  delete(objs_inativos.back());
-  objs_inativos.pop_back();
- }
 }
 //-----------------------------------------------------------
 QPointF CenaObjetos::alinharPontoGrade(const QPointF &pnt)
@@ -309,10 +302,19 @@ void CenaObjetos::removeItem(QGraphicsItem *item)
   /* Caso particular para classes OGRelacionamento e OGTabela:
      desconecta os sinais anteriormente conectados à cena e que
      são disparados por tabela ou relacionamento */
-  if(rel) disconnect(rel, NULL, this, NULL);
-  else if(tab)disconnect(tab, NULL, this, NULL);
-
-  if(objeto)
+  if(rel)
+  {
+   disconnect(rel, NULL, this, NULL);
+   /** issue#2 **/
+   /* O segmentation fault era causado pois as tabelas
+      não eram desconectadas do relacionamento a ser removido,
+      assim, quando uma delas era movimentada faziam referência
+      a um objeto inexistente, causando o crash da aplicação */
+   rel->desconectarTabelas();
+  }
+  else if(tab)
+   disconnect(tab, NULL, this, NULL);
+  else if(objeto)
    disconnect(objeto, NULL, this, NULL);
 
   /* Como a classe QGraphicsScene não delete o item apenas o retira da cena,
@@ -321,9 +323,9 @@ void CenaObjetos::removeItem(QGraphicsItem *item)
   item->setActive(false);
   QGraphicsScene::removeItem(item);
 
+  //Desaloca o objeto
   if(objeto)
-   //Armazena o objeto removido na lista de inativos para exclusão posterior
-   objs_inativos.push_back(objeto);
+   delete(objeto);
  }
 }
 //-----------------------------------------------------------

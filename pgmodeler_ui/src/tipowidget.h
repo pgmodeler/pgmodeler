@@ -37,7 +37,7 @@
  Essa declaração não afeta o comportamento das demais classes que de algum
  modo referenciam a classe Parametro.*/
 #include <QMetaType>
-Q_DECLARE_METATYPE(Parametro);
+Q_DECLARE_METATYPE(Parametro)
 //***********************************************************
 class TipoWidget: public ObjetoBaseWidget, public Ui::TipoWidget {
  Q_OBJECT

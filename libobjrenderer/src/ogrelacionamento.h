@@ -117,6 +117,13 @@ class OGRelacionamento: public ObjetoGrafico {
   //Retorna o objeto de origem convertido em relacionamento
   RelacionamentoBase *obterObjetoOrigem(void);
 
+  /** issue#2 **/
+  /* Desconecta do relacionamento os sinais emitidos pelas tabelas.
+     Esse método só deve ser chamado quando o relacionamento será removido
+     da cena e destruído, se chamado antes disso, o relacionamento não será
+     mais atualizando quando uma das tabelas se movimentarem */
+  void desconectarTabelas(void);
+
  signals:
   //Este sinal é emitido sempre que um ponto é adicionado ou removido do relacionamento
   void s_relacionamentoModificado(ObjetoGraficoBase *rel);

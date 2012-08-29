@@ -43,8 +43,8 @@ OGRelacionamento::~OGRelacionamento(void)
 {
  QGraphicsItem *item=NULL;
 
- for(int i=0; i < 2; i++)
-  disconnect(this, SLOT(configurarLinha(void)));
+ /*for(int i=0; i < 2; i++)
+  disconnect(this, SLOT(configurarLinha(void)));*/
 
  //Exclui todos os objetos criados e agregados ao relacionamento
  for(int i=0; i < 3; i++)
@@ -344,6 +344,12 @@ void OGRelacionamento::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
  }
 
  ObjetoGrafico::mouseReleaseEvent(evento);
+}
+//-----------------------------------------------------------
+void OGRelacionamento::desconectarTabelas(void)
+{
+ for(unsigned i=0; i < 2; i++)
+  disconnect(tabelas[i], NULL, this, NULL);
 }
 //-----------------------------------------------------------
 void OGRelacionamento::configurarObjeto(void)
