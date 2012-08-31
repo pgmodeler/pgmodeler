@@ -36,7 +36,7 @@ LIBS = $${GLOBAL_LIBS}
 SUBDIRS = pgmodeler_ui plugins/dummyplugin
 
 
-sources.files = models schemas lang conf README.md COMPILING.md LICENSE
+sources.files = models schemas lang conf README.md COMPILING.md PLUGINS.md LICENSE
 sources.path = .
 INSTALLS += sources
 
