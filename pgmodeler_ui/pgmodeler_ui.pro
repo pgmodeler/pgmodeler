@@ -20,12 +20,6 @@ DESTDIR = ../build
 CODECFORTR = UTF-8
 RESOURCES += res/resources.qrc
 
-#LIBS += $$DESTDIR/lib/$$LIBUTIL \
-#        $$DESTDIR/lib/$$LIBCONEXBD \
-#        $$DESTDIR/lib/$$LIBPARSERS \
-#        $$DESTDIR/lib/$$LIBPGMODELER \
-#        $$DESTDIR/lib/$$LIBOBJRENDERER
-
 QMAKE_POST_LINK+= "cp -r ../schemas/ $$DESTDIR; \
                    cp -r ../conf/ $$DESTDIR; \
                    cp -r ../lang/ $$DESTDIR; \
@@ -85,8 +79,7 @@ SOURCES += src/main.cpp \
            src/confconexoeswidget.cpp \
            src/formconfiguracao.cpp \
            src/confbasewidget.cpp \
-           src/formexportacao.cpp \
-           src/pgmodelerplugin.cpp
+           src/formexportacao.cpp
 
 HEADERS += src/formprincipal.h \
            src/modelowidget.h \

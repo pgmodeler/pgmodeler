@@ -29,11 +29,17 @@
 class DummyPlugin: public QObject, public PgModelerPlugin {
  private:
   Q_OBJECT
+  //Declara a interface na qual é usada para implementação de plugin
   Q_INTERFACES(PgModelerPlugin)
 
  public:
   DummyPlugin(void);
 
+  /* Método de obtenção do rótulo do plugin. Este rótulo é usado
+     como texto da ação que dispara o plugin na janela principal */
+  QString obterRotuloPlugin(void);
+
+  //Método de execução do plugin sobrecarregado da classe PgModelerPlugin
   void executarPlugin(ModeloWidget *modelo);
 };
 //***********************************************************

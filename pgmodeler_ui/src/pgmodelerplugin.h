@@ -33,23 +33,26 @@
    pgmodeler_root/plugins/
                          +- pluginA
                                   +---(lib)*(pluginA.)(so|dll) (biblioteca que represnta o plugin)
-                                  +---plugin.conf              (configuração do plugin)
                                   +---pluginA.png              (ícone que representa o plugin, deve possuir o mesmo nome
 
   Obs.: Plugins podem fazer uso de subdiretórios mas qualquer referência a estes devem ser feitas
         manualmente pelo criado do plugin.
 */
-
 class PgModelerPlugin {
- private:
-  QAction *acao;
-
  public:
-  PgModelerPlugin(void);
+  PgModelerPlugin(void) {}
   virtual ~PgModelerPlugin(void) {}
+
+  //Método que executa o plugin
   virtual void executarPlugin(ModeloWidget *modelo)=0;
+
+  //Retorna o texto que é exibido na ação que executa o plugin
+  virtual QString obterRotuloPlugin(void)=0;
 };
 
+/* Declara a classe PgModelerPlugin como interface, ou seja, a base para
+   implementação de plugins. Todo plugin deve herdar esta classe e usar a
+   diretiva Q_INTERFACE em sua construção */
 Q_DECLARE_INTERFACE(PgModelerPlugin,"pgmodelerplugin")
 //***********************************************************
 #endif

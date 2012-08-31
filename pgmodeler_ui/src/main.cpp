@@ -7,7 +7,6 @@ int main(int argc, char **argv)
  try
  {
   Aplicacao app(argc,argv);
-  QString local = QLocale::system().name();
   QTranslator tradutor;
 
   //Obtém os valores das variáveis de ambiente
@@ -34,7 +33,7 @@ int main(int argc, char **argv)
   app.addLibraryPath(AtributosGlobais::DIR_PLUGINS);
 
   //Carrega o arquivo de tradução da interface de acordo com o locale do sistema
-  tradutor.load(QString("pgmodeler.") + local, AtributosGlobais::DIR_LINGUAS);
+  tradutor.load(QString("pgmodeler.") + QLocale::system().name(), AtributosGlobais::DIR_LINGUAS);
 
   //Instala o tradutor na aplicação
   app.installTranslator(&tradutor);

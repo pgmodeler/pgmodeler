@@ -12,6 +12,9 @@ CONFIG += plugin qt warn_on uitools uic4
 QT = core gui qt3support
 TEMPLATE = lib
 TARGET = dummyplugin
+TRANSLATIONS = $$PWD/lang/dummyplugin.en_US.ts
+
+CODECFORTR = UTF-8
 
 INCLUDEPATH = $${GLOBAL_INCLUDES} \
               $$PGMODELER_SRC_DIR/libutil/src \
@@ -25,13 +28,19 @@ DEPENDPATH = ". res src ui moc obj"
 MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
-DESTDIR = ../../build/plugins/
+DESTDIR = ../../build/plugins/dummyplugin
 
 QMAKE_DISTCLEAN+= "-r $$MOC_DIR $$OBJECTS_DIR"
 
+QMAKE_POST_LINK+= "cp res/dummyplugin.png $$DESTDIR;\
+                   cp -r lang/ $$DESTDIR;"
+
 HEADERS += src/dummyplugin.h \
-           $$PGMODELER_SRC_DIR/pgmodeler_ui/src/pgmodelerplugin.h
+           $$PGMODELER_SRC_DIR/pgmodeler_ui/src/pgmodelerplugin.h \
+           $$PGMODELER_SRC_DIR/pgmodeler_ui/src/caixamensagem.h \
+           $$PGMODELER_SRC_DIR/libutil/src/excecao.h
 
 SOURCES += src/dummyplugin.cpp \
-           $$PGMODELER_SRC_DIR/pgmodeler_ui/src/pgmodelerplugin.cpp
+           $$PGMODELER_SRC_DIR/pgmodeler_ui/src/caixamensagem.cpp \
+           $$PGMODELER_SRC_DIR/libutil/src/excecao.cpp
 

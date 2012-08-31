@@ -31,7 +31,6 @@
 #include "listaobjetoswidget.h"
 #include "formconfiguracao.h"
 #include "formexportacao.h"
-#include "pgmodelerplugin.h"
 
 /* Formulários globais. Como são formulários os mesmos podem ser
    compartilhados e usados em outros arquivos não havendo a necessidade
@@ -243,7 +242,20 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  this->setWindowTitle(titulo_janela);
  this->addDockWidget(Qt::RightDockWidgetArea, visao_objs);
  this->addDockWidget(Qt::RightDockWidgetArea, lista_oper);
+ this->menuPlugins->setVisible(false);
 
+ //Faz o carregamento dos plugins
+ try
+ {
+  this->carregarPlugins();
+ }
+ catch(Excecao &e)
+ {
+  caixa_msg->show(e);
+ }
+
+
+ //Faz o carregamento das configurações
  try
  {
   fconfiguracao->carregarConfiguracao();
@@ -262,6 +274,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   toolbars[AtributosParsers::TB_ARQUIVO]=arquivo_tb;
   toolbars[AtributosParsers::TB_EDICAO]=edicao_tb;
   toolbars[AtributosParsers::TB_EXIBICAO]=exibicao_tb;
+  toolbars[AtributosParsers::TB_PLUGINS]=plugins_tb;
   toolbars[AtributosParsers::TB_MODELO]=modelo_tb;
 
   //Aplicando as configurações carregadas
@@ -271,6 +284,8 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   itr=confs.begin();
   itr_end=confs.end();
 
+  /* Configurando a exibição dos widgets conforme as configurações e
+     carregando arquivos anteriormente abertos */
   while(itr!=itr_end)
   {
    atribs=itr->second;
@@ -285,7 +300,8 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
    else if(tipo==AtributosParsers::TB_ARQUIVO ||
            tipo==AtributosParsers::TB_EDICAO ||
            tipo==AtributosParsers::TB_EXIBICAO ||
-           tipo==AtributosParsers::TB_MODELO)
+           tipo==AtributosParsers::TB_MODELO ||
+           tipo==AtributosParsers::TB_PLUGINS)
    {
     this->addToolBar(areas_toolbar[atribs[AtributosParsers::POSICAO]], toolbars[tipo]);
     toolbars[tipo]->setVisible(atribs[AtributosParsers::VISIVEL]==AtributosParsers::VERDADEIRO);
@@ -311,23 +327,19 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   caixa_msg->show(e);
  }
 
- try
- {
-  this->carregarPlugins();
- }
- catch(Excecao &e)
- {
-  caixa_msg->show(e);
- }
-
+ //Inicializa o atributo de tempo de salvamento automático
  interv_salvar=confs[AtributosParsers::CONFIGURACAO][AtributosParsers::INTERVALO_SALVAR_AUTO].toInt() * 60000;
 
+ //Caso o intervalo de salvamento esteja setado inicializa o timer
  if(interv_salvar > 0)
   tm_salvamento.start(interv_salvar, false);
 }
 //----------------------------------------------------------
 FormPrincipal::~FormPrincipal(void)
 {
+ //Destrói os plugins carregados
+ this->destruirPlugins();
+
  //Desalocando os formulários globais
  delete(icone_op);
  delete(nome_op);
@@ -367,16 +379,17 @@ void FormPrincipal::closeEvent(QCloseEvent *)
  confs=conf_wgt->obterParamsConfiguracao();
  conf_wgt->excluirParamsConfiguracao();
 
+ //Caso seja preciso salvar a posição dos widgets
  if(!confs[AtributosParsers::CONFIGURACAO][AtributosParsers::SALVAR_WIDGETS].isEmpty())
  {
-  int i, qtd=6;
+  int i, qtd=7;
   QString id_param;
   map<QString, QString> atribs;
   map<Qt::DockWidgetArea, QString> areas_dock;
   map<Qt::ToolBarArea, QString> areas_toolbar;
   map<QWidget *, QString> id_widgets;
   QWidget *vet_wgts[]={ arquivo_tb, edicao_tb, exibicao_tb,
-                        modelo_tb, visao_objs, lista_oper };
+                        plugins_tb, modelo_tb, visao_objs, lista_oper };
   QToolBar *toolbar=NULL;
   QDockWidget *dock=NULL;
 
@@ -387,6 +400,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
   id_widgets[arquivo_tb]=AtributosParsers::TB_ARQUIVO;
   id_widgets[edicao_tb]=AtributosParsers::TB_EDICAO;
   id_widgets[exibicao_tb]=AtributosParsers::TB_EXIBICAO;
+  id_widgets[plugins_tb]=AtributosParsers::TB_PLUGINS;
   id_widgets[modelo_tb]=AtributosParsers::TB_MODELO;
 
   areas_dock[Qt::LeftDockWidgetArea]=AtributosParsers::ESQUERDA;
@@ -420,6 +434,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
   }
  }
 
+ //Caso seja necessário salvar a sessão de arquivos carregados
  if(!confs[AtributosParsers::CONFIGURACAO][AtributosParsers::SALVAR_SESSAO].isEmpty())
  {
   int i, qtd;
@@ -446,8 +461,6 @@ void FormPrincipal::closeEvent(QCloseEvent *)
 
  if(salvar_conf)
   conf_wgt->salvarConfiguracao();
-
- //QMainWindow::close();
 }
 //----------------------------------------------------------
 void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
@@ -476,6 +489,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
  layout=modelos_tab->currentWidget()->layout();
  layout->setContentsMargins(4,4,4,4);
 
+ //Cria objetos do sistema (esquema public e linguagens c, sql e plpgsql)
  esq_publico=new Esquema;
  esq_publico->definirNome("public");
  tab_modelo->modelo->adicionarObjeto(esq_publico);
@@ -496,6 +510,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
  {
   try
   {
+   //Carrega o modelo caso o nome do arquivo esteja especificado
    tab_modelo->carregarModelo(nome_arq);
    modelos_tab->setTabText(modelos_tab->currentIndex(),
                            QString::fromUtf8(tab_modelo->modelo->obterNome()));
@@ -515,10 +530,12 @@ void FormPrincipal::definirModeloAtual(void)
 
  objeto=sender();
 
+ //Limpa as barras de edição de de modelo
  modelo_tb->clear();
  edicao_tb->clear();
  menuEditar->clear();
 
+ //Adiciona as ações de desfazer/refazer na barra/menu de edição
  edicao_tb->addAction(action_desfazer);
  edicao_tb->addAction(action_refazer);
  edicao_tb->addSeparator();
@@ -526,18 +543,27 @@ void FormPrincipal::definirModeloAtual(void)
  menuEditar->addAction(action_refazer);
  menuEditar->addSeparator();
 
+ //Atualiza os botões de navegação de modelos
  if(objeto==action_proximo)
   modelos_tab->setCurrentIndex(modelos_tab->currentIndex()+1);
  else if(objeto==action_anterior)
   modelos_tab->setCurrentIndex(modelos_tab->currentIndex()-1);
 
+ //O modelo atual obtido a partir da aba atual no 'modelos_tab'
  modelo_atual=dynamic_cast<ModeloWidget *>(modelos_tab->currentWidget());
 
+ //Caso haja um modelo
  if(modelo_atual)
  {
+  //Atualiza o zoom do memos
   this->aplicarZoom();
+
+  //Focaliza o modelo
   modelo_atual->setFocus(Qt::OtherFocusReason);
+  //Cancela qualquer operação que possa ter sido ativada pelo usuário antes de abrir o modelo atual
   modelo_atual->cancelarAdicaoObjeto();
+
+  //Configura a barra de ferramentas do modelo conforme as ações respectivas no modelo atual
   modelo_tb->addAction(modelo_atual->action_novo_obj);
   modelo_tb->addAction(modelo_atual->action_editar);
   modelo_tb->addAction(modelo_atual->action_codigo_fonte);
@@ -557,9 +583,11 @@ void FormPrincipal::definirModeloAtual(void)
   menuEditar->addAction(modelo_atual->action_colar);
   menuEditar->addAction(modelo_atual->action_excluir);
 
+  //Configura o titulo da janela da aplicação
   if(modelo_atual->obterNomeArquivo().isEmpty())
    this->setWindowTitle(titulo_janela);
   else
+   //Caso o modelo atual venha de um arquivo, concatena o caminho para o arquivo
    this->setWindowTitle(titulo_janela + " - " + QDir::toNativeSeparators(modelo_atual->obterNomeArquivo()));
 
   connect(modelo_atual, SIGNAL(s_objetoModificado(void)),lista_oper, SLOT(atualizarListaOperacoes(void)));
@@ -585,20 +613,27 @@ void FormPrincipal::definirModeloAtual(void)
 
  atualizarEstadoFerramentas();
 
+ //Atualiza os dockwidgets com os dados do modelo atual
  lista_oper->definirModelo(modelo_atual);
  visao_objs->definirModelo(modelo_atual);
 }
 //----------------------------------------------------------
 void FormPrincipal::definirOpcoesGrade(void)
 {
+ //Configura, globalmente na cena, as opçoẽs da grade
  CenaObjetos::definirOpcoesGrade(action_exibir_grade->isChecked(),
                                  action_alin_objs_grade->isChecked(),
                                  action_exibir_lim_paginas->isChecked());
 
+
  if(modelo_atual)
  {
+  /* Caso o alinhamento de objetos esteja ativado, chama o método de
+     alinhamento da cena do modelo */
   if(action_alin_objs_grade->isChecked())
    modelo_atual->cena->alinharObjetosGrade();
+
+  //Atualiza a cena do modelo
   modelo_atual->cena->update();
  }
 }
@@ -607,8 +642,10 @@ void FormPrincipal::aplicarZoom(void)
 {
  if(modelo_atual)
  {
+  //Obtém o zoom atual do modelo
   float zoom=modelo_atual->zoomAtual();
 
+  //Configura a aplicação do zoom conforme a ação qu disparou o método
   if(sender()==action_zoom_normal)
    zoom=1;
   else if(sender()==action_ampliar_zoom && zoom < ModeloWidget::ZOOM_MAXIMO)
@@ -616,18 +653,22 @@ void FormPrincipal::aplicarZoom(void)
   else if(sender()==action_diminuir_zoom && zoom > ModeloWidget::ZOOM_MINIMO)
    zoom-=ModeloWidget::INC_ZOOM;
 
- /*action_diminuir_zoom->setEnabled(zoom >= ModeloWidget::ZOOM_MINIMO);
-   action_ampliar_zoom->setEnabled(zoom <= ModeloWidget::ZOOM_MAXIMO); */
+  //Aplica o zoom configurado
   modelo_atual->aplicarZoom(zoom);
  }
 }
 //----------------------------------------------------------
 void FormPrincipal::exibirTelaCheia(bool tela_cheia)
 {
+ //Barras/Widgets que são escondidas quando o pgModeler está em tela cheia
  menu_principal_mb->setVisible(!tela_cheia);
  arquivo_tb->setVisible(!tela_cheia);
- edicao_tb->setVisible(!tela_cheia);
+ edicao_tb->setVisible(!tela_cheia); 
+ lista_oper->setVisible(!tela_cheia);
+ visao_objs->setVisible(!tela_cheia);
 
+
+ //Caso não esteja em tela cheia, reinsere as barras na área destinada a toolbars
  if(!tela_cheia)
  {
   arquivo_tb->setAllowedAreas(Qt::AllToolBarAreas);
@@ -644,6 +685,7 @@ void FormPrincipal::exibirTelaCheia(bool tela_cheia)
  }
  else
  {
+  //Caso esteja em tela cheia remove as barras de suas áreas e as torna flutuantes
   arquivo_tb->setParent(NULL);
   arquivo_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
   arquivo_tb->setVisible(true);
@@ -665,9 +707,6 @@ void FormPrincipal::exibirTelaCheia(bool tela_cheia)
   exibicao_tb->setAllowedAreas(Qt::NoToolBarArea);
   exibicao_tb->adjustSize();
  }
-
- lista_oper->setVisible(!tela_cheia);
- visao_objs->setVisible(!tela_cheia);
 }
 //----------------------------------------------------------
 void FormPrincipal::fecharModelo(int idx_modelo)
@@ -715,18 +754,24 @@ void FormPrincipal::atualizarModelos(void)
  ConfGeralWidget *conf_wgt=NULL;
  int qtd, i;
 
+ //Obtém o widget de configuração geral
  conf_wgt=dynamic_cast<ConfGeralWidget *>(fconfiguracao->obterWidgetConfiguracao(0));
+
+ //Caso a opção de salvamento do modelo não esteja marcada
  if(!conf_wgt->salvar_mod_chk->isChecked())
  {
+  //Interrompe o timer de salvamento
   interv_salvar=0;
   tm_salvamento.stop();
  }
- else if(conf_wgt->salvar_mod_chk->isChecked())
+ //Caso contrário configura o intervalo de salvamento
+ else
  {
   interv_salvar=conf_wgt->salvar_mod_spb->value() * 60000;
   tm_salvamento.start(interv_salvar, false);
  }
 
+ //Força a atualização de todos os modelos abertos
  qtd=modelos_tab->count();
  for(i=0; i < qtd; i++)
   dynamic_cast<ModeloWidget *>(modelos_tab->widget(i))->modelo->definirObjetosModificados();
@@ -734,13 +779,14 @@ void FormPrincipal::atualizarModelos(void)
 //----------------------------------------------------------
 void FormPrincipal::salvarTodosModelos(void)
 {
+ //Caso o intervalo de salvamento esteja setado
  if(interv_salvar > 0)
  {
   ModeloWidget *modelo=NULL;
   int i, qtd;
 
+  //Executa o método de salvamento em todos os modelos abertos
   qtd=modelos_tab->count();
-
   for(i=0; i < qtd; i++)
   {
    modelo=dynamic_cast<ModeloWidget *>(modelos_tab->widget(i));
@@ -753,21 +799,25 @@ void FormPrincipal::salvarModelo(ModeloWidget *modelo)
 {
  try
  {
+  //Caso nenhum modelo foi especificado toma como base o modelo atual
   if(!modelo)
    modelo=modelo_atual;
 
   if(modelo)
   {
+   //Caso a ação que disparou o método foi o de 'Salvar como'
    if(sender()==action_salvar_como || modelo->nome_arquivo.isEmpty())
    {
     QFileDialog arquivo_dlg;
 
+    //Exibe o diálogo de salvamento do arquivo
     arquivo_dlg.setWindowTitle(trUtf8("Salvar '%1' como...").arg(modelo->modelo->obterNome()));
     arquivo_dlg.setFilter(tr("Modelo de Banco de Dados (*.pgmodel);;Todos os Arquivos (*.*)"));
     arquivo_dlg.setFileMode(QFileDialog::AnyFile);
     arquivo_dlg.setAcceptMode(QFileDialog::AcceptSave);
     arquivo_dlg.setModal(true);
 
+    //Caso o usuário confirme o salvamento, executa o método de salvamento do modelo
     if(arquivo_dlg.exec()==QFileDialog::Accepted)
     {
      if(!arquivo_dlg.selectedFiles().isEmpty())
@@ -775,6 +825,7 @@ void FormPrincipal::salvarModelo(ModeloWidget *modelo)
     }
    }
    else
+    //Caso o usuário acione a ação de salvamento comum, executa direto o método do modelo
     modelo->salvarModelo();
   }
  }
@@ -786,6 +837,7 @@ void FormPrincipal::salvarModelo(ModeloWidget *modelo)
 //----------------------------------------------------------
 void FormPrincipal::exportarModelo(void)
 {
+ //Caso haja um modelo aberto exibe o formulário de exportação do modelo
  if(modelo_atual)
   fexportacao->show(modelo_atual->modelo);
 }
@@ -806,6 +858,8 @@ void FormPrincipal::imprimirModelo(void)
   deque<QWidget *> wgts;
   QGroupBox *gb=new QGroupBox(&print_dlg);
 
+  /* Cria dois checkboxes no diálogo de impressão, um
+     que indica a impressão da grade e outro do número de páginas */
   impgrade_chk=new QCheckBox(&print_dlg);
   impgrade_chk->setText(trUtf8("Imprimir grade"));
   impgrade_chk->setChecked(true);
@@ -827,6 +881,7 @@ void FormPrincipal::imprimirModelo(void)
    layout->removeItem(layout->itemAt(0));
   }
 
+  //Adiciona os widgets no diálogo
   layout->addWidget(gb);
   while(!wgts.empty())
   {
@@ -837,17 +892,25 @@ void FormPrincipal::imprimirModelo(void)
   print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
   print_dlg.setWindowTitle(trUtf8("Impressão de modelo de banco de dados"));
 
+  //Obtém as configurações de impressão da cena
   CenaObjetos::obterConfiguracaoPagina(tam_papel, orientacao, margens);
 
+  //Obtém a referência à impressora configuada no diálogo de impressão
   printer=print_dlg.printer();
+
+  //Atribui as configurações de impressão da cena à impressora
   printer->setPaperSize(tam_papel);
   printer->setOrientation(orientacao);
   printer->setPageMargins(margens.left(), margens.top(), margens.right(), margens.bottom(), QPrinter::Millimeter);
   printer->margins(&mt,&ml,&mb,&mr);
   print_dlg.exec();
 
+  //Caso o usuário confirme a impressão do modelo
   if(print_dlg.result() == QDialog::Accepted)
   {
+   /* Caso o usuário modifique as configurações da impressora este será alertado de
+      que as configurações divergem daquelas setadas na Cena, e assim a impressão
+      pode ser prejudicada */
    printer->margins(&mt1,&ml1,&mb1,&mr1);
    orient_atual=print_dlg.printer()->orientation();
    tam_papel_atual=print_dlg.printer()->paperSize();
@@ -855,6 +918,7 @@ void FormPrincipal::imprimirModelo(void)
    if(ml!=ml1 || mr!=mr1 || mt!=mt1 || mb!=mb1 ||
       orientacao!=orient_atual || tam_papel_atual!=tam_papel)
    {
+    //Exibe a caixa de confirmação de impressão ao usuário
     caixa_msg->show(trUtf8("Confirmação"),
     trUtf8("Foram detectadas modificações nas definições de papel/margem do modelo o que pode provocar a impressão incorreta dos objetos. Deseja prosseguir com a impressão usando as novas configurações? Para usar as configurações padrão clique 'Não' ou em 'Cancelar' para abortar a impressão."),
     CaixaMensagem::ICONE_ALERTA, CaixaMensagem::BOTAO_SIM_NAO_CANCELAR);
@@ -862,13 +926,16 @@ void FormPrincipal::imprimirModelo(void)
 
    if(!caixa_msg->caixaCanceleda())
    {
+    //Caso o usuário rejeite as configurações personalizada
     if(caixa_msg->result()==QDialog::Rejected)
     {
+     //Reverte para as configurações originais da cena
      printer->setPaperSize(tam_papel);
      printer->setOrientation(orientacao);
      printer->setPageMargins(margens.left(), margens.top(), margens.right(), margens.bottom(), QPrinter::Millimeter);
     }
 
+    //Imprime o modelo com as configurações setadas
     modelo_atual->imprimirModelo(printer, impgrade_chk->isChecked(), impnumpag_chk->isChecked());
    }
   }
@@ -883,18 +950,20 @@ void FormPrincipal::carregarModelo(void)
 
  try
  {
+  //Exibe o diálogo de carregamento do arquivo
   arquivo_dlg.setFilter(tr("Modelo de Banco de Dados (*.pgmodel);;Todos os Arquivos (*.*)"));
   arquivo_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));
   arquivo_dlg.setWindowTitle(trUtf8("Carregar modelo"));
   arquivo_dlg.setFileMode(QFileDialog::ExistingFiles);
   arquivo_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 
-
+  //Caso o usuário confirme o carregamento dos arquivos
   if(arquivo_dlg.exec()==QFileDialog::Accepted)
   {
    lista=arquivo_dlg.selectedFiles();
    qtd=lista.count();
 
+   //Varre a lista de arquivos selecionados e os carrega
    for(i=0; i < qtd; i++)
    {
     if(QFileInfo(lista[i]).isFile())
@@ -948,6 +1017,9 @@ void FormPrincipal::atualizarEstadoFerramentas(bool modelo_fechado)
   action_zoom_normal->setEnabled(modelo_atual->zoomAtual()!=0);
   action_diminuir_zoom->setEnabled(modelo_atual->zoomAtual() >= ModeloWidget::ZOOM_MINIMO + ModeloWidget::INC_ZOOM);
  }
+
+ plugins_tb->setEnabled(modelos_tab->count() > 0);
+ menuPlugins->setEnabled(modelos_tab->count() > 0);
 }
 //----------------------------------------------------------
 void FormPrincipal::atualizarDockWidgets(void)
@@ -969,17 +1041,120 @@ void FormPrincipal::__atualizarDockWidgets(void)
 //----------------------------------------------------------
 void FormPrincipal::carregarPlugins(void)
 {
+ vector<Excecao> vet_erros;
+ QString lib, nome_plugin,
+         dir_plugins=AtributosGlobais::DIR_PLUGINS +
+                     AtributosGlobais::SEP_DIRETORIO;
  QPluginLoader pl;
- pl.setFileName(AtributosGlobais::DIR_PLUGINS +
-                AtributosGlobais::SEP_DIRETORIO +
-                QString("libdummyplugin.so"));
- if(pl.load())
+ /* Configura uma instância de QDir para manipular as entradas no diretório raiz
+    de plugins. O pgModeler obterá somente diretórios, caso o usuário crie um plugin
+    e não o coloque em uma pasta o pgModeler ignora tal arquivo */
+ QDir dir(dir_plugins, "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot);
+ QStringList lista_dirs=dir.entryList();
+ PgModelerPlugin *plugin=NULL;
+ QAction *acao_plugin=NULL;
+ QPixmap ico_acao;
+
+ //O QPluginLoader deve resolver todos os símbolos da biblioteca
+ pl.setLoadHints(QLibrary::ResolveAllSymbolsHint);
+
+ while(!lista_dirs.isEmpty())
  {
-  cout << "carregado!" << endl;
-  PgModelerPlugin *plugin=qobject_cast<PgModelerPlugin *>(pl.instance());
-  plugin->executarPlugin(NULL);
+  //Armazena o nome do plugin
+  nome_plugin=lista_dirs.front();
+
+  /* Monta o caminho básico para a biblioteca.
+     O pgModeler configura o caminho da seguinte forma:
+
+     [DIR. RAIZ PLUGINS]/[NOME PLUGIN]/lib[NOME PLUGIN].[SUFIXO] */
+  //Resolve do o sufixo da biblioteca em tempo de compilação
+  #ifdef Q_OS_WIN
+   lib=dir_plugins + nome_plugin +
+       AtributosGlobais::SEP_DIRETORIO  +
+       nome_plugin + QString(".dll"); //Sufixo em Windows
+  #elif Q_OS_MAC
+   lib=dir_plugins + nome_plugin +
+       AtributosGlobais::SEP_DIRETORIO  +
+       nome_plugin + QString(".dylib"); //Sufixo em Mac
+  #else
+    lib=dir_plugins + nome_plugin +
+        AtributosGlobais::SEP_DIRETORIO  +
+        QString("lib") + nome_plugin + QString(".so"); //Sufixo em Unix/Linux
+  #endif
+
+  //Carrega a biblioteca
+  pl.setFileName(lib);
+  if(pl.load())
+  {
+   //Caso carregada com sucesso, insere uma instância do plugin no vetor de plugins
+   plugin=qobject_cast<PgModelerPlugin *>(pl.instance());
+   plugins[nome_plugin]=plugin;
+
+   //Cria a ação que é usada para disparar o plugin
+   acao_plugin=new QAction(this);
+   acao_plugin->setText(plugin->obterRotuloPlugin());
+
+   /* O nome da ação é setado como o nome do plugin para que este possa ser
+      referenciado no mapa de plugins quando o método FormPrincipal::executarPlugin()
+      for executado */
+   acao_plugin->setName(nome_plugin.toStdString().c_str());
+
+   ico_acao.load(dir_plugins + nome_plugin +
+                 AtributosGlobais::SEP_DIRETORIO  +
+                 nome_plugin + QString(".png"));
+   acao_plugin->setIcon(ico_acao);
+
+   //Conecta a ação ao método do form principal que executa o plugin
+   connect(acao_plugin, SIGNAL(triggered(void)), this, SLOT(executarPlugin(void)));
+
+   //Adiciona a ação na barra de plugins
+   plugins_tb->addAction(acao_plugin);
+   menuPlugins->addAction(acao_plugin);
+  }
+  else
+  {
+   //Caso o plugin não foi carregado, armazena o erro para posterior exibição
+   vet_erros.push_back(Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_PLUGINNAOCARREGADO)
+                               .arg(lista_dirs.front())
+                               .arg(lib)
+                               .arg(pl.errorString()),
+                               ERR_PGMODELERUI_PLUGINNAOCARREGADO, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+  }
+  lista_dirs.pop_front();
  }
- else
-  cout << pl.errorString().toStdString() << " : " << pl.fileName().toStdString() << endl;
+
+ //Exibe a barra de plugins caso este esteja visível
+ plugins_tb->setVisible(!plugins.empty());
+ menuPlugins->setVisible(!plugins.empty());
+
+ //Caso algum erro foi disparado no carregamento, redireciona o erro
+ if(!vet_erros.empty())
+  throw Excecao(ERR_PGMODELERUI_PLUGINSNAOCARREGADOS,__PRETTY_FUNCTION__,__FILE__,__LINE__, vet_erros);
+}
+//----------------------------------------------------------
+void FormPrincipal::destruirPlugins(void)
+{
+ map<QString, PgModelerPlugin *>::iterator itr;
+
+ //Varre o mapa de plugins destruindo cada instância (itr->second)
+ itr=plugins.begin();
+ while(itr!=plugins.end())
+ {
+  delete(itr->second);
+  itr->second=NULL;
+  itr++;
+ }
+
+ plugins.clear();
+}
+//----------------------------------------------------------
+void FormPrincipal::executarPlugin(void)
+{
+ QAction *acao=dynamic_cast<QAction *>(sender());
+
+ /* Um plugin só será executado caso um modelo esteja aberto
+    e ação tenha o nome de um plugin registrado  */
+ if(modelo_atual && acao && plugins.count(acao->name())==1)
+  plugins[acao->name()]->executarPlugin(modelo_atual);
 }
 //**********************************************************

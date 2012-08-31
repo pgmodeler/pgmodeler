@@ -22,7 +22,7 @@
 <!ELEMENT widget EMPTY>
 <!ATTLIST widget visible (false|true) "true">
 <!ATTLIST widget id CDATA #REQUIRED>
-<!ATTLIST widget type (fileToolbar|editToolbar|viewToolbar|modelToolbar|operationsDock|objectsDock) "fileToolbar">
+<!ATTLIST widget type (fileToolbar|editToolbar|viewToolbar|pluginsToolbar|modelToolbar|operationsDock|objectsDock) "fileToolbar">
 <!ATTLIST widget position (left|top|right|bottom) "left">
  
 <!ELEMENT session (file+)>

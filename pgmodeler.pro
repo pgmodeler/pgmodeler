@@ -10,12 +10,6 @@ unix {
 
  GLOBAL_LIBS =  /usr/local/pgsql/lib/libpq.so \
                 -lxml2
-
- #LIBUTIL = libutil.so
- #LIBCONEXBD = libconexbd.so
- #LIBPGMODELER = libpgmodeler.so
- #LIBOBJRENDERER = libobjrenderer.so
- #LIBPARSERS = libparsers.so
 }
 
 windows {
@@ -27,12 +21,6 @@ windows {
                "C:/QtSDK/mingw/bin/libxml2.dll"
 
  QMAKE_LFLAGS=-Wl,-enable-auto-import
-
- #LIBUTIL = util.dll
- #LIBCONEXBD = conexbd.dll
- #LIBPGMODELER = pgmodeler.dll
- #LIBOBJRENDERER = objrender.dll
- #LIBPARSERS = parsers.dll
 }
 
 INCLUDEPATH = $${GLOBAL_INCLUDES} \
@@ -45,14 +33,7 @@ INCLUDEPATH = $${GLOBAL_INCLUDES} \
 
 LIBS = $${GLOBAL_LIBS}
 
-#SUBDIRS = libutil \
-#          libconexbd \
-#          libparsers \
-#          libpgmodeler \
-#          libobjrenderer \
-#          pgmodeler_ui
-
-SUBDIRS = pgmodeler_ui
+SUBDIRS = pgmodeler_ui plugins/dummyplugin
 
 
 sources.files = models schemas lang conf README.md COMPILING.md LICENSE
