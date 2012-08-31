@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FuncaoWidget</class>
+ <widget class="QWidget" name="FuncaoWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>588</width>
+    <height>412</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>465</width>
+    <height>216</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="funcao_grid">
+   <property name="margin">
+    <number>2</number>
+   </property>
+   <property name="spacing">
+    <number>6</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="funcaowidget_twg">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>273</height>
+      </size>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="atributos_tab">
+      <attribute name="title">
+       <string>Atributos</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <property name="margin">
+        <number>4</number>
+       </property>
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="linguagem_lbl">
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Linguagem:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="linguagem_cmb"/>
+       </item>
+       <item row="1" column="0" colspan="4">
+        <widget class="QFrame" name="frame_2">
+         <property name="frameShape">
+          <enum>QFrame::HLine</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="tipo_func_lbl">
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Tipo de Função:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="tipo_func_cmb"/>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel" name="func_janela_lbl">
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Função Janela:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QCheckBox" name="func_janela_chk">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="custo_exec_lbl">
+         <property name="minimumSize">
+          <size>
+           <width>125</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Custo de Execução:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QSpinBox" name="custo_exec_spb">
+         <property name="maximum">
+          <number>10000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QLabel" name="linhas_ret_lbl">
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Linhas Retornadas:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QSpinBox" name="linhas_ret_sbp">
+         <property name="maximum">
+          <number>1000000000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="comportamento_lbl">
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Comportamento:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" colspan="3">
+        <widget class="QComboBox" name="comportamento_cmb"/>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="seguranca_lbl">
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Segurança:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" colspan="3">
+        <widget class="QComboBox" name="seguranca_cmb"/>
+       </item>
+       <item row="6" column="0" colspan="4">
+        <widget class="QFrame" name="frame">
+         <property name="frameShape">
+          <enum>QFrame::HLine</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="metodo_ret_lbl">
+         <property name="maximumSize">
+          <size>
+           <width>110</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Método de Retorno:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1" colspan="2">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QRadioButton" name="simples_rb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Simples</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <property name="autoExclusive">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="conjunto_rb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Conjunto</string>
+           </property>
+           <property name="autoExclusive">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="tabela_rb">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Tabela</string>
+           </property>
+           <property name="autoExclusive">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="7" column="3">
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="8" column="0" colspan="4">
+        <widget class="QGroupBox" name="tabela_ret_gb">
+         <property name="title">
+          <string>Tabela de Retorno</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="parametros_tab">
+      <attribute name="title">
+       <string>Parâmetros</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="definicao_tab">
+      <attribute name="title">
+       <string>Definição</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <property name="margin">
+        <number>4</number>
+       </property>
+       <property name="spacing">
+        <number>6</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QFrame" name="biblioteca_frm">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <property name="margin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <item row="0" column="0" colspan="3">
+           <widget class="QLabel" name="biblioteca1_lbl">
+            <property name="text">
+             <string>Biblioteca Dinâmica:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>450</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="0">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>10</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="simbolo_lbl">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>60</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Símbolo:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" colspan="2">
+           <widget class="QLineEdit" name="simbolo_edt">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="biblioteca_lbl">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>60</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Biblioteca:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2" colspan="2">
+           <widget class="QLineEdit" name="biblioteca_edt">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>61</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QFrame" name="codigofonte_frm">
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <property name="margin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="codigofonte_lbl">
+            <property name="text">
+             <string>Código-Fonte:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>485</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QTextEdit" name="codigofonte_txt"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

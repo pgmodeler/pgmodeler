@@ -1,15 +1,15 @@
-#include(../pgmodeler.pro)
+include(../pgmodeler.pro)
 
-#CONFIG += qt warn_on uitools uic4
-#QT = core gui qt3support
-#TEMPLATE = lib
-#TARGET = pgmodeler
-#DESTDIR = ../build/lib
-#DEPENDPATH = ". src obj"
-#OBJECTS_DIR = obj
+CONFIG += qt warn_on uitools uic4
+QT = core gui qt3support
+TEMPLATE = lib
+TARGET = pgmodeler
+DESTDIR = ../build/lib
+DEPENDPATH = ". src obj"
+OBJECTS_DIR = obj
 
-#LIBS += $$DESTDIR/$$LIBUTIL \
-#        $$DESTDIR/$$LIBPARSERS
+LIBS += $$DESTDIR/$$LIBUTIL \
+        $$DESTDIR/$$LIBPARSERS
 
 HEADERS += $$PWD/src/caixatexto.h \
            $$PWD/src/conversaotipo.h \

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ClasseOperadoresWidget</class>
+ <widget class="QWidget" name="ClasseOperadoresWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>489</width>
+    <height>194</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QCheckBox" name="classepadrao_chk">
+   <property name="geometry">
+    <rect>
+     <x>85</x>
+     <y>5</y>
+     <width>25</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="classepadrao_lbl">
+   <property name="geometry">
+    <rect>
+     <x>4</x>
+     <y>4</y>
+     <width>91</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>90</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>Classe Padrão:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="tipo_index_lbl">
+   <property name="geometry">
+    <rect>
+     <x>114</x>
+     <y>4</y>
+     <width>68</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>68</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>Indexação:</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="tipo_index_cmb">
+   <property name="geometry">
+    <rect>
+     <x>178</x>
+     <y>4</y>
+     <width>78</width>
+     <height>24</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="elementos_grp">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>50</y>
+     <width>481</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Elementos</string>
+   </property>
+   <layout class="QGridLayout" name="elementos_grid">
+    <property name="margin">
+     <number>4</number>
+    </property>
+    <property name="spacing">
+     <number>6</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QLabel" name="tipo_elem_lbl">
+      <property name="text">
+       <string>Tipo de Elemento:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="tipo_elem_cmb">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <item>
+       <property name="text">
+        <string>Operador</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Função</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Armazenamento</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="0" column="2" colspan="2">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>271</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="funcao_lbl">
+      <property name="text">
+       <string>Função:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="operador_lbl">
+      <property name="text">
+       <string>Operador:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="num_suporte_lbl">
+      <property name="text">
+       <string>Suporte/Estratégia:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QSpinBox" name="num_suporte_sb">
+      <property name="minimum">
+       <number>1</number>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2" colspan="2">
+     <widget class="QCheckBox" name="rechecar_chk">
+      <property name="text">
+       <string>Rechecar</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QLabel" name="familia_lbl">
+   <property name="geometry">
+    <rect>
+     <x>4</x>
+     <y>32</y>
+     <width>68</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>68</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>Família:</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

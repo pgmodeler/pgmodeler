@@ -18,7 +18,7 @@ For details about compilation and installation process see [COMPILING.md](https:
 Warning
 -------
 
-Although this is first stable version of pgModeler it is recommended NOT EXPORT the models created directly to production environments. Not all possible code generation were tested in this way, is its your own risk export the models into environments that are not intended for testing. The project's author is not responsible for any possible loss of data due the inappropriate use of this tool.
+Although this is a major upgrade version of pgModeler it is recommended NOT EXPORT the models created directly to production environments. Not all possible code generation were tested in this way, is its your own risk export the models into environments that are not intended for testing. The project's author is not responsible for any possible loss of data due the inappropriate use of this tool.
 
 Change History
 --------------

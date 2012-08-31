@@ -10,6 +10,7 @@ Compiling Requirements
 * Qt 4.7.x library or above (qt.nokia.com)
 * LibXML2 library (www.xmlsoft.org)
 * libpq library (www.postgresql.org)
+* pgModeler source (github.com/pgmodeler/pgmodeler/tags)
 
 Compiling
 ----------

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ParametroWidget</class>
+ <widget class="QWidget" name="ParametroWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>436</width>
+    <height>204</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>430</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QLabel" name="valorpadrao_lbl">
+   <property name="geometry">
+    <rect>
+     <x>4</x>
+     <y>53</y>
+     <width>80</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>80</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>75</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>Valor Padrão:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="valorpadrao_edt">
+   <property name="geometry">
+    <rect>
+     <x>83</x>
+     <y>53</y>
+     <width>112</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="modo_lbl">
+   <property name="geometry">
+    <rect>
+     <x>4</x>
+     <y>129</y>
+     <width>34</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>75</width>
+     <height>16777215</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>Modo:</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>83</x>
+     <y>129</y>
+     <width>137</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="in_out_hlt">
+    <property name="spacing">
+     <number>4</number>
+    </property>
+    <item>
+     <widget class="QCheckBox" name="param_in_chk">
+      <property name="text">
+       <string>IN</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="param_out_chk">
+      <property name="text">
+       <string>OUT</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

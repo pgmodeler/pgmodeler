@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ConfConexoesWidget</class>
+ <widget class="QWidget" name="ConfConexoesWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>519</width>
+    <height>461</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>2</number>
+   </property>
+   <property name="spacing">
+    <number>6</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QLabel" name="conexoes_lbl">
+     <property name="text">
+      <string>Conexões:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QComboBox" name="conexoes_cmb">
+       <property name="insertPolicy">
+        <enum>QComboBox::InsertAlphabetically</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="nova_tb">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Criar nova conexão</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/novo.png</normaloff>:/icones/icones/novo.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="cancelar_tb">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Cancelar edição</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/fechar1.png</normaloff>:/icones/icones/fechar1.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="editar_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Editar conexão selecionada</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/editar.png</normaloff>:/icones/icones/editar.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="excluir_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>30</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Excluir conexão selecionada</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/excluir.png</normaloff>:/icones/icones/excluir.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0" colspan="4">
+    <widget class="QFrame" name="div_ln">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>10</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::HLine</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QLabel" name="alias_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Alias Conexão:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" colspan="2">
+    <widget class="QLineEdit" name="alias_edt">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="placeholderText">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QLabel" name="bd_conexao_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>BD Conexão:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" colspan="2">
+    <widget class="QLineEdit" name="bd_conexao_edt">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="host_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Host/Porta:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLineEdit" name="host_edt">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="porta_sbp">
+       <property name="minimum">
+        <number>1025</number>
+       </property>
+       <property name="maximum">
+        <number>65535</number>
+       </property>
+       <property name="value">
+        <number>5432</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="usuario_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Usuário:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2" colspan="2">
+    <widget class="QLineEdit" name="usuario_edt">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="senha_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Senha:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2" colspan="2">
+    <widget class="QLineEdit" name="senha_edt"/>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="timeout_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Timeout:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_7">
+     <item>
+      <widget class="QSpinBox" name="timeout_sbp">
+       <property name="value">
+        <number>2</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="segundos_lbl">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>segundo(s)</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="modo_ssl_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Modo SSL:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="2">
+    <widget class="QComboBox" name="modo_ssl_cmb">
+     <property name="minimumSize">
+      <size>
+       <width>200</width>
+       <height>0</height>
+      </size>
+     </property>
+     <item>
+      <property name="text">
+       <string>Desativado</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Permitir</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Requerido</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Verificação de AC</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Verificação Completa</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="8" column="3">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="9" column="0" colspan="2">
+    <widget class="QLabel" name="cert_cliente_lbl">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Certificado Cliente:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="2" colspan="2">
+    <widget class="QLineEdit" name="cert_cliente_edt">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>~/.postgresql/postgresql.crt</string>
+     </property>
+     <property name="placeholderText">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0" colspan="2">
+    <widget class="QLabel" name="chave_cli_lbl">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Chave Cliente:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="2" colspan="2">
+    <widget class="QLineEdit" name="chave_cli_edt">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>~/.postgresql/postgresql.key</string>
+     </property>
+     <property name="placeholderText">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0" colspan="2">
+    <widget class="QLabel" name="cert_raiz_lbl">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Certificado Raiz:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="2" colspan="2">
+    <widget class="QLineEdit" name="cert_raiz_edt">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>~/.postgresql/root.crt</string>
+     </property>
+     <property name="placeholderText">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0" colspan="2">
+    <widget class="QLabel" name="crl_lbl">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Cert. Revogados:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="2" colspan="2">
+    <widget class="QLineEdit" name="crl_edt">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>~/.postgresql/root.crl</string>
+     </property>
+     <property name="placeholderText">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0" colspan="2">
+    <widget class="QLabel" name="serv_kerberus_lbl">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Servidor Kerberus:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="2" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLineEdit" name="serv_kerberus_edt">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="aut_gssapi_chk">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Forçar GSSAPI</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="14" column="0">
+    <widget class="QLabel" name="opcoes_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Opções:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="2" colspan="2">
+    <widget class="QLineEdit" name="opcoes_edt"/>
+   </item>
+   <item row="15" column="0" colspan="4">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="adicionar_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>90</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Adicionar</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/adicionar.png</normaloff>:/icones/icones/adicionar.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="atualizar_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>90</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Atualizar</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/padroes.png</normaloff>:/icones/icones/padroes.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="testar_tb">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>90</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Testar</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../res/resources.qrc">
+         <normaloff>:/icones/icones/conexaobd.png</normaloff>:/icones/icones/conexaobd.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="16" column="1">
+    <spacer name="verticalSpacer_4">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../res/resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

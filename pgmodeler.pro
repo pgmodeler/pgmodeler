@@ -1,5 +1,7 @@
 CONFIG += ordered
 TEMPLATE = subdirs
+TARGET = pgmodeler
+DESTDIR = build/
 
 unix {
  GLOBAL_INCLUDES = .\
@@ -10,6 +12,13 @@ unix {
 
  GLOBAL_LIBS =  /usr/local/pgsql/lib/libpq.so \
                 -lxml2
+
+ LIBUTIL=libutil.so
+ LIBPARSERS=libparsers.so
+ LIBCONEXBD=libconexbd.so
+ LIBPGMODELER=libpgmodeler.so
+ LIBOBJRENDERER=libobjrenderer.so
+ LIBPGMODELERUI=libpgmodeler_ui.so
 }
 
 windows {
@@ -21,6 +30,13 @@ windows {
                "C:/QtSDK/mingw/bin/libxml2.dll"
 
  QMAKE_LFLAGS=-Wl,-enable-auto-import
+
+ LIBUTIL=util.dll
+ LIBPARSERS=parsers.dll
+ LIBCONEXBD=conexbd.dll
+ LIBPGMODELER=pgmodeler.dll
+ LIBOBJRENDERER=objrenderer.dll
+ LIBPGMODELERUI=pgmodeler_ui.dll
 }
 
 INCLUDEPATH = $${GLOBAL_INCLUDES} \
@@ -29,12 +45,18 @@ INCLUDEPATH = $${GLOBAL_INCLUDES} \
               $$PWD/libparsers/src \
               $$PWD/libpgmodeler/src \
               $$PWD/libobjrenderer/src \
-              $$PWD/pgmodeler_ui/src
+              $$PWD/libpgmodeler_ui/src
 
 LIBS = $${GLOBAL_LIBS}
 
-SUBDIRS = pgmodeler_ui plugins/dummyplugin
-
+SUBDIRS = libutil \
+          libparsers \
+          libconexbd \
+          libpgmodeler \
+          libobjrenderer \
+          libpgmodeler_ui \
+          main \
+          plugins/dummyplugin
 
 sources.files = models schemas lang conf README.md COMPILING.md PLUGINS.md LICENSE
 sources.path = .

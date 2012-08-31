@@ -1,16 +1,16 @@
 PostgreSQL Database Modeler - pgModeler
 ---------------------------------------
 
-This document describes a simple way how to create third party plugins on pgModeler. ATTENTION: Any plugin must be compiled using the most current source of pgModeler.
+This document describes a simple way to create third party plugins on pgModeler. ATTENTION: Any plugin must be compiled using the most current source and libs of pgModeler.
 
 Basic Rules
 -----------
 
 To be used as a plugin your class must:
 
-1) Inherit the class "PgModelerPlugin"
-2) Use the macro Q_INTERFACES in its declaration.
-3) Overloadthe methods PgModelerPlugin::obterRotuloPlugin(void) and PgModelerPlugin::executarPlugin(ModeloWidget *model)
+* Inherit the class "PgModelerPlugin"
+* Use the macro Q_INTERFACES in its declaration.
+* Overloadthe methods PgModelerPlugin::obterRotuloPlugin(void) and PgModelerPlugin::executarPlugin(ModeloWidget *model)
 
 Plugin directory structure
 --------------------------
@@ -23,8 +23,8 @@ The plugins in pgModeler must be within the "plugins" folder in its own director
                                       +---(lib)*(pluginA.)(so|dylib|dll) (library)
                                       +---pluginA.png                    (icon)
 
-* Library: is the shared object that represents the plugin. The prefix (lib) and suffix (so|dylib|dll) are plataform dependent.
-* Icon: It is a PNG image that represents the plugin on the plugins toolbar.
+* Library: it is the shared object that represents the plugin. The prefix (lib) and suffix (so|dylib|dll) are plataform dependent.
+* Icon: it is a PNG image that represents the plugin on the plugins toolbar.
 
 The dummy plugin
 ----------------
