@@ -1,0 +1,29 @@
+<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT objects-style (global, font+, object+)>
+
+<!ELEMENT global EMPTY>
+<!ATTLIST global font CDATA #REQUIRED>
+<!ATTLIST global size CDATA #REQUIRED>
+
+<!ELEMENT font EMPTY>
+<!ATTLIST font color CDATA #REQUIRED>
+<!ATTLIST font italic (false|true) "false">
+<!ATTLIST font bold (false|true) "false">
+<!ATTLIST font underline (false|true) "false">
+<!ATTLIST font id (table-schema-name|view-schema-name|table-name|column|fk-column|pk-column|uq-column|nn-column|
+                   prot-column|inh-column|index|rule|trigger|view-name|attribute|label|
+                   constraints|object-type|ref-table|ref-column|alias|pos-info) "table-name">
+
+<!ELEMENT object EMPTY>
+<!ATTLIST object fill-color CDATA #REQUIRED>
+<!ATTLIST object border-color CDATA #REQUIRED>
+<!ATTLIST object id (table-title|table-body|textbox|view-title|view-body|label|relationship|
+                     attribute|column|pk-column|uq-column|fk-column|nn-column|rule|trigger|index|
+                     locker-body|locker-arc|obj-selection|reference|table-ext-body|pos-info) "table-title">

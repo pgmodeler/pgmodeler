@@ -153,6 +153,8 @@ QString Excecao::mensagens[QTD_ERROS][2]={
 {"ERR_PGMODELERUI_CONFNAOCARREGADA", QObject::tr("Não foi possível carregar um ou mais arquivos de configuração! Por favor, cheque se os arquivos existem na pasta de configurações e se o mesmos não estão corrompidos para que este erro não se repita na próxima inicialização!")},
 {"ERR_PGMODELERUI_CONFPADRAONAORESTAURADA", QObject::tr("Não foi possível encontrar o arquivo de configurações padrão '%1'! Para restaurar as configurações padrão cheque a existência do referido arquivo e tente novamente!")},
 {"ERR_PGMODELERUI_FALHAEXPORTACAO", QObject::tr("O processo de exportação falhou devido a um erro disparado pelo servidor PostgreSQL na tentativa de execução de um comando SQL. Para obter mais detalhes sobre erro cheque a pilha de exceções!\n\n** Comando SQL executado: **\n\n%1")},
+{"ERR_PGMODELERUI_PLUGINNAOCARREGADO", QObject::tr("Não foi possível carregar o plugin '%1' a partir da biblioteca '%2'! Mensagem retornada pelo gerenciador de plugins: '%3'")},
+{"ERR_PGMODELERUI_PLUGINSNAOCARREGADOS", QObject::tr("Um ou mais plugins não foram ativados devido a erros durante o processo de carregamento! Verifique a pilha de exceções para mais detalhes.")},
 {"ERR_PARSERS_SINTAXEINV", QObject::tr("Sintaxe inválida no arquivo %1, linha %2, coluna %3!")},
 {"ERR_PARSERS_CONDICIONALINV", QObject::tr("Instrução condicional '%1' inválida no arquivo %2, linha %3, coluna %4!")},
 {"ERR_PARSERS_ATRIBUTODESC", QObject::tr("Atributo '%1' desconhecido no arquivo %2, linha %3, coluna %4!")},

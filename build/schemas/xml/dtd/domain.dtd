@@ -1,0 +1,14 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT domain (schema, role?, comment?, type?, expression?)>
+<!ATTLIST domain name CDATA #REQUIRED>
+<!ATTLIST domain not-null (true | false) "false">
+<!ATTLIST domain default CDATA #IMPLIED>
+<!ATTLIST domain constraint CDATA #IMPLIED>
+<!ATTLIST domain protected (false|true) "false">

@@ -1,0 +1,30 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT relationship (line*,position*,label*,column*,constraint*,special-pk-cols?)>
+<!ATTLIST relationship name CDATA #REQUIRED>
+<!ATTLIST relationship src-required (false|true) "false">
+<!ATTLIST relationship dst-required (false|true) "false">
+<!ATTLIST relationship type (rel11|rel1n|relnn|relgen|reldep|reltv) "rel11">
+<!ATTLIST relationship protected (false|true) "false">
+<!ATTLIST relationship src-table CDATA #REQUIRED>
+<!ATTLIST relationship dst-table CDATA #REQUIRED>
+<!ATTLIST relationship src-sufix CDATA #IMPLIED>
+<!ATTLIST relationship dst-sufix CDATA #IMPLIED>
+<!ATTLIST relationship table-name CDATA #IMPLIED>
+<!ATTLIST relationship identifier (false|true) "false">
+<!ATTLIST relationship deferrable (true | false) "false">
+<!ATTLIST relationship defer-type CDATA #IMPLIED>
+ 
+<!ELEMENT line (position+)>
+
+<!ELEMENT special-pk-cols EMPTY>
+<!ATTLIST special-pk-cols indexes CDATA #REQUIRED>
+
+<!ELEMENT label (position)>
+<!ATTLIST label ref-type (name-label|src-label|dst-label) "name-label">

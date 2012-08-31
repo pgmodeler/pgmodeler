@@ -336,6 +336,7 @@ static const QString
   TB_EDICAO="editToolbar",
   TB_EXIBICAO="viewToolbar",
   TB_MODELO="modelToolbar",
+  TB_PLUGINS="pluginsToolbar",
   DK_OPERACOES="operationsDock",
   DK_OBJETOS="objectsDock",
   ESQUERDA="left",

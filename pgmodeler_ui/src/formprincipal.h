@@ -31,6 +31,7 @@
 #include "formbasico.h"
 #include "listaoperacoeswidget.h"
 #include "visaoobjetoswidget.h"
+#include "pgmodelerplugin.h"
 
 using namespace std;
 //***********************************************************
@@ -38,25 +39,55 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
  Q_OBJECT
 
  private:
+  //Atributo estático e constante que guarda a versão atual do pgModeler
   static const QString VERSAO_PGMODELER;
 
+  //Timer de salvamento automático do modelo
   QTimer tm_salvamento;
+
+  //Dockwidget o qual exibe as operações executadas sobre os objetos
   ListaOperacoesWidget *lista_oper;
+
+  //Dockwidget o qual exibe todos os objetos do modelo em forma de árvore/lista
   VisaoObjetosWidget *visao_objs;
+
+  //Armazena a referência para o modelo atualmente aberto
   ModeloWidget *modelo_atual;
+
+  //Armazena o nome da operação atualmente selecionada
   QLabel *nome_op;
+
+  //Armazena o nome ícone da operação atualmente selecionada
   QLabel *icone_op;
+
+  //Título da janela principal
   QString titulo_janela;
+
+  //Armazena o intevalo de salvamento automático do modelo
   int interv_salvar;
 
+  //Mapa de plugins carregados
+  map<QString, PgModelerPlugin *> plugins;
+
+  //Sobrecarga do closeEvent(): Salva as configurações antes do encerramento do aplicativo
   void closeEvent(QCloseEvent *);
+
+  //Carrega os plugins no diretório plugins/
+  void carregarPlugins(void);
+
+  //Destrói todos os plugins carregados
+  void destruirPlugins(void);
 
  public:
    FormPrincipal(QWidget *parent = 0, Qt::WindowFlags flags = 0);
   ~FormPrincipal(void);
 
  private slots:
+  //Atualiza as definições da grade com base nas ações: Exibir Grade, Alin. Grade e Exibir limites
   void definirOpcoesGrade(void);
+
+  /* Adiciona um novo modelo, caso o parâmetro 'nome_arq' esteja preenchido, o pgModeler
+     tentará carregar o modelo especificado pelo arquivo */
   void adicionarNovoModelo(const QString &nome_arq="");
 
   /* Atualiza o estado (ativo/inativo) dos botões das barras
@@ -70,20 +101,39 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
   void atualizarDockWidgets(void);
   void __atualizarDockWidgets(void);
 
+  //Atualiza a referência ao modelo atual quando as abas de modelos são ativadas
   void definirModeloAtual(void);
+
+  /* Executa o fechamento do modelo atual, o parâmetro 'idx_modelo' pode ser usado
+     para fechar um modelo especificado por seu índice */
   void fecharModelo(int idx_modelo=-1);
 
+  //Carrega um modelo a partir do disco
   void carregarModelo(void);
+
+  //Salva um determinado ModeloWidget
   void salvarModelo(ModeloWidget *modelo=NULL);
+
+  //Salva todos os modelos abertos
   void salvarTodosModelos(void);
+
+  //Imprime o modelo atual
   void imprimirModelo(void);
+
+  //Executa a exportação no modelo atual
   void exportarModelo(void);
 
   //Atualiza os modelos abertos com as novas configurações
   void atualizarModelos(void);
 
+  //Aplica o zoom sobre o modelo atual
   void aplicarZoom(void);
+
+  //Exibe o pgModeler em tela cheia
   void exibirTelaCheia(bool tela_cheixa);
+
+  //Executa o plugin representado pela ação que disparou o slot
+  void executarPlugin(void);
 };
 //***********************************************************
 #endif

@@ -1,0 +1,16 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ENTITY % element SYSTEM "element.dtd">
+%element;
+
+<!ELEMENT opclass (schema?,role?,comment?,opfamily?,type?,element*)>
+<!ATTLIST opclass name CDATA #REQUIRED>
+<!ATTLIST opclass index-type (btree | rtree | gist | hash | gin) "btree">
+<!ATTLIST opclass default (false | true) "true">
+<!ATTLIST opclass protected (false|true) "false">

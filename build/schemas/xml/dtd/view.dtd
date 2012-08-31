@@ -1,0 +1,17 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT view (schema,comment?,position,reference+,expression+)>
+<!ATTLIST view name CDATA #REQUIRED>
+<!ATTLIST view protected (false|true) "false">
+
+<!ELEMENT reference (expression?)>
+<!ATTLIST reference alias CDATA #IMPLIED>
+<!ATTLIST reference column-alias CDATA #IMPLIED>
+<!ATTLIST reference column CDATA #IMPLIED>
+<!ATTLIST reference table CDATA #IMPLIED>

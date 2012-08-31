@@ -1,0 +1,66 @@
+<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ENTITY % baseelements SYSTEM "baseelements.dtd">
+%baseelements;
+<!ENTITY % basetype SYSTEM "basetype.dtd">
+%basetype;
+<!ENTITY % role SYSTEM "role.dtd">
+%role;
+<!ENTITY % tablespace SYSTEM "tablespace.dtd">
+%tablespace;
+<!ENTITY % database SYSTEM "database.dtd">
+%database;
+<!ENTITY % schema SYSTEM "schema.dtd">
+%schema;
+<!ENTITY % language SYSTEM "language.dtd">
+%language;
+<!ENTITY % function SYSTEM "function.dtd">
+%function;
+<!ENTITY % usertype SYSTEM "usertype.dtd">
+%usertype;
+<!ENTITY % cast SYSTEM "cast.dtd">
+%cast;
+<!ENTITY % conversion SYSTEM "conversion.dtd">
+%conversion;
+<!ENTITY % operator SYSTEM "operator.dtd">
+%operator;
+<!ENTITY % opfamily SYSTEM "opfamily.dtd">
+%opfamily;
+<!ENTITY % opclass SYSTEM "opclass.dtd">
+%opclass;
+<!ENTITY % aggregate SYSTEM "aggregate.dtd">
+%aggregate;
+<!ENTITY % domain SYSTEM "domain.dtd">
+%domain;
+<!ENTITY % table SYSTEM "table.dtd">
+%table;
+<!ENTITY % sequence SYSTEM "sequence.dtd">
+%sequence;
+<!ENTITY % view SYSTEM "view.dtd">
+%view;
+<!ENTITY % textbox SYSTEM "textbox.dtd">
+%textbox;
+<!ENTITY % relationship SYSTEM "relationship.dtd">
+%relationship;
+
+<!ENTITY % grant SYSTEM "grant.dtd">
+%grant;
+
+<!--
+  Diferente de como era definido antes, um elemento pode ter qualuqer combinação de
+  subelementos sem uma ordem excepcional de construção dos objetos, ou seja,
+  a ordem de criação dos objetos não é por prioridade de tipo de objetos e sim
+  por temporalidade, ou seja, os objetos são organizados no arquivo XML por ordem
+  crescente de tempo de criação, isso permite que objetos possam ser criados
+  sem quebrar referências ou causar erros inesperados
+-->
+<!ELEMENT dbmodel ANY>
+
+<!ATTLIST dbmodel author CDATA #IMPLIED>
+<!ATTLIST dbmodel protected (false|true) "false">

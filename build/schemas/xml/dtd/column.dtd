@@ -1,0 +1,13 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT column (type?)>
+<!ATTLIST column name CDATA #REQUIRED>
+<!ATTLIST column not-null (true | false) "false">
+<!ATTLIST column default CDATA #IMPLIED>
+<!ATTLIST column protected (false|true) "false">

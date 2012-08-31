@@ -1,0 +1,12 @@
+﻿<!--
+  ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
+           o que está fazendo. Resultados inesperados podem acontecer
+           caso o código seja alterado deliberadamente.
+
+  CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
+           Unexpected results may occur if the code is changed deliberately.
+-->
+<!ELEMENT opfamily (schema?,role?,comment?)>
+<!ATTLIST opfamily name CDATA #REQUIRED>
+<!ATTLIST opfamily index-type (btree | rtree | gist | hash | gin) "btree">
+<!ATTLIST opfamily protected (false|true) "false">

@@ -1,4 +1,5 @@
 CONFIG += ordered
+TEMPLATE = subdirs
 
 unix {
  GLOBAL_INCLUDES = .\
@@ -32,17 +33,10 @@ INCLUDEPATH = $${GLOBAL_INCLUDES} \
 
 LIBS = $${GLOBAL_LIBS}
 
-TEMPLATE = subdirs
+SUBDIRS = pgmodeler_ui plugins/dummyplugin
 
-SUBDIRS = pgmodeler_ui\
-          libutil \
-          libconexbd \
-          libparsers \
-          libpgmodeler \
-          libobjrenderer
-
-SUBDIRS = pgmodeler_ui
 
 sources.files = models schemas lang conf README.md COMPILING.md LICENSE
 sources.path = .
 INSTALLS += sources
+

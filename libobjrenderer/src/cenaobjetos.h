@@ -1,7 +1,7 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
+# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca libobjrenderer
-# Classe: Viewport
+# Classe: CenaObjetos
 # Descrição: Esta classe deriva a classe QGraphicsScene e implementa a visualização
 #            e outras operações relacionados aos objetos gráficos do modelo.
 #

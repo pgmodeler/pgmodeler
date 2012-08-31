@@ -91,7 +91,7 @@
      <x>0</x>
      <y>0</y>
      <width>1323</width>
-     <height>26</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -156,9 +156,18 @@
     <addaction name="separator"/>
     <addaction name="menuFerramentas"/>
    </widget>
+   <widget class="QMenu" name="menuPlugins">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string>Plugins</string>
+    </property>
+   </widget>
    <addaction name="menuArquivo"/>
    <addaction name="menuEditar"/>
    <addaction name="menuExibir"/>
+   <addaction name="menuPlugins"/>
    <addaction name="menuSobre"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -304,6 +313,28 @@
    </property>
    <attribute name="toolBarArea">
     <enum>BottomToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QToolBar" name="plugins_tb">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
+   <property name="windowTitle">
+    <string>Plugins</string>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>

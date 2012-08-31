@@ -23,6 +23,13 @@ Although this is first stable version of pgModeler it is recommended NOT EXPORT 
 Change History
 --------------
 
+[ v0.2.0 ]
+
+* NEW FEATURE: pgModeler now has an interface to implement third party plugins. Check [PLUGINS.md] (https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md) for details.
+* Issue#2 resolved, pgModeler no longer crashes when removing an primary-key of a table which has relationship with other tables.
+* Added a short cut to easily control the zoom on the model. Use Crtl + Mouse wheel up (zoom up) or Crtl + Mouse wheel down (zoom down)
+* Fixed the semantics of one-to-one relationships.
+
 [ v0.1.2 ]
 
 * Dockwidgets no longer disappear unexpectedly when the main window is minimized.
@@ -32,7 +39,7 @@ Change History
 * Added a functionality to save modified models before closing the software.
 * Updated the en_US dictionary with the texts of the above functionality.
 * Fixed segmentation faults caused by the destruction of relationships which possessed attributes/constraints.
-* Fixed the translation to SQL code of 1-1 relationships.
+* Fixed the translation to SQL code of one-to-one relationships.
 * Fixed segmentation fault when editing relationships and/or undoing an operation involving a relationship.
 * Identifiers relationships now correctly display the thick line beside the weak entity.
 

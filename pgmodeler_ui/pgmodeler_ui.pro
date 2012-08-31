@@ -20,6 +20,18 @@ DESTDIR = ../build
 CODECFORTR = UTF-8
 RESOURCES += res/resources.qrc
 
+QMAKE_POST_LINK+= "cp -r ../schemas/ $$DESTDIR; \
+                   cp -r ../conf/ $$DESTDIR; \
+                   cp -r ../lang/ $$DESTDIR; \
+                   cp ../*.md $$DESTDIR; \
+                   cp ../LICENSE $$DESTDIR;"
+
+QMAKE_DISTCLEAN+= "-r $$DESTDIR/schemas \
+                      $$DESTDIR/conf \
+                      $$DESTDIR/lang \
+                      $$DESTDIR/*.md \
+                      $$DESTDIR/LICENSE"
+
 SOURCES += src/main.cpp \
            src/formprincipal.cpp \
            src/modelowidget.cpp \
@@ -66,8 +78,8 @@ SOURCES += src/main.cpp \
            src/confaparenciawidget.cpp \
            src/confconexoeswidget.cpp \
            src/formconfiguracao.cpp \
-    src/confbasewidget.cpp \
-    src/formexportacao.cpp
+           src/confbasewidget.cpp \
+           src/formexportacao.cpp
 
 HEADERS += src/formprincipal.h \
            src/modelowidget.h \
@@ -113,10 +125,11 @@ HEADERS += src/formprincipal.h \
            src/listaobjetoswidget.h \
            src/confgeralwidget.h \
            src/formconfiguracao.h \
-    src/confconexoeswidget.h \
-    src/confaparenciawidget.h \
-    src/confbasewidget.h \
-    src/formexportacao.h
+           src/confconexoeswidget.h \
+           src/confaparenciawidget.h \
+           src/confbasewidget.h \
+           src/formexportacao.h \
+           src/pgmodelerplugin.h
 
 FORMS += ui/formprincipal.ui \
          ui/formsobre.ui \
