@@ -15,7 +15,15 @@ DESTDIR = ../build/lib
 CODECFORTR = UTF-8
 RESOURCES += res/resources.qrc
 
-QMAKE_POST_LINK+= "cp res/icones/pgsqlModeler48x48.png ../build/pgmodeler.png"
+unix {
+ QMAKE_POST_LINK+= "cp res/icones/pgsqlModeler48x48.png ../build/pgmodeler.png"
+}
+
+windows {
+ DEST=..\\build
+ QMAKE_POST_LINK+= "copy res\\icones\\pgsqlModeler48x48.png $$DEST\\pgmodeler.png"
+}
+
 QMAKE_DISTCLEAN+= "../build/pgmodeler.png"
 
 LIBS = $$DESTDIR/$$LIBUTIL \

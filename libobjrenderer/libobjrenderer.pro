@@ -9,6 +9,7 @@ DEPENDPATH = ". src obj"
 OBJECTS_DIR = obj
 
 LIBS += $$DESTDIR/$$LIBUTIL \
+        $$DESTDIR/$$LIBPARSERS \
         $$DESTDIR/$$LIBPGMODELER
 
 HEADERS +=  $$PWD/src/objetografico.h \

@@ -1,7 +1,5 @@
 CONFIG += ordered
 TEMPLATE = subdirs
-TARGET = pgmodeler
-DESTDIR = build/
 
 unix {
  GLOBAL_INCLUDES = .\
