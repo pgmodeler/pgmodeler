@@ -25,7 +25,7 @@ Change History
 
 [ v0.2.0 ]
 
-* NEW FEATURE: pgModeler now has an interface to implement third party plugins. Check [PLUGINS.md] (https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md) for details.
+* NEW FEATURE: pgModeler now has an interface to implement third party plugins. Check [PLUGINS.md] (https://github.com/pgmodeler/pgmodeler/blob/master/PLUGINS.md) for details.
 * Issue#2 resolved, pgModeler no longer crashes when removing an primary-key of a table which has relationship with other tables.
 * Added a short cut to easily control the zoom on the model. Use Crtl + Mouse wheel up (zoom up) or Crtl + Mouse wheel down (zoom down)
 * Fixed the semantics of one-to-one relationships.
