@@ -75,7 +75,7 @@ Relacionamento::Relacionamento(const QString &nome, unsigned tipo_rel, Tabela *t
  qtd_cols_rejeitadas=0;
  definirIdentificador(identificador);
 
- atributos[AtributosParsers::RESTRICAO]="";
+ atributos[AtributosParsers::RESTRICOES]="";
  atributos[AtributosParsers::TABELA]="";
  atributos[AtributosParsers::RELAC_NN]="";
  atributos[AtributosParsers::RELAC_GEN]="";
@@ -2280,11 +2280,22 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
  {
   if(fk_rel1n && (tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N))
   {
+   unsigned qtd, i;
+
    atributos[AtributosParsers::RELAC_1N]="1";
-   atributos[AtributosParsers::RESTRICAO]=fk_rel1n->obterDefinicaoObjeto(tipo_def);
+   atributos[AtributosParsers::RESTRICOES]=fk_rel1n->obterDefinicaoObjeto(tipo_def);
 
    if(uq_rel11)
-    atributos[AtributosParsers::RESTRICAO]+=uq_rel11->obterDefinicaoObjeto(tipo_def);
+    atributos[AtributosParsers::RESTRICOES]+=uq_rel11->obterDefinicaoObjeto(tipo_def);
+
+   qtd=restricoes_rel.size();
+   for(i=0; i < qtd; i++)
+   {
+    if(dynamic_cast<Restricao *>(restricoes_rel[i])->obterTipoRestricao()!=TipoRestricao::primary_key)
+     atributos[AtributosParsers::RESTRICOES]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
+                                              obterDefinicaoObjeto(tipo_def, false);
+
+   }
 
    atributos[AtributosParsers::TABELA]=obterTabelaReceptora()->obterNome(true);
   }

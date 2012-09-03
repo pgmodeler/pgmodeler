@@ -500,6 +500,10 @@ void RestricaoWidget::aplicarConfiguracao(void)
   restricao->definirTipoAcao(TipoAcao(acao_delete_cmb->currentText()),false);
   restricao->definirTipoAcao(TipoAcao(acao_update_cmb->currentText()),true);
 
+  //Caso seja uma chave estrangeira, atribui a tabela referenciada
+  if(restricao->obterTipoRestricao()==TipoRestricao::foreign_key)
+   restricao->definirTabReferenciada(sel_tabela_ref->obterObjeto());
+
   //Remove todas as colunas da restrição para inserir as presentes na tabela
   restricao->removerColunas();
   for(tipo_col=Restricao::COLUNA_ORIGEM; tipo_col <= Restricao::COLUNA_REFER; tipo_col++)

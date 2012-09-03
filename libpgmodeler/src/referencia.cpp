@@ -13,8 +13,8 @@ Referencia::Referencia(Tabela *tabela, Coluna *coluna, const QString &alias_tab,
 
  /* Caso o alias atribuido à tabela/expressão ou coluna seja inválido
     de acordo com a regra de nomenclatura do PostgreSQL */
- else if(!ObjetoBase::nomeValido(alias_tab) ||
-         !ObjetoBase::nomeValido(alias_col))
+ else if((!alias_tab.isEmpty() && !ObjetoBase::nomeValido(alias_tab)) ||
+         (!alias_col.isEmpty() && !ObjetoBase::nomeValido(alias_col)))
   throw Excecao(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Caso se tente criar uma referência a uma coluna cuja tabela pai seja

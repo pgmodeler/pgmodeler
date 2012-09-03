@@ -11,7 +11,7 @@
 #          you are doing.
 
 %if @{rel1n} %then
- @{constraint}
+ @{constraints}
 %end
 
 %if @{relgen} %then

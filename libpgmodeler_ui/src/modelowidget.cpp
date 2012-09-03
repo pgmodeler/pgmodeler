@@ -245,9 +245,6 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  connect(cena, SIGNAL(s_menupopupRequisitado(vector<ObjetoBase*>)), this, SLOT(exibirMenuObjetoTabela(vector<ObjetoBase *>)));
 
  connect(cena, SIGNAL(s_objetoSelecionado(ObjetoGraficoBase*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
-
- viewport->horizontalScrollBar()->installEventFilter(this);
- viewport->verticalScrollBar()->installEventFilter(this);
 }
 //----------------------------------------------------------
 ModeloWidget::~ModeloWidget(void)
@@ -291,6 +288,15 @@ bool ModeloWidget::eventFilter(QObject *objeto, QEvent *evento)
   return(QWidget::eventFilter(objeto, evento));
 }
 //----------------------------------------------------------
+void ModeloWidget::keyReleaseEvent(QKeyEvent *evento)
+{
+ if(evento->key()==Qt::Key_Control)
+ {
+  viewport->horizontalScrollBar()->removeEventFilter(this);
+  viewport->verticalScrollBar()->removeEventFilter(this);
+ }
+}
+//----------------------------------------------------------
 void ModeloWidget::keyPressEvent(QKeyEvent *evento)
 {
  //Cancela a ação de inserção do objeto quando ESC é pressionado
@@ -298,6 +304,11 @@ void ModeloWidget::keyPressEvent(QKeyEvent *evento)
  {
   this->cancelarAdicaoObjeto();
   cena->clearSelection();
+ }
+ else if(evento->key()==Qt::Key_Control)
+ {
+  viewport->horizontalScrollBar()->installEventFilter(this);
+  viewport->verticalScrollBar()->installEventFilter(this);
  }
 }
 //----------------------------------------------------------
@@ -343,6 +354,7 @@ void ModeloWidget::wheelEvent(QWheelEvent * evento)
   else
    //Aumenta o zoom
    this->aplicarZoom(this->zoom_atual + INC_ZOOM);
+  viewport->centerOn(viewport->mapToScene(evento->pos()));
  }
 }
 //----------------------------------------------------------
@@ -355,9 +367,10 @@ void ModeloWidget::aplicarZoom(float zoom)
   viewport->resetTransform();
   //Aplica a matriz de escala para ampliar/reduzir a visão
   viewport->scale(zoom, zoom);
+
+  viewport->centerOn(0,0);
   //Armazena o zoom aplicado como atual
   this->zoom_atual=zoom; 
-
   emit s_zoomModificado();
  }
 }

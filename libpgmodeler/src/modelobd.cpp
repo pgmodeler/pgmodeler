@@ -1414,7 +1414,6 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
    }
   }
 
-
   /* Varre a lista de visões para verificar aquelas as quais possam estar
      referenciando colunas adicionadas por relacionamentos. */
   itr=visoes.begin();
@@ -4668,7 +4667,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
                   ERR_PGMODELER_ALOCPKFORMAINVALIDA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Efetuando configurações específicas para chaves estrangeiras
-  if(tipo_rest==TipoRestricao::foreign_key && tipo_objeto==OBJETO_TABELA)
+  if(tipo_rest==TipoRestricao::foreign_key /*&& tipo_objeto==OBJETO_TABELA*/)
   {
    //Define se a restrição é postergavel (apenas para chaves estrangeiras)
    postergavel=(atributos[AtributosParsers::POSTERGAVEL]==AtributosParsers::VERDADEIRO);
@@ -4754,9 +4753,9 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
       //Varre a lista de nomes de colunas e as obtém da tabela a qual possuirá a restrição
       for(i=0; i < qtd; i++)
       {
-       if(tipo_objeto==OBJETO_TABELA)
+       if(tipo_coluna==Restricao::COLUNA_ORIGEM)
        {
-        if(tipo_coluna==Restricao::COLUNA_ORIGEM)
+        if(tipo_objeto==OBJETO_TABELA)
         {
          coluna=tabela->obterColuna(lista_cols[i]);
          //Caso a coluna não for encontrada, tenta obtê-la referenciando seu nome antigo
@@ -4764,17 +4763,17 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
           coluna=tabela->obterColuna(lista_cols[i], true);
         }
         else
-        {
-         tabela_aux=dynamic_cast<Tabela *>(tabela_ref);
-         coluna=tabela_aux->obterColuna(lista_cols[i]);
-         //Caso a coluna não for encontrada, tenta obtê-la referenciando seu nome antigo
-         if(!coluna)
-          coluna=tabela_aux->obterColuna(lista_cols[i], true);
-        }
+         //Para os demais tipos de relacionamento as colunas a serem obtidas são os atributos do relacionamento
+          coluna=dynamic_cast<Coluna *>(relacao->obterObjeto(lista_cols[i], OBJETO_COLUNA));
        }
        else
-        //Para os demais tipos de relacionamento as colunas a serem obtidas são os atributos do relacionamento
-         coluna=dynamic_cast<Coluna *>(relacao->obterObjeto(lista_cols[i], OBJETO_COLUNA));
+       {
+        tabela_aux=dynamic_cast<Tabela *>(tabela_ref);
+        coluna=tabela_aux->obterColuna(lista_cols[i]);
+        //Caso a coluna não for encontrada, tenta obtê-la referenciando seu nome antigo
+        if(!coluna)
+         coluna=tabela_aux->obterColuna(lista_cols[i], true);
+       }
 
        //Adiciona a coluna à restrição
        restricao->adicionarColuna(coluna, tipo_coluna);
@@ -4789,7 +4788,15 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
   {
    //Caso a restrição criada não seja uma chave primária insere-a normalmente na tabela
    if(restricao->obterTipoRestricao()!=TipoRestricao::primary_key)
+   {
     tabela->adicionarRestricao(restricao);
+
+    /* Caso a tabela receptora da restrição esteja inserida no modelo, força o seu redesenho.
+       Isso é útil para atualizar tabelas as quais tiveram restrições adicionadas após a sua
+       criação */
+    if(this->obterIndiceObjeto(tabela) >= 0)
+      tabela->definirModificado(true);
+   }
   }
  }
  catch(Excecao &e)
@@ -5997,7 +6004,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
          tipo_def_str=(tipo_def==ParserEsquema::DEFINICAO_SQL ? "SQL" : "XML");
  Tipo *tipo_usr=NULL;
  map<unsigned, ObjetoBase *> mapa_objetos;
- vector<unsigned> vet_id_objs;
+ vector<unsigned> vet_id_objs, vet_id_objs_tab;
  Tabela *tabela=NULL;
  Indice *indice=NULL;
  Gatilho *gatilho=NULL;
@@ -6073,7 +6080,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
   /* Para definição XML todos os 16 tipos da lista 'tipos_objs' são tratados.
      Para definição SQL são tratados apenas os 12 primeiros (tabelas, relacionamentos, visões e sequências)
      são tratadas separadamente pois existe uma ordem específica em que elas precisam ser criadas e essa
-     ordem é definina na interação após a ordenação dos objetos */
+     ordem é definida na interação após a ordenação dos objetos */
   if(tipo_def==ParserEsquema::DEFINICAO_XML)
    qtd=16;
   else
@@ -6111,13 +6118,14 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
    }
   }
 
-  /* Caso a definição seja XML executa um trecho especial que é
-     a obtenção e armazenamento dos objetos especiais (os quais
+  /* ** Trecho especial **:
+     Obtenção e armazenamento dos objetos especiais (os quais
      referenciam colunas de tabelas adicionadas por relacionamentos)
-     no mapa de objetos. Para isso a lista de tabelas é varrida novamente
-     e suas restrições e índices são validados como especiais ou não */
-  if(tipo_def==ParserEsquema::DEFINICAO_XML)
-  {
+     no mapa de objetos e seus ids em um vetor auxiliar de ids 'vet_id_objs_tab'.
+     Para isso a lista de tabelas é varrida novamente e suas restrições e índices
+     são validados como especiais ou não. O vetor de ids é concatenado ao vetor de ids principal
+     antes de sua ordenação quando a definição é XML ou concatenado após a ordenação para def. SQL, desta
+     forma os objetos especiais são criados de forma correta em ambas as linguagens */
    itr=tabelas.begin();
    itr_end=tabelas.end();
 
@@ -6140,7 +6148,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
       //Armazena o objeto em si no mapa de objetos
       mapa_objetos[restricao->obterIdObjeto()]=restricao;
       //Armazena o id do objeto na lista de ids usada para referenciar os objetos no mapa
-      vet_id_objs.push_back(restricao->obterIdObjeto());
+      vet_id_objs_tab.push_back(restricao->obterIdObjeto());
      }
     }
 
@@ -6156,7 +6164,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
       //Armazena o objeto em si no mapa de objetos
       mapa_objetos[gatilho->obterIdObjeto()]=gatilho;
       //Armazena o id do objeto na lista de ids usada para referenciar os objetos no mapa
-      vet_id_objs.push_back(gatilho->obterIdObjeto());
+      vet_id_objs_tab.push_back(gatilho->obterIdObjeto());
      }
     }
 
@@ -6172,11 +6180,15 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
       //Armazena o objeto em si no mapa de objetos
       mapa_objetos[indice->obterIdObjeto()]=indice;
       //Armazena o id do objeto na lista de ids usada para referenciar os objetos no mapa
-      vet_id_objs.push_back(indice->obterIdObjeto());
+      vet_id_objs_tab.push_back(indice->obterIdObjeto());
      }
     }
    }
-  }
+
+  /* Concatena o vetor de ids auxiliar (ids de objetos especiais) ao vetor de ids principal
+     antes da ordenação caso a definição seja XML */
+  if(tipo_def==ParserEsquema::DEFINICAO_XML)
+   vet_id_objs.insert(vet_id_objs.end(), vet_id_objs_tab.begin(), vet_id_objs_tab.end());
 
   //Ordena o vetor de identificadores em ordem crescente
   sort(vet_id_objs.begin(), vet_id_objs.end());
@@ -6235,6 +6247,11 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
    }
   }
 
+  /* Concatena o vetor de ids auxiliar (ids de objetos especiais) ao vetor de ids principal
+     após a ordenação caso a definição seja SQL */
+  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+   vet_id_objs.insert(vet_id_objs.end(), vet_id_objs_tab.begin(), vet_id_objs_tab.end());
+
   atribs_aux[AtributosParsers::TIPOS_SHELL]="";
 
   /* Caso a definição seja SQL e existam tipos definidos pelo usuário
@@ -6289,6 +6306,10 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
      atribs_aux[this->obterNomeEsquemaObjeto()]+=this->__obterDefinicaoObjeto(tipo_def);
     else
      atribs_aux[atrib]+=this->__obterDefinicaoObjeto(tipo_def);
+   }
+   else if(tipo_obj==OBJETO_RESTRICAO)
+   {
+    atribs_aux[atrib]+=dynamic_cast<Restricao *>(objeto)->obterDefinicaoObjeto(tipo_def, true);
    }
    else
    {
@@ -7519,8 +7540,8 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
    Coluna *coluna=dynamic_cast<Coluna *>(objeto);
    vector<ObjetoBase *> *lista_obj=NULL;
    vector<ObjetoBase *>::iterator itr, itr_end;
-   TipoObjetoBase  tipos_obj[]={ OBJETO_SEQUENCIA, OBJETO_VISAO, OBJETO_TABELA };
-   unsigned i, qtd=3;
+   TipoObjetoBase  tipos_obj[]={ OBJETO_SEQUENCIA, OBJETO_VISAO, OBJETO_TABELA, OBJETO_RELACAO };
+   unsigned i, qtd=4;
 
    for(i=0; i < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i++)
    {
@@ -7548,8 +7569,19 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
      else if(tipos_obj[i]==OBJETO_TABELA)
      {
       Tabela *tab=dynamic_cast<Tabela *>(*itr);
-      unsigned qtd_gat, idx, qtd1, i1;
+      unsigned qtd_gat, qtd_rest, idx, qtd1, i1;
       Gatilho *gat=NULL;
+
+      qtd_rest=tab->obterNumRestricoes();
+      for(idx=0; idx < qtd_rest && (!modo_exclusao || (modo_exclusao && !refer)); idx++)
+      {
+       if(tab->obterRestricao(idx)->colunaExistente(coluna, Restricao::COLUNA_ORIGEM) ||
+          tab->obterRestricao(idx)->colunaExistente(coluna, Restricao::COLUNA_REFER))
+       {
+        refer=true;
+        vet_refs.push_back(tab->obterRestricao(idx));
+       }
+      }
 
       qtd_gat=tab->obterNumGatilhos();
       for(idx=0; idx < qtd_gat && (!modo_exclusao || (modo_exclusao && !refer)); idx++)
@@ -7567,6 +7599,23 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
        }
       }
      }
+     else if(tipos_obj[i]==OBJETO_RELACAO)
+     {
+      Relacionamento *rel=dynamic_cast<Relacionamento *>(*itr);
+      unsigned qtd_rest, idx;
+
+      qtd_rest=rel->obterNumRestricoes();
+      for(idx=0; idx < qtd_rest && (!modo_exclusao || (modo_exclusao && !refer)); idx++)
+      {
+       if(rel->obterRestricao(idx)->colunaExistente(coluna, Restricao::COLUNA_ORIGEM) ||
+          rel->obterRestricao(idx)->colunaExistente(coluna, Restricao::COLUNA_REFER))
+       {
+        refer=true;
+        vet_refs.push_back(rel);
+       }
+      }
+     }
+
      itr++;
     }
    }

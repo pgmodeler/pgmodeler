@@ -113,6 +113,7 @@ class ModeloWidget: public QWidget {
   void mousePressEvent(QMouseEvent *evento);
   void keyPressEvent(QKeyEvent *evento);
   void focusInEvent(QFocusEvent *evento);
+  void keyReleaseEvent(QKeyEvent *evento);
 
   //Modifica o zoom do viewport quando se pressiona CONTROL e utiliza o wheel do mouse
   void wheelEvent(QWheelEvent * evento);

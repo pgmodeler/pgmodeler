@@ -361,7 +361,7 @@ bool Restricao::referenciaColunaIncRelacao(void)
      e nenhuma das colunas desta vieram de relacionamentos, a
      lista de colunas referenciadas é que será varrida com o
      mesmo intuito */
-  if(itr==itr_end && !enc)
+  if(itr==itr_end && itr_end!=colunas_ref.end() && !enc)
   {
    itr=colunas_ref.begin();
    itr_end=colunas_ref.end();
