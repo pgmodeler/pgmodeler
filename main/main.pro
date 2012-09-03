@@ -5,6 +5,9 @@ QT = core gui qt3support
 TEMPLATE = app
 TARGET = pgmodeler
 
+TRANSLATIONS = ../lang/pgmodeler.en_US.ts
+CODECFORTR = UTF-8
+
 DEPENDPATH = ". moc obj"
 OBJECTS_DIR = obj
 DESTDIR = ../build/

@@ -38,16 +38,25 @@ int main(int argc, char **argv)
   //Instala o tradutor na aplicação
   app.installTranslator(&tradutor);
 
+  //Carregando uma splash screen
+  QPixmap pixmap(":imagens/imagens/pgsqldbm_logo_grande.png");
+  QSplashScreen splash(pixmap);
+  splash.show();
+  splash.repaint();
+
   /* Aloca o formulário principal.
      Durante a sua alocação pode ser disparadas uma série de exceções que a
      aplicação não é capaz de caputar pois o formulário ainda não foi atribuído
      a esta, desta forma, a alocação do formulário e feita dentro de um
      try-catch para possível captura de erros. A aplicação será abortada
      e o erro mostrado no console caso ocorra. */
-  FormPrincipal fmain;//=new FormPrincipal;
+  FormPrincipal fmain;
 
   //Atribui o formulário alocado à aplicação
   app.setMainWidget(&fmain);
+
+  //Indicando para a splash screen que ela deve fechar quando a janela principal for exibida
+  splash.finish(&fmain);
 
   //Exibe o formulário principal e prossegue com a execução da aplicação
   fmain.showMaximized();
@@ -55,8 +64,6 @@ int main(int argc, char **argv)
   //Executa a aplicação
   app.exec();
 
-  //Desloca a janela principal ao término do loop principal
-  //delete(fmain);
   return(0);
  }
  //Caso um erro seja capturado durante a inicialização da aplicação

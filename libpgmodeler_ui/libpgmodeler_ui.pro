@@ -6,13 +6,14 @@ TEMPLATE = lib
 TARGET = pgmodeler_ui
 
 TRANSLATIONS = ../lang/pgmodeler.en_US.ts
+CODECFORTR = UTF-8
 
 DEPENDPATH = ". res src ui moc obj"
 MOC_DIR = moc
 OBJECTS_DIR = obj
 UI_DIR = src
 DESTDIR = ../build/lib
-CODECFORTR = UTF-8
+
 RESOURCES += res/resources.qrc
 
 unix {
