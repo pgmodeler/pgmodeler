@@ -5,7 +5,7 @@ moc_*.cpp
 obj/*
 moc/*
 Makefile
-build/pgmodeler
+build/*
 *.pro.user
 *.directory
 
