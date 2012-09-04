@@ -39,7 +39,10 @@ int main(int argc, char **argv)
   app.installTranslator(&tradutor);
 
   //Carregando uma splash screen
-  QPixmap pixmap(":imagens/imagens/pgsqldbm_logo_grande.png");
+  QPixmap pixmap(":imagens/imagens/pgmodeler_logo_grande.png");
+  QPixmap alfa(":imagens/imagens/pgmodeler_logo_alfa.png");
+  pixmap.setAlphaChannel(alfa);
+
   QSplashScreen splash(pixmap);
   QFont fnt=splash.font();
   fnt.setPointSize(8.5f);

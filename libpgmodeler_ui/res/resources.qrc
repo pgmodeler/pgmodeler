@@ -136,7 +136,6 @@
         <file>icones/padroes.png</file>
     </qresource>
     <qresource prefix="/imagens">
-        <file>imagens/pgsqldbm_logo_grande.png</file>
         <file>imagens/barra_logo_meio_cinza.png</file>
         <file>imagens/barra_logo_topo.png</file>
         <file>imagens/barra_logo_base.png</file>
@@ -145,5 +144,7 @@
         <file>imagens/twitter.png</file>
         <file>imagens/facebook.png</file>
         <file>imagens/github.png</file>
+        <file>imagens/pgmodeler_logo_alfa.png</file>
+        <file>imagens/pgmodeler_logo_grande.png</file>
     </qresource>
 </RCC>

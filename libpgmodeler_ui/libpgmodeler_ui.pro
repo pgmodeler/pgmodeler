@@ -17,12 +17,12 @@ DESTDIR = ../build/lib
 RESOURCES += res/resources.qrc
 
 unix {
- QMAKE_POST_LINK+= "cp res/icones/pgsqlModeler48x48.png ../build/pgmodeler.png"
+ QMAKE_POST_LINK+= "cp res/imagens/pgmodeler_logo_grande.png ../build/pgmodeler.png"
 }
 
 windows {
  DEST=..\\build
- QMAKE_POST_LINK+= "copy res\\icones\\pgsqlModeler48x48.png $$DEST\\pgmodeler.png"
+ QMAKE_POST_LINK+= "copy res\\imagens\\pgmodeler_logo_grande.png $$DEST\\pgmodeler.png"
 }
 
 QMAKE_DISTCLEAN+= "../build/pgmodeler.png"
