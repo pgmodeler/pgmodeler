@@ -41,6 +41,11 @@ int main(int argc, char **argv)
   //Carregando uma splash screen
   QPixmap pixmap(":imagens/imagens/pgsqldbm_logo_grande.png");
   QSplashScreen splash(pixmap);
+  QFont fnt=splash.font();
+  fnt.setPointSize(8.5f);
+  splash.setFont(fnt);
+  //Exibe a versão do pgmodeler na base do splash
+  splash.showMessage(QString("v%1  ").arg(AtributosGlobais::VERSAO_PGMODELER), Qt::AlignBottom | Qt::AlignRight, Qt::white);
   splash.show();
   splash.repaint();
 
