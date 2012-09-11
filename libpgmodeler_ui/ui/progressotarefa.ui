@@ -81,7 +81,7 @@
          <enum>Qt::PlainText</enum>
         </property>
         <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgsqldbm_logo_grande.png</pixmap>
+         <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_logo_grande.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
