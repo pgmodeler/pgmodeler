@@ -212,28 +212,19 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  connect(relacao_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
  connect(tabela_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
 
- connect(arquivo_tb, SIGNAL(visibilityChanged(bool)), action_arquivo, SLOT(setChecked(bool)));
- connect(action_arquivo, SIGNAL(toggled(bool)), arquivo_tb, SLOT(setVisible(bool)));
-
- connect(edicao_tb, SIGNAL(visibilityChanged(bool)), action_edicao, SLOT(setChecked(bool)));
- connect(action_edicao, SIGNAL(toggled(bool)), edicao_tb, SLOT(setVisible(bool)));
-
- connect(exibicao_tb, SIGNAL(visibilityChanged(bool)), action_exibicao, SLOT(setChecked(bool)));
- connect(action_exibicao, SIGNAL(toggled(bool)), exibicao_tb, SLOT(setVisible(bool)));
-
- connect(modelo_tb, SIGNAL(visibilityChanged(bool)), action_modelo, SLOT(setChecked(bool)));
- connect(action_modelo, SIGNAL(toggled(bool)), modelo_tb, SLOT(setVisible(bool)));
-
- connect(action_operacoes, SIGNAL(toggled(bool)), lista_oper, SLOT(setVisible(bool)));
- connect(lista_oper, SIGNAL(visibilityChanged(bool)), this, SLOT(atualizarDockWidgets(void)));
-
- connect(action_visao_objetos, SIGNAL(toggled(bool)), visao_objs, SLOT(setVisible(bool)));
- connect(visao_objs, SIGNAL(visibilityChanged(bool)), this, SLOT(atualizarDockWidgets(void)));
-
  connect(fconfiguracao, SIGNAL(finished(int)), this, SLOT(atualizarModelos(void)));
  connect(&tm_salvamento, SIGNAL(timeout(void)), this, SLOT(salvarTodosModelos(void)));
 
  connect(action_exportar, SIGNAL(triggered(bool)), this, SLOT(exportarModelo(void)));
+
+ menuFerramentas->addAction(visao_objs->toggleViewAction());
+ menuFerramentas->addAction(lista_oper->toggleViewAction());
+ menuFerramentas->addSeparator();
+ menuFerramentas->addAction(arquivo_tb->toggleViewAction());
+ menuFerramentas->addAction(exibicao_tb->toggleViewAction());
+ menuFerramentas->addAction(edicao_tb->toggleViewAction());
+ menuFerramentas->addAction(modelo_tb->toggleViewAction());
+ menuFerramentas->addAction(plugins_tb->toggleViewAction());
 
  modelo_atual=NULL;
 
@@ -242,7 +233,6 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  this->setWindowTitle(titulo_janela);
  this->addDockWidget(Qt::RightDockWidgetArea, visao_objs);
  this->addDockWidget(Qt::RightDockWidgetArea, lista_oper);
- this->menuPlugins->setVisible(false);
 
  //Faz o carregamento dos plugins
  try
@@ -253,7 +243,6 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  {
   caixa_msg->show(e);
  }
-
 
  //Faz o carregamento das configurações
  try
@@ -303,8 +292,11 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
            tipo==AtributosParsers::TB_MODELO ||
            tipo==AtributosParsers::TB_PLUGINS)
    {
+    if(toolbars[tipo]==plugins_tb)
+     toolbars[tipo]->setVisible(atribs[AtributosParsers::VISIVEL]==AtributosParsers::VERDADEIRO && !plugins.empty());
+    else
+     toolbars[tipo]->setVisible(atribs[AtributosParsers::VISIVEL]==AtributosParsers::VERDADEIRO);
     this->addToolBar(areas_toolbar[atribs[AtributosParsers::POSICAO]], toolbars[tipo]);
-    toolbars[tipo]->setVisible(atribs[AtributosParsers::VISIVEL]==AtributosParsers::VERDADEIRO);
    }
    else if(atribs.count(AtributosParsers::CAMINHO)!=0)
    {
@@ -346,6 +338,22 @@ FormPrincipal::~FormPrincipal(void)
  delete(lista_oper);
  delete(visao_objs);
  delete(fsobre);
+}
+//----------------------------------------------------------
+void FormPrincipal::showEvent(QShowEvent *)
+{
+ /* Insere as ações de plugins na barra e menu de plugins.
+    Este procedimento era feito durante a inicialização do software
+    no método carrgarPlugins() mas a barra ficava visível enquanto o
+    splash screen estava ativo, então, a inserção das ações foi movida
+    para o evento Show da janela principal */
+ vector<QAction *>::iterator itr=acoes_plugins.begin();
+ while(itr!=acoes_plugins.end())
+ {
+  plugins_tb->addAction(*itr);
+  menuPlugins->addAction(*itr);
+  itr++;
+ }
 }
 //----------------------------------------------------------
 void FormPrincipal::closeEvent(QCloseEvent *)
@@ -680,6 +688,9 @@ void FormPrincipal::exibirTelaCheia(bool tela_cheia)
   exibicao_tb->setAllowedAreas(Qt::AllToolBarAreas);
   this->addToolBar(Qt::TopToolBarArea, exibicao_tb);
 
+  plugins_tb->setAllowedAreas(Qt::AllToolBarAreas);
+  this->addToolBar(Qt::TopToolBarArea, plugins_tb);
+
   modelo_tb->setAllowedAreas(Qt::AllToolBarAreas);
   this->addToolBar(Qt::BottomToolBarArea, modelo_tb);
  }
@@ -706,6 +717,12 @@ void FormPrincipal::exibirTelaCheia(bool tela_cheia)
   exibicao_tb->setVisible(true);
   exibicao_tb->setAllowedAreas(Qt::NoToolBarArea);
   exibicao_tb->adjustSize();
+
+  plugins_tb->setParent(NULL);
+  plugins_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+  plugins_tb->setVisible(true);
+  plugins_tb->setAllowedAreas(Qt::NoToolBarArea);
+  plugins_tb->adjustSize();
  }
 }
 //----------------------------------------------------------
@@ -1029,8 +1046,6 @@ void FormPrincipal::atualizarDockWidgets(void)
   lista_oper->atualizarListaOperacoes();
   __atualizarEstadoFerramentas();
  }
- action_operacoes->setChecked(lista_oper->isVisible());
- action_visao_objetos->setChecked(visao_objs->isVisible());
 }
 //----------------------------------------------------------
 void FormPrincipal::__atualizarDockWidgets(void)
@@ -1107,9 +1122,8 @@ void FormPrincipal::carregarPlugins(void)
    //Conecta a ação ao método do form principal que executa o plugin
    connect(acao_plugin, SIGNAL(triggered(void)), this, SLOT(executarPlugin(void)));
 
-   //Adiciona a ação na barra de plugins
-   plugins_tb->addAction(acao_plugin);
-   menuPlugins->addAction(acao_plugin);
+   //Adiciona a ação no vetor de ações para que estas seja inseridas na toolbar no evento showEvent()
+   acoes_plugins.push_back(acao_plugin);
   }
   else
   {
@@ -1122,10 +1136,6 @@ void FormPrincipal::carregarPlugins(void)
   }
   lista_dirs.pop_front();
  }
-
- //Exibe a barra de plugins caso este esteja visível
- plugins_tb->setVisible(!plugins.empty());
- menuPlugins->setVisible(!plugins.empty());
 
  //Caso algum erro foi disparado no carregamento, redireciona o erro
  if(!vet_erros.empty())

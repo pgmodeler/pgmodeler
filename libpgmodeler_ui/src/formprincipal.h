@@ -69,8 +69,14 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
   //Mapa de plugins carregados
   map<QString, PgModelerPlugin *> plugins;
 
+  //Armazena as ações criadas para cada plugin
+  vector<QAction *> acoes_plugins;
+
   //Sobrecarga do closeEvent(): Salva as configurações antes do encerramento do aplicativo
   void closeEvent(QCloseEvent *);
+
+  //Sobrecarga do showEvent(): Insere as ações do plugin na barra de plugins (se houver)
+  void showEvent(QShowEvent *);
 
   //Carrega os plugins no diretório plugins/
   void carregarPlugins(void);

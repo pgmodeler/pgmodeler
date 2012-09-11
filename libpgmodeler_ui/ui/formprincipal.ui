@@ -138,13 +138,6 @@
      <property name="title">
       <string>Ferramentas</string>
      </property>
-     <addaction name="action_arquivo"/>
-     <addaction name="action_exibicao"/>
-     <addaction name="action_edicao"/>
-     <addaction name="action_modelo"/>
-     <addaction name="separator"/>
-     <addaction name="action_operacoes"/>
-     <addaction name="action_visao_objetos"/>
     </widget>
     <addaction name="action_exibir_grade"/>
     <addaction name="action_exibir_lim_paginas"/>
@@ -589,61 +582,6 @@
     <string>Ctrl+G</string>
    </property>
   </action>
-  <action name="action_barra_arquivo">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Arquivo</string>
-   </property>
-  </action>
-  <action name="action_barra_edicao">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Edição</string>
-   </property>
-  </action>
-  <action name="action_barra_exibicao">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Exibição</string>
-   </property>
-  </action>
-  <action name="action_barra_configuracao">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Configuração</string>
-   </property>
-  </action>
-  <action name="action_barra_ajuda">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Ajuda</string>
-   </property>
-  </action>
   <action name="action_fechar_modelo">
    <property name="enabled">
     <bool>false</bool>
@@ -749,54 +687,6 @@
   <action name="actionWidgets">
    <property name="text">
     <string>Widgets</string>
-   </property>
-  </action>
-  <action name="action_arquivo">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Arquivo</string>
-   </property>
-  </action>
-  <action name="action_exibicao">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Exibição</string>
-   </property>
-  </action>
-  <action name="action_edicao">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Edição</string>
-   </property>
-  </action>
-  <action name="action_modelo">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Modelo</string>
-   </property>
-  </action>
-  <action name="action_operacoes">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Operações</string>
-   </property>
-  </action>
-  <action name="action_visao_objetos">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Visão de Objetos</string>
    </property>
   </action>
   <action name="action_salvar_tudo">

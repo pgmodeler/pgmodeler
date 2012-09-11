@@ -1338,7 +1338,9 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
      referência à tabela de origem do relacionamento, o sufixo das colunas a serem criadas
      será configurado como sendo o sufixo da tabela de origem. Caso contrário  o
       será o da própria tabela de destino. */
-  if(tab_receptora==tabela_orig && !sufixo_dest.isEmpty())
+  if(((tipo_relac!=RELACIONAMENTO_NN && tab_receptora==tabela_orig) ||
+      (tipo_relac==RELACIONAMENTO_NN && tab_referencia==tabela_dest))
+      && !sufixo_dest.isEmpty())
    sufixo=SEPARADOR_SUFIXO + sufixo_dest;
   else if(!sufixo_orig.isEmpty())
    sufixo=SEPARADOR_SUFIXO + sufixo_orig;
