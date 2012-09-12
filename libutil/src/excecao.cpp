@@ -221,6 +221,21 @@ Excecao::Excecao(TipoErro tipo_erro, const QString &local, const QString &arquiv
  }
 }
 //-----------------------------------------------------------
+Excecao::Excecao(const QString &msg, const QString &local, const QString &arquivo, int linha, vector<Excecao> &excecoes, const QString &info_adicional)
+{
+ vector<Excecao>::iterator itr, itr_end;
+
+ configurarExcecao(msg,tipo_erro, local, arquivo, linha, info_adicional);
+
+ itr=excecoes.begin();
+ itr_end=excecoes.end();
+ while(itr!=itr_end)
+ {
+  adicionarExecao((*itr));
+  itr++;
+ }
+}
+//-----------------------------------------------------------
 void Excecao::configurarExcecao(const QString &msg, TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, const QString &info_adicional)
 {
  this->tipo_erro=tipo_erro;

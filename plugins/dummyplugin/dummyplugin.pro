@@ -1,5 +1,5 @@
-PGMODELER_SRC_DIR=/root/pgmodeler
-PGMODELER_LIB_DIR=/root/pgmodeler/build/lib
+PGMODELER_SRC_DIR=../../
+PGMODELER_LIB_DIR=$$PGMODELER_SRC_DIR/build/lib
 
 !exists($$PGMODELER_SRC_DIR) {
  warning("pt_BR: O diretório de código fonte do pgModeler '$$PGMODELER_SRC_DIR' não foi encontrado! Certifique-se de que a variável PGMODELER_SRC_DIR aponta para uma localização válida!")
@@ -15,7 +15,7 @@ TEMPLATE = lib
 TARGET = dummyplugin
 TRANSLATIONS += $$PWD/lang/dummyplugin.en_US.ts
 
-CODECFORTR = UTF-8
+CODECFORTR = UTF8
 
 INCLUDEPATH = $${GLOBAL_INCLUDES} \
               $$PGMODELER_SRC_DIR/libutil/src \

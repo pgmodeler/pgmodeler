@@ -277,6 +277,7 @@ class Excecao {
   Excecao(const QString &msg, TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, Excecao *excecao=NULL, const QString &info_adicional="");
   Excecao(TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, Excecao *excecao=NULL, const QString &info_adicional="");
   Excecao(TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, vector<Excecao> &excecoes, const QString &info_adicional="");
+  Excecao(const QString &msg, const QString &local, const QString &arquivo, int linha, vector<Excecao> &excecoes, const QString &info_adicional="");
   ~Excecao(void){}
   QString obterMensagemErro(void);
   static QString obterMensagemErro(TipoErro tipo_erro);

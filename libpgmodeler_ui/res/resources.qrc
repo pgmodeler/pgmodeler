@@ -146,5 +146,6 @@
         <file>imagens/github.png</file>
         <file>imagens/pgmodeler_logo_alfa.png</file>
         <file>imagens/pgmodeler_logo_grande.png</file>
+        <file>imagens/model2png.png</file>
     </qresource>
 </RCC>

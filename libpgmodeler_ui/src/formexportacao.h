@@ -24,18 +24,18 @@
 
 #include "ui_formexportacao.h"
 #include "parseresquema.h"
-#include "modelobd.h"
+#include "modelowidget.h"
 //***********************************************************
 class FormExportacao: public QDialog, public Ui::FormExportacao {
  private:
   Q_OBJECT
-  ModeloBD *modelo;
+  ModeloWidget *modelo_wgt;
 
  public:
   FormExportacao(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
  public slots:
-  void show(ModeloBD *modelo);
+  void show(ModeloWidget *modelo);
   void hideEvent(QHideEvent *);
 
  private slots:

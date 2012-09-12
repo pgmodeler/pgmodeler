@@ -55,7 +55,7 @@ static QString
   DIR_PLUGINS=QString(QDir::currentPath() + QString("/plugins")).replace("\\","/");
 
 static const QString
-   VERSAO_PGMODELER="0.2.0",
+   VERSAO_PGMODELER="0.3.0",
 
    SEP_DIRETORIO="/",
    DIR_CONF_PADRAO="defaults", //Nome do diretório o qual guarda as configurações padrão do pgModeler

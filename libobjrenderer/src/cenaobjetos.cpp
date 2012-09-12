@@ -482,10 +482,16 @@ void CenaObjetos::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
   //Configura o retângulo com as dimensões obtidas
   ret.setCoords(x1, y1, x2, y2);
 
-  /* Caso este retângulo seja diferente do retângulo da cena este passará a ser
-     a nova dimensão da cena */
+  /* Caso este retângulo seja diferente do retângulo da cena a nova dimensão passará a ser
+     o boundingRect dos itens parindo da origem e acrescido em 5% */
   if(ret!=this->sceneRect())
+  {
+   ret=this->itemsBoundingRect();
+   ret.setTopLeft(QPointF(0,0));
+   ret.setWidth(ret.width() * 1.05f);
+   ret.setHeight(ret.height() * 1.05f);
    this->setSceneRect(ret);
+  }
 
   //Emite um sinal indicando que os objetos finalizaram o movimento
   emit s_objetosMovimentados(true);

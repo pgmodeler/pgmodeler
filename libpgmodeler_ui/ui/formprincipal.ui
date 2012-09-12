@@ -10,13 +10,13 @@
     <x>0</x>
     <y>0</y>
     <width>1323</width>
-    <height>480</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>640</width>
-    <height>480</height>
+    <width>800</width>
+    <height>600</height>
    </size>
   </property>
   <property name="mouseTracking">
@@ -233,6 +233,7 @@
    <addaction name="action_alin_objs_grade"/>
    <addaction name="action_exibir_grade"/>
    <addaction name="action_exibir_lim_paginas"/>
+   <addaction name="action_visao_geral"/>
    <addaction name="action_tela_cheia"/>
    <addaction name="separator"/>
    <addaction name="action_anterior"/>
@@ -692,6 +693,21 @@
   <action name="action_salvar_tudo">
    <property name="text">
     <string>Salvar Tudo</string>
+   </property>
+  </action>
+  <action name="action_visao_geral">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/visaogeral.png</normaloff>:/icones/icones/visaogeral.png</iconset>
+   </property>
+   <property name="text">
+    <string>Visão Geral</string>
+   </property>
+   <property name="toolTip">
+    <string>Exibe a visão geral do modelo</string>
    </property>
   </action>
  </widget>

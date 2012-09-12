@@ -557,6 +557,9 @@ void FormPrincipal::definirModeloAtual(void)
  else if(objeto==action_anterior)
   modelos_tab->setCurrentIndex(modelos_tab->currentIndex()-1);
 
+ if(modelo_atual)
+  modelo_atual->visaogeral_wgt->close();
+
  //O modelo atual obtido a partir da aba atual no 'modelos_tab'
  modelo_atual=dynamic_cast<ModeloWidget *>(modelos_tab->currentWidget());
 
@@ -610,8 +613,8 @@ void FormPrincipal::definirModeloAtual(void)
   connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
   connect(action_exibir_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
   connect(action_exibir_lim_paginas, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
-
-  connect(modelo_atual, SIGNAL(s_zoomModificado(void)), this, SLOT(atualizarEstadoFerramentas(void)));
+  connect(action_visao_geral, SIGNAL(triggered(void)), modelo_atual, SLOT(exibirVisaoGeral(void)));
+  connect(modelo_atual, SIGNAL(s_zoomModificado(float)), this, SLOT(atualizarEstadoFerramentas(void)));
  }
  else
   this->setWindowTitle(titulo_janela);
@@ -748,6 +751,8 @@ void FormPrincipal::fecharModelo(int idx_modelo)
   disconnect(action_alin_objs_grade, NULL, this, NULL);
   disconnect(action_exibir_grade, NULL, this, NULL);
   disconnect(action_exibir_lim_paginas, NULL, this, NULL);
+  disconnect(action_visao_geral, NULL, tab , NULL);
+  disconnect(modelo_atual->visaogeral_wgt, NULL, action_visao_geral, NULL);
 
   delete(dynamic_cast<ModeloWidget *>(tab)); //Desaloca a aba selecionada
  }
@@ -856,7 +861,7 @@ void FormPrincipal::exportarModelo(void)
 {
  //Caso haja um modelo aberto exibe o formulário de exportação do modelo
  if(modelo_atual)
-  fexportacao->show(modelo_atual->modelo);
+  fexportacao->show(modelo_atual);
 }
 //----------------------------------------------------------
 void FormPrincipal::imprimirModelo(void)
@@ -1012,6 +1017,7 @@ void FormPrincipal::atualizarEstadoFerramentas(bool modelo_fechado)
  action_fechar_modelo->setEnabled(ativo);
  action_exibir_grade->setEnabled(ativo);
  action_exibir_lim_paginas->setEnabled(ativo);
+ action_visao_geral->setEnabled(ativo);
 
  action_zoom_normal->setEnabled(ativo);
  action_ampliar_zoom->setEnabled(ativo);

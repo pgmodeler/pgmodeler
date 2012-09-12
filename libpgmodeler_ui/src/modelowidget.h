@@ -32,6 +32,7 @@
 #include "formbasico.h"
 #include "cenaobjetos.h"
 #include "progressotarefa.h"
+#include "visaogeralwidget.h"
 //***********************************************************
 class ModeloWidget: public QWidget {
  Q_OBJECT
@@ -40,7 +41,10 @@ class ModeloWidget: public QWidget {
   //Fator de zoom atual da cena de objetos
   float zoom_atual;
 
+  //Indica que o modelo foi modificado por alguma operação
   bool modificado;
+
+  VisaoGeralWidget *visaogeral_wgt;
 
  protected:
   //Constantes usadas nas operações de zoom
@@ -209,6 +213,8 @@ class ModeloWidget: public QWidget {
      para serem impressos */
   vector<QRectF> obterPaginasImpressao(const QSizeF &tam_papel, unsigned &qtd_pag_h, unsigned &qtd_pag_v);
 
+  void exibirVisaoGeral(void);
+
  public slots:
    void carregarModelo(const QString &nome_arq);
    void salvarModelo(const QString &nome_arq);
@@ -227,9 +233,10 @@ class ModeloWidget: public QWidget {
   void s_objetoCriado(void);
   void s_objetoRemovido(void);
   void s_selecaoObjetoAtualizada(void);
-  void s_zoomModificado(void);
+  void s_zoomModificado(float);
 
   friend class FormPrincipal;
+  friend class FormExportacao;
   friend class ListaOperacoesWidget;
   friend class VisaoObjetosWidget;
 };

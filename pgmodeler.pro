@@ -59,4 +59,3 @@ SUBDIRS = libutil \
 sources.files = models schemas lang conf README.md COMPILING.md PLUGINS.md LICENSE
 sources.path = .
 INSTALLS += sources
-

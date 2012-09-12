@@ -1342,7 +1342,9 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
       (tipo_relac==RELACIONAMENTO_NN && tab_referencia==tabela_dest))
       && !sufixo_dest.isEmpty())
    sufixo=SEPARADOR_SUFIXO + sufixo_dest;
-  else if(!sufixo_orig.isEmpty())
+  else if(((tipo_relac!=RELACIONAMENTO_NN && tab_receptora==tabela_dest) ||
+           (tipo_relac==RELACIONAMENTO_NN && tab_referencia==tabela_orig))
+           && !sufixo_orig.isEmpty())
    sufixo=SEPARADOR_SUFIXO + sufixo_orig;
 
   /* Caso o relacionamento seja 1-n e a tabela de origem não possua
