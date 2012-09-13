@@ -28,22 +28,24 @@ void VisaoGeralWidget::atualizarVisaoGeral(void)
 {
  if(viewp)
  {
-  QSizeF tam;
+  QSize tam;
   QPixmap pix;
 
-  //Cria um pixmap com 20% do tamanho da cena
-  tam=cena->sceneRect().size();
+  //Cria um pixmap com o tamanho da cena
+  pix.resize(cena->sceneRect().size().toSize());
+
+  //Cria um QSize com 20% do tamanho da cena
+  tam=cena->sceneRect().size().toSize();
   tam.setWidth(tam.width() * FATOR_REDIM);
   tam.setHeight(tam.height() * FATOR_REDIM);
-  pix.resize(tam.toSize());
 
-  ///Desenha a cena no pixmap e faz a escala correta
+  ///Desenha a cena no pixmap
   QPainter p(&pix);
-  cena->render(&p, QRectF(QPointF(0,0), tam), cena->sceneRect().toRect());
+  cena->render(&p, pix.rect(), cena->sceneRect().toRect());
 
-  //Exibe o pixmap no label
-  label->setPixmap(pix);
-  label->resize(pix.size());
+  //Exibe o pixmap no label redimensionado com o QSize criado anteriormente
+  label->setPixmap(pix.scaled(tam, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+  label->resize(tam);
  }
 }
 //-----------------------------------------------------------

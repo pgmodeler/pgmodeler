@@ -646,6 +646,7 @@ void FormPrincipal::definirOpcoesGrade(void)
 
   //Atualiza a cena do modelo
   modelo_atual->cena->update();
+  modelo_atual->visaogeral_wgt->atualizarVisaoGeral();
  }
 }
 //----------------------------------------------------------

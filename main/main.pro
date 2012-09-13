@@ -7,7 +7,7 @@ TARGET = pgmodeler
 
 DEPENDPATH = ". moc obj"
 OBJECTS_DIR = obj
-DESTDIR = ../build/
+DESTDIR = ../build
 
 unix {
 QMAKE_POST_LINK+= "cp -r ../schemas/ $$DESTDIR; \
