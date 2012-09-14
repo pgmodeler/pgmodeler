@@ -151,7 +151,6 @@ void ListaOperacoesWidget::definirModelo(ModeloWidget *modelo)
  operacoes_tw->clear();
  this->modelo_wgt=modelo;
  atualizarListaOperacoes();
- //QDockWidget::show();
 }
 //-----------------------------------------------------------
 void ListaOperacoesWidget::desfazerOperacao(void)
@@ -227,6 +226,9 @@ void ListaOperacoesWidget::atualizarModeloObjetos(void)
 {
  //Atualiza a lista de operações
  atualizarListaOperacoes();
+
+ //Atualiza a visão geral do modelo
+ modelo_wgt->visaogeral_wgt->atualizarVisaoGeral();
 
  /* Emite um sinal indicando que o modelo foi atualizado devido a
     operação na lista de objetos */

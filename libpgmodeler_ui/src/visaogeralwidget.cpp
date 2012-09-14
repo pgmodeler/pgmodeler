@@ -26,7 +26,7 @@ VisaoGeralWidget::VisaoGeralWidget(QGraphicsScene *cena, QWidget *parent) : QDia
 //-----------------------------------------------------------
 void VisaoGeralWidget::atualizarVisaoGeral(void)
 {
- if(viewp)
+ if(viewp && this->isVisible())
  {
   QSize tam;
   QPixmap pix;
