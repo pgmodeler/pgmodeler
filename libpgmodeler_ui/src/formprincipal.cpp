@@ -753,7 +753,7 @@ void FormPrincipal::fecharModelo(int idx_modelo)
   disconnect(action_exibir_grade, NULL, this, NULL);
   disconnect(action_exibir_lim_paginas, NULL, this, NULL);
   disconnect(action_visao_geral, NULL, tab , NULL);
-  disconnect(modelo_atual->visaogeral_wgt, NULL, action_visao_geral, NULL);
+  disconnect(dynamic_cast<ModeloWidget *>(tab)->visaogeral_wgt, NULL, action_visao_geral, NULL);
 
   delete(dynamic_cast<ModeloWidget *>(tab)); //Desaloca a aba selecionada
  }
