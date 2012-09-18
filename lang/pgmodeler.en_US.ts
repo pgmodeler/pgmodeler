@@ -3328,6 +3328,10 @@ Message returned by the DBMS: %1</translation>
         <source>Um ou mais plugins não foram ativados devido a erros durante o processo de carregamento! Verifique a pilha de exceções para mais detalhes.</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Atribuição de sufixo inválido ao relacionamento &apos;%1&apos;!</source>
+        <translation>Assignment of invalid suffix to the relationship &apos;%1&apos;!</translation>
+    </message>
 </context>
 <context>
     <name>RegraWidget</name>
@@ -3501,6 +3505,10 @@ Message returned by the DBMS: %1</translation>
     <message>
         <source>dep</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Sufixo Automático</source>
+        <translation>Automatic Suffix</translation>
     </message>
 </context>
 <context>

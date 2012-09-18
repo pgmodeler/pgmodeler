@@ -13,6 +13,7 @@ unix {
 QMAKE_POST_LINK+= "cp -r ../schemas/ $$DESTDIR; \
                    cp -r ../conf/ $$DESTDIR; \
                    cp -r ../lang/ $$DESTDIR; \
+                   cp -r ../samples $$DESTDIR; \
                    cp -r ../*.md $$DESTDIR; \
                    cp -r ../LICENSE $$DESTDIR"
 }
@@ -22,6 +23,7 @@ DEST=..\\build
 QMAKE_POST_LINK+="xcopy ..\\schemas $$DEST\\schemas /S /I /Y /Q &" \
                  "xcopy ..\\conf $$DEST\\conf /S /I /Y /Q &" \
                  "xcopy ..\\lang $$DEST\\lang /S /I /Y /Q &" \
+                 "xcopy ..\\samples $$DEST\\samples /S /I /Y /Q &" \
                  "copy ..\\*.md $$DEST /Y &" \
                  "copy ..\\LICENSE $$DEST /Y"
 }

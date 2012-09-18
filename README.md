@@ -23,6 +23,16 @@ Although this is a major upgrade version of pgModeler it is recommended NOT EXPO
 Change History
 --------------
 
+[ v0.3.1 ]
+
+* Added a feature on relationships that generates automatically column suffixes based on linked tables.
+* Fixed a bug on class CenaObjetos that were deleting objects twice.
+* Tables are now created with "With OIDs" attribute by default.
+* Added two samples to pgModeler.
+* Fixed a bug that crashes pgModeler when closing one model.
+* Changed the graphical update method on overview widget preventing unecessary processing.
+
+
 [ v0.3.0 ]
 
 * NEW FEATURE: pgModeler now has a model overview widget.

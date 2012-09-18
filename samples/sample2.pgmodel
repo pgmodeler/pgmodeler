@@ -1157,14 +1157,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<function signature="public.funcao_teste(integer[],integer,integer,integer)"/>
 	<columns names="&quot;coluna_Teste2&quot;"/>
 </trigger>
-<trigger name="gatilho_restricao_teste_4a" firing-type="AFTER" per-line="true"
-	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
-	 deferrable="true" defer-type="INITIALLY DEFERRED" ref-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_2&quot;"
-	 table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4a&quot;">
-		<comment>Gatilho teste na tabela teste</comment>
-		<function signature="public.funcao_teste(integer[],integer,integer,integer)"/>
-	<columns names="&quot;coluna_B4&quot;"/>
-</trigger>
 <relationship name="relacao_teste_8"
 	 type="rel1n"
 	 src-required="false" dst-required="false"
