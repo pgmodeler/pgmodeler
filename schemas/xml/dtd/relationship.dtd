@@ -16,9 +16,10 @@
 <!ATTLIST relationship dst-table CDATA #REQUIRED>
 <!ATTLIST relationship src-sufix CDATA #IMPLIED>
 <!ATTLIST relationship dst-sufix CDATA #IMPLIED>
+<!ATTLIST relationship auto-sufix (false|true) "true">
 <!ATTLIST relationship table-name CDATA #IMPLIED>
 <!ATTLIST relationship identifier (false|true) "false">
-<!ATTLIST relationship deferrable (true | false) "false">
+<!ATTLIST relationship deferrable (true |false) "false">
 <!ATTLIST relationship defer-type CDATA #IMPLIED>
  
 <!ELEMENT line (position+)>

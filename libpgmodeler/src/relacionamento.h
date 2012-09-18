@@ -133,7 +133,11 @@ class Relacionamento: public RelacionamentoBase {
  private:
   /* Indica que o relacionamento teve algum atributo crítico modificado e precisa
      ser revalidado */
-  bool invalidado;
+  bool invalidado,
+
+       /* Define que os sufixos das colunas devem ser criados automaticamente conforme o
+          nome das tabelas envolvidas */
+       sufixo_auto;
 
   /* Armazena a quantidade de colunas as quais foram rejeitadas no momento da ligação
      relacionamento entre as tabelas. Este é usado apenas por relacionamentos de
@@ -292,6 +296,7 @@ class Relacionamento: public RelacionamentoBase {
   Relacionamento(const QString &nome, unsigned tipo_rel,
                  Tabela *tab_orig, Tabela *tab_dest,
                  bool obrig_orig=false, bool obrig_dest=false,
+                 bool sufixo_auto=true,
                  const QString &sufix_orig="", const QString &sufix_dest="",
                  bool identificador=false, bool postergavel=false,
                  TipoPostergacao tipo_postergacao=TipoPostergacao::immediate);
@@ -312,6 +317,10 @@ class Relacionamento: public RelacionamentoBase {
 
    //Define a obrigatoriedade da tabela de origem e destino
    void definirTabelaObrigatoria(unsigned id_tabela, bool valor);
+
+   //Define a geração automática de sufixos das colunas
+   void definirSufixoAutomatico(bool valor);
+   bool obterSufixoAutomatico(void);
 
    /* Atenção: Este método só tem efeito quando o relacionamento está conectado, pois é só
       nesta situação que se consegue obter as colunas geradas pela ligação do relacionamento à tabelas.

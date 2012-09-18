@@ -346,7 +346,8 @@ static const QString
   VISIVEL="visible",
   WIDGET="widget",
   INFO_POSICAO="pos-info",
-  CONEXOES="connections";
+  CONEXOES="connections",
+  SUFIXO_AUTO="auto-sufix";
 }
 //***********************************************************
 #endif

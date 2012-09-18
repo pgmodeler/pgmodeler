@@ -27,6 +27,10 @@ $tb
  $tb [ dst-sufix=] "@{dst-sufix}" $br
 %end
 
+%if @{auto-sufix} %then
+ $tb [ auto-sufix=] "true" $br
+%end
+
 %if @{identifier} %then 
  $tb $sp identifier="true" $br
 %end

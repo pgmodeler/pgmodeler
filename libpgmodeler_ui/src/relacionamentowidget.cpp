@@ -94,6 +94,11 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
   connect(postergavel_chk, SIGNAL(toggled(bool)), tipo_postergacao_cmb, SLOT(setEnabled(bool)));
   connect(postergavel_chk, SIGNAL(toggled(bool)), tipo_postergacao_lbl, SLOT(setEnabled(bool)));
 
+  connect(sufixo_auto_chk, SIGNAL(toggled(bool)), sufixo_orig_lbl, SLOT(setDisabled(bool)));
+  connect(sufixo_auto_chk, SIGNAL(toggled(bool)), sufixo_orig_edt, SLOT(setDisabled(bool)));
+  connect(sufixo_auto_chk, SIGNAL(toggled(bool)), sufixo_dest_lbl, SLOT(setDisabled(bool)));
+  connect(sufixo_auto_chk, SIGNAL(toggled(bool)), sufixo_dest_edt, SLOT(setDisabled(bool)));
+
   connect(identificador_chk, SIGNAL(toggled(bool)), tab_orig_obrig_chk, SLOT(setDisabled(bool)));
   connect(identificador_chk, SIGNAL(toggled(bool)), tab_dest_obrig_chk, SLOT(setDisabled(bool)));
 
@@ -106,6 +111,7 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
   connect(tab_restricoes, SIGNAL(s_linhaAdicionada(int)), this, SLOT(adicionarObjeto(void)));
   connect(tab_restricoes, SIGNAL(s_linhaEditada(int)), this, SLOT(editarObjeto(int)));
   connect(tab_restricoes, SIGNAL(s_linhaRemovida(int)), this, SLOT(removerObjeto(int)));
+
  }
  catch(Excecao &e)
  {
@@ -246,8 +252,14 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
   relacao_aux=dynamic_cast<Relacionamento *>(relacao);
 
   //Preenche os campos do formulário com os valores presentes no relacionamento
-  sufixo_orig_edt->setText(QString::fromUtf8(relacao_aux->obterSufixoTabela(RelacionamentoBase::TABELA_ORIGEM)));
-  sufixo_dest_edt->setText(QString::fromUtf8(relacao_aux->obterSufixoTabela(RelacionamentoBase::TABELA_DESTINO)));
+  sufixo_auto_chk->setChecked(relacao_aux->obterSufixoAutomatico());
+
+  if(!sufixo_auto_chk->isChecked())
+  {
+   sufixo_orig_edt->setText(QString::fromUtf8(relacao_aux->obterSufixoTabela(RelacionamentoBase::TABELA_ORIGEM)));
+   sufixo_dest_edt->setText(QString::fromUtf8(relacao_aux->obterSufixoTabela(RelacionamentoBase::TABELA_DESTINO)));
+  }
+
   tab_orig_obrig_chk->setChecked(relacao_aux->tabelaObrigatoria(RelacionamentoBase::TABELA_ORIGEM));
   tab_dest_obrig_chk->setChecked(relacao_aux->tabelaObrigatoria(RelacionamentoBase::TABELA_DESTINO));
   identificador_chk->setChecked(relacao_aux->relacionamentoIdentificador());
@@ -311,13 +323,17 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
 
  //Sufixo de origem: exibido para 1-n ou n-n
  sufixo_orig_lbl->setVisible(rel1n || relnn);
+ //sufixo_orig_lbl->setEnabled(rel1n || relnn);
  sufixo_orig_edt->setVisible(rel1n || relnn);
+ //sufixo_orig_edt->setEnabled(rel1n || relnn);
 
  //Sufixo de destino: exibido para n-n
  sufixo_dest_lbl->setVisible(rel1n || relnn);
- sufixo_dest_lbl->setEnabled(relnn);
+ //sufixo_dest_lbl->setEnabled(relnn);
  sufixo_dest_edt->setVisible(rel1n || relnn);
- sufixo_dest_edt->setEnabled(relnn);
+ //sufixo_dest_edt->setEnabled(relnn);
+
+ sufixo_auto_chk->setVisible(rel1n || relnn);
 
  //Obrigatoriedade de tabela de origem: exibido para 1-n e n-n
  card_lbl->setVisible(rel1n);
@@ -649,6 +665,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
       de relacionamento */
    relacao->definirSufixoTabela(RelacionamentoBase::TABELA_ORIGEM, sufixo_orig_edt->text());
    relacao->definirSufixoTabela(RelacionamentoBase::TABELA_DESTINO, sufixo_dest_edt->text());
+   relacao->definirSufixoAutomatico(sufixo_auto_chk->isChecked());
 
    relacao->definirTabelaObrigatoria(RelacionamentoBase::TABELA_ORIGEM, false);
    relacao->definirTabelaObrigatoria(RelacionamentoBase::TABELA_DESTINO, false);

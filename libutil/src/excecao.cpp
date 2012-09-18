@@ -136,6 +136,7 @@ QString Excecao::mensagens[QTD_ERROS][2]={
 {"ERR_PGMODELER_ATRALINHAMENTOINVTIPO",QObject::tr("Atribuição de alinhamento inválido ao tipo '%1'!")},
 {"ERR_PGMODELER_ATRNOMEINVTABRELNN",  QObject::tr("Atribuição de nome inválido à tabela gerada por relacionamento N-N!")},
 {"ERR_PGMODELER_PKESPTIPORELINV", QObject::tr("O relacionamento '%1' não pode fazer uso da chave-primária especial. Apenas relacionamentos de generalização/dependência têm acesso a este recurso!")},
+{"ERR_PGMODELER_ATRSUFIXORELINV",  QObject::tr("Atribuição de sufixo inválido ao relacionamento '%1'!")},
 {"ERR_PGMODELERUI_OPROBJINCRELACAO", QObject::tr("O objeto '%1' (%2) não pode ser editado ou excluído por ter sido incluído automaticamente através de relacionamento! Para manipular o objeto é necessário fazê-lo a partir do formulário de edição do relacionamento que o detém.")},
 {"ERR_PGMODELERUI_REMOBJPROTEGIDO", QObject::tr("O objeto '%1' (%2) não pode ser excluído por estar protegido!")},
 {"ERR_PGMODELERUI_REDECLGRUPODESTAQUE", QObject::tr("O grupo '%1' já foi declarado anteriormente!")},

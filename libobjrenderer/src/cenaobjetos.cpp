@@ -321,11 +321,13 @@ void CenaObjetos::removeItem(QGraphicsItem *item)
      força a destruição do objeto */
   item->setVisible(false);
   item->setActive(false);
+
+  //O item removido não é desalocado na chamada do método e sim quando a cena é destruída.
   QGraphicsScene::removeItem(item);
 
-  //Desaloca o objeto
-  if(objeto)
-   delete(objeto);
+  //Desaloca o objeto (buggy!!!)
+  //if(objeto)
+   //delete(objeto);
  }
 }
 //-----------------------------------------------------------

@@ -5507,7 +5507,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
  RelacionamentoBase *relacao_base=NULL;
  Relacionamento *relacao=NULL;
  TabelaBase *tabelas[2]={NULL, NULL};
- bool obrig_orig, obrig_dest, identificador, protegido, postergavel;
+ bool obrig_orig, obrig_dest, identificador, protegido, postergavel, sufixo_auto;
  TipoPostergacao tipo_postergacao;
  unsigned tipo_relac=0, i;
  TipoObjetoBase tipos_tab[2]={OBJETO_VISAO, OBJETO_TABELA}, tipo_obj_rel;
@@ -5576,6 +5576,8 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    obrig_dest=atributos[AtributosParsers::OBRIG_DESTINO]==AtributosParsers::VERDADEIRO;
    identificador=atributos[AtributosParsers::IDENTIFICADOR]==AtributosParsers::VERDADEIRO;
    postergavel=atributos[AtributosParsers::POSTERGAVEL]==AtributosParsers::VERDADEIRO;
+   sufixo_auto=(atributos[AtributosParsers::SUFIXO_AUTO].isEmpty() ||
+                atributos[AtributosParsers::SUFIXO_AUTO]==AtributosParsers::VERDADEIRO);
    tipo_postergacao=TipoPostergacao(atributos[AtributosParsers::TIPO_POSTERGACAO]);
 
    //Configura o tipo do novo relacionamento
@@ -5595,7 +5597,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
                               dynamic_cast<Tabela *>(tabelas[0]),
                               dynamic_cast<Tabela *>(tabelas[1]),
                               obrig_orig, obrig_dest,
-                              atributos[AtributosParsers::SUFIXO_ORIGEM],
+                              sufixo_auto, atributos[AtributosParsers::SUFIXO_ORIGEM],
                               atributos[AtributosParsers::SUFIXO_DESTINO],
                               identificador, postergavel, tipo_postergacao);
 

@@ -492,6 +492,9 @@
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="sufixo_orig_lbl">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -515,8 +518,11 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1" colspan="2">
+       <item row="5" column="1">
         <widget class="QLineEdit" name="sufixo_orig_edt">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -527,6 +533,9 @@
        </item>
        <item row="6" column="0">
         <widget class="QLabel" name="sufixo_dest_lbl">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -550,8 +559,11 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="1" colspan="2">
+       <item row="6" column="1">
         <widget class="QLineEdit" name="sufixo_dest_edt">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -699,6 +711,16 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="5" column="2" rowspan="2">
+        <widget class="QCheckBox" name="sufixo_auto_chk">
+         <property name="text">
+          <string>Sufixo Automático</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

@@ -897,7 +897,9 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
     //Caso seja uma visão atualiza os relacionamentos entre as tabelas e a visão
     if(tipo==OBJETO_VISAO && oper->tipo_op==Operacao::OBJETO_MODIFICADO)
      modelo->atualizarRelTabelaVisao(dynamic_cast<Visao *>(obj_grafico));
-    else if(tipo==OBJETO_RELACAO && oper->tipo_op==Operacao::OBJETO_MODIFICADO)
+    else if((tipo==OBJETO_RELACAO ||
+             (tipo==OBJETO_TABELA && modelo->obterRelacionamento(dynamic_cast<TabelaBase *>(objeto), NULL))) &&
+            oper->tipo_op==Operacao::OBJETO_MODIFICADO)
      modelo->validarRelacionamentos();
    }
   }

@@ -741,9 +741,8 @@ void ModeloWidget::converterRelacionamentoNN(void)
     //Aloca um relacionamento entre a nova tabela e a tabela de origem do relacionamento
     nome_rel=QString("rel_") + tab->obterNome(false) + QString("_") + tab_orig->obterNome(false);
     rel1=new Relacionamento(nome_rel, Relacionamento::RELACIONAMENTO_1N,
-                           tab_orig, tab, obrig_orig, false,
-                           rel->obterSufixoTabela(Relacionamento::TABELA_ORIGEM),
-                            "", true);
+                           tab_orig, tab, obrig_orig, false, true,
+                           "", "", true);
 
     //Adiciona o relacionamento criado ao modelo e à lista de operações
     modelo->adicionarRelacionamento(rel1);
@@ -755,9 +754,8 @@ void ModeloWidget::converterRelacionamentoNN(void)
      nome_rel+=QString("1");
 
     rel2=new Relacionamento(nome_rel, Relacionamento::RELACIONAMENTO_1N,
-                            tab_dest, tab, obrig_dest, false,
-                            rel->obterSufixoTabela(Relacionamento::TABELA_DESTINO),
-                            "", true);
+                            tab_dest, tab, obrig_dest, false, true,
+                            "", "", true);
 
     //Adiciona o relacionamento criado ao modelo e à lista de operações
     modelo->adicionarRelacionamento(rel2);

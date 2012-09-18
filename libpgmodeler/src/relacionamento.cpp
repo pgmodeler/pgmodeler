@@ -35,8 +35,8 @@ Relacionamento::Relacionamento(Relacionamento *relacao) : RelacionamentoBase(rel
 //-----------------------------------------------------------
 Relacionamento::Relacionamento(const QString &nome, unsigned tipo_rel, Tabela *tab_orig,
                                Tabela *tab_dest, bool obrig_orig, bool obrig_dest,
-                               const QString &sufix_orig, const QString &sufix_dest, bool identificador,
-                               bool postergavel,  TipoPostergacao tipo_postergacao) :
+                               bool sufixo_auto, const QString &sufix_orig, const QString &sufix_dest,
+                               bool identificador,  bool postergavel, TipoPostergacao tipo_postergacao) :
                 RelacionamentoBase(nome, tipo_rel, tab_orig, tab_dest, obrig_orig, obrig_dest)
 {
  tipo_objeto=OBJETO_RELACAO;
@@ -56,7 +56,7 @@ Relacionamento::Relacionamento(const QString &nome, unsigned tipo_rel, Tabela *t
     pelo relacionamento e que participam de chaves estrangeiras */
  this->sufixo_orig=sufix_orig;
  this->sufixo_dest=sufix_dest;
-
+ this->sufixo_auto=sufixo_auto;
 
  tabela_relnn=NULL;
  fk_rel1n=pk_relident=pk_especial=uq_rel11=NULL;
@@ -107,6 +107,10 @@ void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufix
 {
  if(tipo_tab > TABELA_DESTINO)
   throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+ if(!sufixo.isEmpty() && !ObjetoBase::nomeValido(sufixo))
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRSUFIXORELINV).arg(this->obterNome()),
+                ERR_PGMODELER_ATRSUFIXORELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(tipo_tab==TABELA_ORIGEM)
   sufixo_orig=sufixo;
@@ -1338,8 +1342,27 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
      referência à tabela de origem do relacionamento, o sufixo das colunas a serem criadas
      será configurado como sendo o sufixo da tabela de origem. Caso contrário  o
       será o da própria tabela de destino. */
-  if(((tipo_relac!=RELACIONAMENTO_NN && tab_receptora==tabela_orig) ||
-      (tipo_relac==RELACIONAMENTO_NN && tab_referencia==tabela_dest))
+  if(sufixo_auto)
+  {
+   if(tipo_relac==RELACIONAMENTO_1N || tipo_relac==RELACIONAMENTO_11)
+   {
+    sufixo=SEPARADOR_SUFIXO + tab_referencia->obterNome();
+
+    if(tab_referencia==tabela_orig)
+     sufixo_orig=sufixo;
+    else
+     sufixo_dest=sufixo;
+   }
+   else if(tipo_relac==RELACIONAMENTO_NN)
+   {
+    if(tab_referencia==tabela_dest)
+    sufixo=sufixo_dest=SEPARADOR_SUFIXO + tabela_dest->obterNome();
+   else
+    sufixo=sufixo_orig=SEPARADOR_SUFIXO + tabela_orig->obterNome();
+   }
+  }
+  else if(((tipo_relac!=RELACIONAMENTO_NN && tab_receptora==tabela_orig) ||
+           (tipo_relac==RELACIONAMENTO_NN && tab_referencia==tabela_dest))
       && !sufixo_dest.isEmpty())
    sufixo=SEPARADOR_SUFIXO + sufixo_dest;
   else if(((tipo_relac!=RELACIONAMENTO_NN && tab_receptora==tabela_dest) ||
@@ -2063,7 +2086,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
  Restricao *fk=NULL, *fk1=NULL, *rest=NULL, *pk=NULL;
  bool valido=false;
  Coluna *col1=NULL, *col2=NULL, *col3=NULL;
- QString sufixo, nome_col;
+ QString nome_col;
 
  /* Caso o relacionamento foi invaldado por modificação
     de atributos críticos já retorna a invalidez sem
@@ -2086,6 +2109,13 @@ bool Relacionamento::relacionamentoInvalidado(void)
     por modificação de atributos */
  else if(conectado)
  {
+   /* Valida os sufixos caso a geração automática de sufixos esteja ativa.
+      Checa se os sufixos, quando preenchidos, coincidem  com os nomes das tabelas respectivas */
+   if(sufixo_auto &&
+      ((!sufixo_orig.isEmpty() &&  sufixo_orig!=QString(SEPARADOR_SUFIXO) + tabela_orig->obterNome()) ||
+       (!sufixo_dest.isEmpty() &&  sufixo_dest!=QString(SEPARADOR_SUFIXO) + tabela_dest->obterNome())))
+    return(true);
+
   /* Pare relacionamentos 1-1 e 1-n a verificação de
      invalidação do relacionamento baseia-se na comparação da
      quantidade de colunas da chave estrangeira configurada
@@ -2332,12 +2362,14 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   bool forma_reduzida;
 
   definirAtributosRelacionamento();
-  atributos[AtributosParsers::SUFIXO_ORIGEM]=sufixo_orig;
-  atributos[AtributosParsers::SUFIXO_DESTINO]=sufixo_dest;
+  atributos[AtributosParsers::SUFIXO_ORIGEM]=(!sufixo_auto ? sufixo_orig : "");
+  atributos[AtributosParsers::SUFIXO_DESTINO]=(!sufixo_auto ? sufixo_dest : "");
   atributos[AtributosParsers::IDENTIFICADOR]=(identificador ? "1" : "");
   atributos[AtributosParsers::POSTERGAVEL]=(postergavel ? "1" : "");
+  atributos[AtributosParsers::SUFIXO_AUTO]=(sufixo_auto ? "1" : "");
   atributos[AtributosParsers::TIPO_POSTERGACAO]=~tipo_postergacao;
   atributos[AtributosParsers::NOME_TABELA]=nome_tab_relnn;
+
 
   atributos[AtributosParsers::COLUNAS]="";
   qtd=atributos_rel.size();
@@ -2379,6 +2411,17 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
  }
 }
 //-----------------------------------------------------------
+void Relacionamento::definirSufixoAutomatico(bool valor)
+{
+ this->invalidado=(this->sufixo_auto!=valor);
+ this->sufixo_auto=valor;
+}
+//-----------------------------------------------------------
+bool Relacionamento::obterSufixoAutomatico(void)
+{
+ return(this->sufixo_auto);
+}
+//-----------------------------------------------------------
 void Relacionamento::operator = (Relacionamento &rel)
 {
  (*dynamic_cast<RelacionamentoBase *>(this))=dynamic_cast<RelacionamentoBase &>(rel);
@@ -2395,5 +2438,6 @@ void Relacionamento::operator = (Relacionamento &rel)
  this->tabela_relnn=NULL;
  this->fk_rel1n=pk_relident=pk_especial=NULL;
  this->colunas_ref.clear();
+ this->sufixo_auto=rel.sufixo_auto;
 }
 //***********************************************************
