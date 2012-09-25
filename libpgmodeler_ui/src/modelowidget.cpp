@@ -75,8 +75,8 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
                           OBJETO_FUNCAO, OBJETO_FUNC_AGREGACAO, OBJETO_LINGUAGEM,
                           OBJETO_CLASSE_OPER, OBJETO_OPERADOR, OBJETO_FAMILIA_OPER,
                           OBJETO_PAPEL, OBJETO_ESQUEMA, OBJETO_SEQUENCIA, OBJETO_TIPO,
-                          OBJETO_COLUNA, OBJETO_RESTRICAO, OBJETO_REGRA, OBJETO_GATILHO, OBJETO_INDICE };
- unsigned i, qtd=22,
+                          OBJETO_COLUNA, OBJETO_RESTRICAO, OBJETO_REGRA, OBJETO_GATILHO, OBJETO_INDICE, OBJETO_ESPACO_TABELA };
+ unsigned i, qtd=23,
           tipos_rel[]={ RelacionamentoBase::RELACIONAMENTO_11, RelacionamentoBase::RELACIONAMENTO_1N,
                         RelacionamentoBase::RELACIONAMENTO_NN, RelacionamentoBase::RELACIONAMENTO_DEP,
                         RelacionamentoBase::RELACIONAMENTO_GEN };
@@ -2116,10 +2116,10 @@ void ModeloWidget::configurarMenuPopup(vector<ObjetoBase *> objs_sel)
   {
    TipoObjetoBase tipos[]={ OBJETO_TABELA, OBJETO_VISAO, OBJETO_RELACAO, OBJETO_CAIXA_TEXTO, OBJETO_CONV_TIPO, OBJETO_CONV_CODIFICACAO, OBJETO_DOMINIO,
                             OBJETO_FUNCAO, OBJETO_FUNC_AGREGACAO, OBJETO_LINGUAGEM, OBJETO_CLASSE_OPER, OBJETO_OPERADOR,
-                            OBJETO_FAMILIA_OPER, OBJETO_PAPEL, OBJETO_ESQUEMA, OBJETO_SEQUENCIA, OBJETO_TIPO };
+                            OBJETO_FAMILIA_OPER, OBJETO_PAPEL, OBJETO_ESQUEMA, OBJETO_SEQUENCIA, OBJETO_TIPO, OBJETO_ESPACO_TABELA };
 
    //Configura o menu de inserção de novos objetos com os tipos do vetor 'tipos[]'
-   for(i=0; i < 17; i++)
+   for(i=0; i < 18; i++)
     menu_novo_obj.addAction(acoes_ins_objs[tipos[i]]);
 
    //Adiciona o menu configurado à ação de novo objeto
