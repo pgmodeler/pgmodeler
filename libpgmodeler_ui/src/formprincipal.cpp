@@ -835,6 +835,9 @@ void FormPrincipal::salvarModelo(ModeloWidget *modelo)
 
     //Exibe o diálogo de salvamento do arquivo
     arquivo_dlg.setWindowTitle(trUtf8("Salvar '%1' como...").arg(modelo->modelo->obterNome()));
+
+    /** issue#9 **/
+    //Ateração da extensão dos modelos de .pgmodel para .dbm
     arquivo_dlg.setFilter(tr("Modelo de Banco de Dados (*.dbm);;Todos os Arquivos (*.*)"));
     arquivo_dlg.setFileMode(QFileDialog::AnyFile);
     arquivo_dlg.setAcceptMode(QFileDialog::AcceptSave);
@@ -974,6 +977,8 @@ void FormPrincipal::carregarModelo(void)
  try
  {
   //Exibe o diálogo de carregamento do arquivo
+  /** issue#9 **/
+  //Ateração da extensão dos modelos de .pgmodel para .dbm
   arquivo_dlg.setFilter(tr("Modelo de Banco de Dados (*.dbm);;Todos os Arquivos (*.*)"));
   arquivo_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));
   arquivo_dlg.setWindowTitle(trUtf8("Carregar modelo"));
