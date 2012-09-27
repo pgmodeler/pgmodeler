@@ -2193,6 +2193,10 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
         <source>Depend. / Refer.</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Converter um relacionamento é uma operação irreversível e provoca a exclusão de todo histórico de operações! Deseja continuar?</source>
+        <translation>Convert a relationship is an irreversible operation and causes the deletion of all operation history! Do you want to continue?</translation>
+    </message>
 </context>
 <context>
     <name>ObjetoBaseWidget</name>
@@ -2979,10 +2983,6 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
         <translation>The tablespace &apos;%1&apos; can not be inserted into the model because it points to the same directory as the tablespace &apos;%2&apos;!</translation>
     </message>
     <message>
-        <source>Não é possível criar arrays de domínios (dimensão &gt;= 1)! O PostgreSQL ainda não implementa esta funcionalidade!</source>
-        <translation>Can not create arrays of domains (dimension &gt;= 1)! PostgreSQL does not yet implement this feature!</translation>
-    </message>
-    <message>
         <source>A função &apos;%1&apos; não pode receber um código-fonte como definição pois sua linguagem está definida como C. Os atributos símbolo e biblioteca dinâmica é que devem ser utilizados!</source>
         <translation>The function &apos;%1&apos; can not get a source code as a definition because its language is set to C. Use the attributes symbol and dynamic library instead!</translation>
     </message>
@@ -3331,6 +3331,10 @@ Message returned by the DBMS: %1</translation>
     <message>
         <source>Atribuição de sufixo inválido ao relacionamento &apos;%1&apos;!</source>
         <translation>Assignment of invalid suffix to the relationship &apos;%1&apos;!</translation>
+    </message>
+    <message>
+        <source>Não é possível criar arrays de domínios ou sequências (dimensão &gt;= 1)! O PostgreSQL ainda não implementa esta funcionalidade!</source>
+        <translation>It is not possible to create arrays of domains or sequences (dimension &gt;= 1)! PostgreSQL does not yet implement this feature!</translation>
     </message>
 </context>
 <context>

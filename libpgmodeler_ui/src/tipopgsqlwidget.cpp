@@ -95,7 +95,7 @@ void TipoPgSQLWidget::atualizarFormatoTipo(void)
  }
 }
 //-----------------------------------------------------------
-void TipoPgSQLWidget::obterTiposPgSQL(QComboBox *combo, ModeloBD *modelo, bool tipo_usr, bool dominio, bool tipo_oid, bool pseudo)
+void TipoPgSQLWidget::obterTiposPgSQL(QComboBox *combo, ModeloBD *modelo, unsigned conf_tipo_usr, bool tipo_oid, bool pseudo)
 {
  if(combo)
  {
@@ -104,31 +104,15 @@ void TipoPgSQLWidget::obterTiposPgSQL(QComboBox *combo, ModeloBD *modelo, bool t
 
   combo->clear();
 
-  if(tipo_usr)
-  {
-   //Obtém os tipo definidos pelo usuário e insere ao combo de tipo
-   TipoPgSQL::obterTiposUsuario(tipos,modelo,true,false);
-   tipos.sort();
-   qtd=tipos.size();
+  //Obtém os tipo definidos pelo usuário e insere ao combo de tipo
+  TipoPgSQL::obterTiposUsuario(tipos,modelo, conf_tipo_usr);
+  tipos.sort();
+  qtd=tipos.size();
 
-   /* Adiciona cada indice referente ao tipo como dado do elemento do combobox
+  /* Adiciona cada indice referente ao tipo como dado do elemento do combobox
       para se referenciar de forma mais direta o tipo definido pelo usuário */
-   for(idx=0; idx < qtd; idx++)
-    combo->addItem(QString::fromUtf8(tipos[idx]), QVariant(TipoPgSQL::obterIndiceTipoUsuario(tipos[idx],NULL,modelo)));
-  }
-
-  if(dominio)
-  {
-   //Obtém os domínios definidos pelo usuário e insere ao combo de tipo
-   TipoPgSQL::obterTiposUsuario(tipos,modelo,false,true);
-   tipos.sort();
-   qtd=tipos.size();
-
-   /* Adiciona cada índice referente ao tipo como dado do elemento do combobox
-      para se referenciar de forma mais direta o tipo definido pelo usuário */
-   for(idx=0; idx < qtd; idx++)
-    combo->addItem(QString::fromUtf8(tipos[idx]), QVariant(TipoPgSQL::obterIndiceTipoUsuario(tipos[idx],NULL,modelo)));
-  }
+  for(idx=0; idx < qtd; idx++)
+   combo->addItem(QString::fromUtf8(tipos[idx]), QVariant(TipoPgSQL::obterIndiceTipoUsuario(tipos[idx],NULL,modelo)));
 
   /* Obtendo os demais tipos (builtin) do PostgreSQL. Neste caso, por serem tipos
      de fácil acesso não é necessário armazena os índices dos mesmos como
@@ -139,7 +123,7 @@ void TipoPgSQLWidget::obterTiposPgSQL(QComboBox *combo, ModeloBD *modelo, bool t
  }
 }
 //-----------------------------------------------------------
-void TipoPgSQLWidget::definirAtributos(TipoPgSQL tipo, ModeloBD *modelo, bool tipo_usr, bool dominio, bool tipo_oid, bool pseudo)
+void TipoPgSQLWidget::definirAtributos(TipoPgSQL tipo, ModeloBD *modelo,  unsigned conf_tipo_usr, bool tipo_oid, bool pseudo)
 {
  try
  {
@@ -152,7 +136,7 @@ void TipoPgSQLWidget::definirAtributos(TipoPgSQL tipo, ModeloBD *modelo, bool ti
   tipo_cmb->blockSignals(true);
 
   //Obtém os tipos PgSQL
-  obterTiposPgSQL(tipo_cmb, modelo, tipo_usr, dominio, tipo_oid, pseudo);
+  obterTiposPgSQL(tipo_cmb, modelo, conf_tipo_usr, tipo_oid, pseudo);
 
   //Reativa os sinais do combo de tipos
   tipo_cmb->blockSignals(false);

@@ -104,7 +104,7 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TIPO)
   connect(tab_atributos, SIGNAL(s_linhaAdicionada(int)), this, SLOT(exibirFormAtributo(void)));
   connect(tab_atributos, SIGNAL(s_linhaEditada(int)), this, SLOT(exibirFormAtributo(void)));
 
-  janela_pai->setMinimumSize(580, 680);
+  janela_pai->setMinimumSize(625, 765);
 
   //Preenche o combo box com os tipos de armazenamento disponíveis
   TipoArmazenamento::obterTipos(lista);

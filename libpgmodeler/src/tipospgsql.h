@@ -233,38 +233,41 @@ class TipoIntervalo: public TipoBase{
   unsigned operator = (const QString &nome_tipo);
 };
 //-----------------------------------------------------------
+ /* Isso é feio, muito feio! :/
+    Mas foi preciso fazê-lo para resolver a interação
+    entre tipos definidos pelo usuário e tipos internos
+    do PostgreSQL de forma transparente. Poderá (deverá?)
+    ser modificado em futuras versões do pgModeler. */
+class ConfigTipoUsuario {
+  protected:
+   //Ponteiro para a instância do tipo definido pelo usuário
+   void *ptipo;
+
+   //Ponteiro para a instância do modelo ao qual o tipo pertence
+   void *pmodelo;
+
+   //Nome do tipo definido pelo usário
+   QString nome;
+
+   unsigned conf_tipo;
+
+  public:
+   static const unsigned TIPO_BASE=1,
+                         TIPO_DOMINIO=2,
+                         TIPO_TABELA=4,
+                         TIPO_SEQUENCIA=8,
+                         /* Esta constante é usada somente para referenciar todos os tipos de uma vez,
+                            é não deve ser usado para definir um tipo de configuração */
+                         TIPO_USR_TODOS=15;
+
+   ConfigTipoUsuario(void)
+   { nome=""; ptipo=NULL; pmodelo=NULL; conf_tipo=TIPO_BASE; }
+
+   friend class TipoPgSQL;
+};
+
 class TipoPgSQL: public TipoBase{
  private:
-  /* Isso é feio, muito feio! :/
-     Mas foi preciso fazê-lo para resolver a interação
-     entre tipos definidos pelo usuário e tipos internos
-     do PostgreSQL de forma transparente. Poderá (deverá?)
-     ser modificado em futuras versões do pgsqlDBM. */
-  class ConfigTipoUsuario{
-   public:
-    //Ponteiro para a instância do tipo definido pelo usuário
-    void *ptipo;
-
-    //Ponteiro para a instância do modelo ao qual o tipo pertence
-    void *pmodelo;
-
-    //Nome do tipo definido pelo usário
-    QString nome;
-
-    /* Indica se o tipo definido pelo usuário é um domínio,
-       caso contrário será considerado como um tipo comum
-       (definido pelo usário). É necessário diferenciar o domínio
-       do tipo definido pelo usuário pois o PostgreSQL ainda não
-       aceita a crição de arrays de domínio. */
-    bool dominio;
-
-    ConfigTipoUsuario(void)
-    { nome=""; ptipo=NULL; pmodelo=NULL; dominio=false; };
-
-    ~ConfigTipoUsuario(void)
-    { };
-  };
-
   static const unsigned offset=25;
   static const unsigned qtd_tipos=61;
 
@@ -302,7 +305,7 @@ class TipoPgSQL: public TipoBase{
  protected:
   /* Adiciona uma nova referência ao tipo definido pelo usuário
      (Esse método é chamando sempre que o tipo definido é criado) */
-  static void adicionarTipoUsuario(const QString &nome, void *ptipo, void *pmodelo, bool dominio);
+  static void adicionarTipoUsuario(const QString &nome, void *ptipo, void *pmodelo, unsigned conf_tipo);
 
   /* Remove uma referência ao tipo definido pelo usuário
     (Esse método é chamando sempre que o tipo definido é destruído) */
@@ -339,8 +342,8 @@ class TipoPgSQL: public TipoBase{
   static unsigned obterIndiceTipoBase(const QString &nome);
 
   //Obtém todos os tipos definidos pelo usuário
-  static void obterTiposUsuario(QStringList &tipos, void *pmodelo, bool inc_tipo_usr=true, bool inc_dominio=true);
-  static void obterTiposUsuario(vector<void *> &ptipos, void *pmodelo, bool inc_tipo_usr=true, bool inc_dominio=true);
+  static void obterTiposUsuario(QStringList &tipos, void *pmodelo, unsigned inc_tipos_usr);
+  static void obterTiposUsuario(vector<void *> &ptipos, void *pmodelo, unsigned inc_tipos_usr);
   static void obterTipos(QStringList &tipos, bool tipo_oid=true, bool pseudos=true);
 
   void definirDimensao(unsigned dim);
@@ -387,10 +390,15 @@ class TipoPgSQL: public TipoBase{
      denota o tipo pgsql em questão. Caso este operador seja usado
      em um tipo que não é definido pelo usuário será retornado NULL */
   void *obterRefTipoUsuario(void);
+  //Retorna o tipo de configuração do tipo quando o mesmo é definido pelo usuário
+  unsigned obterConfTipoUsuario(void);
 
   friend class Tipo;
   friend class Dominio;
+  friend class Tabela;
+  friend class Sequencia;
   friend class ModeloBD;
+  friend class ListaOperacoes;
 };
 //-----------------------------------------------------------
 class TipoComportamento: public TipoBase{

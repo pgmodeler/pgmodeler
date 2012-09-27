@@ -70,7 +70,7 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_FUN
   grid->addWidget(frame, grid->count()+1, 0, 1, 0);
   frame->setParent(funcaowidget_twg->widget(0));
 
-  janela_pai->setMinimumSize(600, 660);
+  janela_pai->setMinimumSize(645, 715);
 
   //Configura o combo de tipos de segurança da função
   TipoSeguranca::obterTipos(tipos);

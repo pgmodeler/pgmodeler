@@ -51,28 +51,26 @@ Tipo::~Tipo(void)
 //-----------------------------------------------------------
 void Tipo::definirNome(const QString &nome)
 {
- QString nome_ant, novo_nome;
+ QString nome_ant;
 
  nome_ant=this->obterNome(true);//this->nome;
  ObjetoBase::definirNome(nome);
- novo_nome=this->obterNome(true);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, novo_nome);
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
 //-----------------------------------------------------------
 void Tipo::definirEsquema(ObjetoBase *esquema)
 {
- QString nome_ant, nome;
+ QString nome_ant;
 
  nome_ant=this->obterNome(true);
  ObjetoBase::definirEsquema(esquema);
- nome=this->obterNome(true);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, nome);
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
 //-----------------------------------------------------------
 bool Tipo::atributoExiste(const QString &nome_atrib)
@@ -619,7 +617,7 @@ QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 //-----------------------------------------------------------
 void Tipo::operator = (Tipo &tipo)
 {
- QString nome_ant, novo_nome;
+ QString nome_ant;
  unsigned i=0;
 
  nome_ant=this->obterNome(true);
@@ -645,9 +643,8 @@ void Tipo::operator = (Tipo &tipo)
   i++;
  }
 
- novo_nome=this->obterNome(true);
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, novo_nome);
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
 //***********************************************************

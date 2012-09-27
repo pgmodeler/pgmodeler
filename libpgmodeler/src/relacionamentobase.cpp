@@ -49,6 +49,7 @@ void RelacionamentoBase::configurarRelacionamento(void)
  atributos[AtributosParsers::ELEMENTOS]="";
  atributos[AtributosParsers::SUFIXO_ORIGEM]="";
  atributos[AtributosParsers::SUFIXO_DESTINO]="";
+ atributos[AtributosParsers::SUFIXO_AUTO]="";
  atributos[AtributosParsers::IDENTIFICADOR]="";
  atributos[AtributosParsers::FORMA_REDUZIDA]="";
  atributos[AtributosParsers::POSTERGAVEL]="";

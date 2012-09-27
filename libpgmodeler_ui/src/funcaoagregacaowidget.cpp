@@ -68,7 +68,7 @@ FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(
 
   configurarLayouFormulario(funcaoagregacao_grid, OBJETO_FUNC_AGREGACAO);
 
-  janela_pai->setMinimumSize(600, 500);
+  janela_pai->setMinimumSize(645, 750);
 
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
   connect(tab_tipos_entrada, SIGNAL(s_linhaAdicionada(int)), this, SLOT(manipularTipoDado(int)));

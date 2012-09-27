@@ -42,20 +42,23 @@ namespace AtributosGlobais {
      PGMODELER_LANG_DIR
      PGMODELER_PLUGINS_DIR
 */
-static QString
+
+static const QString
   /** ticket#1 **/
   /* De acordo com a documentação da libXml, os caminhos usados pelo parser são
      em URI (ex.: file://a/b/c) logo, em Windows, os caminhos são em formato
      C:\a\b\c, isso provocava o erro no parser que não conseguia localizar
      as DTD's. A solução para esse problema é substituir as '\' do caminho por '/' */
 
-  DIR_RAIZ_ESQUEMAS=QString(QDir::currentPath() + QString("/schemas")).replace("\\","/"),
-  DIR_CONFIGURACOES=QString(QDir::currentPath() + QString("/conf")).replace("\\","/"),
-  DIR_LINGUAS=QString(QDir::currentPath() + QString("/lang")).replace("\\","/"),
-  DIR_PLUGINS=QString(QDir::currentPath() + QString("/plugins")).replace("\\","/");
+  /** issue#7 **/
+  /* Correção de referência incorreta às variáveis de ambiente */
+  DIR_RAIZ_ESQUEMAS=QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/"),
+  DIR_CONFIGURACOES=QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/"),
+  DIR_LINGUAS=QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/"),
+  DIR_PLUGINS=QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/");
 
 static const QString
-   VERSAO_PGMODELER="0.3.1",
+   VERSAO_PGMODELER="0.3.2",
 
    SEP_DIRETORIO="/",
    DIR_CONF_PADRAO="defaults", //Nome do diretório o qual guarda as configurações padrão do pgModeler

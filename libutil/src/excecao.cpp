@@ -126,7 +126,7 @@ QString Excecao::mensagens[QTD_ERROS][2]={
 {"ERR_PGMODELER_PERMREFOBJINEXISTE", QObject::tr("Uma permissão está referenciando o objeto '%1' (%2) o qual não foi encontrado no modelo!")},
 {"ERR_PGMODELER_OBJSEMESQUEMA", QObject::tr("O objeto '%1' (%2) não pode ser criado por não estar atribuído a nenhum esquema!")},
 {"ERR_PGMODELER_ATRESPTABDIRDUPLIC", QObject::tr("O espaço de tabela '%1' não pode ser inserido no modelo pois o mesmo aponta para o mesmo diretório que o espaço de tabela '%2'!")},
-{"ERR_PGMODELER_ATRDIMENSAOINVDOMINIO", QObject::tr("Não é possível criar arrays de domínios (dimensão >= 1)! O PostgreSQL ainda não implementa esta funcionalidade!")},
+{"ERR_PGMODELER_ATRDIMENSAOINVDOMINIO", QObject::tr("Não é possível criar arrays de domínios ou sequências (dimensão >= 1)! O PostgreSQL ainda não implementa esta funcionalidade!")},
 {"ERR_PGMODELER_ATRCORPOFUNCLINGC", QObject::tr("A função '%1' não pode receber um código-fonte como definição pois sua linguagem está definida como C. Os atributos símbolo e biblioteca dinâmica é que devem ser utilizados!")},
 {"ERR_PGMODELER_ATRBIBLIOFUNCLINGDIFC", QObject::tr("A função '%1' só pode ter os atributos de símbolo e biblioteca configurados caso sua linguagem esteja definida como C. Para os demais casos é necessário especificar um código-fonte que a define o SGBD!")},
 {"ERR_PGMODELER_ATROPERCOMUTINV", QObject::tr("O operador '%1' não pode ser atribuído como comutador do operador '%2' pois possui configuração incompatível!")},

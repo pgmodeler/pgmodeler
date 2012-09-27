@@ -29,8 +29,11 @@ QMAKE_POST_LINK+="xcopy ..\\schemas $$DEST\\schemas /S /I /Y /Q &" \
 }
 
 QMAKE_DISTCLEAN+= "-r $$DESTDIR/schemas \
+                      $$DESTDIR/samples \
                       $$DESTDIR/conf \
                       $$DESTDIR/lang \
+                      $$DESTDIR/lib \
+                      $$DESTDIR/plugins \
                       $$DESTDIR/*.md \
                       $$DESTDIR/LICENSE"
 

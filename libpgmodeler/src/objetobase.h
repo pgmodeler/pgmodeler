@@ -237,7 +237,7 @@ class ObjetoBase {
   bool operator != (const QString &nome);
 
   //Operado que faz a atribuição entre um objeto e outro
-  void operator = (ObjetoBase &obj);
+  virtual void operator = (ObjetoBase &obj);
 
   //Limpa os atributos usados pelo parser de esquemas
   void limparAtributos(void);

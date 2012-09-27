@@ -719,6 +719,10 @@ void ModeloBD::adicionarTabela(Tabela *tabela, int idx_obj)
  try
  {
   __adicionarObjeto(tabela, idx_obj);
+  /* Ao ser inserido uma nova tabela a mesma tem
+   seu nome é adicionado à lista de tipos válidos
+   do PostgreSQL */
+  TipoPgSQL::adicionarTipoUsuario(tabela->obterNome(true), tabela, this, ConfigTipoUsuario::TIPO_TABELA);
  }
  catch(Excecao &e)
  {
@@ -775,7 +779,13 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
     throw Excecao(str_aux, tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
+  removerTipoUsuario(tabela, idx_obj);
+
   __removerObjeto(tabela, idx_obj);
+
+  /* Ao ser removido do modelo a sequencia tem
+   seu nome removido da lista de tipos válidos do PostgreSQL */
+ //TipoPgSQL::removerTipoUsuario(tabela->obterNome(true), tabela);
  }
 }
 //-----------------------------------------------------------
@@ -784,6 +794,10 @@ void ModeloBD::adicionarSequencia(Sequencia *sequencia, int idx_obj)
  try
  {
   __adicionarObjeto(sequencia, idx_obj);
+  /* Ao ser inserido uma nova sequencia a mesma tem
+   seu nome é adicionado à lista de tipos válidos
+   do PostgreSQL */
+  TipoPgSQL::adicionarTipoUsuario(sequencia->obterNome(true), sequencia, this, ConfigTipoUsuario::TIPO_SEQUENCIA);
  }
  catch(Excecao &e)
  {
@@ -800,7 +814,11 @@ void ModeloBD::removerSequencia(Sequencia *sequencia, int idx_obj)
 {
  if(sequencia)
  {
+  removerTipoUsuario(sequencia, idx_obj);
   __removerObjeto(sequencia, idx_obj);
+  /* Ao ser removido do modelo a sequencia tem
+   seu nome removido da lista de tipos válidos do PostgreSQL */
+  //TipoPgSQL::removerTipoUsuario(sequencia->obterNome(true), sequencia);
  }
 }
 //-----------------------------------------------------------
@@ -1494,7 +1512,10 @@ void ModeloBD::criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj)
   tipo_obj=obterTipoObjeto(ParserXML::obterNomeElemento());
 
   //Cria o objeto de acordo com o tipo identificado
-  objeto=criarObjeto(tipo_obj);
+  if(tipo_obj==OBJETO_SEQUENCIA)
+   objeto=criarSequencia(true);
+  else
+   objeto=criarObjeto(tipo_obj);
 
   if(tipo_obj==OBJETO_SEQUENCIA)
    adicionarSequencia(dynamic_cast<Sequencia *>(objeto));
@@ -2060,7 +2081,7 @@ void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
    /* Ao ser inserido um novo tipo o mesmo tem
     seu nome é adicionado à lista de tipos válidos
     do PostgreSQL */
-   TipoPgSQL::adicionarTipoUsuario(dominio->obterNome(true), dominio, this, true);
+   TipoPgSQL::adicionarTipoUsuario(dominio->obterNome(true), dominio, this, ConfigTipoUsuario::TIPO_DOMINIO);
   }
   catch(Excecao &e)
   {
@@ -2234,7 +2255,7 @@ void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
    /* Ao ser inserido um novo tipo o mesmo tem
     seu nome é adicionado à lista de tipos válidos
     do PostgreSQL */
-   TipoPgSQL::adicionarTipoUsuario(tipo->obterNome(true), tipo, this, false);
+   TipoPgSQL::adicionarTipoUsuario(tipo->obterNome(true), tipo, this, ConfigTipoUsuario::TIPO_BASE);
   }
   catch(Excecao &e)
   {
@@ -3581,7 +3602,7 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  QString nome;
  Tipo *tipo_usr=NULL;
  void *ptipo=NULL;
- TipoPgSQL tipo;
+ //TipoPgSQL tipo;
  bool enc=false, com_timezone;
  TipoIntervalo tipo_interv;
 
@@ -3611,7 +3632,11 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  else
  {
   //Obtém a lista de tipos definidios pelo usuario
-  TipoPgSQL::obterTiposUsuario(vet_ptipos, this);
+  TipoPgSQL::obterTiposUsuario(vet_ptipos, this,
+                               ConfigTipoUsuario::TIPO_BASE |
+                               ConfigTipoUsuario::TIPO_DOMINIO |
+                               ConfigTipoUsuario::TIPO_TABELA |
+                               ConfigTipoUsuario::TIPO_SEQUENCIA);
   itr=vet_ptipos.begin();
   itr_end=vet_ptipos.end();
 
@@ -5220,7 +5245,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
  return(gatilho);
 }
 //-----------------------------------------------------------
-Sequencia *ModeloBD::criarSequencia(void)
+Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
 {
  map<QString, QString> atributos;
  Sequencia *sequencia=NULL;
@@ -5292,7 +5317,7 @@ Sequencia *ModeloBD::criarSequencia(void)
 
    /* Caso a coluna não exista porém a mesma esteja sendo referenciada no xml
       um erro será disparado */
-   if(!coluna)
+   if(!coluna && !ignorar_possuidora)
     throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCOLPOSINDEF).arg(sequencia->obterNome(true)),
                   ERR_PGMODELER_ATRCOLPOSINDEF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -6470,7 +6495,8 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    /* Obtém a referência para o tipo de dado da classe, caso um ponteiro válido seja retornado
       indica que o tipo de dado é um definido pelo usuário (classe Tipo) e que este precisa
       também ter as dependências obtidas */
-  ObjetoBase *tipo_usr=obterObjeto(*classe_op->obterTipoDado(), OBJETO_TIPO);
+  ObjetoBase *tipo_usr=obterObjetoTipoPgSQL(classe_op->obterTipoDado());
+  //obterObjeto(*classe_op->obterTipoDado(), OBJETO_TIPO);
 
    if(tipo_usr)
     obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
@@ -6485,7 +6511,8 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    /* Obtém a referência para o tipo de dado do domínio, caso um ponteiro válido seja retornado
       indica que o tipo de dado é um definido pelo usuário (classe Tipo) e que este precisa
       também ter as dependências obtidas */
-   ObjetoBase *tipo_usr=obterObjeto(*dynamic_cast<Dominio *>(objeto)->obterTipo(), OBJETO_TIPO);
+   ObjetoBase *tipo_usr=obterObjetoTipoPgSQL(dynamic_cast<Dominio *>(objeto)->obterTipo());
+   //obterObjeto(*dynamic_cast<Dominio *>(objeto)->obterTipo(), OBJETO_TIPO);
 
    if(tipo_usr)
     obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
@@ -6506,7 +6533,9 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    //Obtém as dependências dos tipos usados na conversão de tipo
    for(unsigned i=ConversaoTipo::CONV_TIPO_ORIGEM; i <= ConversaoTipo::CONV_TIPO_DESTINO; i++)
    {
-    tipo_usr=obterObjeto(*conv->obterTipoDado(i), OBJETO_TIPO);
+    tipo_usr=obterObjetoTipoPgSQL(conv->obterTipoDado(i));
+      //obterObjeto(*conv->obterTipoDado(i), OBJETO_TIPO);
+
     if(tipo_usr)
      obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
    }
@@ -6518,7 +6547,8 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
   else if(tipo_obj==OBJETO_FUNCAO)
   {
    Funcao *func=dynamic_cast<Funcao *>(objeto);
-   ObjetoBase *tipo_usr=obterObjeto(*func->obterTipoRetorno(), OBJETO_TIPO);
+   ObjetoBase *tipo_usr=obterObjetoTipoPgSQL(func->obterTipoRetorno());
+     //obterObjeto(*func->obterTipoRetorno(), OBJETO_TIPO);
    unsigned qtd, i;
 
    //Caso a linguagem da função não seja C ou SQL obtém as dependências da mesma
@@ -6534,7 +6564,8 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    qtd=func->obterNumParams();
    for(i=0; i < qtd; i++)
    {
-    tipo_usr=obterObjeto(*func->obterParametro(i).obterTipo(), OBJETO_TIPO);
+    tipo_usr=obterObjetoTipoPgSQL(func->obterParametro(i).obterTipo());
+    //obterObjeto(*func->obterParametro(i).obterTipo(), OBJETO_TIPO);
 
     if(tipo_usr)
      obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
@@ -6544,7 +6575,8 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    qtd=func->obterNumTiposRetTabela();
    for(i=0; i < qtd; i++)
    {
-    tipo_usr=obterObjeto(*func->obterTipoRetTabela(i).obterTipo(), OBJETO_TIPO);
+    tipo_usr=obterObjetoTipoPgSQL(func->obterTipoRetTabela(i).obterTipo());
+    //obterObjeto(*func->obterTipoRetTabela(i).obterTipo(), OBJETO_TIPO);
 
     if(tipo_usr)
      obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
@@ -6562,7 +6594,8 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
     obterDependenciasObjeto(func->obterFuncao(i), vet_deps, inc_dep_indiretas);
 
    //Obtém a dependência do tipo de estado da função de agregação
-   tipo_usr=obterObjeto(*func->obterTipoEstado(), OBJETO_TIPO);
+   tipo_usr=obterObjetoTipoPgSQL(func->obterTipoEstado());
+     //obterObjeto(*func->obterTipoEstado(), OBJETO_TIPO);
 
    if(tipo_usr)
     obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
@@ -6575,7 +6608,8 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    qtd=func->obterNumTipoDados();
    for(i=0; i < qtd; i++)
    {
-    tipo_usr=obterObjeto(*func->obterTipoDado(i), OBJETO_TIPO);
+    tipo_usr=obterObjetoTipoPgSQL(func->obterTipoDado(i));
+      //obterObjeto(*func->obterTipoDado(i), OBJETO_TIPO);
 
     if(tipo_usr)
      obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
@@ -6609,7 +6643,9 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    //Obtém as dependências dos tipos dos argumentos do operador
    for(i=Operador::ARG_ESQUERDA; i <= Operador::ARG_DIREITA; i++)
    {
-    tipo_usr=obterObjeto(*oper->obterTipoDadoArgumento(i), OBJETO_TIPO);
+    tipo_usr=obterObjetoTipoPgSQL(oper->obterTipoDadoArgumento(i));
+      //obterObjeto(*oper->obterTipoDadoArgumento(i), OBJETO_TIPO);
+
     if(tipo_usr)
      obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
    }
@@ -6652,7 +6688,9 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    qtd=rel->obterNumAtributos();
    for(i=0; i < qtd; i++)
    {
-    tipo_usr=obterObjeto(*rel->obterAtributo(i)->obterTipo(), OBJETO_TIPO);
+    tipo_usr=obterObjetoTipoPgSQL(rel->obterAtributo(i)->obterTipo());
+      //obterObjeto(*rel->obterAtributo(i)->obterTipo(), OBJETO_TIPO);
+
     if(tipo_usr)
      obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
    }
@@ -6692,7 +6730,9 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    for(i=0; i < qtd; i++)
    {
     col=tab->obterColuna(i);
-    tipo_usr=obterObjeto(*col->obterTipo(), OBJETO_TIPO);
+    tipo_usr=obterObjetoTipoPgSQL(col->obterTipo());
+      //obterObjeto(*col->obterTipo(), OBJETO_TIPO);
+
     if(!col->incluidoPorLigacao() && tipo_usr)
      obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
    }
@@ -6739,7 +6779,9 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
       obterDependenciasObjeto(ind->obterElemento(i1).obterClasseOperadores(), vet_deps, inc_dep_indiretas);
      else if(ind->obterElemento(i1).obterColuna())
      {
-      tipo_usr=obterObjeto(*ind->obterElemento(i1).obterColuna()->obterTipo(), OBJETO_TIPO);
+      tipo_usr=obterObjetoTipoPgSQL(ind->obterElemento(i1).obterColuna()->obterTipo());
+        //obterObjeto(*ind->obterElemento(i1).obterColuna()->obterTipo(), OBJETO_TIPO);
+
       if(tipo_usr)
        obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
      }
@@ -6757,7 +6799,8 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    if(tipo_usr->obterConfiguracao()==Tipo::TIPO_BASE)
    {
     //Obtém as dependências do tipo de cópia
-    tipo_aux=obterObjeto(*tipo_usr->obterTipoCopia(), OBJETO_TIPO);
+    tipo_aux=obterObjetoTipoPgSQL(tipo_usr->obterTipoCopia());
+      //obterObjeto(*tipo_usr->obterTipoCopia(), OBJETO_TIPO);
 
     if(tipo_aux)
      obterDependenciasObjeto(tipo_aux, vet_deps, inc_dep_indiretas);
@@ -6773,7 +6816,8 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
     qtd=tipo_usr->obterNumAtributos();
     for(i=0; i < qtd; i++)
     {
-     tipo_aux=obterObjeto(*tipo_usr->obterAtributo(i).obterTipo(), OBJETO_TIPO);
+     tipo_aux=obterObjetoTipoPgSQL(tipo_usr->obterAtributo(i).obterTipo());
+       //obterObjeto(*tipo_usr->obterAtributo(i).obterTipo(), OBJETO_TIPO);
 
      if(tipo_aux)
       obterDependenciasObjeto(tipo_aux, vet_deps, inc_dep_indiretas);
@@ -6913,7 +6957,8 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     itr++;
    }
   }
-  else if(tipo_obj==OBJETO_FUNCAO)
+
+  if(tipo_obj==OBJETO_FUNCAO)
   {
    Funcao *funcao=dynamic_cast<Funcao *>(objeto);
    vector<ObjetoBase *> *lista_obj=NULL;
@@ -7055,7 +7100,8 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     }
    }
   }
-  else if(tipo_obj==OBJETO_ESQUEMA)
+
+  if(tipo_obj==OBJETO_ESQUEMA)
   {
    vector<ObjetoBase *> *lista_obj=NULL;
    vector<ObjetoBase *>::iterator itr, itr_end;
@@ -7087,7 +7133,9 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     }
    }
   }
-  else if(tipo_obj==OBJETO_TIPO || tipo_obj==OBJETO_DOMINIO)
+
+  if(tipo_obj==OBJETO_TIPO || tipo_obj==OBJETO_DOMINIO ||
+     tipo_obj==OBJETO_SEQUENCIA || tipo_obj==OBJETO_TABELA)
   {
    vector<ObjetoBase *> *lista_obj=NULL;
    vector<ObjetoBase *>::iterator itr, itr_end;
@@ -7104,6 +7152,19 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
    FuncaoAgregacao *func_ag=NULL;
    Operador *oper=NULL;
    Tipo *tipo=NULL;
+   void *ptr_tipopgsql=NULL;
+
+   /* Devido a particuladade de se atribuir ponteiros de objetos como tipos base do pgsql (ver TipoPgSQL)
+      é necessário fazer um dynamic_cast para a classe correta do 'objeto'. Caso o dynamic_cast não seja
+      feita, mesmo que o objeto seja um tipopgsql válido o mesmo não será localizado na lista de tipos
+      base do pgsql.  */
+   switch(tipo_obj)
+   {
+    case OBJETO_TIPO: ptr_tipopgsql=dynamic_cast<Tipo*>(objeto); break;
+    case OBJETO_DOMINIO: ptr_tipopgsql=dynamic_cast<Dominio*>(objeto); break;
+    case OBJETO_SEQUENCIA: ptr_tipopgsql=dynamic_cast<Sequencia*>(objeto); break;
+    default: ptr_tipopgsql=dynamic_cast<Tabela*>(objeto); break;
+   }
 
    /* Varre todas as listas de objetos os quais podem
      referenciar direta ou indiretamente um tipo definido
@@ -7149,7 +7210,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       itr++;
 
       //Verifica se o tipo de dado da classe é o próprio tipo a ser removido
-      if(classe_op->obterTipoDado()==objeto)
+      if(classe_op->obterTipoDado()==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(classe_op);
@@ -7167,7 +7228,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       itr++;
 
       //Verifica se o tipo de dado do dominio é o próprio tipo a ser removido
-      if(dom->obterTipo()==objeto)
+      if(dom->obterTipo()==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(dom);
@@ -7184,9 +7245,9 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       tipo=dynamic_cast<Tipo *>(*itr);
       itr++;
 
-      if(tipo->obterAlinhamento()==objeto ||
-         tipo->obterElemento()==objeto ||
-         tipo->obterTipoCopia()==objeto)
+      if(tipo->obterAlinhamento()==ptr_tipopgsql ||
+         tipo->obterElemento()==ptr_tipopgsql ||
+         tipo->obterTipoCopia()==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(tipo);
@@ -7208,7 +7269,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       qtd=func_ag->obterNumTipoDados();
       for(i1=0; i1 < qtd  && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
       {
-       if(func_ag->obterTipoDado(i1)==objeto)
+       if(func_ag->obterTipoDado(i1)==ptr_tipopgsql)
        {
         refer=true;
         vet_refs.push_back(func_ag);
@@ -7228,7 +7289,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       itr++;
 
       //Verifica se o tipo de retorno é o próprio tipo a ser removido
-      if(func->obterTipoRetorno()==objeto)
+      if(func->obterTipoRetorno()==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(func);
@@ -7240,7 +7301,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
        qtd=func->obterNumParams();
        for(i1=0; i1 < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
        {
-        if(func->obterParametro(i1).obterTipo()==objeto)
+        if(func->obterParametro(i1).obterTipo()==ptr_tipopgsql)
         {
          refer=true;
          vet_refs.push_back(func);
@@ -7260,8 +7321,8 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       itr++;
 
       //Verifica se um dos argumentos do operador é o próprio tipo a ser removido
-      if(oper->obterTipoDadoArgumento(Operador::ARG_ESQUERDA)==objeto ||
-         oper->obterTipoDadoArgumento(Operador::ARG_DIREITA)==objeto)
+      if(oper->obterTipoDadoArgumento(Operador::ARG_ESQUERDA)==ptr_tipopgsql ||
+         oper->obterTipoDadoArgumento(Operador::ARG_DIREITA)==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(oper);
@@ -7277,7 +7338,8 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       itr++;
 
       //Verifica se o objeto não referencia o tipo
-      if(conv_tipo->obterTipoDado(ConversaoTipo::CONV_TIPO_ORIGEM)==objeto)
+      if(conv_tipo->obterTipoDado(ConversaoTipo::CONV_TIPO_ORIGEM)==ptr_tipopgsql ||
+         conv_tipo->obterTipoDado(ConversaoTipo::CONV_TIPO_DESTINO)==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(conv_tipo);
@@ -7286,7 +7348,8 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     }
    }
   }
-  else if(tipo_obj==OBJETO_PAPEL)
+
+  if(tipo_obj==OBJETO_PAPEL)
   {
    vector<ObjetoBase *> *lista_obj=NULL;
    vector<ObjetoBase *>::iterator itr, itr_end;
@@ -7358,7 +7421,8 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     vet_refs.push_back(this);
    }
   }
-  else if(tipo_obj==OBJETO_ESPACO_TABELA)
+
+  if(tipo_obj==OBJETO_ESPACO_TABELA)
   {
    vector<ObjetoBase *>::iterator itr, itr_end;
    unsigned i, qtd;
@@ -7419,7 +7483,8 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     vet_refs.push_back(this);
    }
   }
-  else if(tipo_obj==OBJETO_LINGUAGEM)
+
+  if(tipo_obj==OBJETO_LINGUAGEM)
   {
    vector<ObjetoBase *>::iterator itr, itr_end;
    Funcao *func=NULL;
@@ -7441,7 +7506,8 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     itr++;
    }
   }
-  else if(tipo_obj==OBJETO_OPERADOR)
+
+  if(tipo_obj==OBJETO_OPERADOR)
   {
    vector<ObjetoBase *> *lista_obj=NULL;
    vector<ObjetoBase *>::iterator itr, itr_end;
@@ -7517,7 +7583,8 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     }
    }
   }
-  else if(tipo_obj==OBJETO_FAMILIA_OPER)
+
+  if(tipo_obj==OBJETO_FAMILIA_OPER)
   {
    vector<ObjetoBase *>::iterator itr, itr_end;
    FamiliaOperadores *familia_op=dynamic_cast<FamiliaOperadores *>(objeto);
@@ -7537,7 +7604,8 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     itr++;
    }
   }
-  else if(tipo_obj==OBJETO_COLUNA)
+
+  if(tipo_obj==OBJETO_COLUNA)
   {
    Coluna *coluna=dynamic_cast<Coluna *>(objeto);
    vector<ObjetoBase *> *lista_obj=NULL;
@@ -7661,6 +7729,32 @@ void ModeloBD::definirObjetosModificados(void)
 
    itr++;
   }
+ }
+}
+//-----------------------------------------------------------
+ObjetoBase *ModeloBD::obterObjetoTipoPgSQL(TipoPgSQL tipo)
+{
+ switch(tipo.obterConfTipoUsuario())
+ {
+  case ConfigTipoUsuario::TIPO_BASE:
+   return(this->obterObjeto(*tipo, OBJETO_TIPO));
+  break;
+
+  case ConfigTipoUsuario::TIPO_DOMINIO:
+   return(this->obterObjeto(*tipo, OBJETO_DOMINIO));
+  break;
+
+  case ConfigTipoUsuario::TIPO_TABELA:
+   return(this->obterObjeto(*tipo, OBJETO_TABELA));
+  break;
+
+  case ConfigTipoUsuario::TIPO_SEQUENCIA:
+   return(this->obterObjeto(*tipo, OBJETO_SEQUENCIA));
+  break;
+
+  default:
+   return(NULL);
+  break;
  }
 }
 //***********************************************************

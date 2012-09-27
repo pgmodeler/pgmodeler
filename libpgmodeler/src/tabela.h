@@ -103,6 +103,9 @@ class Tabela: public TabelaBase {
    Tabela(void);
   ~Tabela(void);
 
+  void definirNome(const QString &nome);
+  void definirEsquema(ObjetoBase *esquema);
+
   //Define se a tabela aceita oids ou não
   void definirAceitaOids(bool valor);
 

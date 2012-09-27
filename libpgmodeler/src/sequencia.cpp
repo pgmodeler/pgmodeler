@@ -145,9 +145,20 @@ int Sequencia::compararValores(QString valor1, QString valor2)
  }
 }
 //-----------------------------------------------------------
+void Sequencia::definirNome(const QString &nome)
+{
+ QString nome_ant=this->obterNome(true);
+ ObjetoBase::definirNome(nome);
+
+ /* Renomeia o tipo já definido anteriormente na
+    lista de tipos do PostgreSQL */
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+}
+//-----------------------------------------------------------
 void Sequencia::definirEsquema(ObjetoBase *esquema)
 {
  Tabela *tabela=NULL;
+ QString nome_ant=this->obterNome(true);
 
  //Caso a coluna possuidora da sequencia exista
  if(coluna)
@@ -162,6 +173,10 @@ void Sequencia::definirEsquema(ObjetoBase *esquema)
 
  //Atribui o esquema à sequencia
  ObjetoBase::definirEsquema(esquema);
+
+ /* Renomeia o tipo já definido anteriormente na
+    lista de tipos do PostgreSQL */
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
 //-----------------------------------------------------------
 void Sequencia::definirCiclica(bool valor)
@@ -330,5 +345,22 @@ QString Sequencia::obterDefinicaoObjeto(unsigned tipo_def)
  atributos[AtributosParsers::CICLICA]=(ciclica ? "1" : "");
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+}
+//-----------------------------------------------------------
+void Sequencia::operator = (Sequencia &seq)
+{
+ QString nome_ant=this->obterNome(true);
+
+ *(dynamic_cast<ObjetoBase *>(this))=dynamic_cast<ObjetoBase &>(seq);
+
+ this->ciclica=seq.ciclica;
+ this->valor_max=seq.valor_max;
+ this->valor_min=seq.valor_min;
+ this->inicio=seq.inicio;
+ this->incremento=seq.incremento;
+ this->cache=seq.cache;
+ this->coluna=seq.coluna;
+
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
 //***********************************************************

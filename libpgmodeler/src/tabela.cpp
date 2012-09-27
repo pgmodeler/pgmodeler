@@ -31,6 +31,28 @@ Tabela::~Tabela(void)
  tabelas_pai.clear();
 }
 //-----------------------------------------------------------
+void Tabela::definirNome(const QString &nome)
+{
+ QString nome_ant=this->obterNome(true);
+ ObjetoBase::definirNome(nome);
+
+ /* Renomeia o tipo já definido anteriormente na
+    lista de tipos do PostgreSQL */
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+}
+//-----------------------------------------------------------
+void Tabela::definirEsquema(ObjetoBase *esquema)
+{
+ QString nome_ant=this->obterNome(true);
+
+ //Atribui o esquema à tabela
+ ObjetoBase::definirEsquema(esquema);
+
+ /* Renomeia o tipo já definido anteriormente na
+    lista de tipos do PostgreSQL */
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+}
+//-----------------------------------------------------------
 void Tabela::definirAceitaOids(bool valor)
 {
  aceita_oids=valor;
@@ -982,9 +1004,13 @@ QString Tabela::obterDefinicaoObjeto(unsigned tipo_def)
 //-----------------------------------------------------------
 void Tabela::operator = (Tabela &tabela)
 {
+ QString nome_ant = this->obterNome(true);
+
  (*dynamic_cast<ObjetoGraficoBase *>(this))=dynamic_cast<ObjetoGraficoBase &>(tabela);
  this->aceita_oids=tabela.aceita_oids;
  definirProtegido(tabela.protegido);
+
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
 //-----------------------------------------------------------
 bool Tabela::referenciaObjetoIncRelacao(void)

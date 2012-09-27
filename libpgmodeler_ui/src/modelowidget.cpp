@@ -69,7 +69,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  QAction *acao=NULL;
  QString str_ico, str_txt,
          vet_tipos_rel[]={"11", "1n", "nn", "dep", "gen" },
-         vet_rot_rel[]={"1-1", "1-n", "n-n", trUtf8("Dependência"), trUtf8("Generalização")};
+         vet_rot_rel[]={" 1-1", " 1-n", " n-n", trUtf8("Dependência"), trUtf8("Generalização")};
  TipoObjetoBase tipos[]={ OBJETO_TABELA, OBJETO_VISAO, OBJETO_CAIXA_TEXTO, OBJETO_RELACAO,
                           OBJETO_CONV_TIPO, OBJETO_CONV_CODIFICACAO, OBJETO_DOMINIO,
                           OBJETO_FUNCAO, OBJETO_FUNC_AGREGACAO, OBJETO_LINGUAGEM,
@@ -649,146 +649,153 @@ void ModeloWidget::converterRelacionamentoNN(void)
 
  if(rel)
  {
-  unsigned qtd_op, qtd;
+  //unsigned qtd_op, qtd;
 
   //Só converte o relacionamento caso este seja n-n
   if(rel->obterTipoRelacionamento()==Relacionamento::RELACIONAMENTO_NN)
   {
-   try
+   caixa_msg->show(trUtf8("Confirmação"),
+                   trUtf8("Converter um relacionamento é uma operação irreversível e provoca a exclusão de todo histórico de operações! Deseja continuar?"),
+                   CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
+
+   if(caixa_msg->result()==QDialog::Accepted)
    {
-    Relacionamento *rel1=NULL, *rel2=NULL;
-    Tabela *tab=NULL, *tab_nn=NULL,
-           *tab_orig=dynamic_cast<Tabela *>(rel->obterTabela(Relacionamento::TABELA_ORIGEM)),
-           *tab_dest=dynamic_cast<Tabela *>(rel->obterTabela(Relacionamento::TABELA_DESTINO));
-    Restricao *rest=NULL, *rest_aux=NULL;
-    Coluna *col=NULL;
-    bool obrig_orig=true,//rel->tabelaObrigatoria(Relacionamento::TABELA_ORIGEM),
-         obrig_dest=true;//rel->tabelaObrigatoria(Relacionamento::TABELA_DESTINO);
-    QString nome_rel, nome_tab, xml_tab;
-    QPointF pnt;
-    unsigned i=1, idx, qtd, idx1, qtd1, x;
-
-    qtd_op=lista_op->obterTamanhoAtual();
-
-    //Obtém o xml que define a tabela do relacionamento
-    tab_nn=rel->obterTabelaReceptora();
-    xml_tab=tab_nn->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML);
-
-    //Cria a mesma a partir do xml
-    ParserXML::reiniciarParser();
-    ParserXML::carregarBufferXML(xml_tab);
-    tab=modelo->criarTabela();
-    nome_tab=tab->obterNome();
-
-    /* Caso haja outras tabelas no modelo com o nome da tabela recém criada a mesma terá
-       seu nome alterado até que não existam tabelas com mesmo nome que ela */
-    while(modelo->obterObjeto(tab->obterNome(true), OBJETO_TABELA))
+    try
     {
-     tab->definirNome(nome_tab + QString("_%1").arg(i));
-     i++;
-    }
+     Relacionamento *rel1=NULL, *rel2=NULL;
+     Tabela *tab=NULL, *tab_nn=NULL,
+       *tab_orig=dynamic_cast<Tabela *>(rel->obterTabela(Relacionamento::TABELA_ORIGEM)),
+       *tab_dest=dynamic_cast<Tabela *>(rel->obterTabela(Relacionamento::TABELA_DESTINO));
+     Restricao *rest=NULL, *rest_aux=NULL;
+     Coluna *col=NULL;
+     bool obrig_orig=true,//rel->tabelaObrigatoria(Relacionamento::TABELA_ORIGEM),
+       obrig_dest=true;//rel->tabelaObrigatoria(Relacionamento::TABELA_DESTINO);
+     QString nome_rel, nome_tab, xml_tab;
+     QPointF pnt;
+     unsigned i=1, idx, qtd, idx1, qtd1, x;
 
-    //Copia os atributos do relacionamento n-n para a tabela gerada
-    qtd=rel->obterNumAtributos();
-    for(idx=0; idx < qtd; idx++)
-    {
-     col=new Coluna;
-     (*col)=(*rel->obterAtributo(idx));
-     col->definirTabelaPai(NULL);
-     tab->adicionarColuna(col);
-    }
+     //qtd_op=lista_op->obterTamanhoAtual();
 
-    //Copia as restrições  do relacionamento n-n para a tabela gerada
-    qtd=rel->obterNumRestricoes();
-    for(idx=0; idx < qtd; idx++)
-    {
-     rest=new Restricao;
-     rest_aux=rel->obterRestricao(idx);
-     (*rest)=(*rest_aux);
-     rest->removerColunas();
-     rest->definirTabelaPai(NULL);
+     //Obtém o xml que define a tabela do relacionamento
+     tab_nn=rel->obterTabelaReceptora();
+     xml_tab=tab_nn->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML);
 
-     for(x=Restricao::COLUNA_ORIGEM; x <= Restricao::COLUNA_REFER; x++)
+     //Cria a mesma a partir do xml
+     ParserXML::reiniciarParser();
+     ParserXML::carregarBufferXML(xml_tab);
+     tab=modelo->criarTabela();
+     nome_tab=tab->obterNome();
+
+     /* Caso haja outras tabelas no modelo com o nome da tabela recém criada a mesma terá
+        seu nome alterado até que não existam tabelas com mesmo nome que ela */
+     while(modelo->obterObjeto(tab->obterNome(true), OBJETO_TABELA))
      {
-      qtd1=rest_aux->obterNumColunas(x);
-      for(idx1=0; idx1 < qtd1; idx1++)
+      tab->definirNome(nome_tab + QString("_%1").arg(i));
+      i++;
+     }
+
+     //Copia os atributos do relacionamento n-n para a tabela gerada
+     qtd=rel->obterNumAtributos();
+     for(idx=0; idx < qtd; idx++)
+     {
+      col=new Coluna;
+      (*col)=(*rel->obterAtributo(idx));
+      col->definirTabelaPai(NULL);
+      tab->adicionarColuna(col);
+     }
+
+     //Copia as restrições  do relacionamento n-n para a tabela gerada
+     qtd=rel->obterNumRestricoes();
+     for(idx=0; idx < qtd; idx++)
+     {
+      rest=new Restricao;
+      rest_aux=rel->obterRestricao(idx);
+      (*rest)=(*rest_aux);
+      rest->removerColunas();
+      rest->definirTabelaPai(NULL);
+
+      for(x=Restricao::COLUNA_ORIGEM; x <= Restricao::COLUNA_REFER; x++)
       {
-       col=tab->obterColuna(rest_aux->obterColuna(idx, x)->obterNome());
-       if(col) rest->adicionarColuna(col, x);
+       qtd1=rest_aux->obterNumColunas(x);
+       for(idx1=0; idx1 < qtd1; idx1++)
+       {
+        col=tab->obterColuna(rest_aux->obterColuna(idx, x)->obterNome());
+        if(col) rest->adicionarColuna(col, x);
+       }
       }
+      tab->adicionarRestricao(rest);
      }
-     tab->adicionarRestricao(rest);
+
+     //Inicia o encadeamento de operaçẽos
+     //lista_op->iniciarEncadeamentoOperacoes();
+
+     //Remove o relacionamento n-n do modelo
+     modelo->removerObjeto(rel);
+     //Adiciona-o à lista de operações
+     //lista_op->adicionarObjeto(rel, Operacao::OBJETO_REMOVIDO);
+
+     //A posição padrão da tabela originada será o ponto médio entre as tabelas participantes do relacionamento
+     pnt.setX((tab_orig->obterPosicaoObjeto().x() + tab_dest->obterPosicaoObjeto().x())/2.0f);
+     pnt.setY((tab_orig->obterPosicaoObjeto().y() + tab_dest->obterPosicaoObjeto().y())/2.0f);
+     tab->definirPosicaoObjeto(pnt);
+
+     //Adiciona a tabela criada ao modelo
+     modelo->adicionarObjeto(tab);
+     //Adiciona uma operação à lista de operações indicando a criação da tabela
+     //lista_op->adicionarObjeto(tab, Operacao::OBJETO_CRIADO);
+
+     //Aloca um relacionamento entre a nova tabela e a tabela de origem do relacionamento
+     nome_rel=QString("rel_") + tab->obterNome(false) + QString("_") + tab_orig->obterNome(false);
+     rel1=new Relacionamento(nome_rel, Relacionamento::RELACIONAMENTO_1N,
+                             tab_orig, tab, obrig_orig, false, true,
+                             "", "", true);
+
+     //Adiciona o relacionamento criado ao modelo e à lista de operações
+     modelo->adicionarRelacionamento(rel1);
+     //lista_op->adicionarObjeto(rel1, Operacao::OBJETO_CRIADO);
+
+     //Aloca um relacionamento entre a nova tabela e a tabela de destino do relacionamento
+     nome_rel=QString("rel_") + tab->obterNome() + QString("_") + tab_dest->obterNome();
+     if(rel->autoRelacionamento())
+      nome_rel+=QString("1");
+
+     rel2=new Relacionamento(nome_rel, Relacionamento::RELACIONAMENTO_1N,
+                             tab_dest, tab, obrig_dest, false, true,
+                             "", "", true);
+
+     //Adiciona o relacionamento criado ao modelo e à lista de operações
+     modelo->adicionarRelacionamento(rel2);
+     //lista_op->adicionarObjeto(rel2, Operacao::OBJETO_CRIADO);
+
+     //Finaliza o encademanento de operações
+     //lista_op->finalizarEncadeamentoOperacoes();
+     lista_op->removerOperacoes();
+
+     emit s_objetoCriado();
     }
-
-    //Inicia o encadeamento de operaçẽos
-    lista_op->iniciarEncadeamentoOperacoes();
-
-    //Remove o relacionamento n-n do modelo
-    modelo->removerObjeto(rel);
-    //Adiciona-o à lista de operações
-    lista_op->adicionarObjeto(rel, Operacao::OBJETO_REMOVIDO);
-
-    //A posição padrão da tabela originada será o ponto médio entre as tabelas participantes do relacionamento
-    pnt.setX((tab_orig->obterPosicaoObjeto().x() + tab_dest->obterPosicaoObjeto().x())/2.0f);
-    pnt.setY((tab_orig->obterPosicaoObjeto().y() + tab_dest->obterPosicaoObjeto().y())/2.0f);
-    tab->definirPosicaoObjeto(pnt);
-
-    //Adiciona a tabela criada ao modelo
-    modelo->adicionarObjeto(tab);
-    //Adiciona uma operação à lista de operações indicando a criação da tabela
-    lista_op->adicionarObjeto(tab, Operacao::OBJETO_CRIADO);
-
-    //Aloca um relacionamento entre a nova tabela e a tabela de origem do relacionamento
-    nome_rel=QString("rel_") + tab->obterNome(false) + QString("_") + tab_orig->obterNome(false);
-    rel1=new Relacionamento(nome_rel, Relacionamento::RELACIONAMENTO_1N,
-                           tab_orig, tab, obrig_orig, false, true,
-                           "", "", true);
-
-    //Adiciona o relacionamento criado ao modelo e à lista de operações
-    modelo->adicionarRelacionamento(rel1);
-    lista_op->adicionarObjeto(rel1, Operacao::OBJETO_CRIADO);
-
-    //Aloca um relacionamento entre a nova tabela e a tabela de destino do relacionamento
-    nome_rel=QString("rel_") + tab->obterNome() + QString("_") + tab_dest->obterNome();
-    if(rel->autoRelacionamento())
-     nome_rel+=QString("1");
-
-    rel2=new Relacionamento(nome_rel, Relacionamento::RELACIONAMENTO_1N,
-                            tab_dest, tab, obrig_dest, false, true,
-                            "", "", true);
-
-    //Adiciona o relacionamento criado ao modelo e à lista de operações
-    modelo->adicionarRelacionamento(rel2);
-    lista_op->adicionarObjeto(rel2, Operacao::OBJETO_CRIADO);
-
-    //Finaliza o encademanento de operações
-    lista_op->finalizarEncadeamentoOperacoes();
-
-    emit s_objetoCriado();
-   }
-   catch(Excecao &e)
-   {
-    if(qtd_op < lista_op->obterTamanhoAtual())
+    catch(Excecao &e)
     {
-     //Obtém a quantidade de operações que necessitam ser removidas
-     qtd=lista_op->obterTamanhoAtual()-qtd_op;
-
-     /* Anula o encadeamento de operações para que as mesmas seja
-        desfeitas uma a uma ignorando o encadeamento */
-     lista_op->anularEncadeamentoOperacoes(true);
-
-     /* Desfaz as operações na quantidade calculada e remove a
-        operação da lista */
-     for(unsigned i=0; i < qtd; i++)
+     /*if(qtd_op < lista_op->obterTamanhoAtual())
      {
-      lista_op->desfazerOperacao();
-      lista_op->removerUltimaOperacao();
-     }
+      //Obtém a quantidade de operações que necessitam ser removidas
+      qtd=lista_op->obterTamanhoAtual()-qtd_op;
 
-     //Desfaz a anulação do encadeamento
-     lista_op->anularEncadeamentoOperacoes(false);
+      //Anula o encadeamento de operações para que as mesmas seja
+      //desfeitas uma a uma ignorando o encadeamento
+      lista_op->anularEncadeamentoOperacoes(true);
+
+      //Desfaz as operações na quantidade calculada e remove a operação da lista
+      for(unsigned i=0; i < qtd; i++)
+      {
+       lista_op->desfazerOperacao();
+       lista_op->removerUltimaOperacao();
+      }
+
+      //Desfaz a anulação do encadeamento
+      lista_op->anularEncadeamentoOperacoes(false);
+     }*/
+     throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
     }
-    throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
    }
   }
  }

@@ -536,7 +536,7 @@ unsigned TipoIntervalo::operator = (const QString &nome_tipo)
  * CLASSE: TipoPgSQL *
  *********************/
 //Inicializando a lista estática da classe
-vector<TipoPgSQL::ConfigTipoUsuario> TipoPgSQL::tipos_usr;
+vector<ConfigTipoUsuario> TipoPgSQL::tipos_usr;
 //-----------------------------------------------------------
 TipoPgSQL::TipoPgSQL(void)
 {
@@ -648,9 +648,17 @@ unsigned TipoPgSQL::operator = (const QString &nome_tipo)
 void *TipoPgSQL::obterRefTipoUsuario(void)
 {
  if(this->tipoUsuario())
-  return(tipos_usr[this->idx_tipo].ptipo);
+  return(tipos_usr[this->idx_tipo - (fim_pseudo + 1)].ptipo);
  else
   return(NULL);
+}
+//-----------------------------------------------------------
+unsigned TipoPgSQL::obterConfTipoUsuario(void)
+{
+ if(this->tipoUsuario())
+  return(tipos_usr[this->idx_tipo - (fim_pseudo + 1)].conf_tipo);
+ else
+  return(0);
 }
 //-----------------------------------------------------------
 bool TipoPgSQL::operator == (unsigned idx_tipo)
@@ -745,8 +753,10 @@ void TipoPgSQL::definirTipoUsuario(unsigned idx)
 {
  unsigned lim1, lim2;
 
- lim1=offset + qtd_tipos;
- lim2=offset + qtd_tipos + TipoPgSQL::tipos_usr.size();
+ //lim1=offset + qtd_tipos +;
+ //lim2=offset + qtd_tipos + TipoPgSQL::tipos_usr.size();
+ lim1=fim_pseudo + 1;
+ lim2=lim1 + TipoPgSQL::tipos_usr.size();
 
  if(TipoPgSQL::tipos_usr.size() > 0 &&
     (idx >= lim1 && idx < lim2))
@@ -766,16 +776,21 @@ void TipoPgSQL::definirTipoUsuario(void *ptipo)
   idx_tipo=idx;
 }
 //-----------------------------------------------------------
-void TipoPgSQL::adicionarTipoUsuario(const QString &nome, void *ptipo, void *pmodelo, bool dominio)
+void TipoPgSQL::adicionarTipoUsuario(const QString &nome, void *ptipo, void *pmodelo, unsigned conf_tipo_usr)
 {
- if(nome!="" && ptipo && pmodelo && obterIndiceTipoUsuario(nome,ptipo,pmodelo)==0)
+ if(nome!="" && ptipo && pmodelo &&
+    (conf_tipo_usr==ConfigTipoUsuario::TIPO_DOMINIO ||
+     conf_tipo_usr==ConfigTipoUsuario::TIPO_SEQUENCIA ||
+     conf_tipo_usr==ConfigTipoUsuario::TIPO_TABELA ||
+     conf_tipo_usr==ConfigTipoUsuario::TIPO_BASE) &&
+    obterIndiceTipoUsuario(nome,ptipo,pmodelo)==0)
  {
   ConfigTipoUsuario cfg;
 
   cfg.nome=nome;
   cfg.ptipo=ptipo;
   cfg.pmodelo=pmodelo;
-  cfg.dominio=dominio;
+  cfg.conf_tipo=conf_tipo_usr;
   TipoPgSQL::tipos_usr.push_back(cfg);
  }
 }
@@ -807,7 +822,6 @@ void TipoPgSQL::renomearTipoUsuario(const QString &nome, void *ptipo,const QStri
  if(TipoPgSQL::tipos_usr.size() > 0 &&
     nome!="" && ptipo && nome!=novo_nome)
  {
-  ConfigTipoUsuario cfg;
   vector<ConfigTipoUsuario>::iterator itr, itr_end;
 
   itr=TipoPgSQL::tipos_usr.begin();
@@ -834,7 +848,6 @@ unsigned TipoPgSQL::obterIndiceTipoUsuario(const QString &nome, void *ptipo, voi
 {
  if(TipoPgSQL::tipos_usr.size() > 0 && (nome!="" || ptipo))
  {
-  ConfigTipoUsuario cfg;
   vector<ConfigTipoUsuario>::iterator itr, itr_end;
   int idx=0;
 
@@ -852,7 +865,8 @@ unsigned TipoPgSQL::obterIndiceTipoUsuario(const QString &nome, void *ptipo, voi
   }
 
   if(itr!=itr_end)
-   return(offset + qtd_tipos + idx);
+   //return(offset + qtd_tipos + idx);
+   return(fim_pseudo + 1 + idx);
   else
    return(TipoBase::nulo);
  }
@@ -863,8 +877,12 @@ QString TipoPgSQL::obterNomeTipoUsuario(unsigned idx)
 {
  unsigned lim1, lim2;
 
- lim1=offset + qtd_tipos;
- lim2=offset + qtd_tipos + TipoPgSQL::tipos_usr.size();
+ /*lim1=offset + qtd_tipos;
+ lim2=offset + qtd_tipos + TipoPgSQL::tipos_usr.size();*/
+
+ lim1=fim_pseudo + 1;
+ lim2=lim1 + TipoPgSQL::tipos_usr.size();
+
 
  if(TipoPgSQL::tipos_usr.size() > 0 &&
     (idx >= lim1 && idx < lim2))
@@ -873,7 +891,7 @@ QString TipoPgSQL::obterNomeTipoUsuario(unsigned idx)
   return("");
 }
 //-----------------------------------------------------------
-void TipoPgSQL::obterTiposUsuario(QStringList &tipos, void *pmodelo, bool inc_tipo_usr, bool inc_dominio)
+void TipoPgSQL::obterTiposUsuario(QStringList &tipos, void *pmodelo, unsigned inc_tipos_usr)
 {
  unsigned idx,total;
 
@@ -884,13 +902,12 @@ void TipoPgSQL::obterTiposUsuario(QStringList &tipos, void *pmodelo, bool inc_ti
  {
   //Só obtem os tipos definidos pelo usuário do modelo especificado
   if(tipos_usr[idx].pmodelo==pmodelo &&
-    ((inc_tipo_usr && !tipos_usr[idx].dominio) ||
-     (inc_dominio && tipos_usr[idx].dominio)))
+     ((inc_tipos_usr & tipos_usr[idx].conf_tipo) == tipos_usr[idx].conf_tipo))
    tipos.push_back(tipos_usr[idx].nome);
  }
 }
 //-----------------------------------------------------------
-void TipoPgSQL::obterTiposUsuario(vector<void *> &ptipos, void *pmodelo, bool inc_tipo_usr, bool inc_dominio)
+void TipoPgSQL::obterTiposUsuario(vector<void *> &ptipos, void *pmodelo, unsigned inc_tipos_usr)
 {
  unsigned idx, total;
 
@@ -901,16 +918,15 @@ void TipoPgSQL::obterTiposUsuario(vector<void *> &ptipos, void *pmodelo, bool in
  {
   //Só obtem os tipos definidos pelo usuário do modelo especificado
   if(tipos_usr[idx].pmodelo==pmodelo &&
-    ((inc_tipo_usr && !tipos_usr[idx].dominio) ||
-     (inc_dominio && tipos_usr[idx].dominio)))
+     ((inc_tipos_usr & tipos_usr[idx].conf_tipo) == tipos_usr[idx].conf_tipo))
    ptipos.push_back(tipos_usr[idx].ptipo);
  }
 }
 //-----------------------------------------------------------
 QString TipoPgSQL::operator ~ (void)
 {
- if(idx_tipo >= offset + qtd_tipos)
-  return(tipos_usr[idx_tipo - (offset + qtd_tipos)].nome);
+ if(idx_tipo >= fim_pseudo + 1)//offset + qtd_tipos)
+  return(tipos_usr[idx_tipo - (fim_pseudo + 1)].nome);
  else
   return(TipoBase::tipos[idx_tipo]);
 }
@@ -946,7 +962,8 @@ void TipoPgSQL::definirDimensao(unsigned dim)
  if(dim > 0 && this->tipoUsuario())
  {
   int idx=obterIndiceTipoUsuario(~(*this), NULL);
-  if(tipos_usr[idx].dominio)
+  if(tipos_usr[idx].conf_tipo==ConfigTipoUsuario::TIPO_DOMINIO ||
+     tipos_usr[idx].conf_tipo==ConfigTipoUsuario::TIPO_SEQUENCIA)
     throw Excecao(ERR_PGMODELER_ATRDIMENSAOINVDOMINIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 

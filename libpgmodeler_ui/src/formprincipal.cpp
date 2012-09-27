@@ -1068,17 +1068,21 @@ void FormPrincipal::carregarPlugins(void)
          dir_plugins=AtributosGlobais::DIR_PLUGINS +
                      AtributosGlobais::SEP_DIRETORIO;
  QPluginLoader pl;
- /* Configura uma instância de QDir para manipular as entradas no diretório raiz
-    de plugins. O pgModeler obterá somente diretórios, caso o usuário crie um plugin
-    e não o coloque em uma pasta o pgModeler ignora tal arquivo */
- QDir dir(dir_plugins, "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot);
- QStringList lista_dirs=dir.entryList();
+ QStringList lista_dirs;
  PgModelerPlugin *plugin=NULL;
  QAction *acao_plugin=NULL;
  QPixmap ico_acao;
 
  //O QPluginLoader deve resolver todos os símbolos da biblioteca
  pl.setLoadHints(QLibrary::ResolveAllSymbolsHint);
+
+ if(AtributosGlobais::DIR_PLUGINS.isEmpty())
+  dir_plugins="." + AtributosGlobais::SEP_DIRETORIO;
+
+ /* Configura uma instância de QDir para manipular as entradas no diretório raiz
+    de plugins. O pgModeler obterá somente diretórios, caso o usuário crie um plugin
+    e não o coloque em uma pasta o pgModeler ignora tal arquivo */
+ lista_dirs=QDir(dir_plugins, "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
 
  while(!lista_dirs.isEmpty())
  {

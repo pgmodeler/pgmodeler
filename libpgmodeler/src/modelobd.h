@@ -152,6 +152,14 @@ class ModeloBD:  public QObject, public ObjetoBase {
      pois o método substitui o buffer do parser e reinicia a navegação nos elementos XML quando chamado. */
   void criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj=0);
 
+  //Método utilizado para remover um tipo definido pelo usuario (tipo ou domínio)
+  void removerTipoUsuario(ObjetoBase *objeto, int idx_obj);
+
+  /* Retorna o objeto do modelo o qual representa o tipo da dado PostgreSQL.
+     Basicamente esse método retorna uma tabela, sequencia, tipo ou domínio quando
+     o 'tipo' é um tipo de dado definido pelo usuário */
+  ObjetoBase *obterObjetoTipoPgSQL(TipoPgSQL tipo);
+
  public:
   ModeloBD(void);
   ~ModeloBD(void);
@@ -375,9 +383,6 @@ class ModeloBD:  public QObject, public ObjetoBase {
      como auxiliar nos métodos de inserção e remoção de permissões */
   int obterIndicePermissao(Permissao *permissao);
 
-  //Método utilizado para remover um tipo definido pelo usuario (tipo ou domínio)
-  void removerTipoUsuario(ObjetoBase *objeto, int idx_obj);
-
   //Obtém um objeto através de seu nome e tipo
   ObjetoBase *obterObjeto(const QString &nome, TipoObjetoBase tipo_obj);
 
@@ -409,7 +414,15 @@ class ModeloBD:  public QObject, public ObjetoBase {
   Tabela *criarTabela(void);
   Coluna *criarColuna(void);
   Regra *criarRegra(void);
-  Sequencia *criarSequencia(void);
+
+  /* O parâmetro 'ignorar_possuidora' quando 'true' indica que o método deve
+     criar a sequência mesmo se a coluna possuidora referenciada não
+     exista. Esse parâmetro foi adicionado para que sequencias não sejam
+     invalidadas caso a coluna possuidora deixe existir (desconectando um relacionamento) e
+     por consequência, outros objetos como funções, funções de agregação, sejam invalidados
+     por referenciar a sequência como um tipo de dado */
+  Sequencia *criarSequencia(bool ignorar_possuidora=false);
+
   Visao *criarVisao(void);
   Permissao *criarPermissao(void);
 
