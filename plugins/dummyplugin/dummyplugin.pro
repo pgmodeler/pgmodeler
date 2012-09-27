@@ -39,14 +39,14 @@ LIBS = $$PGMODELER_LIB_DIR/$$LIBUTIL \
        $$PGMODELER_LIB_DIR/$$LIBPGMODELERUI
 
 unix {
- QMAKE_POST_LINK+= "cp res/$$TARGET.png $$DESTDIR;\
+ QMAKE_POST_LINK+= "cp res/$${TARGET}.png $$DESTDIR;\
                     cp -r lang/ $$DESTDIR;"
  QMAKE_DISTCLEAN+= "-r $$MOC_DIR $$OBJECTS_DIR"
 }
 
 windows {
  DEST=..\\..\\build\\plugins\\$$TARGET
- QMAKE_POST_LINK+= "copy res\\$$TARGET.png $$DEST /Y &\
+ QMAKE_POST_LINK+= "copy res\\$${TARGET}.png $$DEST /Y &\
                     xcopy lang $$DEST\\lang /S /I /Y /Q"
  QMAKE_DISTCLEAN+= "$$MOC_DIR /S /Q & \
                     $$OBJECTS_DIR  /S /Q"

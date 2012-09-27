@@ -1327,10 +1327,6 @@
         <translation>Save &apos;%1&apos; as...</translation>
     </message>
     <message>
-        <source>Modelo de Banco de Dados (*.pgmodel);;Todos os Arquivos (*.*)</source>
-        <translation>Database Model (*.pgmodel);;All Files (*.*)</translation>
-    </message>
-    <message>
         <source>Imprimir grade</source>
         <translation>Print grid</translation>
     </message>
@@ -1445,6 +1441,10 @@
     <message>
         <source>Exibe a visão geral do modelo</source>
         <translation>Show the model overview</translation>
+    </message>
+    <message>
+        <source>Modelo de Banco de Dados (*.dbm);;Todos os Arquivos (*.*)</source>
+        <translation>Database Model (*.dbm);; All Files (*.*)</translation>
     </message>
 </context>
 <context>
