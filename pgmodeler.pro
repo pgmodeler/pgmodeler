@@ -5,10 +5,12 @@ unix {
  GLOBAL_INCLUDES = .\
                    /usr/local/pgsql/include \
                    /usr/include \
-                   /usr/include/libxml2
+                   /usr/include/libxml2 \
+                   /usr/include/postgresql
 
 
  GLOBAL_LIBS =  /usr/local/pgsql/lib/libpq.so \
+                /usr/lib/libpq.so \
                 -lxml2
 
  LIBUTIL=libutil.so
