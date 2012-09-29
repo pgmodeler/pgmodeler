@@ -8,11 +8,21 @@ int main(int argc, char **argv)
  {
   Aplicacao app(argc,argv);
   QTranslator tradutor;
+  QString ling_fallback="pgmodeler.en_US",
+          locale=QLocale::system().name();
 
   app.addLibraryPath(AtributosGlobais::DIR_PLUGINS);
 
-  //Carrega o arquivo de tradução da interface de acordo com o locale do sistema
-  tradutor.load(QString("pgmodeler.") + QLocale::system().name(), AtributosGlobais::DIR_LINGUAS);
+  /** issue#23 **/
+  //Caso o idioma do sistema seja Português do Brasil, o pgModeler assume sua lingua nativa.
+  if(!locale.contains("pt_BR"))
+  {
+   /* Caso o pgModeler não encontre um arquivo de tradução da lingua nativa do sistema o qual está
+      sendo executado será carregado o arquivo pgmodeler.en_US (lingua fallback) */
+   if(!tradutor.load(QString("pgmodeler.") + QLocale::system().name(), AtributosGlobais::DIR_LINGUAS))
+    //Carrega a lingua fallback
+    tradutor.load(ling_fallback, AtributosGlobais::DIR_LINGUAS);
+  }
 
   //Instala o tradutor na aplicação
   app.installTranslator(&tradutor);

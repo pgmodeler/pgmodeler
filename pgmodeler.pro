@@ -56,6 +56,6 @@ SUBDIRS = libutil \
           main \
           plugins/dummyplugin
 
-sources.files = models schemas lang conf README.md COMPILING.md PLUGINS.md LICENSE
+sources.files = models schemas lang conf README.md COMPILING.md PLUGINS.md LICENSE start-pgmodeler.sh start-pgmodeler.bat
 sources.path = .
 INSTALLS += sources
