@@ -1,27 +1,9 @@
 include(../pgmodeler.pro)
 
-CONFIG += qt warn_on uitools uic4
-QT = core gui qt3support
 TEMPLATE = lib
 TARGET = pgmodeler_ui
-
-DEPENDPATH = ". res src ui moc obj"
-MOC_DIR = moc
-OBJECTS_DIR = obj
-UI_DIR = src
 DESTDIR = ../build/lib
 RESOURCES += $$PWD/res/resources.qrc
-
-unix {
- QMAKE_POST_LINK+= "cp res/imagens/pgmodeler_logo_grande.png ../build/pgmodeler.png"
-}
-
-windows {
- DEST=..\\build
- QMAKE_POST_LINK+= "copy res\\imagens\\pgmodeler_logo_grande.png $$DEST\\pgmodeler.png"
-}
-
-QMAKE_DISTCLEAN+= "../build/pgmodeler.png"
 
 LIBS = $$DESTDIR/$$LIBUTIL \
        $$DESTDIR/$$LIBPARSERS \

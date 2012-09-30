@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>210</height>
+    <height>175</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,7 +22,7 @@
   <property name="minimumSize">
    <size>
     <width>500</width>
-    <height>210</height>
+    <height>175</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -39,98 +39,7 @@
    <property name="spacing">
     <number>4</number>
    </property>
-   <item row="0" column="0" rowspan="2">
-    <widget class="QWidget" name="imgmeio_wgt" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>60</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>60</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-image: url(:/imagens/imagens/barra_logo_meio_cinza.png); background-repeat: repeat-y;
-border: 1px #ff00ff solid;</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="margin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>60</width>
-          <height>82</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>60</width>
-          <height>82</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/imagens/imagens/barra_logo_topo.png</pixmap>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>15</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="minimumSize">
-         <size>
-          <width>60</width>
-          <height>119</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>60</width>
-          <height>119</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/imagens/imagens/barra_logo_base.png</pixmap>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="1">
+   <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -140,8 +49,8 @@ border: 1px #ff00ff solid;</string>
      </property>
      <property name="minimumSize">
       <size>
-       <width>432</width>
-       <height>168</height>
+       <width>0</width>
+       <height>0</height>
       </size>
      </property>
      <property name="frameShape">
@@ -217,7 +126,7 @@ border: 1px #ff00ff solid;</string>
         <property name="minimumSize">
          <size>
           <width>424</width>
-          <height>122</height>
+          <height>0</height>
          </size>
         </property>
         <property name="frameShape">
@@ -281,7 +190,7 @@ border: 1px #ff00ff solid;</string>
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>40</height>
+                <height>0</height>
                </size>
               </property>
               <property name="maximumSize">
@@ -315,7 +224,7 @@ border: 1px #ff00ff solid;</string>
                <bool>true</bool>
               </property>
               <property name="margin">
-               <number>1</number>
+               <number>4</number>
               </property>
               <property name="textInteractionFlags">
                <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -410,9 +319,9 @@ border: 1px #ff00ff solid;</string>
      </layout>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="1" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="0">
+     <item row="0" column="1">
       <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -425,7 +334,7 @@ border: 1px #ff00ff solid;</string>
        </property>
       </spacer>
      </item>
-     <item row="0" column="1">
+     <item row="0" column="2">
       <widget class="QWidget" name="container_wgt" native="true">
        <layout class="QGridLayout" name="gridLayout">
         <property name="margin">
@@ -501,6 +410,16 @@ border: 1px #ff00ff solid;</string>
          </widget>
         </item>
        </layout>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
+       </property>
       </widget>
      </item>
     </layout>

@@ -584,7 +584,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 <table name="tabela_B_3" oids="false">
 	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="462.222" y="1068.89"/>
+	<position x="463.222" y="1068.89"/>
 	<column name="њcoluna_Bњ">
 		<type name="serial"/>
 	</column>

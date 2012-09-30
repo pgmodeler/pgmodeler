@@ -58,7 +58,7 @@ static const QString
   DIR_PLUGINS=QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/");
 
 static const QString
-   VERSAO_PGMODELER="0.3.2",
+   VERSAO_PGMODELER="0.3.3",
 
    SEP_DIRETORIO="/",
    DIR_CONF_PADRAO="defaults", //Nome do diretório o qual guarda as configurações padrão do pgModeler

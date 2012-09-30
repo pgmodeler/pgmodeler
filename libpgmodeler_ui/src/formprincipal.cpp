@@ -133,7 +133,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  indice_wgt=new IndiceWidget(this);
  relacao_wgt=new RelacionamentoWidget(this);
  tabela_wgt=new TabelaWidget(this);
- prog_tarefa=new ProgressoTarefa(this);
+ prog_tarefa=new ProgressoTarefa();
  deps_refs_wgt=new ListaObjetosWidget(this);
 
  for(unsigned i=0; i < 27; i++)

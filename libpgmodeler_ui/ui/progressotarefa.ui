@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>ProgressoTarefa</class>
  <widget class="QDialog" name="ProgressoTarefa">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -28,9 +31,6 @@
   <property name="windowIcon">
    <iconset resource="../res/resources.qrc">
     <normaloff>:/icones/icones/pgsqlModeler48x48.png</normaloff>:/icones/icones/pgsqlModeler48x48.png</iconset>
-  </property>
-  <property name="modal">
-   <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <property name="margin">
@@ -81,7 +81,7 @@
          <enum>Qt::PlainText</enum>
         </property>
         <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_logo_grande.png</pixmap>
+         <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_logo.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>

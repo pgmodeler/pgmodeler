@@ -808,6 +808,7 @@ void ModeloWidget::carregarModelo(const QString &nome_arq)
   //Configura o widget de progresso para exibir o progresso de carregamento do modelo
   connect(modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
   prog_tarefa->setWindowTitle(trUtf8("Carregando modelo de banco de dados"));
+  prog_tarefa->show();
 
   //Carrega o arquivo
   modelo->carregarModelo(nome_arq);
@@ -1049,6 +1050,7 @@ void ModeloWidget::salvarModelo(const QString &nome_arq)
   //Configura o widget de progresso de tarefa para exibir o progresso do salvamento do arquivo
   connect(modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
   prog_tarefa->setWindowTitle(trUtf8("Salvando modelo de banco de dados"));
+  prog_tarefa->show();
 
   //Salva o modelo em arquivo
   modelo->salvarModelo(nome_arq, ParserEsquema::DEFINICAO_XML);
@@ -1590,7 +1592,7 @@ void ModeloWidget::colarObjetos(void)
 
  //Exibe o progresso de tarefas pois a operação de colagem
  prog_tarefa->setWindowTitle(trUtf8("Colando objetos..."));
- prog_tarefa->open();
+ prog_tarefa->show();
 
  itr=objs_copiados.begin();
  itr_end=objs_copiados.end();

@@ -45,98 +45,7 @@
    <property name="spacing">
     <number>4</number>
    </property>
-   <item row="0" column="0" rowspan="3">
-    <widget class="QWidget" name="imgmeio_wgt" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>60</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>60</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-image: url(:/imagens/imagens/barra_logo_meio_cinza.png); background-repeat: repeat-y;
-border: 1px #ff00ff solid;</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="margin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="minimumSize">
-         <size>
-          <width>60</width>
-          <height>81</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>60</width>
-          <height>81</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/imagens/imagens/barra_logo_topo.png</pixmap>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>103</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>60</width>
-          <height>119</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>60</width>
-          <height>119</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="../res/resources.qrc">:/imagens/imagens/barra_logo_base.png</pixmap>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="1">
+   <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="enabled">
       <bool>true</bool>
@@ -1199,7 +1108,7 @@ border: 1px #ff00ff solid;</string>
      </layout>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="1" column="0">
     <layout class="QGridLayout" name="botoes_lt">
      <property name="leftMargin">
       <number>4</number>
@@ -1210,7 +1119,7 @@ border: 1px #ff00ff solid;</string>
      <property name="spacing">
       <number>0</number>
      </property>
-     <item row="0" column="0">
+     <item row="0" column="1">
       <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -1223,7 +1132,7 @@ border: 1px #ff00ff solid;</string>
        </property>
       </spacer>
      </item>
-     <item row="0" column="1">
+     <item row="0" column="2">
       <widget class="QPushButton" name="exportar_btn">
        <property name="minimumSize">
         <size>
@@ -1249,7 +1158,7 @@ border: 1px #ff00ff solid;</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="2">
+     <item row="0" column="3">
       <widget class="QPushButton" name="fechar_btn">
        <property name="minimumSize">
         <size>
@@ -1272,6 +1181,16 @@ border: 1px #ff00ff solid;</string>
        </property>
        <property name="flat">
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../res/resources.qrc">:/imagens/imagens/pgmodeler_name.png</pixmap>
        </property>
       </widget>
      </item>

@@ -160,6 +160,7 @@ void ListaOperacoesWidget::desfazerOperacao(void)
   //Exibe o progresso de operações de desfazer
   connect(modelo_wgt->lista_op, SIGNAL(s_operacaoExecutada(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
   prog_tarefa->setWindowTitle(trUtf8("Desfazendo operações..."));
+  prog_tarefa->show();
 
   modelo_wgt->lista_op->desfazerOperacao();
 
@@ -186,6 +187,7 @@ void ListaOperacoesWidget::refazerOperacao(void)
   //Exibe o progresso de operações de refazer
   connect(modelo_wgt->lista_op, SIGNAL(s_operacaoExecutada(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
   prog_tarefa->setWindowTitle(trUtf8("Refazendo operações..."));
+  prog_tarefa->show();
 
   modelo_wgt->lista_op->refazerOperacao();
 

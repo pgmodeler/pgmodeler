@@ -117,6 +117,7 @@ void CodigoFonteWidget::gerarCodigoFonteObjeto(int)
    if(tipo_obj==OBJETO_BANCO_DADOS)
    {
     prog_tarefa->setWindowTitle(trUtf8("Gerando código-fonte..."));
+    prog_tarefa->show();
     connect(this->modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)),
             prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
    }

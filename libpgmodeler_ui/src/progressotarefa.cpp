@@ -14,9 +14,6 @@ void ProgressoTarefa::adicionarIcone(unsigned id, const QIcon &ico)
 //-----------------------------------------------------------
 void ProgressoTarefa::executarProgesso(int progresso, const QString &texto, unsigned id_icone)
 {
- if(!this->isVisible())
-  this->open();
-
  //Caso o progresso seja maior que o máximo da barra de progresso
  if(progresso > progresso_pb->maximum())
   //O progresso recebe o valor máximo da barra de progresso
@@ -41,6 +38,6 @@ void ProgressoTarefa::close(void)
  progresso_pb->setValue(0);
  texto_lbl->clear();
  icone_lbl->clear();
- QDialog::close();
+ QWidget::close();
 }
 //***********************************************************

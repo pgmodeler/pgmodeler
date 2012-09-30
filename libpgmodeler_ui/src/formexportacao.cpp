@@ -161,6 +161,7 @@ void FormExportacao::exportarModelo(void)
 
     //Configura o widget de progresso para capturar o progresso da geração do código
     prog_tarefa->setWindowTitle(trUtf8("Gerando código-fonte..."));
+    prog_tarefa->show();
     connect(this->modelo_wgt->modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)),
             prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
 

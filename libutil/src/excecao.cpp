@@ -181,7 +181,7 @@ QString Excecao::mensagens[QTD_ERROS][2]={
 {"ERR_CONEXBD_REFCOLTUPLAIDXINV", QObject::tr("Referência à uma coluna da tupla com índice inválido!")},
 {"ERR_CONEXBD_REFCOLTUPLANOMEINV", QObject::tr("Referência à uma coluna da tupla com nome inválido!")},
 {"ERR_CONEXBD_REFTUPLANAOEXISTE", QObject::tr("Referência à uma tupla com índice inválido ou o resultado está vazio (sem tuplas)!")},
-{"ERR_CONEXBD_CMDSQLNAOEXECUTADO", "Não foi possível executar o comando SQL.\n Mensagem retornada: %1"},
+{"ERR_CONEXBD_CMDSQLNAOEXECUTADO", QObject::tr("Não foi possível executar o comando SQL.\n Mensagem retornada: %1")},
 };
 //-----------------------------------------------------------
 Excecao::Excecao(void)
