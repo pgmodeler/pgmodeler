@@ -326,8 +326,7 @@ void CenaObjetos::removeItem(QGraphicsItem *item)
   QGraphicsScene::removeItem(item);
 
   //Desaloca o objeto (buggy!!!)
-  //if(objeto)
-   //delete(objeto);
+  //if(objeto) //delete(objeto);
  }
 }
 //-----------------------------------------------------------

@@ -1,15 +1,17 @@
-include(../pgmodeler.pro)
+contains(BUILDCONF, shared) {
+ include(../pgmodeler.pro)
+ TEMPLATE = lib
+ TARGET = pgmodeler_ui
+ DESTDIR = ../build/lib
+ LIBS = $$DESTDIR/$$LIBUTIL \
+        $$DESTDIR/$$LIBPARSERS \
+        $$DESTDIR/$$LIBCONEXBD \
+        $$DESTDIR/$$LIBOBJRENDERER \
+        $$DESTDIR/$$LIBPGMODELER
+}
 
-TEMPLATE = lib
-TARGET = pgmodeler_ui
-DESTDIR = ../build/lib
 RESOURCES += $$PWD/res/resources.qrc
-
-LIBS = $$DESTDIR/$$LIBUTIL \
-       $$DESTDIR/$$LIBPARSERS \
-       $$DESTDIR/$$LIBCONEXBD \
-       $$DESTDIR/$$LIBOBJRENDERER \
-       $$DESTDIR/$$LIBPGMODELER
+windows:RCC_DIR += $$PWD/src
 
 SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/modelowidget.cpp \

@@ -2067,7 +2067,12 @@ void ModeloWidget::excluirObjetos(void)
 
     cena->clearSelection();
     emit s_objetoRemovido();
-    throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+
+    /** issue #24**/
+    /* Aparentemente redirencionando a exceção neste ponto é provocado um segmentation fault sem causa conhecida.
+       Uma solução alternativa é chamar a caixa de mensagem exibindo a exceção capturada. */
+    //throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+    caixa_msg->show(e);
    }
   }
  }

@@ -1,11 +1,11 @@
-include(../pgmodeler.pro)
-
-TEMPLATE = lib
-TARGET = pgmodeler
-DESTDIR = ../build/lib
-
-LIBS += $$DESTDIR/$$LIBUTIL \
-        $$DESTDIR/$$LIBPARSERS
+contains(BUILDCONF, shared) {
+ include(../pgmodeler.pro)
+ TEMPLATE = lib
+ TARGET = pgmodeler
+ DESTDIR = ../build/lib
+ LIBS += $$DESTDIR/$$LIBUTIL \
+         $$DESTDIR/$$LIBPARSERS
+}
 
 HEADERS += $$PWD/src/caixatexto.h \
            $$PWD/src/conversaotipo.h \

@@ -1,11 +1,11 @@
-include(../pgmodeler.pro)
-
-TEMPLATE = lib
-TARGET = conexbd
-DESTDIR = ../build/lib
-OBJECTS_DIR = obj
-
-LIBS += $$DESTDIR/$$LIBUTIL
+contains(BUILDCONF, shared) {
+ include(../pgmodeler.pro)
+ TEMPLATE = lib
+ TARGET = conexbd
+ DESTDIR = ../build/lib
+ OBJECTS_DIR = obj
+ LIBS += $$DESTDIR/$$LIBUTIL
+}
 
 HEADERS += $$PWD/src/conexaobd.h \
            $$PWD/src/resultado.h
