@@ -100,40 +100,40 @@ void ListaOperacoesWidget::atualizarListaOperacoes(void)
 
    operacoes_tw->insertTopLevelItem(i,item);
    item->setFont(0,fonte);
-   item->setText(0,trUtf8("Objeto: %1").arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj)));
+   item->setText(0,trUtf8("Object: %1").arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj)));
 
    //Aloca um item da lista como o nome do objeto com seu ícone respectivo
    item2=new QTreeWidgetItem(item);
    item2->setIcon(0,QPixmap(QString(":/icones/icones/uid.png")));
    item2->setFont(0,fonte);
-   item2->setText(0,QString::fromUtf8(trUtf8("Nome: %1").arg(nome_obj)));
+   item2->setText(0,QString::fromUtf8(trUtf8("Name: %1").arg(nome_obj)));
 
    //Identifica o tipo da operação executada
    if(tipo_op==Operacao::OBJETO_CRIADO)
    {
     icone_op="criado";
-    nome_op=trUtf8("criado");
+    nome_op=trUtf8("criated");
    }
    else if(tipo_op==Operacao::OBJETO_REMOVIDO)
    {
     icone_op="removido";
-    nome_op=trUtf8("removido");
+    nome_op=trUtf8("removed");
    }
    else if(tipo_op==Operacao::OBJETO_MODIFICADO)
    {
     icone_op="modificado";
-    nome_op=trUtf8("modificado");
+    nome_op=trUtf8("modified");
    }
    else if(tipo_op==Operacao::OBJETO_MOVIMENTADO)
    {
     icone_op="movimentado";
-    nome_op=trUtf8("movimentado");
+    nome_op=trUtf8("moved");
    }
    //Aloca um item da lista como sendo o tipo da operação objeto com seu ícone respectivo
    item1=new QTreeWidgetItem(item);
    item1->setIcon(0,QPixmap(QString(":/icones/icones/") + icone_op + QString(".png")));
    item1->setFont(0,fonte);
-   item1->setText(0,trUtf8("Operação: %1").arg(nome_op));
+   item1->setText(0,trUtf8("Operation: %1").arg(nome_op));
 
    //Expande o novo item para exibir todos os seus filhos
    operacoes_tw->expandItem(item);
@@ -159,7 +159,7 @@ void ListaOperacoesWidget::desfazerOperacao(void)
  {
   //Exibe o progresso de operações de desfazer
   connect(modelo_wgt->lista_op, SIGNAL(s_operacaoExecutada(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
-  prog_tarefa->setWindowTitle(trUtf8("Desfazendo operações..."));
+  prog_tarefa->setWindowTitle(trUtf8("Undoing operations..."));
   prog_tarefa->show();
 
   modelo_wgt->lista_op->desfazerOperacao();
@@ -186,7 +186,7 @@ void ListaOperacoesWidget::refazerOperacao(void)
  {
   //Exibe o progresso de operações de refazer
   connect(modelo_wgt->lista_op, SIGNAL(s_operacaoExecutada(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
-  prog_tarefa->setWindowTitle(trUtf8("Refazendo operações..."));
+  prog_tarefa->setWindowTitle(trUtf8("Redoing operations..."));
   prog_tarefa->show();
 
   modelo_wgt->lista_op->refazerOperacao();
@@ -210,8 +210,8 @@ void ListaOperacoesWidget::refazerOperacao(void)
 void ListaOperacoesWidget::excluirOperacoes(void)
 {
  //Exibe a mensagem de confirmação ao usuário
- caixa_msg->show(trUtf8("Exclusão de histórico de operações"),
-                 trUtf8("Excluir o histórico de operações executadas é uma ação irreversível, deseja realmente prosseguir?"),
+ caixa_msg->show(trUtf8("Operation history exclusion"),
+                 trUtf8("Delete the executed operations history is an irreversible action, do you want to continue?"),
                  CaixaMensagem::ICONE_CONFIRM,
                  CaixaMensagem::BOTAO_SIM_NAO);
 

@@ -33,22 +33,22 @@ PapelWidget::PapelWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_PAPEL
   */
   tab_obj->definirNumColunas(6);
 
-  tab_obj->definirRotuloCabecalho(trUtf8("Papel"),0);
+  tab_obj->definirRotuloCabecalho(trUtf8("Role"),0);
   tab_obj->definirIconeCabecalho(QPixmap(":/icones/icones/role.png"),0);
 
   tab_obj->definirRotuloCabecalho(trUtf8("SysID"),1);
   tab_obj->definirIconeCabecalho(QPixmap(":/icones/icones/uid.png"),1);
 
-  tab_obj->definirRotuloCabecalho(trUtf8("Validade"),2);
+  tab_obj->definirRotuloCabecalho(trUtf8("Validity"),2);
   tab_obj->definirIconeCabecalho(QPixmap(":/icones/icones/validade.png"),2);
 
-  tab_obj->definirRotuloCabecalho(trUtf8("Membro de"),3);
+  tab_obj->definirRotuloCabecalho(trUtf8("Member of"),3);
   tab_obj->definirIconeCabecalho(QPixmap(":/icones/icones/role.png"),3);
 
-  tab_obj->definirRotuloCabecalho(trUtf8("Membros"),4);
+  tab_obj->definirRotuloCabecalho(trUtf8("Members"),4);
   tab_obj->definirIconeCabecalho(QPixmap(":/icones/icones/role.png"),4);
 
-  tab_obj->definirRotuloCabecalho(trUtf8("Membros (Admin.)"),5);
+  tab_obj->definirRotuloCabecalho(trUtf8("Members (Admin.)"),5);
   tab_obj->definirIconeCabecalho(QPixmap(":/icones/icones/role.png"),5);
 
   /* Cria um layout em grade adiciona a tabela alocada e a

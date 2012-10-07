@@ -27,9 +27,9 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_FUN
   tab_retorno=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
                                      TabelaObjetosWidget::BTN_ATUALIZAR_ITEM, true, this);
   tab_retorno->definirNumColunas(2);
-  tab_retorno->definirRotuloCabecalho(trUtf8("Coluna"), 0);
+  tab_retorno->definirRotuloCabecalho(trUtf8("Column"), 0);
   tab_retorno->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-  tab_retorno->definirRotuloCabecalho(trUtf8("Tipo"), 1);
+  tab_retorno->definirRotuloCabecalho(trUtf8("Type"), 1);
   tab_retorno->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
 
    /* Aloca a tabela que armazena os parâmetros da função.
@@ -39,12 +39,12 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_FUN
   tab_parametros=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
                                         TabelaObjetosWidget::BTN_ATUALIZAR_ITEM, true, this);
   tab_parametros->definirNumColunas(4);
-  tab_parametros->definirRotuloCabecalho(trUtf8("Nome"),0);
+  tab_parametros->definirRotuloCabecalho(trUtf8("Name"),0);
   tab_parametros->definirIconeCabecalho(QPixmap(":/icones/icones/parameter.png"),0);
-  tab_parametros->definirRotuloCabecalho(trUtf8("Tipo"),1);
+  tab_parametros->definirRotuloCabecalho(trUtf8("Type"),1);
   tab_parametros->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
   tab_parametros->definirRotuloCabecalho(trUtf8("IN/OUT"),2);
-  tab_parametros->definirRotuloCabecalho(trUtf8("Valor Padrão"),3);
+  tab_parametros->definirRotuloCabecalho(trUtf8("Default Value"),3);
 
   grid=new QGridLayout;
   grid->addWidget(tab_parametros,0,0,1,1);

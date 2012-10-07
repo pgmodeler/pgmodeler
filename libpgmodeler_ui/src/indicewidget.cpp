@@ -29,14 +29,14 @@ IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_IND
   sel_classe_op=new SeletorObjetoWidget(OBJETO_CLASSE_OPER, true, this);
 
   tab_elementos->definirNumColunas(5);
-  tab_elementos->definirRotuloCabecalho(trUtf8("Elemento"), 0);
+  tab_elementos->definirRotuloCabecalho(trUtf8("Element"), 0);
   tab_elementos->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-  tab_elementos->definirRotuloCabecalho(trUtf8("Tipo"), 1);
+  tab_elementos->definirRotuloCabecalho(trUtf8("Type"), 1);
   tab_elementos->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
-  tab_elementos->definirRotuloCabecalho(trUtf8("Classe Operadores"), 2);
+  tab_elementos->definirRotuloCabecalho(trUtf8("Operator Class"), 2);
   tab_elementos->definirIconeCabecalho(QPixmap(":/icones/icones/opclass.png"),2);
-  tab_elementos->definirRotuloCabecalho(trUtf8("Ordenação"), 3);
-  tab_elementos->definirRotuloCabecalho(trUtf8("Nulos Primeiro"), 4);
+  tab_elementos->definirRotuloCabecalho(trUtf8("Sorting"), 3);
+  tab_elementos->definirRotuloCabecalho(trUtf8("Nulls First"), 4);
 
   grid=dynamic_cast<QGridLayout *>(elementos_grp->layout());
   grid->addWidget(sel_classe_op, 2,1,1,3);

@@ -50,7 +50,7 @@ void CaixaTextoWidget::selecionarCorTexto(void)
  QColorDialog cor_dlg;
  QPalette palette;
 
- cor_dlg.setWindowTitle(trUtf8("Selecionar cor de texto"));
+ cor_dlg.setWindowTitle(trUtf8("Select text color"));
  cor_dlg.exec();
 
  if(cor_dlg.result()==QDialog::Accepted)

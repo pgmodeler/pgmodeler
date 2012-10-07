@@ -402,7 +402,7 @@ void TabelaObjetosWidget::removerLinha(void)
   if(item->isSelected())
   {
    if(conf_exclusoes)
-    caixa_msg->show(trUtf8("Confirmação"),trUtf8("Tem certeza de que deseja remover o item selecionado?"),
+    caixa_msg->show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the selected item?"),
                     CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
 
    if(!conf_exclusoes || (conf_exclusoes && caixa_msg->result()==QDialog::Accepted))
@@ -433,7 +433,7 @@ void TabelaObjetosWidget::removerLinhas(void)
      independente da confirmação estar configurada ou não. Isto é util no caso de uma limpeza
      da tabela para reuso. */
   if(conf_exclusoes && obj_sender==remover_todas_tb)
-   caixa_msg->show(trUtf8("Confirmação"),trUtf8("Tem certeza de que deseja remover todos os itens?"),
+   caixa_msg->show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the all items?"),
                    CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
 
   if(!conf_exclusoes || (conf_exclusoes && obj_sender!=remover_todas_tb) ||

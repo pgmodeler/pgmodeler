@@ -160,12 +160,12 @@ void FormExportacao::exportarModelo(void)
      vet_cod_erros.push_back(cod_erros[i]);
 
     //Configura o widget de progresso para capturar o progresso da geração do código
-    prog_tarefa->setWindowTitle(trUtf8("Gerando código-fonte..."));
+    prog_tarefa->setWindowTitle(trUtf8("Generating source code..."));
     prog_tarefa->show();
     connect(this->modelo_wgt->modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)),
             prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
 
-    rot_prog_lbl->setText(trUtf8("Iniciando exportação do modelo..."));
+    rot_prog_lbl->setText(trUtf8("Initializing model export..."));
     rot_prog_lbl->repaint();
 
     //Caso seja exportação em arquivo
@@ -174,7 +174,7 @@ void FormExportacao::exportarModelo(void)
      //Define a versão do postgresql a ser adotada
      ParserEsquema::definirVersaoPgSQL(pgsqlvers_cmb->currentText());
 
-     rot_prog_lbl->setText(trUtf8("Salvando arquivo '%1'").arg(arquivo_edt->text()));
+     rot_prog_lbl->setText(trUtf8("Saving file '%1'").arg(arquivo_edt->text()));
 
      //Salva o modelo em arquivo
      modelo_wgt->modelo->salvarModelo(arquivo_edt->text(), ParserEsquema::DEFINICAO_SQL);
@@ -205,7 +205,7 @@ void FormExportacao::exportarModelo(void)
       for(i=0; i < qtd; i++)
       {
        objeto=modelo_wgt->modelo->obterObjeto(i, vet_tipos[id_tipo]);
-       rot_prog_lbl->setText(trUtf8("Criando objeto '%1' (%2)...").arg(QString::fromUtf8(objeto->obterNome())).arg(objeto->obterNomeTipoObjeto()));
+       rot_prog_lbl->setText(trUtf8("Creating object '%1' (%2)...").arg(QString::fromUtf8(objeto->obterNome())).arg(objeto->obterNomeTipoObjeto()));
        rot_prog_lbl->repaint();
 
        try
@@ -232,7 +232,7 @@ void FormExportacao::exportarModelo(void)
      }
 
      //Cria o banco de dados no servidor
-     rot_prog_lbl->setText(trUtf8("Criando banco de dados '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->obterNome())));
+     rot_prog_lbl->setText(trUtf8("Creating database '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->obterNome())));
      rot_prog_lbl->repaint();
 
      try
@@ -258,13 +258,13 @@ void FormExportacao::exportarModelo(void)
 
      conex_novo_bd=(*conexao);
      conex_novo_bd.definirParamConexao(ConexaoBD::PARAM_NOME_BD, modelo_wgt->modelo->obterNome());
-     rot_prog_lbl->setText(trUtf8("Conectando ao banco de dados '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->obterNome())));
+     rot_prog_lbl->setText(trUtf8("Connecting to database '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->obterNome())));
      rot_prog_lbl->repaint();
      conex_novo_bd.conectar();
      prog_pb->setValue(50);
 
      //Cria os demais objetos no novo banco
-     rot_prog_lbl->setText(trUtf8("Criando objetos No banco de dados '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->obterNome())));
+     rot_prog_lbl->setText(trUtf8("Creating objects on database '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->obterNome())));
      rot_prog_lbl->repaint();
 
      //Gera o código SQL de todo o banco
@@ -377,7 +377,7 @@ void FormExportacao::exportarModelo(void)
 
   //Finaliza o progresso da exportação
   prog_pb->setValue(100);
-  rot_prog_lbl->setText(trUtf8("Exportação finalizada com sucesso!"));
+  rot_prog_lbl->setText(trUtf8("Exporting process sucessfuly ended!"));
   rot_prog_lbl->repaint();
   ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_info.png")));
   ico_lbl->setVisible(true);
@@ -388,7 +388,7 @@ void FormExportacao::exportarModelo(void)
  catch(Excecao &e)
  {
   //Exibe no progresso a mensagem de falha
-  rot_prog_lbl->setText(trUtf8("Falha na exportação!"));
+  rot_prog_lbl->setText(trUtf8("Error on export!"));
   rot_prog_lbl->repaint();
   ico_lbl->setPixmap(QPixmap(QString(":/icones/icones/msgbox_erro.png")));
   ico_lbl->setVisible(true);
@@ -451,12 +451,12 @@ void FormExportacao::selecionarArquivoDestino(void)
 {
  QFileDialog arquivo_dlg;
 
- arquivo_dlg.setWindowTitle(trUtf8("Exportar modelo como..."));
+ arquivo_dlg.setWindowTitle(trUtf8("Export model as..."));
 
  if(exportacao_arq_rb->isChecked())
-  arquivo_dlg.setFilter(trUtf8("Código SQL (*.sql);;Todos os Arquivos (*.*)"));
+  arquivo_dlg.setFilter(trUtf8("SQL code (*.sql);;All files (*.*)"));
  else
-  arquivo_dlg.setFilter(trUtf8("Imagem PNG (*.png);;Todos os Arquivos (*.*)"));
+  arquivo_dlg.setFilter(trUtf8("PNG image (*.png);;All files (*.*)"));
 
  arquivo_dlg.setFileMode(QFileDialog::AnyFile);
  arquivo_dlg.setAcceptMode(QFileDialog::AcceptSave);

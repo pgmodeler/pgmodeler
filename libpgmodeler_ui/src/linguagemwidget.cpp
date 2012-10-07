@@ -25,10 +25,7 @@ LinguagemWidget::LinguagemWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   configurarLayouFormulario(linguagem_grid, OBJETO_LINGUAGEM);
 
   //Gera o frame de informação
-  frame=gerarFrameInformacao(trUtf8("As funções a serem atribuídas à linguagem devem possuir, respectivamente, as seguintes assinaturas:<br/><br/>\
-  <strong>Função Handler:</strong> <em>language_handler funcao()</em><br/>\
-  <strong>Função Validator:</strong> <em>void funcao(oid)</em><br/>\
-  <strong>Função Inline:</strong> <em>void funcao(internal)</em>"));
+  frame=gerarFrameInformacao(trUtf8("The functions to be assigned to the language should have, respectively, the following signatures:<br/><br/>  <strong>Handler Function:</strong> <em>language_handler function()</em><br/>  <strong>Validator Function:</strong> <em>void function(oid)</em><br/>  <strong>Inline Function:</strong> <em>void function(internal)</em>"));
   linguagem_grid->addWidget(frame, linguagem_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 

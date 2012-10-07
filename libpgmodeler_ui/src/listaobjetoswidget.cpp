@@ -6,7 +6,7 @@ ListaObjetosWidget::ListaObjetosWidget(QWidget *parent): ObjetoBaseWidget(parent
  configurarLayouFormulario(listaobjetos_grid, OBJETO_BASE);
 
  //Define os atributos do formulários e da janela pai
- janela_pai->setWindowTitle(trUtf8("Dependências / Referências do Objeto"));
+ janela_pai->setWindowTitle(trUtf8("Dependeces / References of Object"));
  janela_pai->definirBotoes(CaixaMensagem::BOTAO_OK);
  janela_pai->setMinimumSize(550, 300);
 

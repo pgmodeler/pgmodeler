@@ -37,9 +37,7 @@ VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_VISAO
   tab_referencias->definirRotuloCabecalho(trUtf8("SF FW AW"),3);
 
   //Gera o frame de informação sobre a referência a todas as colunas da tabela
-  frame_info=gerarFrameInformacao(trUtf8("Para se referenciar todas as colunas de uma tabela (*) basta não preencher\
-                                     o campo <strong>Coluna</strong>, isso é equivalente a se \
-                                     escrever <em><strong>[esquema].[tabela].*</strong></em>"));
+  frame_info=gerarFrameInformacao(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[tablel].*</strong></em>"));
 
   //grid=dynamic_cast<QGridLayout *>(referencias_gb->layout());
   referencias_grid->addWidget(sel_tabela, 2,1,1,2);
@@ -375,7 +373,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
  {
   /* Caso algum erro seja disparado durante a configuração da visão auxiliar
      exibe uma mensagem ao usuário no próprio campo de código fonte */
-  codigo_txt->setPlainText(trUtf8("-- Impossível gerar código. Verifique se todos os atributos foram preenchidos corretamente! --"));
+  codigo_txt->setPlainText(trUtf8("-- Could not generate the code. Make sure all attributes are correctly filled! --"));
  }
 }
 //----------------------------------------------------------

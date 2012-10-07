@@ -50,40 +50,40 @@ TabelaWidget::TabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TAB
 
  //Configura as colunas e rótulos das tabelas de objetos
  mapa_tab_objetos[OBJETO_COLUNA]->definirNumColunas(4);
- mapa_tab_objetos[OBJETO_COLUNA]->definirRotuloCabecalho(trUtf8("Nome"), 0);
+ mapa_tab_objetos[OBJETO_COLUNA]->definirRotuloCabecalho(trUtf8("Name"), 0);
  mapa_tab_objetos[OBJETO_COLUNA]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
- mapa_tab_objetos[OBJETO_COLUNA]->definirRotuloCabecalho(trUtf8("Tipo"), 1);
+ mapa_tab_objetos[OBJETO_COLUNA]->definirRotuloCabecalho(trUtf8("Type"), 1);
  mapa_tab_objetos[OBJETO_COLUNA]->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
- mapa_tab_objetos[OBJETO_COLUNA]->definirRotuloCabecalho(trUtf8("Valor Padrão"), 2);
- mapa_tab_objetos[OBJETO_COLUNA]->definirRotuloCabecalho(trUtf8("Atributos"), 3);
+ mapa_tab_objetos[OBJETO_COLUNA]->definirRotuloCabecalho(trUtf8("Default Value"), 2);
+ mapa_tab_objetos[OBJETO_COLUNA]->definirRotuloCabecalho(trUtf8("Attribute"), 3);
 
  mapa_tab_objetos[OBJETO_RESTRICAO]->definirNumColunas(4);
- mapa_tab_objetos[OBJETO_RESTRICAO]->definirRotuloCabecalho(trUtf8("Nome"), 0);
+ mapa_tab_objetos[OBJETO_RESTRICAO]->definirRotuloCabecalho(trUtf8("Name"), 0);
  mapa_tab_objetos[OBJETO_RESTRICAO]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
- mapa_tab_objetos[OBJETO_RESTRICAO]->definirRotuloCabecalho(trUtf8("Tipo"), 1);
+ mapa_tab_objetos[OBJETO_RESTRICAO]->definirRotuloCabecalho(trUtf8("Type"), 1);
  mapa_tab_objetos[OBJETO_RESTRICAO]->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
  mapa_tab_objetos[OBJETO_RESTRICAO]->definirRotuloCabecalho(trUtf8("ON DELETE"), 2);
  mapa_tab_objetos[OBJETO_RESTRICAO]->definirRotuloCabecalho(trUtf8("ON UPDATE"), 3);
 
  mapa_tab_objetos[OBJETO_GATILHO]->definirNumColunas(4);
- mapa_tab_objetos[OBJETO_GATILHO]->definirRotuloCabecalho(trUtf8("Nome"), 0);
+ mapa_tab_objetos[OBJETO_GATILHO]->definirRotuloCabecalho(trUtf8("Name"), 0);
  mapa_tab_objetos[OBJETO_GATILHO]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
- mapa_tab_objetos[OBJETO_GATILHO]->definirRotuloCabecalho(trUtf8("Tab. Refer."), 1);
+ mapa_tab_objetos[OBJETO_GATILHO]->definirRotuloCabecalho(trUtf8("Refer. Table"), 1);
  mapa_tab_objetos[OBJETO_GATILHO]->definirIconeCabecalho(QPixmap(":/icones/icones/table.png"),1);
- mapa_tab_objetos[OBJETO_GATILHO]->definirRotuloCabecalho(trUtf8("Disparo"), 2);
+ mapa_tab_objetos[OBJETO_GATILHO]->definirRotuloCabecalho(trUtf8("Firing"), 2);
  mapa_tab_objetos[OBJETO_GATILHO]->definirIconeCabecalho(QPixmap(":/icones/icones/trigger.png"),2);
- mapa_tab_objetos[OBJETO_GATILHO]->definirRotuloCabecalho(trUtf8("Eventos"), 3);
+ mapa_tab_objetos[OBJETO_GATILHO]->definirRotuloCabecalho(trUtf8("Events"), 3);
 
  mapa_tab_objetos[OBJETO_REGRA]->definirNumColunas(3);
- mapa_tab_objetos[OBJETO_REGRA]->definirRotuloCabecalho(trUtf8("Nome"), 0);
+ mapa_tab_objetos[OBJETO_REGRA]->definirRotuloCabecalho(trUtf8("Name"), 0);
  mapa_tab_objetos[OBJETO_REGRA]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
- mapa_tab_objetos[OBJETO_REGRA]->definirRotuloCabecalho(trUtf8("Execução"), 1);
- mapa_tab_objetos[OBJETO_REGRA]->definirRotuloCabecalho(trUtf8("Evento"), 2);
+ mapa_tab_objetos[OBJETO_REGRA]->definirRotuloCabecalho(trUtf8("Execution"), 1);
+ mapa_tab_objetos[OBJETO_REGRA]->definirRotuloCabecalho(trUtf8("Event"), 2);
 
  mapa_tab_objetos[OBJETO_INDICE]->definirNumColunas(2);
- mapa_tab_objetos[OBJETO_INDICE]->definirRotuloCabecalho(trUtf8("Nome"), 0);
+ mapa_tab_objetos[OBJETO_INDICE]->definirRotuloCabecalho(trUtf8("Name"), 0);
  mapa_tab_objetos[OBJETO_INDICE]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
- mapa_tab_objetos[OBJETO_INDICE]->definirRotuloCabecalho(trUtf8("Indexação"), 1);
+ mapa_tab_objetos[OBJETO_INDICE]->definirRotuloCabecalho(trUtf8("Indexing"), 1);
 
  configurarLayouFormulario(tabela_grid, OBJETO_TABELA);
  janela_pai->setMinimumSize(550, 500);
@@ -218,7 +218,7 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
  {
   QString nome;
 
-  nome=trUtf8("nova_tabela");
+  nome=trUtf8("new_table");
   //Aloca o novo relacionamento
   tabela=new Tabela;
   tabela->definirNome(nome);

@@ -20,20 +20,20 @@ ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidge
   sel_operador=new SeletorObjetoWidget(OBJETO_OPERADOR, true, this);
   sel_funcao=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
   tipo_dado=new TipoPgSQLWidget(this);
-  tipo_armazenamento=new TipoPgSQLWidget(this, trUtf8("Tipo de Armazenamento"));
+  tipo_armazenamento=new TipoPgSQLWidget(this, trUtf8("Storage Type"));
   tab_elementos=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
 
   /* A tabela de elementos é constituída de 4 colunas:
      Nome do objeto, tipo, nº de suporte/estratégia e rechecagem. */
   tab_elementos->definirNumColunas(4);
-  tab_elementos->definirRotuloCabecalho(trUtf8("Objeto"),0);
+  tab_elementos->definirRotuloCabecalho(trUtf8("Object"),0);
   tab_elementos->definirIconeCabecalho(QPixmap(":/icones/icones/table.png"),0);
 
-  tab_elementos->definirRotuloCabecalho(trUtf8("Tipo"),1);
+  tab_elementos->definirRotuloCabecalho(trUtf8("Type"),1);
   tab_elementos->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
 
-  tab_elementos->definirRotuloCabecalho(trUtf8("Suporte/Estratégia"),2);
-  tab_elementos->definirRotuloCabecalho(trUtf8("Rechecar"),3);
+  tab_elementos->definirRotuloCabecalho(trUtf8("Support/Strategy"),2);
+  tab_elementos->definirRotuloCabecalho(trUtf8("Recheck"),3);
 
   //Configurando a disposição dos campos no layout
   grid=new QGridLayout;
@@ -173,9 +173,9 @@ void ClasseOperadoresWidget::exibirDadosElemento(ElemClasseOperadores elem, int 
  if(tipo_elem==ElemClasseOperadores::ELEM_OPERADOR)
  {
   if(elem.rechecarElemento())
-   tab_elementos->definirTextoCelula(trUtf8("Sim"), idx_linha, 3);
+   tab_elementos->definirTextoCelula(trUtf8("Yes"), idx_linha, 3);
   else
-   tab_elementos->definirTextoCelula(trUtf8("Não"), idx_linha, 3);
+   tab_elementos->definirTextoCelula(trUtf8("No"), idx_linha, 3);
  }
  /* Para os tipos FUNÇÃO e ARMAZENAMENTO este campo não é preenchido
     pois não aplica esta categorias de elementos */

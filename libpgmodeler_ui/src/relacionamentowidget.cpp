@@ -43,15 +43,15 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
 
   //Configurando os rótulos e ícones das colunas das tabelas
   tab_atributos->definirNumColunas(2);
-  tab_atributos->definirRotuloCabecalho(trUtf8("Atributo"), 0);
+  tab_atributos->definirRotuloCabecalho(trUtf8("Attribute"), 0);
   tab_atributos->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-  tab_atributos->definirRotuloCabecalho(trUtf8("Tipo"), 1);
+  tab_atributos->definirRotuloCabecalho(trUtf8("Type"), 1);
   tab_atributos->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
 
   tab_restricoes->definirNumColunas(2);
-  tab_restricoes->definirRotuloCabecalho(trUtf8("Restrição"), 0);
+  tab_restricoes->definirRotuloCabecalho(trUtf8("Constraint"), 0);
   tab_restricoes->definirIconeCabecalho(QPixmap(":/icones/icones/constraint.png"),0);
-  tab_restricoes->definirRotuloCabecalho(trUtf8("Tipo"), 1);
+  tab_restricoes->definirRotuloCabecalho(trUtf8("Type"), 1);
   tab_restricoes->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
 
   //Adiciona as tabelas alocadas às respectivas abas
@@ -67,17 +67,13 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
 
   grid=dynamic_cast<QGridLayout *>(atributosrel_tbw->widget(0)->layout());
   //Gera um frame de alerta sobre a edição de atributos do relacionamento
-  frame=gerarFrameInformacao(trUtf8("A edição de atributos de um relacionamento já existente é permitida, porém, deve ser\
-  feita com atenção pois pode quebrar referências à colunas e causar a invalidez de objetos como gatilhos,\
-  índices, restrições e sequências."));
+  frame=gerarFrameInformacao(trUtf8("Editing attributes of an existing relationship is allowed, but must be done carefully because it may break references to columns and cause invalidation of objects such as triggers, indexes, constraints and sequences."));
   grid->addWidget(frame, grid->count()+1, 0, 1, 3);
   frame->setParent(atributosrel_tbw->widget(0));
 
   grid=dynamic_cast<QGridLayout *>(atributosrel_tbw->widget(3)->layout());
   //Gera um frame de informação sobre a criação de chave primária especial
-  frame=gerarFrameInformacao(trUtf8("Utilize o recurso de chave-primária especial caso queira incluir uma chave-primária contendo\
-  as colunas heradas/copiadas na tabela receptora. Este é um recurso disponível apenas para relacionamentos\
-  de generalização/dependência."));
+  frame=gerarFrameInformacao(trUtf8("Use the special primary key if you want to include a primary key containing inherited / copied columns to the receiving table. This is a feature available only for generalization / dependency relationships."));
 
   grid->addWidget(frame, 1, 0, 1, 1);
   frame->setParent(atributosrel_tbw->widget(3));

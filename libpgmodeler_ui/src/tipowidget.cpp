@@ -19,9 +19,9 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TIPO)
 
   //Aloca os widgets de configuração de tipos
   tipo_copia=NULL;
-  tipo_copia=new TipoPgSQLWidget(this, trUtf8("Tipo Cópia"));
+  tipo_copia=new TipoPgSQLWidget(this, trUtf8("Copy Type"));
   tipo_elemento=NULL;
-  tipo_elemento=new TipoPgSQLWidget(this, trUtf8("Tipo Elemento"));
+  tipo_elemento=new TipoPgSQLWidget(this, trUtf8("Element Type"));
 
   //Cria um layout e insere os widgets de tipo
   grid=dynamic_cast<QGridLayout *>(atrib_base_twg->widget(0)->layout());
@@ -50,9 +50,9 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TIPO)
   tab_atributos=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
                                        TabelaObjetosWidget::BTN_ATUALIZAR_ITEM, false, this);
   tab_atributos->definirNumColunas(2);
-  tab_atributos->definirRotuloCabecalho(trUtf8("Nome"),0);
+  tab_atributos->definirRotuloCabecalho(trUtf8("Name"),0);
   tab_atributos->definirIconeCabecalho(QPixmap(":/icones/icones/uid.png"),0);
-  tab_atributos->definirRotuloCabecalho(trUtf8("Tipo"),1);
+  tab_atributos->definirRotuloCabecalho(trUtf8("Type"),1);
   tab_atributos->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
 
   grid=new QGridLayout;
@@ -72,24 +72,7 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TIPO)
 
   //Gera o frame de informação
   grid=dynamic_cast<QGridLayout *>(atrib_base_twg->widget(1)->layout());
-  frame=gerarFrameInformacao(trUtf8("As funções a serem atribuídas ao tipo devem ser todas escritas em linguagem C e possuirem, respectivamente, as seguintes assinaturas:<br/>\
-  <table>\
-   <tr>\
-    <td><strong>INPUT:</strong> <em>any funcao(cstring, oid, integer)</em></td>\
-    <td><strong>OUTPUT:</strong> <em>cstring funcao(any)</em></td>\
-   </tr>\
-   <tr>\
-    <td><strong>SEND:</strong> <em>byta funcao(any)</em></td>\
-    <td><strong>RECV:</strong> <em>any funcao(internal, oid, integer)</em></td>\
-   </tr>\
-   <tr>\
-    <td><strong>TPMOD_IN:</strong> <em>integer funcao(cstring[])</em></td>\
-    <td><strong>TPMOD_OUT:</strong> <em>cstring funcao(integer)</em></td>\
-   </tr>\
-   <tr>\
-    <td><strong>ANALYZE:</strong> <em>boolean funcao(internal)</em></td> \
-   <tr>\
-  </table>"));
+  frame=gerarFrameInformacao(trUtf8("The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:<br/>  <table>   <tr>    <td><strong>INPUT:</strong> <em>any function(cstring, oid, integer)</em></td>    <td><strong>OUTPUT:</strong> <em>cstring function(any)</em></td>   </tr>   <tr>    <td><strong>SEND:</strong> <em>byta function(any)</em></td>    <td><strong>RECV:</strong> <em>any function(internal, oid, integer)</em></td>   </tr>   <tr>    <td><strong>TPMOD_IN:</strong> <em>integer function(cstring[])</em></td>    <td><strong>TPMOD_OUT:</strong> <em>cstring function(integer)</em></td>   </tr>   <tr>    <td><strong>ANALYZE:</strong> <em>boolean function(internal)</em></td>    <tr>  </table>"));
   grid->addWidget(frame, grid->count()+1, 0, 1, 0);
   frame->setParent(atrib_base_twg->widget(1));
 

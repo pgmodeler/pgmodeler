@@ -48,8 +48,8 @@ BancoDadosWidget::BancoDadosWidget(QWidget *parent): ObjetoBaseWidget(parent, OB
  lista_loc.sort();
 
  //Insere as localizações nos combos
- lccollate_cmb->addItem(trUtf8("Padrão"));
- lcctype_cmb->addItem(trUtf8("Padrão"));
+ lccollate_cmb->addItem(trUtf8("Default"));
+ lcctype_cmb->addItem(trUtf8("Default"));
  lccollate_cmb->addItems(lista_loc);
  lcctype_cmb->addItems(lista_loc);
 }

@@ -34,8 +34,7 @@ ConversaoTipoWidget::ConversaoTipoWidget(QWidget *parent): ObjetoBaseWidget(pare
   nome_edt->setFont(fonte);
 
   //Gera o frame de informação
-  frame=gerarFrameInformacao(trUtf8("A função a ser atribuída a uma conversão do <em><strong>tipoA</strong></em> para o <em><strong>tipoB</strong></em>\
-                                     deve possuir a seguinte assinatura: <em><strong>tipoB</strong> funcao(<strong>tipoA</strong>, integer, boolean)</em>."));
+  frame=gerarFrameInformacao(trUtf8("The function to be assigned to a cast from <em><strong>typeA</strong></em> to <em><strong>typeB</strong></em> must have the following signature: <em><strong>typeB</strong> function(<strong>typeA</strong>, integer, boolean)</em>."));
   convtipo_grid->addWidget(frame, convtipo_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 

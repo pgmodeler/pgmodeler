@@ -21,7 +21,7 @@ void FormBasico::definirBotoes(unsigned conf_botoes)
 {
  if(conf_botoes==CaixaMensagem::BOTAO_OK_CANCELAR)
  {
-  aplicar_ok_btn->setText(trUtf8("&Aplicar"));
+  aplicar_ok_btn->setText(trUtf8("&Apply"));
   cancelar_btn->setVisible(true);
  }
  else

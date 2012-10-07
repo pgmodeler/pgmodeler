@@ -34,16 +34,16 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
 
   //Configurando as tabelas com 2 colunas (nome da coluna e tipo)
   tab_colunas->definirNumColunas(2);
-  tab_colunas->definirRotuloCabecalho(trUtf8("Coluna"), 0);
+  tab_colunas->definirRotuloCabecalho(trUtf8("Column"), 0);
   tab_colunas->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-  tab_colunas->definirRotuloCabecalho(trUtf8("Tipo"), 1);
+  tab_colunas->definirRotuloCabecalho(trUtf8("Type"), 1);
   tab_colunas->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
 
   tab_colunas_ref->setEnabled(false);
   tab_colunas_ref->definirNumColunas(2);
-  tab_colunas_ref->definirRotuloCabecalho(trUtf8("Coluna"), 0);
+  tab_colunas_ref->definirRotuloCabecalho(trUtf8("Column"), 0);
   tab_colunas_ref->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-  tab_colunas_ref->definirRotuloCabecalho(trUtf8("Tipo"), 1);
+  tab_colunas_ref->definirRotuloCabecalho(trUtf8("Type"), 1);
   tab_colunas_ref->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
 
   dynamic_cast<QGridLayout *>(colunas_tbw->widget(0)->layout())->addWidget(tab_colunas, 1,0,1,3);
@@ -72,9 +72,7 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   acao_update_cmb->addItems(lista);
 
   //Gera o frame de informação
-  frame_info=gerarFrameInformacao(trUtf8("Colunas as quais foram incluídas por relacionamento não podem ser adicionadas/removidas\
-  manualmente das chaves-primárias. Caso isso ocorra tais alterações serão ignoradas. Para criar chaves-primárias\
-  usando colunas incluídas por relacionamentos utilize o recurso de atributos, restrições e chave-primária no formulário de edição relacionamentos."));
+  frame_info=gerarFrameInformacao(trUtf8("Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they will be ignored. To create primary key using columns included by relationship use the feature attributes, constraints and primary key on the relationship form."));
 
   restricao_grid->addWidget(frame_info, restricao_grid->count()+1, 0, 1, 0);
   frame_info->setParent(this);

@@ -79,8 +79,8 @@ void FormConfiguracao::carregarConfiguracao(void)
 //-----------------------------------------------------------
 void FormConfiguracao::restaurarPadroes(void)
 {
- caixa_msg->show(trUtf8("Confirmação"),
-                 trUtf8("Qualquer modificação feita até agora na seção atual será perdida! Deseja realmente restaurar as configurações padrão?"),
+ caixa_msg->show(trUtf8("Confirmation"),
+                 trUtf8("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
                  CaixaMensagem::ICONE_CONFIRM,
                  CaixaMensagem::BOTAO_SIM_NAO);
 

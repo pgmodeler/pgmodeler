@@ -17,8 +17,7 @@ ConversaoCodificacaoWidget::ConversaoCodificacaoWidget(QWidget *parent): ObjetoB
   configurarLayouFormulario(convcod_grid, OBJETO_CONV_CODIFICACAO);
 
   //Gera o frame de informação sobre a função de conversão
-  frame=gerarFrameInformacao(trUtf8("A função a ser atribuída a uma conversão de codificação deve possuir a seguinte assinatura:\
-                                    <em>void funcao(integer, integer, cstring, internal, integer)</em>."));
+  frame=gerarFrameInformacao(trUtf8("The function to be assigned to an encoding conversion must have the following signature: <em>void function(integer, integer, cstring, internal, integer)</em>."));
   convcod_grid->addWidget(frame, convcod_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 

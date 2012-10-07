@@ -40,7 +40,7 @@ ObjetoBaseWidget::ObjetoBaseWidget(QWidget *parent, TipoObjetoBase tipo_obj): QD
                                      AtributosGlobais::EXT_CONFIGURACAO);
 
   janela_pai=new FormBasico(NULL, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
-  janela_pai->setWindowTitle(trUtf8("Criação / Edição: ") + QString::fromUtf8(ObjetoBase::obterNomeTipoObjeto(tipo_obj)));
+  janela_pai->setWindowTitle(trUtf8("Criate / Edit: ") + QString::fromUtf8(ObjetoBase::obterNomeTipoObjeto(tipo_obj)));
   janela_pai->widgetgeral_wgt->insertWidget(0, this);
   janela_pai->widgetgeral_wgt->setCurrentIndex(0);
   janela_pai->definirBotoes(CaixaMensagem::BOTAO_OK_CANCELAR);
@@ -425,7 +425,7 @@ QFrame *ObjetoBaseWidget::gerarFrameAlertaVersao(map<QString, vector<QWidget *> 
     vet_valores=valores->at(wgt);
     qtd1=vet_valores.size();
 
-    nome_cmp+=QString("<br/>") + trUtf8("Valor(es)") + QString(": (");
+    nome_cmp+=QString("<br/>") + trUtf8("Value(s)") + QString(": (");
     for(i1=0; i1 < qtd1; i1++)
     {
      nome_cmp+=vet_valores.at(i1);
@@ -438,7 +438,7 @@ QFrame *ObjetoBaseWidget::gerarFrameAlertaVersao(map<QString, vector<QWidget *> 
    fonte.setBold(true);
    fonte.setItalic(true);
    wgt->setFont(fonte);
-   wgt->setToolTip(QString::fromUtf8("<em style='font-size: 8pt'>") + trUtf8("Versão") +
+   wgt->setToolTip(QString::fromUtf8("<em style='font-size: 8pt'>") + trUtf8("Version") +
                    itr->first + QString::fromUtf8(" %1</em>").arg(nome_cmp));
   }
   itr++;
@@ -479,10 +479,7 @@ QFrame *ObjetoBaseWidget::gerarFrameAlertaVersao(map<QString, vector<QWidget *> 
  mensagem_lbl->setWordWrap(true);
 
  //Configura a mensagem de alerta
- mensagem_lbl->setText(trUtf8("O(s) campo(s) ou valor(es) destacado(s) no formulário é(são) de\
- uso exclusivo e/ou obrigatório em versões específicas do PostgreSQL.\
- O não preenchimento do(s) mesmo(s) pode ocasionar erros na geração de código SQL\
- de cada versão indicada nas dicas de ferramenta dos campos destacados."));
+ mensagem_lbl->setText(trUtf8("The field(s) or value(s) highlighted on the form is(are) for the exclusive use and/or mandatory in specific versions of PostgreSQL. Failure to complete that may cause errors in the generation of SQL code for each version shown in tool tips of the highlighted fields."));
 
  //Adiciona o o label de mensagem ao layout
  grid->addWidget(mensagem_lbl, 0, 1, 1, 1);

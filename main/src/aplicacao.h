@@ -57,7 +57,7 @@ class Aplicacao: public QApplication {
    catch(...) //Capturando as demais execeções
    {
     //Exibe uma caixa de mensagem de erro crítico com a mensagem da exceção
-    caixa_msg->show(trUtf8("Erro"),trUtf8("Exceção desconhecida capturada!"), CaixaMensagem::ICONE_ERRO);
+    caixa_msg->show(trUtf8("Error"),trUtf8("Unknown exception caught!"), CaixaMensagem::ICONE_ERRO);
     return(false);
    }
   }

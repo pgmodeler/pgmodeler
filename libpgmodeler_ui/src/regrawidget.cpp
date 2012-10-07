@@ -25,12 +25,12 @@ RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_REGRA
 
   //Criando a tabela que armazena os comandos SQL da regra
   tab_comandos=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
-  tab_comandos->definirRotuloCabecalho(trUtf8("Comando SQL"),0);
+  tab_comandos->definirRotuloCabecalho(trUtf8("SQL command"),0);
   tab_comandos->definirIconeCabecalho(QPixmap(":/icones/icones/codigosql.png"),0);
   dynamic_cast<QGridLayout *>(comandos_gb->layout())->addWidget(tab_comandos, 1, 0, 1, 2);
 
   //Gera o frame de informação
-  frame=gerarFrameInformacao(trUtf8("Para se criar uma regra que não execute ação alguma (<strong>DO NOTHING</strong>) basta não especificar comandos na tabela de comandos SQL."));
+  frame=gerarFrameInformacao(trUtf8("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
   regra_grid->addWidget(frame, regra_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 

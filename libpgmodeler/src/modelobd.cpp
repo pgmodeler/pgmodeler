@@ -2756,7 +2756,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
           if(!signalsBlocked())
           {
            emit s_objetoCarregado(ParserXML::obterLinhaAtualBuffer()/ParserXML::obterNumLinhasBuffer(),
-                                  trUtf8("Carregando objeto: %1 (%2)")
+                                  trUtf8("Loading object: %1 (%2)")
                                    .arg(QString::fromUtf8(objeto->obterNome()))
                                    .arg(objeto->obterNomeTipoObjeto()),
                                   tipo_obj);
@@ -2785,7 +2785,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
          }
          else
          {
-          QString info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo()).arg(ParserXML::obterElementoAtual()->line);
+          QString info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo()).arg(ParserXML::obterElementoAtual()->line);
           throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
          }
         }
@@ -2842,7 +2842,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
    destruirObjetos();
 
    if(ParserXML::obterElementoAtual())
-    info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo()).arg(ParserXML::obterElementoAtual()->line);
+    info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo()).arg(ParserXML::obterElementoAtual()->line);
 
    //Caso o erro seja na biblioteca de parsers
    if(e.obterTipoErro()>=ERR_PARSERS_SINTAXEINV)
@@ -3186,7 +3186,7 @@ Papel *ModeloBD::criarPapel(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   //Remove o papel alocado
@@ -3220,7 +3220,7 @@ EspacoTabela *ModeloBD::criarEspacoTabela(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   //Remove o espaco de tabela alocado
@@ -3249,7 +3249,7 @@ Esquema *ModeloBD::criarEsquema(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   //Remove o espaco de tabela alocado
@@ -3340,7 +3340,7 @@ Linguagem *ModeloBD::criarLinguagem(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   //Remove a linguagem alocada
@@ -3511,7 +3511,7 @@ Funcao *ModeloBD::criarFuncao(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   //Remove o espaco de tabela alocado
@@ -3581,7 +3581,7 @@ Parametro ModeloBD::criarParametro(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   //Restaura a posição do parser
@@ -3821,7 +3821,7 @@ Tipo *ModeloBD::criarTipo(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   //Remove o tipo alocado
@@ -3907,7 +3907,7 @@ Dominio *ModeloBD::criarDominio(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   //Remove o domínio alocado
@@ -4000,7 +4000,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   if(conv_tipo) delete(conv_tipo);
@@ -4076,7 +4076,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   if(conv_codif) delete(conv_codif);
@@ -4212,7 +4212,7 @@ Operador *ModeloBD::criarOperador(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
   if(operador) delete(operador);
 
@@ -4328,7 +4328,7 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   if(classe_op) delete(classe_op);
@@ -4359,7 +4359,7 @@ FamiliaOperadores *ModeloBD::criarFamiliaOperadores(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   if(familia_op) delete(familia_op);
@@ -4446,7 +4446,7 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   if(func_agreg) delete(func_agreg);
@@ -4513,7 +4513,7 @@ Tabela *ModeloBD::criarTabela(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   ParserXML::restaurarPosicao();
@@ -4564,7 +4564,7 @@ Coluna *ModeloBD::criarColuna(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   if(coluna) delete(coluna);
@@ -4827,7 +4827,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   if(restricao)
@@ -4985,7 +4985,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   if(indice) delete(indice);
@@ -5059,7 +5059,7 @@ Regra *ModeloBD::criarRegra(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
   if(regra) delete(regra);
 
@@ -5234,7 +5234,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
   if(gatilho) delete(gatilho);
 
@@ -5327,7 +5327,7 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
   if(sequencia) delete(sequencia);
 
@@ -5475,7 +5475,7 @@ Visao *ModeloBD::criarVisao(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
   if(visao) delete(visao);
 
@@ -5513,7 +5513,7 @@ CaixaTexto *ModeloBD::criarCaixaTexto(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   if(caixa_texto) delete(caixa_texto);
@@ -5714,7 +5714,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
 
   if(relacao_base && relacao_base->obterTipoObjeto()==OBJETO_RELACAO)
@@ -5903,7 +5903,7 @@ Permissao *ModeloBD::criarPermissao(void)
  catch(Excecao &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (linha: %2)")).arg(ParserXML::obterNomeArquivo())
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
                                    .arg(ParserXML::obterElementoAtual()->line);
   if(permissao) delete(permissao);
 
@@ -6026,7 +6026,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
  vector<ObjetoBase *> *lista_obj=NULL;
  vector<ObjetoBase *>::iterator itr, itr_end;
  vector<unsigned>::iterator itr1, itr1_end;
- QString msg=trUtf8("Gerando %1 do objeto: %2 (%3)"),
+ QString msg=trUtf8("Generating %1 of the object: %2 (%3)"),
          atrib=AtributosParsers::OBJETOS,
          tipo_def_str=(tipo_def==ParserEsquema::DEFINICAO_SQL ? "SQL" : "XML");
  Tipo *tipo_usr=NULL;

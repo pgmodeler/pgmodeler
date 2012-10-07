@@ -11,7 +11,7 @@ CodigoFonteWidget::CodigoFonteWidget(QWidget *parent): ObjetoBaseWidget(parent)
 
   Ui_CodigoFonteWidget::setupUi(this);
   configurarLayouFormulario(codigofonte_grid, OBJETO_BASE);
-  comentario_lbl->setText(trUtf8("Tipo:"));
+  comentario_lbl->setText(trUtf8("Type:"));
 
   destaque_sql=NULL;
   destaque_xml=NULL;
@@ -30,7 +30,7 @@ CodigoFonteWidget::CodigoFonteWidget(QWidget *parent): ObjetoBaseWidget(parent)
   versoes_cmb->addItems(QStringList(QList<QString>::fromVector(QVector<QString>::fromStdVector(versoes))));
 
   //Define os atributos do formulários e da janela pai
-  janela_pai->setWindowTitle(trUtf8("Visualização de Código-Fonte"));
+  janela_pai->setWindowTitle(trUtf8("Source code visualization"));
   janela_pai->definirBotoes(CaixaMensagem::BOTAO_OK);
   janela_pai->setMinimumSize(550, 450);
 
@@ -116,7 +116,7 @@ void CodigoFonteWidget::gerarCodigoFonteObjeto(int)
   {
    if(tipo_obj==OBJETO_BANCO_DADOS)
    {
-    prog_tarefa->setWindowTitle(trUtf8("Gerando código-fonte..."));
+    prog_tarefa->setWindowTitle(trUtf8("Generating source code..."));
     prog_tarefa->show();
     connect(this->modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)),
             prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
@@ -128,7 +128,7 @@ void CodigoFonteWidget::gerarCodigoFonteObjeto(int)
 
   //Caso o objeto não possua uma definição SQL exibe o texto avisando o fato
   if(codigosql_txt->toPlainText()=="")
-   codigosql_txt->setPlainText(trUtf8("-- Código SQL não disponível para este tipo de objeto. --"));
+   codigosql_txt->setPlainText(trUtf8("-- SQL code unavailable for this type of object --"));
 
   //Configura a caixa de código fonte XML com o código XML do objeto
   codigoxml_txt->setPlainText(QString::fromUtf8(ModeloBD::validarDefinicaoObjeto(objeto, ParserEsquema::DEFINICAO_XML)));

@@ -69,7 +69,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  QAction *acao=NULL;
  QString str_ico, str_txt,
          vet_tipos_rel[]={"11", "1n", "nn", "dep", "gen" },
-         vet_rot_rel[]={" 1-1", " 1-n", " n-n", trUtf8("Dependência"), trUtf8("Generalização")};
+         vet_rot_rel[]={" 1-1", " 1-n", " n-n", trUtf8("Dependence"), trUtf8("Generalization")};
  TipoObjetoBase tipos[]={ OBJETO_TABELA, OBJETO_VISAO, OBJETO_CAIXA_TEXTO, OBJETO_RELACAO,
                           OBJETO_CONV_TIPO, OBJETO_CONV_CODIFICACAO, OBJETO_DOMINIO,
                           OBJETO_FUNCAO, OBJETO_FUNC_AGREGACAO, OBJETO_LINGUAGEM,
@@ -112,7 +112,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  fonte.setKerning(true);
  label->setFont(fonte);
  label->setWordWrap(true);
- label->setText(trUtf8("<strong>ATENÇÃO:</strong> O modelo de objetos encontra-se protegido! Novos objetos só poderão ser inseridos quando esta situação for revertida!"));
+ label->setText(trUtf8("<strong>CAUTION:</strong> The object model is protected! New objects will be inserted only when the protection is removed!"));
 
  grid->addWidget(label, 0, 1, 1, 1);
  modelo_protegido_frm->setLayout(grid);
@@ -150,47 +150,47 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  this->setLayout(grid);
 
  //Aloca as ações do menu popup
- action_codigo_fonte=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Código-fonte"), this);
+ action_codigo_fonte=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Source code"), this);
  action_codigo_fonte->setShortcut(QKeySequence("Alt+S"));
- action_codigo_fonte->setToolTip(trUtf8("Exibe o código-fonte do objeto"));
+ action_codigo_fonte->setToolTip(trUtf8("Show object source code"));
 
- action_editar=new QAction(QIcon(QString(":/icones/icones/editar.png")), trUtf8("Propriedades"), this);
+ action_editar=new QAction(QIcon(QString(":/icones/icones/editar.png")), trUtf8("Properties"), this);
  action_editar->setShortcut(QKeySequence("Space"));
- action_editar->setToolTip(trUtf8("Edita as propriedades do objeto"));
+ action_editar->setToolTip(trUtf8("Edit the object properties"));
 
- action_proteger=new QAction(QIcon(QString(":/icones/icones/bloqobjeto.png")), trUtf8("Proteger"), this);
- action_desproteger=new QAction(QIcon(QString(":/icones/icones/desbloqobjeto.png")), trUtf8("Desproteger"), this);
- action_proteger->setToolTip(trUtf8("Protege o(s) objeto(s) contra modificações"));
- action_desproteger->setToolTip(trUtf8("Remove a proteção contra modificação do(s) objeto(s)"));
+ action_proteger=new QAction(QIcon(QString(":/icones/icones/bloqobjeto.png")), trUtf8("Protect"), this);
+ action_desproteger=new QAction(QIcon(QString(":/icones/icones/desbloqobjeto.png")), trUtf8("Unprotect"), this);
+ action_proteger->setToolTip(trUtf8("Pretects the object(s) against modifications"));
+ action_desproteger->setToolTip(trUtf8("Removes from the objetc(s) the protection against modifications"));
 
- action_excluir=new QAction(QIcon(QString(":/icones/icones/excluir.png")), trUtf8("Excluir"), this);
+ action_excluir=new QAction(QIcon(QString(":/icones/icones/excluir.png")), trUtf8("Delete"), this);
  action_excluir->setShortcut(QKeySequence("Del"));
- action_excluir->setToolTip(trUtf8("Exclui o(s) objeto(s) selecionado(s)"));
+ action_excluir->setToolTip(trUtf8("Delete the selected object(s)"));
 
- action_selecionar_todos=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Selecionar todos"), this);
+ action_selecionar_todos=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select all"), this);
  action_selecionar_todos->setShortcut(QKeySequence("Ctrl+A"));
- action_selecionar_todos->setToolTip(trUtf8("Seleciona todos os objetos gráficos no modelo"));
+ action_selecionar_todos->setToolTip(trUtf8("Selects all the graphical objects in the model"));
 
- action_converter_relnn=new QAction(QIcon(QString(":/icones/icones/convrelnn.png")), trUtf8("Converter rel. n-n"), this);
- action_converter_relnn->setToolTip(trUtf8("Converte o relacionamento n-n para tabela própria"));
+ action_converter_relnn=new QAction(QIcon(QString(":/icones/icones/convrelnn.png")), trUtf8("Convert rel. n-n"), this);
+ action_converter_relnn->setToolTip(trUtf8("Converts the n-n relationship into table"));
 
- action_copiar=new QAction(QIcon(QString(":/icones/icones/copiar.png")), trUtf8("Copiar"), this);
+ action_copiar=new QAction(QIcon(QString(":/icones/icones/copiar.png")), trUtf8("Copy"), this);
  action_copiar->setShortcut(QKeySequence("Ctrl+C"));
- action_copiar->setToolTip(trUtf8("Copia o(s) objeto(s) selecionado(s)"));
+ action_copiar->setToolTip(trUtf8("Copy the selected objects(s)"));
 
- action_colar=new QAction(QIcon(QString(":/icones/icones/colar.png")), trUtf8("Colar"), this);
+ action_colar=new QAction(QIcon(QString(":/icones/icones/colar.png")), trUtf8("Paste"), this);
  action_colar->setShortcut(QKeySequence("Ctrl+V"));
- action_colar->setToolTip(trUtf8("Cola o(s) objeto(s) anteriormente copiado(s)"));
+ action_colar->setToolTip(trUtf8("Paste the previos copied object(s)"));
 
- action_recortar=new QAction(QIcon(QString(":/icones/icones/recortar.png")), trUtf8("Recortar"), this);
+ action_recortar=new QAction(QIcon(QString(":/icones/icones/recortar.png")), trUtf8("Cut"), this);
  action_recortar->setShortcut(QKeySequence("Ctrl+X"));
- action_recortar->setToolTip(trUtf8("Recorta o(s) objeto(s) selecionado(s)"));
+ action_recortar->setToolTip(trUtf8("Cut the selected object(s)"));
 
  action_deps_refs=new QAction(QIcon(QString(":/icones/icones/depsrefs.png")), trUtf8("Depend. / Refer."), this);
- action_deps_refs->setToolTip(trUtf8("Exibe os objetos que referenciam e os que são dependência do objeto selecionado"));
+ action_deps_refs->setToolTip(trUtf8("Displays objects that reference and that are dependent of the selected object"));
 
- action_novo_obj=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("Novo objeto"), this);
- action_novo_obj->setToolTip(trUtf8("Adiciona um novo objeto no modelo"));
+ action_novo_obj=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New object"), this);
+ action_novo_obj->setToolTip(trUtf8("Add a new object in the model"));
 
  //Aloca as ações de criação de novo objeto
  for(i=0; i < qtd; i++)
@@ -212,7 +212,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
   str_ico=ObjetoBase::obterNomeEsquemaObjeto(OBJETO_RELACAO) + vet_tipos_rel[i] +  QString(".png");
 
   if(i < 3)
-   str_txt=trUtf8("Relacionamento ") + vet_rot_rel[i];
+   str_txt=trUtf8("Relationship ") + vet_rot_rel[i];
   else
    str_txt=vet_rot_rel[i];
 
@@ -654,8 +654,8 @@ void ModeloWidget::converterRelacionamentoNN(void)
   //Só converte o relacionamento caso este seja n-n
   if(rel->obterTipoRelacionamento()==Relacionamento::RELACIONAMENTO_NN)
   {
-   caixa_msg->show(trUtf8("Confirmação"),
-                   trUtf8("Converter um relacionamento é uma operação irreversível e provoca a exclusão de todo histórico de operações! Deseja continuar?"),
+   caixa_msg->show(trUtf8("Confirmation"),
+                   trUtf8("Convert a relationship is an irreversible operation and causes the deletion of all operation history! Do you want to continue?"),
                    CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
 
    if(caixa_msg->result()==QDialog::Accepted)
@@ -807,7 +807,7 @@ void ModeloWidget::carregarModelo(const QString &nome_arq)
  {
   //Configura o widget de progresso para exibir o progresso de carregamento do modelo
   connect(modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
-  prog_tarefa->setWindowTitle(trUtf8("Carregando modelo de banco de dados"));
+  prog_tarefa->setWindowTitle(trUtf8("Loading database model"));
   prog_tarefa->show();
 
   //Carrega o arquivo
@@ -1049,7 +1049,7 @@ void ModeloWidget::salvarModelo(const QString &nome_arq)
  {
   //Configura o widget de progresso de tarefa para exibir o progresso do salvamento do arquivo
   connect(modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
-  prog_tarefa->setWindowTitle(trUtf8("Salvando modelo de banco de dados"));
+  prog_tarefa->setWindowTitle(trUtf8("Saving database model"));
   prog_tarefa->show();
 
   //Salva o modelo em arquivo
@@ -1495,8 +1495,8 @@ void ModeloWidget::copiarObjetos(void)
  unsigned i, id_tipo, qtd;
 
  //Solicia a confirmação ao usuário se o mesmo deseja copiar as dependências dos objetos
- caixa_msg->show(trUtf8("Confirmação"),
-                 trUtf8("Deseja copiar também todas dependências dos objetos selecionados? Isso minimiza a quebra de referências quando os objetos copiados forem colados em outro modelo."),
+ caixa_msg->show(trUtf8("Confirmation"),
+                 trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
                  CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
 
  itr=objs_selecionados.begin();
@@ -1591,7 +1591,7 @@ void ModeloWidget::colarObjetos(void)
  unsigned idx=1, pos=0;
 
  //Exibe o progresso de tarefas pois a operação de colagem
- prog_tarefa->setWindowTitle(trUtf8("Colando objetos..."));
+ prog_tarefa->setWindowTitle(trUtf8("Pasting objects..."));
  prog_tarefa->show();
 
  itr=objs_copiados.begin();
@@ -1816,7 +1816,7 @@ void ModeloWidget::colarObjetos(void)
     de um alerta */
  if(erro.obterTipoErro()!=ERR_NULO)
   caixa_msg->show(erro,
-                  trUtf8("Nem todos objetos foram colados ao modelo devido a erros retornados durante o processo! Consulte a pilha de erros para mais detalhes!"),
+                  trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
                   CaixaMensagem::ICONE_ALERTA);
 
  //Caso não seja uma operação de recorte
@@ -1881,14 +1881,14 @@ void ModeloWidget::excluirObjetos(void)
       sobre a exclusão de multiplos objetos e a invalidação de objetos */
    if(objs_selecionados.size() > 1)
    {
-    caixa_msg->show(trUtf8("Confirmação"),
-                    trUtf8("ATENÇÃO: Remover vários objetos de uma só vez pode provocar invalidações irreversíveis de outros objetos no modelo. Tem certeza de que deseja excluir TODOS os objetos selecionados?"),
+    caixa_msg->show(trUtf8("Confirmation"),
+                    trUtf8("CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?"),
                     CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
    }
    else
    {
-    caixa_msg->show(trUtf8("Confirmação"),
-                    trUtf8("Tem certeza de que deseja excluir o objeto selecionado?"),
+    caixa_msg->show(trUtf8("Confirmation"),
+                    trUtf8("Do you really want to delete the selected object?"),
                     CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
    }
   }
@@ -2282,14 +2282,14 @@ void ModeloWidget::configurarMenuPopup(vector<ObjetoBase *> objs_sel)
 
      acao=new QAction(dynamic_cast<QObject *>(submenu));
      acao->setIcon(QPixmap(QString(":/icones/icones/editar.png")));
-     acao->setText(trUtf8("Propriedades"));
+     acao->setText(trUtf8("Properties"));
      acao->setData(QVariant::fromValue<void *>(dynamic_cast<ObjetoBase *>(rest)));
      connect(acao, SIGNAL(triggered(bool)), this, SLOT(editarObjeto(void)));
      submenu->addAction(acao);
 
      acao=new QAction(dynamic_cast<QObject *>(submenu));
      acao->setIcon(QPixmap(QString(":/icones/icones/codigosql.png")));
-     acao->setText(trUtf8("Código-fonte"));
+     acao->setText(trUtf8("Source code"));
      acao->setData(QVariant::fromValue<void *>(dynamic_cast<ObjetoBase *>(rest)));
      connect(acao, SIGNAL(triggered(bool)), this, SLOT(exibirCodigoFonte(void)));
      submenu->addAction(acao);
@@ -2306,19 +2306,19 @@ void ModeloWidget::configurarMenuPopup(vector<ObjetoBase *> objs_sel)
        if(rest->objetoProtegido())
        {
         acao->setIcon(QPixmap(QString(":/icones/icones/desbloqobjeto.png")));
-        acao->setText(trUtf8("Desproteger"));
+        acao->setText(trUtf8("Unprotect"));
        }
        else
        {
         acao->setIcon(QPixmap(QString(":/icones/icones/bloqobjeto.png")));
-        acao->setText(trUtf8("Proteger"));
+        acao->setText(trUtf8("Protect"));
        }
       }
 
       acao=new QAction(dynamic_cast<QObject *>(submenu));
       acao->setData(QVariant::fromValue<void *>(dynamic_cast<ObjetoBase *>(rest)));
       acao->setIcon(QPixmap(QString(":/icones/icones/excluir.png")));
-      acao->setText(trUtf8("Excluir"));
+      acao->setText(trUtf8("Delete"));
       connect(acao, SIGNAL(triggered(bool)), this, SLOT(excluirObjetos(void)));
       submenu->addAction(acao);
      }
@@ -2332,7 +2332,7 @@ void ModeloWidget::configurarMenuPopup(vector<ObjetoBase *> objs_sel)
    if(!submenus.empty())
    {
     submenu=new QMenu(&menu_popup);
-    submenu->setTitle(trUtf8("Restrições"));
+    submenu->setTitle(trUtf8("Constraints"));
     submenu->setIcon(QPixmap(QString(":/icones/icones/") +
                      ObjetoBase::obterNomeEsquemaObjeto(OBJETO_RESTRICAO) + QString("_grp.png")));
     qtd=submenus.size();

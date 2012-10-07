@@ -33,9 +33,9 @@ GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_G
 
   //Configurando as tabelas com 2 colunas (nome da coluna e tipo)
   tab_colunas->definirNumColunas(2);
-  tab_colunas->definirRotuloCabecalho(trUtf8("Coluna"), 0);
+  tab_colunas->definirRotuloCabecalho(trUtf8("Column"), 0);
   tab_colunas->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-  tab_colunas->definirRotuloCabecalho(trUtf8("Tipo"), 1);
+  tab_colunas->definirRotuloCabecalho(trUtf8("Type"), 1);
   tab_colunas->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
 
   dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(tab_colunas, 1,0,1,3);

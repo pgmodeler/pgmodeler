@@ -13,9 +13,9 @@ OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO
 
   //Alocando os widget de configuração de argumento do operador
   tipo_args[0]=NULL;
-  tipo_args[0]=new TipoPgSQLWidget(this, trUtf8("Tipo Argumento Direita"));
+  tipo_args[0]=new TipoPgSQLWidget(this, trUtf8("Right Argument Type"));
   tipo_args[1]=NULL;
-  tipo_args[1]=new TipoPgSQLWidget(this, trUtf8("Tipo Argumento Esquerda"));
+  tipo_args[1]=new TipoPgSQLWidget(this, trUtf8("Left Argument Type"));
 
   grid=new QGridLayout;
   grid->setContentsMargins(2,2,2,2);
@@ -23,9 +23,7 @@ OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO
   grid->addWidget(tipo_args[1],1,0);
 
   //Gera o frame de informação sobre a criação de operador unário
-  frame=gerarFrameInformacao(trUtf8("Para a criação de um operador unário é necessário especificar como <strong><em>'any'</em></strong>\
-                                     um de seus argumentos. Adicionalmente, a função que define o operador deve possuir apenas uma parâmetro\
-                                     e este, por sua vez, deve ter o tipo de dado igual ao tipo de dado do argumento do operador unário."));
+  frame=gerarFrameInformacao(trUtf8("To create a unary operator it is necessary to specify as <strong><em>'any'</em></strong> one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator."));
   grid->addWidget(frame, 2, 0);
   atributos_twg->widget(0)->setLayout(grid);
 

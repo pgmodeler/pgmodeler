@@ -30,8 +30,8 @@ FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(
   tipo_entrada=NULL;
   tipo_estado=NULL;
 
-  tipo_entrada=new TipoPgSQLWidget(this, trUtf8("Tipo de Dados de Entrada"));
-  tipo_estado=new TipoPgSQLWidget(this, trUtf8("Tipo de Dado de Estado"));
+  tipo_entrada=new TipoPgSQLWidget(this, trUtf8("Input Data Type"));
+  tipo_estado=new TipoPgSQLWidget(this, trUtf8("State Data Type"));
 
   //Alocando a tabela de tipos de entrada da função de agregação.
   tab_tipos_entrada=NULL;
@@ -59,10 +59,7 @@ FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(
   tipos_entrada_estado_twg->widget(1)->setLayout(grid);
 
   //Gera o frame de informação sobre a criação de funções agregadas
-  frame=gerarFrameInformacao(trUtf8("Uma função de agregação que aceita os tipos <em><strong>tipoA</strong></em> e <em><strong>tipoB</strong></em>\
-                                    como entrada e cujo tipo de estado seja <em><strong>tipo_estado</strong></em>, deve obedecer às seguintes regras:<br/><br/> \
-                                    <strong> &nbsp;&nbsp;&nbsp;• Função Final:</strong> <em>void funcao_final(<strong>tipo_estado</strong>)</em><br/>\
-  <strong> &nbsp;&nbsp;&nbsp;• Função Transição:</strong> <em><strong>tipo_estado</strong> funcao_transicao(<strong>tipo_estado</strong>, <strong>tipoA</strong>, <strong>tipoB</strong>)</em>"));
+  frame=gerarFrameInformacao(trUtf8("An aggregate function that accepts the types <em><strong>typeA</strong></em> and <em><strong>typeB</strong></em> as input types and which type of state is <em><strong>state_type</strong></em>, must obey the following rules: <br/><br/> <strong> &nbsp;&nbsp;&nbsp;• Final Function:</strong> <em>void final_function(<strong>state_type</strong>)</em><br/>  <strong> &nbsp;&nbsp;&nbsp;• Transition Function:</strong> <em><strong>state_type</strong> transition_function(<strong>state_type</strong>, <strong>typeA</strong>, <strong>typeB</strong>)</em>"));
   funcaoagregacao_grid->addWidget(frame, funcaoagregacao_grid->count()+1, 0, 1, 2);
   frame->setParent(this);
 

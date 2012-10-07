@@ -382,8 +382,8 @@ void FormPrincipal::closeEvent(QCloseEvent *)
   //Se algum modelo foi encontrado como modificado
   if(modificado)
   {
-   caixa_msg->show(trUtf8("Salvar modelos"),
-                   trUtf8("Alguns modelos foram modificados! Deseja salvar todos antes de encerrar o pgModeler?"),
+   caixa_msg->show(trUtf8("Save all models"),
+                   trUtf8("Some models were modified! Do you want to save them before finish the pgModeler?"),
                    CaixaMensagem::ICONE_CONFIRM,CaixaMensagem::BOTAO_SIM_NAO);
 
    if(caixa_msg->result()==QDialog::Accepted)
@@ -842,7 +842,7 @@ void FormPrincipal::salvarModelo(ModeloWidget *modelo)
     QFileDialog arquivo_dlg;
 
     //Exibe o diálogo de salvamento do arquivo
-    arquivo_dlg.setWindowTitle(trUtf8("Salvar '%1' como...").arg(modelo->modelo->obterNome()));
+    arquivo_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(modelo->modelo->obterNome()));
 
     /** issue#9 **/
     //Ateração da extensão dos modelos de .pgmodel para .dbm
@@ -895,18 +895,18 @@ void FormPrincipal::imprimirModelo(void)
   /* Cria dois checkboxes no diálogo de impressão, um
      que indica a impressão da grade e outro do número de páginas */
   impgrade_chk=new QCheckBox(&print_dlg);
-  impgrade_chk->setText(trUtf8("Imprimir grade"));
+  impgrade_chk->setText(trUtf8("Print grid"));
   impgrade_chk->setChecked(true);
 
   impnumpag_chk=new QCheckBox(&print_dlg);
-  impnumpag_chk->setText(trUtf8("Imprimir número de páginas"));
+  impnumpag_chk->setText(trUtf8("Print page numbers"));
   impnumpag_chk->setChecked(true);
 
   grid=new QGridLayout;
   grid->addWidget(impgrade_chk,0,0,1,1);
   grid->addWidget(impnumpag_chk,0,1,1,1);
   gb->setLayout(grid);
-  gb->setTitle(trUtf8("Opções do modelo"));
+  gb->setTitle(trUtf8("Model Options"));
 
   layout=dynamic_cast<QVBoxLayout *>(print_dlg.layout());
   while(layout->count()!=0)
@@ -924,7 +924,7 @@ void FormPrincipal::imprimirModelo(void)
   }
 
   print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
-  print_dlg.setWindowTitle(trUtf8("Impressão de modelo de banco de dados"));
+  print_dlg.setWindowTitle(trUtf8("Database model printing"));
 
   //Obtém as configurações de impressão da cena
   CenaObjetos::obterConfiguracaoPagina(tam_papel, orientacao, margens);
@@ -953,8 +953,8 @@ void FormPrincipal::imprimirModelo(void)
       orientacao!=orient_atual || tam_papel_atual!=tam_papel)
    {
     //Exibe a caixa de confirmação de impressão ao usuário
-    caixa_msg->show(trUtf8("Confirmação"),
-    trUtf8("Foram detectadas modificações nas definições de papel/margem do modelo o que pode provocar a impressão incorreta dos objetos. Deseja prosseguir com a impressão usando as novas configurações? Para usar as configurações padrão clique 'Não' ou em 'Cancelar' para abortar a impressão."),
+    caixa_msg->show(trUtf8("Confirmation"),
+    trUtf8("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
     CaixaMensagem::ICONE_ALERTA, CaixaMensagem::BOTAO_SIM_NAO_CANCELAR);
    }
 
@@ -987,9 +987,9 @@ void FormPrincipal::carregarModelo(void)
   //Exibe o diálogo de carregamento do arquivo
   /** issue#9 **/
   //Ateração da extensão dos modelos de .pgmodel para .dbm
-  arquivo_dlg.setFilter(tr("Modelo de Banco de Dados (*.dbm);;Todos os Arquivos (*.*)"));
+  arquivo_dlg.setFilter(trUtf8("Database Model (*.dbm);; All Files (*.*)"));
   arquivo_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));
-  arquivo_dlg.setWindowTitle(trUtf8("Carregar modelo"));
+  arquivo_dlg.setWindowTitle(trUtf8("Load model"));
   arquivo_dlg.setFileMode(QFileDialog::ExistingFiles);
   arquivo_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 

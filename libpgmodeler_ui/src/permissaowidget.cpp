@@ -35,7 +35,7 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
     tipo do objeto o qual se está configurando as permissões.
     Além disso o campo nome e comentario são marcados como
     read-only pois o usuário não tem acesso a esses campos. */
- comentario_lbl->setText(trUtf8("Tipo:"));
+ comentario_lbl->setText(trUtf8("Type:"));
  fonte=nome_edt->font();
  fonte.setItalic(true);
  comentario_edt->setFont(fonte);
@@ -51,7 +51,7 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
                                     TabelaObjetosWidget::BTN_REMOVER_ITEM |
                                     TabelaObjetosWidget::BTN_EDITAR_ITEM, false, this);
  tab_papeis->definirNumColunas(1);
- tab_papeis->definirRotuloCabecalho(trUtf8("Papel"),0);
+ tab_papeis->definirRotuloCabecalho(trUtf8("Role"),0);
  tab_papeis->definirIconeCabecalho(QPixmap(":/icones/icones/role.png"),0);
 
  /* Insere a tabela de papéis em um grid layout para que a mesma
@@ -68,9 +68,9 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
  tab_permissoes->definirNumColunas(3);
  tab_permissoes->definirRotuloCabecalho(trUtf8("Id"),0);
  tab_permissoes->definirIconeCabecalho(QPixmap(":/icones/icones/uid.png"),0);
- tab_permissoes->definirRotuloCabecalho(trUtf8("Papéis"),1);
+ tab_permissoes->definirRotuloCabecalho(trUtf8("Roles"),1);
  tab_permissoes->definirIconeCabecalho(QPixmap(":/icones/icones/role.png"),1);
- tab_permissoes->definirRotuloCabecalho(trUtf8("Privilégios"),2);
+ tab_permissoes->definirRotuloCabecalho(trUtf8("Privileges"),2);
  tab_permissoes->definirIconeCabecalho(QPixmap(":/icones/icones/grant.png"),2);
 
  /* Insere a tabela de permissões em um grid layout para que a mesma

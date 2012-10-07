@@ -15,17 +15,17 @@ QString ObjetoBase::esq_objetos[QTD_TIPOS_OBJETO]={
 
 
 QString ObjetoBase::nome_tipo_objetos[QTD_TIPOS_OBJETO]={
-  QObject::tr("Coluna"), QObject::tr("Restrição"), QObject::tr("Função"),
-  QObject::tr("Gatilho"), QObject::tr("Índice"), QObject::tr("Regra"),
-  QObject::tr("Tabela"), QObject::tr("Visão"),  QObject::tr("Domínio"),
-  QObject::tr("Esquema"), QObject::tr("Função de Agregação"), QObject::tr("Operador"),
-  QObject::tr("Seqüência"), QObject::tr("Papel"), QObject::tr("Conversão de Codificação"),
-  QObject::tr("Conversão de Tipo"),
-  QObject::tr("Linguagem"), QObject::tr("Tipo"), QObject::tr("Espaço de Tabela"),
-  QObject::tr("Família de Operadores"), QObject::tr("Classe de Operadores"),
-  QObject::tr("Banco de Dados"), QObject::tr("Relacionamento Tabela-Tabela"),
-  QObject::tr("Caixa de Texto"), QObject::tr("Permissão"), QObject::tr("Parâmetro"),
-  QObject::tr("Relacionamento Tabela-Visão")
+  QObject::tr("Column"), QObject::tr("Constraint"), QObject::tr("Function"),
+  QObject::tr("Trigger"), QObject::tr("Index"), QObject::tr("Rule"),
+  QObject::tr("Table"), QObject::tr("View"),  QObject::tr("Domain"),
+  QObject::tr("Schema"), QObject::tr("Aggregate"), QObject::tr("Operator"),
+  QObject::tr("Sequence"), QObject::tr("Role"), QObject::tr("Conversion"),
+  QObject::tr("Cast"),
+  QObject::tr("Language"), QObject::tr("Type"), QObject::tr("Tablespace"),
+  QObject::tr("Operator Family"), QObject::tr("Operator Class"),
+  QObject::tr("Database"), QObject::tr("Table-Table Relationship"),
+  QObject::tr("Textbox"), QObject::tr("Permission"), QObject::tr("Parameter"),
+  QObject::tr("Table-View Relationship")
 
 };
 

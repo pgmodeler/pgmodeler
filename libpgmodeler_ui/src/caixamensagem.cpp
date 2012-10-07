@@ -138,15 +138,15 @@ void CaixaMensagem::show(Excecao e, const QString &msg, unsigned tipo_ico)
  switch(tipo_ico)
  {
   case ICONE_ERRO:
-   titulo=trUtf8("Erro");
+   titulo=trUtf8("Error");
   break;
 
   case ICONE_ALERTA:
-   titulo=trUtf8("Alerta");
+   titulo=trUtf8("Alert");
   break;
 
   case ICONE_INFO:
-   titulo=trUtf8("Informação");
+   titulo=trUtf8("Information");
   break;
 
   default:
@@ -172,19 +172,19 @@ void CaixaMensagem::show(const QString &titulo, const QString &texto, unsigned i
  switch(botoes)
  {
   case BOTAO_SIM_NAO:
-    nao_btn->setText(trUtf8("&Não"));
-    sim_ok_btn->setText(trUtf8("&Sim"));
+    nao_btn->setText(trUtf8("&No"));
+    sim_ok_btn->setText(trUtf8("&Yes"));
   break;
 
   case BOTAO_OK_CANCELAR:
-    cancelar_btn->setText(trUtf8("&Cancelar"));
+    cancelar_btn->setText(trUtf8("&Cancel"));
     sim_ok_btn->setText(trUtf8("&Ok"));
   break;
 
   case BOTAO_SIM_NAO_CANCELAR:
-   cancelar_btn->setText(trUtf8("&Cancelar"));
-   nao_btn->setText(trUtf8("&Não"));
-   sim_ok_btn->setText(trUtf8("&Sim"));
+   cancelar_btn->setText(trUtf8("&Cancel"));
+   nao_btn->setText(trUtf8("&No"));
+   sim_ok_btn->setText(trUtf8("&Yes"));
   break;
 
   default:
