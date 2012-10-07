@@ -1,10 +1,9 @@
-contains(BUILDCONF, shared) {
- include(../pgmodeler.pro)
- TEMPLATE = lib
- TARGET = parsers
- DESTDIR = ../build/lib
- LIBS += $$DESTDIR/$$LIBUTIL
-}
+include(../pgmodeler.pro)
+
+TEMPLATE = lib
+TARGET = parsers
+DESTDIR = ../build/lib
+LIBS += $$DESTDIR/$$LIBUTIL
 
 HEADERS += $$PWD/src/parseresquema.h \
            $$PWD/src/parserxml.h

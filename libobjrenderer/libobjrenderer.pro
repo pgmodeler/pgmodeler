@@ -1,12 +1,11 @@
-contains(BUILDCONF, shared) {
- include(../pgmodeler.pro)
- TEMPLATE = lib
- TARGET = objrenderer
- DESTDIR = ../build/lib
- LIBS += $$DESTDIR/$$LIBUTIL \
-         $$DESTDIR/$$LIBPARSERS \
-         $$DESTDIR/$$LIBPGMODELER
-}
+include(../pgmodeler.pro)
+
+TEMPLATE = lib
+TARGET = objrenderer
+DESTDIR = ../build/lib
+LIBS += $$DESTDIR/$$LIBUTIL \
+        $$DESTDIR/$$LIBPARSERS \
+        $$DESTDIR/$$LIBPGMODELER
 
 HEADERS +=  $$PWD/src/objetografico.h \
             $$PWD/src/ogcaixatexto.h \

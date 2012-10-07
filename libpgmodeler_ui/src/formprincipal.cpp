@@ -95,46 +95,54 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  setupUi(this);
 
  //Alocando os formulários globais
- fsobre=new FormSobre;
  caixa_msg=new CaixaMensagem(this, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
- fconfiguracao=new FormConfiguracao(this);
- fexportacao=new FormExportacao(this);
 
- lista_oper=new ListaOperacoesWidget;
- visao_objs=new VisaoObjetosWidget;
- selecaoobjetos_wgt=new VisaoObjetosWidget(true);
+ try
+ {
+  fsobre=new FormSobre;
+  fconfiguracao=new FormConfiguracao(this);
+  fexportacao=new FormExportacao(this);
+
+  lista_oper=new ListaOperacoesWidget;
+  visao_objs=new VisaoObjetosWidget;
+  selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
 
- //*** CRIAÇÃO DOS FORMULÁRIOS GLOBAIS ***
- permissao_wgt=new PermissaoWidget(this);
- codigofonte_wgt=new CodigoFonteWidget(this);
- caixatexto_wgt=new CaixaTextoWidget(this);
- bancodados_wgt=new BancoDadosWidget(this);
- esquema_wgt=new EsquemaWidget(this);
- papel_wgt=new PapelWidget(this);
- espacotabela_wgt=new EspacoTabelaWidget(this);
- linguagem_wgt=new LinguagemWidget(this);
- parametro_wgt=new ParametroWidget(this);
- funcao_wgt=new FuncaoWidget(this);
- convtipo_wgt=new ConversaoTipoWidget(this);
- convcodif_wgt=new ConversaoCodificacaoWidget(this);
- dominio_wgt=new DominioWidget(this);
- funcaoag_wgt=new FuncaoAgregacaoWidget(this);
- sequencia_wgt=new SequenciaWidget(this);
- operador_wgt=new OperadorWidget(this);
- familiaop_wgt=new FamiliaOperadoresWidget(this);
- classeop_wgt=new ClasseOperadoresWidget(this);
- tipo_wgt=new TipoWidget(this);
- visao_wgt=new VisaoWidget(this);
- coluna_wgt=new ColunaWidget(this);
- restricao_wgt=new RestricaoWidget(this);
- regra_wgt=new RegraWidget(this);
- gatilho_wgt=new GatilhoWidget(this);
- indice_wgt=new IndiceWidget(this);
- relacao_wgt=new RelacionamentoWidget(this);
- tabela_wgt=new TabelaWidget(this);
- prog_tarefa=new ProgressoTarefa();
- deps_refs_wgt=new ListaObjetosWidget(this);
+  //*** CRIAÇÃO DOS FORMULÁRIOS GLOBAIS ***
+  permissao_wgt=new PermissaoWidget(this);
+  codigofonte_wgt=new CodigoFonteWidget(this);
+  caixatexto_wgt=new CaixaTextoWidget(this);
+  bancodados_wgt=new BancoDadosWidget(this);
+  esquema_wgt=new EsquemaWidget(this);
+  papel_wgt=new PapelWidget(this);
+  espacotabela_wgt=new EspacoTabelaWidget(this);
+  linguagem_wgt=new LinguagemWidget(this);
+  parametro_wgt=new ParametroWidget(this);
+  funcao_wgt=new FuncaoWidget(this);
+  convtipo_wgt=new ConversaoTipoWidget(this);
+  convcodif_wgt=new ConversaoCodificacaoWidget(this);
+  dominio_wgt=new DominioWidget(this);
+  funcaoag_wgt=new FuncaoAgregacaoWidget(this);
+  sequencia_wgt=new SequenciaWidget(this);
+  operador_wgt=new OperadorWidget(this);
+  familiaop_wgt=new FamiliaOperadoresWidget(this);
+  classeop_wgt=new ClasseOperadoresWidget(this);
+  tipo_wgt=new TipoWidget(this);
+  visao_wgt=new VisaoWidget(this);
+  coluna_wgt=new ColunaWidget(this);
+  restricao_wgt=new RestricaoWidget(this);
+  regra_wgt=new RegraWidget(this);
+  gatilho_wgt=new GatilhoWidget(this);
+  indice_wgt=new IndiceWidget(this);
+  relacao_wgt=new RelacionamentoWidget(this);
+  tabela_wgt=new TabelaWidget(this);
+  prog_tarefa=new ProgressoTarefa();
+  deps_refs_wgt=new ListaObjetosWidget(this);
+ }
+ catch(Excecao &e)
+ {
+  caixa_msg->show(e);
+ }
 
  for(unsigned i=0; i < 27; i++)
   prog_tarefa->adicionarIcone(tipos[i],

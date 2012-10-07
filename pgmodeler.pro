@@ -1,8 +1,4 @@
-CONFIG += ordered qt stl rtti exceptions
-
-contains(CONFIG, debug) {
- CONFIG += warn_on
-}
+CONFIG += ordered qt stl rtti exceptions warn_on
 
 unix: CONFIG += link_pkgconfig
 unix: PKGCONFIG += libxml-2.0 libpq
@@ -12,23 +8,14 @@ unix:LIB_PREFIX = lib
 unix:LIB_EXT = so
 windows:LIB_EXT = dll
 
-isEmpty(BUILDCONF): BUILDCONF += shared
-
-contains(BUILDCONF, shared) {
- SUBDIRS = libutil \
-           libparsers \
-           libconexbd \
-           libpgmodeler \
-           libobjrenderer \
-           libpgmodeler_ui \
-           main \
-           plugins/dummyplugin
-}
-
-contains(BUILDCONF, static) {
- SUBDIRS = main
-           #plugins/dummyplugin
-}
+SUBDIRS = libutil \
+          libparsers \
+          libconexbd \
+          libpgmodeler \
+          libobjrenderer \
+          libpgmodeler_ui \
+          main # \
+          #plugins/dummyplugin
 
 
 LIBUTIL=$${LIB_PREFIX}util.$${LIB_EXT}
@@ -52,8 +39,8 @@ INCLUDEPATH += $$PWD/libutil/src \
                $$PWD/libpgmodeler_ui/src
 unix:LIBS = -lxml2 -lpq
 
-windows:INCLUDEPATH += C:/mingw/include C:/PostgreSQL/9.2/include
-windows:LIBS = C:/mingw/bin/libxml2.dll C:/PostgreSQL/9.2/bin/libpq.dll
+windows:INCLUDEPATH += C:/mingw32-tdm/include C:/PostgreSQL/9.2/include
+windows:LIBS = C:/mingw32-tdm/bin/libxml2.dll C:/PostgreSQL/9.2/bin/libpq.dll
 
 sources.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
 unix:sources.files += start-pgmodeler.sh
