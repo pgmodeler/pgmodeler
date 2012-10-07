@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>645</width>
-    <height>500</height>
+    <height>520</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,13 +22,13 @@
   <property name="minimumSize">
    <size>
     <width>645</width>
-    <height>500</height>
+    <height>520</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>645</width>
-    <height>500</height>
+    <height>520</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -289,18 +289,14 @@
          </font>
         </property>
         <property name="text">
-         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Tahoma';&quot;&gt;Copyleft 2006-2012 - Raphael Araújo e Silva &amp;lt;&lt;/span&gt;&lt;a href=&quot;rkhaotix@gmail.com&quot;&gt;&lt;span style=&quot; font-family:'Tahoma'; text-decoration: underline; color:#0000ff;&quot;&gt;rkhaotix@gmail.com&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'Tahoma';&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Tahoma';&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Tahoma';&quot;&gt;O projeto pgModeler consiste numa ferramenta CASE para modelagem de bancos de dados relacionais para o SGBD PostgreSQL pelo uso das técnicas de modelagem provenientes dos Diagramas de Entidade-Relacionamento.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Tahoma';&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Tahoma';&quot;&gt;Agradecimentos especiais aos amigos da equipe de desenvolvimento de software da Assembleia Legislativa, Tocantins, Brasil: &lt;/span&gt;&lt;span style=&quot; font-family:'Tahoma'; font-weight:600;&quot;&gt;Michel de Almeida&lt;/span&gt;&lt;span style=&quot; font-family:'Tahoma';&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-family:'Tahoma'; font-weight:600;&quot;&gt;Filipe Santana&lt;/span&gt;&lt;span style=&quot; font-family:'Tahoma';&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-family:'Tahoma'; font-weight:600;&quot;&gt;Jonas Nepomuceno&lt;/span&gt;&lt;span style=&quot; font-family:'Tahoma';&quot;&gt;, &lt;/span&gt;&lt;span style=&quot; font-family:'Tahoma'; font-weight:600;&quot;&gt;Ricardo Ishibashi&lt;/span&gt;&lt;span style=&quot; font-family:'Tahoma';&quot;&gt; e &lt;/span&gt;&lt;span style=&quot; font-family:'Tahoma'; font-weight:600;&quot;&gt;Álvaro Nunes.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>Copyright 2006-2012 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
+
+The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.
+
+Special thanks to friends of the software development team of the Legislative Assembly, Tocantins, Brazil: Michel de Almeida, Felipe Santana, Jonas Nepomuceno, Ricardo Ishibashi and Álvaro Nunes.</string>
         </property>
         <property name="textFormat">
-         <enum>Qt::RichText</enum>
+         <enum>Qt::PlainText</enum>
         </property>
         <property name="alignment">
          <set>Qt::AlignJustify|Qt::AlignTop</set>
@@ -356,9 +352,11 @@ p, li { white-space: pre-wrap; }
          <enum>QFrame::Sunken</enum>
         </property>
         <property name="text">
-         <string>This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License (GPL) as published by the Free Software Foundation; either version 2.
+         <string>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation version 3.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</string>
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+The complete text of GPLv3 is at LICENSE file on source code root directory. Also, you can get the complete GNU General Public License at &lt;http://www.gnu.org/licenses/&gt;</string>
         </property>
         <property name="textFormat">
          <enum>Qt::PlainText</enum>

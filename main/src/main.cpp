@@ -28,11 +28,15 @@ int main(int argc, char **argv)
   pixmap.setAlphaChannel(alfa);
 
   QSplashScreen splash(pixmap);
+
   QFont fnt=splash.font();
-  fnt.setPointSize(8.5f);
+  fnt.setFamily("Dejavu Sans");
+  fnt.setBold(true);
+  fnt.setPointSize(7.5f);
   splash.setFont(fnt);
+
   //Exibe a versão do pgmodeler na base do splash
-  splash.showMessage(QString("v%1  ").arg(AtributosGlobais::VERSAO_PGMODELER), Qt::AlignBottom | Qt::AlignRight, Qt::white);
+  splash.showMessage(QString("       v%1\n").arg(AtributosGlobais::VERSAO_PGMODELER), Qt::AlignBottom | Qt::AlignHCenter, Qt::white);
   splash.show();
   splash.repaint();
 
