@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>243</width>
-    <height>24</height>
+    <height>28</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -41,7 +41,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Indexação:</string>
+      <string>Indexing:</string>
      </property>
     </widget>
    </item>

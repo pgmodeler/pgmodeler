@@ -21,7 +21,7 @@
    <set>Qt::AllDockWidgetAreas</set>
   </property>
   <property name="windowTitle">
-   <string>Objetos do Modelo</string>
+   <string>Objects of Model</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <property name="enabled">
@@ -294,7 +294,7 @@
            </size>
           </property>
           <property name="title">
-           <string>Tipos de Objetos Visíveis</string>
+           <string>Visible Objects Type</string>
           </property>
           <property name="flat">
            <bool>false</bool>
@@ -349,14 +349,14 @@
              <item>
               <widget class="QToolButton" name="marcar_tb">
                <property name="text">
-                <string>Marcar Todos</string>
+                <string>Select All</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QToolButton" name="desmarcar_tb">
                <property name="text">
-                <string>Desmarcar Todos</string>
+                <string>Clear All</string>
                </property>
               </widget>
              </item>
@@ -400,7 +400,7 @@
       <item>
        <widget class="QToolButton" name="selecionar_tb">
         <property name="toolTip">
-         <string>Selecionar</string>
+         <string>Select</string>
         </property>
         <property name="text">
          <string/>
@@ -420,7 +420,7 @@
       <item>
        <widget class="QToolButton" name="cancelar_tb">
         <property name="toolTip">
-         <string>Cancelar</string>
+         <string>Cancel</string>
         </property>
         <property name="text">
          <string/>
@@ -446,7 +446,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Configuração da visão de objetos</string>
+         <string>Objects view configuration</string>
         </property>
         <property name="text">
          <string>...</string>
@@ -478,7 +478,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Visão em árvore</string>
+         <string>Tree view</string>
         </property>
         <property name="accessibleName">
          <string/>
@@ -513,7 +513,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Visão em lista</string>
+         <string>List view</string>
         </property>
         <property name="text">
          <string>...</string>

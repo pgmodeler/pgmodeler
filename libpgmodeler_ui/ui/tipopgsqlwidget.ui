@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>430</width>
-    <height>135</height>
+    <height>153</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -53,7 +53,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Tipo de Dado</string>
+      <string>Data Type</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="margin">
@@ -86,7 +86,7 @@
          <string notr="true">font-weight: normal;</string>
         </property>
         <property name="text">
-         <string>Tipo:</string>
+         <string>Type:</string>
         </property>
        </widget>
       </item>
@@ -143,13 +143,13 @@
          </font>
         </property>
         <property name="toolTip">
-         <string>Comprimento</string>
+         <string>Length</string>
         </property>
         <property name="styleSheet">
          <string notr="true">font-weight: normal;</string>
         </property>
         <property name="text">
-         <string>(c):</string>
+         <string>L:</string>
         </property>
        </widget>
       </item>
@@ -174,7 +174,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Comprimento</string>
+         <string>Length</string>
         </property>
         <property name="styleSheet">
          <string notr="true">font-weight: normal;</string>
@@ -216,13 +216,13 @@
          </font>
         </property>
         <property name="toolTip">
-         <string>Precisão</string>
+         <string>Precision</string>
         </property>
         <property name="styleSheet">
          <string notr="true">font-weight: normal;</string>
         </property>
         <property name="text">
-         <string>(p):</string>
+         <string>P:</string>
         </property>
        </widget>
       </item>
@@ -247,7 +247,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Precisão</string>
+         <string>Precision</string>
         </property>
         <property name="styleSheet">
          <string notr="true">font-weight: normal;</string>
@@ -292,7 +292,7 @@
          </font>
         </property>
         <property name="toolTip">
-         <string>Dimensão</string>
+         <string>Dimension</string>
         </property>
         <property name="styleSheet">
          <string notr="true">font-weight: normal;</string>
@@ -323,7 +323,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>Dimensão</string>
+         <string>Dimension</string>
         </property>
         <property name="styleSheet">
          <string notr="true">font-weight: normal;</string>
@@ -368,7 +368,7 @@
          <string notr="true">font-weight: normal;</string>
         </property>
         <property name="text">
-         <string>Intervalo:</string>
+         <string>Interval:</string>
         </property>
        </widget>
       </item>
@@ -418,7 +418,7 @@
          <string notr="true">font-weight: normal;</string>
         </property>
         <property name="text">
-         <string>Formato:</string>
+         <string>Format:</string>
         </property>
        </widget>
       </item>

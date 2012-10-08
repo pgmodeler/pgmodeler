@@ -47,7 +47,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Adicionar Item</string>
+        <string>Add Item</string>
        </property>
        <property name="text">
         <string/>
@@ -73,7 +73,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Remover Item</string>
+        <string>Remove Item</string>
        </property>
        <property name="text">
         <string/>
@@ -99,7 +99,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Atualizar Item</string>
+        <string>Update Item</string>
        </property>
        <property name="text">
         <string/>
@@ -125,7 +125,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Excluir Todos</string>
+        <string>Remove All</string>
        </property>
        <property name="text">
         <string/>
@@ -151,7 +151,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Editar Item</string>
+        <string>Edit Item</string>
        </property>
        <property name="text">
         <string/>
@@ -177,7 +177,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Mover para cima</string>
+        <string>Move Up</string>
        </property>
        <property name="text">
         <string/>
@@ -203,7 +203,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Mover para baixo</string>
+        <string>Move Down</string>
        </property>
        <property name="text">
         <string/>
@@ -229,7 +229,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Mover para o início</string>
+        <string>Move to start</string>
        </property>
        <property name="text">
         <string/>
@@ -255,7 +255,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Mover para o fim</string>
+        <string>Move to end</string>
        </property>
        <property name="text">
         <string/>

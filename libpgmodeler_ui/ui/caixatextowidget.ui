@@ -25,14 +25,14 @@
      <item>
       <widget class="QCheckBox" name="negrito_chk">
        <property name="text">
-        <string>Negrito</string>
+        <string>Bold</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QCheckBox" name="italico_chk">
        <property name="text">
-        <string>Itálico</string>
+        <string>Italic</string>
        </property>
       </widget>
      </item>

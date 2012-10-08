@@ -83,7 +83,7 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Limpar campo</string>
+      <string>Clear field</string>
      </property>
      <property name="text">
       <string/>
@@ -103,7 +103,7 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Selecionar Objeto</string>
+      <string>Select Object</string>
      </property>
      <property name="text">
       <string/>

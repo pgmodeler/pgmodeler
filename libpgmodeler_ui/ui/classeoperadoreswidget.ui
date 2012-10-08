@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>489</width>
+    <width>559</width>
     <height>194</height>
    </rect>
   </property>
@@ -54,7 +54,7 @@
     </size>
    </property>
    <property name="text">
-    <string>Classe Padrão:</string>
+    <string>Default Class:</string>
    </property>
   </widget>
   <widget class="QLabel" name="tipo_index_lbl">
@@ -79,7 +79,7 @@
     </size>
    </property>
    <property name="text">
-    <string>Indexação:</string>
+    <string>Indexing:</string>
    </property>
   </widget>
   <widget class="QComboBox" name="tipo_index_cmb">
@@ -102,7 +102,7 @@
     </rect>
    </property>
    <property name="title">
-    <string>Elementos</string>
+    <string>Elements</string>
    </property>
    <layout class="QGridLayout" name="elementos_grid">
     <property name="margin">
@@ -114,7 +114,7 @@
     <item row="0" column="0">
      <widget class="QLabel" name="tipo_elem_lbl">
       <property name="text">
-       <string>Tipo de Elemento:</string>
+       <string>Elemente Type:</string>
       </property>
      </widget>
     </item>
@@ -128,17 +128,17 @@
       </property>
       <item>
        <property name="text">
-        <string>Operador</string>
+        <string>Operator</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Função</string>
+        <string>Function</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Armazenamento</string>
+        <string>Storage</string>
        </property>
       </item>
      </widget>
@@ -159,21 +159,21 @@
     <item row="1" column="0">
      <widget class="QLabel" name="funcao_lbl">
       <property name="text">
-       <string>Função:</string>
+       <string>Function:</string>
       </property>
      </widget>
     </item>
     <item row="2" column="0">
      <widget class="QLabel" name="operador_lbl">
       <property name="text">
-       <string>Operador:</string>
+       <string>Operator:</string>
       </property>
      </widget>
     </item>
     <item row="4" column="0">
      <widget class="QLabel" name="num_suporte_lbl">
       <property name="text">
-       <string>Suporte/Estratégia:</string>
+       <string>Support/Strategy:</string>
       </property>
      </widget>
     </item>
@@ -187,7 +187,7 @@
     <item row="4" column="2" colspan="2">
      <widget class="QCheckBox" name="rechecar_chk">
       <property name="text">
-       <string>Rechecar</string>
+       <string>Recheck</string>
       </property>
      </widget>
     </item>
@@ -209,7 +209,7 @@
     </size>
    </property>
    <property name="text">
-    <string>Família:</string>
+    <string>Family:</string>
    </property>
   </widget>
  </widget>

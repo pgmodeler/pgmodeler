@@ -55,7 +55,7 @@
    <item row="0" column="2">
     <widget class="QLabel" name="senha_lbl">
      <property name="text">
-      <string>Senha:</string>
+      <string>Password:</string>
      </property>
     </widget>
    </item>
@@ -65,7 +65,7 @@
    <item row="1" column="0">
     <widget class="QLabel" name="validade_lbl">
      <property name="text">
-      <string>Validade:</string>
+      <string>Validity:</string>
      </property>
     </widget>
    </item>
@@ -89,7 +89,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Conexões:</string>
+      <string>Connections:</string>
      </property>
     </widget>
    </item>
@@ -115,7 +115,7 @@
    <item row="2" column="0" colspan="4">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Atributos</string>
+      <string>Attributes</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="margin">
@@ -127,42 +127,42 @@
       <item row="0" column="0">
        <widget class="QCheckBox" name="superusr_chk">
         <property name="text">
-         <string>Superusuário</string>
+         <string>Superuser</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
        <widget class="QCheckBox" name="herdarperm_chk">
         <property name="text">
-         <string>Herdar Permissões</string>
+         <string>Inherit Permissions</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="QCheckBox" name="criarbd_chk">
         <property name="text">
-         <string>Criar Banco de Dados</string>
+         <string>Create Database</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
        <widget class="QCheckBox" name="permitirlogin_chk">
         <property name="text">
-         <string>Permitir Login</string>
+         <string>Can Login</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
        <widget class="QCheckBox" name="criarusr_chk">
         <property name="text">
-         <string>Criar Usuários/Grupos</string>
+         <string>Create Users/Groups</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
        <widget class="QCheckBox" name="senhacripto_chk">
         <property name="text">
-         <string>Senha Criptografada</string>
+         <string>Encrypted Password</string>
         </property>
        </widget>
       </item>
@@ -176,17 +176,17 @@
      </property>
      <widget class="QWidget" name="membros_tab">
       <attribute name="title">
-       <string>Membros</string>
+       <string>Members</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="membro_tab">
       <attribute name="title">
-       <string>Membro de</string>
+       <string>Member of</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="membros_adm_tab">
       <attribute name="title">
-       <string>Membros (Administradores)</string>
+       <string>Members (Admin.)</string>
       </attribute>
      </widget>
     </widget>

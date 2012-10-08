@@ -75,11 +75,11 @@
         </size>
        </property>
        <property name="text">
-        <string>Ok</string>
+        <string>Close</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
-         <normaloff>:/icones/icones/confirmar.png</normaloff>:/icones/icones/confirmar.png</iconset>
+         <normaloff>:/icones/icones/fechar1.png</normaloff>:/icones/icones/fechar1.png</iconset>
        </property>
        <property name="default">
         <bool>true</bool>

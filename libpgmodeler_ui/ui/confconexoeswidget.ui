@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>519</width>
-    <height>461</height>
+    <height>470</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
    <item row="0" column="0">
     <widget class="QLabel" name="conexoes_lbl">
      <property name="text">
-      <string>Conexões:</string>
+      <string>Connections:</string>
      </property>
     </widget>
    </item>
@@ -51,7 +51,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Criar nova conexão</string>
+        <string>Create new connection</string>
        </property>
        <property name="text">
         <string/>
@@ -74,7 +74,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Cancelar edição</string>
+        <string>Cancel edition</string>
        </property>
        <property name="text">
         <string/>
@@ -97,7 +97,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Editar conexão selecionada</string>
+        <string>Edit selected connection</string>
        </property>
        <property name="text">
         <string/>
@@ -120,7 +120,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Excluir conexão selecionada</string>
+        <string>Delete selected connection</string>
        </property>
        <property name="text">
         <string/>
@@ -158,7 +158,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Alias Conexão:</string>
+      <string>Connection Alias:</string>
      </property>
     </widget>
    </item>
@@ -184,7 +184,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>BD Conexão:</string>
+      <string>Connection DB:</string>
      </property>
     </widget>
    </item>
@@ -213,7 +213,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Host/Porta:</string>
+      <string>Host/Port:</string>
      </property>
     </widget>
    </item>
@@ -259,7 +259,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Usuário:</string>
+      <string>User:</string>
      </property>
     </widget>
    </item>
@@ -288,7 +288,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Senha:</string>
+      <string>Password:</string>
      </property>
     </widget>
    </item>
@@ -326,7 +326,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>segundo(s)</string>
+        <string>second(s)</string>
        </property>
       </widget>
      </item>
@@ -341,7 +341,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Modo SSL:</string>
+      <string>SSL Mode:</string>
      </property>
     </widget>
    </item>
@@ -355,27 +355,27 @@
      </property>
      <item>
       <property name="text">
-       <string>Desativado</string>
+       <string>Disable</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Permitir</string>
+       <string>Allow</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Requerido</string>
+       <string>Require</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Verificação de AC</string>
+       <string>AC verification</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Verificação Completa</string>
+       <string>Full verification</string>
       </property>
      </item>
     </widget>
@@ -405,7 +405,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Certificado Cliente:</string>
+      <string>Client Certificate:</string>
      </property>
     </widget>
    </item>
@@ -434,7 +434,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Chave Cliente:</string>
+      <string>Client Key:</string>
      </property>
     </widget>
    </item>
@@ -463,7 +463,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Certificado Raiz:</string>
+      <string>Root Certificate:</string>
      </property>
     </widget>
    </item>
@@ -492,7 +492,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Cert. Revogados:</string>
+      <string>Revoked Certs.:</string>
      </property>
     </widget>
    </item>
@@ -521,7 +521,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Servidor Kerberus:</string>
+      <string>Kerberus Server:</string>
      </property>
     </widget>
    </item>
@@ -543,7 +543,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Forçar GSSAPI</string>
+        <string>Force GSSAPI</string>
        </property>
       </widget>
      </item>
@@ -558,7 +558,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Opções:</string>
+      <string>Options:</string>
      </property>
     </widget>
    </item>
@@ -598,7 +598,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Adicionar</string>
+        <string>Add</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -624,7 +624,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Atualizar</string>
+        <string>Update</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -650,7 +650,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Testar</string>
+        <string>Test</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">

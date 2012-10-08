@@ -93,7 +93,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Exibir/Esconder pilha de exceções.</string>
+           <string>Show/hide exceptions stack.</string>
           </property>
           <property name="text">
            <string>...</string>
@@ -209,7 +209,7 @@
                <string notr="true"/>
               </property>
               <property name="text">
-               <string>mensagem</string>
+               <string>msg</string>
               </property>
               <property name="textFormat">
                <enum>Qt::AutoText</enum>
@@ -355,7 +355,7 @@
            </size>
           </property>
           <property name="text">
-           <string>&amp;Sim</string>
+           <string>&amp;Yes</string>
           </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
@@ -384,7 +384,7 @@
            </size>
           </property>
           <property name="text">
-           <string>&amp;Não</string>
+           <string>&amp;No</string>
           </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
@@ -401,7 +401,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Cancelar</string>
+           <string>Cancel</string>
           </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">

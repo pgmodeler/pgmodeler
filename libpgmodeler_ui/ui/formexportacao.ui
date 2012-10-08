@@ -32,7 +32,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Exportação do Modelo</string>
+   <string>Model Export</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../res/resources.qrc">
@@ -82,7 +82,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Selecione o tipo de exportação do modelo:</string>
+         <string>Select the export type:</string>
         </property>
        </widget>
       </item>
@@ -110,7 +110,7 @@
         <item row="0" column="1" colspan="3">
          <widget class="QLabel" name="exportacao_arq_lbl">
           <property name="text">
-           <string>Exportação para arquivo SQL:</string>
+           <string>Export to SQL file:</string>
           </property>
          </widget>
         </item>
@@ -129,7 +129,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Arquivo:</string>
+           <string>File:</string>
           </property>
          </widget>
         </item>
@@ -154,7 +154,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Selecionar arquivo de destino</string>
+             <string>Select target file</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -251,7 +251,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Versão do PostgreSQL no qual do código SQL deve ser gerado</string>
+             <string>PostgreSQL version in which the SQL code should be generated</string>
             </property>
             <property name="insertPolicy">
              <enum>QComboBox::InsertAtBottom</enum>
@@ -357,7 +357,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Certifique-se que o usuário do sistema possui permissão de gravação sobre a pasta de destino do arquivo SQL.</string>
+             <string>Check if the system user has write permission on target folder.</string>
             </property>
             <property name="textFormat">
              <enum>Qt::PlainText</enum>
@@ -379,7 +379,7 @@
         <item row="0" column="1" colspan="3">
          <widget class="QLabel" name="exportacao_arq_lbl_2">
           <property name="text">
-           <string>Exportação para imagem PNG:</string>
+           <string>Export to PNG image:</string>
           </property>
          </widget>
         </item>
@@ -432,7 +432,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Imagem:</string>
+           <string>Image:</string>
           </property>
          </widget>
         </item>
@@ -463,7 +463,7 @@
              </size>
             </property>
             <property name="toolTip">
-             <string>Selecionar arquivo de destino</string>
+             <string>Select target file</string>
             </property>
             <property name="text">
              <string>...</string>
@@ -511,7 +511,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Opções:</string>
+           <string>Options:</string>
           </property>
          </widget>
         </item>
@@ -529,7 +529,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Exibir grade</string>
+             <string>Show grid</string>
             </property>
            </widget>
           </item>
@@ -539,7 +539,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>Exibir limites de páginas</string>
+             <string>Show the page delimiters</string>
             </property>
            </widget>
           </item>
@@ -635,7 +635,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Certifique-se que o usuário do sistema possui permissão de gravação sobre a pasta de destino da imagem.</string>
+             <string>Check if the system user has write permission on image target folder.</string>
             </property>
             <property name="textFormat">
              <enum>Qt::PlainText</enum>
@@ -669,7 +669,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Conexão:</string>
+           <string>Connection:</string>
           </property>
          </widget>
         </item>
@@ -873,7 +873,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Recomenda-se marcar esta opção somente quando a versão do SGBD, de alguma forma, não seja identificável ou se é necessário gerar uma versão específica de código SQL para testes. </string>
+             <string>It is recommended to select this option only when the version of the DBMS, somehow, is not identifiable or if you need to generate a specific version of SQL code for testing.</string>
             </property>
             <property name="textFormat">
              <enum>Qt::PlainText</enum>
@@ -911,7 +911,7 @@
                <bool>false</bool>
               </property>
               <property name="text">
-               <string>Ignorar duplicidade de objetos</string>
+               <string>Ignore object duplicity</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>
@@ -988,7 +988,7 @@
                </font>
               </property>
               <property name="text">
-               <string>O pgModeler ignora os erros gerados por duplicidade de objetos e cria apenas objetos do modelo não existentes no banco de dados serão. Esta opção pode ser usada quando um objeto foi criado no modelo posteriormente a uma exportação.</string>
+               <string>The pgModeler ignores errors generated by duplicate objects and creates only model objects that do not exist in the database. This option may be used when an object was created after a later model export.</string>
               </property>
               <property name="textFormat">
                <enum>Qt::PlainText</enum>
@@ -1012,7 +1012,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Exportação para o SGBD:</string>
+           <string>Export to DBMS:</string>
           </property>
          </widget>
         </item>
@@ -1048,7 +1048,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Rótulo progresso...</string>
+           <string>Progress label...</string>
           </property>
          </widget>
         </item>
@@ -1147,7 +1147,7 @@
         </size>
        </property>
        <property name="text">
-        <string>&amp;Exportar</string>
+        <string>&amp;Export</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -1173,7 +1173,7 @@
         </size>
        </property>
        <property name="text">
-        <string>&amp;Fechar</string>
+        <string>&amp;Close</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">

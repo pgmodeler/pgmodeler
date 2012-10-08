@@ -50,7 +50,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Modo Disparo:</string>
+      <string>Triggering Mode:</string>
      </property>
     </widget>
    </item>
@@ -123,7 +123,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Executar por linha</string>
+        <string>Execute per row</string>
        </property>
       </widget>
      </item>
@@ -150,7 +150,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Evento:</string>
+      <string>Event:</string>
      </property>
     </widget>
    </item>
@@ -282,7 +282,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Postergável:</string>
+      <string>Deferrable:</string>
      </property>
     </widget>
    </item>
@@ -337,7 +337,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Postergação:</string>
+        <string>Deferral:</string>
        </property>
       </widget>
      </item>
@@ -392,7 +392,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Tab. Referenciada:</string>
+      <string>Referenced Table:</string>
      </property>
     </widget>
    </item>
@@ -417,7 +417,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Expr. Condicional:</string>
+      <string>Conditional Expr.:</string>
      </property>
     </widget>
    </item>
@@ -474,7 +474,7 @@
      </property>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Colunas</string>
+       <string>Columns</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="margin">
@@ -495,7 +495,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Coluna:</string>
+          <string>Column:</string>
          </property>
         </widget>
        </item>
@@ -525,7 +525,7 @@
      </widget>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Argumentos</string>
+       <string>Arguments</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="margin">
@@ -534,7 +534,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="argumento_lbl">
          <property name="text">
-          <string>Argumento:</string>
+          <string>Argument:</string>
          </property>
         </widget>
        </item>
@@ -576,14 +576,14 @@
       </size>
      </property>
      <property name="text">
-      <string>Função:</string>
+      <string>Function:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="0">
     <widget class="QLabel" name="gat_rest_lbl">
      <property name="text">
-      <string>Gatilho Restrição</string>
+      <string>Constraint Trigger:</string>
      </property>
     </widget>
    </item>

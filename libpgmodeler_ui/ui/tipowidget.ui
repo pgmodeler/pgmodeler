@@ -35,7 +35,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Configuração:</string>
+      <string>Configuration:</string>
      </property>
     </widget>
    </item>
@@ -48,7 +48,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Tipo Base</string>
+      <string>Base Type</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -64,7 +64,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Enumeração</string>
+      <string>Enumeration</string>
      </property>
     </widget>
    </item>
@@ -77,7 +77,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Composto</string>
+      <string>Composite</string>
      </property>
     </widget>
    </item>
@@ -103,7 +103,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Enumerações</string>
+      <string>Enumerations</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="margin">
@@ -115,7 +115,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="nome_enum_lbl">
         <property name="text">
-         <string>Enumeração:</string>
+         <string>Enumeration:</string>
         </property>
        </widget>
       </item>
@@ -140,7 +140,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Atributos</string>
+      <string>Attributes</string>
      </property>
     </widget>
    </item>
@@ -151,7 +151,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Atributos</string>
+       <string>Attributes</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="margin">
@@ -163,7 +163,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="comp_int_lbl">
          <property name="text">
-          <string>Comp. Interno:</string>
+          <string>Internal Length:</string>
          </property>
         </widget>
        </item>
@@ -186,7 +186,7 @@
        <item row="0" column="2">
         <widget class="QLabel" name="armazenamento_lbl">
          <property name="text">
-          <string>Armazenamento:</string>
+          <string>Storage:</string>
          </property>
         </widget>
        </item>
@@ -196,7 +196,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="por_valor_lbl">
          <property name="text">
-          <string>Por Valor: </string>
+          <string>By Value:</string>
          </property>
         </widget>
        </item>
@@ -216,7 +216,7 @@
        <item row="1" column="2">
         <widget class="QLabel" name="categoria_lbl">
          <property name="text">
-          <string>Categoria:</string>
+          <string>Category:</string>
          </property>
         </widget>
        </item>
@@ -226,7 +226,7 @@
        <item row="2" column="0">
         <widget class="QLabel" name="preferido_lbl">
          <property name="text">
-          <string>Preferido:</string>
+          <string>Preferred:</string>
          </property>
         </widget>
        </item>
@@ -246,7 +246,7 @@
        <item row="2" column="2">
         <widget class="QLabel" name="delimitador_lbl">
          <property name="text">
-          <string>Delimitador:</string>
+          <string>Delimiter:</string>
          </property>
         </widget>
        </item>
@@ -260,7 +260,7 @@
        <item row="3" column="0">
         <widget class="QLabel" name="alinhamento_lbl">
          <property name="text">
-          <string>Alinhamento:</string>
+          <string>Alignment:</string>
          </property>
         </widget>
        </item>
@@ -303,7 +303,7 @@
        <item row="3" column="2">
         <widget class="QLabel" name="valor_padrao_lbl">
          <property name="text">
-          <string>Valor Padrão:</string>
+          <string>Default Value:</string>
          </property>
         </widget>
        </item>
@@ -314,7 +314,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Funções</string>
+       <string>Functions</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="margin">
@@ -326,49 +326,49 @@
        <item row="0" column="0">
         <widget class="QLabel" name="input_lbl">
          <property name="text">
-          <string>Função INPUT:</string>
+          <string>INPUT:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="output_lbl">
          <property name="text">
-          <string>Função OUTPUT:</string>
+          <string>OUTPUT:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="recv_lbl">
          <property name="text">
-          <string>Função RECV:</string>
+          <string>RECV:</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="send_lbl">
          <property name="text">
-          <string>Função SEND:</string>
+          <string>SEND:</string>
          </property>
         </widget>
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="tpmod_in_lbl">
          <property name="text">
-          <string>Função TPMOD_IN:</string>
+          <string>TPMOD_IN:</string>
          </property>
         </widget>
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="tpmod_out_lbl">
          <property name="text">
-          <string>Função TPMOD_OUT:</string>
+          <string>TPMOD_OUT:</string>
          </property>
         </widget>
        </item>
        <item row="6" column="0">
         <widget class="QLabel" name="analyze_lbl">
          <property name="text">
-          <string>Função ANALYZE:</string>
+          <string>ANALYZE:</string>
          </property>
         </widget>
        </item>

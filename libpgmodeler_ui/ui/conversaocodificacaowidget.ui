@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>439</width>
-    <height>74</height>
+    <height>82</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -47,7 +47,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Codificação Origem:</string>
+      <string>Source Encoding:</string>
      </property>
     </widget>
    </item>
@@ -85,7 +85,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Codificação Destino:</string>
+      <string>Target Encoding:</string>
      </property>
     </widget>
    </item>
@@ -123,7 +123,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Função de Conversão:</string>
+      <string>Convertion Function:</string>
      </property>
     </widget>
    </item>
@@ -161,7 +161,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Conversão Padrão:</string>
+      <string>Default Conversion:</string>
      </property>
     </widget>
    </item>

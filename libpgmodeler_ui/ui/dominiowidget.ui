@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>434</width>
-    <height>106</height>
+    <height>114</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
    <item row="0" column="0">
     <widget class="QLabel" name="nao_nulo_lbl">
      <property name="text">
-      <string>Não-Nulo:</string>
+      <string>Not Null:</string>
      </property>
     </widget>
    </item>
@@ -37,7 +37,7 @@
    <item row="1" column="0">
     <widget class="QLabel" name="valor_padrao_lbl">
      <property name="text">
-      <string>Valor Padrão:</string>
+      <string>Default Value:</string>
      </property>
     </widget>
    </item>
@@ -47,7 +47,7 @@
    <item row="2" column="0">
     <widget class="QLabel" name="nome_rest_lbl">
      <property name="text">
-      <string>Nome da Restrição:</string>
+      <string>Constraint Name:</string>
      </property>
     </widget>
    </item>
@@ -57,7 +57,7 @@
    <item row="3" column="0">
     <widget class="QLabel" name="expr_checagem_lbl">
      <property name="text">
-      <string>Expressão de Checagem:</string>
+      <string>Check Expression:</string>
      </property>
     </widget>
    </item>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>347</width>
-    <height>52</height>
+    <height>56</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
     <widget class="QLabel" name="valorpadrao_lbl">
      <property name="minimumSize">
       <size>
-       <width>80</width>
+       <width>90</width>
        <height>0</height>
       </size>
      </property>
@@ -35,7 +35,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Valor Padrão:</string>
+      <string>Default Value:</string>
      </property>
     </widget>
    </item>
@@ -76,7 +76,7 @@
    <item row="1" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Não-Nulo:</string>
+      <string>Not Null:</string>
      </property>
     </widget>
    </item>

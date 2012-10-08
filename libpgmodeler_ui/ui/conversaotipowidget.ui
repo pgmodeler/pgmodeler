@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>446</width>
+    <width>453</width>
     <height>78</height>
    </rect>
   </property>
@@ -47,7 +47,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Tipo da Conversão:</string>
+      <string>Conversion Type:</string>
      </property>
     </widget>
    </item>
@@ -72,7 +72,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Implícita</string>
+      <string>Implicit</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -100,7 +100,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Atribuição</string>
+      <string>Assignment</string>
      </property>
     </widget>
    </item>
@@ -113,7 +113,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Entrada / Saída</string>
+      <string>Input / Output</string>
      </property>
     </widget>
    </item>
@@ -138,7 +138,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Função de Conversão:</string>
+      <string>Convertion Function:</string>
      </property>
     </widget>
    </item>

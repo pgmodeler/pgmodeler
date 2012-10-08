@@ -51,7 +51,7 @@
      </property>
      <widget class="QWidget" name="atributos_tab">
       <attribute name="title">
-       <string>Atributos</string>
+       <string>Attributes</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="margin">
@@ -69,7 +69,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Linguagem:</string>
+          <string>Langague:</string>
          </property>
         </widget>
        </item>
@@ -95,7 +95,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Tipo de Função:</string>
+          <string>Function Type:</string>
          </property>
         </widget>
        </item>
@@ -111,7 +111,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Função Janela:</string>
+          <string>Window Function:</string>
          </property>
         </widget>
        </item>
@@ -137,7 +137,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Custo de Execução:</string>
+          <string>Execution Cost:</string>
          </property>
         </widget>
        </item>
@@ -157,7 +157,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Linhas Retornadas:</string>
+          <string>Rows Returned:</string>
          </property>
         </widget>
        </item>
@@ -177,7 +177,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Comportamento:</string>
+          <string>Behavior:</string>
          </property>
         </widget>
        </item>
@@ -193,7 +193,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Segurança:</string>
+          <string>Security:</string>
          </property>
         </widget>
        </item>
@@ -219,7 +219,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Método de Retorno:</string>
+          <string>Return Method:</string>
          </property>
         </widget>
        </item>
@@ -234,7 +234,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Simples</string>
+            <string>Simple</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -253,7 +253,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Conjunto</string>
+            <string>Set</string>
            </property>
            <property name="autoExclusive">
             <bool>true</bool>
@@ -269,7 +269,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Tabela</string>
+            <string>Table</string>
            </property>
            <property name="autoExclusive">
             <bool>true</bool>
@@ -294,7 +294,7 @@
        <item row="8" column="0" colspan="4">
         <widget class="QGroupBox" name="tabela_ret_gb">
          <property name="title">
-          <string>Tabela de Retorno</string>
+          <string>Return Table</string>
          </property>
         </widget>
        </item>
@@ -302,12 +302,12 @@
      </widget>
      <widget class="QWidget" name="parametros_tab">
       <attribute name="title">
-       <string>Parâmetros</string>
+       <string>Parameters</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="definicao_tab">
       <attribute name="title">
-       <string>Definição</string>
+       <string>Definition</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
        <property name="margin">
@@ -334,7 +334,7 @@
           <item row="0" column="0" colspan="3">
            <widget class="QLabel" name="biblioteca1_lbl">
             <property name="text">
-             <string>Biblioteca Dinâmica:</string>
+             <string>Dynamic Library:</string>
             </property>
            </widget>
           </item>
@@ -379,7 +379,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Símbolo:</string>
+             <string>Symbol:</string>
             </property>
            </widget>
           </item>
@@ -408,7 +408,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Biblioteca:</string>
+             <string>Library:</string>
             </property>
            </widget>
           </item>
@@ -459,7 +459,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="codigofonte_lbl">
             <property name="text">
-             <string>Código-Fonte:</string>
+             <string>Source code:</string>
             </property>
            </widget>
           </item>

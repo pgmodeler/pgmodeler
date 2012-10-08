@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>473</width>
-    <height>250</height>
+    <height>251</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Referências</string>
+       <string>References</string>
       </attribute>
       <layout class="QGridLayout" name="referencias_grid">
        <property name="margin">
@@ -39,7 +39,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="tipo_ref_lbl">
          <property name="text">
-          <string>Tipo:</string>
+          <string>Type:</string>
          </property>
         </widget>
        </item>
@@ -47,12 +47,12 @@
         <widget class="QComboBox" name="tipo_ref_cmb">
          <item>
           <property name="text">
-           <string>Coluna</string>
+           <string>Column</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Expressão</string>
+           <string>Expression</string>
           </property>
          </item>
         </widget>
@@ -73,7 +73,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="tipo_ref_lbl_2">
          <property name="text">
-          <string>Usado em:</string>
+          <string>Used in:</string>
          </property>
         </widget>
        </item>
@@ -96,7 +96,7 @@
          <item>
           <widget class="QCheckBox" name="apos_where_chk">
            <property name="text">
-            <string>Após WHERE</string>
+            <string>After WHERE</string>
            </property>
           </widget>
          </item>
@@ -105,7 +105,7 @@
        <item row="2" column="0">
         <widget class="QLabel" name="tabela_lbl">
          <property name="text">
-          <string>Tabela:</string>
+          <string>Table:</string>
          </property>
         </widget>
        </item>
@@ -118,7 +118,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Alias Tabela:</string>
+          <string>Table Alias:</string>
          </property>
         </widget>
        </item>
@@ -135,7 +135,7 @@
        <item row="3" column="0">
         <widget class="QLabel" name="coluna_lbl">
          <property name="text">
-          <string>Coluna:</string>
+          <string>Column:</string>
          </property>
         </widget>
        </item>
@@ -148,7 +148,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Alias Coluna:</string>
+          <string>Column Alias:</string>
          </property>
         </widget>
        </item>
@@ -165,7 +165,7 @@
        <item row="4" column="0">
         <widget class="QLabel" name="expressao_lbl">
          <property name="text">
-          <string>Expressão:</string>
+          <string>Expression:</string>
          </property>
         </widget>
        </item>
@@ -206,7 +206,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Alias Expressão:</string>
+          <string>Expression Alias:</string>
          </property>
         </widget>
        </item>
@@ -237,7 +237,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Previsão de Código</string>
+       <string>Code Preview</string>
       </attribute>
       <layout class="QGridLayout" name="previsao_grid">
        <property name="margin">

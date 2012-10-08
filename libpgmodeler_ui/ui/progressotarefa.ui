@@ -107,7 +107,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Carregando objeto: [objeto] (tipo)</string>
+           <string>Loading object: [object] (type)</string>
           </property>
          </widget>
         </item>

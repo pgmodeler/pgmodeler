@@ -41,7 +41,7 @@
       </size>
      </property>
      <property name="text">
-      <string>BD Modelo:</string>
+      <string>Template DB:</string>
      </property>
     </widget>
    </item>
@@ -64,7 +64,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Autor do Modelo:</string>
+      <string>Model Author:</string>
      </property>
     </widget>
    </item>
@@ -93,7 +93,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Codificação:</string>
+      <string>Encoding:</string>
      </property>
     </widget>
    </item>
@@ -168,7 +168,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Conexões:</string>
+      <string>Connections:</string>
      </property>
     </widget>
    </item>

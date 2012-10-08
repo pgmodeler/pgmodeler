@@ -41,7 +41,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Tipo de Restrição:</string>
+      <string>Constraint Type:</string>
      </property>
     </widget>
    </item>
@@ -83,7 +83,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Expr.Checagem:</string>
+      <string>Check Expr.:</string>
      </property>
     </widget>
    </item>
@@ -148,7 +148,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Fator Preenc.:</string>
+      <string>Fill Factor:</string>
      </property>
     </widget>
    </item>
@@ -171,7 +171,7 @@
    <item row="2" column="2">
     <widget class="QLabel" name="tipo_comparacao_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -189,7 +189,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Comparação:</string>
+      <string>Comparison:</string>
      </property>
     </widget>
    </item>
@@ -224,7 +224,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Postergável:</string>
+      <string>Deferrable:</string>
      </property>
     </widget>
    </item>
@@ -247,7 +247,7 @@
       <bool>false</bool>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -265,7 +265,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Postergação:</string>
+      <string>Deferral:</string>
      </property>
     </widget>
    </item>
@@ -326,7 +326,7 @@
    <item row="4" column="2">
     <widget class="QLabel" name="acao_update_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -371,7 +371,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Colunas</string>
+       <string>Columns</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="margin">
@@ -389,7 +389,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Coluna:</string>
+          <string>Column:</string>
          </property>
         </widget>
        </item>
@@ -413,7 +413,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Colunas Referenciadas</string>
+       <string>Referenced Columns</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="margin">
@@ -431,7 +431,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Tabela:</string>
+          <string>Table:</string>
          </property>
         </widget>
        </item>
@@ -450,7 +450,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Coluna:</string>
+          <string>Column:</string>
          </property>
         </widget>
        </item>

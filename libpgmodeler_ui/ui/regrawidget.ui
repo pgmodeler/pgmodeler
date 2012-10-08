@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>404</width>
-    <height>193</height>
+    <width>407</width>
+    <height>194</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -41,7 +41,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Evento:</string>
+      <string>Event:</string>
      </property>
     </widget>
    </item>
@@ -93,7 +93,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Tipo Execução:</string>
+        <string>Execution Type:</string>
        </property>
       </widget>
      </item>
@@ -139,7 +139,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Expr. Condicional:</string>
+      <string>Conditional Expr.:</string>
      </property>
     </widget>
    </item>
@@ -192,7 +192,7 @@
    <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="comandos_gb">
      <property name="title">
-      <string>Comandos Executados</string>
+      <string>Executed Commands</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="margin">
@@ -216,7 +216,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Comando SQL:</string>
+         <string>SQL Command:</string>
         </property>
        </widget>
       </item>

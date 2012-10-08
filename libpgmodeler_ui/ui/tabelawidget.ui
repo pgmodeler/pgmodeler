@@ -41,7 +41,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Aceita OIDs:</string>
+      <string>With OIDs:</string>
      </property>
     </widget>
    </item>
@@ -62,17 +62,17 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Colunas</string>
+       <string>Columns</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_4">
       <attribute name="title">
-       <string>Restrições</string>
+       <string>Constraints</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_5">
       <attribute name="title">
-       <string>Gatilhos</string>
+       <string>Triggers</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_6">
@@ -82,12 +82,12 @@
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
-       <string>Índices</string>
+       <string>Indexes</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Tabelas</string>
+       <string>Tables</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="margin">
@@ -103,7 +103,7 @@
            <item>
             <widget class="QLabel" name="label">
              <property name="text">
-              <string>Tabelas Ancestrais:</string>
+              <string>Ancestor Tables:</string>
              </property>
             </widget>
            </item>
@@ -136,7 +136,7 @@
            <item>
             <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>Tabelas Copiadas:</string>
+              <string>Copied Tables:</string>
              </property>
             </widget>
            </item>

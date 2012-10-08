@@ -29,21 +29,21 @@
       </size>
      </property>
      <property name="text">
-      <string>Opções:</string>
+      <string>Options:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
     <widget class="QCheckBox" name="merges_chk">
      <property name="text">
-      <string>Suporta MERGES</string>
+      <string>MERGES</string>
      </property>
     </widget>
    </item>
    <item row="0" column="2">
     <widget class="QCheckBox" name="hashes_chk">
      <property name="text">
-      <string>Suporta HASHES</string>
+      <string>HASHES</string>
      </property>
     </widget>
    </item>
@@ -67,12 +67,12 @@
      </property>
      <widget class="QWidget" name="argumentos_tab">
       <attribute name="title">
-       <string>Argumentos</string>
+       <string>Arguments</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="funcoes_tab">
       <attribute name="title">
-       <string>Funções</string>
+       <string>Functions</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="margin">
@@ -84,14 +84,14 @@
        <item row="1" column="0">
         <widget class="QLabel" name="func_juncao_lbl">
          <property name="text">
-          <string>Junção:</string>
+          <string>Join:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="func_restricao_lbl">
          <property name="text">
-          <string>Restrição:</string>
+          <string>Constraints:</string>
          </property>
         </widget>
        </item>
@@ -111,7 +111,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="func_operador_lbl">
          <property name="text">
-          <string>Operador:</string>
+          <string>Operator:</string>
          </property>
         </widget>
        </item>
@@ -119,7 +119,7 @@
      </widget>
      <widget class="QWidget" name="operadores_tab">
       <attribute name="title">
-       <string>Operadores</string>
+       <string>Operators</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="margin">
@@ -131,42 +131,42 @@
        <item row="0" column="0">
         <widget class="QLabel" name="op_comutacao_lbl">
          <property name="text">
-          <string>Comutação:</string>
+          <string>Commutation:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="op_negacao_lbl">
          <property name="text">
-          <string>Negação:</string>
+          <string>Negation:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="op_ordenacao1_lbl">
          <property name="text">
-          <string>Ordenação (1):</string>
+          <string>Sort (1):</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="op_ordenacao2_lbl">
          <property name="text">
-          <string>Ordenação (2):</string>
+          <string>Sort (2):</string>
          </property>
         </widget>
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="op_menorque_lbl">
          <property name="text">
-          <string>Menor que:</string>
+          <string>Less than:</string>
          </property>
         </widget>
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="op_maiorque_lbl">
          <property name="text">
-          <string>Maior que:</string>
+          <string>Greater then:</string>
          </property>
         </widget>
        </item>

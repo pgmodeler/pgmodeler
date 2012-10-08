@@ -140,7 +140,7 @@
            <string notr="true"/>
           </property>
           <property name="text">
-           <string>&amp;Aplicar</string>
+           <string>&amp;Apply</string>
           </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">
@@ -175,7 +175,7 @@
            <string notr="true"/>
           </property>
           <property name="text">
-           <string>&amp;Cancelar</string>
+           <string>&amp;Cancel</string>
           </property>
           <property name="icon">
            <iconset resource="../res/resources.qrc">

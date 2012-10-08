@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>407</width>
     <height>131</height>
    </rect>
   </property>
@@ -29,7 +29,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Elemento:</string>
+      <string>Element:</string>
      </property>
     </widget>
    </item>
@@ -37,227 +37,227 @@
     <widget class="QComboBox" name="elemento_cmb">
      <item>
       <property name="text">
-       <string>Global: Estilo de fonte</string>
+       <string>Global: Font style</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Global: Descritor de restrições</string>
+       <string>Global: Constraints descriptor</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Global: Seleção de objetos</string>
+       <string>Global: Object selection</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Global: Texto informativo de posição</string>
+       <string>Global: Position hint text</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Global: Caixa do informativo de posição</string>
+       <string>Global: Position hint box</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Global: Tipo de objetos</string>
+       <string>Global: Objects type</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Global: Arco de cadeado</string>
+       <string>Global: Lock arc</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Global: Corpo do cadeado</string>
+       <string>Global: Lock body</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Tabela: Nome de esquema</string>
+       <string>Table: Schema name</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Tabela: Nome de tabela</string>
+       <string>Table: Table name</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Tabela: Caixa de colunas</string>
+       <string>Table: Columns box</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Tabela: Caixa de atributos extendidos</string>
+       <string>Table: Extended attributes box</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Tabela: Caixa de título</string>
+       <string>Table: Title box</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Regra: Nome de regra</string>
+       <string>Rule: Name</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Regra: Descritor</string>
+       <string>Rule: Descriptor</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Índice: Nome de índice</string>
+       <string>Index: Name</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Índice: Descritor</string>
+       <string>Index: Descriptor</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Gatilho: Nome de gatilho</string>
+       <string>Trigger: Name</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Gatilho: Descritor</string>
+       <string>Trigger: Descriptor</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Visão: Nome de esquema</string>
+       <string>View: Schema name</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Visão: Nome de visão</string>
+       <string>View: View name</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Visão: Caixa de referências</string>
+       <string>View: References box</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Visão: Caixa de título</string>
+       <string>View: Title box</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Visão: Alias de tabela / coluna</string>
+       <string>View: Table / columns alias</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Visão: Coluna referenciada</string>
+       <string>View: Referenced column</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Visão: Tabela referenciada</string>
+       <string>View: Referenced table</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Visão: Descritor de referência</string>
+       <string>View: Reference descriptor</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Caixa de Texto: Corpo</string>
+       <string>Textbox: Body</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Coluna: Nome de coluna</string>
+       <string>Column: Column name</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Coluna: Descritor</string>
+       <string>Column: Descriptor</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Coluna: Incluída / Herdada por relacionamento</string>
+       <string>Column: Included / Inherited by relationship</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Coluna: Protegida</string>
+       <string>Column: Protected</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Coluna (pk): Nome de coluna</string>
+       <string>Column (pk): Column name</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Coluna (pk): Descritor</string>
+       <string>Column (pk): Descriptor</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Coluna (fk): Nome de coluna</string>
+       <string>Column (fk): Column name</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Coluna (fk): Descritor</string>
+       <string>Column (fk): Descriptor</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Coluna (uq): Nome de coluna</string>
+       <string>Column (uq): Column name</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Coluna (uq): Descritor</string>
+       <string>Column (uq): Descriptor</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Coluna (nn): Nome de coluna</string>
+       <string>Column (nn): Column name</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Coluna (nn): Descritor</string>
+       <string>Column (nn): Descriptor</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Relacionamento: Descritor</string>
+       <string>Relationship: Descriptor</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Relacionamento: Texto do rótulo</string>
+       <string>Relationship: Label text</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Relacionamento: Caixa do rótulo</string>
+       <string>Relationship: Label box</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Relacionamento: Texto do atributo</string>
+       <string>Relationship: Attribute text</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Relacionamento: Descritor do atributo</string>
+       <string>Relationship: Attribute descriptor</string>
       </property>
      </item>
     </widget>
@@ -271,7 +271,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Fonte:</string>
+      <string>Font:</string>
      </property>
     </widget>
    </item>
@@ -333,7 +333,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Negrito</string>
+      <string>Bold</string>
      </property>
     </widget>
    </item>
@@ -352,7 +352,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Itálico</string>
+      <string>Italic</string>
      </property>
     </widget>
    </item>
@@ -365,7 +365,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Cores:</string>
+      <string>Colors:</string>
      </property>
     </widget>
    </item>
@@ -386,7 +386,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Cor da fonte / preenchimento 1</string>
+        <string>Font color / Fill color 1</string>
        </property>
        <property name="text">
         <string/>
@@ -408,7 +408,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Cor de preenchimento 2</string>
+        <string>Fill color 2</string>
        </property>
        <property name="text">
         <string/>
@@ -430,7 +430,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Cor da borda</string>
+        <string>Border color</string>
        </property>
        <property name="text">
         <string/>
@@ -461,7 +461,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Sublinhado</string>
+      <string>Underline</string>
      </property>
     </widget>
    </item>

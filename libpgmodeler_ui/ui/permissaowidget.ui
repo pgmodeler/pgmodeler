@@ -88,7 +88,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Permissões</string>
+      <string>Permissions</string>
      </property>
     </widget>
    </item>
@@ -113,7 +113,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Papéis</string>
+      <string>Roles</string>
      </property>
     </widget>
    </item>
@@ -138,7 +138,7 @@
       </size>
      </property>
      <property name="title">
-      <string>Privilégios</string>
+      <string>Privileges</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="margin">
@@ -185,7 +185,7 @@
       <bool>false</bool>
      </property>
      <property name="toolTip">
-      <string>Cancelar Operação</string>
+      <string>Cancel Operation</string>
      </property>
      <property name="text">
       <string/>
@@ -208,7 +208,7 @@
       <bool>false</bool>
      </property>
      <property name="toolTip">
-      <string>Atualizar Permissão</string>
+      <string>Update Permission</string>
      </property>
      <property name="text">
       <string/>
@@ -231,7 +231,7 @@
       <bool>false</bool>
      </property>
      <property name="toolTip">
-      <string>Adicionar Permissão</string>
+      <string>Add Permission</string>
      </property>
      <property name="text">
       <string/>

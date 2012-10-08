@@ -26,7 +26,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Configurações do pgModeler</string>
+   <string>pgModeler Configuration</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../res/resources.qrc">
@@ -75,7 +75,7 @@
         </size>
        </property>
        <property name="text">
-        <string>&amp;Aplicar</string>
+        <string>&amp;Apply</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -101,7 +101,7 @@
         </size>
        </property>
        <property name="text">
-        <string>&amp;Cancelar</string>
+        <string>&amp;Cancel</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -127,7 +127,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Padrões</string>
+        <string>Defaults</string>
        </property>
        <property name="icon">
         <iconset resource="../res/resources.qrc">
@@ -187,13 +187,13 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>90</width>
+          <width>100</width>
           <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>90</width>
+          <width>100</width>
           <height>16777215</height>
          </size>
         </property>
@@ -272,11 +272,11 @@
          <bool>false</bool>
         </property>
         <property name="currentRow">
-         <number>-1</number>
+         <number>0</number>
         </property>
         <item>
          <property name="text">
-          <string>Geral</string>
+          <string>General</string>
          </property>
          <property name="textAlignment">
           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
@@ -291,7 +291,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Estilo</string>
+          <string>Style</string>
          </property>
          <property name="textAlignment">
           <set>AlignHCenter|AlignVCenter|AlignCenter</set>
@@ -306,7 +306,7 @@
         </item>
         <item>
          <property name="text">
-          <string>Conexões</string>
+          <string>Connetions</string>
          </property>
          <property name="textAlignment">
           <set>AlignHCenter|AlignVCenter|AlignCenter</set>

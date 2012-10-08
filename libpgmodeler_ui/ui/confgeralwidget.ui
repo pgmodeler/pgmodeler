@@ -41,7 +41,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Tamanho da grade:</string>
+      <string>Grid size:</string>
      </property>
     </widget>
    </item>
@@ -117,7 +117,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Histórico de operações:</string>
+      <string>Operation history:</string>
      </property>
     </widget>
    </item>
@@ -166,7 +166,7 @@
         </size>
        </property>
        <property name="text">
-        <string>itens</string>
+        <string>items</string>
        </property>
       </widget>
      </item>
@@ -187,7 +187,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Salvar modelo a cada:</string>
+      <string>Save model every:</string>
      </property>
     </widget>
    </item>
@@ -236,7 +236,7 @@
         </size>
        </property>
        <property name="text">
-        <string>minuto(s)</string>
+        <string>minute(s)</string>
        </property>
       </widget>
      </item>
@@ -257,7 +257,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Salvar posição de widgets</string>
+      <string>Save widgets position</string>
      </property>
     </widget>
    </item>
@@ -276,7 +276,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Salvar sessão atual </string>
+      <string>Save current session</string>
      </property>
     </widget>
    </item>
@@ -305,7 +305,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Papel:</string>
+      <string>Paper:</string>
      </property>
     </widget>
    </item>
@@ -478,7 +478,7 @@
      </item>
      <item>
       <property name="text">
-       <string>Personalizado (Baseado nas margens)</string>
+       <string>Custom (Based on margins)</string>
       </property>
      </item>
     </widget>
@@ -492,7 +492,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Orientação:</string>
+      <string>Orientation:</string>
      </property>
     </widget>
    </item>
@@ -507,7 +507,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Retrato</string>
+        <string>Portrait</string>
        </property>
       </widget>
      </item>
@@ -520,7 +520,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Paisagem</string>
+        <string>Landscape</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -538,7 +538,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Margens:</string>
+      <string>Margins:</string>
      </property>
     </widget>
    </item>
@@ -555,7 +555,7 @@
      </property>
      <item>
       <property name="text">
-       <string>Milímetros</string>
+       <string>Milimeters</string>
       </property>
      </item>
      <item>
@@ -565,12 +565,12 @@
      </item>
      <item>
       <property name="text">
-       <string>Polegadas</string>
+       <string>Inches</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Centímetros</string>
+       <string>Centimeter</string>
       </property>
      </item>
     </widget>
@@ -580,7 +580,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Esq.:</string>
+        <string>Left:</string>
        </property>
       </widget>
      </item>
@@ -599,7 +599,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Margem esquerda</string>
+        <string>Left margin</string>
        </property>
        <property name="maximum">
         <double>5000.000000000000000</double>
@@ -609,7 +609,7 @@
      <item row="0" column="2">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Topo:</string>
+        <string>Top:</string>
        </property>
       </widget>
      </item>
@@ -628,7 +628,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Margem topo</string>
+        <string>Top margin</string>
        </property>
        <property name="maximum">
         <double>5000.000000000000000</double>
@@ -638,7 +638,7 @@
      <item row="1" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Dir.:</string>
+        <string>Right:</string>
        </property>
       </widget>
      </item>
@@ -657,7 +657,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Margem direita</string>
+        <string>Right margin</string>
        </property>
        <property name="maximum">
         <double>5000.000000000000000</double>
@@ -667,7 +667,7 @@
      <item row="1" column="2">
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Base:</string>
+        <string>Bottom:</string>
        </property>
       </widget>
      </item>
@@ -686,7 +686,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Margem base</string>
+        <string>Bottom margin</string>
        </property>
        <property name="maximum">
         <double>5000.000000000000000</double>

@@ -41,7 +41,7 @@
     </size>
    </property>
    <property name="text">
-    <string>Valor Padrão:</string>
+    <string>Default Value:</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="valorpadrao_edt">
@@ -59,7 +59,7 @@
     <rect>
      <x>4</x>
      <y>129</y>
-     <width>34</width>
+     <width>51</width>
      <height>16</height>
     </rect>
    </property>
@@ -70,7 +70,7 @@
     </size>
    </property>
    <property name="text">
-    <string>Modo:</string>
+    <string>Mode:</string>
    </property>
   </widget>
   <widget class="QWidget" name="layoutWidget">

@@ -45,7 +45,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Geral</string>
+       <string>General</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="margin">
@@ -75,7 +75,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Relacionamento:</string>
+          <string>Relationship:</string>
          </property>
         </widget>
        </item>
@@ -110,7 +110,7 @@
             </font>
            </property>
            <property name="toolTip">
-            <string>Relacionamento de um para um</string>
+            <string>One to one relationship</string>
            </property>
            <property name="text">
             <string>1-1</string>
@@ -146,7 +146,7 @@
             </font>
            </property>
            <property name="toolTip">
-            <string>Relacionamento de um para muitos</string>
+            <string>One to many relationship</string>
            </property>
            <property name="text">
             <string>1-n</string>
@@ -182,7 +182,7 @@
             </font>
            </property>
            <property name="toolTip">
-            <string>Relacionamento de muitos para muitos</string>
+            <string>Many to many relationship</string>
            </property>
            <property name="text">
             <string>n-n</string>
@@ -218,7 +218,7 @@
             </font>
            </property>
            <property name="toolTip">
-            <string>Relacionamento de generalização (herança)</string>
+            <string>Generalization relationship (inheritance)</string>
            </property>
            <property name="text">
             <string>gen</string>
@@ -254,7 +254,7 @@
             </font>
            </property>
            <property name="toolTip">
-            <string>Relacionamento de dependência entre tabelas ou entre uma tabela e visão</string>
+            <string>Dependency relationship</string>
            </property>
            <property name="text">
             <string>dep</string>
@@ -272,7 +272,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string> Identificador</string>
+          <string>Identifier</string>
          </property>
         </widget>
        </item>
@@ -297,7 +297,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Tabela Origem:</string>
+          <string>Source Table:</string>
          </property>
         </widget>
        </item>
@@ -361,7 +361,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Tabela Destino:</string>
+          <string>Target Table:</string>
          </property>
         </widget>
        </item>
@@ -425,7 +425,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Cardinalidade:</string>
+          <string>Cardinality:</string>
          </property>
         </widget>
        </item>
@@ -440,7 +440,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Origem Obrigatória</string>
+            <string>Source Required</string>
            </property>
           </widget>
          </item>
@@ -453,7 +453,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Destino Obrigatória</string>
+            <string>Target Required</string>
            </property>
           </widget>
          </item>
@@ -480,15 +480,19 @@
           </size>
          </property>
          <property name="toolTip">
-          <string>Nome da tabela gerada pelo relacionamento muitos para muitos</string>
+          <string>Name of the table generated from many to many relationship</string>
          </property>
          <property name="text">
-          <string>Nome Tab. N-N:</string>
+          <string>Table Name:</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1" colspan="2">
-        <widget class="QLineEdit" name="nome_tab_relnn_edt"/>
+        <widget class="QLineEdit" name="nome_tab_relnn_edt">
+         <property name="toolTip">
+          <string>Name of the table generated from many to many relationship</string>
+         </property>
+        </widget>
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="sufixo_orig_lbl">
@@ -514,7 +518,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Sufixo Origem:</string>
+          <string>Source Suffix:</string>
          </property>
         </widget>
        </item>
@@ -555,7 +559,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Sufixo Destino:</string>
+          <string>Target Suffix:</string>
          </property>
         </widget>
        </item>
@@ -581,7 +585,7 @@
           </sizepolicy>
          </property>
          <property name="title">
-          <string>Chave-estrangeira</string>
+          <string>Foreign key</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="margin">
@@ -611,7 +615,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Postergável:</string>
+             <string>Deferrable:</string>
             </property>
            </widget>
           </item>
@@ -664,7 +668,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Postergação:</string>
+             <string>Deferral:</string>
             </property>
            </widget>
           </item>
@@ -715,7 +719,7 @@
        <item row="5" column="2" rowspan="2">
         <widget class="QCheckBox" name="sufixo_auto_chk">
          <property name="text">
-          <string>Sufixo Automático</string>
+          <string>Automatic Suffix</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -726,17 +730,17 @@
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
-       <string>Atributos</string>
+       <string>Attributes</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Restrições</string>
+       <string>Constraints</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_4">
       <attribute name="title">
-       <string>Chave-primária</string>
+       <string>Primary key</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <property name="margin">

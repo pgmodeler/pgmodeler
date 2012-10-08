@@ -35,7 +35,7 @@
     </size>
    </property>
    <property name="text">
-    <string>Nome:</string>
+    <string>Name:</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="nome_edt">
@@ -122,7 +122,7 @@
     </size>
    </property>
    <property name="text">
-    <string>Comentário:</string>
+    <string>Comment:</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="comentario_edt">
@@ -170,7 +170,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Esp. de Tabela:</string>
+    <string>Tablespace:</string>
    </property>
   </widget>
   <widget class="QLabel" name="dono_lbl">
@@ -183,7 +183,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Dono:</string>
+    <string>Owner:</string>
    </property>
   </widget>
   <widget class="QLabel" name="esquema_lbl">
@@ -196,7 +196,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Esquema:</string>
+    <string>Schema:</string>
    </property>
   </widget>
   <widget class="Line" name="div1_ln">
@@ -228,7 +228,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Permissões:</string>
+    <string>Permissions:</string>
    </property>
   </widget>
   <widget class="QToolButton" name="edt_permissoes_tb">
@@ -327,7 +327,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Este o objeto encontra-se protegido, assim nenhuma alteração no formulário será aplicada ao mesmo.</string>
+       <string>This object is protected thus no change in form will be applied to it.</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>
@@ -346,7 +346,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Objeto Pai:</string>
+    <string>Parent Object:</string>
    </property>
   </widget>
   <widget class="QLabel" name="iconeobjpai_lbl">

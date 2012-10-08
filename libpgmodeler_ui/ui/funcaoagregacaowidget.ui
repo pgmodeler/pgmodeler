@@ -29,28 +29,28 @@
    <item row="0" column="0">
     <widget class="QLabel" name="func_final_lbl">
      <property name="text">
-      <string>Função Final:</string>
+      <string>Final Function:</string>
      </property>
     </widget>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="func_transicao_lbl">
      <property name="text">
-      <string>Função de Transição:</string>
+      <string>Transition Function:</string>
      </property>
     </widget>
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="op_ordenacao_lbl">
      <property name="text">
-      <string>Operador de Ordenação:</string>
+      <string>Sort Operator:</string>
      </property>
     </widget>
    </item>
    <item row="3" column="0">
     <widget class="QLabel" name="cond_inicial_lbl">
      <property name="text">
-      <string>Condição Inicial:</string>
+      <string>Final Condition:</string>
      </property>
     </widget>
    </item>
@@ -98,12 +98,12 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Entradas da Função</string>
+       <string>Funtion Inputs</string>
       </attribute>
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Estado da Função</string>
+       <string>Function State</string>
       </attribute>
      </widget>
     </widget>

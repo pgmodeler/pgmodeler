@@ -38,7 +38,7 @@
    <enum>Qt::ActionsContextMenu</enum>
   </property>
   <property name="windowTitle">
-   <string>Visão geral do modelo</string>
+   <string>Model overview</string>
   </property>
   <property name="windowOpacity">
    <double>1.000000000000000</double>

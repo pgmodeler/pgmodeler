@@ -91,7 +91,7 @@
      <x>0</x>
      <y>0</y>
      <width>1323</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="defaultUp">
@@ -99,7 +99,7 @@
    </property>
    <widget class="QMenu" name="menuArquivo">
     <property name="title">
-     <string>Arquivo</string>
+     <string>File</string>
     </property>
     <addaction name="action_novo_modelo"/>
     <addaction name="action_carregar_modelo"/>
@@ -116,7 +116,7 @@
    </widget>
    <widget class="QMenu" name="menuEditar">
     <property name="title">
-     <string>Editar</string>
+     <string>Edit</string>
     </property>
     <addaction name="action_desfazer"/>
     <addaction name="action_refazer"/>
@@ -126,13 +126,13 @@
    </widget>
    <widget class="QMenu" name="menuSobre">
     <property name="title">
-     <string>Ajuda</string>
+     <string>Help</string>
     </property>
     <addaction name="action_sobre"/>
    </widget>
    <widget class="QMenu" name="menuExibir">
     <property name="title">
-     <string>Exibir</string>
+     <string>Show</string>
     </property>
     <widget class="QMenu" name="menuFerramentas">
      <property name="title">
@@ -340,7 +340,7 @@
      <normaloff>:/icones/icones/novo.png</normaloff>:/icones/icones/novo.png</iconset>
    </property>
    <property name="text">
-    <string>Novo</string>
+    <string>New</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
@@ -355,7 +355,7 @@
      <normaloff>:/icones/icones/salvar.png</normaloff>:/icones/icones/salvar.png</iconset>
    </property>
    <property name="text">
-    <string>Salvar</string>
+    <string>Save</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -370,10 +370,10 @@
      <normaloff>:/icones/icones/zoom_mais.png</normaloff>:/icones/icones/zoom_mais.png</iconset>
    </property>
    <property name="text">
-    <string>Zoom +</string>
+    <string>Zoom in</string>
    </property>
    <property name="toolTip">
-    <string>Ampliar zoom</string>
+    <string>Zoom in</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+=</string>
@@ -394,13 +394,13 @@
      <normaloff>:/icones/icones/zoom_menos.png</normaloff>:/icones/icones/zoom_menos.png</iconset>
    </property>
    <property name="text">
-    <string>Zoom -</string>
+    <string>Zoom out</string>
    </property>
    <property name="iconText">
     <string>Zoom -</string>
    </property>
    <property name="toolTip">
-    <string>Diminuir zoom</string>
+    <string>Zoom out</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+-</string>
@@ -412,7 +412,7 @@
      <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
    </property>
    <property name="text">
-    <string>Carregar</string>
+    <string>Load</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -427,7 +427,10 @@
      <normaloff>:/icones/icones/proximo.png</normaloff>:/icones/icones/proximo.png</iconset>
    </property>
    <property name="text">
-    <string>Próximo</string>
+    <string>Next</string>
+   </property>
+   <property name="toolTip">
+    <string>Next</string>
    </property>
   </action>
   <action name="action_anterior">
@@ -439,19 +442,10 @@
      <normaloff>:/icones/icones/anterior.png</normaloff>:/icones/icones/anterior.png</iconset>
    </property>
    <property name="text">
-    <string>Anterior</string>
+    <string>Previous</string>
    </property>
-  </action>
-  <action name="action_ajuda">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/msgbox_quest.png</normaloff>:/icones/icones/msgbox_quest.png</iconset>
-   </property>
-   <property name="text">
-    <string>Ajuda</string>
-   </property>
-   <property name="shortcut">
-    <string>F1</string>
+   <property name="toolTip">
+    <string>Previous</string>
    </property>
   </action>
   <action name="action_salvar_como">
@@ -463,7 +457,7 @@
      <normaloff>:/icones/icones/salvar_como.png</normaloff>:/icones/icones/salvar_como.png</iconset>
    </property>
    <property name="text">
-    <string>Salvar Como</string>
+    <string>Save as</string>
    </property>
   </action>
   <action name="action_sair">
@@ -472,7 +466,7 @@
      <normaloff>:/icones/icones/sair.png</normaloff>:/icones/icones/sair.png</iconset>
    </property>
    <property name="text">
-    <string>Sair</string>
+    <string>Exit</string>
    </property>
    <property name="menuRole">
     <enum>QAction::QuitRole</enum>
@@ -484,7 +478,7 @@
      <normaloff>:/icones/icones/pgsqlModeler48x48.png</normaloff>:/icones/icones/pgsqlModeler48x48.png</iconset>
    </property>
    <property name="text">
-    <string>Sobre o pgModeler</string>
+    <string>About pgModeler</string>
    </property>
    <property name="shortcut">
     <string>F2</string>
@@ -499,7 +493,7 @@
      <normaloff>:/icones/icones/imprimir.png</normaloff>:/icones/icones/imprimir.png</iconset>
    </property>
    <property name="text">
-    <string>Imprimir</string>
+    <string>Print</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
@@ -514,7 +508,7 @@
      <normaloff>:/icones/icones/desfazer.png</normaloff>:/icones/icones/desfazer.png</iconset>
    </property>
    <property name="text">
-    <string>Desfazer</string>
+    <string>Undo</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
@@ -529,22 +523,10 @@
      <normaloff>:/icones/icones/refazer.png</normaloff>:/icones/icones/refazer.png</iconset>
    </property>
    <property name="text">
-    <string>Refazer</string>
+    <string>Redo</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Y</string>
-   </property>
-  </action>
-  <action name="action_preferencias">
-   <property name="icon">
-    <iconset resource="../res/resources.qrc">
-     <normaloff>:/icones/icones/config.png</normaloff>:/icones/icones/config.png</iconset>
-   </property>
-   <property name="text">
-    <string>Preferências</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+P</string>
    </property>
   </action>
   <action name="action_exportar">
@@ -556,7 +538,7 @@
      <normaloff>:/icones/icones/exportar.png</normaloff>:/icones/icones/exportar.png</iconset>
    </property>
    <property name="text">
-    <string>Exportar</string>
+    <string>Export</string>
    </property>
   </action>
   <action name="action_exibir_grade">
@@ -574,7 +556,7 @@
      <normaloff>:/icones/icones/grade.png</normaloff>:/icones/icones/grade.png</iconset>
    </property>
    <property name="text">
-    <string>Exibir grade</string>
+    <string>Show grid</string>
    </property>
    <property name="iconText">
     <string>Exibir grade</string>
@@ -592,7 +574,7 @@
      <normaloff>:/icones/icones/fechar.png</normaloff>:/icones/icones/fechar.png</iconset>
    </property>
    <property name="text">
-    <string>Fechar Modelo</string>
+    <string>Close model</string>
    </property>
   </action>
   <action name="action_zoom_normal">
@@ -604,7 +586,7 @@
      <normaloff>:/icones/icones/zoom_normal.png</normaloff>:/icones/icones/zoom_normal.png</iconset>
    </property>
    <property name="text">
-    <string>Zoom Normal</string>
+    <string>Normal zoom</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+0</string>
@@ -625,10 +607,10 @@
      <normaloff>:/icones/icones/alinhargrade.png</normaloff>:/icones/icones/alinhargrade.png</iconset>
    </property>
    <property name="text">
-    <string>Alinhar à grade</string>
+    <string>Align to grid</string>
    </property>
    <property name="toolTip">
-    <string>Alinhar objetos à grade</string>
+    <string>Align objects position to grid</string>
    </property>
   </action>
   <action name="action_tela_cheia">
@@ -643,10 +625,10 @@
      <normaloff>:/icones/icones/telacheia.png</normaloff>:/icones/icones/telacheia.png</iconset>
    </property>
    <property name="text">
-    <string>Tela cheia</string>
+    <string>Fullscreen</string>
    </property>
    <property name="toolTip">
-    <string>Exibe o modelo em tela cheia</string>
+    <string>Show the model on fullscreen mode</string>
    </property>
    <property name="shortcut">
     <string>F11</string>
@@ -667,10 +649,10 @@
      <normaloff>:/icones/icones/exibirlimpag.png</normaloff>:/icones/icones/exibirlimpag.png</iconset>
    </property>
    <property name="text">
-    <string>Exibir Limites</string>
+    <string>Show delimiters</string>
    </property>
    <property name="toolTip">
-    <string>Exibe os limitadores de página</string>
+    <string>Show the page delimiters</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
@@ -682,7 +664,7 @@
      <normaloff>:/icones/icones/config.png</normaloff>:/icones/icones/config.png</iconset>
    </property>
    <property name="text">
-    <string>Configurações</string>
+    <string>Configurations</string>
    </property>
   </action>
   <action name="actionWidgets">
@@ -692,7 +674,7 @@
   </action>
   <action name="action_salvar_tudo">
    <property name="text">
-    <string>Salvar Tudo</string>
+    <string>Save all</string>
    </property>
   </action>
   <action name="action_visao_geral">
@@ -704,10 +686,10 @@
      <normaloff>:/icones/icones/visaogeral.png</normaloff>:/icones/icones/visaogeral.png</iconset>
    </property>
    <property name="text">
-    <string>Visão Geral</string>
+    <string>Overview</string>
    </property>
    <property name="toolTip">
-    <string>Exibe a visão geral do modelo</string>
+    <string>Show the model overview</string>
    </property>
   </action>
  </widget>
