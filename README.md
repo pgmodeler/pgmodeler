@@ -8,27 +8,35 @@ Please, let me know how the pgModeler is working on your system! Help to improve
 Licensing
 ---------
 
-This software is licensed under GNU General Public License 2.0. See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for details.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation version 3., or
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for details.
 
 Compiling/Installation
 ----------------------
 
 For details about compilation and installation process see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md) for details.
 
-Warning
--------
-
-Although this is a major upgrade version of pgModeler it is recommended NOT EXPORT the models created directly to production environments. Not all possible code generation were tested in this way, is its your own risk export the models into environments that are not intended for testing. The project's author is not responsible for any possible loss of data due the inappropriate use of this tool.
-
 Known bugs
 ----------
 
 * Broken compilation process on MacOSX. [(issue#10)](https://github.com/pgmodeler/pgmodeler/issues/10)
-* PgModeler crashes when trying to make a relationship between tables were some of them have special trigger/index. [(issue#8)](https://github.com/pgmodeler/pgmodeler/issues/8)
 * PgModeler, when compiled on Qt 4.7.x, crashes after activating the print dialog. [(issue#1)](https://github.com/pgmodeler/pgmodeler/issues/1)
 
 Change History
 --------------
+
+[ v0.3.3 ]
+
+* [Change]: pgModeler license were update to GPLv3.
+* [Change]: Error massages and entire UI were translated to en_US. Now people can contribute more easily with translation files. [(issue#8)](https://github.com/pgmodeler/pgmodeler/issues/8)
+* [Change]: The left side image were removed form all forms giving more space to show widgets.
+* [Change]: pgModeler now shows a messagebox at startup if any critical error is raised instead to show them on stdin.
+* [Fix]: Translation files now are correctly loaded depending on system language. [(issue#23)](https://github.com/pgmodeler/pgmodeler/issues/23)
+* [Fix]: Compilation process and execution is working correctly on Windows system. [(issue#11)](https://github.com/pgmodeler/pgmodeler/issues/11)
+* [Fix]: No more crashes when dealing with relationships that have special triggers/indexes/columns. [(issue#8)](https://github.com/pgmodeler/pgmodeler/issues/8) [(issue#24)](https://github.com/pgmodeler/pgmodeler/issues/24)
 
 [ v0.3.2 ]
 

@@ -584,6 +584,9 @@ void FormPrincipal::definirModeloAtual(void)
 
   //Configura a barra de ferramentas do modelo conforme as ações respectivas no modelo atual
   modelo_tb->addAction(modelo_atual->action_novo_obj);
+  //Seta o modo de popup do menu para "InstantPopup" assim o usuário não precisa pressionar a setinha para ativar o popup
+  dynamic_cast<QToolButton *>(modelo_tb->widgetForAction(modelo_atual->action_novo_obj))->setPopupMode(QToolButton::InstantPopup);
+
   modelo_tb->addAction(modelo_atual->action_editar);
   modelo_tb->addAction(modelo_atual->action_codigo_fonte);
   modelo_tb->addAction(modelo_atual->action_converter_relnn);

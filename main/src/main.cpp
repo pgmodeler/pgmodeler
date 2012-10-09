@@ -27,16 +27,19 @@ int main(int argc, char **argv)
   QPixmap alfa(":imagens/imagens/pgmodeler_logo_alfa.png");
   pixmap.setAlphaChannel(alfa);
 
-  QSplashScreen splash(pixmap);
-
-  QFont fnt=splash.font();
+  //Desenha o texto da versão atual no canto inferior direito do pixmap
+  QFont fnt;
+  QPainter p;
   fnt.setFamily("Dejavu Sans");
   fnt.setBold(true);
   fnt.setPointSize(7.5f);
-  splash.setFont(fnt);
+  p.begin(&pixmap);
+  p.setFont(fnt);
+  p.setPen(QColor(255,255,255));
+  p.drawText(QPointF(pixmap.size().width()-45, pixmap.size().width()-17), QString("v%1").arg(AtributosGlobais::VERSAO_PGMODELER));
+  p.end();
 
-  //Exibe a versão do pgmodeler na base do splash
-  splash.showMessage(QString("       v%1\n").arg(AtributosGlobais::VERSAO_PGMODELER), Qt::AlignBottom | Qt::AlignHCenter, Qt::white);
+  QSplashScreen splash(pixmap);
   splash.show();
   splash.repaint();
 

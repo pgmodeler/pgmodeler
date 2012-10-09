@@ -304,6 +304,9 @@ Special thanks to friends of the software development team of the Legislative As
         <property name="wordWrap">
          <bool>true</bool>
         </property>
+        <property name="textInteractionFlags">
+         <set>Qt::NoTextInteraction</set>
+        </property>
        </widget>
       </item>
       <item row="3" column="0" colspan="2">
@@ -365,10 +368,13 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
          <bool>false</bool>
         </property>
         <property name="alignment">
-         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+         <set>Qt::AlignJustify|Qt::AlignTop</set>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::NoTextInteraction</set>
         </property>
        </widget>
       </item>

@@ -40,7 +40,7 @@ If the build is successful the executable 'pgmodeler' and some directories will 
 Environment Variables
 ---------------------
 
-Four own environment variables are used for access the folders schemas/, conf/, plugins/ and lang/. If you want to configure directories cited in deferent paths use the following variables:
+Four own environment variables are used by pgModeler to access the folders schemas/, conf/, plugins/ and lang/. If you want to configure directories cited in deferent paths use the following variables:
 
 * PGMODELER_SCHEMAS_DIR -> stores the full path the directory schemas/
 * PGMODELER_CONF_DIR -> stores the full path the directory conf/
@@ -49,7 +49,7 @@ Four own environment variables are used for access the folders schemas/, conf/, 
 
 Additionally, the pgModeler need to know where to find the libraries required for the execution (Qt Library, LibXML and libpq) for which you should enter the full path in the variable LD_LIBRARY_PATH (Unix) or PATH (Windows), if not already configured.
 
-To provide the interface translation pgModeler checks the variable LANG (Unix). To use a specific translation, change the value of this variable. So far, the pgModeler only supports the U.S. English (en_US).
+To provide the interface translation pgModeler checks the variable LANG (Unix). To use a specific translation, change the value of this variable. So far, the pgModeler only supports the U.S. English (en_US) language.
 
 Finally, as a convenience, the script 'start-pgmodeler.(sh | bat)' is provided to assist the initialization of pgModeler so it is not necessary to call the executable directly or change the environment variables on your operating system.
 
