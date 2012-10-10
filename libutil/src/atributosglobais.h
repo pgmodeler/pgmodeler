@@ -49,10 +49,11 @@ static const QString
 
   /** issue#7 **/
   /* Correção de referência incorreta às variáveis de ambiente */
-  DIR_RAIZ_ESQUEMAS=QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/"),
-  DIR_CONFIGURACOES=QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/"),
-  DIR_LINGUAS=QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/"),
-  DIR_PLUGINS=QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/");
+  /* Caso a variável não esteja especificada, o pgModeler procura a pasta requisitada no diretório de atual "." */
+  DIR_RAIZ_ESQUEMAS=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString("./schemas")),
+  DIR_CONFIGURACOES=(getenv("PGMODELER_CONF_DIR") ? QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") : QString("./conf")),
+  DIR_LINGUAS=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString("./lang")),
+  DIR_PLUGINS=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins"));
 
 static const QString
    VERSAO_PGMODELER="0.3.3",
