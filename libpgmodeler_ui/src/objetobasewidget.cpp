@@ -40,7 +40,7 @@ ObjetoBaseWidget::ObjetoBaseWidget(QWidget *parent, TipoObjetoBase tipo_obj): QD
                                      AtributosGlobais::EXT_CONFIGURACAO);
 
   janela_pai=new FormBasico(NULL, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
-  janela_pai->setWindowTitle(trUtf8("Criate / Edit: ") + QString::fromUtf8(ObjetoBase::obterNomeTipoObjeto(tipo_obj)));
+  janela_pai->setWindowTitle(trUtf8("Criate / Edit: ") + ObjetoBase::obterNomeTipoObjeto(tipo_obj));
   janela_pai->widgetgeral_wgt->insertWidget(0, this);
   janela_pai->widgetgeral_wgt->setCurrentIndex(0);
   janela_pai->definirBotoes(CaixaMensagem::BOTAO_OK_CANCELAR);
@@ -201,7 +201,7 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
  edt_permissoes_tb->setEnabled(objeto!=NULL);
  objeto_pai_txt->setPlainText(QString::fromUtf8(objeto_pai->obterNome(true)));
 
- iconeobjpai_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/") + objeto_pai->obterNomeEsquemaObjeto() + QString(".png")));
+ iconeobjpai_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + objeto_pai->obterNomeEsquemaObjeto() + QString(".png")));
  iconeobjpai_lbl->setToolTip(objeto_pai->obterNomeTipoObjeto());
 
  /* Configura os seletores de dono/esquema/espaço de tabela somente quando

@@ -143,6 +143,9 @@
        </item>
        <item row="3" column="1">
         <widget class="QSpinBox" name="custo_exec_spb">
+         <property name="minimum">
+          <number>1</number>
+         </property>
          <property name="maximum">
           <number>10000</number>
          </property>

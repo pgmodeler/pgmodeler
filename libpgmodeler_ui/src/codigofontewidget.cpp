@@ -169,7 +169,7 @@ void CodigoFonteWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto)
    iconeobj_lbl->setPixmap(icone_obj);
 
    //Preenche os campos do formulario com os atributos do objeto
-   comentario_edt->setText(QString::fromUtf8(objeto->obterNomeTipoObjeto()));
+   comentario_edt->setText(objeto->obterNomeTipoObjeto());
 
    if(!destaque_sql->configuracaoCarregada())
    {

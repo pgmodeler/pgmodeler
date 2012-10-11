@@ -282,22 +282,31 @@ void FormExportacao::exportarModelo(void)
       {
        cmd_sql.clear();
 
+       //Executa um trimm no comando SQL extraído
+       cmd_sql=cmd_sql.trimmed();
+
        //Extrai os caracteres até encontrar o final do buffer ou um ';'
-       while(i < qtd && buf_sql.at(i)!=';')
+       while(i < qtd)
        {
-        cmd_sql+=buf_sql.at(i);
+        /* Caso o caracter seja um ';' e o próximo seja uma quebra de linha, significa o final do comando SQL
+           assim a varredura será interrompida */
+        if(buf_sql.at(i)==';' && buf_sql.at(i+1)=='\n')
+        {
+         cmd_sql+=';';
+         break;
+        }
+        else
+         cmd_sql+=buf_sql.at(i);
         i++;
        }
 
        //Executa um trimm no comando SQL extraído
-       cmd_sql=cmd_sql.trimmed();
+       //cmd_sql=cmd_sql.trimmed();
 
        //Caso o comando não esteja vazio
        if(!cmd_sql.isEmpty())
        {
         i++;
-        //Concatena um ';' para finalizar o comando
-        cmd_sql+=';';
         //Executa-o na conexão
         conex_novo_bd.executarComandoDDL(cmd_sql);
        }

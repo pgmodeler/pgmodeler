@@ -249,7 +249,7 @@ bool ObjetoBase::nomeValido(const QString &nome_obj)
    {
     chr1=nome_obj[i+1];
 
-    if((i + 2) < (tam-1))
+    if((i + 2) <= (tam-1))
      chr2=nome_obj[i+2];
     else
      chr2=0;
