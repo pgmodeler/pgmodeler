@@ -4,6 +4,9 @@ TEMPLATE = app
 TARGET = pgmodeler
 DESTDIR = ../build
 
+windows:RC_FILE=$$PWD/res/windows_ico.qrc
+windows:RCC_DIR=$$PWD/src/
+
 LIBS += $$DESTDIR/lib/$$LIBUTIL \
         $$DESTDIR/lib/$$LIBPARSERS \
         $$DESTDIR/lib/$$LIBCONEXBD \
