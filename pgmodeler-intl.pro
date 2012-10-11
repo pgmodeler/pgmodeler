@@ -6,5 +6,5 @@ include(libpgmodeler/libpgmodeler.pro)
 include(libpgmodeler_ui/libpgmodeler_ui.pro)
 include(main/main.pro)
 
-TRANSLATIONS = lang/pgmodeler.en_US.ts
+TRANSLATIONS = lang/pgmodeler.pt_BR.ts
 CODECFORTR = UTF8

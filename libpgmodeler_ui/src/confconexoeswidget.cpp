@@ -356,7 +356,7 @@ void ConfConexoesWidget::testarConexao(void)
   conexao.conectar();
 
   //Exibe a mensagem de sucesso
-  caixa_msg->show(trUtf8("Sucesso"), trUtf8("Conexão efetuada com sucesso!"), CaixaMensagem::ICONE_INFO);
+  caixa_msg->show(trUtf8("Success"), trUtf8("Connection successfuly stablished!"), CaixaMensagem::ICONE_INFO);
  }
  catch(Excecao &e)
  {

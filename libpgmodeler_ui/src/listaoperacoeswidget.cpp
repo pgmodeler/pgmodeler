@@ -112,7 +112,7 @@ void ListaOperacoesWidget::atualizarListaOperacoes(void)
    if(tipo_op==Operacao::OBJETO_CRIADO)
    {
     icone_op="criado";
-    nome_op=trUtf8("criated");
+    nome_op=trUtf8("created");
    }
    else if(tipo_op==Operacao::OBJETO_REMOVIDO)
    {

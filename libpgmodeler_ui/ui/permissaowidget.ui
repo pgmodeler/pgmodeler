@@ -166,7 +166,7 @@
         </attribute>
         <column>
          <property name="text">
-          <string>Privilégio</string>
+          <string>Privilege</string>
          </property>
         </column>
         <column>

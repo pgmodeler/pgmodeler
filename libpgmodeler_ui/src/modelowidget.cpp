@@ -197,7 +197,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  {
   acoes_ins_objs[tipos[i]]=new QAction(QIcon(QString(":/icones/icones/") +
                                        ObjetoBase::obterNomeEsquemaObjeto(tipos[i]) + QString(".png")),
-                                       QString::fromUtf8(ObjetoBase::obterNomeTipoObjeto(tipos[i])), this);
+                                       ObjetoBase::obterNomeTipoObjeto(tipos[i]), this);
   acoes_ins_objs[tipos[i]]->setData(QVariant(tipos[i]));
   connect(acoes_ins_objs[tipos[i]], SIGNAL(triggered(bool)), this, SLOT(adicionarNovoObjeto(void)));
  }
@@ -1607,7 +1607,7 @@ void ModeloWidget::colarObjetos(void)
   //Atualiza a mensagem do widget de progresso de tarefa
   pos++;
   prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
-                                tr("Validando objeto: %1 (%2)").arg(objeto->obterNome())
+                                trUtf8("Validating object: %1 (%2)").arg(objeto->obterNome())
                                                                .arg(objeto->obterNomeTipoObjeto()),
                                 objeto->obterTipoObjeto());
 
@@ -1722,8 +1722,8 @@ void ModeloWidget::colarObjetos(void)
   //Atualiza a mensagem do widget de progresso de tarefa
   pos++;
   prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
-                                tr("Gerando código XML do objeto: %1 (%2)").arg(objeto->obterNome())
-                                                                           .arg(objeto->obterNomeTipoObjeto()),
+                                trUtf8("Generating XML code of object: %1 (%2)").arg(objeto->obterNome())
+                                                                            .arg(objeto->obterNomeTipoObjeto()),
                                 objeto->obterTipoObjeto());
 
   //Armazena a definição XML do objeto num mapa de buffers xml
@@ -1779,7 +1779,7 @@ void ModeloWidget::colarObjetos(void)
    //Atualiza a mensagem do widget de progresso de tarefa
    pos++;
    prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
-                                 tr("Colando o objeto: %1 (%2)").arg(objeto->obterNome())
+                                 trUtf8("Pasting object: %1 (%2)").arg(objeto->obterNome())
                                                                 .arg(objeto->obterNomeTipoObjeto()),
                                  objeto->obterTipoObjeto());
 

@@ -655,7 +655,7 @@ void ListaOperacoes::desfazerOperacao(void)
      //Dispara um sinal com o progresso da operação encadeada
      pos++;
      emit s_operacaoExecutada((pos/static_cast<float>(tam_enc))*100,
-                               tr("Desfazendo operação no objeto: %1 (%2)")
+                               trUtf8("Undoing operation on object: %1 (%2)")
                                       .arg(operacao->obj_pool->obterNome())
                                       .arg(operacao->obj_pool->obterNomeTipoObjeto()),
                                        operacao->obj_pool->obterTipoObjeto());
@@ -720,7 +720,7 @@ void ListaOperacoes::refazerOperacao(void)
      //Dispara um sinal com o progresso da operação encadeada
      pos++;
      emit s_operacaoExecutada((pos/static_cast<float>(tam_enc))*100,
-                               tr("Refazendo operação no objeto: %1 (%2)")
+                               trUtf8("Redoing operation on object:: %1 (%2)")
                                       .arg(operacao->obj_pool->obterNome())
                                       .arg(operacao->obj_pool->obterNomeTipoObjeto()),
                                        operacao->obj_pool->obterTipoObjeto());

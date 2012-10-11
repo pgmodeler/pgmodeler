@@ -14,8 +14,8 @@ ConversaoTipoWidget::ConversaoTipoWidget(QWidget *parent): ObjetoBaseWidget(pare
   tipo_dado_dest=NULL;
   sel_funcao_conv=NULL;
 
-  tipo_dado_orig=new TipoPgSQLWidget(this, tr("Tipo de Dado de Origem"));
-  tipo_dado_dest=new TipoPgSQLWidget(this, tr("Tipo de Dado de Destino"));
+  tipo_dado_orig=new TipoPgSQLWidget(this, trUtf8("Source data type"));
+  tipo_dado_dest=new TipoPgSQLWidget(this, trUtf8("Target data type"));
   //Alocando o widget seletor de função de conversão
   sel_funcao_conv=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
 

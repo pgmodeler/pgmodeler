@@ -247,7 +247,7 @@
     </size>
    </property>
    <property name="toolTip">
-    <string>Editar Permissões</string>
+    <string>Edit Permissions</string>
    </property>
    <property name="text">
     <string/>

@@ -769,7 +769,7 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Versão do PostgreSQL no qual do código SQL deve ser gerado</string>
+           <string>PostgreSQL version in which the SQL code should be generated</string>
           </property>
           <property name="insertPolicy">
            <enum>QComboBox::InsertAtBottom</enum>

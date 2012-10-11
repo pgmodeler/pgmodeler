@@ -307,7 +307,7 @@
             </property>
             <column>
              <property name="text">
-              <string>Exceções</string>
+              <string>Exceptions</string>
              </property>
             </column>
            </widget>

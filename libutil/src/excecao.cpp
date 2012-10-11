@@ -16,7 +16,7 @@ QString Excecao::mensagens[QTD_ERROS][2]={
 {"ERR_PGMODELER_ATROBJDUPLICCONT", QObject::tr("The object '%1' (%2) can't be assigned because there is already exists in the container object '%3'!")},
 {"ERR_PGMODELER_ATROBJTIPOINV", QObject::tr("Assignment of object of an invalid type!")},
 {"ERR_PGMODELER_REMOBJTIPOINV", QObject::tr("Removing an object of an invalid type!")},
-{"ERR_PGMODELER_OBTOBJTIPOINV", QObject::tr("Removing an object of an invalid type!Obtaining an object of an invalid type!")},
+{"ERR_PGMODELER_OBTOBJTIPOINV", QObject::tr("Obtaining an object of an invalid type!")},
 {"ERR_PGMODELER_ATRNOMEVAZIOTPRET", QObject::tr("Assignment of empty name to table return type!")},
 {"ERR_PGMODELER_INSPARAMDUPLIC", QObject::tr("The insertion of the parameter '%1' will not be possible because there is another parameter with same name in the function '%2'!")},
 {"ERR_PGMODELER_INSTPRETDUPLIC", QObject::tr("The insertion of the table return type '%1' will not be possible because there is another return type with the same name in the '%2'!")},

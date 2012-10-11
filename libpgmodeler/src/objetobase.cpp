@@ -15,17 +15,17 @@ QString ObjetoBase::esq_objetos[QTD_TIPOS_OBJETO]={
 
 
 QString ObjetoBase::nome_tipo_objetos[QTD_TIPOS_OBJETO]={
-  QObject::tr("Column"), QObject::tr("Constraint"), QObject::tr("Function"),
-  QObject::tr("Trigger"), QObject::tr("Index"), QObject::tr("Rule"),
-  QObject::tr("Table"), QObject::tr("View"),  QObject::tr("Domain"),
-  QObject::tr("Schema"), QObject::tr("Aggregate"), QObject::tr("Operator"),
-  QObject::tr("Sequence"), QObject::tr("Role"), QObject::tr("Conversion"),
-  QObject::tr("Cast"),
-  QObject::tr("Language"), QObject::tr("Type"), QObject::tr("Tablespace"),
-  QObject::tr("Operator Family"), QObject::tr("Operator Class"),
-  QObject::tr("Database"), QObject::tr("Table-Table Relationship"),
-  QObject::tr("Textbox"), QObject::tr("Permission"), QObject::tr("Parameter"),
-  QObject::tr("Table-View Relationship")
+  QObject::trUtf8("Column"), QObject::trUtf8("Constraint"), QObject::trUtf8("Function"),
+  QObject::trUtf8("Trigger"), QObject::tr("Index"), QObject::trUtf8("Rule"),
+  QObject::trUtf8("Table"), QObject::trUtf8("View"),  QObject::trUtf8("Domain"),
+  QObject::trUtf8("Schema"), QObject::trUtf8("Aggregate"), QObject::trUtf8("Operator"),
+  QObject::trUtf8("Sequence"), QObject::trUtf8("Role"), QObject::trUtf8("Conversion"),
+  QObject::trUtf8("Cast"),
+  QObject::trUtf8("Language"), QObject::trUtf8("Type"), QObject::trUtf8("Tablespace"),
+  QObject::trUtf8("Operator Family"), QObject::trUtf8("Operator Class"),
+  QObject::trUtf8("Database"), QObject::trUtf8("Table-Table Relationship"),
+  QObject::trUtf8("Textbox"), QObject::trUtf8("Permission"), QObject::trUtf8("Parameter"),
+  QObject::trUtf8("Table-View Relationship")
 
 };
 

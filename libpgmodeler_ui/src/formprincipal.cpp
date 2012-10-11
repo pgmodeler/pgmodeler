@@ -362,6 +362,10 @@ void FormPrincipal::showEvent(QShowEvent *)
   menuPlugins->addAction(*itr);
   itr++;
  }
+
+ //Caso não haja nenhum modelo pré-carregado (sessão restaurada) adiciona um novo
+ if(!modelo_atual)
+   this->adicionarNovoModelo();
 }
 //----------------------------------------------------------
 void FormPrincipal::closeEvent(QCloseEvent *)
@@ -849,7 +853,7 @@ void FormPrincipal::salvarModelo(ModeloWidget *modelo)
 
     /** issue#9 **/
     //Ateração da extensão dos modelos de .pgmodel para .dbm
-    arquivo_dlg.setFilter(tr("Modelo de Banco de Dados (*.dbm);;Todos os Arquivos (*.*)"));
+    arquivo_dlg.setFilter(tr("Database model (*.dbm);;All files (*.*)"));
     arquivo_dlg.setFileMode(QFileDialog::AnyFile);
     arquivo_dlg.setAcceptMode(QFileDialog::AcceptSave);
     arquivo_dlg.setModal(true);
@@ -990,7 +994,7 @@ void FormPrincipal::carregarModelo(void)
   //Exibe o diálogo de carregamento do arquivo
   /** issue#9 **/
   //Ateração da extensão dos modelos de .pgmodel para .dbm
-  arquivo_dlg.setFilter(trUtf8("Database Model (*.dbm);; All Files (*.*)"));
+  arquivo_dlg.setFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
   arquivo_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));
   arquivo_dlg.setWindowTitle(trUtf8("Load model"));
   arquivo_dlg.setFileMode(QFileDialog::ExistingFiles);

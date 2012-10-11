@@ -136,7 +136,7 @@
     </property>
     <widget class="QMenu" name="menuFerramentas">
      <property name="title">
-      <string>Ferramentas</string>
+      <string>Tools</string>
      </property>
     </widget>
     <addaction name="action_exibir_grade"/>
@@ -171,7 +171,7 @@
     </font>
    </property>
    <property name="windowTitle">
-    <string>Arquivo</string>
+    <string>File</string>
    </property>
    <property name="iconSize">
     <size>
@@ -210,7 +210,7 @@
     </font>
    </property>
    <property name="windowTitle">
-    <string>Visualização</string>
+    <string>View</string>
    </property>
    <property name="iconSize">
     <size>
@@ -249,7 +249,7 @@
     </font>
    </property>
    <property name="windowTitle">
-    <string>Edição</string>
+    <string>Edit</string>
    </property>
    <property name="movable">
     <bool>true</bool>
@@ -291,7 +291,7 @@
     </font>
    </property>
    <property name="windowTitle">
-    <string>Modelo</string>
+    <string>Model</string>
    </property>
    <property name="iconSize">
     <size>
@@ -559,7 +559,7 @@
     <string>Show grid</string>
    </property>
    <property name="iconText">
-    <string>Exibir grade</string>
+    <string>Show grid</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
