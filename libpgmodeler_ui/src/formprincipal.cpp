@@ -81,6 +81,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  map<QString, QDockWidget *> dock_wgts;
  map<QString, QToolBar *> toolbars;
  QString tipo;
+ QStringList arq_sessao_ant;
  ConfBaseWidget *conf_wgt=NULL;
  TipoObjetoBase tipos[27]={
           OBJETO_RELACAO_BASE,OBJETO_RELACAO, OBJETO_TABELA, OBJETO_VISAO,
@@ -99,14 +100,19 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 
  try
  {
+  QDir dir;
+  //Checa se o diretório temporário existe. Caso não seja encontrado, o mesmo será criado
+  if(!dir.exists(AtributosGlobais::DIR_TEMPORARIO))
+   dir.mkdir(AtributosGlobais::DIR_TEMPORARIO);
+
   fsobre=new FormSobre;
   fconfiguracao=new FormConfiguracao(this);
   fexportacao=new FormExportacao(this);
-
-  lista_oper=new ListaOperacoesWidget;
-  visao_objs=new VisaoObjetosWidget;
   selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
+  frestmodelo=new FormRestauracaoModelo(this);
+  lista_oper=new ListaOperacoesWidget;
+  visao_objs=new VisaoObjetosWidget;
 
   //*** CRIAÇÃO DOS FORMULÁRIOS GLOBAIS ***
   permissao_wgt=new PermissaoWidget(this);
@@ -222,6 +228,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 
  connect(fconfiguracao, SIGNAL(finished(int)), this, SLOT(atualizarModelos(void)));
  connect(&tm_salvamento, SIGNAL(timeout(void)), this, SLOT(salvarTodosModelos(void)));
+ connect(&tm_salvamento_tmp, SIGNAL(timeout(void)), this, SLOT(salvarModeloTemporario(void)));
 
  connect(action_exportar, SIGNAL(triggered(bool)), this, SLOT(exportarModelo(void)));
 
@@ -306,12 +313,13 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
      toolbars[tipo]->setVisible(atribs[AtributosParsers::VISIVEL]==AtributosParsers::VERDADEIRO);
     this->addToolBar(areas_toolbar[atribs[AtributosParsers::POSICAO]], toolbars[tipo]);
    }
+   //Carrega a sessão anterior somente se não hoverem arquivos temporários
    else if(atribs.count(AtributosParsers::CAMINHO)!=0)
    {
     try
     {
      if(!atribs[AtributosParsers::CAMINHO].isEmpty())
-      this->adicionarNovoModelo(atribs[AtributosParsers::CAMINHO]);
+      arq_sessao_ant.push_back(atribs[AtributosParsers::CAMINHO]);
     }
     catch(Excecao &e)
     {
@@ -327,16 +335,66 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   caixa_msg->show(e);
  }
 
+ //Restaura os arquivos temporários (se houver)
+ if(frestmodelo->existeModelosTemporarios())
+ {
+  frestmodelo->exec();
+
+  if(frestmodelo->result()==QDialog::Accepted)
+  {
+   ModeloWidget *modelo=NULL;
+   try
+   {
+    QStringList arq_temps=frestmodelo->obterModelosSelecionados();
+    while(!arq_temps.isEmpty())
+    {
+     this->adicionarNovoModelo(arq_temps.front());
+     //Obtém o modelo gerado a partir do arquivo temporário
+     modelo=dynamic_cast<ModeloWidget *>(modelos_tab->widget(modelos_tab->count()-1));
+
+     /* Define-o como modificado e limpa o nome do arquivo temporário, isso
+        forçará o usuário a salvá-lo quando o timer de salvamento automático for atingido ou
+        se o pgModeler for fechado */
+     modelo->modificado=true;
+     modelo->nome_arquivo.clear();
+     arq_temps.pop_front();
+    }
+   }
+   catch(Excecao &e)
+   {
+    caixa_msg->show(e);
+   }
+  }
+
+  frestmodelo->excluirModelosTemporarios();
+ }
+
+ //Carregando arquivos da sessão anterior
+ if(!arq_sessao_ant.isEmpty() && frestmodelo->result()==QDialog::Rejected)
+ {
+  try
+  {
+   while(!arq_sessao_ant.isEmpty())
+   {
+    this->adicionarNovoModelo(arq_sessao_ant.front());
+    arq_sessao_ant.pop_front();
+   }
+  }
+  catch(Excecao &e)
+  {
+   caixa_msg->show(e);
+  }
+ }
+
  //Inicializa o atributo de tempo de salvamento automático
  interv_salvar=confs[AtributosParsers::CONFIGURACAO][AtributosParsers::INTERVALO_SALVAR_AUTO].toInt() * 60000;
-
- //Caso o intervalo de salvamento esteja setado inicializa o timer
- if(interv_salvar > 0)
-  tm_salvamento.start(interv_salvar, false);
 }
 //----------------------------------------------------------
 FormPrincipal::~FormPrincipal(void)
 {
+ //Exclui todos os arquivos temporários
+ frestmodelo->excluirModelosTemporarios();
+
  //Destrói os plugins carregados
  this->destruirPlugins();
 
@@ -366,6 +424,14 @@ void FormPrincipal::showEvent(QShowEvent *)
  //Caso não haja nenhum modelo pré-carregado (sessão restaurada) adiciona um novo
  if(!modelo_atual)
    this->adicionarNovoModelo();
+
+ //Caso o intervalo de salvamento esteja setado inicializa o timer
+ if(interv_salvar > 0)
+  tm_salvamento.start(interv_salvar, false);
+
+ //O intervalo de salvamento do arquivo temporário será a cada 2 minutos.
+ //tm_salvamento_tmp.start(120000, false);
+ tm_salvamento_tmp.start(5000, false);
 }
 //----------------------------------------------------------
 void FormPrincipal::closeEvent(QCloseEvent *)
@@ -625,11 +691,13 @@ void FormPrincipal::definirModeloAtual(void)
   connect(modelo_atual, SIGNAL(s_objetoCriado(void)),visao_objs, SLOT(atualizarVisaoObjetos(void)));
   connect(modelo_atual, SIGNAL(s_objetoRemovido(void)),visao_objs, SLOT(atualizarVisaoObjetos(void)));
 
+  connect(modelo_atual, SIGNAL(s_zoomModificado(float)), this, SLOT(atualizarEstadoFerramentas(void)));
+
   connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
   connect(action_exibir_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
   connect(action_exibir_lim_paginas, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
   connect(action_visao_geral, SIGNAL(triggered(void)), modelo_atual, SLOT(exibirVisaoGeral(void)));
-  connect(modelo_atual, SIGNAL(s_zoomModificado(float)), this, SLOT(atualizarEstadoFerramentas(void)));
+
  }
  else
   this->setWindowTitle(titulo_janela);
@@ -750,27 +818,43 @@ void FormPrincipal::fecharModelo(int idx_modelo)
  QWidget *tab=NULL;
 
  if(idx_modelo >= 0)
- {
   tab=modelos_tab->widget(idx_modelo);
-  modelos_tab->removeTab(idx_modelo); //Remove a aba
- }
  else
- {
   tab=modelos_tab->currentWidget(); //Obtém a aba em foco
-  modelos_tab->removeTab(modelos_tab->currentIndex()); //Remove a aba
- }
 
  if(tab)
  {
+  ModeloWidget *modelo=dynamic_cast<ModeloWidget *>(tab);
+
   disconnect(tab, NULL, lista_oper, NULL);
   disconnect(tab, NULL, visao_objs, NULL);
   disconnect(action_alin_objs_grade, NULL, this, NULL);
   disconnect(action_exibir_grade, NULL, this, NULL);
   disconnect(action_exibir_lim_paginas, NULL, this, NULL);
   disconnect(action_visao_geral, NULL, tab , NULL);
-  disconnect(dynamic_cast<ModeloWidget *>(tab)->visaogeral_wgt, NULL, action_visao_geral, NULL);
+  disconnect(modelo->visaogeral_wgt, NULL, action_visao_geral, NULL);
 
-  delete(dynamic_cast<ModeloWidget *>(tab)); //Desaloca a aba selecionada
+  //Remove o arquivo temporário relacionado ao modelo
+  QDir arq_tmp;
+  arq_tmp.remove(modelo->obterNomeArquivoTemp());
+
+  //Se o modelo foi modificado então solicita o salvamento ao usuário
+  if(modelo->modeloModificado())
+  {
+   caixa_msg->show(trUtf8("Save model"),
+                   trUtf8("The model were modified! Do you want to save it before close?"),
+                   CaixaMensagem::ICONE_CONFIRM,CaixaMensagem::BOTAO_SIM_NAO);
+
+   if(caixa_msg->result()==QDialog::Accepted)
+    this->salvarModelo(modelo);
+  }
+
+  if(idx_modelo >= 0)
+   modelos_tab->removeTab(idx_modelo); //Remove a aba
+  else
+   modelos_tab->removeTab(modelos_tab->currentIndex()); //Remove a aba
+
+  delete(modelo); //Desaloca a aba selecionada
  }
 
  if(modelos_tab->count()==0)
@@ -1197,5 +1281,11 @@ void FormPrincipal::executarPlugin(void)
     e ação tenha o nome de um plugin registrado  */
  if(modelo_atual && acao && plugins.count(acao->name())==1)
   plugins[acao->name()]->executarPlugin(modelo_atual);
+}
+//----------------------------------------------------------
+void FormPrincipal::salvarModeloTemporario(void)
+{
+ if(modelo_atual && modelo_atual->modeloModificado())
+  modelo_atual->modelo->salvarModelo(modelo_atual->obterNomeArquivoTemp(), ParserEsquema::DEFINICAO_XML);
 }
 //**********************************************************

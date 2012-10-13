@@ -105,7 +105,8 @@ class ModeloWidget: public QWidget {
   ModeloBD *modelo;
 
   //Armazena o nome do arquivo de modelo carregado no widget
-  QString nome_arquivo;
+  QString nome_arquivo,
+          nome_arquivo_tmp;
 
   /* Configura a cena alinhando os objetos e a redimensionando quandos
      os objetos extrapolam o tamanho máximo dela */
@@ -138,6 +139,9 @@ class ModeloWidget: public QWidget {
 
   //Obtém o nome do arquivo que deu origem ao modelo
   QString obterNomeArquivo(void);
+
+  //Obtém o nome temporário do arquivo usado para salvar uma cópia de segurança na pasta tmp do pgModeler
+  QString obterNomeArquivoTemp(void);
 
   //Exibe o formulário de edição do objeto conforme o tipo passado
   void exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto=NULL, ObjetoBase *objeto_pai=NULL, QPointF pos=QPointF(NAN, NAN));

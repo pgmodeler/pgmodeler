@@ -82,8 +82,10 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
                         RelacionamentoBase::RELACIONAMENTO_GEN };
 
  zoom_atual=1;
- modificado=true;
+ modificado=false;
  tipo_novo_obj=OBJETO_BASE;
+
+ nome_arquivo_tmp=QString(tempnam(AtributosGlobais::DIR_TEMPORARIO, "model")) + QString(".dbm");
 
  modelo_protegido_frm=new QFrame(this);
  modelo_protegido_frm->setGeometry(QRect(20, 10, 511, 48));
@@ -1070,6 +1072,11 @@ void ModeloWidget::salvarModelo(const QString &nome_arq)
 QString ModeloWidget::obterNomeArquivo(void)
 {
  return(this->nome_arquivo);
+}
+//----------------------------------------------------------
+QString ModeloWidget::obterNomeArquivoTemp(void)
+{
+ return(this->nome_arquivo_tmp);
 }
 //----------------------------------------------------------
 void ModeloWidget::exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto, ObjetoBase *objeto_pai, QPointF pos)

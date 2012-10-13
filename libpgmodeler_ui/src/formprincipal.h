@@ -28,6 +28,7 @@
 #include "formsobre.h"
 #include "caixamensagem.h"
 #include "formbasico.h"
+#include "formrestauracaomodelo.h"
 #include "listaoperacoeswidget.h"
 #include "visaoobjetoswidget.h"
 #include "pgmodelerplugin.h"
@@ -38,11 +39,12 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
  Q_OBJECT
 
  private:
-  //Atributo estático e constante que guarda a versão atual do pgModeler
-  static const QString VERSAO_PGMODELER;
-
   //Timer de salvamento automático do modelo
-  QTimer tm_salvamento;
+  QTimer tm_salvamento,
+         tm_salvamento_tmp;
+
+  //Formulário de restauração de modelos
+  FormRestauracaoModelo *frestmodelo;
 
   //Dockwidget o qual exibe as operações executadas sobre os objetos
   ListaOperacoesWidget *lista_oper;
@@ -139,6 +141,9 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
 
   //Executa o plugin representado pela ação que disparou o slot
   void executarPlugin(void);
+
+  //Salva o modelo atualmente editados na pasta temporária em caso de crash o mesmo pode ser restaurado
+  void salvarModeloTemporario(void);
 };
 //***********************************************************
 #endif

@@ -38,6 +38,7 @@ namespace AtributosGlobais {
      PGMODELER_CONF_DIR
      PGMODELER_LANG_DIR
      PGMODELER_PLUGINS_DIR
+     PGMODELER_TMP_DIR
 */
 
 static const QString
@@ -53,7 +54,8 @@ static const QString
   DIR_RAIZ_ESQUEMAS=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString("./schemas")),
   DIR_CONFIGURACOES=(getenv("PGMODELER_CONF_DIR") ? QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") : QString("./conf")),
   DIR_LINGUAS=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString("./lang")),
-  DIR_PLUGINS=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins"));
+  DIR_PLUGINS=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins")),
+  DIR_TEMPORARIO=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp"));
 
 static const QString
    VERSAO_PGMODELER="0.3.3",

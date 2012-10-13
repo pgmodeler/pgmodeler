@@ -14,6 +14,7 @@ SUBDIRS = libutil \
           libpgmodeler \
           libobjrenderer \
           libpgmodeler_ui \
+          crashhandler \
           main # \
           #plugins/dummyplugin
 
