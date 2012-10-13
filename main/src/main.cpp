@@ -8,13 +8,15 @@
 
 void executarCrashHandler(int)
 {
+ QString cmd;
+
  /** A função backtrace não é existe até o momento no MingW (Windows) desta forma
      o trecho que gera a stacktrace do programa só é ativado em Linux/Unix **/
  #ifdef Q_OS_WIN
   cmd="crashhandler.exe";
  #else
   ofstream saida;
-  QString cmd, lin;
+  QString lin;
   void *pilha[20];
   size_t tam_pilha, i;
   char **simbolos=NULL;
