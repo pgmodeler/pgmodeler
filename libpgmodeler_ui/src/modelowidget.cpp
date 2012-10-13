@@ -1084,9 +1084,6 @@ void ModeloWidget::exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto,
  try
  {
   unsigned tipo_rel=0;
- #warning "Crash handler teste"
-  Tabela *tab=NULL;
-  tab->definirNome("");
 
   /* Caso o tipo_obj seja maior que o ultimo código de tipo de objeto, indica
      que se trata de um tipo específico de relacionamento (1-1, 1-n, n-n, gen, dep).
