@@ -85,7 +85,19 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  modificado=false;
  tipo_novo_obj=OBJETO_BASE;
 
- nome_arquivo_tmp=QString(tempnam(AtributosGlobais::DIR_TEMPORARIO, "model")) + QString(".dbm");
+ //nome_arquivo_tmp=QString(tempnam(AtributosGlobais::DIR_TEMPORARIO, "model")) + QString(".dbm");
+
+ //Gera um nome de arquivo termporário usando a classe QTEmporaryFile
+ QTemporaryFile tf;
+ /* Seta a másca de geração do mesmo. Caso na máscara tenha um caminho absoluto, o arquivo será
+    gerado na pasta especificada pelo caminho */
+ tf.setFileTemplate(AtributosGlobais::DIR_TEMPORARIO + AtributosGlobais::SEP_DIRETORIO + QString("modelXXXXXX") + QString(".dbm"));
+ //Executa o método open para que o arquivo seja criado
+ tf.open();
+ //Armazena o nome temporário
+ nome_arquivo_tmp=tf.name();
+ //Fecha o arquivo temporário
+ tf.close();
 
  modelo_protegido_frm=new QFrame(this);
  modelo_protegido_frm->setGeometry(QRect(20, 10, 511, 48));
@@ -1095,7 +1107,6 @@ void ModeloWidget::exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto,
    tipo_rel=tipo_obj - OBJETO_RELACAO;
    tipo_obj=OBJETO_RELACAO;
   }
-
 
   if(objeto && tipo_obj!=objeto->obterTipoObjeto())
    throw Excecao(ERR_PGMODELER_OPROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);

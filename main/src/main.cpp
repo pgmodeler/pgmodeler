@@ -93,7 +93,7 @@ int main(int argc, char **argv)
   p.begin(&pixmap);
   p.setFont(fnt);
   p.setPen(QColor(255,255,255));
-  p.drawText(QPointF(pixmap.size().width()-45, pixmap.size().width()-17), QString("v%1").arg(AtributosGlobais::VERSAO_PGMODELER));
+  p.drawText(QPointF(pixmap.size().width()-45, pixmap.size().width()-17), QString("v%1 ").arg(AtributosGlobais::VERSAO_PGMODELER));
   p.end();
 
   QSplashScreen splash(pixmap);
