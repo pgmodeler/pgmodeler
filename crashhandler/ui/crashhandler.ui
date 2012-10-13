@@ -191,12 +191,6 @@
        <height>0</height>
       </size>
      </property>
-     <property name="font">
-      <font>
-       <family>DejaVu Sans</family>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
      <property name="text">
       <string>We apologize for what happened! It is clear that a nasty bug caused it. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software.</string>
      </property>

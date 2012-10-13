@@ -152,7 +152,6 @@
           </property>
           <property name="font">
            <font>
-            <family>DejaVu Sans</family>
             <pointsize>18</pointsize>
             <weight>75</weight>
             <bold>true</bold>
@@ -185,11 +184,8 @@
           </property>
           <property name="font">
            <font>
-            <family>DejaVu Sans</family>
             <pointsize>12</pointsize>
-            <weight>50</weight>
             <italic>true</italic>
-            <bold>false</bold>
            </font>
           </property>
           <property name="text">
@@ -219,7 +215,6 @@
           </property>
           <property name="font">
            <font>
-            <family>DejaVu Sans</family>
             <pointsize>12</pointsize>
             <weight>75</weight>
             <italic>true</italic>
@@ -233,6 +228,11 @@
         </item>
         <item row="2" column="1">
          <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <pointsize>8</pointsize>
+           </font>
+          </property>
           <property name="text">
            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
@@ -281,12 +281,6 @@
           <width>0</width>
           <height>0</height>
          </size>
-        </property>
-        <property name="font">
-         <font>
-          <family>DejaVu Sans</family>
-          <pointsize>10</pointsize>
-         </font>
         </property>
         <property name="text">
          <string>Copyright 2006-2012 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
@@ -344,12 +338,6 @@ Special thanks to friends of the software development team of the Legislative As
           <width>0</width>
           <height>0</height>
          </size>
-        </property>
-        <property name="font">
-         <font>
-          <family>DejaVu Sans</family>
-          <pointsize>10</pointsize>
-         </font>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Sunken</enum>

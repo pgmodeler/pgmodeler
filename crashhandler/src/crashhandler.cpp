@@ -3,31 +3,36 @@ const char CrashHandler::CHR_DELIMITADOR=static_cast<char>(3);
 //***********************************************************
 CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
- ifstream entrada;
- QString buf;
- char lin[1024];
-
  setupUi(this);
  connect(cancelar_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
  connect(criar_btn, SIGNAL(clicked(void)), this, SLOT(gerarRelatorio(void)));
  connect(acoes_txt, SIGNAL(textChanged(void)), this, SLOT(habilitarGeracao(void)));
 
- //Abre o arquivo o qual armazena a stack trace do ultimo travamento
- entrada.open(AtributosGlobais::DIR_TEMPORARIO +
-              AtributosGlobais::SEP_DIRETORIO +
-              AtributosGlobais::ARQ_CRASH_HANDLER);
+ #ifndef Q_OS_WIN
+  ifstream entrada;
+  QString buf;
+  char lin[1024];
 
- //Le cada linha do arquivo e concatena ao buffer
- while(entrada.is_open() && !entrada.eof())
- {
-  entrada.getline(lin, sizeof(lin), '\n');
-  buf += QString("%1\n").arg(lin);
- }
+  //Abre o arquivo o qual armazena a stack trace do ultimo travamento
+  entrada.open(AtributosGlobais::DIR_TEMPORARIO +
+               AtributosGlobais::SEP_DIRETORIO +
+               AtributosGlobais::ARQ_CRASH_HANDLER);
 
- entrada.close();
+  //Le cada linha do arquivo e concatena ao buffer
+  while(entrada.is_open() && !entrada.eof())
+  {
+   entrada.getline(lin, sizeof(lin), '\n');
+   buf += QString("%1\n").arg(lin);
+  }
 
- //Exibe o buffer no widget de stack trace
- stack_txt->setPlainText(buf);
+  entrada.close();
+
+  //Exibe o buffer no widget de stack trace
+  stack_txt->setPlainText(buf);
+ #else
+  //Para sistemas Windows, exibe uma mensagem dizendo a indisponibilidade da stacktrace
+  stack_txt->setPlainText(trUtf8("** Stack trace unavailable on Windows system **");
+ #endif
 
  //Cria um destacador de sintaxe para o modelo
  dest_modelo_txt=new DestaqueSintaxe(modelo_txt, false);

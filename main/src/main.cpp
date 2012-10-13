@@ -1,45 +1,49 @@
 #include "formprincipal.h"
 #include "aplicacao.h"
-#include "execinfo.h"
 #include <QTranslator>
+
+#ifndef Q_OS_WIN
+ #include "execinfo.h"
+#endif
 
 void executarCrashHandler(int)
 {
- ofstream saida;
- QString cmd, lin;
- void *pilha[20];
- size_t tam_pilha, i;
- char **simbolos=NULL;
-
- //Obtém os simbolos da stack trace (até 20 itens)
- tam_pilha = backtrace(pilha, 20);
- simbolos = backtrace_symbols(pilha, tam_pilha);
-
- //Cria o arquivo que armazenará a stack trace
- saida.open(AtributosGlobais::DIR_TEMPORARIO +
-            AtributosGlobais::SEP_DIRETORIO +
-            AtributosGlobais::ARQ_CRASH_HANDLER);
-
- //Caso o arquivo esteja aberto
- if(saida.is_open())
- {
-  lin=QString("** pgModeler crashed after receive signal: %1 **\n\n").arg("SIGSEGV");
-  saida.write(lin.toStdString().c_str(), lin.size());
-
-  //Grava cada linha da stack trace no arquivo
-  for(i=0; i < tam_pilha; i++)
-  {
-   lin=QString(simbolos[i]) + QString("\n");
-   saida.write(lin.toStdString().c_str(), lin.size());
-  }
-  //Desaloca a stack trace
-  free(simbolos);
-  saida.close();
- }
-
+ /** A função backtrace não é existe até o momento no MingW (Windows) desta forma
+     o trecho que gera a stacktrace do programa só é ativado em Linux/Unix **/
  #ifdef Q_OS_WIN
   cmd="crashhandler.exe";
  #else
+  ofstream saida;
+  QString cmd, lin;
+  void *pilha[20];
+  size_t tam_pilha, i;
+  char **simbolos=NULL;
+
+  //Obtém os simbolos da stack trace (até 20 itens)
+  tam_pilha = backtrace(pilha, 20);
+  simbolos = backtrace_symbols(pilha, tam_pilha);
+
+  //Cria o arquivo que armazenará a stack trace
+  saida.open(AtributosGlobais::DIR_TEMPORARIO +
+             AtributosGlobais::SEP_DIRETORIO +
+             AtributosGlobais::ARQ_CRASH_HANDLER);
+
+  //Caso o arquivo esteja aberto
+  if(saida.is_open())
+  {
+   lin=QString("** pgModeler crashed after receive signal: %1 **\n\n").arg("SIGSEGV");
+   saida.write(lin.toStdString().c_str(), lin.size());
+
+   //Grava cada linha da stack trace no arquivo
+   for(i=0; i < tam_pilha; i++)
+   {
+    lin=QString(simbolos[i]) + QString("\n");
+    saida.write(lin.toStdString().c_str(), lin.size());
+   }
+   //Desaloca a stack trace
+   free(simbolos);
+   saida.close();
+  }
   cmd="crashhandler";
  #endif
 
@@ -48,7 +52,6 @@ void executarCrashHandler(int)
  system(cmd.toStdString().c_str());
  exit(1);
 }
-
 
 
 int main(int argc, char **argv)
