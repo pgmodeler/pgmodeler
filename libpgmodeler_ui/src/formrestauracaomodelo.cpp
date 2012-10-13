@@ -30,7 +30,7 @@ void FormRestauracaoModelo::exec(void)
   item=new QListWidgetItem;
   item->setText(info.fileName() +
                 QString(" - ") +
-                trUtf8("Created: %1").arg(info.created().toString(tr("yyyy-MM-dd"))) +
+                trUtf8("Modified: %1").arg(info.lastModified().toString(tr("yyyy-MM-dd hh:mm:ss"))) +
                 QString(" - ") +
                 QString("%1 bytes").arg(info.size()));
   //Armazena o caminho completo para o arquivo como dado o item

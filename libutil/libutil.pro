@@ -4,8 +4,8 @@ TEMPLATE = lib
 TARGET = util
 DESTDIR = ../build/lib
 
-HEADERS += $$PWD/src/excecao.h \
-           $$PWD/src/atributosglobais.h \
-           $$PWD/src/atributosparsers.h
+HEADERS += src/excecao.h \
+           src/atributosglobais.h \
+           src/atributosparsers.h
 
-SOURCES += $$PWD/src/excecao.cpp
+SOURCES += src/excecao.cpp

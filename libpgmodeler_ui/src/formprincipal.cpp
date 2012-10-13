@@ -429,9 +429,8 @@ void FormPrincipal::showEvent(QShowEvent *)
  if(interv_salvar > 0)
   tm_salvamento.start(interv_salvar, false);
 
- //O intervalo de salvamento do arquivo temporário será a cada 2 minutos.
- //tm_salvamento_tmp.start(120000, false);
- tm_salvamento_tmp.start(5000, false);
+ //O intervalo de salvamento do arquivo temporário será a cada 1 minuto.
+ tm_salvamento_tmp.start(60000, false);
 }
 //----------------------------------------------------------
 void FormPrincipal::closeEvent(QCloseEvent *)
@@ -710,6 +709,9 @@ void FormPrincipal::definirModeloAtual(void)
  //Atualiza os dockwidgets com os dados do modelo atual
  lista_oper->definirModelo(modelo_atual);
  visao_objs->definirModelo(modelo_atual);
+
+ //Salva o arquivo temporário referente ao modelo
+ this->salvarModeloTemporario();
 }
 //----------------------------------------------------------
 void FormPrincipal::definirOpcoesGrade(void)
@@ -1285,7 +1287,7 @@ void FormPrincipal::executarPlugin(void)
 //----------------------------------------------------------
 void FormPrincipal::salvarModeloTemporario(void)
 {
- if(modelo_atual && modelo_atual->modeloModificado())
+ if(modelo_atual)
   modelo_atual->modelo->salvarModelo(modelo_atual->obterNomeArquivoTemp(), ParserEsquema::DEFINICAO_XML);
 }
 //**********************************************************

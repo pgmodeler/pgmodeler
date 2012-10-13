@@ -1,11 +1,63 @@
 #include "formprincipal.h"
 #include "aplicacao.h"
+#include "execinfo.h"
 #include <QTranslator>
+
+void executarCrashHandler(int)
+{
+ ofstream saida;
+ QString cmd, lin;
+ void *pilha[20];
+ size_t tam_pilha, i;
+ char **simbolos=NULL;
+
+ //Obtém os simbolos da stack trace (até 20 itens)
+ tam_pilha = backtrace(pilha, 20);
+ simbolos = backtrace_symbols(pilha, tam_pilha);
+
+ //Cria o arquivo que armazenará a stack trace
+ saida.open(AtributosGlobais::DIR_TEMPORARIO +
+            AtributosGlobais::SEP_DIRETORIO +
+            AtributosGlobais::ARQ_CRASH_HANDLER);
+
+ //Caso o arquivo esteja aberto
+ if(saida.is_open())
+ {
+  lin=QString("** pgModeler crashed after receive signal: %1 **\n\n").arg("SIGSEGV");
+  saida.write(lin.toStdString().c_str(), lin.size());
+
+  //Grava cada linha da stack trace no arquivo
+  for(i=0; i < tam_pilha; i++)
+  {
+   lin=QString(simbolos[i]) + QString("\n");
+   saida.write(lin.toStdString().c_str(), lin.size());
+  }
+  //Desaloca a stack trace
+  free(simbolos);
+  saida.close();
+ }
+
+ #ifdef Q_OS_WIN
+  cmd="crashhandler.exe";
+ #else
+  cmd="crashhandler";
+ #endif
+
+ //Executa o comando crashhandler (que obrigatoriamente deve estar na mesma pasta do pgModeler)
+ cmd=QApplication::applicationDirPath() + AtributosGlobais::SEP_DIRETORIO + cmd;
+ system(cmd.toStdString().c_str());
+ exit(1);
+}
+
+
 
 int main(int argc, char **argv)
 {
  try
  {
+  //Captura o sinal de segmentation fault e inicia o crashhandler
+  signal(SIGSEGV, executarCrashHandler);
+
   Aplicacao app(argc,argv);
   QTranslator tradutor;
   QString ling_fallback="pgmodeler.en_US";

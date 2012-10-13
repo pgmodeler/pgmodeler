@@ -4,8 +4,10 @@ TEMPLATE = app
 TARGET = pgmodeler
 DESTDIR = ../build
 
-windows:RC_FILE=$$PWD/res/windows_ico.qrc
-windows:RCC_DIR=$$PWD/src/
+QMAKE_CXXFLAGS += -Wl,-rdynamic
+
+windows:RC_FILE=res/windows_ico.qrc
+windows:RCC_DIR=src/
 
 LIBS += $$DESTDIR/lib/$$LIBUTIL \
         $$DESTDIR/lib/$$LIBPARSERS \
@@ -14,5 +16,5 @@ LIBS += $$DESTDIR/lib/$$LIBUTIL \
         $$DESTDIR/lib/$$LIBPGMODELER \
         $$DESTDIR/lib/$$LIBPGMODELERUI
 
-HEADERS += $$PWD/src/aplicacao.h
-SOURCES += $$PWD/src/main.cpp
+HEADERS += src/aplicacao.h
+SOURCES += src/main.cpp
