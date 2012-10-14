@@ -1296,7 +1296,8 @@ void ModeloWidget::exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto,
  }
  catch(Excecao &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  //throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  caixa_msg->show(e);
  }
 }
 //----------------------------------------------------------
