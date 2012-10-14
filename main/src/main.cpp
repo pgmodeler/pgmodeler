@@ -8,15 +8,12 @@
 
 void executarCrashHandler(int)
 {
- QString cmd;
+ ofstream saida;
+ QString lin, cmd;
 
  /** A função backtrace não é existe até o momento no MingW (Windows) desta forma
      o trecho que gera a stacktrace do programa só é ativado em Linux/Unix **/
- #ifdef Q_OS_WIN
-  cmd="crashhandler.exe";
- #else
-  ofstream saida;
-  QString lin;
+ #ifndef Q_OS_WIN
   void *pilha[20];
   size_t tam_pilha, i;
   char **simbolos=NULL;
@@ -24,18 +21,23 @@ void executarCrashHandler(int)
   //Obtém os simbolos da stack trace (até 20 itens)
   tam_pilha = backtrace(pilha, 20);
   simbolos = backtrace_symbols(pilha, tam_pilha);
+  cmd="crashhandler";
+ #else
+  cmd="crashhandler.exe";
+ #endif
 
-  //Cria o arquivo que armazenará a stack trace
-  saida.open(AtributosGlobais::DIR_TEMPORARIO +
-             AtributosGlobais::SEP_DIRETORIO +
-             AtributosGlobais::ARQ_CRASH_HANDLER);
+ //Cria o arquivo que armazenará a stack trace
+ saida.open(AtributosGlobais::DIR_TEMPORARIO +
+            AtributosGlobais::SEP_DIRETORIO +
+            AtributosGlobais::ARQ_CRASH_HANDLER);
 
-  //Caso o arquivo esteja aberto
-  if(saida.is_open())
-  {
-   lin=QString("** pgModeler crashed after receive signal: %1 **\n\n").arg("SIGSEGV");
-   saida.write(lin.toStdString().c_str(), lin.size());
+ //Caso o arquivo esteja aberto
+ if(saida.is_open())
+ {
+  lin=QString("** pgModeler [v%1] crashed after receive signal: %2 **\n\n").arg(AtributosGlobais::VERSAO_PGMODELER).arg("SIGSEGV");
+  saida.write(lin.toStdString().c_str(), lin.size());
 
+  #ifndef Q_OS_WIN
    //Grava cada linha da stack trace no arquivo
    for(i=0; i < tam_pilha; i++)
    {
@@ -44,10 +46,13 @@ void executarCrashHandler(int)
    }
    //Desaloca a stack trace
    free(simbolos);
-   saida.close();
-  }
-  cmd="crashhandler";
- #endif
+  #else
+    lin=QString("** Stack trace temporary unavailable on Windows system **");
+    saida.write(lin.toStdString().c_str(), lin.size());
+  #endif
+
+  saida.close();
+ }
 
  //Executa o comando crashhandler (que obrigatoriamente deve estar na mesma pasta do pgModeler)
  cmd=QApplication::applicationDirPath() + AtributosGlobais::SEP_DIRETORIO + cmd;

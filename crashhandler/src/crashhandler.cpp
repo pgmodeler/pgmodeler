@@ -12,27 +12,22 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
  connect(criar_btn, SIGNAL(clicked(void)), this, SLOT(gerarRelatorio(void)));
  connect(acoes_txt, SIGNAL(textChanged(void)), this, SLOT(habilitarGeracao(void)));
 
- #ifndef Q_OS_WIN
-  //Abre o arquivo o qual armazena a stack trace do ultimo travamento
-  entrada.open(AtributosGlobais::DIR_TEMPORARIO +
-               AtributosGlobais::SEP_DIRETORIO +
-               AtributosGlobais::ARQ_CRASH_HANDLER);
+ //Abre o arquivo o qual armazena a stack trace do ultimo travamento
+ entrada.open(AtributosGlobais::DIR_TEMPORARIO +
+              AtributosGlobais::SEP_DIRETORIO +
+              AtributosGlobais::ARQ_CRASH_HANDLER);
 
-  //Le cada linha do arquivo e concatena ao buffer
-  while(entrada.is_open() && !entrada.eof())
-  {
-   entrada.getline(lin, sizeof(lin), '\n');
-   buf += QString("%1\n").arg(lin);
-  }
+ //Le cada linha do arquivo e concatena ao buffer
+ while(entrada.is_open() && !entrada.eof())
+ {
+  entrada.getline(lin, sizeof(lin), '\n');
+  buf += QString("%1\n").arg(lin);
+ }
 
-  entrada.close();
+ entrada.close();
 
-  //Exibe o buffer no widget de stack trace
-  stack_txt->setPlainText(buf);
- #else
-  //Para sistemas Windows, exibe uma mensagem dizendo a indisponibilidade da stacktrace
-  stack_txt->setPlainText(trUtf8("** Stack trace temporary unavailable on Windows system **"));
- #endif
+ //Exibe o buffer no widget de stack trace
+ stack_txt->setPlainText(buf);
 
  //Cria um destacador de sintaxe para o modelo
  dest_modelo_txt=new DestaqueSintaxe(modelo_txt, false);

@@ -969,10 +969,6 @@
         <translation>Pilha de Execução</translation>
     </message>
     <message>
-        <source>** Stack trace temporary unavailable on Windows system **</source>
-        <translation>** Pilha de execução temporariamente indisponível para o sistema Windows **</translation>
-    </message>
-    <message>
         <source>pgModeler crash file analysis</source>
         <translation>Análise de arquivo de travamento do pgModeler</translation>
     </message>
