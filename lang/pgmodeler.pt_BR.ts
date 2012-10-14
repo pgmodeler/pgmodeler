@@ -991,8 +991,8 @@ Tamanho: %2 bytes
         <translation>Informação</translation>
     </message>
     <message>
-        <source>Crash report successfuly generated! Please send this file &apos;%1&apos; to pgModeler author&apos;s email &lt;%2&gt; in order be debugged. Thank you for the collaboration!</source>
-        <translation>Relatório de travamento gerado com sucesso! Por favor, envie este arquivo &apos;%1&apos; para o email do autor do pgModeler &lt;%2&gt; a fim de que o mesmo possa ser depurado. Obrigado pela colaboração!</translation>
+        <source>Crash report successfuly generated! Please send the file &apos;%1&apos; to &lt;%2&gt; in order be debugged. Thank you for the collaboration!</source>
+        <translation>Relatório de travamento gerado com sucesso! Por favor, envie o arquivo &apos;%1&apos; para &lt;%2&gt; a fim de ser depurado. Obrigado pela colaboração!</translation>
     </message>
 </context>
 <context>

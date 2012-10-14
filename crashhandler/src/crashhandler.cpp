@@ -165,7 +165,7 @@ void CrashHandler::gerarRelatorio(void)
   saida.close();
 
   //Exibe a imagem de sucesso e fecha o crash handler
-  caixa.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send this file '%1' to pgModeler author's email <%2> in order be debugged. Thank you for the collaboration!").arg(arq_crash).arg("rkhaotix@gmail.com"), CaixaMensagem::ICONE_INFO);
+  caixa.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file '%1' to <%2> in order be debugged. Thank you for the collaboration!").arg(arq_crash).arg("rkhaotix@gmail.com"), CaixaMensagem::ICONE_INFO);
   this->close();
  }
 }
