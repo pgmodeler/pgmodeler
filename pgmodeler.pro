@@ -40,8 +40,8 @@ INCLUDEPATH += $$PWD/libutil/src \
                $$PWD/libpgmodeler_ui/src
 unix:LIBS = -lxml2 -lpq
 
-windows:INCLUDEPATH += C:/mingw32-tdm/include C:/PostgreSQL/9.2/include
-windows:LIBS = C:/mingw32-tdm/bin/libxml2.dll C:/PostgreSQL/9.2/bin/libpq.dll
+windows:INCLUDEPATH += C:/QtSDK/mingw/include C:/PostgreSQL/9.2/include
+windows:LIBS = C:/QtSDK/mingw/bin/libxml2.dll C:/PostgreSQL/9.2/bin/libpq.dll
 
 sources.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
 unix:sources.files += start-pgmodeler.sh
