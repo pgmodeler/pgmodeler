@@ -7,22 +7,22 @@ LIBS += $$DESTDIR/$$LIBUTIL \
         $$DESTDIR/$$LIBPARSERS \
         $$DESTDIR/$$LIBPGMODELER
 
-HEADERS +=  src/objetografico.h \
-            src/ogcaixatexto.h \
-            src/ogtabela.h \
-            src/ogvisao.h \
-            src/ogrelacionamento.h \
-            src/ogtituloobjeto.h \
-            src/ogsubitemobjeto.h \
-            src/ogtabelabase.h \
-            src/cenaobjetos.h
+HEADERS +=  $$PWD/src/objetografico.h \
+            $$PWD/src/ogcaixatexto.h \
+            $$PWD/src/ogtabela.h \
+            $$PWD/src/ogvisao.h \
+            $$PWD/src/ogrelacionamento.h \
+            $$PWD/src/ogtituloobjeto.h \
+            $$PWD/src/ogsubitemobjeto.h \
+            $$PWD/src/ogtabelabase.h \
+            $$PWD/src/cenaobjetos.h
 
-SOURCES +=  src/objetografico.cpp \
-            src/ogcaixatexto.cpp \
-            src/ogtabela.cpp \
-            src/ogvisao.cpp \
-            src/ogrelacionamento.cpp \
-            src/ogtituloobjeto.cpp \
-            src/ogsubitemobjeto.cpp \
-            src/ogtabelabase.cpp \
-            src/cenaobjetos.cpp
+SOURCES +=  $$PWD/src/objetografico.cpp \
+            $$PWD/src/ogcaixatexto.cpp \
+            $$PWD/src/ogtabela.cpp \
+            $$PWD/src/ogvisao.cpp \
+            $$PWD/src/ogrelacionamento.cpp \
+            $$PWD/src/ogtituloobjeto.cpp \
+            $$PWD/src/ogsubitemobjeto.cpp \
+            $$PWD/src/ogtabelabase.cpp \
+            $$PWD/src/cenaobjetos.cpp

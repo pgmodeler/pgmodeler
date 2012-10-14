@@ -5,8 +5,8 @@ TARGET = parsers
 DESTDIR = ../build/lib
 LIBS += $$DESTDIR/$$LIBUTIL
 
-HEADERS += src/parseresquema.h \
-           src/parserxml.h
+HEADERS += $$PWD/src/parseresquema.h \
+           $$PWD/src/parserxml.h
 
-SOURCES += src/parseresquema.cpp \
-           src/parserxml.cpp
+SOURCES += $$PWD/src/parseresquema.cpp \
+           $$PWD/src/parserxml.cpp

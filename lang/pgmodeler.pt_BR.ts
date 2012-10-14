@@ -927,6 +927,79 @@
     </message>
 </context>
 <context>
+    <name>CrashHandler</name>
+    <message>
+        <source>pgModeler Crash Handler</source>
+        <translation>Gerenciador de erros do pgModeler</translation>
+    </message>
+    <message>
+        <source>Oops! pgModeler just crashed!</source>
+        <translation>Oopa! O pgModeler acaba de travar!</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Criar</translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Cancelar</translation>
+    </message>
+    <message>
+        <source>We apologize for what happened! It is clear that a nasty bug caused it. Please fill out the form below describing your actions before pgModeler quit unexpectedly. This will help on bug extermination and improve the software.</source>
+        <translation>Pedimos desculpas pelo ocorrido! Está claro que um bug desagradável causou isso. Por favor, preencha o formulário abaixo descrevendo suas ações antes do pgModeler fechar inesperadamente. Isso ajudará no extermínio do bug e melhorar o software.</translation>
+    </message>
+    <message>
+        <source>Report</source>
+        <translation>Relatório</translation>
+    </message>
+    <message>
+        <source>Actions made before the crash:</source>
+        <translation>Ações feitas antes do travamento:</translation>
+    </message>
+    <message>
+        <source>Loaded Model</source>
+        <translation>Modelo Carregado</translation>
+    </message>
+    <message>
+        <source>Attach the below database model file that possibly generates the crash.</source>
+        <translation>Anexar o model de banco de dados abaixo o qual possivelmente gerou o travamento.</translation>
+    </message>
+    <message>
+        <source>Stack trace</source>
+        <translation>Pilha de Execução</translation>
+    </message>
+    <message>
+        <source>** Stack trace temporary unavailable on Windows system **</source>
+        <translation>** Pilha de execução temporariamente indisponível para o sistema Windows **</translation>
+    </message>
+    <message>
+        <source>pgModeler crash file analysis</source>
+        <translation>Análise de arquivo de travamento do pgModeler</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Erro</translation>
+    </message>
+    <message>
+        <source>File: %1
+Size: %2 bytes
+
+</source>
+        <translation>Arquivo: %1
+Tamanho: %2 bytes
+
+</translation>
+    </message>
+    <message>
+        <source>Information</source>
+        <translation>Informação</translation>
+    </message>
+    <message>
+        <source>Crash report successfuly generated! Please send this file &apos;%1&apos; to pgModeler author&apos;s email &lt;%2&gt; in order be debugged. Thank you for the collaboration!</source>
+        <translation>Relatório de travamento gerado com sucesso! Por favor, envie este arquivo &apos;%1&apos; para o email do autor do pgModeler &lt;%2&gt; a fim de que o mesmo possa ser depurado. Obrigado pela colaboração!</translation>
+    </message>
+</context>
+<context>
     <name>DominioWidget</name>
     <message>
         <source>Default Value:</source>
@@ -1425,6 +1498,44 @@
     <message>
         <source>Database model (*.dbm);;All files (*.*)</source>
         <translation>Modelo de banco de dados (*.dbm);; Todos os arquivos (*.*)</translation>
+    </message>
+    <message>
+        <source>Save model</source>
+        <translation>Salvar modelo</translation>
+    </message>
+    <message>
+        <source>The model were modified! Do you want to save it before close?</source>
+        <translation>O modelo foi modificado! Deseja salvá-lo antes de fechar?</translation>
+    </message>
+</context>
+<context>
+    <name>FormRestauracaoModelo</name>
+    <message>
+        <source>Modified: %1</source>
+        <translation>Modificado: %1</translation>
+    </message>
+    <message>
+        <source>yyyy-MM-dd hh:mm:ss</source>
+        <translation>dd/MM/yyyy hh:mm:ss</translation>
+    </message>
+</context>
+<context>
+    <name>FormRestauracaoModelos</name>
+    <message>
+        <source>Model restoration</source>
+        <translation>Restauração de modelos</translation>
+    </message>
+    <message>
+        <source>&amp;Restore</source>
+        <translation>&amp;Restaurar</translation>
+    </message>
+    <message>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Cancelar</translation>
+    </message>
+    <message>
+        <source>pgModeler was not closed properly in a previous execution and some models were still being edited. Click &apos;Restore&apos; to reopen the models or &apos;Cancel&apos; to abort the restoration.</source>
+        <translation>pgModeler não foi encerrado corretamente em uma execução anterior e alguns modelos ainda estavam em edição. Clique &apos;Restaurar&apos; para reabrir os modelos ou &apos;Cancelar&apos; para abortar a restauração.</translation>
     </message>
 </context>
 <context>
@@ -2853,14 +2964,6 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Atribuição de tamanho máximo inválido à lista de operações!</translation>
     </message>
     <message>
-        <source>Unable to write the model in the file %1! Make sure the directory exists, or if the user has access permissions on it!</source>
-        <translation>Não foi possível gravar o modelo no arquivo %1! Verifique se o diretório existe, ou se o usuário possui permissões de acesso sobre o mesmo!</translation>
-    </message>
-    <message>
-        <source>Unable to write the model in the file%1 due to one or more errors in the definition generation process!</source>
-        <translation>Não foi possível gravar o modelo no arquivo %1 devido a um ou mais erros na geração da definição do mesmo!</translation>
-    </message>
-    <message>
         <source>The configuration of the relationship &apos;%1&apos; generates a redundancy between the relationships &apos;%2&apos;. Redundancy on identifier or generalization/dependency relationships are not accepted since they result in  incorrect column spreading making the model inconsistent!</source>
         <translation>A configuração do relacionamento &apos;%1&apos; gera uma redundância entre os relacionamentos &apos;%2&apos;. Redundância de relacionamentos identificadores ou de generalização/dependência não são aceitos pois resultam em propagação incorreta de colunas tornando o modelo inconsiste!</translation>
     </message>
@@ -3035,10 +3138,6 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <source>Attribute &apos;%1&apos; with an undefined value in file %2, line %3, column %4!</source>
         <translation>Atributo &apos;%1&apos; com valor indefinido no arquivo %2, linha %3, coluna %4!</translation>
-    </message>
-    <message>
-        <source>Could not access the file or directory%1! Make sure that it exists or if the user has access permissions on it!</source>
-        <translation>Não foi possível acessar o arquivo ou diretório %1! Verifique se ele existe ou se o usuário possui permissões de acesso sobre o mesmo!</translation>
     </message>
     <message>
         <source>Assignment of empty DTD file name!</source>
@@ -3279,6 +3378,18 @@ Mensagem retornada pelo SGBD: %1</translation>
     <message>
         <source>Obtaining an object of an invalid type!</source>
         <translation>Obtenção de um objeto com tipo inválido!</translation>
+    </message>
+    <message>
+        <source>Unable to write the model in the file %1 due to one or more errors in the definition generation process!</source>
+        <translation>Não foi possível gravar o modelo no arquivo %1 devido a um ou mais erros no processo de geração da definição do mesmo!</translation>
+    </message>
+    <message>
+        <source>Could not access the file or directory %1! Make sure that it exists or if the user has access permissions on it!</source>
+        <translation>Não foi possível acessar o arquivo ou diretório %1! Certifique-se de que o mesmo existe e o usuário possui permissões de acesso a ele!</translation>
+    </message>
+    <message>
+        <source>Unable to write the file %1! Make sure the directory exists, or if the user has access permissions on it!</source>
+        <translation>Não foi possível salvar o arquivo %1! Certifique-se de que o diretório existe ou se o usuário tem permissão de acesso ao mesmo!</translation>
     </message>
 </context>
 <context>

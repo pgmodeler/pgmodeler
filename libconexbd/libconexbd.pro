@@ -6,8 +6,8 @@ DESTDIR = ../build/lib
 OBJECTS_DIR = obj
 LIBS += $$DESTDIR/$$LIBUTIL
 
-HEADERS += src/conexaobd.h \
-           src/resultado.h
+HEADERS += $$PWD/src/conexaobd.h \
+           $$PWD/src/resultado.h
 
-SOURCES += src/conexaobd.cpp \
-           src/resultado.cpp
+SOURCES += $$PWD/src/conexaobd.cpp \
+           $$PWD/src/resultado.cpp
