@@ -63,7 +63,7 @@ class CaixaMensagem: public QDialog, public Ui::CaixaMensagem {
    //Retorna se o usuário marcou a opção de cancela na caixa
    bool caixaCanceleda(void);
 
-private slots:
+ private slots:
    void clickSimOK(void);
    void clickNaoCancelar(void);
    void exibirListaExecoes(void);

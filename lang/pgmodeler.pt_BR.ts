@@ -102,6 +102,10 @@
         <source>Exceptions</source>
         <translation>Exceções</translation>
     </message>
+    <message>
+        <source>Show excpetion stack in text format (useful to report errors).</source>
+        <translation>Exibe a pilha de exceções em formato texto (útil para se reportar erros).</translation>
+    </message>
 </context>
 <context>
     <name>CaixaTextoWidget</name>

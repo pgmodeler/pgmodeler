@@ -279,7 +279,12 @@ class Excecao {
   QString obterLinha(void);
   TipoErro obterTipoErro(void);
   QString obterInfoAdicional(void);
+
+  //Obtém a pilha de exceções completa
   void obterListaExcecoes(deque<Excecao> &lista);
+
+  //Retorna a lista de exções em formato texto
+  QString obterTextoExcecoes(void);
 };
 //***********************************************************
 #endif

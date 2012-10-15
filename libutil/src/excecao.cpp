@@ -325,4 +325,29 @@ void Excecao::obterListaExcecoes(deque<Excecao> &lista)
  lista.push_front(Excecao(this->msg_erro,this->tipo_erro,
                           this->local,this->arquivo,this->linha,NULL,this->info_adicional));
 }
+//-----------------------------------------------------------
+QString Excecao::obterTextoExcecoes(void)
+{
+ deque<Excecao> excecoes;
+ deque<Excecao>::iterator itr, itr_end;
+ unsigned idx=0;
+ QString excecoes_txt;
+
+ //Obtém a lista de exceções geradas
+ this->obterListaExcecoes(excecoes);
+ itr=excecoes.begin();
+ itr_end=excecoes.end();
+ idx=excecoes.size()-1;
+
+ //Exibe todas as exceções no console
+ while(itr!=itr_end)
+ {
+  excecoes_txt+=QString("[%1] %2 (%3)\n").arg(idx).arg(itr->obterArquivo()).arg(itr->obterLinha());
+  excecoes_txt+=QString("  %1\n").arg(itr->obterLocal());
+  excecoes_txt+=QString("    [%1] %2\n\n").arg(Excecao::obterNomeErro(itr->obterTipoErro())).arg(itr->obterMensagemErro());
+  itr++; idx--;
+ }
+
+ return(excecoes_txt);
+}
 //***********************************************************

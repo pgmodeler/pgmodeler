@@ -8,7 +8,10 @@ CaixaMensagem::CaixaMensagem(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
  connect(nao_btn,SIGNAL(clicked()),this,SLOT(clickNaoCancelar()));
  connect(cancelar_btn,SIGNAL(clicked()),this,SLOT(clickNaoCancelar()));
  connect(exibir_exec_tb,SIGNAL(clicked()),this,SLOT(exibirListaExecoes()));
+ connect(exibir_exec_tb,SIGNAL(toggled(bool)),exibir_exec_txt_tb,SLOT(setVisible(bool)));
+ connect(exibir_exec_txt_tb,SIGNAL(toggled(bool)),this,SLOT(exibirListaExecoes(void)));
  exibir_exec_tb->setVisible(false);
+ exibir_exec_txt_tb->setVisible(false);
 }
 //----------------------------------------------------------
 void CaixaMensagem::clickSimOK(void)
@@ -46,8 +49,13 @@ void CaixaMensagem::exibirListaExecoes(void)
  if(exibir_exec_tb->isChecked())
  {
   exibir_exec_tb->setIcon(QPixmap(QString(":/icones/icones/desfazer.png")));
-  grupo_objs_wgt->setCurrentIndex(1);
+
+  if(exibir_exec_txt_tb->isChecked())
+   grupo_objs_wgt->setCurrentIndex(2);
+  else
+   grupo_objs_wgt->setCurrentIndex(1);
  }
+
  /* Caso nao esteja marcado o botao de exibiçao da lista de exceçoes
     alterna o icone do mesmo indicando que a lista pode ser exibida e alem
     disso exibe o label de mensagem de erro */
@@ -68,6 +76,13 @@ void CaixaMensagem::show(Excecao e, const QString &msg, unsigned tipo_ico)
  Excecao *ex=NULL;
  QString str_aux, titulo;
  QFont fonte=this->font();
+
+ exibir_exec_txt_tb->blockSignals(true);
+ exibir_exec_txt_tb->setChecked(false);
+ exibir_exec_txt_tb->blockSignals(false);
+
+ //Armazena a exceção também em formato texto
+ excecoes_txt->setPlainText(e.obterTextoExcecoes());
 
  //Obtém a lista de erros contida na exceção passada
  e.obterListaExcecoes(lista);
