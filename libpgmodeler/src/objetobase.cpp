@@ -1,4 +1,5 @@
 #include "objetobase.h"
+#include <QApplication>
 //***********************************************************
 /* Atenção: Se a ordem e quantidade das enumerações forem modificados
    então a ordem e quantidade dos elementos deste vetor
@@ -15,18 +16,16 @@ QString ObjetoBase::esq_objetos[QTD_TIPOS_OBJETO]={
 
 
 QString ObjetoBase::nome_tipo_objetos[QTD_TIPOS_OBJETO]={
-  QObject::trUtf8("Column"), QObject::trUtf8("Constraint"), QObject::trUtf8("Function"),
-  QObject::trUtf8("Trigger"), QObject::tr("Index"), QObject::trUtf8("Rule"),
-  QObject::trUtf8("Table"), QObject::trUtf8("View"),  QObject::trUtf8("Domain"),
-  QObject::trUtf8("Schema"), QObject::trUtf8("Aggregate"), QObject::trUtf8("Operator"),
-  QObject::trUtf8("Sequence"), QObject::trUtf8("Role"), QObject::trUtf8("Conversion"),
-  QObject::trUtf8("Cast"),
-  QObject::trUtf8("Language"), QObject::trUtf8("Type"), QObject::trUtf8("Tablespace"),
-  QObject::trUtf8("Operator Family"), QObject::trUtf8("Operator Class"),
-  QObject::trUtf8("Database"), QObject::trUtf8("Table-Table Relationship"),
-  QObject::trUtf8("Textbox"), QObject::trUtf8("Permission"), QObject::trUtf8("Parameter"),
-  QObject::trUtf8("Table-View Relationship")
-
+  QT_TR_NOOP("Column"), QT_TR_NOOP("Constraint"), QT_TR_NOOP("Function"),
+  QT_TR_NOOP("Trigger"), QT_TR_NOOP("Index"), QT_TR_NOOP("Rule"),
+  QT_TR_NOOP("Table"), QT_TR_NOOP("View"),  QT_TR_NOOP("Domain"),
+  QT_TR_NOOP("Schema"), QT_TR_NOOP("Aggregate"), QT_TR_NOOP("Operator"),
+  QT_TR_NOOP("Sequence"), QT_TR_NOOP("Role"), QT_TR_NOOP("Conversion"),
+  QT_TR_NOOP("Cast"), QT_TR_NOOP("Language"), QT_TR_NOOP("Type"), QT_TR_NOOP("Tablespace"),
+  QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
+  QT_TR_NOOP("Database"), QT_TR_NOOP("Table-Table Relationship"),
+  QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"),
+  QT_TR_NOOP("Table-View Relationship")
 };
 
 QString ObjetoBase::sql_objetos[QTD_TIPOS_OBJETO]={
@@ -76,7 +75,11 @@ unsigned ObjetoBase::obterIdGlobal(void)
 QString ObjetoBase::obterNomeTipoObjeto(TipoObjetoBase tipo_objeto)
 {
  if(tipo_objeto!=OBJETO_BASE)
-  return(QObject::tr(nome_tipo_objetos[tipo_objeto]));
+  /* Devido a classe ObjetoBase não ser derivada de QObject a função tr() é ineficiente para traduzir os nomes
+     dos tipos de objetos sendo assim é chamado o metódo de tradução diretamente da aplicação especificando o
+     contexto (ObjetoBase) no arquivo .ts e o texto a ser traduzido */
+  return(QApplication::translate("ObjetoBase",nome_tipo_objetos[tipo_objeto],"",QApplication::UnicodeUTF8));
+  //return(QObject::trUtf8());
  else
   return("");
 }
