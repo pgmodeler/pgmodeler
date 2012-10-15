@@ -29,12 +29,15 @@ void executarCrashHandler(int)
  //Cria o arquivo que armazenará a stack trace
  saida.open(AtributosGlobais::DIR_TEMPORARIO +
             AtributosGlobais::SEP_DIRETORIO +
-            AtributosGlobais::ARQ_CRASH_HANDLER);
+            AtributosGlobais::ARQ_STACKTRACE);
 
  //Caso o arquivo esteja aberto
  if(saida.is_open())
  {
-  lin=QString("** pgModeler [v%1] crashed after receive signal: %2 **\n\n").arg(AtributosGlobais::VERSAO_PGMODELER).arg("SIGSEGV");
+  lin=QString("** pgModeler [v%1] crashed after receive signal: %2 **\n\nDate/Time:%3\n\n")
+      .arg(AtributosGlobais::VERSAO_PGMODELER)
+      .arg("SIGSEGV")
+      .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
   saida.write(lin.toStdString().c_str(), lin.size());
 
   #ifndef Q_OS_WIN
@@ -47,7 +50,7 @@ void executarCrashHandler(int)
    //Desaloca a stack trace
    free(simbolos);
   #else
-    lin=QString("** Stack trace temporary unavailable on Windows system **");
+    lin=QString("** Stack trace unavailable on Windows system **");
     saida.write(lin.toStdString().c_str(), lin.size());
   #endif
 
@@ -95,10 +98,16 @@ int main(int argc, char **argv)
   fnt.setFamily("Dejavu Sans");
   fnt.setBold(true);
   fnt.setPointSize(7.5f);
+
+  QFontMetrics fm(fnt);
+  QString str_ver=QString("v%1").arg(AtributosGlobais::VERSAO_PGMODELER);
+  QRect ret=fm.boundingRect(str_ver);
+
   p.begin(&pixmap);
   p.setFont(fnt);
   p.setPen(QColor(255,255,255));
-  p.drawText(QPointF(pixmap.size().width()-45, pixmap.size().width()-17), QString("v%1 ").arg(AtributosGlobais::VERSAO_PGMODELER));
+  p.drawText(QPointF((pixmap.size().width()*0.55f)-(ret.width()/2),
+                      pixmap.size().width()-17), str_ver);
   p.end();
 
   QSplashScreen splash(pixmap);

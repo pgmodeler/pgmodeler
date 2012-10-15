@@ -15,7 +15,7 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
  //Abre o arquivo o qual armazena a stack trace do ultimo travamento
  entrada.open(AtributosGlobais::DIR_TEMPORARIO +
               AtributosGlobais::SEP_DIRETORIO +
-              AtributosGlobais::ARQ_CRASH_HANDLER);
+              AtributosGlobais::ARQ_STACKTRACE);
 
  //Le cada linha do arquivo e concatena ao buffer
  while(entrada.is_open() && !entrada.eof())
@@ -25,6 +25,12 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
  }
 
  entrada.close();
+
+ //Remove o arquivo stack trace
+ QDir arq_stk;
+ arq_stk.remove(AtributosGlobais::DIR_TEMPORARIO +
+                AtributosGlobais::SEP_DIRETORIO +
+                AtributosGlobais::ARQ_STACKTRACE);
 
  //Exibe o buffer no widget de stack trace
  stack_txt->setPlainText(buf);
@@ -132,9 +138,9 @@ void CrashHandler::gerarRelatorio(void)
  ofstream saida;
 
  //Configura o caminho para o arquivo .crash gerado
- QString arq_crash=AtributosGlobais::DIR_TEMPORARIO +
-                   AtributosGlobais::SEP_DIRETORIO +
-                   AtributosGlobais::ARQ_CRASH_HANDLER;
+ QString arq_crash=(AtributosGlobais::DIR_TEMPORARIO +
+                    AtributosGlobais::SEP_DIRETORIO +
+                    AtributosGlobais::ARQ_CRASH_HANDLER).arg(QDateTime::currentDateTime().toString("_yyyyMMdd_hhmm"));
 
  //Abre o arquivo para gravação
  saida.open(arq_crash);
@@ -165,7 +171,7 @@ void CrashHandler::gerarRelatorio(void)
   saida.close();
 
   //Exibe a imagem de sucesso e fecha o crash handler
-  caixa.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file '%1' to <%2> in order be debugged. Thank you for the collaboration!").arg(arq_crash).arg("rkhaotix@gmail.com"), CaixaMensagem::ICONE_INFO);
+  caixa.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file '%1' to %2 in order be debugged. Thank you for the collaboration!").arg(arq_crash).arg("rkhaotix@gmail.com"), CaixaMensagem::ICONE_INFO);
   this->close();
  }
 }

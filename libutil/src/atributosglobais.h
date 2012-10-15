@@ -58,8 +58,9 @@ static const QString
   DIR_TEMPORARIO=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp"));
 
 static const QString
-   VERSAO_PGMODELER="0.3.4",
-   ARQ_CRASH_HANDLER="pgmodeler.crash",
+   VERSAO_PGMODELER="0.3.4-beta",
+   ARQ_CRASH_HANDLER="pgmodeler%1.crash",
+   ARQ_STACKTRACE=".stacktrace",
 
    SEP_DIRETORIO="/",
    DIR_CONF_PADRAO="defaults", //Nome do diretório o qual guarda as configurações padrão do pgModeler
