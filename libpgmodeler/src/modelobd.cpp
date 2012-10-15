@@ -3623,6 +3623,10 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  com_timezone=(atributos[AtributosParsers::COM_TIMEZONE]==AtributosParsers::VERDADEIRO);
  tipo_interv=atributos[AtributosParsers::TIPO_INTERVALO];
 
+ if(!atributos[AtributosParsers::TIPO_ESPACIAL].isEmpty())
+  tipo_esp=TipoEspacial(atributos[AtributosParsers::TIPO_ESPACIAL],
+                        atributos[AtributosParsers::VARIACAO].toUInt());
+
  nome=atributos[AtributosParsers::NOME];
 
  idx_tipo=TipoPgSQL::obterIndiceTipoBase(nome);

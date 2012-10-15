@@ -4,7 +4,7 @@ TipoPgSQLWidget::TipoPgSQLWidget(QWidget *parent, const QString &rotulo) : QWidg
 {
  try
  {
-  QStringList tipo_interv;
+  QStringList tipo_interv, tipo_esp;
 
   setupUi(this);
 
@@ -28,6 +28,10 @@ TipoPgSQLWidget::TipoPgSQLWidget(QWidget *parent, const QString &rotulo) : QWidg
   tipo_interv_cmb->addItem("");
   tipo_interv_cmb->addItems(tipo_interv);
 
+  //Configura o combo de tipos espaciais
+  TipoEspacial::obterTipos(tipo_esp);
+  tipo_esp_cmb->addItems(tipo_esp);
+
   //Conecta os objetos do formulário com o método de atualização do formato do tipo
   connect(tipo_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(atualizarFormatoTipo(void)));
   connect(precisao_sb, SIGNAL(valueChanged(int)), this, SLOT(atualizarFormatoTipo(void)));
@@ -35,6 +39,9 @@ TipoPgSQLWidget::TipoPgSQLWidget(QWidget *parent, const QString &rotulo) : QWidg
   connect(dimensao_sb, SIGNAL(valueChanged(int)), this, SLOT(atualizarFormatoTipo(void)));
   connect(tipo_interv_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(atualizarFormatoTipo(void)));
   connect(timezone_chk, SIGNAL(toggled(bool)), this, SLOT(atualizarFormatoTipo(void)));
+  connect(tipo_esp_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(atualizarFormatoTipo(void)));
+  connect(var_m_chk, SIGNAL(toggled(bool)), this, SLOT(atualizarFormatoTipo(void)));
+  connect(var_z_chk, SIGNAL(toggled(bool)), this, SLOT(atualizarFormatoTipo(void)));
  }
  catch(Excecao &e)
  {
@@ -78,6 +85,30 @@ void TipoPgSQLWidget::atualizarFormatoTipo(void)
      que aceita esse dado) */
   tipo_interv_cmb->setVisible(tipo=="interval");
   tipo_interv_lbl->setVisible(tipo_interv_cmb->isVisible());
+
+  //O campo de tipo espacial só é ativado quando o tipo é 'geometry' ou 'geography' é selecionado
+  tipo_esp_cmb->setVisible(tipo=="geometry" || tipo=="geography");
+
+  if(tipo_esp_cmb->isVisible())
+  {
+   TipoEspacial tp_esp;
+
+   tipo_esp_lbl->setVisible(tipo_esp_cmb->isVisible());
+   variacao_lbl->setVisible(tipo_esp_cmb->isVisible());
+   var_m_chk->setVisible(tipo_esp_cmb->isVisible());
+   var_z_chk->setVisible(tipo_esp_cmb->isVisible());
+
+   //Configurando o tipo espacial conforme o formulário
+   tp_esp=TipoEspacial(tipo_esp_cmb->currentText());
+   if(var_z_chk->isChecked() && var_m_chk->isChecked())
+    tp_esp.definirVariacao(TipoEspacial::var_zm);
+   else if(var_m_chk->isChecked())
+    tp_esp.definirVariacao(TipoEspacial::var_m);
+   else if(var_z_chk->isChecked())
+    tp_esp.definirVariacao(TipoEspacial::var_z);
+
+   tipo.definirTipoEspacial(tp_esp);
+  }
 
   //Configura o tipo com os valores do formulário
   tipo.definirComprimento(comprimento_sb->value());

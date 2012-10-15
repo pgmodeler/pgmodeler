@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>430</width>
-    <height>153</height>
+    <height>177</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,8 +32,17 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="tipopgsql_grid">
-   <property name="margin">
+   <property name="leftMargin">
     <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>4</number>
+   </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
+   <property name="bottomMargin">
+    <number>4</number>
    </property>
    <property name="spacing">
     <number>6</number>
@@ -41,7 +50,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -56,12 +65,6 @@
       <string>Data Type</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <property name="margin">
-       <number>4</number>
-      </property>
-      <property name="spacing">
-       <number>6</number>
-      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="tipo_lbl">
         <property name="sizePolicy">
@@ -190,7 +193,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
+      <item row="0" column="4" colspan="2">
        <widget class="QLabel" name="precisao_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -226,7 +229,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="5">
+      <item row="0" column="6">
        <widget class="QSpinBox" name="precisao_sb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -266,7 +269,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="6">
+      <item row="0" column="7">
        <widget class="QLabel" name="dimensao_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -302,7 +305,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="7">
+      <item row="0" column="8">
        <widget class="QSpinBox" name="dimensao_sb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -372,29 +375,75 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="tipo_interv_cmb">
+      <item row="2" column="0">
+       <widget class="QLabel" name="tipo_esp_lbl">
         <property name="enabled">
          <bool>true</bool>
         </property>
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="minimumSize">
          <size>
-          <width>0</width>
+          <width>55</width>
           <height>0</height>
          </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>55</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <italic>false</italic>
+         </font>
         </property>
         <property name="styleSheet">
          <string notr="true">font-weight: normal;</string>
         </property>
+        <property name="text">
+         <string>Spatial:</string>
+        </property>
        </widget>
       </item>
       <item row="3" column="0">
+       <widget class="QLabel" name="timezone_lbl">
+        <property name="styleSheet">
+         <string notr="true">font-weight: normal;</string>
+        </property>
+        <property name="text">
+         <string>Timezone:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="timezone_chk">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">font-weight: normal;</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
        <widget class="QLabel" name="formato_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -422,7 +471,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1" colspan="7">
+      <item row="4" column="1" colspan="8">
        <widget class="QTextEdit" name="formato_txt">
         <property name="maximumSize">
          <size>
@@ -457,34 +506,106 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QCheckBox" name="timezone_chk">
+       <widget class="QComboBox" name="tipo_esp_cmb">
         <property name="enabled">
          <bool>true</bool>
         </property>
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
         </property>
         <property name="styleSheet">
          <string notr="true">font-weight: normal;</string>
-        </property>
-        <property name="text">
-         <string/>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="timezone_lbl">
+      <item row="2" column="2" colspan="7">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="variacao_lbl">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <italic>false</italic>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">font-weight: normal;</string>
+          </property>
+          <property name="text">
+           <string>Variation:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="var_z_chk">
+          <property name="text">
+           <string>Z</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="var_m_chk">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>M</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="1" colspan="3">
+       <widget class="QComboBox" name="tipo_interv_cmb">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="styleSheet">
          <string notr="true">font-weight: normal;</string>
-        </property>
-        <property name="text">
-         <string>Timezone:</string>
         </property>
        </widget>
       </item>

@@ -33,4 +33,9 @@ $tb [<type name=] "@{name}"
  [ interval-type=] "@{interval-type}"
 %end
 
+%if @{spatial-type} %then
+ [ spatial-type=] "@{spatial-type}"
+ [ variation=] "@{variation}"
+%end
+
 />  $br

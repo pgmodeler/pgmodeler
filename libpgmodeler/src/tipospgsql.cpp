@@ -555,33 +555,55 @@ unsigned TipoIntervalo::operator = (const QString &nome_tipo)
  ************************/
 TipoEspacial::TipoEspacial(const QString &nome_tipo, unsigned variacao)
 {
-
+ TipoBase::definirTipo(TipoBase::obterTipo(nome_tipo, offset, qtd_tipos),
+                       offset, qtd_tipos);
+ definirVariacao(variacao);
 }
 //-----------------------------------------------------------
 TipoEspacial::TipoEspacial(unsigned tipo, unsigned variacao)
 {
-
+ TipoBase::definirTipo(tipo,offset,qtd_tipos);
+ definirVariacao(variacao);
 }
 //-----------------------------------------------------------
 TipoEspacial::TipoEspacial(void)
 {
-
+ idx_tipo=point;
+ variacao=no_var;
 }
 //-----------------------------------------------------------
 void TipoEspacial::definirVariacao(unsigned var)
 {
-
+ if(var > var_zm)
+  variacao=var_zm;
+ else
+  variacao=var;
 }
 //-----------------------------------------------------------
 unsigned TipoEspacial::obterVariacao(void)
 {
-
+ return(variacao);
 }
 //-----------------------------------------------------------
 void TipoEspacial::obterTipos(QStringList &tipos)
 {
+ TipoBase::obterTipos(tipos,offset,qtd_tipos);
+}
+//-----------------------------------------------------------
+QString TipoEspacial::operator * (void)
+{
+ QString var_str;
 
+ switch(variacao)
+ {
+  case var_z: var_str+="Z"; break;
+  case var_m: var_str+="M"; break;
+  case var_zm: var_str+="ZM"; break;
+  default: var_str=""; break;
+ }
 
+ //Atualmente o PostGiS aceita somente SRID = 4326 (Vide documentação Postgis 2.0)
+ return(QString("(%1%2, 4326)").arg(tipos[idx_tipo]).arg(var_str));
 }
 //***********************************************************
 /*********************
@@ -1089,6 +1111,8 @@ QString TipoPgSQL::obterDefinicaoObjeto(unsigned tipo_def,QString tipo_ref)
   atributos[AtributosParsers::PRECISAO]="";
   atributos[AtributosParsers::COM_TIMEZONE]="";
   atributos[AtributosParsers::TIPO_INTERVALO]="";
+  atributos[AtributosParsers::TIPO_ESPACIAL]="";
+  atributos[AtributosParsers::VARIACAO]="";
   atributos[AtributosParsers::TIPO_REFERENCIA]=tipo_ref;
 
   atributos[AtributosParsers::NOME]=(~(*this));
@@ -1105,6 +1129,12 @@ QString TipoPgSQL::obterDefinicaoObjeto(unsigned tipo_def,QString tipo_ref)
   if(tipo_intervalo != TipoBase::nulo)
    atributos[AtributosParsers::TIPO_INTERVALO]=(~tipo_intervalo);
 
+  if(tipo_espacial != TipoBase::nulo)
+  {
+   atributos[AtributosParsers::TIPO_ESPACIAL]=(~tipo_espacial);
+   atributos[AtributosParsers::VARIACAO]=QString("%1").arg(tipo_espacial.obterVariacao());
+  }
+
   if(com_timezone)
    atributos[AtributosParsers::COM_TIMEZONE]="1";
 
@@ -1118,7 +1148,11 @@ QString TipoPgSQL::operator * (void)
  unsigned idx;
 
  tipo=~(*this);
- if(comprimento > 1 && tipoCompVariavel())
+
+ //Gerando definição de tipos espaciais (PostGiS)
+ if(tipo=="geometry" || tipo=="geography")
+  tipo_fmt=tipo + (*tipo_espacial);
+ else if(comprimento > 1 && tipoCompVariavel())
  {
   /* Tratando o caso de tipos que necessitam de uma precisão.
      A sintaxe desses tipos se altera ficando na forma TIPO(COMPRIMENTO,PRECISÃO).*/

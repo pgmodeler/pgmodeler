@@ -236,9 +236,10 @@ class TipoEspacial: public TipoBase{
   static const unsigned qtd_tipos=7;
 
  public:
-  static const unsigned var_z=0;
-  static const unsigned var_m=1;
-  static const unsigned var_zm=2;
+  static const unsigned no_var=0;
+  static const unsigned var_z=1;
+  static const unsigned var_m=2;
+  static const unsigned var_zm=3;
 
   static const unsigned point=offset;
   static const unsigned linestring=offset+1;
@@ -248,14 +249,15 @@ class TipoEspacial: public TipoBase{
   static const unsigned multipolygon=offset+5;
   static const unsigned geometrycollection=offset+6;
 
-  TipoEspacial(const QString &nome_tipo, unsigned variacao);
-  TipoEspacial(unsigned tipo, unsigned variacao);
+  TipoEspacial(const QString &nome_tipo, unsigned variacao=TipoEspacial::no_var);
+  TipoEspacial(unsigned tipo, unsigned variacao=TipoEspacial::no_var);
   TipoEspacial(void);
 
   void definirVariacao(unsigned var);
   unsigned obterVariacao(void);
 
   static void obterTipos(QStringList &tipos);
+  QString operator * (void);
 };
 //-----------------------------------------------------------
  /* Isso é feio, muito feio! :/

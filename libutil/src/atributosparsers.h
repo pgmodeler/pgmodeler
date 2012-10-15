@@ -344,7 +344,9 @@ static const QString
   WIDGET="widget",
   INFO_POSICAO="pos-info",
   CONEXOES="connections",
-  SUFIXO_AUTO="auto-sufix";
+  SUFIXO_AUTO="auto-sufix",
+  VARIACAO="variation",
+  TIPO_ESPACIAL="spatial-type";
 }
 //***********************************************************
 #endif
