@@ -64,16 +64,20 @@ QString TipoBase::tipos[qtd_tipos]=
  "polygon", "circle", "cidr", "inet",
  "macaddr", "bit", "bit varying", "varbit", "uuid", "xml",
 
+ //Tipos espaciais específicos da extensão PostGis (integrantes da classe TipoPgSQL)
+ //offsets 62 a 66
+ "box2d","box3d","geometry",
+ "geometry_dump","geography",
 
  //Tipos identificadores de objeto (OID)
- //offsets 62 a 73
+ //offsets 67 a 78
  "oid", "regproc", "regprocedure",
  "regoper", "regoperator", "regclass",
  "regtype", "regconfig", "regdictionary",
  "xid", "cid", "tid",
 
  //Pseudo-tipos
- //offsets 74 a 85
+ //offsets 79 a 90
  "any","anyarray","anyelement","anyenum",
  "anynonarray","cstring","internal","language_handler",
  "record","trigger","void","opaque",
@@ -81,25 +85,25 @@ QString TipoBase::tipos[qtd_tipos]=
  /* Tipos utilizados pela classe TipoIntervalo usado
     como auxiliar da classe TipoPgSQL quando se trata
     do tipo de dado "interval" */
- //offsets 86 a 98
+ //offsets 91 a 103
  "YEAR", "MONTH", "DAY", "HOUR",
  "MINUTE", "SECOND","YEAR TO MONTH",
  "DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
  "HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND",
 
  //Tipos utilizados pela classe TipoComportamento
- //offsets 99 a 101
+ //offsets 104 a 106
  "CALLED ON NULL INPUT",
  "RETURNS NULL ON NULL INPUT",
  "STRICT",
 
  //Tipos utilizados pela classe TipoSeguranca
- //offsets 102 a 103
+ //offsets 107 a 108
  "SECURITY INVOKER",
  "SECURITY DEFINER",
 
  //Tipos utilizados pela classe TipoLinguagem
- //offsets 104 a 109
+ //offsets 109 a 114
  "sql",
  "c",
  "plpgsql",
@@ -108,7 +112,7 @@ QString TipoBase::tipos[qtd_tipos]=
  "plpython",
 
  //Tipos utilizados pela classe TipoCodificacao
- //offsets 110 a 150
+ //offsets 115 a 155
  "UTF8", "BIG5", "EUC_CN",  "EUC_JP", "EUC_JIS_2004", "EUC_KR",
  "EUC_TW", "GB18030", "GBK", "ISO_8859_5", "ISO_8859_6",
  "ISO_8859_7", "ISO_8859_8", "JOHAB", "KOI", "LATIN1",
@@ -120,25 +124,25 @@ QString TipoBase::tipos[qtd_tipos]=
  "WIN1258",
 
  //Tipos utilizados pela classe TipoArmazenamento
- //offsets 151 a 154
+ //offsets 156 a 159
  "plain",
  "external",
  "extended",
  "main",
 
  //Tipos utilizados pela classe TipoComparacao
- //offsets 155 a 157
+ //offsets 160 a 162
  "MATCH FULL",
  "MATCH PARTIAL",
  "MATCH SIMPLE",
 
  //Tipos utilizados pela classe TipoPostergacao
- //offsets 158 a 159
+ //offsets 163 a 164
  "INITIALLY IMMEDIATE",
  "INITIALLY DEFERRED",
 
  //Tipos utilizados pela classe TipoCategoria
- //offsets 160 a 173 - Vide tabela 44-43 da Documentação do PostgreSQL 8.4
+ //offsets 165 a 178 - Vide tabela 44-43 da Documentação do PostgreSQL 8.4
  "U", //User-defined types
  "A", //Array types
  "B", //Boolean types
@@ -155,10 +159,24 @@ QString TipoBase::tipos[qtd_tipos]=
  "X", //Unknown type
 
  //Tipos utilizados pela classe TipoDisparo
- //offsets 174 a 176
+ //offsets 179 a 181
  "BEFORE",
  "AFTER",
- "INSTEAD OF"
+ "INSTEAD OF",
+
+ /* Tipos auxiliares usados pela classe TipoEspacial na configuração de
+    tipos de objetos do PostGiS na class TipoPgSQL.
+    Estes tipos aceitam as variações Z, M e ZM.
+     > Exemplo: POINT, POINTZ, POINTM, POINTZM
+    Referência: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
+ //offsets 182 a 188
+ "POINT",
+ "LINESTRING",
+ "POLYGON",
+ "MULTIPOINT",
+ "MULTILINESTRING",
+ "MULTIPOLYGON",
+ "GEOMETRYCOLLECTION"
 };
 //-----------------------------------------------------------
 TipoBase::TipoBase(void)
@@ -532,6 +550,40 @@ unsigned TipoIntervalo::operator = (const QString &nome_tipo)
  return(idx_tipo);
 }
 //***********************************************************
+/************************
+ * CLASSE: TipoEspacial *
+ ************************/
+TipoEspacial::TipoEspacial(const QString &nome_tipo, unsigned variacao)
+{
+
+}
+//-----------------------------------------------------------
+TipoEspacial::TipoEspacial(unsigned tipo, unsigned variacao)
+{
+
+}
+//-----------------------------------------------------------
+TipoEspacial::TipoEspacial(void)
+{
+
+}
+//-----------------------------------------------------------
+void TipoEspacial::definirVariacao(unsigned var)
+{
+
+}
+//-----------------------------------------------------------
+unsigned TipoEspacial::obterVariacao(void)
+{
+
+}
+//-----------------------------------------------------------
+void TipoEspacial::obterTipos(QStringList &tipos)
+{
+
+
+}
+//***********************************************************
 /*********************
  * CLASSE: TipoPgSQL *
  *********************/
@@ -565,7 +617,7 @@ TipoPgSQL::TipoPgSQL(void *ptipo)
  com_timezone=false;
 }
 //-----------------------------------------------------------
-TipoPgSQL::TipoPgSQL(void *ptipo, unsigned comprimento, unsigned dimensao, int precisao, bool com_timezone, TipoIntervalo tipo_interv)
+TipoPgSQL::TipoPgSQL(void *ptipo, unsigned comprimento, unsigned dimensao, int precisao, bool com_timezone, TipoIntervalo tipo_interv, TipoEspacial tipo_esp)
 {
  (*this) << ptipo;
  definirComprimento(comprimento);
@@ -573,9 +625,10 @@ TipoPgSQL::TipoPgSQL(void *ptipo, unsigned comprimento, unsigned dimensao, int p
  definirPrecisao(precisao);
  definirComTimezone(com_timezone);
  definirTipoIntervalo(tipo_interv);
+ definirTipoEspacial(tipo_esp);
 }
 //-----------------------------------------------------------
-TipoPgSQL::TipoPgSQL(const QString &tipo, unsigned comprimento, unsigned dimensao, int precisao, bool com_timezone, TipoIntervalo tipo_interv)
+TipoPgSQL::TipoPgSQL(const QString &tipo, unsigned comprimento, unsigned dimensao, int precisao, bool com_timezone, TipoIntervalo tipo_interv, TipoEspacial tipo_esp)
 {
  (*this)=tipo;
  definirComprimento(comprimento);
@@ -583,9 +636,10 @@ TipoPgSQL::TipoPgSQL(const QString &tipo, unsigned comprimento, unsigned dimensa
  definirPrecisao(precisao);
  definirComTimezone(com_timezone);
  definirTipoIntervalo(tipo_interv);
+ definirTipoEspacial(tipo_esp);
 }
 //-----------------------------------------------------------
-TipoPgSQL::TipoPgSQL(unsigned idx_tipo, unsigned comprimento, unsigned dimensao, int precisao, bool com_timezone, TipoIntervalo tipo_interv)
+TipoPgSQL::TipoPgSQL(unsigned idx_tipo, unsigned comprimento, unsigned dimensao, int precisao, bool com_timezone, TipoIntervalo tipo_interv, TipoEspacial tipo_esp)
 {
  (*this)=idx_tipo;
  definirComprimento(comprimento);
@@ -593,6 +647,7 @@ TipoPgSQL::TipoPgSQL(unsigned idx_tipo, unsigned comprimento, unsigned dimensao,
  definirPrecisao(precisao);
  definirComTimezone(com_timezone);
  definirTipoIntervalo(tipo_interv);
+ definirTipoEspacial(tipo_esp);
 }
 //-----------------------------------------------------------
 void TipoPgSQL::obterTipos(QStringList &tipos, bool tipo_oid, bool pseudos)
@@ -716,6 +771,11 @@ TipoIntervalo TipoPgSQL::obterTipoIntervalo(void)
  return(tipo_intervalo);
 }
 //-----------------------------------------------------------
+TipoEspacial TipoPgSQL::obterTipoEspacial(void)
+{
+ return(tipo_espacial);
+}
+//-----------------------------------------------------------
 bool TipoPgSQL::comTimezone(void)
 {
  return(com_timezone);
@@ -742,6 +802,11 @@ unsigned TipoPgSQL::operator << (void *ptipo)
 void TipoPgSQL::definirTipoIntervalo(TipoIntervalo tipo_interv)
 {
  tipo_intervalo=tipo_interv;
+}
+//-----------------------------------------------------------
+void TipoPgSQL::definirTipoEspacial(TipoEspacial tipo_esp)
+{
+ tipo_espacial=tipo_esp;
 }
 //-----------------------------------------------------------
 void TipoPgSQL::definirComTimezone(bool com_timezone)

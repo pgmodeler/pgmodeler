@@ -31,7 +31,7 @@ using namespace std;
 //***********************************************************
 class TipoBase{
  private:
-  static const unsigned qtd_tipos=178;
+  static const unsigned qtd_tipos=189;
 
  protected:
   static QString tipos[qtd_tipos];
@@ -202,7 +202,7 @@ class TipoIndexacao: public TipoBase{
 //-----------------------------------------------------------
 class TipoIntervalo: public TipoBase{
  private:
-  static const unsigned offset=86;
+  static const unsigned offset=91;
   static const unsigned qtd_tipos=13;
 
  public:
@@ -227,6 +227,35 @@ class TipoIntervalo: public TipoBase{
   static void obterTipos(QStringList &tipos);
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
+};
+//-----------------------------------------------------------
+class TipoEspacial: public TipoBase{
+ private:
+  unsigned variacao;
+  static const unsigned offset=182;
+  static const unsigned qtd_tipos=7;
+
+ public:
+  static const unsigned var_z=0;
+  static const unsigned var_m=1;
+  static const unsigned var_zm=2;
+
+  static const unsigned point=offset;
+  static const unsigned linestring=offset+1;
+  static const unsigned polygon=offset+2;
+  static const unsigned multipoint=offset+3;
+  static const unsigned multilinestring=offset+4;
+  static const unsigned multipolygon=offset+5;
+  static const unsigned geometrycollection=offset+6;
+
+  TipoEspacial(const QString &nome_tipo, unsigned variacao);
+  TipoEspacial(unsigned tipo, unsigned variacao);
+  TipoEspacial(void);
+
+  void definirVariacao(unsigned var);
+  unsigned obterVariacao(void);
+
+  static void obterTipos(QStringList &tipos);
 };
 //-----------------------------------------------------------
  /* Isso é feio, muito feio! :/
@@ -265,15 +294,15 @@ class ConfigTipoUsuario {
 class TipoPgSQL: public TipoBase{
  private:
   static const unsigned offset=25;
-  static const unsigned qtd_tipos=61;
+  static const unsigned qtd_tipos=66;
 
   //Offset dos tipos oid
-  static const unsigned ini_oid=62;
-  static const unsigned fim_oid=73;
+  static const unsigned ini_oid=67;
+  static const unsigned fim_oid=78;
 
   //Offset dos pseudo-tipos
-  static const unsigned ini_pseudo=74;
-  static const unsigned fim_pseudo=85;
+  static const unsigned ini_pseudo=79;
+  static const unsigned fim_pseudo=90;
 
   /* Apenas as classes Tipo (a qual criar SQL para tipos definidos pelo usuário)
      e Dominio têm acesso a esta lista através de métodos de acesso. Esta classe é a
@@ -297,6 +326,9 @@ class TipoPgSQL: public TipoBase{
 
   //Tipo de intervalo de tempo usado pelo tipo de dado 'interval'
   TipoIntervalo tipo_intervalo;
+
+  //Tipo espacial usado na criação de tipos do PostGiS
+  TipoEspacial tipo_espacial;
 
  protected:
   /* Adiciona uma nova referência ao tipo definido pelo usuário
@@ -324,13 +356,16 @@ class TipoPgSQL: public TipoBase{
   TipoPgSQL(void *ptipo);
   TipoPgSQL(const QString &tipo, unsigned comprimento,
             unsigned dimensao, int precisao,
-            bool com_timezone, TipoIntervalo tipo_interv);
+            bool com_timezone, TipoIntervalo tipo_interv,
+            TipoEspacial tipo_esp);
   TipoPgSQL(void *ptipo, unsigned comprimento,
             unsigned dimensao, int precisao,
-            bool com_timezone, TipoIntervalo tipo_interv);
+            bool com_timezone, TipoIntervalo tipo_interv,
+            TipoEspacial tipo_esp);
   TipoPgSQL(unsigned idx_tipo, unsigned comprimento,
             unsigned dimensao, int precisao,
-            bool com_timezone, TipoIntervalo tipo_interv);
+            bool com_timezone, TipoIntervalo tipo_interv,
+            TipoEspacial tipo_esp);
 
   /* Obtém o índice referente a um tipo definido pelo usuário.
      Retorna 0 caso o tipo não exista na lista. */
@@ -347,11 +382,13 @@ class TipoPgSQL: public TipoBase{
   void definirPrecisao(int prec);
   void definirComTimezone(bool com_timezone);
   void definirTipoIntervalo(TipoIntervalo tipo_interv);
+  void definirTipoEspacial(TipoEspacial tipo_espacial);
 
   unsigned obterDimensao(void);
   unsigned obterComprimento(void);
   int obterPrecisao(void);
   TipoIntervalo obterTipoIntervalo(void);
+  TipoEspacial obterTipoEspacial(void);
 
   bool comTimezone(void); //Retorna se o tipo considera timezone
   bool pseudoTipo(void); //Retorna se o tipo é um pseudo-tipo
@@ -399,7 +436,7 @@ class TipoPgSQL: public TipoBase{
 //-----------------------------------------------------------
 class TipoComportamento: public TipoBase{
  private:
-  static const unsigned offset=99;
+  static const unsigned offset=104;
   static const unsigned qtd_tipos=3;
 
  public:
@@ -419,7 +456,7 @@ class TipoComportamento: public TipoBase{
 //-----------------------------------------------------------
 class TipoSeguranca: public TipoBase{
  private:
-  static const unsigned offset=102;
+  static const unsigned offset=107;
   static const unsigned qtd_tipos=2;
 
  public:
@@ -438,7 +475,7 @@ class TipoSeguranca: public TipoBase{
 //-----------------------------------------------------------
 class TipoLinguagem: public TipoBase{
  private:
-  static const unsigned offset=104;
+  static const unsigned offset=109;
   static const unsigned qtd_tipos=6;
 
  public:
@@ -461,7 +498,7 @@ class TipoLinguagem: public TipoBase{
 //-----------------------------------------------------------
 class TipoCodificacao: public TipoBase{
  private:
-  static const unsigned offset=110;
+  static const unsigned offset=115;
   static const unsigned qtd_tipos=41;
 
  public:
@@ -480,7 +517,7 @@ class TipoCodificacao: public TipoBase{
 //-----------------------------------------------------------
 class TipoArmazenamento: public TipoBase{
  private:
-  static const unsigned offset=151;
+  static const unsigned offset=156;
   static const unsigned qtd_tipos=4;
 
  public:
@@ -504,7 +541,7 @@ class TipoArmazenamento: public TipoBase{
 //-----------------------------------------------------------
 class TipoComparacao: public TipoBase{
  private:
-  static const unsigned offset=155;
+  static const unsigned offset=160;
   static const unsigned qtd_tipos=3;
 
  public:
@@ -524,7 +561,7 @@ class TipoComparacao: public TipoBase{
 //-----------------------------------------------------------
 class TipoPostergacao: public TipoBase{
  private:
-  static const unsigned offset=158;
+  static const unsigned offset=163;
   static const unsigned qtd_tipos=2;
 
  public:
@@ -543,7 +580,7 @@ class TipoPostergacao: public TipoBase{
 //-----------------------------------------------------------
 class TipoCategoria: public TipoBase{
  private:
-  static const unsigned offset=160;
+  static const unsigned offset=165;
   static const unsigned qtd_tipos=14;
 
  public:
@@ -573,7 +610,7 @@ class TipoCategoria: public TipoBase{
 //-----------------------------------------------------------
 class TipoDisparo: public TipoBase{
  private:
-  static const unsigned offset=174;
+  static const unsigned offset=179;
   static const unsigned qtd_tipos=3;
 
  public:

@@ -3605,6 +3605,7 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  //TipoPgSQL tipo;
  bool enc=false, com_timezone;
  TipoIntervalo tipo_interv;
+ TipoEspacial tipo_esp;
 
 
  //Obtém os atributos do tipo
@@ -3627,7 +3628,7 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  idx_tipo=TipoPgSQL::obterIndiceTipoBase(nome);
  if(idx_tipo!=TipoPgSQL::nulo)
  {
-  return(TipoPgSQL(nome,comprimento,dimensao,precisao,com_timezone,tipo_interv));
+  return(TipoPgSQL(nome,comprimento,dimensao,precisao,com_timezone,tipo_interv, tipo_esp));
  }
  else
  {
@@ -3660,7 +3661,7 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
     throw Excecao(ERR_PGMODELER_REFTIPOUSRINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   idx_tipo=TipoPgSQL::obterIndiceTipoUsuario(nome, ptipo);
-  return(TipoPgSQL(idx_tipo,comprimento,dimensao,precisao,com_timezone,tipo_interv));
+  return(TipoPgSQL(idx_tipo,comprimento,dimensao,precisao,com_timezone,tipo_interv,tipo_esp));
  }
 }
 //-----------------------------------------------------------
