@@ -240,6 +240,7 @@ bool ObjetoBase::nomeValido(const QString &nome_obj)
       Sendo que o primeiro byte deve estar entre 0xC2 e 0xDF e o segundo/terceiro
       deve estar entre 0x80 e 0xBF.
       Ref.: http://www.fileformat.info/info/unicode/utf8.htm
+            http://en.wikipedia.org/wiki/UTF-8
 
       Trecho extraído da url:
 
@@ -321,7 +322,7 @@ void ObjetoBase::definirEsquema(ObjetoBase *esquema)
 {
  if(!esquema)
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRESQNAOALOC)
-                .arg(this->nome).arg(this->obterNomeTipoObjeto()),
+                .arg(QString::fromUtf8(this->nome)).arg(this->obterNomeTipoObjeto()),
                 ERR_PGMODELER_ATRESQNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(esquema && esquema->obterTipoObjeto()!=OBJETO_ESQUEMA)
   throw Excecao(ERR_PGMODELER_ATRESQTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
