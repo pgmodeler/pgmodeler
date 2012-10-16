@@ -89,7 +89,7 @@ void Restricao::adicionarColuna(Coluna *coluna, unsigned tipo_coluna)
  //Caso a coluna não esteja aloca, dispara exceção.
  if(!coluna)
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCOLNAOALOC)
-                        .arg(this->obterNome())
+                        .arg(QString::fromUtf8(this->obterNome()))
                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RESTRICAO)),
                  ERR_PGMODELER_ATRCOLNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(tipo!=TipoRestricao::check)

@@ -25,7 +25,7 @@ void FuncaoAgregacao::definirFuncao(unsigned idx_func, Funcao *func)
     regras necessária para o tipo especfico */
  if(!funcaoValida(idx_func, func))
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_FUNCCONFIGINV)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNC_AGREGACAO)),
                 ERR_PGMODELER_FUNCCONFIGINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -130,7 +130,9 @@ void FuncaoAgregacao::adicionarTipoDado(TipoPgSQL tipo)
  //Verifica se o tipo de dado já foi inserido na função
  if(tipoDadoExiste(tipo))
   //Caso existe um erro é gerado
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_INSTIPODUPLIC).arg(~tipo).arg(this->obterNome(true)),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_INSTIPODUPLIC)
+                .arg(QString::fromUtf8(~tipo))
+                .arg(QString::fromUtf8(this->obterNome(true))),
                 ERR_PGMODELER_INSTIPODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Insere o tipo ao final da lista

@@ -110,7 +110,7 @@ void Indice::adicionarElemento(Coluna *coluna, ClasseOperadores *classe_oper, bo
  if(!coluna)
  {
  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCOLNAOALOC)
-                        .arg(this->obterNome())
+                        .arg(QString::fromUtf8(this->obterNome()))
                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_INDICE)),
                ERR_PGMODELER_ATRCOLNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }

@@ -23,7 +23,7 @@ void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
      de uma conversão */
   if((*tipo_dado)=="")
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRTIPONULO)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
                  ERR_PGMODELER_ATRTIPONULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -61,7 +61,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
 
  if(!funcao_conv)
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNAOALOC)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
                 ERR_PGMODELER_ATRFUNCNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -71,7 +71,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  //A função deve possuir número de parâmetros de 1 a 3
  if(qtd_param==0 || qtd_param > 3)
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
                 ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
@@ -91,7 +91,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
   //Caso alguma das validações acima falhe dispara-se uma exceção
   if(erro)
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCPARAMINV)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
                  ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
@@ -99,7 +99,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  //Verifica se o tipo de retorno da função é diferente do tipo de destino da conversão
  if(funcao_conv->obterTipoRetorno()!=this->tipos[CONV_TIPO_DESTINO])
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCRETINV)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
                 ERR_PGMODELER_ATRFUNCRETINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

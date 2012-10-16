@@ -45,9 +45,9 @@ Relacionamento::Relacionamento(const QString &nome, unsigned tipo_rel, Tabela *t
       !this->obterTabelaReferencia()->obterChavePrimaria()) ||
     (tipo_relac==RELACIONAMENTO_NN && (!tab_orig->obterChavePrimaria() || !tab_dest->obterChavePrimaria())))
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_RELTABSEMPK)
-                          .arg(nome)
-                          .arg(tab_orig->obterNome(true))
-                          .arg(tab_dest->obterNome(true)),
+                          .arg(QString::fromUtf8(nome))
+                          .arg(QString::fromUtf8(tab_orig->obterNome(true)))
+                          .arg(QString::fromUtf8(tab_dest->obterNome(true))),
                  ERR_PGMODELER_RELTABSEMPK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Atribuindo os sufixos ao relacionamento.
@@ -109,7 +109,8 @@ void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufix
   throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(!sufixo.isEmpty() && !ObjetoBase::nomeValido(sufixo))
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRSUFIXORELINV).arg(this->obterNome()),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRSUFIXORELINV)
+                .arg(QString::fromUtf8(this->obterNome())),
                 ERR_PGMODELER_ATRSUFIXORELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(tipo_tab==TABELA_ORIGEM)
@@ -159,7 +160,8 @@ void Relacionamento::definirColsChavePrimariaEspecial(vector<unsigned> &cols)
  /* Dispara um erro caso o usuário tente usar a chave primária especial em autorelacionamento
     e/ou relacionamento n-n */
  if(autoRelacionamento() || relacionamentoIdentificador() || tipo_relac==RELACIONAMENTO_NN)
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_PKESPTIPORELINV).arg(this->obterNome()),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_PKESPTIPORELINV)
+                .arg(QString::fromUtf8(this->obterNome())),
                 ERR_PGMODELER_PKESPTIPORELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->id_colunas_pk_rel=cols;
@@ -402,7 +404,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
      a definição SQL do objeto está incompleta */
   if(e.obterTipoErro()==ERR_PARSERS_ATRIBVALORNULO)
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDEFSQLINV)
-                              .arg(objeto_tab->obterNome())
+                              .arg(QString::fromUtf8(objeto_tab->obterNome()))
                               .arg(objeto_tab->obterNomeTipoObjeto()),
                  ERR_PGMODELER_ATROBJDEFSQLINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   else
@@ -473,11 +475,11 @@ void Relacionamento::removerObjeto(unsigned id_obj, TipoObjetoBase tipo_obj)
   //Caso haja referência
   if(refer)
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REMOBJREFERIND)
-                           .arg(coluna->obterNome())
+                           .arg(QString::fromUtf8(coluna->obterNome()))
                            .arg(coluna->obterNomeTipoObjeto())
-                           .arg(rest->obterNome())
+                           .arg(QString::fromUtf8(rest->obterNome()))
                            .arg(rest->obterNomeTipoObjeto())
-                           .arg(this->obterNome(true))
+                           .arg(QString::fromUtf8(this->obterNome(true)))
                            .arg(this->obterNomeTipoObjeto()),
                  ERR_PGMODELER_REMOBJREFERIND,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
@@ -1376,9 +1378,9 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
   if((!pk_orig && (tipo_relac==RELACIONAMENTO_1N || tipo_relac==RELACIONAMENTO_11)) ||
      (!pk_orig && !pk_dest && tipo_relac==RELACIONAMENTO_NN))
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_RELTABSEMPK)
-                          .arg(this->nome)
-                          .arg(tab_referencia->obterNome(true))
-                          .arg(tab_receptora->obterNome(true)),
+                          .arg(QString::fromUtf8(this->nome))
+                          .arg(QString::fromUtf8(tab_referencia->obterNome(true)))
+                          .arg(QString::fromUtf8(tab_receptora->obterNome(true))),
                  ERR_PGMODELER_RELTABSEMPK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 

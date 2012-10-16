@@ -93,14 +93,14 @@ void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
      como função executada pelo operador */
   if(!funcao)
     throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNAOALOC)
-                         .arg(this->obterNome(true))
+                         .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_OPERADOR)),
                   ERR_PGMODELER_ATRFUNCNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Caso o número de parâmetros da função seja inválido. Para operadores
      a mesma deve possuir 1 ou 2 parâmetros */
   else if(funcao->obterNumParams()==0 || funcao->obterNumParams() > 2)
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_OPERADOR)),
                  ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
@@ -172,8 +172,8 @@ void Operador::definirOperador(Operador *op, unsigned tipo_op)
   if(op && tipo_op==OPER_COMUTACAO && tipo_args[ARG_ESQUERDA]!=op->tipo_args[ARG_DIREITA])
   {
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROPERCOMUTINV)
-                         .arg(op->obterAssinatura(true))
-                         .arg(this->obterAssinatura(true)),
+                         .arg(QString::fromUtf8(op->obterAssinatura(true)))
+                         .arg(QString::fromUtf8(this->obterAssinatura(true))),
                  ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
   /* Validando OP Negação: De acordo com a documentação do PostgreSQL o operador
@@ -187,8 +187,8 @@ void Operador::definirOperador(Operador *op, unsigned tipo_op)
            tipo_args[ARG_DIREITA]!=op->tipo_args[ARG_DIREITA]))
   {
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROPERNEGINV)
-                         .arg(op->obterAssinatura(true))
-                         .arg(this->obterAssinatura(true)),
+                         .arg(QString::fromUtf8(op->obterAssinatura(true)))
+                         .arg(QString::fromUtf8(this->obterAssinatura(true))),
                  ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
   else

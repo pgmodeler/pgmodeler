@@ -7,5 +7,6 @@ include(libpgmodeler_ui/libpgmodeler_ui.pro)
 include(crashhandler/crashhandler.pro)
 include(main/main.pro)
 
-TRANSLATIONS = lang/pgmodeler.pt_BR.ts
+TRANSLATIONS = lang/pgmodeler.pt_BR.ts \
+               lang/pgmodeler.zh_CN.ts
 CODECFORTR = UTF8

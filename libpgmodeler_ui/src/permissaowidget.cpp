@@ -315,7 +315,7 @@ void PermissaoWidget::exibirDadosPapelSelecionado(void)
   {
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDUPLICCONT)
                                .arg(QString::fromUtf8(papel->obterNome()))
-                               .arg(QString::fromUtf8(papel->obterNomeTipoObjeto()))
+                               .arg(papel->obterNomeTipoObjeto())
                                .arg(papeis_gb->title()),
                  ERR_PGMODELER_INSITEMPAPELDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -409,7 +409,7 @@ void PermissaoWidget::atualizarPermissao(void)
    /* Qualquer outra situação além da comentado no if acima é considerada duplicação
       de permissões gerando assim um erro */
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRPERMISSAODUPLIC)
-                 .arg(permissao->obterObjeto()->obterNome())
+                 .arg(QString::fromUtf8(permissao->obterObjeto()->obterNome()))
                  .arg(permissao->obterObjeto()->obterNomeTipoObjeto()),
                  ERR_PGMODELER_ATRPERMISSAODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }

@@ -14,7 +14,7 @@ void EspacoTabela::definirNome(const QString &nome)
  //if(nome.substr(0,3)=="pg_")
  if(nome.mid(0,3)=="pg_")
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRNOMERESERV)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_ESPACO_TABELA)),
                 ERR_PGMODELER_ATRNOMERESERV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

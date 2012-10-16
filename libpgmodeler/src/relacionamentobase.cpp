@@ -67,7 +67,7 @@ void RelacionamentoBase::configurarRelacionamento(void)
       não estão alocadas, caso isso ocorra, dispara uma exceção */
    if(!tabela_orig || !tabela_dest)
     throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRTABNAOALOC)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RELACAO_BASE)),
                   ERR_PGMODELER_ATRTABNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

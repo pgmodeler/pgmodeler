@@ -21,7 +21,7 @@ void Linguagem::definirNome(const QString &nome)
     para o SGBD e não podem ser criados pelo usuário */
  if(nome.toLower()==~TipoLinguagem("c") || nome.toLower()==~TipoLinguagem("sql"))
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRNOMERESERV)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_LINGUAGEM)),
                 ERR_PGMODELER_ATRNOMERESERV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

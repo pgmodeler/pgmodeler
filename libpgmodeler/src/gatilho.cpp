@@ -74,7 +74,7 @@ void Gatilho::definirFuncao(Funcao *funcao)
  if(!funcao)
   //Dispara exceção relatando o erro
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNAOALOC)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_GATILHO)),
                 ERR_PGMODELER_ATRFUNCNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
@@ -87,7 +87,7 @@ void Gatilho::definirFuncao(Funcao *funcao)
   else if(funcao->obterNumParams()==0)
    //Dispara exceção relatando o erro
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_GATILHO)),
                  ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else

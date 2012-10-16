@@ -96,7 +96,7 @@ void Tipo::adicionarAtributo(Parametro atrib)
  if(atrib.obterNome()=="" || atrib.obterTipo()==TipoPgSQL::nulo)
   throw Excecao(ERR_PGMODELER_INSATRIBTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(TipoPgSQL::obterIndiceTipoUsuario(this->obterNome(true), this) == !atrib.obterTipo())
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_TIPOUSRAUTOREF).arg(this->obterNome(true)),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_TIPOUSRAUTOREF).arg(QString::fromUtf8(this->obterNome(true))),
                 ERR_PGMODELER_TIPOUSRAUTOREF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Verifica se o atributo com mesmo nome já não foi inserido no tipo
  else if(atributoExiste(atrib.obterNome()))
@@ -220,7 +220,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
     pois estas duas são obrigatórias para um tipo base */
  if(!funcao && (conf_func==FUNCAO_INPUT || conf_func==FUNCAO_OUTPUT))
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNAOALOC)
-                         .arg(this->obterNome(true))
+                         .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TIPO)),
                 ERR_PGMODELER_ATRFUNCNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -241,7 +241,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
            conf_func==FUNCAO_TPMOD_IN || conf_func==FUNCAO_TPMOD_OUT ||
            conf_func==FUNCAO_ANALYZE)))
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
-                          .arg(this->obterNome())
+                          .arg(QString::fromUtf8(this->obterNome()))
                           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TIPO)),
                  ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -260,7 +260,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
           (conf_func==FUNCAO_TPMOD_OUT && funcao->obterTipoRetorno()!="cstring") ||
           (conf_func==FUNCAO_ANALYZE && funcao->obterTipoRetorno()!="boolean"))
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCRETINV)
-                          .arg(this->obterNome())
+                          .arg(QString::fromUtf8(this->obterNome()))
                           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TIPO)),
                  ERR_PGMODELER_ATRFUNCRETINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -359,7 +359,7 @@ void Tipo::definirAlinhamento(TipoPgSQL tipo)
  /* Verifica se o tipo a ser atribuído ao alinhamento é
     diferente de char, smallint, integer e double (os únicos aceitos) */
  if(tp!="char" && tp!="smallint" && tp!="integer" && tp!="double precision")
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRALINHAMENTOINVTIPO).arg(this->obterNome(true)),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRALINHAMENTOINVTIPO).arg(QString::fromUtf8(this->obterNome(true))),
                 ERR_PGMODELER_ATRALINHAMENTOINVTIPO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 //-----------------------------------------------------------
@@ -376,12 +376,12 @@ void Tipo::definirValorPadrao(const QString &valor_padrao)
 void Tipo::definirElemento(TipoPgSQL elemento)
 {
  if(TipoPgSQL::obterIndiceTipoUsuario(this->obterNome(true), this) == !elemento)
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_TIPOUSRAUTOREF).arg(this->obterNome(true)),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_TIPOUSRAUTOREF).arg(QString::fromUtf8(this->obterNome(true))),
                 ERR_PGMODELER_TIPOUSRAUTOREF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(elemento!="any" &&
    (elemento.tipoOID() || elemento.pseudoTipo() ||
     elemento.tipoUsuario() || elemento.tipoArray()))
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRELEMENTOINVTIPO).arg(this->obterNome(true)),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRELEMENTOINVTIPO).arg(QString::fromUtf8(this->obterNome(true))),
                 ERR_PGMODELER_ATRELEMENTOINVTIPO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->elemento=elemento;
@@ -449,7 +449,7 @@ void Tipo::definirPreferido(bool preferido)
 void Tipo::definirTipoCopia(TipoPgSQL tipo_copia)
 {
  if(TipoPgSQL::obterIndiceTipoUsuario(this->obterNome(true), this) == !tipo_copia)
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_TIPOUSRAUTOREF).arg(this->obterNome(true)),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_TIPOUSRAUTOREF).arg(QString::fromUtf8(this->obterNome(true))),
                 ERR_PGMODELER_TIPOUSRAUTOREF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->tipo_copia=tipo_copia;

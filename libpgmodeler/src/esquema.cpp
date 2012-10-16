@@ -12,7 +12,7 @@ void Esquema::definirNome(const QString &nome)
     não podem ser criados pelo usuário */
  if(nome.mid(0,3)=="pg_")
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRNOMERESERV)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_ESQUEMA)),
                 ERR_PGMODELER_ATRNOMERESERV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

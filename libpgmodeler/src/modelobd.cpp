@@ -5,7 +5,7 @@ ModeloBD::ModeloBD(void)
  id_objeto=ObjetoBase::id_modelobd++;
 
  tipo_objeto=OBJETO_BANCO_DADOS;
- definirNome(QObject::tr("new_database"));
+ definirNome("new_database");
 
  lim_conexao=-1;
  carregando_modelo=false;
@@ -135,7 +135,7 @@ QString ModeloBD::validarDefinicaoObjeto(ObjetoBase *objeto, unsigned tipo_def)
       indica que a def. SQL não é válida */
    if(e.obterTipoErro()==ERR_PARSERS_ATRIBVALORNULO)
     throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDEFSQLINV)
-                           .arg(objeto->obterNome(true))
+                           .arg(QString::fromUtf8(objeto->obterNome(true)))
                            .arg(objeto->obterNomeTipoObjeto()),
                   ERR_PGMODELER_ATROBJDEFSQLINV,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
    else
@@ -357,7 +357,7 @@ void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
    if(esp_tab->obterDiretorio()==esp_tab_aux->obterDiretorio())
    {
     throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRESPTABDIRDUPLIC)
-                         .arg(esp_tab->obterNome())
+                         .arg(QString::fromUtf8(esp_tab->obterNome()))
                          .arg(esp_tab_aux->obterNome()),
                   ERR_PGMODELER_ATRESPTABDIRDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
@@ -2347,7 +2347,7 @@ void ModeloBD::adicionarPermissao(Permissao *permissao)
     o resultado da chamada ao metodo obterIndicePermissao() sejá >= 0,
     um erro será disparado */
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRPERMISSAODUPLIC)
-                .arg(permissao->obterObjeto()->obterNome())
+                .arg(QString::fromUtf8(permissao->obterObjeto()->obterNome()))
                 .arg(permissao->obterObjeto()->obterNomeTipoObjeto()),
                 ERR_PGMODELER_ATRPERMISSAODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -2359,7 +2359,7 @@ void ModeloBD::adicionarPermissao(Permissao *permissao)
   if(e.obterTipoErro()==ERR_PGMODELER_ATROBJDUPLIC)
    throw
    Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRPERMISSAODUPLIC)
-           .arg(permissao->obterObjeto()->obterNome())
+           .arg(QString::fromUtf8(permissao->obterObjeto()->obterNome()))
            .arg(permissao->obterObjeto()->obterNomeTipoObjeto()),
            ERR_PGMODELER_ATRPERMISSAODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 
@@ -3040,10 +3040,10 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
 
   //Dispara a exceção
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
-                   .arg(objeto->obterNome())
-                   .arg(ObjetoBase::nome_tipo_objetos[objeto->obterTipoObjeto()])
-                   .arg(atribs_aux[AtributosParsers::NOME])
-                   .arg(ObjetoBase::nome_tipo_objetos[tipo_obj]),
+                   .arg(QString::fromUtf8(objeto->obterNome()))
+                   .arg(objeto->obterNomeTipoObjeto())
+                   .arg(QString::fromUtf8(atribs_aux[AtributosParsers::NOME]))
+                   .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj)),
                 ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  //Caso o objeto não esteja atribuído a nenhum esquema gera um erro
@@ -3056,7 +3056,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
           tipo_obj_aux==OBJETO_CLASSE_OPER))
  {
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_OBJSEMESQUEMA)
-                        .arg(objeto->obterNome())
+                        .arg(QString::fromUtf8(objeto->obterNome()))
                         .arg(objeto->obterNomeTipoObjeto()),
           ERR_PGMODELER_OBJSEMESQUEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
@@ -3167,9 +3167,9 @@ Papel *ModeloBD::criarPapel(void)
         //Dispara a exceção
         throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
                                .arg(QString::fromUtf8(papel->obterNome()))
-                               .arg(QString::fromUtf8(ObjetoBase::obterNomeTipoObjeto(OBJETO_PAPEL)))
+                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_PAPEL))
                                .arg(QString::fromUtf8(lista[i]))
-                               .arg(QString::fromUtf8(ObjetoBase::obterNomeTipoObjeto(OBJETO_PAPEL))),
+                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_PAPEL)),
                       ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
        //Caso o papel exista no modelo, o mesmo será relacionado ao novo papel
@@ -3312,9 +3312,9 @@ Linguagem *ModeloBD::criarLinguagem(void)
         if(!funcao)
          //Dispara a exceção indicando que o objeto está incompleto
          throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
-                               .arg(linguagem->obterNome())
+                               .arg(QString::fromUtf8(linguagem->obterNome()))
                                .arg(linguagem->obterNomeTipoObjeto())
-                               .arg(assinatura)
+                               .arg(QString::fromUtf8(assinatura))
                                .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                        ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -3468,9 +3468,9 @@ Funcao *ModeloBD::criarFuncao(void)
       //Caso a linguagem não existe será disparada uma exceção
       if(!objeto)
        throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
-                              .arg(funcao->obterNome())
+                              .arg(QString::fromUtf8(funcao->obterNome()))
                               .arg(funcao->obterNomeTipoObjeto())
-                              .arg(atributos[AtributosParsers::NOME])
+                              .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_LINGUAGEM)),
                       ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -3524,7 +3524,7 @@ Funcao *ModeloBD::criarFuncao(void)
   //Redireciona qualquer exceção capturada
   if(e.obterTipoErro()==ERR_PGMODELER_REFTIPOUSRINV)
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDEFSQLINV)
-                              .arg(str_aux)
+                              .arg(QString::fromUtf8(str_aux))
                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                  ERR_PGMODELER_ATROBJDEFSQLINV,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, info_adicional);
   else
@@ -3803,9 +3803,9 @@ Tipo *ModeloBD::criarTipo(void)
          se a função referenciada não existe */
       if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
        throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
-                              .arg(tipo->obterNome())
+                              .arg(QString::fromUtf8(tipo->obterNome()))
                               .arg(tipo->obterNomeTipoObjeto())
-                              .arg(atributos[AtributosParsers::ASSINATURA])
+                              .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       else if(tipo_funcoes.count(atributos[AtributosParsers::TIPO_REFERENCIA])==0)
@@ -3839,7 +3839,7 @@ Tipo *ModeloBD::criarTipo(void)
   //Redireciona qualquer exceção capturada
   if(e.obterTipoErro()==ERR_PGMODELER_REFTIPOUSRINV)
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDEFSQLINV)
-                              .arg(str_aux)
+                              .arg(QString::fromUtf8(str_aux))
                               .arg(tipo->obterNomeTipoObjeto()),
                  ERR_PGMODELER_ATROBJDEFSQLINV,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, info_adicional);
   else
@@ -3988,9 +3988,9 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
        throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
-                             .arg(conv_tipo->obterNome())
+                             .arg(QString::fromUtf8(conv_tipo->obterNome()))
                              .arg(conv_tipo->obterNomeTipoObjeto())
-                             .arg(atributos[AtributosParsers::ASSINATURA])
+                             .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4064,9 +4064,9 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
        throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
-                             .arg(conv_codif->obterNome())
+                             .arg(QString::fromUtf8(conv_codif->obterNome()))
                              .arg(conv_codif->obterNomeTipoObjeto())
-                             .arg(atributos[AtributosParsers::ASSINATURA])
+                             .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4156,9 +4156,9 @@ Operador *ModeloBD::criarOperador(void)
       //Dispara uma exceção caso o operador referenciado não exista
       if(!oper_aux && !atributos[AtributosParsers::ASSINATURA].isEmpty())
        throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
-                             .arg(operador->obterAssinatura(true))
+                             .arg(QString::fromUtf8(operador->obterAssinatura(true)))
                              .arg(operador->obterNomeTipoObjeto())
-                             .arg(atributos[AtributosParsers::ASSINATURA])
+                             .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_OPERADOR)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4196,9 +4196,9 @@ Operador *ModeloBD::criarOperador(void)
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
        throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
-                             .arg(operador->obterNome())
+                             .arg(QString::fromUtf8(operador->obterNome()))
                              .arg(operador->obterNomeTipoObjeto())
-                             .arg(atributos[AtributosParsers::ASSINATURA])
+                             .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4279,9 +4279,9 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
       //Dispara uma exceção caso o operador referenciado não exista
       if(!objeto && !atributos[AtributosParsers::NOME].isEmpty())
        throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
-                             .arg(classe_op->obterNome())
+                             .arg(QString::fromUtf8(classe_op->obterNome()))
                              .arg(classe_op->obterNomeTipoObjeto())
-                             .arg(atributos[AtributosParsers::NOME])
+                             .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FAMILIA_OPER)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4429,9 +4429,9 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
        throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
-                             .arg(func_agreg->obterNome())
+                             .arg(QString::fromUtf8(func_agreg->obterNome()))
                              .arg(func_agreg->obterNomeTipoObjeto())
-                             .arg(atributos[AtributosParsers::ASSINATURA])
+                             .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4627,10 +4627,10 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
    {
     //Configura os argumentos da mensagem de erro
     str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
-          .arg(atributos[AtributosParsers::NOME])
-          .arg(ObjetoBase::nome_tipo_objetos[OBJETO_RESTRICAO])
-          .arg(atributos[AtributosParsers::TABELA])
-          .arg(ObjetoBase::nome_tipo_objetos[OBJETO_TABELA]);
+          .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
+          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RESTRICAO))
+          .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]))
+          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
     //Dispara a exceção
     throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
@@ -4693,7 +4693,8 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
      Adicionalmente é necessário verificar o tipo da restrição para se
      ter certeza que a mesma é uma chave primária. */
   if(!objeto && tipo_rest==TipoRestricao::primary_key)
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ALOCPKFORMAINVALIDA).arg(restricao->obterNome()),
+    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ALOCPKFORMAINVALIDA)
+                  .arg(QString::fromUtf8(restricao->obterNome())),
                   ERR_PGMODELER_ALOCPKFORMAINVALIDA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Efetuando configurações específicas para chaves estrangeiras
@@ -4730,10 +4731,10 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
    {
     //Configura os argumentos da mensagem de erro
     str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
-          .arg(restricao->obterNome())
-          .arg(ObjetoBase::nome_tipo_objetos[restricao->obterTipoObjeto()])
-          .arg(atributos[AtributosParsers::TABELA_REF])
-          .arg(ObjetoBase::nome_tipo_objetos[OBJETO_TABELA]);
+          .arg(QString::fromUtf8(restricao->obterNome()))
+          .arg(restricao->obterNomeTipoObjeto())
+          .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA_REF]))
+          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
     //Dispara a exceção
     throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
@@ -4870,10 +4871,10 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
    {
     //Configura os argumentos da mensagem de erro
     str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
-          .arg(atributos[AtributosParsers::NOME])
-          .arg(ObjetoBase::nome_tipo_objetos[OBJETO_INDICE])
-          .arg(atributos[AtributosParsers::TABELA])
-          .arg(ObjetoBase::nome_tipo_objetos[OBJETO_TABELA]);
+          .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
+          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_INDICE))
+          .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]))
+          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
     //Dispara a exceção
     throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
@@ -4927,10 +4928,10 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
          {
           //Configura os argumentos da mensagem de erro
           str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
-                          .arg(indice->obterNome())
-                          .arg(ObjetoBase::nome_tipo_objetos[OBJETO_INDICE])
-                          .arg(atributos[AtributosParsers::CLASSE_OPERADORES])
-                          .arg(ObjetoBase::nome_tipo_objetos[OBJETO_CLASSE_OPER]);
+                          .arg(QString::fromUtf8(indice->obterNome()))
+                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_INDICE))
+                          .arg(QString::fromUtf8(atributos[AtributosParsers::CLASSE_OPERADORES]))
+                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CLASSE_OPER));
           //Dispara a exceção
           throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
          }
@@ -5099,10 +5100,10 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
    tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[AtributosParsers::TABELA], OBJETO_TABELA));
    if(!tabela)
     throw Excecao(QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
-                  .arg(atributos[AtributosParsers::NOME])
+                  .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
                   .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_GATILHO))
-                  .arg(atributos[AtributosParsers::TABELA])
-                  .arg(ObjetoBase::nome_tipo_objetos[OBJETO_TABELA]),
+                  .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]))
+                  .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA)),
                   ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
@@ -5180,10 +5181,10 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
       if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
       {
        str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
-               .arg(gatilho->obterNome())
-               .arg(ObjetoBase::nome_tipo_objetos[gatilho->obterTipoObjeto()])
-               .arg(atributos[AtributosParsers::ASSINATURA])
-               .arg(ObjetoBase::nome_tipo_objetos[OBJETO_FUNCAO]);
+               .arg(QString::fromUtf8(gatilho->obterNome()))
+               .arg(gatilho->obterNomeTipoObjeto())
+               .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
+               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO));
 
        //Dispara a exceção
        throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5304,10 +5305,10 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
    if(!tabela)
    {
     str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
-            .arg(sequencia->obterNome())
-            .arg(ObjetoBase::nome_tipo_objetos[OBJETO_SEQUENCIA])
-            .arg(nome_tab)
-            .arg(ObjetoBase::nome_tipo_objetos[OBJETO_TABELA]);
+            .arg(QString::fromUtf8(sequencia->obterNome()))
+            .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_SEQUENCIA))
+            .arg(QString::fromUtf8(nome_tab))
+            .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
 
     //Dispara a exceção
     throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5323,7 +5324,8 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
    /* Caso a coluna não exista porém a mesma esteja sendo referenciada no xml
       um erro será disparado */
    if(!coluna && !ignorar_possuidora)
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCOLPOSINDEF).arg(sequencia->obterNome(true)),
+    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCOLPOSINDEF)
+                  .arg(QString::fromUtf8(sequencia->obterNome(true))),
                   ERR_PGMODELER_ATRCOLPOSINDEF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    sequencia->definirPossuidora(coluna);
@@ -5386,10 +5388,10 @@ Visao *ModeloBD::criarVisao(void)
        if(!tabela)
        {
         str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
-                        .arg(visao->obterNome())
-                        .arg(ObjetoBase::nome_tipo_objetos[OBJETO_VISAO])
-                        .arg(atributos[AtributosParsers::TABELA])
-                        .arg(ObjetoBase::nome_tipo_objetos[OBJETO_TABELA]);
+                        .arg(QString::fromUtf8(visao->obterNome()))
+                        .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_VISAO))
+                        .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]))
+                        .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
 
         //Dispara a exceção
         throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5410,11 +5412,11 @@ Visao *ModeloBD::criarVisao(void)
          if(!coluna)
          {
           str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
-                          .arg(visao->obterNome())
-                          .arg(ObjetoBase::nome_tipo_objetos[OBJETO_VISAO])
-                          .arg(atributos[AtributosParsers::TABELA] + "." +
-                               atributos[AtributosParsers::COLUNA])
-                         .arg(ObjetoBase::nome_tipo_objetos[OBJETO_COLUNA]);
+                          .arg(QString::fromUtf8(visao->obterNome()))
+                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_VISAO))
+                          .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]) + "." +
+                               QString::fromUtf8(atributos[AtributosParsers::COLUNA]))
+                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_COLUNA));
 
           //Dispara a exceção
           throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5570,10 +5572,10 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    if(!tabelas[i])
    {
     str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
-                    .arg(atributos[AtributosParsers::NOME])
-                    .arg(ObjetoBase::nome_tipo_objetos[tipo_obj_rel])
-                    .arg(atributos[atribs[i]])
-                    .arg(ObjetoBase::nome_tipo_objetos[tipos_tab[i]]);
+                    .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
+                    .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj_rel))
+                    .arg(QString::fromUtf8(atributos[atribs[i]]))
+                    .arg(ObjetoBase::obterNomeTipoObjeto(tipos_tab[i]));
 
     //Dispara a exceção
     throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5587,9 +5589,9 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    //Caso o relacionamento tabela-visão nao seja encontrado o erro será disparado
    if(!relacao_base)
     throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
-                             .arg(this->obterNome())
+                             .arg(QString::fromUtf8(this->obterNome()))
                              .arg(this->obterNomeTipoObjeto())
-                             .arg(atributos[AtributosParsers::NOME])
+                             .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RELACAO_BASE)),
                   ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -5800,7 +5802,7 @@ Permissao *ModeloBD::criarPermissao(void)
      não pode existir sem que referencie um objeto */
   if(!objeto)
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_PERMREFOBJINEXISTE)
-                          .arg(nome_obj)
+                          .arg(QString::fromUtf8(nome_obj))
                           .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj)),
                       ERR_PGMODELER_PERMREFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -5838,9 +5840,9 @@ Permissao *ModeloBD::criarPermissao(void)
      {
       //Dispara a exceção
       throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_PERMREFOBJINEXISTE)
-                              .arg(objeto->obterNome())
+                              .arg(QString::fromUtf8(objeto->obterNome()))
                               .arg(objeto->obterNomeTipoObjeto())
-                              .arg(lista[i])
+                              .arg(QString::fromUtf8(lista[i]))
                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_PAPEL)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -5930,9 +5932,9 @@ void ModeloBD::validarRemocaoColuna(Coluna *coluna)
   if(!vet_refs.empty())
    //Dispara um erro informando que a coluna não pde ser remove e qual objeto a referencia
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REMOBJREFERDIR)
-                 .arg(coluna->obterTabelaPai()->obterNome(true) + "." + coluna->obterNome(true))
+                 .arg(QString::fromUtf8(coluna->obterTabelaPai()->obterNome(true)) + "." + QString::fromUtf8(coluna->obterNome(true)))
                  .arg(coluna->obterNomeTipoObjeto())
-                 .arg(vet_refs[0]->obterNome(true))
+                 .arg(QString::fromUtf8(vet_refs[0]->obterNome(true)))
                  .arg(vet_refs[0]->obterNomeTipoObjeto()),
                  ERR_PGMODELER_REMOBJREFERDIR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }

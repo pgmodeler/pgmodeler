@@ -124,7 +124,9 @@ void Funcao::adicionarParametro(Parametro param)
  //Caso seja encontrado um parâmetro com mesmo nome
  if(enc)
   //Dispara exceção relatando o erro
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_INSPARAMDUPLIC).arg(param.obterNome()).arg(this->assinatura),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_INSPARAMDUPLIC)
+                .arg(QString::fromUtf8(param.obterNome()))
+                .arg(QString::fromUtf8(this->assinatura)),
                 ERR_PGMODELER_INSPARAMDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -163,7 +165,9 @@ void Funcao::adicionarTipoRetTabela(const QString &nome, TipoPgSQL tipo)
   //Caso seja encontrado um parâmetro com mesmo nome
   if(enc)
    //Dispara exceção relatando o erro
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_INSTPRETDUPLIC).arg(nome).arg(this->assinatura),
+   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_INSTPRETDUPLIC)
+                 .arg(QString::fromUtf8(nome))
+                 .arg(QString::fromUtf8(this->assinatura)),
                  ERR_PGMODELER_INSTPRETDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {//Dispara exceção relatando o erro
@@ -224,7 +228,8 @@ void Funcao::definirQuantidadeLinhas(unsigned qtd_linhas)
 void Funcao::definirBiblioteca(const QString &biblioteca)
 {
  if(linguagem->obterNome().toLower()!=~TipoLinguagem("c"))
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRBIBLIOFUNCLINGDIFC).arg(this->obterAssinatura()),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRBIBLIOFUNCLINGDIFC)
+                .arg(QString::fromUtf8(this->obterAssinatura())),
                 ERR_PGMODELER_ATRBIBLIOFUNCLINGDIFC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->biblioteca=biblioteca;
@@ -233,7 +238,8 @@ void Funcao::definirBiblioteca(const QString &biblioteca)
 void Funcao::definirSimbolo(const QString &simbolo)
 {
  if(linguagem->obterNome().toLower()!=~TipoLinguagem("c"))
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRBIBLIOFUNCLINGDIFC).arg(this->obterAssinatura()),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRBIBLIOFUNCLINGDIFC)
+                .arg(QString::fromUtf8(this->obterAssinatura())),
                 ERR_PGMODELER_ATRBIBLIOFUNCLINGDIFC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->simbolo=simbolo;
@@ -288,7 +294,8 @@ void Funcao::definirTipoComportamento(TipoComportamento tipo)
 void Funcao::definirCodigoFonte(const QString &codigo)
 {
  if(linguagem->obterNome().toLower()==~TipoLinguagem("c"))
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCORPOFUNCLINGC).arg(this->obterAssinatura()),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCORPOFUNCLINGC)
+                .arg(QString::fromUtf8(this->obterAssinatura())),
                 ERR_PGMODELER_ATRCORPOFUNCLINGC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->codigo_fonte=codigo;

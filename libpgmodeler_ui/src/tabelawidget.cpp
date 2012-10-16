@@ -216,12 +216,11 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
 
  if(!tabela)
  {
-  QString nome;
-
-  nome=trUtf8("new_table");
-  //Aloca o novo relacionamento
+  //QString nome;
+  //nome=trUtf8("new_table");
+  //Aloca a nova tabela
   tabela=new Tabela;
-  tabela->definirNome(nome);
+  tabela->definirNome("new_table");
 
   /* Marca como novo objeto o relacionamento gerado, assim o mesmo é tratado
      de forma diferente nos métodos de configuração da classe superior */
@@ -489,7 +488,7 @@ void TabelaWidget::removerObjetos(void)
    }
    else
     throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_REMOBJPROTEGIDO)
-                  .arg(objeto->obterNome())
+                  .arg(QString::fromUtf8(objeto->obterNome()))
                   .arg(objeto->obterNomeTipoObjeto()),
                   ERR_PGMODELERUI_REMOBJPROTEGIDO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -550,7 +549,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
   }
   else
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_REMOBJPROTEGIDO)
-                 .arg(objeto->obterNome())
+                 .arg(QString::fromUtf8(objeto->obterNome()))
                  .arg(objeto->obterNomeTipoObjeto()),
                  ERR_PGMODELERUI_REMOBJPROTEGIDO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }

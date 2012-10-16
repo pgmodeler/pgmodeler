@@ -223,13 +223,15 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
   // Verifica se a tabela não pertence ao mesmo esquema da sequencia.
   //   Caso não pertença, dispara uma exceção.
   if(tabela->obterEsquema()!=this->esquema)
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRESQDIFTAB).arg(this->obterNome(true)),
+   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRESQDIFTAB)
+                 .arg(QString::fromUtf8(this->obterNome(true))),
                  ERR_PGMODELER_ATRESQDIFTAB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     /* Verifica se a tabela não pertence ao mesmo dono da sequencia.
      Caso não pertença, dispara uma exceção. */
   if(tabela->obterDono()!=this->dono)
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRDONODIFTAB).arg(this->obterNome(true)),
+   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRDONODIFTAB)
+                 .arg(QString::fromUtf8(this->obterNome(true))),
                  ERR_PGMODELER_ATRDONODIFTAB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Obtém a coluna da tabela com base no nome passado
@@ -242,7 +244,8 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
 
   //Caso a coluna não exista
   if(!this->coluna)
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCOLPOSINDEF).arg(this->obterNome(true)),
+   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCOLPOSINDEF)
+                 .arg(QString::fromUtf8(this->obterNome(true))),
                  ERR_PGMODELER_ATRCOLPOSINDEF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
@@ -259,19 +262,22 @@ void Sequencia::definirPossuidora(Coluna *coluna)
 
   //CAso a coluna possuidor não seja de uma tabela
   if(!tabela)
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCOLPOSNAORELAC).arg(this->obterNome(true)),
+   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCOLPOSNAORELAC)
+                 .arg(QString::fromUtf8(this->obterNome(true))),
                  ERR_PGMODELER_ATRCOLPOSNAORELAC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Verifica se a tabela não pertence ao mesmo esquema da sequencia.
      Caso não pertença, dispara uma exceção. */
   if(tabela->obterEsquema()!=this->esquema)
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRESQDIFTAB).arg(this->obterNome(true)),
+   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRESQDIFTAB)
+                 .arg(QString::fromUtf8(this->obterNome(true))),
                  ERR_PGMODELER_ATRESQDIFTAB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Verifica se a tabela não pertence ao mesmo dono da sequencia.
      Caso não pertença, dispara uma exceção. */
   if(tabela->obterDono()!=this->dono)
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRDONODIFTAB).arg(this->obterNome(true)),
+   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRDONODIFTAB)
+                 .arg(QString::fromUtf8(this->obterNome(true))),
                  ERR_PGMODELER_ATRDONODIFTAB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   this->coluna=coluna;

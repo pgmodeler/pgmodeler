@@ -19,7 +19,7 @@ void ConversaoCodificacao::definirCodificacao(unsigned idx_tipo, TipoCodificacao
   //Se o tipo de codificação passado é nulo, dispara uma exceção
   if((~tipo_cod)=="")
    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRTIPONULO)
-                         .arg(this->obterNome())
+                         .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
                  ERR_PGMODELER_ATRTIPONULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -36,13 +36,13 @@ void ConversaoCodificacao::definirFuncaoConversao(Funcao *funcao_conv)
  //Caso a função de conversão passada seja nula, dispara uma exceção
  if(!funcao_conv)
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNAOALOC)
-                         .arg(this->obterNome(true))
+                         .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
                 ERR_PGMODELER_ATRFUNCNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //A função de conversão deve obrigatoriamente possuir 5 parâmetros
  else if(funcao_conv->obterNumParams()!=5)
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
-                         .arg(this->obterNome(true))
+                         .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
                 ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Verifica os tipos dos parâmetros da função de conversão.
@@ -54,13 +54,13 @@ void ConversaoCodificacao::definirFuncaoConversao(Funcao *funcao_conv)
          funcao_conv->obterParametro(3).obterTipo()!="internal" ||
          funcao_conv->obterParametro(4).obterTipo()!="integer")
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCPARAMINV)
-                         .arg(this->obterNome(true))
+                         .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
                 ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //O tipo de retorno da função de conversão deve ser 'void'
  else if(funcao_conv->obterTipoRetorno()!="void")
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCRETINV)
-                         .arg(this->obterNome(true))
+                         .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
                 ERR_PGMODELER_ATRFUNCRETINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

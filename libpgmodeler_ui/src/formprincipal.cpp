@@ -1246,8 +1246,8 @@ void FormPrincipal::carregarPlugins(void)
   {
    //Caso o plugin não foi carregado, armazena o erro para posterior exibição
    vet_erros.push_back(Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_PLUGINNAOCARREGADO)
-                               .arg(lista_dirs.front())
-                               .arg(lib)
+                               .arg(QString::fromUtf8(lista_dirs.front()))
+                               .arg(QString::fromUtf8(lib))
                                .arg(pl.errorString()),
                                ERR_PGMODELERUI_PLUGINNAOCARREGADO, __PRETTY_FUNCTION__,__FILE__,__LINE__));
   }

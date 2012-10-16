@@ -703,7 +703,8 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
       /* Configura o texto do item como sendo o nome do tipo atual com a
          quantidade de objetos encontrados */
       qtd2=lista_obj.size();
-      item3->setText(0,ObjetoBase::obterNomeTipoObjeto(tipos[i1]) +
+      item3->setText(0,
+                      ObjetoBase::obterNomeTipoObjeto(tipos[i1]) +
                       QString(" (%1)").arg(qtd2));
       fonte=item3->font(0);
       fonte.setItalic(true);
@@ -800,7 +801,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoB
    item->setIcon(0,icone_grupo);
    /* O texto do ícone será o nome do tipo do objeto (no caso, tabela) e a
       quantidade de objetos encontrado */
-   item->setText(0,QString::fromUtf8(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA)) +
+   item->setText(0,ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA) +
                    QString(" (%1)").arg(lista_obj.size()));
    fonte=item->font(0);
    fonte.setItalic(true);
@@ -851,7 +852,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoB
       /* Configura o texto do item como sendo o nome do tipo e a quantidade de
          objetos deste tipo presente na tabela */
       qtd1=tabela->obterNumObjetos(tipos[i1]);
-      item2->setText(0,trUtf8(ObjetoBase::obterNomeTipoObjeto(tipos[i1])) +
+      item2->setText(0,ObjetoBase::obterNomeTipoObjeto(tipos[i1]) +
                       QString(" (%1)").arg(qtd1));
 
       //Varre a lista de elementos filhos da tabela

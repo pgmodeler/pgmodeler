@@ -402,7 +402,7 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
       indica que a def. SQL não é válida */
    if(e.obterTipoErro()==ERR_PARSERS_ATRIBVALORNULO)
     throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDEFSQLINV)
-                              .arg(obj->obterNome())
+                              .arg(QString::fromUtf8(obj->obterNome()))
                               .arg(obj->obterNomeTipoObjeto()),
                   ERR_PGMODELER_ATROBJDEFSQLINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
    else
@@ -527,11 +527,11 @@ void Tabela::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
    if(!vet_refs.empty())
    {
     throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REMOBJREFERIND)
-                          .arg(coluna->obterNome())
+                          .arg(QString::fromUtf8(coluna->obterNome()))
                           .arg(coluna->obterNomeTipoObjeto())
-                          .arg(vet_refs[0]->obterNome())
+                          .arg(QString::fromUtf8(vet_refs[0]->obterNome()))
                           .arg(vet_refs[0]->obterNomeTipoObjeto())
-                          .arg(this->obterNome(true))
+                          .arg(QString::fromUtf8(this->obterNome(true)))
                           .arg(this->obterNomeTipoObjeto()),
                  ERR_PGMODELER_REMOBJREFERIND,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }

@@ -60,7 +60,7 @@ void ConfBaseWidget::salvarConfiguracao(const QString &id_conf)
 
   //Caso não consiga abrir o arquivo para gravação
   if(!saida.isOpen())
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ARQNAOGRAVADO).arg(nome_arq),
+   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ARQNAOGRAVADO).arg(QString::fromUtf8(nome_arq)),
                  ERR_PGMODELER_ARQNAOGRAVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Grava o buffer gerado no arquivo
@@ -70,7 +70,7 @@ void ConfBaseWidget::salvarConfiguracao(const QString &id_conf)
  catch(Excecao &e)
  {
   if(saida.isOpen()) saida.close();
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ARQNAOGRAVADODEFINV).arg(nome_arq),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ARQNAOGRAVADODEFINV).arg(QString::fromUtf8(nome_arq)),
                 ERR_PGMODELER_ARQNAOGRAVADODEFINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
@@ -95,7 +95,7 @@ void ConfBaseWidget::restaurarPadroes(const QString &id_conf)
 
  //Verifica a existência do arquivo padrão, caso não existe emite uma exceção e a restauração é abortada
  if(!QFile::exists(arq_orig))
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_CONFPADRAONAORESTAURADA).arg(arq_orig),
+  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_CONFPADRAONAORESTAURADA).arg(QString::fromUtf8(arq_orig)),
                 ERR_PGMODELERUI_CONFPADRAONAORESTAURADA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
