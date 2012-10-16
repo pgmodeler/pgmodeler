@@ -58,7 +58,7 @@ static const QString
   DIR_TEMPORARIO=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp"));
 
 static const QString
-   VERSAO_PGMODELER="0.3.4-beta",
+   VERSAO_PGMODELER="0.3.4-rc",
    ARQ_CRASH_HANDLER="pgmodeler%1.crash",
    ARQ_STACKTRACE=".stacktrace",
 

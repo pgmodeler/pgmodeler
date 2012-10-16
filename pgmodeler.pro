@@ -43,7 +43,7 @@ unix:LIBS = -lxml2 -lpq
 windows:INCLUDEPATH += C:/QtSDK/mingw/include C:/PostgreSQL/9.2/include
 windows:LIBS = C:/QtSDK/mingw/bin/libxml2.dll C:/PostgreSQL/9.2/bin/libpq.dll
 
-sources.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
+sources.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
 unix:sources.files += start-pgmodeler.sh
 windows:sources.files += start-pgmodeler.bat
 sources.path = build/

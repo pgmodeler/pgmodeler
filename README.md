@@ -17,83 +17,46 @@ See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for de
 Compiling/Installation
 ----------------------
 
-For details about compilation and installation process see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md) for details.
+For details about installation process from source code see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md). If you don't want to compile pgModeler there are binaries available for download at [Downloads](https://github.com/pgmodeler/pgmodeler/downloads) section.
+
+Running pgModeler
+-----------------
+
+The pgModeler can be executed directly from de executable but it is necessary change some environment variables, see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md). For convinience there are two scripts used to startup pgModeler.
+
+* Windows users: use the ```start-pgmodeler.bat``` script. By default this script consider that pgModeler is installed on ```c:\pgmodeler``` edit the PGMODELER_* environment variables if you desire to set other location to the installation.
+
+* Linux/Unix users: use the ```start-pgmodeler.sh``` script. By default this script consider that pgModeler is installed on current working directory AKA ```pwd``` edit the PGMODELER_* environment variables if you desire to set other location to the installation.
 
 Known bugs
 ----------
 
-* Broken compilation process on MacOSX. [(issue#10)](https://github.com/pgmodeler/pgmodeler/issues/10)
+* Broken compilation process on MacOSX. ([issue#10](https://github.com/pgmodeler/pgmodeler/issues/10))
 * PgModeler, when compiled on Qt 4.7.x, crashes after activating the print dialog. [(issue#1)](https://github.com/pgmodeler/pgmodeler/issues/1)
 
-Change History
---------------
+Change Log
+----------
 
-[ v0.3.3 ]
+[ v0.3.4 ]
 
-* [Change]: pgModeler license were update to GPLv3.
-* [Change]: Error massages and entire UI were translated to en_US. Now people can contribute more easily with translation files. [(issue#8)](https://github.com/pgmodeler/pgmodeler/issues/8)
-* [Change]: The left side image were removed form all forms giving more space to show widgets.
-* [Change]: pgModeler now shows a messagebox at startup if any critical error is raised instead to show them on stdin.
-* [Fix]: Translation files now are correctly loaded depending on system language. [(issue#23)](https://github.com/pgmodeler/pgmodeler/issues/23)
-* [Fix]: Compilation process and execution is working correctly on Windows system. [(issue#11)](https://github.com/pgmodeler/pgmodeler/issues/11)
-* [Fix]: No more crashes when dealing with relationships that have special triggers/indexes/columns. [(issue#8)](https://github.com/pgmodeler/pgmodeler/issues/8) [(issue#24)](https://github.com/pgmodeler/pgmodeler/issues/24)
+* [New]: added chinese UI translation (provided by [gjunming](https://github.com/gjunming)).
+* [New]: added support for PostGiS data types: box2d, box3d, geometry and geography (suggested by [george-silva](https://github.com/george-silva) on [issue#28](https://github.com/pgmodeler/pgmodeler/issues/28))
+* [New]: added a model restoration feature to reopen models after unexpected quit (crash).
+* [New]: added a crash handler to pgModeler. Now signal SIGSEGV is trapped (in most cases) and the crash handler pops up permiting the user to generate an error report. (EXPERIMENTAL)
+* [New]: to facilitate the error reporting exceptions stack now can be showed in text format. Users can post the complete error stack when creating an issue.
+* [New]: icon added to pgModeler executable (Windows only)
+* [Change]: update on pt_BR translation file.
+* [Change]: removed "pgmodeler" prefix from translation files.
+* [Change]: added the field "Underline" on textbox editing form.
+* [Fix]: little fix on startup scripts. Corrected de PGMODELER_ROOT on both Linux and Windows systems. ([issue#29](https://github.com/pgmodeler/pgmodeler/issues/29))
+* [Fix]: corrected the referece to environment variables PGMODELER_*. Now pgModeler search for necessary paths on current directory if some of these variables are not set.
+* [Fix]: corrected the validation of UTF-8 names that have 3 bytes length.
+* [Fix]: corrected the sources path reference on project (.pro) files. Now lupdate command do not generates empty TS files.
+* [Fix]: corrected a bug that was causing crash where user try to edit protected objects.
+. (EXPERIMENTAL)
+* [Fix]: corrected the exhibition of UTF-8 messages on ```throw``` statemets.
 
-[ v0.3.2 ]
-
-* [Change]: The default extension for the models now stands for ".dbm" [(issue#9)](https://github.com/pgmodeler/pgmodeler/issues/9)
-* [Change]: Tables and sequences now can be used as function return type as well parameter type. This is valid for other objects that make use of base types (except for table columns).
-* [Change]: The relationship conversion command now need to be confirmed by the user.
-* [Fix]: Compilation process now works correctly on Windows system.
-* [Fix]: Adjusted the size of some forms to show their fields properly.
-* [Fix]: The "make distclean" command now make the correct cleanup on build/ directory.
-* [Fix]: Startup scripts "start-pgmodeler.(sh|bat)" where adjusted. To prevent errors pgModeler need to be started through these scripts.
-* [Fix]: Corrected the reference to the plugins directory. [(issue#7)](https://github.com/pgmodeler/pgmodeler/issues/7)
-* [Fix]: The action "New Object -> Tablespace" now is displayed properly.
-
-[ v0.3.1 ]
-
-* [New]: Relationships generates column suffixes automaticaly. This behavior can be changed on the relationship editing form.
-* [New]: Added two samples to pgModeler.
-* [Change]: Tables are now created with "With OIDs" attribute by default.
-* [Change] The graphical update method on overview widget has improved preventing unecessary processing.
-* [Fix]: Class CenaObjetos now doesn't delete objects twice.
-* [Fix]: Eliminated bug that caused crashing on pgModeler when closing a model.
-
-[ v0.3.0 ]
-
-* [New]: Added a model overview widget.
-* [New]: Added export feature that generates PNG image of the models.
-* [Fix]: Corrected the naming of columns generated by many-to-many relationships.
-* [Fix]: Corrected generation of XML/SQL code by the model.
-
-[ v0.2.0 ]
-
-* [New]: Added an interface to implement third party plugins. Check [PLUGINS.md] (https://github.com/pgmodeler/pgmodeler/blob/master/PLUGINS.md) for details.
-* [New]: Added a short cut to easily control the zoom on the model. Use Crtl + Mouse wheel up (zoom up) or Crtl + Mouse wheel down (zoom down).
-* [Change]: Due to the plugin interface the compilation method changed back to the form of shared libraries + executable.
-* [Fix]: No more crashes when removing an primary-key of a table which has relationship with other tables. [(issue#2)](https://github.com/pgmodeler/pgmodeler/issues/2)
-* [Fix]: Adjusted the semantics of one-to-one relationships.
-
-[ v0.1.2 ]
-
-* [New]: Added a functionality to save modified models before closing the software.
-* [Change]: Updated the en_US dictionary with the texts of the above functionality.
-* [Fix]: Dockwidgets no longer disappear unexpectedly when the main window is minimized.
-* [Fix]: Operations performed before creating a table object (column, constraint, trigger, index, rule) are no longer removed when any exception is thrown in the creation of these object.
-* [Fix]: Fixed bug that caused user-defined types had wrong SQL/XML code generated by the model.
-* [Fix]: Functions and Types received an own range of id in order to create these objects in a correct way.
-* [Fix]: Eliminated segmentation faults caused by the destruction of relationships which possessed attributes/constraints.
-* [Fix]: Adjusted the translation to SQL code of one-to-one relationships.
-* [Fix]: Eliminated segmentation fault when editing relationships and/or undoing an operation involving a relationship.
-* [Fix]: Identifiers relationships now correctly display the thick line beside the weak entity.
-
-[ v0.1.1 ]
-
-* [Fix]: Correction of the actions for inserting graphic objects (table, text box, vision and relationship) in Windows environment.
-* [Fix]: Correction on the display of the maximize button in the window decoration in Windows environment.
-* [Fix]: Adjust on the position and spacing of widgets in editing forms.
-* [Fix]: The XML parser can now correctly read DTD files in Windows environment.
-* [Fix]: The compilation method is no longer in the form of shared libraries + executable and passed to be as standalone executable only.
+The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 
 Older Releases/Code
 -------------------
