@@ -2,7 +2,6 @@
 //***********************************************************
 Linguagem::Linguagem(void)
 {
- nome="";
  tipo_objeto=OBJETO_LINGUAGEM;
  confiavel=false;
 

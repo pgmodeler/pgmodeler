@@ -220,7 +220,6 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
   //nome=trUtf8("new_table");
   //Aloca a nova tabela
   tabela=new Tabela;
-  tabela->definirNome("new_table");
 
   /* Marca como novo objeto o relacionamento gerado, assim o mesmo é tratado
      de forma diferente nos métodos de configuração da classe superior */

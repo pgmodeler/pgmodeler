@@ -36,6 +36,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QCheckBox" name="sublinhado_chk">
+       <property name="text">
+        <string>Underline</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="0" column="3">

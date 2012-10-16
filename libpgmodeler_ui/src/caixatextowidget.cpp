@@ -18,6 +18,7 @@ void CaixaTextoWidget::hideEvent(QHideEvent *evento)
  texto_txt->clear();
  negrito_chk->setChecked(false);
  italico_chk->setChecked(false);
+ sublinhado_chk->setChecked(false);
 
  palette.setColor(QPalette::Button, QColor(0,0,0));
  sel_cor_tb->setPalette(palette);
@@ -39,6 +40,7 @@ void CaixaTextoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
   texto_txt->setPlainText(QString::fromUtf8(caixa_texto->obterComentario()));
   negrito_chk->setChecked(caixa_texto->obterAtributoTexto(CaixaTexto::TEXTO_NEGRITO));
   italico_chk->setChecked(caixa_texto->obterAtributoTexto(CaixaTexto::TEXTO_ITALICO));
+  sublinhado_chk->setChecked(caixa_texto->obterAtributoTexto(CaixaTexto::TEXTO_SUBLINHADO));
  }
 
  //Define os atributos do formulários e da janela pai
@@ -73,6 +75,7 @@ void CaixaTextoWidget::aplicarConfiguracao(void)
   caixa->definirComentario(texto_txt->toPlainText());
   caixa->definirAtributoTexto(CaixaTexto::TEXTO_ITALICO, italico_chk->isChecked());
   caixa->definirAtributoTexto(CaixaTexto::TEXTO_NEGRITO, negrito_chk->isChecked());
+  caixa->definirAtributoTexto(CaixaTexto::TEXTO_SUBLINHADO, sublinhado_chk->isChecked());
   caixa->definirCorTexto(sel_cor_tb->palette().color(QPalette::Button));
 
   ObjetoBaseWidget::aplicarConfiguracao();

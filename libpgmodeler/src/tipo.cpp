@@ -5,7 +5,7 @@ Tipo::Tipo(void)
  id_objeto=ObjetoBase::id_tipo++;
  tipo_objeto=OBJETO_TIPO;
  config=TIPO_ENUMERACAO;
- nome="novo_tipo";
+ //nome="novo_tipo";
  alinhamento="integer";
  delimitador='\0';
  armazenamento=TipoArmazenamento::plain;

@@ -5,7 +5,7 @@ ModeloBD::ModeloBD(void)
  id_objeto=ObjetoBase::id_modelobd++;
 
  tipo_objeto=OBJETO_BANCO_DADOS;
- definirNome("new_database");
+ definirNome(QObject::trUtf8("new_database").toUtf8());
 
  lim_conexao=-1;
  carregando_modelo=false;

@@ -125,6 +125,10 @@
         <source>Form</source>
         <translation>Form</translation>
     </message>
+    <message>
+        <source>Underline</source>
+        <translation type="unfinished">下划线</translation>
+    </message>
 </context>
 <context>
     <name>ClasseOperadoresWidget</name>
@@ -3849,10 +3853,6 @@ GPLv3 的完整文本在源代码的 LICENSE 文件中。你也可以通过访�
         <translation>索引</translation>
     </message>
     <message>
-        <source>new_table</source>
-        <translation>新表</translation>
-    </message>
-    <message>
         <source>Form</source>
         <translation>Form</translation>
     </message>
@@ -3926,6 +3926,22 @@ GPLv3 的完整文本在源代码的 LICENSE 文件中。你也可以通过访�
     <message>
         <source>Timezone:</source>
         <translation>时区：</translation>
+    </message>
+    <message>
+        <source>Spatial:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Variation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Z</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>M</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

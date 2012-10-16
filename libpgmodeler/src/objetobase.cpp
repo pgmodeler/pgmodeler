@@ -54,7 +54,7 @@ ObjetoBase::ObjetoBase(void)
 {
  id_objeto=ObjetoBase::id_global++;
  protegido=false;
- nome="new_object";
+ //nome="";
  tipo_objeto=OBJETO_BASE;
  esquema=NULL;
  dono=NULL;

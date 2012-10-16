@@ -125,6 +125,10 @@
         <source>Form</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Underline</source>
+        <translation>Sublinhado</translation>
+    </message>
 </context>
 <context>
     <name>ClasseOperadoresWidget</name>
@@ -3851,10 +3855,6 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Indexação</translation>
     </message>
     <message>
-        <source>new_table</source>
-        <translation>nova_tabela</translation>
-    </message>
-    <message>
         <source>Form</source>
         <translation></translation>
     </message>
@@ -3927,6 +3927,22 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Timezone:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Spatial:</source>
+        <translation>Espacial:</translation>
+    </message>
+    <message>
+        <source>Variation:</source>
+        <translation>Variação:</translation>
+    </message>
+    <message>
+        <source>Z</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>M</source>
         <translation></translation>
     </message>
 </context>
