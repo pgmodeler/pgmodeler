@@ -155,7 +155,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  viewport->centerOn(0,0);
  this->aplicarZoom(1);
 
- visaogeral_wgt=new VisaoGeralWidget(cena);
+ //visaogeral_wgt=new VisaoGeralWidget(cena);
 
  //Aloca um grid layout para agrupar os widgets que formam o ModeloWidget
  grid=new QGridLayout;
@@ -262,22 +262,23 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 
  connect(cena, SIGNAL(s_objetoSelecionado(ObjetoGraficoBase*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
 
+ /*
  connect(this, SIGNAL(s_objetoCriado(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
  connect(this, SIGNAL(s_objetoRemovido(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
  connect(this, SIGNAL(s_objetosMovimentados(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
  connect(this, SIGNAL(s_objetoModificado(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
  connect(this, SIGNAL(s_zoomModificado(float)), visaogeral_wgt, SLOT(atualizarFatorZoom(float)));
- connect(cena, SIGNAL(selectionChanged(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
- connect(cena, SIGNAL(sceneRectChanged(QRectF)),visaogeral_wgt, SLOT(redimensionarVisaoGeral(void)));
- connect(cena, SIGNAL(sceneRectChanged(QRectF)),visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
  connect(viewport->horizontalScrollBar(), SIGNAL(actionTriggered(int)), visaogeral_wgt, SLOT(redimensionarFrameJanela(void)));
  connect(viewport->verticalScrollBar(), SIGNAL(actionTriggered(int)), visaogeral_wgt, SLOT(redimensionarFrameJanela(void)));
+ connect(cena, SIGNAL(selectionChanged(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
+ connect(cena, SIGNAL(sceneRectChanged(QRectF)),visaogeral_wgt, SLOT(redimensionarVisaoGeral(void)));
+ connect(cena, SIGNAL(sceneRectChanged(QRectF)),visaogeral_wgt, SLOT(atualizarVisaoGeral(void))); */
 }
 //----------------------------------------------------------
 ModeloWidget::~ModeloWidget(void)
 {
  objs_copiados.clear();
- delete(visaogeral_wgt);
+ //delete(visaogeral_wgt);
  delete(viewport);
  delete(cena);
  delete(lista_op);
@@ -300,9 +301,10 @@ void ModeloWidget::resizeEvent(QResizeEvent *)
  //Reconfigura o tamanho da cena
  cena->setSceneRect(ret);
 
- visaogeral_wgt->redimensionarFrameJanela();
- visaogeral_wgt->redimensionarVisaoGeral();
- visaogeral_wgt->atualizarVisaoGeral();
+ emit s_modeloRedimensionado();
+ //visaogeral_wgt->redimensionarFrameJanela();
+ //visaogeral_wgt->redimensionarVisaoGeral();
+ //visaogeral_wgt->atualizarVisaoGeral();
 }
 //----------------------------------------------------------
 bool ModeloWidget::eventFilter(QObject *objeto, QEvent *evento)
@@ -387,7 +389,7 @@ void ModeloWidget::wheelEvent(QWheelEvent * evento)
    //Aumenta o zoom
    this->aplicarZoom(this->zoom_atual + INC_ZOOM);
 
-  visaogeral_wgt->redimensionarFrameJanela();
+  //visaogeral_wgt->redimensionarFrameJanela();
  }
 }
 //----------------------------------------------------------
@@ -2370,17 +2372,6 @@ void ModeloWidget::configurarMenuPopup(vector<ObjetoBase *> objs_sel)
  {
   acoes.back()->setEnabled(true);
   acoes.pop_back();
- }
-}
-//----------------------------------------------------------
-void ModeloWidget::exibirVisaoGeral(bool exibir)
-{
- visaogeral_wgt->setVisible(exibir);
- if(exibir)
- {
-  visaogeral_wgt->atualizarVisaoGeral();
-  visaogeral_wgt->move(this->geometry().right() - visaogeral_wgt->width(),
-                       this->geometry().bottom() - visaogeral_wgt->height());
  }
 }
 //----------------------------------------------------------

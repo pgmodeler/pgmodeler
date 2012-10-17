@@ -32,6 +32,7 @@
 #include "listaoperacoeswidget.h"
 #include "visaoobjetoswidget.h"
 #include "pgmodelerplugin.h"
+#include "visaogeralwidget.h"
 
 using namespace std;
 //***********************************************************
@@ -42,6 +43,9 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
   //Timer de salvamento automático do modelo
   QTimer tm_salvamento,
          tm_salvamento_tmp;
+
+  //Widget de visão geral do modelo
+  VisaoGeralWidget *visaogeral_wgt;
 
   //Formulário de restauração de modelos
   FormRestauracaoModelo *frestmodelo;
@@ -144,6 +148,9 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
 
   //Salva o modelo atualmente editados na pasta temporária em caso de crash o mesmo pode ser restaurado
   void salvarModeloTemporario(void);
+
+  //Exibe a visão geral do modelo atualmente aberto
+  void exibirVisaoGeral(bool exibir);
 };
 //***********************************************************
 #endif

@@ -1,27 +1,56 @@
 #include "visaogeralwidget.h"
 #include "modelowidget.h"
 //***********************************************************
-VisaoGeralWidget::VisaoGeralWidget(QGraphicsScene *cena, QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint)
+VisaoGeralWidget::VisaoGeralWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint)
 {
- //Dispara um erro caso a cena não esteja alocada
- if(!cena)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
  setupUi(this);
- this->cena=cena;
-
- //Se a cena não estiver atribuída a algum viewport
- if(cena->views().isEmpty())
-  //O viewport será nulo
-  viewp=NULL;
- else
-   //Caso contrário, usa como referência o primeiro viewport
-  viewp=cena->views().at(0);
-
+ this->modelo=NULL;
  fator_zoom=1;
 
  //Fixa as dimensões do widget
  this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+}
+//-----------------------------------------------------------
+void VisaoGeralWidget::show(ModeloWidget *modelo)
+{
+ if(this->modelo)
+ {
+  disconnect(this->modelo, NULL, this, NULL);
+  disconnect(this->modelo->viewport, NULL,  this, NULL);
+  disconnect(this->modelo->cena, NULL,  this, NULL);
+ }
+
+ this->modelo=modelo;
+
+ if(this->modelo)
+ {
+  connect(this->modelo, SIGNAL(s_objetoCriado(void)), this, SLOT(atualizarVisaoGeral(void)));
+  connect(this->modelo, SIGNAL(s_objetoRemovido(void)), this, SLOT(atualizarVisaoGeral(void)));
+  connect(this->modelo, SIGNAL(s_objetosMovimentados(void)), this, SLOT(atualizarVisaoGeral(void)));
+  connect(this->modelo, SIGNAL(s_objetoModificado(void)), this, SLOT(atualizarVisaoGeral(void)));
+  connect(this->modelo, SIGNAL(s_zoomModificado(float)), this, SLOT(atualizarFatorZoom(float)));
+
+  connect(this->modelo, SIGNAL(s_modeloRedimensionado(void)), this, SLOT(redimensionarVisaoGeral(void)));
+  connect(this->modelo, SIGNAL(s_modeloRedimensionado(void)), this, SLOT(redimensionarFrameJanela(void)));
+  connect(this->modelo, SIGNAL(s_modeloRedimensionado(void)), this, SLOT(atualizarVisaoGeral(void)));
+
+  connect(this->modelo->viewport->horizontalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(redimensionarFrameJanela(void)));
+  connect(this->modelo->viewport->verticalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(redimensionarFrameJanela(void)));
+
+  connect(this->modelo->cena, SIGNAL(selectionChanged(void)), this, SLOT(atualizarVisaoGeral(void)));
+  connect(this->modelo->cena, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(redimensionarVisaoGeral(void)));
+  connect(this->modelo->cena, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(atualizarVisaoGeral(void)));
+
+  this->redimensionarVisaoGeral();
+  this->redimensionarFrameJanela();
+  this->atualizarVisaoGeral(true);
+
+  this->move(this->modelo->geometry().right() - this->width(),
+             this->modelo->geometry().bottom() - this->height());
+ }
+
+ this->raise();
+ QWidget::show();
 }
 //-----------------------------------------------------------
 void VisaoGeralWidget::closeEvent(QCloseEvent *evento)
@@ -38,22 +67,27 @@ void VisaoGeralWidget::showEvent(QShowEvent *evento)
 //-----------------------------------------------------------
 void VisaoGeralWidget::atualizarVisaoGeral(void)
 {
- if(viewp && this->isVisible())
+ this->atualizarVisaoGeral(false);
+}
+//-----------------------------------------------------------
+void VisaoGeralWidget::atualizarVisaoGeral(bool forcar_atual)
+{
+ if(this->modelo && (this->isVisible() || forcar_atual))
  {
   QSize tam;
   QPixmap pix;
 
   //Cria um pixmap com o tamanho da cena
-  pix.resize(cena->sceneRect().size().toSize());
+  pix.resize(this->modelo->cena->sceneRect().size().toSize());
 
   //Cria um QSize com 20% do tamanho da cena
-  tam=cena->sceneRect().size().toSize();
+  tam=this->modelo->cena->sceneRect().size().toSize();
   tam.setWidth(tam.width() * FATOR_REDIM);
   tam.setHeight(tam.height() * FATOR_REDIM);
 
   ///Desenha a cena no pixmap
   QPainter p(&pix);
-  cena->render(&p, pix.rect(), cena->sceneRect().toRect());
+  this->modelo->cena->render(&p, pix.rect(), this->modelo->cena->sceneRect().toRect());
 
   //Exibe o pixmap no label redimensionado com o QSize criado anteriormente
   label->setPixmap(pix.scaled(tam, Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -63,30 +97,30 @@ void VisaoGeralWidget::atualizarVisaoGeral(void)
 //-----------------------------------------------------------
 void VisaoGeralWidget::redimensionarFrameJanela(void)
 {
- if(viewp)
+ if(this->modelo)
  {
   QSizeF tam;
 
   //Redimensiona o frame da janela conforme as dimensões do viewport
-  tam=viewp->geometry().size();
+  tam=this->modelo->viewport->geometry().size();
   tam.setWidth(tam.width() * FATOR_REDIM * 1/fator_zoom);
   tam.setHeight(tam.height() * FATOR_REDIM * 1/fator_zoom);
   janela_frm->resize(tam.toSize());
 
   //Posiciona a janela conforme os valores das barras de rolagem
-  janela_frm->move(QPoint(viewp->horizontalScrollBar()->value() * FATOR_REDIM,
-                          viewp->verticalScrollBar()->value() * FATOR_REDIM));
+  janela_frm->move(QPoint(this->modelo->viewport->horizontalScrollBar()->value() * FATOR_REDIM,
+                          this->modelo->viewport->verticalScrollBar()->value() * FATOR_REDIM));
  }
 }
 //-----------------------------------------------------------
 void VisaoGeralWidget::redimensionarVisaoGeral(void)
 {
- if(viewp)
+ if(this->modelo)
  {
   QSizeF tam;
 
   //Redimensiona o widget conforme as dimensões da cena
-  tam=cena->sceneRect().size();
+  tam=this->modelo->cena->sceneRect().size();
   tam.setWidth(tam.width() * FATOR_REDIM);
   tam.setHeight(tam.height() * FATOR_REDIM);
   this->resize(tam.toSize());
@@ -148,8 +182,8 @@ void VisaoGeralWidget::mouseMoveEvent(QMouseEvent *evento)
    ret.translate(0,(ret1.bottom() - ret.bottom())-ret1.top());
 
   janela_frm->setGeometry(ret);
-  viewp->horizontalScrollBar()->setValue(ceilf(fator_zoom * cena->sceneRect().width() * (ret.x()/static_cast<float>(ret1.width()))));
-  viewp->verticalScrollBar()->setValue(ceilf(fator_zoom * cena->sceneRect().height() * (ret.y()/static_cast<float>(ret1.height()))));
+  this->modelo->viewport->horizontalScrollBar()->setValue(ceilf(fator_zoom * this->modelo->cena->sceneRect().width() * (ret.x()/static_cast<float>(ret1.width()))));
+  this->modelo->viewport->verticalScrollBar()->setValue(ceilf(fator_zoom * this->modelo->cena->sceneRect().height() * (ret.y()/static_cast<float>(ret1.height()))));
  }
 }
 //-----------------------------------------------------------

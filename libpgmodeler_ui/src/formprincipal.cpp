@@ -113,6 +113,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   frestmodelo=new FormRestauracaoModelo(this);
   lista_oper=new ListaOperacoesWidget;
   visao_objs=new VisaoObjetosWidget;
+  visaogeral_wgt=new VisaoGeralWidget;
 
   //*** CRIAÇÃO DOS FORMULÁRIOS GLOBAIS ***
   permissao_wgt=new PermissaoWidget(this);
@@ -226,6 +227,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  connect(relacao_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
  connect(tabela_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
 
+ connect(lista_oper, SIGNAL(s_operacaoExecutada(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
  connect(fconfiguracao, SIGNAL(finished(int)), this, SLOT(atualizarModelos(void)));
  connect(&tm_salvamento, SIGNAL(timeout(void)), this, SLOT(salvarTodosModelos(void)));
  connect(&tm_salvamento_tmp, SIGNAL(timeout(void)), this, SLOT(salvarModeloTemporario(void)));
@@ -403,6 +405,7 @@ FormPrincipal::~FormPrincipal(void)
  delete(nome_op);
  delete(lista_oper);
  delete(visao_objs);
+ delete(visaogeral_wgt);
  delete(fsobre);
 }
 //----------------------------------------------------------
@@ -634,12 +637,12 @@ void FormPrincipal::definirModeloAtual(void)
  else if(objeto==action_anterior)
   modelos_tab->setCurrentIndex(modelos_tab->currentIndex()-1);
 
- if(modelo_atual)
+/* if(modelo_atual)
  {
   modelo_atual->visaogeral_wgt->close();
   disconnect(action_visao_geral, NULL, modelo_atual, NULL);
   disconnect(modelo_atual->visaogeral_wgt, NULL, action_visao_geral, NULL);
- }
+ } */
 
  //O modelo atual obtido a partir da aba atual no 'modelos_tab'
  modelo_atual=dynamic_cast<ModeloWidget *>(modelos_tab->currentWidget());
@@ -699,8 +702,12 @@ void FormPrincipal::definirModeloAtual(void)
   connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
   connect(action_exibir_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
   connect(action_exibir_lim_paginas, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
-  connect(action_visao_geral, SIGNAL(toggled(bool)), modelo_atual, SLOT(exibirVisaoGeral(bool)));
-  connect(modelo_atual->visaogeral_wgt, SIGNAL(s_visaoGeralVisivel(bool)), action_visao_geral, SLOT(setChecked(bool)));
+
+  connect(action_visao_geral, SIGNAL(toggled(bool)), this, SLOT(exibirVisaoGeral(bool)));
+  connect(visaogeral_wgt, SIGNAL(s_visaoGeralVisivel(bool)), action_visao_geral, SLOT(setChecked(bool)));
+
+  if(action_visao_geral->isChecked())
+   visaogeral_wgt->show(modelo_atual);
  }
  else
   this->setWindowTitle(titulo_janela);
@@ -735,7 +742,7 @@ void FormPrincipal::definirOpcoesGrade(void)
 
   //Atualiza a cena do modelo
   modelo_atual->cena->update();
-  modelo_atual->visaogeral_wgt->atualizarVisaoGeral();
+  //modelo_atual->visaogeral_wgt->atualizarVisaoGeral();
  }
 }
 //----------------------------------------------------------
@@ -837,8 +844,6 @@ void FormPrincipal::fecharModelo(int idx_modelo)
   disconnect(action_alin_objs_grade, NULL, this, NULL);
   disconnect(action_exibir_grade, NULL, this, NULL);
   disconnect(action_exibir_lim_paginas, NULL, this, NULL);
-  disconnect(action_visao_geral, NULL, tab , NULL);
-  disconnect(modelo->visaogeral_wgt, NULL, action_visao_geral, NULL);
 
   //Remove o arquivo temporário relacionado ao modelo
   QDir arq_tmp;
@@ -1293,5 +1298,13 @@ void FormPrincipal::salvarModeloTemporario(void)
 {
  if(modelo_atual)
   modelo_atual->modelo->salvarModelo(modelo_atual->obterNomeArquivoTemp(), ParserEsquema::DEFINICAO_XML);
+}
+//----------------------------------------------------------
+void FormPrincipal::exibirVisaoGeral(bool exibir)
+{
+ if(exibir && modelo_atual && !visaogeral_wgt->isVisible())
+  visaogeral_wgt->show(modelo_atual);
+ else if(!exibir)
+  visaogeral_wgt->close();
 }
 //**********************************************************

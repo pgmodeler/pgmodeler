@@ -26,15 +26,19 @@
 #include <QtGui>
 #include "excecao.h"
 #include "ui_visaogeralwidget.h"
+#include "modelowidget.h"
 //***********************************************************
 class VisaoGeralWidget: public QWidget, public Ui::VisaoGeralWidget {
  Q_OBJECT
  private:
+  //Modelo usado para exibição na visão geral
+  ModeloWidget *modelo;
+
   //Armazena a cena a qual será desenhada na visão geral
-  QGraphicsScene *cena;
+  //CenaObjetos *cena;
 
   //Armazena o viewport o qual está exibindo a cena
-  QGraphicsView *viewp;
+  //QGraphicsView *viewp;
 
   //Fator de zoom da cena
   float fator_zoom;
@@ -47,11 +51,15 @@ class VisaoGeralWidget: public QWidget, public Ui::VisaoGeralWidget {
   void mouseReleaseEvent(QMouseEvent *evento);
   void mouseMoveEvent(QMouseEvent *evento);
 
+  /* Atualiza a exibição da visão geral com a última modificação na cena, o parâmetro
+     'forcar_atual' força a atualização mesmo que o widget não esteja visível */
+  void atualizarVisaoGeral(bool forcar_atual);
+
  public:
-  VisaoGeralWidget(QGraphicsScene *cena, QWidget *parent = 0);
+  VisaoGeralWidget(QWidget *parent = 0);
 
  public slots:
-  //Atualiza a exibição da visão geral com a última modificação na cena
+  //Atualiza a visão geral (caso o widiget esteja visível)
   void atualizarVisaoGeral(void);
 
   //Redimensiona a geometria do frame de janela do mundo
@@ -60,7 +68,11 @@ class VisaoGeralWidget: public QWidget, public Ui::VisaoGeralWidget {
   //Redimensiona todo o widget de visão geral
   void redimensionarVisaoGeral(void);
 
+  //Atualiza o fator de zoom da cena
   void atualizarFatorZoom(float zoom);
+
+  //Define o modelo a ser exibido na visão geral
+  void show(ModeloWidget *modelo);
 
   //Sobrecarga dos metodos de manipulação dos eventos de abertura e fechamento da janela
   void closeEvent(QCloseEvent *evento);
