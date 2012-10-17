@@ -155,7 +155,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  viewport->centerOn(0,0);
  this->aplicarZoom(1);
 
- visaogeral_wgt=new VisaoGeralWidget(cena, this);
+ visaogeral_wgt=new VisaoGeralWidget(cena);
 
  //Aloca um grid layout para agrupar os widgets que formam o ModeloWidget
  grid=new QGridLayout;
@@ -2373,12 +2373,15 @@ void ModeloWidget::configurarMenuPopup(vector<ObjetoBase *> objs_sel)
  }
 }
 //----------------------------------------------------------
-void ModeloWidget::exibirVisaoGeral(void)
+void ModeloWidget::exibirVisaoGeral(bool exibir)
 {
- visaogeral_wgt->atualizarVisaoGeral();
- visaogeral_wgt->setVisible(true);
- visaogeral_wgt->move(this->geometry().right() - visaogeral_wgt->width(),
-                      this->geometry().bottom() - visaogeral_wgt->height());
+ visaogeral_wgt->setVisible(exibir);
+ if(exibir)
+ {
+  visaogeral_wgt->atualizarVisaoGeral();
+  visaogeral_wgt->move(this->geometry().right() - visaogeral_wgt->width(),
+                       this->geometry().bottom() - visaogeral_wgt->height());
+ }
 }
 //----------------------------------------------------------
 bool ModeloWidget::modeloModificado(void)

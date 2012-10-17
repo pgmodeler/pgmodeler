@@ -40,6 +40,10 @@
   <property name="windowTitle">
    <string>Model overview</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../res/resources.qrc">
+    <normaloff>:/icones/icones/pgsqlModeler48x48.png</normaloff>:/icones/icones/pgsqlModeler48x48.png</iconset>
+  </property>
   <property name="windowOpacity">
    <double>1.000000000000000</double>
   </property>
@@ -153,6 +157,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../res/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

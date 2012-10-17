@@ -635,7 +635,11 @@ void FormPrincipal::definirModeloAtual(void)
   modelos_tab->setCurrentIndex(modelos_tab->currentIndex()-1);
 
  if(modelo_atual)
+ {
   modelo_atual->visaogeral_wgt->close();
+  disconnect(action_visao_geral, NULL, modelo_atual, NULL);
+  disconnect(modelo_atual->visaogeral_wgt, NULL, action_visao_geral, NULL);
+ }
 
  //O modelo atual obtido a partir da aba atual no 'modelos_tab'
  modelo_atual=dynamic_cast<ModeloWidget *>(modelos_tab->currentWidget());
@@ -695,8 +699,8 @@ void FormPrincipal::definirModeloAtual(void)
   connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
   connect(action_exibir_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
   connect(action_exibir_lim_paginas, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
-  connect(action_visao_geral, SIGNAL(triggered(void)), modelo_atual, SLOT(exibirVisaoGeral(void)));
-
+  connect(action_visao_geral, SIGNAL(toggled(bool)), modelo_atual, SLOT(exibirVisaoGeral(bool)));
+  connect(modelo_atual->visaogeral_wgt, SIGNAL(s_visaoGeralVisivel(bool)), action_visao_geral, SLOT(setChecked(bool)));
  }
  else
   this->setWindowTitle(titulo_janela);

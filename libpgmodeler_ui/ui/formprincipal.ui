@@ -678,6 +678,9 @@
    </property>
   </action>
   <action name="action_visao_geral">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="enabled">
     <bool>false</bool>
    </property>

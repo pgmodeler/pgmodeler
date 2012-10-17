@@ -216,7 +216,7 @@ class ModeloWidget: public QWidget {
   vector<QRectF> obterPaginasImpressao(const QSizeF &tam_papel, unsigned &qtd_pag_h, unsigned &qtd_pag_v);
 
   //Exibe o widget de visão geral. Para fechá-la o usuário pode dar um duplo-clique ou pressionar esc.
-  void exibirVisaoGeral(void);
+  void exibirVisaoGeral(bool exibir);
 
  public slots:
    void carregarModelo(const QString &nome_arq);

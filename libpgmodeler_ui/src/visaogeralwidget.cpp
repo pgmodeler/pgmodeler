@@ -1,7 +1,7 @@
 #include "visaogeralwidget.h"
 #include "modelowidget.h"
 //***********************************************************
-VisaoGeralWidget::VisaoGeralWidget(QGraphicsScene *cena, QWidget *parent) : QDialog(parent, Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint)
+VisaoGeralWidget::VisaoGeralWidget(QGraphicsScene *cena, QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint)
 {
  //Dispara um erro caso a cena não esteja alocada
  if(!cena)
@@ -22,6 +22,18 @@ VisaoGeralWidget::VisaoGeralWidget(QGraphicsScene *cena, QWidget *parent) : QDia
 
  //Fixa as dimensões do widget
  this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+}
+//-----------------------------------------------------------
+void VisaoGeralWidget::closeEvent(QCloseEvent *evento)
+{
+ emit s_visaoGeralVisivel(false);
+ QWidget::closeEvent(evento);
+}
+//-----------------------------------------------------------
+void VisaoGeralWidget::showEvent(QShowEvent *evento)
+{
+ emit s_visaoGeralVisivel(true);
+ QWidget::showEvent(evento);
 }
 //-----------------------------------------------------------
 void VisaoGeralWidget::atualizarVisaoGeral(void)
@@ -96,8 +108,7 @@ void VisaoGeralWidget::mouseDoubleClickEvent(QMouseEvent *)
 //-----------------------------------------------------------
 void VisaoGeralWidget::mouseMoveEvent(QMouseEvent *evento)
 {
- if(evento->buttons()==Qt::RightButton ||
-    (evento->modifiers()==Qt::ControlModifier && evento->buttons()==Qt::LeftButton))
+ if(evento->buttons()==Qt::LeftButton)
  {
   QRect ret=janela_frm->geometry(), ret1;
   int larg, alt, x=evento->x(), y=evento->y();
@@ -144,8 +155,7 @@ void VisaoGeralWidget::mouseMoveEvent(QMouseEvent *evento)
 //-----------------------------------------------------------
 void VisaoGeralWidget::mousePressEvent(QMouseEvent *evento)
 {
- if(evento->button()==Qt::RightButton ||
-    (evento->modifiers()==Qt::ControlModifier && evento->button()==Qt::LeftButton))
+ if(evento->button()==Qt::LeftButton)
  {
   janela_frm->setCursor(QCursor(Qt::OpenHandCursor));
   this->setCursor(QCursor(Qt::OpenHandCursor));
@@ -154,8 +164,7 @@ void VisaoGeralWidget::mousePressEvent(QMouseEvent *evento)
 //-----------------------------------------------------------
 void VisaoGeralWidget::mouseReleaseEvent(QMouseEvent *evento)
 {
- if(evento->button()==Qt::RightButton ||
-    (evento->modifiers()==Qt::ControlModifier && evento->button()==Qt::LeftButton))
+ if(evento->button()==Qt::LeftButton)
  {
   janela_frm->setCursor(QCursor(Qt::ArrowCursor));
   this->setCursor(QCursor(Qt::ArrowCursor));

@@ -27,7 +27,7 @@
 #include "excecao.h"
 #include "ui_visaogeralwidget.h"
 //***********************************************************
-class VisaoGeralWidget: public QDialog, public Ui::VisaoGeralWidget {
+class VisaoGeralWidget: public QWidget, public Ui::VisaoGeralWidget {
  Q_OBJECT
  private:
   //Armazena a cena a qual será desenhada na visão geral
@@ -61,6 +61,14 @@ class VisaoGeralWidget: public QDialog, public Ui::VisaoGeralWidget {
   void redimensionarVisaoGeral(void);
 
   void atualizarFatorZoom(float zoom);
+
+  //Sobrecarga dos metodos de manipulação dos eventos de abertura e fechamento da janela
+  void closeEvent(QCloseEvent *evento);
+  void showEvent(QShowEvent *evento);
+
+  signals:
+   //Sinal emitido quando a janela é aberta ou fechada (o parâmetro indica se a janela está ou não visível)
+   void s_visaoGeralVisivel(bool);
 };
 //***********************************************************
 #endif
