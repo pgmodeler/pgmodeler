@@ -313,7 +313,7 @@ void TabelaWidget::listarObjetos(TipoObjetoBase tipo_obj)
 //----------------------------------------------------------
 void TabelaWidget::manipularObjeto(void)
 {
- TipoObjetoBase tipo_obj;
+ TipoObjetoBase tipo_obj=OBJETO_BASE;
 
  try
  {
@@ -457,7 +457,7 @@ void TabelaWidget::removerObjetos(void)
  Tabela *tabela=NULL;
  unsigned qtd, qtd_op=0, i;
  ObjetoBase *objeto=NULL;
- TipoObjetoBase tipo_obj;
+ TipoObjetoBase tipo_obj=OBJETO_BASE;
 
  try
  {
@@ -527,7 +527,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
 {
  Tabela *tabela=NULL;
  ObjetoBase *objeto=NULL;
- TipoObjetoBase tipo_obj;
+ TipoObjetoBase tipo_obj=OBJETO_BASE;
 
  try
  {
@@ -562,7 +562,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
 //----------------------------------------------------------
 void TabelaWidget::TabelaWidget::moverObjetos(int idx1, int idx2)
 {
- TipoObjetoBase tipo_obj;
+ TipoObjetoBase tipo_obj=OBJETO_BASE;
  Tabela *tabela=NULL;
 
  try

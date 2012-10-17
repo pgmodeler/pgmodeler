@@ -594,7 +594,7 @@ void RelacionamentoWidget::removerObjetos(void)
 void RelacionamentoWidget::removerObjeto(int idx_lin)
 {
  Relacionamento *relacao=NULL;
- TipoObjetoBase tipo_obj;
+ TipoObjetoBase tipo_obj=OBJETO_BASE;
  ObjetoTabela *objeto=NULL;
 
  try
