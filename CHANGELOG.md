@@ -4,7 +4,7 @@ Complete pgModeler Change Log
 [ v0.3.4 ]
 
 * [New]: added chinese UI translation (provided by [gjunming](https://github.com/gjunming)).
-* [New]: added basic support for PostGiS 2.0 only data types: box2d, box3d, geometry and geography (suggested by [george-silva](https://github.com/george-silva) on [issue#28](https://github.com/pgmodeler/pgmodeler/issues/28))(EXPERIMENTAL). Note: when using these data types make sure that PostGiS extension is installed on database cluster because pgModeler WILL NOT install it automatically or generate the command to do it!
+* [New]: added basic support for PostGiS 2.0 only data types: box2d, box3d, geometry and geography (suggested by [george-silva](https://github.com/george-silva) on [issue#28](https://github.com/pgmodeler/pgmodeler/issues/28))(EXPERIMENTAL). Note: when using these data types make sure that PostGiS extension is installed on database cluster since pgModeler WILL NOT install it automatically or generate the command to do it!
 * [New]: added a model restoration feature to reopen models after unexpected quit (crash).
 * [New]: added a crash handler to pgModeler. Now signal SIGSEGV is trapped (in most cases) and the crash handler pops up permiting the user to generate an error report. (EXPERIMENTAL)
 * [New]: to facilitate the error reporting exceptions stack now can be showed in text format. Users can post the complete error stack when creating an issue.
@@ -12,13 +12,13 @@ Complete pgModeler Change Log
 * [Change]: update on pt_BR translation file.
 * [Change]: removed "pgmodeler" prefix from translation files.
 * [Change]: added the field "Underline" on textbox editing form.
+* [Fix]: corrected the "AlwayOnTop" bug on model overview widget. ([issue#30](https://github.com/pgmodeler/pgmodeler/issues/30))
 * [Fix]: little fix on startup scripts. Corrected de PGMODELER_ROOT on both Linux and Windows systems. ([issue#29](https://github.com/pgmodeler/pgmodeler/issues/29))
 * [Fix]: corrected the referece to environment variables PGMODELER_*. Now pgModeler search for necessary paths on current directory if some of these variables are not set.
 * [Fix]: corrected the validation of UTF-8 names that have 3 bytes length.
 * [Fix]: corrected the sources path reference on project (.pro) files. Now lupdate command do not generates empty TS files.
 * [Fix]: corrected a bug that was causing crash where user try to edit protected objects.
-. (EXPERIMENTAL)
-* [Fix]: corrected the exhibition of UTF-8 messages on ```throw``` statemets.
+* [Fix]: corrected the exhibition of UTF-8 messages on ```throw``` statements.
 
 [ v0.3.3 ]
 
