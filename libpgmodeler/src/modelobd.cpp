@@ -5608,7 +5608,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    obrig_dest=atributos[AtributosParsers::OBRIG_DESTINO]==AtributosParsers::VERDADEIRO;
    identificador=atributos[AtributosParsers::IDENTIFICADOR]==AtributosParsers::VERDADEIRO;
    postergavel=atributos[AtributosParsers::POSTERGAVEL]==AtributosParsers::VERDADEIRO;
-   sufixo_auto=(atributos[AtributosParsers::SUFIXO_AUTO].isEmpty() ||
+   sufixo_auto=(!atributos[AtributosParsers::SUFIXO_AUTO].isEmpty() &&
                 atributos[AtributosParsers::SUFIXO_AUTO]==AtributosParsers::VERDADEIRO);
    tipo_postergacao=TipoPostergacao(atributos[AtributosParsers::TIPO_POSTERGACAO]);
 
