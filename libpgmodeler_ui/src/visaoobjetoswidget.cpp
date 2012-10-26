@@ -24,7 +24,7 @@
 #include "indicewidget.h"
 #include "relacionamentowidget.h"
 #include "tabelawidget.h"
-//***********************************************************
+
 extern CaixaMensagem *caixa_msg;
 extern BancoDadosWidget *bancodados_wgt;
 extern EsquemaWidget *esquema_wgt;
@@ -51,7 +51,7 @@ extern GatilhoWidget *gatilho_wgt;
 extern IndiceWidget *indice_wgt;
 extern RelacionamentoWidget *relacao_wgt;
 extern TabelaWidget *tabela_wgt;
-//-----------------------------------------------------------
+
 VisaoObjetosWidget::VisaoObjetosWidget(bool visao_simplificada, QWidget *parent, Qt::WindowFlags f) : QDockWidget(parent, f)
 {
  TipoObjetoBase tipos[]={  OBJETO_BANCO_DADOS, OBJETO_TABELA, OBJETO_FUNCAO, OBJETO_VISAO, OBJETO_DOMINIO,
@@ -866,7 +866,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoB
        item3->setToolTip(0,QString::fromUtf8(objeto->obterNome()));
        item3->setData(0, Qt::UserRole, gerarValorItem(objeto));
 
-       /* Caso o objeto foi incluido à tabela por um relacionamento, configura um estilo de fonte para
+       /* Caso o objeto foi incluido   tabela por um relacionamento, configura um estilo de fonte para
           indicar esta situação */
        if(dynamic_cast<ObjetoTabela *>(objeto)->incluidoPorRelacionamento())
        {
@@ -1219,4 +1219,4 @@ void VisaoObjetosWidget::mouseMoveEvent(QMouseEvent *)
   this->move(px,py);
  }
 }
-//***********************************************************
+

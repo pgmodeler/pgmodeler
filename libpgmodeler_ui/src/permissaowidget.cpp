@@ -1,7 +1,7 @@
 #include "permissaowidget.h"
 #include "visaoobjetoswidget.h"
 extern VisaoObjetosWidget *selecaoobjetos_wgt;
-//***********************************************************
+
 PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_PERMISSAO)
 {
  QGridLayout *grid=NULL;
@@ -128,11 +128,11 @@ void PermissaoWidget::hideEvent(QHideEvent *evento)
  //Executa o método que trata o evento de esconder da classe superior
  ObjetoBaseWidget::hideEvent(evento);
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai, ObjetoBase *objeto)
 {
  /* Chama o método de definição de atributos da classe Pai para depois
-    configurar os atributos relacionados à classe PermissaoWidget */
+    configurar os atributos relacionados   classe PermissaoWidget */
  ObjetoBaseWidget::definirAtributos(modelo,NULL,objeto,objeto_pai);
 
  if(objeto)
@@ -206,14 +206,14 @@ void PermissaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai,
   tab_permissoes->limparSelecao();
  }
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::selecionarPapel(void)
 {
  selecaoobjetos_wgt->definirObjetoVisivel(OBJETO_PAPEL, true);
  selecaoobjetos_wgt->definirModelo(this->modelo);
  selecaoobjetos_wgt->show();
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::selecionarPermissao(int idx_perm)
 {
  if(idx_perm >= 0)
@@ -221,7 +221,7 @@ void PermissaoWidget::selecionarPermissao(int idx_perm)
  else
   permissao=NULL;
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::listarPermissoes(void)
 {
  if(modelo)
@@ -252,7 +252,7 @@ void PermissaoWidget::listarPermissoes(void)
    //Obtém uma permissão
    perm=permissoes[i];
 
-   //Adiciona uma linha à tabela
+   //Adiciona uma linha   tabela
    tab_permissoes->adicionarLinha();
    //Define como dado da linha adicionada a permissão atual
    tab_permissoes->definirDadoLinha(QVariant::fromValue<void *>(reinterpret_cast<void *>(perm)),i);
@@ -262,7 +262,7 @@ void PermissaoWidget::listarPermissoes(void)
    tab_permissoes->definirTextoCelula(perm->obterStringPrivilegios(),i,2);
 
    /* A terceira coluna armazena os nomes concatenados de todos
-      os papéis relacionados à permissão */
+      os papéis relacionado�  permissão */
    qtd1=perm->obterNumPapeis();
    for(i1=0; i1 < qtd1; i1++)
    {
@@ -275,7 +275,7 @@ void PermissaoWidget::listarPermissoes(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::exibirDadosPapelSelecionado(void)
 {
  int lin, idx_lin=-1;
@@ -321,7 +321,7 @@ void PermissaoWidget::exibirDadosPapelSelecionado(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::adicionarPermissao(void)
 {
  Permissao *perm_aux=NULL;
@@ -365,7 +365,7 @@ void PermissaoWidget::adicionarPermissao(void)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::atualizarPermissao(void)
 {
  Permissao *perm_aux=NULL,*perm_bkp=NULL;
@@ -393,7 +393,7 @@ void PermissaoWidget::atualizarPermissao(void)
   /* Caso o índice seja negativo isso indica que a configuração da permissão auxiliar (perm_aux) não
      se assemelha a nehuma permissão no modelo. Já se o índice for positivo e a permissão no
      índice seja a mesma que está sendo edita (permissao) isso indica que a permissão auxiliar é
-     igual à permissão atual, podendo claramente ser atualizada. */
+     igual   permissão atual, podendo claramente ser atualizada. */
   if(idx_perm < 0 || (idx_perm >=0 && modelo->obterObjeto(idx_perm,OBJETO_PERMISSAO)==permissao))
   {
    /* Copia os atributos da permissão auxiliar para a permissão atual
@@ -432,7 +432,7 @@ void PermissaoWidget::atualizarPermissao(void)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::editarPermissao(void)
 {
  if(permissao)
@@ -451,12 +451,12 @@ void PermissaoWidget::editarPermissao(void)
   //Preenche o campo do formulário com o noome da permissão selecionada
   id_perm_edt->setText(permissao->obterNome());
 
-  /* Obtém a quantidade de papéis relacionados à permissão para que os
+  /* Obtém a quantidade de papéis relacionao �  permissão para que os
      mesmos possam ser exibidos na tabela de papéis */
   qtd=permissao->obterNumPapeis();
   for(i=0; i < qtd; i++)
   {
-   //Adiciona uma linha à tabela de permissão
+   //Adiciona uma linha   tabela de permissão
    tab_papeis->adicionarLinha();
    //Obtém um papel da permissão
    papel=permissao->obterPapel(i);
@@ -484,7 +484,7 @@ void PermissaoWidget::editarPermissao(void)
   habilitarBotoesEdicao();
  }
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::removerPermissao(void)
 {
  //Remove a permissão atualmente selecionada
@@ -497,14 +497,14 @@ void PermissaoWidget::removerPermissao(void)
     item para edição/remoção */
  tab_permissoes->limparSelecao();
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::removerPermissoes(void)
 {
  //Remove todas as permissões relacionadas ao objeto
  modelo->removerPermissoes(objeto);
  cancelarOperacao();
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::configurarPermissao(Permissao *permissao)
 {
  if(permissao)
@@ -517,7 +517,7 @@ void PermissaoWidget::configurarPermissao(Permissao *permissao)
   permissao->removerPapeis();
   qtd=tab_papeis->obterNumLinhas();
 
-  //Adiciona cada papel da tabela à permissão
+  //Adiciona cada papel da tabela   permissão
   for(i=0; i < qtd; i++)
    permissao->adicionarPapel(reinterpret_cast<Papel *>(tab_papeis->obterDadoLinha(i).value<void *>()));
 
@@ -534,7 +534,7 @@ void PermissaoWidget::configurarPermissao(Permissao *permissao)
   }
  }
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::cancelarOperacao(void)
 {
  unsigned priv;
@@ -564,7 +564,7 @@ void PermissaoWidget::cancelarOperacao(void)
  //Limpa a seleção na tabela de permissões
  tab_permissoes->limparSelecao();
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::marcarPrivilegio(void)
 {
  QObject *obj_sender=sender();
@@ -606,7 +606,7 @@ void PermissaoWidget::marcarPrivilegio(void)
   habilitarBotoesEdicao();
  }
 }
-//-----------------------------------------------------------
+
 void PermissaoWidget::habilitarBotoesEdicao(void)
 {
  bool priv_marcados=false;
@@ -634,4 +634,4 @@ void PermissaoWidget::habilitarBotoesEdicao(void)
     ou caso haja alguma permissão criada (tabela de permissões com pelo menos 1 item) */
  cancelar_tb->setEnabled(inserir_perm_tb->isEnabled() || atualizar_perm_tb->isEnabled() || tab_permissoes->obterNumLinhas() > 0);
 }
-//***********************************************************
+

@@ -2,7 +2,7 @@
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe Sequencia que é usada para
-#             gerar os códigos SQL pertinentes às sequências
+#             gerar os códigos SQL pertinentes as sequências
 #             ou auto-enumerações
 # Data de Criação: 26/04/2008
 #
@@ -25,7 +25,7 @@
 
 #include "objetobase.h"
 #include "tabela.h"
-//***********************************************************
+
 class Sequencia: public ObjetoBase {
  private:
   //Define se a sequencia é cíclica
@@ -102,5 +102,5 @@ class Sequencia: public ObjetoBase {
   //Retorna a definição SQL ou XML do objeto
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

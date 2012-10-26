@@ -25,7 +25,7 @@
 #include "objetobasewidget.h"
 #include "ui_regrawidget.h"
 #include "tabelaobjetoswidget.h"
-//***********************************************************
+
 class RegraWidget: public ObjetoBaseWidget, public Ui::RegraWidget {
  Q_OBJECT
 
@@ -51,5 +51,5 @@ class RegraWidget: public ObjetoBaseWidget, public Ui::RegraWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

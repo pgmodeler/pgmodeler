@@ -1,5 +1,5 @@
 #include "parametrowidget.h"
-//***********************************************************
+
 ParametroWidget::ParametroWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_PARAMETRO)
 {
  try
@@ -86,4 +86,4 @@ Parametro ParametroWidget::obterParametro(void)
 {
  return(parametro);
 }
-//***********************************************************
+

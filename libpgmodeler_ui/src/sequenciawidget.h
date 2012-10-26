@@ -24,7 +24,7 @@
 
 #include "objetobasewidget.h"
 #include "ui_sequenciawidget.h"
-//***********************************************************
+
 class SequenciaWidget: public ObjetoBaseWidget, public Ui::SequenciaWidget {
  Q_OBJECT
 
@@ -41,5 +41,5 @@ class SequenciaWidget: public ObjetoBaseWidget, public Ui::SequenciaWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

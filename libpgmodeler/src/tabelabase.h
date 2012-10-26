@@ -23,7 +23,7 @@
 #define TABELABASE_H
 
 #include "objetograficobase.h"
-//***********************************************************
+
 class TabelaBase: public ObjetoGraficoBase {
  protected:
  public:
@@ -31,5 +31,5 @@ class TabelaBase: public ObjetoGraficoBase {
   friend class RelacionamentoBase;
   friend class ModeloBD;
 };
-//***********************************************************
+
 #endif

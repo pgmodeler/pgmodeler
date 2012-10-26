@@ -1,5 +1,5 @@
 #include "conversaotipo.h"
-//***********************************************************
+
 ConversaoTipo::ConversaoTipo(void)
 {
  tipo_objeto=OBJETO_CONV_TIPO;
@@ -12,7 +12,7 @@ ConversaoTipo::ConversaoTipo(void)
  atributos[AtributosParsers::TIPO_CONVERSAO]="";
  atributos[AtributosParsers::CONV_ENTRADA_SAIDA]="";
 }
-//-----------------------------------------------------------
+
 void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
 {
  //Verifica se o índice do tipo de dado é válido
@@ -38,7 +38,7 @@ void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
 
  this->nome=QString("cast(%1,%2)").arg(~tipos[CONV_TIPO_ORIGEM]).arg(~tipos[CONV_TIPO_DESTINO]);
 }
-//-----------------------------------------------------------
+
 void ConversaoTipo::definirTipoConversao(unsigned tipo)
 {
  /* Caso se tente atribuir um tipo inválido de conversão
@@ -48,12 +48,12 @@ void ConversaoTipo::definirTipoConversao(unsigned tipo)
 
  this->tipo=tipo;
 }
-//-----------------------------------------------------------
+
 void ConversaoTipo::definirEntradaSaida(bool valor)
 {
  entrada_saida=valor;
 }
-//-----------------------------------------------------------
+
 void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
 {
  unsigned qtd_param;
@@ -105,7 +105,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
 
  this->funcao_conv=funcao_conv;
 }
-//-----------------------------------------------------------
+
 TipoPgSQL ConversaoTipo::obterTipoDado(unsigned idx_tipo)
 {
  /* Retorna um tipo de dado envolvido na conversão caso
@@ -116,22 +116,22 @@ TipoPgSQL ConversaoTipo::obterTipoDado(unsigned idx_tipo)
   //Caso o índice usado seja inválido, dispare-se uma exceção
   throw Excecao(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
-//-----------------------------------------------------------
+
 bool ConversaoTipo::obterEntradaSaida(void)
 {
  return(entrada_saida);
 }
-//-----------------------------------------------------------
+
 Funcao *ConversaoTipo::obterFuncaoConversao(void)
 {
  return(funcao_conv);
 }
-//-----------------------------------------------------------
+
 unsigned ConversaoTipo::obterTipoConversao(void)
 {
  return(tipo);
 }
-//-----------------------------------------------------------
+
 QString ConversaoTipo::obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
@@ -165,4 +165,4 @@ QString ConversaoTipo::obterDefinicaoObjeto(unsigned tipo_def)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//***********************************************************
+

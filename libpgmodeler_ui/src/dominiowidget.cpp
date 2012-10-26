@@ -1,5 +1,5 @@
 #include "dominiowidget.h"
-//***********************************************************
+
 DominioWidget::DominioWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_DOMINIO)
 {
  try
@@ -91,4 +91,4 @@ void DominioWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

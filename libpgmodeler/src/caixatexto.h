@@ -25,7 +25,7 @@
 
 #include "objetograficobase.h"
 #include <QColor>
-//***********************************************************
+
 class CaixaTexto: public ObjetoGraficoBase{
  private:
   //Armazena os atributos do texto a ser exibido (negrito / italico / sublinhado)
@@ -61,5 +61,5 @@ class CaixaTexto: public ObjetoGraficoBase{
   //Copia os atributos do objeto do parâmetro para o objeto this
   void operator = (CaixaTexto &caixa);
 };
-//***********************************************************
+
 #endif

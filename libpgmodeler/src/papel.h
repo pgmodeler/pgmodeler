@@ -23,7 +23,7 @@
 #define PAPEL_H
 
 #include "objetobase.h"
-//***********************************************************
+
 class Papel: public ObjetoBase {
  private:
   //Id de usuário
@@ -123,5 +123,5 @@ class Papel: public ObjetoBase {
   //Retorna a definição SQL ou XML do objeto
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

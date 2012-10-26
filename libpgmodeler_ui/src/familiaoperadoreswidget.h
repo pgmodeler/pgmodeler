@@ -24,7 +24,7 @@
 
 #include "objetobasewidget.h"
 #include "ui_familiaoperadoreswidget.h"
-//***********************************************************
+
 class FamiliaOperadoresWidget: public ObjetoBaseWidget, public Ui::FamiliaOperadoresWidget {
  Q_OBJECT
 
@@ -40,5 +40,5 @@ class FamiliaOperadoresWidget: public ObjetoBaseWidget, public Ui::FamiliaOperad
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

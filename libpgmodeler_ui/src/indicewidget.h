@@ -35,7 +35,7 @@
  modo referenciam a classe ElementoIndice.*/
 #include <QMetaType>
 Q_DECLARE_METATYPE(ElementoIndice);
-//***********************************************************
+
 class IndiceWidget: public ObjetoBaseWidget, public Ui::IndiceWidget {
  Q_OBJECT
 
@@ -71,5 +71,5 @@ class IndiceWidget: public ObjetoBaseWidget, public Ui::IndiceWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

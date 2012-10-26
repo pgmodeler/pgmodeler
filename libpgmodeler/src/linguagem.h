@@ -2,7 +2,7 @@
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe Linguagem que é usado para
-#             e gerar os códigos SQL pertinentes às linguagens
+#             e gerar os códigos SQL pertinente� s linguagens
 #             procedurais.
 # Data de Criação: 19/05/2008
 #
@@ -26,7 +26,7 @@
 #include "objetobase.h"
 #include "funcao.h"
 #include "papel.h"
-//***********************************************************
+
 class Linguagem: public ObjetoBase{
  private:
   /* Indica se a linguaguem é confiável ou não.
@@ -59,5 +59,5 @@ class Linguagem: public ObjetoBase{
   QString obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida);
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

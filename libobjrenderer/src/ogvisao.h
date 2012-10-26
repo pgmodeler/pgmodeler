@@ -25,7 +25,7 @@
 
 #include "visao.h"
 #include "ogtabelabase.h"
-//***********************************************************
+
 class OGVisao: public OGTabelaBase {
  private:
   Q_OBJECT
@@ -40,5 +40,5 @@ class OGVisao: public OGTabelaBase {
  private slots:
   void configurarObjeto(void);
 };
-//***********************************************************
+
 #endif

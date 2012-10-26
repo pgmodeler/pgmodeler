@@ -2,7 +2,7 @@
 #include "caixamensagem.h"
 
 extern CaixaMensagem *caixa_msg;
-//***********************************************************
+
 FormConfiguracao::FormConfiguracao(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
  QGridLayout *layout=NULL;
@@ -37,7 +37,7 @@ FormConfiguracao::FormConfiguracao(QWidget *parent, Qt::WindowFlags f) : QDialog
  connect(aplicar_btn, SIGNAL(clicked(void)), this, SLOT(aplicarConfiguracao(void)));
  connect(padroes_btn, SIGNAL(clicked(void)), this, SLOT(restaurarPadroes(void)));
 }
-//-----------------------------------------------------------
+
 void FormConfiguracao::close(void)
 {
  try
@@ -53,7 +53,7 @@ void FormConfiguracao::close(void)
 
  QDialog::close();
 }
-//-----------------------------------------------------------
+
 void FormConfiguracao::aplicarConfiguracao(void)
 {
  conf_geral->salvarConfiguracao();
@@ -62,7 +62,7 @@ void FormConfiguracao::aplicarConfiguracao(void)
  conf_conexoes->salvarConfiguracao();
  this->close();
 }
-//-----------------------------------------------------------
+
 void FormConfiguracao::carregarConfiguracao(void)
 {
  try
@@ -76,7 +76,7 @@ void FormConfiguracao::carregarConfiguracao(void)
   throw Excecao(ERR_PGMODELERUI_CONFNAOCARREGADA,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void FormConfiguracao::restaurarPadroes(void)
 {
  caixa_msg->show(trUtf8("Confirmation"),
@@ -105,7 +105,7 @@ void FormConfiguracao::restaurarPadroes(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 ConfBaseWidget *FormConfiguracao::obterWidgetConfiguracao(unsigned idx)
 {
  if(idx >= static_cast<unsigned>(stackedWidget->count()))
@@ -121,4 +121,4 @@ ConfBaseWidget *FormConfiguracao::obterWidgetConfiguracao(unsigned idx)
   }
  }
 }
-//***********************************************************
+

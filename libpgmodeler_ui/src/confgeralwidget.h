@@ -25,7 +25,7 @@
 #include "confbasewidget.h"
 #include "cenaobjetos.h"
 #include "listaoperacoes.h"
-//***********************************************************
+
 class ConfGeralWidget: public QWidget, public Ui::ConfGeralWidget, public ConfBaseWidget {
  private:
  Q_OBJECT
@@ -44,5 +44,5 @@ class ConfGeralWidget: public QWidget, public Ui::ConfGeralWidget, public ConfBa
    //Faz a conversão dos valores das margens para a unidade selecionada
    void converterUnidadeMargem(void);
 };
-//***********************************************************
+
 #endif

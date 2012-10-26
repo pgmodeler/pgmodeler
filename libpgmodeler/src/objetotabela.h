@@ -24,7 +24,7 @@
 #define OBJETOTABELA_H
 
 #include "objetobase.h"
-//***********************************************************
+
 class ObjetoTabela: public ObjetoBase {
  protected:
   /* Armazena o endereço da tabela a qual possui um objeto desta classe.
@@ -87,5 +87,5 @@ class ObjetoTabela: public ObjetoBase {
 
   friend class Relacionamento;
 };
-//***********************************************************
+
 #endif

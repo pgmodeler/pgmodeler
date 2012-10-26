@@ -26,7 +26,7 @@
 #include "ui_listaoperacoeswidget.h"
 #include "modelowidget.h"
 #include "caixamensagem.h"
-//***********************************************************
+
 class ListaOperacoesWidget: public QDockWidget, public Ui::ListaOperacoesWidget {
  Q_OBJECT
 
@@ -55,5 +55,5 @@ class ListaOperacoesWidget: public QDockWidget, public Ui::ListaOperacoesWidget 
    void s_operacaoExecutada(void);
    void s_listaOperacoesAtualizada(void);
 };
-//***********************************************************
+
 #endif

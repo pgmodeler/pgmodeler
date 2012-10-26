@@ -26,7 +26,7 @@
 #include "ui_visaoobjetoswidget.h"
 #include "modelowidget.h"
 #include "caixamensagem.h"
-//***********************************************************
+
 class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
  Q_OBJECT
 
@@ -119,5 +119,5 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
   void s_visaoObjetosModificada(void);
   void s_visibilityChanged(ObjetoBase *,bool);
 };
-//***********************************************************
+
 #endif

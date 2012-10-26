@@ -24,7 +24,7 @@
 
 #include "referencia.h"
 #include "tabelabase.h"
-//***********************************************************
+
 class Visao: public TabelaBase {
  private:
   //Armazena as referências para objetos e expressões
@@ -105,5 +105,5 @@ class Visao: public TabelaBase {
   //Copia os atributos do objeto do parâmetro para o objeto this
   void operator = (Visao &visao);
 };
-//***********************************************************
+
 #endif

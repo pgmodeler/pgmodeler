@@ -1,9 +1,9 @@
 #include "objetografico.h"
-//***********************************************************
+
 map<QString, QTextCharFormat> ObjetoGrafico::config_fonte;
 map<QString, QColor *> ObjetoGrafico::config_cores;
 unsigned ObjetoGrafico::ordem_selecao_global=1;
-//-----------------------------------------------------------
+
 ObjetoGrafico::ObjetoGrafico(ObjetoBase *objeto)
 {
  ordem_selecao=0;
@@ -14,12 +14,12 @@ ObjetoGrafico::ObjetoGrafico(ObjetoBase *objeto)
  txt_info_pos=NULL;
  definirObjetoOrigem(objeto);
 }
-//-----------------------------------------------------------
+
 ObjetoGrafico::~ObjetoGrafico(void)
 {
  definirObjetoOrigem(NULL);
 }
-//-----------------------------------------------------------
+
 void ObjetoGrafico::definirObjetoOrigem(ObjetoBase *objeto)
 {
  ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(objeto);
@@ -134,14 +134,14 @@ void ObjetoGrafico::definirObjetoOrigem(ObjetoBase *objeto)
   txt_info_pos->setVisible(false);
  }
 }
-//-----------------------------------------------------------
+
 ObjetoBase *ObjetoGrafico::obterObjetoOrigem(void)
 {
  /* Retorna o dado armazenado no objeto gráfico, que nada mais é que
     a referência ao objeto que deu origem a representação gráfica */
  return(reinterpret_cast<ObjetoBase *>(this->data(0).value<void *>()));
 }
-//-----------------------------------------------------------
+
 void ObjetoGrafico::redimensionarPoligono(QPolygonF &pol, float larg, float alt)
 {
  QVector<QPointF>::iterator itr,itr_end;
@@ -153,7 +153,7 @@ void ObjetoGrafico::redimensionarPoligono(QPolygonF &pol, float larg, float alt)
  coef_a=larg / pol.boundingRect().width();
  coef_b=alt / pol.boundingRect().height();
 
- //Aplicando os coeficientes calculados à todos os pontos do polígono
+ //Aplicando os coeficientes calculados à  todos os pontos do polígono
  while(itr!=itr_end)
  {
   itr->setX(itr->x() * coef_a);
@@ -161,7 +161,7 @@ void ObjetoGrafico::redimensionarPoligono(QPolygonF &pol, float larg, float alt)
   itr++;
  }
 }
-//-----------------------------------------------------------
+
 void ObjetoGrafico::carregarEstiloObjetos(void)
 {
  QColor *cores=NULL;
@@ -240,7 +240,7 @@ void ObjetoGrafico::carregarEstiloObjetos(void)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ObjetoGrafico::definirEstiloFonte(const QString &id, QTextCharFormat fmt_fonte)
 {
  QFont fonte;
@@ -276,13 +276,13 @@ void ObjetoGrafico::definirEstiloFonte(const QString &id, QTextCharFormat fmt_fo
  if(config_fonte.count(id))
   config_fonte[id]=fmt_fonte;
 }
-//-----------------------------------------------------------
+
 void ObjetoGrafico::definirCorElemento(const QString &id, QColor cor, unsigned id_cor)
 {
  if(id_cor < 3 && config_cores.count(id))
   config_cores[id][id_cor]=cor;
 }
-//-----------------------------------------------------------
+
 void ObjetoGrafico::obterEstiloPreenchimento(const QString &id, QColor &cor1, QColor &cor2)
 {
  if(config_cores.count(id) > 0)
@@ -291,7 +291,7 @@ void ObjetoGrafico::obterEstiloPreenchimento(const QString &id, QColor &cor1, QC
   cor2=config_cores[id][1];
  }
 }
-//-----------------------------------------------------------
+
 QLinearGradient ObjetoGrafico::obterEstiloPreenchimento(const QString &id)
 {
  QColor *cores=NULL;
@@ -317,7 +317,7 @@ QLinearGradient ObjetoGrafico::obterEstiloPreenchimento(const QString &id)
 
  return(grad);
 }
-//-----------------------------------------------------------
+
 QPen ObjetoGrafico::obterEstiloBorda(const QString &id)
 {
  QPen pen;
@@ -340,7 +340,7 @@ QPen ObjetoGrafico::obterEstiloBorda(const QString &id)
 
  return(pen);
 }
-//-----------------------------------------------------------
+
 QTextCharFormat ObjetoGrafico::obterEstiloFonte(const QString &id)
 {
  if(config_fonte.count(id))
@@ -348,7 +348,7 @@ QTextCharFormat ObjetoGrafico::obterEstiloFonte(const QString &id)
  else
   return(QTextCharFormat());
 }
-//-----------------------------------------------------------
+
 QVariant ObjetoGrafico::itemChange(GraphicsItemChange change, const QVariant &value)
 {
  /* Caso a mudança seja de posição, atualiza a posição do objeto de origem com a posição
@@ -380,12 +380,12 @@ QVariant ObjetoGrafico::itemChange(GraphicsItemChange change, const QVariant &va
 
  return(value);
 }
-//-----------------------------------------------------------
+
 QRectF ObjetoGrafico::boundingRect(void) const
 {
  return(bounding_rect);
 }
-//-----------------------------------------------------------
+
 void ObjetoGrafico::exibirProtecaoObjeto(bool valor)
 {
  ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->obterObjetoOrigem());
@@ -398,7 +398,7 @@ void ObjetoGrafico::exibirProtecaoObjeto(bool valor)
  if(obj_graf)
   obj_graf->definirModificado(true);
 }
-//-----------------------------------------------------------
+
 void ObjetoGrafico::configurarInfoPosicao(QPointF pos_info)
 {
  if(this->isSelected())
@@ -422,7 +422,7 @@ void ObjetoGrafico::configurarInfoPosicao(QPointF pos_info)
                        - pol_info_pos->boundingRect().height());
  }
 }
-//-----------------------------------------------------------
+
 void ObjetoGrafico::configurarSombraObjeto(void)
 {
  if(sombra)
@@ -443,7 +443,7 @@ void ObjetoGrafico::configurarSombraObjeto(void)
   sombra->setBrush(QColor(0,0,0,100));
  }
 }
-//-----------------------------------------------------------
+
 void ObjetoGrafico::configurarSelecaoObjeto(void)
 {
  if(selecao_obj)
@@ -462,7 +462,7 @@ void ObjetoGrafico::configurarSelecaoObjeto(void)
   selecao_obj->setPolygon(pol);
   selecao_obj->setPos(0,0);
  }
-}//-----------------------------------------------------------
+}
 void ObjetoGrafico::configurarIconeProtecao(void)
 {
  if(icone_protegido)
@@ -510,7 +510,7 @@ void ObjetoGrafico::configurarIconeProtecao(void)
   item_pol->setPen(this->obterEstiloBorda(AtributosParsers::CORPO_CADEADO));
  }
 }
-//-----------------------------------------------------------
+
 void ObjetoGrafico::configurarObjeto(void)
 {
  ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->obterObjetoOrigem());
@@ -526,9 +526,9 @@ void ObjetoGrafico::configurarObjeto(void)
   this->configurarIconeProtecao();
  }
 }
-//-----------------------------------------------------------
+
 unsigned ObjetoGrafico::obterOrdemSelecao(void)
 {
  return(ordem_selecao);
 }
-//***********************************************************
+

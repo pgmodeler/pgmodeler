@@ -34,7 +34,7 @@
  de classes de operadores.*/
 #include <QMetaType>
 Q_DECLARE_METATYPE(ElemClasseOperadores)
-//***********************************************************
+
 class ClasseOperadoresWidget: public ObjetoBaseWidget, public Ui::ClasseOperadoresWidget {
  Q_OBJECT
 
@@ -74,5 +74,5 @@ class ClasseOperadoresWidget: public ObjetoBaseWidget, public Ui::ClasseOperador
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

@@ -25,7 +25,7 @@
 
 #include "resultado.h"
 #include <map>
-//***********************************************************
+
 class ConexaoBD {
  private:
   //Descritor de conexão com o banco
@@ -105,5 +105,5 @@ class ConexaoBD {
   //Atribui uma conexão a outra
   void operator = (ConexaoBD &conex);
 };
-//***********************************************************
+
 #endif

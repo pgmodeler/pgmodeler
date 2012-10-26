@@ -1,5 +1,5 @@
 #include "linguagemwidget.h"
-//***********************************************************
+
 LinguagemWidget::LinguagemWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_LINGUAGEM)
 {
  try
@@ -109,4 +109,4 @@ void LinguagemWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

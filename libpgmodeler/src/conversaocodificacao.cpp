@@ -1,5 +1,5 @@
 #include "conversaocodificacao.h"
-//***********************************************************
+
 ConversaoCodificacao::ConversaoCodificacao(void)
 {
  tipo_objeto=OBJETO_CONV_CODIFICACAO;
@@ -10,7 +10,7 @@ ConversaoCodificacao::ConversaoCodificacao(void)
  atributos[AtributosParsers::COD_DESTINO]="";
  atributos[AtributosParsers::FUNCAO]="";
 }
-//-----------------------------------------------------------
+
 void ConversaoCodificacao::definirCodificacao(unsigned idx_tipo, TipoCodificacao tipo_cod)
 {
  //Verifica se o índice da codificação a ser acessada é válido
@@ -30,7 +30,7 @@ void ConversaoCodificacao::definirCodificacao(unsigned idx_tipo, TipoCodificacao
   //Dispara uma exceção caso o índice do tipo é inválido
   throw Excecao(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
-//-----------------------------------------------------------
+
 void ConversaoCodificacao::definirFuncaoConversao(Funcao *funcao_conv)
 {
  //Caso a função de conversão passada seja nula, dispara uma exceção
@@ -66,12 +66,12 @@ void ConversaoCodificacao::definirFuncaoConversao(Funcao *funcao_conv)
 
  this->funcao_conv=funcao_conv;
 }
-//-----------------------------------------------------------
+
 void ConversaoCodificacao::definirPadrao(bool valor)
 {
  padrao=valor;
 }
-//-----------------------------------------------------------
+
 TipoCodificacao ConversaoCodificacao::obterCodificacao(unsigned idx_tipo)
 {
  if(idx_tipo<=CONV_COD_DESTINO)
@@ -80,17 +80,17 @@ TipoCodificacao ConversaoCodificacao::obterCodificacao(unsigned idx_tipo)
   //Caso o usuário não referencie a codificação com o índice correto
   throw Excecao(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
-//-----------------------------------------------------------
+
 Funcao *ConversaoCodificacao::obterFuncaoConversao(void)
 {
  return(funcao_conv);
 }
-//-----------------------------------------------------------
+
 bool ConversaoCodificacao::conversaoPadrao(void)
 {
  return(padrao);
 }
-//-----------------------------------------------------------
+
 QString ConversaoCodificacao::obterDefinicaoObjeto(unsigned tipo_def)
 {
  atributos[AtributosParsers::PADRAO]=(padrao ? "1" : "");
@@ -107,4 +107,4 @@ QString ConversaoCodificacao::obterDefinicaoObjeto(unsigned tipo_def)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//***********************************************************
+

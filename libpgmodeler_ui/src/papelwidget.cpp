@@ -1,7 +1,7 @@
 #include "papelwidget.h"
 #include "visaoobjetoswidget.h"
 extern VisaoObjetosWidget *selecaoobjetos_wgt;
-//***********************************************************
+
 PapelWidget::PapelWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_PAPEL)
 {
  TabelaObjetosWidget *tab_obj=NULL;
@@ -68,7 +68,7 @@ void PapelWidget::configurarSelecaoPapeis(void)
 
  /* Desconecta todos os sinais-slots das tabelas de membros
     isso evita que o método de selecionar papel membro seja
-    executado várias vezes por estar conectado às três
+    executado várias vezes por estar conectad� s três
     instâncias das tabelas de membros */
  for(i=0; i < 3; i++)
   disconnect(tab_membros[i],0,this,0);
@@ -189,7 +189,7 @@ void PapelWidget::exibirDadosPapel(Papel *papel, unsigned idx_tabela, unsigned l
     if(i < qtd-1) str_aux+=", ";
    }
 
-   //Atribui a string configurada à coluna do tipo de membro do papel membro atual
+   //Atribui a string configurada   coluna do tipo de membro do papel membro atual
    tab_membros[idx_tabela]->definirTextoCelula(QString::fromUtf8(str_aux), lin, 3 + id_tipo);
    str_aux.clear();
   }
@@ -353,4 +353,4 @@ void PapelWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

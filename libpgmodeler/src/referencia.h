@@ -24,7 +24,7 @@
 
 #include "tabela.h"
 #include "esquema.h"
-//***********************************************************
+
 class Referencia {
  private:
   //Guarda a referência para uma tabela
@@ -84,5 +84,5 @@ class Referencia {
   //Compara os atributos de duas referências
   bool operator == (Referencia &refer);
 };
-//***********************************************************
+
 #endif

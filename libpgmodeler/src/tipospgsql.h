@@ -28,7 +28,7 @@
 #include <map>
 
 using namespace std;
-//***********************************************************
+
 class TipoBase{
  private:
   static const unsigned qtd_tipos=189;
@@ -68,7 +68,7 @@ class TipoBase{
 
   static QString obterStringTipo(unsigned tipo);
 };
-//-----------------------------------------------------------
+
 class TipoAcao: public TipoBase{
  private:
   static const unsigned offset=1; //Posição inicial dos nomes de tipos da classe
@@ -91,11 +91,11 @@ class TipoAcao: public TipoBase{
   //Obtém todos os tipos válidos da classe e guarda em uma lista
   static void obterTipos(QStringList &tipos);
 
-  //Atribui um tipo à instancia this
+  //Atribui um tipo a instancia this
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoRestricao: public TipoBase{
  private:
   static const unsigned offset=6;
@@ -116,7 +116,7 @@ class TipoRestricao: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoEvento: public TipoBase{
  private:
   static const unsigned offset=10;
@@ -138,7 +138,7 @@ class TipoEvento: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoExecucao: public TipoBase{
  private:
   static const unsigned offset=15;
@@ -157,7 +157,7 @@ class TipoExecucao: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoFuncao: public TipoBase{
  private:
   static const unsigned offset=17;
@@ -177,7 +177,7 @@ class TipoFuncao: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoIndexacao: public TipoBase{
  private:
   static const unsigned offset=20;
@@ -199,7 +199,7 @@ class TipoIndexacao: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoIntervalo: public TipoBase{
  private:
   static const unsigned offset=91;
@@ -228,7 +228,7 @@ class TipoIntervalo: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoEspacial: public TipoBase{
  private:
   unsigned variacao;
@@ -259,7 +259,7 @@ class TipoEspacial: public TipoBase{
   static void obterTipos(QStringList &tipos);
   QString operator * (void);
 };
-//-----------------------------------------------------------
+
  /* Isso é feio, muito feio! :/
     Mas foi preciso fazê-lo para resolver a interação
     entre tipos definidos pelo usuário e tipos internos
@@ -401,7 +401,7 @@ class TipoPgSQL: public TipoBase{
   bool tipoAceitaPrecisao(void); //Retorna o tipo aceita precisão
 
   /* Como é necessário que o tipo base do PgSQL tenha uma definição XML
-     este método foi adicionado à essa classe a qual configura um mapa
+     este método foi adicionado    essa classe a qual configura um mapa
      de atributos e passa ao parser de esquemas para que este retorne
      a definição XML. Este método permite também se obter a definição
      SQL do objeto, porém chamar este método para obtenção do SQL do tipo
@@ -435,7 +435,7 @@ class TipoPgSQL: public TipoBase{
   friend class ModeloBD;
   friend class ListaOperacoes;
 };
-//-----------------------------------------------------------
+
 class TipoComportamento: public TipoBase{
  private:
   static const unsigned offset=104;
@@ -455,7 +455,7 @@ class TipoComportamento: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoSeguranca: public TipoBase{
  private:
   static const unsigned offset=107;
@@ -474,7 +474,7 @@ class TipoSeguranca: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoLinguagem: public TipoBase{
  private:
   static const unsigned offset=109;
@@ -497,7 +497,7 @@ class TipoLinguagem: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoCodificacao: public TipoBase{
  private:
   static const unsigned offset=115;
@@ -516,7 +516,7 @@ class TipoCodificacao: public TipoBase{
   bool operator != (const QString &nome_tipo);
   bool operator != (TipoCodificacao tipo);
 };
-//-----------------------------------------------------------
+
 class TipoArmazenamento: public TipoBase{
  private:
   static const unsigned offset=156;
@@ -540,7 +540,7 @@ class TipoArmazenamento: public TipoBase{
   bool operator != (const QString &nome_tipo);
   bool operator != (TipoArmazenamento tipo);
 };
-//-----------------------------------------------------------
+
 class TipoComparacao: public TipoBase{
  private:
   static const unsigned offset=160;
@@ -560,7 +560,7 @@ class TipoComparacao: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoPostergacao: public TipoBase{
  private:
   static const unsigned offset=163;
@@ -579,7 +579,7 @@ class TipoPostergacao: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoCategoria: public TipoBase{
  private:
   static const unsigned offset=165;
@@ -609,7 +609,7 @@ class TipoCategoria: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//-----------------------------------------------------------
+
 class TipoDisparo: public TipoBase{
  private:
   static const unsigned offset=179;
@@ -628,5 +628,5 @@ class TipoDisparo: public TipoBase{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
-//***********************************************************
+
 #endif

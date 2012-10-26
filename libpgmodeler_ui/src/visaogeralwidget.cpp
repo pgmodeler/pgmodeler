@@ -1,6 +1,6 @@
 #include "visaogeralwidget.h"
 #include "modelowidget.h"
-//***********************************************************
+
 VisaoGeralWidget::VisaoGeralWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint)
 {
  setupUi(this);
@@ -10,7 +10,7 @@ VisaoGeralWidget::VisaoGeralWidget(QWidget *parent) : QWidget(parent, Qt::Window
  //Fixa as dimensões do widget
  this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
-//-----------------------------------------------------------
+
 void VisaoGeralWidget::show(ModeloWidget *modelo)
 {
  if(this->modelo)
@@ -52,24 +52,24 @@ void VisaoGeralWidget::show(ModeloWidget *modelo)
  this->raise();
  QWidget::show();
 }
-//-----------------------------------------------------------
+
 void VisaoGeralWidget::closeEvent(QCloseEvent *evento)
 {
  emit s_visaoGeralVisivel(false);
  QWidget::closeEvent(evento);
 }
-//-----------------------------------------------------------
+
 void VisaoGeralWidget::showEvent(QShowEvent *evento)
 {
  emit s_visaoGeralVisivel(true);
  QWidget::showEvent(evento);
 }
-//-----------------------------------------------------------
+
 void VisaoGeralWidget::atualizarVisaoGeral(void)
 {
  this->atualizarVisaoGeral(false);
 }
-//-----------------------------------------------------------
+
 void VisaoGeralWidget::atualizarVisaoGeral(bool forcar_atual)
 {
  if(this->modelo && (this->isVisible() || forcar_atual))
@@ -94,7 +94,7 @@ void VisaoGeralWidget::atualizarVisaoGeral(bool forcar_atual)
   label->resize(tam);
  }
 }
-//-----------------------------------------------------------
+
 void VisaoGeralWidget::redimensionarFrameJanela(void)
 {
  if(this->modelo)
@@ -112,7 +112,7 @@ void VisaoGeralWidget::redimensionarFrameJanela(void)
                           this->modelo->viewport->verticalScrollBar()->value() * FATOR_REDIM));
  }
 }
-//-----------------------------------------------------------
+
 void VisaoGeralWidget::redimensionarVisaoGeral(void)
 {
  if(this->modelo)
@@ -128,18 +128,18 @@ void VisaoGeralWidget::redimensionarVisaoGeral(void)
   this->setMinimumSize(tam.toSize());
  }
 }
-//-----------------------------------------------------------
+
 void VisaoGeralWidget::atualizarFatorZoom(float zoom)
 {
  this->fator_zoom=zoom;
  this->redimensionarFrameJanela();
 }
-//-----------------------------------------------------------
+
 void VisaoGeralWidget::mouseDoubleClickEvent(QMouseEvent *)
 {
  this->close();
 }
-//-----------------------------------------------------------
+
 void VisaoGeralWidget::mouseMoveEvent(QMouseEvent *evento)
 {
  if(evento->buttons()==Qt::LeftButton)
@@ -186,7 +186,7 @@ void VisaoGeralWidget::mouseMoveEvent(QMouseEvent *evento)
   this->modelo->viewport->verticalScrollBar()->setValue(ceilf(fator_zoom * this->modelo->cena->sceneRect().height() * (ret.y()/static_cast<float>(ret1.height()))));
  }
 }
-//-----------------------------------------------------------
+
 void VisaoGeralWidget::mousePressEvent(QMouseEvent *evento)
 {
  if(evento->button()==Qt::LeftButton)
@@ -195,7 +195,7 @@ void VisaoGeralWidget::mousePressEvent(QMouseEvent *evento)
   this->setCursor(QCursor(Qt::OpenHandCursor));
  }
 }
-//-----------------------------------------------------------
+
 void VisaoGeralWidget::mouseReleaseEvent(QMouseEvent *evento)
 {
  if(evento->button()==Qt::LeftButton)
@@ -204,4 +204,4 @@ void VisaoGeralWidget::mouseReleaseEvent(QMouseEvent *evento)
   this->setCursor(QCursor(Qt::ArrowCursor));
  }
 }
-//***********************************************************
+

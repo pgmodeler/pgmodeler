@@ -25,7 +25,7 @@
 #include "visao.h"
 #include "tabela.h"
 #include "objetografico.h"
-//***********************************************************
+
 class OGSubItemObjeto: public ObjetoGrafico
 {
  private:
@@ -87,5 +87,5 @@ class OGSubItemObjeto: public ObjetoGrafico
      são ignoradas pelo método */
   static QString obterStringRestricoes(Coluna *coluna);
 };
-//***********************************************************
+
 #endif

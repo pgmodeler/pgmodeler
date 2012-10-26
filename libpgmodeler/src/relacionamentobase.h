@@ -25,7 +25,7 @@
 #include "tabelabase.h"
 #include "caixatexto.h"
 #include <cmath>
-//***********************************************************
+
 class RelacionamentoBase: public ObjetoGraficoBase {
  protected:
   vector<QPointF> pontos;
@@ -145,5 +145,5 @@ class RelacionamentoBase: public ObjetoGraficoBase {
 
   friend class ModeloBD;
 };
-//***********************************************************
+
 #endif

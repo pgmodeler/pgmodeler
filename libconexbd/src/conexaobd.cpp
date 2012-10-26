@@ -1,5 +1,5 @@
 #include "conexaobd.h"
-//***********************************************************
+
 const QString ConexaoBD::SSL_DESATIVADO="disable";
 const QString ConexaoBD::SSL_PERMITIR="allow";
 const QString ConexaoBD::SSL_PREFERIR="prefer";
@@ -21,12 +21,12 @@ const QString ConexaoBD::PARAM_CERT_RAIZ_SSL="sslrootcert";
 const QString ConexaoBD::PARAM_CRL_SSL="sslcrl";
 const QString ConexaoBD::PARAM_SERVIDOR_KERBEROS="krbsrvname";
 const QString ConexaoBD::PARAM_LIB_GSSAPI="gsslib";
-//-----------------------------------------------------------
+
 ConexaoBD::ConexaoBD(void)
 {
  conexao=NULL;
 }
-//-----------------------------------------------------------
+
 ConexaoBD::ConexaoBD(const QString &servidor, const QString &porta, const QString &usuario, const QString &senha, const QString &nome_bd)
 {
  //Configura os parâmetros básicos de conexão
@@ -39,13 +39,13 @@ ConexaoBD::ConexaoBD(const QString &servidor, const QString &porta, const QStrin
  //Estabelece a conexão
  conectar();
 }
-//-----------------------------------------------------------
+
 ConexaoBD::~ConexaoBD(void)
 {
  if(conexao)
   PQfinish(conexao);
 }
-//-----------------------------------------------------------
+
 void ConexaoBD::definirParamConexao(const QString &parametro, const QString &valor)
 {
  //Dispara um erro caso se tente atribuir um valor a um parâmetro vazio
@@ -56,7 +56,7 @@ void ConexaoBD::definirParamConexao(const QString &parametro, const QString &val
  params_conexao[parametro]=valor;
  gerarStringConexao();
 }
-//-----------------------------------------------------------
+
 void ConexaoBD::gerarStringConexao(void)
 {
  map<QString, QString>::iterator itr;
@@ -73,7 +73,7 @@ void ConexaoBD::gerarStringConexao(void)
   itr++;
  }
 }
-//-----------------------------------------------------------
+
 void ConexaoBD::conectar(void)
 {
  QString str_aux;
@@ -98,7 +98,7 @@ void ConexaoBD::conectar(void)
                 __PRETTY_FUNCTION__, __FILE__, __LINE__);
  }
 }
-//-----------------------------------------------------------
+
 void ConexaoBD::fechar(void)
 {
  //Dispara um erro caso o usuário tente fechar uma conexão não iniciada
@@ -109,7 +109,7 @@ void ConexaoBD::fechar(void)
  PQfinish(conexao);
  conexao=NULL;
 }
-//-----------------------------------------------------------
+
 void ConexaoBD::reiniciar(void)
 {
  //Dispara um erro caso o usuário tente reiniciar uma conexão não iniciada
@@ -119,27 +119,27 @@ void ConexaoBD::reiniciar(void)
  //Reinicia a conexão
  PQreset(conexao);
 }
-//-----------------------------------------------------------
+
 QString ConexaoBD::obterParamConexao(const QString &parametro)
 {
  return(params_conexao[parametro]);
 }
-//-----------------------------------------------------------
+
 map<QString, QString> ConexaoBD::obterParamsConexao(void)
 {
  return(params_conexao);
 }
-//-----------------------------------------------------------
+
 QString ConexaoBD::obterStringConexao(void)
 {
  return(str_conexao);
 }
-//-----------------------------------------------------------
+
 bool ConexaoBD::conexaoEstabelecida(void)
 {
  return(conexao!=NULL);
 }
-//-----------------------------------------------------------
+
 QString  ConexaoBD::obterVersaoSGBD(void)
 {
  QString versao;
@@ -154,7 +154,7 @@ QString  ConexaoBD::obterVersaoSGBD(void)
         .arg(versao.mid(2,2).toInt()/10)
         .arg(versao.mid(4,1).toInt()));
 }
-//-----------------------------------------------------------
+
 void ConexaoBD::executarComandoDML(const QString &sql, Resultado &resultado)
 {
  Resultado *novo_res=NULL;
@@ -180,7 +180,7 @@ void ConexaoBD::executarComandoDML(const QString &sql, Resultado &resultado)
  //Desaloca o resultado criado
  delete(novo_res);
 }
-//-----------------------------------------------------------
+
 void ConexaoBD::executarComandoDDL(const QString &sql)
 {
  PGresult *res_sql=NULL;
@@ -199,7 +199,7 @@ void ConexaoBD::executarComandoDDL(const QString &sql)
                 QString(PQresultErrorField(res_sql, PG_DIAG_SQLSTATE)));
  }
 }
-//-----------------------------------------------------------
+
 void ConexaoBD::operator = (ConexaoBD &conex)
 {
  if(this->conexaoEstabelecida())
@@ -209,4 +209,4 @@ void ConexaoBD::operator = (ConexaoBD &conex)
  this->str_conexao=conex.str_conexao;
  conectar();
 }
-//***********************************************************
+

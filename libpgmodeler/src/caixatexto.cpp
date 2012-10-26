@@ -1,5 +1,5 @@
 #include "caixatexto.h"
-//***********************************************************
+
 CaixaTexto::CaixaTexto(void)
 {
  definirComentario(" ");
@@ -10,7 +10,7 @@ CaixaTexto::CaixaTexto(void)
  atributos[AtributosParsers::SUBLINHADO]="";
  atributos[AtributosParsers::COR]="";
 }
-//-----------------------------------------------------------
+
 QString CaixaTexto::obterDefinicaoObjeto(void)
 {
  definirAtributoPosicao();
@@ -29,7 +29,7 @@ QString CaixaTexto::obterDefinicaoObjeto(void)
 
  return(this->ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML));
 }
-//-----------------------------------------------------------
+
 void CaixaTexto::operator = (CaixaTexto &caixa)
 {
  (*dynamic_cast<ObjetoGraficoBase *>(this))=reinterpret_cast<ObjetoGraficoBase &>(caixa);
@@ -39,7 +39,7 @@ void CaixaTexto::operator = (CaixaTexto &caixa)
  this->atributo_texto[2]=caixa.atributo_texto[2];
  this->cor_texto=caixa.cor_texto;
 }
-//-----------------------------------------------------------
+
 void CaixaTexto::definirAtributoTexto(unsigned atributo, bool valor)
 {
  if(atributo > TEXTO_SUBLINHADO)
@@ -47,17 +47,17 @@ void CaixaTexto::definirAtributoTexto(unsigned atributo, bool valor)
 
  atributo_texto[atributo]=valor;
 }
-//-----------------------------------------------------------
+
 void CaixaTexto::definirCorTexto(const QColor &cor)
 {
  cor_texto=cor;
 }
-//-----------------------------------------------------------
+
 QColor CaixaTexto::obterCorTexto(void)
 {
  return(cor_texto);
 }
-//-----------------------------------------------------------
+
 bool CaixaTexto::obterAtributoTexto(unsigned atributo)
 {
  if(atributo > TEXTO_SUBLINHADO)
@@ -65,4 +65,4 @@ bool CaixaTexto::obterAtributoTexto(unsigned atributo)
 
  return(atributo_texto[atributo]);
 }
-//***********************************************************
+

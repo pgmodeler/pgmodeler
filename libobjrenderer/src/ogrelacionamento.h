@@ -27,7 +27,7 @@
 #include "ogcaixatexto.h"
 #include "ogtabelabase.h"
 #include "relacionamento.h"
-//***********************************************************
+
 class OGRelacionamento: public ObjetoGrafico {
  private:
   //Raio padrão da representação gráfica do ponto.
@@ -126,5 +126,5 @@ class OGRelacionamento: public ObjetoGrafico {
   //Este sinal é emitido sempre que um ponto é adicionado ou removido do relacionamento
   void s_relacionamentoModificado(ObjetoGraficoBase *rel);
 };
-//***********************************************************
+
 #endif

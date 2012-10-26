@@ -1,5 +1,5 @@
 #include "familiaoperadoreswidget.h"
-//***********************************************************
+
 FamiliaOperadoresWidget::FamiliaOperadoresWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_FAMILIA_OPER)
 {
  QStringList tipos;
@@ -58,4 +58,4 @@ void FamiliaOperadoresWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

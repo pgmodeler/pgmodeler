@@ -25,7 +25,7 @@
 #define ESPACOTABELA_H
 
 #include "objetobase.h"
-//***********************************************************
+
 class EspacoTabela: public ObjetoBase{
  private:
   //Diretório em que se encontra o espaco de tabela
@@ -46,5 +46,5 @@ class EspacoTabela: public ObjetoBase{
   //Retorna a definição SQL ou XML do objeto
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

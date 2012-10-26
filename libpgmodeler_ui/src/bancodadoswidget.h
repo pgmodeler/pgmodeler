@@ -24,7 +24,7 @@
 
 #include "ui_bancodadoswidget.h"
 #include "objetobasewidget.h"
-//***********************************************************
+
 class BancoDadosWidget: public ObjetoBaseWidget, public Ui::BancoDadosWidget {
  Q_OBJECT
 
@@ -39,5 +39,5 @@ class BancoDadosWidget: public ObjetoBaseWidget, public Ui::BancoDadosWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

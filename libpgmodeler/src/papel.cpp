@@ -1,5 +1,5 @@
 #include "papel.h"
-//***********************************************************
+
 Papel::Papel(void)
 {
  tipo_objeto=OBJETO_PAPEL;
@@ -26,7 +26,7 @@ Papel::Papel(void)
  atributos[AtributosParsers::SYSID]="";
  atributos[AtributosParsers::GRUPO]="";
 }
-//-----------------------------------------------------------
+
 void Papel::definirSysid(unsigned sysid)
 {
  /* IDs de usuário abaixo de 100 são reservados ao SGBD, sendo assim
@@ -36,7 +36,7 @@ void Papel::definirSysid(unsigned sysid)
 
  this->sysid=sysid;
 }
-//-----------------------------------------------------------
+
 void Papel::definirOpcao(unsigned tipo_op, bool valor)
 {
  //Caso o tipo de opção seja válido, atribui-se o valor ao mesmo
@@ -46,7 +46,7 @@ void Papel::definirOpcao(unsigned tipo_op, bool valor)
   //Dispara-se uma exceção caso se use um tipo de opção inválido
   throw Excecao(ERR_PGMODELER_ATROPPAPELTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
-//-----------------------------------------------------------
+
 void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
 {
  /* Caso o papel a ser inserido na lista não esteja alocado,
@@ -131,22 +131,22 @@ void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
   }
  }
 }
-//-----------------------------------------------------------
+
 void Papel::definirLimiteConexao(int limite)
 {
  lim_conexao=limite;
 }
-//-----------------------------------------------------------
+
 void Papel::definirValidade(const QString &data)
 {
  validade=data;
 }
-//-----------------------------------------------------------
+
 void Papel::definirSenha(const QString &senha)
 {
  this->senha=senha;
 }
-//-----------------------------------------------------------
+
 void Papel::definirAtributoPapel(unsigned tipo_papel)
 {
  QString str_papeis, atrib;
@@ -179,7 +179,7 @@ void Papel::definirAtributoPapel(unsigned tipo_papel)
 
  atributos[atrib]=str_papeis;
 }
-//-----------------------------------------------------------
+
 void Papel::removerPapel(unsigned tipo_papel, unsigned idx_papel)
 {
  vector<Papel *> *lista=NULL;
@@ -203,7 +203,7 @@ void Papel::removerPapel(unsigned tipo_papel, unsigned idx_papel)
  itr=lista->begin() + idx_papel;
  lista->erase(itr);
 }
-//-----------------------------------------------------------
+
 void Papel::removerPapeis(unsigned tipo_papel)
 {
  vector<Papel *> *lista=NULL;
@@ -222,7 +222,7 @@ void Papel::removerPapeis(unsigned tipo_papel)
 
  lista->clear();
 }
-//-----------------------------------------------------------
+
 bool Papel::papelExiste(unsigned tipo_papel, Papel *papel)
 {
  vector<Papel *> *lista=NULL;
@@ -255,12 +255,12 @@ bool Papel::papelExiste(unsigned tipo_papel, Papel *papel)
 
  return(enc);
 }
-//-----------------------------------------------------------
+
 unsigned Papel::obterSysid(void)
 {
  return(sysid);
 }
-//-----------------------------------------------------------
+
 bool Papel::obterOpcao(unsigned tipo_op)
 {
  if(tipo_op <= OP_ENCRYPTED)
@@ -268,7 +268,7 @@ bool Papel::obterOpcao(unsigned tipo_op)
  else
   throw Excecao(ERR_PGMODELER_ATROPPAPELTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
-//-----------------------------------------------------------
+
 Papel *Papel::obterPapel(unsigned tipo_papel, unsigned idx_papel)
 {
  Papel *papel=NULL;
@@ -296,7 +296,7 @@ Papel *Papel::obterPapel(unsigned tipo_papel, unsigned idx_papel)
 
  return(papel);
 }
-//-----------------------------------------------------------
+
 unsigned Papel::obterNumPapeis(unsigned tipo_papel)
 {
  vector<Papel *> *lista=NULL;
@@ -315,22 +315,22 @@ unsigned Papel::obterNumPapeis(unsigned tipo_papel)
  //Retorna o tamanho da lista selecionada
  return(lista->size());
 }
-//-----------------------------------------------------------
+
 unsigned Papel::obterLimiteConexao(void)
 {
  return(lim_conexao);
 }
-//-----------------------------------------------------------
+
 QString Papel::obterValidade(void)
 {
  return(validade);
 }
-//-----------------------------------------------------------
+
 QString Papel::obterSenha(void)
 {
  return(senha);
 }
-//-----------------------------------------------------------
+
 QString Papel::obterDefinicaoObjeto(unsigned tipo_def)
 {
  unsigned i;
@@ -362,4 +362,4 @@ QString Papel::obterDefinicaoObjeto(unsigned tipo_def)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//***********************************************************
+

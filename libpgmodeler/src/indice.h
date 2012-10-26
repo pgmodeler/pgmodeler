@@ -25,7 +25,7 @@
 
 #include "objetotabela.h"
 #include "elementoindice.h"
-//***********************************************************
+
 class Indice: public ObjetoTabela{
  private:
   /* Vetor de classe de operadores o qual relacionada cada
@@ -111,5 +111,5 @@ class Indice: public ObjetoTabela{
      conexões e desconexões de relacionamentos */
   bool referenciaColunaIncRelacao(void);
 };
-//***********************************************************
+
 #endif

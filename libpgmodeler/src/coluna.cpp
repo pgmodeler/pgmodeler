@@ -1,5 +1,5 @@
 #include "coluna.h"
-//***********************************************************
+
 Coluna::Coluna(void)
 {
  tipo_objeto=OBJETO_COLUNA;
@@ -9,7 +9,7 @@ Coluna::Coluna(void)
  atributos[AtributosParsers::NAO_NULO]="";
  atributos[AtributosParsers::TABELA]="";
 }
-//-----------------------------------------------------------
+
 void Coluna::definirNome(const QString &nome)
 {
  try
@@ -30,37 +30,37 @@ void Coluna::definirNome(const QString &nome)
   throw Excecao(e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void Coluna::definirTipo(TipoPgSQL tipo)
 {
- /* Caso o tipo a ser atribuído à coluna seja um pseudo-tipo
+ /* Caso o tipo a ser atribuíd�  coluna seja um pseudo-tipo
     será disparada uma exceção */
  if(tipo.pseudoTipo())
   throw Excecao(ERR_PGMODELER_ATRPSDTIPOCOL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   this->tipo=tipo;
 }
-//-----------------------------------------------------------
+
 void Coluna::definirValorPadrao(const QString &valor)
 {
  valor_padrao=valor;
 }
-//-----------------------------------------------------------
+
 void Coluna::definirNaoNulo(bool valor)
 {
  nao_nulo=valor;
 }
-//-----------------------------------------------------------
+
 TipoPgSQL Coluna::obterTipo(void)
 {
  return(tipo);
 }
-//-----------------------------------------------------------
+
 bool Coluna::naoNulo(void)
 {
  return(nao_nulo);
 }
-//-----------------------------------------------------------
+
 QString Coluna::obterReferenciaTipo(void)
 {
  if(tabela_pai)
@@ -68,12 +68,12 @@ QString Coluna::obterReferenciaTipo(void)
  else
   return("");
 }
-//-----------------------------------------------------------
+
 QString Coluna::obterValorPadrao(void)
 {
  return(valor_padrao);
 }
-//-----------------------------------------------------------
+
 QString Coluna::obterNomeAntigo(bool formatar)
 {
  if(formatar)
@@ -81,7 +81,7 @@ QString Coluna::obterNomeAntigo(bool formatar)
  else
   return(nome_antigo);
 }
-//-----------------------------------------------------------
+
 QString Coluna::obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(this->tabela_pai)
@@ -92,7 +92,7 @@ QString Coluna::obterDefinicaoObjeto(unsigned tipo_def)
  atributos[AtributosParsers::NAO_NULO]=(!nao_nulo ? "" : "1");
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//-----------------------------------------------------------
+
 void Coluna::operator = (Coluna &coluna)
 {
  this->comentario=coluna.comentario;
@@ -113,4 +113,4 @@ void Coluna::operator = (Coluna &coluna)
  this->inc_generalizacao=false;
  this->inc_ligacao=false;
 }
-//***********************************************************
+

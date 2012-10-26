@@ -1,5 +1,5 @@
 #include "listaobjetoswidget.h"
-//***********************************************************
+
 ListaObjetosWidget::ListaObjetosWidget(QWidget *parent): ObjetoBaseWidget(parent)
 {
  Ui_ListaObjetosWidget::setupUi(this);
@@ -13,7 +13,7 @@ ListaObjetosWidget::ListaObjetosWidget(QWidget *parent): ObjetoBaseWidget(parent
  //Conecta o botão ok do formulário pai com o método de fechamento do formulário
  connect(janela_pai->aplicar_ok_btn, SIGNAL(clicked(bool)), janela_pai, SLOT(close(void)));
 }
-//-----------------------------------------------------------
+
 void ListaObjetosWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto, ObjetoBase *objeto_pai)
 {
  vector<ObjetoBase *> vet_objs;
@@ -37,7 +37,7 @@ void ListaObjetosWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto, 
  modelo->obterReferenciasObjeto(objeto, vet_objs);
  this->atualizarListaObjetos(vet_objs, referencias_tbw);
 }
-//-----------------------------------------------------------
+
 void ListaObjetosWidget::hideEvent(QHideEvent *evento)
 {
  tabWidget->setCurrentIndex(0);
@@ -51,7 +51,7 @@ void ListaObjetosWidget::hideEvent(QHideEvent *evento)
 
  ObjetoBaseWidget::hideEvent(evento);
 }
-//-----------------------------------------------------------
+
 void ListaObjetosWidget::atualizarListaObjetos(vector<ObjetoBase *> &objetos, QTableWidget *listaobjetos_tbw)
 {
  int qtd, id_lin, i;
@@ -105,4 +105,4 @@ void ListaObjetosWidget::atualizarListaObjetos(vector<ObjetoBase *> &objetos, QT
   }
  }
 }
-//***********************************************************
+

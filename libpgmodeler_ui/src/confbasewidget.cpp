@@ -1,27 +1,27 @@
 #include "confbasewidget.h"
-//***********************************************************
+
 void ConfBaseWidget::adicionarParamConfiguracao(const QString &param, const map<QString, QString> &atributos)
 {
  //Adiciona um parâmetro somente se o identificador 'param' e os atributos não estejam vazio
  if(!param.isEmpty() && !atributos.empty())
   params_config[param]=atributos;
 }
-//-----------------------------------------------------------
+
 map<QString, map<QString, QString> > ConfBaseWidget::obterParamsConfiguracao(void)
 {
  return(params_config);
 }
-//-----------------------------------------------------------
+
 void ConfBaseWidget::excluirParamConfiguracao(const QString &param)
 {
  params_config.erase(param);
 }
-//-----------------------------------------------------------
+
 void ConfBaseWidget::excluirParamsConfiguracao(void)
 {
  params_config.clear();
 }
-//-----------------------------------------------------------
+
 void ConfBaseWidget::salvarConfiguracao(const QString &id_conf)
 {
  QString buf,
@@ -74,7 +74,7 @@ void ConfBaseWidget::salvarConfiguracao(const QString &id_conf)
                 ERR_PGMODELER_ARQNAOGRAVADODEFINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ConfBaseWidget::restaurarPadroes(const QString &id_conf)
 {
  QString arq_atual, arq_orig;
@@ -105,7 +105,7 @@ void ConfBaseWidget::restaurarPadroes(const QString &id_conf)
   QFile::copy(arq_orig, arq_atual);
  }
 }
-//-----------------------------------------------------------
+
 void ConfBaseWidget::carregarConfiguracao(const QString &id_conf, const vector<QString> &atribs_chave)
 {
  try
@@ -163,7 +163,7 @@ void ConfBaseWidget::carregarConfiguracao(const QString &id_conf, const vector<Q
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ConfBaseWidget::obterParamsConfiguracao(const vector<QString> &atribs_chave)
 {
  map<QString, QString> atrib_aux;
@@ -190,8 +190,8 @@ void ConfBaseWidget::obterParamsConfiguracao(const vector<QString> &atribs_chave
  if(chave.isEmpty())
   chave=ParserXML::obterNomeElemento();
 
- //Atribui os dados obtidos do elemento atual à chave do mapa de parâmetros de configuração
+ //Atribui os dados obtidos do elemento atual   chave do mapa de parâmetros de configuração
  if(!atrib_aux.empty())
   params_config[chave]=atrib_aux;
 }
-//***********************************************************
+

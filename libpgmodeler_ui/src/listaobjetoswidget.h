@@ -25,7 +25,7 @@
 #include "ui_listaobjetoswidget.h"
 #include "objetobasewidget.h"
 #include "objetografico.h"
-//***********************************************************
+
 class ListaObjetosWidget: public ObjetoBaseWidget, public Ui::ListaObjetosWidget {
  Q_OBJECT
 
@@ -42,5 +42,5 @@ class ListaObjetosWidget: public ObjetoBaseWidget, public Ui::ListaObjetosWidget
   ListaObjetosWidget(QWidget * parent = 0);
   void definirAtributos(ModeloBD *modelo, ObjetoBase *objeto, ObjetoBase *objeto_pai=NULL);
 };
-//***********************************************************
+
 #endif

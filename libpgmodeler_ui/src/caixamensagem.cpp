@@ -1,5 +1,5 @@
 #include "caixamensagem.h"
-//***********************************************************
+
 CaixaMensagem::CaixaMensagem(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
  setupUi(this);
@@ -260,4 +260,4 @@ void CaixaMensagem::show(const QString &titulo, const QString &texto, unsigned i
 
  QDialog::exec();
 }
-//***********************************************************
+

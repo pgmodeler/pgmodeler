@@ -1,5 +1,5 @@
 #include "elemclasseoperadores.h"
-//***********************************************************
+
 ElemClasseOperadores::ElemClasseOperadores(void)
 {
  tipo_elemento=ELEM_OPERADOR;
@@ -8,7 +8,7 @@ ElemClasseOperadores::ElemClasseOperadores(void)
  rechecar=false;
  num_estrategia=0;
 }
-//-----------------------------------------------------------
+
 void ElemClasseOperadores::definirFuncao(Funcao *funcao, unsigned num_estrategia)
 {
  //Caso a função não esteja alocada dispara uma exceção
@@ -27,7 +27,7 @@ void ElemClasseOperadores::definirFuncao(Funcao *funcao, unsigned num_estrategia
  this->num_estrategia=num_estrategia;
  tipo_elemento=ELEM_FUNCAO;
 }
-//-----------------------------------------------------------
+
 void ElemClasseOperadores::definirOperador(Operador *operador, unsigned num_estrategia, bool rechecar)
 {
  //Caso o operador não esteja alocada dispara uma exceção
@@ -47,7 +47,7 @@ void ElemClasseOperadores::definirOperador(Operador *operador, unsigned num_estr
  this->rechecar=rechecar;
  tipo_elemento=ELEM_OPERADOR;
 }
-//-----------------------------------------------------------
+
 void ElemClasseOperadores::definirArmazenamento(TipoPgSQL tipo_armaz)
 {
  //Limpa os atributos não pertinentes ao tipo ELEM_ARMAZENAMENTO
@@ -59,37 +59,37 @@ void ElemClasseOperadores::definirArmazenamento(TipoPgSQL tipo_armaz)
  this->tipo_armaz=tipo_armaz;
  tipo_elemento=ELEM_ARMAZENAMENTO;
 }
-//-----------------------------------------------------------
+
 unsigned ElemClasseOperadores::obterTipoElemento(void)
 {
  return(tipo_elemento);
 }
-//-----------------------------------------------------------
+
 Funcao *ElemClasseOperadores::obterFuncao(void)
 {
  return(funcao);
 }
-//-----------------------------------------------------------
+
 Operador *ElemClasseOperadores::obterOperador(void)
 {
  return(operador);
 }
-//-----------------------------------------------------------
+
 TipoPgSQL ElemClasseOperadores::obterTipoArmazenamento(void)
 {
  return(tipo_armaz);
 }
-//-----------------------------------------------------------
+
 bool ElemClasseOperadores::rechecarElemento(void)
 {
  return(rechecar);
 }
-//-----------------------------------------------------------
+
 unsigned ElemClasseOperadores::obterNumEstrategia(void)
 {
  return(num_estrategia);
 }
-//-----------------------------------------------------------
+
 QString ElemClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def)
 {
  map<QString, QString> atributos;
@@ -139,7 +139,7 @@ QString ElemClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def)
 
  return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::ELEMENTO,atributos, tipo_def));
 }
-//-----------------------------------------------------------
+
 bool ElemClasseOperadores::operator == (ElemClasseOperadores &elem)
 {
  return(this->tipo_elemento == elem.tipo_elemento &&
@@ -148,4 +148,4 @@ bool ElemClasseOperadores::operator == (ElemClasseOperadores &elem)
         this->operador == elem.operador &&
         this->num_estrategia == elem.num_estrategia);
 }
-//***********************************************************
+

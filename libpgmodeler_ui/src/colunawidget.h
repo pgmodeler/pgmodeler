@@ -25,7 +25,7 @@
 #include "objetobasewidget.h"
 #include "ui_colunawidget.h"
 #include "tipopgsqlwidget.h"
-//***********************************************************
+
 class ColunaWidget: public ObjetoBaseWidget, public Ui::ColunaWidget {
  Q_OBJECT
 
@@ -46,5 +46,5 @@ class ColunaWidget: public ObjetoBaseWidget, public Ui::ColunaWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

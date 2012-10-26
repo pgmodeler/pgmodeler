@@ -25,7 +25,7 @@
 #include "objetobasewidget.h"
 #include "tipopgsqlwidget.h"
 #include "ui_conversaotipowidget.h"
-//***********************************************************
+
 class ConversaoTipoWidget: public ObjetoBaseWidget, public Ui::ConversaoTipoWidget {
  Q_OBJECT
 
@@ -47,5 +47,5 @@ class ConversaoTipoWidget: public ObjetoBaseWidget, public Ui::ConversaoTipoWidg
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

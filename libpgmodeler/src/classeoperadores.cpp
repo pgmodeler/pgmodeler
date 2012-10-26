@@ -1,5 +1,5 @@
 #include "classeoperadores.h"
-//***********************************************************
+
 ClasseOperadores::ClasseOperadores(void)
 {
  tipo_objeto=OBJETO_CLASSE_OPER;
@@ -11,12 +11,12 @@ ClasseOperadores::ClasseOperadores(void)
  atributos[AtributosParsers::TIPO]="";
  atributos[AtributosParsers::PADRAO]="";
 }
-//-----------------------------------------------------------
+
 ClasseOperadores::~ClasseOperadores(void)
 {
  elementos.clear();
 }
-//-----------------------------------------------------------
+
 void ClasseOperadores::definirTipoDado(TipoPgSQL tipo_dado)
 {
  /* Caso se tente atribuir um tipo de dado nulo ao objeto,
@@ -26,22 +26,22 @@ void ClasseOperadores::definirTipoDado(TipoPgSQL tipo_dado)
 
  this->tipo_dado=tipo_dado;
 }
-//-----------------------------------------------------------
+
 void ClasseOperadores::definirFamilia(FamiliaOperadores *familia)
 {
  this->familia=familia;
 }
-//-----------------------------------------------------------
+
 void ClasseOperadores::definirTipoIndexacao(TipoIndexacao tipo_index)
 {
  this->tipo_index=tipo_index;
 }
-//-----------------------------------------------------------
+
 void ClasseOperadores::definirPadrao(bool valor)
 {
  padrao=valor;
 }
-//-----------------------------------------------------------
+
 void ClasseOperadores::definirAtributoElementos(unsigned tipo_def)
 {
  QString str_elems;
@@ -59,7 +59,7 @@ void ClasseOperadores::definirAtributoElementos(unsigned tipo_def)
 
  atributos[AtributosParsers::ELEMENTOS]=str_elems;
 }
-//-----------------------------------------------------------
+
 void ClasseOperadores::adicionarElementoClasse(ElemClasseOperadores elemento)
 {
  //Verifica se um elemento igual já não existe na lista de elementos
@@ -68,7 +68,7 @@ void ClasseOperadores::adicionarElementoClasse(ElemClasseOperadores elemento)
 
  elementos.push_back(elemento);
 }
-//-----------------------------------------------------------
+
 void ClasseOperadores::removerElementoClasse(unsigned idx_elem)
 {
  /* Caso o índice do elemento a se remover seja superior ao tamanho da lista
@@ -79,12 +79,12 @@ void ClasseOperadores::removerElementoClasse(unsigned idx_elem)
  //Remove o item da lista referente ao elemento
  elementos.erase(elementos.begin() + idx_elem);
 }
-//-----------------------------------------------------------
+
 void ClasseOperadores::removerElementosClasse(void)
 {
  elementos.clear();
 }
-//-----------------------------------------------------------
+
 ElemClasseOperadores ClasseOperadores::obterElementoClasse(unsigned idx_elem)
 {
  /* Caso o índice do elemento a obtido seja superior ao tamanho da lista
@@ -95,7 +95,7 @@ ElemClasseOperadores ClasseOperadores::obterElementoClasse(unsigned idx_elem)
  //Retorna o elemento no índice especificado
  return(elementos[idx_elem]);
 }
-//-----------------------------------------------------------
+
 bool ClasseOperadores::elementoExiste(ElemClasseOperadores elemento)
 {
  bool existe=false;
@@ -115,37 +115,37 @@ bool ClasseOperadores::elementoExiste(ElemClasseOperadores elemento)
 
  return(existe);
 }
-//-----------------------------------------------------------
+
 unsigned ClasseOperadores::obterNumElemClasseOperadores(void)
 {
  return(elementos.size());
 }
-//-----------------------------------------------------------
+
 TipoPgSQL ClasseOperadores::obterTipoDado(void)
 {
  return(tipo_dado);
 }
-//-----------------------------------------------------------
+
 FamiliaOperadores *ClasseOperadores::obterFamilia(void)
 {
  return(familia);
 }
-//-----------------------------------------------------------
+
 TipoIndexacao ClasseOperadores::obterTipoIndexacao(void)
 {
  return(tipo_index);
 }
-//-----------------------------------------------------------
+
 bool ClasseOperadores::classePadrao(void)
 {
  return(padrao);
 }
-//-----------------------------------------------------------
+
 QString ClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def)
 {
  return(this->obterDefinicaoObjeto(tipo_def, false));
 }
-//-----------------------------------------------------------
+
 QString ClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  definirAtributoElementos(tipo_def);
@@ -164,4 +164,4 @@ QString ClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def, bool forma_red
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }
-//***********************************************************
+

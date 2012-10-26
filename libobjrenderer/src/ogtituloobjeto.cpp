@@ -1,5 +1,5 @@
 #include "ogtituloobjeto.h"
-//***********************************************************
+
 OGTituloObjeto::OGTituloObjeto(void) : ObjetoGrafico(NULL)
 {
  esquema=new QGraphicsSimpleTextItem;
@@ -15,7 +15,7 @@ OGTituloObjeto::OGTituloObjeto(void) : ObjetoGrafico(NULL)
  this->addToGroup(esquema);
  this->addToGroup(nome);
 }
-//-----------------------------------------------------------
+
 OGTituloObjeto::~OGTituloObjeto(void)
 {
  this->removeFromGroup(esquema);
@@ -25,7 +25,7 @@ OGTituloObjeto::~OGTituloObjeto(void)
  delete(nome);
  delete(caixa);
 }
-//-----------------------------------------------------------
+
 void OGTituloObjeto::configurarObjeto(ObjetoGraficoBase *objeto)
 {
  QTextCharFormat fmt;
@@ -79,7 +79,7 @@ void OGTituloObjeto::configurarObjeto(ObjetoGraficoBase *objeto)
  this->redimensionarTitulo(nome->boundingRect().width() + esquema->boundingRect().width() + (2 * ESP_HORIZONTAL),
                            esquema->boundingRect().height() + (2 * ESP_VERTICAL));
 }
-//-----------------------------------------------------------
+
 void OGTituloObjeto::redimensionarTitulo(float larg, float alt)
 {
  QPolygonF pol;
@@ -106,4 +106,4 @@ void OGTituloObjeto::redimensionarTitulo(float larg, float alt)
  this->bounding_rect.setTopLeft(this->pos());
  this->bounding_rect.setSize(QSizeF(caixa->boundingRect().width(), caixa->boundingRect().height()));
 }
-//***********************************************************
+

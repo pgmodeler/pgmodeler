@@ -28,7 +28,7 @@
 #include "tabelabase.h"
 #include "ogtituloobjeto.h"
 #include "ogsubitemobjeto.h"
-//***********************************************************
+
 class OGTabelaBase: public ObjetoGrafico {
  private:
   Q_OBJECT
@@ -53,5 +53,5 @@ class OGTabelaBase: public ObjetoGrafico {
      atualiza a linha do relacionamento quando a tabela é movida */
   void s_objetoMovido(void);
 };
-//***********************************************************
+
 #endif

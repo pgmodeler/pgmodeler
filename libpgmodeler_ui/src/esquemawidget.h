@@ -23,7 +23,7 @@
 #define ESQUEMA_WIDGET_H
 
 #include "objetobasewidget.h"
-//***********************************************************
+
 class EsquemaWidget: public ObjetoBaseWidget {
  Q_OBJECT
 
@@ -38,5 +38,5 @@ class EsquemaWidget: public ObjetoBaseWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

@@ -30,7 +30,7 @@
 #include "atributosglobais.h"
 #include "atributosparsers.h"
 #include <algorithm>
-//***********************************************************
+
 class DestaqueSintaxe: public QSyntaxHighlighter {
  Q_OBJECT
  private:
@@ -177,7 +177,7 @@ class DestaqueSintaxe: public QSyntaxHighlighter {
      um carregamento prévio das configurações */
   void limparConfiguracao(void);
 };
-//***********************************************************
+
 #endif
 
 

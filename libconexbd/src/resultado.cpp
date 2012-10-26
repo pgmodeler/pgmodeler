@@ -1,5 +1,5 @@
 #include "resultado.h"
-//***********************************************************
+
 Resultado::Resultado(void)
 {
  resultado_sql=NULL;
@@ -7,7 +7,7 @@ Resultado::Resultado(void)
  res_copiado=false;
  tupla_atual=-1;
 }
-//-----------------------------------------------------------
+
 Resultado::Resultado(PGresult *resultado_sql)
 {
  QString str_aux;
@@ -51,12 +51,12 @@ Resultado::Resultado(PGresult *resultado_sql)
   break;
  }
 }
-//-----------------------------------------------------------
+
 Resultado::~Resultado(void)
 {
  destruirResultado();
 }
-//-----------------------------------------------------------
+
 void Resultado::destruirResultado(void)
 {
  /* Destrói o result-set do objeto caso este não foi copiado
@@ -70,7 +70,7 @@ void Resultado::destruirResultado(void)
  res_copiado=false;
  tupla_atual=-1;
 }
-//-----------------------------------------------------------
+
 QString Resultado::obterNomeColuna(int idx_coluna)
 {
  //Dispara um erro caso o índice da coluna seja inválido
@@ -80,7 +80,7 @@ QString Resultado::obterNomeColuna(int idx_coluna)
  //Retorna o nome da coluna com índice especificado
  return(QString(PQfname(resultado_sql, idx_coluna)));
 }
-//-----------------------------------------------------------
+
 int Resultado::obterIndiceColuna(const QString &nome_coluna)
 {
  int idx_coluna=-1;
@@ -95,7 +95,7 @@ int Resultado::obterIndiceColuna(const QString &nome_coluna)
 
  return(idx_coluna);
 }
-//-----------------------------------------------------------
+
 char *Resultado::obterValorColuna(const QString &nome_coluna)
 {
  int idx_coluna=-1;
@@ -120,7 +120,7 @@ char *Resultado::obterValorColuna(const QString &nome_coluna)
  //Retorna o valor da coluna (idx_coluna) na linha atual (tupla_atual)
  return(PQgetvalue(resultado_sql, tupla_atual, idx_coluna));
 }
-//-----------------------------------------------------------
+
 char *Resultado::obterValorColuna(int idx_coluna)
 {
  //Dispara um erro caso o índice da coluna seja inválido
@@ -135,7 +135,7 @@ char *Resultado::obterValorColuna(int idx_coluna)
  //Retorna o valor da coluna (idx_coluna) na linha atual (tupla_atual)
  return(PQgetvalue(resultado_sql, tupla_atual, idx_coluna));
 }
-//-----------------------------------------------------------
+
 int Resultado::obterTamanhoColuna(const QString &nome_coluna)
 {
  int idx_coluna=-1;
@@ -154,7 +154,7 @@ int Resultado::obterTamanhoColuna(const QString &nome_coluna)
  //Retorna o comprimento do valor da coluna (idx_coluna) na linha atual (tupla_atual)
  return(PQgetlength(resultado_sql, tupla_atual, idx_coluna));
 }
-//-----------------------------------------------------------
+
 int Resultado::obterTamanhoColuna(int idx_coluna)
 {
  //Dispara um erro caso o índice da coluna seja inválido
@@ -164,7 +164,7 @@ int Resultado::obterTamanhoColuna(int idx_coluna)
  //Retorna o comprimento do valor da coluna (idx_coluna) na linha atual (tupla_atual)
  return(PQgetlength(resultado_sql, tupla_atual, idx_coluna));
 }
-//-----------------------------------------------------------
+
 int Resultado::obterNumTuplas(void)
 {
  //Caso o resultado possua tuplas
@@ -176,17 +176,17 @@ int Resultado::obterNumTuplas(void)
      seja comandos do tipo INSERT, DELETE, UPDATE) */
   return(atoi(PQcmdTuples(resultado_sql)));
 }
-//-----------------------------------------------------------
+
 int Resultado::obterNumColunas(void)
 {
  return(PQnfields(resultado_sql));
 }
-//-----------------------------------------------------------
+
 int Resultado::obterTuplaAtual(void)
 {
  return(tupla_atual);
 }
-//-----------------------------------------------------------
+
 bool Resultado::colunaFormatoBinario(const QString &nome_coluna)
 {
  int idx_coluna=-1;
@@ -207,7 +207,7 @@ bool Resultado::colunaFormatoBinario(const QString &nome_coluna)
     são de uso reservado */
  return(PQfformat(resultado_sql, idx_coluna)==1);
 }
-//-----------------------------------------------------------
+
 bool Resultado::colunaFormatoBinario(int idx_coluna)
 {
  //Dispara um erro caso o índice da coluna seja inválido
@@ -220,7 +220,7 @@ bool Resultado::colunaFormatoBinario(int idx_coluna)
     são de uso reservado */
  return(PQfformat(resultado_sql, idx_coluna)==1);
 }
-//-----------------------------------------------------------
+
 bool Resultado::acessarTupla(unsigned tipo_tupla)
 {
  int num_tuplas=obterNumTuplas();
@@ -256,7 +256,7 @@ bool Resultado::acessarTupla(unsigned tipo_tupla)
 
  return(acessado);
 }
-//-----------------------------------------------------------
+
 void Resultado::operator = (Resultado &res)
 {
  /* Marca que o resultado do parâmetro foi copiado, evitando
@@ -273,4 +273,4 @@ void Resultado::operator = (Resultado &res)
  this->resultado_sql=res.resultado_sql;
  this->res_copiado=false;
 }
-//***********************************************************
+

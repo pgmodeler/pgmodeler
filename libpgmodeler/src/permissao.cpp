@@ -1,5 +1,5 @@
 #include "permissao.h"
-//***********************************************************
+
 Permissao::Permissao(ObjetoBase *objeto)
 {
  TipoObjetoBase tipo_obj;
@@ -9,7 +9,7 @@ Permissao::Permissao(ObjetoBase *objeto)
  for(id_priv=PRIV_SELECT; id_priv<=PRIV_USAGE; id_priv++)
   privilegios[id_priv]=op_concessao[id_priv]=false;
 
- //Caso o usuário tente atribuir um objeto não alocado à permissão
+ //Caso o usuário tente atribuir um objeto não alocd �  permissão
  if(!objeto)
   throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -24,7 +24,7 @@ Permissao::Permissao(ObjetoBase *objeto)
     tipo_obj!=OBJETO_ESPACO_TABELA)
   throw Excecao(ERR_PGMODELER_ATROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Atribui o objeto à permissão
+ //Atribui o objeto   permissão
  this->objeto=objeto;
  this->tipo_objeto=OBJETO_PERMISSAO;
 
@@ -36,13 +36,13 @@ Permissao::Permissao(ObjetoBase *objeto)
  atributos[AtributosParsers::PRIVILEGIOS]="";
  atributos[AtributosParsers::PRIVILEGIOS_GOP]="";
 }
-//-----------------------------------------------------------
+
 bool Permissao::papelReferenciado(Papel *papel)
 {
  vector<Papel *>::iterator itr, itr_end;
  bool enc=false;
 
- //Verifica a existencia do papel na lista de papeis já relacionados à permissão
+ //Verifica a existencia do papel na lista de papeis já relacionado�  permissão
  itr=papeis.begin();
  itr_end=papeis.end();
 
@@ -54,7 +54,7 @@ bool Permissao::papelReferenciado(Papel *papel)
 
  return(enc);
 }
-//-----------------------------------------------------------
+
 void Permissao::adicionarPapel(Papel *papel)
 {
  //Caso o usuário tente atribuir um papel não alocado um erro será disparado
@@ -65,11 +65,11 @@ void Permissao::adicionarPapel(Papel *papel)
  if(papelReferenciado(papel))
    throw Excecao(ERR_PGMODELER_INSPAPELDUPLICPERM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Adiciona o papel à lista de papeis da permissão
+ //Adiciona o papel   lista de papeis da permissão
  papeis.push_back(papel);
  gerarIdPermissao();
 }
-//-----------------------------------------------------------
+
 void Permissao::definirPrivilegio(unsigned privilegio, bool valor, bool op_concessao)
 {
  TipoObjetoBase tipo_obj;
@@ -129,7 +129,7 @@ void Permissao::definirPrivilegio(unsigned privilegio, bool valor, bool op_conce
  privilegios[privilegio]=valor;
  this->op_concessao[privilegio]=op_concessao;
 }
-//-----------------------------------------------------------
+
 void Permissao::removerPapel(unsigned idx_papel)
 {
  if(idx_papel > papeis.size())
@@ -137,13 +137,13 @@ void Permissao::removerPapel(unsigned idx_papel)
 
  gerarIdPermissao();
 }
-//-----------------------------------------------------------
+
 void Permissao::removerPapeis(void)
 {
  papeis.clear();
  gerarIdPermissao();
 }
-//-----------------------------------------------------------
+
 Papel *Permissao::obterPapel(unsigned idx_papel)
 {
  if(idx_papel > papeis.size())
@@ -151,17 +151,17 @@ Papel *Permissao::obterPapel(unsigned idx_papel)
 
  return(papeis[idx_papel]);
 }
-//-----------------------------------------------------------
+
 unsigned Permissao::obterNumPapeis(void)
 {
  return(papeis.size());
 }
-//-----------------------------------------------------------
+
 ObjetoBase *Permissao::obterObjeto(void)
 {
  return(objeto);
 }
-//-----------------------------------------------------------
+
 bool Permissao::obterPrivilegio(unsigned privilegio)
 {
  //Caso o tipo de privilégio sejá inválido dispara uma exceção
@@ -170,7 +170,7 @@ bool Permissao::obterPrivilegio(unsigned privilegio)
 
  return(privilegios[privilegio]);
 }
-//-----------------------------------------------------------
+
 bool Permissao::obterOpConcessao(unsigned privilegio)
 {
  //Caso o tipo de privilégio sejá inválido dispara uma exceção
@@ -179,7 +179,7 @@ bool Permissao::obterOpConcessao(unsigned privilegio)
 
  return(op_concessao[privilegio]);
 }
-//-----------------------------------------------------------
+
 QString Permissao::obterStringPrivilegios(void)
 {
  unsigned char cod_privilegios[13]="rawdDxtCcTXU";
@@ -218,7 +218,7 @@ QString Permissao::obterStringPrivilegios(void)
 
  return(str_priv);
 }
-//-----------------------------------------------------------
+
 void Permissao::gerarIdPermissao(void)
 {
  vector<Papel *>::iterator itr, itr_end;
@@ -229,7 +229,7 @@ void Permissao::gerarIdPermissao(void)
  unsigned i, qtd;
  QTextStream stream(&endereco);
 
- //Caso haja algum papel associado à permissão
+ //Caso haja algum papel associado   permissão
  if(papeis.size() > 0)
  {
   itr=papeis.begin();
@@ -277,7 +277,7 @@ void Permissao::gerarIdPermissao(void)
             .arg(objeto->obterIdObjeto())
             .arg(str_aux);
 }
-//-----------------------------------------------------------
+
 QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
 {
  unsigned i, qtd;
@@ -346,4 +346,4 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//***********************************************************
+

@@ -25,7 +25,7 @@
 #include "visao.h"
 #include "tabela.h"
 #include "objetografico.h"
-//***********************************************************
+
 class OGTituloObjeto: public ObjetoGrafico
 {
  private:
@@ -45,5 +45,5 @@ class OGTituloObjeto: public ObjetoGrafico
   void configurarObjeto(ObjetoGraficoBase *objeto);
   void redimensionarTitulo(float larg, float alt);
 };
-//***********************************************************
+
 #endif

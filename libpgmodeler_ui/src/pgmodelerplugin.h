@@ -23,7 +23,7 @@
 #define PGMODELER_PLUGIN_H
 
 #include "modelowidget.h"
-//***********************************************************
+
 /* Os plugins no pgModeler deve estar dentro da pasta "plugins"
    em um diretório próprio (recomenda-se usar o mesmo nome do plugin)
    e deve possuir a seguinte estrutura básica:
@@ -52,5 +52,5 @@ class PgModelerPlugin {
    implementação de plugins. Todo plugin deve herdar esta classe e usar a
    diretiva Q_INTERFACE em sua construção */
 Q_DECLARE_INTERFACE(PgModelerPlugin,"pgmodelerplugin")
-//***********************************************************
+
 #endif

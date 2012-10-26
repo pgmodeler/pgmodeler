@@ -24,7 +24,7 @@
 #include <QtGui>
 #include "atributosglobais.h"
 #include "ui_formrestauracaomodelo.h"
-//***********************************************************
+
 class FormRestauracaoModelo: public QDialog, public Ui::FormRestauracaoModelos {
  private:
   Q_OBJECT
@@ -48,5 +48,5 @@ class FormRestauracaoModelo: public QDialog, public Ui::FormRestauracaoModelos {
  private slots:
   void habilitarRestauracao(void);
 };
-//***********************************************************
+
 #endif

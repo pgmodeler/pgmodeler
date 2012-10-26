@@ -26,7 +26,7 @@
 #include "ogrelacionamento.h"
 #include "ogvisao.h"
 #include "ogtabela.h"
-//***********************************************************
+
 class CenaObjetos: public QGraphicsScene {
  private:
   Q_OBJECT
@@ -135,5 +135,5 @@ class CenaObjetos: public QGraphicsScene {
 
   friend class ModeloWidget;
 };
-//***********************************************************
+
 #endif

@@ -32,7 +32,7 @@
 #include <QStringList>
 
 using namespace AtributosParsers;
-//***********************************************************
+
 enum TipoObjetoBase {
   OBJETO_COLUNA,                                    /* Comentário */
   OBJETO_RESTRICAO,                                 /* Comentário */
@@ -241,5 +241,5 @@ class ObjetoBase {
 
   friend class ModeloBD;
 };
-//***********************************************************
+
 #endif

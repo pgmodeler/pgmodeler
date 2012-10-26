@@ -1,5 +1,5 @@
 #include "regrawidget.h"
-//***********************************************************
+
 RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_REGRA)
 {
  try
@@ -125,7 +125,7 @@ void RegraWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<Regra>();
 
-  //Obtém a referência à regra que está sendo criada/editada
+  //Obtém a referêni �  regra que está sendo criada/editada
   regra=dynamic_cast<Regra *>(this->objeto);
 
   //Configura a regra com base nos atributos preenchidos no formulário
@@ -155,4 +155,4 @@ void RegraWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

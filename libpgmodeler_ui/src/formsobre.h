@@ -24,7 +24,7 @@
 #include <QWidget>
 #include "ui_formsobre.h"
 #include "atributosglobais.h"
-//***********************************************************
+
 class FormSobre: public QWidget, public Ui::FormSobre {
  Q_OBJECT
 
@@ -36,5 +36,5 @@ class FormSobre: public QWidget, public Ui::FormSobre {
 
  private slots:
 };
-//***********************************************************
+
 #endif

@@ -28,9 +28,9 @@
 #include <QApplication>
 #include <QMessageBox>
 #include "caixamensagem.h"
-//***********************************************************
+
 extern CaixaMensagem *caixa_msg;
-//-----------------------------------------------------------
+
 class Aplicacao: public QApplication {
  private:
  public:
@@ -62,5 +62,5 @@ class Aplicacao: public QApplication {
    }
   }
 };
-//***********************************************************
+
 #endif

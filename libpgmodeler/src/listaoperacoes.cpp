@@ -1,5 +1,5 @@
 #include "listaoperacoes.h"
-//***********************************************************
+
 template <class Classe>
 void copiarObjeto(ObjetoBase **pobj_orig, Classe *obj_copia)
 {
@@ -23,7 +23,7 @@ void copiarObjeto(ObjetoBase **pobj_orig, Classe *obj_copia)
  //Efetua a cópia entre os objetos
  (*obj_orig)=(*obj_copia);
 }
-//-----------------------------------------------------------
+
 void copiarObjeto(ObjetoBase **pobj_orig, ObjetoBase *obj_copia, TipoObjetoBase tipo)
 {
  switch(tipo)
@@ -115,9 +115,9 @@ void copiarObjeto(ObjetoBase **pobj_orig, ObjetoBase *obj_copia, TipoObjetoBase 
   break;
  }
 }
-//***********************************************************
+
 unsigned ListaOperacoes::tam_maximo=500;
-//***********************************************************
+
 ListaOperacoes::ListaOperacoes(ModeloBD *modelo)
 {
  //Dispara uma exceção caso o modelo passado não esteja alocado
@@ -129,27 +129,27 @@ ListaOperacoes::ListaOperacoes(ModeloBD *modelo)
  enc_prox_oper=Operacao::SEM_ENCADEAMENTO;
  anular_enc=false;
 }
-//-----------------------------------------------------------
+
 ListaOperacoes::~ListaOperacoes(void)
 {
  removerOperacoes();
 }
-//-----------------------------------------------------------
+
 unsigned ListaOperacoes::obterTamanhoAtual(void)
 {
  return(operacoes.size());
 }
-//-----------------------------------------------------------
+
 unsigned ListaOperacoes::obterTamanhoMaximo(void)
 {
  return(tam_maximo);
 }
-//-----------------------------------------------------------
+
 int ListaOperacoes::obterIndiceAtual(void)
 {
  return(idx_atual);
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::iniciarEncadeamentoOperacoes(void)
 {
  /* Caso o encadeamento esteja iniciado e o usuário tente inicializa-lo
@@ -161,7 +161,7 @@ void ListaOperacoes::iniciarEncadeamentoOperacoes(void)
     primeira operação do encadeamento */
  enc_prox_oper=Operacao::ENC_INICIO;
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::finalizarEncadeamentoOperacoes(void)
 {
  /* Caso o encadeamento não esteja anulado,
@@ -193,18 +193,18 @@ void ListaOperacoes::finalizarEncadeamentoOperacoes(void)
    operacoes[idx]->tipo_enc=Operacao::SEM_ENCADEAMENTO;
  }
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::anularEncadeamentoOperacoes(bool valor)
 {
  anular_enc=valor;
 }
-//-----------------------------------------------------------
+
 bool ListaOperacoes::encadeamentoIniciado(void)
 {
  return(enc_prox_oper==Operacao::ENC_INICIO ||
         enc_prox_oper==Operacao::ENC_MEIO);
 }
-//-----------------------------------------------------------
+
 bool ListaOperacoes::refazerHabilitado(void)
 {
  /* Para que a operação de refazer possa ser executada
@@ -212,14 +212,14 @@ bool ListaOperacoes::refazerHabilitado(void)
     no penultimo elemento e a lista não pode estar vazia */
  return(!operacoes.empty() && idx_atual < static_cast<int>(operacoes.size()));
 }
-//-----------------------------------------------------------
+
 bool ListaOperacoes::desfazerHabilitado(void)
 {
  /* Para que a operação de desfazer possa ser executada é
     suficiente que a lista de operações não esteja vazia */
  return(!operacoes.empty() && idx_atual > 0);
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::definirTamanhoMaximo(unsigned tam_max)
 {
  /* A lista de operações não pode ter valor 0 em seu tamanho máximo,
@@ -230,7 +230,7 @@ void ListaOperacoes::definirTamanhoMaximo(unsigned tam_max)
  //Define o tamanho máximo da lista
  tam_maximo=tam_max;
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::adicionarObjetoPool(ObjetoBase *objeto, unsigned tipo_op)
 {
  TipoObjetoBase tipo_obj;
@@ -271,7 +271,7 @@ void ListaOperacoes::adicionarObjetoPool(ObjetoBase *objeto, unsigned tipo_op)
   //Insere o próprio objeto no pool
   pool_objetos.push_back(objeto);
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::removerOperacoes(void)
 {
  ObjetoBase *objeto=NULL;
@@ -309,7 +309,7 @@ void ListaOperacoes::removerOperacoes(void)
 
  idx_atual=0;
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::validarOperacoes(void)
 {
  vector<Operacao *>::iterator itr, itr_end;
@@ -333,7 +333,7 @@ void ListaOperacoes::validarOperacoes(void)
   else itr++;
  }
 }
-//-----------------------------------------------------------
+
 bool ListaOperacoes::objetoNoPool(ObjetoBase *objeto)
 {
  bool enc=false;
@@ -352,7 +352,7 @@ bool ListaOperacoes::objetoNoPool(ObjetoBase *objeto)
 
  return(enc);
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::removerObjetoPool(unsigned idx_obj)
 {
  ObjetoBase *objeto=NULL;
@@ -375,7 +375,7 @@ void ListaOperacoes::removerObjetoPool(unsigned idx_obj)
     ou passar a ser referenciado quando uma operação da lista for executada. */
   objs_nao_excluidos.push_back(objeto);
 }
-//-----------------------------------------------------------
+
 
 void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int idx_objeto,  ObjetoBase *objeto_pai)
 {
@@ -414,7 +414,7 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
   /* Caso se esteja adicionando uma operação e o índice atual não esteja apontando
      para o final da lista (operação de refazer disponível / usuário executou operações
      de desfazer), todos do índice atual até o fim da lista de operaçãoes serão excluídos
-     bem como os objetos no pool que estavam ligados às operações excluídas */
+     bem como os objetos no pool que estavam ligados   s operações excluídas */
 
   if(idx_atual>=0 && static_cast<unsigned>(idx_atual)!=operacoes.size())
   {
@@ -424,7 +424,7 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
    i=operacoes.size()-1;
 
    /* Remove as operações enquanto o indice da operação a ser removida (i)
-      não seja de uma operação anterior à operação atual */
+      não seja de uma operação anterior a  operação atual */
    while(i >= idx_atual)
    {
     //Remove a operação pelo seu indice
@@ -450,7 +450,7 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
   //Adiciona o objeto no pool
   adicionarObjetoPool(objeto, tipo_op);
 
-  //Atribui à operação o objeto inserido no pool
+  //Atribui    operação o objeto inserido no pool
   operacao->obj_pool=pool_objetos.back();
 
   /* Caso o tipo de encadeamento atual da operação seja de início de
@@ -549,7 +549,7 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::obterDadosOperacao(unsigned idx_oper, unsigned &tipo_oper, QString &nome_obj, TipoObjetoBase &tipo_obj)
 {
  Operacao *operacao=NULL;
@@ -574,7 +574,7 @@ void ListaOperacoes::obterDadosOperacao(unsigned idx_oper, unsigned &tipo_oper, 
   nome_obj=operacao->obj_pai->obterNome(true) + "." + nome_obj;
  }
 }
-//-----------------------------------------------------------
+
 unsigned ListaOperacoes::obterTamanhoEncadeamento(void)
 {
  int i=idx_atual-1;
@@ -613,7 +613,7 @@ unsigned ListaOperacoes::obterTamanhoEncadeamento(void)
 
  return(tam);
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::desfazerOperacao(void)
 {
  if(desfazerHabilitado())
@@ -679,7 +679,7 @@ void ListaOperacoes::desfazerOperacao(void)
    throw Excecao(erro.obterMensagemErro(), erro.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::refazerOperacao(void)
 {
  if(refazerHabilitado())
@@ -743,7 +743,7 @@ void ListaOperacoes::refazerOperacao(void)
    throw Excecao(erro.obterMensagemErro(), erro.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
 {
   if(oper)
@@ -904,7 +904,7 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
    }
   }
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::removerUltimaOperacao(void)
 {
  if(!operacoes.empty())
@@ -921,7 +921,7 @@ void ListaOperacoes::removerUltimaOperacao(void)
   {
    //Obtém a operação armazenada no iterador para sua devida remoção
    oper=(*itr);
-   //Remove o objeto relacionado à operação e que se encontrar no pool
+   //Remove o objeto relacionado    operação e que se encontrar no pool
    removerObjetoPool(idx_obj);
    /* Condição de parada de remoção da operação:
       1) A operação não é encadeada com outras, ou
@@ -935,7 +935,7 @@ void ListaOperacoes::removerUltimaOperacao(void)
          (oper->tipo_enc==Operacao::SEM_ENCADEAMENTO ||
           oper->tipo_enc==Operacao::ENC_INICIO)));
 
-   //Passa para a operação anterior à atual
+   //Passa para a operação anterior    atual
    itr++; idx_obj--;
   }
 
@@ -957,7 +957,7 @@ void ListaOperacoes::removerUltimaOperacao(void)
    idx_atual=operacoes.size();
  }
 }
-//-----------------------------------------------------------
+
 void ListaOperacoes::atualizarIndiceObjeto(ObjetoBase *objeto, unsigned idx_novo)
 {
  vector<Operacao *>::iterator itr, itr_end;
@@ -977,4 +977,4 @@ void ListaOperacoes::atualizarIndiceObjeto(ObjetoBase *objeto, unsigned idx_novo
   itr++;
  }
 }
-//***********************************************************
+

@@ -27,7 +27,7 @@
 
 #include "ui_tabelaobjetoswidget.h"
 #include "objetobasewidget.h"
-//***********************************************************
+
 class TabelaObjetosWidget: public QWidget, public Ui::TabelaObjetosWidget {
  Q_OBJECT
 
@@ -183,5 +183,5 @@ class TabelaObjetosWidget: public QWidget, public Ui::TabelaObjetosWidget {
       O índice da coluna adicionada é enviado com o sinal. */
    void s_colunaAdicionada(int);
 };
-//***********************************************************
+
 #endif

@@ -1,5 +1,5 @@
 #include "ogrelacionamento.h"
-//***********************************************************
+
 OGRelacionamento::OGRelacionamento(RelacionamentoBase *relacao) : ObjetoGrafico(relacao)
 {
  //Dispara uma exceção caso tente criar um relacionamento a partir de um objeto não alocado
@@ -38,7 +38,7 @@ OGRelacionamento::OGRelacionamento(RelacionamentoBase *relacao) : ObjetoGrafico(
  this->setZValue(-1);
  this->configurarObjeto();
 }
-//-----------------------------------------------------------
+
 OGRelacionamento::~OGRelacionamento(void)
 {
  QGraphicsItem *item=NULL;
@@ -75,12 +75,12 @@ OGRelacionamento::~OGRelacionamento(void)
  this->removeFromGroup(descritor);
  delete(descritor);
 }
-//-----------------------------------------------------------
+
 RelacionamentoBase *OGRelacionamento::obterObjetoOrigem(void)
 {
  return(dynamic_cast<RelacionamentoBase *>(this->ObjetoGrafico::obterObjetoOrigem()));
 }
-//-----------------------------------------------------------
+
 OGCaixaTexto *OGRelacionamento::obterRotulo(unsigned idx_rot)
 {
  if(idx_rot > RelacionamentoBase::ROTULO_NOME_RELAC)
@@ -88,7 +88,7 @@ OGCaixaTexto *OGRelacionamento::obterRotulo(unsigned idx_rot)
  else
   return(rotulos[idx_rot]);
 }
-//-----------------------------------------------------------
+
 QVariant OGRelacionamento::itemChange(GraphicsItemChange change, const QVariant &value)
 {
  //Caso seja uma mudança na posição
@@ -158,7 +158,7 @@ QVariant OGRelacionamento::itemChange(GraphicsItemChange change, const QVariant 
 
  return(value);
 }
-//-----------------------------------------------------------
+
 void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
 {
  /* O relacionamento em sim não pode ser movimentado pelo usuário, porém pode ser selecionado.
@@ -300,7 +300,7 @@ void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
   }
  }
 }
-//-----------------------------------------------------------
+
 void OGRelacionamento::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
 {
  //Caso o relacionamento esteja selecionado e não esteja protegido
@@ -323,7 +323,7 @@ void OGRelacionamento::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
 
  ObjetoGrafico::mouseMoveEvent(evento);
 }
-//-----------------------------------------------------------
+
 void OGRelacionamento::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
 {
  RelacionamentoBase *rel_base=this->obterObjetoOrigem();
@@ -345,13 +345,13 @@ void OGRelacionamento::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
 
  ObjetoGrafico::mouseReleaseEvent(evento);
 }
-//-----------------------------------------------------------
+
 void OGRelacionamento::desconectarTabelas(void)
 {
  for(unsigned i=0; i < 2; i++)
   disconnect(tabelas[i], NULL, this, NULL);
 }
-//-----------------------------------------------------------
+
 void OGRelacionamento::configurarObjeto(void)
 {
  RelacionamentoBase *rel_base=this->obterObjetoOrigem();
@@ -371,7 +371,7 @@ void OGRelacionamento::configurarObjeto(void)
 
  connect(rel_base, SIGNAL(s_objetoModificado()), this, SLOT(configurarLinha(void)));
 }
-//-----------------------------------------------------------
+
 void OGRelacionamento::configurarInfoPosicao(void)
 {
  if(this->isSelected())
@@ -383,7 +383,7 @@ void OGRelacionamento::configurarInfoPosicao(void)
                        descritor->pos().y() - pol_info_pos->boundingRect().height());
  }
 }
-//-----------------------------------------------------------
+
 void OGRelacionamento::configurarLinha(void)
 {
  if(!configurando_linha)
@@ -613,7 +613,7 @@ void OGRelacionamento::configurarLinha(void)
   descritor->setToolTip(QString::fromUtf8(rel_base->obterNome(true)));
  }
 }
-//-----------------------------------------------------------
+
 void OGRelacionamento::configurarDescritor(void)
 {
  QLineF lin;
@@ -709,7 +709,7 @@ void OGRelacionamento::configurarDescritor(void)
  this->configurarAtributos();
  this->configurarInfoPosicao();
 }
-//-----------------------------------------------------------
+
 void OGRelacionamento::configurarAtributos(void)
 {
  Relacionamento *relacao=dynamic_cast<Relacionamento *>(this->obterObjetoOrigem());
@@ -836,7 +836,7 @@ void OGRelacionamento::configurarAtributos(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 void OGRelacionamento::configurarRotulos(void)
 {
  float x=0,y=0;
@@ -928,22 +928,22 @@ void OGRelacionamento::configurarRotulos(void)
   for(idx=0; idx < 2; idx++)
   {
    /* Caso não haja distância configurada para o rótulo em questão,
-      ele será posicionado automaticamente em relação à linha fixa
+      ele será posicionado automaticamente em relação à  linha fixa
       respectiva. Os rótulos de cardinalidade por padrão são posicionados
-      de forma a ficarem rente às linhas fixas. O exemplos mostra os casos
+      de forma a ficarem rente à s linhas fixas. O exemplos mostra os casos
       possíveis:
 
       1) Linha horizontal:
          ----------                              ----------
          | Tabela |-[rotulo]-----<>-----[rotulo]-| Tabela |
          ----------                              ----------
-         >> Os rótulos de cadinalidade são posicionados à frente (ou atrás)
-            da tabela e centralizados verticalmente em relação às linhas fixas.
+         >> Os rótulos de cadinalidade são posicionados à  frente (ou atrás)
+            da tabela e centralizados verticalmente em relação à s linhas fixas.
 
       2) Linha vertical:
          ----------
          | Tabela | >> Os rótulos são posicionados abaixo ou acima das tabelas
-         ----------    e centralizados horizontalmente em relação às linhas fixas.
+         ----------    e centralizados horizontalmente em relação à s linhas fixas.
               |
            [rotulo]
               |
@@ -1011,7 +1011,7 @@ void OGRelacionamento::configurarRotulos(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 QRectF OGRelacionamento::__boundingRect(void)
 {
  float x1=0, y1=0, x2=0, y2=0;
@@ -1053,4 +1053,4 @@ QRectF OGRelacionamento::__boundingRect(void)
 
  return(QRectF(x1, y1, x2, y2));
 }
-//***********************************************************
+

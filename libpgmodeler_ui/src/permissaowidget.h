@@ -25,7 +25,7 @@
 #include "objetobasewidget.h"
 #include "ui_permissaowidget.h"
 #include "tabelaobjetoswidget.h"
-//***********************************************************
+
 class PermissaoWidget: public ObjetoBaseWidget, public Ui::PermissaoWidget {
  Q_OBJECT
 
@@ -51,7 +51,7 @@ class PermissaoWidget: public ObjetoBaseWidget, public Ui::PermissaoWidget {
 
    /* Método de configuração de uma permissão. Este método
       faz a atribuição dos valores preenchidos no formulário
-      à permissão do parâmetro. Este método é compartilhado
+        permissão do parâmetro. Este método é compartilhado
       entre as ações de adição e atualização de permissão */
    void configurarPermissao(Permissao *permissao);
 
@@ -89,5 +89,5 @@ class PermissaoWidget: public ObjetoBaseWidget, public Ui::PermissaoWidget {
  public slots:
    void hideEvent(QHideEvent *);
 };
-//***********************************************************
+
 #endif

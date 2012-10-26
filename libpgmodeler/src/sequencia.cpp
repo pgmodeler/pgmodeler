@@ -1,8 +1,8 @@
 #include "sequencia.h"
-//***********************************************************
+
 const QString Sequencia::VALOR_MAX_POSITIVO="+9223372036854775807";
 const QString Sequencia::VALOR_MAX_NEGATIVO="-9223372036854775808";
-//-----------------------------------------------------------
+
 Sequencia::Sequencia(void)
 {
  tipo_objeto=OBJETO_SEQUENCIA;
@@ -20,7 +20,7 @@ Sequencia::Sequencia(void)
  atributos[AtributosParsers::CICLICA]="";
  atributos[AtributosParsers::POSSUIDORA]="";
 }
-//-----------------------------------------------------------
+
 bool Sequencia::valorNulo(const QString &valor)
 {
  unsigned i, qtd;
@@ -36,7 +36,7 @@ bool Sequencia::valorNulo(const QString &valor)
  }
  return(nulo);
 }
-//-----------------------------------------------------------
+
 bool Sequencia::valorValido(const QString &valor)
 {
  /*
@@ -69,7 +69,7 @@ bool Sequencia::valorValido(const QString &valor)
   return(valido);
  }
 }
-//-----------------------------------------------------------
+
 QString Sequencia::formatarValor(const QString &valor)
 {
  QString valor_fmt;
@@ -98,7 +98,7 @@ QString Sequencia::formatarValor(const QString &valor)
 
  return(valor_fmt);
 }
-//-----------------------------------------------------------
+
 int Sequencia::compararValores(QString valor1, QString valor2)
 {
  if(valor1==valor2)
@@ -144,7 +144,7 @@ int Sequencia::compararValores(QString valor1, QString valor2)
    return(1);
  }
 }
-//-----------------------------------------------------------
+
 void Sequencia::definirNome(const QString &nome)
 {
  QString nome_ant=this->obterNome(true);
@@ -154,7 +154,7 @@ void Sequencia::definirNome(const QString &nome)
     lista de tipos do PostgreSQL */
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
-//-----------------------------------------------------------
+
 void Sequencia::definirEsquema(ObjetoBase *esquema)
 {
  Tabela *tabela=NULL;
@@ -166,24 +166,24 @@ void Sequencia::definirEsquema(ObjetoBase *esquema)
   //Obtém a tabela pai da coluna
   tabela=dynamic_cast<Tabela *>(coluna->obterTabelaPai());
 
-  //Verifica se o esquema sendo atribuído à seqüência é o mesmo da tabela possuidora
+  //Verifica se o esquema sendo atribuíd�  seqüência é o mesmo da tabela possuidora
   if(tabela && tabela->obterEsquema()!=esquema)
     throw Excecao(ERR_PGMODELER_ATRESQDIFSEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
- //Atribui o esquema à sequencia
+ //Atribui o esquema   sequencia
  ObjetoBase::definirEsquema(esquema);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
-//-----------------------------------------------------------
+
 void Sequencia::definirCiclica(bool valor)
 {
  ciclica=valor;
 }
-//-----------------------------------------------------------
+
 void Sequencia::definirValores(QString vmin, QString vmax, QString inc, QString inicio, QString cache)
 {
  vmin=formatarValor(vmin);
@@ -213,7 +213,7 @@ void Sequencia::definirValores(QString vmin, QString vmax, QString inc, QString 
  this->cache=cache;
  this->inicio=inicio;
 }
-//-----------------------------------------------------------
+
 void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
 {
  if(!tabela || nome_coluna=="")
@@ -249,7 +249,7 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
                  ERR_PGMODELER_ATRCOLPOSINDEF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
-//-----------------------------------------------------------
+
 void Sequencia::definirPossuidora(Coluna *coluna)
 {
  Tabela *tabela=NULL;
@@ -287,47 +287,47 @@ void Sequencia::definirPossuidora(Coluna *coluna)
    this->id_objeto=ObjetoBase::obterIdGlobal();
  }
 }
-//-----------------------------------------------------------
+
 bool Sequencia::referenciaColunaIncRelacao(void)
 {
  return(coluna && coluna->incluidoPorRelacionamento());
 }
-//-----------------------------------------------------------
+
 bool Sequencia::sequenciaCiclica(void)
 {
  return(ciclica);
 }
-//-----------------------------------------------------------
+
 QString Sequencia::obterValorMax(void)
 {
  return(valor_max);
 }
-//-----------------------------------------------------------
+
 QString Sequencia::obterValorMin(void)
 {
  return(valor_min);
 }
-//-----------------------------------------------------------
+
 QString Sequencia::obterCache(void)
 {
  return(cache);
 }
-//-----------------------------------------------------------
+
 QString Sequencia::obterIncremento(void)
 {
  return(incremento);
 }
-//-----------------------------------------------------------
+
 QString Sequencia::obterInicio(void)
 {
  return(inicio);
 }
-//-----------------------------------------------------------
+
 Coluna *Sequencia::obterPossuidora(void)
 {
  return(coluna);
 }
-//-----------------------------------------------------------
+
 QString Sequencia::obterDefinicaoObjeto(unsigned tipo_def)
 {
  QString str_aux;
@@ -352,7 +352,7 @@ QString Sequencia::obterDefinicaoObjeto(unsigned tipo_def)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//-----------------------------------------------------------
+
 void Sequencia::operator = (Sequencia &seq)
 {
  QString nome_ant=this->obterNome(true);
@@ -369,4 +369,4 @@ void Sequencia::operator = (Sequencia &seq)
 
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
-//***********************************************************
+

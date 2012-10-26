@@ -31,7 +31,7 @@
 #include "cenaobjetos.h"
 #include "progressotarefa.h"
 //#include "visaogeralwidget.h"
-//***********************************************************
+
 class ModeloWidget: public QWidget {
  Q_OBJECT
 
@@ -245,5 +245,5 @@ class ModeloWidget: public QWidget {
   friend class VisaoObjetosWidget;
   friend class VisaoGeralWidget;
 };
-//***********************************************************
+
 #endif

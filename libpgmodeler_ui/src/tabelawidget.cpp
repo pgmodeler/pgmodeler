@@ -12,7 +12,7 @@ extern RegraWidget *regra_wgt;
 extern IndiceWidget *indice_wgt;
 extern GatilhoWidget *gatilho_wgt;
 extern CaixaMensagem *caixa_msg;
-//***********************************************************
+
 TabelaWidget::TabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TABELA)
 {
  //QStringList lista;
@@ -225,7 +225,7 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
      de forma diferente nos métodos de configuração da classe superior */
   this->novo_obj=true;
 
-  //Adiciona o relacionamento criado à lista de operações
+  //Adiciona o relacionamento criado   lista de operações
   lista_op->adicionarObjeto(tabela, Operacao::OBJETO_CRIADO);
  }
 
@@ -240,7 +240,7 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
   /* Caso o tipo atual seja um coluna ou restrição:
      Desabilita (esconde) os botões de mover objetos na tabela
      pois esta movimentação só pode ser feita antes da ligação de
-     relacionamentos à tabela */
+     relacionamentos   tabela */
   if(tipos[i]==OBJETO_COLUNA || tipos[i]==OBJETO_RESTRICAO)
   {
    if(this->novo_obj || !tabela->referenciaObjetoIncRelacao())
@@ -275,7 +275,7 @@ void TabelaWidget::listarObjetos(TipoObjetoBase tipo_obj)
   //Obtém a tabela de objetos referente ao tipo passado
   tab=mapa_tab_objetos[tipo_obj];
 
-  //Obtém a referência à tabela em edição
+  //Obtém a referêni �  tabela em edição
   tabela=dynamic_cast<Tabela *>(this->objeto);
 
   //Remove as linhas da tabela antes da exibição dos elementos
@@ -589,7 +589,7 @@ void TabelaWidget::aplicarConfiguracao(void)
 
   if(!this->novo_obj)
   {
-   //Adiciona o relacionamento à lista de operações antes de ser modificado
+   //Adiciona o relacionamento   lista de operações antes de ser modificado
    lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_MODIFICADO);
   }
 
@@ -636,7 +636,7 @@ void TabelaWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void TabelaWidget::cancelarConfiguracao(void)
 {
  if(lista_op->encadeamentoIniciado())
@@ -648,4 +648,4 @@ void TabelaWidget::cancelarConfiguracao(void)
      adicionadas durante a edição da tabela */
   ObjetoBaseWidget::cancelarConfiguracao();
 }
-//***********************************************************
+

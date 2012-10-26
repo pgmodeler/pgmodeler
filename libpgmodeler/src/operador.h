@@ -26,7 +26,7 @@
 #include "funcao.h"
 #include "esquema.h"
 #include "papel.h"
-//***********************************************************
+
 class Operador: public ObjetoBase {
  private:
   //Armazena as referências para as funções do operador
@@ -102,5 +102,5 @@ class Operador: public ObjetoBase {
   //Obtém a assinatura do operador
   QString obterAssinatura(bool formatar_nome=true);
 };
-//***********************************************************
+
 #endif

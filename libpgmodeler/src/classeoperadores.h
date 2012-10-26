@@ -2,7 +2,7 @@
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe ClasseOperadores que é usada para
-#             gerar os códigos SQL pertinentes às classes de operadores
+#             gerar os códigos SQL pertinentes s classes de operadores
 #             as quais indicam como um tipo de dado pode ser usado em
 #             um determinado método de indexação.
 # Data de Criação: 08/07/2008
@@ -27,7 +27,7 @@
 #include "objetobase.h"                                                                                                                                                                                            
 #include "elemclasseoperadores.h"                                                                                                                                                                                  
 #include "familiaoperadores.h"                                                                                                                                                                                     
-//***********************************************************                                                                                                                                                      
+                                                                                                                                                      
 class ClasseOperadores: public ObjetoBase {                                                                                                                                                                        
  private:                                                                                                                                                                                                          
   //Tipo de dado no qual a classe de operadores trabalha                                                                                                                                                           
@@ -84,5 +84,5 @@ class ClasseOperadores: public ObjetoBase {
   QString obterDefinicaoObjeto(unsigned tipo_def,bool forma_reduzida);
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

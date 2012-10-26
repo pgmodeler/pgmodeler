@@ -26,7 +26,7 @@
 #include "ui_progressotarefa.h"
 #include <map>
 using namespace std;
-//***********************************************************
+
 class ProgressoTarefa: public QDialog, public Ui::ProgressoTarefa
 {
  private:
@@ -46,5 +46,5 @@ class ProgressoTarefa: public QDialog, public Ui::ProgressoTarefa
   void close(void);
   void executarProgesso(int progresso, const QString &texto, unsigned id_ico);
 };
-//***********************************************************
+
 #endif

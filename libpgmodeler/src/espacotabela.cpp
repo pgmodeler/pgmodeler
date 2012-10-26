@@ -1,12 +1,12 @@
 #include "espacotabela.h"
-//***********************************************************
+
 EspacoTabela::EspacoTabela(void)
 {
  tipo_objeto=OBJETO_ESPACO_TABELA;
  atributos[AtributosParsers::DIRETORIO]="";
  id_objeto=ObjetoBase::id_esptabela++;
 }
-//-----------------------------------------------------------
+
 void EspacoTabela::definirNome(const QString &nome)
 {
  /* Tratando nomes de esquemas iniciados em pg_ pois são reservados para o SGBD e
@@ -20,7 +20,7 @@ void EspacoTabela::definirNome(const QString &nome)
 
  ObjetoBase::definirNome(nome); //Chama o método da classe descendente
 }
-//-----------------------------------------------------------
+
 void EspacoTabela::definirDiretorio(const QString &diretorio)
 {
  QString dir_aux=diretorio;
@@ -35,12 +35,12 @@ void EspacoTabela::definirDiretorio(const QString &diretorio)
  //TODO: Verificar se o diretório está na forma correta em windows ou unix???
  this->diretorio=dir_aux;
 }
-//-----------------------------------------------------------
+
 QString EspacoTabela::obterDiretorio(void)
 {
  return(diretorio);
 }
-//-----------------------------------------------------------
+
 QString EspacoTabela::obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(diretorio!="")
@@ -48,4 +48,4 @@ QString EspacoTabela::obterDefinicaoObjeto(unsigned tipo_def)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//***********************************************************
+

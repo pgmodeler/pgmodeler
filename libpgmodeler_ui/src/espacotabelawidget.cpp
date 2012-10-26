@@ -1,5 +1,5 @@
 #include "espacotabelawidget.h"
-//***********************************************************
+
 EspacoTabelaWidget::EspacoTabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_ESPACO_TABELA)
 {
  Ui_EspacoTabelaWidget::setupUi(this);
@@ -53,4 +53,4 @@ void EspacoTabelaWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

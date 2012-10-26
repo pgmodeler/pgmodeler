@@ -23,7 +23,7 @@
 
 #include "objetotabela.h"
 #include "dominio.h"
-//***********************************************************
+
 class Coluna: public ObjetoTabela{
  protected:
   /* Armazena o nome anterior da coluna antes da mudança de nome da mesma.
@@ -84,5 +84,5 @@ class Coluna: public ObjetoTabela{
 
   friend class Tabela;
 };
-//***********************************************************
+
 #endif

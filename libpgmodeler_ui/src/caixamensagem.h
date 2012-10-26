@@ -26,7 +26,7 @@
 
 #include "ui_caixamensagem.h"
 #include "excecao.h"
-//***********************************************************
+
 class CaixaMensagem: public QDialog, public Ui::CaixaMensagem {
  private:
  Q_OBJECT
@@ -68,5 +68,5 @@ class CaixaMensagem: public QDialog, public Ui::CaixaMensagem {
    void clickNaoCancelar(void);
    void exibirListaExecoes(void);
 };
-//***********************************************************
+
 #endif

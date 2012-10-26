@@ -26,7 +26,7 @@
 #include <cstdlib>
 #include <QString>
 #include <QDir>
-//***********************************************************
+
 namespace AtributosGlobais {
 
 /* Variáveis usadas para referenciar os diretórios do
@@ -49,7 +49,7 @@ static const QString
      as DTD's. A solução para esse problema é substituir as '\' do caminho por '/' */
 
   /** issue#7 **/
-  /* Correção de referência incorreta às variáveis de ambiente */
+  /* Correção de referência incorreta as variáveis de ambiente */
   /* Caso a variável não esteja especificada, o pgModeler procura a pasta requisitada no diretório de atual "." */
   DIR_RAIZ_ESQUEMAS=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString("./schemas")),
   DIR_CONFIGURACOES=(getenv("PGMODELER_CONF_DIR") ? QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") : QString("./conf")),
@@ -85,5 +85,5 @@ static const QString
 
    MODELO_EXEMPLO="example.pgmodel"; //Nome padrão do arquivo de modelo de exemplo da configuração de aparência de objetos
 };
-//***********************************************************
+
 #endif

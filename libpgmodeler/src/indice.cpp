@@ -1,5 +1,5 @@
 #include "indice.h"
-//***********************************************************
+
 Indice::Indice(void)
 {
  atrib_indice[UNIQUE]=false;
@@ -21,7 +21,7 @@ Indice::Indice(void)
  atributos[AtributosParsers::ELEMENTOS]="";
  atributos[AtributosParsers::ATUAL_RAPIDA]="";
 }
-//-----------------------------------------------------------
+
 void Indice::definirAtributoElementos(unsigned tipo_def)
 {
  QString str_elem;
@@ -36,7 +36,7 @@ void Indice::definirAtributoElementos(unsigned tipo_def)
 
  atributos[AtributosParsers::ELEMENTOS]=str_elem;
 }
-//-----------------------------------------------------------
+
 int Indice::elementoExiste(Coluna *coluna)
 {
  int qtd, idx;
@@ -60,7 +60,7 @@ int Indice::elementoExiste(Coluna *coluna)
  if(!enc) idx=-1;
  return(idx);
 }
-//-----------------------------------------------------------
+
 int Indice::elementoExiste(const QString &expressao)
 {
  int qtd, idx;
@@ -78,7 +78,7 @@ int Indice::elementoExiste(const QString &expressao)
  if(!enc) idx=-1;
  return(idx);
 }
-//-----------------------------------------------------------
+
 void Indice::adicionarElemento(const QString &expressao, ClasseOperadores *classe_oper, bool ordem_asc, bool nulos_primeiro)
 {
  //Caso a expressão esteja vazia, dispara exceção.
@@ -103,7 +103,7 @@ void Indice::adicionarElemento(const QString &expressao, ClasseOperadores *class
   elementos.push_back(elem);
  }
 }
-//-----------------------------------------------------------
+
 void Indice::adicionarElemento(Coluna *coluna, ClasseOperadores *classe_oper, bool ordem_asc, bool nulos_primeiro)
 {
  //Caso a coluna não esteja aloca, dispara exceção.
@@ -131,7 +131,7 @@ void Indice::adicionarElemento(Coluna *coluna, ClasseOperadores *classe_oper, bo
   elementos.push_back(elem);
  }
 }
-//-----------------------------------------------------------
+
 void Indice::removerElemento(unsigned idx_elem)
 {
  vector<ElementoIndice>::iterator itr;
@@ -143,12 +143,12 @@ void Indice::removerElemento(unsigned idx_elem)
  else
   elementos.erase(elementos.begin() + idx_elem);
 }
-//-----------------------------------------------------------
+
 void Indice::removerElementos(void)
 {
  elementos.clear();
 }
-//-----------------------------------------------------------
+
 void Indice::definirAtributo(unsigned id_atrib, bool valor)
 {
  if(id_atrib > ATUAL_RAPIDA)
@@ -156,27 +156,27 @@ void Indice::definirAtributo(unsigned id_atrib, bool valor)
 
  atrib_indice[id_atrib]=valor;
 }
-//-----------------------------------------------------------
+
 void Indice::definirFatorPreenchimento(unsigned fator)
 {
  fator_preenc=fator;
 }
-//-----------------------------------------------------------
+
 void Indice::definirTipoIndexacao(TipoIndexacao tipo_indexacao)
 {
  this->tipo_indexacao=tipo_indexacao;
 }
-//-----------------------------------------------------------
+
 void Indice::definirExpCondicional(const QString &exp)
 {
  exp_condicional=exp;
 }
-//-----------------------------------------------------------
+
 unsigned Indice::obterFatorPreenchimento(void)
 {
  return(fator_preenc);
 }
-//-----------------------------------------------------------
+
 ElementoIndice Indice::obterElemento(unsigned idx_elem)
 {
 /* Verifica se o índice condiz com o tamanho das listas de elementos,
@@ -186,12 +186,12 @@ ElementoIndice Indice::obterElemento(unsigned idx_elem)
  else
   return(elementos[idx_elem]);
 }
-//-----------------------------------------------------------
+
 unsigned Indice::obterNumElementos(void)
 {
  return(elementos.size());
 }
-//-----------------------------------------------------------
+
 bool Indice::obterAtributo(unsigned id_atrib)
 {
  if(id_atrib > ATUAL_RAPIDA)
@@ -199,17 +199,17 @@ bool Indice::obterAtributo(unsigned id_atrib)
 
  return(atrib_indice[id_atrib]);
 }
-//-----------------------------------------------------------
+
 TipoIndexacao Indice::obterTipoIndexacao(void)
 {
  return(tipo_indexacao);
 }
-//-----------------------------------------------------------
+
 QString Indice::obterExpCondicional(void)
 {
  return(exp_condicional);
 }
-//-----------------------------------------------------------
+
 bool Indice::referenciaColunaIncRelacao(void)
 {
  vector<ElementoIndice>::iterator itr, itr_end;
@@ -241,7 +241,7 @@ bool Indice::referenciaColunaIncRelacao(void)
 
  return(enc);
 }
-//-----------------------------------------------------------
+
 QString Indice::obterDefinicaoObjeto(unsigned tipo_def)
 {
  definirAtributoElementos(tipo_def);
@@ -267,4 +267,4 @@ QString Indice::obterDefinicaoObjeto(unsigned tipo_def)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//***********************************************************
+

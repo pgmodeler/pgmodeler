@@ -25,7 +25,7 @@
 #include "objetobasewidget.h"
 #include "ui_relacionamentowidget.h"
 #include "tabelaobjetoswidget.h"
-//***********************************************************
+
 class RelacionamentoWidget: public ObjetoBaseWidget, public Ui::RelacionamentoWidget {
  private:
   Q_OBJECT
@@ -60,7 +60,7 @@ class RelacionamentoWidget: public ObjetoBaseWidget, public Ui::RelacionamentoWi
  private slots:
   void hideEvent(QHideEvent *);
 
-  //Adiciona um objeto à tabela a qual aciona o método
+  //Adiciona um objeto   tabela a qual aciona o método
   void adicionarObjeto(void);
   //Edita um objeto selecionado  na tabela a qual aciona o método
   void editarObjeto(int idx_lin);
@@ -75,5 +75,5 @@ class RelacionamentoWidget: public ObjetoBaseWidget, public Ui::RelacionamentoWi
 
  friend class ModeloWidget;
 };
-//***********************************************************
+
 #endif

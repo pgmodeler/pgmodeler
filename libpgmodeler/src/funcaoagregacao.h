@@ -2,7 +2,7 @@
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca núcleo libpgsqldbm
 # Descrição: Definição da classe FuncaoAgregacao que é usada para
-#            gerar os códigos SQL pertinentes a estas às funções
+#            gerar os códigos SQL pertinentes a esta� s funções
 #            de agregação (aggregates)
 #
 # Data de Criação: 16/04/2008
@@ -27,7 +27,7 @@
 #include "objetobase.h"
 #include "funcao.h"
 #include "operador.h"
-//***********************************************************
+
 class FuncaoAgregacao: public ObjetoBase {
  private:
   /* Lista de tipos com os quais a função opera.
@@ -58,7 +58,7 @@ class FuncaoAgregacao: public ObjetoBase {
      na geração da definição SQL da função de agregação */
   void definirAtributoTipos(unsigned tipo_def);
 
-  /* Valida as funções atribuidas à função de agregação de acordo
+  /* Valida as funções atribuia �  função de agregação de acordo
      com as regras da documentação */
   bool funcaoValida(unsigned idx_func, Funcao *func);
 
@@ -104,5 +104,5 @@ class FuncaoAgregacao: public ObjetoBase {
   //Retorna a definição SQL ou XML do objeto
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

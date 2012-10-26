@@ -26,7 +26,7 @@
 #include "ui_tabelawidget.h"
 #include "tabelaobjetoswidget.h"
 #include "ogtabela.h"
-//***********************************************************
+
 class TabelaWidget: public ObjetoBaseWidget, public Ui::TabelaWidget {
  Q_OBJECT
 
@@ -76,5 +76,5 @@ class TabelaWidget: public ObjetoBaseWidget, public Ui::TabelaWidget {
    void aplicarConfiguracao(void);
    void cancelarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

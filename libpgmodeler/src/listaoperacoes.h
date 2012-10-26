@@ -26,7 +26,7 @@
 
 #include "modelobd.h"
 #include <QObject>
-//***********************************************************
+
 class Operacao {
  protected:
   /* Referência ao objeto pai do objeto que sofreu a operação,
@@ -82,7 +82,7 @@ class Operacao {
 
  friend class ListaOperacoes;
 };
-//------------------------------------------------------------
+
 class ListaOperacoes: public QObject {
  private:
   Q_OBJECT
@@ -213,7 +213,7 @@ class ListaOperacoes: public QObject {
      a exceção disparada. Caso a última operação for parte de um encadeamento,
      toda a cadeia de operações é removido. Atenção: O funcionamento dste método
      é diferente do método de desfazer operação, pois os objetos são removidos
-     do pool porém seus estados anteriores a adição dos mesmos à lista não são
+     do pool porém seus estados anteriores a adição dos mesmos a  lista não são
      restaurados, por isso este não pode ser usado deliberadamente. */
   void removerUltimaOperacao(void);
 
@@ -229,7 +229,7 @@ class ListaOperacoes: public QObject {
    //Sinal disparado para cada operação encadeada que for executada
    void s_operacaoExecutada(int progresso, QString id_objeto, unsigned id_icone);
 };
-//***********************************************************
+
 
 /* Função modelo faz a cópia dos atributos do obj_copia para obj_orig fazendo
    o cast para o tipo de objeto correto. Caso o objeto de origem não esteja alocado
@@ -242,5 +242,5 @@ void copiarObjeto(ObjetoBase **pobj_orig, Classe *obj_copia);
 /* Esta função apenas chama a função modelo acima fazendo o dynamic_cast correto,
    de acordo com o tipo passado */
 void copiarObjeto(ObjetoBase **pobj_orig, ObjetoBase *obj_copia, TipoObjetoBase tipo);
-//***********************************************************
+
 #endif

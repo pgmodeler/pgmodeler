@@ -27,7 +27,7 @@
 #include "objetobase.h"
 #include "funcao.h"
 #include "papel.h"
-//***********************************************************
+
 class ConversaoCodificacao: public ObjetoBase {
  private:
  /* Tipos de codificação da conversão:
@@ -73,5 +73,5 @@ class ConversaoCodificacao: public ObjetoBase {
   //Retorna a definição SQL ou XML do objeto
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

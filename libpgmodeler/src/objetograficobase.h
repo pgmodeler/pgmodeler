@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QPointF>
 #include "objetobase.h"
-//***********************************************************
+
 class ObjetoGraficoBase: public QObject, public ObjetoBase {
  Q_OBJECT
 
@@ -43,7 +43,7 @@ class ObjetoGraficoBase: public QObject, public ObjetoBase {
      dos sinais emitidos pela instância desta classe. Este atributo quebra
      alguns conceitos da OO mas é necessário para o caso de quando um OGRelacionamento
      é alocado, não ser necessário pesquisar no modelo, quem é o objeto gráfico
-     relacionado às tabelas do relacionamento */
+     relacionado  s tabelas do relacionamento */
   QObject *objeto_receptor;
 
  protected:
@@ -88,5 +88,5 @@ class ObjetoGraficoBase: public QObject, public ObjetoBase {
   friend class ObjetoGrafico;
   friend class ModeloBD;
 };
-//***********************************************************
+
 #endif

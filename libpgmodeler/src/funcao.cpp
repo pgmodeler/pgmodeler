@@ -1,36 +1,36 @@
 #include "funcao.h"
-//***********************************************************
+
 Parametro::Parametro(void)
 {
  tipo_objeto=OBJETO_PARAMETRO;
  entrada=saida=false;
 }
-//-----------------------------------------------------------
+
 void Parametro::definirTipo(TipoPgSQL tipo)
 {
  this->tipo=tipo;
 }
-//-----------------------------------------------------------
+
 void Parametro::definirEntrada(bool valor)
 {
  entrada=valor;
 }
-//-----------------------------------------------------------
+
 void Parametro::definirSaida(bool valor)
 {
  saida=valor;
 }
-//-----------------------------------------------------------
+
 bool Parametro::parametroEntrada(void)
 {
  return(entrada);
 }
-//-----------------------------------------------------------
+
 bool Parametro::parametroSaida(void)
 {
  return(saida);
 }
-//-----------------------------------------------------------
+
 void Parametro::operator = (const Parametro &param)
 {
  this->nome=param.nome;
@@ -39,7 +39,7 @@ void Parametro::operator = (const Parametro &param)
  this->entrada=param.entrada;
  this->saida=param.saida;
 }
-//-----------------------------------------------------------
+
 QString Parametro::obterDefinicaoObjeto(unsigned tipo_def)
 {
  //map<QString, QString> atributos;
@@ -58,7 +58,7 @@ QString Parametro::obterDefinicaoObjeto(unsigned tipo_def)
  //return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::PARAMETRO,atributos, tipo_def));
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//***********************************************************
+
 Funcao::Funcao(void)
 {
  id_objeto=ObjetoBase::id_funcao++;
@@ -89,19 +89,19 @@ Funcao::Funcao(void)
  atributos[AtributosParsers::BIBLIOTECA]="";
  atributos[AtributosParsers::SIMBOLO]="";
 }
-//-----------------------------------------------------------
+
 void Funcao::definirNome(const QString &nome)
 {
  ObjetoBase::definirNome(nome);
  criarAssinatura();
 }
-//-----------------------------------------------------------
+
 void Funcao::definirEsquema(ObjetoBase *esquema)
 {
  ObjetoBase::definirEsquema(esquema);
  criarAssinatura();
 }
-//-----------------------------------------------------------
+
 void Funcao::adicionarParametro(Parametro param)
 {
  vector<Parametro>::iterator itr,itr_end;
@@ -135,7 +135,7 @@ void Funcao::adicionarParametro(Parametro param)
  }
  criarAssinatura();
 }
-//-----------------------------------------------------------
+
 void Funcao::adicionarTipoRetTabela(const QString &nome, TipoPgSQL tipo)
 {
  //Verifica se o nome do elemento não está vazio
@@ -180,7 +180,7 @@ void Funcao::adicionarTipoRetTabela(const QString &nome, TipoPgSQL tipo)
   }
  }
 }
-//-----------------------------------------------------------
+
 void Funcao::definirAtributoParametros(unsigned tipo_def)
 {
  QString str_param;
@@ -197,7 +197,7 @@ void Funcao::definirAtributoParametros(unsigned tipo_def)
 
  atributos[AtributosParsers::PARAMETROS]=str_param;
 }
-//-----------------------------------------------------------
+
 void Funcao::definirAtributoTipoRetTabela(unsigned tipo_def)
 {
  QString str_tipo;
@@ -214,17 +214,17 @@ void Funcao::definirAtributoTipoRetTabela(unsigned tipo_def)
 
  atributos[AtributosParsers::TABELA_RETORNO]=str_tipo;
 }
-//-----------------------------------------------------------
+
 void Funcao::definirCustoExecucao(unsigned custo)
 {
  custo_execucao=custo;
 }
-//-----------------------------------------------------------
+
 void Funcao::definirQuantidadeLinhas(unsigned qtd_linhas)
 {
  this->qtd_linhas=qtd_linhas;
 }
-//-----------------------------------------------------------
+
 void Funcao::definirBiblioteca(const QString &biblioteca)
 {
  if(linguagem->obterNome().toLower()!=~TipoLinguagem("c"))
@@ -234,7 +234,7 @@ void Funcao::definirBiblioteca(const QString &biblioteca)
 
  this->biblioteca=biblioteca;
 }
-//-----------------------------------------------------------
+
 void Funcao::definirSimbolo(const QString &simbolo)
 {
  if(linguagem->obterNome().toLower()!=~TipoLinguagem("c"))
@@ -244,20 +244,20 @@ void Funcao::definirSimbolo(const QString &simbolo)
 
  this->simbolo=simbolo;
 }
-//-----------------------------------------------------------
+
 void Funcao::definirTipoRetorno(TipoPgSQL tipo)
 {
  tipo_retorno=tipo;
 }
-//-----------------------------------------------------------
+
 void Funcao::definirTipoFuncao(TipoFuncao tipo)
 {
  tipo_funcao=tipo;
 }
-//-----------------------------------------------------------
+
 void Funcao::definirLinguagem(ObjetoBase *linguagem)
 {
- /* Caso se tente atribuir uma linguagem não alocada à função
+ /* Caso se tente atribuir uma linguagem não alocada  função
     um erro é gerado */
  if(!linguagem)
   throw Excecao(ERR_PGMODELER_ATRLINGNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -270,27 +270,27 @@ void Funcao::definirLinguagem(ObjetoBase *linguagem)
   this->linguagem=linguagem;
  }
 }
-//-----------------------------------------------------------
+
 void Funcao::definirRetornaSetOf(bool valor)
 {
  retorna_setof=valor;
 }
-//-----------------------------------------------------------
+
 void Funcao::definirFuncaoJanela(bool valor)
 {
  funcao_janela=valor;
 }
-//-----------------------------------------------------------
+
 void Funcao::definirTipoSeguranca(TipoSeguranca tipo)
 {
  tipo_seg=tipo;
 }
-//-----------------------------------------------------------
+
 void Funcao::definirTipoComportamento(TipoComportamento tipo)
 {
  tipo_comportamento=tipo;
 }
-//-----------------------------------------------------------
+
 void Funcao::definirCodigoFonte(const QString &codigo)
 {
  if(linguagem->obterNome().toLower()==~TipoLinguagem("c"))
@@ -300,62 +300,62 @@ void Funcao::definirCodigoFonte(const QString &codigo)
 
  this->codigo_fonte=codigo;
 }
-//-----------------------------------------------------------
+
 TipoPgSQL Funcao::obterTipoRetorno(void)
 {
  return(tipo_retorno);
 }
-//-----------------------------------------------------------
+
 TipoFuncao Funcao::obterTipoFuncao(void)
 {
  return(tipo_funcao);
 }
-//-----------------------------------------------------------
+
 ObjetoBase *Funcao::obterLinguagem(void)
 {
  return(linguagem);
 }
-//-----------------------------------------------------------
+
 unsigned Funcao::obterNumParams(void)
 {
  return(params.size());
 }
-//-----------------------------------------------------------
+
 unsigned Funcao::obterNumTiposRetTabela(void)
 {
  return(tipos_ret_tabela.size());
 }
-//-----------------------------------------------------------
+
 bool Funcao::retornaSetOf(void)
 {
  return(retorna_setof);
 }
-//-----------------------------------------------------------
+
 bool Funcao::retornaTabela(void)
 {
  return(tipos_ret_tabela.size() > 0);
 }
-//-----------------------------------------------------------
+
 bool Funcao::funcaoJanela(void)
 {
  return(funcao_janela);
 }
-//-----------------------------------------------------------
+
 TipoSeguranca Funcao::obterTipoSeguranca(void)
 {
  return(tipo_seg);
 }
-//-----------------------------------------------------------
+
 TipoComportamento Funcao::obterTipoComportamento(void)
 {
  return(tipo_comportamento);
 }
-//-----------------------------------------------------------
+
 QString Funcao::obterCodigoFonte(void)
 {
  return(codigo_fonte);
 }
-//-----------------------------------------------------------
+
 Parametro Funcao::obterParametro(unsigned idx_param)
 {
  /* Caso o índice do parâmtro esteja fora da capacidade
@@ -367,7 +367,7 @@ Parametro Funcao::obterParametro(unsigned idx_param)
   //Retorna o parâmetro no índice desejado
   return(params[idx_param]);
 }
-//-----------------------------------------------------------
+
 Parametro Funcao::obterTipoRetTabela(unsigned idx_tipo)
 {
  /* Caso o índice do tipo esteja fora da capacidade
@@ -379,38 +379,38 @@ Parametro Funcao::obterTipoRetTabela(unsigned idx_tipo)
   //Retorna o item no índice desejado
   return(tipos_ret_tabela[idx_tipo]);
 }
-//-----------------------------------------------------------
+
 unsigned Funcao::obterCustoExecucao(void)
 {
  return(custo_execucao);
 }
-//-----------------------------------------------------------
+
 unsigned Funcao::obterQuantidadeLinhas(void)
 {
  return(qtd_linhas);
 }
-//-----------------------------------------------------------
+
 QString Funcao::obterBiblioteca(void)
 {
  return(biblioteca);
 }
-//-----------------------------------------------------------
+
 QString Funcao::obterSimbolo(void)
 {
  return(simbolo);
 }
-//-----------------------------------------------------------
+
 void Funcao::removerParametros(void)
 {
  params.clear();
  criarAssinatura();
 }
-//-----------------------------------------------------------
+
 void Funcao::removerTiposRetTabela(void)
 {
  tipos_ret_tabela.clear();
 }
-//-----------------------------------------------------------
+
 void Funcao::removerParametro(const QString &nome, TipoPgSQL tipo)
 {
  vector<Parametro>::iterator itr,itr_end;
@@ -434,7 +434,7 @@ void Funcao::removerParametro(const QString &nome, TipoPgSQL tipo)
 
  criarAssinatura();
 }
-//-----------------------------------------------------------
+
 void Funcao::removerParametro(unsigned idx_param)
 {
  /* Caso o índice do parâmtro esteja fora da capacidade
@@ -451,7 +451,7 @@ void Funcao::removerParametro(unsigned idx_param)
 
  criarAssinatura();
 }
-//-----------------------------------------------------------
+
 void Funcao::removerTipoRetTabela(unsigned idx_tipo)
 {
  /* Caso o índice do parâmtro esteja fora da capacidade
@@ -466,12 +466,12 @@ void Funcao::removerTipoRetTabela(unsigned idx_tipo)
   tipos_ret_tabela.erase(itr); //Remove o parâmetro encontrado
  }
 }
-//-----------------------------------------------------------
+
 QString Funcao::obterAssinatura(void)
 {
  return(assinatura);
 }
-//-----------------------------------------------------------
+
 void Funcao::criarAssinatura(bool formatar)
 {
  Parametro param;
@@ -490,12 +490,12 @@ void Funcao::criarAssinatura(bool formatar)
  //Formato da assinatura NOME(TIPO_PARAM1,TIPO_PARAM2,...,TIPO_PARAMn)
  assinatura=this->obterNome(formatar) + QString("(") + str_param + QString(")");
 }
-//-----------------------------------------------------------
+
 QString Funcao::obterDefinicaoObjeto(unsigned tipo_def)
 {
  return(this->obterDefinicaoObjeto(tipo_def, false));
 }
-//-----------------------------------------------------------
+
 QString Funcao::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  definirAtributoParametros(tipo_def);
@@ -532,4 +532,4 @@ QString Funcao::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  atributos[AtributosParsers::ASSINATURA]=assinatura;
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }
-//***********************************************************
+

@@ -1,5 +1,5 @@
 #include "ogcaixatexto.h"
-//***********************************************************
+
 OGCaixaTexto::OGCaixaTexto(CaixaTexto *cxtexto, const QBrush &brush, const QPen &pen) : ObjetoGrafico(cxtexto)
 {
  connect(cxtexto, SIGNAL(s_objetoModificado(void)), this, SLOT(configurarObjeto(void)));
@@ -26,7 +26,7 @@ OGCaixaTexto::OGCaixaTexto(CaixaTexto *cxtexto, const QBrush &brush, const QPen 
  this->addToGroup(caixa);
  this->configurarObjeto();
 }
-//-----------------------------------------------------------
+
 OGCaixaTexto::~OGCaixaTexto(void)
 {
  disconnect(this, SLOT(configurarObjeto(void)));
@@ -36,7 +36,7 @@ OGCaixaTexto::~OGCaixaTexto(void)
  delete(caixa);
  delete(texto);
 }
-//-----------------------------------------------------------
+
 void OGCaixaTexto::configurarObjeto(void)
 {
  CaixaTexto *cxtexto=dynamic_cast<CaixaTexto *>(this->obterObjetoOrigem());
@@ -88,4 +88,4 @@ void OGCaixaTexto::configurarObjeto(void)
  ObjetoGrafico::configurarSombraObjeto();
  ObjetoGrafico::configurarSelecaoObjeto();
 }
-//***********************************************************
+

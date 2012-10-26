@@ -226,7 +226,7 @@ enum TipoErro {
  ERR_CONEXBD_REFTUPLANAOEXISTE,
  ERR_CONEXBD_CMDSQLNAOEXECUTADO
 };
-//***********************************************************
+
 class Excecao {
  private:
   /* Armazena outras execeções antes do disparo da exceção this.
@@ -251,7 +251,7 @@ class Excecao {
          arquivo,
 
          /* Informações adicionais (de preenchimento opcinal) pode armazer qualquer outro
-            tipo de informação interessante à tentativa de resolução do erro */
+            tipo de informação interessante é  tentativa de resolução do erro */
          info_adicional;
 
       //Linha do arquivo de onde foi gerada a exceção (Macro __LINE__)
@@ -286,5 +286,5 @@ class Excecao {
   //Retorna a lista de exções em formato texto
   QString obterTextoExcecoes(void);
 };
-//***********************************************************
+
 #endif

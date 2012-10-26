@@ -1,5 +1,5 @@
 #include "cenaobjetos.h"
-//***********************************************************
+
 bool CenaObjetos::alin_objs_grade=false;
 bool CenaObjetos::exibir_grade=true;
 bool CenaObjetos::exibir_lim_pagina=true;
@@ -8,7 +8,7 @@ QPrinter::PageSize CenaObjetos::tam_papel=QPrinter::A4;
 QPrinter::Orientation CenaObjetos::orientacao_pag=QPrinter::Landscape;
 QRectF CenaObjetos::margens_pag=QRectF(10,10,10,10);
 QBrush CenaObjetos::grade;
-//***********************************************************
+
 CenaObjetos::CenaObjetos(void)
 {
  movendo_objs=false;
@@ -28,11 +28,11 @@ CenaObjetos::CenaObjetos(void)
  linha_rel->setZValue(-1);
  linha_rel->setPen(QColor(80,80,80));
 
- //Adiciona à  cena o retângulo de seleção
+ //Adiciona à   cena o retângulo de seleção
  this->addItem(ret_selecao);
  this->addItem(linha_rel);
 }
-//-----------------------------------------------------------
+
 CenaObjetos::~CenaObjetos(void)
 {
  QGraphicsItemGroup *item=NULL;
@@ -70,7 +70,7 @@ CenaObjetos::~CenaObjetos(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 QPointF CenaObjetos::alinharPontoGrade(const QPointF &pnt)
 {
  QPointF p(roundf(pnt.x()/tam_grade) * tam_grade,
@@ -81,12 +81,12 @@ QPointF CenaObjetos::alinharPontoGrade(const QPointF &pnt)
 
  return(p);
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::setSceneRect(const QRectF &ret)
 {
  QGraphicsScene::setSceneRect(0, 0, ret.width(), ret.height());
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::definirGrade(unsigned tam)
 {
  if(tam >= 20 || grade.style()==Qt::NoBrush)
@@ -152,7 +152,7 @@ void CenaObjetos::definirGrade(unsigned tam)
   grade.setTextureImage(img_grade);
  }
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::exibirLinhaRelacionamento(bool valor, const QPointF &p)
 {
  QList<QGraphicsItem *> itens=this->items();
@@ -199,7 +199,7 @@ void CenaObjetos::exibirLinhaRelacionamento(bool valor, const QPointF &p)
   itens.pop_front();
  }
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::definirOpcoesGrade(bool exibir_grade, bool alin_objs_grade, bool exibir_lim_pagina)
 {
  bool redef_grade=(CenaObjetos::exibir_grade!=exibir_grade ||
@@ -217,33 +217,33 @@ void CenaObjetos::definirOpcoesGrade(bool exibir_grade, bool alin_objs_grade, bo
   definirGrade(CenaObjetos::tam_grade);
  }
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::obterOpcoesGrade(bool &exibir_grade, bool &alin_objs_grade, bool &exibir_lim_pagina)
 {
  exibir_grade=CenaObjetos::exibir_grade;
  alin_objs_grade=CenaObjetos::alin_objs_grade;
  exibir_lim_pagina=CenaObjetos::exibir_lim_pagina;
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::definirConfiguracaoPagina(QPrinter::PaperSize tam_papel, QPrinter::Orientation orientacao, QRectF margens)
 {
  CenaObjetos::tam_papel=tam_papel;
  CenaObjetos::orientacao_pag=orientacao;
  CenaObjetos::margens_pag=margens;
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::obterConfiguracaoPagina(QPrinter::PaperSize &tam_papel, QPrinter::Orientation &orientacao, QRectF &margens)
 {
  tam_papel=CenaObjetos::tam_papel;
  orientacao=CenaObjetos::orientacao_pag;
  margens=CenaObjetos::margens_pag;
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::sinalizarModificacaoObjeto(ObjetoGraficoBase *objeto)
 {
  emit s_objetoModificado(objeto);
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::sinalizarObjetoFilhoSelecionado(ObjetoTabela *obj_filho)
 {
  /* Trata o sinal de OGTabela::objetoFilhoSelecionado somente quando não
@@ -258,13 +258,13 @@ void CenaObjetos::sinalizarObjetoFilhoSelecionado(ObjetoTabela *obj_filho)
   emit s_menupopupRequisitado(vet);
  }
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::sinalizarObjetoSelecionado(ObjetoGraficoBase *objeto, bool selecionado)
 {
  if(objeto)
   emit s_objetoSelecionado(objeto, selecionado);
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::addItem(QGraphicsItem *item)
 {
  if(item)
@@ -290,7 +290,7 @@ void CenaObjetos::addItem(QGraphicsItem *item)
   QGraphicsScene::addItem(item);
  }
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::removeItem(QGraphicsItem *item)
 {
  if(item)
@@ -300,7 +300,7 @@ void CenaObjetos::removeItem(QGraphicsItem *item)
   OGTabela *tab=dynamic_cast<OGTabela *>(item);
 
   /* Caso particular para classes OGRelacionamento e OGTabela:
-     desconecta os sinais anteriormente conectados à cena e que
+     desconecta os sinais anteriormente conectados à  cena e que
      são disparados por tabela ou relacionamento */
   if(rel)
   {
@@ -329,7 +329,7 @@ void CenaObjetos::removeItem(QGraphicsItem *item)
   //if(objeto) //delete(objeto);
  }
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evento)
 {
  QGraphicsScene::mouseDoubleClickEvent(evento);
@@ -344,7 +344,7 @@ void CenaObjetos::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evento)
    emit s_objetoDuploClique(dynamic_cast<ObjetoGraficoBase *>(obj->obterObjetoOrigem()));
  }
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::mousePressEvent(QGraphicsSceneMouseEvent *evento)
 {
  if(evento->buttons()==Qt::LeftButton ||
@@ -375,7 +375,7 @@ void CenaObjetos::mousePressEvent(QGraphicsSceneMouseEvent *evento)
   emit s_objetoSelecionado(NULL,false);
  }
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
 {
  if(evento->buttons()==Qt::LeftButton)
@@ -392,7 +392,7 @@ void CenaObjetos::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
    }
 
    /*Caso o alinhamento esteja ativo e haja objetos selecionados efetua o alinhamento
-     do ponto (posição do evento) à grade */
+     do ponto (posição do evento) à  grade */
    if(alin_objs_grade && !ret_selecao->isVisible())
     evento->setScenePos(this->alinharPontoGrade(evento->scenePos()));
    else if(ret_selecao->isVisible())
@@ -415,13 +415,13 @@ void CenaObjetos::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
 
  QGraphicsScene::mouseMoveEvent(evento);
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
 {
  QGraphicsScene::mouseReleaseEvent(evento);
 
  /* Caso haja objetos selecionados e o botão esquerdo do mouse for liberado
-    finaliza o movimento de objetos, alinhando-os à grade se necessário */
+    finaliza o movimento de objetos, alinhando-os à  grade se necessário */
  if(!this->selectedItems().isEmpty() && movendo_objs &&
     evento->button()==Qt::LeftButton && evento->modifiers()==Qt::NoModifier)
  {
@@ -451,11 +451,11 @@ void CenaObjetos::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
    if(!rel)
    {
     if(alin_objs_grade)
-     //Move o objeto para um ponto ajustado à grade
+     //Move o objeto para um ponto ajustado à  grade
      itens[i]->setPos(alinharPontoGrade(itens[i]->pos()));
     else
     {
-     //Caso o alinhamento à grade não esteja disponível, apneas ajusta o ponto se o mesmo for negativo
+     //Caso o alinhamento à  grade não esteja disponível, apneas ajusta o ponto se o mesmo for negativo
      QPointF p=itens[i]->pos();
      if(p.x() < 0) p.setX(0);
      if(p.y() < 0) p.setY(0);
@@ -516,7 +516,7 @@ void CenaObjetos::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
   sel_ini.setY(NAN);
  }
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::alinharObjetosGrade(void)
 {
  QList<QGraphicsItem *> itens=this->items();
@@ -529,7 +529,7 @@ void CenaObjetos::alinharObjetosGrade(void)
  qtd=itens.size();
  for(i=0; i < qtd; i++)
  {
-  /* Obtém somente os objetos que são convertidos à classe QGraphicsItemGroup e
+  /* Obtém somente os objetos que são convertidos à  classe QGraphicsItemGroup e
      que não tenham objeto pai. Isso é feito pois o método items() retorna TODOS
      os itens desconsiderando se eles pertencem ou não a grupos, e isso no contexto
      dos objetos do modelo é errado pois todos os objetos do grupo precisam ser alinhados
@@ -543,7 +543,7 @@ void CenaObjetos::alinharObjetosGrade(void)
 
    //Caso o item foi convertido para tabela
    if(tab)
-    //Move o objeto usando o método setPos da classe OGTabelaBase com o ponto alinhado à grade
+    //Move o objeto usando o método setPos da classe OGTabelaBase com o ponto alinhado à  grade
     tab->setPos(this->alinharPontoGrade(tab->pos()));
    /* Caso o item foi convertido para relacionamento, efetua um tratamento diferenciado,
       movendo pontos e rótulos individualmente */
@@ -562,7 +562,7 @@ void CenaObjetos::alinharObjetosGrade(void)
      rel->configurarLinha();
     }
 
-    //Alinha os rótulos à grade
+    //Alinha os rótulos à  grade
     for(i1=RelacionamentoBase::ROTULO_CARD_ORIGEM;
         i1<=RelacionamentoBase::ROTULO_NOME_RELAC; i1++)
     {
@@ -577,10 +577,10 @@ void CenaObjetos::alinharObjetosGrade(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 void CenaObjetos::update(void)
 {
  this->setBackgroundBrush(grade);
  QGraphicsScene::update(this->sceneRect());
 }
-//***********************************************************
+

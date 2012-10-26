@@ -26,7 +26,7 @@
 #include "objetograficobase.h"
 #include "relacionamentobase.h"
 #include "parserxml.h"
-//***********************************************************
+
 class ObjetoGrafico: public QObject, public QGraphicsItemGroup {
  private:
   Q_OBJECT
@@ -141,5 +141,5 @@ class ObjetoGrafico: public QObject, public QGraphicsItemGroup {
  signals:
   void s_objetoSelecionado(ObjetoGraficoBase *objeto, bool selecionado);
 };
-//***********************************************************
+
 #endif

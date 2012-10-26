@@ -2,7 +2,7 @@
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca libpgsqldbm_ui
 # Classe: ConfBaseWidget
-# Descrição: Implementa operações básicas para gravação de arquivos  e acesso às configuraçoẽs
+# Descrição: Implementa operações básicas para gravação de arquios  e cesso � s configuraçoẽs
 #            nos widgets de configurações.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -26,7 +26,7 @@
 #include "parserxml.h"
 #include "atributosparsers.h"
 #include <algorithm>
-//***********************************************************
+
 class ConfBaseWidget {
  protected:
   //Mapa que armazena os parâmetros de configuração carregados do arquivos
@@ -65,5 +65,5 @@ class ConfBaseWidget {
   //Aplica as configurações padrão
   virtual void aplicarConfiguracao(void)=0;
 };
-//***********************************************************
+
 #endif

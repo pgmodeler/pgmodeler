@@ -1,5 +1,5 @@
 #include "formbasico.h"
-//***********************************************************
+
 FormBasico::FormBasico(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
  setupUi(this);
@@ -30,4 +30,4 @@ void FormBasico::definirBotoes(unsigned conf_botoes)
   cancelar_btn->setVisible(false);
  }
 }
-//***********************************************************
+

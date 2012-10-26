@@ -1,5 +1,5 @@
 #include "tipopgsqlwidget.h"
-//***********************************************************
+
 TipoPgSQLWidget::TipoPgSQLWidget(QWidget *parent, const QString &rotulo) : QWidget(parent)
 {
  try
@@ -49,7 +49,7 @@ TipoPgSQLWidget::TipoPgSQLWidget(QWidget *parent, const QString &rotulo) : QWidg
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void TipoPgSQLWidget::atualizarFormatoTipo(void)
 {
  try
@@ -125,7 +125,7 @@ void TipoPgSQLWidget::atualizarFormatoTipo(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void TipoPgSQLWidget::obterTiposPgSQL(QComboBox *combo, ModeloBD *modelo, unsigned conf_tipo_usr, bool tipo_oid, bool pseudo)
 {
  if(combo)
@@ -153,7 +153,7 @@ void TipoPgSQLWidget::obterTiposPgSQL(QComboBox *combo, ModeloBD *modelo, unsign
   combo->addItems(tipos);
  }
 }
-//-----------------------------------------------------------
+
 void TipoPgSQLWidget::definirAtributos(TipoPgSQL tipo, ModeloBD *modelo,  unsigned conf_tipo_usr, bool tipo_oid, bool pseudo)
 {
  try
@@ -202,9 +202,9 @@ void TipoPgSQLWidget::definirAtributos(TipoPgSQL tipo, ModeloBD *modelo,  unsign
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 TipoPgSQL TipoPgSQLWidget::obterTipoPgSQL(void)
 {
  return(tipo);
 }
-//***********************************************************
+

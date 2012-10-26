@@ -27,7 +27,7 @@
 #include "ogtabelabase.h"
 #include "ogtituloobjeto.h"
 #include "ogsubitemobjeto.h"
-//***********************************************************
+
 class OGTabela: public OGTabelaBase {
  private:
   Q_OBJECT
@@ -62,5 +62,5 @@ class OGTabela: public OGTabelaBase {
      sobre um item da tabela em foco */
   void s_objetoFilhoSelecionado(ObjetoTabela *);
 };
-//***********************************************************
+
 #endif

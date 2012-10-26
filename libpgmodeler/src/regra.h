@@ -24,7 +24,7 @@
 
 #include "objetotabela.h"
 #include "coluna.h"
-//***********************************************************
+
 class Regra: public ObjetoTabela{
  private:
   //Comandos que a regra executará ao ser chamada
@@ -82,5 +82,5 @@ class Regra: public ObjetoTabela{
   //Retorna a definição SQL ou XML do objeto
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

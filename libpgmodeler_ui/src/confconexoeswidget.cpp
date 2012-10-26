@@ -2,7 +2,7 @@
 #include "caixamensagem.h"
 
 extern CaixaMensagem *caixa_msg;
-//***********************************************************
+
 ConfConexoesWidget::ConfConexoesWidget(QWidget * parent) : QWidget(parent)
 {
  setupUi(this);
@@ -27,7 +27,7 @@ ConfConexoesWidget::ConfConexoesWidget(QWidget * parent) : QWidget(parent)
  atualizar_tb->setVisible(false);
  cancelar_tb->setVisible(false);
 }
-//------------------------------------------------------------
+
 ConfConexoesWidget::~ConfConexoesWidget(void)
 {
  /* Remove todas as conexões carregadas ao destruir o formulário,
@@ -35,7 +35,7 @@ ConfConexoesWidget::~ConfConexoesWidget(void)
  while(conexoes_cmb->count() > 0)
   this->removerConexao();
 }
-//------------------------------------------------------------
+
 void ConfConexoesWidget::carregarConfiguracao(void)
 {
  vector<QString> atribs_chave;
@@ -68,7 +68,7 @@ void ConfConexoesWidget::carregarConfiguracao(void)
   else
    conexao->definirParamConexao(ConexaoBD::PARAM_FQDN_SERVIDOR, itr->second[ConexaoBD::PARAM_FQDN_SERVIDOR]);
 
-  //Atribuindo os demais valores à conexão
+  //Atribuindo os demais valores à  conexão
   conexao->definirParamConexao(ConexaoBD::PARAM_PORTA, itr->second[ConexaoBD::PARAM_PORTA]);
   conexao->definirParamConexao(ConexaoBD::PARAM_USUARIO, itr->second[ConexaoBD::PARAM_USUARIO]);
   conexao->definirParamConexao(ConexaoBD::PARAM_SENHA,itr->second[ConexaoBD::PARAM_SENHA]);
@@ -95,7 +95,7 @@ void ConfConexoesWidget::carregarConfiguracao(void)
  editar_tb->setEnabled(conexoes_cmb->count() > 0);
  excluir_tb->setEnabled(conexoes_cmb->count() > 0);
 }
-//------------------------------------------------------------
+
 void ConfConexoesWidget::habilitarCertificados(void)
 {
  /* Habilita os campos relacionados aos certificados SSL quando o modo
@@ -109,7 +109,7 @@ void ConfConexoesWidget::habilitarCertificados(void)
  chave_cli_lbl->setEnabled(modo_ssl_cmb->currentIndex()!=0);
  chave_cli_edt->setEnabled(modo_ssl_cmb->currentIndex()!=0);
 }
-//------------------------------------------------------------
+
 void ConfConexoesWidget::habilitarTesteConexao(void)
 {
  /* O teste de conexão só é habilitado quando informações básicas
@@ -122,7 +122,7 @@ void ConfConexoesWidget::habilitarTesteConexao(void)
  adicionar_tb->setEnabled(testar_tb->isEnabled());
  atualizar_tb->setEnabled(testar_tb->isEnabled());
 }
-//------------------------------------------------------------
+
 void ConfConexoesWidget::novaConexao(void)
 {
  /* Limpa todo o formulário e reverte os valores de alguns
@@ -155,7 +155,7 @@ void ConfConexoesWidget::novaConexao(void)
  editar_tb->setEnabled(conexoes_cmb->count() > 0);
  excluir_tb->setEnabled(conexoes_cmb->count() > 0);
 }
-//------------------------------------------------------------
+
 void ConfConexoesWidget::manipularConexao(void)
 {
  ConexaoBD *conexao=NULL;
@@ -196,7 +196,7 @@ void ConfConexoesWidget::manipularConexao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//------------------------------------------------------------
+
 void ConfConexoesWidget::removerConexao(void)
 {
  //Caso haja uma conexão selecionada no combo
@@ -217,7 +217,7 @@ void ConfConexoesWidget::removerConexao(void)
   this->novaConexao();
  }
 }
-//------------------------------------------------------------
+
 void ConfConexoesWidget::editarConexao(void)
 {
  //Caso hajam itens no combo de conexões
@@ -276,7 +276,7 @@ void ConfConexoesWidget::editarConexao(void)
   editar_tb->setEnabled(false);
  }
 }
-//------------------------------------------------------------
+
 void ConfConexoesWidget::configurarConexao(ConexaoBD *conexao)
 {
  if(conexao)
@@ -341,7 +341,7 @@ void ConfConexoesWidget::configurarConexao(ConexaoBD *conexao)
    conexao->definirParamConexao(ConexaoBD::PARAM_OPCOES, opcoes_edt->text());
  }
 }
-//------------------------------------------------------------
+
 void ConfConexoesWidget::testarConexao(void)
 {
  ConexaoBD conexao;
@@ -363,7 +363,7 @@ void ConfConexoesWidget::testarConexao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ConfConexoesWidget::restaurarPadroes(void)
 {
  try
@@ -383,7 +383,7 @@ void ConfConexoesWidget::restaurarPadroes(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ConfConexoesWidget::salvarConfiguracao(void)
 {
  try
@@ -425,7 +425,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
        geraria muitos erros se o modo citado não estivesse ativado */
     ParserEsquema::ignorarAtributosDesc(true);
 
-    //Gera o esquema da conexão e contatena à demais geradas
+    //Gera o esquema da conexão e contatena à  demais geradas
     params_config[AtributosGlobais::CONF_CONEXOES][AtributosParsers::CONEXOES]+=
     ParserEsquema::obterDefinicaoObjeto(AtributosGlobais::DIR_CONFIGURACOES +
                                         AtributosGlobais::SEP_DIRETORIO +
@@ -446,7 +446,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ConfConexoesWidget::obterConexoes(map<QString, ConexaoBD *> &conexoes)
 {
  int i, qtd;
@@ -457,5 +457,5 @@ void ConfConexoesWidget::obterConexoes(map<QString, ConexaoBD *> &conexoes)
  for(i=0; i < qtd; i++)
   conexoes[conexoes_cmb->itemText(i)]=reinterpret_cast<ConexaoBD *>(conexoes_cmb->itemData(i).value<void *>());
 }
-//***********************************************************
+
 

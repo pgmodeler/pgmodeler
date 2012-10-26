@@ -25,7 +25,7 @@
 #include "objetobasewidget.h"
 #include "ui_gatilhowidget.h"
 #include "tabelaobjetoswidget.h"
-//***********************************************************
+
 class GatilhoWidget: public ObjetoBaseWidget, public Ui::GatilhoWidget {
  Q_OBJECT
 
@@ -41,7 +41,7 @@ class GatilhoWidget: public ObjetoBaseWidget, public Ui::GatilhoWidget {
    SeletorObjetoWidget *sel_tabela_ref,
                        *sel_funcao;
 
-   //Adiciona uma coluna à tabelade colunas referenciadas pelo gatilho
+   //Adiciona uma coluna   tabelade colunas referenciadas pelo gatilho
    void adicionarColuna(Coluna *coluna, int idx_lin);
 
  public:
@@ -59,5 +59,5 @@ class GatilhoWidget: public ObjetoBaseWidget, public Ui::GatilhoWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

@@ -1,5 +1,5 @@
 #include "conversaocodificacaowidget.h"
-//***********************************************************
+
 ConversaoCodificacaoWidget::ConversaoCodificacaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_CONV_CODIFICACAO)
 {
  try
@@ -94,4 +94,4 @@ void ConversaoCodificacaoWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

@@ -27,7 +27,7 @@
 #include "ui_funcaoagregacaowidget.h"
 #include "tipopgsqlwidget.h"
 #include "tabelaobjetoswidget.h"
-//***********************************************************
+
 class FuncaoAgregacaoWidget: public ObjetoBaseWidget, public Ui::FuncaoAgregacaoWidget {
  Q_OBJECT
 
@@ -44,7 +44,7 @@ class FuncaoAgregacaoWidget: public ObjetoBaseWidget, public Ui::FuncaoAgregacao
                    //Destacador de sintaxe usado no campo de expressão condicional
    DestaqueSintaxe *destaque_cond;
 
-                  //Seletores de funções e operador relacionados à função de agregação
+                  //Seletores de funções e operador relacionao �  função de agregação
    SeletorObjetoWidget *sel_op_ordenacao,
                        *sel_func_final,
                        *sel_func_transicao;
@@ -56,11 +56,11 @@ class FuncaoAgregacaoWidget: public ObjetoBaseWidget, public Ui::FuncaoAgregacao
  private slots:
   void hideEvent(QHideEvent *);
 
-  //Adiciona ou atualiza o tipo selecionado no widget 'tipo_entrada' à tabela de tipos de entrada
+  //Adiciona ou atualiza o tipo selecionado no widget 'tipo_entrada'   tabela de tipos de entrada
   void manipularTipoDado(int linha);
 
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

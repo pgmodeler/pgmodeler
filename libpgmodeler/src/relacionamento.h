@@ -26,7 +26,7 @@
 #include "relacionamentobase.h"
 #include "tabela.h"
 #include "caixatexto.h"
-//***********************************************************
+
 /*
 ### Regras de implementação de relacionamentos: ###
 
@@ -183,12 +183,12 @@ class Relacionamento: public RelacionamentoBase {
 
   //Chave estrangeira que representa o relacionamento 1-n
   Restricao *fk_rel1n,
-            /* Armazena a referência à chave primária
+            /* Armazena a referência a chave primária
                criada automaticamente quando o relacionamento
                é identificador e a entidade fraca não possui
                uma chave primária */
             *pk_relident,
-            /*Armazena a referência à chave primária especial. Esta
+            /*Armazena a referência a  chave primária especial. Esta
               referência só fica disponível quando o relacionamento é do tipo gen/dep */
             *pk_especial,
             //Armazena a chave única que representa (juntamente com a fk_rel1n) o rel. 1-1
@@ -213,7 +213,7 @@ class Relacionamento: public RelacionamentoBase {
      serão usadas como chave primária especial na tabela receptora do relacionamento */
   vector<unsigned> id_colunas_pk_rel;
 
-  //Nome atribuiído à  tabela gerada pelo relacionamento n-n
+  //Nome atribuiído a   tabela gerada pelo relacionamento n-n
   QString nome_tab_relnn;
 
   //Indica se uma dada coluna existe na lista de colunas
@@ -236,11 +236,11 @@ class Relacionamento: public RelacionamentoBase {
      verificar nomes duplicados e tipos incompatíves de colunas. */
   void adicionarColunasRelGen(void);
 
-  /* Cria a chave estrangeira que representa o relacionamento e a adiciona à
+  /* Cria a chave estrangeira que representa o relacionamento e a adiciona a
      tabela de destino do relacionamento */
   void adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *tab_receptora, TipoAcao acao_del, TipoAcao acao_upd);
 
-  /* Cria a chave única que representa o relacionamento 1-1 e a adiciona à
+  /* Cria a chave única que representa o relacionamento 1-1 e a adiciona a
      tabela de destino do relacionamento */
   void adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_receptora);
 
@@ -320,7 +320,7 @@ class Relacionamento: public RelacionamentoBase {
    bool obterSufixoAutomatico(void);
 
    /* Atenção: Este método só tem efeito quando o relacionamento está conectado, pois é só
-      nesta situação que se consegue obter as colunas geradas pela ligação do relacionamento à tabelas.
+      nesta situação que se consegue obter as colunas geradas pela ligação do relacionameto as tabelas.
 
       Método que define quais as colunas herdadas/copiadas serão usadas
       como chave-primária especial na tabela receptora. Quando o relacionamento é conectado
@@ -354,7 +354,7 @@ class Relacionamento: public RelacionamentoBase {
    //Retorna se o relacionamento é identificador ou não
    bool relacionamentoIdentificador(void);
 
-    /* Retorna se o relacionamento está invalidado em relação à propagação de colunas.
+    /* Retorna se o relacionamento está invalidado em relaçao a  propagação de colunas.
      Este método faz uma série de verificações para cada tipo de relacionamento,
      e se em alguma condição este método retornar 'true' indica que o relacionamento
      não está mais válido e precisa ser reconectado. A reconexão operação é
@@ -447,5 +447,5 @@ class Relacionamento: public RelacionamentoBase {
 
   friend class ModeloBD;
 };
-//***********************************************************
+
 #endif

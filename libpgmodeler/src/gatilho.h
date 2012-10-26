@@ -25,7 +25,7 @@
 
 #include "objetotabela.h"
 #include "funcao.h"
-//***********************************************************
+
 class Gatilho: public ObjetoTabela{
  protected:
   //Argumentos que são passados a função que o gatilho executa
@@ -76,7 +76,7 @@ class Gatilho: public ObjetoTabela{
 
   /* Adiciona uma coluna como condição de disparo (apenas para evento update)
      As colunas adicionadas por esse método devem obrigatoriamente pertencer
-     à coluna dona do gatilho e não à outras tabelas */
+       coluna dona do gatilho e nã�  outras tabelas */
   void adicionarColuna(Coluna *coluna);
 
   //Adiciona um argumento ao gatilho
@@ -159,5 +159,5 @@ class Gatilho: public ObjetoTabela{
   //Retorna a definição SQL ou XML do objeto
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

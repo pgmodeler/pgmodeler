@@ -1,8 +1,8 @@
 #include "relacionamento.h"
-//***********************************************************
+
 //Inicialização de atributos estáticos da classe
 const QString Relacionamento::SEPARADOR_SUFIXO("_");
-//-----------------------------------------------------------
+
 Relacionamento::Relacionamento(Relacionamento *relacao) : RelacionamentoBase(relacao)
 {
  if(!relacao)
@@ -10,7 +10,7 @@ Relacionamento::Relacionamento(Relacionamento *relacao) : RelacionamentoBase(rel
 
  (*(this))=(*relacao);
 }
-//-----------------------------------------------------------
+
 /*Relacionamento::~Relacionamento(void)
 {
  if(!conectado)
@@ -32,7 +32,7 @@ Relacionamento::Relacionamento(Relacionamento *relacao) : RelacionamentoBase(rel
   }
  }
 }*/
-//-----------------------------------------------------------
+
 Relacionamento::Relacionamento(const QString &nome, unsigned tipo_rel, Tabela *tab_orig,
                                Tabela *tab_dest, bool obrig_orig, bool obrig_dest,
                                bool sufixo_auto, const QString &sufix_orig, const QString &sufix_dest,
@@ -81,7 +81,7 @@ Relacionamento::Relacionamento(const QString &nome, unsigned tipo_rel, Tabela *t
  atributos[AtributosParsers::RELAC_GEN]="";
  atributos[AtributosParsers::RELAC_1N]="";
  atributos[AtributosParsers::TABELA_PAI]="";
-}//-----------------------------------------------------------
+}
 vector<QString> Relacionamento::obterColunasRelacionamento(void)
 {
  unsigned qtd, i;
@@ -96,13 +96,13 @@ vector<QString> Relacionamento::obterColunasRelacionamento(void)
 
  return(vet_nomes);
 }
-//-----------------------------------------------------------
+
 void Relacionamento::definirTabelaObrigatoria(unsigned id_tabela, bool valor)
 {
  RelacionamentoBase::definirTabelaObrigatoria(id_tabela, valor);
  this->invalidado=true;
 }
-//-----------------------------------------------------------
+
 void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufixo)
 {
  if(tipo_tab > TABELA_DESTINO)
@@ -120,7 +120,7 @@ void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufix
 
  this->invalidado=true;
 }
-//-----------------------------------------------------------
+
 QString Relacionamento::obterSufixoTabela(unsigned tipo_tab)
 {
  if(tipo_tab > TABELA_DESTINO)
@@ -131,13 +131,13 @@ QString Relacionamento::obterSufixoTabela(unsigned tipo_tab)
  else
   return(sufixo_dest);
 }
-//-----------------------------------------------------------
+
 void Relacionamento::definirPostergavel(bool valor)
 {
  postergavel=valor;
  this->invalidado=true;
 }
-//-----------------------------------------------------------
+
 void Relacionamento::definirIdentificador(bool valor)
 {
  /* Validando o relacionamento identificador.
@@ -154,7 +154,7 @@ void Relacionamento::definirIdentificador(bool valor)
  identificador=valor;
  this->invalidado=true;
 }
-//-----------------------------------------------------------
+
 void Relacionamento::definirColsChavePrimariaEspecial(vector<unsigned> &cols)
 {
  /* Dispara um erro caso o usuário tente usar a chave primária especial em autorelacionamento
@@ -166,12 +166,12 @@ void Relacionamento::definirColsChavePrimariaEspecial(vector<unsigned> &cols)
 
  this->id_colunas_pk_rel=cols;
 }
-//-----------------------------------------------------------
+
 vector<unsigned> Relacionamento::obterColChavePrimariaEspecial(void)
 {
  return(this->id_colunas_pk_rel);
 }
-//-----------------------------------------------------------
+
 void Relacionamento::criarChavePrimariaEspecial(void)
 {
  if(!id_colunas_pk_rel.empty())
@@ -190,7 +190,7 @@ void Relacionamento::criarChavePrimariaEspecial(void)
   pk_especial->definirProtegido(true);
   pk_especial->definirEspacoTabela(dynamic_cast<EspacoTabela *>(obterTabelaReceptora()->obterEspacoTabela()));
 
-  //Adiciona as colunas à chave primária obtendo-as através dos seus índices armazenados em 'id_colunas_pk_rel'
+  //Adiciona as colunas   chave primária obtendo-as através dos seus índices armazenados em 'id_colunas_pk_rel'
   qtd=id_colunas_pk_rel.size();
   for(i=0; i < qtd; i++)
   {
@@ -213,7 +213,7 @@ void Relacionamento::criarChavePrimariaEspecial(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::definirNomeTabelaRelNN(const QString &nome)
 {
  if(!ObjetoBase::nomeValido(nome))
@@ -222,28 +222,28 @@ void Relacionamento::definirNomeTabelaRelNN(const QString &nome)
  nome_tab_relnn=nome;
  this->invalidado=true;
 }
-//-----------------------------------------------------------
+
 QString Relacionamento::obterNomeTabelaRelNN(void)
 {
  return(nome_tab_relnn);
 }
-//-----------------------------------------------------------
+
 bool Relacionamento::obterPostergavel(void)
 {
  return(postergavel);
 }
-//-----------------------------------------------------------
+
 void Relacionamento::definirTipoPostergacao(TipoPostergacao tipo_post)
 {
  tipo_postergacao=tipo_post;
  this->invalidado=true;
 }
-//-----------------------------------------------------------
+
 TipoPostergacao Relacionamento::obterTipoPostergacao(void)
 {
  return(tipo_postergacao);
 }
-//-----------------------------------------------------------
+
 int Relacionamento::obterIndiceObjeto(ObjetoTabela *objeto)
 {
  vector<ObjetoTabela *>::iterator itr, itr_end;
@@ -283,7 +283,7 @@ int Relacionamento::obterIndiceObjeto(ObjetoTabela *objeto)
  else
   return(-1);
 }
-//-----------------------------------------------------------
+
 bool Relacionamento::colunaExistente(Coluna *coluna)
 {
  vector<Coluna *>::iterator itr, itr_end;
@@ -309,7 +309,7 @@ bool Relacionamento::colunaExistente(Coluna *coluna)
 
  return(enc);
 }
-//-----------------------------------------------------------
+
 void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
 {
  TipoObjetoBase tipo_obj;
@@ -347,7 +347,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
       disparada e o objeto não será inserido na lista */
 
    /* Como atributos recém criados não possuem uma tabela pai até que sejam
-      adicionados à tabela receptora, para medidas de validação do código do atributo,
+      adicionados   tabela receptora, para medidas de validação do código do atributo,
       a tabela de origem do relacionamento é atribuída como tabela pai */
    objeto_tab->definirTabelaPai(tabela_orig);
 
@@ -411,13 +411,13 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
    throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::removerObjetos(void)
 {
  atributos_rel.clear();
  restricoes_rel.clear();
 }
-//-----------------------------------------------------------
+
 void Relacionamento::destruirObjetos(void)
 {
  while(!restricoes_rel.empty())
@@ -432,7 +432,7 @@ void Relacionamento::destruirObjetos(void)
   atributos_rel.pop_back();
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::removerObjeto(unsigned id_obj, TipoObjetoBase tipo_obj)
 {
  vector<ObjetoTabela *> *lista_obj=NULL;
@@ -495,7 +495,7 @@ void Relacionamento::removerObjeto(unsigned id_obj, TipoObjetoBase tipo_obj)
  //Reconecta o relacionamento
  conectarRelacionamento();
 }
-//-----------------------------------------------------------
+
 void Relacionamento::removerObjeto(ObjetoTabela *objeto)
 {
  if(!objeto)
@@ -503,17 +503,17 @@ void Relacionamento::removerObjeto(ObjetoTabela *objeto)
 
  removerObjeto(obterIndiceObjeto(objeto),objeto->obterTipoObjeto());
 }
-//-----------------------------------------------------------
+
 void Relacionamento::removerAtributo(unsigned id_atrib)
 {
  removerObjeto(id_atrib, OBJETO_COLUNA);
 }
-//-----------------------------------------------------------
+
 void Relacionamento::removerRestricao(unsigned id_rest)
 {
  removerObjeto(id_rest, OBJETO_RESTRICAO);
 }
-//-----------------------------------------------------------
+
 Coluna *Relacionamento::obterColunaReferenciada(const QString &nome_col)
 {
  vector<Coluna *>::iterator itr, itr_end;
@@ -538,7 +538,7 @@ Coluna *Relacionamento::obterColunaReferenciada(const QString &nome_col)
  else
   return(NULL);
 }
-//-----------------------------------------------------------
+
 ObjetoTabela *Relacionamento::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
 {
  vector<ObjetoTabela *> *lista=NULL;
@@ -556,7 +556,7 @@ ObjetoTabela *Relacionamento::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_
 
  return(lista->at(idx_obj));
 }
-//-----------------------------------------------------------
+
 ObjetoTabela *Relacionamento::obterObjeto(const QString &nome_atrib, TipoObjetoBase tipo_obj)
 {
  vector<ObjetoTabela *>::iterator itr, itr_end;
@@ -590,7 +590,7 @@ ObjetoTabela *Relacionamento::obterObjeto(const QString &nome_atrib, TipoObjetoB
  else
   return(NULL);
 }
-//-----------------------------------------------------------
+
 Coluna *Relacionamento::obterAtributo(unsigned id_atrib)
 {
  /* Caso o índice do atributo esteja fora da quantidade da lista de
@@ -599,12 +599,12 @@ Coluna *Relacionamento::obterAtributo(unsigned id_atrib)
   throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  return(dynamic_cast<Coluna *>(atributos_rel[id_atrib]));
 }
-//-----------------------------------------------------------
+
 Coluna *Relacionamento::obterAtributo(const QString &nome_atrib)
 {
  return(dynamic_cast<Coluna *>(obterObjeto(nome_atrib,OBJETO_COLUNA)));
 }
-//-----------------------------------------------------------
+
 Restricao *Relacionamento::obterRestricao(unsigned id_rest)
 {
  /* Caso o índice da restrição esteja fora da quantidade da lista de
@@ -613,22 +613,22 @@ Restricao *Relacionamento::obterRestricao(unsigned id_rest)
   throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  return(dynamic_cast<Restricao *>(restricoes_rel[id_rest]));
 }
-//-----------------------------------------------------------
+
 Restricao *Relacionamento::obterRestricao(const QString &nome_rest)
 {
  return(dynamic_cast<Restricao *>(obterObjeto(nome_rest,OBJETO_RESTRICAO)));
 }
-//-----------------------------------------------------------
+
 unsigned Relacionamento::obterNumAtributos(void)
 {
  return(atributos_rel.size());
 }
-//-----------------------------------------------------------
+
 unsigned Relacionamento::obterNumRestricoes(void)
 {
  return(restricoes_rel.size());
 }
-//-----------------------------------------------------------
+
 unsigned Relacionamento::obterNumObjetos(TipoObjetoBase tipo_obj)
 {
  if(tipo_obj==OBJETO_COLUNA)
@@ -638,7 +638,7 @@ unsigned Relacionamento::obterNumObjetos(TipoObjetoBase tipo_obj)
  else
   throw Excecao(ERR_PGMODELER_REFOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
-//-----------------------------------------------------------
+
 void Relacionamento::adicionarRestricoes(Tabela *tab_dest)
 {
  Restricao *rest=NULL, *pk=NULL;
@@ -724,7 +724,7 @@ void Relacionamento::adicionarRestricoes(Tabela *tab_dest)
   throw Excecao(e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::adicionarColunasRelGen(void)
 {
  Tabela *tab_orig=NULL, *tab_dest=NULL,
@@ -898,7 +898,7 @@ void Relacionamento::adicionarColunasRelGen(void)
      else if(coluna->obterTipo()=="bigserial")
       coluna->definirTipo(TipoPgSQL("bigint"));
 
-     //Adiciona a nova coluna à lista temporária de colunas
+     //Adiciona a nova coluna   lista temporária de colunas
      colunas.push_back(coluna);
     }
     else
@@ -973,7 +973,7 @@ void Relacionamento::adicionarColunasRelGen(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::conectarRelacionamento(void)
 {
  try
@@ -1042,7 +1042,7 @@ void Relacionamento::conectarRelacionamento(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
 {
  Restricao *pk=NULL;
@@ -1089,7 +1089,7 @@ void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
     i++;
    }
 
-   //Atribui o nome configurado à chave primaria criada
+   //Atribui o nome configurado   chave primaria criada
    pk->definirNome(nome);
   }
 
@@ -1099,7 +1099,7 @@ void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
   for(i=0; i < qtd; i++)
    pk->adicionarColuna(colunas_ref[i], Restricao::COLUNA_ORIGEM);
 
-  //Caso a tabela não tenha uma chave primária a mesma será atribuída à ela
+  //Caso a tabela não tenha uma chave primária a mesma será atru��a �  ela
   if(nova_pk)
    tab_receptora->adicionarRestricao(pk);
  }
@@ -1108,7 +1108,7 @@ void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_receptora)
 {
  Restricao *uq=NULL;
@@ -1126,7 +1126,7 @@ void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_rec
    uq_rel11=uq;
   }
 
-  //Insere as colunas do relacionamentos à chave única
+  //Insere as colunas do relacionamentos   chave única
   qtd=colunas_ref.size();
   i=0;
 
@@ -1148,7 +1148,7 @@ void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_rec
    i++;
   }
 
-  //Atribui o nome configurado à chave única
+  //Atribui o nome configurado   chave única
   uq->definirNome(nome + aux);
 
   /* Após configurada a chave única que define o
@@ -1160,7 +1160,7 @@ void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_rec
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *tab_receptora, TipoAcao acao_del, TipoAcao acao_upd)
 {
  Restricao *pk=NULL, *pk_aux=NULL, *fk=NULL;
@@ -1184,7 +1184,7 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
    fk->definirTabReferenciada(tab_referencia);
 
    /* Caso o relacionamento seja 1-1 ou 1-n a chave estrangeira alocada
-      será atribuída à chave estrangeira que representa o relacionamento */
+      será atribu�d �  chave estrangeira que representa o relacionamento */
    if(tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N)
     fk_rel1n=fk;
   }
@@ -1267,7 +1267,7 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
    i++;
   }
 
-  //Atribui o nome configurado à chave estrangeira
+  //Atribui o nome configurado   chave estrangeira
   fk->definirNome(nome + aux);
 
   /* Após configurada a chave estrangeira que define o
@@ -1279,7 +1279,7 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::adicionarAtributos(Tabela *tab_receptora)
 {
  unsigned i, qtd, i1;
@@ -1325,7 +1325,7 @@ void Relacionamento::adicionarAtributos(Tabela *tab_receptora)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora, bool nao_nulo)
 {
  Restricao *pk_dest=NULL, *pk_orig=NULL, *pk=NULL;
@@ -1341,7 +1341,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
 
    /* Selecionando a lista de colunas correta de acordo com a forma do relacionamento.
      Caso a tabela a qual receberá a chave estrangeira (tab_dest) for uma
-     referência à tabela de origem do relacionamento, o sufixo das colunas a serem criadas
+     referênci�  tabela de origem do relacionamento, o sufixo das colunas a serem criadas
      será configurado como sendo o sufixo da tabela de origem. Caso contrário  o
       será o da própria tabela de destino. */
   if(sufixo_auto)
@@ -1454,7 +1454,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
       coluna passará a ter como nome antigo o nome atribuido na iteração acima */
    coluna->definirNome(nome);
 
-   /* Caso o nome anteriro atribuído à coluna seja diferente do nome atual, o nome
+   /* Caso o nome anteriro atribuíd�  coluna seja diferente do nome atual, o nome
       atual da coluna passará a ser o nome antigo da mesma quando o relacionamento
       for desconectado e reconectado novamente, desta forma o histórico de nomes da
       colunas não se perde mesmo quando as colunas do relacionamento são desalocadas,
@@ -1475,7 +1475,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::adicionarColunasRel11(void)
 {
  Tabela *tab_ref=NULL, *tab_recep=NULL;
@@ -1565,7 +1565,7 @@ void Relacionamento::adicionarColunasRel11(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::adicionarColunasRel1n(void)
 {
  Tabela *tab_ref=NULL, *tab_recep=NULL;
@@ -1633,7 +1633,7 @@ void Relacionamento::adicionarColunasRel1n(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::adicionarColunasRelNn(void)
 {
  Tabela *tab=NULL, *tab1=NULL;
@@ -1696,7 +1696,7 @@ void Relacionamento::adicionarColunasRelNn(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 Tabela *Relacionamento::obterTabelaReferencia(void)
 {
  /* Para relacionamentos n-n que possuem 2 tabelas de refência,
@@ -1715,7 +1715,7 @@ Tabela *Relacionamento::obterTabelaReferencia(void)
    return(dynamic_cast<Tabela *>(tabela_orig));
  }
 }
-//-----------------------------------------------------------
+
 Tabela *Relacionamento::obterTabelaReceptora(void)
 {
  if(tipo_relac==RELACIONAMENTO_11)
@@ -1756,7 +1756,7 @@ Tabela *Relacionamento::obterTabelaReceptora(void)
  else
   return(dynamic_cast<Tabela *>(tabela_relnn));
 }
-//-----------------------------------------------------------
+
 void Relacionamento::removerObjetosTabelaRefCols(Tabela *tabela)
 {
  Gatilho *gat=NULL;
@@ -1808,7 +1808,7 @@ void Relacionamento::removerObjetosTabelaRefCols(Tabela *tabela)
   }
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::removerColsChavePrimariaTabela(Tabela *tabela)
 {
  if(tabela)
@@ -1851,7 +1851,7 @@ void Relacionamento::removerColsChavePrimariaTabela(Tabela *tabela)
   }
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
 {
  try
@@ -1891,7 +1891,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
     /* No caso de relacionamento 1-1 e 1-n é necessário
        remover a chave estrangeira que representa o
        relacionamento da tabela, além disso colunas
-       adicionadas à chave primária (no caso de um
+       adicionadas   chave primária (no caso de um
        relacionamento identificador) precisam ser removidas */
     if(fk_rel1n && (tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N))
     {
@@ -1991,7 +1991,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
 
      /* É necessário verificar se o objeto pertence ao relacionamento
         a fim de evitar que atributos adicionados por outros relacionamentos
-        à tabela também sejam removidos */
+          tabela também sejam removidos */
      if(tabela && obterIndiceObjeto(obj_tab) >= 0)
      {
       //Remove o atributo da tabela através do nome e tipo
@@ -2051,12 +2051,12 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 bool Relacionamento::relacionamentoIdentificador(void)
 {
  return(identificador);
 }
-//-----------------------------------------------------------
+
 bool Relacionamento::possuiAtributoIdentificador(void)
 {
  vector<ObjetoTabela *>::iterator itr, itr_end;
@@ -2080,7 +2080,7 @@ bool Relacionamento::possuiAtributoIdentificador(void)
 
  return(enc);
 }
-//-----------------------------------------------------------
+
 bool Relacionamento::relacionamentoInvalidado(void)
 {
  unsigned qtd_cols_rel, qtd_cols_tab, i, i1, qtd;
@@ -2152,7 +2152,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
      //Obtém a da chave estrangeira
      col2=colunas_ref[i];
 
-     //Obtém a coluna da chave primária ligada à coluna atual da chave estrangeira
+     //Obtém a coluna da chave primária ligd �  coluna atual da chave estrangeira
      col1=colunas_pk[i];
 
      /* Obtém a coluna da pk em si. Com esta referência será verificado se os endereços são iguais
@@ -2171,7 +2171,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
          A única exceção aceita é se o tipo da coluna de origem é do tipo 'serial' ou 'bigserial'
          e da coluna de destino seja 'integer' ou 'bigint'
 
-      3) Checa se a coluna (endereço) vindo do vetor colunas_pk é igual à coluna
+      3) Checa se a coluna (endereço) vindo do vetor colunas_pk é iga �  coluna
          obtida diretamente da chave primária */
      nome_col=col1->obterNome() + sufixo_cols[i];
      valido=(col1==col3 &&
@@ -2222,7 +2222,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
      1) Pega-se a chave estrangeira da tabela criada pela ligação
      a qual referencia a tabela de origem e verifica se as quantidades
      de colunas coincidem. O mesmo é feito para a segunda chave estrangeira
-     só que em relação à chave primaria da tabela de destino
+     só que em rela�� �  chave primaria da tabela de destino
      2) É necessário validar se os nomes das colunas da tabela gerada
         coincidem com os nomes das colunas das tabelas originárias */
   else if(tipo_relac==RELACIONAMENTO_NN)
@@ -2248,7 +2248,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
      if(rest->obterTipoRestricao()==TipoRestricao::foreign_key)
      {
       /* Verifica se a tabela referenciada pela chave é a tabela de origem
-         caso seja, armazena seu endereço na referência à chave estrangeira
+         caso seja, armazena seu endereço na referêni �  chave estrangeira
          da origem */
       if(!fk && rest->obterTabReferenciada()==tabela)
        fk=rest;
@@ -2309,7 +2309,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
  else
   return(true);
 }
-//-----------------------------------------------------------
+
 QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
@@ -2412,18 +2412,18 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   return(this->ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML, forma_reduzida));
  }
 }
-//-----------------------------------------------------------
+
 void Relacionamento::definirSufixoAutomatico(bool valor)
 {
  this->invalidado=(this->sufixo_auto!=valor);
  this->sufixo_auto=valor;
 }
-//-----------------------------------------------------------
+
 bool Relacionamento::obterSufixoAutomatico(void)
 {
  return(this->sufixo_auto);
 }
-//-----------------------------------------------------------
+
 void Relacionamento::operator = (Relacionamento &rel)
 {
  (*dynamic_cast<RelacionamentoBase *>(this))=dynamic_cast<RelacionamentoBase &>(rel);
@@ -2442,4 +2442,4 @@ void Relacionamento::operator = (Relacionamento &rel)
  this->colunas_ref.clear();
  this->sufixo_auto=rel.sufixo_auto;
 }
-//***********************************************************
+

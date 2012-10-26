@@ -1,5 +1,5 @@
 #include "confaparenciawidget.h"
-//***********************************************************
+
 ConfAparenciaWidget::ConfAparenciaWidget(QWidget * parent) : QWidget(parent)
 {
  setupUi(this);
@@ -72,14 +72,14 @@ ConfAparenciaWidget::ConfAparenciaWidget(QWidget * parent) : QWidget(parent)
  connect(sublinhado_chk, SIGNAL(toggled(bool)), this, SLOT(aplicarEstiloFonte(void)));
  connect(italico_chk, SIGNAL(toggled(bool)), this, SLOT(aplicarEstiloFonte(void)));
 }
-//-----------------------------------------------------------
+
 ConfAparenciaWidget::~ConfAparenciaWidget(void)
 {
  delete(viewp);
  delete(cena);
  delete(modelo);
 }
-//-----------------------------------------------------------
+
 void ConfAparenciaWidget::criarObjetosExemplo(void)
 {
  try
@@ -140,7 +140,7 @@ void ConfAparenciaWidget::criarObjetosExemplo(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ConfAparenciaWidget::carregarConfiguracao(void)
 {
  try
@@ -184,7 +184,7 @@ void ConfAparenciaWidget::carregarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ConfAparenciaWidget::salvarConfiguracao(void)
 {
  try
@@ -258,7 +258,7 @@ void ConfAparenciaWidget::salvarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ConfAparenciaWidget::habilitarElemConfiguracao(void)
 {
  QPalette pal;
@@ -339,7 +339,7 @@ void ConfAparenciaWidget::habilitarElemConfiguracao(void)
  fonte_cmb->blockSignals(false);
  tam_fonte_spb->blockSignals(false);
 }
-//-----------------------------------------------------------
+
 void ConfAparenciaWidget::aplicarCorElemento(void)
 {
  QToolButton *btn=dynamic_cast<QToolButton *>(sender());
@@ -376,7 +376,7 @@ void ConfAparenciaWidget::aplicarCorElemento(void)
    //Caso seja uma configuração de fonte
    else
    {
-    //Atribui a cor selecionada à cor da fonte do elemento atual
+    //Atribui a cor selecionada   cor da fonte do elemento atual
     itens_conf[elemento_cmb->currentIndex()].fmt_fonte.setForeground(cor_dlg.selectedColor());
     ObjetoGrafico::definirEstiloFonte(itens_conf[elemento_cmb->currentIndex()].id_conf,
                                       itens_conf[elemento_cmb->currentIndex()].fmt_fonte);
@@ -388,7 +388,7 @@ void ConfAparenciaWidget::aplicarCorElemento(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 void ConfAparenciaWidget::aplicarEstiloFonte(void)
 {
  QFont fonte;
@@ -409,7 +409,7 @@ void ConfAparenciaWidget::aplicarEstiloFonte(void)
  modelo->definirObjetosModificados();
  cena->update();
 }
-//-----------------------------------------------------------
+
 void ConfAparenciaWidget::restaurarPadroes(void)
 {
  try
@@ -423,4 +423,4 @@ void ConfAparenciaWidget::restaurarPadroes(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

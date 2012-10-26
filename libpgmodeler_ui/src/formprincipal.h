@@ -35,7 +35,7 @@
 #include "visaogeralwidget.h"
 
 using namespace std;
-//***********************************************************
+
 class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
  Q_OBJECT
 
@@ -152,5 +152,5 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
   //Exibe a visão geral do modelo atualmente aberto
   void exibirVisaoGeral(bool exibir);
 };
-//***********************************************************
+
 #endif

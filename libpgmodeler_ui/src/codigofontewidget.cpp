@@ -1,7 +1,7 @@
 #include "codigofontewidget.h"
 #include "progressotarefa.h"
 extern ProgressoTarefa *prog_tarefa;
-//***********************************************************
+
 CodigoFonteWidget::CodigoFonteWidget(QWidget *parent): ObjetoBaseWidget(parent)
 {
  try
@@ -196,4 +196,4 @@ void CodigoFonteWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto)
   }
  }
 }
-//***********************************************************
+

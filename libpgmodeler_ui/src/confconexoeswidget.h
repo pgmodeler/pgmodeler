@@ -24,7 +24,7 @@
 #include "ui_confconexoeswidget.h"
 #include "confbasewidget.h"
 #include "conexaobd.h"
-//***********************************************************
+
 class ConfConexoesWidget: public QWidget, public Ui::ConfConexoesWidget, public ConfBaseWidget {
  private:
   Q_OBJECT
@@ -71,5 +71,5 @@ class ConfConexoesWidget: public QWidget, public Ui::ConfConexoesWidget, public 
       ao arquivo, operação esta tratada pelo método salvarConfiguracao() */
    void aplicarConfiguracao(void){}
 };
-//***********************************************************
+
 #endif

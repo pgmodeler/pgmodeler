@@ -31,7 +31,7 @@
 
 #include <iostream>
 #include <fstream>
-//***********************************************************
+
 class CrashHandler : public QDialog, Ui::CrashHandler
 {
  private:
@@ -54,5 +54,5 @@ class CrashHandler : public QDialog, Ui::CrashHandler
   void gerarRelatorio(void);
   void habilitarGeracao(void);
 };
-//***********************************************************
+
 #endif

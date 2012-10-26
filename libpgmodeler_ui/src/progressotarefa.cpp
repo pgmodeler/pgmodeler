@@ -1,17 +1,17 @@
 #include "progressotarefa.h"
-//***********************************************************
+
 ProgressoTarefa::ProgressoTarefa(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
  setupUi(this);
  //Por padrão o progresso de tarefa é modal e não tem bordas
  this->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
 }
-//-----------------------------------------------------------
+
 void ProgressoTarefa::adicionarIcone(unsigned id, const QIcon &ico)
 {
  icones[id]=ico;
 }
-//-----------------------------------------------------------
+
 void ProgressoTarefa::executarProgesso(int progresso, const QString &texto, unsigned id_icone)
 {
  //Caso o progresso seja maior que o máximo da barra de progresso
@@ -32,7 +32,7 @@ void ProgressoTarefa::executarProgesso(int progresso, const QString &texto, unsi
  //Força o redesenho do formulário para atualizar os valores
  this->repaint();
 }
-//-----------------------------------------------------------
+
 void ProgressoTarefa::close(void)
 {
  progresso_pb->setValue(0);
@@ -40,4 +40,4 @@ void ProgressoTarefa::close(void)
  icone_lbl->clear();
  QWidget::close();
 }
-//***********************************************************
+

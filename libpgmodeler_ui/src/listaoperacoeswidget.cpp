@@ -1,9 +1,9 @@
 #include "listaoperacoeswidget.h"
 #include "progressotarefa.h"
-//***********************************************************
+
 extern CaixaMensagem *caixa_msg;
 extern ProgressoTarefa *prog_tarefa;
-//***********************************************************
+
 ListaOperacoesWidget::ListaOperacoesWidget(QWidget *parent, Qt::WindowFlags f) : QDockWidget(parent, f)
 {
  setupUi(this);
@@ -152,7 +152,7 @@ void ListaOperacoesWidget::definirModelo(ModeloWidget *modelo)
  this->modelo_wgt=modelo;
  atualizarListaOperacoes();
 }
-//-----------------------------------------------------------
+
 void ListaOperacoesWidget::desfazerOperacao(void)
 {
  try
@@ -179,7 +179,7 @@ void ListaOperacoesWidget::desfazerOperacao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ListaOperacoesWidget::refazerOperacao(void)
 {
  try
@@ -206,7 +206,7 @@ void ListaOperacoesWidget::refazerOperacao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ListaOperacoesWidget::excluirOperacoes(void)
 {
  //Exibe a mensagem de confirmação ao usuário
@@ -223,7 +223,7 @@ void ListaOperacoesWidget::excluirOperacoes(void)
   excluiroperacoes_tb->setEnabled(false);
  }
 }
-//-----------------------------------------------------------
+
 void ListaOperacoesWidget::atualizarModeloObjetos(void)
 {
  //Atualiza a lista de operações
@@ -233,4 +233,4 @@ void ListaOperacoesWidget::atualizarModeloObjetos(void)
     operação na lista de objetos */
  emit s_operacaoExecutada();
 }
-//***********************************************************
+

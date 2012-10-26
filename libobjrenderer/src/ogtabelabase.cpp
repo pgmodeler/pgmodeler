@@ -1,5 +1,5 @@
 #include "ogtabelabase.h"
-//***********************************************************
+
 OGTabelaBase::OGTabelaBase(TabelaBase *tab_base) : ObjetoGrafico(tab_base)
 {
  if(!tab_base)
@@ -10,7 +10,7 @@ OGTabelaBase::OGTabelaBase(TabelaBase *tab_base) : ObjetoGrafico(tab_base)
  this->addToGroup(corpo);
  this->addToGroup(titulo);
 }
-//-----------------------------------------------------------
+
 OGTabelaBase::~OGTabelaBase(void)
 {
  this->removeFromGroup(corpo);
@@ -18,7 +18,7 @@ OGTabelaBase::~OGTabelaBase(void)
  delete(corpo);
  delete(titulo);
 }
-//-----------------------------------------------------------
+
 QVariant OGTabelaBase::itemChange(GraphicsItemChange change, const QVariant &value)
 {
  //Executa o método itemChange() da classe superior
@@ -29,4 +29,4 @@ QVariant OGTabelaBase::itemChange(GraphicsItemChange change, const QVariant &val
 
  return(value);
 }
-//***********************************************************
+

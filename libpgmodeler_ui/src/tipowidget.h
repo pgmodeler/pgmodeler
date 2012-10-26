@@ -36,7 +36,7 @@
  modo referenciam a classe Parametro.*/
 #include <QMetaType>
 Q_DECLARE_METATYPE(Parametro)
-//***********************************************************
+
 class TipoWidget: public ObjetoBaseWidget, public Ui::TipoWidget {
  Q_OBJECT
 
@@ -75,5 +75,5 @@ class TipoWidget: public ObjetoBaseWidget, public Ui::TipoWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

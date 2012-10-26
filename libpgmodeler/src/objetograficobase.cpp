@@ -1,5 +1,5 @@
 #include "objetograficobase.h"
-//***********************************************************
+
 ObjetoGraficoBase::ObjetoGraficoBase(void)
 {
  /* Por padrão o objeto é definido como modificado
@@ -13,19 +13,19 @@ ObjetoGraficoBase::ObjetoGraficoBase(void)
 
  objeto_receptor=NULL;
 }
-//-----------------------------------------------------------
+
 ObjetoGraficoBase::~ObjetoGraficoBase(void)
 {
  this->blockSignals(true);
 }
-//-----------------------------------------------------------
+
 void ObjetoGraficoBase::definirProtegido(bool valor)
 {
  protegido=valor;
  if(!this->signalsBlocked())
   emit s_objetoProtegido(valor);
 }
-//-----------------------------------------------------------
+
 void ObjetoGraficoBase::definirModificado(bool valor)
 {
  modificado=valor;
@@ -33,12 +33,12 @@ void ObjetoGraficoBase::definirModificado(bool valor)
  if(!this->signalsBlocked() && modificado)
   emit s_objetoModificado();
 }
-//-----------------------------------------------------------
+
 bool ObjetoGraficoBase::objetoModificado(void)
 {
  return(modificado);
 }
-//-----------------------------------------------------------
+
 void ObjetoGraficoBase::definirAtributoPosicao(void)
 {
  atributos[AtributosParsers::POSICAO_X]=QString("%1").arg(posicao.x());
@@ -46,23 +46,23 @@ void ObjetoGraficoBase::definirAtributoPosicao(void)
  atributos[AtributosParsers::POSICAO]=ParserEsquema::obterDefinicaoObjeto(AtributosParsers::POSICAO,
                                      atributos, ParserEsquema::DEFINICAO_XML);
 }
-//-----------------------------------------------------------
+
 void  ObjetoGraficoBase::definirPosicaoObjeto(QPointF p)
 {
  posicao=p;
 }
-//-----------------------------------------------------------
+
 QPointF ObjetoGraficoBase::obterPosicaoObjeto(void)
 {
  return(posicao);
 }
-//-----------------------------------------------------------
+
 void ObjetoGraficoBase::operator = (ObjetoGraficoBase &obj)
 {
  *(dynamic_cast<ObjetoBase *>(this))=dynamic_cast<ObjetoBase &>(obj);
  this->posicao=obj.posicao;
 }
-//-----------------------------------------------------------
+
 void ObjetoGraficoBase::definirObjetoReceptor(QObject *objeto)
 {
  if(!objeto && objeto_receptor)
@@ -70,9 +70,9 @@ void ObjetoGraficoBase::definirObjetoReceptor(QObject *objeto)
 
  objeto_receptor=objeto;
 }
-//-----------------------------------------------------------
+
 QObject *ObjetoGraficoBase::obterObjetoReceptor(void)
 {
  return(objeto_receptor);
 }
-//***********************************************************
+

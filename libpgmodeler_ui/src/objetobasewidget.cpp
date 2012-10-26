@@ -9,7 +9,7 @@ const QColor ObjetoBaseWidget::COR_FUNDO_LIN_PROT=QColor(255,180,180);
 const QColor ObjetoBaseWidget::COR_TEXTO_LIN_PROT=QColor(80,80,80);
 const QColor ObjetoBaseWidget::COR_FUNDO_LIN_INCREL=QColor(164,249,176);
 const QColor ObjetoBaseWidget::COR_TEXTO_LIN_INCREL=QColor(80,80,80);
-//***********************************************************
+
 ObjetoBaseWidget::ObjetoBaseWidget(QWidget *parent, TipoObjetoBase tipo_obj): QDialog(parent)
 {
  try
@@ -616,7 +616,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 void ObjetoBaseWidget::finalizarConfiguracao(void)
 {
  if(this->objeto)
@@ -625,7 +625,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
   ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->objeto);
   ObjetoTabela *obj_tab=dynamic_cast<ObjetoTabela *>(this->objeto);
 
-  /* Caso o objeto seja novo, é necessário adicioná-lo à lista
+  /* Caso o objeto seja novo, é necessário adicion�-o �  lista
      de operações como objeto criado para permitir sua remoção
      quando o usuário executar a operação de desfazer */
   if(novo_obj)
@@ -643,7 +643,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
    {
     if(this->tabela)
      lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_CRIADO, -1, this->tabela);
-    /* Relacionamento não são adicionados à lista de operações por este trecho de código.
+    /* Relacionamento não são adicionao �  lista de operações por este trecho de código.
        Isso é tratado no método definirAtributos() da classe RelacionamentoWidget */
     else if(tipo_obj!=OBJETO_RELACAO && tipo_obj!=OBJETO_TABELA)
      lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_CRIADO, -1, this->relacionamento);
@@ -758,7 +758,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
   emit s_objetoManipulado();
  }
 }
-//-----------------------------------------------------------
+
 void ObjetoBaseWidget::cancelarConfiguracao(void)
 {
  TipoObjetoBase tipo_obj;
@@ -817,8 +817,8 @@ void ObjetoBaseWidget::cancelarConfiguracao(void)
  }
 
   /* Emite um sinal indicando que o objeto foi manipulado de modo que
-     seu estado anterior à edição foi restaurado e assim como a lista
+     seu estado anterior   edição foi restaurado e assim como a lista
      de operações sofreu modificações */
   emit s_objetoManipulado();
 }
-//***********************************************************
+

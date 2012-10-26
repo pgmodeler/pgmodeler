@@ -1,5 +1,5 @@
 #include "sequenciawidget.h"
-//***********************************************************
+
 SequenciaWidget::SequenciaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_SEQUENCIA)
 {
  try
@@ -79,7 +79,7 @@ void SequenciaWidget::aplicarConfiguracao(void)
   Sequencia *sequencia=NULL;
   iniciarConfiguracao<Sequencia>();
 
-  //Obtém a referência à sequência que está sendo editada/criada
+  //Obtém a referêni �  sequência que está sendo editada/criada
   sequencia=dynamic_cast<Sequencia *>(this->objeto);
 
   sequencia->definirCiclica(ciclica_chk->isChecked());
@@ -100,4 +100,4 @@ void SequenciaWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

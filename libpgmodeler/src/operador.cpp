@@ -1,5 +1,5 @@
 #include "operador.h"
-//***********************************************************
+
 Operador::Operador(void)
 {
  unsigned i;
@@ -32,7 +32,7 @@ Operador::Operador(void)
  atributos[AtributosParsers::ASSINATURA]="";
  atributos[AtributosParsers::TIPO_REFERENCIA]="";
 }
-//-----------------------------------------------------------
+
 bool Operador::nomeValido(const QString &nome)
 {
  //ATENÇÃO: Não alterar a seqüência em que aparecem os caracteres.
@@ -68,7 +68,7 @@ bool Operador::nomeValido(const QString &nome)
 
  return(valido);
 }
-//-----------------------------------------------------------
+
 void Operador::definirNome(const QString &nome)
 {
  if(nome=="")
@@ -81,7 +81,7 @@ void Operador::definirNome(const QString &nome)
    this->nome=nome;
  }
 }
-//-----------------------------------------------------------
+
 void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
 {
  //Caso o tipo de função seja inválido
@@ -145,7 +145,7 @@ void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
 
  funcoes[tipo_funcao]=funcao;
 }
-//-----------------------------------------------------------
+
 void Operador::definirTipoDadoArgumento(TipoPgSQL tipo_dado, unsigned tipo_arg)
 {
  //Caso o tipo de argumento seja inválido
@@ -154,7 +154,7 @@ void Operador::definirTipoDadoArgumento(TipoPgSQL tipo_dado, unsigned tipo_arg)
  else
   tipo_args[tipo_arg]=tipo_dado;
 }
-//-----------------------------------------------------------
+
 void Operador::definirOperador(Operador *op, unsigned tipo_op)
 {
  //Caso o tipo de operador seja inválido
@@ -163,8 +163,8 @@ void Operador::definirOperador(Operador *op, unsigned tipo_op)
  else
  {
   /* Validando OP Comutação: De acordo com a documentação do PostgreSQL o operador
-     de comutação deve possuir seu argumento à direita do mesmo tipo do argumento
-     à esquerda do operador comutado. Ou seja, se o operador ++ (tipoA, tipoB)
+     de comutação deve possuir seu argumet �  direita do mesmo tipo do argumento
+       esquerda do operador comutado. Ou seja, se o operador ++ (tipoA, tipoB)
      está sendo definido e seu operador de comutação é +*+ então a assinatura
      deste último deve ser +*+(tipoB, tipoA). A condição testa abaixo é a situação
      contrária, ou seja quando o operador de comutação não atende aos requisitos
@@ -195,17 +195,17 @@ void Operador::definirOperador(Operador *op, unsigned tipo_op)
    operadores[tipo_op]=op;
  }
 }
-//-----------------------------------------------------------
+
 void Operador::definirHashes(bool valor)
 {
  hashes=valor;
 }
-//-----------------------------------------------------------
+
 void Operador::definirMerges(bool valor)
 {
  merges=valor;
 }
-//-----------------------------------------------------------
+
 Funcao *Operador::obterFuncao(unsigned tipo_funcao)
 {
  //Caso o tipo de função seja inválido
@@ -214,7 +214,7 @@ Funcao *Operador::obterFuncao(unsigned tipo_funcao)
 
  return(funcoes[tipo_funcao]);
 }
-//-----------------------------------------------------------
+
 TipoPgSQL Operador::obterTipoDadoArgumento(unsigned tipo_arg)
 {
  //Caso o tipo de argumento seja inválido
@@ -222,7 +222,7 @@ TipoPgSQL Operador::obterTipoDadoArgumento(unsigned tipo_arg)
   throw Excecao( ERR_PGMODELER_REFARGOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  return(tipo_args[tipo_arg]);
 }
-//-----------------------------------------------------------
+
 Operador *Operador::obterOperador(unsigned tipo_op)
 {
  //Caso o tipo de operador seja inválido
@@ -230,17 +230,17 @@ Operador *Operador::obterOperador(unsigned tipo_op)
   throw Excecao(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  return(operadores[tipo_op]);
 }
-//-----------------------------------------------------------
+
 bool Operador::aceitaHashes(void)
 {
  return(hashes);
 }
-//-----------------------------------------------------------
+
 bool Operador::aceitaMerges(void)
 {
  return(merges);
 }
-//-----------------------------------------------------------
+
 QString Operador::obterAssinatura(bool formatar_nome)
 {
  QString assinatura, str_aux;
@@ -260,12 +260,12 @@ QString Operador::obterAssinatura(bool formatar_nome)
  assinatura+="(" + str_aux + ")";
  return(assinatura);
 }
-//-----------------------------------------------------------
+
 QString Operador::obterDefinicaoObjeto(unsigned tipo_def)
 {
  return(this->obterDefinicaoObjeto(tipo_def, false));
 }
-//-----------------------------------------------------------
+
 QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  unsigned i;
@@ -328,4 +328,4 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }
-//***********************************************************
+

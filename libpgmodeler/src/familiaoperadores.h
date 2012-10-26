@@ -2,7 +2,7 @@
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe FamiliaOperadores que é usada para
-#             gerar os códigos SQL pertinentes às famílias de operadores
+#             gerar os códigos SQL pertinente� s famílias de operadores
 #             referenciadas pelas classes de operadores
 # Data de Criação: 08/07/2008
 #
@@ -24,7 +24,7 @@
 #define FAMILIAOPERADORES_H
 
 #include "objetobase.h"
-//***********************************************************
+
 class FamiliaOperadores: public ObjetoBase {
  private:
   //Tipo de indexação usada na família de operadores
@@ -43,5 +43,5 @@ class FamiliaOperadores: public ObjetoBase {
   QString obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida);
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

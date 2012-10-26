@@ -1,6 +1,6 @@
 #include "excecao.h"
 #include <QApplication>
-//***********************************************************
+
 QString Excecao::mensagens[QTD_ERROS][2]={
 {"ERR_NULO", " "},
 {"ERR_GLOBAL_OBJBADALOC", QT_TR_NOOP("Insufficient memory space to allocate the object!")},
@@ -178,18 +178,18 @@ QString Excecao::mensagens[QTD_ERROS][2]={
 {"ERR_CONEXBD_REFTUPLANAOEXISTE", QT_TR_NOOP("Reference to a tuple with index invalid or the result is empty (no tuples)!")},
 {"ERR_CONEXBD_CMDSQLNAOEXECUTADO", QT_TR_NOOP("Could not execute the SQL command.\n Message returned: %1")},
 };
-//-----------------------------------------------------------
+
 Excecao::Excecao(void)
 {
  configurarExcecao("",ERR_NULO,"","",-1,"");
 }
-//-----------------------------------------------------------
+
 Excecao::Excecao(const QString &msg, const QString &local, const QString &arquivo, int linha, Excecao *excecao, const QString &info_adicional)
 {
  configurarExcecao(msg,tipo_erro, local, arquivo, linha, info_adicional);
  if(excecao) adicionarExecao(*excecao);
 }
-//-----------------------------------------------------------
+
 Excecao::Excecao(TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, Excecao *excecao, const QString &info_adicional)
 {
  /* Devido a classe Excecao não ser derivada de QObject a função tr() é ineficiente para traduzir as mensagens
@@ -200,13 +200,13 @@ Excecao::Excecao(TipoErro tipo_erro, const QString &local, const QString &arquiv
 
  if(excecao) adicionarExecao(*excecao);
 }
-//-----------------------------------------------------------
+
 Excecao::Excecao(const QString &msg, TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, Excecao *excecao, const QString &info_adicional)
 {
  configurarExcecao(msg,tipo_erro, local, arquivo, linha, info_adicional);
  if(excecao) adicionarExecao(*excecao);
 }
-//-----------------------------------------------------------
+
 Excecao::Excecao(TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, vector<Excecao> &excecoes, const QString &info_adicional)
 {
  vector<Excecao>::iterator itr, itr_end;
@@ -225,7 +225,7 @@ Excecao::Excecao(TipoErro tipo_erro, const QString &local, const QString &arquiv
   itr++;
  }
 }
-//-----------------------------------------------------------
+
 Excecao::Excecao(const QString &msg, const QString &local, const QString &arquivo, int linha, vector<Excecao> &excecoes, const QString &info_adicional)
 {
  vector<Excecao>::iterator itr, itr_end;
@@ -240,7 +240,7 @@ Excecao::Excecao(const QString &msg, const QString &local, const QString &arquiv
   itr++;
  }
 }
-//-----------------------------------------------------------
+
 void Excecao::configurarExcecao(const QString &msg, TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, const QString &info_adicional)
 {
  this->tipo_erro=tipo_erro;
@@ -250,12 +250,12 @@ void Excecao::configurarExcecao(const QString &msg, TipoErro tipo_erro, const QS
  this->linha=linha;
  this->info_adicional=info_adicional;
 }
-//-----------------------------------------------------------
+
 QString Excecao::obterMensagemErro(void)
 {
  return(msg_erro);
 }
-//-----------------------------------------------------------
+
 QString Excecao::obterMensagemErro(TipoErro tipo_erro)
 {
  if(tipo_erro < QTD_ERROS)
@@ -267,7 +267,7 @@ QString Excecao::obterMensagemErro(TipoErro tipo_erro)
  else
   return("");
 }
-//-----------------------------------------------------------
+
 QString Excecao::obterNomeErro(TipoErro tipo_erro)
 {
  if(tipo_erro < QTD_ERROS)
@@ -275,32 +275,32 @@ QString Excecao::obterNomeErro(TipoErro tipo_erro)
  else
   return("");
 }
-//-----------------------------------------------------------
+
 QString Excecao::obterLocal(void)
 {
  return(local);
 }
-//-----------------------------------------------------------
+
 QString Excecao::obterArquivo(void)
 {
  return(arquivo);
 }
-//-----------------------------------------------------------
+
 QString Excecao::obterLinha(void)
 {
  return(QString("%1").arg(linha));
 }
-//-----------------------------------------------------------
+
 TipoErro Excecao::obterTipoErro(void)
 {
  return(tipo_erro);
 }
-//-----------------------------------------------------------
+
 QString Excecao::obterInfoAdicional(void)
 {
  return(info_adicional);
 }
-//-----------------------------------------------------------
+
 void Excecao::adicionarExecao(Excecao &excecao)
 {
  deque<Excecao>::iterator itr, itr_end;
@@ -318,14 +318,14 @@ void Excecao::adicionarExecao(Excecao &excecao)
  this->excecoes.push_front(Excecao(excecao.msg_erro,excecao.tipo_erro,
                                    excecao.local,excecao.arquivo,excecao.linha,NULL,excecao.info_adicional));
 }
-//-----------------------------------------------------------
+
 void Excecao::obterListaExcecoes(deque<Excecao> &lista)
 {
  lista.assign(this->excecoes.begin(), this->excecoes.end());
  lista.push_front(Excecao(this->msg_erro,this->tipo_erro,
                           this->local,this->arquivo,this->linha,NULL,this->info_adicional));
 }
-//-----------------------------------------------------------
+
 QString Excecao::obterTextoExcecoes(void)
 {
  deque<Excecao> excecoes;
@@ -350,4 +350,4 @@ QString Excecao::obterTextoExcecoes(void)
 
  return(excecoes_txt);
 }
-//***********************************************************
+

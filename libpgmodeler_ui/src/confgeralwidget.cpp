@@ -1,5 +1,5 @@
 #include "confgeralwidget.h"
-//***********************************************************
+
 ConfGeralWidget::ConfGeralWidget(QWidget * parent) : QWidget(parent)
 {
  QPrinter::PaperSize cod_tipo_papel[]={QPrinter::A0, QPrinter::A1, QPrinter::A2, QPrinter::A3, QPrinter::A4, QPrinter::A5,
@@ -29,7 +29,7 @@ ConfGeralWidget::ConfGeralWidget(QWidget * parent) : QWidget(parent)
  params_config[AtributosParsers::CONFIGURACAO][AtributosParsers::ARQUIVO]="";
  params_config[AtributosParsers::CONFIGURACAO][AtributosParsers::WIDGET]="";
 }
-//-----------------------------------------------------------
+
 void ConfGeralWidget::carregarConfiguracao(void)
 {
  QStringList margem;
@@ -65,10 +65,10 @@ void ConfGeralWidget::carregarConfiguracao(void)
  marg_dir->setValue((margem.count() >= 3 ? margem[2].toFloat() : 10));
  marg_base->setValue((margem.count() >= 4 ? margem[3].toFloat() : 10));
 
- //Efetiva as configurações do formulário aplicando-as às classes interessadas
+ //Efetiva as configurações do formulário aplicano-s � s classes interessadas
  this->aplicarConfiguracao();
 }
-//-----------------------------------------------------------
+
 void ConfGeralWidget::salvarConfiguracao()
 {
  try
@@ -143,22 +143,22 @@ void ConfGeralWidget::salvarConfiguracao()
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ConfGeralWidget::aplicarConfiguracao(void)
 {
- //Aplica as configurações de papel à cena
+ //Aplica as configurações de pae �  cena
  CenaObjetos::definirConfiguracaoPagina(static_cast<QPrinter::PaperSize>(papel_cmb->itemData(papel_cmb->currentIndex()).toInt()),
                                         (retrato_rb->isChecked() ? QPrinter::Portrait : QPrinter::Landscape),
                                         QRectF(marg_esq->value(), marg_topo->value(),
                                                marg_dir->value(), marg_base->value()));
 
- //Aplica a configuração de grade à cena
+ //Aplica a configuração de grd �  cena
  CenaObjetos::definirGrade(tam_grade_spb->value());
 
- //Aplica as configurações à lista de operações
+ //Aplica as configuraç�e �  lista de operações
  ListaOperacoes::definirTamanhoMaximo(tam_lista_spb->value());
 }
-//-----------------------------------------------------------
+
 void ConfGeralWidget::restaurarPadroes(void)
 {
  try
@@ -172,7 +172,7 @@ void ConfGeralWidget::restaurarPadroes(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ConfGeralWidget::converterUnidadeMargem(void)
 {
  static int unidade_ant=0;
@@ -191,4 +191,4 @@ void ConfGeralWidget::converterUnidadeMargem(void)
 
  unidade_ant=unidade_cmb->currentIndex();
 }
-//***********************************************************
+

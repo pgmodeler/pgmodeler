@@ -1,5 +1,5 @@
 #include "esquemawidget.h"
-//***********************************************************
+
 EsquemaWidget::EsquemaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_ESQUEMA)
 {
  configurarLayouFormulario(NULL, OBJETO_ESQUEMA);
@@ -33,4 +33,4 @@ void EsquemaWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

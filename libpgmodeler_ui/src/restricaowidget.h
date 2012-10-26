@@ -25,7 +25,7 @@
 #include "objetobasewidget.h"
 #include "ui_restricaowidget.h"
 #include "tabelaobjetoswidget.h"
-//***********************************************************
+
 class RestricaoWidget: public ObjetoBaseWidget, public Ui::RestricaoWidget {
  Q_OBJECT
 
@@ -45,7 +45,7 @@ class RestricaoWidget: public ObjetoBaseWidget, public Ui::RestricaoWidget {
    //Atualiza o combo de colunas do tipo especificado (Origem ou Referenciadas)
    void atualizarComboColunas(unsigned tipo_cmb);
 
-   /* Adiciona uma coluna à tabela de tipo especificado (origem ou referenciada)
+   /* Adiciona uma coluna   tabela de tipo especificado (origem ou referenciada)
       na linha especificada */
    void adicionarColuna(Coluna *coluna, unsigned tipo_col, int idx_lin);
 
@@ -71,5 +71,5 @@ class RestricaoWidget: public ObjetoBaseWidget, public Ui::RestricaoWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

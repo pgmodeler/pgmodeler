@@ -6,7 +6,7 @@
 extern ProgressoTarefa *prog_tarefa;
 extern FormConfiguracao *fconfiguracao;
 extern CaixaMensagem *caixa_msg;
-//***********************************************************
+
 FormExportacao::FormExportacao(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
  vector<QString> versoes;
@@ -36,7 +36,7 @@ FormExportacao::FormExportacao(QWidget *parent, Qt::WindowFlags f) : QDialog(par
   this->frame->setFrameShape(QFrame::WinPanel);
  #endif
 }
-//-----------------------------------------------------------
+
 void FormExportacao::show(ModeloWidget *modelo)
 {
  if(modelo)
@@ -70,7 +70,7 @@ void FormExportacao::show(ModeloWidget *modelo)
   QDialog::show();
  }
 }
-//-----------------------------------------------------------
+
 void FormExportacao::hideEvent(QHideEvent *)
 {
  this->modelo_wgt=NULL;
@@ -78,7 +78,7 @@ void FormExportacao::hideEvent(QHideEvent *)
  exportacao_arq_rb->setChecked(true);
  exportar_btn->setEnabled(false);
 }
-//-----------------------------------------------------------
+
 void FormExportacao::exportarModelo(void)
 {
  try
@@ -407,7 +407,7 @@ void FormExportacao::exportarModelo(void)
   caixa_msg->show(e);
  }
 }
-//-----------------------------------------------------------
+
 void FormExportacao::ocultarProgressoExportacao(void)
 {
  ln2_frm->setVisible(false);
@@ -416,7 +416,7 @@ void FormExportacao::ocultarProgressoExportacao(void)
  ico_lbl->setVisible(false);
  this->resize(this->minimumSize());
 }
-//-----------------------------------------------------------
+
 void FormExportacao::habilitarTipoExportacao(void)
 {
  bool exp_arq=(sender()==exportacao_arq_rb), exp_png=(sender()==exportacao_png_rb);
@@ -455,7 +455,7 @@ void FormExportacao::habilitarTipoExportacao(void)
                           (exportacao_arq_rb->isChecked() && !arquivo_edt->text().isEmpty()) ||
                           (exportacao_png_rb->isChecked() && !imagem_edt->text().isEmpty()));
 }
-//-----------------------------------------------------------
+
 void FormExportacao::selecionarArquivoDestino(void)
 {
  QFileDialog arquivo_dlg;
@@ -482,4 +482,4 @@ void FormExportacao::selecionarArquivoDestino(void)
  exportar_btn->setEnabled(!arquivo_edt->text().isEmpty() ||
                           !imagem_edt->text().isEmpty());
 }
-//***********************************************************
+

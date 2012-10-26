@@ -28,7 +28,7 @@
 #include "esquema.h"
 #include "funcao.h"
 #include "papel.h"
-//***********************************************************
+
 class Tipo: public ObjetoBase {
  private:
   //Configuração do tipo
@@ -60,7 +60,7 @@ class Tipo: public ObjetoBase {
   //Valor padrão do tipo
   QString valor_padrao; //DEFAULT
 
-  //** Atributos Adicionados devido à alteraçõpes na versão 8.4 **/
+  //** Atributos Adicionados devido a  alteraçõpes na versão 8.4 **/
   //Categoria do tipo (apenas para tipo base) - PADRÃO 'U'
   TipoCategoria categoria; //CATEGORY
 
@@ -173,5 +173,5 @@ class Tipo: public ObjetoBase {
 
   friend class ModeloBD;
 };
-//***********************************************************
+
 #endif

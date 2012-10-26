@@ -1,5 +1,5 @@
 #include "ogtabela.h"
-//***********************************************************
+
 OGTabela::OGTabela(Tabela *tabela) : OGTabelaBase(tabela)
 {
  connect(tabela, SIGNAL(s_objetoModificado(void)), this, SLOT(configurarObjeto(void)));
@@ -19,7 +19,7 @@ OGTabela::OGTabela(Tabela *tabela) : OGTabelaBase(tabela)
 
  this->setAcceptHoverEvents(true);
 }
-//-----------------------------------------------------------
+
 OGTabela::~OGTabela(void)
 {
  disconnect(this, SLOT(configurarObjeto(void)));
@@ -32,7 +32,7 @@ OGTabela::~OGTabela(void)
  delete(colunas);
  delete(atributos_ext);
 }
-//-----------------------------------------------------------
+
 void OGTabela::mousePressEvent(QGraphicsSceneMouseEvent *evento)
 {
  //Caso o usuário clique com o botão direito e haja um objeto de tabela selecionado
@@ -43,7 +43,7 @@ void OGTabela::mousePressEvent(QGraphicsSceneMouseEvent *evento)
  //Executa o método mousePress() da classe superior
  ObjetoGrafico::mousePressEvent(evento);
 }
-//-----------------------------------------------------------
+
 QVariant OGTabela::itemChange(GraphicsItemChange change, const QVariant &value)
 {
  /* Como a seleção da tabela é usada também para selecionar os subitens
@@ -55,7 +55,7 @@ QVariant OGTabela::itemChange(GraphicsItemChange change, const QVariant &value)
  //Executa o método itemChange() da classe superior
  return(OGTabelaBase::itemChange(change, value));
 }
-//-----------------------------------------------------------
+
 void OGTabela::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 {
  /* Caso o objeto não esteja selecionado porém o objeto de seleção esteja,
@@ -67,7 +67,7 @@ void OGTabela::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
  //Desfaz a referência o objeto selecionado
  obj_filho_sel=NULL;
 }
-//-----------------------------------------------------------
+
 void OGTabela::hoverMoveEvent(QGraphicsSceneHoverEvent *evento)
 {
  /* Caso a tabela não esteja selecionado exibe o seletor sobre
@@ -121,7 +121,7 @@ void OGTabela::hoverMoveEvent(QGraphicsSceneHoverEvent *evento)
   }
  }
 }
-//-----------------------------------------------------------
+
 void OGTabela::configurarObjeto(void)
 {
  Tabela *tabela=dynamic_cast<Tabela *>(this->obterObjetoOrigem());
@@ -326,4 +326,4 @@ void OGTabela::configurarObjeto(void)
  //O tool tip do objeto grafico será o nome formatado do objeto de origem
  this->setToolTip(QString::fromUtf8(tabela->obterNome(true)));
 }
-//***********************************************************
+

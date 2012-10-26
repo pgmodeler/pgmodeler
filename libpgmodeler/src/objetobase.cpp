@@ -1,6 +1,6 @@
 #include "objetobase.h"
 #include <QApplication>
-//***********************************************************
+
 /* Atenção: Se a ordem e quantidade das enumerações forem modificados
    então a ordem e quantidade dos elementos deste vetor
    também devem ser modificados */
@@ -49,7 +49,7 @@ unsigned ObjetoBase::id_esquema=30000;
 unsigned ObjetoBase::id_modelobd=20000;
 unsigned ObjetoBase::id_esptabela=10000;
 unsigned ObjetoBase::id_papel=0;
-//-----------------------------------------------------------
+
 ObjetoBase::ObjetoBase(void)
 {
  id_objeto=ObjetoBase::id_global++;
@@ -66,12 +66,12 @@ ObjetoBase::ObjetoBase(void)
  atributos[AtributosParsers::ESQUEMA]="";
  atributos[AtributosParsers::PROTEGIDO]="";
 }
-//-----------------------------------------------------------
+
 unsigned ObjetoBase::obterIdGlobal(void)
 {
  return(id_global);
 }
-//-----------------------------------------------------------
+
 QString ObjetoBase::obterNomeTipoObjeto(TipoObjetoBase tipo_objeto)
 {
  if(tipo_objeto!=OBJETO_BASE)
@@ -83,17 +83,17 @@ QString ObjetoBase::obterNomeTipoObjeto(TipoObjetoBase tipo_objeto)
  else
   return("");
 }
-//-----------------------------------------------------------
+
 QString ObjetoBase::obterNomeEsquemaObjeto(TipoObjetoBase tipo_objeto)
 {
  return(esq_objetos[tipo_objeto]);
 }
-//-----------------------------------------------------------
+
 QString ObjetoBase::obterNomeSQLObjeto(TipoObjetoBase tipo_objeto)
 {
  return(sql_objetos[tipo_objeto]);
 }
-//-----------------------------------------------------------
+
 QString ObjetoBase::formatarNome(const QString &nome_obj, bool obj_operador)
 {
  int i;
@@ -186,7 +186,7 @@ QString ObjetoBase::formatarNome(const QString &nome_obj, bool obj_operador)
 
  return(nome_form);
 }
-//-----------------------------------------------------------
+
 bool ObjetoBase::nomeValido(const QString &nome_obj)
 {
  int tam;
@@ -282,12 +282,12 @@ bool ObjetoBase::nomeValido(const QString &nome_obj)
   return(valido);
  }
 }
-//-----------------------------------------------------------
+
 void ObjetoBase::definirProtegido(bool valor)
 {
  protegido=valor;
 }
-//-----------------------------------------------------------
+
 void ObjetoBase::definirNome(const QString &nome)
 {
  /* Caso se tente atribuir um nome vazio ao objeto
@@ -312,12 +312,12 @@ void ObjetoBase::definirNome(const QString &nome)
   }
  }
 }
-//-----------------------------------------------------------
+
 void ObjetoBase::definirComentario(const QString &comentario)
 {
  this->comentario=comentario;
 }
-//-----------------------------------------------------------
+
 void ObjetoBase::definirEsquema(ObjetoBase *esquema)
 {
  if(!esquema)
@@ -341,7 +341,7 @@ void ObjetoBase::definirEsquema(ObjetoBase *esquema)
    throw Excecao(ERR_PGMODELER_ATRESQTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
-//-----------------------------------------------------------
+
 void ObjetoBase::definirDono(ObjetoBase *dono)
 {
  if(dono && dono->obterTipoObjeto()!=OBJETO_PAPEL)
@@ -362,7 +362,7 @@ void ObjetoBase::definirDono(ObjetoBase *dono)
    throw Excecao(ERR_PGMODELER_ATRDONOOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
-//-----------------------------------------------------------
+
 void ObjetoBase::definirEspacoTabela(ObjetoBase *espacotabela)
 {
  if(espacotabela && espacotabela->obterTipoObjeto()!=OBJETO_ESPACO_TABELA)
@@ -380,7 +380,7 @@ void ObjetoBase::definirEspacoTabela(ObjetoBase *espacotabela)
    throw Excecao(ERR_PGMODELER_ATRESPTABOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
-//-----------------------------------------------------------
+
 QString ObjetoBase::obterNome(bool formatar)
 {
  if(formatar)
@@ -398,72 +398,72 @@ QString ObjetoBase::obterNome(bool formatar)
  }
  else return(this->nome);
 }
-//-----------------------------------------------------------
+
 QString ObjetoBase::obterComentario(void)
 {
  return(comentario);
 }
-//-----------------------------------------------------------
+
 ObjetoBase *ObjetoBase::obterEsquema(void)
 {
  return(esquema);
 }
-//-----------------------------------------------------------
+
 ObjetoBase *ObjetoBase::obterDono(void)
 {
  return(dono);
 }
-//-----------------------------------------------------------
+
 ObjetoBase *ObjetoBase::obterEspacoTabela(void)
 {
  return(espacotabela);
 }
-//-----------------------------------------------------------
+
 TipoObjetoBase ObjetoBase::obterTipoObjeto(void)
 {
  return(tipo_objeto);
 }
-//-----------------------------------------------------------
+
 QString ObjetoBase::obterNomeTipoObjeto(void)
 {
  return(ObjetoBase::obterNomeTipoObjeto(this->tipo_objeto));
 }
-//-----------------------------------------------------------
+
 QString ObjetoBase::obterNomeEsquemaObjeto(void)
 {
  return(ObjetoBase::obterNomeEsquemaObjeto(this->tipo_objeto));
 }
-//-----------------------------------------------------------
+
 QString ObjetoBase::obterNomeSQLObjeto(void)
 {
  return(ObjetoBase::obterNomeSQLObjeto(this->tipo_objeto));
 }
-//-----------------------------------------------------------
+
 bool ObjetoBase::objetoProtegido(void)
 {
  return(protegido);
 }
-//-----------------------------------------------------------
+
 unsigned ObjetoBase::obterIdObjeto(void)
 {
  return(id_objeto);
 }
-//-----------------------------------------------------------
+
 bool ObjetoBase::operator == (const QString &nome)
 {
  return(this->nome==nome);
 }
-//-----------------------------------------------------------
+
 bool ObjetoBase::operator != (const QString &nome)
 {
  return(this->nome!=nome);
 }
-//-----------------------------------------------------------
+
 QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def)
 {
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def, false));
 }
-//-----------------------------------------------------------
+
 QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  QString def;
@@ -639,12 +639,12 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 
  return(def);
 }
-//-----------------------------------------------------------
+
 void ObjetoBase::definirAtributoEsquema(const QString &atrib, const QString &valor)
 {
  atributos[atrib]=valor;
 }
-//-----------------------------------------------------------
+
 void ObjetoBase::limparAtributos(void)
 {
  map<QString, QString>::iterator itr, itr_end;
@@ -658,7 +658,7 @@ void ObjetoBase::limparAtributos(void)
   itr++;
  }
 }
-//-----------------------------------------------------------
+
 void ObjetoBase::operator = (ObjetoBase &obj)
 {
  this->dono=obj.dono;
@@ -669,4 +669,4 @@ void ObjetoBase::operator = (ObjetoBase &obj)
  this->tipo_objeto=obj.tipo_objeto;
  this->protegido=obj.protegido;
 }
-//***********************************************************
+

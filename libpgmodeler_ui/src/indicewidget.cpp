@@ -1,5 +1,5 @@
 #include "indicewidget.h"
-//***********************************************************
+
 IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_INDICE)
 {
  try
@@ -353,4 +353,4 @@ void IndiceWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

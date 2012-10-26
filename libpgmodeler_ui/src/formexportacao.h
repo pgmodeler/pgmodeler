@@ -24,7 +24,7 @@
 #include "ui_formexportacao.h"
 #include "parseresquema.h"
 #include "modelowidget.h"
-//***********************************************************
+
 class FormExportacao: public QDialog, public Ui::FormExportacao {
  private:
   Q_OBJECT
@@ -43,5 +43,5 @@ class FormExportacao: public QDialog, public Ui::FormExportacao {
   void selecionarArquivoDestino(void);
   void ocultarProgressoExportacao(void);
 };
-//***********************************************************
+
 #endif

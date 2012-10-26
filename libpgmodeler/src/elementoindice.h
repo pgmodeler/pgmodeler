@@ -25,7 +25,7 @@
 
 #include "coluna.h"
 #include "classeoperadores.h"
-//***********************************************************
+
 class ElementoIndice {
  private:
   /* Coluna referenciada pelo elemento do índice. Este atributo é
@@ -70,5 +70,5 @@ class ElementoIndice {
    //Retorna a definição SQL ou XML do objeto
    QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

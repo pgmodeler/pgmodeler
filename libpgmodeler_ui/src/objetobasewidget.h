@@ -39,7 +39,7 @@
  modo referenciam a classe TipoPgSQL.*/
 #include <QMetaType>
 Q_DECLARE_METATYPE(TipoPgSQL)
-//***********************************************************
+
 class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
  Q_OBJECT
 
@@ -201,5 +201,5 @@ void ObjetoBaseWidget::iniciarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+
 #endif

@@ -1,5 +1,5 @@
 #include "formrestauracaomodelo.h"
-//***********************************************************
+
 FormRestauracaoModelo::FormRestauracaoModelo(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
  setupUi(this);
@@ -7,13 +7,13 @@ FormRestauracaoModelo::FormRestauracaoModelo(QWidget *parent, Qt::WindowFlags f)
  connect(cancelar_btn, SIGNAL(clicked(void)), this, SLOT(reject(void)));
  connect(arqs_tmps_lst, SIGNAL(itemSelectionChanged()), this, SLOT(habilitarRestauracao(void)));
 }
-//-----------------------------------------------------------
+
 QStringList FormRestauracaoModelo::obterModelosTemporarios(void)
 {
  //Retorna se na pasta tmp existem arquivos *.dbm
  return(QDir(AtributosGlobais::DIR_TEMPORARIO, "*.dbm", QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
 }
-//-----------------------------------------------------------
+
 void FormRestauracaoModelo::exec(void)
 {
  QStringList lista_arqs=this->obterModelosTemporarios();
@@ -43,12 +43,12 @@ void FormRestauracaoModelo::exec(void)
 
  QDialog::exec();
 }
-//-----------------------------------------------------------
+
 bool FormRestauracaoModelo::existeModelosTemporarios(void)
 {
  return(!this->obterModelosTemporarios().isEmpty());
 }
-//-----------------------------------------------------------
+
 void FormRestauracaoModelo::excluirModelosTemporarios(void)
 {
  QStringList lista_arqs=this->obterModelosTemporarios();
@@ -61,12 +61,12 @@ void FormRestauracaoModelo::excluirModelosTemporarios(void)
   lista_arqs.pop_front();
  }
 }
-//-----------------------------------------------------------
+
 void FormRestauracaoModelo::habilitarRestauracao(void)
 {
  restaurar_btn->setEnabled(!arqs_tmps_lst->selectedItems().isEmpty());
 }
-//-----------------------------------------------------------
+
 QStringList FormRestauracaoModelo::obterModelosSelecionados(void)
 {
  QStringList lista;
@@ -84,4 +84,4 @@ QStringList FormRestauracaoModelo::obterModelosSelecionados(void)
 
  return(lista);
 }
-//***********************************************************
+

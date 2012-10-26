@@ -25,12 +25,12 @@
 #include "objetobasewidget.h"
 #include "ui_papelwidget.h"
 #include "tabelaobjetoswidget.h"
-//***********************************************************
+
 class PapelWidget: public ObjetoBaseWidget, public Ui::PapelWidget {
  Q_OBJECT
 
  private:
-   /* Armazena as referências às tabelas de membros do papel para que sejam
+   /* Armazena as referência� s tabelas de membros do papel para que sejam
       referenciados nos demais métodos de forma mais eficaz */
    TabelaObjetosWidget *tab_membros[3];
 
@@ -57,11 +57,11 @@ class PapelWidget: public ObjetoBaseWidget, public Ui::PapelWidget {
    void selecionarPapelMembro(void);
 
    /* Faz a conexão de sinais-slots para cada tabela de objetos
-      à medida que a tabela em foco mude */
+        medida que a tabela em foco mude */
    void configurarSelecaoPapeis(void);
 
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

@@ -6,7 +6,7 @@
 extern RestricaoWidget *restricao_wgt;
 extern ColunaWidget *coluna_wgt;
 extern CaixaMensagem *caixa_msg;
-//***********************************************************
+
 RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_RELACAO)
 {
  try
@@ -54,7 +54,7 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
   tab_restricoes->definirRotuloCabecalho(trUtf8("Type"), 1);
   tab_restricoes->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
 
-  //Adiciona as tabelas alocadas às respectivas abas
+  //Adiciona as tabelas alocadas  s respectivas abas
   grid=new QGridLayout;
   grid->addWidget(tab_atributos, 0,0,1,1);
   grid->setContentsMargins(2,2,2,2);
@@ -181,7 +181,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
 
   qtd_operacoes=lista_op->obterTamanhoAtual();
 
-  //Adiciona o relacionamento criado à lista de operações
+  //Adiciona o relacionamento criado   lista de operações
   lista_op->adicionarObjeto(rel, Operacao::OBJETO_CRIADO);
 
   //Chama o método publico de definição dos atributos
@@ -641,7 +641,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
 
   if(!this->novo_obj)
   {
-   //Adiciona o relacionamento à lista de operações antes de ser modificado
+   //Adiciona o relacionamento   lista de operações antes de ser modificado
    lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_MODIFICADO);
   }
 
@@ -750,7 +750,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void RelacionamentoWidget::cancelarConfiguracao(void)
 {
  if(lista_op->encadeamentoIniciado())
@@ -762,4 +762,4 @@ void RelacionamentoWidget::cancelarConfiguracao(void)
      adicionadas durante a edição do relacionamento */
   ObjetoBaseWidget::cancelarConfiguracao();
 }
-//***********************************************************
+

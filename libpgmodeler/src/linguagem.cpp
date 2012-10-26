@@ -1,5 +1,5 @@
 #include "linguagem.h"
-//***********************************************************
+
 Linguagem::Linguagem(void)
 {
  tipo_objeto=OBJETO_LINGUAGEM;
@@ -13,7 +13,7 @@ Linguagem::Linguagem(void)
  atributos[AtributosParsers::FUNCAO_VALIDATOR]="";
  atributos[AtributosParsers::FUNCAO_INLINE]="";
 }
-//-----------------------------------------------------------
+
 void Linguagem::definirNome(const QString &nome)
 {
  /* Tratando nome de linguagem. Nomes como SQL, C são reservados
@@ -26,12 +26,12 @@ void Linguagem::definirNome(const QString &nome)
 
  ObjetoBase::definirNome(nome); //Chama o método da classe descendente
 }
-//-----------------------------------------------------------
+
 void Linguagem::definirConfiavel(bool valor)
 {
  confiavel=valor;
 }
-//-----------------------------------------------------------
+
 void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
 {
  TipoLinguagem ling;
@@ -75,7 +75,7 @@ void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
   //Dispara um erro se a função possuir parâmetros inválidos
   throw Excecao(ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
-//-----------------------------------------------------------
+
 Funcao * Linguagem::obterFuncao(unsigned tipo_func)
 {
  if(tipo_func > FUNC_INLINE)
@@ -83,17 +83,17 @@ Funcao * Linguagem::obterFuncao(unsigned tipo_func)
 
  return(funcoes[tipo_func]);
 }
-//-----------------------------------------------------------
+
 bool Linguagem::linguagemConfiavel(void)
 {
  return(confiavel);
 }
-//-----------------------------------------------------------
+
 QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def)
 {
  return(this->obterDefinicaoObjeto(tipo_def, false));
 }
-//-----------------------------------------------------------
+
 QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  unsigned i;
@@ -122,4 +122,4 @@ QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }
-//***********************************************************
+

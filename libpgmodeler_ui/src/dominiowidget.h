@@ -25,7 +25,7 @@
 #include "objetobasewidget.h"
 #include "ui_dominiowidget.h"
 #include "tipopgsqlwidget.h"
-//***********************************************************
+
 class DominioWidget: public ObjetoBaseWidget, public Ui::DominioWidget {
  Q_OBJECT
 
@@ -43,5 +43,5 @@ class DominioWidget: public ObjetoBaseWidget, public Ui::DominioWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

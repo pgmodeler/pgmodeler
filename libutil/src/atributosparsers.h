@@ -26,7 +26,7 @@
 #define ATRIBUTOS_PARSERS_H
 
 #include <QString>
-//***********************************************************
+
 namespace AtributosParsers {
 static const QString
   ACAO_DELETE="del-action",
@@ -348,5 +348,5 @@ static const QString
   VARIACAO="variation",
   TIPO_ESPACIAL="spatial-type";
 }
-//***********************************************************
+
 #endif

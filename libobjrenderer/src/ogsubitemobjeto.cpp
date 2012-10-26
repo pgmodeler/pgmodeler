@@ -1,5 +1,5 @@
 #include "ogsubitemobjeto.h"
-//***********************************************************
+
 const QString OGSubItemObjeto::SEPARADOR_TIPO(" ");
 const QString OGSubItemObjeto::SEPARADOR_REST(" ");
 const QString OGSubItemObjeto::TEXTO_UNIQUE("uq");
@@ -8,7 +8,7 @@ const QString OGSubItemObjeto::TEXTO_FOREIGN_KEY("fk");
 const QString OGSubItemObjeto::TEXTO_NOT_NULL("nn");
 const QString OGSubItemObjeto::DELIMITADOR_REST_INI("«");
 const QString OGSubItemObjeto::DELIMITADOR_REST_FIM("»");
-//-----------------------------------------------------------
+
 OGSubItemObjeto::OGSubItemObjeto(ObjetoTabela *objeto) : ObjetoGrafico(objeto)
 {
  //O descritor é alocado no método de configuração conforme o tipo do objeto de origem
@@ -21,7 +21,7 @@ OGSubItemObjeto::OGSubItemObjeto(ObjetoTabela *objeto) : ObjetoGrafico(objeto)
   this->addToGroup(rotulos[i]);
  }
 }
-//-----------------------------------------------------------
+
 OGSubItemObjeto::~OGSubItemObjeto(void)
 {
  //Desaloca e remove do grupo todos os objetos filhos
@@ -34,7 +34,7 @@ OGSubItemObjeto::~OGSubItemObjeto(void)
   delete(rotulos[i]);
  }
 }
-//-----------------------------------------------------------
+
 void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
 {
  TipoObjetoBase tipo_obj=OBJETO_BASE;
@@ -173,7 +173,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
   desc->setPen(this->obterEstiloBorda(AtributosParsers::REFERENCIA));
  }
 }
-//-----------------------------------------------------------
+
 void OGSubItemObjeto::configurarObjeto(void)
 {
  //Caso haja um objeto de tabela atribuído ao subitem
@@ -189,7 +189,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   //Caso seja uma coluna
   if(coluna)
   {
-   //Obtém a string de restrições relacionadas à coluna
+   //Obtém a string de restrições relacionadas à  coluna
    str_rest=this->obterStringRestricoes(coluna);
 
    /* Determina o tipo primário de restrição conforme as checagens a seguir.
@@ -319,7 +319,7 @@ void OGSubItemObjeto::configurarObjeto(void)
    bounding_rect.setBottomRight(QPointF(rotulos[2]->boundingRect().right(), rotulos[0]->boundingRect().bottom()));
  }
 }
-//-----------------------------------------------------------
+
 void OGSubItemObjeto::configurarObjeto(Referencia referencia)
 {
  QTextCharFormat fmt;
@@ -396,7 +396,7 @@ void OGSubItemObjeto::configurarObjeto(Referencia referencia)
  else
   bounding_rect.setBottomRight(QPointF(rotulos[2]->boundingRect().right(), rotulos[0]->boundingRect().bottom()));
 }
-//-----------------------------------------------------------
+
 void OGSubItemObjeto::definirPosXObjetoFilho(unsigned idx_obj, float px)
 {
  if(idx_obj >= 4)
@@ -407,7 +407,7 @@ void OGSubItemObjeto::definirPosXObjetoFilho(unsigned idx_obj, float px)
  else
   rotulos[idx_obj-1]->setPos(px, rotulos[idx_obj-1]->pos().y());
 }
-//-----------------------------------------------------------
+
 QGraphicsItem *OGSubItemObjeto::obterObjetoFilho(unsigned idx_obj)
 {
  if(idx_obj >= 4)
@@ -418,7 +418,7 @@ QGraphicsItem *OGSubItemObjeto::obterObjetoFilho(unsigned idx_obj)
  else
   return(rotulos[idx_obj-1]);
 }
-//-----------------------------------------------------------
+
 QString OGSubItemObjeto::obterStringRestricoes(Coluna *coluna)
 {
  if(coluna && coluna->obterTabelaPai())
@@ -461,7 +461,7 @@ QString OGSubItemObjeto::obterStringRestricoes(Coluna *coluna)
    }
   }
 
-  //Caso a coluna seja não-nula adiciona a QString formatada o texto referente à constraint NOT NULL
+  //Caso a coluna seja não-nula adiciona a QString formatada o texto referente à  constraint NOT NULL
   if(coluna->naoNulo()) str_rest+=TEXTO_NOT_NULL + SEPARADOR_REST;
 
   //Caso a QString formatada tenha sido criada
@@ -475,4 +475,4 @@ QString OGSubItemObjeto::obterStringRestricoes(Coluna *coluna)
  }
  else return("");
 }
-//***********************************************************
+

@@ -1,5 +1,5 @@
 #include "classeoperadoreswidget.h"
-//***********************************************************
+
 ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_CLASSE_OPER)
 {
  try
@@ -284,17 +284,17 @@ void ClasseOperadoresWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<ClasseOperadores>();
 
-  //Obtém a referência à classe de objetos que está sendo manipulada
+  //Obtém a referência à  classe de objetos que está sendo manipulada
   classe_op=dynamic_cast<ClasseOperadores *>(this->objeto);
 
-  //Atribui os valores configurados no formulário à classe de operadores
+  //Atribui os valores configurados no formulário à  classe de operadores
   classe_op->definirPadrao(classe_op->classePadrao());
   classe_op->definirFamilia(dynamic_cast<FamiliaOperadores *>(sel_familiaop->obterObjeto()));
   classe_op->definirTipoIndexacao(TipoIndexacao(tipo_index_cmb->currentText()));
   classe_op->definirTipoDado(tipo_dado->obterTipoPgSQL());
 
   /* Remove todos os elementos da classe de operadores e em seguida
-     insere aqueles configurados na tabela à classe */
+     insere aqueles configurados na tabela à  classe */
   classe_op->removerElementosClasse();
   qtd=tab_elementos->obterNumLinhas();
 
@@ -314,4 +314,4 @@ void ClasseOperadoresWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

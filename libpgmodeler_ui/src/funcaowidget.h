@@ -26,7 +26,7 @@
 #include "ui_funcaowidget.h"
 #include "tipopgsqlwidget.h"
 #include "tabelaobjetoswidget.h"
-//***********************************************************
+
 class FuncaoWidget: public ObjetoBaseWidget, public Ui::FuncaoWidget  {
  Q_OBJECT
 
@@ -62,7 +62,7 @@ class FuncaoWidget: public ObjetoBaseWidget, public Ui::FuncaoWidget  {
    void alternarTiposRetorno(void);
 
    /* Seleciona a linguagem de definição da função, e caso disponível,
-      carrega o arquivo de destaque de sintaxe referênte à linguagem
+      carrega o arquivo de destaque de sintaxe referênt�  linguagem
       selecionada */
    void selecionarLinguagem(void);
 
@@ -78,5 +78,5 @@ class FuncaoWidget: public ObjetoBaseWidget, public Ui::FuncaoWidget  {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

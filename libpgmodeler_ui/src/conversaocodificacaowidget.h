@@ -24,7 +24,7 @@
 
 #include "objetobasewidget.h"
 #include "ui_conversaocodificacaowidget.h"
-//***********************************************************
+
 class ConversaoCodificacaoWidget: public ObjetoBaseWidget, public Ui::ConversaoCodificacaoWidget {
  Q_OBJECT
 
@@ -42,5 +42,5 @@ class ConversaoCodificacaoWidget: public ObjetoBaseWidget, public Ui::ConversaoC
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

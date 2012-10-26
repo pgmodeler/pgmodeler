@@ -1,5 +1,5 @@
 #include "bancodadoswidget.h"
-//***********************************************************
+
 BancoDadosWidget::BancoDadosWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_BANCO_DADOS)
 {
  map<QString, vector<QWidget *> > mapa_campos;
@@ -119,4 +119,4 @@ void BancoDadosWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

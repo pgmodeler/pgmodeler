@@ -24,7 +24,7 @@
 #define ESQUEMA_H
 
 #include "objetobase.h"
-//***********************************************************
+
 class Esquema: public ObjetoBase{
  public:
   Esquema(void);
@@ -32,5 +32,5 @@ class Esquema: public ObjetoBase{
   //Define o nome do esquema
   void definirNome(const QString &nome);
 };
-//***********************************************************
+
 #endif

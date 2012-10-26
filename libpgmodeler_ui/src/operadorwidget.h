@@ -25,7 +25,7 @@
 #include "objetobasewidget.h"
 #include "tipopgsqlwidget.h"
 #include "ui_operadorwidget.h"
-//***********************************************************
+
 class OperadorWidget: public ObjetoBaseWidget, public Ui::OperadorWidget {
  Q_OBJECT
 
@@ -44,5 +44,5 @@ class OperadorWidget: public ObjetoBaseWidget, public Ui::OperadorWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

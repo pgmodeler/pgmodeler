@@ -1,5 +1,5 @@
 #include "gatilhowidget.h"
-//***********************************************************
+
 GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_GATILHO)
 {
  try
@@ -97,11 +97,11 @@ void GatilhoWidget::adicionarColuna(int idx_lin)
 
  try
  {
-  //Obtém a referência à coluna no item atual do combo box
+  //Obtém a referêni �  coluna no item atual do combo box
   coluna=reinterpret_cast<Coluna *>(coluna_cmb->itemData(coluna_cmb->currentIndex(),Qt::UserRole).value<void *>());
   //Quando a coluna vai ser atribuída a tabela a mesma é removida do combo
   coluna_cmb->removeItem(coluna_cmb->currentIndex());
-  //Adiciona a coluna à tabela
+  //Adiciona a coluna   tabela
   adicionarColuna(coluna, idx_lin);
   //Caso não houver itens no combo o botão de inserção da respectiva tabela será desabilitado
   tab_colunas->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (coluna_cmb->count()!=0));
@@ -118,7 +118,7 @@ void GatilhoWidget::adicionarColuna(Coluna *coluna, int idx_lin)
  //Caso a coluna esteja alocada e o índice da linha seja válido (não-negativo)
  if(coluna && idx_lin >= 0)
  {
-  /* Exibe os dados da coluna na linha especificada, definindo a referência à coluna
+  /* Exibe os dados da coluna na linha especificada, definindo a referênci�  coluna
      como dado da linha */
   tab_colunas->definirTextoCelula(QString::fromUtf8(coluna->obterNome()),idx_lin,0);
   tab_colunas->definirTextoCelula(QString::fromUtf8(~coluna->obterTipo()),idx_lin,1);
@@ -326,4 +326,4 @@ void GatilhoWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

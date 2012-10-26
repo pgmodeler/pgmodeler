@@ -1,5 +1,5 @@
 #include "colunawidget.h"
-//***********************************************************
+
 ColunaWidget::ColunaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_COLUNA)
 {
  try
@@ -67,10 +67,10 @@ void ColunaWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<Coluna>();
 
-  //Obtém a referência à coluna que está sendo criada/editada
+  //Obtém a referêni �  coluna que está sendo criada/editada
   coluna=dynamic_cast<Coluna *>(this->objeto);
 
-  //Atribui os dados do formulário à coluna
+  //Atribui os dados do formulári�  coluna
   coluna->definirNaoNulo(nao_nulo_chk->isChecked());
   coluna->definirValorPadrao(valor_padrao_txt->toPlainText());
   coluna->definirTipo(tipo_col->obterTipoPgSQL());
@@ -88,4 +88,4 @@ void ColunaWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

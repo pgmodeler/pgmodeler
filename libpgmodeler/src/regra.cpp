@@ -1,5 +1,5 @@
 #include "regra.h"
-//***********************************************************
+
 Regra::Regra(void)
 {
  tipo_exec=TipoBase::nulo;
@@ -10,7 +10,7 @@ Regra::Regra(void)
  atributos[AtributosParsers::TIPO_EXECUCAO]="";
  atributos[AtributosParsers::COMANDOS]="";
 }
-//-----------------------------------------------------------
+
 void Regra::definirAtributoComandos(void)
 {
  QString str_cmds;
@@ -26,22 +26,22 @@ void Regra::definirAtributoComandos(void)
  //if(str_cmds!="") str_cmds="(" + str_cmds + ")";
  atributos[AtributosParsers::COMANDOS]=str_cmds;
 }
-//-----------------------------------------------------------
+
 void Regra::definirTipoEvento(TipoEvento tipo)
 {
  tipo_evento=tipo;
 }
-//-----------------------------------------------------------
+
 void Regra::definirTipoExecucao(TipoExecucao tipo)
 {
  tipo_exec=tipo;
 }
-//-----------------------------------------------------------
+
 void Regra::definirExpCondicional(const QString &exp)
 {
  exp_condicional=exp;
 }
-//-----------------------------------------------------------
+
 void Regra::adicionarComando(const QString &comando)
 {
  //Caso o comando a ser atribuido estaja vazio
@@ -57,22 +57,22 @@ void Regra::adicionarComando(const QString &comando)
   comandos.push_back(cmd_aux);
  }
 }
-//-----------------------------------------------------------
+
 TipoEvento Regra::obterTipoEvento(void)
 {
  return(tipo_evento);
 }
-//-----------------------------------------------------------
+
 TipoExecucao Regra::obterTipoExecucao(void)
 {
  return(tipo_exec);
 }
-//-----------------------------------------------------------
+
 QString Regra::obterExpCondicional(void)
 {
  return(exp_condicional);
 }
-//-----------------------------------------------------------
+
 QString Regra::obterComando(unsigned idx_cmd)
 {
  /* Verifica se o índice condiz com o tamanho das listas de comandos,
@@ -83,12 +83,12 @@ QString Regra::obterComando(unsigned idx_cmd)
   //Retorna o comando no índice passado
   return(comandos[idx_cmd]);
 }
-//-----------------------------------------------------------
+
 unsigned Regra::obterNumComandos(void)
 {
  return(comandos.size());
 }
-//-----------------------------------------------------------
+
 void Regra::removerComando(unsigned idx_cmd)
 {
  /* Verifica se o índice condiz com o tamanho das listas de comandos,
@@ -99,12 +99,12 @@ void Regra::removerComando(unsigned idx_cmd)
   //Remove o comando no índice específico
   comandos.erase(comandos.begin() + idx_cmd);
 }
-//-----------------------------------------------------------
+
 void Regra::removerComandos(void)
 {
  comandos.clear();
 }
-//-----------------------------------------------------------
+
 QString Regra::obterDefinicaoObjeto(unsigned tipo_def)
 {
  definirAtributoComandos();
@@ -118,4 +118,4 @@ QString Regra::obterDefinicaoObjeto(unsigned tipo_def)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//***********************************************************
+

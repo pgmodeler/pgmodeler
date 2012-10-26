@@ -43,8 +43,8 @@ class ParserEsquema {
                      CHR_ESPACO,         //Caractere de espacamento
                      CHR_TABULACAO,      //Caractere de tabulacao
                      CHR_INI_ATRIBUTO,   //Caractere que inicia uma referência a um atributo
-                     CHR_MEIO_ATRIBUTO,  //Caractere que delimita �  esquerda um atributo
-                     CHR_FIM_ATRIBUTO,   //Caractere que delimita �  esquerda um atributo
+                     CHR_MEIO_ATRIBUTO,  //Caractere que delimita ࿽  esquerda um atributo
+                     CHR_FIM_ATRIBUTO,   //Caractere que delimita ࿽  esquerda um atributo
                      CHR_INI_CONDICIONAL,//Caractere que indica o início de uma instrução condicional
                      CHR_INI_METACHAR,   //Caractere que indica o início de um meta caractere
                      CHR_INI_TEXTOPURO,

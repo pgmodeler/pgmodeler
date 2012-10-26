@@ -26,7 +26,7 @@
 #include "ui_formbasico.h"
 #include "excecao.h"
 #include "caixamensagem.h"
-//***********************************************************
+
 class FormBasico: public QDialog, public Ui::FormBasico {
  Q_OBJECT
 
@@ -39,5 +39,5 @@ class FormBasico: public QDialog, public Ui::FormBasico {
 
  public slots:
 };
-//***********************************************************
+
 #endif

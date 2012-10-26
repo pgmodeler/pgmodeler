@@ -1,5 +1,5 @@
 #include "tipo.h"
-//***********************************************************
+
 Tipo::Tipo(void)
 {
  id_objeto=ObjetoBase::id_tipo++;
@@ -40,7 +40,7 @@ Tipo::Tipo(void)
  ObjetoBase::atributos[AtributosParsers::PREFERIDO]="";
  ObjetoBase::atributos[AtributosParsers::TIPO_COPIA]="";
 }
-//-----------------------------------------------------------
+
 Tipo::~Tipo(void)
 {
  /* Ao ser destruído um objeto desta classe tem
@@ -48,7 +48,7 @@ Tipo::~Tipo(void)
     do PostgreSQL */
  TipoPgSQL::removerTipoUsuario(this->obterNome(true), this);
 }
-//-----------------------------------------------------------
+
 void Tipo::definirNome(const QString &nome)
 {
  QString nome_ant;
@@ -60,7 +60,7 @@ void Tipo::definirNome(const QString &nome)
     lista de tipos do PostgreSQL */
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
-//-----------------------------------------------------------
+
 void Tipo::definirEsquema(ObjetoBase *esquema)
 {
  QString nome_ant;
@@ -72,7 +72,7 @@ void Tipo::definirEsquema(ObjetoBase *esquema)
     lista de tipos do PostgreSQL */
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
-//-----------------------------------------------------------
+
 bool Tipo::atributoExiste(const QString &nome_atrib)
 {
  vector<Parametro>::iterator itr, itr_end;
@@ -89,7 +89,7 @@ bool Tipo::atributoExiste(const QString &nome_atrib)
 
  return(enc);
 }
-//-----------------------------------------------------------
+
 void Tipo::adicionarAtributo(Parametro atrib)
 {
  //O atributo não pode ter o nome vazio nem tipo nulo
@@ -104,7 +104,7 @@ void Tipo::adicionarAtributo(Parametro atrib)
 
  atributos.push_back(atrib);
 }
-//-----------------------------------------------------------
+
 void Tipo::removerAtributo(unsigned idx_atrib)
 {
  //Verifica se o índice do atributo é valido
@@ -114,12 +114,12 @@ void Tipo::removerAtributo(unsigned idx_atrib)
  //Remove atributo no índice especificado
  atributos.erase(atributos.begin() + idx_atrib);
 }
-//-----------------------------------------------------------
+
 void Tipo::removerAtributos(void)
 {
  atributos.clear();
 }
-//-----------------------------------------------------------
+
 bool Tipo::enumeracaoExiste(const QString &nome_enum)
 {
  vector<QString>::iterator itr, itr_end;
@@ -136,7 +136,7 @@ bool Tipo::enumeracaoExiste(const QString &nome_enum)
 
  return(enc);
 }
-//-----------------------------------------------------------
+
 void Tipo::adicionarEnumeracao(const QString &enumer)
 {
  //Verifica se a enumeração é vazia
@@ -152,7 +152,7 @@ void Tipo::adicionarEnumeracao(const QString &enumer)
 
  enumeracoes.push_back(enumer);
 }
-//-----------------------------------------------------------
+
 void Tipo::removerEnumeracao(unsigned idx_enum)
 {
  if(idx_enum >= enumeracoes.size())
@@ -160,12 +160,12 @@ void Tipo::removerEnumeracao(unsigned idx_enum)
 
  enumeracoes.erase(enumeracoes.begin() + idx_enum);
 }
-//-----------------------------------------------------------
+
 void Tipo::removerEnumeracoes(void)
 {
  enumeracoes.clear();
 }
-//-----------------------------------------------------------
+
 void Tipo::definirConfiguracao(unsigned conf)
 {
  unsigned idx;
@@ -201,7 +201,7 @@ void Tipo::definirConfiguracao(unsigned conf)
 
  this->config=conf;
 }
-//-----------------------------------------------------------
+
 void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
 {
  unsigned qtd_params;
@@ -264,7 +264,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
                           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TIPO)),
                  ERR_PGMODELER_ATRFUNCRETINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  /* Validando os tipos do parâmetro da função em relação à configuração do tipo.
+  /* Validando os tipos do parâmetro da função em ra��o �  configuração do tipo.
      A função INPUT deve possuir os parâmetros com tipo (cstring, oid, integer).
      As funções OUTPUT e SEND devem possuir um parâmetro do mesmo tipo sendo definido,
      neste caso, para facilitar a implementação basta usar um parâmetro de tipo 'any'.
@@ -294,7 +294,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
 
  funcoes[conf_func]=funcao;
 }
-//-----------------------------------------------------------
+
 void Tipo::converterParametrosFuncoes(bool conv_inversa)
 {
  unsigned i, conf_funcs[]={ FUNCAO_INPUT, FUNCAO_RECV,
@@ -340,17 +340,17 @@ void Tipo::converterParametrosFuncoes(bool conv_inversa)
   }
  }
 }
-//-----------------------------------------------------------
+
 void Tipo::definirCompInterno(unsigned comp)
 {
  comp_interno=comp;
 }
-//-----------------------------------------------------------
+
 void Tipo::definirPorValor(bool valor)
 {
  por_valor=valor;
 }
-//-----------------------------------------------------------
+
 void Tipo::definirAlinhamento(TipoPgSQL tipo)
 {
  QString tp;
@@ -362,17 +362,17 @@ void Tipo::definirAlinhamento(TipoPgSQL tipo)
   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRALINHAMENTOINVTIPO).arg(QString::fromUtf8(this->obterNome(true))),
                 ERR_PGMODELER_ATRALINHAMENTOINVTIPO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
-//-----------------------------------------------------------
+
 void Tipo::definirArmazenamento(TipoArmazenamento armaz)
 {
  armazenamento=armaz;
 }
-//-----------------------------------------------------------
+
 void Tipo::definirValorPadrao(const QString &valor_padrao)
 {
  this->valor_padrao=valor_padrao;
 }
-//-----------------------------------------------------------
+
 void Tipo::definirElemento(TipoPgSQL elemento)
 {
  if(TipoPgSQL::obterIndiceTipoUsuario(this->obterNome(true), this) == !elemento)
@@ -386,12 +386,12 @@ void Tipo::definirElemento(TipoPgSQL elemento)
 
  this->elemento=elemento;
 }
-//-----------------------------------------------------------
+
 void Tipo::definirDelimitador(char delim)
 {
  delimitador=delim;
 }
-//-----------------------------------------------------------
+
 void Tipo::definirAtributoElementos(unsigned tipo_def)
 {
  Parametro param;
@@ -416,7 +416,7 @@ void Tipo::definirAtributoElementos(unsigned tipo_def)
 
  ObjetoBase::atributos[AtributosParsers::ELEMENTOS]=str_elem;
 }
-//-----------------------------------------------------------
+
 void Tipo::definirAtributoEnumeracoes(unsigned tipo_def)
 {
  QString str_enum;
@@ -435,17 +435,17 @@ void Tipo::definirAtributoEnumeracoes(unsigned tipo_def)
 
  ObjetoBase::atributos[AtributosParsers::ENUMERACOES]=str_enum;
 }
-//-----------------------------------------------------------
+
 void Tipo::definirCategoria(TipoCategoria categoria)
 {
  this->categoria=categoria;
 }
-//-----------------------------------------------------------
+
 void Tipo::definirPreferido(bool preferido)
 {
  this->preferido=preferido;
 }
-//-----------------------------------------------------------
+
 void Tipo::definirTipoCopia(TipoPgSQL tipo_copia)
 {
  if(TipoPgSQL::obterIndiceTipoUsuario(this->obterNome(true), this) == !tipo_copia)
@@ -454,7 +454,7 @@ void Tipo::definirTipoCopia(TipoPgSQL tipo_copia)
 
  this->tipo_copia=tipo_copia;
 }
-//-----------------------------------------------------------
+
 Parametro Tipo::obterAtributo(unsigned idx_atrib)
 {
  if(idx_atrib >= atributos.size())
@@ -462,12 +462,12 @@ Parametro Tipo::obterAtributo(unsigned idx_atrib)
 
  return(atributos[idx_atrib]);
 }
-//-----------------------------------------------------------
+
 unsigned Tipo::obterNumAtributos(void)
 {
  return(atributos.size());
 }
-//-----------------------------------------------------------
+
 QString Tipo::obterEnumeracao(unsigned idx_enum)
 {
  if(idx_enum >= enumeracoes.size())
@@ -475,12 +475,12 @@ QString Tipo::obterEnumeracao(unsigned idx_enum)
 
  return(enumeracoes[idx_enum]);
 }
-//-----------------------------------------------------------
+
 unsigned Tipo::obterNumEnumeracoes(void)
 {
  return(enumeracoes.size());
 }
-//-----------------------------------------------------------
+
 Funcao *Tipo::obterFuncao(unsigned conf_func)
 {
  if(conf_func > FUNCAO_ANALYZE)
@@ -488,67 +488,67 @@ Funcao *Tipo::obterFuncao(unsigned conf_func)
 
  return(funcoes[conf_func]);
 }
-//-----------------------------------------------------------
+
 unsigned Tipo::obterCompInterno(void)
 {
  return(comp_interno);
 }
-//-----------------------------------------------------------
+
 bool Tipo::passadoPorValor(void)
 {
  return(por_valor);
 }
-//-----------------------------------------------------------
+
 TipoPgSQL Tipo::obterAlinhamento(void)
 {
  return(alinhamento);
 }
-//-----------------------------------------------------------
+
 TipoArmazenamento Tipo::obterArmazenamento(void)
 {
  return(armazenamento);
 }
-//-----------------------------------------------------------
+
 QString Tipo::obterValorPadrao(void)
 {
  return(valor_padrao);
 }
-//-----------------------------------------------------------
+
 TipoPgSQL Tipo::obterElemento(void)
 {
  return(elemento);
 }
-//-----------------------------------------------------------
+
 char Tipo::obterDelimitador(void)
 {
  return(delimitador);
 }
-//-----------------------------------------------------------
+
 unsigned Tipo::obterConfiguracao(void)
 {
  return(config);
 }
-//-----------------------------------------------------------
+
 TipoCategoria Tipo::obterCategoria(void)
 {
  return(categoria);
 }
-//-----------------------------------------------------------
+
 bool Tipo::tipoPreferido(void)
 {
  return(preferido);
 }
-//-----------------------------------------------------------
+
 TipoPgSQL Tipo::obterTipoCopia(void)
 {
  return(tipo_copia);
 }
-//-----------------------------------------------------------
+
 QString Tipo::obterDefinicaoObjeto(unsigned tipo_def)
 {
  return(this->obterDefinicaoObjeto(tipo_def, false));
 }
-//-----------------------------------------------------------
+
 QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  if(config==TIPO_ENUMERACAO)
@@ -614,7 +614,7 @@ QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }
-//-----------------------------------------------------------
+
 void Tipo::operator = (Tipo &tipo)
 {
  QString nome_ant;
@@ -647,4 +647,4 @@ void Tipo::operator = (Tipo &tipo)
     lista de tipos do PostgreSQL */
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
-//***********************************************************
+

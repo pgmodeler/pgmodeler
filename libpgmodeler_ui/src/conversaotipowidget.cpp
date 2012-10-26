@@ -1,5 +1,5 @@
 #include "conversaotipowidget.h"
-//***********************************************************
+
 ConversaoTipoWidget::ConversaoTipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_CONV_TIPO)
 {
  try
@@ -134,4 +134,4 @@ void ConversaoTipoWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

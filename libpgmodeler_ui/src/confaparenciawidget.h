@@ -26,7 +26,7 @@
 #include "cenaobjetos.h"
 #include "modelobd.h"
 #include <algorithm>
-//***********************************************************
+
 class ConfAparenciaWidget: public QWidget, public Ui::ConfAparenciaWidget, public ConfBaseWidget {
  private:
   Q_OBJECT
@@ -82,5 +82,5 @@ class ConfAparenciaWidget: public QWidget, public Ui::ConfAparenciaWidget, publi
  public slots:
   void restaurarPadroes(void);
 };
-//***********************************************************
+
 #endif

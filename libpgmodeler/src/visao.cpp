@@ -1,5 +1,5 @@
 #include "visao.h"
-//***********************************************************
+
 Visao::Visao(void) : TabelaBase()
 {
  //Definindo configurações inicias para a visão
@@ -10,7 +10,7 @@ Visao::Visao(void) : TabelaBase()
  atributos[AtributosParsers::EXP_FROM]="";
  atributos[AtributosParsers::EXP_SIMPLES]="";
 }
-//-----------------------------------------------------------
+
 Visao::~Visao(void)
 {
  //Limpa a lista de referências da visão
@@ -21,7 +21,7 @@ Visao::~Visao(void)
  exp_from.clear();
  exp_where.clear();
 }
-//-----------------------------------------------------------
+
 int Visao::obterIndiceReferencia(Referencia &refer)
 {
  vector<Referencia>::iterator itr, itr_end;
@@ -47,7 +47,7 @@ int Visao::obterIndiceReferencia(Referencia &refer)
  if(!existe) idx=-1;
  return(idx);
 }
-//-----------------------------------------------------------
+
 void Visao::adicionarReferencia(Referencia &refer, unsigned tipo_sql, int id_exp)
 {
  int idx;
@@ -92,12 +92,12 @@ void Visao::adicionarReferencia(Referencia &refer, unsigned tipo_sql, int id_exp
     col->obterIdObjeto() > this->id_objeto)
   this->id_objeto=ObjetoBase::obterIdGlobal();
 }
-//-----------------------------------------------------------
+
 unsigned Visao::obterNumReferencias(void)
 {
  return(referencias.size());
 }
-//-----------------------------------------------------------
+
 unsigned Visao::obterNumReferencias(unsigned tipo_sql, int tipo_ref)
 {
  vector<unsigned> *vet_idref=NULL;
@@ -138,7 +138,7 @@ unsigned Visao::obterNumReferencias(unsigned tipo_sql, int tipo_ref)
   return(qtd);
  }
 }
-//-----------------------------------------------------------
+
 Referencia Visao::obterReferencia(unsigned id_ref)
 {
  /* Caso tente acessar uma referência com índice
@@ -148,7 +148,7 @@ Referencia Visao::obterReferencia(unsigned id_ref)
 
  return(referencias[id_ref]);
 }
-//-----------------------------------------------------------
+
 Referencia Visao::obterReferencia(unsigned id_ref, unsigned tipo_sql)
 {
  vector<unsigned> *vet_idref=NULL;
@@ -167,7 +167,7 @@ Referencia Visao::obterReferencia(unsigned id_ref, unsigned tipo_sql)
  idx=vet_idref->at(id_ref);
  return(referencias[idx]);
 }
-//-----------------------------------------------------------
+
 void Visao::removerReferencia(unsigned id_ref)
 {
  vector<unsigned> *vet_idref[3]={&exp_select, &exp_from, &exp_where};
@@ -190,7 +190,7 @@ void Visao::removerReferencia(unsigned id_ref)
   //Varre a lista
   while(itr!=itr_end && !vet_idref[i]->empty())
   {
-   /* Caso a referencia atual seja igual à referência
+   /* Caso a referencia atual seja igual   referência
       a ser removeda, o item da lista de expressão atual
       o qual contém a referência a ser excluída será
       removido. */
@@ -204,7 +204,7 @@ void Visao::removerReferencia(unsigned id_ref)
  //Remove a referência da lista
  referencias.erase(referencias.begin() + id_ref);
 }
-//-----------------------------------------------------------
+
 void Visao::removerReferencias(void)
 {
  referencias.clear();
@@ -212,7 +212,7 @@ void Visao::removerReferencias(void)
  exp_from.clear();
  exp_where.clear();
 }
-//-----------------------------------------------------------
+
 void Visao::removerReferencia(unsigned id_exp, unsigned tipo_sql)
 {
  vector<unsigned> *vet_idref=NULL;
@@ -232,7 +232,7 @@ void Visao::removerReferencia(unsigned id_exp, unsigned tipo_sql)
  //Remove a referência da lista de expressão
  vet_idref->erase(vet_idref->begin() + id_exp);
 }
-//-----------------------------------------------------------
+
 int Visao::obterIndiceReferencia(Referencia &ref, unsigned tipo_sql)
 {
  vector<unsigned> *vet_idref=NULL;
@@ -264,7 +264,7 @@ int Visao::obterIndiceReferencia(Referencia &ref, unsigned tipo_sql)
  else
   return(itr-vet_idref->begin());
 }
-//-----------------------------------------------------------
+
 void Visao::definirAtributoDeclaracao(void)
 {
  QString decl;
@@ -284,14 +284,14 @@ void Visao::definirAtributoDeclaracao(void)
    //Caso a lista não esteja vazia
    if(vet_ref[i]->size() > 0)
    {
-    //Concatena a palavra referente à lista de expressões
+    //Concatena a palavra referente   lista de expressões
     decl+=palavras[i];
 
     itr=vet_ref[i]->begin();
     itr_end=vet_ref[i]->end();
     while(itr!=itr_end)
     {
-     /* Concatena à declaração da visão a sql da referência atual
+     /* Concatena   declaração da visão a sql da referência atual
         especificando o tipo da sql a ser gerada */
      idx=(*itr);
      decl+=referencias[idx].obterDefinicaoSQL(tipo_sql[i]);
@@ -312,7 +312,7 @@ void Visao::definirAtributoDeclaracao(void)
  }
  atributos[AtributosParsers::DECLARACAO]=decl;
 }
-//-----------------------------------------------------------
+
 void Visao::definirAtributoReferencias(void)
 {
  QString str_aux;
@@ -342,7 +342,7 @@ void Visao::definirAtributoReferencias(void)
   atributos[vet_atrib[i]]=str_aux;
  }
 }
-//-----------------------------------------------------------
+
 bool Visao::referenciaColunaIncRelacao(void)
 {
  Coluna *coluna=NULL;
@@ -359,7 +359,7 @@ bool Visao::referenciaColunaIncRelacao(void)
 
  return(enc);
 }
-//-----------------------------------------------------------
+
 bool Visao::referenciaTabela(Tabela *tab)
 {
  Tabela *tab_aux=NULL;
@@ -376,7 +376,7 @@ bool Visao::referenciaTabela(Tabela *tab)
 
  return(enc);
 }
-//-----------------------------------------------------------
+
 bool Visao::referenciaColuna(Coluna *col)
 {
  unsigned qtd, i;
@@ -390,7 +390,7 @@ bool Visao::referenciaColuna(Coluna *col)
  }
  return(enc);
 }
-//-----------------------------------------------------------
+
 QString Visao::obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
@@ -403,7 +403,7 @@ QString Visao::obterDefinicaoObjeto(unsigned tipo_def)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//-----------------------------------------------------------
+
 void Visao::operator = (Visao &visao)
 {
  (*dynamic_cast<ObjetoGraficoBase *>(this))=reinterpret_cast<ObjetoGraficoBase &>(visao);
@@ -413,4 +413,4 @@ void Visao::operator = (Visao &visao)
  this->exp_from=visao.exp_from;
  this->exp_where=visao.exp_where;
 }
-//***********************************************************
+

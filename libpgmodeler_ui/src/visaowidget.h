@@ -36,7 +36,7 @@
  modo referenciam a classe Referencia.*/
 #include <QMetaType>
 Q_DECLARE_METATYPE(Referencia)
-//***********************************************************
+
 class VisaoWidget: public ObjetoBaseWidget, public Ui::VisaoWidget {
  Q_OBJECT
 
@@ -56,7 +56,7 @@ class VisaoWidget: public ObjetoBaseWidget, public Ui::VisaoWidget {
    DestaqueSintaxe *destaque_expr,
                    *destaque_codigo;
 
-                  //Seletores de tabela e coluna relacionados à visao
+                  //Seletores de tabela e coluna relacionados   visao
    SeletorObjetoWidget *sel_tabela,
                        *sel_coluna;
 
@@ -97,5 +97,5 @@ class VisaoWidget: public ObjetoBaseWidget, public Ui::VisaoWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

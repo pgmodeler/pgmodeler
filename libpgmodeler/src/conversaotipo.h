@@ -26,7 +26,7 @@
 
 #include "objetobase.h"
 #include "funcao.h"
-//***********************************************************
+
 class ConversaoTipo: public ObjetoBase {
  private:
  /* Tipos de dados da conversão:
@@ -84,5 +84,5 @@ class ConversaoTipo: public ObjetoBase {
   //Retorna a definição SQL ou XML do objeto
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

@@ -24,7 +24,7 @@
 
 #include "objetobasewidget.h"
 #include "ui_linguagemwidget.h"
-//***********************************************************
+
 class LinguagemWidget: public ObjetoBaseWidget, public Ui::LinguagemWidget {
  Q_OBJECT
 
@@ -42,5 +42,5 @@ class LinguagemWidget: public ObjetoBaseWidget, public Ui::LinguagemWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

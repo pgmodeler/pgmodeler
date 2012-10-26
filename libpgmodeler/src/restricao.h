@@ -26,7 +26,7 @@
 #include "objetotabela.h"
 #include "espacotabela.h"
 #include "coluna.h"
-//***********************************************************
+
 class Restricao: public ObjetoTabela{
  private:
   //Tipo da constraint
@@ -192,5 +192,5 @@ class Restricao: public ObjetoTabela{
   friend class Tabela;
   friend class Relacionamento;
 };
-//***********************************************************
+
 #endif

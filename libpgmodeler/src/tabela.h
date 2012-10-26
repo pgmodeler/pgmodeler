@@ -32,7 +32,7 @@
 #include "gatilho.h"
 #include "funcao.h"
 #include "papel.h"
-//**************************************************************
+
 class Tabela: public TabelaBase {
  private:
   //Armazena as colunas da tabela
@@ -245,5 +245,5 @@ class Tabela: public TabelaBase {
   friend class Relacionamento;
   friend class ListaOperacoes;
 };
-//***********************************************************
+
 #endif

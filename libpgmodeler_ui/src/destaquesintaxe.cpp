@@ -1,17 +1,17 @@
 #include "destaquesintaxe.h"
-//***********************************************************
+
 DestaqueSintaxe::DestaqueSintaxe(QTextDocument *parent, bool auto_redestaque) : QSyntaxHighlighter(parent)
 {
  this->auto_redestaque=auto_redestaque;
  configurarAtributos();
 }
-//-----------------------------------------------------------
+
 DestaqueSintaxe::DestaqueSintaxe(QTextEdit *parent, bool auto_redestaque) : QSyntaxHighlighter(parent)
 {
  this->auto_redestaque=auto_redestaque;
  configurarAtributos();
 }
-//-----------------------------------------------------------
+
 void DestaqueSintaxe::configurarAtributos(void)
 {
  conf_carregada=false;
@@ -24,7 +24,7 @@ void DestaqueSintaxe::configurarAtributos(void)
   connect(document(), SIGNAL(contentsChange(int,int,int)), this, SLOT(validarModificacaoTexto(int,int,int)));
  }
 }
-//-----------------------------------------------------------
+
 void DestaqueSintaxe::validarModificacaoTexto(int, int rem, int ins)
 {
  unsigned qtd;
@@ -43,7 +43,7 @@ void DestaqueSintaxe::validarModificacaoTexto(int, int rem, int ins)
    (/*qtd==0 && qtd_info_bloco_atual==qtd &&*/ (ins > 0 || rem > 0)))
   rehighlight();
 }
-//-----------------------------------------------------------
+
 DestaqueSintaxe::InfoMultiLinha *DestaqueSintaxe::obterInfoMultiLinha(int col_ini, int col_fim, int bloco)
 {
  unsigned i, qtd;
@@ -119,7 +119,7 @@ DestaqueSintaxe::InfoMultiLinha *DestaqueSintaxe::obterInfoMultiLinha(int col_in
  else
   return(NULL);
 }
-//-----------------------------------------------------------
+
 void DestaqueSintaxe::removerInfoMultiLinha(int bloco)
 {
  vector<InfoMultiLinha *>::iterator itr, itr_end;
@@ -144,7 +144,7 @@ void DestaqueSintaxe::removerInfoMultiLinha(int bloco)
    itr++;
  }
 }
-//-----------------------------------------------------------
+
 unsigned DestaqueSintaxe::obterNumInfoMultiLinha(int bloco)
 {
  vector<InfoMultiLinha *>::iterator itr, itr_end;
@@ -163,7 +163,7 @@ unsigned DestaqueSintaxe::obterNumInfoMultiLinha(int bloco)
 
  return(qtd);
 }
-//-----------------------------------------------------------
+
 QString DestaqueSintaxe::identificarGrupoPalavra(const QString &palavra, const QChar &chr_lookup, int idx, int &idx_comb, int &comp_combinacao)
 {
  QRegExp expr;
@@ -260,7 +260,7 @@ QString DestaqueSintaxe::identificarGrupoPalavra(const QString &palavra, const Q
  {
   /* Obtém os iteradores do vetor de ordem de grupos
      para que as expressões dos mesmos sejam aplicadas
-     à palavra em questão com o intuito de verificar se
+       palavra em questão com o intuito de verificar se
      a mesma faz parte do grupo */
   itr=ordem_grupos.begin();
   itr_end=ordem_grupos.end();
@@ -347,7 +347,7 @@ QString DestaqueSintaxe::identificarGrupoPalavra(const QString &palavra, const Q
   return(grupo);
  }
 }
-//-----------------------------------------------------------
+
 void DestaqueSintaxe::rehighlight(void)
 {
  InfoMultiLinha *info=NULL;
@@ -364,7 +364,7 @@ void DestaqueSintaxe::rehighlight(void)
 
  QSyntaxHighlighter::rehighlight();
 }
-//-----------------------------------------------------------
+
 void DestaqueSintaxe::highlightBlock(const QString &txt)
 {
  /* Caso a linha esteja vazia ou consita apenas de uma
@@ -417,14 +417,14 @@ void DestaqueSintaxe::highlightBlock(const QString &txt)
      //Adiciona-o na palavra que está sendo extraída
      palavra+=chr_delim;
 
-     /* Extrai todos os próximos caracteres concatenando-os à palavra,
+     /* Extrai todos os próximos caracteres concatenando-o�  palavra,
         idenpendente da categoria destes, enquanto o caractere final
         delimitador de palavra não seja encontrado ou o fim do texto
         seja alcançado. */
      while(i < tam && chr_delim!=texto[i])
       palavra+=texto[i++];
 
-     /* Caso o caractere delimitador final for encontrado concatena-o à palavra
+     /* Caso o caractere delimitador final for encontrado concatena-o   palavra
         formando a palavra delimitada como um todo */
      if(i < tam && texto[i]==chr_delim)
      {
@@ -490,12 +490,12 @@ void DestaqueSintaxe::highlightBlock(const QString &txt)
   qtd_info_bloco_atual=obterNumInfoMultiLinha(bloco_atual);
  }
 }
-//-----------------------------------------------------------
+
 bool DestaqueSintaxe::configuracaoCarregada(void)
 {
  return(conf_carregada);
 }
-//-----------------------------------------------------------
+
 void DestaqueSintaxe::limparConfiguracao(void)
 {
  exp_iniciais.clear();
@@ -511,7 +511,7 @@ void DestaqueSintaxe::limparConfiguracao(void)
 
  configurarAtributos();
 }
-//-----------------------------------------------------------
+
 void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
 {
  if(nome_arq!="")
@@ -634,7 +634,7 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
                        ERR_PGMODELERUI_REDECLGRUPODESTAQUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
 
-        /* Caso nenhum erro for disparado o grupo é adicionado à lista de
+        /* Caso nenhum erro for disparado o grupo é adicionad�  lista de
            ordem de aplicação dos grupos */
         ordem_grupos.push_back(grupo);
        }
@@ -794,4 +794,4 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
   }
  }
 }
-//***********************************************************
+

@@ -1,5 +1,5 @@
 #include "caixatextowidget.h"
-//***********************************************************
+
 CaixaTextoWidget::CaixaTextoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_CAIXA_TEXTO)
 {
  Ui_CaixaTextoWidget::setupUi(this);
@@ -90,4 +90,4 @@ void CaixaTextoWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//***********************************************************
+

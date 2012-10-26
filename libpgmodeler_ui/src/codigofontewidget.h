@@ -24,7 +24,7 @@
 
 #include "ui_codigofontewidget.h"
 #include "objetobasewidget.h"
-//***********************************************************
+
 class CodigoFonteWidget: public ObjetoBaseWidget, public Ui::CodigoFonteWidget {
  Q_OBJECT
  private:
@@ -42,6 +42,6 @@ class CodigoFonteWidget: public ObjetoBaseWidget, public Ui::CodigoFonteWidget {
    void gerarCodigoFonteObjeto(int=0);
    void definirAbaCodigoFonte(int=0);
 };
-//***********************************************************
+
 #endif
 

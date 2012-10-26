@@ -1,5 +1,5 @@
 #include "gatilho.h"
-//***********************************************************
+
 Gatilho::Gatilho(void)
 {
  unsigned i, tipos[4]={TipoEvento::on_insert, TipoEvento::on_delete,
@@ -30,12 +30,12 @@ Gatilho::Gatilho(void)
  atributos[AtributosParsers::POSTERGAVEL]="";
  atributos[AtributosParsers::DECL_DENTRO_TABELA]="";
 }
-//-----------------------------------------------------------
+
 void Gatilho::adicionarArgumento(const QString &arg)
 {
  argumentos.push_back(arg);
 }
-//-----------------------------------------------------------
+
 void Gatilho::definirAtributoArgumentos(unsigned tipo_def)
 {
  QString str_args;
@@ -54,12 +54,12 @@ void Gatilho::definirAtributoArgumentos(unsigned tipo_def)
 
  atributos[AtributosParsers::ARGUMENTOS]=str_args;
 }
-//-----------------------------------------------------------
+
 void Gatilho::definirTipoDisparo(TipoDisparo tipo_disp)
 {
  tipo_disparo=tipo_disp;
 }
-//-----------------------------------------------------------
+
 void Gatilho::definirEvento(TipoEvento evento, bool valor)
 {
  if(evento==TipoEvento::on_select)
@@ -67,7 +67,7 @@ void Gatilho::definirEvento(TipoEvento evento, bool valor)
 
  eventos[!evento]=valor;
 }
-//-----------------------------------------------------------
+
 void Gatilho::definirFuncao(Funcao *funcao)
 {
  //Caso a função a ser atribuida ao gatilho esteja nula
@@ -94,12 +94,12 @@ void Gatilho::definirFuncao(Funcao *funcao)
    this->funcao=funcao;
  }
 }
-//-----------------------------------------------------------
+
 void Gatilho::definirCondicao(const QString &cond)
 {
  this->condicao=cond;
 }
-//-----------------------------------------------------------
+
 void Gatilho::adicionarColuna(Coluna *coluna)
 {
  if(!coluna)
@@ -115,7 +115,7 @@ void Gatilho::adicionarColuna(Coluna *coluna)
 
   colunas_upd.push_back(coluna);
 }
-//-----------------------------------------------------------
+
 void Gatilho::editarArgumento(unsigned idx_arg, const QString &novo_arg)
 {
  /* Caso o índice do argumento esteja fora da capacidade
@@ -131,12 +131,12 @@ void Gatilho::editarArgumento(unsigned idx_arg, const QString &novo_arg)
   (*itr)=novo_arg; //Muda o valor do argumento
  }
 }
-//-----------------------------------------------------------
+
 void Gatilho::executarPorLinha(bool valor)
 {
  por_linha=valor;
 }
-//-----------------------------------------------------------
+
 bool Gatilho::executaNoEvento(TipoEvento evento)
 {
  if(evento==TipoEvento::on_select)
@@ -144,7 +144,7 @@ bool Gatilho::executaNoEvento(TipoEvento evento)
 
  return(eventos.at(!evento));
 }
-//-----------------------------------------------------------
+
 QString Gatilho::obterArgumento(unsigned idx_arg)
 {
  /* Caso o índice do argumento esteja fora da capacidade
@@ -156,7 +156,7 @@ QString Gatilho::obterArgumento(unsigned idx_arg)
   //Retorna o argumento no índice desejado
   return(argumentos[idx_arg]);
 }
-//-----------------------------------------------------------
+
 Coluna *Gatilho::obterColuna(unsigned idx_col)
 {
  if(idx_col>=colunas_upd.size())
@@ -165,32 +165,32 @@ Coluna *Gatilho::obterColuna(unsigned idx_col)
   //Retorna a coluna no índice desejado
   return(colunas_upd[idx_col]);
 }
-//-----------------------------------------------------------
+
 unsigned Gatilho::obterNumArgs(void)
 {
  return(argumentos.size());
 }
-//-----------------------------------------------------------
+
 unsigned Gatilho::obterNumColunas(void)
 {
  return(colunas_upd.size());
 }
-//-----------------------------------------------------------
+
 Funcao *Gatilho::obterFuncao(void)
 {
  return(funcao);
 }
-//-----------------------------------------------------------
+
 QString Gatilho::obterCondicao(void)
 {
  return(condicao);
 }
-//-----------------------------------------------------------
+
 TipoDisparo Gatilho::obterTipoDisparo(void)
 {
  return(tipo_disparo);
 }
-//-----------------------------------------------------------
+
 void Gatilho::removerArgumento(unsigned idx_arg)
 {
  /* Caso o índice do argumento steja fora da capacidade
@@ -205,17 +205,17 @@ void Gatilho::removerArgumento(unsigned idx_arg)
   argumentos.erase(itr); //Remove o argumento encontrado
  }
 }
-//-----------------------------------------------------------
+
 void Gatilho::removerArgumentos(void)
 {
  argumentos.clear();
 }
-//-----------------------------------------------------------
+
 void Gatilho::removerColunas(void)
 {
  colunas_upd.clear();
 }
-//-----------------------------------------------------------
+
 void Gatilho::definirTabReferenciada(ObjetoBase *tabela_ref)
 {
  /* Caso a tabela referenciada a ser atribuída esteja alocada, porém
@@ -226,32 +226,32 @@ void Gatilho::definirTabReferenciada(ObjetoBase *tabela_ref)
  //Atribui a tabela referenciada ao gatilho
  this->tabela_ref=tabela_ref;
 }
-//-----------------------------------------------------------
+
 void Gatilho::definirTipoPostergacao(TipoPostergacao tipo)
 {
  tipo_postergacao=tipo;
 }
-//-----------------------------------------------------------
+
 void Gatilho::definirPostergavel(bool valor)
 {
  postergavel=valor;
 }
-//-----------------------------------------------------------
+
 ObjetoBase *Gatilho::obterTabReferenciada(void)
 {
  return(tabela_ref);
 }
-//-----------------------------------------------------------
+
 TipoPostergacao Gatilho::obterTipoPostergacao(void)
 {
  return(tipo_postergacao);
 }
-//-----------------------------------------------------------
+
 bool Gatilho::gatilhoPostergavel(void)
 {
  return(postergavel);
 }
-//-----------------------------------------------------------
+
 bool Gatilho::referenciaColunaIncRelacao(void)
 {
  vector<Coluna *>::iterator itr, itr_end;
@@ -279,7 +279,7 @@ bool Gatilho::referenciaColunaIncRelacao(void)
 
  return(enc);
 }
-//-----------------------------------------------------------
+
 void Gatilho::definirAtributosBasicosGatilho(unsigned tipo_def)
 {
  QString str_aux,
@@ -324,7 +324,7 @@ void Gatilho::definirAtributosBasicosGatilho(unsigned tipo_def)
    atributos[AtributosParsers::FUNCAO_GAT]=funcao->obterDefinicaoObjeto(tipo_def, true);
  }
 }
-//-----------------------------------------------------------
+
 QString Gatilho::obterDefinicaoObjeto(unsigned tipo_def)
 {
  definirAtributosBasicosGatilho(tipo_def);
@@ -357,4 +357,4 @@ QString Gatilho::obterDefinicaoObjeto(unsigned tipo_def)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//***********************************************************
+

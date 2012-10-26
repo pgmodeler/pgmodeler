@@ -25,7 +25,7 @@
 
 #include "caixatexto.h"
 #include "objetografico.h"
-//***********************************************************
+
 class OGCaixaTexto: public ObjetoGrafico {
  private:
   Q_OBJECT
@@ -47,5 +47,5 @@ class OGCaixaTexto: public ObjetoGrafico {
  protected slots:
   void configurarObjeto(void);
 };
-//***********************************************************
+
 #endif

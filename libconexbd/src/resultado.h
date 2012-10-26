@@ -26,7 +26,7 @@
 #include "excecao.h"
 #include <libpq-fe.h>
 #include <cstdlib>
-//***********************************************************
+
 class Resultado {
  private:
   /* Indica se o resultado foi copiado, este flag é utilizado
@@ -100,5 +100,5 @@ class Resultado {
 
   friend class ConexaoBD;
 };
-//***********************************************************
+
 #endif

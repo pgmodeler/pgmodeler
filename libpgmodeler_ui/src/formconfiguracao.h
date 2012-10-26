@@ -25,7 +25,7 @@
 #include "confaparenciawidget.h"
 #include "confgeralwidget.h"
 #include "confconexoeswidget.h"
-//***********************************************************
+
 class FormConfiguracao: public QDialog, public Ui::FormConfiguracao {
  private:
   Q_OBJECT
@@ -49,5 +49,5 @@ class FormConfiguracao: public QDialog, public Ui::FormConfiguracao {
  private slots:
   void restaurarPadroes(void);
 };
-//***********************************************************
+
 #endif

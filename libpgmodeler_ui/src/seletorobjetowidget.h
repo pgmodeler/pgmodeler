@@ -29,7 +29,7 @@
 #include "modelobd.h"
 #include "destaquesintaxe.h"
 #include "ui_seletorobjetowidget.h"
-//***********************************************************
+
 class SeletorObjetoWidget: public QWidget, public Ui::SeletorObjetoWidget {
  Q_OBJECT
 
@@ -88,5 +88,5 @@ class SeletorObjetoWidget: public QWidget, public Ui::SeletorObjetoWidget {
    //Sinal disparando quando um objeto é deselecionado (removido)
    void s_objetoRemovido(void);
 };
-//***********************************************************
+
 #endif

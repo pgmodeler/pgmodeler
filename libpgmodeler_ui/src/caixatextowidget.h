@@ -24,7 +24,7 @@
 
 #include "ui_caixatextowidget.h"
 #include "objetobasewidget.h"
-//***********************************************************
+
 class CaixaTextoWidget: public ObjetoBaseWidget, public Ui::CaixaTextoWidget {
  Q_OBJECT
 
@@ -41,5 +41,5 @@ class CaixaTextoWidget: public ObjetoBaseWidget, public Ui::CaixaTextoWidget {
  public slots:
   void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

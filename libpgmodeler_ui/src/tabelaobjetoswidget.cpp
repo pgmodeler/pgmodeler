@@ -1,7 +1,7 @@
 #include "tabelaobjetoswidget.h"
 #include "caixamensagem.h"
 extern CaixaMensagem *caixa_msg;
-//***********************************************************
+
 TabelaObjetosWidget::TabelaObjetosWidget(unsigned conf_botoes, bool conf_exclusoes, QWidget *parent): QWidget(parent)
 {
  setupUi(this);
@@ -32,7 +32,7 @@ TabelaObjetosWidget::TabelaObjetosWidget(unsigned conf_botoes, bool conf_excluso
  mover_cima_tb->setToolTip(mover_cima_tb->toolTip() + QString(" (%1)").arg(mover_cima_tb->shortcut().toString()));
  mover_baixo_tb->setToolTip(mover_baixo_tb->toolTip() + QString(" (%1)").arg(mover_baixo_tb->shortcut().toString()));
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::definirConfiguracaoBotoes(unsigned conf_botoes)
 {
  bool btn_mover, btn_edt, btn_ins, btn_limpar, btn_rem, btn_atual;
@@ -65,7 +65,7 @@ void TabelaObjetosWidget::definirConfiguracaoBotoes(unsigned conf_botoes)
   tabelaobj_grid->addWidget(tabela_tbw,0,0,1,10);
  }
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::definirNumColunas(unsigned num_colunas)
 {
  if(num_colunas > 0)
@@ -88,7 +88,7 @@ void TabelaObjetosWidget::definirNumColunas(unsigned num_colunas)
   }
  }
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::definirRotuloCabecalho(const QString &rotulo, unsigned idx_col)
 {
  QTableWidgetItem *item=NULL;
@@ -103,7 +103,7 @@ void TabelaObjetosWidget::definirRotuloCabecalho(const QString &rotulo, unsigned
  //Define o rótulo do item
  item->setText(rotulo);
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::definirIconeCabecalho(const QIcon &icone, unsigned idx_col)
 {
  QTableWidgetItem *item=NULL;
@@ -118,7 +118,7 @@ void TabelaObjetosWidget::definirIconeCabecalho(const QIcon &icone, unsigned idx
  //Define o ícone do item obtido
  item->setIcon(icone);
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::definirIconeCelula(const QIcon &icone, unsigned idx_lin, unsigned idx_col)
 {
  QTableWidgetItem *item=NULL;
@@ -138,7 +138,7 @@ void TabelaObjetosWidget::definirIconeCelula(const QIcon &icone, unsigned idx_li
  //Define o ícone da célula
  item->setIcon(icone);
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::definirTextoCelula(const QString &texto, unsigned idx_lin, unsigned idx_col)
 {
  QTableWidgetItem *item=NULL;
@@ -158,7 +158,7 @@ void TabelaObjetosWidget::definirTextoCelula(const QString &texto, unsigned idx_
  //Define o texto da célula
  item->setText(texto);
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::definirFonteLinha(int idx_lin, const QFont &fonte, const QColor &cor_texto, const QColor &cor_fundo)
 {
  QTableWidgetItem *item=NULL;
@@ -178,7 +178,7 @@ void TabelaObjetosWidget::definirFonteLinha(int idx_lin, const QFont &fonte, con
   item->setBackgroundColor(cor_fundo);
  }
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::definirDadoLinha(const QVariant &dado, unsigned idx_lin)
 {
  QTableWidgetItem *item=NULL;
@@ -195,19 +195,19 @@ void TabelaObjetosWidget::definirDadoLinha(const QVariant &dado, unsigned idx_li
  //Armazena dentro do item o dado passado no parâmetro
  item->setData(Qt::UserRole, dado);
 }
-//-----------------------------------------------------------
+
 unsigned TabelaObjetosWidget::obterNumColunas(void)
 {
  //Retorna o número de colunas do objeto tabela
  return(tabela_tbw->columnCount());
 }
-//-----------------------------------------------------------
+
 unsigned TabelaObjetosWidget::obterNumLinhas(void)
 {
  //Retorna o número de linhas do objeto tabela
  return(tabela_tbw->rowCount());
 }
-//-----------------------------------------------------------
+
 QString TabelaObjetosWidget::obterRotuloCabecalho(unsigned idx_col)
 {
  QTableWidgetItem *item=NULL;
@@ -221,7 +221,7 @@ QString TabelaObjetosWidget::obterRotuloCabecalho(unsigned idx_col)
  item=tabela_tbw->horizontalHeaderItem(idx_col);
  return(item->text());
 }
-//-----------------------------------------------------------
+
 QString TabelaObjetosWidget::obterTextoCelula(unsigned idx_lin, unsigned idx_col)
 {
  QTableWidgetItem *item=NULL;
@@ -241,7 +241,7 @@ QString TabelaObjetosWidget::obterTextoCelula(unsigned idx_lin, unsigned idx_col
  item=tabela_tbw->item(idx_lin,idx_col);
  return(item->text());
 }
-//-----------------------------------------------------------
+
 QVariant TabelaObjetosWidget::obterDadoLinha(unsigned idx_lin)
 {
  QTableWidgetItem *item=NULL;
@@ -256,12 +256,12 @@ QVariant TabelaObjetosWidget::obterDadoLinha(unsigned idx_lin)
  //Retorna o dado armazenado pelo item
  return(item->data(Qt::UserRole));
 }
-//-----------------------------------------------------------
+
 int TabelaObjetosWidget::obterLinhaSelecionada(void)
 {
  return(tabela_tbw->currentRow());
 }
-//-----------------------------------------------------------
+
 int TabelaObjetosWidget::obterIndiceLinha(const QVariant &dado)
 {
  unsigned i, qtd;
@@ -292,10 +292,10 @@ int TabelaObjetosWidget::obterIndiceLinha(const QVariant &dado)
  else
   return(i);
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::adicionarColuna(unsigned idx_col)
 {
- /* Caso o índice da coluna anterior à coluna a ser adcionada seja inválido
+ /* Caso o índice da coluna anterio�  coluna a ser adcionada seja inválido
     adiciona a coluna ao final da lista de colunas */
  if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
   idx_col=tabela_tbw->columnCount();
@@ -308,7 +308,7 @@ void TabelaObjetosWidget::adicionarColuna(unsigned idx_col)
  //Emite um sinal indicando em qual índice foi adicionada uma coluna
  emit s_colunaAdicionada(idx_col);
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::selecionarLinha(int idx_lin)
 {
  QTableWidgetItem *item=NULL;
@@ -323,7 +323,7 @@ void TabelaObjetosWidget::selecionarLinha(int idx_lin)
   habilitarBotoes();
  }
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::adicionarLinha(void)
 {
  QTableWidgetItem *item=NULL;
@@ -359,7 +359,7 @@ void TabelaObjetosWidget::adicionarLinha(void)
  //Emite um sinal com o índice da linha adicionada
  emit s_linhaAdicionada(lin);
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::removerLinha(unsigned idx_lin)
 {
  unsigned i, qtd;
@@ -387,7 +387,7 @@ void TabelaObjetosWidget::removerLinha(unsigned idx_lin)
  removerLinha();
  conf_exclusoes=conf;
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::removerLinha(void)
 {
  /* Caso haja alguma linha selecionada ou seja o índice
@@ -418,7 +418,7 @@ void TabelaObjetosWidget::removerLinha(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::removerLinhas(void)
 {
  if(tabela_tbw->rowCount() > 0)
@@ -450,7 +450,7 @@ void TabelaObjetosWidget::removerLinhas(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::removerColuna(unsigned idx_col)
 {
  /* Caso o índice da coluna a ser removida seja inválido retorna um erro
@@ -465,7 +465,7 @@ void TabelaObjetosWidget::removerColuna(unsigned idx_col)
  //Emite o sinal indicando a coluna removida
  emit s_colunaRemovida(idx_col);
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::moverLinhas(void)
 {
  QObject *obj_sender=sender();
@@ -551,7 +551,7 @@ void TabelaObjetosWidget::moverLinhas(void)
   emit s_linhasMovidas(lin, lin1);
  }
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::editarLinha(void)
 {
  /* Para este método nada é executado apenas um sinal é emitido
@@ -559,7 +559,7 @@ void TabelaObjetosWidget::editarLinha(void)
     da linha é o objeto externo o qual faz uso da tabela. */
  emit s_linhaEditada(tabela_tbw->currentRow());
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::atualizarLinha(void)
 {
  /* Para este método nada é executado apenas um sinal é emitido
@@ -567,14 +567,14 @@ void TabelaObjetosWidget::atualizarLinha(void)
     da linha é o objeto externo o qual faz uso da tabela. */
  emit s_linhaAtualizada(tabela_tbw->currentRow());
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::limparSelecao(void)
 {
  tabela_tbw->clearSelection();
  tabela_tbw->setCurrentItem(NULL);
  habilitarBotoes();
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::habilitarBotoes(unsigned conf_botoes, bool valor)
 {
  int lin=-1;
@@ -621,7 +621,7 @@ void TabelaObjetosWidget::habilitarBotoes(unsigned conf_botoes, bool valor)
  if((conf_botoes & BTN_ATUALIZAR_ITEM) == BTN_ATUALIZAR_ITEM)
   atualizar_tb->setEnabled(valor && lin >= 0);
 }
-//-----------------------------------------------------------
+
 void TabelaObjetosWidget::habilitarBotoes(void)
 {
  //Obtém o item atual caso haja algum selecionado
@@ -630,9 +630,9 @@ void TabelaObjetosWidget::habilitarBotoes(void)
  habilitarBotoes(TODOS_BOTOES, true);
 
  /* Caso uma linha esteja selecionada emite o sinal indicativo de seleção de linha,
-    este sinal é interessante quando se quer ter acesso direto à linha selecionada
+    este sinal é interessante quando se quer ter acesso diret�  linha selecionada
     sem ter que chamar o método de obterLinhaSelecionada() */
  if(item && item->row() >= 0)
   emit s_linhaSelecionada(item->row());
 }
-//***********************************************************
+

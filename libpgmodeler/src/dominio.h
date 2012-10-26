@@ -24,7 +24,7 @@
 
 #include "objetobase.h"
 #include "esquema.h"
-//***********************************************************
+
 class Dominio: public ObjetoBase{
  private:
   //Nome da constraint usada no domínio
@@ -75,5 +75,5 @@ class Dominio: public ObjetoBase{
 
   void operator = (Dominio &dominio);
 };
-//***********************************************************
+
 #endif

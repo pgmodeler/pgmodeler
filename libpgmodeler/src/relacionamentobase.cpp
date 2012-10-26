@@ -1,5 +1,5 @@
 #include "relacionamentobase.h"
-//***********************************************************
+
 RelacionamentoBase::RelacionamentoBase(RelacionamentoBase *relacao)
 {
  if(!relacao)
@@ -11,7 +11,7 @@ RelacionamentoBase::RelacionamentoBase(RelacionamentoBase *relacao)
 
  (*(this))=(*relacao);
 }
-//------------------------------------------------------------
+
 RelacionamentoBase::RelacionamentoBase(const QString &nome, unsigned tipo_rel,
                                        TabelaBase *tab_orig, TabelaBase *tab_dest,
                                         bool obrig_orig, bool obrig_dest)
@@ -33,7 +33,7 @@ RelacionamentoBase::RelacionamentoBase(const QString &nome, unsigned tipo_rel,
  configurarRelacionamento();
  definirNome(nome);
 }
-//------------------------------------------------------------
+
 void RelacionamentoBase::configurarRelacionamento(void)
 {
  tipo_objeto=OBJETO_RELACAO_BASE;
@@ -108,7 +108,7 @@ void RelacionamentoBase::configurarRelacionamento(void)
  else
   throw Excecao(ERR_PGMODELER_ALOCOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
-//-----------------------------------------------------------
+
 RelacionamentoBase::~RelacionamentoBase(void)
 {
  //Desconecta o relacionamento
@@ -118,7 +118,7 @@ RelacionamentoBase::~RelacionamentoBase(void)
  for(unsigned i=0; i<3; i++)
   if(rotulos[i]) delete(rotulos[i]);
 }
-//-----------------------------------------------------------
+
 void RelacionamentoBase::definirNome(const QString &nome)
 {
  try
@@ -133,7 +133,7 @@ void RelacionamentoBase::definirNome(const QString &nome)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void RelacionamentoBase::definirTabelaObrigatoria(unsigned id_tabela, bool valor)
 {
  QString cmin, aux;
@@ -196,7 +196,7 @@ void RelacionamentoBase::definirTabelaObrigatoria(unsigned id_tabela, bool valor
   rotulos[tipo_rot]->definirModificado(true);
  }
 }
-//-----------------------------------------------------------
+
 TabelaBase *RelacionamentoBase::obterTabela(unsigned id_tabela)
 {
  //Retorna a tabela de acordo o índice passado
@@ -207,7 +207,7 @@ TabelaBase *RelacionamentoBase::obterTabela(unsigned id_tabela)
  else
   return(NULL);
 }
-//-----------------------------------------------------------
+
 bool RelacionamentoBase::tabelaObrigatoria(unsigned id_tabela)
 {
  /* Retorna o flag de obrigatoriedade de acordo o índice
@@ -217,7 +217,7 @@ bool RelacionamentoBase::tabelaObrigatoria(unsigned id_tabela)
  else
   return(obrig_dest);
 }
-//-----------------------------------------------------------
+
 void RelacionamentoBase::desconectarRelacionamento(void)
 {
  if(conectado)
@@ -227,7 +227,7 @@ void RelacionamentoBase::desconectarRelacionamento(void)
   tabela_dest->definirModificado(true);
  }
 }
-//-----------------------------------------------------------
+
 void RelacionamentoBase::conectarRelacionamento(void)
 {
  //Caso o relacionamento não esteja conectado
@@ -242,7 +242,7 @@ void RelacionamentoBase::conectarRelacionamento(void)
   tabela_dest->definirModificado(true);
  }
 }
-//-----------------------------------------------------------
+
 CaixaTexto *RelacionamentoBase::obterRotulo(unsigned idx_rot)
 {
  // Retorna o rótulo na posição especificada, caso o índice
@@ -253,22 +253,22 @@ CaixaTexto *RelacionamentoBase::obterRotulo(unsigned idx_rot)
   //Dispara uma exceção caso o índice usado seja inválido
   throw Excecao(ERR_PGMODELER_REFROTIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
- //-----------------------------------------------------------
+ 
 unsigned RelacionamentoBase::obterTipoRelacionamento(void)
 {
  return(tipo_relac);
 }
-//-----------------------------------------------------------
+
 bool RelacionamentoBase::relacionamentoConectado(void)
 {
  return(conectado);
 }
-//-----------------------------------------------------------
+
 bool RelacionamentoBase::autoRelacionamento(void)
 {
  return(tabela_dest==tabela_orig);
 }
-//-----------------------------------------------------------
+
 void RelacionamentoBase::definirAtributosRelacionamento(void)
 {
  unsigned qtd, i;
@@ -330,7 +330,7 @@ void RelacionamentoBase::definirAtributosRelacionamento(void)
  }
  atributos[AtributosParsers::POSICAO_ROTULOS]=str_aux;
 }
-//-----------------------------------------------------------
+
 QString RelacionamentoBase::obterDefinicaoObjeto(void)
 {
  bool forma_reduzida;
@@ -339,12 +339,12 @@ QString RelacionamentoBase::obterDefinicaoObjeto(void)
  forma_reduzida=atributos[AtributosParsers::PONTOS].isEmpty();
  return(ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML,forma_reduzida));
 }
-//-----------------------------------------------------------
+
 void RelacionamentoBase::definirPontos(const vector<QPointF> &pontos)
 {
  this->pontos=pontos;
 }
-//-----------------------------------------------------------
+
 void RelacionamentoBase::definirDistanciaRotulo(unsigned idx_rot, QPointF dist_rotulo)
 {
  if(idx_rot > ROTULO_NOME_RELAC)
@@ -352,7 +352,7 @@ void RelacionamentoBase::definirDistanciaRotulo(unsigned idx_rot, QPointF dist_r
 
  this->dist_rotulos[idx_rot]=dist_rotulo;
 }
-//-----------------------------------------------------------
+
 QPointF RelacionamentoBase::obterDistanciaRotulo(unsigned idx_rot)
 {
  if(idx_rot > ROTULO_NOME_RELAC)
@@ -360,12 +360,12 @@ QPointF RelacionamentoBase::obterDistanciaRotulo(unsigned idx_rot)
 
  return(this->dist_rotulos[idx_rot]);
 }
-//-----------------------------------------------------------
+
 vector<QPointF> RelacionamentoBase::obterPontos(void)
 {
  return(pontos);
 }
-//-----------------------------------------------------------
+
 void RelacionamentoBase::operator = (RelacionamentoBase &rel)
 {
  (*dynamic_cast<ObjetoGraficoBase *>(this))=dynamic_cast<ObjetoGraficoBase &>(rel);
@@ -401,4 +401,4 @@ void RelacionamentoBase::operator = (RelacionamentoBase &rel)
  this->definirTabelaObrigatoria(TABELA_ORIGEM, rel.obrig_orig);
  this->definirTabelaObrigatoria(TABELA_DESTINO, rel.obrig_dest);
 }
-//***********************************************************
+

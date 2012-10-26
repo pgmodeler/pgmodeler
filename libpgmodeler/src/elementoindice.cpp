@@ -1,5 +1,5 @@
 #include "elementoindice.h"
-//***********************************************************
+
 ElementoIndice::ElementoIndice(void)
 {
  coluna=NULL;
@@ -7,7 +7,7 @@ ElementoIndice::ElementoIndice(void)
  atrib_elemento[NULOS_PRIMEIRO]=false;
  atrib_elemento[ORDEM_ASCENDENTE]=true;
 }
-//-----------------------------------------------------------
+
 void ElementoIndice::definirColuna(Coluna *coluna)
 {
  if(coluna)
@@ -16,7 +16,7 @@ void ElementoIndice::definirColuna(Coluna *coluna)
   this->expressao="";
  }
 }
-//-----------------------------------------------------------
+
 void ElementoIndice::definirExpressao(const QString &expressao)
 {
  if(!expressao.isEmpty())
@@ -25,12 +25,12 @@ void ElementoIndice::definirExpressao(const QString &expressao)
   this->coluna=NULL;
  }
 }
-//-----------------------------------------------------------
+
 void ElementoIndice::definirClasseOperadores(ClasseOperadores *classe_oper)
 {
  this->classe_oper=classe_oper;
 }
-//-----------------------------------------------------------
+
 void ElementoIndice::definirAtributo(unsigned id_atrib, bool valor)
 {
  if(id_atrib > NULOS_PRIMEIRO)
@@ -38,7 +38,7 @@ void ElementoIndice::definirAtributo(unsigned id_atrib, bool valor)
  
  atrib_elemento[id_atrib]=valor;
 }
-//-----------------------------------------------------------
+
 bool ElementoIndice::obterAtributo(unsigned id_atrib)
 {
  if(id_atrib > NULOS_PRIMEIRO)
@@ -46,22 +46,22 @@ bool ElementoIndice::obterAtributo(unsigned id_atrib)
  
  return(atrib_elemento[id_atrib]);
 }
-//-----------------------------------------------------------
+
 Coluna *ElementoIndice::obterColuna(void)
 {
  return(coluna);
 }
-//-----------------------------------------------------------
+
 QString ElementoIndice::obterExpressao(void)
 {
  return(expressao);
 }
-//-----------------------------------------------------------
+
 ClasseOperadores *ElementoIndice::obterClasseOperadores(void)
 {
  return(classe_oper);
 }
-//-----------------------------------------------------------
+
 QString ElementoIndice::obterDefinicaoObjeto(unsigned tipo_def)
 {
  map<QString, QString> atributos;
@@ -93,4 +93,4 @@ QString ElementoIndice::obterDefinicaoObjeto(unsigned tipo_def)
  
  return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::ELEMENTO_INDICE,atributos, tipo_def));
 }
-//***********************************************************
+

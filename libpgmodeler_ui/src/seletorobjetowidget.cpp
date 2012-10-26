@@ -1,9 +1,9 @@
 #include "seletorobjetowidget.h"
 #include "visaoobjetoswidget.h"
 extern VisaoObjetosWidget *selecaoobjetos_wgt;
-//***********************************************************
+
 QObject *SeletorObjetoWidget::seletor_atual=NULL;
-//-----------------------------------------------------------
+
 SeletorObjetoWidget::SeletorObjetoWidget(TipoObjetoBase tipo_obj_seletor, bool inst_destaque_txt, QWidget *parent): QWidget(parent)
 {
  try
@@ -41,12 +41,12 @@ SeletorObjetoWidget::SeletorObjetoWidget(TipoObjetoBase tipo_obj_seletor, bool i
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 ObjetoBase *SeletorObjetoWidget::obterObjeto(void)
 {
  return(objeto);
 }
-//-----------------------------------------------------------
+
 void SeletorObjetoWidget::definirObjeto(ObjetoBase *objeto)
 {
  TipoObjetoBase tipo_obj;
@@ -105,12 +105,12 @@ void SeletorObjetoWidget::definirObjeto(ObjetoBase *objeto)
  else
   removerObjetoSelecionado();
 }
-//-----------------------------------------------------------
+
 void SeletorObjetoWidget::definirModelo(ModeloBD *modelo)
 {
  this->modelo=modelo;
 }
-//-----------------------------------------------------------
+
 void SeletorObjetoWidget::exibirObjetoSelecionado(ObjetoBase *obj_sel, bool)
 {
  /* Caso se tente atribuir um objeto ao seletor é necessário verificar
@@ -120,7 +120,7 @@ void SeletorObjetoWidget::exibirObjetoSelecionado(ObjetoBase *obj_sel, bool)
  if(SeletorObjetoWidget::seletor_atual==this && obj_sel)
   definirObjeto(obj_sel);
 }
-//-----------------------------------------------------------
+
 void SeletorObjetoWidget::removerObjetoSelecionado(void)
 {
  //Limpa a referência ao objeto selecionado
@@ -133,7 +133,7 @@ void SeletorObjetoWidget::removerObjetoSelecionado(void)
  //Emite o sinal indicando que um objeto foi selecionado
  emit s_objetoRemovido();
 }
-//-----------------------------------------------------------
+
 void SeletorObjetoWidget::exibirSelecaoObjetos(void)
 {
  /* Antes de exibir o form de seleção de objeto é preciso armazenar
@@ -150,4 +150,4 @@ void SeletorObjetoWidget::exibirSelecaoObjetos(void)
  selecaoobjetos_wgt->definirModelo(this->modelo);
  selecaoobjetos_wgt->show();
 }
-//***********************************************************
+

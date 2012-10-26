@@ -1,5 +1,5 @@
 #include "ogvisao.h"
-//***********************************************************
+
 OGVisao::OGVisao(Visao *visao) : OGTabelaBase(visao)
 {
  connect(visao, SIGNAL(s_objetoModificado(void)), this, SLOT(configurarObjeto(void)));
@@ -9,13 +9,13 @@ OGVisao::OGVisao(Visao *visao) : OGTabelaBase(visao)
  this->addToGroup(referencias);
  this->configurarObjeto();
 }
-//-----------------------------------------------------------
+
 OGVisao::~OGVisao(void)
 {
  this->removeFromGroup(referencias);
  delete(referencias);
 }
-//-----------------------------------------------------------
+
 void OGVisao::configurarObjeto(void)
 {
  Visao *visao=dynamic_cast<Visao *>(this->obterObjetoOrigem());
@@ -129,4 +129,4 @@ void OGVisao::configurarObjeto(void)
  ObjetoGrafico::configurarSombraObjeto();
  ObjetoGrafico::configurarSelecaoObjeto();
 }
-//***********************************************************
+

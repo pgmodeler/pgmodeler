@@ -26,7 +26,7 @@
 #include "tabelawidget.h"
 #include "progressotarefa.h"
 #include "listaobjetoswidget.h"
-//***********************************************************
+
 extern CaixaMensagem *caixa_msg;
 extern BancoDadosWidget *bancodados_wgt;
 extern EsquemaWidget *esquema_wgt;
@@ -516,7 +516,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
 {
  /* O parâmetro fim_movimento indica se a operação de movimentação de objetos
     foi finalizada. Quando este parâmetro é false, indica que a movimentação
-    foi iniciada, desta forma os objetos são adicionados à lista de operações
+    foi iniciada, desta forma os objetos são adicionado�  lista de operações
     antes do movimento acontecer */
  if(!fim_movimento)
  {
@@ -551,7 +551,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
 //----------------------------------------------------------
 void ModeloWidget::manipularModificacaoObjeto(ObjetoGraficoBase *objeto)
 {
- //Adciona o objeto modificado à lista de operações
+ //Adciona o objeto modificado   lista de operações
  lista_op->adicionarObjeto(objeto, Operacao::OBJETO_MODIFICADO);
  this->modificado=true;
  //Emite um sinal indicando que um objeto foi modificado
@@ -747,7 +747,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
 
      //Remove o relacionamento n-n do modelo
      modelo->removerObjeto(rel);
-     //Adiciona-o à lista de operações
+     //Adiciona-o   lista de operações
      //lista_op->adicionarObjeto(rel, Operacao::OBJETO_REMOVIDO);
 
      //A posição padrão da tabela originada será o ponto médio entre as tabelas participantes do relacionamento
@@ -757,7 +757,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
 
      //Adiciona a tabela criada ao modelo
      modelo->adicionarObjeto(tab);
-     //Adiciona uma operação à lista de operações indicando a criação da tabela
+     //Adiciona uma operaç� �  lista de operações indicando a criação da tabela
      //lista_op->adicionarObjeto(tab, Operacao::OBJETO_CRIADO);
 
      //Aloca um relacionamento entre a nova tabela e a tabela de origem do relacionamento
@@ -766,7 +766,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
                              tab_orig, tab, obrig_orig, false, true,
                              "", "", true);
 
-     //Adiciona o relacionamento criado ao modelo e à lista de operações
+     //Adiciona o relacionamento criado ao modelo e   lista de operações
      modelo->adicionarRelacionamento(rel1);
      //lista_op->adicionarObjeto(rel1, Operacao::OBJETO_CRIADO);
 
@@ -779,7 +779,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
                              tab_dest, tab, obrig_dest, false, true,
                              "", "", true);
 
-     //Adiciona o relacionamento criado ao modelo e à lista de operações
+     //Adiciona o relacionamento criado ao modelo e   lista de operações
      modelo->adicionarRelacionamento(rel2);
      //lista_op->adicionarObjeto(rel2, Operacao::OBJETO_CRIADO);
 
@@ -869,7 +869,7 @@ void ModeloWidget::ajustarTamanhoCena(void)
  cena->setSceneRect(ret_cena);
  viewport->centerOn(0,0);
 
- //Alinha os objetos à grade caso a opção esteja ativa
+ //Alinha os objetos   grade caso a opção esteja ativa
  if(alin_objs)
   cena->alinharObjetosGrade();
 }
@@ -1811,7 +1811,7 @@ void ModeloWidget::colarObjetos(void)
       !dynamic_cast<Relacionamento *>(objeto))
     modelo->adicionarObjeto(objeto);
 
-   //Adiciona o objeto criado à lista de operações
+   //Adiciona o objeto criado   lista de operações
    if(obj_tab)
     lista_op->adicionarObjeto(obj_tab, Operacao::OBJETO_CRIADO, -1, obj_tab->obterTabelaPai());
    else
@@ -1998,7 +1998,7 @@ void ModeloWidget::excluirObjetos(void)
 
         modelo->removerPermissoes(objeto_tab);
 
-        //Adiciona o objeto removido à lista de operações e redesenha o modelo
+        //Adiciona o objeto removido   lista de operações e redesenha o modelo
         lista_op->adicionarObjeto(objeto_tab, Operacao::OBJETO_REMOVIDO, idx_obj, tabela);
         tabela->removerObjeto(idx_obj, tipo_obj);
 
@@ -2027,7 +2027,7 @@ void ModeloWidget::excluirObjetos(void)
 
         try
         {
-         //Adiciona o objeto removido à lista de operações e redesenha o modelo
+         //Adiciona o objeto removido   lista de operações e redesenha o modelo
          lista_op->adicionarObjeto(objeto, Operacao::OBJETO_REMOVIDO, idx_obj);
          modelo->removerObjeto(objeto, idx_obj);
         }
@@ -2157,7 +2157,7 @@ void ModeloWidget::configurarMenuPopup(vector<ObjetoBase *> objs_sel)
    for(i=0; i < 18; i++)
     menu_novo_obj.addAction(acoes_ins_objs[tipos[i]]);
 
-   //Adiciona o menu configurado à ação de novo objeto
+   //Adiciona o menu configurado   ação de novo objeto
    action_novo_obj->setMenu(&menu_novo_obj);
    menu_popup.addAction(action_novo_obj);
    menu_popup.addSeparator();
@@ -2268,7 +2268,7 @@ void ModeloWidget::configurarMenuPopup(vector<ObjetoBase *> objs_sel)
   menu_popup.addAction(action_excluir);
 
  /* Caso o objeto seja uma coluna (objeto de tabela) cria um menu
-    especial que permite acesso rápido às retrições que são pertinentes
+    especial que permite acesso rápid� s retrições que são pertinentes
     a coluna */
  if(obj_tab)
  {

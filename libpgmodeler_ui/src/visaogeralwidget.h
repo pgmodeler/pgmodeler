@@ -27,7 +27,7 @@
 #include "excecao.h"
 #include "ui_visaogeralwidget.h"
 #include "modelowidget.h"
-//***********************************************************
+
 class VisaoGeralWidget: public QWidget, public Ui::VisaoGeralWidget {
  Q_OBJECT
  private:
@@ -82,5 +82,5 @@ class VisaoGeralWidget: public QWidget, public Ui::VisaoGeralWidget {
    //Sinal emitido quando a janela é aberta ou fechada (o parâmetro indica se a janela está ou não visível)
    void s_visaoGeralVisivel(bool);
 };
-//***********************************************************
+
 #endif

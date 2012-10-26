@@ -30,7 +30,7 @@
 #include "tipospgsql.h"
 #include "destaquesintaxe.h"
 #include "modelobd.h"
-//***********************************************************
+
 class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
  Q_OBJECT
 
@@ -52,7 +52,7 @@ class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
                                bool tipo_oid=true, bool pseudo=true);
 
  private slots:
-   /* Atualiza o formato do tipo à medida que os campos
+   /* Atualiza o formato do tipo   medida que os campos
       do formulário são modificados */
    void atualizarFormatoTipo(void);
 
@@ -64,5 +64,5 @@ class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
    //Obtém o tipo configurado no formulário
    TipoPgSQL obterTipoPgSQL(void);
 };
-//***********************************************************
+
 #endif

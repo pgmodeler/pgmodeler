@@ -29,7 +29,7 @@
 #include "papel.h"
 #include <algorithm>
  #include <QTextStream>
-//***********************************************************
+
 class Permissao: public ObjetoBase {
  /* Permissões no PostgreSQL se aplicam somente aos objetos
     de banco de dados como a seguir:
@@ -132,5 +132,5 @@ class Permissao: public ObjetoBase {
   //Retorna a definição SQL ou XML do objeto
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

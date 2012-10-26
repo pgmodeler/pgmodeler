@@ -1,5 +1,5 @@
 #include "modelobd.h"
-//***********************************************************
+
 ModeloBD::ModeloBD(void)
 {
  id_objeto=ObjetoBase::id_modelobd++;
@@ -15,18 +15,18 @@ ModeloBD::ModeloBD(void)
  atributos[AtributosParsers::LC_COLLATE_BD]="";
  atributos[AtributosParsers::LC_CTYPE_BD]="";
 }
-//-----------------------------------------------------------
+
 ModeloBD::~ModeloBD(void)
 {
  this->blockSignals(true);
  destruirObjetos();
 }
-//-----------------------------------------------------------
+
 void ModeloBD::definirCodificacao(TipoCodificacao tipo_cod)
 {
  tipo_codif=tipo_cod;
 }
-//-----------------------------------------------------------
+
 void ModeloBD::definirLocalizacao(int cod_local, const QString &valor)
 {
  unsigned idx=0;
@@ -41,13 +41,13 @@ void ModeloBD::definirLocalizacao(int cod_local, const QString &valor)
  }
  localizacoes[idx]=valor;
 }
-//-----------------------------------------------------------
+
 void ModeloBD::definirLimiteConexao(int lim_conexao)
 {
  if(lim_conexao < -1) lim_conexao=-1;
  this->lim_conexao=lim_conexao;
 }
-//-----------------------------------------------------------
+
 void ModeloBD::definirBDModelo(const QString &bd_modelo)
 {
  if(!bd_modelo.isEmpty() && !ObjetoBase::nomeValido(bd_modelo))
@@ -55,12 +55,12 @@ void ModeloBD::definirBDModelo(const QString &bd_modelo)
 
  this->bd_modelo=bd_modelo;
 }
-//-----------------------------------------------------------
+
 void ModeloBD::definirAutor(const QString &autor)
 {
  this->autor=autor;
 }
-//-----------------------------------------------------------
+
 vector<ObjetoBase *> *ModeloBD::obterListaObjetos(TipoObjetoBase tipo_obj)
 {
  //Retorna a referencia da lista equivalente ao tipo passado
@@ -107,7 +107,7 @@ vector<ObjetoBase *> *ModeloBD::obterListaObjetos(TipoObjetoBase tipo_obj)
  else
   return(NULL);
 }
-//-----------------------------------------------------------
+
 QString ModeloBD::validarDefinicaoObjeto(ObjetoBase *objeto, unsigned tipo_def)
 {
  TipoObjetoBase tipo_obj;
@@ -146,7 +146,7 @@ QString ModeloBD::validarDefinicaoObjeto(ObjetoBase *objeto, unsigned tipo_def)
 
  return(def_obj);
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarObjeto(ObjetoBase *objeto, int idx_obj)
 {
  TipoObjetoBase tipo_obj;
@@ -203,7 +203,7 @@ void ModeloBD::adicionarObjeto(ObjetoBase *objeto, int idx_obj)
   }
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerObjeto(ObjetoBase *objeto, int idx_obj)
 {
  TipoObjetoBase tipo_obj;
@@ -261,7 +261,7 @@ void ModeloBD::removerObjeto(ObjetoBase *objeto, int idx_obj)
   }
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
 {
  if(tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO ||
@@ -323,7 +323,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
   removerPermissao(dynamic_cast<Permissao *>(objeto));
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
 {
  int idx;
@@ -415,7 +415,7 @@ void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
  if(!signalsBlocked())
   emit s_objetoAdicionado(objeto);
 }
-//-----------------------------------------------------------
+
 void ModeloBD::__removerObjeto(ObjetoBase *objeto, int idx_obj)
 {
  if(!objeto)
@@ -457,7 +457,7 @@ void ModeloBD::__removerObjeto(ObjetoBase *objeto, int idx_obj)
    emit s_objetoRemovido(objeto);
  }
 }
-//-----------------------------------------------------------
+
 vector<ObjetoBase *> ModeloBD::obterObjetos(TipoObjetoBase tipo_obj, ObjetoBase *esquema)
 {
  vector<ObjetoBase *> *lista_obj=NULL, lista_sel;
@@ -483,7 +483,7 @@ vector<ObjetoBase *> ModeloBD::obterObjetos(TipoObjetoBase tipo_obj, ObjetoBase 
 
  return(lista_sel);
 }
-//-----------------------------------------------------------
+
 ObjetoBase *ModeloBD::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, int &idx_obj)
 {
  ObjetoBase *objeto=NULL;
@@ -556,7 +556,7 @@ ObjetoBase *ModeloBD::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, 
 
  return(objeto);
 }
-//-----------------------------------------------------------
+
 ObjetoBase *ModeloBD::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
 {
  vector<ObjetoBase *> *lista_obj=NULL;
@@ -575,7 +575,7 @@ ObjetoBase *ModeloBD::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
  else
   return(lista_obj->at(idx_obj));
 }
-//-----------------------------------------------------------
+
 unsigned ModeloBD::obterNumObjetos(TipoObjetoBase tipo_obj)
 {
  vector<ObjetoBase *> *lista_obj=NULL;
@@ -590,7 +590,7 @@ unsigned ModeloBD::obterNumObjetos(TipoObjetoBase tipo_obj)
  else
   return(lista_obj->size());
 }
-//-----------------------------------------------------------
+
 unsigned ModeloBD::obterNumObjetos(void)
 {
  TipoObjetoBase tipos[20]={
@@ -608,7 +608,7 @@ unsigned ModeloBD::obterNumObjetos(void)
 
  return(qtd);
 }
-//-----------------------------------------------------------
+
 QString ModeloBD::obterLocalizacao(int cod_local)
 {
  unsigned idx=0;
@@ -623,27 +623,27 @@ QString ModeloBD::obterLocalizacao(int cod_local)
  }
  return(localizacoes[idx]);
 }
-//-----------------------------------------------------------
+
 int ModeloBD::obterLimiteConexao(void)
 {
  return(lim_conexao);
 }
-//-----------------------------------------------------------
+
 QString ModeloBD::obterBDModelo(void)
 {
  return(bd_modelo);
 }
-//-----------------------------------------------------------
+
 TipoCodificacao ModeloBD::obterCodificacao(void)
 {
  return(tipo_codif);
 }
-//-----------------------------------------------------------
+
 QString ModeloBD::obterAutor(void)
 {
  return(autor);
 }
-//-----------------------------------------------------------
+
 void ModeloBD::definirProtegido(bool protegido)
 {
  TipoObjetoBase tipos[19]={
@@ -675,7 +675,7 @@ void ModeloBD::definirProtegido(bool protegido)
 
  ObjetoBase::definirProtegido(protegido);
 }
-//-----------------------------------------------------------
+
 void ModeloBD::destruirObjetos(void)
 {
  /* A ordem de destruição de objetos deve ser seguida de forma que
@@ -713,14 +713,14 @@ void ModeloBD::destruirObjetos(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarTabela(Tabela *tabela, int idx_obj)
 {
  try
  {
   __adicionarObjeto(tabela, idx_obj);
   /* Ao ser inserido uma nova tabela a mesma tem
-   seu nome é adicionado à lista de tipos válidos
+   seu nome é adicionad�  lista de tipos válidos
    do PostgreSQL */
   TipoPgSQL::adicionarTipoUsuario(tabela->obterNome(true), tabela, this, ConfigTipoUsuario::TIPO_TABELA);
  }
@@ -729,12 +729,12 @@ void ModeloBD::adicionarTabela(Tabela *tabela, int idx_obj)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 Tabela *ModeloBD::obterTabela(unsigned idx_obj)
 {
  return(dynamic_cast<Tabela *>(obterObjeto(idx_obj, OBJETO_TABELA)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
 {
  if(tabela)
@@ -742,7 +742,7 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
   vector<ObjetoBase *> vet_refs;
   QString str_aux;
 
-  //Obtém as referências à tabela
+  //Obtém as referênca �  tabela
   obterReferenciasObjeto(tabela, vet_refs, true);
 
   //Caso a tabela esteja sendo referenciada, a mesma não pode ser removida
@@ -788,14 +788,14 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
  //TipoPgSQL::removerTipoUsuario(tabela->obterNome(true), tabela);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarSequencia(Sequencia *sequencia, int idx_obj)
 {
  try
  {
   __adicionarObjeto(sequencia, idx_obj);
   /* Ao ser inserido uma nova sequencia a mesma tem
-   seu nome é adicionado à lista de tipos válidos
+   seu nome é adicionad�  lista de tipos válidos
    do PostgreSQL */
   TipoPgSQL::adicionarTipoUsuario(sequencia->obterNome(true), sequencia, this, ConfigTipoUsuario::TIPO_SEQUENCIA);
  }
@@ -804,12 +804,12 @@ void ModeloBD::adicionarSequencia(Sequencia *sequencia, int idx_obj)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 Sequencia *ModeloBD::obterSequencia(unsigned idx_obj)
 {
  return(dynamic_cast<Sequencia *>(obterObjeto(idx_obj, OBJETO_SEQUENCIA)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerSequencia(Sequencia *sequencia, int idx_obj)
 {
  if(sequencia)
@@ -821,7 +821,7 @@ void ModeloBD::removerSequencia(Sequencia *sequencia, int idx_obj)
   //TipoPgSQL::removerTipoUsuario(sequencia->obterNome(true), sequencia);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarVisao(Visao *visao, int idx_obj)
 {
  if(visao)
@@ -837,12 +837,12 @@ void ModeloBD::adicionarVisao(Visao *visao, int idx_obj)
   }
  }
 }
-//-----------------------------------------------------------
+
 Visao *ModeloBD::obterVisao(unsigned idx_obj)
 {
  return(dynamic_cast<Visao *>(obterObjeto(idx_obj, OBJETO_VISAO)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerVisao(Visao *visao, int idx_obj)
 {
  if(visao)
@@ -851,7 +851,7 @@ void ModeloBD::removerVisao(Visao *visao, int idx_obj)
   atualizarRelTabelaVisao(visao);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
 {
  Tabela *tab=NULL;
@@ -956,7 +956,7 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
   }
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::desconectarRelacionamentos(void)
 {
  try
@@ -993,7 +993,7 @@ void ModeloBD::desconectarRelacionamentos(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::validarRelacionamentos(void)
 {
  vector<ObjetoBase *>::iterator itr, itr_end, itr_ant;
@@ -1201,7 +1201,7 @@ void ModeloBD::validarRelacionamentos(void)
   throw Excecao(ERR_PGMODELER_REFCOLUNAINVTABELA,__PRETTY_FUNCTION__,__FILE__,__LINE__,vet_erros);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
 {
  try
@@ -1303,7 +1303,7 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::obterXMLObjetosEspeciais(void)
 {
  unsigned qtd, i, id_tipo;
@@ -1494,7 +1494,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj)
 {
  TipoObjetoBase tipo_obj;
@@ -1536,7 +1536,7 @@ void ModeloBD::criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, def_xml_obj);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarRelacionamento(RelacionamentoBase *relacao, int idx_obj)
 {
  try
@@ -1588,7 +1588,7 @@ void ModeloBD::adicionarRelacionamento(RelacionamentoBase *relacao, int idx_obj)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerRelacionamento(RelacionamentoBase *relacao, int idx_obj)
 {
  try
@@ -1618,7 +1618,7 @@ void ModeloBD::removerRelacionamento(RelacionamentoBase *relacao, int idx_obj)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 RelacionamentoBase *ModeloBD::obterRelacionamento(unsigned idx_obj, TipoObjetoBase tipo_rel)
 {
  //Caso o tipo de relacionamento seja inválido
@@ -1627,7 +1627,7 @@ RelacionamentoBase *ModeloBD::obterRelacionamento(unsigned idx_obj, TipoObjetoBa
 
  return(dynamic_cast<RelacionamentoBase *>(obterObjeto(idx_obj, tipo_rel)));
 }
-//-----------------------------------------------------------
+
 RelacionamentoBase *ModeloBD::obterRelacionamento(TabelaBase *tab_orig, TabelaBase *tab_dest)
 {
  vector<ObjetoBase *>::iterator itr, itr_end;
@@ -1686,7 +1686,7 @@ RelacionamentoBase *ModeloBD::obterRelacionamento(TabelaBase *tab_orig, TabelaBa
 
  return(rel);
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarCaixaTexto(CaixaTexto *caixa, int idx_obj)
 {
  try
@@ -1698,17 +1698,17 @@ void ModeloBD::adicionarCaixaTexto(CaixaTexto *caixa, int idx_obj)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerCaixaTexto(CaixaTexto *caixa, int idx_obj)
 {
  __removerObjeto(caixa, idx_obj);
 }
-//-----------------------------------------------------------
+
 CaixaTexto *ModeloBD::obterCaixaTexto(unsigned idx_obj)
 {
  return(dynamic_cast<CaixaTexto *>(obterObjeto(idx_obj, OBJETO_CAIXA_TEXTO)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarEsquema(Esquema *esquema, int idx_obj)
 {
  try
@@ -1720,12 +1720,12 @@ void ModeloBD::adicionarEsquema(Esquema *esquema, int idx_obj)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 Esquema *ModeloBD::obterEsquema(unsigned idx_obj)
 {
  return(dynamic_cast<Esquema *>(obterObjeto(idx_obj, OBJETO_ESQUEMA)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerEsquema(Esquema *esquema, int idx_obj)
 {
  if(esquema)
@@ -1753,7 +1753,7 @@ void ModeloBD::removerEsquema(Esquema *esquema, int idx_obj)
   __removerObjeto(esquema, idx_obj);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarPapel(Papel *papel, int idx_obj)
 {
  try
@@ -1765,12 +1765,12 @@ void ModeloBD::adicionarPapel(Papel *papel, int idx_obj)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 Papel *ModeloBD::obterPapel(unsigned idx_obj)
 {
  return(dynamic_cast<Papel *>(obterObjeto(idx_obj, OBJETO_PAPEL)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerPapel(Papel *papel, int idx_obj)
 {
  if(papel)
@@ -1797,7 +1797,7 @@ void ModeloBD::removerPapel(Papel *papel, int idx_obj)
   __removerObjeto(papel, idx_obj);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
 {
  try
@@ -1809,12 +1809,12 @@ void ModeloBD::adicionarEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 EspacoTabela *ModeloBD::obterEspacoTabela(unsigned idx_obj)
 {
  return(dynamic_cast<EspacoTabela *>(obterObjeto(idx_obj, OBJETO_ESPACO_TABELA)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
 {
  if(espaco_tab)
@@ -1864,7 +1864,7 @@ void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
   __removerObjeto(espaco_tab, idx_obj);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarConversaoTipo(ConversaoTipo *conv_tipo, int idx_obj)
 {
  try
@@ -1876,17 +1876,17 @@ void ModeloBD::adicionarConversaoTipo(ConversaoTipo *conv_tipo, int idx_obj)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerConversaoTipo(ConversaoTipo *conv_tipo, int idx_obj)
 {
  __removerObjeto(conv_tipo, idx_obj);
 }
-//-----------------------------------------------------------
+
 ConversaoTipo *ModeloBD::obterConversaoTipo(unsigned idx_obj)
 {
  return(dynamic_cast<ConversaoTipo *>(obterObjeto(idx_obj, OBJETO_CONV_TIPO)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarConversaoCodificacao(ConversaoCodificacao *conv_codificacao, int idx_obj)
 {
  try
@@ -1898,18 +1898,18 @@ void ModeloBD::adicionarConversaoCodificacao(ConversaoCodificacao *conv_codifica
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerConversaoCodificacao(ConversaoCodificacao *conv_codificacao, int idx_obj)
 {
  __removerObjeto(conv_codificacao, idx_obj);
 }
-//-----------------------------------------------------------
+
 ConversaoCodificacao *ModeloBD::obterConversaoCodificacao(unsigned idx_obj)
 {
  return(dynamic_cast<ConversaoCodificacao *>(obterObjeto(idx_obj,
  OBJETO_CONV_CODIFICACAO)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarLinguagem(Linguagem *linguagem, int idx_obj)
 {
  try
@@ -1921,19 +1921,19 @@ void ModeloBD::adicionarLinguagem(Linguagem *linguagem, int idx_obj)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 Linguagem *ModeloBD::obterLinguagem(unsigned idx_obj)
 {
  return(dynamic_cast<Linguagem *>(obterObjeto(idx_obj, OBJETO_LINGUAGEM)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerLinguagem(Linguagem *linguagem, int idx_obj)
 {
  if(linguagem)
  {
   vector<ObjetoBase *> vet_refs;
 
-  //Obtém as referências à linguagem
+  //Obtém as referênca �  linguagem
   obterReferenciasObjeto(linguagem, vet_refs, true);
 
  /* Caso a linguagem esteja sendo referenciado, por algum objeto a
@@ -1953,7 +1953,7 @@ void ModeloBD::removerLinguagem(Linguagem *linguagem, int idx_obj)
   __removerObjeto(linguagem, idx_obj);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarFuncao(Funcao *funcao, int idx_obj)
 {
  try
@@ -1965,12 +1965,12 @@ void ModeloBD::adicionarFuncao(Funcao *funcao, int idx_obj)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 Funcao *ModeloBD::obterFuncao(unsigned idx_obj)
 {
  return(dynamic_cast<Funcao *>(obterObjeto(idx_obj, OBJETO_FUNCAO)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
 {
  if(funcao)
@@ -1978,7 +1978,7 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
   vector<ObjetoBase *> vet_refs;
   QString str_aux;
 
-  //Obtém as referências à função
+  //Obtém as referênca �  função
   obterReferenciasObjeto(funcao, vet_refs, true);
 
  /* Caso a função esteja sendo referenciado, por algum objeto a
@@ -2021,7 +2021,7 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
   __removerObjeto(funcao, idx_obj);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarFuncaoAgregacao(FuncaoAgregacao *func_agregacao, int idx_obj)
 {
  try
@@ -2033,17 +2033,17 @@ void ModeloBD::adicionarFuncaoAgregacao(FuncaoAgregacao *func_agregacao, int idx
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 FuncaoAgregacao *ModeloBD::obterFuncaoAgregacao(unsigned idx_obj)
 {
  return(dynamic_cast<FuncaoAgregacao *>(obterObjeto(idx_obj, OBJETO_FUNC_AGREGACAO)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerFuncaoAgregacao(FuncaoAgregacao *func_agregacao, int idx_obj)
 {
  __removerObjeto(func_agregacao, idx_obj);
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
 {
  if(dominio)
@@ -2079,7 +2079,7 @@ void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
    __adicionarObjeto(dominio, idx_obj);
 
    /* Ao ser inserido um novo tipo o mesmo tem
-    seu nome é adicionado à lista de tipos válidos
+    seu nome é adicionad�  lista de tipos válidos
     do PostgreSQL */
    TipoPgSQL::adicionarTipoUsuario(dominio->obterNome(true), dominio, this, ConfigTipoUsuario::TIPO_DOMINIO);
   }
@@ -2089,7 +2089,7 @@ void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
   }
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerDominio(Dominio *dominio, int idx_obj)
 {
  try
@@ -2101,12 +2101,12 @@ void ModeloBD::removerDominio(Dominio *dominio, int idx_obj)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 Dominio *ModeloBD::obterDominio(unsigned idx_obj)
 {
  return(dynamic_cast<Dominio *>(obterObjeto(idx_obj, OBJETO_DOMINIO)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarFamiliaOperadores(FamiliaOperadores *familia_op, int idx_obj)
 {
  try
@@ -2118,12 +2118,12 @@ void ModeloBD::adicionarFamiliaOperadores(FamiliaOperadores *familia_op, int idx
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 FamiliaOperadores *ModeloBD::obterFamiliaOperadores(unsigned idx_obj)
 {
  return(dynamic_cast<FamiliaOperadores *>(obterObjeto(idx_obj, OBJETO_FAMILIA_OPER)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerFamiliaOperadores(FamiliaOperadores *familia_op, int idx_obj)
 {
  if(familia_op)
@@ -2150,7 +2150,7 @@ void ModeloBD::removerFamiliaOperadores(FamiliaOperadores *familia_op, int idx_o
   __removerObjeto(familia_op, idx_obj);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarClasseOperadores(ClasseOperadores *classe_op, int idx_obj)
 {
  try
@@ -2162,17 +2162,17 @@ void ModeloBD::adicionarClasseOperadores(ClasseOperadores *classe_op, int idx_ob
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerClasseOperadores(ClasseOperadores *classe_op, int idx_obj)
 {
  __removerObjeto(classe_op, idx_obj);
 }
-//-----------------------------------------------------------
+
 ClasseOperadores *ModeloBD::obterClasseOperadores(unsigned idx_obj)
 {
  return(dynamic_cast<ClasseOperadores *>(obterObjeto(idx_obj, OBJETO_CLASSE_OPER)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarOperador(Operador *operador, int idx_obj)
 {
  try
@@ -2184,7 +2184,7 @@ void ModeloBD::adicionarOperador(Operador *operador, int idx_obj)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerOperador(Operador *operador, int idx_obj)
 {
  if(operador)
@@ -2212,12 +2212,12 @@ void ModeloBD::removerOperador(Operador *operador, int idx_obj)
   __removerObjeto(operador, idx_obj);
  }
 }
-//-----------------------------------------------------------
+
 Operador *ModeloBD::obterOperador(unsigned idx_obj)
 {
  return(dynamic_cast<Operador *>(obterObjeto(idx_obj, OBJETO_OPERADOR)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
 {
  if(tipo)
@@ -2253,7 +2253,7 @@ void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
    __adicionarObjeto(tipo, idx_obj);
 
    /* Ao ser inserido um novo tipo o mesmo tem
-    seu nome é adicionado à lista de tipos válidos
+    seu nome é adicionad�  lista de tipos válidos
     do PostgreSQL */
    TipoPgSQL::adicionarTipoUsuario(tipo->obterNome(true), tipo, this, ConfigTipoUsuario::TIPO_BASE);
   }
@@ -2263,7 +2263,7 @@ void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
   }
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerTipo(Tipo *tipo, int idx_obj)
 {
  try
@@ -2275,12 +2275,12 @@ void ModeloBD::removerTipo(Tipo *tipo, int idx_obj)
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 Tipo *ModeloBD::obterTipo(unsigned idx_obj)
 {
  return(dynamic_cast<Tipo *>(obterObjeto(idx_obj, OBJETO_TIPO)));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerTipoUsuario(ObjetoBase *objeto, int idx_obj)
 {
  if(objeto)
@@ -2333,7 +2333,7 @@ void ModeloBD::removerTipoUsuario(ObjetoBase *objeto, int idx_obj)
   TipoPgSQL::removerTipoUsuario(objeto->obterNome(true), objeto);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::adicionarPermissao(Permissao *permissao)
 {
  try
@@ -2367,7 +2367,7 @@ void ModeloBD::adicionarPermissao(Permissao *permissao)
    throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerPermissao(Permissao *permissao)
 {
  if(permissao)
@@ -2375,7 +2375,7 @@ void ModeloBD::removerPermissao(Permissao *permissao)
   __removerObjeto(permissao);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::removerPermissoes(ObjetoBase *objeto)
 {
  vector<Permissao *> vet_perm;
@@ -2420,7 +2420,7 @@ void ModeloBD::removerPermissoes(ObjetoBase *objeto)
   { itr++; idx++; }
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::obterPermissoes(ObjetoBase *objeto, vector<Permissao *> &vet_perm)
 {
  vector<ObjetoBase *>::iterator itr, itr_end;
@@ -2448,14 +2448,14 @@ void ModeloBD::obterPermissoes(ObjetoBase *objeto, vector<Permissao *> &vet_perm
 
   /* Caso a permissão esteja relacionada ao mesmo
      objeto do parâmetro insere tal permissão
-     à lista de permissões */
+       lista de permissões */
   if(permissao->obterObjeto()==objeto)
    vet_perm.push_back(permissao);
 
   itr++;
  }
 }
-//-----------------------------------------------------------
+
 int ModeloBD::obterIndicePermissao(Permissao *permissao)
 {
  int idx_perm=-1;
@@ -2517,20 +2517,20 @@ int ModeloBD::obterIndicePermissao(Permissao *permissao)
 
  return(idx_perm);
 }
-//-----------------------------------------------------------
+
 ObjetoBase *ModeloBD::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj)
 {
  int idx;
  return(obterObjeto(nome, tipo_obj, idx));
 }
-//-----------------------------------------------------------
+
 int ModeloBD::obterIndiceObjeto(const QString &nome, TipoObjetoBase tipo_obj)
 {
  int idx;
  obterObjeto(nome, tipo_obj, idx);
  return(idx);
 }
-//-----------------------------------------------------------
+
 int ModeloBD::obterIndiceObjeto(ObjetoBase *objeto)
 {
  if(!objeto)
@@ -2568,12 +2568,12 @@ int ModeloBD::obterIndiceObjeto(ObjetoBase *objeto)
   }
  }
 }
-//-----------------------------------------------------------
+
 bool ModeloBD::carregandoModelo(void)
 {
  return(carregando_modelo);
 }
-//-----------------------------------------------------------
+
 void ModeloBD::carregarModelo(const QString &nome_arq)
 {
  if(nome_arq!="")
@@ -2667,7 +2667,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
         xml_objs_especiais.clear();
 
         /* Após a restauração dos objetos especiais é necessário recarregar
-          o buffer do parser com o buffer usando anteriormente à restauração
+          o buffer do parser com o buffer usando anteriormente   restauração
           deos objetos especiais para que as permissões possam ser criadas
           a partir do XML */
         ParserXML::reiniciarParser();
@@ -2811,7 +2811,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
        {
         //Caso a lista esteja vazia o processo de reavaliação é interrompido
         reaval_objetos=false;
-        //O parser é retornado à posição em que se encontrava antes da reavaliação
+        //O parser é retornad�  posição em que se encontrava antes da reavaliação
         ParserXML::restaurarPosicao(elem_aux);
        }
       }
@@ -2856,7 +2856,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
   }
  }
 }
-//-----------------------------------------------------------
+
 TipoObjetoBase ModeloBD::obterTipoObjeto(const QString &str_tipo)
 {
  TipoObjetoBase tipo_obj=OBJETO_BASE;
@@ -2873,7 +2873,7 @@ TipoObjetoBase ModeloBD::obterTipoObjeto(const QString &str_tipo)
 
  return(tipo_obj);
 }
-//-----------------------------------------------------------
+
 ObjetoBase *ModeloBD::criarObjeto(TipoObjetoBase tipo_obj)
 {
  ObjetoBase *objeto=NULL;
@@ -2927,7 +2927,7 @@ ObjetoBase *ModeloBD::criarObjeto(TipoObjetoBase tipo_obj)
 
  return(objeto);
 }
-//-----------------------------------------------------------
+
 void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
 {
  map<QString, QString> atributos, atribs_aux;
@@ -3061,7 +3061,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
           ERR_PGMODELER_OBJSEMESQUEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
-//-----------------------------------------------------------
+
 Papel *ModeloBD::criarPapel(void)
 {
  map<QString, QString> atributos, atribs_aux;
@@ -3109,7 +3109,7 @@ Papel *ModeloBD::criarPapel(void)
   if(!atributos[AtributosParsers::LIMITE_CONEXAO].isEmpty())
    papel->definirLimiteConexao(atributos[AtributosParsers::LIMITE_CONEXAO].toInt());
 
-  /* Identificando as opções do papel. Caso o atributo referente à uma
+  /* Identificando as opções do papel. Caso o atributo referet �  uma
      estive com valor "true" no documento XML quer dizer que aquele
      atributo está marcado para o papel */
   for(i=0; i < 6; i++)
@@ -3199,7 +3199,7 @@ Papel *ModeloBD::criarPapel(void)
  //Retorna o novo papel criado
  return(papel);
 }
-//-----------------------------------------------------------
+
 EspacoTabela *ModeloBD::criarEspacoTabela(void)
 {
  map<QString, QString> atributos;
@@ -3232,7 +3232,7 @@ EspacoTabela *ModeloBD::criarEspacoTabela(void)
 
  return(esp_tabela);
 }
-//-----------------------------------------------------------
+
 Esquema *ModeloBD::criarEsquema(void)
 {
  map<QString, QString> atributos;
@@ -3261,7 +3261,7 @@ Esquema *ModeloBD::criarEsquema(void)
 
  return(esquema);
 }
-//-----------------------------------------------------------
+
 Linguagem *ModeloBD::criarLinguagem(void)
 {
  map<QString, QString> atributos;
@@ -3352,7 +3352,7 @@ Linguagem *ModeloBD::criarLinguagem(void)
 
  return(linguagem);
 }
-//-----------------------------------------------------------
+
 Funcao *ModeloBD::criarFuncao(void)
 {
  map<QString, QString> atributos, atrib_aux;
@@ -3441,7 +3441,7 @@ Funcao *ModeloBD::criarFuncao(void)
          else if(ParserXML::obterNomeElemento()==AtributosParsers::PARAMETRO)
          {
           param=criarParametro();
-          //Adiciona o tipo de retorno à função
+          //Adiciona o tipo de retorno   função
           funcao->adicionarTipoRetTabela(param.obterNome(), param.obterTipo());
          }
         }
@@ -3480,7 +3480,7 @@ Funcao *ModeloBD::criarFuncao(void)
      else if(ParserXML::obterNomeElemento()==AtributosParsers::PARAMETRO)
      {
       param=criarParametro();
-      //Adiciona o parâmeto à função
+      //Adiciona o parâmet�  função
       funcao->adicionarParametro(param);
      }
      //Extraíndo a definição (corpo) da função (tag <definition>)
@@ -3533,7 +3533,7 @@ Funcao *ModeloBD::criarFuncao(void)
 
  return(funcao);
 }
-//-----------------------------------------------------------
+
 Parametro ModeloBD::criarParametro(void)
 {
  TipoPgSQL tipo;
@@ -3591,7 +3591,7 @@ Parametro ModeloBD::criarParametro(void)
 
  return(param);
 }
-//-----------------------------------------------------------
+
 TipoPgSQL ModeloBD::criarTipoPgSQL(void)
 {
  map<QString, QString> atributos;
@@ -3668,7 +3668,7 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
   return(TipoPgSQL(idx_tipo,comprimento,dimensao,precisao,com_timezone,tipo_interv,tipo_esp));
  }
 }
-//-----------------------------------------------------------
+
 Tipo *ModeloBD::criarTipo(void)
 {
  map<QString, QString> atributos;
@@ -3792,7 +3792,7 @@ Tipo *ModeloBD::criarTipo(void)
      else if(elem==AtributosParsers::FUNCAO)
      {
       /*No caso de tipo base, serão extraídas referência a funções do modelo,
-        as quais serão atribuídas às funções que compoem o tipo base. */
+        as quais serão atribuía � s funções que compoem o tipo base. */
       ParserXML::obterAtributosElemento(atributos);
 
       /* Com a assinatura da função obtida di XML, a mesma será buscada no modelo, para
@@ -3848,7 +3848,7 @@ Tipo *ModeloBD::criarTipo(void)
 
  return(tipo);
 }
-//-----------------------------------------------------------
+
 Dominio *ModeloBD::criarDominio(void)
 {
  map<QString, QString> atributos;
@@ -3924,7 +3924,7 @@ Dominio *ModeloBD::criarDominio(void)
 
  return(dominio);
 }
-//-----------------------------------------------------------
+
 ConversaoTipo *ModeloBD::criarConversaoTipo(void)
 {
  map<QString, QString> atributos;
@@ -3976,9 +3976,9 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
      //Extraíndo a função de conversão do XML
      else if(elem==AtributosParsers::FUNCAO)
      {
-      /*No caso da conversão, será extraída a referência à função no modelo.
+      /*No caso da conversão, será extraída a refeênia �  função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
-        será localizada e atribuída à conversão */
+        será localizada e atribu�d �  conversão */
       ParserXML::obterAtributosElemento(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
@@ -3994,7 +3994,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      //Atribui a função à conversão de tipos
+      //Atribui a funç� �  conversão de tipos
       conv_tipo->definirFuncaoConversao(dynamic_cast<Funcao *>(funcao));
      }
     }
@@ -4016,7 +4016,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
 
  return(conv_tipo);
 }
-//-----------------------------------------------------------
+
 ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
 {
  map<QString, QString> atributos;
@@ -4052,9 +4052,9 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
 
      if(elem==AtributosParsers::FUNCAO)
      {
-      /*No caso da conversão, será extraída a referência à função no modelo.
+      /*No caso da conversão, será extraída a refeênia �  função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
-        será localizada e atribuída à conversão */
+        será localizada e atribu�d �  conversão */
       ParserXML::obterAtributosElemento(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
@@ -4070,7 +4070,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      //Atribui a função à conversão de tipos
+      //Atribui a funç� �  conversão de tipos
       conv_codif->definirFuncaoConversao(dynamic_cast<Funcao *>(funcao));
      }
     }
@@ -4092,7 +4092,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
 
  return(conv_codif);
 }
-//-----------------------------------------------------------
+
 Operador *ModeloBD::criarOperador(void)
 {
  map<QString, QString> atributos;
@@ -4184,7 +4184,7 @@ Operador *ModeloBD::criarOperador(void)
      }
      else if(elem==AtributosParsers::FUNCAO)
      {
-      /*No caso do operador, será extraída a referência à função no modelo.
+      /*No caso do operador, será extraída a refer�nca �  função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
         será localizada e atribuída ao operador */
       ParserXML::obterAtributosElemento(atributos);
@@ -4227,7 +4227,7 @@ Operador *ModeloBD::criarOperador(void)
 
  return(operador);
 }
-//-----------------------------------------------------------
+
 ClasseOperadores *ModeloBD::criarClasseOperadores(void)
 {
  map<QString, QString> atributos;
@@ -4344,7 +4344,7 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
 
  return(classe_op);
 }
-//-----------------------------------------------------------
+
 FamiliaOperadores *ModeloBD::criarFamiliaOperadores(void)
 {
  map<QString, QString> atributos;
@@ -4375,7 +4375,7 @@ FamiliaOperadores *ModeloBD::criarFamiliaOperadores(void)
 
  return(familia_op);
 }
-//-----------------------------------------------------------
+
 FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
 {
  map<QString, QString> atributos;
@@ -4411,7 +4411,7 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
       ParserXML::obterAtributosElemento(atributos);
       tipo=criarTipoPgSQL();
 
-      //Define o tipo à função agregada de acordo com o tipo de referência do mesmo
+      //Define o tipo   função agregada de acordo com o tipo de referência do mesmo
       if(atributos[AtributosParsers::TIPO_REFERENCIA]==
           AtributosParsers::TIPO_ESTADO)
        func_agreg->definirTipoEstado(tipo);
@@ -4462,7 +4462,7 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
 
  return(func_agreg);
 }
-//-----------------------------------------------------------
+
 Tabela *ModeloBD::criarTabela(void)
 {
  map<QString, QString> atributos;
@@ -4530,7 +4530,7 @@ Tabela *ModeloBD::criarTabela(void)
 
  return(tabela);
 }
-//-----------------------------------------------------------
+
 Coluna *ModeloBD::criarColuna(void)
 {
  map<QString, QString> atributos;
@@ -4580,7 +4580,7 @@ Coluna *ModeloBD::criarColuna(void)
 
  return(coluna);
 }
-//-----------------------------------------------------------
+
 Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
 {
  map<QString, QString> atributos;
@@ -4688,7 +4688,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
      armazena o endereço da tabela ou relacionamento recém criados
      a partir do bloco <table> ou <relationship>, respectivamente.
      Quando tal parâmetro está nulo indica que a restrição será criada
-     e atribuída à tabela cujo nome está no atributo 'table' no XML
+     e atribuíd�  tabela cujo nome está no atributo 'table' no XML
      significando que a mesma está declarada fora dos dois blocos indicados.
      Adicionalmente é necessário verificar o tipo da restrição para se
      ter certeza que a mesma é uma chave primária. */
@@ -4806,7 +4806,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
          coluna=tabela_aux->obterColuna(lista_cols[i], true);
        }
 
-       //Adiciona a coluna à restrição
+       //Adiciona a coluna   restrição
        restricao->adicionarColuna(coluna, tipo_coluna);
       }
      }
@@ -4845,7 +4845,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
 
  return(restricao);
 }
-//-----------------------------------------------------------
+
 Indice *ModeloBD::criarIndice(Tabela *tabela)
 {
  map<QString, QString> atributos;
@@ -5002,7 +5002,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
 
  return(indice);
 }
-//-----------------------------------------------------------
+
 Regra *ModeloBD::criarRegra(void)
 {
  map<QString, QString> atributos;
@@ -5075,7 +5075,7 @@ Regra *ModeloBD::criarRegra(void)
 
  return(regra);
 }
-//-----------------------------------------------------------
+
 Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
 {
  map<QString, QString> atributos;
@@ -5250,7 +5250,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
 
  return(gatilho);
 }
-//-----------------------------------------------------------
+
 Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
 {
  map<QString, QString> atributos;
@@ -5344,7 +5344,7 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
 
  return(sequencia);
 }
-//-----------------------------------------------------------
+
 Visao *ModeloBD::criarVisao(void)
 {
  map<QString, QString> atributos;
@@ -5423,12 +5423,12 @@ Visao *ModeloBD::criarVisao(void)
          }
         }
 
-       //Adiciona a referência configurada à lista temporária de referências
+       //Adiciona a referência configurad�  lista temporária de referências
        vet_refs.push_back(Referencia(tabela, coluna,
                                      atributos[AtributosParsers::ALIAS],
                                      atributos[AtributosParsers::ALIAS_COLUNA]));
       }
-      //Extraindo uma referência à uma expressão
+      //Extraindo uma referênci�  uma expressão
       else
       {
        ParserXML::salvarPosicao();
@@ -5467,7 +5467,7 @@ Visao *ModeloBD::criarVisao(void)
       //Construindo cada expressão na visão
       for(i=0; i < qtd; i++)
       {
-       //Obtém o índice da referência e a adiciona à visão
+       //Obtém o índice da referência e a adiioa �  visão
        idx_ref=lista_aux[i].toInt();
        visao->adicionarReferencia(vet_refs[idx_ref],tipo);
       }
@@ -5492,7 +5492,7 @@ Visao *ModeloBD::criarVisao(void)
 
  return(visao);
 }
-//-----------------------------------------------------------
+
 CaixaTexto *ModeloBD::criarCaixaTexto(void)
 {
  CaixaTexto *caixa_texto=NULL;
@@ -5531,7 +5531,7 @@ CaixaTexto *ModeloBD::criarCaixaTexto(void)
 
  return(caixa_texto);
 }
-//-----------------------------------------------------------
+
 RelacionamentoBase *ModeloBD::criarRelacionamento(void)
 {
  vector<unsigned> cols_pk_especial;
@@ -5747,7 +5747,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
 
  return(relacao_base);
 }
-//-----------------------------------------------------------
+
 Permissao *ModeloBD::criarPermissao(void)
 {
  Permissao *permissao=NULL;
@@ -5768,7 +5768,7 @@ Permissao *ModeloBD::criarPermissao(void)
   ParserXML::obterAtributosElemento(atrib_priv);
 
   /* Acessa o elemento filho <object> o qual armazena o objeto
-     do modelo relacionado à permissão */
+     do modelo relacionado   permissão */
   ParserXML::salvarPosicao();
   ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
   ParserXML::obterAtributosElemento(atributos);
@@ -5847,7 +5847,7 @@ Permissao *ModeloBD::criarPermissao(void)
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
      }
-     //Adiciona o papel à permissão
+     //Adiciona o papel   permissão
      permissao->adicionarPapel(papel);
     }
    }
@@ -5856,7 +5856,7 @@ Permissao *ModeloBD::criarPermissao(void)
     //Obtém os atributos do elemento <privileges>
     ParserXML::obterAtributosElemento(atrib_priv);
 
-    //Atribui os privilégios à permissão recém criada
+    //Atribui os privilégio�  permissão recém criada
     itr=atrib_priv.begin();
     itr_end=atrib_priv.end();
 
@@ -5920,7 +5920,7 @@ Permissao *ModeloBD::criarPermissao(void)
 
  return(permissao);
 }
-//-----------------------------------------------------------
+
 void ModeloBD::validarRemocaoColuna(Coluna *coluna)
 {
  if(coluna && coluna->obterTabelaPai())
@@ -5939,7 +5939,7 @@ void ModeloBD::validarRemocaoColuna(Coluna *coluna)
                  ERR_PGMODELER_REMOBJREFERDIR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::validarRelacObjetoTabela(ObjetoTabela *objeto, Tabela *tabela_pai)
 {
  try
@@ -5992,7 +5992,7 @@ void ModeloBD::validarRelacObjetoTabela(ObjetoTabela *objeto, Tabela *tabela_pai
   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 QString ModeloBD::__obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(lim_conexao >= 0)
@@ -6018,12 +6018,12 @@ QString ModeloBD::__obterDefinicaoObjeto(unsigned tipo_def)
  atributos[AtributosParsers::BD_MODELO]=bd_modelo;
  return(this->ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//-----------------------------------------------------------
+
 QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def)
 {
  return(this->obterDefinicaoObjeto(tipo_def, true));
 }
-//-----------------------------------------------------------
+
 QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
 {
  map<QString, QString> atribs_aux;
@@ -6440,7 +6440,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
  //Retorna a definição do modelo completa
  return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::MODELO_BD, atribs_aux, tipo_def));
 }
-//-----------------------------------------------------------
+
 void ModeloBD::salvarModelo(const QString &nome_arq, unsigned tipo_def)
 {
  QString str_aux;
@@ -6468,7 +6468,7 @@ void ModeloBD::salvarModelo(const QString &nome_arq, unsigned tipo_def)
   throw Excecao(str_aux,ERR_PGMODELER_ARQNAOGRAVADODEFINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &vet_deps, bool inc_dep_indiretas)
 {
  //Caso o objeto esteja alocado e o mesmo ainda não exista na lista de dependências
@@ -6847,7 +6847,7 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
   }
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &vet_refs, bool modo_exclusao)
 {
  vet_refs.clear();
@@ -7699,7 +7699,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
   }
  }
 }
-//-----------------------------------------------------------
+
 void ModeloBD::definirObjetosModificados(void)
 {
  TipoObjetoBase tipos[]={OBJETO_TABELA, OBJETO_VISAO,
@@ -7738,7 +7738,7 @@ void ModeloBD::definirObjetosModificados(void)
   }
  }
 }
-//-----------------------------------------------------------
+
 ObjetoBase *ModeloBD::obterObjetoTipoPgSQL(TipoPgSQL tipo)
 {
  switch(tipo.obterConfTipoUsuario())
@@ -7764,4 +7764,4 @@ ObjetoBase *ModeloBD::obterObjetoTipoPgSQL(TipoPgSQL tipo)
   break;
  }
 }
-//***********************************************************
+

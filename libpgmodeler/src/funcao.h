@@ -26,7 +26,7 @@
 #include "esquema.h"
 #include "papel.h"
 #include "coluna.h"
-//***********************************************************
+
 class Parametro: public Coluna {
  private:
   /* Atributos que indicam que o parâmetro é de
@@ -49,7 +49,7 @@ class Parametro: public Coluna {
   QString obterDefinicaoObjeto(unsigned tipo_def);
   void operator = (const Parametro &param);
 };
-//-----------------------------------------------------------
+
 class Funcao: public ObjetoBase {
  private:
   //Assinatura da função
@@ -117,7 +117,7 @@ class Funcao: public ObjetoBase {
   //Define o esquema ao qual a função faz parte
   void definirEsquema(ObjetoBase *esquema);
 
-  //Adiciona um parâmetro à função (com nome e tipo especificados)
+  //Adiciona um parâmetr�  função (com nome e tipo especificados)
   void adicionarParametro(Parametro param);
 
   //Adiciona um tipo de retorno específico para a cláusula RETURNS TABLE
@@ -237,5 +237,5 @@ class Funcao: public ObjetoBase {
   QString obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida);
   QString obterDefinicaoObjeto(unsigned tipo_def);
 };
-//***********************************************************
+
 #endif

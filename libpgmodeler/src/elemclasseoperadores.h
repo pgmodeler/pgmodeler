@@ -26,7 +26,7 @@
 #include "objetobase.h"
 #include "operador.h"
 #include "funcao.h"
-//***********************************************************
+
 class ElemClasseOperadores {
  private:
   unsigned tipo_elemento;
@@ -93,5 +93,5 @@ class ElemClasseOperadores {
   //Operador de comparação entre dois elementos
   bool operator == (ElemClasseOperadores &elem);
 };
-//***********************************************************
+
 #endif

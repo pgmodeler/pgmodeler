@@ -26,7 +26,7 @@
 #include "objetobasewidget.h"
 #include "ui_parametrowidget.h"
 #include "tipopgsqlwidget.h"
-//***********************************************************
+
 class ParametroWidget: public ObjetoBaseWidget, public Ui::ParametroWidget {
  Q_OBJECT
 
@@ -50,5 +50,5 @@ class ParametroWidget: public ObjetoBaseWidget, public Ui::ParametroWidget {
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif

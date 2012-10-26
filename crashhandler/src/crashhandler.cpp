@@ -1,6 +1,6 @@
 #include "crashhandler.h"
 const char CrashHandler::CHR_DELIMITADOR=static_cast<char>(3);
-//***********************************************************
+
 CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
  ifstream entrada;
@@ -64,12 +64,12 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
   modelo_txt->setPlainText(QString::fromUtf8(buf));
  }
 }
-//-----------------------------------------------------------
+
 void CrashHandler::habilitarGeracao(void)
 {
  criar_btn->setEnabled(!acoes_txt->text().isEmpty());
 }
-//-----------------------------------------------------------
+
 void CrashHandler::carregarRelatorio(const QString &arquivo)
 {
  ifstream entrada;
@@ -130,7 +130,7 @@ void CrashHandler::carregarRelatorio(const QString &arquivo)
   }
  }
 }
-//-----------------------------------------------------------
+
 void CrashHandler::gerarRelatorio(void)
 {
  CaixaMensagem caixa;
@@ -175,4 +175,3 @@ void CrashHandler::gerarRelatorio(void)
   this->close();
  }
 }
-//***********************************************************

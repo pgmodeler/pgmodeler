@@ -1,5 +1,5 @@
 #include "funcaoagregacao.h"
-//***********************************************************
+
 FuncaoAgregacao::FuncaoAgregacao(void)
 {
  tipo_objeto=OBJETO_FUNC_AGREGACAO;
@@ -13,7 +13,7 @@ FuncaoAgregacao::FuncaoAgregacao(void)
  atributos[AtributosParsers::COND_INICIAL]="";
  atributos[AtributosParsers::OP_ORDENACAO]="";
 }
-//-----------------------------------------------------------
+
 void FuncaoAgregacao::definirFuncao(unsigned idx_func, Funcao *func)
 {
  /* Caso o usuário tente acessar um índice de função inválido,
@@ -31,7 +31,7 @@ void FuncaoAgregacao::definirFuncao(unsigned idx_func, Funcao *func)
 
  funcoes[idx_func]=func;
 }
-//-----------------------------------------------------------
+
 bool FuncaoAgregacao::funcaoValida(unsigned idx_func, Funcao *func)
 {
  if(func)
@@ -67,17 +67,17 @@ bool FuncaoAgregacao::funcaoValida(unsigned idx_func, Funcao *func)
  }
  else return(true);
 }
-//-----------------------------------------------------------
+
 void FuncaoAgregacao::definirTipoEstado(TipoPgSQL tipo_estado)
 {
  this->tipo_estado=tipo_estado;
 }
-//-----------------------------------------------------------
+
 void FuncaoAgregacao::definirCondicaoInicial(const QString &cond)
 {
  cond_inicial=cond;
 }
-//-----------------------------------------------------------
+
 void FuncaoAgregacao::definirOperadorOrdenacao(Operador *op_ordenacao)
 {
  if(op_ordenacao)
@@ -101,7 +101,7 @@ void FuncaoAgregacao::definirOperadorOrdenacao(Operador *op_ordenacao)
 
  this->op_ordenacao=op_ordenacao;
 }
-//-----------------------------------------------------------
+
 void FuncaoAgregacao::definirAtributoTipos(unsigned tipo_def)
 {
  QString str_tipos;
@@ -124,7 +124,7 @@ void FuncaoAgregacao::definirAtributoTipos(unsigned tipo_def)
 
  atributos[AtributosParsers::TIPOS]=str_tipos;
 }
-//-----------------------------------------------------------
+
 void FuncaoAgregacao::adicionarTipoDado(TipoPgSQL tipo)
 {
  //Verifica se o tipo de dado já foi inserido na função
@@ -138,7 +138,7 @@ void FuncaoAgregacao::adicionarTipoDado(TipoPgSQL tipo)
  //Insere o tipo ao final da lista
  tipo_dados.push_back(tipo);
 }
-//-----------------------------------------------------------
+
 void FuncaoAgregacao::removerTipoDado(unsigned idx_tipo)
 {
  //Verifica se o índice do tipo a ser removido é inválido
@@ -149,12 +149,12 @@ void FuncaoAgregacao::removerTipoDado(unsigned idx_tipo)
  //Remove o elemento na posição especificada pelo índice
  tipo_dados.erase(tipo_dados.begin() + idx_tipo);
 }
-//-----------------------------------------------------------
+
 void FuncaoAgregacao::removerTiposDado(void)
 {
  tipo_dados.clear();
 }
-//-----------------------------------------------------------
+
 bool FuncaoAgregacao::tipoDadoExiste(TipoPgSQL tipo)
 {
  vector<TipoPgSQL>::iterator itr, itr_end;
@@ -171,12 +171,12 @@ bool FuncaoAgregacao::tipoDadoExiste(TipoPgSQL tipo)
 
  return(enc);
 }
-//-----------------------------------------------------------
+
 unsigned FuncaoAgregacao::obterNumTipoDados(void)
 {
  return(tipo_dados.size());
 }
-//-----------------------------------------------------------
+
 Funcao *FuncaoAgregacao::obterFuncao(unsigned idx_func)
 {
  //Verifica se o índice usado para referenciar a função é inválido
@@ -186,22 +186,22 @@ Funcao *FuncaoAgregacao::obterFuncao(unsigned idx_func)
  //Retorna a função no indice especificado
  return(funcoes[idx_func]);
 }
-//-----------------------------------------------------------
+
 TipoPgSQL FuncaoAgregacao::obterTipoEstado(void)
 {
  return(tipo_estado);
 }
-//-----------------------------------------------------------
+
 QString FuncaoAgregacao::obterCondicaoInicial(void)
 {
  return(cond_inicial);
 }
-//-----------------------------------------------------------
+
 Operador *FuncaoAgregacao::obterOperadorOrdenacao(void)
 {
  return(op_ordenacao);
 }
-//-----------------------------------------------------------
+
 TipoPgSQL FuncaoAgregacao::obterTipoDado(unsigned idx_tipo)
 {
  //Verifica se o índice usado para referenciar o tipo de dado é inválido
@@ -212,7 +212,7 @@ TipoPgSQL FuncaoAgregacao::obterTipoDado(unsigned idx_tipo)
  //Retorna o tipo na posição especificada
  return(tipo_dados[idx_tipo]);
 }
-//-----------------------------------------------------------
+
 QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
 {
  definirAtributoTipos(tipo_def);
@@ -259,4 +259,4 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
-//***********************************************************
+

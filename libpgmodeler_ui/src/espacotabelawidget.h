@@ -24,7 +24,7 @@
 
 #include "objetobasewidget.h"
 #include "ui_espacotabelawidget.h"
-//***********************************************************
+
 class EspacoTabelaWidget: public ObjetoBaseWidget, public Ui::EspacoTabelaWidget {
  Q_OBJECT
 
@@ -40,5 +40,5 @@ class EspacoTabelaWidget: public ObjetoBaseWidget, public Ui::EspacoTabelaWidget
  public slots:
    void aplicarConfiguracao(void);
 };
-//***********************************************************
+
 #endif
