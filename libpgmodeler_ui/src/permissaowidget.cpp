@@ -262,7 +262,7 @@ void PermissaoWidget::listarPermissoes(void)
    tab_permissoes->definirTextoCelula(perm->obterStringPrivilegios(),i,2);
 
    /* A terceira coluna armazena os nomes concatenados de todos
-      os papéis relacionado�  permissão */
+      os papéis relacionado�  permissão */
    qtd1=perm->obterNumPapeis();
    for(i1=0; i1 < qtd1; i1++)
    {
@@ -313,7 +313,7 @@ void PermissaoWidget::exibirDadosPapelSelecionado(void)
      pois o mesmo objeto não pode aparecer mais de uma vez na mesma tabela */
   if(papel && idx_lin >= 0)
   {
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDUPLICCONT)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDUPLICCONT)
                                .arg(QString::fromUtf8(papel->obterNome()))
                                .arg(papel->obterNomeTipoObjeto())
                                .arg(papeis_gb->title()),
@@ -345,7 +345,7 @@ void PermissaoWidget::adicionarPermissao(void)
      os botões. */
   cancelarOperacao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Em caso de qualuqer erro for disparado
      a permissão alocada é removida do modelo e
@@ -362,7 +362,7 @@ void PermissaoWidget::adicionarPermissao(void)
   cancelarOperacao();
 
   //Redireciona o erro capturado
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -408,7 +408,7 @@ void PermissaoWidget::atualizarPermissao(void)
   {
    /* Qualquer outra situação além da comentado no if acima é considerada duplicação
       de permissões gerando assim um erro */
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRPERMISSAODUPLIC)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRPERMISSAODUPLIC)
                  .arg(QString::fromUtf8(permissao->obterObjeto()->obterNome()))
                  .arg(permissao->obterObjeto()->obterNomeTipoObjeto()),
                  ERR_PGMODELER_ATRPERMISSAODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -417,7 +417,7 @@ void PermissaoWidget::atualizarPermissao(void)
   //Remove a permissão de backup
   delete(perm_bkp);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Em caso de erro restaura os valores originais da permissão
   (*permissao)=(*perm_bkp);
@@ -429,7 +429,7 @@ void PermissaoWidget::atualizarPermissao(void)
   cancelarOperacao();
 
   //Redireciona o erro capturado
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -451,7 +451,7 @@ void PermissaoWidget::editarPermissao(void)
   //Preenche o campo do formulário com o noome da permissão selecionada
   id_perm_edt->setText(permissao->obterNome());
 
-  /* Obtém a quantidade de papéis relacionao �  permissão para que os
+  /* Obtém a quantidade de papéis relacionao �  permissão para que os
      mesmos possam ser exibidos na tabela de papéis */
   qtd=permissao->obterNumPapeis();
   for(i=0; i < qtd; i++)

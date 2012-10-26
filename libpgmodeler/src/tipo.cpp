@@ -94,13 +94,13 @@ void Tipo::adicionarAtributo(Parametro atrib)
 {
  //O atributo não pode ter o nome vazio nem tipo nulo
  if(atrib.obterNome()=="" || atrib.obterTipo()==TipoPgSQL::nulo)
-  throw Excecao(ERR_PGMODELER_INSATRIBTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_INSATRIBTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(TipoPgSQL::obterIndiceTipoUsuario(this->obterNome(true), this) == !atrib.obterTipo())
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_TIPOUSRAUTOREF).arg(QString::fromUtf8(this->obterNome(true))),
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_TIPOUSRAUTOREF).arg(QString::fromUtf8(this->obterNome(true))),
                 ERR_PGMODELER_TIPOUSRAUTOREF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Verifica se o atributo com mesmo nome já não foi inserido no tipo
  else if(atributoExiste(atrib.obterNome()))
-  throw Excecao(ERR_PGMODELER_INSATRIBTIPODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_INSATRIBTIPODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  atributos.push_back(atrib);
 }
@@ -109,7 +109,7 @@ void Tipo::removerAtributo(unsigned idx_atrib)
 {
  //Verifica se o índice do atributo é valido
  if(idx_atrib >= atributos.size())
-  throw Excecao(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Remove atributo no índice especificado
  atributos.erase(atributos.begin() + idx_atrib);
@@ -141,14 +141,14 @@ void Tipo::adicionarEnumeracao(const QString &enumer)
 {
  //Verifica se a enumeração é vazia
  if(enumer=="")
-  throw Excecao(ERR_PGMODELER_INSENUMTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_INSENUMTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Verifica se o nome da enumeração é válida de acordo com
     com a regra de nomenclatura de identificadores no PostgreSQL */
  else if(!ObjetoBase::nomeValido(enumer))
-  throw Excecao(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Verifica se uma enumeração com mesmo nome já não foi inserido no tipo
  else if(enumeracaoExiste(enumer))
-  throw Excecao(ERR_PGMODELER_INSENUMTIPODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_INSENUMTIPODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  enumeracoes.push_back(enumer);
 }
@@ -156,7 +156,7 @@ void Tipo::adicionarEnumeracao(const QString &enumer)
 void Tipo::removerEnumeracao(unsigned idx_enum)
 {
  if(idx_enum >= enumeracoes.size())
-  throw Excecao(ERR_PGMODELER_REFENUMTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFENUMTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  enumeracoes.erase(enumeracoes.begin() + idx_enum);
 }
@@ -175,7 +175,7 @@ void Tipo::definirConfiguracao(unsigned conf)
 
  //Verifica se a configuração a ser atribuída ao tipo é válida
  if(conf < TIPO_BASE || conf > TIPO_COMPOSTO)
-  throw Excecao(ERR_PGMODELER_ATRCONFTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRCONFTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(conf!=TIPO_BASE)
  {
@@ -210,7 +210,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
 
  //Verifica se o tipo da função é válido
  if(conf_func > FUNCAO_ANALYZE)
-  throw Excecao(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém a quantidade de parâmetros da função
  if(funcao)
@@ -219,7 +219,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
  /* Verifica se a função está alocada quando o tipo de função é INPUT ou OUTPUT,
     pois estas duas são obrigatórias para um tipo base */
  if(!funcao && (conf_func==FUNCAO_INPUT || conf_func==FUNCAO_OUTPUT))
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNAOALOC)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNAOALOC)
                          .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TIPO)),
                 ERR_PGMODELER_ATRFUNCNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -229,7 +229,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
   /* Verifica se a função está escrita em C. Para a criação de um tipo base
    apenas funções nesta linguagem podem ser atribuídas */
   if(funcao->obterLinguagem()->obterNome()!=(~ling))
-   throw Excecao(ERR_PGMODELER_ATRFUNCLINGINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATRFUNCLINGINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Verificando a quantidade de parâmetros da função em relação ao tipo.
      Funções INPUT e RECV devem possuir 1 ou 3 parâmetros, já as demais funções
@@ -240,7 +240,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
           (conf_func==FUNCAO_OUTPUT   || conf_func==FUNCAO_SEND ||
            conf_func==FUNCAO_TPMOD_IN || conf_func==FUNCAO_TPMOD_OUT ||
            conf_func==FUNCAO_ANALYZE)))
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
                           .arg(QString::fromUtf8(this->obterNome()))
                           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TIPO)),
                  ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -259,12 +259,12 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
           (conf_func==FUNCAO_TPMOD_IN && funcao->obterTipoRetorno()!="integer") ||
           (conf_func==FUNCAO_TPMOD_OUT && funcao->obterTipoRetorno()!="cstring") ||
           (conf_func==FUNCAO_ANALYZE && funcao->obterTipoRetorno()!="boolean"))
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCRETINV)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCRETINV)
                           .arg(QString::fromUtf8(this->obterNome()))
                           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TIPO)),
                  ERR_PGMODELER_ATRFUNCRETINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  /* Validando os tipos do parâmetro da função em ra��o �  configuração do tipo.
+  /* Validando os tipos do parâmetro da função em ra��o �  configuração do tipo.
      A função INPUT deve possuir os parâmetros com tipo (cstring, oid, integer).
      As funções OUTPUT e SEND devem possuir um parâmetro do mesmo tipo sendo definido,
      neste caso, para facilitar a implementação basta usar um parâmetro de tipo 'any'.
@@ -287,7 +287,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
           (conf_func==FUNCAO_TPMOD_IN && *(funcao->obterParametro(0).obterTipo())!="cstring[]") ||
           (conf_func==FUNCAO_TPMOD_OUT && funcao->obterParametro(0).obterTipo()!="integer") ||
           (conf_func==FUNCAO_ANALYZE && funcao->obterParametro(0).obterTipo()!="internal"))
-   throw Excecao(ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   funcao->definirProtegido(false);
  }
@@ -359,7 +359,7 @@ void Tipo::definirAlinhamento(TipoPgSQL tipo)
  /* Verifica se o tipo a ser atribuído ao alinhamento é
     diferente de char, smallint, integer e double (os únicos aceitos) */
  if(tp!="char" && tp!="smallint" && tp!="integer" && tp!="double precision")
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRALINHAMENTOINVTIPO).arg(QString::fromUtf8(this->obterNome(true))),
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRALINHAMENTOINVTIPO).arg(QString::fromUtf8(this->obterNome(true))),
                 ERR_PGMODELER_ATRALINHAMENTOINVTIPO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
@@ -376,12 +376,12 @@ void Tipo::definirValorPadrao(const QString &valor_padrao)
 void Tipo::definirElemento(TipoPgSQL elemento)
 {
  if(TipoPgSQL::obterIndiceTipoUsuario(this->obterNome(true), this) == !elemento)
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_TIPOUSRAUTOREF).arg(QString::fromUtf8(this->obterNome(true))),
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_TIPOUSRAUTOREF).arg(QString::fromUtf8(this->obterNome(true))),
                 ERR_PGMODELER_TIPOUSRAUTOREF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(elemento!="any" &&
    (elemento.tipoOID() || elemento.pseudoTipo() ||
     elemento.tipoUsuario() || elemento.tipoArray()))
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRELEMENTOINVTIPO).arg(QString::fromUtf8(this->obterNome(true))),
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRELEMENTOINVTIPO).arg(QString::fromUtf8(this->obterNome(true))),
                 ERR_PGMODELER_ATRELEMENTOINVTIPO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->elemento=elemento;
@@ -449,7 +449,7 @@ void Tipo::definirPreferido(bool preferido)
 void Tipo::definirTipoCopia(TipoPgSQL tipo_copia)
 {
  if(TipoPgSQL::obterIndiceTipoUsuario(this->obterNome(true), this) == !tipo_copia)
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_TIPOUSRAUTOREF).arg(QString::fromUtf8(this->obterNome(true))),
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_TIPOUSRAUTOREF).arg(QString::fromUtf8(this->obterNome(true))),
                 ERR_PGMODELER_TIPOUSRAUTOREF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->tipo_copia=tipo_copia;
@@ -458,7 +458,7 @@ void Tipo::definirTipoCopia(TipoPgSQL tipo_copia)
 Parametro Tipo::obterAtributo(unsigned idx_atrib)
 {
  if(idx_atrib >= atributos.size())
-  throw Excecao(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(atributos[idx_atrib]);
 }
@@ -471,7 +471,7 @@ unsigned Tipo::obterNumAtributos(void)
 QString Tipo::obterEnumeracao(unsigned idx_enum)
 {
  if(idx_enum >= enumeracoes.size())
-  throw Excecao(ERR_PGMODELER_REFENUMTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFENUMTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(enumeracoes[idx_enum]);
 }
@@ -484,7 +484,7 @@ unsigned Tipo::obterNumEnumeracoes(void)
 Funcao *Tipo::obterFuncao(unsigned conf_func)
 {
  if(conf_func > FUNCAO_ANALYZE)
-  throw Excecao(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(funcoes[conf_func]);
 }

@@ -55,11 +55,11 @@ extern RelacionamentoWidget *relacao_wgt;
 extern TabelaWidget *tabela_wgt;
 extern ProgressoTarefa *prog_tarefa;
 extern ListaObjetosWidget *deps_refs_wgt;
-//**********************************************************
+
 vector<ObjetoBase *> ModeloWidget::objs_copiados;
 bool ModeloWidget::op_recortar=false;
 ModeloWidget *ModeloWidget::modelo_orig=NULL;
-//**********************************************************
+
 ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 {
  QFont fonte;
@@ -516,7 +516,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
 {
  /* O parâmetro fim_movimento indica se a operação de movimentação de objetos
     foi finalizada. Quando este parâmetro é false, indica que a movimentação
-    foi iniciada, desta forma os objetos são adicionado�  lista de operações
+    foi iniciada, desta forma os objetos são adicionado�  lista de operações
     antes do movimento acontecer */
  if(!fim_movimento)
  {
@@ -757,7 +757,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
 
      //Adiciona a tabela criada ao modelo
      modelo->adicionarObjeto(tab);
-     //Adiciona uma operaç� �  lista de operações indicando a criação da tabela
+     //Adiciona uma operaç� �  lista de operações indicando a criação da tabela
      //lista_op->adicionarObjeto(tab, Operacao::OBJETO_CRIADO);
 
      //Aloca um relacionamento entre a nova tabela e a tabela de origem do relacionamento
@@ -789,7 +789,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
 
      emit s_objetoCriado();
     }
-    catch(Excecao &e)
+    catch(Exception &e)
     {
      /*if(qtd_op < lista_op->obterTamanhoAtual())
      {
@@ -810,7 +810,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
       //Desfaz a anulação do encadeamento
       lista_op->anularEncadeamentoOperacoes(false);
      }*/
-     throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
     }
    }
   }
@@ -839,11 +839,11 @@ void ModeloWidget::carregarModelo(const QString &nome_arq)
   modelo_protegido_frm->setVisible(modelo->objetoProtegido());
   this->modificado=false;
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   prog_tarefa->close();
   disconnect(modelo, NULL, prog_tarefa, NULL);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -1077,9 +1077,9 @@ void ModeloWidget::salvarModelo(const QString &nome_arq)
   disconnect(modelo, NULL, prog_tarefa, NULL);
   this->modificado=false;
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -1111,14 +1111,14 @@ void ModeloWidget::exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto,
   }
 
   if(objeto && tipo_obj!=objeto->obterTipoObjeto())
-   throw Excecao(ERR_PGMODELER_OPROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_OPROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Caso se tente chamar o formulário de criação de um objeto de tabela
      sem se especificar a tabela pai (objeto_pai) */
   else if(!objeto_pai &&
          (tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO ||
           tipo_obj==OBJETO_GATILHO || tipo_obj==OBJETO_REGRA ||
           tipo_obj==OBJETO_INDICE))
-   throw Excecao(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Caso o objeto esteja alocado e seja gráfico indica que o mesmo será editado,
      sendo assim sua posição precisa ser armazena e em seguida informada ao
@@ -1135,7 +1135,7 @@ void ModeloWidget::exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto,
         objeto->obterNome()==~TipoLinguagem("plpgsql"))) ||
       (tipo_obj==OBJETO_ESQUEMA &&
        objeto->obterNome()=="public")))
-    throw Excecao(ERR_PGMODELERUI_OPROBJRESERVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_PGMODELERUI_OPROBJRESERVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   switch(tipo_obj)
   {
@@ -1296,7 +1296,7 @@ void ModeloWidget::exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto,
    break;
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   caixa_msg->show(e);
@@ -1420,7 +1420,7 @@ void ModeloWidget::protegerObjeto(void)
           this->objs_selecionados[0]->obterNome()==~TipoLinguagem("plpgsql"))) ||
         (this->objs_selecionados[0]->obterTipoObjeto()==OBJETO_ESQUEMA &&
          this->objs_selecionados[0]->obterNome()=="public")))
-      throw Excecao(ERR_PGMODELERUI_OPROBJRESERVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      throw Exception(ERR_PGMODELERUI_OPROBJRESERVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     this->objs_selecionados[0]->definirProtegido(!this->objs_selecionados[0]->objetoProtegido());
    }
@@ -1458,14 +1458,14 @@ void ModeloWidget::protegerObjeto(void)
           objeto->obterNome()==~TipoLinguagem("plpgsql") )) ||
         (tipo_obj==OBJETO_ESQUEMA &&
          objeto->obterNome()=="public")))
-      throw Excecao(ERR_PGMODELERUI_OPROBJRESERVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      throw Exception(ERR_PGMODELERUI_OPROBJRESERVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     else if(tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO)
     {
      obj_tab=dynamic_cast<ObjetoTabela *>(objeto);
      if(obj_tab->incluidoPorRelacionamento())
      {
       //Monta a mensagem de que o objeto não pode ser removido por estar protegido
-      throw Excecao(QString(Excecao::obterMensagemErro(ERR_PGMODELERUI_OPROBJINCRELACAO))
+      throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELERUI_OPROBJINCRELACAO))
                     .arg(objeto->obterNome()).arg(objeto->obterNomeTipoObjeto()),
                     ERR_PGMODELERUI_OPROBJINCRELACAO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
      }
@@ -1482,9 +1482,9 @@ void ModeloWidget::protegerObjeto(void)
   //Emite um sinal indica que vários objetos foram modificados
   emit s_objetoModificado();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -1608,7 +1608,7 @@ void ModeloWidget::colarObjetos(void)
  Operador *oper=NULL;
  QString nome_aux, nome_obj_copia;
  TipoObjetoBase tipo_obj;
- Excecao erro;
+ Exception erro;
  unsigned idx=1, pos=0;
 
  //Exibe o progresso de tarefas pois a operação de colagem
@@ -1817,7 +1817,7 @@ void ModeloWidget::colarObjetos(void)
    else
     lista_op->adicionarObjeto(objeto, Operacao::OBJETO_CRIADO);
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
    erro=e;
   }
@@ -1835,7 +1835,7 @@ void ModeloWidget::colarObjetos(void)
 
  /* Caso algum erro foi capturado durante a colagem o mesmo é mostrado ao usuário acompanhado
     de um alerta */
- if(erro.obterTipoErro()!=ERR_NULO)
+ if(erro.getErrorType()!=ERR_NULO)
   caixa_msg->show(erro,
                   trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
                   CaixaMensagem::ICONE_ALERTA);
@@ -1971,11 +1971,11 @@ void ModeloWidget::excluirObjetos(void)
            objeto->obterNome()==~TipoLinguagem("plpgsql") )) ||
          (tipo_obj==OBJETO_ESQUEMA &&
           objeto->obterNome()=="public")))
-       throw Excecao(ERR_PGMODELERUI_OPROBJRESERVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(ERR_PGMODELERUI_OPROBJRESERVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
      else if(objeto->objetoProtegido())
      {
       //Monta a mensagem de que o objeto não pode ser removido por estar protegido
-      throw Excecao(QString(Excecao::obterMensagemErro(ERR_PGMODELERUI_REMOBJPROTEGIDO))
+      throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELERUI_REMOBJPROTEGIDO))
                     .arg(objeto->obterNome(true))
                     .arg(objeto->obterNomeTipoObjeto()),
                     ERR_PGMODELERUI_REMOBJPROTEGIDO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -2006,9 +2006,9 @@ void ModeloWidget::excluirObjetos(void)
 
         modelo->validarRelacObjetoTabela(objeto_tab, tabela);
        }
-       catch(Excecao &e)
+       catch(Exception &e)
        {
-        throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+        throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
        }
       }
       else
@@ -2031,9 +2031,9 @@ void ModeloWidget::excluirObjetos(void)
          lista_op->adicionarObjeto(objeto, Operacao::OBJETO_REMOVIDO, idx_obj);
          modelo->removerObjeto(objeto, idx_obj);
         }
-        catch(Excecao &e)
+        catch(Exception &e)
         {
-         throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+         throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
         }
 
          /* Caso um relacionamento foi removido é necessário redimensionar as tabelas participantes
@@ -2058,9 +2058,9 @@ void ModeloWidget::excluirObjetos(void)
     this->modificado=true;
     emit s_objetoRemovido();
    }
-   catch(Excecao &e)
+   catch(Exception &e)
    {
-    if(e.obterTipoErro()==ERR_PGMODELER_REFCOLUNAINVTABELA)
+    if(e.getErrorType()==ERR_PGMODELER_REFCOLUNAINVTABELA)
      lista_op->removerOperacoes();
 
     if(lista_op->encadeamentoIniciado())
@@ -2268,7 +2268,7 @@ void ModeloWidget::configurarMenuPopup(vector<ObjetoBase *> objs_sel)
   menu_popup.addAction(action_excluir);
 
  /* Caso o objeto seja uma coluna (objeto de tabela) cria um menu
-    especial que permite acesso rápid� s retrições que são pertinentes
+    especial que permite acesso rápid� s retrições que são pertinentes
     a coluna */
  if(obj_tab)
  {
@@ -2379,4 +2379,4 @@ bool ModeloWidget::modeloModificado(void)
 {
  return(modificado);
 }
-//**********************************************************
+

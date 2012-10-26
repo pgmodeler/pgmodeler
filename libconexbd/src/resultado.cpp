@@ -14,7 +14,7 @@ Resultado::Resultado(PGresult *resultado_sql)
  int estado_res;
 
  if(!resultado_sql)
-  throw Excecao(ERR_CONEXBD_ATRRESSQLNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_CONEXBD_ATRRESSQLNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  this->resultado_sql=resultado_sql;
  estado_res=PQresultStatus(this->resultado_sql);
@@ -24,19 +24,19 @@ Resultado::Resultado(PGresult *resultado_sql)
  {
   //Gerando um erro caso o servidor retorna uma resposta incompreensível
   case PGRES_BAD_RESPONSE:
-   throw Excecao(ERR_CONEXBD_SGBDRESPINCOMP, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+   throw Exception(ERR_CONEXBD_SGBDRESPINCOMP, __PRETTY_FUNCTION__, __FILE__, __LINE__);
   break;
 
   //Gerando um erro caso o servidor retorne um erro fatal
   case PGRES_FATAL_ERROR:
-   str_aux=QString(Excecao::obterMensagemErro(ERR_CONEXBD_SGBDERROFATAL))
+   str_aux=QString(Exception::getErrorMessage(ERR_CONEXBD_SGBDERROFATAL))
            .arg(PQresultErrorMessage(resultado_sql));
-   throw Excecao(str_aux,ERR_CONEXBD_SGBDERROFATAL, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+   throw Exception(str_aux,ERR_CONEXBD_SGBDERROFATAL, __PRETTY_FUNCTION__, __FILE__, __LINE__);
   break;
 
   //Gerando um erro caso o usuário tente obter resultado a partir de uma query vazia
   case PGRES_EMPTY_QUERY:
-   throw Excecao(ERR_CONEXBD_COMANDOSQLVAZIO, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+   throw Exception(ERR_CONEXBD_COMANDOSQLVAZIO, __PRETTY_FUNCTION__, __FILE__, __LINE__);
   break;
 
   //Estados de sucesso, o resultado será criado
@@ -75,7 +75,7 @@ QString Resultado::obterNomeColuna(int idx_coluna)
 {
  //Dispara um erro caso o índice da coluna seja inválido
  if(idx_coluna < 0 || idx_coluna >= obterNumColunas())
-  throw Excecao(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  //Retorna o nome da coluna com índice especificado
  return(QString(PQfname(resultado_sql, idx_coluna)));
@@ -91,7 +91,7 @@ int Resultado::obterIndiceColuna(const QString &nome_coluna)
  /* Caso o índice seja negativo indica que a coluna não existe na tupla
     desta forma um erro é disparado */
  if(idx_coluna < 0)
-  throw Excecao(ERR_CONEXBD_REFCOLTUPLANOMEINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_CONEXBD_REFCOLTUPLANOMEINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  return(idx_coluna);
 }
@@ -106,15 +106,15 @@ char *Resultado::obterValorColuna(const QString &nome_coluna)
      uma tupla de um resultado vazio ou gerado a partir de um comando INSERT, DELETE, UPDATE,
      ou seja, de comando os quais não retornam linhas mas apenas a atualizam/remove */
   if(obterNumTuplas()==0 || res_sem_tuplas)
-   throw Excecao(ERR_CONEXBD_REFTUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+   throw Exception(ERR_CONEXBD_REFTUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
   //Obtém o índice da coluna através do nome
   idx_coluna=obterIndiceColuna(nome_coluna);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Captura e redireciona qualquer exceção gerada
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
  }
 
  //Retorna o valor da coluna (idx_coluna) na linha atual (tupla_atual)
@@ -125,12 +125,12 @@ char *Resultado::obterValorColuna(int idx_coluna)
 {
  //Dispara um erro caso o índice da coluna seja inválido
  if(idx_coluna < 0 || idx_coluna >= obterNumColunas())
-  throw Excecao(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 /* Dispara um erro caso o usuário tente obter o valor de uma coluna em 
      uma tupla de um resultado vazio ou gerado a partir de um comando INSERT, DELETE, UPDATE,
      ou seja, de comando os quais não retornam linhas mas apenas a atualizam/remove */
  else if(obterNumTuplas()==0 || res_sem_tuplas)
-  throw Excecao(ERR_CONEXBD_REFTUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_CONEXBD_REFTUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  //Retorna o valor da coluna (idx_coluna) na linha atual (tupla_atual)
  return(PQgetvalue(resultado_sql, tupla_atual, idx_coluna));
@@ -145,10 +145,10 @@ int Resultado::obterTamanhoColuna(const QString &nome_coluna)
   //Obtém o índice da coluna a ser detectado o comprimento
   idx_coluna=obterIndiceColuna(nome_coluna);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Captura e redireciona qualquer exceção gerada
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
  }
 
  //Retorna o comprimento do valor da coluna (idx_coluna) na linha atual (tupla_atual)
@@ -159,7 +159,7 @@ int Resultado::obterTamanhoColuna(int idx_coluna)
 {
  //Dispara um erro caso o índice da coluna seja inválido
  if(idx_coluna < 0 || idx_coluna >= obterNumColunas())
-  throw Excecao(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  //Retorna o comprimento do valor da coluna (idx_coluna) na linha atual (tupla_atual)
  return(PQgetlength(resultado_sql, tupla_atual, idx_coluna));
@@ -195,10 +195,10 @@ bool Resultado::colunaFormatoBinario(const QString &nome_coluna)
  {
   idx_coluna=obterIndiceColuna(nome_coluna);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Captura e redireciona qualquer exceção gerada
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
  }
 
  /* Retorna o formato da coluna (idx_coluna) na linha atual (tupla_atual).
@@ -212,7 +212,7 @@ bool Resultado::colunaFormatoBinario(int idx_coluna)
 {
  //Dispara um erro caso o índice da coluna seja inválido
  if(idx_coluna < 0 || idx_coluna >= obterNumColunas())
-  throw Excecao(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  /* Retorna o formato da coluna (idx_coluna) na linha atual (tupla_atual).
     De acordo cmo a documentação da libpq, valor = 0, indica coluna em formato
@@ -231,7 +231,7 @@ bool Resultado::acessarTupla(unsigned tipo_tupla)
     se o tipo de tupla a ser acessado seja inválido, fora do 
     conjunto definido pela classe */
  if(num_tuplas==0 || res_sem_tuplas || tipo_tupla > TUPLA_POSTERIOR)
-  throw Excecao(ERR_CONEXBD_REFTUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_CONEXBD_REFTUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  switch(tipo_tupla)
  {

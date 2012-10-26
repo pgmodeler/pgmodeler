@@ -84,7 +84,7 @@ void Indice::adicionarElemento(const QString &expressao, ClasseOperadores *class
  //Caso a expressão esteja vazia, dispara exceção.
  if(expressao.isEmpty())
  {
-  throw Excecao(ERR_PGMODELER_ATREXPRINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATREXPRINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  else
  {
@@ -92,7 +92,7 @@ void Indice::adicionarElemento(const QString &expressao, ClasseOperadores *class
 
   //Caso a expressão a ser atribuída ao índice já exista, dispara-se uma exceção
   if(elementoExiste(expressao) >= 0)
-   throw Excecao(ERR_PGMODELER_INSELEMDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_INSELEMDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   elem.definirExpressao(expressao);
   elem.definirClasseOperadores(classe_oper);
@@ -109,7 +109,7 @@ void Indice::adicionarElemento(Coluna *coluna, ClasseOperadores *classe_oper, bo
  //Caso a coluna não esteja aloca, dispara exceção.
  if(!coluna)
  {
- throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCOLNAOALOC)
+ throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRCOLNAOALOC)
                         .arg(QString::fromUtf8(this->obterNome()))
                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_INDICE)),
                ERR_PGMODELER_ATRCOLNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -120,7 +120,7 @@ void Indice::adicionarElemento(Coluna *coluna, ClasseOperadores *classe_oper, bo
 
   //Caso a coluna a ser atribuída ao índice já exista, dispara-se uma exceção
   if(elementoExiste(coluna) >= 0)
-   throw Excecao(ERR_PGMODELER_INSCOLDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_INSCOLDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   elem.definirColuna(coluna);
   elem.definirClasseOperadores(classe_oper);
@@ -139,7 +139,7 @@ void Indice::removerElemento(unsigned idx_elem)
  /* Verifica se o índice condiz com o tamanho das listas de elementos,
    caso não conincida, dispara exceção */
  if(idx_elem < elementos.size())
-  throw Excecao(ERR_PGMODELER_REFELEMIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFELEMIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   elementos.erase(elementos.begin() + idx_elem);
 }
@@ -152,7 +152,7 @@ void Indice::removerElementos(void)
 void Indice::definirAtributo(unsigned id_atrib, bool valor)
 {
  if(id_atrib > ATUAL_RAPIDA)
-  throw Excecao(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  atrib_indice[id_atrib]=valor;
 }
@@ -182,7 +182,7 @@ ElementoIndice Indice::obterElemento(unsigned idx_elem)
 /* Verifica se o índice condiz com o tamanho das listas de elementos,
    caso não conincida, dispara exceção */
  if(idx_elem >= elementos.size())
-  throw Excecao(ERR_PGMODELER_REFELEMIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFELEMIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   return(elementos[idx_elem]);
 }
@@ -195,7 +195,7 @@ unsigned Indice::obterNumElementos(void)
 bool Indice::obterAtributo(unsigned id_atrib)
 {
  if(id_atrib > ATUAL_RAPIDA)
-  throw Excecao(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(atrib_indice[id_atrib]);
 }

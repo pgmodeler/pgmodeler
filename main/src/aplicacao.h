@@ -48,7 +48,7 @@ class Aplicacao: public QApplication {
     //Executa normalmente o notify da classe pai
     return(QApplication::notify(receiver,event));
    }
-   catch(Excecao &e)
+   catch(Exception &e)
    {
     //Exibe uma caixa de mensagem de erro crítico com a mensagem da exceção
     caixa_msg->show(e);

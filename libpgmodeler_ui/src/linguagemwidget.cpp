@@ -42,10 +42,10 @@ LinguagemWidget::LinguagemWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   janela_pai->setMinimumSize(550, 510);
   janela_pai->setMaximumSize(16777215, 510);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -100,13 +100,13 @@ void LinguagemWidget::aplicarConfiguracao(void)
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
   cancelarConfiguracao();
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

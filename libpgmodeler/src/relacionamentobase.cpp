@@ -3,7 +3,7 @@
 RelacionamentoBase::RelacionamentoBase(RelacionamentoBase *relacao)
 {
  if(!relacao)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Inicializa com NULL os rótulos pois os mesmos são copiados no operador =
  for(unsigned i=0; i < 3; i++)
@@ -66,7 +66,7 @@ void RelacionamentoBase::configurarRelacionamento(void)
    /* Verifica se uma das tabelas envolvidas no relacionamentos
       não estão alocadas, caso isso ocorra, dispara uma exceção */
    if(!tabela_orig || !tabela_dest)
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRTABNAOALOC)
+    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRTABNAOALOC)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RELACAO_BASE)),
                   ERR_PGMODELER_ATRTABNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -76,7 +76,7 @@ void RelacionamentoBase::configurarRelacionamento(void)
       pois uma tabela não pode herdar/copiar atributos dela mesma */
    if((tipo_relac==RELACIONAMENTO_GEN ||
        tipo_relac==RELACIONAMENTO_DEP) && tabela_orig==tabela_dest)
-    throw Excecao(ERR_PGMODELER_HERANCATABINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_PGMODELER_HERANCATABINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    /* Aloca o rótulo de nome do relacionamento, todos os tipos de relacionamento
       possui esse rótulo */
@@ -102,11 +102,11 @@ void RelacionamentoBase::configurarRelacionamento(void)
   }
   catch(bad_alloc &e)
   {
-   throw Excecao(ERR_GLOBAL_OBJBADALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_GLOBAL_OBJBADALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
  }
  else
-  throw Excecao(ERR_PGMODELER_ALOCOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ALOCOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 RelacionamentoBase::~RelacionamentoBase(void)
@@ -128,9 +128,9 @@ void RelacionamentoBase::definirNome(const QString &nome)
   if(rotulos[ROTULO_NOME_RELAC])
    rotulos[ROTULO_NOME_RELAC]->definirComentario(nome);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -145,7 +145,7 @@ void RelacionamentoBase::definirTabelaObrigatoria(unsigned id_tabela, bool valor
  if(tipo_relac==RELACIONAMENTO_11 &&
     ((id_tabela==TABELA_ORIGEM && valor && obrig_dest) ||
      (id_tabela==TABELA_DESTINO && valor && obrig_orig)))
-  throw Excecao(ERR_PGMODELER_TIPORELNAOIMPL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_TIPORELNAOIMPL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso a tabela de origem seja obrigatório
  if(id_tabela==TABELA_ORIGEM)
@@ -251,7 +251,7 @@ CaixaTexto *RelacionamentoBase::obterRotulo(unsigned idx_rot)
   return(rotulos[idx_rot]);
  else
   //Dispara uma exceção caso o índice usado seja inválido
-  throw Excecao(ERR_PGMODELER_REFROTIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFROTIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
  
 unsigned RelacionamentoBase::obterTipoRelacionamento(void)
@@ -348,7 +348,7 @@ void RelacionamentoBase::definirPontos(const vector<QPointF> &pontos)
 void RelacionamentoBase::definirDistanciaRotulo(unsigned idx_rot, QPointF dist_rotulo)
 {
  if(idx_rot > ROTULO_NOME_RELAC)
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->dist_rotulos[idx_rot]=dist_rotulo;
 }
@@ -356,7 +356,7 @@ void RelacionamentoBase::definirDistanciaRotulo(unsigned idx_rot, QPointF dist_r
 QPointF RelacionamentoBase::obterDistanciaRotulo(unsigned idx_rot)
 {
  if(idx_rot > ROTULO_NOME_RELAC)
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(this->dist_rotulos[idx_rot]);
 }

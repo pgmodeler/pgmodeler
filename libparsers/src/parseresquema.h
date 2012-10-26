@@ -31,7 +31,7 @@
 #include <map>
 #include <vector>
 #include <QDir>
-//**********************************************************
+
 class ParserEsquema {
  private:
   /* Indica que o parser deve ignorar atributos
@@ -147,5 +147,5 @@ class ParserEsquema {
   //Define se parser deve ignorar atributos desconhecidos ou não
   static void ignorarAtributosDesc(bool ignorar);
 };
-//**********************************************************
+
 #endif

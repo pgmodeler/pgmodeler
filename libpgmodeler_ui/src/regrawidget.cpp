@@ -50,10 +50,10 @@ RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_REGRA
   connect(tab_comandos, SIGNAL(s_linhaAtualizada(int)), this, SLOT(manipularComando(int)));
   connect(tab_comandos, SIGNAL(s_linhaEditada(int)), this, SLOT(editarComando(int)));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -92,7 +92,7 @@ void RegraWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaOp
  unsigned qtd, i;
 
  if(!tabela_pai)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, regra, tabela_pai);
@@ -125,7 +125,7 @@ void RegraWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<Regra>();
 
-  //Obtém a referêni �  regra que está sendo criada/editada
+  //Obtém a referêni �  regra que está sendo criada/editada
   regra=dynamic_cast<Regra *>(this->objeto);
 
   //Configura a regra com base nos atributos preenchidos no formulário
@@ -146,13 +146,13 @@ void RegraWidget::aplicarConfiguracao(void)
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
   cancelarConfiguracao();
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

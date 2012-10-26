@@ -25,18 +25,18 @@ void Coluna::definirNome(const QString &nome)
      obtido ao respectivo atributo da coluna */
   this->nome_antigo=nome_ant;
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
 void Coluna::definirTipo(TipoPgSQL tipo)
 {
- /* Caso o tipo a ser atribuíd�  coluna seja um pseudo-tipo
+ /* Caso o tipo a ser atribuíd�  coluna seja um pseudo-tipo
     será disparada uma exceção */
  if(tipo.pseudoTipo())
-  throw Excecao(ERR_PGMODELER_ATRPSDTIPOCOL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRPSDTIPOCOL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   this->tipo=tipo;
 }

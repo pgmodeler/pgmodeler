@@ -58,7 +58,7 @@ bool Restricao::colunaExistente(Coluna *coluna, unsigned tipo_coluna)
 
  //Caso a coluna a ser buscada não esteja aloca, dispara uma exceção
  if(!coluna)
-  throw Excecao(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(tipo_coluna==COLUNA_ORIGEM)
  {
@@ -88,7 +88,7 @@ void Restricao::adicionarColuna(Coluna *coluna, unsigned tipo_coluna)
 {
  //Caso a coluna não esteja aloca, dispara exceção.
  if(!coluna)
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCOLNAOALOC)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRCOLNAOALOC)
                         .arg(QString::fromUtf8(this->obterNome()))
                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RESTRICAO)),
                  ERR_PGMODELER_ATRCOLNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -114,13 +114,13 @@ void Restricao::definirEspacoTabela(EspacoTabela *espacotabela)
   if(espacotabela &&
      tipo!=TipoRestricao::primary_key &&
      tipo!=TipoRestricao::unique)
-   throw Excecao(ERR_PGMODELER_ATRESPTABRESTTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATRESPTABRESTTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   ObjetoBase::definirEspacoTabela(espacotabela);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -154,7 +154,7 @@ void Restricao::definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, 
  {
   col=vet_col->at(i);
 
-  /* No caso de definição XML as colunas protegidas (adicionaa �  restrição
+  /* No caso de definição XML as colunas protegidas (adicionaa �  restrição
      por relacionamento) não podem ser incluídas pois estas serão inseridas
      na restrição no momento da criação do relacionamento a partir do XML respectivo
      por isso o parâmetro 'inc_insporrelacao' pode ser usado para resolver esse caso. */
@@ -233,7 +233,7 @@ Coluna *Restricao::obterColuna(unsigned idx_col, unsigned tipo_coluna)
  /* Caso o índice de coluna a ser obtido seja inválido, um erro
     será retornado */
  if(idx_col>=lista_col->size())
-  throw Excecao(ERR_PGMODELER_REFCOLIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFCOLIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Retorna a coluna no índice especificado
   return(lista_col->at(idx_col));

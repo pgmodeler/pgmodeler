@@ -13,11 +13,11 @@ void ElemClasseOperadores::definirFuncao(Funcao *funcao, unsigned num_estrategia
 {
  //Caso a função não esteja alocada dispara uma exceção
  if(!funcao)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso o número de estratégia seja zero (inválido) dispara exceção
  else if(num_estrategia==0)
-  throw Excecao(ERR_PGMODELER_ATRVALORINVNUMEST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRVALORINVNUMEST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Limpa os atributos não pertinentes ao tipo ELEM_FUNCAO
  operador=NULL;
@@ -32,11 +32,11 @@ void ElemClasseOperadores::definirOperador(Operador *operador, unsigned num_estr
 {
  //Caso o operador não esteja alocada dispara uma exceção
  if(!operador)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso o número de estratégia seja zero (inválido) dispara exceção
  else if(num_estrategia==0)
-  throw Excecao(ERR_PGMODELER_ATRVALORINVNUMEST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRVALORINVNUMEST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Limpa os atributos não pertinentes ao tipo ELEM_OPERADOR
  funcao=NULL;

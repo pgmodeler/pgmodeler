@@ -72,11 +72,11 @@ bool Operador::nomeValido(const QString &nome)
 void Operador::definirNome(const QString &nome)
 {
  if(nome=="")
-  throw Excecao(ERR_PGMODELER_ATRNOMEOBJVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRNOMEOBJVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   if(!nomeValido(nome))
-   throw Excecao(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
    this->nome=nome;
  }
@@ -86,20 +86,20 @@ void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
 {
  //Caso o tipo de função seja inválido
  if(tipo_funcao > FUNC_RESTRICAO)
-  throw Excecao(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(tipo_funcao==FUNC_OPERADOR)
  {
   /* Caso a função não esteja alocada e se tente atribuí-la
      como função executada pelo operador */
   if(!funcao)
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNAOALOC)
+    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNAOALOC)
                          .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_OPERADOR)),
                   ERR_PGMODELER_ATRFUNCNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Caso o número de parâmetros da função seja inválido. Para operadores
      a mesma deve possuir 1 ou 2 parâmetros */
   else if(funcao->obterNumParams()==0 || funcao->obterNumParams() > 2)
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_OPERADOR)),
                  ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -139,7 +139,7 @@ void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
       (qtd_params==1 &&
        ((tipo_args[0]!="any" && tipo_args[0]!=tipo_param1) ||
         (tipo_args[1]!="any" && tipo_args[1]!=tipo_param1))))
-     throw Excecao(ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+     throw Exception(ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
  }
 
@@ -150,7 +150,7 @@ void Operador::definirTipoDadoArgumento(TipoPgSQL tipo_dado, unsigned tipo_arg)
 {
  //Caso o tipo de argumento seja inválido
  if(tipo_arg > ARG_DIREITA)
-  throw Excecao( ERR_PGMODELER_REFARGOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception( ERR_PGMODELER_REFARGOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   tipo_args[tipo_arg]=tipo_dado;
 }
@@ -159,11 +159,11 @@ void Operador::definirOperador(Operador *op, unsigned tipo_op)
 {
  //Caso o tipo de operador seja inválido
  if(tipo_op > OPER_MAIOR)
-   throw Excecao(ERR_PGMODELER_REFOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_REFOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   /* Validando OP Comutação: De acordo com a documentação do PostgreSQL o operador
-     de comutação deve possuir seu argumet �  direita do mesmo tipo do argumento
+     de comutação deve possuir seu argumet �  direita do mesmo tipo do argumento
        esquerda do operador comutado. Ou seja, se o operador ++ (tipoA, tipoB)
      está sendo definido e seu operador de comutação é +*+ então a assinatura
      deste último deve ser +*+(tipoB, tipoA). A condição testa abaixo é a situação
@@ -171,7 +171,7 @@ void Operador::definirOperador(Operador *op, unsigned tipo_op)
      da documentação  */
   if(op && tipo_op==OPER_COMUTACAO && tipo_args[ARG_ESQUERDA]!=op->tipo_args[ARG_DIREITA])
   {
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROPERCOMUTINV)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATROPERCOMUTINV)
                          .arg(QString::fromUtf8(op->obterAssinatura(true)))
                          .arg(QString::fromUtf8(this->obterAssinatura(true))),
                  ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -186,7 +186,7 @@ void Operador::definirOperador(Operador *op, unsigned tipo_op)
           (tipo_args[ARG_ESQUERDA]!=op->tipo_args[ARG_ESQUERDA] &&
            tipo_args[ARG_DIREITA]!=op->tipo_args[ARG_DIREITA]))
   {
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROPERNEGINV)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATROPERNEGINV)
                          .arg(QString::fromUtf8(op->obterAssinatura(true)))
                          .arg(QString::fromUtf8(this->obterAssinatura(true))),
                  ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -210,7 +210,7 @@ Funcao *Operador::obterFuncao(unsigned tipo_funcao)
 {
  //Caso o tipo de função seja inválido
  if(tipo_funcao > FUNC_RESTRICAO)
-  throw Excecao(ERR_PGMODELER_REFOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(funcoes[tipo_funcao]);
 }
@@ -219,7 +219,7 @@ TipoPgSQL Operador::obterTipoDadoArgumento(unsigned tipo_arg)
 {
  //Caso o tipo de argumento seja inválido
  if(tipo_arg > ARG_DIREITA)
-  throw Excecao( ERR_PGMODELER_REFARGOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception( ERR_PGMODELER_REFARGOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  return(tipo_args[tipo_arg]);
 }
 
@@ -227,7 +227,7 @@ Operador *Operador::obterOperador(unsigned tipo_op)
 {
  //Caso o tipo de operador seja inválido
  if(tipo_op > OPER_MAIOR)
-  throw Excecao(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  return(operadores[tipo_op]);
 }
 

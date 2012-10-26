@@ -31,10 +31,10 @@ SequenciaWidget::SequenciaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   janela_pai->setMinimumHeight(430);
   janela_pai->setMaximumHeight(430);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -79,7 +79,7 @@ void SequenciaWidget::aplicarConfiguracao(void)
   Sequencia *sequencia=NULL;
   iniciarConfiguracao<Sequencia>();
 
-  //Obtém a referêni �  sequência que está sendo editada/criada
+  //Obtém a referêni �  sequência que está sendo editada/criada
   sequencia=dynamic_cast<Sequencia *>(this->objeto);
 
   sequencia->definirCiclica(ciclica_chk->isChecked());
@@ -91,13 +91,13 @@ void SequenciaWidget::aplicarConfiguracao(void)
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
   cancelarConfiguracao();
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

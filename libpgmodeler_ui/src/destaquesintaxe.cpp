@@ -417,7 +417,7 @@ void DestaqueSintaxe::highlightBlock(const QString &txt)
      //Adiciona-o na palavra que está sendo extraída
      palavra+=chr_delim;
 
-     /* Extrai todos os próximos caracteres concatenando-o�  palavra,
+     /* Extrai todos os próximos caracteres concatenando-o�  palavra,
         idenpendente da categoria destes, enquanto o caractere final
         delimitador de palavra não seja encontrado ou o fim do texto
         seja alcançado. */
@@ -619,7 +619,7 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
         if(find(ordem_grupos.begin(), ordem_grupos.end(), grupo)!=ordem_grupos.end())
         {
          //Dispara o erro indicado que o grupo está sendo redeclarado
-         throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_REDECLGRUPODESTAQUE).arg(grupo),
+         throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_REDECLGRUPODESTAQUE).arg(grupo),
                        ERR_PGMODELERUI_REDECLGRUPODESTAQUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
         /* 2ª Validação: Verifica se o grupo está sendo declarado e construído ao mesmo tempo no
@@ -629,12 +629,12 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
                          sendo construído em local inválido */
         else if(atributos.size() > 1 || ParserXML::possuiElemento(ParserXML::ELEMENTO_FILHO))
         {
-         throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_DEFGRUPOLOCALINV)
+         throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_DEFGRUPOLOCALINV)
                        .arg(grupo).arg(AtributosParsers::ORDEM_DESTAQUE),
                        ERR_PGMODELERUI_REDECLGRUPODESTAQUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
 
-        /* Caso nenhum erro for disparado o grupo é adicionad�  lista de
+        /* Caso nenhum erro for disparado o grupo é adicionad�  lista de
            ordem de aplicação dos grupos */
         ordem_grupos.push_back(grupo);
        }
@@ -650,7 +650,7 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
         if(exp_iniciais.count(grupo)!=0)
         {
          //Dispara o erro ao usuário indicando construção duplicada
-         throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_DEFGRUPODUPLICADA).arg(grupo),
+         throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_DEFGRUPODUPLICADA).arg(grupo),
                        ERR_PGMODELERUI_DEFGRUPODUPLICADA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
         /* 2ª Validação: Verifica se o grupo está sendo construído sem ter sido declarado.
@@ -661,7 +661,7 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
         else if(find(ordem_grupos.begin(), ordem_grupos.end(), grupo)==ordem_grupos.end())
         {
          //Dispara o erro indicando que o grupo foi construído e não declarado
-         throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_DEFGRUPONAODECL)
+         throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_DEFGRUPONAODECL)
                        .arg(grupo).arg(AtributosParsers::ORDEM_DESTAQUE),
                        ERR_PGMODELERUI_DEFGRUPONAODECL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
@@ -670,7 +670,7 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
                          Caso ele não possua elementos deste tipo um erro é retornado ao usuário */
         else if(!ParserXML::possuiElemento(ParserXML::ELEMENTO_FILHO))
         {
-         throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_DEFGRUPOSEMELEM).arg(grupo),
+         throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_DEFGRUPOSEMELEM).arg(grupo),
                        ERR_PGMODELERUI_DEFGRUPOSEMELEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
 
@@ -779,7 +779,7 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
     if(exp_iniciais[grupo].size()==0)
     {
      //Dispara o erro indicando que o grupo foi declarado porém não construído
-     throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_GRUPODECLNAODEF).arg(grupo),
+     throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_GRUPODECLNAODEF).arg(grupo),
                    ERR_PGMODELERUI_GRUPODECLNAODEF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     }
    }
@@ -787,10 +787,10 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
    //Marca a flag indicando que a configuração foi carregada com sucesso
    conf_carregada=true;
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
    //Captura e redireciona erros das demais bibliotecas
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
  }
 }

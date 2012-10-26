@@ -101,7 +101,7 @@ void Tabela::definirAtributoColunas(unsigned tipo_def)
  for(i=0; i < qtd; i++)
  {
   /*
-   Para a definição de uma colunar ser inclía �  definição da tabela
+   Para a definição de uma colunar ser inclía �  definição da tabela
    a mesma tem de ser incluída por relacionamento simples. Caso a coluna
    foi adicionar   tabela por relacionamento de dependência ou generalização
    a mesma não será incluída na tabela.
@@ -251,7 +251,7 @@ vector<ObjetoTabela *> *Tabela::obterListaObjetos(TipoObjetoBase tipo_obj)
   return(&indices);
  else
   //Dispara uma exceção caso o tipo de objeto seja inválido
-  throw Excecao(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
@@ -260,7 +260,7 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
 
  if(!obj)
   //Caso o objeto não esteja alocado, dispara uma exceção
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   int idx;
@@ -281,19 +281,19 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
   if(obterObjeto(obj->obterNome(),tipo_obj,idx))
   {
    //Dispara uma exceçaõ indica a duplicidade de nomes de objetos
-   str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDUPLIC))
+   str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDUPLIC))
            .arg(obj->obterNome(true))
            .arg(obj->obterNomeTipoObjeto())
            .arg(this->obterNome(true))
            .arg(this->obterNomeTipoObjeto());
-   throw Excecao(str_aux,ERR_PGMODELER_ATROBJDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(str_aux,ERR_PGMODELER_ATROBJDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
   /* Caso o objeto seja uma tabela (herança) e a mesma for a própria tabela a se adicionar o objeto,
      significa um caso de herança inválida onde uma tabela tenta herdar atributos dela mesma */
   else if(tipo_obj==OBJETO_TABELA && obj==this)
    //Dispara a exceção indica o erro
-   throw Excecao(ERR_PGMODELER_HERANCATABINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_HERANCATABINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    //Insere o objeto   lista de acordo com seu tipo
    switch(tipo_obj)
@@ -313,7 +313,7 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
       if(!obj_tab->obterTabelaPai())
        obj_tab->definirTabelaPai(this);
       else if(obj_tab->obterTabelaPai()!=this)
-       throw Excecao(ERR_PGMODELER_ATROBJRELAC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(ERR_PGMODELER_ATROBJRELAC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Testando a definição sql do objeto
       if(tipo_obj==OBJETO_COLUNA)
@@ -357,7 +357,7 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
       if(tipo_obj==OBJETO_RESTRICAO &&
          tipo_rest==TipoRestricao::primary_key &&
          this->obterChavePrimaria())
-       throw Excecao(ERR_PGMODELER_ATRPKEXISTETAB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(ERR_PGMODELER_ATRPKEXISTETAB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       /* Caso o índice passado seja menor que zero ou superior ao tamanho da lista
          o objeto será inserido ao final da mesma */
@@ -392,22 +392,22 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
     break;
 
     default:
-     throw Excecao(ERR_PGMODELER_ATROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+     throw Exception(ERR_PGMODELER_ATROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     break;
    }
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
    /* Caso o código do erro seja de atributo obrigatório não preenchido,
       indica que a def. SQL não é válida */
-   if(e.obterTipoErro()==ERR_PARSERS_ATRIBVALORNULO)
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDEFSQLINV)
+   if(e.getErrorType()==ERR_PARSERS_ATRIBVALORNULO)
+    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDEFSQLINV)
                               .arg(QString::fromUtf8(obj->obterNome()))
                               .arg(obj->obterNomeTipoObjeto()),
                   ERR_PGMODELER_ATROBJDEFSQLINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
    else
     //Caso o a exceção não seja de def. SQL mal-formada, apenas redireciona o erro
-    throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
  }
 }
@@ -475,14 +475,14 @@ void Tabela::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
     tipo_obj!=OBJETO_REGRA && tipo_obj!=OBJETO_TABELA &&
     tipo_obj!=OBJETO_TABELA_BASE)
   //Caso o tipo esteja fora do conjunto, dispara uma exceção
-  throw Excecao(ERR_PGMODELER_REMOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REMOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso o objeto a ser removido seja uma tabela pai e seu índice seja válido
  else if(tipo_obj==OBJETO_TABELA && idx_obj < tabelas_pai.size())
  {
   vector<Tabela *>::iterator itr;
 
-  itr=tabelas_pai.begin() + idx_obj; //Obtendo a referênci�  tabela pai
+  itr=tabelas_pai.begin() + idx_obj; //Obtendo a referênci�  tabela pai
   tabelas_pai.erase(itr); //Remove a tabela pai da lista
  }
  //Caso o objeto a ser removido seja uma tabela cópia e seu índice seja válido
@@ -490,7 +490,7 @@ void Tabela::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
  {
   vector<Tabela *>::iterator itr;
 
-  itr=tabelas_copia.begin() + idx_obj; //Obtendo a referênci�  tabela copia
+  itr=tabelas_copia.begin() + idx_obj; //Obtendo a referênci�  tabela copia
   tabelas_copia.erase(itr); //Remove a tabela pai da lista
  }
  else if(tipo_obj!=OBJETO_TABELA && tipo_obj!=OBJETO_TABELA_BASE)
@@ -503,7 +503,7 @@ void Tabela::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
 
   //Caso o indice do objeto extrapole o tamanho da lista de objetos
   if(idx_obj >= lista_obj->size())
-   throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Executando a remoção genérica de objetos que não sejam colunas
   if(tipo_obj!=OBJETO_COLUNA)
@@ -526,7 +526,7 @@ void Tabela::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
       remoção da mesma disparando uma exceção. */
    if(!vet_refs.empty())
    {
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REMOBJREFERIND)
+    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REMOBJREFERIND)
                           .arg(QString::fromUtf8(coluna->obterNome()))
                           .arg(coluna->obterNomeTipoObjeto())
                           .arg(QString::fromUtf8(vet_refs[0]->obterNome()))
@@ -722,7 +722,7 @@ ObjetoBase *Tabela::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, in
   }
  }
  else
-  throw Excecao(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Retorna o objeto encontrado
  return(objeto);
@@ -736,7 +736,7 @@ ObjetoBase *Tabela::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
  {
   //Caso o índice do objeto seja inválido dispara uma exceção
   if(idx_obj >= tabelas_pai.size())
-   throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Retorna a tabela pai no índice especificado
   return(tabelas_pai[idx_obj]);
@@ -745,7 +745,7 @@ ObjetoBase *Tabela::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
  {
   //Caso o índice do objeto seja inválido dispara uma exceção
   if(idx_obj >= tabelas_copia.size())
-   throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Retorna a tabela cópia no índice especificado
   return(tabelas_copia[idx_obj]);
@@ -758,7 +758,7 @@ ObjetoBase *Tabela::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
   if(idx_obj < lista_obj->size())
    return(lista_obj->at(idx_obj));
   else
-   throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
 
@@ -941,7 +941,7 @@ unsigned Tabela::obterNumObjetos(TipoObjetoBase tipo_obj, bool inc_insporrelacao
   }
  }
  else
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 Restricao *Tabela::obterChavePrimaria(void)
@@ -1055,7 +1055,7 @@ void Tabela::trocarIndicesObjetos(TipoObjetoBase tipo_obj, unsigned idx1, unsign
    lista_obj=obterListaObjetos(tipo_obj);
 
    if(idx1 >= lista_obj->size() || idx2 >= lista_obj->size())
-    throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    obj_aux=lista_obj->at(idx1);
    itr1=lista_obj->begin() + idx1;
@@ -1065,9 +1065,9 @@ void Tabela::trocarIndicesObjetos(TipoObjetoBase tipo_obj, unsigned idx1, unsign
    (*itr2)=obj_aux;
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 

@@ -46,10 +46,10 @@ CodigoFonteWidget::CodigoFonteWidget(QWidget *parent): ObjetoBaseWidget(parent)
   destaque_sql=new DestaqueSintaxe(codigosql_txt, false);
   destaque_xml=new DestaqueSintaxe(codigoxml_txt, false);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -139,12 +139,12 @@ void CodigoFonteWidget::gerarCodigoFonteObjeto(int)
   prog_tarefa->close();
   disconnect(this->modelo, NULL, prog_tarefa, NULL);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   prog_tarefa->close();
   disconnect(this->modelo, NULL, prog_tarefa, NULL);
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -189,10 +189,10 @@ void CodigoFonteWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto)
 
    gerarCodigoFonteObjeto();
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
    //Redireciona o erro
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
  }
 }

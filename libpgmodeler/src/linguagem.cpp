@@ -19,7 +19,7 @@ void Linguagem::definirNome(const QString &nome)
  /* Tratando nome de linguagem. Nomes como SQL, C são reservados
     para o SGBD e não podem ser criados pelo usuário */
  if(nome.toLower()==~TipoLinguagem("c") || nome.toLower()==~TipoLinguagem("sql"))
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRNOMERESERV)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRNOMERESERV)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_LINGUAGEM)),
                 ERR_PGMODELER_ATRNOMERESERV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -67,19 +67,19 @@ void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
  //Disparando uma exceção caso o tipo de retorno da função não coincida com o aceito para cada tipo de função
  else if((tipo_func==FUNC_HANDLER && funcao->obterTipoRetorno()!="language_handler") ||
          ((tipo_func==FUNC_VALIDATOR || tipo_func==FUNC_INLINE) && funcao->obterTipoRetorno()!="void"))
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCRETINV)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCRETINV)
                          .arg(this->obterNome(true))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_LINGUAGEM)),
                 ERR_PGMODELER_ATRFUNCRETINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Dispara um erro se a função possuir parâmetros inválidos
-  throw Excecao(ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 Funcao * Linguagem::obterFuncao(unsigned tipo_func)
 {
  if(tipo_func > FUNC_INLINE)
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(funcoes[tipo_func]);
 }

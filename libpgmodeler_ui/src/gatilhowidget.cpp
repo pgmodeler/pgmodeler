@@ -75,10 +75,10 @@ GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_G
   connect(tab_argumentos, SIGNAL(s_linhaEditada(int)), this, SLOT(editarArgumento(int)));
   connect(gat_rest_chk, SIGNAL(toggled(bool)), this, SLOT(definirGratilhoRestricao(bool)));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -97,7 +97,7 @@ void GatilhoWidget::adicionarColuna(int idx_lin)
 
  try
  {
-  //Obtém a referêni �  coluna no item atual do combo box
+  //Obtém a referêni �  coluna no item atual do combo box
   coluna=reinterpret_cast<Coluna *>(coluna_cmb->itemData(coluna_cmb->currentIndex(),Qt::UserRole).value<void *>());
   //Quando a coluna vai ser atribuída a tabela a mesma é removida do combo
   coluna_cmb->removeItem(coluna_cmb->currentIndex());
@@ -106,10 +106,10 @@ void GatilhoWidget::adicionarColuna(int idx_lin)
   //Caso não houver itens no combo o botão de inserção da respectiva tabela será desabilitado
   tab_colunas->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (coluna_cmb->count()!=0));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   tab_colunas->removerLinha(idx_lin);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -118,7 +118,7 @@ void GatilhoWidget::adicionarColuna(Coluna *coluna, int idx_lin)
  //Caso a coluna esteja alocada e o índice da linha seja válido (não-negativo)
  if(coluna && idx_lin >= 0)
  {
-  /* Exibe os dados da coluna na linha especificada, definindo a referênci�  coluna
+  /* Exibe os dados da coluna na linha especificada, definindo a referênci�  coluna
      como dado da linha */
   tab_colunas->definirTextoCelula(QString::fromUtf8(coluna->obterNome()),idx_lin,0);
   tab_colunas->definirTextoCelula(QString::fromUtf8(~coluna->obterTipo()),idx_lin,1);
@@ -153,9 +153,9 @@ void GatilhoWidget::atualizarComboColunas(void)
   //Desabilita o obtão de inserir itens na tabela caso não hajam itens no combobox
   tab_colunas->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (coluna_cmb->count()!=0));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -213,7 +213,7 @@ void GatilhoWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, Lista
  Coluna *coluna=NULL;
 
  if(!tabela_pai)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, gatilho, tabela_pai);
@@ -317,13 +317,13 @@ void GatilhoWidget::aplicarConfiguracao(void)
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
   cancelarConfiguracao();
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

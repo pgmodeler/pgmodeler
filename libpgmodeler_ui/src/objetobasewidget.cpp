@@ -4,7 +4,7 @@
 
 extern VisaoObjetosWidget *selecaoobjetos_wgt;
 extern PermissaoWidget *permissao_wgt;
-//**********************************************************
+
 const QColor ObjetoBaseWidget::COR_FUNDO_LIN_PROT=QColor(255,180,180);
 const QColor ObjetoBaseWidget::COR_TEXTO_LIN_PROT=QColor(80,80,80);
 const QColor ObjetoBaseWidget::COR_FUNDO_LIN_INCREL=QColor(164,249,176);
@@ -86,12 +86,12 @@ ObjetoBaseWidget::ObjetoBaseWidget(QWidget *parent, TipoObjetoBase tipo_obj): QD
 
   objetobase_grid->addWidget(div1_ln, 9, 0, 1, 5);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   if(janela_pai) delete(janela_pai);
 
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -154,7 +154,7 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
  TipoObjetoBase tipo_obj, tipo_obj_pai=OBJETO_BASE;
 
  if(!modelo)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->modelo=modelo;
 
@@ -167,7 +167,7 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
   else if(tipo_obj_pai==OBJETO_RELACAO)
    this->relacionamento=dynamic_cast<Relacionamento *>(objeto_pai);
   else
-   throw Excecao(ERR_PGMODELER_ATROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  else
  {
@@ -564,7 +564,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
 
     if(!novo_obj && obj_aux && obj_aux!=objeto)
     {
-     throw Excecao(QString(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDUPLIC))
+     throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDUPLIC))
                    .arg(nome_obj)
                    .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj))
                    .arg(obj_pai->obterNome(true))
@@ -610,9 +610,9 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
     objeto->definirEsquema(esquema);
    }
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
  }
 }
@@ -625,7 +625,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
   ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->objeto);
   ObjetoTabela *obj_tab=dynamic_cast<ObjetoTabela *>(this->objeto);
 
-  /* Caso o objeto seja novo, é necessário adicion�-o �  lista
+  /* Caso o objeto seja novo, é necessário adicion�-o �  lista
      de operações como objeto criado para permitir sua remoção
      quando o usuário executar a operação de desfazer */
   if(novo_obj)
@@ -643,7 +643,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
    {
     if(this->tabela)
      lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_CRIADO, -1, this->tabela);
-    /* Relacionamento não são adicionao �  lista de operações por este trecho de código.
+    /* Relacionamento não são adicionao �  lista de operações por este trecho de código.
        Isso é tratado no método definirAtributos() da classe RelacionamentoWidget */
     else if(tipo_obj!=OBJETO_RELACAO && tipo_obj!=OBJETO_TABELA)
      lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_CRIADO, -1, this->relacionamento);
@@ -812,7 +812,7 @@ void ObjetoBaseWidget::cancelarConfiguracao(void)
    //Remove a ultima operação adicionada referente ao objeto editado/criado
    lista_op->removerUltimaOperacao();
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {}
  }
 

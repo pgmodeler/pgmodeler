@@ -18,7 +18,7 @@ void ConversaoCodificacao::definirCodificacao(unsigned idx_tipo, TipoCodificacao
  {
   //Se o tipo de codificação passado é nulo, dispara uma exceção
   if((~tipo_cod)=="")
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRTIPONULO)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRTIPONULO)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
                  ERR_PGMODELER_ATRTIPONULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -28,20 +28,20 @@ void ConversaoCodificacao::definirCodificacao(unsigned idx_tipo, TipoCodificacao
  }
  else
   //Dispara uma exceção caso o índice do tipo é inválido
-  throw Excecao(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void ConversaoCodificacao::definirFuncaoConversao(Funcao *funcao_conv)
 {
  //Caso a função de conversão passada seja nula, dispara uma exceção
  if(!funcao_conv)
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNAOALOC)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNAOALOC)
                          .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
                 ERR_PGMODELER_ATRFUNCNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //A função de conversão deve obrigatoriamente possuir 5 parâmetros
  else if(funcao_conv->obterNumParams()!=5)
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
                          .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
                 ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -53,13 +53,13 @@ void ConversaoCodificacao::definirFuncaoConversao(Funcao *funcao_conv)
          funcao_conv->obterParametro(2).obterTipo()!="cstring" ||
          funcao_conv->obterParametro(3).obterTipo()!="internal" ||
          funcao_conv->obterParametro(4).obterTipo()!="integer")
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCPARAMINV)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCPARAMINV)
                          .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
                 ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //O tipo de retorno da função de conversão deve ser 'void'
  else if(funcao_conv->obterTipoRetorno()!="void")
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCRETINV)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCRETINV)
                          .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
                 ERR_PGMODELER_ATRFUNCRETINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -78,7 +78,7 @@ TipoCodificacao ConversaoCodificacao::obterCodificacao(unsigned idx_tipo)
   return(this->codificacoes[idx_tipo]);
  else
   //Caso o usuário não referencie a codificação com o índice correto
-  throw Excecao(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 Funcao *ConversaoCodificacao::obterFuncaoConversao(void)

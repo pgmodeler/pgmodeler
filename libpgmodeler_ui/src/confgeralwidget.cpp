@@ -65,7 +65,7 @@ void ConfGeralWidget::carregarConfiguracao(void)
  marg_dir->setValue((margem.count() >= 3 ? margem[2].toFloat() : 10));
  marg_base->setValue((margem.count() >= 4 ? margem[3].toFloat() : 10));
 
- //Efetiva as configurações do formulário aplicano-s � s classes interessadas
+ //Efetiva as configurações do formulário aplicano-s � s classes interessadas
  this->aplicarConfiguracao();
 }
 
@@ -138,24 +138,24 @@ void ConfGeralWidget::salvarConfiguracao()
   //Salva a configuração em arquivo
   ConfBaseWidget::salvarConfiguracao(AtributosGlobais::CONF_GERAL);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
 void ConfGeralWidget::aplicarConfiguracao(void)
 {
- //Aplica as configurações de pae �  cena
+ //Aplica as configurações de pae �  cena
  CenaObjetos::definirConfiguracaoPagina(static_cast<QPrinter::PaperSize>(papel_cmb->itemData(papel_cmb->currentIndex()).toInt()),
                                         (retrato_rb->isChecked() ? QPrinter::Portrait : QPrinter::Landscape),
                                         QRectF(marg_esq->value(), marg_topo->value(),
                                                marg_dir->value(), marg_base->value()));
 
- //Aplica a configuração de grd �  cena
+ //Aplica a configuração de grd �  cena
  CenaObjetos::definirGrade(tam_grade_spb->value());
 
- //Aplica as configuraç�e �  lista de operações
+ //Aplica as configuraç�e �  lista de operações
  ListaOperacoes::definirTamanhoMaximo(tam_lista_spb->value());
 }
 
@@ -167,9 +167,9 @@ void ConfGeralWidget::restaurarPadroes(void)
   ConfBaseWidget::restaurarPadroes(AtributosGlobais::CONF_GERAL);
   this->carregarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

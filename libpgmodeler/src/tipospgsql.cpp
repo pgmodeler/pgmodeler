@@ -187,7 +187,7 @@ TipoBase::TipoBase(void)
 QString TipoBase::obterStringTipo(unsigned tipo)
 {
  if(tipo > qtd_tipos)
-  throw Excecao(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(tipos[tipo]);
 }
@@ -197,10 +197,10 @@ void TipoBase::definirTipo(unsigned tipo,unsigned offset,unsigned qtd_tipos)
  /* Caso a quantidade de tipos seja nula ou maior do que o tamanho da lista de tipos
     da classe base, dispara um exceção indicando o fato */
  if(qtd_tipos==0 || qtd_tipos > this->qtd_tipos)
-  throw Excecao(ERR_PGMODELER_OBTQTDTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OBTQTDTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Caso o tipo a ser atribuido não seja pertecente a classe de tipo atual
  else if(!tipoValido(tipo,offset,qtd_tipos))
-  throw Excecao(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   idx_tipo=tipo;
 }
@@ -216,7 +216,7 @@ void TipoBase::obterTipos(QStringList &tipos,unsigned offset,unsigned qtd_tipos)
  /* Caso a quantidade de tipos seja nula ou maior do que o tamanho da lista de tipos
     da classe base, dispara um exceção indicando o fato */
  if(qtd_tipos==0 || qtd_tipos > TipoBase::qtd_tipos)
-  throw Excecao(ERR_PGMODELER_OBTQTDTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OBTQTDTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   unsigned idx,total;
@@ -696,7 +696,7 @@ unsigned TipoPgSQL::operator = (unsigned tipo)
  else if(tipo > 0)
   TipoBase::definirTipo(tipo,offset,qtd_tipos);
  else if(tipo==0)
-  throw Excecao(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(idx_tipo);
 }
@@ -709,7 +709,7 @@ unsigned TipoPgSQL::operator = (const QString &nome_tipo)
  idx_tipo_usr=obterIndiceTipoUsuario(nome_tipo, NULL);
 
  if(idx_tipo==0 && idx_tipo_usr==0)
-  throw Excecao(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(idx_tipo!=0)
  {
   TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
@@ -849,7 +849,7 @@ void TipoPgSQL::definirTipoUsuario(unsigned idx)
     (idx >= lim1 && idx < lim2))
   idx_tipo=idx;
  else
-  throw Excecao(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void TipoPgSQL::definirTipoUsuario(void *ptipo)
@@ -858,7 +858,7 @@ void TipoPgSQL::definirTipoUsuario(void *ptipo)
 
  idx=obterIndiceTipoUsuario("",ptipo);
  if(idx <= 0)
-  throw Excecao(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   idx_tipo=idx;
 }
@@ -1051,7 +1051,7 @@ void TipoPgSQL::definirDimensao(unsigned dim)
   int idx=obterIndiceTipoUsuario(~(*this), NULL);
   if(tipos_usr[idx].conf_tipo==ConfigTipoUsuario::TIPO_DOMINIO ||
      tipos_usr[idx].conf_tipo==ConfigTipoUsuario::TIPO_SEQUENCIA)
-    throw Excecao(ERR_PGMODELER_ATRDIMENSAOINVDOMINIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_PGMODELER_ATRDIMENSAOINVDOMINIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  dimensao=dim;
@@ -1062,7 +1062,7 @@ void TipoPgSQL::definirComprimento(unsigned comp)
  //Caso o usuário tente criar um tipo de tamanho zero
  if(comp==0)
   //throw Excecao("Atribuição de comprimento igual a zero!");
-  throw Excecao(ERR_PGMODELER_ATRCOMPRIMZERO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRCOMPRIMZERO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Define o comprimento do tipo da coluna
   this->comprimento=comp;
@@ -1073,11 +1073,11 @@ void TipoPgSQL::definirPrecisao(int prec)
  //Caso o usuário tente definir uma precisao maior que o comprimento do tipo
  if(((TipoBase::tipos[idx_tipo]=="numeric" ||
       TipoBase::tipos[idx_tipo]=="decimal") && prec > static_cast<int>(comprimento)))
-  throw Excecao(ERR_PGMODELER_ATRPRECISAOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRPRECISAOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(((TipoBase::tipos[idx_tipo]=="time" ||
            TipoBase::tipos[idx_tipo]=="timestamp" ||
            TipoBase::tipos[idx_tipo]=="interval") && prec > 6))
-  throw Excecao(ERR_PGMODELER_ATRPRECTIPOTIMEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRPRECTIPOTIMEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Define a precisão do tipo da coluna
   this->precisao=prec;

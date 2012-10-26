@@ -70,10 +70,10 @@ ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidge
   TipoIndexacao::obterTipos(tipos);
   tipo_index_cmb->addItems(tipos);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -218,7 +218,7 @@ void ClasseOperadoresWidget::manipularElemento(int idx_linha)
   rechecar_chk->setChecked(false);
   tab_elementos->limparSelecao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Em caso de erro e caso a linha atual da tabela esteja sem dados (algum campo sem texto)
      indica que a operação de inserção de um elemento é que gerou a exceção e para tanto
@@ -226,7 +226,7 @@ void ClasseOperadoresWidget::manipularElemento(int idx_linha)
   if(tab_elementos->obterTextoCelula(idx_linha, 0).isEmpty())
    tab_elementos->removerLinha(idx_linha);
 
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -284,17 +284,17 @@ void ClasseOperadoresWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<ClasseOperadores>();
 
-  //Obtém a referência �   classe de objetos que está sendo manipulada
+  //Obtém a referência �   classe de objetos que está sendo manipulada
   classe_op=dynamic_cast<ClasseOperadores *>(this->objeto);
 
-  //Atribui os valores configurados no formulário �   classe de operadores
+  //Atribui os valores configurados no formulário �   classe de operadores
   classe_op->definirPadrao(classe_op->classePadrao());
   classe_op->definirFamilia(dynamic_cast<FamiliaOperadores *>(sel_familiaop->obterObjeto()));
   classe_op->definirTipoIndexacao(TipoIndexacao(tipo_index_cmb->currentText()));
   classe_op->definirTipoDado(tipo_dado->obterTipoPgSQL());
 
   /* Remove todos os elementos da classe de operadores e em seguida
-     insere aqueles configurados na tabela �   classe */
+     insere aqueles configurados na tabela �   classe */
   classe_op->removerElementosClasse();
   qtd=tab_elementos->obterNumLinhas();
 
@@ -305,13 +305,13 @@ void ClasseOperadoresWidget::aplicarConfiguracao(void)
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
   cancelarConfiguracao();
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

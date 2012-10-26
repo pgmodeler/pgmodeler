@@ -97,10 +97,10 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TIPO)
   TipoCategoria::obterTipos(lista);
   categoria_cmb->addItems(lista);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -374,7 +374,7 @@ void TipoWidget::aplicarConfiguracao(void)
    //Configura a instância como tipo base
    tipo->definirConfiguracao(Tipo::TIPO_BASE);
 
-   //Atribui todos os valores configurados no formulári�  instância de tipo
+   //Atribui todos os valores configurados no formulári�  instância de tipo
    tipo->definirTipoCopia(tipo_copia->obterTipoPgSQL());
    tipo->definirElemento(tipo_elemento->obterTipoPgSQL());
    tipo->definirCompInterno(comp_int_sb->value());
@@ -386,7 +386,7 @@ void TipoWidget::aplicarConfiguracao(void)
    tipo->definirAlinhamento(TipoPgSQL(alinhamento_cmb->currentText()));
    tipo->definirArmazenamento(TipoArmazenamento(armazenamento_cmb->currentText()));
 
-   //Atribui todas as funções definidas nos seletoe �  instância de tipo
+   //Atribui todas as funções definidas nos seletoe �  instância de tipo
    for(i=Tipo::FUNCAO_INPUT; i <= Tipo::FUNCAO_ANALYZE; i++)
     tipo->definirFuncao(i, dynamic_cast<Funcao *>(sel_funcoes[i]->obterObjeto()));
   }
@@ -394,13 +394,13 @@ void TipoWidget::aplicarConfiguracao(void)
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
   cancelarConfiguracao();
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

@@ -1,5 +1,5 @@
 #include "parserxml.h"
-//**********************************************************
+
 QString ParserXML::nome_doc_xml="";
 QString ParserXML::buffer_xml="";
 QString ParserXML::decl_dtd="";
@@ -57,8 +57,8 @@ void ParserXML::carregarArquivoXML(const QString &nome_arq)
    //Caso o arquivo foi aberto com sucesso
    if(!entrada.is_open())
    {
-    str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_ARQDIRNAOCARREGADO)).arg(nome_arq);
-    throw Excecao(str_aux,ERR_PARSERS_ARQDIRNAOCARREGADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_ARQDIRNAOCARREGADO)).arg(nome_arq);
+    throw Exception(str_aux,ERR_PARSERS_ARQDIRNAOCARREGADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
    buffer="";
@@ -75,9 +75,9 @@ void ParserXML::carregarArquivoXML(const QString &nome_arq)
    carregarBufferXML(buffer);
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -88,7 +88,7 @@ void ParserXML::carregarBufferXML(const QString &buf_xml)
   int pos1=-1, pos2=-1, tam=0;
 
   if(buf_xml.isEmpty())
-   throw Excecao(ERR_PARSERS_ATRIBBUFXMLVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PARSERS_ATRIBBUFXMLVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   pos1=buf_xml.find("<?xml");
   pos2=buf_xml.find("?>");
@@ -106,19 +106,19 @@ void ParserXML::carregarBufferXML(const QString &buf_xml)
   removerDTD();
   interpretarBuffer();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
 void ParserXML::definirArquivoDTD(const QString &arq_dtd, const QString &nome_dtd)
 {
  if(arq_dtd.isEmpty())
-  throw Excecao(ERR_PARSERS_ATRIBARQDTDVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_ATRIBARQDTDVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(nome_dtd.isEmpty())
-  throw Excecao(ERR_PARSERS_ATRIBNOMEDTDVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_ATRIBNOMEDTDVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  decl_dtd="<!DOCTYPE " + nome_dtd + " SYSTEM " + "\"" +  arq_dtd + "\">\n";
 }
@@ -171,7 +171,7 @@ void ParserXML::interpretarBuffer(void)
    //Liberando a memória ocupada pelo documento
    if(doc_xml) reiniciarParser();
 
-   throw Excecao(QString(Excecao::obterMensagemErro(ERR_PARSERS_LIBXMLERR))
+   throw Exception(QString(Exception::getErrorMessage(ERR_PARSERS_LIBXMLERR))
                  .arg(erro_xml->line).arg(erro_xml->int2).arg(msg).arg(arquivo),
                  ERR_PARSERS_LIBXMLERR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -187,7 +187,7 @@ void ParserXML::interpretarBuffer(void)
 void ParserXML::salvarPosicao(void)
 {
  if(!elem_raiz)
-  throw Excecao(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  pilha_elems.push(elem_atual);
 }
@@ -195,7 +195,7 @@ void ParserXML::salvarPosicao(void)
 void ParserXML::restaurarPosicao(void)
 {
  if(!elem_raiz)
-  throw Excecao(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(pilha_elems.empty())
   elem_atual=elem_raiz;
@@ -209,9 +209,9 @@ void ParserXML::restaurarPosicao(void)
 void ParserXML::restaurarPosicao(const xmlNode *elem)
 {
  if(!elem)
-  throw Excecao(ERR_PARSERS_OPRELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_OPRELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(elem->doc!=doc_xml)
-  throw Excecao(ERR_PARSERS_OPRELEMINVARVDOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_OPRELEMINVARVDOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  reiniciarNavegacao();
  elem_atual=const_cast<xmlNode *>(elem);
@@ -220,7 +220,7 @@ void ParserXML::restaurarPosicao(const xmlNode *elem)
 void ParserXML::reiniciarNavegacao(void)
 {
  if(!elem_raiz)
-  throw Excecao(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  elem_atual=elem_raiz;
 
@@ -251,7 +251,7 @@ bool ParserXML::acessarElemento(unsigned tipo_elem)
  xmlNode *vet_elems[4];
 
  if(!elem_raiz)
-  throw Excecao(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  vet_elems[ELEMENTO_RAIZ]=elem_atual->parent;
  vet_elems[ELEMENTO_FILHO]=elem_atual->children;
@@ -275,7 +275,7 @@ bool ParserXML::acessarElemento(unsigned tipo_elem)
 bool ParserXML::possuiElemento(unsigned tipo_elem)
 {
  if(!elem_raiz)
-  throw Excecao(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(tipo_elem==ELEMENTO_RAIZ)
   /* Retorna a verificação se o elemento atual possui um pai.
@@ -296,7 +296,7 @@ bool ParserXML::possuiElemento(unsigned tipo_elem)
 bool ParserXML::possuiAtributos(void)
 {
  if(!elem_raiz)
-  throw Excecao(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(elem_atual->properties!=NULL);
 }
@@ -304,7 +304,7 @@ bool ParserXML::possuiAtributos(void)
 QString ParserXML::obterConteudoElemento(void)
 {
  if(!elem_raiz)
-  throw Excecao(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso esteja alocado, converte para char * e retorna em forma de std::QString
  return(QString(reinterpret_cast<char *>(elem_atual->content)));
@@ -313,7 +313,7 @@ QString ParserXML::obterConteudoElemento(void)
 QString ParserXML::obterNomeElemento(void)
 {
  if(!elem_raiz)
-  throw Excecao(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(QString(reinterpret_cast<const char *>(elem_atual->name)));
 }
@@ -321,7 +321,7 @@ QString ParserXML::obterNomeElemento(void)
 xmlElementType ParserXML::obterTipoElemento(void)
 {
  if(!elem_raiz)
-  throw Excecao(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(elem_atual->type);
 }
@@ -337,12 +337,12 @@ void ParserXML::obterAtributosElemento(map<QString, QString> &atributos)
  QString atrib, valor;
 
  if(!elem_raiz)
-  throw Excecao(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Limpa a lista de atributos passada
  atributos.clear();
 
- //Obtém a referência � s propriedades do elemento
+ //Obtém a referência � s propriedades do elemento
  atribs_elem=elem_atual->properties;
 
  //Varre a lista de propriedades até o seu final
@@ -387,4 +387,4 @@ int ParserXML::obterNumLinhasBuffer(void)
  else
   return(0);
 }
-//**********************************************************
+

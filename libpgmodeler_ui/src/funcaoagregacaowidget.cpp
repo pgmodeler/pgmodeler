@@ -17,7 +17,7 @@ FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(
                                       AtributosGlobais::CONF_DESTAQUE_SQL +
                                       AtributosGlobais::EXT_CONFIGURACAO);
 
-  //Alocando os seletores de objetos (função e operador) que são atriuíos �  função de agregação
+  //Alocando os seletores de objetos (função e operador) que são atriuíos �  função de agregação
   sel_func_final=NULL;
   sel_func_transicao=NULL;
   sel_op_ordenacao=NULL;
@@ -71,10 +71,10 @@ FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(
   connect(tab_tipos_entrada, SIGNAL(s_linhaAdicionada(int)), this, SLOT(manipularTipoDado(int)));
   connect(tab_tipos_entrada, SIGNAL(s_linhaAtualizada(int)), this, SLOT(manipularTipoDado(int)));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -153,7 +153,7 @@ void FuncaoAgregacaoWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<FuncaoAgregacao>();
 
-  //Obtém a referêni �  função de agregação que está sendo editada/criada
+  //Obtém a referêni �  função de agregação que está sendo editada/criada
   funcao_ag=dynamic_cast<FuncaoAgregacao *>(this->objeto);
 
   //Configura os atributos do mesmo com os valores definidos no formulário
@@ -166,7 +166,7 @@ void FuncaoAgregacaoWidget::aplicarConfiguracao(void)
   qtd=tab_tipos_entrada->obterNumLinhas();
 
   /* Obtém de cada linha da tabela de tipos de entrada o dado interno o qual é
-     uma instância da classe TipoPgSQL e que será atribía �  função de agregação
+     uma instância da classe TipoPgSQL e que será atribía �  função de agregação
      como tipo de dado de entrada */
   for(i=0; i < qtd; i++)
    funcao_ag->adicionarTipoDado(tab_tipos_entrada->obterDadoLinha(i).value<TipoPgSQL>());
@@ -180,13 +180,13 @@ void FuncaoAgregacaoWidget::aplicarConfiguracao(void)
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
   cancelarConfiguracao();
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

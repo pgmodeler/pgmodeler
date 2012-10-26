@@ -9,18 +9,18 @@ Referencia::Referencia(void)
 Referencia::Referencia(Tabela *tabela, Coluna *coluna, const QString &alias_tab, const QString &alias_col)
 {
  if(!tabela)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Caso o alias atribuido   tabela/expressão ou coluna seja inválido
     de acordo com a regra de nomenclatura do PostgreSQL */
  else if((!alias_tab.isEmpty() && !ObjetoBase::nomeValido(alias_tab)) ||
          (!alias_col.isEmpty() && !ObjetoBase::nomeValido(alias_col)))
-  throw Excecao(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Caso se tente criar uma referência a uma coluna cuja tabela pai seja
     diferente da tabela informada no parâmetro */
  else if(coluna && coluna->obterTabelaPai()!=tabela)
-  throw Excecao(ERR_PGMODELER_ATROBJRELAC ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJRELAC ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Atribui os parâmetros aos atributos do objeto
  this->tabela=tabela;
@@ -32,11 +32,11 @@ Referencia::Referencia(Tabela *tabela, Coluna *coluna, const QString &alias_tab,
 Referencia::Referencia(const QString &expressao, const QString &alias_exp)
 {
  if(expressao=="")
-  throw Excecao(ERR_PGMODELER_ATREXPRINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATREXPRINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Caso o alias da expressão seja inválido de acordo com as regras de
     nomenclatura do PostgreSQL */
  else if(!ObjetoBase::nomeValido(alias_exp))
-  throw Excecao(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  tabela=NULL;
  coluna=NULL;
@@ -89,11 +89,11 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
  //Obtém o tipo de referência do objeto this
  tipo_refer=obterTipoReferencia();
 
- /* Caso seja uma referênci�  parte SELECT-FROM,
+ /* Caso seja uma referênci�  parte SELECT-FROM,
     formata a SQL do objeto de acordo com este tipo */
  if(tipo_sql==SQL_REFER_SELECT)
  {
-  //Caso seja um referênci�  objetos (colunas, esquemas, tabelas, alias)
+  //Caso seja um referênci�  objetos (colunas, esquemas, tabelas, alias)
   if(tipo_refer==REFER_COLUNA)
   {
    /*
@@ -122,12 +122,12 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
     //Caso haja uma coluna definida, atribui o seu nome   definição SQL
     def_sql=nome_tab + coluna->obterNome(true);
 
-    //Caso haja um alias para a coluna o mesmo será concatenad�  definição
+    //Caso haja um alias para a coluna o mesmo será concatenad�  definição
     if(alias_coluna!="")
      def_sql+=" AS " + ObjetoBase::formatarNome(alias_coluna);
    }
   }
-  //Caso seja um referênci�  uma expressão na parte SELECT-FROM
+  //Caso seja um referênci�  uma expressão na parte SELECT-FROM
   else
   {
    /*
@@ -176,7 +176,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
    */
 
    /* Caso não existe um alias de tabel, o próprio nome
-      da mesma é concatenad�  definição */
+      da mesma é concatenad�  definição */
    if(alias=="")
     def_sql=tabela->obterNome(true);
    else

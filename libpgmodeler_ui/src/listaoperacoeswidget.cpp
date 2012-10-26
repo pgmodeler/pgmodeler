@@ -172,11 +172,11 @@ void ListaOperacoesWidget::desfazerOperacao(void)
   //Limpa a seleção na cena
   modelo_wgt->cena->clearSelection();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   prog_tarefa->close();
   disconnect(modelo_wgt->lista_op, NULL, prog_tarefa, NULL);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -199,11 +199,11 @@ void ListaOperacoesWidget::refazerOperacao(void)
   //Limpa a seleção na cena
   modelo_wgt->cena->clearSelection();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   prog_tarefa->close();
   disconnect(modelo_wgt->lista_op, NULL, prog_tarefa, NULL);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

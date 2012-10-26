@@ -121,7 +121,7 @@ void FormExportacao::exportarModelo(void)
 
    //Caso a imagem não possa ser salva, retorna um erro
    if(!pix.save(imagem_edt->text()))
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ARQNAOGRAVADO).arg(QString::fromUtf8(imagem_edt->text())),
+    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ARQNAOGRAVADO).arg(QString::fromUtf8(imagem_edt->text())),
                   ERR_PGMODELER_ARQNAOGRAVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
@@ -137,7 +137,7 @@ void FormExportacao::exportarModelo(void)
    int idx_objs[]={-1, -1};
    TipoObjetoBase vet_tipos[]={OBJETO_PAPEL, OBJETO_ESPACO_TABELA};
    ObjetoBase *objeto=NULL;
-   vector<Excecao> vet_erros;
+   vector<Exception> vet_erros;
 
 
    /* Vetor que armazena os códigos de erros referentes a objetos duplicados no PostgreSQL:
@@ -212,16 +212,16 @@ void FormExportacao::exportarModelo(void)
        {
         conexao->executarComandoDDL(objeto->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL));
        }
-       catch(Excecao &e)
+       catch(Exception &e)
        {
         /* Caso o checkbox de ignorar duplicidade não esteja marcado ou se este está marcado porém a
          informação adicinal da exceção não carrega um dos códigos indicando duplicidade de objeto
          redireciona o erro, caso contrário apenas o ignora */
         if(!ignorar_dup_chk->isChecked() ||
            (ignorar_dup_chk->isChecked() &&
-            std::find(vet_cod_erros.begin(), vet_cod_erros.end(), e.obterInfoAdicional())==vet_cod_erros.end()))
-         throw Excecao(e.obterMensagemErro(),
-                       e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+            std::find(vet_cod_erros.begin(), vet_cod_erros.end(), e.getExtraInfo())==vet_cod_erros.end()))
+         throw Exception(e.getErrorMessage(),
+                       e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
         else
          vet_erros.push_back(e);
        }
@@ -240,16 +240,16 @@ void FormExportacao::exportarModelo(void)
       conexao->executarComandoDDL(modelo_wgt->modelo->__obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL));
       bd_criado=true;
      }
-     catch(Excecao &e)
+     catch(Exception &e)
      {
       /* Caso o checkbox de ignorar duplicidade não esteja marcado ou se este está marcado porém a
        informação adicinal da exceção não carrega um dos códigos indicando duplicidade de objeto
        redireciona o erro, caso contrário apenas o ignora */
       if(!ignorar_dup_chk->isChecked() ||
          (ignorar_dup_chk->isChecked() &&
-          std::find(vet_cod_erros.begin(), vet_cod_erros.end(), e.obterInfoAdicional())==vet_cod_erros.end()))
-       throw Excecao(e.obterMensagemErro(),
-                     e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+          std::find(vet_cod_erros.begin(), vet_cod_erros.end(), e.getExtraInfo())==vet_cod_erros.end()))
+       throw Exception(e.getErrorMessage(),
+                     e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
       else
        vet_erros.push_back(e);
      }
@@ -313,15 +313,15 @@ void FormExportacao::exportarModelo(void)
 
        prog_pb->setValue(50 + ((i/static_cast<float>(qtd)) * 10));
       }
-      catch(Excecao &e)
+      catch(Exception &e)
       {
        /* Caso o checkbox de ignorar duplicidade não esteja marcado ou se este está marcado porém a
         informação adicinal da exceção não carrega um dos códigos indicando duplicidade de objeto
         redireciona o erro, caso contrário apenas o ignora */
        if(!ignorar_dup_chk->isChecked() ||
           (ignorar_dup_chk->isChecked() &&
-           std::find(vet_cod_erros.begin(), vet_cod_erros.end(), e.obterInfoAdicional())==vet_cod_erros.end()))
-        throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_FALHAEXPORTACAO).arg(QString::fromUtf8(cmd_sql)),
+           std::find(vet_cod_erros.begin(), vet_cod_erros.end(), e.getExtraInfo())==vet_cod_erros.end()))
+        throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_FALHAEXPORTACAO).arg(QString::fromUtf8(cmd_sql)),
                       ERR_PGMODELERUI_FALHAEXPORTACAO,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
        else
         vet_erros.push_back(e);
@@ -332,7 +332,7 @@ void FormExportacao::exportarModelo(void)
     prog_tarefa->close();
     disconnect(this->modelo_wgt->modelo, NULL, prog_tarefa, NULL);
    }
-   catch(Excecao &e)
+   catch(Exception &e)
    {
     QString drop_cmd=QString("DROP %1 %2;");
 
@@ -366,7 +366,7 @@ void FormExportacao::exportarModelo(void)
                                     .arg(objeto->obterNomeSQLObjeto())
                                     .arg(objeto->obterNome(true)));
        }
-       catch(Excecao &e)
+       catch(Exception &e)
        {}
 
        idx_objs[id_tipo]--;
@@ -375,11 +375,11 @@ void FormExportacao::exportarModelo(void)
     }
 
     if(vet_erros.empty())
-     throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
     else
     {
      vet_erros.push_back(e);
-     throw Excecao(e.obterMensagemErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, vet_erros);
+     throw Exception(e.getErrorMessage(),__PRETTY_FUNCTION__,__FILE__,__LINE__, vet_erros);
     }
    }
   }
@@ -394,7 +394,7 @@ void FormExportacao::exportarModelo(void)
   //Oculta os widgets de progresso após 10 segundos
   QTimer::singleShot(5000, this, SLOT(ocultarProgressoExportacao(void)));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Exibe no progresso a mensagem de falha
   rot_prog_lbl->setText(trUtf8("Error on export!"));

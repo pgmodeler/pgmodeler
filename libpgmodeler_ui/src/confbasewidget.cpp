@@ -60,17 +60,17 @@ void ConfBaseWidget::salvarConfiguracao(const QString &id_conf)
 
   //Caso não consiga abrir o arquivo para gravação
   if(!saida.isOpen())
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ARQNAOGRAVADO).arg(QString::fromUtf8(nome_arq)),
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ARQNAOGRAVADO).arg(QString::fromUtf8(nome_arq)),
                  ERR_PGMODELER_ARQNAOGRAVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Grava o buffer gerado no arquivo
   saida.write(buf.toStdString().c_str(), buf.size());
   saida.close();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   if(saida.isOpen()) saida.close();
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ARQNAOGRAVADODEFINV).arg(QString::fromUtf8(nome_arq)),
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ARQNAOGRAVADODEFINV).arg(QString::fromUtf8(nome_arq)),
                 ERR_PGMODELER_ARQNAOGRAVADODEFINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
@@ -95,7 +95,7 @@ void ConfBaseWidget::restaurarPadroes(const QString &id_conf)
 
  //Verifica a existência do arquivo padrão, caso não existe emite uma exceção e a restauração é abortada
  if(!QFile::exists(arq_orig))
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_CONFPADRAONAORESTAURADA).arg(QString::fromUtf8(arq_orig)),
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_CONFPADRAONAORESTAURADA).arg(QString::fromUtf8(arq_orig)),
                 ERR_PGMODELERUI_CONFPADRAONAORESTAURADA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -157,10 +157,10 @@ void ConfBaseWidget::carregarConfiguracao(const QString &id_conf, const vector<Q
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

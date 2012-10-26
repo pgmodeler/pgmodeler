@@ -34,7 +34,7 @@ void ElementoIndice::definirClasseOperadores(ClasseOperadores *classe_oper)
 void ElementoIndice::definirAtributo(unsigned id_atrib, bool valor)
 {
  if(id_atrib > NULOS_PRIMEIRO)
-  throw Excecao(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  
  atrib_elemento[id_atrib]=valor;
 }
@@ -42,7 +42,7 @@ void ElementoIndice::definirAtributo(unsigned id_atrib, bool valor)
 bool ElementoIndice::obterAtributo(unsigned id_atrib)
 {
  if(id_atrib > NULOS_PRIMEIRO)
-  throw Excecao(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  
  return(atrib_elemento[id_atrib]);
 }

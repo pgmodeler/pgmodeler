@@ -68,7 +68,7 @@ void PapelWidget::configurarSelecaoPapeis(void)
 
  /* Desconecta todos os sinais-slots das tabelas de membros
     isso evita que o método de selecionar papel membro seja
-    executado várias vezes por estar conectad� s três
+    executado várias vezes por estar conectad� s três
     instâncias das tabelas de membros */
  for(i=0; i < 3; i++)
   disconnect(tab_membros[i],0,this,0);
@@ -161,7 +161,7 @@ void PapelWidget::exibirDadosPapel(Papel *papel, unsigned idx_tabela, unsigned l
            tipo_papeis[3]={ Papel::PAPEL_REF, Papel::PAPEL_MEMBRO, Papel::PAPEL_ADMIN };
 
   if(idx_tabela > 3)
-   throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Atribui como dado da linha a referência ao papel membro, para tanto é necessário
      converter a referência para void * pois é a única forma de ponteiro que
@@ -269,7 +269,7 @@ void PapelWidget::exibirDadosPapelSelecionado(void)
     a ele mesmo */
  if(obj_sel && obj_sel==this->objeto)
  {
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFREDUNDANTEPAPEIS)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFREDUNDANTEPAPEIS)
                                .arg(QString::fromUtf8(obj_sel->obterNome()))
                                .arg(QString::fromUtf8(nome_edt->text())),
                  ERR_PGMODELER_REFREDUNDANTEPAPEIS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -290,7 +290,7 @@ void PapelWidget::exibirDadosPapelSelecionado(void)
      pois o mesmo objeto não pode aparecer mais de uma vez na mesma tabela */
   if(obj_sel && idx_lin >= 0)
   {
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_INSITEMPAPELDUPLIC)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_INSITEMPAPELDUPLIC)
                                .arg(QString::fromUtf8(obj_sel->obterNome()))
                                .arg(QString::fromUtf8(nome_edt->text())),
                  ERR_PGMODELER_INSITEMPAPELDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -347,10 +347,10 @@ void PapelWidget::aplicarConfiguracao(void)
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   cancelarConfiguracao();
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

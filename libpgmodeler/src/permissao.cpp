@@ -9,9 +9,9 @@ Permissao::Permissao(ObjetoBase *objeto)
  for(id_priv=PRIV_SELECT; id_priv<=PRIV_USAGE; id_priv++)
   privilegios[id_priv]=op_concessao[id_priv]=false;
 
- //Caso o usuário tente atribuir um objeto não alocd �  permissão
+ //Caso o usuário tente atribuir um objeto não alocd �  permissão
  if(!objeto)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o tipo do objeto
  tipo_obj=objeto->obterTipoObjeto();
@@ -22,7 +22,7 @@ Permissao::Permissao(ObjetoBase *objeto)
     tipo_obj!=OBJETO_SEQUENCIA && tipo_obj!=OBJETO_BANCO_DADOS && tipo_obj!=OBJETO_FUNCAO &&
     tipo_obj!=OBJETO_FUNC_AGREGACAO && tipo_obj!=OBJETO_LINGUAGEM && tipo_obj!=OBJETO_ESQUEMA &&
     tipo_obj!=OBJETO_ESPACO_TABELA)
-  throw Excecao(ERR_PGMODELER_ATROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Atribui o objeto   permissão
  this->objeto=objeto;
@@ -42,7 +42,7 @@ bool Permissao::papelReferenciado(Papel *papel)
  vector<Papel *>::iterator itr, itr_end;
  bool enc=false;
 
- //Verifica a existencia do papel na lista de papeis já relacionado�  permissão
+ //Verifica a existencia do papel na lista de papeis já relacionado�  permissão
  itr=papeis.begin();
  itr_end=papeis.end();
 
@@ -59,11 +59,11 @@ void Permissao::adicionarPapel(Papel *papel)
 {
  //Caso o usuário tente atribuir um papel não alocado um erro será disparado
  if(!papel)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso o papel já esteja inserido em tal lista um erro será disparado
  if(papelReferenciado(papel))
-   throw Excecao(ERR_PGMODELER_INSPAPELDUPLICPERM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_INSPAPELDUPLICPERM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Adiciona o papel   lista de papeis da permissão
  papeis.push_back(papel);
@@ -76,7 +76,7 @@ void Permissao::definirPrivilegio(unsigned privilegio, bool valor, bool op_conce
 
  //Caso o tipo de privilégio sejá inválido dispara uma exceção
  if(privilegio > PRIV_USAGE)
-  throw Excecao(ERR_PGMODELER_REFPRIVLEGIOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFPRIVLEGIOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  tipo_obj=objeto->obterTipoObjeto();
 
@@ -123,7 +123,7 @@ void Permissao::definirPrivilegio(unsigned privilegio, bool valor, bool op_conce
     (tipo_obj==OBJETO_VISAO && privilegio!=PRIV_SELECT))
    /* Caso o privilégio a ser atribuído ao objeto seja incompatível com seu tipo
       um erro será retornado ao usuário */
-   throw Excecao(ERR_PGMODELER_ATRPRIVILEGIOOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATRPRIVILEGIOOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Marca o privilégio com o valor passado
  privilegios[privilegio]=valor;
@@ -133,7 +133,7 @@ void Permissao::definirPrivilegio(unsigned privilegio, bool valor, bool op_conce
 void Permissao::removerPapel(unsigned idx_papel)
 {
  if(idx_papel > papeis.size())
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  gerarIdPermissao();
 }
@@ -147,7 +147,7 @@ void Permissao::removerPapeis(void)
 Papel *Permissao::obterPapel(unsigned idx_papel)
 {
  if(idx_papel > papeis.size())
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(papeis[idx_papel]);
 }
@@ -166,7 +166,7 @@ bool Permissao::obterPrivilegio(unsigned privilegio)
 {
  //Caso o tipo de privilégio sejá inválido dispara uma exceção
  if(privilegio > PRIV_USAGE)
-  throw Excecao(ERR_PGMODELER_REFPRIVLEGIOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFPRIVLEGIOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(privilegios[privilegio]);
 }
@@ -175,7 +175,7 @@ bool Permissao::obterOpConcessao(unsigned privilegio)
 {
  //Caso o tipo de privilégio sejá inválido dispara uma exceção
  if(privilegio > PRIV_USAGE)
-  throw Excecao(ERR_PGMODELER_REFPRIVLEGIOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFPRIVLEGIOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(op_concessao[privilegio]);
 }

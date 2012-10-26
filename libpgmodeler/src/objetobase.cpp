@@ -293,7 +293,7 @@ void ObjetoBase::definirNome(const QString &nome)
  /* Caso se tente atribuir um nome vazio ao objeto
     é disparada uma exceção */
  if(nome.isEmpty())
-  throw Excecao(ERR_PGMODELER_ATRNOMEOBJVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRNOMEOBJVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   int qtd;
@@ -304,7 +304,7 @@ void ObjetoBase::definirNome(const QString &nome)
 
   //Caso o nome não seja válido dispara uma exceção
   if(!nomeValido(nome_aux))
-   throw Excecao(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
    nome_aux.remove('\"');
@@ -321,11 +321,11 @@ void ObjetoBase::definirComentario(const QString &comentario)
 void ObjetoBase::definirEsquema(ObjetoBase *esquema)
 {
  if(!esquema)
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRESQNAOALOC)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRESQNAOALOC)
                 .arg(QString::fromUtf8(this->nome)).arg(this->obterNomeTipoObjeto()),
                 ERR_PGMODELER_ATRESQNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(esquema && esquema->obterTipoObjeto()!=OBJETO_ESQUEMA)
-  throw Excecao(ERR_PGMODELER_ATRESQTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRESQTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   if(tipo_objeto==OBJETO_FUNCAO || tipo_objeto==OBJETO_TABELA ||
@@ -338,14 +338,14 @@ void ObjetoBase::definirEsquema(ObjetoBase *esquema)
    this->esquema=esquema;
   }
   else
-   throw Excecao(ERR_PGMODELER_ATRESQTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATRESQTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
 
 void ObjetoBase::definirDono(ObjetoBase *dono)
 {
  if(dono && dono->obterTipoObjeto()!=OBJETO_PAPEL)
-  throw Excecao(ERR_PGMODELER_ATRPAPELTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRPAPELTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   if(tipo_objeto==OBJETO_FUNCAO || tipo_objeto==OBJETO_TABELA ||
@@ -359,14 +359,14 @@ void ObjetoBase::definirDono(ObjetoBase *dono)
    this->dono=dono;
   }
   else
-   throw Excecao(ERR_PGMODELER_ATRDONOOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATRDONOOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
 
 void ObjetoBase::definirEspacoTabela(ObjetoBase *espacotabela)
 {
  if(espacotabela && espacotabela->obterTipoObjeto()!=OBJETO_ESPACO_TABELA)
-  throw Excecao(ERR_PGMODELER_ATRESPTABTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRESPTABTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   if(tipo_objeto==OBJETO_INDICE ||
@@ -377,7 +377,7 @@ void ObjetoBase::definirEspacoTabela(ObjetoBase *espacotabela)
    this->espacotabela=espacotabela;
   }
   else
-   throw Excecao(ERR_PGMODELER_ATRESPTABOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATRESPTABOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
 
@@ -629,11 +629,11 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 
    limparAtributos();
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
    ParserEsquema::reiniciarParser();
    limparAtributos();
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
  }
 

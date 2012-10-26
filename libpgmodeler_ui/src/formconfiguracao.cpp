@@ -48,7 +48,7 @@ void FormConfiguracao::close(void)
    conf_conexoes->carregarConfiguracao();
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {}
 
  QDialog::close();
@@ -71,9 +71,9 @@ void FormConfiguracao::carregarConfiguracao(void)
   conf_aparencia->carregarConfiguracao();
   conf_conexoes->carregarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(ERR_PGMODELERUI_CONFNAOCARREGADA,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(ERR_PGMODELERUI_CONFNAOCARREGADA,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

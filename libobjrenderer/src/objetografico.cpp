@@ -235,9 +235,9 @@ void ObjetoGrafico::carregarEstiloObjetos(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(), __PRETTY_FUNCTION__, __FILE__, __LINE__, &e);
  }
 }
 

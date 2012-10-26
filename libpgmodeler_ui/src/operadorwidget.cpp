@@ -63,10 +63,10 @@ OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO
   janela_pai->setMinimumHeight(560);
   janela_pai->setMaximumHeight(560);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -137,10 +137,10 @@ void OperadorWidget::aplicarConfiguracao(void)
   Operador *operador=NULL;
   iniciarConfiguracao<Operador>();
 
-  //Obtém a referêni �  sequência que está sendo editada/criada
+  //Obtém a referêni �  sequência que está sendo editada/criada
   operador=dynamic_cast<Operador *>(this->objeto);
 
-  /* Atribui os valores configurados no formulári�  instância do
+  /* Atribui os valores configurados no formulári�  instância do
      operador que está sendo configurado */
   operador->definirHashes(hashes_chk->isChecked());
   operador->definirMerges(merges_chk->isChecked());
@@ -161,13 +161,13 @@ void OperadorWidget::aplicarConfiguracao(void)
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
   cancelarConfiguracao();
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

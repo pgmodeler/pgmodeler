@@ -22,7 +22,7 @@ void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
      é disparada uma exceção, pois um tipo de dado nulo não deve participar
      de uma conversão */
   if((*tipo_dado)=="")
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRTIPONULO)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRTIPONULO)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
                  ERR_PGMODELER_ATRTIPONULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -34,7 +34,7 @@ void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
  else
   /* Caso o índice usado para referenciar o tipo de dado seja inválido
      é disparada um exceção */
-  throw Excecao(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->nome=QString("cast(%1,%2)").arg(~tipos[CONV_TIPO_ORIGEM]).arg(~tipos[CONV_TIPO_DESTINO]);
 }
@@ -44,7 +44,7 @@ void ConversaoTipo::definirTipoConversao(unsigned tipo)
  /* Caso se tente atribuir um tipo inválido de conversão
     uma exceção será disparada */
  if(tipo!=CONV_ATRIBUICAO && tipo!=CONV_IMPLICITA)
-  throw Excecao(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->tipo=tipo;
 }
@@ -60,7 +60,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  bool erro=false;
 
  if(!funcao_conv)
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNAOALOC)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNAOALOC)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
                 ERR_PGMODELER_ATRFUNCNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -70,7 +70,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
 
  //A função deve possuir número de parâmetros de 1 a 3
  if(qtd_param==0 || qtd_param > 3)
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
                 ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -90,7 +90,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
 
   //Caso alguma das validações acima falhe dispara-se uma exceção
   if(erro)
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCPARAMINV)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCPARAMINV)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
                  ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -98,7 +98,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
 
  //Verifica se o tipo de retorno da função é diferente do tipo de destino da conversão
  if(funcao_conv->obterTipoRetorno()!=this->tipos[CONV_TIPO_DESTINO])
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRFUNCRETINV)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCRETINV)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
                 ERR_PGMODELER_ATRFUNCRETINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -114,7 +114,7 @@ TipoPgSQL ConversaoTipo::obterTipoDado(unsigned idx_tipo)
   return(this->tipos[idx_tipo]);
  else
   //Caso o índice usado seja inválido, dispare-se uma exceção
-  throw Excecao(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 bool ConversaoTipo::obterEntradaSaida(void)

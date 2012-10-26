@@ -51,7 +51,7 @@ void ModeloBD::definirLimiteConexao(int lim_conexao)
 void ModeloBD::definirBDModelo(const QString &bd_modelo)
 {
  if(!bd_modelo.isEmpty() && !ObjetoBase::nomeValido(bd_modelo))
-  throw Excecao(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->bd_modelo=bd_modelo;
 }
@@ -129,18 +129,18 @@ QString ModeloBD::validarDefinicaoObjeto(ObjetoBase *objeto, unsigned tipo_def)
    else
     def_obj=objeto->obterDefinicaoObjeto(tipo_def);
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
    /* Caso o código do erro seja de atributo obrigatório não preenchido,
       indica que a def. SQL não é válida */
-   if(e.obterTipoErro()==ERR_PARSERS_ATRIBVALORNULO)
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDEFSQLINV)
+   if(e.getErrorType()==ERR_PARSERS_ATRIBVALORNULO)
+    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDEFSQLINV)
                            .arg(QString::fromUtf8(objeto->obterNome(true)))
                            .arg(objeto->obterNomeTipoObjeto()),
                   ERR_PGMODELER_ATROBJDEFSQLINV,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
    else
     //Caso o parser dispare os demais erros, apenas redireciona o erro
-    throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
  }
 
@@ -197,9 +197,9 @@ void ModeloBD::adicionarObjeto(ObjetoBase *objeto, int idx_obj)
    else if(tipo_obj==OBJETO_PERMISSAO)
     adicionarPermissao(dynamic_cast<Permissao *>(objeto));
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
  }
 }
@@ -255,9 +255,9 @@ void ModeloBD::removerObjeto(ObjetoBase *objeto, int idx_obj)
    else if(tipo_obj==OBJETO_PERMISSAO)
     removerPermissao(dynamic_cast<Permissao *>(objeto));
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
  }
 }
@@ -270,7 +270,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
     tipo_obj==OBJETO_BASE || tipo_obj==OBJETO_RELACAO_BASE ||
     tipo_obj==OBJETO_BANCO_DADOS)
   //Caso o tipo esteja fora do conjunto, dispara uma exceção
-  throw Excecao(ERR_PGMODELER_REMOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REMOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso o objeto a ser removido seja uma tabela pai e seu índice seja válido
  else
@@ -280,7 +280,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
 
   lista_obj=obterListaObjetos(tipo_obj);
   if(idx_obj >= lista_obj->size())
-   throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   objeto=(*lista_obj)[idx_obj];
   if(tipo_obj==OBJETO_CAIXA_TEXTO)
@@ -332,7 +332,7 @@ void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
  vector<ObjetoBase *>::iterator itr, itr_end;
 
  if(!objeto)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
  tipo_obj=objeto->obterTipoObjeto();
@@ -356,7 +356,7 @@ void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
    //Caso o diretório dos mesmos sejam iguais um erro é disparado
    if(esp_tab->obterDiretorio()==esp_tab_aux->obterDiretorio())
    {
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRESPTABDIRDUPLIC)
+    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRESPTABDIRDUPLIC)
                          .arg(QString::fromUtf8(esp_tab->obterNome()))
                          .arg(esp_tab_aux->obterNome()),
                   ERR_PGMODELER_ATRESPTABDIRDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -373,13 +373,13 @@ void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
  {
   QString str_aux;
 
-  str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDUPLIC))
+  str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDUPLIC))
           .arg(objeto->obterNome(true))
           .arg(objeto->obterNomeTipoObjeto())
           .arg(this->obterNome(true))
           .arg(this->obterNomeTipoObjeto());
 
-  throw Excecao(str_aux,ERR_PGMODELER_ATROBJDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(str_aux,ERR_PGMODELER_ATROBJDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  try
@@ -387,9 +387,9 @@ void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
   //Valida a definição sql do objeto
   ModeloBD::validarDefinicaoObjeto(objeto, ParserEsquema::DEFINICAO_SQL);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 
  //Obtém a lista de objetos do tipo do novo objeto
@@ -419,7 +419,7 @@ void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
 void ModeloBD::__removerObjeto(ObjetoBase *objeto, int idx_obj)
 {
  if(!objeto)
-  throw Excecao(ERR_PGMODELER_REMOBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REMOBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   vector<ObjetoBase *> *lista_obj=NULL;
@@ -430,7 +430,7 @@ void ModeloBD::__removerObjeto(ObjetoBase *objeto, int idx_obj)
   //Obtém a lista de acordo com o tipo do objeto
   lista_obj=obterListaObjetos(tipo_obj);
   if(!lista_obj)
-   throw Excecao(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
    //Caso o índice do objeto não foi especificado o método tenta descobrí-lo
@@ -469,7 +469,7 @@ vector<ObjetoBase *> ModeloBD::obterObjetos(TipoObjetoBase tipo_obj, ObjetoBase 
  /* Caso a lista não exista indica que foi passado um tipo inválido
     de objeto, dessa forma será retornado um erro */
  if(!lista_obj)
-  throw Excecao(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=lista_obj->begin();
  itr_end=lista_obj->end();
@@ -499,7 +499,7 @@ ObjetoBase *ModeloBD::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, 
  /* Caso a lista não exista indica que foi passado um tipo inválido
     de objeto, dessa forma será retornado um erro */
  if(!lista_obj)
-  throw Excecao(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   //Obtém as referências para o inicio e o fim da lista
@@ -567,11 +567,11 @@ ObjetoBase *ModeloBD::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
  /* Caso a lista não exista indica que foi passado um tipo inválido
     de objeto, dessa forma será retornado um erro */
  if(!lista_obj)
-  throw Excecao(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Caso o índice do objeto a ser obtido esteja fora do
     intervalo de elementos da lista */
  else if(idx_obj >= lista_obj->size())
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   return(lista_obj->at(idx_obj));
 }
@@ -586,7 +586,7 @@ unsigned ModeloBD::obterNumObjetos(TipoObjetoBase tipo_obj)
  /* Caso a lista não exista indica que foi passado um tipo inválido
     de objeto, dessa forma será retornado um erro */
  if(!lista_obj)
-  throw Excecao(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   return(lista_obj->size());
 }
@@ -720,13 +720,13 @@ void ModeloBD::adicionarTabela(Tabela *tabela, int idx_obj)
  {
   __adicionarObjeto(tabela, idx_obj);
   /* Ao ser inserido uma nova tabela a mesma tem
-   seu nome é adicionad�  lista de tipos válidos
+   seu nome é adicionad�  lista de tipos válidos
    do PostgreSQL */
   TipoPgSQL::adicionarTipoUsuario(tabela->obterNome(true), tabela, this, ConfigTipoUsuario::TIPO_TABELA);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -742,20 +742,20 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
   vector<ObjetoBase *> vet_refs;
   QString str_aux;
 
-  //Obtém as referênca �  tabela
+  //Obtém as referênca �  tabela
   obterReferenciasObjeto(tabela, vet_refs, true);
 
   //Caso a tabela esteja sendo referenciada, a mesma não pode ser removida
   if(!vet_refs.empty())
   {
-   TipoErro tipo_err;
+   ErrorType tipo_err;
 
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
        do objeto referenciado */
     if(!dynamic_cast<ObjetoTabela *>(vet_refs[0]))
     {
      tipo_err=ERR_PGMODELER_REMOBJREFERDIR;
-     str_aux=QString(Excecao::obterMensagemErro(tipo_err))
+     str_aux=QString(Exception::getErrorMessage(tipo_err))
              .arg(tabela->obterNome(true))
              .arg(tabela->obterNomeTipoObjeto())
              .arg(vet_refs[0]->obterNome(true))
@@ -767,7 +767,7 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
 
      //Formata a mensagem caso exista uma referência indireta ao objeto a ser removido
      tipo_err=ERR_PGMODELER_REMOBJREFERIND;
-     str_aux=QString(Excecao::obterMensagemErro(tipo_err))
+     str_aux=QString(Exception::getErrorMessage(tipo_err))
              .arg(tabela->obterNome(true))
              .arg(tabela->obterNomeTipoObjeto())
              .arg(vet_refs[0]->obterNome(true))
@@ -776,7 +776,7 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
              .arg(obj_ref_pai->obterNomeTipoObjeto());
     }
 
-    throw Excecao(str_aux, tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(str_aux, tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
   removerTipoUsuario(tabela, idx_obj);
@@ -795,13 +795,13 @@ void ModeloBD::adicionarSequencia(Sequencia *sequencia, int idx_obj)
  {
   __adicionarObjeto(sequencia, idx_obj);
   /* Ao ser inserido uma nova sequencia a mesma tem
-   seu nome é adicionad�  lista de tipos válidos
+   seu nome é adicionad�  lista de tipos válidos
    do PostgreSQL */
   TipoPgSQL::adicionarTipoUsuario(sequencia->obterNome(true), sequencia, this, ConfigTipoUsuario::TIPO_SEQUENCIA);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -831,9 +831,9 @@ void ModeloBD::adicionarVisao(Visao *visao, int idx_obj)
    __adicionarObjeto(visao, idx_obj);
    atualizarRelTabelaVisao(visao);
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
  }
 }
@@ -861,7 +861,7 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
  vector<ObjetoBase *>::iterator itr, itr_end;
 
  if(!visao)
-  throw Excecao(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(obterIndiceObjeto(visao) < 0)
  {
   /* Quando uma visão é excluída, os relacionamentos tabela-visão os quais
@@ -988,9 +988,9 @@ void ModeloBD::desconectarRelacionamentos(void)
     rel_base->desconectarRelacionamento();
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1002,10 +1002,10 @@ void ModeloBD::validarRelacionamentos(void)
  RelacionamentoBase *rel_base=NULL;
  vector<ObjetoBase *> vet_rel, vet_rel_inv, rels;
  bool enc_rel_inv;
- vector<Excecao> vet_erros;
+ vector<Exception> vet_erros;
  map<unsigned, QString>::iterator itr1, itr1_end;
- map<unsigned, Excecao> mapa_erros;
- map<unsigned, Excecao>::iterator itr2, itr2_end;
+ map<unsigned, Exception> mapa_erros;
+ map<unsigned, Exception>::iterator itr2, itr2_end;
  unsigned idx;
 
  //Obtém os iterador para varredura inicial na lista global de relacionamentos
@@ -1090,7 +1090,7 @@ void ModeloBD::validarRelacionamentos(void)
     /* Caso um erro seja disparado durante a conexão do relacionamento o
        mesmo é considerado inválido permanentemente sendo necessário
        sua remoção do modelo */
-    catch(Excecao &e)
+    catch(Exception &e)
     {
      /* Remove o relacionamento chamando o método de remoção
         de objetos se verificação */
@@ -1160,7 +1160,7 @@ void ModeloBD::validarRelacionamentos(void)
       itr1=xml_objs_especiais.begin();
       itr1_end=xml_objs_especiais.end();
      }
-     catch(Excecao &e)
+     catch(Exception &e)
      {
       /* Caso uma exceção for caputarada na criação do objeto especial
          armazena o erro no mapa de erros sendo que a chave do mapa
@@ -1198,7 +1198,7 @@ void ModeloBD::validarRelacionamentos(void)
     método de recriação dos objetos especiais */
   xml_objs_especiais.clear();
 
-  throw Excecao(ERR_PGMODELER_REFCOLUNAINVTABELA,__PRETTY_FUNCTION__,__FILE__,__LINE__,vet_erros);
+  throw Exception(ERR_PGMODELER_REFCOLUNAINVTABELA,__PRETTY_FUNCTION__,__FILE__,__LINE__,vet_erros);
  }
 }
 
@@ -1212,7 +1212,7 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
      de relacionamentos a partir de um relacionamento
      não alocado */
   if(!rel)
-   throw Excecao(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   tipo_rel=rel->obterTipoRelacionamento();
 
@@ -1291,16 +1291,16 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
    if(ciclo_enc)
    {
     str_aux+=rel->obterNome();
-    msg=Excecao::obterMensagemErro(ERR_PGMODELER_INSRELGERAREDUNDANCIA)
+    msg=Exception::getErrorMessage(ERR_PGMODELER_INSRELGERAREDUNDANCIA)
         .arg(rel->obterNome())
         .arg(str_aux);
-    throw Excecao(msg,ERR_PGMODELER_INSRELGERAREDUNDANCIA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(msg,ERR_PGMODELER_INSRELGERAREDUNDANCIA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1489,9 +1489,9 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
    }
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1531,9 +1531,9 @@ void ModeloBD::criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj)
   if(objeto && id_obj!=0)
    objeto->id_objeto=id_obj;
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, def_xml_obj);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, def_xml_obj);
  }
 }
 
@@ -1557,12 +1557,12 @@ void ModeloBD::adicionarRelacionamento(RelacionamentoBase *relacao, int idx_obj)
    if(obterRelacionamento(tab1,tab2))
    {
     //__removerObjeto(relacao);
-    msg=Excecao::obterMensagemErro(ERR_PGMODELER_RELEXISTEMODELO)
+    msg=Exception::getErrorMessage(ERR_PGMODELER_RELEXISTEMODELO)
         .arg(tab1->obterNomeTipoObjeto())
         .arg(tab1->obterNome(true))
         .arg(tab2->obterNomeTipoObjeto())
         .arg(tab2->obterNome(true));
-    throw Excecao(msg,ERR_PGMODELER_RELEXISTEMODELO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(msg,ERR_PGMODELER_RELEXISTEMODELO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
   }
 
@@ -1583,9 +1583,9 @@ void ModeloBD::adicionarRelacionamento(RelacionamentoBase *relacao, int idx_obj)
   else
    relacao->conectarRelacionamento();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1613,9 +1613,9 @@ void ModeloBD::removerRelacionamento(RelacionamentoBase *relacao, int idx_obj)
    }
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1623,7 +1623,7 @@ RelacionamentoBase *ModeloBD::obterRelacionamento(unsigned idx_obj, TipoObjetoBa
 {
  //Caso o tipo de relacionamento seja inválido
  if(tipo_rel!=OBJETO_RELACAO && tipo_rel!=OBJETO_RELACAO_BASE)
-  throw Excecao(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(dynamic_cast<RelacionamentoBase *>(obterObjeto(idx_obj, tipo_rel)));
 }
@@ -1693,9 +1693,9 @@ void ModeloBD::adicionarCaixaTexto(CaixaTexto *caixa, int idx_obj)
  {
   __adicionarObjeto(caixa, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1715,9 +1715,9 @@ void ModeloBD::adicionarEsquema(Esquema *esquema, int idx_obj)
  {
   __adicionarObjeto(esquema, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1742,7 +1742,7 @@ void ModeloBD::removerEsquema(Esquema *esquema, int idx_obj)
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
 
-   throw Excecao(QString(Excecao::obterMensagemErro(ERR_PGMODELER_REMOBJREFERDIR))
+   throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELER_REMOBJREFERDIR))
                  .arg(esquema->obterNome(true))
                  .arg(esquema->obterNomeTipoObjeto())
                  .arg(vet_refs[0]->obterNome(true))
@@ -1760,9 +1760,9 @@ void ModeloBD::adicionarPapel(Papel *papel, int idx_obj)
  {
   __adicionarObjeto(papel, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1786,7 +1786,7 @@ void ModeloBD::removerPapel(Papel *papel, int idx_obj)
   {
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
-   throw Excecao(QString(Excecao::obterMensagemErro(ERR_PGMODELER_REMOBJREFERDIR))
+   throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELER_REMOBJREFERDIR))
                  .arg(papel->obterNome(true))
                  .arg(papel->obterNomeTipoObjeto())
                  .arg(vet_refs[0]->obterNome(true))
@@ -1804,9 +1804,9 @@ void ModeloBD::adicionarEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
  {
   __adicionarObjeto(espaco_tab, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1829,7 +1829,7 @@ void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
      mesma não pode ser removida */
   if(!vet_refs.empty())
   {
-   TipoErro tipo_err;
+   ErrorType tipo_err;
 
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
@@ -1837,7 +1837,7 @@ void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
    {
     //Formata a mensagem para referencia direta
     tipo_err=ERR_PGMODELER_REMOBJREFERDIR;
-    str_aux=QString(Excecao::obterMensagemErro(tipo_err))
+    str_aux=QString(Exception::getErrorMessage(tipo_err))
             .arg(espaco_tab->obterNome(true))
             .arg(espaco_tab->obterNomeTipoObjeto())
             .arg(vet_refs[0]->obterNome(true))
@@ -1848,7 +1848,7 @@ void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
     ObjetoBase *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
     //Formata a mensagem para referencia indireta
     tipo_err=ERR_PGMODELER_REMOBJREFERIND;
-    str_aux=QString(Excecao::obterMensagemErro(tipo_err))
+    str_aux=QString(Exception::getErrorMessage(tipo_err))
             .arg(espaco_tab->obterNome(true))
             .arg(espaco_tab->obterNomeTipoObjeto())
             .arg(vet_refs[0]->obterNome(true))
@@ -1858,7 +1858,7 @@ void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
 
    }
 
-   throw Excecao(str_aux,tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(str_aux,tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
   __removerObjeto(espaco_tab, idx_obj);
@@ -1871,9 +1871,9 @@ void ModeloBD::adicionarConversaoTipo(ConversaoTipo *conv_tipo, int idx_obj)
  {
   __adicionarObjeto(conv_tipo, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1893,9 +1893,9 @@ void ModeloBD::adicionarConversaoCodificacao(ConversaoCodificacao *conv_codifica
  {
   __adicionarObjeto(conv_codificacao, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1916,9 +1916,9 @@ void ModeloBD::adicionarLinguagem(Linguagem *linguagem, int idx_obj)
  {
   __adicionarObjeto(linguagem, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1933,7 +1933,7 @@ void ModeloBD::removerLinguagem(Linguagem *linguagem, int idx_obj)
  {
   vector<ObjetoBase *> vet_refs;
 
-  //Obtém as referênca �  linguagem
+  //Obtém as referênca �  linguagem
   obterReferenciasObjeto(linguagem, vet_refs, true);
 
  /* Caso a linguagem esteja sendo referenciado, por algum objeto a
@@ -1942,7 +1942,7 @@ void ModeloBD::removerLinguagem(Linguagem *linguagem, int idx_obj)
   {
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
-   throw Excecao(QString(Excecao::obterMensagemErro(ERR_PGMODELER_REMOBJREFERDIR))
+   throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELER_REMOBJREFERDIR))
                  .arg(linguagem->obterNome(true))
                  .arg(linguagem->obterNomeTipoObjeto())
                  .arg(dynamic_cast<Funcao *>(vet_refs[0])->obterAssinatura())
@@ -1960,9 +1960,9 @@ void ModeloBD::adicionarFuncao(Funcao *funcao, int idx_obj)
  {
   __adicionarObjeto(funcao, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -1978,14 +1978,14 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
   vector<ObjetoBase *> vet_refs;
   QString str_aux;
 
-  //Obtém as referênca �  função
+  //Obtém as referênca �  função
   obterReferenciasObjeto(funcao, vet_refs, true);
 
  /* Caso a função esteja sendo referenciado, por algum objeto a
      mesma não pode ser removida */
   if(!vet_refs.empty())
   {
-   TipoErro tipo_err;
+   ErrorType tipo_err;
 
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
@@ -1993,7 +1993,7 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
    {
     //Formata a mensagem para referência direta
     tipo_err=ERR_PGMODELER_REMOBJREFERDIR;
-    str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REMOBJREFERDIR))
+    str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REMOBJREFERDIR))
             .arg(funcao->obterAssinatura())
             .arg(funcao->obterNomeTipoObjeto())
             .arg(vet_refs[0]->obterNome(true))
@@ -2005,7 +2005,7 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
     ObjetoBase *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
     //Formata a mensagem para referência indireta
     tipo_err=ERR_PGMODELER_REMOBJREFERIND;
-    str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REMOBJREFERIND))
+    str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REMOBJREFERIND))
             .arg(funcao->obterAssinatura())
             .arg(funcao->obterNomeTipoObjeto())
             .arg(vet_refs[0]->obterNome(true))
@@ -2015,7 +2015,7 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
 
    }
 
-   throw Excecao(str_aux,tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(str_aux,tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
   __removerObjeto(funcao, idx_obj);
@@ -2028,9 +2028,9 @@ void ModeloBD::adicionarFuncaoAgregacao(FuncaoAgregacao *func_agregacao, int idx
  {
   __adicionarObjeto(func_agregacao, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -2065,12 +2065,12 @@ void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
   //Caso exista um tipo de mesmo nome que o domínio dispara o erro
   if(enc)
   {
-   str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDUPLIC))
+   str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDUPLIC))
            .arg(dominio->obterNome(true))
            .arg(dominio->obterNomeTipoObjeto())
            .arg(this->obterNome(true))
            .arg(this->obterNomeTipoObjeto());
-   throw Excecao(str_aux, ERR_PGMODELER_ATROBJDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(str_aux, ERR_PGMODELER_ATROBJDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
   try
@@ -2079,13 +2079,13 @@ void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
    __adicionarObjeto(dominio, idx_obj);
 
    /* Ao ser inserido um novo tipo o mesmo tem
-    seu nome é adicionad�  lista de tipos válidos
+    seu nome é adicionad�  lista de tipos válidos
     do PostgreSQL */
    TipoPgSQL::adicionarTipoUsuario(dominio->obterNome(true), dominio, this, ConfigTipoUsuario::TIPO_DOMINIO);
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
  }
 }
@@ -2096,9 +2096,9 @@ void ModeloBD::removerDominio(Dominio *dominio, int idx_obj)
  {
   removerTipoUsuario(dominio, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -2113,9 +2113,9 @@ void ModeloBD::adicionarFamiliaOperadores(FamiliaOperadores *familia_op, int idx
  {
   __adicionarObjeto(familia_op, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -2139,7 +2139,7 @@ void ModeloBD::removerFamiliaOperadores(FamiliaOperadores *familia_op, int idx_o
   {
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
-   throw Excecao(QString(Excecao::obterMensagemErro(ERR_PGMODELER_REMOBJREFERDIR))
+   throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELER_REMOBJREFERDIR))
                  .arg(familia_op->obterNome(true))
                  .arg(familia_op->obterNomeTipoObjeto())
                  .arg(vet_refs[0]->obterNome(true))
@@ -2157,9 +2157,9 @@ void ModeloBD::adicionarClasseOperadores(ClasseOperadores *classe_op, int idx_ob
  {
   __adicionarObjeto(classe_op, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -2179,9 +2179,9 @@ void ModeloBD::adicionarOperador(Operador *operador, int idx_obj)
  {
   __adicionarObjeto(operador, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -2201,7 +2201,7 @@ void ModeloBD::removerOperador(Operador *operador, int idx_obj)
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
    //Formata a mensagem para referência direta
-   throw Excecao(QString(Excecao::obterMensagemErro(ERR_PGMODELER_REMOBJREFERDIR))
+   throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELER_REMOBJREFERDIR))
                  .arg(operador->obterAssinatura(true))
                  .arg(operador->obterNomeTipoObjeto())
                  .arg(vet_refs[0]->obterNome(true))
@@ -2239,12 +2239,12 @@ void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
   //Caso exista um dominio de mesmo nome que o tipo dispara o erro
   if(enc)
   {
-   str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDUPLIC))
+   str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDUPLIC))
            .arg(tipo->obterNome(true))
            .arg(tipo->obterNomeTipoObjeto())
            .arg(this->obterNome(true))
            .arg(this->obterNomeTipoObjeto());
-   throw Excecao(str_aux, ERR_PGMODELER_ATROBJDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(str_aux, ERR_PGMODELER_ATROBJDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
   try
@@ -2253,13 +2253,13 @@ void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
    __adicionarObjeto(tipo, idx_obj);
 
    /* Ao ser inserido um novo tipo o mesmo tem
-    seu nome é adicionad�  lista de tipos válidos
+    seu nome é adicionad�  lista de tipos válidos
     do PostgreSQL */
    TipoPgSQL::adicionarTipoUsuario(tipo->obterNome(true), tipo, this, ConfigTipoUsuario::TIPO_BASE);
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
  }
 }
@@ -2270,9 +2270,9 @@ void ModeloBD::removerTipo(Tipo *tipo, int idx_obj)
  {
   removerTipoUsuario(tipo, idx_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -2295,7 +2295,7 @@ void ModeloBD::removerTipoUsuario(ObjetoBase *objeto, int idx_obj)
      mesmo não pode ser removida */
   if(!vet_refs.empty())
   {
-   TipoErro tipo_err;
+   ErrorType tipo_err;
 
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
@@ -2303,7 +2303,7 @@ void ModeloBD::removerTipoUsuario(ObjetoBase *objeto, int idx_obj)
    {
     //Formata a mensagem para referência direta
     tipo_err=ERR_PGMODELER_REMOBJREFERDIR;
-    str_aux=QString(Excecao::obterMensagemErro(tipo_err))
+    str_aux=QString(Exception::getErrorMessage(tipo_err))
             .arg(objeto->obterNome(true))
             .arg(objeto->obterNomeTipoObjeto())
             .arg(vet_refs[0]->obterNome(true))
@@ -2315,7 +2315,7 @@ void ModeloBD::removerTipoUsuario(ObjetoBase *objeto, int idx_obj)
 
     //Formata a mensagem para referência indireta
     tipo_err=ERR_PGMODELER_REMOBJREFERIND;
-    str_aux=QString(Excecao::obterMensagemErro(tipo_err))
+    str_aux=QString(Exception::getErrorMessage(tipo_err))
             .arg(objeto->obterNome(true))
             .arg(objeto->obterNomeTipoObjeto())
             .arg(vet_refs[0]->obterNome(true))
@@ -2324,7 +2324,7 @@ void ModeloBD::removerTipoUsuario(ObjetoBase *objeto, int idx_obj)
             .arg(obj_ref_pai->obterNomeTipoObjeto());
    }
 
-   throw Excecao(str_aux,tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(str_aux,tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
   __removerObjeto(objeto, idx_obj);
@@ -2339,14 +2339,14 @@ void ModeloBD::adicionarPermissao(Permissao *permissao)
  try
  {
   if(!permissao)
-   throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   if(obterIndicePermissao(permissao) >=0)
   {
   /* Caso haja uma permissão semelhante a que está sendo inserida, ou seja,
     o resultado da chamada ao metodo obterIndicePermissao() sejá >= 0,
     um erro será disparado */
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRPERMISSAODUPLIC)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRPERMISSAODUPLIC)
                 .arg(QString::fromUtf8(permissao->obterObjeto()->obterNome()))
                 .arg(permissao->obterObjeto()->obterNomeTipoObjeto()),
                 ERR_PGMODELER_ATRPERMISSAODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -2354,17 +2354,17 @@ void ModeloBD::adicionarPermissao(Permissao *permissao)
 
   permissoes.push_back(permissao);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  if(e.obterTipoErro()==ERR_PGMODELER_ATROBJDUPLIC)
+  if(e.getErrorType()==ERR_PGMODELER_ATROBJDUPLIC)
    throw
-   Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRPERMISSAODUPLIC)
+   Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRPERMISSAODUPLIC)
            .arg(QString::fromUtf8(permissao->obterObjeto()->obterNome()))
            .arg(permissao->obterObjeto()->obterNomeTipoObjeto()),
            ERR_PGMODELER_ATRPERMISSAODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 
   else
-   throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+   throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -2387,7 +2387,7 @@ void ModeloBD::removerPermissoes(ObjetoBase *objeto)
     esteja alocado um erro será disparado pois o usuário está
     tentando remover permissões de um objeto inexistente */
  if(!objeto)
-  throw Excecao(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=permissoes.begin();
  itr_end=permissoes.end();
@@ -2430,7 +2430,7 @@ void ModeloBD::obterPermissoes(ObjetoBase *objeto, vector<Permissao *> &vet_perm
     obtidas não esteja alocado um erro será disparado pois o
     usuário está tentando obter permissões de um objeto inexistente */
  if(!objeto)
-  throw Excecao(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=permissoes.begin();
  itr_end=permissoes.end();
@@ -2548,7 +2548,7 @@ int ModeloBD::obterIndiceObjeto(ObjetoBase *objeto)
   /* Caso a lista não exista indica que foi passado um tipo inválido
      de objeto, dessa forma será retornado um erro */
   if(!lista_obj)
-   throw Excecao(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_OBTOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
    //Obtém as referências para o inicio e o fim da lista
@@ -2585,7 +2585,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
   deque<const xmlNode *> objetos_incomp;
   bool reaval_objetos=false, modelo_protegido=false;
   const xmlNode *elem_aux=NULL;
-  deque<Excecao> vet_erros;
+  deque<Exception> vet_erros;
   map<unsigned, QString>::iterator itr, itr_end;
 
   /* Montando o caminho padrão para localização dos esquemas DTD.
@@ -2766,13 +2766,13 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
          //Restaura a posição do parser para o elemento anterior ao atual
          ParserXML::restaurarPosicao();
         }
-        catch(Excecao &e)
+        catch(Exception &e)
         {
          if(!reaval_objetos &&
-            (((e.obterTipoErro()==ERR_PGMODELER_REFOBJINEXISTE && tipo_obj==OBJETO_TABELA)) ||
-             (((e.obterTipoErro()==ERR_PGMODELER_ATROBJDEFSQLINV ||
-                e.obterTipoErro()==ERR_PGMODELER_REFOBJINEXISTE ||
-                e.obterTipoErro()==ERR_PGMODELER_ATRTIPOINVOBJ) &&
+            (((e.getErrorType()==ERR_PGMODELER_REFOBJINEXISTE && tipo_obj==OBJETO_TABELA)) ||
+             (((e.getErrorType()==ERR_PGMODELER_ATROBJDEFSQLINV ||
+                e.getErrorType()==ERR_PGMODELER_REFOBJINEXISTE ||
+                e.getErrorType()==ERR_PGMODELER_ATRTIPOINVOBJ) &&
                (tipo_obj==OBJETO_LINGUAGEM || tipo_obj==OBJETO_FUNCAO || tipo_obj==OBJETO_TIPO || tipo_obj==OBJETO_OPERADOR)))))
          {
           /* Adiciona o nó da arvore o qual possui o elemento incompleto
@@ -2786,7 +2786,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
          else
          {
           QString info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo()).arg(ParserXML::obterElementoAtual()->line);
-          throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+          throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
          }
         }
        }
@@ -2811,7 +2811,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
        {
         //Caso a lista esteja vazia o processo de reavaliação é interrompido
         reaval_objetos=false;
-        //O parser é retornad�  posição em que se encontrava antes da reavaliação
+        //O parser é retornad�  posição em que se encontrava antes da reavaliação
         ParserXML::restaurarPosicao(elem_aux);
        }
       }
@@ -2825,7 +2825,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
       de leitura do arquivo os mesmo serão redirecionados e o processo de leitura do arquivo
       cancelado */
    if(vet_erros.size() > 0)
-    throw Excecao(vet_erros[0].obterMensagemErro(),vet_erros[0].obterTipoErro(), __PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(vet_erros[0].getErrorMessage(),vet_erros[0].getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     //Protege o modelo com base no atributo obtido do xml
    this->ObjetoBase::definirProtegido(modelo_protegido);
@@ -2835,7 +2835,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
      não feitas durante o carregamento */
    this->validarRelacionamentos();
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
    QString info_adicional;
    carregando_modelo=false;
@@ -2845,14 +2845,14 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
     info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo()).arg(ParserXML::obterElementoAtual()->line);
 
    //Caso o erro seja na biblioteca de parsers
-   if(e.obterTipoErro()>=ERR_PARSERS_SINTAXEINV)
+   if(e.getErrorType()>=ERR_PARSERS_SINTAXEINV)
    {
-    str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_ARQMODELOINV)).arg(nome_arq);
-    throw Excecao(str_aux,ERR_PARSERS_ARQMODELOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+    str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_ARQMODELOINV)).arg(nome_arq);
+    throw Exception(str_aux,ERR_PARSERS_ARQMODELOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
    }
    else
     //Captura e redireciona erros das demais bibliotecas
-    throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
   }
  }
 }
@@ -2939,7 +2939,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
 
  //Caso o objeto não esteja alocado uma exceção é disparada
  if(!objeto)
-  throw Excecao(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém os atributos do elemento
  ParserXML::obterAtributosElemento(atributos);
@@ -3039,7 +3039,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
      está referenciando um outro objeto o qual não existe no modelo */
 
   //Dispara a exceção
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                    .arg(QString::fromUtf8(objeto->obterNome()))
                    .arg(objeto->obterNomeTipoObjeto())
                    .arg(QString::fromUtf8(atribs_aux[AtributosParsers::NOME]))
@@ -3055,7 +3055,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
           tipo_obj_aux==OBJETO_TIPO || tipo_obj_aux==OBJETO_FAMILIA_OPER ||
           tipo_obj_aux==OBJETO_CLASSE_OPER))
  {
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_OBJSEMESQUEMA)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_OBJSEMESQUEMA)
                         .arg(QString::fromUtf8(objeto->obterNome()))
                         .arg(objeto->obterNomeTipoObjeto()),
           ERR_PGMODELER_OBJSEMESQUEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -3109,7 +3109,7 @@ Papel *ModeloBD::criarPapel(void)
   if(!atributos[AtributosParsers::LIMITE_CONEXAO].isEmpty())
    papel->definirLimiteConexao(atributos[AtributosParsers::LIMITE_CONEXAO].toInt());
 
-  /* Identificando as opções do papel. Caso o atributo referet �  uma
+  /* Identificando as opções do papel. Caso o atributo referet �  uma
      estive com valor "true" no documento XML quer dizer que aquele
      atributo está marcado para o papel */
   for(i=0; i < 6; i++)
@@ -3165,7 +3165,7 @@ Papel *ModeloBD::criarPapel(void)
        if(!papel_ref)
        {
         //Dispara a exceção
-        throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
+        throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                                .arg(QString::fromUtf8(papel->obterNome()))
                                .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_PAPEL))
                                .arg(QString::fromUtf8(lista[i]))
@@ -3183,7 +3183,7 @@ Papel *ModeloBD::criarPapel(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -3193,7 +3193,7 @@ Papel *ModeloBD::criarPapel(void)
   if(papel) delete(papel);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  //Retorna o novo papel criado
@@ -3217,7 +3217,7 @@ EspacoTabela *ModeloBD::criarEspacoTabela(void)
   //Definindo os valores de atributos básicos do papel
   esp_tabela->definirDiretorio(atributos[AtributosParsers::DIRETORIO]);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -3227,7 +3227,7 @@ EspacoTabela *ModeloBD::criarEspacoTabela(void)
   if(esp_tabela) delete(esp_tabela);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(esp_tabela);
@@ -3246,7 +3246,7 @@ Esquema *ModeloBD::criarEsquema(void)
   //Lê do parser os atributos basicos
   definirAtributosBasicos(esquema);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -3256,7 +3256,7 @@ Esquema *ModeloBD::criarEsquema(void)
   if(esquema) delete(esquema);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(esquema);
@@ -3311,7 +3311,7 @@ Linguagem *ModeloBD::criarLinguagem(void)
         //Caso a função não seja encontrada
         if(!funcao)
          //Dispara a exceção indicando que o objeto está incompleto
-         throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
+         throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                                .arg(QString::fromUtf8(linguagem->obterNome()))
                                .arg(linguagem->obterNomeTipoObjeto())
                                .arg(QString::fromUtf8(assinatura))
@@ -3329,7 +3329,7 @@ Linguagem *ModeloBD::criarLinguagem(void)
        }
        else
         //Dispara uma exceção caso o tipo de referencia a função seja inválido
-        throw Excecao(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
      }
     }
@@ -3337,7 +3337,7 @@ Linguagem *ModeloBD::criarLinguagem(void)
    }
 
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -3347,7 +3347,7 @@ Linguagem *ModeloBD::criarLinguagem(void)
   if(linguagem) delete(linguagem);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(linguagem);
@@ -3450,10 +3450,10 @@ Funcao *ModeloBD::criarFuncao(void)
 
        ParserXML::restaurarPosicao();
       }
-      catch(Excecao &e)
+      catch(Exception &e)
       {
        ParserXML::restaurarPosicao();
-       throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+       throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
       }
      }
      //Obtendo a linguagem da função
@@ -3467,7 +3467,7 @@ Funcao *ModeloBD::criarFuncao(void)
 
       //Caso a linguagem não existe será disparada uma exceção
       if(!objeto)
-       throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
+       throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                               .arg(QString::fromUtf8(funcao->obterNome()))
                               .arg(funcao->obterNomeTipoObjeto())
                               .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
@@ -3480,7 +3480,7 @@ Funcao *ModeloBD::criarFuncao(void)
      else if(ParserXML::obterNomeElemento()==AtributosParsers::PARAMETRO)
      {
       param=criarParametro();
-      //Adiciona o parâmet�  função
+      //Adiciona o parâmet�  função
       funcao->adicionarParametro(param);
      }
      //Extraíndo a definição (corpo) da função (tag <definition>)
@@ -3508,7 +3508,7 @@ Funcao *ModeloBD::criarFuncao(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -3522,13 +3522,13 @@ Funcao *ModeloBD::criarFuncao(void)
   }
 
   //Redireciona qualquer exceção capturada
-  if(e.obterTipoErro()==ERR_PGMODELER_REFTIPOUSRINV)
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDEFSQLINV)
+  if(e.getErrorType()==ERR_PGMODELER_REFTIPOUSRINV)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDEFSQLINV)
                               .arg(QString::fromUtf8(str_aux))
                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                  ERR_PGMODELER_ATROBJDEFSQLINV,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, info_adicional);
   else
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(funcao);
@@ -3578,7 +3578,7 @@ Parametro ModeloBD::criarParametro(void)
   //Restaura a posição do parser
   ParserXML::restaurarPosicao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -3586,7 +3586,7 @@ Parametro ModeloBD::criarParametro(void)
 
   //Restaura a posição do parser
   ParserXML::restaurarPosicao();
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(param);
@@ -3662,7 +3662,7 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
      mesmo exista no modelo, sendo assim, um erro será disparado e
      a criação do tipo será abortada */
   if(!enc)
-    throw Excecao(ERR_PGMODELER_REFTIPOUSRINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_PGMODELER_REFTIPOUSRINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   idx_tipo=TipoPgSQL::obterIndiceTipoUsuario(nome, ptipo);
   return(TipoPgSQL(idx_tipo,comprimento,dimensao,precisao,com_timezone,tipo_interv,tipo_esp));
@@ -3792,7 +3792,7 @@ Tipo *ModeloBD::criarTipo(void)
      else if(elem==AtributosParsers::FUNCAO)
      {
       /*No caso de tipo base, serão extraídas referência a funções do modelo,
-        as quais serão atribuía � s funções que compoem o tipo base. */
+        as quais serão atribuía � s funções que compoem o tipo base. */
       ParserXML::obterAtributosElemento(atributos);
 
       /* Com a assinatura da função obtida di XML, a mesma será buscada no modelo, para
@@ -3802,14 +3802,14 @@ Tipo *ModeloBD::criarTipo(void)
       /* Dispara uma exceção caso o tipo de referencia a função seja inválido ou
          se a função referenciada não existe */
       if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
-       throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
+       throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                               .arg(QString::fromUtf8(tipo->obterNome()))
                               .arg(tipo->obterNomeTipoObjeto())
                               .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       else if(tipo_funcoes.count(atributos[AtributosParsers::TIPO_REFERENCIA])==0)
-       throw Excecao(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       /* Obtém o tipo de configuraçao de função do tipo de acordo com a referência
          da mesma obtida do XML */
@@ -3823,7 +3823,7 @@ Tipo *ModeloBD::criarTipo(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -3837,13 +3837,13 @@ Tipo *ModeloBD::criarTipo(void)
   }
 
   //Redireciona qualquer exceção capturada
-  if(e.obterTipoErro()==ERR_PGMODELER_REFTIPOUSRINV)
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATROBJDEFSQLINV)
+  if(e.getErrorType()==ERR_PGMODELER_REFTIPOUSRINV)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDEFSQLINV)
                               .arg(QString::fromUtf8(str_aux))
                               .arg(tipo->obterNomeTipoObjeto()),
                  ERR_PGMODELER_ATROBJDEFSQLINV,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, info_adicional);
   else
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(tipo);
@@ -3909,7 +3909,7 @@ Dominio *ModeloBD::criarDominio(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -3919,7 +3919,7 @@ Dominio *ModeloBD::criarDominio(void)
   if(dominio) delete(dominio);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(dominio);
@@ -3976,9 +3976,9 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
      //Extraíndo a função de conversão do XML
      else if(elem==AtributosParsers::FUNCAO)
      {
-      /*No caso da conversão, será extraída a refeênia �  função no modelo.
+      /*No caso da conversão, será extraída a refeênia �  função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
-        será localizada e atribu�d �  conversão */
+        será localizada e atribu�d �  conversão */
       ParserXML::obterAtributosElemento(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
@@ -3987,14 +3987,14 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
 
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
-       throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
+       throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(conv_tipo->obterNome()))
                              .arg(conv_tipo->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      //Atribui a funç� �  conversão de tipos
+      //Atribui a funç� �  conversão de tipos
       conv_tipo->definirFuncaoConversao(dynamic_cast<Funcao *>(funcao));
      }
     }
@@ -4002,7 +4002,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -4011,7 +4011,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
   if(conv_tipo) delete(conv_tipo);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(conv_tipo);
@@ -4052,9 +4052,9 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
 
      if(elem==AtributosParsers::FUNCAO)
      {
-      /*No caso da conversão, será extraída a refeênia �  função no modelo.
+      /*No caso da conversão, será extraída a refeênia �  função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
-        será localizada e atribu�d �  conversão */
+        será localizada e atribu�d �  conversão */
       ParserXML::obterAtributosElemento(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
@@ -4063,14 +4063,14 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
 
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
-       throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
+       throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(conv_codif->obterNome()))
                              .arg(conv_codif->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      //Atribui a funç� �  conversão de tipos
+      //Atribui a funç� �  conversão de tipos
       conv_codif->definirFuncaoConversao(dynamic_cast<Funcao *>(funcao));
      }
     }
@@ -4078,7 +4078,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -4087,7 +4087,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
   if(conv_codif) delete(conv_codif);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(conv_codif);
@@ -4155,7 +4155,7 @@ Operador *ModeloBD::criarOperador(void)
 
       //Dispara uma exceção caso o operador referenciado não exista
       if(!oper_aux && !atributos[AtributosParsers::ASSINATURA].isEmpty())
-       throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
+       throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(operador->obterAssinatura(true)))
                              .arg(operador->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
@@ -4184,7 +4184,7 @@ Operador *ModeloBD::criarOperador(void)
      }
      else if(elem==AtributosParsers::FUNCAO)
      {
-      /*No caso do operador, será extraída a refer�nca �  função no modelo.
+      /*No caso do operador, será extraída a refer�nca �  função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
         será localizada e atribuída ao operador */
       ParserXML::obterAtributosElemento(atributos);
@@ -4195,7 +4195,7 @@ Operador *ModeloBD::criarOperador(void)
 
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
-       throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
+       throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(operador->obterNome()))
                              .arg(operador->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
@@ -4214,7 +4214,7 @@ Operador *ModeloBD::criarOperador(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -4222,7 +4222,7 @@ Operador *ModeloBD::criarOperador(void)
   if(operador) delete(operador);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(operador);
@@ -4278,7 +4278,7 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
 
       //Dispara uma exceção caso o operador referenciado não exista
       if(!objeto && !atributos[AtributosParsers::NOME].isEmpty())
-       throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
+       throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(classe_op->obterNome()))
                              .arg(classe_op->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
@@ -4330,7 +4330,7 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -4339,7 +4339,7 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
   if(classe_op) delete(classe_op);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(classe_op);
@@ -4361,7 +4361,7 @@ FamiliaOperadores *ModeloBD::criarFamiliaOperadores(void)
   //Definindo os valores de atributos básicos do objeto
   familia_op->definirTipoIndexacao(TipoIndexacao(atributos[AtributosParsers::TIPO_INDEXACAO]));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -4370,7 +4370,7 @@ FamiliaOperadores *ModeloBD::criarFamiliaOperadores(void)
   if(familia_op) delete(familia_op);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(familia_op);
@@ -4428,7 +4428,7 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
 
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
-       throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
+       throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(func_agreg->obterNome()))
                              .arg(func_agreg->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
@@ -4448,7 +4448,7 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -4457,7 +4457,7 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
   if(func_agreg) delete(func_agreg);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(func_agreg);
@@ -4515,7 +4515,7 @@ Tabela *ModeloBD::criarTabela(void)
 
   tabela->definirProtegido(tabela->objetoProtegido());
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -4525,7 +4525,7 @@ Tabela *ModeloBD::criarTabela(void)
   if(tabela) delete(tabela);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(tabela);
@@ -4566,7 +4566,7 @@ Coluna *ModeloBD::criarColuna(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -4575,7 +4575,7 @@ Coluna *ModeloBD::criarColuna(void)
   if(coluna) delete(coluna);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(coluna);
@@ -4611,7 +4611,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
    else if(tipo_objeto==OBJETO_RELACAO)
     relacao=dynamic_cast<Relacionamento *>(objeto);
    else
-    throw Excecao(ERR_PGMODELER_OPROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_PGMODELER_OPROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
   /* Caso o objeto não esteja especificado então o objeto possuidor será considerado
      como sendo sempre uma tabela e com base nisso o atributo "table" no código
@@ -4626,13 +4626,13 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
    if(!tabela)
    {
     //Configura os argumentos da mensagem de erro
-    str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
+    str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
           .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RESTRICAO))
           .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]))
           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
     //Dispara a exceção
-    throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
   }
 
@@ -4688,12 +4688,12 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
      armazena o endereço da tabela ou relacionamento recém criados
      a partir do bloco <table> ou <relationship>, respectivamente.
      Quando tal parâmetro está nulo indica que a restrição será criada
-     e atribuíd�  tabela cujo nome está no atributo 'table' no XML
+     e atribuíd�  tabela cujo nome está no atributo 'table' no XML
      significando que a mesma está declarada fora dos dois blocos indicados.
      Adicionalmente é necessário verificar o tipo da restrição para se
      ter certeza que a mesma é uma chave primária. */
   if(!objeto && tipo_rest==TipoRestricao::primary_key)
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ALOCPKFORMAINVALIDA)
+    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ALOCPKFORMAINVALIDA)
                   .arg(QString::fromUtf8(restricao->obterNome())),
                   ERR_PGMODELER_ALOCPKFORMAINVALIDA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4730,13 +4730,13 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
    if(!tabela_ref)
    {
     //Configura os argumentos da mensagem de erro
-    str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
+    str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
           .arg(QString::fromUtf8(restricao->obterNome()))
           .arg(restricao->obterNomeTipoObjeto())
           .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA_REF]))
           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
     //Dispara a exceção
-    throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
    //Define a tabela de destino da chave estrangeira
@@ -4830,7 +4830,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
    }
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -4840,7 +4840,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
    delete(restricao);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(restricao);
@@ -4870,13 +4870,13 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
    if(!tabela)
    {
     //Configura os argumentos da mensagem de erro
-    str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
+    str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
           .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_INDICE))
           .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]))
           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
     //Dispara a exceção
-    throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
   }
 
@@ -4927,13 +4927,13 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
          if(!classe_oper)
          {
           //Configura os argumentos da mensagem de erro
-          str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
+          str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
                           .arg(QString::fromUtf8(indice->obterNome()))
                           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_INDICE))
                           .arg(QString::fromUtf8(atributos[AtributosParsers::CLASSE_OPERADORES]))
                           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CLASSE_OPER));
           //Dispara a exceção
-          throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+          throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
          }
         }
         //Caso o elemento atual seja um  <column>
@@ -4988,7 +4988,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
    tabela->definirModificado(true);
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -4997,7 +4997,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
   if(indice) delete(indice);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(indice);
@@ -5062,7 +5062,7 @@ Regra *ModeloBD::criarRegra(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -5070,7 +5070,7 @@ Regra *ModeloBD::criarRegra(void)
   if(regra) delete(regra);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(regra);
@@ -5093,13 +5093,13 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
   ParserXML::obterAtributosElemento(atributos);
 
   if(!tabela && atributos[AtributosParsers::TABELA].isEmpty())
-   throw Excecao(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else if(!tabela && !atributos[AtributosParsers::TABELA].isEmpty())
   {
    inc_gat_tabela=true;
    tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[AtributosParsers::TABELA], OBJETO_TABELA));
    if(!tabela)
-    throw Excecao(QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
+    throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
                   .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
                   .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_GATILHO))
                   .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]))
@@ -5180,14 +5180,14 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
       {
-       str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
+       str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
                .arg(QString::fromUtf8(gatilho->obterNome()))
                .arg(gatilho->obterNomeTipoObjeto())
                .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
                .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO));
 
        //Dispara a exceção
-       throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
 
       //Define a função executada pelo gatilho
@@ -5237,7 +5237,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
    tabela->definirModificado(true);
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -5245,7 +5245,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
   if(gatilho) delete(gatilho);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(gatilho);
@@ -5304,14 +5304,14 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
    //Dispara uma exceção caso a tabela referenciada não exista
    if(!tabela)
    {
-    str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
+    str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
             .arg(QString::fromUtf8(sequencia->obterNome()))
             .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_SEQUENCIA))
             .arg(QString::fromUtf8(nome_tab))
             .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
 
     //Dispara a exceção
-    throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
    //Tenta obter a coluna da tabela com o nome vindo do XML
@@ -5324,14 +5324,14 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
    /* Caso a coluna não exista porém a mesma esteja sendo referenciada no xml
       um erro será disparado */
    if(!coluna && !ignorar_possuidora)
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRCOLPOSINDEF)
+    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRCOLPOSINDEF)
                   .arg(QString::fromUtf8(sequencia->obterNome(true))),
                   ERR_PGMODELER_ATRCOLPOSINDEF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    sequencia->definirPossuidora(coluna);
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -5339,7 +5339,7 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
   if(sequencia) delete(sequencia);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(sequencia);
@@ -5387,14 +5387,14 @@ Visao *ModeloBD::criarVisao(void)
        //Dispara uma exceção caso a tabela referenciada não exista
        if(!tabela)
        {
-        str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
+        str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
                         .arg(QString::fromUtf8(visao->obterNome()))
                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_VISAO))
                         .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]))
                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
 
         //Dispara a exceção
-        throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
 
        if(!atributos[AtributosParsers::COLUNA].isEmpty())
@@ -5411,7 +5411,7 @@ Visao *ModeloBD::criarVisao(void)
            referenciando uma coluna inexistente na tabela */
          if(!coluna)
          {
-          str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
+          str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
                           .arg(QString::fromUtf8(visao->obterNome()))
                           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_VISAO))
                           .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]) + "." +
@@ -5419,16 +5419,16 @@ Visao *ModeloBD::criarVisao(void)
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_COLUNA));
 
           //Dispara a exceção
-          throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+          throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
          }
         }
 
-       //Adiciona a referência configurad�  lista temporária de referências
+       //Adiciona a referência configurad�  lista temporária de referências
        vet_refs.push_back(Referencia(tabela, coluna,
                                      atributos[AtributosParsers::ALIAS],
                                      atributos[AtributosParsers::ALIAS_COLUNA]));
       }
-      //Extraindo uma referênci�  uma expressão
+      //Extraindo uma referênci�  uma expressão
       else
       {
        ParserXML::salvarPosicao();
@@ -5467,7 +5467,7 @@ Visao *ModeloBD::criarVisao(void)
       //Construindo cada expressão na visão
       for(i=0; i < qtd; i++)
       {
-       //Obtém o índice da referência e a adiioa �  visão
+       //Obtém o índice da referência e a adiioa �  visão
        idx_ref=lista_aux[i].toInt();
        visao->adicionarReferencia(vet_refs[idx_ref],tipo);
       }
@@ -5479,7 +5479,7 @@ Visao *ModeloBD::criarVisao(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -5487,7 +5487,7 @@ Visao *ModeloBD::criarVisao(void)
   if(visao) delete(visao);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(visao);
@@ -5517,7 +5517,7 @@ CaixaTexto *ModeloBD::criarCaixaTexto(void)
   if(!atributos[AtributosParsers::COR].isEmpty())
    caixa_texto->definirCorTexto(QColor(atributos[AtributosParsers::COR]));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -5526,7 +5526,7 @@ CaixaTexto *ModeloBD::criarCaixaTexto(void)
   if(caixa_texto) delete(caixa_texto);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(caixa_texto);
@@ -5571,14 +5571,14 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    //Dispara uma exceção caso a tabela referenciada não exista
    if(!tabelas[i])
    {
-    str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE))
+    str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
                     .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
                     .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj_rel))
                     .arg(QString::fromUtf8(atributos[atribs[i]]))
                     .arg(ObjetoBase::obterNomeTipoObjeto(tipos_tab[i]));
 
     //Dispara a exceção
-    throw Excecao(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
   }
 
@@ -5588,7 +5588,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
   {
    //Caso o relacionamento tabela-visão nao seja encontrado o erro será disparado
    if(!relacao_base)
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFOBJINEXISTE)
+    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(this->obterNome()))
                              .arg(this->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
@@ -5718,7 +5718,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -5728,7 +5728,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    delete(relacao_base);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  //Caso o relacionamento tabela-tabela foi criado o mesmo será adicionado no modelo
@@ -5801,7 +5801,7 @@ Permissao *ModeloBD::criarPermissao(void)
   /* Caso o objeto não exista será disparada uma exceção pois uma permissão
      não pode existir sem que referencie um objeto */
   if(!objeto)
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_PERMREFOBJINEXISTE)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_PERMREFOBJINEXISTE)
                           .arg(QString::fromUtf8(nome_obj))
                           .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj)),
                       ERR_PGMODELER_PERMREFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5839,7 +5839,7 @@ Permissao *ModeloBD::criarPermissao(void)
      if(!papel)
      {
       //Dispara a exceção
-      throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_PERMREFOBJINEXISTE)
+      throw Exception(Exception::getErrorMessage(ERR_PGMODELER_PERMREFOBJINEXISTE)
                               .arg(QString::fromUtf8(objeto->obterNome()))
                               .arg(objeto->obterNomeTipoObjeto())
                               .arg(QString::fromUtf8(lista[i]))
@@ -5856,7 +5856,7 @@ Permissao *ModeloBD::criarPermissao(void)
     //Obtém os atributos do elemento <privileges>
     ParserXML::obterAtributosElemento(atrib_priv);
 
-    //Atribui os privilégio�  permissão recém criada
+    //Atribui os privilégio�  permissão recém criada
     itr=atrib_priv.begin();
     itr_end=atrib_priv.end();
 
@@ -5907,7 +5907,7 @@ Permissao *ModeloBD::criarPermissao(void)
 
   ParserXML::restaurarPosicao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   QString info_adicional;
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
@@ -5915,7 +5915,7 @@ Permissao *ModeloBD::criarPermissao(void)
   if(permissao) delete(permissao);
 
   //Redireciona qualquer exceção capturada
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
  return(permissao);
@@ -5931,7 +5931,7 @@ void ModeloBD::validarRemocaoColuna(Coluna *coluna)
   //Caso um objeto seja encontrado o qual referencia a coluna
   if(!vet_refs.empty())
    //Dispara um erro informando que a coluna não pde ser remove e qual objeto a referencia
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REMOBJREFERDIR)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REMOBJREFERDIR)
                  .arg(QString::fromUtf8(coluna->obterTabelaPai()->obterNome(true)) + "." + QString::fromUtf8(coluna->obterNome(true)))
                  .arg(coluna->obterNomeTipoObjeto())
                  .arg(QString::fromUtf8(vet_refs[0]->obterNome(true)))
@@ -5987,9 +5987,9 @@ void ModeloBD::validarRelacObjetoTabela(ObjetoTabela *objeto, Tabela *tabela_pai
    }
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -6417,7 +6417,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
    }
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
   {
@@ -6431,7 +6431,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
      tipo_usr->converterParametrosFuncoes(true);
    }
   }
-  throw Excecao(e.obterMensagemErro(), e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 
  //Armazena o atributo que indica se a exportação é para arquivo ou não
@@ -6451,8 +6451,8 @@ void ModeloBD::salvarModelo(const QString &nome_arq, unsigned tipo_def)
  //Caso não consiga abrir o arquivo para gravação
  if(!saida.isOpen())
  {
-  str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_ARQNAOGRAVADO).arg(nome_arq));
-  throw Excecao(str_aux,ERR_PGMODELER_ARQNAOGRAVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_ARQNAOGRAVADO).arg(nome_arq));
+  throw Exception(str_aux,ERR_PGMODELER_ARQNAOGRAVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  try
@@ -6461,11 +6461,11 @@ void ModeloBD::salvarModelo(const QString &nome_arq, unsigned tipo_def)
   saida.write(str_aux.toStdString().c_str(),str_aux.size());
   saida.close();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   if(saida.isOpen()) saida.close();
-  str_aux=QString(Excecao::obterMensagemErro(ERR_PGMODELER_ARQNAOGRAVADODEFINV).arg(nome_arq));
-  throw Excecao(str_aux,ERR_PGMODELER_ARQNAOGRAVADODEFINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_ARQNAOGRAVADODEFINV).arg(nome_arq));
+  throw Exception(str_aux,ERR_PGMODELER_ARQNAOGRAVADODEFINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

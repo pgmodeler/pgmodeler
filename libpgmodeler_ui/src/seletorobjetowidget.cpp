@@ -35,10 +35,10 @@ SeletorObjetoWidget::SeletorObjetoWidget(TipoObjetoBase tipo_obj_seletor, bool i
   connect(rem_objeto_tb, SIGNAL(clicked(bool)), this, SLOT(removerObjetoSelecionado(void)));
   connect(selecaoobjetos_wgt, SIGNAL(s_visibilityChanged(ObjetoBase*,bool)), this, SLOT(exibirObjetoSelecionado(ObjetoBase*, bool)));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

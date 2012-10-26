@@ -58,7 +58,7 @@ class CaixaMensagem: public QDialog, public Ui::CaixaMensagem {
       exceções é exibida. Os parâmetros 'msg' e 'tipo_ico' são usados para personalizar a exibição
       da mensagem de erro da exceção. Se usado o parametro 'msg' a mensagem da exceção é sobrepostas
       estando disponível apenas na pilha de erros. */
-   void show(Excecao e, const QString &msg="", unsigned tipo_ico=ICONE_ERRO);
+   void show(Exception e, const QString &msg="", unsigned tipo_ico=ICONE_ERRO);
 
    //Retorna se o usuário marcou a opção de cancela na caixa
    bool caixaCanceleda(void);

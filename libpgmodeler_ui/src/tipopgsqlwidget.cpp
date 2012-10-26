@@ -43,10 +43,10 @@ TipoPgSQLWidget::TipoPgSQLWidget(QWidget *parent, const QString &rotulo) : QWidg
   connect(var_m_chk, SIGNAL(toggled(bool)), this, SLOT(atualizarFormatoTipo(void)));
   connect(var_z_chk, SIGNAL(toggled(bool)), this, SLOT(atualizarFormatoTipo(void)));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -120,9 +120,9 @@ void TipoPgSQLWidget::atualizarFormatoTipo(void)
   //Atualiza o formato do tipo exibido no campo
   formato_txt->setPlainText(QString::fromUtf8(*tipo));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -197,9 +197,9 @@ void TipoPgSQLWidget::definirAtributos(TipoPgSQL tipo, ModeloBD *modelo,  unsign
   //Atualiza a exibição do formato do tipo configurado
   atualizarFormatoTipo();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

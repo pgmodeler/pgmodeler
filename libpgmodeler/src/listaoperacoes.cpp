@@ -10,7 +10,7 @@ void copiarObjeto(ObjetoBase **pobj_orig, Classe *obj_copia)
 
  //Caso o objeto de cópia não esteja aloca será disparada uma exceção
  if(!obj_copia)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Caso o objeto de origem não esteja alocado
     o mesmo será alocado */
@@ -111,7 +111,7 @@ void copiarObjeto(ObjetoBase **pobj_orig, ObjetoBase *obj_copia, TipoObjetoBase 
     copiarObjeto(pobj_orig, dynamic_cast<Visao *>(obj_copia));
   break;
   default:
-    throw Excecao(ERR_PGMODELER_OPROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_PGMODELER_OPROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
 }
@@ -122,7 +122,7 @@ ListaOperacoes::ListaOperacoes(ModeloBD *modelo)
 {
  //Dispara uma exceção caso o modelo passado não esteja alocado
  if(!modelo)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->modelo=modelo;
  idx_atual=0;
@@ -225,7 +225,7 @@ void ListaOperacoes::definirTamanhoMaximo(unsigned tam_max)
  /* A lista de operações não pode ter valor 0 em seu tamanho máximo,
     sendo assim é disparada uma exceção caso isso ocorra */
  if(tam_max==0)
-  throw Excecao(ERR_PGMODELER_ATRTAMMAXINVLISTA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRTAMMAXINVLISTA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define o tamanho máximo da lista
  tam_maximo=tam_max;
@@ -238,7 +238,7 @@ void ListaOperacoes::adicionarObjetoPool(ObjetoBase *objeto, unsigned tipo_op)
  /* Caso se tente inserir no pool um objeto não alocado
     é disparada uma exceção */
  if(!objeto)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  tipo_obj=objeto->obterTipoObjeto();
 
@@ -256,12 +256,12 @@ void ListaOperacoes::adicionarObjetoPool(ObjetoBase *objeto, unsigned tipo_op)
    copiarObjeto(&obj_copia, objeto, tipo_obj);
   }
   else
-   throw Excecao(ERR_PGMODELER_ATROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Caso a cópia falhe esta retorna um objeto nulo e a adição de objeto
      será cancelada com o disparo da exceção */
   if(!obj_copia)
-   throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
    //Insere a cópia do objeto no pool
    pool_objetos.push_back(obj_copia);
@@ -340,7 +340,7 @@ bool ListaOperacoes::objetoNoPool(ObjetoBase *objeto)
  vector<ObjetoBase *>::iterator itr, itr_end;
 
  if(!objeto)
-  throw Excecao(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=pool_objetos.begin();
  itr_end=pool_objetos.end();
@@ -360,7 +360,7 @@ void ListaOperacoes::removerObjetoPool(unsigned idx_obj)
 
  //Caso o índice do objeto a ser excluído seja inválido é disparada uma exceção
  if(idx_obj >= pool_objetos.size())
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o elemento a ser removido
  itr=pool_objetos.begin() + idx_obj;
@@ -389,13 +389,13 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
  {
   //Caso se tente adicionar uma operação com objeto não alocado, dispara uma exceção
   if(!objeto)
-   throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   tipo_obj=objeto->obterTipoObjeto();
   if((tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO ||
       tipo_obj==OBJETO_INDICE || tipo_obj==OBJETO_GATILHO ||
       tipo_obj==OBJETO_REGRA) && !objeto_pai)
-   throw Excecao(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   else if(objeto_pai &&
      (((tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO) &&
@@ -403,7 +403,7 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
 
       ((tipo_obj==OBJETO_INDICE || tipo_obj==OBJETO_GATILHO || tipo_obj==OBJETO_REGRA) &&
         objeto_pai->obterTipoObjeto()!=OBJETO_TABELA)))
-   throw Excecao(ERR_PGMODELER_OPROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_OPROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Caso a lista de operações esteja cheia, faz a limpeza automática antes de inserir uma nova operação
   if(idx_atual == static_cast<int>(tam_maximo-1))
@@ -518,7 +518,7 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
    /* Caso nem tabela pai nem relacionametno pai estejam alocados
       retorna um erro ao usuário e desaloca a operção criada */
    else
-    throw Excecao(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
   else
   {
@@ -539,14 +539,14 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
   //O índice atual de operação será o próprio tamanho da lista
   idx_atual=operacoes.size();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   if(operacao)
   {
    removerObjetoPool(pool_objetos.size()-1);
    delete(operacao);
   }
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 }
 
@@ -555,7 +555,7 @@ void ListaOperacoes::obterDadosOperacao(unsigned idx_oper, unsigned &tipo_oper, 
  Operacao *operacao=NULL;
 
  if(idx_oper >= operacoes.size())
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  operacao=operacoes[idx_oper];
  tipo_oper=operacao->tipo_op;
@@ -620,7 +620,7 @@ void ListaOperacoes::desfazerOperacao(void)
  {
   Operacao *operacao=NULL;
   bool enc_ativo=false;
-  Excecao erro;
+  Exception erro;
   unsigned tam_enc=0, pos=0;
 
   if(!this->signalsBlocked())
@@ -664,7 +664,7 @@ void ListaOperacoes::desfazerOperacao(void)
     //Executa a operação de desfazer
     executarOperacao(operacao, false);
    }
-   catch(Excecao &e)
+   catch(Exception &e)
    {
     erro=e;
    }
@@ -675,8 +675,8 @@ void ListaOperacoes::desfazerOperacao(void)
      ou a opção de desfazer esteja habilidata */
   while(!anular_enc && desfazerHabilitado() && operacao->tipo_enc!=Operacao::SEM_ENCADEAMENTO);
 
-  if(erro.obterTipoErro()!=ERR_NULO)
-   throw Excecao(erro.obterMensagemErro(), erro.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  if(erro.getErrorType()!=ERR_NULO)
+   throw Exception(erro.getErrorMessage(), erro.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
 
@@ -686,7 +686,7 @@ void ListaOperacoes::refazerOperacao(void)
  {
   Operacao *operacao=NULL;
   bool enc_ativo=false;
-  Excecao erro;
+  Exception erro;
   unsigned tam_enc=0, pos=0;
 
   //Calcula o tamanho do encademanto de operações atual
@@ -729,7 +729,7 @@ void ListaOperacoes::refazerOperacao(void)
     //Executa a operação de refazer (segundo parametro = true)
     executarOperacao(operacao, true);
    }
-   catch(Excecao &e)
+   catch(Exception &e)
    {
     erro=e;
    }
@@ -739,8 +739,8 @@ void ListaOperacoes::refazerOperacao(void)
      ou a opção de refazer esteja habilidata */
   while(!anular_enc && refazerHabilitado()  && operacao->tipo_enc!=Operacao::SEM_ENCADEAMENTO);
 
-  if(erro.obterTipoErro()!=ERR_NULO)
-   throw Excecao(erro.obterMensagemErro(), erro.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  if(erro.getErrorType()!=ERR_NULO)
+   throw Exception(erro.getErrorMessage(), erro.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
 
@@ -964,7 +964,7 @@ void ListaOperacoes::atualizarIndiceObjeto(ObjetoBase *objeto, unsigned idx_novo
  Operacao *oper=NULL;
 
  if(!objeto)
-  throw Excecao(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=operacoes.begin();
  itr_end=operacoes.end();

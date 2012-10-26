@@ -1,5 +1,5 @@
 #include "parseresquema.h"
-//**********************************************************
+
 const char ParserEsquema::CHR_COMENTARIO='#';
 const char ParserEsquema::CHR_FIM_LINHA='\n';
 const char ParserEsquema::CHR_TABULACAO='\t';
@@ -70,8 +70,8 @@ void ParserEsquema::obterVersoesPgSQL(vector<QString> &vet_versoes)
  //Caso o diretorio não exista um erro será disparado
  if(!diretorio.exists())
  {
-  str_aux=Excecao::obterMensagemErro(ERR_PARSERS_ARQDIRNAOCARREGADO).arg(caminho);
-  throw Excecao(str_aux, ERR_PARSERS_ARQDIRNAOCARREGADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  str_aux=Exception::getErrorMessage(ERR_PARSERS_ARQDIRNAOCARREGADO).arg(caminho);
+  throw Exception(str_aux, ERR_PARSERS_ARQDIRNAOCARREGADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  //Limpa a lista de versões passada
@@ -107,8 +107,8 @@ void ParserEsquema::carregarArquivo(const QString &arquivo)
 
   if(!entrada.is_open())
   {
-   str_aux=Excecao::obterMensagemErro(ERR_PARSERS_ARQDIRNAOCARREGADO).arg(arquivo);
-   throw Excecao(str_aux, ERR_PARSERS_ARQDIRNAOCARREGADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   str_aux=Exception::getErrorMessage(ERR_PARSERS_ARQDIRNAOCARREGADO).arg(arquivo);
+   throw Exception(str_aux, ERR_PARSERS_ARQDIRNAOCARREGADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
   //Caso o arquivo foi aberto com sucesso
@@ -207,9 +207,9 @@ QString ParserEsquema::obterAtributo(void)
  if(erro)
  {
   //Dispara um erro de sintaxe
-  str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_SINTAXEINV))
+  str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
           .arg(arquivo).arg((linha + qtd_coment + 1)).arg((coluna+1));
-  throw Excecao(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  return(atrib);
@@ -285,10 +285,10 @@ QString ParserEsquema::obterTextoPuro(void)
 
  if(erro)
  {
-  str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_SINTAXEINV))
+  str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
           .arg(arquivo).arg((linha + qtd_coment + 1)).arg((coluna+1));
 
-  throw Excecao(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  return(texto);
@@ -325,9 +325,9 @@ QString ParserEsquema::obterCondicional(void)
 
  if(erro)
  {
-  str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_SINTAXEINV))
+  str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
           .arg(arquivo).arg(linha + qtd_coment + 1).arg(coluna+1);
-  throw Excecao(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  return(condicional);
@@ -364,9 +364,9 @@ QString ParserEsquema::obterMetaCaractere(void)
 
  if(erro)
  {
-  str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_SINTAXEINV))
+  str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
           .arg(arquivo).arg(linha + qtd_coment + 1).arg(coluna+1);
-  throw Excecao(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  return(meta);
@@ -398,15 +398,15 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString & nome_obj, map<QStrin
     //Tenta obter a definição do objeto no caminho especificado
     return(obterDefinicaoObjeto(nome_arq, atributos));
    }
-   catch(Excecao &e)
+   catch(Exception &e)
    {
     /* Caso seja detectado o erro de que o arquivo não foi encontrado, o parser
        tentará buscar o arquivo no diretório comum de esquemas de todas as versões
        do postgresql */
 
     //Caso a exceção seja de outro tipo senão de arquivo não carregado, redireciona o erro
-    if(e.obterTipoErro()!=ERR_PARSERS_ARQDIRNAOCARREGADO)
-     throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),
+    if(e.getErrorType()!=ERR_PARSERS_ARQDIRNAOCARREGADO)
+     throw Exception(e.getErrorMessage(),e.getErrorType(),
                    __PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 
     //Reconfigura o nome do arquivo para apontar para o diretório padrão
@@ -488,21 +488,21 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString &nome_arq, map<QString
       if(meta!=TOKEN_META_SP && meta!=TOKEN_META_TB &&
          meta!=TOKEN_META_BR)
       {
-       str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_METACHARINV))
+       str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_METACHARINV))
                .arg(meta).arg(arquivo).arg(linha + qtd_coment +1).arg(coluna+1);
 
 
-       throw Excecao(str_aux,ERR_PARSERS_METACHARINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(str_aux,ERR_PARSERS_METACHARINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
       //Verifica se o metacaractere está na parte da expressão if (erro)
       else if(nivel_if>=0 && vet_tk_if[nivel_if] && !vet_tk_then[nivel_if])
       {
 /*       sprintf(str_aux, (Excecao::obterMensagemErro(ERR_PARSERS_SINTAXEINV)).c_str(),
                arquivo.c_str(), (linha + qtd_coment +1), (coluna+1));*/
-       str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_SINTAXEINV))
+       str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
                .arg(arquivo).arg(linha + qtd_coment +1).arg(coluna+1);
 
-       throw Excecao(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
       else
       {
@@ -546,14 +546,14 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString &nome_arq, map<QString
      case CHR_FIM_ATRIBUTO:
       atrib=obterAtributo();
 
-      //Verifica se o atributo extraido pertence �  lista de atributos passada
+      //Verifica se o atributo extraido pertence �  lista de atributos passada
       if(atributos.count(atrib)==0)
       {
        if(!ignorar_atribs_desc)
        {
-        str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_ATRIBUTODESC))
+        str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_ATRIBUTODESC))
                 .arg(atrib).arg(arquivo).arg((linha + qtd_coment +1)).arg((coluna+1));
-        throw Excecao(str_aux,ERR_PARSERS_ATRIBUTODESC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(str_aux,ERR_PARSERS_ATRIBUTODESC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
        else
         atributos[atrib]="";
@@ -580,10 +580,10 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString &nome_arq, map<QString
        {
 /*        sprintf(str_aux, (Excecao::obterMensagemErro(ERR_PARSERS_SINTAXEINV)).c_str(),
                 arquivo.c_str(), (linha + qtd_coment +1), (coluna+1));*/
-        str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_SINTAXEINV))
+        str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
                 .arg(arquivo).arg(linha + qtd_coment +1).arg(coluna+1);
 
-        throw Excecao(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
        else
        {
@@ -611,10 +611,10 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString &nome_arq, map<QString
       {
        if(atributos[atrib]=="")
        {
-        str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_ATRIBVALORNULO))
+        str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_ATRIBVALORNULO))
                 .arg(atrib).arg(arquivo).arg(linha + qtd_coment +1).arg(coluna+1);
 
-        throw Excecao(str_aux,ERR_PARSERS_ATRIBVALORNULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(str_aux,ERR_PARSERS_ATRIBVALORNULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
 
        /* Caso o parser não esteja num if/else, concatena o valor do
@@ -632,9 +632,9 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString &nome_arq, map<QString
       if(cond!=TOKEN_IF && cond!=TOKEN_ELSE &&
          cond!=TOKEN_THEN && cond!=TOKEN_END)
       {
-       str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_CONDICIONALINV))
+       str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_CONDICIONALINV))
                .arg(cond).arg(arquivo).arg(linha + qtd_coment +1).arg(coluna+1);
-       throw Excecao(str_aux,ERR_PARSERS_CONDICIONALINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(str_aux,ERR_PARSERS_CONDICIONALINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
       else
       {
@@ -743,9 +743,9 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString &nome_arq, map<QString
            //Caso o atributo não possua valor definido, dispara uma exceção
            if(palavra=="")
            {
-            str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_ATRIBVALORNULO))
+            str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_ATRIBVALORNULO))
                     .arg(atrib).arg(arquivo).arg(linha + qtd_coment +1).arg(coluna+1);
-            throw Excecao(str_aux,ERR_PARSERS_ATRIBVALORNULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+            throw Exception(str_aux,ERR_PARSERS_ATRIBVALORNULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
            }
           }
 
@@ -792,9 +792,9 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString &nome_arq, map<QString
 
        if(erro)
        {
-        str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_SINTAXEINV))
+        str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
                 .arg(arquivo).arg(linha + qtd_coment +1).arg(coluna+1);
-        throw Excecao(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
       }
      break;
@@ -814,9 +814,9 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString &nome_arq, map<QString
            pois apenas um atributo pode aparecer na expressão if */
         if(vet_tk_if[nivel_if] && !vet_tk_then[nivel_if])
         {
-         str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_SINTAXEINV))
+         str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
                  .arg(arquivo).arg(linha + qtd_coment +1).arg(coluna+1);
-         throw Excecao(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+         throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
         //Caso o parser esteja na parte if
         else if(vet_tk_if[nivel_if] &&
@@ -842,9 +842,9 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString &nome_arq, map<QString
    {
     /*sprintf(str_aux, (Excecao::obterMensagemErro(ERR_PARSERS_SINTAXEINV)).c_str(),
             arquivo.c_str(), (linha + qtd_coment +1), (coluna+1));*/
-    str_aux=QString(Excecao::obterMensagemErro(ERR_PARSERS_SINTAXEINV))
+    str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
             .arg(arquivo).arg(linha + qtd_coment +1).arg(coluna+1);
-    throw Excecao(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
   }
  }
@@ -853,4 +853,4 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString &nome_arq, map<QString
  ignorar_atribs_desc=false;
  return(def_sql);
 }
-//**********************************************************
+

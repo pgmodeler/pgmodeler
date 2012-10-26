@@ -30,7 +30,7 @@
 #include <deque>
 
 using namespace std;
-const int QTD_ERROS=175;
+const int ERROR_COUNT=175;
 
 /*
  Formato dos enums de erros: ERR_[BIBLIOTECA]_[ERRO] onde:
@@ -46,7 +46,7 @@ const int QTD_ERROS=175;
   CODIGO ERRO
 */
 
-enum TipoErro {
+enum ErrorType {
  ERR_NULO,
  ERR_GLOBAL_OBJBADALOC,
  ERR_PGMODELER_ATRPSDTIPOCOL,
@@ -227,64 +227,64 @@ enum TipoErro {
  ERR_CONEXBD_CMDSQLNAOEXECUTADO
 };
 
-class Excecao {
+class Exception {
  private:
   /* Armazena outras execeções antes do disparo da exceção this.
      Esta estrutura pode ser usada para simular um stack trace,
      para melhorar o debug */
-  deque<Excecao> excecoes;
+  deque<Exception> exceptions;
 
   //Armazena as mensagens de erros e os códigos (nomes dos erros) em formato string
-  static QString mensagens[QTD_ERROS][2];
+  static QString messages[ERROR_COUNT][2];
 
-  static const unsigned CODIGO_ERRO=0,
-                        MENSAGEM_ERRO=1;
+  static const unsigned ERROR_CODE=0,
+                        ERROR_MESSAGE=1;
 
-  TipoErro tipo_erro;
-  QString msg_erro,
+  ErrorType error_type;
+  QString error_msg,
          /* Armazena o nome da classe e método de onde foi
             disparada a exceção. Para que isso seja possí­vel, no momento
             da instanciação desta classe a macro do G++ __PRETTY_FUNCTION__
             deve ser passada. Essa macro contém o formato [RETORNO][CLASSE]::[METODO][PARAMS] */
-         local,
+         method,
          //Arquivo de onde foi gerada a exceção (Macro __FILE__)
-         arquivo,
+         file,
 
          /* Informações adicionais (de preenchimento opcinal) pode armazer qualquer outro
             tipo de informação interessante é  tentativa de resolução do erro */
-         info_adicional;
+         extra_info;
 
       //Linha do arquivo de onde foi gerada a exceção (Macro __LINE__)
-  int linha;
+  int line;
 
   //Configura os atributos básicos da exceção
-  void configurarExcecao(const QString &msg, TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, const QString &info_adicional);
+  void configureException(const QString &msg, ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, const QString &info_adicional);
 
   //Adiciona um exceção na lista de exceções
-  void adicionarExecao(Excecao &execao);
+  void addException(Exception &execao);
 
  public:
-  Excecao(void);
-  Excecao(const QString &msg, const QString &local, const QString &arquivo, int linha, Excecao *excecao=NULL, const QString &info_adicional="");
-  Excecao(const QString &msg, TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, Excecao *excecao=NULL, const QString &info_adicional="");
-  Excecao(TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, Excecao *excecao=NULL, const QString &info_adicional="");
-  Excecao(TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, vector<Excecao> &excecoes, const QString &info_adicional="");
-  Excecao(const QString &msg, const QString &local, const QString &arquivo, int linha, vector<Excecao> &excecoes, const QString &info_adicional="");
-  ~Excecao(void){}
-  QString obterMensagemErro(void);
-  static QString obterMensagemErro(TipoErro tipo_erro);
-  static QString obterNomeErro(TipoErro tipo_erro);
-  QString obterLocal(void);
-  QString obterArquivo(void);
-  QString obterLinha(void);
-  TipoErro obterTipoErro(void);
-  QString obterInfoAdicional(void);
+  Exception(void);
+  Exception(const QString &msg, const QString &local, const QString &arquivo, int linha, Exception *excecao=NULL, const QString &info_adicional="");
+  Exception(const QString &msg, ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, Exception *excecao=NULL, const QString &info_adicional="");
+  Exception(ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, Exception *excecao=NULL, const QString &info_adicional="");
+  Exception(ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, vector<Exception> &excecoes, const QString &info_adicional="");
+  Exception(const QString &msg, const QString &local, const QString &arquivo, int linha, vector<Exception> &excecoes, const QString &info_adicional="");
+  ~Exception(void){}
+  QString getErrorMessage(void);
+  static QString getErrorMessage(ErrorType tipo_erro);
+  static QString getErrorCode(ErrorType tipo_erro);
+  QString getMethod(void);
+  QString getFile(void);
+  QString getLine(void);
+  ErrorType getErrorType(void);
+  QString getExtraInfo(void);
 
   //Obtém a pilha de exceções completa
-  void obterListaExcecoes(deque<Excecao> &lista);
+  void getExceptionsList(deque<Exception> &lista);
 
   //Retorna a lista de exções em formato texto
-  QString obterTextoExcecoes(void);
+  QString getExceptionsText(void);
 };
 
 #endif

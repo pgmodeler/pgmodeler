@@ -109,10 +109,10 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
   connect(tab_restricoes, SIGNAL(s_linhaRemovida(int)), this, SLOT(removerObjeto(int)));
 
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -187,10 +187,10 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
   //Chama o método publico de definição dos atributos
   this->definirAtributos(modelo, lista_op, rel);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   if(rel) delete(rel);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -204,7 +204,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
 
  //Caso o relacionamento não esteja alocado dispara um erro
  if(!relacao)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, relacao);
@@ -407,9 +407,9 @@ void RelacionamentoWidget::listarObjetos(TipoObjetoBase tipo_obj)
   tab_restricoes->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM,
                                    tab_atributos->obterNumLinhas() > 0);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -450,10 +450,10 @@ void RelacionamentoWidget::adicionarObjeto(void)
   //Atualiza a lista de objetos exibindo o objeto recém criado
   listarObjetos(tipo_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   listarObjetos(tipo_obj);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -485,10 +485,10 @@ void RelacionamentoWidget::editarObjeto(int idx_lin)
   //Desfaz a anulação do encadeamento da lista de operações
   lista_op->anularEncadeamentoOperacoes(false);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   lista_op->anularEncadeamentoOperacoes(false);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -560,7 +560,7 @@ void RelacionamentoWidget::removerObjetos(void)
    lista_op->adicionarObjeto(objeto, Operacao::OBJETO_REMOVIDO, 0, relacao);
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Caso a quantidade de operações seja diferente da quantidade inicial
      obtida antes da remoção dos objetos */
@@ -587,7 +587,7 @@ void RelacionamentoWidget::removerObjetos(void)
 
   //Atualiza a lista de objeto do relacionamento
   listarObjetos(tipo_obj);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -617,10 +617,10 @@ void RelacionamentoWidget::removerObjeto(int idx_lin)
 
   lista_op->adicionarObjeto(objeto, Operacao::OBJETO_REMOVIDO, 0, relacao);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   listarObjetos(tipo_obj);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -714,17 +714,17 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
     relacao->blockSignals(false);
     relacao->definirModificado(true);
    }
-   catch(Excecao &e)
+   catch(Exception &e)
    {
     /* O único erro que é desconsiderado é o de invalidação de objetos, pois,
        mesmo com a restauração do estado original do relacionamento estes
        objetos não são recuperados */
-    if(e.obterTipoErro()==ERR_PGMODELER_REFCOLUNAINVTABELA)
+    if(e.getErrorType()==ERR_PGMODELER_REFCOLUNAINVTABELA)
      //Exibe uma mensagem de erro com o conteúdo da exceção
      caixa_msg->show(e);
     //Para os demais erros a exceção é encaminhada
     else
-     throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
    }
   }
 
@@ -734,7 +734,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
   //Finaliza a configuração do relacionamento
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
@@ -747,7 +747,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
      do relacionamento */
   modelo->validarRelacionamentos();
 
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

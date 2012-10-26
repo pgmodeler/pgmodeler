@@ -188,12 +188,12 @@ void ConfConexoesWidget::manipularConexao(void)
   editar_tb->setEnabled(conexoes_cmb->count() > 0);
   excluir_tb->setEnabled(conexoes_cmb->count() > 0);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   if(adicionar_tb->isVisible())
    delete(conexao);
 
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -358,9 +358,9 @@ void ConfConexoesWidget::testarConexao(void)
   //Exibe a mensagem de sucesso
   caixa_msg->show(trUtf8("Success"), trUtf8("Connection successfuly stablished!"), CaixaMensagem::ICONE_INFO);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -378,9 +378,9 @@ void ConfConexoesWidget::restaurarPadroes(void)
   //Recarrega a configuração de conexões
   this->carregarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -441,9 +441,9 @@ void ConfConexoesWidget::salvarConfiguracao(void)
   //Gera o arquivo de configuração completo
   ConfBaseWidget::salvarConfiguracao(AtributosGlobais::CONF_CONEXOES);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

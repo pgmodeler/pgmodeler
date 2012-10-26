@@ -602,9 +602,9 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
    }
    listaobjetos_tbw->setSortingEnabled(true);
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
  }
 }
@@ -763,9 +763,9 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
     }
    }
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
  }
 }
@@ -916,9 +916,9 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoB
     }
    }
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
  }
 }
@@ -1060,9 +1060,9 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
     arvoreobjetos_tw->expandItem(raiz);
    }
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
 
   //Ordena os itens da árvore

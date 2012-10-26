@@ -94,10 +94,10 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_FUN
   connect(tab_retorno, SIGNAL(s_linhaAdicionada(int)), this, SLOT(exibirFormParametro()));
   connect(tab_retorno, SIGNAL(s_linhaEditada(int)), this, SLOT(exibirFormParametro()));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -208,9 +208,9 @@ Parametro FuncaoWidget::obterParametro(TabelaObjetosWidget *tab, unsigned idx_li
     param.definirValorPadrao(tab->obterTextoCelula(idx_lin,3));
    }
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
  }
 
@@ -418,7 +418,7 @@ void FuncaoWidget::selecionarLinguagem(void)
                                          AtributosGlobais::SUF_ARQ_DESTAQUE +
                                          AtributosGlobais::EXT_CONFIGURACAO);
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
    destaque_codigo->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
                                          AtributosGlobais::SEP_DIRETORIO +
@@ -548,10 +548,10 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
    }
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Caso alguma validação acima dispare um erro o mesmo é redirecionado
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_CONFFUNCINVALIDAOBJ)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_CONFFUNCINVALIDAOBJ)
                 .arg(QString::fromUtf8(objeto->obterNome(true)))
                 .arg(objeto->obterNomeTipoObjeto()),
                 ERR_PGMODELERUI_CONFFUNCINVALIDAOBJ,
@@ -611,7 +611,7 @@ void FuncaoWidget::aplicarConfiguracao(void)
   /* Caso a linguagem selecionada no formulário for a C
      indica que a função está definida em uma biblioteca externa
      para tanto os valores dos campos biblioteca e simbolo
-     serão atribuío �  função que está sendo configurada */
+     serão atribuío �  função que está sendo configurada */
   if(linguagem_cmb->currentText()==~TipoLinguagem(TipoLinguagem::c))
   {
    func->definirBiblioteca(biblioteca_edt->text());
@@ -633,7 +633,7 @@ void FuncaoWidget::aplicarConfiguracao(void)
       com o estado do radiobox 'conjunto_rb' */
    func->definirRetornaSetOf(conjunto_rb->isChecked());
   }
-  //Caso a função retorna uma tabela, a mesma é atru��a �  função
+  //Caso a função retorna uma tabela, a mesma é atru��a �  função
   else
   {
    func->removerTiposRetTabela();
@@ -658,13 +658,13 @@ void FuncaoWidget::aplicarConfiguracao(void)
 
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
   cancelarConfiguracao();
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

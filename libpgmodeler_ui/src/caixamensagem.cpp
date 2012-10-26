@@ -66,14 +66,14 @@ void CaixaMensagem::exibirListaExecoes(void)
  }
 }
 
-void CaixaMensagem::show(Excecao e, const QString &msg, unsigned tipo_ico)
+void CaixaMensagem::show(Exception e, const QString &msg, unsigned tipo_ico)
 {
- deque<Excecao> lista;
- deque<Excecao>::reverse_iterator itr,itr_end;
+ deque<Exception> lista;
+ deque<Exception>::reverse_iterator itr,itr_end;
  QTreeWidgetItem *item=NULL,*item1=NULL,*item2=NULL;
  QLabel *label=NULL;
  int idx=0;
- Excecao *ex=NULL;
+ Exception *ex=NULL;
  QString str_aux, titulo;
  QFont fonte=this->font();
 
@@ -82,10 +82,10 @@ void CaixaMensagem::show(Excecao e, const QString &msg, unsigned tipo_ico)
  exibir_exec_txt_tb->blockSignals(false);
 
  //Armazena a exceção também em formato texto
- excecoes_txt->setPlainText(e.obterTextoExcecoes());
+ excecoes_txt->setPlainText(e.getExceptionsText());
 
  //Obtém a lista de erros contida na exceção passada
- e.obterListaExcecoes(lista);
+ e.getExceptionsList(lista);
 
  /* Varre a lista de erros obtidas em ordem reversa mostrando
     de onde partiu cada em sua ordem correta */
@@ -102,7 +102,7 @@ void CaixaMensagem::show(Excecao e, const QString &msg, unsigned tipo_ico)
   item=new QTreeWidgetItem;
   str_aux=QString("[%1] - %2")
           .arg(idx)
-          .arg(ex->obterLocal());
+          .arg(ex->getMethod());
   item->setIcon(0,QPixmap(QString(":/icones/icones/funcao.png")));
   excecoes_trw->insertTopLevelItem(0,item);
   label=new QLabel;
@@ -115,13 +115,13 @@ void CaixaMensagem::show(Excecao e, const QString &msg, unsigned tipo_ico)
      onde foi gerado o erro */
   item1=new QTreeWidgetItem(item);
   item1->setIcon(0,QPixmap(QString(":/icones/icones/codigofonte.png")));
-  item1->setText(0,ex->obterArquivo() + " (" + ex->obterLinha() + ")");
+  item1->setText(0,ex->getFile() + " (" + ex->getLine() + ")");
 
   //Configura o item o qual denota o código interno do erro
   item2=new QTreeWidgetItem(item);
   item2->setIcon(0,QPixmap(QString(":/icones/icones/msgbox_alerta.png")));
-  item2->setText(0,Excecao::obterNomeErro(ex->obterTipoErro()) +
-                   " (" + QString("%1").arg(ex->obterTipoErro()) + ")");
+  item2->setText(0,Exception::getErrorCode(ex->getErrorType()) +
+                   " (" + QString("%1").arg(ex->getErrorType()) + ")");
 
   //Configura o item da lista o qual exibe a mensagem de erro da exceção
   item1=new QTreeWidgetItem(item);
@@ -131,9 +131,9 @@ void CaixaMensagem::show(Excecao e, const QString &msg, unsigned tipo_ico)
   label->setFont(fonte);
   label->setStyleSheet("color: #ff0000;");
   excecoes_trw->setItemWidget(item1, 0, label);
-  label->setText(ex->obterMensagemErro());
+  label->setText(ex->getErrorMessage());
 
-  if(!ex->obterInfoAdicional().isEmpty())
+  if(!ex->getExtraInfo().isEmpty())
   {
    //Configura o item da lista o qual exibe a mensagem de erro da exceção
    item1=new QTreeWidgetItem(item);
@@ -143,7 +143,7 @@ void CaixaMensagem::show(Excecao e, const QString &msg, unsigned tipo_ico)
    label->setFont(fonte);
    label->setStyleSheet("color: #000080;");
    excecoes_trw->setItemWidget(item1, 0, label);
-   label->setText(ex->obterInfoAdicional());
+   label->setText(ex->getExtraInfo());
   }
 
   itr++;
@@ -172,7 +172,7 @@ void CaixaMensagem::show(Excecao e, const QString &msg, unsigned tipo_ico)
  /* Configura a caixa de mensagem com apenas o botão OK e com o ícone
     de erro crítico */
  if(msg.isEmpty())
-  str_aux=e.obterMensagemErro();
+  str_aux=e.getErrorMessage();
  else
   str_aux=msg;
 

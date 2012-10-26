@@ -32,7 +32,7 @@
 #include <map>
 #include <stack>
 using namespace std;
-//**********************************************************
+
 class ParserXML {
  private:
   /* Armazena o nome do arquivo que gerou o buffer xml. Este atributo
@@ -153,5 +153,5 @@ class ParserXML {
      carregar um arquivo/buffer XML para retomar o uso do mesmo */
   static void reiniciarParser(void);
 };
-//**********************************************************
+
 #endif

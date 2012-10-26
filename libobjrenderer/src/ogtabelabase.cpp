@@ -3,7 +3,7 @@
 OGTabelaBase::OGTabelaBase(TabelaBase *tab_base) : ObjetoGrafico(tab_base)
 {
  if(!tab_base)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  corpo=new QGraphicsPolygonItem;
  titulo=new OGTituloObjeto;

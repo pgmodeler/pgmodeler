@@ -13,7 +13,7 @@ void EspacoTabela::definirNome(const QString &nome)
     não podem ser criados pelo usuário */
  //if(nome.substr(0,3)=="pg_")
  if(nome.mid(0,3)=="pg_")
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRNOMERESERV)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRNOMERESERV)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_ESPACO_TABELA)),
                 ERR_PGMODELER_ATRNOMERESERV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -30,7 +30,7 @@ void EspacoTabela::definirDiretorio(const QString &diretorio)
     é disparada uma exceção, pois é obrigatório informar o diretório do
     sistema onde o espaço de tabelas será criado */
  if(dir_aux=="")
-  throw Excecao(ERR_PGMODELER_ATRNOMEDIRVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRNOMEDIRVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //TODO: Verificar se o diretório está na forma correta em windows ou unix???
  this->diretorio=dir_aux;

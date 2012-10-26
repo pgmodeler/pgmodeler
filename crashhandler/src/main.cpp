@@ -37,9 +37,9 @@ int main(int argc, char **argv)
   return(0);
  }
  //Caso um erro seja capturado durante a inicialização da aplicação
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Retorna o código de erro da última exceção e aborta a aplicação
-  return(e.obterTipoErro());
+  return(e.getErrorType());
  }
 }

@@ -90,10 +90,10 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   connect(sel_tabela_ref, SIGNAL(s_objetoRemovido(void)), this, SLOT(selecionarTabelaReferenciada(void)));
   connect(sel_tabela_ref, SIGNAL(s_objetoSelecionado(void)), this, SLOT(selecionarTabelaReferenciada(void)));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -125,7 +125,7 @@ void RestricaoWidget::adicionarColuna(int idx_lin)
    tipo_col=Restricao::COLUNA_REFER;
   }
 
-  //Obtém a referêni �  coluna no item atual do combo box
+  //Obtém a referêni �  coluna no item atual do combo box
   coluna=reinterpret_cast<Coluna *>(combo->itemData(combo->currentIndex(),Qt::UserRole).value<void *>());
   //Quando a coluna vai ser atribuída a tabela a mesma é removida do combo
   combo->removeItem(combo->currentIndex());
@@ -134,10 +134,10 @@ void RestricaoWidget::adicionarColuna(int idx_lin)
   //Caso não houver itens no combo o botão de inserção da respectiva tabela será desabilitado
   tab_col_aux->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (combo->count()!=0));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   tab_col_aux->removerLinha(idx_lin);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -181,7 +181,7 @@ void RestricaoWidget::adicionarColuna(Coluna *coluna, unsigned tipo_col, int idx
   else
    tabela_wgt=tab_colunas_ref;
 
-  /* Exibe os dados da coluna na linha especificada, definindo a referênci�  coluna
+  /* Exibe os dados da coluna na linha especificada, definindo a referênci�  coluna
      como dado da linha */
   tabela_wgt->definirTextoCelula(QString::fromUtf8(coluna->obterNome()),idx_lin,0);
   tabela_wgt->definirTextoCelula(QString::fromUtf8(~coluna->obterTipo()),idx_lin,1);
@@ -275,9 +275,9 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
   //Desabilita o obtão de inserir itens na tabela caso não hajam itens no combobox
   tab_col_aux->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (combo->count()!=0));
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -379,7 +379,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai,
  Tabela *tabela_ref=NULL;
 
  if(!objeto_pai)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, restricao, objeto_pai);
@@ -402,7 +402,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai,
  tab_colunas->blockSignals(true);
  for(i=0, lin_tab=0; i < qtd; i++)
  {
-  /* Caso o objeto pai seja uma tabela usa a referênci�  tabela pai
+  /* Caso o objeto pai seja uma tabela usa a referênci�  tabela pai
      para obter a coluna atual */
   if(tipo_obj==OBJETO_TABELA)
    coluna=tabela->obterColuna(i);
@@ -485,7 +485,7 @@ void RestricaoWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<Restricao>();
 
-  //Obtém a referêni �  restrição que está sendo criada/editada
+  //Obtém a referêni �  restrição que está sendo criada/editada
   restricao=dynamic_cast<Restricao *>(this->objeto);
 
   //Preenche os atributos básicos da restição com os valores configurados no formulário
@@ -529,11 +529,11 @@ void RestricaoWidget::aplicarConfiguracao(void)
       restricao->obterNumColunas(Restricao::COLUNA_ORIGEM)==0) ||
      (restricao->obterTipoRestricao()==TipoRestricao::foreign_key &&
       restricao->obterNumColunas(Restricao::COLUNA_REFER)==0))
-   throw Excecao(ERR_PGMODELERUI_RESTPKFKSEMCOLUNAS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELERUI_RESTPKFKSEMCOLUNAS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto

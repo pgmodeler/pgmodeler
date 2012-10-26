@@ -135,9 +135,9 @@ void ConfAparenciaWidget::criarObjetosExemplo(void)
    }
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -179,9 +179,9 @@ void ConfAparenciaWidget::carregarConfiguracao(void)
   modelo->definirObjetosModificados();
   cena->update();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -253,9 +253,9 @@ void ConfAparenciaWidget::salvarConfiguracao(void)
   //Salva a configuração em arquivo
   ConfBaseWidget::salvarConfiguracao(AtributosGlobais::CONF_ESTILO_OBJETOS);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -418,9 +418,9 @@ void ConfAparenciaWidget::restaurarPadroes(void)
   ConfBaseWidget::restaurarPadroes(AtributosGlobais::CONF_ESTILO_OBJETOS);
   this->carregarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

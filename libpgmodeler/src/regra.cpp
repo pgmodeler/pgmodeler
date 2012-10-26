@@ -47,7 +47,7 @@ void Regra::adicionarComando(const QString &comando)
  //Caso o comando a ser atribuido estaja vazio
  if(comando=="")
   //Dispara a exceção avisando tal fato
-  throw Excecao(ERR_PGMODELER_INSCMDNULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_INSCMDNULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   QString cmd_aux=comando;
@@ -78,7 +78,7 @@ QString Regra::obterComando(unsigned idx_cmd)
  /* Verifica se o índice condiz com o tamanho das listas de comandos,
     caso não conincida, dispara exceção */
  if(idx_cmd >= comandos.size())
-  throw Excecao(ERR_PGMODELER_REFCMDIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFCMDIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Retorna o comando no índice passado
   return(comandos[idx_cmd]);
@@ -94,7 +94,7 @@ void Regra::removerComando(unsigned idx_cmd)
  /* Verifica se o índice condiz com o tamanho das listas de comandos,
     caso não conincida, dispara exceção */
  if(idx_cmd>=comandos.size())
-  throw Excecao(ERR_PGMODELER_REFCMDIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFCMDIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Remove o comando no índice específico
   comandos.erase(comandos.begin() + idx_cmd);

@@ -4,7 +4,7 @@ OGRelacionamento::OGRelacionamento(RelacionamentoBase *relacao) : ObjetoGrafico(
 {
  //Dispara uma exceção caso tente criar um relacionamento a partir de um objeto não alocado
  if(!relacao)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  for(unsigned i=RelacionamentoBase::ROTULO_CARD_ORIGEM;
       i <= RelacionamentoBase::ROTULO_NOME_RELAC; i++)

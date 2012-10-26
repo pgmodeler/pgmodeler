@@ -146,7 +146,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   prog_tarefa=new ProgressoTarefa();
   deps_refs_wgt=new ListaObjetosWidget(this);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   caixa_msg->show(e);
  }
@@ -256,7 +256,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  {
   this->carregarPlugins();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   caixa_msg->show(e);
  }
@@ -323,7 +323,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
      if(!atribs[AtributosParsers::CAMINHO].isEmpty())
       arq_sessao_ant.push_back(atribs[AtributosParsers::CAMINHO]);
     }
-    catch(Excecao &e)
+    catch(Exception &e)
     {
      caixa_msg->show(e);
     }
@@ -332,7 +332,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
    itr++;
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   caixa_msg->show(e);
  }
@@ -362,7 +362,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
      arq_temps.pop_front();
     }
    }
-   catch(Excecao &e)
+   catch(Exception &e)
    {
     caixa_msg->show(e);
    }
@@ -382,7 +382,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
     arq_sessao_ant.pop_front();
    }
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
    caixa_msg->show(e);
   }
@@ -603,9 +603,9 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
    modelos_tab->setTabText(modelos_tab->currentIndex(),
                            QString::fromUtf8(tab_modelo->modelo->obterNome()));
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
-   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
  }
 
@@ -965,9 +965,9 @@ void FormPrincipal::salvarModelo(ModeloWidget *modelo)
     modelo->salvarModelo();
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -1031,10 +1031,10 @@ void FormPrincipal::imprimirModelo(void)
   //Obtém as configurações de impressão da cena
   CenaObjetos::obterConfiguracaoPagina(tam_papel, orientacao, margens);
 
-  //Obtém a referência �  impressora configuada no diálogo de impressão
+  //Obtém a referência �  impressora configuada no diálogo de impressão
   printer=print_dlg.printer();
 
-  //Atribui as configurações de impressão da cena �  impressora
+  //Atribui as configurações de impressão da cena �  impressora
   printer->setPaperSize(tam_papel);
   printer->setOrientation(orientacao);
   printer->setPageMargins(margens.left(), margens.top(), margens.right(), margens.bottom(), QPrinter::Millimeter);
@@ -1109,10 +1109,10 @@ void FormPrincipal::carregarModelo(void)
    }
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   fecharModelo(modelos_tab->currentIndex());
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -1178,7 +1178,7 @@ void FormPrincipal::__atualizarDockWidgets(void)
 
 void FormPrincipal::carregarPlugins(void)
 {
- vector<Excecao> vet_erros;
+ vector<Exception> vet_erros;
  QString lib, nome_plugin,
          dir_plugins=AtributosGlobais::DIR_PLUGINS +
                      AtributosGlobais::SEP_DIRETORIO;
@@ -1254,7 +1254,7 @@ void FormPrincipal::carregarPlugins(void)
   else
   {
    //Caso o plugin não foi carregado, armazena o erro para posterior exibição
-   vet_erros.push_back(Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_PLUGINNAOCARREGADO)
+   vet_erros.push_back(Exception(Exception::getErrorMessage(ERR_PGMODELERUI_PLUGINNAOCARREGADO)
                                .arg(QString::fromUtf8(lista_dirs.front()))
                                .arg(QString::fromUtf8(lib))
                                .arg(pl.errorString()),
@@ -1265,7 +1265,7 @@ void FormPrincipal::carregarPlugins(void)
 
  //Caso algum erro foi disparado no carregamento, redireciona o erro
  if(!vet_erros.empty())
-  throw Excecao(ERR_PGMODELERUI_PLUGINSNAOCARREGADOS,__PRETTY_FUNCTION__,__FILE__,__LINE__, vet_erros);
+  throw Exception(ERR_PGMODELERUI_PLUGINSNAOCARREGADOS,__PRETTY_FUNCTION__,__FILE__,__LINE__, vet_erros);
 }
 
 void FormPrincipal::destruirPlugins(void)

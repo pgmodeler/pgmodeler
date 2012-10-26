@@ -24,10 +24,10 @@ ColunaWidget::ColunaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_COL
   janela_pai->setMinimumSize(530, 380);
   janela_pai->setMaximumHeight(380);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Redireciona o erro
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -43,7 +43,7 @@ void ColunaWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai, Li
  TipoPgSQL tipo;
 
  if(!objeto_pai)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, coluna, objeto_pai);
@@ -67,10 +67,10 @@ void ColunaWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<Coluna>();
 
-  //Obtém a referêni �  coluna que está sendo criada/editada
+  //Obtém a referêni �  coluna que está sendo criada/editada
   coluna=dynamic_cast<Coluna *>(this->objeto);
 
-  //Atribui os dados do formulári�  coluna
+  //Atribui os dados do formulári�  coluna
   coluna->definirNaoNulo(nao_nulo_chk->isChecked());
   coluna->definirValorPadrao(valor_padrao_txt->toPlainText());
   coluna->definirTipo(tipo_col->obterTipoPgSQL());
@@ -79,13 +79,13 @@ void ColunaWidget::aplicarConfiguracao(void)
 
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
   cancelarConfiguracao();
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

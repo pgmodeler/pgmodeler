@@ -275,7 +275,7 @@ void TabelaWidget::listarObjetos(TipoObjetoBase tipo_obj)
   //Obtém a tabela de objetos referente ao tipo passado
   tab=mapa_tab_objetos[tipo_obj];
 
-  //Obtém a referêni �  tabela em edição
+  //Obtém a referêni �  tabela em edição
   tabela=dynamic_cast<Tabela *>(this->objeto);
 
   //Remove as linhas da tabela antes da exibição dos elementos
@@ -305,9 +305,9 @@ void TabelaWidget::listarObjetos(TipoObjetoBase tipo_obj)
                                                        mapa_tab_objetos[OBJETO_COLUNA]->obterNumLinhas() > 0);
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -326,10 +326,10 @@ void TabelaWidget::manipularObjeto(void)
   //Atualiza a lista de objetos exibindo o objeto recém criado
   listarObjetos(tipo_obj);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   listarObjetos(tipo_obj);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -486,13 +486,13 @@ void TabelaWidget::removerObjetos(void)
     lista_op->adicionarObjeto(objeto, Operacao::OBJETO_REMOVIDO, 0, this->objeto);
    }
    else
-    throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_REMOBJPROTEGIDO)
+    throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_REMOBJPROTEGIDO)
                   .arg(QString::fromUtf8(objeto->obterNome()))
                   .arg(objeto->obterNomeTipoObjeto()),
                   ERR_PGMODELERUI_REMOBJPROTEGIDO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Caso a quantidade de operações seja diferente da quantidade inicial
      obtida antes da remoção dos objetos */
@@ -519,7 +519,7 @@ void TabelaWidget::removerObjetos(void)
 
   //Atualiza a lista de objeto da tabela
   listarObjetos(tipo_obj);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -547,16 +547,16 @@ void TabelaWidget::removerObjeto(int idx_lin)
    lista_op->adicionarObjeto(objeto, Operacao::OBJETO_REMOVIDO, idx_lin, this->objeto);
   }
   else
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELERUI_REMOBJPROTEGIDO)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_REMOBJPROTEGIDO)
                  .arg(QString::fromUtf8(objeto->obterNome()))
                  .arg(objeto->obterNomeTipoObjeto()),
                  ERR_PGMODELERUI_REMOBJPROTEGIDO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Atualiza a lista de objeto da tabela
   listarObjetos(tipo_obj);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -573,11 +573,11 @@ void TabelaWidget::TabelaWidget::moverObjetos(int idx1, int idx2)
   lista_op->atualizarIndiceObjeto(tabela->obterObjeto(idx2, tipo_obj), idx1);
   tabela->trocarIndicesObjetos(tipo_obj, idx1, idx2);
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   //Atualiza a lista de objeto do relacionamento
   listarObjetos(tipo_obj);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -606,17 +606,17 @@ void TabelaWidget::aplicarConfiguracao(void)
        da tabela */
     modelo->validarRelacionamentos();
   }
-  catch(Excecao &e)
+  catch(Exception &e)
   {
    /* O único erro que é desconsiderado é o de invalidação de objetos, pois,
       mesmo com a restauração do estado original da tabela estes
       objetos não são recuperados */
-   if(e.obterTipoErro()==ERR_PGMODELER_REFCOLUNAINVTABELA)
+   if(e.getErrorType()==ERR_PGMODELER_REFCOLUNAINVTABELA)
     //Exibe uma mensagem de erro com o conteúdo da exceção
     caixa_msg->show(e);
    //Para os demais erros a exceção é encaminhada
    else
-    throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   }
 
   //Finaliza o encademanto de operações aberto
@@ -625,7 +625,7 @@ void TabelaWidget::aplicarConfiguracao(void)
   //Finaliza a configuração da tabela
   finalizarConfiguracao();
  }
- catch(Excecao &e)
+ catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
@@ -633,7 +633,7 @@ void TabelaWidget::aplicarConfiguracao(void)
   lista_op->anularEncadeamentoOperacoes(true);
   this->cancelarConfiguracao();
   lista_op->anularEncadeamentoOperacoes(false);
-  throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

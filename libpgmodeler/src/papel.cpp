@@ -32,7 +32,7 @@ void Papel::definirSysid(unsigned sysid)
  /* IDs de usuário abaixo de 100 são reservados ao SGBD, sendo assim
     um erro será gerado */
  if(sysid < 100)
-  throw Excecao(ERR_PGMODELER_ATRIDUSUARIOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATRIDUSUARIOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->sysid=sysid;
 }
@@ -44,7 +44,7 @@ void Papel::definirOpcao(unsigned tipo_op, bool valor)
   opcoes[tipo_op]=valor;
  else
   //Dispara-se uma exceção caso se use um tipo de opção inválido
-  throw Excecao(ERR_PGMODELER_ATROPPAPELTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROPPAPELTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
@@ -52,11 +52,11 @@ void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
  /* Caso o papel a ser inserido na lista não esteja alocado,
     um erro e disparado */
  if(!papel)
-  throw Excecao(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Caso o usuário tente atribuir como membro do papel 'this'
     o mesmo objeto representado por este ultimo */
  else if(papel && this==papel)
-  throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_ATRMEBROPROPPAPEL)
+  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRMEBROPROPPAPEL)
                                .arg(QString::fromUtf8(papel->obterNome())),
                 ERR_PGMODELER_ATRMEBROPROPPAPEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
@@ -83,7 +83,7 @@ void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
      (tipo_papel==PAPEL_MEMBRO && (papel_mem || papel_adm)) ||
      (tipo_papel==PAPEL_ADMIN && (papel_adm || papel_mem)))
      //Dispara um erro caso o papel já foi inserido anteriormente na lista
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_INSITEMPAPELDUPLIC)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_INSITEMPAPELDUPLIC)
                                .arg(QString::fromUtf8(papel->obterNome()))
                                .arg(QString::fromUtf8(this->obterNome())),
                  ERR_PGMODELER_INSITEMPAPELDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -113,7 +113,7 @@ void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
   else if((tipo_papel==PAPEL_REF && ((papel_mem || papel_adm) || papel_ref1)) ||
           (tipo_papel==PAPEL_MEMBRO && ((papel_mem1 || papel_adm1) || papel_ref)) ||
           (tipo_papel==PAPEL_ADMIN &&  ((papel_mem1 || papel_adm1) || papel_ref)))
-   throw Excecao(Excecao::obterMensagemErro(ERR_PGMODELER_REFREDUNDANTEPAPEIS)
+   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFREDUNDANTEPAPEIS)
                                .arg(QString::fromUtf8(this->obterNome()))
                                .arg(QString::fromUtf8(papel->obterNome())),
                  ERR_PGMODELER_REFREDUNDANTEPAPEIS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -193,12 +193,12 @@ void Papel::removerPapel(unsigned tipo_papel, unsigned idx_papel)
   case PAPEL_ADMIN: lista=&papeis_admins; break;
   default:
     //Dispara um erro caso se referencie um tipo inválido de lista de papéis
-    throw Excecao(ERR_PGMODELER_REFPAPELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_PGMODELER_REFPAPELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
 
  if(idx_papel >= lista->size())
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=lista->begin() + idx_papel;
  lista->erase(itr);
@@ -216,7 +216,7 @@ void Papel::removerPapeis(unsigned tipo_papel)
   case PAPEL_ADMIN: lista=&papeis_admins; break;
   default:
     //Dispara um erro caso se referencie um tipo inválido de lista de papéis
-    throw Excecao(ERR_PGMODELER_REFPAPELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_PGMODELER_REFPAPELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
 
@@ -237,7 +237,7 @@ bool Papel::papelExiste(unsigned tipo_papel, Papel *papel)
   case PAPEL_ADMIN: lista=&papeis_admins; break;
   default:
     //Dispara um erro caso se referencie um tipo inválido de lista de papéis
-    throw Excecao(ERR_PGMODELER_REFPAPELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_PGMODELER_REFPAPELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
 
@@ -266,7 +266,7 @@ bool Papel::obterOpcao(unsigned tipo_op)
  if(tipo_op <= OP_ENCRYPTED)
   return(opcoes[tipo_op]);
  else
-  throw Excecao(ERR_PGMODELER_ATROPPAPELTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_ATROPPAPELTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 Papel *Papel::obterPapel(unsigned tipo_papel, unsigned idx_papel)
@@ -282,14 +282,14 @@ Papel *Papel::obterPapel(unsigned tipo_papel, unsigned idx_papel)
   case PAPEL_ADMIN: lista=&papeis_admins; break;
   default:
     //Dispara um erro caso se referencie um tipo inválido de lista de papéis
-    throw Excecao(ERR_PGMODELER_REFPAPELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_PGMODELER_REFPAPELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
 
  /* Caso o índice do papel a ser obtido seja inválido, um
     erro é gerado */
  if(idx_papel > lista->size())
-  throw Excecao(ERR_PGMODELER_REFPAPELIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFPAPELIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Obtém o papel na posição especificada
   papel=lista->at(idx_papel);
@@ -308,7 +308,7 @@ unsigned Papel::obterNumPapeis(unsigned tipo_papel)
   case PAPEL_ADMIN: lista=&papeis_admins; break;
   default:
    //Dispara um erro caso se referencie um tipo inválido de lista de papéis
-   throw Excecao(ERR_PGMODELER_REFPAPELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_PGMODELER_REFPAPELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
 

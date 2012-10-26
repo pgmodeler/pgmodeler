@@ -1,7 +1,7 @@
 #include "excecao.h"
 #include <QApplication>
 
-QString Excecao::mensagens[QTD_ERROS][2]={
+QString Exception::messages[ERROR_COUNT][2]={
 {"ERR_NULO", " "},
 {"ERR_GLOBAL_OBJBADALOC", QT_TR_NOOP("Insufficient memory space to allocate the object!")},
 {"ERR_PGMODELER_ATRPSDTIPOCOL", QT_TR_NOOP("Assignment of a pseudo-type to the type of the column!")},
@@ -42,15 +42,15 @@ QString Excecao::mensagens[QTD_ERROS][2]={
 {"ERR_PGMODELER_REFFUNCTIPOINV", QT_TR_NOOP("Reference to a function with invalid type!")},
 {"ERR_PGMODELER_REFARGOPTIPOINV", QT_TR_NOOP("Reference to an argument of the operator with invalid type!")},
 {"ERR_PGMODELER_REFOPTIPOINV", QT_TR_NOOP("Reference to an operator with invalid type!")},
-{"ERR_PGMODELER_ATROPPAPELTIPOINV", QT_TR_NOOP("Assigment of value to an invalid option type on role!")},
+{"ERR_PGMODELER_ATROPPAPELTIPOINV", QT_TR_NOOP("Assignment of value to an invalid option type on role!")},
 {"ERR_PGMODELER_REFPAPELINV", QT_TR_NOOP("Reference to an invalid role type!")},
 {"ERR_PGMODELER_INSITEMPAPELDUPLIC", QT_TR_NOOP("The insertion of the role '%1' is not possible because this is already being referenced by role '%2'!")},
-{"ERR_PGMODELER_REFREDUNDANTEPAPEIS",QT_TR_NOOP("Reference redundance detected by having the role '%1' referencing the role '%2'!")},
+{"ERR_PGMODELER_REFREDUNDANTEPAPEIS",QT_TR_NOOP("Reference redundancy detected by having the role '%1' referencing the role '%2'!")},
 {"ERR_PGMODELER_ATRMEBROPROPPAPEL", QT_TR_NOOP("The role '%1' can not be listed as a member of itself!")},
 {"ERR_PGMODELER_REFPAPELIDXINV", QT_TR_NOOP("Reference to a paper which index is out of paper list capacity!")},
 {"ERR_PGMODELER_INSCMDNULO", QT_TR_NOOP("Insertion of null command to the rule!")},
 {"ERR_PGMODELER_REFCMDIDXINV", QT_TR_NOOP("Reference to a command which index is out of the command list capacity!")},
-{"ERR_PGMODELER_HERANCATABINV", QT_TR_NOOP("Is not possible to create a self generalization/dependecy relationship! The table can not inherit or copy their own attributes!")},
+{"ERR_PGMODELER_HERANCATABINV", QT_TR_NOOP("Is not possible to create a self generalization/dependency relationship! The table can not inherit or copy their own attributes!")},
 {"ERR_PGMODELER_ATROBJRELAC", QT_TR_NOOP("Assignment of an object that already belongs to another table!")},
 {"ERR_PGMODELER_ATRESQDIFSEQ", QT_TR_NOOP("Assignment of a schema to the sequence which differs from the schema of the owner table!")},
 {"ERR_PGMODELER_ATRESQVALORINV", QT_TR_NOOP("Assignment of an invalid value to one of the sequence attributes!")},
@@ -82,7 +82,7 @@ QString Excecao::mensagens[QTD_ERROS][2]={
 {"ERR_PGMODELER_ATRCONFTIPOINV", QT_TR_NOOP("Assignment of invalid configuration to the type!")},
 {"ERR_PGMODELER_INSTIPODUPLIC", QT_TR_NOOP("The data type '%1' can not be assigned because it already exists in the types list of the aggregate function '%2'!")},
 {"ERR_PGMODELER_ATROPFUNCAGRARGINV", QT_TR_NOOP("Assignment of an operator which input  type count is invalid to aggregate function!")},
-{"ERR_PGMODELER_ATROPFUNCAGTIPOSINV", QT_TR_NOOP("Assigment of an operator which types of arguments is invalid!")},
+{"ERR_PGMODELER_ATROPFUNCAGTIPOSINV", QT_TR_NOOP("Assignment of an operator which types of arguments is invalid!")},
 {"ERR_PGMODELER_ATRNOMERESERV", QT_TR_NOOP("Assignment of system reserved name to the object '%1' (%2)!")},
 {"ERR_PGMODELER_FUNCCONFIGINV", QT_TR_NOOP("One function with invalid configuration is been used by the object '%1' (%2)!")},
 {"ERR_PGMODELER_ATRIDUSUARIOINV", QT_TR_NOOP("Assignment of invalid id to the user!")},
@@ -179,162 +179,162 @@ QString Excecao::mensagens[QTD_ERROS][2]={
 {"ERR_CONEXBD_CMDSQLNAOEXECUTADO", QT_TR_NOOP("Could not execute the SQL command.\n Message returned: %1")},
 };
 
-Excecao::Excecao(void)
+Exception::Exception(void)
 {
- configurarExcecao("",ERR_NULO,"","",-1,"");
+ configureException("",ERR_NULO,"","",-1,"");
 }
 
-Excecao::Excecao(const QString &msg, const QString &local, const QString &arquivo, int linha, Excecao *excecao, const QString &info_adicional)
+Exception::Exception(const QString &msg, const QString &local, const QString &arquivo, int linha, Exception *excecao, const QString &info_adicional)
 {
- configurarExcecao(msg,tipo_erro, local, arquivo, linha, info_adicional);
- if(excecao) adicionarExecao(*excecao);
+ configureException(msg,error_type, local, arquivo, linha, info_adicional);
+ if(excecao) addException(*excecao);
 }
 
-Excecao::Excecao(TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, Excecao *excecao, const QString &info_adicional)
+Exception::Exception(ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, Exception *excecao, const QString &info_adicional)
 {
  /* Devido a classe Excecao não ser derivada de QObject a função tr() é ineficiente para traduzir as mensagens
     sendo assim é chamado o metódo de tradução diretamente da aplicação especificando o
     contexto (Excecao) no arquivo .ts e o texto a ser traduzido */
- configurarExcecao(QApplication::translate("Excecao",mensagens[tipo_erro][MENSAGEM_ERRO],"",QApplication::UnicodeUTF8),
+ configureException(QApplication::translate("Excecao",messages[tipo_erro][ERROR_MESSAGE],"",QApplication::UnicodeUTF8),
                    tipo_erro, local, arquivo, linha, info_adicional);
 
- if(excecao) adicionarExecao(*excecao);
+ if(excecao) addException(*excecao);
 }
 
-Excecao::Excecao(const QString &msg, TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, Excecao *excecao, const QString &info_adicional)
+Exception::Exception(const QString &msg, ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, Exception *excecao, const QString &info_adicional)
 {
- configurarExcecao(msg,tipo_erro, local, arquivo, linha, info_adicional);
- if(excecao) adicionarExecao(*excecao);
+ configureException(msg,tipo_erro, local, arquivo, linha, info_adicional);
+ if(excecao) addException(*excecao);
 }
 
-Excecao::Excecao(TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, vector<Excecao> &excecoes, const QString &info_adicional)
+Exception::Exception(ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, vector<Exception> &excecoes, const QString &info_adicional)
 {
- vector<Excecao>::iterator itr, itr_end;
+ vector<Exception>::iterator itr, itr_end;
 
  /* Devido a classe Excecao não ser derivada de QObject a função tr() é ineficiente para traduzir as mensagens
     sendo assim é chamado o metódo de tradução diretamente da aplicação especificando o
     contexto (Excecao) no arquivo .ts e o texto a ser traduzido */
- configurarExcecao(QApplication::translate("Excecao",mensagens[tipo_erro][MENSAGEM_ERRO],"",QApplication::UnicodeUTF8),
+ configureException(QApplication::translate("Excecao",messages[tipo_erro][ERROR_MESSAGE],"",QApplication::UnicodeUTF8),
                    tipo_erro, local, arquivo, linha, info_adicional);
 
  itr=excecoes.begin();
  itr_end=excecoes.end();
  while(itr!=itr_end)
  {
-  adicionarExecao((*itr));
+  addException((*itr));
   itr++;
  }
 }
 
-Excecao::Excecao(const QString &msg, const QString &local, const QString &arquivo, int linha, vector<Excecao> &excecoes, const QString &info_adicional)
+Exception::Exception(const QString &msg, const QString &local, const QString &arquivo, int linha, vector<Exception> &excecoes, const QString &info_adicional)
 {
- vector<Excecao>::iterator itr, itr_end;
+ vector<Exception>::iterator itr, itr_end;
 
- configurarExcecao(msg,tipo_erro, local, arquivo, linha, info_adicional);
+ configureException(msg,error_type, local, arquivo, linha, info_adicional);
 
  itr=excecoes.begin();
  itr_end=excecoes.end();
  while(itr!=itr_end)
  {
-  adicionarExecao((*itr));
+  addException((*itr));
   itr++;
  }
 }
 
-void Excecao::configurarExcecao(const QString &msg, TipoErro tipo_erro, const QString &local, const QString &arquivo, int linha, const QString &info_adicional)
+void Exception::configureException(const QString &msg, ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, const QString &info_adicional)
 {
- this->tipo_erro=tipo_erro;
- this->msg_erro=msg;
- this->local=local;
- this->arquivo=arquivo;
- this->linha=linha;
- this->info_adicional=info_adicional;
+ this->error_type=tipo_erro;
+ this->error_msg=msg;
+ this->method=local;
+ this->file=arquivo;
+ this->line=linha;
+ this->extra_info=info_adicional;
 }
 
-QString Excecao::obterMensagemErro(void)
+QString Exception::getErrorMessage(void)
 {
- return(msg_erro);
+ return(error_msg);
 }
 
-QString Excecao::obterMensagemErro(TipoErro tipo_erro)
+QString Exception::getErrorMessage(ErrorType tipo_erro)
 {
- if(tipo_erro < QTD_ERROS)
+ if(tipo_erro < ERROR_COUNT)
   /* Devido a classe Excecao não ser derivada de QObject a função tr() é ineficiente para traduzir as mensagens
      sendo assim é chamado o metódo de tradução diretamente da aplicação especificando o
      contexto (Excecao) no arquivo .ts e o texto a ser traduzido */
-  return(QApplication::translate("Excecao",mensagens[tipo_erro][MENSAGEM_ERRO],"", QApplication::UnicodeUTF8));
+  return(QApplication::translate("Excecao",messages[tipo_erro][ERROR_MESSAGE],"", QApplication::UnicodeUTF8));
    //return(QObject::tr(mensagens[tipo_erro][MENSAGEM_ERRO]));
  else
   return("");
 }
 
-QString Excecao::obterNomeErro(TipoErro tipo_erro)
+QString Exception::getErrorCode(ErrorType tipo_erro)
 {
- if(tipo_erro < QTD_ERROS)
-   return(mensagens[tipo_erro][CODIGO_ERRO]);
+ if(tipo_erro < ERROR_COUNT)
+   return(messages[tipo_erro][ERROR_CODE]);
  else
   return("");
 }
 
-QString Excecao::obterLocal(void)
+QString Exception::getMethod(void)
 {
- return(local);
+ return(method);
 }
 
-QString Excecao::obterArquivo(void)
+QString Exception::getFile(void)
 {
- return(arquivo);
+ return(file);
 }
 
-QString Excecao::obterLinha(void)
+QString Exception::getLine(void)
 {
- return(QString("%1").arg(linha));
+ return(QString("%1").arg(line));
 }
 
-TipoErro Excecao::obterTipoErro(void)
+ErrorType Exception::getErrorType(void)
 {
- return(tipo_erro);
+ return(error_type);
 }
 
-QString Excecao::obterInfoAdicional(void)
+QString Exception::getExtraInfo(void)
 {
- return(info_adicional);
+ return(extra_info);
 }
 
-void Excecao::adicionarExecao(Excecao &excecao)
+void Exception::addException(Exception &excecao)
 {
- deque<Excecao>::iterator itr, itr_end;
+ deque<Exception>::iterator itr, itr_end;
 
- itr=excecao.excecoes.begin();
- itr_end=excecao.excecoes.end();
+ itr=excecao.exceptions.begin();
+ itr_end=excecao.exceptions.end();
 
  while(itr!=itr_end)
  {
-  this->excecoes.push_front(Excecao(itr->msg_erro,itr->tipo_erro,
-                                    itr->local,itr->arquivo,itr->linha,NULL,itr->info_adicional));
+  this->exceptions.push_front(Exception(itr->error_msg,itr->error_type,
+                                    itr->method,itr->file,itr->line,NULL,itr->extra_info));
   itr++;
  }
- excecao.excecoes.clear();
- this->excecoes.push_front(Excecao(excecao.msg_erro,excecao.tipo_erro,
-                                   excecao.local,excecao.arquivo,excecao.linha,NULL,excecao.info_adicional));
+ excecao.exceptions.clear();
+ this->exceptions.push_front(Exception(excecao.error_msg,excecao.error_type,
+                                   excecao.method,excecao.file,excecao.line,NULL,excecao.extra_info));
 }
 
-void Excecao::obterListaExcecoes(deque<Excecao> &lista)
+void Exception::getExceptionsList(deque<Exception> &lista)
 {
- lista.assign(this->excecoes.begin(), this->excecoes.end());
- lista.push_front(Excecao(this->msg_erro,this->tipo_erro,
-                          this->local,this->arquivo,this->linha,NULL,this->info_adicional));
+ lista.assign(this->exceptions.begin(), this->exceptions.end());
+ lista.push_front(Exception(this->error_msg,this->error_type,
+                          this->method,this->file,this->line,NULL,this->extra_info));
 }
 
-QString Excecao::obterTextoExcecoes(void)
+QString Exception::getExceptionsText(void)
 {
- deque<Excecao> excecoes;
- deque<Excecao>::iterator itr, itr_end;
+ deque<Exception> excecoes;
+ deque<Exception>::iterator itr, itr_end;
  unsigned idx=0;
  QString excecoes_txt;
 
  //Obtém a lista de exceções geradas
- this->obterListaExcecoes(excecoes);
+ this->getExceptionsList(excecoes);
  itr=excecoes.begin();
  itr_end=excecoes.end();
  idx=excecoes.size()-1;
@@ -342,9 +342,9 @@ QString Excecao::obterTextoExcecoes(void)
  //Exibe todas as exceções no console
  while(itr!=itr_end)
  {
-  excecoes_txt+=QString("[%1] %2 (%3)\n").arg(idx).arg(itr->obterArquivo()).arg(itr->obterLinha());
-  excecoes_txt+=QString("  %1\n").arg(itr->obterLocal());
-  excecoes_txt+=QString("    [%1] %2\n\n").arg(Excecao::obterNomeErro(itr->obterTipoErro())).arg(itr->obterMensagemErro());
+  excecoes_txt+=QString("[%1] %2 (%3)\n").arg(idx).arg(itr->getFile()).arg(itr->getLine());
+  excecoes_txt+=QString("  %1\n").arg(itr->getMethod());
+  excecoes_txt+=QString("    [%1] %2\n\n").arg(Exception::getErrorCode(itr->getErrorType())).arg(itr->getErrorMessage());
   itr++; idx--;
  }
 

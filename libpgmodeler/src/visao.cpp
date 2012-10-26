@@ -81,7 +81,7 @@ void Visao::adicionarReferencia(Referencia &refer, unsigned tipo_sql, int id_exp
  /* Caso se tente inserir uma referência num índice inválido,
     é disparada uma exceção */
  else if(id_exp >= 0 && id_exp >= static_cast<int>(vet_idref->size()))
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Insere a referência no fim da lista de expressões
  else
@@ -144,7 +144,7 @@ Referencia Visao::obterReferencia(unsigned id_ref)
  /* Caso tente acessar uma referência com índice
     inválido, dispara uma exceção */
  if(id_ref >= referencias.size())
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(referencias[id_ref]);
 }
@@ -177,7 +177,7 @@ void Visao::removerReferencia(unsigned id_ref)
  /* Dispara uma exceção caso se tente remover uma referência
     com índice inválido */
  if(id_ref >= referencias.size())
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Varre as três listas de expressões para verificar se o
     a referência não está sendo usada em uma delas */
@@ -227,7 +227,7 @@ void Visao::removerReferencia(unsigned id_exp, unsigned tipo_sql)
   vet_idref=&exp_where;
 
  if(id_exp >= vet_idref->size())
-  throw Excecao(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Remove a referência da lista de expressão
  vet_idref->erase(vet_idref->begin() + id_exp);
