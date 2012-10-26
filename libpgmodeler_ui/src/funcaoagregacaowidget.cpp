@@ -77,7 +77,7 @@ FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void FuncaoAgregacaoWidget::hideEvent(QHideEvent *evento)
 {
  sel_func_final->removerObjetoSelecionado();
@@ -87,7 +87,7 @@ void FuncaoAgregacaoWidget::hideEvent(QHideEvent *evento)
  cond_inicial_txt->clear();
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void FuncaoAgregacaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, FuncaoAgregacao *funcao_ag)
 {
  unsigned qtd, i;

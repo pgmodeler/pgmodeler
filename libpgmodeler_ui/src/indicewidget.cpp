@@ -73,7 +73,7 @@ IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_IND
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void IndiceWidget::hideEvent(QHideEvent *evento)
 {
  ObjetoBaseWidget::hideEvent(evento);
@@ -94,7 +94,7 @@ void IndiceWidget::hideEvent(QHideEvent *evento)
  ascendente_rb->setChecked(true);
  coluna_rb->setChecked(true);
 }
-//----------------------------------------------------------
+
 void IndiceWidget::atualizarComboColunas(void)
 {
  Coluna *coluna=NULL;
@@ -119,7 +119,7 @@ void IndiceWidget::atualizarComboColunas(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void IndiceWidget::exibirDadosElemento(ElementoIndice elem, int idx_elem)
 {
  //Caso o elemento possua uma coluna
@@ -158,7 +158,7 @@ void IndiceWidget::exibirDadosElemento(ElementoIndice elem, int idx_elem)
     no método aplicarConfiguracao() */
  tab_elementos->definirDadoLinha(QVariant::fromValue<ElementoIndice>(elem), idx_elem);
 }
-//----------------------------------------------------------
+
 void IndiceWidget::manipularElemento(int idx_elem)
 {
  /* Caso a radio box de coluna esteja marcado ou se o de expressão esteja
@@ -190,7 +190,7 @@ void IndiceWidget::manipularElemento(int idx_elem)
  else if(tab_elementos->obterTextoCelula(idx_elem,0).isEmpty())
   tab_elementos->removerLinha(idx_elem);
 }
-//----------------------------------------------------------
+
 void IndiceWidget::editarElemento(int idx_elem)
 {
  ElementoIndice elem;
@@ -223,7 +223,7 @@ void IndiceWidget::editarElemento(int idx_elem)
  //Exibe a classe de operadores no formulário
  sel_classe_op->definirObjeto(elem.obterClasseOperadores());
 }
-//----------------------------------------------------------
+
 void IndiceWidget::selecionarObjetoElemento(void)
 {
  QObject *obj_sender=sender();
@@ -256,7 +256,7 @@ void IndiceWidget::selecionarObjetoElemento(void)
  coluna_rb->blockSignals(false);
  expressao_rb->blockSignals(false);
 }
-//----------------------------------------------------------
+
 void IndiceWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaOperacoes *lista_op, Indice *indice)
 {
  unsigned i, qtd;
@@ -296,7 +296,7 @@ void IndiceWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaO
   tab_elementos->blockSignals(false);
  }
 }
-//----------------------------------------------------------
+
 void IndiceWidget::aplicarConfiguracao(void)
 {
  try

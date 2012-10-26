@@ -56,7 +56,7 @@ RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_REGRA
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void RegraWidget::hideEvent(QHideEvent *evento)
 {
  ObjetoBaseWidget::hideEvent(evento);
@@ -65,13 +65,13 @@ void RegraWidget::hideEvent(QHideEvent *evento)
  tipo_evento_cmb->setCurrentIndex(0);
  tipo_execucao_cmb->setCurrentIndex(0);
 }
-//----------------------------------------------------------
+
 void RegraWidget::editarComando(int idx_lin)
 {
  //Exibe o comando na linha atual da tabela no campo de comando sql
  comando_txt->setPlainText(tab_comandos->obterTextoCelula(idx_lin,0));
 }
-//----------------------------------------------------------
+
 void RegraWidget::manipularComando(int idx_lin)
 {
  //Caso haja texto inserido no campo
@@ -86,7 +86,7 @@ void RegraWidget::manipularComando(int idx_lin)
  else if(tab_comandos->obterTextoCelula(idx_lin,0).isEmpty())
   tab_comandos->removerLinha(idx_lin);
 }
-//----------------------------------------------------------
+
 void RegraWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaOperacoes *lista_op, Regra *regra)
 {
  unsigned qtd, i;
@@ -115,7 +115,7 @@ void RegraWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaOp
   tab_comandos->blockSignals(false);
  }
 }
-//----------------------------------------------------------
+
 void RegraWidget::aplicarConfiguracao(void)
 {
  try

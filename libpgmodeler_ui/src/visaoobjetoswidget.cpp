@@ -141,7 +141,7 @@ VisaoObjetosWidget::VisaoObjetosWidget(bool visao_simplificada, QWidget *parent,
  connect(visaoarvore_tb,SIGNAL(clicked(void)),this,SLOT(mudarVisaoObjetos(void)));
  connect(visaolista_tb,SIGNAL(clicked(void)),this,SLOT(mudarVisaoObjetos(void)));
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::exibirMenuObjeto(void)
 {
  if(objeto_selecao && QApplication::mouseButtons()==Qt::RightButton && modelo_wgt && !visao_simplificada)
@@ -153,7 +153,7 @@ void VisaoObjetosWidget::exibirMenuObjeto(void)
   modelo_wgt->menu_popup.exec(QCursor::pos());
  }
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::editarObjeto(void)
 {
  if(objeto_selecao && modelo_wgt && !visao_simplificada)
@@ -165,7 +165,7 @@ void VisaoObjetosWidget::editarObjeto(void)
   modelo_wgt->editarObjeto();
  }
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::selecionarObjeto(void)
 {
  if(visaoarvore_tb->isChecked())
@@ -183,7 +183,7 @@ void VisaoObjetosWidget::selecionarObjeto(void)
 
  exibirMenuObjeto();
 }
-//----------------------------------------------------------
+
 QVariant VisaoObjetosWidget::gerarValorItem(ObjetoBase *objeto)
 {
  void *p_aux=NULL;
@@ -192,7 +192,7 @@ QVariant VisaoObjetosWidget::gerarValorItem(ObjetoBase *objeto)
  //Retorna um QVariant armazenando o endereço do objeto passado
  return(QVariant::fromValue(p_aux));
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::definirObjetoVisivel(TipoObjetoBase tipo_obj, bool visivel)
 {
  if(tipo_obj!=OBJETO_BASE && tipo_obj!=OBJETO_TABELA_BASE)
@@ -214,7 +214,7 @@ void VisaoObjetosWidget::definirObjetoVisivel(TipoObjetoBase tipo_obj, bool visi
    map_objs_visiveis[OBJETO_ESQUEMA]=true;
  }
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::definirObjetoVisivel(QListWidgetItem *item)
 {
  TipoObjetoBase tipo_obj;
@@ -227,7 +227,7 @@ void VisaoObjetosWidget::definirObjetoVisivel(QListWidgetItem *item)
  //Atualiza a visão de objetos para aplicar as modificações
  atualizarVisaoObjetos();
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::definirTodosObjetosVisiveis(bool)
 {
  int qtd, i;
@@ -257,7 +257,7 @@ void VisaoObjetosWidget::definirTodosObjetosVisiveis(bool)
 
  atualizarVisaoObjetos();
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::mudarVisaoObjetos(void)
 {
  if(sender()==visaolista_tb)
@@ -293,13 +293,13 @@ void VisaoObjetosWidget::mudarVisaoObjetos(void)
    splitter->restoreState(config_widgets.value("splitterSize").toByteArray());
  }
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::atualizarVisaoObjetos(void)
 {
  atualizarArvoreObjetos();
  atualizarListaObjetos();
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::atualizarListaObjetos(void)
 {
  while(listaobjetos_tbw->rowCount() > 0)
@@ -608,7 +608,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
   }
  }
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
 {
  if(modelo_bd && map_objs_visiveis[OBJETO_ESQUEMA])
@@ -769,7 +769,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
   }
  }
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoBase *esquema)
 {
  if(modelo_bd && map_objs_visiveis[OBJETO_TABELA])
@@ -922,7 +922,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoB
   }
  }
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::atualizarArvoreObjetos(void)
 {
  arvoreobjetos_tw->clear();
@@ -1069,12 +1069,12 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
   arvoreobjetos_tw->sortByColumn(0, Qt::AscendingOrder);
  }
 }
-//----------------------------------------------------------
+
 ObjetoBase *VisaoObjetosWidget::obterObjetoSelecao(void)
 {
  return(objeto_selecao);
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::expandirItemArvore(ObjetoBase *objeto)
 {
  if(objeto)
@@ -1110,7 +1110,7 @@ void VisaoObjetosWidget::expandirItemArvore(ObjetoBase *objeto)
   }
  }
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::close(void)
 {
  QObject *obj_sender=sender();
@@ -1138,7 +1138,7 @@ void VisaoObjetosWidget::close(void)
 
  QDockWidget::close();
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::definirModelo(ModeloWidget *modelo_wgt)
 {
  this->modelo_wgt=modelo_wgt;
@@ -1146,7 +1146,7 @@ void VisaoObjetosWidget::definirModelo(ModeloWidget *modelo_wgt)
  if(modelo_wgt)
   definirModelo(modelo_wgt->modelo);
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::definirModelo(ModeloBD *modelo_bd)
 {
  this->modelo_bd=modelo_bd;
@@ -1161,7 +1161,7 @@ void VisaoObjetosWidget::definirModelo(ModeloBD *modelo_bd)
  atualizarVisaoObjetos();
  visaoobjetos_stw->setEnabled(true);
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::closeEvent(QCloseEvent *)
 {
  /* Quando usado de forma simplificada, ao esconder o dock todos
@@ -1179,7 +1179,7 @@ void VisaoObjetosWidget::closeEvent(QCloseEvent *)
 
  emit s_visibilityChanged(objeto_selecao, !this->isVisible());
 }
-//----------------------------------------------------------
+
 void VisaoObjetosWidget::mouseMoveEvent(QMouseEvent *)
 {
  static QPoint pos=QCursor::pos(), pos1=QCursor::pos();

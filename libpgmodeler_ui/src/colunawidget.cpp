@@ -30,14 +30,14 @@ ColunaWidget::ColunaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_COL
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void ColunaWidget::hideEvent(QHideEvent *evento)
 {
  valor_padrao_txt->clear();
  nao_nulo_chk->setChecked(false);
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void ColunaWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai, ListaOperacoes *lista_op, Coluna *coluna)
 {
  TipoPgSQL tipo;
@@ -58,7 +58,7 @@ void ColunaWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai, Li
  //Marca o tipo do domínio no widget de tipos pgsql
  tipo_col->definirAtributos(tipo, modelo, ConfigTipoUsuario::TIPO_BASE | ConfigTipoUsuario::TIPO_DOMINIO);
 }
-//----------------------------------------------------------
+
 void ColunaWidget::aplicarConfiguracao(void)
 {
  try

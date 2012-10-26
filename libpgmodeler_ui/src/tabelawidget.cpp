@@ -91,7 +91,7 @@ TabelaWidget::TabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TAB
  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
  connect(janela_pai->cancelar_btn,SIGNAL(clicked(bool)), this, SLOT(cancelarConfiguracao(void)));
 }
-//----------------------------------------------------------
+
 void TabelaWidget::hideEvent(QHideEvent *evento)
 {
  map<TipoObjetoBase, TabelaObjetosWidget *>::iterator itr, itr_end;
@@ -118,7 +118,7 @@ void TabelaWidget::hideEvent(QHideEvent *evento)
 
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void TabelaWidget::exibirFormObjetoTabela(TipoObjetoBase tipo_obj)
 {
  ObjetoTabela *objeto=NULL;
@@ -166,7 +166,7 @@ void TabelaWidget::exibirFormObjetoTabela(TipoObjetoBase tipo_obj)
   break;
  }
 }
-//----------------------------------------------------------
+
 TabelaObjetosWidget *TabelaWidget::selecionarTabelaObjetos(TipoObjetoBase tipo_obj)
 {
  if(mapa_tab_objetos.count(tipo_obj) > 0)
@@ -174,7 +174,7 @@ TabelaObjetosWidget *TabelaWidget::selecionarTabelaObjetos(TipoObjetoBase tipo_o
  else
   return(NULL);
 }
-//----------------------------------------------------------
+
 TipoObjetoBase TabelaWidget::selecionarTipoObjeto(QObject *tab_sender)
 {
  TipoObjetoBase tipo_obj=OBJETO_BASE;
@@ -200,7 +200,7 @@ TipoObjetoBase TabelaWidget::selecionarTipoObjeto(QObject *tab_sender)
 
  return(tipo_obj);
 }
-//----------------------------------------------------------
+
 void TabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Tabela *tabela, float pos_x, float pos_y)
 {
  unsigned i, qtd;
@@ -263,7 +263,7 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
  for(i=0; i < qtd; i++)
   tabs_copiadas_lst->addItem(QString::fromUtf8(tabela->obterTabelaCopia(i)->obterNome(true)));
 }
-//----------------------------------------------------------
+
 void TabelaWidget::listarObjetos(TipoObjetoBase tipo_obj)
 {
  TabelaObjetosWidget *tab=NULL;
@@ -310,7 +310,7 @@ void TabelaWidget::listarObjetos(TipoObjetoBase tipo_obj)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void TabelaWidget::manipularObjeto(void)
 {
  TipoObjetoBase tipo_obj=OBJETO_BASE;
@@ -332,7 +332,7 @@ void TabelaWidget::manipularObjeto(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
 {
  TabelaObjetosWidget *tab=NULL;
@@ -451,7 +451,7 @@ void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
  //Define como dado da linha o próprio objeto para facilitar referências ao mesmo
  tab->definirDadoLinha(QVariant::fromValue<void *>(objeto), idx_lin);
 }
-//----------------------------------------------------------
+
 void TabelaWidget::removerObjetos(void)
 {
  Tabela *tabela=NULL;
@@ -522,7 +522,7 @@ void TabelaWidget::removerObjetos(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void TabelaWidget::removerObjeto(int idx_lin)
 {
  Tabela *tabela=NULL;
@@ -559,7 +559,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void TabelaWidget::TabelaWidget::moverObjetos(int idx1, int idx2)
 {
  TipoObjetoBase tipo_obj=OBJETO_BASE;
@@ -580,7 +580,7 @@ void TabelaWidget::TabelaWidget::moverObjetos(int idx1, int idx2)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void TabelaWidget::aplicarConfiguracao(void)
 {
  try

@@ -15,7 +15,7 @@ ListaOperacoesWidget::ListaOperacoesWidget(QWidget *parent, Qt::WindowFlags f) :
  connect(operacoes_tw,SIGNAL(itemClicked(QTreeWidgetItem *, int)),
          this,SLOT(selecionarItem(QTreeWidgetItem *, int)));
 }
-//----------------------------------------------------------
+
 void ListaOperacoesWidget::selecionarItem(QTreeWidgetItem *item, int)
 {
  //Limpa os itens selecionados na lista
@@ -35,7 +35,7 @@ void ListaOperacoesWidget::selecionarItem(QTreeWidgetItem *item, int)
   operacoes_tw->setCurrentItem(item);
  }
 }
-//----------------------------------------------------------
+
 void ListaOperacoesWidget::atualizarListaOperacoes(void)
 {
  //Caso o modelo não esteja alocado
@@ -145,7 +145,7 @@ void ListaOperacoesWidget::atualizarListaOperacoes(void)
 
  emit s_listaOperacoesAtualizada();
 }
-//----------------------------------------------------------
+
 void ListaOperacoesWidget::definirModelo(ModeloWidget *modelo)
 {
  operacoes_tw->clear();

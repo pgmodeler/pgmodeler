@@ -76,13 +76,13 @@ VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_VISAO
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void VisaoWidget::hideEvent(QHideEvent *evento)
 {
  tab_referencias->removerLinhas();
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void VisaoWidget::limparFormReferencia(void)
 {
  sel_coluna->removerObjetoSelecionado();
@@ -95,7 +95,7 @@ void VisaoWidget::limparFormReferencia(void)
  from_where_chk->setChecked(false);
  apos_where_chk->setChecked(false);
 }
-//----------------------------------------------------------
+
 void VisaoWidget::selecionarTipoReferencia(void)
 {
  /* Marca na variável 'ref_obj' se o índice do combo de tipo de referência
@@ -120,7 +120,7 @@ void VisaoWidget::selecionarTipoReferencia(void)
  alias_exp_edt->setVisible(!ref_obj);
  alias_exp_lbl->setVisible(!ref_obj);
 }
-//----------------------------------------------------------
+
 void VisaoWidget::manipularReferencia(int idx_ref)
 {
  try
@@ -173,7 +173,7 @@ void VisaoWidget::manipularReferencia(int idx_ref)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void VisaoWidget::editarReferencia(int idx_ref)
 {
  Referencia ref;
@@ -222,7 +222,7 @@ void VisaoWidget::editarReferencia(int idx_ref)
  from_where_chk->setChecked(str_aux[1]=='1');
  apos_where_chk->setChecked(str_aux[2]=='1');
 }
-//----------------------------------------------------------
+
 void VisaoWidget::exibirNomeObjeto(void)
 {
  Coluna *col=NULL;
@@ -265,7 +265,7 @@ void VisaoWidget::exibirNomeObjeto(void)
   sel_tabela->blockSignals(false);
  }
 }
-//----------------------------------------------------------
+
 void VisaoWidget::exibirDadosReferencia(Referencia refer, bool selec_from, bool from_where, bool apos_where, unsigned idx_lin)
 {
  Tabela *tab=NULL;
@@ -325,7 +325,7 @@ void VisaoWidget::exibirDadosReferencia(Referencia refer, bool selec_from, bool 
     no código SQL da visão */
  atualizarPrevisaoCodigo();
 }
-//----------------------------------------------------------
+
 void VisaoWidget::atualizarPrevisaoCodigo(void)
 {
  Referencia refer;
@@ -376,7 +376,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
   codigo_txt->setPlainText(trUtf8("-- Could not generate the code. Make sure all attributes are correctly filled! --"));
  }
 }
-//----------------------------------------------------------
+
 void VisaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Visao *visao, float px, float py)
 {
  unsigned i, qtd;

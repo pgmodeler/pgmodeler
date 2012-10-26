@@ -115,7 +115,7 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void RelacionamentoWidget::hideEvent(QHideEvent *evento)
 {
  RelacionamentoBase *rel=dynamic_cast<RelacionamentoBase *>(this->objeto);
@@ -154,7 +154,7 @@ void RelacionamentoWidget::hideEvent(QHideEvent *evento)
 
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Tabela *tab_orig, Tabela *tab_dest, unsigned tipo_rel)
 {
  Relacionamento *rel=NULL;
@@ -193,7 +193,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, RelacionamentoBase *relacao)
 {
  static QWidget *tabs[3]={ atributosrel_tbw->widget(1), atributosrel_tbw->widget(2), atributosrel_tbw->widget(3) };
@@ -369,7 +369,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
   atributosrel_tbw->addTab(tabs[2], rot_tabs[2]);
  }
 }
-//----------------------------------------------------------
+
 void RelacionamentoWidget::listarObjetos(TipoObjetoBase tipo_obj)
 {
  TabelaObjetosWidget *tab=NULL;
@@ -412,7 +412,7 @@ void RelacionamentoWidget::listarObjetos(TipoObjetoBase tipo_obj)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void RelacionamentoWidget::adicionarObjeto(void)
 {
  TipoObjetoBase tipo_obj=OBJETO_BASE;
@@ -456,7 +456,7 @@ void RelacionamentoWidget::adicionarObjeto(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void RelacionamentoWidget::editarObjeto(int idx_lin)
 {
  try
@@ -491,7 +491,7 @@ void RelacionamentoWidget::editarObjeto(int idx_lin)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void RelacionamentoWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
 {
  TabelaObjetosWidget *tab=NULL;
@@ -515,7 +515,7 @@ void RelacionamentoWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
  //Define como dado da linha o próprio objeto para facilitar referências ao mesmo
  tab->definirDadoLinha(QVariant::fromValue<void *>(objeto), idx_lin);
 }
-//----------------------------------------------------------
+
 void RelacionamentoWidget::removerObjetos(void)
 {
  Relacionamento *relacao=NULL;
@@ -590,7 +590,7 @@ void RelacionamentoWidget::removerObjetos(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void RelacionamentoWidget::removerObjeto(int idx_lin)
 {
  Relacionamento *relacao=NULL;
@@ -623,7 +623,7 @@ void RelacionamentoWidget::removerObjeto(int idx_lin)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void RelacionamentoWidget::aplicarConfiguracao(void)
 {
  try

@@ -38,7 +38,7 @@ ConversaoCodificacaoWidget::ConversaoCodificacaoWidget(QWidget *parent): ObjetoB
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void ConversaoCodificacaoWidget::hideEvent(QHideEvent *evento)
 {
  sel_funcao_conv->removerObjetoSelecionado();
@@ -62,7 +62,7 @@ void ConversaoCodificacaoWidget::definirAtributos(ModeloBD *modelo, ListaOperaco
   cod_dest_cmb->setCurrentIndex(cod_dest_cmb->findText(~(conv_cod->obterCodificacao(ConversaoCodificacao::CONV_COD_DESTINO))));
  }
 }
-//----------------------------------------------------------
+
 void ConversaoCodificacaoWidget::aplicarConfiguracao(void)
 {
  try

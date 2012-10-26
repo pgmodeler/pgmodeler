@@ -103,7 +103,7 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TIPO)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 /*TipoWidget::~TipoWidget(void)
 {
  for(unsigned i=Tipo::FUNCAO_INPUT; i <= Tipo::FUNCAO_ANALYZE; i++)
@@ -114,7 +114,7 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TIPO)
  if(tipo_copia) delete(tipo_copia);
  if(tipo_elemento) delete(tipo_elemento);
 } */
-//----------------------------------------------------------
+
 void TipoWidget::hideEvent(QHideEvent *evento)
 {
  //Limpa as tabelas
@@ -146,14 +146,14 @@ void TipoWidget::hideEvent(QHideEvent *evento)
  //Executa o método que trata o evento de esconder da classe superior
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void TipoWidget::selecionarConfiguracaoTipo(void)
 {
  atrib_base_twg->setVisible(tipo_base_rb->isChecked());
  enumeracoes_gb->setVisible(enumeracao_rb->isChecked());
  atributos_gb->setVisible(composto_rb->isChecked());
 }
-//----------------------------------------------------------
+
 void TipoWidget::manipularEnumeracao(int idx_linha)
 {
  //Caso o nome da enumeração esteja preenchido
@@ -169,7 +169,7 @@ void TipoWidget::manipularEnumeracao(int idx_linha)
      uma linha em branco */
   tab_enumeracoes->removerLinha(idx_linha);
 }
-//----------------------------------------------------------
+
 void TipoWidget::manipularAtributo(int res)
 {
  int lin;
@@ -196,7 +196,7 @@ void TipoWidget::manipularAtributo(int res)
    tab_atributos->removerLinha(lin);
  }
 }
-//----------------------------------------------------------
+
 void TipoWidget::exibirFormAtributo(void)
 {
  int idx_lin;
@@ -219,7 +219,7 @@ void TipoWidget::exibirFormAtributo(void)
 
  parametro_wgt->show();
 }
-//----------------------------------------------------------
+
 void TipoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Tipo *tipo)
 {
  TipoPgSQL tp_copia, tp_elem;
@@ -329,7 +329,7 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Ti
  //Configura o widget de tipo de elemento com o tipo obtido da instância de tipo
  tipo_elemento->definirAtributos(tp_elem, modelo);
 }
-//----------------------------------------------------------
+
 void TipoWidget::aplicarConfiguracao(void)
 {
  try

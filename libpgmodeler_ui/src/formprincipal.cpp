@@ -1,5 +1,5 @@
 #include "formprincipal.h"
-//----------------------------------------------------------
+
 #include "caixatextowidget.h"
 #include "codigofontewidget.h"
 #include "bancodadoswidget.h"
@@ -70,7 +70,7 @@ ProgressoTarefa *prog_tarefa=NULL;
 ListaObjetosWidget *deps_refs_wgt=NULL;
 FormConfiguracao *fconfiguracao=NULL;
 FormExportacao *fexportacao=NULL;
-//----------------------------------------------------------
+
 FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
  map<QString, map<QString, QString> >confs;
@@ -391,7 +391,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  //Inicializa o atributo de tempo de salvamento automático
  interv_salvar=confs[AtributosParsers::CONFIGURACAO][AtributosParsers::INTERVALO_SALVAR_AUTO].toInt() * 60000;
 }
-//----------------------------------------------------------
+
 FormPrincipal::~FormPrincipal(void)
 {
  //Exclui todos os arquivos temporários
@@ -408,7 +408,7 @@ FormPrincipal::~FormPrincipal(void)
  delete(visaogeral_wgt);
  delete(fsobre);
 }
-//----------------------------------------------------------
+
 void FormPrincipal::showEvent(QShowEvent *)
 {
  /* Insere as ações de plugins na barra e menu de plugins.
@@ -435,7 +435,7 @@ void FormPrincipal::showEvent(QShowEvent *)
  //O intervalo de salvamento do arquivo temporário será a cada 1 minuto.
  tm_salvamento_tmp.start(60000, false);
 }
-//----------------------------------------------------------
+
 void FormPrincipal::closeEvent(QCloseEvent *)
 {
  ConfGeralWidget *conf_wgt=NULL;
@@ -550,7 +550,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
  if(salvar_conf)
   conf_wgt->salvarConfiguracao();
 }
-//----------------------------------------------------------
+
 void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
 {
  ModeloWidget *tab_modelo;
@@ -611,7 +611,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
 
  definirModeloAtual();
 }
-//----------------------------------------------------------
+
 void FormPrincipal::definirModeloAtual(void)
 {
  QObject *objeto=NULL;
@@ -724,7 +724,7 @@ void FormPrincipal::definirModeloAtual(void)
  //Salva o arquivo temporário referente ao modelo
  this->salvarModeloTemporario();
 }
-//----------------------------------------------------------
+
 void FormPrincipal::definirOpcoesGrade(void)
 {
  //Configura, globalmente na cena, as opçoẽs da grade
@@ -745,7 +745,7 @@ void FormPrincipal::definirOpcoesGrade(void)
   //modelo_atual->visaogeral_wgt->atualizarVisaoGeral();
  }
 }
-//----------------------------------------------------------
+
 void FormPrincipal::aplicarZoom(void)
 {
  if(modelo_atual)
@@ -765,7 +765,7 @@ void FormPrincipal::aplicarZoom(void)
   modelo_atual->aplicarZoom(zoom);
  }
 }
-//----------------------------------------------------------
+
 void FormPrincipal::exibirTelaCheia(bool tela_cheia)
 {
  //Barras/Widgets que são escondidas quando o pgModeler está em tela cheia
@@ -825,7 +825,7 @@ void FormPrincipal::exibirTelaCheia(bool tela_cheia)
   plugins_tb->adjustSize();
  }
 }
-//----------------------------------------------------------
+
 void FormPrincipal::fecharModelo(int idx_modelo)
 {
  QWidget *tab=NULL;
@@ -881,7 +881,7 @@ void FormPrincipal::fecharModelo(int idx_modelo)
   definirModeloAtual();
  }
 }
-//----------------------------------------------------------
+
 void FormPrincipal::atualizarModelos(void)
 {
  ConfGeralWidget *conf_wgt=NULL;
@@ -909,7 +909,7 @@ void FormPrincipal::atualizarModelos(void)
  for(i=0; i < qtd; i++)
   dynamic_cast<ModeloWidget *>(modelos_tab->widget(i))->modelo->definirObjetosModificados();
 }
-//----------------------------------------------------------
+
 void FormPrincipal::salvarTodosModelos(void)
 {
  //Caso o intervalo de salvamento esteja setado
@@ -927,7 +927,7 @@ void FormPrincipal::salvarTodosModelos(void)
   }
  }
 }
-//----------------------------------------------------------
+
 void FormPrincipal::salvarModelo(ModeloWidget *modelo)
 {
  try
@@ -970,14 +970,14 @@ void FormPrincipal::salvarModelo(ModeloWidget *modelo)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void FormPrincipal::exportarModelo(void)
 {
  //Caso haja um modelo aberto exibe o formulário de exportação do modelo
  if(modelo_atual)
   fexportacao->show(modelo_atual);
 }
-//----------------------------------------------------------
+
 void FormPrincipal::imprimirModelo(void)
 {
  if(modelo_atual)
@@ -1031,10 +1031,10 @@ void FormPrincipal::imprimirModelo(void)
   //Obtém as configurações de impressão da cena
   CenaObjetos::obterConfiguracaoPagina(tam_papel, orientacao, margens);
 
-  //Obtém a referência à impressora configuada no diálogo de impressão
+  //Obtém a referência �  impressora configuada no diálogo de impressão
   printer=print_dlg.printer();
 
-  //Atribui as configurações de impressão da cena à impressora
+  //Atribui as configurações de impressão da cena �  impressora
   printer->setPaperSize(tam_papel);
   printer->setOrientation(orientacao);
   printer->setPageMargins(margens.left(), margens.top(), margens.right(), margens.bottom(), QPrinter::Millimeter);
@@ -1077,7 +1077,7 @@ void FormPrincipal::imprimirModelo(void)
   }
  }
 }
-//----------------------------------------------------------
+
 void FormPrincipal::carregarModelo(void)
 {
  QStringList lista;
@@ -1115,12 +1115,12 @@ void FormPrincipal::carregarModelo(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void FormPrincipal::__atualizarEstadoFerramentas(void)
 {
  atualizarEstadoFerramentas(false);
 }
-//----------------------------------------------------------
+
 void FormPrincipal::atualizarEstadoFerramentas(bool modelo_fechado)
 {
  bool ativo=!modelo_fechado;
@@ -1160,7 +1160,7 @@ void FormPrincipal::atualizarEstadoFerramentas(bool modelo_fechado)
  plugins_tb->setEnabled(modelos_tab->count() > 0);
  menuPlugins->setEnabled(modelos_tab->count() > 0);
 }
-//----------------------------------------------------------
+
 void FormPrincipal::atualizarDockWidgets(void)
 {
  if(modelo_atual)
@@ -1169,13 +1169,13 @@ void FormPrincipal::atualizarDockWidgets(void)
   __atualizarEstadoFerramentas();
  }
 }
-//----------------------------------------------------------
+
 void FormPrincipal::__atualizarDockWidgets(void)
 {
  lista_oper->atualizarListaOperacoes();
  visao_objs->atualizarVisaoObjetos();
 }
-//----------------------------------------------------------
+
 void FormPrincipal::carregarPlugins(void)
 {
  vector<Excecao> vet_erros;
@@ -1267,7 +1267,7 @@ void FormPrincipal::carregarPlugins(void)
  if(!vet_erros.empty())
   throw Excecao(ERR_PGMODELERUI_PLUGINSNAOCARREGADOS,__PRETTY_FUNCTION__,__FILE__,__LINE__, vet_erros);
 }
-//----------------------------------------------------------
+
 void FormPrincipal::destruirPlugins(void)
 {
  map<QString, PgModelerPlugin *>::iterator itr;
@@ -1283,7 +1283,7 @@ void FormPrincipal::destruirPlugins(void)
 
  plugins.clear();
 }
-//----------------------------------------------------------
+
 void FormPrincipal::executarPlugin(void)
 {
  QAction *acao=dynamic_cast<QAction *>(sender());
@@ -1293,13 +1293,13 @@ void FormPrincipal::executarPlugin(void)
  if(modelo_atual && acao && plugins.count(acao->name())==1)
   plugins[acao->name()]->executarPlugin(modelo_atual);
 }
-//----------------------------------------------------------
+
 void FormPrincipal::salvarModeloTemporario(void)
 {
  if(modelo_atual)
   modelo_atual->modelo->salvarModelo(modelo_atual->obterNomeArquivoTemp(), ParserEsquema::DEFINICAO_XML);
 }
-//----------------------------------------------------------
+
 void FormPrincipal::exibirVisaoGeral(bool exibir)
 {
  if(exibir && modelo_atual && !visaogeral_wgt->isVisible())

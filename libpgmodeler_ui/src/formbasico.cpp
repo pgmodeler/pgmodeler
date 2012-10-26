@@ -16,7 +16,7 @@ FormBasico::FormBasico(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
   this->widgetgeral_wgt->setFrameShape(QFrame::WinPanel);
  #endif
 }
-//----------------------------------------------------------
+
 void FormBasico::definirBotoes(unsigned conf_botoes)
 {
  if(conf_botoes==CaixaMensagem::BOTAO_OK_CANCELAR)

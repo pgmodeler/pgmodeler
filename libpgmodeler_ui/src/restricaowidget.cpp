@@ -96,7 +96,7 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void RestricaoWidget::adicionarColuna(int idx_lin)
 {
  QObject *obj_sender=sender();
@@ -140,7 +140,7 @@ void RestricaoWidget::adicionarColuna(int idx_lin)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void RestricaoWidget::removerColuna(int)
 {
  //Caso o sender seja a tabela de colunas da origem
@@ -151,7 +151,7 @@ void RestricaoWidget::removerColuna(int)
   //Atualiza o combo de colunas de referência
   atualizarComboColunas(Restricao::COLUNA_REFER);
 }
-//----------------------------------------------------------
+
 void RestricaoWidget::removerColunas(void)
 {
  //Caso o sender seja a tabela de colunas da origem
@@ -166,7 +166,7 @@ void RestricaoWidget::removerColunas(void)
   atualizarComboColunas(Restricao::COLUNA_REFER);
  }
 }
-//----------------------------------------------------------
+
 void RestricaoWidget::adicionarColuna(Coluna *coluna, unsigned tipo_col, int idx_lin)
 {
  TabelaObjetosWidget *tabela_wgt=NULL;
@@ -202,7 +202,7 @@ void RestricaoWidget::adicionarColuna(Coluna *coluna, unsigned tipo_col, int idx
   }
  }
 }
-//----------------------------------------------------------
+
 void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
 {
  TabelaObjetosWidget *tab_col_aux=NULL;
@@ -280,7 +280,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void RestricaoWidget::selecionarTabelaReferenciada(void)
 {
  //Obtém a tabela configurada no seletor
@@ -303,7 +303,7 @@ void RestricaoWidget::selecionarTabelaReferenciada(void)
   atualizarComboColunas(Restricao::COLUNA_REFER);
  }
 }
-//----------------------------------------------------------
+
 void RestricaoWidget::hideEvent(QHideEvent *evento)
 {
  exp_checagem_txt->clear();
@@ -326,7 +326,7 @@ void RestricaoWidget::hideEvent(QHideEvent *evento)
 
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void RestricaoWidget::selecionarTipoRestricao(void)
 {
  static QWidget *tab=colunas_tbw->widget(1);
@@ -370,7 +370,7 @@ void RestricaoWidget::selecionarTipoRestricao(void)
  else
   colunas_tbw->addTab(tab, rot_tab);
 }
-//----------------------------------------------------------
+
 void RestricaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai, ListaOperacoes *lista_op, Restricao *restricao)
 {
  TipoObjetoBase tipo_obj;
@@ -473,7 +473,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai,
   }
  }
 }
-//----------------------------------------------------------
+
 void RestricaoWidget::aplicarConfiguracao(void)
 {
  try

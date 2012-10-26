@@ -30,7 +30,7 @@ DominioWidget::DominioWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_D
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void DominioWidget::hideEvent(QHideEvent *evento)
 {
  valor_padrao_edt->clear();
@@ -39,7 +39,7 @@ void DominioWidget::hideEvent(QHideEvent *evento)
  nao_nulo_chk->setChecked(false);
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void DominioWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Dominio *dominio)
 {
  TipoPgSQL tipo;
@@ -61,7 +61,7 @@ void DominioWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op,
  //Marca o tipo do domínio no widget de tipos pgsql
  tipo_dominio->definirAtributos(tipo, modelo);
 }
-//----------------------------------------------------------
+
 void DominioWidget::aplicarConfiguracao(void)
 {
  try

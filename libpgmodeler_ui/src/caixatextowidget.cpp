@@ -9,7 +9,7 @@ CaixaTextoWidget::CaixaTextoWidget(QWidget *parent): ObjetoBaseWidget(parent, OB
  janela_pai->definirBotoes(CaixaMensagem::BOTAO_OK_CANCELAR);
  janela_pai->setMinimumSize(500,250);
 }
-//----------------------------------------------------------
+
 void CaixaTextoWidget::hideEvent(QHideEvent *evento)
 {
  QPalette palette;
@@ -26,7 +26,7 @@ void CaixaTextoWidget::hideEvent(QHideEvent *evento)
  //Executa o método que trata o evento de esconder da classe superior
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void CaixaTextoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, CaixaTexto *caixa_texto, float px_objeto, float py_objeto)
 {
  /* Caso a caixa de texto esteja alocada, preenche o formulário
@@ -46,7 +46,7 @@ void CaixaTextoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, caixa_texto, NULL, px_objeto, py_objeto);
 }
-//----------------------------------------------------------
+
 void CaixaTextoWidget::selecionarCorTexto(void)
 {
  QColorDialog cor_dlg;
@@ -61,7 +61,7 @@ void CaixaTextoWidget::selecionarCorTexto(void)
   sel_cor_tb->setPalette(palette);
  }
 }
-//----------------------------------------------------------
+
 void CaixaTextoWidget::aplicarConfiguracao(void)
 {
  try

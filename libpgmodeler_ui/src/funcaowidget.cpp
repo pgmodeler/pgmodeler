@@ -100,7 +100,7 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_FUN
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void FuncaoWidget::manipularParametro(int res)
 {
  int qtd_lin, lin;
@@ -144,7 +144,7 @@ void FuncaoWidget::manipularParametro(int res)
    tabela->removerLinha(qtd_lin-1);
  }
 }
-//----------------------------------------------------------
+
 void FuncaoWidget::exibirFormParametro(void)
 {
  QObject *obj_sender=sender();
@@ -179,7 +179,7 @@ void FuncaoWidget::exibirFormParametro(void)
   parametro_wgt->show();
  }
 }
-//----------------------------------------------------------
+
 Parametro FuncaoWidget::obterParametro(TabelaObjetosWidget *tab, unsigned idx_lin)
 {
  Parametro param;
@@ -216,7 +216,7 @@ Parametro FuncaoWidget::obterParametro(TabelaObjetosWidget *tab, unsigned idx_li
 
  return(param);
 }
-//----------------------------------------------------------
+
 void FuncaoWidget::exibirDadosParametro(Parametro param, TabelaObjetosWidget *tab, unsigned idx_lin)
 {
  if(tab)
@@ -247,7 +247,7 @@ void FuncaoWidget::exibirDadosParametro(Parametro param, TabelaObjetosWidget *ta
   }
  }
 }
-//----------------------------------------------------------
+
 void FuncaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Funcao *funcao)
 {
  vector<ObjetoBase *> linguagens;
@@ -379,7 +379,7 @@ void FuncaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
 
  tipo_ret->definirAtributos(tipo_aux, modelo);
 }
-//----------------------------------------------------------
+
 void FuncaoWidget::hideEvent(QHideEvent *evento)
 {
  linguagem_cmb->clear();
@@ -392,14 +392,14 @@ void FuncaoWidget::hideEvent(QHideEvent *evento)
  disconnect(parametro_wgt,NULL, this, NULL);
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void FuncaoWidget::alternarTiposRetorno(void)
 {
  QObject *obj_sender=sender();
  tabela_ret_gb->setVisible(obj_sender==tabela_rb);
  tipo_ret->setVisible(!tabela_ret_gb->isVisible());
 }
-//----------------------------------------------------------
+
 void FuncaoWidget::selecionarLinguagem(void)
 {
  bool ling_c;
@@ -429,7 +429,7 @@ void FuncaoWidget::selecionarLinguagem(void)
   destaque_codigo->rehighlight();
  }
 }
-//----------------------------------------------------------
+
 void FuncaoWidget::validarFuncaoConfigurada(void)
 {
  vector<ObjetoBase *> *lista_obj;
@@ -558,7 +558,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
                 __PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void FuncaoWidget::aplicarConfiguracao(void)
 {
  try

@@ -61,7 +61,7 @@ PapelWidget::PapelWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_PAPEL
 
  janela_pai->setMinimumSize(500, 530);
 }
-//----------------------------------------------------------
+
 void PapelWidget::configurarSelecaoPapeis(void)
 {
  unsigned i;
@@ -78,14 +78,14 @@ void PapelWidget::configurarSelecaoPapeis(void)
  connect(tab_membros[membros_twg->currentIndex()], SIGNAL(s_linhaAdicionada(int)), this, SLOT(selecionarPapelMembro(void)));
  connect(tab_membros[membros_twg->currentIndex()], SIGNAL(s_linhaEditada(int)), this, SLOT(selecionarPapelMembro(void)));
 }
-//----------------------------------------------------------
+
 void PapelWidget::selecionarPapelMembro(void)
 {
  selecaoobjetos_wgt->definirObjetoVisivel(OBJETO_PAPEL, true);
  selecaoobjetos_wgt->definirModelo(this->modelo);
  selecaoobjetos_wgt->show();
 }
-//----------------------------------------------------------
+
 void PapelWidget::hideEvent(QHideEvent *evento)
 {
  unsigned i;
@@ -119,7 +119,7 @@ void PapelWidget::hideEvent(QHideEvent *evento)
  //Executa o método que trata o evento de esconder da classe superior
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void PapelWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Papel *papel)
 {
  if(papel)
@@ -150,7 +150,7 @@ void PapelWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, P
  connect(selecaoobjetos_wgt, SIGNAL(s_visibilityChanged(ObjetoBase*,bool)), this, SLOT(exibirDadosPapelSelecionado(void)));
  configurarSelecaoPapeis();
 }
-//----------------------------------------------------------
+
 void PapelWidget::exibirDadosPapel(Papel *papel, unsigned idx_tabela, unsigned lin)
 {
  if(papel)
@@ -195,7 +195,7 @@ void PapelWidget::exibirDadosPapel(Papel *papel, unsigned idx_tabela, unsigned l
   }
  }
 }
-//----------------------------------------------------------
+
 void PapelWidget::preencherTabelaMembros(void)
 {
  //Caso exista um objeto a ser editado
@@ -241,7 +241,7 @@ void PapelWidget::preencherTabelaMembros(void)
   }
  }
 }
-//----------------------------------------------------------
+
 void PapelWidget::exibirDadosPapelSelecionado(void)
 {
  unsigned idx_tab;
@@ -297,7 +297,7 @@ void PapelWidget::exibirDadosPapelSelecionado(void)
   }
  }
 }
-//----------------------------------------------------------
+
 void PapelWidget::aplicarConfiguracao(void)
 {
  Papel *papel=NULL, *papel_aux=NULL;

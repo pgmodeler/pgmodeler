@@ -52,7 +52,7 @@ CodigoFonteWidget::CodigoFonteWidget(QWidget *parent): ObjetoBaseWidget(parent)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void CodigoFonteWidget::hideEvent(QHideEvent *evento)
 {
  versoes_cmb->blockSignals(true);
@@ -67,7 +67,7 @@ void CodigoFonteWidget::hideEvent(QHideEvent *evento)
  codigoxml_txt->clear();
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void CodigoFonteWidget::definirAbaCodigoFonte(int)
 {
  QString icone_codigo;
@@ -99,7 +99,7 @@ void CodigoFonteWidget::definirAbaCodigoFonte(int)
  pgsql_lbl->setEnabled(campos_ativos);
  versao_lbl->setEnabled(campos_ativos);
 }
-//----------------------------------------------------------
+
 void CodigoFonteWidget::gerarCodigoFonteObjeto(int)
 {
  TipoObjetoBase tipo_obj;
@@ -147,7 +147,7 @@ void CodigoFonteWidget::gerarCodigoFonteObjeto(int)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void CodigoFonteWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto)
 {
  /* Caso o objeto esteja alocado, preenche o formulário

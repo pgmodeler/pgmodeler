@@ -49,7 +49,7 @@ ConversaoTipoWidget::ConversaoTipoWidget(QWidget *parent): ObjetoBaseWidget(pare
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void ConversaoTipoWidget::hideEvent(QHideEvent *evento)
 {
  entradasaida_chk->setChecked(false);
@@ -92,7 +92,7 @@ void ConversaoTipoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lis
  tipo_dado_orig->definirAtributos(tipo_orig,modelo);
  tipo_dado_dest->definirAtributos(tipo_dest,modelo);
 }
-//----------------------------------------------------------
+
 void ConversaoTipoWidget::aplicarConfiguracao(void)
 {
  try

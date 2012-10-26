@@ -81,7 +81,7 @@ GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_G
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void GatilhoWidget::definirGratilhoRestricao(bool valor)
 {
  exec_por_linha_chk->setEnabled(!valor);
@@ -90,7 +90,7 @@ void GatilhoWidget::definirGratilhoRestricao(bool valor)
  if(!valor)
   sel_tabela_ref->removerObjetoSelecionado();
 }
-//----------------------------------------------------------
+
 void GatilhoWidget::adicionarColuna(int idx_lin)
 {
  Coluna *coluna=NULL;
@@ -112,7 +112,7 @@ void GatilhoWidget::adicionarColuna(int idx_lin)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void GatilhoWidget::adicionarColuna(Coluna *coluna, int idx_lin)
 {
  //Caso a coluna esteja alocada e o índice da linha seja válido (não-negativo)
@@ -125,7 +125,7 @@ void GatilhoWidget::adicionarColuna(Coluna *coluna, int idx_lin)
   tab_colunas->definirDadoLinha(QVariant::fromValue<void *>(coluna), idx_lin);
  }
 }
-//----------------------------------------------------------
+
 void GatilhoWidget::atualizarComboColunas(void)
 {
  Coluna *coluna=NULL;
@@ -158,7 +158,7 @@ void GatilhoWidget::atualizarComboColunas(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void GatilhoWidget::manipularArgumento(int idx_lin)
 {
  //Caso o argumento esteja preenchido
@@ -173,12 +173,12 @@ void GatilhoWidget::manipularArgumento(int idx_lin)
      uma linha em branco */
   tab_argumentos->removerLinha(idx_lin);
 }
-//----------------------------------------------------------
+
 void GatilhoWidget::editarArgumento(int idx_lin)
 {
  argumento_edt->setText(tab_argumentos->obterTextoCelula(idx_lin, 0));
 }
-//----------------------------------------------------------
+
 void GatilhoWidget::hideEvent(QHideEvent *evento)
 {
  ObjetoBaseWidget::hideEvent(evento);
@@ -206,7 +206,7 @@ void GatilhoWidget::hideEvent(QHideEvent *evento)
  sel_funcao->removerObjetoSelecionado();
  sel_tabela_ref->removerObjetoSelecionado();
 }
-//----------------------------------------------------------
+
 void GatilhoWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaOperacoes *lista_op, Gatilho *gatilho)
 {
  unsigned qtd=0, i;
@@ -268,7 +268,7 @@ void GatilhoWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, Lista
  //Atualiza o combo de colunas com as colunas restantes da tabela pai
  atualizarComboColunas();
 }
-//----------------------------------------------------------
+
 void GatilhoWidget::aplicarConfiguracao(void)
 {
  try

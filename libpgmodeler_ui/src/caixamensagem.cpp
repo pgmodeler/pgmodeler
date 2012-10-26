@@ -13,13 +13,13 @@ CaixaMensagem::CaixaMensagem(QWidget *parent, Qt::WindowFlags f) : QDialog(paren
  exibir_exec_tb->setVisible(false);
  exibir_exec_txt_tb->setVisible(false);
 }
-//----------------------------------------------------------
+
 void CaixaMensagem::clickSimOK(void)
 {
  excecoes_trw->clear();
  accept();
 }
-//----------------------------------------------------------
+
 void CaixaMensagem::clickNaoCancelar(void)
 {
  excecoes_trw->clear();
@@ -35,12 +35,12 @@ void CaixaMensagem::clickNaoCancelar(void)
   reject();
  }
 }
-//----------------------------------------------------------
+
 bool CaixaMensagem::caixaCanceleda(void)
 {
  return(cancelada);
 }
-//----------------------------------------------------------
+
 void CaixaMensagem::exibirListaExecoes(void)
 {
  /* Caso o botao de exibiçao da lista de excecoes esteja ativado,
@@ -65,7 +65,7 @@ void CaixaMensagem::exibirListaExecoes(void)
   grupo_objs_wgt->setCurrentIndex(0);
  }
 }
-//----------------------------------------------------------
+
 void CaixaMensagem::show(Excecao e, const QString &msg, unsigned tipo_ico)
 {
  deque<Excecao> lista;
@@ -178,7 +178,7 @@ void CaixaMensagem::show(Excecao e, const QString &msg, unsigned tipo_ico)
 
  this->show(titulo,str_aux,tipo_ico,BOTAO_OK);
 }
-//----------------------------------------------------------
+
 void CaixaMensagem::show(const QString &titulo, const QString &texto, unsigned icone, unsigned botoes)
 {
  QString nome_icone;

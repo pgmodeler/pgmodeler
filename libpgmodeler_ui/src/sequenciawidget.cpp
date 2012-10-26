@@ -37,13 +37,13 @@ SequenciaWidget::SequenciaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void SequenciaWidget::hideEvent(QHideEvent *evento)
 {
  sel_coluna->removerObjetoSelecionado();
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void SequenciaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Sequencia *sequencia)
 {
  sel_coluna->definirModelo(modelo);

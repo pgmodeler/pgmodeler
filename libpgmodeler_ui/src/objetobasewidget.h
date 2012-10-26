@@ -168,7 +168,7 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
  signals:
    void s_objetoManipulado(void);
 };
-//----------------------------------------------------------
+
 template<class Classe>
 void ObjetoBaseWidget::iniciarConfiguracao(void)
 {

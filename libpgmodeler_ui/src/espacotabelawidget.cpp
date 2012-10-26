@@ -10,7 +10,7 @@ EspacoTabelaWidget::EspacoTabelaWidget(QWidget *parent): ObjetoBaseWidget(parent
  janela_pai->setMinimumSize(480, 260);
  janela_pai->setMaximumSize(16777215, 260);
 }
-//----------------------------------------------------------
+
 void EspacoTabelaWidget::hideEvent(QHideEvent *evento)
 {
  //Limpa as caixas de texto
@@ -18,7 +18,7 @@ void EspacoTabelaWidget::hideEvent(QHideEvent *evento)
  //Executa o método que trata o evento de esconder da classe superior
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void EspacoTabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, EspacoTabela *espaco_tab)
 {
  //Define os atributos do formulários e da janela pai
@@ -27,7 +27,7 @@ void EspacoTabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *list
  if(espaco_tab)
   diretorio_edt->setText(espaco_tab->obterDiretorio());
 }
-//----------------------------------------------------------
+
 void EspacoTabelaWidget::aplicarConfiguracao(void)
 {
  try

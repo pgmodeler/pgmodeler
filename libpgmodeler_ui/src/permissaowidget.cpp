@@ -112,7 +112,7 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
  connect(inserir_perm_tb, SIGNAL(clicked(bool)), this, SLOT(adicionarPermissao(void)));
  connect(atualizar_perm_tb, SIGNAL(clicked(bool)), this, SLOT(atualizarPermissao(void)));
 }
-//----------------------------------------------------------
+
 void PermissaoWidget::hideEvent(QHideEvent *evento)
 {
  disconnect(selecaoobjetos_wgt,0,this,0);

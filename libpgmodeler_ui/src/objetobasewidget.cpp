@@ -94,18 +94,18 @@ ObjetoBaseWidget::ObjetoBaseWidget(QWidget *parent, TipoObjetoBase tipo_obj): QD
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 ObjetoBaseWidget::~ObjetoBaseWidget(void)
 {
  delete(janela_pai);
 }
-//----------------------------------------------------------
+
 void ObjetoBaseWidget::show(void)
 {
  janela_pai->exec();
  QDialog::show();
 }
-//----------------------------------------------------------
+
 void ObjetoBaseWidget::showEvent(QShowEvent *)
 {
  /* Na primeira exibição do formulário a altura minima e máxima
@@ -133,7 +133,7 @@ void ObjetoBaseWidget::showEvent(QShowEvent *)
   janela_pai->resize(janela_pai->minimumWidth(), alt_min_jp);
  }
 }
-//----------------------------------------------------------
+
 void ObjetoBaseWidget::hideEvent(QHideEvent *)
 {
  nome_edt->clear();
@@ -148,7 +148,7 @@ void ObjetoBaseWidget::hideEvent(QHideEvent *)
  janela_pai->close();
  janela_pai->blockSignals(false);
 }
-//----------------------------------------------------------
+
 void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, ObjetoBase *objeto, ObjetoBase *objeto_pai, float px_objeto, float py_objeto)
 {
  TipoObjetoBase tipo_obj, tipo_obj_pai=OBJETO_BASE;
@@ -240,7 +240,7 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
  }
  else obj_protegido_frm->setVisible(false);
 }
-//----------------------------------------------------------
+
 void ObjetoBaseWidget::configurarLayouFormulario(QGridLayout *grid, TipoObjetoBase tipo_obj)
 {
  bool exibir_esq, exibir_dono, exibir_esptab, exibir_coment, exibir_obj_pai;
@@ -331,7 +331,7 @@ void ObjetoBaseWidget::configurarLayouFormulario(QGridLayout *grid, TipoObjetoBa
   iconeobj_lbl->setToolTip(ObjetoBase::obterNomeTipoObjeto(tipo_obj));
  }
 }
-//----------------------------------------------------------
+
 QString ObjetoBaseWidget::gerarIntervaloVersoes(unsigned tipo_intervalo, const QString &ver_ini, const QString &ver_fim)
 {
  if(tipo_intervalo==ATE_VERSAO && !ver_ini.isEmpty())
@@ -343,7 +343,7 @@ QString ObjetoBaseWidget::gerarIntervaloVersoes(unsigned tipo_intervalo, const Q
  else
    return("");
 }
-//----------------------------------------------------------
+
 QFrame *ObjetoBaseWidget::gerarFrameInformacao(const QString &mensagem)
 {
  QFrame *info_frm=NULL;
@@ -394,7 +394,7 @@ QFrame *ObjetoBaseWidget::gerarFrameInformacao(const QString &mensagem)
 
  return(info_frm);
 }
-//----------------------------------------------------------
+
 QFrame *ObjetoBaseWidget::gerarFrameAlertaVersao(map<QString, vector<QWidget *> > &campos,
                                                  map< QWidget *, vector<QString> > *valores)
 {
@@ -487,7 +487,7 @@ QFrame *ObjetoBaseWidget::gerarFrameAlertaVersao(map<QString, vector<QWidget *> 
 
  return(alerta_frm);
 }
-//----------------------------------------------------------
+
 void ObjetoBaseWidget::editarPermissoes(void)
 {
  ObjetoBase *objeto_pai=NULL;
@@ -498,7 +498,7 @@ void ObjetoBaseWidget::editarPermissoes(void)
  permissao_wgt->definirAtributos(this->modelo, objeto_pai, this->objeto);
  permissao_wgt->show();
 }
-//----------------------------------------------------------
+
 void ObjetoBaseWidget::aplicarConfiguracao(void)
 {
  if(objeto)

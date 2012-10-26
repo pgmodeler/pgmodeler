@@ -48,7 +48,7 @@ LinguagemWidget::LinguagemWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void LinguagemWidget::hideEvent(QHideEvent *evento)
 {
  sel_func_handler->removerObjetoSelecionado();
@@ -59,7 +59,7 @@ void LinguagemWidget::hideEvent(QHideEvent *evento)
  //Executa o método que trata o evento de esconder da classe superior
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void LinguagemWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Linguagem *linguagem)
 {
  //Define os atributos do formulários e da janela pai
@@ -80,7 +80,7 @@ void LinguagemWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_o
   sel_func_inline->definirObjeto(linguagem->obterFuncao(Linguagem::FUNC_INLINE));
  }
 }
-//----------------------------------------------------------
+
 void LinguagemWidget::aplicarConfiguracao(void)
 {
  try

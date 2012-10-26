@@ -37,17 +37,17 @@ unsigned ParserEsquema::qtd_coment=0;
 bool ParserEsquema::ignorar_atribs_desc=false;
 
 QString ParserEsquema::versao_pgsql=ParserEsquema::VERSAO_PGSQL_91;
-//----------------------------------------------------------
+
 void ParserEsquema::definirVersaoPgSQL(const QString &versao_pgsql)
 {
  ParserEsquema::versao_pgsql=versao_pgsql;
 }
-//----------------------------------------------------------
+
 QString ParserEsquema::obterVersaoPgSQL(void)
 {
  return(ParserEsquema::versao_pgsql);
 }
-//----------------------------------------------------------
+
 void ParserEsquema::obterVersoesPgSQL(vector<QString> &vet_versoes)
 {
  QDir diretorio;
@@ -84,7 +84,7 @@ void ParserEsquema::obterVersoesPgSQL(vector<QString> &vet_versoes)
  for(i=qtd-1; i >=0; i--)
   vet_versoes.push_back(lista_dirs[i]);
 }
-//----------------------------------------------------------
+
 void ParserEsquema::reiniciarParser(void)
 {
 /* Limpa o buffer e reinicia os contadores de linha,
@@ -92,7 +92,7 @@ void ParserEsquema::reiniciarParser(void)
  buffer.clear();
  linha=coluna=qtd_coment=0;
 }
-//----------------------------------------------------------
+
 void ParserEsquema::carregarArquivo(const QString &arquivo)
 {
  if(arquivo!="")
@@ -152,7 +152,7 @@ void ParserEsquema::carregarArquivo(const QString &arquivo)
   entrada.close();
  }
 }
-//----------------------------------------------------------
+
 QString ParserEsquema::obterAtributo(void)
 {
  QString atrib, linha_atual, str_aux;
@@ -214,7 +214,7 @@ QString ParserEsquema::obterAtributo(void)
 
  return(atrib);
 }
-//----------------------------------------------------------
+
 QString ParserEsquema::obterPalavra(void)
 {
  QString palavra, linha_atual;
@@ -239,7 +239,7 @@ QString ParserEsquema::obterPalavra(void)
 
  return(palavra);
 }
-//----------------------------------------------------------
+
 QString ParserEsquema::obterTextoPuro(void)
 {
  QString texto, linha_atual, str_aux;
@@ -293,7 +293,7 @@ QString ParserEsquema::obterTextoPuro(void)
 
  return(texto);
 }
-//----------------------------------------------------------
+
 QString ParserEsquema::obterCondicional(void)
 {
  QString condicional, linha_atual, str_aux;
@@ -332,7 +332,7 @@ QString ParserEsquema::obterCondicional(void)
 
  return(condicional);
 }
-//----------------------------------------------------------
+
 QString ParserEsquema::obterMetaCaractere(void)
 {
  QString meta, linha_atual, str_aux;
@@ -371,7 +371,7 @@ QString ParserEsquema::obterMetaCaractere(void)
 
  return(meta);
 }
-//----------------------------------------------------------
+
 bool ParserEsquema::caractereEspecial(char chr)
 {
  return(chr==CHR_INI_ATRIBUTO || chr==CHR_MEIO_ATRIBUTO ||
@@ -379,7 +379,7 @@ bool ParserEsquema::caractereEspecial(char chr)
         chr==CHR_INI_METACHAR || chr==CHR_INI_TEXTOPURO ||
         chr==CHR_FIM_TEXTOPURO);
 }
-//----------------------------------------------------------
+
 QString ParserEsquema::obterDefinicaoObjeto(const QString & nome_obj, map<QString, QString> &atributos, unsigned tipo_def)
 {
  if(nome_obj!="")
@@ -429,12 +429,12 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString & nome_obj, map<QStrin
  }
  else return("");
 }
-//----------------------------------------------------------
+
 void ParserEsquema::ignorarAtributosDesc(bool ignorar)
 {
  ignorar_atribs_desc=ignorar;
 }
-//----------------------------------------------------------
+
 QString ParserEsquema::obterDefinicaoObjeto(const QString &nome_arq, map<QString,QString> &atributos)
 {
  QString def_sql;
@@ -546,7 +546,7 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString &nome_arq, map<QString
      case CHR_FIM_ATRIBUTO:
       atrib=obterAtributo();
 
-      //Verifica se o atributo extraido pertence Ã  lista de atributos passada
+      //Verifica se o atributo extraido pertence Ã  lista de atributos passada
       if(atributos.count(atrib)==0)
       {
        if(!ignorar_atribs_desc)

@@ -76,7 +76,7 @@ ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidge
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void ClasseOperadoresWidget::hideEvent(QHideEvent *evento)
 {
  //Retorna os widgets aos valores padrão
@@ -90,7 +90,7 @@ void ClasseOperadoresWidget::hideEvent(QHideEvent *evento)
  //Executa o método que trata o evento de esconder da classe superior
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void ClasseOperadoresWidget::selecionarTipoElemento(int tipo)
 {
  unsigned tipo_sel=static_cast<unsigned>(tipo);
@@ -113,7 +113,7 @@ void ClasseOperadoresWidget::selecionarTipoElemento(int tipo)
  num_suporte_lbl->setVisible(tipo_sel!=ElemClasseOperadores::ELEM_ARMAZENAMENTO);
  num_suporte_sb->setVisible(tipo_sel!=ElemClasseOperadores::ELEM_ARMAZENAMENTO);
 }
-//----------------------------------------------------------
+
 void ClasseOperadoresWidget::editarElemento(int idx_linha)
 {
  ElemClasseOperadores elem;
@@ -129,7 +129,7 @@ void ClasseOperadoresWidget::editarElemento(int idx_linha)
  num_suporte_sb->setValue(elem.obterNumEstrategia());
  tipo_armazenamento->definirAtributos(elem.obterTipoArmazenamento(),this->modelo);
 }
-//----------------------------------------------------------
+
 void ClasseOperadoresWidget::exibirDadosElemento(ElemClasseOperadores elem, int idx_linha)
 {
  unsigned tipo_elem;
@@ -185,7 +185,7 @@ void ClasseOperadoresWidget::exibirDadosElemento(ElemClasseOperadores elem, int 
  //Define o dado da linha como sendo o elemento fornecido no parâmetro.
  tab_elementos->definirDadoLinha(QVariant::fromValue<ElemClasseOperadores>(elem), idx_linha);
 }
-//----------------------------------------------------------
+
 void ClasseOperadoresWidget::manipularElemento(int idx_linha)
 {
  ElemClasseOperadores elem;
@@ -229,7 +229,7 @@ void ClasseOperadoresWidget::manipularElemento(int idx_linha)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void ClasseOperadoresWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, ClasseOperadores *classe_op)
 {
  TipoPgSQL tipo;
@@ -274,7 +274,7 @@ void ClasseOperadoresWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *
  //Exibe no widget de tipos pgsql, o tipo de dados que a classe opera
  tipo_dado->definirAtributos(tipo, modelo);
 }
-//----------------------------------------------------------
+
 void ClasseOperadoresWidget::aplicarConfiguracao(void)
 {
  try
@@ -284,17 +284,17 @@ void ClasseOperadoresWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<ClasseOperadores>();
 
-  //Obtém a referência à  classe de objetos que está sendo manipulada
+  //Obtém a referência �   classe de objetos que está sendo manipulada
   classe_op=dynamic_cast<ClasseOperadores *>(this->objeto);
 
-  //Atribui os valores configurados no formulário à  classe de operadores
+  //Atribui os valores configurados no formulário �   classe de operadores
   classe_op->definirPadrao(classe_op->classePadrao());
   classe_op->definirFamilia(dynamic_cast<FamiliaOperadores *>(sel_familiaop->obterObjeto()));
   classe_op->definirTipoIndexacao(TipoIndexacao(tipo_index_cmb->currentText()));
   classe_op->definirTipoDado(tipo_dado->obterTipoPgSQL());
 
   /* Remove todos os elementos da classe de operadores e em seguida
-     insere aqueles configurados na tabela à  classe */
+     insere aqueles configurados na tabela �   classe */
   classe_op->removerElementosClasse();
   qtd=tab_elementos->obterNumLinhas();
 

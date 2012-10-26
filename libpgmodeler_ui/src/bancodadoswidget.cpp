@@ -53,7 +53,7 @@ BancoDadosWidget::BancoDadosWidget(QWidget *parent): ObjetoBaseWidget(parent, OB
  lccollate_cmb->addItems(lista_loc);
  lcctype_cmb->addItems(lista_loc);
 }
-//----------------------------------------------------------
+
 void BancoDadosWidget::definirAtributos(ModeloBD *modelo)
 {
  if(modelo)
@@ -83,7 +83,7 @@ void BancoDadosWidget::definirAtributos(ModeloBD *modelo)
   ObjetoBaseWidget::definirAtributos(modelo, NULL, modelo);
  }
 }
-//----------------------------------------------------------
+
 void BancoDadosWidget::aplicarConfiguracao(void)
 {
  try

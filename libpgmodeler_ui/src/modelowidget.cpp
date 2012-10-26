@@ -274,7 +274,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  connect(cena, SIGNAL(sceneRectChanged(QRectF)),visaogeral_wgt, SLOT(redimensionarVisaoGeral(void)));
  connect(cena, SIGNAL(sceneRectChanged(QRectF)),visaogeral_wgt, SLOT(atualizarVisaoGeral(void))); */
 }
-//----------------------------------------------------------
+
 ModeloWidget::~ModeloWidget(void)
 {
  objs_copiados.clear();
@@ -284,7 +284,7 @@ ModeloWidget::~ModeloWidget(void)
  delete(lista_op);
  delete(modelo);
 }
-//----------------------------------------------------------
+
 void ModeloWidget::resizeEvent(QResizeEvent *)
 {
  //Obtém o tamanho da cena
@@ -306,7 +306,7 @@ void ModeloWidget::resizeEvent(QResizeEvent *)
  //visaogeral_wgt->redimensionarVisaoGeral();
  //visaogeral_wgt->atualizarVisaoGeral();
 }
-//----------------------------------------------------------
+
 bool ModeloWidget::eventFilter(QObject *objeto, QEvent *evento)
 {
  //Filtra o evento Wheel caso seja disparado pelas barras de rolagem do viewport
@@ -321,7 +321,7 @@ bool ModeloWidget::eventFilter(QObject *objeto, QEvent *evento)
  else
   return(QWidget::eventFilter(objeto, evento));
 }
-//----------------------------------------------------------
+
 void ModeloWidget::keyReleaseEvent(QKeyEvent *evento)
 {
  if(evento->key()==Qt::Key_Control)
@@ -330,7 +330,7 @@ void ModeloWidget::keyReleaseEvent(QKeyEvent *evento)
   viewport->verticalScrollBar()->removeEventFilter(this);
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::keyPressEvent(QKeyEvent *evento)
 {
  //Cancela a ação de inserção do objeto quando ESC é pressionado
@@ -345,7 +345,7 @@ void ModeloWidget::keyPressEvent(QKeyEvent *evento)
   viewport->verticalScrollBar()->installEventFilter(this);
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::mousePressEvent(QMouseEvent *evento)
 {
  //Caso o usuário pressione o botão direito exibe o menu popup na posição do cursor
@@ -370,13 +370,13 @@ void ModeloWidget::mousePressEvent(QMouseEvent *evento)
   }
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::focusInEvent(QFocusEvent *evento)
 {
  cena->update();
  QWidget::focusInEvent(evento);
 }
-//----------------------------------------------------------
+
 void ModeloWidget::wheelEvent(QWheelEvent * evento)
 {
  if(evento->modifiers()==Qt::ControlModifier)
@@ -392,7 +392,7 @@ void ModeloWidget::wheelEvent(QWheelEvent * evento)
   //visaogeral_wgt->redimensionarFrameJanela();
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::aplicarZoom(float zoom)
 {
  //Aplica o zoom somente se este for válido
@@ -409,12 +409,12 @@ void ModeloWidget::aplicarZoom(float zoom)
   emit s_zoomModificado(zoom);
  }
 }
-//----------------------------------------------------------
+
 float ModeloWidget::zoomAtual(void)
 {
  return(zoom_atual);
 }
-//----------------------------------------------------------
+
 void ModeloWidget::manipularAdicaoObjeto(ObjetoBase *objeto)
 {
  //Converte o objeto base para objeto gráfico
@@ -453,7 +453,7 @@ void ModeloWidget::manipularAdicaoObjeto(ObjetoBase *objeto)
 
  this->modificado=true;
 }
-//----------------------------------------------------------
+
 void ModeloWidget::adicionarNovoObjeto(void)
 {
  //Obtém a ação de chamou o slot
@@ -493,7 +493,7 @@ void ModeloWidget::adicionarNovoObjeto(void)
   }
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::manipularRemocaoObjeto(ObjetoBase *objeto)
 {
  ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(objeto);
@@ -505,13 +505,13 @@ void ModeloWidget::manipularRemocaoObjeto(ObjetoBase *objeto)
 
  this->modificado=true;
 }
-//----------------------------------------------------------
+
 void ModeloWidget::manipularDuploCliqueObjeto(ObjetoGraficoBase *objeto)
 {
  if(objeto)
   this->exibirFormObjeto(objeto->obterTipoObjeto(), objeto, NULL, objeto->obterPosicaoObjeto());
 }
-//----------------------------------------------------------
+
 void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
 {
  /* O parâmetro fim_movimento indica se a operação de movimentação de objetos
@@ -548,7 +548,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
   emit s_objetosMovimentados();
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::manipularModificacaoObjeto(ObjetoGraficoBase *objeto)
 {
  //Adciona o objeto modificado   lista de operações
@@ -557,7 +557,7 @@ void ModeloWidget::manipularModificacaoObjeto(ObjetoGraficoBase *objeto)
  //Emite um sinal indicando que um objeto foi modificado
  emit s_objetoModificado();
 }
-//----------------------------------------------------------
+
 void ModeloWidget::configurarSelecaoObjetos(void)
 {
  QList<QGraphicsItem *> itens=cena->selectedItems();
@@ -647,7 +647,7 @@ void ModeloWidget::configurarSelecaoObjetos(void)
   else
    this->configurarMenuPopup(objs_selecionados);
 }
-//----------------------------------------------------------
+
 void ModeloWidget::selecionarTodos(void)
 {
  QPainterPath pth;
@@ -657,7 +657,7 @@ void ModeloWidget::selecionarTodos(void)
  pth.addRect(cena->sceneRect());
  cena->setSelectionArea(pth);
 }
-//----------------------------------------------------------
+
 void ModeloWidget::converterRelacionamentoNN(void)
 {
  //Obtém o relacionamento a ser convertido da ação que disparou o método
@@ -816,7 +816,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
   }
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::carregarModelo(const QString &nome_arq)
 {
  try
@@ -846,7 +846,7 @@ void ModeloWidget::carregarModelo(const QString &nome_arq)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::ajustarTamanhoCena(void)
 {
  QRectF ret_cena, ret_objs;
@@ -873,7 +873,7 @@ void ModeloWidget::ajustarTamanhoCena(void)
  if(alin_objs)
   cena->alinharObjetosGrade();
 }
-//----------------------------------------------------------
+
 vector<QRectF> ModeloWidget::obterPaginasImpressao(const QSizeF &tam_papel, unsigned &qtd_pag_h, unsigned &qtd_pag_v)
 {
  vector<QRectF> paginas;
@@ -922,7 +922,7 @@ vector<QRectF> ModeloWidget::obterPaginasImpressao(const QSizeF &tam_papel, unsi
 
  return(paginas);
 }
-//----------------------------------------------------------
+
 void ModeloWidget::imprimirModelo(QPrinter *printer, bool exibir_grade_imp, bool imp_num_pag)
 {
  if(printer)
@@ -1053,12 +1053,12 @@ void ModeloWidget::imprimirModelo(QPrinter *printer, bool exibir_grade_imp, bool
   cena->update();
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::salvarModelo(void)
 {
  salvarModelo(this->nome_arquivo);
 }
- //----------------------------------------------------------
+ 
 void ModeloWidget::salvarModelo(const QString &nome_arq)
 {
  try
@@ -1082,17 +1082,17 @@ void ModeloWidget::salvarModelo(const QString &nome_arq)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 QString ModeloWidget::obterNomeArquivo(void)
 {
  return(this->nome_arquivo);
 }
-//----------------------------------------------------------
+
 QString ModeloWidget::obterNomeArquivoTemp(void)
 {
  return(this->nome_arquivo_tmp);
 }
-//----------------------------------------------------------
+
 void ModeloWidget::exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto, ObjetoBase *objeto_pai, QPointF pos)
 {
  try
@@ -1302,7 +1302,7 @@ void ModeloWidget::exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto,
   caixa_msg->show(e);
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::exibirDepsRefs(void)
 {
  QAction *obj_sender=dynamic_cast<QAction *>(sender());
@@ -1321,7 +1321,7 @@ void ModeloWidget::exibirDepsRefs(void)
   }
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::exibirCodigoFonte(void)
 {
  QAction *obj_sender=dynamic_cast<QAction *>(sender());
@@ -1339,7 +1339,7 @@ void ModeloWidget::exibirCodigoFonte(void)
   }
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::cancelarAdicaoObjeto(void)
 {
  /* Reinicia o tipo do objeto, isso fará com que o usuário escolha
@@ -1351,7 +1351,7 @@ void ModeloWidget::cancelarAdicaoObjeto(void)
  cena->exibirLinhaRelacionamento(false);
  this->configurarMenuPopup(this->objs_selecionados);
 }
-//----------------------------------------------------------
+
 void ModeloWidget::editarObjeto(void)
 {
  QObject *obj_sender=dynamic_cast<QAction *>(sender());
@@ -1374,7 +1374,7 @@ void ModeloWidget::editarObjeto(void)
   exibirFormObjeto(objeto->obterTipoObjeto(), objeto,
                   (obj_tab ? obj_tab->obterTabelaPai() : NULL));
 }
-//----------------------------------------------------------
+
 void ModeloWidget::protegerObjeto(void)
 {
  try
@@ -1487,7 +1487,7 @@ void ModeloWidget::protegerObjeto(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::recortarObjetos(void)
 {
  /* Marca que o modelo de origem da operação de recorte foi o modelo 'this'.
@@ -1501,7 +1501,7 @@ void ModeloWidget::recortarObjetos(void)
  //Efetua a cópia dos objetos selecionados
  this->copiarObjetos();
 }
-//----------------------------------------------------------
+
 void ModeloWidget::copiarObjetos(void)
 {
  map<unsigned, ObjetoBase *> mapa_objs;
@@ -1595,7 +1595,7 @@ void ModeloWidget::copiarObjetos(void)
   itr1++;
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::colarObjetos(void)
 {
  map<ObjetoBase *, QString> xml_objs;
@@ -1870,7 +1870,7 @@ void ModeloWidget::colarObjetos(void)
  this->configurarMenuPopup();
  this->modificado=true;
 }
-//----------------------------------------------------------
+
 void ModeloWidget::excluirObjetos(void)
 {
  int idx_obj=-1;
@@ -2098,13 +2098,13 @@ void ModeloWidget::excluirObjetos(void)
   }
  }
 }
-//----------------------------------------------------------
+
 void ModeloWidget::exibirMenuObjetoTabela(vector<ObjetoBase *> objs_selecionados)
 {
  this->configurarMenuPopup(objs_selecionados);
  menu_popup.exec(QCursor::pos());
 }
-//----------------------------------------------------------
+
 void ModeloWidget::desabilitarAcoesModelo(void)
 {
  action_codigo_fonte->setEnabled(false);
@@ -2120,7 +2120,7 @@ void ModeloWidget::desabilitarAcoesModelo(void)
  action_recortar->setEnabled(false);
  action_excluir->setEnabled(false);
 }
-//----------------------------------------------------------
+
 void ModeloWidget::configurarMenuPopup(vector<ObjetoBase *> objs_sel)
 {
  QMenu *submenu=NULL;
@@ -2374,7 +2374,7 @@ void ModeloWidget::configurarMenuPopup(vector<ObjetoBase *> objs_sel)
   acoes.pop_back();
  }
 }
-//----------------------------------------------------------
+
 bool ModeloWidget::modeloModificado(void)
 {
  return(modificado);

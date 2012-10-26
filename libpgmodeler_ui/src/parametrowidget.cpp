@@ -35,7 +35,7 @@ ParametroWidget::ParametroWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void ParametroWidget::hideEvent(QHideEvent *evento)
 {
  //Reseta os campos do formulário ao esconder o mesmo
@@ -44,7 +44,7 @@ void ParametroWidget::hideEvent(QHideEvent *evento)
  valorpadrao_edt->clear();
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void ParametroWidget::definirAtributos(Parametro param, ModeloBD *modelo)
 {
  this->parametro=param;
@@ -57,7 +57,7 @@ void ParametroWidget::definirAtributos(Parametro param, ModeloBD *modelo)
 
  ObjetoBaseWidget::definirAtributos(modelo,NULL,&this->parametro);
 }
-//----------------------------------------------------------
+
 void ParametroWidget::aplicarConfiguracao(void)
 {
  try
@@ -81,7 +81,7 @@ void ParametroWidget::aplicarConfiguracao(void)
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 Parametro ParametroWidget::obterParametro(void)
 {
  return(parametro);

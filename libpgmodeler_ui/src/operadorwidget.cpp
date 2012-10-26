@@ -69,7 +69,7 @@ OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO
   throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
-//----------------------------------------------------------
+
 void OperadorWidget::hideEvent(QHideEvent *evento)
 {
  unsigned i;
@@ -89,7 +89,7 @@ void OperadorWidget::hideEvent(QHideEvent *evento)
  atributos_twg->setCurrentIndex(0);
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void OperadorWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Operador *operador)
 {
  unsigned i;

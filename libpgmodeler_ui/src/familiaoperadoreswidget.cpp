@@ -16,7 +16,7 @@ FamiliaOperadoresWidget::FamiliaOperadoresWidget(QWidget *parent): ObjetoBaseWid
  janela_pai->setMinimumSize(480, 270);
  janela_pai->setMaximumSize(16777215, 270);
 }
-//----------------------------------------------------------
+
 void FamiliaOperadoresWidget::hideEvent(QHideEvent *evento)
 {
  tipo_index_cmb->setCurrentIndex(0);
@@ -24,7 +24,7 @@ void FamiliaOperadoresWidget::hideEvent(QHideEvent *evento)
  //Executa o método que trata o evento de esconder da classe superior
  ObjetoBaseWidget::hideEvent(evento);
 }
-//----------------------------------------------------------
+
 void FamiliaOperadoresWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, FamiliaOperadores *familia_op)
 {
  //Define os atributos do formulários e da janela pai
@@ -35,7 +35,7 @@ void FamiliaOperadoresWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes 
  if(familia_op)
   tipo_index_cmb->setCurrentIndex(tipo_index_cmb->findText(~(familia_op->obterTipoIndexacao())));
 }
-//----------------------------------------------------------
+
 void FamiliaOperadoresWidget::aplicarConfiguracao(void)
 {
  try
