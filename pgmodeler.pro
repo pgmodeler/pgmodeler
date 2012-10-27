@@ -10,7 +10,7 @@ windows:LIB_EXT = dll
 
 SUBDIRS = libutil \
           libparsers \
-          libconexbd \
+          libdbconnect \
           libpgmodeler \
           libobjrenderer \
           libpgmodeler_ui \
@@ -19,9 +19,10 @@ SUBDIRS = libutil \
           #plugins/dummyplugin
 
 
+
 LIBUTIL=$${LIB_PREFIX}util.$${LIB_EXT}
 LIBPARSERS=$${LIB_PREFIX}parsers.$${LIB_EXT}
-LIBCONEXBD=$${LIB_PREFIX}conexbd.$${LIB_EXT}
+LIBDBCONNECT=$${LIB_PREFIX}dbconnect.$${LIB_EXT}
 LIBPGMODELER=$${LIB_PREFIX}pgmodeler.$${LIB_EXT}
 LIBOBJRENDERER=$${LIB_PREFIX}objrenderer.$${LIB_EXT}
 LIBPGMODELERUI=$${LIB_PREFIX}pgmodeler_ui.$${LIB_EXT}
@@ -33,7 +34,7 @@ OBJECTS_DIR = obj
 UI_DIR = src
 
 INCLUDEPATH += $$PWD/libutil/src \
-               $$PWD/libconexbd/src \
+               $$PWD/libdbconnect/src \
                $$PWD/libparsers/src \
                $$PWD/libpgmodeler/src \
                $$PWD/libobjrenderer/src \

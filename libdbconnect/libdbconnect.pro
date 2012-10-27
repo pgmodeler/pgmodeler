@@ -1,7 +1,7 @@
 include(../pgmodeler.pro)
 
 TEMPLATE = lib
-TARGET = conexbd
+TARGET = dbconnect
 DESTDIR = ../build/lib
 OBJECTS_DIR = obj
 LIBS += $$DESTDIR/$$LIBUTIL

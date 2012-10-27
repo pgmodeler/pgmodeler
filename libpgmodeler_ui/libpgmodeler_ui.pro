@@ -6,7 +6,7 @@ DESTDIR = ../build/lib
 
 LIBS = $$DESTDIR/$$LIBUTIL \
        $$DESTDIR/$$LIBPARSERS \
-       $$DESTDIR/$$LIBCONEXBD \
+       $$DESTDIR/$$LIBDBCONNECT \
        $$DESTDIR/$$LIBOBJRENDERER \
        $$DESTDIR/$$LIBPGMODELER
 
