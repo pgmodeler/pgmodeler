@@ -22,7 +22,7 @@
 #define TIPOSPGSQL_H
 
 #include "exception.h"
-#include "atributosparsers.h"
+#include "parsersattributes.h"
 #include "parseresquema.h"
 #include <vector>
 #include <map>

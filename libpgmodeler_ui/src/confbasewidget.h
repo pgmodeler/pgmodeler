@@ -24,7 +24,7 @@
 
 #include "exception.h"
 #include "parserxml.h"
-#include "atributosparsers.h"
+#include "parsersattributes.h"
 #include <algorithm>
 
 class ConfBaseWidget {

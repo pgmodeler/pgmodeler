@@ -91,6 +91,6 @@ QString ElementoIndice::obterDefinicaoObjeto(unsigned tipo_def)
    atributos[ParsersAttributes::OP_CLASS]=classe_oper->obterDefinicaoObjeto(tipo_def, true);
  }
  
- return(ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::ELEMENTO_INDICE,atributos, tipo_def));
+ return(ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::INDEX_ELEMENT,atributos, tipo_def));
 }
 

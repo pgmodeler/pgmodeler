@@ -8,12 +8,12 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
  QFont fonte;
  QCheckBox *check=NULL;
  unsigned i;
- QString vet_priv[12]={ ParsersAttributes::PRIV_SELECT, ParsersAttributes::PRIV_INSERT,
-                        ParsersAttributes::PRIV_UPDATE, ParsersAttributes::PRIV_DELETE,
-                        ParsersAttributes::PRIV_TRUNCATE, ParsersAttributes::PRIV_REFERENCES,
-                        ParsersAttributes::PRIV_TRIGGER, ParsersAttributes::PRIV_CREATE,
-                        ParsersAttributes::PRIV_CONNECT, ParsersAttributes::PRIV_TEMPORARY,
-                        ParsersAttributes::PRIV_EXECUTE, ParsersAttributes::PRIV_USAGE };
+ QString vet_priv[12]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
+                        ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
+                        ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
+                        ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
+                        ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
+                        ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
 
  Ui_PermissaoWidget::setupUi(this);
 

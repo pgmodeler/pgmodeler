@@ -93,10 +93,10 @@ void OGVisao::configurarObjeto(void)
  this->redimensionarPoligono(pol, larg, referencias->boundingRect().height() + (2 * ESP_VERTICAL));
 
  corpo->setPolygon(pol);
- corpo->setBrush(this->obterEstiloPreenchimento(ParsersAttributes::CORPO_VISAO));
+ corpo->setBrush(this->obterEstiloPreenchimento(ParsersAttributes::VIEW_BODY));
 
  //Define que a borda de visão é traceja
- pen=this->obterEstiloBorda(ParsersAttributes::CORPO_VISAO);
+ pen=this->obterEstiloBorda(ParsersAttributes::VIEW_BODY);
  pen.setStyle(Qt::DashLine);
 
  corpo->setPen(pen);

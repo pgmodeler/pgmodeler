@@ -49,13 +49,13 @@ void RelacionamentoBase::configurarRelacionamento(void)
  atributos[ParsersAttributes::ELEMENTS]="";
  atributos[ParsersAttributes::SRC_SUFFIX]="";
  atributos[ParsersAttributes::DST_SUFFIX]="";
- atributos[ParsersAttributes::SUFIXO_AUTO]="";
+ atributos[ParsersAttributes::AUTO_SUFFIX]="";
  atributos[ParsersAttributes::IDENTIFIER]="";
  atributos[ParsersAttributes::REDUCED_FORM]="";
  atributos[ParsersAttributes::DEFERRABLE]="";
  atributos[ParsersAttributes::DEFER_TYPE]="";
- atributos[ParsersAttributes::NOME_TABELA]="";
- atributos[ParsersAttributes::COLUNAS_PK_ESPECIAL]="";
+ atributos[ParsersAttributes::TABLE_NAME]="";
+ atributos[ParsersAttributes::SPECIAL_PK_COLS]="";
 
 
  //Verifica se o tipo de relacionamento é valido

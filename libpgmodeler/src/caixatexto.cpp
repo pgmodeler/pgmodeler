@@ -8,7 +8,7 @@ CaixaTexto::CaixaTexto(void)
  atributos[ParsersAttributes::ITALIC]="";
  atributos[ParsersAttributes::BOLD]="";
  atributos[ParsersAttributes::UNDERLINE]="";
- atributos[ParsersAttributes::COR]="";
+ atributos[ParsersAttributes::COLOR]="";
 }
 
 QString CaixaTexto::obterDefinicaoObjeto(void)
@@ -25,7 +25,7 @@ QString CaixaTexto::obterDefinicaoObjeto(void)
   atributos[ParsersAttributes::UNDERLINE]="1";
 
  if(cor_texto.name()!="#000000")
-  atributos[ParsersAttributes::COR]=cor_texto.name();
+  atributos[ParsersAttributes::COLOR]=cor_texto.name();
 
  return(this->ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML));
 }

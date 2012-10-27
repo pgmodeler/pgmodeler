@@ -43,15 +43,15 @@ void OGTituloObjeto::configurarObjeto(ObjetoGraficoBase *objeto)
  //Selecionando os atributos de cores conforme o tipo do objeto dono
  if(objeto->obterTipoObjeto()==OBJETO_VISAO)
  {
-  atrib_nome=ParsersAttributes::NOME_VISAO;
-  atrib_nome_esquema=ParsersAttributes::NOME_ESQUEMA_VISAO;
-  atrib_cor_titulo=ParsersAttributes::TITULO_VISAO;
+  atrib_nome=ParsersAttributes::VIEW_NAME;
+  atrib_nome_esquema=ParsersAttributes::VIEW_SCHEMA_NAME;
+  atrib_cor_titulo=ParsersAttributes::VIEW_TITLE;
  }
  else
  {
-  atrib_nome=ParsersAttributes::NOME_TABELA;
-  atrib_nome_esquema=ParsersAttributes::NOME_ESQUEMA_TABELA;
-  atrib_cor_titulo=ParsersAttributes::TITULO_TABELA;
+  atrib_nome=ParsersAttributes::TABLE_NAME;
+  atrib_nome_esquema=ParsersAttributes::TABLE_SCHEMA_NAME;
+  atrib_cor_titulo=ParsersAttributes::TABLE_TITLE;
  }
 
  //Configura o descritor de esquema do objeto

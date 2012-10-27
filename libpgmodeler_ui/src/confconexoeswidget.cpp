@@ -399,7 +399,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
      preencher o atributo 'params_config[AtributosGlobais::CONF_CONEXOES][AtributosParsers::CONEXOES]'
      espaços */
   if(qtd==0)
-   params_config[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONEXOES]="  ";
+   params_config[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]="  ";
   else
   {
    /* Quando se tem conexões no combo, os atributos de cada uma são obtidos e é
@@ -426,7 +426,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
     ParserEsquema::ignorarAtributosDesc(true);
 
     //Gera o esquema da conexão e contatena �   demais geradas
-    params_config[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONEXOES]+=
+    params_config[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
     ParserEsquema::obterDefinicaoObjeto(GlobalAttributes::CONFIGURATIONS_DIR +
                                         GlobalAttributes::DIR_SEPARATOR +
                                         GlobalAttributes::SCHEMAS_DIR +

@@ -22,7 +22,7 @@
 #ifndef OBJETOBASE_H
 #define OBJETOBASE_H
 
-#include "atributosparsers.h"
+#include "parsersattributes.h"
 #include "exception.h"
 #include "tipospgsql.h"
 #include "parseresquema.h"

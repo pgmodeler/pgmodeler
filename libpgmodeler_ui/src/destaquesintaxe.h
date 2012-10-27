@@ -28,7 +28,7 @@
 #include "exception.h"
 #include "parserxml.h"
 #include "globalattributes.h"
-#include "atributosparsers.h"
+#include "parsersattributes.h"
 #include <algorithm>
 
 class DestaqueSintaxe: public QSyntaxHighlighter {

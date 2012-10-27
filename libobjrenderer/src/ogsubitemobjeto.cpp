@@ -91,7 +91,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
                         QSizeF(9.0f * fator, 9.0f * fator)));
 
    if(coluna->naoNulo())
-    atrib=ParsersAttributes::COLUNA_NN;
+    atrib=ParsersAttributes::NN_COLUMN;
    else
     atrib=ParsersAttributes::COLUMN;
 
@@ -107,7 +107,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
    //Cria um polígono conforme o tipo de restrição da coluna
    if(tipo_rest==TipoRestricao::primary_key)
    {
-    atrib=ParsersAttributes::COLUNA_PK;
+    atrib=ParsersAttributes::PK_COLUMN;
     pol.append(QPointF(2,0)); pol.append(QPointF(0,2)); pol.append(QPointF(0,7));
     pol.append(QPointF(2,9)); pol.append(QPointF(3,8)); pol.append(QPointF(3,6));
     pol.append(QPointF(4,6)); pol.append(QPointF(5,7)); pol.append(QPointF(6,6));
@@ -116,7 +116,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
    }
    else if(tipo_rest==TipoRestricao::foreign_key)
    {
-    atrib=ParsersAttributes::COLUNA_FK;
+    atrib=ParsersAttributes::FK_COLUMN;
     pol.append(QPointF(0,3)); pol.append(QPointF(0,6)); pol.append(QPointF(4,6));
     pol.append(QPointF(4,9)); pol.append(QPointF(5,9)); pol.append(QPointF(9,5));
     pol.append(QPointF(9,4)); pol.append(QPointF(5,0)); pol.append(QPointF(4,0));
@@ -124,7 +124,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
    }
    else if(tipo_rest==TipoRestricao::unique)
    {
-    atrib=ParsersAttributes::COLUNA_UQ;
+    atrib=ParsersAttributes::UQ_COLUMN;
     pol.append(QPointF(4,0)); pol.append(QPointF(0,4)); pol.append(QPointF(0,5));
     pol.append(QPointF(4,9)); pol.append(QPointF(5,9)); pol.append(QPointF(9,5));
     pol.append(QPointF(9,4)); pol.append(QPointF(5,0));
@@ -197,28 +197,28 @@ void OGSubItemObjeto::configurarObjeto(void)
       obtém a formatação de fonte para o tipo da restrição */
    if(str_rest.find(TEXTO_PRIMARY_KEY)>=0)
    {
-    fmt=config_fonte[ParsersAttributes::COLUNA_PK];
+    fmt=config_fonte[ParsersAttributes::PK_COLUMN];
     tipo_rest=TipoRestricao::primary_key;
    }
    else if(str_rest.find(TEXTO_FOREIGN_KEY)>=0)
    {
-    fmt=config_fonte[ParsersAttributes::COLUNA_FK];
+    fmt=config_fonte[ParsersAttributes::FK_COLUMN];
     tipo_rest=TipoRestricao::foreign_key;
    }
    else if(str_rest.find(TEXTO_UNIQUE)>=0)
    {
-    fmt=config_fonte[ParsersAttributes::COLUNA_UQ];
+    fmt=config_fonte[ParsersAttributes::UQ_COLUMN];
     tipo_rest=TipoRestricao::unique;
    }
    else if(str_rest.find(TEXTO_NOT_NULL)>=0)
-    fmt=config_fonte[ParsersAttributes::COLUNA_NN];
+    fmt=config_fonte[ParsersAttributes::NN_COLUMN];
    else
     fmt=config_fonte[ParsersAttributes::COLUMN];
 
    if(coluna->incluidoPorRelacionamento())
-    fmt=config_fonte[ParsersAttributes::COLUNA_HERDADA];
+    fmt=config_fonte[ParsersAttributes::INH_COLUMN];
    else if(coluna->objetoProtegido())
-    fmt=config_fonte[ParsersAttributes::COLUNA_PROTEGIDA];
+    fmt=config_fonte[ParsersAttributes::PROT_COLUMN];
   }
   //Caso não seja uma coluna, obtém a formatação para o tipo do objeto de tabela
   else
@@ -240,7 +240,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   px+=rotulos[0]->boundingRect().width();
 
   //Configura o rótulo de tipo
-  fmt=config_fonte[ParsersAttributes::TIPO_OBJETO];
+  fmt=config_fonte[ParsersAttributes::OBJECT_TYPE];
   if(coluna)
    rotulos[1]->setText(QString::fromUtf8(SEPARADOR_TIPO + (*coluna->obterTipo())));
   else
@@ -342,7 +342,7 @@ void OGSubItemObjeto::configurarObjeto(Referencia referencia)
   rotulos[0]->setPos(px, 0);
   px+=rotulos[0]->boundingRect().width();
 
-  fmt=config_fonte[ParsersAttributes::COLUNA_REF];
+  fmt=config_fonte[ParsersAttributes::REF_COLUMN];
   if(referencia.obterColuna())
    rotulos[1]->setText(referencia.obterColuna()->obterNome());
   else

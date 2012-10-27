@@ -86,8 +86,8 @@ Funcao::Funcao(void)
  atributos[ParsersAttributes::REF_TYPE]="";
  atributos[ParsersAttributes::WINDOW_FUNC]="";
  atributos[ParsersAttributes::RETURN_TABLE]="";
- atributos[ParsersAttributes::BIBLIOTECA]="";
- atributos[ParsersAttributes::SIMBOLO]="";
+ atributos[ParsersAttributes::LIBRARY]="";
+ atributos[ParsersAttributes::SYMBOL]="";
 }
 
 void Funcao::definirNome(const QString &nome)
@@ -525,8 +525,8 @@ QString Funcao::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 
  if(linguagem->obterNome()==~TipoLinguagem(TipoLinguagem::c))
  {
-  atributos[ParsersAttributes::SIMBOLO]=simbolo;
-  atributos[ParsersAttributes::BIBLIOTECA]=biblioteca;
+  atributos[ParsersAttributes::SYMBOL]=simbolo;
+  atributos[ParsersAttributes::LIBRARY]=biblioteca;
  }
 
  atributos[ParsersAttributes::SIGNATURE]=assinatura;

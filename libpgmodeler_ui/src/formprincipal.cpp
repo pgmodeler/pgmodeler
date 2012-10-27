@@ -266,22 +266,22 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  {
   fconfiguracao->carregarConfiguracao();
 
-  areas_dock[ParsersAttributes::ESQUERDA]=Qt::LeftDockWidgetArea;
-  areas_dock[ParsersAttributes::DIREITA]=Qt::RightDockWidgetArea;
-  areas_dock[ParsersAttributes::BASE]=Qt::BottomDockWidgetArea;
-  areas_dock[ParsersAttributes::TOPO]=Qt::TopDockWidgetArea;
-  dock_wgts[ParsersAttributes::DK_OBJETOS]=visao_objs;
-  dock_wgts[ParsersAttributes::DK_OPERACOES]=lista_oper;
+  areas_dock[ParsersAttributes::LEFT]=Qt::LeftDockWidgetArea;
+  areas_dock[ParsersAttributes::RIGHT]=Qt::RightDockWidgetArea;
+  areas_dock[ParsersAttributes::BOTTOM]=Qt::BottomDockWidgetArea;
+  areas_dock[ParsersAttributes::TOP]=Qt::TopDockWidgetArea;
+  dock_wgts[ParsersAttributes::OBJECTS_DOCK]=visao_objs;
+  dock_wgts[ParsersAttributes::OPERATIONS_DOCK]=lista_oper;
 
-  areas_toolbar[ParsersAttributes::ESQUERDA]=Qt::LeftToolBarArea;
-  areas_toolbar[ParsersAttributes::DIREITA]=Qt::RightToolBarArea;
-  areas_toolbar[ParsersAttributes::BASE]=Qt::BottomToolBarArea;
-  areas_toolbar[ParsersAttributes::TOPO]=Qt::TopToolBarArea;
-  toolbars[ParsersAttributes::TB_ARQUIVO]=arquivo_tb;
-  toolbars[ParsersAttributes::TB_EDICAO]=edicao_tb;
-  toolbars[ParsersAttributes::TB_EXIBICAO]=exibicao_tb;
-  toolbars[ParsersAttributes::TB_PLUGINS]=plugins_tb;
-  toolbars[ParsersAttributes::TB_MODELO]=modelo_tb;
+  areas_toolbar[ParsersAttributes::LEFT]=Qt::LeftToolBarArea;
+  areas_toolbar[ParsersAttributes::RIGHT]=Qt::RightToolBarArea;
+  areas_toolbar[ParsersAttributes::BOTTOM]=Qt::BottomToolBarArea;
+  areas_toolbar[ParsersAttributes::TOP]=Qt::TopToolBarArea;
+  toolbars[ParsersAttributes::FILE_TOOLBAR]=arquivo_tb;
+  toolbars[ParsersAttributes::EDIT_TOOLBAR]=edicao_tb;
+  toolbars[ParsersAttributes::VIEW_TOOLBAR]=exibicao_tb;
+  toolbars[ParsersAttributes::PLUGINS_TOOLBAR]=plugins_tb;
+  toolbars[ParsersAttributes::MODEL_TOOLBAR]=modelo_tb;
 
   //Aplicando as configurações carregadas
   conf_wgt=fconfiguracao->obterWidgetConfiguracao(0);
@@ -297,31 +297,31 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
    atribs=itr->second;
    tipo=atribs[ParsersAttributes::TYPE];
 
-   if(tipo==ParsersAttributes::DK_OBJETOS ||
-      tipo==ParsersAttributes::DK_OPERACOES)
+   if(tipo==ParsersAttributes::OBJECTS_DOCK ||
+      tipo==ParsersAttributes::OPERATIONS_DOCK)
    {
     this->addDockWidget(areas_dock[atribs[ParsersAttributes::POSITION]], dock_wgts[tipo]);
-    dock_wgts[tipo]->setVisible(atribs[ParsersAttributes::VISIVEL]==ParsersAttributes::_TRUE_);
+    dock_wgts[tipo]->setVisible(atribs[ParsersAttributes::VISIBLE]==ParsersAttributes::_TRUE_);
    }
-   else if(tipo==ParsersAttributes::TB_ARQUIVO ||
-           tipo==ParsersAttributes::TB_EDICAO ||
-           tipo==ParsersAttributes::TB_EXIBICAO ||
-           tipo==ParsersAttributes::TB_MODELO ||
-           tipo==ParsersAttributes::TB_PLUGINS)
+   else if(tipo==ParsersAttributes::FILE_TOOLBAR ||
+           tipo==ParsersAttributes::EDIT_TOOLBAR ||
+           tipo==ParsersAttributes::VIEW_TOOLBAR ||
+           tipo==ParsersAttributes::MODEL_TOOLBAR ||
+           tipo==ParsersAttributes::PLUGINS_TOOLBAR)
    {
     if(toolbars[tipo]==plugins_tb)
-     toolbars[tipo]->setVisible(atribs[ParsersAttributes::VISIVEL]==ParsersAttributes::_TRUE_ && !plugins.empty());
+     toolbars[tipo]->setVisible(atribs[ParsersAttributes::VISIBLE]==ParsersAttributes::_TRUE_ && !plugins.empty());
     else
-     toolbars[tipo]->setVisible(atribs[ParsersAttributes::VISIVEL]==ParsersAttributes::_TRUE_);
+     toolbars[tipo]->setVisible(atribs[ParsersAttributes::VISIBLE]==ParsersAttributes::_TRUE_);
     this->addToolBar(areas_toolbar[atribs[ParsersAttributes::POSITION]], toolbars[tipo]);
    }
    //Carrega a sessão anterior somente se não hoverem arquivos temporários
-   else if(atribs.count(ParsersAttributes::CAMINHO)!=0)
+   else if(atribs.count(ParsersAttributes::PATH)!=0)
    {
     try
     {
-     if(!atribs[ParsersAttributes::CAMINHO].isEmpty())
-      arq_sessao_ant.push_back(atribs[ParsersAttributes::CAMINHO]);
+     if(!atribs[ParsersAttributes::PATH].isEmpty())
+      arq_sessao_ant.push_back(atribs[ParsersAttributes::PATH]);
     }
     catch(Exception &e)
     {
@@ -389,7 +389,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  }
 
  //Inicializa o atributo de tempo de salvamento automático
- interv_salvar=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::INTERVALO_SALVAR_AUTO].toInt() * 60000;
+ interv_salvar=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL].toInt() * 60000;
 }
 
 FormPrincipal::~FormPrincipal(void)
@@ -468,7 +468,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
  conf_wgt->excluirParamsConfiguracao();
 
  //Caso seja preciso salvar a posição dos widgets
- if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SALVAR_WIDGETS].isEmpty())
+ if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS].isEmpty())
  {
   int i, qtd=7;
   QString id_param;
@@ -483,23 +483,23 @@ void FormPrincipal::closeEvent(QCloseEvent *)
 
   salvar_conf=true;
 
-  id_widgets[visao_objs]=ParsersAttributes::DK_OBJETOS;
-  id_widgets[lista_oper]=ParsersAttributes::DK_OPERACOES;
-  id_widgets[arquivo_tb]=ParsersAttributes::TB_ARQUIVO;
-  id_widgets[edicao_tb]=ParsersAttributes::TB_EDICAO;
-  id_widgets[exibicao_tb]=ParsersAttributes::TB_EXIBICAO;
-  id_widgets[plugins_tb]=ParsersAttributes::TB_PLUGINS;
-  id_widgets[modelo_tb]=ParsersAttributes::TB_MODELO;
+  id_widgets[visao_objs]=ParsersAttributes::OBJECTS_DOCK;
+  id_widgets[lista_oper]=ParsersAttributes::OPERATIONS_DOCK;
+  id_widgets[arquivo_tb]=ParsersAttributes::FILE_TOOLBAR;
+  id_widgets[edicao_tb]=ParsersAttributes::EDIT_TOOLBAR;
+  id_widgets[exibicao_tb]=ParsersAttributes::VIEW_TOOLBAR;
+  id_widgets[plugins_tb]=ParsersAttributes::PLUGINS_TOOLBAR;
+  id_widgets[modelo_tb]=ParsersAttributes::MODEL_TOOLBAR;
 
-  areas_dock[Qt::LeftDockWidgetArea]=ParsersAttributes::ESQUERDA;
-  areas_dock[Qt::RightDockWidgetArea]=ParsersAttributes::DIREITA;
-  areas_dock[Qt::BottomDockWidgetArea]=ParsersAttributes::BASE;
-  areas_dock[Qt::TopDockWidgetArea]=ParsersAttributes::TOPO;
+  areas_dock[Qt::LeftDockWidgetArea]=ParsersAttributes::LEFT;
+  areas_dock[Qt::RightDockWidgetArea]=ParsersAttributes::RIGHT;
+  areas_dock[Qt::BottomDockWidgetArea]=ParsersAttributes::BOTTOM;
+  areas_dock[Qt::TopDockWidgetArea]=ParsersAttributes::TOP;
 
-  areas_toolbar[Qt::LeftToolBarArea]=ParsersAttributes::ESQUERDA;
-  areas_toolbar[Qt::RightToolBarArea]=ParsersAttributes::DIREITA;
-  areas_toolbar[Qt::BottomToolBarArea]=ParsersAttributes::BASE;
-  areas_toolbar[Qt::TopToolBarArea]=ParsersAttributes::TOPO;
+  areas_toolbar[Qt::LeftToolBarArea]=ParsersAttributes::LEFT;
+  areas_toolbar[Qt::RightToolBarArea]=ParsersAttributes::RIGHT;
+  areas_toolbar[Qt::BottomToolBarArea]=ParsersAttributes::BOTTOM;
+  areas_toolbar[Qt::TopToolBarArea]=ParsersAttributes::TOP;
 
   for(i=0; i < qtd; i++)
   {
@@ -509,7 +509,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
    id_param=QString("%1%2").arg(ParsersAttributes::WIDGET).arg(i);
    atribs[ParsersAttributes::TYPE]=id_widgets[vet_wgts[i]];
    atribs[ParsersAttributes::ID]=id_param;
-   atribs[ParsersAttributes::VISIVEL]=(vet_wgts[i]->isVisible() ?
+   atribs[ParsersAttributes::VISIBLE]=(vet_wgts[i]->isVisible() ?
                                       ParsersAttributes::_TRUE_ :  ParsersAttributes::_FALSE_);
 
    if(dock)
@@ -523,7 +523,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
  }
 
  //Caso seja necessário salvar a sessão de arquivos carregados
- if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SALVAR_SESSAO].isEmpty())
+ if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION].isEmpty())
  {
   int i, qtd;
   ModeloWidget *modelo=NULL;
@@ -537,9 +537,9 @@ void FormPrincipal::closeEvent(QCloseEvent *)
 
    if(!modelo->obterNomeArquivo().isEmpty())
    {
-    id_param=QString("%1%2").arg(ParsersAttributes::ARQUIVO).arg(i);
+    id_param=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
     atribs[ParsersAttributes::ID]=id_param;
-    atribs[ParsersAttributes::CAMINHO]=modelo->obterNomeArquivo();
+    atribs[ParsersAttributes::PATH]=modelo->obterNomeArquivo();
     conf_wgt->adicionarParamConfiguracao(id_param, atribs);
     atribs.clear();
    }

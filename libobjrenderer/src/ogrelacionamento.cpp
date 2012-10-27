@@ -131,7 +131,7 @@ QVariant OGRelacionamento::itemChange(GraphicsItemChange change, const QVariant 
      que as mesmas também estão selecionadas */
   if(value.toBool())
   {
-   QColor cor1=ObjetoGrafico::obterEstiloBorda(ParsersAttributes::SELECAO_OBJETO).color(),
+   QColor cor1=ObjetoGrafico::obterEstiloBorda(ParsersAttributes::OBJ_SELECTION).color(),
           cor2=ObjetoGrafico::obterEstiloBorda(ParsersAttributes::RELATIONSHIP).color();
 
    cor.setRedF((cor1.redF() + cor2.greenF())/2.0f);
@@ -496,8 +496,8 @@ void OGRelacionamento::configurarLinha(void)
      pontos_graf.push_back(pol);
      pol->setZValue(0);
      pol->setPolygon(pol_aux);
-     pol->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::SELECAO_OBJETO));
-     pol->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::SELECAO_OBJETO));
+     pol->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::OBJ_SELECTION));
+     pol->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::OBJ_SELECTION));
      this->addToGroup(pol);
     }
     else
@@ -735,7 +735,7 @@ void OGRelacionamento::configurarAtributos(void)
         fator=config_fonte[ParsersAttributes::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
 
   //Obtém configuração de fonte dos atributos
-  fmt=config_fonte[ParsersAttributes::ATRIBUTO];
+  fmt=config_fonte[ParsersAttributes::ATTRIBUTE];
   fonte=fmt.font();
   fonte.setPointSizeF(fonte.pointSizeF() * 0.80f);
 
@@ -793,13 +793,13 @@ void OGRelacionamento::configurarAtributos(void)
    }
 
    desc->setRect(ret);
-   desc->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::ATRIBUTO));
-   desc->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::ATRIBUTO));
+   desc->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::ATTRIBUTE));
+   desc->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::ATTRIBUTE));
    lin->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::RELATIONSHIP));
    texto->setBrush(fmt.foreground());
    texto->setFont(fonte);
-   sel_atrib->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::SELECAO_OBJETO));
-   sel_atrib->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::SELECAO_OBJETO));
+   sel_atrib->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::OBJ_SELECTION));
+   sel_atrib->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::OBJ_SELECTION));
 
    //Move o atributo para a posição calculada
    atributo->setPos(px, py);

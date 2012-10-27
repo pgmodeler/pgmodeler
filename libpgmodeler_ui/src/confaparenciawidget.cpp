@@ -6,22 +6,22 @@ ConfAparenciaWidget::ConfAparenciaWidget(QWidget * parent) : QWidget(parent)
 
  //Armazena cada id de elemento no arquivo de configuração
  QString ids_confs[]={
-  ParsersAttributes::GLOBAL, ParsersAttributes::CONSTRAINTS, ParsersAttributes::SELECAO_OBJETO,
-  ParsersAttributes::INFO_POSICAO, ParsersAttributes::INFO_POSICAO,
-  ParsersAttributes::TIPO_OBJETO, ParsersAttributes::ARCO_CADEADO, ParsersAttributes::CORPO_CADEADO,
-  ParsersAttributes::NOME_ESQUEMA_TABELA, ParsersAttributes::NOME_TABELA, ParsersAttributes::CORPO_TABELA,
-  ParsersAttributes::CORPO_EXT_TABELA, ParsersAttributes::TITULO_TABELA, ObjetoBase::obterNomeEsquemaObjeto(OBJETO_REGRA),
+  ParsersAttributes::GLOBAL, ParsersAttributes::CONSTRAINTS, ParsersAttributes::OBJ_SELECTION,
+  ParsersAttributes::POSITION_INFO, ParsersAttributes::POSITION_INFO,
+  ParsersAttributes::OBJECT_TYPE, ParsersAttributes::LOCKER_ARC, ParsersAttributes::LOCKER_BODY,
+  ParsersAttributes::TABLE_SCHEMA_NAME, ParsersAttributes::TABLE_NAME, ParsersAttributes::TABLE_BODY,
+  ParsersAttributes::TABLE_EXT_BODY, ParsersAttributes::TABLE_TITLE, ObjetoBase::obterNomeEsquemaObjeto(OBJETO_REGRA),
   ObjetoBase::obterNomeEsquemaObjeto(OBJETO_REGRA), ObjetoBase::obterNomeEsquemaObjeto(OBJETO_INDICE),
   ObjetoBase::obterNomeEsquemaObjeto(OBJETO_INDICE), ObjetoBase::obterNomeEsquemaObjeto(OBJETO_GATILHO),
-  ObjetoBase::obterNomeEsquemaObjeto(OBJETO_GATILHO), ParsersAttributes::NOME_ESQUEMA_VISAO, ParsersAttributes::NOME_VISAO,
-  ParsersAttributes::CORPO_VISAO, ParsersAttributes::TITULO_VISAO, ParsersAttributes::ALIAS,
-  ParsersAttributes::COLUNA_REF, ParsersAttributes::REF_TABLE, ParsersAttributes::REFERENCE,
+  ObjetoBase::obterNomeEsquemaObjeto(OBJETO_GATILHO), ParsersAttributes::VIEW_SCHEMA_NAME, ParsersAttributes::VIEW_NAME,
+  ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_TITLE, ParsersAttributes::ALIAS,
+  ParsersAttributes::REF_COLUMN, ParsersAttributes::REF_TABLE, ParsersAttributes::REFERENCE,
   ObjetoBase::obterNomeEsquemaObjeto(OBJETO_CAIXA_TEXTO), ParsersAttributes::COLUMN, ParsersAttributes::COLUMN,
-  ParsersAttributes::COLUNA_HERDADA, ParsersAttributes::COLUNA_PROTEGIDA, ParsersAttributes::COLUNA_PK,
-  ParsersAttributes::COLUNA_PK, ParsersAttributes::COLUNA_FK, ParsersAttributes::COLUNA_FK,
-  ParsersAttributes::COLUNA_UQ, ParsersAttributes::COLUNA_UQ, ParsersAttributes::COLUNA_NN,
-  ParsersAttributes::COLUNA_NN, ParsersAttributes::RELATIONSHIP, ParsersAttributes::LABEL,
-  ParsersAttributes::LABEL, ParsersAttributes::ATRIBUTO, ParsersAttributes::ATRIBUTO };
+  ParsersAttributes::INH_COLUMN, ParsersAttributes::PROT_COLUMN, ParsersAttributes::PK_COLUMN,
+  ParsersAttributes::PK_COLUMN, ParsersAttributes::FK_COLUMN, ParsersAttributes::FK_COLUMN,
+  ParsersAttributes::UQ_COLUMN, ParsersAttributes::UQ_COLUMN, ParsersAttributes::NN_COLUMN,
+  ParsersAttributes::NN_COLUMN, ParsersAttributes::RELATIONSHIP, ParsersAttributes::LABEL,
+  ParsersAttributes::LABEL, ParsersAttributes::ATTRIBUTE, ParsersAttributes::ATTRIBUTE };
   int i, qtd=elemento_cmb->count(),
      //Este vetor armazena os índices dos elementos os quais referem-se a configuraçao de cor de objetos
      vet_ids_aux[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 21, 22,

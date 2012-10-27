@@ -2633,7 +2633,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
          só serão feitas caso não hajam objetos para serem reavaliados,
          caso contrário, os objetos são reavalias e logo apos as permissões
          obtidas. */
-      if(nome_elem==ParsersAttributes::PERMISSAO && objetos_incomp.size()==0)
+      if(nome_elem==ParsersAttributes::PERMISSION && objetos_incomp.size()==0)
       {
        /* Caso a lista de objetos especiais esteja com elementos
           efetua a recriação dos mesmos. Obs: Este processo é executado
@@ -2676,7 +2676,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
 
         /* Executa a navegação sobre os elementos até que o primeiro elemento
            que define uma permissão seja localizado */
-        while(ParserXML::obterNomeElemento()!=ParsersAttributes::PERMISSAO &&
+        while(ParserXML::obterNomeElemento()!=ParsersAttributes::PERMISSION &&
               ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
        }
 
@@ -3491,10 +3491,10 @@ Funcao *ModeloBD::criarFuncao(void)
       //Obtém os atributos da biblioteca
       ParserXML::obterAtributosElemento(atrib_aux);
 
-      if(!atrib_aux[ParsersAttributes::BIBLIOTECA].isEmpty())
+      if(!atrib_aux[ParsersAttributes::LIBRARY].isEmpty())
       {
-       funcao->definirBiblioteca(atrib_aux[ParsersAttributes::BIBLIOTECA]);
-       funcao->definirSimbolo(atrib_aux[ParsersAttributes::SIMBOLO]);
+       funcao->definirBiblioteca(atrib_aux[ParsersAttributes::LIBRARY]);
+       funcao->definirSimbolo(atrib_aux[ParsersAttributes::SYMBOL]);
       }
       /* Para se ter acesso ao código que define a função é preciso acessar
          o filho da tag <definition> e obter seu conteúdo */
@@ -3620,12 +3620,12 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  if(!atributos[ParsersAttributes::PRECISION].isEmpty())
   precisao=atributos[ParsersAttributes::PRECISION].toInt();
 
- com_timezone=(atributos[ParsersAttributes::COM_TIMEZONE]==ParsersAttributes::_TRUE_);
- tipo_interv=atributos[ParsersAttributes::TIPO_INTERVALO];
+ com_timezone=(atributos[ParsersAttributes::WITH_TIMEZONE]==ParsersAttributes::_TRUE_);
+ tipo_interv=atributos[ParsersAttributes::INTERVAL_TYPE];
 
- if(!atributos[ParsersAttributes::TIPO_ESPACIAL].isEmpty())
-  tipo_esp=TipoEspacial(atributos[ParsersAttributes::TIPO_ESPACIAL],
-                        atributos[ParsersAttributes::VARIACAO].toUInt());
+ if(!atributos[ParsersAttributes::SPATIAL_TYPE].isEmpty())
+  tipo_esp=TipoEspacial(atributos[ParsersAttributes::SPATIAL_TYPE],
+                        atributos[ParsersAttributes::VARIATION].toUInt());
 
  nome=atributos[ParsersAttributes::NAME];
 
@@ -4885,7 +4885,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
   indice->definirTabelaPai(tabela);
   indice->definirAtributo(Indice::CONCORRENTE, atributos[ParsersAttributes::CONCURRENT]==ParsersAttributes::_TRUE_);
   indice->definirAtributo(Indice::UNIQUE, atributos[ParsersAttributes::UNIQUE]==ParsersAttributes::_TRUE_);
-  indice->definirAtributo(Indice::ATUAL_RAPIDA, atributos[ParsersAttributes::ATUAL_RAPIDA]==ParsersAttributes::_TRUE_);
+  indice->definirAtributo(Indice::ATUAL_RAPIDA, atributos[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::_TRUE_);
 
   indice->definirTipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]);
   indice->definirFatorPreenchimento(atributos[ParsersAttributes::FACTOR].toUInt());
@@ -4903,7 +4903,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
      /* Caso o elemento atual for do tipo <idxelement> indica que
         os elementos filhos que podem ser extraídos são
         <column>, <expression> ou <opclass> */
-     if(elem==ParsersAttributes::ELEMENTO_INDICE)
+     if(elem==ParsersAttributes::INDEX_ELEMENT)
      {
       nulos_primeiro=(atributos[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
       ordem_asc=(atributos[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
@@ -5514,8 +5514,8 @@ CaixaTexto *ModeloBD::criarCaixaTexto(void)
   if(atributos[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_)
    caixa_texto->definirAtributoTexto(CaixaTexto::TEXTO_SUBLINHADO, true);
 
-  if(!atributos[ParsersAttributes::COR].isEmpty())
-   caixa_texto->definirCorTexto(QColor(atributos[ParsersAttributes::COR]));
+  if(!atributos[ParsersAttributes::COLOR].isEmpty())
+   caixa_texto->definirCorTexto(QColor(atributos[ParsersAttributes::COLOR]));
  }
  catch(Exception &e)
  {
@@ -5608,8 +5608,8 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    obrig_dest=atributos[ParsersAttributes::DST_REQUIRED]==ParsersAttributes::_TRUE_;
    identificador=atributos[ParsersAttributes::IDENTIFIER]==ParsersAttributes::_TRUE_;
    postergavel=atributos[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_;
-   sufixo_auto=(!atributos[ParsersAttributes::SUFIXO_AUTO].isEmpty() &&
-                atributos[ParsersAttributes::SUFIXO_AUTO]==ParsersAttributes::_TRUE_);
+   sufixo_auto=(!atributos[ParsersAttributes::AUTO_SUFFIX].isEmpty() &&
+                atributos[ParsersAttributes::AUTO_SUFFIX]==ParsersAttributes::_TRUE_);
    tipo_postergacao=TipoPostergacao(atributos[ParsersAttributes::DEFER_TYPE]);
 
    //Configura o tipo do novo relacionamento
@@ -5633,8 +5633,8 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
                               atributos[ParsersAttributes::DST_SUFFIX],
                               identificador, postergavel, tipo_postergacao);
 
-   if(!atributos[ParsersAttributes::NOME_TABELA].isEmpty())
-    relacao->definirNomeTabelaRelNN(atributos[ParsersAttributes::NOME_TABELA]);
+   if(!atributos[ParsersAttributes::TABLE_NAME].isEmpty())
+    relacao->definirNomeTabelaRelNN(atributos[ParsersAttributes::TABLE_NAME]);
 
    /* Faz com que o ponteiro relacao_base aponte para o novo relacionamento
       para executar as configurações geréricas as quais se aplicam tanto
@@ -5696,7 +5696,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
       ParserXML::obterAtributosElemento(atributos);
       ParserXML::restaurarPosicao();
      }
-     else if(elem==ParsersAttributes::COLUNAS_PK_ESPECIAL && relacao)
+     else if(elem==ParsersAttributes::SPECIAL_PK_COLS && relacao)
      {
       QList<QString> lista_cols;
 
@@ -5776,7 +5776,7 @@ Permissao *ModeloBD::criarPermissao(void)
   //Obtém os atributos do objeto que é referenciado pela  permissão
   tipo_obj=obterTipoObjeto(atributos[ParsersAttributes::TYPE]);
   nome_obj=atributos[ParsersAttributes::NAME];
-  obj_pai=atributos[ParsersAttributes::OBJETO_PAI];
+  obj_pai=atributos[ParsersAttributes::PARENT];
 
   //Caso o objeto seja uma coluna a mesma será obtida da tabela pai
   if(tipo_obj==OBJETO_COLUNA)
@@ -5851,7 +5851,7 @@ Permissao *ModeloBD::criarPermissao(void)
      permissao->adicionarPapel(papel);
     }
    }
-   else if(ParserXML::obterNomeElemento()==ParsersAttributes::PRIVILEGIOS)
+   else if(ParserXML::obterNomeElemento()==ParsersAttributes::PRIVILEGES)
    {
     //Obtém os atributos do elemento <privileges>
     ParserXML::obterAtributosElemento(atrib_priv);
@@ -5864,36 +5864,36 @@ Permissao *ModeloBD::criarPermissao(void)
        estes estejam definidos no XML */
     while(itr!=itr_end)
     {
-     if(itr->first!=ParsersAttributes::OP_CONCESSAO)
+     if(itr->first!=ParsersAttributes::GRANT_OP)
      {
       //Obtém o valor do privilégio (true/false)
       valor_priv=(itr->second==ParsersAttributes::_TRUE_);
-      op_concessao=(itr->second==ParsersAttributes::OP_CONCESSAO);
+      op_concessao=(itr->second==ParsersAttributes::GRANT_OP);
 
       //Identifica o tipo de privilégio atual
-      if(itr->first==ParsersAttributes::PRIV_CONNECT)
+      if(itr->first==ParsersAttributes::CONNECT_PRIV)
        tipo_priv=Permissao::PRIV_CONNECT;
-      else if(itr->first==ParsersAttributes::PRIV_CREATE)
+      else if(itr->first==ParsersAttributes::CREATE_PRIV)
        tipo_priv=Permissao::PRIV_CREATE;
-      else if(itr->first==ParsersAttributes::PRIV_DELETE)
+      else if(itr->first==ParsersAttributes::DELETE_PRIV)
        tipo_priv=Permissao::PRIV_DELETE;
-      else if(itr->first==ParsersAttributes::PRIV_EXECUTE)
+      else if(itr->first==ParsersAttributes::EXECUTE_PRIV)
        tipo_priv=Permissao::PRIV_EXECUTE;
-      else if(itr->first==ParsersAttributes::PRIV_INSERT)
+      else if(itr->first==ParsersAttributes::INSERT_PRIV)
        tipo_priv=Permissao::PRIV_INSERT;
-      else if(itr->first==ParsersAttributes::PRIV_REFERENCES)
+      else if(itr->first==ParsersAttributes::REFERENCES_PRIV)
        tipo_priv=Permissao::PRIV_REFERENCES;
-      else if(itr->first==ParsersAttributes::PRIV_SELECT)
+      else if(itr->first==ParsersAttributes::SELECT_PRIV)
        tipo_priv=Permissao::PRIV_SELECT;
-      else if(itr->first==ParsersAttributes::PRIV_TEMPORARY)
+      else if(itr->first==ParsersAttributes::TEMPORARY_PRIV)
        tipo_priv=Permissao::PRIV_TEMPORARY;
-      else if(itr->first==ParsersAttributes::PRIV_TRIGGER)
+      else if(itr->first==ParsersAttributes::TRIGGER_PRIV)
        tipo_priv=Permissao::PRIV_TRIGGER;
-      else if(itr->first==ParsersAttributes::PRIV_TRUNCATE)
+      else if(itr->first==ParsersAttributes::TRUNCATE_PRIV)
        tipo_priv=Permissao::PRIV_TRUNCATE;
-      else if(itr->first==ParsersAttributes::PRIV_UPDATE)
+      else if(itr->first==ParsersAttributes::UPDATE_PRIV)
        tipo_priv=Permissao::PRIV_UPDATE;
-      else if(itr->first==ParsersAttributes::PRIV_USAGE)
+      else if(itr->first==ParsersAttributes::USAGE_PRIV)
        tipo_priv=Permissao::PRIV_USAGE;
 
       //Configura o privilégio na permissão
@@ -6374,11 +6374,11 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
   //Gerando a definição sql/xml das permissões
   itr=permissoes.begin();
   itr_end=permissoes.end();
-  atribs_aux[ParsersAttributes::PERMISSAO]="";
+  atribs_aux[ParsersAttributes::PERMISSION]="";
 
   while(itr!=itr_end)
   {
-   atribs_aux[ParsersAttributes::PERMISSAO]+=dynamic_cast<Permissao *>(*itr)->obterDefinicaoObjeto(tipo_def);
+   atribs_aux[ParsersAttributes::PERMISSION]+=dynamic_cast<Permissao *>(*itr)->obterDefinicaoObjeto(tipo_def);
 
    //Dispara um sinal para sinalizar o progresso final da geração de código
    qtd_defs_geradas++;

@@ -19,7 +19,7 @@ Indice::Indice(void)
  atributos[ParsersAttributes::ASC_ORDER]="";
  atributos[ParsersAttributes::DECL_IN_TABLE]="";
  atributos[ParsersAttributes::ELEMENTS]="";
- atributos[ParsersAttributes::ATUAL_RAPIDA]="";
+ atributos[ParsersAttributes::FAST_UPDATE]="";
 }
 
 void Indice::definirAtributoElementos(unsigned tipo_def)
@@ -247,7 +247,7 @@ QString Indice::obterDefinicaoObjeto(unsigned tipo_def)
  definirAtributoElementos(tipo_def);
  atributos[ParsersAttributes::UNIQUE]=(atrib_indice[UNIQUE] ? "1" : "");
  atributos[ParsersAttributes::CONCURRENT]=(atrib_indice[CONCORRENTE] ? "1" : "");
- atributos[ParsersAttributes::ATUAL_RAPIDA]=(atrib_indice[ATUAL_RAPIDA] ? "1" : "");
+ atributos[ParsersAttributes::FAST_UPDATE]=(atrib_indice[ATUAL_RAPIDA] ? "1" : "");
  atributos[ParsersAttributes::INDEX_TYPE]=(~tipo_indexacao);
  atributos[ParsersAttributes::CONDITION]=exp_condicional;
 

@@ -2368,9 +2368,9 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   atributos[ParsersAttributes::DST_SUFFIX]=(!sufixo_auto ? sufixo_dest : "");
   atributos[ParsersAttributes::IDENTIFIER]=(identificador ? "1" : "");
   atributos[ParsersAttributes::DEFERRABLE]=(postergavel ? "1" : "");
-  atributos[ParsersAttributes::SUFIXO_AUTO]=(sufixo_auto ? "1" : "");
+  atributos[ParsersAttributes::AUTO_SUFFIX]=(sufixo_auto ? "1" : "");
   atributos[ParsersAttributes::DEFER_TYPE]=~tipo_postergacao;
-  atributos[ParsersAttributes::NOME_TABELA]=nome_tab_relnn;
+  atributos[ParsersAttributes::TABLE_NAME]=nome_tab_relnn;
 
 
   atributos[ParsersAttributes::COLUMNS]="";
@@ -2396,8 +2396,8 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
    //Armazena o nome das colunas da chave primária especial se houver
    if(!colunas_ref.empty() && i < colunas_ref.size())
    {
-    atributos[ParsersAttributes::COLUNAS_PK_ESPECIAL]+=QString("%1").arg(id_colunas_pk_rel[i]);
-    if(i < qtd-1) atributos[ParsersAttributes::COLUNAS_PK_ESPECIAL]+=",";
+    atributos[ParsersAttributes::SPECIAL_PK_COLS]+=QString("%1").arg(id_colunas_pk_rel[i]);
+    if(i < qtd-1) atributos[ParsersAttributes::SPECIAL_PK_COLS]+=",";
    }
   }
 
@@ -2406,7 +2406,7 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   forma_reduzida=(atributos[ParsersAttributes::COLUMNS].isEmpty() &&
                   atributos[ParsersAttributes::CONSTRAINTS].isEmpty() &&
                   atributos[ParsersAttributes::POINTS].isEmpty() &&
-                  atributos[ParsersAttributes::COLUNAS_PK_ESPECIAL].isEmpty());
+                  atributos[ParsersAttributes::SPECIAL_PK_COLS].isEmpty());
 
 
   return(this->ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML, forma_reduzida));

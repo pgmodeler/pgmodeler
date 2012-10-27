@@ -30,11 +30,11 @@ Permissao::Permissao(ObjetoBase *objeto)
 
  atributos[ParsersAttributes::OBJECT]="";
  atributos[ParsersAttributes::TYPE]="";
- atributos[ParsersAttributes::OBJETO_PAI]="";
- atributos[ParsersAttributes::OP_CONCESSAO]="";
+ atributos[ParsersAttributes::PARENT]="";
+ atributos[ParsersAttributes::GRANT_OP]="";
  atributos[ParsersAttributes::ROLES]="";
- atributos[ParsersAttributes::PRIVILEGIOS]="";
- atributos[ParsersAttributes::PRIVILEGIOS_GOP]="";
+ atributos[ParsersAttributes::PRIVILEGES]="";
+ atributos[ParsersAttributes::PRIVILEGES_GOP]="";
 }
 
 bool Permissao::papelReferenciado(Papel *papel)
@@ -273,7 +273,7 @@ void Permissao::gerarIdPermissao(void)
     interno para a permissão e assim
     podendo gerar erros quando o usuário tenta criar uma permissão
     com o mesmo conjunto de papéis relacionados ao objeto */
- this->nome=QString(ParsersAttributes::PERMISSAO + "_%1.%2")
+ this->nome=QString(ParsersAttributes::PERMISSION + "_%1.%2")
             .arg(objeto->obterIdObjeto())
             .arg(str_aux);
 }
@@ -282,12 +282,12 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
 {
  unsigned i, qtd;
  TipoObjetoBase tipo_obj;
- QString vet_priv[12]={ ParsersAttributes::PRIV_SELECT, ParsersAttributes::PRIV_INSERT,
-                        ParsersAttributes::PRIV_UPDATE, ParsersAttributes::PRIV_DELETE,
-                        ParsersAttributes::PRIV_TRUNCATE, ParsersAttributes::PRIV_REFERENCES,
-                        ParsersAttributes::PRIV_TRIGGER, ParsersAttributes::PRIV_CREATE,
-                        ParsersAttributes::PRIV_CONNECT, ParsersAttributes::PRIV_TEMPORARY,
-                        ParsersAttributes::PRIV_EXECUTE, ParsersAttributes::PRIV_USAGE };
+ QString vet_priv[12]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
+                        ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
+                        ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
+                        ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
+                        ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
+                        ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
 
  tipo_obj=objeto->obterTipoObjeto();
 
@@ -302,7 +302,7 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
   atributos[ParsersAttributes::TYPE]=ObjetoBase::obterNomeEsquemaObjeto(objeto->obterTipoObjeto());
 
  if(tipo_obj==OBJETO_COLUNA)
-  atributos[ParsersAttributes::OBJETO_PAI]=dynamic_cast<Coluna *>(objeto)->obterTabelaPai()->obterNome(true);
+  atributos[ParsersAttributes::PARENT]=dynamic_cast<Coluna *>(objeto)->obterTabelaPai()->obterNome(true);
 
  if(tipo_def==ParserEsquema::DEFINICAO_XML)
  {
@@ -310,7 +310,7 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
   for(i=0; i < 12; i++)
   {
    if(privilegios[i] && op_concessao[i])
-    atributos[vet_priv[i]]=ParsersAttributes::OP_CONCESSAO;
+    atributos[vet_priv[i]]=ParsersAttributes::GRANT_OP;
    else if(privilegios[i])
     atributos[vet_priv[i]]=ParsersAttributes::_TRUE_;
    else
@@ -324,13 +324,13 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
   for(i=0; i < 12; i++)
   {
    if(privilegios[i] && !op_concessao[i])
-    atributos[ParsersAttributes::PRIVILEGIOS]+=vet_priv[i].toUpper() + ",";
+    atributos[ParsersAttributes::PRIVILEGES]+=vet_priv[i].toUpper() + ",";
    else if(op_concessao[i])
-    atributos[ParsersAttributes::PRIVILEGIOS_GOP]+=vet_priv[i].toUpper() + ",";
+    atributos[ParsersAttributes::PRIVILEGES_GOP]+=vet_priv[i].toUpper() + ",";
   }
 
-  atributos[ParsersAttributes::PRIVILEGIOS].remove(atributos[ParsersAttributes::PRIVILEGIOS].size()-1,1);
-  atributos[ParsersAttributes::PRIVILEGIOS_GOP].remove(atributos[ParsersAttributes::PRIVILEGIOS_GOP].size()-1,1);
+  atributos[ParsersAttributes::PRIVILEGES].remove(atributos[ParsersAttributes::PRIVILEGES].size()-1,1);
+  atributos[ParsersAttributes::PRIVILEGES_GOP].remove(atributos[ParsersAttributes::PRIVILEGES_GOP].size()-1,1);
  }
 
  qtd=papeis.size();

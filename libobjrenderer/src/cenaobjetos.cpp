@@ -404,8 +404,8 @@ void CenaObjetos::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
     pol.append(QPointF(evento->scenePos().x(), evento->scenePos().y()));
     pol.append(QPointF(sel_ini.x(), evento->scenePos().y()));
     ret_selecao->setPolygon(pol);
-    ret_selecao->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::SELECAO_OBJETO));
-    ret_selecao->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::SELECAO_OBJETO));
+    ret_selecao->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::OBJ_SELECTION));
+    ret_selecao->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::OBJ_SELECTION));
    }
   }
  }
