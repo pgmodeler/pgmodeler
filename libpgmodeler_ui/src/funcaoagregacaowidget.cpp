@@ -12,10 +12,10 @@ FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(
   //Cria um destacador de sintaxe no campo de condição inicial da função
   destaque_cond=NULL;
   destaque_cond=new DestaqueSintaxe(cond_inicial_txt, false);
-  destaque_cond->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                      AtributosGlobais::SEP_DIRETORIO +
-                                      AtributosGlobais::CONF_DESTAQUE_SQL +
-                                      AtributosGlobais::EXT_CONFIGURACAO);
+  destaque_cond->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                      GlobalAttributes::DIR_SEPARATOR +
+                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                      GlobalAttributes::CONFIGURATION_EXT);
 
   //Alocando os seletores de objetos (função e operador) que são atriuíos �  função de agregação
   sel_func_final=NULL;

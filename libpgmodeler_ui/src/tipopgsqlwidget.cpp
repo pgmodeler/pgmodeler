@@ -18,10 +18,10 @@ TipoPgSQLWidget::TipoPgSQLWidget(QWidget *parent, const QString &rotulo) : QWidg
   destaque_fmt=new DestaqueSintaxe(formato_txt, false);
 
   //A configuração padrão carregada é a de destaque de código SQL
-  destaque_fmt->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                     AtributosGlobais::SEP_DIRETORIO +
-                                     AtributosGlobais::CONF_DESTAQUE_SQL +
-                                     AtributosGlobais::EXT_CONFIGURACAO);
+  destaque_fmt->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                     GlobalAttributes::DIR_SEPARATOR +
+                                     GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                     GlobalAttributes::CONFIGURATION_EXT);
 
   //Configura o combo de tipos de intervalo
   TipoIntervalo::obterTipos(tipo_interv);

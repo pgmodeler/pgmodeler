@@ -14,10 +14,10 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   //Cria um destacador de sintaxe no campo de expressão de checagem
   dest_exp_checagem=NULL;
   dest_exp_checagem=new DestaqueSintaxe(exp_checagem_txt, false);
-  dest_exp_checagem->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                      AtributosGlobais::SEP_DIRETORIO +
-                                      AtributosGlobais::CONF_DESTAQUE_SQL +
-                                      AtributosGlobais::EXT_CONFIGURACAO);
+  dest_exp_checagem->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                      GlobalAttributes::DIR_SEPARATOR +
+                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                      GlobalAttributes::CONFIGURATION_EXT);
 
   //Aloca as tabelas que recebem as colunas usadas na restrição
   tab_colunas=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^

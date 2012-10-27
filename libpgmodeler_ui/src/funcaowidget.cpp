@@ -412,18 +412,18 @@ void FuncaoWidget::selecionarLinguagem(void)
  {
   try
   {
-   destaque_codigo->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                         AtributosGlobais::SEP_DIRETORIO +
+   destaque_codigo->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                         GlobalAttributes::DIR_SEPARATOR +
                                          linguagem_cmb->currentText() +
-                                         AtributosGlobais::SUF_ARQ_DESTAQUE +
-                                         AtributosGlobais::EXT_CONFIGURACAO);
+                                         GlobalAttributes::HIGHLIGHT_FILE_SUF +
+                                         GlobalAttributes::CONFIGURATION_EXT);
   }
   catch(Exception &e)
   {
-   destaque_codigo->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                         AtributosGlobais::SEP_DIRETORIO +
-                                         AtributosGlobais::CONF_DESTAQUE_SQL +
-                                         AtributosGlobais::EXT_CONFIGURACAO);
+   destaque_codigo->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                         GlobalAttributes::DIR_SEPARATOR +
+                                         GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                         GlobalAttributes::CONFIGURATION_EXT);
   }
 
   destaque_codigo->rehighlight();

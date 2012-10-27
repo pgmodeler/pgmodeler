@@ -13,9 +13,9 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
  connect(acoes_txt, SIGNAL(textChanged(void)), this, SLOT(habilitarGeracao(void)));
 
  //Abre o arquivo o qual armazena a stack trace do ultimo travamento
- entrada.open(AtributosGlobais::DIR_TEMPORARIO +
-              AtributosGlobais::SEP_DIRETORIO +
-              AtributosGlobais::ARQ_STACKTRACE);
+ entrada.open(GlobalAttributes::TEMPORARY_DIR +
+              GlobalAttributes::DIR_SEPARATOR +
+              GlobalAttributes::STACKTRACE_FILE);
 
  //Le cada linha do arquivo e concatena ao buffer
  while(entrada.is_open() && !entrada.eof())
@@ -28,29 +28,29 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 
  //Remove o arquivo stack trace
  QDir arq_stk;
- arq_stk.remove(AtributosGlobais::DIR_TEMPORARIO +
-                AtributosGlobais::SEP_DIRETORIO +
-                AtributosGlobais::ARQ_STACKTRACE);
+ arq_stk.remove(GlobalAttributes::TEMPORARY_DIR +
+                GlobalAttributes::DIR_SEPARATOR +
+                GlobalAttributes::STACKTRACE_FILE);
 
  //Exibe o buffer no widget de stack trace
  stack_txt->setPlainText(buf);
 
  //Cria um destacador de sintaxe para o modelo
  dest_modelo_txt=new DestaqueSintaxe(modelo_txt, false);
- dest_modelo_txt->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                       AtributosGlobais::SEP_DIRETORIO +
-                                       AtributosGlobais::CONF_DESTAQUE_XML +
-                                       AtributosGlobais::EXT_CONFIGURACAO);
+ dest_modelo_txt->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                       GlobalAttributes::DIR_SEPARATOR +
+                                       GlobalAttributes::XML_HIGHLIGHT_CONF +
+                                       GlobalAttributes::CONFIGURATION_EXT);
 
- QDir dir_tmp=QDir(AtributosGlobais::DIR_TEMPORARIO, "*.dbm", QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
+ QDir dir_tmp=QDir(GlobalAttributes::TEMPORARY_DIR, "*.dbm", QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
  dir_tmp.setSorting(QDir::Time);
  QStringList lista=dir_tmp.entryList();
 
  if(!lista.isEmpty())
  {
   //Abre o modelo temporário modificado pela última vez
-  entrada.open(AtributosGlobais::DIR_TEMPORARIO +
-               AtributosGlobais::SEP_DIRETORIO + lista[0]);
+  entrada.open(GlobalAttributes::TEMPORARY_DIR +
+               GlobalAttributes::DIR_SEPARATOR + lista[0]);
 
   //Le cada linha do arquivo e concatena ao buffer
   buf.clear();
@@ -138,9 +138,9 @@ void CrashHandler::gerarRelatorio(void)
  ofstream saida;
 
  //Configura o caminho para o arquivo .crash gerado
- QString arq_crash=(AtributosGlobais::DIR_TEMPORARIO +
-                    AtributosGlobais::SEP_DIRETORIO +
-                    AtributosGlobais::ARQ_CRASH_HANDLER).arg(QDateTime::currentDateTime().toString("_yyyyMMdd_hhmm"));
+ QString arq_crash=(GlobalAttributes::TEMPORARY_DIR +
+                    GlobalAttributes::DIR_SEPARATOR +
+                    GlobalAttributes::CRASH_HANDLER_FILE).arg(QDateTime::currentDateTime().toString("_yyyyMMdd_hhmm"));
 
  //Abre o arquivo para gravação
  saida.open(arq_crash);

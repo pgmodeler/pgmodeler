@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: ObjetoBaseWidget
-# Descrição: Definição da classe que implementa operações básicas
+# Description:o: Definição da classe que implementa operações básicas
 #            dos formulários de criação e edição de objetos no modelo
 #            de banco de dados.
 #

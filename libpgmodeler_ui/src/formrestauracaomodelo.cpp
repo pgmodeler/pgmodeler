@@ -11,7 +11,7 @@ FormRestauracaoModelo::FormRestauracaoModelo(QWidget *parent, Qt::WindowFlags f)
 QStringList FormRestauracaoModelo::obterModelosTemporarios(void)
 {
  //Retorna se na pasta tmp existem arquivos *.dbm
- return(QDir(AtributosGlobais::DIR_TEMPORARIO, "*.dbm", QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
+ return(QDir(GlobalAttributes::TEMPORARY_DIR, "*.dbm", QDir::Name, QDir::Files | QDir::NoDotAndDotDot).entryList());
 }
 
 void FormRestauracaoModelo::exec(void)
@@ -24,7 +24,7 @@ void FormRestauracaoModelo::exec(void)
  while(!lista_arqs.isEmpty())
  {
   //Obtém as informações do arquivo
-  info.setFile(AtributosGlobais::DIR_TEMPORARIO, lista_arqs.front());
+  info.setFile(GlobalAttributes::TEMPORARY_DIR, lista_arqs.front());
 
   //Cria um item da lista no formato [NOME] - [DATA CRIAÇÃO] - [TAMANHO]
   item=new QListWidgetItem;
@@ -34,8 +34,8 @@ void FormRestauracaoModelo::exec(void)
                 QString(" - ") +
                 QString("%1 bytes").arg(info.size()));
   //Armazena o caminho completo para o arquivo como dado o item
-  item->setData(Qt::UserRole, QVariant::fromValue<QString>(AtributosGlobais::DIR_TEMPORARIO +
-                                                           AtributosGlobais::SEP_DIRETORIO + lista_arqs.front()));
+  item->setData(Qt::UserRole, QVariant::fromValue<QString>(GlobalAttributes::TEMPORARY_DIR +
+                                                           GlobalAttributes::DIR_SEPARATOR + lista_arqs.front()));
   arqs_tmps_lst->addItem(item);
   item->setSelected(true);
   lista_arqs.pop_front();
@@ -57,7 +57,7 @@ void FormRestauracaoModelo::excluirModelosTemporarios(void)
  //Varre a lista de arquivos temporários excluindo cada um
  while(!lista_arqs.isEmpty())
  {
-  arq_tmp.remove(AtributosGlobais::DIR_TEMPORARIO + AtributosGlobais::SEP_DIRETORIO + lista_arqs.front());
+  arq_tmp.remove(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + lista_arqs.front());
   lista_arqs.pop_front();
  }
 }

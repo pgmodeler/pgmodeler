@@ -59,8 +59,8 @@ void ParserEsquema::obterVersoesPgSQL(vector<QString> &vet_versoes)
  int qtd, i;
 
  //Configura o caminho para o diretório convertendo o mesmo para o formato nativo do sistema operacional
- caminho=AtributosGlobais::DIR_RAIZ_ESQUEMAS + AtributosGlobais::SEP_DIRETORIO +
-         AtributosGlobais::DIR_ESQUEMA_SQL + AtributosGlobais::SEP_DIRETORIO;
+ caminho=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+         GlobalAttributes::SQL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR;
 
  //Abre o diretório
  diretorio=QDir(caminho);
@@ -391,9 +391,9 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString & nome_obj, map<QStrin
    try
    {
     //Formata o nome do arquivo
-    nome_arq=AtributosGlobais::DIR_RAIZ_ESQUEMAS + AtributosGlobais::SEP_DIRETORIO +
-             AtributosGlobais::DIR_ESQUEMA_SQL + AtributosGlobais::SEP_DIRETORIO + versao_pgsql +
-             AtributosGlobais::SEP_DIRETORIO + nome_obj + AtributosGlobais::EXT_ESQUEMA;
+    nome_arq=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+             GlobalAttributes::SQL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + versao_pgsql +
+             GlobalAttributes::DIR_SEPARATOR + nome_obj + GlobalAttributes::SCHEMA_EXT;
 
     //Tenta obter a definição do objeto no caminho especificado
     return(obterDefinicaoObjeto(nome_arq, atributos));
@@ -410,10 +410,10 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString & nome_obj, map<QStrin
                    __PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 
     //Reconfigura o nome do arquivo para apontar para o diretório padrão
-    nome_arq=AtributosGlobais::DIR_RAIZ_ESQUEMAS + AtributosGlobais::SEP_DIRETORIO +
-             AtributosGlobais::DIR_ESQUEMA_SQL + AtributosGlobais::SEP_DIRETORIO +
-             AtributosGlobais::DIR_ESQUEMA_COMUM + AtributosGlobais::SEP_DIRETORIO +
-             nome_obj + AtributosGlobais::EXT_ESQUEMA;
+    nome_arq=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+             GlobalAttributes::SQL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+             GlobalAttributes::COMMON_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
+             nome_obj + GlobalAttributes::SCHEMA_EXT;
 
     return(obterDefinicaoObjeto(nome_arq, atributos));
    }
@@ -421,9 +421,9 @@ QString ParserEsquema::obterDefinicaoObjeto(const QString & nome_obj, map<QStrin
   else
   {
    //Formata o nome do arquivo
-   nome_arq=AtributosGlobais::DIR_RAIZ_ESQUEMAS + AtributosGlobais::SEP_DIRETORIO +
-            AtributosGlobais::DIR_ESQUEMA_XML + AtributosGlobais::SEP_DIRETORIO + nome_obj +
-            AtributosGlobais::EXT_ESQUEMA;
+   nome_arq=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+            GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + nome_obj +
+            GlobalAttributes::SCHEMA_EXT;
    return(obterDefinicaoObjeto(nome_arq, atributos));
   }
  }

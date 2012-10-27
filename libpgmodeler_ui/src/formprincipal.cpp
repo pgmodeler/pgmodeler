@@ -102,8 +102,8 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  {
   QDir dir;
   //Checa se o diretório temporário existe. Caso não seja encontrado, o mesmo será criado
-  if(!dir.exists(AtributosGlobais::DIR_TEMPORARIO))
-   dir.mkdir(AtributosGlobais::DIR_TEMPORARIO);
+  if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
+   dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
   fsobre=new FormSobre;
   fconfiguracao=new FormConfiguracao(this);
@@ -246,7 +246,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  modelo_atual=NULL;
 
  //Inserindo a versão do software na janela principal
- titulo_janela=this->windowTitle() + " " + AtributosGlobais::VERSAO_PGMODELER;
+ titulo_janela=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
  this->setWindowTitle(titulo_janela);
  this->addDockWidget(Qt::RightDockWidgetArea, visao_objs);
  this->addDockWidget(Qt::RightDockWidgetArea, lista_oper);
@@ -1180,8 +1180,8 @@ void FormPrincipal::carregarPlugins(void)
 {
  vector<Exception> vet_erros;
  QString lib, nome_plugin,
-         dir_plugins=AtributosGlobais::DIR_PLUGINS +
-                     AtributosGlobais::SEP_DIRETORIO;
+         dir_plugins=GlobalAttributes::PLUGINS_DIR +
+                     GlobalAttributes::DIR_SEPARATOR;
  QPluginLoader pl;
  QStringList lista_dirs;
  PgModelerPlugin *plugin=NULL;
@@ -1191,8 +1191,8 @@ void FormPrincipal::carregarPlugins(void)
  //O QPluginLoader deve resolver todos os símbolos da biblioteca
  pl.setLoadHints(QLibrary::ResolveAllSymbolsHint);
 
- if(AtributosGlobais::DIR_PLUGINS.isEmpty())
-  dir_plugins="." + AtributosGlobais::SEP_DIRETORIO;
+ if(GlobalAttributes::PLUGINS_DIR.isEmpty())
+  dir_plugins="." + GlobalAttributes::DIR_SEPARATOR;
 
  /* Configura uma instância de QDir para manipular as entradas no diretório raiz
     de plugins. O pgModeler obterá somente diretórios, caso o usuário crie um plugin
@@ -1219,7 +1219,7 @@ void FormPrincipal::carregarPlugins(void)
        nome_plugin + QString(".dylib"); //Sufixo em Mac
   #else
     lib=dir_plugins + nome_plugin +
-        AtributosGlobais::SEP_DIRETORIO  +
+        GlobalAttributes::DIR_SEPARATOR  +
         QString("lib") + nome_plugin + QString(".so"); //Sufixo em Unix/Linux
   #endif
 
@@ -1241,7 +1241,7 @@ void FormPrincipal::carregarPlugins(void)
    acao_plugin->setName(nome_plugin.toStdString().c_str());
 
    ico_acao.load(dir_plugins + nome_plugin +
-                 AtributosGlobais::SEP_DIRETORIO  +
+                 GlobalAttributes::DIR_SEPARATOR  +
                  nome_plugin + QString(".png"));
    acao_plugin->setIcon(ico_acao);
 

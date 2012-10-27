@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definição da classe CaixaTexto que é usada para
+# Description:o:  Definição da classe CaixaTexto que é usada para
 #             representar graficamente os textos adicionados pelo usuário.
 #             Também é usada para representar os rótulos dos relacionamentos.
 # Creation date:o: 05/09/2007

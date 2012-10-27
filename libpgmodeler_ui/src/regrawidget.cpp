@@ -12,16 +12,16 @@ RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_REGRA
   /* Alocando os destacadores de sintaxe para o campo de expressão
      condicional e de comando sql */
   dest_exp_condicional=new DestaqueSintaxe(exp_condicional_txt, false);
-  dest_exp_condicional->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                      AtributosGlobais::SEP_DIRETORIO +
-                                      AtributosGlobais::CONF_DESTAQUE_SQL +
-                                      AtributosGlobais::EXT_CONFIGURACAO);
+  dest_exp_condicional->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                      GlobalAttributes::DIR_SEPARATOR +
+                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                      GlobalAttributes::CONFIGURATION_EXT);
 
   dest_comando=new DestaqueSintaxe(comando_txt, false);
-  dest_comando->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                     AtributosGlobais::SEP_DIRETORIO +
-                                     AtributosGlobais::CONF_DESTAQUE_SQL +
-                                     AtributosGlobais::EXT_CONFIGURACAO);
+  dest_comando->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                     GlobalAttributes::DIR_SEPARATOR +
+                                     GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                     GlobalAttributes::CONFIGURATION_EXT);
 
   //Criando a tabela que armazena os comandos SQL da regra
   tab_comandos=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);

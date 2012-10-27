@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: DestaqueSintaxe
-# Descrição: Definição da classe que implementa um destacador de sintaxe de
+# Description:o: Definição da classe que implementa um destacador de sintaxe de
 #            linguagens (código fonte) com padrões de marcação definidos pelo usuário.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -27,7 +27,7 @@
 #include <vector>
 #include "exception.h"
 #include "parserxml.h"
-#include "atributosglobais.h"
+#include "globalattributes.h"
 #include "atributosparsers.h"
 #include <algorithm>
 

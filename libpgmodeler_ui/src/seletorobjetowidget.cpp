@@ -25,10 +25,10 @@ SeletorObjetoWidget::SeletorObjetoWidget(TipoObjetoBase tipo_obj_seletor, bool i
    destaque_txt=new DestaqueSintaxe(nome_objeto_txt, false);
 
    //A configuração padrão carregada é a de destaque de código SQL
-   destaque_txt->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                      AtributosGlobais::SEP_DIRETORIO +
-                                      AtributosGlobais::CONF_DESTAQUE_SQL +
-                                      AtributosGlobais::EXT_CONFIGURACAO);
+   destaque_txt->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                      GlobalAttributes::DIR_SEPARATOR +
+                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                      GlobalAttributes::CONFIGURATION_EXT);
   }
 
   connect(sel_objeto_tb, SIGNAL(clicked(bool)), this, SLOT(exibirSelecaoObjetos(void)));

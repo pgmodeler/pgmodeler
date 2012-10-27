@@ -153,7 +153,7 @@ void ObjetoGrafico::redimensionarPoligono(QPolygonF &pol, float larg, float alt)
  coef_a=larg / pol.boundingRect().width();
  coef_b=alt / pol.boundingRect().height();
 
- //Aplicando os coeficientes calculados à  todos os pontos do polígono
+ //Aplicando os coeficientes calculados �   todos os pontos do polígono
  while(itr!=itr_end)
  {
   itr->setX(itr->x() * coef_a);
@@ -171,19 +171,19 @@ void ObjetoGrafico::carregarEstiloObjetos(void)
  map<QString, QTextCharFormat>::iterator itr;
  QStringList lista;
  QString elem,
-         arq_conf=AtributosGlobais::DIR_CONFIGURACOES + AtributosGlobais::SEP_DIRETORIO +
-                  AtributosGlobais::CONF_ESTILO_OBJETOS + AtributosGlobais::EXT_CONFIGURACAO;
+         arq_conf=GlobalAttributes::CONFIGURATIONS_DIR + GlobalAttributes::DIR_SEPARATOR +
+                  GlobalAttributes::OBJECTS_STYLE_CONF + GlobalAttributes::CONFIGURATION_EXT;
 
  //Faz um carregamento do arquivo XML que define as configurações de fonte dos objetos
  try
  {
   ParserXML::reiniciarParser();
-  ParserXML::definirArquivoDTD(AtributosGlobais::DIR_CONFIGURACOES +
-                               AtributosGlobais::SEP_DIRETORIO +
-                               AtributosGlobais::DIR_DTD_OBJETO +
-                               AtributosGlobais::SEP_DIRETORIO +
-                               AtributosGlobais::CONF_ESTILO_OBJETOS +
-                               AtributosGlobais::EXT_DTD_OBJETO, AtributosGlobais::CONF_ESTILO_OBJETOS);
+  ParserXML::definirArquivoDTD(GlobalAttributes::CONFIGURATIONS_DIR +
+                               GlobalAttributes::DIR_SEPARATOR +
+                               GlobalAttributes::OBJECT_DTD_DIR +
+                               GlobalAttributes::DIR_SEPARATOR +
+                               GlobalAttributes::OBJECTS_STYLE_CONF +
+                               GlobalAttributes::OBJECT_DTD_EXT, GlobalAttributes::OBJECTS_STYLE_CONF);
   ParserXML::carregarArquivoXML(arq_conf);
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))

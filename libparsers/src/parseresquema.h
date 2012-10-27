@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca de parsers libparsers
-# Descrição: Definição da classe ParserEsquema, usada para
+# Description:o: Definição da classe ParserEsquema, usada para
 #            ler e montar os esquemas SQL (armazenados em disco) dos objetos
 #            de banco de dados.
 #
@@ -24,7 +24,7 @@
 #ifndef PARSER_ESQUEMA_H
 #define PARSER_ESQUEMA_H
 
-#include "atributosglobais.h"
+#include "globalattributes.h"
 #include "exception.h"
 #include <fstream>
 #include <iostream>

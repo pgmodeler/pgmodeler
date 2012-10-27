@@ -9,10 +9,10 @@ ColunaWidget::ColunaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_COL
   //Cria um destacador de sintaxe no campo de expressão de checagem do domínio
   dest_valor_padrao=NULL;
   dest_valor_padrao=new DestaqueSintaxe(valor_padrao_txt, false);
-  dest_valor_padrao->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                      AtributosGlobais::SEP_DIRETORIO +
-                                      AtributosGlobais::CONF_DESTAQUE_SQL +
-                                      AtributosGlobais::EXT_CONFIGURACAO);
+  dest_valor_padrao->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                      GlobalAttributes::DIR_SEPARATOR +
+                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                      GlobalAttributes::CONFIGURATION_EXT);
 
   tipo_col=NULL;
   tipo_col=new TipoPgSQLWidget(this);

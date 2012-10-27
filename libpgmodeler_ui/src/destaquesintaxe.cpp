@@ -537,13 +537,13 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
 
    /* Montando o caminho padrão para localização do arquivo DTD que define a sintaxe
      do arquivo xml de destaque de código fonte. */
-   ParserXML::definirArquivoDTD(AtributosGlobais::DIR_CONFIGURACOES +
-                                AtributosGlobais::SEP_DIRETORIO +
-                                AtributosGlobais::DIR_DTD_OBJETO +
-                                AtributosGlobais::SEP_DIRETORIO +
-                                AtributosGlobais::CONF_DESTAQUE_CODIGO +
-                                AtributosGlobais::EXT_DTD_OBJETO,
-                                AtributosGlobais::CONF_DESTAQUE_CODIGO);
+   ParserXML::definirArquivoDTD(GlobalAttributes::CONFIGURATIONS_DIR +
+                                GlobalAttributes::DIR_SEPARATOR +
+                                GlobalAttributes::OBJECT_DTD_DIR +
+                                GlobalAttributes::DIR_SEPARATOR +
+                                GlobalAttributes::CODE_HIGHLIGHT_CONF +
+                                GlobalAttributes::OBJECT_DTD_EXT,
+                                GlobalAttributes::CODE_HIGHLIGHT_CONF);
 
    //Carrega o arquivo validando-o de acordo com a DTD informada
    ParserXML::carregarArquivoXML(nome_arq);

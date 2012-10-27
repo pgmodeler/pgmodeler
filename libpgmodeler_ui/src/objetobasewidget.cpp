@@ -34,10 +34,10 @@ ObjetoBaseWidget::ObjetoBaseWidget(QWidget *parent, TipoObjetoBase tipo_obj): QD
   dest_nomepai_txt=new DestaqueSintaxe(objeto_pai_txt, false);
 
   //A configuração padrão carregada é a de destaque de código SQL
-  dest_nomepai_txt->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                     AtributosGlobais::SEP_DIRETORIO +
-                                     AtributosGlobais::CONF_DESTAQUE_SQL +
-                                     AtributosGlobais::EXT_CONFIGURACAO);
+  dest_nomepai_txt->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                     GlobalAttributes::DIR_SEPARATOR +
+                                     GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                     GlobalAttributes::CONFIGURATION_EXT);
 
   janela_pai=new FormBasico(NULL, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
   janela_pai->setWindowTitle(trUtf8("Criate / Edit: ") + ObjetoBase::obterNomeTipoObjeto(tipo_obj));

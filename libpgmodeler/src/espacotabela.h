@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definição da classe EspacoTabela que é usada para
+# Description:o:  Definição da classe EspacoTabela que é usada para
 #             gerar os códigos SQL pertinentes aos tablespaces
 #             em banco de dados.
 #

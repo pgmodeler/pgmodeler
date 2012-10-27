@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definição da classe ClasseOperadores que é usada para
+# Description:o:  Definição da classe ClasseOperadores que é usada para
 #             gerar os códigos SQL pertinentes s classes de operadores
 #             as quais indicam como um tipo de dado pode ser usado em
 #             um determinado método de indexação.

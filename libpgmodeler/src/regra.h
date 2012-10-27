@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definição da classe Regra que é usado para configurar
+# Description:o:  Definição da classe Regra que é usado para configurar
 #              e gerar os códigos SQL referentes a regras para tabelas.
 # Creation date:o: 26/09/2006
 #

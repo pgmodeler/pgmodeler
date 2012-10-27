@@ -1,7 +1,7 @@
 /* 
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definição da classe Esquema que é usado para
+# Description:o:  Definição da classe Esquema que é usado para
 #             representar graficamente os esquemas em banco de dados
 #             e gerar os códigos SQL pertinentes a estes.
 # Creation date:o: 07/04/2008

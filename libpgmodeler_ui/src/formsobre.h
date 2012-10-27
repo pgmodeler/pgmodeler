@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: FormPrincipal
-# Descrição: Definição da classe que implementa a caixa de informações do software.
+# Description:o: Definição da classe que implementa a caixa de informações do software.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -23,7 +23,7 @@
 
 #include <QWidget>
 #include "ui_formsobre.h"
-#include "atributosglobais.h"
+#include "globalattributes.h"
 
 class FormSobre: public QWidget, public Ui::FormSobre {
  Q_OBJECT

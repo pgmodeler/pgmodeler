@@ -14,16 +14,16 @@ IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_IND
 
   //Cria um destacador de sintaxe no campo de expressão de checagem
   dest_exp_condicional=new DestaqueSintaxe(exp_condicional_txt, false);
-  dest_exp_condicional->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                     AtributosGlobais::SEP_DIRETORIO +
-                                     AtributosGlobais::CONF_DESTAQUE_SQL +
-                                     AtributosGlobais::EXT_CONFIGURACAO);
+  dest_exp_condicional->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                     GlobalAttributes::DIR_SEPARATOR +
+                                     GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                     GlobalAttributes::CONFIGURATION_EXT);
 
   dest_exp_elemento=new DestaqueSintaxe(exp_elemento_txt, false);
-  dest_exp_elemento->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                     AtributosGlobais::SEP_DIRETORIO +
-                                     AtributosGlobais::CONF_DESTAQUE_SQL +
-                                     AtributosGlobais::EXT_CONFIGURACAO);
+  dest_exp_elemento->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                     GlobalAttributes::DIR_SEPARATOR +
+                                     GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                     GlobalAttributes::CONFIGURATION_EXT);
 
   tab_elementos=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
   sel_classe_op=new SeletorObjetoWidget(OBJETO_CLASSE_OPER, true, this);

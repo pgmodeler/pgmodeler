@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definição da classe Papel que é usada para gerar os
+# Description:o:  Definição da classe Papel que é usada para gerar os
 #             códigos SQL para os papéis no banco de dados (roles).
 # Creation date:o: 12/05/2008
 #

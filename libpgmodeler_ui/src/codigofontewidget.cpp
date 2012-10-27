@@ -173,18 +173,18 @@ void CodigoFonteWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto)
 
    if(!destaque_sql->configuracaoCarregada())
    {
-    destaque_sql->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                       AtributosGlobais::SEP_DIRETORIO +
-                                       AtributosGlobais::CONF_DESTAQUE_SQL +
-                                       AtributosGlobais::EXT_CONFIGURACAO);
+    destaque_sql->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                       GlobalAttributes::DIR_SEPARATOR +
+                                       GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                       GlobalAttributes::CONFIGURATION_EXT);
    }
 
    if(!destaque_xml->configuracaoCarregada())
    {
-    destaque_xml->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                       AtributosGlobais::SEP_DIRETORIO +
-                                       AtributosGlobais::CONF_DESTAQUE_XML +
-                                       AtributosGlobais::EXT_CONFIGURACAO);
+    destaque_xml->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                       GlobalAttributes::DIR_SEPARATOR +
+                                       GlobalAttributes::XML_HIGHLIGHT_CONF +
+                                       GlobalAttributes::CONFIGURATION_EXT);
    }
 
    gerarCodigoFonteObjeto();

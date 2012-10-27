@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libobjrenderer
 # Classe: OGTituloObjeto
-# Descrição: Esta classe deriva a classe ObjetoGrafico e implementa a representação gráfica
+# Description:o: Esta classe deriva a classe ObjetoGrafico e implementa a representação gráfica
 #            do título de visões e tabelas.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

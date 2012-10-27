@@ -49,7 +49,7 @@ void ConfConexoesWidget::carregarConfiguracao(void)
  atribs_chave.push_back(AtributosParsers::ALIAS);
 
  //Carrega as configurações
- ConfBaseWidget::carregarConfiguracao(AtributosGlobais::CONF_CONEXOES, atribs_chave);
+ ConfBaseWidget::carregarConfiguracao(GlobalAttributes::CONNECTIONS_CONF, atribs_chave);
 
  itr=params_config.begin();
  itr_end=params_config.end();
@@ -68,7 +68,7 @@ void ConfConexoesWidget::carregarConfiguracao(void)
   else
    conexao->definirParamConexao(ConexaoBD::PARAM_FQDN_SERVIDOR, itr->second[ConexaoBD::PARAM_FQDN_SERVIDOR]);
 
-  //Atribuindo os demais valores à  conexão
+  //Atribuindo os demais valores �   conexão
   conexao->definirParamConexao(ConexaoBD::PARAM_PORTA, itr->second[ConexaoBD::PARAM_PORTA]);
   conexao->definirParamConexao(ConexaoBD::PARAM_USUARIO, itr->second[ConexaoBD::PARAM_USUARIO]);
   conexao->definirParamConexao(ConexaoBD::PARAM_SENHA,itr->second[ConexaoBD::PARAM_SENHA]);
@@ -369,7 +369,7 @@ void ConfConexoesWidget::restaurarPadroes(void)
  try
  {
   //Restaura as configurações padrão e recarrega o arquivo restaurado
-  ConfBaseWidget::restaurarPadroes(AtributosGlobais::CONF_CONEXOES);
+  ConfBaseWidget::restaurarPadroes(GlobalAttributes::CONNECTIONS_CONF);
 
   //Remove as conexões atuais
   while(conexoes_cmb->count() > 0)
@@ -392,14 +392,14 @@ void ConfConexoesWidget::salvarConfiguracao(void)
   ConexaoBD *conexao=NULL;
   map<QString, QString> atribs;
 
-  params_config[AtributosGlobais::CONF_CONEXOES].clear();
+  params_config[GlobalAttributes::CONNECTIONS_CONF].clear();
   qtd=conexoes_cmb->count();
 
   /* Workaround: Quando não existem conexões, para se gravar um arquivo vazio, é necessário
      preencher o atributo 'params_config[AtributosGlobais::CONF_CONEXOES][AtributosParsers::CONEXOES]'
      espaços */
   if(qtd==0)
-   params_config[AtributosGlobais::CONF_CONEXOES][AtributosParsers::CONEXOES]="  ";
+   params_config[GlobalAttributes::CONNECTIONS_CONF][AtributosParsers::CONEXOES]="  ";
   else
   {
    /* Quando se tem conexões no combo, os atributos de cada uma são obtidos e é
@@ -425,21 +425,21 @@ void ConfConexoesWidget::salvarConfiguracao(void)
        geraria muitos erros se o modo citado não estivesse ativado */
     ParserEsquema::ignorarAtributosDesc(true);
 
-    //Gera o esquema da conexão e contatena à  demais geradas
-    params_config[AtributosGlobais::CONF_CONEXOES][AtributosParsers::CONEXOES]+=
-    ParserEsquema::obterDefinicaoObjeto(AtributosGlobais::DIR_CONFIGURACOES +
-                                        AtributosGlobais::SEP_DIRETORIO +
-                                        AtributosGlobais::DIR_ESQUEMAS +
-                                        AtributosGlobais::SEP_DIRETORIO +
-                                        AtributosGlobais::CONF_CONEXOES +
-                                        AtributosGlobais::EXT_ESQUEMA,
+    //Gera o esquema da conexão e contatena �   demais geradas
+    params_config[GlobalAttributes::CONNECTIONS_CONF][AtributosParsers::CONEXOES]+=
+    ParserEsquema::obterDefinicaoObjeto(GlobalAttributes::CONFIGURATIONS_DIR +
+                                        GlobalAttributes::DIR_SEPARATOR +
+                                        GlobalAttributes::SCHEMAS_DIR +
+                                        GlobalAttributes::DIR_SEPARATOR +
+                                        GlobalAttributes::CONNECTIONS_CONF +
+                                        GlobalAttributes::SCHEMA_EXT,
                                         atribs);
     ParserEsquema::ignorarAtributosDesc(false);
    }
   }
 
   //Gera o arquivo de configuração completo
-  ConfBaseWidget::salvarConfiguracao(AtributosGlobais::CONF_CONEXOES);
+  ConfBaseWidget::salvarConfiguracao(GlobalAttributes::CONNECTIONS_CONF);
  }
  catch(Exception &e)
  {

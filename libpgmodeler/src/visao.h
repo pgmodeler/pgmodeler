@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definição da classe Visao que é usada para
+# Description:o:  Definição da classe Visao que é usada para
 #             gerar os códigos SQL pertinentes a estas.
 # Creation date:o: 07/04/2008
 #

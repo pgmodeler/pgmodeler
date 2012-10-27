@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: ConfGeralWidget
-# Descrição: Implementa o widget de configurações gerais do modelo.
+# Description:o: Implementa o widget de configurações gerais do modelo.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

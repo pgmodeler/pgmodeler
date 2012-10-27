@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libparserxml
 # Classe: Parser
-# Descrição: Esta classe impelementa operações básicas de um analisador
+# Description:o: Esta classe impelementa operações básicas de um analisador
 #            sintático de xml usando a biblioteca libxml2
 # Creation date:o: 02/04/2008
 #

@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição: Definição da classe Funcao que é usado para
+# Description:o: Definição da classe Funcao que é usado para
 #            configurar e gerar os códigos SQL referentes a funções (procedimentos).
 # Creation date:o: 28/09/2006
 #

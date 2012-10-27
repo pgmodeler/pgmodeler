@@ -20,17 +20,17 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
   dest_tab_orig=NULL;
   qtd_operacoes=0;
   dest_tab_orig=new DestaqueSintaxe(tabela_orig_txt, false);
-  dest_tab_orig->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                     AtributosGlobais::SEP_DIRETORIO +
-                                     AtributosGlobais::CONF_DESTAQUE_SQL +
-                                     AtributosGlobais::EXT_CONFIGURACAO);
+  dest_tab_orig->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                     GlobalAttributes::DIR_SEPARATOR +
+                                     GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                     GlobalAttributes::CONFIGURATION_EXT);
 
   dest_tab_dest=NULL;
   dest_tab_dest=new DestaqueSintaxe(tabela_dest_txt, false);
-  dest_tab_dest->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                     AtributosGlobais::SEP_DIRETORIO +
-                                     AtributosGlobais::CONF_DESTAQUE_SQL +
-                                     AtributosGlobais::EXT_CONFIGURACAO);
+  dest_tab_dest->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                     GlobalAttributes::DIR_SEPARATOR +
+                                     GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                     GlobalAttributes::CONFIGURATION_EXT);
 
   //Alocando as tabela de atributos e restrições do relacionamento
   tab_atributos=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^

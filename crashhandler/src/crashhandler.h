@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: App crashhandler
 # Classe: CrashHandler
-# Descrição: Definição da classe que implementa o formulário de
+# Description:o: Definição da classe que implementa o formulário de
 #            tratamentos de crashing do pgModeler.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -24,7 +24,7 @@
 
 #include <QDialog>
 #include "exception.h"
-#include "atributosglobais.h"
+#include "globalattributes.h"
 #include "ui_crashhandler.h"
 #include "destaquesintaxe.h"
 #include "caixamensagem.h"

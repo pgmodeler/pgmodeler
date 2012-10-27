@@ -26,17 +26,17 @@ void ConfBaseWidget::salvarConfiguracao(const QString &id_conf)
 {
  QString buf,
          //Configura o nome do arquivo de modelo (esquema) de configuração
-         nome_arq_sch=AtributosGlobais::DIR_CONFIGURACOES +
-                      AtributosGlobais::SEP_DIRETORIO +
-                      AtributosGlobais::DIR_ESQUEMAS +
-                      AtributosGlobais::SEP_DIRETORIO +
+         nome_arq_sch=GlobalAttributes::CONFIGURATIONS_DIR +
+                      GlobalAttributes::DIR_SEPARATOR +
+                      GlobalAttributes::SCHEMAS_DIR +
+                      GlobalAttributes::DIR_SEPARATOR +
                       id_conf +
-                      AtributosGlobais::EXT_ESQUEMA,
+                      GlobalAttributes::SCHEMA_EXT,
          //Configura o nome do arquivo de configuração
-         nome_arq=AtributosGlobais::DIR_CONFIGURACOES +
-                  AtributosGlobais::SEP_DIRETORIO +
+         nome_arq=GlobalAttributes::CONFIGURATIONS_DIR +
+                  GlobalAttributes::DIR_SEPARATOR +
                   id_conf +
-                  AtributosGlobais::EXT_CONFIGURACAO;
+                  GlobalAttributes::CONFIGURATION_EXT;
  QFile saida(nome_arq);
  map<QString, QString> atribs;
  map<QString, map<QString, QString> >::iterator itr, itr_end;
@@ -80,18 +80,18 @@ void ConfBaseWidget::restaurarPadroes(const QString &id_conf)
  QString arq_atual, arq_orig;
 
  //Monta o caminho para o arquivo de configuração atual (conf/arquivo.conf)
- arq_atual=AtributosGlobais::DIR_CONFIGURACOES +
-           AtributosGlobais::SEP_DIRETORIO +
+ arq_atual=GlobalAttributes::CONFIGURATIONS_DIR +
+           GlobalAttributes::DIR_SEPARATOR +
            id_conf +
-           AtributosGlobais::EXT_CONFIGURACAO;
+           GlobalAttributes::CONFIGURATION_EXT;
 
  //Monta o caminho para o arquivo de configuração original (padrão) (conf/defaults/arquivo.conf)
- arq_orig=AtributosGlobais::DIR_CONFIGURACOES +
-          AtributosGlobais::SEP_DIRETORIO +
-          AtributosGlobais::DIR_CONF_PADRAO+
-          AtributosGlobais::SEP_DIRETORIO +
+ arq_orig=GlobalAttributes::CONFIGURATIONS_DIR +
+          GlobalAttributes::DIR_SEPARATOR +
+          GlobalAttributes::DEFAULT_CONFS_DIR+
+          GlobalAttributes::DIR_SEPARATOR +
           id_conf +
-          AtributosGlobais::EXT_CONFIGURACAO;
+          GlobalAttributes::CONFIGURATION_EXT;
 
  //Verifica a existência do arquivo padrão, caso não existe emite uma exceção e a restauração é abortada
  if(!QFile::exists(arq_orig))
@@ -116,18 +116,18 @@ void ConfBaseWidget::carregarConfiguracao(const QString &id_conf, const vector<Q
   //Reinicia o parser XML para a leitura do arquivo
   ParserXML::reiniciarParser();
 
-  ParserXML::definirArquivoDTD(AtributosGlobais::DIR_CONFIGURACOES +
-                               AtributosGlobais::SEP_DIRETORIO +
-                               AtributosGlobais::DIR_DTD_OBJETO +
-                               AtributosGlobais::SEP_DIRETORIO +
+  ParserXML::definirArquivoDTD(GlobalAttributes::CONFIGURATIONS_DIR +
+                               GlobalAttributes::DIR_SEPARATOR +
+                               GlobalAttributes::OBJECT_DTD_DIR +
+                               GlobalAttributes::DIR_SEPARATOR +
                                id_conf +
-                               AtributosGlobais::EXT_DTD_OBJETO,
+                               GlobalAttributes::OBJECT_DTD_EXT,
                                id_conf);
 
-  ParserXML::carregarArquivoXML(AtributosGlobais::DIR_CONFIGURACOES +
-                                AtributosGlobais::SEP_DIRETORIO +
+  ParserXML::carregarArquivoXML(GlobalAttributes::CONFIGURATIONS_DIR +
+                                GlobalAttributes::DIR_SEPARATOR +
                                 id_conf +
-                                AtributosGlobais::EXT_CONFIGURACAO);
+                                GlobalAttributes::CONFIGURATION_EXT);
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
   {

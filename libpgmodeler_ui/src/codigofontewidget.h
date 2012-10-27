@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: CodigoFonteWidget
-# Descrição: Definição da classe que implementa o formulário de visualização
+# Description:o: Definição da classe que implementa o formulário de visualização
 #            do código SQL/XML de um dado objeto.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

@@ -91,7 +91,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  QTemporaryFile tf;
  /* Seta a másca de geração do mesmo. Caso na máscara tenha um caminho absoluto, o arquivo será
     gerado na pasta especificada pelo caminho */
- tf.setFileTemplate(AtributosGlobais::DIR_TEMPORARIO + AtributosGlobais::SEP_DIRETORIO + QString("modelXXXXXX") + QString(".dbm"));
+ tf.setFileTemplate(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + QString("modelXXXXXX") + QString(".dbm"));
  //Executa o método open para que o arquivo seja criado
  tf.open();
  //Armazena o nome temporário

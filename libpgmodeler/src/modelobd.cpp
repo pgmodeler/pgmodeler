@@ -2590,12 +2590,12 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
 
   /* Montando o caminho padrão para localização dos esquemas DTD.
      Por padrão esta pasta se encontra na raiz dentro da pasta esquemas/xml*/
-  arq_dtd=AtributosGlobais::DIR_RAIZ_ESQUEMAS +
-           AtributosGlobais::SEP_DIRETORIO +
-           AtributosGlobais::DIR_ESQUEMA_XML +
-           AtributosGlobais::SEP_DIRETORIO +
-           AtributosGlobais::DIR_DTD_OBJETO +
-           AtributosGlobais::SEP_DIRETORIO;
+  arq_dtd=GlobalAttributes::SCHEMAS_ROOT_DIR +
+           GlobalAttributes::DIR_SEPARATOR +
+           GlobalAttributes::XML_SCHEMA_DIR +
+           GlobalAttributes::DIR_SEPARATOR +
+           GlobalAttributes::OBJECT_DTD_DIR +
+           GlobalAttributes::DIR_SEPARATOR;
 
   try
   {
@@ -2604,9 +2604,9 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
    //Reinicia o parser XML para a leitura do arquivo
    ParserXML::reiniciarParser();
    //Faz com que o parser carregue a DTD que armazena a sintaxe do arquivo de modelos
-   ParserXML::definirArquivoDTD(arq_dtd + AtributosGlobais::DTD_RAIZ +
-                                AtributosGlobais::EXT_DTD_OBJETO,
-                                AtributosGlobais::DTD_RAIZ);
+   ParserXML::definirArquivoDTD(arq_dtd + GlobalAttributes::ROOT_DTD +
+                                GlobalAttributes::OBJECT_DTD_EXT,
+                                GlobalAttributes::ROOT_DTD);
 
    //Carrega o arquivo validando-o de acordo com a DTD informada
    ParserXML::carregarArquivoXML(nome_arq);

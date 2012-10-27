@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libconexbd
 # Classe: Resultado
-# Descrição: Esta classe encapsula algumas funções de manipulação de resultados
+# Description:o: Esta classe encapsula algumas funções de manipulação de resultados
 #            de comandos SQL do PostgreSQL implementadas pela biblioteca libpq
 # Creation date:o: 14/07/2009
 #

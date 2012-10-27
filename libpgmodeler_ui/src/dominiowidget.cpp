@@ -9,10 +9,10 @@ DominioWidget::DominioWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_D
   //Cria um destacador de sintaxe no campo de expressão de checagem do domínio
   destaque_expr=NULL;
   destaque_expr=new DestaqueSintaxe(expr_checagem_txt, false);
-  destaque_expr->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                     AtributosGlobais::SEP_DIRETORIO +
-                                     AtributosGlobais::CONF_DESTAQUE_SQL +
-                                     AtributosGlobais::EXT_CONFIGURACAO);
+  destaque_expr->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                     GlobalAttributes::DIR_SEPARATOR +
+                                     GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                     GlobalAttributes::CONFIGURATION_EXT);
 
   tipo_dominio=NULL;
   tipo_dominio=new TipoPgSQLWidget(this);

@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: FormRestrauracaoModelos
-# Descrição: Formulário de restauração de modelos temporários
+# Description:o: Formulário de restauração de modelos temporários
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -22,7 +22,7 @@
 #define FORM_RESTAURACAO_MODELOS_H
 
 #include <QtGui>
-#include "atributosglobais.h"
+#include "globalattributes.h"
 #include "ui_formrestauracaomodelo.h"
 
 class FormRestauracaoModelo: public QDialog, public Ui::FormRestauracaoModelos {

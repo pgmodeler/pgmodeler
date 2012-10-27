@@ -13,16 +13,16 @@ int main(int argc, char **argv)
   /** issue#23 **/
   /* Caso o pgModeler não encontre um arquivo de tradução da lingua nativa do sistema o qual está
      sendo executado será carregado o arquivo pgmodeler.en_US (lingua fallback) */
-  if(!tradutor.load(QString("pgmodeler.") + QLocale::system().name(), AtributosGlobais::DIR_LINGUAS))
+  if(!tradutor.load(QString("pgmodeler.") + QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR))
    //Carrega a lingua fallback
-   tradutor.load(ling_fallback, AtributosGlobais::DIR_LINGUAS);
+   tradutor.load(ling_fallback, GlobalAttributes::LANGUAGES_DIR);
 
   //Instala o tradutor na aplicação
   app.installTranslator(&tradutor);
 
   CrashHandler crashhandler;
 
-  //Atribui o formulário alocado à aplicação
+  //Atribui o formulário alocado �  aplicação
   app.setMainWidget(&crashhandler);
 
   if(argc > 1)

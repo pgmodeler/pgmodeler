@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição: Definição da classe Coluna que é utilizada pela classe Tabela.
+# Description:o: Definição da classe Coluna que é utilizada pela classe Tabela.
 # Creation date:o: 12/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: FormBasico
-# Descrição: Definição da classe que um container de widgets de configuração
+# Description:o: Definição da classe que um container de widgets de configuração
 #            de objetos no modelo de banco de dados.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

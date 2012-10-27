@@ -27,15 +27,15 @@ void executarCrashHandler(int)
  #endif
 
  //Cria o arquivo que armazenará a stack trace
- saida.open(AtributosGlobais::DIR_TEMPORARIO +
-            AtributosGlobais::SEP_DIRETORIO +
-            AtributosGlobais::ARQ_STACKTRACE);
+ saida.open(GlobalAttributes::TEMPORARY_DIR +
+            GlobalAttributes::DIR_SEPARATOR +
+            GlobalAttributes::STACKTRACE_FILE);
 
  //Caso o arquivo esteja aberto
  if(saida.is_open())
  {
   lin=QString("** pgModeler [v%1] crashed after receive signal: %2 **\n\nDate/Time:%3\n\n")
-      .arg(AtributosGlobais::VERSAO_PGMODELER)
+      .arg(GlobalAttributes::PGMODELER_VERSION)
       .arg("SIGSEGV")
       .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
   saida.write(lin.toStdString().c_str(), lin.size());
@@ -58,7 +58,7 @@ void executarCrashHandler(int)
  }
 
  //Executa o comando crashhandler (que obrigatoriamente deve estar na mesma pasta do pgModeler)
- cmd=QApplication::applicationDirPath() + AtributosGlobais::SEP_DIRETORIO + cmd;
+ cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + cmd;
  system(cmd.toStdString().c_str());
  exit(1);
 }
@@ -74,10 +74,10 @@ int main(int argc, char **argv)
   Aplicacao app(argc,argv);
   QTranslator tradutor;
 
-  app.addLibraryPath(AtributosGlobais::DIR_PLUGINS);
+  app.addLibraryPath(GlobalAttributes::PLUGINS_DIR);
 
   //Tenta carregar a tradução conforme o locale do sistema
-  tradutor.load(QLocale::system().name(), AtributosGlobais::DIR_LINGUAS);
+  tradutor.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
 
   //Instala o tradutor na aplicação
   app.installTranslator(&tradutor);
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
   fnt.setPointSize(7.5f);
 
   QFontMetrics fm(fnt);
-  QString str_ver=QString("v%1").arg(AtributosGlobais::VERSAO_PGMODELER);
+  QString str_ver=QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION);
   QRect ret=fm.boundingRect(str_ver);
 
   p.begin(&pixmap);

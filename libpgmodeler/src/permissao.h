@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definição da classe Permissao que é usada para controlar
+# Description:o:  Definição da classe Permissao que é usada para controlar
 #             permissões em certos tipos de objetos de banco de dados
 #             além de gerar os códigos SQL que implante as permissões
 #             no banco de dados.

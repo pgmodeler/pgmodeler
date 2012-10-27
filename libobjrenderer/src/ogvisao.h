@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libobjrenderer
 # Classe: OGVisao
-# Descrição: Esta classe deriva a classe ObjetoGrafico e implementa a representação gráfica
+# Description:o: Esta classe deriva a classe ObjetoGrafico e implementa a representação gráfica
 #            da classe Visao. O sufixo OG foi adicionado ao nome da classe para evitar conflitos
 #            de nomes entra a classe Visao da biblioteca libpgsqldbm e a classe abaixo definida.
 #

@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: TabelaObjetosWidget
-# Descrição: Definição da classe que implementa uma tabela para manipulação
+# Description:o: Definição da classe que implementa uma tabela para manipulação
 #            vários objetos em uma grade. Incluíndo funções de inclusão e exclusão
 #            de objeto e movimentação dos mesmos nas linhas da tabela. Esta classe
 #            é usada como auxiliar em formulários os quais trabalham com vários objetos

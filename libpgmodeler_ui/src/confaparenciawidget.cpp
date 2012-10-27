@@ -93,9 +93,9 @@ void ConfAparenciaWidget::criarObjetosExemplo(void)
   //Caso não existam objetos no modelo faz o carregamento do arquivo
   if(modelo->obterNumObjetos()==0)
   {
-   modelo->carregarModelo(AtributosGlobais::DIR_CONFIGURACOES +
-                          AtributosGlobais::SEP_DIRETORIO +
-                          AtributosGlobais::MODELO_EXEMPLO);
+   modelo->carregarModelo(GlobalAttributes::CONFIGURATIONS_DIR +
+                          GlobalAttributes::DIR_SEPARATOR +
+                          GlobalAttributes::EXAMPLE_MODEL);
 
    qtd=modelo->obterNumObjetos(OBJETO_TABELA);
    for(i=0; i < qtd; i++)
@@ -248,10 +248,10 @@ void ConfAparenciaWidget::salvarConfiguracao(void)
   }
 
   //Especifica aos parâmetros de configuração de estilo de objetos os atributos configurados acima
-  params_config[AtributosGlobais::CONF_ESTILO_OBJETOS]=atribs;
+  params_config[GlobalAttributes::OBJECTS_STYLE_CONF]=atribs;
 
   //Salva a configuração em arquivo
-  ConfBaseWidget::salvarConfiguracao(AtributosGlobais::CONF_ESTILO_OBJETOS);
+  ConfBaseWidget::salvarConfiguracao(GlobalAttributes::OBJECTS_STYLE_CONF);
  }
  catch(Exception &e)
  {
@@ -415,7 +415,7 @@ void ConfAparenciaWidget::restaurarPadroes(void)
  try
  {
   //Restaura as configurações padrão e recarrega o arquivo restaurado
-  ConfBaseWidget::restaurarPadroes(AtributosGlobais::CONF_ESTILO_OBJETOS);
+  ConfBaseWidget::restaurarPadroes(GlobalAttributes::OBJECTS_STYLE_CONF);
   this->carregarConfiguracao();
  }
  catch(Exception &e)

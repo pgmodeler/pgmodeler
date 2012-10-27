@@ -40,7 +40,7 @@ void ConfGeralWidget::carregarConfiguracao(void)
  atribs_chave.push_back(AtributosParsers::ID);
 
  //Carrega as configurações
- ConfBaseWidget::carregarConfiguracao(AtributosGlobais::CONF_GERAL, atribs_chave);
+ ConfBaseWidget::carregarConfiguracao(GlobalAttributes::GENERAL_CONF, atribs_chave);
 
  //Repassa os valores obtidos no arquivo de configuração para os widgets do formulário
  tam_grade_spb->setValue((params_config[AtributosParsers::CONFIGURACAO][AtributosParsers::TAM_GRADE]).toUInt());
@@ -76,20 +76,20 @@ void ConfGeralWidget::salvarConfiguracao()
   map<QString, map<QString, QString> >::iterator itr, itr_end;
   QString sch_widget, sch_arquivo, dir_raiz;
 
-  dir_raiz=AtributosGlobais::DIR_CONFIGURACOES +
-           AtributosGlobais::SEP_DIRETORIO;
+  dir_raiz=GlobalAttributes::CONFIGURATIONS_DIR +
+           GlobalAttributes::DIR_SEPARATOR;
 
   sch_widget=dir_raiz +
-             AtributosGlobais::DIR_ESQUEMAS +
-             AtributosGlobais::SEP_DIRETORIO +
+             GlobalAttributes::SCHEMAS_DIR +
+             GlobalAttributes::DIR_SEPARATOR +
              AtributosParsers::WIDGET +
-             AtributosGlobais::EXT_ESQUEMA;
+             GlobalAttributes::SCHEMA_EXT;
 
   sch_arquivo=dir_raiz +
-              AtributosGlobais::DIR_ESQUEMAS +
-              AtributosGlobais::SEP_DIRETORIO +
+              GlobalAttributes::SCHEMAS_DIR +
+              GlobalAttributes::DIR_SEPARATOR +
               AtributosParsers::ARQUIVO +
-              AtributosGlobais::EXT_ESQUEMA;
+              GlobalAttributes::SCHEMA_EXT;
 
   //Armazena no mapa de parâmetros de configuração os valores dos widgets no formulário
   params_config[AtributosParsers::CONFIGURACAO][AtributosParsers::TAM_GRADE]=QString("%1").arg(tam_grade_spb->value());
@@ -136,7 +136,7 @@ void ConfGeralWidget::salvarConfiguracao()
   }
 
   //Salva a configuração em arquivo
-  ConfBaseWidget::salvarConfiguracao(AtributosGlobais::CONF_GERAL);
+  ConfBaseWidget::salvarConfiguracao(GlobalAttributes::GENERAL_CONF);
  }
  catch(Exception &e)
  {
@@ -164,7 +164,7 @@ void ConfGeralWidget::restaurarPadroes(void)
  try
  {
   //Restaura as configurações padrão e recarrega o arquivo restaurado
-  ConfBaseWidget::restaurarPadroes(AtributosGlobais::CONF_GERAL);
+  ConfBaseWidget::restaurarPadroes(GlobalAttributes::GENERAL_CONF);
   this->carregarConfiguracao();
  }
  catch(Exception &e)

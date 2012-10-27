@@ -2,7 +2,7 @@
 # Projeto: Squid-Autoconf
 # Sub-project: Biblioteca libconexbd
 # Classe: ConexaoBD
-# Descrição: Esta classe encapsula algumas funções de manipulação de conexões
+# Description:o: Esta classe encapsula algumas funções de manipulação de conexões
 #            com o PostgreSQL implementadas pela biblioteca libpq
 # Creation date:o: 13/07/2009
 #

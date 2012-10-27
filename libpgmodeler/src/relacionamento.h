@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definição da classe Relacionamento que é usado para
+# Description:o:  Definição da classe Relacionamento que é usado para
 #             representar graficamente os relacionamentos entre tabelas
 #             e gerar os códigos SQL pertinentes a estes.
 # Creation date:o: 20/11/2006

@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libobjrenderer
 # Classe: OGTabelaBase
-# Descrição: Esta classe deriva a classe ObjetoGrafico e implementa um conjuto de métodos utilitáiros
+# Description:o: Esta classe deriva a classe ObjetoGrafico e implementa um conjuto de métodos utilitáiros
 #            para serem usadas pelas classes OGTabela, OGVisao e OGRelacionamento. O sufixo OG foi
 #            adicionado ao nome da classe para evitar conflitos de nomes entra a classe Tabela da biblioteca
 #            libpgmodeler e a classe abaixo definida.

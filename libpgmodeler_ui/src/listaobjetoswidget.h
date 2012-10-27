@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: ListaObjetosWidget
-# Descrição: Definição da classe que implementa o formulário de
+# Description:o: Definição da classe que implementa o formulário de
 #            exibição das dependências e referências a um objeto
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

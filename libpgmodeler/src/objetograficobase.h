@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definição da classe ObjetoBaseGrafico que é uma implementação básica para
+# Description:o:  Definição da classe ObjetoBaseGrafico que é uma implementação básica para
 #             representar graficamente as tabelas, relacionamentos, caixas de texto.
 #             A representação gráfica efetiva do objeto é feita pela classe ObjetoGrafico (libobjrenderer)
 # Creation date:o: 17/09/2006

@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: FormPrincipal
-# Descrição: Definição da classe que implementa o formulário principal do software,
+# Description:o: Definição da classe que implementa o formulário principal do software,
 #            Reune e gerencia todas as classes das bibliotecas implementadas.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

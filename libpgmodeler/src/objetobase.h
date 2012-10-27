@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definições da classe ObjetoBase que controla o nome, comentário
+# Description:o:  Definições da classe ObjetoBase que controla o nome, comentário
                e definição sql dos demais objetos gráficos ou não.
 # Creation date:o: 12/09/2006
 #

@@ -10,17 +10,17 @@ VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_VISAO
   //Cria um destacador de sintaxe no campo de expressão e código fonte
   destaque_expr=NULL;
   destaque_expr=new DestaqueSintaxe(expressao_txt, false);
-  destaque_expr->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                     AtributosGlobais::SEP_DIRETORIO +
-                                     AtributosGlobais::CONF_DESTAQUE_SQL +
-                                     AtributosGlobais::EXT_CONFIGURACAO);
+  destaque_expr->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                     GlobalAttributes::DIR_SEPARATOR +
+                                     GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                     GlobalAttributes::CONFIGURATION_EXT);
 
   destaque_codigo=NULL;
   destaque_codigo=new DestaqueSintaxe(codigo_txt, false);
-  destaque_codigo->carregarConfiguracao(AtributosGlobais::DIR_CONFIGURACOES +
-                                     AtributosGlobais::SEP_DIRETORIO +
-                                     AtributosGlobais::CONF_DESTAQUE_SQL +
-                                     AtributosGlobais::EXT_CONFIGURACAO);
+  destaque_codigo->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+                                     GlobalAttributes::DIR_SEPARATOR +
+                                     GlobalAttributes::SQL_HIGHLIGHT_CONF +
+                                     GlobalAttributes::CONFIGURATION_EXT);
 
   //Alocando os seletores de objetos (tabela e coluna) que são atribuío � s referências da visão
   sel_tabela=NULL;

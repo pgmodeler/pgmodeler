@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definição da classe Constraint que é usado para
+# Description:o:  Definição da classe Constraint que é usado para
 #              configurar e gerar os códigos SQL referentes a chaves primárias
 #              e estrangeiras, de checagem, únicas.
 # Creation date:o: 23/09/2006

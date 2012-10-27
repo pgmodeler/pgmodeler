@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: main
 # Classe: Aplicacao
-# Descrição: Esta classe é uma derivação da classe QApplication.
+# Description:o: Esta classe é uma derivação da classe QApplication.
 #            A mesa apenas sobrecarrega o método notify() de sua
 #            classe pai para tratar as execeções disparadas cujas
 #            instâncias são da classe Excecao.
