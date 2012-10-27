@@ -23,7 +23,7 @@
 #ifndef CONEXAOBD_H
 #define CONEXAOBD_H
 
-#include "resultado.h"
+#include "resultset.h"
 #include <map>
 
 class ConexaoBD {
@@ -96,7 +96,7 @@ class ConexaoBD {
 
   /* Executa um comando DML no servidor usando a conexão aberta
      retornando um objeto de resutlado da consulta */
-  void executarComandoDML(const QString &sql, Resultado &resultado);
+  void executarComandoDML(const QString &sql, ResultSet &resultado);
 
   /* Executa um comando DDL no servidor usando a conexão aberta
      sem retorno de objetos de resultado */

@@ -1,26 +1,26 @@
-#include "resultado.h"
+#include "resultset.h"
 
-Resultado::Resultado(void)
+ResultSet::ResultSet(void)
 {
- resultado_sql=NULL;
- res_sem_tuplas=false;
- res_copiado=false;
- tupla_atual=-1;
+ sql_result=NULL;
+ empty_result=false;
+ is_res_copied=false;
+ current_tuple=-1;
 }
 
-Resultado::Resultado(PGresult *resultado_sql)
+ResultSet::ResultSet(PGresult *sql_result)
 {
  QString str_aux;
- int estado_res;
+ int res_state;
 
- if(!resultado_sql)
+ if(!sql_result)
   throw Exception(ERR_CONEXBD_ATRRESSQLNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
- this->resultado_sql=resultado_sql;
- estado_res=PQresultStatus(this->resultado_sql);
+ this->sql_result=sql_result;
+ res_state=PQresultStatus(this->sql_result);
 
  //Trantando o estado do resultado
- switch(estado_res)
+ switch(res_state)
  {
   //Gerando um erro caso o servidor retorna uma resposta incompreensível
   case PGRES_BAD_RESPONSE:
@@ -30,7 +30,7 @@ Resultado::Resultado(PGresult *resultado_sql)
   //Gerando um erro caso o servidor retorne um erro fatal
   case PGRES_FATAL_ERROR:
    str_aux=QString(Exception::getErrorMessage(ERR_CONEXBD_SGBDERROFATAL))
-           .arg(PQresultErrorMessage(resultado_sql));
+           .arg(PQresultErrorMessage(sql_result));
    throw Exception(str_aux,ERR_CONEXBD_SGBDERROFATAL, __PRETTY_FUNCTION__, __FILE__, __LINE__);
   break;
 
@@ -45,71 +45,71 @@ Resultado::Resultado(PGresult *resultado_sql)
   case PGRES_COPY_OUT:
   case PGRES_COPY_IN:
   default:
-   res_sem_tuplas=(estado_res!=PGRES_TUPLES_OK);
-   tupla_atual=0;
-   res_copiado=false;
+   empty_result=(res_state!=PGRES_TUPLES_OK);
+   current_tuple=0;
+   is_res_copied=false;
   break;
  }
 }
 
-Resultado::~Resultado(void)
+ResultSet::~ResultSet(void)
 {
- destruirResultado();
+ destroyResultSet();
 }
 
-void Resultado::destruirResultado(void)
+void ResultSet::destroyResultSet(void)
 {
  /* Destrói o result-set do objeto caso este não foi copiado
     para outra instância de classe (ver operador = ) */
- if(resultado_sql && !res_copiado)
-  PQclear(resultado_sql);
+ if(sql_result && !is_res_copied)
+  PQclear(sql_result);
 
  //Reinicia os demais atributos
- resultado_sql=NULL;
- res_sem_tuplas=false;
- res_copiado=false;
- tupla_atual=-1;
+ sql_result=NULL;
+ empty_result=false;
+ is_res_copied=false;
+ current_tuple=-1;
 }
 
-QString Resultado::obterNomeColuna(int idx_coluna)
+QString ResultSet::getColumnName(int column_idx)
 {
  //Dispara um erro caso o índice da coluna seja inválido
- if(idx_coluna < 0 || idx_coluna >= obterNumColunas())
+ if(column_idx < 0 || column_idx >= getColumnCount())
   throw Exception(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  //Retorna o nome da coluna com índice especificado
- return(QString(PQfname(resultado_sql, idx_coluna)));
+ return(QString(PQfname(sql_result, column_idx)));
 }
 
-int Resultado::obterIndiceColuna(const QString &nome_coluna)
+int ResultSet::getColumnIndex(const QString &column_name)
 {
- int idx_coluna=-1;
+ int col_idx=-1;
 
  //Obtém o índice da coluna usando o nome
- idx_coluna=PQfnumber(resultado_sql, nome_coluna.toStdString().c_str());
+ col_idx=PQfnumber(sql_result, column_name.toStdString().c_str());
 
  /* Caso o índice seja negativo indica que a coluna não existe na tupla
     desta forma um erro é disparado */
- if(idx_coluna < 0)
+ if(col_idx < 0)
   throw Exception(ERR_CONEXBD_REFCOLTUPLANOMEINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
- return(idx_coluna);
+ return(col_idx);
 }
 
-char *Resultado::obterValorColuna(const QString &nome_coluna)
+char *ResultSet::getColumnValue(const QString &column_name)
 {
- int idx_coluna=-1;
+ int col_idx=-1;
 
  try
  {
   /* Dispara um erro caso o usuário tente obter o valor de uma coluna em 
      uma tupla de um resultado vazio ou gerado a partir de um comando INSERT, DELETE, UPDATE,
      ou seja, de comando os quais não retornam linhas mas apenas a atualizam/remove */
-  if(obterNumTuplas()==0 || res_sem_tuplas)
+  if(getTupleCount()==0 || empty_result)
    throw Exception(ERR_CONEXBD_REFTUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
   //Obtém o índice da coluna através do nome
-  idx_coluna=obterIndiceColuna(nome_coluna);
+  col_idx=getColumnIndex(column_name);
  }
  catch(Exception &e)
  {
@@ -118,32 +118,32 @@ char *Resultado::obterValorColuna(const QString &nome_coluna)
  }
 
  //Retorna o valor da coluna (idx_coluna) na linha atual (tupla_atual)
- return(PQgetvalue(resultado_sql, tupla_atual, idx_coluna));
+ return(PQgetvalue(sql_result, current_tuple, col_idx));
 }
 
-char *Resultado::obterValorColuna(int idx_coluna)
+char *ResultSet::getColumnValue(int column_idx)
 {
  //Dispara um erro caso o índice da coluna seja inválido
- if(idx_coluna < 0 || idx_coluna >= obterNumColunas())
+ if(column_idx < 0 || column_idx >= getColumnCount())
   throw Exception(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 /* Dispara um erro caso o usuário tente obter o valor de uma coluna em 
      uma tupla de um resultado vazio ou gerado a partir de um comando INSERT, DELETE, UPDATE,
      ou seja, de comando os quais não retornam linhas mas apenas a atualizam/remove */
- else if(obterNumTuplas()==0 || res_sem_tuplas)
+ else if(getTupleCount()==0 || empty_result)
   throw Exception(ERR_CONEXBD_REFTUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  //Retorna o valor da coluna (idx_coluna) na linha atual (tupla_atual)
- return(PQgetvalue(resultado_sql, tupla_atual, idx_coluna));
+ return(PQgetvalue(sql_result, current_tuple, column_idx));
 }
 
-int Resultado::obterTamanhoColuna(const QString &nome_coluna)
+int ResultSet::getColumnSize(const QString &column_name)
 {
- int idx_coluna=-1;
+ int col_idx=-1;
 
  try
  {
   //Obtém o índice da coluna a ser detectado o comprimento
-  idx_coluna=obterIndiceColuna(nome_coluna);
+  col_idx=getColumnIndex(column_name);
  }
  catch(Exception &e)
  {
@@ -152,48 +152,48 @@ int Resultado::obterTamanhoColuna(const QString &nome_coluna)
  }
 
  //Retorna o comprimento do valor da coluna (idx_coluna) na linha atual (tupla_atual)
- return(PQgetlength(resultado_sql, tupla_atual, idx_coluna));
+ return(PQgetlength(sql_result, current_tuple, col_idx));
 }
 
-int Resultado::obterTamanhoColuna(int idx_coluna)
+int ResultSet::getColumnSize(int column_idx)
 {
  //Dispara um erro caso o índice da coluna seja inválido
- if(idx_coluna < 0 || idx_coluna >= obterNumColunas())
+ if(column_idx < 0 || column_idx >= getColumnCount())
   throw Exception(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  //Retorna o comprimento do valor da coluna (idx_coluna) na linha atual (tupla_atual)
- return(PQgetlength(resultado_sql, tupla_atual, idx_coluna));
+ return(PQgetlength(sql_result, current_tuple, column_idx));
 }
 
-int Resultado::obterNumTuplas(void)
+int ResultSet::getTupleCount(void)
 {
  //Caso o resultado possua tuplas
- if(!res_sem_tuplas)
+ if(!empty_result)
   //Retorna a quantidade de tuplas obtidas a partir do comando
-  return(PQntuples(resultado_sql));
+  return(PQntuples(sql_result));
  else
   /* Retorna o número de linhas afetadas pelo comando (caso
      seja comandos do tipo INSERT, DELETE, UPDATE) */
-  return(atoi(PQcmdTuples(resultado_sql)));
+  return(atoi(PQcmdTuples(sql_result)));
 }
 
-int Resultado::obterNumColunas(void)
+int ResultSet::getColumnCount(void)
 {
- return(PQnfields(resultado_sql));
+ return(PQnfields(sql_result));
 }
 
-int Resultado::obterTuplaAtual(void)
+int ResultSet::getCurrentTuple(void)
 {
- return(tupla_atual);
+ return(current_tuple);
 }
 
-bool Resultado::colunaFormatoBinario(const QString &nome_coluna)
+bool ResultSet::isColumnBinaryFormat(const QString &column_name)
 {
- int idx_coluna=-1;
+ int col_idx=-1;
 
  try
  {
-  idx_coluna=obterIndiceColuna(nome_coluna);
+  col_idx=getColumnIndex(column_name);
  }
  catch(Exception &e)
  {
@@ -205,72 +205,72 @@ bool Resultado::colunaFormatoBinario(const QString &nome_coluna)
     De acordo cmo a documentação da libpq, valor = 0, indica coluna em formato
     texto, já valor = 1 é coluna em formato binário, os demais valores
     são de uso reservado */
- return(PQfformat(resultado_sql, idx_coluna)==1);
+ return(PQfformat(sql_result, col_idx)==1);
 }
 
-bool Resultado::colunaFormatoBinario(int idx_coluna)
+bool ResultSet::isColumnBinaryFormat(int column_idx)
 {
  //Dispara um erro caso o índice da coluna seja inválido
- if(idx_coluna < 0 || idx_coluna >= obterNumColunas())
+ if(column_idx < 0 || column_idx >= getColumnCount())
   throw Exception(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  /* Retorna o formato da coluna (idx_coluna) na linha atual (tupla_atual).
     De acordo cmo a documentação da libpq, valor = 0, indica coluna em formato
     texto, já valor = 1 é coluna em formato binário, os demais valores
     são de uso reservado */
- return(PQfformat(resultado_sql, idx_coluna)==1);
+ return(PQfformat(sql_result, column_idx)==1);
 }
 
-bool Resultado::acessarTupla(unsigned tipo_tupla)
+bool ResultSet::accessTuple(unsigned tuple_type)
 {
- int num_tuplas=obterNumTuplas();
- bool acessado=true;
+ int tuple_count=getTupleCount();
+ bool accessed=true;
 
  /* Dispara um erro caso o resultado não possua linhas ou
     seja derivado de um comando o qual apenas afeta linhas ou
     se o tipo de tupla a ser acessado seja inválido, fora do 
     conjunto definido pela classe */
- if(num_tuplas==0 || res_sem_tuplas || tipo_tupla > TUPLA_POSTERIOR)
+ if(tuple_count==0 || empty_result || tuple_type > NEXT_TUPLE)
   throw Exception(ERR_CONEXBD_REFTUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
- switch(tipo_tupla)
+ switch(tuple_type)
  {
-  case TUPLA_INICIAL:
-   tupla_atual=0;
+  case FIRST_TUPLE:
+   current_tuple=0;
   break;
 
-  case TUPLA_FINAL:
-   tupla_atual=num_tuplas-1;
+  case LAST_TUPLE:
+   current_tuple=tuple_count-1;
   break;
 
-  case TUPLA_ANTERIOR:
-   acessado=(tupla_atual > 0);
-   if(acessado) tupla_atual--;
+  case PREVIOUS_TUPLE:
+   accessed=(current_tuple > 0);
+   if(accessed) current_tuple--;
   break;
 
-  case TUPLA_POSTERIOR:
-   acessado=(tupla_atual < (num_tuplas-1));
-   if(acessado) tupla_atual++;
+  case NEXT_TUPLE:
+   accessed=(current_tuple < (tuple_count-1));
+   if(accessed) current_tuple++;
   break;
  }
 
- return(acessado);
+ return(accessed);
 }
 
-void Resultado::operator = (Resultado &res)
+void ResultSet::operator = (ResultSet &res)
 {
  /* Marca que o resultado do parâmetro foi copiado, evitando
     que seu result set seja desalocado */
- res.res_copiado=true;
+ res.is_res_copied=true;
 
  /* Caso o resultado this esteja alocado,
     o mesmo será desalocado para evitar memory leaks */
- destruirResultado();
+ destroyResultSet();
 
  //Copia os atributos do resultado do parâmetro para o resultado this
- this->tupla_atual=res.tupla_atual;
- this->res_sem_tuplas=res.res_sem_tuplas;
- this->resultado_sql=res.resultado_sql;
- this->res_copiado=false;
+ this->current_tuple=res.current_tuple;
+ this->empty_result=res.empty_result;
+ this->sql_result=res.sql_result;
+ this->is_res_copied=false;
 }
 

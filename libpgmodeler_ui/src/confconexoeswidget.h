@@ -23,7 +23,7 @@
 
 #include "ui_confconexoeswidget.h"
 #include "confbasewidget.h"
-#include "conexaobd.h"
+#include "dbconnection.h"
 
 class ConfConexoesWidget: public QWidget, public Ui::ConfConexoesWidget, public ConfBaseWidget {
  private:

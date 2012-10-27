@@ -1,4 +1,4 @@
-#include "conexaobd.h"
+#include "dbconnection.h"
 
 const QString ConexaoBD::SSL_DESATIVADO="disable";
 const QString ConexaoBD::SSL_PERMITIR="allow";
@@ -155,9 +155,9 @@ QString  ConexaoBD::obterVersaoSGBD(void)
         .arg(versao.mid(4,1).toInt()));
 }
 
-void ConexaoBD::executarComandoDML(const QString &sql, Resultado &resultado)
+void ConexaoBD::executarComandoDML(const QString &sql, ResultSet &resultado)
 {
- Resultado *novo_res=NULL;
+ ResultSet *novo_res=NULL;
  PGresult *res_sql=NULL;
 
  //Dispara um erro caso o usuário tente reiniciar uma conexão não iniciada
@@ -174,7 +174,7 @@ void ConexaoBD::executarComandoDML(const QString &sql, Resultado &resultado)
                 QString(PQresultErrorField(res_sql, PG_DIAG_SQLSTATE)));
  }
 
- novo_res=new Resultado(res_sql);
+ novo_res=new ResultSet(res_sql);
  //Copia o novo resultado para o resultado do parâmetro
  resultado=*(novo_res);
  //Desaloca o resultado criado
