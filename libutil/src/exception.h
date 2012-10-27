@@ -261,10 +261,10 @@ class Exception {
   int line;
 
   //Configures the basic attributes of exception
-  void configureException(const QString &msg, ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, const QString &info_adicional);
+  void configureException(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, const QString &extra_info);
 
   //Adds a exception to the list of exceptions
-  void addException(Exception &execao);
+  void addException(Exception &exception);
 
  public:
   Exception(void);
