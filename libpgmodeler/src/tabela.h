@@ -1,10 +1,10 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca núcleo libpgsqldbm
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe Tabela que é usado para
 #             representar graficamente as tabelas e gerar os códigos SQL
 #             pertinentes a esta.
-# Data de Criação: 17/09/2006
+# Creation date:o: 17/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

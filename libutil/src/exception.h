@@ -1,8 +1,8 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libutil
-# Classe: Excecao
-# Data de Criação: 10/07/2006
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: libutil library
+# Classe: Exception
+# Creation date: 10/07/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,8 +18,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef EXCECAO_H
-#define EXCECAO_H
+#ifndef EXCEPTION_H
+#define EXCEPTION_H
 
 #include <QObject>
 #include <exception>
@@ -30,20 +30,19 @@
 #include <deque>
 
 using namespace std;
+
 const int ERROR_COUNT=175;
 
 /*
- Formato dos enums de erros: ERR_[BIBLIOTECA]_[ERRO] onde:
- ERRO é composto de:
-  CODIGO CLASSE
-  CODIGO OPERAÇÃOO: INS=Inserção
-                   ATR=Atribuição
-                   REF=Referência
-                   REM=Remoção
-                   DES=Desenho
-                   RES=Restauração
-                   OBT=Obtenção
-  CODIGO ERRO
+ ErrorType enum format: ERR_[LIBRARY]_[[OPERATION_CODE][ERROR_CODE]] where:
+
+ OPERATION_CODE is composed as:
+   INS=Insertion
+   ATR=Atribuition
+   REF=Reference
+   REM=Removing
+   RES=Restoration
+   OBT=Obtaining
 */
 
 enum ErrorType {
@@ -229,61 +228,65 @@ enum ErrorType {
 
 class Exception {
  private:
-  /* Armazena outras execeções antes do disparo da exceção this.
-     Esta estrutura pode ser usada para simular um stack trace,
-     para melhorar o debug */
+  /* Stores other exceptions before raise the 'this' exception.
+     This structure can be used to simulate a stack trace to improve the debug */
   deque<Exception> exceptions;
 
-  //Armazena as mensagens de erros e os códigos (nomes dos erros) em formato string
+  //Stores the error messages and codes (names of errors) in string format
   static QString messages[ERROR_COUNT][2];
 
+  //Constants used to access the error details
   static const unsigned ERROR_CODE=0,
                         ERROR_MESSAGE=1;
 
+  //Error type related to the exception
   ErrorType error_type;
+
+  //Formated error message
   QString error_msg,
-         /* Armazena o nome da classe e método de onde foi
-            disparada a exceção. Para que isso seja possí­vel, no momento
-            da instanciação desta classe a macro do G++ __PRETTY_FUNCTION__
-            deve ser passada. Essa macro contém o formato [RETORNO][CLASSE]::[METODO][PARAMS] */
+        /* Holds the class name and method which was
+           triggered the exception. For this to be possible, at the time
+           instantiation of this class the  G++ macro __ PRETTY_FUNCTION__
+           must be passed. This macro contains the format [RETURN][CLASS]::[METHOD][PARAMS] */
          method,
-         //Arquivo de onde foi gerada a exceção (Macro __FILE__)
+
+         //File where the exception was generated (Macro __ FILE__)
          file,
 
-         /* Informações adicionais (de preenchimento opcinal) pode armazer qualquer outro
-            tipo de informação interessante é  tentativa de resolução do erro */
+         /* Additional information (optional) may store any other
+            type of information that is interesting on attempt to resolve the error */
          extra_info;
 
-      //Linha do arquivo de onde foi gerada a exceção (Macro __LINE__)
+  //Line of file where the exception were generated (Macro __LINE__)
   int line;
 
-  //Configura os atributos básicos da exceção
+  //Configures the basic attributes of exception
   void configureException(const QString &msg, ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, const QString &info_adicional);
 
-  //Adiciona um exceção na lista de exceções
+  //Adds a exception to the list of exceptions
   void addException(Exception &execao);
 
  public:
   Exception(void);
-  Exception(const QString &msg, const QString &local, const QString &arquivo, int linha, Exception *excecao=NULL, const QString &info_adicional="");
-  Exception(const QString &msg, ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, Exception *excecao=NULL, const QString &info_adicional="");
-  Exception(ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, Exception *excecao=NULL, const QString &info_adicional="");
-  Exception(ErrorType tipo_erro, const QString &local, const QString &arquivo, int linha, vector<Exception> &excecoes, const QString &info_adicional="");
-  Exception(const QString &msg, const QString &local, const QString &arquivo, int linha, vector<Exception> &excecoes, const QString &info_adicional="");
+  Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception=NULL, const QString &extra_info="");
+  Exception(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=NULL, const QString &extra_info="");
+  Exception(ErrorType error_type, const QString &method, const QString &file, int line, Exception *exception=NULL, const QString &extra_info="");
+  Exception(ErrorType error_type, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
+  Exception(const QString &msg, const QString &method, const QString &file, int line, vector<Exception> &exceptions, const QString &extra_info="");
   ~Exception(void){}
   QString getErrorMessage(void);
-  static QString getErrorMessage(ErrorType tipo_erro);
-  static QString getErrorCode(ErrorType tipo_erro);
+  static QString getErrorMessage(ErrorType error_type);
+  static QString getErrorCode(ErrorType error_type);
   QString getMethod(void);
   QString getFile(void);
   QString getLine(void);
   ErrorType getErrorType(void);
   QString getExtraInfo(void);
 
-  //Obtém a pilha de exceções completa
-  void getExceptionsList(deque<Exception> &lista);
+  //Gets the full exception stack
+  void getExceptionsList(deque<Exception> &list);
 
-  //Retorna a lista de exções em formato texto
+  //Gets the exception stack in a formatted text
   QString getExceptionsText(void);
 };
 

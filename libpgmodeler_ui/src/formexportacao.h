@@ -1,6 +1,6 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libpgsqldbm_ui
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: FormExportacao
 # Descrição: Formulário de exportação do modelo
 #

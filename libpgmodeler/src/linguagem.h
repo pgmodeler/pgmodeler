@@ -1,10 +1,10 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca núcleo libpgsqldbm
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe Linguagem que é usado para
 #             e gerar os códigos SQL pertinente� s linguagens
 #             procedurais.
-# Data de Criação: 19/05/2008
+# Creation date:o: 19/05/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

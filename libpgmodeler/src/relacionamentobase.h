@@ -1,9 +1,9 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca núcleo libpgsqldbm
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe RelacionamentoBase que implementa operações
 #             básicas de manipulação gráfica de relacionamento entre tabelas
-# Data de Criação: 09/04/2008
+# Creation date:o: 09/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

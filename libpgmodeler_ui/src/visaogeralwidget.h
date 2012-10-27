@@ -1,6 +1,6 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libpgsqldbm_ui
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: VisaoGeralWidget
 # Descrição: Definição da classe que implementa o widget de visão geral do modelo.
 #
@@ -24,7 +24,7 @@
 #define VISAO_GERAL_WIDGET_H
 
 #include <QtGui>
-#include "excecao.h"
+#include "exception.h"
 #include "ui_visaogeralwidget.h"
 #include "modelowidget.h"
 

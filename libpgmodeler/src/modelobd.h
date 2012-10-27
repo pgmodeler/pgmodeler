@@ -1,11 +1,11 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca núcleo libpgsqldbm
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe ModeloBD que é usado para
 #             representar graficamente o modelo do banco de dados, gerar os
 #             códigos SQL do banco de dados, salvar em arquivo, executar
 #             engenharia reversa, etc.
-# Data de Criação: 20/10/2006
+# Creation date:o: 20/10/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

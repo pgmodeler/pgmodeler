@@ -1,6 +1,6 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libpgsqldbm_ui
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: ListaOperacoesWidget
 # Descrição: Definição da classe que implementa a arvore de operações executadas
 #            no modelo de banco de dados.

@@ -1,6 +1,6 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libpgsqldbm_ui
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: ConfBaseWidget
 # Descrição: Implementa operações básicas para gravação de arquios  e cesso � s configuraçoẽs
 #            nos widgets de configurações.
@@ -22,7 +22,7 @@
 #ifndef CONF_BASE_WIDGET_H
 #define CONF_BASE_WIDGET_H
 
-#include "excecao.h"
+#include "exception.h"
 #include "parserxml.h"
 #include "atributosparsers.h"
 #include <algorithm>

@@ -1,12 +1,12 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: main
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: main
 # Classe: Aplicacao
 # Descrição: Esta classe é uma derivação da classe QApplication.
 #            A mesa apenas sobrecarrega o método notify() de sua
 #            classe pai para tratar as execeções disparadas cujas
 #            instâncias são da classe Excecao.
-# Data de Criação: 30/08/2007
+# Creation date:o: 30/08/2007
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

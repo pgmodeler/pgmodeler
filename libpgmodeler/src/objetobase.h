@@ -1,9 +1,9 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca núcleo libpgsqldbm
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definições da classe ObjetoBase que controla o nome, comentário
                e definição sql dos demais objetos gráficos ou não.
-# Data de Criação: 12/09/2006
+# Creation date:o: 12/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -23,7 +23,7 @@
 #define OBJETOBASE_H
 
 #include "atributosparsers.h"
-#include "excecao.h"
+#include "exception.h"
 #include "tipospgsql.h"
 #include "parseresquema.h"
 #include "parserxml.h"

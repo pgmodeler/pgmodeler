@@ -1,8 +1,8 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca núcleo libpgsqldbm
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definições das classes de tipos de objetos no PostgreSQL
-# Data de Criação: 31/08/2006
+# Creation date:o: 31/08/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -21,7 +21,7 @@
 #ifndef TIPOSPGSQL_H
 #define TIPOSPGSQL_H
 
-#include "excecao.h"
+#include "exception.h"
 #include "atributosparsers.h"
 #include "parseresquema.h"
 #include <vector>

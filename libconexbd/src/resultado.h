@@ -1,10 +1,10 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libconexbd
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libconexbd
 # Classe: Resultado
 # Descrição: Esta classe encapsula algumas funções de manipulação de resultados
 #            de comandos SQL do PostgreSQL implementadas pela biblioteca libpq
-# Data de Criação: 14/07/2009
+# Creation date:o: 14/07/2009
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -23,7 +23,7 @@
 #ifndef RESULTADO_H
 #define RESULTADO_H
 
-#include "excecao.h"
+#include "exception.h"
 #include <libpq-fe.h>
 #include <cstdlib>
 

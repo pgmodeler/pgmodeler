@@ -1,12 +1,12 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca núcleo libpgsqldbm
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição do namespcae Atributos, um espaço de nomes o qual
               armazena uma série de QStrings estáticas constantes, usadas
               para referênciar os atributos dos objetos nos métodos de geração
               da definição sql e xml. Cada QString guarda o nome do atributo usado
               no arquivo de esquema ".sch" dos respectivos objetos.
-# Data de Criação: 23/09/2008
+# Creation date:o: 23/09/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

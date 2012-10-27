@@ -1,6 +1,6 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libobjrenderer
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libobjrenderer
 # Classe: OGRelacionamento
 # Descrição: Esta classe deriva a classe ObjetoGrafico e implementa a representação gráfica
 #            da classe Relacionamento/RelacionamentoBase. O sufixo OG foi adicionado ao nome

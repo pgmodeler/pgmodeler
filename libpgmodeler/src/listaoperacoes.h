@@ -1,11 +1,11 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca núcleo libpgsqldbm
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca núcleo libpgsqldbm
 # Classe: ListaOperacoes
 # Descrição:  Definição da classe ListaOperacoes que é usada para
 #             armazenar e restaurar a ações executadas pelo usuário
 #             no modelo de banco de dados.
-# Data de Criação: 17/07/2006
+# Creation date:o: 17/07/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

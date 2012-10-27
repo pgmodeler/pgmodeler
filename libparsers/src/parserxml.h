@@ -1,10 +1,10 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libparserxml
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libparserxml
 # Classe: Parser
 # Descrição: Esta classe impelementa operações básicas de um analisador
 #            sintático de xml usando a biblioteca libxml2
-# Data de Criação: 02/04/2008
+# Creation date:o: 02/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -26,7 +26,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include "parseresquema.h"
-#include "excecao.h"
+#include "exception.h"
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -42,7 +42,7 @@ class ParserXML {
   //Armazena o documento xml gerado após a leitura do buffer xml
   static xmlDoc *doc_xml;
 
-  //Armazena a referência à raiz da árvore de documentos
+  //Armazena a referência �  raiz da árvore de documentos
   static xmlNode *elem_raiz,
                  //Armazena a posição atual na árvore de documentos
                  *elem_atual;

@@ -1,10 +1,10 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca núcleo libpgsqldbm
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe ElementoIndice que é usada para
 #             armazenar e gerar os códigos SQL/XML pertinentes aos atributos
 #             usados nas índices.
-# Data de Criação: 26/05/2010
+# Creation date:o: 26/05/2010
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

@@ -1,11 +1,11 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca núcleo libpgsqldbm
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca núcleo libpgsqldbm
 # Descrição:  Definição da classe ConversaoCodificacao que é usada para
 #             gerar os códigos SQL pertinentes aos conversions entre tipos
 #             de codificação de caracteres no banco de dados.
 #
-# Data de Criação: 04/06/2008
+# Creation date:o: 04/06/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

@@ -1,6 +1,6 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libpgsqldbm_ui
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: ModeloWidget
 # Descrição: Definição da classe que implementa o modelo de banco de dados
 #            em sua forma de widget, ou seja, que permite a interação do usuário

@@ -1,6 +1,6 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libobjrenderer
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libobjrenderer
 # Classe: CenaObjetos
 # Descrição: Esta classe deriva a classe QGraphicsScene e implementa a visualização
 #            e outras operações relacionados aos objetos gráficos do modelo.
@@ -59,7 +59,7 @@ class CenaObjetos: public QGraphicsScene {
 
   QGraphicsLineItem *linha_rel;
 
-  //Método utilitário para alinhar um ponto à grade
+  //Método utilitário para alinhar um ponto �  grade
   static QPointF alinharPontoGrade(const QPointF &pnt);
 
  protected:
@@ -82,7 +82,7 @@ class CenaObjetos: public QGraphicsScene {
   ~CenaObjetos(void);
 
   /* Métodos estáticos que definem o tamanho da grade e as opções de
-     alinhamento de objetos à grade e exibição da própria grade. */
+     alinhamento de objetos �  grade e exibição da própria grade. */
   static void definirGrade(unsigned tam);
   static void definirOpcoesGrade(bool exibir_grade, bool alin_objs_grade, bool exibir_lim_pagina);
   static void obterOpcoesGrade(bool &exibir_grade, bool &alin_objs_grade, bool &exibir_lim_pagina);
@@ -97,7 +97,7 @@ class CenaObjetos: public QGraphicsScene {
   void setSceneRect(const QRectF &ret);
 
  public slots:
-  //Alinha todos os objetos do modelo à grade
+  //Alinha todos os objetos do modelo �  grade
   void alinharObjetosGrade(void);
   void update(void);
 

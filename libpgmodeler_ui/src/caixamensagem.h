@@ -1,6 +1,6 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libpgsqldbm_ui
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: CaixaMensagem
 # Descrição: Definição da classe usada para exibição de caixas
 #            de mensagens personalizadas, como exibição de pilha
@@ -25,7 +25,7 @@
 #define CAIXA_MENSAGEM_H
 
 #include "ui_caixamensagem.h"
-#include "excecao.h"
+#include "exception.h"
 
 class CaixaMensagem: public QDialog, public Ui::CaixaMensagem {
  private:

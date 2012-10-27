@@ -1,10 +1,10 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libutil
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libutil
 # Descrição:  Definição do namespace AtributosGlobais, um espaço de nomes o qual
 #             armazena uma série de strings estáticas constantes, usadas
 #             para referênciar as variáveis de configuração globais do software.
-# Data de Criação: 14/05/2010
+# Creation date:o: 14/05/2010
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

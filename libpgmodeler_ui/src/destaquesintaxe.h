@@ -1,6 +1,6 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libpgsqldbm_ui
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: DestaqueSintaxe
 # Descrição: Definição da classe que implementa um destacador de sintaxe de
 #            linguagens (código fonte) com padrões de marcação definidos pelo usuário.
@@ -25,7 +25,7 @@
 #include <QtGui>
 #include <map>
 #include <vector>
-#include "excecao.h"
+#include "exception.h"
 #include "parserxml.h"
 #include "atributosglobais.h"
 #include "atributosparsers.h"

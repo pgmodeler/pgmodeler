@@ -1,6 +1,6 @@
 /*
-# Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libpgsqldbm_ui
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: FormBasico
 # Descrição: Definição da classe que um container de widgets de configuração
 #            de objetos no modelo de banco de dados.
@@ -24,7 +24,7 @@
 
 #include <QtGui>
 #include "ui_formbasico.h"
-#include "excecao.h"
+#include "exception.h"
 #include "caixamensagem.h"
 
 class FormBasico: public QDialog, public Ui::FormBasico {
