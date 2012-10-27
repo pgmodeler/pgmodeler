@@ -66,31 +66,31 @@ QString ElementoIndice::obterDefinicaoObjeto(unsigned tipo_def)
 {
  map<QString, QString> atributos;
 
- atributos[AtributosParsers::COLUNA]="";
- atributos[AtributosParsers::EXPRESSAO]="";
- atributos[AtributosParsers::CLASSE_OPERADORES]="";
+ atributos[ParsersAttributes::COLUMN]="";
+ atributos[ParsersAttributes::EXPRESSION]="";
+ atributos[ParsersAttributes::OP_CLASS]="";
  
- atributos[AtributosParsers::NULOS_PRIMEIRO]=(atrib_elemento[NULOS_PRIMEIRO] ? "1" : "");
- atributos[AtributosParsers::ORDEM_ASCENDENTE]=(atrib_elemento[ORDEM_ASCENDENTE] ? "1" : "");
+ atributos[ParsersAttributes::NULLS_FIRST]=(atrib_elemento[NULOS_PRIMEIRO] ? "1" : "");
+ atributos[ParsersAttributes::ASC_ORDER]=(atrib_elemento[ORDEM_ASCENDENTE] ? "1" : "");
  
  if(coluna)
  {
   /*if(tipo_def==ParserEsquema::DEFINICAO_SQL)
    atributos[AtributosParsers::COLUNA]=coluna->obterTabelaPai()->obterNome(true) + "." + coluna->obterNome(true);
   else */
-   atributos[AtributosParsers::COLUNA]=coluna->obterNome(true);
+   atributos[ParsersAttributes::COLUMN]=coluna->obterNome(true);
  }
  else
-  atributos[AtributosParsers::EXPRESSAO]=expressao;
+  atributos[ParsersAttributes::EXPRESSION]=expressao;
  
  if(classe_oper)
  {
   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-   atributos[AtributosParsers::CLASSE_OPERADORES]=classe_oper->obterNome(true);
+   atributos[ParsersAttributes::OP_CLASS]=classe_oper->obterNome(true);
   else
-   atributos[AtributosParsers::CLASSE_OPERADORES]=classe_oper->obterDefinicaoObjeto(tipo_def, true);
+   atributos[ParsersAttributes::OP_CLASS]=classe_oper->obterDefinicaoObjeto(tipo_def, true);
  }
  
- return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::ELEMENTO_INDICE,atributos, tipo_def));
+ return(ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::ELEMENTO_INDICE,atributos, tipo_def));
 }
 

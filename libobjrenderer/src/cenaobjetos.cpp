@@ -28,7 +28,7 @@ CenaObjetos::CenaObjetos(void)
  linha_rel->setZValue(-1);
  linha_rel->setPen(QColor(80,80,80));
 
- //Adiciona à   cena o retângulo de seleção
+ //Adiciona �    cena o retângulo de seleção
  this->addItem(ret_selecao);
  this->addItem(linha_rel);
 }
@@ -300,7 +300,7 @@ void CenaObjetos::removeItem(QGraphicsItem *item)
   OGTabela *tab=dynamic_cast<OGTabela *>(item);
 
   /* Caso particular para classes OGRelacionamento e OGTabela:
-     desconecta os sinais anteriormente conectados à  cena e que
+     desconecta os sinais anteriormente conectados �   cena e que
      são disparados por tabela ou relacionamento */
   if(rel)
   {
@@ -392,7 +392,7 @@ void CenaObjetos::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
    }
 
    /*Caso o alinhamento esteja ativo e haja objetos selecionados efetua o alinhamento
-     do ponto (posição do evento) à  grade */
+     do ponto (posição do evento) �   grade */
    if(alin_objs_grade && !ret_selecao->isVisible())
     evento->setScenePos(this->alinharPontoGrade(evento->scenePos()));
    else if(ret_selecao->isVisible())
@@ -404,8 +404,8 @@ void CenaObjetos::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
     pol.append(QPointF(evento->scenePos().x(), evento->scenePos().y()));
     pol.append(QPointF(sel_ini.x(), evento->scenePos().y()));
     ret_selecao->setPolygon(pol);
-    ret_selecao->setBrush(ObjetoGrafico::obterEstiloPreenchimento(AtributosParsers::SELECAO_OBJETO));
-    ret_selecao->setPen(ObjetoGrafico::obterEstiloBorda(AtributosParsers::SELECAO_OBJETO));
+    ret_selecao->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::SELECAO_OBJETO));
+    ret_selecao->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::SELECAO_OBJETO));
    }
   }
  }
@@ -421,7 +421,7 @@ void CenaObjetos::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
  QGraphicsScene::mouseReleaseEvent(evento);
 
  /* Caso haja objetos selecionados e o botão esquerdo do mouse for liberado
-    finaliza o movimento de objetos, alinhando-os à  grade se necessário */
+    finaliza o movimento de objetos, alinhando-os �   grade se necessário */
  if(!this->selectedItems().isEmpty() && movendo_objs &&
     evento->button()==Qt::LeftButton && evento->modifiers()==Qt::NoModifier)
  {
@@ -451,11 +451,11 @@ void CenaObjetos::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
    if(!rel)
    {
     if(alin_objs_grade)
-     //Move o objeto para um ponto ajustado à  grade
+     //Move o objeto para um ponto ajustado �   grade
      itens[i]->setPos(alinharPontoGrade(itens[i]->pos()));
     else
     {
-     //Caso o alinhamento à  grade não esteja disponível, apneas ajusta o ponto se o mesmo for negativo
+     //Caso o alinhamento �   grade não esteja disponível, apneas ajusta o ponto se o mesmo for negativo
      QPointF p=itens[i]->pos();
      if(p.x() < 0) p.setX(0);
      if(p.y() < 0) p.setY(0);
@@ -529,7 +529,7 @@ void CenaObjetos::alinharObjetosGrade(void)
  qtd=itens.size();
  for(i=0; i < qtd; i++)
  {
-  /* Obtém somente os objetos que são convertidos à  classe QGraphicsItemGroup e
+  /* Obtém somente os objetos que são convertidos �   classe QGraphicsItemGroup e
      que não tenham objeto pai. Isso é feito pois o método items() retorna TODOS
      os itens desconsiderando se eles pertencem ou não a grupos, e isso no contexto
      dos objetos do modelo é errado pois todos os objetos do grupo precisam ser alinhados
@@ -543,7 +543,7 @@ void CenaObjetos::alinharObjetosGrade(void)
 
    //Caso o item foi convertido para tabela
    if(tab)
-    //Move o objeto usando o método setPos da classe OGTabelaBase com o ponto alinhado à  grade
+    //Move o objeto usando o método setPos da classe OGTabelaBase com o ponto alinhado �   grade
     tab->setPos(this->alinharPontoGrade(tab->pos()));
    /* Caso o item foi convertido para relacionamento, efetua um tratamento diferenciado,
       movendo pontos e rótulos individualmente */
@@ -562,7 +562,7 @@ void CenaObjetos::alinharObjetosGrade(void)
      rel->configurarLinha();
     }
 
-    //Alinha os rótulos à  grade
+    //Alinha os rótulos �   grade
     for(i1=RelacionamentoBase::ROTULO_CARD_ORIGEM;
         i1<=RelacionamentoBase::ROTULO_NOME_RELAC; i1++)
     {

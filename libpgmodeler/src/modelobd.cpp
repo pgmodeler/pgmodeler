@@ -9,11 +9,11 @@ ModeloBD::ModeloBD(void)
 
  lim_conexao=-1;
  carregando_modelo=false;
- atributos[AtributosParsers::CODIFICACAO]="";
- atributos[AtributosParsers::BD_MODELO]="";
- atributos[AtributosParsers::LIMITE_CONEXAO]="";
- atributos[AtributosParsers::LC_COLLATE_BD]="";
- atributos[AtributosParsers::LC_CTYPE_BD]="";
+ atributos[ParsersAttributes::ENCODING]="";
+ atributos[ParsersAttributes::TEMPLATE_DB]="";
+ atributos[ParsersAttributes::CONN_LIMIT]="";
+ atributos[ParsersAttributes::LC_COLLATE_DB]="";
+ atributos[ParsersAttributes::LC_CTYPE_DB]="";
 }
 
 ModeloBD::~ModeloBD(void)
@@ -2613,9 +2613,9 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
 
    //Obter as informações de versão, autor do modelo e versão postgresql
    ParserXML::obterAtributosElemento(atributos);
-   this->autor=atributos[AtributosParsers::AUTOR_MODELO];
+   this->autor=atributos[ParsersAttributes::MODEL_AUTHOR];
 
-   modelo_protegido=(atributos[AtributosParsers::PROTEGIDO]==AtributosParsers::VERDADEIRO);
+   modelo_protegido=(atributos[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
    //Passa para o próximo elemento que provavelmente será um <role> ou <tablespace>
    if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
@@ -2633,7 +2633,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
          só serão feitas caso não hajam objetos para serem reavaliados,
          caso contrário, os objetos são reavalias e logo apos as permissões
          obtidas. */
-      if(nome_elem==AtributosParsers::PERMISSAO && objetos_incomp.size()==0)
+      if(nome_elem==ParsersAttributes::PERMISSAO && objetos_incomp.size()==0)
       {
        /* Caso a lista de objetos especiais esteja com elementos
           efetua a recriação dos mesmos. Obs: Este processo é executado
@@ -2676,7 +2676,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
 
         /* Executa a navegação sobre os elementos até que o primeiro elemento
            que define uma permissão seja localizado */
-        while(ParserXML::obterNomeElemento()!=AtributosParsers::PERMISSAO &&
+        while(ParserXML::obterNomeElemento()!=ParsersAttributes::PERMISSAO &&
               ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
        }
 
@@ -2721,13 +2721,13 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
        if(tipo_obj==OBJETO_BANCO_DADOS)
        {
         ParserXML::obterAtributosElemento(atributos);
-        tipo_codif=atributos[AtributosParsers::CODIFICACAO];
-        bd_modelo=atributos[AtributosParsers::BD_MODELO];
-        localizacoes[0]=atributos[AtributosParsers::LC_CTYPE_BD];
-        localizacoes[1]=atributos[AtributosParsers::LC_COLLATE_BD];
+        tipo_codif=atributos[ParsersAttributes::ENCODING];
+        bd_modelo=atributos[ParsersAttributes::TEMPLATE_DB];
+        localizacoes[0]=atributos[ParsersAttributes::LC_CTYPE_DB];
+        localizacoes[1]=atributos[ParsersAttributes::LC_COLLATE_DB];
 
-        if(!atributos[AtributosParsers::LIMITE_CONEXAO].isEmpty())
-         lim_conexao=atributos[AtributosParsers::LIMITE_CONEXAO].toInt();
+        if(!atributos[ParsersAttributes::CONN_LIMIT].isEmpty())
+         lim_conexao=atributos[ParsersAttributes::CONN_LIMIT].toInt();
 
         definirAtributosBasicos(this);
        }
@@ -2946,10 +2946,10 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
 
  tipo_obj_aux=objeto->obterTipoObjeto();
  if(tipo_obj_aux!=OBJETO_CONV_TIPO)
-  objeto->definirNome(atributos[AtributosParsers::NOME]);
+  objeto->definirNome(atributos[ParsersAttributes::NAME]);
 
  //Definindo se o objeto está protegido ou não
- protegido=atributos[AtributosParsers::PROTEGIDO]==AtributosParsers::VERDADEIRO;
+ protegido=atributos[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_;
 
  ParserXML::salvarPosicao();
 
@@ -2966,7 +2966,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
     nome_elem=ParserXML::obterNomeElemento();
 
     //Caso o elemento filho seja um comentáio <comment>
-    if(nome_elem==AtributosParsers::COMENTARIO)
+    if(nome_elem==ParsersAttributes::COMMENT)
     {
      /* Para se extraír o comentário, é necessário salvar a posição de navegação
         do parser, pois o conteúdo do comentário é um elemento filho do elemento
@@ -2980,45 +2980,45 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
      ParserXML::restaurarPosicao();
     }
     //Caso o elemento filho seja uma referência a um esquema <schema>
-    else if(nome_elem==AtributosParsers::ESQUEMA)
+    else if(nome_elem==ParsersAttributes::SCHEMA)
     {
      tipo_obj=OBJETO_ESQUEMA;
      ParserXML::obterAtributosElemento(atribs_aux);
-     esquema=dynamic_cast<Esquema *>(obterObjeto(atribs_aux[AtributosParsers::NOME], tipo_obj));
+     esquema=dynamic_cast<Esquema *>(obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj));
      objeto->definirEsquema(esquema);
-     erro=(!esquema && !atribs_aux[AtributosParsers::NOME].isEmpty());
+     erro=(!esquema && !atribs_aux[ParsersAttributes::NAME].isEmpty());
     }
 
     //Caso o elemento filho seja uma referência a um tablespace <tablespace>
-    else if(nome_elem==AtributosParsers::ESPACOTABELA)
+    else if(nome_elem==ParsersAttributes::TABLESPACE)
     {
      tipo_obj=OBJETO_ESPACO_TABELA;
      ParserXML::obterAtributosElemento(atribs_aux);
-     esp_tabela=obterObjeto(atribs_aux[AtributosParsers::NOME], tipo_obj);
+     esp_tabela=obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj);
      objeto->definirEspacoTabela(esp_tabela);
-     erro=(!esp_tabela && !atribs_aux[AtributosParsers::NOME].isEmpty());
+     erro=(!esp_tabela && !atribs_aux[ParsersAttributes::NAME].isEmpty());
     }
 
     //Caso o elemento filho seja uma referência a um dono (role/papel) <role>
-    else if(nome_elem==AtributosParsers::PAPEL)
+    else if(nome_elem==ParsersAttributes::ROLE)
     {
      tipo_obj=OBJETO_PAPEL;
      ParserXML::obterAtributosElemento(atribs_aux);
-     dono=obterObjeto(atribs_aux[AtributosParsers::NOME], tipo_obj);
+     dono=obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj);
      objeto->definirDono(dono);
-     erro=(!dono && !atribs_aux[AtributosParsers::NOME].isEmpty());
+     erro=(!dono && !atribs_aux[ParsersAttributes::NAME].isEmpty());
     }
     //Obténdo o atributo a posição do objeto (apenas para objetos gráficos)
-    else if(nome_elem==AtributosParsers::POSICAO)
+    else if(nome_elem==ParsersAttributes::POSITION)
     {
      ParserXML::obterAtributosElemento(atributos);
 
-     if(nome_elem==AtributosParsers::POSICAO &&
+     if(nome_elem==ParsersAttributes::POSITION &&
         (tipo_obj_aux!=OBJETO_RELACAO &&
          tipo_obj_aux!=OBJETO_RELACAO_BASE))
      {
-      dynamic_cast<ObjetoGraficoBase *>(objeto)->definirPosicaoObjeto(QPointF(atributos[AtributosParsers::POSICAO_X].toFloat(),
-                                                                       atributos[AtributosParsers::POSICAO_Y].toFloat()));
+      dynamic_cast<ObjetoGraficoBase *>(objeto)->definirPosicaoObjeto(QPointF(atributos[ParsersAttributes::X_POS].toFloat(),
+                                                                       atributos[ParsersAttributes::Y_POS].toFloat()));
 
 
      }
@@ -3042,7 +3042,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                    .arg(QString::fromUtf8(objeto->obterNome()))
                    .arg(objeto->obterNomeTipoObjeto())
-                   .arg(QString::fromUtf8(atribs_aux[AtributosParsers::NOME]))
+                   .arg(QString::fromUtf8(atribs_aux[ParsersAttributes::NAME]))
                    .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj)),
                 ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
@@ -3076,9 +3076,9 @@ Papel *ModeloBD::criarPapel(void)
     mesma ordem pois seus valores serão trabalhados em conjunto
     na interação onde ser precisa identificar as opções do papel
     o qual está sendo criado */
- QString atrib_ops[]={ AtributosParsers::SUPER_USUARIO, AtributosParsers::CRIAR_BD,
-                       AtributosParsers::CRIAR_PAPEL, AtributosParsers::HERDA_ATRIBUTOS,
-                       AtributosParsers::LOGIN, AtributosParsers::ENCRIPTADA };
+ QString atrib_ops[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
+                       ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
+                       ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED };
 
  unsigned vet_ops[]={ Papel::OP_SUPERUSER, Papel::OP_CREATEDB,
                       Papel::OP_CREATEROLE, Papel::OP_INHERIT,
@@ -3094,20 +3094,20 @@ Papel *ModeloBD::criarPapel(void)
   ParserXML::obterAtributosElemento(atributos);
 
   //Definindo os valores de atributos básicos do papel
-  papel->definirSenha(atributos[AtributosParsers::SENHA]);
-  papel->definirValidade(atributos[AtributosParsers::VALIDADE]);
+  papel->definirSenha(atributos[ParsersAttributes::PASSWORD]);
+  papel->definirValidade(atributos[ParsersAttributes::VALIDITY]);
 
   /* Caso o atributo de id de usuário esteja atribuído no xml.
      (atributos[AtributosParsers::UID] != "").
      Atribui ao papel o valor do atributo convertido para inteiro. */
-  if(!atributos[AtributosParsers::SYSID].isEmpty())
-   papel->definirSysid(atributos[AtributosParsers::SYSID].toInt());
+  if(!atributos[ParsersAttributes::SYSID].isEmpty())
+   papel->definirSysid(atributos[ParsersAttributes::SYSID].toInt());
 
   /* Caso o atributo de limite de conexão esteja atribuído no xml.
      (atributos[AtributosParsers::LIMITE_CONEXAO] != "").
      Atribui ao papel o valor do atributo convertido para inteiro. */
-  if(!atributos[AtributosParsers::LIMITE_CONEXAO].isEmpty())
-   papel->definirLimiteConexao(atributos[AtributosParsers::LIMITE_CONEXAO].toInt());
+  if(!atributos[ParsersAttributes::CONN_LIMIT].isEmpty())
+   papel->definirLimiteConexao(atributos[ParsersAttributes::CONN_LIMIT].toInt());
 
   /* Identificando as opções do papel. Caso o atributo referet �  uma
      estive com valor "true" no documento XML quer dizer que aquele
@@ -3115,7 +3115,7 @@ Papel *ModeloBD::criarPapel(void)
   for(i=0; i < 6; i++)
   {
    //Verifica se a opção está marcada no XML, valor de atributo = true
-   marcado=atributos[atrib_ops[i]]==AtributosParsers::VERDADEIRO;
+   marcado=atributos[atrib_ops[i]]==ParsersAttributes::_TRUE_;
    papel->definirOpcao(vet_ops[i], marcado);
   }
 
@@ -3132,7 +3132,7 @@ Papel *ModeloBD::criarPapel(void)
      nome_elem=ParserXML::obterNomeElemento();
 
      //Caso o elemento filho seja uma lista de papeis <roles>
-     if(nome_elem==AtributosParsers::PAPEIS)
+     if(nome_elem==ParsersAttributes::ROLES)
      {
       //Obtém os atributos do elemento <roles>, neste caso são names e reftype
       ParserXML::obterAtributosElemento(atribs_aux);
@@ -3140,16 +3140,16 @@ Papel *ModeloBD::criarPapel(void)
       /* O atributo names armazena uma lista de nomes de papéis as quais o novo papel
          referenciará. A lista tem os elementos separados por vírgula, sendo assim a
          string será quebrada usando o delimitador ',') */
-      lista=atribs_aux[AtributosParsers::NOMES].split(',');
+      lista=atribs_aux[ParsersAttributes::NAMES].split(',');
 
       //Obtém a quantidade de nomes de papéis na lista
       tam=lista.size();
 
       /* Identificando o tipo da lista de papéis a qual será inserido os objetos
          cujos nomes foram extraídos acima */
-      if(atribs_aux[AtributosParsers::TIPO_PAPEL]==AtributosParsers::REFER)
+      if(atribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::REFER)
        tipo_papel=Papel::PAPEL_REF;
-      else if(atribs_aux[AtributosParsers::TIPO_PAPEL]==AtributosParsers::MEMBRO)
+      else if(atribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::MEMBER)
        tipo_papel=Papel::PAPEL_MEMBRO;
       else
        tipo_papel=Papel::PAPEL_ADMIN;
@@ -3215,7 +3215,7 @@ EspacoTabela *ModeloBD::criarEspacoTabela(void)
   ParserXML::obterAtributosElemento(atributos);
 
   //Definindo os valores de atributos básicos do papel
-  esp_tabela->definirDiretorio(atributos[AtributosParsers::DIRETORIO]);
+  esp_tabela->definirDiretorio(atributos[ParsersAttributes::DIRECTORY]);
  }
  catch(Exception &e)
  {
@@ -3278,8 +3278,8 @@ Linguagem *ModeloBD::criarLinguagem(void)
   ParserXML::obterAtributosElemento(atributos);
   definirAtributosBasicos(linguagem);
 
-  linguagem->definirConfiavel(atributos[AtributosParsers::CONFIAVEL]==
-                               AtributosParsers::VERDADEIRO);
+  linguagem->definirConfiavel(atributos[ParsersAttributes::TRUSTED]==
+                               ParsersAttributes::_TRUE_);
 
    if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
    {
@@ -3295,15 +3295,15 @@ Linguagem *ModeloBD::criarLinguagem(void)
       {
        ParserXML::obterAtributosElemento(atributos);
        //Obtém o tipo de referência da função
-       tipo_ref=atributos[AtributosParsers::TIPO_REFERENCIA];
+       tipo_ref=atributos[ParsersAttributes::REF_TYPE];
 
        //Caso seja uma função handler ou validator
-       if(tipo_ref==AtributosParsers::FUNCAO_VALIDATOR ||
-          tipo_ref==AtributosParsers::FUNCAO_HANDLER ||
-          tipo_ref==AtributosParsers::FUNCAO_INLINE)
+       if(tipo_ref==ParsersAttributes::VALIDATOR_FUNC ||
+          tipo_ref==ParsersAttributes::HANDLER_FUNC ||
+          tipo_ref==ParsersAttributes::INLINE_FUNC)
        {
         //Obtém a assinatura da função
-        assinatura=atributos[AtributosParsers::ASSINATURA];
+        assinatura=atributos[ParsersAttributes::SIGNATURE];
 
         //Obtém a função do modelo
         funcao=obterObjeto(assinatura, OBJETO_FUNCAO);
@@ -3318,10 +3318,10 @@ Linguagem *ModeloBD::criarLinguagem(void)
                                .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                        ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-        if(tipo_ref==AtributosParsers::FUNCAO_VALIDATOR)
+        if(tipo_ref==ParsersAttributes::VALIDATOR_FUNC)
 
          linguagem->definirFuncao(dynamic_cast<Funcao *>(funcao), Linguagem::FUNC_VALIDATOR);
-        else if(tipo_ref==AtributosParsers::FUNCAO_HANDLER)
+        else if(tipo_ref==ParsersAttributes::HANDLER_FUNC)
          linguagem->definirFuncao(dynamic_cast<Funcao *>(funcao), Linguagem::FUNC_HANDLER);
         else
          linguagem->definirFuncao(dynamic_cast<Funcao *>(funcao), Linguagem::FUNC_INLINE);
@@ -3373,34 +3373,34 @@ Funcao *ModeloBD::criarFuncao(void)
   ParserXML::obterAtributosElemento(atributos);
 
   //Define se a função retorna setof, caso o atributo esteja marcado no XML
-  if(!atributos[AtributosParsers::RETORNA_SETOF].isEmpty())
-   funcao->definirRetornaSetOf(atributos[AtributosParsers::RETORNA_SETOF]==
-                               AtributosParsers::VERDADEIRO);
+  if(!atributos[ParsersAttributes::RETURNS_SETOF].isEmpty())
+   funcao->definirRetornaSetOf(atributos[ParsersAttributes::RETURNS_SETOF]==
+                               ParsersAttributes::_TRUE_);
 
   //Define se a função é do tipo janela, caso o atributo esteja marcado no XML
-  if(!atributos[AtributosParsers::FUNCAO_JANELA].isEmpty())
-   funcao->definirFuncaoJanela(atributos[AtributosParsers::FUNCAO_JANELA]==
-                               AtributosParsers::VERDADEIRO);
+  if(!atributos[ParsersAttributes::WINDOW_FUNC].isEmpty())
+   funcao->definirFuncaoJanela(atributos[ParsersAttributes::WINDOW_FUNC]==
+                               ParsersAttributes::_TRUE_);
 
   //Define a configuração de retorno da função, caso o atributo esteja marcado no XML
-  if(!atributos[AtributosParsers::TIPO_COMPORTAMENTO].isEmpty())
-   funcao->definirTipoComportamento(TipoComportamento(atributos[AtributosParsers::TIPO_COMPORTAMENTO]));
+  if(!atributos[ParsersAttributes::BEHAVIOR_TYPE].isEmpty())
+   funcao->definirTipoComportamento(TipoComportamento(atributos[ParsersAttributes::BEHAVIOR_TYPE]));
 
   //Define o tipo da função, caso o atributo esteja marcado no XML
-  if(!atributos[AtributosParsers::TIPO_FUNCAO].isEmpty())
-   funcao->definirTipoFuncao(TipoFuncao(atributos[AtributosParsers::TIPO_FUNCAO]));
+  if(!atributos[ParsersAttributes::FUNCTION_TYPE].isEmpty())
+   funcao->definirTipoFuncao(TipoFuncao(atributos[ParsersAttributes::FUNCTION_TYPE]));
 
   //Define o tipo de segurança da função, caso o atributo esteja marcado no XML
-  if(!atributos[AtributosParsers::TIPO_SEGURANCA].isEmpty())
-   funcao->definirTipoSeguranca(TipoSeguranca(atributos[AtributosParsers::TIPO_SEGURANCA]));
+  if(!atributos[ParsersAttributes::SECURITY_TYPE].isEmpty())
+   funcao->definirTipoSeguranca(TipoSeguranca(atributos[ParsersAttributes::SECURITY_TYPE]));
 
   //Define o custo de execução da função, caso o atributo esteja marcado no XML
-  if(!atributos[AtributosParsers::CUSTO_EXECUCAO].isEmpty())
-   funcao->definirCustoExecucao(atributos[AtributosParsers::CUSTO_EXECUCAO].toInt());
+  if(!atributos[ParsersAttributes::EXECUTION_COST].isEmpty())
+   funcao->definirCustoExecucao(atributos[ParsersAttributes::EXECUTION_COST].toInt());
 
   //Define a quantidade de linhas retornadas pela função, caso o atributo esteja marcado no XML
-  if(!atributos[AtributosParsers::QTD_LINHAS].isEmpty())
-   funcao->definirQuantidadeLinhas(atributos[AtributosParsers::QTD_LINHAS].toInt());
+  if(!atributos[ParsersAttributes::ROW_AMOUNT].isEmpty())
+   funcao->definirQuantidadeLinhas(atributos[ParsersAttributes::ROW_AMOUNT].toInt());
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
   {
@@ -3414,7 +3414,7 @@ Funcao *ModeloBD::criarFuncao(void)
      tipo_obj=obterTipoObjeto(elem);
 
      //Caso o parser acesso a tag que determina o tipo de retorno da função
-     if(elem==AtributosParsers::TIPO_RETORNO)
+     if(elem==ParsersAttributes::RETURN_TYPE)
      {
       ParserXML::salvarPosicao();
 
@@ -3429,7 +3429,7 @@ Funcao *ModeloBD::criarFuncao(void)
         {
          /* Caso o elemento atual no parser seja um <type>, indica que
           será extraído o tipo de retorno da função */
-         if(ParserXML::obterNomeElemento()==AtributosParsers::TIPO)
+         if(ParserXML::obterNomeElemento()==ParsersAttributes::TYPE)
          {
           //Cria o tipo
           tipo=criarTipoPgSQL();
@@ -3438,7 +3438,7 @@ Funcao *ModeloBD::criarFuncao(void)
          }
          /* Criação dos tipo de retorno de tabela da função. Os mesmos vem descritos
             dentro da tag <return-type> em forma de parâmetros */
-         else if(ParserXML::obterNomeElemento()==AtributosParsers::PARAMETRO)
+         else if(ParserXML::obterNomeElemento()==ParsersAttributes::PARAMETER)
          {
           param=criarParametro();
           //Adiciona o tipo de retorno   função
@@ -3463,38 +3463,38 @@ Funcao *ModeloBD::criarFuncao(void)
       ParserXML::obterAtributosElemento(atributos);
 
       //Busca a linguagem no modelo
-      objeto=obterObjeto(atributos[AtributosParsers::NOME], tipo_obj);
+      objeto=obterObjeto(atributos[ParsersAttributes::NAME], tipo_obj);
 
       //Caso a linguagem não existe será disparada uma exceção
       if(!objeto)
        throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                               .arg(QString::fromUtf8(funcao->obterNome()))
                               .arg(funcao->obterNomeTipoObjeto())
-                              .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
+                              .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_LINGUAGEM)),
                       ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Define a linguagem da função
       funcao->definirLinguagem(dynamic_cast<Linguagem *>(objeto));
      }
-     else if(ParserXML::obterNomeElemento()==AtributosParsers::PARAMETRO)
+     else if(ParserXML::obterNomeElemento()==ParsersAttributes::PARAMETER)
      {
       param=criarParametro();
       //Adiciona o parâmet�  função
       funcao->adicionarParametro(param);
      }
      //Extraíndo a definição (corpo) da função (tag <definition>)
-     else if(ParserXML::obterNomeElemento()==AtributosParsers::DEFINICAO)
+     else if(ParserXML::obterNomeElemento()==ParsersAttributes::DEFINITION)
      {
       ParserXML::salvarPosicao();
 
       //Obtém os atributos da biblioteca
       ParserXML::obterAtributosElemento(atrib_aux);
 
-      if(!atrib_aux[AtributosParsers::BIBLIOTECA].isEmpty())
+      if(!atrib_aux[ParsersAttributes::BIBLIOTECA].isEmpty())
       {
-       funcao->definirBiblioteca(atrib_aux[AtributosParsers::BIBLIOTECA]);
-       funcao->definirSimbolo(atrib_aux[AtributosParsers::SIMBOLO]);
+       funcao->definirBiblioteca(atrib_aux[ParsersAttributes::BIBLIOTECA]);
+       funcao->definirSimbolo(atrib_aux[ParsersAttributes::SIMBOLO]);
       }
       /* Para se ter acesso ao código que define a função é preciso acessar
          o filho da tag <definition> e obter seu conteúdo */
@@ -3548,12 +3548,12 @@ Parametro ModeloBD::criarParametro(void)
   //Obtem os atributos do parâmetro (nome, in e out)
   ParserXML::obterAtributosElemento(atributos);
 
-  param.definirNome(atributos[AtributosParsers::NOME]);
+  param.definirNome(atributos[ParsersAttributes::NAME]);
   /* Configurando atributos in e out do parâmetro caso estes estejam
      definidos como true no XML */
-  param.definirEntrada(atributos[AtributosParsers::PARAM_ENTRADA]==AtributosParsers::VERDADEIRO);
-  param.definirSaida(atributos[AtributosParsers::PARAM_SAIDA]==AtributosParsers::VERDADEIRO);
-  param.definirValorPadrao(atributos[AtributosParsers::VALOR_PADRAO]);
+  param.definirEntrada(atributos[ParsersAttributes::PARAM_IN]==ParsersAttributes::_TRUE_);
+  param.definirSaida(atributos[ParsersAttributes::PARAM_OUT]==ParsersAttributes::_TRUE_);
+  param.definirValorPadrao(atributos[ParsersAttributes::DEFAULT_VALUE]);
 
   //Acessa os elementos filhos do parâmetro, que no caso será apenas <type> ou <domain>
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
@@ -3566,7 +3566,7 @@ Parametro ModeloBD::criarParametro(void)
     {
      elem=ParserXML::obterNomeElemento();
 
-     if(elem==AtributosParsers::TIPO)
+     if(elem==ParsersAttributes::TYPE)
      {
       param.definirTipo(criarTipoPgSQL());
      }
@@ -3611,23 +3611,23 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  //Obtém os atributos do tipo
  ParserXML::obterAtributosElemento(atributos);
 
- if(!atributos[AtributosParsers::COMPRIMENTO].isEmpty())
-  comprimento=atributos[AtributosParsers::COMPRIMENTO].toUInt();
+ if(!atributos[ParsersAttributes::LENGTH].isEmpty())
+  comprimento=atributos[ParsersAttributes::LENGTH].toUInt();
 
- if(!atributos[AtributosParsers::DIMENSAO].isEmpty())
-  dimensao=atributos[AtributosParsers::DIMENSAO].toUInt();
+ if(!atributos[ParsersAttributes::DIMENSION].isEmpty())
+  dimensao=atributos[ParsersAttributes::DIMENSION].toUInt();
 
- if(!atributos[AtributosParsers::PRECISAO].isEmpty())
-  precisao=atributos[AtributosParsers::PRECISAO].toInt();
+ if(!atributos[ParsersAttributes::PRECISION].isEmpty())
+  precisao=atributos[ParsersAttributes::PRECISION].toInt();
 
- com_timezone=(atributos[AtributosParsers::COM_TIMEZONE]==AtributosParsers::VERDADEIRO);
- tipo_interv=atributos[AtributosParsers::TIPO_INTERVALO];
+ com_timezone=(atributos[ParsersAttributes::COM_TIMEZONE]==ParsersAttributes::_TRUE_);
+ tipo_interv=atributos[ParsersAttributes::TIPO_INTERVALO];
 
- if(!atributos[AtributosParsers::TIPO_ESPACIAL].isEmpty())
-  tipo_esp=TipoEspacial(atributos[AtributosParsers::TIPO_ESPACIAL],
-                        atributos[AtributosParsers::VARIACAO].toUInt());
+ if(!atributos[ParsersAttributes::TIPO_ESPACIAL].isEmpty())
+  tipo_esp=TipoEspacial(atributos[ParsersAttributes::TIPO_ESPACIAL],
+                        atributos[ParsersAttributes::VARIACAO].toUInt());
 
- nome=atributos[AtributosParsers::NOME];
+ nome=atributos[ParsersAttributes::NAME];
 
  idx_tipo=TipoPgSQL::obterIndiceTipoBase(nome);
  if(idx_tipo!=TipoPgSQL::nulo)
@@ -3692,60 +3692,60 @@ Tipo *ModeloBD::criarTipo(void)
   ParserXML::obterAtributosElemento(atributos);
 
   //Define a configuração do tipo
-  if(atributos[AtributosParsers::CONFIGURACAO]==AtributosParsers::TIPO_BASE)
+  if(atributos[ParsersAttributes::CONFIGURATION]==ParsersAttributes::BASE_TYPE)
   {
    tipo->definirConfiguracao(Tipo::TIPO_BASE);
 
    //Definindos os atributos específicos para tipo base
 
    //Definindo se o tipo é passado por valor ou não
-   tipo->definirPorValor(atributos[AtributosParsers::POR_VALOR]==AtributosParsers::VERDADEIRO);
+   tipo->definirPorValor(atributos[ParsersAttributes::BY_VALUE]==ParsersAttributes::_TRUE_);
 
    //Definindo o comprimento interno do tipo caso esteja especificado no XML
-   if(!atributos[AtributosParsers::COMP_INTERNO].isEmpty())
-    tipo->definirCompInterno(atributos[AtributosParsers::COMP_INTERNO].toUInt());
+   if(!atributos[ParsersAttributes::INTERNAL_LENGHT].isEmpty())
+    tipo->definirCompInterno(atributos[ParsersAttributes::INTERNAL_LENGHT].toUInt());
 
    //Definindo o alinhamento interno do tipo caso esteja especificado no XML
-   if(!atributos[AtributosParsers::ALINHAMENTO].isEmpty())
-    tipo->definirAlinhamento(atributos[AtributosParsers::ALINHAMENTO]);
+   if(!atributos[ParsersAttributes::ALIGNMENT].isEmpty())
+    tipo->definirAlinhamento(atributos[ParsersAttributes::ALIGNMENT]);
 
    //Definindo o tipo de armazenamento do tipo caso esteja especificado no XML
-   if(!atributos[AtributosParsers::ARMAZENAMENTO].isEmpty())
-    tipo->definirArmazenamento(atributos[AtributosParsers::ARMAZENAMENTO]);
+   if(!atributos[ParsersAttributes::STORAGE].isEmpty())
+    tipo->definirArmazenamento(atributos[ParsersAttributes::STORAGE]);
 
    //Definindo o elemento do tipo caso esteja especificado no XML
-   if(!atributos[AtributosParsers::ELEMENTO].isEmpty())
-    tipo->definirElemento(atributos[AtributosParsers::ELEMENTO]);
+   if(!atributos[ParsersAttributes::ELEMENT].isEmpty())
+    tipo->definirElemento(atributos[ParsersAttributes::ELEMENT]);
 
    //Definindo o delimitador do tipo caso esteja especificado no XML
-   if(!atributos[AtributosParsers::DELIMITADOR].isEmpty())
-    tipo->definirDelimitador(atributos[AtributosParsers::DELIMITADOR][0].toAscii());
+   if(!atributos[ParsersAttributes::DELIMITER].isEmpty())
+    tipo->definirDelimitador(atributos[ParsersAttributes::DELIMITER][0].toAscii());
 
    //Definindo o valor padrão do tipo caso esteja especificado no XML
-   if(!atributos[AtributosParsers::VALOR_PADRAO].isEmpty())
-    tipo->definirValorPadrao(atributos[AtributosParsers::VALOR_PADRAO]);
+   if(!atributos[ParsersAttributes::DEFAULT_VALUE].isEmpty())
+    tipo->definirValorPadrao(atributos[ParsersAttributes::DEFAULT_VALUE]);
 
    //Definindo a categoria do tipo caso esteja especificado no XML
-   if(!atributos[AtributosParsers::CATEGORIA].isEmpty())
-    tipo->definirCategoria(atributos[AtributosParsers::CATEGORIA]);
+   if(!atributos[ParsersAttributes::CATEGORY].isEmpty())
+    tipo->definirCategoria(atributos[ParsersAttributes::CATEGORY]);
 
    //Definindo a categoria do tipo caso esteja especificado no XML
-   if(!atributos[AtributosParsers::PREFERIDO].isEmpty())
-    tipo->definirPreferido(atributos[AtributosParsers::PREFERIDO]==AtributosParsers::VERDADEIRO);
+   if(!atributos[ParsersAttributes::PREFERRED].isEmpty())
+    tipo->definirPreferido(atributos[ParsersAttributes::PREFERRED]==ParsersAttributes::_TRUE_);
 
 
    /* O mapa de tipos de função abaixo é usado para se atribuir de forma
       mas simples, sem comparações, a função que for obtida do XML a qual
       o tipo em construção referencia */
-   tipo_funcoes[AtributosParsers::FUNCAO_INPUT]=Tipo::FUNCAO_INPUT;
-   tipo_funcoes[AtributosParsers::FUNCAO_OUTPUT]=Tipo::FUNCAO_OUTPUT;
-   tipo_funcoes[AtributosParsers::FUNCAO_SEND]=Tipo::FUNCAO_SEND;
-   tipo_funcoes[AtributosParsers::FUNCAO_RECV]=Tipo::FUNCAO_RECV;
-   tipo_funcoes[AtributosParsers::FUNCAO_TPMOD_IN]=Tipo::FUNCAO_TPMOD_IN;
-   tipo_funcoes[AtributosParsers::FUNCAO_TPMOD_OUT]=Tipo::FUNCAO_TPMOD_OUT;
-   tipo_funcoes[AtributosParsers::FUNCAO_ANALYZE]=Tipo::FUNCAO_ANALYZE;
+   tipo_funcoes[ParsersAttributes::INPUT_FUNC]=Tipo::FUNCAO_INPUT;
+   tipo_funcoes[ParsersAttributes::OUTPUT_FUNC]=Tipo::FUNCAO_OUTPUT;
+   tipo_funcoes[ParsersAttributes::SEND_FUNC]=Tipo::FUNCAO_SEND;
+   tipo_funcoes[ParsersAttributes::RECV_FUNC]=Tipo::FUNCAO_RECV;
+   tipo_funcoes[ParsersAttributes::TPMOD_IN_FUNC]=Tipo::FUNCAO_TPMOD_IN;
+   tipo_funcoes[ParsersAttributes::TPMOD_OUT_FUNC]=Tipo::FUNCAO_TPMOD_OUT;
+   tipo_funcoes[ParsersAttributes::ANALYZE_FUNC]=Tipo::FUNCAO_ANALYZE;
   }
-  else if(atributos[AtributosParsers::CONFIGURACAO]==AtributosParsers::TIPO_COMPOSTO)
+  else if(atributos[ParsersAttributes::CONFIGURATION]==ParsersAttributes::COMPOSITE_TYPE)
    tipo->definirConfiguracao(Tipo::TIPO_COMPOSTO);
   else
    tipo->definirConfiguracao(Tipo::TIPO_ENUMERACAO);
@@ -3761,13 +3761,13 @@ Tipo *ModeloBD::criarTipo(void)
      elem=ParserXML::obterNomeElemento();
 
      //Operação específica para tipo ENUM
-     if(elem==AtributosParsers::TIPO_ENUM)
+     if(elem==ParsersAttributes::ENUM_TYPE)
      {
       //Obtém o atributo da tag <enumerations>
       ParserXML::obterAtributosElemento(atributos);
       /* Como se trata de uma lista de enumerações separadas por vírgulas
          a mesma será quebrada e transformada num vetor */
-      enums=atributos[AtributosParsers::VALORES].split(",");
+      enums=atributos[ParsersAttributes::VALUES].split(",");
 
       //Adiciona ao tipo todas as enumerações presentes no vetor
       qtd=enums.size();
@@ -3775,7 +3775,7 @@ Tipo *ModeloBD::criarTipo(void)
        tipo->adicionarEnumeracao(enums[i]);
      }
      //Operação específica para tipo COMPOSTO
-     else if(elem==AtributosParsers::PARAMETRO)
+     else if(elem==ParsersAttributes::PARAMETER)
      {
       /* No caso de tipo composto, o mesmo possui indefinida quatidade
          de elementos <parameter> os quais simbolizam os atributos do
@@ -3784,12 +3784,12 @@ Tipo *ModeloBD::criarTipo(void)
       tipo->adicionarAtributo(param);
      }
      //Operação específica para tipo BASE
-     else if(elem==AtributosParsers::TIPO)
+     else if(elem==ParsersAttributes::TYPE)
      {
       tipo_copia=criarTipoPgSQL();
       tipo->definirTipoCopia(tipo_copia);
      }
-     else if(elem==AtributosParsers::FUNCAO)
+     else if(elem==ParsersAttributes::FUNCTION)
      {
       /*No caso de tipo base, serão extraídas referência a funções do modelo,
         as quais serão atribuía � s funções que compoem o tipo base. */
@@ -3797,23 +3797,23 @@ Tipo *ModeloBD::criarTipo(void)
 
       /* Com a assinatura da função obtida di XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      funcao=obterObjeto(atributos[AtributosParsers::ASSINATURA], OBJETO_FUNCAO);
+      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_FUNCAO);
 
       /* Dispara uma exceção caso o tipo de referencia a função seja inválido ou
          se a função referenciada não existe */
-      if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
+      if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                               .arg(QString::fromUtf8(tipo->obterNome()))
                               .arg(tipo->obterNomeTipoObjeto())
-                              .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
+                              .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-      else if(tipo_funcoes.count(atributos[AtributosParsers::TIPO_REFERENCIA])==0)
+      else if(tipo_funcoes.count(atributos[ParsersAttributes::REF_TYPE])==0)
        throw Exception(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       /* Obtém o tipo de configuraçao de função do tipo de acordo com a referência
          da mesma obtida do XML */
-      tipo_func=tipo_funcoes[atributos[AtributosParsers::TIPO_REFERENCIA]];
+      tipo_func=tipo_funcoes[atributos[ParsersAttributes::REF_TYPE]];
 
       //Atribui a função ao tipo na configuração obtida
       tipo->definirFuncao(tipo_func, dynamic_cast<Funcao *>(funcao));
@@ -3865,14 +3865,14 @@ Dominio *ModeloBD::criarDominio(void)
   //Obtém os atributos do domíno
   ParserXML::obterAtributosElemento(atributos);
 
-  if(!atributos[AtributosParsers::RESTRICAO].isEmpty())
-   dominio->definirNomeRestricao(atributos[AtributosParsers::RESTRICAO]);
+  if(!atributos[ParsersAttributes::CONSTRAINT].isEmpty())
+   dominio->definirNomeRestricao(atributos[ParsersAttributes::CONSTRAINT]);
 
-  if(!atributos[AtributosParsers::VALOR_PADRAO].isEmpty())
-   dominio->definirValorPadrao(atributos[AtributosParsers::VALOR_PADRAO]);
+  if(!atributos[ParsersAttributes::DEFAULT_VALUE].isEmpty())
+   dominio->definirValorPadrao(atributos[ParsersAttributes::DEFAULT_VALUE]);
 
-  dominio->definirNaoNulo(atributos[AtributosParsers::NAO_NULO]==
-                            AtributosParsers::VERDADEIRO);
+  dominio->definirNaoNulo(atributos[ParsersAttributes::NOT_NULL]==
+                            ParsersAttributes::_TRUE_);
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
   {
@@ -3886,12 +3886,12 @@ Dominio *ModeloBD::criarDominio(void)
 
      /* Caso o elemento seja um <type>, será extraído do XML
         o tipo ao qual o domínio se aplica */
-     if(elem==AtributosParsers::TIPO)
+     if(elem==ParsersAttributes::TYPE)
      {
       dominio->definirTipo(criarTipoPgSQL());
      }
      //Caso o elemento seja uma expressão
-     else if(elem==AtributosParsers::EXPRESSAO)
+     else if(elem==ParsersAttributes::EXPRESSION)
      {
       /* Para se extraír a expressão, é necessário salvar a posição de navegação
          do parser, pois o conteúdo da mesma é um elemento filho do elemento
@@ -3944,13 +3944,13 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
   //Obtém os atributos do domíno
   ParserXML::obterAtributosElemento(atributos);
 
-  if(atributos[AtributosParsers::TIPO_CONVERSAO]==
-      AtributosParsers::IMPLICITA)
+  if(atributos[ParsersAttributes::CAST_TYPE]==
+      ParsersAttributes::IMPLICIT)
    conv_tipo->definirTipoConversao(ConversaoTipo::CONV_IMPLICITA);
   else
    conv_tipo->definirTipoConversao(ConversaoTipo::CONV_ATRIBUICAO);
 
-  conv_tipo->definirEntradaSaida(atributos[AtributosParsers::CONV_ENTRADA_SAIDA]==AtributosParsers::VERDADEIRO);
+  conv_tipo->definirEntradaSaida(atributos[ParsersAttributes::IO_CAST]==ParsersAttributes::_TRUE_);
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
   {
@@ -3964,7 +3964,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
 
      /* Caso o elemento seja um <type>, será extraído do XML
         o tipo (de origem ou destino) da conversao */
-     if(elem==AtributosParsers::TIPO)
+     if(elem==ParsersAttributes::TYPE)
      {
       tipo=criarTipoPgSQL();
       if(idx_tipo==0)
@@ -3974,7 +3974,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
       idx_tipo++;
      }
      //Extraíndo a função de conversão do XML
-     else if(elem==AtributosParsers::FUNCAO)
+     else if(elem==ParsersAttributes::FUNCTION)
      {
       /*No caso da conversão, será extraída a refeênia �  função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
@@ -3983,14 +3983,14 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      funcao=obterObjeto(atributos[AtributosParsers::ASSINATURA], OBJETO_FUNCAO);
+      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_FUNCAO);
 
       //Dispara uma exceção caso a função referenciada não exista
-      if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
+      if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(conv_tipo->obterNome()))
                              .arg(conv_tipo->obterNomeTipoObjeto())
-                             .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
+                             .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4035,10 +4035,10 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
   ParserXML::obterAtributosElemento(atributos);
 
   conv_codif->definirCodificacao(ConversaoCodificacao::CONV_COD_ORIGEM,
-                                 TipoCodificacao(atributos[AtributosParsers::COD_ORIGEM]));
+                                 TipoCodificacao(atributos[ParsersAttributes::SRC_ENCODING]));
 
   conv_codif->definirCodificacao(ConversaoCodificacao::CONV_COD_DESTINO,
-                                 TipoCodificacao(atributos[AtributosParsers::COD_DESTINO]));
+                                 TipoCodificacao(atributos[ParsersAttributes::DST_ENCODING]));
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
   {
@@ -4050,7 +4050,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
     {
      elem=ParserXML::obterNomeElemento();
 
-     if(elem==AtributosParsers::FUNCAO)
+     if(elem==ParsersAttributes::FUNCTION)
      {
       /*No caso da conversão, será extraída a refeênia �  função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
@@ -4059,14 +4059,14 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      funcao=obterObjeto(atributos[AtributosParsers::ASSINATURA], OBJETO_FUNCAO);
+      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_FUNCAO);
 
       //Dispara uma exceção caso a função referenciada não exista
-      if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
+      if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(conv_codif->obterNome()))
                              .arg(conv_codif->obterNomeTipoObjeto())
-                             .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
+                             .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4114,25 +4114,25 @@ Operador *ModeloBD::criarOperador(void)
   //Obtém os atributos
   ParserXML::obterAtributosElemento(atributos);
 
-  operador->definirMerges(atributos[AtributosParsers::MERGES]==AtributosParsers::VERDADEIRO);
-  operador->definirHashes(atributos[AtributosParsers::HASHES]==AtributosParsers::VERDADEIRO);
+  operador->definirMerges(atributos[ParsersAttributes::MERGES]==ParsersAttributes::_TRUE_);
+  operador->definirHashes(atributos[ParsersAttributes::HASHES]==ParsersAttributes::_TRUE_);
 
   /* O mapa de tipos de função abaixo é usado para se atribuir de forma
       mas simples, sem comparações, a função que for obtida do XML a qual
       o tipo em construção referencia */
-  tipo_funcoes[AtributosParsers::FUNCAO_OPERADOR]=Operador::FUNC_OPERADOR;
-  tipo_funcoes[AtributosParsers::FUNCAO_JUNCAO]=Operador::FUNC_JUNCAO;
-  tipo_funcoes[AtributosParsers::FUNCAO_RESTRICAO]=Operador::FUNC_RESTRICAO;
+  tipo_funcoes[ParsersAttributes::OPERATOR_FUNC]=Operador::FUNC_OPERADOR;
+  tipo_funcoes[ParsersAttributes::JOIN_FUNC]=Operador::FUNC_JUNCAO;
+  tipo_funcoes[ParsersAttributes::RESTRICTION_FUNC]=Operador::FUNC_RESTRICAO;
 
   /* O mapa de tipos de operadores abaixo é usado para se atribuir de forma
       mais simples, sem comparações, o operador que for obtida do XML a qual
       o operador em construção referencia */
-  tipo_operadores[AtributosParsers::OP_COMUTACAO]=Operador::OPER_COMUTACAO;
-  tipo_operadores[AtributosParsers::OP_MAIOR]=Operador::OPER_MAIOR;
-  tipo_operadores[AtributosParsers::OP_MENOR]=Operador::OPER_MENOR;
-  tipo_operadores[AtributosParsers::OP_NEGACAO]=Operador::OPER_NEGACAO;
-  tipo_operadores[AtributosParsers::OP_ORDENACAO]=Operador::OPER_ORDENACAO1;
-  tipo_operadores[AtributosParsers::OP_ORDENACAO2]=Operador::OPER_ORDENACAO2;
+  tipo_operadores[ParsersAttributes::COMMUTATOR_OP]=Operador::OPER_COMUTACAO;
+  tipo_operadores[ParsersAttributes::GREATER_OP]=Operador::OPER_MAIOR;
+  tipo_operadores[ParsersAttributes::LESS_OP]=Operador::OPER_MENOR;
+  tipo_operadores[ParsersAttributes::NEGATOR_OP]=Operador::OPER_NEGACAO;
+  tipo_operadores[ParsersAttributes::SORT_OP]=Operador::OPER_ORDENACAO1;
+  tipo_operadores[ParsersAttributes::SORT2_OP]=Operador::OPER_ORDENACAO2;
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
   {
@@ -4151,30 +4151,30 @@ Operador *ModeloBD::criarOperador(void)
 
       /* Com a assinatura do operador obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      oper_aux=obterObjeto(atributos[AtributosParsers::ASSINATURA], OBJETO_OPERADOR);
+      oper_aux=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_OPERADOR);
 
       //Dispara uma exceção caso o operador referenciado não exista
-      if(!oper_aux && !atributos[AtributosParsers::ASSINATURA].isEmpty())
+      if(!oper_aux && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(operador->obterAssinatura(true)))
                              .arg(operador->obterNomeTipoObjeto())
-                             .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
+                             .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_OPERADOR)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       /* Obtém o tipo de configuraçao de função do tipo de acordo com a referência
          da mesma obtida do XML */
-      tipo_oper=tipo_operadores[atributos[AtributosParsers::TIPO_REFERENCIA]];
+      tipo_oper=tipo_operadores[atributos[ParsersAttributes::REF_TYPE]];
       operador->definirOperador(dynamic_cast<Operador *>(oper_aux),tipo_oper);
      }
-     else if(elem==AtributosParsers::TIPO)
+     else if(elem==ParsersAttributes::TYPE)
      {
       /* Obtém os atributos do tipo para saber se o mesmo é um tipo da
          esquerda ou da direita */
       ParserXML::obterAtributosElemento(atributos);
 
       //Obtém o tipo de referência do tipo base (esquerda ou direita)
-      if(atributos[AtributosParsers::TIPO_REFERENCIA]!=AtributosParsers::TIPO_DIRETA)
+      if(atributos[ParsersAttributes::REF_TYPE]!=ParsersAttributes::RIGHT_TYPE)
        tipo_arg=Operador::ARG_ESQUERDA;
       else
        tipo_arg=Operador::ARG_DIREITA;
@@ -4182,7 +4182,7 @@ Operador *ModeloBD::criarOperador(void)
       tipo=criarTipoPgSQL();
       operador->definirTipoDadoArgumento(tipo, tipo_arg);
      }
-     else if(elem==AtributosParsers::FUNCAO)
+     else if(elem==ParsersAttributes::FUNCTION)
      {
       /*No caso do operador, será extraída a refer�nca �  função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
@@ -4191,20 +4191,20 @@ Operador *ModeloBD::criarOperador(void)
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      funcao=obterObjeto(atributos[AtributosParsers::ASSINATURA], OBJETO_FUNCAO);
+      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_FUNCAO);
 
       //Dispara uma exceção caso a função referenciada não exista
-      if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
+      if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(operador->obterNome()))
                              .arg(operador->obterNomeTipoObjeto())
-                             .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
+                             .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       /* Obtém o tipo de configuraçao de função do tipo de acordo com a referência
          da mesma obtida do XML */
-      tipo_func=tipo_funcoes[atributos[AtributosParsers::TIPO_REFERENCIA]];
+      tipo_func=tipo_funcoes[atributos[ParsersAttributes::REF_TYPE]];
 
       //Atribui a função ao tipo na configuração obtida
       operador->definirFuncao(dynamic_cast<Funcao *>(funcao), tipo_func);
@@ -4250,12 +4250,12 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
   //Obtém os atributos
   ParserXML::obterAtributosElemento(atributos);
 
-  classe_op->definirTipoIndexacao(TipoIndexacao(atributos[AtributosParsers::TIPO_INDEXACAO]));
-  classe_op->definirPadrao(atributos[AtributosParsers::PADRAO]==AtributosParsers::VERDADEIRO);
+  classe_op->definirTipoIndexacao(TipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]));
+  classe_op->definirPadrao(atributos[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
 
-  tipos_elem[AtributosParsers::FUNCAO]=ElemClasseOperadores::ELEM_FUNCAO;
-  tipos_elem[AtributosParsers::OPERADOR]=ElemClasseOperadores::ELEM_OPERADOR;
-  tipos_elem[AtributosParsers::ARMAZENAMENTO]=ElemClasseOperadores::ELEM_ARMAZENAMENTO;
+  tipos_elem[ParsersAttributes::FUNCTION]=ElemClasseOperadores::ELEM_FUNCAO;
+  tipos_elem[ParsersAttributes::OPERATOR]=ElemClasseOperadores::ELEM_OPERADOR;
+  tipos_elem[ParsersAttributes::STORAGE]=ElemClasseOperadores::ELEM_ARMAZENAMENTO;
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
   {
@@ -4274,33 +4274,33 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
 
       /* Com o nome da família do operador obtida do XML, a mesma será buscada no modelo, para
          saber se existe um objeto correspondente */
-      objeto=obterObjeto(atributos[AtributosParsers::NOME], OBJETO_FAMILIA_OPER);
+      objeto=obterObjeto(atributos[ParsersAttributes::NAME], OBJETO_FAMILIA_OPER);
 
       //Dispara uma exceção caso o operador referenciado não exista
-      if(!objeto && !atributos[AtributosParsers::NOME].isEmpty())
+      if(!objeto && !atributos[ParsersAttributes::NAME].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(classe_op->obterNome()))
                              .arg(classe_op->obterNomeTipoObjeto())
-                             .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
+                             .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FAMILIA_OPER)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       classe_op->definirFamilia(dynamic_cast<FamiliaOperadores *>(objeto));
      }
-     else if(elem==AtributosParsers::TIPO)
+     else if(elem==ParsersAttributes::TYPE)
      {
       //Obtém os atributos do tipo
       ParserXML::obterAtributosElemento(atributos);
       tipo=criarTipoPgSQL();
       classe_op->definirTipoDado(tipo);
      }
-     else if(elem==AtributosParsers::ELEMENTO)
+     else if(elem==ParsersAttributes::ELEMENT)
      {
       ParserXML::obterAtributosElemento(atributos);
 
-      rechecar=atributos[AtributosParsers::RECHECAR]==AtributosParsers::VERDADEIRO;
-      num_estrategia=atributos[AtributosParsers::NUM_ESTRATEGIA].toUInt();
-      tp_elem=tipos_elem[atributos[AtributosParsers::TIPO]];
+      rechecar=atributos[ParsersAttributes::RECHECK]==ParsersAttributes::_TRUE_;
+      num_estrategia=atributos[ParsersAttributes::STRATEGY_NUM].toUInt();
+      tp_elem=tipos_elem[atributos[ParsersAttributes::TYPE]];
 
       ParserXML::salvarPosicao();
       ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
@@ -4313,12 +4313,12 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
       }
       else if(tp_elem==ElemClasseOperadores::ELEM_FUNCAO)
       {
-       objeto=obterObjeto(atributos[AtributosParsers::ASSINATURA],OBJETO_FUNCAO);
+       objeto=obterObjeto(atributos[ParsersAttributes::SIGNATURE],OBJETO_FUNCAO);
        elem_classe.definirFuncao(dynamic_cast<Funcao *>(objeto),num_estrategia);
       }
       else if(tp_elem==ElemClasseOperadores::ELEM_OPERADOR)
       {
-       objeto=obterObjeto(atributos[AtributosParsers::ASSINATURA],OBJETO_OPERADOR);
+       objeto=obterObjeto(atributos[ParsersAttributes::SIGNATURE],OBJETO_OPERADOR);
        elem_classe.definirOperador(dynamic_cast<Operador *>(objeto),num_estrategia,rechecar);
       }
 
@@ -4359,7 +4359,7 @@ FamiliaOperadores *ModeloBD::criarFamiliaOperadores(void)
   ParserXML::obterAtributosElemento(atributos);
 
   //Definindo os valores de atributos básicos do objeto
-  familia_op->definirTipoIndexacao(TipoIndexacao(atributos[AtributosParsers::TIPO_INDEXACAO]));
+  familia_op->definirTipoIndexacao(TipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]));
  }
  catch(Exception &e)
  {
@@ -4393,7 +4393,7 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
 
   //Obtém os atributos
   ParserXML::obterAtributosElemento(atributos);
-  func_agreg->definirCondicaoInicial(atributos[AtributosParsers::COND_INICIAL]);
+  func_agreg->definirCondicaoInicial(atributos[ParsersAttributes::INITIAL_COND]);
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
   {
@@ -4405,38 +4405,38 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
     {
      elem=ParserXML::obterNomeElemento();
 
-     if(elem==AtributosParsers::TIPO)
+     if(elem==ParsersAttributes::TYPE)
      {
       //Obtém os atributos do tipo
       ParserXML::obterAtributosElemento(atributos);
       tipo=criarTipoPgSQL();
 
       //Define o tipo   função agregada de acordo com o tipo de referência do mesmo
-      if(atributos[AtributosParsers::TIPO_REFERENCIA]==
-          AtributosParsers::TIPO_ESTADO)
+      if(atributos[ParsersAttributes::REF_TYPE]==
+          ParsersAttributes::STATE_TYPE)
        func_agreg->definirTipoEstado(tipo);
       else
        func_agreg->adicionarTipoDado(tipo);
      }
-     else if(elem==AtributosParsers::FUNCAO)
+     else if(elem==ParsersAttributes::FUNCTION)
      {
       ParserXML::obterAtributosElemento(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      funcao=obterObjeto(atributos[AtributosParsers::ASSINATURA], OBJETO_FUNCAO);
+      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_FUNCAO);
 
       //Dispara uma exceção caso a função referenciada não exista
-      if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
+      if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(func_agreg->obterNome()))
                              .arg(func_agreg->obterNomeTipoObjeto())
-                             .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
+                             .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Define a função de acordo com o tipo de referência da mesma
-      if(atributos[AtributosParsers::TIPO_REFERENCIA]==AtributosParsers::FUNCAO_TRANSICAO)
+      if(atributos[ParsersAttributes::REF_TYPE]==ParsersAttributes::TRANSITION_FUNC)
        func_agreg->definirFuncao(FuncaoAgregacao::FUNCAO_TRANSICAO,
                                  dynamic_cast<Funcao *>(funcao));
       else
@@ -4479,7 +4479,7 @@ Tabela *ModeloBD::criarTabela(void)
 
   //Obtém os atributos
   ParserXML::obterAtributosElemento(atributos);
-  tabela->definirAceitaOids(atributos[AtributosParsers::OIDS]==AtributosParsers::VERDADEIRO);
+  tabela->definirAceitaOids(atributos[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
   {
@@ -4544,8 +4544,8 @@ Coluna *ModeloBD::criarColuna(void)
 
   //Obtém os atributos do elemento
   ParserXML::obterAtributosElemento(atributos);
-  coluna->definirNaoNulo(atributos[AtributosParsers::NAO_NULO]==AtributosParsers::VERDADEIRO);
-  coluna->definirValorPadrao(atributos[AtributosParsers::VALOR_PADRAO]);
+  coluna->definirNaoNulo(atributos[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
+  coluna->definirValorPadrao(atributos[ParsersAttributes::DEFAULT_VALUE]);
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
   {
@@ -4557,7 +4557,7 @@ Coluna *ModeloBD::criarColuna(void)
     {
      elem=ParserXML::obterNomeElemento();
 
-     if(elem==AtributosParsers::TIPO)
+     if(elem==ParsersAttributes::TYPE)
      {
       coluna->definirTipo(criarTipoPgSQL());
      }
@@ -4619,7 +4619,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
   else
   {
    tipo_objeto=OBJETO_TABELA;
-   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[AtributosParsers::TABELA], OBJETO_TABELA));
+   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJETO_TABELA));
    ins_rest_tabela=true;
    /* Caso a tabela a qual possua a restição não for encontrada uma exceção será disparada pois
       não se pode criar uma restrição sem que esta seja atribuida a uma tabela, neste caso. */
@@ -4627,9 +4627,9 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
    {
     //Configura os argumentos da mensagem de erro
     str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
-          .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
+          .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RESTRICAO))
-          .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]))
+          .arg(QString::fromUtf8(atributos[ParsersAttributes::TABLE]))
           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
     //Dispara a exceção
     throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4640,18 +4640,18 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
   restricao->definirTabelaPai(tabela);
 
   //Configurando o tipo da restrição
-  if(atributos[AtributosParsers::TIPO]==AtributosParsers::REST_CK)
+  if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::CK_CONSTR)
    tipo_rest=TipoRestricao::check;
-  else if(atributos[AtributosParsers::TIPO]==AtributosParsers::REST_PK)
+  else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::PK_CONSTR)
    tipo_rest=TipoRestricao::primary_key;
-  else if(atributos[AtributosParsers::TIPO]==AtributosParsers::REST_FK)
+  else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::FK_CONSTR)
    tipo_rest=TipoRestricao::foreign_key;
   else
    tipo_rest=TipoRestricao::unique;
 
   restricao->definirTipo(tipo_rest);
-  if(!atributos[AtributosParsers::FATOR].isEmpty())
-   restricao->definirFatorPreenchimento(atributos[AtributosParsers::FATOR].toUInt());
+  if(!atributos[ParsersAttributes::FACTOR].isEmpty())
+   restricao->definirFatorPreenchimento(atributos[ParsersAttributes::FACTOR].toUInt());
   definirAtributosBasicos(restricao);
 
   /* Caso o tipo de restrição seja uma chave primária uma verificação importante
@@ -4701,28 +4701,28 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
   if(tipo_rest==TipoRestricao::foreign_key /*&& tipo_objeto==OBJETO_TABELA*/)
   {
    //Define se a restrição é postergavel (apenas para chaves estrangeiras)
-   postergavel=(atributos[AtributosParsers::POSTERGAVEL]==AtributosParsers::VERDADEIRO);
+   postergavel=(atributos[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
    restricao->definirPostergavel(postergavel);
 
-   if(postergavel && !atributos[AtributosParsers::TIPO_POSTERGACAO].isEmpty())
-    restricao->definirTipoPostergacao(atributos[AtributosParsers::TIPO_POSTERGACAO]);
+   if(postergavel && !atributos[ParsersAttributes::DEFER_TYPE].isEmpty())
+    restricao->definirTipoPostergacao(atributos[ParsersAttributes::DEFER_TYPE]);
 
-   if(!atributos[AtributosParsers::TIPO_COMPARACAO].isEmpty())
-    restricao->definirTipoComparacao(atributos[AtributosParsers::TIPO_COMPARACAO]);
+   if(!atributos[ParsersAttributes::COMPARISON_TYPE].isEmpty())
+    restricao->definirTipoComparacao(atributos[ParsersAttributes::COMPARISON_TYPE]);
 
    //Definindo os tipos de ação nos eventos DELETE e UPDATE
-   if(!atributos[AtributosParsers::ACAO_DELETE].isEmpty())
-    restricao->definirTipoAcao(atributos[AtributosParsers::ACAO_DELETE], false);
+   if(!atributos[ParsersAttributes::DEL_ACTION].isEmpty())
+    restricao->definirTipoAcao(atributos[ParsersAttributes::DEL_ACTION], false);
 
-   if(!atributos[AtributosParsers::ACAO_UPDATE].isEmpty())
-    restricao->definirTipoAcao(atributos[AtributosParsers::ACAO_UPDATE], true);
+   if(!atributos[ParsersAttributes::UPD_ACTION].isEmpty())
+    restricao->definirTipoAcao(atributos[ParsersAttributes::UPD_ACTION], true);
 
    //Obtém a tabela referenciada na chave estrangeira
-   tabela_ref=obterObjeto(atributos[AtributosParsers::TABELA_REF], OBJETO_TABELA);
+   tabela_ref=obterObjeto(atributos[ParsersAttributes::REF_TABLE], OBJETO_TABELA);
 
    /* Caso a tabela referenciada não seja encontrada verifica se esta não é a própria
       tabela a qual receberá a restrição (usado para auto-relacionamentos) */
-   if(!tabela_ref && tabela->obterNome(true)==atributos[AtributosParsers::TABELA_REF])
+   if(!tabela_ref && tabela->obterNome(true)==atributos[ParsersAttributes::REF_TABLE])
     tabela_ref=tabela;
 
    /* Caso a tabela referenciada não foi encontrada uma exceção será disparada pois
@@ -4733,7 +4733,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
     str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
           .arg(QString::fromUtf8(restricao->obterNome()))
           .arg(restricao->obterNomeTipoObjeto())
-          .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA_REF]))
+          .arg(QString::fromUtf8(atributos[ParsersAttributes::REF_TABLE]))
           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
     //Dispara a exceção
     throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4753,7 +4753,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
     {
      elem=ParserXML::obterNomeElemento();
 
-     if(elem==AtributosParsers::EXPRESSAO)
+     if(elem==ParsersAttributes::EXPRESSION)
      {
       ParserXML::salvarPosicao();
       //Acessa o elemento filho o qual contém o conteúdo da expressão ou condição
@@ -4762,7 +4762,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
       restricao->definirExpChecagem(ParserXML::obterConteudoElemento());
       ParserXML::restaurarPosicao();
      }
-     else if(elem==AtributosParsers::COLUNAS)
+     else if(elem==ParsersAttributes::COLUMNS)
      {
       //Obtém os atributos da tag <columns>
       ParserXML::obterAtributosElemento(atributos);
@@ -4771,12 +4771,12 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
          colocando seus nomes em um vetor pois os mesmos estão
          unidos por vírgula, neste caso o método split é usado
          para fazer a divisão */
-      lista_cols=atributos[AtributosParsers::NOMES].split(',');
+      lista_cols=atributos[ParsersAttributes::NAMES].split(',');
       qtd=lista_cols.count();
 
       /* Obtém o tipo de referência das colunas de acordo com o atributo
          tipo de referência vindo do XML */
-      if(atributos[AtributosParsers::TIPO_REFERENCIA]==AtributosParsers::COLUNAS_ORIGEM)
+      if(atributos[ParsersAttributes::REF_TYPE]==ParsersAttributes::SRC_COLUMNS)
        tipo_coluna=Restricao::COLUNA_ORIGEM;
       else
        tipo_coluna=Restricao::COLUNA_REFER;
@@ -4864,16 +4864,16 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
   if(!tabela)
   {
    inc_ind_tabela=true;
-   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[AtributosParsers::TABELA], OBJETO_TABELA));
+   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJETO_TABELA));
    /* Caso a tabela a qual possua a restição não for encontrada uma exceção será disparada pois
       não se pode criar uma restrição sem que esta seja atribuida a uma tabela, neste caso. */
    if(!tabela)
    {
     //Configura os argumentos da mensagem de erro
     str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
-          .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
+          .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_INDICE))
-          .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]))
+          .arg(QString::fromUtf8(atributos[ParsersAttributes::TABLE]))
           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
     //Dispara a exceção
     throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4883,12 +4883,12 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
   indice=new Indice;
   definirAtributosBasicos(indice);
   indice->definirTabelaPai(tabela);
-  indice->definirAtributo(Indice::CONCORRENTE, atributos[AtributosParsers::CONCORRENTE]==AtributosParsers::VERDADEIRO);
-  indice->definirAtributo(Indice::UNIQUE, atributos[AtributosParsers::UNIQUE]==AtributosParsers::VERDADEIRO);
-  indice->definirAtributo(Indice::ATUAL_RAPIDA, atributos[AtributosParsers::ATUAL_RAPIDA]==AtributosParsers::VERDADEIRO);
+  indice->definirAtributo(Indice::CONCORRENTE, atributos[ParsersAttributes::CONCURRENT]==ParsersAttributes::_TRUE_);
+  indice->definirAtributo(Indice::UNIQUE, atributos[ParsersAttributes::UNIQUE]==ParsersAttributes::_TRUE_);
+  indice->definirAtributo(Indice::ATUAL_RAPIDA, atributos[ParsersAttributes::ATUAL_RAPIDA]==ParsersAttributes::_TRUE_);
 
-  indice->definirTipoIndexacao(atributos[AtributosParsers::TIPO_INDEXACAO]);
-  indice->definirFatorPreenchimento(atributos[AtributosParsers::FATOR].toUInt());
+  indice->definirTipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]);
+  indice->definirFatorPreenchimento(atributos[ParsersAttributes::FACTOR].toUInt());
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
   {
@@ -4903,10 +4903,10 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
      /* Caso o elemento atual for do tipo <idxelement> indica que
         os elementos filhos que podem ser extraídos são
         <column>, <expression> ou <opclass> */
-     if(elem==AtributosParsers::ELEMENTO_INDICE)
+     if(elem==ParsersAttributes::ELEMENTO_INDICE)
      {
-      nulos_primeiro=(atributos[AtributosParsers::NULOS_PRIMEIRO]==AtributosParsers::VERDADEIRO);
-      ordem_asc=(atributos[AtributosParsers::ORDEM_ASCENDENTE]==AtributosParsers::VERDADEIRO);
+      nulos_primeiro=(atributos[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
+      ordem_asc=(atributos[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
 
       ParserXML::salvarPosicao();
       ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
@@ -4918,10 +4918,10 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
        if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
        {
         //Caso o elemento atual seja um  <opclass>
-        if(elem==AtributosParsers::CLASSE_OPERADORES)
+        if(elem==ParsersAttributes::OP_CLASS)
         {
          ParserXML::obterAtributosElemento(atributos);
-         classe_oper=dynamic_cast<ClasseOperadores *>(obterObjeto(atributos[AtributosParsers::NOME], OBJETO_CLASSE_OPER));
+         classe_oper=dynamic_cast<ClasseOperadores *>(obterObjeto(atributos[ParsersAttributes::NAME], OBJETO_CLASSE_OPER));
 
          //Caso o índice esteja referenciando uma classe de operadores inexistente
          if(!classe_oper)
@@ -4930,26 +4930,26 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
           str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
                           .arg(QString::fromUtf8(indice->obterNome()))
                           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_INDICE))
-                          .arg(QString::fromUtf8(atributos[AtributosParsers::CLASSE_OPERADORES]))
+                          .arg(QString::fromUtf8(atributos[ParsersAttributes::OP_CLASS]))
                           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CLASSE_OPER));
           //Dispara a exceção
           throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
          }
         }
         //Caso o elemento atual seja um  <column>
-        else if(elem==AtributosParsers::COLUNA)
+        else if(elem==ParsersAttributes::COLUMN)
         {
          //Obtém a coluna que o elemento referencia
          ParserXML::obterAtributosElemento(atributos);
-         coluna=tabela->obterColuna(atributos[AtributosParsers::NOME]);
+         coluna=tabela->obterColuna(atributos[ParsersAttributes::NAME]);
 
          /* Caso a coluna não exista tenta obtê-la novamente porém referenciando
             seu nome antigo */
          if(!coluna)
-          coluna=tabela->obterColuna(atributos[AtributosParsers::NOME], true);
+          coluna=tabela->obterColuna(atributos[ParsersAttributes::NAME], true);
         }
         //Caso o elemento atual seja um  <expression>
-        else if(elem==AtributosParsers::EXPRESSAO)
+        else if(elem==ParsersAttributes::EXPRESSION)
         {
          ParserXML::salvarPosicao();
          //Acessa o elemento filho o qual contém o conteúdo da expressão
@@ -4968,7 +4968,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
 
       ParserXML::restaurarPosicao();
      }
-     else if(elem==AtributosParsers::CONDICAO)
+     else if(elem==ParsersAttributes::CONDITION)
      {
       ParserXML::salvarPosicao();
       //Acessa o elemento filho o qual contém o conteúdo da expressão ou condição
@@ -5018,8 +5018,8 @@ Regra *ModeloBD::criarRegra(void)
 
   //Obtém os atributos do elemento
   ParserXML::obterAtributosElemento(atributos);
-  regra->definirTipoExecucao(atributos[AtributosParsers::TIPO_EXECUCAO]);
-  regra->definirTipoEvento(atributos[AtributosParsers::TIPO_EVENTO]);
+  regra->definirTipoExecucao(atributos[ParsersAttributes::EXEC_TYPE]);
+  regra->definirTipoEvento(atributos[ParsersAttributes::EVENT_TYPE]);
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
   {
@@ -5031,8 +5031,8 @@ Regra *ModeloBD::criarRegra(void)
     {
      elem=ParserXML::obterNomeElemento();
 
-     if(elem==AtributosParsers::COMANDOS ||
-        elem==AtributosParsers::CONDICAO)
+     if(elem==ParsersAttributes::COMMANDS ||
+        elem==ParsersAttributes::CONDITION)
      {
       ParserXML::salvarPosicao();
       //Acessa o elemento filho o qual contém o conteúdo da condição ou comandos
@@ -5041,7 +5041,7 @@ Regra *ModeloBD::criarRegra(void)
       str_aux=ParserXML::obterConteudoElemento();
       ParserXML::restaurarPosicao();
 
-      if(elem==AtributosParsers::COMANDOS)
+      if(elem==ParsersAttributes::COMMANDS)
       {
        /* A lista de comandos é quebrada por ; e os comandos
           inseridos um a um na regra */
@@ -5092,17 +5092,17 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
   //Obtém os atributos do elemento
   ParserXML::obterAtributosElemento(atributos);
 
-  if(!tabela && atributos[AtributosParsers::TABELA].isEmpty())
+  if(!tabela && atributos[ParsersAttributes::TABLE].isEmpty())
    throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-  else if(!tabela && !atributos[AtributosParsers::TABELA].isEmpty())
+  else if(!tabela && !atributos[ParsersAttributes::TABLE].isEmpty())
   {
    inc_gat_tabela=true;
-   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[AtributosParsers::TABELA], OBJETO_TABELA));
+   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJETO_TABELA));
    if(!tabela)
     throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
-                  .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
+                  .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
                   .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_GATILHO))
-                  .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]))
+                  .arg(QString::fromUtf8(atributos[ParsersAttributes::TABLE]))
                   .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA)),
                   ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -5114,34 +5114,34 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
 
   //Marcando os eventos de execução do gatilho
   gatilho->definirEvento(TipoEvento::on_insert,
-                        (atributos[AtributosParsers::EVENTO_INS]==
-                         AtributosParsers::VERDADEIRO));
+                        (atributos[ParsersAttributes::INS_EVENT]==
+                         ParsersAttributes::_TRUE_));
 
   gatilho->definirEvento(TipoEvento::on_delete,
-                        (atributos[AtributosParsers::EVENTO_DEL]==
-                         AtributosParsers::VERDADEIRO));
+                        (atributos[ParsersAttributes::DEL_EVENT]==
+                         ParsersAttributes::_TRUE_));
 
   gatilho->definirEvento(TipoEvento::on_update,
-                        (atributos[AtributosParsers::EVENTO_UPD]==
-                         AtributosParsers::VERDADEIRO));
+                        (atributos[ParsersAttributes::UPD_EVENT]==
+                         ParsersAttributes::_TRUE_));
 
   gatilho->definirEvento(TipoEvento::on_truncate,
-                        (atributos[AtributosParsers::EVENTO_TRUNC]==
-                         AtributosParsers::VERDADEIRO));
+                        (atributos[ParsersAttributes::TRUNC_EVENT]==
+                         ParsersAttributes::_TRUE_));
 
   //Marcando e o gatilho é executado por linha ou não
-  gatilho->executarPorLinha(atributos[AtributosParsers::POR_LINHA]==
-                            AtributosParsers::VERDADEIRO);
+  gatilho->executarPorLinha(atributos[ParsersAttributes::PER_LINE]==
+                            ParsersAttributes::_TRUE_);
 
   //Define o modo de disparo do gatilho
-  gatilho->definirTipoDisparo(TipoDisparo(atributos[AtributosParsers::TIPO_DISPARO]));
+  gatilho->definirTipoDisparo(TipoDisparo(atributos[ParsersAttributes::FIRING_TYPE]));
 
 
   /* Atribuindo os argumentos vindo do XML ao gatilho.
      No XML os argumentos estão separados por vírgula,
      sendo assim o método split é usado para quebrar a
      string de argumentos e atribui-los ao objeto */
-  lista_aux=atributos[AtributosParsers::ARGUMENTOS].split(',');
+  lista_aux=atributos[ParsersAttributes::ARGUMENTS].split(',');
   qtd=lista_aux.count();
   for(i=0; i < qtd; i++)
   {
@@ -5150,13 +5150,13 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
   }
 
   //Caso o objeto alocado seja um gatilho
-  gatilho->definirPostergavel(atributos[AtributosParsers::POSTERGAVEL]==
-                              AtributosParsers::VERDADEIRO);
+  gatilho->definirPostergavel(atributos[ParsersAttributes::DEFERRABLE]==
+                              ParsersAttributes::_TRUE_);
   if(gatilho->gatilhoPostergavel())
-    gatilho->definirTipoPostergacao(atributos[AtributosParsers::TIPO_POSTERGACAO]);
+    gatilho->definirTipoPostergacao(atributos[ParsersAttributes::DEFER_TYPE]);
 
   //Obtém a tabela referenciada no gatilho
-  tabela_ref=obterObjeto(atributos[AtributosParsers::TABELA_REF], OBJETO_TABELA);
+  tabela_ref=obterObjeto(atributos[ParsersAttributes::REF_TABLE], OBJETO_TABELA);
   gatilho->definirTabReferenciada(tabela_ref);
 
   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
@@ -5169,21 +5169,21 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
     {
      elem=ParserXML::obterNomeElemento();
 
-     if(elem==AtributosParsers::FUNCAO)
+     if(elem==ParsersAttributes::FUNCTION)
      {
       ParserXML::obterAtributosElemento(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      funcao=obterObjeto(atributos[AtributosParsers::ASSINATURA], OBJETO_FUNCAO);
+      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_FUNCAO);
 
       //Dispara uma exceção caso a função referenciada não exista
-      if(!funcao && !atributos[AtributosParsers::ASSINATURA].isEmpty())
+      if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
       {
        str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
                .arg(QString::fromUtf8(gatilho->obterNome()))
                .arg(gatilho->obterNomeTipoObjeto())
-               .arg(QString::fromUtf8(atributos[AtributosParsers::ASSINATURA]))
+               .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO));
 
        //Dispara a exceção
@@ -5193,7 +5193,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
       //Define a função executada pelo gatilho
       gatilho->definirFuncao(dynamic_cast<Funcao *>(funcao));
      }
-     else if(elem==AtributosParsers::CONDICAO)
+     else if(elem==ParsersAttributes::CONDITION)
      {
       ParserXML::salvarPosicao();
       //Acessa o elemento filho o qual contém o conteúdo da expressão ou condição
@@ -5202,7 +5202,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
       ParserXML::restaurarPosicao();
       gatilho->definirCondicao(str_aux);
      }
-     else if(elem==AtributosParsers::COLUNAS)
+     else if(elem==ParsersAttributes::COLUMNS)
      {
       //Obtém os atributos da tag <columns>
       ParserXML::obterAtributosElemento(atributos);
@@ -5211,7 +5211,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
          colocando seus nomes em um vetor pois os mesmos estão
          unidos por vírgula, neste caso o método split é usado
          para fazer a divisão */
-      lista_aux=atributos[AtributosParsers::NOMES].split(',');
+      lista_aux=atributos[ParsersAttributes::NAMES].split(',');
       qtd=lista_aux.count();
 
       for(i=0; i < qtd; i++)
@@ -5268,18 +5268,18 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
 
   //Obtém os atributos do elemento
   ParserXML::obterAtributosElemento(atributos);
-  sequencia->definirValores(atributos[AtributosParsers::VALOR_MINIMO],
-                            atributos[AtributosParsers::VALOR_MAXIMO],
-                            atributos[AtributosParsers::INCREMENTO],
-                            atributos[AtributosParsers::INICIO],
-                            atributos[AtributosParsers::CACHE]);
-  sequencia->definirCiclica(atributos[AtributosParsers::CICLICA]==AtributosParsers::VERDADEIRO);
+  sequencia->definirValores(atributos[ParsersAttributes::MIN_VALUE],
+                            atributos[ParsersAttributes::MAX_VALUE],
+                            atributos[ParsersAttributes::INCREMENT],
+                            atributos[ParsersAttributes::START],
+                            atributos[ParsersAttributes::CACHE]);
+  sequencia->definirCiclica(atributos[ParsersAttributes::CYCLE]==ParsersAttributes::_TRUE_);
 
   //Caso o atributo de coluna possuidora da sequencia esteja preenchido
-  if(!atributos[AtributosParsers::POSSUIDORA].isEmpty())
+  if(!atributos[ParsersAttributes::OWNER_COLUMN].isEmpty())
   {
    //Quebra o valor do atributo por .
-   lista_elem=atributos[AtributosParsers::POSSUIDORA].split('.');
+   lista_elem=atributos[ParsersAttributes::OWNER_COLUMN].split('.');
    qtd=lista_elem.count();
 
    /* Caso a lista de nomes gerada possua 3 elementos indica
@@ -5372,17 +5372,17 @@ Visao *ModeloBD::criarVisao(void)
     {
      elem=ParserXML::obterNomeElemento();
 
-     if(elem==AtributosParsers::REFERENCIA)
+     if(elem==ParsersAttributes::REFERENCE)
      {
       //Obtém os atributos da referência
       ParserXML::obterAtributosElemento(atributos);
 
       /* Caso o nome da tabela referenciada esteja preenchido,
          tentar criar uma referência específica a uma tabela/coluna */
-      if(!atributos[AtributosParsers::TABELA].isEmpty())
+      if(!atributos[ParsersAttributes::TABLE].isEmpty())
       {
        coluna=NULL;
-       tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[AtributosParsers::TABELA], OBJETO_TABELA));
+       tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJETO_TABELA));
 
        //Dispara uma exceção caso a tabela referenciada não exista
        if(!tabela)
@@ -5390,21 +5390,21 @@ Visao *ModeloBD::criarVisao(void)
         str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
                         .arg(QString::fromUtf8(visao->obterNome()))
                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_VISAO))
-                        .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]))
+                        .arg(QString::fromUtf8(atributos[ParsersAttributes::TABLE]))
                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
 
         //Dispara a exceção
         throw Exception(str_aux,ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
 
-       if(!atributos[AtributosParsers::COLUNA].isEmpty())
+       if(!atributos[ParsersAttributes::COLUMN].isEmpty())
        {
         //Tenta obter a colna referenciada da tabela
-        coluna=tabela->obterColuna(atributos[AtributosParsers::COLUNA]);
+        coluna=tabela->obterColuna(atributos[ParsersAttributes::COLUMN]);
 
         //Caso a coluna não exista tenta obtê-la referenciando o nome antigo da mesma
         if(!coluna)
-         coluna=tabela->obterColuna(atributos[AtributosParsers::COLUNA], true);
+         coluna=tabela->obterColuna(atributos[ParsersAttributes::COLUMN], true);
 
         /* Caso o atributo coluna da referencia esteja preenchido mas um objeto coluna
            não foi encontrado na tabela, uma exceção será disparada pois a visão está
@@ -5414,8 +5414,8 @@ Visao *ModeloBD::criarVisao(void)
           str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
                           .arg(QString::fromUtf8(visao->obterNome()))
                           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_VISAO))
-                          .arg(QString::fromUtf8(atributos[AtributosParsers::TABELA]) + "." +
-                               QString::fromUtf8(atributos[AtributosParsers::COLUNA]))
+                          .arg(QString::fromUtf8(atributos[ParsersAttributes::TABLE]) + "." +
+                               QString::fromUtf8(atributos[ParsersAttributes::COLUMN]))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_COLUNA));
 
           //Dispara a exceção
@@ -5425,15 +5425,15 @@ Visao *ModeloBD::criarVisao(void)
 
        //Adiciona a referência configurad�  lista temporária de referências
        vet_refs.push_back(Referencia(tabela, coluna,
-                                     atributos[AtributosParsers::ALIAS],
-                                     atributos[AtributosParsers::ALIAS_COLUNA]));
+                                     atributos[ParsersAttributes::ALIAS],
+                                     atributos[ParsersAttributes::COLUMN_ALIAS]));
       }
       //Extraindo uma referênci�  uma expressão
       else
       {
        ParserXML::salvarPosicao();
        //Armazena o alias da expressão
-       str_aux=atributos[AtributosParsers::ALIAS];
+       str_aux=atributos[ParsersAttributes::ALIAS];
 
        //Acessa e obtém o conteúdo da expressão
        ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
@@ -5446,15 +5446,15 @@ Visao *ModeloBD::criarVisao(void)
      /* Extraindo as expressões as quais formam as partes da declaração da visão,
         ou seja, expressões e referências as quais estão entre SELECT-FROM,
         FROM-WHERE */
-     else if(elem==AtributosParsers::EXPRESSAO)
+     else if(elem==ParsersAttributes::EXPRESSION)
      {
       ParserXML::salvarPosicao();
       ParserXML::obterAtributosElemento(atributos);
 
       //Armazena o alias da expressão
-      if(atributos[AtributosParsers::TIPO]==AtributosParsers::EXP_SELECT)
+      if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::SELECT_EXP)
        tipo=Referencia::SQL_REFER_SELECT;
-      else if(atributos[AtributosParsers::TIPO]==AtributosParsers::EXP_FROM)
+      else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::FROM_EXP)
        tipo=Referencia::SQL_REFER_FROM;
       else
        tipo=Referencia::SQL_REFER_WHERE;
@@ -5505,17 +5505,17 @@ CaixaTexto *ModeloBD::criarCaixaTexto(void)
 
   ParserXML::obterAtributosElemento(atributos);
 
-  if(atributos[AtributosParsers::ITALICO]==AtributosParsers::VERDADEIRO)
+  if(atributos[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_)
    caixa_texto->definirAtributoTexto(CaixaTexto::TEXTO_ITALICO, true);
 
-  if(atributos[AtributosParsers::NEGRITO]==AtributosParsers::VERDADEIRO)
+  if(atributos[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_)
    caixa_texto->definirAtributoTexto(CaixaTexto::TEXTO_NEGRITO, true);
 
-  if(atributos[AtributosParsers::SUBLINHADO]==AtributosParsers::VERDADEIRO)
+  if(atributos[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_)
    caixa_texto->definirAtributoTexto(CaixaTexto::TEXTO_SUBLINHADO, true);
 
-  if(!atributos[AtributosParsers::COR].isEmpty())
-   caixa_texto->definirCorTexto(QColor(atributos[AtributosParsers::COR]));
+  if(!atributos[ParsersAttributes::COR].isEmpty())
+   caixa_texto->definirCorTexto(QColor(atributos[ParsersAttributes::COR]));
  }
  catch(Exception &e)
  {
@@ -5544,16 +5544,16 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
  unsigned tipo_relac=0, i;
  TipoObjetoBase tipos_tab[2]={OBJETO_VISAO, OBJETO_TABELA}, tipo_obj_rel;
  QString str_aux, elem,
-         atribs[2]={ AtributosParsers::TABELA_ORIGEM,
-                     AtributosParsers::TABELA_DESTINO };
+         atribs[2]={ ParsersAttributes::SRC_TABLE,
+                     ParsersAttributes::DST_TABLE };
 
  try
  {
   //Obtém os atributos do elemento
   ParserXML::obterAtributosElemento(atributos);
-  protegido=(atributos[AtributosParsers::PROTEGIDO]==AtributosParsers::VERDADEIRO);
+  protegido=(atributos[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
-  if(atributos[TIPO]!=AtributosParsers::RELAC_TAB_VISAO)
+  if(atributos[TYPE]!=ParsersAttributes::RELATION_TAB_VIEW)
   {
    tipos_tab[0]=OBJETO_TABELA;
    tipo_obj_rel=OBJETO_RELACAO;
@@ -5572,7 +5572,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    if(!tabelas[i])
    {
     str_aux=QString(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE))
-                    .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
+                    .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
                     .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj_rel))
                     .arg(QString::fromUtf8(atributos[atribs[i]]))
                     .arg(ObjetoBase::obterNomeTipoObjeto(tipos_tab[i]));
@@ -5584,57 +5584,57 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
 
   //Caso o relacionamento entre tabela e visão exista
   relacao_base=obterRelacionamento(tabelas[0], tabelas[1]);
-  if(atributos[TIPO]==AtributosParsers::RELAC_TAB_VISAO)
+  if(atributos[TYPE]==ParsersAttributes::RELATION_TAB_VIEW)
   {
    //Caso o relacionamento tabela-visão nao seja encontrado o erro será disparado
    if(!relacao_base)
     throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFOBJINEXISTE)
                              .arg(QString::fromUtf8(this->obterNome()))
                              .arg(this->obterNomeTipoObjeto())
-                             .arg(QString::fromUtf8(atributos[AtributosParsers::NOME]))
+                             .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RELACAO_BASE)),
                   ERR_PGMODELER_REFOBJINEXISTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    //Desconecta o relacionamento para configurá-lo
    relacao_base->desconectarRelacionamento();
-   relacao_base->definirNome(atributos[AtributosParsers::NOME]);
+   relacao_base->definirNome(atributos[ParsersAttributes::NAME]);
   }
   /* Caso o tipo de relacionamento não seja tabela-visão, isso indica que
      um relacionamento tabela-tabela deverá ser criado */
-  else if(atributos[TIPO]!=AtributosParsers::RELAC_TAB_VISAO)
+  else if(atributos[TYPE]!=ParsersAttributes::RELATION_TAB_VIEW)
   {
    //Obtém os atributos do relacionamento a partir do XML
-   obrig_orig=atributos[AtributosParsers::OBRIG_ORIGEM]==AtributosParsers::VERDADEIRO;
-   obrig_dest=atributos[AtributosParsers::OBRIG_DESTINO]==AtributosParsers::VERDADEIRO;
-   identificador=atributos[AtributosParsers::IDENTIFICADOR]==AtributosParsers::VERDADEIRO;
-   postergavel=atributos[AtributosParsers::POSTERGAVEL]==AtributosParsers::VERDADEIRO;
-   sufixo_auto=(!atributos[AtributosParsers::SUFIXO_AUTO].isEmpty() &&
-                atributos[AtributosParsers::SUFIXO_AUTO]==AtributosParsers::VERDADEIRO);
-   tipo_postergacao=TipoPostergacao(atributos[AtributosParsers::TIPO_POSTERGACAO]);
+   obrig_orig=atributos[ParsersAttributes::SRC_REQUIRED]==ParsersAttributes::_TRUE_;
+   obrig_dest=atributos[ParsersAttributes::DST_REQUIRED]==ParsersAttributes::_TRUE_;
+   identificador=atributos[ParsersAttributes::IDENTIFIER]==ParsersAttributes::_TRUE_;
+   postergavel=atributos[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_;
+   sufixo_auto=(!atributos[ParsersAttributes::SUFIXO_AUTO].isEmpty() &&
+                atributos[ParsersAttributes::SUFIXO_AUTO]==ParsersAttributes::_TRUE_);
+   tipo_postergacao=TipoPostergacao(atributos[ParsersAttributes::DEFER_TYPE]);
 
    //Configura o tipo do novo relacionamento
-   if(atributos[TIPO]==AtributosParsers::RELAC_11)
+   if(atributos[TYPE]==ParsersAttributes::RELATIONSHIP_11)
     tipo_relac=RelacionamentoBase::RELACIONAMENTO_11;
-   else if(atributos[TIPO]==AtributosParsers::RELAC_1N)
+   else if(atributos[TYPE]==ParsersAttributes::RELATIONSHIP_1N)
     tipo_relac=RelacionamentoBase::RELACIONAMENTO_1N;
-   else if(atributos[TIPO]==AtributosParsers::RELAC_NN)
+   else if(atributos[TYPE]==ParsersAttributes::RELATIONSHIP_NN)
     tipo_relac=RelacionamentoBase::RELACIONAMENTO_NN;
-   else if(atributos[TIPO]==AtributosParsers::RELAC_GEN)
+   else if(atributos[TYPE]==ParsersAttributes::RELATIONSHIP_GEN)
     tipo_relac=RelacionamentoBase::RELACIONAMENTO_GEN;
-   else if(atributos[TIPO]==AtributosParsers::RELAC_DEP)
+   else if(atributos[TYPE]==ParsersAttributes::RELATIONSHIP_DEP)
     tipo_relac=RelacionamentoBase::RELACIONAMENTO_DEP;
 
    //Cria o novo relacionamento
-   relacao=new Relacionamento(atributos[AtributosParsers::NOME], tipo_relac,
+   relacao=new Relacionamento(atributos[ParsersAttributes::NAME], tipo_relac,
                               dynamic_cast<Tabela *>(tabelas[0]),
                               dynamic_cast<Tabela *>(tabelas[1]),
                               obrig_orig, obrig_dest,
-                              sufixo_auto, atributos[AtributosParsers::SUFIXO_ORIGEM],
-                              atributos[AtributosParsers::SUFIXO_DESTINO],
+                              sufixo_auto, atributos[ParsersAttributes::SRC_SUFFIX],
+                              atributos[ParsersAttributes::DST_SUFFIX],
                               identificador, postergavel, tipo_postergacao);
 
-   if(!atributos[AtributosParsers::NOME_TABELA].isEmpty())
-    relacao->definirNomeTabelaRelNN(atributos[AtributosParsers::NOME_TABELA]);
+   if(!atributos[ParsersAttributes::NOME_TABELA].isEmpty())
+    relacao->definirNomeTabelaRelNN(atributos[ParsersAttributes::NOME_TABELA]);
 
    /* Faz com que o ponteiro relacao_base aponte para o novo relacionamento
       para executar as configurações geréricas as quais se aplicam tanto
@@ -5652,20 +5652,20 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
     {
      elem=ParserXML::obterNomeElemento();
 
-     if(elem==AtributosParsers::COLUNA && relacao)
+     if(elem==ParsersAttributes::COLUMN && relacao)
      {
       ParserXML::salvarPosicao();
       relacao->adicionarObjeto(criarColuna());
       ParserXML::restaurarPosicao();
      }
-     else if(elem==AtributosParsers::RESTRICAO && relacao)
+     else if(elem==ParsersAttributes::CONSTRAINT && relacao)
      {
       ParserXML::salvarPosicao();
       relacao->adicionarObjeto(criarRestricao(relacao));
       ParserXML::restaurarPosicao();
      }
      //Configurando a linha do relacionamento
-     else if(elem==AtributosParsers::LINHA)
+     else if(elem==ParsersAttributes::LINE)
      {
       vector<QPointF> pontos;
       ParserXML::salvarPosicao();
@@ -5675,8 +5675,8 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
       {
        //Lê o ponto do XML
        ParserXML::obterAtributosElemento(atributos);
-       pontos.push_back(QPointF(atributos[AtributosParsers::POSICAO_X].toFloat(),
-                                atributos[AtributosParsers::POSICAO_Y].toFloat()));
+       pontos.push_back(QPointF(atributos[ParsersAttributes::X_POS].toFloat(),
+                                atributos[ParsersAttributes::Y_POS].toFloat()));
       }
       while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
 
@@ -5684,11 +5684,11 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
       ParserXML::restaurarPosicao();
      }
      //Configurando a posição dos rótulos
-     else if(elem==AtributosParsers::ROTULO)
+     else if(elem==ParsersAttributes::LABEL)
      {
       ParserXML::obterAtributosElemento(atributos);
       //Obtém o tipo de rótulo a ser configurado
-      str_aux=atributos[AtributosParsers::TIPO_REFERENCIA];
+      str_aux=atributos[ParsersAttributes::REF_TYPE];
 
       //Acessa o elemento filho da tag <label> o qual armazena a posição do rótulo
       ParserXML::salvarPosicao();
@@ -5696,13 +5696,13 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
       ParserXML::obterAtributosElemento(atributos);
       ParserXML::restaurarPosicao();
      }
-     else if(elem==AtributosParsers::COLUNAS_PK_ESPECIAL && relacao)
+     else if(elem==ParsersAttributes::COLUNAS_PK_ESPECIAL && relacao)
      {
       QList<QString> lista_cols;
 
       //Obtém os atributos da tag <special-pk-cols>
       ParserXML::obterAtributosElemento(atributos);
-      lista_cols=atributos[AtributosParsers::INDICES].split(',');
+      lista_cols=atributos[ParsersAttributes::INDEXES].split(',');
 
       while(!lista_cols.isEmpty())
       {
@@ -5774,9 +5774,9 @@ Permissao *ModeloBD::criarPermissao(void)
   ParserXML::obterAtributosElemento(atributos);
 
   //Obtém os atributos do objeto que é referenciado pela  permissão
-  tipo_obj=obterTipoObjeto(atributos[AtributosParsers::TIPO]);
-  nome_obj=atributos[AtributosParsers::NOME];
-  obj_pai=atributos[AtributosParsers::OBJETO_PAI];
+  tipo_obj=obterTipoObjeto(atributos[ParsersAttributes::TYPE]);
+  nome_obj=atributos[ParsersAttributes::NAME];
+  obj_pai=atributos[ParsersAttributes::OBJETO_PAI];
 
   //Caso o objeto seja uma coluna a mesma será obtida da tabela pai
   if(tipo_obj==OBJETO_COLUNA)
@@ -5815,7 +5815,7 @@ Permissao *ModeloBD::criarPermissao(void)
      SQL para permissões */
   do
   {
-   if(ParserXML::obterNomeElemento()==AtributosParsers::PAPEIS)
+   if(ParserXML::obterNomeElemento()==ParsersAttributes::ROLES)
    {
     //Obtém os atributos do elemento <roles>, neste caso são names e reftype
     ParserXML::obterAtributosElemento(atributos);
@@ -5823,7 +5823,7 @@ Permissao *ModeloBD::criarPermissao(void)
     /* O atributo names armazena uma lista de nomes de papéis as quais a permissão
        referenciará. A lista tem os elementos separados por vírgula, sendo assim a
        string será quebrada usando o delimitador ',') */
-    lista=atributos[AtributosParsers::NOMES].split(',');
+    lista=atributos[ParsersAttributes::NAMES].split(',');
 
     //Obtém a quantidade de nomes de papéis na lista
     tam=lista.size();
@@ -5851,7 +5851,7 @@ Permissao *ModeloBD::criarPermissao(void)
      permissao->adicionarPapel(papel);
     }
    }
-   else if(ParserXML::obterNomeElemento()==AtributosParsers::PRIVILEGIOS)
+   else if(ParserXML::obterNomeElemento()==ParsersAttributes::PRIVILEGIOS)
    {
     //Obtém os atributos do elemento <privileges>
     ParserXML::obterAtributosElemento(atrib_priv);
@@ -5864,36 +5864,36 @@ Permissao *ModeloBD::criarPermissao(void)
        estes estejam definidos no XML */
     while(itr!=itr_end)
     {
-     if(itr->first!=AtributosParsers::OP_CONCESSAO)
+     if(itr->first!=ParsersAttributes::OP_CONCESSAO)
      {
       //Obtém o valor do privilégio (true/false)
-      valor_priv=(itr->second==AtributosParsers::VERDADEIRO);
-      op_concessao=(itr->second==AtributosParsers::OP_CONCESSAO);
+      valor_priv=(itr->second==ParsersAttributes::_TRUE_);
+      op_concessao=(itr->second==ParsersAttributes::OP_CONCESSAO);
 
       //Identifica o tipo de privilégio atual
-      if(itr->first==AtributosParsers::PRIV_CONNECT)
+      if(itr->first==ParsersAttributes::PRIV_CONNECT)
        tipo_priv=Permissao::PRIV_CONNECT;
-      else if(itr->first==AtributosParsers::PRIV_CREATE)
+      else if(itr->first==ParsersAttributes::PRIV_CREATE)
        tipo_priv=Permissao::PRIV_CREATE;
-      else if(itr->first==AtributosParsers::PRIV_DELETE)
+      else if(itr->first==ParsersAttributes::PRIV_DELETE)
        tipo_priv=Permissao::PRIV_DELETE;
-      else if(itr->first==AtributosParsers::PRIV_EXECUTE)
+      else if(itr->first==ParsersAttributes::PRIV_EXECUTE)
        tipo_priv=Permissao::PRIV_EXECUTE;
-      else if(itr->first==AtributosParsers::PRIV_INSERT)
+      else if(itr->first==ParsersAttributes::PRIV_INSERT)
        tipo_priv=Permissao::PRIV_INSERT;
-      else if(itr->first==AtributosParsers::PRIV_REFERENCES)
+      else if(itr->first==ParsersAttributes::PRIV_REFERENCES)
        tipo_priv=Permissao::PRIV_REFERENCES;
-      else if(itr->first==AtributosParsers::PRIV_SELECT)
+      else if(itr->first==ParsersAttributes::PRIV_SELECT)
        tipo_priv=Permissao::PRIV_SELECT;
-      else if(itr->first==AtributosParsers::PRIV_TEMPORARY)
+      else if(itr->first==ParsersAttributes::PRIV_TEMPORARY)
        tipo_priv=Permissao::PRIV_TEMPORARY;
-      else if(itr->first==AtributosParsers::PRIV_TRIGGER)
+      else if(itr->first==ParsersAttributes::PRIV_TRIGGER)
        tipo_priv=Permissao::PRIV_TRIGGER;
-      else if(itr->first==AtributosParsers::PRIV_TRUNCATE)
+      else if(itr->first==ParsersAttributes::PRIV_TRUNCATE)
        tipo_priv=Permissao::PRIV_TRUNCATE;
-      else if(itr->first==AtributosParsers::PRIV_UPDATE)
+      else if(itr->first==ParsersAttributes::PRIV_UPDATE)
        tipo_priv=Permissao::PRIV_UPDATE;
-      else if(itr->first==AtributosParsers::PRIV_USAGE)
+      else if(itr->first==ParsersAttributes::PRIV_USAGE)
        tipo_priv=Permissao::PRIV_USAGE;
 
       //Configura o privilégio na permissão
@@ -5996,26 +5996,26 @@ void ModeloBD::validarRelacObjetoTabela(ObjetoTabela *objeto, Tabela *tabela_pai
 QString ModeloBD::__obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(lim_conexao >= 0)
-  atributos[AtributosParsers::LIMITE_CONEXAO]=QString("%1").arg(lim_conexao);
+  atributos[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(lim_conexao);
 
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
  {
-  atributos[AtributosParsers::CODIFICACAO]="'" + (~tipo_codif) + "'";
+  atributos[ParsersAttributes::ENCODING]="'" + (~tipo_codif) + "'";
 
   if(!localizacoes[1].isEmpty())
-   atributos[AtributosParsers::LC_COLLATE_BD]="'" + localizacoes[1] + "'";
+   atributos[ParsersAttributes::LC_COLLATE_DB]="'" + localizacoes[1] + "'";
 
   if(!localizacoes[0].isEmpty())
-   atributos[AtributosParsers::LC_CTYPE_BD]="'" + localizacoes[0]  + "'";
+   atributos[ParsersAttributes::LC_CTYPE_DB]="'" + localizacoes[0]  + "'";
  }
  else
  {
-  atributos[AtributosParsers::CODIFICACAO]=(~tipo_codif);
-  atributos[AtributosParsers::LC_COLLATE_BD]=localizacoes[1];
-  atributos[AtributosParsers::LC_CTYPE_BD]=localizacoes[0];
+  atributos[ParsersAttributes::ENCODING]=(~tipo_codif);
+  atributos[ParsersAttributes::LC_COLLATE_DB]=localizacoes[1];
+  atributos[ParsersAttributes::LC_CTYPE_DB]=localizacoes[0];
  }
 
- atributos[AtributosParsers::BD_MODELO]=bd_modelo;
+ atributos[ParsersAttributes::TEMPLATE_DB]=bd_modelo;
  return(this->ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
 
@@ -6034,7 +6034,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
  vector<ObjetoBase *>::iterator itr, itr_end;
  vector<unsigned>::iterator itr1, itr1_end;
  QString msg=trUtf8("Generating %1 of the object: %2 (%3)"),
-         atrib=AtributosParsers::OBJETOS,
+         atrib=ParsersAttributes::OBJECTS,
          tipo_def_str=(tipo_def==ParserEsquema::DEFINICAO_SQL ? "SQL" : "XML");
  Tipo *tipo_usr=NULL;
  map<unsigned, ObjetoBase *> mapa_objetos;
@@ -6286,7 +6286,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
    vet_id_objs.insert(vet_id_objs.end(), vet_id_objs_tab.begin(), vet_id_objs_tab.end());
 
-  atribs_aux[AtributosParsers::TIPOS_SHELL]="";
+  atribs_aux[ParsersAttributes::SHELL_TYPES]="";
 
   /* Caso a definição seja SQL e existam tipos definidos pelo usuário
      faz a conversão dos parâmetros das funções usadas internamente
@@ -6310,7 +6310,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
   itr1=vet_id_objs.begin();
   itr1_end=vet_id_objs.end();
 
-  atrib=AtributosParsers::OBJETOS;
+  atrib=ParsersAttributes::OBJECTS;
   while(itr1!=itr1_end)
   {
    /* Obtém o objeto do mapa a partir do seu identificador
@@ -6330,7 +6330,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
 
     //Obtendo a definição do tipo em forma de shell type
     if(tipo_usr->obterConfiguracao()==Tipo::TIPO_BASE)
-     atribs_aux[AtributosParsers::TIPOS_SHELL]+=tipo_usr->obterDefinicaoObjeto(tipo_def, true);
+     atribs_aux[ParsersAttributes::SHELL_TYPES]+=tipo_usr->obterDefinicaoObjeto(tipo_def, true);
     else
      atribs_aux[atrib]+=tipo_usr->obterDefinicaoObjeto(tipo_def);
    }
@@ -6374,11 +6374,11 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
   //Gerando a definição sql/xml das permissões
   itr=permissoes.begin();
   itr_end=permissoes.end();
-  atribs_aux[AtributosParsers::PERMISSAO]="";
+  atribs_aux[ParsersAttributes::PERMISSAO]="";
 
   while(itr!=itr_end)
   {
-   atribs_aux[AtributosParsers::PERMISSAO]+=dynamic_cast<Permissao *>(*itr)->obterDefinicaoObjeto(tipo_def);
+   atribs_aux[ParsersAttributes::PERMISSAO]+=dynamic_cast<Permissao *>(*itr)->obterDefinicaoObjeto(tipo_def);
 
    //Dispara um sinal para sinalizar o progresso final da geração de código
    qtd_defs_geradas++;
@@ -6395,11 +6395,11 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
   }
 
   //Configura os atributos específicos do modelo de banco
-  atribs_aux[AtributosParsers::AUTOR_MODELO]=autor;
+  atribs_aux[ParsersAttributes::MODEL_AUTHOR]=autor;
 
   if(tipo_def==ParserEsquema::DEFINICAO_XML)
   {
-   atribs_aux[AtributosParsers::PROTEGIDO]=(this->protegido ? "1" : "");
+   atribs_aux[ParsersAttributes::PROTECTED]=(this->protegido ? "1" : "");
   }
   else
   {
@@ -6435,10 +6435,10 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
  }
 
  //Armazena o atributo que indica se a exportação é para arquivo ou não
- atribs_aux[AtributosParsers::EXPORTAR_ARQ]=(exportar_arq ? "1" : "");
+ atribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(exportar_arq ? "1" : "");
 
  //Retorna a definição do modelo completa
- return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::MODELO_BD, atribs_aux, tipo_def));
+ return(ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::DB_MODEL, atribs_aux, tipo_def));
 }
 
 void ModeloBD::salvarModelo(const QString &nome_arq, unsigned tipo_def)

@@ -6,20 +6,20 @@ Indice::Indice(void)
  atrib_indice[CONCORRENTE]=false;
  tipo_objeto=OBJETO_INDICE;
  fator_preenc=90;
- atributos[AtributosParsers::UNIQUE]="";
- atributos[AtributosParsers::CONCORRENTE]="";
- atributos[AtributosParsers::TABELA]="";
- atributos[AtributosParsers::TIPO_INDEXACAO]="";
- atributos[AtributosParsers::COLUNAS]="";
- atributos[AtributosParsers::EXPRESSAO]="";
- atributos[AtributosParsers::FATOR]="";
- atributos[AtributosParsers::CONDICAO]="";
- atributos[AtributosParsers::CLASSE_OPERADORES]="";
- atributos[AtributosParsers::NULOS_PRIMEIRO]="";
- atributos[AtributosParsers::ORDEM_ASCENDENTE]="";
- atributos[AtributosParsers::DECL_DENTRO_TABELA]="";
- atributos[AtributosParsers::ELEMENTOS]="";
- atributos[AtributosParsers::ATUAL_RAPIDA]="";
+ atributos[ParsersAttributes::UNIQUE]="";
+ atributos[ParsersAttributes::CONCURRENT]="";
+ atributos[ParsersAttributes::TABLE]="";
+ atributos[ParsersAttributes::INDEX_TYPE]="";
+ atributos[ParsersAttributes::COLUMNS]="";
+ atributos[ParsersAttributes::EXPRESSION]="";
+ atributos[ParsersAttributes::FACTOR]="";
+ atributos[ParsersAttributes::CONDITION]="";
+ atributos[ParsersAttributes::OP_CLASS]="";
+ atributos[ParsersAttributes::NULLS_FIRST]="";
+ atributos[ParsersAttributes::ASC_ORDER]="";
+ atributos[ParsersAttributes::DECL_IN_TABLE]="";
+ atributos[ParsersAttributes::ELEMENTS]="";
+ atributos[ParsersAttributes::ATUAL_RAPIDA]="";
 }
 
 void Indice::definirAtributoElementos(unsigned tipo_def)
@@ -34,7 +34,7 @@ void Indice::definirAtributoElementos(unsigned tipo_def)
   if(i < (qtd-1) && tipo_def==ParserEsquema::DEFINICAO_SQL) str_elem+=",";
  }
 
- atributos[AtributosParsers::ELEMENTOS]=str_elem;
+ atributos[ParsersAttributes::ELEMENTS]=str_elem;
 }
 
 int Indice::elementoExiste(Coluna *coluna)
@@ -245,16 +245,16 @@ bool Indice::referenciaColunaIncRelacao(void)
 QString Indice::obterDefinicaoObjeto(unsigned tipo_def)
 {
  definirAtributoElementos(tipo_def);
- atributos[AtributosParsers::UNIQUE]=(atrib_indice[UNIQUE] ? "1" : "");
- atributos[AtributosParsers::CONCORRENTE]=(atrib_indice[CONCORRENTE] ? "1" : "");
- atributos[AtributosParsers::ATUAL_RAPIDA]=(atrib_indice[ATUAL_RAPIDA] ? "1" : "");
- atributos[AtributosParsers::TIPO_INDEXACAO]=(~tipo_indexacao);
- atributos[AtributosParsers::CONDICAO]=exp_condicional;
+ atributos[ParsersAttributes::UNIQUE]=(atrib_indice[UNIQUE] ? "1" : "");
+ atributos[ParsersAttributes::CONCURRENT]=(atrib_indice[CONCORRENTE] ? "1" : "");
+ atributos[ParsersAttributes::ATUAL_RAPIDA]=(atrib_indice[ATUAL_RAPIDA] ? "1" : "");
+ atributos[ParsersAttributes::INDEX_TYPE]=(~tipo_indexacao);
+ atributos[ParsersAttributes::CONDITION]=exp_condicional;
 
  if(this->tabela_pai)
-  atributos[AtributosParsers::TABELA]=this->tabela_pai->obterNome(true);
+  atributos[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
 
- atributos[AtributosParsers::FATOR]=QString("%1").arg(fator_preenc);
+ atributos[ParsersAttributes::FACTOR]=QString("%1").arg(fator_preenc);
 
  /* Caso o índice não esteja referenciando alguma coluna incluída por relacionamento
     a mesma será declarada dentro do código da tabela pai e para tanto existe um atributo
@@ -263,7 +263,7 @@ QString Indice::obterDefinicaoObjeto(unsigned tipo_def)
     tabela pai. Este atributo é usado apenas para ajudar na formatação do código SQL e
     não tem nenhuma outra utilidade. */
  if(!referenciaColunaIncRelacao())
-  atributos[AtributosParsers::DECL_DENTRO_TABELA]="1";
+  atributos[ParsersAttributes::DECL_IN_TABLE]="1";
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }

@@ -1106,37 +1106,37 @@ QString TipoPgSQL::obterDefinicaoObjeto(unsigned tipo_def,QString tipo_ref)
  {
   map<QString, QString> atributos;
 
-  atributos[AtributosParsers::COMPRIMENTO]="";
-  atributos[AtributosParsers::DIMENSAO]="";
-  atributos[AtributosParsers::PRECISAO]="";
-  atributos[AtributosParsers::COM_TIMEZONE]="";
-  atributos[AtributosParsers::TIPO_INTERVALO]="";
-  atributos[AtributosParsers::TIPO_ESPACIAL]="";
-  atributos[AtributosParsers::VARIACAO]="";
-  atributos[AtributosParsers::TIPO_REFERENCIA]=tipo_ref;
+  atributos[ParsersAttributes::LENGTH]="";
+  atributos[ParsersAttributes::DIMENSION]="";
+  atributos[ParsersAttributes::PRECISION]="";
+  atributos[ParsersAttributes::COM_TIMEZONE]="";
+  atributos[ParsersAttributes::TIPO_INTERVALO]="";
+  atributos[ParsersAttributes::TIPO_ESPACIAL]="";
+  atributos[ParsersAttributes::VARIACAO]="";
+  atributos[ParsersAttributes::REF_TYPE]=tipo_ref;
 
-  atributos[AtributosParsers::NOME]=(~(*this));
+  atributos[ParsersAttributes::NAME]=(~(*this));
 
   if(comprimento > 1)
-   atributos[AtributosParsers::COMPRIMENTO]=QString("%1").arg(this->comprimento);
+   atributos[ParsersAttributes::LENGTH]=QString("%1").arg(this->comprimento);
 
   if(dimensao > 0)
-   atributos[AtributosParsers::DIMENSAO]=QString("%1").arg(this->dimensao);
+   atributos[ParsersAttributes::DIMENSION]=QString("%1").arg(this->dimensao);
 
   if(precisao >= 0)
-   atributos[AtributosParsers::PRECISAO]=QString("%1").arg(this->precisao);
+   atributos[ParsersAttributes::PRECISION]=QString("%1").arg(this->precisao);
 
   if(tipo_intervalo != TipoBase::nulo)
-   atributos[AtributosParsers::TIPO_INTERVALO]=(~tipo_intervalo);
+   atributos[ParsersAttributes::TIPO_INTERVALO]=(~tipo_intervalo);
 
   if(tipo_espacial != TipoBase::nulo)
   {
-   atributos[AtributosParsers::TIPO_ESPACIAL]=(~tipo_espacial);
-   atributos[AtributosParsers::VARIACAO]=QString("%1").arg(tipo_espacial.obterVariacao());
+   atributos[ParsersAttributes::TIPO_ESPACIAL]=(~tipo_espacial);
+   atributos[ParsersAttributes::VARIACAO]=QString("%1").arg(tipo_espacial.obterVariacao());
   }
 
   if(com_timezone)
-   atributos[AtributosParsers::COM_TIMEZONE]="1";
+   atributos[ParsersAttributes::COM_TIMEZONE]="1";
 
   return(ParserEsquema::obterDefinicaoObjeto("basetype",atributos, tipo_def));
  }

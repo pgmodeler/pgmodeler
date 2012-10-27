@@ -75,12 +75,12 @@ Relacionamento::Relacionamento(const QString &nome, unsigned tipo_rel, Tabela *t
  qtd_cols_rejeitadas=0;
  definirIdentificador(identificador);
 
- atributos[AtributosParsers::RESTRICOES]="";
- atributos[AtributosParsers::TABELA]="";
- atributos[AtributosParsers::RELAC_NN]="";
- atributos[AtributosParsers::RELAC_GEN]="";
- atributos[AtributosParsers::RELAC_1N]="";
- atributos[AtributosParsers::TABELA_PAI]="";
+ atributos[ParsersAttributes::CONSTRAINTS]="";
+ atributos[ParsersAttributes::TABLE]="";
+ atributos[ParsersAttributes::RELATIONSHIP_NN]="";
+ atributos[ParsersAttributes::RELATIONSHIP_GEN]="";
+ atributos[ParsersAttributes::RELATIONSHIP_1N]="";
+ atributos[ParsersAttributes::ANCESTOR_TABLE]="";
 }
 vector<QString> Relacionamento::obterColunasRelacionamento(void)
 {
@@ -2318,42 +2318,42 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   {
    unsigned qtd, i;
 
-   atributos[AtributosParsers::RELAC_1N]="1";
-   atributos[AtributosParsers::RESTRICOES]=fk_rel1n->obterDefinicaoObjeto(tipo_def);
+   atributos[ParsersAttributes::RELATIONSHIP_1N]="1";
+   atributos[ParsersAttributes::CONSTRAINTS]=fk_rel1n->obterDefinicaoObjeto(tipo_def);
 
    if(uq_rel11)
-    atributos[AtributosParsers::RESTRICOES]+=uq_rel11->obterDefinicaoObjeto(tipo_def);
+    atributos[ParsersAttributes::CONSTRAINTS]+=uq_rel11->obterDefinicaoObjeto(tipo_def);
 
    qtd=restricoes_rel.size();
    for(i=0; i < qtd; i++)
    {
     if(dynamic_cast<Restricao *>(restricoes_rel[i])->obterTipoRestricao()!=TipoRestricao::primary_key)
-     atributos[AtributosParsers::RESTRICOES]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
+     atributos[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
                                               obterDefinicaoObjeto(tipo_def, false);
 
    }
 
-   atributos[AtributosParsers::TABELA]=obterTabelaReceptora()->obterNome(true);
+   atributos[ParsersAttributes::TABLE]=obterTabelaReceptora()->obterNome(true);
   }
   else if(tabela_relnn && tipo_relac==RELACIONAMENTO_NN)
   {
    unsigned qtd, i;
 
-   atributos[AtributosParsers::RELAC_NN]="1";
-   atributos[AtributosParsers::TABELA]=tabela_relnn->obterDefinicaoObjeto(tipo_def);
+   atributos[ParsersAttributes::RELATIONSHIP_NN]="1";
+   atributos[ParsersAttributes::TABLE]=tabela_relnn->obterDefinicaoObjeto(tipo_def);
 
    qtd=tabela_relnn->obterNumRestricoes();
    for(i=0; i < qtd; i++)
    {
     if(tabela_relnn->obterRestricao(i)->obterTipoRestricao()!=TipoRestricao::primary_key)
-     atributos[AtributosParsers::RESTRICOES]+=tabela_relnn->obterRestricao(i)->obterDefinicaoObjeto(tipo_def, true);
+     atributos[ParsersAttributes::CONSTRAINTS]+=tabela_relnn->obterRestricao(i)->obterDefinicaoObjeto(tipo_def, true);
    }
   }
   else if(tipo_relac==RELACIONAMENTO_GEN)
   {
-   atributos[AtributosParsers::RELAC_GEN]="1";
-   atributos[AtributosParsers::TABELA]=obterTabelaReceptora()->obterNome(true);
-   atributos[AtributosParsers::TABELA_PAI]=obterTabelaReferencia()->obterNome(true);
+   atributos[ParsersAttributes::RELATIONSHIP_GEN]="1";
+   atributos[ParsersAttributes::TABLE]=obterTabelaReceptora()->obterNome(true);
+   atributos[ParsersAttributes::ANCESTOR_TABLE]=obterTabelaReferencia()->obterNome(true);
   }
 
   return(this->ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL));
@@ -2364,29 +2364,29 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   bool forma_reduzida;
 
   definirAtributosRelacionamento();
-  atributos[AtributosParsers::SUFIXO_ORIGEM]=(!sufixo_auto ? sufixo_orig : "");
-  atributos[AtributosParsers::SUFIXO_DESTINO]=(!sufixo_auto ? sufixo_dest : "");
-  atributos[AtributosParsers::IDENTIFICADOR]=(identificador ? "1" : "");
-  atributos[AtributosParsers::POSTERGAVEL]=(postergavel ? "1" : "");
-  atributos[AtributosParsers::SUFIXO_AUTO]=(sufixo_auto ? "1" : "");
-  atributos[AtributosParsers::TIPO_POSTERGACAO]=~tipo_postergacao;
-  atributos[AtributosParsers::NOME_TABELA]=nome_tab_relnn;
+  atributos[ParsersAttributes::SRC_SUFFIX]=(!sufixo_auto ? sufixo_orig : "");
+  atributos[ParsersAttributes::DST_SUFFIX]=(!sufixo_auto ? sufixo_dest : "");
+  atributos[ParsersAttributes::IDENTIFIER]=(identificador ? "1" : "");
+  atributos[ParsersAttributes::DEFERRABLE]=(postergavel ? "1" : "");
+  atributos[ParsersAttributes::SUFIXO_AUTO]=(sufixo_auto ? "1" : "");
+  atributos[ParsersAttributes::DEFER_TYPE]=~tipo_postergacao;
+  atributos[ParsersAttributes::NOME_TABELA]=nome_tab_relnn;
 
 
-  atributos[AtributosParsers::COLUNAS]="";
+  atributos[ParsersAttributes::COLUMNS]="";
   qtd=atributos_rel.size();
   for(i=0; i < qtd; i++)
   {
-   atributos[AtributosParsers::COLUNAS]+=dynamic_cast<Coluna *>(atributos_rel[i])->
+   atributos[ParsersAttributes::COLUMNS]+=dynamic_cast<Coluna *>(atributos_rel[i])->
                     obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML);
   }
 
-  atributos[AtributosParsers::RESTRICOES]="";
+  atributos[ParsersAttributes::CONSTRAINTS]="";
   qtd=restricoes_rel.size();
   for(i=0; i < qtd; i++)
   {
    if(!restricoes_rel[i]->objetoProtegido())
-    atributos[AtributosParsers::RESTRICOES]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
+    atributos[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
                        obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML, true);
   }
 
@@ -2396,17 +2396,17 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
    //Armazena o nome das colunas da chave primária especial se houver
    if(!colunas_ref.empty() && i < colunas_ref.size())
    {
-    atributos[AtributosParsers::COLUNAS_PK_ESPECIAL]+=QString("%1").arg(id_colunas_pk_rel[i]);
-    if(i < qtd-1) atributos[AtributosParsers::COLUNAS_PK_ESPECIAL]+=",";
+    atributos[ParsersAttributes::COLUNAS_PK_ESPECIAL]+=QString("%1").arg(id_colunas_pk_rel[i]);
+    if(i < qtd-1) atributos[ParsersAttributes::COLUNAS_PK_ESPECIAL]+=",";
    }
   }
 
   /* Caso não haja colunas, restrições e linha definida no relacionamento
      a definição XML do rel. será em forma reduzida */
-  forma_reduzida=(atributos[AtributosParsers::COLUNAS].isEmpty() &&
-                  atributos[AtributosParsers::RESTRICOES].isEmpty() &&
-                  atributos[AtributosParsers::PONTOS].isEmpty() &&
-                  atributos[AtributosParsers::COLUNAS_PK_ESPECIAL].isEmpty());
+  forma_reduzida=(atributos[ParsersAttributes::COLUMNS].isEmpty() &&
+                  atributos[ParsersAttributes::CONSTRAINTS].isEmpty() &&
+                  atributos[ParsersAttributes::POINTS].isEmpty() &&
+                  atributos[ParsersAttributes::COLUNAS_PK_ESPECIAL].isEmpty());
 
 
   return(this->ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML, forma_reduzida));

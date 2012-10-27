@@ -16,29 +16,29 @@ Tipo::Tipo(void)
  preferido=false;
  tipo_copia="any";
 
- ObjetoBase::atributos[AtributosParsers::TIPO_BASE]="";
- ObjetoBase::atributos[AtributosParsers::TIPO_COMPOSTO]="";
- ObjetoBase::atributos[AtributosParsers::ELEMENTOS]="";
- ObjetoBase::atributos[AtributosParsers::TIPO_ENUM]="";
- ObjetoBase::atributos[AtributosParsers::ENUMERACOES]="";
- ObjetoBase::atributos[AtributosParsers::FUNCAO_INPUT]="";
- ObjetoBase::atributos[AtributosParsers::FUNCAO_OUTPUT]="";
- ObjetoBase::atributos[AtributosParsers::FUNCAO_RECV]="";
- ObjetoBase::atributos[AtributosParsers::FUNCAO_SEND]="";
- ObjetoBase::atributos[AtributosParsers::FUNCAO_TPMOD_IN]="";
- ObjetoBase::atributos[AtributosParsers::FUNCAO_TPMOD_OUT]="";
- ObjetoBase::atributos[AtributosParsers::FUNCAO_ANALYZE]="";
- ObjetoBase::atributos[AtributosParsers::COMP_INTERNO]="";
- ObjetoBase::atributos[AtributosParsers::POR_VALOR]="";
- ObjetoBase::atributos[AtributosParsers::ALINHAMENTO]="";
- ObjetoBase::atributos[AtributosParsers::ARMAZENAMENTO]="";
- ObjetoBase::atributos[AtributosParsers::VALOR_PADRAO]="";
- ObjetoBase::atributos[AtributosParsers::ELEMENTO]="";
- ObjetoBase::atributos[AtributosParsers::DELIMITADOR]="";
- ObjetoBase::atributos[AtributosParsers::FORMA_REDUZIDA]="";
- ObjetoBase::atributos[AtributosParsers::CATEGORIA]="";
- ObjetoBase::atributos[AtributosParsers::PREFERIDO]="";
- ObjetoBase::atributos[AtributosParsers::TIPO_COPIA]="";
+ ObjetoBase::atributos[ParsersAttributes::BASE_TYPE]="";
+ ObjetoBase::atributos[ParsersAttributes::COMPOSITE_TYPE]="";
+ ObjetoBase::atributos[ParsersAttributes::ELEMENTS]="";
+ ObjetoBase::atributos[ParsersAttributes::ENUM_TYPE]="";
+ ObjetoBase::atributos[ParsersAttributes::ENUMARATIONS]="";
+ ObjetoBase::atributos[ParsersAttributes::INPUT_FUNC]="";
+ ObjetoBase::atributos[ParsersAttributes::OUTPUT_FUNC]="";
+ ObjetoBase::atributos[ParsersAttributes::RECV_FUNC]="";
+ ObjetoBase::atributos[ParsersAttributes::SEND_FUNC]="";
+ ObjetoBase::atributos[ParsersAttributes::TPMOD_IN_FUNC]="";
+ ObjetoBase::atributos[ParsersAttributes::TPMOD_OUT_FUNC]="";
+ ObjetoBase::atributos[ParsersAttributes::ANALYZE_FUNC]="";
+ ObjetoBase::atributos[ParsersAttributes::INTERNAL_LENGHT]="";
+ ObjetoBase::atributos[ParsersAttributes::BY_VALUE]="";
+ ObjetoBase::atributos[ParsersAttributes::ALIGNMENT]="";
+ ObjetoBase::atributos[ParsersAttributes::STORAGE]="";
+ ObjetoBase::atributos[ParsersAttributes::DEFAULT_VALUE]="";
+ ObjetoBase::atributos[ParsersAttributes::ELEMENT]="";
+ ObjetoBase::atributos[ParsersAttributes::DELIMITER]="";
+ ObjetoBase::atributos[ParsersAttributes::REDUCED_FORM]="";
+ ObjetoBase::atributos[ParsersAttributes::CATEGORY]="";
+ ObjetoBase::atributos[ParsersAttributes::PREFERRED]="";
+ ObjetoBase::atributos[ParsersAttributes::LIKE_TYPE]="";
 }
 
 Tipo::~Tipo(void)
@@ -414,7 +414,7 @@ void Tipo::definirAtributoElementos(unsigned tipo_def)
   }
  }
 
- ObjetoBase::atributos[AtributosParsers::ELEMENTOS]=str_elem;
+ ObjetoBase::atributos[ParsersAttributes::ELEMENTS]=str_elem;
 }
 
 void Tipo::definirAtributoEnumeracoes(unsigned tipo_def)
@@ -433,7 +433,7 @@ void Tipo::definirAtributoEnumeracoes(unsigned tipo_def)
   if(i < (qtd-1)) str_enum+=",";
  }
 
- ObjetoBase::atributos[AtributosParsers::ENUMERACOES]=str_enum;
+ ObjetoBase::atributos[ParsersAttributes::ENUMARATIONS]=str_enum;
 }
 
 void Tipo::definirCategoria(TipoCategoria categoria)
@@ -553,26 +553,26 @@ QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  if(config==TIPO_ENUMERACAO)
  {
-  ObjetoBase::atributos[AtributosParsers::TIPO_ENUM]="1";
+  ObjetoBase::atributos[ParsersAttributes::ENUM_TYPE]="1";
   definirAtributoEnumeracoes(tipo_def);
  }
  else if(config==TIPO_COMPOSTO)
  {
-  ObjetoBase::atributos[AtributosParsers::TIPO_COMPOSTO]="1";
+  ObjetoBase::atributos[ParsersAttributes::COMPOSITE_TYPE]="1";
   definirAtributoElementos(tipo_def);
  }
  else
  {
   unsigned i;
-  QString atrib_func[7]={AtributosParsers::FUNCAO_INPUT,
-                         AtributosParsers::FUNCAO_OUTPUT,
-                         AtributosParsers::FUNCAO_RECV,
-                         AtributosParsers::FUNCAO_SEND,
-                         AtributosParsers::FUNCAO_TPMOD_IN,
-                         AtributosParsers::FUNCAO_TPMOD_OUT,
-                         AtributosParsers::FUNCAO_ANALYZE};
+  QString atrib_func[7]={ParsersAttributes::INPUT_FUNC,
+                         ParsersAttributes::OUTPUT_FUNC,
+                         ParsersAttributes::RECV_FUNC,
+                         ParsersAttributes::SEND_FUNC,
+                         ParsersAttributes::TPMOD_IN_FUNC,
+                         ParsersAttributes::TPMOD_OUT_FUNC,
+                         ParsersAttributes::ANALYZE_FUNC};
 
-  ObjetoBase::atributos[AtributosParsers::TIPO_BASE]="1";
+  ObjetoBase::atributos[ParsersAttributes::BASE_TYPE]="1";
 
   for(i=0; i < 7; i++)
   {
@@ -582,34 +582,34 @@ QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
      ObjetoBase::atributos[atrib_func[i]]=funcoes[i]->obterNome();
     else
     {
-     funcoes[i]->definirAtributoEsquema(AtributosParsers::TIPO_REFERENCIA, atrib_func[i]);
+     funcoes[i]->definirAtributoEsquema(ParsersAttributes::REF_TYPE, atrib_func[i]);
      ObjetoBase::atributos[atrib_func[i]]=funcoes[i]->obterDefinicaoObjeto(tipo_def, true);
     }
    }
   }
 
   if(comp_interno==0 && tipo_def==ParserEsquema::DEFINICAO_SQL)
-   ObjetoBase::atributos[AtributosParsers::COMP_INTERNO]="VARIABLE";
+   ObjetoBase::atributos[ParsersAttributes::INTERNAL_LENGHT]="VARIABLE";
   else
-   ObjetoBase::atributos[AtributosParsers::COMP_INTERNO]=QString("%1").arg(comp_interno);
+   ObjetoBase::atributos[ParsersAttributes::INTERNAL_LENGHT]=QString("%1").arg(comp_interno);
 
-  ObjetoBase::atributos[AtributosParsers::POR_VALOR]=(por_valor ? "1" : "");
-  ObjetoBase::atributos[AtributosParsers::ALINHAMENTO]=(*alinhamento);
-  ObjetoBase::atributos[AtributosParsers::ARMAZENAMENTO]=(~armazenamento);
-  ObjetoBase::atributos[AtributosParsers::VALOR_PADRAO]=valor_padrao;
+  ObjetoBase::atributos[ParsersAttributes::BY_VALUE]=(por_valor ? "1" : "");
+  ObjetoBase::atributos[ParsersAttributes::ALIGNMENT]=(*alinhamento);
+  ObjetoBase::atributos[ParsersAttributes::STORAGE]=(~armazenamento);
+  ObjetoBase::atributos[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
 
   if(elemento!="any")
-   ObjetoBase::atributos[AtributosParsers::ELEMENTO]=(*elemento);
+   ObjetoBase::atributos[ParsersAttributes::ELEMENT]=(*elemento);
 
   if(delimitador!='\0')
-   ObjetoBase::atributos[AtributosParsers::DELIMITADOR]=delimitador;
+   ObjetoBase::atributos[ParsersAttributes::DELIMITER]=delimitador;
 
-  ObjetoBase::atributos[AtributosParsers::CATEGORIA]=~(categoria);
+  ObjetoBase::atributos[ParsersAttributes::CATEGORY]=~(categoria);
 
-  ObjetoBase::atributos[AtributosParsers::PREFERIDO]=(preferido ? "1" : "");
+  ObjetoBase::atributos[ParsersAttributes::PREFERRED]=(preferido ? "1" : "");
 
   if(tipo_copia!="any")
-   ObjetoBase::atributos[AtributosParsers::TIPO_COPIA]=(*tipo_copia);
+   ObjetoBase::atributos[ParsersAttributes::LIKE_TYPE]=(*tipo_copia);
  }
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));

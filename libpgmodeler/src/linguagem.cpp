@@ -8,10 +8,10 @@ Linguagem::Linguagem(void)
  for(unsigned i=FUNC_VALIDATOR; i <= FUNC_INLINE; i++)
   funcoes[i]=NULL;
 
- atributos[AtributosParsers::CONFIAVEL]="";
- atributos[AtributosParsers::FUNCAO_HANDLER]="";
- atributos[AtributosParsers::FUNCAO_VALIDATOR]="";
- atributos[AtributosParsers::FUNCAO_INLINE]="";
+ atributos[ParsersAttributes::TRUSTED]="";
+ atributos[ParsersAttributes::HANDLER_FUNC]="";
+ atributos[ParsersAttributes::VALIDATOR_FUNC]="";
+ atributos[ParsersAttributes::INLINE_FUNC]="";
 }
 
 void Linguagem::definirNome(const QString &nome)
@@ -97,11 +97,11 @@ QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def)
 QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  unsigned i;
- QString atrib_func[3]={AtributosParsers::FUNCAO_VALIDATOR,
-                        AtributosParsers::FUNCAO_HANDLER,
-                        AtributosParsers::FUNCAO_INLINE};
+ QString atrib_func[3]={ParsersAttributes::VALIDATOR_FUNC,
+                        ParsersAttributes::HANDLER_FUNC,
+                        ParsersAttributes::INLINE_FUNC};
 
- atributos[AtributosParsers::CONFIAVEL]=(confiavel ? "1" : "");
+ atributos[ParsersAttributes::TRUSTED]=(confiavel ? "1" : "");
 
  if(!forma_reduzida && tipo_def==ParserEsquema::DEFINICAO_XML)
   forma_reduzida=(!funcoes[FUNC_VALIDATOR] && !funcoes[FUNC_HANDLER] && !funcoes[FUNC_INLINE] && !this->obterDono());
@@ -114,7 +114,7 @@ QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
     atributos[atrib_func[i]]=funcoes[i]->obterNome(true);
    else
    {
-    funcoes[i]->definirAtributoEsquema(AtributosParsers::TIPO_REFERENCIA, atrib_func[i]);
+    funcoes[i]->definirAtributoEsquema(ParsersAttributes::REF_TYPE, atrib_func[i]);
     atributos[atrib_func[i]]=funcoes[i]->obterDefinicaoObjeto(tipo_def, true);
    }
   }

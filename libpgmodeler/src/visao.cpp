@@ -4,11 +4,11 @@ Visao::Visao(void) : TabelaBase()
 {
  //Definindo configurações inicias para a visão
  tipo_objeto=OBJETO_VISAO;
- atributos[AtributosParsers::DECLARACAO]="";
- atributos[AtributosParsers::REFERENCIAS]="";
- atributos[AtributosParsers::EXP_SELECT]="";
- atributos[AtributosParsers::EXP_FROM]="";
- atributos[AtributosParsers::EXP_SIMPLES]="";
+ atributos[ParsersAttributes::DECLARATION]="";
+ atributos[ParsersAttributes::REFERENCES]="";
+ atributos[ParsersAttributes::SELECT_EXP]="";
+ atributos[ParsersAttributes::FROM_EXP]="";
+ atributos[ParsersAttributes::EXP_SIMPLES]="";
 }
 
 Visao::~Visao(void)
@@ -310,15 +310,15 @@ void Visao::definirAtributoDeclaracao(void)
    }
   }
  }
- atributos[AtributosParsers::DECLARACAO]=decl;
+ atributos[ParsersAttributes::DECLARATION]=decl;
 }
 
 void Visao::definirAtributoReferencias(void)
 {
  QString str_aux;
- QString vet_atrib[]={ AtributosParsers::EXP_SELECT,
-                       AtributosParsers::EXP_FROM,
-                       AtributosParsers::EXP_SIMPLES };
+ QString vet_atrib[]={ ParsersAttributes::SELECT_EXP,
+                       ParsersAttributes::FROM_EXP,
+                       ParsersAttributes::EXP_SIMPLES };
  vector<unsigned> *vet_exp[]={&exp_select, &exp_from, &exp_where};
  int qtd, i, i1;
 
@@ -326,7 +326,7 @@ void Visao::definirAtributoReferencias(void)
  qtd=referencias.size();
  for(i=0; i < qtd; i++)
   str_aux+=referencias[i].obterDefinicaoXML();
- atributos[AtributosParsers::REFERENCIAS]=str_aux;
+ atributos[ParsersAttributes::REFERENCES]=str_aux;
 
  /* Este bloco concatena os indices de referências
     em cada vetor de expressão separando-os por vírgula */

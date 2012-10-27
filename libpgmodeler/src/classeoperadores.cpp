@@ -5,11 +5,11 @@ ClasseOperadores::ClasseOperadores(void)
  tipo_objeto=OBJETO_CLASSE_OPER;
  familia=NULL;
  padrao=false;
- atributos[AtributosParsers::FAMILIA]="";
- atributos[AtributosParsers::ELEMENTOS]="";
- atributos[AtributosParsers::TIPO_INDEXACAO]="";
- atributos[AtributosParsers::TIPO]="";
- atributos[AtributosParsers::PADRAO]="";
+ atributos[ParsersAttributes::FAMILY]="";
+ atributos[ParsersAttributes::ELEMENTS]="";
+ atributos[ParsersAttributes::INDEX_TYPE]="";
+ atributos[ParsersAttributes::TYPE]="";
+ atributos[ParsersAttributes::DEFAULT]="";
 }
 
 ClasseOperadores::~ClasseOperadores(void)
@@ -57,7 +57,7 @@ void ClasseOperadores::definirAtributoElementos(unsigned tipo_def)
      i < qtd-1) str_elems+=",\n";
  }
 
- atributos[AtributosParsers::ELEMENTOS]=str_elems;
+ atributos[ParsersAttributes::ELEMENTS]=str_elems;
 }
 
 void ClasseOperadores::adicionarElementoClasse(ElemClasseOperadores elemento)
@@ -149,17 +149,17 @@ QString ClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def)
 QString ClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  definirAtributoElementos(tipo_def);
- atributos[AtributosParsers::TIPO_INDEXACAO]=(~tipo_index);
- atributos[AtributosParsers::PADRAO]=(padrao ? "1" : "");
+ atributos[ParsersAttributes::INDEX_TYPE]=(~tipo_index);
+ atributos[ParsersAttributes::DEFAULT]=(padrao ? "1" : "");
 
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-  atributos[AtributosParsers::TIPO]=(*tipo_dado);
+  atributos[ParsersAttributes::TYPE]=(*tipo_dado);
  else
-  atributos[AtributosParsers::TIPO]=tipo_dado.obterDefinicaoObjeto(tipo_def);
+  atributos[ParsersAttributes::TYPE]=tipo_dado.obterDefinicaoObjeto(tipo_def);
 
  if(familia)
  {
-  atributos[AtributosParsers::FAMILIA]=familia->obterNome(true);
+  atributos[ParsersAttributes::FAMILY]=familia->obterNome(true);
  }
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));

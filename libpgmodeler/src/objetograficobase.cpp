@@ -7,9 +7,9 @@ ObjetoGraficoBase::ObjetoGraficoBase(void)
  modificado=true;
 
  //Atributos de posição do objeto, usado apenas na definição XML
- atributos[AtributosParsers::POSICAO_X]="";
- atributos[AtributosParsers::POSICAO_Y]="";
- atributos[AtributosParsers::POSICAO]="";
+ atributos[ParsersAttributes::X_POS]="";
+ atributos[ParsersAttributes::Y_POS]="";
+ atributos[ParsersAttributes::POSITION]="";
 
  objeto_receptor=NULL;
 }
@@ -41,9 +41,9 @@ bool ObjetoGraficoBase::objetoModificado(void)
 
 void ObjetoGraficoBase::definirAtributoPosicao(void)
 {
- atributos[AtributosParsers::POSICAO_X]=QString("%1").arg(posicao.x());
- atributos[AtributosParsers::POSICAO_Y]=QString("%1").arg(posicao.y());
- atributos[AtributosParsers::POSICAO]=ParserEsquema::obterDefinicaoObjeto(AtributosParsers::POSICAO,
+ atributos[ParsersAttributes::X_POS]=QString("%1").arg(posicao.x());
+ atributos[ParsersAttributes::Y_POS]=QString("%1").arg(posicao.y());
+ atributos[ParsersAttributes::POSITION]=ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::POSITION,
                                      atributos, ParserEsquema::DEFINICAO_XML);
 }
 

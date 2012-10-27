@@ -16,21 +16,21 @@ Operador::Operador(void)
  tipo_args[ARG_ESQUERDA]=TipoPgSQL("any");
  tipo_args[ARG_DIREITA]=TipoPgSQL("any");
 
- atributos[AtributosParsers::TIPO_ESQUERDA]="";
- atributos[AtributosParsers::TIPO_DIRETA]="";
- atributos[AtributosParsers::OP_COMUTACAO]="";
- atributos[AtributosParsers::OP_NEGACAO]="";
- atributos[AtributosParsers::OP_ORDENACAO]="";
- atributos[AtributosParsers::OP_ORDENACAO2]="";
- atributos[AtributosParsers::OP_MENOR]="";
- atributos[AtributosParsers::OP_MAIOR]="";
- atributos[AtributosParsers::FUNCAO_RESTRICAO]="";
- atributos[AtributosParsers::FUNCAO_JUNCAO]="";
- atributos[AtributosParsers::FUNCAO_OPERADOR]="";
- atributos[AtributosParsers::HASHES]="";
- atributos[AtributosParsers::MERGES]="";
- atributos[AtributosParsers::ASSINATURA]="";
- atributos[AtributosParsers::TIPO_REFERENCIA]="";
+ atributos[ParsersAttributes::LEFT_TYPE]="";
+ atributos[ParsersAttributes::RIGHT_TYPE]="";
+ atributos[ParsersAttributes::COMMUTATOR_OP]="";
+ atributos[ParsersAttributes::NEGATOR_OP]="";
+ atributos[ParsersAttributes::SORT_OP]="";
+ atributos[ParsersAttributes::SORT2_OP]="";
+ atributos[ParsersAttributes::LESS_OP]="";
+ atributos[ParsersAttributes::GREATER_OP]="";
+ atributos[ParsersAttributes::RESTRICTION_FUNC]="";
+ atributos[ParsersAttributes::JOIN_FUNC]="";
+ atributos[ParsersAttributes::OPERATOR_FUNC]="";
+ atributos[ParsersAttributes::HASHES]="";
+ atributos[ParsersAttributes::MERGES]="";
+ atributos[ParsersAttributes::SIGNATURE]="";
+ atributos[ParsersAttributes::REF_TYPE]="";
 }
 
 bool Operador::nomeValido(const QString &nome)
@@ -269,16 +269,16 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def)
 QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  unsigned i;
- QString atribs_tipos[]={AtributosParsers::TIPO_ESQUERDA, AtributosParsers::TIPO_DIRETA},
-        atribs_ops[]={ AtributosParsers::OP_COMUTACAO,
-                      AtributosParsers::OP_NEGACAO,
-                      AtributosParsers::OP_ORDENACAO,
-                      AtributosParsers::OP_ORDENACAO2,
-                      AtributosParsers::OP_MENOR,
-                      AtributosParsers::OP_MAIOR},
-        atribs_funcoes[]={AtributosParsers::FUNCAO_OPERADOR,
-                          AtributosParsers::FUNCAO_JUNCAO,
-                          AtributosParsers::FUNCAO_RESTRICAO};
+ QString atribs_tipos[]={ParsersAttributes::LEFT_TYPE, ParsersAttributes::RIGHT_TYPE},
+        atribs_ops[]={ ParsersAttributes::COMMUTATOR_OP,
+                      ParsersAttributes::NEGATOR_OP,
+                      ParsersAttributes::SORT_OP,
+                      ParsersAttributes::SORT2_OP,
+                      ParsersAttributes::LESS_OP,
+                      ParsersAttributes::GREATER_OP},
+        atribs_funcoes[]={ParsersAttributes::OPERATOR_FUNC,
+                          ParsersAttributes::JOIN_FUNC,
+                          ParsersAttributes::RESTRICTION_FUNC};
 
  for(i=Operador::ARG_ESQUERDA; i <= Operador::ARG_DIREITA; i++)
  {
@@ -302,7 +302,7 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
     atributos[atribs_ops[i]]=operadores[i]->obterNome(true);
    else
    {
-    operadores[i]->atributos[AtributosParsers::TIPO_REFERENCIA]=atribs_ops[i];
+    operadores[i]->atributos[ParsersAttributes::REF_TYPE]=atribs_ops[i];
     atributos[atribs_ops[i]]=operadores[i]->obterDefinicaoObjeto(tipo_def, true);
    }
   }
@@ -316,15 +316,15 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
     atributos[atribs_funcoes[i]]=funcoes[i]->obterAssinatura();
    else
    {
-    funcoes[i]->definirAtributoEsquema(AtributosParsers::TIPO_REFERENCIA, atribs_funcoes[i]);
+    funcoes[i]->definirAtributoEsquema(ParsersAttributes::REF_TYPE, atribs_funcoes[i]);
     atributos[atribs_funcoes[i]]=funcoes[i]->obterDefinicaoObjeto(tipo_def, true);
    }
   }
  }
 
- atributos[AtributosParsers::HASHES]=(hashes ? "1" : "");
- atributos[AtributosParsers::MERGES]=(merges ? "1" : "");
- atributos[AtributosParsers::ASSINATURA]=obterAssinatura();
+ atributos[ParsersAttributes::HASHES]=(hashes ? "1" : "");
+ atributos[ParsersAttributes::MERGES]=(merges ? "1" : "");
+ atributos[ParsersAttributes::SIGNATURE]=obterAssinatura();
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }

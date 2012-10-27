@@ -4,11 +4,11 @@ Regra::Regra(void)
 {
  tipo_exec=TipoBase::nulo;
  tipo_objeto=OBJETO_REGRA;
- atributos[AtributosParsers::TIPO_EVENTO]="";
- atributos[AtributosParsers::TABELA]="";
- atributos[AtributosParsers::CONDICAO]="";
- atributos[AtributosParsers::TIPO_EXECUCAO]="";
- atributos[AtributosParsers::COMANDOS]="";
+ atributos[ParsersAttributes::EVENT_TYPE]="";
+ atributos[ParsersAttributes::TABLE]="";
+ atributos[ParsersAttributes::CONDITION]="";
+ atributos[ParsersAttributes::EXEC_TYPE]="";
+ atributos[ParsersAttributes::COMMANDS]="";
 }
 
 void Regra::definirAtributoComandos(void)
@@ -24,7 +24,7 @@ void Regra::definirAtributoComandos(void)
  }
 
  //if(str_cmds!="") str_cmds="(" + str_cmds + ")";
- atributos[AtributosParsers::COMANDOS]=str_cmds;
+ atributos[ParsersAttributes::COMMANDS]=str_cmds;
 }
 
 void Regra::definirTipoEvento(TipoEvento tipo)
@@ -108,12 +108,12 @@ void Regra::removerComandos(void)
 QString Regra::obterDefinicaoObjeto(unsigned tipo_def)
 {
  definirAtributoComandos();
- atributos[AtributosParsers::CONDICAO]=exp_condicional;
- atributos[AtributosParsers::TIPO_EXECUCAO]=(~tipo_exec);
- atributos[AtributosParsers::TIPO_EVENTO]=(~tipo_evento);
+ atributos[ParsersAttributes::CONDITION]=exp_condicional;
+ atributos[ParsersAttributes::EXEC_TYPE]=(~tipo_exec);
+ atributos[ParsersAttributes::EVENT_TYPE]=(~tipo_evento);
 
  if(this->tabela_pai)
-  atributos[AtributosParsers::TABELA]=this->tabela_pai->obterNome(true);
+  atributos[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
 
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));

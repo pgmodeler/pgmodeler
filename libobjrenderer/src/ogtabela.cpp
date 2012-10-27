@@ -136,7 +136,7 @@ void OGTabela::configurarObjeto(void)
  QGraphicsItemGroup *grupos[]={ colunas, atributos_ext };
  QGraphicsPolygonItem *corpos[]={ corpo, corpo_atribs_ext };
  vector<ObjetoTabela *> objs_filhos;
- QString atribs[]={ AtributosParsers::CORPO_TABELA, AtributosParsers::CORPO_EXT_TABELA };
+ QString atribs[]={ ParsersAttributes::CORPO_TABELA, ParsersAttributes::CORPO_EXT_TABELA };
 
  //Configura o título da tabela
  titulo->configurarObjeto(tabela);

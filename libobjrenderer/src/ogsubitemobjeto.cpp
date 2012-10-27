@@ -39,7 +39,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
 {
  TipoObjetoBase tipo_obj=OBJETO_BASE;
  Coluna *coluna=dynamic_cast<Coluna *>(this->obterObjetoOrigem());
- float fator=config_fonte[AtributosParsers::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
+ float fator=config_fonte[ParsersAttributes::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
  bool desc_elipse=false;
 
  //Obtém o tipo do objeto de origem, é com base nele que o descritor será alocado
@@ -91,9 +91,9 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
                         QSizeF(9.0f * fator, 9.0f * fator)));
 
    if(coluna->naoNulo())
-    atrib=AtributosParsers::COLUNA_NN;
+    atrib=ParsersAttributes::COLUNA_NN;
    else
-    atrib=AtributosParsers::COLUNA;
+    atrib=ParsersAttributes::COLUMN;
 
    //Configura o preenchimento de acordo com o atributo selecionado acima
    desc->setBrush(this->obterEstiloPreenchimento(atrib));
@@ -107,7 +107,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
    //Cria um polígono conforme o tipo de restrição da coluna
    if(tipo_rest==TipoRestricao::primary_key)
    {
-    atrib=AtributosParsers::COLUNA_PK;
+    atrib=ParsersAttributes::COLUNA_PK;
     pol.append(QPointF(2,0)); pol.append(QPointF(0,2)); pol.append(QPointF(0,7));
     pol.append(QPointF(2,9)); pol.append(QPointF(3,8)); pol.append(QPointF(3,6));
     pol.append(QPointF(4,6)); pol.append(QPointF(5,7)); pol.append(QPointF(6,6));
@@ -116,7 +116,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
    }
    else if(tipo_rest==TipoRestricao::foreign_key)
    {
-    atrib=AtributosParsers::COLUNA_FK;
+    atrib=ParsersAttributes::COLUNA_FK;
     pol.append(QPointF(0,3)); pol.append(QPointF(0,6)); pol.append(QPointF(4,6));
     pol.append(QPointF(4,9)); pol.append(QPointF(5,9)); pol.append(QPointF(9,5));
     pol.append(QPointF(9,4)); pol.append(QPointF(5,0)); pol.append(QPointF(4,0));
@@ -124,7 +124,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
    }
    else if(tipo_rest==TipoRestricao::unique)
    {
-    atrib=AtributosParsers::COLUNA_UQ;
+    atrib=ParsersAttributes::COLUNA_UQ;
     pol.append(QPointF(4,0)); pol.append(QPointF(0,4)); pol.append(QPointF(0,5));
     pol.append(QPointF(4,9)); pol.append(QPointF(5,9)); pol.append(QPointF(9,5));
     pol.append(QPointF(9,4)); pol.append(QPointF(5,0));
@@ -169,8 +169,8 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
 
   desc->setRect(QRectF(QPointF(0,0),
                        QSizeF(9.0f * fator, 9.0f * fator)));
-  desc->setBrush(this->obterEstiloPreenchimento(AtributosParsers::REFERENCIA));
-  desc->setPen(this->obterEstiloBorda(AtributosParsers::REFERENCIA));
+  desc->setBrush(this->obterEstiloPreenchimento(ParsersAttributes::REFERENCE));
+  desc->setPen(this->obterEstiloBorda(ParsersAttributes::REFERENCE));
  }
 }
 
@@ -189,7 +189,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   //Caso seja uma coluna
   if(coluna)
   {
-   //Obtém a string de restrições relacionadas à  coluna
+   //Obtém a string de restrições relacionadas �   coluna
    str_rest=this->obterStringRestricoes(coluna);
 
    /* Determina o tipo primário de restrição conforme as checagens a seguir.
@@ -197,28 +197,28 @@ void OGSubItemObjeto::configurarObjeto(void)
       obtém a formatação de fonte para o tipo da restrição */
    if(str_rest.find(TEXTO_PRIMARY_KEY)>=0)
    {
-    fmt=config_fonte[AtributosParsers::COLUNA_PK];
+    fmt=config_fonte[ParsersAttributes::COLUNA_PK];
     tipo_rest=TipoRestricao::primary_key;
    }
    else if(str_rest.find(TEXTO_FOREIGN_KEY)>=0)
    {
-    fmt=config_fonte[AtributosParsers::COLUNA_FK];
+    fmt=config_fonte[ParsersAttributes::COLUNA_FK];
     tipo_rest=TipoRestricao::foreign_key;
    }
    else if(str_rest.find(TEXTO_UNIQUE)>=0)
    {
-    fmt=config_fonte[AtributosParsers::COLUNA_UQ];
+    fmt=config_fonte[ParsersAttributes::COLUNA_UQ];
     tipo_rest=TipoRestricao::unique;
    }
    else if(str_rest.find(TEXTO_NOT_NULL)>=0)
-    fmt=config_fonte[AtributosParsers::COLUNA_NN];
+    fmt=config_fonte[ParsersAttributes::COLUNA_NN];
    else
-    fmt=config_fonte[AtributosParsers::COLUNA];
+    fmt=config_fonte[ParsersAttributes::COLUMN];
 
    if(coluna->incluidoPorRelacionamento())
-    fmt=config_fonte[AtributosParsers::COLUNA_HERDADA];
+    fmt=config_fonte[ParsersAttributes::COLUNA_HERDADA];
    else if(coluna->objetoProtegido())
-    fmt=config_fonte[AtributosParsers::COLUNA_PROTEGIDA];
+    fmt=config_fonte[ParsersAttributes::COLUNA_PROTEGIDA];
   }
   //Caso não seja uma coluna, obtém a formatação para o tipo do objeto de tabela
   else
@@ -240,7 +240,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   px+=rotulos[0]->boundingRect().width();
 
   //Configura o rótulo de tipo
-  fmt=config_fonte[AtributosParsers::TIPO_OBJETO];
+  fmt=config_fonte[ParsersAttributes::TIPO_OBJETO];
   if(coluna)
    rotulos[1]->setText(QString::fromUtf8(SEPARADOR_TIPO + (*coluna->obterTipo())));
   else
@@ -254,7 +254,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   /* Configura o rótulo de restrições. Para objetos índice, regras e gatilho
      o rótulo de restrições armazena informações sobre modo de disparo,
      eventos, entre outros */
-  fmt=config_fonte[AtributosParsers::RESTRICOES];
+  fmt=config_fonte[ParsersAttributes::CONSTRAINTS];
   if(coluna)
    rotulos[2]->setText(QString::fromUtf8(str_rest));
   else
@@ -335,14 +335,14 @@ void OGSubItemObjeto::configurarObjeto(Referencia referencia)
  if(referencia.obterTipoReferencia()==Referencia::REFER_COLUNA)
  {
   //Configura o rótulo de nome no formato: [tabela].[coluna]
-  fmt=config_fonte[AtributosParsers::TABELA_REF];
+  fmt=config_fonte[ParsersAttributes::REF_TABLE];
   rotulos[0]->setText(referencia.obterTabela()->obterNome() + ".");
   rotulos[0]->setFont(fmt.font());
   rotulos[0]->setBrush(fmt.foreground());
   rotulos[0]->setPos(px, 0);
   px+=rotulos[0]->boundingRect().width();
 
-  fmt=config_fonte[AtributosParsers::COLUNA_REF];
+  fmt=config_fonte[ParsersAttributes::COLUNA_REF];
   if(referencia.obterColuna())
    rotulos[1]->setText(referencia.obterColuna()->obterNome());
   else
@@ -356,7 +356,7 @@ void OGSubItemObjeto::configurarObjeto(Referencia referencia)
  //Caso a referência seja a uma expressão
  else
  {
-  fmt=config_fonte[AtributosParsers::TABELA_REF];
+  fmt=config_fonte[ParsersAttributes::REF_TABLE];
 
   //Trunca a expressão em 20 caracters caso a mesma ultrapasse este comprimento
   str_aux=referencia.obterExpressao().mid(0,20);
@@ -380,7 +380,7 @@ void OGSubItemObjeto::configurarObjeto(Referencia referencia)
    str_aux=referencia.obterAliasColuna();
 
   str_aux=" (" + str_aux + ") ";
-  fmt=config_fonte[AtributosParsers::ALIAS];
+  fmt=config_fonte[ParsersAttributes::ALIAS];
   rotulos[2]->setText(str_aux);
   rotulos[2]->setFont(fmt.font());
   rotulos[2]->setBrush(fmt.foreground());
@@ -461,7 +461,7 @@ QString OGSubItemObjeto::obterStringRestricoes(Coluna *coluna)
    }
   }
 
-  //Caso a coluna seja não-nula adiciona a QString formatada o texto referente à  constraint NOT NULL
+  //Caso a coluna seja não-nula adiciona a QString formatada o texto referente �   constraint NOT NULL
   if(coluna->naoNulo()) str_rest+=TEXTO_NOT_NULL + SEPARADOR_REST;
 
   //Caso a QString formatada tenha sido criada

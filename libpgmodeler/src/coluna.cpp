@@ -4,10 +4,10 @@ Coluna::Coluna(void)
 {
  tipo_objeto=OBJETO_COLUNA;
  nao_nulo=false;
- atributos[AtributosParsers::TIPO]="";
- atributos[AtributosParsers::VALOR_PADRAO]="";
- atributos[AtributosParsers::NAO_NULO]="";
- atributos[AtributosParsers::TABELA]="";
+ atributos[ParsersAttributes::TYPE]="";
+ atributos[ParsersAttributes::DEFAULT_VALUE]="";
+ atributos[ParsersAttributes::NOT_NULL]="";
+ atributos[ParsersAttributes::TABLE]="";
 }
 
 void Coluna::definirNome(const QString &nome)
@@ -85,11 +85,11 @@ QString Coluna::obterNomeAntigo(bool formatar)
 QString Coluna::obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(this->tabela_pai)
-  atributos[AtributosParsers::TABELA]=this->tabela_pai->obterNome(true);
+  atributos[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
 
- atributos[AtributosParsers::TIPO]=tipo.obterDefinicaoObjeto(tipo_def);
- atributos[AtributosParsers::VALOR_PADRAO]=valor_padrao;
- atributos[AtributosParsers::NAO_NULO]=(!nao_nulo ? "" : "1");
+ atributos[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
+ atributos[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
+ atributos[ParsersAttributes::NOT_NULL]=(!nao_nulo ? "" : "1");
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }
 

@@ -46,14 +46,14 @@ QString Parametro::obterDefinicaoObjeto(unsigned tipo_def)
  QString val_true, val_false;
 
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-  atributos[AtributosParsers::NOME]=ObjetoBase::formatarNome(nome);
+  atributos[ParsersAttributes::NAME]=ObjetoBase::formatarNome(nome);
  else
-  atributos[AtributosParsers::NOME]=nome;
+  atributos[ParsersAttributes::NAME]=nome;
 
- atributos[AtributosParsers::PARAM_ENTRADA]=(entrada ? "1" : "");
- atributos[AtributosParsers::PARAM_SAIDA]=(saida ? "1" : "");
- atributos[AtributosParsers::VALOR_PADRAO]=valor_padrao;
- atributos[AtributosParsers::TIPO]=tipo.obterDefinicaoObjeto(tipo_def);
+ atributos[ParsersAttributes::PARAM_IN]=(entrada ? "1" : "");
+ atributos[ParsersAttributes::PARAM_OUT]=(saida ? "1" : "");
+ atributos[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
+ atributos[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
 
  //return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::PARAMETRO,atributos, tipo_def));
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
@@ -72,22 +72,22 @@ Funcao::Funcao(void)
  custo_execucao=100;
  qtd_linhas=1000;
 
- atributos[AtributosParsers::PARAMETROS]="";
- atributos[AtributosParsers::CUSTO_EXECUCAO]="";
- atributos[AtributosParsers::QTD_LINHAS]="";
- atributos[AtributosParsers::TIPO_RETORNO]="";
- atributos[AtributosParsers::TIPO_FUNCAO]="";
- atributos[AtributosParsers::LINGUAGEM]="";
- atributos[AtributosParsers::RETORNA_SETOF]="";
- atributos[AtributosParsers::TIPO_SEGURANCA]="";
- atributos[AtributosParsers::TIPO_COMPORTAMENTO]="";
- atributos[AtributosParsers::DEFINICAO]="";
- atributos[AtributosParsers::ASSINATURA]="";
- atributos[AtributosParsers::TIPO_REFERENCIA]="";
- atributos[AtributosParsers::FUNCAO_JANELA]="";
- atributos[AtributosParsers::TABELA_RETORNO]="";
- atributos[AtributosParsers::BIBLIOTECA]="";
- atributos[AtributosParsers::SIMBOLO]="";
+ atributos[ParsersAttributes::PARAMETERS]="";
+ atributos[ParsersAttributes::EXECUTION_COST]="";
+ atributos[ParsersAttributes::ROW_AMOUNT]="";
+ atributos[ParsersAttributes::RETURN_TYPE]="";
+ atributos[ParsersAttributes::FUNCTION_TYPE]="";
+ atributos[ParsersAttributes::LANGUAGE]="";
+ atributos[ParsersAttributes::RETURNS_SETOF]="";
+ atributos[ParsersAttributes::SECURITY_TYPE]="";
+ atributos[ParsersAttributes::BEHAVIOR_TYPE]="";
+ atributos[ParsersAttributes::DEFINITION]="";
+ atributos[ParsersAttributes::SIGNATURE]="";
+ atributos[ParsersAttributes::REF_TYPE]="";
+ atributos[ParsersAttributes::WINDOW_FUNC]="";
+ atributos[ParsersAttributes::RETURN_TABLE]="";
+ atributos[ParsersAttributes::BIBLIOTECA]="";
+ atributos[ParsersAttributes::SIMBOLO]="";
 }
 
 void Funcao::definirNome(const QString &nome)
@@ -195,7 +195,7 @@ void Funcao::definirAtributoParametros(unsigned tipo_def)
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
   str_param.remove(str_param.size()-2,2);
 
- atributos[AtributosParsers::PARAMETROS]=str_param;
+ atributos[ParsersAttributes::PARAMETERS]=str_param;
 }
 
 void Funcao::definirAtributoTipoRetTabela(unsigned tipo_def)
@@ -212,7 +212,7 @@ void Funcao::definirAtributoTipoRetTabela(unsigned tipo_def)
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
   str_tipo.remove(str_tipo.size()-2,2);
 
- atributos[AtributosParsers::TABELA_RETORNO]=str_tipo;
+ atributos[ParsersAttributes::RETURN_TABLE]=str_tipo;
 }
 
 void Funcao::definirCustoExecucao(unsigned custo)
@@ -500,36 +500,36 @@ QString Funcao::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  definirAtributoParametros(tipo_def);
 
- atributos[AtributosParsers::CUSTO_EXECUCAO]=QString("%1").arg(custo_execucao);
- atributos[AtributosParsers::QTD_LINHAS]=QString("%1").arg(qtd_linhas);
- atributos[AtributosParsers::TIPO_FUNCAO]=(~tipo_funcao);
+ atributos[ParsersAttributes::EXECUTION_COST]=QString("%1").arg(custo_execucao);
+ atributos[ParsersAttributes::ROW_AMOUNT]=QString("%1").arg(qtd_linhas);
+ atributos[ParsersAttributes::FUNCTION_TYPE]=(~tipo_funcao);
 
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
  {
-  atributos[AtributosParsers::LINGUAGEM]=linguagem->obterNome(false);
-  atributos[AtributosParsers::TIPO_RETORNO]=(*tipo_retorno);
+  atributos[ParsersAttributes::LANGUAGE]=linguagem->obterNome(false);
+  atributos[ParsersAttributes::RETURN_TYPE]=(*tipo_retorno);
  }
  else
  {
-  atributos[AtributosParsers::LINGUAGEM]=linguagem->obterDefinicaoObjeto(tipo_def,true);
-  atributos[AtributosParsers::TIPO_RETORNO]=tipo_retorno.obterDefinicaoObjeto(tipo_def);
+  atributos[ParsersAttributes::LANGUAGE]=linguagem->obterDefinicaoObjeto(tipo_def,true);
+  atributos[ParsersAttributes::RETURN_TYPE]=tipo_retorno.obterDefinicaoObjeto(tipo_def);
  }
 
  definirAtributoTipoRetTabela(tipo_def);
 
- atributos[AtributosParsers::RETORNA_SETOF]=(retorna_setof ? "1" : "");
- atributos[AtributosParsers::FUNCAO_JANELA]=(funcao_janela ? "1" : "");
- atributos[AtributosParsers::TIPO_SEGURANCA]=(~tipo_seg);
- atributos[AtributosParsers::TIPO_COMPORTAMENTO]=(~tipo_comportamento);
- atributos[AtributosParsers::DEFINICAO]=codigo_fonte;
+ atributos[ParsersAttributes::RETURNS_SETOF]=(retorna_setof ? "1" : "");
+ atributos[ParsersAttributes::WINDOW_FUNC]=(funcao_janela ? "1" : "");
+ atributos[ParsersAttributes::SECURITY_TYPE]=(~tipo_seg);
+ atributos[ParsersAttributes::BEHAVIOR_TYPE]=(~tipo_comportamento);
+ atributos[ParsersAttributes::DEFINITION]=codigo_fonte;
 
  if(linguagem->obterNome()==~TipoLinguagem(TipoLinguagem::c))
  {
-  atributos[AtributosParsers::SIMBOLO]=simbolo;
-  atributos[AtributosParsers::BIBLIOTECA]=biblioteca;
+  atributos[ParsersAttributes::SIMBOLO]=simbolo;
+  atributos[ParsersAttributes::BIBLIOTECA]=biblioteca;
  }
 
- atributos[AtributosParsers::ASSINATURA]=assinatura;
+ atributos[ParsersAttributes::SIGNATURE]=assinatura;
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }
 

@@ -59,12 +59,12 @@ ObjetoBase::ObjetoBase(void)
  esquema=NULL;
  dono=NULL;
  espacotabela=NULL;
- atributos[AtributosParsers::NOME]="";
- atributos[AtributosParsers::COMENTARIO]="";
- atributos[AtributosParsers::DONO]="";
- atributos[AtributosParsers::ESPACOTABELA]="";
- atributos[AtributosParsers::ESQUEMA]="";
- atributos[AtributosParsers::PROTEGIDO]="";
+ atributos[ParsersAttributes::NAME]="";
+ atributos[ParsersAttributes::COMMENT]="";
+ atributos[ParsersAttributes::OWNER]="";
+ atributos[ParsersAttributes::TABLESPACE]="";
+ atributos[ParsersAttributes::SCHEMA]="";
+ atributos[ParsersAttributes::PROTECTED]="";
 }
 
 unsigned ObjetoBase::obterIdGlobal(void)
@@ -500,27 +500,27 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
    case OBJETO_OPERADOR:
    case OBJETO_CLASSE_OPER:
    case OBJETO_FAMILIA_OPER:
-    atributos[AtributosParsers::SQL_DIF]="1";
+    atributos[ParsersAttributes::DIF_SQL]="1";
    break;
    default:
-    atributos[AtributosParsers::SQL_DIF]="";
+    atributos[ParsersAttributes::DIF_SQL]="";
    break;
   }
 
-  atributos[AtributosParsers::NOME]=this->obterNome(formatar);
-  atributos[AtributosParsers::SQL_OBJETO]=sql_objetos[this->tipo_objeto];
+  atributos[ParsersAttributes::NAME]=this->obterNome(formatar);
+  atributos[ParsersAttributes::SQL_OBJECT]=sql_objetos[this->tipo_objeto];
 
   if(tipo_def==ParserEsquema::DEFINICAO_XML && esquema)
   {
-   atributos[AtributosParsers::ESQUEMA]=esquema->obterDefinicaoObjeto(tipo_def, true);
+   atributos[ParsersAttributes::SCHEMA]=esquema->obterDefinicaoObjeto(tipo_def, true);
   }
 
   if(tipo_def==ParserEsquema::DEFINICAO_XML)
-    atributos[AtributosParsers::PROTEGIDO]=(protegido ? "1" : "");
+    atributos[ParsersAttributes::PROTECTED]=(protegido ? "1" : "");
 
   if(comentario!="")
   {
-   atributos[AtributosParsers::COMENTARIO]=comentario;
+   atributos[ParsersAttributes::COMMENT]=comentario;
 
    if((tipo_def==ParserEsquema::DEFINICAO_SQL &&
        tipo_objeto!=OBJETO_ESPACO_TABELA &&
@@ -528,24 +528,24 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
       tipo_def==ParserEsquema::DEFINICAO_XML)
    {
     ParserEsquema::ignorarAtributosDesc(true);
-    atributos[AtributosParsers::COMENTARIO]=
-    ParserEsquema::obterDefinicaoObjeto(AtributosParsers::COMENTARIO, atributos, tipo_def);
+    atributos[ParsersAttributes::COMMENT]=
+    ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::COMMENT, atributos, tipo_def);
    }
   }
 
   if(espacotabela)
   {
    if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-    atributos[AtributosParsers::ESPACOTABELA]=espacotabela->obterNome(formatar);
+    atributos[ParsersAttributes::TABLESPACE]=espacotabela->obterNome(formatar);
    else
-    atributos[AtributosParsers::ESPACOTABELA]=espacotabela->obterDefinicaoObjeto(tipo_def, true);
+    atributos[ParsersAttributes::TABLESPACE]=espacotabela->obterDefinicaoObjeto(tipo_def, true);
   }
 
   if(dono)
   {
    if(tipo_def==ParserEsquema::DEFINICAO_SQL)
    {
-    atributos[AtributosParsers::DONO]=dono->obterNome(formatar);
+    atributos[ParsersAttributes::OWNER]=dono->obterNome(formatar);
 
     /** Apenas espaços de tabelas e banco de dados não têm um comando ALTER SET OWNER
         pois por regra do PostgreSQL, espaços de tabelas e banco de dados devem ser criados
@@ -556,18 +556,18 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
        tipo_def==ParserEsquema::DEFINICAO_XML)
     {
      ParserEsquema::ignorarAtributosDesc(true);
-     atributos[AtributosParsers::DONO]=
-     ParserEsquema::obterDefinicaoObjeto(AtributosParsers::DONO, atributos, tipo_def);
+     atributos[ParsersAttributes::OWNER]=
+     ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::OWNER, atributos, tipo_def);
     }
    }
    else
-    atributos[AtributosParsers::DONO]=dono->obterDefinicaoObjeto(tipo_def, true);
+    atributos[ParsersAttributes::OWNER]=dono->obterDefinicaoObjeto(tipo_def, true);
   }
 
   if(forma_reduzida)
-   atributos[AtributosParsers::FORMA_REDUZIDA]="1";
+   atributos[ParsersAttributes::REDUCED_FORM]="1";
   else
-   atributos[AtributosParsers::FORMA_REDUZIDA]="";
+   atributos[ParsersAttributes::REDUCED_FORM]="";
 
   try
   {

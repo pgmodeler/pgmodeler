@@ -5,10 +5,10 @@ ConversaoCodificacao::ConversaoCodificacao(void)
  tipo_objeto=OBJETO_CONV_CODIFICACAO;
  funcao_conv=NULL;
  padrao=false;
- atributos[AtributosParsers::PADRAO]="";
- atributos[AtributosParsers::COD_ORIGEM]="";
- atributos[AtributosParsers::COD_DESTINO]="";
- atributos[AtributosParsers::FUNCAO]="";
+ atributos[ParsersAttributes::DEFAULT]="";
+ atributos[ParsersAttributes::SRC_ENCODING]="";
+ atributos[ParsersAttributes::DST_ENCODING]="";
+ atributos[ParsersAttributes::FUNCTION]="";
 }
 
 void ConversaoCodificacao::definirCodificacao(unsigned idx_tipo, TipoCodificacao tipo_cod)
@@ -93,16 +93,16 @@ bool ConversaoCodificacao::conversaoPadrao(void)
 
 QString ConversaoCodificacao::obterDefinicaoObjeto(unsigned tipo_def)
 {
- atributos[AtributosParsers::PADRAO]=(padrao ? "1" : "");
- atributos[AtributosParsers::COD_ORIGEM]=(~codificacoes[CONV_COD_ORIGEM]);
- atributos[AtributosParsers::COD_DESTINO]=(~codificacoes[CONV_COD_DESTINO]);
+ atributos[ParsersAttributes::DEFAULT]=(padrao ? "1" : "");
+ atributos[ParsersAttributes::SRC_ENCODING]=(~codificacoes[CONV_COD_ORIGEM]);
+ atributos[ParsersAttributes::DST_ENCODING]=(~codificacoes[CONV_COD_DESTINO]);
 
  if(funcao_conv)
  {
   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-   atributos[AtributosParsers::FUNCAO]=funcao_conv->obterNome(true);
+   atributos[ParsersAttributes::FUNCTION]=funcao_conv->obterNome(true);
   else
-   atributos[AtributosParsers::FUNCAO]=funcao_conv->obterDefinicaoObjeto(tipo_def, true);
+   atributos[ParsersAttributes::FUNCTION]=funcao_conv->obterDefinicaoObjeto(tipo_def, true);
  }
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));

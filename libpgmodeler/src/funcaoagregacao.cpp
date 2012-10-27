@@ -5,13 +5,13 @@ FuncaoAgregacao::FuncaoAgregacao(void)
  tipo_objeto=OBJETO_FUNC_AGREGACAO;
  funcoes[0]=funcoes[1]=NULL;
  op_ordenacao=NULL;
- atributos[AtributosParsers::TIPOS]="";
- atributos[AtributosParsers::FUNCAO_TRANSICAO]="";
- atributos[AtributosParsers::TIPO_ESTADO]="";
- atributos[AtributosParsers::TIPO_BASE]="";
- atributos[AtributosParsers::FUNCAO_FINAL]="";
- atributos[AtributosParsers::COND_INICIAL]="";
- atributos[AtributosParsers::OP_ORDENACAO]="";
+ atributos[ParsersAttributes::TYPES]="";
+ atributos[ParsersAttributes::TRANSITION_FUNC]="";
+ atributos[ParsersAttributes::STATE_TYPE]="";
+ atributos[ParsersAttributes::BASE_TYPE]="";
+ atributos[ParsersAttributes::FINAL_FUNC]="";
+ atributos[ParsersAttributes::INITIAL_COND]="";
+ atributos[ParsersAttributes::SORT_OP]="";
 }
 
 void FuncaoAgregacao::definirFuncao(unsigned idx_func, Funcao *func)
@@ -122,7 +122,7 @@ void FuncaoAgregacao::definirAtributoTipos(unsigned tipo_def)
     cria uma função em parâmetros no seguinte formato: funcao(*). */
  if(str_tipos.isEmpty()) str_tipos="*";
 
- atributos[AtributosParsers::TIPOS]=str_tipos;
+ atributos[ParsersAttributes::TYPES]=str_tipos;
 }
 
 void FuncaoAgregacao::adicionarTipoDado(TipoPgSQL tipo)
@@ -220,42 +220,42 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
  if(funcoes[FUNCAO_TRANSICAO])
  {
   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-   atributos[AtributosParsers::FUNCAO_TRANSICAO]=funcoes[FUNCAO_TRANSICAO]->obterAssinatura();
+   atributos[ParsersAttributes::TRANSITION_FUNC]=funcoes[FUNCAO_TRANSICAO]->obterAssinatura();
   else
   {
-   funcoes[FUNCAO_TRANSICAO]->definirAtributoEsquema(AtributosParsers::TIPO_REFERENCIA,
-                                                     AtributosParsers::FUNCAO_TRANSICAO);
-   atributos[AtributosParsers::FUNCAO_TRANSICAO]=funcoes[FUNCAO_TRANSICAO]->obterDefinicaoObjeto(tipo_def,true);
+   funcoes[FUNCAO_TRANSICAO]->definirAtributoEsquema(ParsersAttributes::REF_TYPE,
+                                                     ParsersAttributes::TRANSITION_FUNC);
+   atributos[ParsersAttributes::TRANSITION_FUNC]=funcoes[FUNCAO_TRANSICAO]->obterDefinicaoObjeto(tipo_def,true);
   }
  }
 
  if(funcoes[FUNCAO_FINAL])
  {
   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-   atributos[AtributosParsers::FUNCAO_FINAL]=funcoes[FUNCAO_FINAL]->obterAssinatura();
+   atributos[ParsersAttributes::FINAL_FUNC]=funcoes[FUNCAO_FINAL]->obterAssinatura();
   else
   {
-   funcoes[FUNCAO_FINAL]->definirAtributoEsquema(AtributosParsers::TIPO_REFERENCIA,
-                                                 AtributosParsers::FUNCAO_FINAL);
-   atributos[AtributosParsers::FUNCAO_FINAL]=funcoes[FUNCAO_FINAL]->obterDefinicaoObjeto(tipo_def,true);
+   funcoes[FUNCAO_FINAL]->definirAtributoEsquema(ParsersAttributes::REF_TYPE,
+                                                 ParsersAttributes::FINAL_FUNC);
+   atributos[ParsersAttributes::FINAL_FUNC]=funcoes[FUNCAO_FINAL]->obterDefinicaoObjeto(tipo_def,true);
   }
  }
 
  if(op_ordenacao)
  {
   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-   atributos[AtributosParsers::OP_ORDENACAO]=op_ordenacao->obterNome(true);
+   atributos[ParsersAttributes::SORT_OP]=op_ordenacao->obterNome(true);
   else
-   atributos[AtributosParsers::OP_ORDENACAO]=op_ordenacao->obterDefinicaoObjeto(tipo_def,true);
+   atributos[ParsersAttributes::SORT_OP]=op_ordenacao->obterDefinicaoObjeto(tipo_def,true);
  }
 
  if(cond_inicial!="")
-  atributos[AtributosParsers::COND_INICIAL]=cond_inicial;
+  atributos[ParsersAttributes::INITIAL_COND]=cond_inicial;
 
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-  atributos[AtributosParsers::TIPO_ESTADO]=*(tipo_estado);
+  atributos[ParsersAttributes::STATE_TYPE]=*(tipo_estado);
  else
-  atributos[AtributosParsers::TIPO_ESTADO]=tipo_estado.obterDefinicaoObjeto(tipo_def,AtributosParsers::TIPO_ESTADO);
+  atributos[ParsersAttributes::STATE_TYPE]=tipo_estado.obterDefinicaoObjeto(tipo_def,ParsersAttributes::STATE_TYPE);
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }

@@ -4,11 +4,11 @@ Dominio::Dominio(void)
 {
  tipo_objeto=OBJETO_DOMINIO;
  nao_nulo=false;
- atributos[AtributosParsers::VALOR_PADRAO]="";
- atributos[AtributosParsers::NAO_NULO]="";
- atributos[AtributosParsers::EXPRESSAO]="";
- atributos[AtributosParsers::TIPO]="";
- atributos[AtributosParsers::RESTRICAO]="";
+ atributos[ParsersAttributes::DEFAULT_VALUE]="";
+ atributos[ParsersAttributes::NOT_NULL]="";
+ atributos[ParsersAttributes::EXPRESSION]="";
+ atributos[ParsersAttributes::TYPE]="";
+ atributos[ParsersAttributes::CONSTRAINT]="";
 }
 
 Dominio::~Dominio(void)
@@ -98,16 +98,16 @@ TipoPgSQL Dominio::obterTipo(void)
 
 QString Dominio::obterDefinicaoObjeto(unsigned tipo_def)
 {
- atributos[AtributosParsers::NAO_NULO]=(nao_nulo ? "1" : "");
- atributos[AtributosParsers::VALOR_PADRAO]=valor_padrao;
- atributos[AtributosParsers::EXPRESSAO]=expressao;
- atributos[AtributosParsers::RESTRICAO]=ObjetoBase::formatarNome(nome_rest);
+ atributos[ParsersAttributes::NOT_NULL]=(nao_nulo ? "1" : "");
+ atributos[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
+ atributos[ParsersAttributes::EXPRESSION]=expressao;
+ atributos[ParsersAttributes::CONSTRAINT]=ObjetoBase::formatarNome(nome_rest);
 
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-  atributos[AtributosParsers::TIPO]=(*tipo);
+  atributos[ParsersAttributes::TYPE]=(*tipo);
  else
  {
-  atributos[AtributosParsers::TIPO]=tipo.obterDefinicaoObjeto(tipo_def);
+  atributos[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
  }
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));

@@ -46,7 +46,7 @@ void ConfConexoesWidget::carregarConfiguracao(void)
  QRegExp ip_regexp("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
 
  //Para a sessão de configuração de conexões, o 'alias' será usado como campo chave
- atribs_chave.push_back(AtributosParsers::ALIAS);
+ atribs_chave.push_back(ParsersAttributes::ALIAS);
 
  //Carrega as configurações
  ConfBaseWidget::carregarConfiguracao(GlobalAttributes::CONNECTIONS_CONF, atribs_chave);
@@ -84,7 +84,7 @@ void ConfConexoesWidget::carregarConfiguracao(void)
   conexao->definirParamConexao(ConexaoBD::PARAM_OPCOES, itr->second[ConexaoBD::PARAM_OPCOES]);
 
   //Adiciona a conexão ao combo de conexões
-  conexoes_cmb->addItem(QString::fromUtf8(itr->second[AtributosParsers::ALIAS]),
+  conexoes_cmb->addItem(QString::fromUtf8(itr->second[ParsersAttributes::ALIAS]),
                         QVariant::fromValue<void *>(reinterpret_cast<void *>(conexao)));
 
   itr++;
@@ -399,7 +399,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
      preencher o atributo 'params_config[AtributosGlobais::CONF_CONEXOES][AtributosParsers::CONEXOES]'
      espaços */
   if(qtd==0)
-   params_config[GlobalAttributes::CONNECTIONS_CONF][AtributosParsers::CONEXOES]="  ";
+   params_config[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONEXOES]="  ";
   else
   {
    /* Quando se tem conexões no combo, os atributos de cada uma são obtidos e é
@@ -418,7 +418,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
 
     /* Armazena também nos atributos o alias da conexão pois este precisa ser gravado
        no arquivo de configuração */
-    atribs[AtributosParsers::ALIAS]=conexoes_cmb->itemText(i);
+    atribs[ParsersAttributes::ALIAS]=conexoes_cmb->itemText(i);
 
     /* Ativa o modo de ignorar atributos desconhecidos do parser, pois, alguns
        atributos da conexão nem sempre são especificados (opcionais) e isso
@@ -426,7 +426,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
     ParserEsquema::ignorarAtributosDesc(true);
 
     //Gera o esquema da conexão e contatena �   demais geradas
-    params_config[GlobalAttributes::CONNECTIONS_CONF][AtributosParsers::CONEXOES]+=
+    params_config[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONEXOES]+=
     ParserEsquema::obterDefinicaoObjeto(GlobalAttributes::CONFIGURATIONS_DIR +
                                         GlobalAttributes::DIR_SEPARATOR +
                                         GlobalAttributes::SCHEMAS_DIR +

@@ -6,22 +6,22 @@ ConfAparenciaWidget::ConfAparenciaWidget(QWidget * parent) : QWidget(parent)
 
  //Armazena cada id de elemento no arquivo de configuração
  QString ids_confs[]={
-  AtributosParsers::GLOBAL, AtributosParsers::RESTRICOES, AtributosParsers::SELECAO_OBJETO,
-  AtributosParsers::INFO_POSICAO, AtributosParsers::INFO_POSICAO,
-  AtributosParsers::TIPO_OBJETO, AtributosParsers::ARCO_CADEADO, AtributosParsers::CORPO_CADEADO,
-  AtributosParsers::NOME_ESQUEMA_TABELA, AtributosParsers::NOME_TABELA, AtributosParsers::CORPO_TABELA,
-  AtributosParsers::CORPO_EXT_TABELA, AtributosParsers::TITULO_TABELA, ObjetoBase::obterNomeEsquemaObjeto(OBJETO_REGRA),
+  ParsersAttributes::GLOBAL, ParsersAttributes::CONSTRAINTS, ParsersAttributes::SELECAO_OBJETO,
+  ParsersAttributes::INFO_POSICAO, ParsersAttributes::INFO_POSICAO,
+  ParsersAttributes::TIPO_OBJETO, ParsersAttributes::ARCO_CADEADO, ParsersAttributes::CORPO_CADEADO,
+  ParsersAttributes::NOME_ESQUEMA_TABELA, ParsersAttributes::NOME_TABELA, ParsersAttributes::CORPO_TABELA,
+  ParsersAttributes::CORPO_EXT_TABELA, ParsersAttributes::TITULO_TABELA, ObjetoBase::obterNomeEsquemaObjeto(OBJETO_REGRA),
   ObjetoBase::obterNomeEsquemaObjeto(OBJETO_REGRA), ObjetoBase::obterNomeEsquemaObjeto(OBJETO_INDICE),
   ObjetoBase::obterNomeEsquemaObjeto(OBJETO_INDICE), ObjetoBase::obterNomeEsquemaObjeto(OBJETO_GATILHO),
-  ObjetoBase::obterNomeEsquemaObjeto(OBJETO_GATILHO), AtributosParsers::NOME_ESQUEMA_VISAO, AtributosParsers::NOME_VISAO,
-  AtributosParsers::CORPO_VISAO, AtributosParsers::TITULO_VISAO, AtributosParsers::ALIAS,
-  AtributosParsers::COLUNA_REF, AtributosParsers::TABELA_REF, AtributosParsers::REFERENCIA,
-  ObjetoBase::obterNomeEsquemaObjeto(OBJETO_CAIXA_TEXTO), AtributosParsers::COLUNA, AtributosParsers::COLUNA,
-  AtributosParsers::COLUNA_HERDADA, AtributosParsers::COLUNA_PROTEGIDA, AtributosParsers::COLUNA_PK,
-  AtributosParsers::COLUNA_PK, AtributosParsers::COLUNA_FK, AtributosParsers::COLUNA_FK,
-  AtributosParsers::COLUNA_UQ, AtributosParsers::COLUNA_UQ, AtributosParsers::COLUNA_NN,
-  AtributosParsers::COLUNA_NN, AtributosParsers::RELACIONAMENTO, AtributosParsers::ROTULO,
-  AtributosParsers::ROTULO, AtributosParsers::ATRIBUTO, AtributosParsers::ATRIBUTO };
+  ObjetoBase::obterNomeEsquemaObjeto(OBJETO_GATILHO), ParsersAttributes::NOME_ESQUEMA_VISAO, ParsersAttributes::NOME_VISAO,
+  ParsersAttributes::CORPO_VISAO, ParsersAttributes::TITULO_VISAO, ParsersAttributes::ALIAS,
+  ParsersAttributes::COLUNA_REF, ParsersAttributes::REF_TABLE, ParsersAttributes::REFERENCE,
+  ObjetoBase::obterNomeEsquemaObjeto(OBJETO_CAIXA_TEXTO), ParsersAttributes::COLUMN, ParsersAttributes::COLUMN,
+  ParsersAttributes::COLUNA_HERDADA, ParsersAttributes::COLUNA_PROTEGIDA, ParsersAttributes::COLUNA_PK,
+  ParsersAttributes::COLUNA_PK, ParsersAttributes::COLUNA_FK, ParsersAttributes::COLUNA_FK,
+  ParsersAttributes::COLUNA_UQ, ParsersAttributes::COLUNA_UQ, ParsersAttributes::COLUNA_NN,
+  ParsersAttributes::COLUNA_NN, ParsersAttributes::RELATIONSHIP, ParsersAttributes::LABEL,
+  ParsersAttributes::LABEL, ParsersAttributes::ATRIBUTO, ParsersAttributes::ATRIBUTO };
   int i, qtd=elemento_cmb->count(),
      //Este vetor armazena os índices dos elementos os quais referem-se a configuraçao de cor de objetos
      vet_ids_aux[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 21, 22,
@@ -173,7 +173,7 @@ void ConfAparenciaWidget::carregarConfiguracao(void)
   this->habilitarElemConfiguracao();
 
   //Marca no combo de fontes, a fonte global
-  fonte_cmb->setCurrentFont(ObjetoGrafico::obterEstiloFonte(AtributosParsers::GLOBAL).font());
+  fonte_cmb->setCurrentFont(ObjetoGrafico::obterEstiloFonte(ParsersAttributes::GLOBAL).font());
 
   //Define todos os objetos do modelo de exemplo como modificados, forçando seu redesenho
   modelo->definirObjetosModificados();
@@ -219,7 +219,7 @@ void ConfAparenciaWidget::salvarConfiguracao(void)
    }
    /* Caso o item atual seja um elemento de fonte do objeto porém não seja o
       elemento de configuração global de fonte */
-   else if(item.id_conf!=AtributosParsers::GLOBAL && !item.conf_obj)
+   else if(item.id_conf!=ParsersAttributes::GLOBAL && !item.conf_obj)
    {
     //Obtém a fonte do item
     fonte=item.fmt_fonte.font();
@@ -229,14 +229,14 @@ void ConfAparenciaWidget::salvarConfiguracao(void)
     atribs[id_atrib]=item.fmt_fonte.foreground().color().name();
 
     //Cria um atributo que armazena se a fonte está em itálico, negrito e sublinhado
-    id_atrib=item.id_conf + QString("-") + AtributosParsers::ITALICO;
-    atribs[id_atrib]=(fonte.italic() ? AtributosParsers::VERDADEIRO : AtributosParsers::FALSO);
+    id_atrib=item.id_conf + QString("-") + ParsersAttributes::ITALIC;
+    atribs[id_atrib]=(fonte.italic() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 
-    id_atrib=item.id_conf + QString("-") + AtributosParsers::NEGRITO;
-    atribs[id_atrib]=(fonte.bold() ? AtributosParsers::VERDADEIRO : AtributosParsers::FALSO);
+    id_atrib=item.id_conf + QString("-") + ParsersAttributes::BOLD;
+    atribs[id_atrib]=(fonte.bold() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 
-    id_atrib=item.id_conf + QString("-") + AtributosParsers::SUBLINHADO;
-    atribs[id_atrib]=(fonte.underline() ? AtributosParsers::VERDADEIRO : AtributosParsers::FALSO);
+    id_atrib=item.id_conf + QString("-") + ParsersAttributes::UNDERLINE;
+    atribs[id_atrib]=(fonte.underline() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
    }
    //Caso o item atual seja o elemento global de fonte
    else

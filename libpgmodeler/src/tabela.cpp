@@ -3,12 +3,12 @@
 Tabela::Tabela(void) : TabelaBase()
 {
  tipo_objeto=OBJETO_TABELA;
- atributos[AtributosParsers::COLUNAS]="";
- atributos[AtributosParsers::RESTRICOES]="";
- atributos[AtributosParsers::INDICES]="";
- atributos[AtributosParsers::GATILHOS]="";
- atributos[AtributosParsers::REGRAS]="";
- atributos[AtributosParsers::OIDS]="";
+ atributos[ParsersAttributes::COLUMNS]="";
+ atributos[ParsersAttributes::CONSTRAINTS]="";
+ atributos[ParsersAttributes::INDEXES]="";
+ atributos[ParsersAttributes::TRIGGERS]="";
+ atributos[ParsersAttributes::RULES]="";
+ atributos[ParsersAttributes::OIDS]="";
 }
 
 Tabela::~Tabela(void)
@@ -128,7 +128,7 @@ void Tabela::definirAtributoColunas(unsigned tipo_def)
   }
  }
 
- atributos[AtributosParsers::COLUNAS]=str_cols;
+ atributos[ParsersAttributes::COLUMNS]=str_cols;
 }
 
 void Tabela::definirAtributoRestricoes(unsigned tipo_def)
@@ -169,7 +169,7 @@ void Tabela::definirAtributoRestricoes(unsigned tipo_def)
   }
  }
 
- atributos[AtributosParsers::RESTRICOES]=str_rest;
+ atributos[ParsersAttributes::CONSTRAINTS]=str_rest;
 }
 
 void Tabela::definirAtributoGatilhos(unsigned tipo_def)
@@ -194,7 +194,7 @@ void Tabela::definirAtributoGatilhos(unsigned tipo_def)
   }
  }
 
- atributos[AtributosParsers::GATILHOS]=str_gat;
+ atributos[ParsersAttributes::TRIGGERS]=str_gat;
 }
 
 void Tabela::definirAtributoIndices(unsigned tipo_def)
@@ -215,7 +215,7 @@ void Tabela::definirAtributoIndices(unsigned tipo_def)
    str_ind+=ind->obterDefinicaoObjeto(tipo_def);
  }
 
- atributos[AtributosParsers::INDICES]=str_ind;
+ atributos[ParsersAttributes::INDEXES]=str_ind;
 }
 
 void Tabela::definirAtributoRegras(unsigned tipo_def)
@@ -233,7 +233,7 @@ void Tabela::definirAtributoRegras(unsigned tipo_def)
    str_reg+=regras[i]->obterDefinicaoObjeto(tipo_def);
  }
 
- atributos[AtributosParsers::REGRAS]=str_reg;
+ atributos[ParsersAttributes::RULES]=str_reg;
 }
 
 vector<ObjetoTabela *> *Tabela::obterListaObjetos(TipoObjetoBase tipo_obj)
@@ -989,7 +989,7 @@ bool Tabela::restricaoReferenciaColuna(Coluna *coluna, TipoRestricao tipo_rest)
 
 QString Tabela::obterDefinicaoObjeto(unsigned tipo_def)
 {
- atributos[AtributosParsers::OIDS]=(aceita_oids ? "1" : "");
+ atributos[ParsersAttributes::OIDS]=(aceita_oids ? "1" : "");
  definirAtributoColunas(tipo_def);
  definirAtributoRestricoes(tipo_def);
  definirAtributoGatilhos(tipo_def);

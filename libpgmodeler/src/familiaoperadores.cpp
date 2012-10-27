@@ -3,7 +3,7 @@
 FamiliaOperadores::FamiliaOperadores(void)
 {
  tipo_objeto=OBJETO_FAMILIA_OPER;
- atributos[AtributosParsers::TIPO_INDEXACAO]="";
+ atributos[ParsersAttributes::INDEX_TYPE]="";
 }
 
 void FamiliaOperadores::definirTipoIndexacao(TipoIndexacao tipo)
@@ -23,7 +23,7 @@ QString FamiliaOperadores::obterDefinicaoObjeto(unsigned tipo_def)
 
 QString FamiliaOperadores::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
- atributos[AtributosParsers::TIPO_INDEXACAO]=(~tipo_index);
+ atributos[ParsersAttributes::INDEX_TYPE]=(~tipo_index);
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def,forma_reduzida));
 }
 

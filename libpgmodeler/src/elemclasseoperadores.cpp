@@ -94,50 +94,50 @@ QString ElemClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def)
 {
  map<QString, QString> atributos;
 
- atributos[AtributosParsers::TIPO]="";
- atributos[AtributosParsers::NUM_ESTRATEGIA]="";
- atributos[AtributosParsers::ASSINATURA]="";
- atributos[AtributosParsers::RECHECAR]="";
- atributos[AtributosParsers::FUNCAO]="";
- atributos[AtributosParsers::OPERADOR]="";
- atributos[AtributosParsers::ARMAZENAMENTO]="";
- atributos[AtributosParsers::DEFINICAO]="";
+ atributos[ParsersAttributes::TYPE]="";
+ atributos[ParsersAttributes::STRATEGY_NUM]="";
+ atributos[ParsersAttributes::SIGNATURE]="";
+ atributos[ParsersAttributes::RECHECK]="";
+ atributos[ParsersAttributes::FUNCTION]="";
+ atributos[ParsersAttributes::OPERATOR]="";
+ atributos[ParsersAttributes::STORAGE]="";
+ atributos[ParsersAttributes::DEFINITION]="";
 
  if(tipo_elemento==ELEM_FUNCAO && funcao && num_estrategia > 0)
  {
   //FUNCTION support_number [ ( op_type [ , op_type ] ) ] funcname ( argument_type [, ...] )
-  atributos[AtributosParsers::FUNCAO]="1";
-  atributos[AtributosParsers::NUM_ESTRATEGIA]=QString("%1").arg(num_estrategia);
+  atributos[ParsersAttributes::FUNCTION]="1";
+  atributos[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(num_estrategia);
 
   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-   atributos[AtributosParsers::ASSINATURA]=funcao->obterAssinatura();
+   atributos[ParsersAttributes::SIGNATURE]=funcao->obterAssinatura();
   else
-   atributos[AtributosParsers::DEFINICAO]=funcao->obterDefinicaoObjeto(tipo_def,true);
+   atributos[ParsersAttributes::DEFINITION]=funcao->obterDefinicaoObjeto(tipo_def,true);
  }
  else if(tipo_elemento==ELEM_OPERADOR && operador && num_estrategia > 0)
  {
   //OPERATOR strategy_number operator_name [ ( op_type, op_type ) ] [ RECHECK ]
-  atributos[AtributosParsers::OPERADOR]="1";
-  atributos[AtributosParsers::NUM_ESTRATEGIA]=QString("%1").arg(num_estrategia);
-  if(rechecar) atributos[AtributosParsers::RECHECAR]="1";
+  atributos[ParsersAttributes::OPERATOR]="1";
+  atributos[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(num_estrategia);
+  if(rechecar) atributos[ParsersAttributes::RECHECK]="1";
 
   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-   atributos[AtributosParsers::ASSINATURA]=operador->obterAssinatura();
+   atributos[ParsersAttributes::SIGNATURE]=operador->obterAssinatura();
   else
-   atributos[AtributosParsers::DEFINICAO]=operador->obterDefinicaoObjeto(tipo_def,true);
+   atributos[ParsersAttributes::DEFINITION]=operador->obterDefinicaoObjeto(tipo_def,true);
  }
  else if(tipo_elemento==ELEM_ARMAZENAMENTO && tipo_armaz!=TipoPgSQL::nulo)
  {
   //STORAGE storage_type
-  atributos[AtributosParsers::ARMAZENAMENTO]="1";
+  atributos[ParsersAttributes::STORAGE]="1";
 
   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-   atributos[AtributosParsers::TIPO]=(*tipo_armaz);
+   atributos[ParsersAttributes::TYPE]=(*tipo_armaz);
   else
-   atributos[AtributosParsers::DEFINICAO]=tipo_armaz.obterDefinicaoObjeto(tipo_def);
+   atributos[ParsersAttributes::DEFINITION]=tipo_armaz.obterDefinicaoObjeto(tipo_def);
  }
 
- return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::ELEMENTO,atributos, tipo_def));
+ return(ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::ELEMENT,atributos, tipo_def));
 }
 
 bool ElemClasseOperadores::operator == (ElemClasseOperadores &elem)

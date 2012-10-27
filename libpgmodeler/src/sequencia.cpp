@@ -12,13 +12,13 @@ Sequencia::Sequencia(void)
  valor_max=VALOR_MAX_POSITIVO;
  coluna=NULL;
 
- atributos[AtributosParsers::INCREMENTO]="";
- atributos[AtributosParsers::VALOR_MINIMO]="";
- atributos[AtributosParsers::VALOR_MAXIMO]="";
- atributos[AtributosParsers::INICIO]="";
- atributos[AtributosParsers::CACHE]="";
- atributos[AtributosParsers::CICLICA]="";
- atributos[AtributosParsers::POSSUIDORA]="";
+ atributos[ParsersAttributes::INCREMENT]="";
+ atributos[ParsersAttributes::MIN_VALUE]="";
+ atributos[ParsersAttributes::MAX_VALUE]="";
+ atributos[ParsersAttributes::START]="";
+ atributos[ParsersAttributes::CACHE]="";
+ atributos[ParsersAttributes::CYCLE]="";
+ atributos[ParsersAttributes::OWNER_COLUMN]="";
 }
 
 bool Sequencia::valorNulo(const QString &valor)
@@ -341,14 +341,14 @@ QString Sequencia::obterDefinicaoObjeto(unsigned tipo_def)
      e a coluna possuidora */
   str_aux=tabela->obterNome(true) + "." + coluna->obterNome(true);
  }
- atributos[AtributosParsers::POSSUIDORA]=str_aux;
+ atributos[ParsersAttributes::OWNER_COLUMN]=str_aux;
 
- atributos[AtributosParsers::INCREMENTO]=incremento;
- atributos[AtributosParsers::VALOR_MINIMO]=valor_min;
- atributos[AtributosParsers::VALOR_MAXIMO]=valor_max;
- atributos[AtributosParsers::INICIO]=inicio;
- atributos[AtributosParsers::CACHE]=cache;
- atributos[AtributosParsers::CICLICA]=(ciclica ? "1" : "");
+ atributos[ParsersAttributes::INCREMENT]=incremento;
+ atributos[ParsersAttributes::MIN_VALUE]=valor_min;
+ atributos[ParsersAttributes::MAX_VALUE]=valor_max;
+ atributos[ParsersAttributes::START]=inicio;
+ atributos[ParsersAttributes::CACHE]=cache;
+ atributos[ParsersAttributes::CYCLE]=(ciclica ? "1" : "");
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }

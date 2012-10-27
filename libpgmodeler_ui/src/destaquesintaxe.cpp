@@ -559,25 +559,25 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
       elem=ParserXML::obterNomeElemento();
 
       //Obtém os separadores de palavras da linguagem
-      if(elem==AtributosParsers::SEP_PALAVRAS)
+      if(elem==ParsersAttributes::WORD_SEPARATORS)
       {
        //Obtém os atributos do mesmo
        ParserXML::obterAtributosElemento(atributos);
-       sep_palavras=atributos[AtributosParsers::VALOR];
+       sep_palavras=atributos[ParsersAttributes::VALUE];
       }
 
       //Obtém os delimitadores de palavras da linguagem
-      else if(elem==AtributosParsers::DELIM_PALAVRAS)
+      else if(elem==ParsersAttributes::WORD_DELIMITERS)
       {
        //Obtém os atributos do mesmo
        ParserXML::obterAtributosElemento(atributos);
-       delim_palavras=atributos[AtributosParsers::VALOR];
+       delim_palavras=atributos[ParsersAttributes::VALUE];
       }
-      else if(elem==AtributosParsers::CARACTERES_IGNORADOS)
+      else if(elem==ParsersAttributes::IGNORED_CHARS)
       {
        //Obtém os atributos do mesmo
        ParserXML::obterAtributosElemento(atributos);
-       chr_ignorados=atributos[AtributosParsers::VALOR];
+       chr_ignorados=atributos[ParsersAttributes::VALUE];
       }
 
       /* Caso o elemento seja o que define a ordem de aplicação dos grupos
@@ -585,7 +585,7 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
          os grupos usados para destacar o código-fonte. TODOS os grupos
          precisam ser declarados neste bloco antes de serem construídos
          caso contrário será disparado um erro. */
-      else if(elem==AtributosParsers::ORDEM_DESTAQUE)
+      else if(elem==ParsersAttributes::HIGHLIGHT_ORDER)
       {
        //Marca a flag indicando que os grupos estão sendo declarados
        decl_grupos=true;
@@ -599,12 +599,12 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
       }
 
       //Caso o elemento atual seja de construção de um grupo '<group>'
-      if(elem==AtributosParsers::GRUPO)
+      if(elem==ParsersAttributes::GROUP)
       {
        //Obtém os atributos do mesmo
        ParserXML::obterAtributosElemento(atributos);
        //Armazena seu nome em uma variável auxiliar
-       grupo=atributos[AtributosParsers::NOME];
+       grupo=atributos[ParsersAttributes::NAME];
 
        /* Caso o parser estiver no bloco de declaração de grupos e não no bloco
           de construção dos mesmos, algumas validações serão executadas. */
@@ -630,7 +630,7 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
         else if(atributos.size() > 1 || ParserXML::possuiElemento(ParserXML::ELEMENTO_FILHO))
         {
          throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_DEFGRUPOLOCALINV)
-                       .arg(grupo).arg(AtributosParsers::ORDEM_DESTAQUE),
+                       .arg(grupo).arg(ParsersAttributes::HIGHLIGHT_ORDER),
                        ERR_PGMODELERUI_REDECLGRUPODESTAQUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
 
@@ -662,7 +662,7 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
         {
          //Dispara o erro indicando que o grupo foi construído e não declarado
          throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_DEFGRUPONAODECL)
-                       .arg(grupo).arg(AtributosParsers::ORDEM_DESTAQUE),
+                       .arg(grupo).arg(ParsersAttributes::HIGHLIGHT_ORDER),
                        ERR_PGMODELERUI_DEFGRUPONAODECL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
         /* 3ª Validação: Verifica se o grupo possui elementos filhos. No bloco de construção
@@ -675,16 +675,16 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
         }
 
         //Obtém e armazena em variáveis os atributos do grupo que está sendo construído
-        sensivel_chr=(atributos[AtributosParsers::SENSIVEL_CARACTERE]==AtributosParsers::VERDADEIRO);
-        italico=(atributos[AtributosParsers::ITALICO]==AtributosParsers::VERDADEIRO);
-        negrito=(atributos[AtributosParsers::NEGRITO]==AtributosParsers::VERDADEIRO);
-        sublinhado=(atributos[AtributosParsers::SUBLINHADO]==AtributosParsers::VERDADEIRO);
-        comb_parcial=(atributos[AtributosParsers::COMBINACAO_PARCIAL]==AtributosParsers::VERDADEIRO);
-        cor_fonte.setNamedColor(atributos[AtributosParsers::COR_FONTE]);
-        cor_fundo.setNamedColor(atributos[AtributosParsers::COR_FUNDO]);
+        sensivel_chr=(atributos[ParsersAttributes::CASE_SENSITIVE]==ParsersAttributes::_TRUE_);
+        italico=(atributos[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
+        negrito=(atributos[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
+        sublinhado=(atributos[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
+        comb_parcial=(atributos[ParsersAttributes::PARTIAL_MATCH]==ParsersAttributes::_TRUE_);
+        cor_fonte.setNamedColor(atributos[ParsersAttributes::FOREGROUND_COLOR]);
+        cor_fundo.setNamedColor(atributos[ParsersAttributes::BACKGROUND_COLOR]);
 
-        if(!atributos[AtributosParsers::CARACTERE_LOOKUP].isEmpty())
-         caractere_lookup[grupo]=atributos[AtributosParsers::CARACTERE_LOOKUP][0];
+        if(!atributos[ParsersAttributes::LOOKUP_CHAR].isEmpty())
+         caractere_lookup[grupo]=atributos[ParsersAttributes::LOOKUP_CHAR][0];
 
         //Configura a formatação do grupo de acordo com os atributos obtidos
         formatacao.setFontItalic(italico);
@@ -720,12 +720,12 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
           //Obtém os atributos do elemento filho do grupo
           ParserXML::obterAtributosElemento(atributos);
           //Obtém o tipo do elemento
-          tipo_exp=atributos[AtributosParsers::TIPO];
+          tipo_exp=atributos[ParsersAttributes::TYPE];
 
           //Configura a expressão regular com o valor presente no atributo 'value' do elemento
-          exp_regular.setPattern(atributos[AtributosParsers::VALOR]);
+          exp_regular.setPattern(atributos[ParsersAttributes::VALUE]);
 
-          if(atributos[AtributosParsers::EXP_REGULAR]==AtributosParsers::VERDADEIRO)
+          if(atributos[ParsersAttributes::REGULAR_EXP]==ParsersAttributes::_TRUE_)
            exp_regular.setPatternSyntax(QRegExp::RegExp);
           else
            exp_regular.setPatternSyntax(QRegExp::FixedString);
@@ -733,8 +733,8 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
           /* A expressão regular configura será inserida na lista de expressões
              de acordo com o tipo do elemento */
           if(tipo_exp=="" ||
-             tipo_exp==AtributosParsers::EXP_SIMPLES ||
-             tipo_exp==AtributosParsers::EXP_INICIAL)
+             tipo_exp==ParsersAttributes::EXP_SIMPLES ||
+             tipo_exp==ParsersAttributes::INITIAL_EXP)
            exp_iniciais[grupo].push_back(exp_regular);
           else
            exp_finais[grupo].push_back(exp_regular);

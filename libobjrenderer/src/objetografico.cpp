@@ -108,8 +108,8 @@ void ObjetoGrafico::definirObjetoOrigem(ObjetoBase *objeto)
    this->addToGroup(selecao_obj);
   }
 
-  selecao_obj->setBrush(this->obterEstiloPreenchimento(AtributosParsers::SELECAO_OBJETO));
-  selecao_obj->setPen(this->obterEstiloBorda(AtributosParsers::SELECAO_OBJETO));
+  selecao_obj->setBrush(this->obterEstiloPreenchimento(ParsersAttributes::SELECAO_OBJETO));
+  selecao_obj->setPen(this->obterEstiloBorda(ParsersAttributes::SELECAO_OBJETO));
   selecao_obj->setVisible(false);
   selecao_obj->setZValue(4);
 
@@ -198,37 +198,37 @@ void ObjetoGrafico::carregarEstiloObjetos(void)
      elem=ParserXML::obterNomeElemento();
 
      //Obtendo a configuração da fonte global
-     if(elem==AtributosParsers::GLOBAL)
+     if(elem==ParsersAttributes::GLOBAL)
      {
-      fonte.setFamily(atributos[AtributosParsers::FONTE]);
-      fonte.setPointSizeF(atributos[AtributosParsers::TAMANHO].toFloat());
-      fonte.setBold(atributos[AtributosParsers::NEGRITO]==AtributosParsers::VERDADEIRO);
-      fonte.setItalic(atributos[AtributosParsers::ITALICO]==AtributosParsers::VERDADEIRO);
-      fonte.setUnderline(atributos[AtributosParsers::SUBLINHADO]==AtributosParsers::VERDADEIRO);
+      fonte.setFamily(atributos[ParsersAttributes::FONTE]);
+      fonte.setPointSizeF(atributos[ParsersAttributes::TAMANHO].toFloat());
+      fonte.setBold(atributos[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
+      fonte.setItalic(atributos[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
+      fonte.setUnderline(atributos[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
       fmt_fonte.setFont(fonte);
-      config_fonte[AtributosParsers::GLOBAL]=fmt_fonte;
+      config_fonte[ParsersAttributes::GLOBAL]=fmt_fonte;
      }
      //Obtém a configuração individual de fonte de cada elemento
-     else if(elem==AtributosParsers::FONTE)
+     else if(elem==ParsersAttributes::FONTE)
      {
-      config_fonte[atributos[AtributosParsers::ID]]=fmt_fonte;
-      itr=config_fonte.find(atributos[AtributosParsers::ID]);
+      config_fonte[atributos[ParsersAttributes::ID]]=fmt_fonte;
+      itr=config_fonte.find(atributos[ParsersAttributes::ID]);
       fonte=fmt_fonte.font();
-      fonte.setBold(atributos[AtributosParsers::NEGRITO]==AtributosParsers::VERDADEIRO);
-      fonte.setItalic(atributos[AtributosParsers::ITALICO]==AtributosParsers::VERDADEIRO);
-      fonte.setUnderline(atributos[AtributosParsers::SUBLINHADO]==AtributosParsers::VERDADEIRO);
+      fonte.setBold(atributos[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
+      fonte.setItalic(atributos[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
+      fonte.setUnderline(atributos[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
       (itr->second).setFont(fonte);
-      (itr->second).setForeground(QColor(atributos[AtributosParsers::COR]));
+      (itr->second).setForeground(QColor(atributos[ParsersAttributes::COR]));
      }
      //Obtém a configuração individual de estilo de cada objeto
-     else if(elem==AtributosParsers::OBJETO)
+     else if(elem==ParsersAttributes::OBJECT)
      {
-      lista=atributos[AtributosParsers::COR_PREENCHIMENTO].split(",");
+      lista=atributos[ParsersAttributes::COR_PREENCHIMENTO].split(",");
       cores=new QColor[3];
       cores[0]=(!lista.isEmpty() ? QColor(lista[0]) : QColor(0,0,0));
       cores[1]=(lista.size()==2 ? QColor(lista[1]) : cores[0]);
-      cores[2]=QColor(atributos[AtributosParsers::COR_BORDA]);
-      config_cores[atributos[AtributosParsers::ID]]=cores;
+      cores[2]=QColor(atributos[ParsersAttributes::COR_BORDA]);
+      config_cores[atributos[ParsersAttributes::ID]]=cores;
      }
     }
    }
@@ -245,9 +245,9 @@ void ObjetoGrafico::definirEstiloFonte(const QString &id, QTextCharFormat fmt_fo
 {
  QFont fonte;
 
- if(id!=AtributosParsers::GLOBAL)
+ if(id!=ParsersAttributes::GLOBAL)
  {
-  fonte=config_fonte[AtributosParsers::GLOBAL].font();
+  fonte=config_fonte[ParsersAttributes::GLOBAL].font();
   fonte.setItalic(fmt_fonte.font().italic());
   fonte.setBold(fmt_fonte.font().bold());
   fonte.setUnderline(fmt_fonte.font().underline());
@@ -303,7 +303,7 @@ QLinearGradient ObjetoGrafico::obterEstiloPreenchimento(const QString &id)
   cores=config_cores[id];
   if(cores)
   {
-   if(id==AtributosParsers::SELECAO_OBJETO)
+   if(id==ParsersAttributes::SELECAO_OBJETO)
    {
     cores[0].setAlpha(128);
     cores[1].setAlpha(128);
@@ -330,7 +330,7 @@ QPen ObjetoGrafico::obterEstiloBorda(const QString &id)
   if(cores)
   {
    //Caso se tratar da seleção do objeto uma transparência é aplicada ao mesmo
-   if(id==AtributosParsers::SELECAO_OBJETO)
+   if(id==ParsersAttributes::SELECAO_OBJETO)
     cores[2].setAlpha(128);
 
    pen.setWidthF(LARG_BORDA_OBJETOS);
@@ -405,10 +405,10 @@ void ObjetoGrafico::configurarInfoPosicao(QPointF pos_info)
  {
   QPolygonF pol;
 
-  pol_info_pos->setBrush(ObjetoGrafico::obterEstiloPreenchimento(AtributosParsers::INFO_POSICAO));
-  pol_info_pos->setPen(ObjetoGrafico::obterEstiloBorda(AtributosParsers::INFO_POSICAO));
-  txt_info_pos->setFont(config_fonte[AtributosParsers::INFO_POSICAO].font());
-  txt_info_pos->setBrush(config_fonte[AtributosParsers::INFO_POSICAO].foreground());
+  pol_info_pos->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::INFO_POSICAO));
+  pol_info_pos->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::INFO_POSICAO));
+  txt_info_pos->setFont(config_fonte[ParsersAttributes::INFO_POSICAO].font());
+  txt_info_pos->setBrush(config_fonte[ParsersAttributes::INFO_POSICAO].foreground());
 
   txt_info_pos->setText(QString(" x=%1 y=%2 ").arg(pos_info.x()).arg(pos_info.y()));
   pol.append(txt_info_pos->boundingRect().topLeft());
@@ -473,7 +473,7 @@ void ObjetoGrafico::configurarIconeProtecao(void)
 
   /* Calcula a proporção entre a fonte configurada e o tamanho padrão da fonte,
      para compatibilizar o tamanho dos objetos com o tamanho da fonte */
-  fator=config_fonte[AtributosParsers::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
+  fator=config_fonte[ParsersAttributes::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
 
   /* Configura os polígonos do ícone de proteção aplicando o fator de redimensionamento
      definido acima */
@@ -491,8 +491,8 @@ void ObjetoGrafico::configurarIconeProtecao(void)
 
   item_pol=dynamic_cast<QGraphicsPolygonItem *>(icone_protegido->children().at(0));
   item_pol->setPolygon(pol);
-  item_pol->setBrush(this->obterEstiloPreenchimento(AtributosParsers::ARCO_CADEADO));
-  item_pol->setPen(this->obterEstiloBorda(AtributosParsers::ARCO_CADEADO));
+  item_pol->setBrush(this->obterEstiloPreenchimento(ParsersAttributes::ARCO_CADEADO));
+  item_pol->setPen(this->obterEstiloBorda(ParsersAttributes::ARCO_CADEADO));
 
   pol.clear();
   pol.append(QPointF(1,5));  pol.append(QPointF(10,5));
@@ -506,8 +506,8 @@ void ObjetoGrafico::configurarIconeProtecao(void)
 
   item_pol=dynamic_cast<QGraphicsPolygonItem *>(icone_protegido->children().at(1));
   item_pol->setPolygon(pol);
-  item_pol->setBrush(this->obterEstiloPreenchimento(AtributosParsers::CORPO_CADEADO));
-  item_pol->setPen(this->obterEstiloBorda(AtributosParsers::CORPO_CADEADO));
+  item_pol->setBrush(this->obterEstiloPreenchimento(ParsersAttributes::CORPO_CADEADO));
+  item_pol->setPen(this->obterEstiloBorda(ParsersAttributes::CORPO_CADEADO));
  }
 }
 

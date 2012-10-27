@@ -40,7 +40,7 @@ OGCaixaTexto::~OGCaixaTexto(void)
 void OGCaixaTexto::configurarObjeto(void)
 {
  CaixaTexto *cxtexto=dynamic_cast<CaixaTexto *>(this->obterObjetoOrigem());
- QTextCharFormat fmt=config_fonte[AtributosParsers::GLOBAL];
+ QTextCharFormat fmt=config_fonte[ParsersAttributes::GLOBAL];
  QFont fonte;
  QPolygonF poligono;
 

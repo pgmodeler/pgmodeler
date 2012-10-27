@@ -38,24 +38,24 @@ void RelacionamentoBase::configurarRelacionamento(void)
 {
  tipo_objeto=OBJETO_RELACAO_BASE;
 
- atributos[AtributosParsers::TIPO]="";
- atributos[AtributosParsers::OBRIG_ORIGEM]="";
- atributos[AtributosParsers::OBRIG_DESTINO]="";
- atributos[AtributosParsers::TABELA_ORIGEM]="";
- atributos[AtributosParsers::TABELA_DESTINO]="";
- atributos[AtributosParsers::PONTOS]="";
- atributos[AtributosParsers::COLUNAS]="";
- atributos[AtributosParsers::RESTRICOES]="";
- atributos[AtributosParsers::ELEMENTOS]="";
- atributos[AtributosParsers::SUFIXO_ORIGEM]="";
- atributos[AtributosParsers::SUFIXO_DESTINO]="";
- atributos[AtributosParsers::SUFIXO_AUTO]="";
- atributos[AtributosParsers::IDENTIFICADOR]="";
- atributos[AtributosParsers::FORMA_REDUZIDA]="";
- atributos[AtributosParsers::POSTERGAVEL]="";
- atributos[AtributosParsers::TIPO_POSTERGACAO]="";
- atributos[AtributosParsers::NOME_TABELA]="";
- atributos[AtributosParsers::COLUNAS_PK_ESPECIAL]="";
+ atributos[ParsersAttributes::TYPE]="";
+ atributos[ParsersAttributes::SRC_REQUIRED]="";
+ atributos[ParsersAttributes::DST_REQUIRED]="";
+ atributos[ParsersAttributes::SRC_TABLE]="";
+ atributos[ParsersAttributes::DST_TABLE]="";
+ atributos[ParsersAttributes::POINTS]="";
+ atributos[ParsersAttributes::COLUMNS]="";
+ atributos[ParsersAttributes::CONSTRAINTS]="";
+ atributos[ParsersAttributes::ELEMENTS]="";
+ atributos[ParsersAttributes::SRC_SUFFIX]="";
+ atributos[ParsersAttributes::DST_SUFFIX]="";
+ atributos[ParsersAttributes::SUFIXO_AUTO]="";
+ atributos[ParsersAttributes::IDENTIFIER]="";
+ atributos[ParsersAttributes::REDUCED_FORM]="";
+ atributos[ParsersAttributes::DEFERRABLE]="";
+ atributos[ParsersAttributes::DEFER_TYPE]="";
+ atributos[ParsersAttributes::NOME_TABELA]="";
+ atributos[ParsersAttributes::COLUNAS_PK_ESPECIAL]="";
 
 
  //Verifica se o tipo de relacionamento é valido
@@ -273,45 +273,45 @@ void RelacionamentoBase::definirAtributosRelacionamento(void)
 {
  unsigned qtd, i;
  QString str_aux,
-         atribs_rot[3]={ AtributosParsers::ROTULO_CARD_ORIGEM,
-                         AtributosParsers::ROTULO_CARD_DESTINO,
-                         AtributosParsers::ROTULO_NOME_RELAC};
+         atribs_rot[3]={ ParsersAttributes::SRC_LABEL,
+                         ParsersAttributes::DST_LABEL,
+                         ParsersAttributes::NAME_LABEL};
 
  //Definindo o atributo de tipo de relacionamento
  switch(tipo_relac)
  {
-  case RELACIONAMENTO_11: atributos[TIPO]=AtributosParsers::RELAC_11; break;
-  case RELACIONAMENTO_1N: atributos[TIPO]=AtributosParsers::RELAC_1N; break;
-  case RELACIONAMENTO_NN: atributos[TIPO]=AtributosParsers::RELAC_NN; break;
-  case RELACIONAMENTO_GEN: atributos[TIPO]=AtributosParsers::RELAC_GEN; break;
+  case RELACIONAMENTO_11: atributos[TYPE]=ParsersAttributes::RELATIONSHIP_11; break;
+  case RELACIONAMENTO_1N: atributos[TYPE]=ParsersAttributes::RELATIONSHIP_1N; break;
+  case RELACIONAMENTO_NN: atributos[TYPE]=ParsersAttributes::RELATIONSHIP_NN; break;
+  case RELACIONAMENTO_GEN: atributos[TYPE]=ParsersAttributes::RELATIONSHIP_GEN; break;
   default:
     if(tabela_orig->obterTipoObjeto()==OBJETO_VISAO)
-     atributos[AtributosParsers::TIPO]=AtributosParsers::RELAC_TAB_VISAO;
+     atributos[ParsersAttributes::TYPE]=ParsersAttributes::RELATION_TAB_VIEW;
     else
-     atributos[AtributosParsers::TIPO]=AtributosParsers::RELAC_DEP;
+     atributos[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_DEP;
   break;
  }
 
- atributos[AtributosParsers::OBRIG_ORIGEM]=(obrig_orig ? "1" : "");
- atributos[AtributosParsers::OBRIG_DESTINO]=(obrig_dest ? "1" : "");
+ atributos[ParsersAttributes::SRC_REQUIRED]=(obrig_orig ? "1" : "");
+ atributos[ParsersAttributes::DST_REQUIRED]=(obrig_dest ? "1" : "");
 
  if(tabela_orig)
-  atributos[AtributosParsers::TABELA_ORIGEM]=tabela_orig->obterNome(true);
+  atributos[ParsersAttributes::SRC_TABLE]=tabela_orig->obterNome(true);
 
  if(tabela_dest)
-  atributos[AtributosParsers::TABELA_DESTINO]=tabela_dest->obterNome(true);
+  atributos[ParsersAttributes::DST_TABLE]=tabela_dest->obterNome(true);
 
 
  //Criando a definição XML da linha do relacionamento
  qtd=pontos.size();
  for(i=0; i < qtd; i++)
  {
-  atributos[AtributosParsers::POSICAO_X]=QString("%1").arg(pontos[i].x());
-  atributos[AtributosParsers::POSICAO_Y]=QString("%1").arg(pontos[i].y());
-  str_aux+=ParserEsquema::obterDefinicaoObjeto(AtributosParsers::POSICAO,
+  atributos[ParsersAttributes::X_POS]=QString("%1").arg(pontos[i].x());
+  atributos[ParsersAttributes::Y_POS]=QString("%1").arg(pontos[i].y());
+  str_aux+=ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::POSITION,
                                                 atributos, ParserEsquema::DEFINICAO_XML);
  }
- atributos[AtributosParsers::PONTOS]=str_aux;
+ atributos[ParsersAttributes::POINTS]=str_aux;
 
  //Obtendo a posição dos rótulos
  str_aux="";
@@ -319,16 +319,16 @@ void RelacionamentoBase::definirAtributosRelacionamento(void)
  {
   if(!isnan(dist_rotulos[i].x()))
   {
-   atributos[AtributosParsers::POSICAO_X]=QString("%1").arg(dist_rotulos[i].x());
-   atributos[AtributosParsers::POSICAO_Y]=QString("%1").arg(dist_rotulos[i].y());
-   atributos[AtributosParsers::POSICAO]=ParserEsquema::obterDefinicaoObjeto(AtributosParsers::POSICAO,
+   atributos[ParsersAttributes::X_POS]=QString("%1").arg(dist_rotulos[i].x());
+   atributos[ParsersAttributes::Y_POS]=QString("%1").arg(dist_rotulos[i].y());
+   atributos[ParsersAttributes::POSITION]=ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::POSITION,
                                                  atributos, ParserEsquema::DEFINICAO_XML);
-   atributos[AtributosParsers::TIPO_REFERENCIA]=atribs_rot[i];
-   str_aux+=ParserEsquema::obterDefinicaoObjeto(AtributosParsers::ROTULO,
+   atributos[ParsersAttributes::REF_TYPE]=atribs_rot[i];
+   str_aux+=ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::LABEL,
                                                 atributos, ParserEsquema::DEFINICAO_XML);
   }
  }
- atributos[AtributosParsers::POSICAO_ROTULOS]=str_aux;
+ atributos[ParsersAttributes::LABELS_POS]=str_aux;
 }
 
 QString RelacionamentoBase::obterDefinicaoObjeto(void)
@@ -336,7 +336,7 @@ QString RelacionamentoBase::obterDefinicaoObjeto(void)
  bool forma_reduzida;
 
  definirAtributosRelacionamento();
- forma_reduzida=atributos[AtributosParsers::PONTOS].isEmpty();
+ forma_reduzida=atributos[ParsersAttributes::POINTS].isEmpty();
  return(ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML,forma_reduzida));
 }
 

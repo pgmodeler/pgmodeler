@@ -6,11 +6,11 @@ ConversaoTipo::ConversaoTipo(void)
  funcao_conv=NULL;
  tipo=CONV_IMPLICITA;
  entrada_saida=false;
- atributos[AtributosParsers::TIPO_ORIGEM]="";
- atributos[AtributosParsers::TIPO_DESTINO]="";
- atributos[AtributosParsers::ASSINATURA]="";
- atributos[AtributosParsers::TIPO_CONVERSAO]="";
- atributos[AtributosParsers::CONV_ENTRADA_SAIDA]="";
+ atributos[ParsersAttributes::SOURCE_TYPE]="";
+ atributos[ParsersAttributes::DEST_TYPE]="";
+ atributos[ParsersAttributes::SIGNATURE]="";
+ atributos[ParsersAttributes::CAST_TYPE]="";
+ atributos[ParsersAttributes::IO_CAST]="";
 }
 
 void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
@@ -136,32 +136,32 @@ QString ConversaoTipo::obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
  {
-  atributos[AtributosParsers::TIPO_ORIGEM]=(*tipos[CONV_TIPO_ORIGEM]);
-  atributos[AtributosParsers::TIPO_DESTINO]=(*tipos[CONV_TIPO_DESTINO]);
+  atributos[ParsersAttributes::SOURCE_TYPE]=(*tipos[CONV_TIPO_ORIGEM]);
+  atributos[ParsersAttributes::DEST_TYPE]=(*tipos[CONV_TIPO_DESTINO]);
  }
  else
  {
-  atributos[AtributosParsers::TIPO_ORIGEM]=tipos[CONV_TIPO_ORIGEM].obterDefinicaoObjeto(tipo_def);
-  atributos[AtributosParsers::TIPO_DESTINO]=tipos[CONV_TIPO_DESTINO].obterDefinicaoObjeto(tipo_def);
+  atributos[ParsersAttributes::SOURCE_TYPE]=tipos[CONV_TIPO_ORIGEM].obterDefinicaoObjeto(tipo_def);
+  atributos[ParsersAttributes::DEST_TYPE]=tipos[CONV_TIPO_DESTINO].obterDefinicaoObjeto(tipo_def);
  }
 
  if(funcao_conv)
  {
   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-   atributos[AtributosParsers::ASSINATURA]=funcao_conv->obterAssinatura();
+   atributos[ParsersAttributes::SIGNATURE]=funcao_conv->obterAssinatura();
   else
-   atributos[AtributosParsers::ASSINATURA]=funcao_conv->obterDefinicaoObjeto(tipo_def, true);
+   atributos[ParsersAttributes::SIGNATURE]=funcao_conv->obterDefinicaoObjeto(tipo_def, true);
  }
 
  if(tipo==CONV_ATRIBUICAO)
-  atributos[AtributosParsers::TIPO_CONVERSAO]=AtributosParsers::ATRIBUICAO;
+  atributos[ParsersAttributes::CAST_TYPE]=ParsersAttributes::ASSIGNMENT;
  else
-  atributos[AtributosParsers::TIPO_CONVERSAO]=AtributosParsers::IMPLICITA;
+  atributos[ParsersAttributes::CAST_TYPE]=ParsersAttributes::IMPLICIT;
 
  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-  atributos[AtributosParsers::TIPO_CONVERSAO]=atributos[AtributosParsers::TIPO_CONVERSAO].toUpper();
+  atributos[ParsersAttributes::CAST_TYPE]=atributos[ParsersAttributes::CAST_TYPE].toUpper();
 
- atributos[AtributosParsers::CONV_ENTRADA_SAIDA]=(entrada_saida ? "1" : "");
+ atributos[ParsersAttributes::IO_CAST]=(entrada_saida ? "1" : "");
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }

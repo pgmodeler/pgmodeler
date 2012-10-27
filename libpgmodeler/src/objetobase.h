@@ -31,7 +31,7 @@
 #include <QRegExp>
 #include <QStringList>
 
-using namespace AtributosParsers;
+using namespace ParsersAttributes;
 
 enum TipoObjetoBase {
   OBJETO_COLUNA,                                    /* Comentário */

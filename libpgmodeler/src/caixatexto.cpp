@@ -5,10 +5,10 @@ CaixaTexto::CaixaTexto(void)
  definirComentario(" ");
  tipo_objeto=OBJETO_CAIXA_TEXTO;
  atributo_texto[0]=atributo_texto[1]=atributo_texto[2]=false;
- atributos[AtributosParsers::ITALICO]="";
- atributos[AtributosParsers::NEGRITO]="";
- atributos[AtributosParsers::SUBLINHADO]="";
- atributos[AtributosParsers::COR]="";
+ atributos[ParsersAttributes::ITALIC]="";
+ atributos[ParsersAttributes::BOLD]="";
+ atributos[ParsersAttributes::UNDERLINE]="";
+ atributos[ParsersAttributes::COR]="";
 }
 
 QString CaixaTexto::obterDefinicaoObjeto(void)
@@ -16,16 +16,16 @@ QString CaixaTexto::obterDefinicaoObjeto(void)
  definirAtributoPosicao();
 
  if(atributo_texto[TEXTO_ITALICO])
-  atributos[AtributosParsers::ITALICO]="1";
+  atributos[ParsersAttributes::ITALIC]="1";
 
  if(atributo_texto[TEXTO_NEGRITO])
-  atributos[AtributosParsers::NEGRITO]="1";
+  atributos[ParsersAttributes::BOLD]="1";
 
  if(atributo_texto[TEXTO_SUBLINHADO])
-  atributos[AtributosParsers::SUBLINHADO]="1";
+  atributos[ParsersAttributes::UNDERLINE]="1";
 
  if(cor_texto.name()!="#000000")
-  atributos[AtributosParsers::COR]=cor_texto.name();
+  atributos[ParsersAttributes::COR]=cor_texto.name();
 
  return(this->ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML));
 }

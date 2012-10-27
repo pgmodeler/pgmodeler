@@ -3,7 +3,7 @@
 EspacoTabela::EspacoTabela(void)
 {
  tipo_objeto=OBJETO_ESPACO_TABELA;
- atributos[AtributosParsers::DIRETORIO]="";
+ atributos[ParsersAttributes::DIRECTORY]="";
  id_objeto=ObjetoBase::id_esptabela++;
 }
 
@@ -44,7 +44,7 @@ QString EspacoTabela::obterDiretorio(void)
 QString EspacoTabela::obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(diretorio!="")
-  atributos[AtributosParsers::DIRETORIO]="'" + diretorio + "'";
+  atributos[ParsersAttributes::DIRECTORY]="'" + diretorio + "'";
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }

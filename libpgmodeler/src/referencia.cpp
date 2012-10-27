@@ -200,21 +200,21 @@ QString Referencia::obterDefinicaoXML(void)
  QString def_xml;
  map<QString, QString> atributos;
 
- atributos[AtributosParsers::TABELA]="";
- atributos[AtributosParsers::COLUNA]="";
+ atributos[ParsersAttributes::TABLE]="";
+ atributos[ParsersAttributes::COLUMN]="";
 
  if(tabela)
-  atributos[AtributosParsers::TABELA]=tabela->obterNome(true);
+  atributos[ParsersAttributes::TABLE]=tabela->obterNome(true);
 
  if(coluna)
-  atributos[AtributosParsers::COLUNA]=coluna->obterNome();
+  atributos[ParsersAttributes::COLUMN]=coluna->obterNome();
 
- atributos[AtributosParsers::EXPRESSAO]=expressao;
- atributos[AtributosParsers::ALIAS]=alias;
- atributos[AtributosParsers::ALIAS_COLUNA]=alias_coluna;
+ atributos[ParsersAttributes::EXPRESSION]=expressao;
+ atributos[ParsersAttributes::ALIAS]=alias;
+ atributos[ParsersAttributes::COLUMN_ALIAS]=alias_coluna;
 
  //Retorna a definição XML da referencia
- return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::REFERENCIA,
+ return(ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::REFERENCE,
                                             atributos, ParserEsquema::DEFINICAO_XML));
 }
 

@@ -7,23 +7,23 @@ Restricao::Restricao(void)
  postergavel=false;
  fator_preenc=100;
 
- atributos[AtributosParsers::REST_PK]="";
- atributos[AtributosParsers::REST_FK]="";
- atributos[AtributosParsers::REST_CK]="";
- atributos[AtributosParsers::REST_UQ]="";
- atributos[AtributosParsers::TABELA_REF]="";
- atributos[AtributosParsers::COLUNAS_ORIGEM]="";
- atributos[AtributosParsers::COLUNAS_DESTINO]="";
- atributos[AtributosParsers::ACAO_DELETE]="";
- atributos[AtributosParsers::ACAO_UPDATE]="";
- atributos[AtributosParsers::EXPRESSAO]="";
- atributos[AtributosParsers::TIPO]="";
- atributos[AtributosParsers::TIPO_COMPARACAO]="";
- atributos[AtributosParsers::TIPO_POSTERGACAO]="";
- atributos[AtributosParsers::POSTERGAVEL]="";
- atributos[AtributosParsers::TABELA]="";
- atributos[AtributosParsers::DECL_DENTRO_TABELA]="";
- atributos[AtributosParsers::FATOR]="";
+ atributos[ParsersAttributes::PK_CONSTR]="";
+ atributos[ParsersAttributes::FK_CONSTR]="";
+ atributos[ParsersAttributes::CK_CONSTR]="";
+ atributos[ParsersAttributes::UQ_CONSTR]="";
+ atributos[ParsersAttributes::REF_TABLE]="";
+ atributos[ParsersAttributes::SRC_COLUMNS]="";
+ atributos[ParsersAttributes::DST_COLUMNS]="";
+ atributos[ParsersAttributes::DEL_ACTION]="";
+ atributos[ParsersAttributes::UPD_ACTION]="";
+ atributos[ParsersAttributes::EXPRESSION]="";
+ atributos[ParsersAttributes::TYPE]="";
+ atributos[ParsersAttributes::COMPARISON_TYPE]="";
+ atributos[ParsersAttributes::DEFER_TYPE]="";
+ atributos[ParsersAttributes::DEFERRABLE]="";
+ atributos[ParsersAttributes::TABLE]="";
+ atributos[ParsersAttributes::DECL_IN_TABLE]="";
+ atributos[ParsersAttributes::FACTOR]="";
 }
 
 Restricao::~Restricao(void)
@@ -139,12 +139,12 @@ void Restricao::definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, 
  if(tipo_coluna==COLUNA_REFER)
  {
   vet_col=&colunas_ref;
-  atrib=AtributosParsers::COLUNAS_DESTINO;
+  atrib=ParsersAttributes::DST_COLUMNS;
  }
  else
  {
   vet_col=&colunas;
-  atrib=AtributosParsers::COLUNAS_ORIGEM;
+  atrib=ParsersAttributes::SRC_COLUMNS;
  }
 
  /* Varre a lista de colunas contatenando os nomes
@@ -385,32 +385,32 @@ QString Restricao::obterDefinicaoObjeto(unsigned tipo_def, bool inc_insporrelaca
 {
  QString atrib;
 
- atributos[AtributosParsers::REST_PK]="";
- atributos[AtributosParsers::REST_FK]="";
- atributos[AtributosParsers::REST_CK]="";
- atributos[AtributosParsers::REST_UQ]="";
+ atributos[ParsersAttributes::PK_CONSTR]="";
+ atributos[ParsersAttributes::FK_CONSTR]="";
+ atributos[ParsersAttributes::CK_CONSTR]="";
+ atributos[ParsersAttributes::UQ_CONSTR]="";
 
  switch(!tipo)
  {
   case TipoRestricao::check:
-   atrib=AtributosParsers::REST_CK;
+   atrib=ParsersAttributes::CK_CONSTR;
   break;
   case TipoRestricao::primary_key:
-   atrib=AtributosParsers::REST_PK;
+   atrib=ParsersAttributes::PK_CONSTR;
   break;
   case TipoRestricao::foreign_key:
-   atrib=AtributosParsers::REST_FK;
+   atrib=ParsersAttributes::FK_CONSTR;
   break;
   case TipoRestricao::unique:
-   atrib=AtributosParsers::REST_UQ;
+   atrib=ParsersAttributes::UQ_CONSTR;
   break;
  }
  atributos[atrib]="1";
 
- atributos[AtributosParsers::TIPO]=atrib;
- atributos[AtributosParsers::ACAO_UPDATE]=(~acao_upd);
- atributos[AtributosParsers::ACAO_DELETE]=(~acao_del);
- atributos[AtributosParsers::EXPRESSAO]=exp_checagem;
+ atributos[ParsersAttributes::TYPE]=atrib;
+ atributos[ParsersAttributes::UPD_ACTION]=(~acao_upd);
+ atributos[ParsersAttributes::DEL_ACTION]=(~acao_del);
+ atributos[ParsersAttributes::EXPRESSION]=exp_checagem;
 
  if(tipo!=TipoRestricao::check)
  {
@@ -425,13 +425,13 @@ QString Restricao::obterDefinicaoObjeto(unsigned tipo_def, bool inc_insporrelaca
    definirAtributoColunas(COLUNA_REFER, tipo_def, inc_insporrelacao);
  }
 
- atributos[AtributosParsers::TABELA_REF]=(tabela_ref ? tabela_ref->obterNome(true) : "");
- atributos[AtributosParsers::POSTERGAVEL]=(postergavel ? "1" : "");
- atributos[AtributosParsers::TIPO_COMPARACAO]=(~tipo_comp);
- atributos[AtributosParsers::TIPO_POSTERGACAO]=(~tipo_postergacao);
+ atributos[ParsersAttributes::REF_TABLE]=(tabela_ref ? tabela_ref->obterNome(true) : "");
+ atributos[ParsersAttributes::DEFERRABLE]=(postergavel ? "1" : "");
+ atributos[ParsersAttributes::COMPARISON_TYPE]=(~tipo_comp);
+ atributos[ParsersAttributes::DEFER_TYPE]=(~tipo_postergacao);
 
  if(this->tabela_pai)
-  atributos[AtributosParsers::TABELA]=this->tabela_pai->obterNome(true);
+  atributos[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
 
  /* Caso a restrição não esteja referenciando alguma coluna incluída por relacionamento
     a mesma será declarada dentro do código da tabela pai e para tanto existe um atributo
@@ -440,12 +440,12 @@ QString Restricao::obterDefinicaoObjeto(unsigned tipo_def, bool inc_insporrelaca
     tabela pai. Este atributo é usado apenas para ajudar na formatação do código SQL e
     não tem nenhuma outra utilidade. */
  if(!referenciaColunaIncRelacao() || tipo==TipoRestricao::primary_key)
-  atributos[AtributosParsers::DECL_DENTRO_TABELA]="1";
+  atributos[ParsersAttributes::DECL_IN_TABLE]="1";
 
  if(tipo==TipoRestricao::primary_key || tipo==TipoRestricao::unique)
-  atributos[AtributosParsers::FATOR]=QString("%1").arg(fator_preenc);
+  atributos[ParsersAttributes::FACTOR]=QString("%1").arg(fator_preenc);
  else
-  atributos[AtributosParsers::FATOR]="";
+  atributos[ParsersAttributes::FACTOR]="";
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
 }

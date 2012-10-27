@@ -12,10 +12,10 @@ OGRelacionamento::OGRelacionamento(RelacionamentoBase *relacao) : ObjetoGrafico(
   //Aloca os rótulos
   if(relacao->obterRotulo(i))
   {
-   relacao->obterRotulo(i)->definirCorTexto(ObjetoGrafico::obterEstiloFonte(AtributosParsers::ROTULO).foreground());
+   relacao->obterRotulo(i)->definirCorTexto(ObjetoGrafico::obterEstiloFonte(ParsersAttributes::LABEL).foreground());
    rotulos[i]=new OGCaixaTexto(relacao->obterRotulo(i),
-                               ObjetoGrafico::obterEstiloPreenchimento(AtributosParsers::ROTULO),
-                               ObjetoGrafico::obterEstiloBorda(AtributosParsers::ROTULO));
+                               ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::LABEL),
+                               ObjetoGrafico::obterEstiloBorda(ParsersAttributes::LABEL));
    rotulos[i]->setZValue(1);
    this->addToGroup(rotulos[i]);
   }
@@ -131,15 +131,15 @@ QVariant OGRelacionamento::itemChange(GraphicsItemChange change, const QVariant 
      que as mesmas também estão selecionadas */
   if(value.toBool())
   {
-   QColor cor1=ObjetoGrafico::obterEstiloBorda(AtributosParsers::SELECAO_OBJETO).color(),
-          cor2=ObjetoGrafico::obterEstiloBorda(AtributosParsers::RELACIONAMENTO).color();
+   QColor cor1=ObjetoGrafico::obterEstiloBorda(ParsersAttributes::SELECAO_OBJETO).color(),
+          cor2=ObjetoGrafico::obterEstiloBorda(ParsersAttributes::RELATIONSHIP).color();
 
    cor.setRedF((cor1.redF() + cor2.greenF())/2.0f);
    cor.setGreenF((cor1.greenF() + cor2.greenF())/2.0f);
    cor.setBlueF((cor1.blueF() + cor2.blueF())/2.0f);
   }
   else
-   cor=ObjetoGrafico::obterEstiloBorda(AtributosParsers::RELACIONAMENTO).color();
+   cor=ObjetoGrafico::obterEstiloBorda(ParsersAttributes::RELATIONSHIP).color();
 
   //Aplica a cor nas linhas do relacionamento
   qtd=linhas.size();
@@ -406,7 +406,7 @@ void OGRelacionamento::configurarLinha(void)
   //Caso seja um auto relacionamento
   if(rel_base->autoRelacionamento())
   {
-   float fator=config_fonte[AtributosParsers::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
+   float fator=config_fonte[ParsersAttributes::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
 
    /* Cria uma linha fixa no seguinte formato:
 
@@ -496,8 +496,8 @@ void OGRelacionamento::configurarLinha(void)
      pontos_graf.push_back(pol);
      pol->setZValue(0);
      pol->setPolygon(pol_aux);
-     pol->setBrush(ObjetoGrafico::obterEstiloPreenchimento(AtributosParsers::SELECAO_OBJETO));
-     pol->setPen(ObjetoGrafico::obterEstiloBorda(AtributosParsers::SELECAO_OBJETO));
+     pol->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::SELECAO_OBJETO));
+     pol->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::SELECAO_OBJETO));
      this->addToGroup(pol);
     }
     else
@@ -521,7 +521,7 @@ void OGRelacionamento::configurarLinha(void)
   }
 
   //Caso o relacionamento seja de dependência a linha será tracejada
-  pen=ObjetoGrafico::obterEstiloBorda(AtributosParsers::RELACIONAMENTO);
+  pen=ObjetoGrafico::obterEstiloBorda(ParsersAttributes::RELATIONSHIP);
   if(rel_base->obterTipoRelacionamento()==RelacionamentoBase::RELACIONAMENTO_DEP)
    pen.setStyle(Qt::DashLine);
 
@@ -621,19 +621,19 @@ void OGRelacionamento::configurarDescritor(void)
  RelacionamentoBase *rel_base=this->obterObjetoOrigem();
  Relacionamento *relacao=dynamic_cast<Relacionamento *>(rel_base);
  unsigned tipo_rel=rel_base->obterTipoRelacionamento();
- float x, y, fator=config_fonte[AtributosParsers::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
+ float x, y, fator=config_fonte[ParsersAttributes::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
  QPen pen;
  QPointF pnt;
  vector<QPointF> pontos=rel_base->obterPontos();
 
  //Configura o estilo da borda do descritor
- pen=ObjetoGrafico::obterEstiloBorda(AtributosParsers::RELACIONAMENTO);
+ pen=ObjetoGrafico::obterEstiloBorda(ParsersAttributes::RELATIONSHIP);
  if(tipo_rel==RelacionamentoBase::RELACIONAMENTO_DEP)
   pen.setStyle(Qt::DashLine);
 
  //Configura a borda e preenchimento do descritor
  descritor->setPen(pen);
- descritor->setBrush(ObjetoGrafico::obterEstiloPreenchimento(AtributosParsers::RELACIONAMENTO));
+ descritor->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::RELATIONSHIP));
 
  /* Cria um polígono triangular (para relacionamentos de dep. ou gen.)
     ou losangular (para relacionamentos 1n ou nn) */
@@ -732,10 +732,10 @@ void OGRelacionamento::configurarAtributos(void)
   QRectF ret;
   QPolygonF pol;
   float py, px,
-        fator=config_fonte[AtributosParsers::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
+        fator=config_fonte[ParsersAttributes::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
 
   //Obtém configuração de fonte dos atributos
-  fmt=config_fonte[AtributosParsers::ATRIBUTO];
+  fmt=config_fonte[ParsersAttributes::ATRIBUTO];
   fonte=fmt.font();
   fonte.setPointSizeF(fonte.pointSizeF() * 0.80f);
 
@@ -793,13 +793,13 @@ void OGRelacionamento::configurarAtributos(void)
    }
 
    desc->setRect(ret);
-   desc->setPen(ObjetoGrafico::obterEstiloBorda(AtributosParsers::ATRIBUTO));
-   desc->setBrush(ObjetoGrafico::obterEstiloPreenchimento(AtributosParsers::ATRIBUTO));
-   lin->setPen(ObjetoGrafico::obterEstiloBorda(AtributosParsers::RELACIONAMENTO));
+   desc->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::ATRIBUTO));
+   desc->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::ATRIBUTO));
+   lin->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::RELATIONSHIP));
    texto->setBrush(fmt.foreground());
    texto->setFont(fonte);
-   sel_atrib->setPen(ObjetoGrafico::obterEstiloBorda(AtributosParsers::SELECAO_OBJETO));
-   sel_atrib->setBrush(ObjetoGrafico::obterEstiloPreenchimento(AtributosParsers::SELECAO_OBJETO));
+   sel_atrib->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::SELECAO_OBJETO));
+   sel_atrib->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::SELECAO_OBJETO));
 
    //Move o atributo para a posição calculada
    atributo->setPos(px, py);
@@ -928,22 +928,22 @@ void OGRelacionamento::configurarRotulos(void)
   for(idx=0; idx < 2; idx++)
   {
    /* Caso não haja distância configurada para o rótulo em questão,
-      ele será posicionado automaticamente em relação à  linha fixa
+      ele será posicionado automaticamente em relação �   linha fixa
       respectiva. Os rótulos de cardinalidade por padrão são posicionados
-      de forma a ficarem rente à s linhas fixas. O exemplos mostra os casos
+      de forma a ficarem rente �  s linhas fixas. O exemplos mostra os casos
       possíveis:
 
       1) Linha horizontal:
          ----------                              ----------
          | Tabela |-[rotulo]-----<>-----[rotulo]-| Tabela |
          ----------                              ----------
-         >> Os rótulos de cadinalidade são posicionados à  frente (ou atrás)
-            da tabela e centralizados verticalmente em relação à s linhas fixas.
+         >> Os rótulos de cadinalidade são posicionados �   frente (ou atrás)
+            da tabela e centralizados verticalmente em relação �  s linhas fixas.
 
       2) Linha vertical:
          ----------
          | Tabela | >> Os rótulos são posicionados abaixo ou acima das tabelas
-         ----------    e centralizados horizontalmente em relação à s linhas fixas.
+         ----------    e centralizados horizontalmente em relação �  s linhas fixas.
               |
            [rotulo]
               |
