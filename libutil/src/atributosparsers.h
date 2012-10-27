@@ -1,11 +1,12 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Descrição:  Definição do namespcae Atributos, um espaço de nomes o qual
-              armazena uma série de QStrings estáticas constantes, usadas
-              para referênciar os atributos dos objetos nos métodos de geração
-              da definição sql e xml. Cada QString guarda o nome do atributo usado
-              no arquivo de esquema ".sch" dos respectivos objetos.
+# Sub-project: libutil library
+# Description: Definition of parsers attributes namespace which
+#              stores a series of static strings constants used
+#              to reference the attributes of objects in SQL/XML
+#              generation methods.
+#              Each string stores the name of the attribute used
+#              in the schema file "sch" of the respective objects.
 # Creation date:o: 23/09/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -22,8 +23,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef ATRIBUTOS_PARSERS_H
-#define ATRIBUTOS_PARSERS_H
+#ifndef PARSERS_ATTRIBUTES_H
+#define PARSERS_ATTRIBUTES_H
 
 #include <QString>
 
@@ -31,7 +32,6 @@ namespace AtributosParsers {
 static const QString
   ACAO_DELETE="del-action",
   ACAO_UPDATE="upd-action",
-  //ADMIN="admin",
   ALINHAMENTO="alignment",
   TIPO_DISPARO="firing-type",
   ARGUMENTOS="arguments",
@@ -65,7 +65,6 @@ static const QString
   DELIMITADOR="delimiter",
   DIMENSAO="dimension",
   DIRETORIO="directory",
-  //DOMINIO="domain",
   DONO="owner",
   ELEMENTO="element",
   ELEMENTOS="elements",
@@ -173,7 +172,6 @@ static const QString
   TIPO_REFERENCIA="ref-type",
   TIPO_RETORNO="return-type",
   TIPO_SEGURANCA="security-type",
-  //TIPO_USUARIO="usertype",
   TIPO="type",
   TIPOS="types",
   SYSID="sysid",
@@ -220,12 +218,6 @@ static const QString
   RELAC_GEN="relgen",
   RELAC_DEP="reldep",
   RELAC_TAB_VISAO="reltv",
-  //TIPO_CONEX_ORIG="src-conntype",
-  //TIPO_CONEX_DEST="dst-conntype",
-  //CONEXAO_BASE="base",
-  //CONEXAO_TOPO="top",
-  //CONEXAO_ESQUERDA="left",
-  //CONEXAO_DIREITA="right",
   ROTULO="label",
   POSICAO_ROTULOS="labels-pos",
   ROTULO_CARD_DESTINO="dst-label",
@@ -249,7 +241,6 @@ static const QString
   COR_FONTE="foreground-color",
   SENSIVEL_CARACTERE="case-sensitive",
   EXP_INICIAL="initial-exp",
-  //EXP_FINAL="final-exp",
   VALOR="value",
   EXP_REGULAR="regexp",
   SEP_PALAVRAS="word-separators",
@@ -292,8 +283,6 @@ static const QString
   ATRIBUTO="attribute",
   GLOBAL="global",
   FONTE="font",
-  //CONFIG_FONTE="font-settings",
-  //CORES_OBJETO="object-colors",
   TIPO_OBJETO="object-type",
   COR="color",
   TAMANHO="size",
@@ -326,7 +315,6 @@ static const QString
   RETRATO="portrait",
   PAISAGEM="landscape",
   TAM_GRADE="grid-size",
-  //SESSAO="session",
   CAMINHO="path",
   ARQUIVO="file",
   TB_ARQUIVO="fileToolbar",
