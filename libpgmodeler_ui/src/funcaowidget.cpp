@@ -62,8 +62,8 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_FUN
   tabela_ret_gb->setVisible(false);
 
   //Define os campos exclusivos para cada versão
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, ParserEsquema::VERSAO_PGSQL_84)].push_back(tabela_rb);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, ParserEsquema::VERSAO_PGSQL_84)].push_back(func_janela_lbl);
+  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(tabela_rb);
+  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(func_janela_lbl);
 
   //Gera o frame de alerta
   frame=gerarFrameAlertaVersao(mapa_campos);

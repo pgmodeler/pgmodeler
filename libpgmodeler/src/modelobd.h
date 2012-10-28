@@ -42,7 +42,7 @@
 #include "conversaotipo.h"
 #include "conversaocodificacao.h"
 #include "classeoperadores.h"
-#include "parserxml.h"
+#include "xmlparser.h"
 #include "permissao.h"
 #include <algorithm>
 #include <locale.h>
@@ -432,7 +432,7 @@ class ModeloBD:  public QObject, public ObjetoBase {
   void atualizarRelTabelaVisao(Visao *visao);
 
   /* Cria uma restrição a partir do XML. Caso o parâmetro 'objeto' seja uma tabela
-     cria a restrição e já adiciona automaticaene à  primeira. Caso seja um relacionamento
+     cria a restrição e já adiciona automaticaene �   primeira. Caso seja um relacionamento
      adiciona a restrição criada a mesma referenciando as colunas que representam o
      relacionamento. Caso o parâmetro 'objeto' seja nulo será considerado o atributo
      'table' código XML o qual armazena o nome da tabela a qual irá armazenar a restrição,
@@ -457,7 +457,7 @@ class ModeloBD:  public QObject, public ObjetoBase {
 
   /* Retorna se um dado objeto no modelo referência a coluna especificada.
      Esse método deve ser usado antes da remoção da coluna. O não uso deste método
-     pode quebrar as referênciaà  coluna e causar resultados inesperados e inconsistências
+     pode quebrar as referência�   coluna e causar resultados inesperados e inconsistências
      no modelo. Este método varre a lista de objetos do tipo: sequencia e visao */
   void validarRemocaoColuna(Coluna *coluna);
 

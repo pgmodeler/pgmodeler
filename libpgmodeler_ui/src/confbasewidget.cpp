@@ -53,7 +53,7 @@ void ConfBaseWidget::salvarConfiguracao(const QString &id_conf)
   }
 
   //Gera o modelo de configuração com base nos parâmetros atuais
-  buf=ParserEsquema::obterDefinicaoObjeto(nome_arq_sch, atribs);
+  buf=SchemaParser::getObjectDefinition(nome_arq_sch, atribs);
 
   //Abre o arquivo de configuração para gravação
   saida.open(QFile::WriteOnly);

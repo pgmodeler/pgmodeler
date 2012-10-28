@@ -25,7 +25,7 @@
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-#include "parseresquema.h"
+#include "schemaparser.h"
 #include "exception.h"
 #include <fstream>
 #include <iostream>

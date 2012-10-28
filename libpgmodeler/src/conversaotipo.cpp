@@ -134,7 +134,7 @@ unsigned ConversaoTipo::obterTipoConversao(void)
 
 QString ConversaoTipo::obterDefinicaoObjeto(unsigned tipo_def)
 {
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
   atributos[ParsersAttributes::SOURCE_TYPE]=(*tipos[CONV_TIPO_ORIGEM]);
   atributos[ParsersAttributes::DEST_TYPE]=(*tipos[CONV_TIPO_DESTINO]);
@@ -147,7 +147,7 @@ QString ConversaoTipo::obterDefinicaoObjeto(unsigned tipo_def)
 
  if(funcao_conv)
  {
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
    atributos[ParsersAttributes::SIGNATURE]=funcao_conv->obterAssinatura();
   else
    atributos[ParsersAttributes::SIGNATURE]=funcao_conv->obterDefinicaoObjeto(tipo_def, true);
@@ -158,7 +158,7 @@ QString ConversaoTipo::obterDefinicaoObjeto(unsigned tipo_def)
  else
   atributos[ParsersAttributes::CAST_TYPE]=ParsersAttributes::IMPLICIT;
 
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
   atributos[ParsersAttributes::CAST_TYPE]=atributos[ParsersAttributes::CAST_TYPE].toUpper();
 
  atributos[ParsersAttributes::IO_CAST]=(entrada_saida ? "1" : "");

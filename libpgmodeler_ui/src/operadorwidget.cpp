@@ -46,10 +46,10 @@ OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO
   }
 
   //Gera o frame de alerta com os campos que são exclusivos para versões do postgresql
-  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, ParserEsquema::VERSAO_PGSQL_82)].push_back(op_ordenacao1_lbl);
-  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, ParserEsquema::VERSAO_PGSQL_82)].push_back(op_ordenacao2_lbl);
-  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, ParserEsquema::VERSAO_PGSQL_82)].push_back(op_menorque_lbl);
-  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, ParserEsquema::VERSAO_PGSQL_82)].push_back(op_maiorque_lbl);
+  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, SchemaParser::PGSQL_VERSION_82)].push_back(op_ordenacao1_lbl);
+  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, SchemaParser::PGSQL_VERSION_82)].push_back(op_ordenacao2_lbl);
+  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, SchemaParser::PGSQL_VERSION_82)].push_back(op_menorque_lbl);
+  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, SchemaParser::PGSQL_VERSION_82)].push_back(op_maiorque_lbl);
   frame=gerarFrameAlertaVersao(mapa_campos);
   grid->addWidget(frame, grid->count()+1, 0, 1, 0);
   frame->setParent(atributos_twg->widget(2));

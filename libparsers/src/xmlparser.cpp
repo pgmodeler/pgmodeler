@@ -1,4 +1,4 @@
-#include "parserxml.h"
+#include "xmlparser.h"
 
 QString ParserXML::nome_doc_xml="";
 QString ParserXML::buffer_xml="";

@@ -103,7 +103,7 @@ QString Dominio::obterDefinicaoObjeto(unsigned tipo_def)
  atributos[ParsersAttributes::EXPRESSION]=expressao;
  atributos[ParsersAttributes::CONSTRAINT]=ObjetoBase::formatarNome(nome_rest);
 
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
   atributos[ParsersAttributes::TYPE]=(*tipo);
  else
  {

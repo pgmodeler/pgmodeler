@@ -214,8 +214,8 @@ QString Referencia::obterDefinicaoXML(void)
  atributos[ParsersAttributes::COLUMN_ALIAS]=alias_coluna;
 
  //Retorna a definição XML da referencia
- return(ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::REFERENCE,
-                                            atributos, ParserEsquema::DEFINICAO_XML));
+ return(SchemaParser::getObjectDefinition(ParsersAttributes::REFERENCE,
+                                            atributos, SchemaParser::XML_DEFINITION));
 }
 
 bool Referencia::operator == (Referencia &refer)

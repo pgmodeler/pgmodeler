@@ -22,7 +22,7 @@
 #define FORM_EXPORTACAO_H
 
 #include "ui_formexportacao.h"
-#include "parseresquema.h"
+#include "schemaparser.h"
 #include "modelowidget.h"
 
 class FormExportacao: public QDialog, public Ui::FormExportacao {

@@ -652,7 +652,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
   }
   else
    //Caso o objeto esteja sendo atualizado, apenas valida a definição do mesmo.
-   modelo->validarDefinicaoObjeto(this->objeto, ParserEsquema::DEFINICAO_SQL);
+   modelo->validarDefinicaoObjeto(this->objeto, SchemaParser::SQL_DEFINITION);
 
 
   /* Caso o objeto em questão seja um esquema,faz com que os objetos do tipo

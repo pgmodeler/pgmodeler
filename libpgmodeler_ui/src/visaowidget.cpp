@@ -367,7 +367,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
    }
   }
   //Exibe o código fonte da visão auxliar, para refletir a configuração atual da mesma
-  codigo_txt->setPlainText(QString::fromUtf8(visao_aux.obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL)));
+  codigo_txt->setPlainText(QString::fromUtf8(visao_aux.obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION)));
  }
  catch(Exception &e)
  {

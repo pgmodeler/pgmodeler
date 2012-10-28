@@ -30,7 +30,7 @@ LinguagemWidget::LinguagemWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   frame->setParent(this);
 
   //Define os campos exclusivos para cada versão
-  chave_ver=gerarIntervaloVersoes(APOS_VERSAO, ParserEsquema::VERSAO_PGSQL_84);
+  chave_ver=gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84);
   mapa_campos[chave_ver].push_back(func_inline_lbl);
   //Gera o frame de alerta
   frame=gerarFrameAlertaVersao(mapa_campos);

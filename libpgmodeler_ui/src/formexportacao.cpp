@@ -24,7 +24,7 @@ FormExportacao::FormExportacao(QWidget *parent, Qt::WindowFlags f) : QDialog(par
  connect(exportar_btn, SIGNAL(clicked(void)), this, SLOT(exportarModelo(void)));
 
  //Obtém as versões disponíveis de esquemas SQL
- ParserEsquema::obterVersoesPgSQL(versoes);
+ SchemaParser::getPgSQLVersions(versoes);
 
  //Preenche os comboboxes de versões
  pgsqlvers_cmb->addItems(QStringList(QList<QString>::fromVector(QVector<QString>::fromStdVector(versoes))));
@@ -172,12 +172,12 @@ void FormExportacao::exportarModelo(void)
     if(exportacao_arq_rb->isChecked())
     {
      //Define a versão do postgresql a ser adotada
-     ParserEsquema::definirVersaoPgSQL(pgsqlvers_cmb->currentText());
+     SchemaParser::setPgSQLVersion(pgsqlvers_cmb->currentText());
 
      rot_prog_lbl->setText(trUtf8("Saving file '%1'").arg(arquivo_edt->text()));
 
      //Salva o modelo em arquivo
-     modelo_wgt->modelo->salvarModelo(arquivo_edt->text(), ParserEsquema::DEFINICAO_SQL);
+     modelo_wgt->modelo->salvarModelo(arquivo_edt->text(), SchemaParser::SQL_DEFINITION);
      prog_pb->setValue(25);
     }
     //Caso seja exportação direto para o SGBD
@@ -193,9 +193,9 @@ void FormExportacao::exportarModelo(void)
      /* Caso o checkbox de versão esteja marcada então a versão do servidor é ignorada
       usando aquela escolhida no combo */
      if(pgsqlvers_chk->isChecked())
-      ParserEsquema::definirVersaoPgSQL(pgsqlvers1_cmb->currentText());
+      SchemaParser::setPgSQLVersion(pgsqlvers1_cmb->currentText());
      else
-      ParserEsquema::definirVersaoPgSQL(versao);
+      SchemaParser::setPgSQLVersion(versao);
 
 
      //Cria os Papéis e espaços de tabela separadamente dos demais
@@ -210,7 +210,7 @@ void FormExportacao::exportarModelo(void)
 
        try
        {
-        conexao->executeDDLCommand(objeto->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL));
+        conexao->executeDDLCommand(objeto->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION));
        }
        catch(Exception &e)
        {
@@ -237,7 +237,7 @@ void FormExportacao::exportarModelo(void)
 
      try
      {
-      conexao->executeDDLCommand(modelo_wgt->modelo->__obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL));
+      conexao->executeDDLCommand(modelo_wgt->modelo->__obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION));
       bd_criado=true;
      }
      catch(Exception &e)
@@ -268,7 +268,7 @@ void FormExportacao::exportarModelo(void)
      rot_prog_lbl->repaint();
 
      //Gera o código SQL de todo o banco
-     buf_sql=modelo_wgt->modelo->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL, false);
+     buf_sql=modelo_wgt->modelo->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION, false);
 
      /* Extrai cada comando SQL do buffeer e o executa separadamente, isso é feito
       para que, em caso de erro, o usuário saiba exatamente a SQL que gerou a

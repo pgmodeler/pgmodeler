@@ -694,7 +694,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
 
      //Obtém o xml que define a tabela do relacionamento
      tab_nn=rel->obterTabelaReceptora();
-     xml_tab=tab_nn->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML);
+     xml_tab=tab_nn->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
 
      //Cria a mesma a partir do xml
      ParserXML::reiniciarParser();
@@ -1069,7 +1069,7 @@ void ModeloWidget::salvarModelo(const QString &nome_arq)
   prog_tarefa->show();
 
   //Salva o modelo em arquivo
-  modelo->salvarModelo(nome_arq, ParserEsquema::DEFINICAO_XML);
+  modelo->salvarModelo(nome_arq, SchemaParser::XML_DEFINITION);
   this->nome_arquivo=nome_arq;
 
   //Fecha o widget de progresso de tarefa
@@ -1663,8 +1663,8 @@ void ModeloWidget::colarObjetos(void)
       de terem ou não o mesmo nome ou definição XML serão SEMPRE colados no modelo. */
    if(objeto_aux &&
       (dynamic_cast<ObjetoGraficoBase *>(objeto) ||
-       (modelo->validarDefinicaoObjeto(objeto_aux, ParserEsquema::ParserEsquema::DEFINICAO_XML) !=
-        modelo->validarDefinicaoObjeto(objeto, ParserEsquema::ParserEsquema::DEFINICAO_XML))))
+       (modelo->validarDefinicaoObjeto(objeto_aux, SchemaParser::SchemaParser::XML_DEFINITION) !=
+        modelo->validarDefinicaoObjeto(objeto, SchemaParser::SchemaParser::XML_DEFINITION))))
    {
     //Resolvendo conflitos de nomes
     if(tipo_obj!=OBJETO_CONV_TIPO)
@@ -1748,7 +1748,7 @@ void ModeloWidget::colarObjetos(void)
                                 objeto->obterTipoObjeto());
 
   //Armazena a definição XML do objeto num mapa de buffers xml
-  xml_objs[objeto]=modelo->validarDefinicaoObjeto(objeto, ParserEsquema::DEFINICAO_XML);
+  xml_objs[objeto]=modelo->validarDefinicaoObjeto(objeto, SchemaParser::XML_DEFINITION);
  }
 
  /* O quarto passo da colagem é a restauração dos nomes originais dos objetos

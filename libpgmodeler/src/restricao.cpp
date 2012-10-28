@@ -130,7 +130,7 @@ void Restricao::definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, 
  Coluna *col;
  QString str_cols, atrib;
  unsigned i, qtd;
- bool formatar=(tipo_def==ParserEsquema::DEFINICAO_SQL);
+ bool formatar=(tipo_def==SchemaParser::SQL_DEFINITION);
 
  /* Caso a coluna selecionada seja a de destino,
     obtém a lista de colunas de destino e marca
@@ -158,8 +158,8 @@ void Restricao::definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, 
      por relacionamento) não podem ser incluídas pois estas serão inseridas
      na restrição no momento da criação do relacionamento a partir do XML respectivo
      por isso o parâmetro 'inc_insporrelacao' pode ser usado para resolver esse caso. */
-  if((tipo_def==ParserEsquema::DEFINICAO_SQL) ||
-     ((tipo_def==ParserEsquema::DEFINICAO_XML) &&
+  if((tipo_def==SchemaParser::SQL_DEFINITION) ||
+     ((tipo_def==SchemaParser::XML_DEFINITION) &&
       ((inc_insporrelacao && col->incluidoPorRelacionamento()) ||
        (inc_insporrelacao && !col->incluidoPorRelacionamento()) ||
        (!inc_insporrelacao && !col->incluidoPorRelacionamento()))))

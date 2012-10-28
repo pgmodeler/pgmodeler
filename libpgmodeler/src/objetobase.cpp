@@ -468,19 +468,19 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  QString def;
 
- if((tipo_def==ParserEsquema::DEFINICAO_SQL &&
+ if((tipo_def==SchemaParser::SQL_DEFINITION &&
      tipo_objeto!=OBJETO_BASE && tipo_objeto!=OBJETO_RELACAO_BASE &&
      tipo_objeto!=OBJETO_TABELA_BASE && tipo_objeto!=OBJETO_CAIXA_TEXTO) ||
 
-    (tipo_def==ParserEsquema::DEFINICAO_XML &&
+    (tipo_def==SchemaParser::XML_DEFINITION &&
      tipo_objeto!=OBJETO_BASE && tipo_objeto!=OBJETO_TABELA_BASE))
  {
   bool formatar;
   QString str_aux;
 
   //Formata o nome dos objetos caso uma definição SQL está sendo gerada
-  formatar=(tipo_def==ParserEsquema::DEFINICAO_SQL ||
-            (tipo_def==ParserEsquema::DEFINICAO_XML && forma_reduzida &&
+  formatar=(tipo_def==SchemaParser::SQL_DEFINITION ||
+            (tipo_def==SchemaParser::XML_DEFINITION && forma_reduzida &&
              tipo_objeto!=OBJETO_CAIXA_TEXTO && tipo_objeto!=OBJETO_RELACAO &&
              tipo_objeto!=OBJETO_RELACAO_BASE));
   atributos[esq_objetos[tipo_objeto]]="1";
@@ -510,32 +510,32 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   atributos[ParsersAttributes::NAME]=this->obterNome(formatar);
   atributos[ParsersAttributes::SQL_OBJECT]=sql_objetos[this->tipo_objeto];
 
-  if(tipo_def==ParserEsquema::DEFINICAO_XML && esquema)
+  if(tipo_def==SchemaParser::XML_DEFINITION && esquema)
   {
    atributos[ParsersAttributes::SCHEMA]=esquema->obterDefinicaoObjeto(tipo_def, true);
   }
 
-  if(tipo_def==ParserEsquema::DEFINICAO_XML)
+  if(tipo_def==SchemaParser::XML_DEFINITION)
     atributos[ParsersAttributes::PROTECTED]=(protegido ? "1" : "");
 
   if(comentario!="")
   {
    atributos[ParsersAttributes::COMMENT]=comentario;
 
-   if((tipo_def==ParserEsquema::DEFINICAO_SQL &&
+   if((tipo_def==SchemaParser::SQL_DEFINITION &&
        tipo_objeto!=OBJETO_ESPACO_TABELA &&
        tipo_objeto!=OBJETO_BANCO_DADOS) ||
-      tipo_def==ParserEsquema::DEFINICAO_XML)
+      tipo_def==SchemaParser::XML_DEFINITION)
    {
-    ParserEsquema::ignorarAtributosDesc(true);
+    SchemaParser::setIgnoreUnkownAttributes(true);
     atributos[ParsersAttributes::COMMENT]=
-    ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::COMMENT, atributos, tipo_def);
+    SchemaParser::getObjectDefinition(ParsersAttributes::COMMENT, atributos, tipo_def);
    }
   }
 
   if(espacotabela)
   {
-   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+   if(tipo_def==SchemaParser::SQL_DEFINITION)
     atributos[ParsersAttributes::TABLESPACE]=espacotabela->obterNome(formatar);
    else
     atributos[ParsersAttributes::TABLESPACE]=espacotabela->obterDefinicaoObjeto(tipo_def, true);
@@ -543,21 +543,21 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 
   if(dono)
   {
-   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+   if(tipo_def==SchemaParser::SQL_DEFINITION)
    {
     atributos[ParsersAttributes::OWNER]=dono->obterNome(formatar);
 
     /** Apenas espaços de tabelas e banco de dados não têm um comando ALTER SET OWNER
         pois por regra do PostgreSQL, espaços de tabelas e banco de dados devem ser criados
         com apenas por linha de comando isolada das demais **/
-    if((tipo_def==ParserEsquema::DEFINICAO_SQL &&
+    if((tipo_def==SchemaParser::SQL_DEFINITION &&
         tipo_objeto!=OBJETO_ESPACO_TABELA &&
         tipo_objeto!=OBJETO_BANCO_DADOS) ||
-       tipo_def==ParserEsquema::DEFINICAO_XML)
+       tipo_def==SchemaParser::XML_DEFINITION)
     {
-     ParserEsquema::ignorarAtributosDesc(true);
+     SchemaParser::setIgnoreUnkownAttributes(true);
      atributos[ParsersAttributes::OWNER]=
-     ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::OWNER, atributos, tipo_def);
+     SchemaParser::getObjectDefinition(ParsersAttributes::OWNER, atributos, tipo_def);
     }
    }
    else
@@ -575,8 +575,8 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
       terão os caracteres <, >, ', " e & substituídos pelos
       equivalentes no XML, evitando assim a construção de
       código XMl com erros de sintaxe */
-   def=ParserEsquema::obterDefinicaoObjeto(esq_objetos[tipo_objeto], atributos, tipo_def);
-   if(tipo_def==ParserEsquema::DEFINICAO_XML)
+   def=SchemaParser::getObjectDefinition(esq_objetos[tipo_objeto], atributos, tipo_def);
+   if(tipo_def==SchemaParser::XML_DEFINITION)
    {
     QRegExp vet_regexp[]={
                            QRegExp("(=\")+"),
@@ -631,7 +631,7 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   }
   catch(Exception &e)
   {
-   ParserEsquema::reiniciarParser();
+   SchemaParser::resetParser();
    limparAtributos();
    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }

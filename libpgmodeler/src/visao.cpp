@@ -393,7 +393,7 @@ bool Visao::referenciaColuna(Coluna *col)
 
 QString Visao::obterDefinicaoObjeto(unsigned tipo_def)
 {
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
   definirAtributoDeclaracao();
  else
  {

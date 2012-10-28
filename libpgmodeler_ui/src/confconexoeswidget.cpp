@@ -423,18 +423,18 @@ void ConfConexoesWidget::salvarConfiguracao(void)
     /* Ativa o modo de ignorar atributos desconhecidos do parser, pois, alguns
        atributos da conexão nem sempre são especificados (opcionais) e isso
        geraria muitos erros se o modo citado não estivesse ativado */
-    ParserEsquema::ignorarAtributosDesc(true);
+    SchemaParser::setIgnoreUnkownAttributes(true);
 
     //Gera o esquema da conexão e contatena �   demais geradas
     params_config[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
-    ParserEsquema::obterDefinicaoObjeto(GlobalAttributes::CONFIGURATIONS_DIR +
+    SchemaParser::getObjectDefinition(GlobalAttributes::CONFIGURATIONS_DIR +
                                         GlobalAttributes::DIR_SEPARATOR +
                                         GlobalAttributes::SCHEMAS_DIR +
                                         GlobalAttributes::DIR_SEPARATOR +
                                         GlobalAttributes::CONNECTIONS_CONF +
                                         GlobalAttributes::SCHEMA_EXT,
                                         atribs);
-    ParserEsquema::ignorarAtributosDesc(false);
+    SchemaParser::setIgnoreUnkownAttributes(false);
    }
   }
 

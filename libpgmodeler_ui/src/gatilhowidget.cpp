@@ -50,10 +50,10 @@ GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_G
   tipo_disparo_cmb->addItems(lista);
 
   //Define os campos exclusivos para cada versão
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, ParserEsquema::VERSAO_PGSQL_84)].push_back(truncate_chk);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, ParserEsquema::VERSAO_PGSQL_90)].push_back(exp_condicional_lbl);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, ParserEsquema::VERSAO_PGSQL_90)].push_back(coluna_lbl);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, ParserEsquema::VERSAO_PGSQL_91)].push_back(tipo_disparo_lbl);
+  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(truncate_chk);
+  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_90)].push_back(exp_condicional_lbl);
+  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_90)].push_back(coluna_lbl);
+  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_91)].push_back(tipo_disparo_lbl);
   mapa_valores[tipo_disparo_lbl].push_back(tipo_disparo_cmb->itemText(tipo_disparo_cmb->count()-1));
 
   //Gera o frame de alerta

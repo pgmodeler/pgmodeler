@@ -23,7 +23,7 @@
 #define CONF_BASE_WIDGET_H
 
 #include "exception.h"
-#include "parserxml.h"
+#include "xmlparser.h"
 #include "parsersattributes.h"
 #include <algorithm>
 

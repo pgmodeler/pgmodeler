@@ -121,7 +121,7 @@ void ConfGeralWidget::salvarConfiguracao()
                            QString(")([0-9]+)"))))
    {
     params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]+=
-    ParserEsquema::obterDefinicaoObjeto(sch_arquivo, itr->second);
+    SchemaParser::getObjectDefinition(sch_arquivo, itr->second);
    }
    else if(salvar_wgts_chk->isChecked() &&
      (itr->first).contains(QRegExp(QString("(") +
@@ -129,7 +129,7 @@ void ConfGeralWidget::salvarConfiguracao()
                            QString(")([0-9]+)"))))
    {
     params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGET]+=
-    ParserEsquema::obterDefinicaoObjeto(sch_widget, itr->second);
+    SchemaParser::getObjectDefinition(sch_widget, itr->second);
    }
 
    itr++;

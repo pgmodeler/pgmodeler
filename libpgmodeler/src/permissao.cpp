@@ -296,7 +296,7 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
  else
   atributos[ParsersAttributes::OBJECT]=objeto->obterNome(true);
 
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
   atributos[ParsersAttributes::TYPE]=ObjetoBase::obterNomeSQLObjeto(objeto->obterTipoObjeto());
  else
   atributos[ParsersAttributes::TYPE]=ObjetoBase::obterNomeEsquemaObjeto(objeto->obterTipoObjeto());
@@ -304,7 +304,7 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
  if(tipo_obj==OBJETO_COLUNA)
   atributos[ParsersAttributes::PARENT]=dynamic_cast<Coluna *>(objeto)->obterTabelaPai()->obterNome(true);
 
- if(tipo_def==ParserEsquema::DEFINICAO_XML)
+ if(tipo_def==SchemaParser::XML_DEFINITION)
  {
   //Marca os privilégios que estão setados atribuídos ao objeto
   for(i=0; i < 12; i++)

@@ -122,9 +122,9 @@ QString ModeloBD::validarDefinicaoObjeto(ObjetoBase *objeto, unsigned tipo_def)
   {
    tipo_obj=objeto->obterTipoObjeto();
 
-   if(tipo_obj==OBJETO_RELACAO_BASE && tipo_def==ParserEsquema::DEFINICAO_XML)
+   if(tipo_obj==OBJETO_RELACAO_BASE && tipo_def==SchemaParser::XML_DEFINITION)
     def_obj=dynamic_cast<RelacionamentoBase *>(objeto)->obterDefinicaoObjeto();
-   else if(tipo_obj==OBJETO_CAIXA_TEXTO && tipo_def==ParserEsquema::DEFINICAO_XML)
+   else if(tipo_obj==OBJETO_CAIXA_TEXTO && tipo_def==SchemaParser::XML_DEFINITION)
     def_obj=dynamic_cast<CaixaTexto *>(objeto)->obterDefinicaoObjeto();
    else
     def_obj=objeto->obterDefinicaoObjeto(tipo_def);
@@ -385,7 +385,7 @@ void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
  try
  {
   //Valida a definição sql do objeto
-  ModeloBD::validarDefinicaoObjeto(objeto, ParserEsquema::DEFINICAO_SQL);
+  ModeloBD::validarDefinicaoObjeto(objeto, SchemaParser::SQL_DEFINITION);
  }
  catch(Exception &e)
  {
@@ -1363,7 +1363,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
       /* Caso uma restrição seja encontrada obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
       if(enc)
-       xml_objs_especiais[restricao->obterIdObjeto()]=restricao->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML, true);
+       xml_objs_especiais[restricao->obterIdObjeto()]=restricao->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION, true);
      }
      else if(tipo_obj_tab[id_tipo]==OBJETO_GATILHO)
      {
@@ -1377,7 +1377,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
       /* Caso um índice seja encontrado obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
       if(enc)
-       xml_objs_especiais[gatilho->obterIdObjeto()]=gatilho->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML);
+       xml_objs_especiais[gatilho->obterIdObjeto()]=gatilho->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
      }
      //Caso seja um índice
      else
@@ -1392,7 +1392,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
       /* Caso um índice seja encontrado obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
       if(enc)
-       xml_objs_especiais[indice->obterIdObjeto()]=indice->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML);
+       xml_objs_especiais[indice->obterIdObjeto()]=indice->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
      }
 
      //Caso algum objeto especial for encontrado
@@ -1426,7 +1426,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
       a sequencia como objeto especial */
    if(sequencia->referenciaColunaIncRelacao())
    {
-    xml_objs_especiais[sequencia->obterIdObjeto()]=sequencia->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML);
+    xml_objs_especiais[sequencia->obterIdObjeto()]=sequencia->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
     removerSequencia(sequencia);
     delete(sequencia);
    }
@@ -1448,7 +1448,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
    if(visao->referenciaColunaIncRelacao())
    {
     //Armazena a definição XML da visão
-    xml_objs_especiais[visao->obterIdObjeto()]=visao->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML);
+    xml_objs_especiais[visao->obterIdObjeto()]=visao->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
 
     /* Caso hajam relacionamentos ligando a visão e as tabelas referenciadas
        os mesmo também serão armazenados como objetos especiais para posterior
@@ -5998,7 +5998,7 @@ QString ModeloBD::__obterDefinicaoObjeto(unsigned tipo_def)
  if(lim_conexao >= 0)
   atributos[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(lim_conexao);
 
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
   atributos[ParsersAttributes::ENCODING]="'" + (~tipo_codif) + "'";
 
@@ -6035,7 +6035,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
  vector<unsigned>::iterator itr1, itr1_end;
  QString msg=trUtf8("Generating %1 of the object: %2 (%3)"),
          atrib=ParsersAttributes::OBJECTS,
-         tipo_def_str=(tipo_def==ParserEsquema::DEFINICAO_SQL ? "SQL" : "XML");
+         tipo_def_str=(tipo_def==SchemaParser::SQL_DEFINITION ? "SQL" : "XML");
  Tipo *tipo_usr=NULL;
  map<unsigned, ObjetoBase *> mapa_objetos;
  vector<unsigned> vet_id_objs, vet_id_objs_tab;
@@ -6066,7 +6066,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
 
    /* Caso o tipo de definição seja SQL obtem o nome do atributo
       do tipo do objeto nos esquema SQL */
-   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+   if(tipo_def==SchemaParser::SQL_DEFINITION)
    {
     atrib=ObjetoBase::esq_objetos[tipos_obj_aux[i]];
     atribs_aux[atrib]="";
@@ -6115,7 +6115,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
      Para definição SQL são tratados apenas os 12 primeiros (tabelas, relacionamentos, visões e sequências)
      são tratadas separadamente pois existe uma ordem específica em que elas precisam ser criadas e essa
      ordem é definida na interação após a ordenação dos objetos */
-  if(tipo_def==ParserEsquema::DEFINICAO_XML)
+  if(tipo_def==SchemaParser::XML_DEFINITION)
    qtd=16;
   else
    qtd=12;
@@ -6126,7 +6126,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
       elementos no mapa de objetos. No caso de definição SQL apenas os  objetos
       caixa de texto e relacionamento tabela-visão não são obtidos pois os mesmos
       não possuem código SQL */
-   if(tipo_def==ParserEsquema::DEFINICAO_SQL &&
+   if(tipo_def==SchemaParser::SQL_DEFINITION &&
       (tipos_obj[i]==OBJETO_CAIXA_TEXTO || tipos_obj[i]==OBJETO_RELACAO_BASE))
     lista_obj=NULL;
    else
@@ -6221,7 +6221,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
 
   /* Concatena o vetor de ids auxiliar (ids de objetos especiais) ao vetor de ids principal
      antes da ordenação caso a definição seja XML */
-  if(tipo_def==ParserEsquema::DEFINICAO_XML)
+  if(tipo_def==SchemaParser::XML_DEFINITION)
    vet_id_objs.insert(vet_id_objs.end(), vet_id_objs_tab.begin(), vet_id_objs_tab.end());
 
   //Ordena o vetor de identificadores em ordem crescente
@@ -6236,7 +6236,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
      3) As sequencias devem ter seus SQL gerados após as tabelas restantes
      4) Visões devem ser as últimas a terem o SQL gerado para não terem referências a colunas e tabelas quebradas
   */
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
   {
    ObjetoBase *objetos[3]={NULL, NULL, NULL};
    vector<ObjetoBase *> vet_aux;
@@ -6283,7 +6283,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
 
   /* Concatena o vetor de ids auxiliar (ids de objetos especiais) ao vetor de ids principal
      após a ordenação caso a definição seja SQL */
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
    vet_id_objs.insert(vet_id_objs.end(), vet_id_objs_tab.begin(), vet_id_objs_tab.end());
 
   atribs_aux[ParsersAttributes::SHELL_TYPES]="";
@@ -6291,7 +6291,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
   /* Caso a definição seja SQL e existam tipos definidos pelo usuário
      faz a conversão dos parâmetros das funções usadas internamente
      por estes */
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
   {
    itr=tipos.begin();
    itr_end=tipos.end();
@@ -6324,7 +6324,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
    /* Caso seja um objeto tipo e a definição seja SQL armazena a
       definição shell dos tipos os quais são declarados antes da criação
       dos tipos definidos pelo usuário */
-   if(tipo_obj==OBJETO_TIPO && tipo_def==ParserEsquema::DEFINICAO_SQL)
+   if(tipo_obj==OBJETO_TIPO && tipo_def==SchemaParser::SQL_DEFINITION)
    {
     tipo_usr=dynamic_cast<Tipo *>(objeto);
 
@@ -6336,7 +6336,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
    }
    else if(tipo_obj==OBJETO_BANCO_DADOS)
    {
-    if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+    if(tipo_def==SchemaParser::SQL_DEFINITION)
      atribs_aux[this->obterNomeEsquemaObjeto()]+=this->__obterDefinicaoObjeto(tipo_def);
     else
      atribs_aux[atrib]+=this->__obterDefinicaoObjeto(tipo_def);
@@ -6397,7 +6397,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
   //Configura os atributos específicos do modelo de banco
   atribs_aux[ParsersAttributes::MODEL_AUTHOR]=autor;
 
-  if(tipo_def==ParserEsquema::DEFINICAO_XML)
+  if(tipo_def==SchemaParser::XML_DEFINITION)
   {
    atribs_aux[ParsersAttributes::PROTECTED]=(this->protegido ? "1" : "");
   }
@@ -6419,7 +6419,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
  }
  catch(Exception &e)
  {
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
   {
    /* Em caso de erro na geração da definição SQL do modelo, faz a conversão inversa
      dos parâmetros das funções usadas pelos tipos base */
@@ -6438,7 +6438,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
  atribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(exportar_arq ? "1" : "");
 
  //Retorna a definição do modelo completa
- return(ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::DB_MODEL, atribs_aux, tipo_def));
+ return(SchemaParser::getObjectDefinition(ParsersAttributes::DB_MODEL, atribs_aux, tipo_def));
 }
 
 void ModeloBD::salvarModelo(const QString &nome_arq, unsigned tipo_def)

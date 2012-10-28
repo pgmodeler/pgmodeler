@@ -53,7 +53,7 @@ void ClasseOperadores::definirAtributoElementos(unsigned tipo_def)
  for(i=0; i < qtd; i++)
  {
   str_elems+=elementos[i].obterDefinicaoObjeto(tipo_def);
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL &&
+  if(tipo_def==SchemaParser::SQL_DEFINITION &&
      i < qtd-1) str_elems+=",\n";
  }
 
@@ -152,7 +152,7 @@ QString ClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def, bool forma_red
  atributos[ParsersAttributes::INDEX_TYPE]=(~tipo_index);
  atributos[ParsersAttributes::DEFAULT]=(padrao ? "1" : "");
 
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
   atributos[ParsersAttributes::TYPE]=(*tipo_dado);
  else
   atributos[ParsersAttributes::TYPE]=tipo_dado.obterDefinicaoObjeto(tipo_def);

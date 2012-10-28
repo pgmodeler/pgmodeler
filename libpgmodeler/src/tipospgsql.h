@@ -23,7 +23,7 @@
 
 #include "exception.h"
 #include "parsersattributes.h"
-#include "parseresquema.h"
+#include "schemaparser.h"
 #include <vector>
 #include <map>
 

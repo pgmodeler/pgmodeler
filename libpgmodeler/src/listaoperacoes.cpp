@@ -486,7 +486,7 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
     if(tipo_op==Operacao::OBJETO_REMOVIDO)
      obj_tab->definirTabelaPai(tabela_pai);
 
-    operacao->def_xml=modelo->validarDefinicaoObjeto(obj_tab, ParserEsquema::DEFINICAO_XML);
+    operacao->def_xml=modelo->validarDefinicaoObjeto(obj_tab, SchemaParser::XML_DEFINITION);
    }
 
    operacao->obj_pai=objeto_pai;
@@ -817,7 +817,7 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
      obj_orig=modelo->obterObjeto(oper->idx_obj, tipo);
 
     if(obj_aux)
-     oper->def_xml=modelo->validarDefinicaoObjeto(obj_orig, ParserEsquema::DEFINICAO_XML);
+     oper->def_xml=modelo->validarDefinicaoObjeto(obj_orig, SchemaParser::SQL_DEFINITION);
 
      /* A objeto original (obtido da tabela, relacionamento pai ou modelo) tera seus valores anteriores
         restaurados com a cópia existente no pool. Após a restauração o objeto
@@ -846,7 +846,7 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
      relac_pai->adicionarObjeto(dynamic_cast<ObjetoTabela *>(objeto), oper->idx_obj);
     else
      if(dynamic_cast<Tabela *>(objeto))
-      dynamic_cast<Tabela *>(objeto)->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL);
+      dynamic_cast<Tabela *>(objeto)->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
      modelo->adicionarObjeto(objeto, oper->idx_obj);
    }
    /* Caso a operação seja de objeto criado anteriormente ou caso o objeto

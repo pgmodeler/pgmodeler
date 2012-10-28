@@ -43,8 +43,8 @@ void ObjetoGraficoBase::definirAtributoPosicao(void)
 {
  atributos[ParsersAttributes::X_POS]=QString("%1").arg(posicao.x());
  atributos[ParsersAttributes::Y_POS]=QString("%1").arg(posicao.y());
- atributos[ParsersAttributes::POSITION]=ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::POSITION,
-                                     atributos, ParserEsquema::DEFINICAO_XML);
+ atributos[ParsersAttributes::POSITION]=SchemaParser::getObjectDefinition(ParsersAttributes::POSITION,
+                                     atributos, SchemaParser::XML_DEFINITION);
 }
 
 void  ObjetoGraficoBase::definirPosicaoObjeto(QPointF p)

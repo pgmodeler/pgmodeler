@@ -49,10 +49,10 @@ IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_IND
   tipo_index_cmb->addItems(lista);
 
   //Define os campos exclusivos para cada versão
-  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, ParserEsquema::VERSAO_PGSQL_81)].push_back(tipo_index_lbl);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, ParserEsquema::VERSAO_PGSQL_82)].push_back(concorrente_chk);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, ParserEsquema::VERSAO_PGSQL_83)].push_back(ordenacao_lbl);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, ParserEsquema::VERSAO_PGSQL_84)].push_back(atual_rapida_chk);
+  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, SchemaParser::PGSQL_VERSION_81)].push_back(tipo_index_lbl);
+  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_82)].push_back(concorrente_chk);
+  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_83)].push_back(ordenacao_lbl);
+  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(atual_rapida_chk);
   mapa_valores[tipo_index_lbl].push_back(~TipoIndexacao(TipoIndexacao::rtree));
 
   //Gera o frame de alerta

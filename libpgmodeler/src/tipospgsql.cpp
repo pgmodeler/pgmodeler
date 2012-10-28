@@ -1100,7 +1100,7 @@ int TipoPgSQL::obterPrecisao(void)
 
 QString TipoPgSQL::obterDefinicaoObjeto(unsigned tipo_def,QString tipo_ref)
 {
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
   return(*(*this));
  else
  {
@@ -1138,7 +1138,7 @@ QString TipoPgSQL::obterDefinicaoObjeto(unsigned tipo_def,QString tipo_ref)
   if(com_timezone)
    atributos[ParsersAttributes::WITH_TIMEZONE]="1";
 
-  return(ParserEsquema::obterDefinicaoObjeto("basetype",atributos, tipo_def));
+  return(SchemaParser::getObjectDefinition("basetype",atributos, tipo_def));
  }
 }
 

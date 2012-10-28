@@ -26,7 +26,7 @@
 #include <map>
 #include <vector>
 #include "exception.h"
-#include "parserxml.h"
+#include "xmlparser.h"
 #include "globalattributes.h"
 #include "parsersattributes.h"
 #include <algorithm>

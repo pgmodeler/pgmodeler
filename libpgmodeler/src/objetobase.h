@@ -25,8 +25,8 @@
 #include "parsersattributes.h"
 #include "exception.h"
 #include "tipospgsql.h"
-#include "parseresquema.h"
-#include "parserxml.h"
+#include "schemaparser.h"
+#include "xmlparser.h"
 #include <map>
 #include <QRegExp>
 #include <QStringList>

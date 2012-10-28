@@ -1297,7 +1297,7 @@ void FormPrincipal::executarPlugin(void)
 void FormPrincipal::salvarModeloTemporario(void)
 {
  if(modelo_atual)
-  modelo_atual->modelo->salvarModelo(modelo_atual->obterNomeArquivoTemp(), ParserEsquema::DEFINICAO_XML);
+  modelo_atual->modelo->salvarModelo(modelo_atual->obterNomeArquivoTemp(), SchemaParser::XML_DEFINITION);
 }
 
 void FormPrincipal::exibirVisaoGeral(bool exibir)

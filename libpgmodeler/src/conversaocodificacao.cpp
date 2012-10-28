@@ -99,7 +99,7 @@ QString ConversaoCodificacao::obterDefinicaoObjeto(unsigned tipo_def)
 
  if(funcao_conv)
  {
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
    atributos[ParsersAttributes::FUNCTION]=funcao_conv->obterNome(true);
   else
    atributos[ParsersAttributes::FUNCTION]=funcao_conv->obterDefinicaoObjeto(tipo_def, true);

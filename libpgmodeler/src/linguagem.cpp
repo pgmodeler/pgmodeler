@@ -103,14 +103,14 @@ QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 
  atributos[ParsersAttributes::TRUSTED]=(confiavel ? "1" : "");
 
- if(!forma_reduzida && tipo_def==ParserEsquema::DEFINICAO_XML)
+ if(!forma_reduzida && tipo_def==SchemaParser::XML_DEFINITION)
   forma_reduzida=(!funcoes[FUNC_VALIDATOR] && !funcoes[FUNC_HANDLER] && !funcoes[FUNC_INLINE] && !this->obterDono());
 
  for(i=0; i < 3; i++)
  {
   if(funcoes[i])
   {
-   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+   if(tipo_def==SchemaParser::SQL_DEFINITION)
     atributos[atrib_func[i]]=funcoes[i]->obterNome(true);
    else
    {

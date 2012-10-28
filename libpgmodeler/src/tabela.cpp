@@ -109,13 +109,13 @@ void Tabela::definirAtributoColunas(unsigned tipo_def)
   /*if((tipo_def==ParserEsquema::DEFINICAO_SQL &&
       (colunas[i]->incluidoPorLigacao() || colunas[i]->incluidoPorDependencia())) ||
      (!colunas[i]->incluidoPorRelacionamento())) */
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL ||
-     (tipo_def==ParserEsquema::DEFINICAO_XML &&
+  if(tipo_def==SchemaParser::SQL_DEFINITION ||
+     (tipo_def==SchemaParser::XML_DEFINITION &&
       !colunas[i]->incluidoPorRelacionamento()))
    str_cols+=colunas[i]->obterDefinicaoObjeto(tipo_def);
  }
 
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
   /* Caso a operação acima tenha retornado uma QString
      não vazia, qualquer vírgula ou quebra de linha final
@@ -144,19 +144,19 @@ void Tabela::definirAtributoRestricoes(unsigned tipo_def)
  {
   rest=dynamic_cast<Restricao *>(restricoes[i]);
 
-  if((tipo_def==ParserEsquema::DEFINICAO_SQL &&
+  if((tipo_def==SchemaParser::SQL_DEFINITION &&
       (!rest->referenciaColunaIncRelacao() || rest->obterTipoRestricao()==TipoRestricao::primary_key)) ||
 
-     (tipo_def==ParserEsquema::DEFINICAO_XML && !rest->incluidoPorRelacionamento() &&
+     (tipo_def==SchemaParser::XML_DEFINITION && !rest->incluidoPorRelacionamento() &&
       ((rest->obterTipoRestricao()!=TipoRestricao::primary_key && !rest->referenciaColunaIncRelacao()) ||
        (rest->obterTipoRestricao()==TipoRestricao::primary_key))))
   {
-   inc_insporrelacao=(tipo_def==ParserEsquema::DEFINICAO_SQL);
+   inc_insporrelacao=(tipo_def==SchemaParser::SQL_DEFINITION);
    str_rest+=rest->obterDefinicaoObjeto(tipo_def,inc_insporrelacao);
   }
  }
 
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
   /* Caso a operação acima tenha retornado uma QString
      não vazia, qualquer vírgula ou quebra de linha final
@@ -187,8 +187,8 @@ void Tabela::definirAtributoGatilhos(unsigned tipo_def)
 
   if((/*!gat->objetoProtegido() &&*/
       !gat->referenciaColunaIncRelacao() &&
-      tipo_def==ParserEsquema::DEFINICAO_XML) ||
-      tipo_def==ParserEsquema::DEFINICAO_SQL)
+      tipo_def==SchemaParser::XML_DEFINITION) ||
+      tipo_def==SchemaParser::SQL_DEFINITION)
   {
    str_gat+=gat->obterDefinicaoObjeto(tipo_def);
   }
@@ -210,8 +210,8 @@ void Tabela::definirAtributoIndices(unsigned tipo_def)
   ind=dynamic_cast<Indice *>(indices[i]);
   if((!ind->incluidoPorRelacionamento() &&
       !ind->referenciaColunaIncRelacao() &&
-      tipo_def==ParserEsquema::DEFINICAO_XML) ||
-      tipo_def==ParserEsquema::DEFINICAO_SQL)
+      tipo_def==SchemaParser::XML_DEFINITION) ||
+      tipo_def==SchemaParser::SQL_DEFINITION)
    str_ind+=ind->obterDefinicaoObjeto(tipo_def);
  }
 
@@ -228,8 +228,8 @@ void Tabela::definirAtributoRegras(unsigned tipo_def)
  for(i=0; i < qtd; i++)
  {
   if((/* !regras[i]->objetoProtegido() && */
-      tipo_def==ParserEsquema::DEFINICAO_XML) ||
-      tipo_def==ParserEsquema::DEFINICAO_SQL)
+      tipo_def==SchemaParser::XML_DEFINITION) ||
+      tipo_def==SchemaParser::SQL_DEFINITION)
    str_reg+=regras[i]->obterDefinicaoObjeto(tipo_def);
  }
 
@@ -320,32 +320,32 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
       {
        Coluna *col;
        col=dynamic_cast<Coluna *>(obj_tab);
-       col->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL);
+       col->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
       }
       else if(tipo_obj==OBJETO_RESTRICAO)
       {
        Restricao *rest;
        rest=dynamic_cast<Restricao *>(obj_tab);
-       rest->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL);
+       rest->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
        tipo_rest=rest->obterTipoRestricao();
       }
       else if(tipo_obj==OBJETO_INDICE)
       {
        Indice *ind;
        ind=dynamic_cast<Indice *>(obj_tab);
-       ind->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL);
+       ind->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
       }
       else if(tipo_obj==OBJETO_REGRA)
       {
        Regra *reg;
        reg=dynamic_cast<Regra *>(obj_tab);
-       reg->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL);
+       reg->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
       }
       else if(tipo_obj==OBJETO_GATILHO)
       {
        Gatilho *gat;
        gat=dynamic_cast<Gatilho *>(obj_tab);
-       gat->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL);
+       gat->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
       }
 
       //Insere o objeto na lista correta
@@ -996,7 +996,7 @@ QString Tabela::obterDefinicaoObjeto(unsigned tipo_def)
  definirAtributoIndices(tipo_def);
  definirAtributoRegras(tipo_def);
 
- if(tipo_def==ParserEsquema::DEFINICAO_XML)
+ if(tipo_def==SchemaParser::XML_DEFINITION)
   definirAtributoPosicao();
 
  return(ObjetoBase::obterDefinicaoObjeto(tipo_def));

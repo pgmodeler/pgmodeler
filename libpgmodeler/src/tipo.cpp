@@ -403,7 +403,7 @@ void Tipo::definirAtributoElementos(unsigned tipo_def)
  {
   param=Tipo::atributos[i];
 
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
   {
    str_elem+=param.obterNome() + " " + (*param.obterTipo());
    if(i < (qtd-1)) str_elem+=",";
@@ -425,7 +425,7 @@ void Tipo::definirAtributoEnumeracoes(unsigned tipo_def)
  qtd=enumeracoes.size();
  for(i=0; i < qtd; i++)
  {
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
    str_enum+="'" + enumeracoes[i] + "'";
   else
    str_enum+=enumeracoes[i];
@@ -578,7 +578,7 @@ QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   {
    if(funcoes[i])
    {
-    if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+    if(tipo_def==SchemaParser::SQL_DEFINITION)
      ObjetoBase::atributos[atrib_func[i]]=funcoes[i]->obterNome();
     else
     {
@@ -588,7 +588,7 @@ QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
    }
   }
 
-  if(comp_interno==0 && tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(comp_interno==0 && tipo_def==SchemaParser::SQL_DEFINITION)
    ObjetoBase::atributos[ParsersAttributes::INTERNAL_LENGHT]="VARIABLE";
   else
    ObjetoBase::atributos[ParsersAttributes::INTERNAL_LENGHT]=QString("%1").arg(comp_interno);

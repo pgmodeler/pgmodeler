@@ -110,7 +110,7 @@ void FuncaoAgregacao::definirAtributoTipos(unsigned tipo_def)
  qtd=tipo_dados.size();
  for(i=0; i < qtd; i++)
  {
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
   {
    str_tipos+=*(tipo_dados[i]);
    if(i < (qtd-1)) str_tipos+=",";
@@ -219,7 +219,7 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
 
  if(funcoes[FUNCAO_TRANSICAO])
  {
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
    atributos[ParsersAttributes::TRANSITION_FUNC]=funcoes[FUNCAO_TRANSICAO]->obterAssinatura();
   else
   {
@@ -231,7 +231,7 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
 
  if(funcoes[FUNCAO_FINAL])
  {
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
    atributos[ParsersAttributes::FINAL_FUNC]=funcoes[FUNCAO_FINAL]->obterAssinatura();
   else
   {
@@ -243,7 +243,7 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
 
  if(op_ordenacao)
  {
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
    atributos[ParsersAttributes::SORT_OP]=op_ordenacao->obterNome(true);
   else
    atributos[ParsersAttributes::SORT_OP]=op_ordenacao->obterDefinicaoObjeto(tipo_def,true);
@@ -252,7 +252,7 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
  if(cond_inicial!="")
   atributos[ParsersAttributes::INITIAL_COND]=cond_inicial;
 
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
   atributos[ParsersAttributes::STATE_TYPE]=*(tipo_estado);
  else
   atributos[ParsersAttributes::STATE_TYPE]=tipo_estado.obterDefinicaoObjeto(tipo_def,ParsersAttributes::STATE_TYPE);

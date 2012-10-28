@@ -31,7 +31,7 @@ void Indice::definirAtributoElementos(unsigned tipo_def)
  for(i=0; i < qtd; i++)
  {
   str_elem+=elementos[i].obterDefinicaoObjeto(tipo_def);
-  if(i < (qtd-1) && tipo_def==ParserEsquema::DEFINICAO_SQL) str_elem+=",";
+  if(i < (qtd-1) && tipo_def==SchemaParser::SQL_DEFINITION) str_elem+=",";
  }
 
  atributos[ParsersAttributes::ELEMENTS]=str_elem;

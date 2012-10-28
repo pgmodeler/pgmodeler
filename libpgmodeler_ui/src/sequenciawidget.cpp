@@ -15,7 +15,7 @@ SequenciaWidget::SequenciaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   sequencia_grid->addWidget(sel_coluna,3,1,1,3);
 
   //Define os campos exclusivos para cada versão
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, ParserEsquema::VERSAO_PGSQL_83)].push_back(possuidora_lbl);
+  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_83)].push_back(possuidora_lbl);
 
   //Gera o frame de alerta
   frame=gerarFrameAlertaVersao(mapa_campos);

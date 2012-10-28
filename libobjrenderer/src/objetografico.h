@@ -25,7 +25,7 @@
 #include <QtGui>
 #include "objetograficobase.h"
 #include "relacionamentobase.h"
-#include "parserxml.h"
+#include "xmlparser.h"
 
 class ObjetoGrafico: public QObject, public QGraphicsItemGroup {
  private:

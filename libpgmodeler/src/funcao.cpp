@@ -45,7 +45,7 @@ QString Parametro::obterDefinicaoObjeto(unsigned tipo_def)
  //map<QString, QString> atributos;
  QString val_true, val_false;
 
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
   atributos[ParsersAttributes::NAME]=ObjetoBase::formatarNome(nome);
  else
   atributos[ParsersAttributes::NAME]=nome;
@@ -192,7 +192,7 @@ void Funcao::definirAtributoParametros(unsigned tipo_def)
   str_param+=params[i].obterDefinicaoObjeto(tipo_def);
  }
 
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
   str_param.remove(str_param.size()-2,2);
 
  atributos[ParsersAttributes::PARAMETERS]=str_param;
@@ -209,7 +209,7 @@ void Funcao::definirAtributoTipoRetTabela(unsigned tipo_def)
   str_tipo+=tipos_ret_tabela[i].obterDefinicaoObjeto(tipo_def);
  }
 
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
   str_tipo.remove(str_tipo.size()-2,2);
 
  atributos[ParsersAttributes::RETURN_TABLE]=str_tipo;
@@ -504,7 +504,7 @@ QString Funcao::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  atributos[ParsersAttributes::ROW_AMOUNT]=QString("%1").arg(qtd_linhas);
  atributos[ParsersAttributes::FUNCTION_TYPE]=(~tipo_funcao);
 
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
   atributos[ParsersAttributes::LANGUAGE]=linguagem->obterNome(false);
   atributos[ParsersAttributes::RETURN_TYPE]=(*tipo_retorno);

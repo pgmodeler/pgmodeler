@@ -308,8 +308,8 @@ void RelacionamentoBase::definirAtributosRelacionamento(void)
  {
   atributos[ParsersAttributes::X_POS]=QString("%1").arg(pontos[i].x());
   atributos[ParsersAttributes::Y_POS]=QString("%1").arg(pontos[i].y());
-  str_aux+=ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::POSITION,
-                                                atributos, ParserEsquema::DEFINICAO_XML);
+  str_aux+=SchemaParser::getObjectDefinition(ParsersAttributes::POSITION,
+                                                atributos, SchemaParser::XML_DEFINITION);
  }
  atributos[ParsersAttributes::POINTS]=str_aux;
 
@@ -321,11 +321,11 @@ void RelacionamentoBase::definirAtributosRelacionamento(void)
   {
    atributos[ParsersAttributes::X_POS]=QString("%1").arg(dist_rotulos[i].x());
    atributos[ParsersAttributes::Y_POS]=QString("%1").arg(dist_rotulos[i].y());
-   atributos[ParsersAttributes::POSITION]=ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::POSITION,
-                                                 atributos, ParserEsquema::DEFINICAO_XML);
+   atributos[ParsersAttributes::POSITION]=SchemaParser::getObjectDefinition(ParsersAttributes::POSITION,
+                                                 atributos, SchemaParser::XML_DEFINITION);
    atributos[ParsersAttributes::REF_TYPE]=atribs_rot[i];
-   str_aux+=ParserEsquema::obterDefinicaoObjeto(ParsersAttributes::LABEL,
-                                                atributos, ParserEsquema::DEFINICAO_XML);
+   str_aux+=SchemaParser::getObjectDefinition(ParsersAttributes::LABEL,
+                                                atributos, SchemaParser::XML_DEFINITION);
   }
  }
  atributos[ParsersAttributes::LABELS_POS]=str_aux;
@@ -337,7 +337,7 @@ QString RelacionamentoBase::obterDefinicaoObjeto(void)
 
  definirAtributosRelacionamento();
  forma_reduzida=atributos[ParsersAttributes::POINTS].isEmpty();
- return(ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML,forma_reduzida));
+ return(ObjetoBase::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION,forma_reduzida));
 }
 
 void RelacionamentoBase::definirPontos(const vector<QPointF> &pontos)

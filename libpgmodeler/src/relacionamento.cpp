@@ -352,12 +352,12 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
    objeto_tab->definirTabelaPai(tabela_orig);
 
    if(tipo_obj==OBJETO_COLUNA)
-    dynamic_cast<Coluna *>(objeto_tab)->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL);
+    dynamic_cast<Coluna *>(objeto_tab)->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
    else
    {
     Restricao *rest=NULL;
     rest=dynamic_cast<Restricao *>(objeto_tab);
-    rest->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL);
+    rest->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
 
     /* Caso se tente inserir uma chave estrangeira como restrição do relacionamento
        retorna um erro pois este é o único tipo que não pode ser incluído */
@@ -2312,7 +2312,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
 
 QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
 {
- if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+ if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
   if(fk_rel1n && (tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N))
   {
@@ -2356,7 +2356,7 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
    atributos[ParsersAttributes::ANCESTOR_TABLE]=obterTabelaReferencia()->obterNome(true);
   }
 
-  return(this->ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL));
+  return(this->ObjetoBase::obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION));
  }
  else
  {
@@ -2378,7 +2378,7 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   for(i=0; i < qtd; i++)
   {
    atributos[ParsersAttributes::COLUMNS]+=dynamic_cast<Coluna *>(atributos_rel[i])->
-                    obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML);
+                    obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
   }
 
   atributos[ParsersAttributes::CONSTRAINTS]="";
@@ -2387,7 +2387,7 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   {
    if(!restricoes_rel[i]->objetoProtegido())
     atributos[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
-                       obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML, true);
+                       obterDefinicaoObjeto(SchemaParser::XML_DEFINITION, true);
   }
 
   qtd=id_colunas_pk_rel.size();
@@ -2409,7 +2409,7 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
                   atributos[ParsersAttributes::SPECIAL_PK_COLS].isEmpty());
 
 
-  return(this->ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML, forma_reduzida));
+  return(this->ObjetoBase::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION, forma_reduzida));
  }
 }
 

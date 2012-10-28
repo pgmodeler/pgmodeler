@@ -24,7 +24,7 @@ CodigoFonteWidget::CodigoFonteWidget(QWidget *parent): ObjetoBaseWidget(parent)
   nome_edt->setReadOnly(true);
 
   //Obtém as versões disponíveis de esquemas SQL
-  ParserEsquema::obterVersoesPgSQL(versoes);
+  SchemaParser::getPgSQLVersions(versoes);
 
   //Preenche o combobox de versões
   versoes_cmb->addItems(QStringList(QList<QString>::fromVector(QVector<QString>::fromStdVector(versoes))));
@@ -122,8 +122,8 @@ void CodigoFonteWidget::gerarCodigoFonteObjeto(int)
             prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
    }
 
-   ParserEsquema::definirVersaoPgSQL(versoes_cmb->currentText());
-   codigosql_txt->setPlainText(QString::fromUtf8(ModeloBD::validarDefinicaoObjeto(objeto, ParserEsquema::DEFINICAO_SQL)));
+   SchemaParser::setPgSQLVersion(versoes_cmb->currentText());
+   codigosql_txt->setPlainText(QString::fromUtf8(ModeloBD::validarDefinicaoObjeto(objeto, SchemaParser::SQL_DEFINITION)));
   }
 
   //Caso o objeto não possua uma definição SQL exibe o texto avisando o fato
@@ -131,7 +131,7 @@ void CodigoFonteWidget::gerarCodigoFonteObjeto(int)
    codigosql_txt->setPlainText(trUtf8("-- SQL code unavailable for this type of object --"));
 
   //Configura a caixa de código fonte XML com o código XML do objeto
-  codigoxml_txt->setPlainText(QString::fromUtf8(ModeloBD::validarDefinicaoObjeto(objeto, ParserEsquema::DEFINICAO_XML)));
+  codigoxml_txt->setPlainText(QString::fromUtf8(ModeloBD::validarDefinicaoObjeto(objeto, SchemaParser::XML_DEFINITION)));
 
   //Configura a aba e os ícones de acordo com a que está em foco
   definirAbaCodigoFonte();

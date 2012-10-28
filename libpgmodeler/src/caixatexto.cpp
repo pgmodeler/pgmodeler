@@ -27,7 +27,7 @@ QString CaixaTexto::obterDefinicaoObjeto(void)
  if(cor_texto.name()!="#000000")
   atributos[ParsersAttributes::COLOR]=cor_texto.name();
 
- return(this->ObjetoBase::obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML));
+ return(this->ObjetoBase::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION));
 }
 
 void CaixaTexto::operator = (CaixaTexto &caixa)

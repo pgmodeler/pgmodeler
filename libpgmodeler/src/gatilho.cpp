@@ -44,7 +44,7 @@ void Gatilho::definirAtributoArgumentos(unsigned tipo_def)
  qtd=argumentos.size();
  for(i=0; i < qtd; i++)
  {
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
    str_args+="'" + argumentos[i] + "'";
   else
    str_args+=argumentos[i];
@@ -318,7 +318,7 @@ void Gatilho::definirAtributosBasicosGatilho(unsigned tipo_def)
 
  if(funcao)
  {
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
    atributos[ParsersAttributes::TRIGGER_FUNC]=funcao->obterNome(true);
   else
    atributos[ParsersAttributes::TRIGGER_FUNC]=funcao->obterDefinicaoObjeto(tipo_def, true);

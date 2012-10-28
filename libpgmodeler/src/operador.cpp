@@ -282,7 +282,7 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 
  for(i=Operador::ARG_ESQUERDA; i <= Operador::ARG_DIREITA; i++)
  {
-  if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
   {
    if(tipo_args[i]!="any")
     atributos[atribs_tipos[i]]=(*tipo_args[i]);
@@ -290,7 +290,7 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   else
   {
    atributos[atribs_tipos[i]]=tipo_args[i].
-                obterDefinicaoObjeto(ParserEsquema::DEFINICAO_XML,atribs_tipos[i]);
+                obterDefinicaoObjeto(SchemaParser::XML_DEFINITION,atribs_tipos[i]);
   }
  }
 
@@ -298,7 +298,7 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  {
   if(operadores[i])
   {
-   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+   if(tipo_def==SchemaParser::SQL_DEFINITION)
     atributos[atribs_ops[i]]=operadores[i]->obterNome(true);
    else
    {
@@ -312,7 +312,7 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  {
   if(funcoes[i])
   {
-   if(tipo_def==ParserEsquema::DEFINICAO_SQL)
+   if(tipo_def==SchemaParser::SQL_DEFINITION)
     atributos[atribs_funcoes[i]]=funcoes[i]->obterAssinatura();
    else
    {
