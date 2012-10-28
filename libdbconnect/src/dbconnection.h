@@ -1,10 +1,11 @@
 /*
 # Projeto: Squid-Autoconf
 # Sub-project: Biblioteca libconexbd
-# Classe: ConexaoBD
-# Description:o: Esta classe encapsula algumas funções de manipulação de conexões
-#            com o PostgreSQL implementadas pela biblioteca libpq
-# Creation date:o: 13/07/2009
+# Class: DBConnection
+# Description: This class encapsulates some connection manipulation functions
+#              implemented by the PostgreSQL libpq
+#
+# Creation date: 13/07/2009
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -20,8 +21,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef CONEXAOBD_H
-#define CONEXAOBD_H
+#ifndef DBCONNECTION_H
+#define DBCONNECTION_H
 
 #include "resultset.h"
 #include <map>
