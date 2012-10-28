@@ -1,212 +1,217 @@
 #include "dbconnection.h"
 
-const QString ConexaoBD::SSL_DESATIVADO="disable";
-const QString ConexaoBD::SSL_PERMITIR="allow";
-const QString ConexaoBD::SSL_PREFERIR="prefer";
-const QString ConexaoBD::SSL_REQUERER="require";
-const QString ConexaoBD::SSL_VERIF_AUT_CERT="verify-ca";
-const QString ConexaoBD::SSL_VERIF_COMPLETA="verify-full";
-const QString ConexaoBD::PARAM_FQDN_SERVIDOR="host";
-const QString ConexaoBD::PARAM_IP_SERVIDOR="hostaddr";
-const QString ConexaoBD::PARAM_PORTA="port";
-const QString ConexaoBD::PARAM_NOME_BD="dbname";
-const QString ConexaoBD::PARAM_USUARIO="user";
-const QString ConexaoBD::PARAM_SENHA="password";
-const QString ConexaoBD::PARAM_TEMPO_CONEXAO="connect_timeout";
-const QString ConexaoBD::PARAM_OPCOES="options";
-const QString ConexaoBD::PARAM_MODO_SSL="sslmode";
-const QString ConexaoBD::PARAM_CERT_SSL="sslcert";
-const QString ConexaoBD::PARAM_CHAVE_SSL="sslkey";
-const QString ConexaoBD::PARAM_CERT_RAIZ_SSL="sslrootcert";
-const QString ConexaoBD::PARAM_CRL_SSL="sslcrl";
-const QString ConexaoBD::PARAM_SERVIDOR_KERBEROS="krbsrvname";
-const QString ConexaoBD::PARAM_LIB_GSSAPI="gsslib";
+const QString DBConnection::SSL_DESABLE="disable";
+const QString DBConnection::SSL_ALLOW="allow";
+const QString DBConnection::SSL_PREFER="prefer";
+const QString DBConnection::SSL_REQUIRE="require";
+const QString DBConnection::SSL_CA_VERIF="verify-ca";
+const QString DBConnection::SSL_FULL_VERIF="verify-full";
+const QString DBConnection::PARAM_SERVER_FQDN="host";
+const QString DBConnection::PARAM_SERVER_IP="hostaddr";
+const QString DBConnection::PARAM_PORT="port";
+const QString DBConnection::PARAM_DB_NAME="dbname";
+const QString DBConnection::PARAM_USER="user";
+const QString DBConnection::PARAM_PASSWORD="password";
+const QString DBConnection::PARAM_CONN_TIMEOUT="connect_timeout";
+const QString DBConnection::PARAM_OPTIONS="options";
+const QString DBConnection::PARAM_SSL_MODE="sslmode";
+const QString DBConnection::PARAM_SSL_CERT="sslcert";
+const QString DBConnection::PARAM_SSL_KEY="sslkey";
+const QString DBConnection::PARAM_SSL_ROOT_CERT="sslrootcert";
+const QString DBConnection::PARAM_SSL_CRL="sslcrl";
+const QString DBConnection::PARAM_KERBEROS_SERVER="krbsrvname";
+const QString DBConnection::PARAM_LIB_GSSAPI="gsslib";
 
-ConexaoBD::ConexaoBD(void)
+DBConnection::DBConnection(void)
 {
- conexao=NULL;
+ connection=NULL;
 }
 
-ConexaoBD::ConexaoBD(const QString &servidor, const QString &porta, const QString &usuario, const QString &senha, const QString &nome_bd)
+DBConnection::DBConnection(const QString &server_fqdn, const QString &port, const QString &user, const QString &passwd, const QString &db_name)
 {
- //Configura os parâmetros básicos de conexão
- definirParamConexao(PARAM_FQDN_SERVIDOR, servidor);
- definirParamConexao(PARAM_PORTA, porta);
- definirParamConexao(PARAM_USUARIO, usuario);
- definirParamConexao(PARAM_SENHA, senha);
- definirParamConexao(PARAM_NOME_BD, nome_bd);
+ //Configures the basic connection params
+ setConnectionParam(PARAM_SERVER_FQDN, server_fqdn);
+ setConnectionParam(PARAM_PORT, port);
+ setConnectionParam(PARAM_USER, user);
+ setConnectionParam(PARAM_PASSWORD, passwd);
+ setConnectionParam(PARAM_DB_NAME, db_name);
 
  //Estabelece a conexão
- conectar();
+ connect();
 }
 
-ConexaoBD::~ConexaoBD(void)
+DBConnection::~DBConnection(void)
 {
- if(conexao)
-  PQfinish(conexao);
+ if(connection)
+  PQfinish(connection);
 }
 
-void ConexaoBD::definirParamConexao(const QString &parametro, const QString &valor)
+void DBConnection::setConnectionParam(const QString &param, const QString &value)
 {
- //Dispara um erro caso se tente atribuir um valor a um parâmetro vazio
- if(parametro=="")
+ //Raise an error in case the param name is empty
+ if(param=="")
   throw Exception(ERR_CONEXBD_ATRPARAMINVCONEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
- //Atribui o valor ao parâmetro selecionado e gera a string de conexão
- params_conexao[parametro]=valor;
- gerarStringConexao();
+ //Set the value to the specified param on the map and generates the connection string
+ connection_params[param]=value;
+ generateConnectionString();
 }
 
-void ConexaoBD::gerarStringConexao(void)
+void DBConnection::generateConnectionString(void)
 {
  map<QString, QString>::iterator itr;
 
- itr=params_conexao.begin();
+ itr=connection_params.begin();
 
- //Varre o mapa de parâmetros de conexão
- str_conexao="";
- while(itr!=params_conexao.end())
+ //Scans the parameter map concatening the params (itr->first) / values (itr->second)
+ connection_str="";
+ while(itr!=connection_params.end())
  {
-  //Concatena cada parâmetro a seu valor, separândo-os por um sinal de igual
   if(!itr->second.isEmpty())
-   str_conexao+=itr->first + "=" + itr->second + " ";
+   connection_str+=itr->first + "=" + itr->second + " ";
   itr++;
  }
 }
 
-void ConexaoBD::conectar(void)
+void DBConnection::connect(void)
 {
  QString str_aux;
 
- /* Caso a string de conexão não esteja estabelecida indica que o usuário
-    está tentado conectar sem configurar os parâmetros de conexão, sendo
-    assim um erro será disparado */
- if(str_conexao=="")
+ /* If the connection string is not established indicates that the user
+    is trying to connect without configuring connection parameters,
+    thus an error is raised */
+ if(connection_str=="")
   throw Exception(ERR_CONEXBD_CONEXSEMPARAMCONFIG, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
- //Tenta conectar ao banco de dados
- conexao=PQconnectdb(str_conexao.toStdString().c_str());
+ //Try to connect to the database
+ connection=PQconnectdb(connection_str.toStdString().c_str());
 
- /* Caso o descritor de conexão não foi alocado ou se o estado da conexão
-    seja CONNECTION_BAD indica que a conexão não foi bem sucedida */
- if(conexao==NULL || PQstatus(conexao)==CONNECTION_BAD)
+ /* If the connection descriptor has not been allocated or if the connection state
+    is CONNECTION_BAD it indicates that the connection was not successful */
+ if(connection==NULL || PQstatus(connection)==CONNECTION_BAD)
  {
-  //Dispara o erro gerado pelo SGBD
+  //Raise the error generated by the DBMS
   str_aux=QString(Exception::getErrorMessage(ERR_CONEXBD_CONEXNAOESTABELECIDA))
-          .arg(PQerrorMessage(conexao));
+          .arg(PQerrorMessage(connection));
   throw Exception(str_aux, ERR_CONEXBD_CONEXNAOESTABELECIDA,
                 __PRETTY_FUNCTION__, __FILE__, __LINE__);
  }
 }
 
-void ConexaoBD::fechar(void)
+void DBConnection::close(void)
 {
- //Dispara um erro caso o usuário tente fechar uma conexão não iniciada
- if(!conexao)
+ //Raise an erro in case the user try to close a not opened connection
+ if(!connection)
   throw Exception(ERR_CONEXBD_OPRCONEXNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
- //Finaliza a conexão
- PQfinish(conexao);
- conexao=NULL;
+ //Finalizes the connection
+ PQfinish(connection);
+ connection=NULL;
 }
 
-void ConexaoBD::reiniciar(void)
+void DBConnection::reset(void)
 {
- //Dispara um erro caso o usuário tente reiniciar uma conexão não iniciada
- if(!conexao)
+ //Raise an erro in case the user try to reset a not opened connection
+ if(!connection)
   throw Exception(ERR_CONEXBD_OPRCONEXNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  //Reinicia a conexão
- PQreset(conexao);
+ PQreset(connection);
 }
 
-QString ConexaoBD::obterParamConexao(const QString &parametro)
+QString DBConnection::getConnectionParam(const QString &param)
 {
- return(params_conexao[parametro]);
+ return(connection_params[param]);
 }
 
-map<QString, QString> ConexaoBD::obterParamsConexao(void)
+map<QString, QString> DBConnection::getConnectionParams(void)
 {
- return(params_conexao);
+ return(connection_params);
 }
 
-QString ConexaoBD::obterStringConexao(void)
+QString DBConnection::getConnectionString(void)
 {
- return(str_conexao);
+ return(connection_str);
 }
 
-bool ConexaoBD::conexaoEstabelecida(void)
+bool DBConnection::isStablished(void)
 {
- return(conexao!=NULL);
+ return(connection!=NULL);
 }
 
-QString  ConexaoBD::obterVersaoSGBD(void)
+QString  DBConnection::getDBMSVersion(void)
 {
- QString versao;
+ QString version;
 
- if(!conexao)
+ if(!connection)
   throw Exception(ERR_CONEXBD_OPRCONEXNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
- versao=QString("%1").arg(PQserverVersion(conexao));
+ version=QString("%1").arg(PQserverVersion(connection));
 
  return(QString("%1.%2.%3")
-        .arg(versao.mid(0,2).toInt()/10)
-        .arg(versao.mid(2,2).toInt()/10)
-        .arg(versao.mid(4,1).toInt()));
+        .arg(version.mid(0,2).toInt()/10)
+        .arg(version.mid(2,2).toInt()/10)
+        .arg(version.mid(4,1).toInt()));
 }
 
-void ConexaoBD::executarComandoDML(const QString &sql, ResultSet &resultado)
+void DBConnection::executeDMLCommand(const QString &sql, ResultSet &result)
 {
- ResultSet *novo_res=NULL;
- PGresult *res_sql=NULL;
+ ResultSet *new_res=NULL;
+ PGresult *sql_res=NULL;
 
- //Dispara um erro caso o usuário tente reiniciar uma conexão não iniciada
- if(!conexao)
+ //Raise an error in case the user try to close a not opened connection
+ if(!connection)
   throw Exception(ERR_CONEXBD_OPRCONEXNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
- //Aloca um novo resultado para receber o result-set vindo da execução do comando sql
- res_sql=PQexec(conexao, sql.toStdString().c_str());
- if(strlen(PQerrorMessage(conexao))>0)
+ //Alocates a new result to receive the resultset returned by the sql command
+ sql_res=PQexec(connection, sql.toStdString().c_str());
+
+ //Raise an error in case the command sql execution is not sucessful
+ if(strlen(PQerrorMessage(connection))>0)
  {
   throw Exception(QString(Exception::getErrorMessage(ERR_CONEXBD_CMDSQLNAOEXECUTADO))
-                .arg(PQerrorMessage(conexao)),
+                .arg(PQerrorMessage(connection)),
                 ERR_CONEXBD_CMDSQLNAOEXECUTADO, __PRETTY_FUNCTION__, __FILE__, __LINE__, NULL,
-                QString(PQresultErrorField(res_sql, PG_DIAG_SQLSTATE)));
+                QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)));
  }
 
- novo_res=new ResultSet(res_sql);
- //Copia o novo resultado para o resultado do parâmetro
- resultado=*(novo_res);
- //Desaloca o resultado criado
- delete(novo_res);
+ //Generates the resultset based on the sql result descriptor
+ new_res=new ResultSet(sql_res);
+
+ //Copy the new resultset to the parameter resultset
+ result=*(new_res);
+
+ //Deallocate the new resultset
+ delete(new_res);
 }
 
-void ConexaoBD::executarComandoDDL(const QString &sql)
+void DBConnection::executeDDLCommand(const QString &sql)
 {
- PGresult *res_sql=NULL;
+ PGresult *sql_res=NULL;
 
- //Dispara um erro caso o usuário tente reiniciar uma conexão não iniciada
- if(!conexao)
+ //Raise an error in case the user try to close a not opened connection
+ if(!connection)
   throw Exception(ERR_CONEXBD_OPRCONEXNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
- res_sql=PQexec(conexao, sql.toStdString().c_str());
+ sql_res=PQexec(connection, sql.toStdString().c_str());
 
- if(strlen(PQerrorMessage(conexao)) > 0)
+ //Raise an error in case the command sql execution is not sucessful
+ if(strlen(PQerrorMessage(connection)) > 0)
  {
   throw Exception(QString(Exception::getErrorMessage(ERR_CONEXBD_CMDSQLNAOEXECUTADO))
-                .arg(PQerrorMessage(conexao)),
+                .arg(PQerrorMessage(connection)),
                 ERR_CONEXBD_CMDSQLNAOEXECUTADO, __PRETTY_FUNCTION__, __FILE__, __LINE__, NULL,
-                QString(PQresultErrorField(res_sql, PG_DIAG_SQLSTATE)));
+                QString(PQresultErrorField(sql_res, PG_DIAG_SQLSTATE)));
  }
 }
 
-void ConexaoBD::operator = (ConexaoBD &conex)
+void DBConnection::operator = (DBConnection &conn)
 {
- if(this->conexaoEstabelecida())
-  this->fechar();
+ if(this->isStablished())
+  this->close();
 
- this->params_conexao=conex.params_conexao;
- this->str_conexao=conex.str_conexao;
- conectar();
+ this->connection_params=conn.connection_params;
+ this->connection_str=conn.connection_str;
+ connect();
 }
 

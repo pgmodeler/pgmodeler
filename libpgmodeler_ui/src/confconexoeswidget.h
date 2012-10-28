@@ -30,7 +30,7 @@ class ConfConexoesWidget: public QWidget, public Ui::ConfConexoesWidget, public 
   Q_OBJECT
 
   //Configura uma instância de conexão com os valores preenchidos no formulário
-  void configurarConexao(ConexaoBD *conexao);
+  void configurarConexao(DBConnection *conexao);
 
  public:
   ConfConexoesWidget(QWidget * parent=0);
@@ -40,7 +40,7 @@ class ConfConexoesWidget: public QWidget, public Ui::ConfConexoesWidget, public 
   void carregarConfiguracao(void);
 
   //Preenche um mapa com as conexões carregadas no formulário
-  void obterConexoes(map<QString, ConexaoBD *> &conexoes);
+  void obterConexoes(map<QString, DBConnection *> &conexoes);
 
  public slots:
   void restaurarPadroes(void);

@@ -41,8 +41,8 @@ void FormExportacao::show(ModeloWidget *modelo)
 {
  if(modelo)
  {
-  map<QString, ConexaoBD *> conexoes;
-  map<QString, ConexaoBD *>::iterator itr;
+  map<QString, DBConnection *> conexoes;
+  map<QString, DBConnection *>::iterator itr;
   QString host;
 
   /* Atualiza a lista de conexões ao exibir o formulário de exportação, obtendo-as
@@ -55,10 +55,10 @@ void FormExportacao::show(ModeloWidget *modelo)
 
   while(itr!=conexoes.end())
   {
-   host=(itr->second)->obterParamConexao(ConexaoBD::PARAM_FQDN_SERVIDOR);
+   host=(itr->second)->getConnectionParam(DBConnection::PARAM_SERVER_FQDN);
 
    if(host.isEmpty())
-    host=(itr->second)->obterParamConexao(ConexaoBD::PARAM_IP_SERVIDOR);
+    host=(itr->second)->getConnectionParam(DBConnection::PARAM_SERVER_IP);
 
    conexoes_cmb->addItem(itr->first + QString(" (%1)").arg(host),
                          QVariant::fromValue<void *>(itr->second));
@@ -131,7 +131,7 @@ void FormExportacao::exportarModelo(void)
   {
    int id_tipo;
    QString  versao, buf_sql, cmd_sql;
-   ConexaoBD *conexao=NULL, conex_novo_bd;
+   DBConnection *conexao=NULL, conex_novo_bd;
    unsigned i, qtd;
    bool bd_criado=false;
    int idx_objs[]={-1, -1};
@@ -184,11 +184,11 @@ void FormExportacao::exportarModelo(void)
     else
     {
      //Obtém a conexão selecionada no combo
-     conexao=reinterpret_cast<ConexaoBD *>(conexoes_cmb->itemData(conexoes_cmb->currentIndex()).value<void *>());
+     conexao=reinterpret_cast<DBConnection *>(conexoes_cmb->itemData(conexoes_cmb->currentIndex()).value<void *>());
      //Tenta se conectar
-     conexao->conectar();
+     conexao->connect();
      //Obtém a versão do servidor PostgreSQL. Essa versão é usada na geração de código a seguir
-     versao=(conexao->obterVersaoSGBD()).mid(0,3);
+     versao=(conexao->getDBMSVersion()).mid(0,3);
 
      /* Caso o checkbox de versão esteja marcada então a versão do servidor é ignorada
       usando aquela escolhida no combo */
@@ -210,7 +210,7 @@ void FormExportacao::exportarModelo(void)
 
        try
        {
-        conexao->executarComandoDDL(objeto->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL));
+        conexao->executeDDLCommand(objeto->obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL));
        }
        catch(Exception &e)
        {
@@ -237,7 +237,7 @@ void FormExportacao::exportarModelo(void)
 
      try
      {
-      conexao->executarComandoDDL(modelo_wgt->modelo->__obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL));
+      conexao->executeDDLCommand(modelo_wgt->modelo->__obterDefinicaoObjeto(ParserEsquema::DEFINICAO_SQL));
       bd_criado=true;
      }
      catch(Exception &e)
@@ -257,10 +257,10 @@ void FormExportacao::exportarModelo(void)
      prog_pb->setValue(30);
 
      conex_novo_bd=(*conexao);
-     conex_novo_bd.definirParamConexao(ConexaoBD::PARAM_NOME_BD, modelo_wgt->modelo->obterNome());
+     conex_novo_bd.setConnectionParam(DBConnection::PARAM_DB_NAME, modelo_wgt->modelo->obterNome());
      rot_prog_lbl->setText(trUtf8("Connecting to database '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->obterNome())));
      rot_prog_lbl->repaint();
-     conex_novo_bd.conectar();
+     conex_novo_bd.connect();
      prog_pb->setValue(50);
 
      //Cria os demais objetos no novo banco
@@ -308,7 +308,7 @@ void FormExportacao::exportarModelo(void)
        {
         i++;
         //Executa-o na conexão
-        conex_novo_bd.executarComandoDDL(cmd_sql);
+        conex_novo_bd.executeDDLCommand(cmd_sql);
        }
 
        prog_pb->setValue(50 + ((i/static_cast<float>(qtd)) * 10));
@@ -344,12 +344,12 @@ void FormExportacao::exportarModelo(void)
      banco de dados, espaço de tabelas e papéis */
     if(bd_criado || idx_objs[0] >= 0 || idx_objs[1] >= 0)
     {
-     if(conex_novo_bd.conexaoEstabelecida())
-      conex_novo_bd.fechar();
+     if(conex_novo_bd.isStablished())
+      conex_novo_bd.close();
 
      //Caso o banco de dados foi criado, exclui o mesmo
      if(bd_criado)
-      conexao->executarComandoDDL(drop_cmd
+      conexao->executeDDLCommand(drop_cmd
                                   .arg(modelo_wgt->modelo->obterNomeSQLObjeto())
                                   .arg(modelo_wgt->modelo->obterNome(true)));
 
@@ -362,7 +362,7 @@ void FormExportacao::exportarModelo(void)
 
        try
        {
-        conexao->executarComandoDDL(drop_cmd
+        conexao->executeDDLCommand(drop_cmd
                                     .arg(objeto->obterNomeSQLObjeto())
                                     .arg(objeto->obterNome(true)));
        }

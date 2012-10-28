@@ -40,7 +40,7 @@ void ConfConexoesWidget::carregarConfiguracao(void)
 {
  vector<QString> atribs_chave;
  map<QString, map<QString, QString> >::iterator itr, itr_end;
- ConexaoBD *conexao=NULL;
+ DBConnection *conexao=NULL;
 
  //Expressão regular usada para validar o endereço digitado para o servidor
  QRegExp ip_regexp("[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+");
@@ -57,31 +57,31 @@ void ConfConexoesWidget::carregarConfiguracao(void)
  while(itr!=itr_end)
  {
   //Aloca uma nova conexão
-  conexao=new ConexaoBD;
+  conexao=new DBConnection;
 
   /* Caso o host da conexão seja um IP, atribui o valor ao parâmetro,
      ConexaoBD::PARAM_IP_SERVIDOR da conexão. Caso contrário atribui ao
      ConexaoBD::PARAM_FQDN_SERVIDOR. A libpq trata separadamente IP e FQDN do servidor
      por isso é necessária esta distinção */
-  if(ip_regexp.exactMatch(itr->second[ConexaoBD::PARAM_FQDN_SERVIDOR]))
-   conexao->definirParamConexao(ConexaoBD::PARAM_IP_SERVIDOR, itr->second[ConexaoBD::PARAM_FQDN_SERVIDOR]);
+  if(ip_regexp.exactMatch(itr->second[DBConnection::PARAM_SERVER_FQDN]))
+   conexao->setConnectionParam(DBConnection::PARAM_SERVER_IP, itr->second[DBConnection::PARAM_SERVER_FQDN]);
   else
-   conexao->definirParamConexao(ConexaoBD::PARAM_FQDN_SERVIDOR, itr->second[ConexaoBD::PARAM_FQDN_SERVIDOR]);
+   conexao->setConnectionParam(DBConnection::PARAM_SERVER_FQDN, itr->second[DBConnection::PARAM_SERVER_FQDN]);
 
   //Atribuindo os demais valores �   conexão
-  conexao->definirParamConexao(ConexaoBD::PARAM_PORTA, itr->second[ConexaoBD::PARAM_PORTA]);
-  conexao->definirParamConexao(ConexaoBD::PARAM_USUARIO, itr->second[ConexaoBD::PARAM_USUARIO]);
-  conexao->definirParamConexao(ConexaoBD::PARAM_SENHA,itr->second[ConexaoBD::PARAM_SENHA]);
-  conexao->definirParamConexao(ConexaoBD::PARAM_NOME_BD, itr->second[ConexaoBD::PARAM_NOME_BD]);
-  conexao->definirParamConexao(ConexaoBD::PARAM_TEMPO_CONEXAO, itr->second[ConexaoBD::PARAM_TEMPO_CONEXAO]);
-  conexao->definirParamConexao(ConexaoBD::PARAM_MODO_SSL, itr->second[ConexaoBD::PARAM_MODO_SSL]);
-  conexao->definirParamConexao(ConexaoBD::PARAM_CERT_RAIZ_SSL, itr->second[ConexaoBD::PARAM_CERT_RAIZ_SSL]);
-  conexao->definirParamConexao(ConexaoBD::PARAM_CERT_SSL, itr->second[ConexaoBD::PARAM_CERT_SSL]);
-  conexao->definirParamConexao(ConexaoBD::PARAM_CHAVE_SSL, itr->second[ConexaoBD::PARAM_CHAVE_SSL]);
-  conexao->definirParamConexao(ConexaoBD::PARAM_CRL_SSL, itr->second[ConexaoBD::PARAM_CRL_SSL]);
-  conexao->definirParamConexao(ConexaoBD::PARAM_LIB_GSSAPI, itr->second[ConexaoBD::PARAM_LIB_GSSAPI]);
-  conexao->definirParamConexao(ConexaoBD::PARAM_SERVIDOR_KERBEROS, itr->second[ConexaoBD::PARAM_SERVIDOR_KERBEROS]);
-  conexao->definirParamConexao(ConexaoBD::PARAM_OPCOES, itr->second[ConexaoBD::PARAM_OPCOES]);
+  conexao->setConnectionParam(DBConnection::PARAM_PORT, itr->second[DBConnection::PARAM_PORT]);
+  conexao->setConnectionParam(DBConnection::PARAM_USER, itr->second[DBConnection::PARAM_USER]);
+  conexao->setConnectionParam(DBConnection::PARAM_PASSWORD,itr->second[DBConnection::PARAM_PASSWORD]);
+  conexao->setConnectionParam(DBConnection::PARAM_DB_NAME, itr->second[DBConnection::PARAM_DB_NAME]);
+  conexao->setConnectionParam(DBConnection::PARAM_CONN_TIMEOUT, itr->second[DBConnection::PARAM_CONN_TIMEOUT]);
+  conexao->setConnectionParam(DBConnection::PARAM_SSL_MODE, itr->second[DBConnection::PARAM_SSL_MODE]);
+  conexao->setConnectionParam(DBConnection::PARAM_SSL_ROOT_CERT, itr->second[DBConnection::PARAM_SSL_ROOT_CERT]);
+  conexao->setConnectionParam(DBConnection::PARAM_SSL_CERT, itr->second[DBConnection::PARAM_SSL_CERT]);
+  conexao->setConnectionParam(DBConnection::PARAM_SSL_KEY, itr->second[DBConnection::PARAM_SSL_KEY]);
+  conexao->setConnectionParam(DBConnection::PARAM_SSL_CRL, itr->second[DBConnection::PARAM_SSL_CRL]);
+  conexao->setConnectionParam(DBConnection::PARAM_LIB_GSSAPI, itr->second[DBConnection::PARAM_LIB_GSSAPI]);
+  conexao->setConnectionParam(DBConnection::PARAM_KERBEROS_SERVER, itr->second[DBConnection::PARAM_KERBEROS_SERVER]);
+  conexao->setConnectionParam(DBConnection::PARAM_OPTIONS, itr->second[DBConnection::PARAM_OPTIONS]);
 
   //Adiciona a conexão ao combo de conexões
   conexoes_cmb->addItem(QString::fromUtf8(itr->second[ParsersAttributes::ALIAS]),
@@ -158,7 +158,7 @@ void ConfConexoesWidget::novaConexao(void)
 
 void ConfConexoesWidget::manipularConexao(void)
 {
- ConexaoBD *conexao=NULL;
+ DBConnection *conexao=NULL;
  QString alias;
  unsigned i=1;
 
@@ -173,13 +173,13 @@ void ConfConexoesWidget::manipularConexao(void)
 
   if(!atualizar_tb->isVisible())
   {
-   conexao=new ConexaoBD;
+   conexao=new DBConnection;
    this->configurarConexao(conexao);
    conexoes_cmb->addItem(alias, QVariant::fromValue<void *>(reinterpret_cast<void *>(conexao)));
   }
   else
   {
-   conexao=reinterpret_cast<ConexaoBD *>(conexoes_cmb->itemData(conexoes_cmb->currentIndex()).value<void *>());
+   conexao=reinterpret_cast<DBConnection *>(conexoes_cmb->itemData(conexoes_cmb->currentIndex()).value<void *>());
    this->configurarConexao(conexao);
    conexoes_cmb->setItemText(conexoes_cmb->currentIndex(), alias);
   }
@@ -202,10 +202,10 @@ void ConfConexoesWidget::removerConexao(void)
  //Caso haja uma conexão selecionada no combo
  if(conexoes_cmb->currentIndex() >= 0)
  {
-  ConexaoBD *conexao=NULL;
+  DBConnection *conexao=NULL;
 
   //Obtém a conexão do item do combobox
-  conexao=reinterpret_cast<ConexaoBD *>(conexoes_cmb->itemData(conexoes_cmb->currentIndex()).value<void *>());
+  conexao=reinterpret_cast<DBConnection *>(conexoes_cmb->itemData(conexoes_cmb->currentIndex()).value<void *>());
 
   //Remove o item do combo
   conexoes_cmb->removeItem(conexoes_cmb->currentIndex());
@@ -223,37 +223,37 @@ void ConfConexoesWidget::editarConexao(void)
  //Caso hajam itens no combo de conexões
  if(conexoes_cmb->count() > 0)
  {
-  ConexaoBD *conexao=NULL;
+  DBConnection *conexao=NULL;
 
   //Obtém a conexão selecionada
-  conexao=reinterpret_cast<ConexaoBD *>(conexoes_cmb->itemData(conexoes_cmb->currentIndex()).value<void *>());
+  conexao=reinterpret_cast<DBConnection *>(conexoes_cmb->itemData(conexoes_cmb->currentIndex()).value<void *>());
 
   //Preenche os campos do formulário com os valores dos atributos da conexão
   alias_edt->setText(conexoes_cmb->currentText());
 
-  if(!conexao->obterParamConexao(ConexaoBD::PARAM_FQDN_SERVIDOR).isEmpty())
-   host_edt->setText(conexao->obterParamConexao(ConexaoBD::PARAM_FQDN_SERVIDOR));
+  if(!conexao->getConnectionParam(DBConnection::PARAM_SERVER_FQDN).isEmpty())
+   host_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_SERVER_FQDN));
   else
-   host_edt->setText(conexao->obterParamConexao(ConexaoBD::PARAM_IP_SERVIDOR));
+   host_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_SERVER_IP));
 
-  bd_conexao_edt->setText(conexao->obterParamConexao(ConexaoBD::PARAM_NOME_BD));
-  usuario_edt->setText(conexao->obterParamConexao(ConexaoBD::PARAM_USUARIO));
-  senha_edt->setText(conexao->obterParamConexao(ConexaoBD::PARAM_SENHA));
-  porta_sbp->setValue(conexao->obterParamConexao(ConexaoBD::PARAM_PORTA).toInt());
-  timeout_sbp->setValue(conexao->obterParamConexao(ConexaoBD::PARAM_TEMPO_CONEXAO).toInt());
+  bd_conexao_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_DB_NAME));
+  usuario_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_USER));
+  senha_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_PASSWORD));
+  porta_sbp->setValue(conexao->getConnectionParam(DBConnection::PARAM_PORT).toInt());
+  timeout_sbp->setValue(conexao->getConnectionParam(DBConnection::PARAM_CONN_TIMEOUT).toInt());
 
-  serv_kerberus_edt->setText(conexao->obterParamConexao(ConexaoBD::PARAM_SERVIDOR_KERBEROS));
-  aut_gssapi_chk->setChecked(conexao->obterParamConexao(ConexaoBD::PARAM_LIB_GSSAPI)=="gssapi");
-  opcoes_edt->setText(conexao->obterParamConexao(ConexaoBD::PARAM_OPCOES));
+  serv_kerberus_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_KERBEROS_SERVER));
+  aut_gssapi_chk->setChecked(conexao->getConnectionParam(DBConnection::PARAM_LIB_GSSAPI)=="gssapi");
+  opcoes_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_OPTIONS));
 
   //Seta o modo de conexão SSL
-  if(conexao->obterParamConexao(ConexaoBD::PARAM_MODO_SSL)==ConexaoBD::SSL_DESATIVADO)
+  if(conexao->getConnectionParam(DBConnection::PARAM_SSL_MODE)==DBConnection::SSL_DESABLE)
    modo_ssl_cmb->setCurrentIndex(0);
-  else if(conexao->obterParamConexao(ConexaoBD::PARAM_MODO_SSL)==ConexaoBD::SSL_PERMITIR)
+  else if(conexao->getConnectionParam(DBConnection::PARAM_SSL_MODE)==DBConnection::SSL_ALLOW)
    modo_ssl_cmb->setCurrentIndex(1);
-  else if(conexao->obterParamConexao(ConexaoBD::PARAM_MODO_SSL)==ConexaoBD::SSL_REQUERER)
+  else if(conexao->getConnectionParam(DBConnection::PARAM_SSL_MODE)==DBConnection::SSL_REQUIRE)
    modo_ssl_cmb->setCurrentIndex(2);
-  else if(conexao->obterParamConexao(ConexaoBD::PARAM_MODO_SSL)==ConexaoBD::SSL_VERIF_AUT_CERT)
+  else if(conexao->getConnectionParam(DBConnection::PARAM_SSL_MODE)==DBConnection::SSL_CA_VERIF)
    modo_ssl_cmb->setCurrentIndex(3);
   else
    modo_ssl_cmb->setCurrentIndex(4);
@@ -261,10 +261,10 @@ void ConfConexoesWidget::editarConexao(void)
   //Caso haja um modo SSL escolhido, preenche os campos de certificados digitais
   if(modo_ssl_cmb->currentIndex() > 0)
   {
-   cert_cliente_edt->setText(conexao->obterParamConexao(ConexaoBD::PARAM_CERT_SSL));
-   cert_raiz_edt->setText(conexao->obterParamConexao(ConexaoBD::PARAM_CERT_RAIZ_SSL));
-   chave_cli_edt->setText(conexao->obterParamConexao(ConexaoBD::PARAM_CHAVE_SSL));
-   crl_edt->setText(conexao->obterParamConexao(ConexaoBD::PARAM_CRL_SSL));
+   cert_cliente_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_SSL_CERT));
+   cert_raiz_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_SSL_ROOT_CERT));
+   chave_cli_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_SSL_KEY));
+   crl_edt->setText(conexao->getConnectionParam(DBConnection::PARAM_SSL_CRL));
   }
 
   atualizar_tb->setVisible(true);
@@ -277,7 +277,7 @@ void ConfConexoesWidget::editarConexao(void)
  }
 }
 
-void ConfConexoesWidget::configurarConexao(ConexaoBD *conexao)
+void ConfConexoesWidget::configurarConexao(DBConnection *conexao)
 {
  if(conexao)
  {
@@ -287,64 +287,64 @@ void ConfConexoesWidget::configurarConexao(ConexaoBD *conexao)
      atribui o valor ao campo respectivo na conexão. Caso contrário atribui ao campo de
      nome de host (fqdn) */
   if(ip_regexp.exactMatch(host_edt->text()))
-   conexao->definirParamConexao(ConexaoBD::PARAM_IP_SERVIDOR, host_edt->text());
+   conexao->setConnectionParam(DBConnection::PARAM_SERVER_IP, host_edt->text());
   else
-   conexao->definirParamConexao(ConexaoBD::PARAM_FQDN_SERVIDOR, host_edt->text());
+   conexao->setConnectionParam(DBConnection::PARAM_SERVER_FQDN, host_edt->text());
 
   //Atribuindo os valores básicos de conexão
-  conexao->definirParamConexao(ConexaoBD::PARAM_PORTA, QString("%1").arg(porta_sbp->value()));
-  conexao->definirParamConexao(ConexaoBD::PARAM_USUARIO, usuario_edt->text());
-  conexao->definirParamConexao(ConexaoBD::PARAM_SENHA, senha_edt->text());
-  conexao->definirParamConexao(ConexaoBD::PARAM_NOME_BD, bd_conexao_edt->text());
-  conexao->definirParamConexao(ConexaoBD::PARAM_TEMPO_CONEXAO, QString("%1").arg(timeout_sbp->value()));
+  conexao->setConnectionParam(DBConnection::PARAM_PORT, QString("%1").arg(porta_sbp->value()));
+  conexao->setConnectionParam(DBConnection::PARAM_USER, usuario_edt->text());
+  conexao->setConnectionParam(DBConnection::PARAM_PASSWORD, senha_edt->text());
+  conexao->setConnectionParam(DBConnection::PARAM_DB_NAME, bd_conexao_edt->text());
+  conexao->setConnectionParam(DBConnection::PARAM_CONN_TIMEOUT, QString("%1").arg(timeout_sbp->value()));
 
   //Configurando o modo SSL da conexão
   switch(modo_ssl_cmb->currentIndex())
   {
    case 1:
-    conexao->definirParamConexao(ConexaoBD::PARAM_MODO_SSL, ConexaoBD::SSL_PERMITIR);
+    conexao->setConnectionParam(DBConnection::PARAM_SSL_MODE, DBConnection::SSL_ALLOW);
    break;
    case 2:
-    conexao->definirParamConexao(ConexaoBD::PARAM_MODO_SSL, ConexaoBD::SSL_REQUERER);
+    conexao->setConnectionParam(DBConnection::PARAM_SSL_MODE, DBConnection::SSL_REQUIRE);
    break;
    case 3:
-    conexao->definirParamConexao(ConexaoBD::PARAM_MODO_SSL, ConexaoBD::SSL_VERIF_AUT_CERT);
+    conexao->setConnectionParam(DBConnection::PARAM_SSL_MODE, DBConnection::SSL_CA_VERIF);
    break;
    case 4:
-    conexao->definirParamConexao(ConexaoBD::PARAM_MODO_SSL, ConexaoBD::SSL_VERIF_COMPLETA);
+    conexao->setConnectionParam(DBConnection::PARAM_SSL_MODE, DBConnection::SSL_FULL_VERIF);
    break;
    default:
    case 0:
-    conexao->definirParamConexao(ConexaoBD::PARAM_MODO_SSL, ConexaoBD::SSL_DESATIVADO);
+    conexao->setConnectionParam(DBConnection::PARAM_SSL_MODE, DBConnection::SSL_DESABLE);
    break;
   }
 
   //Caso haja um modo SSL selecionado, atribui os certificados usados para conexão
   if(modo_ssl_cmb->currentIndex()!=0)
   {
-   conexao->definirParamConexao(ConexaoBD::PARAM_CERT_RAIZ_SSL, cert_raiz_edt->text());
-   conexao->definirParamConexao(ConexaoBD::PARAM_CERT_SSL, cert_cliente_edt->text());
-   conexao->definirParamConexao(ConexaoBD::PARAM_CHAVE_SSL, chave_cli_edt->text());
-   conexao->definirParamConexao(ConexaoBD::PARAM_CRL_SSL, crl_edt->text());
+   conexao->setConnectionParam(DBConnection::PARAM_SSL_ROOT_CERT, cert_raiz_edt->text());
+   conexao->setConnectionParam(DBConnection::PARAM_SSL_CERT, cert_cliente_edt->text());
+   conexao->setConnectionParam(DBConnection::PARAM_SSL_KEY, chave_cli_edt->text());
+   conexao->setConnectionParam(DBConnection::PARAM_SSL_CRL, crl_edt->text());
   }
 
   //Especificando autenticação GSSAPI caso esteja marcada no formulário
   if(aut_gssapi_chk->isChecked())
-   conexao->definirParamConexao(ConexaoBD::PARAM_LIB_GSSAPI, "gssapi");
+   conexao->setConnectionParam(DBConnection::PARAM_LIB_GSSAPI, "gssapi");
 
   //Especificando o endereço do servidor Kerberus quando especificado
   if(!serv_kerberus_edt->text().isEmpty())
-   conexao->definirParamConexao(ConexaoBD::PARAM_SERVIDOR_KERBEROS, serv_kerberus_edt->text());
+   conexao->setConnectionParam(DBConnection::PARAM_KERBEROS_SERVER, serv_kerberus_edt->text());
 
   //Atribuindo opções adicionas de conexão
   if(!opcoes_edt->text().isEmpty())
-   conexao->definirParamConexao(ConexaoBD::PARAM_OPCOES, opcoes_edt->text());
+   conexao->setConnectionParam(DBConnection::PARAM_OPTIONS, opcoes_edt->text());
  }
 }
 
 void ConfConexoesWidget::testarConexao(void)
 {
- ConexaoBD conexao;
+ DBConnection conexao;
 
  try
  {
@@ -353,7 +353,7 @@ void ConfConexoesWidget::testarConexao(void)
 
   /* Tenta a conexão. Se neste ponto nenhuma exceção for disparada
      considera-se que a conexão foi realizada com sucesso */
-  conexao.conectar();
+  conexao.connect();
 
   //Exibe a mensagem de sucesso
   caixa_msg->show(trUtf8("Success"), trUtf8("Connection successfuly stablished!"), CaixaMensagem::ICONE_INFO);
@@ -389,7 +389,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
  try
  {
   int i, qtd;
-  ConexaoBD *conexao=NULL;
+  DBConnection *conexao=NULL;
   map<QString, QString> atribs;
 
   params_config[GlobalAttributes::CONNECTIONS_CONF].clear();
@@ -407,14 +407,14 @@ void ConfConexoesWidget::salvarConfiguracao(void)
    for(i=0; i < qtd; i++)
    {
     //Obtém uma conexão e seus atributos
-    conexao=reinterpret_cast<ConexaoBD *>(conexoes_cmb->itemData(i).value<void *>());
-    atribs=conexao->obterParamsConexao();
+    conexao=reinterpret_cast<DBConnection *>(conexoes_cmb->itemData(i).value<void *>());
+    atribs=conexao->getConnectionParams();
 
     /* Caso na conexão não esteja especificado o host significa que o endereço usado é o IP,
        sendo assim, o IP é atribuido ao parâmetro FQDN, desta forma ao gerar o esquema
        da conexão, o parser conseguirá identificar o parâmetro 'host' */
-    if(atribs.count(ConexaoBD::PARAM_FQDN_SERVIDOR)==0)
-     atribs[ConexaoBD::PARAM_FQDN_SERVIDOR]=atribs[ConexaoBD::PARAM_IP_SERVIDOR];
+    if(atribs.count(DBConnection::PARAM_SERVER_FQDN)==0)
+     atribs[DBConnection::PARAM_SERVER_FQDN]=atribs[DBConnection::PARAM_SERVER_IP];
 
     /* Armazena também nos atributos o alias da conexão pois este precisa ser gravado
        no arquivo de configuração */
@@ -447,7 +447,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
  }
 }
 
-void ConfConexoesWidget::obterConexoes(map<QString, ConexaoBD *> &conexoes)
+void ConfConexoesWidget::obterConexoes(map<QString, DBConnection *> &conexoes)
 {
  int i, qtd;
 
@@ -455,7 +455,7 @@ void ConfConexoesWidget::obterConexoes(map<QString, ConexaoBD *> &conexoes)
  qtd=conexoes_cmb->count();
 
  for(i=0; i < qtd; i++)
-  conexoes[conexoes_cmb->itemText(i)]=reinterpret_cast<ConexaoBD *>(conexoes_cmb->itemData(i).value<void *>());
+  conexoes[conexoes_cmb->itemText(i)]=reinterpret_cast<DBConnection *>(conexoes_cmb->itemData(i).value<void *>());
 }
 
 

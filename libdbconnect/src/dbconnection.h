@@ -1,10 +1,9 @@
 /*
-# Projeto: Squid-Autoconf
-# Sub-project: Biblioteca libconexbd
+# PostgreSQL Database Modeler (pgModeler)
+# Sub-project: libdbconnect library
 # Class: DBConnection
 # Description: This class encapsulates some connection manipulation functions
 #              implemented by the PostgreSQL libpq
-#
 # Creation date: 13/07/2009
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -27,84 +26,87 @@
 #include "resultset.h"
 #include <map>
 
-class ConexaoBD {
+class DBConnection {
  private:
-  //Descritor de conexão com o banco
-  PGconn *conexao;
+  //Database connection descriptor
+  PGconn *connection;
 
-  //Parâmetros usados para gerar a string de conexão
-  map<QString, QString> params_conexao;
+  //Parameters map used to generate the connection string
+  map<QString, QString> connection_params;
 
-  //String de conexão formatada
-  QString str_conexao;
+  //Formated connection string
+  QString connection_str;
 
-  //Gera a string de conexão com base no mapa de parâmetros de conexão
-  void gerarStringConexao(void);
+  //Generates the connection string based on the parameter map
+  void generateConnectionString(void);
 
  public:
-  static const QString PARAM_FQDN_SERVIDOR,
-                       PARAM_IP_SERVIDOR,
-                       PARAM_PORTA,
-                       PARAM_NOME_BD,
-                       PARAM_USUARIO,
-                       PARAM_SENHA,
-                       PARAM_TEMPO_CONEXAO,
-                       PARAM_OPCOES,
-                       PARAM_MODO_SSL,
-                       PARAM_CERT_SSL,
-                       PARAM_CHAVE_SSL,
-                       PARAM_CERT_RAIZ_SSL,
-                       PARAM_CRL_SSL,
-                       PARAM_SERVIDOR_KERBEROS,
+  //Constants used to reference the connections parameters
+  static const QString PARAM_SERVER_FQDN,
+                       PARAM_SERVER_IP,
+                       PARAM_PORT,
+                       PARAM_DB_NAME,
+                       PARAM_USER,
+                       PARAM_PASSWORD,
+                       PARAM_CONN_TIMEOUT,
+                       PARAM_OPTIONS,
+                       PARAM_SSL_MODE,
+                       PARAM_SSL_CERT,
+                       PARAM_SSL_KEY,
+                       PARAM_SSL_ROOT_CERT,
+                       PARAM_SSL_CRL,
+                       PARAM_KERBEROS_SERVER,
                        PARAM_LIB_GSSAPI,
-                       SSL_DESATIVADO,
-                       SSL_PERMITIR,
-                       SSL_PREFERIR,
-                       SSL_REQUERER,
-                       SSL_VERIF_AUT_CERT,
-                       SSL_VERIF_COMPLETA;
-  ConexaoBD(void);
-  ConexaoBD(const QString &servidor, const QString &porta, const QString &usuario, const QString &senha, const QString &nome_bd);
-  ~ConexaoBD(void);
+                       SSL_DESABLE,
+                       SSL_ALLOW,
+                       SSL_PREFER,
+                       SSL_REQUIRE,
+                       SSL_CA_VERIF,
+                       SSL_FULL_VERIF;
 
-  /* Define um parâmetro de conexão. Este só deve ser chamado antes de se
-     conectar ao banco */
-  void definirParamConexao(const QString &parametro, const QString &valor);
+  DBConnection(void);
+  DBConnection(const QString &servidor, const QString &porta, const QString &usuario, const QString &passwd, const QString &db_name);
+  ~DBConnection(void);
 
-  //Cria uma conexão simples com o banco
-  void conectar(void);
+  /* Sets one connection parameter. This method can only be called before
+     the connection to the database */
+  void setConnectionParam(const QString &param, const QString &value);
 
-  //Reinicia a conexão com o banco de dados
-  void reiniciar(void);
+  //Open the connection to the database
+  void connect(void);
 
-  //Fecha a conexão aberta
-  void fechar(void);
+  //Resets the database connection
+  void reset(void);
 
-  //Retorna o valor definido atualmente para um dado parâmetro da conexão
-  QString obterParamConexao(const QString &parametro);
+  //Close the opened connection
+  void close(void);
 
-  //Retorna o mapa com os parâmetros de configuração da conexão
-  map<QString, QString> obterParamsConexao(void);
+  //Returns the value of specified parameter name
+  QString getConnectionParam(const QString &param);
 
-  //Retorna a string de conexão usada para se conectar ao banco
-  QString obterStringConexao(void);
+  //Returns the full parameter map
+  map<QString, QString> getConnectionParams(void);
 
-  //Retorna a versão do SGBD no formato XX.YY.ZZ
-  QString obterVersaoSGBD(void);
+  //Returns the connection string used to connect to de database
+  QString getConnectionString(void);
 
-  //Retorna se a conexão está estabelecida
-  bool conexaoEstabelecida(void);
+  //Returns the DBMS version in format XX.YY.ZZ
+  QString getDBMSVersion(void);
 
-  /* Executa um comando DML no servidor usando a conexão aberta
-     retornando um objeto de resutlado da consulta */
-  void executarComandoDML(const QString &sql, ResultSet &resultado);
+  //Returns if the connections is stablished
+  bool isStablished(void);
 
-  /* Executa um comando DDL no servidor usando a conexão aberta
-     sem retorno de objetos de resultado */
-  void executarComandoDDL(const QString &sql);
+  /* Executes a DML command on the server using the opened connection.
+     Its mandatory to specify the object to receive the returned resultset. */
+  void executeDMLCommand(const QString &sql, ResultSet &result);
 
-  //Atribui uma conexão a outra
-  void operator = (ConexaoBD &conex);
+  /* Executes a DDL command on the server using the opened connection.
+     The user don't need to specify the resultset since the commando executed is intended
+     to be an data definition one  */
+  void executeDDLCommand(const QString &sql);
+
+  //Makes an copy between two connections
+  void operator = (DBConnection &conn);
 };
 
 #endif

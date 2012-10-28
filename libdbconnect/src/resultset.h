@@ -99,7 +99,7 @@ class ResultSet {
   //Make a copy between two resultsets
   void operator = (ResultSet &res);
 
-  friend class ConexaoBD;
+  friend class DBConnection;
 };
 
 #endif
