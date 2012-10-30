@@ -1,6 +1,6 @@
 #include "xmlparser.h"
 
-QString XMLParser::xml_doc_name="";
+QString XMLParser::xml_doc_filename="";
 QString XMLParser::xml_buffer="";
 QString XMLParser::dtd_decl="";
 QString XMLParser::xml_decl="";
@@ -22,56 +22,55 @@ XMLParser::~XMLParser(void)
 
 void XMLParser::removeDTD(void)
 {
- int pos1=-1, pos2=-1, pos3=-1, tam;
+ int pos1=-1, pos2=-1, pos3=-1, len;
 
  if(!xml_buffer.isEmpty())
  {
-  /* Retira a DTD atual do documento.
-     Caso o usuário tente manipular a estrutura do
-     documento prejudicando a integridade do mesmo. */
+  /* Removes the current DTD from document.
+     If the user attempts to manipulate the structure of
+     document damaging its integrity. */
   pos1=xml_buffer.find("<!DOCTYPE");
   pos2=xml_buffer.find("]>\n");
   pos3=xml_buffer.find("\">\n");
   if(pos1 >=0 && (pos2 >=0 || pos3 >= 0))
   {
-   tam=((pos2 > pos3) ? (pos2-pos1)+3 :  (pos3-pos2)+3);
-   xml_buffer.replace(pos1,tam,"");
+   len=((pos2 > pos3) ? (pos2-pos1)+3 :  (pos3-pos2)+3);
+   xml_buffer.replace(pos1,len,"");
   }
  }
 }
 
-void XMLParser::loadXMLFile(const QString &nome_arq)
+void XMLParser::loadXMLFile(const QString &filename)
 {
  try
  {
-  ifstream entrada;
+  ifstream input;
   QString buffer, str_aux;
-  string lin;
+  string line;
 
-  //Caso o nome do arquivo seja especificado
-  if(nome_arq!="")
+  if(filename!="")
   {
-   //Abre o arquivo para leitura
-   entrada.open(nome_arq.toAscii(),ios_base::in);
+   //Opens a file stream using the file name
+   input.open(filename.toAscii(),ios_base::in);
 
-   //Caso o arquivo foi aberto com sucesso
-   if(!entrada.is_open())
+   //Case the file opening was sucessful
+   if(!input.is_open())
    {
-    str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_ARQDIRNAOCARREGADO)).arg(nome_arq);
+    str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_ARQDIRNAOCARREGADO)).arg(filename);
     throw Exception(str_aux,ERR_PARSERS_ARQDIRNAOCARREGADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
    buffer="";
 
-   //Lê cada linha e armazena em um buffer
-   while(!entrada.eof())
+   //Read the file line by line and store them on the parser buffer
+   while(!input.eof())
    {
-    getline(entrada, lin);
-    buffer+=QString::fromStdString(lin) + "\n";
+    getline(input, line);
+    buffer+=QString::fromStdString(line) + "\n";
    }
-   entrada.close();
+   input.close();
 
-   xml_doc_name=nome_arq;
+   xml_doc_filename=filename;
    loadXMLBuffer(buffer);
   }
  }
@@ -81,18 +80,18 @@ void XMLParser::loadXMLFile(const QString &nome_arq)
  }
 }
 
-void XMLParser::loadXMLBuffer(const QString &buf_xml)
+void XMLParser::loadXMLBuffer(const QString &xml_buf)
 {
  try
  {
   int pos1=-1, pos2=-1, tam=0;
 
-  if(buf_xml.isEmpty())
+  if(xml_buf.isEmpty())
    throw Exception(ERR_PARSERS_ATRIBBUFXMLVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  pos1=buf_xml.find("<?xml");
-  pos2=buf_xml.find("?>");
-  xml_buffer=buf_xml;
+  pos1=xml_buf.find("<?xml");
+  pos2=xml_buf.find("?>");
+  xml_buffer=xml_buf;
 
   if(pos1 >= 0 && pos2 >= 0)
   {
@@ -112,74 +111,72 @@ void XMLParser::loadXMLBuffer(const QString &buf_xml)
  }
 }
 
-void XMLParser::setDTDFile(const QString &arq_dtd, const QString &nome_dtd)
+void XMLParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 {
- if(arq_dtd.isEmpty())
+ if(dtd_file.isEmpty())
   throw Exception(ERR_PARSERS_ATRIBARQDTDVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(nome_dtd.isEmpty())
+ if(dtd_name.isEmpty())
   throw Exception(ERR_PARSERS_ATRIBNOMEDTDVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- dtd_decl="<!DOCTYPE " + nome_dtd + " SYSTEM " + "\"" +  arq_dtd + "\">\n";
+ dtd_decl="<!DOCTYPE " + dtd_name + " SYSTEM " + "\"" +  dtd_file + "\">\n";
 }
 
 void XMLParser::readBuffer(void)
 {
- QString buffer, msg, arquivo;
- xmlError *erro_xml=NULL;
+ QString buffer, msg, file;
+ xmlError *xml_error=NULL;
  int parser_opt;
 
  if(!xml_buffer.isEmpty())
  {
-  //Insere o cabeçalho do arquivo XML
+  //Inserts the XML declaration
   buffer+=xml_decl;
 
-  //Configura o parser, inicialmente, para não validar o documento
+  //Configures the parser, initially, to not validate the document against the dtd
   parser_opt=( XML_PARSE_NOBLANKS | XML_PARSE_NONET | XML_PARSE_NOENT );
-  //XML_PARSE_NOERROR | XML_PARSE_NOWARNING
 
-  //Caso a declaração DTD não esteja vazia
+  //If the dtd declarions is setup
   if(!dtd_decl.isEmpty())
   {
-   //Insere a declaração DTD do software ao buffer do documento XML
+   //Inserts the default software DTD declarion into XML buffer
    buffer+=dtd_decl;
 
-   //Configurando o parser para validar o documento com a DTD
+   //Now configures the parser to validate the buffer against the DTD
    parser_opt=(parser_opt | XML_PARSE_DTDLOAD | XML_PARSE_DTDVALID);
   }
 
   buffer+=xml_buffer;
 
-  //Lê o documento XML armazenado no buffer
+  //Create an xml document from the buffer
   xml_doc=xmlReadMemory(buffer.toStdString().c_str(), buffer.size(),
                         NULL, NULL, parser_opt);
 
-  //Obtém o último erro XML
-  erro_xml=xmlGetLastError();
+  //In case the document criation fails, gets the last xml parser error
+  xml_error=xmlGetLastError();
 
-  //Caso haja algum erro dispara uma exceção
-  if(erro_xml)
+  //If some error is set
+  if(xml_error)
   {
-   //Configurando a mensagem de erro
-   msg=erro_xml->message;
-   arquivo=erro_xml->file;
-   if(!arquivo.isEmpty()) arquivo="("+arquivo+")";
-
-   //Remove o \n final da mensagem original
+   //Formats the error
+   msg=xml_error->message;
+   file=xml_error->file;
+   if(!file.isEmpty()) file="("+file+")";
    msg.replace("\n"," ");
 
-   //Liberando a memória ocupada pelo documento
+   //Restarts the parser
    if(xml_doc) restartParser();
 
+   //Raise an exception with the error massege from the parser xml
    throw Exception(QString(Exception::getErrorMessage(ERR_PARSERS_LIBXMLERR))
-                 .arg(erro_xml->line).arg(erro_xml->int2).arg(msg).arg(arquivo),
+                 .arg(xml_error->line).arg(xml_error->int2).arg(msg).arg(file),
                  ERR_PARSERS_LIBXMLERR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  //Obtém a raiz da árvore de elementos gerada
+  //Gets the referênce to the root element on the document
   root_elem=curr_elem=xmlDocGetRootElement(xml_doc);
 
-  //Limpa as variáveis alocadas pelo parser
+  //Cleanup the allocated parser variables
   if(xml_doc) xmlCleanupParser();
  }
 }
@@ -242,34 +239,32 @@ void XMLParser::restartParser(void)
   elems_stack.pop();
 
  xmlResetLastError();
- xml_doc_name="";
+ xml_doc_filename="";
 }
 
-bool XMLParser::accessElement(unsigned tipo_elem)
+bool XMLParser::accessElement(unsigned elem_type)
 {
- bool possui_elem;
- xmlNode *vet_elems[4];
+ bool has_elem;
+ xmlNode *elems[4];
 
  if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- vet_elems[ROOT_ELEMENT]=curr_elem->parent;
- vet_elems[CHILD_ELEMENT]=curr_elem->children;
- vet_elems[NEXT_ELEMENT]=curr_elem->next;
- vet_elems[PREVIOUS_ELEMENT]=curr_elem->prev;
+ elems[ROOT_ELEMENT]=curr_elem->parent;
+ elems[CHILD_ELEMENT]=curr_elem->children;
+ elems[NEXT_ELEMENT]=curr_elem->next;
+ elems[PREVIOUS_ELEMENT]=curr_elem->prev;
 
- /* Verifica se o elemento atual possui o elemento que
-    se deseja acessar. O flag possui_elem também é usado
-    no retorno do método para indicar se o elemento foi
-    movido ou não. */
- possui_elem=hasElement(tipo_elem);
+ /* Checks whether the current element has the element that
+    is to  be accessed. The flag 'has_elem' is also used
+    on the method return to indicate if the element has been
+    accessed or not. */
+ has_elem=hasElement(elem_type);
 
- //Caso possua o elemento
- if(possui_elem)
-  //Move o elemento atual para o elemento escolhido
-  curr_elem=vet_elems[tipo_elem];
+ if(has_elem)
+  curr_elem=elems[elem_type];
 
- return(possui_elem);
+ return(has_elem);
 }
 
 bool XMLParser::hasElement(unsigned tipo_elem)
@@ -278,18 +273,18 @@ bool XMLParser::hasElement(unsigned tipo_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(tipo_elem==ROOT_ELEMENT)
-  /* Retorna a verificação se o elemento atual possui um pai.
-     O elemento deve ser diferente da raiz, pois o elemento raiz
-     nao está ligado a um pai */
+  /* Returns the verification if the current element has a parent.
+     The element must be different from the root, because the root element
+     is not connected to a parent */
   return(curr_elem!=root_elem && curr_elem->parent!=NULL);
  else if(tipo_elem==CHILD_ELEMENT)
-  //Retorna a verificação se o elemento atual possui filhos
+  //Returns the verification if the current element has children
   return(curr_elem->children!=NULL);
  else if(tipo_elem==NEXT_ELEMENT)
   return(curr_elem->next!=NULL);
  else
-  /* A segunda comparação na expressão é feita para o elemento raiz.
-     pois a libxml2 coloca como elemento anterior da raiz ela mesma */
+  /* The second comparison in the expression is made for the root element
+     because libxml2 places the previous element as the root itself */
   return(curr_elem->prev!=NULL && curr_elem->prev!=root_elem);
 }
 
@@ -306,7 +301,6 @@ QString XMLParser::getElementContent(void)
  if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Caso esteja alocado, converte para char * e retorna em forma de std::QString
  return(QString(reinterpret_cast<char *>(curr_elem->content)));
 }
 
@@ -331,40 +325,39 @@ const xmlNode *XMLParser::getCurrentElement(void)
  return(curr_elem);
 }
 
-void XMLParser::getElementAttributes(map<QString, QString> &atributos)
+void XMLParser::getElementAttributes(map<QString, QString> &attributes)
 {
- xmlAttr *atribs_elem=NULL;
- QString atrib, valor;
+ xmlAttr *elem_attribs=NULL;
+ QString attrib, value;
 
  if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Limpa a lista de atributos passada
- atributos.clear();
+ //Always clears the passed attributes maps
+ attributes.clear();
 
- //Obtém a referência � s propriedades do elemento
- atribs_elem=curr_elem->properties;
+ //Gets the references to the element properties
+ elem_attribs=curr_elem->properties;
 
- //Varre a lista de propriedades até o seu final
- while(atribs_elem)
+ while(elem_attribs)
  {
-  //Obtém o nome do atributo, covertendo para utf8
-  atrib=QString(reinterpret_cast<const char *>(atribs_elem->name));
-  //Obtém o valor atributo, covertendo para utf8
-  valor=QString(reinterpret_cast<char *>(atribs_elem->children->content));
+  //Gets the attribute name
+  attrib=QString(reinterpret_cast<const char *>(elem_attribs->name));
+  //Gets the attribute value
+  value=QString(reinterpret_cast<char *>(elem_attribs->children->content));
 
-  /* Atribui ao mapa de atributos, no índice especificado pelo próprio
-     nome do atributo o valor obtido */
-  atributos[atrib]=valor;
+  /* Assigns to the attribute map in the index specified by the
+     attribute name the obtained value */
+  attributes[attrib]=value;
 
-  //Passa para o próximo atributo
-  atribs_elem=atribs_elem->next;
+  //Step to the next element attribute
+  elem_attribs=elem_attribs->next;
  }
 }
 
 QString XMLParser::getLoadedFilename(void)
 {
- return(xml_doc_name);
+ return(xml_doc_filename);
 }
 
 QString XMLParser::getXMLBuffer(void)
