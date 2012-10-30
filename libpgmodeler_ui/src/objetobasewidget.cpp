@@ -335,11 +335,11 @@ void ObjetoBaseWidget::configurarLayouFormulario(QGridLayout *grid, TipoObjetoBa
 QString ObjetoBaseWidget::gerarIntervaloVersoes(unsigned tipo_intervalo, const QString &ver_ini, const QString &ver_fim)
 {
  if(tipo_intervalo==ATE_VERSAO && !ver_ini.isEmpty())
-   return(ParserXML::CHR_MENORQUE + QString("= ") + ver_ini);
+   return(XMLParser::CHAR_LT + QString("= ") + ver_ini);
  else if(tipo_intervalo==INTER_VERSOES && !ver_ini.isEmpty() && !ver_fim.isEmpty())
-   return(ParserXML::CHR_MAIORQUE + QString("= ") + ver_ini + ParserXML::CHR_ECOMERCIAL + ParserXML::CHR_MENORQUE + QString("= ") + ver_fim);
+   return(XMLParser::CHAR_GT + QString("= ") + ver_ini + XMLParser::CHAR_AMP + XMLParser::CHAR_LT + QString("= ") + ver_fim);
  else if(tipo_intervalo==APOS_VERSAO &&  !ver_ini.isEmpty())
-   return(ParserXML::CHR_MAIORQUE + QString("= ") + ver_ini);
+   return(XMLParser::CHAR_GT + QString("= ") + ver_ini);
  else
    return("");
 }

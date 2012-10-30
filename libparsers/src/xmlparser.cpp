@@ -1,46 +1,46 @@
 #include "xmlparser.h"
 
-QString ParserXML::nome_doc_xml="";
-QString ParserXML::buffer_xml="";
-QString ParserXML::decl_dtd="";
-QString ParserXML::decl_xml="";
-xmlNode *ParserXML::elem_raiz=NULL;
-xmlNode *ParserXML::elem_atual=NULL;
-xmlDoc *ParserXML::doc_xml=NULL;
-stack<xmlNode*> ParserXML::pilha_elems;
+QString XMLParser::xml_doc_name="";
+QString XMLParser::xml_buffer="";
+QString XMLParser::dtd_decl="";
+QString XMLParser::xml_decl="";
+xmlNode *XMLParser::root_elem=NULL;
+xmlNode *XMLParser::curr_elem=NULL;
+xmlDoc *XMLParser::xml_doc=NULL;
+stack<xmlNode*> XMLParser::elems_stack;
 
-const QString ParserXML::CHR_ECOMERCIAL="&amp;";
-const QString ParserXML::CHR_MENORQUE="&lt;";
-const QString ParserXML::CHR_MAIORQUE="&gt;";
-const QString ParserXML::CHR_ASPAS="&quot;";
-const QString ParserXML::CHR_APOSTROFO="&apos;";
+const QString XMLParser::CHAR_AMP="&amp;";
+const QString XMLParser::CHAR_LT="&lt;";
+const QString XMLParser::CHAR_GT="&gt;";
+const QString XMLParser::CHAR_QUOT="&quot;";
+const QString XMLParser::CHAR_APOS="&apos;";
 
-ParserXML::~ParserXML(void)
+XMLParser::~XMLParser(void)
 {
- reiniciarParser();
+ restartParser();
 }
 
-void ParserXML::removerDTD(void)
+void XMLParser::removeDTD(void)
 {
  int pos1=-1, pos2=-1, pos3=-1, tam;
 
- if(!buffer_xml.isEmpty())
+ if(!xml_buffer.isEmpty())
  {
   /* Retira a DTD atual do documento.
      Caso o usuário tente manipular a estrutura do
      documento prejudicando a integridade do mesmo. */
-  pos1=buffer_xml.find("<!DOCTYPE");
-  pos2=buffer_xml.find("]>\n");
-  pos3=buffer_xml.find("\">\n");
+  pos1=xml_buffer.find("<!DOCTYPE");
+  pos2=xml_buffer.find("]>\n");
+  pos3=xml_buffer.find("\">\n");
   if(pos1 >=0 && (pos2 >=0 || pos3 >= 0))
   {
    tam=((pos2 > pos3) ? (pos2-pos1)+3 :  (pos3-pos2)+3);
-   buffer_xml.replace(pos1,tam,"");
+   xml_buffer.replace(pos1,tam,"");
   }
  }
 }
 
-void ParserXML::carregarArquivoXML(const QString &nome_arq)
+void XMLParser::loadXMLFile(const QString &nome_arq)
 {
  try
  {
@@ -71,8 +71,8 @@ void ParserXML::carregarArquivoXML(const QString &nome_arq)
    }
    entrada.close();
 
-   nome_doc_xml=nome_arq;
-   carregarBufferXML(buffer);
+   xml_doc_name=nome_arq;
+   loadXMLBuffer(buffer);
   }
  }
  catch(Exception &e)
@@ -81,7 +81,7 @@ void ParserXML::carregarArquivoXML(const QString &nome_arq)
  }
 }
 
-void ParserXML::carregarBufferXML(const QString &buf_xml)
+void XMLParser::loadXMLBuffer(const QString &buf_xml)
 {
  try
  {
@@ -92,19 +92,19 @@ void ParserXML::carregarBufferXML(const QString &buf_xml)
 
   pos1=buf_xml.find("<?xml");
   pos2=buf_xml.find("?>");
-  buffer_xml=buf_xml;
+  xml_buffer=buf_xml;
 
   if(pos1 >= 0 && pos2 >= 0)
   {
    tam=(pos2-pos1)+3;
-   decl_xml=buffer_xml.mid(pos1, tam);
-   buffer_xml.replace(pos1,tam,"");
+   xml_decl=xml_buffer.mid(pos1, tam);
+   xml_buffer.replace(pos1,tam,"");
   }
   else
-   decl_xml="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+   xml_decl="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
-  removerDTD();
-  interpretarBuffer();
+  removeDTD();
+  readBuffer();
  }
  catch(Exception &e)
  {
@@ -112,7 +112,7 @@ void ParserXML::carregarBufferXML(const QString &buf_xml)
  }
 }
 
-void ParserXML::definirArquivoDTD(const QString &arq_dtd, const QString &nome_dtd)
+void XMLParser::setDTDFile(const QString &arq_dtd, const QString &nome_dtd)
 {
  if(arq_dtd.isEmpty())
   throw Exception(ERR_PARSERS_ATRIBARQDTDVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -120,38 +120,38 @@ void ParserXML::definirArquivoDTD(const QString &arq_dtd, const QString &nome_dt
  if(nome_dtd.isEmpty())
   throw Exception(ERR_PARSERS_ATRIBNOMEDTDVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- decl_dtd="<!DOCTYPE " + nome_dtd + " SYSTEM " + "\"" +  arq_dtd + "\">\n";
+ dtd_decl="<!DOCTYPE " + nome_dtd + " SYSTEM " + "\"" +  arq_dtd + "\">\n";
 }
 
-void ParserXML::interpretarBuffer(void)
+void XMLParser::readBuffer(void)
 {
  QString buffer, msg, arquivo;
  xmlError *erro_xml=NULL;
  int parser_opt;
 
- if(!buffer_xml.isEmpty())
+ if(!xml_buffer.isEmpty())
  {
   //Insere o cabeçalho do arquivo XML
-  buffer+=decl_xml;
+  buffer+=xml_decl;
 
   //Configura o parser, inicialmente, para não validar o documento
   parser_opt=( XML_PARSE_NOBLANKS | XML_PARSE_NONET | XML_PARSE_NOENT );
   //XML_PARSE_NOERROR | XML_PARSE_NOWARNING
 
   //Caso a declaração DTD não esteja vazia
-  if(!decl_dtd.isEmpty())
+  if(!dtd_decl.isEmpty())
   {
    //Insere a declaração DTD do software ao buffer do documento XML
-   buffer+=decl_dtd;
+   buffer+=dtd_decl;
 
    //Configurando o parser para validar o documento com a DTD
    parser_opt=(parser_opt | XML_PARSE_DTDLOAD | XML_PARSE_DTDVALID);
   }
 
-  buffer+=buffer_xml;
+  buffer+=xml_buffer;
 
   //Lê o documento XML armazenado no buffer
-  doc_xml=xmlReadMemory(buffer.toStdString().c_str(), buffer.size(),
+  xml_doc=xmlReadMemory(buffer.toStdString().c_str(), buffer.size(),
                         NULL, NULL, parser_opt);
 
   //Obtém o último erro XML
@@ -169,7 +169,7 @@ void ParserXML::interpretarBuffer(void)
    msg.replace("\n"," ");
 
    //Liberando a memória ocupada pelo documento
-   if(doc_xml) reiniciarParser();
+   if(xml_doc) restartParser();
 
    throw Exception(QString(Exception::getErrorMessage(ERR_PARSERS_LIBXMLERR))
                  .arg(erro_xml->line).arg(erro_xml->int2).arg(msg).arg(arquivo),
@@ -177,173 +177,173 @@ void ParserXML::interpretarBuffer(void)
   }
 
   //Obtém a raiz da árvore de elementos gerada
-  elem_raiz=elem_atual=xmlDocGetRootElement(doc_xml);
+  root_elem=curr_elem=xmlDocGetRootElement(xml_doc);
 
   //Limpa as variáveis alocadas pelo parser
-  if(doc_xml) xmlCleanupParser();
+  if(xml_doc) xmlCleanupParser();
  }
 }
 
-void ParserXML::salvarPosicao(void)
+void XMLParser::savePosition(void)
 {
- if(!elem_raiz)
+ if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- pilha_elems.push(elem_atual);
+ elems_stack.push(curr_elem);
 }
 
-void ParserXML::restaurarPosicao(void)
+void XMLParser::restorePosition(void)
 {
- if(!elem_raiz)
+ if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(pilha_elems.empty())
-  elem_atual=elem_raiz;
+ if(elems_stack.empty())
+  curr_elem=root_elem;
  else
  {
-  elem_atual=pilha_elems.top();
-  pilha_elems.pop();
+  curr_elem=elems_stack.top();
+  elems_stack.pop();
  }
 }
 
-void ParserXML::restaurarPosicao(const xmlNode *elem)
+void XMLParser::restorePosition(const xmlNode *elem)
 {
  if(!elem)
   throw Exception(ERR_PARSERS_OPRELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(elem->doc!=doc_xml)
+ else if(elem->doc!=xml_doc)
   throw Exception(ERR_PARSERS_OPRELEMINVARVDOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- reiniciarNavegacao();
- elem_atual=const_cast<xmlNode *>(elem);
+ restartNavigation();
+ curr_elem=const_cast<xmlNode *>(elem);
 }
 
-void ParserXML::reiniciarNavegacao(void)
+void XMLParser::restartNavigation(void)
 {
- if(!elem_raiz)
+ if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- elem_atual=elem_raiz;
+ curr_elem=root_elem;
 
- while(!pilha_elems.empty())
-  pilha_elems.pop();
+ while(!elems_stack.empty())
+  elems_stack.pop();
 }
 
-void ParserXML::reiniciarParser(void)
+void XMLParser::restartParser(void)
 {
- elem_raiz=elem_atual=NULL;
- if(doc_xml)
+ root_elem=curr_elem=NULL;
+ if(xml_doc)
  {
-  xmlFreeDoc(doc_xml);
-  doc_xml=NULL;
+  xmlFreeDoc(xml_doc);
+  xml_doc=NULL;
  }
- decl_dtd=buffer_xml=decl_xml="";
+ dtd_decl=xml_buffer=xml_decl="";
 
- while(!pilha_elems.empty())
-  pilha_elems.pop();
+ while(!elems_stack.empty())
+  elems_stack.pop();
 
  xmlResetLastError();
- nome_doc_xml="";
+ xml_doc_name="";
 }
 
-bool ParserXML::acessarElemento(unsigned tipo_elem)
+bool XMLParser::accessElement(unsigned tipo_elem)
 {
  bool possui_elem;
  xmlNode *vet_elems[4];
 
- if(!elem_raiz)
+ if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- vet_elems[ELEMENTO_RAIZ]=elem_atual->parent;
- vet_elems[ELEMENTO_FILHO]=elem_atual->children;
- vet_elems[ELEMENTO_POSTERIOR]=elem_atual->next;
- vet_elems[ELEMENTO_ANTERIOR]=elem_atual->prev;
+ vet_elems[ROOT_ELEMENT]=curr_elem->parent;
+ vet_elems[CHILD_ELEMENT]=curr_elem->children;
+ vet_elems[NEXT_ELEMENT]=curr_elem->next;
+ vet_elems[PREVIOUS_ELEMENT]=curr_elem->prev;
 
  /* Verifica se o elemento atual possui o elemento que
     se deseja acessar. O flag possui_elem também é usado
     no retorno do método para indicar se o elemento foi
     movido ou não. */
- possui_elem=possuiElemento(tipo_elem);
+ possui_elem=hasElement(tipo_elem);
 
  //Caso possua o elemento
  if(possui_elem)
   //Move o elemento atual para o elemento escolhido
-  elem_atual=vet_elems[tipo_elem];
+  curr_elem=vet_elems[tipo_elem];
 
  return(possui_elem);
 }
 
-bool ParserXML::possuiElemento(unsigned tipo_elem)
+bool XMLParser::hasElement(unsigned tipo_elem)
 {
- if(!elem_raiz)
+ if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(tipo_elem==ELEMENTO_RAIZ)
+ if(tipo_elem==ROOT_ELEMENT)
   /* Retorna a verificação se o elemento atual possui um pai.
      O elemento deve ser diferente da raiz, pois o elemento raiz
      nao está ligado a um pai */
-  return(elem_atual!=elem_raiz && elem_atual->parent!=NULL);
- else if(tipo_elem==ELEMENTO_FILHO)
+  return(curr_elem!=root_elem && curr_elem->parent!=NULL);
+ else if(tipo_elem==CHILD_ELEMENT)
   //Retorna a verificação se o elemento atual possui filhos
-  return(elem_atual->children!=NULL);
- else if(tipo_elem==ELEMENTO_POSTERIOR)
-  return(elem_atual->next!=NULL);
+  return(curr_elem->children!=NULL);
+ else if(tipo_elem==NEXT_ELEMENT)
+  return(curr_elem->next!=NULL);
  else
   /* A segunda comparação na expressão é feita para o elemento raiz.
      pois a libxml2 coloca como elemento anterior da raiz ela mesma */
-  return(elem_atual->prev!=NULL && elem_atual->prev!=elem_raiz);
+  return(curr_elem->prev!=NULL && curr_elem->prev!=root_elem);
 }
 
-bool ParserXML::possuiAtributos(void)
+bool XMLParser::hasAttributes(void)
 {
- if(!elem_raiz)
+ if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(elem_atual->properties!=NULL);
+ return(curr_elem->properties!=NULL);
 }
 
-QString ParserXML::obterConteudoElemento(void)
+QString XMLParser::getElementContent(void)
 {
- if(!elem_raiz)
+ if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso esteja alocado, converte para char * e retorna em forma de std::QString
- return(QString(reinterpret_cast<char *>(elem_atual->content)));
+ return(QString(reinterpret_cast<char *>(curr_elem->content)));
 }
 
-QString ParserXML::obterNomeElemento(void)
+QString XMLParser::getElementName(void)
 {
- if(!elem_raiz)
+ if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(QString(reinterpret_cast<const char *>(elem_atual->name)));
+ return(QString(reinterpret_cast<const char *>(curr_elem->name)));
 }
 
-xmlElementType ParserXML::obterTipoElemento(void)
+xmlElementType XMLParser::getElementType(void)
 {
- if(!elem_raiz)
+ if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(elem_atual->type);
+ return(curr_elem->type);
 }
 
-const xmlNode *ParserXML::obterElementoAtual(void)
+const xmlNode *XMLParser::getCurrentElement(void)
 {
- return(elem_atual);
+ return(curr_elem);
 }
 
-void ParserXML::obterAtributosElemento(map<QString, QString> &atributos)
+void XMLParser::getElementAttributes(map<QString, QString> &atributos)
 {
  xmlAttr *atribs_elem=NULL;
  QString atrib, valor;
 
- if(!elem_raiz)
+ if(!root_elem)
   throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Limpa a lista de atributos passada
  atributos.clear();
 
  //Obtém a referência � s propriedades do elemento
- atribs_elem=elem_atual->properties;
+ atribs_elem=curr_elem->properties;
 
  //Varre a lista de propriedades até o seu final
  while(atribs_elem)
@@ -362,28 +362,28 @@ void ParserXML::obterAtributosElemento(map<QString, QString> &atributos)
  }
 }
 
-QString ParserXML::obterNomeArquivo(void)
+QString XMLParser::getLoadedFilename(void)
 {
- return(nome_doc_xml);
+ return(xml_doc_name);
 }
 
-QString ParserXML::obterBufferXML(void)
+QString XMLParser::getXMLBuffer(void)
 {
- return(buffer_xml);
+ return(xml_buffer);
 }
 
-int ParserXML::obterLinhaAtualBuffer(void)
+int XMLParser::getCurrentBufferLine(void)
 {
- if(elem_atual)
-  return(elem_atual->line);
+ if(curr_elem)
+  return(curr_elem->line);
  else
   return(0);
 }
 
-int ParserXML::obterNumLinhasBuffer(void)
+int XMLParser::getBufferLineCount(void)
 {
- if(doc_xml)
-  return(doc_xml->last->line);
+ if(xml_doc)
+  return(xml_doc->last->line);
  else
   return(0);
 }

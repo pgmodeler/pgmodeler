@@ -88,7 +88,7 @@ void SchemaParser::getPgSQLVersions(vector<QString> &versions)
   versions.push_back(dir_list[i]);
 }
 
-void SchemaParser::resetParser(void)
+void SchemaParser::restartParser(void)
 {
  /* Clears the buffer and resets the counters for line,
     column and amount of comments */
@@ -115,7 +115,7 @@ void SchemaParser::loadFile(const QString &file)
   }
 
   //Prepares the parser to do new reading
-  resetParser();
+  restartParser();
 
   //While the input file doesn't reach the end
   while(!input.eof())
@@ -835,7 +835,7 @@ QString SchemaParser::getObjectDefinition(const QString &filename, map<QString,Q
   }
  }
 
- resetParser();
+ restartParser();
  ignore_unk_atribs=false;
  return(object_def);
 }

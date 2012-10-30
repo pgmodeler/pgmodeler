@@ -177,25 +177,25 @@ void ObjetoGrafico::carregarEstiloObjetos(void)
  //Faz um carregamento do arquivo XML que define as configurações de fonte dos objetos
  try
  {
-  ParserXML::reiniciarParser();
-  ParserXML::definirArquivoDTD(GlobalAttributes::CONFIGURATIONS_DIR +
+  XMLParser::restartParser();
+  XMLParser::setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
                                GlobalAttributes::DIR_SEPARATOR +
                                GlobalAttributes::OBJECT_DTD_DIR +
                                GlobalAttributes::DIR_SEPARATOR +
                                GlobalAttributes::OBJECTS_STYLE_CONF +
                                GlobalAttributes::OBJECT_DTD_EXT, GlobalAttributes::OBJECTS_STYLE_CONF);
-  ParserXML::carregarArquivoXML(arq_conf);
+  XMLParser::loadXMLFile(arq_conf);
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     ParserXML::obterAtributosElemento(atributos);
-     elem=ParserXML::obterNomeElemento();
+     XMLParser::getElementAttributes(atributos);
+     elem=XMLParser::getElementName();
 
      //Obtendo a configuração da fonte global
      if(elem==ParsersAttributes::GLOBAL)
@@ -232,7 +232,7 @@ void ObjetoGrafico::carregarEstiloObjetos(void)
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)

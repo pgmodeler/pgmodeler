@@ -114,9 +114,9 @@ void ConfBaseWidget::carregarConfiguracao(const QString &id_conf, const vector<Q
   params_config.clear();
 
   //Reinicia o parser XML para a leitura do arquivo
-  ParserXML::reiniciarParser();
+  XMLParser::restartParser();
 
-  ParserXML::definirArquivoDTD(GlobalAttributes::CONFIGURATIONS_DIR +
+  XMLParser::setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
                                GlobalAttributes::DIR_SEPARATOR +
                                GlobalAttributes::OBJECT_DTD_DIR +
                                GlobalAttributes::DIR_SEPARATOR +
@@ -124,37 +124,37 @@ void ConfBaseWidget::carregarConfiguracao(const QString &id_conf, const vector<Q
                                GlobalAttributes::OBJECT_DTD_EXT,
                                id_conf);
 
-  ParserXML::carregarArquivoXML(GlobalAttributes::CONFIGURATIONS_DIR +
+  XMLParser::loadXMLFile(GlobalAttributes::CONFIGURATIONS_DIR +
                                 GlobalAttributes::DIR_SEPARATOR +
                                 id_conf +
                                 GlobalAttributes::CONFIGURATION_EXT);
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
       qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      this->obterParamsConfiguracao(atribs_chave);
 
-     if(ParserXML::possuiElemento(ParserXML::ELEMENTO_FILHO))
+     if(XMLParser::hasElement(XMLParser::CHILD_ELEMENT))
      {
-      ParserXML::salvarPosicao();
-      ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
+      XMLParser::savePosition();
+      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
 
       do
       {
        this->obterParamsConfiguracao(atribs_chave);
       }
-      while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+      while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 
-      ParserXML::restaurarPosicao();
+      XMLParser::restorePosition();
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
@@ -171,7 +171,7 @@ void ConfBaseWidget::obterParamsConfiguracao(const vector<QString> &atribs_chave
  QString chave;
 
  //Obtém os atributos do elemento atual
- ParserXML::obterAtributosElemento(atrib_aux);
+ XMLParser::getElementAttributes(atrib_aux);
 
  itr=atrib_aux.begin();
  itr_end=atrib_aux.end();
@@ -188,7 +188,7 @@ void ConfBaseWidget::obterParamsConfiguracao(const vector<QString> &atribs_chave
 
  //Caso a chave não foi definida, a chave padrão será o nome do elemento
  if(chave.isEmpty())
-  chave=ParserXML::obterNomeElemento();
+  chave=XMLParser::getElementName();
 
  //Atribui os dados obtidos do elemento atual   chave do mapa de parâmetros de configuração
  if(!atrib_aux.empty())

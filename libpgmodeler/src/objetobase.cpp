@@ -613,9 +613,9 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
       //Obtém a substring extraída com as expressões regulares
       str_aux=def.mid(pos, qtd);
       //Substitui os caracteres especiais pelas entidades XML
-      str_aux.replace('\"',ParserXML::CHR_ASPAS);
-      str_aux.replace('<',ParserXML::CHR_MENORQUE);
-      str_aux.replace('>',ParserXML::CHR_MAIORQUE);
+      str_aux.replace('\"',XMLParser::CHAR_QUOT);
+      str_aux.replace('<',XMLParser::CHAR_LT);
+      str_aux.replace('>',XMLParser::CHAR_GT);
       //Substitui na definição XML original pela string modificada
       def.replace(pos,qtd,str_aux);
       pos+=qtd;
@@ -631,7 +631,7 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   }
   catch(Exception &e)
   {
-   SchemaParser::resetParser();
+   SchemaParser::restartParser();
    limparAtributos();
    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }

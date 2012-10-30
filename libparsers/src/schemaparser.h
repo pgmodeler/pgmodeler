@@ -141,7 +141,7 @@ class SchemaParser {
   static QString getPgSQLVersion(void);
 
   //Resets the parser in order to do new analysis
-  static void resetParser(void);
+  static void restartParser(void);
 
   //Set if the parser must ignore unknown attributes avoiding expcetion throwing
   static void setIgnoreUnkownAttributes(bool ignore);

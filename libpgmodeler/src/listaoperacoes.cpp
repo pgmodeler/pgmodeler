@@ -779,8 +779,8 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
         oper->tipo_op==Operacao::OBJETO_MOVIMENTADO)))
    {
     //Reinicia o parser e carrega o buffer do mesmo com o código xml da operação
-    ParserXML::reiniciarParser();
-    ParserXML::carregarBufferXML(oper->def_xml);
+    XMLParser::restartParser();
+    XMLParser::loadXMLBuffer(oper->def_xml);
 
     //Cria uma cópia do objeto conforme o tipo do mesmo
     if(tipo==OBJETO_GATILHO)

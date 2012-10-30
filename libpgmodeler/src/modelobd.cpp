@@ -1504,13 +1504,13 @@ void ModeloBD::criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj)
  try
  {
   //Reinicia o parser XML para nova leitura de buffer arquivo
-  ParserXML::reiniciarParser();
+  XMLParser::restartParser();
 
   //Carrega o buffer XML do parser com a definição XML do objeto especial
-  ParserXML::carregarBufferXML(def_xml_obj);
+  XMLParser::loadXMLBuffer(def_xml_obj);
 
   //Identificando o tipo de objeto de acordo com o elemento obtido anteriormente
-  tipo_obj=obterTipoObjeto(ParserXML::obterNomeElemento());
+  tipo_obj=obterTipoObjeto(XMLParser::getElementName());
 
   //Cria o objeto de acordo com o tipo identificado
   if(tipo_obj==OBJETO_SEQUENCIA)
@@ -2603,29 +2603,29 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
    carregando_modelo=true;
 
    //Reinicia o parser XML para a leitura do arquivo
-   ParserXML::reiniciarParser();
+   XMLParser::restartParser();
    //Faz com que o parser carregue a DTD que armazena a sintaxe do arquivo de modelos
-   ParserXML::definirArquivoDTD(arq_dtd + GlobalAttributes::ROOT_DTD +
+   XMLParser::setDTDFile(arq_dtd + GlobalAttributes::ROOT_DTD +
                                 GlobalAttributes::OBJECT_DTD_EXT,
                                 GlobalAttributes::ROOT_DTD);
 
    //Carrega o arquivo validando-o de acordo com a DTD informada
-   ParserXML::carregarArquivoXML(nome_arq);
+   XMLParser::loadXMLFile(nome_arq);
 
    //Obter as informações de versão, autor do modelo e versão postgresql
-   ParserXML::obterAtributosElemento(atributos);
+   XMLParser::getElementAttributes(atributos);
    this->autor=atributos[ParsersAttributes::MODEL_AUTHOR];
 
    modelo_protegido=(atributos[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
    //Passa para o próximo elemento que provavelmente será um <role> ou <tablespace>
-   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
    {
     do
     {
-     if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
      {
-      nome_elem=ParserXML::obterNomeElemento();
+      nome_elem=XMLParser::getElementName();
 
       /* Caso o nome do elemento atual seja o que define uma permissão
          indica que o parser leu todos os objetos do modelo e o mesmo
@@ -2648,7 +2648,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
            a restauração de objetos especiais apaga o buffer
            recente do parser para serem usados os códigos xml
            de tais objetos */
-        str_aux=ParserXML::obterBufferXML();
+        str_aux=XMLParser::getXMLBuffer();
 
         itr=xml_objs_especiais.begin();
         itr_end=xml_objs_especiais.end();
@@ -2671,14 +2671,14 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
           o buffer do parser com o buffer usando anteriormente   restauração
           deos objetos especiais para que as permissões possam ser criadas
           a partir do XML */
-        ParserXML::reiniciarParser();
-        ParserXML::carregarBufferXML(str_aux);
-        ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
+        XMLParser::restartParser();
+        XMLParser::loadXMLBuffer(str_aux);
+        XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
 
         /* Executa a navegação sobre os elementos até que o primeiro elemento
            que define uma permissão seja localizado */
-        while(ParserXML::obterNomeElemento()!=ParsersAttributes::PERMISSION &&
-              ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+        while(XMLParser::getElementName()!=ParsersAttributes::PERMISSION &&
+              XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
        }
 
        //Executa acriação da permissão atual a partir do xml
@@ -2707,21 +2707,21 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
           tipo_obj!=OBJETO_TIPO && tipo_obj!=OBJETO_TABELA)
        {
         //Faz o parser XML voltar ao elemento anterior
-        ParserXML::acessarElemento(ParserXML::ELEMENTO_ANTERIOR);
+        XMLParser::accessElement(XMLParser::PREVIOUS_ELEMENT);
         //Armazena a posição atual do parser
-        elem_aux=ParserXML::obterElementoAtual();
+        elem_aux=XMLParser::getCurrentElement();
 
         reaval_objetos=true;
         //Restaura o parser para a posição onde o objeto incompleto foi lido
-        ParserXML::restaurarPosicao(objetos_incomp.front());
+        XMLParser::restorePosition(objetos_incomp.front());
         //Obtém o tipo deste objeto
-        tipo_obj=obterTipoObjeto(ParserXML::obterNomeElemento());
+        tipo_obj=obterTipoObjeto(XMLParser::getElementName());
        }
 
        //Lendo um objeto banco de dados
        if(tipo_obj==OBJETO_BANCO_DADOS)
        {
-        ParserXML::obterAtributosElemento(atributos);
+        XMLParser::getElementAttributes(atributos);
         tipo_codif=atributos[ParsersAttributes::ENCODING];
         bd_modelo=atributos[ParsersAttributes::TEMPLATE_DB];
         localizacoes[0]=atributos[ParsersAttributes::LC_CTYPE_DB];
@@ -2739,7 +2739,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
          /* Para os demais objetos, sempre a posição do parser XMl é salva
             antes da leitura e criação dos mesmos, para que a reavaliação
             seja possível, quando for necessária */
-         ParserXML::salvarPosicao();
+         XMLParser::savePosition();
          //Cria o objeto de acordo com  o tipo obtido
          objeto=criarObjeto(tipo_obj);
 
@@ -2756,7 +2756,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
           //Dispara um sinal com o progresso (aproximado) do carregamento de objetos
           if(!signalsBlocked())
           {
-           emit s_objetoCarregado(ParserXML::obterLinhaAtualBuffer()/ParserXML::obterNumLinhasBuffer(),
+           emit s_objetoCarregado(XMLParser::getCurrentBufferLine()/XMLParser::getBufferLineCount(),
                                   trUtf8("Loading object: %1 (%2)")
                                    .arg(QString::fromUtf8(objeto->obterNome()))
                                    .arg(objeto->obterNomeTipoObjeto()),
@@ -2765,7 +2765,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
          }
 
          //Restaura a posição do parser para o elemento anterior ao atual
-         ParserXML::restaurarPosicao();
+         XMLParser::restorePosition();
         }
         catch(Exception &e)
         {
@@ -2779,14 +2779,14 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
           /* Adiciona o nó da arvore o qual possui o elemento incompleto
              para que o mesmo tente ser recriado após suas possíveis dependências
              serem carregadas */
-          ParserXML::restaurarPosicao();
-          objetos_incomp.push_back(ParserXML::obterElementoAtual());
+          XMLParser::restorePosition();
+          objetos_incomp.push_back(XMLParser::getCurrentElement());
           //Armazena a exceção capturada para verificações ao final do carregamento do modelo
           vet_erros.push_back(e);
          }
          else
          {
-          QString info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo()).arg(ParserXML::obterElementoAtual()->line);
+          QString info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename()).arg(XMLParser::getCurrentElement()->line);
           throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
          }
         }
@@ -2807,18 +2807,18 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
        /* Caso a lista ainda possua elementos o parser será voltado para o
           elemento incompleto anterior ao atual */
        if(objetos_incomp.size() > 0)
-        ParserXML::restaurarPosicao(objetos_incomp.front());
+        XMLParser::restorePosition(objetos_incomp.front());
        else
        {
         //Caso a lista esteja vazia o processo de reavaliação é interrompido
         reaval_objetos=false;
         //O parser é retornad�  posição em que se encontrava antes da reavaliação
-        ParserXML::restaurarPosicao(elem_aux);
+        XMLParser::restorePosition(elem_aux);
        }
       }
      }
     }
-    while((!reaval_objetos && ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR)) ||
+    while((!reaval_objetos && XMLParser::accessElement(XMLParser::NEXT_ELEMENT)) ||
           (reaval_objetos));
    }
 
@@ -2842,8 +2842,8 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
    carregando_modelo=false;
    destruirObjetos();
 
-   if(ParserXML::obterElementoAtual())
-    info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo()).arg(ParserXML::obterElementoAtual()->line);
+   if(XMLParser::getCurrentElement())
+    info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename()).arg(XMLParser::getCurrentElement()->line);
 
    //Caso o erro seja na biblioteca de parsers
    if(e.getErrorType()>=ERR_PARSERS_SINTAXEINV)
@@ -2943,7 +2943,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
   throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém os atributos do elemento
- ParserXML::obterAtributosElemento(atributos);
+ XMLParser::getElementAttributes(atributos);
 
  tipo_obj_aux=objeto->obterTipoObjeto();
  if(tipo_obj_aux!=OBJETO_CONV_TIPO)
@@ -2952,19 +2952,19 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
  //Definindo se o objeto está protegido ou não
  protegido=atributos[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_;
 
- ParserXML::salvarPosicao();
+ XMLParser::savePosition();
 
  //Passa para os elementos filhos que provavelmente serão <onwer>, <tablespace> e <comment>
- if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+ if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
  {
   do
   {
    /* Certificando que só elementos xml serão lidos do parser, qualquer outro
       tipo de objeto xml será ignorado */
-   if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+   if(XMLParser::getElementType()==XML_ELEMENT_NODE)
    {
     //Obtém o nome do elemento filho
-    nome_elem=ParserXML::obterNomeElemento();
+    nome_elem=XMLParser::getElementName();
 
     //Caso o elemento filho seja um comentáio <comment>
     if(nome_elem==ParsersAttributes::COMMENT)
@@ -2972,19 +2972,19 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
      /* Para se extraír o comentário, é necessário salvar a posição de navegação
         do parser, pois o conteúdo do comentário é um elemento filho do elemento
         atual do parser XML */
-     ParserXML::salvarPosicao();
+     XMLParser::savePosition();
      //Acessa o elemento filho o qual contém o conteúdo do comentário
-     ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
+     XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
      //Atributo o conteúdo do elemento filho ao atributo cometário do novo papel
-     objeto->definirComentario(ParserXML::obterConteudoElemento());
+     objeto->definirComentario(XMLParser::getElementContent());
      //Restaura a posição de navegação do parser, ou seja, volta para o elemento <comment>
-     ParserXML::restaurarPosicao();
+     XMLParser::restorePosition();
     }
     //Caso o elemento filho seja uma referência a um esquema <schema>
     else if(nome_elem==ParsersAttributes::SCHEMA)
     {
      tipo_obj=OBJETO_ESQUEMA;
-     ParserXML::obterAtributosElemento(atribs_aux);
+     XMLParser::getElementAttributes(atribs_aux);
      esquema=dynamic_cast<Esquema *>(obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj));
      objeto->definirEsquema(esquema);
      erro=(!esquema && !atribs_aux[ParsersAttributes::NAME].isEmpty());
@@ -2994,7 +2994,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
     else if(nome_elem==ParsersAttributes::TABLESPACE)
     {
      tipo_obj=OBJETO_ESPACO_TABELA;
-     ParserXML::obterAtributosElemento(atribs_aux);
+     XMLParser::getElementAttributes(atribs_aux);
      esp_tabela=obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj);
      objeto->definirEspacoTabela(esp_tabela);
      erro=(!esp_tabela && !atribs_aux[ParsersAttributes::NAME].isEmpty());
@@ -3004,7 +3004,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
     else if(nome_elem==ParsersAttributes::ROLE)
     {
      tipo_obj=OBJETO_PAPEL;
-     ParserXML::obterAtributosElemento(atribs_aux);
+     XMLParser::getElementAttributes(atribs_aux);
      dono=obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj);
      objeto->definirDono(dono);
      erro=(!dono && !atribs_aux[ParsersAttributes::NAME].isEmpty());
@@ -3012,7 +3012,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
     //Obténdo o atributo a posição do objeto (apenas para objetos gráficos)
     else if(nome_elem==ParsersAttributes::POSITION)
     {
-     ParserXML::obterAtributosElemento(atributos);
+     XMLParser::getElementAttributes(atributos);
 
      if(nome_elem==ParsersAttributes::POSITION &&
         (tipo_obj_aux!=OBJETO_RELACAO &&
@@ -3028,10 +3028,10 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
   }
   /* A extração de elementos continuará até que se chegue no último elemento
      filho do elemento */
-  while(!erro && ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+  while(!erro && XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
  }
 
- ParserXML::restaurarPosicao();
+ XMLParser::restorePosition();
  objeto->definirProtegido(protegido);
 
  if(erro)
@@ -3092,7 +3092,7 @@ Papel *ModeloBD::criarPapel(void)
   definirAtributosBasicos(papel);
 
   //Obtém os atributos do elemento
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   //Definindo os valores de atributos básicos do papel
   papel->definirSenha(atributos[ParsersAttributes::PASSWORD]);
@@ -3121,22 +3121,22 @@ Papel *ModeloBD::criarPapel(void)
   }
 
   //Passa para os elementos filhos que provavelmente serão <roles> e <comment>
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser, qualquer outro
        tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      //Obtém o nome do elemento filho
-     nome_elem=ParserXML::obterNomeElemento();
+     nome_elem=XMLParser::getElementName();
 
      //Caso o elemento filho seja uma lista de papeis <roles>
      if(nome_elem==ParsersAttributes::ROLES)
      {
       //Obtém os atributos do elemento <roles>, neste caso são names e reftype
-      ParserXML::obterAtributosElemento(atribs_aux);
+      XMLParser::getElementAttributes(atribs_aux);
 
       /* O atributo names armazena uma lista de nomes de papéis as quais o novo papel
          referenciará. A lista tem os elementos separados por vírgula, sendo assim a
@@ -3181,14 +3181,14 @@ Papel *ModeloBD::criarPapel(void)
    }
    /* A extração de elementos continuará até que se chegue no último elemento
       filho do elemento <role> */
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   //Remove o papel alocado
   if(papel) delete(papel);
@@ -3213,7 +3213,7 @@ EspacoTabela *ModeloBD::criarEspacoTabela(void)
   definirAtributosBasicos(esp_tabela);
 
   //Obtém os atributos do elemento
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   //Definindo os valores de atributos básicos do papel
   esp_tabela->definirDiretorio(atributos[ParsersAttributes::DIRECTORY]);
@@ -3221,8 +3221,8 @@ EspacoTabela *ModeloBD::criarEspacoTabela(void)
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   //Remove o espaco de tabela alocado
   if(esp_tabela) delete(esp_tabela);
@@ -3250,8 +3250,8 @@ Esquema *ModeloBD::criarEsquema(void)
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   //Remove o espaco de tabela alocado
   if(esquema) delete(esquema);
@@ -3276,25 +3276,25 @@ Linguagem *ModeloBD::criarLinguagem(void)
   linguagem=new Linguagem;
 
   //Obtém os atributos do elemento
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
   definirAtributosBasicos(linguagem);
 
   linguagem->definirConfiavel(atributos[ParsersAttributes::TRUSTED]==
                                ParsersAttributes::_TRUE_);
 
-   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
    {
     do
     {
      /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-     if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
      {
-      tipo_obj=obterTipoObjeto(ParserXML::obterNomeElemento());
+      tipo_obj=obterTipoObjeto(XMLParser::getElementName());
 
       if(tipo_obj==OBJETO_FUNCAO)
       {
-       ParserXML::obterAtributosElemento(atributos);
+       XMLParser::getElementAttributes(atributos);
        //Obtém o tipo de referência da função
        tipo_ref=atributos[ParsersAttributes::REF_TYPE];
 
@@ -3334,15 +3334,15 @@ Linguagem *ModeloBD::criarLinguagem(void)
       }
      }
     }
-    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+    while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
    }
 
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   //Remove a linguagem alocada
   if(linguagem) delete(linguagem);
@@ -3371,7 +3371,7 @@ Funcao *ModeloBD::criarFuncao(void)
   definirAtributosBasicos(funcao);
 
   //Obtém os atributos da função
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   //Define se a função retorna setof, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::RETURNS_SETOF].isEmpty())
@@ -3403,34 +3403,34 @@ Funcao *ModeloBD::criarFuncao(void)
   if(!atributos[ParsersAttributes::ROW_AMOUNT].isEmpty())
    funcao->definirQuantidadeLinhas(atributos[ParsersAttributes::ROW_AMOUNT].toInt());
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
      tipo_obj=obterTipoObjeto(elem);
 
      //Caso o parser acesso a tag que determina o tipo de retorno da função
      if(elem==ParsersAttributes::RETURN_TYPE)
      {
-      ParserXML::salvarPosicao();
+      XMLParser::savePosition();
 
       try
       {
        //Acesso os elementos filhos os quais podem ser um <type> ou vários <parameter>
-       ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
+       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
 
        do
        {
-        if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+        if(XMLParser::getElementType()==XML_ELEMENT_NODE)
         {
          /* Caso o elemento atual no parser seja um <type>, indica que
           será extraído o tipo de retorno da função */
-         if(ParserXML::obterNomeElemento()==ParsersAttributes::TYPE)
+         if(XMLParser::getElementName()==ParsersAttributes::TYPE)
          {
           //Cria o tipo
           tipo=criarTipoPgSQL();
@@ -3439,7 +3439,7 @@ Funcao *ModeloBD::criarFuncao(void)
          }
          /* Criação dos tipo de retorno de tabela da função. Os mesmos vem descritos
             dentro da tag <return-type> em forma de parâmetros */
-         else if(ParserXML::obterNomeElemento()==ParsersAttributes::PARAMETER)
+         else if(XMLParser::getElementName()==ParsersAttributes::PARAMETER)
          {
           param=criarParametro();
           //Adiciona o tipo de retorno   função
@@ -3447,13 +3447,13 @@ Funcao *ModeloBD::criarFuncao(void)
          }
         }
        }
-       while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+       while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 
-       ParserXML::restaurarPosicao();
+       XMLParser::restorePosition();
       }
       catch(Exception &e)
       {
-       ParserXML::restaurarPosicao();
+       XMLParser::restorePosition();
        throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
       }
      }
@@ -3461,7 +3461,7 @@ Funcao *ModeloBD::criarFuncao(void)
      else if(tipo_obj==OBJETO_LINGUAGEM)
      {
       //Obtém seus atributos
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       //Busca a linguagem no modelo
       objeto=obterObjeto(atributos[ParsersAttributes::NAME], tipo_obj);
@@ -3478,19 +3478,19 @@ Funcao *ModeloBD::criarFuncao(void)
       //Define a linguagem da função
       funcao->definirLinguagem(dynamic_cast<Linguagem *>(objeto));
      }
-     else if(ParserXML::obterNomeElemento()==ParsersAttributes::PARAMETER)
+     else if(XMLParser::getElementName()==ParsersAttributes::PARAMETER)
      {
       param=criarParametro();
       //Adiciona o parâmet�  função
       funcao->adicionarParametro(param);
      }
      //Extraíndo a definição (corpo) da função (tag <definition>)
-     else if(ParserXML::obterNomeElemento()==ParsersAttributes::DEFINITION)
+     else if(XMLParser::getElementName()==ParsersAttributes::DEFINITION)
      {
-      ParserXML::salvarPosicao();
+      XMLParser::savePosition();
 
       //Obtém os atributos da biblioteca
-      ParserXML::obterAtributosElemento(atrib_aux);
+      XMLParser::getElementAttributes(atrib_aux);
 
       if(!atrib_aux[ParsersAttributes::LIBRARY].isEmpty())
       {
@@ -3499,21 +3499,21 @@ Funcao *ModeloBD::criarFuncao(void)
       }
       /* Para se ter acesso ao código que define a função é preciso acessar
          o filho da tag <definition> e obter seu conteúdo */
-      else if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
-       funcao->definirCodigoFonte(ParserXML::obterConteudoElemento());
+      else if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
+       funcao->definirCodigoFonte(XMLParser::getElementContent());
 
-      ParserXML::restaurarPosicao();
+      XMLParser::restorePosition();
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   //Remove o espaco de tabela alocado
   if(funcao)
@@ -3545,9 +3545,9 @@ Parametro ModeloBD::criarParametro(void)
  try
  {
   //Salva a posição do parser
-  ParserXML::salvarPosicao();
+  XMLParser::savePosition();
   //Obtem os atributos do parâmetro (nome, in e out)
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   param.definirNome(atributos[ParsersAttributes::NAME]);
   /* Configurando atributos in e out do parâmetro caso estes estejam
@@ -3557,15 +3557,15 @@ Parametro ModeloBD::criarParametro(void)
   param.definirValorPadrao(atributos[ParsersAttributes::DEFAULT_VALUE]);
 
   //Acessa os elementos filhos do parâmetro, que no caso será apenas <type> ou <domain>
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      if(elem==ParsersAttributes::TYPE)
      {
@@ -3573,20 +3573,20 @@ Parametro ModeloBD::criarParametro(void)
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
 
   //Restaura a posição do parser
-  ParserXML::restaurarPosicao();
+  XMLParser::restorePosition();
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   //Restaura a posição do parser
-  ParserXML::restaurarPosicao();
+  XMLParser::restorePosition();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
@@ -3610,7 +3610,7 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
 
 
  //Obtém os atributos do tipo
- ParserXML::obterAtributosElemento(atributos);
+ XMLParser::getElementAttributes(atributos);
 
  if(!atributos[ParsersAttributes::LENGTH].isEmpty())
   comprimento=atributos[ParsersAttributes::LENGTH].toUInt();
@@ -3690,7 +3690,7 @@ Tipo *ModeloBD::criarTipo(void)
   definirAtributosBasicos(tipo);
 
   //Obtém os atributos do tipo
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   //Define a configuração do tipo
   if(atributos[ParsersAttributes::CONFIGURATION]==ParsersAttributes::BASE_TYPE)
@@ -3751,21 +3751,21 @@ Tipo *ModeloBD::criarTipo(void)
   else
    tipo->definirConfiguracao(Tipo::TIPO_ENUMERACAO);
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      //Operação específica para tipo ENUM
      if(elem==ParsersAttributes::ENUM_TYPE)
      {
       //Obtém o atributo da tag <enumerations>
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
       /* Como se trata de uma lista de enumerações separadas por vírgulas
          a mesma será quebrada e transformada num vetor */
       enums=atributos[ParsersAttributes::VALUES].split(",");
@@ -3794,7 +3794,7 @@ Tipo *ModeloBD::criarTipo(void)
      {
       /*No caso de tipo base, serão extraídas referência a funções do modelo,
         as quais serão atribuía � s funções que compoem o tipo base. */
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       /* Com a assinatura da função obtida di XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
@@ -3821,14 +3821,14 @@ Tipo *ModeloBD::criarTipo(void)
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   //Remove o tipo alocado
   if(tipo)
@@ -3864,7 +3864,7 @@ Dominio *ModeloBD::criarDominio(void)
   definirAtributosBasicos(dominio);
 
   //Obtém os atributos do domíno
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   if(!atributos[ParsersAttributes::CONSTRAINT].isEmpty())
    dominio->definirNomeRestricao(atributos[ParsersAttributes::CONSTRAINT]);
@@ -3875,15 +3875,15 @@ Dominio *ModeloBD::criarDominio(void)
   dominio->definirNaoNulo(atributos[ParsersAttributes::NOT_NULL]==
                             ParsersAttributes::_TRUE_);
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      /* Caso o elemento seja um <type>, será extraído do XML
         o tipo ao qual o domínio se aplica */
@@ -3897,24 +3897,24 @@ Dominio *ModeloBD::criarDominio(void)
       /* Para se extraír a expressão, é necessário salvar a posição de navegação
          do parser, pois o conteúdo da mesma é um elemento filho do elemento
          atual do parser XML */
-      ParserXML::salvarPosicao();
+      XMLParser::savePosition();
       //Acessa o elemento filho o qual contém o conteúdo da expressão
-      ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
+      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
       //dominio->definirExpressao(QString::fromUtf8(ParserXML::obterConteudoElemento()));
-      dominio->definirExpressao(ParserXML::obterConteudoElemento());
+      dominio->definirExpressao(XMLParser::getElementContent());
       //Restaura a posição de navegação do parser, ou seja, volta para o elemento <expression>
-      ParserXML::restaurarPosicao();
+      XMLParser::restorePosition();
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   //Remove o domínio alocado
   if(dominio) delete(dominio);
@@ -3943,7 +3943,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
   definirAtributosBasicos(conv_tipo);
 
   //Obtém os atributos do domíno
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   if(atributos[ParsersAttributes::CAST_TYPE]==
       ParsersAttributes::IMPLICIT)
@@ -3953,15 +3953,15 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
 
   conv_tipo->definirEntradaSaida(atributos[ParsersAttributes::IO_CAST]==ParsersAttributes::_TRUE_);
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      /* Caso o elemento seja um <type>, será extraído do XML
         o tipo (de origem ou destino) da conversao */
@@ -3980,7 +3980,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
       /*No caso da conversão, será extraída a refeênia �  função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
         será localizada e atribu�d �  conversão */
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
@@ -4000,14 +4000,14 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   if(conv_tipo) delete(conv_tipo);
 
@@ -4033,7 +4033,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
   definirAtributosBasicos(conv_codif);
 
   //Obtém os atributos
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   conv_codif->definirCodificacao(ConversaoCodificacao::CONV_COD_ORIGEM,
                                  TipoCodificacao(atributos[ParsersAttributes::SRC_ENCODING]));
@@ -4041,22 +4041,22 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
   conv_codif->definirCodificacao(ConversaoCodificacao::CONV_COD_DESTINO,
                                  TipoCodificacao(atributos[ParsersAttributes::DST_ENCODING]));
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      if(elem==ParsersAttributes::FUNCTION)
      {
       /*No caso da conversão, será extraída a refeênia �  função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
         será localizada e atribu�d �  conversão */
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
@@ -4076,14 +4076,14 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   if(conv_codif) delete(conv_codif);
 
@@ -4113,7 +4113,7 @@ Operador *ModeloBD::criarOperador(void)
   definirAtributosBasicos(operador);
 
   //Obtém os atributos
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   operador->definirMerges(atributos[ParsersAttributes::MERGES]==ParsersAttributes::_TRUE_);
   operador->definirHashes(atributos[ParsersAttributes::HASHES]==ParsersAttributes::_TRUE_);
@@ -4135,20 +4135,20 @@ Operador *ModeloBD::criarOperador(void)
   tipo_operadores[ParsersAttributes::SORT_OP]=Operador::OPER_ORDENACAO1;
   tipo_operadores[ParsersAttributes::SORT2_OP]=Operador::OPER_ORDENACAO2;
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      if(elem==esq_objetos[OBJETO_OPERADOR])
      {
       //Obtém os atributos do operador referenciado
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       /* Com a assinatura do operador obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
@@ -4172,7 +4172,7 @@ Operador *ModeloBD::criarOperador(void)
      {
       /* Obtém os atributos do tipo para saber se o mesmo é um tipo da
          esquerda ou da direita */
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       //Obtém o tipo de referência do tipo base (esquerda ou direita)
       if(atributos[ParsersAttributes::REF_TYPE]!=ParsersAttributes::RIGHT_TYPE)
@@ -4188,7 +4188,7 @@ Operador *ModeloBD::criarOperador(void)
       /*No caso do operador, será extraída a refer�nca �  função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
         será localizada e atribuída ao operador */
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
@@ -4212,14 +4212,14 @@ Operador *ModeloBD::criarOperador(void)
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
   if(operador) delete(operador);
 
   //Redireciona qualquer exceção capturada
@@ -4249,7 +4249,7 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
   definirAtributosBasicos(classe_op);
 
   //Obtém os atributos
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   classe_op->definirTipoIndexacao(TipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]));
   classe_op->definirPadrao(atributos[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
@@ -4258,20 +4258,20 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
   tipos_elem[ParsersAttributes::OPERATOR]=ElemClasseOperadores::ELEM_OPERADOR;
   tipos_elem[ParsersAttributes::STORAGE]=ElemClasseOperadores::ELEM_ARMAZENAMENTO;
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      if(elem==esq_objetos[OBJETO_FAMILIA_OPER])
      {
       //Obtém os atributos do operador referenciado
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       /* Com o nome da família do operador obtida do XML, a mesma será buscada no modelo, para
          saber se existe um objeto correspondente */
@@ -4291,21 +4291,21 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
      else if(elem==ParsersAttributes::TYPE)
      {
       //Obtém os atributos do tipo
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
       tipo=criarTipoPgSQL();
       classe_op->definirTipoDado(tipo);
      }
      else if(elem==ParsersAttributes::ELEMENT)
      {
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       rechecar=atributos[ParsersAttributes::RECHECK]==ParsersAttributes::_TRUE_;
       num_estrategia=atributos[ParsersAttributes::STRATEGY_NUM].toUInt();
       tp_elem=tipos_elem[atributos[ParsersAttributes::TYPE]];
 
-      ParserXML::salvarPosicao();
-      ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::savePosition();
+      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+      XMLParser::getElementAttributes(atributos);
 
       if(tp_elem==ElemClasseOperadores::ELEM_ARMAZENAMENTO)
       {
@@ -4324,18 +4324,18 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
       }
 
       classe_op->adicionarElementoClasse(elem_classe);
-      ParserXML::restaurarPosicao();
+      XMLParser::restorePosition();
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   if(classe_op) delete(classe_op);
 
@@ -4357,7 +4357,7 @@ FamiliaOperadores *ModeloBD::criarFamiliaOperadores(void)
   definirAtributosBasicos(familia_op);
 
   //Obtém os atributos do elemento
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   //Definindo os valores de atributos básicos do objeto
   familia_op->definirTipoIndexacao(TipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]));
@@ -4365,8 +4365,8 @@ FamiliaOperadores *ModeloBD::criarFamiliaOperadores(void)
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   if(familia_op) delete(familia_op);
 
@@ -4393,23 +4393,23 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
   definirAtributosBasicos(func_agreg);
 
   //Obtém os atributos
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
   func_agreg->definirCondicaoInicial(atributos[ParsersAttributes::INITIAL_COND]);
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      if(elem==ParsersAttributes::TYPE)
      {
       //Obtém os atributos do tipo
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
       tipo=criarTipoPgSQL();
 
       //Define o tipo   função agregada de acordo com o tipo de referência do mesmo
@@ -4421,7 +4421,7 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
      }
      else if(elem==ParsersAttributes::FUNCTION)
      {
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
@@ -4446,14 +4446,14 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   if(func_agreg) delete(func_agreg);
 
@@ -4479,19 +4479,19 @@ Tabela *ModeloBD::criarTabela(void)
   definirAtributosBasicos(tabela);
 
   //Obtém os atributos
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
   tabela->definirAceitaOids(atributos[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
-     ParserXML::salvarPosicao();
+     elem=XMLParser::getElementName();
+     XMLParser::savePosition();
      objeto=NULL;
 
      if(elem==ObjetoBase::esq_objetos[OBJETO_COLUNA])
@@ -4508,10 +4508,10 @@ Tabela *ModeloBD::criarTabela(void)
      if(objeto)
       tabela->adicionarObjeto(objeto);
 
-     ParserXML::restaurarPosicao();
+     XMLParser::restorePosition();
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
 
   tabela->definirProtegido(tabela->objetoProtegido());
@@ -4519,10 +4519,10 @@ Tabela *ModeloBD::criarTabela(void)
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
-  ParserXML::restaurarPosicao();
+  XMLParser::restorePosition();
   if(tabela) delete(tabela);
 
   //Redireciona qualquer exceção capturada
@@ -4544,19 +4544,19 @@ Coluna *ModeloBD::criarColuna(void)
   definirAtributosBasicos(coluna);
 
   //Obtém os atributos do elemento
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
   coluna->definirNaoNulo(atributos[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
   coluna->definirValorPadrao(atributos[ParsersAttributes::DEFAULT_VALUE]);
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      if(elem==ParsersAttributes::TYPE)
      {
@@ -4564,14 +4564,14 @@ Coluna *ModeloBD::criarColuna(void)
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   if(coluna) delete(coluna);
 
@@ -4601,7 +4601,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
  try
  {
   //Obtém os atributos do elemento
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   //Caso o objeto o qual será possuidor da restrição esteja alocado
   if(objeto)
@@ -4744,29 +4744,29 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
    restricao->definirTabReferenciada(tabela_ref);
   }
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      if(elem==ParsersAttributes::EXPRESSION)
      {
-      ParserXML::salvarPosicao();
+      XMLParser::savePosition();
       //Acessa o elemento filho o qual contém o conteúdo da expressão ou condição
-      ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
+      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
       //Obtém o contéudo do elemento <expression>
-      restricao->definirExpChecagem(ParserXML::obterConteudoElemento());
-      ParserXML::restaurarPosicao();
+      restricao->definirExpChecagem(XMLParser::getElementContent());
+      XMLParser::restorePosition();
      }
      else if(elem==ParsersAttributes::COLUMNS)
      {
       //Obtém os atributos da tag <columns>
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       /* Obtém os nomes das colunas participantes da restrição
          colocando seus nomes em um vetor pois os mesmos estão
@@ -4813,7 +4813,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
 
   if(ins_rest_tabela)
@@ -4834,8 +4834,8 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   if(restricao)
    delete(restricao);
@@ -4860,7 +4860,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
  try
  {
   //Obtém os atributos do elemento
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   if(!tabela)
   {
@@ -4891,15 +4891,15 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
   indice->definirTipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]);
   indice->definirFatorPreenchimento(atributos[ParsersAttributes::FACTOR].toUInt());
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      /* Caso o elemento atual for do tipo <idxelement> indica que
         os elementos filhos que podem ser extraídos são
@@ -4909,19 +4909,19 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
       nulos_primeiro=(atributos[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
       ordem_asc=(atributos[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
 
-      ParserXML::salvarPosicao();
-      ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
+      XMLParser::savePosition();
+      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
 
       do
       {
-       elem=ParserXML::obterNomeElemento();
+       elem=XMLParser::getElementName();
 
-       if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+       if(XMLParser::getElementType()==XML_ELEMENT_NODE)
        {
         //Caso o elemento atual seja um  <opclass>
         if(elem==ParsersAttributes::OP_CLASS)
         {
-         ParserXML::obterAtributosElemento(atributos);
+         XMLParser::getElementAttributes(atributos);
          classe_oper=dynamic_cast<ClasseOperadores *>(obterObjeto(atributos[ParsersAttributes::NAME], OBJETO_CLASSE_OPER));
 
          //Caso o índice esteja referenciando uma classe de operadores inexistente
@@ -4941,7 +4941,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
         else if(elem==ParsersAttributes::COLUMN)
         {
          //Obtém a coluna que o elemento referencia
-         ParserXML::obterAtributosElemento(atributos);
+         XMLParser::getElementAttributes(atributos);
          coluna=tabela->obterColuna(atributos[ParsersAttributes::NAME]);
 
          /* Caso a coluna não exista tenta obtê-la novamente porém referenciando
@@ -4952,35 +4952,35 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
         //Caso o elemento atual seja um  <expression>
         else if(elem==ParsersAttributes::EXPRESSION)
         {
-         ParserXML::salvarPosicao();
+         XMLParser::savePosition();
          //Acessa o elemento filho o qual contém o conteúdo da expressão
-         ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
-         expr=ParserXML::obterConteudoElemento();
-         ParserXML::restaurarPosicao();
+         XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+         expr=XMLParser::getElementContent();
+         XMLParser::restorePosition();
         }
        }
       }
-      while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+      while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 
       if(!expr.isEmpty())
        indice->adicionarElemento(expr, classe_oper, ordem_asc, nulos_primeiro);
       else
        indice->adicionarElemento(coluna, classe_oper, ordem_asc, nulos_primeiro);
 
-      ParserXML::restaurarPosicao();
+      XMLParser::restorePosition();
      }
      else if(elem==ParsersAttributes::CONDITION)
      {
-      ParserXML::salvarPosicao();
+      XMLParser::savePosition();
       //Acessa o elemento filho o qual contém o conteúdo da expressão ou condição
-      ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
-      str_aux=ParserXML::obterConteudoElemento();
-      ParserXML::restaurarPosicao();
+      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+      str_aux=XMLParser::getElementContent();
+      XMLParser::restorePosition();
       indice->definirExpCondicional(str_aux);
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
 
   if(inc_ind_tabela)
@@ -4992,8 +4992,8 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   if(indice) delete(indice);
 
@@ -5018,29 +5018,29 @@ Regra *ModeloBD::criarRegra(void)
   definirAtributosBasicos(regra);
 
   //Obtém os atributos do elemento
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
   regra->definirTipoExecucao(atributos[ParsersAttributes::EXEC_TYPE]);
   regra->definirTipoEvento(atributos[ParsersAttributes::EVENT_TYPE]);
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      if(elem==ParsersAttributes::COMMANDS ||
         elem==ParsersAttributes::CONDITION)
      {
-      ParserXML::salvarPosicao();
+      XMLParser::savePosition();
       //Acessa o elemento filho o qual contém o conteúdo da condição ou comandos
-      ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
+      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
       //str_aux=QString::fromUtf8(ParserXML::obterConteudoElemento());
-      str_aux=ParserXML::obterConteudoElemento();
-      ParserXML::restaurarPosicao();
+      str_aux=XMLParser::getElementContent();
+      XMLParser::restorePosition();
 
       if(elem==ParsersAttributes::COMMANDS)
       {
@@ -5060,14 +5060,14 @@ Regra *ModeloBD::criarRegra(void)
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
   if(regra) delete(regra);
 
   //Redireciona qualquer exceção capturada
@@ -5091,7 +5091,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
  try
  {
   //Obtém os atributos do elemento
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   if(!tabela && atributos[ParsersAttributes::TABLE].isEmpty())
    throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5160,19 +5160,19 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
   tabela_ref=obterObjeto(atributos[ParsersAttributes::REF_TABLE], OBJETO_TABELA);
   gatilho->definirTabReferenciada(tabela_ref);
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      if(elem==ParsersAttributes::FUNCTION)
      {
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
@@ -5196,17 +5196,17 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
      }
      else if(elem==ParsersAttributes::CONDITION)
      {
-      ParserXML::salvarPosicao();
+      XMLParser::savePosition();
       //Acessa o elemento filho o qual contém o conteúdo da expressão ou condição
-      ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
-      str_aux=ParserXML::obterConteudoElemento();
-      ParserXML::restaurarPosicao();
+      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+      str_aux=XMLParser::getElementContent();
+      XMLParser::restorePosition();
       gatilho->definirCondicao(str_aux);
      }
      else if(elem==ParsersAttributes::COLUMNS)
      {
       //Obtém os atributos da tag <columns>
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       /* Obtém os nomes das colunas participantes do gatilho
          colocando seus nomes em um vetor pois os mesmos estão
@@ -5229,7 +5229,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
 
   if(inc_gat_tabela)
@@ -5241,8 +5241,8 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
   if(gatilho) delete(gatilho);
 
   //Redireciona qualquer exceção capturada
@@ -5268,7 +5268,7 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
   definirAtributosBasicos(sequencia);
 
   //Obtém os atributos do elemento
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
   sequencia->definirValores(atributos[ParsersAttributes::MIN_VALUE],
                             atributos[ParsersAttributes::MAX_VALUE],
                             atributos[ParsersAttributes::INCREMENT],
@@ -5335,8 +5335,8 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
   if(sequencia) delete(sequencia);
 
   //Redireciona qualquer exceção capturada
@@ -5363,20 +5363,20 @@ Visao *ModeloBD::criarVisao(void)
   visao=new Visao;
   definirAtributosBasicos(visao);
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      if(elem==ParsersAttributes::REFERENCE)
      {
       //Obtém os atributos da referência
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
 
       /* Caso o nome da tabela referenciada esteja preenchido,
          tentar criar uma referência específica a uma tabela/coluna */
@@ -5432,16 +5432,16 @@ Visao *ModeloBD::criarVisao(void)
       //Extraindo uma referênci�  uma expressão
       else
       {
-       ParserXML::salvarPosicao();
+       XMLParser::savePosition();
        //Armazena o alias da expressão
        str_aux=atributos[ParsersAttributes::ALIAS];
 
        //Acessa e obtém o conteúdo da expressão
-       ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
-       ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
-       vet_refs.push_back(Referencia(ParserXML::obterConteudoElemento(),str_aux));
+       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+       vet_refs.push_back(Referencia(XMLParser::getElementContent(),str_aux));
 
-       ParserXML::restaurarPosicao();
+       XMLParser::restorePosition();
       }
      }
      /* Extraindo as expressões as quais formam as partes da declaração da visão,
@@ -5449,8 +5449,8 @@ Visao *ModeloBD::criarVisao(void)
         FROM-WHERE */
      else if(elem==ParsersAttributes::EXPRESSION)
      {
-      ParserXML::salvarPosicao();
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::savePosition();
+      XMLParser::getElementAttributes(atributos);
 
       //Armazena o alias da expressão
       if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::SELECT_EXP)
@@ -5461,8 +5461,8 @@ Visao *ModeloBD::criarVisao(void)
        tipo=Referencia::SQL_REFER_WHERE;
 
       //Acessa e obtém o conteúdo da expressão
-      ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
-      lista_aux=ParserXML::obterConteudoElemento().split(',');
+      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+      lista_aux=XMLParser::getElementContent().split(',');
       qtd=lista_aux.size();
 
       //Construindo cada expressão na visão
@@ -5473,18 +5473,18 @@ Visao *ModeloBD::criarVisao(void)
        visao->adicionarReferencia(vet_refs[idx_ref],tipo);
       }
 
-      ParserXML::restaurarPosicao();
+      XMLParser::restorePosition();
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
   if(visao) delete(visao);
 
   //Redireciona qualquer exceção capturada
@@ -5504,7 +5504,7 @@ CaixaTexto *ModeloBD::criarCaixaTexto(void)
   caixa_texto=new CaixaTexto;
   definirAtributosBasicos(caixa_texto);
 
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
 
   if(atributos[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_)
    caixa_texto->definirAtributoTexto(CaixaTexto::TEXTO_ITALICO, true);
@@ -5521,8 +5521,8 @@ CaixaTexto *ModeloBD::criarCaixaTexto(void)
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   if(caixa_texto) delete(caixa_texto);
 
@@ -5551,7 +5551,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
  try
  {
   //Obtém os atributos do elemento
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::getElementAttributes(atributos);
   protegido=(atributos[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
   if(atributos[TYPE]!=ParsersAttributes::RELATION_TAB_VIEW)
@@ -5643,66 +5643,66 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    relacao_base=relacao;
   }
 
-  if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+  if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
     /* Certificando que só elementos xml serão lidos do parser,
        qualquer outro tipo de objeto xml será ignorado */
-    if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     elem=ParserXML::obterNomeElemento();
+     elem=XMLParser::getElementName();
 
      if(elem==ParsersAttributes::COLUMN && relacao)
      {
-      ParserXML::salvarPosicao();
+      XMLParser::savePosition();
       relacao->adicionarObjeto(criarColuna());
-      ParserXML::restaurarPosicao();
+      XMLParser::restorePosition();
      }
      else if(elem==ParsersAttributes::CONSTRAINT && relacao)
      {
-      ParserXML::salvarPosicao();
+      XMLParser::savePosition();
       relacao->adicionarObjeto(criarRestricao(relacao));
-      ParserXML::restaurarPosicao();
+      XMLParser::restorePosition();
      }
      //Configurando a linha do relacionamento
      else if(elem==ParsersAttributes::LINE)
      {
       vector<QPointF> pontos;
-      ParserXML::salvarPosicao();
-      ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
+      XMLParser::savePosition();
+      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
 
       do
       {
        //Lê o ponto do XML
-       ParserXML::obterAtributosElemento(atributos);
+       XMLParser::getElementAttributes(atributos);
        pontos.push_back(QPointF(atributos[ParsersAttributes::X_POS].toFloat(),
                                 atributos[ParsersAttributes::Y_POS].toFloat()));
       }
-      while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+      while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 
       relacao_base->definirPontos(pontos);
-      ParserXML::restaurarPosicao();
+      XMLParser::restorePosition();
      }
      //Configurando a posição dos rótulos
      else if(elem==ParsersAttributes::LABEL)
      {
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
       //Obtém o tipo de rótulo a ser configurado
       str_aux=atributos[ParsersAttributes::REF_TYPE];
 
       //Acessa o elemento filho da tag <label> o qual armazena a posição do rótulo
-      ParserXML::salvarPosicao();
-      ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
-      ParserXML::obterAtributosElemento(atributos);
-      ParserXML::restaurarPosicao();
+      XMLParser::savePosition();
+      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+      XMLParser::getElementAttributes(atributos);
+      XMLParser::restorePosition();
      }
      else if(elem==ParsersAttributes::SPECIAL_PK_COLS && relacao)
      {
       QList<QString> lista_cols;
 
       //Obtém os atributos da tag <special-pk-cols>
-      ParserXML::obterAtributosElemento(atributos);
+      XMLParser::getElementAttributes(atributos);
       lista_cols=atributos[ParsersAttributes::INDEXES].split(',');
 
       while(!lista_cols.isEmpty())
@@ -5716,14 +5716,14 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
      }
     }
    }
-   while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+   while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
 
   if(relacao_base && relacao_base->obterTipoObjeto()==OBJETO_RELACAO)
    delete(relacao_base);
@@ -5766,13 +5766,13 @@ Permissao *ModeloBD::criarPermissao(void)
  try
  {
   //Obtém os privilégios configurados para a permissão
-  ParserXML::obterAtributosElemento(atrib_priv);
+  XMLParser::getElementAttributes(atrib_priv);
 
   /* Acessa o elemento filho <object> o qual armazena o objeto
      do modelo relacionado   permissão */
-  ParserXML::salvarPosicao();
-  ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
-  ParserXML::obterAtributosElemento(atributos);
+  XMLParser::savePosition();
+  XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+  XMLParser::getElementAttributes(atributos);
 
   //Obtém os atributos do objeto que é referenciado pela  permissão
   tipo_obj=obterTipoObjeto(atributos[ParsersAttributes::TYPE]);
@@ -5816,10 +5816,10 @@ Permissao *ModeloBD::criarPermissao(void)
      SQL para permissões */
   do
   {
-   if(ParserXML::obterNomeElemento()==ParsersAttributes::ROLES)
+   if(XMLParser::getElementName()==ParsersAttributes::ROLES)
    {
     //Obtém os atributos do elemento <roles>, neste caso são names e reftype
-    ParserXML::obterAtributosElemento(atributos);
+    XMLParser::getElementAttributes(atributos);
 
     /* O atributo names armazena uma lista de nomes de papéis as quais a permissão
        referenciará. A lista tem os elementos separados por vírgula, sendo assim a
@@ -5852,10 +5852,10 @@ Permissao *ModeloBD::criarPermissao(void)
      permissao->adicionarPapel(papel);
     }
    }
-   else if(ParserXML::obterNomeElemento()==ParsersAttributes::PRIVILEGES)
+   else if(XMLParser::getElementName()==ParsersAttributes::PRIVILEGES)
    {
     //Obtém os atributos do elemento <privileges>
-    ParserXML::obterAtributosElemento(atrib_priv);
+    XMLParser::getElementAttributes(atrib_priv);
 
     //Atribui os privilégio�  permissão recém criada
     itr=atrib_priv.begin();
@@ -5904,15 +5904,15 @@ Permissao *ModeloBD::criarPermissao(void)
     }
    }
   }
-  while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+  while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 
-  ParserXML::restaurarPosicao();
+  XMLParser::restorePosition();
  }
  catch(Exception &e)
  {
   QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(ParserXML::obterNomeArquivo())
-                                   .arg(ParserXML::obterElementoAtual()->line);
+  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+                                   .arg(XMLParser::getCurrentElement()->line);
   if(permissao) delete(permissao);
 
   //Redireciona qualquer exceção capturada

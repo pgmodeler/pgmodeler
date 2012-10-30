@@ -533,11 +533,11 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
    limparConfiguracao();
 
    //Reinicia o parser XML para a leitura do arquivo
-   ParserXML::reiniciarParser();
+   XMLParser::restartParser();
 
    /* Montando o caminho padrão para localização do arquivo DTD que define a sintaxe
      do arquivo xml de destaque de código fonte. */
-   ParserXML::definirArquivoDTD(GlobalAttributes::CONFIGURATIONS_DIR +
+   XMLParser::setDTDFile(GlobalAttributes::CONFIGURATIONS_DIR +
                                 GlobalAttributes::DIR_SEPARATOR +
                                 GlobalAttributes::OBJECT_DTD_DIR +
                                 GlobalAttributes::DIR_SEPARATOR +
@@ -546,23 +546,23 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
                                 GlobalAttributes::CODE_HIGHLIGHT_CONF);
 
    //Carrega o arquivo validando-o de acordo com a DTD informada
-   ParserXML::carregarArquivoXML(nome_arq);
+   XMLParser::loadXMLFile(nome_arq);
 
    //Acessa o elemento inicial do arquivo de destaque de código fonte
-   if(ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO))
+   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
    {
     do
     {
-     if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
      {
       //Obtém o elemento atual
-      elem=ParserXML::obterNomeElemento();
+      elem=XMLParser::getElementName();
 
       //Obtém os separadores de palavras da linguagem
       if(elem==ParsersAttributes::WORD_SEPARATORS)
       {
        //Obtém os atributos do mesmo
-       ParserXML::obterAtributosElemento(atributos);
+       XMLParser::getElementAttributes(atributos);
        sep_palavras=atributos[ParsersAttributes::VALUE];
       }
 
@@ -570,13 +570,13 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
       else if(elem==ParsersAttributes::WORD_DELIMITERS)
       {
        //Obtém os atributos do mesmo
-       ParserXML::obterAtributosElemento(atributos);
+       XMLParser::getElementAttributes(atributos);
        delim_palavras=atributos[ParsersAttributes::VALUE];
       }
       else if(elem==ParsersAttributes::IGNORED_CHARS)
       {
        //Obtém os atributos do mesmo
-       ParserXML::obterAtributosElemento(atributos);
+       XMLParser::getElementAttributes(atributos);
        chr_ignorados=atributos[ParsersAttributes::VALUE];
       }
 
@@ -590,19 +590,19 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
        //Marca a flag indicando que os grupos estão sendo declarados
        decl_grupos=true;
        //Salva a posição atual do parser xml
-       ParserXML::salvarPosicao();
+       XMLParser::savePosition();
        /* Acesso o primeiro elemento filho da tag de ordem de destaque que
           no caso é uma tag de declaração de grupo <group> */
-       ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
+       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
        //Obtém o nome do elemento, no caso <group>
-       elem=ParserXML::obterNomeElemento();
+       elem=XMLParser::getElementName();
       }
 
       //Caso o elemento atual seja de construção de um grupo '<group>'
       if(elem==ParsersAttributes::GROUP)
       {
        //Obtém os atributos do mesmo
-       ParserXML::obterAtributosElemento(atributos);
+       XMLParser::getElementAttributes(atributos);
        //Armazena seu nome em uma variável auxiliar
        grupo=atributos[ParsersAttributes::NAME];
 
@@ -627,7 +627,7 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
                          formato <group name='nome'/>, qualquer construção diferente da apresentada
                          seja com mais atributos ou elementos filhos é considerado que o grupo está
                          sendo construído em local inválido */
-        else if(atributos.size() > 1 || ParserXML::possuiElemento(ParserXML::ELEMENTO_FILHO))
+        else if(atributos.size() > 1 || XMLParser::hasElement(XMLParser::CHILD_ELEMENT))
         {
          throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_DEFGRUPOLOCALINV)
                        .arg(grupo).arg(ParsersAttributes::HIGHLIGHT_ORDER),
@@ -668,7 +668,7 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
         /* 3ª Validação: Verifica se o grupo possui elementos filhos. No bloco de construção
                          do grupo é necessário que ele possua pelo menos um filho '<element>'.
                          Caso ele não possua elementos deste tipo um erro é retornado ao usuário */
-        else if(!ParserXML::possuiElemento(ParserXML::ELEMENTO_FILHO))
+        else if(!XMLParser::hasElement(XMLParser::CHILD_ELEMENT))
         {
          throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_DEFGRUPOSEMELEM).arg(grupo),
                        ERR_PGMODELERUI_DEFGRUPOSEMELEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -700,8 +700,8 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
         formatacoes[grupo]=formatacao;
 
         //Salva a posição atual do parser e acesso os elementos filhos do grupo
-        ParserXML::salvarPosicao();
-        ParserXML::acessarElemento(ParserXML::ELEMENTO_FILHO);
+        XMLParser::savePosition();
+        XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
 
         /* Configura a variável de expressão regular para ser sensível a
            caracteres (case sensitive) de acordo com o mesmo atributo
@@ -715,10 +715,10 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
 
         do
         {
-         if(ParserXML::obterTipoElemento()==XML_ELEMENT_NODE)
+         if(XMLParser::getElementType()==XML_ELEMENT_NODE)
          {
           //Obtém os atributos do elemento filho do grupo
-          ParserXML::obterAtributosElemento(atributos);
+          XMLParser::getElementAttributes(atributos);
           //Obtém o tipo do elemento
           tipo_exp=atributos[ParsersAttributes::TYPE];
 
@@ -740,10 +740,10 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
            exp_finais[grupo].push_back(exp_regular);
          }
         }
-        while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+        while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 
         //Restaura a posição do parser para continuar a leitura dos próximos grupos
-        ParserXML::restaurarPosicao();
+        XMLParser::restorePosition();
        }
       }
      }
@@ -752,14 +752,14 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
         declarados. Caso não existe, desmarca a flag de declaração de grupos
         e restaura a posição do parser para que o restante do arquivo possa
         ser lido */
-     if(decl_grupos && !ParserXML::possuiElemento(ParserXML::ELEMENTO_POSTERIOR))
+     if(decl_grupos && !XMLParser::hasElement(XMLParser::NEXT_ELEMENT))
      {
       decl_grupos=false;
-      ParserXML::restaurarPosicao();
+      XMLParser::restorePosition();
      }
 
     }
-    while(ParserXML::acessarElemento(ParserXML::ELEMENTO_POSTERIOR));
+    while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
    }
 
    /* Executa a validação final do carregamento do arquivo que consiste em

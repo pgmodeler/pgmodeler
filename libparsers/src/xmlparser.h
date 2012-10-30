@@ -20,8 +20,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef PARSER_XML_H
-#define PARSER_XML_H
+#ifndef XML_PARSER_H
+#define XML_PARSER_H
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -33,125 +33,125 @@
 #include <stack>
 using namespace std;
 
-class ParserXML {
+class XMLParser {
  private:
   /* Armazena o nome do arquivo que gerou o buffer xml. Este atributo
      só é marcando quando o método carregarArquivoXML() é chamado */
-  static QString nome_doc_xml;
+  static QString xml_doc_name;
 
   //Armazena o documento xml gerado após a leitura do buffer xml
-  static xmlDoc *doc_xml;
+  static xmlDoc *xml_doc;
 
-  //Armazena a referência �  raiz da árvore de documentos
-  static xmlNode *elem_raiz,
+  //Armazena a referência a  raiz da árvore de documentos
+  static xmlNode *root_elem,
                  //Armazena a posição atual na árvore de documentos
-                 *elem_atual;
+                 *curr_elem;
 
   /* Armazena o elemento que marca a posição na árvore antes
      de uma operação subsequente. Para que este elemento seja
      configurado é necessário chamar o método salvarPosicao() e
      para voltar a navegação para a posição salva é necessário
      chamar restaurarPosicao() */
-  static stack<xmlNode *> pilha_elems;
+  static stack<xmlNode *> elems_stack;
 
   //Armazena a declaração da DTD do documento
-  static QString decl_dtd,
+  static QString dtd_decl,
                 //Armazena as linhas do documento XML
-                buffer_xml,
+                xml_buffer,
                 /* Armazena a declaração <?xml?>. Caso não exista
                    é criada uma declaração padrão */
-                decl_xml;
+                xml_decl;
 
   //Remove a DTD original do documento
-  static void removerDTD(void);
+  static void removeDTD(void);
 
   /* Faz a interpretação do buffer XML validando-o de acordo com a DTD
      definida no buffer DTD, caso este não esteja vazio. Inicializa
      os atributos necessário para que se possa navigar na árvore de
      elementos gerada a partir do documento XML lido. */
-  static void interpretarBuffer(void);
+  static void readBuffer(void);
 
  public:
   //Constantes usadas para referências elementos na árvore de documentos
-  static const unsigned ELEMENTO_RAIZ=0,
-                        ELEMENTO_FILHO=1,
-                        ELEMENTO_POSTERIOR=2,
-                        ELEMENTO_ANTERIOR=3;
+  static const unsigned ROOT_ELEMENT=0,
+                        CHILD_ELEMENT=1,
+                        NEXT_ELEMENT=2,
+                        PREVIOUS_ELEMENT=3;
 
-  static const QString CHR_ECOMERCIAL; //& = &amp;
-  static const QString CHR_MENORQUE; // < = &lt;
-  static const QString CHR_MAIORQUE; // < = &gt;
-  static const QString CHR_ASPAS; // < = &quot;
-  static const QString CHR_APOSTROFO; // < = &apos;
+  static const QString CHAR_AMP; //& = &amp;
+  static const QString CHAR_LT; // < = &lt;
+  static const QString CHAR_GT; // < = &gt;
+  static const QString CHAR_QUOT; // < = &quot;
+  static const QString CHAR_APOS; // < = &apos;
 
-  ParserXML(void);
-  ~ParserXML(void);
+  XMLParser(void);
+  ~XMLParser(void);
 
   /* Carrega o buffer XML a partir de um arquivo em disco */
-  static void carregarArquivoXML(const QString &nome_arq);
+  static void loadXMLFile(const QString &nome_arq);
 
   //Carrega o buffer XML a partir de uma QString
-  static void carregarBufferXML(const QString &buf_xml);
+  static void loadXMLBuffer(const QString &buf_xml);
 
   //Informa o arquivo DTD para validação do XML
-  static void definirArquivoDTD(const QString &arq_dtd, const QString &nome_dtd);
+  static void setDTDFile(const QString &arq_dtd, const QString &nome_dtd);
 
   //Salva a posição atual de navegação na árvore na pilha
-  static void salvarPosicao(void);
+  static void savePosition(void);
 
   //Restaura a posição de navegação anterior da pilha
-  static void restaurarPosicao(void);
+  static void restorePosition(void);
 
   /* Restaura a posição de navegação para um elemento
      específico do documento. A pilha de navegação sempre será
      esvaziada quando este método for chamado */
-  static void restaurarPosicao(const xmlNode *elem);
+  static void restorePosition(const xmlNode *elem);
 
   /* Move um nível na árvore de documentos de acordo com o tipo de elemento a
      ser acessado. Retorna verdadeiro caso o elemento foi movido para o
      elemento desejado. */
-  static bool acessarElemento(unsigned tipo_elem);
+  static bool accessElement(unsigned tipo_elem);
 
   //Retorna se um dado elemento possui um elemento raiz, filho, posterior ou anterior
-  static bool possuiElemento(unsigned tipo_elem);
+  static bool hasElement(unsigned tipo_elem);
 
   //Retorna se o elemento atual possui atributos
-  static bool possuiAtributos(void);
+  static bool hasAttributes(void);
 
   //Armazena em um mapa os atributos e seus respectivos valores do elemento atual
-  static void obterAtributosElemento(map<QString, QString> &atributos);
+  static void getElementAttributes(map<QString, QString> &atributos);
 
   /* Retorna o contéudo do elemento, usado apenas para elementos os quais não possuem
      elementos filhos e são preenchidos por textos simples */
-  static QString obterConteudoElemento(void);
+  static QString getElementContent(void);
 
   //Retorna o tipo do elemento atual
-  static xmlElementType obterTipoElemento(void);
+  static xmlElementType getElementType(void);
 
   //Retorna uma referência constante ao elemento atual da árvore
-  static const xmlNode *obterElementoAtual(void);
+  static const xmlNode *getCurrentElement(void);
 
   //Retorna o número da linha atual no buffer em que se encontra o parser
-  static int obterLinhaAtualBuffer(void);
+  static int getCurrentBufferLine(void);
 
   //Retorna o total de linhas do buffer
-  static int obterNumLinhasBuffer(void);
+  static int getBufferLineCount(void);
 
   //Retorna o nome da tag que define o elemento atual
-  static QString obterNomeElemento(void);
+  static QString getElementName(void);
 
   //Retorna o nome do arquivo que deu origem ao buffer XML
-  static QString obterNomeArquivo(void);
+  static QString getLoadedFilename(void);
 
   //Retorna o buffer de código xml atualmente manipulado pelo parser
-  static QString obterBufferXML(void);
+  static QString getXMLBuffer(void);
 
   //Reinicia os elementos responsáveis pela navegação na árvore de documentos
-  static void reiniciarNavegacao(void);
+  static void restartNavigation(void);
 
   /* Reinicia todo o parser, desalocando os atributos alocados, forçando o usuário
      carregar um arquivo/buffer XML para retomar o uso do mesmo */
-  static void reiniciarParser(void);
+  static void restartParser(void);
 };
 
 #endif

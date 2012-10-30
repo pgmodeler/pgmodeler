@@ -697,8 +697,8 @@ void ModeloWidget::converterRelacionamentoNN(void)
      xml_tab=tab_nn->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
 
      //Cria a mesma a partir do xml
-     ParserXML::reiniciarParser();
-     ParserXML::carregarBufferXML(xml_tab);
+     XMLParser::restartParser();
+     XMLParser::loadXMLBuffer(xml_tab);
      tab=modelo->criarTabela();
      nome_tab=tab->obterNome();
 
@@ -1788,14 +1788,14 @@ void ModeloWidget::colarObjetos(void)
  while(itr!=itr_end)
  {
   //Carrega o parser xml com o buffer
-  ParserXML::reiniciarParser();
-  ParserXML::carregarBufferXML(xml_objs[*itr]);
+  XMLParser::restartParser();
+  XMLParser::loadXMLBuffer(xml_objs[*itr]);
   itr++;
 
   try
   {
    //Cria um objeto com o xml obtido
-   objeto=modelo->criarObjeto(modelo->obterTipoObjeto(ParserXML::obterNomeElemento()));
+   objeto=modelo->criarObjeto(modelo->obterTipoObjeto(XMLParser::getElementName()));
    obj_tab=dynamic_cast<ObjetoTabela *>(objeto);
 
    //Atualiza a mensagem do widget de progresso de tarefa
