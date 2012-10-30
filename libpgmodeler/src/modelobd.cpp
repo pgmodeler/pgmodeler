@@ -949,8 +949,9 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
    rel=obterRelacionamento(visao,tab);
    if(tab && !rel)
    {
-    rel=new RelacionamentoBase("rel_" + visao->obterNome() + "_" + tab->obterNome(),
-                               RelacionamentoBase::RELACIONAMENTO_DEP,visao,tab,false,false);
+    /* rel=new RelacionamentoBase("rel_" + visao->obterNome() + "_" + tab->obterNome(),
+                               RelacionamentoBase::RELACIONAMENTO_DEP,visao,tab,false,false); */
+    rel=new RelacionamentoBase(RelacionamentoBase::RELACIONAMENTO_DEP,visao,tab,false,false);
     adicionarRelacionamento(rel);
    }
   }
@@ -5597,7 +5598,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
 
    //Desconecta o relacionamento para configurá-lo
    relacao_base->desconectarRelacionamento();
-   relacao_base->definirNome(atributos[ParsersAttributes::NAME]);
+   //relacao_base->definirNome(atributos[ParsersAttributes::NAME]);
   }
   /* Caso o tipo de relacionamento não seja tabela-visão, isso indica que
      um relacionamento tabela-tabela deverá ser criado */
@@ -5625,7 +5626,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
     tipo_relac=RelacionamentoBase::RELACIONAMENTO_DEP;
 
    //Cria o novo relacionamento
-   relacao=new Relacionamento(atributos[ParsersAttributes::NAME], tipo_relac,
+   relacao=new Relacionamento(tipo_relac,
                               dynamic_cast<Tabela *>(tabelas[0]),
                               dynamic_cast<Tabela *>(tabelas[1]),
                               obrig_orig, obrig_dest,
@@ -5633,7 +5634,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
                               atributos[ParsersAttributes::DST_SUFFIX],
                               identificador, postergavel, tipo_postergacao);
 
-   if(!atributos[ParsersAttributes::TABLE_NAME].isEmpty())
+    if(!atributos[ParsersAttributes::TABLE_NAME].isEmpty())
     relacao->definirNomeTabelaRelNN(atributos[ParsersAttributes::TABLE_NAME]);
 
    /* Faz com que o ponteiro relacao_base aponte para o novo relacionamento

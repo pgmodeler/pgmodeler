@@ -1,4 +1,5 @@
 #include "relacionamentobase.h"
+#include <QApplication>
 
 RelacionamentoBase::RelacionamentoBase(RelacionamentoBase *relacao)
 {
@@ -12,26 +13,37 @@ RelacionamentoBase::RelacionamentoBase(RelacionamentoBase *relacao)
  (*(this))=(*relacao);
 }
 
-RelacionamentoBase::RelacionamentoBase(const QString &nome, unsigned tipo_rel,
+RelacionamentoBase::RelacionamentoBase(/*const QString &nome,*/ unsigned tipo_rel,
                                        TabelaBase *tab_orig, TabelaBase *tab_dest,
                                         bool obrig_orig, bool obrig_dest)
 
 {
- this->conectado=false;
- this->obrig_orig=obrig_orig;
- this->obrig_dest=obrig_dest;
- this->tabela_orig=tab_orig;
- this->tabela_dest=tab_dest;
- this->tipo_relac=tipo_rel;
-
- for(unsigned i=0; i < 3; i++)
+ try
  {
-  rotulos[i]=NULL;
-  dist_rotulos[i]=QPointF(NAN, NAN);
- }
+  QString str_aux;
 
- configurarRelacionamento();
- definirNome(nome);
+  this->conectado=false;
+  this->obrig_orig=obrig_orig;
+  this->obrig_dest=obrig_dest;
+  this->tabela_orig=tab_orig;
+  this->tabela_dest=tab_dest;
+  this->tipo_relac=tipo_rel;
+
+  for(unsigned i=0; i < 3; i++)
+  {
+   rotulos[i]=NULL;
+   dist_rotulos[i]=QPointF(NAN, NAN);
+  }
+
+  configurarRelacionamento();
+
+  str_aux=QApplication::translate("RelacionamentoBase","rel_%1_%2","",QApplication::UnicodeUTF8);
+  definirNome(str_aux.arg(tab_orig->obterNome()).arg(tab_dest->obterNome()));
+ }
+ catch(Exception &e)
+ {
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+ }
 }
 
 void RelacionamentoBase::configurarRelacionamento(void)

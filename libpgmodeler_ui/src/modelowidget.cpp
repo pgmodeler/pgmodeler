@@ -69,7 +69,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  QAction *acao=NULL;
  QString str_ico, str_txt,
          vet_tipos_rel[]={"11", "1n", "nn", "dep", "gen" },
-         vet_rot_rel[]={" 1-1", " 1-n", " n-n", trUtf8("Dependence"), trUtf8("Generalization")};
+         vet_rot_rel[]={"One to One (1-1)", "One to Many (1-n)", "Many to Many (n-n)", trUtf8("Copy"), trUtf8("Generalization")};
  TipoObjetoBase tipos[]={ OBJETO_TABELA, OBJETO_VISAO, OBJETO_CAIXA_TEXTO, OBJETO_RELACAO,
                           OBJETO_CONV_TIPO, OBJETO_CONV_CODIFICACAO, OBJETO_DOMINIO,
                           OBJETO_FUNCAO, OBJETO_FUNC_AGREGACAO, OBJETO_LINGUAGEM,
@@ -225,9 +225,9 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  {
   str_ico=ObjetoBase::obterNomeEsquemaObjeto(OBJETO_RELACAO) + vet_tipos_rel[i] +  QString(".png");
 
-  if(i < 3)
+  /* if(i < 3)
    str_txt=trUtf8("Relationship ") + vet_rot_rel[i];
-  else
+  else */
    str_txt=vet_rot_rel[i];
 
   /* Aloca a ação para o tipo de relacionamento. O dado da ação será o tipo do objeto
@@ -761,8 +761,8 @@ void ModeloWidget::converterRelacionamentoNN(void)
      //lista_op->adicionarObjeto(tab, Operacao::OBJETO_CRIADO);
 
      //Aloca um relacionamento entre a nova tabela e a tabela de origem do relacionamento
-     nome_rel=QString("rel_") + tab->obterNome(false) + QString("_") + tab_orig->obterNome(false);
-     rel1=new Relacionamento(nome_rel, Relacionamento::RELACIONAMENTO_1N,
+     //nome_rel=QString("rel_") + tab->obterNome(false) + QString("_") + tab_orig->obterNome(false);
+     rel1=new Relacionamento(Relacionamento::RELACIONAMENTO_1N,
                              tab_orig, tab, obrig_orig, false, true,
                              "", "", true);
 
@@ -771,13 +771,14 @@ void ModeloWidget::converterRelacionamentoNN(void)
      //lista_op->adicionarObjeto(rel1, Operacao::OBJETO_CRIADO);
 
      //Aloca um relacionamento entre a nova tabela e a tabela de destino do relacionamento
-     nome_rel=QString("rel_") + tab->obterNome() + QString("_") + tab_dest->obterNome();
-     if(rel->autoRelacionamento())
-      nome_rel+=QString("1");
+     //nome_rel=QString("rel_") + tab->obterNome() + QString("_") + tab_dest->obterNome();
+     //if(rel->autoRelacionamento())
+     // nome_rel+=QString("1");
 
-     rel2=new Relacionamento(nome_rel, Relacionamento::RELACIONAMENTO_1N,
+     rel2=new Relacionamento(Relacionamento::RELACIONAMENTO_1N,
                              tab_dest, tab, obrig_dest, false, true,
                              "", "", true);
+
 
      //Adiciona o relacionamento criado ao modelo e   lista de operações
      modelo->adicionarRelacionamento(rel2);

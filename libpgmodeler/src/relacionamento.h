@@ -290,7 +290,7 @@ class Relacionamento: public RelacionamentoBase {
 
   Relacionamento(Relacionamento *relacao);
 
-  Relacionamento(const QString &nome, unsigned tipo_rel,
+  Relacionamento(unsigned tipo_rel,
                  Tabela *tab_orig, Tabela *tab_dest,
                  bool obrig_orig=false, bool obrig_dest=false,
                  bool sufixo_auto=true,

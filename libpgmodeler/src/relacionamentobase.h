@@ -88,9 +88,8 @@ class RelacionamentoBase: public ObjetoGraficoBase {
 
   RelacionamentoBase(RelacionamentoBase *relacao);
 
-  RelacionamentoBase(const QString &nome, unsigned tipo_rel,
-                 TabelaBase *tab_orig, TabelaBase *tab_dest,
-                 bool obrig_orig, bool obrig_dest);
+  RelacionamentoBase(unsigned tipo_rel, TabelaBase *tab_orig, TabelaBase *tab_dest,
+                     bool obrig_orig, bool obrig_dest);
   ~RelacionamentoBase(void);
 
 

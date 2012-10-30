@@ -1,4 +1,5 @@
 #include "relacionamento.h"
+#include <QApplication>
 
 //Inicialização de atributos estáticos da classe
 const QString Relacionamento::SEPARADOR_SUFIXO("_");
@@ -33,55 +34,85 @@ Relacionamento::Relacionamento(Relacionamento *relacao) : RelacionamentoBase(rel
  }
 }*/
 
-Relacionamento::Relacionamento(const QString &nome, unsigned tipo_rel, Tabela *tab_orig,
+Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabela *tab_orig,
                                Tabela *tab_dest, bool obrig_orig, bool obrig_dest,
                                bool sufixo_auto, const QString &sufix_orig, const QString &sufix_dest,
                                bool identificador,  bool postergavel, TipoPostergacao tipo_postergacao) :
-                RelacionamentoBase(nome, tipo_rel, tab_orig, tab_dest, obrig_orig, obrig_dest)
+                RelacionamentoBase(tipo_rel, tab_orig, tab_dest, obrig_orig, obrig_dest)
 {
- tipo_objeto=OBJETO_RELACAO;
+ try
+ {
+  tipo_objeto=OBJETO_RELACAO;
+  QString str_aux;
 
- if(((tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N) &&
+  if(((tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N) &&
       !this->obterTabelaReferencia()->obterChavePrimaria()) ||
-    (tipo_relac==RELACIONAMENTO_NN && (!tab_orig->obterChavePrimaria() || !tab_dest->obterChavePrimaria())))
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_RELTABSEMPK)
-                          .arg(QString::fromUtf8(nome))
-                          .arg(QString::fromUtf8(tab_orig->obterNome(true)))
-                          .arg(QString::fromUtf8(tab_dest->obterNome(true))),
-                 ERR_PGMODELER_RELTABSEMPK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+     (tipo_relac==RELACIONAMENTO_NN && (!tab_orig->obterChavePrimaria() || !tab_dest->obterChavePrimaria())))
+     throw Exception(Exception::getErrorMessage(ERR_PGMODELER_RELTABSEMPK)
+                           .arg(QString::fromUtf8(nome))
+                           .arg(QString::fromUtf8(tab_orig->obterNome(true)))
+                           .arg(QString::fromUtf8(tab_dest->obterNome(true))),
+                  ERR_PGMODELER_RELTABSEMPK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- /* Atribuindo os sufixos ao relacionamento.
+  /* Atribuindo os sufixos ao relacionamento.
     Sufixos são palavras concatenadas ao final do nome de
     colunas as quais são adicionadas automaticamente nas tabelas
     pelo relacionamento e que participam de chaves estrangeiras */
- this->sufixo_orig=sufix_orig;
- this->sufixo_dest=sufix_dest;
- this->sufixo_auto=sufixo_auto;
+  this->sufixo_orig=sufix_orig;
+   this->sufixo_dest=sufix_dest;
+  this->sufixo_auto=sufixo_auto;
 
- tabela_relnn=NULL;
- fk_rel1n=pk_relident=pk_especial=uq_rel11=NULL;
- this->postergavel=postergavel;
- this->tipo_postergacao=tipo_postergacao;
- this->invalidado=true;
+  tabela_relnn=NULL;
+  fk_rel1n=pk_relident=pk_especial=uq_rel11=NULL;
+  this->postergavel=postergavel;
+  this->tipo_postergacao=tipo_postergacao;
+  this->invalidado=true;
 
- /* Caso a os sufixos estejam especificados o nome da tabela será
-    a junção dos sufixos separados pelo separador de sufixos. Caso
-    contrário o nome da tabela será o próprio nome do relacionamento */
- if(sufixo_orig!="" && sufixo_dest!="")
-  nome_tab_relnn=sufixo_orig + SEPARADOR_SUFIXO + sufixo_dest;
- else
-  nome_tab_relnn=this->nome;
+  //Configura o nome do relacionamento conforme o tipo
+  if(tipo_rel==RELACIONAMENTO_11)
+   str_aux=QApplication::translate("Relacionamento","%1_has_one_%2","",QApplication::UnicodeUTF8);
+  else if(tipo_rel==RELACIONAMENTO_1N)
+   str_aux=QApplication::translate("Relacionamento","%1_has_many_%2","",QApplication::UnicodeUTF8);
+  else if(tipo_rel==RELACIONAMENTO_NN)
+   str_aux=QApplication::translate("Relacionamento","many_%1_has_many_%2","",QApplication::UnicodeUTF8);
+  else if(tipo_rel==RELACIONAMENTO_GEN)
+   str_aux=QApplication::translate("Relacionamento","%1_inherits_%2","",QApplication::UnicodeUTF8);
+  else
+   str_aux=QApplication::translate("Relacionamento","%1_copies_%2","",QApplication::UnicodeUTF8);
 
- qtd_cols_rejeitadas=0;
- definirIdentificador(identificador);
+  if(tipo_rel!=RELACIONAMENTO_NN)
+   str_aux=str_aux.arg(this->obterTabelaReferencia()->obterNome())
+                     .arg(this->obterTabelaReceptora()->obterNome());
+  else
+   str_aux=str_aux.arg(this->tabela_orig->obterNome())
+                  .arg(this->tabela_dest->obterNome());
 
- atributos[ParsersAttributes::CONSTRAINTS]="";
- atributos[ParsersAttributes::TABLE]="";
- atributos[ParsersAttributes::RELATIONSHIP_NN]="";
- atributos[ParsersAttributes::RELATIONSHIP_GEN]="";
- atributos[ParsersAttributes::RELATIONSHIP_1N]="";
- atributos[ParsersAttributes::ANCESTOR_TABLE]="";
+  definirNome(str_aux);
+
+  /* Caso a os sufixos estejam especificados o nome da tabela será
+     a junção dos sufixos separados pelo separador de sufixos. Caso
+     contrário o nome da tabela será o próprio nome do relacionamento */
+  if(sufixo_orig!="" && sufixo_dest!="")
+   nome_tab_relnn=sufixo_orig + SEPARADOR_SUFIXO + sufixo_dest;
+  else
+   nome_tab_relnn=this->nome;
+
+  qtd_cols_rejeitadas=0;
+  definirIdentificador(identificador);
+
+  atributos[ParsersAttributes::CONSTRAINTS]="";
+  atributos[ParsersAttributes::TABLE]="";
+  atributos[ParsersAttributes::RELATIONSHIP_NN]="";
+  atributos[ParsersAttributes::RELATIONSHIP_GEN]="";
+  atributos[ParsersAttributes::RELATIONSHIP_1N]="";
+  atributos[ParsersAttributes::ANCESTOR_TABLE]="";
+ }
+ catch(Exception &e)
+ {
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+ }
 }
+
 vector<QString> Relacionamento::obterColunasRelacionamento(void)
 {
  unsigned qtd, i;

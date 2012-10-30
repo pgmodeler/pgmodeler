@@ -164,10 +164,11 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
   QString nome;
 
   //Cria um nome temporário para o relacionamento
-  nome=QString("rel_") + tab_orig->obterNome() + QString("_") + tab_dest->obterNome();
+  //nome=QString("rel_") + tab_orig->obterNome() + QString("_") + tab_dest->obterNome();
 
   //Aloca o novo relacionamento
-  rel=new Relacionamento(nome, tipo_rel, tab_orig, tab_dest);
+  //rel=new Relacionamento(nome, tipo_rel, tab_orig, tab_dest);
+  rel=new Relacionamento(tipo_rel, tab_orig, tab_dest);
 
   /* Marca como novo objeto o relacionamento gerado, assim o mesmo é tratado
      de forma diferente nos métodos de configuração da classe superior */
