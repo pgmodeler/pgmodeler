@@ -1836,7 +1836,7 @@ void ModeloWidget::colarObjetos(void)
 
  /* Caso algum erro foi capturado durante a colagem o mesmo é mostrado ao usuário acompanhado
     de um alerta */
- if(erro.getErrorType()!=ERR_NULO)
+ if(erro.getErrorType()!=ERR_CUSTOM)
   caixa_msg->show(erro,
                   trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
                   CaixaMensagem::ICONE_ALERTA);

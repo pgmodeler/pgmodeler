@@ -675,7 +675,7 @@ void ListaOperacoes::desfazerOperacao(void)
      ou a opção de desfazer esteja habilidata */
   while(!anular_enc && desfazerHabilitado() && operacao->tipo_enc!=Operacao::SEM_ENCADEAMENTO);
 
-  if(erro.getErrorType()!=ERR_NULO)
+  if(erro.getErrorType()!=ERR_CUSTOM)
    throw Exception(erro.getErrorMessage(), erro.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
@@ -739,7 +739,7 @@ void ListaOperacoes::refazerOperacao(void)
      ou a opção de refazer esteja habilidata */
   while(!anular_enc && refazerHabilitado()  && operacao->tipo_enc!=Operacao::SEM_ENCADEAMENTO);
 
-  if(erro.getErrorType()!=ERR_NULO)
+  if(erro.getErrorType()!=ERR_CUSTOM)
    throw Exception(erro.getErrorMessage(), erro.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }

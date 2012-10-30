@@ -767,7 +767,7 @@ void Relacionamento::adicionarColunasRelGen(void)
           idx, qtd_tab;
  vector<Coluna *> colunas;
  TipoObjetoBase tipos[2]={OBJETO_TABELA, OBJETO_TABELA_BASE};
- ErrorType tipo_erro=ERR_NULO;
+ ErrorType tipo_erro=ERR_CUSTOM;
  bool duplic=false, cond,
       /* 0 -> Coluna vinda de herança
          1 -> Coluna vinda de cópia */
@@ -788,7 +788,7 @@ void Relacionamento::adicionarColunasRelGen(void)
 
   /* Este for compara cada coluna da tabela de destino com
      cada coluna da tabela de origem */
-  for(i=0; i < qtd_dest && tipo_erro==ERR_NULO; i++)
+  for(i=0; i < qtd_dest && tipo_erro==ERR_CUSTOM; i++)
   {
    //Obtém uma coluna do destino
    col_dest=tab_dest->obterColuna(i);
@@ -906,7 +906,7 @@ void Relacionamento::adicionarColunasRelGen(void)
    }
 
    //Caso não foi detectado nenhum erro
-   if(tipo_erro==ERR_NULO)
+   if(tipo_erro==ERR_CUSTOM)
    {
     //Caso não haja duplicidade
     if(!duplic)
@@ -942,7 +942,7 @@ void Relacionamento::adicionarColunasRelGen(void)
   }
 
   //Caso nenhum erro de duplicidade foi detectado
-  if(tipo_erro==ERR_NULO)
+  if(tipo_erro==ERR_CUSTOM)
   {
    vector<Coluna *>::iterator itr, itr_end;
 

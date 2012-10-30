@@ -2,7 +2,7 @@
 #include <QApplication>
 
 QString Exception::messages[ERROR_COUNT][2]={
-{"ERR_NULO", " "},
+{"ERR_CUSTOM", " "},
 {"ERR_GLOBAL_OBJBADALOC", QT_TR_NOOP("Insufficient memory space to allocate the object!")},
 {"ERR_PGMODELER_ATRPSDTIPOCOL", QT_TR_NOOP("Assignment of a pseudo-type to the type of the column!")},
 {"ERR_PGMODELER_ATRCOMPRIMZERO", QT_TR_NOOP("Zero length assignment!")},
@@ -181,7 +181,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 
 Exception::Exception(void)
 {
- configureException("",ERR_NULO,"","",-1,"");
+ configureException("",ERR_CUSTOM,"","",-1,"");
 }
 
 Exception::Exception(const QString &msg, const QString &method, const QString &file, int line, Exception *exception, const QString &extra_info)
