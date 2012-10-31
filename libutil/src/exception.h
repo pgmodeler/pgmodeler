@@ -47,7 +47,6 @@ const int ERROR_COUNT=175;
 
 enum ErrorType {
  ERR_CUSTOM,
- //Insufficient memory space to allocate the object!
  ERR_GLOBAL_OBJBADALOC,
  ERR_PGMODELER_ATRPSDTIPOCOL,
  ERR_PGMODELER_ATRCOMPRIMZERO,
