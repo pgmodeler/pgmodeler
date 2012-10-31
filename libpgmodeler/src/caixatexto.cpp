@@ -43,7 +43,7 @@ void CaixaTexto::operator = (CaixaTexto &caixa)
 void CaixaTexto::definirAtributoTexto(unsigned atributo, bool valor)
 {
  if(atributo > TEXTO_SUBLINHADO)
-  throw Exception(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  atributo_texto[atributo]=valor;
 }
@@ -61,7 +61,7 @@ QColor CaixaTexto::obterCorTexto(void)
 bool CaixaTexto::obterAtributoTexto(unsigned atributo)
 {
  if(atributo > TEXTO_SUBLINHADO)
-  throw Exception(ERR_PGMODELER_REFATRIBTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(atributo_texto[atributo]);
 }

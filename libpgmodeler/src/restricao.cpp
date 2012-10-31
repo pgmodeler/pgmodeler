@@ -58,7 +58,7 @@ bool Restricao::colunaExistente(Coluna *coluna, unsigned tipo_coluna)
 
  //Caso a coluna a ser buscada não esteja aloca, dispara uma exceção
  if(!coluna)
-  throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(tipo_coluna==COLUNA_ORIGEM)
  {
@@ -88,10 +88,10 @@ void Restricao::adicionarColuna(Coluna *coluna, unsigned tipo_coluna)
 {
  //Caso a coluna não esteja aloca, dispara exceção.
  if(!coluna)
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRCOLNAOALOC)
+  throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
                         .arg(QString::fromUtf8(this->obterNome()))
                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RESTRICAO)),
-                 ERR_PGMODELER_ATRCOLNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(tipo!=TipoRestricao::check)
  {
   //Só adiciona a coluna em uma das lista caso a mesma não exista em uma delas
@@ -114,7 +114,7 @@ void Restricao::definirEspacoTabela(EspacoTabela *espacotabela)
   if(espacotabela &&
      tipo!=TipoRestricao::primary_key &&
      tipo!=TipoRestricao::unique)
-   throw Exception(ERR_PGMODELER_ATRESPTABRESTTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_ASG_TABSPC_INV_CONSTR_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   ObjetoBase::definirEspacoTabela(espacotabela);
  }
@@ -233,7 +233,7 @@ Coluna *Restricao::obterColuna(unsigned idx_col, unsigned tipo_coluna)
  /* Caso o índice de coluna a ser obtido seja inválido, um erro
     será retornado */
  if(idx_col>=lista_col->size())
-  throw Exception(ERR_PGMODELER_REFCOLIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_COLUMN_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Retorna a coluna no índice especificado
   return(lista_col->at(idx_col));

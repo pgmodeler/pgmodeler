@@ -152,7 +152,7 @@ void VisaoWidget::manipularReferencia(int idx_ref)
   if(!select_from_chk->isChecked() &&
      !from_where_chk->isChecked() &&
      !apos_where_chk->isChecked())
-   throw Exception(ERR_PGMODELERUI_TIPOSQLINDEFREFVISAO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_SQL_SCOPE_INV_VIEW_REF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Exibe os dados da referência recém-criada na tabela de referências
   exibirDadosReferencia(ref, select_from_chk->isChecked(), from_where_chk->isChecked(),

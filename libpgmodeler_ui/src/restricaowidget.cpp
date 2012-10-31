@@ -379,7 +379,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai,
  Tabela *tabela_ref=NULL;
 
  if(!objeto_pai)
-  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, restricao, objeto_pai);
@@ -529,7 +529,7 @@ void RestricaoWidget::aplicarConfiguracao(void)
       restricao->obterNumColunas(Restricao::COLUNA_ORIGEM)==0) ||
      (restricao->obterTipoRestricao()==TipoRestricao::foreign_key &&
       restricao->obterNumColunas(Restricao::COLUNA_REFER)==0))
-   throw Exception(ERR_PGMODELERUI_RESTPKFKSEMCOLUNAS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_CONSTR_NO_COLUMNS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   finalizarConfiguracao();
  }

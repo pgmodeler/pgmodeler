@@ -19,15 +19,15 @@ void FuncaoAgregacao::definirFuncao(unsigned idx_func, Funcao *func)
  /* Caso o usuário tente acessar um índice de função inválido,
     é gerado um erro */
  if(idx_func!=FUNCAO_FINAL && idx_func!=FUNCAO_TRANSICAO)
-  throw Exception(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Verfica se a função a qual está sendo atribuída, obedece algumas
     regras necessária para o tipo especfico */
  if(!funcaoValida(idx_func, func))
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_FUNCCONFIGINV)
+  throw Exception(Exception::getErrorMessage(ERR_USING_INV_FUNC_CONFIG)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNC_AGREGACAO)),
-                ERR_PGMODELER_FUNCCONFIGINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_USING_INV_FUNC_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  funcoes[idx_func]=func;
 }
@@ -92,11 +92,11 @@ void FuncaoAgregacao::definirOperadorOrdenacao(Operador *op_ordenacao)
   func=op_ordenacao->obterFuncao(Operador::FUNC_OPERADOR);
   //Validando a condição 1
   if(tipo_dados.size()!=1)
-   throw Exception(ERR_PGMODELER_ATROPFUNCAGRARGINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_ASG_INV_OPER_ARGS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   //Validando a condição 2
   else if(func->obterParametro(0).obterTipo()!=tipo_dados[0] ||
          (func->obterNumParams()==2 && func->obterParametro(1).obterTipo()!=tipo_dados[0]))
-   throw Exception(ERR_PGMODELER_ATROPFUNCAGTIPOSINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_ASG_INV_OPERATOR_TYPES,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  this->op_ordenacao=op_ordenacao;
@@ -130,10 +130,10 @@ void FuncaoAgregacao::adicionarTipoDado(TipoPgSQL tipo)
  //Verifica se o tipo de dado já foi inserido na função
  if(tipoDadoExiste(tipo))
   //Caso existe um erro é gerado
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_INSTIPODUPLIC)
+  throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_TYPE)
                 .arg(QString::fromUtf8(~tipo))
                 .arg(QString::fromUtf8(this->obterNome(true))),
-                ERR_PGMODELER_INSTIPODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_INS_DUPLIC_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Insere o tipo ao final da lista
  tipo_dados.push_back(tipo);
@@ -144,7 +144,7 @@ void FuncaoAgregacao::removerTipoDado(unsigned idx_tipo)
  //Verifica se o índice do tipo a ser removido é inválido
  if(idx_tipo >= tipo_dados.size())
   //Caso seja inválido, dispara uma exceção
-  throw Exception(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Remove o elemento na posição especificada pelo índice
  tipo_dados.erase(tipo_dados.begin() + idx_tipo);
@@ -181,7 +181,7 @@ Funcao *FuncaoAgregacao::obterFuncao(unsigned idx_func)
 {
  //Verifica se o índice usado para referenciar a função é inválido
  if(idx_func!=FUNCAO_FINAL && idx_func!=FUNCAO_TRANSICAO)
-  throw Exception(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Retorna a função no indice especificado
  return(funcoes[idx_func]);
@@ -207,7 +207,7 @@ TipoPgSQL FuncaoAgregacao::obterTipoDado(unsigned idx_tipo)
  //Verifica se o índice usado para referenciar o tipo de dado é inválido
  if(idx_tipo >= tipo_dados.size())
   //Dispara uma exceção caso isso ocorra
-  throw Exception(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Retorna o tipo na posição especificada
  return(tipo_dados[idx_tipo]);

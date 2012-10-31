@@ -161,7 +161,7 @@ void PapelWidget::exibirDadosPapel(Papel *papel, unsigned idx_tabela, unsigned l
            tipo_papeis[3]={ Papel::PAPEL_REF, Papel::PAPEL_MEMBRO, Papel::PAPEL_ADMIN };
 
   if(idx_tabela > 3)
-   throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Atribui como dado da linha a referência ao papel membro, para tanto é necessário
      converter a referência para void * pois é a única forma de ponteiro que
@@ -269,10 +269,10 @@ void PapelWidget::exibirDadosPapelSelecionado(void)
     a ele mesmo */
  if(obj_sel && obj_sel==this->objeto)
  {
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REFREDUNDANTEPAPEIS)
+  throw Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
                                .arg(QString::fromUtf8(obj_sel->obterNome()))
                                .arg(QString::fromUtf8(nome_edt->text())),
-                 ERR_PGMODELER_REFREDUNDANTEPAPEIS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  //Se o objeto da seleção não existir na tabela exibe seus dados
  else if(obj_sel && idx_lin < 0)
@@ -290,10 +290,10 @@ void PapelWidget::exibirDadosPapelSelecionado(void)
      pois o mesmo objeto não pode aparecer mais de uma vez na mesma tabela */
   if(obj_sel && idx_lin >= 0)
   {
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_INSITEMPAPELDUPLIC)
+   throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
                                .arg(QString::fromUtf8(obj_sel->obterNome()))
                                .arg(QString::fromUtf8(nome_edt->text())),
-                 ERR_PGMODELER_INSITEMPAPELDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
  }
 }

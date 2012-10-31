@@ -4,7 +4,7 @@
 RelacionamentoBase::RelacionamentoBase(RelacionamentoBase *relacao)
 {
  if(!relacao)
-  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Inicializa com NULL os rótulos pois os mesmos são copiados no operador =
  for(unsigned i=0; i < 3; i++)
@@ -78,17 +78,17 @@ void RelacionamentoBase::configurarRelacionamento(void)
    /* Verifica se uma das tabelas envolvidas no relacionamentos
       não estão alocadas, caso isso ocorra, dispara uma exceção */
    if(!tabela_orig || !tabela_dest)
-    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRTABNAOALOC)
+    throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_TABLE)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RELACAO_BASE)),
-                  ERR_PGMODELER_ATRTABNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                  ERR_ASG_NOT_ALOC_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    /* Caso o tipo de relacionamento seja de generalização ou de dependência
       e as tabelas de origem e destino forem iguais, será disparada uma exceção
       pois uma tabela não pode herdar/copiar atributos dela mesma */
    if((tipo_relac==RELACIONAMENTO_GEN ||
        tipo_relac==RELACIONAMENTO_DEP) && tabela_orig==tabela_dest)
-    throw Exception(ERR_PGMODELER_HERANCATABINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_INV_INH_COPY_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    /* Aloca o rótulo de nome do relacionamento, todos os tipos de relacionamento
       possui esse rótulo */
@@ -118,7 +118,7 @@ void RelacionamentoBase::configurarRelacionamento(void)
   }
  }
  else
-  throw Exception(ERR_PGMODELER_ALOCOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ALOC_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 RelacionamentoBase::~RelacionamentoBase(void)
@@ -157,7 +157,7 @@ void RelacionamentoBase::definirTabelaObrigatoria(unsigned id_tabela, bool valor
  if(tipo_relac==RELACIONAMENTO_11 &&
     ((id_tabela==TABELA_ORIGEM && valor && obrig_dest) ||
      (id_tabela==TABELA_DESTINO && valor && obrig_orig)))
-  throw Exception(ERR_PGMODELER_TIPORELNAOIMPL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_NOT_IMPL_REL_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso a tabela de origem seja obrigatório
  if(id_tabela==TABELA_ORIGEM)
@@ -263,7 +263,7 @@ CaixaTexto *RelacionamentoBase::obterRotulo(unsigned idx_rot)
   return(rotulos[idx_rot]);
  else
   //Dispara uma exceção caso o índice usado seja inválido
-  throw Exception(ERR_PGMODELER_REFROTIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_LABEL_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
  
 unsigned RelacionamentoBase::obterTipoRelacionamento(void)
@@ -360,7 +360,7 @@ void RelacionamentoBase::definirPontos(const vector<QPointF> &pontos)
 void RelacionamentoBase::definirDistanciaRotulo(unsigned idx_rot, QPointF dist_rotulo)
 {
  if(idx_rot > ROTULO_NOME_RELAC)
-  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->dist_rotulos[idx_rot]=dist_rotulo;
 }
@@ -368,7 +368,7 @@ void RelacionamentoBase::definirDistanciaRotulo(unsigned idx_rot, QPointF dist_r
 QPointF RelacionamentoBase::obterDistanciaRotulo(unsigned idx_rot)
 {
  if(idx_rot > ROTULO_NOME_RELAC)
-  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(this->dist_rotulos[idx_rot]);
 }

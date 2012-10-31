@@ -1112,14 +1112,14 @@ void ModeloWidget::exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto,
   }
 
   if(objeto && tipo_obj!=objeto->obterTipoObjeto())
-   throw Exception(ERR_PGMODELER_OPROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Caso se tente chamar o formulário de criação de um objeto de tabela
      sem se especificar a tabela pai (objeto_pai) */
   else if(!objeto_pai &&
          (tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO ||
           tipo_obj==OBJETO_GATILHO || tipo_obj==OBJETO_REGRA ||
           tipo_obj==OBJETO_INDICE))
-   throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Caso o objeto esteja alocado e seja gráfico indica que o mesmo será editado,
      sendo assim sua posição precisa ser armazena e em seguida informada ao
@@ -1136,7 +1136,7 @@ void ModeloWidget::exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto,
         objeto->obterNome()==~TipoLinguagem("plpgsql"))) ||
       (tipo_obj==OBJETO_ESQUEMA &&
        objeto->obterNome()=="public")))
-    throw Exception(ERR_PGMODELERUI_OPROBJRESERVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   switch(tipo_obj)
   {
@@ -1421,7 +1421,7 @@ void ModeloWidget::protegerObjeto(void)
           this->objs_selecionados[0]->obterNome()==~TipoLinguagem("plpgsql"))) ||
         (this->objs_selecionados[0]->obterTipoObjeto()==OBJETO_ESQUEMA &&
          this->objs_selecionados[0]->obterNome()=="public")))
-      throw Exception(ERR_PGMODELERUI_OPROBJRESERVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     this->objs_selecionados[0]->definirProtegido(!this->objs_selecionados[0]->objetoProtegido());
    }
@@ -1459,16 +1459,16 @@ void ModeloWidget::protegerObjeto(void)
           objeto->obterNome()==~TipoLinguagem("plpgsql") )) ||
         (tipo_obj==OBJETO_ESQUEMA &&
          objeto->obterNome()=="public")))
-      throw Exception(ERR_PGMODELERUI_OPROBJRESERVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     else if(tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO)
     {
      obj_tab=dynamic_cast<ObjetoTabela *>(objeto);
      if(obj_tab->incluidoPorRelacionamento())
      {
       //Monta a mensagem de que o objeto não pode ser removido por estar protegido
-      throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELERUI_OPROBJINCRELACAO))
+      throw Exception(QString(Exception::getErrorMessage(ERR_OPR_REL_INCL_OBJECT))
                     .arg(objeto->obterNome()).arg(objeto->obterNomeTipoObjeto()),
-                    ERR_PGMODELERUI_OPROBJINCRELACAO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                    ERR_OPR_REL_INCL_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
      }
     }
 
@@ -1972,14 +1972,14 @@ void ModeloWidget::excluirObjetos(void)
            objeto->obterNome()==~TipoLinguagem("plpgsql") )) ||
          (tipo_obj==OBJETO_ESQUEMA &&
           objeto->obterNome()=="public")))
-       throw Exception(ERR_PGMODELERUI_OPROBJRESERVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
      else if(objeto->objetoProtegido())
      {
       //Monta a mensagem de que o objeto não pode ser removido por estar protegido
-      throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELERUI_REMOBJPROTEGIDO))
+      throw Exception(QString(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT))
                     .arg(objeto->obterNome(true))
                     .arg(objeto->obterNomeTipoObjeto()),
-                    ERR_PGMODELERUI_REMOBJPROTEGIDO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                    ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
      }
      else if(tipo_obj!=OBJETO_RELACAO_BASE)
      {
@@ -2061,7 +2061,7 @@ void ModeloWidget::excluirObjetos(void)
    }
    catch(Exception &e)
    {
-    if(e.getErrorType()==ERR_PGMODELER_REFCOLUNAINVTABELA)
+    if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
      lista_op->removerOperacoes();
 
     if(lista_op->encadeamentoIniciado())

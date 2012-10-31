@@ -486,10 +486,10 @@ void TabelaWidget::removerObjetos(void)
     lista_op->adicionarObjeto(objeto, Operacao::OBJETO_REMOVIDO, 0, this->objeto);
    }
    else
-    throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_REMOBJPROTEGIDO)
+    throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
                   .arg(QString::fromUtf8(objeto->obterNome()))
                   .arg(objeto->obterNomeTipoObjeto()),
-                  ERR_PGMODELERUI_REMOBJPROTEGIDO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                  ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
  }
  catch(Exception &e)
@@ -547,10 +547,10 @@ void TabelaWidget::removerObjeto(int idx_lin)
    lista_op->adicionarObjeto(objeto, Operacao::OBJETO_REMOVIDO, idx_lin, this->objeto);
   }
   else
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_REMOBJPROTEGIDO)
+   throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
                  .arg(QString::fromUtf8(objeto->obterNome()))
                  .arg(objeto->obterNomeTipoObjeto()),
-                 ERR_PGMODELERUI_REMOBJPROTEGIDO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  catch(Exception &e)
  {
@@ -611,7 +611,7 @@ void TabelaWidget::aplicarConfiguracao(void)
    /* O único erro que é desconsiderado é o de invalidação de objetos, pois,
       mesmo com a restauração do estado original da tabela estes
       objetos não são recuperados */
-   if(e.getErrorType()==ERR_PGMODELER_REFCOLUNAINVTABELA)
+   if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
     //Exibe uma mensagem de erro com o conteúdo da exceção
     caixa_msg->show(e);
    //Para os demais erros a exceção é encaminhada

@@ -262,7 +262,7 @@ void IndiceWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaO
  unsigned i, qtd;
 
  if(!tabela_pai)
-  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, indice, tabela_pai);

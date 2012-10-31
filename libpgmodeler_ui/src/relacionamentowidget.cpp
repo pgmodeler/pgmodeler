@@ -205,7 +205,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
 
  //Caso o relacionamento não esteja alocado dispara um erro
  if(!relacao)
-  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, relacao);
@@ -720,7 +720,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
     /* O único erro que é desconsiderado é o de invalidação de objetos, pois,
        mesmo com a restauração do estado original do relacionamento estes
        objetos não são recuperados */
-    if(e.getErrorType()==ERR_PGMODELER_REFCOLUNAINVTABELA)
+    if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
      //Exibe uma mensagem de erro com o conteúdo da exceção
      caixa_msg->show(e);
     //Para os demais erros a exceção é encaminhada

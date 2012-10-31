@@ -124,10 +124,10 @@ void Funcao::adicionarParametro(Parametro param)
  //Caso seja encontrado um parâmetro com mesmo nome
  if(enc)
   //Dispara exceção relatando o erro
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_INSPARAMDUPLIC)
+  throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PARAM_FUNCTION)
                 .arg(QString::fromUtf8(param.obterNome()))
                 .arg(QString::fromUtf8(this->assinatura)),
-                ERR_PGMODELER_INSPARAMDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_ASG_DUPLIC_PARAM_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   //Insere o parâmetro na lista de parâmetros
@@ -141,7 +141,7 @@ void Funcao::adicionarTipoRetTabela(const QString &nome, TipoPgSQL tipo)
  //Verifica se o nome do elemento não está vazio
  if(nome=="")
   //Caso esteja vazio, dispara uma exceção relatando o erro
-  throw Exception(ERR_PGMODELER_ATRNOMEVAZIOTPRET,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_EMPTY_NAME_RET_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  //Caso não esteja vazio
  {
@@ -165,10 +165,10 @@ void Funcao::adicionarTipoRetTabela(const QString &nome, TipoPgSQL tipo)
   //Caso seja encontrado um parâmetro com mesmo nome
   if(enc)
    //Dispara exceção relatando o erro
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_INSTPRETDUPLIC)
+   throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_RET_TAB_TYPE)
                  .arg(QString::fromUtf8(nome))
                  .arg(QString::fromUtf8(this->assinatura)),
-                 ERR_PGMODELER_INSTPRETDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_INS_DUPLIC_RET_TAB_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {//Dispara exceção relatando o erro
    Parametro p;
@@ -228,9 +228,9 @@ void Funcao::definirQuantidadeLinhas(unsigned qtd_linhas)
 void Funcao::definirBiblioteca(const QString &biblioteca)
 {
  if(linguagem->obterNome().toLower()!=~TipoLinguagem("c"))
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRBIBLIOFUNCLINGDIFC)
+  throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
                 .arg(QString::fromUtf8(this->obterAssinatura())),
-                ERR_PGMODELER_ATRBIBLIOFUNCLINGDIFC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->biblioteca=biblioteca;
 }
@@ -238,9 +238,9 @@ void Funcao::definirBiblioteca(const QString &biblioteca)
 void Funcao::definirSimbolo(const QString &simbolo)
 {
  if(linguagem->obterNome().toLower()!=~TipoLinguagem("c"))
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRBIBLIOFUNCLINGDIFC)
+  throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
                 .arg(QString::fromUtf8(this->obterAssinatura())),
-                ERR_PGMODELER_ATRBIBLIOFUNCLINGDIFC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->simbolo=simbolo;
 }
@@ -260,11 +260,11 @@ void Funcao::definirLinguagem(ObjetoBase *linguagem)
  /* Caso se tente atribuir uma linguagem não alocada  função
     um erro é gerado */
  if(!linguagem)
-  throw Exception(ERR_PGMODELER_ATRLINGNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_NOT_ALOC_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Caso se tente inserir um objeto alocado porém que não é uma linguagem
     um erro é gerado */
  else if(linguagem->obterTipoObjeto()!=OBJETO_LINGUAGEM)
-  throw Exception(ERR_PGMODELER_ATRLINGTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_LANGUAGE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   this->linguagem=linguagem;
@@ -294,9 +294,9 @@ void Funcao::definirTipoComportamento(TipoComportamento tipo)
 void Funcao::definirCodigoFonte(const QString &codigo)
 {
  if(linguagem->obterNome().toLower()==~TipoLinguagem("c"))
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRCORPOFUNCLINGC)
+  throw Exception(Exception::getErrorMessage(ERR_ASG_CODE_FUNC_C_LANGUAGE)
                 .arg(QString::fromUtf8(this->obterAssinatura())),
-                ERR_PGMODELER_ATRCORPOFUNCLINGC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_ASG_CODE_FUNC_C_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->codigo_fonte=codigo;
 }
@@ -362,7 +362,7 @@ Parametro Funcao::obterParametro(unsigned idx_param)
     da lista de parâmetros */
  if(idx_param>=params.size())
   //Dispara exceção relatando o erro
-  throw Exception(ERR_PGMODELER_REFPARAMIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_PARAM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Retorna o parâmetro no índice desejado
   return(params[idx_param]);
@@ -374,7 +374,7 @@ Parametro Funcao::obterTipoRetTabela(unsigned idx_tipo)
     da lista de tipos de retorno */
  if(idx_tipo>=tipos_ret_tabela.size())
   //Dispara exceção relatando o erro
-  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Retorna o item no índice desejado
   return(tipos_ret_tabela[idx_tipo]);
@@ -441,7 +441,7 @@ void Funcao::removerParametro(unsigned idx_param)
     da lista de parâmetros */
  if(idx_param>=params.size())
   //Dispara exceção relatando o erro
-  throw Exception(ERR_PGMODELER_REFPARAMIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_PARAM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   vector<Parametro>::iterator itr;
@@ -458,7 +458,7 @@ void Funcao::removerTipoRetTabela(unsigned idx_tipo)
     da lista de parâmetros */
  if(idx_tipo>=tipos_ret_tabela.size())
   //Dispara exceção relatando o erro
-  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   vector<Parametro>::iterator itr;

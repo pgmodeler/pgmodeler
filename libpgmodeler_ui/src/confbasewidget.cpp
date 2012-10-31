@@ -60,8 +60,8 @@ void ConfBaseWidget::salvarConfiguracao(const QString &id_conf)
 
   //Caso não consiga abrir o arquivo para gravação
   if(!saida.isOpen())
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ARQNAOGRAVADO).arg(QString::fromUtf8(nome_arq)),
-                 ERR_PGMODELER_ARQNAOGRAVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(QString::fromUtf8(nome_arq)),
+                 ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Grava o buffer gerado no arquivo
   saida.write(buf.toStdString().c_str(), buf.size());
@@ -70,8 +70,8 @@ void ConfBaseWidget::salvarConfiguracao(const QString &id_conf)
  catch(Exception &e)
  {
   if(saida.isOpen()) saida.close();
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ARQNAOGRAVADODEFINV).arg(QString::fromUtf8(nome_arq)),
-                ERR_PGMODELER_ARQNAOGRAVADODEFINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(QString::fromUtf8(nome_arq)),
+                ERR_FILE_NOT_WRITTER_INV_DEF,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -95,8 +95,8 @@ void ConfBaseWidget::restaurarPadroes(const QString &id_conf)
 
  //Verifica a existência do arquivo padrão, caso não existe emite uma exceção e a restauração é abortada
  if(!QFile::exists(arq_orig))
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_CONFPADRAONAORESTAURADA).arg(QString::fromUtf8(arq_orig)),
-                ERR_PGMODELERUI_CONFPADRAONAORESTAURADA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(Exception::getErrorMessage(ERR_DEFAULT_CONFIG_NOT_REST).arg(QString::fromUtf8(arq_orig)),
+                ERR_DEFAULT_CONFIG_NOT_REST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   //Remove o arquivo atual

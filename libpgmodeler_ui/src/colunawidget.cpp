@@ -43,7 +43,7 @@ void ColunaWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai, Li
  TipoPgSQL tipo;
 
  if(!objeto_pai)
-  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, coluna, objeto_pai);

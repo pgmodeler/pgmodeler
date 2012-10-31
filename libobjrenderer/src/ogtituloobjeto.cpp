@@ -34,11 +34,11 @@ void OGTituloObjeto::configurarObjeto(ObjetoGraficoBase *objeto)
 
  //Dispara uma exceção caso o objeto dono do título não esteja alocado
  if(!objeto)
-  throw Exception(ERR_PGMODELER_OPROBJNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
  //Dispara uma exceção caso o objeto dono do título não seja uma visão ou tabela
  else if(objeto->obterTipoObjeto()!=OBJETO_TABELA  &&
          objeto->obterTipoObjeto()!=OBJETO_VISAO)
-  throw Exception(ERR_PGMODELER_OPROBJTIPOINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_OPR_OBJ_INV_TYPE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  //Selecionando os atributos de cores conforme o tipo do objeto dono
  if(objeto->obterTipoObjeto()==OBJETO_VISAO)

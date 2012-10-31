@@ -168,7 +168,7 @@ void Sequencia::definirEsquema(ObjetoBase *esquema)
 
   //Verifica se o esquema sendo atribuíd�  seqüência é o mesmo da tabela possuidora
   if(tabela && tabela->obterEsquema()!=esquema)
-    throw Exception(ERR_PGMODELER_ATRESQDIFSEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(ERR_ASG_SEQ_DIF_TABLE_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  //Atribui o esquema   sequencia
@@ -196,16 +196,16 @@ void Sequencia::definirValores(QString vmin, QString vmax, QString inc, QString 
     que seu valor é invalido, sendo assim uma exceção é disparada*/
  if(vmin==""   || vmax=="" || inc=="" ||
     inicio=="" || cache=="")
-  throw Exception(ERR_PGMODELER_ATRESQVALORINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_VALUE_SEQ_ATTRIBS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(compararValores(vmin,vmax) > 0)
-  throw Exception(ERR_PGMODELER_ATRESQVALORMININV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_SEQ_MIN_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(compararValores(inicio, vmin) < 0 ||
          compararValores(inicio, vmax) > 0)
-  throw Exception(ERR_PGMODELER_ATRESQVALORINIINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_SEQ_START_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(valorNulo(inc))
-  throw Exception(ERR_PGMODELER_ATRESQINCNULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_SEQ_INCR_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(valorNulo(cache))
-  throw Exception(ERR_PGMODELER_ATRESQCACHENULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_SEQ_CACHE_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->valor_min=vmin;
  this->valor_max=vmax;
@@ -223,16 +223,16 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
   // Verifica se a tabela não pertence ao mesmo esquema da sequencia.
   //   Caso não pertença, dispara uma exceção.
   if(tabela->obterEsquema()!=this->esquema)
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRESQDIFTAB)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_TAB_DIF_SEQ_SCHEMA)
                  .arg(QString::fromUtf8(this->obterNome(true))),
-                 ERR_PGMODELER_ATRESQDIFTAB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_TAB_DIF_SEQ_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     /* Verifica se a tabela não pertence ao mesmo dono da sequencia.
      Caso não pertença, dispara uma exceção. */
   if(tabela->obterDono()!=this->dono)
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRDONODIFTAB)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_SEQ_OWNER_DIF_TABLE)
                  .arg(QString::fromUtf8(this->obterNome(true))),
-                 ERR_PGMODELER_ATRDONODIFTAB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Obtém a coluna da tabela com base no nome passado
   this->coluna=tabela->obterColuna(nome_coluna);
@@ -244,9 +244,9 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
 
   //Caso a coluna não exista
   if(!this->coluna)
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRCOLPOSINDEF)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_INEXIST_OWNER_COL_SEQ)
                  .arg(QString::fromUtf8(this->obterNome(true))),
-                 ERR_PGMODELER_ATRCOLPOSINDEF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_INEXIST_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
 
@@ -262,23 +262,23 @@ void Sequencia::definirPossuidora(Coluna *coluna)
 
   //CAso a coluna possuidor não seja de uma tabela
   if(!tabela)
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRCOLPOSNAORELAC)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_INV_OWNER_COL_SEQ)
                  .arg(QString::fromUtf8(this->obterNome(true))),
-                 ERR_PGMODELER_ATRCOLPOSNAORELAC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_INV_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Verifica se a tabela não pertence ao mesmo esquema da sequencia.
      Caso não pertença, dispara uma exceção. */
   if(tabela->obterEsquema()!=this->esquema)
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRESQDIFTAB)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_TAB_DIF_SEQ_SCHEMA)
                  .arg(QString::fromUtf8(this->obterNome(true))),
-                 ERR_PGMODELER_ATRESQDIFTAB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_TAB_DIF_SEQ_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Verifica se a tabela não pertence ao mesmo dono da sequencia.
      Caso não pertença, dispara uma exceção. */
   if(tabela->obterDono()!=this->dono)
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRDONODIFTAB)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_SEQ_OWNER_DIF_TABLE)
                  .arg(QString::fromUtf8(this->obterNome(true))),
-                 ERR_PGMODELER_ATRDONODIFTAB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   this->coluna=coluna;
 

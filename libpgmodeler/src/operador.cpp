@@ -72,11 +72,11 @@ bool Operador::nomeValido(const QString &nome)
 void Operador::definirNome(const QString &nome)
 {
  if(nome=="")
-  throw Exception(ERR_PGMODELER_ATRNOMEOBJVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   if(!nomeValido(nome))
-   throw Exception(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
    this->nome=nome;
  }
@@ -86,23 +86,23 @@ void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
 {
  //Caso o tipo de função seja inválido
  if(tipo_funcao > FUNC_RESTRICAO)
-  throw Exception(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(tipo_funcao==FUNC_OPERADOR)
  {
   /* Caso a função não esteja alocada e se tente atribuí-la
      como função executada pelo operador */
   if(!funcao)
-    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNAOALOC)
+    throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->obterNome(true)))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_OPERADOR)),
-                  ERR_PGMODELER_ATRFUNCNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                  ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Caso o número de parâmetros da função seja inválido. Para operadores
      a mesma deve possuir 1 ou 2 parâmetros */
   else if(funcao->obterNumParams()==0 || funcao->obterNumParams() > 2)
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_OPERADOR)),
-                 ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
    unsigned qtd_params=funcao->obterNumParams();
@@ -139,7 +139,7 @@ void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
       (qtd_params==1 &&
        ((tipo_args[0]!="any" && tipo_args[0]!=tipo_param1) ||
         (tipo_args[1]!="any" && tipo_args[1]!=tipo_param1))))
-     throw Exception(ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+     throw Exception(ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
  }
 
@@ -150,7 +150,7 @@ void Operador::definirTipoDadoArgumento(TipoPgSQL tipo_dado, unsigned tipo_arg)
 {
  //Caso o tipo de argumento seja inválido
  if(tipo_arg > ARG_DIREITA)
-  throw Exception( ERR_PGMODELER_REFARGOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception( ERR_REF_OPER_ARG_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   tipo_args[tipo_arg]=tipo_dado;
 }
@@ -159,7 +159,7 @@ void Operador::definirOperador(Operador *op, unsigned tipo_op)
 {
  //Caso o tipo de operador seja inválido
  if(tipo_op > OPER_MAIOR)
-   throw Exception(ERR_PGMODELER_REFOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_REF_OPER_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   /* Validando OP Comutação: De acordo com a documentação do PostgreSQL o operador
@@ -171,10 +171,10 @@ void Operador::definirOperador(Operador *op, unsigned tipo_op)
      da documentação  */
   if(op && tipo_op==OPER_COMUTACAO && tipo_args[ARG_ESQUERDA]!=op->tipo_args[ARG_DIREITA])
   {
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATROPERCOMUTINV)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_INV_COM_OPEERATOR)
                          .arg(QString::fromUtf8(op->obterAssinatura(true)))
                          .arg(QString::fromUtf8(this->obterAssinatura(true))),
-                 ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
   /* Validando OP Negação: De acordo com a documentação do PostgreSQL o operador
      de negação deve possuir seus argumentos do mesmo tipo dos argumentos
@@ -186,10 +186,10 @@ void Operador::definirOperador(Operador *op, unsigned tipo_op)
           (tipo_args[ARG_ESQUERDA]!=op->tipo_args[ARG_ESQUERDA] &&
            tipo_args[ARG_DIREITA]!=op->tipo_args[ARG_DIREITA]))
   {
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATROPERNEGINV)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_INV_NEG_OPERATOR)
                          .arg(QString::fromUtf8(op->obterAssinatura(true)))
                          .arg(QString::fromUtf8(this->obterAssinatura(true))),
-                 ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
   else
    operadores[tipo_op]=op;
@@ -210,7 +210,7 @@ Funcao *Operador::obterFuncao(unsigned tipo_funcao)
 {
  //Caso o tipo de função seja inválido
  if(tipo_funcao > FUNC_RESTRICAO)
-  throw Exception(ERR_PGMODELER_REFOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OPER_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(funcoes[tipo_funcao]);
 }
@@ -219,7 +219,7 @@ TipoPgSQL Operador::obterTipoDadoArgumento(unsigned tipo_arg)
 {
  //Caso o tipo de argumento seja inválido
  if(tipo_arg > ARG_DIREITA)
-  throw Exception( ERR_PGMODELER_REFARGOPTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception( ERR_REF_OPER_ARG_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  return(tipo_args[tipo_arg]);
 }
 
@@ -227,7 +227,7 @@ Operador *Operador::obterOperador(unsigned tipo_op)
 {
  //Caso o tipo de operador seja inválido
  if(tipo_op > OPER_MAIOR)
-  throw Exception(ERR_PGMODELER_REFFUNCTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  return(operadores[tipo_op]);
 }
 

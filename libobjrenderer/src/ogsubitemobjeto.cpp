@@ -400,7 +400,7 @@ void OGSubItemObjeto::configurarObjeto(Referencia referencia)
 void OGSubItemObjeto::definirPosXObjetoFilho(unsigned idx_obj, float px)
 {
  if(idx_obj >= 4)
-  throw Exception(ERR_PGMODELER_REFOBJIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_REF_OBJ_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  if(idx_obj==0)
   descritor->setPos(px, descritor->pos().y());
@@ -411,7 +411,7 @@ void OGSubItemObjeto::definirPosXObjetoFilho(unsigned idx_obj, float px)
 QGraphicsItem *OGSubItemObjeto::obterObjetoFilho(unsigned idx_obj)
 {
  if(idx_obj >= 4)
-  throw Exception(ERR_PGMODELER_REFOBJIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_REF_OBJ_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  if(idx_obj==0)
   return(descritor);

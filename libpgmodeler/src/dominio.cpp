@@ -46,7 +46,7 @@ void Dominio::definirNomeRestricao(const QString &nome_constr)
  /* Verifica se o nome da constraint é valido de acordo com as
     regras de nomenclatura do PostgreSQL */
  if(!ObjetoBase::nomeValido(nome_constr))
-  throw Exception(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->nome_rest=nome_constr;
 }

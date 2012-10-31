@@ -22,10 +22,10 @@ void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
      é disparada uma exceção, pois um tipo de dado nulo não deve participar
      de uma conversão */
   if((*tipo_dado)=="")
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRTIPONULO)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
-                 ERR_PGMODELER_ATRTIPONULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Atribui o tipo de dado ao índice especifico de tipos de dados
      envolvidos na conversão */
@@ -34,7 +34,7 @@ void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
  else
   /* Caso o índice usado para referenciar o tipo de dado seja inválido
      é disparada um exceção */
-  throw Exception(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->nome=QString("cast(%1,%2)").arg(~tipos[CONV_TIPO_ORIGEM]).arg(~tipos[CONV_TIPO_DESTINO]);
 }
@@ -44,7 +44,7 @@ void ConversaoTipo::definirTipoConversao(unsigned tipo)
  /* Caso se tente atribuir um tipo inválido de conversão
     uma exceção será disparada */
  if(tipo!=CONV_ATRIBUICAO && tipo!=CONV_IMPLICITA)
-  throw Exception(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->tipo=tipo;
 }
@@ -60,20 +60,20 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  bool erro=false;
 
  if(!funcao_conv)
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNAOALOC)
+  throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
-                ERR_PGMODELER_ATRFUNCNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o número de parâmetros da função para validações específicas
  qtd_param=funcao_conv->obterNumParams();
 
  //A função deve possuir número de parâmetros de 1 a 3
  if(qtd_param==0 || qtd_param > 3)
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
+  throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
-                ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   /* Verifica se o tipo do primeiro parâmetro é diferente do tipo do
@@ -90,18 +90,18 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
 
   //Caso alguma das validações acima falhe dispara-se uma exceção
   if(erro)
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCPARAMINV)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
-                 ERR_PGMODELER_ATRFUNCPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  //Verifica se o tipo de retorno da função é diferente do tipo de destino da conversão
  if(funcao_conv->obterTipoRetorno()!=this->tipos[CONV_TIPO_DESTINO])
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCRETINV)
+  throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
-                ERR_PGMODELER_ATRFUNCRETINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->funcao_conv=funcao_conv;
 }
@@ -114,7 +114,7 @@ TipoPgSQL ConversaoTipo::obterTipoDado(unsigned idx_tipo)
   return(this->tipos[idx_tipo]);
  else
   //Caso o índice usado seja inválido, dispare-se uma exceção
-  throw Exception(ERR_PGMODELER_REFTIPOIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 bool ConversaoTipo::obterEntradaSaida(void)

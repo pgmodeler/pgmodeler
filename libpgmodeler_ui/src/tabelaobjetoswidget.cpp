@@ -96,7 +96,7 @@ void TabelaObjetosWidget::definirRotuloCabecalho(const QString &rotulo, unsigned
  /* Caso o índice da coluna do cabeçalho referenciada seja inválida
     dispara um erro indicando a situação */
  if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
-  throw Exception(ERR_PGMODELERUI_REFCOLTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o item que representa o cabeçalho na coluna indicada
  item=tabela_tbw->horizontalHeaderItem(idx_col);
@@ -111,7 +111,7 @@ void TabelaObjetosWidget::definirIconeCabecalho(const QIcon &icone, unsigned idx
  /* Caso o índice da coluna do cabeçalho referenciada seja inválida
     dispara um erro indicando a situação */
  if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
-  throw Exception(ERR_PGMODELERUI_REFCOLTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o item que representa o cabeçalho na coluna indicada
  item=tabela_tbw->horizontalHeaderItem(idx_col);
@@ -126,12 +126,12 @@ void TabelaObjetosWidget::definirIconeCelula(const QIcon &icone, unsigned idx_li
  /* Caso o índice da linha da célula a ser referenciada seja inválida
     dispara um erro indicando a situação */
  if(idx_lin >= static_cast<unsigned>(tabela_tbw->rowCount()))
-  throw Exception(ERR_PGMODELERUI_REFLINTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Caso o índice da coluna da célula a ser referenciada seja inválida
     dispara um erro indicando a situação */
  if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
-  throw Exception(ERR_PGMODELERUI_REFCOLTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o item o qual representa a célula
  item=tabela_tbw->item(idx_lin, idx_col);
@@ -146,12 +146,12 @@ void TabelaObjetosWidget::definirTextoCelula(const QString &texto, unsigned idx_
  /* Caso o índice da linha da célula a ser referenciada seja inválida
     dispara um erro indicando a situação */
  if(idx_lin >= static_cast<unsigned>(tabela_tbw->rowCount()))
-  throw Exception(ERR_PGMODELERUI_REFLINTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Caso o índice da coluna da célula a ser referenciada seja inválida
     dispara um erro indicando a situação */
  if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
-  throw Exception(ERR_PGMODELERUI_REFCOLTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o item o qual representa a célula
  item=tabela_tbw->item(idx_lin,idx_col);
@@ -167,7 +167,7 @@ void TabelaObjetosWidget::definirFonteLinha(int idx_lin, const QFont &fonte, con
  /* Caso o índice da linha da célula a ser referenciada seja inválida
     dispara um erro indicando a situação */
  if(idx_lin >= tabela_tbw->rowCount())
-  throw Exception(ERR_PGMODELERUI_REFLINTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  qtd_col=tabela_tbw->columnCount();
  for(i=0; i < qtd_col; i++)
@@ -186,7 +186,7 @@ void TabelaObjetosWidget::definirDadoLinha(const QVariant &dado, unsigned idx_li
  /* Caso o índice da linha da célula a ser referenciada seja inválida
     dispara um erro indicando a situação */
  if(idx_lin >= static_cast<unsigned>(tabela_tbw->rowCount()))
-  throw Exception(ERR_PGMODELERUI_REFLINTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Obtém o ítem que representa o cabeçalho vertical da linha.
     Este cabeçalho é usado para armazenar o dado que a linha guarda.
@@ -215,7 +215,7 @@ QString TabelaObjetosWidget::obterRotuloCabecalho(unsigned idx_col)
  /* Caso o índice da coluna do cabeçalho a ser referenciado seja inválida
     dispara um erro indicando a situação */
  if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
-  throw Exception(ERR_PGMODELERUI_REFCOLTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o cabeçalho e retorna seu texto
  item=tabela_tbw->horizontalHeaderItem(idx_col);
@@ -229,12 +229,12 @@ QString TabelaObjetosWidget::obterTextoCelula(unsigned idx_lin, unsigned idx_col
  /* Caso o índice da linha da célula a ser referenciada seja inválida
     dispara um erro indicando a situação */
  if(idx_lin >= static_cast<unsigned>(tabela_tbw->rowCount()))
-  throw Exception(ERR_PGMODELERUI_REFLINTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Caso o índice da coluna da célula a ser referenciada seja inválida
     dispara um erro indicando a situação */
  if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
-  throw Exception(ERR_PGMODELERUI_REFCOLTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Obtém o item que representa a célula na linha e coluna especificadas
     e procede com o retorno do seu texto */
@@ -249,7 +249,7 @@ QVariant TabelaObjetosWidget::obterDadoLinha(unsigned idx_lin)
  /* Caso o índice da linha a ser referenciada seja inválida
     dispara um erro indicando a situação */
  if(idx_lin >= static_cast<unsigned>(tabela_tbw->rowCount()))
-  throw Exception(ERR_PGMODELERUI_REFLINTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o cabeçalho vertical da linha o qual armazena o dado desta
  item=tabela_tbw->verticalHeaderItem(idx_lin);
@@ -368,7 +368,7 @@ void TabelaObjetosWidget::removerLinha(unsigned idx_lin)
  /* Caso o índice da linha da célula a ser referenciada seja inválida
     dispara um erro indicando a situação */
  if(idx_lin >= static_cast<unsigned>(tabela_tbw->rowCount()))
-  throw Exception(ERR_PGMODELERUI_REFLINTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Limpa a seleção da linha atual
  tabela_tbw->clearSelection();
@@ -456,7 +456,7 @@ void TabelaObjetosWidget::removerColuna(unsigned idx_col)
  /* Caso o índice da coluna a ser removida seja inválido retorna um erro
     e aborta a operação */
  if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
-  throw Exception(ERR_PGMODELERUI_REFCOLTABOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Remove a coluna no indice especificado e limpa a seleção
  tabela_tbw->removeColumn(idx_col);

@@ -121,8 +121,8 @@ void FormExportacao::exportarModelo(void)
 
    //Caso a imagem não possa ser salva, retorna um erro
    if(!pix.save(imagem_edt->text()))
-    throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ARQNAOGRAVADO).arg(QString::fromUtf8(imagem_edt->text())),
-                  ERR_PGMODELER_ARQNAOGRAVADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(QString::fromUtf8(imagem_edt->text())),
+                  ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
 
@@ -321,8 +321,8 @@ void FormExportacao::exportarModelo(void)
        if(!ignorar_dup_chk->isChecked() ||
           (ignorar_dup_chk->isChecked() &&
            std::find(vet_cod_erros.begin(), vet_cod_erros.end(), e.getExtraInfo())==vet_cod_erros.end()))
-        throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_FALHAEXPORTACAO).arg(QString::fromUtf8(cmd_sql)),
-                      ERR_PGMODELERUI_FALHAEXPORTACAO,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+        throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE).arg(QString::fromUtf8(cmd_sql)),
+                      ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
        else
         vet_erros.push_back(e);
       }

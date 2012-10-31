@@ -72,8 +72,8 @@ void SchemaParser::getPgSQLVersions(vector<QString> &versions)
  //In case that the directory doesn't exists an error is raised
  if(!directory.exists())
  {
-  str_aux=Exception::getErrorMessage(ERR_PARSERS_ARQDIRNAOCARREGADO).arg(path);
-  throw Exception(str_aux, ERR_PARSERS_ARQDIRNAOCARREGADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  str_aux=Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(path);
+  throw Exception(str_aux, ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  //Clears the list of past versions
@@ -110,8 +110,8 @@ void SchemaParser::loadFile(const QString &file)
 
   if(!input.is_open())
   {
-   str_aux=Exception::getErrorMessage(ERR_PARSERS_ARQDIRNAOCARREGADO).arg(file);
-   throw Exception(str_aux, ERR_PARSERS_ARQDIRNAOCARREGADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   str_aux=Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(file);
+   throw Exception(str_aux, ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
   //Prepares the parser to do new reading
@@ -211,9 +211,9 @@ QString SchemaParser::getAttribute(void)
  if(error)
  {
   //Raise a syntax error
-  str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
+  str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
           .arg(filename).arg((line + comment_count + 1)).arg((column+1));
-  throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  return(atrib);
@@ -287,10 +287,10 @@ QString SchemaParser::getPureText(void)
 
  if(error)
  {
-  str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
+  str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
           .arg(filename).arg((line + comment_count + 1)).arg((column+1));
 
-  throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  return(text);
@@ -326,9 +326,9 @@ QString SchemaParser::getConditional(void)
 
  if(error)
  {
-  str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
+  str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
           .arg(filename).arg(line + comment_count + 1).arg(column+1);
-  throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  return(conditional);
@@ -362,9 +362,9 @@ QString SchemaParser::getMetaCharacter(void)
 
  if(error)
  {
-  str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
+  str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
           .arg(filename).arg(line + comment_count + 1).arg(column+1);
-  throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  return(meta);
@@ -403,7 +403,7 @@ QString SchemaParser::getObjectDefinition(const QString & obj_name, map<QString,
        postgresql */
 
     //If the exception is of another type than 'file not loaded' redirects error
-    if(e.getErrorType()!=ERR_PARSERS_ARQDIRNAOCARREGADO)
+    if(e.getErrorType()!=ERR_FILE_DIR_NOT_ACCESSED)
      throw Exception(e.getErrorMessage(),e.getErrorType(),
                    __PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 
@@ -485,19 +485,19 @@ QString SchemaParser::getObjectDefinition(const QString &filename, map<QString,Q
       if(meta!=TOKEN_META_SP && meta!=TOKEN_META_TB &&
          meta!=TOKEN_META_BR)
       {
-       str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_METACHARINV))
+       str_aux=QString(Exception::getErrorMessage(ERR_INV_METACHARACTER))
                .arg(meta).arg(filename).arg(line + comment_count +1).arg(column+1);
 
 
-       throw Exception(str_aux,ERR_PARSERS_METACHARINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(str_aux,ERR_INV_METACHARACTER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
       //Checks whether the metacharacter is part of the  'if' expression (this is an error)
       else if(if_level>=0 && vet_tk_if[if_level] && !vet_tk_then[if_level])
       {
-       str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
+       str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
                .arg(filename).arg(line + comment_count +1).arg(column+1);
 
-       throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
       else
       {
@@ -543,9 +543,9 @@ QString SchemaParser::getObjectDefinition(const QString &filename, map<QString,Q
       {
        if(!ignore_unk_atribs)
        {
-        str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_ATRIBUTODESC))
+        str_aux=QString(Exception::getErrorMessage(ERR_UNK_ATTRIBUTE))
                 .arg(atrib).arg(filename).arg((line + comment_count +1)).arg((column+1));
-        throw Exception(str_aux,ERR_PARSERS_ATRIBUTODESC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(str_aux,ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
        else
         attributes[atrib]="";
@@ -570,10 +570,10 @@ QString SchemaParser::getObjectDefinition(const QString &filename, map<QString,Q
           may appear if expression */
        else if(if_attrib && vet_tk_if[if_level] && !vet_tk_then[if_level])
        {
-        str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
+        str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
                 .arg(filename).arg(line + comment_count +1).arg(column+1);
 
-        throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
        else
        {
@@ -599,10 +599,10 @@ QString SchemaParser::getObjectDefinition(const QString &filename, map<QString,Q
       {
        if(attributes[atrib]=="")
        {
-        str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_ATRIBVALORNULO))
+        str_aux=QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
                 .arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1);
 
-        throw Exception(str_aux,ERR_PARSERS_ATRIBVALORNULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(str_aux,ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
 
        /* If the parser is not in an if / else, concatenates the value of the attribute
@@ -620,9 +620,9 @@ QString SchemaParser::getObjectDefinition(const QString &filename, map<QString,Q
       if(cond!=TOKEN_IF && cond!=TOKEN_ELSE &&
          cond!=TOKEN_THEN && cond!=TOKEN_END)
       {
-       str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_CONDICIONALINV))
+       str_aux=QString(Exception::getErrorMessage(ERR_INV_CONDITIONAL))
                .arg(cond).arg(filename).arg(line + comment_count +1).arg(column+1);
-       throw Exception(str_aux,ERR_PARSERS_CONDICIONALINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(str_aux,ERR_INV_CONDITIONAL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
       else
       {
@@ -731,9 +731,9 @@ QString SchemaParser::getObjectDefinition(const QString &filename, map<QString,Q
            //If the attribute has no value set raises an exception
            if(word=="")
            {
-            str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_ATRIBVALORNULO))
+            str_aux=QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
                     .arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1);
-            throw Exception(str_aux,ERR_PARSERS_ATRIBVALORNULO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+            throw Exception(str_aux,ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
            }
           }
 
@@ -781,9 +781,9 @@ QString SchemaParser::getObjectDefinition(const QString &filename, map<QString,Q
 
        if(error)
        {
-        str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
+        str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
                 .arg(filename).arg(line + comment_count +1).arg(column+1);
-        throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+        throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
       }
      break;
@@ -803,9 +803,9 @@ QString SchemaParser::getObjectDefinition(const QString &filename, map<QString,Q
            because only an attribute must be on the 'if' expression  */
         if(vet_tk_if[if_level] && !vet_tk_then[if_level])
         {
-         str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
+         str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
                  .arg(filename).arg(line + comment_count +1).arg(column+1);
-         throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+         throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
         //Case the parser is in 'if' section
         else if(vet_tk_if[if_level] &&
@@ -828,9 +828,9 @@ QString SchemaParser::getObjectDefinition(const QString &filename, map<QString,Q
       was not closed thus the parser returns an error */
    if(if_cnt!=end_cnt)
    {
-    str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_SINTAXEINV))
+    str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
             .arg(filename).arg(line + comment_count +1).arg(column+1);
-    throw Exception(str_aux,ERR_PARSERS_SINTAXEINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
   }
  }

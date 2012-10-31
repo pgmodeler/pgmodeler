@@ -73,7 +73,7 @@ void FormConfiguracao::carregarConfiguracao(void)
  }
  catch(Exception &e)
  {
-  throw Exception(ERR_PGMODELERUI_CONFNAOCARREGADA,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  throw Exception(ERR_CONFIG_NOT_LOADED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 

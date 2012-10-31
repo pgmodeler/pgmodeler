@@ -9,18 +9,18 @@ Referencia::Referencia(void)
 Referencia::Referencia(Tabela *tabela, Coluna *coluna, const QString &alias_tab, const QString &alias_col)
 {
  if(!tabela)
-  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Caso o alias atribuido   tabela/expressão ou coluna seja inválido
     de acordo com a regra de nomenclatura do PostgreSQL */
  else if((!alias_tab.isEmpty() && !ObjetoBase::nomeValido(alias_tab)) ||
          (!alias_col.isEmpty() && !ObjetoBase::nomeValido(alias_col)))
-  throw Exception(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Caso se tente criar uma referência a uma coluna cuja tabela pai seja
     diferente da tabela informada no parâmetro */
  else if(coluna && coluna->obterTabelaPai()!=tabela)
-  throw Exception(ERR_PGMODELER_ATROBJRELAC ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_OBJ_BELONGS_OTHER_TABLE ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Atribui os parâmetros aos atributos do objeto
  this->tabela=tabela;
@@ -32,11 +32,11 @@ Referencia::Referencia(Tabela *tabela, Coluna *coluna, const QString &alias_tab,
 Referencia::Referencia(const QString &expressao, const QString &alias_exp)
 {
  if(expressao=="")
-  throw Exception(ERR_PGMODELER_ATREXPRINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Caso o alias da expressão seja inválido de acordo com as regras de
     nomenclatura do PostgreSQL */
  else if(!ObjetoBase::nomeValido(alias_exp))
-  throw Exception(ERR_PGMODELER_ATRNOMEOBJINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  tabela=NULL;
  coluna=NULL;

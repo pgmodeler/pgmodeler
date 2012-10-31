@@ -87,7 +87,7 @@ void CrashHandler::carregarRelatorio(const QString &arquivo)
 
  //Caso o arquivo  não foi aberto com sucesso, exibe um erro
  if(!entrada.is_open())
-  caixa.show(trUtf8("Error"), Exception::getErrorMessage(ERR_PARSERS_ARQDIRNAOCARREGADO).arg(arquivo), CaixaMensagem::ICONE_ERRO);
+  caixa.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(arquivo), CaixaMensagem::ICONE_ERRO);
  else
  {
   QByteArray buf_descomp;
@@ -147,7 +147,7 @@ void CrashHandler::gerarRelatorio(void)
 
  //Caso não possa ser aberto, exibe um erro
  if(!saida.is_open())
-  caixa.show(trUtf8("Error"), Exception::getErrorMessage(ERR_PGMODELER_ARQNAOGRAVADO).arg(arq_crash), CaixaMensagem::ICONE_ERRO);
+  caixa.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(arq_crash), CaixaMensagem::ICONE_ERRO);
  else
  {
   //Insere a descrição das ações no buffer

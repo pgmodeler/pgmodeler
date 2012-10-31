@@ -56,8 +56,8 @@ void XMLParser::loadXMLFile(const QString &filename)
    //Case the file opening was sucessful
    if(!input.is_open())
    {
-    str_aux=QString(Exception::getErrorMessage(ERR_PARSERS_ARQDIRNAOCARREGADO)).arg(filename);
-    throw Exception(str_aux,ERR_PARSERS_ARQDIRNAOCARREGADO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    str_aux=QString(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED)).arg(filename);
+    throw Exception(str_aux,ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
    buffer="";
@@ -87,7 +87,7 @@ void XMLParser::loadXMLBuffer(const QString &xml_buf)
   int pos1=-1, pos2=-1, tam=0;
 
   if(xml_buf.isEmpty())
-   throw Exception(ERR_PARSERS_ATRIBBUFXMLVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_ASG_EMPTY_XML_BUFFER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   pos1=xml_buf.find("<?xml");
   pos2=xml_buf.find("?>");
@@ -114,10 +114,10 @@ void XMLParser::loadXMLBuffer(const QString &xml_buf)
 void XMLParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 {
  if(dtd_file.isEmpty())
-  throw Exception(ERR_PARSERS_ATRIBARQDTDVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_EMPTY_DTD_FILE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(dtd_name.isEmpty())
-  throw Exception(ERR_PARSERS_ATRIBNOMEDTDVAZIO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_EMPTY_DTD_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  dtd_decl="<!DOCTYPE " + dtd_name + " SYSTEM " + "\"" +  dtd_file + "\">\n";
 }
@@ -168,9 +168,9 @@ void XMLParser::readBuffer(void)
    if(xml_doc) restartParser();
 
    //Raise an exception with the error massege from the parser xml
-   throw Exception(QString(Exception::getErrorMessage(ERR_PARSERS_LIBXMLERR))
+   throw Exception(QString(Exception::getErrorMessage(ERR_LIBXMLERR))
                  .arg(xml_error->line).arg(xml_error->int2).arg(msg).arg(file),
-                 ERR_PARSERS_LIBXMLERR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_LIBXMLERR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
   //Gets the referênce to the root element on the document
@@ -184,7 +184,7 @@ void XMLParser::readBuffer(void)
 void XMLParser::savePosition(void)
 {
  if(!root_elem)
-  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_ELEM_TREE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  elems_stack.push(curr_elem);
 }
@@ -192,7 +192,7 @@ void XMLParser::savePosition(void)
 void XMLParser::restorePosition(void)
 {
  if(!root_elem)
-  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_ELEM_TREE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(elems_stack.empty())
   curr_elem=root_elem;
@@ -206,9 +206,9 @@ void XMLParser::restorePosition(void)
 void XMLParser::restorePosition(const xmlNode *elem)
 {
  if(!elem)
-  throw Exception(ERR_PARSERS_OPRELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(elem->doc!=xml_doc)
-  throw Exception(ERR_PARSERS_OPRELEMINVARVDOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_INEXIST_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  restartNavigation();
  curr_elem=const_cast<xmlNode *>(elem);
@@ -217,7 +217,7 @@ void XMLParser::restorePosition(const xmlNode *elem)
 void XMLParser::restartNavigation(void)
 {
  if(!root_elem)
-  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_ELEM_TREE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  curr_elem=root_elem;
 
@@ -248,7 +248,7 @@ bool XMLParser::accessElement(unsigned elem_type)
  xmlNode *elems[4];
 
  if(!root_elem)
-  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_ELEM_TREE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  elems[ROOT_ELEMENT]=curr_elem->parent;
  elems[CHILD_ELEMENT]=curr_elem->children;
@@ -270,7 +270,7 @@ bool XMLParser::accessElement(unsigned elem_type)
 bool XMLParser::hasElement(unsigned tipo_elem)
 {
  if(!root_elem)
-  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_ELEM_TREE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(tipo_elem==ROOT_ELEMENT)
   /* Returns the verification if the current element has a parent.
@@ -291,7 +291,7 @@ bool XMLParser::hasElement(unsigned tipo_elem)
 bool XMLParser::hasAttributes(void)
 {
  if(!root_elem)
-  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_ELEM_TREE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(curr_elem->properties!=NULL);
 }
@@ -299,7 +299,7 @@ bool XMLParser::hasAttributes(void)
 QString XMLParser::getElementContent(void)
 {
  if(!root_elem)
-  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_ELEM_TREE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(QString(reinterpret_cast<char *>(curr_elem->content)));
 }
@@ -307,7 +307,7 @@ QString XMLParser::getElementContent(void)
 QString XMLParser::getElementName(void)
 {
  if(!root_elem)
-  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_ELEM_TREE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(QString(reinterpret_cast<const char *>(curr_elem->name)));
 }
@@ -315,7 +315,7 @@ QString XMLParser::getElementName(void)
 xmlElementType XMLParser::getElementType(void)
 {
  if(!root_elem)
-  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_ELEM_TREE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(curr_elem->type);
 }
@@ -331,7 +331,7 @@ void XMLParser::getElementAttributes(map<QString, QString> &attributes)
  QString attrib, value;
 
  if(!root_elem)
-  throw Exception(ERR_PARSERS_OPRARVELEMNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_ELEM_TREE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Always clears the passed attributes maps
  attributes.clear();

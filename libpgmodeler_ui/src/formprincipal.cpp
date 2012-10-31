@@ -1254,18 +1254,18 @@ void FormPrincipal::carregarPlugins(void)
   else
   {
    //Caso o plugin não foi carregado, armazena o erro para posterior exibição
-   vet_erros.push_back(Exception(Exception::getErrorMessage(ERR_PGMODELERUI_PLUGINNAOCARREGADO)
+   vet_erros.push_back(Exception(Exception::getErrorMessage(ERR_PLUGIN_NOT_LOADED)
                                .arg(QString::fromUtf8(lista_dirs.front()))
                                .arg(QString::fromUtf8(lib))
                                .arg(pl.errorString()),
-                               ERR_PGMODELERUI_PLUGINNAOCARREGADO, __PRETTY_FUNCTION__,__FILE__,__LINE__));
+                               ERR_PLUGIN_NOT_LOADED, __PRETTY_FUNCTION__,__FILE__,__LINE__));
   }
   lista_dirs.pop_front();
  }
 
  //Caso algum erro foi disparado no carregamento, redireciona o erro
  if(!vet_erros.empty())
-  throw Exception(ERR_PGMODELERUI_PLUGINSNAOCARREGADOS,__PRETTY_FUNCTION__,__FILE__,__LINE__, vet_erros);
+  throw Exception(ERR_PLUGINS_NOT_LOADED,__PRETTY_FUNCTION__,__FILE__,__LINE__, vet_erros);
 }
 
 void FormPrincipal::destruirPlugins(void)

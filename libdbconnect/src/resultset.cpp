@@ -14,7 +14,7 @@ ResultSet::ResultSet(PGresult *sql_result)
  int res_state;
 
  if(!sql_result)
-  throw Exception(ERR_CONEXBD_ATRRESSQLNAOALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_ASG_SQL_RESULT_NOT_ALOC, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  this->sql_result=sql_result;
  res_state=PQresultStatus(this->sql_result);
@@ -24,19 +24,19 @@ ResultSet::ResultSet(PGresult *sql_result)
  {
   //Generating an error in case the server returns an incomprehensible response
   case PGRES_BAD_RESPONSE:
-   throw Exception(ERR_CONEXBD_SGBDRESPINCOMP, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+   throw Exception(ERR_INCOMPREHENSIBLE_DBMS_RESP, __PRETTY_FUNCTION__, __FILE__, __LINE__);
   break;
 
   //Generating an error in case the server returns a fatal error
   case PGRES_FATAL_ERROR:
-   str_aux=QString(Exception::getErrorMessage(ERR_CONEXBD_SGBDERROFATAL))
+   str_aux=QString(Exception::getErrorMessage(ERR_DBMS_FATAL_ERROR))
            .arg(PQresultErrorMessage(sql_result));
-   throw Exception(str_aux,ERR_CONEXBD_SGBDERROFATAL, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+   throw Exception(str_aux,ERR_DBMS_FATAL_ERROR, __PRETTY_FUNCTION__, __FILE__, __LINE__);
   break;
 
   //Generating an error in case the user tries to get a result from an empty query
   case PGRES_EMPTY_QUERY:
-   throw Exception(ERR_CONEXBD_COMANDOSQLVAZIO, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+   throw Exception(ERR_EMPTY_SQL_COMMAND, __PRETTY_FUNCTION__, __FILE__, __LINE__);
   break;
 
   //In case of sucess states the result will be created
@@ -75,7 +75,7 @@ QString ResultSet::getColumnName(int column_idx)
 {
  //Throws an error in case the column index is invalid
  if(column_idx < 0 || column_idx >= getColumnCount())
-  throw Exception(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_REF_TUPLE_COL_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  //Returns the column name on the specified index
  return(QString(PQfname(sql_result, column_idx)));
@@ -91,7 +91,7 @@ int ResultSet::getColumnIndex(const QString &column_name)
  /* In case the index is negative indicates that the column doesn't exists in the tuple
     thus an error will be raised */
  if(col_idx < 0)
-  throw Exception(ERR_CONEXBD_REFCOLTUPLANOMEINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_REF_TUPLE_COL_INV_NAME, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  return(col_idx);
 }
@@ -106,7 +106,7 @@ char *ResultSet::getColumnValue(const QString &column_name)
      a tuple of an empty result or generated from an INSERT, DELETE, UPDATE,
      that is, which command do not return lines but only do updates or removal */
   if(getTupleCount()==0 || empty_result)
-   throw Exception(ERR_CONEXBD_REFTUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+   throw Exception(ERR_REF_TUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
   //Get the column index through its name
   col_idx=getColumnIndex(column_name);
@@ -125,12 +125,12 @@ char *ResultSet::getColumnValue(int column_idx)
 {
  //Raise an error in case the column index is invalid
  if(column_idx < 0 || column_idx >= getColumnCount())
-  throw Exception(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_REF_TUPLE_COL_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
  /* Raises an error if the user try to get the value of a column in
     a tuple of an empty result or generated from an INSERT, DELETE, UPDATE,
     that is, which command do not return lines but only do updates or removal */
  else if(getTupleCount()==0 || empty_result)
-  throw Exception(ERR_CONEXBD_REFTUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_REF_TUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  //Returns the column value on the current tuple
  return(PQgetvalue(sql_result, current_tuple, column_idx));
@@ -159,7 +159,7 @@ int ResultSet::getColumnSize(int column_idx)
 {
  //Raise an error in case the column index is invalid
  if(column_idx < 0 || column_idx >= getColumnCount())
-  throw Exception(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_REF_TUPLE_COL_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  //Retorns the column value length on the current tuple
  return(PQgetlength(sql_result, current_tuple, column_idx));
@@ -210,7 +210,7 @@ bool ResultSet::isColumnBinaryFormat(int column_idx)
 {
  //Raise an error in case the column index is invalid
  if(column_idx < 0 || column_idx >= getColumnCount())
-  throw Exception(ERR_CONEXBD_REFCOLTUPLAIDXINV, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_REF_TUPLE_COL_INV_INDEX, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  /* Returns the column format in the current tuple.
     According to libpq documentation, value = 0, indicates column text format,
@@ -228,7 +228,7 @@ bool ResultSet::accessTuple(unsigned tuple_type)
     The tuple type to be accessed is invalid, out of
     set defined by the class */
  if(tuple_count==0 || empty_result || tuple_type > NEXT_TUPLE)
-  throw Exception(ERR_CONEXBD_REFTUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+  throw Exception(ERR_REF_TUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  switch(tuple_type)
  {

@@ -154,7 +154,7 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
  TipoObjetoBase tipo_obj, tipo_obj_pai=OBJETO_BASE;
 
  if(!modelo)
-  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->modelo=modelo;
 
@@ -167,7 +167,7 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
   else if(tipo_obj_pai==OBJETO_RELACAO)
    this->relacionamento=dynamic_cast<Relacionamento *>(objeto_pai);
   else
-   throw Exception(ERR_PGMODELER_ATROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  else
  {
@@ -564,12 +564,12 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
 
     if(!novo_obj && obj_aux && obj_aux!=objeto)
     {
-     throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDUPLIC))
+     throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
                    .arg(nome_obj)
                    .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj))
                    .arg(obj_pai->obterNome(true))
                    .arg(obj_pai->obterNomeTipoObjeto()),
-                    ERR_PGMODELER_ATROBJDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                    ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     }
    }
 

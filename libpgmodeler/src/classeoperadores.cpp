@@ -22,7 +22,7 @@ void ClasseOperadores::definirTipoDado(TipoPgSQL tipo_dado)
  /* Caso se tente atribuir um tipo de dado nulo ao objeto,
     é disparada uma exceção */
  if(tipo_dado==TipoPgSQL::nulo)
-  throw Exception(ERR_PGMODELER_ATRTIPOINVOBJ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->tipo_dado=tipo_dado;
 }
@@ -64,7 +64,7 @@ void ClasseOperadores::adicionarElementoClasse(ElemClasseOperadores elemento)
 {
  //Verifica se um elemento igual já não existe na lista de elementos
  if(elementoExiste(elemento))
-  throw Exception(ERR_PGMODELER_INSELEMDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  elementos.push_back(elemento);
 }
@@ -74,7 +74,7 @@ void ClasseOperadores::removerElementoClasse(unsigned idx_elem)
  /* Caso o índice do elemento a se remover seja superior ao tamanho da lista
     de elementos, é disparada uma exceção */
  if(idx_elem >= elementos.size())
-  throw Exception(ERR_PGMODELER_REFELEMIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Remove o item da lista referente ao elemento
  elementos.erase(elementos.begin() + idx_elem);
@@ -90,7 +90,7 @@ ElemClasseOperadores ClasseOperadores::obterElementoClasse(unsigned idx_elem)
  /* Caso o índice do elemento a obtido seja superior ao tamanho da lista
     de elementos, é disparada uma exceção */
  if(idx_elem >= elementos.size())
-  throw Exception(ERR_PGMODELER_REFELEMIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Retorna o elemento no índice especificado
  return(elementos[idx_elem]);

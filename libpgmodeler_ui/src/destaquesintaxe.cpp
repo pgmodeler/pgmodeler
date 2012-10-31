@@ -619,8 +619,8 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
         if(find(ordem_grupos.begin(), ordem_grupos.end(), grupo)!=ordem_grupos.end())
         {
          //Dispara o erro indicado que o grupo está sendo redeclarado
-         throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_REDECLGRUPODESTAQUE).arg(grupo),
-                       ERR_PGMODELERUI_REDECLGRUPODESTAQUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+         throw Exception(Exception::getErrorMessage(ERR_REDECL_HL_GROUP).arg(grupo),
+                       ERR_REDECL_HL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
         /* 2ª Validação: Verifica se o grupo está sendo declarado e construído ao mesmo tempo no
                          bloco de declaração. Um grupo no bloco de declaração deve aparecer no
@@ -629,9 +629,9 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
                          sendo construído em local inválido */
         else if(atributos.size() > 1 || XMLParser::hasElement(XMLParser::CHILD_ELEMENT))
         {
-         throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_DEFGRUPOLOCALINV)
+         throw Exception(Exception::getErrorMessage(ERR_DEF_INV_GROUP_DECL)
                        .arg(grupo).arg(ParsersAttributes::HIGHLIGHT_ORDER),
-                       ERR_PGMODELERUI_REDECLGRUPODESTAQUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                       ERR_REDECL_HL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
 
         /* Caso nenhum erro for disparado o grupo é adicionad�  lista de
@@ -650,8 +650,8 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
         if(exp_iniciais.count(grupo)!=0)
         {
          //Dispara o erro ao usuário indicando construção duplicada
-         throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_DEFGRUPODUPLICADA).arg(grupo),
-                       ERR_PGMODELERUI_DEFGRUPODUPLICADA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+         throw Exception(Exception::getErrorMessage(ERR_DEF_DUPLIC_GROUP).arg(grupo),
+                       ERR_DEF_DUPLIC_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
         /* 2ª Validação: Verifica se o grupo está sendo construído sem ter sido declarado.
                          Para tal, verifica se grupo que está sendo construído não existe
@@ -661,17 +661,17 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
         else if(find(ordem_grupos.begin(), ordem_grupos.end(), grupo)==ordem_grupos.end())
         {
          //Dispara o erro indicando que o grupo foi construído e não declarado
-         throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_DEFGRUPONAODECL)
+         throw Exception(Exception::getErrorMessage(ERR_DEF_NOT_DECL_GROUP)
                        .arg(grupo).arg(ParsersAttributes::HIGHLIGHT_ORDER),
-                       ERR_PGMODELERUI_DEFGRUPONAODECL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                       ERR_DEF_NOT_DECL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
         /* 3ª Validação: Verifica se o grupo possui elementos filhos. No bloco de construção
                          do grupo é necessário que ele possua pelo menos um filho '<element>'.
                          Caso ele não possua elementos deste tipo um erro é retornado ao usuário */
         else if(!XMLParser::hasElement(XMLParser::CHILD_ELEMENT))
         {
-         throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_DEFGRUPOSEMELEM).arg(grupo),
-                       ERR_PGMODELERUI_DEFGRUPOSEMELEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+         throw Exception(Exception::getErrorMessage(ERR_DEF_EMPTY_GROUP).arg(grupo),
+                       ERR_DEF_EMPTY_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
 
         //Obtém e armazena em variáveis os atributos do grupo que está sendo construído
@@ -779,8 +779,8 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
     if(exp_iniciais[grupo].size()==0)
     {
      //Dispara o erro indicando que o grupo foi declarado porém não construído
-     throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_GRUPODECLNAODEF).arg(grupo),
-                   ERR_PGMODELERUI_GRUPODECLNAODEF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+     throw Exception(Exception::getErrorMessage(ERR_GROUP_DECL_NOT_DEFINED).arg(grupo),
+                   ERR_GROUP_DECL_NOT_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     }
    }
 

@@ -11,7 +11,7 @@ void ObjetoTabela::definirTabelaPai(ObjetoBase *tabela)
  /* Caso o objeto a ser atribuído não seja uma tabela
     um erro é gerado */
  if(tabela && tabela->obterTipoObjeto()!=OBJETO_TABELA)
-  throw Exception(ERR_PGMODELER_ATROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  tabela_pai=tabela;
 }

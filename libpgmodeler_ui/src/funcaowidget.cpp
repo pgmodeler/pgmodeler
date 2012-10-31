@@ -551,10 +551,10 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
  catch(Exception &e)
  {
   //Caso alguma validação acima dispare um erro o mesmo é redirecionado
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELERUI_CONFFUNCINVALIDAOBJ)
+  throw Exception(Exception::getErrorMessage(ERR_FUNC_CONFIG_INV_OBJECT)
                 .arg(QString::fromUtf8(objeto->obterNome(true)))
                 .arg(objeto->obterNomeTipoObjeto()),
-                ERR_PGMODELERUI_CONFFUNCINVALIDAOBJ,
+                ERR_FUNC_CONFIG_INV_OBJECT,
                 __PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

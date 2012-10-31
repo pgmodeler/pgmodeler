@@ -313,11 +313,11 @@ void PermissaoWidget::exibirDadosPapelSelecionado(void)
      pois o mesmo objeto não pode aparecer mais de uma vez na mesma tabela */
   if(papel && idx_lin >= 0)
   {
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDUPLICCONT)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_DUPL_OBJ_CONTAINER)
                                .arg(QString::fromUtf8(papel->obterNome()))
                                .arg(papel->obterNomeTipoObjeto())
                                .arg(papeis_gb->title()),
-                 ERR_PGMODELER_INSITEMPAPELDUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
  }
 }
@@ -408,10 +408,10 @@ void PermissaoWidget::atualizarPermissao(void)
   {
    /* Qualquer outra situação além da comentado no if acima é considerada duplicação
       de permissões gerando assim um erro */
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRPERMISSAODUPLIC)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
                  .arg(QString::fromUtf8(permissao->obterObjeto()->obterNome()))
                  .arg(permissao->obterObjeto()->obterNomeTipoObjeto()),
-                 ERR_PGMODELER_ATRPERMISSAODUPLIC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
   //Remove a permissão de backup

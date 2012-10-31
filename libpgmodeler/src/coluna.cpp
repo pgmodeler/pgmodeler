@@ -36,7 +36,7 @@ void Coluna::definirTipo(TipoPgSQL tipo)
  /* Caso o tipo a ser atribuíd�  coluna seja um pseudo-tipo
     será disparada uma exceção */
  if(tipo.pseudoTipo())
-  throw Exception(ERR_PGMODELER_ATRPSDTIPOCOL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_PSDTYPE_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   this->tipo=tipo;
 }

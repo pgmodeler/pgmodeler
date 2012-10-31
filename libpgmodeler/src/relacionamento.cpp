@@ -7,7 +7,7 @@ const QString Relacionamento::SEPARADOR_SUFIXO("_");
 Relacionamento::Relacionamento(Relacionamento *relacao) : RelacionamentoBase(relacao)
 {
  if(!relacao)
-  throw Exception(ERR_PGMODELER_ATROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  (*(this))=(*relacao);
 }
@@ -48,11 +48,11 @@ Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabel
   if(((tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N) &&
       !this->obterTabelaReferencia()->obterChavePrimaria()) ||
      (tipo_relac==RELACIONAMENTO_NN && (!tab_orig->obterChavePrimaria() || !tab_dest->obterChavePrimaria())))
-     throw Exception(Exception::getErrorMessage(ERR_PGMODELER_RELTABSEMPK)
+     throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
                            .arg(QString::fromUtf8(nome))
                            .arg(QString::fromUtf8(tab_orig->obterNome(true)))
                            .arg(QString::fromUtf8(tab_dest->obterNome(true))),
-                  ERR_PGMODELER_RELTABSEMPK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                  ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Atribuindo os sufixos ao relacionamento.
     Sufixos são palavras concatenadas ao final do nome de
@@ -137,12 +137,12 @@ void Relacionamento::definirTabelaObrigatoria(unsigned id_tabela, bool valor)
 void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufixo)
 {
  if(tipo_tab > TABELA_DESTINO)
-  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(!sufixo.isEmpty() && !ObjetoBase::nomeValido(sufixo))
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRSUFIXORELINV)
+  throw Exception(Exception::getErrorMessage(ERR_ASG_INV_SUFFIX_REL)
                 .arg(QString::fromUtf8(this->obterNome())),
-                ERR_PGMODELER_ATRSUFIXORELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_ASG_INV_SUFFIX_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(tipo_tab==TABELA_ORIGEM)
   sufixo_orig=sufixo;
@@ -155,7 +155,7 @@ void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufix
 QString Relacionamento::obterSufixoTabela(unsigned tipo_tab)
 {
  if(tipo_tab > TABELA_DESTINO)
-  throw Exception(ERR_PGMODELER_REFARGIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(tipo_tab==TABELA_ORIGEM)
   return(sufixo_orig);
@@ -180,7 +180,7 @@ void Relacionamento::definirIdentificador(bool valor)
     (tipo_relac==RELACIONAMENTO_NN ||
      tipo_relac==RELACIONAMENTO_GEN ||
      tipo_relac==RELACIONAMENTO_DEP)))
-  throw Exception(ERR_PGMODELER_RELIDENTINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_INV_IDENT_RELATIOSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  identificador=valor;
  this->invalidado=true;
@@ -191,9 +191,9 @@ void Relacionamento::definirColsChavePrimariaEspecial(vector<unsigned> &cols)
  /* Dispara um erro caso o usuário tente usar a chave primária especial em autorelacionamento
     e/ou relacionamento n-n */
  if(autoRelacionamento() || relacionamentoIdentificador() || tipo_relac==RELACIONAMENTO_NN)
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_PKESPTIPORELINV)
+  throw Exception(Exception::getErrorMessage(ERR_INV_USE_ESPECIAL_PK)
                 .arg(QString::fromUtf8(this->obterNome())),
-                ERR_PGMODELER_PKESPTIPORELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_INV_USE_ESPECIAL_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->id_colunas_pk_rel=cols;
 }
@@ -248,7 +248,7 @@ void Relacionamento::criarChavePrimariaEspecial(void)
 void Relacionamento::definirNomeTabelaRelNN(const QString &nome)
 {
  if(!ObjetoBase::nomeValido(nome))
-  throw Exception(ERR_PGMODELER_ATRNOMEINVTABRELNN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_INV_NAME_TABLE_RELNN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  nome_tab_relnn=nome;
  this->invalidado=true;
@@ -285,7 +285,7 @@ int Relacionamento::obterIndiceObjeto(ObjetoTabela *objeto)
 
  //Dispara uma exceção caso o objeto a ser buscado não esteja alocado
  if(!objeto)
-  throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Selecionando a lista de objetos de acordo com o tipo do objeto
  tipo_obj=objeto->obterTipoObjeto();
@@ -294,7 +294,7 @@ int Relacionamento::obterIndiceObjeto(ObjetoTabela *objeto)
  else if(tipo_obj==OBJETO_RESTRICAO)
   lista=&restricoes_rel;
  else
-  throw Exception(ERR_PGMODELER_REFOBJTIPOINV, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=lista->begin();
  itr_end=lista->end();
@@ -323,7 +323,7 @@ bool Relacionamento::colunaExistente(Coluna *coluna)
 
  //Caso a coluna a ser buscada não esteja aloca, dispara uma exceção
  if(!coluna)
-  throw Exception(ERR_PGMODELER_OPROBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=colunas_ref.begin();
  itr_end=colunas_ref.end();
@@ -354,7 +354,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
     !(objeto_tab->incluidoPorRelacionamento() &&
       objeto_tab->objetoProtegido() &&
       objeto_tab->obterTipoObjeto()==OBJETO_RESTRICAO))
-  throw Exception(ERR_PGMODELER_ATROBJRELINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_OBJ_INV_REL_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  try
  {
@@ -393,7 +393,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
     /* Caso se tente inserir uma chave estrangeira como restrição do relacionamento
        retorna um erro pois este é o único tipo que não pode ser incluído */
     if(rest->obterTipoRestricao()==TipoRestricao::foreign_key)
-     throw Exception(ERR_PGMODELER_ATRFKRELAC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+     throw Exception(ERR_ASG_FOREIGN_KEY_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
    //Após a validação do novo objeto a tabela pai é setada como nula
@@ -422,22 +422,22 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
    this->invalidado=true;
   }
   else
-   throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDUPLIC))
+   throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
                  .arg(objeto_tab->obterNome(true))
                  .arg(objeto_tab->obterNomeTipoObjeto())
                  .arg(this->obterNome(true))
                  .arg(this->obterNomeTipoObjeto()),
-                 ERR_PGMODELER_ATROBJDUPLIC, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_DUPLIC_OBJECT, __PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  catch(Exception &e)
  {
   /* Caso a exceção capturada seja de atributo não preenchido, indice que
      a definição SQL do objeto está incompleta */
-  if(e.getErrorType()==ERR_PARSERS_ATRIBVALORNULO)
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATROBJDEFSQLINV)
+  if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
                               .arg(QString::fromUtf8(objeto_tab->obterNome()))
                               .arg(objeto_tab->obterNomeTipoObjeto()),
-                 ERR_PGMODELER_ATROBJDEFSQLINV,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+                 ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   else
    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
@@ -474,11 +474,11 @@ void Relacionamento::removerObjeto(unsigned id_obj, TipoObjetoBase tipo_obj)
  else if(tipo_obj==OBJETO_RESTRICAO)
   lista_obj=&restricoes_rel;
  else
-  throw Exception(ERR_PGMODELER_REFOBJTIPOINV, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Se o índice do objeto for inválido, dispara o erro
  if(id_obj >= lista_obj->size())
-  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Verificação específica para coluna. Caso a coluna esteja sendo
     referenciada por uma restrição do relacionamento será disparado
@@ -505,14 +505,14 @@ void Relacionamento::removerObjeto(unsigned id_obj, TipoObjetoBase tipo_obj)
 
   //Caso haja referência
   if(refer)
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_REMOBJREFERIND)
+   throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
                            .arg(QString::fromUtf8(coluna->obterNome()))
                            .arg(coluna->obterNomeTipoObjeto())
                            .arg(QString::fromUtf8(rest->obterNome()))
                            .arg(rest->obterNomeTipoObjeto())
                            .arg(QString::fromUtf8(this->obterNome(true)))
                            .arg(this->obterNomeTipoObjeto()),
-                 ERR_PGMODELER_REMOBJREFERIND,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  /* Antes da remoção de qualquer objeto é necessário desconectar
@@ -530,7 +530,7 @@ void Relacionamento::removerObjeto(unsigned id_obj, TipoObjetoBase tipo_obj)
 void Relacionamento::removerObjeto(ObjetoTabela *objeto)
 {
  if(!objeto)
-  throw Exception(ERR_PGMODELER_REMOBJNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REM_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  removerObjeto(obterIndiceObjeto(objeto),objeto->obterTipoObjeto());
 }
@@ -580,10 +580,10 @@ ObjetoTabela *Relacionamento::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_
  else if(tipo_obj==OBJETO_RESTRICAO)
   lista=&restricoes_rel;
  else
-  throw Exception(ERR_PGMODELER_REFOBJTIPOINV, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(idx_obj >= lista->size())
-  throw Exception(ERR_PGMODELER_REFOBJIDXINV, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_INDEX, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(lista->at(idx_obj));
 }
@@ -601,7 +601,7 @@ ObjetoTabela *Relacionamento::obterObjeto(const QString &nome_atrib, TipoObjetoB
  else if(tipo_obj==OBJETO_RESTRICAO)
   lista=&restricoes_rel;
  else
-  throw Exception(ERR_PGMODELER_REFOBJTIPOINV, __PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=lista->begin();
  itr_end=lista->end();
@@ -627,7 +627,7 @@ Coluna *Relacionamento::obterAtributo(unsigned id_atrib)
  /* Caso o índice do atributo esteja fora da quantidade da lista de
     atributos dispara uma exceção */
  if(id_atrib >= atributos_rel.size())
-  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  return(dynamic_cast<Coluna *>(atributos_rel[id_atrib]));
 }
 
@@ -641,7 +641,7 @@ Restricao *Relacionamento::obterRestricao(unsigned id_rest)
  /* Caso o índice da restrição esteja fora da quantidade da lista de
     restrições dispara uma exceção */
  if(id_rest >= restricoes_rel.size())
-  throw Exception(ERR_PGMODELER_REFOBJIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  return(dynamic_cast<Restricao *>(restricoes_rel[id_rest]));
 }
 
@@ -667,7 +667,7 @@ unsigned Relacionamento::obterNumObjetos(TipoObjetoBase tipo_obj)
  else if(tipo_obj==OBJETO_RESTRICAO)
   return(restricoes_rel.size());
  else
-  throw Exception(ERR_PGMODELER_REFOBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void Relacionamento::adicionarRestricoes(Tabela *tab_dest)
@@ -895,13 +895,13 @@ void Relacionamento::adicionarColunasRelGen(void)
        ((!flags_dest[0] && !flags_dest[1]) ||
         (!flags_dest[0] &&  flags_dest[1])))
      {
-      tipo_erro=ERR_PGMODELER_RELINVCOLDUPLIC;
+      tipo_erro=ERR_DUPLIC_COLS_COPY_REL;
      }
      /* Condição de erro 2: O tipo de relacionamento é de generalização e o tipo
         das colunas são incompatíveis */
      else if(tipo_relac==RELACIONAMENTO_GEN &&
              tipo_orig!=tipo_dest)
-      tipo_erro=ERR_PGMODELER_RELINVCOLSINCOMP;
+      tipo_erro=ERR_INCOMP_COLS_INHERIT_REL;
     }
    }
 
@@ -975,7 +975,7 @@ void Relacionamento::adicionarColunasRelGen(void)
    str_aux=Exception::getErrorMessage(tipo_erro);
 
    //Formata a mensagem de erro de acordo com o tipo do erro
-   if(tipo_erro==ERR_PGMODELER_RELINVCOLDUPLIC)
+   if(tipo_erro==ERR_DUPLIC_COLS_COPY_REL)
    {
     msg=QString(str_aux)
         .arg(col_dest->obterNome())
@@ -1408,11 +1408,11 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
      não possuam chave primária, uma exceção será disparada */
   if((!pk_orig && (tipo_relac==RELACIONAMENTO_1N || tipo_relac==RELACIONAMENTO_11)) ||
      (!pk_orig && !pk_dest && tipo_relac==RELACIONAMENTO_NN))
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_RELTABSEMPK)
+   throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
                           .arg(QString::fromUtf8(this->nome))
                           .arg(QString::fromUtf8(tab_referencia->obterNome(true)))
                           .arg(QString::fromUtf8(tab_receptora->obterNome(true))),
-                 ERR_PGMODELER_RELTABSEMPK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
   /* Obtém a quantidade de colunas referenciadas na chave

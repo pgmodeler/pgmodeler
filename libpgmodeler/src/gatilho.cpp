@@ -63,7 +63,7 @@ void Gatilho::definirTipoDisparo(TipoDisparo tipo_disp)
 void Gatilho::definirEvento(TipoEvento evento, bool valor)
 {
  if(evento==TipoEvento::on_select)
-  throw Exception(ERR_PGMODELER_REFEVENTOGATINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  eventos[!evento]=valor;
 }
@@ -73,23 +73,23 @@ void Gatilho::definirFuncao(Funcao *funcao)
  //Caso a função a ser atribuida ao gatilho esteja nula
  if(!funcao)
   //Dispara exceção relatando o erro
-  throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNAOALOC)
+  throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_GATILHO)),
-                ERR_PGMODELER_ATRFUNCNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   //Caso a função não possua tipo de retorno 'trigger', ela não pode ser usada em um gatilho
   if(funcao->obterTipoRetorno()!="trigger")
    //Dispara exceção relatando o erro
-   throw Exception(ERR_PGMODELER_ATRFUNCGATINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(ERR_ASG_INV_TRIGGER_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   //Caso a função não possua parâmetros, ela não pode ser usada em um gatilho
   else if(funcao->obterNumParams()==0)
    //Dispara exceção relatando o erro
-   throw Exception(Exception::getErrorMessage(ERR_PGMODELER_ATRFUNCNUMPARAMINV)
+   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->obterNome()))
                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_GATILHO)),
-                 ERR_PGMODELER_ATRFUNCNUMPARAMINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                 ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
    this->funcao=funcao;
  }
@@ -103,15 +103,15 @@ void Gatilho::definirCondicao(const QString &cond)
 void Gatilho::adicionarColuna(Coluna *coluna)
 {
  if(!coluna)
-  throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELER_ATRCOLNAOALOC))
+  throw Exception(QString(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN))
                 .arg(this->obterNome(true))
                 .arg(this->obterNomeTipoObjeto()),
-                ERR_PGMODELER_ATRCOLNAOALOC,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(coluna->obterTabelaPai() != this->obterTabelaPai())
-  throw Exception(QString(Exception::getErrorMessage(ERR_PGMODELER_ATRCOLINVGATILHO))
+  throw Exception(QString(Exception::getErrorMessage(ERR_ASG_INV_COLUMN_TRIGGER))
                 .arg(coluna->obterNome(true))
                 .arg(this->obterNome(true)),
-                ERR_PGMODELER_ATRCOLINVGATILHO,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+                ERR_ASG_INV_COLUMN_TRIGGER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   colunas_upd.push_back(coluna);
 }
@@ -122,7 +122,7 @@ void Gatilho::editarArgumento(unsigned idx_arg, const QString &novo_arg)
     da lista de argumentos */
  if(idx_arg>=argumentos.size())
   //Dispara exceção relatando o erro
-  throw Exception(ERR_PGMODELER_REFARGIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   vector<QString>::iterator itr;
@@ -140,7 +140,7 @@ void Gatilho::executarPorLinha(bool valor)
 bool Gatilho::executaNoEvento(TipoEvento evento)
 {
  if(evento==TipoEvento::on_select)
-  throw Exception(ERR_PGMODELER_REFEVENTOGATINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(eventos.at(!evento));
 }
@@ -151,7 +151,7 @@ QString Gatilho::obterArgumento(unsigned idx_arg)
     da lista de argumentos */
  if(idx_arg>=argumentos.size())
   //Dispara exceção relatando o erro
-  throw Exception(ERR_PGMODELER_REFARGIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Retorna o argumento no índice desejado
   return(argumentos[idx_arg]);
@@ -160,7 +160,7 @@ QString Gatilho::obterArgumento(unsigned idx_arg)
 Coluna *Gatilho::obterColuna(unsigned idx_col)
 {
  if(idx_col>=colunas_upd.size())
-  throw Exception(ERR_PGMODELER_REFCOLIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_COLUMN_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Retorna a coluna no índice desejado
   return(colunas_upd[idx_col]);
@@ -197,7 +197,7 @@ void Gatilho::removerArgumento(unsigned idx_arg)
     da lista de argumentos */
  if(idx_arg>=argumentos.size())
   //Dispara exceção relatando o erro
-  throw Exception(ERR_PGMODELER_REFARGIDXINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   vector<QString>::iterator itr;
@@ -221,7 +221,7 @@ void Gatilho::definirTabReferenciada(ObjetoBase *tabela_ref)
  /* Caso a tabela referenciada a ser atribuída esteja alocada, porém
     seu tipo não seja OBJETO_TABELA, isso gera um erro */
  if(tabela_ref && tabela_ref->obterTipoObjeto()!=OBJETO_TABELA)
-  throw Exception(ERR_PGMODELER_ATROBJTIPOINV,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+  throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Atribui a tabela referenciada ao gatilho
  this->tabela_ref=tabela_ref;
