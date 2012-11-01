@@ -401,7 +401,7 @@ class TipoPgSQL: public TipoBase{
   bool tipoAceitaPrecisao(void); //Retorna o tipo aceita precisão
 
   /* Como é necessário que o tipo base do PgSQL tenha uma definição XML
-     este método foi adicionado    essa classe a qual configura um mapa
+     este método foi adicionad   essa classe a qual configura um mapa
      de atributos e passa ao parser de esquemas para que este retorne
      a definição XML. Este método permite também se obter a definição
      SQL do objeto, porém chamar este método para obtenção do SQL do tipo

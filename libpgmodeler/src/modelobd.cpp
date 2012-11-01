@@ -779,13 +779,11 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
     throw Exception(str_aux, tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
-  removerTipoUsuario(tabela, idx_obj);
-
   __removerObjeto(tabela, idx_obj);
 
   /* Ao ser removido do modelo a sequencia tem
    seu nome removido da lista de tipos válidos do PostgreSQL */
- //TipoPgSQL::removerTipoUsuario(tabela->obterNome(true), tabela);
+ TipoPgSQL::removerTipoUsuario(tabela->obterNome(true), tabela);
  }
 }
 

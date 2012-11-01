@@ -1129,7 +1129,7 @@ QString TipoPgSQL::obterDefinicaoObjeto(unsigned tipo_def,QString tipo_ref)
   if(tipo_intervalo != TipoBase::nulo)
    atributos[ParsersAttributes::INTERVAL_TYPE]=(~tipo_intervalo);
 
-  if(tipo_espacial != TipoBase::nulo)
+  if(!tipoUsuario() && tipo_espacial != TipoBase::nulo)
   {
    atributos[ParsersAttributes::SPATIAL_TYPE]=(~tipo_espacial);
    atributos[ParsersAttributes::VARIATION]=QString("%1").arg(tipo_espacial.obterVariacao());

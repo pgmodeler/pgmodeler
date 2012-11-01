@@ -414,7 +414,7 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
   /* Caso se esteja adicionando uma operação e o índice atual não esteja apontando
      para o final da lista (operação de refazer disponível / usuário executou operações
      de desfazer), todos do índice atual até o fim da lista de operaçãoes serão excluídos
-     bem como os objetos no pool que estavam ligados   s operações excluídas */
+     bem como os objetos no pool que estavam ligados  s operações excluídas */
 
   if(idx_atual>=0 && static_cast<unsigned>(idx_atual)!=operacoes.size())
   {
@@ -450,7 +450,7 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
   //Adiciona o objeto no pool
   adicionarObjetoPool(objeto, tipo_op);
 
-  //Atribui    operação o objeto inserido no pool
+  //Atribui   operação o objeto inserido no pool
   operacao->obj_pool=pool_objetos.back();
 
   /* Caso o tipo de encadeamento atual da operação seja de início de
@@ -921,7 +921,7 @@ void ListaOperacoes::removerUltimaOperacao(void)
   {
    //Obtém a operação armazenada no iterador para sua devida remoção
    oper=(*itr);
-   //Remove o objeto relacionado    operação e que se encontrar no pool
+   //Remove o objeto relacionado   operação e que se encontrar no pool
    removerObjetoPool(idx_obj);
    /* Condição de parada de remoção da operação:
       1) A operação não é encadeada com outras, ou
@@ -935,7 +935,7 @@ void ListaOperacoes::removerUltimaOperacao(void)
          (oper->tipo_enc==Operacao::SEM_ENCADEAMENTO ||
           oper->tipo_enc==Operacao::ENC_INICIO)));
 
-   //Passa para a operação anterior    atual
+   //Passa para a operação anterior   atual
    itr++; idx_obj--;
   }
 

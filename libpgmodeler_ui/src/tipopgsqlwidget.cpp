@@ -174,7 +174,7 @@ void TipoPgSQLWidget::definirAtributos(TipoPgSQL tipo, ModeloBD *modelo,  unsign
 
   /* Obtém o índice do tipo no combo de tipos de acordo com o tipo de dados
      passado no parâmetro */
-  idx=tipo_cmb->findText(~tipo);
+  idx=tipo_cmb->findText(QString::fromUtf8(~tipo));
 
   //Seleciona o tipo no combobox
   tipo_cmb->setCurrentIndex(idx);
