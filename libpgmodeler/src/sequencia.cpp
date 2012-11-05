@@ -145,10 +145,10 @@ int Sequencia::compararValores(QString valor1, QString valor2)
  }
 }
 
-void Sequencia::definirNome(const QString &nome)
+void Sequencia::setName(const QString &nome)
 {
  QString nome_ant=this->getName(true);
- BaseObject::definirNome(nome);
+ BaseObject::setName(nome);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
@@ -328,7 +328,7 @@ Coluna *Sequencia::obterPossuidora(void)
  return(coluna);
 }
 
-QString Sequencia::obterDefinicaoObjeto(unsigned tipo_def)
+QString Sequencia::getCodeDefinition(unsigned tipo_def)
 {
  QString str_aux;
  Tabela *tabela=NULL;
@@ -350,7 +350,7 @@ QString Sequencia::obterDefinicaoObjeto(unsigned tipo_def)
  attributes[ParsersAttributes::CACHE]=cache;
  attributes[ParsersAttributes::CYCLE]=(ciclica ? "1" : "");
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 
 void Sequencia::operator = (Sequencia &seq)

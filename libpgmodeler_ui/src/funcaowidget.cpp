@@ -191,7 +191,7 @@ Parametro FuncaoWidget::obterParametro(TabelaObjetosWidget *tab, unsigned idx_li
   {
    /* Configura o nome do parâmetro com o texto da coluna de nome
       da linha especificada da tabela */
-   param.definirNome(tab->obterTextoCelula(idx_lin,0));
+   param.setName(tab->obterTextoCelula(idx_lin,0));
 
    //Configura o tipo do parâmetro com o tipo armazenado na linha atual da tabela
    param.definirTipo(tab->obterDadoLinha(idx_lin).value<TipoPgSQL>());
@@ -594,7 +594,7 @@ void FuncaoWidget::aplicarConfiguracao(void)
   {
    /* Cria um parâmetro auxiliar e os configura de acordo com os valores
       do parâmetro atual (i) na tabela */
-   param.definirNome(tab_parametros->obterTextoCelula(i,0));
+   param.setName(tab_parametros->obterTextoCelula(i,0));
    param.definirTipo(tab_parametros->obterDadoLinha(i).value<TipoPgSQL>());
 
    str_aux=tab_parametros->obterTextoCelula(i,2);

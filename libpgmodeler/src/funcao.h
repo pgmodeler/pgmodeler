@@ -46,7 +46,7 @@ class Parametro: public Coluna {
   bool parametroSaida(void);
 
   //Retorna a definição SQL ou XML do objeto
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def);
   void operator = (const Parametro &param);
 };
 
@@ -112,7 +112,7 @@ class Funcao: public BaseObject {
   Funcao(void);
 
   //Define o nome da função
-  void definirNome(const QString &obj_name);
+  void setName(const QString &obj_name);
 
   //Define o esquema ao qual a função faz parte
   void setSchema(BaseObject *schema);
@@ -234,8 +234,8 @@ class Funcao: public BaseObject {
   void criarAssinatura(bool formatar=true);
 
   //Retorna a definição SQL ou XML do objeto
-  QString obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida);
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def, bool forma_reduzida);
+  QString getCodeDefinition(unsigned tipo_def);
 };
 
 #endif

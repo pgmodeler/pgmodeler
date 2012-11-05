@@ -7,7 +7,7 @@ EspacoTabela::EspacoTabela(void)
  object_id=BaseObject::tabspace_id++;
 }
 
-void EspacoTabela::definirNome(const QString &nome)
+void EspacoTabela::setName(const QString &nome)
 {
  /* Tratando nomes de esquemas iniciados em pg_ pois são reservados para o SGBD e
     não podem ser criados pelo usuário */
@@ -18,7 +18,7 @@ void EspacoTabela::definirNome(const QString &nome)
                          .arg(BaseObject::getTypeName(OBJ_TABLESPACE)),
                 ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- BaseObject::definirNome(nome); //Chama o método da classe descendente
+ BaseObject::setName(nome); //Chama o método da classe descendente
 }
 
 void EspacoTabela::definirDiretorio(const QString &diretorio)
@@ -41,11 +41,11 @@ QString EspacoTabela::obterDiretorio(void)
  return(diretorio);
 }
 
-QString EspacoTabela::obterDefinicaoObjeto(unsigned tipo_def)
+QString EspacoTabela::getCodeDefinition(unsigned tipo_def)
 {
  if(diretorio!="")
   attributes[ParsersAttributes::DIRECTORY]="'" + diretorio + "'";
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 

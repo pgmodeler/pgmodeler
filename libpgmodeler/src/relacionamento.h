@@ -440,7 +440,7 @@ class Relacionamento: public RelacionamentoBase {
      1-1,1-n pois possuem a chave estrangeira a qual denota o relacionamento
      e para o tipo n-n o qual possui a tabela descritora do relacionamento.
      Para os demais tipos de relacionamento retorna uma string vazia */
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def);
 
   //Operador que faz a atribuição entre um objeto e outro
   void operator = (Relacionamento &rel);

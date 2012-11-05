@@ -94,7 +94,7 @@ class RelacionamentoBase: public ObjetoGraficoBase {
 
 
   //Método específico de definição do nome de relacionamentos
-  void definirNome(const QString &obj_name);
+  void setName(const QString &obj_name);
 
   //Define a obrigatoriedade da participação de uma entidade no relacionamento
   void definirTabelaObrigatoria(unsigned id_tabela, bool valor);
@@ -120,7 +120,7 @@ class RelacionamentoBase: public ObjetoGraficoBase {
   void reiniciarPosicaoRotulos(void);
 
   //Retorna a definição XMl do relacionamento
-  QString obterDefinicaoObjeto(void);
+  QString getCodeDefinition(void);
 
   /* Retorna se o relacionamento é um auto-relacionamento.
      Esse método evita a validação manual que é obter as

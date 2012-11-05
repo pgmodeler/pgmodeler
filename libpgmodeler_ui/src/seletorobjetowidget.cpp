@@ -56,7 +56,7 @@ void SeletorObjetoWidget::definirObjeto(BaseObject *objeto)
  if(objeto)
  {
   //Obtém o seu tipo
-  tipo_obj=objeto->obterTipoObjeto();
+  tipo_obj=objeto->getType();
 
   /* Dependendo do tipo do objeto obtém o nome ou assinatura
      do mesmo com o método correto. */

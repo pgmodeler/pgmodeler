@@ -105,7 +105,7 @@ void Regra::removerComandos(void)
  comandos.clear();
 }
 
-QString Regra::obterDefinicaoObjeto(unsigned tipo_def)
+QString Regra::getCodeDefinition(unsigned tipo_def)
 {
  definirAtributoComandos();
  attributes[ParsersAttributes::CONDITION]=exp_condicional;
@@ -116,6 +116,6 @@ QString Regra::obterDefinicaoObjeto(unsigned tipo_def)
   attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
 
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 

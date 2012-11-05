@@ -10,7 +10,7 @@ Coluna::Coluna(void)
  attributes[ParsersAttributes::TABLE]="";
 }
 
-void Coluna::definirNome(const QString &nome)
+void Coluna::setName(const QString &nome)
 {
  try
  {
@@ -20,7 +20,7 @@ void Coluna::definirNome(const QString &nome)
   nome_ant=this->obj_name;
 
   //Tenta definir o novo nome da coluna
-  BaseObject::definirNome(nome);
+  BaseObject::setName(nome);
   /* Caso nenhuma exceção foi disparada atribui o nome anterior
      obtido ao respectivo atributo da coluna */
   this->nome_antigo=nome_ant;
@@ -82,7 +82,7 @@ QString Coluna::getNameAntigo(bool formatar)
   return(nome_antigo);
 }
 
-QString Coluna::obterDefinicaoObjeto(unsigned tipo_def)
+QString Coluna::getCodeDefinition(unsigned tipo_def)
 {
  if(this->tabela_pai)
   attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
@@ -90,7 +90,7 @@ QString Coluna::obterDefinicaoObjeto(unsigned tipo_def)
  attributes[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
  attributes[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
  attributes[ParsersAttributes::NOT_NULL]=(!nao_nulo ? "" : "1");
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 
 void Coluna::operator = (Coluna &coluna)

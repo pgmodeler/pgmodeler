@@ -59,7 +59,7 @@ class Operador: public BaseObject {
   Operador(void);
 
   //Define o nome do operador
-  void definirNome(const QString &obj_name);
+  void setName(const QString &obj_name);
 
   //Define as funções usadas pelo operador (operador, junção, restrição)
   void definirFuncao(Funcao *funcao, unsigned tipo_funcao);
@@ -96,8 +96,8 @@ class Operador: public BaseObject {
   static bool isValidName(const QString &obj_name);
 
   //Retorna a definição SQL ou XML do objeto
-  QString obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida);
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def, bool forma_reduzida);
+  QString getCodeDefinition(unsigned tipo_def);
 
   //Obtém a assinatura do operador
   QString obterAssinatura(bool formatar_nome=true);

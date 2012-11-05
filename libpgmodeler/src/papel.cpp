@@ -331,7 +331,7 @@ QString Papel::obterSenha(void)
  return(senha);
 }
 
-QString Papel::obterDefinicaoObjeto(unsigned tipo_def)
+QString Papel::getCodeDefinition(unsigned tipo_def)
 {
  unsigned i;
  QString atrib_ops[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
@@ -360,6 +360,6 @@ QString Papel::obterDefinicaoObjeto(unsigned tipo_def)
 
  attributes[ParsersAttributes::SYSID]=QString("%1").arg(sysid);
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 

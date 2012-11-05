@@ -30,7 +30,7 @@ class Esquema: public BaseObject{
   Esquema(void);
 
   //Define o nome do esquema
-  void definirNome(const QString &obj_name);
+  void setName(const QString &obj_name);
 };
 
 #endif

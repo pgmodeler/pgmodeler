@@ -65,7 +65,7 @@ class ObjetoTabela: public BaseObject {
   /* Este método é puramente virtual para obrigar que as classes
      derivadas desta sobrecarreguem este método. Isto também faz
      com que a classe ObjetoTabela não seja instanciada */
-  virtual QString obterDefinicaoObjeto(unsigned tipo_def)=0;
+  virtual QString getCodeDefinition(unsigned tipo_def)=0;
 
   /* Retorna se o objeto foi incluído ou não automaticamente
      por relacionamento comum */

@@ -69,7 +69,7 @@ bool Operador::isValidName(const QString &nome)
  return(valido);
 }
 
-void Operador::definirNome(const QString &nome)
+void Operador::setName(const QString &nome)
 {
  if(nome=="")
   throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -261,12 +261,12 @@ QString Operador::obterAssinatura(bool formatar_nome)
  return(assinatura);
 }
 
-QString Operador::obterDefinicaoObjeto(unsigned tipo_def)
+QString Operador::getCodeDefinition(unsigned tipo_def)
 {
- return(this->obterDefinicaoObjeto(tipo_def, false));
+ return(this->getCodeDefinition(tipo_def, false));
 }
 
-QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
+QString Operador::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
 {
  unsigned i;
  QString atribs_tipos[]={ParsersAttributes::LEFT_TYPE, ParsersAttributes::RIGHT_TYPE},
@@ -303,7 +303,7 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
    else
    {
     operadores[i]->attributes[ParsersAttributes::REF_TYPE]=atribs_ops[i];
-    attributes[atribs_ops[i]]=operadores[i]->obterDefinicaoObjeto(tipo_def, true);
+    attributes[atribs_ops[i]]=operadores[i]->getCodeDefinition(tipo_def, true);
    }
   }
  }
@@ -317,7 +317,7 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
    else
    {
     funcoes[i]->setAttribute(ParsersAttributes::REF_TYPE, atribs_funcoes[i]);
-    attributes[atribs_funcoes[i]]=funcoes[i]->obterDefinicaoObjeto(tipo_def, true);
+    attributes[atribs_funcoes[i]]=funcoes[i]->getCodeDefinition(tipo_def, true);
    }
   }
  }
@@ -326,6 +326,6 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  attributes[ParsersAttributes::MERGES]=(merges ? "1" : "");
  attributes[ParsersAttributes::SIGNATURE]=obterAssinatura();
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));
+ return(BaseObject::getCodeDefinition(tipo_def, forma_reduzida));
 }
 

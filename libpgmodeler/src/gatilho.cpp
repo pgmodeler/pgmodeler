@@ -220,7 +220,7 @@ void Gatilho::definirTabReferenciada(BaseObject *tabela_ref)
 {
  /* Caso a tabela referenciada a ser atribuída esteja alocada, porém
     seu tipo não seja OBJETO_TABELA, isso gera um erro */
- if(tabela_ref && tabela_ref->obterTipoObjeto()!=OBJ_TABLE)
+ if(tabela_ref && tabela_ref->getType()!=OBJ_TABLE)
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Atribui a tabela referenciada ao gatilho
@@ -321,11 +321,11 @@ void Gatilho::definirAtributosBasicosGatilho(unsigned tipo_def)
   if(tipo_def==SchemaParser::SQL_DEFINITION)
    attributes[ParsersAttributes::TRIGGER_FUNC]=funcao->getName(true);
   else
-   attributes[ParsersAttributes::TRIGGER_FUNC]=funcao->obterDefinicaoObjeto(tipo_def, true);
+   attributes[ParsersAttributes::TRIGGER_FUNC]=funcao->getCodeDefinition(tipo_def, true);
  }
 }
 
-QString Gatilho::obterDefinicaoObjeto(unsigned tipo_def)
+QString Gatilho::getCodeDefinition(unsigned tipo_def)
 {
  definirAtributosBasicosGatilho(tipo_def);
 
@@ -355,6 +355,6 @@ QString Gatilho::obterDefinicaoObjeto(unsigned tipo_def)
   attributes[ParsersAttributes::DEFER_TYPE]=(~tipo_postergacao);
  }
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 

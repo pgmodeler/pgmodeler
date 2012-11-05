@@ -579,19 +579,19 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
 
  //Cria objetos do sistema (esquema public e linguagens c, sql e plpgsql)
  esq_publico=new Esquema;
- esq_publico->definirNome("public");
+ esq_publico->setName("public");
  tab_modelo->modelo->adicionarObjeto(esq_publico);
 
  ling=new Linguagem;
- ling->BaseObject::definirNome(~TipoLinguagem(TipoLinguagem::c));
+ ling->BaseObject::setName(~TipoLinguagem(TipoLinguagem::c));
  tab_modelo->modelo->adicionarObjeto(ling);
 
  ling=new Linguagem;
- ling->BaseObject::definirNome(~TipoLinguagem(TipoLinguagem::sql));
+ ling->BaseObject::setName(~TipoLinguagem(TipoLinguagem::sql));
  tab_modelo->modelo->adicionarObjeto(ling);
 
  ling=new Linguagem;
- ling->BaseObject::definirNome(~TipoLinguagem(TipoLinguagem::plpgsql));
+ ling->BaseObject::setName(~TipoLinguagem(TipoLinguagem::plpgsql));
  tab_modelo->modelo->adicionarObjeto(ling);
 
  if(!nome_arq.isEmpty())

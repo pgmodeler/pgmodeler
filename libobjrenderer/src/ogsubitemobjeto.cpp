@@ -44,7 +44,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
 
  //Obtém o tipo do objeto de origem, é com base nele que o descritor será alocado
  if(this->obterObjetoOrigem())
-  tipo_obj=this->obterObjetoOrigem()->obterTipoObjeto();
+  tipo_obj=this->obterObjetoOrigem()->getType();
 
  /* Descritores em forma de elipse são alocados para colunas (com ou sem not-null)
     todos os demais tipos têm descritores poligonais */

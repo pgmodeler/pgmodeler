@@ -88,7 +88,7 @@ QString ElementoIndice::obterDefinicaoObjeto(unsigned tipo_def)
   if(tipo_def==SchemaParser::SQL_DEFINITION)
    atributos[ParsersAttributes::OP_CLASS]=classe_oper->getName(true);
   else
-   atributos[ParsersAttributes::OP_CLASS]=classe_oper->obterDefinicaoObjeto(tipo_def, true);
+   atributos[ParsersAttributes::OP_CLASS]=classe_oper->getCodeDefinition(tipo_def, true);
  }
  
  return(SchemaParser::getObjectDefinition(ParsersAttributes::INDEX_ELEMENT,atributos, tipo_def));

@@ -100,7 +100,7 @@ class Tabela: public TabelaBase {
    Tabela(void);
   ~Tabela(void);
 
-  void definirNome(const QString &obj_name);
+  void setName(const QString &obj_name);
   void setSchema(BaseObject *schema);
 
   //Define se a tabela aceita oids ou não
@@ -202,7 +202,7 @@ class Tabela: public TabelaBase {
   void removerRegra(unsigned idx_reg);
 
   //Retorna a definição SQL ou XML do objeto
-  virtual QString obterDefinicaoObjeto(unsigned tipo_def);
+  virtual QString getCodeDefinition(unsigned tipo_def);
 
   //Obtém o índice de um determinado objeto através de seu nome
   int obterIndiceObjeto(const QString &obj_name, ObjectType tipo_obj);

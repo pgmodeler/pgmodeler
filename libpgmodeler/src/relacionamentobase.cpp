@@ -38,7 +38,7 @@ RelacionamentoBase::RelacionamentoBase(/*const QString &nome,*/ unsigned tipo_re
   configurarRelacionamento();
 
   str_aux=QApplication::translate("RelacionamentoBase","rel_%1_%2","",QApplication::UnicodeUTF8);
-  definirNome(str_aux.arg(tab_orig->getName()).arg(tab_dest->getName()));
+  setName(str_aux.arg(tab_orig->getName()).arg(tab_dest->getName()));
  }
  catch(Exception &e)
  {
@@ -131,11 +131,11 @@ RelacionamentoBase::~RelacionamentoBase(void)
   if(rotulos[i]) delete(rotulos[i]);
 }
 
-void RelacionamentoBase::definirNome(const QString &nome)
+void RelacionamentoBase::setName(const QString &nome)
 {
  try
  {
-  ObjetoGraficoBase::definirNome(nome);
+  BaseObject::setName(nome);
 
   if(rotulos[ROTULO_NOME_RELAC])
    rotulos[ROTULO_NOME_RELAC]->setComment(nome);
@@ -297,7 +297,7 @@ void RelacionamentoBase::definirAtributosRelacionamento(void)
   case RELACIONAMENTO_NN: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_NN; break;
   case RELACIONAMENTO_GEN: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_GEN; break;
   default:
-    if(tabela_orig->obterTipoObjeto()==OBJ_VIEW)
+    if(tabela_orig->getType()==OBJ_VIEW)
      attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATION_TAB_VIEW;
     else
      attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_DEP;
@@ -343,13 +343,13 @@ void RelacionamentoBase::definirAtributosRelacionamento(void)
  attributes[ParsersAttributes::LABELS_POS]=str_aux;
 }
 
-QString RelacionamentoBase::obterDefinicaoObjeto(void)
+QString RelacionamentoBase::getCodeDefinition(void)
 {
  bool forma_reduzida;
 
  definirAtributosRelacionamento();
  forma_reduzida=attributes[ParsersAttributes::POINTS].isEmpty();
- return(BaseObject::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION,forma_reduzida));
+ return(BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION,forma_reduzida));
 }
 
 void RelacionamentoBase::definirPontos(const vector<QPointF> &pontos)

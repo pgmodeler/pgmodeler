@@ -47,7 +47,7 @@ class Linguagem: public BaseObject{
   Linguagem(void);
 
   //Define o nome da linguagem
-  void definirNome(const QString &obj_name);
+  void setName(const QString &obj_name);
 
   //Define se a linguagem é confiável ou não
   void definirConfiavel(bool valor);
@@ -56,8 +56,8 @@ class Linguagem: public BaseObject{
   bool linguagemConfiavel(void);
   Funcao *obterFuncao(unsigned tipo_func);
 
-  QString obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida);
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def, bool forma_reduzida);
+  QString getCodeDefinition(unsigned tipo_def);
 };
 
 #endif

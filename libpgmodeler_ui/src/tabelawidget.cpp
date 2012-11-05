@@ -355,7 +355,7 @@ void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
                         TipoEvento::on_truncate,
                         TipoEvento::on_update };
 
- tipo_obj=objeto->obterTipoObjeto();
+ tipo_obj=objeto->getType();
 
  //Obtém a tabela referênte ao tipo do objeto
  tab=mapa_tab_objetos[tipo_obj];

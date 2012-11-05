@@ -16,12 +16,12 @@ Dominio::~Dominio(void)
  TipoPgSQL::removerTipoUsuario(this->getName(true), this);
 }
 
-void Dominio::definirNome(const QString &nome)
+void Dominio::setName(const QString &nome)
 {
  QString nome_ant, novo_nome;
 
  nome_ant=this->getName(true);
- BaseObject::definirNome(nome);
+ BaseObject::setName(nome);
  novo_nome=this->getName(true);
 
  /* Renomeia o tipo já definido anteriormente na
@@ -96,7 +96,7 @@ TipoPgSQL Dominio::obterTipo(void)
  return(tipo);
 }
 
-QString Dominio::obterDefinicaoObjeto(unsigned tipo_def)
+QString Dominio::getCodeDefinition(unsigned tipo_def)
 {
  attributes[ParsersAttributes::NOT_NULL]=(nao_nulo ? "1" : "");
  attributes[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
@@ -110,7 +110,7 @@ QString Dominio::obterDefinicaoObjeto(unsigned tipo_def)
   attributes[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
  }
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 
 void Dominio::operator = (Dominio &dominio)

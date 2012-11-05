@@ -210,7 +210,7 @@ void FormExportacao::exportarModelo(void)
 
        try
        {
-        conexao->executeDDLCommand(objeto->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION));
+        conexao->executeDDLCommand(objeto->getCodeDefinition(SchemaParser::SQL_DEFINITION));
        }
        catch(Exception &e)
        {
@@ -268,7 +268,7 @@ void FormExportacao::exportarModelo(void)
      rot_prog_lbl->repaint();
 
      //Gera o código SQL de todo o banco
-     buf_sql=modelo_wgt->modelo->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION, false);
+     buf_sql=modelo_wgt->modelo->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);
 
      /* Extrai cada comando SQL do buffeer e o executa separadamente, isso é feito
       para que, em caso de erro, o usuário saiba exatamente a SQL que gerou a

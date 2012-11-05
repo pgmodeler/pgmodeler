@@ -148,7 +148,7 @@ void PermissaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
   //Preenche os campos do formulario com os atributos do objeto
   nome_edt->setText(QString::fromUtf8(objeto->getName(true)));
   comentario_edt->setText(QString::fromUtf8(objeto->getTypeName()));
-  tipo_obj=objeto->obterTipoObjeto();
+  tipo_obj=objeto->getType();
 
   /* Faz uma varredura usando os privilégios disponíveis para os objetos.
      O objetivo é deixar visível ao usuário somente os privilégios referentes

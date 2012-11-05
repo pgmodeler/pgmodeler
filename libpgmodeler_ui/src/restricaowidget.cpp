@@ -390,7 +390,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
  sel_tabela_ref->definirModelo(modelo);
 
  //Obtém o tipo de objeto pai da restrição o qual pode ser uma tabela ou relacionamento
- tipo_obj=objeto_pai->obterTipoObjeto();
+ tipo_obj=objeto_pai->getType();
 
  //Obtém a quantidade de colunas existentes no objeto pai
  if(tipo_obj==OBJ_TABLE)

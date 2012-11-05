@@ -240,7 +240,7 @@ void ListaOperacoes::adicionarObjetoPool(BaseObject *objeto, unsigned tipo_op)
  if(!objeto)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- tipo_obj=objeto->obterTipoObjeto();
+ tipo_obj=objeto->getType();
 
  /* Caso o objeto está prestes a ser removido ou modificado, será armazenado no pool
     uma cópia do mesmo e não o objeto em si */
@@ -391,7 +391,7 @@ void ListaOperacoes::adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int i
   if(!objeto)
    throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  tipo_obj=objeto->obterTipoObjeto();
+  tipo_obj=objeto->getType();
   if((tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT ||
       tipo_obj==OBJ_INDEX || tipo_obj==OBJ_TRIGGER ||
       tipo_obj==OBJ_RULE) && !objeto_pai)
@@ -399,10 +399,10 @@ void ListaOperacoes::adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int i
 
   else if(objeto_pai &&
      (((tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT) &&
-      (objeto_pai->obterTipoObjeto()!=OBJ_RELATIONSHIP && objeto_pai->obterTipoObjeto()!=OBJ_TABLE)) ||
+      (objeto_pai->getType()!=OBJ_RELATIONSHIP && objeto_pai->getType()!=OBJ_TABLE)) ||
 
       ((tipo_obj==OBJ_INDEX || tipo_obj==OBJ_TRIGGER || tipo_obj==OBJ_RULE) &&
-        objeto_pai->obterTipoObjeto()!=OBJ_TABLE)))
+        objeto_pai->getType()!=OBJ_TABLE)))
    throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Caso a lista de operações esteja cheia, faz a limpeza automática antes de inserir uma nova operação
@@ -470,7 +470,7 @@ void ListaOperacoes::adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int i
    ObjetoTabela *obj_tab=NULL;
    obj_tab=dynamic_cast<ObjetoTabela *>(objeto);
 
-   if(objeto_pai->obterTipoObjeto()==OBJ_TABLE)
+   if(objeto_pai->getType()==OBJ_TABLE)
     tabela_pai=dynamic_cast<Tabela *>(objeto_pai);
    else
     relac_pai=dynamic_cast<Relacionamento *>(objeto_pai);
@@ -560,7 +560,7 @@ void ListaOperacoes::obterDadosOperacao(unsigned idx_oper, unsigned &tipo_oper, 
  operacao=operacoes[idx_oper];
  tipo_oper=operacao->tipo_op;
 
- tipo_obj=operacao->obj_pool->obterTipoObjeto();
+ tipo_obj=operacao->obj_pool->getType();
 
  if(tipo_obj==OBJ_CAST)
   nome_obj=operacao->obj_pool->getName();
@@ -658,7 +658,7 @@ void ListaOperacoes::desfazerOperacao(void)
                                trUtf8("Undoing operation on object: %1 (%2)")
                                       .arg(operacao->obj_pool->getName())
                                       .arg(operacao->obj_pool->getTypeName()),
-                                       operacao->obj_pool->obterTipoObjeto());
+                                       operacao->obj_pool->getType());
     }
 
     //Executa a operação de desfazer
@@ -723,7 +723,7 @@ void ListaOperacoes::refazerOperacao(void)
                                trUtf8("Redoing operation on object:: %1 (%2)")
                                       .arg(operacao->obj_pool->getName())
                                       .arg(operacao->obj_pool->getTypeName()),
-                                       operacao->obj_pool->obterTipoObjeto());
+                                       operacao->obj_pool->getType());
     }
 
     //Executa a operação de refazer (segundo parametro = true)
@@ -754,7 +754,7 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
    Relacionamento *relac_pai=NULL;
 
    objeto=oper->obj_pool;
-   tipo=objeto->obterTipoObjeto();
+   tipo=objeto->getType();
 
    /* Convertendo o objeto pai, caso exista, para a classe correta conforme
       o tipo do objeto pai. Caso seja OBJETO_TABELA, o ponteiro
@@ -764,7 +764,7 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
       'relac_pai' receberá a referência ao relacionamento */
    if(oper->obj_pai)
    {
-    if(oper->obj_pai->obterTipoObjeto()==OBJ_TABLE)
+    if(oper->obj_pai->getType()==OBJ_TABLE)
      tabela_pai=dynamic_cast<Tabela *>(oper->obj_pai);
     else
      relac_pai=dynamic_cast<Relacionamento *>(oper->obj_pai);
@@ -846,7 +846,7 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
      relac_pai->adicionarObjeto(dynamic_cast<ObjetoTabela *>(objeto), oper->idx_obj);
     else
      if(dynamic_cast<Tabela *>(objeto))
-      dynamic_cast<Tabela *>(objeto)->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
+      dynamic_cast<Tabela *>(objeto)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
      modelo->adicionarObjeto(objeto, oper->idx_obj);
    }
    /* Caso a operação seja de objeto criado anteriormente ou caso o objeto
@@ -875,8 +875,8 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
     relac_pai->definirModificado(true);
 
     if(tabela_pai &&
-      (objeto->obterTipoObjeto()==OBJ_COLUMN ||
-       objeto->obterTipoObjeto()==OBJ_CONSTRAINT))
+      (objeto->getType()==OBJ_COLUMN ||
+       objeto->getType()==OBJ_CONSTRAINT))
      modelo->validarRelacObjetoTabela(dynamic_cast<ObjetoTabela *>(objeto), tabela_pai);
     else if(relac_pai)
      modelo->validarRelacionamentos();

@@ -266,8 +266,8 @@ class ModeloBD:  public QObject, public BaseObject {
      pelo arquivo e sim diretamente pelo formulário de exportação do modelo.
      (Vide pgmodeler_ui/FormExportacao). Adicionalmente, este parâmetro só é considerado
      em geração de código SQL. */
-  QString obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq);
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def, bool exportar_arq);
+  QString getCodeDefinition(unsigned tipo_def);
 
   //Retorna a definição SOMENTE do banco de dados definido pelo modelo.
   QString __obterDefinicaoObjeto(unsigned tipo_def);
@@ -387,7 +387,7 @@ class ModeloBD:  public QObject, public BaseObject {
   void operator = (ModeloBD &modelo);
 
   //Métodos de criação de objetos a partir do documento XML
-  ObjectType obterTipoObjeto(const QString &str_tipo);
+  ObjectType getType(const QString &str_tipo);
   void definirAtributosBasicos(BaseObject *objeto);
   TipoPgSQL criarTipoPgSQL(void);
 

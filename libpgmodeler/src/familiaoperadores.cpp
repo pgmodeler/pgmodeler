@@ -16,14 +16,14 @@ TipoIndexacao FamiliaOperadores::obterTipoIndexacao(void)
  return(tipo_index);
 }
 
-QString FamiliaOperadores::obterDefinicaoObjeto(unsigned tipo_def)
+QString FamiliaOperadores::getCodeDefinition(unsigned tipo_def)
 {
- return(this->obterDefinicaoObjeto(tipo_def, false));
+ return(this->getCodeDefinition(tipo_def, false));
 }
 
-QString FamiliaOperadores::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
+QString FamiliaOperadores::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
 {
  attributes[ParsersAttributes::INDEX_TYPE]=(~tipo_index);
- return(BaseObject::obterDefinicaoObjeto(tipo_def,forma_reduzida));
+ return(BaseObject::getCodeDefinition(tipo_def,forma_reduzida));
 }
 

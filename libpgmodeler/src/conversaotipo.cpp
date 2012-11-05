@@ -132,7 +132,7 @@ unsigned ConversaoTipo::obterTipoConversao(void)
  return(tipo);
 }
 
-QString ConversaoTipo::obterDefinicaoObjeto(unsigned tipo_def)
+QString ConversaoTipo::getCodeDefinition(unsigned tipo_def)
 {
  if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
@@ -150,7 +150,7 @@ QString ConversaoTipo::obterDefinicaoObjeto(unsigned tipo_def)
   if(tipo_def==SchemaParser::SQL_DEFINITION)
    attributes[ParsersAttributes::SIGNATURE]=funcao_conv->obterAssinatura();
   else
-   attributes[ParsersAttributes::SIGNATURE]=funcao_conv->obterDefinicaoObjeto(tipo_def, true);
+   attributes[ParsersAttributes::SIGNATURE]=funcao_conv->getCodeDefinition(tipo_def, true);
  }
 
  if(tipo==CONV_ATRIBUICAO)
@@ -163,6 +163,6 @@ QString ConversaoTipo::obterDefinicaoObjeto(unsigned tipo_def)
 
  attributes[ParsersAttributes::IO_CAST]=(entrada_saida ? "1" : "");
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 

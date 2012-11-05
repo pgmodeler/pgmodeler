@@ -35,7 +35,7 @@ class EspacoTabela: public BaseObject{
   EspacoTabela(void);
 
   //Define o nome do espaço de tabela
-  void definirNome(const QString &obj_name);
+  void setName(const QString &obj_name);
 
   //Define o diretório do tablespace
   void definirDiretorio(const QString &diretorio);
@@ -44,7 +44,7 @@ class EspacoTabela: public BaseObject{
   QString obterDiretorio(void);
 
   //Retorna a definição SQL ou XML do objeto
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def);
 };
 
 #endif

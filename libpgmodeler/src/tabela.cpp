@@ -31,10 +31,10 @@ Tabela::~Tabela(void)
  tabelas_pai.clear();
 }
 
-void Tabela::definirNome(const QString &nome)
+void Tabela::setName(const QString &nome)
 {
  QString nome_ant=this->getName(true);
- BaseObject::definirNome(nome);
+ BaseObject::setName(nome);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
@@ -112,7 +112,7 @@ void Tabela::definirAtributoColunas(unsigned tipo_def)
   if(tipo_def==SchemaParser::SQL_DEFINITION ||
      (tipo_def==SchemaParser::XML_DEFINITION &&
       !colunas[i]->incluidoPorRelacionamento()))
-   str_cols+=colunas[i]->obterDefinicaoObjeto(tipo_def);
+   str_cols+=colunas[i]->getCodeDefinition(tipo_def);
  }
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
@@ -152,7 +152,7 @@ void Tabela::definirAtributoRestricoes(unsigned tipo_def)
        (rest->obterTipoRestricao()==TipoRestricao::primary_key))))
   {
    inc_insporrelacao=(tipo_def==SchemaParser::SQL_DEFINITION);
-   str_rest+=rest->obterDefinicaoObjeto(tipo_def,inc_insporrelacao);
+   str_rest+=rest->getCodeDefinition(tipo_def,inc_insporrelacao);
   }
  }
 
@@ -190,7 +190,7 @@ void Tabela::definirAtributoGatilhos(unsigned tipo_def)
       tipo_def==SchemaParser::XML_DEFINITION) ||
       tipo_def==SchemaParser::SQL_DEFINITION)
   {
-   str_gat+=gat->obterDefinicaoObjeto(tipo_def);
+   str_gat+=gat->getCodeDefinition(tipo_def);
   }
  }
 
@@ -212,7 +212,7 @@ void Tabela::definirAtributoIndices(unsigned tipo_def)
       !ind->referenciaColunaIncRelacao() &&
       tipo_def==SchemaParser::XML_DEFINITION) ||
       tipo_def==SchemaParser::SQL_DEFINITION)
-   str_ind+=ind->obterDefinicaoObjeto(tipo_def);
+   str_ind+=ind->getCodeDefinition(tipo_def);
  }
 
  attributes[ParsersAttributes::INDEXES]=str_ind;
@@ -230,7 +230,7 @@ void Tabela::definirAtributoRegras(unsigned tipo_def)
   if((/* !regras[i]->isProtected() && */
       tipo_def==SchemaParser::XML_DEFINITION) ||
       tipo_def==SchemaParser::SQL_DEFINITION)
-   str_reg+=regras[i]->obterDefinicaoObjeto(tipo_def);
+   str_reg+=regras[i]->getCodeDefinition(tipo_def);
  }
 
  attributes[ParsersAttributes::RULES]=str_reg;
@@ -264,7 +264,7 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
  else
  {
   int idx;
-  tipo_obj=obj->obterTipoObjeto();
+  tipo_obj=obj->getType();
   TipoRestricao tipo_rest;
   QString str_aux;
 
@@ -320,32 +320,32 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
       {
        Coluna *col;
        col=dynamic_cast<Coluna *>(obj_tab);
-       col->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
+       col->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       }
       else if(tipo_obj==OBJ_CONSTRAINT)
       {
        Restricao *rest;
        rest=dynamic_cast<Restricao *>(obj_tab);
-       rest->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
+       rest->getCodeDefinition(SchemaParser::SQL_DEFINITION);
        tipo_rest=rest->obterTipoRestricao();
       }
       else if(tipo_obj==OBJ_INDEX)
       {
        Indice *ind;
        ind=dynamic_cast<Indice *>(obj_tab);
-       ind->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
+       ind->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       }
       else if(tipo_obj==OBJ_RULE)
       {
        Regra *reg;
        reg=dynamic_cast<Regra *>(obj_tab);
-       reg->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
+       reg->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       }
       else if(tipo_obj==OBJ_TRIGGER)
       {
        Gatilho *gat;
        gat=dynamic_cast<Gatilho *>(obj_tab);
-       gat->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
+       gat->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       }
 
       //Insere o objeto na lista correta
@@ -450,7 +450,7 @@ void Tabela::adicionarTabelaCopia(Tabela *tab, int idx_tab)
 void Tabela::removerObjeto(BaseObject *objeto)
 {
  if(objeto)
-  removerObjeto(objeto->getName(), objeto->obterTipoObjeto());
+  removerObjeto(objeto->getName(), objeto->getType());
 }
 
 void Tabela::removerObjeto(const QString &nome, ObjectType tipo_obj)
@@ -624,7 +624,7 @@ int Tabela::obterIndiceObjeto(ObjetoTabela *objeto)
  if(!objeto)
   return(-1);
  else
-  return(obterIndiceObjeto(objeto->getName(true), objeto->obterTipoObjeto()));
+  return(obterIndiceObjeto(objeto->getName(true), objeto->getType()));
 }
 
 BaseObject *Tabela::obterObjeto(const QString &nome, ObjectType tipo_obj)
@@ -987,7 +987,7 @@ bool Tabela::restricaoReferenciaColuna(Coluna *coluna, TipoRestricao tipo_rest)
  return(enc);
 }
 
-QString Tabela::obterDefinicaoObjeto(unsigned tipo_def)
+QString Tabela::getCodeDefinition(unsigned tipo_def)
 {
  attributes[ParsersAttributes::OIDS]=(aceita_oids ? "1" : "");
  definirAtributoColunas(tipo_def);
@@ -999,7 +999,7 @@ QString Tabela::obterDefinicaoObjeto(unsigned tipo_def)
  if(tipo_def==SchemaParser::XML_DEFINITION)
   definirAtributoPosicao();
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 
 void Tabela::operator = (Tabela &tabela)

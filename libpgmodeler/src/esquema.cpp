@@ -6,7 +6,7 @@ Esquema::Esquema(void)
  object_id=BaseObject::schema_id++;
 }
 
-void Esquema::definirNome(const QString &nome)
+void Esquema::setName(const QString &nome)
 {
  /* Tratando nomes de esquemas iniciados em pg_ pois são reservados para o SGBD e
     não podem ser criados pelo usuário */
@@ -16,6 +16,6 @@ void Esquema::definirNome(const QString &nome)
                          .arg(BaseObject::getTypeName(OBJ_SCHEMA)),
                 ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- BaseObject::definirNome(nome); //Chama o método da classe descendente
+ BaseObject::setName(nome); //Chama o método da classe descendente
 }
 

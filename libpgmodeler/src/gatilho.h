@@ -157,7 +157,7 @@ class Gatilho: public ObjetoTabela{
   bool referenciaColunaIncRelacao(void);
 
   //Retorna a definição SQL ou XML do objeto
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def);
 };
 
 #endif

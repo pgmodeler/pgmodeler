@@ -40,7 +40,7 @@ void Parametro::operator = (const Parametro &param)
  this->saida=param.saida;
 }
 
-QString Parametro::obterDefinicaoObjeto(unsigned tipo_def)
+QString Parametro::getCodeDefinition(unsigned tipo_def)
 {
  //map<QString, QString> atributos;
  QString val_true, val_false;
@@ -56,7 +56,7 @@ QString Parametro::obterDefinicaoObjeto(unsigned tipo_def)
  attributes[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
 
  //return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::PARAMETRO,atributos, tipo_def));
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 
 Funcao::Funcao(void)
@@ -90,9 +90,9 @@ Funcao::Funcao(void)
  attributes[ParsersAttributes::SYMBOL]="";
 }
 
-void Funcao::definirNome(const QString &nome)
+void Funcao::setName(const QString &nome)
 {
- BaseObject::definirNome(nome);
+ BaseObject::setName(nome);
  criarAssinatura();
 }
 
@@ -174,7 +174,7 @@ void Funcao::adicionarTipoRetTabela(const QString &nome, TipoPgSQL tipo)
    Parametro p;
 
    //Insere o parâmetro na lista de parâmetros
-   p.definirNome(nome);
+   p.setName(nome);
    p.definirTipo(tipo);
    tipos_ret_tabela.push_back(p);
   }
@@ -189,7 +189,7 @@ void Funcao::definirAtributoParametros(unsigned tipo_def)
  qtd=params.size();
  for(i=0; i < qtd; i++)
  {
-  str_param+=params[i].obterDefinicaoObjeto(tipo_def);
+  str_param+=params[i].getCodeDefinition(tipo_def);
  }
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
@@ -206,7 +206,7 @@ void Funcao::definirAtributoTipoRetTabela(unsigned tipo_def)
  qtd=tipos_ret_tabela.size();
  for(i=0; i < qtd; i++)
  {
-  str_tipo+=tipos_ret_tabela[i].obterDefinicaoObjeto(tipo_def);
+  str_tipo+=tipos_ret_tabela[i].getCodeDefinition(tipo_def);
  }
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
@@ -263,7 +263,7 @@ void Funcao::definirLinguagem(BaseObject *linguagem)
   throw Exception(ERR_ASG_NOT_ALOC_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Caso se tente inserir um objeto alocado porém que não é uma linguagem
     um erro é gerado */
- else if(linguagem->obterTipoObjeto()!=OBJ_LANGUAGE)
+ else if(linguagem->getType()!=OBJ_LANGUAGE)
   throw Exception(ERR_ASG_INV_LANGUAGE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -491,12 +491,12 @@ void Funcao::criarAssinatura(bool formatar)
  assinatura=this->getName(formatar) + QString("(") + str_param + QString(")");
 }
 
-QString Funcao::obterDefinicaoObjeto(unsigned tipo_def)
+QString Funcao::getCodeDefinition(unsigned tipo_def)
 {
- return(this->obterDefinicaoObjeto(tipo_def, false));
+ return(this->getCodeDefinition(tipo_def, false));
 }
 
-QString Funcao::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
+QString Funcao::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
 {
  definirAtributoParametros(tipo_def);
 
@@ -511,7 +511,7 @@ QString Funcao::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  }
  else
  {
-  attributes[ParsersAttributes::LANGUAGE]=linguagem->obterDefinicaoObjeto(tipo_def,true);
+  attributes[ParsersAttributes::LANGUAGE]=linguagem->getCodeDefinition(tipo_def,true);
   attributes[ParsersAttributes::RETURN_TYPE]=tipo_retorno.obterDefinicaoObjeto(tipo_def);
  }
 
@@ -530,6 +530,6 @@ QString Funcao::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  }
 
  attributes[ParsersAttributes::SIGNATURE]=assinatura;
- return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));
+ return(BaseObject::getCodeDefinition(tipo_def, forma_reduzida));
 }
 

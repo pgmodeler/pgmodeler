@@ -86,7 +86,7 @@ class Visao: public TabelaBase {
   int obterIndiceReferencia(Referencia &ref, unsigned tipo_sql);
 
   //Retorna a definição SQL ou XML do objeto
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def);
 
   /* Retorna se a visão referencia colunas adicionadas
      por relacionamento. Este método é usado como auxiliar

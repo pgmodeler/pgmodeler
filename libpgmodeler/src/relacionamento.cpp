@@ -87,7 +87,7 @@ Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabel
    str_aux=str_aux.arg(this->tabela_orig->getName())
                   .arg(this->tabela_dest->getName());
 
-  definirNome(str_aux);
+  setName(str_aux);
 
   /* Caso a os sufixos estejam especificados o nome da tabela será
      a junção dos sufixos separados pelo separador de sufixos. Caso
@@ -215,7 +215,7 @@ void Relacionamento::criarChavePrimariaEspecial(void)
 
      2) O espaço de tabelas usado na restrição é o mesmo da tabela receptora */
   pk_especial=new Restricao;
-  pk_especial->definirNome(this->getName() + QString("_pk"));
+  pk_especial->setName(this->getName() + QString("_pk"));
   pk_especial->definirTipo(TipoRestricao::primary_key);
   pk_especial->definirIncPorLigacao(true);
   pk_especial->setProtected(true);
@@ -288,7 +288,7 @@ int Relacionamento::obterIndiceObjeto(ObjetoTabela *objeto)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Selecionando a lista de objetos de acordo com o tipo do objeto
- tipo_obj=objeto->obterTipoObjeto();
+ tipo_obj=objeto->getType();
  if(tipo_obj==OBJ_COLUMN)
   lista=&atributos_rel;
  else if(tipo_obj==OBJ_CONSTRAINT)
@@ -353,7 +353,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
      tipo_relac==RELACIONAMENTO_DEP) &&
     !(objeto_tab->incluidoPorRelacionamento() &&
       objeto_tab->isProtected() &&
-      objeto_tab->obterTipoObjeto()==OBJ_CONSTRAINT))
+      objeto_tab->getType()==OBJ_CONSTRAINT))
   throw Exception(ERR_ASG_OBJ_INV_REL_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  try
@@ -367,7 +367,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
   {
    /* Obtém a lista de objetos de acordo com o tipo
       do objeto a ser inserido */
-   tipo_obj=objeto_tab->obterTipoObjeto();
+   tipo_obj=objeto_tab->getType();
    if(tipo_obj==OBJ_COLUMN)
     lista_obj=&atributos_rel;
    else if(tipo_obj==OBJ_CONSTRAINT)
@@ -383,12 +383,12 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
    objeto_tab->definirTabelaPai(tabela_orig);
 
    if(tipo_obj==OBJ_COLUMN)
-    dynamic_cast<Coluna *>(objeto_tab)->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
+    dynamic_cast<Coluna *>(objeto_tab)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
    else
    {
     Restricao *rest=NULL;
     rest=dynamic_cast<Restricao *>(objeto_tab);
-    rest->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
+    rest->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
     /* Caso se tente inserir uma chave estrangeira como restrição do relacionamento
        retorna um erro pois este é o único tipo que não pode ser incluído */
@@ -532,7 +532,7 @@ void Relacionamento::removerObjeto(ObjetoTabela *objeto)
  if(!objeto)
   throw Exception(ERR_REM_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- removerObjeto(obterIndiceObjeto(objeto),objeto->obterTipoObjeto());
+ removerObjeto(obterIndiceObjeto(objeto),objeto->getType());
 }
 
 void Relacionamento::removerAtributo(unsigned id_atrib)
@@ -712,7 +712,7 @@ void Relacionamento::adicionarRestricoes(Tabela *tab_dest)
      i++;
     }
 
-    if(nome!="") rest->definirNome(nome);
+    if(nome!="") rest->setName(nome);
 
     //Adiciona a restrição na tabela
     tab_dest->adicionarRestricao(rest);
@@ -1047,7 +1047,7 @@ void Relacionamento::conectarRelacionamento(void)
 
      /* O esquema e espaço de tabelas da tabela resultante será, por padrão,
         os mesmos da tabela de origem */
-    tabela_relnn->definirNome(nome_tab_relnn);
+    tabela_relnn->setName(nome_tab_relnn);
     tabela_relnn->setSchema(tabela_orig->getSchema());
     tabela_relnn->setTablespace(tabela_orig->getTablespace());
 
@@ -1121,7 +1121,7 @@ void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
    }
 
    //Atribui o nome configurado   chave primaria criada
-   pk->definirNome(nome);
+   pk->setName(nome);
   }
 
   /* Adicionando as colunas da chave primária da entidade forte na chave
@@ -1180,7 +1180,7 @@ void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_rec
   }
 
   //Atribui o nome configurado   chave única
-  uq->definirNome(nome + aux);
+  uq->setName(nome + aux);
 
   /* Após configurada a chave única que define o
      relacionamento é adicionado na tabela */
@@ -1299,7 +1299,7 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
   }
 
   //Atribui o nome configurado   chave estrangeira
-  fk->definirNome(nome + aux);
+  fk->setName(nome + aux);
 
   /* Após configurada a chave estrangeira que define o
      relacionamento é adicionado na tabela */
@@ -1344,7 +1344,7 @@ void Relacionamento::adicionarAtributos(Tabela *tab_receptora)
     i1++;
    }
    //Define o nome do atributo
-   coluna->definirNome(nome + aux);
+   coluna->setName(nome + aux);
    aux[0]='\0';
 
    //Adiciona o atributo na tabela
@@ -1479,11 +1479,11 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
 
    //Primeiramente a coluna é renomeada com seu nome antigo para manter o histórico
    if(nome_ant!="")
-    coluna->definirNome(nome_ant);
+    coluna->setName(nome_ant);
 
    /* Define o nome da coluna como sendo o nome configurado acima, desta forma a
       coluna passará a ter como nome antigo o nome atribuido na iteração acima */
-   coluna->definirNome(nome);
+   coluna->setName(nome);
 
    /* Caso o nome anteriro atribuíd  coluna seja diferente do nome atual, o nome
       atual da coluna passará a ser o nome antigo da mesma quando o relacionamento
@@ -1706,7 +1706,7 @@ void Relacionamento::adicionarColunasRelNn(void)
   /* Cria a chave primária padrão da tabela que consiste nas colunas que
      identificam cada chave estrangeira na tabela. */
   pk_tabnn=new Restricao;
-  pk_tabnn->definirNome(tabela_relnn->getName() + "_pk");
+  pk_tabnn->setName(tabela_relnn->getName() + "_pk");
   pk_tabnn->definirTipo(TipoRestricao::primary_key);
   pk_tabnn->definirIncPorLigacao(true);
   qtd=colunas_ref.size();
@@ -2026,7 +2026,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
      if(tabela && obterIndiceObjeto(obj_tab) >= 0)
      {
       //Remove o atributo da tabela através do nome e tipo
-      tabela->removerObjeto(obj_tab->getName(), obj_tab->obterTipoObjeto());
+      tabela->removerObjeto(obj_tab->getName(), obj_tab->getType());
       obj_tab->definirTabelaPai(NULL);
      }
      //Para para o atributo posterior
@@ -2341,7 +2341,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
   return(true);
 }
 
-QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
+QString Relacionamento::getCodeDefinition(unsigned tipo_def)
 {
  if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
@@ -2350,17 +2350,17 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
    unsigned qtd, i;
 
    attributes[ParsersAttributes::RELATIONSHIP_1N]="1";
-   attributes[ParsersAttributes::CONSTRAINTS]=fk_rel1n->obterDefinicaoObjeto(tipo_def);
+   attributes[ParsersAttributes::CONSTRAINTS]=fk_rel1n->getCodeDefinition(tipo_def);
 
    if(uq_rel11)
-    attributes[ParsersAttributes::CONSTRAINTS]+=uq_rel11->obterDefinicaoObjeto(tipo_def);
+    attributes[ParsersAttributes::CONSTRAINTS]+=uq_rel11->getCodeDefinition(tipo_def);
 
    qtd=restricoes_rel.size();
    for(i=0; i < qtd; i++)
    {
     if(dynamic_cast<Restricao *>(restricoes_rel[i])->obterTipoRestricao()!=TipoRestricao::primary_key)
      attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
-                                              obterDefinicaoObjeto(tipo_def, false);
+                                              getCodeDefinition(tipo_def, false);
 
    }
 
@@ -2371,13 +2371,13 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
    unsigned qtd, i;
 
    attributes[ParsersAttributes::RELATIONSHIP_NN]="1";
-   attributes[ParsersAttributes::TABLE]=tabela_relnn->obterDefinicaoObjeto(tipo_def);
+   attributes[ParsersAttributes::TABLE]=tabela_relnn->getCodeDefinition(tipo_def);
 
    qtd=tabela_relnn->obterNumRestricoes();
    for(i=0; i < qtd; i++)
    {
     if(tabela_relnn->obterRestricao(i)->obterTipoRestricao()!=TipoRestricao::primary_key)
-     attributes[ParsersAttributes::CONSTRAINTS]+=tabela_relnn->obterRestricao(i)->obterDefinicaoObjeto(tipo_def, true);
+     attributes[ParsersAttributes::CONSTRAINTS]+=tabela_relnn->obterRestricao(i)->getCodeDefinition(tipo_def, true);
    }
   }
   else if(tipo_relac==RELACIONAMENTO_GEN)
@@ -2387,7 +2387,7 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
    attributes[ParsersAttributes::ANCESTOR_TABLE]=obterTabelaReferencia()->getName(true);
   }
 
-  return(this->BaseObject::obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION));
+  return(this->BaseObject::getCodeDefinition(SchemaParser::SQL_DEFINITION));
  }
  else
  {
@@ -2409,7 +2409,7 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   for(i=0; i < qtd; i++)
   {
    attributes[ParsersAttributes::COLUMNS]+=dynamic_cast<Coluna *>(atributos_rel[i])->
-                    obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
+                    getCodeDefinition(SchemaParser::XML_DEFINITION);
   }
 
   attributes[ParsersAttributes::CONSTRAINTS]="";
@@ -2418,7 +2418,7 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   {
    if(!restricoes_rel[i]->isProtected())
     attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
-                       obterDefinicaoObjeto(SchemaParser::XML_DEFINITION, true);
+                       getCodeDefinition(SchemaParser::XML_DEFINITION, true);
   }
 
   qtd=id_colunas_pk_rel.size();
@@ -2440,7 +2440,7 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
                   attributes[ParsersAttributes::SPECIAL_PK_COLS].isEmpty());
 
 
-  return(this->BaseObject::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION, forma_reduzida));
+  return(this->BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION, forma_reduzida));
  }
 }
 

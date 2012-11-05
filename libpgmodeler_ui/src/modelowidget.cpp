@@ -423,7 +423,7 @@ void ModeloWidget::manipularAdicaoObjeto(BaseObject *objeto)
  //Caso seja um objeto gráfico
  if(obj_graf)
  {
-  ObjectType tipo_obj=obj_graf->obterTipoObjeto();
+  ObjectType tipo_obj=obj_graf->getType();
   QGraphicsItem *item=NULL;
 
   //Cria um objeto gráfico na cena conforme o tipo do objeto base
@@ -509,7 +509,7 @@ void ModeloWidget::manipularRemocaoObjeto(BaseObject *objeto)
 void ModeloWidget::manipularDuploCliqueObjeto(ObjetoGraficoBase *objeto)
 {
  if(objeto)
-  this->exibirFormObjeto(objeto->obterTipoObjeto(), objeto, NULL, objeto->obterPosicaoObjeto());
+  this->exibirFormObjeto(objeto->getType(), objeto, NULL, objeto->obterPosicaoObjeto());
 }
 
 void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
@@ -610,8 +610,8 @@ void ModeloWidget::configurarSelecaoObjetos(void)
    else if(qtd >=1 && qtd <=2)
    {
     //Obtém os tipos dos objetos
-    tipo_obj1=objs_selecionados[0]->obterTipoObjeto();
-    tipo_obj2=(qtd==2 ? objs_selecionados[1]->obterTipoObjeto() : BASE_OBJECT);
+    tipo_obj1=objs_selecionados[0]->getType();
+    tipo_obj2=(qtd==2 ? objs_selecionados[1]->getType() : BASE_OBJECT);
 
     //Caso haja apenas 1 objeto selecionado ativa a linha que simula a criação do relacionamento
     if(qtd==1 && tipo_obj1==OBJ_TABLE &&
@@ -694,7 +694,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
 
      //Obtém o xml que define a tabela do relacionamento
      tab_nn=rel->obterTabelaReceptora();
-     xml_tab=tab_nn->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
+     xml_tab=tab_nn->getCodeDefinition(SchemaParser::XML_DEFINITION);
 
      //Cria a mesma a partir do xml
      XMLParser::restartParser();
@@ -706,7 +706,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
         seu nome alterado até que não existam tabelas com mesmo nome que ela */
      while(modelo->obterObjeto(tab->getName(true), OBJ_TABLE))
      {
-      tab->definirNome(nome_tab + QString("_%1").arg(i));
+      tab->setName(nome_tab + QString("_%1").arg(i));
       i++;
      }
 
@@ -1111,7 +1111,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    tipo_obj=OBJ_RELATIONSHIP;
   }
 
-  if(objeto && tipo_obj!=objeto->obterTipoObjeto())
+  if(objeto && tipo_obj!=objeto->getType())
    throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Caso se tente chamar o formulário de criação de um objeto de tabela
      sem se especificar a tabela pai (objeto_pai) */
@@ -1272,7 +1272,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
        1 quando se tratar de autorelacionamento */
     if(!objeto && tipo_rel > 0 &&
        objs_selecionados.size() > 0 &&
-       objs_selecionados[0]->obterTipoObjeto()==OBJ_TABLE)
+       objs_selecionados[0]->getType()==OBJ_TABLE)
     {
      Tabela *tab1=dynamic_cast<Tabela *>(objs_selecionados[0]),
             *tab2=(objs_selecionados.size()==2 ?
@@ -1372,7 +1372,7 @@ void ModeloWidget::editarObjeto(void)
 
  //Exibe o formulário pra o objeto
  if(objeto)
-  exibirFormObjeto(objeto->obterTipoObjeto(), objeto,
+  exibirFormObjeto(objeto->getType(), objeto,
                   (obj_tab ? obj_tab->obterTabelaPai() : NULL));
 }
 
@@ -1415,11 +1415,11 @@ void ModeloWidget::protegerObjeto(void)
     /* O esquema 'public' e as linguagens C e SQL não pode ser manipuladas
        por serem do sistema, caso o usuário tente esta operação um erro será disparado */
     if(this->objs_selecionados[0] &&
-       ((this->objs_selecionados[0]->obterTipoObjeto()==OBJ_LANGUAGE &&
+       ((this->objs_selecionados[0]->getType()==OBJ_LANGUAGE &&
          (this->objs_selecionados[0]->getName()==~TipoLinguagem("c") ||
           this->objs_selecionados[0]->getName()==~TipoLinguagem("sql") ||
           this->objs_selecionados[0]->getName()==~TipoLinguagem("plpgsql"))) ||
-        (this->objs_selecionados[0]->obterTipoObjeto()==OBJ_SCHEMA &&
+        (this->objs_selecionados[0]->getType()==OBJ_SCHEMA &&
          this->objs_selecionados[0]->getName()=="public")))
       throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -1448,7 +1448,7 @@ void ModeloWidget::protegerObjeto(void)
     /* Caso o objeto seja uma coluna ou restrição adicionada automaticamente por um
       relacionamento, um erro será disparado pois objetos deste tipo não pode
       ser manipulados diretamente pelo usuário */
-    tipo_obj=objeto->obterTipoObjeto();
+    tipo_obj=objeto->getType();
 
     /* O esquema 'public' e as linguagens C e SQL não pode ser manipuladas
        por serem do sistema, caso o usuário tente esta operação um erro será disparado */
@@ -1530,7 +1530,7 @@ void ModeloWidget::copiarObjetos(void)
   objeto=(*itr);
 
   //Relacionamentos Tabela-visão não são copiados pois são criados automaticamente pelo modelo
-  if(objeto->obterTipoObjeto()!=BASE_RELATIONSHIP)
+  if(objeto->getType()!=BASE_RELATIONSHIP)
   {
    //Obtém as dependências do objeto atual caso o usuário tenha confirmado a obtenção das mesmas
    modelo->obterDependenciasObjeto(objeto, vet_deps, caixa_msg->result()==QDialog::Accepted);
@@ -1538,7 +1538,7 @@ void ModeloWidget::copiarObjetos(void)
    /* Caso especial para tabelas: É preciso copiar para a lista os objetos especiais
       (indices, gatilhos e restrições) que referenciam colunas incluídas por relacionamento.
       Para que seja possível a recriação dos mesmos quando colados */
-   if(objeto->obterTipoObjeto()==OBJ_TABLE)
+   if(objeto->getType()==OBJ_TABLE)
    {
     tabela=dynamic_cast<Tabela *>(objeto);
 
@@ -1623,7 +1623,7 @@ void ModeloWidget::colarObjetos(void)
  {
   //Obtém um objeto selecionado
   objeto=(*itr);
-  tipo_obj=objeto->obterTipoObjeto();
+  tipo_obj=objeto->getType();
   itr++;
 
   //Atualiza a mensagem do widget de progresso de tarefa
@@ -1631,7 +1631,7 @@ void ModeloWidget::colarObjetos(void)
   prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
                                 trUtf8("Validating object: %1 (%2)").arg(objeto->getName())
                                                                .arg(objeto->getTypeName()),
-                                objeto->obterTipoObjeto());
+                                objeto->getType());
 
 
   //Caso não seja um objeto de tabela
@@ -1686,16 +1686,16 @@ void ModeloWidget::colarObjetos(void)
       if(tipo_obj==OBJ_FUNCTION)
       {
        func=dynamic_cast<Funcao *>(objeto);
-       func->definirNome(nome_orig_objs[objeto] + nome_aux);
+       func->setName(nome_orig_objs[objeto] + nome_aux);
        nome_obj_copia=func->obterAssinatura();
-       func->definirNome(nome_orig_objs[objeto]);
+       func->setName(nome_orig_objs[objeto]);
       }
       else if(tipo_obj==OBJ_OPERATOR)
       {
        oper=dynamic_cast<Operador *>(objeto);
-       oper->definirNome(nome_orig_objs[objeto] + nome_aux);
+       oper->setName(nome_orig_objs[objeto] + nome_aux);
        nome_obj_copia=oper->obterAssinatura();
-       oper->definirNome(nome_orig_objs[objeto]);
+       oper->setName(nome_orig_objs[objeto]);
       }
       /*else if(tipo_obj==OBJETO_TIPO)
       {
@@ -1706,9 +1706,9 @@ void ModeloWidget::colarObjetos(void)
       } */
       else
       {
-       objeto->definirNome(nome_orig_objs[objeto] + nome_aux);
+       objeto->setName(nome_orig_objs[objeto] + nome_aux);
        nome_obj_copia=objeto->getName(true);
-       objeto->definirNome(nome_orig_objs[objeto]);
+       objeto->setName(nome_orig_objs[objeto]);
       }
      }
      while(modelo->obterObjeto(nome_obj_copia, tipo_obj));
@@ -1721,7 +1721,7 @@ void ModeloWidget::colarObjetos(void)
      else if(oper)
       oper->definirNome(nome_orig_objs[objeto] + nome_aux);
      else */
-      objeto->definirNome(nome_orig_objs[objeto] + nome_aux);
+      objeto->setName(nome_orig_objs[objeto] + nome_aux);
 
      nome_aux.clear();
      idx=1;
@@ -1746,7 +1746,7 @@ void ModeloWidget::colarObjetos(void)
   prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
                                 trUtf8("Generating XML code of object: %1 (%2)").arg(objeto->getName())
                                                                             .arg(objeto->getTypeName()),
-                                objeto->obterTipoObjeto());
+                                objeto->getType());
 
   //Armazena a definição XML do objeto num mapa de buffers xml
   xml_objs[objeto]=modelo->validarDefinicaoObjeto(objeto, SchemaParser::XML_DEFINITION);
@@ -1773,7 +1773,7 @@ void ModeloWidget::colarObjetos(void)
     dynamic_cast<Tipo *>(objeto)->definirNome(nome_orig_objs[objeto]);
    else*/
    if(tipo_obj!=OBJ_CAST)
-    objeto->definirNome(nome_orig_objs[objeto]);
+    objeto->setName(nome_orig_objs[objeto]);
   }
  }
 
@@ -1795,7 +1795,7 @@ void ModeloWidget::colarObjetos(void)
   try
   {
    //Cria um objeto com o xml obtido
-   objeto=modelo->criarObjeto(modelo->obterTipoObjeto(XMLParser::getElementName()));
+   objeto=modelo->criarObjeto(modelo->getType(XMLParser::getElementName()));
    obj_tab=dynamic_cast<ObjetoTabela *>(objeto);
 
    //Atualiza a mensagem do widget de progresso de tarefa
@@ -1803,7 +1803,7 @@ void ModeloWidget::colarObjetos(void)
    prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
                                  trUtf8("Pasting object: %1 (%2)").arg(objeto->getName())
                                                                 .arg(objeto->getTypeName()),
-                                 objeto->obterTipoObjeto());
+                                 objeto->getType());
 
    /* Com o objeto criado o mesmo é inserido no modelo, exceto para relacionamentos e objetos
       de tabelas pois estes são inseridos automaticamente em seus objetos pais */
@@ -1960,7 +1960,7 @@ void ModeloWidget::excluirObjetos(void)
     do
     {
      if(!objeto)  objeto=(*ritr++);
-     tipo_obj=objeto->obterTipoObjeto();
+     tipo_obj=objeto->getType();
 
      //Caso o objeto esteja protegido a exclusão será negada
      /* O esquema 'public' e as linguagens C e SQL não pode ser manipuladas
@@ -2188,18 +2188,18 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 
    //Se o objeto não está protegido e o mesmo seja um relacionamento ou tabela
    if(!obj->isProtected() &&
-      (obj->obterTipoObjeto()==OBJ_TABLE ||
-       obj->obterTipoObjeto()==OBJ_RELATIONSHIP))
+      (obj->getType()==OBJ_TABLE ||
+       obj->getType()==OBJ_RELATIONSHIP))
    {
     //Caso seja tabela, inclui a ação de adição de objetos de tabela
-    if(obj->obterTipoObjeto() == OBJ_TABLE)
+    if(obj->getType() == OBJ_TABLE)
     {
      for(i=0; i < 5; i++)
       menu_novo_obj.addAction(acoes_ins_objs[tipos[i]]);
      action_novo_obj->setMenu(&menu_novo_obj);
     }
     //Caso seja tabela, inclui a ação de adição de atributos e restrições ao relacionamento
-    else if(obj->obterTipoObjeto()==OBJ_RELATIONSHIP)
+    else if(obj->getType()==OBJ_RELATIONSHIP)
     {
      for(i=0; i < 2; i++)
       menu_novo_obj.addAction(acoes_ins_objs[tipos[i]]);
@@ -2275,7 +2275,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
  {
   tabela=dynamic_cast<Tabela *>(obj_tab->obterTabelaPai());
 
-  if(obj_tab->obterTipoObjeto()==OBJ_COLUMN)
+  if(obj_tab->getType()==OBJ_COLUMN)
   {
    qtd=tabela->obterNumRestricoes();
 

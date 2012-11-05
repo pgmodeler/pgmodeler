@@ -142,17 +142,17 @@ class BaseObject {
   //Define um atributo específico na lista de atributos de esquema
   /* Este método pode ser usando quando uma classe precisa acessar diretamente
      os atributos de outra porém não possui permissão */
-  void setAttribute(const QString &atrib, const QString &valor);
+  void setAttribute(const QString &attrib, const QString &value);
 
   /* Retorna se o nome do objeto está com conformidades com a regra
      de nomenclatura de objetos no PostgreSQL (63 bytes dentre [a-zA-z0-9_] */
-  static bool isValidName(const QString &nome_obj);
+  static bool isValidName(const QString &name);
 
   /* A flag obj_operador indica que o nome passado é de um operador
      o único tipo de objeto que aceita caracteres fora do alfabeto (ex. sinais matemáticos)
      na composição do seu nome. Neste caso a função de formatação apenas ignora a validação
      caso o flag esteja marcado */
-  static QString formatName(const QString &nome_obj, bool obj_operador=false);
+  static QString formatName(const QString &name, bool is_operator=false);
 
   //Retorna o nome do tipo do objeto
   static QString getTypeName(ObjectType obj_type);
@@ -170,7 +170,7 @@ class BaseObject {
   virtual void setComment(const QString &comment);
 
   //Define o nome do objeto
-  virtual void definirNome(const QString &obj_name);
+  virtual void setName(const QString &name);
 
   //Define o esquema ao qual o objeto pertence
   virtual void setSchema(BaseObject *schema);
@@ -182,12 +182,12 @@ class BaseObject {
   virtual void setTablespace(BaseObject *tablespace);
 
   //Define se o objeto está protegido ou não
-  virtual void setProtected(bool valor);
+  virtual void setProtected(bool value);
 
   /* Retorna o nome do objeto. O parâmetro 'formatar'
      é usado para obter o nome do objeto com o nome do esquema
      e as aspas concatenados */
-  QString getName(bool formatar=false);
+  QString getName(bool format=false);
 
   //Retorna o comentário do objeto
   QString getComment(void);
@@ -195,13 +195,13 @@ class BaseObject {
   /* Retorna a definição SQL ou XML do objeto. O atributo 'forma_reduzida'
      indica que a geração do código XML será uma representação mínima do
      objeto. Vide arquivo de esquemas de função, esquemas, domínios, tipos. */
-  virtual QString obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida);
+  virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
   //Método sobrecarregado que gera uma definição completa do objeto (forma_reduzida=false)
-  virtual QString obterDefinicaoObjeto(unsigned tipo_def);
+  virtual QString getCodeDefinition(unsigned def_type);
 
   //Retorna o tipo do objeto
-  ObjectType obterTipoObjeto(void);
+  ObjectType getType(void);
 
   //Retorna o nome do tipo do objeto
   QString getTypeName(void);

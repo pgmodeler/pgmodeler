@@ -213,7 +213,7 @@ TipoPgSQL FuncaoAgregacao::obterTipoDado(unsigned idx_tipo)
  return(tipo_dados[idx_tipo]);
 }
 
-QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
+QString FuncaoAgregacao::getCodeDefinition(unsigned tipo_def)
 {
  definirAtributoTipos(tipo_def);
 
@@ -225,7 +225,7 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
   {
    funcoes[FUNCAO_TRANSICAO]->setAttribute(ParsersAttributes::REF_TYPE,
                                                      ParsersAttributes::TRANSITION_FUNC);
-   attributes[ParsersAttributes::TRANSITION_FUNC]=funcoes[FUNCAO_TRANSICAO]->obterDefinicaoObjeto(tipo_def,true);
+   attributes[ParsersAttributes::TRANSITION_FUNC]=funcoes[FUNCAO_TRANSICAO]->getCodeDefinition(tipo_def,true);
   }
  }
 
@@ -237,7 +237,7 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
   {
    funcoes[FUNCAO_FINAL]->setAttribute(ParsersAttributes::REF_TYPE,
                                                  ParsersAttributes::FINAL_FUNC);
-   attributes[ParsersAttributes::FINAL_FUNC]=funcoes[FUNCAO_FINAL]->obterDefinicaoObjeto(tipo_def,true);
+   attributes[ParsersAttributes::FINAL_FUNC]=funcoes[FUNCAO_FINAL]->getCodeDefinition(tipo_def,true);
   }
  }
 
@@ -246,7 +246,7 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
   if(tipo_def==SchemaParser::SQL_DEFINITION)
    attributes[ParsersAttributes::SORT_OP]=op_ordenacao->getName(true);
   else
-   attributes[ParsersAttributes::SORT_OP]=op_ordenacao->obterDefinicaoObjeto(tipo_def,true);
+   attributes[ParsersAttributes::SORT_OP]=op_ordenacao->getCodeDefinition(tipo_def,true);
  }
 
  if(cond_inicial!="")
@@ -257,6 +257,6 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
  else
   attributes[ParsersAttributes::STATE_TYPE]=tipo_estado.obterDefinicaoObjeto(tipo_def,ParsersAttributes::STATE_TYPE);
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 

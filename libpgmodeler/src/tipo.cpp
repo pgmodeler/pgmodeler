@@ -49,12 +49,12 @@ Tipo::~Tipo(void)
  TipoPgSQL::removerTipoUsuario(this->getName(true), this);
 }
 
-void Tipo::definirNome(const QString &nome)
+void Tipo::setName(const QString &nome)
 {
  QString nome_ant;
 
  nome_ant=this->getName(true);//this->nome;
- BaseObject::definirNome(nome);
+ BaseObject::setName(nome);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
@@ -410,7 +410,7 @@ void Tipo::definirAtributoElementos(unsigned tipo_def)
   }
   else
   {
-   str_elem+=param.obterDefinicaoObjeto(tipo_def);
+   str_elem+=param.getCodeDefinition(tipo_def);
   }
  }
 
@@ -544,12 +544,12 @@ TipoPgSQL Tipo::obterTipoCopia(void)
  return(tipo_copia);
 }
 
-QString Tipo::obterDefinicaoObjeto(unsigned tipo_def)
+QString Tipo::getCodeDefinition(unsigned tipo_def)
 {
- return(this->obterDefinicaoObjeto(tipo_def, false));
+ return(this->getCodeDefinition(tipo_def, false));
 }
 
-QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
+QString Tipo::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
 {
  if(config==TIPO_ENUMERACAO)
  {
@@ -583,7 +583,7 @@ QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
     else
     {
      funcoes[i]->setAttribute(ParsersAttributes::REF_TYPE, atrib_func[i]);
-     BaseObject::attributes[atrib_func[i]]=funcoes[i]->obterDefinicaoObjeto(tipo_def, true);
+     BaseObject::attributes[atrib_func[i]]=funcoes[i]->getCodeDefinition(tipo_def, true);
     }
    }
   }
@@ -612,7 +612,7 @@ QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
    BaseObject::attributes[ParsersAttributes::LIKE_TYPE]=(*tipo_copia);
  }
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));
+ return(BaseObject::getCodeDefinition(tipo_def, forma_reduzida));
 }
 
 void Tipo::operator = (Tipo &tipo)

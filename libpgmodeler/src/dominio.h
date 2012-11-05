@@ -60,7 +60,7 @@ class Dominio: public BaseObject{
   //Define o tipo do domínio
   void definirTipo(TipoPgSQL tipo);
 
-  void definirNome(const QString &obj_name);
+  void setName(const QString &obj_name);
   void setSchema(BaseObject *schema);
 
   //Métodos de obtenção dos valores dos atributos
@@ -71,7 +71,7 @@ class Dominio: public BaseObject{
   TipoPgSQL obterTipo(void);
 
   //Retorna a definição SQL ou XML do objeto
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def);
 
   void operator = (Dominio &dominio);
 };

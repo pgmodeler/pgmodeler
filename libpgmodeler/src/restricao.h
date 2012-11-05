@@ -181,10 +181,10 @@ class Restricao: public ObjetoTabela{
   //Retorna a definição SQL ou XML do objeto
   /* Para manter a compatibilidade com o método puramente virtual da classe ancestral
      esse método retorna por padrão da definição SQL/XML sem incluir os objetos protegidos */
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def);
 
   //Retorna a definição SQL/XML filtrando por objetos incluídos por relacionamento ou não
-  QString obterDefinicaoObjeto(unsigned tipo_def, bool inc_insporrelacao);
+  QString getCodeDefinition(unsigned tipo_def, bool inc_insporrelacao);
 
   //Indica se uma dada coluna existe na lista de colunas de origem ou de destino
   bool colunaExistente(Coluna *coluna, unsigned tipo_coluna);

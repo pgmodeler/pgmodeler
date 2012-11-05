@@ -10,7 +10,7 @@ void ObjetoTabela::definirTabelaPai(BaseObject *tabela)
 {
  /* Caso o objeto a ser atribuído não seja uma tabela
     um erro é gerado */
- if(tabela && tabela->obterTipoObjeto()!=OBJ_TABLE)
+ if(tabela && tabela->getType()!=OBJ_TABLE)
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  tabela_pai=tabela;

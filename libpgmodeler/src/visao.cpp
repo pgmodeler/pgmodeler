@@ -391,7 +391,7 @@ bool Visao::referenciaColuna(Coluna *col)
  return(enc);
 }
 
-QString Visao::obterDefinicaoObjeto(unsigned tipo_def)
+QString Visao::getCodeDefinition(unsigned tipo_def)
 {
  if(tipo_def==SchemaParser::SQL_DEFINITION)
   definirAtributoDeclaracao();
@@ -401,7 +401,7 @@ QString Visao::obterDefinicaoObjeto(unsigned tipo_def)
   definirAtributoReferencias();
  }
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 
 void Visao::operator = (Visao &visao)

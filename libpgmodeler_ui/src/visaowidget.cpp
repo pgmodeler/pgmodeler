@@ -340,7 +340,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
   visao_aux.removerReferencias();
 
   //Configura o nome da visão com o que está no formulário
-  visao_aux.definirNome(nome_edt->text());
+  visao_aux.BaseObject::setName(nome_edt->text());
 
   //Configura o esquema da visão com o que está no formulário
   visao_aux.setSchema(sel_esquema->obterObjeto());
@@ -367,7 +367,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
    }
   }
   //Exibe o código fonte da visão auxliar, para refletir a configuração atual da mesma
-  codigo_txt->setPlainText(QString::fromUtf8(visao_aux.obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION)));
+  codigo_txt->setPlainText(QString::fromUtf8(visao_aux.getCodeDefinition(SchemaParser::SQL_DEFINITION)));
  }
  catch(Exception &e)
  {

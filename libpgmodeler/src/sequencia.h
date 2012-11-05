@@ -82,7 +82,7 @@ class Sequencia: public BaseObject {
   void definirPossuidora(Tabela *tabela, const QString &nome_coluna);
   void definirPossuidora(Coluna *coluna);
 
-  void definirNome(const QString &obj_name);
+  void setName(const QString &obj_name);
 
   //Define o esquema ao qual a sequência pertence
   void setSchema(BaseObject *schema);
@@ -100,7 +100,7 @@ class Sequencia: public BaseObject {
   void operator = (Sequencia &seq);
 
   //Retorna a definição SQL ou XML do objeto
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def);
 };
 
 #endif

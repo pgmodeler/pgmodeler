@@ -40,8 +40,8 @@ class FamiliaOperadores: public BaseObject {
   TipoIndexacao obterTipoIndexacao(void);
 
   //Retorna a definição SQL ou XML do objeto
-  QString obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida);
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def, bool forma_reduzida);
+  QString getCodeDefinition(unsigned tipo_def);
 };
 
 #endif

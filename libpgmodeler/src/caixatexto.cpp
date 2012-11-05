@@ -11,7 +11,7 @@ CaixaTexto::CaixaTexto(void)
  attributes[ParsersAttributes::COLOR]="";
 }
 
-QString CaixaTexto::obterDefinicaoObjeto(void)
+QString CaixaTexto::getCodeDefinition(void)
 {
  definirAtributoPosicao();
 
@@ -27,7 +27,7 @@ QString CaixaTexto::obterDefinicaoObjeto(void)
  if(cor_texto.name()!="#000000")
   attributes[ParsersAttributes::COLOR]=cor_texto.name();
 
- return(this->BaseObject::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION));
+ return(this->BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION));
 }
 
 void CaixaTexto::operator = (CaixaTexto &caixa)

@@ -376,12 +376,12 @@ TipoComparacao Restricao::obterTipoComparacao(void)
  return(tipo_comp);
 }
 
-QString Restricao::obterDefinicaoObjeto(unsigned tipo_def)
+QString Restricao::getCodeDefinition(unsigned tipo_def)
 {
- return(obterDefinicaoObjeto(tipo_def, false));
+ return(getCodeDefinition(tipo_def, false));
 }
 
-QString Restricao::obterDefinicaoObjeto(unsigned tipo_def, bool inc_insporrelacao)
+QString Restricao::getCodeDefinition(unsigned tipo_def, bool inc_insporrelacao)
 {
  QString atrib;
 
@@ -447,6 +447,6 @@ QString Restricao::obterDefinicaoObjeto(unsigned tipo_def, bool inc_insporrelaca
  else
   attributes[ParsersAttributes::FACTOR]="";
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 

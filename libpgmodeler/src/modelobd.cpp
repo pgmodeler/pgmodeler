@@ -5,7 +5,7 @@ ModeloBD::ModeloBD(void)
  object_id=BaseObject::dbmodel_id++;
 
  obj_type=OBJ_DATABASE;
- definirNome(QObject::trUtf8("new_database").toUtf8());
+ BaseObject::setName(QObject::trUtf8("new_database").toUtf8());
 
  lim_conexao=-1;
  carregando_modelo=false;
@@ -120,14 +120,14 @@ QString ModeloBD::validarDefinicaoObjeto(BaseObject *objeto, unsigned tipo_def)
      algum problema com a definição sql do objeto */
   try
   {
-   tipo_obj=objeto->obterTipoObjeto();
+   tipo_obj=objeto->getType();
 
    if(tipo_obj==BASE_RELATIONSHIP && tipo_def==SchemaParser::XML_DEFINITION)
-    def_obj=dynamic_cast<RelacionamentoBase *>(objeto)->obterDefinicaoObjeto();
+    def_obj=dynamic_cast<RelacionamentoBase *>(objeto)->getCodeDefinition();
    else if(tipo_obj==OBJ_TEXTBOX && tipo_def==SchemaParser::XML_DEFINITION)
-    def_obj=dynamic_cast<CaixaTexto *>(objeto)->obterDefinicaoObjeto();
+    def_obj=dynamic_cast<CaixaTexto *>(objeto)->getCodeDefinition();
    else
-    def_obj=objeto->obterDefinicaoObjeto(tipo_def);
+    def_obj=objeto->getCodeDefinition(tipo_def);
   }
   catch(Exception &e)
   {
@@ -155,7 +155,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
  {
   try
   {
-   tipo_obj=objeto->obterTipoObjeto();
+   tipo_obj=objeto->getType();
 
    if(tipo_obj==OBJ_RELATIONSHIP ||
       tipo_obj==BASE_RELATIONSHIP)
@@ -213,7 +213,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
  {
   try
   {
-   tipo_obj=objeto->obterTipoObjeto();
+   tipo_obj=objeto->getType();
 
    if(tipo_obj==OBJ_RELATIONSHIP ||
       tipo_obj==BASE_RELATIONSHIP)
@@ -335,7 +335,7 @@ void ModeloBD::__adicionarObjeto(BaseObject *objeto, int idx_obj)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
- tipo_obj=objeto->obterTipoObjeto();
+ tipo_obj=objeto->getType();
 
  /* Caso o objeto seja um espaço de tabela verifica se não existem
     outro espaço de tabela que esteja apontando para o mesmo diretório
@@ -393,7 +393,7 @@ void ModeloBD::__adicionarObjeto(BaseObject *objeto, int idx_obj)
  }
 
  //Obtém a lista de objetos do tipo do novo objeto
- lista_obj=obterListaObjetos(objeto->obterTipoObjeto());
+ lista_obj=obterListaObjetos(objeto->getType());
 
  //Insere o novo elemento na lista
  if(idx_obj < 0 || idx_obj >= static_cast<int>(lista_obj->size()))
@@ -425,7 +425,7 @@ void ModeloBD::__removerObjeto(BaseObject *objeto, int idx_obj)
   vector<BaseObject *> *lista_obj=NULL;
   ObjectType tipo_obj;
 
-  tipo_obj=objeto->obterTipoObjeto();
+  tipo_obj=objeto->getType();
 
   //Obtém a lista de acordo com o tipo do objeto
   lista_obj=obterListaObjetos(tipo_obj);
@@ -705,7 +705,7 @@ void ModeloBD::destruirObjetos(void)
   {
    objeto=lista->back();
 
-   if(objeto->obterTipoObjeto()==OBJ_RELATIONSHIP)
+   if(objeto->getType()==OBJ_RELATIONSHIP)
     dynamic_cast<Relacionamento *>(objeto)->destruirObjetos();
 
    delete(objeto);
@@ -908,7 +908,7 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
       rel->obterTabela(RelacionamentoBase::TABELA_DESTINO)==visao)
    {
     //Obtém a tabela do relacionamento
-    if(rel->obterTabela(RelacionamentoBase::TABELA_ORIGEM)->obterTipoObjeto()==OBJ_TABLE)
+    if(rel->obterTabela(RelacionamentoBase::TABELA_ORIGEM)->getType()==OBJ_TABLE)
      tab=dynamic_cast<Tabela *>(rel->obterTabela(RelacionamentoBase::TABELA_ORIGEM));
     else
      tab=dynamic_cast<Tabela *>(rel->obterTabela(RelacionamentoBase::TABELA_DESTINO));
@@ -977,7 +977,7 @@ void ModeloBD::desconectarRelacionamentos(void)
    ritr_rel++;
 
    //Caso o relacionamento obtido da lista seja entre tabelas
-   if(rel_base->obterTipoObjeto()==OBJ_RELATIONSHIP)
+   if(rel_base->getType()==OBJ_RELATIONSHIP)
    {
     //Converte o objeto para relacionamento tabela-tabela
     rel=dynamic_cast<Relacionamento *>(rel_base);
@@ -1025,7 +1025,7 @@ void ModeloBD::validarRelacionamentos(void)
    itr++;
 
    //Caso o relacionamento obtido seja tabela-tabela
-   if(rel_base->obterTipoObjeto()==OBJ_RELATIONSHIP)
+   if(rel_base->getType()==OBJ_RELATIONSHIP)
    {
     //Converte o relacionamento base para rel. tabela-tabela
     rel=dynamic_cast<Relacionamento *>(rel_base);
@@ -1249,7 +1249,7 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
     rel_base=dynamic_cast<RelacionamentoBase *>(*itr);
     itr++;
 
-    if(rel_base->obterTipoObjeto()==OBJ_RELATIONSHIP)
+    if(rel_base->getType()==OBJ_RELATIONSHIP)
     {
      //Obtém um relacionamento da lista
      rel_aux=dynamic_cast<Relacionamento *>(rel_base);
@@ -1362,7 +1362,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
       /* Caso uma restrição seja encontrada obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
       if(enc)
-       xml_objs_especiais[restricao->getObjectId()]=restricao->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION, true);
+       xml_objs_especiais[restricao->getObjectId()]=restricao->getCodeDefinition(SchemaParser::XML_DEFINITION, true);
      }
      else if(tipo_obj_tab[id_tipo]==OBJ_TRIGGER)
      {
@@ -1376,7 +1376,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
       /* Caso um índice seja encontrado obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
       if(enc)
-       xml_objs_especiais[gatilho->getObjectId()]=gatilho->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
+       xml_objs_especiais[gatilho->getObjectId()]=gatilho->getCodeDefinition(SchemaParser::XML_DEFINITION);
      }
      //Caso seja um índice
      else
@@ -1391,14 +1391,14 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
       /* Caso um índice seja encontrado obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
       if(enc)
-       xml_objs_especiais[indice->getObjectId()]=indice->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
+       xml_objs_especiais[indice->getObjectId()]=indice->getCodeDefinition(SchemaParser::XML_DEFINITION);
      }
 
      //Caso algum objeto especial for encontrado
      if(enc)
      {
       //Remove o mesmo da tabela possuidora
-      tabela->removerObjeto(obj_tab->getName(), obj_tab->obterTipoObjeto());
+      tabela->removerObjeto(obj_tab->getName(), obj_tab->getType());
 
       //Remove as permissões existentes para o objeto
       removerPermissoes(obj_tab);
@@ -1425,7 +1425,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
       a sequencia como objeto especial */
    if(sequencia->referenciaColunaIncRelacao())
    {
-    xml_objs_especiais[sequencia->getObjectId()]=sequencia->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
+    xml_objs_especiais[sequencia->getObjectId()]=sequencia->getCodeDefinition(SchemaParser::XML_DEFINITION);
     removerSequencia(sequencia);
     delete(sequencia);
    }
@@ -1447,7 +1447,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
    if(visao->referenciaColunaIncRelacao())
    {
     //Armazena a definição XML da visão
-    xml_objs_especiais[visao->getObjectId()]=visao->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
+    xml_objs_especiais[visao->getObjectId()]=visao->getCodeDefinition(SchemaParser::XML_DEFINITION);
 
     /* Caso hajam relacionamentos ligando a visão e as tabelas referenciadas
        os mesmo também serão armazenados como objetos especiais para posterior
@@ -1473,7 +1473,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
       if(rel)
       {
        //Armazena a definição xml do relacionamento
-       xml_objs_especiais[rel->getObjectId()]=rel->obterDefinicaoObjeto();
+       xml_objs_especiais[rel->getObjectId()]=rel->getCodeDefinition();
        //Remove o mesmo do modelo
        removerRelacionamento(rel);
        //Desaloca o relacionamento obtido
@@ -1508,7 +1508,7 @@ void ModeloBD::criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj)
   XMLParser::loadXMLBuffer(def_xml_obj);
 
   //Identificando o tipo de objeto de acordo com o elemento obtido anteriormente
-  tipo_obj=obterTipoObjeto(XMLParser::getElementName());
+  tipo_obj=getType(XMLParser::getElementName());
 
   //Cria o objeto de acordo com o tipo identificado
   if(tipo_obj==OBJ_SEQUENCE)
@@ -1566,12 +1566,12 @@ void ModeloBD::adicionarRelacionamento(RelacionamentoBase *relacao, int idx_obj)
   }
 
   //Adiciona o objeto no modelo
-  if(relacao->obterTipoObjeto()==OBJ_RELATIONSHIP)
+  if(relacao->getType()==OBJ_RELATIONSHIP)
    verificarRedundanciaRelacoes(dynamic_cast<Relacionamento *>(relacao));
 
   __adicionarObjeto(relacao, idx_obj);
 
-  if(relacao->obterTipoObjeto()==OBJ_RELATIONSHIP)
+  if(relacao->getType()==OBJ_RELATIONSHIP)
   {
    //Conecta o novo relacionamento
    dynamic_cast<Relacionamento *>(relacao)->conectarRelacionamento();
@@ -1594,18 +1594,18 @@ void ModeloBD::removerRelacionamento(RelacionamentoBase *relacao, int idx_obj)
  {
   if(obterIndiceObjeto(relacao) >= 0)
   {
-   if(relacao->obterTipoObjeto()==OBJ_RELATIONSHIP)
+   if(relacao->getType()==OBJ_RELATIONSHIP)
    {
     //Desconecta os relacionamentos
     obterXMLObjetosEspeciais();
     desconectarRelacionamentos();
    }
-   else if(relacao->obterTipoObjeto()==BASE_RELATIONSHIP)
+   else if(relacao->getType()==BASE_RELATIONSHIP)
     relacao->desconectarRelacionamento();
 
    __removerObjeto(relacao, idx_obj);
 
-   if(relacao->obterTipoObjeto()==OBJ_RELATIONSHIP)
+   if(relacao->getType()==OBJ_RELATIONSHIP)
    {
     //Valida os relacionamentos após a remoção de o relacionamento atual
     validarRelacionamentos();
@@ -1654,8 +1654,8 @@ RelacionamentoBase *ModeloBD::obterRelacionamento(TabelaBase *tab_orig, TabelaBa
   /* Caso um dos objetos seja uma visão, a lista de relacionamentos
      tabela-visão será varrida, caso contrário a lista de relacionamentos
      tabela-tabela será usada */
-  if(tab_orig->obterTipoObjeto()==OBJ_VIEW ||
-     tab_dest->obterTipoObjeto()==OBJ_VIEW)
+  if(tab_orig->getType()==OBJ_VIEW ||
+     tab_dest->getType()==OBJ_VIEW)
   {
    itr=relac_visoes.begin();
    itr_end=relac_visoes.end();
@@ -2536,7 +2536,7 @@ int ModeloBD::obterIndiceObjeto(BaseObject *objeto)
   return(-1);
  else
  {
-  ObjectType tipo_obj=objeto->obterTipoObjeto();
+  ObjectType tipo_obj=objeto->getType();
   vector<BaseObject *> *lista_obj=NULL;
   vector<BaseObject *>::iterator itr, itr_end;
   bool enc=false;
@@ -2685,7 +2685,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
       else
       {
        //Obtém o tipo do elemento de acordo com a tag atual que o parser carregou
-       tipo_obj=obterTipoObjeto(nome_elem);
+       tipo_obj=getType(nome_elem);
 
        /* Este bloco faz a reavaliação de objetos. A reavaliação consiste em
           ler um trecho do arquivo XML novamente onde algum objeto foi referenciado
@@ -2713,7 +2713,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
         //Restaura o parser para a posição onde o objeto incompleto foi lido
         XMLParser::restorePosition(objetos_incomp.front());
         //Obtém o tipo deste objeto
-        tipo_obj=obterTipoObjeto(XMLParser::getElementName());
+        tipo_obj=getType(XMLParser::getElementName());
        }
 
        //Lendo um objeto banco de dados
@@ -2856,7 +2856,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
  }
 }
 
-ObjectType ModeloBD::obterTipoObjeto(const QString &str_tipo)
+ObjectType ModeloBD::getType(const QString &str_tipo)
 {
  ObjectType tipo_obj=BASE_OBJECT;
  int i;
@@ -2943,9 +2943,9 @@ void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
  //Obtém os atributos do elemento
  XMLParser::getElementAttributes(atributos);
 
- tipo_obj_aux=objeto->obterTipoObjeto();
+ tipo_obj_aux=objeto->getType();
  if(tipo_obj_aux!=OBJ_CAST)
-  objeto->definirNome(atributos[ParsersAttributes::NAME]);
+  objeto->setName(atributos[ParsersAttributes::NAME]);
 
  //Definindo se o objeto está protegido ou não
  protegido=atributos[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_;
@@ -3288,7 +3288,7 @@ Linguagem *ModeloBD::criarLinguagem(void)
        qualquer outro tipo de objeto xml será ignorado */
      if(XMLParser::getElementType()==XML_ELEMENT_NODE)
      {
-      tipo_obj=obterTipoObjeto(XMLParser::getElementName());
+      tipo_obj=getType(XMLParser::getElementName());
 
       if(tipo_obj==OBJ_FUNCTION)
       {
@@ -3410,7 +3410,7 @@ Funcao *ModeloBD::criarFuncao(void)
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
-     tipo_obj=obterTipoObjeto(elem);
+     tipo_obj=getType(elem);
 
      //Caso o parser acesso a tag que determina o tipo de retorno da função
      if(elem==ParsersAttributes::RETURN_TYPE)
@@ -3547,7 +3547,7 @@ Parametro ModeloBD::criarParametro(void)
   //Obtem os atributos do parâmetro (nome, in e out)
   XMLParser::getElementAttributes(atributos);
 
-  param.definirNome(atributos[ParsersAttributes::NAME]);
+  param.setName(atributos[ParsersAttributes::NAME]);
   /* Configurando atributos in e out do parâmetro caso estes estejam
      definidos como true no XML */
   param.definirEntrada(atributos[ParsersAttributes::PARAM_IN]==ParsersAttributes::_TRUE_);
@@ -4604,7 +4604,7 @@ Restricao *ModeloBD::criarRestricao(BaseObject *objeto)
   //Caso o objeto o qual será possuidor da restrição esteja alocado
   if(objeto)
   {
-   tipo_objeto=objeto->obterTipoObjeto();
+   tipo_objeto=objeto->getType();
    if(tipo_objeto==OBJ_TABLE)
     tabela=dynamic_cast<Tabela *>(objeto);
    else if(tipo_objeto==OBJ_RELATIONSHIP)
@@ -5723,7 +5723,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
                                    .arg(XMLParser::getCurrentElement()->line);
 
-  if(relacao_base && relacao_base->obterTipoObjeto()==OBJ_RELATIONSHIP)
+  if(relacao_base && relacao_base->getType()==OBJ_RELATIONSHIP)
    delete(relacao_base);
 
   //Redireciona qualquer exceção capturada
@@ -5741,7 +5741,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
  relacao_base->setProtected(protegido);
 
  //Reconecta o relacionamento caso o mesmo seja um rel. tabela-visao
- if(relacao_base && relacao_base->obterTipoObjeto()==BASE_RELATIONSHIP)
+ if(relacao_base && relacao_base->getType()==BASE_RELATIONSHIP)
   relacao_base->conectarRelacionamento();
 
  return(relacao_base);
@@ -5773,7 +5773,7 @@ Permissao *ModeloBD::criarPermissao(void)
   XMLParser::getElementAttributes(atributos);
 
   //Obtém os atributos do objeto que é referenciado pela  permissão
-  tipo_obj=obterTipoObjeto(atributos[ParsersAttributes::TYPE]);
+  tipo_obj=getType(atributos[ParsersAttributes::TYPE]);
   nome_obj=atributos[ParsersAttributes::NAME];
   obj_pai=atributos[ParsersAttributes::PARENT];
 
@@ -5950,7 +5950,7 @@ void ModeloBD::validarRelacObjetoTabela(ObjetoTabela *objeto, Tabela *tabela_pai
 
   if(objeto && tabela_pai)
   {
-   tipo=objeto->obterTipoObjeto();
+   tipo=objeto->getType();
 
    /* Condição de revalidação de relacionamentos:
       > Caso seja uma coluna e a mesma é referenciada pela chave primária da tabela pai
@@ -6015,15 +6015,15 @@ QString ModeloBD::__obterDefinicaoObjeto(unsigned tipo_def)
  }
 
  attributes[ParsersAttributes::TEMPLATE_DB]=bd_modelo;
- return(this->BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(this->BaseObject::getCodeDefinition(tipo_def));
 }
 
-QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def)
+QString ModeloBD::getCodeDefinition(unsigned tipo_def)
 {
- return(this->obterDefinicaoObjeto(tipo_def, true));
+ return(this->getCodeDefinition(tipo_def, true));
 }
 
-QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
+QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
 {
  map<QString, QString> atribs_aux;
  unsigned qtd1, i, qtd;
@@ -6080,8 +6080,8 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
     //Obtém o objeto atual
     objeto=(*itr);
 
-    if(objeto->obterTipoObjeto()!=OBJ_SCHEMA ||
-       (objeto->obterTipoObjeto()==OBJ_SCHEMA &&
+    if(objeto->getType()!=OBJ_SCHEMA ||
+       (objeto->getType()==OBJ_SCHEMA &&
         objeto->getName()!="public"))
     {
      //Gera o codigo e o concatena com os demais já gerados
@@ -6094,7 +6094,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
                              msg.arg(tipo_def_str)
                                .arg(QString::fromUtf8(objeto->getName()))
                                .arg(objeto->getTypeName()),
-                            objeto->obterTipoObjeto());
+                            objeto->getType());
      }
     }
     itr++;
@@ -6253,7 +6253,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
     objeto=(*itr);
     itr++;
 
-    if(objeto->obterTipoObjeto()==OBJ_RELATIONSHIP)
+    if(objeto->getType()==OBJ_RELATIONSHIP)
     {
      relacao=dynamic_cast<Relacionamento *>(objeto);
      objetos[0]=relacao->obterTabela(Relacionamento::TABELA_ORIGEM);
@@ -6317,7 +6317,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
    objeto=mapa_objetos[(*itr1)];
 
    //Obtém o tipo do objeto
-   tipo_obj=objeto->obterTipoObjeto();
+   tipo_obj=objeto->getType();
    itr1++;
 
    /* Caso seja um objeto tipo e a definição seja SQL armazena a
@@ -6329,9 +6329,9 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
 
     //Obtendo a definição do tipo em forma de shell type
     if(tipo_usr->obterConfiguracao()==Tipo::TIPO_BASE)
-     atribs_aux[ParsersAttributes::SHELL_TYPES]+=tipo_usr->obterDefinicaoObjeto(tipo_def, true);
+     atribs_aux[ParsersAttributes::SHELL_TYPES]+=tipo_usr->getCodeDefinition(tipo_def, true);
     else
-     atribs_aux[atrib]+=tipo_usr->obterDefinicaoObjeto(tipo_def);
+     atribs_aux[atrib]+=tipo_usr->getCodeDefinition(tipo_def);
    }
    else if(tipo_obj==OBJ_DATABASE)
    {
@@ -6342,7 +6342,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
    }
    else if(tipo_obj==OBJ_CONSTRAINT)
    {
-    atribs_aux[atrib]+=dynamic_cast<Restricao *>(objeto)->obterDefinicaoObjeto(tipo_def, true);
+    atribs_aux[atrib]+=dynamic_cast<Restricao *>(objeto)->getCodeDefinition(tipo_def, true);
    }
    else
    {
@@ -6366,7 +6366,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
                            msg.arg(tipo_def_str)
                               .arg(QString::fromUtf8(objeto->getName()))
                               .arg(objeto->getTypeName()),
-                           objeto->obterTipoObjeto());
+                           objeto->getType());
    }
   }
 
@@ -6377,7 +6377,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
 
   while(itr!=itr_end)
   {
-   atribs_aux[ParsersAttributes::PERMISSION]+=dynamic_cast<Permissao *>(*itr)->obterDefinicaoObjeto(tipo_def);
+   atribs_aux[ParsersAttributes::PERMISSION]+=dynamic_cast<Permissao *>(*itr)->getCodeDefinition(tipo_def);
 
    //Dispara um sinal para sinalizar o progresso final da geração de código
    qtd_defs_geradas++;
@@ -6387,7 +6387,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
                            msg.arg(tipo_def_str)
                               .arg(QString::fromUtf8((*itr)->getName()))
                               .arg(objeto->getTypeName()),
-                           objeto->obterTipoObjeto());
+                           objeto->getType());
    }
 
    itr++;
@@ -6410,7 +6410,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
     tipo_usr=dynamic_cast<Tipo *>(tipos[i]);
     if(tipo_usr->obterConfiguracao()==Tipo::TIPO_BASE)
     {
-     atribs_aux[atrib]+=tipo_usr->obterDefinicaoObjeto(tipo_def);
+     atribs_aux[atrib]+=tipo_usr->getCodeDefinition(tipo_def);
      tipo_usr->converterParametrosFuncoes(true);
     }
    }
@@ -6456,7 +6456,7 @@ void ModeloBD::salvarModelo(const QString &nome_arq, unsigned tipo_def)
 
  try
  {
-  str_aux=this->obterDefinicaoObjeto(tipo_def);
+  str_aux=this->getCodeDefinition(tipo_def);
   saida.write(str_aux.toStdString().c_str(),str_aux.size());
   saida.close();
  }
@@ -6479,7 +6479,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
 
  if((vet_deps.size()==1 && !inc_dep_indiretas) || inc_dep_indiretas)
  {
-  ObjectType tipo_obj=objeto->obterTipoObjeto();
+  ObjectType tipo_obj=objeto->getType();
 
   /* Caso o objeto possua esquema, espaço de tabela e dono,
      busca e inclui se necessário as dependências desses
@@ -6853,7 +6853,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
 
  if(objeto)
  {
-  ObjectType tipo_obj=objeto->obterTipoObjeto();
+  ObjectType tipo_obj=objeto->getType();
   bool refer=false;
 
   if(tipo_obj==OBJ_TABLE)

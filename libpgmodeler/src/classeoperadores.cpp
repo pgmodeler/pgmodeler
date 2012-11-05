@@ -141,12 +141,12 @@ bool ClasseOperadores::classePadrao(void)
  return(padrao);
 }
 
-QString ClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def)
+QString ClasseOperadores::getCodeDefinition(unsigned tipo_def)
 {
- return(this->obterDefinicaoObjeto(tipo_def, false));
+ return(this->getCodeDefinition(tipo_def, false));
 }
 
-QString ClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
+QString ClasseOperadores::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
 {
  definirAtributoElementos(tipo_def);
  attributes[ParsersAttributes::INDEX_TYPE]=(~tipo_index);
@@ -162,6 +162,6 @@ QString ClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def, bool forma_red
   attributes[ParsersAttributes::FAMILY]=familia->getName(true);
  }
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));
+ return(BaseObject::getCodeDefinition(tipo_def, forma_reduzida));
 }
 

@@ -182,8 +182,8 @@ void CenaObjetos::exibirLinhaRelacionamento(bool valor, const QPointF &p)
    /* Caso o objeto gráfico seja uma tabela, visão ou caixa texto, ativa
       a flag de movimento caso o mesmo não esteja protegido */
    if(!valor && obj_base &&
-      obj_base->obterTipoObjeto()!=OBJ_RELATIONSHIP &&
-      obj_base->obterTipoObjeto()!=BASE_RELATIONSHIP &&
+      obj_base->getType()!=OBJ_RELATIONSHIP &&
+      obj_base->getType()!=BASE_RELATIONSHIP &&
       !obj_base->isProtected())
     flags=QGraphicsItem::ItemIsMovable |
           QGraphicsItem::ItemIsSelectable |

@@ -14,7 +14,7 @@ Permissao::Permissao(BaseObject *objeto)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o tipo do objeto
- tipo_obj=objeto->obterTipoObjeto();
+ tipo_obj=objeto->getType();
 
  /* Caso o tipo do objeto a ser atribuído não seja válido de acordo com a regra
     (vide definição da Classe) dispara uma exceção */
@@ -78,7 +78,7 @@ void Permissao::definirPrivilegio(unsigned privilegio, bool valor, bool op_conce
  if(privilegio > PRIV_USAGE)
   throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- tipo_obj=objeto->obterTipoObjeto();
+ tipo_obj=objeto->getType();
 
  /* Alguns privilégios são válidos apenas para certos tipos
     de objetos. Caso o usuário tente atribuir um privilégio P
@@ -278,7 +278,7 @@ void Permissao::gerarIdPermissao(void)
             .arg(str_aux);
 }
 
-QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
+QString Permissao::getCodeDefinition(unsigned tipo_def)
 {
  unsigned i, qtd;
  ObjectType tipo_obj;
@@ -289,7 +289,7 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
                         ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
                         ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
 
- tipo_obj=objeto->obterTipoObjeto();
+ tipo_obj=objeto->getType();
 
  if(tipo_obj==OBJ_FUNCTION)
   attributes[ParsersAttributes::OBJECT]=dynamic_cast<Funcao *>(objeto)->obterAssinatura();
@@ -297,9 +297,9 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
   attributes[ParsersAttributes::OBJECT]=objeto->getName(true);
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
-  attributes[ParsersAttributes::TYPE]=BaseObject::getSQLName(objeto->obterTipoObjeto());
+  attributes[ParsersAttributes::TYPE]=BaseObject::getSQLName(objeto->getType());
  else
-  attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(objeto->obterTipoObjeto());
+  attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(objeto->getType());
 
  if(tipo_obj==OBJ_COLUMN)
   attributes[ParsersAttributes::PARENT]=dynamic_cast<Coluna *>(objeto)->obterTabelaPai()->getName(true);
@@ -344,6 +344,6 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
 
  attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 

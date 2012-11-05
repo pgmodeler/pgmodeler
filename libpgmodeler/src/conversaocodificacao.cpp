@@ -91,7 +91,7 @@ bool ConversaoCodificacao::conversaoPadrao(void)
  return(padrao);
 }
 
-QString ConversaoCodificacao::obterDefinicaoObjeto(unsigned tipo_def)
+QString ConversaoCodificacao::getCodeDefinition(unsigned tipo_def)
 {
  attributes[ParsersAttributes::DEFAULT]=(padrao ? "1" : "");
  attributes[ParsersAttributes::SRC_ENCODING]=(~codificacoes[CONV_COD_ORIGEM]);
@@ -102,9 +102,9 @@ QString ConversaoCodificacao::obterDefinicaoObjeto(unsigned tipo_def)
   if(tipo_def==SchemaParser::SQL_DEFINITION)
    attributes[ParsersAttributes::FUNCTION]=funcao_conv->getName(true);
   else
-   attributes[ParsersAttributes::FUNCTION]=funcao_conv->obterDefinicaoObjeto(tipo_def, true);
+   attributes[ParsersAttributes::FUNCTION]=funcao_conv->getCodeDefinition(tipo_def, true);
  }
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::getCodeDefinition(tipo_def));
 }
 

@@ -177,7 +177,7 @@ void ObjetoBaseWidget::iniciarConfiguracao(void)
   Classe *novo_obj_tmpl=NULL;
 
   if(this->objeto && lista_op &&
-     this->objeto->obterTipoObjeto()!=OBJ_DATABASE)
+     this->objeto->getType()!=OBJ_DATABASE)
   {
    if(this->tabela)
     lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_MODIFICADO, -1, this->tabela);

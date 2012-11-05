@@ -14,7 +14,7 @@ Linguagem::Linguagem(void)
  attributes[ParsersAttributes::INLINE_FUNC]="";
 }
 
-void Linguagem::definirNome(const QString &nome)
+void Linguagem::setName(const QString &nome)
 {
  /* Tratando nome de linguagem. Nomes como SQL, C são reservados
     para o SGBD e não podem ser criados pelo usuário */
@@ -24,7 +24,7 @@ void Linguagem::definirNome(const QString &nome)
                          .arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
                 ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- BaseObject::definirNome(nome); //Chama o método da classe descendente
+ BaseObject::setName(nome); //Chama o método da classe base
 }
 
 void Linguagem::definirConfiavel(bool valor)
@@ -89,12 +89,12 @@ bool Linguagem::linguagemConfiavel(void)
  return(confiavel);
 }
 
-QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def)
+QString Linguagem::getCodeDefinition(unsigned tipo_def)
 {
- return(this->obterDefinicaoObjeto(tipo_def, false));
+ return(this->getCodeDefinition(tipo_def, false));
 }
 
-QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
+QString Linguagem::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
 {
  unsigned i;
  QString atrib_func[3]={ParsersAttributes::VALIDATOR_FUNC,
@@ -115,11 +115,11 @@ QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
    else
    {
     funcoes[i]->setAttribute(ParsersAttributes::REF_TYPE, atrib_func[i]);
-    attributes[atrib_func[i]]=funcoes[i]->obterDefinicaoObjeto(tipo_def, true);
+    attributes[atrib_func[i]]=funcoes[i]->getCodeDefinition(tipo_def, true);
    }
   }
  }
 
- return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));
+ return(BaseObject::getCodeDefinition(tipo_def, forma_reduzida));
 }
 

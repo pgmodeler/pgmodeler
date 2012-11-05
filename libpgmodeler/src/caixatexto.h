@@ -52,7 +52,7 @@ class CaixaTexto: public ObjetoGraficoBase{
   void definirCorTexto(const QColor &cor);
 
   //Retorna a definição XML da caixa de texto
-  QString obterDefinicaoObjeto(void);
+  QString getCodeDefinition(void);
 
   //Retorna o estado do atributo de texto especificado
   bool obterAtributoTexto(unsigned atributo);

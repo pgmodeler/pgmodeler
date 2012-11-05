@@ -112,7 +112,7 @@ QString ElemClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def)
   if(tipo_def==SchemaParser::SQL_DEFINITION)
    atributos[ParsersAttributes::SIGNATURE]=funcao->obterAssinatura();
   else
-   atributos[ParsersAttributes::DEFINITION]=funcao->obterDefinicaoObjeto(tipo_def,true);
+   atributos[ParsersAttributes::DEFINITION]=funcao->getCodeDefinition(tipo_def,true);
  }
  else if(tipo_elemento==ELEM_OPERADOR && operador && num_estrategia > 0)
  {
@@ -124,7 +124,7 @@ QString ElemClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def)
   if(tipo_def==SchemaParser::SQL_DEFINITION)
    atributos[ParsersAttributes::SIGNATURE]=operador->obterAssinatura();
   else
-   atributos[ParsersAttributes::DEFINITION]=operador->obterDefinicaoObjeto(tipo_def,true);
+   atributos[ParsersAttributes::DEFINITION]=operador->getCodeDefinition(tipo_def,true);
  }
  else if(tipo_elemento==ELEM_ARMAZENAMENTO && tipo_armaz!=TipoPgSQL::nulo)
  {

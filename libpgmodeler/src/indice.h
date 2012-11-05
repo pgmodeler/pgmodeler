@@ -101,7 +101,7 @@ class Indice: public ObjetoTabela{
   unsigned obterFatorPreenchimento(void);
 
   //Retorna a definição SQL ou XML do objeto
-  QString obterDefinicaoObjeto(unsigned tipo_def);
+  QString getCodeDefinition(unsigned tipo_def);
 
   /* Retorna se o índice referencia colunas adicionadas
      por relacionamento. Este método é usado como auxiliar
