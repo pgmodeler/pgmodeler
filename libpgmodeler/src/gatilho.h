@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe Gatilho que é usada para
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe Gatilho que é usada para
 #             configurar e gerar os códigos SQL referentes
 #             a gatilhos (triggers) em tabelas.
 # Creation date:o: 11/10/2006

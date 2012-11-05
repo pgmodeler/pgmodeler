@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe TabelaBase que implementa operações
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe TabelaBase que implementa operações
 #             comuns para manipulação grafica de objetos do tipo tabela (visões)
 # Creation date:o: 09/04/2008
 #

@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libobjrenderer
 # Classe: CenaObjetos
-# Description:o: Esta classe deriva a classe QGraphicsScene e implementa a visualização
+# Description:Esta classe deriva a classe QGraphicsScene e implementa a visualização
 #            e outras operações relacionados aos objetos gráficos do modelo.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

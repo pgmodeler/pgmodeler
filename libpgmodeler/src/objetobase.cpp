@@ -43,18 +43,11 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
    estão atribuídos respectivamente aos objetos das classes Papel, EspacoTabela,
    ModeloBD, Esquema, Função e Tipo */
 unsigned BaseObject::global_id=60000;
-unsigned BaseObject::type_id=50000;
-unsigned BaseObject::function_id=40000;
-unsigned BaseObject::schema_id=30000;
-unsigned BaseObject::dbmodel_id=20000;
-unsigned BaseObject::tabspace_id=10000;
-unsigned BaseObject::role_id=0;
 
 BaseObject::BaseObject(void)
 {
  object_id=BaseObject::global_id++;
  protected_obj=false;
- //nome="";
  obj_type=BASE_OBJECT;
  schema=NULL;
  owner=NULL;

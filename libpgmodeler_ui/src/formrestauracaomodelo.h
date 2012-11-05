@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: FormRestrauracaoModelos
-# Description:o: Formulário de restauração de modelos temporários
+# Description:Formulário de restauração de modelos temporários
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

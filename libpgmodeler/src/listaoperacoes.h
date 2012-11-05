@@ -1,8 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
+# Sub-project: Core library (libpgmodeler)m
 # Classe: ListaOperacoes
-# Description:o:  Definição da classe ListaOperacoes que é usada para
+# Description: Definição da classe ListaOperacoes que é usada para
 #             armazenar e restaurar a ações executadas pelo usuário
 #             no modelo de banco de dados.
 # Creation date:o: 17/07/2006

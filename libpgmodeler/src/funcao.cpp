@@ -59,9 +59,11 @@ QString Parametro::getCodeDefinition(unsigned tipo_def)
  return(BaseObject::getCodeDefinition(tipo_def));
 }
 
+unsigned Funcao::function_id=40000;
+
 Funcao::Funcao(void)
 {
- object_id=BaseObject::function_id++;
+ object_id=Funcao::function_id++;
  tipo_retorno=TipoPgSQL("void");
  linguagem=NULL;
  retorna_setof=false;

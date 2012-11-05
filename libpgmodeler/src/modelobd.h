@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe ModeloBD que é usado para
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe ModeloBD que é usado para
 #             representar graficamente o modelo do banco de dados, gerar os
 #             códigos SQL do banco de dados, salvar em arquivo, executar
 #             engenharia reversa, etc.
@@ -48,9 +48,11 @@
 #include <locale.h>
 
 class ModeloBD:  public QObject, public BaseObject {
- Q_OBJECT
-
  private:
+  Q_OBJECT
+
+  static unsigned dbmodel_id;
+
   //Tipo de codificação do banco de dados
   TipoCodificacao tipo_codif;
 

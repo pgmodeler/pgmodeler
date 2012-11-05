@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o: Definição da classe Funcao que é usado para
+# Sub-project: Core library (libpgmodeler)m
+# Description:Definição da classe Funcao que é usado para
 #            configurar e gerar os códigos SQL referentes a funções (procedimentos).
 # Creation date:o: 28/09/2006
 #
@@ -52,6 +52,8 @@ class Parametro: public Coluna {
 
 class Funcao: public BaseObject {
  private:
+  static unsigned function_id;
+
   //Assinatura da função
   QString assinatura;
 

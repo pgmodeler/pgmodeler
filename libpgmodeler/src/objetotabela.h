@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe ObjetoTabela que serve como base para
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe ObjetoTabela que serve como base para
 #             as demais classes as quais são sempre embutidas numa tabela.
 #             São elas: Regra, Gatilho, Indice, Coluna, Restricao.
 # Creation date:o: 24/07/2008

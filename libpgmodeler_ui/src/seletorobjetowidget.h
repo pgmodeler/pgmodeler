@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: SeletorObjetoWidget
-# Description:o: Definição da classe que implementa um seletor de objetos simples
+# Description:Definição da classe que implementa um seletor de objetos simples
 #            o qual integra o formulário de visão de objetos onde o usuário
 #            pode selecionar o objeto a ser exibido e alguns botões de controle
 #            do próprio seletor, usados para limpar o campo e para abrir a janela

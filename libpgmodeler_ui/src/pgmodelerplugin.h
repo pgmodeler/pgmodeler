@@ -2,7 +2,7 @@
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: PgModelerLibrary
-# Description:o: Definição da classe que  implementa  a base para suporte de plugins de terceiros,
+# Description:Definição da classe que  implementa  a base para suporte de plugins de terceiros,
 #            baseados em bibliotecas compartilhadas.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

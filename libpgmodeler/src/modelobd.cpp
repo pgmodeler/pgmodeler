@@ -1,8 +1,10 @@
 #include "modelobd.h"
 
+unsigned ModeloBD::dbmodel_id=20000;
+
 ModeloBD::ModeloBD(void)
 {
- object_id=BaseObject::dbmodel_id++;
+ object_id=ModeloBD::dbmodel_id++;
 
  obj_type=OBJ_DATABASE;
  BaseObject::setName(QObject::trUtf8("new_database").toUtf8());

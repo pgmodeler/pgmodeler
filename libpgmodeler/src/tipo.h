@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe Tipo que é usada para
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe Tipo que é usada para
 #             gerar os códigos SQL pertinentes aos tipos
 #             definidos pelo usuário
 #
@@ -31,6 +31,8 @@
 
 class Tipo: public BaseObject {
  private:
+  static unsigned type_id;
+
   //Configuração do tipo
   unsigned config;
 

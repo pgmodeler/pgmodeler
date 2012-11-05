@@ -1,9 +1,11 @@
 #include "esquema.h"
 
+unsigned Esquema::schema_id=30000;
+
 Esquema::Esquema(void)
 {
  obj_type=OBJ_SCHEMA;
- object_id=BaseObject::schema_id++;
+ object_id=Esquema::schema_id++;
 }
 
 void Esquema::setName(const QString &nome)

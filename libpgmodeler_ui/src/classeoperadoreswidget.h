@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: FamiliaOperadoresWidget
-# Description:o: Definição da classe que implementa o formulário de
+# Description:Definição da classe que implementa o formulário de
 #            edição dos atributos de classe de operadores.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

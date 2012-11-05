@@ -1,9 +1,11 @@
 #include "papel.h"
 
+unsigned Papel::role_id=0;
+
 Papel::Papel(void)
 {
  obj_type=OBJ_ROLE;
- object_id=BaseObject::role_id++;
+ object_id=Papel::role_id++;
  sysid=100;
 
  for(unsigned i=0; i < 6; i++)

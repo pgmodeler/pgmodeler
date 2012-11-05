@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe Referencia que é usada para
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe Referencia que é usada para
 #             para montar a declaração SQL das visões
 # Creation date:o: 05/09/2008
 #

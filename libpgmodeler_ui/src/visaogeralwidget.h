@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: VisaoGeralWidget
-# Description:o: Definição da classe que implementa o widget de visão geral do modelo.
+# Description:Definição da classe que implementa o widget de visão geral do modelo.
 #
 # Copyright (C) 2006-2012 - Raphael Araujo e Silva <rkhaotix@gmail.com>
 #

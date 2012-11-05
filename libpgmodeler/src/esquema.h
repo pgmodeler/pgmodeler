@@ -1,7 +1,7 @@
 /* 
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe Esquema que é usado para
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe Esquema que é usado para
 #             representar graficamente os esquemas em banco de dados
 #             e gerar os códigos SQL pertinentes a estes.
 # Creation date:o: 07/04/2008
@@ -25,7 +25,10 @@
 
 #include "objetobase.h"
 
-class Esquema: public BaseObject{
+class Esquema: public BaseObject {
+ private:
+  static unsigned schema_id;
+
  public:
   Esquema(void);
 

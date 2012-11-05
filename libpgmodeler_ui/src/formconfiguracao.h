@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: FormConfiguracao
-# Description:o: Formulario que reúne todos os widgets de configuração.
+# Description:Formulario que reúne todos os widgets de configuração.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

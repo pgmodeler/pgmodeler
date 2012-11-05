@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe EspacoTabela que é usada para
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe EspacoTabela que é usada para
 #             gerar os códigos SQL pertinentes aos tablespaces
 #             em banco de dados.
 #
@@ -28,6 +28,8 @@
 
 class EspacoTabela: public BaseObject{
  private:
+  static unsigned tabspace_id;
+
   //Diretório em que se encontra o espaco de tabela
   QString diretorio;
 

@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libobjrenderer
 # Classe: OGCaixaTexto
-# Description:o: Esta classe deriva a classe ObjetoGrafico e implementa a representação gráfica
+# Description:Esta classe deriva a classe ObjetoGrafico e implementa a representação gráfica
 #            da classe CaixaTexto. O sufixo OG foi adicionado ao nome da caixa para evitar conflitos
 #            de nomes entra a classe CaixaTexto da biblioteca libpgmodeler e a classe abaixo definida.
 #

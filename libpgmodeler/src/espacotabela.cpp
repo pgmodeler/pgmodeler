@@ -1,10 +1,12 @@
 #include "espacotabela.h"
 
+unsigned EspacoTabela::tabspace_id=10000;
+
 EspacoTabela::EspacoTabela(void)
 {
  obj_type=OBJ_TABLESPACE;
  attributes[ParsersAttributes::DIRECTORY]="";
- object_id=BaseObject::tabspace_id++;
+ object_id=EspacoTabela::tabspace_id++;
 }
 
 void EspacoTabela::setName(const QString &nome)

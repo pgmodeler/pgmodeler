@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe ConversaoCodificacao que é usada para
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe ConversaoCodificacao que é usada para
 #             gerar os códigos SQL pertinentes aos conversions entre tipos
 #             de codificação de caracteres no banco de dados.
 #

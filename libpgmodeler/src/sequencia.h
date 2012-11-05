@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe Sequencia que é usada para
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe Sequencia que é usada para
 #             gerar os códigos SQL pertinentes as sequências
 #             ou auto-enumerações
 # Creation date:o: 26/04/2008

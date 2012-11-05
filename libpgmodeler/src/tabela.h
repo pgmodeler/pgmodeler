@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe Tabela que é usado para
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe Tabela que é usado para
 #             representar graficamente as tabelas e gerar os códigos SQL
 #             pertinentes a esta.
 # Creation date:o: 17/09/2006

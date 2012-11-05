@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe ConversaoTipo que é usada para
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe ConversaoTipo que é usada para
 #             gerar os códigos SQL pertinentes ao casts entre tipos
 #             do banco de dados.
 #

@@ -1,8 +1,10 @@
 #include "tipo.h"
 
+unsigned Tipo::type_id=50000;
+
 Tipo::Tipo(void)
 {
- object_id=BaseObject::type_id++;
+ object_id=Tipo::type_id++;
  obj_type=OBJ_TYPE;
  config=TIPO_ENUMERACAO;
  //nome="novo_tipo";

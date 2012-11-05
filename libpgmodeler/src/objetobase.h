@@ -1,8 +1,9 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definições da classe ObjetoBase que controla o nome, comentário
-               e definição sql dos demais objetos gráficos ou não.
+# Sub-project: Core library (libpgmodeler)
+# Class: BaseObject
+# Description: Implements the most important operations to define,
+#              maintain and generate code (SQL or XML) of database objects
 # Creation date:o: 12/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -34,28 +35,28 @@
 using namespace ParsersAttributes;
 
 enum ObjectType {
-  OBJ_COLUMN,                                    /* Comentário */
-  OBJ_CONSTRAINT,                                 /* Comentário */
-  OBJ_FUNCTION,           /* Dono */ /* Esquema */ /* Comentário */
-  OBJ_TRIGGER,                                   /* Comentário */
-  OBJ_INDEX,                                    /* Comentário */ /* Tablespace */
-  OBJ_RULE,                                     /* Comentário */
-  OBJ_TABLE,           /* Dono */ /* Esquema */ /* Comentário */ /* Tablespace */
-  OBJ_VIEW,                       /* Esquema */ /* Comentário */
-  OBJ_DOMAIN,          /* Dono */ /* Esquema */ /* Comentário */
-  OBJ_SCHEMA,          /* Dono */               /* Comentário */
-  OBJ_AGGREGATE,    /* Dono */ /* Esquema */ /* Comentário */
-  OBJ_OPERATOR,         /* Dono */ /* Esquema */ /* Comentário */
-  OBJ_SEQUENCE,                   /* Esquema */ /* Comentário */
-  OBJ_ROLE,                                     /* Comentário */
-  OBJ_CONVERSION, /* Dono */ /* Esquema */ /* Comentário */
-  OBJ_CAST,                                 /* Comentário */
-  OBJ_LANGUAGE,        /* Dono */               /* Comentário */
-  OBJ_TYPE,             /* Dono */ /* Esquema */ /* Comentário */
-  OBJ_TABLESPACE,    /* Dono */               /* Comentário */
-  OBJ_OPFAMILY,     /* Dono */ /* Esquema */ /* Comentário */
-  OBJ_OPCLASS,      /* Dono */ /* Esquema */ /* Comentário */
-  OBJ_DATABASE,      /* Dono */               /* Comentário */ /* Tablespace */
+  OBJ_COLUMN,
+  OBJ_CONSTRAINT,
+  OBJ_FUNCTION,
+  OBJ_TRIGGER,
+  OBJ_INDEX,
+  OBJ_RULE,
+  OBJ_TABLE,
+  OBJ_VIEW,
+  OBJ_DOMAIN,
+  OBJ_SCHEMA,
+  OBJ_AGGREGATE,
+  OBJ_OPERATOR,
+  OBJ_SEQUENCE,
+  OBJ_ROLE,
+  OBJ_CONVERSION,
+  OBJ_CAST,
+  OBJ_LANGUAGE,
+  OBJ_TYPE,
+  OBJ_TABLESPACE,
+  OBJ_OPFAMILY,
+  OBJ_OPCLASS,
+  OBJ_DATABASE,
   OBJ_RELATIONSHIP,
   OBJ_TEXTBOX,
   OBJ_PERMISSION,
@@ -67,58 +68,54 @@ enum ObjectType {
 
 class BaseObject {
  protected:
-  /* Este atributo estático é usado para gerar o identificador do objeto.
-     À medida que instâncias de objetos são criadas este valor é incrementado. */
-  static unsigned global_id,
-                  schema_id,
-                  dbmodel_id,
-                  tabspace_id,
-                  role_id,
-                  type_id,
-                  function_id;
+  /* This static attribute is used to generate the unique identifier for objects.
+     As object instances are created this value ​​are incremented. In some classes
+     like Schema, DBModel, Tablespace, Role, Type and Function id generators are
+     used each with a custom different numbering range (see cited classes declaration). */
+  static unsigned global_id;
 
-  /* Armazena um identificador único para o objeto. Este id nada mais
-     do que o valor atual do id_global. Este identificador é usado
-     para se saber a ordem cronológica de criação de cada objeto do modelo
-     pois a geração e leitura do código XML é completamente armarrada a ordem
-     em que os objetos foram criados */
+  /* Stores the unique identifier for the object. This id is nothing else
+     than the current value of global_id. This identifier is used
+     to know the chronological order of the creation of each object in the model
+     because the generation and reading of the XML code is completely tied to the order
+     in which the objects were created */
   unsigned object_id;
 
+  //Objects type count declared on enum ObjectType.
   static const int OBJECT_TYPE_COUNT=27;
 
-  /* Indica se o objeto está protegido ou não.
-     Um objeto protegido indica que ele não pode sofrer
-     alterações em sua posição (não pode ser transladado ou rotacionado),
-     não pode ter seu nome/textos alterados e não pode ser excluído. */
+  /* Indicates whether the object is protected or not.
+     A protected object indicates that it can not suffer changes in position
+     (e.g. can not be moved or rotated) can not have your name / text changed,
+     and deleted. This is only a flag, the cited operations are controled in a
+     upper class layer */
   bool protected_obj;
 
-  /* QTD_TIPOS_OBJETO é a quantidade de enumerações OBJETO_??? os quais possuem
-     uma palavra chave em SQL ou um arquivo de definiçao XML. */
+  /* This map stores the name of each object type associated to a schema file
+     that generates the object's code definition */
   static QString objs_schemas[OBJECT_TYPE_COUNT];
 
-  /* QTD_TIPOS_OBJETO é a quantidade de enumerações OBJETO_??? os quais possuem
-     uma palavra chave em SQL. */
+  /* This map associates the object type to a keyword on
+     SQL language that represents the object */
   static QString objs_sql[OBJECT_TYPE_COUNT];
 
-  /* Armazena o nome dos tipos dos objetos para serem usado em formatação
-     de mensagens de erro */
+  /* Stores the name of the type of objects to be used in error messages formatting
+     and others operations that envolves object type name */
   static QString obj_type_names[OBJECT_TYPE_COUNT];
 
-  /* Papel o qual é dono do objeto.
-     Este objeto será usado para
-     gerar a SQL ALTER objeto OWNER TO dono */
+  /* Role that is owner of the object. Some objects cannot be associated to a role
+     so if one is assigned to the object an error will be raised */
   BaseObject *owner;
 
-  /* Esquema ao qual o objeto pertence.
-     Só podem fazer parte de um determinado esquema objetos do tipo:
-     TABELA, VISAO, FUNCAO, DOMINIO. Caso tente inserir um objeto de
-     outro tipo dentro de um esquema será retornado um erro.*/
+  /* Schema the objects belongs. Some objects cannot be associated to a schema
+     so if one is assigned to the object an error will be raised */
   BaseObject *schema;
 
-  //Espaço de tabela ao qual o objeto faz parte
+  /* Tablespace to which the object is part. Some objects cannot be associated to a tablespace
+     so if one is assigned to the object an error will be raised */
   BaseObject *tablespace;
 
-  //Quantidade máxima de dígitos que um nome de objeto pode ter
+  //Maximum number of characters that an object name on PostgreSQL can have
   static const int OBJECT_NAME_MAX_LENGTH=63;
 
   //Comentário do objeto

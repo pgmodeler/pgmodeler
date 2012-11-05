@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca núcleo libpgsqldbm
-# Description:o:  Definição da classe ElemClasseOperadores que é usada para
+# Sub-project: Core library (libpgmodeler)m
+# Description: Definição da classe ElemClasseOperadores que é usada para
 #             armazenar e gerar os códigos SQL pertinentes aos atributos
 #             usados nas de classes de operadores.
 # Creation date:o: 08/07/2008

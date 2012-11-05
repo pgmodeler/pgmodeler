@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: ConfAparenciaWidget
-# Description:o: Implementa o widget de configurações de aparência dos objetos do modelo.
+# Description:Implementa o widget de configurações de aparência dos objetos do modelo.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

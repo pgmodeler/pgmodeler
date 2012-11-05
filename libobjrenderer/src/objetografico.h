@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libobjrenderer
 # Classe: ObjetoGrafico
-# Description:o: Esta classe implementa rotinas básicas para representação gráfica
+# Description:Esta classe implementa rotinas básicas para representação gráfica
 #            dos objetos gráficos do modelo (tabela, relacionamentos, caixa de texto, visão)
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
