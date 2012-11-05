@@ -5,7 +5,7 @@
 #             representar graficamente o modelo do banco de dados, gerar os
 #             códigos SQL do banco de dados, salvar em arquivo, executar
 #             engenharia reversa, etc.
-# Creation date:o: 20/10/2006
+# Creation date: 20/10/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

@@ -4,7 +4,7 @@
 # Description: Definição da classe Sequencia que é usada para
 #             gerar os códigos SQL pertinentes as sequências
 #             ou auto-enumerações
-# Creation date:o: 26/04/2008
+# Creation date: 26/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

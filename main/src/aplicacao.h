@@ -6,7 +6,7 @@
 #            A mesa apenas sobrecarrega o método notify() de sua
 #            classe pai para tratar as execeções disparadas cujas
 #            instâncias são da classe Excecao.
-# Creation date:o: 30/08/2007
+# Creation date: 30/08/2007
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

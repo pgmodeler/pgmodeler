@@ -4,7 +4,7 @@
 # Description: Definição da classe ElementoIndice que é usada para
 #             armazenar e gerar os códigos SQL/XML pertinentes aos atributos
 #             usados nas índices.
-# Creation date:o: 26/05/2010
+# Creation date: 26/05/2010
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

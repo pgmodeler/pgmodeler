@@ -5,7 +5,7 @@
 #             gerar os códigos SQL pertinentes ao casts entre tipos
 #             do banco de dados.
 #
-# Creation date:o: 03/06/2008
+# Creation date: 03/06/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

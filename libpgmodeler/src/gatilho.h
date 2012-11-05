@@ -4,7 +4,7 @@
 # Description: Definição da classe Gatilho que é usada para
 #             configurar e gerar os códigos SQL referentes
 #             a gatilhos (triggers) em tabelas.
-# Creation date:o: 11/10/2006
+# Creation date: 11/10/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

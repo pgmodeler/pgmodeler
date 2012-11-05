@@ -4,7 +4,7 @@
 # Description: Definição da classe ObjetoBaseGrafico que é uma implementação básica para
 #             representar graficamente as tabelas, relacionamentos, caixas de texto.
 #             A representação gráfica efetiva do objeto é feita pela classe ObjetoGrafico (libobjrenderer)
-# Creation date:o: 17/09/2006
+# Creation date: 17/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

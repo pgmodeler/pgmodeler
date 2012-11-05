@@ -4,7 +4,7 @@
 # Description: Definição da classe Constraint que é usado para
 #              configurar e gerar os códigos SQL referentes a chaves primárias
 #              e estrangeiras, de checagem, únicas.
-# Creation date:o: 23/09/2006
+# Creation date: 23/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

@@ -4,7 +4,7 @@
 # Description: Definição da classe CaixaTexto que é usada para
 #             representar graficamente os textos adicionados pelo usuário.
 #             Também é usada para representar os rótulos dos relacionamentos.
-# Creation date:o: 05/09/2007
+# Creation date: 05/09/2007
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

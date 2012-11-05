@@ -5,7 +5,7 @@
 #             gerar os códigos SQL pertinentes s classes de operadores
 #             as quais indicam como um tipo de dado pode ser usado em
 #             um determinado método de indexação.
-# Creation date:o: 08/07/2008
+# Creation date: 08/07/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

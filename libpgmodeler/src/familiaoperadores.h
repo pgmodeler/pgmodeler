@@ -4,7 +4,7 @@
 # Description: Definição da classe FamiliaOperadores que é usada para
 #             gerar os códigos SQL pertinente s famílias de operadores
 #             referenciadas pelas classes de operadores
-# Creation date:o: 08/07/2008
+# Creation date: 08/07/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

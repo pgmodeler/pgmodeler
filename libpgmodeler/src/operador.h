@@ -3,7 +3,7 @@
 # Sub-project: Core library (libpgmodeler)m
 # Description: Definição da classe Operador que é usada para
 #             gerar os códigos SQL pertinentes a operadores
-# Creation date:o: 16/04/2008
+# Creation date: 16/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

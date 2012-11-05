@@ -4,7 +4,7 @@
 # Description: Definição da classe Esquema que é usado para
 #             representar graficamente os esquemas em banco de dados
 #             e gerar os códigos SQL pertinentes a estes.
-# Creation date:o: 07/04/2008
+# Creation date: 07/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

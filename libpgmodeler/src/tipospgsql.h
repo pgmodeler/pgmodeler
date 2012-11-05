@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)m
 # Description: Definições das classes de tipos de objetos no PostgreSQL
-# Creation date:o: 31/08/2006
+# Creation date: 31/08/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

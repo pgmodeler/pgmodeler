@@ -7,7 +7,7 @@
 #              generation methods.
 #              Each string stores the name of the attribute used
 #              in the schema file "sch" of the respective objects.
-# Creation date:o: 23/09/2008
+# Creation date: 23/09/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

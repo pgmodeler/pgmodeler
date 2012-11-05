@@ -3,7 +3,7 @@
 # Sub-project: Core library (libpgmodeler)m
 # Description: Definição da classe TabelaBase que implementa operações
 #             comuns para manipulação grafica de objetos do tipo tabela (visões)
-# Creation date:o: 09/04/2008
+# Creation date: 09/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

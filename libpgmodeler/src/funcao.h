@@ -3,7 +3,7 @@
 # Sub-project: Core library (libpgmodeler)m
 # Description:Definição da classe Funcao que é usado para
 #            configurar e gerar os códigos SQL referentes a funções (procedimentos).
-# Creation date:o: 28/09/2006
+# Creation date: 28/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

@@ -5,7 +5,7 @@
 # Description: Definição da classe ListaOperacoes que é usada para
 #             armazenar e restaurar a ações executadas pelo usuário
 #             no modelo de banco de dados.
-# Creation date:o: 17/07/2006
+# Creation date: 17/07/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

@@ -5,7 +5,7 @@
 #             gerar os códigos SQL pertinentes aos conversions entre tipos
 #             de codificação de caracteres no banco de dados.
 #
-# Creation date:o: 04/06/2008
+# Creation date: 04/06/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

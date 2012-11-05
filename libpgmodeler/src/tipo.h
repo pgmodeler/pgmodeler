@@ -5,7 +5,7 @@
 #             gerar os códigos SQL pertinentes aos tipos
 #             definidos pelo usuário
 #
-# Creation date:o: 05/06/2008
+# Creation date: 05/06/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

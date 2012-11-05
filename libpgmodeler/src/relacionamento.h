@@ -4,7 +4,7 @@
 # Description: Definição da classe Relacionamento que é usado para
 #             representar graficamente os relacionamentos entre tabelas
 #             e gerar os códigos SQL pertinentes a estes.
-# Creation date:o: 20/11/2006
+# Creation date: 20/11/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

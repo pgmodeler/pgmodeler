@@ -5,7 +5,7 @@
 #              stores a series of static strings constants used
 #              to reference the global configuration attributes of
 #              the software.
-# Creation date:o: 14/05/2010
+# Creation date: 14/05/2010
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

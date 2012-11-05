@@ -3,7 +3,7 @@
 # Sub-project: Core library (libpgmodeler)m
 # Description: Definição da classe Referencia que é usada para
 #             para montar a declaração SQL das visões
-# Creation date:o: 05/09/2008
+# Creation date: 05/09/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

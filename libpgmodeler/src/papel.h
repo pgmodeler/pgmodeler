@@ -3,7 +3,7 @@
 # Sub-project: Core library (libpgmodeler)m
 # Description: Definição da classe Papel que é usada para gerar os
 #             códigos SQL para os papéis no banco de dados (roles).
-# Creation date:o: 12/05/2008
+# Creation date: 12/05/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

@@ -4,7 +4,7 @@
 # Class: BaseObject
 # Description: Implements the most important operations to define,
 #              maintain and generate code (SQL or XML) of database objects
-# Creation date:o: 12/09/2006
+# Creation date: 12/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -118,122 +118,137 @@ class BaseObject {
   //Maximum number of characters that an object name on PostgreSQL can have
   static const int OBJECT_NAME_MAX_LENGTH=63;
 
-  //Comentário do objeto
+  //Comments related to object
   QString comment,
-         //Nome do objeto
+         //Object's name (in PostgreSQL accepted format)
          obj_name;
 
-  /*Tipo do objeto, pode ter um dos valores das contantes OBJETO_*
-    Foi usado um tipo numérico para evitar o uso do RTTI.*/
+  /* Type of object, may have one of the values ​​of the enum ObjectType OBJ_*
+     It was used a numeric type to avoid the use excessive of RTTI. */
   ObjectType obj_type;
 
   /* Armazena os atributos e seus valores em forma de QString
      para serem usados pelo ParserEsquema no momento da criação
      da definição SQL do objeto */
+
+  /* Stores the attributes and their values ​​shaped in strings to be used
+     by SchemaParser on the object's code definition creation. The attribute
+     name related to model objects are defined in ParsersAttributes namespace. */
   map<QString, QString> attributes;
 
  public:
   BaseObject(void);
   virtual ~BaseObject(void){}
 
-  //Define um atributo específico na lista de atributos de esquema
-  /* Este método pode ser usando quando uma classe precisa acessar diretamente
-     os atributos de outra porém não possui permissão */
+  /* Defines a specific attribute in the attribute list used to generate the code definition.
+     This method can be used when a class needs to directly write some attributes of
+     another class but does not have permission. */
   void setAttribute(const QString &attrib, const QString &value);
 
-  /* Retorna se o nome do objeto está com conformidades com a regra
-     de nomenclatura de objetos no PostgreSQL (63 bytes dentre [a-zA-z0-9_] */
+   /* Returns whether the object name is in conformity with the
+      PostgreSQL object naming rule.
+     (e.g. 63 bytes long and chars in set [a-zA-z0-9_] */
   static bool isValidName(const QString &name);
 
   /* A flag obj_operador indica que o nome passado é de um operador
      o único tipo de objeto que aceita caracteres fora do alfabeto (ex. sinais matemáticos)
      na composição do seu nome. Neste caso a função de formatação apenas ignora a validação
      caso o flag esteja marcado */
+
+  /* Formats the passed name following the PostgreSQL object naming rule.
+     The 'is_operator' parameter indicates that the passed name is a for an operator
+     this is the only type of object that accepts characters outside of the alphabet
+     (e.g. mathematical signs) on the composition of its name.
+     In this case, the formatting function just ignores some validations if the parameter is checked */
   static QString formatName(const QString &name, bool is_operator=false);
 
-  //Retorna o nome do tipo do objeto
+  //Returns the object's type name related to the passed object type
   static QString getTypeName(ObjectType obj_type);
 
-  //Retorna o nome do tipo do objeto
+  /* Returns the schema identifier used to generate the code definition related to the
+     passed object type */
   static QString getSchemaName(ObjectType obj_type);
 
-  //Retorna o nome do tipo do objeto no código SQL
+  //Returns the keyword related to the object on SQL language
   static QString getSQLName(ObjectType obj_type);
 
-  //Retorna o valor atual do contador global de ids de objeto
+  //Returns the current value of the global object id counter
   static unsigned getGlobalId(void);
 
-  //Define o comentário do objeto que será anexado a definição SQL do mesmo
+  //Defines the comment of the object that will be attached to its SQL definition
   virtual void setComment(const QString &comment);
 
-  //Define o nome do objeto
+  //Defines the objects name. If the passed name isn't valid it'll raise an error
   virtual void setName(const QString &name);
 
-  //Define o esquema ao qual o objeto pertence
+  /* Defines the schema that the object belongs. An error is raised if the
+     passed schema is not valid */
   virtual void setSchema(BaseObject *schema);
 
-  //Define o dono do objeto em banco de dados
+  /* Defines the owner of the object. An error is raised if the
+     passed owner is not valid */
   virtual void setOwner(BaseObject *owner);
 
-  //Define o espaço de tabelas ao qual o objeto pertence
+  /* Defines the tablespace which the objects will use. An error is raised if the
+     passed tablespace is not valid */
   virtual void setTablespace(BaseObject *tablespace);
 
-  //Define se o objeto está protegido ou não
+  //Toggles the object's modify protection
   virtual void setProtected(bool value);
 
-  /* Retorna o nome do objeto. O parâmetro 'formatar'
-     é usado para obter o nome do objeto com o nome do esquema
-     e as aspas concatenados */
+  /* Returns the object's name. The parameter 'format' is used to get
+     the name properly formated (schema qualified and using quotes) */
   QString getName(bool format=false);
 
-  //Retorna o comentário do objeto
+  //Retorns the object's comment
   QString getComment(void);
 
-  /* Retorna a definição SQL ou XML do objeto. O atributo 'forma_reduzida'
-     indica que a geração do código XML será uma representação mínima do
-     objeto. Vide arquivo de esquemas de função, esquemas, domínios, tipos. */
+  /* Returns the object's SQL or XML code definition. The attribute 'reduced_form'
+     indicates that the code generation will be an XML minimum representation
+     of the object. See schema file for: functions, schemas, domains, types. */
   virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
-  //Método sobrecarregado que gera uma definição completa do objeto (forma_reduzida=false)
+  /* Override of the above method. This calls getCodeDefinition(unsigned,bool)
+     with the 'reduced_form' defined as 'false' */
   virtual QString getCodeDefinition(unsigned def_type);
 
-  //Retorna o tipo do objeto
+  //Returns the object's type
   ObjectType getType(void);
 
-  //Retorna o nome do tipo do objeto
+  //Returns the object's type name
   QString getTypeName(void);
 
-  //Retorna o nome do esquema do objeto
+  //Returns the object's schema name used to generate code definition
   QString getSchemaName(void);
 
-  //Retorna o nome do tipo do objeto
+  //Returns the keyword related to the object type
   QString getSQLName(void);
 
-  //Retorna o esquema ao qual o objeto faz parte
+  //Returns the schema that the objects is part
   BaseObject *getSchema(void);
 
-  //Retorna o esquema ao qual o objeto faz parte
+  //Returns the owner of the object
   BaseObject *getOwner(void);
 
-  //Retorna o espaço de tabela ao qual o objeto faz parte
+  //Returns the tablespace that the object is part
   BaseObject *getTablespace(void);
 
-  //Retorna o número identificador do objeto
+  //Returns the object's generated id
   unsigned getObjectId(void);
 
-  //Retorna se o objeto está protegido ou não
+  //Returns if the object is protected or not
   bool isProtected(void);
 
-  //Vefirica se o nome do objeto coincide com o nome passado no parâmetro
+  //Checks if the objects name is the same as the passed name
   bool operator == (const QString &obj_name);
 
-  //Vefirica se o nome do objeto difere do nome passado no parâmetro
+  //Checks if the objects name differs from the passed name
   bool operator != (const QString &obj_name);
 
-  //Operado que faz a atribuição entre um objeto e outro
+  //Assigns an object to other copiyng all the attributes correctly
   virtual void operator = (BaseObject &obj);
 
-  //Limpa os atributos usados pelo parser de esquemas
+  //Clears all the attributes used by the SchemaParser
   void clearAttributes(void);
 
   friend class ModeloBD;

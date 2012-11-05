@@ -4,7 +4,7 @@
 # Description: Definição da classe Tabela que é usado para
 #             representar graficamente as tabelas e gerar os códigos SQL
 #             pertinentes a esta.
-# Creation date:o: 17/09/2006
+# Creation date: 17/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

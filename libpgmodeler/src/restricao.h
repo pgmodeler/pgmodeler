@@ -4,7 +4,7 @@
 # Description: Definição da classe Restricao que é usado para
 #             configurar e gerar os códigos SQL referentes a chaves primárias
 #             e estrangeiras, de checagem, únicas.
-# Creation date:o: 17/09/2006
+# Creation date: 17/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

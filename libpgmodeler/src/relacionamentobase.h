@@ -3,7 +3,7 @@
 # Sub-project: Core library (libpgmodeler)m
 # Description: Definição da classe RelacionamentoBase que implementa operações
 #             básicas de manipulação gráfica de relacionamento entre tabelas
-# Creation date:o: 09/04/2008
+# Creation date: 09/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

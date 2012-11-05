@@ -4,7 +4,7 @@
 # Class: ResultSet
 # Description: This class encapsulates some functions implemented by libpq
 #              for manipulation of resultsets returned by PostgreSQL SQL commands
-# Creation date:o: 14/07/2009
+# Creation date: 14/07/2009
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

@@ -3,7 +3,7 @@
 # Sub-project: Core library (libpgmodeler)m
 # Description: Definição da classe domínio que é usada para
 #             gerar os códigos SQL pertinentes a estes.
-# Creation date:o: 07/04/2008
+# Creation date: 07/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
