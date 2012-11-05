@@ -154,7 +154,7 @@ void Restricao::definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, 
  {
   col=vet_col->at(i);
 
-  /* No caso de definição XML as colunas protegidas (adicionaa �  restrição
+  /* No caso de definição XML as colunas protegidas (adicionaa   restrição
      por relacionamento) não podem ser incluídas pois estas serão inseridas
      na restrição no momento da criação do relacionamento a partir do XML respectivo
      por isso o parâmetro 'inc_insporrelacao' pode ser usado para resolver esse caso. */

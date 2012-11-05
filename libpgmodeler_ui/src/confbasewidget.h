@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Biblioteca libpgsqldbm_ui
 # Classe: ConfBaseWidget
-# Description:o: Implementa operações básicas para gravação de arquios  e cesso � s configuraçoẽs
+# Description:o: Implementa operações básicas para gravação de arquios  e cesso  s configuraçoẽs
 #            nos widgets de configurações.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

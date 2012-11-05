@@ -117,7 +117,7 @@ class Funcao: public ObjetoBase {
   //Define o esquema ao qual a função faz parte
   void definirEsquema(ObjetoBase *esquema);
 
-  //Adiciona um parâmetr�  função (com nome e tipo especificados)
+  //Adiciona um parâmetr  função (com nome e tipo especificados)
   void adicionarParametro(Parametro param);
 
   //Adiciona um tipo de retorno específico para a cláusula RETURNS TABLE

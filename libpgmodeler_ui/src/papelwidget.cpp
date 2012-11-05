@@ -68,7 +68,7 @@ void PapelWidget::configurarSelecaoPapeis(void)
 
  /* Desconecta todos os sinais-slots das tabelas de membros
     isso evita que o método de selecionar papel membro seja
-    executado várias vezes por estar conectad� s três
+    executado várias vezes por estar conectad s três
     instâncias das tabelas de membros */
  for(i=0; i < 3; i++)
   disconnect(tab_membros[i],0,this,0);

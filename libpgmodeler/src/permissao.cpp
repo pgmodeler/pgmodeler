@@ -9,7 +9,7 @@ Permissao::Permissao(ObjetoBase *objeto)
  for(id_priv=PRIV_SELECT; id_priv<=PRIV_USAGE; id_priv++)
   privilegios[id_priv]=op_concessao[id_priv]=false;
 
- //Caso o usuário tente atribuir um objeto não alocd �  permissão
+ //Caso o usuário tente atribuir um objeto não alocd   permissão
  if(!objeto)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -42,7 +42,7 @@ bool Permissao::papelReferenciado(Papel *papel)
  vector<Papel *>::iterator itr, itr_end;
  bool enc=false;
 
- //Verifica a existencia do papel na lista de papeis já relacionado�  permissão
+ //Verifica a existencia do papel na lista de papeis já relacionado  permissão
  itr=papeis.begin();
  itr_end=papeis.end();
 

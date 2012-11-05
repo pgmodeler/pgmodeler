@@ -611,7 +611,7 @@ void FuncaoWidget::aplicarConfiguracao(void)
   /* Caso a linguagem selecionada no formulário for a C
      indica que a função está definida em uma biblioteca externa
      para tanto os valores dos campos biblioteca e simbolo
-     serão atribuío �  função que está sendo configurada */
+     serão atribuío   função que está sendo configurada */
   if(linguagem_cmb->currentText()==~TipoLinguagem(TipoLinguagem::c))
   {
    func->definirBiblioteca(biblioteca_edt->text());
@@ -633,7 +633,7 @@ void FuncaoWidget::aplicarConfiguracao(void)
       com o estado do radiobox 'conjunto_rb' */
    func->definirRetornaSetOf(conjunto_rb->isChecked());
   }
-  //Caso a função retorna uma tabela, a mesma é atru��a �  função
+  //Caso a função retorna uma tabela, a mesma é atrua   função
   else
   {
    func->removerTiposRetTabela();

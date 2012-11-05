@@ -76,7 +76,7 @@ class Gatilho: public ObjetoTabela{
 
   /* Adiciona uma coluna como condição de disparo (apenas para evento update)
      As colunas adicionadas por esse método devem obrigatoriamente pertencer
-       coluna dona do gatilho e nã�  outras tabelas */
+       coluna dona do gatilho e nã  outras tabelas */
   void adicionarColuna(Coluna *coluna);
 
   //Adiciona um argumento ao gatilho

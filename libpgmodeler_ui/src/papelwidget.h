@@ -30,7 +30,7 @@ class PapelWidget: public ObjetoBaseWidget, public Ui::PapelWidget {
  Q_OBJECT
 
  private:
-   /* Armazena as referência� s tabelas de membros do papel para que sejam
+   /* Armazena as referência s tabelas de membros do papel para que sejam
       referenciados nos demais métodos de forma mais eficaz */
    TabelaObjetosWidget *tab_membros[3];
 

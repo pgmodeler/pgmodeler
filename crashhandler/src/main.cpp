@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 
   CrashHandler crashhandler;
 
-  //Atribui o formulário alocado �  aplicação
+  //Atribui o formulário alocado�  aplicação
   app.setMainWidget(&crashhandler);
 
   if(argc > 1)

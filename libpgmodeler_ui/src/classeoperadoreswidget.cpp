@@ -284,17 +284,17 @@ void ClasseOperadoresWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<ClasseOperadores>();
 
-  //Obtém a referência �   classe de objetos que está sendo manipulada
+  //Obtém a referência    classe de objetos que está sendo manipulada
   classe_op=dynamic_cast<ClasseOperadores *>(this->objeto);
 
-  //Atribui os valores configurados no formulário �   classe de operadores
+  //Atribui os valores configurados no formulário    classe de operadores
   classe_op->definirPadrao(classe_op->classePadrao());
   classe_op->definirFamilia(dynamic_cast<FamiliaOperadores *>(sel_familiaop->obterObjeto()));
   classe_op->definirTipoIndexacao(TipoIndexacao(tipo_index_cmb->currentText()));
   classe_op->definirTipoDado(tipo_dado->obterTipoPgSQL());
 
   /* Remove todos os elementos da classe de operadores e em seguida
-     insere aqueles configurados na tabela �   classe */
+     insere aqueles configurados na tabela    classe */
   classe_op->removerElementosClasse();
   qtd=tab_elementos->obterNumLinhas();
 

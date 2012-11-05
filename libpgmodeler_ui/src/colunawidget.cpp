@@ -67,10 +67,10 @@ void ColunaWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<Coluna>();
 
-  //Obtém a referêni �  coluna que está sendo criada/editada
+  //Obtém a referên �  coluna que está sendo criada/editada
   coluna=dynamic_cast<Coluna *>(this->objeto);
 
-  //Atribui os dados do formulári�  coluna
+  //Atribui os dados do formulár�  coluna
   coluna->definirNaoNulo(nao_nulo_chk->isChecked());
   coluna->definirValorPadrao(valor_padrao_txt->toPlainText());
   coluna->definirTipo(tipo_col->obterTipoPgSQL());

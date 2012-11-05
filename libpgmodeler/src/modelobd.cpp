@@ -720,7 +720,7 @@ void ModeloBD::adicionarTabela(Tabela *tabela, int idx_obj)
  {
   __adicionarObjeto(tabela, idx_obj);
   /* Ao ser inserido uma nova tabela a mesma tem
-   seu nome é adicionad�  lista de tipos válidos
+   seu nome é adicionad  lista de tipos válidos
    do PostgreSQL */
   TipoPgSQL::adicionarTipoUsuario(tabela->obterNome(true), tabela, this, ConfigTipoUsuario::TIPO_TABELA);
  }
@@ -742,7 +742,7 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
   vector<ObjetoBase *> vet_refs;
   QString str_aux;
 
-  //Obtém as referênca �  tabela
+  //Obtém as referênca   tabela
   obterReferenciasObjeto(tabela, vet_refs, true);
 
   //Caso a tabela esteja sendo referenciada, a mesma não pode ser removida
@@ -793,7 +793,7 @@ void ModeloBD::adicionarSequencia(Sequencia *sequencia, int idx_obj)
  {
   __adicionarObjeto(sequencia, idx_obj);
   /* Ao ser inserido uma nova sequencia a mesma tem
-   seu nome é adicionad�  lista de tipos válidos
+   seu nome é adicionad  lista de tipos válidos
    do PostgreSQL */
   TipoPgSQL::adicionarTipoUsuario(sequencia->obterNome(true), sequencia, this, ConfigTipoUsuario::TIPO_SEQUENCIA);
  }
@@ -1932,7 +1932,7 @@ void ModeloBD::removerLinguagem(Linguagem *linguagem, int idx_obj)
  {
   vector<ObjetoBase *> vet_refs;
 
-  //Obtém as referênca �  linguagem
+  //Obtém as referênca   linguagem
   obterReferenciasObjeto(linguagem, vet_refs, true);
 
  /* Caso a linguagem esteja sendo referenciado, por algum objeto a
@@ -1977,7 +1977,7 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
   vector<ObjetoBase *> vet_refs;
   QString str_aux;
 
-  //Obtém as referênca �  função
+  //Obtém as referênca   função
   obterReferenciasObjeto(funcao, vet_refs, true);
 
  /* Caso a função esteja sendo referenciado, por algum objeto a
@@ -2078,7 +2078,7 @@ void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
    __adicionarObjeto(dominio, idx_obj);
 
    /* Ao ser inserido um novo tipo o mesmo tem
-    seu nome é adicionad�  lista de tipos válidos
+    seu nome é adicionad  lista de tipos válidos
     do PostgreSQL */
    TipoPgSQL::adicionarTipoUsuario(dominio->obterNome(true), dominio, this, ConfigTipoUsuario::TIPO_DOMINIO);
   }
@@ -2252,7 +2252,7 @@ void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
    __adicionarObjeto(tipo, idx_obj);
 
    /* Ao ser inserido um novo tipo o mesmo tem
-    seu nome é adicionad�  lista de tipos válidos
+    seu nome é adicionad  lista de tipos válidos
     do PostgreSQL */
    TipoPgSQL::adicionarTipoUsuario(tipo->obterNome(true), tipo, this, ConfigTipoUsuario::TIPO_BASE);
   }
@@ -2810,7 +2810,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
        {
         //Caso a lista esteja vazia o processo de reavaliação é interrompido
         reaval_objetos=false;
-        //O parser é retornad�  posição em que se encontrava antes da reavaliação
+        //O parser é retornad  posição em que se encontrava antes da reavaliação
         XMLParser::restorePosition(elem_aux);
        }
       }
@@ -3108,7 +3108,7 @@ Papel *ModeloBD::criarPapel(void)
   if(!atributos[ParsersAttributes::CONN_LIMIT].isEmpty())
    papel->definirLimiteConexao(atributos[ParsersAttributes::CONN_LIMIT].toInt());
 
-  /* Identificando as opções do papel. Caso o atributo referet �  uma
+  /* Identificando as opções do papel. Caso o atributo referet   uma
      estive com valor "true" no documento XML quer dizer que aquele
      atributo está marcado para o papel */
   for(i=0; i < 6; i++)
@@ -3479,7 +3479,7 @@ Funcao *ModeloBD::criarFuncao(void)
      else if(XMLParser::getElementName()==ParsersAttributes::PARAMETER)
      {
       param=criarParametro();
-      //Adiciona o parâmet�  função
+      //Adiciona o parâmet  função
       funcao->adicionarParametro(param);
      }
      //Extraíndo a definição (corpo) da função (tag <definition>)
@@ -3791,7 +3791,7 @@ Tipo *ModeloBD::criarTipo(void)
      else if(elem==ParsersAttributes::FUNCTION)
      {
       /*No caso de tipo base, serão extraídas referência a funções do modelo,
-        as quais serão atribuía � s funções que compoem o tipo base. */
+        as quais serão atribuía  s funções que compoem o tipo base. */
       XMLParser::getElementAttributes(atributos);
 
       /* Com a assinatura da função obtida di XML, a mesma será buscada no modelo, para
@@ -3975,9 +3975,9 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
      //Extraíndo a função de conversão do XML
      else if(elem==ParsersAttributes::FUNCTION)
      {
-      /*No caso da conversão, será extraída a refeênia �  função no modelo.
+      /*No caso da conversão, será extraída a refeênia   função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
-        será localizada e atribu�d �  conversão */
+        será localizada e atribud   conversão */
       XMLParser::getElementAttributes(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
@@ -3993,7 +3993,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      //Atribui a funç� �  conversão de tipos
+      //Atribui a funç   conversão de tipos
       conv_tipo->definirFuncaoConversao(dynamic_cast<Funcao *>(funcao));
      }
     }
@@ -4051,9 +4051,9 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
 
      if(elem==ParsersAttributes::FUNCTION)
      {
-      /*No caso da conversão, será extraída a refeênia �  função no modelo.
+      /*No caso da conversão, será extraída a refeênia   função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
-        será localizada e atribu�d �  conversão */
+        será localizada e atribud   conversão */
       XMLParser::getElementAttributes(atributos);
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
@@ -4069,7 +4069,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      //Atribui a funç� �  conversão de tipos
+      //Atribui a funç   conversão de tipos
       conv_codif->definirFuncaoConversao(dynamic_cast<Funcao *>(funcao));
      }
     }
@@ -4183,7 +4183,7 @@ Operador *ModeloBD::criarOperador(void)
      }
      else if(elem==ParsersAttributes::FUNCTION)
      {
-      /*No caso do operador, será extraída a refer�nca �  função no modelo.
+      /*No caso do operador, será extraída a refernca   função no modelo.
         Será através da assinatura de função vinda do XML que a função no modelo
         será localizada e atribuída ao operador */
       XMLParser::getElementAttributes(atributos);
@@ -4687,7 +4687,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
      armazena o endereço da tabela ou relacionamento recém criados
      a partir do bloco <table> ou <relationship>, respectivamente.
      Quando tal parâmetro está nulo indica que a restrição será criada
-     e atribuíd�  tabela cujo nome está no atributo 'table' no XML
+     e atribuíd  tabela cujo nome está no atributo 'table' no XML
      significando que a mesma está declarada fora dos dois blocos indicados.
      Adicionalmente é necessário verificar o tipo da restrição para se
      ter certeza que a mesma é uma chave primária. */
@@ -5422,12 +5422,12 @@ Visao *ModeloBD::criarVisao(void)
          }
         }
 
-       //Adiciona a referência configurad�  lista temporária de referências
+       //Adiciona a referência configurad  lista temporária de referências
        vet_refs.push_back(Referencia(tabela, coluna,
                                      atributos[ParsersAttributes::ALIAS],
                                      atributos[ParsersAttributes::COLUMN_ALIAS]));
       }
-      //Extraindo uma referênci�  uma expressão
+      //Extraindo uma referênci  uma expressão
       else
       {
        XMLParser::savePosition();
@@ -5466,7 +5466,7 @@ Visao *ModeloBD::criarVisao(void)
       //Construindo cada expressão na visão
       for(i=0; i < qtd; i++)
       {
-       //Obtém o índice da referência e a adiioa �  visão
+       //Obtém o índice da referência e a adiioa   visão
        idx_ref=lista_aux[i].toInt();
        visao->adicionarReferencia(vet_refs[idx_ref],tipo);
       }
@@ -5552,7 +5552,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
   XMLParser::getElementAttributes(atributos);
   protegido=(atributos[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
-  if(atributos[TYPE]!=ParsersAttributes::RELATION_TAB_VIEW)
+  if(atributos[ParsersAttributes::TYPE]!=ParsersAttributes::RELATION_TAB_VIEW)
   {
    tipos_tab[0]=OBJETO_TABELA;
    tipo_obj_rel=OBJETO_RELACAO;
@@ -5583,7 +5583,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
 
   //Caso o relacionamento entre tabela e visão exista
   relacao_base=obterRelacionamento(tabelas[0], tabelas[1]);
-  if(atributos[TYPE]==ParsersAttributes::RELATION_TAB_VIEW)
+  if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATION_TAB_VIEW)
   {
    //Caso o relacionamento tabela-visão nao seja encontrado o erro será disparado
    if(!relacao_base)
@@ -5600,7 +5600,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
   }
   /* Caso o tipo de relacionamento não seja tabela-visão, isso indica que
      um relacionamento tabela-tabela deverá ser criado */
-  else if(atributos[TYPE]!=ParsersAttributes::RELATION_TAB_VIEW)
+  else if(atributos[ParsersAttributes::TYPE]!=ParsersAttributes::RELATION_TAB_VIEW)
   {
    //Obtém os atributos do relacionamento a partir do XML
    obrig_orig=atributos[ParsersAttributes::SRC_REQUIRED]==ParsersAttributes::_TRUE_;
@@ -5612,15 +5612,15 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    tipo_postergacao=TipoPostergacao(atributos[ParsersAttributes::DEFER_TYPE]);
 
    //Configura o tipo do novo relacionamento
-   if(atributos[TYPE]==ParsersAttributes::RELATIONSHIP_11)
+   if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_11)
     tipo_relac=RelacionamentoBase::RELACIONAMENTO_11;
-   else if(atributos[TYPE]==ParsersAttributes::RELATIONSHIP_1N)
+   else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_1N)
     tipo_relac=RelacionamentoBase::RELACIONAMENTO_1N;
-   else if(atributos[TYPE]==ParsersAttributes::RELATIONSHIP_NN)
+   else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_NN)
     tipo_relac=RelacionamentoBase::RELACIONAMENTO_NN;
-   else if(atributos[TYPE]==ParsersAttributes::RELATIONSHIP_GEN)
+   else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_GEN)
     tipo_relac=RelacionamentoBase::RELACIONAMENTO_GEN;
-   else if(atributos[TYPE]==ParsersAttributes::RELATIONSHIP_DEP)
+   else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_DEP)
     tipo_relac=RelacionamentoBase::RELACIONAMENTO_DEP;
 
    //Cria o novo relacionamento
@@ -5855,7 +5855,7 @@ Permissao *ModeloBD::criarPermissao(void)
     //Obtém os atributos do elemento <privileges>
     XMLParser::getElementAttributes(atrib_priv);
 
-    //Atribui os privilégio�  permissão recém criada
+    //Atribui os privilégio  permissão recém criada
     itr=atrib_priv.begin();
     itr_end=atrib_priv.end();
 

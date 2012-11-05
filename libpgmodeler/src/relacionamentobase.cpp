@@ -292,10 +292,10 @@ void RelacionamentoBase::definirAtributosRelacionamento(void)
  //Definindo o atributo de tipo de relacionamento
  switch(tipo_relac)
  {
-  case RELACIONAMENTO_11: atributos[TYPE]=ParsersAttributes::RELATIONSHIP_11; break;
-  case RELACIONAMENTO_1N: atributos[TYPE]=ParsersAttributes::RELATIONSHIP_1N; break;
-  case RELACIONAMENTO_NN: atributos[TYPE]=ParsersAttributes::RELATIONSHIP_NN; break;
-  case RELACIONAMENTO_GEN: atributos[TYPE]=ParsersAttributes::RELATIONSHIP_GEN; break;
+  case RELACIONAMENTO_11: atributos[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_11; break;
+  case RELACIONAMENTO_1N: atributos[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_1N; break;
+  case RELACIONAMENTO_NN: atributos[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_NN; break;
+  case RELACIONAMENTO_GEN: atributos[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_GEN; break;
   default:
     if(tabela_orig->obterTipoObjeto()==OBJETO_VISAO)
      atributos[ParsersAttributes::TYPE]=ParsersAttributes::RELATION_TAB_VIEW;

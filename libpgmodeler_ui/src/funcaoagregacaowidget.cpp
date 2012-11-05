@@ -17,7 +17,7 @@ FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(
                                       GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                       GlobalAttributes::CONFIGURATION_EXT);
 
-  //Alocando os seletores de objetos (função e operador) que são atriuíos �  função de agregação
+  //Alocando os seletores de objetos (função e operador) que são atriuíos   função de agregação
   sel_func_final=NULL;
   sel_func_transicao=NULL;
   sel_op_ordenacao=NULL;
@@ -153,7 +153,7 @@ void FuncaoAgregacaoWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<FuncaoAgregacao>();
 
-  //Obtém a referêni �  função de agregação que está sendo editada/criada
+  //Obtém a referêni   função de agregação que está sendo editada/criada
   funcao_ag=dynamic_cast<FuncaoAgregacao *>(this->objeto);
 
   //Configura os atributos do mesmo com os valores definidos no formulário
@@ -166,7 +166,7 @@ void FuncaoAgregacaoWidget::aplicarConfiguracao(void)
   qtd=tab_tipos_entrada->obterNumLinhas();
 
   /* Obtém de cada linha da tabela de tipos de entrada o dado interno o qual é
-     uma instância da classe TipoPgSQL e que será atribía �  função de agregação
+     uma instância da classe TipoPgSQL e que será atribía   função de agregação
      como tipo de dado de entrada */
   for(i=0; i < qtd; i++)
    funcao_ag->adicionarTipoDado(tab_tipos_entrada->obterDadoLinha(i).value<TipoPgSQL>());

@@ -417,7 +417,7 @@ void DestaqueSintaxe::highlightBlock(const QString &txt)
      //Adiciona-o na palavra que está sendo extraída
      palavra+=chr_delim;
 
-     /* Extrai todos os próximos caracteres concatenando-o�  palavra,
+     /* Extrai todos os próximos caracteres concatenando-o  palavra,
         idenpendente da categoria destes, enquanto o caractere final
         delimitador de palavra não seja encontrado ou o fim do texto
         seja alcançado. */
@@ -634,7 +634,7 @@ void DestaqueSintaxe::carregarConfiguracao(const QString &nome_arq)
                        ERR_REDECL_HL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
 
-        /* Caso nenhum erro for disparado o grupo é adicionad�  lista de
+        /* Caso nenhum erro for disparado o grupo é adicionad  lista de
            ordem de aplicação dos grupos */
         ordem_grupos.push_back(grupo);
        }

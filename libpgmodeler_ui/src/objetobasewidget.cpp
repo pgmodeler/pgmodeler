@@ -625,7 +625,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
   ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->objeto);
   ObjetoTabela *obj_tab=dynamic_cast<ObjetoTabela *>(this->objeto);
 
-  /* Caso o objeto seja novo, é necessário adicion�-o �  lista
+  /* Caso o objeto seja novo, é necessário adicion-o   lista
      de operações como objeto criado para permitir sua remoção
      quando o usuário executar a operação de desfazer */
   if(novo_obj)
@@ -643,7 +643,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
    {
     if(this->tabela)
      lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_CRIADO, -1, this->tabela);
-    /* Relacionamento não são adicionao �  lista de operações por este trecho de código.
+    /* Relacionamento não são adicionao   lista de operações por este trecho de código.
        Isso é tratado no método definirAtributos() da classe RelacionamentoWidget */
     else if(tipo_obj!=OBJETO_RELACAO && tipo_obj!=OBJETO_TABELA)
      lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_CRIADO, -1, this->relacionamento);

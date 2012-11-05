@@ -264,7 +264,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
                           .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TIPO)),
                  ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  /* Validando os tipos do parâmetro da função em ra��o �  configuração do tipo.
+  /* Validando os tipos do parâmetro da função em rao   configuração do tipo.
      A função INPUT deve possuir os parâmetros com tipo (cstring, oid, integer).
      As funções OUTPUT e SEND devem possuir um parâmetro do mesmo tipo sendo definido,
      neste caso, para facilitar a implementação basta usar um parâmetro de tipo 'any'.

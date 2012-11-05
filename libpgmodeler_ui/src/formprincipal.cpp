@@ -1031,10 +1031,10 @@ void FormPrincipal::imprimirModelo(void)
   //Obtém as configurações de impressão da cena
   CenaObjetos::obterConfiguracaoPagina(tam_papel, orientacao, margens);
 
-  //Obtém a referência �  impressora configuada no diálogo de impressão
+  //Obtém a referência   impressora configuada no diálogo de impressão
   printer=print_dlg.printer();
 
-  //Atribui as configurações de impressão da cena �  impressora
+  //Atribui as configurações de impressão da cena   impressora
   printer->setPaperSize(tam_papel);
   printer->setOrientation(orientacao);
   printer->setPageMargins(margens.left(), margens.top(), margens.right(), margens.bottom(), QPrinter::Millimeter);

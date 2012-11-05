@@ -295,7 +295,7 @@ int TabelaObjetosWidget::obterIndiceLinha(const QVariant &dado)
 
 void TabelaObjetosWidget::adicionarColuna(unsigned idx_col)
 {
- /* Caso o índice da coluna anterio�  coluna a ser adcionada seja inválido
+ /* Caso o índice da coluna anterio  coluna a ser adcionada seja inválido
     adiciona a coluna ao final da lista de colunas */
  if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
   idx_col=tabela_tbw->columnCount();
@@ -630,7 +630,7 @@ void TabelaObjetosWidget::habilitarBotoes(void)
  habilitarBotoes(TODOS_BOTOES, true);
 
  /* Caso uma linha esteja selecionada emite o sinal indicativo de seleção de linha,
-    este sinal é interessante quando se quer ter acesso diret�  linha selecionada
+    este sinal é interessante quando se quer ter acesso diret  linha selecionada
     sem ter que chamar o método de obterLinhaSelecionada() */
  if(item && item->row() >= 0)
   emit s_linhaSelecionada(item->row());

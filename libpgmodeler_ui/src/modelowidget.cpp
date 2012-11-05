@@ -516,7 +516,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
 {
  /* O parâmetro fim_movimento indica se a operação de movimentação de objetos
     foi finalizada. Quando este parâmetro é false, indica que a movimentação
-    foi iniciada, desta forma os objetos são adicionado�  lista de operações
+    foi iniciada, desta forma os objetos são adicionado  lista de operações
     antes do movimento acontecer */
  if(!fim_movimento)
  {
@@ -757,7 +757,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
 
      //Adiciona a tabela criada ao modelo
      modelo->adicionarObjeto(tab);
-     //Adiciona uma operaç� �  lista de operações indicando a criação da tabela
+     //Adiciona uma operaç   lista de operações indicando a criação da tabela
      //lista_op->adicionarObjeto(tab, Operacao::OBJETO_CRIADO);
 
      //Aloca um relacionamento entre a nova tabela e a tabela de origem do relacionamento
@@ -2269,7 +2269,7 @@ void ModeloWidget::configurarMenuPopup(vector<ObjetoBase *> objs_sel)
   menu_popup.addAction(action_excluir);
 
  /* Caso o objeto seja uma coluna (objeto de tabela) cria um menu
-    especial que permite acesso rápid� s retrições que são pertinentes
+    especial que permite acesso rápid s retrições que são pertinentes
     a coluna */
  if(obj_tab)
  {

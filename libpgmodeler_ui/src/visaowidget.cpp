@@ -22,7 +22,7 @@ VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_VISAO
                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                      GlobalAttributes::CONFIGURATION_EXT);
 
-  //Alocando os seletores de objetos (tabela e coluna) que são atribuío � s referências da visão
+  //Alocando os seletores de objetos (tabela e coluna) que são atribuío  s referências da visão
   sel_tabela=NULL;
   sel_tabela=new SeletorObjetoWidget(OBJETO_TABELA, true, this);
   sel_coluna=NULL;
@@ -102,7 +102,7 @@ void VisaoWidget::selecionarTipoReferencia(void)
     se trata de uma referência a uma coluna */
  bool ref_obj=(tipo_ref_cmb->currentIndex()==static_cast<int>(Referencia::REFER_COLUNA));
 
- //Exibe todos os campos do formulário referente�  referência de coluna
+ //Exibe todos os campos do formulário referente  referência de coluna
  tabela_lbl->setVisible(ref_obj);
  coluna_lbl->setVisible(ref_obj);
  sel_tabela->setVisible(ref_obj);
@@ -429,7 +429,7 @@ void VisaoWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<Visao>();
 
-  //Obtém a referêni �  visao que está sendo editada/criada
+  //Obtém a referêni   visao que está sendo editada/criada
   visao=dynamic_cast<Visao *>(this->objeto);
 
   //Faz a cópia da visão auxiliar para a visão que está sendo editada

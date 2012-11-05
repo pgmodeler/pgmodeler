@@ -59,7 +59,7 @@ class CenaObjetos: public QGraphicsScene {
 
   QGraphicsLineItem *linha_rel;
 
-  //Método utilitário para alinhar um ponto �  grade
+  //Método utilitário para alinhar um pont �  grade
   static QPointF alinharPontoGrade(const QPointF &pnt);
 
  protected:
@@ -82,7 +82,7 @@ class CenaObjetos: public QGraphicsScene {
   ~CenaObjetos(void);
 
   /* Métodos estáticos que definem o tamanho da grade e as opções de
-     alinhamento de objetos �  grade e exibição da própria grade. */
+     alinhamento de objetos   grade e exibição da própria grade. */
   static void definirGrade(unsigned tam);
   static void definirOpcoesGrade(bool exibir_grade, bool alin_objs_grade, bool exibir_lim_pagina);
   static void obterOpcoesGrade(bool &exibir_grade, bool &alin_objs_grade, bool &exibir_lim_pagina);
@@ -97,7 +97,7 @@ class CenaObjetos: public QGraphicsScene {
   void setSceneRect(const QRectF &ret);
 
  public slots:
-  //Alinha todos os objetos do modelo �  grade
+  //Alinha todos os objetos do modelo   grade
   void alinharObjetosGrade(void);
   void update(void);
 

@@ -125,7 +125,7 @@ void RegraWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<Regra>();
 
-  //Obtém a referêni �  regra que está sendo criada/editada
+  //Obtém a referêni   regra que está sendo criada/editada
   regra=dynamic_cast<Regra *>(this->objeto);
 
   //Configura a regra com base nos atributos preenchidos no formulário

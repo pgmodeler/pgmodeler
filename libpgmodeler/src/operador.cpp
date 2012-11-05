@@ -163,7 +163,7 @@ void Operador::definirOperador(Operador *op, unsigned tipo_op)
  else
  {
   /* Validando OP Comutação: De acordo com a documentação do PostgreSQL o operador
-     de comutação deve possuir seu argumet �  direita do mesmo tipo do argumento
+     de comutação deve possuir seu argumet   direita do mesmo tipo do argumento
        esquerda do operador comutado. Ou seja, se o operador ++ (tipoA, tipoB)
      está sendo definido e seu operador de comutação é +*+ então a assinatura
      deste último deve ser +*+(tipoB, tipoA). A condição testa abaixo é a situação

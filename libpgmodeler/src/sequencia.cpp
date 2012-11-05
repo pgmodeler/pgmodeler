@@ -166,7 +166,7 @@ void Sequencia::definirEsquema(ObjetoBase *esquema)
   //Obtém a tabela pai da coluna
   tabela=dynamic_cast<Tabela *>(coluna->obterTabelaPai());
 
-  //Verifica se o esquema sendo atribuíd�  seqüência é o mesmo da tabela possuidora
+  //Verifica se o esquema sendo atribuíd  seqüência é o mesmo da tabela possuidora
   if(tabela && tabela->obterEsquema()!=esquema)
     throw Exception(ERR_ASG_SEQ_DIF_TABLE_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }

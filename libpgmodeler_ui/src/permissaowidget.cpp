@@ -262,7 +262,7 @@ void PermissaoWidget::listarPermissoes(void)
    tab_permissoes->definirTextoCelula(perm->obterStringPrivilegios(),i,2);
 
    /* A terceira coluna armazena os nomes concatenados de todos
-      os papéis relacionado�  permissão */
+      os papéis relacionado  permissão */
    qtd1=perm->obterNumPapeis();
    for(i1=0; i1 < qtd1; i1++)
    {
@@ -451,7 +451,7 @@ void PermissaoWidget::editarPermissao(void)
   //Preenche o campo do formulário com o noome da permissão selecionada
   id_perm_edt->setText(permissao->obterNome());
 
-  /* Obtém a quantidade de papéis relacionao �  permissão para que os
+  /* Obtém a quantidade de papéis relacionao   permissão para que os
      mesmos possam ser exibidos na tabela de papéis */
   qtd=permissao->obterNumPapeis();
   for(i=0; i < qtd; i++)

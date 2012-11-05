@@ -101,7 +101,7 @@ void Tabela::definirAtributoColunas(unsigned tipo_def)
  for(i=0; i < qtd; i++)
  {
   /*
-   Para a definição de uma colunar ser inclía �  definição da tabela
+   Para a definição de uma colunar ser inclía   definição da tabela
    a mesma tem de ser incluída por relacionamento simples. Caso a coluna
    foi adicionar   tabela por relacionamento de dependência ou generalização
    a mesma não será incluída na tabela.
@@ -482,7 +482,7 @@ void Tabela::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
  {
   vector<Tabela *>::iterator itr;
 
-  itr=tabelas_pai.begin() + idx_obj; //Obtendo a referênci�  tabela pai
+  itr=tabelas_pai.begin() + idx_obj; //Obtendo a referênci  tabela pai
   tabelas_pai.erase(itr); //Remove a tabela pai da lista
  }
  //Caso o objeto a ser removido seja uma tabela cópia e seu índice seja válido
@@ -490,7 +490,7 @@ void Tabela::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
  {
   vector<Tabela *>::iterator itr;
 
-  itr=tabelas_copia.begin() + idx_obj; //Obtendo a referênci�  tabela copia
+  itr=tabelas_copia.begin() + idx_obj; //Obtendo a referênci  tabela copia
   tabelas_copia.erase(itr); //Remove a tabela pai da lista
  }
  else if(tipo_obj!=OBJETO_TABELA && tipo_obj!=OBJETO_TABELA_BASE)

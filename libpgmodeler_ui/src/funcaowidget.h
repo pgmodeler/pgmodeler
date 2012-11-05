@@ -62,7 +62,7 @@ class FuncaoWidget: public ObjetoBaseWidget, public Ui::FuncaoWidget  {
    void alternarTiposRetorno(void);
 
    /* Seleciona a linguagem de definição da função, e caso disponível,
-      carrega o arquivo de destaque de sintaxe referênt�  linguagem
+      carrega o arquivo de destaque de sintaxe referênt  linguagem
       selecionada */
    void selecionarLinguagem(void);
 

@@ -189,7 +189,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   //Caso seja uma coluna
   if(coluna)
   {
-   //Obtém a string de restrições relacionadas �   coluna
+   //Obtém a string de restrições relacionads �   coluna
    str_rest=this->obterStringRestricoes(coluna);
 
    /* Determina o tipo primário de restrição conforme as checagens a seguir.
@@ -461,7 +461,7 @@ QString OGSubItemObjeto::obterStringRestricoes(Coluna *coluna)
    }
   }
 
-  //Caso a coluna seja não-nula adiciona a QString formatada o texto referente �   constraint NOT NULL
+  //Caso a coluna seja não-nula adiciona a QString formatada o texto referente�   constraint NOT NULL
   if(coluna->naoNulo()) str_rest+=TEXTO_NOT_NULL + SEPARADOR_REST;
 
   //Caso a QString formatada tenha sido criada

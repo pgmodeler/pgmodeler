@@ -137,10 +137,10 @@ void OperadorWidget::aplicarConfiguracao(void)
   Operador *operador=NULL;
   iniciarConfiguracao<Operador>();
 
-  //Obtém a referêni �  sequência que está sendo editada/criada
+  //Obtém a referêni   sequência que está sendo editada/criada
   operador=dynamic_cast<Operador *>(this->objeto);
 
-  /* Atribui os valores configurados no formulári�  instância do
+  /* Atribui os valores configurados no formulári  instância do
      operador que está sendo configurado */
   operador->definirHashes(hashes_chk->isChecked());
   operador->definirMerges(merges_chk->isChecked());

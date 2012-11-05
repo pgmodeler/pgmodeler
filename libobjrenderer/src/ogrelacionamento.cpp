@@ -928,22 +928,22 @@ void OGRelacionamento::configurarRotulos(void)
   for(idx=0; idx < 2; idx++)
   {
    /* Caso não haja distância configurada para o rótulo em questão,
-      ele será posicionado automaticamente em relação �   linha fixa
+      ele será posicionado automaticamente em relaç�o �   linha fixa
       respectiva. Os rótulos de cardinalidade por padrão são posicionados
-      de forma a ficarem rente �  s linhas fixas. O exemplos mostra os casos
+      de forma a ficarem rente   s linhas fixas. O exemplos mostra os casos
       possíveis:
 
       1) Linha horizontal:
          ----------                              ----------
          | Tabela |-[rotulo]-----<>-----[rotulo]-| Tabela |
          ----------                              ----------
-         >> Os rótulos de cadinalidade são posicionados �   frente (ou atrás)
-            da tabela e centralizados verticalmente em relação �  s linhas fixas.
+         >> Os rótulos de cadinalidade são posicionado �   frente (ou atrás)
+            da tabela e centralizados verticalmente em relaçã �  s linhas fixas.
 
       2) Linha vertical:
          ----------
          | Tabela | >> Os rótulos são posicionados abaixo ou acima das tabelas
-         ----------    e centralizados horizontalmente em relação �  s linhas fixas.
+         ----------    e centralizados horizontalmente em relaçã �  s linhas fixas.
               |
            [rotulo]
               |

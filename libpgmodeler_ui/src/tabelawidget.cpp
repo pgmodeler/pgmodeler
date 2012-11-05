@@ -275,7 +275,7 @@ void TabelaWidget::listarObjetos(TipoObjetoBase tipo_obj)
   //Obtém a tabela de objetos referente ao tipo passado
   tab=mapa_tab_objetos[tipo_obj];
 
-  //Obtém a referêni �  tabela em edição
+  //Obtém a referêni   tabela em edição
   tabela=dynamic_cast<Tabela *>(this->objeto);
 
   //Remove as linhas da tabela antes da exibição dos elementos

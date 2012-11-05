@@ -1130,7 +1130,7 @@ void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
   for(i=0; i < qtd; i++)
    pk->adicionarColuna(colunas_ref[i], Restricao::COLUNA_ORIGEM);
 
-  //Caso a tabela não tenha uma chave primária a mesma será atru��a �  ela
+  //Caso a tabela não tenha uma chave primária a mesma será atrua   ela
   if(nova_pk)
    tab_receptora->adicionarRestricao(pk);
  }
@@ -1215,7 +1215,7 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
    fk->definirTabReferenciada(tab_referencia);
 
    /* Caso o relacionamento seja 1-1 ou 1-n a chave estrangeira alocada
-      será atribu�d �  chave estrangeira que representa o relacionamento */
+      será atribud   chave estrangeira que representa o relacionamento */
    if(tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N)
     fk_rel1n=fk;
   }
@@ -1372,7 +1372,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
 
    /* Selecionando a lista de colunas correta de acordo com a forma do relacionamento.
      Caso a tabela a qual receberá a chave estrangeira (tab_dest) for uma
-     referênci�  tabela de origem do relacionamento, o sufixo das colunas a serem criadas
+     referênci  tabela de origem do relacionamento, o sufixo das colunas a serem criadas
      será configurado como sendo o sufixo da tabela de origem. Caso contrário  o
       será o da própria tabela de destino. */
   if(sufixo_auto)
@@ -1485,7 +1485,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
       coluna passará a ter como nome antigo o nome atribuido na iteração acima */
    coluna->definirNome(nome);
 
-   /* Caso o nome anteriro atribuíd�  coluna seja diferente do nome atual, o nome
+   /* Caso o nome anteriro atribuíd  coluna seja diferente do nome atual, o nome
       atual da coluna passará a ser o nome antigo da mesma quando o relacionamento
       for desconectado e reconectado novamente, desta forma o histórico de nomes da
       colunas não se perde mesmo quando as colunas do relacionamento são desalocadas,
@@ -2183,7 +2183,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
      //Obtém a da chave estrangeira
      col2=colunas_ref[i];
 
-     //Obtém a coluna da chave primária ligd �  coluna atual da chave estrangeira
+     //Obtém a coluna da chave primária ligd   coluna atual da chave estrangeira
      col1=colunas_pk[i];
 
      /* Obtém a coluna da pk em si. Com esta referência será verificado se os endereços são iguais
@@ -2202,7 +2202,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
          A única exceção aceita é se o tipo da coluna de origem é do tipo 'serial' ou 'bigserial'
          e da coluna de destino seja 'integer' ou 'bigint'
 
-      3) Checa se a coluna (endereço) vindo do vetor colunas_pk é iga �  coluna
+      3) Checa se a coluna (endereço) vindo do vetor colunas_pk é iga   coluna
          obtida diretamente da chave primária */
      nome_col=col1->obterNome() + sufixo_cols[i];
      valido=(col1==col3 &&
@@ -2253,7 +2253,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
      1) Pega-se a chave estrangeira da tabela criada pela ligação
      a qual referencia a tabela de origem e verifica se as quantidades
      de colunas coincidem. O mesmo é feito para a segunda chave estrangeira
-     só que em rela�� �  chave primaria da tabela de destino
+     só que em rela   chave primaria da tabela de destino
      2) É necessário validar se os nomes das colunas da tabela gerada
         coincidem com os nomes das colunas das tabelas originárias */
   else if(tipo_relac==RELACIONAMENTO_NN)
@@ -2279,7 +2279,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
      if(rest->obterTipoRestricao()==TipoRestricao::foreign_key)
      {
       /* Verifica se a tabela referenciada pela chave é a tabela de origem
-         caso seja, armazena seu endereço na referêni �  chave estrangeira
+         caso seja, armazena seu endereço na referêni   chave estrangeira
          da origem */
       if(!fk && rest->obterTabReferenciada()==tabela)
        fk=rest;

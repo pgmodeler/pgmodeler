@@ -33,7 +33,7 @@ void Coluna::definirNome(const QString &nome)
 
 void Coluna::definirTipo(TipoPgSQL tipo)
 {
- /* Caso o tipo a ser atribuíd�  coluna seja um pseudo-tipo
+ /* Caso o tipo a ser atribuíd  coluna seja um pseudo-tipo
     será disparada uma exceção */
  if(tipo.pseudoTipo())
   throw Exception(ERR_ASG_PSDTYPE_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);

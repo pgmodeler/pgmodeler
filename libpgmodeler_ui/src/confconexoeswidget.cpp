@@ -68,7 +68,7 @@ void ConfConexoesWidget::carregarConfiguracao(void)
   else
    conexao->setConnectionParam(DBConnection::PARAM_SERVER_FQDN, itr->second[DBConnection::PARAM_SERVER_FQDN]);
 
-  //Atribuindo os demais valores �   conexão
+  //Atribuindo os demais valores    conexão
   conexao->setConnectionParam(DBConnection::PARAM_PORT, itr->second[DBConnection::PARAM_PORT]);
   conexao->setConnectionParam(DBConnection::PARAM_USER, itr->second[DBConnection::PARAM_USER]);
   conexao->setConnectionParam(DBConnection::PARAM_PASSWORD,itr->second[DBConnection::PARAM_PASSWORD]);
@@ -425,7 +425,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
        geraria muitos erros se o modo citado não estivesse ativado */
     SchemaParser::setIgnoreUnkownAttributes(true);
 
-    //Gera o esquema da conexão e contatena �   demais geradas
+    //Gera o esquema da conexão e contatena    demais geradas
     params_config[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
     SchemaParser::getObjectDefinition(GlobalAttributes::CONFIGURATIONS_DIR +
                                         GlobalAttributes::DIR_SEPARATOR +

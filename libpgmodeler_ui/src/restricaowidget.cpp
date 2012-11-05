@@ -125,7 +125,7 @@ void RestricaoWidget::adicionarColuna(int idx_lin)
    tipo_col=Restricao::COLUNA_REFER;
   }
 
-  //Obtém a referêni �  coluna no item atual do combo box
+  //Obtém a referêni   coluna no item atual do combo box
   coluna=reinterpret_cast<Coluna *>(combo->itemData(combo->currentIndex(),Qt::UserRole).value<void *>());
   //Quando a coluna vai ser atribuída a tabela a mesma é removida do combo
   combo->removeItem(combo->currentIndex());
@@ -181,7 +181,7 @@ void RestricaoWidget::adicionarColuna(Coluna *coluna, unsigned tipo_col, int idx
   else
    tabela_wgt=tab_colunas_ref;
 
-  /* Exibe os dados da coluna na linha especificada, definindo a referênci�  coluna
+  /* Exibe os dados da coluna na linha especificada, definindo a referênci  coluna
      como dado da linha */
   tabela_wgt->definirTextoCelula(QString::fromUtf8(coluna->obterNome()),idx_lin,0);
   tabela_wgt->definirTextoCelula(QString::fromUtf8(~coluna->obterTipo()),idx_lin,1);
@@ -402,7 +402,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai,
  tab_colunas->blockSignals(true);
  for(i=0, lin_tab=0; i < qtd; i++)
  {
-  /* Caso o objeto pai seja uma tabela usa a referênci�  tabela pai
+  /* Caso o objeto pai seja uma tabela usa a referênci  tabela pai
      para obter a coluna atual */
   if(tipo_obj==OBJETO_TABELA)
    coluna=tabela->obterColuna(i);
@@ -485,7 +485,7 @@ void RestricaoWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<Restricao>();
 
-  //Obtém a referêni �  restrição que está sendo criada/editada
+  //Obtém a referêni   restrição que está sendo criada/editada
   restricao=dynamic_cast<Restricao *>(this->objeto);
 
   //Preenche os atributos básicos da restição com os valores configurados no formulário

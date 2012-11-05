@@ -89,11 +89,11 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
  //Obtém o tipo de referência do objeto this
  tipo_refer=obterTipoReferencia();
 
- /* Caso seja uma referênci�  parte SELECT-FROM,
+ /* Caso seja uma referênci  parte SELECT-FROM,
     formata a SQL do objeto de acordo com este tipo */
  if(tipo_sql==SQL_REFER_SELECT)
  {
-  //Caso seja um referênci�  objetos (colunas, esquemas, tabelas, alias)
+  //Caso seja um referênci  objetos (colunas, esquemas, tabelas, alias)
   if(tipo_refer==REFER_COLUNA)
   {
    /*
@@ -122,12 +122,12 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
     //Caso haja uma coluna definida, atribui o seu nome   definição SQL
     def_sql=nome_tab + coluna->obterNome(true);
 
-    //Caso haja um alias para a coluna o mesmo será concatenad�  definição
+    //Caso haja um alias para a coluna o mesmo será concatenad  definição
     if(alias_coluna!="")
      def_sql+=" AS " + ObjetoBase::formatarNome(alias_coluna);
    }
   }
-  //Caso seja um referênci�  uma expressão na parte SELECT-FROM
+  //Caso seja um referênci  uma expressão na parte SELECT-FROM
   else
   {
    /*
@@ -176,7 +176,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
    */
 
    /* Caso não existe um alias de tabel, o próprio nome
-      da mesma é concatenad�  definição */
+      da mesma é concatenad  definição */
    if(alias=="")
     def_sql=tabela->obterNome(true);
    else

@@ -97,7 +97,7 @@ void GatilhoWidget::adicionarColuna(int idx_lin)
 
  try
  {
-  //Obtém a referêni �  coluna no item atual do combo box
+  //Obtém a referêni   coluna no item atual do combo box
   coluna=reinterpret_cast<Coluna *>(coluna_cmb->itemData(coluna_cmb->currentIndex(),Qt::UserRole).value<void *>());
   //Quando a coluna vai ser atribuída a tabela a mesma é removida do combo
   coluna_cmb->removeItem(coluna_cmb->currentIndex());
@@ -118,7 +118,7 @@ void GatilhoWidget::adicionarColuna(Coluna *coluna, int idx_lin)
  //Caso a coluna esteja alocada e o índice da linha seja válido (não-negativo)
  if(coluna && idx_lin >= 0)
  {
-  /* Exibe os dados da coluna na linha especificada, definindo a referênci�  coluna
+  /* Exibe os dados da coluna na linha especificada, definindo a referênci  coluna
      como dado da linha */
   tab_colunas->definirTextoCelula(QString::fromUtf8(coluna->obterNome()),idx_lin,0);
   tab_colunas->definirTextoCelula(QString::fromUtf8(~coluna->obterTipo()),idx_lin,1);

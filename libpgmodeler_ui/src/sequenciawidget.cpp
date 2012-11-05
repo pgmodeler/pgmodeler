@@ -79,7 +79,7 @@ void SequenciaWidget::aplicarConfiguracao(void)
   Sequencia *sequencia=NULL;
   iniciarConfiguracao<Sequencia>();
 
-  //Obtém a referêni �  sequência que está sendo editada/criada
+  //Obtém a referêni   sequência que está sendo editada/criada
   sequencia=dynamic_cast<Sequencia *>(this->objeto);
 
   sequencia->definirCiclica(ciclica_chk->isChecked());

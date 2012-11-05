@@ -153,7 +153,7 @@ void ObjetoGrafico::redimensionarPoligono(QPolygonF &pol, float larg, float alt)
  coef_a=larg / pol.boundingRect().width();
  coef_b=alt / pol.boundingRect().height();
 
- //Aplicando os coeficientes calculados �   todos os pontos do polígono
+ //Aplicando os coeficientes calculados    todos os pontos do polígono
  while(itr!=itr_end)
  {
   itr->setX(itr->x() * coef_a);
