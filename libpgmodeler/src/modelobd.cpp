@@ -2,7 +2,7 @@
 
 ModeloBD::ModeloBD(void)
 {
- id_objeto=BaseObject::id_modelobd++;
+ object_id=BaseObject::dbmodel_id++;
 
  tipo_objeto=OBJ_DATABASE;
  definirNome(QObject::trUtf8("new_database").toUtf8());
@@ -1528,7 +1528,7 @@ void ModeloBD::criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj)
      os mesmos foram carregados a partir do arquivo evitando a quebra
      de referências. */
   if(objeto && id_obj!=0)
-   objeto->id_objeto=id_obj;
+   objeto->object_id=id_obj;
  }
  catch(Exception &e)
  {
@@ -2861,9 +2861,9 @@ ObjectType ModeloBD::obterTipoObjeto(const QString &str_tipo)
  ObjectType tipo_obj=BASE_OBJECT;
  int i;
 
- for(i=0; i < BaseObject::QTD_TIPOS_OBJETO; i++)
+ for(i=0; i < BaseObject::OBJECT_TYPE_COUNT; i++)
  {
-  if(esq_objetos[i]==str_tipo)
+  if(objs_schemas[i]==str_tipo)
   {
    tipo_obj=static_cast<ObjectType>(i);
    break;
@@ -4143,7 +4143,7 @@ Operador *ModeloBD::criarOperador(void)
     {
      elem=XMLParser::getElementName();
 
-     if(elem==esq_objetos[OBJ_OPERATOR])
+     if(elem==objs_schemas[OBJ_OPERATOR])
      {
       //Obtém os atributos do operador referenciado
       XMLParser::getElementAttributes(atributos);
@@ -4266,7 +4266,7 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
     {
      elem=XMLParser::getElementName();
 
-     if(elem==esq_objetos[OBJ_OPFAMILY])
+     if(elem==objs_schemas[OBJ_OPFAMILY])
      {
       //Obtém os atributos do operador referenciado
       XMLParser::getElementAttributes(atributos);
@@ -4492,15 +4492,15 @@ Tabela *ModeloBD::criarTabela(void)
      XMLParser::savePosition();
      objeto=NULL;
 
-     if(elem==BaseObject::esq_objetos[OBJ_COLUMN])
+     if(elem==BaseObject::objs_schemas[OBJ_COLUMN])
       objeto=criarColuna();
-     else if(elem==BaseObject::esq_objetos[OBJ_CONSTRAINT])
+     else if(elem==BaseObject::objs_schemas[OBJ_CONSTRAINT])
       objeto=criarRestricao(tabela);
-     else if(elem==BaseObject::esq_objetos[OBJ_INDEX])
+     else if(elem==BaseObject::objs_schemas[OBJ_INDEX])
       objeto=criarIndice(tabela);
-     else if(elem==BaseObject::esq_objetos[OBJ_RULE])
+     else if(elem==BaseObject::objs_schemas[OBJ_RULE])
       objeto=criarRegra();
-     else if(elem==BaseObject::esq_objetos[OBJ_TRIGGER])
+     else if(elem==BaseObject::objs_schemas[OBJ_TRIGGER])
       objeto=criarGatilho(tabela);
 
      if(objeto)
@@ -6067,7 +6067,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
       do tipo do objeto nos esquema SQL */
    if(tipo_def==SchemaParser::SQL_DEFINITION)
    {
-    atrib=BaseObject::esq_objetos[tipos_obj_aux[i]];
+    atrib=BaseObject::objs_schemas[tipos_obj_aux[i]];
     atribs_aux[atrib]="";
    }
 
@@ -6398,7 +6398,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
 
   if(tipo_def==SchemaParser::XML_DEFINITION)
   {
-   atribs_aux[ParsersAttributes::PROTECTED]=(this->protegido ? "1" : "");
+   atribs_aux[ParsersAttributes::PROTECTED]=(this->protected_obj ? "1" : "");
   }
   else
   {

@@ -61,7 +61,7 @@ QString Parametro::obterDefinicaoObjeto(unsigned tipo_def)
 
 Funcao::Funcao(void)
 {
- id_objeto=BaseObject::id_funcao++;
+ object_id=BaseObject::function_id++;
  tipo_retorno=TipoPgSQL("void");
  linguagem=NULL;
  retorna_setof=false;

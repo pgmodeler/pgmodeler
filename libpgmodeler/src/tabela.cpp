@@ -1008,7 +1008,7 @@ void Tabela::operator = (Tabela &tabela)
 
  (*dynamic_cast<ObjetoGraficoBase *>(this))=dynamic_cast<ObjetoGraficoBase &>(tabela);
  this->aceita_oids=tabela.aceita_oids;
- definirProtegido(tabela.protegido);
+ definirProtegido(tabela.protected_obj);
 
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }

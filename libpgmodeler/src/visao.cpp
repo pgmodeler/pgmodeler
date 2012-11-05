@@ -89,8 +89,8 @@ void Visao::adicionarReferencia(Referencia &refer, unsigned tipo_sql, int id_exp
 
  col=refer.obterColuna();
  if(col && col->incluidoPorRelacionamento() &&
-    col->obterIdObjeto() > this->id_objeto)
-  this->id_objeto=BaseObject::obterIdGlobal();
+    col->obterIdObjeto() > this->object_id)
+  this->object_id=BaseObject::obterIdGlobal();
 }
 
 unsigned Visao::obterNumReferencias(void)

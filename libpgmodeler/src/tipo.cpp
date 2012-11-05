@@ -2,7 +2,7 @@
 
 Tipo::Tipo(void)
 {
- id_objeto=BaseObject::id_tipo++;
+ object_id=BaseObject::type_id++;
  tipo_objeto=OBJ_TYPE;
  config=TIPO_ENUMERACAO;
  //nome="novo_tipo";

@@ -116,7 +116,7 @@ class Tipo: public BaseObject {
   void definirNome(const QString &nome);
 
   //Atribui um esquema ao tipo
-  void definirEsquema(BaseObject *esquema);
+  void definirEsquema(BaseObject *schema);
 
   //Define a configuração do tipo
   void definirConfiguracao(unsigned conf);

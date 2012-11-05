@@ -96,8 +96,8 @@ QString Coluna::obterDefinicaoObjeto(unsigned tipo_def)
 void Coluna::operator = (Coluna &coluna)
 {
  this->comentario=coluna.comentario;
- this->id_objeto=coluna.id_objeto;
- this->protegido=coluna.protegido;
+ this->object_id=coluna.object_id;
+ this->protected_obj=coluna.protected_obj;
 
  this->nome=coluna.nome;
  this->nome_antigo=coluna.nome_antigo;

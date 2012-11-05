@@ -69,54 +69,54 @@ class BaseObject {
  protected:
   /* Este atributo estático é usado para gerar o identificador do objeto.
      À medida que instâncias de objetos são criadas este valor é incrementado. */
-  static unsigned id_global,
-                  id_esquema,
-                  id_modelobd,
-                  id_esptabela,
-                  id_papel,
-                  id_tipo,
-                  id_funcao;
+  static unsigned global_id,
+                  schema_id,
+                  dbmodel_id,
+                  tabspace_id,
+                  role_id,
+                  type_id,
+                  function_id;
 
   /* Armazena um identificador único para o objeto. Este id nada mais
      do que o valor atual do id_global. Este identificador é usado
      para se saber a ordem cronológica de criação de cada objeto do modelo
      pois a geração e leitura do código XML é completamente armarrada a ordem
      em que os objetos foram criados */
-  unsigned id_objeto;
+  unsigned object_id;
 
-  static const int QTD_TIPOS_OBJETO=27;
+  static const int OBJECT_TYPE_COUNT=27;
 
   /* Indica se o objeto está protegido ou não.
      Um objeto protegido indica que ele não pode sofrer
      alterações em sua posição (não pode ser transladado ou rotacionado),
      não pode ter seu nome/textos alterados e não pode ser excluído. */
-  bool protegido;
+  bool protected_obj;
 
   /* QTD_TIPOS_OBJETO é a quantidade de enumerações OBJETO_??? os quais possuem
      uma palavra chave em SQL ou um arquivo de definiçao XML. */
-  static QString esq_objetos[QTD_TIPOS_OBJETO];
+  static QString objs_schemas[OBJECT_TYPE_COUNT];
 
   /* QTD_TIPOS_OBJETO é a quantidade de enumerações OBJETO_??? os quais possuem
      uma palavra chave em SQL. */
-  static QString sql_objetos[QTD_TIPOS_OBJETO];
+  static QString objs_sql[OBJECT_TYPE_COUNT];
 
   /* Armazena o nome dos tipos dos objetos para serem usado em formatação
      de mensagens de erro */
-  static QString nome_tipo_objetos[QTD_TIPOS_OBJETO];
+  static QString obj_type_names[OBJECT_TYPE_COUNT];
 
   /* Papel o qual é dono do objeto.
      Este objeto será usado para
      gerar a SQL ALTER objeto OWNER TO dono */
-  BaseObject *dono;
+  BaseObject *owner;
 
   /* Esquema ao qual o objeto pertence.
      Só podem fazer parte de um determinado esquema objetos do tipo:
      TABELA, VISAO, FUNCAO, DOMINIO. Caso tente inserir um objeto de
      outro tipo dentro de um esquema será retornado um erro.*/
-  BaseObject *esquema;
+  BaseObject *schema;
 
   //Espaço de tabela ao qual o objeto faz parte
-  BaseObject *espacotabela;
+  BaseObject *tablespace;
 
   //Quantidade máxima de dígitos que um nome de objeto pode ter
   static const int TAM_MAX_NOME_OBJETO=63;
@@ -173,13 +173,13 @@ class BaseObject {
   virtual void definirNome(const QString &nome);
 
   //Define o esquema ao qual o objeto pertence
-  virtual void definirEsquema(BaseObject *esquema);
+  virtual void definirEsquema(BaseObject *schema);
 
   //Define o dono do objeto em banco de dados
-  virtual void definirDono(BaseObject *dono);
+  virtual void definirDono(BaseObject *owner);
 
   //Define o espaço de tabelas ao qual o objeto pertence
-  virtual void definirEspacoTabela(BaseObject *espacotabela);
+  virtual void definirEspacoTabela(BaseObject *tablespace);
 
   //Define se o objeto está protegido ou não
   virtual void definirProtegido(bool valor);

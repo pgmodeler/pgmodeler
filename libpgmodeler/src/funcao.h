@@ -115,7 +115,7 @@ class Funcao: public BaseObject {
   void definirNome(const QString &nome);
 
   //Define o esquema ao qual a função faz parte
-  void definirEsquema(BaseObject *esquema);
+  void definirEsquema(BaseObject *schema);
 
   //Adiciona um parâmetr  função (com nome e tipo especificados)
   void adicionarParametro(Parametro param);

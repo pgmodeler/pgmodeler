@@ -85,7 +85,7 @@ class Sequencia: public BaseObject {
   void definirNome(const QString &nome);
 
   //Define o esquema ao qual a sequência pertence
-  void definirEsquema(BaseObject *esquema);
+  void definirEsquema(BaseObject *schema);
 
   //Métodos de obtenção dos atributos da seqüência
   bool sequenciaCiclica(void);

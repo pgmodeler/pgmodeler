@@ -181,7 +181,7 @@ class ModeloBD:  public QObject, public BaseObject {
   static QString validarDefinicaoObjeto(BaseObject *objeto, unsigned tipo_def);
 
   /* Retorna os objetos do tipo especificado no esquema especificado */
-  vector<BaseObject *> obterObjetos(ObjectType tipo_obj, BaseObject *esquema=NULL);
+  vector<BaseObject *> obterObjetos(ObjectType tipo_obj, BaseObject *schema=NULL);
 
   //Obtém o índice de um objeto através de seu nome e tipo
   int obterIndiceObjeto(const QString &nome, ObjectType tipo_obj);
@@ -229,7 +229,7 @@ class ModeloBD:  public QObject, public BaseObject {
      da classe ObjetoBase. O metodo sobrecarregado protege
      ou desprotege todos os objetos do modelo em uma
      só chamada */
-  void definirProtegido(bool protegido);
+  void definirProtegido(bool protected_obj);
 
   //Destrói todos os objetos do modelo
   void destruirObjetos(void);
@@ -293,8 +293,8 @@ class ModeloBD:  public QObject, public BaseObject {
   Funcao *obterFuncao(unsigned idx_obj);
 
   //Métodos de manipulação de esquemas
-  void adicionarEsquema(Esquema *esquema, int idx_obj=-1);
-  void removerEsquema(Esquema *esquema, int idx_obj=-1);
+  void adicionarEsquema(Esquema *schema, int idx_obj=-1);
+  void removerEsquema(Esquema *schema, int idx_obj=-1);
   Esquema *obterEsquema(unsigned idx_obj);
 
   //Métodos de manipulação de visões
@@ -490,7 +490,7 @@ class ModeloBD:  public QObject, public BaseObject {
   void s_objetoAdicionado(BaseObject *objeto);
   //Sinal emitido sempre que um objeto for excluído do modelo
   void s_objetoRemovido(BaseObject *objeto);
-  void s_objetoCarregado(int progresso, QString id_objeto, unsigned id_icone);
+  void s_objetoCarregado(int progresso, QString object_id, unsigned id_icone);
 
   friend class ListaOperacoes;
 };

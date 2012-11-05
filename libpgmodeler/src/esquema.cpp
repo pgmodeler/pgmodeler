@@ -3,7 +3,7 @@
 Esquema::Esquema(void)
 {
  tipo_objeto=OBJ_SCHEMA;
- id_objeto=BaseObject::id_esquema++;
+ object_id=BaseObject::schema_id++;
 }
 
 void Esquema::definirNome(const QString &nome)

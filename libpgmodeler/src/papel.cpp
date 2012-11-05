@@ -3,7 +3,7 @@
 Papel::Papel(void)
 {
  tipo_objeto=OBJ_ROLE;
- id_objeto=BaseObject::id_papel++;
+ object_id=BaseObject::role_id++;
  sysid=100;
 
  for(unsigned i=0; i < 6; i++)

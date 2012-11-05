@@ -4,7 +4,7 @@ EspacoTabela::EspacoTabela(void)
 {
  tipo_objeto=OBJ_TABLESPACE;
  atributos[ParsersAttributes::DIRECTORY]="";
- id_objeto=BaseObject::id_esptabela++;
+ object_id=BaseObject::tabspace_id++;
 }
 
 void EspacoTabela::definirNome(const QString &nome)

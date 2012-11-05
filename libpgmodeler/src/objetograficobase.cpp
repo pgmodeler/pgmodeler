@@ -21,7 +21,7 @@ ObjetoGraficoBase::~ObjetoGraficoBase(void)
 
 void ObjetoGraficoBase::definirProtegido(bool valor)
 {
- protegido=valor;
+ protected_obj=valor;
  if(!this->signalsBlocked())
   emit s_objetoProtegido(valor);
 }

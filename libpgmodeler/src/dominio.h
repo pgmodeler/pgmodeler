@@ -61,7 +61,7 @@ class Dominio: public BaseObject{
   void definirTipo(TipoPgSQL tipo);
 
   void definirNome(const QString &nome);
-  void definirEsquema(BaseObject *esquema);
+  void definirEsquema(BaseObject *schema);
 
   //Métodos de obtenção dos valores dos atributos
   QString obterNomeRestricao(void);
