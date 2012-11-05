@@ -26,7 +26,7 @@
 #include "objetobase.h"
 #include "tabela.h"
 
-class Sequencia: public ObjetoBase {
+class Sequencia: public BaseObject {
  private:
   //Define se a sequencia é cíclica
   bool ciclica;
@@ -85,7 +85,7 @@ class Sequencia: public ObjetoBase {
   void definirNome(const QString &nome);
 
   //Define o esquema ao qual a sequência pertence
-  void definirEsquema(ObjetoBase *esquema);
+  void definirEsquema(BaseObject *esquema);
 
   //Métodos de obtenção dos atributos da seqüência
   bool sequenciaCiclica(void);

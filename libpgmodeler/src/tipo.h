@@ -29,7 +29,7 @@
 #include "funcao.h"
 #include "papel.h"
 
-class Tipo: public ObjetoBase {
+class Tipo: public BaseObject {
  private:
   //Configuração do tipo
   unsigned config;
@@ -116,7 +116,7 @@ class Tipo: public ObjetoBase {
   void definirNome(const QString &nome);
 
   //Atribui um esquema ao tipo
-  void definirEsquema(ObjetoBase *esquema);
+  void definirEsquema(BaseObject *esquema);
 
   //Define a configuração do tipo
   void definirConfiguracao(unsigned conf);

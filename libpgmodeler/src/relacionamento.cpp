@@ -42,7 +42,7 @@ Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabel
 {
  try
  {
-  tipo_objeto=OBJETO_RELACAO;
+  tipo_objeto=OBJ_RELATIONSHIP;
   QString str_aux;
 
   if(((tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N) &&
@@ -139,7 +139,7 @@ void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufix
  if(tipo_tab > TABELA_DESTINO)
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(!sufixo.isEmpty() && !ObjetoBase::nomeValido(sufixo))
+ if(!sufixo.isEmpty() && !BaseObject::nomeValido(sufixo))
   throw Exception(Exception::getErrorMessage(ERR_ASG_INV_SUFFIX_REL)
                 .arg(QString::fromUtf8(this->obterNome())),
                 ERR_ASG_INV_SUFFIX_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -247,7 +247,7 @@ void Relacionamento::criarChavePrimariaEspecial(void)
 
 void Relacionamento::definirNomeTabelaRelNN(const QString &nome)
 {
- if(!ObjetoBase::nomeValido(nome))
+ if(!BaseObject::nomeValido(nome))
   throw Exception(ERR_ASG_INV_NAME_TABLE_RELNN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  nome_tab_relnn=nome;
@@ -280,7 +280,7 @@ int Relacionamento::obterIndiceObjeto(ObjetoTabela *objeto)
  vector<ObjetoTabela *>::iterator itr, itr_end;
  vector<ObjetoTabela *> *lista=NULL;
  ObjetoTabela *obj_aux=NULL;
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
  bool enc=false;
 
  //Dispara uma exceção caso o objeto a ser buscado não esteja alocado
@@ -289,9 +289,9 @@ int Relacionamento::obterIndiceObjeto(ObjetoTabela *objeto)
 
  //Selecionando a lista de objetos de acordo com o tipo do objeto
  tipo_obj=objeto->obterTipoObjeto();
- if(tipo_obj==OBJETO_COLUNA)
+ if(tipo_obj==OBJ_COLUMN)
   lista=&atributos_rel;
- else if(tipo_obj==OBJETO_RESTRICAO)
+ else if(tipo_obj==OBJ_CONSTRAINT)
   lista=&restricoes_rel;
  else
   throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -343,7 +343,7 @@ bool Relacionamento::colunaExistente(Coluna *coluna)
 
 void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
  vector<ObjetoTabela *> *lista_obj=NULL;
 
  /* Somente a chave primária especial (criada pelo relacionamento)
@@ -353,7 +353,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
      tipo_relac==RELACIONAMENTO_DEP) &&
     !(objeto_tab->incluidoPorRelacionamento() &&
       objeto_tab->objetoProtegido() &&
-      objeto_tab->obterTipoObjeto()==OBJETO_RESTRICAO))
+      objeto_tab->obterTipoObjeto()==OBJ_CONSTRAINT))
   throw Exception(ERR_ASG_OBJ_INV_REL_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  try
@@ -368,9 +368,9 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
    /* Obtém a lista de objetos de acordo com o tipo
       do objeto a ser inserido */
    tipo_obj=objeto_tab->obterTipoObjeto();
-   if(tipo_obj==OBJETO_COLUNA)
+   if(tipo_obj==OBJ_COLUMN)
     lista_obj=&atributos_rel;
-   else if(tipo_obj==OBJETO_RESTRICAO)
+   else if(tipo_obj==OBJ_CONSTRAINT)
     lista_obj=&restricoes_rel;
 
    /* Tenta gerar a definição SQL do objeto para ver se o mesmo
@@ -382,7 +382,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
       a tabela de origem do relacionamento é atribuída como tabela pai */
    objeto_tab->definirTabelaPai(tabela_orig);
 
-   if(tipo_obj==OBJETO_COLUNA)
+   if(tipo_obj==OBJ_COLUMN)
     dynamic_cast<Coluna *>(objeto_tab)->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
    else
    {
@@ -464,14 +464,14 @@ void Relacionamento::destruirObjetos(void)
  }
 }
 
-void Relacionamento::removerObjeto(unsigned id_obj, TipoObjetoBase tipo_obj)
+void Relacionamento::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
 {
  vector<ObjetoTabela *> *lista_obj=NULL;
 
  //Seleciona a lista de objetos de acordo com o tipo passado
- if(tipo_obj==OBJETO_COLUNA)
+ if(tipo_obj==OBJ_COLUMN)
   lista_obj=&atributos_rel;
- else if(tipo_obj==OBJETO_RESTRICAO)
+ else if(tipo_obj==OBJ_CONSTRAINT)
   lista_obj=&restricoes_rel;
  else
   throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -483,7 +483,7 @@ void Relacionamento::removerObjeto(unsigned id_obj, TipoObjetoBase tipo_obj)
  /* Verificação específica para coluna. Caso a coluna esteja sendo
     referenciada por uma restrição do relacionamento será disparado
     um erro. */
- if(tipo_obj==OBJETO_COLUNA)
+ if(tipo_obj==OBJ_COLUMN)
  {
   Coluna *coluna=NULL;
   Restricao *rest=NULL;
@@ -537,12 +537,12 @@ void Relacionamento::removerObjeto(ObjetoTabela *objeto)
 
 void Relacionamento::removerAtributo(unsigned id_atrib)
 {
- removerObjeto(id_atrib, OBJETO_COLUNA);
+ removerObjeto(id_atrib, OBJ_COLUMN);
 }
 
 void Relacionamento::removerRestricao(unsigned id_rest)
 {
- removerObjeto(id_rest, OBJETO_RESTRICAO);
+ removerObjeto(id_rest, OBJ_CONSTRAINT);
 }
 
 Coluna *Relacionamento::obterColunaReferenciada(const QString &nome_col)
@@ -570,14 +570,14 @@ Coluna *Relacionamento::obterColunaReferenciada(const QString &nome_col)
   return(NULL);
 }
 
-ObjetoTabela *Relacionamento::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
+ObjetoTabela *Relacionamento::obterObjeto(unsigned idx_obj, ObjectType tipo_obj)
 {
  vector<ObjetoTabela *> *lista=NULL;
 
  //Selecionando a lista de objetos de acordo com o tipo do objeto
- if(tipo_obj==OBJETO_COLUNA)
+ if(tipo_obj==OBJ_COLUMN)
   lista=&atributos_rel;
- else if(tipo_obj==OBJETO_RESTRICAO)
+ else if(tipo_obj==OBJ_CONSTRAINT)
   lista=&restricoes_rel;
  else
   throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -588,7 +588,7 @@ ObjetoTabela *Relacionamento::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_
  return(lista->at(idx_obj));
 }
 
-ObjetoTabela *Relacionamento::obterObjeto(const QString &nome_atrib, TipoObjetoBase tipo_obj)
+ObjetoTabela *Relacionamento::obterObjeto(const QString &nome_atrib, ObjectType tipo_obj)
 {
  vector<ObjetoTabela *>::iterator itr, itr_end;
  vector<ObjetoTabela *> *lista=NULL;
@@ -596,9 +596,9 @@ ObjetoTabela *Relacionamento::obterObjeto(const QString &nome_atrib, TipoObjetoB
  bool enc=false;
 
  //Selecionando a lista de objetos de acordo com o tipo do objeto
- if(tipo_obj==OBJETO_COLUNA)
+ if(tipo_obj==OBJ_COLUMN)
   lista=&atributos_rel;
- else if(tipo_obj==OBJETO_RESTRICAO)
+ else if(tipo_obj==OBJ_CONSTRAINT)
   lista=&restricoes_rel;
  else
   throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -633,7 +633,7 @@ Coluna *Relacionamento::obterAtributo(unsigned id_atrib)
 
 Coluna *Relacionamento::obterAtributo(const QString &nome_atrib)
 {
- return(dynamic_cast<Coluna *>(obterObjeto(nome_atrib,OBJETO_COLUNA)));
+ return(dynamic_cast<Coluna *>(obterObjeto(nome_atrib,OBJ_COLUMN)));
 }
 
 Restricao *Relacionamento::obterRestricao(unsigned id_rest)
@@ -647,7 +647,7 @@ Restricao *Relacionamento::obterRestricao(unsigned id_rest)
 
 Restricao *Relacionamento::obterRestricao(const QString &nome_rest)
 {
- return(dynamic_cast<Restricao *>(obterObjeto(nome_rest,OBJETO_RESTRICAO)));
+ return(dynamic_cast<Restricao *>(obterObjeto(nome_rest,OBJ_CONSTRAINT)));
 }
 
 unsigned Relacionamento::obterNumAtributos(void)
@@ -660,11 +660,11 @@ unsigned Relacionamento::obterNumRestricoes(void)
  return(restricoes_rel.size());
 }
 
-unsigned Relacionamento::obterNumObjetos(TipoObjetoBase tipo_obj)
+unsigned Relacionamento::obterNumObjetos(ObjectType tipo_obj)
 {
- if(tipo_obj==OBJETO_COLUNA)
+ if(tipo_obj==OBJ_COLUMN)
   return(atributos_rel.size());
- else if(tipo_obj==OBJETO_RESTRICAO)
+ else if(tipo_obj==OBJ_CONSTRAINT)
   return(restricoes_rel.size());
  else
   throw Exception(ERR_REF_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -766,7 +766,7 @@ void Relacionamento::adicionarColunasRelGen(void)
           i, i1, i2, id_tab,
           idx, qtd_tab;
  vector<Coluna *> colunas;
- TipoObjetoBase tipos[2]={OBJETO_TABELA, OBJETO_TABELA_BASE};
+ ObjectType tipos[2]={OBJ_TABLE, BASE_TABLE};
  ErrorType tipo_erro=ERR_CUSTOM;
  bool duplic=false, cond,
       /* 0 -> Coluna vinda de herança
@@ -1910,9 +1910,9 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
 
     //Remove a tabela cópia/pai dependendo do tipo do relacionamento
     if(tipo_relac==RELACIONAMENTO_GEN)
-     tabela->removerObjeto(obterTabelaReferencia()->obterNome(true), OBJETO_TABELA);
+     tabela->removerObjeto(obterTabelaReferencia()->obterNome(true), OBJ_TABLE);
     else
-     tabela->removerObjeto(obterTabelaReferencia()->obterNome(true), OBJETO_TABELA_BASE);
+     tabela->removerObjeto(obterTabelaReferencia()->obterNome(true), BASE_TABLE);
    }
    else
    {
@@ -2387,7 +2387,7 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
    atributos[ParsersAttributes::ANCESTOR_TABLE]=obterTabelaReferencia()->obterNome(true);
   }
 
-  return(this->ObjetoBase::obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION));
+  return(this->BaseObject::obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION));
  }
  else
  {
@@ -2440,7 +2440,7 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
                   atributos[ParsersAttributes::SPECIAL_PK_COLS].isEmpty());
 
 
-  return(this->ObjetoBase::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION, forma_reduzida));
+  return(this->BaseObject::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION, forma_reduzida));
  }
 }
 

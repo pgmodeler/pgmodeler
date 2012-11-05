@@ -1,11 +1,11 @@
 #include "familiaoperadoreswidget.h"
 
-FamiliaOperadoresWidget::FamiliaOperadoresWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_FAMILIA_OPER)
+FamiliaOperadoresWidget::FamiliaOperadoresWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_OPFAMILY)
 {
  QStringList tipos;
 
  Ui_FamiliaOperadoresWidget::setupUi(this);
- configurarLayouFormulario(familiaop_grid, OBJETO_FAMILIA_OPER);
+ configurarLayouFormulario(familiaop_grid, OBJ_OPFAMILY);
 
  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
 

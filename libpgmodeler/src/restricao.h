@@ -67,7 +67,7 @@ class Restricao: public ObjetoTabela{
      ObjetoBase está sendo usada que de qualquer forma serve como
      referencia a uma tabela, pois esta ultima herda as propriedades de
      ObjetoGraficoBase. */
-  ObjetoBase *tabela_ref;
+  BaseObject *tabela_ref;
 
   /* Formata a QString de colunas usada pelo parser de esquema
      na geração da definição SQL da restrição */
@@ -108,7 +108,7 @@ class Restricao: public ObjetoTabela{
   void definirExpChecagem(const QString &exp);
 
   //Define a tabela de destino nas referências da chave estrangeira.
-  void definirTabReferenciada(ObjetoBase *tab_ref);
+  void definirTabReferenciada(BaseObject *tab_ref);
 
   /* Define o espaço de tabela usado pela restrição.
      Espaços de tabelas só podem ser atribuídas a restrições
@@ -159,7 +159,7 @@ class Restricao: public ObjetoTabela{
   QString obterExpChecagem(void);
 
   //Obtém a tabela de destino
-  ObjetoBase *obterTabReferenciada(void);
+  BaseObject *obterTabReferenciada(void);
 
   //Obtém o tipo de postergação da restrição
   TipoPostergacao obterTipoPostergacao(void);

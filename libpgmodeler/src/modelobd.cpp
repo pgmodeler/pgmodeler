@@ -2,9 +2,9 @@
 
 ModeloBD::ModeloBD(void)
 {
- id_objeto=ObjetoBase::id_modelobd++;
+ id_objeto=BaseObject::id_modelobd++;
 
- tipo_objeto=OBJETO_BANCO_DADOS;
+ tipo_objeto=OBJ_DATABASE;
  definirNome(QObject::trUtf8("new_database").toUtf8());
 
  lim_conexao=-1;
@@ -50,7 +50,7 @@ void ModeloBD::definirLimiteConexao(int lim_conexao)
 
 void ModeloBD::definirBDModelo(const QString &bd_modelo)
 {
- if(!bd_modelo.isEmpty() && !ObjetoBase::nomeValido(bd_modelo))
+ if(!bd_modelo.isEmpty() && !BaseObject::nomeValido(bd_modelo))
   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->bd_modelo=bd_modelo;
@@ -61,56 +61,56 @@ void ModeloBD::definirAutor(const QString &autor)
  this->autor=autor;
 }
 
-vector<ObjetoBase *> *ModeloBD::obterListaObjetos(TipoObjetoBase tipo_obj)
+vector<BaseObject *> *ModeloBD::obterListaObjetos(ObjectType tipo_obj)
 {
  //Retorna a referencia da lista equivalente ao tipo passado
- if(tipo_obj==OBJETO_CAIXA_TEXTO)
+ if(tipo_obj==OBJ_TEXTBOX)
   return(&caixas);
- else if(tipo_obj==OBJETO_TABELA)
+ else if(tipo_obj==OBJ_TABLE)
   return(&tabelas);
- else if(tipo_obj==OBJETO_FUNCAO)
+ else if(tipo_obj==OBJ_FUNCTION)
   return(&funcoes);
- else if(tipo_obj==OBJETO_FUNC_AGREGACAO)
+ else if(tipo_obj==OBJ_AGGREGATE)
   return(&func_agregadas);
- else if(tipo_obj==OBJETO_ESQUEMA)
+ else if(tipo_obj==OBJ_SCHEMA)
   return(&esquemas);
- else if(tipo_obj==OBJETO_VISAO)
+ else if(tipo_obj==OBJ_VIEW)
   return(&visoes);
- else if(tipo_obj==OBJETO_TIPO)
+ else if(tipo_obj==OBJ_TYPE)
   return(&tipos);
- else if(tipo_obj==OBJETO_PAPEL)
+ else if(tipo_obj==OBJ_ROLE)
   return(&papeis);
- else if(tipo_obj==OBJETO_ESPACO_TABELA)
+ else if(tipo_obj==OBJ_TABLESPACE)
   return(&espacos_tabela);
- else if(tipo_obj==OBJETO_LINGUAGEM)
+ else if(tipo_obj==OBJ_LANGUAGE)
   return(&linguagens);
- else if(tipo_obj==OBJETO_CONV_TIPO)
+ else if(tipo_obj==OBJ_CAST)
   return(&conv_tipos);
- else if(tipo_obj==OBJETO_CONV_CODIFICACAO)
+ else if(tipo_obj==OBJ_CONVERSION)
   return(&conv_codificacao);
- else if(tipo_obj==OBJETO_OPERADOR)
+ else if(tipo_obj==OBJ_OPERATOR)
   return(&operadores);
- else if(tipo_obj==OBJETO_CLASSE_OPER)
+ else if(tipo_obj==OBJ_OPCLASS)
   return(&classe_ops);
- else if(tipo_obj==OBJETO_FAMILIA_OPER)
+ else if(tipo_obj==OBJ_OPFAMILY)
   return(&familia_ops);
- else if(tipo_obj==OBJETO_DOMINIO)
+ else if(tipo_obj==OBJ_DOMAIN)
   return(&dominios);
- else if(tipo_obj==OBJETO_SEQUENCIA)
+ else if(tipo_obj==OBJ_SEQUENCE)
   return(&sequencias);
- else if(tipo_obj==OBJETO_RELACAO_BASE)
+ else if(tipo_obj==BASE_RELATIONSHIP)
   return(&relac_visoes);
- else if(tipo_obj==OBJETO_RELACAO)
+ else if(tipo_obj==OBJ_RELATIONSHIP)
   return(&relacionamentos);
- else if(tipo_obj==OBJETO_PERMISSAO)
+ else if(tipo_obj==OBJ_PERMISSION)
   return(&permissoes);
  else
   return(NULL);
 }
 
-QString ModeloBD::validarDefinicaoObjeto(ObjetoBase *objeto, unsigned tipo_def)
+QString ModeloBD::validarDefinicaoObjeto(BaseObject *objeto, unsigned tipo_def)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
  QString def_obj;
 
  if(objeto)
@@ -122,9 +122,9 @@ QString ModeloBD::validarDefinicaoObjeto(ObjetoBase *objeto, unsigned tipo_def)
   {
    tipo_obj=objeto->obterTipoObjeto();
 
-   if(tipo_obj==OBJETO_RELACAO_BASE && tipo_def==SchemaParser::XML_DEFINITION)
+   if(tipo_obj==BASE_RELATIONSHIP && tipo_def==SchemaParser::XML_DEFINITION)
     def_obj=dynamic_cast<RelacionamentoBase *>(objeto)->obterDefinicaoObjeto();
-   else if(tipo_obj==OBJETO_CAIXA_TEXTO && tipo_def==SchemaParser::XML_DEFINITION)
+   else if(tipo_obj==OBJ_TEXTBOX && tipo_def==SchemaParser::XML_DEFINITION)
     def_obj=dynamic_cast<CaixaTexto *>(objeto)->obterDefinicaoObjeto();
    else
     def_obj=objeto->obterDefinicaoObjeto(tipo_def);
@@ -147,9 +147,9 @@ QString ModeloBD::validarDefinicaoObjeto(ObjetoBase *objeto, unsigned tipo_def)
  return(def_obj);
 }
 
-void ModeloBD::adicionarObjeto(ObjetoBase *objeto, int idx_obj)
+void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
 
  if(objeto)
  {
@@ -157,44 +157,44 @@ void ModeloBD::adicionarObjeto(ObjetoBase *objeto, int idx_obj)
   {
    tipo_obj=objeto->obterTipoObjeto();
 
-   if(tipo_obj==OBJETO_RELACAO ||
-      tipo_obj==OBJETO_RELACAO_BASE)
+   if(tipo_obj==OBJ_RELATIONSHIP ||
+      tipo_obj==BASE_RELATIONSHIP)
     adicionarRelacionamento(dynamic_cast<RelacionamentoBase *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_CAIXA_TEXTO)
+   else if(tipo_obj==OBJ_TEXTBOX)
     adicionarCaixaTexto(dynamic_cast<CaixaTexto *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_TABELA)
+   else if(tipo_obj==OBJ_TABLE)
     adicionarTabela(dynamic_cast<Tabela *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_FUNCAO)
+   else if(tipo_obj==OBJ_FUNCTION)
     adicionarFuncao(dynamic_cast<Funcao *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_FUNC_AGREGACAO)
+   else if(tipo_obj==OBJ_AGGREGATE)
     adicionarFuncaoAgregacao(dynamic_cast<FuncaoAgregacao *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_ESQUEMA)
+   else if(tipo_obj==OBJ_SCHEMA)
     adicionarEsquema(dynamic_cast<Esquema *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_VISAO)
+   else if(tipo_obj==OBJ_VIEW)
     adicionarVisao(dynamic_cast<Visao *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_TIPO)
+   else if(tipo_obj==OBJ_TYPE)
     adicionarTipo(dynamic_cast<Tipo *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_PAPEL)
+   else if(tipo_obj==OBJ_ROLE)
     adicionarPapel(dynamic_cast<Papel *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_ESPACO_TABELA)
+   else if(tipo_obj==OBJ_TABLESPACE)
     adicionarEspacoTabela(dynamic_cast<EspacoTabela *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_LINGUAGEM)
+   else if(tipo_obj==OBJ_LANGUAGE)
     adicionarLinguagem(dynamic_cast<Linguagem *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_CONV_TIPO)
+   else if(tipo_obj==OBJ_CAST)
     adicionarConversaoTipo(dynamic_cast<ConversaoTipo *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_CONV_CODIFICACAO)
+   else if(tipo_obj==OBJ_CONVERSION)
     adicionarConversaoCodificacao(dynamic_cast<ConversaoCodificacao *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_OPERADOR)
+   else if(tipo_obj==OBJ_OPERATOR)
     adicionarOperador(dynamic_cast<Operador *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_CLASSE_OPER)
+   else if(tipo_obj==OBJ_OPCLASS)
     adicionarClasseOperadores(dynamic_cast<ClasseOperadores *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_FAMILIA_OPER)
+   else if(tipo_obj==OBJ_OPFAMILY)
     adicionarFamiliaOperadores(dynamic_cast<FamiliaOperadores *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_DOMINIO)
+   else if(tipo_obj==OBJ_DOMAIN)
     adicionarDominio(dynamic_cast<Dominio *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_SEQUENCIA)
+   else if(tipo_obj==OBJ_SEQUENCE)
     adicionarSequencia(dynamic_cast<Sequencia *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_PERMISSAO)
+   else if(tipo_obj==OBJ_PERMISSION)
     adicionarPermissao(dynamic_cast<Permissao *>(objeto));
   }
   catch(Exception &e)
@@ -204,9 +204,9 @@ void ModeloBD::adicionarObjeto(ObjetoBase *objeto, int idx_obj)
  }
 }
 
-void ModeloBD::removerObjeto(ObjetoBase *objeto, int idx_obj)
+void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
 
 
  if(objeto)
@@ -215,44 +215,44 @@ void ModeloBD::removerObjeto(ObjetoBase *objeto, int idx_obj)
   {
    tipo_obj=objeto->obterTipoObjeto();
 
-   if(tipo_obj==OBJETO_RELACAO ||
-      tipo_obj==OBJETO_RELACAO_BASE)
+   if(tipo_obj==OBJ_RELATIONSHIP ||
+      tipo_obj==BASE_RELATIONSHIP)
     removerRelacionamento(dynamic_cast<RelacionamentoBase *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_CAIXA_TEXTO)
+   else if(tipo_obj==OBJ_TEXTBOX)
     removerCaixaTexto(dynamic_cast<CaixaTexto *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_TABELA)
+   else if(tipo_obj==OBJ_TABLE)
     removerTabela(dynamic_cast<Tabela *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_FUNCAO)
+   else if(tipo_obj==OBJ_FUNCTION)
     removerFuncao(dynamic_cast<Funcao *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_FUNC_AGREGACAO)
+   else if(tipo_obj==OBJ_AGGREGATE)
     removerFuncaoAgregacao(dynamic_cast<FuncaoAgregacao *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_ESQUEMA)
+   else if(tipo_obj==OBJ_SCHEMA)
     removerEsquema(dynamic_cast<Esquema *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_VISAO)
+   else if(tipo_obj==OBJ_VIEW)
     removerVisao(dynamic_cast<Visao *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_TIPO)
+   else if(tipo_obj==OBJ_TYPE)
     removerTipo(dynamic_cast<Tipo *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_PAPEL)
+   else if(tipo_obj==OBJ_ROLE)
     removerPapel(dynamic_cast<Papel *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_ESPACO_TABELA)
+   else if(tipo_obj==OBJ_TABLESPACE)
     removerEspacoTabela(dynamic_cast<EspacoTabela *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_LINGUAGEM)
+   else if(tipo_obj==OBJ_LANGUAGE)
     removerLinguagem(dynamic_cast<Linguagem *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_CONV_TIPO)
+   else if(tipo_obj==OBJ_CAST)
     removerConversaoTipo(dynamic_cast<ConversaoTipo *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_CONV_CODIFICACAO)
+   else if(tipo_obj==OBJ_CONVERSION)
     removerConversaoCodificacao(dynamic_cast<ConversaoCodificacao *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_OPERADOR)
+   else if(tipo_obj==OBJ_OPERATOR)
     removerOperador(dynamic_cast<Operador *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_CLASSE_OPER)
+   else if(tipo_obj==OBJ_OPCLASS)
     removerClasseOperadores(dynamic_cast<ClasseOperadores *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_FAMILIA_OPER)
+   else if(tipo_obj==OBJ_OPFAMILY)
     removerFamiliaOperadores(dynamic_cast<FamiliaOperadores *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_DOMINIO)
+   else if(tipo_obj==OBJ_DOMAIN)
     removerDominio(dynamic_cast<Dominio *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_SEQUENCIA)
+   else if(tipo_obj==OBJ_SEQUENCE)
     removerSequencia(dynamic_cast<Sequencia *>(objeto), idx_obj);
-   else if(tipo_obj==OBJETO_PERMISSAO)
+   else if(tipo_obj==OBJ_PERMISSION)
     removerPermissao(dynamic_cast<Permissao *>(objeto));
   }
   catch(Exception &e)
@@ -262,74 +262,74 @@ void ModeloBD::removerObjeto(ObjetoBase *objeto, int idx_obj)
  }
 }
 
-void ModeloBD::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
+void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
 {
- if(tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO ||
-    tipo_obj==OBJETO_GATILHO || tipo_obj==OBJETO_INDICE ||
-    tipo_obj==OBJETO_REGRA ||
-    tipo_obj==OBJETO_BASE || tipo_obj==OBJETO_RELACAO_BASE ||
-    tipo_obj==OBJETO_BANCO_DADOS)
+ if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT ||
+    tipo_obj==OBJ_TRIGGER || tipo_obj==OBJ_INDEX ||
+    tipo_obj==OBJ_RULE ||
+    tipo_obj==BASE_OBJECT || tipo_obj==BASE_RELATIONSHIP ||
+    tipo_obj==OBJ_DATABASE)
   //Caso o tipo esteja fora do conjunto, dispara uma exceção
   throw Exception(ERR_REM_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso o objeto a ser removido seja uma tabela pai e seu índice seja válido
  else
  {
-  vector<ObjetoBase *> *lista_obj=NULL;
-  ObjetoBase *objeto=NULL;
+  vector<BaseObject *> *lista_obj=NULL;
+  BaseObject *objeto=NULL;
 
   lista_obj=obterListaObjetos(tipo_obj);
   if(idx_obj >= lista_obj->size())
    throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   objeto=(*lista_obj)[idx_obj];
-  if(tipo_obj==OBJETO_CAIXA_TEXTO)
+  if(tipo_obj==OBJ_TEXTBOX)
    removerCaixaTexto(dynamic_cast<CaixaTexto *>(objeto), idx_obj);
-  else if(tipo_obj==OBJETO_TABELA)
+  else if(tipo_obj==OBJ_TABLE)
    removerTabela(dynamic_cast<Tabela *>(objeto), idx_obj);
-  else if(tipo_obj==OBJETO_FUNCAO)
+  else if(tipo_obj==OBJ_FUNCTION)
    removerFuncao(dynamic_cast<Funcao *>(objeto), idx_obj);
-  else if(tipo_obj==OBJETO_FUNC_AGREGACAO)
+  else if(tipo_obj==OBJ_AGGREGATE)
    removerFuncaoAgregacao(dynamic_cast<FuncaoAgregacao *>(objeto), idx_obj);
-  else if(tipo_obj==OBJETO_ESQUEMA)
+  else if(tipo_obj==OBJ_SCHEMA)
    removerEsquema(dynamic_cast<Esquema *>(objeto), idx_obj);
-  else if(tipo_obj==OBJETO_VISAO)
+  else if(tipo_obj==OBJ_VIEW)
    removerVisao(dynamic_cast<Visao *>(objeto), idx_obj);
-  else if(tipo_obj==OBJETO_TIPO)
+  else if(tipo_obj==OBJ_TYPE)
    removerTipo(dynamic_cast<Tipo *>(objeto), idx_obj);
-  else if(tipo_obj==OBJETO_PAPEL)
+  else if(tipo_obj==OBJ_ROLE)
    removerPapel(dynamic_cast<Papel *>(objeto), idx_obj);
- else if(tipo_obj==OBJETO_ESPACO_TABELA)
+ else if(tipo_obj==OBJ_TABLESPACE)
    removerEspacoTabela(dynamic_cast<EspacoTabela *>(objeto), idx_obj);
- else if(tipo_obj==OBJETO_LINGUAGEM)
+ else if(tipo_obj==OBJ_LANGUAGE)
    removerLinguagem(dynamic_cast<Linguagem *>(objeto), idx_obj);
- else if(tipo_obj==OBJETO_CONV_TIPO)
+ else if(tipo_obj==OBJ_CAST)
    removerConversaoTipo(dynamic_cast<ConversaoTipo *>(objeto), idx_obj);
- else if(tipo_obj==OBJETO_CONV_CODIFICACAO)
+ else if(tipo_obj==OBJ_CONVERSION)
    removerConversaoCodificacao(dynamic_cast<ConversaoCodificacao *>(objeto), idx_obj);
- else if(tipo_obj==OBJETO_OPERADOR)
+ else if(tipo_obj==OBJ_OPERATOR)
   removerOperador(dynamic_cast<Operador *>(objeto), idx_obj);
- else if(tipo_obj==OBJETO_CLASSE_OPER)
+ else if(tipo_obj==OBJ_OPCLASS)
   removerClasseOperadores(dynamic_cast<ClasseOperadores *>(objeto), idx_obj);
- else if(tipo_obj==OBJETO_FAMILIA_OPER)
+ else if(tipo_obj==OBJ_OPFAMILY)
   removerFamiliaOperadores(dynamic_cast<FamiliaOperadores *>(objeto), idx_obj);
- else if(tipo_obj==OBJETO_DOMINIO)
+ else if(tipo_obj==OBJ_DOMAIN)
   removerDominio(dynamic_cast<Dominio *>(objeto), idx_obj);
- else if(tipo_obj==OBJETO_SEQUENCIA)
+ else if(tipo_obj==OBJ_SEQUENCE)
   removerSequencia(dynamic_cast<Sequencia *>(objeto), idx_obj);
- else if(tipo_obj==OBJETO_RELACAO || tipo_obj==OBJETO_RELACAO_BASE)
+ else if(tipo_obj==OBJ_RELATIONSHIP || tipo_obj==BASE_RELATIONSHIP)
   removerRelacionamento(dynamic_cast<RelacionamentoBase *>(objeto), idx_obj);
- else if(tipo_obj==OBJETO_PERMISSAO)
+ else if(tipo_obj==OBJ_PERMISSION)
   removerPermissao(dynamic_cast<Permissao *>(objeto));
  }
 }
 
-void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
+void ModeloBD::__adicionarObjeto(BaseObject *objeto, int idx_obj)
 {
  int idx;
- TipoObjetoBase tipo_obj;
- vector<ObjetoBase *> *lista_obj=NULL;
- vector<ObjetoBase *>::iterator itr, itr_end;
+ ObjectType tipo_obj;
+ vector<BaseObject *> *lista_obj=NULL;
+ vector<BaseObject *>::iterator itr, itr_end;
 
  if(!objeto)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -340,7 +340,7 @@ void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
  /* Caso o objeto seja um espaço de tabela verifica se não existem
     outro espaço de tabela que esteja apontando para o mesmo diretório
     o que é considerado erro */
- if(tipo_obj==OBJETO_ESPACO_TABELA)
+ if(tipo_obj==OBJ_TABLESPACE)
  {
   EspacoTabela *esp_tab=NULL, *esp_tab_aux=NULL;
 
@@ -367,8 +367,8 @@ void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
  }
 
  //Verifica se o objeto a ser inserido já existe no modelo, buscando através do nome.
- if((tipo_obj!=OBJETO_FUNCAO && obterObjeto(objeto->obterNome(true), tipo_obj, idx)) ||
-    (tipo_obj==OBJETO_FUNCAO &&
+ if((tipo_obj!=OBJ_FUNCTION && obterObjeto(objeto->obterNome(true), tipo_obj, idx)) ||
+    (tipo_obj==OBJ_FUNCTION &&
      obterObjeto(dynamic_cast<Funcao *>(objeto)->obterAssinatura(), tipo_obj, idx)))
  {
   QString str_aux;
@@ -416,14 +416,14 @@ void ModeloBD::__adicionarObjeto(ObjetoBase *objeto, int idx_obj)
   emit s_objetoAdicionado(objeto);
 }
 
-void ModeloBD::__removerObjeto(ObjetoBase *objeto, int idx_obj)
+void ModeloBD::__removerObjeto(BaseObject *objeto, int idx_obj)
 {
  if(!objeto)
   throw Exception(ERR_REM_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  vector<ObjetoBase *> *lista_obj=NULL;
-  TipoObjetoBase tipo_obj;
+  vector<BaseObject *> *lista_obj=NULL;
+  ObjectType tipo_obj;
 
   tipo_obj=objeto->obterTipoObjeto();
 
@@ -436,9 +436,9 @@ void ModeloBD::__removerObjeto(ObjetoBase *objeto, int idx_obj)
    //Caso o índice do objeto não foi especificado o método tenta descobrí-lo
    if(idx_obj < 0)
    {
-    if(tipo_obj!=OBJETO_FUNCAO && tipo_obj!=OBJETO_OPERADOR)
+    if(tipo_obj!=OBJ_FUNCTION && tipo_obj!=OBJ_OPERATOR)
      obterObjeto(objeto->obterNome(true), tipo_obj, idx_obj);
-    else if(tipo_obj==OBJETO_FUNCAO)
+    else if(tipo_obj==OBJ_FUNCTION)
      obterObjeto(dynamic_cast<Funcao *>(objeto)->obterAssinatura(), tipo_obj, idx_obj);
     else
      obterObjeto(dynamic_cast<Operador *>(objeto)->obterAssinatura(), tipo_obj, idx_obj);
@@ -458,10 +458,10 @@ void ModeloBD::__removerObjeto(ObjetoBase *objeto, int idx_obj)
  }
 }
 
-vector<ObjetoBase *> ModeloBD::obterObjetos(TipoObjetoBase tipo_obj, ObjetoBase *esquema)
+vector<BaseObject *> ModeloBD::obterObjetos(ObjectType tipo_obj, BaseObject *esquema)
 {
- vector<ObjetoBase *> *lista_obj=NULL, lista_sel;
- vector<ObjetoBase *>::iterator itr, itr_end;
+ vector<BaseObject *> *lista_obj=NULL, lista_sel;
+ vector<BaseObject *>::iterator itr, itr_end;
 
  //Obtém a lista de acordo com o tipo do objeto
  lista_obj=obterListaObjetos(tipo_obj);
@@ -484,11 +484,11 @@ vector<ObjetoBase *> ModeloBD::obterObjetos(TipoObjetoBase tipo_obj, ObjetoBase 
  return(lista_sel);
 }
 
-ObjetoBase *ModeloBD::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, int &idx_obj)
+BaseObject *ModeloBD::obterObjeto(const QString &nome, ObjectType tipo_obj, int &idx_obj)
 {
- ObjetoBase *objeto=NULL;
- vector<ObjetoBase *> *lista_obj=NULL;
- vector<ObjetoBase *>::iterator itr, itr_end;
+ BaseObject *objeto=NULL;
+ vector<BaseObject *> *lista_obj=NULL;
+ vector<BaseObject *>::iterator itr, itr_end;
  bool enc=false;
  int qtd;
  QString nome_aux, nome_aux1;
@@ -511,9 +511,9 @@ ObjetoBase *ModeloBD::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, 
   qtd=nome_aux1.count(QChar('\0'));
   if(qtd >=1) nome_aux1.chop(qtd);
 
-  if(tipo_obj!=OBJETO_FUNCAO && tipo_obj!=OBJETO_OPERADOR)
+  if(tipo_obj!=OBJ_FUNCTION && tipo_obj!=OBJ_OPERATOR)
   {
-   nome_aux1=ObjetoBase::formatarNome(nome_aux1);
+   nome_aux1=BaseObject::formatarNome(nome_aux1);
 
    while(itr!=itr_end && !enc)
    {
@@ -535,7 +535,7 @@ ObjetoBase *ModeloBD::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, 
        o PostgreSQL permite a sobrecarga de funções e operadores. Neste caso especial
        o parâmetro informado ao método deve ser uma assinatura de função/operador
        e não seu nome */
-    if(tipo_obj==OBJETO_FUNCAO)
+    if(tipo_obj==OBJ_FUNCTION)
      assinatura=dynamic_cast<Funcao *>(*itr)->obterAssinatura();
     else
      assinatura=dynamic_cast<Operador *>(*itr)->obterAssinatura();
@@ -557,9 +557,9 @@ ObjetoBase *ModeloBD::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, 
  return(objeto);
 }
 
-ObjetoBase *ModeloBD::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
+BaseObject *ModeloBD::obterObjeto(unsigned idx_obj, ObjectType tipo_obj)
 {
- vector<ObjetoBase *> *lista_obj=NULL;
+ vector<BaseObject *> *lista_obj=NULL;
 
  //Obtém a lista de acordo com o tipo do objeto
  lista_obj=obterListaObjetos(tipo_obj);
@@ -576,9 +576,9 @@ ObjetoBase *ModeloBD::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
   return(lista_obj->at(idx_obj));
 }
 
-unsigned ModeloBD::obterNumObjetos(TipoObjetoBase tipo_obj)
+unsigned ModeloBD::obterNumObjetos(ObjectType tipo_obj)
 {
- vector<ObjetoBase *> *lista_obj=NULL;
+ vector<BaseObject *> *lista_obj=NULL;
 
  //Obtém a lista de acordo com o tipo do objeto
  lista_obj=obterListaObjetos(tipo_obj);
@@ -593,14 +593,14 @@ unsigned ModeloBD::obterNumObjetos(TipoObjetoBase tipo_obj)
 
 unsigned ModeloBD::obterNumObjetos(void)
 {
- TipoObjetoBase tipos[20]={
-          OBJETO_RELACAO_BASE,OBJETO_RELACAO, OBJETO_TABELA, OBJETO_VISAO,
-          OBJETO_FUNC_AGREGACAO, OBJETO_OPERADOR,
-          OBJETO_SEQUENCIA, OBJETO_CONV_CODIFICACAO,
-          OBJETO_CONV_TIPO, OBJETO_FAMILIA_OPER, OBJETO_CLASSE_OPER,
-          OBJETO_RELACAO_BASE, OBJETO_CAIXA_TEXTO,
-          OBJETO_DOMINIO, OBJETO_TIPO, OBJETO_FUNCAO, OBJETO_ESQUEMA,
-          OBJETO_LINGUAGEM, OBJETO_ESPACO_TABELA, OBJETO_PAPEL };
+ ObjectType tipos[20]={
+          BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
+          OBJ_AGGREGATE, OBJ_OPERATOR,
+          OBJ_SEQUENCE, OBJ_CONVERSION,
+          OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS,
+          BASE_RELATIONSHIP, OBJ_TEXTBOX,
+          OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
+          OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE };
  unsigned qtd=0, i;
 
  for(i=0; i < 20; i++)
@@ -646,17 +646,17 @@ QString ModeloBD::obterAutor(void)
 
 void ModeloBD::definirProtegido(bool protegido)
 {
- TipoObjetoBase tipos[19]={
-          OBJETO_RELACAO, OBJETO_TABELA, OBJETO_VISAO,
-          OBJETO_FUNC_AGREGACAO, OBJETO_OPERADOR,
-          OBJETO_SEQUENCIA, OBJETO_CONV_CODIFICACAO,
-          OBJETO_CONV_TIPO, OBJETO_FAMILIA_OPER, OBJETO_CLASSE_OPER,
-          OBJETO_RELACAO_BASE, OBJETO_CAIXA_TEXTO,
-          OBJETO_DOMINIO, OBJETO_TIPO, OBJETO_FUNCAO, OBJETO_ESQUEMA,
-          OBJETO_LINGUAGEM, OBJETO_ESPACO_TABELA, OBJETO_PAPEL };
- vector<ObjetoBase *> *lista=NULL;
- vector<ObjetoBase *>::iterator itr, itr_end;
- ObjetoBase *objeto=NULL;
+ ObjectType tipos[19]={
+          OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
+          OBJ_AGGREGATE, OBJ_OPERATOR,
+          OBJ_SEQUENCE, OBJ_CONVERSION,
+          OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS,
+          BASE_RELATIONSHIP, OBJ_TEXTBOX,
+          OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
+          OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE };
+ vector<BaseObject *> *lista=NULL;
+ vector<BaseObject *>::iterator itr, itr_end;
+ BaseObject *objeto=NULL;
  unsigned i;
 
  for(i=0; i < 19; i++)
@@ -673,7 +673,7 @@ void ModeloBD::definirProtegido(bool protegido)
   }
  }
 
- ObjetoBase::definirProtegido(protegido);
+ BaseObject::definirProtegido(protegido);
 }
 
 void ModeloBD::destruirObjetos(void)
@@ -683,16 +683,16 @@ void ModeloBD::destruirObjetos(void)
     evitar falha de segmentação onde, no momento da destruição de algum
     objeto, um dos objetos mais dependendidos sejam referenciados porém
     ja foram destruídos anteriormente. */
- TipoObjetoBase tipos[20]={
-          OBJETO_RELACAO_BASE,OBJETO_RELACAO, OBJETO_TABELA, OBJETO_VISAO,
-          OBJETO_FUNC_AGREGACAO, OBJETO_OPERADOR,
-          OBJETO_SEQUENCIA, OBJETO_CONV_CODIFICACAO,
-          OBJETO_CONV_TIPO, OBJETO_FAMILIA_OPER, OBJETO_CLASSE_OPER,
-          OBJETO_RELACAO_BASE, OBJETO_CAIXA_TEXTO,
-          OBJETO_DOMINIO, OBJETO_TIPO, OBJETO_FUNCAO, OBJETO_ESQUEMA,
-          OBJETO_LINGUAGEM, OBJETO_ESPACO_TABELA, OBJETO_PAPEL };
- vector<ObjetoBase *> *lista=NULL;
- ObjetoBase *objeto=NULL;
+ ObjectType tipos[20]={
+          BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
+          OBJ_AGGREGATE, OBJ_OPERATOR,
+          OBJ_SEQUENCE, OBJ_CONVERSION,
+          OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS,
+          BASE_RELATIONSHIP, OBJ_TEXTBOX,
+          OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
+          OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE };
+ vector<BaseObject *> *lista=NULL;
+ BaseObject *objeto=NULL;
  unsigned i;
 
  desconectarRelacionamentos();
@@ -705,7 +705,7 @@ void ModeloBD::destruirObjetos(void)
   {
    objeto=lista->back();
 
-   if(objeto->obterTipoObjeto()==OBJETO_RELACAO)
+   if(objeto->obterTipoObjeto()==OBJ_RELATIONSHIP)
     dynamic_cast<Relacionamento *>(objeto)->destruirObjetos();
 
    delete(objeto);
@@ -732,14 +732,14 @@ void ModeloBD::adicionarTabela(Tabela *tabela, int idx_obj)
 
 Tabela *ModeloBD::obterTabela(unsigned idx_obj)
 {
- return(dynamic_cast<Tabela *>(obterObjeto(idx_obj, OBJETO_TABELA)));
+ return(dynamic_cast<Tabela *>(obterObjeto(idx_obj, OBJ_TABLE)));
 }
 
 void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
 {
  if(tabela)
  {
-  vector<ObjetoBase *> vet_refs;
+  vector<BaseObject *> vet_refs;
   QString str_aux;
 
   //Obtém as referênca   tabela
@@ -763,7 +763,7 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
     }
     else
     {
-     ObjetoBase *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
+     BaseObject *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
 
      //Formata a mensagem caso exista uma referência indireta ao objeto a ser removido
      tipo_err=ERR_REM_INDIRECT_REFERENCE;
@@ -805,7 +805,7 @@ void ModeloBD::adicionarSequencia(Sequencia *sequencia, int idx_obj)
 
 Sequencia *ModeloBD::obterSequencia(unsigned idx_obj)
 {
- return(dynamic_cast<Sequencia *>(obterObjeto(idx_obj, OBJETO_SEQUENCIA)));
+ return(dynamic_cast<Sequencia *>(obterObjeto(idx_obj, OBJ_SEQUENCE)));
 }
 
 void ModeloBD::removerSequencia(Sequencia *sequencia, int idx_obj)
@@ -838,7 +838,7 @@ void ModeloBD::adicionarVisao(Visao *visao, int idx_obj)
 
 Visao *ModeloBD::obterVisao(unsigned idx_obj)
 {
- return(dynamic_cast<Visao *>(obterObjeto(idx_obj, OBJETO_VISAO)));
+ return(dynamic_cast<Visao *>(obterObjeto(idx_obj, OBJ_VIEW)));
 }
 
 void ModeloBD::removerVisao(Visao *visao, int idx_obj)
@@ -856,7 +856,7 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
  RelacionamentoBase *rel=NULL;
  Referencia ref;
  unsigned i, qtd_ref, idx;
- vector<ObjetoBase *>::iterator itr, itr_end;
+ vector<BaseObject *>::iterator itr, itr_end;
 
  if(!visao)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -908,7 +908,7 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
       rel->obterTabela(RelacionamentoBase::TABELA_DESTINO)==visao)
    {
     //Obtém a tabela do relacionamento
-    if(rel->obterTabela(RelacionamentoBase::TABELA_ORIGEM)->obterTipoObjeto()==OBJETO_TABELA)
+    if(rel->obterTabela(RelacionamentoBase::TABELA_ORIGEM)->obterTipoObjeto()==OBJ_TABLE)
      tab=dynamic_cast<Tabela *>(rel->obterTabela(RelacionamentoBase::TABELA_ORIGEM));
     else
      tab=dynamic_cast<Tabela *>(rel->obterTabela(RelacionamentoBase::TABELA_DESTINO));
@@ -962,7 +962,7 @@ void ModeloBD::desconectarRelacionamentos(void)
  {
   RelacionamentoBase *rel_base=NULL;
   Relacionamento *rel=NULL;
-  vector<ObjetoBase *>::reverse_iterator ritr_rel, ritr_rel_end;
+  vector<BaseObject *>::reverse_iterator ritr_rel, ritr_rel_end;
 
   /* Varre a lista geral de relacionamentos
      do último ao primeiro, desconectando os últimos relacionamentos primeiro
@@ -977,7 +977,7 @@ void ModeloBD::desconectarRelacionamentos(void)
    ritr_rel++;
 
    //Caso o relacionamento obtido da lista seja entre tabelas
-   if(rel_base->obterTipoObjeto()==OBJETO_RELACAO)
+   if(rel_base->obterTipoObjeto()==OBJ_RELATIONSHIP)
    {
     //Converte o objeto para relacionamento tabela-tabela
     rel=dynamic_cast<Relacionamento *>(rel_base);
@@ -995,11 +995,11 @@ void ModeloBD::desconectarRelacionamentos(void)
 
 void ModeloBD::validarRelacionamentos(void)
 {
- vector<ObjetoBase *>::iterator itr, itr_end, itr_ant;
+ vector<BaseObject *>::iterator itr, itr_end, itr_ant;
  //vector<unsigned> vet_id_objs;
  Relacionamento *rel=NULL;
  RelacionamentoBase *rel_base=NULL;
- vector<ObjetoBase *> vet_rel, vet_rel_inv, rels;
+ vector<BaseObject *> vet_rel, vet_rel_inv, rels;
  bool enc_rel_inv;
  vector<Exception> vet_erros;
  map<unsigned, QString>::iterator itr1, itr1_end;
@@ -1025,7 +1025,7 @@ void ModeloBD::validarRelacionamentos(void)
    itr++;
 
    //Caso o relacionamento obtido seja tabela-tabela
-   if(rel_base->obterTipoObjeto()==OBJETO_RELACAO)
+   if(rel_base->obterTipoObjeto()==OBJ_RELATIONSHIP)
    {
     //Converte o relacionamento base para rel. tabela-tabela
     rel=dynamic_cast<Relacionamento *>(rel_base);
@@ -1229,7 +1229,7 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
    Tabela *tabela_rec=NULL;
    Relacionamento *rel_aux=NULL;
    RelacionamentoBase *rel_base=NULL;
-   vector<ObjetoBase *>::iterator itr, itr_end;
+   vector<BaseObject *>::iterator itr, itr_end;
    bool ciclo_enc=false;
    unsigned tipo_rel_aux;
    QString str_aux, msg;
@@ -1249,7 +1249,7 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
     rel_base=dynamic_cast<RelacionamentoBase *>(*itr);
     itr++;
 
-    if(rel_base->obterTipoObjeto()==OBJETO_RELACAO)
+    if(rel_base->obterTipoObjeto()==OBJ_RELATIONSHIP)
     {
      //Obtém um relacionamento da lista
      rel_aux=dynamic_cast<Relacionamento *>(rel_base);
@@ -1307,7 +1307,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
 {
  unsigned qtd, i, id_tipo;
 
- vector<ObjetoBase *>::iterator itr, itr_end;
+ vector<BaseObject *>::iterator itr, itr_end;
  Sequencia *sequencia=NULL;
  Tabela *tabela=NULL;
  ObjetoTabela *obj_tab=NULL;
@@ -1317,7 +1317,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
  Visao *visao=NULL;
  RelacionamentoBase *rel=NULL;
  Referencia ref;
- TipoObjetoBase tipo_obj_tab[3]={ OBJETO_RESTRICAO, OBJETO_GATILHO, OBJETO_INDICE };
+ ObjectType tipo_obj_tab[3]={ OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_INDEX };
  bool enc=false;
 
  try
@@ -1347,7 +1347,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
      enc=false;
 
      //Caso seja uma restrição
-     if(tipo_obj_tab[id_tipo]==OBJETO_RESTRICAO)
+     if(tipo_obj_tab[id_tipo]==OBJ_CONSTRAINT)
      {
       //Converte o objeto genérico (ObjetoTabela) para restrição
       restricao=dynamic_cast<Restricao *>(obj_tab);
@@ -1364,7 +1364,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
       if(enc)
        xml_objs_especiais[restricao->obterIdObjeto()]=restricao->obterDefinicaoObjeto(SchemaParser::XML_DEFINITION, true);
      }
-     else if(tipo_obj_tab[id_tipo]==OBJETO_GATILHO)
+     else if(tipo_obj_tab[id_tipo]==OBJ_TRIGGER)
      {
       //Converte o objeto tabela genérico em gatilho
       gatilho=dynamic_cast<Gatilho *>(obj_tab);
@@ -1496,8 +1496,8 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
 
 void ModeloBD::criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj)
 {
- TipoObjetoBase tipo_obj;
- ObjetoBase *objeto=NULL;
+ ObjectType tipo_obj;
+ BaseObject *objeto=NULL;
 
  try
  {
@@ -1511,14 +1511,14 @@ void ModeloBD::criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj)
   tipo_obj=obterTipoObjeto(XMLParser::getElementName());
 
   //Cria o objeto de acordo com o tipo identificado
-  if(tipo_obj==OBJETO_SEQUENCIA)
+  if(tipo_obj==OBJ_SEQUENCE)
    objeto=criarSequencia(true);
   else
    objeto=criarObjeto(tipo_obj);
 
-  if(tipo_obj==OBJETO_SEQUENCIA)
+  if(tipo_obj==OBJ_SEQUENCE)
    adicionarSequencia(dynamic_cast<Sequencia *>(objeto));
-  else if(tipo_obj==OBJETO_VISAO)
+  else if(tipo_obj==OBJ_VIEW)
    adicionarVisao(dynamic_cast<Visao *>(objeto));
 
   /* Modifica o id do objeto para o valor do id passado no parâmetro.
@@ -1566,12 +1566,12 @@ void ModeloBD::adicionarRelacionamento(RelacionamentoBase *relacao, int idx_obj)
   }
 
   //Adiciona o objeto no modelo
-  if(relacao->obterTipoObjeto()==OBJETO_RELACAO)
+  if(relacao->obterTipoObjeto()==OBJ_RELATIONSHIP)
    verificarRedundanciaRelacoes(dynamic_cast<Relacionamento *>(relacao));
 
   __adicionarObjeto(relacao, idx_obj);
 
-  if(relacao->obterTipoObjeto()==OBJETO_RELACAO)
+  if(relacao->obterTipoObjeto()==OBJ_RELATIONSHIP)
   {
    //Conecta o novo relacionamento
    dynamic_cast<Relacionamento *>(relacao)->conectarRelacionamento();
@@ -1594,18 +1594,18 @@ void ModeloBD::removerRelacionamento(RelacionamentoBase *relacao, int idx_obj)
  {
   if(obterIndiceObjeto(relacao) >= 0)
   {
-   if(relacao->obterTipoObjeto()==OBJETO_RELACAO)
+   if(relacao->obterTipoObjeto()==OBJ_RELATIONSHIP)
    {
     //Desconecta os relacionamentos
     obterXMLObjetosEspeciais();
     desconectarRelacionamentos();
    }
-   else if(relacao->obterTipoObjeto()==OBJETO_RELACAO_BASE)
+   else if(relacao->obterTipoObjeto()==BASE_RELATIONSHIP)
     relacao->desconectarRelacionamento();
 
    __removerObjeto(relacao, idx_obj);
 
-   if(relacao->obterTipoObjeto()==OBJETO_RELACAO)
+   if(relacao->obterTipoObjeto()==OBJ_RELATIONSHIP)
    {
     //Valida os relacionamentos após a remoção de o relacionamento atual
     validarRelacionamentos();
@@ -1618,10 +1618,10 @@ void ModeloBD::removerRelacionamento(RelacionamentoBase *relacao, int idx_obj)
  }
 }
 
-RelacionamentoBase *ModeloBD::obterRelacionamento(unsigned idx_obj, TipoObjetoBase tipo_rel)
+RelacionamentoBase *ModeloBD::obterRelacionamento(unsigned idx_obj, ObjectType tipo_rel)
 {
  //Caso o tipo de relacionamento seja inválido
- if(tipo_rel!=OBJETO_RELACAO && tipo_rel!=OBJETO_RELACAO_BASE)
+ if(tipo_rel!=OBJ_RELATIONSHIP && tipo_rel!=BASE_RELATIONSHIP)
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(dynamic_cast<RelacionamentoBase *>(obterObjeto(idx_obj, tipo_rel)));
@@ -1629,7 +1629,7 @@ RelacionamentoBase *ModeloBD::obterRelacionamento(unsigned idx_obj, TipoObjetoBa
 
 RelacionamentoBase *ModeloBD::obterRelacionamento(TabelaBase *tab_orig, TabelaBase *tab_dest)
 {
- vector<ObjetoBase *>::iterator itr, itr_end;
+ vector<BaseObject *>::iterator itr, itr_end;
  RelacionamentoBase *rel=NULL;
  bool enc=false, buscar_tab_unica=false;
  TabelaBase *tab1=NULL, *tab2=NULL;
@@ -1654,8 +1654,8 @@ RelacionamentoBase *ModeloBD::obterRelacionamento(TabelaBase *tab_orig, TabelaBa
   /* Caso um dos objetos seja uma visão, a lista de relacionamentos
      tabela-visão será varrida, caso contrário a lista de relacionamentos
      tabela-tabela será usada */
-  if(tab_orig->obterTipoObjeto()==OBJETO_VISAO ||
-     tab_dest->obterTipoObjeto()==OBJETO_VISAO)
+  if(tab_orig->obterTipoObjeto()==OBJ_VIEW ||
+     tab_dest->obterTipoObjeto()==OBJ_VIEW)
   {
    itr=relac_visoes.begin();
    itr_end=relac_visoes.end();
@@ -1705,7 +1705,7 @@ void ModeloBD::removerCaixaTexto(CaixaTexto *caixa, int idx_obj)
 
 CaixaTexto *ModeloBD::obterCaixaTexto(unsigned idx_obj)
 {
- return(dynamic_cast<CaixaTexto *>(obterObjeto(idx_obj, OBJETO_CAIXA_TEXTO)));
+ return(dynamic_cast<CaixaTexto *>(obterObjeto(idx_obj, OBJ_TEXTBOX)));
 }
 
 void ModeloBD::adicionarEsquema(Esquema *esquema, int idx_obj)
@@ -1722,14 +1722,14 @@ void ModeloBD::adicionarEsquema(Esquema *esquema, int idx_obj)
 
 Esquema *ModeloBD::obterEsquema(unsigned idx_obj)
 {
- return(dynamic_cast<Esquema *>(obterObjeto(idx_obj, OBJETO_ESQUEMA)));
+ return(dynamic_cast<Esquema *>(obterObjeto(idx_obj, OBJ_SCHEMA)));
 }
 
 void ModeloBD::removerEsquema(Esquema *esquema, int idx_obj)
 {
  if(esquema)
  {
-  vector<ObjetoBase *> vet_refs;
+  vector<BaseObject *> vet_refs;
 
   //Obtém as referências ao esquema
   obterReferenciasObjeto(esquema, vet_refs, true);
@@ -1767,14 +1767,14 @@ void ModeloBD::adicionarPapel(Papel *papel, int idx_obj)
 
 Papel *ModeloBD::obterPapel(unsigned idx_obj)
 {
- return(dynamic_cast<Papel *>(obterObjeto(idx_obj, OBJETO_PAPEL)));
+ return(dynamic_cast<Papel *>(obterObjeto(idx_obj, OBJ_ROLE)));
 }
 
 void ModeloBD::removerPapel(Papel *papel, int idx_obj)
 {
  if(papel)
  {
-  vector<ObjetoBase *> vet_refs;
+  vector<BaseObject *> vet_refs;
 
   //Obtém as referências ao papel
   obterReferenciasObjeto(papel, vet_refs, true);
@@ -1811,14 +1811,14 @@ void ModeloBD::adicionarEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
 
 EspacoTabela *ModeloBD::obterEspacoTabela(unsigned idx_obj)
 {
- return(dynamic_cast<EspacoTabela *>(obterObjeto(idx_obj, OBJETO_ESPACO_TABELA)));
+ return(dynamic_cast<EspacoTabela *>(obterObjeto(idx_obj, OBJ_TABLESPACE)));
 }
 
 void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
 {
  if(espaco_tab)
  {
-  vector<ObjetoBase *> vet_refs;
+  vector<BaseObject *> vet_refs;
   QString str_aux;
 
   //Obtém as referências ao espaço de tabela
@@ -1844,7 +1844,7 @@ void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
    }
    else
    {
-    ObjetoBase *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
+    BaseObject *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
     //Formata a mensagem para referencia indireta
     tipo_err=ERR_REM_INDIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(tipo_err))
@@ -1883,7 +1883,7 @@ void ModeloBD::removerConversaoTipo(ConversaoTipo *conv_tipo, int idx_obj)
 
 ConversaoTipo *ModeloBD::obterConversaoTipo(unsigned idx_obj)
 {
- return(dynamic_cast<ConversaoTipo *>(obterObjeto(idx_obj, OBJETO_CONV_TIPO)));
+ return(dynamic_cast<ConversaoTipo *>(obterObjeto(idx_obj, OBJ_CAST)));
 }
 
 void ModeloBD::adicionarConversaoCodificacao(ConversaoCodificacao *conv_codificacao, int idx_obj)
@@ -1906,7 +1906,7 @@ void ModeloBD::removerConversaoCodificacao(ConversaoCodificacao *conv_codificaca
 ConversaoCodificacao *ModeloBD::obterConversaoCodificacao(unsigned idx_obj)
 {
  return(dynamic_cast<ConversaoCodificacao *>(obterObjeto(idx_obj,
- OBJETO_CONV_CODIFICACAO)));
+ OBJ_CONVERSION)));
 }
 
 void ModeloBD::adicionarLinguagem(Linguagem *linguagem, int idx_obj)
@@ -1923,14 +1923,14 @@ void ModeloBD::adicionarLinguagem(Linguagem *linguagem, int idx_obj)
 
 Linguagem *ModeloBD::obterLinguagem(unsigned idx_obj)
 {
- return(dynamic_cast<Linguagem *>(obterObjeto(idx_obj, OBJETO_LINGUAGEM)));
+ return(dynamic_cast<Linguagem *>(obterObjeto(idx_obj, OBJ_LANGUAGE)));
 }
 
 void ModeloBD::removerLinguagem(Linguagem *linguagem, int idx_obj)
 {
  if(linguagem)
  {
-  vector<ObjetoBase *> vet_refs;
+  vector<BaseObject *> vet_refs;
 
   //Obtém as referênca   linguagem
   obterReferenciasObjeto(linguagem, vet_refs, true);
@@ -1967,14 +1967,14 @@ void ModeloBD::adicionarFuncao(Funcao *funcao, int idx_obj)
 
 Funcao *ModeloBD::obterFuncao(unsigned idx_obj)
 {
- return(dynamic_cast<Funcao *>(obterObjeto(idx_obj, OBJETO_FUNCAO)));
+ return(dynamic_cast<Funcao *>(obterObjeto(idx_obj, OBJ_FUNCTION)));
 }
 
 void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
 {
  if(funcao)
  {
-  vector<ObjetoBase *> vet_refs;
+  vector<BaseObject *> vet_refs;
   QString str_aux;
 
   //Obtém as referênca   função
@@ -2001,7 +2001,7 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
    }
    else
    {
-    ObjetoBase *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
+    BaseObject *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
     //Formata a mensagem para referência indireta
     tipo_err=ERR_REM_INDIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE))
@@ -2035,7 +2035,7 @@ void ModeloBD::adicionarFuncaoAgregacao(FuncaoAgregacao *func_agregacao, int idx
 
 FuncaoAgregacao *ModeloBD::obterFuncaoAgregacao(unsigned idx_obj)
 {
- return(dynamic_cast<FuncaoAgregacao *>(obterObjeto(idx_obj, OBJETO_FUNC_AGREGACAO)));
+ return(dynamic_cast<FuncaoAgregacao *>(obterObjeto(idx_obj, OBJ_AGGREGATE)));
 }
 
 void ModeloBD::removerFuncaoAgregacao(FuncaoAgregacao *func_agregacao, int idx_obj)
@@ -2047,7 +2047,7 @@ void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
 {
  if(dominio)
  {
-  vector<ObjetoBase *>::iterator itr, itr_end;
+  vector<BaseObject *>::iterator itr, itr_end;
   bool enc=false;
   QString str_aux;
 
@@ -2103,7 +2103,7 @@ void ModeloBD::removerDominio(Dominio *dominio, int idx_obj)
 
 Dominio *ModeloBD::obterDominio(unsigned idx_obj)
 {
- return(dynamic_cast<Dominio *>(obterObjeto(idx_obj, OBJETO_DOMINIO)));
+ return(dynamic_cast<Dominio *>(obterObjeto(idx_obj, OBJ_DOMAIN)));
 }
 
 void ModeloBD::adicionarFamiliaOperadores(FamiliaOperadores *familia_op, int idx_obj)
@@ -2120,14 +2120,14 @@ void ModeloBD::adicionarFamiliaOperadores(FamiliaOperadores *familia_op, int idx
 
 FamiliaOperadores *ModeloBD::obterFamiliaOperadores(unsigned idx_obj)
 {
- return(dynamic_cast<FamiliaOperadores *>(obterObjeto(idx_obj, OBJETO_FAMILIA_OPER)));
+ return(dynamic_cast<FamiliaOperadores *>(obterObjeto(idx_obj, OBJ_OPFAMILY)));
 }
 
 void ModeloBD::removerFamiliaOperadores(FamiliaOperadores *familia_op, int idx_obj)
 {
  if(familia_op)
  {
-  vector<ObjetoBase *> vet_refs;
+  vector<BaseObject *> vet_refs;
 
   //OBtém as referências ao objeto
   obterReferenciasObjeto(familia_op, vet_refs, true);
@@ -2169,7 +2169,7 @@ void ModeloBD::removerClasseOperadores(ClasseOperadores *classe_op, int idx_obj)
 
 ClasseOperadores *ModeloBD::obterClasseOperadores(unsigned idx_obj)
 {
- return(dynamic_cast<ClasseOperadores *>(obterObjeto(idx_obj, OBJETO_CLASSE_OPER)));
+ return(dynamic_cast<ClasseOperadores *>(obterObjeto(idx_obj, OBJ_OPCLASS)));
 }
 
 void ModeloBD::adicionarOperador(Operador *operador, int idx_obj)
@@ -2188,7 +2188,7 @@ void ModeloBD::removerOperador(Operador *operador, int idx_obj)
 {
  if(operador)
  {
-  vector<ObjetoBase *> vet_refs;
+  vector<BaseObject *> vet_refs;
 
   //Obtém as referências ao operador
   obterReferenciasObjeto(operador, vet_refs, true);
@@ -2214,14 +2214,14 @@ void ModeloBD::removerOperador(Operador *operador, int idx_obj)
 
 Operador *ModeloBD::obterOperador(unsigned idx_obj)
 {
- return(dynamic_cast<Operador *>(obterObjeto(idx_obj, OBJETO_OPERADOR)));
+ return(dynamic_cast<Operador *>(obterObjeto(idx_obj, OBJ_OPERATOR)));
 }
 
 void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
 {
  if(tipo)
  {
-  vector<ObjetoBase *>::iterator itr, itr_end;
+  vector<BaseObject *>::iterator itr, itr_end;
   bool enc=false;
   QString str_aux;
 
@@ -2277,14 +2277,14 @@ void ModeloBD::removerTipo(Tipo *tipo, int idx_obj)
 
 Tipo *ModeloBD::obterTipo(unsigned idx_obj)
 {
- return(dynamic_cast<Tipo *>(obterObjeto(idx_obj, OBJETO_TIPO)));
+ return(dynamic_cast<Tipo *>(obterObjeto(idx_obj, OBJ_TYPE)));
 }
 
-void ModeloBD::removerTipoUsuario(ObjetoBase *objeto, int idx_obj)
+void ModeloBD::removerTipoUsuario(BaseObject *objeto, int idx_obj)
 {
  if(objeto)
  {
-  vector<ObjetoBase *> vet_refs;
+  vector<BaseObject *> vet_refs;
   QString str_aux;
 
   //Obtém as referências ao objeto
@@ -2310,7 +2310,7 @@ void ModeloBD::removerTipoUsuario(ObjetoBase *objeto, int idx_obj)
    }
    else
    {
-    ObjetoBase *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
+    BaseObject *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
 
     //Formata a mensagem para referência indireta
     tipo_err=ERR_REM_INDIRECT_REFERENCE;
@@ -2375,10 +2375,10 @@ void ModeloBD::removerPermissao(Permissao *permissao)
  }
 }
 
-void ModeloBD::removerPermissoes(ObjetoBase *objeto)
+void ModeloBD::removerPermissoes(BaseObject *objeto)
 {
  vector<Permissao *> vet_perm;
- vector<ObjetoBase *>::iterator itr, itr_end;
+ vector<BaseObject *>::iterator itr, itr_end;
  Permissao *permissao=NULL;
  unsigned idx=0;
 
@@ -2420,9 +2420,9 @@ void ModeloBD::removerPermissoes(ObjetoBase *objeto)
  }
 }
 
-void ModeloBD::obterPermissoes(ObjetoBase *objeto, vector<Permissao *> &vet_perm)
+void ModeloBD::obterPermissoes(BaseObject *objeto, vector<Permissao *> &vet_perm)
 {
- vector<ObjetoBase *>::iterator itr, itr_end;
+ vector<BaseObject *>::iterator itr, itr_end;
  Permissao *permissao=NULL;
 
  /* Caso o objeto o qual terá todas as permissões relacionadas
@@ -2463,8 +2463,8 @@ int ModeloBD::obterIndicePermissao(Permissao *permissao)
  if(permissao)
  {
   Permissao *perm_aux=NULL;
-  vector<ObjetoBase *>::iterator itr, itr_end;
-  ObjetoBase *objeto=NULL;
+  vector<BaseObject *>::iterator itr, itr_end;
+  BaseObject *objeto=NULL;
   Papel *papel=NULL;
   unsigned qtd, i;
   bool papel_ref=false;
@@ -2517,28 +2517,28 @@ int ModeloBD::obterIndicePermissao(Permissao *permissao)
  return(idx_perm);
 }
 
-ObjetoBase *ModeloBD::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj)
+BaseObject *ModeloBD::obterObjeto(const QString &nome, ObjectType tipo_obj)
 {
  int idx;
  return(obterObjeto(nome, tipo_obj, idx));
 }
 
-int ModeloBD::obterIndiceObjeto(const QString &nome, TipoObjetoBase tipo_obj)
+int ModeloBD::obterIndiceObjeto(const QString &nome, ObjectType tipo_obj)
 {
  int idx;
  obterObjeto(nome, tipo_obj, idx);
  return(idx);
 }
 
-int ModeloBD::obterIndiceObjeto(ObjetoBase *objeto)
+int ModeloBD::obterIndiceObjeto(BaseObject *objeto)
 {
  if(!objeto)
   return(-1);
  else
  {
-  TipoObjetoBase tipo_obj=objeto->obterTipoObjeto();
-  vector<ObjetoBase *> *lista_obj=NULL;
-  vector<ObjetoBase *>::iterator itr, itr_end;
+  ObjectType tipo_obj=objeto->obterTipoObjeto();
+  vector<BaseObject *> *lista_obj=NULL;
+  vector<BaseObject *>::iterator itr, itr_end;
   bool enc=false;
 
   //Obtém a lista de acordo com o tipo do objeto
@@ -2578,9 +2578,9 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
  if(nome_arq!="")
  {
   QString arq_dtd, str_aux, nome_elem;
-  TipoObjetoBase tipo_obj;
+  ObjectType tipo_obj;
   map<QString, QString> atributos;
-  ObjetoBase *objeto=NULL;
+  BaseObject *objeto=NULL;
   deque<const xmlNode *> objetos_incomp;
   bool reaval_objetos=false, modelo_protegido=false;
   const xmlNode *elem_aux=NULL;
@@ -2700,9 +2700,9 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
              foi encontrado (criado)
        */
        if(!reaval_objetos && objetos_incomp.size() > 0 &&
-          tipo_obj!=OBJETO_FUNCAO && tipo_obj!=OBJETO_ESQUEMA &&
-          tipo_obj!=OBJETO_ESPACO_TABELA && tipo_obj!=OBJETO_LINGUAGEM &&
-          tipo_obj!=OBJETO_TIPO && tipo_obj!=OBJETO_TABELA)
+          tipo_obj!=OBJ_FUNCTION && tipo_obj!=OBJ_SCHEMA &&
+          tipo_obj!=OBJ_TABLESPACE && tipo_obj!=OBJ_LANGUAGE &&
+          tipo_obj!=OBJ_TYPE && tipo_obj!=OBJ_TABLE)
        {
         //Faz o parser XML voltar ao elemento anterior
         XMLParser::accessElement(XMLParser::PREVIOUS_ELEMENT);
@@ -2717,7 +2717,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
        }
 
        //Lendo um objeto banco de dados
-       if(tipo_obj==OBJETO_BANCO_DADOS)
+       if(tipo_obj==OBJ_DATABASE)
        {
         XMLParser::getElementAttributes(atributos);
         tipo_codif=atributos[ParsersAttributes::ENCODING];
@@ -2745,7 +2745,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
          if(objeto)
          {
           if(!dynamic_cast<ObjetoTabela *>(objeto) &&
-             tipo_obj!=OBJETO_RELACAO && tipo_obj!=OBJETO_RELACAO_BASE)
+             tipo_obj!=OBJ_RELATIONSHIP && tipo_obj!=BASE_RELATIONSHIP)
           {
            //Usa o método de inserção de objetos genéricos
            adicionarObjeto(objeto);
@@ -2768,11 +2768,11 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
         catch(Exception &e)
         {
          if(!reaval_objetos &&
-            (((e.getErrorType()==ERR_REF_OBJ_INEXISTS_MODEL && tipo_obj==OBJETO_TABELA)) ||
+            (((e.getErrorType()==ERR_REF_OBJ_INEXISTS_MODEL && tipo_obj==OBJ_TABLE)) ||
              (((e.getErrorType()==ERR_ASG_OBJ_INV_DEFINITION ||
                 e.getErrorType()==ERR_REF_OBJ_INEXISTS_MODEL ||
                 e.getErrorType()==ERR_ASG_INV_TYPE_OBJECT) &&
-               (tipo_obj==OBJETO_LINGUAGEM || tipo_obj==OBJETO_FUNCAO || tipo_obj==OBJETO_TIPO || tipo_obj==OBJETO_OPERADOR)))))
+               (tipo_obj==OBJ_LANGUAGE || tipo_obj==OBJ_FUNCTION || tipo_obj==OBJ_TYPE || tipo_obj==OBJ_OPERATOR)))))
          {
           /* Adiciona o nó da arvore o qual possui o elemento incompleto
              para que o mesmo tente ser recriado após suas possíveis dependências
@@ -2827,7 +2827,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
     throw Exception(vet_erros[0].getErrorMessage(),vet_erros[0].getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     //Protege o modelo com base no atributo obtido do xml
-   this->ObjetoBase::definirProtegido(modelo_protegido);
+   this->BaseObject::definirProtegido(modelo_protegido);
    carregando_modelo=false;
 
    /* Faz uma última validação nos relacionamentos para abranger qualquer modificação de colunas
@@ -2856,16 +2856,16 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
  }
 }
 
-TipoObjetoBase ModeloBD::obterTipoObjeto(const QString &str_tipo)
+ObjectType ModeloBD::obterTipoObjeto(const QString &str_tipo)
 {
- TipoObjetoBase tipo_obj=OBJETO_BASE;
+ ObjectType tipo_obj=BASE_OBJECT;
  int i;
 
- for(i=0; i < ObjetoBase::QTD_TIPOS_OBJETO; i++)
+ for(i=0; i < BaseObject::QTD_TIPOS_OBJETO; i++)
  {
   if(esq_objetos[i]==str_tipo)
   {
-   tipo_obj=static_cast<TipoObjetoBase>(i);
+   tipo_obj=static_cast<ObjectType>(i);
    break;
   }
  }
@@ -2873,67 +2873,67 @@ TipoObjetoBase ModeloBD::obterTipoObjeto(const QString &str_tipo)
  return(tipo_obj);
 }
 
-ObjetoBase *ModeloBD::criarObjeto(TipoObjetoBase tipo_obj)
+BaseObject *ModeloBD::criarObjeto(ObjectType tipo_obj)
 {
- ObjetoBase *objeto=NULL;
+ BaseObject *objeto=NULL;
 
- if(tipo_obj!=OBJETO_BASE)
+ if(tipo_obj!=BASE_OBJECT)
  {
-  if(tipo_obj==OBJETO_PAPEL)
+  if(tipo_obj==OBJ_ROLE)
    objeto=criarPapel();
-  else if(tipo_obj==OBJETO_ESPACO_TABELA)
+  else if(tipo_obj==OBJ_TABLESPACE)
    objeto=criarEspacoTabela();
-  else if(tipo_obj==OBJETO_ESQUEMA)
+  else if(tipo_obj==OBJ_SCHEMA)
    objeto=criarEsquema();
-  else if(tipo_obj==OBJETO_LINGUAGEM)
+  else if(tipo_obj==OBJ_LANGUAGE)
    objeto=criarLinguagem();
-  else if(tipo_obj==OBJETO_FUNCAO)
+  else if(tipo_obj==OBJ_FUNCTION)
    objeto=criarFuncao();
-  else if(tipo_obj==OBJETO_TIPO)
+  else if(tipo_obj==OBJ_TYPE)
    objeto=criarTipo();
-  else if(tipo_obj==OBJETO_DOMINIO)
+  else if(tipo_obj==OBJ_DOMAIN)
    objeto=criarDominio();
-  else if(tipo_obj==OBJETO_CONV_TIPO)
+  else if(tipo_obj==OBJ_CAST)
    objeto=criarConversaoTipo();
-  else if(tipo_obj==OBJETO_CONV_CODIFICACAO)
+  else if(tipo_obj==OBJ_CONVERSION)
    objeto=criarConversaoCodificacao();
-  else if(tipo_obj==OBJETO_OPERADOR)
+  else if(tipo_obj==OBJ_OPERATOR)
    objeto=criarOperador();
-  else if(tipo_obj==OBJETO_FAMILIA_OPER)
+  else if(tipo_obj==OBJ_OPFAMILY)
    objeto=criarFamiliaOperadores();
-  else if(tipo_obj==OBJETO_CLASSE_OPER)
+  else if(tipo_obj==OBJ_OPCLASS)
    objeto=criarClasseOperadores();
-  else if(tipo_obj==OBJETO_FUNC_AGREGACAO)
+  else if(tipo_obj==OBJ_AGGREGATE)
    objeto=criarFuncaoAgregacao();
-  else if(tipo_obj==OBJETO_TABELA)
+  else if(tipo_obj==OBJ_TABLE)
    objeto=criarTabela();
-  else if(tipo_obj==OBJETO_SEQUENCIA)
+  else if(tipo_obj==OBJ_SEQUENCE)
    objeto=criarSequencia();
-  else if(tipo_obj==OBJETO_VISAO)
+  else if(tipo_obj==OBJ_VIEW)
    objeto=criarVisao();
-  else if(tipo_obj==OBJETO_CAIXA_TEXTO)
+  else if(tipo_obj==OBJ_TEXTBOX)
    objeto=criarCaixaTexto();
-  else if(tipo_obj==OBJETO_RESTRICAO)
+  else if(tipo_obj==OBJ_CONSTRAINT)
    objeto=criarRestricao(NULL);
-  else if(tipo_obj==OBJETO_GATILHO)
+  else if(tipo_obj==OBJ_TRIGGER)
    objeto=criarGatilho(NULL);
-  else if(tipo_obj==OBJETO_INDICE)
+  else if(tipo_obj==OBJ_INDEX)
    objeto=criarIndice(NULL);
-  else if(tipo_obj==OBJETO_RELACAO ||
-          tipo_obj==OBJETO_RELACAO_BASE)
+  else if(tipo_obj==OBJ_RELATIONSHIP ||
+          tipo_obj==BASE_RELATIONSHIP)
    objeto=criarRelacionamento();
  }
 
  return(objeto);
 }
 
-void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
+void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
 {
  map<QString, QString> atributos, atribs_aux;
  QString nome_elem;//, str_aux;
- ObjetoBase *esp_tabela=NULL, *dono=NULL;
+ BaseObject *esp_tabela=NULL, *dono=NULL;
  Esquema *esquema=NULL;
- TipoObjetoBase tipo_obj=OBJETO_BASE, tipo_obj_aux;
+ ObjectType tipo_obj=BASE_OBJECT, tipo_obj_aux;
  bool erro=false, protegido=false;
 
  //Caso o objeto não esteja alocado uma exceção é disparada
@@ -2944,7 +2944,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
  XMLParser::getElementAttributes(atributos);
 
  tipo_obj_aux=objeto->obterTipoObjeto();
- if(tipo_obj_aux!=OBJETO_CONV_TIPO)
+ if(tipo_obj_aux!=OBJ_CAST)
   objeto->definirNome(atributos[ParsersAttributes::NAME]);
 
  //Definindo se o objeto está protegido ou não
@@ -2981,7 +2981,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
     //Caso o elemento filho seja uma referência a um esquema <schema>
     else if(nome_elem==ParsersAttributes::SCHEMA)
     {
-     tipo_obj=OBJETO_ESQUEMA;
+     tipo_obj=OBJ_SCHEMA;
      XMLParser::getElementAttributes(atribs_aux);
      esquema=dynamic_cast<Esquema *>(obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj));
      objeto->definirEsquema(esquema);
@@ -2991,7 +2991,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
     //Caso o elemento filho seja uma referência a um tablespace <tablespace>
     else if(nome_elem==ParsersAttributes::TABLESPACE)
     {
-     tipo_obj=OBJETO_ESPACO_TABELA;
+     tipo_obj=OBJ_TABLESPACE;
      XMLParser::getElementAttributes(atribs_aux);
      esp_tabela=obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj);
      objeto->definirEspacoTabela(esp_tabela);
@@ -3001,7 +3001,7 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
     //Caso o elemento filho seja uma referência a um dono (role/papel) <role>
     else if(nome_elem==ParsersAttributes::ROLE)
     {
-     tipo_obj=OBJETO_PAPEL;
+     tipo_obj=OBJ_ROLE;
      XMLParser::getElementAttributes(atribs_aux);
      dono=obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj);
      objeto->definirDono(dono);
@@ -3013,8 +3013,8 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
      XMLParser::getElementAttributes(atributos);
 
      if(nome_elem==ParsersAttributes::POSITION &&
-        (tipo_obj_aux!=OBJETO_RELACAO &&
-         tipo_obj_aux!=OBJETO_RELACAO_BASE))
+        (tipo_obj_aux!=OBJ_RELATIONSHIP &&
+         tipo_obj_aux!=BASE_RELATIONSHIP))
      {
       dynamic_cast<ObjetoGraficoBase *>(objeto)->definirPosicaoObjeto(QPointF(atributos[ParsersAttributes::X_POS].toFloat(),
                                                                        atributos[ParsersAttributes::Y_POS].toFloat()));
@@ -3042,17 +3042,17 @@ void ModeloBD::definirAtributosBasicos(ObjetoBase *objeto)
                    .arg(QString::fromUtf8(objeto->obterNome()))
                    .arg(objeto->obterNomeTipoObjeto())
                    .arg(QString::fromUtf8(atribs_aux[ParsersAttributes::NAME]))
-                   .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj)),
+                   .arg(BaseObject::obterNomeTipoObjeto(tipo_obj)),
                 ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  //Caso o objeto não esteja atribuído a nenhum esquema gera um erro
  else if(!objeto->obterEsquema() &&
-         (tipo_obj_aux==OBJETO_FUNCAO || tipo_obj_aux==OBJETO_TABELA ||
-          tipo_obj_aux==OBJETO_VISAO  || tipo_obj_aux==OBJETO_DOMINIO ||
-          tipo_obj_aux==OBJETO_FUNC_AGREGACAO || tipo_obj_aux==OBJETO_OPERADOR ||
-          tipo_obj_aux==OBJETO_SEQUENCIA || tipo_obj_aux==OBJETO_CONV_CODIFICACAO ||
-          tipo_obj_aux==OBJETO_TIPO || tipo_obj_aux==OBJETO_FAMILIA_OPER ||
-          tipo_obj_aux==OBJETO_CLASSE_OPER))
+         (tipo_obj_aux==OBJ_FUNCTION || tipo_obj_aux==OBJ_TABLE ||
+          tipo_obj_aux==OBJ_VIEW  || tipo_obj_aux==OBJ_DOMAIN ||
+          tipo_obj_aux==OBJ_AGGREGATE || tipo_obj_aux==OBJ_OPERATOR ||
+          tipo_obj_aux==OBJ_SEQUENCE || tipo_obj_aux==OBJ_CONVERSION ||
+          tipo_obj_aux==OBJ_TYPE || tipo_obj_aux==OBJ_OPFAMILY ||
+          tipo_obj_aux==OBJ_OPCLASS))
  {
   throw Exception(Exception::getErrorMessage(ERR_ALOC_OBJECT_NO_SCHEMA)
                         .arg(QString::fromUtf8(objeto->obterNome()))
@@ -3157,7 +3157,7 @@ Papel *ModeloBD::criarPapel(void)
       for(i=0; i < tam; i++)
       {
        //Tenta obter um papel do modelo cujo nome é o elemento atual da lista de nomes (lista[i])
-       papel_ref=dynamic_cast<Papel *>(obterObjeto(lista[i].trimmed(),OBJETO_PAPEL));
+       papel_ref=dynamic_cast<Papel *>(obterObjeto(lista[i].trimmed(),OBJ_ROLE));
 
        /* Caso esse papel não exista um erro será disparado pois um novo papel
           não pode referenciar um outro papel que ainda nem foi criado */
@@ -3166,9 +3166,9 @@ Papel *ModeloBD::criarPapel(void)
         //Dispara a exceção
         throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                                .arg(QString::fromUtf8(papel->obterNome()))
-                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_PAPEL))
+                               .arg(BaseObject::obterNomeTipoObjeto(OBJ_ROLE))
                                .arg(QString::fromUtf8(lista[i]))
-                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_PAPEL)),
+                               .arg(BaseObject::obterNomeTipoObjeto(OBJ_ROLE)),
                       ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
        //Caso o papel exista no modelo, o mesmo será relacionado ao novo papel
@@ -3265,9 +3265,9 @@ Linguagem *ModeloBD::criarLinguagem(void)
 {
  map<QString, QString> atributos;
  Linguagem *linguagem=NULL;
- ObjetoBase *funcao=NULL;
+ BaseObject *funcao=NULL;
  QString assinatura, tipo_ref;
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
 
  try
  {
@@ -3290,7 +3290,7 @@ Linguagem *ModeloBD::criarLinguagem(void)
      {
       tipo_obj=obterTipoObjeto(XMLParser::getElementName());
 
-      if(tipo_obj==OBJETO_FUNCAO)
+      if(tipo_obj==OBJ_FUNCTION)
       {
        XMLParser::getElementAttributes(atributos);
        //Obtém o tipo de referência da função
@@ -3305,7 +3305,7 @@ Linguagem *ModeloBD::criarLinguagem(void)
         assinatura=atributos[ParsersAttributes::SIGNATURE];
 
         //Obtém a função do modelo
-        funcao=obterObjeto(assinatura, OBJETO_FUNCAO);
+        funcao=obterObjeto(assinatura, OBJ_FUNCTION);
 
         //Caso a função não seja encontrada
         if(!funcao)
@@ -3314,7 +3314,7 @@ Linguagem *ModeloBD::criarLinguagem(void)
                                .arg(QString::fromUtf8(linguagem->obterNome()))
                                .arg(linguagem->obterNomeTipoObjeto())
                                .arg(QString::fromUtf8(assinatura))
-                               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
+                               .arg(BaseObject::obterNomeTipoObjeto(OBJ_FUNCTION)),
                        ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
         if(tipo_ref==ParsersAttributes::VALIDATOR_FUNC)
@@ -3356,8 +3356,8 @@ Funcao *ModeloBD::criarFuncao(void)
 {
  map<QString, QString> atributos, atrib_aux;
  Funcao *funcao=NULL;
- TipoObjetoBase tipo_obj;
- ObjetoBase *objeto=NULL;
+ ObjectType tipo_obj;
+ BaseObject *objeto=NULL;
  TipoPgSQL tipo;
  Parametro param;
  QString str_aux, elem;
@@ -3456,7 +3456,7 @@ Funcao *ModeloBD::criarFuncao(void)
       }
      }
      //Obtendo a linguagem da função
-     else if(tipo_obj==OBJETO_LINGUAGEM)
+     else if(tipo_obj==OBJ_LANGUAGE)
      {
       //Obtém seus atributos
       XMLParser::getElementAttributes(atributos);
@@ -3470,7 +3470,7 @@ Funcao *ModeloBD::criarFuncao(void)
                               .arg(QString::fromUtf8(funcao->obterNome()))
                               .arg(funcao->obterNomeTipoObjeto())
                               .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
-                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_LINGUAGEM)),
+                              .arg(BaseObject::obterNomeTipoObjeto(OBJ_LANGUAGE)),
                       ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Define a linguagem da função
@@ -3524,7 +3524,7 @@ Funcao *ModeloBD::criarFuncao(void)
   if(e.getErrorType()==ERR_REF_INEXIST_USER_TYPE)
    throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
                               .arg(QString::fromUtf8(str_aux))
-                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
+                              .arg(BaseObject::obterNomeTipoObjeto(OBJ_FUNCTION)),
                  ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, info_adicional);
   else
    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
@@ -3677,7 +3677,7 @@ Tipo *ModeloBD::criarTipo(void)
  QStringList enums;
  QString elem, str_aux;
  Parametro param;
- ObjetoBase *funcao=NULL;
+ BaseObject *funcao=NULL;
  unsigned tipo_func=0;
  TipoPgSQL tipo_copia;
 
@@ -3796,7 +3796,7 @@ Tipo *ModeloBD::criarTipo(void)
 
       /* Com a assinatura da função obtida di XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_FUNCAO);
+      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
       /* Dispara uma exceção caso o tipo de referencia a função seja inválido ou
          se a função referenciada não existe */
@@ -3805,7 +3805,7 @@ Tipo *ModeloBD::criarTipo(void)
                               .arg(QString::fromUtf8(tipo->obterNome()))
                               .arg(tipo->obterNomeTipoObjeto())
                               .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
-                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
+                              .arg(BaseObject::obterNomeTipoObjeto(OBJ_FUNCTION)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       else if(tipo_funcoes.count(atributos[ParsersAttributes::REF_TYPE])==0)
        throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -3931,7 +3931,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
  QString elem;
  unsigned idx_tipo=0;
  TipoPgSQL tipo;
- ObjetoBase *funcao=NULL;
+ BaseObject *funcao=NULL;
 
  try
  {
@@ -3982,7 +3982,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_FUNCAO);
+      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
@@ -3990,7 +3990,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
                              .arg(QString::fromUtf8(conv_tipo->obterNome()))
                              .arg(conv_tipo->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
-                             .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
+                             .arg(BaseObject::obterNomeTipoObjeto(OBJ_FUNCTION)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Atribui a funç   conversão de tipos
@@ -4021,7 +4021,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
  map<QString, QString> atributos;
  ConversaoCodificacao *conv_codif=NULL;
  QString elem;
- ObjetoBase *funcao=NULL;
+ BaseObject *funcao=NULL;
 
  try
  {
@@ -4058,7 +4058,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_FUNCAO);
+      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
@@ -4066,7 +4066,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
                              .arg(QString::fromUtf8(conv_codif->obterNome()))
                              .arg(conv_codif->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
-                             .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
+                             .arg(BaseObject::obterNomeTipoObjeto(OBJ_FUNCTION)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Atribui a funç   conversão de tipos
@@ -4099,7 +4099,7 @@ Operador *ModeloBD::criarOperador(void)
  map<QString, unsigned> tipo_operadores;
  Operador *operador=NULL;
  QString elem;
- ObjetoBase *funcao=NULL,*oper_aux=NULL;
+ BaseObject *funcao=NULL,*oper_aux=NULL;
  unsigned tipo_func, tipo_oper, tipo_arg;
  TipoPgSQL tipo;
 
@@ -4143,14 +4143,14 @@ Operador *ModeloBD::criarOperador(void)
     {
      elem=XMLParser::getElementName();
 
-     if(elem==esq_objetos[OBJETO_OPERADOR])
+     if(elem==esq_objetos[OBJ_OPERATOR])
      {
       //Obtém os atributos do operador referenciado
       XMLParser::getElementAttributes(atributos);
 
       /* Com a assinatura do operador obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      oper_aux=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_OPERADOR);
+      oper_aux=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJ_OPERATOR);
 
       //Dispara uma exceção caso o operador referenciado não exista
       if(!oper_aux && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
@@ -4158,7 +4158,7 @@ Operador *ModeloBD::criarOperador(void)
                              .arg(QString::fromUtf8(operador->obterAssinatura(true)))
                              .arg(operador->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
-                             .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_OPERADOR)),
+                             .arg(BaseObject::obterNomeTipoObjeto(OBJ_OPERATOR)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       /* Obtém o tipo de configuraçao de função do tipo de acordo com a referência
@@ -4190,7 +4190,7 @@ Operador *ModeloBD::criarOperador(void)
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_FUNCAO);
+      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
@@ -4198,7 +4198,7 @@ Operador *ModeloBD::criarOperador(void)
                              .arg(QString::fromUtf8(operador->obterNome()))
                              .arg(operador->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
-                             .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
+                             .arg(BaseObject::obterNomeTipoObjeto(OBJ_FUNCTION)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       /* Obtém o tipo de configuraçao de função do tipo de acordo com a referência
@@ -4231,7 +4231,7 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
 {
  map<QString, QString> atributos;
  map<QString, unsigned> tipos_elem;
- ObjetoBase *objeto=NULL;
+ BaseObject *objeto=NULL;
  QString elem;
  TipoPgSQL tipo;
  ClasseOperadores *classe_op=NULL;
@@ -4266,14 +4266,14 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
     {
      elem=XMLParser::getElementName();
 
-     if(elem==esq_objetos[OBJETO_FAMILIA_OPER])
+     if(elem==esq_objetos[OBJ_OPFAMILY])
      {
       //Obtém os atributos do operador referenciado
       XMLParser::getElementAttributes(atributos);
 
       /* Com o nome da família do operador obtida do XML, a mesma será buscada no modelo, para
          saber se existe um objeto correspondente */
-      objeto=obterObjeto(atributos[ParsersAttributes::NAME], OBJETO_FAMILIA_OPER);
+      objeto=obterObjeto(atributos[ParsersAttributes::NAME], OBJ_OPFAMILY);
 
       //Dispara uma exceção caso o operador referenciado não exista
       if(!objeto && !atributos[ParsersAttributes::NAME].isEmpty())
@@ -4281,7 +4281,7 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
                              .arg(QString::fromUtf8(classe_op->obterNome()))
                              .arg(classe_op->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
-                             .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FAMILIA_OPER)),
+                             .arg(BaseObject::obterNomeTipoObjeto(OBJ_OPFAMILY)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       classe_op->definirFamilia(dynamic_cast<FamiliaOperadores *>(objeto));
@@ -4312,12 +4312,12 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
       }
       else if(tp_elem==ElemClasseOperadores::ELEM_FUNCAO)
       {
-       objeto=obterObjeto(atributos[ParsersAttributes::SIGNATURE],OBJETO_FUNCAO);
+       objeto=obterObjeto(atributos[ParsersAttributes::SIGNATURE],OBJ_FUNCTION);
        elem_classe.definirFuncao(dynamic_cast<Funcao *>(objeto),num_estrategia);
       }
       else if(tp_elem==ElemClasseOperadores::ELEM_OPERADOR)
       {
-       objeto=obterObjeto(atributos[ParsersAttributes::SIGNATURE],OBJETO_OPERADOR);
+       objeto=obterObjeto(atributos[ParsersAttributes::SIGNATURE],OBJ_OPERATOR);
        elem_classe.definirOperador(dynamic_cast<Operador *>(objeto),num_estrategia,rechecar);
       }
 
@@ -4378,7 +4378,7 @@ FamiliaOperadores *ModeloBD::criarFamiliaOperadores(void)
 FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
 {
  map<QString, QString> atributos;
- ObjetoBase *funcao=NULL;
+ BaseObject *funcao=NULL;
  QString elem;
  TipoPgSQL tipo;
  FuncaoAgregacao *func_agreg=NULL;
@@ -4423,7 +4423,7 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_FUNCAO);
+      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
@@ -4431,7 +4431,7 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
                              .arg(QString::fromUtf8(func_agreg->obterNome()))
                              .arg(func_agreg->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
-                             .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO)),
+                             .arg(BaseObject::obterNomeTipoObjeto(OBJ_FUNCTION)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Define a função de acordo com o tipo de referência da mesma
@@ -4492,15 +4492,15 @@ Tabela *ModeloBD::criarTabela(void)
      XMLParser::savePosition();
      objeto=NULL;
 
-     if(elem==ObjetoBase::esq_objetos[OBJETO_COLUNA])
+     if(elem==BaseObject::esq_objetos[OBJ_COLUMN])
       objeto=criarColuna();
-     else if(elem==ObjetoBase::esq_objetos[OBJETO_RESTRICAO])
+     else if(elem==BaseObject::esq_objetos[OBJ_CONSTRAINT])
       objeto=criarRestricao(tabela);
-     else if(elem==ObjetoBase::esq_objetos[OBJETO_INDICE])
+     else if(elem==BaseObject::esq_objetos[OBJ_INDEX])
       objeto=criarIndice(tabela);
-     else if(elem==ObjetoBase::esq_objetos[OBJETO_REGRA])
+     else if(elem==BaseObject::esq_objetos[OBJ_RULE])
       objeto=criarRegra();
-     else if(elem==ObjetoBase::esq_objetos[OBJETO_GATILHO])
+     else if(elem==BaseObject::esq_objetos[OBJ_TRIGGER])
       objeto=criarGatilho(tabela);
 
      if(objeto)
@@ -4580,11 +4580,11 @@ Coluna *ModeloBD::criarColuna(void)
  return(coluna);
 }
 
-Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
+Restricao *ModeloBD::criarRestricao(BaseObject *objeto)
 {
  map<QString, QString> atributos;
  Restricao *restricao=NULL;
- ObjetoBase *tabela_ref=NULL;
+ BaseObject *tabela_ref=NULL;
  Tabela *tabela=NULL,*tabela_aux=NULL;
  Coluna *coluna=NULL;
  Relacionamento *relacao=NULL;
@@ -4594,7 +4594,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
  QStringList lista_cols;
  int qtd, i;
  unsigned tipo_coluna;
- TipoObjetoBase tipo_objeto;
+ ObjectType tipo_objeto;
 
  try
  {
@@ -4605,9 +4605,9 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
   if(objeto)
   {
    tipo_objeto=objeto->obterTipoObjeto();
-   if(tipo_objeto==OBJETO_TABELA)
+   if(tipo_objeto==OBJ_TABLE)
     tabela=dynamic_cast<Tabela *>(objeto);
-   else if(tipo_objeto==OBJETO_RELACAO)
+   else if(tipo_objeto==OBJ_RELATIONSHIP)
     relacao=dynamic_cast<Relacionamento *>(objeto);
    else
     throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4617,8 +4617,8 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
      xml da restrição será usado para localizar a tabela possuidora no modelo */
   else
   {
-   tipo_objeto=OBJETO_TABELA;
-   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJETO_TABELA));
+   tipo_objeto=OBJ_TABLE;
+   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJ_TABLE));
    ins_rest_tabela=true;
    /* Caso a tabela a qual possua a restição não for encontrada uma exceção será disparada pois
       não se pode criar uma restrição sem que esta seja atribuida a uma tabela, neste caso. */
@@ -4627,9 +4627,9 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
     //Configura os argumentos da mensagem de erro
     str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
           .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
-          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RESTRICAO))
+          .arg(BaseObject::obterNomeTipoObjeto(OBJ_CONSTRAINT))
           .arg(QString::fromUtf8(atributos[ParsersAttributes::TABLE]))
-          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
+          .arg(BaseObject::obterNomeTipoObjeto(OBJ_TABLE));
     //Dispara a exceção
     throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
@@ -4717,7 +4717,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
     restricao->definirTipoAcao(atributos[ParsersAttributes::UPD_ACTION], true);
 
    //Obtém a tabela referenciada na chave estrangeira
-   tabela_ref=obterObjeto(atributos[ParsersAttributes::REF_TABLE], OBJETO_TABELA);
+   tabela_ref=obterObjeto(atributos[ParsersAttributes::REF_TABLE], OBJ_TABLE);
 
    /* Caso a tabela referenciada não seja encontrada verifica se esta não é a própria
       tabela a qual receberá a restrição (usado para auto-relacionamentos) */
@@ -4733,7 +4733,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
           .arg(QString::fromUtf8(restricao->obterNome()))
           .arg(restricao->obterNomeTipoObjeto())
           .arg(QString::fromUtf8(atributos[ParsersAttributes::REF_TABLE]))
-          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
+          .arg(BaseObject::obterNomeTipoObjeto(OBJ_TABLE));
     //Dispara a exceção
     throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
@@ -4785,7 +4785,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
       {
        if(tipo_coluna==Restricao::COLUNA_ORIGEM)
        {
-        if(tipo_objeto==OBJETO_TABELA)
+        if(tipo_objeto==OBJ_TABLE)
         {
          coluna=tabela->obterColuna(lista_cols[i]);
          //Caso a coluna não for encontrada, tenta obtê-la referenciando seu nome antigo
@@ -4794,7 +4794,7 @@ Restricao *ModeloBD::criarRestricao(ObjetoBase *objeto)
         }
         else
          //Para os demais tipos de relacionamento as colunas a serem obtidas são os atributos do relacionamento
-          coluna=dynamic_cast<Coluna *>(relacao->obterObjeto(lista_cols[i], OBJETO_COLUNA));
+          coluna=dynamic_cast<Coluna *>(relacao->obterObjeto(lista_cols[i], OBJ_COLUMN));
        }
        else
        {
@@ -4863,7 +4863,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
   if(!tabela)
   {
    inc_ind_tabela=true;
-   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJETO_TABELA));
+   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJ_TABLE));
    /* Caso a tabela a qual possua a restição não for encontrada uma exceção será disparada pois
       não se pode criar uma restrição sem que esta seja atribuida a uma tabela, neste caso. */
    if(!tabela)
@@ -4871,9 +4871,9 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
     //Configura os argumentos da mensagem de erro
     str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
           .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
-          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_INDICE))
+          .arg(BaseObject::obterNomeTipoObjeto(OBJ_INDEX))
           .arg(QString::fromUtf8(atributos[ParsersAttributes::TABLE]))
-          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
+          .arg(BaseObject::obterNomeTipoObjeto(OBJ_TABLE));
     //Dispara a exceção
     throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
@@ -4920,7 +4920,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
         if(elem==ParsersAttributes::OP_CLASS)
         {
          XMLParser::getElementAttributes(atributos);
-         classe_oper=dynamic_cast<ClasseOperadores *>(obterObjeto(atributos[ParsersAttributes::NAME], OBJETO_CLASSE_OPER));
+         classe_oper=dynamic_cast<ClasseOperadores *>(obterObjeto(atributos[ParsersAttributes::NAME], OBJ_OPCLASS));
 
          //Caso o índice esteja referenciando uma classe de operadores inexistente
          if(!classe_oper)
@@ -4928,9 +4928,9 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
           //Configura os argumentos da mensagem de erro
           str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
                           .arg(QString::fromUtf8(indice->obterNome()))
-                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_INDICE))
+                          .arg(BaseObject::obterNomeTipoObjeto(OBJ_INDEX))
                           .arg(QString::fromUtf8(atributos[ParsersAttributes::OP_CLASS]))
-                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CLASSE_OPER));
+                          .arg(BaseObject::obterNomeTipoObjeto(OBJ_OPCLASS));
           //Dispara a exceção
           throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
          }
@@ -5082,7 +5082,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
  QString elem, str_aux;
  QStringList lista_aux;
  int qtd, i;
- ObjetoBase *tabela_ref=NULL, *funcao=NULL;
+ BaseObject *tabela_ref=NULL, *funcao=NULL;
  Coluna *coluna=NULL;
  bool inc_gat_tabela=false;
 
@@ -5096,13 +5096,13 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
   else if(!tabela && !atributos[ParsersAttributes::TABLE].isEmpty())
   {
    inc_gat_tabela=true;
-   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJETO_TABELA));
+   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJ_TABLE));
    if(!tabela)
     throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
                   .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
-                  .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_GATILHO))
+                  .arg(BaseObject::obterNomeTipoObjeto(OBJ_TRIGGER))
                   .arg(QString::fromUtf8(atributos[ParsersAttributes::TABLE]))
-                  .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA)),
+                  .arg(BaseObject::obterNomeTipoObjeto(OBJ_TABLE)),
                   ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
@@ -5155,7 +5155,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
     gatilho->definirTipoPostergacao(atributos[ParsersAttributes::DEFER_TYPE]);
 
   //Obtém a tabela referenciada no gatilho
-  tabela_ref=obterObjeto(atributos[ParsersAttributes::REF_TABLE], OBJETO_TABELA);
+  tabela_ref=obterObjeto(atributos[ParsersAttributes::REF_TABLE], OBJ_TABLE);
   gatilho->definirTabReferenciada(tabela_ref);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
@@ -5174,7 +5174,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
 
       /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
          saber se existe a função correspondente */
-      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJETO_FUNCAO);
+      funcao=obterObjeto(atributos[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
@@ -5183,7 +5183,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
                .arg(QString::fromUtf8(gatilho->obterNome()))
                .arg(gatilho->obterNomeTipoObjeto())
                .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
-               .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNCAO));
+               .arg(BaseObject::obterNomeTipoObjeto(OBJ_FUNCTION));
 
        //Dispara a exceção
        throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5254,7 +5254,7 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
 {
  map<QString, QString> atributos;
  Sequencia *sequencia=NULL;
- ObjetoBase *tabela=NULL;
+ BaseObject *tabela=NULL;
  Coluna *coluna=NULL;
  QString elem, str_aux, nome_tab, nome_col;
  QStringList lista_elem;
@@ -5298,16 +5298,16 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
    }
 
    //Obtém a tabela do modelo
-   tabela=obterObjeto(nome_tab, OBJETO_TABELA);
+   tabela=obterObjeto(nome_tab, OBJ_TABLE);
 
    //Dispara uma exceção caso a tabela referenciada não exista
    if(!tabela)
    {
     str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
             .arg(QString::fromUtf8(sequencia->obterNome()))
-            .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_SEQUENCIA))
+            .arg(BaseObject::obterNomeTipoObjeto(OBJ_SEQUENCE))
             .arg(QString::fromUtf8(nome_tab))
-            .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
+            .arg(BaseObject::obterNomeTipoObjeto(OBJ_TABLE));
 
     //Dispara a exceção
     throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5381,16 +5381,16 @@ Visao *ModeloBD::criarVisao(void)
       if(!atributos[ParsersAttributes::TABLE].isEmpty())
       {
        coluna=NULL;
-       tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJETO_TABELA));
+       tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJ_TABLE));
 
        //Dispara uma exceção caso a tabela referenciada não exista
        if(!tabela)
        {
         str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
                         .arg(QString::fromUtf8(visao->obterNome()))
-                        .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_VISAO))
+                        .arg(BaseObject::obterNomeTipoObjeto(OBJ_VIEW))
                         .arg(QString::fromUtf8(atributos[ParsersAttributes::TABLE]))
-                        .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA));
+                        .arg(BaseObject::obterNomeTipoObjeto(OBJ_TABLE));
 
         //Dispara a exceção
         throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5412,10 +5412,10 @@ Visao *ModeloBD::criarVisao(void)
          {
           str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
                           .arg(QString::fromUtf8(visao->obterNome()))
-                          .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_VISAO))
+                          .arg(BaseObject::obterNomeTipoObjeto(OBJ_VIEW))
                           .arg(QString::fromUtf8(atributos[ParsersAttributes::TABLE]) + "." +
                                QString::fromUtf8(atributos[ParsersAttributes::COLUMN]))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_COLUNA));
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_COLUMN));
 
           //Dispara a exceção
           throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5541,7 +5541,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
  bool obrig_orig, obrig_dest, identificador, protegido, postergavel, sufixo_auto;
  TipoPostergacao tipo_postergacao;
  unsigned tipo_relac=0, i;
- TipoObjetoBase tipos_tab[2]={OBJETO_VISAO, OBJETO_TABELA}, tipo_obj_rel;
+ ObjectType tipos_tab[2]={OBJ_VIEW, OBJ_TABLE}, tipo_obj_rel;
  QString str_aux, elem,
          atribs[2]={ ParsersAttributes::SRC_TABLE,
                      ParsersAttributes::DST_TABLE };
@@ -5554,11 +5554,11 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
 
   if(atributos[ParsersAttributes::TYPE]!=ParsersAttributes::RELATION_TAB_VIEW)
   {
-   tipos_tab[0]=OBJETO_TABELA;
-   tipo_obj_rel=OBJETO_RELACAO;
+   tipos_tab[0]=OBJ_TABLE;
+   tipo_obj_rel=OBJ_RELATIONSHIP;
   }
   else
-   tipo_obj_rel=OBJETO_RELACAO_BASE;
+   tipo_obj_rel=BASE_RELATIONSHIP;
 
   /* Esta iteração obtém as tabelas participantes do relacionamento a
      partir do modelo com base nos nomes das tabelas vindos do XML */
@@ -5572,9 +5572,9 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    {
     str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
                     .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
-                    .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj_rel))
+                    .arg(BaseObject::obterNomeTipoObjeto(tipo_obj_rel))
                     .arg(QString::fromUtf8(atributos[atribs[i]]))
-                    .arg(ObjetoBase::obterNomeTipoObjeto(tipos_tab[i]));
+                    .arg(BaseObject::obterNomeTipoObjeto(tipos_tab[i]));
 
     //Dispara a exceção
     throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -5591,7 +5591,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
                              .arg(QString::fromUtf8(this->obterNome()))
                              .arg(this->obterNomeTipoObjeto())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
-                             .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RELACAO_BASE)),
+                             .arg(BaseObject::obterNomeTipoObjeto(BASE_RELATIONSHIP)),
                   ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    //Desconecta o relacionamento para configurá-lo
@@ -5723,7 +5723,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
   info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
                                    .arg(XMLParser::getCurrentElement()->line);
 
-  if(relacao_base && relacao_base->obterTipoObjeto()==OBJETO_RELACAO)
+  if(relacao_base && relacao_base->obterTipoObjeto()==OBJ_RELATIONSHIP)
    delete(relacao_base);
 
   //Redireciona qualquer exceção capturada
@@ -5741,7 +5741,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
  relacao_base->definirProtegido(protegido);
 
  //Reconecta o relacionamento caso o mesmo seja um rel. tabela-visao
- if(relacao_base && relacao_base->obterTipoObjeto()==OBJETO_RELACAO_BASE)
+ if(relacao_base && relacao_base->obterTipoObjeto()==BASE_RELATIONSHIP)
   relacao_base->conectarRelacionamento();
 
  return(relacao_base);
@@ -5750,12 +5750,12 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
 Permissao *ModeloBD::criarPermissao(void)
 {
  Permissao *permissao=NULL;
- ObjetoBase *objeto=NULL;
+ BaseObject *objeto=NULL;
  Tabela *tabela_pai=NULL;
  Papel *papel=NULL;
  map<QString, QString> atrib_priv, atributos;
  map<QString, QString>::iterator itr, itr_end;
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
  QString obj_pai, nome_obj;
  QStringList lista;
  unsigned i, tam, tipo_priv=Permissao::PRIV_SELECT;
@@ -5778,17 +5778,17 @@ Permissao *ModeloBD::criarPermissao(void)
   obj_pai=atributos[ParsersAttributes::PARENT];
 
   //Caso o objeto seja uma coluna a mesma será obtida da tabela pai
-  if(tipo_obj==OBJETO_COLUNA)
+  if(tipo_obj==OBJ_COLUMN)
   {
    //Primeiramente a tabela pai é obtida do modelo
-   tabela_pai=dynamic_cast<Tabela *>(obterObjeto(obj_pai, OBJETO_TABELA));
+   tabela_pai=dynamic_cast<Tabela *>(obterObjeto(obj_pai, OBJ_TABLE));
 
    /* Caso a tabela pai existe obtém o objeto filho da mesma
       o qual é referenciado pela permissão */
    if(tabela_pai)
     objeto=tabela_pai->obterColuna(nome_obj);
   }
-  else if(tipo_obj==OBJETO_BANCO_DADOS)
+  else if(tipo_obj==OBJ_DATABASE)
   {
    objeto=this;
   }
@@ -5802,7 +5802,7 @@ Permissao *ModeloBD::criarPermissao(void)
   if(!objeto)
    throw Exception(Exception::getErrorMessage(ERR_PERM_REF_INEXIST_OBJECT)
                           .arg(QString::fromUtf8(nome_obj))
-                          .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj)),
+                          .arg(BaseObject::obterNomeTipoObjeto(tipo_obj)),
                       ERR_PERM_REF_INEXIST_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Aloca a permissão relacionando-a com o objeto localizado
@@ -5831,7 +5831,7 @@ Permissao *ModeloBD::criarPermissao(void)
     for(i=0; i < tam; i++)
     {
      //Tenta obter um papel do modelo cujo nome é o elemento atual da lista de nomes (lista[i])
-     papel=dynamic_cast<Papel *>(obterObjeto(lista[i].trimmed(),OBJETO_PAPEL));
+     papel=dynamic_cast<Papel *>(obterObjeto(lista[i].trimmed(),OBJ_ROLE));
 
      /* Caso esse papel não exista um erro será disparado pois um novo papel
         não pode referenciar um outro papel que ainda nem foi criado */
@@ -5842,7 +5842,7 @@ Permissao *ModeloBD::criarPermissao(void)
                               .arg(QString::fromUtf8(objeto->obterNome()))
                               .arg(objeto->obterNomeTipoObjeto())
                               .arg(QString::fromUtf8(lista[i]))
-                              .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_PAPEL)),
+                              .arg(BaseObject::obterNomeTipoObjeto(OBJ_ROLE)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
      }
@@ -5924,7 +5924,7 @@ void ModeloBD::validarRemocaoColuna(Coluna *coluna)
 {
  if(coluna && coluna->obterTabelaPai())
  {
-  vector<ObjetoBase *> vet_refs;
+  vector<BaseObject *> vet_refs;
   obterReferenciasObjeto(coluna, vet_refs);
 
   //Caso um objeto seja encontrado o qual referencia a coluna
@@ -5945,8 +5945,8 @@ void ModeloBD::validarRelacObjetoTabela(ObjetoTabela *objeto, Tabela *tabela_pai
  {
   bool revalidar_rels=false, tab_ref_heranca=false;
   Relacionamento *rel=NULL;
-  vector<ObjetoBase *>::iterator itr, itr_end;
-  TipoObjetoBase tipo;
+  vector<BaseObject *>::iterator itr, itr_end;
+  ObjectType tipo;
 
   if(objeto && tabela_pai)
   {
@@ -5955,15 +5955,15 @@ void ModeloBD::validarRelacObjetoTabela(ObjetoTabela *objeto, Tabela *tabela_pai
    /* Condição de revalidação de relacionamentos:
       > Caso seja uma coluna e a mesma é referenciada pela chave primária da tabela pai
       > Caso seja uma restrição e a mesma seja uma chave primária da tabela */
-    revalidar_rels=((tipo==OBJETO_COLUNA &&
+    revalidar_rels=((tipo==OBJ_COLUMN &&
                      tabela_pai->restricaoReferenciaColuna(dynamic_cast<Coluna *>(objeto), TipoRestricao::primary_key)) ||
-                    (tipo==OBJETO_RESTRICAO &&
+                    (tipo==OBJ_CONSTRAINT &&
                      dynamic_cast<Restricao *>(objeto)->obterTipoRestricao()==TipoRestricao::primary_key));
 
    /* Caso seja uma coluna, verfica se a tabela pai participa de um relacionamento
      de generalização como tabela de destino (aquela que tem suas colunas copiadas
      para a tabela qua a herda) */
-   if(tipo==OBJETO_COLUNA)
+   if(tipo==OBJ_COLUMN)
    {
     itr=relacionamentos.begin();
     itr_end=relacionamentos.end();
@@ -6015,7 +6015,7 @@ QString ModeloBD::__obterDefinicaoObjeto(unsigned tipo_def)
  }
 
  atributos[ParsersAttributes::TEMPLATE_DB]=bd_modelo;
- return(this->ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(this->BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 
 QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def)
@@ -6028,28 +6028,28 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
  map<QString, QString> atribs_aux;
  unsigned qtd1, i, qtd;
  float qtd_geral_obj, qtd_defs_geradas;
- ObjetoBase *objeto=NULL;
- vector<ObjetoBase *> *lista_obj=NULL;
- vector<ObjetoBase *>::iterator itr, itr_end;
+ BaseObject *objeto=NULL;
+ vector<BaseObject *> *lista_obj=NULL;
+ vector<BaseObject *>::iterator itr, itr_end;
  vector<unsigned>::iterator itr1, itr1_end;
  QString msg=trUtf8("Generating %1 of the object: %2 (%3)"),
          atrib=ParsersAttributes::OBJECTS,
          tipo_def_str=(tipo_def==SchemaParser::SQL_DEFINITION ? "SQL" : "XML");
  Tipo *tipo_usr=NULL;
- map<unsigned, ObjetoBase *> mapa_objetos;
+ map<unsigned, BaseObject *> mapa_objetos;
  vector<unsigned> vet_id_objs, vet_id_objs_tab;
  Tabela *tabela=NULL;
  Indice *indice=NULL;
  Gatilho *gatilho=NULL;
  Restricao *restricao=NULL;
  Relacionamento *relacao=NULL;
- TipoObjetoBase tipo_obj,
-                tipos_obj_aux[]={ OBJETO_PAPEL, OBJETO_ESPACO_TABELA, OBJETO_ESQUEMA },
-                tipos_obj[]={ OBJETO_LINGUAGEM, OBJETO_FUNCAO, OBJETO_TIPO,
-                              OBJETO_CONV_TIPO, OBJETO_CONV_CODIFICACAO,
-                              OBJETO_OPERADOR, OBJETO_FAMILIA_OPER, OBJETO_CLASSE_OPER,
-                              OBJETO_FUNC_AGREGACAO, OBJETO_DOMINIO, OBJETO_CAIXA_TEXTO, OBJETO_RELACAO_BASE,
-                              OBJETO_RELACAO, OBJETO_TABELA, OBJETO_VISAO, OBJETO_SEQUENCIA };
+ ObjectType tipo_obj,
+                tipos_obj_aux[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA },
+                tipos_obj[]={ OBJ_LANGUAGE, OBJ_FUNCTION, OBJ_TYPE,
+                              OBJ_CAST, OBJ_CONVERSION,
+                              OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
+                              OBJ_AGGREGATE, OBJ_DOMAIN, OBJ_TEXTBOX, BASE_RELATIONSHIP,
+                              OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW, OBJ_SEQUENCE };
  try
  {
   qtd_geral_obj=this->obterNumObjetos();
@@ -6067,7 +6067,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
       do tipo do objeto nos esquema SQL */
    if(tipo_def==SchemaParser::SQL_DEFINITION)
    {
-    atrib=ObjetoBase::esq_objetos[tipos_obj_aux[i]];
+    atrib=BaseObject::esq_objetos[tipos_obj_aux[i]];
     atribs_aux[atrib]="";
    }
 
@@ -6080,8 +6080,8 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
     //Obtém o objeto atual
     objeto=(*itr);
 
-    if(objeto->obterTipoObjeto()!=OBJETO_ESQUEMA ||
-       (objeto->obterTipoObjeto()==OBJETO_ESQUEMA &&
+    if(objeto->obterTipoObjeto()!=OBJ_SCHEMA ||
+       (objeto->obterTipoObjeto()==OBJ_SCHEMA &&
         objeto->obterNome()!="public"))
     {
      //Gera o codigo e o concatena com os demais já gerados
@@ -6126,7 +6126,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
       caixa de texto e relacionamento tabela-visão não são obtidos pois os mesmos
       não possuem código SQL */
    if(tipo_def==SchemaParser::SQL_DEFINITION &&
-      (tipos_obj[i]==OBJETO_CAIXA_TEXTO || tipos_obj[i]==OBJETO_RELACAO_BASE))
+      (tipos_obj[i]==OBJ_TEXTBOX || tipos_obj[i]==BASE_RELATIONSHIP))
     lista_obj=NULL;
    else
     //Obtém a lista de objeto de acorodo com o tipo
@@ -6237,8 +6237,8 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
   */
   if(tipo_def==SchemaParser::SQL_DEFINITION)
   {
-   ObjetoBase *objetos[3]={NULL, NULL, NULL};
-   vector<ObjetoBase *> vet_aux;
+   BaseObject *objetos[3]={NULL, NULL, NULL};
+   vector<BaseObject *> vet_aux;
    qtd=16;
 
    vet_aux=relacionamentos;
@@ -6253,7 +6253,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
     objeto=(*itr);
     itr++;
 
-    if(objeto->obterTipoObjeto()==OBJETO_RELACAO)
+    if(objeto->obterTipoObjeto()==OBJ_RELATIONSHIP)
     {
      relacao=dynamic_cast<Relacionamento *>(objeto);
      objetos[0]=relacao->obterTabela(Relacionamento::TABELA_ORIGEM);
@@ -6323,7 +6323,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
    /* Caso seja um objeto tipo e a definição seja SQL armazena a
       definição shell dos tipos os quais são declarados antes da criação
       dos tipos definidos pelo usuário */
-   if(tipo_obj==OBJETO_TIPO && tipo_def==SchemaParser::SQL_DEFINITION)
+   if(tipo_obj==OBJ_TYPE && tipo_def==SchemaParser::SQL_DEFINITION)
    {
     tipo_usr=dynamic_cast<Tipo *>(objeto);
 
@@ -6333,14 +6333,14 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
     else
      atribs_aux[atrib]+=tipo_usr->obterDefinicaoObjeto(tipo_def);
    }
-   else if(tipo_obj==OBJETO_BANCO_DADOS)
+   else if(tipo_obj==OBJ_DATABASE)
    {
     if(tipo_def==SchemaParser::SQL_DEFINITION)
      atribs_aux[this->obterNomeEsquemaObjeto()]+=this->__obterDefinicaoObjeto(tipo_def);
     else
      atribs_aux[atrib]+=this->__obterDefinicaoObjeto(tipo_def);
    }
-   else if(tipo_obj==OBJETO_RESTRICAO)
+   else if(tipo_obj==OBJ_CONSTRAINT)
    {
     atribs_aux[atrib]+=dynamic_cast<Restricao *>(objeto)->obterDefinicaoObjeto(tipo_def, true);
    }
@@ -6349,7 +6349,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
     /* Desprezando as linguagens c e sql
        pois as mesmas não precisam ser declaradas explicitamente poir serem built-in */
     if(//tipo_def==ParserEsquema::DEFINICAO_SQL &&
-       (tipo_obj==OBJETO_LINGUAGEM &&
+       (tipo_obj==OBJ_LANGUAGE &&
         (objeto->obterNome()==~TipoLinguagem("c") ||
          objeto->obterNome()==~TipoLinguagem("sql") ||
          objeto->obterNome()==~TipoLinguagem("plpgsql"))))
@@ -6468,7 +6468,7 @@ void ModeloBD::salvarModelo(const QString &nome_arq, unsigned tipo_def)
  }
 }
 
-void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &vet_deps, bool inc_dep_indiretas)
+void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_dep_indiretas)
 {
  //Caso o objeto esteja alocado e o mesmo ainda não exista na lista de dependências
  if(objeto && std::find(vet_deps.begin(), vet_deps.end(), objeto)==vet_deps.end())
@@ -6479,7 +6479,7 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
 
  if((vet_deps.size()==1 && !inc_dep_indiretas) || inc_dep_indiretas)
  {
-  TipoObjetoBase tipo_obj=objeto->obterTipoObjeto();
+  ObjectType tipo_obj=objeto->obterTipoObjeto();
 
   /* Caso o objeto possua esquema, espaço de tabela e dono,
      busca e inclui se necessário as dependências desses
@@ -6494,14 +6494,14 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    obterDependenciasObjeto(objeto->obterDono(), vet_deps, inc_dep_indiretas);
 
   //** Obtendo as dependências de Classe de Operadores **
-  if(tipo_obj==OBJETO_CLASSE_OPER)
+  if(tipo_obj==OBJ_OPCLASS)
   {
    ClasseOperadores *classe_op=dynamic_cast<ClasseOperadores *>(objeto);
 
    /* Obtém a referência para o tipo de dado da classe, caso um ponteiro válido seja retornado
       indica que o tipo de dado é um definido pelo usuário (classe Tipo) e que este precisa
       também ter as dependências obtidas */
-  ObjetoBase *tipo_usr=obterObjetoTipoPgSQL(classe_op->obterTipoDado());
+  BaseObject *tipo_usr=obterObjetoTipoPgSQL(classe_op->obterTipoDado());
   //obterObjeto(*classe_op->obterTipoDado(), OBJETO_TIPO);
 
    if(tipo_usr)
@@ -6512,29 +6512,29 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
     obterDependenciasObjeto(classe_op->obterFamilia(), vet_deps, inc_dep_indiretas);
   }
   //** Obtendo as dependências de Domínios **
-  else if(tipo_obj==OBJETO_DOMINIO)
+  else if(tipo_obj==OBJ_DOMAIN)
   {
    /* Obtém a referência para o tipo de dado do domínio, caso um ponteiro válido seja retornado
       indica que o tipo de dado é um definido pelo usuário (classe Tipo) e que este precisa
       também ter as dependências obtidas */
-   ObjetoBase *tipo_usr=obterObjetoTipoPgSQL(dynamic_cast<Dominio *>(objeto)->obterTipo());
+   BaseObject *tipo_usr=obterObjetoTipoPgSQL(dynamic_cast<Dominio *>(objeto)->obterTipo());
    //obterObjeto(*dynamic_cast<Dominio *>(objeto)->obterTipo(), OBJETO_TIPO);
 
    if(tipo_usr)
     obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
   }
   //** Obtendo as dependências de Conversões de Codificação **
-  else if(tipo_obj==OBJETO_CONV_CODIFICACAO)
+  else if(tipo_obj==OBJ_CONVERSION)
   {
    //Obtém as dependências da função de conversão que define a conversão de codificação
    Funcao *func=dynamic_cast<ConversaoCodificacao *>(objeto)->obterFuncaoConversao();
    obterDependenciasObjeto(func, vet_deps, inc_dep_indiretas);
   }
   //** Obtendo as dependências de Conversões de Tipo **
-  else if(tipo_obj==OBJETO_CONV_TIPO)
+  else if(tipo_obj==OBJ_CAST)
   {
    ConversaoTipo *conv=dynamic_cast<ConversaoTipo *>(objeto);
-   ObjetoBase *tipo_usr=NULL;
+   BaseObject *tipo_usr=NULL;
 
    //Obtém as dependências dos tipos usados na conversão de tipo
    for(unsigned i=ConversaoTipo::CONV_TIPO_ORIGEM; i <= ConversaoTipo::CONV_TIPO_DESTINO; i++)
@@ -6550,10 +6550,10 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    obterDependenciasObjeto(conv->obterFuncaoConversao(), vet_deps, inc_dep_indiretas);
   }
   //** Obtendo as dependências de Funções **
-  else if(tipo_obj==OBJETO_FUNCAO)
+  else if(tipo_obj==OBJ_FUNCTION)
   {
    Funcao *func=dynamic_cast<Funcao *>(objeto);
-   ObjetoBase *tipo_usr=obterObjetoTipoPgSQL(func->obterTipoRetorno());
+   BaseObject *tipo_usr=obterObjetoTipoPgSQL(func->obterTipoRetorno());
      //obterObjeto(*func->obterTipoRetorno(), OBJETO_TIPO);
    unsigned qtd, i;
 
@@ -6589,10 +6589,10 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    }
   }
   //** Obtendo as dependências de Funções de Agregação **
-  else if(tipo_obj==OBJETO_FUNC_AGREGACAO)
+  else if(tipo_obj==OBJ_AGGREGATE)
   {
    FuncaoAgregacao *func=dynamic_cast<FuncaoAgregacao *>(objeto);
-   ObjetoBase *tipo_usr=NULL;
+   BaseObject *tipo_usr=NULL;
    unsigned qtd, i;
 
    //Obtém as dependências das funções que definem a função de agregação
@@ -6622,7 +6622,7 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    }
   }
   //** Obtendo as dependências de Linguagens **
-  else if(tipo_obj==OBJETO_LINGUAGEM)
+  else if(tipo_obj==OBJ_LANGUAGE)
   {
    Linguagem *ling=dynamic_cast<Linguagem *>(objeto);
 
@@ -6633,10 +6633,10 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    }
   }
   //** Obtendo as dependências de Operadores **
-  else if(tipo_obj==OBJETO_OPERADOR)
+  else if(tipo_obj==OBJ_OPERATOR)
   {
    Operador *oper=dynamic_cast<Operador *>(objeto);
-   ObjetoBase *tipo_usr=NULL;
+   BaseObject *tipo_usr=NULL;
    unsigned i;
 
    //Obtém as dependências das funções usadas pelo operador
@@ -6664,7 +6664,7 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    }
   }
   //** Obtendo as dependências de Papéis **
-  else if(tipo_obj==OBJETO_PAPEL)
+  else if(tipo_obj==OBJ_ROLE)
   {
    Papel *papel=dynamic_cast<Papel *>(objeto);
    unsigned i, i1, qtd,
@@ -6679,10 +6679,10 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    }
   }
   //** Obtendo as dependências de Relacionamentos **
-  else if(tipo_obj==OBJETO_RELACAO)
+  else if(tipo_obj==OBJ_RELATIONSHIP)
   {
    Relacionamento *rel=dynamic_cast<Relacionamento *>(objeto);
-   ObjetoBase *tipo_usr=NULL;
+   BaseObject *tipo_usr=NULL;
    Restricao *rest=NULL;
    unsigned i, qtd;
 
@@ -6714,17 +6714,17 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    }
   }
   //** Obtendo as dependências de Sequências **
-  else if(tipo_obj==OBJETO_SEQUENCIA)
+  else if(tipo_obj==OBJ_SEQUENCE)
   {
    Sequencia *seq=dynamic_cast<Sequencia *>(objeto);
    if(seq->obterPossuidora())
     obterDependenciasObjeto(seq->obterPossuidora()->obterTabelaPai(), vet_deps, inc_dep_indiretas);
   }
   //** Obtendo as dependências de Tabelas **
-  else if(tipo_obj==OBJETO_TABELA)
+  else if(tipo_obj==OBJ_TABLE)
   {
    Tabela *tab=dynamic_cast<Tabela *>(objeto);
-   ObjetoBase *tipo_usr=NULL;
+   BaseObject *tipo_usr=NULL;
    Restricao *rest=NULL;
    Gatilho *gat=NULL;
    Indice *ind=NULL;
@@ -6795,10 +6795,10 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    }
   }
   //** Obtendo as dependências de Tipos definidos pelo usuário **
-  else if(tipo_obj==OBJETO_TIPO)
+  else if(tipo_obj==OBJ_TYPE)
   {
    Tipo *tipo_usr=dynamic_cast<Tipo *>(objeto);
-   ObjetoBase *tipo_aux=NULL;
+   BaseObject *tipo_aux=NULL;
    unsigned qtd, i;
 
    //Caso o tipo de usuário seja tipo base
@@ -6831,7 +6831,7 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
    }
   }
   //** Obtendo as dependências de Visões **
-  else if(tipo_obj==OBJETO_VISAO)
+  else if(tipo_obj==OBJ_VIEW)
   {
    Visao *visao=dynamic_cast<Visao *>(objeto);
    unsigned i, qtd;
@@ -6847,16 +6847,16 @@ void ModeloBD::obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> 
  }
 }
 
-void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &vet_refs, bool modo_exclusao)
+void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &vet_refs, bool modo_exclusao)
 {
  vet_refs.clear();
 
  if(objeto)
  {
-  TipoObjetoBase tipo_obj=objeto->obterTipoObjeto();
+  ObjectType tipo_obj=objeto->obterTipoObjeto();
   bool refer=false;
 
-  if(tipo_obj==OBJETO_TABELA)
+  if(tipo_obj==OBJ_TABLE)
   {
    Tabela *tabela=dynamic_cast<Tabela *>(objeto);
    Sequencia *seq=NULL;
@@ -6864,7 +6864,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
    Tabela *tab=NULL;
    Gatilho *gat=NULL;
    RelacionamentoBase *rel_base=NULL;
-   vector<ObjetoBase *>::iterator itr, itr_end;
+   vector<BaseObject *>::iterator itr, itr_end;
    unsigned i, qtd;
 
    /* Vericando se existe algum relacionamento (tabela-tabela)
@@ -6964,14 +6964,14 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
    }
   }
 
-  if(tipo_obj==OBJETO_FUNCAO)
+  if(tipo_obj==OBJ_FUNCTION)
   {
    Funcao *funcao=dynamic_cast<Funcao *>(objeto);
-   vector<ObjetoBase *> *lista_obj=NULL;
-   vector<ObjetoBase *>::iterator itr, itr_end;
-   TipoObjetoBase tipos[7]={OBJETO_CONV_TIPO, OBJETO_CONV_CODIFICACAO,
-                            OBJETO_FUNC_AGREGACAO, OBJETO_OPERADOR,
-                            OBJETO_TABELA, OBJETO_TIPO, OBJETO_LINGUAGEM };
+   vector<BaseObject *> *lista_obj=NULL;
+   vector<BaseObject *>::iterator itr, itr_end;
+   ObjectType tipos[7]={OBJ_CAST, OBJ_CONVERSION,
+                            OBJ_AGGREGATE, OBJ_OPERATOR,
+                            OBJ_TABLE, OBJ_TYPE, OBJ_LANGUAGE };
    unsigned i, i1, qtd;
    Tabela *tab=NULL;
    FuncaoAgregacao *func_ag=NULL;
@@ -6989,7 +6989,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     itr=lista_obj->begin();
     itr_end=lista_obj->end();
 
-    if(tipos[i]==OBJETO_CONV_TIPO)
+    if(tipos[i]==OBJ_CAST)
     {
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
@@ -7002,7 +7002,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       itr++;
      }
     }
-    else if(tipos[i]==OBJETO_CONV_CODIFICACAO)
+    else if(tipos[i]==OBJ_CONVERSION)
     {
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
@@ -7015,7 +7015,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       itr++;
      }
     }
-    else if(tipos[i]==OBJETO_FUNC_AGREGACAO)
+    else if(tipos[i]==OBJ_AGGREGATE)
     {
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
@@ -7030,7 +7030,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       itr++;
      }
     }
-    else if(tipos[i]==OBJETO_OPERADOR)
+    else if(tipos[i]==OBJ_OPERATOR)
     {
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
@@ -7048,7 +7048,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       itr++;
      }
     }
-    else if(tipos[i]==OBJETO_TABELA)
+    else if(tipos[i]==OBJ_TABLE)
     {
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
@@ -7068,7 +7068,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       }
      }
     }
-    else if(tipos[i]==OBJETO_TIPO)
+    else if(tipos[i]==OBJ_TYPE)
     {
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
@@ -7087,7 +7087,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       }
      }
     }
-    else if(tipos[i]==OBJETO_LINGUAGEM)
+    else if(tipos[i]==OBJ_LANGUAGE)
     {
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
@@ -7107,14 +7107,14 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
    }
   }
 
-  if(tipo_obj==OBJETO_ESQUEMA)
+  if(tipo_obj==OBJ_SCHEMA)
   {
-   vector<ObjetoBase *> *lista_obj=NULL;
-   vector<ObjetoBase *>::iterator itr, itr_end;
-   TipoObjetoBase tipos[11]={OBJETO_FUNCAO, OBJETO_TABELA, OBJETO_VISAO,
-                             OBJETO_DOMINIO, OBJETO_FUNC_AGREGACAO, OBJETO_OPERADOR,
-                             OBJETO_SEQUENCIA, OBJETO_CONV_CODIFICACAO,
-                             OBJETO_TIPO, OBJETO_FAMILIA_OPER, OBJETO_CLASSE_OPER};
+   vector<BaseObject *> *lista_obj=NULL;
+   vector<BaseObject *>::iterator itr, itr_end;
+   ObjectType tipos[11]={OBJ_FUNCTION, OBJ_TABLE, OBJ_VIEW,
+                             OBJ_DOMAIN, OBJ_AGGREGATE, OBJ_OPERATOR,
+                             OBJ_SEQUENCE, OBJ_CONVERSION,
+                             OBJ_TYPE, OBJ_OPFAMILY, OBJ_OPCLASS};
    unsigned i;
 
    /* Varre todas as listas de objetos os quais pode pertencer a
@@ -7140,14 +7140,14 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
    }
   }
 
-  if(tipo_obj==OBJETO_TIPO || tipo_obj==OBJETO_DOMINIO ||
-     tipo_obj==OBJETO_SEQUENCIA || tipo_obj==OBJETO_TABELA)
+  if(tipo_obj==OBJ_TYPE || tipo_obj==OBJ_DOMAIN ||
+     tipo_obj==OBJ_SEQUENCE || tipo_obj==OBJ_TABLE)
   {
-   vector<ObjetoBase *> *lista_obj=NULL;
-   vector<ObjetoBase *>::iterator itr, itr_end;
-   TipoObjetoBase tipos[]={OBJETO_TABELA, OBJETO_CLASSE_OPER, OBJETO_CONV_TIPO,
-                           OBJETO_DOMINIO, OBJETO_FUNCAO, OBJETO_FUNC_AGREGACAO,
-                           OBJETO_OPERADOR, OBJETO_TIPO };
+   vector<BaseObject *> *lista_obj=NULL;
+   vector<BaseObject *>::iterator itr, itr_end;
+   ObjectType tipos[]={OBJ_TABLE, OBJ_OPCLASS, OBJ_CAST,
+                           OBJ_DOMAIN, OBJ_FUNCTION, OBJ_AGGREGATE,
+                           OBJ_OPERATOR, OBJ_TYPE };
    unsigned i, i1, qtd;
    ClasseOperadores *classe_op=NULL;
    Tabela *tab=NULL;
@@ -7166,9 +7166,9 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       base do pgsql.  */
    switch(tipo_obj)
    {
-    case OBJETO_TIPO: ptr_tipopgsql=dynamic_cast<Tipo*>(objeto); break;
-    case OBJETO_DOMINIO: ptr_tipopgsql=dynamic_cast<Dominio*>(objeto); break;
-    case OBJETO_SEQUENCIA: ptr_tipopgsql=dynamic_cast<Sequencia*>(objeto); break;
+    case OBJ_TYPE: ptr_tipopgsql=dynamic_cast<Tipo*>(objeto); break;
+    case OBJ_DOMAIN: ptr_tipopgsql=dynamic_cast<Dominio*>(objeto); break;
+    case OBJ_SEQUENCE: ptr_tipopgsql=dynamic_cast<Sequencia*>(objeto); break;
     default: ptr_tipopgsql=dynamic_cast<Tabela*>(objeto); break;
    }
 
@@ -7182,7 +7182,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     itr=lista_obj->begin();
     itr_end=lista_obj->end();
 
-    if(tipos[i]==OBJETO_TABELA)
+    if(tipos[i]==OBJ_TABLE)
     {
      //Verifica se as colunas das tabelas não referenciam o tipo
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
@@ -7205,7 +7205,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       }
      }
     }
-    else if(tipos[i]==OBJETO_CLASSE_OPER)
+    else if(tipos[i]==OBJ_OPCLASS)
     {
      /* Varre a lista de classe operadores e verifica se algum
         objeto referencia o tipo a ser excluído */
@@ -7223,7 +7223,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       }
      }
     }
-    else if(tipos[i]==OBJETO_DOMINIO)
+    else if(tipos[i]==OBJ_DOMAIN)
     {
      /* Varre a lista de domínios e verifica se algum
         objeto referencia o tipo a ser excluído */
@@ -7241,7 +7241,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       }
      }
     }
-    else if(tipos[i]==OBJETO_TIPO)
+    else if(tipos[i]==OBJ_TYPE)
     {
      /* Varre a lista de tipo definidos pelo usuário e verifica se algum
         objeto referencia o tipo a ser excluído */
@@ -7260,7 +7260,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       }
      }
     }
-    else if(tipos[i]==OBJETO_FUNC_AGREGACAO)
+    else if(tipos[i]==OBJ_AGGREGATE)
     {
      /* Varre a lista de funções agregadas e verifica se algum
         objeto referencia o tipo a ser excluído */
@@ -7283,7 +7283,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       }
      }
     }
-    else if(tipos[i]==OBJETO_FUNCAO)
+    else if(tipos[i]==OBJ_FUNCTION)
     {
      /* Varre a lista de funções e verifica se algum
         objeto (parâmetros e tipo de retorno) referencia
@@ -7316,7 +7316,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       }
      }
     }
-    else if(tipos[i]==OBJETO_OPERADOR)
+    else if(tipos[i]==OBJ_OPERATOR)
     {
      /* Varre a lista de operadores e verifica se algum
         objeto referencia o tipo a ser excluído */
@@ -7335,7 +7335,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       }
      }
     }
-    else if(tipos[i]==OBJETO_CONV_TIPO)
+    else if(tipos[i]==OBJ_CAST)
     {
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
@@ -7355,15 +7355,15 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
    }
   }
 
-  if(tipo_obj==OBJETO_PAPEL)
+  if(tipo_obj==OBJ_ROLE)
   {
-   vector<ObjetoBase *> *lista_obj=NULL;
-   vector<ObjetoBase *>::iterator itr, itr_end;
-   TipoObjetoBase tipos[13]={OBJETO_FUNCAO, OBJETO_TABELA, OBJETO_DOMINIO,
-                             OBJETO_FUNC_AGREGACAO, OBJETO_ESQUEMA, OBJETO_OPERADOR,
-                             OBJETO_SEQUENCIA, OBJETO_CONV_CODIFICACAO,
-                             OBJETO_LINGUAGEM, OBJETO_ESPACO_TABELA,
-                             OBJETO_TIPO, OBJETO_FAMILIA_OPER, OBJETO_CLASSE_OPER};
+   vector<BaseObject *> *lista_obj=NULL;
+   vector<BaseObject *>::iterator itr, itr_end;
+   ObjectType tipos[13]={OBJ_FUNCTION, OBJ_TABLE, OBJ_DOMAIN,
+                             OBJ_AGGREGATE, OBJ_SCHEMA, OBJ_OPERATOR,
+                             OBJ_SEQUENCE, OBJ_CONVERSION,
+                             OBJ_LANGUAGE, OBJ_TABLESPACE,
+                             OBJ_TYPE, OBJ_OPFAMILY, OBJ_OPCLASS};
    unsigned i,i1, qtd;
    Papel *papel_aux=NULL;
    Papel *papel=dynamic_cast<Papel *>(objeto);
@@ -7428,9 +7428,9 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
    }
   }
 
-  if(tipo_obj==OBJETO_ESPACO_TABELA)
+  if(tipo_obj==OBJ_TABLESPACE)
   {
-   vector<ObjetoBase *>::iterator itr, itr_end;
+   vector<BaseObject *>::iterator itr, itr_end;
    unsigned i, qtd;
    Tabela *tab=NULL;
    Indice *ind=NULL;
@@ -7483,16 +7483,16 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     itr++;
    }
 
-   if((!modo_exclusao || (modo_exclusao && !refer)) && this->ObjetoBase::obterEspacoTabela()==objeto)
+   if((!modo_exclusao || (modo_exclusao && !refer)) && this->BaseObject::obterEspacoTabela()==objeto)
    {
     refer=true;
     vet_refs.push_back(this);
    }
   }
 
-  if(tipo_obj==OBJETO_LINGUAGEM)
+  if(tipo_obj==OBJ_LANGUAGE)
   {
-   vector<ObjetoBase *>::iterator itr, itr_end;
+   vector<BaseObject *>::iterator itr, itr_end;
    Funcao *func=NULL;
 
    /* Varre a lista de funções e verifica se estas
@@ -7513,13 +7513,13 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
    }
   }
 
-  if(tipo_obj==OBJETO_OPERADOR)
+  if(tipo_obj==OBJ_OPERATOR)
   {
-   vector<ObjetoBase *> *lista_obj=NULL;
-   vector<ObjetoBase *>::iterator itr, itr_end;
-   TipoObjetoBase tipos[3]={OBJETO_CLASSE_OPER,
-                            OBJETO_FUNC_AGREGACAO,
-                            OBJETO_OPERADOR};
+   vector<BaseObject *> *lista_obj=NULL;
+   vector<BaseObject *>::iterator itr, itr_end;
+   ObjectType tipos[3]={OBJ_OPCLASS,
+                            OBJ_AGGREGATE,
+                            OBJ_OPERATOR};
    unsigned i, i1, qtd;
    ClasseOperadores *classe_op=NULL;
    Operador *oper=NULL, *operador=dynamic_cast<Operador *>(objeto);
@@ -7533,7 +7533,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
     itr=lista_obj->begin();
     itr_end=lista_obj->end();
 
-    if(tipos[i]==OBJETO_CLASSE_OPER)
+    if(tipos[i]==OBJ_OPCLASS)
     {
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
@@ -7554,7 +7554,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       }
      }
     }
-    else if(tipos[i]==OBJETO_FUNC_AGREGACAO)
+    else if(tipos[i]==OBJ_AGGREGATE)
     {
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
@@ -7566,7 +7566,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
       itr++;
      }
     }
-    else if(tipos[i]==OBJETO_OPERADOR)
+    else if(tipos[i]==OBJ_OPERATOR)
     {
      while(itr!=itr_end && !refer)
      {
@@ -7590,9 +7590,9 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
    }
   }
 
-  if(tipo_obj==OBJETO_FAMILIA_OPER)
+  if(tipo_obj==OBJ_OPFAMILY)
   {
-   vector<ObjetoBase *>::iterator itr, itr_end;
+   vector<BaseObject *>::iterator itr, itr_end;
    FamiliaOperadores *familia_op=dynamic_cast<FamiliaOperadores *>(objeto);
 
    /* Varre a lista de classe de operadores e verifica se um
@@ -7611,12 +7611,12 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
    }
   }
 
-  if(tipo_obj==OBJETO_COLUNA)
+  if(tipo_obj==OBJ_COLUMN)
   {
    Coluna *coluna=dynamic_cast<Coluna *>(objeto);
-   vector<ObjetoBase *> *lista_obj=NULL;
-   vector<ObjetoBase *>::iterator itr, itr_end;
-   TipoObjetoBase  tipos_obj[]={ OBJETO_SEQUENCIA, OBJETO_VISAO, OBJETO_TABELA, OBJETO_RELACAO };
+   vector<BaseObject *> *lista_obj=NULL;
+   vector<BaseObject *>::iterator itr, itr_end;
+   ObjectType  tipos_obj[]={ OBJ_SEQUENCE, OBJ_VIEW, OBJ_TABLE, OBJ_RELATIONSHIP };
    unsigned i, qtd=4;
 
    for(i=0; i < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i++)
@@ -7636,13 +7636,13 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
         Caso 2: o tipo atual seja visão, faz o cast para a classe
         e chama do método da visão o qual retorna se a coluna
         é referenciada pelo elementos da visão. */
-     if((tipos_obj[i]==OBJETO_SEQUENCIA && dynamic_cast<Sequencia *>(*itr)->obterPossuidora()==coluna) ||
-        (tipos_obj[i]==OBJETO_VISAO && dynamic_cast<Visao *>(*itr)->referenciaColuna(coluna)))
+     if((tipos_obj[i]==OBJ_SEQUENCE && dynamic_cast<Sequencia *>(*itr)->obterPossuidora()==coluna) ||
+        (tipos_obj[i]==OBJ_VIEW && dynamic_cast<Visao *>(*itr)->referenciaColuna(coluna)))
      {
       refer=true;
       vet_refs.push_back(*itr);
      }
-     else if(tipos_obj[i]==OBJETO_TABELA)
+     else if(tipos_obj[i]==OBJ_TABLE)
      {
       Tabela *tab=dynamic_cast<Tabela *>(*itr);
       unsigned qtd_gat, qtd_rest, idx, qtd1, i1;
@@ -7675,7 +7675,7 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
        }
       }
      }
-     else if(tipos_obj[i]==OBJETO_RELACAO)
+     else if(tipos_obj[i]==OBJ_RELATIONSHIP)
      {
       Relacionamento *rel=dynamic_cast<Relacionamento *>(*itr);
       unsigned qtd_rest, idx;
@@ -7701,11 +7701,11 @@ void ModeloBD::obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &
 
 void ModeloBD::definirObjetosModificados(void)
 {
- TipoObjetoBase tipos[]={OBJETO_TABELA, OBJETO_VISAO,
-                         OBJETO_RELACAO, OBJETO_RELACAO_BASE,
-                         OBJETO_CAIXA_TEXTO};
- vector<ObjetoBase *>::iterator itr, itr_end;
- vector<ObjetoBase *> *lista_obj=NULL;
+ ObjectType tipos[]={OBJ_TABLE, OBJ_VIEW,
+                         OBJ_RELATIONSHIP, BASE_RELATIONSHIP,
+                         OBJ_TEXTBOX};
+ vector<BaseObject *>::iterator itr, itr_end;
+ vector<BaseObject *> *lista_obj=NULL;
  CaixaTexto *rot=NULL;
  RelacionamentoBase *rel=NULL;
  unsigned i, i1;
@@ -7723,7 +7723,7 @@ void ModeloBD::definirObjetosModificados(void)
    /* Caso especial: Caso o objeto seja um relacionamento, os rótulos
       do mesmo que são caixas de texto, devem também ser marcados
       como modificado */
-   if(tipos[i]==OBJETO_RELACAO || tipos[i]==OBJETO_RELACAO_BASE)
+   if(tipos[i]==OBJ_RELATIONSHIP || tipos[i]==BASE_RELATIONSHIP)
    {
     rel=dynamic_cast<RelacionamentoBase *>(*itr);
     for(i1=0; i1 < 3; i1++)
@@ -7738,24 +7738,24 @@ void ModeloBD::definirObjetosModificados(void)
  }
 }
 
-ObjetoBase *ModeloBD::obterObjetoTipoPgSQL(TipoPgSQL tipo)
+BaseObject *ModeloBD::obterObjetoTipoPgSQL(TipoPgSQL tipo)
 {
  switch(tipo.obterConfTipoUsuario())
  {
   case ConfigTipoUsuario::TIPO_BASE:
-   return(this->obterObjeto(*tipo, OBJETO_TIPO));
+   return(this->obterObjeto(*tipo, OBJ_TYPE));
   break;
 
   case ConfigTipoUsuario::TIPO_DOMINIO:
-   return(this->obterObjeto(*tipo, OBJETO_DOMINIO));
+   return(this->obterObjeto(*tipo, OBJ_DOMAIN));
   break;
 
   case ConfigTipoUsuario::TIPO_TABELA:
-   return(this->obterObjeto(*tipo, OBJETO_TABELA));
+   return(this->obterObjeto(*tipo, OBJ_TABLE));
   break;
 
   case ConfigTipoUsuario::TIPO_SEQUENCIA:
-   return(this->obterObjeto(*tipo, OBJETO_SEQUENCIA));
+   return(this->obterObjeto(*tipo, OBJ_SEQUENCE));
   break;
 
   default:

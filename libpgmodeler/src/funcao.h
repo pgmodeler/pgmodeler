@@ -50,7 +50,7 @@ class Parametro: public Coluna {
   void operator = (const Parametro &param);
 };
 
-class Funcao: public ObjetoBase {
+class Funcao: public BaseObject {
  private:
   //Assinatura da função
   QString assinatura;
@@ -65,7 +65,7 @@ class Funcao: public ObjetoBase {
   QString codigo_fonte;
 
   //Linguagem em que foi escrita a função
-  ObjetoBase *linguagem;
+  BaseObject *linguagem;
 
   //Parâmetros da função
   vector<Parametro> params;
@@ -115,7 +115,7 @@ class Funcao: public ObjetoBase {
   void definirNome(const QString &nome);
 
   //Define o esquema ao qual a função faz parte
-  void definirEsquema(ObjetoBase *esquema);
+  void definirEsquema(BaseObject *esquema);
 
   //Adiciona um parâmetr  função (com nome e tipo especificados)
   void adicionarParametro(Parametro param);
@@ -133,7 +133,7 @@ class Funcao: public ObjetoBase {
   void definirSimbolo(const QString &simbolo);
 
   //Define a linguagem que a função usará como base
-  void definirLinguagem(ObjetoBase *linguagem);
+  void definirLinguagem(BaseObject *linguagem);
 
   //Define o custo de execução da função
   void definirCustoExecucao(unsigned custo);
@@ -169,7 +169,7 @@ class Funcao: public ObjetoBase {
   QString obterSimbolo(void);
 
   //Retorna o nome da linguagem usada pela função
-  ObjetoBase *obterLinguagem(void);
+  BaseObject *obterLinguagem(void);
 
   //Retorna o número de parâmetros da função
   unsigned obterNumParams(void);

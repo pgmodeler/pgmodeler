@@ -2,7 +2,7 @@
 
 ClasseOperadores::ClasseOperadores(void)
 {
- tipo_objeto=OBJETO_CLASSE_OPER;
+ tipo_objeto=OBJ_OPCLASS;
  familia=NULL;
  padrao=false;
  atributos[ParsersAttributes::FAMILY]="";
@@ -162,6 +162,6 @@ QString ClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def, bool forma_red
   atributos[ParsersAttributes::FAMILY]=familia->obterNome(true);
  }
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }
 

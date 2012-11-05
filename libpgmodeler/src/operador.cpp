@@ -4,7 +4,7 @@ Operador::Operador(void)
 {
  unsigned i;
 
- tipo_objeto=OBJETO_OPERADOR;
+ tipo_objeto=OBJ_OPERATOR;
 
  for(i=0; i < 3; i++)
   funcoes[i]=NULL;
@@ -94,14 +94,14 @@ void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
   if(!funcao)
     throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->obterNome(true)))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_OPERADOR)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_OPERATOR)),
                   ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Caso o número de parâmetros da função seja inválido. Para operadores
      a mesma deve possuir 1 ou 2 parâmetros */
   else if(funcao->obterNumParams()==0 || funcao->obterNumParams() > 2)
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_OPERADOR)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_OPERATOR)),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
@@ -326,6 +326,6 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  atributos[ParsersAttributes::MERGES]=(merges ? "1" : "");
  atributos[ParsersAttributes::SIGNATURE]=obterAssinatura();
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }
 

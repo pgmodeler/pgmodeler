@@ -4,7 +4,7 @@ Indice::Indice(void)
 {
  atrib_indice[UNIQUE]=false;
  atrib_indice[CONCORRENTE]=false;
- tipo_objeto=OBJETO_INDICE;
+ tipo_objeto=OBJ_INDEX;
  fator_preenc=90;
  atributos[ParsersAttributes::UNIQUE]="";
  atributos[ParsersAttributes::CONCURRENT]="";
@@ -111,7 +111,7 @@ void Indice::adicionarElemento(Coluna *coluna, ClasseOperadores *classe_oper, bo
  {
  throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
                         .arg(QString::fromUtf8(this->obterNome()))
-                        .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_INDICE)),
+                        .arg(BaseObject::obterNomeTipoObjeto(OBJ_INDEX)),
                ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  else
@@ -265,6 +265,6 @@ QString Indice::obterDefinicaoObjeto(unsigned tipo_def)
  if(!referenciaColunaIncRelacao())
   atributos[ParsersAttributes::DECL_IN_TABLE]="1";
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 

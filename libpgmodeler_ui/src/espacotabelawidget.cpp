@@ -1,9 +1,9 @@
 #include "espacotabelawidget.h"
 
-EspacoTabelaWidget::EspacoTabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_ESPACO_TABELA)
+EspacoTabelaWidget::EspacoTabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TABLESPACE)
 {
  Ui_EspacoTabelaWidget::setupUi(this);
- configurarLayouFormulario(espacotabela_grid, OBJETO_ESPACO_TABELA);
+ configurarLayouFormulario(espacotabela_grid, OBJ_TABLESPACE);
 
  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
 

@@ -38,23 +38,23 @@ class TabelaWidget: public ObjetoBaseWidget, public Ui::TabelaWidget {
    unsigned qtd_operacoes;
 
    //Armazena as tabelas de objetos filhos da tabela (colunas, restrições, índices, etc)
-   map<TipoObjetoBase, TabelaObjetosWidget *> mapa_tab_objetos;
+   map<ObjectType, TabelaObjetosWidget *> mapa_tab_objetos;
 
    /* Lista os objetos do relacionamento na tabela respectiva, de acordo
       com o tipo do objeto passado */
-   void listarObjetos(TipoObjetoBase tipo_obj);
+   void listarObjetos(ObjectType tipo_obj);
 
    //Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
    void exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin);
 
    //Seleciona a tabela de objetos de acordo com o tipo passado
-   TabelaObjetosWidget *selecionarTabelaObjetos(TipoObjetoBase tipo_obj);
+   TabelaObjetosWidget *selecionarTabelaObjetos(ObjectType tipo_obj);
 
    //Seleciona o tipo de objeto de acordo com o objeto sender informado
-   TipoObjetoBase selecionarTipoObjeto(QObject *tab_sender);
+   ObjectType selecionarTipoObjeto(QObject *tab_sender);
 
    //Exibe o formulário de edição de objetos de tabela conforme o tipo passado
-   void exibirFormObjetoTabela(TipoObjetoBase tipo_obj);
+   void exibirFormObjetoTabela(ObjectType tipo_obj);
 
  public:
    TabelaWidget(QWidget * parent = 0);

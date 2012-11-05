@@ -3,7 +3,7 @@
 
 extern ParametroWidget *parametro_wgt;
 
-TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TIPO)
+TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TYPE)
 {
  try
  {
@@ -15,7 +15,7 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TIPO)
   unsigned i;
 
   Ui_TipoWidget::setupUi(this);
-  configurarLayouFormulario(tipo_grid, OBJETO_TIPO);
+  configurarLayouFormulario(tipo_grid, OBJ_TYPE);
 
   //Aloca os widgets de configuração de tipos
   tipo_copia=NULL;
@@ -35,7 +35,7 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TIPO)
   for(i=Tipo::FUNCAO_INPUT; i <= Tipo::FUNCAO_ANALYZE; i++)
   {
    sel_funcoes[i]=NULL;
-   sel_funcoes[i]=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
+   sel_funcoes[i]=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
    grid->addWidget(sel_funcoes[i],i,1,1,1);
   }
 

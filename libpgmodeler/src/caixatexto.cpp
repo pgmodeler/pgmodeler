@@ -3,7 +3,7 @@
 CaixaTexto::CaixaTexto(void)
 {
  definirComentario(" ");
- tipo_objeto=OBJETO_CAIXA_TEXTO;
+ tipo_objeto=OBJ_TEXTBOX;
  atributo_texto[0]=atributo_texto[1]=atributo_texto[2]=false;
  atributos[ParsersAttributes::ITALIC]="";
  atributos[ParsersAttributes::BOLD]="";
@@ -27,7 +27,7 @@ QString CaixaTexto::obterDefinicaoObjeto(void)
  if(cor_texto.name()!="#000000")
   atributos[ParsersAttributes::COLOR]=cor_texto.name();
 
- return(this->ObjetoBase::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION));
+ return(this->BaseObject::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION));
 }
 
 void CaixaTexto::operator = (CaixaTexto &caixa)

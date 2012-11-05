@@ -34,14 +34,14 @@ class Operacao {
      como colunas, indices, restrições, regras. Para os demais
      tipos de objeto não há necessidade de se usar este atributo
      pois o objeto pai dos demais objetos será o modelo de objetos */
-  ObjetoBase *obj_pai;
+  BaseObject *obj_pai;
 
   //Referência ao objeto no pool (objeto copiado)
-  ObjetoBase *obj_pool;
+  BaseObject *obj_pool;
 
   /* Referência ao objeto gerador da operação. Este atributo é
      usado no método atualizarIndicesObjeto() da lista de operações */
-  ObjetoBase *obj_gerador;
+  BaseObject *obj_gerador;
 
   /* Armazena a definição XML do objeto para casos especiais de
      restuarar objetos os quais referenciam colunas criadas por
@@ -91,13 +91,13 @@ class ListaOperacoes: public QObject {
   bool anular_enc;
 
   //Lista de objetos excluídos / modificado no modelo
-  vector<ObjetoBase *> pool_objetos;
+  vector<BaseObject *> pool_objetos;
 
   /* Lista de objetos que no momento da exclusão do pool ainda eram referenciados
      de algum modo no modelo. Os mesmo são armazenados nesta lista secundária e
      excluídos quando a lista de operações objeto da lista
      em si é destruído */
-  vector<ObjetoBase *> objs_nao_excluidos;
+  vector<BaseObject *> objs_nao_excluidos;
 
   //Lista de operações executadas pelo usuário
   vector<Operacao *> operacoes;
@@ -124,10 +124,10 @@ class ListaOperacoes: public QObject {
   void validarOperacoes(void);
 
   //Verifica se o objeto passado encontra-se no pool
-  bool objetoNoPool(ObjetoBase *objeto);
+  bool objetoNoPool(BaseObject *objeto);
 
   //Adiciona o objeto no pool de acordo com o tipo da operação informado
-  void adicionarObjetoPool(ObjetoBase *objeto, unsigned tipo_op);
+  void adicionarObjetoPool(BaseObject *objeto, unsigned tipo_op);
 
   /* Remove um objeto do pool através de seu índice efetuando a desalocação caso
      nenhum objeto esteja referenciando o mesmo */
@@ -179,7 +179,7 @@ class ListaOperacoes: public QObject {
   void removerOperacoes(void);
 
   //Obtém os dados da operação no índice especificado
-  void obterDadosOperacao(unsigned idx_oper, unsigned &tipo_oper, QString &nome_obj, TipoObjetoBase &tipo_obj);
+  void obterDadosOperacao(unsigned idx_oper, unsigned &tipo_oper, QString &nome_obj, ObjectType &tipo_obj);
 
   //Define o tamanho máximo da lista
   static void definirTamanhoMaximo(unsigned tam_max);
@@ -190,7 +190,7 @@ class ListaOperacoes: public QObject {
      sofra qualquer operação no modelo. Caso este método seja chamado após uma operação sobre o
      objeto, a ordem de restauração/reexecução de operações pode ser quebrada
      ocasionando em segmentations fault. */
-  void adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int idx_objeto=-1, ObjetoBase *objeto_pai=NULL);
+  void adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int idx_objeto=-1, BaseObject *objeto_pai=NULL);
 
   //Obtém o tamanho máximo da lista
   unsigned obterTamanhoMaximo(void);
@@ -223,7 +223,7 @@ class ListaOperacoes: public QObject {
      este método atualiza o índice do objeto com o novo valor para que as operações
      as quais referenciam tal objeto não seja executadas de forma incorreta usando
      o índice anterior */
-  void atualizarIndiceObjeto(ObjetoBase *objeto, unsigned idx_novo);
+  void atualizarIndiceObjeto(BaseObject *objeto, unsigned idx_novo);
 
   signals:
    //Sinal disparado para cada operação encadeada que for executada
@@ -237,10 +237,10 @@ class ListaOperacoes: public QObject {
    caso ambos estejam alocados.
    -- Sintaxe no estilo  brainfuck! :p -- */
 template <class Classe>
-void copiarObjeto(ObjetoBase **pobj_orig, Classe *obj_copia);
+void copiarObjeto(BaseObject **pobj_orig, Classe *obj_copia);
 
 /* Esta função apenas chama a função modelo acima fazendo o dynamic_cast correto,
    de acordo com o tipo passado */
-void copiarObjeto(ObjetoBase **pobj_orig, ObjetoBase *obj_copia, TipoObjetoBase tipo);
+void copiarObjeto(BaseObject **pobj_orig, BaseObject *obj_copia, ObjectType tipo);
 
 #endif

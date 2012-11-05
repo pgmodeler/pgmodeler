@@ -135,8 +135,8 @@ void FormExportacao::exportarModelo(void)
    unsigned i, qtd;
    bool bd_criado=false;
    int idx_objs[]={-1, -1};
-   TipoObjetoBase vet_tipos[]={OBJETO_PAPEL, OBJETO_ESPACO_TABELA};
-   ObjetoBase *objeto=NULL;
+   ObjectType vet_tipos[]={OBJ_ROLE, OBJ_TABLESPACE};
+   BaseObject *objeto=NULL;
    vector<Exception> vet_erros;
 
 

@@ -1,6 +1,6 @@
 #include "funcaoagregacaowidget.h"
 
-FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_FUNC_AGREGACAO)
+FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_AGGREGATE)
 {
  try
  {
@@ -22,9 +22,9 @@ FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(
   sel_func_transicao=NULL;
   sel_op_ordenacao=NULL;
 
-  sel_func_final=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
-  sel_func_transicao=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
-  sel_op_ordenacao=new SeletorObjetoWidget(OBJETO_OPERADOR, true, this);
+  sel_func_final=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
+  sel_func_transicao=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
+  sel_op_ordenacao=new SeletorObjetoWidget(OBJ_OPERATOR, true, this);
 
   //Alocando os widgets de configuração de tipo pgsql
   tipo_entrada=NULL;
@@ -63,7 +63,7 @@ FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(
   funcaoagregacao_grid->addWidget(frame, funcaoagregacao_grid->count()+1, 0, 1, 2);
   frame->setParent(this);
 
-  configurarLayouFormulario(funcaoagregacao_grid, OBJETO_FUNC_AGREGACAO);
+  configurarLayouFormulario(funcaoagregacao_grid, OBJ_AGGREGATE);
 
   janela_pai->setMinimumSize(645, 750);
 

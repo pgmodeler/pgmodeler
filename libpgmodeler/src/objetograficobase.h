@@ -27,7 +27,7 @@
 #include <QPointF>
 #include "objetobase.h"
 
-class ObjetoGraficoBase: public QObject, public ObjetoBase {
+class ObjetoGraficoBase: public QObject, public BaseObject {
  Q_OBJECT
 
  private:

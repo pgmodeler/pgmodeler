@@ -4,7 +4,7 @@ extern VisaoObjetosWidget *selecaoobjetos_wgt;
 
 QObject *SeletorObjetoWidget::seletor_atual=NULL;
 
-SeletorObjetoWidget::SeletorObjetoWidget(TipoObjetoBase tipo_obj_seletor, bool inst_destaque_txt, QWidget *parent): QWidget(parent)
+SeletorObjetoWidget::SeletorObjetoWidget(ObjectType tipo_obj_seletor, bool inst_destaque_txt, QWidget *parent): QWidget(parent)
 {
  try
  {
@@ -33,7 +33,7 @@ SeletorObjetoWidget::SeletorObjetoWidget(TipoObjetoBase tipo_obj_seletor, bool i
 
   connect(sel_objeto_tb, SIGNAL(clicked(bool)), this, SLOT(exibirSelecaoObjetos(void)));
   connect(rem_objeto_tb, SIGNAL(clicked(bool)), this, SLOT(removerObjetoSelecionado(void)));
-  connect(selecaoobjetos_wgt, SIGNAL(s_visibilityChanged(ObjetoBase*,bool)), this, SLOT(exibirObjetoSelecionado(ObjetoBase*, bool)));
+  connect(selecaoobjetos_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(exibirObjetoSelecionado(BaseObject*, bool)));
  }
  catch(Exception &e)
  {
@@ -42,14 +42,14 @@ SeletorObjetoWidget::SeletorObjetoWidget(TipoObjetoBase tipo_obj_seletor, bool i
  }
 }
 
-ObjetoBase *SeletorObjetoWidget::obterObjeto(void)
+BaseObject *SeletorObjetoWidget::obterObjeto(void)
 {
  return(objeto);
 }
 
-void SeletorObjetoWidget::definirObjeto(ObjetoBase *objeto)
+void SeletorObjetoWidget::definirObjeto(BaseObject *objeto)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
  QString nome_obj;
 
  //Caso o objeto esteja alocado
@@ -60,17 +60,17 @@ void SeletorObjetoWidget::definirObjeto(ObjetoBase *objeto)
 
   /* Dependendo do tipo do objeto obtém o nome ou assinatura
      do mesmo com o método correto. */
-  if(tipo_obj==OBJETO_FUNCAO)
+  if(tipo_obj==OBJ_FUNCTION)
    nome_obj=dynamic_cast<Funcao *>(objeto)->obterAssinatura();
-  else if(tipo_obj==OBJETO_OPERADOR)
+  else if(tipo_obj==OBJ_OPERATOR)
    nome_obj=dynamic_cast<Operador *>(objeto)->obterAssinatura();
   /* Formatando o nome do objeto caso o mesmo seja um objeto de tabela.
      nesse modo o nome será exibido da seguinte forma:
      esquema.tabela.objeto */
-  else if(tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO || tipo_obj==OBJETO_REGRA ||
-     tipo_obj==OBJETO_GATILHO ||tipo_obj==OBJETO_INDICE)
+  else if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT || tipo_obj==OBJ_RULE ||
+     tipo_obj==OBJ_TRIGGER ||tipo_obj==OBJ_INDEX)
   {
-   ObjetoBase *tab_pai=dynamic_cast<ObjetoTabela *>(objeto)->obterTabelaPai();
+   BaseObject *tab_pai=dynamic_cast<ObjetoTabela *>(objeto)->obterTabelaPai();
    if(tab_pai)
    {
    /*if(tab_pai->obterEsquema())
@@ -111,7 +111,7 @@ void SeletorObjetoWidget::definirModelo(ModeloBD *modelo)
  this->modelo=modelo;
 }
 
-void SeletorObjetoWidget::exibirObjetoSelecionado(ObjetoBase *obj_sel, bool)
+void SeletorObjetoWidget::exibirObjetoSelecionado(BaseObject *obj_sel, bool)
 {
  /* Caso se tente atribuir um objeto ao seletor é necessário verificar
     se o seletor atual (em foco) é o mesmo que chamou o método pois

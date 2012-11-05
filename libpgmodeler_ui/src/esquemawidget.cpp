@@ -1,8 +1,8 @@
 #include "esquemawidget.h"
 
-EsquemaWidget::EsquemaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_ESQUEMA)
+EsquemaWidget::EsquemaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_SCHEMA)
 {
- configurarLayouFormulario(NULL, OBJETO_ESQUEMA);
+ configurarLayouFormulario(NULL, OBJ_SCHEMA);
 
  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
 

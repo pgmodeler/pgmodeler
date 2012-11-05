@@ -7,7 +7,7 @@ Gatilho::Gatilho(void)
 
  funcao=NULL;
  por_linha=false;
- tipo_objeto=OBJETO_GATILHO;
+ tipo_objeto=OBJ_TRIGGER;
  tabela_ref=NULL;
 
  for(i=0; i < 4; i++)
@@ -75,7 +75,7 @@ void Gatilho::definirFuncao(Funcao *funcao)
   //Dispara exceção relatando o erro
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_GATILHO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_TRIGGER)),
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -88,7 +88,7 @@ void Gatilho::definirFuncao(Funcao *funcao)
    //Dispara exceção relatando o erro
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_GATILHO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_TRIGGER)),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
    this->funcao=funcao;
@@ -216,11 +216,11 @@ void Gatilho::removerColunas(void)
  colunas_upd.clear();
 }
 
-void Gatilho::definirTabReferenciada(ObjetoBase *tabela_ref)
+void Gatilho::definirTabReferenciada(BaseObject *tabela_ref)
 {
  /* Caso a tabela referenciada a ser atribuída esteja alocada, porém
     seu tipo não seja OBJETO_TABELA, isso gera um erro */
- if(tabela_ref && tabela_ref->obterTipoObjeto()!=OBJETO_TABELA)
+ if(tabela_ref && tabela_ref->obterTipoObjeto()!=OBJ_TABLE)
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Atribui a tabela referenciada ao gatilho
@@ -237,7 +237,7 @@ void Gatilho::definirPostergavel(bool valor)
  postergavel=valor;
 }
 
-ObjetoBase *Gatilho::obterTabReferenciada(void)
+BaseObject *Gatilho::obterTabReferenciada(void)
 {
  return(tabela_ref);
 }
@@ -355,6 +355,6 @@ QString Gatilho::obterDefinicaoObjeto(unsigned tipo_def)
   atributos[ParsersAttributes::DEFER_TYPE]=(~tipo_postergacao);
  }
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 

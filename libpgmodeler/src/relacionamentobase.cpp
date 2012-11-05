@@ -48,7 +48,7 @@ RelacionamentoBase::RelacionamentoBase(/*const QString &nome,*/ unsigned tipo_re
 
 void RelacionamentoBase::configurarRelacionamento(void)
 {
- tipo_objeto=OBJETO_RELACAO_BASE;
+ tipo_objeto=BASE_RELATIONSHIP;
 
  atributos[ParsersAttributes::TYPE]="";
  atributos[ParsersAttributes::SRC_REQUIRED]="";
@@ -80,7 +80,7 @@ void RelacionamentoBase::configurarRelacionamento(void)
    if(!tabela_orig || !tabela_dest)
     throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_TABLE)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RELACAO_BASE)),
+                         .arg(BaseObject::obterNomeTipoObjeto(BASE_RELATIONSHIP)),
                   ERR_ASG_NOT_ALOC_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    /* Caso o tipo de relacionamento seja de generalização ou de dependência
@@ -297,7 +297,7 @@ void RelacionamentoBase::definirAtributosRelacionamento(void)
   case RELACIONAMENTO_NN: atributos[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_NN; break;
   case RELACIONAMENTO_GEN: atributos[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_GEN; break;
   default:
-    if(tabela_orig->obterTipoObjeto()==OBJETO_VISAO)
+    if(tabela_orig->obterTipoObjeto()==OBJ_VIEW)
      atributos[ParsersAttributes::TYPE]=ParsersAttributes::RELATION_TAB_VIEW;
     else
      atributos[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_DEP;
@@ -349,7 +349,7 @@ QString RelacionamentoBase::obterDefinicaoObjeto(void)
 
  definirAtributosRelacionamento();
  forma_reduzida=atributos[ParsersAttributes::POINTS].isEmpty();
- return(ObjetoBase::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION,forma_reduzida));
+ return(BaseObject::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION,forma_reduzida));
 }
 
 void RelacionamentoBase::definirPontos(const vector<QPointF> &pontos)

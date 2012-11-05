@@ -2,14 +2,14 @@
 #include "visaoobjetoswidget.h"
 extern VisaoObjetosWidget *selecaoobjetos_wgt;
 
-PapelWidget::PapelWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_PAPEL)
+PapelWidget::PapelWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_ROLE)
 {
  TabelaObjetosWidget *tab_obj=NULL;
  QGridLayout *grid=NULL;
  unsigned i;
 
  Ui_PapelWidget::setupUi(this);
- configurarLayouFormulario(papel_grid, OBJETO_PAPEL);
+ configurarLayouFormulario(papel_grid, OBJ_ROLE);
 
  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
  connect(membros_twg, SIGNAL(currentChanged(int)), this, SLOT(configurarSelecaoPapeis(void)));
@@ -81,7 +81,7 @@ void PapelWidget::configurarSelecaoPapeis(void)
 
 void PapelWidget::selecionarPapelMembro(void)
 {
- selecaoobjetos_wgt->definirObjetoVisivel(OBJETO_PAPEL, true);
+ selecaoobjetos_wgt->definirObjetoVisivel(OBJ_ROLE, true);
  selecaoobjetos_wgt->definirModelo(this->modelo);
  selecaoobjetos_wgt->show();
 }
@@ -147,7 +147,7 @@ void PapelWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, P
  //Preenche a tabela de membros do papel
  preencherTabelaMembros();
 
- connect(selecaoobjetos_wgt, SIGNAL(s_visibilityChanged(ObjetoBase*,bool)), this, SLOT(exibirDadosPapelSelecionado(void)));
+ connect(selecaoobjetos_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(exibirDadosPapelSelecionado(void)));
  configurarSelecaoPapeis();
 }
 
@@ -246,7 +246,7 @@ void PapelWidget::exibirDadosPapelSelecionado(void)
 {
  unsigned idx_tab;
  int lin, idx_lin=-1;
- ObjetoBase *obj_sel=NULL;
+ BaseObject *obj_sel=NULL;
 
  //Obtém o papel selecionado na janela de seleção de objetos
  obj_sel=selecaoobjetos_wgt->obterObjetoSelecao();

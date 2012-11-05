@@ -7,7 +7,7 @@ extern RestricaoWidget *restricao_wgt;
 extern ColunaWidget *coluna_wgt;
 extern CaixaMensagem *caixa_msg;
 
-RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_RELACAO)
+RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_RELATIONSHIP)
 {
  try
  {
@@ -78,7 +78,7 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
   grid->addWidget(frame, 1, 0, 1, 1);
   frame->setParent(atributosrel_tbw->widget(3));
 
-  configurarLayouFormulario(relacionamento_grid, OBJETO_RELACAO);
+  configurarLayouFormulario(relacionamento_grid, OBJ_RELATIONSHIP);
   janela_pai->setMinimumSize(600, 520);
 
   //Configurando o combo de tipo de postergação com os tipos disponíveis
@@ -238,7 +238,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
  tabela_dest_txt->setPlainText(QString::fromUtf8(relacao->obterTabela(RelacionamentoBase::TABELA_DESTINO)->obterNome(true)));
 
  //Caso o relacionamento seja entre tabelas
- if(relacao->obterTipoObjeto()==OBJETO_RELACAO)
+ if(relacao->obterTipoObjeto()==OBJ_RELATIONSHIP)
  {
   vector<QString> vet_cols;
   vector<unsigned> vet_id_cols;
@@ -268,8 +268,8 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
   tab_restricoes->habilitarBotoes(TabelaObjetosWidget::TODOS_BOTOES, !relacao_aux->objetoProtegido());
 
   //Lista as restrições e atributos do relacionamento
-  listarObjetos(OBJETO_COLUNA);
-  listarObjetos(OBJETO_RESTRICAO);
+  listarObjetos(OBJ_COLUMN);
+  listarObjetos(OBJ_CONSTRAINT);
 
   /* Caso seja um novo objeto é necessário conectar o relacionamento para que
      as colunas sejam criadas na tabela receptora e seus nomes obtidos
@@ -365,13 +365,13 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
   for(i=0; i < 2; i++)
    atributosrel_tbw->addTab(tabs[i], rot_tabs[i]);
  }
- else if(relgen_dep && relacao->obterTipoObjeto()==OBJETO_RELACAO)
+ else if(relgen_dep && relacao->obterTipoObjeto()==OBJ_RELATIONSHIP)
  { 
   atributosrel_tbw->addTab(tabs[2], rot_tabs[2]);
  }
 }
 
-void RelacionamentoWidget::listarObjetos(TipoObjetoBase tipo_obj)
+void RelacionamentoWidget::listarObjetos(ObjectType tipo_obj)
 {
  TabelaObjetosWidget *tab=NULL;
  Relacionamento *relacao=NULL;
@@ -380,7 +380,7 @@ void RelacionamentoWidget::listarObjetos(TipoObjetoBase tipo_obj)
  try
  {
   //Seleciona a tabela de objetos de acordo com o tipo especificado
-  if(tipo_obj==OBJETO_COLUNA)
+  if(tipo_obj==OBJ_COLUMN)
    tab=tab_atributos;
   else
    tab=tab_restricoes;
@@ -416,7 +416,7 @@ void RelacionamentoWidget::listarObjetos(TipoObjetoBase tipo_obj)
 
 void RelacionamentoWidget::adicionarObjeto(void)
 {
- TipoObjetoBase tipo_obj=OBJETO_BASE;
+ ObjectType tipo_obj=BASE_OBJECT;
 
  try
  {
@@ -424,18 +424,18 @@ void RelacionamentoWidget::adicionarObjeto(void)
   if(sender()==tab_atributos)
   {
    //Seleciona a tabela de atributos para manipulação
-   tipo_obj=OBJETO_COLUNA;
+   tipo_obj=OBJ_COLUMN;
    tab=tab_atributos;
   }
   else
   {
    //Seleciona a tabela de restrições para manipulação
-   tipo_obj=OBJETO_RESTRICAO;
+   tipo_obj=OBJ_CONSTRAINT;
    tab=tab_restricoes;
   }
 
   //Caso o tipo do objeto seja uma coluna
-  if(tipo_obj==OBJETO_COLUNA)
+  if(tipo_obj==OBJ_COLUMN)
   {
    //Exibe o formulário de criação de colunas (atributos)
    coluna_wgt->definirAtributos(this->modelo, this->objeto, this->lista_op, NULL);
@@ -498,7 +498,7 @@ void RelacionamentoWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
  TabelaObjetosWidget *tab=NULL;
 
  //Caso o tipo do objeto seja uma coluna
- if(objeto->obterTipoObjeto()==OBJETO_COLUNA)
+ if(objeto->obterTipoObjeto()==OBJ_COLUMN)
  {
   //Exibe o nome do tipo da coluna na tabela de atributos
   tab=tab_atributos;
@@ -520,7 +520,7 @@ void RelacionamentoWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
 void RelacionamentoWidget::removerObjetos(void)
 {
  Relacionamento *relacao=NULL;
- TipoObjetoBase tipo_obj=OBJETO_BASE;
+ ObjectType tipo_obj=BASE_OBJECT;
  unsigned qtd, qtd_op=0, i;
  ObjetoTabela *objeto=NULL;
 
@@ -533,13 +533,13 @@ void RelacionamentoWidget::removerObjetos(void)
   if(sender()==tab_atributos)
   {
    //Obtém a quantidade de atributos do relacionamento
-   tipo_obj=OBJETO_COLUNA;
+   tipo_obj=OBJ_COLUMN;
    qtd=relacao->obterNumAtributos();
   }
   else
   {
    //Obtém a quantidade de restrições do relacionamento
-   tipo_obj=OBJETO_RESTRICAO;
+   tipo_obj=OBJ_CONSTRAINT;
    qtd=relacao->obterNumRestricoes();
   }
 
@@ -595,7 +595,7 @@ void RelacionamentoWidget::removerObjetos(void)
 void RelacionamentoWidget::removerObjeto(int idx_lin)
 {
  Relacionamento *relacao=NULL;
- TipoObjetoBase tipo_obj=OBJETO_BASE;
+ ObjectType tipo_obj=BASE_OBJECT;
  ObjetoTabela *objeto=NULL;
 
  try
@@ -606,9 +606,9 @@ void RelacionamentoWidget::removerObjeto(int idx_lin)
   //Caso o sender do método seja a tabela de atributos
   if(sender()==tab_atributos)
    //Marca que o tipo do objeto a ser removido é uma coluna
-   tipo_obj=OBJETO_COLUNA;
+   tipo_obj=OBJ_COLUMN;
   else
-   tipo_obj=OBJETO_RESTRICAO;
+   tipo_obj=OBJ_CONSTRAINT;
 
   //Obtém o objeto no índice especificado
   objeto=relacao->obterObjeto(idx_lin, tipo_obj);
@@ -650,7 +650,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
   ObjetoBaseWidget::aplicarConfiguracao();
 
   //Caso o objeto seja um relacionamento tabela-tabela
-  if(this->objeto->obterTipoObjeto()==OBJETO_RELACAO)
+  if(this->objeto->obterTipoObjeto()==OBJ_RELATIONSHIP)
   {
    //Obtém a referência ao mesmo fazendo o cast correto
    relacao=dynamic_cast<Relacionamento *>(this->objeto);

@@ -4,7 +4,7 @@ map<QString, QTextCharFormat> ObjetoGrafico::config_fonte;
 map<QString, QColor *> ObjetoGrafico::config_cores;
 unsigned ObjetoGrafico::ordem_selecao_global=1;
 
-ObjetoGrafico::ObjetoGrafico(ObjetoBase *objeto)
+ObjetoGrafico::ObjetoGrafico(BaseObject *objeto)
 {
  ordem_selecao=0;
  icone_protegido=NULL;
@@ -20,7 +20,7 @@ ObjetoGrafico::~ObjetoGrafico(void)
  definirObjetoOrigem(NULL);
 }
 
-void ObjetoGrafico::definirObjetoOrigem(ObjetoBase *objeto)
+void ObjetoGrafico::definirObjetoOrigem(BaseObject *objeto)
 {
  ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(objeto);
 
@@ -135,11 +135,11 @@ void ObjetoGrafico::definirObjetoOrigem(ObjetoBase *objeto)
  }
 }
 
-ObjetoBase *ObjetoGrafico::obterObjetoOrigem(void)
+BaseObject *ObjetoGrafico::obterObjetoOrigem(void)
 {
  /* Retorna o dado armazenado no objeto gráfico, que nada mais é que
     a referência ao objeto que deu origem a representação gráfica */
- return(reinterpret_cast<ObjetoBase *>(this->data(0).value<void *>()));
+ return(reinterpret_cast<BaseObject *>(this->data(0).value<void *>()));
 }
 
 void ObjetoGrafico::redimensionarPoligono(QPolygonF &pol, float larg, float alt)

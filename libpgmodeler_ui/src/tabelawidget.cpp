@@ -13,13 +13,13 @@ extern IndiceWidget *indice_wgt;
 extern GatilhoWidget *gatilho_wgt;
 extern CaixaMensagem *caixa_msg;
 
-TabelaWidget::TabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TABELA)
+TabelaWidget::TabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TABLE)
 {
  //QStringList lista;
  QGridLayout *grid=NULL;
  TabelaObjetosWidget *tab=NULL;
- TipoObjetoBase tipos[]={ OBJETO_COLUNA, OBJETO_RESTRICAO, OBJETO_GATILHO,
-                          OBJETO_REGRA, OBJETO_INDICE };
+ ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
+                          OBJ_RULE, OBJ_INDEX };
 
  Ui_TabelaWidget::setupUi(this);
 
@@ -49,43 +49,43 @@ TabelaWidget::TabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TAB
  }
 
  //Configura as colunas e rótulos das tabelas de objetos
- mapa_tab_objetos[OBJETO_COLUNA]->definirNumColunas(4);
- mapa_tab_objetos[OBJETO_COLUNA]->definirRotuloCabecalho(trUtf8("Name"), 0);
- mapa_tab_objetos[OBJETO_COLUNA]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
- mapa_tab_objetos[OBJETO_COLUNA]->definirRotuloCabecalho(trUtf8("Type"), 1);
- mapa_tab_objetos[OBJETO_COLUNA]->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
- mapa_tab_objetos[OBJETO_COLUNA]->definirRotuloCabecalho(trUtf8("Default Value"), 2);
- mapa_tab_objetos[OBJETO_COLUNA]->definirRotuloCabecalho(trUtf8("Attribute"), 3);
+ mapa_tab_objetos[OBJ_COLUMN]->definirNumColunas(4);
+ mapa_tab_objetos[OBJ_COLUMN]->definirRotuloCabecalho(trUtf8("Name"), 0);
+ mapa_tab_objetos[OBJ_COLUMN]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
+ mapa_tab_objetos[OBJ_COLUMN]->definirRotuloCabecalho(trUtf8("Type"), 1);
+ mapa_tab_objetos[OBJ_COLUMN]->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+ mapa_tab_objetos[OBJ_COLUMN]->definirRotuloCabecalho(trUtf8("Default Value"), 2);
+ mapa_tab_objetos[OBJ_COLUMN]->definirRotuloCabecalho(trUtf8("Attribute"), 3);
 
- mapa_tab_objetos[OBJETO_RESTRICAO]->definirNumColunas(4);
- mapa_tab_objetos[OBJETO_RESTRICAO]->definirRotuloCabecalho(trUtf8("Name"), 0);
- mapa_tab_objetos[OBJETO_RESTRICAO]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
- mapa_tab_objetos[OBJETO_RESTRICAO]->definirRotuloCabecalho(trUtf8("Type"), 1);
- mapa_tab_objetos[OBJETO_RESTRICAO]->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
- mapa_tab_objetos[OBJETO_RESTRICAO]->definirRotuloCabecalho(trUtf8("ON DELETE"), 2);
- mapa_tab_objetos[OBJETO_RESTRICAO]->definirRotuloCabecalho(trUtf8("ON UPDATE"), 3);
+ mapa_tab_objetos[OBJ_CONSTRAINT]->definirNumColunas(4);
+ mapa_tab_objetos[OBJ_CONSTRAINT]->definirRotuloCabecalho(trUtf8("Name"), 0);
+ mapa_tab_objetos[OBJ_CONSTRAINT]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
+ mapa_tab_objetos[OBJ_CONSTRAINT]->definirRotuloCabecalho(trUtf8("Type"), 1);
+ mapa_tab_objetos[OBJ_CONSTRAINT]->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+ mapa_tab_objetos[OBJ_CONSTRAINT]->definirRotuloCabecalho(trUtf8("ON DELETE"), 2);
+ mapa_tab_objetos[OBJ_CONSTRAINT]->definirRotuloCabecalho(trUtf8("ON UPDATE"), 3);
 
- mapa_tab_objetos[OBJETO_GATILHO]->definirNumColunas(4);
- mapa_tab_objetos[OBJETO_GATILHO]->definirRotuloCabecalho(trUtf8("Name"), 0);
- mapa_tab_objetos[OBJETO_GATILHO]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
- mapa_tab_objetos[OBJETO_GATILHO]->definirRotuloCabecalho(trUtf8("Refer. Table"), 1);
- mapa_tab_objetos[OBJETO_GATILHO]->definirIconeCabecalho(QPixmap(":/icones/icones/table.png"),1);
- mapa_tab_objetos[OBJETO_GATILHO]->definirRotuloCabecalho(trUtf8("Firing"), 2);
- mapa_tab_objetos[OBJETO_GATILHO]->definirIconeCabecalho(QPixmap(":/icones/icones/trigger.png"),2);
- mapa_tab_objetos[OBJETO_GATILHO]->definirRotuloCabecalho(trUtf8("Events"), 3);
+ mapa_tab_objetos[OBJ_TRIGGER]->definirNumColunas(4);
+ mapa_tab_objetos[OBJ_TRIGGER]->definirRotuloCabecalho(trUtf8("Name"), 0);
+ mapa_tab_objetos[OBJ_TRIGGER]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
+ mapa_tab_objetos[OBJ_TRIGGER]->definirRotuloCabecalho(trUtf8("Refer. Table"), 1);
+ mapa_tab_objetos[OBJ_TRIGGER]->definirIconeCabecalho(QPixmap(":/icones/icones/table.png"),1);
+ mapa_tab_objetos[OBJ_TRIGGER]->definirRotuloCabecalho(trUtf8("Firing"), 2);
+ mapa_tab_objetos[OBJ_TRIGGER]->definirIconeCabecalho(QPixmap(":/icones/icones/trigger.png"),2);
+ mapa_tab_objetos[OBJ_TRIGGER]->definirRotuloCabecalho(trUtf8("Events"), 3);
 
- mapa_tab_objetos[OBJETO_REGRA]->definirNumColunas(3);
- mapa_tab_objetos[OBJETO_REGRA]->definirRotuloCabecalho(trUtf8("Name"), 0);
- mapa_tab_objetos[OBJETO_REGRA]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
- mapa_tab_objetos[OBJETO_REGRA]->definirRotuloCabecalho(trUtf8("Execution"), 1);
- mapa_tab_objetos[OBJETO_REGRA]->definirRotuloCabecalho(trUtf8("Event"), 2);
+ mapa_tab_objetos[OBJ_RULE]->definirNumColunas(3);
+ mapa_tab_objetos[OBJ_RULE]->definirRotuloCabecalho(trUtf8("Name"), 0);
+ mapa_tab_objetos[OBJ_RULE]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
+ mapa_tab_objetos[OBJ_RULE]->definirRotuloCabecalho(trUtf8("Execution"), 1);
+ mapa_tab_objetos[OBJ_RULE]->definirRotuloCabecalho(trUtf8("Event"), 2);
 
- mapa_tab_objetos[OBJETO_INDICE]->definirNumColunas(2);
- mapa_tab_objetos[OBJETO_INDICE]->definirRotuloCabecalho(trUtf8("Name"), 0);
- mapa_tab_objetos[OBJETO_INDICE]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
- mapa_tab_objetos[OBJETO_INDICE]->definirRotuloCabecalho(trUtf8("Indexing"), 1);
+ mapa_tab_objetos[OBJ_INDEX]->definirNumColunas(2);
+ mapa_tab_objetos[OBJ_INDEX]->definirRotuloCabecalho(trUtf8("Name"), 0);
+ mapa_tab_objetos[OBJ_INDEX]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
+ mapa_tab_objetos[OBJ_INDEX]->definirRotuloCabecalho(trUtf8("Indexing"), 1);
 
- configurarLayouFormulario(tabela_grid, OBJETO_TABELA);
+ configurarLayouFormulario(tabela_grid, OBJ_TABLE);
  janela_pai->setMinimumSize(550, 500);
 
  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
@@ -94,7 +94,7 @@ TabelaWidget::TabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_TAB
 
 void TabelaWidget::hideEvent(QHideEvent *evento)
 {
- map<TipoObjetoBase, TabelaObjetosWidget *>::iterator itr, itr_end;
+ map<ObjectType, TabelaObjetosWidget *>::iterator itr, itr_end;
  Tabela *tab=dynamic_cast<Tabela *>(this->objeto);
 
  aceita_oids_chk->setChecked(false);
@@ -119,7 +119,7 @@ void TabelaWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void TabelaWidget::exibirFormObjetoTabela(TipoObjetoBase tipo_obj)
+void TabelaWidget::exibirFormObjetoTabela(ObjectType tipo_obj)
 {
  ObjetoTabela *objeto=NULL;
  TabelaObjetosWidget *tab_obj=NULL;
@@ -139,35 +139,35 @@ void TabelaWidget::exibirFormObjetoTabela(TipoObjetoBase tipo_obj)
  //Exibe o formulário correto de acordo com o tipo de objeto de tabela
  switch(tipo_obj)
  {
-  case OBJETO_COLUNA:
+  case OBJ_COLUMN:
    coluna_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Coluna *>(objeto));
    coluna_wgt->show();
   break;
 
-  case OBJETO_RESTRICAO:
+  case OBJ_CONSTRAINT:
    restricao_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Restricao *>(objeto));
    restricao_wgt->show();
   break;
 
-  case OBJETO_GATILHO:
+  case OBJ_TRIGGER:
    gatilho_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Gatilho *>(objeto));
    gatilho_wgt->show();
   break;
 
-  case OBJETO_INDICE:
+  case OBJ_INDEX:
    indice_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Indice *>(objeto));
    indice_wgt->show();
   break;
 
   default:
-  case OBJETO_REGRA:
+  case OBJ_RULE:
    regra_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Regra *>(objeto));
    regra_wgt->show();
   break;
  }
 }
 
-TabelaObjetosWidget *TabelaWidget::selecionarTabelaObjetos(TipoObjetoBase tipo_obj)
+TabelaObjetosWidget *TabelaWidget::selecionarTabelaObjetos(ObjectType tipo_obj)
 {
  if(mapa_tab_objetos.count(tipo_obj) > 0)
   return(mapa_tab_objetos[tipo_obj]);
@@ -175,13 +175,13 @@ TabelaObjetosWidget *TabelaWidget::selecionarTabelaObjetos(TipoObjetoBase tipo_o
   return(NULL);
 }
 
-TipoObjetoBase TabelaWidget::selecionarTipoObjeto(QObject *tab_sender)
+ObjectType TabelaWidget::selecionarTipoObjeto(QObject *tab_sender)
 {
- TipoObjetoBase tipo_obj=OBJETO_BASE;
+ ObjectType tipo_obj=BASE_OBJECT;
 
  if(tab_sender)
  {
-  map<TipoObjetoBase, TabelaObjetosWidget *>::iterator itr, itr_end;
+  map<ObjectType, TabelaObjetosWidget *>::iterator itr, itr_end;
 
   /* Varre o mapa de tabelas caso o sender no parâmetro seja
      igual a alguma tabela dentro do mapa retorna a chave
@@ -189,7 +189,7 @@ TipoObjetoBase TabelaWidget::selecionarTipoObjeto(QObject *tab_sender)
   itr=mapa_tab_objetos.begin();
   itr_end=mapa_tab_objetos.end();
 
-  while(itr!=itr_end && tipo_obj==OBJETO_BASE)
+  while(itr!=itr_end && tipo_obj==BASE_OBJECT)
   {
    if(itr->second==tab_sender)
     tipo_obj=itr->first;
@@ -204,8 +204,8 @@ TipoObjetoBase TabelaWidget::selecionarTipoObjeto(QObject *tab_sender)
 void TabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Tabela *tabela, float pos_x, float pos_y)
 {
  unsigned i, qtd;
- TipoObjetoBase tipos[]={ OBJETO_COLUNA, OBJETO_RESTRICAO, OBJETO_GATILHO,
-                          OBJETO_REGRA, OBJETO_INDICE };
+ ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
+                          OBJ_RULE, OBJ_INDEX };
 
   /* Inicia o encademanento de operações, assim todo objeto editado dentro
     da tabela será encadeado na lista, desta forma quando o usuário
@@ -241,7 +241,7 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
      Desabilita (esconde) os botões de mover objetos na tabela
      pois esta movimentação só pode ser feita antes da ligação de
      relacionamentos   tabela */
-  if(tipos[i]==OBJETO_COLUNA || tipos[i]==OBJETO_RESTRICAO)
+  if(tipos[i]==OBJ_COLUMN || tipos[i]==OBJ_CONSTRAINT)
   {
    if(this->novo_obj || !tabela->referenciaObjetoIncRelacao())
     mapa_tab_objetos[tipos[i]]->definirConfiguracaoBotoes(TabelaObjetosWidget::TODOS_BOTOES ^
@@ -264,7 +264,7 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
   tabs_copiadas_lst->addItem(QString::fromUtf8(tabela->obterTabelaCopia(i)->obterNome(true)));
 }
 
-void TabelaWidget::listarObjetos(TipoObjetoBase tipo_obj)
+void TabelaWidget::listarObjetos(ObjectType tipo_obj)
 {
  TabelaObjetosWidget *tab=NULL;
  unsigned qtd, i;
@@ -294,15 +294,15 @@ void TabelaWidget::listarObjetos(TipoObjetoBase tipo_obj)
   tab->limparSelecao();
   tab->blockSignals(false);
 
-  if(tipo_obj==OBJETO_COLUNA)
+  if(tipo_obj==OBJ_COLUMN)
   {
    //Habilita o botão de inserção de restrições, gatilhos e índices somente quando há colunas na tabela
-   mapa_tab_objetos[OBJETO_RESTRICAO]->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM,
-                                                       mapa_tab_objetos[OBJETO_COLUNA]->obterNumLinhas() > 0);
-   mapa_tab_objetos[OBJETO_GATILHO]->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM,
-                                                       mapa_tab_objetos[OBJETO_COLUNA]->obterNumLinhas() > 0);
-   mapa_tab_objetos[OBJETO_INDICE]->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM,
-                                                       mapa_tab_objetos[OBJETO_COLUNA]->obterNumLinhas() > 0);
+   mapa_tab_objetos[OBJ_CONSTRAINT]->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM,
+                                                       mapa_tab_objetos[OBJ_COLUMN]->obterNumLinhas() > 0);
+   mapa_tab_objetos[OBJ_TRIGGER]->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM,
+                                                       mapa_tab_objetos[OBJ_COLUMN]->obterNumLinhas() > 0);
+   mapa_tab_objetos[OBJ_INDEX]->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM,
+                                                       mapa_tab_objetos[OBJ_COLUMN]->obterNumLinhas() > 0);
   }
  }
  catch(Exception &e)
@@ -313,7 +313,7 @@ void TabelaWidget::listarObjetos(TipoObjetoBase tipo_obj)
 
 void TabelaWidget::manipularObjeto(void)
 {
- TipoObjetoBase tipo_obj=OBJETO_BASE;
+ ObjectType tipo_obj=BASE_OBJECT;
 
  try
  {
@@ -341,7 +341,7 @@ void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
  Gatilho *gatilho=NULL;
  Regra *regra=NULL;
  Indice *indice=NULL;
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
  QString str_aux, str_aux1,
          vet_tipo_rest[]={ ~TipoRestricao(TipoRestricao::primary_key), ~TipoRestricao(TipoRestricao::foreign_key),
                            ~TipoRestricao(TipoRestricao::check), ~TipoRestricao(TipoRestricao::unique),
@@ -365,7 +365,7 @@ void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
 
  /* Para cada tipo de objeto existe uma rotina
     de exibição do objeto na respectiva tabela. */
- if(tipo_obj==OBJETO_COLUNA)
+ if(tipo_obj==OBJ_COLUMN)
  {
   coluna=dynamic_cast<Coluna *>(objeto);
   //Coluna 1: Tipo da coluna
@@ -389,7 +389,7 @@ void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
 
   tab->definirTextoCelula(str_aux1,idx_lin,3);
  }
- else if(tipo_obj==OBJETO_RESTRICAO)
+ else if(tipo_obj==OBJ_CONSTRAINT)
  {
   restricao=dynamic_cast<Restricao *>(objeto);
   //Coluna 1: Tipo de comparação da restrição
@@ -399,7 +399,7 @@ void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
   //Coluna 3: Tipo de ação ON UPDATE da restrição
   tab->definirTextoCelula(~restricao->obterTipoAcao(true),idx_lin,3);
  }
- else if(tipo_obj==OBJETO_GATILHO)
+ else if(tipo_obj==OBJ_TRIGGER)
  {
   gatilho=dynamic_cast<Gatilho *>(objeto);
   //Coluna 2: Tipo de disparo do gatilho
@@ -420,7 +420,7 @@ void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
   str_aux.remove(str_aux.size()-2, 2);
   tab->definirTextoCelula(str_aux ,idx_lin,3);
  }
- else if(tipo_obj==OBJETO_REGRA)
+ else if(tipo_obj==OBJ_RULE)
  {
   regra=dynamic_cast<Regra *>(objeto);
   //Coluna 1: Tipo de execução da regra
@@ -456,8 +456,8 @@ void TabelaWidget::removerObjetos(void)
 {
  Tabela *tabela=NULL;
  unsigned qtd, qtd_op=0, i;
- ObjetoBase *objeto=NULL;
- TipoObjetoBase tipo_obj=OBJETO_BASE;
+ BaseObject *objeto=NULL;
+ ObjectType tipo_obj=BASE_OBJECT;
 
  try
  {
@@ -526,8 +526,8 @@ void TabelaWidget::removerObjetos(void)
 void TabelaWidget::removerObjeto(int idx_lin)
 {
  Tabela *tabela=NULL;
- ObjetoBase *objeto=NULL;
- TipoObjetoBase tipo_obj=OBJETO_BASE;
+ BaseObject *objeto=NULL;
+ ObjectType tipo_obj=BASE_OBJECT;
 
  try
  {
@@ -562,7 +562,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
 
 void TabelaWidget::TabelaWidget::moverObjetos(int idx1, int idx2)
 {
- TipoObjetoBase tipo_obj=OBJETO_BASE;
+ ObjectType tipo_obj=BASE_OBJECT;
  Tabela *tabela=NULL;
 
  try

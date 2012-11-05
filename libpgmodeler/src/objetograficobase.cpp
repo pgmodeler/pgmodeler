@@ -59,7 +59,7 @@ QPointF ObjetoGraficoBase::obterPosicaoObjeto(void)
 
 void ObjetoGraficoBase::operator = (ObjetoGraficoBase &obj)
 {
- *(dynamic_cast<ObjetoBase *>(this))=dynamic_cast<ObjetoBase &>(obj);
+ *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(obj);
  this->posicao=obj.posicao;
 }
 

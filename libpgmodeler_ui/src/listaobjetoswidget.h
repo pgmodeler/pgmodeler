@@ -33,14 +33,14 @@ class ListaObjetosWidget: public ObjetoBaseWidget, public Ui::ListaObjetosWidget
   void aplicarConfiguracao(void){}
 
   //Carrega os widgets que contém as referências e dependências do objeto
-  void atualizarListaObjetos(vector<ObjetoBase *> &objetos, QTableWidget *tabela_wgt);
+  void atualizarListaObjetos(vector<BaseObject *> &objetos, QTableWidget *tabela_wgt);
 
  protected slots:
   void hideEvent(QHideEvent *);
 
  public:
   ListaObjetosWidget(QWidget * parent = 0);
-  void definirAtributos(ModeloBD *modelo, ObjetoBase *objeto, ObjetoBase *objeto_pai=NULL);
+  void definirAtributos(ModeloBD *modelo, BaseObject *objeto, BaseObject *objeto_pai=NULL);
 };
 
 #endif

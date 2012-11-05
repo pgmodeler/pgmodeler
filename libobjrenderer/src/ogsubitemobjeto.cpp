@@ -37,7 +37,7 @@ OGSubItemObjeto::~OGSubItemObjeto(void)
 
 void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
 {
- TipoObjetoBase tipo_obj=OBJETO_BASE;
+ ObjectType tipo_obj=BASE_OBJECT;
  Coluna *coluna=dynamic_cast<Coluna *>(this->obterObjetoOrigem());
  float fator=config_fonte[ParsersAttributes::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
  bool desc_elipse=false;
@@ -49,8 +49,8 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
  /* Descritores em forma de elipse são alocados para colunas (com ou sem not-null)
     todos os demais tipos têm descritores poligonais */
  desc_elipse=((coluna && tipo_rest==TipoBase::nulo) ||
-              (tipo_obj!=OBJETO_INDICE && tipo_obj!=OBJETO_REGRA &&
-               tipo_obj!=OBJETO_GATILHO && tipo_obj!=OBJETO_COLUNA));
+              (tipo_obj!=OBJ_INDEX && tipo_obj!=OBJ_RULE &&
+               tipo_obj!=OBJ_TRIGGER && tipo_obj!=OBJ_COLUMN));
 
  //Destrói o descritor quando o tipo atual é diferente do novo
  if(descritor && ((desc_elipse && !dynamic_cast<QGraphicsEllipseItem *>(descritor)) ||
@@ -142,9 +142,9 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
   }
  }
  //Configura um descritor poligonal para indice, regra ou gatilho
- else if(tipo_obj==OBJETO_INDICE ||
-         tipo_obj==OBJETO_REGRA ||
-         tipo_obj==OBJETO_GATILHO)
+ else if(tipo_obj==OBJ_INDEX ||
+         tipo_obj==OBJ_RULE ||
+         tipo_obj==OBJ_TRIGGER)
  {
   ObjetoTabela *objeto_tab=dynamic_cast<ObjetoTabela *>(this->obterObjetoOrigem());
   QGraphicsPolygonItem *desc=dynamic_cast<QGraphicsPolygonItem *>(descritor);

@@ -74,7 +74,7 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
    ListaOperacoes *lista_op;
 
    //Objeto que está sendo editado ou criado
-   ObjetoBase *objeto;
+   BaseObject *objeto;
 
    /* Armazena a posição do objeto no momento da chamado do
       formulário (apenas para objetos gráficos) */
@@ -127,7 +127,7 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
       pertencem a esta classe estejam acessíveis. O parâmetro 'tipo_obj' é usado
       para esconder alguns campos do formulário básico quando estes não se aplicam
       ao tipo de objeto informado */
-   void configurarLayouFormulario(QGridLayout *grid=NULL, TipoObjetoBase tipo_obj=OBJETO_BASE);
+   void configurarLayouFormulario(QGridLayout *grid=NULL, ObjectType tipo_obj=BASE_OBJECT);
 
    /* Este método se aplica aos tipos de objetos diferentes do tipo OBJETO_BANCO_DADOS
       e que são passíveis de alocação e e desalocação, pois este método faz a cópia do
@@ -151,12 +151,12 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
    void aplicarConfiguracao(void);
 
  public:
-   ObjetoBaseWidget(QWidget * parent = 0, TipoObjetoBase tipo_obj=OBJETO_BASE);
+   ObjetoBaseWidget(QWidget * parent = 0, ObjectType tipo_obj=BASE_OBJECT);
   ~ObjetoBaseWidget(void);
    void hideEvent(QHideEvent *);
    void showEvent(QShowEvent *);
    void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op,
-                         ObjetoBase *objeto, ObjetoBase *objeto_pai=NULL,
+                         BaseObject *objeto, BaseObject *objeto_pai=NULL,
                          float px_objeto=NAN, float py_objeto=NAN);
 
  protected slots:
@@ -177,7 +177,7 @@ void ObjetoBaseWidget::iniciarConfiguracao(void)
   Classe *novo_obj_tmpl=NULL;
 
   if(this->objeto && lista_op &&
-     this->objeto->obterTipoObjeto()!=OBJETO_BANCO_DADOS)
+     this->objeto->obterTipoObjeto()!=OBJ_DATABASE)
   {
    if(this->tabela)
     lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_MODIFICADO, -1, this->tabela);

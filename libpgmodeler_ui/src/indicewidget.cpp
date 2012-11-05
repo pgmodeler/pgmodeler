@@ -1,6 +1,6 @@
 #include "indicewidget.h"
 
-IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_INDICE)
+IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_INDEX)
 {
  try
  {
@@ -26,7 +26,7 @@ IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_IND
                                      GlobalAttributes::CONFIGURATION_EXT);
 
   tab_elementos=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
-  sel_classe_op=new SeletorObjetoWidget(OBJETO_CLASSE_OPER, true, this);
+  sel_classe_op=new SeletorObjetoWidget(OBJ_OPCLASS, true, this);
 
   tab_elementos->definirNumColunas(5);
   tab_elementos->definirRotuloCabecalho(trUtf8("Element"), 0);
@@ -42,7 +42,7 @@ IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_IND
   grid->addWidget(sel_classe_op, 2,1,1,3);
   grid->addWidget(tab_elementos, 5,0,1,4);
 
-  configurarLayouFormulario(indice_grid, OBJETO_INDICE);
+  configurarLayouFormulario(indice_grid, OBJ_INDEX);
   janela_pai->setMinimumSize(600, 640);
 
   TipoIndexacao::obterTipos(lista);

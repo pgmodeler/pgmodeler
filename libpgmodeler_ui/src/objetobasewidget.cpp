@@ -10,7 +10,7 @@ const QColor ObjetoBaseWidget::COR_TEXTO_LIN_PROT=QColor(80,80,80);
 const QColor ObjetoBaseWidget::COR_FUNDO_LIN_INCREL=QColor(164,249,176);
 const QColor ObjetoBaseWidget::COR_TEXTO_LIN_INCREL=QColor(80,80,80);
 
-ObjetoBaseWidget::ObjetoBaseWidget(QWidget *parent, TipoObjetoBase tipo_obj): QDialog(parent)
+ObjetoBaseWidget::ObjetoBaseWidget(QWidget *parent, ObjectType tipo_obj): QDialog(parent)
 {
  try
  {
@@ -40,7 +40,7 @@ ObjetoBaseWidget::ObjetoBaseWidget(QWidget *parent, TipoObjetoBase tipo_obj): QD
                                      GlobalAttributes::CONFIGURATION_EXT);
 
   janela_pai=new FormBasico(NULL, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
-  janela_pai->setWindowTitle(trUtf8("Criate / Edit: ") + ObjetoBase::obterNomeTipoObjeto(tipo_obj));
+  janela_pai->setWindowTitle(trUtf8("Criate / Edit: ") + BaseObject::obterNomeTipoObjeto(tipo_obj));
   janela_pai->widgetgeral_wgt->insertWidget(0, this);
   janela_pai->widgetgeral_wgt->setCurrentIndex(0);
   janela_pai->definirBotoes(CaixaMensagem::BOTAO_OK_CANCELAR);
@@ -49,9 +49,9 @@ ObjetoBaseWidget::ObjetoBaseWidget(QWidget *parent, TipoObjetoBase tipo_obj): QD
   connect(janela_pai->cancelar_btn, SIGNAL(clicked(bool)), janela_pai, SLOT(close(void)));
   connect(janela_pai, SIGNAL(rejected()), this, SLOT(reject()));
 
-  sel_esquema=new SeletorObjetoWidget(OBJETO_ESQUEMA, true, this);
-  sel_dono=new SeletorObjetoWidget(OBJETO_PAPEL, true, this);
-  sel_esptabela=new SeletorObjetoWidget(OBJETO_ESPACO_TABELA, true, this);
+  sel_esquema=new SeletorObjetoWidget(OBJ_SCHEMA, true, this);
+  sel_dono=new SeletorObjetoWidget(OBJ_ROLE, true, this);
+  sel_esptabela=new SeletorObjetoWidget(OBJ_TABLESPACE, true, this);
 
   //Configura o layout do formulário padrão
   objetobase_grid = new QGridLayout;
@@ -149,9 +149,9 @@ void ObjetoBaseWidget::hideEvent(QHideEvent *)
  janela_pai->blockSignals(false);
 }
 
-void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, ObjetoBase *objeto, ObjetoBase *objeto_pai, float px_objeto, float py_objeto)
+void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, BaseObject *objeto, BaseObject *objeto_pai, float px_objeto, float py_objeto)
 {
- TipoObjetoBase tipo_obj, tipo_obj_pai=OBJETO_BASE;
+ ObjectType tipo_obj, tipo_obj_pai=BASE_OBJECT;
 
  if(!modelo)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -162,9 +162,9 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
  {
   tipo_obj_pai=objeto_pai->obterTipoObjeto();
 
-  if(tipo_obj_pai==OBJETO_TABELA)
+  if(tipo_obj_pai==OBJ_TABLE)
    this->tabela=dynamic_cast<Tabela *>(objeto_pai);
-  else if(tipo_obj_pai==OBJETO_RELACAO)
+  else if(tipo_obj_pai==OBJ_RELATIONSHIP)
    this->relacionamento=dynamic_cast<Relacionamento *>(objeto_pai);
   else
    throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -230,9 +230,9 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
      permitir que o usuário edite uma restrição ou atributo do relacionamento é necessária
      essa exceção */
   tipo_obj=objeto->obterTipoObjeto();
-  protegido=(tipo_obj_pai!=OBJETO_RELACAO &&
+  protegido=(tipo_obj_pai!=OBJ_RELATIONSHIP &&
              (objeto->objetoProtegido() ||
-              ((tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO) &&
+              ((tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT) &&
                dynamic_cast<ObjetoTabela *>(objeto)->incluidoPorRelacionamento())));
   obj_protegido_frm->setVisible(protegido);
 
@@ -241,7 +241,7 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
  else obj_protegido_frm->setVisible(false);
 }
 
-void ObjetoBaseWidget::configurarLayouFormulario(QGridLayout *grid, TipoObjetoBase tipo_obj)
+void ObjetoBaseWidget::configurarLayouFormulario(QGridLayout *grid, ObjectType tipo_obj)
 {
  bool exibir_esq, exibir_dono, exibir_esptab, exibir_coment, exibir_obj_pai;
 
@@ -272,32 +272,32 @@ void ObjetoBaseWidget::configurarLayouFormulario(QGridLayout *grid, TipoObjetoBa
  objetobase_grid->setContentsMargins(4, 4, 4, 4);
 
  //Definindo a exibição do campo de configuração de esquema dos objetos de acordo com o tipo passado
- exibir_esq=(tipo_obj==OBJETO_FUNCAO || tipo_obj==OBJETO_TABELA || tipo_obj==OBJETO_VISAO ||
-             tipo_obj==OBJETO_DOMINIO || tipo_obj==OBJETO_FUNC_AGREGACAO || tipo_obj==OBJETO_OPERADOR ||
-             tipo_obj==OBJETO_SEQUENCIA || tipo_obj==OBJETO_CONV_CODIFICACAO || tipo_obj==OBJETO_TIPO ||
-             tipo_obj==OBJETO_FAMILIA_OPER || tipo_obj==OBJETO_CLASSE_OPER);
+ exibir_esq=(tipo_obj==OBJ_FUNCTION || tipo_obj==OBJ_TABLE || tipo_obj==OBJ_VIEW ||
+             tipo_obj==OBJ_DOMAIN || tipo_obj==OBJ_AGGREGATE || tipo_obj==OBJ_OPERATOR ||
+             tipo_obj==OBJ_SEQUENCE || tipo_obj==OBJ_CONVERSION || tipo_obj==OBJ_TYPE ||
+             tipo_obj==OBJ_OPFAMILY || tipo_obj==OBJ_OPCLASS);
 
  //Definindo a exibição do campo de configuração de dono dos objetos de acordo com o tipo passado
- exibir_dono=(tipo_obj==OBJETO_FUNCAO || tipo_obj==OBJETO_TABELA || tipo_obj==OBJETO_DOMINIO ||
-              tipo_obj==OBJETO_ESQUEMA || tipo_obj==OBJETO_FUNC_AGREGACAO || tipo_obj==OBJETO_OPERADOR ||
-              tipo_obj==OBJETO_CONV_CODIFICACAO || tipo_obj==OBJETO_LINGUAGEM || tipo_obj==OBJETO_TIPO ||
-              tipo_obj==OBJETO_ESPACO_TABELA || tipo_obj==OBJETO_FAMILIA_OPER || tipo_obj==OBJETO_BANCO_DADOS);
+ exibir_dono=(tipo_obj==OBJ_FUNCTION || tipo_obj==OBJ_TABLE || tipo_obj==OBJ_DOMAIN ||
+              tipo_obj==OBJ_SCHEMA || tipo_obj==OBJ_AGGREGATE || tipo_obj==OBJ_OPERATOR ||
+              tipo_obj==OBJ_CONVERSION || tipo_obj==OBJ_LANGUAGE || tipo_obj==OBJ_TYPE ||
+              tipo_obj==OBJ_TABLESPACE || tipo_obj==OBJ_OPFAMILY || tipo_obj==OBJ_DATABASE);
 
  //Definindo a exibição do campo de configuração de espaço dos objetos de acordo com o tipo passado
- exibir_esptab=(tipo_obj==OBJETO_RESTRICAO || tipo_obj==OBJETO_INDICE || tipo_obj==OBJETO_TABELA || tipo_obj==OBJETO_BANCO_DADOS);
+ exibir_esptab=(tipo_obj==OBJ_CONSTRAINT || tipo_obj==OBJ_INDEX || tipo_obj==OBJ_TABLE || tipo_obj==OBJ_DATABASE);
 
  //Definindo a exibição do campo de configuração de comentário dos objetos de acordo com o tipo passado
- exibir_coment=(tipo_obj!=OBJETO_RELACAO && tipo_obj!=OBJETO_CAIXA_TEXTO &&
-                tipo_obj!=OBJETO_PARAMETRO);
+ exibir_coment=(tipo_obj!=OBJ_RELATIONSHIP && tipo_obj!=OBJ_TEXTBOX &&
+                tipo_obj!=OBJ_PARAMETER);
 
  //Definindo a exibição do campo de objeto pai
- exibir_obj_pai=(tipo_obj!=OBJETO_PARAMETRO && tipo_obj!=OBJETO_BANCO_DADOS &&
-                 tipo_obj!=OBJETO_PERMISSAO && tipo_obj!=OBJETO_BASE);
+ exibir_obj_pai=(tipo_obj!=OBJ_PARAMETER && tipo_obj!=OBJ_DATABASE &&
+                 tipo_obj!=OBJ_PERMISSION && tipo_obj!=BASE_OBJECT);
 
- if(tipo_obj!=OBJETO_TABELA && tipo_obj!=OBJETO_COLUNA && tipo_obj!=OBJETO_VISAO &&
-    tipo_obj!=OBJETO_SEQUENCIA && tipo_obj!=OBJETO_BANCO_DADOS && tipo_obj!=OBJETO_FUNCAO &&
-    tipo_obj!=OBJETO_FUNC_AGREGACAO && tipo_obj!=OBJETO_LINGUAGEM && tipo_obj!=OBJETO_ESQUEMA &&
-    tipo_obj!=OBJETO_ESPACO_TABELA)
+ if(tipo_obj!=OBJ_TABLE && tipo_obj!=OBJ_COLUMN && tipo_obj!=OBJ_VIEW &&
+    tipo_obj!=OBJ_SEQUENCE && tipo_obj!=OBJ_DATABASE && tipo_obj!=OBJ_FUNCTION &&
+    tipo_obj!=OBJ_AGGREGATE && tipo_obj!=OBJ_LANGUAGE && tipo_obj!=OBJ_SCHEMA &&
+    tipo_obj!=OBJ_TABLESPACE)
  {
   permissoes_lbl->setVisible(false);
   edt_permissoes_tb->setVisible(false);
@@ -319,16 +319,16 @@ void ObjetoBaseWidget::configurarLayouFormulario(QGridLayout *grid, TipoObjetoBa
  objeto_pai_txt->setVisible(exibir_obj_pai);
  iconeobjpai_lbl->setVisible(exibir_obj_pai);
 
- div1_ln->setVisible(exibir_obj_pai && tipo_obj!=OBJETO_TABELA &&
-                                       tipo_obj!=OBJETO_ESQUEMA &&
-                                       tipo_obj!=OBJETO_RELACAO &&
-                                       tipo_obj!=OBJETO_RELACAO_BASE);
+ div1_ln->setVisible(exibir_obj_pai && tipo_obj!=OBJ_TABLE &&
+                                       tipo_obj!=OBJ_SCHEMA &&
+                                       tipo_obj!=OBJ_RELATIONSHIP &&
+                                       tipo_obj!=BASE_RELATIONSHIP);
 
  //Configura o ícone de acordo com o tipo de objeto
- if(tipo_obj!=OBJETO_BASE)
+ if(tipo_obj!=BASE_OBJECT)
  {
-  iconeobj_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/") + ObjetoBase::obterNomeEsquemaObjeto(tipo_obj) + QString(".png")));
-  iconeobj_lbl->setToolTip(ObjetoBase::obterNomeTipoObjeto(tipo_obj));
+  iconeobj_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/") + BaseObject::obterNomeEsquemaObjeto(tipo_obj) + QString(".png")));
+  iconeobj_lbl->setToolTip(BaseObject::obterNomeTipoObjeto(tipo_obj));
  }
 }
 
@@ -490,7 +490,7 @@ QFrame *ObjetoBaseWidget::gerarFrameAlertaVersao(map<QString, vector<QWidget *> 
 
 void ObjetoBaseWidget::editarPermissoes(void)
 {
- ObjetoBase *objeto_pai=NULL;
+ BaseObject *objeto_pai=NULL;
 
  if(this->relacionamento)
   objeto_pai=this->relacionamento;
@@ -505,14 +505,14 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
  {
   try
   {
-   ObjetoBase *obj_aux=NULL, *obj_aux1=NULL, *obj_pai=NULL;
+   BaseObject *obj_aux=NULL, *obj_aux1=NULL, *obj_pai=NULL;
    //ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(objeto);
    bool novo_obj;
-   TipoObjetoBase tipo_obj;
+   ObjectType tipo_obj;
    QString nome_obj;
 
    tipo_obj=objeto->obterTipoObjeto();
-   nome_obj=ObjetoBase::formatarNome(nome_edt->text().toUtf8(), tipo_obj==OBJETO_OPERADOR);
+   nome_obj=BaseObject::formatarNome(nome_edt->text().toUtf8(), tipo_obj==OBJ_OPERATOR);
 
    if(sel_esquema->obterObjeto())
     nome_obj=sel_esquema->obterObjeto()->obterNome(true) + "." + nome_obj;
@@ -526,7 +526,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
 
       Para o Modelo de Banco de dados também não é validado a duplicidade pois ele
       é uma instância única */
-   if(tipo_obj!=OBJETO_BANCO_DADOS && tipo_obj!=OBJETO_PERMISSAO && tipo_obj!=OBJETO_PARAMETRO)
+   if(tipo_obj!=OBJ_DATABASE && tipo_obj!=OBJ_PERMISSION && tipo_obj!=OBJ_PARAMETER)
    {
     if(tabela)
     {
@@ -552,9 +552,9 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
      obj_pai=modelo;
      obj_aux=modelo->obterObjeto(nome_obj,tipo_obj);
 
-     if(tipo_obj==OBJETO_FUNCAO)
+     if(tipo_obj==OBJ_FUNCTION)
       obj_aux1=modelo->obterObjeto(dynamic_cast<Funcao *>(objeto)->obterAssinatura(),tipo_obj);
-     else if(tipo_obj==OBJETO_OPERADOR)
+     else if(tipo_obj==OBJ_OPERATOR)
       obj_aux1=modelo->obterObjeto(dynamic_cast<Operador *>(objeto)->obterAssinatura(),tipo_obj);
      else
       obj_aux1=modelo->obterObjeto(objeto->obterNome(),tipo_obj);
@@ -566,7 +566,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
     {
      throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
                    .arg(nome_obj)
-                   .arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj))
+                   .arg(BaseObject::obterNomeTipoObjeto(tipo_obj))
                    .arg(obj_pai->obterNome(true))
                    .arg(obj_pai->obterNomeTipoObjeto()),
                     ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -575,7 +575,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
 
    /* Executa a nomeção do objeto chamando o método
       de acordo com a classe referente ao tipo de objeto */
-   if(tipo_obj!=OBJETO_CONV_TIPO)
+   if(tipo_obj!=OBJ_CAST)
     /* Caso o objeto ser renomeado não seja de nenhum dos tipos acima
        e não seja conversão de tipo (o unico objeto que não recebe um nome explicitamente)
        utiliza o método de nomeação geral da classe ObjetoBase */
@@ -621,7 +621,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
 {
  if(this->objeto)
  {
-  TipoObjetoBase tipo_obj=this->objeto->obterTipoObjeto();
+  ObjectType tipo_obj=this->objeto->obterTipoObjeto();
   ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->objeto);
   ObjetoTabela *obj_tab=dynamic_cast<ObjetoTabela *>(this->objeto);
 
@@ -630,13 +630,13 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
      quando o usuário executar a operação de desfazer */
   if(novo_obj)
   {
-   if(tabela && (tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_REGRA ||
-                 tipo_obj==OBJETO_GATILHO ||
-                 tipo_obj==OBJETO_INDICE || tipo_obj==OBJETO_RESTRICAO))
+   if(tabela && (tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_RULE ||
+                 tipo_obj==OBJ_TRIGGER ||
+                 tipo_obj==OBJ_INDEX || tipo_obj==OBJ_CONSTRAINT))
     tabela->adicionarObjeto(this->objeto);
-   else if(relacionamento && (tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO))
+   else if(relacionamento && (tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT))
     relacionamento->adicionarObjeto(dynamic_cast<ObjetoTabela *>(this->objeto));
-   else if(tipo_obj!=OBJETO_PARAMETRO)
+   else if(tipo_obj!=OBJ_PARAMETER)
     modelo->adicionarObjeto(this->objeto);
 
    if(lista_op)
@@ -645,7 +645,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
      lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_CRIADO, -1, this->tabela);
     /* Relacionamento não são adicionao   lista de operações por este trecho de código.
        Isso é tratado no método definirAtributos() da classe RelacionamentoWidget */
-    else if(tipo_obj!=OBJETO_RELACAO && tipo_obj!=OBJETO_TABELA)
+    else if(tipo_obj!=OBJ_RELATIONSHIP && tipo_obj!=OBJ_TABLE)
      lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_CRIADO, -1, this->relacionamento);
    }
    novo_obj=false;
@@ -660,12 +660,12 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
      forçar o redimensionamento dos mesmos, pois se o esquema tem o nome modificado
      consequentimente os objetos citados tem seus tamanhos mudados pois o nome
      do esquema é exibido nos objtos. */
-  if(tipo_obj==OBJETO_ESQUEMA)
+  if(tipo_obj==OBJ_SCHEMA)
   {
-   vector<ObjetoBase *> *lista_obj=NULL;
-   vector<ObjetoBase *>::iterator itr, itr_end;
-   TipoObjetoBase tipos[]={ OBJETO_TABELA, OBJETO_VISAO,
-                            OBJETO_RELACAO, OBJETO_RELACAO_BASE };
+   vector<BaseObject *> *lista_obj=NULL;
+   vector<BaseObject *>::iterator itr, itr_end;
+   ObjectType tipos[]={ OBJ_TABLE, OBJ_VIEW,
+                            OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
    unsigned i;
    ObjetoGraficoBase *obj=NULL, *obj1=NULL;
    RelacionamentoBase *rel=NULL;
@@ -685,8 +685,8 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
      itr++;
 
      //Caso o objeto seja um relacionamento
-     if(obj->obterTipoObjeto()==OBJETO_RELACAO ||
-        obj->obterTipoObjeto()==OBJETO_RELACAO_BASE)
+     if(obj->obterTipoObjeto()==OBJ_RELATIONSHIP ||
+        obj->obterTipoObjeto()==BASE_RELATIONSHIP)
      {
       //Converte o objeto para relacionamento básico
       rel=dynamic_cast<RelacionamentoBase *>(obj);
@@ -732,7 +732,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
   {
    /* Caso o objeto editado seja um objeto de tabela (exceto um parâmetro de função,
    pois este herda a classe Coluna), atualiza a tabela pai */
-   if(!obj_graf && obj_tab && obj_tab->obterTipoObjeto()!=OBJETO_PARAMETRO)
+   if(!obj_graf && obj_tab && obj_tab->obterTipoObjeto()!=OBJ_PARAMETER)
    {
     if(this->tabela)
      obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->tabela);
@@ -761,7 +761,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
 
 void ObjetoBaseWidget::cancelarConfiguracao(void)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
 
  tipo_obj=this->objeto->obterTipoObjeto();
 
@@ -789,7 +789,7 @@ void ObjetoBaseWidget::cancelarConfiguracao(void)
 
   /* Desaloca o objeto, porém tabelas e relacionamentos, que são casos especiais,
      não são desalocados */
-  if(tipo_obj!=OBJETO_TABELA && tipo_obj!=OBJETO_RELACAO)
+  if(tipo_obj!=OBJ_TABLE && tipo_obj!=OBJ_RELATIONSHIP)
   {
    delete(this->objeto);
    this->objeto=NULL;
@@ -803,8 +803,8 @@ void ObjetoBaseWidget::cancelarConfiguracao(void)
     desfazendo a operação de modificação do mesmo na lista
     de operações */
  if(!novo_obj &&
-    lista_op && tipo_obj!=OBJETO_BANCO_DADOS &&
-                tipo_obj!=OBJETO_PERMISSAO)
+    lista_op && tipo_obj!=OBJ_DATABASE &&
+                tipo_obj!=OBJ_PERMISSION)
  {
   try
   {

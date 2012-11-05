@@ -1,6 +1,6 @@
 #include "conversaotipowidget.h"
 
-ConversaoTipoWidget::ConversaoTipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_CONV_TIPO)
+ConversaoTipoWidget::ConversaoTipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_CAST)
 {
  try
  {
@@ -17,14 +17,14 @@ ConversaoTipoWidget::ConversaoTipoWidget(QWidget *parent): ObjetoBaseWidget(pare
   tipo_dado_orig=new TipoPgSQLWidget(this, trUtf8("Source data type"));
   tipo_dado_dest=new TipoPgSQLWidget(this, trUtf8("Target data type"));
   //Alocando o widget seletor de função de conversão
-  sel_funcao_conv=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
+  sel_funcao_conv=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
 
   //Insere os widgets alocados no layout do formulário
   convtipo_grid->addWidget(sel_funcao_conv,1,1,1,3);
   convtipo_grid->addWidget(tipo_dado_orig,2,0,1,4);
   convtipo_grid->addWidget(tipo_dado_dest,3,0,1,4);
 
-  configurarLayouFormulario(convtipo_grid, OBJETO_CONV_TIPO);
+  configurarLayouFormulario(convtipo_grid, OBJ_CAST);
 
   /* Deixa como somente-leitura o campo de nome do objeto pois,
      o nome de conversões de tipo são geradas automaticamente */

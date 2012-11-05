@@ -1,7 +1,7 @@
 #include "listaoperacoes.h"
 
 template <class Classe>
-void copiarObjeto(ObjetoBase **pobj_orig, Classe *obj_copia)
+void copiarObjeto(BaseObject **pobj_orig, Classe *obj_copia)
 {
  Classe *obj_orig=NULL;
 
@@ -24,11 +24,11 @@ void copiarObjeto(ObjetoBase **pobj_orig, Classe *obj_copia)
  (*obj_orig)=(*obj_copia);
 }
 
-void copiarObjeto(ObjetoBase **pobj_orig, ObjetoBase *obj_copia, TipoObjetoBase tipo)
+void copiarObjeto(BaseObject **pobj_orig, BaseObject *obj_copia, ObjectType tipo)
 {
  switch(tipo)
  {
-  case OBJETO_RELACAO:
+  case OBJ_RELATIONSHIP:
     Relacionamento *rel1;
     rel1=new Relacionamento(dynamic_cast<Relacionamento *>(obj_copia));
     if(!(*pobj_orig))
@@ -36,7 +36,7 @@ void copiarObjeto(ObjetoBase **pobj_orig, ObjetoBase *obj_copia, TipoObjetoBase 
     else
      (*(dynamic_cast<Relacionamento *>(*pobj_orig)))=(*rel1);
   break;
-  case OBJETO_RELACAO_BASE:
+  case BASE_RELATIONSHIP:
     RelacionamentoBase *rel;
     rel=new RelacionamentoBase(dynamic_cast<RelacionamentoBase *>(obj_copia));
     if(!(*pobj_orig))
@@ -44,70 +44,70 @@ void copiarObjeto(ObjetoBase **pobj_orig, ObjetoBase *obj_copia, TipoObjetoBase 
     else
      (*(dynamic_cast<RelacionamentoBase *>(*pobj_orig)))=(*rel);
   break;
-  case OBJETO_COLUNA:
+  case OBJ_COLUMN:
     copiarObjeto(pobj_orig, dynamic_cast<Coluna *>(obj_copia));
   break;
-  case OBJETO_RESTRICAO:
+  case OBJ_CONSTRAINT:
     copiarObjeto(pobj_orig, dynamic_cast<Restricao *>(obj_copia));
   break;
-  case OBJETO_GATILHO:
+  case OBJ_TRIGGER:
     copiarObjeto(pobj_orig, dynamic_cast<Gatilho *>(obj_copia));
   break;
-  case OBJETO_REGRA:
+  case OBJ_RULE:
     copiarObjeto(pobj_orig, dynamic_cast<Regra *>(obj_copia));
   break;
-  case OBJETO_INDICE:
+  case OBJ_INDEX:
     copiarObjeto(pobj_orig, dynamic_cast<Indice *>(obj_copia));
   break;
-  case OBJETO_TABELA:
+  case OBJ_TABLE:
     copiarObjeto(pobj_orig, dynamic_cast<Tabela *>(obj_copia));
   break;
-  case OBJETO_CAIXA_TEXTO:
+  case OBJ_TEXTBOX:
     copiarObjeto(pobj_orig, dynamic_cast<CaixaTexto *>(obj_copia));
   break;
-  case OBJETO_CLASSE_OPER:
+  case OBJ_OPCLASS:
     copiarObjeto(pobj_orig, dynamic_cast<ClasseOperadores *>(obj_copia));
   break;
-  case OBJETO_CONV_CODIFICACAO:
+  case OBJ_CONVERSION:
     copiarObjeto(pobj_orig, dynamic_cast<ConversaoCodificacao *>(obj_copia));
   break;
-  case OBJETO_CONV_TIPO:
+  case OBJ_CAST:
     copiarObjeto(pobj_orig, dynamic_cast<ConversaoTipo *>(obj_copia));
   break;
-  case OBJETO_DOMINIO:
+  case OBJ_DOMAIN:
     copiarObjeto(pobj_orig, dynamic_cast<Dominio *>(obj_copia));
   break;
-  case OBJETO_ESPACO_TABELA:
+  case OBJ_TABLESPACE:
     copiarObjeto(pobj_orig, dynamic_cast<EspacoTabela *>(obj_copia));
   break;
-  case OBJETO_ESQUEMA:
+  case OBJ_SCHEMA:
     copiarObjeto(pobj_orig, dynamic_cast<Esquema *>(obj_copia));
   break;
-  case OBJETO_FAMILIA_OPER:
+  case OBJ_OPFAMILY:
     copiarObjeto(pobj_orig, dynamic_cast<FamiliaOperadores *>(obj_copia));
   break;
-  case OBJETO_FUNCAO:
+  case OBJ_FUNCTION:
     copiarObjeto(pobj_orig, dynamic_cast<Funcao *>(obj_copia));
   break;
-  case OBJETO_FUNC_AGREGACAO:
+  case OBJ_AGGREGATE:
     copiarObjeto(pobj_orig, dynamic_cast<FuncaoAgregacao *>(obj_copia));
   break;
-  case OBJETO_LINGUAGEM:
+  case OBJ_LANGUAGE:
     copiarObjeto(pobj_orig, dynamic_cast<Linguagem *>(obj_copia));
   break;
-  case OBJETO_OPERADOR:
+  case OBJ_OPERATOR:
     copiarObjeto(pobj_orig, dynamic_cast<Operador *>(obj_copia));
   break;
-  case OBJETO_PAPEL:
+  case OBJ_ROLE:
     copiarObjeto(pobj_orig, dynamic_cast<Papel *>(obj_copia));
   break;
-  case OBJETO_SEQUENCIA:
+  case OBJ_SEQUENCE:
     copiarObjeto(pobj_orig, dynamic_cast<Sequencia *>(obj_copia));
   break;
-  case OBJETO_TIPO:
+  case OBJ_TYPE:
     copiarObjeto(pobj_orig, dynamic_cast<Tipo *>(obj_copia));
   break;
-  case OBJETO_VISAO:
+  case OBJ_VIEW:
     copiarObjeto(pobj_orig, dynamic_cast<Visao *>(obj_copia));
   break;
   default:
@@ -231,9 +231,9 @@ void ListaOperacoes::definirTamanhoMaximo(unsigned tam_max)
  tam_maximo=tam_max;
 }
 
-void ListaOperacoes::adicionarObjetoPool(ObjetoBase *objeto, unsigned tipo_op)
+void ListaOperacoes::adicionarObjetoPool(BaseObject *objeto, unsigned tipo_op)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
 
  /* Caso se tente inserir no pool um objeto não alocado
     é disparada uma exceção */
@@ -247,10 +247,10 @@ void ListaOperacoes::adicionarObjetoPool(ObjetoBase *objeto, unsigned tipo_op)
  if(tipo_op==Operacao::OBJETO_MODIFICADO ||
     tipo_op==Operacao::OBJETO_MOVIMENTADO)
  {
-  ObjetoBase *obj_copia=NULL;
+  BaseObject *obj_copia=NULL;
 
   //Faz a cópia apenas de objetos descendetes das classes bases
-  if(tipo_obj!=OBJETO_BASE && tipo_obj!=OBJETO_BANCO_DADOS)
+  if(tipo_obj!=BASE_OBJECT && tipo_obj!=OBJ_DATABASE)
   {
    //Copia o objeto
    copiarObjeto(&obj_copia, objeto, tipo_obj);
@@ -274,7 +274,7 @@ void ListaOperacoes::adicionarObjetoPool(ObjetoBase *objeto, unsigned tipo_op)
 
 void ListaOperacoes::removerOperacoes(void)
 {
- ObjetoBase *objeto=NULL;
+ BaseObject *objeto=NULL;
  ObjetoTabela *obj_tab=NULL;
  Tabela *tab=NULL;
 
@@ -334,10 +334,10 @@ void ListaOperacoes::validarOperacoes(void)
  }
 }
 
-bool ListaOperacoes::objetoNoPool(ObjetoBase *objeto)
+bool ListaOperacoes::objetoNoPool(BaseObject *objeto)
 {
  bool enc=false;
- vector<ObjetoBase *>::iterator itr, itr_end;
+ vector<BaseObject *>::iterator itr, itr_end;
 
  if(!objeto)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -355,8 +355,8 @@ bool ListaOperacoes::objetoNoPool(ObjetoBase *objeto)
 
 void ListaOperacoes::removerObjetoPool(unsigned idx_obj)
 {
- ObjetoBase *objeto=NULL;
- vector<ObjetoBase *>::iterator itr;
+ BaseObject *objeto=NULL;
+ vector<BaseObject *>::iterator itr;
 
  //Caso o índice do objeto a ser excluído seja inválido é disparada uma exceção
  if(idx_obj >= pool_objetos.size())
@@ -377,9 +377,9 @@ void ListaOperacoes::removerObjetoPool(unsigned idx_obj)
 }
 
 
-void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int idx_objeto,  ObjetoBase *objeto_pai)
+void ListaOperacoes::adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int idx_objeto,  BaseObject *objeto_pai)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
  Operacao *operacao=NULL;
  Tabela *tabela_pai=NULL;
  Relacionamento *relac_pai=NULL;
@@ -392,17 +392,17 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
    throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   tipo_obj=objeto->obterTipoObjeto();
-  if((tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO ||
-      tipo_obj==OBJETO_INDICE || tipo_obj==OBJETO_GATILHO ||
-      tipo_obj==OBJETO_REGRA) && !objeto_pai)
+  if((tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT ||
+      tipo_obj==OBJ_INDEX || tipo_obj==OBJ_TRIGGER ||
+      tipo_obj==OBJ_RULE) && !objeto_pai)
    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   else if(objeto_pai &&
-     (((tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO) &&
-      (objeto_pai->obterTipoObjeto()!=OBJETO_RELACAO && objeto_pai->obterTipoObjeto()!=OBJETO_TABELA)) ||
+     (((tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT) &&
+      (objeto_pai->obterTipoObjeto()!=OBJ_RELATIONSHIP && objeto_pai->obterTipoObjeto()!=OBJ_TABLE)) ||
 
-      ((tipo_obj==OBJETO_INDICE || tipo_obj==OBJETO_GATILHO || tipo_obj==OBJETO_REGRA) &&
-        objeto_pai->obterTipoObjeto()!=OBJETO_TABELA)))
+      ((tipo_obj==OBJ_INDEX || tipo_obj==OBJ_TRIGGER || tipo_obj==OBJ_RULE) &&
+        objeto_pai->obterTipoObjeto()!=OBJ_TABLE)))
    throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Caso a lista de operações esteja cheia, faz a limpeza automática antes de inserir uma nova operação
@@ -463,25 +463,25 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
      Caso o objeto possua um objeto pai, o mesmo precisa ser descoberto
      e além disso é necessário descobrir e armazenar o índice do objeto
      na lista contida em seu objeto pai */
-  if(tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO ||
-     tipo_obj==OBJETO_INDICE || tipo_obj==OBJETO_GATILHO ||
-     tipo_obj==OBJETO_REGRA)
+  if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT ||
+     tipo_obj==OBJ_INDEX || tipo_obj==OBJ_TRIGGER ||
+     tipo_obj==OBJ_RULE)
   {
    ObjetoTabela *obj_tab=NULL;
    obj_tab=dynamic_cast<ObjetoTabela *>(objeto);
 
-   if(objeto_pai->obterTipoObjeto()==OBJETO_TABELA)
+   if(objeto_pai->obterTipoObjeto()==OBJ_TABLE)
     tabela_pai=dynamic_cast<Tabela *>(objeto_pai);
    else
     relac_pai=dynamic_cast<Relacionamento *>(objeto_pai);
 
    /* Caso específico para colunas: em operações de remoção do objeto
       as permissões daquele objeto precisam ser removidas. */
-   if(tipo_obj==OBJETO_COLUNA && tipo_op==Operacao::OBJETO_REMOVIDO)
+   if(tipo_obj==OBJ_COLUMN && tipo_op==Operacao::OBJETO_REMOVIDO)
     modelo->removerPermissoes(obj_tab);
-   else if(((tipo_obj==OBJETO_GATILHO && dynamic_cast<Gatilho *>(obj_tab)->referenciaColunaIncRelacao()) ||
-            (tipo_obj==OBJETO_INDICE && dynamic_cast<Indice *>(obj_tab)->referenciaColunaIncRelacao()) ||
-            (tipo_obj==OBJETO_RESTRICAO && dynamic_cast<Restricao *>(obj_tab)->referenciaColunaIncRelacao())))
+   else if(((tipo_obj==OBJ_TRIGGER && dynamic_cast<Gatilho *>(obj_tab)->referenciaColunaIncRelacao()) ||
+            (tipo_obj==OBJ_INDEX && dynamic_cast<Indice *>(obj_tab)->referenciaColunaIncRelacao()) ||
+            (tipo_obj==OBJ_CONSTRAINT && dynamic_cast<Restricao *>(obj_tab)->referenciaColunaIncRelacao())))
    {
     if(tipo_op==Operacao::OBJETO_REMOVIDO)
      obj_tab->definirTabelaPai(tabela_pai);
@@ -494,7 +494,7 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
    /* Caso haja um relacionamento pai será obtido o índice do objeto.
       Apenas colunas e restrições são manipuladas caso o pai seja
       um relacionamento */
-   if(relac_pai && (tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO))
+   if(relac_pai && (tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT))
    {
     //Caso um índice específico para o objeto não foi especificado
     if(idx_objeto < 0)
@@ -550,7 +550,7 @@ void ListaOperacoes::adicionarObjeto(ObjetoBase *objeto, unsigned tipo_op, int i
  }
 }
 
-void ListaOperacoes::obterDadosOperacao(unsigned idx_oper, unsigned &tipo_oper, QString &nome_obj, TipoObjetoBase &tipo_obj)
+void ListaOperacoes::obterDadosOperacao(unsigned idx_oper, unsigned &tipo_oper, QString &nome_obj, ObjectType &tipo_obj)
 {
  Operacao *operacao=NULL;
 
@@ -562,14 +562,14 @@ void ListaOperacoes::obterDadosOperacao(unsigned idx_oper, unsigned &tipo_oper, 
 
  tipo_obj=operacao->obj_pool->obterTipoObjeto();
 
- if(tipo_obj==OBJETO_CONV_TIPO)
+ if(tipo_obj==OBJ_CAST)
   nome_obj=operacao->obj_pool->obterNome();
  else
   nome_obj=operacao->obj_pool->obterNome(true);
 
  //Formata o nome especificamente para objetos da tabela incluindo o nome da tabela pai ao nome do objeto
- if(tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO || tipo_obj==OBJETO_REGRA ||
-    tipo_obj==OBJETO_GATILHO || tipo_obj==OBJETO_INDICE)
+ if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT || tipo_obj==OBJ_RULE ||
+    tipo_obj==OBJ_TRIGGER || tipo_obj==OBJ_INDEX)
  {
   nome_obj=operacao->obj_pai->obterNome(true) + "." + nome_obj;
  }
@@ -748,8 +748,8 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
 {
   if(oper)
   {
-   ObjetoBase *obj_orig=NULL, *obj_bkp=NULL, *objeto=NULL, *obj_aux=NULL;
-   TipoObjetoBase tipo;
+   BaseObject *obj_orig=NULL, *obj_bkp=NULL, *objeto=NULL, *obj_aux=NULL;
+   ObjectType tipo;
    Tabela *tabela_pai=NULL;
    Relacionamento *relac_pai=NULL;
 
@@ -764,7 +764,7 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
       'relac_pai' receberá a referência ao relacionamento */
    if(oper->obj_pai)
    {
-    if(oper->obj_pai->obterTipoObjeto()==OBJETO_TABELA)
+    if(oper->obj_pai->obterTipoObjeto()==OBJ_TABLE)
      tabela_pai=dynamic_cast<Tabela *>(oper->obj_pai);
     else
      relac_pai=dynamic_cast<Relacionamento *>(oper->obj_pai);
@@ -783,13 +783,13 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
     XMLParser::loadXMLBuffer(oper->def_xml);
 
     //Cria uma cópia do objeto conforme o tipo do mesmo
-    if(tipo==OBJETO_GATILHO)
+    if(tipo==OBJ_TRIGGER)
      obj_aux=modelo->criarGatilho(tabela_pai);
-    else if(tipo==OBJETO_INDICE)
+    else if(tipo==OBJ_INDEX)
      obj_aux=modelo->criarIndice(tabela_pai);
-    else if(tipo==OBJETO_RESTRICAO)
+    else if(tipo==OBJ_CONSTRAINT)
      obj_aux=modelo->criarRestricao(oper->obj_pai);
-    else if(tipo==OBJETO_SEQUENCIA)
+    else if(tipo==OBJ_SEQUENCE)
      obj_aux=modelo->criarSequencia();
    }
 
@@ -798,7 +798,7 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
    if(oper->tipo_op==Operacao::OBJETO_MODIFICADO ||
       oper->tipo_op==Operacao::OBJETO_MOVIMENTADO)
    {
-    if(tipo==OBJETO_RELACAO)
+    if(tipo==OBJ_RELATIONSHIP)
     {
      /* Devido a complexidade da classe Relacionamento e a forte ligação entre todos os
         relacinamentos do modelo, é necessário armazenar o XML dos objetos especiais e
@@ -823,13 +823,13 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
         restaurados com a cópia existente no pool. Após a restauração o objeto
         no pool terá como atributos os mesmo do objeto antes de ser restaurado,
         para possibilitar a operação de refazer */
-    copiarObjeto(reinterpret_cast<ObjetoBase **>(&obj_bkp), obj_orig, tipo);
-    copiarObjeto(reinterpret_cast<ObjetoBase **>(&obj_orig), objeto, tipo);
-    copiarObjeto(reinterpret_cast<ObjetoBase **>(&objeto), obj_bkp, tipo);
+    copiarObjeto(reinterpret_cast<BaseObject **>(&obj_bkp), obj_orig, tipo);
+    copiarObjeto(reinterpret_cast<BaseObject **>(&obj_orig), objeto, tipo);
+    copiarObjeto(reinterpret_cast<BaseObject **>(&objeto), obj_bkp, tipo);
     objeto=obj_orig;
 
     if(obj_aux)
-     copiarObjeto(reinterpret_cast<ObjetoBase **>(&objeto), obj_aux, tipo);
+     copiarObjeto(reinterpret_cast<BaseObject **>(&objeto), obj_aux, tipo);
    }
    /* Caso a operação seja de objeto removido e não seja uma operação de refazer, ou
       se o objeto foi criado anteriormente e se deseja refazer a operação.
@@ -838,7 +838,7 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
            (oper->tipo_op==Operacao::OBJETO_CRIADO && refazer))
    {
     if(obj_aux)
-     copiarObjeto(reinterpret_cast<ObjetoBase **>(&objeto), obj_aux, tipo);
+     copiarObjeto(reinterpret_cast<BaseObject **>(&objeto), obj_aux, tipo);
 
     if(tabela_pai)
      tabela_pai->adicionarObjeto(dynamic_cast<ObjetoTabela *>(objeto), oper->idx_obj);
@@ -875,8 +875,8 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
     relac_pai->definirModificado(true);
 
     if(tabela_pai &&
-      (objeto->obterTipoObjeto()==OBJETO_COLUNA ||
-       objeto->obterTipoObjeto()==OBJETO_RESTRICAO))
+      (objeto->obterTipoObjeto()==OBJ_COLUMN ||
+       objeto->obterTipoObjeto()==OBJ_CONSTRAINT))
      modelo->validarRelacObjetoTabela(dynamic_cast<ObjetoTabela *>(objeto), tabela_pai);
     else if(relac_pai)
      modelo->validarRelacionamentos();
@@ -884,9 +884,9 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
    /* Caso o objeto em questão seja um grafico o mesmo tem seus flags
       de modificado marcado em true e de selecionado em falso, para
       forçar o redesenho do mesmo no momento de sua restauração */
-   else if(tipo==OBJETO_TABELA || tipo==OBJETO_VISAO ||
-      tipo==OBJETO_RELACAO_BASE || tipo==OBJETO_RELACAO ||
-      tipo==OBJETO_CAIXA_TEXTO)
+   else if(tipo==OBJ_TABLE || tipo==OBJ_VIEW ||
+      tipo==BASE_RELATIONSHIP || tipo==OBJ_RELATIONSHIP ||
+      tipo==OBJ_TEXTBOX)
    {
     ObjetoGraficoBase *obj_grafico=dynamic_cast<ObjetoGraficoBase *>(objeto);
 
@@ -895,10 +895,10 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
      obj_grafico->definirModificado(true);
 
     //Caso seja uma visão atualiza os relacionamentos entre as tabelas e a visão
-    if(tipo==OBJETO_VISAO && oper->tipo_op==Operacao::OBJETO_MODIFICADO)
+    if(tipo==OBJ_VIEW && oper->tipo_op==Operacao::OBJETO_MODIFICADO)
      modelo->atualizarRelTabelaVisao(dynamic_cast<Visao *>(obj_grafico));
-    else if((tipo==OBJETO_RELACAO ||
-             (tipo==OBJETO_TABELA && modelo->obterRelacionamento(dynamic_cast<TabelaBase *>(objeto), NULL))) &&
+    else if((tipo==OBJ_RELATIONSHIP ||
+             (tipo==OBJ_TABLE && modelo->obterRelacionamento(dynamic_cast<TabelaBase *>(objeto), NULL))) &&
             oper->tipo_op==Operacao::OBJETO_MODIFICADO)
      modelo->validarRelacionamentos();
    }
@@ -958,7 +958,7 @@ void ListaOperacoes::removerUltimaOperacao(void)
  }
 }
 
-void ListaOperacoes::atualizarIndiceObjeto(ObjetoBase *objeto, unsigned idx_novo)
+void ListaOperacoes::atualizarIndiceObjeto(BaseObject *objeto, unsigned idx_novo)
 {
  vector<Operacao *>::iterator itr, itr_end;
  Operacao *oper=NULL;

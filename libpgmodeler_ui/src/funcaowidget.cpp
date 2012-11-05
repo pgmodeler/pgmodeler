@@ -2,7 +2,7 @@
 #include "parametrowidget.h"
 extern ParametroWidget *parametro_wgt;
 
-FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_FUNCAO)
+FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_FUNCTION)
 {
  try
  {
@@ -12,7 +12,7 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_FUN
   QFrame *frame=NULL;
 
   Ui_FuncaoWidget::setupUi(this);
-  configurarLayouFormulario(funcao_grid, OBJETO_FUNCAO);
+  configurarLayouFormulario(funcao_grid, OBJ_FUNCTION);
 
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
 
@@ -250,7 +250,7 @@ void FuncaoWidget::exibirDadosParametro(Parametro param, TabelaObjetosWidget *ta
 
 void FuncaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Funcao *funcao)
 {
- vector<ObjetoBase *> linguagens;
+ vector<BaseObject *> linguagens;
  Linguagem *ling=NULL;
  QStringList lista;
  unsigned qtd=0, i;
@@ -264,7 +264,7 @@ void FuncaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, funcao);
 
 //Obtém todas as linguagens criadas no modelo para armazená-las num combo
- linguagens=modelo->obterObjetos(OBJETO_LINGUAGEM);
+ linguagens=modelo->obterObjetos(OBJ_LANGUAGE);
 
  //Caso existam linguagens insere-as numa QStringList para ordená-las alfabeticamente
  while(!linguagens.empty())
@@ -432,8 +432,8 @@ void FuncaoWidget::selecionarLinguagem(void)
 
 void FuncaoWidget::validarFuncaoConfigurada(void)
 {
- vector<ObjetoBase *> *lista_obj;
- vector<ObjetoBase *>::iterator itr, itr_end;
+ vector<BaseObject *> *lista_obj;
+ vector<BaseObject *>::iterator itr, itr_end;
  ConversaoCodificacao *conv_cod=NULL;
  ConversaoTipo *conv_tipo=NULL;
  FuncaoAgregacao *func_ag=NULL;
@@ -443,13 +443,13 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
  Tipo *tipo=NULL;
  Tabela *tab=NULL;
  Funcao *funcao=NULL;
- ObjetoBase *objeto=NULL;
+ BaseObject *objeto=NULL;
  unsigned i, i1, qtd;
 
  //Vetor de tipos de objetos os quais referenciam direta/indiretamente a função
- TipoObjetoBase tipos[7]={ OBJETO_CONV_CODIFICACAO, OBJETO_CONV_TIPO,
-                           OBJETO_FUNC_AGREGACAO, OBJETO_TABELA,
-                           OBJETO_LINGUAGEM, OBJETO_OPERADOR, OBJETO_TIPO };
+ ObjectType tipos[7]={ OBJ_CONVERSION, OBJ_CAST,
+                           OBJ_AGGREGATE, OBJ_TABLE,
+                           OBJ_LANGUAGE, OBJ_OPERATOR, OBJ_TYPE };
 
  //Obtém a referência para a função recém configurada
  funcao=dynamic_cast<Funcao *>(this->objeto);
@@ -478,19 +478,19 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
          Caso a função seja inválida as instâncias dispararão
          exceções acusando o erro isso é o suficiente para verificar
          a validade da função em relação aos objetos que a referenciam. */
-    if(tipos[i]==OBJETO_CONV_CODIFICACAO)
+    if(tipos[i]==OBJ_CONVERSION)
     {
      conv_cod=dynamic_cast<ConversaoCodificacao *>(objeto);
      if(conv_cod->obterFuncaoConversao()==funcao)
       conv_cod->definirFuncaoConversao(funcao);
     }
-    else if(tipos[i]==OBJETO_CONV_TIPO)
+    else if(tipos[i]==OBJ_CAST)
     {
      conv_tipo=dynamic_cast<ConversaoTipo *>(objeto);
      if(conv_tipo->obterFuncaoConversao()==funcao)
       conv_tipo->definirFuncaoConversao(funcao);
     }
-    else if(tipos[i]==OBJETO_FUNC_AGREGACAO)
+    else if(tipos[i]==OBJ_AGGREGATE)
     {
      func_ag=dynamic_cast<FuncaoAgregacao *>(objeto);
      if(func_ag->obterFuncao(FuncaoAgregacao::FUNCAO_FINAL)==funcao)
@@ -502,7 +502,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
       internos das tabelas, primeiro são obtidas as tabelas e em seguida
       com cada instância a função será validada com os gatilhos constantes
       nas tabelas */
-    else if(tipos[i]==OBJETO_TABELA)
+    else if(tipos[i]==OBJ_TABLE)
     {
      tab=dynamic_cast<Tabela *>(objeto);
      qtd=tab->obterNumGatilhos();
@@ -514,7 +514,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
        gatilho->definirFuncao(funcao);
      }
     }
-    else if(tipos[i]==OBJETO_LINGUAGEM)
+    else if(tipos[i]==OBJ_LANGUAGE)
     {
      ling=dynamic_cast<Linguagem *>(objeto);
 
@@ -524,7 +524,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
        ling->definirFuncao(funcao, i1);
      }
     }
-    else if(tipos[i]==OBJETO_OPERADOR)
+    else if(tipos[i]==OBJ_OPERATOR)
     {
      oper=dynamic_cast<Operador *>(objeto);
      for(i1=Operador::FUNC_OPERADOR; i1 <= Operador::FUNC_RESTRICAO; i1++)
@@ -533,7 +533,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
        oper->definirFuncao(funcao, i1);
      }
     }
-    else if(tipos[i]==OBJETO_TIPO)
+    else if(tipos[i]==OBJ_TYPE)
     {
      tipo=dynamic_cast<Tipo *>(objeto);
      if(tipo->obterConfiguracao()==Tipo::TIPO_BASE)
@@ -575,7 +575,7 @@ void FuncaoWidget::aplicarConfiguracao(void)
   func=dynamic_cast<Funcao *>(this->objeto);
 
   //Atribui os valores básicos configurados no formulário para a função
-  func->definirLinguagem(modelo->obterObjeto(linguagem_cmb->currentText(), OBJETO_LINGUAGEM));
+  func->definirLinguagem(modelo->obterObjeto(linguagem_cmb->currentText(), OBJ_LANGUAGE));
   func->definirTipoFuncao(tipo_func_cmb->currentText());
   func->definirFuncaoJanela(func_janela_chk->isChecked());
   func->definirCustoExecucao(custo_exec_spb->value());

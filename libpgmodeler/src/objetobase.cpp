@@ -4,7 +4,7 @@
 /* Atenção: Se a ordem e quantidade das enumerações forem modificados
    então a ordem e quantidade dos elementos deste vetor
    também devem ser modificados */
-QString ObjetoBase::esq_objetos[QTD_TIPOS_OBJETO]={
+QString BaseObject::esq_objetos[QTD_TIPOS_OBJETO]={
   "column",  "constraint", "function", "trigger",
   "index", "rule", "table", "view",
   "domain", "schema", "aggregate", "operator",
@@ -15,7 +15,7 @@ QString ObjetoBase::esq_objetos[QTD_TIPOS_OBJETO]={
 };
 
 
-QString ObjetoBase::nome_tipo_objetos[QTD_TIPOS_OBJETO]={
+QString BaseObject::nome_tipo_objetos[QTD_TIPOS_OBJETO]={
   QT_TR_NOOP("Column"), QT_TR_NOOP("Constraint"), QT_TR_NOOP("Function"),
   QT_TR_NOOP("Trigger"), QT_TR_NOOP("Index"), QT_TR_NOOP("Rule"),
   QT_TR_NOOP("Table"), QT_TR_NOOP("View"),  QT_TR_NOOP("Domain"),
@@ -28,7 +28,7 @@ QString ObjetoBase::nome_tipo_objetos[QTD_TIPOS_OBJETO]={
   QT_TR_NOOP("Table-View Relationship")
 };
 
-QString ObjetoBase::sql_objetos[QTD_TIPOS_OBJETO]={
+QString BaseObject::sql_objetos[QTD_TIPOS_OBJETO]={
   "COLUMN",  "CONSTRAINT", "FUNCTION", "TRIGGER",
   "INDEX", "RULE", "TABLE", "VIEW",
   "DOMAIN", "SCHEMA", "AGGREGATE", "OPERATOR",
@@ -42,20 +42,20 @@ QString ObjetoBase::sql_objetos[QTD_TIPOS_OBJETO]={
    inicia-se em 60k pois as faixas de ids 0,10k,20k,30k,40k e 50k
    estão atribuídos respectivamente aos objetos das classes Papel, EspacoTabela,
    ModeloBD, Esquema, Função e Tipo */
-unsigned ObjetoBase::id_global=60000;
-unsigned ObjetoBase::id_tipo=50000;
-unsigned ObjetoBase::id_funcao=40000;
-unsigned ObjetoBase::id_esquema=30000;
-unsigned ObjetoBase::id_modelobd=20000;
-unsigned ObjetoBase::id_esptabela=10000;
-unsigned ObjetoBase::id_papel=0;
+unsigned BaseObject::id_global=60000;
+unsigned BaseObject::id_tipo=50000;
+unsigned BaseObject::id_funcao=40000;
+unsigned BaseObject::id_esquema=30000;
+unsigned BaseObject::id_modelobd=20000;
+unsigned BaseObject::id_esptabela=10000;
+unsigned BaseObject::id_papel=0;
 
-ObjetoBase::ObjetoBase(void)
+BaseObject::BaseObject(void)
 {
- id_objeto=ObjetoBase::id_global++;
+ id_objeto=BaseObject::id_global++;
  protegido=false;
  //nome="";
- tipo_objeto=OBJETO_BASE;
+ tipo_objeto=BASE_OBJECT;
  esquema=NULL;
  dono=NULL;
  espacotabela=NULL;
@@ -67,14 +67,14 @@ ObjetoBase::ObjetoBase(void)
  atributos[ParsersAttributes::PROTECTED]="";
 }
 
-unsigned ObjetoBase::obterIdGlobal(void)
+unsigned BaseObject::obterIdGlobal(void)
 {
  return(id_global);
 }
 
-QString ObjetoBase::obterNomeTipoObjeto(TipoObjetoBase tipo_objeto)
+QString BaseObject::obterNomeTipoObjeto(ObjectType tipo_objeto)
 {
- if(tipo_objeto!=OBJETO_BASE)
+ if(tipo_objeto!=BASE_OBJECT)
   /* Devido a classe ObjetoBase não ser derivada de QObject a função tr() é ineficiente para traduzir os nomes
      dos tipos de objetos sendo assim é chamado o metódo de tradução diretamente da aplicação especificando o
      contexto (ObjetoBase) no arquivo .ts e o texto a ser traduzido */
@@ -84,17 +84,17 @@ QString ObjetoBase::obterNomeTipoObjeto(TipoObjetoBase tipo_objeto)
   return("");
 }
 
-QString ObjetoBase::obterNomeEsquemaObjeto(TipoObjetoBase tipo_objeto)
+QString BaseObject::obterNomeEsquemaObjeto(ObjectType tipo_objeto)
 {
  return(esq_objetos[tipo_objeto]);
 }
 
-QString ObjetoBase::obterNomeSQLObjeto(TipoObjetoBase tipo_objeto)
+QString BaseObject::obterNomeSQLObjeto(ObjectType tipo_objeto)
 {
  return(sql_objetos[tipo_objeto]);
 }
 
-QString ObjetoBase::formatarNome(const QString &nome_obj, bool obj_operador)
+QString BaseObject::formatarNome(const QString &nome_obj, bool obj_operador)
 {
  int i;
  bool formatado=false;
@@ -187,7 +187,7 @@ QString ObjetoBase::formatarNome(const QString &nome_obj, bool obj_operador)
  return(nome_form);
 }
 
-bool ObjetoBase::nomeValido(const QString &nome_obj)
+bool BaseObject::nomeValido(const QString &nome_obj)
 {
  int tam;
 
@@ -283,12 +283,12 @@ bool ObjetoBase::nomeValido(const QString &nome_obj)
  }
 }
 
-void ObjetoBase::definirProtegido(bool valor)
+void BaseObject::definirProtegido(bool valor)
 {
  protegido=valor;
 }
 
-void ObjetoBase::definirNome(const QString &nome)
+void BaseObject::definirNome(const QString &nome)
 {
  /* Caso se tente atribuir um nome vazio ao objeto
     é disparada uma exceção */
@@ -313,27 +313,27 @@ void ObjetoBase::definirNome(const QString &nome)
  }
 }
 
-void ObjetoBase::definirComentario(const QString &comentario)
+void BaseObject::definirComentario(const QString &comentario)
 {
  this->comentario=comentario;
 }
 
-void ObjetoBase::definirEsquema(ObjetoBase *esquema)
+void BaseObject::definirEsquema(BaseObject *esquema)
 {
  if(!esquema)
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_SCHEMA)
                 .arg(QString::fromUtf8(this->nome)).arg(this->obterNomeTipoObjeto()),
                 ERR_ASG_NOT_ALOC_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(esquema && esquema->obterTipoObjeto()!=OBJETO_ESQUEMA)
+ else if(esquema && esquema->obterTipoObjeto()!=OBJ_SCHEMA)
   throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  if(tipo_objeto==OBJETO_FUNCAO || tipo_objeto==OBJETO_TABELA ||
-     tipo_objeto==OBJETO_VISAO  || tipo_objeto==OBJETO_DOMINIO ||
-     tipo_objeto==OBJETO_FUNC_AGREGACAO || tipo_objeto==OBJETO_OPERADOR ||
-     tipo_objeto==OBJETO_SEQUENCIA || tipo_objeto==OBJETO_CONV_CODIFICACAO ||
-     tipo_objeto==OBJETO_TIPO || tipo_objeto==OBJETO_CLASSE_OPER ||
-     tipo_objeto==OBJETO_FAMILIA_OPER)
+  if(tipo_objeto==OBJ_FUNCTION || tipo_objeto==OBJ_TABLE ||
+     tipo_objeto==OBJ_VIEW  || tipo_objeto==OBJ_DOMAIN ||
+     tipo_objeto==OBJ_AGGREGATE || tipo_objeto==OBJ_OPERATOR ||
+     tipo_objeto==OBJ_SEQUENCE || tipo_objeto==OBJ_CONVERSION ||
+     tipo_objeto==OBJ_TYPE || tipo_objeto==OBJ_OPCLASS ||
+     tipo_objeto==OBJ_OPFAMILY)
   {
    this->esquema=esquema;
   }
@@ -342,19 +342,19 @@ void ObjetoBase::definirEsquema(ObjetoBase *esquema)
  }
 }
 
-void ObjetoBase::definirDono(ObjetoBase *dono)
+void BaseObject::definirDono(BaseObject *dono)
 {
- if(dono && dono->obterTipoObjeto()!=OBJETO_PAPEL)
+ if(dono && dono->obterTipoObjeto()!=OBJ_ROLE)
   throw Exception(ERR_ASG_INV_ROLE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  if(tipo_objeto==OBJETO_FUNCAO || tipo_objeto==OBJETO_TABELA ||
-     tipo_objeto==OBJETO_DOMINIO || tipo_objeto==OBJETO_ESQUEMA ||
-     tipo_objeto==OBJETO_FUNC_AGREGACAO || tipo_objeto==OBJETO_OPERADOR ||
-     tipo_objeto==OBJETO_CONV_CODIFICACAO ||
-     tipo_objeto==OBJETO_LINGUAGEM || tipo_objeto==OBJETO_TIPO ||
-     tipo_objeto==OBJETO_ESPACO_TABELA || tipo_objeto==OBJETO_BANCO_DADOS ||
-     tipo_objeto==OBJETO_CLASSE_OPER || tipo_objeto==OBJETO_FAMILIA_OPER)
+  if(tipo_objeto==OBJ_FUNCTION || tipo_objeto==OBJ_TABLE ||
+     tipo_objeto==OBJ_DOMAIN || tipo_objeto==OBJ_SCHEMA ||
+     tipo_objeto==OBJ_AGGREGATE || tipo_objeto==OBJ_OPERATOR ||
+     tipo_objeto==OBJ_CONVERSION ||
+     tipo_objeto==OBJ_LANGUAGE || tipo_objeto==OBJ_TYPE ||
+     tipo_objeto==OBJ_TABLESPACE || tipo_objeto==OBJ_DATABASE ||
+     tipo_objeto==OBJ_OPCLASS || tipo_objeto==OBJ_OPFAMILY)
   {
    this->dono=dono;
   }
@@ -363,16 +363,16 @@ void ObjetoBase::definirDono(ObjetoBase *dono)
  }
 }
 
-void ObjetoBase::definirEspacoTabela(ObjetoBase *espacotabela)
+void BaseObject::definirEspacoTabela(BaseObject *espacotabela)
 {
- if(espacotabela && espacotabela->obterTipoObjeto()!=OBJETO_ESPACO_TABELA)
+ if(espacotabela && espacotabela->obterTipoObjeto()!=OBJ_TABLESPACE)
   throw Exception(ERR_ASG_INV_TABLESPACE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  if(tipo_objeto==OBJETO_INDICE ||
-     tipo_objeto==OBJETO_TABELA ||
-     tipo_objeto==OBJETO_RESTRICAO ||
-     tipo_objeto==OBJETO_BANCO_DADOS)
+  if(tipo_objeto==OBJ_INDEX ||
+     tipo_objeto==OBJ_TABLE ||
+     tipo_objeto==OBJ_CONSTRAINT ||
+     tipo_objeto==OBJ_DATABASE)
   {
    this->espacotabela=espacotabela;
   }
@@ -381,7 +381,7 @@ void ObjetoBase::definirEspacoTabela(ObjetoBase *espacotabela)
  }
 }
 
-QString ObjetoBase::obterNome(bool formatar)
+QString BaseObject::obterNome(bool formatar)
 {
  if(formatar)
  {
@@ -389,7 +389,7 @@ QString ObjetoBase::obterNome(bool formatar)
 
   /* Formata o nome do objeto e marca o flag que indica se o objeto
      é um operador ou não */
-  nome_aux=formatarNome(this->nome, (tipo_objeto==OBJETO_OPERADOR));
+  nome_aux=formatarNome(this->nome, (tipo_objeto==OBJ_OPERATOR));
 
   if(this->esquema)
    nome_aux=formatarNome(this->esquema->obterNome()) + "." + nome_aux;
@@ -399,81 +399,81 @@ QString ObjetoBase::obterNome(bool formatar)
  else return(this->nome);
 }
 
-QString ObjetoBase::obterComentario(void)
+QString BaseObject::obterComentario(void)
 {
  return(comentario);
 }
 
-ObjetoBase *ObjetoBase::obterEsquema(void)
+BaseObject *BaseObject::obterEsquema(void)
 {
  return(esquema);
 }
 
-ObjetoBase *ObjetoBase::obterDono(void)
+BaseObject *BaseObject::obterDono(void)
 {
  return(dono);
 }
 
-ObjetoBase *ObjetoBase::obterEspacoTabela(void)
+BaseObject *BaseObject::obterEspacoTabela(void)
 {
  return(espacotabela);
 }
 
-TipoObjetoBase ObjetoBase::obterTipoObjeto(void)
+ObjectType BaseObject::obterTipoObjeto(void)
 {
  return(tipo_objeto);
 }
 
-QString ObjetoBase::obterNomeTipoObjeto(void)
+QString BaseObject::obterNomeTipoObjeto(void)
 {
- return(ObjetoBase::obterNomeTipoObjeto(this->tipo_objeto));
+ return(BaseObject::obterNomeTipoObjeto(this->tipo_objeto));
 }
 
-QString ObjetoBase::obterNomeEsquemaObjeto(void)
+QString BaseObject::obterNomeEsquemaObjeto(void)
 {
- return(ObjetoBase::obterNomeEsquemaObjeto(this->tipo_objeto));
+ return(BaseObject::obterNomeEsquemaObjeto(this->tipo_objeto));
 }
 
-QString ObjetoBase::obterNomeSQLObjeto(void)
+QString BaseObject::obterNomeSQLObjeto(void)
 {
- return(ObjetoBase::obterNomeSQLObjeto(this->tipo_objeto));
+ return(BaseObject::obterNomeSQLObjeto(this->tipo_objeto));
 }
 
-bool ObjetoBase::objetoProtegido(void)
+bool BaseObject::objetoProtegido(void)
 {
  return(protegido);
 }
 
-unsigned ObjetoBase::obterIdObjeto(void)
+unsigned BaseObject::obterIdObjeto(void)
 {
  return(id_objeto);
 }
 
-bool ObjetoBase::operator == (const QString &nome)
+bool BaseObject::operator == (const QString &nome)
 {
  return(this->nome==nome);
 }
 
-bool ObjetoBase::operator != (const QString &nome)
+bool BaseObject::operator != (const QString &nome)
 {
  return(this->nome!=nome);
 }
 
-QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def)
+QString BaseObject::obterDefinicaoObjeto(unsigned tipo_def)
 {
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def, false));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def, false));
 }
 
-QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
+QString BaseObject::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  QString def;
 
  if((tipo_def==SchemaParser::SQL_DEFINITION &&
-     tipo_objeto!=OBJETO_BASE && tipo_objeto!=OBJETO_RELACAO_BASE &&
-     tipo_objeto!=OBJETO_TABELA_BASE && tipo_objeto!=OBJETO_CAIXA_TEXTO) ||
+     tipo_objeto!=BASE_OBJECT && tipo_objeto!=BASE_RELATIONSHIP &&
+     tipo_objeto!=BASE_TABLE && tipo_objeto!=OBJ_TEXTBOX) ||
 
     (tipo_def==SchemaParser::XML_DEFINITION &&
-     tipo_objeto!=OBJETO_BASE && tipo_objeto!=OBJETO_TABELA_BASE))
+     tipo_objeto!=BASE_OBJECT && tipo_objeto!=BASE_TABLE))
  {
   bool formatar;
   QString str_aux;
@@ -481,8 +481,8 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   //Formata o nome dos objetos caso uma definição SQL está sendo gerada
   formatar=(tipo_def==SchemaParser::SQL_DEFINITION ||
             (tipo_def==SchemaParser::XML_DEFINITION && forma_reduzida &&
-             tipo_objeto!=OBJETO_CAIXA_TEXTO && tipo_objeto!=OBJETO_RELACAO &&
-             tipo_objeto!=OBJETO_RELACAO_BASE));
+             tipo_objeto!=OBJ_TEXTBOX && tipo_objeto!=OBJ_RELATIONSHIP &&
+             tipo_objeto!=BASE_RELATIONSHIP));
   atributos[esq_objetos[tipo_objeto]]="1";
 
   /* Marcando a flag que indica que o a forma de comentário a ser gerada
@@ -490,16 +490,16 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
      (Ver arquivo de esquema SQL para comentários) */
   switch(tipo_objeto)
   {
-   case OBJETO_COLUNA:
-   case OBJETO_FUNC_AGREGACAO:
-   case OBJETO_FUNCAO:
-   case OBJETO_CONV_TIPO:
-   case OBJETO_RESTRICAO:
-   case OBJETO_REGRA:
-   case OBJETO_GATILHO:
-   case OBJETO_OPERADOR:
-   case OBJETO_CLASSE_OPER:
-   case OBJETO_FAMILIA_OPER:
+   case OBJ_COLUMN:
+   case OBJ_AGGREGATE:
+   case OBJ_FUNCTION:
+   case OBJ_CAST:
+   case OBJ_CONSTRAINT:
+   case OBJ_RULE:
+   case OBJ_TRIGGER:
+   case OBJ_OPERATOR:
+   case OBJ_OPCLASS:
+   case OBJ_OPFAMILY:
     atributos[ParsersAttributes::DIF_SQL]="1";
    break;
    default:
@@ -523,8 +523,8 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
    atributos[ParsersAttributes::COMMENT]=comentario;
 
    if((tipo_def==SchemaParser::SQL_DEFINITION &&
-       tipo_objeto!=OBJETO_ESPACO_TABELA &&
-       tipo_objeto!=OBJETO_BANCO_DADOS) ||
+       tipo_objeto!=OBJ_TABLESPACE &&
+       tipo_objeto!=OBJ_DATABASE) ||
       tipo_def==SchemaParser::XML_DEFINITION)
    {
     SchemaParser::setIgnoreUnkownAttributes(true);
@@ -551,8 +551,8 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
         pois por regra do PostgreSQL, espaços de tabelas e banco de dados devem ser criados
         com apenas por linha de comando isolada das demais **/
     if((tipo_def==SchemaParser::SQL_DEFINITION &&
-        tipo_objeto!=OBJETO_ESPACO_TABELA &&
-        tipo_objeto!=OBJETO_BANCO_DADOS) ||
+        tipo_objeto!=OBJ_TABLESPACE &&
+        tipo_objeto!=OBJ_DATABASE) ||
        tipo_def==SchemaParser::XML_DEFINITION)
     {
      SchemaParser::setIgnoreUnkownAttributes(true);
@@ -640,12 +640,12 @@ QString ObjetoBase::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  return(def);
 }
 
-void ObjetoBase::definirAtributoEsquema(const QString &atrib, const QString &valor)
+void BaseObject::definirAtributoEsquema(const QString &atrib, const QString &valor)
 {
  atributos[atrib]=valor;
 }
 
-void ObjetoBase::limparAtributos(void)
+void BaseObject::limparAtributos(void)
 {
  map<QString, QString>::iterator itr, itr_end;
 
@@ -659,7 +659,7 @@ void ObjetoBase::limparAtributos(void)
  }
 }
 
-void ObjetoBase::operator = (ObjetoBase &obj)
+void BaseObject::operator = (BaseObject &obj)
 {
  this->dono=obj.dono;
  this->esquema=obj.esquema;

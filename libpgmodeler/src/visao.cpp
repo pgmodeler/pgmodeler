@@ -3,7 +3,7 @@
 Visao::Visao(void) : TabelaBase()
 {
  //Definindo configurações inicias para a visão
- tipo_objeto=OBJETO_VISAO;
+ tipo_objeto=OBJ_VIEW;
  atributos[ParsersAttributes::DECLARATION]="";
  atributos[ParsersAttributes::REFERENCES]="";
  atributos[ParsersAttributes::SELECT_EXP]="";
@@ -90,7 +90,7 @@ void Visao::adicionarReferencia(Referencia &refer, unsigned tipo_sql, int id_exp
  col=refer.obterColuna();
  if(col && col->incluidoPorRelacionamento() &&
     col->obterIdObjeto() > this->id_objeto)
-  this->id_objeto=ObjetoBase::obterIdGlobal();
+  this->id_objeto=BaseObject::obterIdGlobal();
 }
 
 unsigned Visao::obterNumReferencias(void)
@@ -401,7 +401,7 @@ QString Visao::obterDefinicaoObjeto(unsigned tipo_def)
   definirAtributoReferencias();
  }
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 
 void Visao::operator = (Visao &visao)

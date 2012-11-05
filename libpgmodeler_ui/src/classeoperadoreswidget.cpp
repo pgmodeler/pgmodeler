@@ -1,6 +1,6 @@
 #include "classeoperadoreswidget.h"
 
-ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_CLASSE_OPER)
+ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_OPCLASS)
 {
  try
  {
@@ -16,9 +16,9 @@ ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidge
   tipo_armazenamento=NULL;
   tab_elementos=NULL;
 
-  sel_familiaop=new SeletorObjetoWidget(OBJETO_FAMILIA_OPER, false, this);
-  sel_operador=new SeletorObjetoWidget(OBJETO_OPERADOR, true, this);
-  sel_funcao=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
+  sel_familiaop=new SeletorObjetoWidget(OBJ_OPFAMILY, false, this);
+  sel_operador=new SeletorObjetoWidget(OBJ_OPERATOR, true, this);
+  sel_funcao=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
   tipo_dado=new TipoPgSQLWidget(this);
   tipo_armazenamento=new TipoPgSQLWidget(this, trUtf8("Storage Type"));
   tab_elementos=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
@@ -47,7 +47,7 @@ ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidge
   grid->addWidget(tipo_dado,4,0,1,5);
   grid->addWidget(elementos_grp,5,0,1,5);
   this->setLayout(grid);
-  configurarLayouFormulario(grid, OBJETO_CLASSE_OPER);
+  configurarLayouFormulario(grid, OBJ_OPCLASS);
 
   grid=dynamic_cast<QGridLayout *>(elementos_grp->layout());
   grid->addWidget(sel_funcao, 1,1,1,4);
@@ -156,7 +156,7 @@ void ClasseOperadoresWidget::exibirDadosElemento(ElemClasseOperadores elem, int 
  else
  {
   tab_elementos->definirTextoCelula(*elem.obterTipoArmazenamento(), idx_linha, 0);
-  tab_elementos->definirTextoCelula(QString::fromUtf8(ObjetoBase::obterNomeTipoObjeto(OBJETO_TIPO)), idx_linha, 1);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(BaseObject::obterNomeTipoObjeto(OBJ_TYPE)), idx_linha, 1);
  }
 
  /* Para os tipos FUNÇÃO e OPERADOR é na coluna 2

@@ -2,8 +2,8 @@
 
 Papel::Papel(void)
 {
- tipo_objeto=OBJETO_PAPEL;
- id_objeto=ObjetoBase::id_papel++;
+ tipo_objeto=OBJ_ROLE;
+ id_objeto=BaseObject::id_papel++;
  sysid=100;
 
  for(unsigned i=0; i < 6; i++)
@@ -360,6 +360,6 @@ QString Papel::obterDefinicaoObjeto(unsigned tipo_def)
 
  atributos[ParsersAttributes::SYSID]=QString("%1").arg(sysid);
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 

@@ -3,7 +3,7 @@
 Restricao::Restricao(void)
 {
  tabela_ref=NULL;
- tipo_objeto=OBJETO_RESTRICAO;
+ tipo_objeto=OBJ_CONSTRAINT;
  postergavel=false;
  fator_preenc=100;
 
@@ -90,7 +90,7 @@ void Restricao::adicionarColuna(Coluna *coluna, unsigned tipo_coluna)
  if(!coluna)
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
                         .arg(QString::fromUtf8(this->obterNome()))
-                        .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_RESTRICAO)),
+                        .arg(BaseObject::obterNomeTipoObjeto(OBJ_CONSTRAINT)),
                  ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(tipo!=TipoRestricao::check)
  {
@@ -116,7 +116,7 @@ void Restricao::definirEspacoTabela(EspacoTabela *espacotabela)
      tipo!=TipoRestricao::unique)
    throw Exception(ERR_ASG_TABSPC_INV_CONSTR_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  ObjetoBase::definirEspacoTabela(espacotabela);
+  BaseObject::definirEspacoTabela(espacotabela);
  }
  catch(Exception &e)
  {
@@ -173,7 +173,7 @@ void Restricao::definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, 
  atributos[atrib]=str_cols;
 }
 
-void Restricao::definirTabReferenciada(ObjetoBase *tab_ref)
+void Restricao::definirTabReferenciada(BaseObject *tab_ref)
 {
  this->tabela_ref=tab_ref;
 }
@@ -266,7 +266,7 @@ Coluna *Restricao::obterColuna(const QString &nome, unsigned tipo_coluna)
  else return(NULL);
 }
 
-ObjetoBase *Restricao::obterTabReferenciada(void)
+BaseObject *Restricao::obterTabReferenciada(void)
 {
  return(tabela_ref);
 }
@@ -447,6 +447,6 @@ QString Restricao::obterDefinicaoObjeto(unsigned tipo_def, bool inc_insporrelaca
  else
   atributos[ParsersAttributes::FACTOR]="";
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 

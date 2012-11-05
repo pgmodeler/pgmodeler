@@ -1,9 +1,9 @@
 #include "caixatextowidget.h"
 
-CaixaTextoWidget::CaixaTextoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_CAIXA_TEXTO)
+CaixaTextoWidget::CaixaTextoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TEXTBOX)
 {
  Ui_CaixaTextoWidget::setupUi(this);
- configurarLayouFormulario(caixatexto_grid, OBJETO_CAIXA_TEXTO);
+ configurarLayouFormulario(caixatexto_grid, OBJ_TEXTBOX);
  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
  connect(sel_cor_tb, SIGNAL(clicked(void)), this, SLOT(selecionarCorTexto(void)));
  janela_pai->definirBotoes(CaixaMensagem::BOTAO_OK_CANCELAR);

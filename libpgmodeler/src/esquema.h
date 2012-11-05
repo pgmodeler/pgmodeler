@@ -25,7 +25,7 @@
 
 #include "objetobase.h"
 
-class Esquema: public ObjetoBase{
+class Esquema: public BaseObject{
  public:
   Esquema(void);
 

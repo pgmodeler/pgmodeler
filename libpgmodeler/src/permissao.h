@@ -30,7 +30,7 @@
 #include <algorithm>
  #include <QTextStream>
 
-class Permissao: public ObjetoBase {
+class Permissao: public BaseObject {
  /* Permissões no PostgreSQL se aplicam somente aos objetos
     de banco de dados como a seguir:
     * tabela
@@ -48,7 +48,7 @@ class Permissao: public ObjetoBase {
     * espaço de tabela */
  private:
    //Objeto o qual se aplicam os privilégios
-   ObjetoBase *objeto;
+   BaseObject *objeto;
 
    /* Usuários/grupos os quais detém as permissões sobre o objeto.
       Este vetor pode estar vazio caso se deseja
@@ -89,7 +89,7 @@ class Permissao: public ObjetoBase {
      não sendo possível alterar este objeto após a instância da classe
      ser criada. O que é possível é apenas manipular os papéis e privilégios
      relacionados ao objeto */
-  Permissao(ObjetoBase *objeto);
+  Permissao(BaseObject *objeto);
 
   ~Permissao(void){};
 
@@ -112,7 +112,7 @@ class Permissao: public ObjetoBase {
   Papel *obterPapel(unsigned idx_papel);
 
   //Obtém o objeto que está sujeito aos privilégios
-  ObjetoBase *obterObjeto(void);
+  BaseObject *obterObjeto(void);
 
   //Obtém o estado atual do flag de opção de concessão de privilégios
   bool obterOpConcessao(unsigned privilegio);

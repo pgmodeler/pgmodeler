@@ -1,6 +1,6 @@
 #include "conversaocodificacaowidget.h"
 
-ConversaoCodificacaoWidget::ConversaoCodificacaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_CONV_CODIFICACAO)
+ConversaoCodificacaoWidget::ConversaoCodificacaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_CONVERSION)
 {
  try
  {
@@ -11,10 +11,10 @@ ConversaoCodificacaoWidget::ConversaoCodificacaoWidget(QWidget *parent): ObjetoB
 
   //Alocando o widget seletor de função de conversão
   sel_funcao_conv=NULL;
-  sel_funcao_conv=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
+  sel_funcao_conv=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
   convcod_grid->addWidget(sel_funcao_conv,1,1,1,3);
 
-  configurarLayouFormulario(convcod_grid, OBJETO_CONV_CODIFICACAO);
+  configurarLayouFormulario(convcod_grid, OBJ_CONVERSION);
 
   //Gera o frame de informação sobre a função de conversão
   frame=gerarFrameInformacao(trUtf8("The function to be assigned to an encoding conversion must have the following signature: <em>void function(integer, integer, cstring, internal, integer)</em>."));

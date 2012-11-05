@@ -61,7 +61,7 @@ class Tabela: public TabelaBase {
 
    /* Obtém um objeto da tabela através de seu nome. Seu tipo deve ser especificado
      para se seja buscado na lista de objetos correta. */
-  ObjetoBase *obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, int &idx_obj);
+  BaseObject *obterObjeto(const QString &nome, ObjectType tipo_obj, int &idx_obj);
 
   /* Formata a QString de colunas usada pelo parser de esquema
      na geração da definição SQL da tabela */
@@ -101,33 +101,33 @@ class Tabela: public TabelaBase {
   ~Tabela(void);
 
   void definirNome(const QString &nome);
-  void definirEsquema(ObjetoBase *esquema);
+  void definirEsquema(BaseObject *esquema);
 
   //Define se a tabela aceita oids ou não
   void definirAceitaOids(bool valor);
 
  /* Adiciona um objeto  tabela. Seu tipo deve ser especificado para se seja inserido
      na lista de objetos correta. */
-  void adicionarObjeto(ObjetoBase *obj, int idx_obj=-1, bool tab_copia=false);
+  void adicionarObjeto(BaseObject *obj, int idx_obj=-1, bool tab_copia=false);
 
   /* Obtém um objeto da tabela através de seu índice. Seu tipo deve ser especificado
      para se seja buscado na lista de objetos correta. */
-  ObjetoBase *obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj);
+  BaseObject *obterObjeto(unsigned idx_obj, ObjectType tipo_obj);
 
   /* Obtém um objeto da tabela através de seu nome. Seu tipo deve ser especificado
      para se seja buscado na lista de objetos correta. */
-  ObjetoBase *obterObjeto(const QString &nome, TipoObjetoBase tipo_obj);
+  BaseObject *obterObjeto(const QString &nome, ObjectType tipo_obj);
 
   /* Remove um objeto da tabela através de seu índice. Seu tipo deve ser especificado
      para se seja removido da lista de objetos correta. */
-  void removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj);
+  void removerObjeto(unsigned idx_obj, ObjectType tipo_obj);
 
   /* Remove um objeto da tabela através de seu nome. Seu tipo deve ser especificado
      para se seja removido da lista de objetos correta. */
-  void removerObjeto(const QString &nome, TipoObjetoBase tipo_obj);
+  void removerObjeto(const QString &nome, ObjectType tipo_obj);
 
   //Remove um objeto da tabela através de seu endereço em memória
-  void removerObjeto(ObjetoBase *objeto);
+  void removerObjeto(BaseObject *objeto);
 
   /* Os métodos de adição de objetos abaixo são usados apenas por conveniência
      pois necessitam de apenas um parâmetro (o objeto a ser inserido). Internamente
@@ -167,7 +167,7 @@ class Tabela: public TabelaBase {
   unsigned obterNumRegras(void);
   unsigned obterNumTabelasPai(void);
   unsigned obterNumTabelasCopia(void);
-  unsigned obterNumObjetos(TipoObjetoBase tipo_obj, bool inc_insporrelacao=true);
+  unsigned obterNumObjetos(ObjectType tipo_obj, bool inc_insporrelacao=true);
 
   //Métodos que retornam uma regra através de seu nome ou índice
   Regra *obterRegra(const QString &nome);
@@ -205,7 +205,7 @@ class Tabela: public TabelaBase {
   virtual QString obterDefinicaoObjeto(unsigned tipo_def);
 
   //Obtém o índice de um determinado objeto através de seu nome
-  int obterIndiceObjeto(const QString &nome, TipoObjetoBase tipo_obj);
+  int obterIndiceObjeto(const QString &nome, ObjectType tipo_obj);
   int obterIndiceObjeto(ObjetoTabela *objeto);
 
   //Retorna a chave primária da tabela se possuir
@@ -225,7 +225,7 @@ class Tabela: public TabelaBase {
 
   /* Método utilitário que faz a inversão de posição entre dois objetos na lista.
      Este método auxilia na ordenação dos objetos da tabela conforme o usuário desejar */
-  void trocarIndicesObjetos(TipoObjetoBase tipo_obj, unsigned idx1, unsigned idx2);
+  void trocarIndicesObjetos(ObjectType tipo_obj, unsigned idx1, unsigned idx2);
 
   //Retorna se a tabela referencia colunas e restrições incluídas por relacionamentos
   bool referenciaObjetoIncRelacao(void);
@@ -234,7 +234,7 @@ class Tabela: public TabelaBase {
   void operator = (Tabela &tabela);
 
   //Retorna a lista de objetos referente ao tipo de objeto passado
-  vector<ObjetoTabela *> *obterListaObjetos(TipoObjetoBase tipo_obj);
+  vector<ObjetoTabela *> *obterListaObjetos(ObjectType tipo_obj);
 
   /* Obtém objetos os quais referenciam o objeto do parâmetro (direta ou indiretamente) e os armazena num vetor.
      O parâmetro 'modo_exclusao' é usado para agilizar a execução do método quando este é usado para validação

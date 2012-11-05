@@ -2,7 +2,7 @@
 
 ConversaoCodificacao::ConversaoCodificacao(void)
 {
- tipo_objeto=OBJETO_CONV_CODIFICACAO;
+ tipo_objeto=OBJ_CONVERSION;
  funcao_conv=NULL;
  padrao=false;
  atributos[ParsersAttributes::DEFAULT]="";
@@ -20,7 +20,7 @@ void ConversaoCodificacao::definirCodificacao(unsigned idx_tipo, TipoCodificacao
   if((~tipo_cod)=="")
    throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CONVERSION)),
                  ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Atribui o tipo de codificação ao vetor de tipos codificações
@@ -37,13 +37,13 @@ void ConversaoCodificacao::definirFuncaoConversao(Funcao *funcao_conv)
  if(!funcao_conv)
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->obterNome(true)))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CONVERSION)),
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //A função de conversão deve obrigatoriamente possuir 5 parâmetros
  else if(funcao_conv->obterNumParams()!=5)
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->obterNome(true)))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CONVERSION)),
                 ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Verifica os tipos dos parâmetros da função de conversão.
     Os mesmos devem ser, em ordem, do tipo integer, integer, cstring,
@@ -55,13 +55,13 @@ void ConversaoCodificacao::definirFuncaoConversao(Funcao *funcao_conv)
          funcao_conv->obterParametro(4).obterTipo()!="integer")
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
                          .arg(QString::fromUtf8(this->obterNome(true)))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CONVERSION)),
                 ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //O tipo de retorno da função de conversão deve ser 'void'
  else if(funcao_conv->obterTipoRetorno()!="void")
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
                          .arg(QString::fromUtf8(this->obterNome(true)))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_CODIFICACAO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CONVERSION)),
                 ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->funcao_conv=funcao_conv;
@@ -105,6 +105,6 @@ QString ConversaoCodificacao::obterDefinicaoObjeto(unsigned tipo_def)
    atributos[ParsersAttributes::FUNCTION]=funcao_conv->obterDefinicaoObjeto(tipo_def, true);
  }
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 

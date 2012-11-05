@@ -2,7 +2,7 @@
 
 Parametro::Parametro(void)
 {
- tipo_objeto=OBJETO_PARAMETRO;
+ tipo_objeto=OBJ_PARAMETER;
  entrada=saida=false;
 }
 
@@ -46,7 +46,7 @@ QString Parametro::obterDefinicaoObjeto(unsigned tipo_def)
  QString val_true, val_false;
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
-  atributos[ParsersAttributes::NAME]=ObjetoBase::formatarNome(nome);
+  atributos[ParsersAttributes::NAME]=BaseObject::formatarNome(nome);
  else
   atributos[ParsersAttributes::NAME]=nome;
 
@@ -56,17 +56,17 @@ QString Parametro::obterDefinicaoObjeto(unsigned tipo_def)
  atributos[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
 
  //return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::PARAMETRO,atributos, tipo_def));
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 
 Funcao::Funcao(void)
 {
- id_objeto=ObjetoBase::id_funcao++;
+ id_objeto=BaseObject::id_funcao++;
  tipo_retorno=TipoPgSQL("void");
  linguagem=NULL;
  retorna_setof=false;
  funcao_janela=false;
- tipo_objeto=OBJETO_FUNCAO;
+ tipo_objeto=OBJ_FUNCTION;
 
  //Este dois valores são criados por padrão pelo SGBD
  custo_execucao=100;
@@ -92,13 +92,13 @@ Funcao::Funcao(void)
 
 void Funcao::definirNome(const QString &nome)
 {
- ObjetoBase::definirNome(nome);
+ BaseObject::definirNome(nome);
  criarAssinatura();
 }
 
-void Funcao::definirEsquema(ObjetoBase *esquema)
+void Funcao::definirEsquema(BaseObject *esquema)
 {
- ObjetoBase::definirEsquema(esquema);
+ BaseObject::definirEsquema(esquema);
  criarAssinatura();
 }
 
@@ -255,7 +255,7 @@ void Funcao::definirTipoFuncao(TipoFuncao tipo)
  tipo_funcao=tipo;
 }
 
-void Funcao::definirLinguagem(ObjetoBase *linguagem)
+void Funcao::definirLinguagem(BaseObject *linguagem)
 {
  /* Caso se tente atribuir uma linguagem não alocada  função
     um erro é gerado */
@@ -263,7 +263,7 @@ void Funcao::definirLinguagem(ObjetoBase *linguagem)
   throw Exception(ERR_ASG_NOT_ALOC_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Caso se tente inserir um objeto alocado porém que não é uma linguagem
     um erro é gerado */
- else if(linguagem->obterTipoObjeto()!=OBJETO_LINGUAGEM)
+ else if(linguagem->obterTipoObjeto()!=OBJ_LANGUAGE)
   throw Exception(ERR_ASG_INV_LANGUAGE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -311,7 +311,7 @@ TipoFuncao Funcao::obterTipoFuncao(void)
  return(tipo_funcao);
 }
 
-ObjetoBase *Funcao::obterLinguagem(void)
+BaseObject *Funcao::obterLinguagem(void)
 {
  return(linguagem);
 }
@@ -530,6 +530,6 @@ QString Funcao::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  }
 
  atributos[ParsersAttributes::SIGNATURE]=assinatura;
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }
 

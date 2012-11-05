@@ -28,7 +28,7 @@
 #include "funcao.h"
 #include "papel.h"
 
-class ConversaoCodificacao: public ObjetoBase {
+class ConversaoCodificacao: public BaseObject {
  private:
  /* Tipos de codificação da conversão:
     0 -> Codificação a ser convertido

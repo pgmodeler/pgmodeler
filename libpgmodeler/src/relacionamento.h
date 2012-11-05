@@ -367,11 +367,11 @@ class Relacionamento: public RelacionamentoBase {
   void adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj=-1);
 
   //Retorna uma atributo ou restrição do relacionamento através do nome
-  ObjetoTabela *obterObjeto(const QString &nome_atrib, TipoObjetoBase tipo_obj);
-  ObjetoTabela *obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj);
+  ObjetoTabela *obterObjeto(const QString &nome_atrib, ObjectType tipo_obj);
+  ObjetoTabela *obterObjeto(unsigned idx_obj, ObjectType tipo_obj);
 
   //Remove um atributo ou restricao através do índice
-  void removerObjeto(unsigned id_obj, TipoObjetoBase tipo_obj);
+  void removerObjeto(unsigned id_obj, ObjectType tipo_obj);
 
   //Remove um atributo ou restrição do relacionamento através da ref. do objeto
   void removerObjeto(ObjetoTabela *objeto);
@@ -408,7 +408,7 @@ class Relacionamento: public RelacionamentoBase {
   unsigned obterNumRestricoes(void);
 
   //Retorna a quantidade de atributos ou restrições conforme o parâmetro passado
-  unsigned obterNumObjetos(TipoObjetoBase tipo_obj);
+  unsigned obterNumObjetos(ObjectType tipo_obj);
 
   /* Retorna se o relacionamento possui um ou mais atributos identificadores.
      Atributos identificadores são atributos os quais fazem parte

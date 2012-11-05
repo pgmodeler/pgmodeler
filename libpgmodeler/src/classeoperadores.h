@@ -28,7 +28,7 @@
 #include "elemclasseoperadores.h"                                                                                                                                                                                  
 #include "familiaoperadores.h"                                                                                                                                                                                     
                                                                                                                                                       
-class ClasseOperadores: public ObjetoBase {                                                                                                                                                                        
+class ClasseOperadores: public BaseObject {
  private:                                                                                                                                                                                                          
   //Tipo de dado no qual a classe de operadores trabalha                                                                                                                                                           
   TipoPgSQL tipo_dado;                                                                                                                                                                                             

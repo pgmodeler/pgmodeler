@@ -24,7 +24,7 @@
 
 #include "objetobase.h"
 
-class Papel: public ObjetoBase {
+class Papel: public BaseObject {
  private:
   //Id de usuário
   unsigned sysid;

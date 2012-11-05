@@ -1,6 +1,6 @@
 #include "regrawidget.h"
 
-RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_REGRA)
+RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_RULE)
 {
  try
  {
@@ -34,7 +34,7 @@ RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_REGRA
   regra_grid->addWidget(frame, regra_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 
-  configurarLayouFormulario(regra_grid, OBJETO_REGRA);
+  configurarLayouFormulario(regra_grid, OBJ_RULE);
   janela_pai->setMinimumSize(550, 520);
 
   //Configurando o combo de tipo de evento com os tipos disponíveis

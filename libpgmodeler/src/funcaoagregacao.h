@@ -28,7 +28,7 @@
 #include "funcao.h"
 #include "operador.h"
 
-class FuncaoAgregacao: public ObjetoBase {
+class FuncaoAgregacao: public BaseObject {
  private:
   /* Lista de tipos com os quais a função opera.
      Caso a mesma esteja vazia será considerado

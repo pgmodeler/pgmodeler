@@ -3,7 +3,7 @@
 Regra::Regra(void)
 {
  tipo_exec=TipoBase::nulo;
- tipo_objeto=OBJETO_REGRA;
+ tipo_objeto=OBJ_RULE;
  atributos[ParsersAttributes::EVENT_TYPE]="";
  atributos[ParsersAttributes::TABLE]="";
  atributos[ParsersAttributes::CONDITION]="";
@@ -116,6 +116,6 @@ QString Regra::obterDefinicaoObjeto(unsigned tipo_def)
   atributos[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
 
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 

@@ -3,7 +3,7 @@
 ListaObjetosWidget::ListaObjetosWidget(QWidget *parent): ObjetoBaseWidget(parent)
 {
  Ui_ListaObjetosWidget::setupUi(this);
- configurarLayouFormulario(listaobjetos_grid, OBJETO_BASE);
+ configurarLayouFormulario(listaobjetos_grid, BASE_OBJECT);
 
  //Define os atributos do formulários e da janela pai
  janela_pai->setWindowTitle(trUtf8("Dependeces / References of Object"));
@@ -14,9 +14,9 @@ ListaObjetosWidget::ListaObjetosWidget(QWidget *parent): ObjetoBaseWidget(parent
  connect(janela_pai->aplicar_ok_btn, SIGNAL(clicked(bool)), janela_pai, SLOT(close(void)));
 }
 
-void ListaObjetosWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto, ObjetoBase *objeto_pai)
+void ListaObjetosWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto, BaseObject *objeto_pai)
 {
- vector<ObjetoBase *> vet_objs;
+ vector<BaseObject *> vet_objs;
 
  ObjetoBaseWidget::definirAtributos(modelo, NULL, objeto, objeto_pai);
 
@@ -28,7 +28,7 @@ void ListaObjetosWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto, 
 
  //Configura o icone do objeto a ser exibido
  iconeobj_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
-                                 ObjetoBase::obterNomeEsquemaObjeto(objeto->obterTipoObjeto()) + QString(".png")));
+                                 BaseObject::obterNomeEsquemaObjeto(objeto->obterTipoObjeto()) + QString(".png")));
 
  //Carrega as dependências e referências do objeto
  modelo->obterDependenciasObjeto(objeto, vet_objs);
@@ -52,11 +52,11 @@ void ListaObjetosWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void ListaObjetosWidget::atualizarListaObjetos(vector<ObjetoBase *> &objetos, QTableWidget *listaobjetos_tbw)
+void ListaObjetosWidget::atualizarListaObjetos(vector<BaseObject *> &objetos, QTableWidget *listaobjetos_tbw)
 {
  int qtd, id_lin, i;
  QTableWidgetItem *item_tab=NULL;
- ObjetoBase *obj_pai=NULL;
+ BaseObject *obj_pai=NULL;
 
  qtd=objetos.size();
 
@@ -73,7 +73,7 @@ void ListaObjetosWidget::atualizarListaObjetos(vector<ObjetoBase *> &objetos, QT
    item_tab=new QTableWidgetItem;
    item_tab->setText(QString::fromUtf8(objetos[i]->obterNome()));
    item_tab->setIcon(QPixmap(QString(":/icones/icones/") +
-                     ObjetoBase::obterNomeEsquemaObjeto(objetos[i]->obterTipoObjeto())+ QString(".png")));
+                     BaseObject::obterNomeEsquemaObjeto(objetos[i]->obterTipoObjeto())+ QString(".png")));
    listaobjetos_tbw->setItem(id_lin, 0, item_tab);
 
    //Aloca o item de tipo do objeto de ref/dep
@@ -94,7 +94,7 @@ void ListaObjetosWidget::atualizarListaObjetos(vector<ObjetoBase *> &objetos, QT
    //Aloca o item de tipo do objeto pai do objeto de ref/dep
    item_tab->setText(QString::fromUtf8(obj_pai->obterNome()));
    item_tab->setIcon(QPixmap(QString(":/icones/icones/") +
-                     ObjetoBase::obterNomeEsquemaObjeto(obj_pai->obterTipoObjeto())+ QString(".png")));
+                     BaseObject::obterNomeEsquemaObjeto(obj_pai->obterTipoObjeto())+ QString(".png")));
    listaobjetos_tbw->setItem(id_lin, 2, item_tab);
 
    item_tab=new QTableWidgetItem;

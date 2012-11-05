@@ -33,39 +33,39 @@
 
 using namespace ParsersAttributes;
 
-enum TipoObjetoBase {
-  OBJETO_COLUNA,                                    /* Comentário */
-  OBJETO_RESTRICAO,                                 /* Comentário */
-  OBJETO_FUNCAO,           /* Dono */ /* Esquema */ /* Comentário */
-  OBJETO_GATILHO,                                   /* Comentário */
-  OBJETO_INDICE,                                    /* Comentário */ /* Tablespace */
-  OBJETO_REGRA,                                     /* Comentário */
-  OBJETO_TABELA,           /* Dono */ /* Esquema */ /* Comentário */ /* Tablespace */
-  OBJETO_VISAO,                       /* Esquema */ /* Comentário */
-  OBJETO_DOMINIO,          /* Dono */ /* Esquema */ /* Comentário */
-  OBJETO_ESQUEMA,          /* Dono */               /* Comentário */
-  OBJETO_FUNC_AGREGACAO,    /* Dono */ /* Esquema */ /* Comentário */
-  OBJETO_OPERADOR,         /* Dono */ /* Esquema */ /* Comentário */
-  OBJETO_SEQUENCIA,                   /* Esquema */ /* Comentário */
-  OBJETO_PAPEL,                                     /* Comentário */
-  OBJETO_CONV_CODIFICACAO, /* Dono */ /* Esquema */ /* Comentário */
-  OBJETO_CONV_TIPO,                                 /* Comentário */
-  OBJETO_LINGUAGEM,        /* Dono */               /* Comentário */
-  OBJETO_TIPO,             /* Dono */ /* Esquema */ /* Comentário */
-  OBJETO_ESPACO_TABELA,    /* Dono */               /* Comentário */
-  OBJETO_FAMILIA_OPER,     /* Dono */ /* Esquema */ /* Comentário */
-  OBJETO_CLASSE_OPER,      /* Dono */ /* Esquema */ /* Comentário */
-  OBJETO_BANCO_DADOS,      /* Dono */               /* Comentário */ /* Tablespace */
-  OBJETO_RELACAO,
-  OBJETO_CAIXA_TEXTO,
-  OBJETO_PERMISSAO,
-  OBJETO_PARAMETRO,
-  OBJETO_RELACAO_BASE,
-  OBJETO_BASE,
-  OBJETO_TABELA_BASE
+enum ObjectType {
+  OBJ_COLUMN,                                    /* Comentário */
+  OBJ_CONSTRAINT,                                 /* Comentário */
+  OBJ_FUNCTION,           /* Dono */ /* Esquema */ /* Comentário */
+  OBJ_TRIGGER,                                   /* Comentário */
+  OBJ_INDEX,                                    /* Comentário */ /* Tablespace */
+  OBJ_RULE,                                     /* Comentário */
+  OBJ_TABLE,           /* Dono */ /* Esquema */ /* Comentário */ /* Tablespace */
+  OBJ_VIEW,                       /* Esquema */ /* Comentário */
+  OBJ_DOMAIN,          /* Dono */ /* Esquema */ /* Comentário */
+  OBJ_SCHEMA,          /* Dono */               /* Comentário */
+  OBJ_AGGREGATE,    /* Dono */ /* Esquema */ /* Comentário */
+  OBJ_OPERATOR,         /* Dono */ /* Esquema */ /* Comentário */
+  OBJ_SEQUENCE,                   /* Esquema */ /* Comentário */
+  OBJ_ROLE,                                     /* Comentário */
+  OBJ_CONVERSION, /* Dono */ /* Esquema */ /* Comentário */
+  OBJ_CAST,                                 /* Comentário */
+  OBJ_LANGUAGE,        /* Dono */               /* Comentário */
+  OBJ_TYPE,             /* Dono */ /* Esquema */ /* Comentário */
+  OBJ_TABLESPACE,    /* Dono */               /* Comentário */
+  OBJ_OPFAMILY,     /* Dono */ /* Esquema */ /* Comentário */
+  OBJ_OPCLASS,      /* Dono */ /* Esquema */ /* Comentário */
+  OBJ_DATABASE,      /* Dono */               /* Comentário */ /* Tablespace */
+  OBJ_RELATIONSHIP,
+  OBJ_TEXTBOX,
+  OBJ_PERMISSION,
+  OBJ_PARAMETER,
+  BASE_RELATIONSHIP,
+  BASE_OBJECT,
+  BASE_TABLE
 };
 
-class ObjetoBase {
+class BaseObject {
  protected:
   /* Este atributo estático é usado para gerar o identificador do objeto.
      À medida que instâncias de objetos são criadas este valor é incrementado. */
@@ -107,16 +107,16 @@ class ObjetoBase {
   /* Papel o qual é dono do objeto.
      Este objeto será usado para
      gerar a SQL ALTER objeto OWNER TO dono */
-  ObjetoBase *dono;
+  BaseObject *dono;
 
   /* Esquema ao qual o objeto pertence.
      Só podem fazer parte de um determinado esquema objetos do tipo:
      TABELA, VISAO, FUNCAO, DOMINIO. Caso tente inserir um objeto de
      outro tipo dentro de um esquema será retornado um erro.*/
-  ObjetoBase *esquema;
+  BaseObject *esquema;
 
   //Espaço de tabela ao qual o objeto faz parte
-  ObjetoBase *espacotabela;
+  BaseObject *espacotabela;
 
   //Quantidade máxima de dígitos que um nome de objeto pode ter
   static const int TAM_MAX_NOME_OBJETO=63;
@@ -128,7 +128,7 @@ class ObjetoBase {
 
   /*Tipo do objeto, pode ter um dos valores das contantes OBJETO_*
     Foi usado um tipo numérico para evitar o uso do RTTI.*/
-  TipoObjetoBase tipo_objeto;
+  ObjectType tipo_objeto;
 
   /* Armazena os atributos e seus valores em forma de QString
      para serem usados pelo ParserEsquema no momento da criação
@@ -136,8 +136,8 @@ class ObjetoBase {
   map<QString, QString> atributos;
 
  public:
-  ObjetoBase(void);
-  virtual ~ObjetoBase(void){}
+  BaseObject(void);
+  virtual ~BaseObject(void){}
 
   //Define um atributo específico na lista de atributos de esquema
   /* Este método pode ser usando quando uma classe precisa acessar diretamente
@@ -155,13 +155,13 @@ class ObjetoBase {
   static QString formatarNome(const QString &nome_obj, bool obj_operador=false);
 
   //Retorna o nome do tipo do objeto
-  static QString obterNomeTipoObjeto(TipoObjetoBase tipo_objeto);
+  static QString obterNomeTipoObjeto(ObjectType tipo_objeto);
 
   //Retorna o nome do tipo do objeto
-  static QString obterNomeEsquemaObjeto(TipoObjetoBase tipo_objeto);
+  static QString obterNomeEsquemaObjeto(ObjectType tipo_objeto);
 
   //Retorna o nome do tipo do objeto no código SQL
-  static QString obterNomeSQLObjeto(TipoObjetoBase tipo_objeto);
+  static QString obterNomeSQLObjeto(ObjectType tipo_objeto);
 
   //Retorna o valor atual do contador global de ids de objeto
   static unsigned obterIdGlobal(void);
@@ -173,13 +173,13 @@ class ObjetoBase {
   virtual void definirNome(const QString &nome);
 
   //Define o esquema ao qual o objeto pertence
-  virtual void definirEsquema(ObjetoBase *esquema);
+  virtual void definirEsquema(BaseObject *esquema);
 
   //Define o dono do objeto em banco de dados
-  virtual void definirDono(ObjetoBase *dono);
+  virtual void definirDono(BaseObject *dono);
 
   //Define o espaço de tabelas ao qual o objeto pertence
-  virtual void definirEspacoTabela(ObjetoBase *espacotabela);
+  virtual void definirEspacoTabela(BaseObject *espacotabela);
 
   //Define se o objeto está protegido ou não
   virtual void definirProtegido(bool valor);
@@ -201,7 +201,7 @@ class ObjetoBase {
   virtual QString obterDefinicaoObjeto(unsigned tipo_def);
 
   //Retorna o tipo do objeto
-  TipoObjetoBase obterTipoObjeto(void);
+  ObjectType obterTipoObjeto(void);
 
   //Retorna o nome do tipo do objeto
   QString obterNomeTipoObjeto(void);
@@ -213,13 +213,13 @@ class ObjetoBase {
   QString obterNomeSQLObjeto(void);
 
   //Retorna o esquema ao qual o objeto faz parte
-  ObjetoBase *obterEsquema(void);
+  BaseObject *obterEsquema(void);
 
   //Retorna o esquema ao qual o objeto faz parte
-  ObjetoBase *obterDono(void);
+  BaseObject *obterDono(void);
 
   //Retorna o espaço de tabela ao qual o objeto faz parte
-  ObjetoBase *obterEspacoTabela(void);
+  BaseObject *obterEspacoTabela(void);
 
   //Retorna o número identificador do objeto
   unsigned obterIdObjeto(void);
@@ -234,7 +234,7 @@ class ObjetoBase {
   bool operator != (const QString &nome);
 
   //Operado que faz a atribuição entre um objeto e outro
-  virtual void operator = (ObjetoBase &obj);
+  virtual void operator = (BaseObject &obj);
 
   //Limpa os atributos usados pelo parser de esquemas
   void limparAtributos(void);

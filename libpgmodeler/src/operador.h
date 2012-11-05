@@ -27,7 +27,7 @@
 #include "esquema.h"
 #include "papel.h"
 
-class Operador: public ObjetoBase {
+class Operador: public BaseObject {
  private:
   //Armazena as referências para as funções do operador
   Funcao *funcoes[3];

@@ -1,6 +1,6 @@
 #include "linguagemwidget.h"
 
-LinguagemWidget::LinguagemWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_LINGUAGEM)
+LinguagemWidget::LinguagemWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_LANGUAGE)
 {
  try
  {
@@ -14,15 +14,15 @@ LinguagemWidget::LinguagemWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   sel_func_validator=NULL;
   sel_func_inline=NULL;
 
-  sel_func_handler=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
-  sel_func_validator=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
-  sel_func_inline=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
+  sel_func_handler=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
+  sel_func_validator=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
+  sel_func_inline=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
 
   linguagem_grid->addWidget(sel_func_handler,1,1,1,2);
   linguagem_grid->addWidget(sel_func_validator,2,1,1,2);
   linguagem_grid->addWidget(sel_func_inline,3,1,1,2);
 
-  configurarLayouFormulario(linguagem_grid, OBJETO_LINGUAGEM);
+  configurarLayouFormulario(linguagem_grid, OBJ_LANGUAGE);
 
   //Gera o frame de informação
   frame=gerarFrameInformacao(trUtf8("The functions to be assigned to the language should have, respectively, the following signatures:<br/><br/>  <strong>Handler Function:</strong> <em>language_handler function()</em><br/>  <strong>Validator Function:</strong> <em>void function(oid)</em><br/>  <strong>Inline Function:</strong> <em>void function(internal)</em>"));

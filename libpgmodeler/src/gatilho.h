@@ -52,7 +52,7 @@ class Gatilho: public ObjetoTabela{
   bool por_linha;
 
   //Tabela referenciada pelo gatilho (apenas para gatilho restrição)
-  ObjetoBase *tabela_ref;
+  BaseObject *tabela_ref;
 
   //Indica se o gatílho é postergavel ou não (apenas para gatilho restrição)
   bool postergavel;
@@ -92,7 +92,7 @@ class Gatilho: public ObjetoTabela{
   void definirCondicao(const QString &cond);
 
   //Define a tabela referenciada
-  void definirTabReferenciada(ObjetoBase *tabela_ref);
+  void definirTabReferenciada(BaseObject *tabela_ref);
 
   //Define o tipo de deferimento
   void definirTipoPostergacao(TipoPostergacao tipo);
@@ -140,7 +140,7 @@ class Gatilho: public ObjetoTabela{
   void removerColunas(void);
 
   //Obtém a tabela referenciada
-  ObjetoBase *obterTabReferenciada(void);
+  BaseObject *obterTabReferenciada(void);
 
   //Obtém o tipo de deferimento da restrição
   TipoPostergacao obterTipoPostergacao(void);

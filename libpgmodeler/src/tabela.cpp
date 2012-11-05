@@ -2,7 +2,7 @@
 
 Tabela::Tabela(void) : TabelaBase()
 {
- tipo_objeto=OBJETO_TABELA;
+ tipo_objeto=OBJ_TABLE;
  atributos[ParsersAttributes::COLUMNS]="";
  atributos[ParsersAttributes::CONSTRAINTS]="";
  atributos[ParsersAttributes::INDEXES]="";
@@ -13,8 +13,8 @@ Tabela::Tabela(void) : TabelaBase()
 
 Tabela::~Tabela(void)
 {
- TipoObjetoBase tipos[]={ OBJETO_GATILHO, OBJETO_INDICE, OBJETO_REGRA,
-                          OBJETO_RESTRICAO, OBJETO_COLUNA };
+ ObjectType tipos[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE,
+                          OBJ_CONSTRAINT, OBJ_COLUMN };
  vector<ObjetoTabela *> *lista=NULL;
 
  for(unsigned i=0; i < 5; i++)
@@ -34,19 +34,19 @@ Tabela::~Tabela(void)
 void Tabela::definirNome(const QString &nome)
 {
  QString nome_ant=this->obterNome(true);
- ObjetoBase::definirNome(nome);
+ BaseObject::definirNome(nome);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
 
-void Tabela::definirEsquema(ObjetoBase *esquema)
+void Tabela::definirEsquema(BaseObject *esquema)
 {
  QString nome_ant=this->obterNome(true);
 
  //Atribui o esquema   tabela
- ObjetoBase::definirEsquema(esquema);
+ BaseObject::definirEsquema(esquema);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
@@ -60,8 +60,8 @@ void Tabela::definirAceitaOids(bool valor)
 
 void Tabela::definirProtegido(bool protegido)
 {
- TipoObjetoBase tipos_obj[]={ OBJETO_COLUNA, OBJETO_RESTRICAO,
-                              OBJETO_INDICE, OBJETO_REGRA, OBJETO_GATILHO };
+ ObjectType tipos_obj[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
+                              OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER };
  unsigned i;
  vector<ObjetoTabela *>::iterator itr, itr_end;
  vector<ObjetoTabela *> *lista=NULL;
@@ -236,27 +236,27 @@ void Tabela::definirAtributoRegras(unsigned tipo_def)
  atributos[ParsersAttributes::RULES]=str_reg;
 }
 
-vector<ObjetoTabela *> *Tabela::obterListaObjetos(TipoObjetoBase tipo_obj)
+vector<ObjetoTabela *> *Tabela::obterListaObjetos(ObjectType tipo_obj)
 {
  //Retorna a referencia da lista equivalente ao tipo passado
- if(tipo_obj==OBJETO_COLUNA)
+ if(tipo_obj==OBJ_COLUMN)
   return(&colunas);
- else if(tipo_obj==OBJETO_RESTRICAO)
+ else if(tipo_obj==OBJ_CONSTRAINT)
   return(&restricoes);
- else if(tipo_obj==OBJETO_REGRA)
+ else if(tipo_obj==OBJ_RULE)
   return(&regras);
- else if(tipo_obj==OBJETO_GATILHO)
+ else if(tipo_obj==OBJ_TRIGGER)
   return(&gatilhos);
- else if(tipo_obj==OBJETO_INDICE)
+ else if(tipo_obj==OBJ_INDEX)
   return(&indices);
  else
   //Dispara uma exceção caso o tipo de objeto seja inválido
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
+void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
 
  if(!obj)
   //Caso o objeto não esteja alocado, dispara uma exceção
@@ -273,8 +273,8 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
   /* Se o flag de tabela de cópia estiver marcado e o objeto passado
      for uma tabela muda o tipo para OBJETO_TABELA_BASE para forçar a
      inserção da tabela na lista de tabelas cópia */
-  if(tab_copia && tipo_obj==OBJETO_TABELA)
-   tipo_obj=OBJETO_TABELA_BASE;
+  if(tab_copia && tipo_obj==OBJ_TABLE)
+   tipo_obj=BASE_TABLE;
 
   /* Verifica se o objeto a ser adicionado   tabela possua o mesmo nome de um objeto que já
      existente,efetuando uma busca na lista de objetos através do nome do novo objeto */
@@ -291,18 +291,18 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
 
   /* Caso o objeto seja uma tabela (herança) e a mesma for a própria tabela a se adicionar o objeto,
      significa um caso de herança inválida onde uma tabela tenta herdar atributos dela mesma */
-  else if(tipo_obj==OBJETO_TABELA && obj==this)
+  else if(tipo_obj==OBJ_TABLE && obj==this)
    //Dispara a exceção indica o erro
    throw Exception(ERR_INV_INH_COPY_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    //Insere o objeto   lista de acordo com seu tipo
    switch(tipo_obj)
    {
-    case OBJETO_COLUNA:
-    case OBJETO_RESTRICAO:
-    case OBJETO_GATILHO:
-    case OBJETO_INDICE:
-    case OBJETO_REGRA:
+    case OBJ_COLUMN:
+    case OBJ_CONSTRAINT:
+    case OBJ_TRIGGER:
+    case OBJ_INDEX:
+    case OBJ_RULE:
       ObjetoTabela *obj_tab;
       vector<ObjetoTabela *> *lista_obj;
 
@@ -316,32 +316,32 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
        throw Exception(ERR_ASG_OBJ_BELONGS_OTHER_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Testando a definição sql do objeto
-      if(tipo_obj==OBJETO_COLUNA)
+      if(tipo_obj==OBJ_COLUMN)
       {
        Coluna *col;
        col=dynamic_cast<Coluna *>(obj_tab);
        col->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
       }
-      else if(tipo_obj==OBJETO_RESTRICAO)
+      else if(tipo_obj==OBJ_CONSTRAINT)
       {
        Restricao *rest;
        rest=dynamic_cast<Restricao *>(obj_tab);
        rest->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
        tipo_rest=rest->obterTipoRestricao();
       }
-      else if(tipo_obj==OBJETO_INDICE)
+      else if(tipo_obj==OBJ_INDEX)
       {
        Indice *ind;
        ind=dynamic_cast<Indice *>(obj_tab);
        ind->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
       }
-      else if(tipo_obj==OBJETO_REGRA)
+      else if(tipo_obj==OBJ_RULE)
       {
        Regra *reg;
        reg=dynamic_cast<Regra *>(obj_tab);
        reg->obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION);
       }
-      else if(tipo_obj==OBJETO_GATILHO)
+      else if(tipo_obj==OBJ_TRIGGER)
       {
        Gatilho *gat;
        gat=dynamic_cast<Gatilho *>(obj_tab);
@@ -354,7 +354,7 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
       /* Caso o usuário tente inserir mais uma chave primária na tabela
          será retornado um erro pois uma tabela pode possuir apenas 1
          chave primária */
-      if(tipo_obj==OBJETO_RESTRICAO &&
+      if(tipo_obj==OBJ_CONSTRAINT &&
          tipo_rest==TipoRestricao::primary_key &&
          this->obterChavePrimaria())
        throw Exception(ERR_ASG_EXISTING_PK_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -373,7 +373,7 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
       }
     break;
 
-    case OBJETO_TABELA:
+    case OBJ_TABLE:
      Tabela *tab;
      tab=dynamic_cast<Tabela *>(obj);
      if(idx_obj < 0 || idx_obj >= static_cast<int>(tabelas_pai.size()))
@@ -382,7 +382,7 @@ void Tabela::adicionarObjeto(ObjetoBase *obj, int idx_obj, bool tab_copia)
       tabelas_pai.insert((tabelas_pai.begin() + idx_obj), tab);
     break;
 
-    case OBJETO_TABELA_BASE:
+    case BASE_TABLE:
      Tabela *tab1;
      tab1=dynamic_cast<Tabela *>(obj);
      if(idx_obj < 0 || idx_obj >= static_cast<int>(tabelas_copia.size()))
@@ -447,13 +447,13 @@ void Tabela::adicionarTabelaCopia(Tabela *tab, int idx_tab)
  adicionarObjeto(tab, idx_tab, true);
 }
 
-void Tabela::removerObjeto(ObjetoBase *objeto)
+void Tabela::removerObjeto(BaseObject *objeto)
 {
  if(objeto)
   removerObjeto(objeto->obterNome(), objeto->obterTipoObjeto());
 }
 
-void Tabela::removerObjeto(const QString &nome, TipoObjetoBase tipo_obj)
+void Tabela::removerObjeto(const QString &nome, ObjectType tipo_obj)
 {
  int idx;
 
@@ -466,19 +466,19 @@ void Tabela::removerObjeto(const QString &nome, TipoObjetoBase tipo_obj)
   removerObjeto(static_cast<unsigned>(idx),tipo_obj);
 }
 
-void Tabela::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
+void Tabela::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
 {
  /* Verfica se o tipo do objeto especifica está fora do conjunto dos que são
     aceitos pela classe tabela */
- if(tipo_obj!=OBJETO_COLUNA && tipo_obj!=OBJETO_RESTRICAO &&
-    tipo_obj!=OBJETO_GATILHO && tipo_obj!=OBJETO_INDICE &&
-    tipo_obj!=OBJETO_REGRA && tipo_obj!=OBJETO_TABELA &&
-    tipo_obj!=OBJETO_TABELA_BASE)
+ if(tipo_obj!=OBJ_COLUMN && tipo_obj!=OBJ_CONSTRAINT &&
+    tipo_obj!=OBJ_TRIGGER && tipo_obj!=OBJ_INDEX &&
+    tipo_obj!=OBJ_RULE && tipo_obj!=OBJ_TABLE &&
+    tipo_obj!=BASE_TABLE)
   //Caso o tipo esteja fora do conjunto, dispara uma exceção
   throw Exception(ERR_REM_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso o objeto a ser removido seja uma tabela pai e seu índice seja válido
- else if(tipo_obj==OBJETO_TABELA && idx_obj < tabelas_pai.size())
+ else if(tipo_obj==OBJ_TABLE && idx_obj < tabelas_pai.size())
  {
   vector<Tabela *>::iterator itr;
 
@@ -486,14 +486,14 @@ void Tabela::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
   tabelas_pai.erase(itr); //Remove a tabela pai da lista
  }
  //Caso o objeto a ser removido seja uma tabela cópia e seu índice seja válido
- else if(tipo_obj==OBJETO_TABELA_BASE && idx_obj < tabelas_copia.size())
+ else if(tipo_obj==BASE_TABLE && idx_obj < tabelas_copia.size())
  {
   vector<Tabela *>::iterator itr;
 
   itr=tabelas_copia.begin() + idx_obj; //Obtendo a referênci  tabela copia
   tabelas_copia.erase(itr); //Remove a tabela pai da lista
  }
- else if(tipo_obj!=OBJETO_TABELA && tipo_obj!=OBJETO_TABELA_BASE)
+ else if(tipo_obj!=OBJ_TABLE && tipo_obj!=BASE_TABLE)
  {
   vector<ObjetoTabela *> *lista_obj=NULL;
   vector<ObjetoTabela *>::iterator itr;
@@ -506,7 +506,7 @@ void Tabela::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
    throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Executando a remoção genérica de objetos que não sejam colunas
-  if(tipo_obj!=OBJETO_COLUNA)
+  if(tipo_obj!=OBJ_COLUMN)
   {
    itr=lista_obj->begin() + idx_obj; //Obtendo a referência ao objeto
    (*itr)->definirTabelaPai(NULL);
@@ -544,75 +544,75 @@ void Tabela::removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
 
 void Tabela::removerColuna(const QString &nome)
 {
- removerObjeto(nome,OBJETO_COLUNA);
+ removerObjeto(nome,OBJ_COLUMN);
 }
 
 void Tabela::removerColuna(unsigned idx_col)
 {
- removerObjeto(idx_col,OBJETO_COLUNA);
+ removerObjeto(idx_col,OBJ_COLUMN);
 }
 
 void Tabela::removerGatilho(const QString &nome)
 {
- removerObjeto(nome,OBJETO_GATILHO);
+ removerObjeto(nome,OBJ_TRIGGER);
 }
 
 void Tabela::removerGatilho(unsigned idx_gat)
 {
- removerObjeto(idx_gat,OBJETO_GATILHO);
+ removerObjeto(idx_gat,OBJ_TRIGGER);
 }
 
 void Tabela::removerIndice(const QString &nome)
 {
- removerObjeto(nome,OBJETO_INDICE);
+ removerObjeto(nome,OBJ_INDEX);
 }
 
 void Tabela::removerIndice(unsigned idx_ind)
 {
- removerObjeto(idx_ind,OBJETO_INDICE);
+ removerObjeto(idx_ind,OBJ_INDEX);
 }
 
 void Tabela::removerRegra(const QString &nome)
 {
- removerObjeto(nome,OBJETO_REGRA);
+ removerObjeto(nome,OBJ_RULE);
 }
 
 void Tabela::removerRegra(unsigned idx_reg)
 {
- removerObjeto(idx_reg,OBJETO_REGRA);
+ removerObjeto(idx_reg,OBJ_RULE);
 }
 
 void Tabela::removerRestricao(const QString &nome)
 {
- removerObjeto(nome,OBJETO_RESTRICAO);
+ removerObjeto(nome,OBJ_CONSTRAINT);
 }
 
 void Tabela::removerRestricao(unsigned idx_const)
 {
- removerObjeto(idx_const,OBJETO_RESTRICAO);
+ removerObjeto(idx_const,OBJ_CONSTRAINT);
 }
 
 void Tabela::removerTabelaPai(const QString &nome)
 {
- removerObjeto(nome,OBJETO_TABELA);
+ removerObjeto(nome,OBJ_TABLE);
 }
 
 void Tabela::removerTabelaPai(unsigned idx_tab)
 {
- removerObjeto(idx_tab,OBJETO_TABELA);
+ removerObjeto(idx_tab,OBJ_TABLE);
 }
 
 void Tabela::removerTabelaCopia(const QString &nome)
 {
- removerObjeto(nome,OBJETO_TABELA_BASE);
+ removerObjeto(nome,BASE_TABLE);
 }
 
 void Tabela::removerTabelaCopia(unsigned idx_tab)
 {
- removerObjeto(idx_tab,OBJETO_TABELA_BASE);
+ removerObjeto(idx_tab,BASE_TABLE);
 }
 
-int Tabela::obterIndiceObjeto(const QString &nome, TipoObjetoBase tipo_obj)
+int Tabela::obterIndiceObjeto(const QString &nome, ObjectType tipo_obj)
 {
  int idx;
  obterObjeto(nome, tipo_obj, idx);
@@ -627,23 +627,23 @@ int Tabela::obterIndiceObjeto(ObjetoTabela *objeto)
   return(obterIndiceObjeto(objeto->obterNome(true), objeto->obterTipoObjeto()));
 }
 
-ObjetoBase *Tabela::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj)
+BaseObject *Tabela::obterObjeto(const QString &nome, ObjectType tipo_obj)
 {
  int idx;
  return(obterObjeto(nome, tipo_obj, idx));
 }
 
-ObjetoBase *Tabela::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, int &idx_obj)
+BaseObject *Tabela::obterObjeto(const QString &nome, ObjectType tipo_obj, int &idx_obj)
 {
- ObjetoBase *objeto=NULL;
+ BaseObject *objeto=NULL;
  bool enc=false, formatar=false;
 
  formatar=nome.contains("\"");
 
  //Caso o objeto a ser obtido seja uma coluna
- if(tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO ||
-    tipo_obj==OBJETO_GATILHO ||
-    tipo_obj==OBJETO_INDICE || tipo_obj==OBJETO_REGRA)
+ if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT ||
+    tipo_obj==OBJ_TRIGGER ||
+    tipo_obj==OBJ_INDEX || tipo_obj==OBJ_RULE)
  {
   vector<ObjetoTabela *>::iterator itr, itr_end;
   vector<ObjetoTabela *> *lista_obj=NULL;
@@ -681,16 +681,16 @@ ObjetoBase *Tabela::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, in
  }
 
  //Caso o objeto a ser obtido seja uma tabela pai
- else if(tipo_obj==OBJETO_TABELA || tipo_obj==OBJETO_TABELA_BASE)
+ else if(tipo_obj==OBJ_TABLE || tipo_obj==BASE_TABLE)
  {
   vector<Tabela *>::iterator itr_tab, itr_end_tab;
   vector<Tabela *> *tabelas;
   QString nome_aux;
 
   //Obrigatoriamente todo nome de tabela deve ser formatado por conta do esquema
-  nome_aux=ObjetoBase::formatarNome(nome);
+  nome_aux=BaseObject::formatarNome(nome);
 
-  if(tipo_obj==OBJETO_TABELA)
+  if(tipo_obj==OBJ_TABLE)
    tabelas=&tabelas_pai;
   else
    tabelas=&tabelas_copia;
@@ -728,11 +728,11 @@ ObjetoBase *Tabela::obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, in
  return(objeto);
 }
 
-ObjetoBase *Tabela::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
+BaseObject *Tabela::obterObjeto(unsigned idx_obj, ObjectType tipo_obj)
 {
  vector<ObjetoTabela *> *lista_obj=NULL;
 
- if(tipo_obj==OBJETO_TABELA)
+ if(tipo_obj==OBJ_TABLE)
  {
   //Caso o índice do objeto seja inválido dispara uma exceção
   if(idx_obj >= tabelas_pai.size())
@@ -741,7 +741,7 @@ ObjetoBase *Tabela::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
   //Retorna a tabela pai no índice especificado
   return(tabelas_pai[idx_obj]);
  }
- else if(tipo_obj==OBJETO_TABELA_BASE)
+ else if(tipo_obj==BASE_TABLE)
  {
   //Caso o índice do objeto seja inválido dispara uma exceção
   if(idx_obj >= tabelas_copia.size())
@@ -765,12 +765,12 @@ ObjetoBase *Tabela::obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj)
 Tabela *Tabela::obterTabelaPai(const QString &nome)
 {
  int idx;
- return(dynamic_cast<Tabela *>(obterObjeto(nome,OBJETO_TABELA,idx)));
+ return(dynamic_cast<Tabela *>(obterObjeto(nome,OBJ_TABLE,idx)));
 }
 
 Tabela *Tabela::obterTabelaPai(unsigned idx_tab)
 {
- return(dynamic_cast<Tabela *>(obterObjeto(idx_tab,OBJETO_TABELA)));
+ return(dynamic_cast<Tabela *>(obterObjeto(idx_tab,OBJ_TABLE)));
 }
 
 Coluna *Tabela::obterColuna(const QString &nome, bool ref_nome_antigo)
@@ -778,7 +778,7 @@ Coluna *Tabela::obterColuna(const QString &nome, bool ref_nome_antigo)
  if(!ref_nome_antigo)
  {
   int idx;
-  return(dynamic_cast<Coluna *>(obterObjeto(nome,OBJETO_COLUNA,idx)));
+  return(dynamic_cast<Coluna *>(obterObjeto(nome,OBJ_COLUMN,idx)));
  }
  else
  {
@@ -808,62 +808,62 @@ Coluna *Tabela::obterColuna(const QString &nome, bool ref_nome_antigo)
 
 Coluna *Tabela::obterColuna(unsigned idx_col)
 {
- return(dynamic_cast<Coluna *>(obterObjeto(idx_col,OBJETO_COLUNA)));
+ return(dynamic_cast<Coluna *>(obterObjeto(idx_col,OBJ_COLUMN)));
 }
 
 Gatilho *Tabela::obterGatilho(const QString &nome)
 {
  int idx;
- return(dynamic_cast<Gatilho *>(obterObjeto(nome,OBJETO_GATILHO,idx)));
+ return(dynamic_cast<Gatilho *>(obterObjeto(nome,OBJ_TRIGGER,idx)));
 }
 
 Gatilho *Tabela::obterGatilho(unsigned idx_gat)
 {
- return(dynamic_cast<Gatilho *>(obterObjeto(idx_gat,OBJETO_GATILHO)));
+ return(dynamic_cast<Gatilho *>(obterObjeto(idx_gat,OBJ_TRIGGER)));
 }
 
 Restricao *Tabela::obterRestricao(const QString &nome)
 {
  int idx;
- return(dynamic_cast<Restricao *>(obterObjeto(nome,OBJETO_RESTRICAO,idx)));
+ return(dynamic_cast<Restricao *>(obterObjeto(nome,OBJ_CONSTRAINT,idx)));
 }
 
 Restricao *Tabela::obterRestricao(unsigned idx_constr)
 {
- return(dynamic_cast<Restricao *>(obterObjeto(idx_constr,OBJETO_RESTRICAO)));
+ return(dynamic_cast<Restricao *>(obterObjeto(idx_constr,OBJ_CONSTRAINT)));
 }
 
 Indice *Tabela::obterIndice(const QString &nome)
 {
  int idx;
- return(dynamic_cast<Indice *>(obterObjeto(nome,OBJETO_INDICE,idx)));
+ return(dynamic_cast<Indice *>(obterObjeto(nome,OBJ_INDEX,idx)));
 }
 
 Indice *Tabela::obterIndice(unsigned idx_ind)
 {
- return(dynamic_cast<Indice *>(obterObjeto(idx_ind,OBJETO_INDICE)));
+ return(dynamic_cast<Indice *>(obterObjeto(idx_ind,OBJ_INDEX)));
 }
 
 Regra *Tabela::obterRegra(const QString &nome)
 {
  int idx;
- return(dynamic_cast<Regra *>(obterObjeto(nome,OBJETO_REGRA,idx)));
+ return(dynamic_cast<Regra *>(obterObjeto(nome,OBJ_RULE,idx)));
 }
 
 Regra *Tabela::obterRegra(unsigned idx_reg)
 {
- return(dynamic_cast<Regra *>(obterObjeto(idx_reg,OBJETO_REGRA)));
+ return(dynamic_cast<Regra *>(obterObjeto(idx_reg,OBJ_RULE)));
 }
 
 Tabela *Tabela::obterTabelaCopia(const QString &nome)
 {
  int idx;
- return(dynamic_cast<Tabela *>(obterObjeto(nome,OBJETO_TABELA_BASE,idx)));
+ return(dynamic_cast<Tabela *>(obterObjeto(nome,BASE_TABLE,idx)));
 }
 
 Tabela *Tabela::obterTabelaCopia(unsigned idx_tab)
 {
- return(dynamic_cast<Tabela *>(obterObjeto(idx_tab,OBJETO_TABELA_BASE)));
+ return(dynamic_cast<Tabela *>(obterObjeto(idx_tab,BASE_TABLE)));
 }
 
 unsigned Tabela::obterNumColunas(void)
@@ -901,16 +901,16 @@ unsigned Tabela::obterNumTabelasCopia(void)
  return(tabelas_copia.size());
 }
 
-unsigned Tabela::obterNumObjetos(TipoObjetoBase tipo_obj, bool inc_insporrelacao)
+unsigned Tabela::obterNumObjetos(ObjectType tipo_obj, bool inc_insporrelacao)
 {
- if(tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO ||
-    tipo_obj==OBJETO_GATILHO ||/* tipo_obj==OBJETO_GAT_RESTRICAO ||*/
-    tipo_obj==OBJETO_INDICE || tipo_obj==OBJETO_REGRA ||
-    tipo_obj==OBJETO_TABELA || tipo_obj==OBJETO_TABELA_BASE)
+ if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT ||
+    tipo_obj==OBJ_TRIGGER ||/* tipo_obj==OBJETO_GAT_RESTRICAO ||*/
+    tipo_obj==OBJ_INDEX || tipo_obj==OBJ_RULE ||
+    tipo_obj==OBJ_TABLE || tipo_obj==BASE_TABLE)
  {
-  if(tipo_obj==OBJETO_TABELA || tipo_obj==OBJETO_TABELA_BASE)
+  if(tipo_obj==OBJ_TABLE || tipo_obj==BASE_TABLE)
   {
-   if(tipo_obj==OBJETO_TABELA)
+   if(tipo_obj==OBJ_TABLE)
     return(tabelas_pai.size());
    else
     return(tabelas_copia.size());
@@ -999,7 +999,7 @@ QString Tabela::obterDefinicaoObjeto(unsigned tipo_def)
  if(tipo_def==SchemaParser::XML_DEFINITION)
   definirAtributoPosicao();
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 
 void Tabela::operator = (Tabela &tabela)
@@ -1016,7 +1016,7 @@ void Tabela::operator = (Tabela &tabela)
 bool Tabela::referenciaObjetoIncRelacao(void)
 {
  vector<ObjetoTabela *>::iterator itr, itr_end;
- TipoObjetoBase tipos[]={ OBJETO_COLUNA, OBJETO_RESTRICAO };
+ ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT };
  bool enc=false;
 
  for(unsigned i=0; i < 2 && !enc; i++)
@@ -1042,7 +1042,7 @@ bool Tabela::referenciaObjetoIncRelacao(void)
  return(enc);
 }
 
-void Tabela::trocarIndicesObjetos(TipoObjetoBase tipo_obj, unsigned idx1, unsigned idx2)
+void Tabela::trocarIndicesObjetos(ObjectType tipo_obj, unsigned idx1, unsigned idx2)
 {
  vector<ObjetoTabela *> *lista_obj=NULL;
  vector<ObjetoTabela *>::iterator itr1, itr2;

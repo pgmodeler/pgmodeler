@@ -1,6 +1,6 @@
 #include "colunawidget.h"
 
-ColunaWidget::ColunaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_COLUNA)
+ColunaWidget::ColunaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_COLUMN)
 {
  try
  {
@@ -18,7 +18,7 @@ ColunaWidget::ColunaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_COL
   tipo_col=new TipoPgSQLWidget(this);
   coluna_grid->addWidget(tipo_col,3,0,1,0);
 
-  configurarLayouFormulario(coluna_grid, OBJETO_COLUNA);
+  configurarLayouFormulario(coluna_grid, OBJ_COLUMN);
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
 
   janela_pai->setMinimumSize(530, 380);
@@ -38,7 +38,7 @@ void ColunaWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void ColunaWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai, ListaOperacoes *lista_op, Coluna *coluna)
+void ColunaWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, ListaOperacoes *lista_op, Coluna *coluna)
 {
  TipoPgSQL tipo;
 

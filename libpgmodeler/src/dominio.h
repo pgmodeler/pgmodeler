@@ -25,7 +25,7 @@
 #include "objetobase.h"
 #include "esquema.h"
 
-class Dominio: public ObjetoBase{
+class Dominio: public BaseObject{
  private:
   //Nome da constraint usada no domínio
   QString nome_rest,
@@ -61,7 +61,7 @@ class Dominio: public ObjetoBase{
   void definirTipo(TipoPgSQL tipo);
 
   void definirNome(const QString &nome);
-  void definirEsquema(ObjetoBase *esquema);
+  void definirEsquema(BaseObject *esquema);
 
   //Métodos de obtenção dos valores dos atributos
   QString obterNomeRestricao(void);

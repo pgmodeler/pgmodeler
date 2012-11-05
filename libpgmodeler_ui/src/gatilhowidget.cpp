@@ -1,6 +1,6 @@
 #include "gatilhowidget.h"
 
-GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_GATILHO)
+GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TRIGGER)
 {
  try
  {
@@ -26,8 +26,8 @@ GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_G
   tab_argumentos=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
 
   //Alocando seletor de tabela referenciada
-  sel_tabela_ref=new SeletorObjetoWidget(OBJETO_TABELA, true, this);
-  sel_funcao=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
+  sel_tabela_ref=new SeletorObjetoWidget(OBJ_TABLE, true, this);
+  sel_funcao=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
   gatilho_grid->addWidget(sel_funcao, 5, 1, 1, 2);
   gatilho_grid->addWidget(sel_tabela_ref, 6, 1, 1, 2);
 
@@ -61,7 +61,7 @@ GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_G
   gatilho_grid->addWidget(frame, gatilho_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 
-  configurarLayouFormulario(gatilho_grid, OBJETO_GATILHO);
+  configurarLayouFormulario(gatilho_grid, OBJ_TRIGGER);
   janela_pai->setMinimumSize(600, 640);
 
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));

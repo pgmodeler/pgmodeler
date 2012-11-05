@@ -10,13 +10,13 @@ ConfAparenciaWidget::ConfAparenciaWidget(QWidget * parent) : QWidget(parent)
   ParsersAttributes::POSITION_INFO, ParsersAttributes::POSITION_INFO,
   ParsersAttributes::OBJECT_TYPE, ParsersAttributes::LOCKER_ARC, ParsersAttributes::LOCKER_BODY,
   ParsersAttributes::TABLE_SCHEMA_NAME, ParsersAttributes::TABLE_NAME, ParsersAttributes::TABLE_BODY,
-  ParsersAttributes::TABLE_EXT_BODY, ParsersAttributes::TABLE_TITLE, ObjetoBase::obterNomeEsquemaObjeto(OBJETO_REGRA),
-  ObjetoBase::obterNomeEsquemaObjeto(OBJETO_REGRA), ObjetoBase::obterNomeEsquemaObjeto(OBJETO_INDICE),
-  ObjetoBase::obterNomeEsquemaObjeto(OBJETO_INDICE), ObjetoBase::obterNomeEsquemaObjeto(OBJETO_GATILHO),
-  ObjetoBase::obterNomeEsquemaObjeto(OBJETO_GATILHO), ParsersAttributes::VIEW_SCHEMA_NAME, ParsersAttributes::VIEW_NAME,
+  ParsersAttributes::TABLE_EXT_BODY, ParsersAttributes::TABLE_TITLE, BaseObject::obterNomeEsquemaObjeto(OBJ_RULE),
+  BaseObject::obterNomeEsquemaObjeto(OBJ_RULE), BaseObject::obterNomeEsquemaObjeto(OBJ_INDEX),
+  BaseObject::obterNomeEsquemaObjeto(OBJ_INDEX), BaseObject::obterNomeEsquemaObjeto(OBJ_TRIGGER),
+  BaseObject::obterNomeEsquemaObjeto(OBJ_TRIGGER), ParsersAttributes::VIEW_SCHEMA_NAME, ParsersAttributes::VIEW_NAME,
   ParsersAttributes::VIEW_BODY, ParsersAttributes::VIEW_TITLE, ParsersAttributes::ALIAS,
   ParsersAttributes::REF_COLUMN, ParsersAttributes::REF_TABLE, ParsersAttributes::REFERENCE,
-  ObjetoBase::obterNomeEsquemaObjeto(OBJETO_CAIXA_TEXTO), ParsersAttributes::COLUMN, ParsersAttributes::COLUMN,
+  BaseObject::obterNomeEsquemaObjeto(OBJ_TEXTBOX), ParsersAttributes::COLUMN, ParsersAttributes::COLUMN,
   ParsersAttributes::INH_COLUMN, ParsersAttributes::PROT_COLUMN, ParsersAttributes::PK_COLUMN,
   ParsersAttributes::PK_COLUMN, ParsersAttributes::FK_COLUMN, ParsersAttributes::FK_COLUMN,
   ParsersAttributes::UQ_COLUMN, ParsersAttributes::UQ_COLUMN, ParsersAttributes::NN_COLUMN,
@@ -97,7 +97,7 @@ void ConfAparenciaWidget::criarObjetosExemplo(void)
                           GlobalAttributes::DIR_SEPARATOR +
                           GlobalAttributes::EXAMPLE_MODEL);
 
-   qtd=modelo->obterNumObjetos(OBJETO_TABELA);
+   qtd=modelo->obterNumObjetos(OBJ_TABLE);
    for(i=0; i < qtd; i++)
    {
     tab=new OGTabela(modelo->obterTabela(i));
@@ -105,28 +105,28 @@ void ConfAparenciaWidget::criarObjetosExemplo(void)
     cena->addItem(tab);
    }
 
-   qtd=modelo->obterNumObjetos(OBJETO_VISAO);
+   qtd=modelo->obterNumObjetos(OBJ_VIEW);
    for(i=0; i < qtd; i++)
    {
     visao=new OGVisao(modelo->obterVisao(i));
     cena->addItem(visao);
    }
 
-   qtd=modelo->obterNumObjetos(OBJETO_RELACAO);
+   qtd=modelo->obterNumObjetos(OBJ_RELATIONSHIP);
    for(i=0; i < qtd; i++)
    {
-    rel=new OGRelacionamento(modelo->obterRelacionamento(i, OBJETO_RELACAO));
+    rel=new OGRelacionamento(modelo->obterRelacionamento(i, OBJ_RELATIONSHIP));
     cena->addItem(rel);
    }
 
-   qtd=modelo->obterNumObjetos(OBJETO_RELACAO_BASE);
+   qtd=modelo->obterNumObjetos(BASE_RELATIONSHIP);
    for(i=0; i < qtd; i++)
    {
-    rel=new OGRelacionamento(modelo->obterRelacionamento(i, OBJETO_RELACAO_BASE));
+    rel=new OGRelacionamento(modelo->obterRelacionamento(i, BASE_RELATIONSHIP));
     cena->addItem(rel);
    }
 
-   qtd=modelo->obterNumObjetos(OBJETO_CAIXA_TEXTO);
+   qtd=modelo->obterNumObjetos(OBJ_TEXTBOX);
    for(i=0; i < qtd; i++)
    {
     caixa=new OGCaixaTexto(modelo->obterCaixaTexto(i));

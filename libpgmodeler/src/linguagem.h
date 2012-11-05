@@ -27,7 +27,7 @@
 #include "funcao.h"
 #include "papel.h"
 
-class Linguagem: public ObjetoBase{
+class Linguagem: public BaseObject{
  private:
   /* Indica se a linguaguem é confiável ou não.
      Ser confiável indica que a linguaguem pode ser usada por um usuário

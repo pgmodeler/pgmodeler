@@ -2,7 +2,7 @@
 #include "visaoobjetoswidget.h"
 extern VisaoObjetosWidget *selecaoobjetos_wgt;
 
-PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_PERMISSAO)
+PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_PERMISSION)
 {
  QGridLayout *grid=NULL;
  QFont fonte;
@@ -44,7 +44,7 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
  nome_edt->setReadOnly(true);
 
  //Configura o formulário adicionando os campos de edição de permissão
- configurarLayouFormulario(permissao_grid, OBJETO_PERMISSAO);
+ configurarLayouFormulario(permissao_grid, OBJ_PERMISSION);
 
  //Cria a tabela de papéis com os botões de inserir, remover e editar item
  tab_papeis=new TabelaObjetosWidget(TabelaObjetosWidget::BTN_INSERIR_ITEM |
@@ -129,7 +129,7 @@ void PermissaoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void PermissaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai, ObjetoBase *objeto)
+void PermissaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, BaseObject *objeto)
 {
  /* Chama o método de definição de atributos da classe Pai para depois
     configurar os atributos relacionados   classe PermissaoWidget */
@@ -139,9 +139,9 @@ void PermissaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai,
  {
   unsigned priv;
   QCheckBox *chk=NULL, *chk1=NULL;
-  TipoObjetoBase tipo_obj;
+  ObjectType tipo_obj;
 
-  connect(selecaoobjetos_wgt, SIGNAL(s_visibilityChanged(ObjetoBase*,bool)), this, SLOT(exibirDadosPapelSelecionado(void)));
+  connect(selecaoobjetos_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(exibirDadosPapelSelecionado(void)));
   connect(tab_papeis, SIGNAL(s_linhaAdicionada(int)), this, SLOT(selecionarPapel(void)));
   connect(tab_permissoes, SIGNAL(s_linhasRemovidas(void)), this, SLOT(removerPermissoes(void)));
 
@@ -167,32 +167,32 @@ void PermissaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai,
       seguir a linha referente ao privilégio é mostrada na tabela, caso contrário
       é ocultada */
    if(((priv==Permissao::PRIV_SELECT || priv==Permissao::PRIV_UPDATE) &&
-        (tipo_obj==OBJETO_TABELA || tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_SEQUENCIA)) ||
+        (tipo_obj==OBJ_TABLE || tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_SEQUENCE)) ||
 
       ((priv==Permissao::PRIV_INSERT || priv==Permissao::PRIV_DELETE) &&
-        (tipo_obj==OBJETO_TABELA)) ||
+        (tipo_obj==OBJ_TABLE)) ||
 
-      ((priv==Permissao::PRIV_INSERT) && (tipo_obj==OBJETO_COLUNA)) ||
+      ((priv==Permissao::PRIV_INSERT) && (tipo_obj==OBJ_COLUMN)) ||
 
       ((priv==Permissao::PRIV_TRUNCATE || priv==Permissao::PRIV_TRIGGER) &&
-        (tipo_obj==OBJETO_TABELA)) ||
+        (tipo_obj==OBJ_TABLE)) ||
 
        (priv==Permissao::PRIV_REFERENCES &&
-        (tipo_obj==OBJETO_TABELA || tipo_obj==OBJETO_COLUNA)) ||
+        (tipo_obj==OBJ_TABLE || tipo_obj==OBJ_COLUMN)) ||
 
        (priv==Permissao::PRIV_CREATE &&
-        (tipo_obj==OBJETO_BANCO_DADOS || tipo_obj==OBJETO_ESQUEMA || tipo_obj==OBJETO_ESPACO_TABELA)) ||
+        (tipo_obj==OBJ_DATABASE || tipo_obj==OBJ_SCHEMA || tipo_obj==OBJ_TABLESPACE)) ||
 
       ((priv==Permissao::PRIV_CONNECT || priv==Permissao::PRIV_TEMPORARY) &&
-        (tipo_obj==OBJETO_BANCO_DADOS)) ||
+        (tipo_obj==OBJ_DATABASE)) ||
 
        (priv==Permissao::PRIV_EXECUTE &&
-        (tipo_obj==OBJETO_FUNCAO || tipo_obj==OBJETO_FUNC_AGREGACAO)) ||
+        (tipo_obj==OBJ_FUNCTION || tipo_obj==OBJ_AGGREGATE)) ||
 
        (priv==Permissao::PRIV_USAGE &&
-        (tipo_obj==OBJETO_SEQUENCIA || tipo_obj==OBJETO_LINGUAGEM || tipo_obj==OBJETO_ESQUEMA)) ||
+        (tipo_obj==OBJ_SEQUENCE || tipo_obj==OBJ_LANGUAGE || tipo_obj==OBJ_SCHEMA)) ||
 
-       (priv==Permissao::PRIV_SELECT && tipo_obj==OBJETO_VISAO))
+       (priv==Permissao::PRIV_SELECT && tipo_obj==OBJ_VIEW))
    {
     privilegios_tbw->setRowHidden(priv, false);
    }
@@ -209,7 +209,7 @@ void PermissaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai,
 
 void PermissaoWidget::selecionarPapel(void)
 {
- selecaoobjetos_wgt->definirObjetoVisivel(OBJETO_PAPEL, true);
+ selecaoobjetos_wgt->definirObjetoVisivel(OBJ_ROLE, true);
  selecaoobjetos_wgt->definirModelo(this->modelo);
  selecaoobjetos_wgt->show();
 }
@@ -394,7 +394,7 @@ void PermissaoWidget::atualizarPermissao(void)
      se assemelha a nehuma permissão no modelo. Já se o índice for positivo e a permissão no
      índice seja a mesma que está sendo edita (permissao) isso indica que a permissão auxiliar é
      igual   permissão atual, podendo claramente ser atualizada. */
-  if(idx_perm < 0 || (idx_perm >=0 && modelo->obterObjeto(idx_perm,OBJETO_PERMISSAO)==permissao))
+  if(idx_perm < 0 || (idx_perm >=0 && modelo->obterObjeto(idx_perm,OBJ_PERMISSION)==permissao))
   {
    /* Copia os atributos da permissão auxiliar para a permissão atual
       efetivando as alterações */

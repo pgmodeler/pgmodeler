@@ -27,7 +27,7 @@
 #include "objetobase.h"
 #include "funcao.h"
 
-class ConversaoTipo: public ObjetoBase {
+class ConversaoTipo: public BaseObject {
  private:
  /* Tipos de dados da conversão:
     0 -> Tipo de dado a ser convertido

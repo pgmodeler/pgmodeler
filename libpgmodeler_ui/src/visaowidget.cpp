@@ -1,6 +1,6 @@
 #include "visaowidget.h"
 
-VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_VISAO)
+VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_VIEW)
 {
  try
  {
@@ -24,9 +24,9 @@ VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_VISAO
 
   //Alocando os seletores de objetos (tabela e coluna) que são atribuío  s referências da visão
   sel_tabela=NULL;
-  sel_tabela=new SeletorObjetoWidget(OBJETO_TABELA, true, this);
+  sel_tabela=new SeletorObjetoWidget(OBJ_TABLE, true, this);
   sel_coluna=NULL;
-  sel_coluna=new SeletorObjetoWidget(OBJETO_COLUNA, true, this);
+  sel_coluna=new SeletorObjetoWidget(OBJ_COLUMN, true, this);
 
   //Alocando a tabela que armazena todas as referências da visão
   tab_referencias=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
@@ -45,7 +45,7 @@ VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_VISAO
   referencias_grid->addWidget(frame_info, 6, 0, 1, 0);
   referencias_grid->addWidget(tab_referencias, 7,0,2,0);
 
-  configurarLayouFormulario(visao_grid, OBJETO_VISAO);
+  configurarLayouFormulario(visao_grid, OBJ_VIEW);
 
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
   connect(tipo_ref_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selecionarTipoReferencia(void)));

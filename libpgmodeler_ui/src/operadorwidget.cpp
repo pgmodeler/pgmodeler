@@ -1,6 +1,6 @@
 #include "operadorwidget.h"
 
-OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_OPERADOR)
+OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_OPERATOR)
 {
  try
  {
@@ -32,7 +32,7 @@ OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO
   for(i=Operador::FUNC_OPERADOR; i <= Operador::FUNC_RESTRICAO; i++)
   {
    sel_funcoes[i]=NULL;
-   sel_funcoes[i]=new SeletorObjetoWidget(OBJETO_FUNCAO, true, this);
+   sel_funcoes[i]=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
    grid->addWidget(sel_funcoes[i],i,1,1,1);
   }
 
@@ -41,7 +41,7 @@ OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO
   for(i=Operador::OPER_COMUTACAO; i <= Operador::OPER_MAIOR; i++)
   {
    sel_operadores[i]=NULL;
-   sel_operadores[i]=new SeletorObjetoWidget(OBJETO_OPERADOR, true, this);
+   sel_operadores[i]=new SeletorObjetoWidget(OBJ_OPERATOR, true, this);
    grid->addWidget(sel_operadores[i],i,1,1,1);
   }
 
@@ -54,7 +54,7 @@ OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO
   grid->addWidget(frame, grid->count()+1, 0, 1, 0);
   frame->setParent(atributos_twg->widget(2));
 
-  configurarLayouFormulario(operador_grid, OBJETO_OPERADOR);
+  configurarLayouFormulario(operador_grid, OBJ_OPERATOR);
 
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
 

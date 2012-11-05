@@ -54,12 +54,12 @@ extern TabelaWidget *tabela_wgt;
 
 VisaoObjetosWidget::VisaoObjetosWidget(bool visao_simplificada, QWidget *parent, Qt::WindowFlags f) : QDockWidget(parent, f)
 {
- TipoObjetoBase tipos[]={  OBJETO_BANCO_DADOS, OBJETO_TABELA, OBJETO_FUNCAO, OBJETO_VISAO, OBJETO_DOMINIO,
-                           OBJETO_ESQUEMA, OBJETO_FUNC_AGREGACAO, OBJETO_OPERADOR, OBJETO_SEQUENCIA,
-                           OBJETO_PAPEL, OBJETO_CONV_CODIFICACAO, OBJETO_CONV_TIPO, OBJETO_LINGUAGEM,
-                           OBJETO_TIPO, OBJETO_ESPACO_TABELA, OBJETO_FAMILIA_OPER, OBJETO_CLASSE_OPER,
-                           OBJETO_RELACAO, OBJETO_CAIXA_TEXTO, OBJETO_COLUNA, OBJETO_RESTRICAO,
-                           OBJETO_GATILHO, OBJETO_INDICE, OBJETO_REGRA, OBJETO_RELACAO_BASE };
+ ObjectType tipos[]={  OBJ_DATABASE, OBJ_TABLE, OBJ_FUNCTION, OBJ_VIEW, OBJ_DOMAIN,
+                           OBJ_SCHEMA, OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_SEQUENCE,
+                           OBJ_ROLE, OBJ_CONVERSION, OBJ_CAST, OBJ_LANGUAGE,
+                           OBJ_TYPE, OBJ_TABLESPACE, OBJ_OPFAMILY, OBJ_OPCLASS,
+                           OBJ_RELATIONSHIP, OBJ_TEXTBOX, OBJ_COLUMN, OBJ_CONSTRAINT,
+                           OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE, BASE_RELATIONSHIP };
  int id_tipo, qtd_tipos=25;
  QListWidgetItem *item=NULL;
  QPixmap icone;
@@ -82,17 +82,17 @@ VisaoObjetosWidget::VisaoObjetosWidget(bool visao_simplificada, QWidget *parent,
   item=new QListWidgetItem;
 
   //Caso o tipo do objeto seja um relacionamento base, configura um ícone específico para o mesmo
-  if(tipos[id_tipo]==OBJETO_RELACAO_BASE)
-   str_aux=QString(ObjetoBase::obterNomeEsquemaObjeto(tipos[id_tipo])) + "tv";
+  if(tipos[id_tipo]==BASE_RELATIONSHIP)
+   str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipos[id_tipo])) + "tv";
   else
    //Caso contrario, configura o ícone do próprio tipo
-   str_aux=QString(ObjetoBase::obterNomeEsquemaObjeto(tipos[id_tipo]));
+   str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipos[id_tipo]));
 
   //Carrega o icone do tipo em um pixmap
   icone=QPixmap(QString::fromUtf8(":/icones/icones/") + str_aux + QString(".png"));
 
   //Configura o texto do item como sendo o nome do tipo de objeto
-  item->setText(QString::fromUtf8(ObjetoBase::obterNomeTipoObjeto(tipos[id_tipo])));
+  item->setText(QString::fromUtf8(BaseObject::obterNomeTipoObjeto(tipos[id_tipo])));
   //Atribui o ícone do objeto ao item
   item->setIcon(icone);
   //Define o item como marcado
@@ -146,7 +146,7 @@ void VisaoObjetosWidget::exibirMenuObjeto(void)
 {
  if(objeto_selecao && QApplication::mouseButtons()==Qt::RightButton && modelo_wgt && !visao_simplificada)
  {
-  vector<ObjetoBase *> vet;
+  vector<BaseObject *> vet;
   vet.push_back(objeto_selecao);
   modelo_wgt->cena->clearSelection();
   modelo_wgt->configurarMenuPopup(vet);
@@ -158,7 +158,7 @@ void VisaoObjetosWidget::editarObjeto(void)
 {
  if(objeto_selecao && modelo_wgt && !visao_simplificada)
  {
-  vector<ObjetoBase *> vet;
+  vector<BaseObject *> vet;
   vet.push_back(objeto_selecao);
   modelo_wgt->cena->clearSelection();
   modelo_wgt->configurarMenuPopup(vet);
@@ -172,19 +172,19 @@ void VisaoObjetosWidget::selecionarObjeto(void)
  {
   QTreeWidgetItem *item_arv=arvoreobjetos_tw->currentItem();
   if(item_arv)
-   objeto_selecao=reinterpret_cast<ObjetoBase *>(item_arv->data(0,Qt::UserRole).value<void *>());
+   objeto_selecao=reinterpret_cast<BaseObject *>(item_arv->data(0,Qt::UserRole).value<void *>());
  }
  else
  {
   QTableWidgetItem *item_tab=listaobjetos_tbw->currentItem();
   if(item_tab)
-   objeto_selecao=reinterpret_cast<ObjetoBase *>(item_tab->data(Qt::UserRole).value<void *>());
+   objeto_selecao=reinterpret_cast<BaseObject *>(item_tab->data(Qt::UserRole).value<void *>());
  }
 
  exibirMenuObjeto();
 }
 
-QVariant VisaoObjetosWidget::gerarValorItem(ObjetoBase *objeto)
+QVariant VisaoObjetosWidget::gerarValorItem(BaseObject *objeto)
 {
  void *p_aux=NULL;
  //Converte o ponteiro para o objeto em um ponteiro void
@@ -193,34 +193,34 @@ QVariant VisaoObjetosWidget::gerarValorItem(ObjetoBase *objeto)
  return(QVariant::fromValue(p_aux));
 }
 
-void VisaoObjetosWidget::definirObjetoVisivel(TipoObjetoBase tipo_obj, bool visivel)
+void VisaoObjetosWidget::definirObjetoVisivel(ObjectType tipo_obj, bool visivel)
 {
- if(tipo_obj!=OBJETO_BASE && tipo_obj!=OBJETO_TABELA_BASE)
+ if(tipo_obj!=BASE_OBJECT && tipo_obj!=BASE_TABLE)
   map_objs_visiveis[tipo_obj]=visivel;
 
  if(visivel && visao_simplificada)
  {
-  if(tipo_obj!=OBJETO_BANCO_DADOS)
-   map_objs_visiveis[OBJETO_BANCO_DADOS]=true;
+  if(tipo_obj!=OBJ_DATABASE)
+   map_objs_visiveis[OBJ_DATABASE]=true;
 
-  if(tipo_obj==OBJETO_COLUNA || tipo_obj==OBJETO_RESTRICAO || tipo_obj==OBJETO_REGRA ||
-     tipo_obj==OBJETO_GATILHO || tipo_obj==OBJETO_INDICE)
-   map_objs_visiveis[OBJETO_TABELA]=map_objs_visiveis[OBJETO_ESQUEMA]=true;
+  if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT || tipo_obj==OBJ_RULE ||
+     tipo_obj==OBJ_TRIGGER || tipo_obj==OBJ_INDEX)
+   map_objs_visiveis[OBJ_TABLE]=map_objs_visiveis[OBJ_SCHEMA]=true;
 
-  if(tipo_obj==OBJETO_TABELA || tipo_obj==OBJETO_VISAO || tipo_obj==OBJETO_FUNCAO ||
-     tipo_obj==OBJETO_FUNC_AGREGACAO || tipo_obj==OBJETO_DOMINIO || tipo_obj==OBJETO_TIPO ||
-     tipo_obj==OBJETO_CONV_CODIFICACAO || tipo_obj==OBJETO_OPERADOR || tipo_obj==OBJETO_FAMILIA_OPER ||
-     tipo_obj==OBJETO_CLASSE_OPER || tipo_obj==OBJETO_SEQUENCIA)
-   map_objs_visiveis[OBJETO_ESQUEMA]=true;
+  if(tipo_obj==OBJ_TABLE || tipo_obj==OBJ_VIEW || tipo_obj==OBJ_FUNCTION ||
+     tipo_obj==OBJ_AGGREGATE || tipo_obj==OBJ_DOMAIN || tipo_obj==OBJ_TYPE ||
+     tipo_obj==OBJ_CONVERSION || tipo_obj==OBJ_OPERATOR || tipo_obj==OBJ_OPFAMILY ||
+     tipo_obj==OBJ_OPCLASS || tipo_obj==OBJ_SEQUENCE)
+   map_objs_visiveis[OBJ_SCHEMA]=true;
  }
 }
 
 void VisaoObjetosWidget::definirObjetoVisivel(QListWidgetItem *item)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
 
  //Obtém o tipo de objeto do item selecionado
- tipo_obj=static_cast<TipoObjetoBase>(item->data(Qt::UserRole).toInt());
+ tipo_obj=static_cast<ObjectType>(item->data(Qt::UserRole).toInt());
  //Marca o flag de visível caso o item esteja com seu checkbox marcado na lista
  //map_objs_visiveis[tipo_obj]=(item->checkState()==Qt::Checked);
  definirObjetoVisivel(tipo_obj, item->checkState()==Qt::Checked);
@@ -231,7 +231,7 @@ void VisaoObjetosWidget::definirObjetoVisivel(QListWidgetItem *item)
 void VisaoObjetosWidget::definirTodosObjetosVisiveis(bool)
 {
  int qtd, i;
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
  QListWidgetItem *item=NULL;
  bool marcado;
 
@@ -245,7 +245,7 @@ void VisaoObjetosWidget::definirTodosObjetosVisiveis(bool)
   //Obtém um item da lista
   item=objetosvisiveis_lst->item(i);
   //Obtém o tipo de objeto ao qual ele está ligado
-  tipo_obj=static_cast<TipoObjetoBase>(item->data(Qt::UserRole).toInt());
+  tipo_obj=static_cast<ObjectType>(item->data(Qt::UserRole).toInt());
   //Atribui a flag 'marcado' ao tipo de objeto no mapa
   map_objs_visiveis[tipo_obj]=marcado;
 
@@ -307,7 +307,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
 
  if(modelo_bd)
  {
-  ObjetoBase *objeto=NULL, *esquema=NULL;
+  BaseObject *objeto=NULL, *esquema=NULL;
   ObjetoTabela *objeto_tab=NULL;
   QTableWidgetItem *item_tab=NULL, *item_tab1=NULL;
   Tabela *tabela=NULL;
@@ -317,13 +317,13 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
   QFont fonte;
   QString str_aux;
   unsigned tipo_rel;
-  TipoObjetoBase tipos[]={  OBJETO_BANCO_DADOS, OBJETO_TABELA, OBJETO_FUNCAO, OBJETO_VISAO, OBJETO_DOMINIO,
-                            OBJETO_ESQUEMA, OBJETO_FUNC_AGREGACAO, OBJETO_OPERADOR, OBJETO_SEQUENCIA,
-                            OBJETO_PAPEL, OBJETO_CONV_CODIFICACAO, OBJETO_CONV_TIPO, OBJETO_LINGUAGEM,
-                            OBJETO_TIPO, OBJETO_ESPACO_TABELA, OBJETO_FAMILIA_OPER, OBJETO_CLASSE_OPER,
-                            OBJETO_RELACAO, OBJETO_CAIXA_TEXTO, OBJETO_RELACAO_BASE },
-                 subtipos[]={ OBJETO_COLUNA, OBJETO_RESTRICAO,
-                              OBJETO_GATILHO, OBJETO_INDICE, OBJETO_REGRA };
+  ObjectType tipos[]={  OBJ_DATABASE, OBJ_TABLE, OBJ_FUNCTION, OBJ_VIEW, OBJ_DOMAIN,
+                            OBJ_SCHEMA, OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_SEQUENCE,
+                            OBJ_ROLE, OBJ_CONVERSION, OBJ_CAST, OBJ_LANGUAGE,
+                            OBJ_TYPE, OBJ_TABLESPACE, OBJ_OPFAMILY, OBJ_OPCLASS,
+                            OBJ_RELATIONSHIP, OBJ_TEXTBOX, BASE_RELATIONSHIP },
+                 subtipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
+                              OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
 
   int qtd_tipos=20, qtd_subtipos=5, id_tipo, qtd, qtd1, id_lin, id_tab;
 
@@ -338,7 +338,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
    {
     /* Caso o tipo de objeto seja de banco de dados a quantidade de objetos
        a serem inseridos na lista é igual a 1 */
-    if(tipos[id_tipo]==OBJETO_BANCO_DADOS)
+    if(tipos[id_tipo]==OBJ_DATABASE)
       qtd=1;
     else
      //Para os demais objetos, a quantidade é obtida através de uma consulta ao modelo
@@ -351,7 +351,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
     {
      listaobjetos_tbw->insertRow(id_lin);
 
-     if(tipos[id_tipo]!=OBJETO_BANCO_DADOS)
+     if(tipos[id_tipo]!=OBJ_DATABASE)
       objeto=modelo_bd->obterObjeto(id_lin, tipos[id_tipo]);
      else
       objeto=modelo_bd;
@@ -372,12 +372,12 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
      }
 
      //Caso o objeto seja uma função ou operador a assinatura será exibida ao invés do nome do objeto
-     if(tipos[id_tipo]!=OBJETO_FUNCAO && tipos[id_tipo]!=OBJETO_OPERADOR)
+     if(tipos[id_tipo]!=OBJ_FUNCTION && tipos[id_tipo]!=OBJ_OPERATOR)
      {
       item_tab->setText(QString::fromUtf8(objeto->obterNome()));
       item_tab->setToolTip(QString::fromUtf8(objeto->obterNome()));
      }
-     else if(tipos[id_tipo]==OBJETO_FUNCAO)
+     else if(tipos[id_tipo]==OBJ_FUNCTION)
      {
       funcao=dynamic_cast<Funcao *>(objeto);
       funcao->criarAssinatura(false);
@@ -396,11 +396,11 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
      item_tab=new QTableWidgetItem;
      item_tab->setData(Qt::UserRole, gerarValorItem(objeto));
 
-     if(tipos[id_tipo]==OBJETO_RELACAO_BASE || tipos[id_tipo]==OBJETO_RELACAO)
+     if(tipos[id_tipo]==BASE_RELATIONSHIP || tipos[id_tipo]==OBJ_RELATIONSHIP)
      {
-      str_aux=QString(ObjetoBase::obterNomeEsquemaObjeto(objeto->obterTipoObjeto()));
+      str_aux=QString(BaseObject::obterNomeEsquemaObjeto(objeto->obterTipoObjeto()));
 
-      if(tipos[id_tipo]==OBJETO_RELACAO_BASE)
+      if(tipos[id_tipo]==BASE_RELATIONSHIP)
         str_aux+="tv";
       else
       {
@@ -419,7 +419,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
       }
      }
      else
-      str_aux=QString(ObjetoBase::obterNomeEsquemaObjeto(objeto->obterTipoObjeto()));
+      str_aux=QString(BaseObject::obterNomeEsquemaObjeto(objeto->obterTipoObjeto()));
 
      icone=QPixmap(QString(":/icones/icones/") + str_aux + QString(".png"));
 
@@ -449,33 +449,33 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
        /* O objeto banco de dados não está ligado a um container sendo
           assim, as colunas descritoras do container terão um valor
           indicativo de não existência do mesmo */
-       case OBJETO_BANCO_DADOS:
+       case OBJ_DATABASE:
           item_tab->setText("-");
           item_tab1->setText("-");
        break;
 
        //Objetos cujo container direto é um esquema
-       case OBJETO_FUNCAO:
-       case OBJETO_TABELA:
-       case OBJETO_VISAO:
-       case OBJETO_DOMINIO:
-       case OBJETO_FUNC_AGREGACAO:
-       case OBJETO_OPERADOR:
-       case OBJETO_SEQUENCIA:
-       case OBJETO_CONV_CODIFICACAO:
-       case OBJETO_TIPO:
-       case OBJETO_FAMILIA_OPER:
-       case OBJETO_CLASSE_OPER:
+       case OBJ_FUNCTION:
+       case OBJ_TABLE:
+       case OBJ_VIEW:
+       case OBJ_DOMAIN:
+       case OBJ_AGGREGATE:
+       case OBJ_OPERATOR:
+       case OBJ_SEQUENCE:
+       case OBJ_CONVERSION:
+       case OBJ_TYPE:
+       case OBJ_OPFAMILY:
+       case OBJ_OPCLASS:
           //Configura o ícone de esquema
           icone=QPixmap(QString(":/icones/icones/") +
-                        QString(ObjetoBase::obterNomeEsquemaObjeto(OBJETO_ESQUEMA)) +
+                        QString(BaseObject::obterNomeEsquemaObjeto(OBJ_SCHEMA)) +
 		        QString(".png"));
 
           item_tab->setText(QString::fromUtf8(objeto->obterEsquema()->obterNome()));
 
           //Atribui o icone ao item da tabela e configura o nome do tipo
           item_tab1->setIcon(icone);
-          item_tab1->setText(QString::fromUtf8(ObjetoBase::obterNomeTipoObjeto(OBJETO_ESQUEMA)));
+          item_tab1->setText(QString::fromUtf8(BaseObject::obterNomeTipoObjeto(OBJ_SCHEMA)));
 
           //Armazenando o endereço da esquema do objeto nos itens descritores do container
           esquema=objeto->obterEsquema();
@@ -494,11 +494,11 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
        //Demais objetos cujo container direto é o banco de dados
        default:
           icone=QPixmap(QString(":/icones/icones/") +
-                        QString(ObjetoBase::obterNomeEsquemaObjeto(OBJETO_BANCO_DADOS)) +
+                        QString(BaseObject::obterNomeEsquemaObjeto(OBJ_DATABASE)) +
 		        QString(".png"));
           item_tab->setText(QString::fromUtf8(modelo_bd->obterNome()));
           item_tab1->setIcon(icone);
-          item_tab1->setText(QString::fromUtf8(ObjetoBase::obterNomeTipoObjeto(OBJETO_BANCO_DADOS)));
+          item_tab1->setText(QString::fromUtf8(BaseObject::obterNomeTipoObjeto(OBJ_DATABASE)));
 
           //Armazenando o endereço do modelo de banco de dados nos itens descritores do container
        break;
@@ -507,7 +507,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
    }
 
    //Insere os objetos (colunas, restrições, indices, gatilhos, etc) das tabelas do modelo
-   qtd=/*modelo_wgt->*/modelo_bd->obterNumObjetos(OBJETO_TABELA);
+   qtd=/*modelo_wgt->*/modelo_bd->obterNumObjetos(OBJ_TABLE);
 
    for(id_tab=0; id_tab < qtd; id_tab++)
    {
@@ -555,7 +555,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
       //Cria o item descritor de tipo do objeto
       item_tab=new QTableWidgetItem;
       icone=QPixmap(QString(":/icones/icones/") +
-                    QString(ObjetoBase::obterNomeEsquemaObjeto(objeto_tab->obterTipoObjeto())) +
+                    QString(BaseObject::obterNomeEsquemaObjeto(objeto_tab->obterTipoObjeto())) +
 		    QString(".png"));
       listaobjetos_tbw->setItem(id_lin, 1, item_tab);
       item_tab->setText(QString::fromUtf8(objeto_tab->obterNomeTipoObjeto()));
@@ -590,12 +590,12 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
 
       //Configura o ícone de tabela (container)
       icone=QPixmap(QString(":/icones/icones/") +
-                    QString(ObjetoBase::obterNomeEsquemaObjeto(OBJETO_TABELA)) +
+                    QString(BaseObject::obterNomeEsquemaObjeto(OBJ_TABLE)) +
 		    QString(".png"));
 
       //Atribui o icone ao item da tabela e configura o nome do tipo do container
       item_tab1->setIcon(icone);
-      item_tab1->setText(QString::fromUtf8(ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA)));
+      item_tab1->setText(QString::fromUtf8(BaseObject::obterNomeTipoObjeto(OBJ_TABLE)));
       item_tab1->setData(Qt::UserRole, gerarValorItem(objeto_tab));
      }
     }
@@ -611,36 +611,36 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
 
 void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
 {
- if(modelo_bd && map_objs_visiveis[OBJETO_ESQUEMA])
+ if(modelo_bd && map_objs_visiveis[OBJ_SCHEMA])
  {
-  ObjetoBase *objeto=NULL, *esquema=NULL;
+  BaseObject *objeto=NULL, *esquema=NULL;
   Funcao *funcao=NULL;
   Operador *operador=NULL;
-  vector<ObjetoBase *> lista_obj;
+  vector<BaseObject *> lista_obj;
   QFont fonte;
   QTreeWidgetItem *item=NULL, *item1=NULL, *item2=NULL, *item3=NULL, *item4=NULL;
   int qtd, qtd2, i, i1, i2;
-  TipoObjetoBase tipos[]={ OBJETO_VISAO, OBJETO_FUNCAO, OBJETO_FUNC_AGREGACAO,
-                           OBJETO_DOMINIO, OBJETO_TIPO, OBJETO_CONV_CODIFICACAO,
-                           OBJETO_OPERADOR, OBJETO_FAMILIA_OPER, OBJETO_CLASSE_OPER,
-                           OBJETO_SEQUENCIA };
+  ObjectType tipos[]={ OBJ_VIEW, OBJ_FUNCTION, OBJ_AGGREGATE,
+                           OBJ_DOMAIN, OBJ_TYPE, OBJ_CONVERSION,
+                           OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
+                           OBJ_SEQUENCE };
           //Configura o ícone que designa um esquema
   QPixmap icone_esq=QPixmap(QString(":/icones/icones/") +
-                            QString(ObjetoBase::obterNomeEsquemaObjeto(OBJETO_ESQUEMA)) +
+                            QString(BaseObject::obterNomeEsquemaObjeto(OBJ_SCHEMA)) +
 			    QString(".png")),
           //Configura o ícone que designa um grupo de esquemas
           icone_grupo=QPixmap(QString(":/icones/icones/") +
-                              QString(ObjetoBase::obterNomeEsquemaObjeto(OBJETO_ESQUEMA)) +
+                              QString(BaseObject::obterNomeEsquemaObjeto(OBJ_SCHEMA)) +
                               QString("_grp") +
 			      QString(".png"));
 
   //Obtém a quantidade de esquemas existentes no modelo
-  qtd=(modelo_bd->obterNumObjetos(OBJETO_ESQUEMA));
+  qtd=(modelo_bd->obterNumObjetos(OBJ_SCHEMA));
   item=new QTreeWidgetItem(raiz);
   item->setIcon(0,icone_grupo);
 
   //Configura o texto do item como sendo o nome do tipo "esquema" com a quantidade obtida
-  item->setText(0,ObjetoBase::obterNomeTipoObjeto(OBJETO_ESQUEMA) +
+  item->setText(0,BaseObject::obterNomeTipoObjeto(OBJ_SCHEMA) +
                   QString(" (%1)").arg(qtd));
   fonte=item->font(0);
   fonte.setItalic(true);
@@ -662,7 +662,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
     else
     {
      //Obtém o esquema no índice atual
-     esquema=/*modelo_wgt->*/modelo_bd->obterObjeto(i,OBJETO_ESQUEMA);
+     esquema=/*modelo_wgt->*/modelo_bd->obterObjeto(i,OBJ_SCHEMA);
      /* Configura um item para o esquema obtido, cujo texto
         será o próprio nome do objeto obtido */
      item2=new QTreeWidgetItem(item);
@@ -694,7 +694,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
       //Cria um item que designa um grupo de objetos do tipo atual
       item3=new QTreeWidgetItem(item2);
       item3->setIcon(0,QPixmap(QString(":/icones/icones/") +
-                       QString(ObjetoBase::obterNomeEsquemaObjeto(tipos[i1])) +
+                       QString(BaseObject::obterNomeEsquemaObjeto(tipos[i1])) +
                        QString("_grp") +
 		       QString(".png")));
 
@@ -704,7 +704,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
          quantidade de objetos encontrados */
       qtd2=lista_obj.size();
       item3->setText(0,
-                      ObjetoBase::obterNomeTipoObjeto(tipos[i1]) +
+                      BaseObject::obterNomeTipoObjeto(tipos[i1]) +
                       QString(" (%1)").arg(qtd2));
       fonte=item3->font(0);
       fonte.setItalic(true);
@@ -729,7 +729,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
        }
 
        //Caso particular para funções
-       if(tipos[i1]==OBJETO_FUNCAO)
+       if(tipos[i1]==OBJ_FUNCTION)
        {
         funcao=dynamic_cast<Funcao *>(objeto);
         //Cria a assinatura sem formatar o nome
@@ -741,7 +741,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
            referências a esse objeto */
         funcao->criarAssinatura(true);
        }
-       else if(tipos[i1]==OBJETO_OPERADOR)
+       else if(tipos[i1]==OBJ_OPERATOR)
        {
         operador=dynamic_cast<Operador *>(objeto);
         item4->setText(0, QString::fromUtf8(operador->obterAssinatura(false)));
@@ -756,7 +756,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
 
         //Configura o icone do do item como sendo o icone para o tipo atual
         item4->setIcon(0,QPixmap(QString(":/icones/icones/") +
-                         QString(ObjetoBase::obterNomeEsquemaObjeto(tipos[i1])) +
+                         QString(BaseObject::obterNomeEsquemaObjeto(tipos[i1])) +
 		         QString(".png")));
       }
      }
@@ -770,38 +770,38 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
  }
 }
 
-void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoBase *esquema)
+void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObject *esquema)
 {
- if(modelo_bd && map_objs_visiveis[OBJETO_TABELA])
+ if(modelo_bd && map_objs_visiveis[OBJ_TABLE])
  {
-  ObjetoBase *objeto=NULL;
-  vector<ObjetoBase *> lista_obj;
+  BaseObject *objeto=NULL;
+  vector<BaseObject *> lista_obj;
   Tabela *tabela=NULL;
   QTreeWidgetItem *item=NULL, *item1=NULL, *item2=NULL, *item3=NULL;
   int qtd, qtd1, i, i1, i2;
   QString str_aux;
   QFont fonte;
   TipoRestricao tipo_rest;
-  TipoObjetoBase tipos[]={ OBJETO_COLUNA, OBJETO_RESTRICAO, OBJETO_REGRA,
-                           OBJETO_GATILHO, OBJETO_INDICE };
+  ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE,
+                           OBJ_TRIGGER, OBJ_INDEX };
           //Configura o ícone que designa uma tabela
   QPixmap icone_tab=QPixmap(QString(":/icones/icones/") +
-                            QString(ObjetoBase::obterNomeEsquemaObjeto(OBJETO_TABELA)) + QString(".png")),
+                            QString(BaseObject::obterNomeEsquemaObjeto(OBJ_TABLE)) + QString(".png")),
           //Configura o ícone que designa um grupo de tabelas
           icone_grupo=QPixmap(QString(":/icones/icones/") +
-                              QString(ObjetoBase::obterNomeEsquemaObjeto(OBJETO_TABELA)) +
+                              QString(BaseObject::obterNomeEsquemaObjeto(OBJ_TABLE)) +
                               QString("_grp") + QString(".png"));
 
   try
   {
    //Obtém a lista de objetos do tipo tabela presentes no esquema passado
-   lista_obj=/*modelo_wgt->*/modelo_bd->obterObjetos(OBJETO_TABELA, esquema);
+   lista_obj=/*modelo_wgt->*/modelo_bd->obterObjetos(OBJ_TABLE, esquema);
    //Configura o elemento raiz como sendo um grupo de tabelas
    item=new QTreeWidgetItem(raiz);
    item->setIcon(0,icone_grupo);
    /* O texto do ícone será o nome do tipo do objeto (no caso, tabela) e a
       quantidade de objetos encontrado */
-   item->setText(0,ObjetoBase::obterNomeTipoObjeto(OBJETO_TABELA) +
+   item->setText(0,BaseObject::obterNomeTipoObjeto(OBJ_TABLE) +
                    QString(" (%1)").arg(lista_obj.size()));
    fonte=item->font(0);
    fonte.setItalic(true);
@@ -819,7 +819,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoB
     item1->setToolTip(0,QString::fromUtf8(tabela->obterNome()));
     //Configura o ícone do item como sendo o ícone de tabela
     item1->setIcon(0,QPixmap(QString(":/icones/icones/") +
-                   QString(ObjetoBase::obterNomeEsquemaObjeto(OBJETO_TABELA)) +
+                   QString(BaseObject::obterNomeEsquemaObjeto(OBJ_TABLE)) +
 	           QString(".png")));
     item1->setData(0, Qt::UserRole, gerarValorItem(tabela));
 
@@ -842,7 +842,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoB
          grupo do tipo atual */
       item2=new QTreeWidgetItem(item1);
       item2->setIcon(0,QPixmap(QString(":/icones/icones/") +
-                       QString(ObjetoBase::obterNomeEsquemaObjeto(tipos[i1])) +
+                       QString(BaseObject::obterNomeEsquemaObjeto(tipos[i1])) +
                        QString("_grp") +
 		       QString(".png")));
       fonte=item2->font(0);
@@ -852,7 +852,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoB
       /* Configura o texto do item como sendo o nome do tipo e a quantidade de
          objetos deste tipo presente na tabela */
       qtd1=tabela->obterNumObjetos(tipos[i1]);
-      item2->setText(0,ObjetoBase::obterNomeTipoObjeto(tipos[i1]) +
+      item2->setText(0,BaseObject::obterNomeTipoObjeto(tipos[i1]) +
                       QString(" (%1)").arg(qtd1));
 
       //Varre a lista de elementos filhos da tabela
@@ -887,7 +887,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoB
 
        switch(tipos[i1])
        {
-        case OBJETO_RESTRICAO:
+        case OBJ_CONSTRAINT:
          /* Fazendo uma configuração específica de ícone para restrições.
             Cada tipo de restrição tem seu ícone específico.
             O sufixos sufixo _pk, _fk, _ck, e _uq, são concatenados
@@ -909,7 +909,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoB
        }
 
        //Configura o caminho do ícone e o atribui ao item
-       str_aux=QString(ObjetoBase::obterNomeEsquemaObjeto(tipos[i1])) + str_aux;
+       str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipos[i1])) + str_aux;
        item3->setIcon(0,QPixmap(QString(":/icones/icones/") + str_aux + QString(".png")));
       }
      }
@@ -929,27 +929,27 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
  if(modelo_bd)
  {
   QString str_aux;
-  ObjetoBase *objeto=NULL;
+  BaseObject *objeto=NULL;
   unsigned qtd, i, i1, tipo_rel;
   QTreeWidgetItem *raiz=NULL,*item1=NULL, *item2=NULL;
   QFont fonte;
 
   //Lista de tipos de objetos a nivel de banco de dados
-  TipoObjetoBase tipos[]={ OBJETO_PAPEL, OBJETO_ESPACO_TABELA,
-                           OBJETO_LINGUAGEM, OBJETO_CONV_TIPO, OBJETO_CAIXA_TEXTO,
-                           OBJETO_RELACAO, OBJETO_RELACAO_BASE };
+  ObjectType tipos[]={ OBJ_ROLE, OBJ_TABLESPACE,
+                           OBJ_LANGUAGE, OBJ_CAST, OBJ_TEXTBOX,
+                           OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
 
   try
   {
    /* Só executa a exibição dos objetos do banco de dados caso o tipo
       banco de dados esteja marcado como visível */
-   if(map_objs_visiveis[OBJETO_BANCO_DADOS])
+   if(map_objs_visiveis[OBJ_DATABASE])
    {
     //Configura o item raiz da árvore
     raiz=new QTreeWidgetItem;
     //O ícone é o descritor de banco de dados
     raiz->setIcon(0,QPixmap(QString::fromUtf8(":/icones/icones/") +
-                    QString(ObjetoBase::obterNomeEsquemaObjeto(OBJETO_BANCO_DADOS)) +
+                    QString(BaseObject::obterNomeEsquemaObjeto(OBJ_DATABASE)) +
                     QString(".png")));
     arvoreobjetos_tw->insertTopLevelItem(0,raiz);
     //O texto do item é o próprio nome do banco de dados
@@ -979,10 +979,10 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
          o sufixo '_grp' no caminho do ícone indica que será carregado
          o ícone do grupo daquele tipo */
       item1=new QTreeWidgetItem(raiz);
-      if(tipos[i]==OBJETO_RELACAO_BASE)
-       str_aux=QString(ObjetoBase::obterNomeEsquemaObjeto(tipos[i])) + "tv";
+      if(tipos[i]==BASE_RELATIONSHIP)
+       str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipos[i])) + "tv";
       else
-       str_aux=QString(ObjetoBase::obterNomeEsquemaObjeto(tipos[i]));
+       str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipos[i]));
 
       item1->setIcon(0,QPixmap(QString(":/icones/icones/") +
                        str_aux + QString("_grp") + QString(".png")));
@@ -991,7 +991,7 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
       qtd=/*modelo_wgt->*/modelo_bd->obterNumObjetos(tipos[i]);
       /* Configura o texto do item de grupo com o nome do tipo e a quantidade
          de objetos daquele tipo presente no modelo */
-      item1->setText(0,ObjetoBase::obterNomeTipoObjeto(tipos[i]) +
+      item1->setText(0,BaseObject::obterNomeTipoObjeto(tipos[i]) +
                      QString(" (%1)").arg(qtd));
       fonte=item1->font(0);
       fonte.setItalic(true);
@@ -1024,7 +1024,7 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
        switch(tipos[i])
        {
         //Configura o ícone apenas para relacionamento
-        case OBJETO_RELACAO:
+        case OBJ_RELATIONSHIP:
         tipo_rel=dynamic_cast<Relacionamento *>(objeto)->obterTipoRelacionamento();
         //Concatena a uma string auxiliar a designação do tipo de relacionamento
         if(tipo_rel==Relacionamento::RELACIONAMENTO_11)
@@ -1039,7 +1039,7 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
          str_aux="gen";
         break;
 
-        case OBJETO_RELACAO_BASE:
+        case BASE_RELATIONSHIP:
          str_aux="tv";
         break;
         /* Para os demais objetos o ícone será aquele referente ao seu
@@ -1051,7 +1051,7 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
        }
 
        //Configura o caminho do ícone e o atribui ao elemento
-       str_aux=QString(ObjetoBase::obterNomeEsquemaObjeto(tipos[i])) + str_aux;
+       str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipos[i])) + str_aux;
        item2->setIcon(0,QPixmap(QString(":/icones/icones/") + str_aux + QString(".png")));
       }
      }
@@ -1070,18 +1070,18 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
  }
 }
 
-ObjetoBase *VisaoObjetosWidget::obterObjetoSelecao(void)
+BaseObject *VisaoObjetosWidget::obterObjetoSelecao(void)
 {
  return(objeto_selecao);
 }
 
-void VisaoObjetosWidget::expandirItemArvore(ObjetoBase *objeto)
+void VisaoObjetosWidget::expandirItemArvore(BaseObject *objeto)
 {
  if(objeto)
  {
   QList<QTreeWidgetItem *> itens;
   QList<QTreeWidgetItem *>::iterator itr, itr_end;
-  ObjetoBase *obj_aux=NULL;
+  BaseObject *obj_aux=NULL;
   QTreeWidgetItem *item_arv=NULL;
 
   //Obtém todos os elementos da árvore e os dispoem em forma de lista
@@ -1094,7 +1094,7 @@ void VisaoObjetosWidget::expandirItemArvore(ObjetoBase *objeto)
   {
    //Obtém cada objeto que cada item da lista armazena
    item_arv=(*itr);
-   obj_aux=reinterpret_cast<ObjetoBase *>(item_arv->data(0,Qt::UserRole).value<void *>());
+   obj_aux=reinterpret_cast<BaseObject *>(item_arv->data(0,Qt::UserRole).value<void *>());
 
    /* Compara o objeto obtido da lista com o objeto do parâmeto
       caso os dois sejam os mesmo procede com a expansão do elemento
@@ -1131,7 +1131,7 @@ void VisaoObjetosWidget::close(void)
    dado=listaobjetos_tbw->currentItem()->data(Qt::UserRole);
 
   //Converte o conteúdo do dado para um void *
-  objeto_selecao=reinterpret_cast<ObjetoBase *>(dado.value<void *>());
+  objeto_selecao=reinterpret_cast<BaseObject *>(dado.value<void *>());
  }
  else
   objeto_selecao=NULL;
@@ -1169,7 +1169,7 @@ void VisaoObjetosWidget::closeEvent(QCloseEvent *)
     de exibição no momento em que o formulário (dockwidget) for exibido novamento */
  if(visao_simplificada)
  {
-  map<TipoObjetoBase, bool>::iterator itr, itr_end;
+  map<ObjectType, bool>::iterator itr, itr_end;
 
   itr=map_objs_visiveis.begin();
   itr_end=map_objs_visiveis.end();

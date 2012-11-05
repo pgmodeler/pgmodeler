@@ -2,7 +2,7 @@
 
 Linguagem::Linguagem(void)
 {
- tipo_objeto=OBJETO_LINGUAGEM;
+ tipo_objeto=OBJ_LANGUAGE;
  confiavel=false;
 
  for(unsigned i=FUNC_VALIDATOR; i <= FUNC_INLINE; i++)
@@ -21,10 +21,10 @@ void Linguagem::definirNome(const QString &nome)
  if(nome.toLower()==~TipoLinguagem("c") || nome.toLower()==~TipoLinguagem("sql"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_LINGUAGEM)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_LANGUAGE)),
                 ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- ObjetoBase::definirNome(nome); //Chama o método da classe descendente
+ BaseObject::definirNome(nome); //Chama o método da classe descendente
 }
 
 void Linguagem::definirConfiavel(bool valor)
@@ -69,7 +69,7 @@ void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
          ((tipo_func==FUNC_VALIDATOR || tipo_func==FUNC_INLINE) && funcao->obterTipoRetorno()!="void"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
                          .arg(this->obterNome(true))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_LINGUAGEM)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_LANGUAGE)),
                 ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Dispara um erro se a função possuir parâmetros inválidos
@@ -120,6 +120,6 @@ QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   }
  }
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def, forma_reduzida));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }
 

@@ -51,7 +51,7 @@ class RestricaoWidget: public ObjetoBaseWidget, public Ui::RestricaoWidget {
 
  public:
    RestricaoWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai, ListaOperacoes *lista_op, Restricao *restricao);
+   void definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, ListaOperacoes *lista_op, Restricao *restricao);
 
  private slots:
   void hideEvent(QHideEvent *);

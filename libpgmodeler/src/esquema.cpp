@@ -2,8 +2,8 @@
 
 Esquema::Esquema(void)
 {
- tipo_objeto=OBJETO_ESQUEMA;
- id_objeto=ObjetoBase::id_esquema++;
+ tipo_objeto=OBJ_SCHEMA;
+ id_objeto=BaseObject::id_esquema++;
 }
 
 void Esquema::definirNome(const QString &nome)
@@ -13,9 +13,9 @@ void Esquema::definirNome(const QString &nome)
  if(nome.mid(0,3)=="pg_")
   throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_ESQUEMA)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_SCHEMA)),
                 ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- ObjetoBase::definirNome(nome); //Chama o método da classe descendente
+ BaseObject::definirNome(nome); //Chama o método da classe descendente
 }
 

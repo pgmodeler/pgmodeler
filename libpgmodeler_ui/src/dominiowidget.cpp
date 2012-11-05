@@ -1,6 +1,6 @@
 #include "dominiowidget.h"
 
-DominioWidget::DominioWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_DOMINIO)
+DominioWidget::DominioWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_DOMAIN)
 {
  try
  {
@@ -18,7 +18,7 @@ DominioWidget::DominioWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_D
   tipo_dominio=new TipoPgSQLWidget(this);
   dominio_grid->addWidget(tipo_dominio,4,0,1,2);
 
-  configurarLayouFormulario(dominio_grid, OBJETO_DOMINIO);
+  configurarLayouFormulario(dominio_grid, OBJ_DOMAIN);
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
 
   janela_pai->setMinimumSize(530, 450);

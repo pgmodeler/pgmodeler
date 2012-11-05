@@ -6,17 +6,17 @@ ObjetoTabela::ObjetoTabela(void)
  inc_ligacao=inc_generalizacao=inc_dependencia=false;
 }
 
-void ObjetoTabela::definirTabelaPai(ObjetoBase *tabela)
+void ObjetoTabela::definirTabelaPai(BaseObject *tabela)
 {
  /* Caso o objeto a ser atribuído não seja uma tabela
     um erro é gerado */
- if(tabela && tabela->obterTipoObjeto()!=OBJETO_TABELA)
+ if(tabela && tabela->obterTipoObjeto()!=OBJ_TABLE)
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  tabela_pai=tabela;
 }
 
-ObjetoBase *ObjetoTabela::obterTabelaPai(void)
+BaseObject *ObjetoTabela::obterTabelaPai(void)
 {
  return(tabela_pai);
 }
@@ -64,7 +64,7 @@ bool ObjetoTabela::incluidoPorRelacionamento(void)
 
 void ObjetoTabela::operator = (ObjetoTabela &objeto)
 {
- *(dynamic_cast<ObjetoBase *>(this))=dynamic_cast<ObjetoBase &>(objeto);
+ *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(objeto);
  this->tabela_pai=objeto.tabela_pai;
  /*this->inc_dependencia=objeto.inc_dependencia;
  this->inc_generalizacao=objeto.inc_generalizacao;

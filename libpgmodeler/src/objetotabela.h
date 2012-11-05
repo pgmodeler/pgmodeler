@@ -25,7 +25,7 @@
 
 #include "objetobase.h"
 
-class ObjetoTabela: public ObjetoBase {
+class ObjetoTabela: public BaseObject {
  protected:
   /* Armazena o endereço da tabela a qual possui um objeto desta classe.
      Na modelagem desta classe a classe Tabela era utilizada
@@ -33,7 +33,7 @@ class ObjetoTabela: public ObjetoBase {
      está sendo usada que de qualquer forma serve como referência
      a uma tabela, pois esta ultima herda as propriedades de
      ObjetoBase. */
-  ObjetoBase *tabela_pai;
+  BaseObject *tabela_pai;
 
   /* Indica se o atributo foi incluido automaticamente por relacionamentos do tipo 11,1n,nn,
      este atributo só é acessível pelas classes Relacionamento e RelacionamentoBase */
@@ -57,10 +57,10 @@ class ObjetoTabela: public ObjetoBase {
   ~ObjetoTabela(void){}
 
   //Define a tabela a qual possui o objeto
-  void definirTabelaPai(ObjetoBase *tabela);
+  void definirTabelaPai(BaseObject *tabela);
 
   //Retorna a tabela a qual possui o objeto
-  ObjetoBase *obterTabelaPai(void);
+  BaseObject *obterTabelaPai(void);
 
   /* Este método é puramente virtual para obrigar que as classes
      derivadas desta sobrecarreguem este método. Isto também faz

@@ -5,7 +5,7 @@ const QString Sequencia::VALOR_MAX_NEGATIVO="-9223372036854775808";
 
 Sequencia::Sequencia(void)
 {
- tipo_objeto=OBJETO_SEQUENCIA;
+ tipo_objeto=OBJ_SEQUENCE;
  ciclica=false;
  incremento=inicio=cache="1";
  valor_min="0";
@@ -148,14 +148,14 @@ int Sequencia::compararValores(QString valor1, QString valor2)
 void Sequencia::definirNome(const QString &nome)
 {
  QString nome_ant=this->obterNome(true);
- ObjetoBase::definirNome(nome);
+ BaseObject::definirNome(nome);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
 }
 
-void Sequencia::definirEsquema(ObjetoBase *esquema)
+void Sequencia::definirEsquema(BaseObject *esquema)
 {
  Tabela *tabela=NULL;
  QString nome_ant=this->obterNome(true);
@@ -172,7 +172,7 @@ void Sequencia::definirEsquema(ObjetoBase *esquema)
  }
 
  //Atribui o esquema   sequencia
- ObjetoBase::definirEsquema(esquema);
+ BaseObject::definirEsquema(esquema);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
@@ -239,7 +239,7 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
 
   if(this->coluna && this->coluna->incluidoPorRelacionamento() &&
      this->coluna->obterIdObjeto() > this->id_objeto)
-   this->id_objeto=ObjetoBase::obterIdGlobal();
+   this->id_objeto=BaseObject::obterIdGlobal();
 
 
   //Caso a coluna não exista
@@ -284,7 +284,7 @@ void Sequencia::definirPossuidora(Coluna *coluna)
 
   if(coluna && coluna->incluidoPorRelacionamento() &&
      coluna->obterIdObjeto() > this->id_objeto)
-   this->id_objeto=ObjetoBase::obterIdGlobal();
+   this->id_objeto=BaseObject::obterIdGlobal();
  }
 }
 
@@ -350,14 +350,14 @@ QString Sequencia::obterDefinicaoObjeto(unsigned tipo_def)
  atributos[ParsersAttributes::CACHE]=cache;
  atributos[ParsersAttributes::CYCLE]=(ciclica ? "1" : "");
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 
 void Sequencia::operator = (Sequencia &seq)
 {
  QString nome_ant=this->obterNome(true);
 
- *(dynamic_cast<ObjetoBase *>(this))=dynamic_cast<ObjetoBase &>(seq);
+ *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(seq);
 
  this->ciclica=seq.ciclica;
  this->valor_max=seq.valor_max;

@@ -2,7 +2,7 @@
 
 ConversaoTipo::ConversaoTipo(void)
 {
- tipo_objeto=OBJETO_CONV_TIPO;
+ tipo_objeto=OBJ_CAST;
  funcao_conv=NULL;
  tipo=CONV_IMPLICITA;
  entrada_saida=false;
@@ -24,7 +24,7 @@ void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
   if((*tipo_dado)=="")
    throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CAST)),
                  ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Atribui o tipo de dado ao índice especifico de tipos de dados
@@ -62,7 +62,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  if(!funcao_conv)
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CAST)),
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o número de parâmetros da função para validações específicas
@@ -72,7 +72,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  if(qtd_param==0 || qtd_param > 3)
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CAST)),
                 ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -92,7 +92,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
   if(erro)
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CAST)),
                  ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
@@ -100,7 +100,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  if(funcao_conv->obterTipoRetorno()!=this->tipos[CONV_TIPO_DESTINO])
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_CONV_TIPO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CAST)),
                 ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->funcao_conv=funcao_conv;
@@ -163,6 +163,6 @@ QString ConversaoTipo::obterDefinicaoObjeto(unsigned tipo_def)
 
  atributos[ParsersAttributes::IO_CAST]=(entrada_saida ? "1" : "");
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 

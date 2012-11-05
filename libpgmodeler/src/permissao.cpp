@@ -1,8 +1,8 @@
 #include "permissao.h"
 
-Permissao::Permissao(ObjetoBase *objeto)
+Permissao::Permissao(BaseObject *objeto)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
  unsigned id_priv;
 
  //Inicializa todos os privilégios como desmarcados
@@ -18,15 +18,15 @@ Permissao::Permissao(ObjetoBase *objeto)
 
  /* Caso o tipo do objeto a ser atribuído não seja válido de acordo com a regra
     (vide definição da Classe) dispara uma exceção */
- if(tipo_obj!=OBJETO_TABELA && tipo_obj!=OBJETO_COLUNA && tipo_obj!=OBJETO_VISAO &&
-    tipo_obj!=OBJETO_SEQUENCIA && tipo_obj!=OBJETO_BANCO_DADOS && tipo_obj!=OBJETO_FUNCAO &&
-    tipo_obj!=OBJETO_FUNC_AGREGACAO && tipo_obj!=OBJETO_LINGUAGEM && tipo_obj!=OBJETO_ESQUEMA &&
-    tipo_obj!=OBJETO_ESPACO_TABELA)
+ if(tipo_obj!=OBJ_TABLE && tipo_obj!=OBJ_COLUMN && tipo_obj!=OBJ_VIEW &&
+    tipo_obj!=OBJ_SEQUENCE && tipo_obj!=OBJ_DATABASE && tipo_obj!=OBJ_FUNCTION &&
+    tipo_obj!=OBJ_AGGREGATE && tipo_obj!=OBJ_LANGUAGE && tipo_obj!=OBJ_SCHEMA &&
+    tipo_obj!=OBJ_TABLESPACE)
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Atribui o objeto   permissão
  this->objeto=objeto;
- this->tipo_objeto=OBJETO_PERMISSAO;
+ this->tipo_objeto=OBJ_PERMISSION;
 
  atributos[ParsersAttributes::OBJECT]="";
  atributos[ParsersAttributes::TYPE]="";
@@ -72,7 +72,7 @@ void Permissao::adicionarPapel(Papel *papel)
 
 void Permissao::definirPrivilegio(unsigned privilegio, bool valor, bool op_concessao)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
 
  //Caso o tipo de privilégio sejá inválido dispara uma exceção
  if(privilegio > PRIV_USAGE)
@@ -98,29 +98,29 @@ void Permissao::definirPrivilegio(unsigned privilegio, bool valor, bool op_conce
     Visão: SELECT
  */
     //Validando o privilégio em relação ao tipo de objeto Tabela
- if((tipo_obj==OBJETO_TABELA && privilegio!=PRIV_SELECT && privilegio!=PRIV_INSERT &&
+ if((tipo_obj==OBJ_TABLE && privilegio!=PRIV_SELECT && privilegio!=PRIV_INSERT &&
                                 privilegio!=PRIV_UPDATE && privilegio!=PRIV_DELETE &&
                                 privilegio!=PRIV_TRUNCATE && privilegio!=PRIV_REFERENCES &&
                                 privilegio!=PRIV_TRIGGER) ||
     //Validando o privilégio em relação ao tipo de objeto Coluna
-    (tipo_obj==OBJETO_COLUNA && privilegio!=PRIV_SELECT && privilegio!=PRIV_INSERT &&
+    (tipo_obj==OBJ_COLUMN && privilegio!=PRIV_SELECT && privilegio!=PRIV_INSERT &&
                                 privilegio!=PRIV_UPDATE && privilegio!=PRIV_REFERENCES) ||
     //Validando o privilégio em relação ao tipo de objeto Sequencia
-    (tipo_obj==OBJETO_SEQUENCIA && privilegio!=PRIV_USAGE && privilegio!=PRIV_SELECT &&
+    (tipo_obj==OBJ_SEQUENCE && privilegio!=PRIV_USAGE && privilegio!=PRIV_SELECT &&
                                    privilegio!=PRIV_UPDATE) ||
     //Validando o privilégio em relação ao tipo de objeto Banco de Dados
-    (tipo_obj==OBJETO_BANCO_DADOS && privilegio!=PRIV_CREATE && privilegio!=PRIV_CONNECT &&
+    (tipo_obj==OBJ_DATABASE && privilegio!=PRIV_CREATE && privilegio!=PRIV_CONNECT &&
                                      privilegio!=PRIV_TEMPORARY) ||
     //Validando o privilégio em relação ao tipo de objeto Função (de Agregação)
-    ((tipo_obj==OBJETO_FUNCAO || tipo_obj==OBJETO_FUNC_AGREGACAO) && privilegio!=PRIV_EXECUTE) ||
+    ((tipo_obj==OBJ_FUNCTION || tipo_obj==OBJ_AGGREGATE) && privilegio!=PRIV_EXECUTE) ||
     //Validando o privilégio em relação ao tipo de objeto Linguagem
-    (tipo_obj==OBJETO_LINGUAGEM && privilegio!=PRIV_USAGE) ||
+    (tipo_obj==OBJ_LANGUAGE && privilegio!=PRIV_USAGE) ||
     //Validando o privilégio em relação ao tipo de objeto Esquema
-    (tipo_obj==OBJETO_ESQUEMA && privilegio!=PRIV_USAGE && privilegio!=PRIV_CREATE) ||
+    (tipo_obj==OBJ_SCHEMA && privilegio!=PRIV_USAGE && privilegio!=PRIV_CREATE) ||
     //Validando o privilégio em relação ao tipo de objeto Espaço de Tabela
-    (tipo_obj==OBJETO_ESPACO_TABELA && privilegio!=PRIV_CREATE) ||
+    (tipo_obj==OBJ_TABLESPACE && privilegio!=PRIV_CREATE) ||
     //Validando o privilégio em relação ao tipo de objeto Visão
-    (tipo_obj==OBJETO_VISAO && privilegio!=PRIV_SELECT))
+    (tipo_obj==OBJ_VIEW && privilegio!=PRIV_SELECT))
    /* Caso o privilégio a ser atribuído ao objeto seja incompatível com seu tipo
       um erro será retornado ao usuário */
    throw Exception(ERR_ASG_INCOMP_PRIV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -157,7 +157,7 @@ unsigned Permissao::obterNumPapeis(void)
  return(papeis.size());
 }
 
-ObjetoBase *Permissao::obterObjeto(void)
+BaseObject *Permissao::obterObjeto(void)
 {
  return(objeto);
 }
@@ -281,7 +281,7 @@ void Permissao::gerarIdPermissao(void)
 QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
 {
  unsigned i, qtd;
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
  QString vet_priv[12]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
                         ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
                         ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
@@ -291,17 +291,17 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
 
  tipo_obj=objeto->obterTipoObjeto();
 
- if(tipo_obj==OBJETO_FUNCAO)
+ if(tipo_obj==OBJ_FUNCTION)
   atributos[ParsersAttributes::OBJECT]=dynamic_cast<Funcao *>(objeto)->obterAssinatura();
  else
   atributos[ParsersAttributes::OBJECT]=objeto->obterNome(true);
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
-  atributos[ParsersAttributes::TYPE]=ObjetoBase::obterNomeSQLObjeto(objeto->obterTipoObjeto());
+  atributos[ParsersAttributes::TYPE]=BaseObject::obterNomeSQLObjeto(objeto->obterTipoObjeto());
  else
-  atributos[ParsersAttributes::TYPE]=ObjetoBase::obterNomeEsquemaObjeto(objeto->obterTipoObjeto());
+  atributos[ParsersAttributes::TYPE]=BaseObject::obterNomeEsquemaObjeto(objeto->obterTipoObjeto());
 
- if(tipo_obj==OBJETO_COLUNA)
+ if(tipo_obj==OBJ_COLUMN)
   atributos[ParsersAttributes::PARENT]=dynamic_cast<Coluna *>(objeto)->obterTabelaPai()->obterNome(true);
 
  if(tipo_def==SchemaParser::XML_DEFINITION)
@@ -344,6 +344,6 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
 
  atributos[ParsersAttributes::ROLES].remove(atributos[ParsersAttributes::ROLES].size()-1,1);
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 

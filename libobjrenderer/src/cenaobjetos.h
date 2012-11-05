@@ -123,7 +123,7 @@ class CenaObjetos: public QGraphicsScene {
   void s_objetoModificado(ObjetoGraficoBase *objeto);
 
   //Emitido quando um usuário pressiona botão direito do mouse na cena
-  void s_menupopupRequisitado(vector<ObjetoBase *>);
+  void s_menupopupRequisitado(vector<BaseObject *>);
 
   //Emitido quando o usuário dá um duplo clique com esquerdo no objeto
   void s_objetoDuploClique(ObjetoGraficoBase *objeto);

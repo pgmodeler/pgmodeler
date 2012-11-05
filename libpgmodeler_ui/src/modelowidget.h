@@ -59,7 +59,7 @@ class ModeloWidget: public QWidget {
   static ModeloWidget *modelo_orig;
 
   //Objetos copiados no modelo de origem
-  static vector<ObjetoBase *> objs_copiados;
+  static vector<BaseObject *> objs_copiados;
 
   //Frame que indica que o modelo está protegido
   QFrame *modelo_protegido_frm;
@@ -90,13 +90,13 @@ class ModeloWidget: public QWidget {
           *action_novo_obj;
 
   //Ações de inserção de novos objetos no modelo
-  map<TipoObjetoBase, QAction *> acoes_ins_objs;
+  map<ObjectType, QAction *> acoes_ins_objs;
 
   //Armazena os objetos do modelo selecionados na cena
-  vector<ObjetoBase *> objs_selecionados;
+  vector<BaseObject *> objs_selecionados;
 
   //Tipo do objeto a ser inserido no modelo
-  TipoObjetoBase tipo_novo_obj;
+  ObjectType tipo_novo_obj;
 
   //Lista de operações executadas sobre os objetos do modelo
   ListaOperacoes *lista_op;
@@ -144,7 +144,7 @@ class ModeloWidget: public QWidget {
   QString obterNomeArquivoTemp(void);
 
   //Exibe o formulário de edição do objeto conforme o tipo passado
-  void exibirFormObjeto(TipoObjetoBase tipo_obj, ObjetoBase *objeto=NULL, ObjetoBase *objeto_pai=NULL, QPointF pos=QPointF(NAN, NAN));
+  void exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto=NULL, BaseObject *objeto_pai=NULL, QPointF pos=QPointF(NAN, NAN));
 
   //Aplica um zoom ao modelo
   void aplicarZoom(float zoom);
@@ -159,17 +159,17 @@ class ModeloWidget: public QWidget {
   /* Os slots manipular*() gerenciam os sinais enviados pela cena e modelo para execução
      de operações adicionais como incluir objetos modificados na lista de operações, criar
      objetos na cena e remover objetos da cena de forma automática */
-  void manipularAdicaoObjeto(ObjetoBase *objeto);
-  void manipularRemocaoObjeto(ObjetoBase *objeto);
+  void manipularAdicaoObjeto(BaseObject *objeto);
+  void manipularRemocaoObjeto(BaseObject *objeto);
   void manipularMovimentoObjetos(bool fim_movimento);
   void manipularModificacaoObjeto(ObjetoGraficoBase *objeto);
   void manipularDuploCliqueObjeto(ObjetoGraficoBase *objeto);
 
   //Configura o menu popup conforme a lista de objetos passada
-  void configurarMenuPopup(vector<ObjetoBase *> objs_selecionados=vector<ObjetoBase *>());
+  void configurarMenuPopup(vector<BaseObject *> objs_selecionados=vector<BaseObject *>());
 
   //Exibe um menu popup específico para objetos de tabela
-  void exibirMenuObjetoTabela(vector<ObjetoBase *> objs_selecionados);
+  void exibirMenuObjetoTabela(vector<BaseObject *> objs_selecionados);
 
   //Exibe as dependências e referências do objeto
   void exibirDepsRefs(void);

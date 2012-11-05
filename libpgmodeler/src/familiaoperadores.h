@@ -25,7 +25,7 @@
 
 #include "objetobase.h"
 
-class FamiliaOperadores: public ObjetoBase {
+class FamiliaOperadores: public BaseObject {
  private:
   //Tipo de indexação usada na família de operadores
   TipoIndexacao tipo_index;

@@ -45,10 +45,10 @@ class SeletorObjetoWidget: public QWidget, public Ui::SeletorObjetoWidget {
    DestaqueSintaxe *destaque_txt;
 
    //Armazena o objeto selecionado pelo usuário
-   ObjetoBase *objeto;
+   BaseObject *objeto;
 
    //Armazena o tipo de objeto que deve ser selecionado pelo seletor
-   TipoObjetoBase tipo_obj_seletor;
+   ObjectType tipo_obj_seletor;
 
    /* Armazena o modelo usado como referencia para seleção dos objetos
       se este objeto não estive definido o seletor de objetos não
@@ -58,20 +58,20 @@ class SeletorObjetoWidget: public QWidget, public Ui::SeletorObjetoWidget {
  public:
    /* Um seletor deve sempre ser instanciado com um rótulo e o tipo de objeto
       que o seletor aceita */
-   SeletorObjetoWidget(TipoObjetoBase tipo_obj_seletor, bool inst_destaque_txt, QWidget * parent = 0);
+   SeletorObjetoWidget(ObjectType tipo_obj_seletor, bool inst_destaque_txt, QWidget * parent = 0);
 
   //Retorna o objeto selecionado pelo usuário
-  ObjetoBase *obterObjeto(void);
+  BaseObject *obterObjeto(void);
 
   //Define o objeto inicial a ser exibido no seletor
-  void definirObjeto(ObjetoBase *objeto);
+  void definirObjeto(BaseObject *objeto);
 
   //Define o modelo o qual o seletor de objeto buscará os objetos
   void definirModelo(ModeloBD *modelo);
 
  private slots:
    //Preenche um dos campos os quais referenciam um esquema, espaço tabela ou dono.
-   void exibirObjetoSelecionado(ObjetoBase *obj_sel, bool=false);
+   void exibirObjetoSelecionado(BaseObject *obj_sel, bool=false);
 
    //Exibe o formulário de seleção de objetos
    void exibirSelecaoObjetos(void);

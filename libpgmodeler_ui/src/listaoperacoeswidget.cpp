@@ -51,7 +51,7 @@ void ListaOperacoesWidget::atualizarListaOperacoes(void)
  else
  {
   unsigned qtd, i, tipo_op;
-  TipoObjetoBase tipo_obj;
+  ObjectType tipo_obj;
   QString nome_obj, str_aux, nome_op, icone_op;
   QTreeWidgetItem *item=NULL,*item1=NULL, *item2=NULL;
   QFont fonte=this->font();
@@ -89,18 +89,18 @@ void ListaOperacoesWidget::atualizarListaOperacoes(void)
 
    //Aloca um item da lista como sendo o tipo do objeto com seu ícone respectivo
    item=new QTreeWidgetItem;
-   str_aux=QString(ObjetoBase::obterNomeEsquemaObjeto(tipo_obj));
+   str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipo_obj));
    //Armazena o tipo do objeto no item da lista de operações
    item->setData(0, Qt::UserRole, QVariant(tipo_obj));
 
-   if(tipo_obj==OBJETO_RELACAO_BASE)
+   if(tipo_obj==BASE_RELATIONSHIP)
     str_aux+="tv";
 
    item->setIcon(0,QPixmap(QString(":/icones/icones/") + str_aux + QString(".png")));
 
    operacoes_tw->insertTopLevelItem(i,item);
    item->setFont(0,fonte);
-   item->setText(0,trUtf8("Object: %1").arg(ObjetoBase::obterNomeTipoObjeto(tipo_obj)));
+   item->setText(0,trUtf8("Object: %1").arg(BaseObject::obterNomeTipoObjeto(tipo_obj)));
 
    //Aloca um item da lista como o nome do objeto com seu ícone respectivo
    item2=new QTreeWidgetItem(item);

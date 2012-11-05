@@ -45,7 +45,7 @@ class RelacionamentoWidget: public ObjetoBaseWidget, public Ui::RelacionamentoWi
 
    /* Lista os objetos do relacionamento na tabela respectiva, de acordo
       com o tipo do objeto passado */
-   void listarObjetos(TipoObjetoBase tipo_obj);
+   void listarObjetos(ObjectType tipo_obj);
 
    //Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
    void exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin);

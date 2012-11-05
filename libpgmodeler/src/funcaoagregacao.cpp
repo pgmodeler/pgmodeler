@@ -2,7 +2,7 @@
 
 FuncaoAgregacao::FuncaoAgregacao(void)
 {
- tipo_objeto=OBJETO_FUNC_AGREGACAO;
+ tipo_objeto=OBJ_AGGREGATE;
  funcoes[0]=funcoes[1]=NULL;
  op_ordenacao=NULL;
  atributos[ParsersAttributes::TYPES]="";
@@ -26,7 +26,7 @@ void FuncaoAgregacao::definirFuncao(unsigned idx_func, Funcao *func)
  if(!funcaoValida(idx_func, func))
   throw Exception(Exception::getErrorMessage(ERR_USING_INV_FUNC_CONFIG)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_FUNC_AGREGACAO)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_AGGREGATE)),
                 ERR_USING_INV_FUNC_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  funcoes[idx_func]=func;
@@ -257,6 +257,6 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
  else
   atributos[ParsersAttributes::STATE_TYPE]=tipo_estado.obterDefinicaoObjeto(tipo_def,ParsersAttributes::STATE_TYPE);
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 

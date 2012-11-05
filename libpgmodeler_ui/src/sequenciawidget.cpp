@@ -1,6 +1,6 @@
 #include "sequenciawidget.h"
 
-SequenciaWidget::SequenciaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_SEQUENCIA)
+SequenciaWidget::SequenciaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_SEQUENCE)
 {
  try
  {
@@ -9,7 +9,7 @@ SequenciaWidget::SequenciaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
 
   Ui_SequenciaWidget::setupUi(this);
   sel_coluna=NULL;
-  sel_coluna=new SeletorObjetoWidget(OBJETO_COLUNA, true, this);
+  sel_coluna=new SeletorObjetoWidget(OBJ_COLUMN, true, this);
 
   //Adicionando os objetos recém alocados no layout do formulário
   sequencia_grid->addWidget(sel_coluna,3,1,1,3);
@@ -22,7 +22,7 @@ SequenciaWidget::SequenciaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   sequencia_grid->addWidget(frame, sequencia_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 
-  configurarLayouFormulario(sequencia_grid, OBJETO_SEQUENCIA);
+  configurarLayouFormulario(sequencia_grid, OBJ_SEQUENCE);
 
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
 

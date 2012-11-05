@@ -2,9 +2,9 @@
 
 EspacoTabela::EspacoTabela(void)
 {
- tipo_objeto=OBJETO_ESPACO_TABELA;
+ tipo_objeto=OBJ_TABLESPACE;
  atributos[ParsersAttributes::DIRECTORY]="";
- id_objeto=ObjetoBase::id_esptabela++;
+ id_objeto=BaseObject::id_esptabela++;
 }
 
 void EspacoTabela::definirNome(const QString &nome)
@@ -15,10 +15,10 @@ void EspacoTabela::definirNome(const QString &nome)
  if(nome.mid(0,3)=="pg_")
   throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(ObjetoBase::obterNomeTipoObjeto(OBJETO_ESPACO_TABELA)),
+                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_TABLESPACE)),
                 ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- ObjetoBase::definirNome(nome); //Chama o método da classe descendente
+ BaseObject::definirNome(nome); //Chama o método da classe descendente
 }
 
 void EspacoTabela::definirDiretorio(const QString &diretorio)
@@ -46,6 +46,6 @@ QString EspacoTabela::obterDefinicaoObjeto(unsigned tipo_def)
  if(diretorio!="")
   atributos[ParsersAttributes::DIRECTORY]="'" + diretorio + "'";
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 

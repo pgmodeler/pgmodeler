@@ -96,7 +96,7 @@ class ObjetoGrafico: public QObject, public QGraphicsItemGroup {
   /* Aloca um objeto gráfico a partir de um objeto que de alguma forma é representado graficamente
      (tabela, visão, caixa de texto, relacionamento). Caso um objeto nulo seja especifcado cria
      um objeto gráfico vazio (invisível) */
-  ObjetoGrafico(ObjetoBase *objeto=NULL);
+  ObjetoGrafico(BaseObject *objeto=NULL);
   ~ObjetoGrafico(void);
 
   //Retorna a ordem de seleção do objeto
@@ -107,10 +107,10 @@ class ObjetoGrafico: public QObject, public QGraphicsItemGroup {
   QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
   //Define o objeto do modelo que deu origem ao objeto gráfico
-  void definirObjetoOrigem(ObjetoBase *objeto);
+  void definirObjetoOrigem(BaseObject *objeto);
 
   //Retorna a referência ao objeto que deu origem a sua representação gráfica
-  ObjetoBase *obterObjetoOrigem(void);
+  BaseObject *obterObjetoOrigem(void);
 
   //Carrega os estilos de fonte e cores do objetos a partir do arquivo XML
   static void carregarEstiloObjetos(void);

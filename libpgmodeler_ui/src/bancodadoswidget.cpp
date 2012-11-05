@@ -1,6 +1,6 @@
 #include "bancodadoswidget.h"
 
-BancoDadosWidget::BancoDadosWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_BANCO_DADOS)
+BancoDadosWidget::BancoDadosWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_DATABASE)
 {
  map<QString, vector<QWidget *> > mapa_campos;
  QFrame *frame=NULL;
@@ -11,7 +11,7 @@ BancoDadosWidget::BancoDadosWidget(QWidget *parent): ObjetoBaseWidget(parent, OB
  Ui_BancoDadosWidget::setupUi(this);
 
  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
- configurarLayouFormulario(bancodados_grid, OBJETO_BANCO_DADOS);
+ configurarLayouFormulario(bancodados_grid, OBJ_DATABASE);
 
  //Define os campos exclusivos para cada versão
  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_83)].push_back(limconexao_lbl);

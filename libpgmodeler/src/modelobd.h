@@ -47,7 +47,7 @@
 #include <algorithm>
 #include <locale.h>
 
-class ModeloBD:  public QObject, public ObjetoBase {
+class ModeloBD:  public QObject, public BaseObject {
  Q_OBJECT
 
  private:
@@ -65,65 +65,65 @@ class ModeloBD:  public QObject, public ObjetoBase {
   int lim_conexao;
 
   //Estrutura de dados que armazena os objetos da classe CaixaTexto
-  vector<ObjetoBase *> caixas;
+  vector<BaseObject *> caixas;
 
   //Estrutura de dados que armazena os objetos da classe Relacionamento
-  vector<ObjetoBase *> relacionamentos;
+  vector<BaseObject *> relacionamentos;
 
   /* Estrutura de dados que armazena os objetos da classe RelacionamentoBase
      usados para relacionar tabelas e visões */
-  vector<ObjetoBase *> relac_visoes;
+  vector<BaseObject *> relac_visoes;
 
   //Funções criadas no banco de dados
-  vector<ObjetoBase *> funcoes;
+  vector<BaseObject *> funcoes;
 
   //Esquemas criados no banco de dados
-  vector<ObjetoBase *> esquemas;
+  vector<BaseObject *> esquemas;
 
   //Visões criadas no banco de dados
-  vector<ObjetoBase *> visoes;
+  vector<BaseObject *> visoes;
 
   //Tabelas criadas no banco de dados
-  vector<ObjetoBase *> tabelas;
+  vector<BaseObject *> tabelas;
 
   //Tipos definidos pelo usuário
-  vector<ObjetoBase *> tipos;
+  vector<BaseObject *> tipos;
 
   //Papéis (usuários e grupos) definidos no banco de dados
-  vector<ObjetoBase *> papeis;
+  vector<BaseObject *> papeis;
 
   //Espaços de Tabelas criados no banco de dados
-  vector<ObjetoBase *> espacos_tabela;
+  vector<BaseObject *> espacos_tabela;
 
   //Linguagens criadas no banco de dados
-  vector<ObjetoBase *> linguagens;
+  vector<BaseObject *> linguagens;
 
   //Funções Agregadas criadas no banco de dados
-  vector<ObjetoBase *> func_agregadas;
+  vector<BaseObject *> func_agregadas;
 
   //Conversões de tipos criadas no banco de dados
-  vector<ObjetoBase *> conv_tipos;
+  vector<BaseObject *> conv_tipos;
 
   //Conversões de codificação criadas no banco de dados
-  vector<ObjetoBase *> conv_codificacao;
+  vector<BaseObject *> conv_codificacao;
 
   //Operadores criados no banco de dados
-  vector<ObjetoBase *> operadores;
+  vector<BaseObject *> operadores;
 
   //Classe de operadores criadas no banco de dados
-  vector<ObjetoBase *> classe_ops;
+  vector<BaseObject *> classe_ops;
 
   //Famílias de operadores criadas no banco de dados
-  vector<ObjetoBase *> familia_ops;
+  vector<BaseObject *> familia_ops;
 
   //Domínios criados no banco de dados
-  vector<ObjetoBase *> dominios;
+  vector<BaseObject *> dominios;
 
   //Sequencias criadas no banco de dados
-  vector<ObjetoBase *> sequencias;
+  vector<BaseObject *> sequencias;
 
   //Permissões que se aplicam a alguns tipos de objetos
-  vector<ObjetoBase *> permissoes;
+  vector<BaseObject *> permissoes;
 
   map<unsigned, QString> xml_objs_especiais;
 
@@ -133,15 +133,15 @@ class ModeloBD:  public QObject, public ObjetoBase {
   /* Retorna um objeto do modelo buscando através de seu nome
      e especificando o tipo do mesmo. Além disso o método armazena no 3º parâmetro
      o índice do objeto caso seja encontrado */
-  ObjetoBase *obterObjeto(const QString &nome, TipoObjetoBase tipo_obj, int &idx_obj);
+  BaseObject *obterObjeto(const QString &nome, ObjectType tipo_obj, int &idx_obj);
 
   /* Adiciona um objeto ao modelo fazendo o cast necessário para o método
      de inserção específico para o objeto */
-  void __adicionarObjeto(ObjetoBase *objeto, int idx_obj=-1);
+  void __adicionarObjeto(BaseObject *objeto, int idx_obj=-1);
 
   /* Remove um objeto do modelo fazendo o cast necessário para o método
      de remoção específico para o objeto */
-  void __removerObjeto(ObjetoBase *objeto, int idx_obj=-1);
+  void __removerObjeto(BaseObject *objeto, int idx_obj=-1);
 
   /* Recria um objeto especial partir da definição xml do mesmo informada no parâmetro.
      Este método deve ser chamando SEMPRE quando todos os relacionamentos estão conectados
@@ -150,19 +150,19 @@ class ModeloBD:  public QObject, public ObjetoBase {
   void criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj=0);
 
   //Método utilizado para remover um tipo definido pelo usuario (tipo ou domínio)
-  void removerTipoUsuario(ObjetoBase *objeto, int idx_obj);
+  void removerTipoUsuario(BaseObject *objeto, int idx_obj);
 
   /* Retorna o objeto do modelo o qual representa o tipo da dado PostgreSQL.
      Basicamente esse método retorna uma tabela, sequencia, tipo ou domínio quando
      o 'tipo' é um tipo de dado definido pelo usuário */
-  ObjetoBase *obterObjetoTipoPgSQL(TipoPgSQL tipo);
+  BaseObject *obterObjetoTipoPgSQL(TipoPgSQL tipo);
 
  public:
   ModeloBD(void);
   ~ModeloBD(void);
 
   //Retorna a lista de objetos referente ao tipo de objeto passado
-  vector<ObjetoBase *> *obterListaObjetos(TipoObjetoBase tipo_obj);
+  vector<BaseObject *> *obterListaObjetos(ObjectType tipo_obj);
 
   //Desconecta os relacionamentos ordenadamente
   void desconectarRelacionamentos(void);
@@ -178,32 +178,32 @@ class ModeloBD:  public QObject, public ObjetoBase {
     /* Verifica se a definição SQL/XML do objeto é válida ou não, efetuando
      chamadas ao parser de esquemas para interpretar o arquivo referente
      ao objeto */
-  static QString validarDefinicaoObjeto(ObjetoBase *objeto, unsigned tipo_def);
+  static QString validarDefinicaoObjeto(BaseObject *objeto, unsigned tipo_def);
 
   /* Retorna os objetos do tipo especificado no esquema especificado */
-  vector<ObjetoBase *> obterObjetos(TipoObjetoBase tipo_obj, ObjetoBase *esquema=NULL);
+  vector<BaseObject *> obterObjetos(ObjectType tipo_obj, BaseObject *esquema=NULL);
 
   //Obtém o índice de um objeto através de seu nome e tipo
-  int obterIndiceObjeto(const QString &nome, TipoObjetoBase tipo_obj);
+  int obterIndiceObjeto(const QString &nome, ObjectType tipo_obj);
 
   //Obtém o índice de um objeto através de seu endere
-  int obterIndiceObjeto(ObjetoBase *objeto);
+  int obterIndiceObjeto(BaseObject *objeto);
 
   //Adiciona um objeto ao modelo do tipo especificado
-  void adicionarObjeto(ObjetoBase *objeto, int idx_obj=-1);
+  void adicionarObjeto(BaseObject *objeto, int idx_obj=-1);
 
   /* Remove um objeto de sua respecitva lista através de seu endereço
      em memória. Este método Não desaloca o objeto passado, isso deve
      ser feito a partir do método de exclusão a partir do qual este
      método foi chamado */
-  void removerObjeto(ObjetoBase *objeto, int idx_obj=-1);
+  void removerObjeto(BaseObject *objeto, int idx_obj=-1);
 
   //Remove um objeto através de seu índice e tipo
-  void removerObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj);
+  void removerObjeto(unsigned idx_obj, ObjectType tipo_obj);
 
   /* Retorna um objeto do modelo buscando através de seu nome e espeficiando
      o tipo do mesmo */
-  ObjetoBase *obterObjeto(unsigned idx_obj, TipoObjetoBase tipo_obj);
+  BaseObject *obterObjeto(unsigned idx_obj, ObjectType tipo_obj);
 
   //Carrega o modelo de banco de dados de um arquivo
   void carregarModelo(const QString &nome_arq);
@@ -235,7 +235,7 @@ class ModeloBD:  public QObject, public ObjetoBase {
   void destruirObjetos(void);
 
   //Obtém o número de objetos de um tipo especificado
-  unsigned obterNumObjetos(TipoObjetoBase tipo_obj);
+  unsigned obterNumObjetos(ObjectType tipo_obj);
 
   //Obtém o número total de objetos no modelo
   unsigned obterNumObjetos(void);
@@ -275,7 +275,7 @@ class ModeloBD:  public QObject, public ObjetoBase {
   //Métodos de manipulação de relacionamentos
   void adicionarRelacionamento(RelacionamentoBase *relacao, int idx_obj=-1);
   void removerRelacionamento(RelacionamentoBase *relacao, int idx_obj=-1);
-  RelacionamentoBase *obterRelacionamento(unsigned idx_obj, TipoObjetoBase tipo_rel);
+  RelacionamentoBase *obterRelacionamento(unsigned idx_obj, ObjectType tipo_rel);
 
   /* Obtém o relacionamento usando uma ou duas tabelas para se obtê-lo. Caso o segundo parâmetro
      seja omitido, o método encontra a primeira ocorrência de relacionamento em que a tabela do
@@ -372,27 +372,27 @@ class ModeloBD:  public QObject, public ObjetoBase {
   //Remove uma dada permissão obtida previamente
   void removerPermissao(Permissao *permissao);
   //Remove todas as permissões relacionadas ao objeto informado
-  void removerPermissoes(ObjetoBase *objeto);
+  void removerPermissoes(BaseObject *objeto);
   /* Obtém as permissões relacionadas ao objeto informado armazenando-as
      no vetor passado */
-  void obterPermissoes(ObjetoBase *objeto, vector<Permissao *> &permissoes);
+  void obterPermissoes(BaseObject *objeto, vector<Permissao *> &permissoes);
   /* Retorna o índice de uma dada permissão. Este método é usado
      como auxiliar nos métodos de inserção e remoção de permissões */
   int obterIndicePermissao(Permissao *permissao);
 
   //Obtém um objeto através de seu nome e tipo
-  ObjetoBase *obterObjeto(const QString &nome, TipoObjetoBase tipo_obj);
+  BaseObject *obterObjeto(const QString &nome, ObjectType tipo_obj);
 
   //Copia os atributos do objeto do parâmetro para o objeto this
   void operator = (ModeloBD &modelo);
 
   //Métodos de criação de objetos a partir do documento XML
-  TipoObjetoBase obterTipoObjeto(const QString &str_tipo);
-  void definirAtributosBasicos(ObjetoBase *objeto);
+  ObjectType obterTipoObjeto(const QString &str_tipo);
+  void definirAtributosBasicos(BaseObject *objeto);
   TipoPgSQL criarTipoPgSQL(void);
 
   //Cria um objeto a partir do tipo passado
-  ObjetoBase *criarObjeto(TipoObjetoBase tipo_obj);
+  BaseObject *criarObjeto(ObjectType tipo_obj);
 
   Papel *criarPapel(void);
   EspacoTabela *criarEspacoTabela(void);
@@ -444,7 +444,7 @@ class ModeloBD:  public QObject, public ObjetoBase {
      principalmente quando o método ModeloBD::verificarRefColsIncRelacao() está em execução
      e uma chave primária está sendo recriada por este método e a tabela já possua um chave primária, isso
      evita que seja disparado um erro indicando que a tabela já possui uma chave-primária. */
-  Restricao *criarRestricao(ObjetoBase *objeto);
+  Restricao *criarRestricao(BaseObject *objeto);
   Indice *criarIndice(Tabela *tabela);
   Gatilho *criarGatilho(Tabela *tabela);
 
@@ -474,22 +474,22 @@ class ModeloBD:  public QObject, public ObjetoBase {
 
   /* Obtém, recursivamente, os objetos os quais o objeto do parâmetro referencia
      (direta ou indiretamente) e os armazena num vetor */
-  void obterDependenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &vet_deps, bool inc_dep_indiretas=false);
+  void obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_dep_indiretas=false);
 
   /* Obtém objetos os quais referenciam o objeto do parâmetro (direta ou indiretamente) e os armazena num vetor.
      O parâmetro 'modo_exclusao' é usado para agilizar a execução do método quando este é usado para validação
      da exclusão do objeto, obtendo apenas a primeira referência ao objeto candidato a exclusão.
      Para se obter TODAS as referências ao objeto, deve-se espeficicar como 'false' o parâmetro 'modo_exclusão'. */
-  void obterReferenciasObjeto(ObjetoBase *objeto, vector<ObjetoBase *> &vet_refs, bool modo_exclusao=false);
+  void obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &vet_refs, bool modo_exclusao=false);
 
   //Marca todos os objetos gráficos do modelo como modificados forçando seu redesenho
   void definirObjetosModificados(void);
 
  signals:
   //Sinal emitido sempre que um novo objeto for adicionado ao modelo
-  void s_objetoAdicionado(ObjetoBase *objeto);
+  void s_objetoAdicionado(BaseObject *objeto);
   //Sinal emitido sempre que um objeto for excluído do modelo
-  void s_objetoRemovido(ObjetoBase *objeto);
+  void s_objetoRemovido(BaseObject *objeto);
   void s_objetoCarregado(int progresso, QString id_objeto, unsigned id_icone);
 
   friend class ListaOperacoes;

@@ -2,6 +2,6 @@
 
 TabelaBase::TabelaBase(void)
 {
- tipo_objeto=OBJETO_TABELA_BASE;
+ tipo_objeto=BASE_TABLE;
 }
 

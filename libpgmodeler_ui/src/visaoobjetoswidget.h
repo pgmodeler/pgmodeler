@@ -39,7 +39,7 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
 
    /* Armazena o endereço do objeto relacionado ao item marcado na árvore
      ou na lista de objetos */
-   ObjetoBase *objeto_selecao;
+   BaseObject *objeto_selecao;
 
   /* Menu popup o qual contém as ações: destacar objeto no modelo,
      excluir do modelo, edição do objeto */
@@ -60,7 +60,7 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
   ModeloBD *modelo_bd;
 
   //Armazena quais os tipos de objetos são visíveis na visão
-  map<TipoObjetoBase, bool> map_objs_visiveis;
+  map<ObjectType, bool> map_objs_visiveis;
 
   //Atualiza a árvore inteira do banco de dados
   void atualizarSubBancoDados(void);
@@ -69,7 +69,7 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
   void atualizarSubArvoreEsquema(QTreeWidgetItem *raiz);
 
   //Atualiza somente a árvore de tabelas em um determinado esquema
-  void atualizarSubArvoreTabela(QTreeWidgetItem *raiz, ObjetoBase *esquema);
+  void atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObject *esquema);
 
   //Atualiza a arvore de objetos
   void atualizarArvoreObjetos(void);
@@ -82,16 +82,16 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
      itens de QTreeWidgets e QListWidgetItem para permitir
      a interação entre direta como os objetos sem selecioná-los
      no modelo */
-  QVariant gerarValorItem(ObjetoBase *objeto);
+  QVariant gerarValorItem(BaseObject *objeto);
 
   /* Expande os itens da árvore até que o item refente ao objeto informado
      no parâmetro esteja visível */
-  void expandirItemArvore(ObjetoBase *objeto);
+  void expandirItemArvore(BaseObject *objeto);
 
  public:
    VisaoObjetosWidget(bool visao_simplificada=false, QWidget * parent = 0, Qt::WindowFlags f = 0);
   void closeEvent(QCloseEvent *);
-  ObjetoBase *obterObjetoSelecao(void);
+  BaseObject *obterObjetoSelecao(void);
 
  private:
    //Implementa a movimentação da janela quando esta é exibida de forma simplificada
@@ -102,7 +102,7 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
    void definirModelo(ModeloBD *modelo_bd);
    void mudarVisaoObjetos(void);
    void atualizarVisaoObjetos(void);
-   void definirObjetoVisivel(TipoObjetoBase tipo_obj, bool visivel);
+   void definirObjetoVisivel(ObjectType tipo_obj, bool visivel);
    void close(void);
 
  private slots:
@@ -117,7 +117,7 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
      a modificação da visão de objetos. Este sinal é capturado pelo
      form principal para atualizar as ferramentas */
   void s_visaoObjetosModificada(void);
-  void s_visibilityChanged(ObjetoBase *,bool);
+  void s_visibilityChanged(BaseObject *,bool);
 };
 
 #endif

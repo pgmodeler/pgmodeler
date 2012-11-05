@@ -83,15 +83,15 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  QString tipo;
  QStringList arq_sessao_ant;
  ConfBaseWidget *conf_wgt=NULL;
- TipoObjetoBase tipos[27]={
-          OBJETO_RELACAO_BASE,OBJETO_RELACAO, OBJETO_TABELA, OBJETO_VISAO,
-          OBJETO_FUNC_AGREGACAO, OBJETO_OPERADOR, OBJETO_INDICE, OBJETO_RESTRICAO,
-          OBJETO_SEQUENCIA, OBJETO_CONV_CODIFICACAO,
-          OBJETO_CONV_TIPO, OBJETO_FAMILIA_OPER, OBJETO_CLASSE_OPER,
-          OBJETO_RELACAO_BASE, OBJETO_CAIXA_TEXTO,
-          OBJETO_DOMINIO, OBJETO_TIPO, OBJETO_FUNCAO, OBJETO_ESQUEMA,
-          OBJETO_LINGUAGEM, OBJETO_ESPACO_TABELA, OBJETO_PAPEL,
-          OBJETO_REGRA, OBJETO_COLUNA, OBJETO_GATILHO, OBJETO_INDICE, OBJETO_RESTRICAO };
+ ObjectType tipos[27]={
+          BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
+          OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_INDEX, OBJ_CONSTRAINT,
+          OBJ_SEQUENCE, OBJ_CONVERSION,
+          OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS,
+          BASE_RELATIONSHIP, OBJ_TEXTBOX,
+          OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
+          OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE,
+          OBJ_RULE, OBJ_COLUMN, OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT };
 
  setupUi(this);
 
@@ -154,7 +154,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  for(unsigned i=0; i < 27; i++)
   prog_tarefa->adicionarIcone(tipos[i],
                               QIcon(QString(":/icones/icones/") +
-                                    ObjetoBase::obterNomeEsquemaObjeto(tipos[i]) +
+                                    BaseObject::obterNomeEsquemaObjeto(tipos[i]) +
                                     QString(".png")));
 
  icone_op=new QLabel;
@@ -583,15 +583,15 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
  tab_modelo->modelo->adicionarObjeto(esq_publico);
 
  ling=new Linguagem;
- ling->ObjetoBase::definirNome(~TipoLinguagem(TipoLinguagem::c));
+ ling->BaseObject::definirNome(~TipoLinguagem(TipoLinguagem::c));
  tab_modelo->modelo->adicionarObjeto(ling);
 
  ling=new Linguagem;
- ling->ObjetoBase::definirNome(~TipoLinguagem(TipoLinguagem::sql));
+ ling->BaseObject::definirNome(~TipoLinguagem(TipoLinguagem::sql));
  tab_modelo->modelo->adicionarObjeto(ling);
 
  ling=new Linguagem;
- ling->ObjetoBase::definirNome(~TipoLinguagem(TipoLinguagem::plpgsql));
+ ling->BaseObject::definirNome(~TipoLinguagem(TipoLinguagem::plpgsql));
  tab_modelo->modelo->adicionarObjeto(ling);
 
  if(!nome_arq.isEmpty())

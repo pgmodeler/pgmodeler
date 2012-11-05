@@ -26,7 +26,7 @@
 
 #include "objetobase.h"
 
-class EspacoTabela: public ObjetoBase{
+class EspacoTabela: public BaseObject{
  private:
   //Diretório em que se encontra o espaco de tabela
   QString diretorio;

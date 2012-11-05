@@ -3,7 +3,7 @@
 
 extern CaixaMensagem *caixa_msg;
 
-RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_RESTRICAO)
+RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_CONSTRAINT)
 {
  try
  {
@@ -30,7 +30,7 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
 
   //Alocando seletor de tabela referenciada
   sel_tabela_ref=NULL;
-  sel_tabela_ref=new SeletorObjetoWidget(OBJETO_TABELA, true, this);
+  sel_tabela_ref=new SeletorObjetoWidget(OBJ_TABLE, true, this);
 
   //Configurando as tabelas com 2 colunas (nome da coluna e tipo)
   tab_colunas->definirNumColunas(2);
@@ -50,7 +50,7 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   dynamic_cast<QGridLayout *>(colunas_tbw->widget(1)->layout())->addWidget(sel_tabela_ref, 0,1,1,2);
   dynamic_cast<QGridLayout *>(colunas_tbw->widget(1)->layout())->addWidget(tab_colunas_ref, 3,0,1,3);
 
-  configurarLayouFormulario(restricao_grid, OBJETO_RESTRICAO);
+  configurarLayouFormulario(restricao_grid, OBJ_CONSTRAINT);
   janela_pai->setMinimumSize(580, 520);
 
   //Configurando o combo de tipo de restrição com os tipos disponíveis
@@ -371,9 +371,9 @@ void RestricaoWidget::selecionarTipoRestricao(void)
   colunas_tbw->addTab(tab, rot_tab);
 }
 
-void RestricaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai, ListaOperacoes *lista_op, Restricao *restricao)
+void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, ListaOperacoes *lista_op, Restricao *restricao)
 {
- TipoObjetoBase tipo_obj;
+ ObjectType tipo_obj;
  unsigned qtd, i, lin_tab;
  Coluna *coluna=NULL;
  Tabela *tabela_ref=NULL;
@@ -393,7 +393,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai,
  tipo_obj=objeto_pai->obterTipoObjeto();
 
  //Obtém a quantidade de colunas existentes no objeto pai
- if(tipo_obj==OBJETO_TABELA)
+ if(tipo_obj==OBJ_TABLE)
   qtd=tabela->obterNumColunas();
  else
   qtd=relacionamento->obterNumAtributos();
@@ -404,7 +404,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, ObjetoBase *objeto_pai,
  {
   /* Caso o objeto pai seja uma tabela usa a referênci  tabela pai
      para obter a coluna atual */
-  if(tipo_obj==OBJETO_TABELA)
+  if(tipo_obj==OBJ_TABLE)
    coluna=tabela->obterColuna(i);
   /* Caso contrário usa a referência ao relacionamento pai
      para obter a coluna atual */

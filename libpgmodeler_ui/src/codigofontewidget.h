@@ -36,7 +36,7 @@ class CodigoFonteWidget: public ObjetoBaseWidget, public Ui::CodigoFonteWidget {
  public:
    CodigoFonteWidget(QWidget * parent = 0);
    void hideEvent(QHideEvent *evento);
-   void definirAtributos(ModeloBD *modelo, ObjetoBase *objeto=NULL);
+   void definirAtributos(ModeloBD *modelo, BaseObject *objeto=NULL);
 
  private slots:
    void gerarCodigoFonteObjeto(int=0);

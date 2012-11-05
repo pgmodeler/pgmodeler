@@ -1,6 +1,6 @@
 #include "parametrowidget.h"
 
-ParametroWidget::ParametroWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJETO_PARAMETRO)
+ParametroWidget::ParametroWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_PARAMETER)
 {
  try
  {
@@ -23,7 +23,7 @@ ParametroWidget::ParametroWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJE
   parametro_grid->addItem(hspacer, 1, 3, 1, 1);
   parametro_grid->addWidget(tipo_pgsql,2,0,1,4);
 
-  configurarLayouFormulario(parametro_grid, OBJETO_PARAMETRO);
+  configurarLayouFormulario(parametro_grid, OBJ_PARAMETER);
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
 
   janela_pai->setMinimumSize(500, 270);

@@ -37,8 +37,8 @@ CenaObjetos::~CenaObjetos(void)
 {
  QGraphicsItemGroup *item=NULL;
  QList<QGraphicsItem *> itens;
- TipoObjetoBase tipos[]={ OBJETO_RELACAO, OBJETO_CAIXA_TEXTO,
-                          OBJETO_VISAO, OBJETO_TABELA };
+ ObjectType tipos[]={ OBJ_RELATIONSHIP, OBJ_TEXTBOX,
+                          OBJ_VIEW, OBJ_TABLE };
  unsigned i;
 
  this->removeItem(ret_selecao);
@@ -57,10 +57,10 @@ CenaObjetos::~CenaObjetos(void)
       classes OGRelacionamento, OGTabela, OGCaixaTexto ou OGVisao, significa que
       o item pode ser removido */
    if(item && !item->parentItem() &&
-      ((dynamic_cast<OGRelacionamento *>(item) && tipos[i]==OBJETO_RELACAO) ||
-       (dynamic_cast<OGCaixaTexto *>(item) && tipos[i]==OBJETO_CAIXA_TEXTO) ||
-       (dynamic_cast<OGVisao *>(item) && tipos[i]==OBJETO_VISAO) ||
-       (dynamic_cast<OGTabela *>(item) && tipos[i]==OBJETO_TABELA)))
+      ((dynamic_cast<OGRelacionamento *>(item) && tipos[i]==OBJ_RELATIONSHIP) ||
+       (dynamic_cast<OGCaixaTexto *>(item) && tipos[i]==OBJ_TEXTBOX) ||
+       (dynamic_cast<OGVisao *>(item) && tipos[i]==OBJ_VIEW) ||
+       (dynamic_cast<OGTabela *>(item) && tipos[i]==OBJ_TABLE)))
 
    {
     this->removeItem(item);
@@ -182,8 +182,8 @@ void CenaObjetos::exibirLinhaRelacionamento(bool valor, const QPointF &p)
    /* Caso o objeto gráfico seja uma tabela, visão ou caixa texto, ativa
       a flag de movimento caso o mesmo não esteja protegido */
    if(!valor && obj_base &&
-      obj_base->obterTipoObjeto()!=OBJETO_RELACAO &&
-      obj_base->obterTipoObjeto()!=OBJETO_RELACAO_BASE &&
+      obj_base->obterTipoObjeto()!=OBJ_RELATIONSHIP &&
+      obj_base->obterTipoObjeto()!=BASE_RELATIONSHIP &&
       !obj_base->objetoProtegido())
     flags=QGraphicsItem::ItemIsMovable |
           QGraphicsItem::ItemIsSelectable |
@@ -250,7 +250,7 @@ void CenaObjetos::sinalizarObjetoFilhoSelecionado(ObjetoTabela *obj_filho)
     houver outros objetos selecionados na cena */
  if(this->selectedItems().isEmpty())
  {
-  vector<ObjetoBase *> vet;
+  vector<BaseObject *> vet;
 
   //Insere um vetor o objeto filho da tabela selecionado
   vet.push_back(obj_filho);

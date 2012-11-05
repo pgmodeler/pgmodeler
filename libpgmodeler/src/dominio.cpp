@@ -2,7 +2,7 @@
 
 Dominio::Dominio(void)
 {
- tipo_objeto=OBJETO_DOMINIO;
+ tipo_objeto=OBJ_DOMAIN;
  nao_nulo=false;
  atributos[ParsersAttributes::DEFAULT_VALUE]="";
  atributos[ParsersAttributes::NOT_NULL]="";
@@ -21,7 +21,7 @@ void Dominio::definirNome(const QString &nome)
  QString nome_ant, novo_nome;
 
  nome_ant=this->obterNome(true);
- ObjetoBase::definirNome(nome);
+ BaseObject::definirNome(nome);
  novo_nome=this->obterNome(true);
 
  /* Renomeia o tipo já definido anteriormente na
@@ -29,12 +29,12 @@ void Dominio::definirNome(const QString &nome)
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, novo_nome);
 }
 
-void Dominio::definirEsquema(ObjetoBase *esquema)
+void Dominio::definirEsquema(BaseObject *esquema)
 {
  QString nome_ant;
 
  nome_ant=this->obterNome(true);
- ObjetoBase::definirEsquema(esquema);
+ BaseObject::definirEsquema(esquema);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
@@ -45,7 +45,7 @@ void Dominio::definirNomeRestricao(const QString &nome_constr)
 {
  /* Verifica se o nome da constraint é valido de acordo com as
     regras de nomenclatura do PostgreSQL */
- if(!ObjetoBase::nomeValido(nome_constr))
+ if(!BaseObject::nomeValido(nome_constr))
   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->nome_rest=nome_constr;
@@ -101,7 +101,7 @@ QString Dominio::obterDefinicaoObjeto(unsigned tipo_def)
  atributos[ParsersAttributes::NOT_NULL]=(nao_nulo ? "1" : "");
  atributos[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
  atributos[ParsersAttributes::EXPRESSION]=expressao;
- atributos[ParsersAttributes::CONSTRAINT]=ObjetoBase::formatarNome(nome_rest);
+ atributos[ParsersAttributes::CONSTRAINT]=BaseObject::formatarNome(nome_rest);
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
   atributos[ParsersAttributes::TYPE]=(*tipo);
@@ -110,14 +110,14 @@ QString Dominio::obterDefinicaoObjeto(unsigned tipo_def)
   atributos[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
  }
 
- return(ObjetoBase::obterDefinicaoObjeto(tipo_def));
+ return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 
 void Dominio::operator = (Dominio &dominio)
 {
  QString nome_ant=this->obterNome(true);
 
- *(dynamic_cast<ObjetoBase *>(this))=dynamic_cast<ObjetoBase &>(dominio);
+ *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(dominio);
  this->nome_rest=dominio.nome_rest;
  this->expressao=dominio.expressao;
  this->nao_nulo=dominio.nao_nulo;
