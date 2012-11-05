@@ -59,7 +59,7 @@ class ObjetoGraficoBase: public QObject, public BaseObject {
 
   /* Define se o objeto está protegido ou não
     (sobrecarga do método da classe ObjetoBase) a diferença
-    é que este método dispara o sinal s_objetoProtegido() */
+    é que este método dispara o sinal isProtecteddo() */
   virtual void definirProtegido(bool valor);
 
   //Define a posição do objeto
@@ -82,7 +82,7 @@ class ObjetoGraficoBase: public QObject, public BaseObject {
 
  signals:
   void s_objetoModificado(void);
-  void s_objetoProtegido(bool);
+  void s_isProtected(bool);
 
   friend class CenaObjetos;
   friend class ObjetoGrafico;

@@ -2,16 +2,16 @@
 
 FuncaoAgregacao::FuncaoAgregacao(void)
 {
- tipo_objeto=OBJ_AGGREGATE;
+ obj_type=OBJ_AGGREGATE;
  funcoes[0]=funcoes[1]=NULL;
  op_ordenacao=NULL;
- atributos[ParsersAttributes::TYPES]="";
- atributos[ParsersAttributes::TRANSITION_FUNC]="";
- atributos[ParsersAttributes::STATE_TYPE]="";
- atributos[ParsersAttributes::BASE_TYPE]="";
- atributos[ParsersAttributes::FINAL_FUNC]="";
- atributos[ParsersAttributes::INITIAL_COND]="";
- atributos[ParsersAttributes::SORT_OP]="";
+ attributes[ParsersAttributes::TYPES]="";
+ attributes[ParsersAttributes::TRANSITION_FUNC]="";
+ attributes[ParsersAttributes::STATE_TYPE]="";
+ attributes[ParsersAttributes::BASE_TYPE]="";
+ attributes[ParsersAttributes::FINAL_FUNC]="";
+ attributes[ParsersAttributes::INITIAL_COND]="";
+ attributes[ParsersAttributes::SORT_OP]="";
 }
 
 void FuncaoAgregacao::definirFuncao(unsigned idx_func, Funcao *func)
@@ -26,7 +26,7 @@ void FuncaoAgregacao::definirFuncao(unsigned idx_func, Funcao *func)
  if(!funcaoValida(idx_func, func))
   throw Exception(Exception::getErrorMessage(ERR_USING_INV_FUNC_CONFIG)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_AGGREGATE)),
+                         .arg(BaseObject::getTypeName(OBJ_AGGREGATE)),
                 ERR_USING_INV_FUNC_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  funcoes[idx_func]=func;
@@ -122,7 +122,7 @@ void FuncaoAgregacao::definirAtributoTipos(unsigned tipo_def)
     cria uma função em parâmetros no seguinte formato: funcao(*). */
  if(str_tipos.isEmpty()) str_tipos="*";
 
- atributos[ParsersAttributes::TYPES]=str_tipos;
+ attributes[ParsersAttributes::TYPES]=str_tipos;
 }
 
 void FuncaoAgregacao::adicionarTipoDado(TipoPgSQL tipo)
@@ -220,42 +220,42 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
  if(funcoes[FUNCAO_TRANSICAO])
  {
   if(tipo_def==SchemaParser::SQL_DEFINITION)
-   atributos[ParsersAttributes::TRANSITION_FUNC]=funcoes[FUNCAO_TRANSICAO]->obterAssinatura();
+   attributes[ParsersAttributes::TRANSITION_FUNC]=funcoes[FUNCAO_TRANSICAO]->obterAssinatura();
   else
   {
-   funcoes[FUNCAO_TRANSICAO]->definirAtributoEsquema(ParsersAttributes::REF_TYPE,
+   funcoes[FUNCAO_TRANSICAO]->setAttribute(ParsersAttributes::REF_TYPE,
                                                      ParsersAttributes::TRANSITION_FUNC);
-   atributos[ParsersAttributes::TRANSITION_FUNC]=funcoes[FUNCAO_TRANSICAO]->obterDefinicaoObjeto(tipo_def,true);
+   attributes[ParsersAttributes::TRANSITION_FUNC]=funcoes[FUNCAO_TRANSICAO]->obterDefinicaoObjeto(tipo_def,true);
   }
  }
 
  if(funcoes[FUNCAO_FINAL])
  {
   if(tipo_def==SchemaParser::SQL_DEFINITION)
-   atributos[ParsersAttributes::FINAL_FUNC]=funcoes[FUNCAO_FINAL]->obterAssinatura();
+   attributes[ParsersAttributes::FINAL_FUNC]=funcoes[FUNCAO_FINAL]->obterAssinatura();
   else
   {
-   funcoes[FUNCAO_FINAL]->definirAtributoEsquema(ParsersAttributes::REF_TYPE,
+   funcoes[FUNCAO_FINAL]->setAttribute(ParsersAttributes::REF_TYPE,
                                                  ParsersAttributes::FINAL_FUNC);
-   atributos[ParsersAttributes::FINAL_FUNC]=funcoes[FUNCAO_FINAL]->obterDefinicaoObjeto(tipo_def,true);
+   attributes[ParsersAttributes::FINAL_FUNC]=funcoes[FUNCAO_FINAL]->obterDefinicaoObjeto(tipo_def,true);
   }
  }
 
  if(op_ordenacao)
  {
   if(tipo_def==SchemaParser::SQL_DEFINITION)
-   atributos[ParsersAttributes::SORT_OP]=op_ordenacao->obterNome(true);
+   attributes[ParsersAttributes::SORT_OP]=op_ordenacao->obterNome(true);
   else
-   atributos[ParsersAttributes::SORT_OP]=op_ordenacao->obterDefinicaoObjeto(tipo_def,true);
+   attributes[ParsersAttributes::SORT_OP]=op_ordenacao->obterDefinicaoObjeto(tipo_def,true);
  }
 
  if(cond_inicial!="")
-  atributos[ParsersAttributes::INITIAL_COND]=cond_inicial;
+  attributes[ParsersAttributes::INITIAL_COND]=cond_inicial;
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
-  atributos[ParsersAttributes::STATE_TYPE]=*(tipo_estado);
+  attributes[ParsersAttributes::STATE_TYPE]=*(tipo_estado);
  else
-  atributos[ParsersAttributes::STATE_TYPE]=tipo_estado.obterDefinicaoObjeto(tipo_def,ParsersAttributes::STATE_TYPE);
+  attributes[ParsersAttributes::STATE_TYPE]=tipo_estado.obterDefinicaoObjeto(tipo_def,ParsersAttributes::STATE_TYPE);
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }

@@ -173,7 +173,7 @@ void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
  this->setFlag(QGraphicsItem::ItemIsMovable, false);
 
  //Caso o relacionamento não esteja protegido
- if(!this->obterObjetoOrigem()->objetoProtegido())
+ if(!this->obterObjetoOrigem()->isProtected())
  {
   RelacionamentoBase *rel_base=this->obterObjetoOrigem();
 
@@ -305,7 +305,7 @@ void OGRelacionamento::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
 {
  //Caso o relacionamento esteja selecionado e não esteja protegido
  if(this->isSelected() && evento->buttons()==Qt::LeftButton &&
-    !this->obterObjetoOrigem()->objetoProtegido())
+    !this->obterObjetoOrigem()->isProtected())
  {
   //Move o objeto filho selecionado (ponto ou rótulo)
   if(dynamic_cast<QGraphicsPolygonItem *>(objeto_sel))

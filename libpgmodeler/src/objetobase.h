@@ -119,21 +119,21 @@ class BaseObject {
   BaseObject *tablespace;
 
   //Quantidade máxima de dígitos que um nome de objeto pode ter
-  static const int TAM_MAX_NOME_OBJETO=63;
+  static const int OBJECT_NAME_MAX_LENGTH=63;
 
   //Comentário do objeto
-  QString comentario,
+  QString comment,
          //Nome do objeto
-         nome;
+         obj_name;
 
   /*Tipo do objeto, pode ter um dos valores das contantes OBJETO_*
     Foi usado um tipo numérico para evitar o uso do RTTI.*/
-  ObjectType tipo_objeto;
+  ObjectType obj_type;
 
   /* Armazena os atributos e seus valores em forma de QString
      para serem usados pelo ParserEsquema no momento da criação
      da definição SQL do objeto */
-  map<QString, QString> atributos;
+  map<QString, QString> attributes;
 
  public:
   BaseObject(void);
@@ -142,35 +142,35 @@ class BaseObject {
   //Define um atributo específico na lista de atributos de esquema
   /* Este método pode ser usando quando uma classe precisa acessar diretamente
      os atributos de outra porém não possui permissão */
-  void definirAtributoEsquema(const QString &atrib, const QString &valor);
+  void setAttribute(const QString &atrib, const QString &valor);
 
   /* Retorna se o nome do objeto está com conformidades com a regra
      de nomenclatura de objetos no PostgreSQL (63 bytes dentre [a-zA-z0-9_] */
-  static bool nomeValido(const QString &nome_obj);
+  static bool isValidName(const QString &nome_obj);
 
   /* A flag obj_operador indica que o nome passado é de um operador
      o único tipo de objeto que aceita caracteres fora do alfabeto (ex. sinais matemáticos)
      na composição do seu nome. Neste caso a função de formatação apenas ignora a validação
      caso o flag esteja marcado */
-  static QString formatarNome(const QString &nome_obj, bool obj_operador=false);
+  static QString formatName(const QString &nome_obj, bool obj_operador=false);
 
   //Retorna o nome do tipo do objeto
-  static QString obterNomeTipoObjeto(ObjectType tipo_objeto);
+  static QString getTypeName(ObjectType obj_type);
 
   //Retorna o nome do tipo do objeto
-  static QString obterNomeEsquemaObjeto(ObjectType tipo_objeto);
+  static QString getSchemaName(ObjectType obj_type);
 
   //Retorna o nome do tipo do objeto no código SQL
-  static QString obterNomeSQLObjeto(ObjectType tipo_objeto);
+  static QString getSQLName(ObjectType obj_type);
 
   //Retorna o valor atual do contador global de ids de objeto
-  static unsigned obterIdGlobal(void);
+  static unsigned getGlobalId(void);
 
   //Define o comentário do objeto que será anexado a definição SQL do mesmo
-  virtual void definirComentario(const QString &comentario);
+  virtual void definirComentario(const QString &comment);
 
   //Define o nome do objeto
-  virtual void definirNome(const QString &nome);
+  virtual void definirNome(const QString &obj_name);
 
   //Define o esquema ao qual o objeto pertence
   virtual void definirEsquema(BaseObject *schema);
@@ -204,40 +204,40 @@ class BaseObject {
   ObjectType obterTipoObjeto(void);
 
   //Retorna o nome do tipo do objeto
-  QString obterNomeTipoObjeto(void);
+  QString getTypeName(void);
 
   //Retorna o nome do esquema do objeto
-  QString obterNomeEsquemaObjeto(void);
+  QString getSchemaName(void);
 
   //Retorna o nome do tipo do objeto
-  QString obterNomeSQLObjeto(void);
+  QString getSQLName(void);
 
   //Retorna o esquema ao qual o objeto faz parte
-  BaseObject *obterEsquema(void);
+  BaseObject *getSchema(void);
 
   //Retorna o esquema ao qual o objeto faz parte
-  BaseObject *obterDono(void);
+  BaseObject *getOwner(void);
 
   //Retorna o espaço de tabela ao qual o objeto faz parte
-  BaseObject *obterEspacoTabela(void);
+  BaseObject *getTablespace(void);
 
   //Retorna o número identificador do objeto
-  unsigned obterIdObjeto(void);
+  unsigned getObjectId(void);
 
   //Retorna se o objeto está protegido ou não
-  bool objetoProtegido(void);
+  bool isProtected(void);
 
   //Vefirica se o nome do objeto coincide com o nome passado no parâmetro
-  bool operator == (const QString &nome);
+  bool operator == (const QString &obj_name);
 
   //Vefirica se o nome do objeto difere do nome passado no parâmetro
-  bool operator != (const QString &nome);
+  bool operator != (const QString &obj_name);
 
   //Operado que faz a atribuição entre um objeto e outro
   virtual void operator = (BaseObject &obj);
 
   //Limpa os atributos usados pelo parser de esquemas
-  void limparAtributos(void);
+  void clearAttributes(void);
 
   friend class ModeloBD;
 };

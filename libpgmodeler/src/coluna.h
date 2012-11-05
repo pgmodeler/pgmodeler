@@ -60,7 +60,7 @@ class Coluna: public ObjetoTabela{
     /* Define o nome da coluna. Este método mantém o último nome da coluna
      armazenado para auxiliar os métodos de relacionamento de colunas
      adicionadas por relacionamentos com restrições/indices e sequencias */
-  void definirNome(const QString &nome);
+  void definirNome(const QString &obj_name);
 
   //Retorna se o campo é de preenchimento obrigatório
   bool naoNulo(void);

@@ -165,11 +165,11 @@ void CodigoFonteWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto)
 
    //Configura o icone do objeto a ser exibido
    icone_obj=QPixmap(QString(":/icones/icones/") +
-                     BaseObject::obterNomeEsquemaObjeto(objeto->obterTipoObjeto()) + QString(".png"));
+                     BaseObject::getSchemaName(objeto->obterTipoObjeto()) + QString(".png"));
    iconeobj_lbl->setPixmap(icone_obj);
 
    //Preenche os campos do formulario com os atributos do objeto
-   comentario_edt->setText(objeto->obterNomeTipoObjeto());
+   comentario_edt->setText(objeto->getTypeName());
 
    if(!destaque_sql->configuracaoCarregada())
    {

@@ -35,7 +35,7 @@ class Tipo: public BaseObject {
   unsigned config;
 
   //Atributos para a configuração TIPO_COMPOSTO
-  vector<Parametro> atributos;
+  vector<Parametro> attributes;
 
   //Atributos para a configuração TIPO_ENUMERACAO
   vector<QString> enumeracoes;
@@ -113,7 +113,7 @@ class Tipo: public BaseObject {
   ~Tipo(void);
 
   //Atribui um nome ao tipo
-  void definirNome(const QString &nome);
+  void definirNome(const QString &obj_name);
 
   //Atribui um esquema ao tipo
   void definirEsquema(BaseObject *schema);

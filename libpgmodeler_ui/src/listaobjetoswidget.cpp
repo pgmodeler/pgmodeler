@@ -28,7 +28,7 @@ void ListaObjetosWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto, 
 
  //Configura o icone do objeto a ser exibido
  iconeobj_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
-                                 BaseObject::obterNomeEsquemaObjeto(objeto->obterTipoObjeto()) + QString(".png")));
+                                 BaseObject::getSchemaName(objeto->obterTipoObjeto()) + QString(".png")));
 
  //Carrega as dependências e referências do objeto
  modelo->obterDependenciasObjeto(objeto, vet_objs);
@@ -73,12 +73,12 @@ void ListaObjetosWidget::atualizarListaObjetos(vector<BaseObject *> &objetos, QT
    item_tab=new QTableWidgetItem;
    item_tab->setText(QString::fromUtf8(objetos[i]->obterNome()));
    item_tab->setIcon(QPixmap(QString(":/icones/icones/") +
-                     BaseObject::obterNomeEsquemaObjeto(objetos[i]->obterTipoObjeto())+ QString(".png")));
+                     BaseObject::getSchemaName(objetos[i]->obterTipoObjeto())+ QString(".png")));
    listaobjetos_tbw->setItem(id_lin, 0, item_tab);
 
    //Aloca o item de tipo do objeto de ref/dep
    item_tab=new QTableWidgetItem;
-   item_tab->setText(QString::fromUtf8(objetos[i]->obterNomeTipoObjeto()));
+   item_tab->setText(QString::fromUtf8(objetos[i]->getTypeName()));
    listaobjetos_tbw->setItem(id_lin, 1, item_tab);
 
    //Aloca o item do objeto pai do objeto de ref/dep
@@ -86,19 +86,19 @@ void ListaObjetosWidget::atualizarListaObjetos(vector<BaseObject *> &objetos, QT
    objeto=objetos[i];
    if(dynamic_cast<ObjetoTabela *>(objetos[i]))
     obj_pai=dynamic_cast<ObjetoTabela *>(objetos[i])->obterTabelaPai();
-   else if(objetos[i]->obterEsquema())
-    obj_pai=objetos[i]->obterEsquema();
+   else if(objetos[i]->getSchema())
+    obj_pai=objetos[i]->getSchema();
    else
     obj_pai=this->modelo;
 
    //Aloca o item de tipo do objeto pai do objeto de ref/dep
    item_tab->setText(QString::fromUtf8(obj_pai->obterNome()));
    item_tab->setIcon(QPixmap(QString(":/icones/icones/") +
-                     BaseObject::obterNomeEsquemaObjeto(obj_pai->obterTipoObjeto())+ QString(".png")));
+                     BaseObject::getSchemaName(obj_pai->obterTipoObjeto())+ QString(".png")));
    listaobjetos_tbw->setItem(id_lin, 2, item_tab);
 
    item_tab=new QTableWidgetItem;
-   item_tab->setText(QString::fromUtf8(obj_pai->obterNomeTipoObjeto()));
+   item_tab->setText(QString::fromUtf8(obj_pai->getTypeName()));
    listaobjetos_tbw->setItem(id_lin, 3, item_tab);
 
    id_lin++;

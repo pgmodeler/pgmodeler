@@ -2,8 +2,8 @@
 
 EspacoTabela::EspacoTabela(void)
 {
- tipo_objeto=OBJ_TABLESPACE;
- atributos[ParsersAttributes::DIRECTORY]="";
+ obj_type=OBJ_TABLESPACE;
+ attributes[ParsersAttributes::DIRECTORY]="";
  object_id=BaseObject::tabspace_id++;
 }
 
@@ -15,7 +15,7 @@ void EspacoTabela::definirNome(const QString &nome)
  if(nome.mid(0,3)=="pg_")
   throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_TABLESPACE)),
+                         .arg(BaseObject::getTypeName(OBJ_TABLESPACE)),
                 ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  BaseObject::definirNome(nome); //Chama o método da classe descendente
@@ -44,7 +44,7 @@ QString EspacoTabela::obterDiretorio(void)
 QString EspacoTabela::obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(diretorio!="")
-  atributos[ParsersAttributes::DIRECTORY]="'" + diretorio + "'";
+  attributes[ParsersAttributes::DIRECTORY]="'" + diretorio + "'";
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }

@@ -136,7 +136,7 @@ class Restricao: public ObjetoTabela{
      true, uma coluna da lista 'colunas_dest' será retornada, caso contrário
      uma coluna da lista 'colunas' será retornada. */
   //Coluna *obterColuna(QString nome, bool col_dest=false);
-  Coluna *obterColuna(const QString &nome, unsigned tipo_coluna);
+  Coluna *obterColuna(const QString &obj_name, unsigned tipo_coluna);
 
   /* Obtém o número de colunas de uma das listas. Caso 'col_dest' esteja como
      true, o número de colunas da lista 'colunas_dest' será retornado, caso contrário
@@ -147,7 +147,7 @@ class Restricao: public ObjetoTabela{
  /* Remove uma coluna de uma das listas através de seu nome. Caso 'col_dest' esteja como
     true, uma coluna da lista 'colunas_dest' será removida, caso contrário
     uma coluna da lista 'colunas_dest' será removida. */
-  void removerColuna(const QString &nome, unsigned tipo_coluna);
+  void removerColuna(const QString &obj_name, unsigned tipo_coluna);
 
   //Limpa as listas de colunas
   void removerColunas(void);

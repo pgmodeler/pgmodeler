@@ -159,8 +159,8 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
                                pol.boundingRect().height() * fator);
 
   desc->setPolygon(pol);
-  desc->setBrush(this->obterEstiloPreenchimento(objeto_tab->obterNomeEsquemaObjeto()));
-  desc->setPen(this->obterEstiloBorda(objeto_tab->obterNomeEsquemaObjeto()));
+  desc->setBrush(this->obterEstiloPreenchimento(objeto_tab->getSchemaName()));
+  desc->setPen(this->obterEstiloBorda(objeto_tab->getSchemaName()));
  }
  //Configura um descritor elíptico padrão (usado para referências de visões)
  else
@@ -217,12 +217,12 @@ void OGSubItemObjeto::configurarObjeto(void)
 
    if(coluna->incluidoPorRelacionamento())
     fmt=config_fonte[ParsersAttributes::INH_COLUMN];
-   else if(coluna->objetoProtegido())
+   else if(coluna->isProtected())
     fmt=config_fonte[ParsersAttributes::PROT_COLUMN];
   }
   //Caso não seja uma coluna, obtém a formatação para o tipo do objeto de tabela
   else
-   fmt=config_fonte[objeto_tab->obterNomeEsquemaObjeto()];
+   fmt=config_fonte[objeto_tab->getSchemaName()];
 
   //Configura o descritor com o tipo da restrição
   configurarDescritor(tipo_rest);
@@ -244,7 +244,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   if(coluna)
    rotulos[1]->setText(QString::fromUtf8(SEPARADOR_TIPO + (*coluna->obterTipo())));
   else
-   rotulos[1]->setText(QString::fromUtf8(SEPARADOR_TIPO + objeto_tab->obterNomeEsquemaObjeto()));
+   rotulos[1]->setText(QString::fromUtf8(SEPARADOR_TIPO + objeto_tab->getSchemaName()));
 
   rotulos[1]->setFont(fmt.font());
   rotulos[1]->setBrush(fmt.foreground());

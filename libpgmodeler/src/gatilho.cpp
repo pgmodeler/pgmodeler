@@ -7,28 +7,28 @@ Gatilho::Gatilho(void)
 
  funcao=NULL;
  por_linha=false;
- tipo_objeto=OBJ_TRIGGER;
+ obj_type=OBJ_TRIGGER;
  tabela_ref=NULL;
 
  for(i=0; i < 4; i++)
   eventos[tipos[i]]=false;
 
- atributos[ParsersAttributes::ARGUMENTS]="";
- atributos[ParsersAttributes::EVENTS]="";
- atributos[ParsersAttributes::TRIGGER_FUNC]="";
- atributos[ParsersAttributes::TABLE]="";
- atributos[ParsersAttributes::COLUMNS]="";
- atributos[ParsersAttributes::FIRING_TYPE]="";
- atributos[ParsersAttributes::PER_LINE]="";
- atributos[ParsersAttributes::INS_EVENT]="";
- atributos[ParsersAttributes::DEL_EVENT]="";
- atributos[ParsersAttributes::UPD_EVENT]="";
- atributos[ParsersAttributes::TRUNC_EVENT]="";
- atributos[ParsersAttributes::CONDITION]="";
- atributos[ParsersAttributes::REF_TABLE]="";
- atributos[ParsersAttributes::DEFER_TYPE]="";
- atributos[ParsersAttributes::DEFERRABLE]="";
- atributos[ParsersAttributes::DECL_IN_TABLE]="";
+ attributes[ParsersAttributes::ARGUMENTS]="";
+ attributes[ParsersAttributes::EVENTS]="";
+ attributes[ParsersAttributes::TRIGGER_FUNC]="";
+ attributes[ParsersAttributes::TABLE]="";
+ attributes[ParsersAttributes::COLUMNS]="";
+ attributes[ParsersAttributes::FIRING_TYPE]="";
+ attributes[ParsersAttributes::PER_LINE]="";
+ attributes[ParsersAttributes::INS_EVENT]="";
+ attributes[ParsersAttributes::DEL_EVENT]="";
+ attributes[ParsersAttributes::UPD_EVENT]="";
+ attributes[ParsersAttributes::TRUNC_EVENT]="";
+ attributes[ParsersAttributes::CONDITION]="";
+ attributes[ParsersAttributes::REF_TABLE]="";
+ attributes[ParsersAttributes::DEFER_TYPE]="";
+ attributes[ParsersAttributes::DEFERRABLE]="";
+ attributes[ParsersAttributes::DECL_IN_TABLE]="";
 }
 
 void Gatilho::adicionarArgumento(const QString &arg)
@@ -52,7 +52,7 @@ void Gatilho::definirAtributoArgumentos(unsigned tipo_def)
   if(i < (qtd-1)) str_args+=",";
  }
 
- atributos[ParsersAttributes::ARGUMENTS]=str_args;
+ attributes[ParsersAttributes::ARGUMENTS]=str_args;
 }
 
 void Gatilho::definirTipoDisparo(TipoDisparo tipo_disp)
@@ -75,7 +75,7 @@ void Gatilho::definirFuncao(Funcao *funcao)
   //Dispara exceção relatando o erro
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_TRIGGER)),
+                         .arg(BaseObject::getTypeName(OBJ_TRIGGER)),
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -88,7 +88,7 @@ void Gatilho::definirFuncao(Funcao *funcao)
    //Dispara exceção relatando o erro
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_TRIGGER)),
+                         .arg(BaseObject::getTypeName(OBJ_TRIGGER)),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
    this->funcao=funcao;
@@ -105,7 +105,7 @@ void Gatilho::adicionarColuna(Coluna *coluna)
  if(!coluna)
   throw Exception(QString(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN))
                 .arg(this->obterNome(true))
-                .arg(this->obterNomeTipoObjeto()),
+                .arg(this->getTypeName()),
                 ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(coluna->obterTabelaPai() != this->obterTabelaPai())
   throw Exception(QString(Exception::getErrorMessage(ERR_ASG_INV_COLUMN_TRIGGER))
@@ -297,31 +297,31 @@ void Gatilho::definirAtributosBasicosGatilho(unsigned tipo_def)
   if(eventos.at(tipo_eventos[i]))
   {
    str_aux+=sql_evento[i];
-   atributos[atribs[i]]="1";
+   attributes[atribs[i]]="1";
 
    if(tipo_eventos[i]==TipoEvento::on_update)
    {
     qtd=colunas_upd.size();
-    atributos[ParsersAttributes::COLUMNS]="";
+    attributes[ParsersAttributes::COLUMNS]="";
     for(i1=0; i1 < qtd; i1++)
     {
-     atributos[ParsersAttributes::COLUMNS]+=colunas_upd.at(i1)->obterNome(true);
+     attributes[ParsersAttributes::COLUMNS]+=colunas_upd.at(i1)->obterNome(true);
      if(i1 < qtd-1)
-      atributos[ParsersAttributes::COLUMNS]+=",";
+      attributes[ParsersAttributes::COLUMNS]+=",";
     }
    }
   }
  }
 
  if(str_aux!="") str_aux.remove(str_aux.size()-3,3);
- atributos[ParsersAttributes::EVENTS]=str_aux;
+ attributes[ParsersAttributes::EVENTS]=str_aux;
 
  if(funcao)
  {
   if(tipo_def==SchemaParser::SQL_DEFINITION)
-   atributos[ParsersAttributes::TRIGGER_FUNC]=funcao->obterNome(true);
+   attributes[ParsersAttributes::TRIGGER_FUNC]=funcao->obterNome(true);
   else
-   atributos[ParsersAttributes::TRIGGER_FUNC]=funcao->obterDefinicaoObjeto(tipo_def, true);
+   attributes[ParsersAttributes::TRIGGER_FUNC]=funcao->obterDefinicaoObjeto(tipo_def, true);
  }
 }
 
@@ -336,23 +336,23 @@ QString Gatilho::obterDefinicaoObjeto(unsigned tipo_def)
     tabela pai. Este atributo é usado apenas para ajudar na formatação do código SQL e
     não tem nenhuma outra utilidade. */
  if(!referenciaColunaIncRelacao())
-  atributos[ParsersAttributes::DECL_IN_TABLE]="1";
+  attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
  if(this->tabela_pai)
-  atributos[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
+  attributes[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
 
- atributos[ParsersAttributes::FIRING_TYPE]=(~tipo_disparo);
+ attributes[ParsersAttributes::FIRING_TYPE]=(~tipo_disparo);
 
  //** Gatilhos Restrições SEMPRE devem executar por linha (FOR EACH ROW) **
- atributos[ParsersAttributes::PER_LINE]=((por_linha && !tabela_ref) || tabela_ref ? "1" : "");
+ attributes[ParsersAttributes::PER_LINE]=((por_linha && !tabela_ref) || tabela_ref ? "1" : "");
 
- atributos[ParsersAttributes::CONDITION]=condicao;
+ attributes[ParsersAttributes::CONDITION]=condicao;
 
  if(tabela_ref)
  {
-  atributos[ParsersAttributes::REF_TABLE]=tabela_ref->obterNome(true);
-  atributos[ParsersAttributes::DEFERRABLE]=(postergavel ? "1" : "");
-  atributos[ParsersAttributes::DEFER_TYPE]=(~tipo_postergacao);
+  attributes[ParsersAttributes::REF_TABLE]=tabela_ref->obterNome(true);
+  attributes[ParsersAttributes::DEFERRABLE]=(postergavel ? "1" : "");
+  attributes[ParsersAttributes::DEFER_TYPE]=(~tipo_postergacao);
  }
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def));

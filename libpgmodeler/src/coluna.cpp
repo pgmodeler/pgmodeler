@@ -2,12 +2,12 @@
 
 Coluna::Coluna(void)
 {
- tipo_objeto=OBJ_COLUMN;
+ obj_type=OBJ_COLUMN;
  nao_nulo=false;
- atributos[ParsersAttributes::TYPE]="";
- atributos[ParsersAttributes::DEFAULT_VALUE]="";
- atributos[ParsersAttributes::NOT_NULL]="";
- atributos[ParsersAttributes::TABLE]="";
+ attributes[ParsersAttributes::TYPE]="";
+ attributes[ParsersAttributes::DEFAULT_VALUE]="";
+ attributes[ParsersAttributes::NOT_NULL]="";
+ attributes[ParsersAttributes::TABLE]="";
 }
 
 void Coluna::definirNome(const QString &nome)
@@ -17,7 +17,7 @@ void Coluna::definirNome(const QString &nome)
   QString nome_ant;
 
   //Obtém o nome atual da coluna o qual passará a ser o antigo
-  nome_ant=this->nome;
+  nome_ant=this->obj_name;
 
   //Tenta definir o novo nome da coluna
   BaseObject::definirNome(nome);
@@ -77,7 +77,7 @@ QString Coluna::obterValorPadrao(void)
 QString Coluna::obterNomeAntigo(bool formatar)
 {
  if(formatar)
-  return(BaseObject::formatarNome(nome_antigo));
+  return(BaseObject::formatName(nome_antigo));
  else
   return(nome_antigo);
 }
@@ -85,21 +85,21 @@ QString Coluna::obterNomeAntigo(bool formatar)
 QString Coluna::obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(this->tabela_pai)
-  atributos[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
+  attributes[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
 
- atributos[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
- atributos[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
- atributos[ParsersAttributes::NOT_NULL]=(!nao_nulo ? "" : "1");
+ attributes[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
+ attributes[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
+ attributes[ParsersAttributes::NOT_NULL]=(!nao_nulo ? "" : "1");
  return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }
 
 void Coluna::operator = (Coluna &coluna)
 {
- this->comentario=coluna.comentario;
+ this->comment=coluna.comment;
  this->object_id=coluna.object_id;
  this->protected_obj=coluna.protected_obj;
 
- this->nome=coluna.nome;
+ this->obj_name=coluna.obj_name;
  this->nome_antigo=coluna.nome_antigo;
 
  this->tipo=coluna.tipo;

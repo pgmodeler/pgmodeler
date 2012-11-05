@@ -40,7 +40,7 @@ ObjetoBaseWidget::ObjetoBaseWidget(QWidget *parent, ObjectType tipo_obj): QDialo
                                      GlobalAttributes::CONFIGURATION_EXT);
 
   janela_pai=new FormBasico(NULL, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
-  janela_pai->setWindowTitle(trUtf8("Criate / Edit: ") + BaseObject::obterNomeTipoObjeto(tipo_obj));
+  janela_pai->setWindowTitle(trUtf8("Criate / Edit: ") + BaseObject::getTypeName(tipo_obj));
   janela_pai->widgetgeral_wgt->insertWidget(0, this);
   janela_pai->widgetgeral_wgt->setCurrentIndex(0);
   janela_pai->definirBotoes(CaixaMensagem::BOTAO_OK_CANCELAR);
@@ -173,8 +173,8 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
  {
   ObjetoTabela *obj_tab=dynamic_cast<ObjetoTabela *>(objeto);
 
-  if(objeto && objeto->obterEsquema())
-   objeto_pai=objeto->obterEsquema();
+  if(objeto && objeto->getSchema())
+   objeto_pai=objeto->getSchema();
   else if(obj_tab && obj_tab->obterTabelaPai())
    objeto_pai=obj_tab->obterTabelaPai();
   else
@@ -201,8 +201,8 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
  edt_permissoes_tb->setEnabled(objeto!=NULL);
  objeto_pai_txt->setPlainText(QString::fromUtf8(objeto_pai->obterNome(true)));
 
- iconeobjpai_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + objeto_pai->obterNomeEsquemaObjeto() + QString(".png")));
- iconeobjpai_lbl->setToolTip(objeto_pai->obterNomeTipoObjeto());
+ iconeobjpai_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + objeto_pai->getSchemaName() + QString(".png")));
+ iconeobjpai_lbl->setToolTip(objeto_pai->getTypeName());
 
  /* Configura os seletores de dono/esquema/espaço de tabela somente quando
     um modelo está definido */
@@ -219,9 +219,9 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
   nome_edt->setText(QString::fromUtf8(objeto->obterNome()));
   comentario_edt->setText(QString::fromUtf8(objeto->obterComentario()));
 
-  sel_dono->definirObjeto(objeto->obterDono());
-  sel_esquema->definirObjeto(objeto->obterEsquema());
-  sel_esptabela->definirObjeto(objeto->obterEspacoTabela());
+  sel_dono->definirObjeto(objeto->getOwner());
+  sel_esquema->definirObjeto(objeto->getSchema());
+  sel_esptabela->definirObjeto(objeto->getTablespace());
 
   /* Exibe o frame de objeto protegido caso o mesmo esteja protegido
      ou seja incluído por relacionamento (coluna ou restrição).
@@ -231,7 +231,7 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
      essa exceção */
   tipo_obj=objeto->obterTipoObjeto();
   protegido=(tipo_obj_pai!=OBJ_RELATIONSHIP &&
-             (objeto->objetoProtegido() ||
+             (objeto->isProtected() ||
               ((tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT) &&
                dynamic_cast<ObjetoTabela *>(objeto)->incluidoPorRelacionamento())));
   obj_protegido_frm->setVisible(protegido);
@@ -327,8 +327,8 @@ void ObjetoBaseWidget::configurarLayouFormulario(QGridLayout *grid, ObjectType t
  //Configura o ícone de acordo com o tipo de objeto
  if(tipo_obj!=BASE_OBJECT)
  {
-  iconeobj_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/") + BaseObject::obterNomeEsquemaObjeto(tipo_obj) + QString(".png")));
-  iconeobj_lbl->setToolTip(BaseObject::obterNomeTipoObjeto(tipo_obj));
+  iconeobj_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/") + BaseObject::getSchemaName(tipo_obj) + QString(".png")));
+  iconeobj_lbl->setToolTip(BaseObject::getTypeName(tipo_obj));
  }
 }
 
@@ -512,7 +512,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
    QString nome_obj;
 
    tipo_obj=objeto->obterTipoObjeto();
-   nome_obj=BaseObject::formatarNome(nome_edt->text().toUtf8(), tipo_obj==OBJ_OPERATOR);
+   nome_obj=BaseObject::formatName(nome_edt->text().toUtf8(), tipo_obj==OBJ_OPERATOR);
 
    if(sel_esquema->obterObjeto())
     nome_obj=sel_esquema->obterObjeto()->obterNome(true) + "." + nome_obj;
@@ -566,9 +566,9 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
     {
      throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
                    .arg(nome_obj)
-                   .arg(BaseObject::obterNomeTipoObjeto(tipo_obj))
+                   .arg(BaseObject::getTypeName(tipo_obj))
                    .arg(obj_pai->obterNome(true))
-                   .arg(obj_pai->obterNomeTipoObjeto()),
+                   .arg(obj_pai->getTypeName()),
                     ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     }
    }
@@ -700,13 +700,13 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
      }
 
      //Caso o objeto referencia o esquema, marca como modificado
-     if(obj->obterEsquema()==this->objeto)
+     if(obj->getSchema()==this->objeto)
       obj->definirModificado(true);
 
      /* Caso o objeto1, neste caso sempre será uma tabela participante
         de um relacionamento quando alocado, referencia o esquema, marca-o como
         modificado */
-     if(obj1 && obj1->obterEsquema()==this->objeto)
+     if(obj1 && obj1->getSchema()==this->objeto)
       obj1->definirModificado(true);
 
      /* Caso o relacionamento esteja alocado, sinal de que o objeto atual é um relacionamento

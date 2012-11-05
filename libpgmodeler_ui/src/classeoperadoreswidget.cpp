@@ -142,21 +142,21 @@ void ClasseOperadoresWidget::exibirDadosElemento(ElemClasseOperadores elem, int 
  if(tipo_elem==ElemClasseOperadores::ELEM_FUNCAO)
  {
   tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterFuncao()->obterAssinatura()), idx_linha, 0);
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterFuncao()->obterNomeTipoObjeto()), idx_linha, 1);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterFuncao()->getTypeName()), idx_linha, 1);
  }
  /* Para o tipo OPERADOR são exibidas na coluna 0 e 1, respectivamente,
     a assinatura do operador e o tipo do objeto (operador) */
  else if(tipo_elem==ElemClasseOperadores::ELEM_OPERADOR)
  {
   tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterOperador()->obterAssinatura()), idx_linha, 0);
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterOperador()->obterNomeTipoObjeto()), idx_linha, 1);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterOperador()->getTypeName()), idx_linha, 1);
  }
   /* Para o tipo ARMAZENAMENTO são exibidas na coluna 0 e 1, respectivamente,
     a nome completo do tipo e o tipo do objeto (tipo) */
  else
  {
   tab_elementos->definirTextoCelula(*elem.obterTipoArmazenamento(), idx_linha, 0);
-  tab_elementos->definirTextoCelula(QString::fromUtf8(BaseObject::obterNomeTipoObjeto(OBJ_TYPE)), idx_linha, 1);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(BaseObject::getTypeName(OBJ_TYPE)), idx_linha, 1);
  }
 
  /* Para os tipos FUNÇÃO e OPERADOR é na coluna 2

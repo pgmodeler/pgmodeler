@@ -133,7 +133,7 @@ class ModeloBD:  public QObject, public BaseObject {
   /* Retorna um objeto do modelo buscando através de seu nome
      e especificando o tipo do mesmo. Além disso o método armazena no 3º parâmetro
      o índice do objeto caso seja encontrado */
-  BaseObject *obterObjeto(const QString &nome, ObjectType tipo_obj, int &idx_obj);
+  BaseObject *obterObjeto(const QString &obj_name, ObjectType tipo_obj, int &idx_obj);
 
   /* Adiciona um objeto ao modelo fazendo o cast necessário para o método
      de inserção específico para o objeto */
@@ -184,7 +184,7 @@ class ModeloBD:  public QObject, public BaseObject {
   vector<BaseObject *> obterObjetos(ObjectType tipo_obj, BaseObject *schema=NULL);
 
   //Obtém o índice de um objeto através de seu nome e tipo
-  int obterIndiceObjeto(const QString &nome, ObjectType tipo_obj);
+  int obterIndiceObjeto(const QString &obj_name, ObjectType tipo_obj);
 
   //Obtém o índice de um objeto através de seu endere
   int obterIndiceObjeto(BaseObject *objeto);
@@ -295,7 +295,7 @@ class ModeloBD:  public QObject, public BaseObject {
   //Métodos de manipulação de esquemas
   void adicionarEsquema(Esquema *schema, int idx_obj=-1);
   void removerEsquema(Esquema *schema, int idx_obj=-1);
-  Esquema *obterEsquema(unsigned idx_obj);
+  Esquema *getSchema(unsigned idx_obj);
 
   //Métodos de manipulação de visões
   void adicionarVisao(Visao *visao, int idx_obj=-1);
@@ -320,7 +320,7 @@ class ModeloBD:  public QObject, public BaseObject {
   //Métodos de manipulação de espaços de tabela
   void adicionarEspacoTabela(EspacoTabela *espaco_tab, int idx_obj=-1);
   void removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj=-1);
-  EspacoTabela *obterEspacoTabela(unsigned idx_obj);
+  EspacoTabela *getTablespace(unsigned idx_obj);
 
   //Métodos de manipulação de linguagens
   void adicionarLinguagem(Linguagem *linguagem, int idx_obj=-1);
@@ -381,7 +381,7 @@ class ModeloBD:  public QObject, public BaseObject {
   int obterIndicePermissao(Permissao *permissao);
 
   //Obtém um objeto através de seu nome e tipo
-  BaseObject *obterObjeto(const QString &nome, ObjectType tipo_obj);
+  BaseObject *obterObjeto(const QString &obj_name, ObjectType tipo_obj);
 
   //Copia os atributos do objeto do parâmetro para o objeto this
   void operator = (ModeloBD &modelo);

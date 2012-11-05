@@ -4,22 +4,22 @@ Indice::Indice(void)
 {
  atrib_indice[UNIQUE]=false;
  atrib_indice[CONCORRENTE]=false;
- tipo_objeto=OBJ_INDEX;
+ obj_type=OBJ_INDEX;
  fator_preenc=90;
- atributos[ParsersAttributes::UNIQUE]="";
- atributos[ParsersAttributes::CONCURRENT]="";
- atributos[ParsersAttributes::TABLE]="";
- atributos[ParsersAttributes::INDEX_TYPE]="";
- atributos[ParsersAttributes::COLUMNS]="";
- atributos[ParsersAttributes::EXPRESSION]="";
- atributos[ParsersAttributes::FACTOR]="";
- atributos[ParsersAttributes::CONDITION]="";
- atributos[ParsersAttributes::OP_CLASS]="";
- atributos[ParsersAttributes::NULLS_FIRST]="";
- atributos[ParsersAttributes::ASC_ORDER]="";
- atributos[ParsersAttributes::DECL_IN_TABLE]="";
- atributos[ParsersAttributes::ELEMENTS]="";
- atributos[ParsersAttributes::FAST_UPDATE]="";
+ attributes[ParsersAttributes::UNIQUE]="";
+ attributes[ParsersAttributes::CONCURRENT]="";
+ attributes[ParsersAttributes::TABLE]="";
+ attributes[ParsersAttributes::INDEX_TYPE]="";
+ attributes[ParsersAttributes::COLUMNS]="";
+ attributes[ParsersAttributes::EXPRESSION]="";
+ attributes[ParsersAttributes::FACTOR]="";
+ attributes[ParsersAttributes::CONDITION]="";
+ attributes[ParsersAttributes::OP_CLASS]="";
+ attributes[ParsersAttributes::NULLS_FIRST]="";
+ attributes[ParsersAttributes::ASC_ORDER]="";
+ attributes[ParsersAttributes::DECL_IN_TABLE]="";
+ attributes[ParsersAttributes::ELEMENTS]="";
+ attributes[ParsersAttributes::FAST_UPDATE]="";
 }
 
 void Indice::definirAtributoElementos(unsigned tipo_def)
@@ -34,7 +34,7 @@ void Indice::definirAtributoElementos(unsigned tipo_def)
   if(i < (qtd-1) && tipo_def==SchemaParser::SQL_DEFINITION) str_elem+=",";
  }
 
- atributos[ParsersAttributes::ELEMENTS]=str_elem;
+ attributes[ParsersAttributes::ELEMENTS]=str_elem;
 }
 
 int Indice::elementoExiste(Coluna *coluna)
@@ -111,7 +111,7 @@ void Indice::adicionarElemento(Coluna *coluna, ClasseOperadores *classe_oper, bo
  {
  throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
                         .arg(QString::fromUtf8(this->obterNome()))
-                        .arg(BaseObject::obterNomeTipoObjeto(OBJ_INDEX)),
+                        .arg(BaseObject::getTypeName(OBJ_INDEX)),
                ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  else
@@ -245,16 +245,16 @@ bool Indice::referenciaColunaIncRelacao(void)
 QString Indice::obterDefinicaoObjeto(unsigned tipo_def)
 {
  definirAtributoElementos(tipo_def);
- atributos[ParsersAttributes::UNIQUE]=(atrib_indice[UNIQUE] ? "1" : "");
- atributos[ParsersAttributes::CONCURRENT]=(atrib_indice[CONCORRENTE] ? "1" : "");
- atributos[ParsersAttributes::FAST_UPDATE]=(atrib_indice[ATUAL_RAPIDA] ? "1" : "");
- atributos[ParsersAttributes::INDEX_TYPE]=(~tipo_indexacao);
- atributos[ParsersAttributes::CONDITION]=exp_condicional;
+ attributes[ParsersAttributes::UNIQUE]=(atrib_indice[UNIQUE] ? "1" : "");
+ attributes[ParsersAttributes::CONCURRENT]=(atrib_indice[CONCORRENTE] ? "1" : "");
+ attributes[ParsersAttributes::FAST_UPDATE]=(atrib_indice[ATUAL_RAPIDA] ? "1" : "");
+ attributes[ParsersAttributes::INDEX_TYPE]=(~tipo_indexacao);
+ attributes[ParsersAttributes::CONDITION]=exp_condicional;
 
  if(this->tabela_pai)
-  atributos[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
+  attributes[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
 
- atributos[ParsersAttributes::FACTOR]=QString("%1").arg(fator_preenc);
+ attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fator_preenc);
 
  /* Caso o índice não esteja referenciando alguma coluna incluída por relacionamento
     a mesma será declarada dentro do código da tabela pai e para tanto existe um atributo
@@ -263,7 +263,7 @@ QString Indice::obterDefinicaoObjeto(unsigned tipo_def)
     tabela pai. Este atributo é usado apenas para ajudar na formatação do código SQL e
     não tem nenhuma outra utilidade. */
  if(!referenciaColunaIncRelacao())
-  atributos[ParsersAttributes::DECL_IN_TABLE]="1";
+  attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }

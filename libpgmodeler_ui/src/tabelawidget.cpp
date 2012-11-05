@@ -437,12 +437,12 @@ void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
 
  /* Caso o objeto esteja protegido ou foi incluído por relacionamento
     muda a coloração da linha para denotar o fato */
- if(objeto->incluidoPorRelacionamento() || objeto->objetoProtegido())
+ if(objeto->incluidoPorRelacionamento() || objeto->isProtected())
  {
   fonte=tab->font();
   fonte.setItalic(true);
 
-  if(objeto->objetoProtegido())
+  if(objeto->isProtected())
    tab->definirFonteLinha(idx_lin, fonte, COR_TEXTO_LIN_PROT, COR_FUNDO_LIN_PROT);
   else
    tab->definirFonteLinha(idx_lin, fonte, COR_TEXTO_LIN_INCREL, COR_FUNDO_LIN_INCREL);
@@ -476,7 +476,7 @@ void TabelaWidget::removerObjetos(void)
    //Obtém o objeto da tabela
    objeto=tabela->obterObjeto(0, tipo_obj);
 
-   if(!objeto->objetoProtegido() &&
+   if(!objeto->isProtected() &&
       !dynamic_cast<ObjetoTabela *>(objeto)->incluidoPorRelacionamento())
    {
     //Tenta removê-lo da tabela
@@ -488,7 +488,7 @@ void TabelaWidget::removerObjetos(void)
    else
     throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
                   .arg(QString::fromUtf8(objeto->obterNome()))
-                  .arg(objeto->obterNomeTipoObjeto()),
+                  .arg(objeto->getTypeName()),
                   ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
  }
@@ -537,7 +537,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
   //Obtém o objeto da tabela
   objeto=tabela->obterObjeto(idx_lin, tipo_obj);
 
-  if(!objeto->objetoProtegido() &&
+  if(!objeto->isProtected() &&
      !dynamic_cast<ObjetoTabela *>(objeto)->incluidoPorRelacionamento())
   {
    //Tenta removê-lo da tabela
@@ -549,7 +549,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
   else
    throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
                  .arg(QString::fromUtf8(objeto->obterNome()))
-                 .arg(objeto->obterNomeTipoObjeto()),
+                 .arg(objeto->getTypeName()),
                  ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  catch(Exception &e)

@@ -3,12 +3,12 @@
 CaixaTexto::CaixaTexto(void)
 {
  definirComentario(" ");
- tipo_objeto=OBJ_TEXTBOX;
+ obj_type=OBJ_TEXTBOX;
  atributo_texto[0]=atributo_texto[1]=atributo_texto[2]=false;
- atributos[ParsersAttributes::ITALIC]="";
- atributos[ParsersAttributes::BOLD]="";
- atributos[ParsersAttributes::UNDERLINE]="";
- atributos[ParsersAttributes::COLOR]="";
+ attributes[ParsersAttributes::ITALIC]="";
+ attributes[ParsersAttributes::BOLD]="";
+ attributes[ParsersAttributes::UNDERLINE]="";
+ attributes[ParsersAttributes::COLOR]="";
 }
 
 QString CaixaTexto::obterDefinicaoObjeto(void)
@@ -16,16 +16,16 @@ QString CaixaTexto::obterDefinicaoObjeto(void)
  definirAtributoPosicao();
 
  if(atributo_texto[TEXTO_ITALICO])
-  atributos[ParsersAttributes::ITALIC]="1";
+  attributes[ParsersAttributes::ITALIC]="1";
 
  if(atributo_texto[TEXTO_NEGRITO])
-  atributos[ParsersAttributes::BOLD]="1";
+  attributes[ParsersAttributes::BOLD]="1";
 
  if(atributo_texto[TEXTO_SUBLINHADO])
-  atributos[ParsersAttributes::UNDERLINE]="1";
+  attributes[ParsersAttributes::UNDERLINE]="1";
 
  if(cor_texto.name()!="#000000")
-  atributos[ParsersAttributes::COLOR]=cor_texto.name();
+  attributes[ParsersAttributes::COLOR]=cor_texto.name();
 
  return(this->BaseObject::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION));
 }
@@ -33,7 +33,7 @@ QString CaixaTexto::obterDefinicaoObjeto(void)
 void CaixaTexto::operator = (CaixaTexto &caixa)
 {
  (*dynamic_cast<ObjetoGraficoBase *>(this))=reinterpret_cast<ObjetoGraficoBase &>(caixa);
- this->comentario=caixa.comentario;
+ this->comment=caixa.comment;
  this->atributo_texto[0]=caixa.atributo_texto[0];
  this->atributo_texto[1]=caixa.atributo_texto[1];
  this->atributo_texto[2]=caixa.atributo_texto[2];

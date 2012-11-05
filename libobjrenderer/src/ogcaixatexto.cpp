@@ -11,8 +11,8 @@ OGCaixaTexto::OGCaixaTexto(CaixaTexto *cxtexto, const QBrush &brush, const QPen 
  //Caso o brush ou pen não estejam especificados usa a cor padrão da caixa de texto
  if(brush.style()==Qt::NoBrush || pen.style()==Qt::NoPen)
  {
-  caixa->setBrush(this->obterEstiloPreenchimento(BaseObject::obterNomeEsquemaObjeto(OBJ_TEXTBOX)));
-  caixa->setPen(this->pen=this->obterEstiloBorda(BaseObject::obterNomeEsquemaObjeto(OBJ_TEXTBOX)));
+  caixa->setBrush(this->obterEstiloPreenchimento(BaseObject::getSchemaName(OBJ_TEXTBOX)));
+  caixa->setPen(this->pen=this->obterEstiloBorda(BaseObject::getSchemaName(OBJ_TEXTBOX)));
  }
  else
  {

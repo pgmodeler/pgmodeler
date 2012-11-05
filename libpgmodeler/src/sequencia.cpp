@@ -5,20 +5,20 @@ const QString Sequencia::VALOR_MAX_NEGATIVO="-9223372036854775808";
 
 Sequencia::Sequencia(void)
 {
- tipo_objeto=OBJ_SEQUENCE;
+ obj_type=OBJ_SEQUENCE;
  ciclica=false;
  incremento=inicio=cache="1";
  valor_min="0";
  valor_max=VALOR_MAX_POSITIVO;
  coluna=NULL;
 
- atributos[ParsersAttributes::INCREMENT]="";
- atributos[ParsersAttributes::MIN_VALUE]="";
- atributos[ParsersAttributes::MAX_VALUE]="";
- atributos[ParsersAttributes::START]="";
- atributos[ParsersAttributes::CACHE]="";
- atributos[ParsersAttributes::CYCLE]="";
- atributos[ParsersAttributes::OWNER_COLUMN]="";
+ attributes[ParsersAttributes::INCREMENT]="";
+ attributes[ParsersAttributes::MIN_VALUE]="";
+ attributes[ParsersAttributes::MAX_VALUE]="";
+ attributes[ParsersAttributes::START]="";
+ attributes[ParsersAttributes::CACHE]="";
+ attributes[ParsersAttributes::CYCLE]="";
+ attributes[ParsersAttributes::OWNER_COLUMN]="";
 }
 
 bool Sequencia::valorNulo(const QString &valor)
@@ -167,7 +167,7 @@ void Sequencia::definirEsquema(BaseObject *esquema)
   tabela=dynamic_cast<Tabela *>(coluna->obterTabelaPai());
 
   //Verifica se o esquema sendo atribuíd  seqüência é o mesmo da tabela possuidora
-  if(tabela && tabela->obterEsquema()!=esquema)
+  if(tabela && tabela->getSchema()!=esquema)
     throw Exception(ERR_ASG_SEQ_DIF_TABLE_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
@@ -222,14 +222,14 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
  {
   // Verifica se a tabela não pertence ao mesmo esquema da sequencia.
   //   Caso não pertença, dispara uma exceção.
-  if(tabela->obterEsquema()!=this->schema)
+  if(tabela->getSchema()!=this->schema)
    throw Exception(Exception::getErrorMessage(ERR_ASG_TAB_DIF_SEQ_SCHEMA)
                  .arg(QString::fromUtf8(this->obterNome(true))),
                  ERR_ASG_TAB_DIF_SEQ_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     /* Verifica se a tabela não pertence ao mesmo dono da sequencia.
      Caso não pertença, dispara uma exceção. */
-  if(tabela->obterDono()!=this->owner)
+  if(tabela->getOwner()!=this->owner)
    throw Exception(Exception::getErrorMessage(ERR_ASG_SEQ_OWNER_DIF_TABLE)
                  .arg(QString::fromUtf8(this->obterNome(true))),
                  ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -238,8 +238,8 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
   this->coluna=tabela->obterColuna(nome_coluna);
 
   if(this->coluna && this->coluna->incluidoPorRelacionamento() &&
-     this->coluna->obterIdObjeto() > this->object_id)
-   this->object_id=BaseObject::obterIdGlobal();
+     this->coluna->getObjectId() > this->object_id)
+   this->object_id=BaseObject::getGlobalId();
 
 
   //Caso a coluna não exista
@@ -268,14 +268,14 @@ void Sequencia::definirPossuidora(Coluna *coluna)
 
   /* Verifica se a tabela não pertence ao mesmo esquema da sequencia.
      Caso não pertença, dispara uma exceção. */
-  if(tabela->obterEsquema()!=this->schema)
+  if(tabela->getSchema()!=this->schema)
    throw Exception(Exception::getErrorMessage(ERR_ASG_TAB_DIF_SEQ_SCHEMA)
                  .arg(QString::fromUtf8(this->obterNome(true))),
                  ERR_ASG_TAB_DIF_SEQ_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Verifica se a tabela não pertence ao mesmo dono da sequencia.
      Caso não pertença, dispara uma exceção. */
-  if(tabela->obterDono()!=this->owner)
+  if(tabela->getOwner()!=this->owner)
    throw Exception(Exception::getErrorMessage(ERR_ASG_SEQ_OWNER_DIF_TABLE)
                  .arg(QString::fromUtf8(this->obterNome(true))),
                  ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -283,8 +283,8 @@ void Sequencia::definirPossuidora(Coluna *coluna)
   this->coluna=coluna;
 
   if(coluna && coluna->incluidoPorRelacionamento() &&
-     coluna->obterIdObjeto() > this->object_id)
-   this->object_id=BaseObject::obterIdGlobal();
+     coluna->getObjectId() > this->object_id)
+   this->object_id=BaseObject::getGlobalId();
  }
 }
 
@@ -341,14 +341,14 @@ QString Sequencia::obterDefinicaoObjeto(unsigned tipo_def)
      e a coluna possuidora */
   str_aux=tabela->obterNome(true) + "." + coluna->obterNome(true);
  }
- atributos[ParsersAttributes::OWNER_COLUMN]=str_aux;
+ attributes[ParsersAttributes::OWNER_COLUMN]=str_aux;
 
- atributos[ParsersAttributes::INCREMENT]=incremento;
- atributos[ParsersAttributes::MIN_VALUE]=valor_min;
- atributos[ParsersAttributes::MAX_VALUE]=valor_max;
- atributos[ParsersAttributes::START]=inicio;
- atributos[ParsersAttributes::CACHE]=cache;
- atributos[ParsersAttributes::CYCLE]=(ciclica ? "1" : "");
+ attributes[ParsersAttributes::INCREMENT]=incremento;
+ attributes[ParsersAttributes::MIN_VALUE]=valor_min;
+ attributes[ParsersAttributes::MAX_VALUE]=valor_max;
+ attributes[ParsersAttributes::START]=inicio;
+ attributes[ParsersAttributes::CACHE]=cache;
+ attributes[ParsersAttributes::CYCLE]=(ciclica ? "1" : "");
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }

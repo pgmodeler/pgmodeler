@@ -2,15 +2,15 @@
 
 ConversaoTipo::ConversaoTipo(void)
 {
- tipo_objeto=OBJ_CAST;
+ obj_type=OBJ_CAST;
  funcao_conv=NULL;
  tipo=CONV_IMPLICITA;
  entrada_saida=false;
- atributos[ParsersAttributes::SOURCE_TYPE]="";
- atributos[ParsersAttributes::DEST_TYPE]="";
- atributos[ParsersAttributes::SIGNATURE]="";
- atributos[ParsersAttributes::CAST_TYPE]="";
- atributos[ParsersAttributes::IO_CAST]="";
+ attributes[ParsersAttributes::SOURCE_TYPE]="";
+ attributes[ParsersAttributes::DEST_TYPE]="";
+ attributes[ParsersAttributes::SIGNATURE]="";
+ attributes[ParsersAttributes::CAST_TYPE]="";
+ attributes[ParsersAttributes::IO_CAST]="";
 }
 
 void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
@@ -24,7 +24,7 @@ void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
   if((*tipo_dado)=="")
    throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CAST)),
+                         .arg(BaseObject::getTypeName(OBJ_CAST)),
                  ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Atribui o tipo de dado ao índice especifico de tipos de dados
@@ -36,7 +36,7 @@ void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
      é disparada um exceção */
   throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- this->nome=QString("cast(%1,%2)").arg(~tipos[CONV_TIPO_ORIGEM]).arg(~tipos[CONV_TIPO_DESTINO]);
+ this->obj_name=QString("cast(%1,%2)").arg(~tipos[CONV_TIPO_ORIGEM]).arg(~tipos[CONV_TIPO_DESTINO]);
 }
 
 void ConversaoTipo::definirTipoConversao(unsigned tipo)
@@ -62,7 +62,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  if(!funcao_conv)
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CAST)),
+                         .arg(BaseObject::getTypeName(OBJ_CAST)),
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o número de parâmetros da função para validações específicas
@@ -72,7 +72,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  if(qtd_param==0 || qtd_param > 3)
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CAST)),
+                         .arg(BaseObject::getTypeName(OBJ_CAST)),
                 ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -92,7 +92,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
   if(erro)
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CAST)),
+                         .arg(BaseObject::getTypeName(OBJ_CAST)),
                  ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
@@ -100,7 +100,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  if(funcao_conv->obterTipoRetorno()!=this->tipos[CONV_TIPO_DESTINO])
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_CAST)),
+                         .arg(BaseObject::getTypeName(OBJ_CAST)),
                 ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->funcao_conv=funcao_conv;
@@ -136,32 +136,32 @@ QString ConversaoTipo::obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
-  atributos[ParsersAttributes::SOURCE_TYPE]=(*tipos[CONV_TIPO_ORIGEM]);
-  atributos[ParsersAttributes::DEST_TYPE]=(*tipos[CONV_TIPO_DESTINO]);
+  attributes[ParsersAttributes::SOURCE_TYPE]=(*tipos[CONV_TIPO_ORIGEM]);
+  attributes[ParsersAttributes::DEST_TYPE]=(*tipos[CONV_TIPO_DESTINO]);
  }
  else
  {
-  atributos[ParsersAttributes::SOURCE_TYPE]=tipos[CONV_TIPO_ORIGEM].obterDefinicaoObjeto(tipo_def);
-  atributos[ParsersAttributes::DEST_TYPE]=tipos[CONV_TIPO_DESTINO].obterDefinicaoObjeto(tipo_def);
+  attributes[ParsersAttributes::SOURCE_TYPE]=tipos[CONV_TIPO_ORIGEM].obterDefinicaoObjeto(tipo_def);
+  attributes[ParsersAttributes::DEST_TYPE]=tipos[CONV_TIPO_DESTINO].obterDefinicaoObjeto(tipo_def);
  }
 
  if(funcao_conv)
  {
   if(tipo_def==SchemaParser::SQL_DEFINITION)
-   atributos[ParsersAttributes::SIGNATURE]=funcao_conv->obterAssinatura();
+   attributes[ParsersAttributes::SIGNATURE]=funcao_conv->obterAssinatura();
   else
-   atributos[ParsersAttributes::SIGNATURE]=funcao_conv->obterDefinicaoObjeto(tipo_def, true);
+   attributes[ParsersAttributes::SIGNATURE]=funcao_conv->obterDefinicaoObjeto(tipo_def, true);
  }
 
  if(tipo==CONV_ATRIBUICAO)
-  atributos[ParsersAttributes::CAST_TYPE]=ParsersAttributes::ASSIGNMENT;
+  attributes[ParsersAttributes::CAST_TYPE]=ParsersAttributes::ASSIGNMENT;
  else
-  atributos[ParsersAttributes::CAST_TYPE]=ParsersAttributes::IMPLICIT;
+  attributes[ParsersAttributes::CAST_TYPE]=ParsersAttributes::IMPLICIT;
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
-  atributos[ParsersAttributes::CAST_TYPE]=atributos[ParsersAttributes::CAST_TYPE].toUpper();
+  attributes[ParsersAttributes::CAST_TYPE]=attributes[ParsersAttributes::CAST_TYPE].toUpper();
 
- atributos[ParsersAttributes::IO_CAST]=(entrada_saida ? "1" : "");
+ attributes[ParsersAttributes::IO_CAST]=(entrada_saida ? "1" : "");
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }

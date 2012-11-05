@@ -184,7 +184,7 @@ void CenaObjetos::exibirLinhaRelacionamento(bool valor, const QPointF &p)
    if(!valor && obj_base &&
       obj_base->obterTipoObjeto()!=OBJ_RELATIONSHIP &&
       obj_base->obterTipoObjeto()!=BASE_RELATIONSHIP &&
-      !obj_base->objetoProtegido())
+      !obj_base->isProtected())
     flags=QGraphicsItem::ItemIsMovable |
           QGraphicsItem::ItemIsSelectable |
           QGraphicsItem::ItemSendsGeometryChanges;

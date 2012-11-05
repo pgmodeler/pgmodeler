@@ -55,24 +55,24 @@ BaseObject::BaseObject(void)
  object_id=BaseObject::global_id++;
  protected_obj=false;
  //nome="";
- tipo_objeto=BASE_OBJECT;
+ obj_type=BASE_OBJECT;
  schema=NULL;
  owner=NULL;
  tablespace=NULL;
- atributos[ParsersAttributes::NAME]="";
- atributos[ParsersAttributes::COMMENT]="";
- atributos[ParsersAttributes::OWNER]="";
- atributos[ParsersAttributes::TABLESPACE]="";
- atributos[ParsersAttributes::SCHEMA]="";
- atributos[ParsersAttributes::PROTECTED]="";
+ attributes[ParsersAttributes::NAME]="";
+ attributes[ParsersAttributes::COMMENT]="";
+ attributes[ParsersAttributes::OWNER]="";
+ attributes[ParsersAttributes::TABLESPACE]="";
+ attributes[ParsersAttributes::SCHEMA]="";
+ attributes[ParsersAttributes::PROTECTED]="";
 }
 
-unsigned BaseObject::obterIdGlobal(void)
+unsigned BaseObject::getGlobalId(void)
 {
  return(global_id);
 }
 
-QString BaseObject::obterNomeTipoObjeto(ObjectType tipo_objeto)
+QString BaseObject::getTypeName(ObjectType tipo_objeto)
 {
  if(tipo_objeto!=BASE_OBJECT)
   /* Devido a classe ObjetoBase não ser derivada de QObject a função tr() é ineficiente para traduzir os nomes
@@ -84,17 +84,17 @@ QString BaseObject::obterNomeTipoObjeto(ObjectType tipo_objeto)
   return("");
 }
 
-QString BaseObject::obterNomeEsquemaObjeto(ObjectType tipo_objeto)
+QString BaseObject::getSchemaName(ObjectType tipo_objeto)
 {
  return(objs_schemas[tipo_objeto]);
 }
 
-QString BaseObject::obterNomeSQLObjeto(ObjectType tipo_objeto)
+QString BaseObject::getSQLName(ObjectType tipo_objeto)
 {
  return(objs_sql[tipo_objeto]);
 }
 
-QString BaseObject::formatarNome(const QString &nome_obj, bool obj_operador)
+QString BaseObject::formatName(const QString &nome_obj, bool obj_operador)
 {
  int i;
  bool formatado=false;
@@ -124,7 +124,7 @@ QString BaseObject::formatarNome(const QString &nome_obj, bool obj_operador)
     inválidos de acordo com a regra e é a única exceção a qual seu
     nome é formatado mesmo sendo inválido) ou se nome é valido de acordo
     com as regras do SGBD para os demais tipos de objetos */
- if(!formatado && (obj_operador || nomeValido(nome_obj)))
+ if(!formatado && (obj_operador || isValidName(nome_obj)))
  {
   bool maiusc=false;
   unsigned i, qtd;
@@ -187,7 +187,7 @@ QString BaseObject::formatarNome(const QString &nome_obj, bool obj_operador)
  return(nome_form);
 }
 
-bool BaseObject::nomeValido(const QString &nome_obj)
+bool BaseObject::isValidName(const QString &nome_obj)
 {
  int tam;
 
@@ -198,7 +198,7 @@ bool BaseObject::nomeValido(const QString &nome_obj)
 
  /* Caso o nome seja maior do que o tamanho máximo
     aceito pelo SGBD (atualmente 63 bytes) */
- if(nome_obj.isEmpty() || tam > TAM_MAX_NOME_OBJETO)
+ if(nome_obj.isEmpty() || tam > OBJECT_NAME_MAX_LENGTH)
   return(false);
  else
  {
@@ -303,37 +303,37 @@ void BaseObject::definirNome(const QString &nome)
   if(qtd >=1) nome_aux.chop(qtd);
 
   //Caso o nome não seja válido dispara uma exceção
-  if(!nomeValido(nome_aux))
+  if(!isValidName(nome_aux))
    throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
    nome_aux.remove('\"');
-   this->nome=nome_aux;
+   this->obj_name=nome_aux;
   }
  }
 }
 
 void BaseObject::definirComentario(const QString &comentario)
 {
- this->comentario=comentario;
+ this->comment=comentario;
 }
 
 void BaseObject::definirEsquema(BaseObject *esquema)
 {
  if(!esquema)
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_SCHEMA)
-                .arg(QString::fromUtf8(this->nome)).arg(this->obterNomeTipoObjeto()),
+                .arg(QString::fromUtf8(this->obj_name)).arg(this->getTypeName()),
                 ERR_ASG_NOT_ALOC_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(esquema && esquema->obterTipoObjeto()!=OBJ_SCHEMA)
   throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  if(tipo_objeto==OBJ_FUNCTION || tipo_objeto==OBJ_TABLE ||
-     tipo_objeto==OBJ_VIEW  || tipo_objeto==OBJ_DOMAIN ||
-     tipo_objeto==OBJ_AGGREGATE || tipo_objeto==OBJ_OPERATOR ||
-     tipo_objeto==OBJ_SEQUENCE || tipo_objeto==OBJ_CONVERSION ||
-     tipo_objeto==OBJ_TYPE || tipo_objeto==OBJ_OPCLASS ||
-     tipo_objeto==OBJ_OPFAMILY)
+  if(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE ||
+     obj_type==OBJ_VIEW  || obj_type==OBJ_DOMAIN ||
+     obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
+     obj_type==OBJ_SEQUENCE || obj_type==OBJ_CONVERSION ||
+     obj_type==OBJ_TYPE || obj_type==OBJ_OPCLASS ||
+     obj_type==OBJ_OPFAMILY)
   {
    this->schema=esquema;
   }
@@ -348,13 +348,13 @@ void BaseObject::definirDono(BaseObject *dono)
   throw Exception(ERR_ASG_INV_ROLE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  if(tipo_objeto==OBJ_FUNCTION || tipo_objeto==OBJ_TABLE ||
-     tipo_objeto==OBJ_DOMAIN || tipo_objeto==OBJ_SCHEMA ||
-     tipo_objeto==OBJ_AGGREGATE || tipo_objeto==OBJ_OPERATOR ||
-     tipo_objeto==OBJ_CONVERSION ||
-     tipo_objeto==OBJ_LANGUAGE || tipo_objeto==OBJ_TYPE ||
-     tipo_objeto==OBJ_TABLESPACE || tipo_objeto==OBJ_DATABASE ||
-     tipo_objeto==OBJ_OPCLASS || tipo_objeto==OBJ_OPFAMILY)
+  if(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE ||
+     obj_type==OBJ_DOMAIN || obj_type==OBJ_SCHEMA ||
+     obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
+     obj_type==OBJ_CONVERSION ||
+     obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
+     obj_type==OBJ_TABLESPACE || obj_type==OBJ_DATABASE ||
+     obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
   {
    this->owner=dono;
   }
@@ -369,10 +369,10 @@ void BaseObject::definirEspacoTabela(BaseObject *espacotabela)
   throw Exception(ERR_ASG_INV_TABLESPACE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  if(tipo_objeto==OBJ_INDEX ||
-     tipo_objeto==OBJ_TABLE ||
-     tipo_objeto==OBJ_CONSTRAINT ||
-     tipo_objeto==OBJ_DATABASE)
+  if(obj_type==OBJ_INDEX ||
+     obj_type==OBJ_TABLE ||
+     obj_type==OBJ_CONSTRAINT ||
+     obj_type==OBJ_DATABASE)
   {
    this->tablespace=espacotabela;
   }
@@ -389,74 +389,74 @@ QString BaseObject::obterNome(bool formatar)
 
   /* Formata o nome do objeto e marca o flag que indica se o objeto
      é um operador ou não */
-  nome_aux=formatarNome(this->nome, (tipo_objeto==OBJ_OPERATOR));
+  nome_aux=formatName(this->obj_name, (obj_type==OBJ_OPERATOR));
 
   if(this->schema)
-   nome_aux=formatarNome(this->schema->obterNome()) + "." + nome_aux;
+   nome_aux=formatName(this->schema->obterNome()) + "." + nome_aux;
 
   return(nome_aux);
  }
- else return(this->nome);
+ else return(this->obj_name);
 }
 
 QString BaseObject::obterComentario(void)
 {
- return(comentario);
+ return(comment);
 }
 
-BaseObject *BaseObject::obterEsquema(void)
+BaseObject *BaseObject::getSchema(void)
 {
  return(schema);
 }
 
-BaseObject *BaseObject::obterDono(void)
+BaseObject *BaseObject::getOwner(void)
 {
  return(owner);
 }
 
-BaseObject *BaseObject::obterEspacoTabela(void)
+BaseObject *BaseObject::getTablespace(void)
 {
  return(tablespace);
 }
 
 ObjectType BaseObject::obterTipoObjeto(void)
 {
- return(tipo_objeto);
+ return(obj_type);
 }
 
-QString BaseObject::obterNomeTipoObjeto(void)
+QString BaseObject::getTypeName(void)
 {
- return(BaseObject::obterNomeTipoObjeto(this->tipo_objeto));
+ return(BaseObject::getTypeName(this->obj_type));
 }
 
-QString BaseObject::obterNomeEsquemaObjeto(void)
+QString BaseObject::getSchemaName(void)
 {
- return(BaseObject::obterNomeEsquemaObjeto(this->tipo_objeto));
+ return(BaseObject::getSchemaName(this->obj_type));
 }
 
-QString BaseObject::obterNomeSQLObjeto(void)
+QString BaseObject::getSQLName(void)
 {
- return(BaseObject::obterNomeSQLObjeto(this->tipo_objeto));
+ return(BaseObject::getSQLName(this->obj_type));
 }
 
-bool BaseObject::objetoProtegido(void)
+bool BaseObject::isProtected(void)
 {
  return(protected_obj);
 }
 
-unsigned BaseObject::obterIdObjeto(void)
+unsigned BaseObject::getObjectId(void)
 {
  return(object_id);
 }
 
 bool BaseObject::operator == (const QString &nome)
 {
- return(this->nome==nome);
+ return(this->obj_name==nome);
 }
 
 bool BaseObject::operator != (const QString &nome)
 {
- return(this->nome!=nome);
+ return(this->obj_name!=nome);
 }
 
 QString BaseObject::obterDefinicaoObjeto(unsigned tipo_def)
@@ -469,11 +469,11 @@ QString BaseObject::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  QString def;
 
  if((tipo_def==SchemaParser::SQL_DEFINITION &&
-     tipo_objeto!=BASE_OBJECT && tipo_objeto!=BASE_RELATIONSHIP &&
-     tipo_objeto!=BASE_TABLE && tipo_objeto!=OBJ_TEXTBOX) ||
+     obj_type!=BASE_OBJECT && obj_type!=BASE_RELATIONSHIP &&
+     obj_type!=BASE_TABLE && obj_type!=OBJ_TEXTBOX) ||
 
     (tipo_def==SchemaParser::XML_DEFINITION &&
-     tipo_objeto!=BASE_OBJECT && tipo_objeto!=BASE_TABLE))
+     obj_type!=BASE_OBJECT && obj_type!=BASE_TABLE))
  {
   bool formatar;
   QString str_aux;
@@ -481,14 +481,14 @@ QString BaseObject::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   //Formata o nome dos objetos caso uma definição SQL está sendo gerada
   formatar=(tipo_def==SchemaParser::SQL_DEFINITION ||
             (tipo_def==SchemaParser::XML_DEFINITION && forma_reduzida &&
-             tipo_objeto!=OBJ_TEXTBOX && tipo_objeto!=OBJ_RELATIONSHIP &&
-             tipo_objeto!=BASE_RELATIONSHIP));
-  atributos[objs_schemas[tipo_objeto]]="1";
+             obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP &&
+             obj_type!=BASE_RELATIONSHIP));
+  attributes[objs_schemas[obj_type]]="1";
 
   /* Marcando a flag que indica que o a forma de comentário a ser gerada
      para o objeto é específica para o mesmo, fugindo da regra padrão.
      (Ver arquivo de esquema SQL para comentários) */
-  switch(tipo_objeto)
+  switch(obj_type)
   {
    case OBJ_COLUMN:
    case OBJ_AGGREGATE:
@@ -500,74 +500,74 @@ QString BaseObject::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
    case OBJ_OPERATOR:
    case OBJ_OPCLASS:
    case OBJ_OPFAMILY:
-    atributos[ParsersAttributes::DIF_SQL]="1";
+    attributes[ParsersAttributes::DIF_SQL]="1";
    break;
    default:
-    atributos[ParsersAttributes::DIF_SQL]="";
+    attributes[ParsersAttributes::DIF_SQL]="";
    break;
   }
 
-  atributos[ParsersAttributes::NAME]=this->obterNome(formatar);
-  atributos[ParsersAttributes::SQL_OBJECT]=objs_sql[this->tipo_objeto];
+  attributes[ParsersAttributes::NAME]=this->obterNome(formatar);
+  attributes[ParsersAttributes::SQL_OBJECT]=objs_sql[this->obj_type];
 
   if(tipo_def==SchemaParser::XML_DEFINITION && schema)
   {
-   atributos[ParsersAttributes::SCHEMA]=schema->obterDefinicaoObjeto(tipo_def, true);
+   attributes[ParsersAttributes::SCHEMA]=schema->obterDefinicaoObjeto(tipo_def, true);
   }
 
   if(tipo_def==SchemaParser::XML_DEFINITION)
-    atributos[ParsersAttributes::PROTECTED]=(protected_obj ? "1" : "");
+    attributes[ParsersAttributes::PROTECTED]=(protected_obj ? "1" : "");
 
-  if(comentario!="")
+  if(comment!="")
   {
-   atributos[ParsersAttributes::COMMENT]=comentario;
+   attributes[ParsersAttributes::COMMENT]=comment;
 
    if((tipo_def==SchemaParser::SQL_DEFINITION &&
-       tipo_objeto!=OBJ_TABLESPACE &&
-       tipo_objeto!=OBJ_DATABASE) ||
+       obj_type!=OBJ_TABLESPACE &&
+       obj_type!=OBJ_DATABASE) ||
       tipo_def==SchemaParser::XML_DEFINITION)
    {
     SchemaParser::setIgnoreUnkownAttributes(true);
-    atributos[ParsersAttributes::COMMENT]=
-    SchemaParser::getObjectDefinition(ParsersAttributes::COMMENT, atributos, tipo_def);
+    attributes[ParsersAttributes::COMMENT]=
+    SchemaParser::getObjectDefinition(ParsersAttributes::COMMENT, attributes, tipo_def);
    }
   }
 
   if(tablespace)
   {
    if(tipo_def==SchemaParser::SQL_DEFINITION)
-    atributos[ParsersAttributes::TABLESPACE]=tablespace->obterNome(formatar);
+    attributes[ParsersAttributes::TABLESPACE]=tablespace->obterNome(formatar);
    else
-    atributos[ParsersAttributes::TABLESPACE]=tablespace->obterDefinicaoObjeto(tipo_def, true);
+    attributes[ParsersAttributes::TABLESPACE]=tablespace->obterDefinicaoObjeto(tipo_def, true);
   }
 
   if(owner)
   {
    if(tipo_def==SchemaParser::SQL_DEFINITION)
    {
-    atributos[ParsersAttributes::OWNER]=owner->obterNome(formatar);
+    attributes[ParsersAttributes::OWNER]=owner->obterNome(formatar);
 
     /** Apenas espaços de tabelas e banco de dados não têm um comando ALTER SET OWNER
         pois por regra do PostgreSQL, espaços de tabelas e banco de dados devem ser criados
         com apenas por linha de comando isolada das demais **/
     if((tipo_def==SchemaParser::SQL_DEFINITION &&
-        tipo_objeto!=OBJ_TABLESPACE &&
-        tipo_objeto!=OBJ_DATABASE) ||
+        obj_type!=OBJ_TABLESPACE &&
+        obj_type!=OBJ_DATABASE) ||
        tipo_def==SchemaParser::XML_DEFINITION)
     {
      SchemaParser::setIgnoreUnkownAttributes(true);
-     atributos[ParsersAttributes::OWNER]=
-     SchemaParser::getObjectDefinition(ParsersAttributes::OWNER, atributos, tipo_def);
+     attributes[ParsersAttributes::OWNER]=
+     SchemaParser::getObjectDefinition(ParsersAttributes::OWNER, attributes, tipo_def);
     }
    }
    else
-    atributos[ParsersAttributes::OWNER]=owner->obterDefinicaoObjeto(tipo_def, true);
+    attributes[ParsersAttributes::OWNER]=owner->obterDefinicaoObjeto(tipo_def, true);
   }
 
   if(forma_reduzida)
-   atributos[ParsersAttributes::REDUCED_FORM]="1";
+   attributes[ParsersAttributes::REDUCED_FORM]="1";
   else
-   atributos[ParsersAttributes::REDUCED_FORM]="";
+   attributes[ParsersAttributes::REDUCED_FORM]="";
 
   try
   {
@@ -575,7 +575,7 @@ QString BaseObject::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
       terão os caracteres <, >, ', " e & substituídos pelos
       equivalentes no XML, evitando assim a construção de
       código XMl com erros de sintaxe */
-   def=SchemaParser::getObjectDefinition(objs_schemas[tipo_objeto], atributos, tipo_def);
+   def=SchemaParser::getObjectDefinition(objs_schemas[obj_type], attributes, tipo_def);
    if(tipo_def==SchemaParser::XML_DEFINITION)
    {
     QRegExp vet_regexp[]={
@@ -627,12 +627,12 @@ QString BaseObject::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
     while(pos >=0 && pos1 >=0);
    }
 
-   limparAtributos();
+   clearAttributes();
   }
   catch(Exception &e)
   {
    SchemaParser::restartParser();
-   limparAtributos();
+   clearAttributes();
    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
  }
@@ -640,17 +640,17 @@ QString BaseObject::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  return(def);
 }
 
-void BaseObject::definirAtributoEsquema(const QString &atrib, const QString &valor)
+void BaseObject::setAttribute(const QString &atrib, const QString &valor)
 {
- atributos[atrib]=valor;
+ attributes[atrib]=valor;
 }
 
-void BaseObject::limparAtributos(void)
+void BaseObject::clearAttributes(void)
 {
  map<QString, QString>::iterator itr, itr_end;
 
- itr=atributos.begin();
- itr_end=atributos.end();
+ itr=attributes.begin();
+ itr_end=attributes.end();
 
  while(itr!=itr_end)
  {
@@ -664,9 +664,9 @@ void BaseObject::operator = (BaseObject &obj)
  this->owner=obj.owner;
  this->schema=obj.schema;
  this->tablespace=obj.tablespace;
- this->comentario=obj.comentario;
- this->nome=obj.nome;
- this->tipo_objeto=obj.tipo_objeto;
+ this->comment=obj.comment;
+ this->obj_name=obj.obj_name;
+ this->obj_type=obj.obj_type;
  this->protected_obj=obj.protected_obj;
 }
 

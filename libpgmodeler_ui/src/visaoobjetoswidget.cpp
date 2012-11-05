@@ -83,16 +83,16 @@ VisaoObjetosWidget::VisaoObjetosWidget(bool visao_simplificada, QWidget *parent,
 
   //Caso o tipo do objeto seja um relacionamento base, configura um ícone específico para o mesmo
   if(tipos[id_tipo]==BASE_RELATIONSHIP)
-   str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipos[id_tipo])) + "tv";
+   str_aux=QString(BaseObject::getSchemaName(tipos[id_tipo])) + "tv";
   else
    //Caso contrario, configura o ícone do próprio tipo
-   str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipos[id_tipo]));
+   str_aux=QString(BaseObject::getSchemaName(tipos[id_tipo]));
 
   //Carrega o icone do tipo em um pixmap
   icone=QPixmap(QString::fromUtf8(":/icones/icones/") + str_aux + QString(".png"));
 
   //Configura o texto do item como sendo o nome do tipo de objeto
-  item->setText(QString::fromUtf8(BaseObject::obterNomeTipoObjeto(tipos[id_tipo])));
+  item->setText(QString::fromUtf8(BaseObject::getTypeName(tipos[id_tipo])));
   //Atribui o ícone do objeto ao item
   item->setIcon(icone);
   //Define o item como marcado
@@ -363,7 +363,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
 
      /* Caso o objeto esteja protegido, configura um estilo de fonte para
         indicar esta situação */
-     if(objeto->objetoProtegido())
+     if(objeto->isProtected())
      {
       fonte=item_tab->font();
       fonte.setItalic(true);
@@ -398,7 +398,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
 
      if(tipos[id_tipo]==BASE_RELATIONSHIP || tipos[id_tipo]==OBJ_RELATIONSHIP)
      {
-      str_aux=QString(BaseObject::obterNomeEsquemaObjeto(objeto->obterTipoObjeto()));
+      str_aux=QString(BaseObject::getSchemaName(objeto->obterTipoObjeto()));
 
       if(tipos[id_tipo]==BASE_RELATIONSHIP)
         str_aux+="tv";
@@ -419,12 +419,12 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
       }
      }
      else
-      str_aux=QString(BaseObject::obterNomeEsquemaObjeto(objeto->obterTipoObjeto()));
+      str_aux=QString(BaseObject::getSchemaName(objeto->obterTipoObjeto()));
 
      icone=QPixmap(QString(":/icones/icones/") + str_aux + QString(".png"));
 
      listaobjetos_tbw->setItem(id_lin, 1, item_tab);
-     item_tab->setText(QString::fromUtf8(objeto->obterNomeTipoObjeto()));
+     item_tab->setText(QString::fromUtf8(objeto->getTypeName()));
      item_tab->setIcon(icone);
      fonte=item_tab->font();
      fonte.setItalic(true);
@@ -468,21 +468,21 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
        case OBJ_OPCLASS:
           //Configura o ícone de esquema
           icone=QPixmap(QString(":/icones/icones/") +
-                        QString(BaseObject::obterNomeEsquemaObjeto(OBJ_SCHEMA)) +
+                        QString(BaseObject::getSchemaName(OBJ_SCHEMA)) +
 		        QString(".png"));
 
-          item_tab->setText(QString::fromUtf8(objeto->obterEsquema()->obterNome()));
+          item_tab->setText(QString::fromUtf8(objeto->getSchema()->obterNome()));
 
           //Atribui o icone ao item da tabela e configura o nome do tipo
           item_tab1->setIcon(icone);
-          item_tab1->setText(QString::fromUtf8(BaseObject::obterNomeTipoObjeto(OBJ_SCHEMA)));
+          item_tab1->setText(QString::fromUtf8(BaseObject::getTypeName(OBJ_SCHEMA)));
 
           //Armazenando o endereço da esquema do objeto nos itens descritores do container
-          esquema=objeto->obterEsquema();
+          esquema=objeto->getSchema();
 
           /* Caso o objeto esteja protegido, configura um estilo de fonte para
              indicar esta situação */
-          if(esquema && esquema->objetoProtegido())
+          if(esquema && esquema->isProtected())
           {
            fonte=item_tab->font();
            fonte.setItalic(true);
@@ -494,11 +494,11 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
        //Demais objetos cujo container direto é o banco de dados
        default:
           icone=QPixmap(QString(":/icones/icones/") +
-                        QString(BaseObject::obterNomeEsquemaObjeto(OBJ_DATABASE)) +
+                        QString(BaseObject::getSchemaName(OBJ_DATABASE)) +
 		        QString(".png"));
           item_tab->setText(QString::fromUtf8(modelo_bd->obterNome()));
           item_tab1->setIcon(icone);
-          item_tab1->setText(QString::fromUtf8(BaseObject::obterNomeTipoObjeto(OBJ_DATABASE)));
+          item_tab1->setText(QString::fromUtf8(BaseObject::getTypeName(OBJ_DATABASE)));
 
           //Armazenando o endereço do modelo de banco de dados nos itens descritores do container
        break;
@@ -544,7 +544,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
       }
       /* Caso o objeto esteja protegido, configura um estilo de fonte para
         indicar esta situação */
-      else  if(objeto_tab->objetoProtegido())
+      else  if(objeto_tab->isProtected())
       {
        fonte=item_tab->font();
        fonte.setItalic(true);
@@ -555,10 +555,10 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
       //Cria o item descritor de tipo do objeto
       item_tab=new QTableWidgetItem;
       icone=QPixmap(QString(":/icones/icones/") +
-                    QString(BaseObject::obterNomeEsquemaObjeto(objeto_tab->obterTipoObjeto())) +
+                    QString(BaseObject::getSchemaName(objeto_tab->obterTipoObjeto())) +
 		    QString(".png"));
       listaobjetos_tbw->setItem(id_lin, 1, item_tab);
-      item_tab->setText(QString::fromUtf8(objeto_tab->obterNomeTipoObjeto()));
+      item_tab->setText(QString::fromUtf8(objeto_tab->getTypeName()));
       item_tab->setIcon(icone);
       fonte=item_tab->font();
       fonte.setItalic(true);
@@ -575,7 +575,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
 
       /* Caso o objeto esteja protegido, configura um estilo de fonte para
          indicar esta situação */
-      if(tabela->objetoProtegido())
+      if(tabela->isProtected())
       {
        fonte=item_tab->font();
        fonte.setItalic(true);
@@ -590,12 +590,12 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
 
       //Configura o ícone de tabela (container)
       icone=QPixmap(QString(":/icones/icones/") +
-                    QString(BaseObject::obterNomeEsquemaObjeto(OBJ_TABLE)) +
+                    QString(BaseObject::getSchemaName(OBJ_TABLE)) +
 		    QString(".png"));
 
       //Atribui o icone ao item da tabela e configura o nome do tipo do container
       item_tab1->setIcon(icone);
-      item_tab1->setText(QString::fromUtf8(BaseObject::obterNomeTipoObjeto(OBJ_TABLE)));
+      item_tab1->setText(QString::fromUtf8(BaseObject::getTypeName(OBJ_TABLE)));
       item_tab1->setData(Qt::UserRole, gerarValorItem(objeto_tab));
      }
     }
@@ -626,11 +626,11 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
                            OBJ_SEQUENCE };
           //Configura o ícone que designa um esquema
   QPixmap icone_esq=QPixmap(QString(":/icones/icones/") +
-                            QString(BaseObject::obterNomeEsquemaObjeto(OBJ_SCHEMA)) +
+                            QString(BaseObject::getSchemaName(OBJ_SCHEMA)) +
 			    QString(".png")),
           //Configura o ícone que designa um grupo de esquemas
           icone_grupo=QPixmap(QString(":/icones/icones/") +
-                              QString(BaseObject::obterNomeEsquemaObjeto(OBJ_SCHEMA)) +
+                              QString(BaseObject::getSchemaName(OBJ_SCHEMA)) +
                               QString("_grp") +
 			      QString(".png"));
 
@@ -640,7 +640,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
   item->setIcon(0,icone_grupo);
 
   //Configura o texto do item como sendo o nome do tipo "esquema" com a quantidade obtida
-  item->setText(0,BaseObject::obterNomeTipoObjeto(OBJ_SCHEMA) +
+  item->setText(0,BaseObject::getTypeName(OBJ_SCHEMA) +
                   QString(" (%1)").arg(qtd));
   fonte=item->font(0);
   fonte.setItalic(true);
@@ -675,7 +675,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
 
     /* Caso o objeto esteja protegido, configura um estilo de fonte para
        indicar esta situação */
-    if(esquema && esquema->objetoProtegido())
+    if(esquema && esquema->isProtected())
     {
      fonte=item2->font(0);
      fonte.setItalic(true);
@@ -694,7 +694,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
       //Cria um item que designa um grupo de objetos do tipo atual
       item3=new QTreeWidgetItem(item2);
       item3->setIcon(0,QPixmap(QString(":/icones/icones/") +
-                       QString(BaseObject::obterNomeEsquemaObjeto(tipos[i1])) +
+                       QString(BaseObject::getSchemaName(tipos[i1])) +
                        QString("_grp") +
 		       QString(".png")));
 
@@ -704,7 +704,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
          quantidade de objetos encontrados */
       qtd2=lista_obj.size();
       item3->setText(0,
-                      BaseObject::obterNomeTipoObjeto(tipos[i1]) +
+                      BaseObject::getTypeName(tipos[i1]) +
                       QString(" (%1)").arg(qtd2));
       fonte=item3->font(0);
       fonte.setItalic(true);
@@ -720,7 +720,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
 
        /* Caso o objeto esteja protegido, configura um estilo de fonte para
           indicar esta situação */
-       if(objeto->objetoProtegido())
+       if(objeto->isProtected())
        {
         fonte=item4->font(0);
         fonte.setItalic(true);
@@ -756,7 +756,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
 
         //Configura o icone do do item como sendo o icone para o tipo atual
         item4->setIcon(0,QPixmap(QString(":/icones/icones/") +
-                         QString(BaseObject::obterNomeEsquemaObjeto(tipos[i1])) +
+                         QString(BaseObject::getSchemaName(tipos[i1])) +
 		         QString(".png")));
       }
      }
@@ -786,10 +786,10 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
                            OBJ_TRIGGER, OBJ_INDEX };
           //Configura o ícone que designa uma tabela
   QPixmap icone_tab=QPixmap(QString(":/icones/icones/") +
-                            QString(BaseObject::obterNomeEsquemaObjeto(OBJ_TABLE)) + QString(".png")),
+                            QString(BaseObject::getSchemaName(OBJ_TABLE)) + QString(".png")),
           //Configura o ícone que designa um grupo de tabelas
           icone_grupo=QPixmap(QString(":/icones/icones/") +
-                              QString(BaseObject::obterNomeEsquemaObjeto(OBJ_TABLE)) +
+                              QString(BaseObject::getSchemaName(OBJ_TABLE)) +
                               QString("_grp") + QString(".png"));
 
   try
@@ -801,7 +801,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
    item->setIcon(0,icone_grupo);
    /* O texto do ícone será o nome do tipo do objeto (no caso, tabela) e a
       quantidade de objetos encontrado */
-   item->setText(0,BaseObject::obterNomeTipoObjeto(OBJ_TABLE) +
+   item->setText(0,BaseObject::getTypeName(OBJ_TABLE) +
                    QString(" (%1)").arg(lista_obj.size()));
    fonte=item->font(0);
    fonte.setItalic(true);
@@ -819,13 +819,13 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
     item1->setToolTip(0,QString::fromUtf8(tabela->obterNome()));
     //Configura o ícone do item como sendo o ícone de tabela
     item1->setIcon(0,QPixmap(QString(":/icones/icones/") +
-                   QString(BaseObject::obterNomeEsquemaObjeto(OBJ_TABLE)) +
+                   QString(BaseObject::getSchemaName(OBJ_TABLE)) +
 	           QString(".png")));
     item1->setData(0, Qt::UserRole, gerarValorItem(tabela));
 
     /* Caso o objeto esteja protegido, configura um estilo de fonte para
        indicar esta situação */
-    if(tabela->objetoProtegido())
+    if(tabela->isProtected())
     {
      fonte=item1->font(0);
      fonte.setItalic(true);
@@ -842,7 +842,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
          grupo do tipo atual */
       item2=new QTreeWidgetItem(item1);
       item2->setIcon(0,QPixmap(QString(":/icones/icones/") +
-                       QString(BaseObject::obterNomeEsquemaObjeto(tipos[i1])) +
+                       QString(BaseObject::getSchemaName(tipos[i1])) +
                        QString("_grp") +
 		       QString(".png")));
       fonte=item2->font(0);
@@ -852,7 +852,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
       /* Configura o texto do item como sendo o nome do tipo e a quantidade de
          objetos deste tipo presente na tabela */
       qtd1=tabela->obterNumObjetos(tipos[i1]);
-      item2->setText(0,BaseObject::obterNomeTipoObjeto(tipos[i1]) +
+      item2->setText(0,BaseObject::getTypeName(tipos[i1]) +
                       QString(" (%1)").arg(qtd1));
 
       //Varre a lista de elementos filhos da tabela
@@ -877,7 +877,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
        }
        /* Caso o objeto esteja protegido, configura um estilo de fonte para
           indicar esta situação */
-       else if(objeto->objetoProtegido())
+       else if(objeto->isProtected())
        {
         fonte=item3->font(0);
         fonte.setItalic(true);
@@ -909,7 +909,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
        }
 
        //Configura o caminho do ícone e o atribui ao item
-       str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipos[i1])) + str_aux;
+       str_aux=QString(BaseObject::getSchemaName(tipos[i1])) + str_aux;
        item3->setIcon(0,QPixmap(QString(":/icones/icones/") + str_aux + QString(".png")));
       }
      }
@@ -949,7 +949,7 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
     raiz=new QTreeWidgetItem;
     //O ícone é o descritor de banco de dados
     raiz->setIcon(0,QPixmap(QString::fromUtf8(":/icones/icones/") +
-                    QString(BaseObject::obterNomeEsquemaObjeto(OBJ_DATABASE)) +
+                    QString(BaseObject::getSchemaName(OBJ_DATABASE)) +
                     QString(".png")));
     arvoreobjetos_tw->insertTopLevelItem(0,raiz);
     //O texto do item é o próprio nome do banco de dados
@@ -959,7 +959,7 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
 
     /* Caso o objeto esteja protegido, configura um estilo de fonte para
        indicar esta situação */
-    if(/*modelo_wgt->*/modelo_bd->objetoProtegido())
+    if(/*modelo_wgt->*/modelo_bd->isProtected())
     {
      fonte=raiz->font(0);
      fonte.setItalic(true);
@@ -980,9 +980,9 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
          o ícone do grupo daquele tipo */
       item1=new QTreeWidgetItem(raiz);
       if(tipos[i]==BASE_RELATIONSHIP)
-       str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipos[i])) + "tv";
+       str_aux=QString(BaseObject::getSchemaName(tipos[i])) + "tv";
       else
-       str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipos[i]));
+       str_aux=QString(BaseObject::getSchemaName(tipos[i]));
 
       item1->setIcon(0,QPixmap(QString(":/icones/icones/") +
                        str_aux + QString("_grp") + QString(".png")));
@@ -991,7 +991,7 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
       qtd=/*modelo_wgt->*/modelo_bd->obterNumObjetos(tipos[i]);
       /* Configura o texto do item de grupo com o nome do tipo e a quantidade
          de objetos daquele tipo presente no modelo */
-      item1->setText(0,BaseObject::obterNomeTipoObjeto(tipos[i]) +
+      item1->setText(0,BaseObject::getTypeName(tipos[i]) +
                      QString(" (%1)").arg(qtd));
       fonte=item1->font(0);
       fonte.setItalic(true);
@@ -1011,7 +1011,7 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
 
        /* Caso o objeto esteja protegido, configura um estilo de fonte para
           indicar esta situação */
-       if(objeto->objetoProtegido())
+       if(objeto->isProtected())
        {
         fonte=item2->font(0);
         fonte.setItalic(true);
@@ -1051,7 +1051,7 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
        }
 
        //Configura o caminho do ícone e o atribui ao elemento
-       str_aux=QString(BaseObject::obterNomeEsquemaObjeto(tipos[i])) + str_aux;
+       str_aux=QString(BaseObject::getSchemaName(tipos[i])) + str_aux;
        item2->setIcon(0,QPixmap(QString(":/icones/icones/") + str_aux + QString(".png")));
       }
      }

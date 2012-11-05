@@ -210,8 +210,8 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  for(i=0; i < qtd; i++)
  {
   acoes_ins_objs[tipos[i]]=new QAction(QIcon(QString(":/icones/icones/") +
-                                       BaseObject::obterNomeEsquemaObjeto(tipos[i]) + QString(".png")),
-                                       BaseObject::obterNomeTipoObjeto(tipos[i]), this);
+                                       BaseObject::getSchemaName(tipos[i]) + QString(".png")),
+                                       BaseObject::getTypeName(tipos[i]), this);
   acoes_ins_objs[tipos[i]]->setData(QVariant(tipos[i]));
   connect(acoes_ins_objs[tipos[i]], SIGNAL(triggered(bool)), this, SLOT(adicionarNovoObjeto(void)));
  }
@@ -223,7 +223,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 
  for(i=0; i < 5; i++)
  {
-  str_ico=BaseObject::obterNomeEsquemaObjeto(OBJ_RELATIONSHIP) + vet_tipos_rel[i] +  QString(".png");
+  str_ico=BaseObject::getSchemaName(OBJ_RELATIONSHIP) + vet_tipos_rel[i] +  QString(".png");
 
   /* if(i < 3)
    str_txt=trUtf8("Relationship ") + vet_rot_rel[i];
@@ -533,7 +533,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
   while(itr!=itr_end)
   {
    obj=dynamic_cast<ObjetoGraficoBase *>(*itr);
-   if(!dynamic_cast<RelacionamentoBase *>(obj) && (obj && !obj->objetoProtegido()))
+   if(!dynamic_cast<RelacionamentoBase *>(obj) && (obj && !obj->isProtected()))
     lista_op->adicionarObjeto(obj, Operacao::OBJETO_MOVIMENTADO);
 
    itr++;
@@ -837,7 +837,7 @@ void ModeloWidget::carregarModelo(const QString &nome_arq)
   prog_tarefa->close();
   disconnect(modelo, NULL, prog_tarefa, NULL);
 
-  modelo_protegido_frm->setVisible(modelo->objetoProtegido());
+  modelo_protegido_frm->setVisible(modelo->isProtected());
   this->modificado=false;
  }
  catch(Exception &e)
@@ -1401,13 +1401,13 @@ void ModeloWidget::protegerObjeto(void)
    if(obj_graf)
    {
     //Caso seja uma tabela, usa o método de proteção/desproteção da tabela
-    obj_graf->definirProtegido(!obj_graf->objetoProtegido());
+    obj_graf->definirProtegido(!obj_graf->isProtected());
    }
    else if(obj_tab)
    {
     /* Caso seja um objto de tabela protege/desprotege o mesmo e marca como modificada a tabela pai
        para forçar o seu redesenho */
-    obj_tab->definirProtegido(!obj_tab->objetoProtegido());
+    obj_tab->definirProtegido(!obj_tab->isProtected());
     dynamic_cast<Tabela *>(obj_tab->obterTabelaPai())->definirModificado(true);
    }
    else
@@ -1423,21 +1423,21 @@ void ModeloWidget::protegerObjeto(void)
          this->objs_selecionados[0]->obterNome()=="public")))
       throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-    this->objs_selecionados[0]->definirProtegido(!this->objs_selecionados[0]->objetoProtegido());
+    this->objs_selecionados[0]->definirProtegido(!this->objs_selecionados[0]->isProtected());
    }
   }
   //Caso não haja objetos selecionados faz a proteção/desproteção do modelo
   else if(this->objs_selecionados.empty())
   {
    if(obj_sender==action_proteger || obj_sender==action_desproteger)
-    modelo->definirProtegido(!modelo->objetoProtegido());
+    modelo->definirProtegido(!modelo->isProtected());
   }
   //Caso haja mais de um objeto selecionado, faz a proteção em lote
   else
   {
    itr=this->objs_selecionados.begin();
    itr_end=this->objs_selecionados.end();
-   proteger=(!this->objs_selecionados[0]->objetoProtegido());
+   proteger=(!this->objs_selecionados[0]->isProtected());
 
    while(itr!=itr_end)
    {
@@ -1467,7 +1467,7 @@ void ModeloWidget::protegerObjeto(void)
      {
       //Monta a mensagem de que o objeto não pode ser removido por estar protegido
       throw Exception(QString(Exception::getErrorMessage(ERR_OPR_REL_INCL_OBJECT))
-                    .arg(objeto->obterNome()).arg(objeto->obterNomeTipoObjeto()),
+                    .arg(objeto->obterNome()).arg(objeto->getTypeName()),
                     ERR_OPR_REL_INCL_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
      }
     }
@@ -1476,7 +1476,7 @@ void ModeloWidget::protegerObjeto(void)
    }
   }
 
-  modelo_protegido_frm->setVisible(modelo->objetoProtegido());
+  modelo_protegido_frm->setVisible(modelo->isProtected());
   cena->blockSignals(false);
   cena->clearSelection();
 
@@ -1579,8 +1579,8 @@ void ModeloWidget::copiarObjetos(void)
  while(itr!=itr_end)
  {
   objeto=(*itr);
-  id_objs.push_back(objeto->obterIdObjeto());
-  mapa_objs[objeto->obterIdObjeto()]=objeto;
+  id_objs.push_back(objeto->getObjectId());
+  mapa_objs[objeto->getObjectId()]=objeto;
   itr++;
  }
 
@@ -1630,7 +1630,7 @@ void ModeloWidget::colarObjetos(void)
   pos++;
   prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
                                 trUtf8("Validating object: %1 (%2)").arg(objeto->obterNome())
-                                                               .arg(objeto->obterNomeTipoObjeto()),
+                                                               .arg(objeto->getTypeName()),
                                 objeto->obterTipoObjeto());
 
 
@@ -1745,7 +1745,7 @@ void ModeloWidget::colarObjetos(void)
   pos++;
   prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
                                 trUtf8("Generating XML code of object: %1 (%2)").arg(objeto->obterNome())
-                                                                            .arg(objeto->obterNomeTipoObjeto()),
+                                                                            .arg(objeto->getTypeName()),
                                 objeto->obterTipoObjeto());
 
   //Armazena a definição XML do objeto num mapa de buffers xml
@@ -1802,7 +1802,7 @@ void ModeloWidget::colarObjetos(void)
    pos++;
    prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
                                  trUtf8("Pasting object: %1 (%2)").arg(objeto->obterNome())
-                                                                .arg(objeto->obterNomeTipoObjeto()),
+                                                                .arg(objeto->getTypeName()),
                                  objeto->obterTipoObjeto());
 
    /* Com o objeto criado o mesmo é inserido no modelo, exceto para relacionamentos e objetos
@@ -1931,8 +1931,8 @@ void ModeloWidget::excluirObjetos(void)
      while(itr!=itr_end)
      {
       objeto=(*itr);
-      mapa_objs[objeto->obterIdObjeto()]=objeto;
-      vet_ids.push_back(objeto->obterIdObjeto());
+      mapa_objs[objeto->getObjectId()]=objeto;
+      vet_ids.push_back(objeto->getObjectId());
       itr++;
      }
 
@@ -1973,12 +1973,12 @@ void ModeloWidget::excluirObjetos(void)
          (tipo_obj==OBJ_SCHEMA &&
           objeto->obterNome()=="public")))
        throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-     else if(objeto->objetoProtegido())
+     else if(objeto->isProtected())
      {
       //Monta a mensagem de que o objeto não pode ser removido por estar protegido
       throw Exception(QString(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT))
                     .arg(objeto->obterNome(true))
-                    .arg(objeto->obterNomeTipoObjeto()),
+                    .arg(objeto->getTypeName()),
                     ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
      }
      else if(tipo_obj!=BASE_RELATIONSHIP)
@@ -2142,7 +2142,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
  this->desabilitarAcoesModelo();
  this->objs_selecionados=objs_sel;
 
- menu_novo_obj.setEnabled(!this->modelo->objetoProtegido());
+ menu_novo_obj.setEnabled(!this->modelo->isProtected());
 
  if(objs_sel.size() <= 1)
  {
@@ -2170,7 +2170,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
    menu_popup.addAction(action_codigo_fonte);
 
    //Caso o modelo esteja protegido exibe a ação de desproteger e vice-versa
-   if(modelo->objetoProtegido())  
+   if(modelo->isProtected())  
     menu_popup.addAction(action_desproteger);
    else
     menu_popup.addAction(action_proteger);
@@ -2187,7 +2187,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
                             OBJ_RULE, OBJ_INDEX/*, OBJETO_RELACAO */ };
 
    //Se o objeto não está protegido e o mesmo seja um relacionamento ou tabela
-   if(!obj->objetoProtegido() &&
+   if(!obj->isProtected() &&
       (obj->obterTipoObjeto()==OBJ_TABLE ||
        obj->obterTipoObjeto()==OBJ_RELATIONSHIP))
    {
@@ -2235,10 +2235,10 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
     de proteger/desproteger não será exibida pois isso força o usário a desproteger
     todo o modelo para depois manipular os demais objetos */
  if(!objs_sel.empty() &&
-    !this->modelo->objetoProtegido() &&
-    (!obj_tab || (obj_tab && !obj_tab->obterTabelaPai()->objetoProtegido() && !obj_tab->incluidoPorRelacionamento())))
+    !this->modelo->isProtected() &&
+    (!obj_tab || (obj_tab && !obj_tab->obterTabelaPai()->isProtected() && !obj_tab->incluidoPorRelacionamento())))
  {
-  if(!objs_sel[0]->objetoProtegido())
+  if(!objs_sel[0]->isProtected())
     menu_popup.addAction(action_proteger);
    else
     menu_popup.addAction(action_desproteger);
@@ -2255,7 +2255,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
   qtd=objs_sel.size();
   i=0;
   while(i < qtd && !obj_protegido)
-   obj_protegido=objs_sel[i++]->objetoProtegido();
+   obj_protegido=objs_sel[i++]->isProtected();
 
   menu_popup.addAction(action_recortar);
  }
@@ -2299,7 +2299,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
      //Cria um menu poup para restrição. Para cada restrição as ações de editar, codigo fonte, bloquear/desbloquear e excluir são incluídas
      submenu=new QMenu(&menu_popup);
      submenu->setIcon(QPixmap(QString(":/icones/icones/") +
-                      BaseObject::obterNomeEsquemaObjeto(OBJ_CONSTRAINT) + str_aux + QString(".png")));
+                      BaseObject::getSchemaName(OBJ_CONSTRAINT) + str_aux + QString(".png")));
      submenu->setTitle(QString::fromUtf8(rest->obterNome()));
 
      acao=new QAction(dynamic_cast<QObject *>(submenu));
@@ -2318,14 +2318,14 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 
      if(!rest->incluidoPorRelacionamento())
      {
-      if(!rest->obterTabelaPai()->objetoProtegido())
+      if(!rest->obterTabelaPai()->isProtected())
       {
        acao=new QAction(dynamic_cast<QObject *>(&menu_popup));
        acao->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(rest)));
        connect(acao, SIGNAL(triggered(bool)), this, SLOT(protegerObjeto(void)));
        submenu->addAction(acao);
 
-       if(rest->objetoProtegido())
+       if(rest->isProtected())
        {
         acao->setIcon(QPixmap(QString(":/icones/icones/desbloqobjeto.png")));
         acao->setText(trUtf8("Unprotect"));
@@ -2356,7 +2356,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
     submenu=new QMenu(&menu_popup);
     submenu->setTitle(trUtf8("Constraints"));
     submenu->setIcon(QPixmap(QString(":/icones/icones/") +
-                     BaseObject::obterNomeEsquemaObjeto(OBJ_CONSTRAINT) + QString("_grp.png")));
+                     BaseObject::getSchemaName(OBJ_CONSTRAINT) + QString("_grp.png")));
     qtd=submenus.size();
     for(i=0; i < qtd; i++)
      submenu->addMenu(submenus[i]);

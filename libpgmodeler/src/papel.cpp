@@ -2,7 +2,7 @@
 
 Papel::Papel(void)
 {
- tipo_objeto=OBJ_ROLE;
+ obj_type=OBJ_ROLE;
  object_id=BaseObject::role_id++;
  sysid=100;
 
@@ -11,20 +11,20 @@ Papel::Papel(void)
 
  lim_conexao=-1;
 
- atributos[ParsersAttributes::SUPERUSER]="";
- atributos[ParsersAttributes::CREATEDB]="";
- atributos[ParsersAttributes::CREATEROLE]="";
- atributos[ParsersAttributes::INHERIT]="";
- atributos[ParsersAttributes::LOGIN]="";
- atributos[ParsersAttributes::CONN_LIMIT]="";
- atributos[ParsersAttributes::PASSWORD]="";
- atributos[ParsersAttributes::ENCRYPTED]="";
- atributos[ParsersAttributes::VALIDITY]="";
- atributos[ParsersAttributes::REF_ROLES]="";
- atributos[ParsersAttributes::MEMBER_ROLES]="";
- atributos[ParsersAttributes::ADMIN_ROLES]="";
- atributos[ParsersAttributes::SYSID]="";
- atributos[ParsersAttributes::GROUP]="";
+ attributes[ParsersAttributes::SUPERUSER]="";
+ attributes[ParsersAttributes::CREATEDB]="";
+ attributes[ParsersAttributes::CREATEROLE]="";
+ attributes[ParsersAttributes::INHERIT]="";
+ attributes[ParsersAttributes::LOGIN]="";
+ attributes[ParsersAttributes::CONN_LIMIT]="";
+ attributes[ParsersAttributes::PASSWORD]="";
+ attributes[ParsersAttributes::ENCRYPTED]="";
+ attributes[ParsersAttributes::VALIDITY]="";
+ attributes[ParsersAttributes::REF_ROLES]="";
+ attributes[ParsersAttributes::MEMBER_ROLES]="";
+ attributes[ParsersAttributes::ADMIN_ROLES]="";
+ attributes[ParsersAttributes::SYSID]="";
+ attributes[ParsersAttributes::GROUP]="";
 }
 
 void Papel::definirSysid(unsigned sysid)
@@ -177,7 +177,7 @@ void Papel::definirAtributoPapel(unsigned tipo_papel)
   if(i < (qtd-1)) str_papeis+=",";
  }
 
- atributos[atrib]=str_papeis;
+ attributes[atrib]=str_papeis;
 }
 
 void Papel::removerPapel(unsigned tipo_papel, unsigned idx_papel)
@@ -343,22 +343,22 @@ QString Papel::obterDefinicaoObjeto(unsigned tipo_def)
  definirAtributoPapel(PAPEL_ADMIN);
 
  for(i=0; i < 6; i++)
-  atributos[atrib_ops[i]]=(opcoes[i] ? "1" : "");
+  attributes[atrib_ops[i]]=(opcoes[i] ? "1" : "");
 
- atributos[ParsersAttributes::PASSWORD]=senha;
- atributos[ParsersAttributes::VALIDITY]=validade;
+ attributes[ParsersAttributes::PASSWORD]=senha;
+ attributes[ParsersAttributes::VALIDITY]=validade;
 
  /* Configurando um atributo indicando se o papel é um group ou não,
     isso é usado apenas para manter a compatibilidade com o postgresql 8.0
     por ser o único que considera usuário e grupo, as demais versões tratam
     ambos como papeis. Um papel assume a forma de um grupo quando o mesmo
     não possui a opção de login setada */
- atributos[ParsersAttributes::GROUP]=(opcoes[OP_LOGIN] ? "" : "1");
+ attributes[ParsersAttributes::GROUP]=(opcoes[OP_LOGIN] ? "" : "1");
 
  if(lim_conexao >= 0)
-  atributos[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(lim_conexao);
+  attributes[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(lim_conexao);
 
- atributos[ParsersAttributes::SYSID]=QString("%1").arg(sysid);
+ attributes[ParsersAttributes::SYSID]=QString("%1").arg(sysid);
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }

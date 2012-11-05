@@ -42,14 +42,14 @@ Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabel
 {
  try
  {
-  tipo_objeto=OBJ_RELATIONSHIP;
+  obj_type=OBJ_RELATIONSHIP;
   QString str_aux;
 
   if(((tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N) &&
       !this->obterTabelaReferencia()->obterChavePrimaria()) ||
      (tipo_relac==RELACIONAMENTO_NN && (!tab_orig->obterChavePrimaria() || !tab_dest->obterChavePrimaria())))
      throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
-                           .arg(QString::fromUtf8(nome))
+                           .arg(QString::fromUtf8(obj_name))
                            .arg(QString::fromUtf8(tab_orig->obterNome(true)))
                            .arg(QString::fromUtf8(tab_dest->obterNome(true))),
                   ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -95,17 +95,17 @@ Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabel
   if(sufixo_orig!="" && sufixo_dest!="")
    nome_tab_relnn=sufixo_orig + SEPARADOR_SUFIXO + sufixo_dest;
   else
-   nome_tab_relnn=this->nome;
+   nome_tab_relnn=this->obj_name;
 
   qtd_cols_rejeitadas=0;
   definirIdentificador(identificador);
 
-  atributos[ParsersAttributes::CONSTRAINTS]="";
-  atributos[ParsersAttributes::TABLE]="";
-  atributos[ParsersAttributes::RELATIONSHIP_NN]="";
-  atributos[ParsersAttributes::RELATIONSHIP_GEN]="";
-  atributos[ParsersAttributes::RELATIONSHIP_1N]="";
-  atributos[ParsersAttributes::ANCESTOR_TABLE]="";
+  attributes[ParsersAttributes::CONSTRAINTS]="";
+  attributes[ParsersAttributes::TABLE]="";
+  attributes[ParsersAttributes::RELATIONSHIP_NN]="";
+  attributes[ParsersAttributes::RELATIONSHIP_GEN]="";
+  attributes[ParsersAttributes::RELATIONSHIP_1N]="";
+  attributes[ParsersAttributes::ANCESTOR_TABLE]="";
  }
  catch(Exception &e)
  {
@@ -139,7 +139,7 @@ void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufix
  if(tipo_tab > TABELA_DESTINO)
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(!sufixo.isEmpty() && !BaseObject::nomeValido(sufixo))
+ if(!sufixo.isEmpty() && !BaseObject::isValidName(sufixo))
   throw Exception(Exception::getErrorMessage(ERR_ASG_INV_SUFFIX_REL)
                 .arg(QString::fromUtf8(this->obterNome())),
                 ERR_ASG_INV_SUFFIX_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -219,7 +219,7 @@ void Relacionamento::criarChavePrimariaEspecial(void)
   pk_especial->definirTipo(TipoRestricao::primary_key);
   pk_especial->definirIncPorLigacao(true);
   pk_especial->definirProtegido(true);
-  pk_especial->definirEspacoTabela(dynamic_cast<EspacoTabela *>(obterTabelaReceptora()->obterEspacoTabela()));
+  pk_especial->definirEspacoTabela(dynamic_cast<EspacoTabela *>(obterTabelaReceptora()->getTablespace()));
 
   //Adiciona as colunas   chave primária obtendo-as através dos seus índices armazenados em 'id_colunas_pk_rel'
   qtd=id_colunas_pk_rel.size();
@@ -247,7 +247,7 @@ void Relacionamento::criarChavePrimariaEspecial(void)
 
 void Relacionamento::definirNomeTabelaRelNN(const QString &nome)
 {
- if(!BaseObject::nomeValido(nome))
+ if(!BaseObject::isValidName(nome))
   throw Exception(ERR_ASG_INV_NAME_TABLE_RELNN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  nome_tab_relnn=nome;
@@ -352,7 +352,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
  if((tipo_relac==RELACIONAMENTO_GEN ||
      tipo_relac==RELACIONAMENTO_DEP) &&
     !(objeto_tab->incluidoPorRelacionamento() &&
-      objeto_tab->objetoProtegido() &&
+      objeto_tab->isProtected() &&
       objeto_tab->obterTipoObjeto()==OBJ_CONSTRAINT))
   throw Exception(ERR_ASG_OBJ_INV_REL_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -424,9 +424,9 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
   else
    throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
                  .arg(objeto_tab->obterNome(true))
-                 .arg(objeto_tab->obterNomeTipoObjeto())
+                 .arg(objeto_tab->getTypeName())
                  .arg(this->obterNome(true))
-                 .arg(this->obterNomeTipoObjeto()),
+                 .arg(this->getTypeName()),
                  ERR_ASG_DUPLIC_OBJECT, __PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  catch(Exception &e)
@@ -436,7 +436,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
   if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
    throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
                               .arg(QString::fromUtf8(objeto_tab->obterNome()))
-                              .arg(objeto_tab->obterNomeTipoObjeto()),
+                              .arg(objeto_tab->getTypeName()),
                  ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   else
    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -507,11 +507,11 @@ void Relacionamento::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
   if(refer)
    throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
                            .arg(QString::fromUtf8(coluna->obterNome()))
-                           .arg(coluna->obterNomeTipoObjeto())
+                           .arg(coluna->getTypeName())
                            .arg(QString::fromUtf8(rest->obterNome()))
-                           .arg(rest->obterNomeTipoObjeto())
+                           .arg(rest->getTypeName())
                            .arg(QString::fromUtf8(this->obterNome(true)))
-                           .arg(this->obterNomeTipoObjeto()),
+                           .arg(this->getTypeName()),
                  ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
@@ -1048,8 +1048,8 @@ void Relacionamento::conectarRelacionamento(void)
      /* O esquema e espaço de tabelas da tabela resultante será, por padrão,
         os mesmos da tabela de origem */
     tabela_relnn->definirNome(nome_tab_relnn);
-    tabela_relnn->definirEsquema(tabela_orig->obterEsquema());
-    tabela_relnn->definirEspacoTabela(tabela_orig->obterEspacoTabela());
+    tabela_relnn->definirEsquema(tabela_orig->getSchema());
+    tabela_relnn->definirEspacoTabela(tabela_orig->getTablespace());
 
     adicionarColunasRelNn();
    }
@@ -1409,7 +1409,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
   if((!pk_orig && (tipo_relac==RELACIONAMENTO_1N || tipo_relac==RELACIONAMENTO_11)) ||
      (!pk_orig && !pk_dest && tipo_relac==RELACIONAMENTO_NN))
    throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
-                          .arg(QString::fromUtf8(this->nome))
+                          .arg(QString::fromUtf8(this->obj_name))
                           .arg(QString::fromUtf8(tab_referencia->obterNome(true)))
                           .arg(QString::fromUtf8(tab_receptora->obterNome(true))),
                  ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1441,7 +1441,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
    coluna->definirNaoNulo(nao_nulo);
 
    //Obtém o nome anterior da coluna antes da desconexão do relacionamento
-   nome_ant=nome_ant_cols_ref[coluna->obterIdObjeto()];
+   nome_ant=nome_ant_cols_ref[coluna->getObjectId()];
 
    //Protege a nova coluna, evitando que o usuário a modifique ou remova
    coluna->definirIncPorLigacao(true);
@@ -1494,7 +1494,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
       n-n as colunas são sempre recriadas sem a necessidade de manter o histórico pois
       o usuário não consegue referenciar as colunas criadas pelos relacionamentos n-n.*/
     if(nome_ant!=nome && (tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N))
-     nome_ant_cols_ref[coluna->obterIdObjeto()]=coluna->obterNome();
+     nome_ant_cols_ref[coluna->getObjectId()]=coluna->obterNome();
 
    /* Adiciona a coluna na tabela a qual foi definida para receber os
       atributos, colunas e restições */
@@ -2349,42 +2349,42 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   {
    unsigned qtd, i;
 
-   atributos[ParsersAttributes::RELATIONSHIP_1N]="1";
-   atributos[ParsersAttributes::CONSTRAINTS]=fk_rel1n->obterDefinicaoObjeto(tipo_def);
+   attributes[ParsersAttributes::RELATIONSHIP_1N]="1";
+   attributes[ParsersAttributes::CONSTRAINTS]=fk_rel1n->obterDefinicaoObjeto(tipo_def);
 
    if(uq_rel11)
-    atributos[ParsersAttributes::CONSTRAINTS]+=uq_rel11->obterDefinicaoObjeto(tipo_def);
+    attributes[ParsersAttributes::CONSTRAINTS]+=uq_rel11->obterDefinicaoObjeto(tipo_def);
 
    qtd=restricoes_rel.size();
    for(i=0; i < qtd; i++)
    {
     if(dynamic_cast<Restricao *>(restricoes_rel[i])->obterTipoRestricao()!=TipoRestricao::primary_key)
-     atributos[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
+     attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
                                               obterDefinicaoObjeto(tipo_def, false);
 
    }
 
-   atributos[ParsersAttributes::TABLE]=obterTabelaReceptora()->obterNome(true);
+   attributes[ParsersAttributes::TABLE]=obterTabelaReceptora()->obterNome(true);
   }
   else if(tabela_relnn && tipo_relac==RELACIONAMENTO_NN)
   {
    unsigned qtd, i;
 
-   atributos[ParsersAttributes::RELATIONSHIP_NN]="1";
-   atributos[ParsersAttributes::TABLE]=tabela_relnn->obterDefinicaoObjeto(tipo_def);
+   attributes[ParsersAttributes::RELATIONSHIP_NN]="1";
+   attributes[ParsersAttributes::TABLE]=tabela_relnn->obterDefinicaoObjeto(tipo_def);
 
    qtd=tabela_relnn->obterNumRestricoes();
    for(i=0; i < qtd; i++)
    {
     if(tabela_relnn->obterRestricao(i)->obterTipoRestricao()!=TipoRestricao::primary_key)
-     atributos[ParsersAttributes::CONSTRAINTS]+=tabela_relnn->obterRestricao(i)->obterDefinicaoObjeto(tipo_def, true);
+     attributes[ParsersAttributes::CONSTRAINTS]+=tabela_relnn->obterRestricao(i)->obterDefinicaoObjeto(tipo_def, true);
    }
   }
   else if(tipo_relac==RELACIONAMENTO_GEN)
   {
-   atributos[ParsersAttributes::RELATIONSHIP_GEN]="1";
-   atributos[ParsersAttributes::TABLE]=obterTabelaReceptora()->obterNome(true);
-   atributos[ParsersAttributes::ANCESTOR_TABLE]=obterTabelaReferencia()->obterNome(true);
+   attributes[ParsersAttributes::RELATIONSHIP_GEN]="1";
+   attributes[ParsersAttributes::TABLE]=obterTabelaReceptora()->obterNome(true);
+   attributes[ParsersAttributes::ANCESTOR_TABLE]=obterTabelaReferencia()->obterNome(true);
   }
 
   return(this->BaseObject::obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION));
@@ -2395,29 +2395,29 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   bool forma_reduzida;
 
   definirAtributosRelacionamento();
-  atributos[ParsersAttributes::SRC_SUFFIX]=(!sufixo_auto ? sufixo_orig : "");
-  atributos[ParsersAttributes::DST_SUFFIX]=(!sufixo_auto ? sufixo_dest : "");
-  atributos[ParsersAttributes::IDENTIFIER]=(identificador ? "1" : "");
-  atributos[ParsersAttributes::DEFERRABLE]=(postergavel ? "1" : "");
-  atributos[ParsersAttributes::AUTO_SUFFIX]=(sufixo_auto ? "1" : "");
-  atributos[ParsersAttributes::DEFER_TYPE]=~tipo_postergacao;
-  atributos[ParsersAttributes::TABLE_NAME]=nome_tab_relnn;
+  attributes[ParsersAttributes::SRC_SUFFIX]=(!sufixo_auto ? sufixo_orig : "");
+  attributes[ParsersAttributes::DST_SUFFIX]=(!sufixo_auto ? sufixo_dest : "");
+  attributes[ParsersAttributes::IDENTIFIER]=(identificador ? "1" : "");
+  attributes[ParsersAttributes::DEFERRABLE]=(postergavel ? "1" : "");
+  attributes[ParsersAttributes::AUTO_SUFFIX]=(sufixo_auto ? "1" : "");
+  attributes[ParsersAttributes::DEFER_TYPE]=~tipo_postergacao;
+  attributes[ParsersAttributes::TABLE_NAME]=nome_tab_relnn;
 
 
-  atributos[ParsersAttributes::COLUMNS]="";
+  attributes[ParsersAttributes::COLUMNS]="";
   qtd=atributos_rel.size();
   for(i=0; i < qtd; i++)
   {
-   atributos[ParsersAttributes::COLUMNS]+=dynamic_cast<Coluna *>(atributos_rel[i])->
+   attributes[ParsersAttributes::COLUMNS]+=dynamic_cast<Coluna *>(atributos_rel[i])->
                     obterDefinicaoObjeto(SchemaParser::XML_DEFINITION);
   }
 
-  atributos[ParsersAttributes::CONSTRAINTS]="";
+  attributes[ParsersAttributes::CONSTRAINTS]="";
   qtd=restricoes_rel.size();
   for(i=0; i < qtd; i++)
   {
-   if(!restricoes_rel[i]->objetoProtegido())
-    atributos[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
+   if(!restricoes_rel[i]->isProtected())
+    attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
                        obterDefinicaoObjeto(SchemaParser::XML_DEFINITION, true);
   }
 
@@ -2427,17 +2427,17 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
    //Armazena o nome das colunas da chave primária especial se houver
    if(!colunas_ref.empty() && i < colunas_ref.size())
    {
-    atributos[ParsersAttributes::SPECIAL_PK_COLS]+=QString("%1").arg(id_colunas_pk_rel[i]);
-    if(i < qtd-1) atributos[ParsersAttributes::SPECIAL_PK_COLS]+=",";
+    attributes[ParsersAttributes::SPECIAL_PK_COLS]+=QString("%1").arg(id_colunas_pk_rel[i]);
+    if(i < qtd-1) attributes[ParsersAttributes::SPECIAL_PK_COLS]+=",";
    }
   }
 
   /* Caso não haja colunas, restrições e linha definida no relacionamento
      a definição XML do rel. será em forma reduzida */
-  forma_reduzida=(atributos[ParsersAttributes::COLUMNS].isEmpty() &&
-                  atributos[ParsersAttributes::CONSTRAINTS].isEmpty() &&
-                  atributos[ParsersAttributes::POINTS].isEmpty() &&
-                  atributos[ParsersAttributes::SPECIAL_PK_COLS].isEmpty());
+  forma_reduzida=(attributes[ParsersAttributes::COLUMNS].isEmpty() &&
+                  attributes[ParsersAttributes::CONSTRAINTS].isEmpty() &&
+                  attributes[ParsersAttributes::POINTS].isEmpty() &&
+                  attributes[ParsersAttributes::SPECIAL_PK_COLS].isEmpty());
 
 
   return(this->BaseObject::obterDefinicaoObjeto(SchemaParser::XML_DEFINITION, forma_reduzida));

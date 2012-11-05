@@ -2,13 +2,13 @@
 
 Tabela::Tabela(void) : TabelaBase()
 {
- tipo_objeto=OBJ_TABLE;
- atributos[ParsersAttributes::COLUMNS]="";
- atributos[ParsersAttributes::CONSTRAINTS]="";
- atributos[ParsersAttributes::INDEXES]="";
- atributos[ParsersAttributes::TRIGGERS]="";
- atributos[ParsersAttributes::RULES]="";
- atributos[ParsersAttributes::OIDS]="";
+ obj_type=OBJ_TABLE;
+ attributes[ParsersAttributes::COLUMNS]="";
+ attributes[ParsersAttributes::CONSTRAINTS]="";
+ attributes[ParsersAttributes::INDEXES]="";
+ attributes[ParsersAttributes::TRIGGERS]="";
+ attributes[ParsersAttributes::RULES]="";
+ attributes[ParsersAttributes::OIDS]="";
 }
 
 Tabela::~Tabela(void)
@@ -128,7 +128,7 @@ void Tabela::definirAtributoColunas(unsigned tipo_def)
   }
  }
 
- atributos[ParsersAttributes::COLUMNS]=str_cols;
+ attributes[ParsersAttributes::COLUMNS]=str_cols;
 }
 
 void Tabela::definirAtributoRestricoes(unsigned tipo_def)
@@ -169,7 +169,7 @@ void Tabela::definirAtributoRestricoes(unsigned tipo_def)
   }
  }
 
- atributos[ParsersAttributes::CONSTRAINTS]=str_rest;
+ attributes[ParsersAttributes::CONSTRAINTS]=str_rest;
 }
 
 void Tabela::definirAtributoGatilhos(unsigned tipo_def)
@@ -185,7 +185,7 @@ void Tabela::definirAtributoGatilhos(unsigned tipo_def)
   //Obtém um gatilho
   gat=dynamic_cast<Gatilho *>(gatilhos.at(i));
 
-  if((/*!gat->objetoProtegido() &&*/
+  if((/*!gat->isProtected() &&*/
       !gat->referenciaColunaIncRelacao() &&
       tipo_def==SchemaParser::XML_DEFINITION) ||
       tipo_def==SchemaParser::SQL_DEFINITION)
@@ -194,7 +194,7 @@ void Tabela::definirAtributoGatilhos(unsigned tipo_def)
   }
  }
 
- atributos[ParsersAttributes::TRIGGERS]=str_gat;
+ attributes[ParsersAttributes::TRIGGERS]=str_gat;
 }
 
 void Tabela::definirAtributoIndices(unsigned tipo_def)
@@ -215,7 +215,7 @@ void Tabela::definirAtributoIndices(unsigned tipo_def)
    str_ind+=ind->obterDefinicaoObjeto(tipo_def);
  }
 
- atributos[ParsersAttributes::INDEXES]=str_ind;
+ attributes[ParsersAttributes::INDEXES]=str_ind;
 }
 
 void Tabela::definirAtributoRegras(unsigned tipo_def)
@@ -227,13 +227,13 @@ void Tabela::definirAtributoRegras(unsigned tipo_def)
  qtd=regras.size();
  for(i=0; i < qtd; i++)
  {
-  if((/* !regras[i]->objetoProtegido() && */
+  if((/* !regras[i]->isProtected() && */
       tipo_def==SchemaParser::XML_DEFINITION) ||
       tipo_def==SchemaParser::SQL_DEFINITION)
    str_reg+=regras[i]->obterDefinicaoObjeto(tipo_def);
  }
 
- atributos[ParsersAttributes::RULES]=str_reg;
+ attributes[ParsersAttributes::RULES]=str_reg;
 }
 
 vector<ObjetoTabela *> *Tabela::obterListaObjetos(ObjectType tipo_obj)
@@ -283,9 +283,9 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
    //Dispara uma exceçaõ indica a duplicidade de nomes de objetos
    str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
            .arg(obj->obterNome(true))
-           .arg(obj->obterNomeTipoObjeto())
+           .arg(obj->getTypeName())
            .arg(this->obterNome(true))
-           .arg(this->obterNomeTipoObjeto());
+           .arg(this->getTypeName());
    throw Exception(str_aux,ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
@@ -403,7 +403,7 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
    if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
     throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
                               .arg(QString::fromUtf8(obj->obterNome()))
-                              .arg(obj->obterNomeTipoObjeto()),
+                              .arg(obj->getTypeName()),
                   ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
    else
     //Caso o a exceção não seja de def. SQL mal-formada, apenas redireciona o erro
@@ -528,11 +528,11 @@ void Tabela::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
    {
     throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
                           .arg(QString::fromUtf8(coluna->obterNome()))
-                          .arg(coluna->obterNomeTipoObjeto())
+                          .arg(coluna->getTypeName())
                           .arg(QString::fromUtf8(vet_refs[0]->obterNome()))
-                          .arg(vet_refs[0]->obterNomeTipoObjeto())
+                          .arg(vet_refs[0]->getTypeName())
                           .arg(QString::fromUtf8(this->obterNome(true)))
-                          .arg(this->obterNomeTipoObjeto()),
+                          .arg(this->getTypeName()),
                  ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
@@ -688,7 +688,7 @@ BaseObject *Tabela::obterObjeto(const QString &nome, ObjectType tipo_obj, int &i
   QString nome_aux;
 
   //Obrigatoriamente todo nome de tabela deve ser formatado por conta do esquema
-  nome_aux=BaseObject::formatarNome(nome);
+  nome_aux=BaseObject::formatName(nome);
 
   if(tipo_obj==OBJ_TABLE)
    tabelas=&tabelas_pai;
@@ -989,7 +989,7 @@ bool Tabela::restricaoReferenciaColuna(Coluna *coluna, TipoRestricao tipo_rest)
 
 QString Tabela::obterDefinicaoObjeto(unsigned tipo_def)
 {
- atributos[ParsersAttributes::OIDS]=(aceita_oids ? "1" : "");
+ attributes[ParsersAttributes::OIDS]=(aceita_oids ? "1" : "");
  definirAtributoColunas(tipo_def);
  definirAtributoRestricoes(tipo_def);
  definirAtributoGatilhos(tipo_def);

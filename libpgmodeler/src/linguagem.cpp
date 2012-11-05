@@ -2,16 +2,16 @@
 
 Linguagem::Linguagem(void)
 {
- tipo_objeto=OBJ_LANGUAGE;
+ obj_type=OBJ_LANGUAGE;
  confiavel=false;
 
  for(unsigned i=FUNC_VALIDATOR; i <= FUNC_INLINE; i++)
   funcoes[i]=NULL;
 
- atributos[ParsersAttributes::TRUSTED]="";
- atributos[ParsersAttributes::HANDLER_FUNC]="";
- atributos[ParsersAttributes::VALIDATOR_FUNC]="";
- atributos[ParsersAttributes::INLINE_FUNC]="";
+ attributes[ParsersAttributes::TRUSTED]="";
+ attributes[ParsersAttributes::HANDLER_FUNC]="";
+ attributes[ParsersAttributes::VALIDATOR_FUNC]="";
+ attributes[ParsersAttributes::INLINE_FUNC]="";
 }
 
 void Linguagem::definirNome(const QString &nome)
@@ -21,7 +21,7 @@ void Linguagem::definirNome(const QString &nome)
  if(nome.toLower()==~TipoLinguagem("c") || nome.toLower()==~TipoLinguagem("sql"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_LANGUAGE)),
+                         .arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
                 ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  BaseObject::definirNome(nome); //Chama o método da classe descendente
@@ -69,7 +69,7 @@ void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
          ((tipo_func==FUNC_VALIDATOR || tipo_func==FUNC_INLINE) && funcao->obterTipoRetorno()!="void"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
                          .arg(this->obterNome(true))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_LANGUAGE)),
+                         .arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
                 ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Dispara um erro se a função possuir parâmetros inválidos
@@ -101,21 +101,21 @@ QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
                         ParsersAttributes::HANDLER_FUNC,
                         ParsersAttributes::INLINE_FUNC};
 
- atributos[ParsersAttributes::TRUSTED]=(confiavel ? "1" : "");
+ attributes[ParsersAttributes::TRUSTED]=(confiavel ? "1" : "");
 
  if(!forma_reduzida && tipo_def==SchemaParser::XML_DEFINITION)
-  forma_reduzida=(!funcoes[FUNC_VALIDATOR] && !funcoes[FUNC_HANDLER] && !funcoes[FUNC_INLINE] && !this->obterDono());
+  forma_reduzida=(!funcoes[FUNC_VALIDATOR] && !funcoes[FUNC_HANDLER] && !funcoes[FUNC_INLINE] && !this->getOwner());
 
  for(i=0; i < 3; i++)
  {
   if(funcoes[i])
   {
    if(tipo_def==SchemaParser::SQL_DEFINITION)
-    atributos[atrib_func[i]]=funcoes[i]->obterNome(true);
+    attributes[atrib_func[i]]=funcoes[i]->obterNome(true);
    else
    {
-    funcoes[i]->definirAtributoEsquema(ParsersAttributes::REF_TYPE, atrib_func[i]);
-    atributos[atrib_func[i]]=funcoes[i]->obterDefinicaoObjeto(tipo_def, true);
+    funcoes[i]->setAttribute(ParsersAttributes::REF_TYPE, atrib_func[i]);
+    attributes[atrib_func[i]]=funcoes[i]->obterDefinicaoObjeto(tipo_def, true);
    }
   }
  }

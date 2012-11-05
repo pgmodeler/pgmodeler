@@ -112,7 +112,7 @@ class Funcao: public BaseObject {
   Funcao(void);
 
   //Define o nome da função
-  void definirNome(const QString &nome);
+  void definirNome(const QString &obj_name);
 
   //Define o esquema ao qual a função faz parte
   void definirEsquema(BaseObject *schema);
@@ -121,7 +121,7 @@ class Funcao: public BaseObject {
   void adicionarParametro(Parametro param);
 
   //Adiciona um tipo de retorno específico para a cláusula RETURNS TABLE
-  void adicionarTipoRetTabela(const QString &nome, TipoPgSQL tipo);
+  void adicionarTipoRetTabela(const QString &obj_name, TipoPgSQL tipo);
 
   //Define o corpo da função (comandos que serão executados por esta)
   void definirCodigoFonte(const QString &codigo);
@@ -211,7 +211,7 @@ class Funcao: public BaseObject {
   unsigned obterQuantidadeLinhas(void);
 
   //Remove um parâmetro através de seu nome e tipo
-  void removerParametro(const QString &nome, TipoPgSQL tipo);
+  void removerParametro(const QString &obj_name, TipoPgSQL tipo);
 
   //Remove um parâmetro através de seu índice
   void removerParametro(unsigned idx_param);

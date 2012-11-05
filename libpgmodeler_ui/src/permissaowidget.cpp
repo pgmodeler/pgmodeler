@@ -147,7 +147,7 @@ void PermissaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
 
   //Preenche os campos do formulario com os atributos do objeto
   nome_edt->setText(QString::fromUtf8(objeto->obterNome(true)));
-  comentario_edt->setText(QString::fromUtf8(objeto->obterNomeTipoObjeto()));
+  comentario_edt->setText(QString::fromUtf8(objeto->getTypeName()));
   tipo_obj=objeto->obterTipoObjeto();
 
   /* Faz uma varredura usando os privilégios disponíveis para os objetos.
@@ -315,7 +315,7 @@ void PermissaoWidget::exibirDadosPapelSelecionado(void)
   {
    throw Exception(Exception::getErrorMessage(ERR_ASG_DUPL_OBJ_CONTAINER)
                                .arg(QString::fromUtf8(papel->obterNome()))
-                               .arg(papel->obterNomeTipoObjeto())
+                               .arg(papel->getTypeName())
                                .arg(papeis_gb->title()),
                  ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -410,7 +410,7 @@ void PermissaoWidget::atualizarPermissao(void)
       de permissões gerando assim um erro */
    throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
                  .arg(QString::fromUtf8(permissao->obterObjeto()->obterNome()))
-                 .arg(permissao->obterObjeto()->obterNomeTipoObjeto()),
+                 .arg(permissao->obterObjeto()->getTypeName()),
                  ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 

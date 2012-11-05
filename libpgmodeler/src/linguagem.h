@@ -47,7 +47,7 @@ class Linguagem: public BaseObject{
   Linguagem(void);
 
   //Define o nome da linguagem
-  void definirNome(const QString &nome);
+  void definirNome(const QString &obj_name);
 
   //Define se a linguagem é confiável ou não
   void definirConfiavel(bool valor);

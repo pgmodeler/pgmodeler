@@ -76,20 +76,20 @@ void ObjetoGrafico::definirObjetoOrigem(BaseObject *objeto)
   QGraphicsPolygonItem *item_pol=NULL;
 
   //Conecta os sinais da classe ObjetoGraficoBase aos slots correspondentes da classe ObjetoGrafico
-  connect(obj_graf, SIGNAL(s_objetoProtegido(bool)), this, SLOT(exibirProtecaoObjeto(bool)));
+  connect(obj_graf, SIGNAL(s_isProtected(bool)), this, SLOT(exibirProtecaoObjeto(bool)));
   obj_graf->definirObjetoReceptor(this);
 
   /* Por padrão, todo objeto gráfico pode ser selecionado, movido e também comunica a instâncias
      superiores sobre alterações em sua geometria */
   this->setFlags(QGraphicsItem::ItemIsSelectable |
                  QGraphicsItem::ItemSendsGeometryChanges);
-  this->setFlag(QGraphicsItem::ItemIsMovable, !obj_graf->objetoProtegido());
+  this->setFlag(QGraphicsItem::ItemIsMovable, !obj_graf->isProtected());
 
   //Aloca o ícone de proteção caso não ainda esteja
   if(!icone_protegido)
   {
    icone_protegido=new QGraphicsItemGroup;
-   icone_protegido->setVisible(obj_graf->objetoProtegido());
+   icone_protegido->setVisible(obj_graf->isProtected());
    icone_protegido->setZValue(3);
 
    item_pol=new QGraphicsPolygonItem;
@@ -357,7 +357,7 @@ QVariant ObjetoGrafico::itemChange(GraphicsItemChange change, const QVariant &va
  {
   ObjetoGraficoBase *obj_grafico=dynamic_cast<ObjetoGraficoBase *>(this->obterObjetoOrigem());
 
-  if(obj_grafico && !obj_grafico->objetoProtegido())
+  if(obj_grafico && !obj_grafico->isProtected())
   {
    obj_grafico->definirPosicaoObjeto(this->scenePos());
    this->configurarInfoPosicao(this->pos());

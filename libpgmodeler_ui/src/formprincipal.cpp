@@ -154,7 +154,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  for(unsigned i=0; i < 27; i++)
   prog_tarefa->adicionarIcone(tipos[i],
                               QIcon(QString(":/icones/icones/") +
-                                    BaseObject::obterNomeEsquemaObjeto(tipos[i]) +
+                                    BaseObject::getSchemaName(tipos[i]) +
                                     QString(".png")));
 
  icone_op=new QLabel;

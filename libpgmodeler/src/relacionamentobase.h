@@ -94,7 +94,7 @@ class RelacionamentoBase: public ObjetoGraficoBase {
 
 
   //Método específico de definição do nome de relacionamentos
-  void definirNome(const QString &nome);
+  void definirNome(const QString &obj_name);
 
   //Define a obrigatoriedade da participação de uma entidade no relacionamento
   void definirTabelaObrigatoria(unsigned id_tabela, bool valor);

@@ -127,7 +127,7 @@ void IndiceWidget::exibirDadosElemento(ElementoIndice elem, int idx_elem)
  {
   //Exibe os dados da coluna
   tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterColuna()->obterNome()), idx_elem, 0);
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterColuna()->obterNomeTipoObjeto()), idx_elem, 1);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterColuna()->getTypeName()), idx_elem, 1);
  }
  //Caso possua uma expressão
  else

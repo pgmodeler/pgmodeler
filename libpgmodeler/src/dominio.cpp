@@ -2,13 +2,13 @@
 
 Dominio::Dominio(void)
 {
- tipo_objeto=OBJ_DOMAIN;
+ obj_type=OBJ_DOMAIN;
  nao_nulo=false;
- atributos[ParsersAttributes::DEFAULT_VALUE]="";
- atributos[ParsersAttributes::NOT_NULL]="";
- atributos[ParsersAttributes::EXPRESSION]="";
- atributos[ParsersAttributes::TYPE]="";
- atributos[ParsersAttributes::CONSTRAINT]="";
+ attributes[ParsersAttributes::DEFAULT_VALUE]="";
+ attributes[ParsersAttributes::NOT_NULL]="";
+ attributes[ParsersAttributes::EXPRESSION]="";
+ attributes[ParsersAttributes::TYPE]="";
+ attributes[ParsersAttributes::CONSTRAINT]="";
 }
 
 Dominio::~Dominio(void)
@@ -45,7 +45,7 @@ void Dominio::definirNomeRestricao(const QString &nome_constr)
 {
  /* Verifica se o nome da constraint é valido de acordo com as
     regras de nomenclatura do PostgreSQL */
- if(!BaseObject::nomeValido(nome_constr))
+ if(!BaseObject::isValidName(nome_constr))
   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->nome_rest=nome_constr;
@@ -98,16 +98,16 @@ TipoPgSQL Dominio::obterTipo(void)
 
 QString Dominio::obterDefinicaoObjeto(unsigned tipo_def)
 {
- atributos[ParsersAttributes::NOT_NULL]=(nao_nulo ? "1" : "");
- atributos[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
- atributos[ParsersAttributes::EXPRESSION]=expressao;
- atributos[ParsersAttributes::CONSTRAINT]=BaseObject::formatarNome(nome_rest);
+ attributes[ParsersAttributes::NOT_NULL]=(nao_nulo ? "1" : "");
+ attributes[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
+ attributes[ParsersAttributes::EXPRESSION]=expressao;
+ attributes[ParsersAttributes::CONSTRAINT]=BaseObject::formatName(nome_rest);
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
-  atributos[ParsersAttributes::TYPE]=(*tipo);
+  attributes[ParsersAttributes::TYPE]=(*tipo);
  else
  {
-  atributos[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
+  attributes[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
  }
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def));

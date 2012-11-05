@@ -657,7 +657,7 @@ void ListaOperacoes::desfazerOperacao(void)
      emit s_operacaoExecutada((pos/static_cast<float>(tam_enc))*100,
                                trUtf8("Undoing operation on object: %1 (%2)")
                                       .arg(operacao->obj_pool->obterNome())
-                                      .arg(operacao->obj_pool->obterNomeTipoObjeto()),
+                                      .arg(operacao->obj_pool->getTypeName()),
                                        operacao->obj_pool->obterTipoObjeto());
     }
 
@@ -722,7 +722,7 @@ void ListaOperacoes::refazerOperacao(void)
      emit s_operacaoExecutada((pos/static_cast<float>(tam_enc))*100,
                                trUtf8("Redoing operation on object:: %1 (%2)")
                                       .arg(operacao->obj_pool->obterNome())
-                                      .arg(operacao->obj_pool->obterNomeTipoObjeto()),
+                                      .arg(operacao->obj_pool->getTypeName()),
                                        operacao->obj_pool->obterTipoObjeto());
     }
 

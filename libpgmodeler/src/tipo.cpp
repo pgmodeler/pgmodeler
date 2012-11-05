@@ -3,7 +3,7 @@
 Tipo::Tipo(void)
 {
  object_id=BaseObject::type_id++;
- tipo_objeto=OBJ_TYPE;
+ obj_type=OBJ_TYPE;
  config=TIPO_ENUMERACAO;
  //nome="novo_tipo";
  alinhamento="integer";
@@ -16,29 +16,29 @@ Tipo::Tipo(void)
  preferido=false;
  tipo_copia="any";
 
- BaseObject::atributos[ParsersAttributes::BASE_TYPE]="";
- BaseObject::atributos[ParsersAttributes::COMPOSITE_TYPE]="";
- BaseObject::atributos[ParsersAttributes::ELEMENTS]="";
- BaseObject::atributos[ParsersAttributes::ENUM_TYPE]="";
- BaseObject::atributos[ParsersAttributes::ENUMARATIONS]="";
- BaseObject::atributos[ParsersAttributes::INPUT_FUNC]="";
- BaseObject::atributos[ParsersAttributes::OUTPUT_FUNC]="";
- BaseObject::atributos[ParsersAttributes::RECV_FUNC]="";
- BaseObject::atributos[ParsersAttributes::SEND_FUNC]="";
- BaseObject::atributos[ParsersAttributes::TPMOD_IN_FUNC]="";
- BaseObject::atributos[ParsersAttributes::TPMOD_OUT_FUNC]="";
- BaseObject::atributos[ParsersAttributes::ANALYZE_FUNC]="";
- BaseObject::atributos[ParsersAttributes::INTERNAL_LENGHT]="";
- BaseObject::atributos[ParsersAttributes::BY_VALUE]="";
- BaseObject::atributos[ParsersAttributes::ALIGNMENT]="";
- BaseObject::atributos[ParsersAttributes::STORAGE]="";
- BaseObject::atributos[ParsersAttributes::DEFAULT_VALUE]="";
- BaseObject::atributos[ParsersAttributes::ELEMENT]="";
- BaseObject::atributos[ParsersAttributes::DELIMITER]="";
- BaseObject::atributos[ParsersAttributes::REDUCED_FORM]="";
- BaseObject::atributos[ParsersAttributes::CATEGORY]="";
- BaseObject::atributos[ParsersAttributes::PREFERRED]="";
- BaseObject::atributos[ParsersAttributes::LIKE_TYPE]="";
+ BaseObject::attributes[ParsersAttributes::BASE_TYPE]="";
+ BaseObject::attributes[ParsersAttributes::COMPOSITE_TYPE]="";
+ BaseObject::attributes[ParsersAttributes::ELEMENTS]="";
+ BaseObject::attributes[ParsersAttributes::ENUM_TYPE]="";
+ BaseObject::attributes[ParsersAttributes::ENUMARATIONS]="";
+ BaseObject::attributes[ParsersAttributes::INPUT_FUNC]="";
+ BaseObject::attributes[ParsersAttributes::OUTPUT_FUNC]="";
+ BaseObject::attributes[ParsersAttributes::RECV_FUNC]="";
+ BaseObject::attributes[ParsersAttributes::SEND_FUNC]="";
+ BaseObject::attributes[ParsersAttributes::TPMOD_IN_FUNC]="";
+ BaseObject::attributes[ParsersAttributes::TPMOD_OUT_FUNC]="";
+ BaseObject::attributes[ParsersAttributes::ANALYZE_FUNC]="";
+ BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]="";
+ BaseObject::attributes[ParsersAttributes::BY_VALUE]="";
+ BaseObject::attributes[ParsersAttributes::ALIGNMENT]="";
+ BaseObject::attributes[ParsersAttributes::STORAGE]="";
+ BaseObject::attributes[ParsersAttributes::DEFAULT_VALUE]="";
+ BaseObject::attributes[ParsersAttributes::ELEMENT]="";
+ BaseObject::attributes[ParsersAttributes::DELIMITER]="";
+ BaseObject::attributes[ParsersAttributes::REDUCED_FORM]="";
+ BaseObject::attributes[ParsersAttributes::CATEGORY]="";
+ BaseObject::attributes[ParsersAttributes::PREFERRED]="";
+ BaseObject::attributes[ParsersAttributes::LIKE_TYPE]="";
 }
 
 Tipo::~Tipo(void)
@@ -78,8 +78,8 @@ bool Tipo::atributoExiste(const QString &nome_atrib)
  vector<Parametro>::iterator itr, itr_end;
  bool enc=false;
 
- itr=atributos.begin();
- itr_end=atributos.end();
+ itr=attributes.begin();
+ itr_end=attributes.end();
 
  while(itr!=itr_end && !enc)
  {
@@ -102,22 +102,22 @@ void Tipo::adicionarAtributo(Parametro atrib)
  else if(atributoExiste(atrib.obterNome()))
   throw Exception(ERR_INS_DUPLIC_ITEMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- atributos.push_back(atrib);
+ attributes.push_back(atrib);
 }
 
 void Tipo::removerAtributo(unsigned idx_atrib)
 {
  //Verifica se o índice do atributo é valido
- if(idx_atrib >= atributos.size())
+ if(idx_atrib >= attributes.size())
   throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Remove atributo no índice especificado
- atributos.erase(atributos.begin() + idx_atrib);
+ attributes.erase(attributes.begin() + idx_atrib);
 }
 
 void Tipo::removerAtributos(void)
 {
- atributos.clear();
+ attributes.clear();
 }
 
 bool Tipo::enumeracaoExiste(const QString &nome_enum)
@@ -144,7 +144,7 @@ void Tipo::adicionarEnumeracao(const QString &enumer)
   throw Exception(ERR_INS_INV_TYPE_ENUM_ITEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Verifica se o nome da enumeração é válida de acordo com
     com a regra de nomenclatura de identificadores no PostgreSQL */
- else if(!BaseObject::nomeValido(enumer))
+ else if(!BaseObject::isValidName(enumer))
   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Verifica se uma enumeração com mesmo nome já não foi inserido no tipo
  else if(enumeracaoExiste(enumer))
@@ -180,7 +180,7 @@ void Tipo::definirConfiguracao(unsigned conf)
  if(conf!=TIPO_BASE)
  {
   if(conf==TIPO_ENUMERACAO)
-   atributos.clear();
+   attributes.clear();
   else
    enumeracoes.clear();
 
@@ -195,7 +195,7 @@ void Tipo::definirConfiguracao(unsigned conf)
  }
  else
  {
-  atributos.clear();
+  attributes.clear();
   enumeracoes.clear();
  }
 
@@ -221,7 +221,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
  if(!funcao && (conf_func==FUNCAO_INPUT || conf_func==FUNCAO_OUTPUT))
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->obterNome(true)))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_TYPE)),
+                         .arg(BaseObject::getTypeName(OBJ_TYPE)),
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  else if(funcao)
@@ -242,7 +242,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
            conf_func==FUNCAO_ANALYZE)))
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                           .arg(QString::fromUtf8(this->obterNome()))
-                          .arg(BaseObject::obterNomeTipoObjeto(OBJ_TYPE)),
+                          .arg(BaseObject::getTypeName(OBJ_TYPE)),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Verificando os tipos de returno da função em relação ao tipo.
@@ -261,7 +261,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
           (conf_func==FUNCAO_ANALYZE && funcao->obterTipoRetorno()!="boolean"))
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
                           .arg(QString::fromUtf8(this->obterNome()))
-                          .arg(BaseObject::obterNomeTipoObjeto(OBJ_TYPE)),
+                          .arg(BaseObject::getTypeName(OBJ_TYPE)),
                  ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Validando os tipos do parâmetro da função em rao   configuração do tipo.
@@ -398,10 +398,10 @@ void Tipo::definirAtributoElementos(unsigned tipo_def)
  QString str_elem;
  unsigned i, qtd;
 
- qtd=Tipo::atributos.size();
+ qtd=Tipo::attributes.size();
  for(i=0; i < qtd; i++)
  {
-  param=Tipo::atributos[i];
+  param=Tipo::attributes[i];
 
   if(tipo_def==SchemaParser::SQL_DEFINITION)
   {
@@ -414,7 +414,7 @@ void Tipo::definirAtributoElementos(unsigned tipo_def)
   }
  }
 
- BaseObject::atributos[ParsersAttributes::ELEMENTS]=str_elem;
+ BaseObject::attributes[ParsersAttributes::ELEMENTS]=str_elem;
 }
 
 void Tipo::definirAtributoEnumeracoes(unsigned tipo_def)
@@ -433,7 +433,7 @@ void Tipo::definirAtributoEnumeracoes(unsigned tipo_def)
   if(i < (qtd-1)) str_enum+=",";
  }
 
- BaseObject::atributos[ParsersAttributes::ENUMARATIONS]=str_enum;
+ BaseObject::attributes[ParsersAttributes::ENUMARATIONS]=str_enum;
 }
 
 void Tipo::definirCategoria(TipoCategoria categoria)
@@ -457,15 +457,15 @@ void Tipo::definirTipoCopia(TipoPgSQL tipo_copia)
 
 Parametro Tipo::obterAtributo(unsigned idx_atrib)
 {
- if(idx_atrib >= atributos.size())
+ if(idx_atrib >= attributes.size())
   throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(atributos[idx_atrib]);
+ return(attributes[idx_atrib]);
 }
 
 unsigned Tipo::obterNumAtributos(void)
 {
- return(atributos.size());
+ return(attributes.size());
 }
 
 QString Tipo::obterEnumeracao(unsigned idx_enum)
@@ -553,12 +553,12 @@ QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  if(config==TIPO_ENUMERACAO)
  {
-  BaseObject::atributos[ParsersAttributes::ENUM_TYPE]="1";
+  BaseObject::attributes[ParsersAttributes::ENUM_TYPE]="1";
   definirAtributoEnumeracoes(tipo_def);
  }
  else if(config==TIPO_COMPOSTO)
  {
-  BaseObject::atributos[ParsersAttributes::COMPOSITE_TYPE]="1";
+  BaseObject::attributes[ParsersAttributes::COMPOSITE_TYPE]="1";
   definirAtributoElementos(tipo_def);
  }
  else
@@ -572,44 +572,44 @@ QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
                          ParsersAttributes::TPMOD_OUT_FUNC,
                          ParsersAttributes::ANALYZE_FUNC};
 
-  BaseObject::atributos[ParsersAttributes::BASE_TYPE]="1";
+  BaseObject::attributes[ParsersAttributes::BASE_TYPE]="1";
 
   for(i=0; i < 7; i++)
   {
    if(funcoes[i])
    {
     if(tipo_def==SchemaParser::SQL_DEFINITION)
-     BaseObject::atributos[atrib_func[i]]=funcoes[i]->obterNome();
+     BaseObject::attributes[atrib_func[i]]=funcoes[i]->obterNome();
     else
     {
-     funcoes[i]->definirAtributoEsquema(ParsersAttributes::REF_TYPE, atrib_func[i]);
-     BaseObject::atributos[atrib_func[i]]=funcoes[i]->obterDefinicaoObjeto(tipo_def, true);
+     funcoes[i]->setAttribute(ParsersAttributes::REF_TYPE, atrib_func[i]);
+     BaseObject::attributes[atrib_func[i]]=funcoes[i]->obterDefinicaoObjeto(tipo_def, true);
     }
    }
   }
 
   if(comp_interno==0 && tipo_def==SchemaParser::SQL_DEFINITION)
-   BaseObject::atributos[ParsersAttributes::INTERNAL_LENGHT]="VARIABLE";
+   BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]="VARIABLE";
   else
-   BaseObject::atributos[ParsersAttributes::INTERNAL_LENGHT]=QString("%1").arg(comp_interno);
+   BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]=QString("%1").arg(comp_interno);
 
-  BaseObject::atributos[ParsersAttributes::BY_VALUE]=(por_valor ? "1" : "");
-  BaseObject::atributos[ParsersAttributes::ALIGNMENT]=(*alinhamento);
-  BaseObject::atributos[ParsersAttributes::STORAGE]=(~armazenamento);
-  BaseObject::atributos[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
+  BaseObject::attributes[ParsersAttributes::BY_VALUE]=(por_valor ? "1" : "");
+  BaseObject::attributes[ParsersAttributes::ALIGNMENT]=(*alinhamento);
+  BaseObject::attributes[ParsersAttributes::STORAGE]=(~armazenamento);
+  BaseObject::attributes[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
 
   if(elemento!="any")
-   BaseObject::atributos[ParsersAttributes::ELEMENT]=(*elemento);
+   BaseObject::attributes[ParsersAttributes::ELEMENT]=(*elemento);
 
   if(delimitador!='\0')
-   BaseObject::atributos[ParsersAttributes::DELIMITER]=delimitador;
+   BaseObject::attributes[ParsersAttributes::DELIMITER]=delimitador;
 
-  BaseObject::atributos[ParsersAttributes::CATEGORY]=~(categoria);
+  BaseObject::attributes[ParsersAttributes::CATEGORY]=~(categoria);
 
-  BaseObject::atributos[ParsersAttributes::PREFERRED]=(preferido ? "1" : "");
+  BaseObject::attributes[ParsersAttributes::PREFERRED]=(preferido ? "1" : "");
 
   if(tipo_copia!="any")
-   BaseObject::atributos[ParsersAttributes::LIKE_TYPE]=(*tipo_copia);
+   BaseObject::attributes[ParsersAttributes::LIKE_TYPE]=(*tipo_copia);
  }
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));
@@ -624,7 +624,7 @@ void Tipo::operator = (Tipo &tipo)
  *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(tipo);
 
  this->config=tipo.config;
- this->atributos=tipo.atributos;
+ this->attributes=tipo.attributes;
  this->enumeracoes=tipo.enumeracoes;
  this->comp_interno=tipo.comp_interno;
  this->por_valor=tipo.por_valor;

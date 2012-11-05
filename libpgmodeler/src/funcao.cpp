@@ -2,7 +2,7 @@
 
 Parametro::Parametro(void)
 {
- tipo_objeto=OBJ_PARAMETER;
+ obj_type=OBJ_PARAMETER;
  entrada=saida=false;
 }
 
@@ -33,7 +33,7 @@ bool Parametro::parametroSaida(void)
 
 void Parametro::operator = (const Parametro &param)
 {
- this->nome=param.nome;
+ this->obj_name=param.obj_name;
  this->tipo=param.tipo;
  this->valor_padrao=param.valor_padrao;
  this->entrada=param.entrada;
@@ -46,14 +46,14 @@ QString Parametro::obterDefinicaoObjeto(unsigned tipo_def)
  QString val_true, val_false;
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
-  atributos[ParsersAttributes::NAME]=BaseObject::formatarNome(nome);
+  attributes[ParsersAttributes::NAME]=BaseObject::formatName(obj_name);
  else
-  atributos[ParsersAttributes::NAME]=nome;
+  attributes[ParsersAttributes::NAME]=obj_name;
 
- atributos[ParsersAttributes::PARAM_IN]=(entrada ? "1" : "");
- atributos[ParsersAttributes::PARAM_OUT]=(saida ? "1" : "");
- atributos[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
- atributos[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
+ attributes[ParsersAttributes::PARAM_IN]=(entrada ? "1" : "");
+ attributes[ParsersAttributes::PARAM_OUT]=(saida ? "1" : "");
+ attributes[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
+ attributes[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
 
  //return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::PARAMETRO,atributos, tipo_def));
  return(BaseObject::obterDefinicaoObjeto(tipo_def));
@@ -66,28 +66,28 @@ Funcao::Funcao(void)
  linguagem=NULL;
  retorna_setof=false;
  funcao_janela=false;
- tipo_objeto=OBJ_FUNCTION;
+ obj_type=OBJ_FUNCTION;
 
  //Este dois valores são criados por padrão pelo SGBD
  custo_execucao=100;
  qtd_linhas=1000;
 
- atributos[ParsersAttributes::PARAMETERS]="";
- atributos[ParsersAttributes::EXECUTION_COST]="";
- atributos[ParsersAttributes::ROW_AMOUNT]="";
- atributos[ParsersAttributes::RETURN_TYPE]="";
- atributos[ParsersAttributes::FUNCTION_TYPE]="";
- atributos[ParsersAttributes::LANGUAGE]="";
- atributos[ParsersAttributes::RETURNS_SETOF]="";
- atributos[ParsersAttributes::SECURITY_TYPE]="";
- atributos[ParsersAttributes::BEHAVIOR_TYPE]="";
- atributos[ParsersAttributes::DEFINITION]="";
- atributos[ParsersAttributes::SIGNATURE]="";
- atributos[ParsersAttributes::REF_TYPE]="";
- atributos[ParsersAttributes::WINDOW_FUNC]="";
- atributos[ParsersAttributes::RETURN_TABLE]="";
- atributos[ParsersAttributes::LIBRARY]="";
- atributos[ParsersAttributes::SYMBOL]="";
+ attributes[ParsersAttributes::PARAMETERS]="";
+ attributes[ParsersAttributes::EXECUTION_COST]="";
+ attributes[ParsersAttributes::ROW_AMOUNT]="";
+ attributes[ParsersAttributes::RETURN_TYPE]="";
+ attributes[ParsersAttributes::FUNCTION_TYPE]="";
+ attributes[ParsersAttributes::LANGUAGE]="";
+ attributes[ParsersAttributes::RETURNS_SETOF]="";
+ attributes[ParsersAttributes::SECURITY_TYPE]="";
+ attributes[ParsersAttributes::BEHAVIOR_TYPE]="";
+ attributes[ParsersAttributes::DEFINITION]="";
+ attributes[ParsersAttributes::SIGNATURE]="";
+ attributes[ParsersAttributes::REF_TYPE]="";
+ attributes[ParsersAttributes::WINDOW_FUNC]="";
+ attributes[ParsersAttributes::RETURN_TABLE]="";
+ attributes[ParsersAttributes::LIBRARY]="";
+ attributes[ParsersAttributes::SYMBOL]="";
 }
 
 void Funcao::definirNome(const QString &nome)
@@ -195,7 +195,7 @@ void Funcao::definirAtributoParametros(unsigned tipo_def)
  if(tipo_def==SchemaParser::SQL_DEFINITION)
   str_param.remove(str_param.size()-2,2);
 
- atributos[ParsersAttributes::PARAMETERS]=str_param;
+ attributes[ParsersAttributes::PARAMETERS]=str_param;
 }
 
 void Funcao::definirAtributoTipoRetTabela(unsigned tipo_def)
@@ -212,7 +212,7 @@ void Funcao::definirAtributoTipoRetTabela(unsigned tipo_def)
  if(tipo_def==SchemaParser::SQL_DEFINITION)
   str_tipo.remove(str_tipo.size()-2,2);
 
- atributos[ParsersAttributes::RETURN_TABLE]=str_tipo;
+ attributes[ParsersAttributes::RETURN_TABLE]=str_tipo;
 }
 
 void Funcao::definirCustoExecucao(unsigned custo)
@@ -500,36 +500,36 @@ QString Funcao::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 {
  definirAtributoParametros(tipo_def);
 
- atributos[ParsersAttributes::EXECUTION_COST]=QString("%1").arg(custo_execucao);
- atributos[ParsersAttributes::ROW_AMOUNT]=QString("%1").arg(qtd_linhas);
- atributos[ParsersAttributes::FUNCTION_TYPE]=(~tipo_funcao);
+ attributes[ParsersAttributes::EXECUTION_COST]=QString("%1").arg(custo_execucao);
+ attributes[ParsersAttributes::ROW_AMOUNT]=QString("%1").arg(qtd_linhas);
+ attributes[ParsersAttributes::FUNCTION_TYPE]=(~tipo_funcao);
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
-  atributos[ParsersAttributes::LANGUAGE]=linguagem->obterNome(false);
-  atributos[ParsersAttributes::RETURN_TYPE]=(*tipo_retorno);
+  attributes[ParsersAttributes::LANGUAGE]=linguagem->obterNome(false);
+  attributes[ParsersAttributes::RETURN_TYPE]=(*tipo_retorno);
  }
  else
  {
-  atributos[ParsersAttributes::LANGUAGE]=linguagem->obterDefinicaoObjeto(tipo_def,true);
-  atributos[ParsersAttributes::RETURN_TYPE]=tipo_retorno.obterDefinicaoObjeto(tipo_def);
+  attributes[ParsersAttributes::LANGUAGE]=linguagem->obterDefinicaoObjeto(tipo_def,true);
+  attributes[ParsersAttributes::RETURN_TYPE]=tipo_retorno.obterDefinicaoObjeto(tipo_def);
  }
 
  definirAtributoTipoRetTabela(tipo_def);
 
- atributos[ParsersAttributes::RETURNS_SETOF]=(retorna_setof ? "1" : "");
- atributos[ParsersAttributes::WINDOW_FUNC]=(funcao_janela ? "1" : "");
- atributos[ParsersAttributes::SECURITY_TYPE]=(~tipo_seg);
- atributos[ParsersAttributes::BEHAVIOR_TYPE]=(~tipo_comportamento);
- atributos[ParsersAttributes::DEFINITION]=codigo_fonte;
+ attributes[ParsersAttributes::RETURNS_SETOF]=(retorna_setof ? "1" : "");
+ attributes[ParsersAttributes::WINDOW_FUNC]=(funcao_janela ? "1" : "");
+ attributes[ParsersAttributes::SECURITY_TYPE]=(~tipo_seg);
+ attributes[ParsersAttributes::BEHAVIOR_TYPE]=(~tipo_comportamento);
+ attributes[ParsersAttributes::DEFINITION]=codigo_fonte;
 
  if(linguagem->obterNome()==~TipoLinguagem(TipoLinguagem::c))
  {
-  atributos[ParsersAttributes::SYMBOL]=simbolo;
-  atributos[ParsersAttributes::LIBRARY]=biblioteca;
+  attributes[ParsersAttributes::SYMBOL]=simbolo;
+  attributes[ParsersAttributes::LIBRARY]=biblioteca;
  }
 
- atributos[ParsersAttributes::SIGNATURE]=assinatura;
+ attributes[ParsersAttributes::SIGNATURE]=assinatura;
  return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }
 

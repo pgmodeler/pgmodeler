@@ -264,8 +264,8 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
   nome_tab_relnn_edt->setText(relacao_aux->obterNomeTabelaRelNN());
 
   //Habilita os botões das tabelas de restições e atributos caso o relacionamento esteja protegido
-  tab_atributos->habilitarBotoes(TabelaObjetosWidget::TODOS_BOTOES, !relacao_aux->objetoProtegido());
-  tab_restricoes->habilitarBotoes(TabelaObjetosWidget::TODOS_BOTOES, !relacao_aux->objetoProtegido());
+  tab_atributos->habilitarBotoes(TabelaObjetosWidget::TODOS_BOTOES, !relacao_aux->isProtected());
+  tab_restricoes->habilitarBotoes(TabelaObjetosWidget::TODOS_BOTOES, !relacao_aux->isProtected());
 
   //Lista as restrições e atributos do relacionamento
   listarObjetos(OBJ_COLUMN);

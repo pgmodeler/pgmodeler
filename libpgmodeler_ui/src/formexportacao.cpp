@@ -205,7 +205,7 @@ void FormExportacao::exportarModelo(void)
       for(i=0; i < qtd; i++)
       {
        objeto=modelo_wgt->modelo->obterObjeto(i, vet_tipos[id_tipo]);
-       rot_prog_lbl->setText(trUtf8("Creating object '%1' (%2)...").arg(QString::fromUtf8(objeto->obterNome())).arg(objeto->obterNomeTipoObjeto()));
+       rot_prog_lbl->setText(trUtf8("Creating object '%1' (%2)...").arg(QString::fromUtf8(objeto->obterNome())).arg(objeto->getTypeName()));
        rot_prog_lbl->repaint();
 
        try
@@ -350,7 +350,7 @@ void FormExportacao::exportarModelo(void)
      //Caso o banco de dados foi criado, exclui o mesmo
      if(bd_criado)
       conexao->executeDDLCommand(drop_cmd
-                                  .arg(modelo_wgt->modelo->obterNomeSQLObjeto())
+                                  .arg(modelo_wgt->modelo->getSQLName())
                                   .arg(modelo_wgt->modelo->obterNome(true)));
 
      //Removendo os espaços de tabela e papéis
@@ -363,7 +363,7 @@ void FormExportacao::exportarModelo(void)
        try
        {
         conexao->executeDDLCommand(drop_cmd
-                                    .arg(objeto->obterNomeSQLObjeto())
+                                    .arg(objeto->getSQLName())
                                     .arg(objeto->obterNome(true)));
        }
        catch(Exception &e)

@@ -82,7 +82,7 @@ class Sequencia: public BaseObject {
   void definirPossuidora(Tabela *tabela, const QString &nome_coluna);
   void definirPossuidora(Coluna *coluna);
 
-  void definirNome(const QString &nome);
+  void definirNome(const QString &obj_name);
 
   //Define o esquema ao qual a sequência pertence
   void definirEsquema(BaseObject *schema);

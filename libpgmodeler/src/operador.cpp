@@ -4,7 +4,7 @@ Operador::Operador(void)
 {
  unsigned i;
 
- tipo_objeto=OBJ_OPERATOR;
+ obj_type=OBJ_OPERATOR;
 
  for(i=0; i < 3; i++)
   funcoes[i]=NULL;
@@ -16,24 +16,24 @@ Operador::Operador(void)
  tipo_args[ARG_ESQUERDA]=TipoPgSQL("any");
  tipo_args[ARG_DIREITA]=TipoPgSQL("any");
 
- atributos[ParsersAttributes::LEFT_TYPE]="";
- atributos[ParsersAttributes::RIGHT_TYPE]="";
- atributos[ParsersAttributes::COMMUTATOR_OP]="";
- atributos[ParsersAttributes::NEGATOR_OP]="";
- atributos[ParsersAttributes::SORT_OP]="";
- atributos[ParsersAttributes::SORT2_OP]="";
- atributos[ParsersAttributes::LESS_OP]="";
- atributos[ParsersAttributes::GREATER_OP]="";
- atributos[ParsersAttributes::RESTRICTION_FUNC]="";
- atributos[ParsersAttributes::JOIN_FUNC]="";
- atributos[ParsersAttributes::OPERATOR_FUNC]="";
- atributos[ParsersAttributes::HASHES]="";
- atributos[ParsersAttributes::MERGES]="";
- atributos[ParsersAttributes::SIGNATURE]="";
- atributos[ParsersAttributes::REF_TYPE]="";
+ attributes[ParsersAttributes::LEFT_TYPE]="";
+ attributes[ParsersAttributes::RIGHT_TYPE]="";
+ attributes[ParsersAttributes::COMMUTATOR_OP]="";
+ attributes[ParsersAttributes::NEGATOR_OP]="";
+ attributes[ParsersAttributes::SORT_OP]="";
+ attributes[ParsersAttributes::SORT2_OP]="";
+ attributes[ParsersAttributes::LESS_OP]="";
+ attributes[ParsersAttributes::GREATER_OP]="";
+ attributes[ParsersAttributes::RESTRICTION_FUNC]="";
+ attributes[ParsersAttributes::JOIN_FUNC]="";
+ attributes[ParsersAttributes::OPERATOR_FUNC]="";
+ attributes[ParsersAttributes::HASHES]="";
+ attributes[ParsersAttributes::MERGES]="";
+ attributes[ParsersAttributes::SIGNATURE]="";
+ attributes[ParsersAttributes::REF_TYPE]="";
 }
 
-bool Operador::nomeValido(const QString &nome)
+bool Operador::isValidName(const QString &nome)
 {
  //ATENÇÃO: Não alterar a seqüência em que aparecem os caracteres.
  QString chr_validos="+-*/<>=~!@#%^&|'?";
@@ -41,7 +41,7 @@ bool Operador::nomeValido(const QString &nome)
  bool valido=true;
 
  //Verifica se o tamanho do nome é válido
- valido=(nome.size() <= static_cast<int>(TAM_MAX_NOME_OBJETO));
+ valido=(nome.size() <= static_cast<int>(OBJECT_NAME_MAX_LENGTH));
 
  //Verificando se o nome é válido de acordo com as condições:
  /* 1) O nome possui apenas caracteres do conjunto
@@ -75,10 +75,10 @@ void Operador::definirNome(const QString &nome)
   throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  if(!nomeValido(nome))
+  if(!isValidName(nome))
    throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
-   this->nome=nome;
+   this->obj_name=nome;
  }
 }
 
@@ -94,14 +94,14 @@ void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
   if(!funcao)
     throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->obterNome(true)))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_OPERATOR)),
+                         .arg(BaseObject::getTypeName(OBJ_OPERATOR)),
                   ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Caso o número de parâmetros da função seja inválido. Para operadores
      a mesma deve possuir 1 ou 2 parâmetros */
   else if(funcao->obterNumParams()==0 || funcao->obterNumParams() > 2)
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->obterNome()))
-                         .arg(BaseObject::obterNomeTipoObjeto(OBJ_OPERATOR)),
+                         .arg(BaseObject::getTypeName(OBJ_OPERATOR)),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
@@ -285,11 +285,11 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   if(tipo_def==SchemaParser::SQL_DEFINITION)
   {
    if(tipo_args[i]!="any")
-    atributos[atribs_tipos[i]]=(*tipo_args[i]);
+    attributes[atribs_tipos[i]]=(*tipo_args[i]);
   }
   else
   {
-   atributos[atribs_tipos[i]]=tipo_args[i].
+   attributes[atribs_tipos[i]]=tipo_args[i].
                 obterDefinicaoObjeto(SchemaParser::XML_DEFINITION,atribs_tipos[i]);
   }
  }
@@ -299,11 +299,11 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   if(operadores[i])
   {
    if(tipo_def==SchemaParser::SQL_DEFINITION)
-    atributos[atribs_ops[i]]=operadores[i]->obterNome(true);
+    attributes[atribs_ops[i]]=operadores[i]->obterNome(true);
    else
    {
-    operadores[i]->atributos[ParsersAttributes::REF_TYPE]=atribs_ops[i];
-    atributos[atribs_ops[i]]=operadores[i]->obterDefinicaoObjeto(tipo_def, true);
+    operadores[i]->attributes[ParsersAttributes::REF_TYPE]=atribs_ops[i];
+    attributes[atribs_ops[i]]=operadores[i]->obterDefinicaoObjeto(tipo_def, true);
    }
   }
  }
@@ -313,18 +313,18 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   if(funcoes[i])
   {
    if(tipo_def==SchemaParser::SQL_DEFINITION)
-    atributos[atribs_funcoes[i]]=funcoes[i]->obterAssinatura();
+    attributes[atribs_funcoes[i]]=funcoes[i]->obterAssinatura();
    else
    {
-    funcoes[i]->definirAtributoEsquema(ParsersAttributes::REF_TYPE, atribs_funcoes[i]);
-    atributos[atribs_funcoes[i]]=funcoes[i]->obterDefinicaoObjeto(tipo_def, true);
+    funcoes[i]->setAttribute(ParsersAttributes::REF_TYPE, atribs_funcoes[i]);
+    attributes[atribs_funcoes[i]]=funcoes[i]->obterDefinicaoObjeto(tipo_def, true);
    }
   }
  }
 
- atributos[ParsersAttributes::HASHES]=(hashes ? "1" : "");
- atributos[ParsersAttributes::MERGES]=(merges ? "1" : "");
- atributos[ParsersAttributes::SIGNATURE]=obterAssinatura();
+ attributes[ParsersAttributes::HASHES]=(hashes ? "1" : "");
+ attributes[ParsersAttributes::MERGES]=(merges ? "1" : "");
+ attributes[ParsersAttributes::SIGNATURE]=obterAssinatura();
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));
 }

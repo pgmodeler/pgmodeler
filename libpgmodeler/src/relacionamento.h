@@ -335,7 +335,7 @@ class Relacionamento: public RelacionamentoBase {
    vector<unsigned> obterColChavePrimariaEspecial(void);
 
    //Métodos de manipulação do nome da tabela gerada pelo rel. n-n
-   void definirNomeTabelaRelNN(const QString &nome);
+   void definirNomeTabelaRelNN(const QString &obj_name);
    QString obterNomeTabelaRelNN(void);
 
    //Métodos de manipulação dos sufixos da tas tabelas

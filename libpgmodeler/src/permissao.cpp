@@ -26,15 +26,15 @@ Permissao::Permissao(BaseObject *objeto)
 
  //Atribui o objeto   permissão
  this->objeto=objeto;
- this->tipo_objeto=OBJ_PERMISSION;
+ this->obj_type=OBJ_PERMISSION;
 
- atributos[ParsersAttributes::OBJECT]="";
- atributos[ParsersAttributes::TYPE]="";
- atributos[ParsersAttributes::PARENT]="";
- atributos[ParsersAttributes::GRANT_OP]="";
- atributos[ParsersAttributes::ROLES]="";
- atributos[ParsersAttributes::PRIVILEGES]="";
- atributos[ParsersAttributes::PRIVILEGES_GOP]="";
+ attributes[ParsersAttributes::OBJECT]="";
+ attributes[ParsersAttributes::TYPE]="";
+ attributes[ParsersAttributes::PARENT]="";
+ attributes[ParsersAttributes::GRANT_OP]="";
+ attributes[ParsersAttributes::ROLES]="";
+ attributes[ParsersAttributes::PRIVILEGES]="";
+ attributes[ParsersAttributes::PRIVILEGES_GOP]="";
 }
 
 bool Permissao::papelReferenciado(Papel *papel)
@@ -273,8 +273,8 @@ void Permissao::gerarIdPermissao(void)
     interno para a permissão e assim
     podendo gerar erros quando o usuário tenta criar uma permissão
     com o mesmo conjunto de papéis relacionados ao objeto */
- this->nome=QString(ParsersAttributes::PERMISSION + "_%1.%2")
-            .arg(objeto->obterIdObjeto())
+ this->obj_name=QString(ParsersAttributes::PERMISSION + "_%1.%2")
+            .arg(objeto->getObjectId())
             .arg(str_aux);
 }
 
@@ -292,17 +292,17 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
  tipo_obj=objeto->obterTipoObjeto();
 
  if(tipo_obj==OBJ_FUNCTION)
-  atributos[ParsersAttributes::OBJECT]=dynamic_cast<Funcao *>(objeto)->obterAssinatura();
+  attributes[ParsersAttributes::OBJECT]=dynamic_cast<Funcao *>(objeto)->obterAssinatura();
  else
-  atributos[ParsersAttributes::OBJECT]=objeto->obterNome(true);
+  attributes[ParsersAttributes::OBJECT]=objeto->obterNome(true);
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
-  atributos[ParsersAttributes::TYPE]=BaseObject::obterNomeSQLObjeto(objeto->obterTipoObjeto());
+  attributes[ParsersAttributes::TYPE]=BaseObject::getSQLName(objeto->obterTipoObjeto());
  else
-  atributos[ParsersAttributes::TYPE]=BaseObject::obterNomeEsquemaObjeto(objeto->obterTipoObjeto());
+  attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(objeto->obterTipoObjeto());
 
  if(tipo_obj==OBJ_COLUMN)
-  atributos[ParsersAttributes::PARENT]=dynamic_cast<Coluna *>(objeto)->obterTabelaPai()->obterNome(true);
+  attributes[ParsersAttributes::PARENT]=dynamic_cast<Coluna *>(objeto)->obterTabelaPai()->obterNome(true);
 
  if(tipo_def==SchemaParser::XML_DEFINITION)
  {
@@ -310,11 +310,11 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
   for(i=0; i < 12; i++)
   {
    if(privilegios[i] && op_concessao[i])
-    atributos[vet_priv[i]]=ParsersAttributes::GRANT_OP;
+    attributes[vet_priv[i]]=ParsersAttributes::GRANT_OP;
    else if(privilegios[i])
-    atributos[vet_priv[i]]=ParsersAttributes::_TRUE_;
+    attributes[vet_priv[i]]=ParsersAttributes::_TRUE_;
    else
-    atributos[vet_priv[i]]="";
+    attributes[vet_priv[i]]="";
   }
  }
  else
@@ -324,13 +324,13 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
   for(i=0; i < 12; i++)
   {
    if(privilegios[i] && !op_concessao[i])
-    atributos[ParsersAttributes::PRIVILEGES]+=vet_priv[i].toUpper() + ",";
+    attributes[ParsersAttributes::PRIVILEGES]+=vet_priv[i].toUpper() + ",";
    else if(op_concessao[i])
-    atributos[ParsersAttributes::PRIVILEGES_GOP]+=vet_priv[i].toUpper() + ",";
+    attributes[ParsersAttributes::PRIVILEGES_GOP]+=vet_priv[i].toUpper() + ",";
   }
 
-  atributos[ParsersAttributes::PRIVILEGES].remove(atributos[ParsersAttributes::PRIVILEGES].size()-1,1);
-  atributos[ParsersAttributes::PRIVILEGES_GOP].remove(atributos[ParsersAttributes::PRIVILEGES_GOP].size()-1,1);
+  attributes[ParsersAttributes::PRIVILEGES].remove(attributes[ParsersAttributes::PRIVILEGES].size()-1,1);
+  attributes[ParsersAttributes::PRIVILEGES_GOP].remove(attributes[ParsersAttributes::PRIVILEGES_GOP].size()-1,1);
  }
 
  qtd=papeis.size();
@@ -339,10 +339,10 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
     permissão separando-os por vírgula */
  for(i=0; i < qtd; i++)
  {
-  atributos[ParsersAttributes::ROLES]+=papeis[i]->obterNome(true) + ",";
+  attributes[ParsersAttributes::ROLES]+=papeis[i]->obterNome(true) + ",";
  }
 
- atributos[ParsersAttributes::ROLES].remove(atributos[ParsersAttributes::ROLES].size()-1,1);
+ attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def));
 }

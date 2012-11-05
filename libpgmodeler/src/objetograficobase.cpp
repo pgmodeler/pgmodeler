@@ -7,9 +7,9 @@ ObjetoGraficoBase::ObjetoGraficoBase(void)
  modificado=true;
 
  //Atributos de posição do objeto, usado apenas na definição XML
- atributos[ParsersAttributes::X_POS]="";
- atributos[ParsersAttributes::Y_POS]="";
- atributos[ParsersAttributes::POSITION]="";
+ attributes[ParsersAttributes::X_POS]="";
+ attributes[ParsersAttributes::Y_POS]="";
+ attributes[ParsersAttributes::POSITION]="";
 
  objeto_receptor=NULL;
 }
@@ -23,7 +23,7 @@ void ObjetoGraficoBase::definirProtegido(bool valor)
 {
  protected_obj=valor;
  if(!this->signalsBlocked())
-  emit s_objetoProtegido(valor);
+  emit s_isProtected(valor);
 }
 
 void ObjetoGraficoBase::definirModificado(bool valor)
@@ -41,10 +41,10 @@ bool ObjetoGraficoBase::objetoModificado(void)
 
 void ObjetoGraficoBase::definirAtributoPosicao(void)
 {
- atributos[ParsersAttributes::X_POS]=QString("%1").arg(posicao.x());
- atributos[ParsersAttributes::Y_POS]=QString("%1").arg(posicao.y());
- atributos[ParsersAttributes::POSITION]=SchemaParser::getObjectDefinition(ParsersAttributes::POSITION,
-                                     atributos, SchemaParser::XML_DEFINITION);
+ attributes[ParsersAttributes::X_POS]=QString("%1").arg(posicao.x());
+ attributes[ParsersAttributes::Y_POS]=QString("%1").arg(posicao.y());
+ attributes[ParsersAttributes::POSITION]=SchemaParser::getObjectDefinition(ParsersAttributes::POSITION,
+                                     attributes, SchemaParser::XML_DEFINITION);
 }
 
 void  ObjetoGraficoBase::definirPosicaoObjeto(QPointF p)

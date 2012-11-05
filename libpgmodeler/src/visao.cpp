@@ -3,12 +3,12 @@
 Visao::Visao(void) : TabelaBase()
 {
  //Definindo configurações inicias para a visão
- tipo_objeto=OBJ_VIEW;
- atributos[ParsersAttributes::DECLARATION]="";
- atributos[ParsersAttributes::REFERENCES]="";
- atributos[ParsersAttributes::SELECT_EXP]="";
- atributos[ParsersAttributes::FROM_EXP]="";
- atributos[ParsersAttributes::EXP_SIMPLES]="";
+ obj_type=OBJ_VIEW;
+ attributes[ParsersAttributes::DECLARATION]="";
+ attributes[ParsersAttributes::REFERENCES]="";
+ attributes[ParsersAttributes::SELECT_EXP]="";
+ attributes[ParsersAttributes::FROM_EXP]="";
+ attributes[ParsersAttributes::EXP_SIMPLES]="";
 }
 
 Visao::~Visao(void)
@@ -89,8 +89,8 @@ void Visao::adicionarReferencia(Referencia &refer, unsigned tipo_sql, int id_exp
 
  col=refer.obterColuna();
  if(col && col->incluidoPorRelacionamento() &&
-    col->obterIdObjeto() > this->object_id)
-  this->object_id=BaseObject::obterIdGlobal();
+    col->getObjectId() > this->object_id)
+  this->object_id=BaseObject::getGlobalId();
 }
 
 unsigned Visao::obterNumReferencias(void)
@@ -310,7 +310,7 @@ void Visao::definirAtributoDeclaracao(void)
    }
   }
  }
- atributos[ParsersAttributes::DECLARATION]=decl;
+ attributes[ParsersAttributes::DECLARATION]=decl;
 }
 
 void Visao::definirAtributoReferencias(void)
@@ -326,7 +326,7 @@ void Visao::definirAtributoReferencias(void)
  qtd=referencias.size();
  for(i=0; i < qtd; i++)
   str_aux+=referencias[i].obterDefinicaoXML();
- atributos[ParsersAttributes::REFERENCES]=str_aux;
+ attributes[ParsersAttributes::REFERENCES]=str_aux;
 
  /* Este bloco concatena os indices de referências
     em cada vetor de expressão separando-os por vírgula */
@@ -339,7 +339,7 @@ void Visao::definirAtributoReferencias(void)
    str_aux+=QString("%1").arg(vet_exp[i]->at(i1));
    if(i1 < qtd-1) str_aux+=",";
   }
-  atributos[vet_atrib[i]]=str_aux;
+  attributes[vet_atrib[i]]=str_aux;
  }
 }
 

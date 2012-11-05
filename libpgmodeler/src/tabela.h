@@ -61,7 +61,7 @@ class Tabela: public TabelaBase {
 
    /* Obtém um objeto da tabela através de seu nome. Seu tipo deve ser especificado
      para se seja buscado na lista de objetos correta. */
-  BaseObject *obterObjeto(const QString &nome, ObjectType tipo_obj, int &idx_obj);
+  BaseObject *obterObjeto(const QString &obj_name, ObjectType tipo_obj, int &idx_obj);
 
   /* Formata a QString de colunas usada pelo parser de esquema
      na geração da definição SQL da tabela */
@@ -89,18 +89,18 @@ class Tabela: public TabelaBase {
   void adicionarTabelaCopia(Tabela *tab, int idx_tab=-1);
 
   //Métodos que removem uma tabela descendente através de seu nome ou índice
-  void removerTabelaPai(const QString &nome);
+  void removerTabelaPai(const QString &obj_name);
   void removerTabelaPai(unsigned idx_tab);
 
   //Métodos que removem uma tabela cópia através de seu nome ou índice
-  void removerTabelaCopia(const QString &nome);
+  void removerTabelaCopia(const QString &obj_name);
   void removerTabelaCopia(unsigned idx_tab);
 
  public:
    Tabela(void);
   ~Tabela(void);
 
-  void definirNome(const QString &nome);
+  void definirNome(const QString &obj_name);
   void definirEsquema(BaseObject *schema);
 
   //Define se a tabela aceita oids ou não
@@ -116,7 +116,7 @@ class Tabela: public TabelaBase {
 
   /* Obtém um objeto da tabela através de seu nome. Seu tipo deve ser especificado
      para se seja buscado na lista de objetos correta. */
-  BaseObject *obterObjeto(const QString &nome, ObjectType tipo_obj);
+  BaseObject *obterObjeto(const QString &obj_name, ObjectType tipo_obj);
 
   /* Remove um objeto da tabela através de seu índice. Seu tipo deve ser especificado
      para se seja removido da lista de objetos correta. */
@@ -124,7 +124,7 @@ class Tabela: public TabelaBase {
 
   /* Remove um objeto da tabela através de seu nome. Seu tipo deve ser especificado
      para se seja removido da lista de objetos correta. */
-  void removerObjeto(const QString &nome, ObjectType tipo_obj);
+  void removerObjeto(const QString &obj_name, ObjectType tipo_obj);
 
   //Remove um objeto da tabela através de seu endereço em memória
   void removerObjeto(BaseObject *objeto);
@@ -144,19 +144,19 @@ class Tabela: public TabelaBase {
      atual mas o nome antigo da coluna. Este parâmetro é usado para auxiliar
      as operações de referência a colunas adicionadas por relacionamentos
      a tabela */
-  Coluna *obterColuna(const QString &nome, bool ref_nome_antigo=false);
+  Coluna *obterColuna(const QString &obj_name, bool ref_nome_antigo=false);
   Coluna *obterColuna(unsigned idx_col);
 
   //Métodos que retornam uma constraint através de seu nome ou índice
-  Restricao *obterRestricao(const QString &nome);
+  Restricao *obterRestricao(const QString &obj_name);
   Restricao *obterRestricao(unsigned idx_constr);
 
   //Métodos que retornam um gatilho através de seu nome ou índice
-  Gatilho *obterGatilho(const QString &nome);
+  Gatilho *obterGatilho(const QString &obj_name);
   Gatilho *obterGatilho(unsigned idx_gat);
 
   //Métodos que retornam um índice através de seu nome ou índice
-  Indice *obterIndice(const QString &nome);
+  Indice *obterIndice(const QString &obj_name);
   Indice *obterIndice(unsigned idx_ind);
 
   //Métodos que retornam o número de objetos na tabela
@@ -170,42 +170,42 @@ class Tabela: public TabelaBase {
   unsigned obterNumObjetos(ObjectType tipo_obj, bool inc_insporrelacao=true);
 
   //Métodos que retornam uma regra através de seu nome ou índice
-  Regra *obterRegra(const QString &nome);
+  Regra *obterRegra(const QString &obj_name);
   Regra *obterRegra(unsigned idx_reg);
 
   //Métodos que retornam uma tabela descendente através de seu nome ou índice
-  Tabela *obterTabelaPai(const QString &nome);
+  Tabela *obterTabelaPai(const QString &obj_name);
   Tabela *obterTabelaPai(unsigned idx_tab);
 
   //Métodos que retornam uma tabela descendente através de seu nome ou índice
-  Tabela *obterTabelaCopia(const QString &nome);
+  Tabela *obterTabelaCopia(const QString &obj_name);
   Tabela *obterTabelaCopia(unsigned idx_tab);
 
   //Métodos que removem uma coluna através de seu nome ou índice
-  void removerColuna(const QString &nome);
+  void removerColuna(const QString &obj_name);
   void removerColuna(unsigned idx_col);
 
   //Métodos que removem uma constraint através de seu nome ou índice
-  void removerRestricao(const QString &nome);
+  void removerRestricao(const QString &obj_name);
   void removerRestricao(unsigned idx_const);
 
   //Métodos que removem um gatilho através de seu nome ou índice
-  void removerGatilho(const QString &nome);
+  void removerGatilho(const QString &obj_name);
   void removerGatilho(unsigned idx_gat);
 
   //Métodos que removem um índice através de seu nome ou índice
-  void removerIndice(const QString &nome);
+  void removerIndice(const QString &obj_name);
   void removerIndice(unsigned idx_ind);
 
   //Métodos que removem uma regra através de seu nome ou índice
-  void removerRegra(const QString &nome);
+  void removerRegra(const QString &obj_name);
   void removerRegra(unsigned idx_reg);
 
   //Retorna a definição SQL ou XML do objeto
   virtual QString obterDefinicaoObjeto(unsigned tipo_def);
 
   //Obtém o índice de um determinado objeto através de seu nome
-  int obterIndiceObjeto(const QString &nome, ObjectType tipo_obj);
+  int obterIndiceObjeto(const QString &obj_name, ObjectType tipo_obj);
   int obterIndiceObjeto(ObjetoTabela *objeto);
 
   //Retorna a chave primária da tabela se possuir

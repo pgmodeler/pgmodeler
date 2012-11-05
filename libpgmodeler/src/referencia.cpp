@@ -13,8 +13,8 @@ Referencia::Referencia(Tabela *tabela, Coluna *coluna, const QString &alias_tab,
 
  /* Caso o alias atribuido   tabela/expressão ou coluna seja inválido
     de acordo com a regra de nomenclatura do PostgreSQL */
- else if((!alias_tab.isEmpty() && !BaseObject::nomeValido(alias_tab)) ||
-         (!alias_col.isEmpty() && !BaseObject::nomeValido(alias_col)))
+ else if((!alias_tab.isEmpty() && !BaseObject::isValidName(alias_tab)) ||
+         (!alias_col.isEmpty() && !BaseObject::isValidName(alias_col)))
   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Caso se tente criar uma referência a uma coluna cuja tabela pai seja
@@ -35,7 +35,7 @@ Referencia::Referencia(const QString &expressao, const QString &alias_exp)
   throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Caso o alias da expressão seja inválido de acordo com as regras de
     nomenclatura do PostgreSQL */
- else if(!BaseObject::nomeValido(alias_exp))
+ else if(!BaseObject::isValidName(alias_exp))
   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  tabela=NULL;
@@ -107,7 +107,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
     nome_tab=tabela->obterNome(true);
    else
     //Caso haja um alias de tabela, formata o seu nome e passa a usá-la na def. SQL
-    nome_tab=BaseObject::formatarNome(alias);
+    nome_tab=BaseObject::formatName(alias);
 
    /* Adiciona um ponto logo após o nome da tabela (ou alias), para
       a concatenação do nome da coluna */
@@ -124,7 +124,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
 
     //Caso haja um alias para a coluna o mesmo será concatenad  definição
     if(alias_coluna!="")
-     def_sql+=" AS " + BaseObject::formatarNome(alias_coluna);
+     def_sql+=" AS " + BaseObject::formatName(alias_coluna);
    }
   }
   //Caso seja um referênci  uma expressão na parte SELECT-FROM
@@ -136,7 +136,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
    */
    def_sql=expressao;
    if(alias!="")
-    def_sql+=" AS " + BaseObject::formatarNome(alias);
+    def_sql+=" AS " + BaseObject::formatName(alias);
   }
   def_sql+=", ";
  }
@@ -156,7 +156,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
 
    //Caso um alias exista
    if(alias!="")
-    def_sql+=" AS " + BaseObject::formatarNome(alias);
+    def_sql+=" AS " + BaseObject::formatName(alias);
    def_sql+=", ";
   }
   else
@@ -180,7 +180,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
    if(alias=="")
     def_sql=tabela->obterNome(true);
    else
-    def_sql=BaseObject::formatarNome(alias);
+    def_sql=BaseObject::formatName(alias);
 
    def_sql+=".";
 
