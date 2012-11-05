@@ -57,7 +57,7 @@ void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
     o mesmo objeto representado por este ultimo */
  else if(papel && this==papel)
   throw Exception(Exception::getErrorMessage(ERR_ROLE_MEMBER_ITSELF)
-                               .arg(QString::fromUtf8(papel->obterNome())),
+                               .arg(QString::fromUtf8(papel->getName())),
                 ERR_ROLE_MEMBER_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -84,8 +84,8 @@ void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
      (tipo_papel==PAPEL_ADMIN && (papel_adm || papel_mem)))
      //Dispara um erro caso o papel já foi inserido anteriormente na lista
    throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
-                               .arg(QString::fromUtf8(papel->obterNome()))
-                               .arg(QString::fromUtf8(this->obterNome())),
+                               .arg(QString::fromUtf8(papel->getName()))
+                               .arg(QString::fromUtf8(this->getName())),
                  ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Erros de referência redundante ou seja um papel
      referencia o outro indefinidamente. Uma referência redundante pode acontecer
@@ -114,8 +114,8 @@ void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
           (tipo_papel==PAPEL_MEMBRO && ((papel_mem1 || papel_adm1) || papel_ref)) ||
           (tipo_papel==PAPEL_ADMIN &&  ((papel_mem1 || papel_adm1) || papel_ref)))
    throw Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
-                               .arg(QString::fromUtf8(this->obterNome()))
-                               .arg(QString::fromUtf8(papel->obterNome())),
+                               .arg(QString::fromUtf8(this->getName()))
+                               .arg(QString::fromUtf8(papel->getName())),
                  ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
@@ -173,7 +173,7 @@ void Papel::definirAtributoPapel(unsigned tipo_papel)
  qtd=vet_papeis->size();
  for(i=0; i < qtd; i++)
  {
-  str_papeis+=vet_papeis->at(i)->obterNome(true);
+  str_papeis+=vet_papeis->at(i)->getName(true);
   if(i < (qtd-1)) str_papeis+=",";
  }
 

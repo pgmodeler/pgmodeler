@@ -50,8 +50,8 @@ Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabel
      (tipo_relac==RELACIONAMENTO_NN && (!tab_orig->obterChavePrimaria() || !tab_dest->obterChavePrimaria())))
      throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
                            .arg(QString::fromUtf8(obj_name))
-                           .arg(QString::fromUtf8(tab_orig->obterNome(true)))
-                           .arg(QString::fromUtf8(tab_dest->obterNome(true))),
+                           .arg(QString::fromUtf8(tab_orig->getName(true)))
+                           .arg(QString::fromUtf8(tab_dest->getName(true))),
                   ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Atribuindo os sufixos ao relacionamento.
@@ -81,11 +81,11 @@ Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabel
    str_aux=QApplication::translate("Relacionamento","%1_copies_%2","",QApplication::UnicodeUTF8);
 
   if(tipo_rel!=RELACIONAMENTO_NN)
-   str_aux=str_aux.arg(this->obterTabelaReferencia()->obterNome())
-                     .arg(this->obterTabelaReceptora()->obterNome());
+   str_aux=str_aux.arg(this->obterTabelaReferencia()->getName())
+                     .arg(this->obterTabelaReceptora()->getName());
   else
-   str_aux=str_aux.arg(this->tabela_orig->obterNome())
-                  .arg(this->tabela_dest->obterNome());
+   str_aux=str_aux.arg(this->tabela_orig->getName())
+                  .arg(this->tabela_dest->getName());
 
   definirNome(str_aux);
 
@@ -121,7 +121,7 @@ vector<QString> Relacionamento::obterColunasRelacionamento(void)
  qtd=colunas_ref.size();
  for(i=0; i < qtd; i++)
  {
-  vet_nomes.push_back(QString::fromUtf8(colunas_ref[i]->obterNome()) + " (" +
+  vet_nomes.push_back(QString::fromUtf8(colunas_ref[i]->getName()) + " (" +
                       QString::fromUtf8(*colunas_ref[i]->obterTipo()) + ")");
  }
 
@@ -141,7 +141,7 @@ void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufix
 
  if(!sufixo.isEmpty() && !BaseObject::isValidName(sufixo))
   throw Exception(Exception::getErrorMessage(ERR_ASG_INV_SUFFIX_REL)
-                .arg(QString::fromUtf8(this->obterNome())),
+                .arg(QString::fromUtf8(this->getName())),
                 ERR_ASG_INV_SUFFIX_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(tipo_tab==TABELA_ORIGEM)
@@ -192,7 +192,7 @@ void Relacionamento::definirColsChavePrimariaEspecial(vector<unsigned> &cols)
     e/ou relacionamento n-n */
  if(autoRelacionamento() || relacionamentoIdentificador() || tipo_relac==RELACIONAMENTO_NN)
   throw Exception(Exception::getErrorMessage(ERR_INV_USE_ESPECIAL_PK)
-                .arg(QString::fromUtf8(this->obterNome())),
+                .arg(QString::fromUtf8(this->getName())),
                 ERR_INV_USE_ESPECIAL_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->id_colunas_pk_rel=cols;
@@ -215,11 +215,11 @@ void Relacionamento::criarChavePrimariaEspecial(void)
 
      2) O espaço de tabelas usado na restrição é o mesmo da tabela receptora */
   pk_especial=new Restricao;
-  pk_especial->definirNome(this->obterNome() + QString("_pk"));
+  pk_especial->definirNome(this->getName() + QString("_pk"));
   pk_especial->definirTipo(TipoRestricao::primary_key);
   pk_especial->definirIncPorLigacao(true);
-  pk_especial->definirProtegido(true);
-  pk_especial->definirEspacoTabela(dynamic_cast<EspacoTabela *>(obterTabelaReceptora()->getTablespace()));
+  pk_especial->setProtected(true);
+  pk_especial->setTablespace(dynamic_cast<EspacoTabela *>(obterTabelaReceptora()->getTablespace()));
 
   //Adiciona as colunas   chave primária obtendo-as através dos seus índices armazenados em 'id_colunas_pk_rel'
   qtd=id_colunas_pk_rel.size();
@@ -254,7 +254,7 @@ void Relacionamento::definirNomeTabelaRelNN(const QString &nome)
  this->invalidado=true;
 }
 
-QString Relacionamento::obterNomeTabelaRelNN(void)
+QString Relacionamento::getNameTabelaRelNN(void)
 {
  return(nome_tab_relnn);
 }
@@ -305,7 +305,7 @@ int Relacionamento::obterIndiceObjeto(ObjetoTabela *objeto)
  while(itr!=itr_end && !enc)
  {
   obj_aux=(*itr);
-  enc=(obj_aux==objeto || obj_aux->obterNome()==objeto->obterNome());
+  enc=(obj_aux==objeto || obj_aux->getName()==objeto->getName());
   itr++;
  }
 
@@ -334,7 +334,7 @@ bool Relacionamento::colunaExistente(Coluna *coluna)
  while(itr!=itr_end && !enc)
  {
   col_aux=(*itr);
-  enc=(col_aux==coluna || col_aux->obterNome()==coluna->obterNome());
+  enc=(col_aux==coluna || col_aux->getName()==coluna->getName());
   itr++;
  }
 
@@ -423,9 +423,9 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
   }
   else
    throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-                 .arg(objeto_tab->obterNome(true))
+                 .arg(objeto_tab->getName(true))
                  .arg(objeto_tab->getTypeName())
-                 .arg(this->obterNome(true))
+                 .arg(this->getName(true))
                  .arg(this->getTypeName()),
                  ERR_ASG_DUPLIC_OBJECT, __PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
@@ -435,7 +435,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
      a definição SQL do objeto está incompleta */
   if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
    throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-                              .arg(QString::fromUtf8(objeto_tab->obterNome()))
+                              .arg(QString::fromUtf8(objeto_tab->getName()))
                               .arg(objeto_tab->getTypeName()),
                  ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   else
@@ -498,19 +498,19 @@ void Relacionamento::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
   {
    rest=dynamic_cast<Restricao *>(*itr);
    //Verifica se a coluna está em uma das listas das restições
-   refer=(rest->obterColuna(coluna->obterNome(), Restricao::COLUNA_ORIGEM) ||
-          rest->obterColuna(coluna->obterNome(), Restricao::COLUNA_REFER));
+   refer=(rest->obterColuna(coluna->getName(), Restricao::COLUNA_ORIGEM) ||
+          rest->obterColuna(coluna->getName(), Restricao::COLUNA_REFER));
    itr++;
   }
 
   //Caso haja referência
   if(refer)
    throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
-                           .arg(QString::fromUtf8(coluna->obterNome()))
+                           .arg(QString::fromUtf8(coluna->getName()))
                            .arg(coluna->getTypeName())
-                           .arg(QString::fromUtf8(rest->obterNome()))
+                           .arg(QString::fromUtf8(rest->getName()))
                            .arg(rest->getTypeName())
-                           .arg(QString::fromUtf8(this->obterNome(true)))
+                           .arg(QString::fromUtf8(this->getName(true)))
                            .arg(this->getTypeName()),
                  ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
@@ -560,7 +560,7 @@ Coluna *Relacionamento::obterColunaReferenciada(const QString &nome_col)
  while(itr!=itr_end && !enc)
  {
   col=(*itr);
-  enc=(col->obterNome(formatar)==nome_col);
+  enc=(col->getName(formatar)==nome_col);
   itr++;
  }
 
@@ -612,7 +612,7 @@ ObjetoTabela *Relacionamento::obterObjeto(const QString &nome_atrib, ObjectType 
  while(itr!=itr_end && !enc)
  {
   obj_aux=(*itr);
-  enc=(obj_aux->obterNome()==nome_atrib);
+  enc=(obj_aux->getName()==nome_atrib);
   itr++;
  }
 
@@ -704,7 +704,7 @@ void Relacionamento::adicionarRestricoes(Tabela *tab_dest)
     i=1; aux[0]='\0';
     nome="";
     //Configura o nome da restrição a fim de resolver problemas de duplicidade
-    nome_orig=rest->obterNome();
+    nome_orig=rest->getName();
     while(tab_dest->obterRestricao(nome_orig + aux))
     {
      aux=QString("%1").arg(i);
@@ -815,7 +815,7 @@ void Relacionamento::adicionarColunasRelGen(void)
     else if(tipo_orig=="bigserial") tipo_orig="bigint";
 
     //Compara o nome das duas colunas
-    duplic=(col_orig->obterNome()==col_dest->obterNome());
+    duplic=(col_orig->getName()==col_dest->getName());
 
     //Caso haja duplicidade de nomes
     if(duplic)
@@ -865,7 +865,7 @@ void Relacionamento::adicionarColunasRelGen(void)
        {
         tab_pai=dynamic_cast<Tabela *>(tab_aux->obterObjeto(idx, tipos[i2]));
         //Verifica se a coluna existe na tabela obtida
-        cond=(tab_pai->obterColuna(col_aux->obterNome()));
+        cond=(tab_pai->obterColuna(col_aux->getName()));
 
         /* Caso o id_tab==0, indica que desejamos atribuir o resultado
            da comparação acima ao vetor de flags na posição relativa
@@ -978,17 +978,17 @@ void Relacionamento::adicionarColunasRelGen(void)
    if(tipo_erro==ERR_DUPLIC_COLS_COPY_REL)
    {
     msg=QString(str_aux)
-        .arg(col_dest->obterNome())
-        .arg(tab_dest->obterNome())
-        .arg(tab_orig->obterNome());
+        .arg(col_dest->getName())
+        .arg(tab_dest->getName())
+        .arg(tab_orig->getName());
    }
    else
    {
     msg=QString(str_aux)
-        .arg(col_dest->obterNome())
-        .arg(tab_dest->obterNome())
-        .arg(col_orig->obterNome())
-        .arg(tab_orig->obterNome());
+        .arg(col_dest->getName())
+        .arg(tab_dest->getName())
+        .arg(col_orig->getName())
+        .arg(tab_orig->getName());
    }
 
    //Dispara a exeção acusando a duplicidade
@@ -1048,8 +1048,8 @@ void Relacionamento::conectarRelacionamento(void)
      /* O esquema e espaço de tabelas da tabela resultante será, por padrão,
         os mesmos da tabela de origem */
     tabela_relnn->definirNome(nome_tab_relnn);
-    tabela_relnn->definirEsquema(tabela_orig->getSchema());
-    tabela_relnn->definirEspacoTabela(tabela_orig->getTablespace());
+    tabela_relnn->setSchema(tabela_orig->getSchema());
+    tabela_relnn->setTablespace(tabela_orig->getTablespace());
 
     adicionarColunasRelNn();
    }
@@ -1109,7 +1109,7 @@ void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
    nova_pk=true;
    i=1;
    aux[0]='\0';
-   nome=tab_receptora->obterNome() + SEPARADOR_SUFIXO + "pk";
+   nome=tab_receptora->getName() + SEPARADOR_SUFIXO + "pk";
 
    /* Verifica se já não existe uma restrição na tabela a qual se adiciona
       as retrições cujo nome seja o mesmo configurado acima. Enquanto isso
@@ -1167,7 +1167,7 @@ void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_rec
   //Configura o nome da chave estrangeira
   i=1;
   aux[0]='\0';
-  nome=tab_referencia->obterNome() + SEPARADOR_SUFIXO + "uq";
+  nome=tab_referencia->getName() + SEPARADOR_SUFIXO + "uq";
 
   /* Verifica a existencia de alguma restrição com mesmo nome
      na tabela a qual receberá a chave única. Enquanto existir
@@ -1286,7 +1286,7 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
   //Configura o nome da chave estrangeira
   i=1;
   aux[0]='\0';
-  nome=tab_referencia->obterNome() + SEPARADOR_SUFIXO + "fk";
+  nome=tab_referencia->getName() + SEPARADOR_SUFIXO + "fk";
 
   /* Verifica a existencia de alguma restrição com mesmo nome
      na tabela a qual receberá a chave estrangeira. Enquanto existir
@@ -1332,7 +1332,7 @@ void Relacionamento::adicionarAtributos(Tabela *tab_receptora)
    if(coluna->obterTabelaPai())
     break;
 
-   nome=coluna->obterNome();
+   nome=coluna->getName();
 
    /* Verifica o se o nome da coluna já não existe na tabela. Equanto
       existir, incrementa e concatena um número (i1) ao final do nome,
@@ -1379,7 +1379,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
   {
    if(tipo_relac==RELACIONAMENTO_1N || tipo_relac==RELACIONAMENTO_11)
    {
-    sufixo=SEPARADOR_SUFIXO + tab_referencia->obterNome();
+    sufixo=SEPARADOR_SUFIXO + tab_referencia->getName();
 
     if(tab_referencia==tabela_orig)
      sufixo_orig=sufixo;
@@ -1389,9 +1389,9 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
    else if(tipo_relac==RELACIONAMENTO_NN)
    {
     if(tab_referencia==tabela_dest)
-    sufixo=sufixo_dest=SEPARADOR_SUFIXO + tabela_dest->obterNome();
+    sufixo=sufixo_dest=SEPARADOR_SUFIXO + tabela_dest->getName();
    else
-    sufixo=sufixo_orig=SEPARADOR_SUFIXO + tabela_orig->obterNome();
+    sufixo=sufixo_orig=SEPARADOR_SUFIXO + tabela_orig->getName();
    }
   }
   else if(((tipo_relac!=RELACIONAMENTO_NN && tab_receptora==tabela_orig) ||
@@ -1410,8 +1410,8 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
      (!pk_orig && !pk_dest && tipo_relac==RELACIONAMENTO_NN))
    throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
                           .arg(QString::fromUtf8(this->obj_name))
-                          .arg(QString::fromUtf8(tab_referencia->obterNome(true)))
-                          .arg(QString::fromUtf8(tab_receptora->obterNome(true))),
+                          .arg(QString::fromUtf8(tab_referencia->getName(true)))
+                          .arg(QString::fromUtf8(tab_receptora->getName(true))),
                  ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
@@ -1458,7 +1458,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
    /* O nome da nova coluna, será o nome original concatenado
       com o sufixo da tabela a qual ela pertence. Isso é feito
       para se saber de onde tal coluna foi originada */
-   nome=coluna->obterNome() + sufixo;
+   nome=coluna->getName() + sufixo;
 
    /* Verifica se o nome da coluna já não existe na tabela
       na qual será inserida, caso exista, um número será concatenado
@@ -1494,7 +1494,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
       n-n as colunas são sempre recriadas sem a necessidade de manter o histórico pois
       o usuário não consegue referenciar as colunas criadas pelos relacionamentos n-n.*/
     if(nome_ant!=nome && (tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N))
-     nome_ant_cols_ref[coluna->getObjectId()]=coluna->obterNome();
+     nome_ant_cols_ref[coluna->getObjectId()]=coluna->getName();
 
    /* Adiciona a coluna na tabela a qual foi definida para receber os
       atributos, colunas e restições */
@@ -1706,7 +1706,7 @@ void Relacionamento::adicionarColunasRelNn(void)
   /* Cria a chave primária padrão da tabela que consiste nas colunas que
      identificam cada chave estrangeira na tabela. */
   pk_tabnn=new Restricao;
-  pk_tabnn->definirNome(tabela_relnn->obterNome() + "_pk");
+  pk_tabnn->definirNome(tabela_relnn->getName() + "_pk");
   pk_tabnn->definirTipo(TipoRestricao::primary_key);
   pk_tabnn->definirIncPorLigacao(true);
   qtd=colunas_ref.size();
@@ -1875,7 +1875,7 @@ void Relacionamento::removerColsChavePrimariaTabela(Tabela *tabela)
       (colunaExistente(coluna) || obterIndiceObjeto(coluna) >= 0))
     {
      //Remove a coluna da chave primária
-     pk->removerColuna(coluna->obterNome(), Restricao::COLUNA_ORIGEM);
+     pk->removerColuna(coluna->getName(), Restricao::COLUNA_ORIGEM);
      i--; qtd--;
     }
    }
@@ -1910,9 +1910,9 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
 
     //Remove a tabela cópia/pai dependendo do tipo do relacionamento
     if(tipo_relac==RELACIONAMENTO_GEN)
-     tabela->removerObjeto(obterTabelaReferencia()->obterNome(true), OBJ_TABLE);
+     tabela->removerObjeto(obterTabelaReferencia()->getName(true), OBJ_TABLE);
     else
-     tabela->removerObjeto(obterTabelaReferencia()->obterNome(true), BASE_TABLE);
+     tabela->removerObjeto(obterTabelaReferencia()->getName(true), BASE_TABLE);
    }
    else
    {
@@ -1932,7 +1932,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
      tabela=dynamic_cast<Tabela *>(fk_rel1n->obterTabelaPai());
 
      //Remove a chave estrangeira da tabela
-     tabela->removerRestricao(fk_rel1n->obterNome());
+     tabela->removerRestricao(fk_rel1n->getName());
 
      /* Obtém a chave primária da tabela para checar se a mesma é igual a chave primária
         que define o relacionamento identificador */
@@ -1953,7 +1953,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
      if(uq_rel11)
      {
       //Remove a chave única da tabela
-      tabela->removerRestricao(uq_rel11->obterNome());
+      tabela->removerRestricao(uq_rel11->getName());
       uq_rel11->removerColunas();
       delete(uq_rel11);
       uq_rel11=NULL;
@@ -1967,7 +1967,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
          caso este seja um relacionamento identificador */
       tabela=dynamic_cast<Tabela *>(pk_relident->obterTabelaPai());
       //Remove a chave primária da tabela
-      tabela->removerRestricao(pk_relident->obterNome());
+      tabela->removerRestricao(pk_relident->getName());
 
       //Desaloca a chave primária
       delete(pk);
@@ -1992,7 +1992,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
       if(rest->incluidoPorRelacionamento() && obterIndiceObjeto(rest) < 0)
       {
        //Remove a restrição da tabela
-       tabela_relnn->removerRestricao(rest->obterNome());
+       tabela_relnn->removerRestricao(rest->getName());
        i--; qtd--;
        delete(rest);
       }
@@ -2026,7 +2026,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
      if(tabela && obterIndiceObjeto(obj_tab) >= 0)
      {
       //Remove o atributo da tabela através do nome e tipo
-      tabela->removerObjeto(obj_tab->obterNome(), obj_tab->obterTipoObjeto());
+      tabela->removerObjeto(obj_tab->getName(), obj_tab->obterTipoObjeto());
       obj_tab->definirTabelaPai(NULL);
      }
      //Para para o atributo posterior
@@ -2047,7 +2047,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
    {
     coluna=(*itr);
     //Remove a coluna da tabela pai
-    tabela->removerColuna(coluna->obterNome());
+    tabela->removerColuna(coluna->getName());
     itr++;
     //Desaloca a coluna
     delete(coluna);
@@ -2145,8 +2145,8 @@ bool Relacionamento::relacionamentoInvalidado(void)
    /* Valida os sufixos caso a geração automática de sufixos esteja ativa.
       Checa se os sufixos, quando preenchidos, coincidem  com os nomes das tabelas respectivas */
    if(sufixo_auto &&
-      ((!sufixo_orig.isEmpty() &&  sufixo_orig!=QString(SEPARADOR_SUFIXO) + tabela_orig->obterNome()) ||
-       (!sufixo_dest.isEmpty() &&  sufixo_dest!=QString(SEPARADOR_SUFIXO) + tabela_dest->obterNome())))
+      ((!sufixo_orig.isEmpty() &&  sufixo_orig!=QString(SEPARADOR_SUFIXO) + tabela_orig->getName()) ||
+       (!sufixo_dest.isEmpty() &&  sufixo_dest!=QString(SEPARADOR_SUFIXO) + tabela_dest->getName())))
     return(true);
 
   /* Pare relacionamentos 1-1 e 1-n a verificação de
@@ -2204,9 +2204,9 @@ bool Relacionamento::relacionamentoInvalidado(void)
 
       3) Checa se a coluna (endereço) vindo do vetor colunas_pk é iga   coluna
          obtida diretamente da chave primária */
-     nome_col=col1->obterNome() + sufixo_cols[i];
+     nome_col=col1->getName() + sufixo_cols[i];
      valido=(col1==col3 &&
-             (nome_col==col2->obterNome()) &&
+             (nome_col==col2->getName()) &&
              (col1->obterTipo()==col2->obterTipo() ||
              (col1->obterTipo()=="serial" && col2->obterTipo()=="integer") ||
              (col1->obterTipo()=="bigserial" && col2->obterTipo()=="bigint")));
@@ -2239,7 +2239,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
    /* Checando se as colunas criadas com a herança/dependência ainda existem
       na tabela de referência */
    for(i=0; i < colunas_ref.size() && valido; i++)
-    valido=tabela->obterColuna(colunas_ref[i]->obterNome(true));
+    valido=tabela->obterColuna(colunas_ref[i]->getName(true));
 
    /* Checando se as colunas da tabela referência existem na tabela
       receptora. Na teoria todas as colunas devem existir pois uma
@@ -2247,7 +2247,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
       não acontença indica que uma coluna da tabela de referência foi
       renomeada */
    for(i=0; i < qtd_cols_tab && valido; i++)
-    valido=tabela1->obterColuna(tabela->obterColuna(i)->obterNome(true));
+    valido=tabela1->obterColuna(tabela->obterColuna(i)->getName(true));
   }
   /* Para relacionamentos n-n, é necessário as comparações:
      1) Pega-se a chave estrangeira da tabela criada pela ligação
@@ -2302,7 +2302,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
     qtd=fk->obterNumColunas(Restricao::COLUNA_ORIGEM);
     for(i=0; i < qtd && valido; i++)
     {
-     nome_col=fk->obterColuna(i, Restricao::COLUNA_ORIGEM)->obterNome();
+     nome_col=fk->obterColuna(i, Restricao::COLUNA_ORIGEM)->getName();
 
      /* Caso o sufixo da origem esteja especificado remove o mesmo do nome
         da coluna para que a mesma seja localizada na tabela de origem */
@@ -2321,7 +2321,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
     qtd+=fk1->obterNumColunas(Restricao::COLUNA_ORIGEM);
     for(i=0; i1 < qtd && valido; i1++)
     {
-     nome_col=fk1->obterColuna(i++, Restricao::COLUNA_ORIGEM)->obterNome();
+     nome_col=fk1->obterColuna(i++, Restricao::COLUNA_ORIGEM)->getName();
 
      /* Caso o sufixo do destino esteja especificado remove o mesmo do nome
         da coluna para que a mesma seja localizada na tabela de destino */
@@ -2364,7 +2364,7 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
 
    }
 
-   attributes[ParsersAttributes::TABLE]=obterTabelaReceptora()->obterNome(true);
+   attributes[ParsersAttributes::TABLE]=obterTabelaReceptora()->getName(true);
   }
   else if(tabela_relnn && tipo_relac==RELACIONAMENTO_NN)
   {
@@ -2383,8 +2383,8 @@ QString Relacionamento::obterDefinicaoObjeto(unsigned tipo_def)
   else if(tipo_relac==RELACIONAMENTO_GEN)
   {
    attributes[ParsersAttributes::RELATIONSHIP_GEN]="1";
-   attributes[ParsersAttributes::TABLE]=obterTabelaReceptora()->obterNome(true);
-   attributes[ParsersAttributes::ANCESTOR_TABLE]=obterTabelaReferencia()->obterNome(true);
+   attributes[ParsersAttributes::TABLE]=obterTabelaReceptora()->getName(true);
+   attributes[ParsersAttributes::ANCESTOR_TABLE]=obterTabelaReferencia()->getName(true);
   }
 
   return(this->BaseObject::obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION));

@@ -347,7 +347,7 @@ class TipoPgSQL: public TipoBase{
 
   /* Obtém o nome do tipo definido pelo usuário através de seu índice.
      Retorna vazio caso não índice seja inválido. */
-  static QString obterNomeTipoUsuario(unsigned idx);
+  static QString getNameTipoUsuario(unsigned idx);
 
   void definirTipoUsuario(unsigned idx);
   void definirTipoUsuario(void *ptipo);

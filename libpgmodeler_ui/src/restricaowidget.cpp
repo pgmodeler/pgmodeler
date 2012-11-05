@@ -183,7 +183,7 @@ void RestricaoWidget::adicionarColuna(Coluna *coluna, unsigned tipo_col, int idx
 
   /* Exibe os dados da coluna na linha especificada, definindo a referênci  coluna
      como dado da linha */
-  tabela_wgt->definirTextoCelula(QString::fromUtf8(coluna->obterNome()),idx_lin,0);
+  tabela_wgt->definirTextoCelula(QString::fromUtf8(coluna->getName()),idx_lin,0);
   tabela_wgt->definirTextoCelula(QString::fromUtf8(~coluna->obterTipo()),idx_lin,1);
   tabela_wgt->definirDadoLinha(QVariant::fromValue<void *>(coluna), idx_lin);
 
@@ -269,7 +269,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
       coluna não está presente na tabela */
    if(tab_col_aux->obterIndiceLinha(QVariant::fromValue<void *>(coluna)) < 0)
    {
-    combo->addItem(QString::fromUtf8(coluna->obterNome()) + " (" + ~coluna->obterTipo() +")", QVariant::fromValue<void *>(coluna));
+    combo->addItem(QString::fromUtf8(coluna->getName()) + " (" + ~coluna->obterTipo() +")", QVariant::fromValue<void *>(coluna));
    }
   }
   //Desabilita o obtão de inserir itens na tabela caso não hajam itens no combobox

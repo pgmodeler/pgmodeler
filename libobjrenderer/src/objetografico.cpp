@@ -520,7 +520,7 @@ void ObjetoGrafico::configurarObjeto(void)
   this->setPos(obj_graf->obterPosicaoObjeto());
 
   //O tool tip do objeto grafico será o nome formatado do objeto de origem
-  this->setToolTip(QString::fromUtf8(obj_graf->obterNome(true)));
+  this->setToolTip(QString::fromUtf8(obj_graf->getName(true)));
 
   this->configurarInfoPosicao(obj_graf->obterPosicaoObjeto());
   this->configurarIconeProtecao();

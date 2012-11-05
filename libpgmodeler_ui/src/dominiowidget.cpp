@@ -54,7 +54,7 @@ void DominioWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op,
   tipo=dominio->obterTipo();
   valor_padrao_edt->setText(QString::fromUtf8(dominio->obterValorPadrao()));
   expr_checagem_txt->setPlainText(QString::fromUtf8(dominio->obterExpressao()));
-  nome_rest_edt->setText(QString::fromUtf8(dominio->obterNomeRestricao()));
+  nome_rest_edt->setText(QString::fromUtf8(dominio->getNameRestricao()));
   nao_nulo_chk->setChecked(dominio->naoNulo());
  }
 

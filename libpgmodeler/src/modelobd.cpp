@@ -135,7 +135,7 @@ QString ModeloBD::validarDefinicaoObjeto(BaseObject *objeto, unsigned tipo_def)
       indica que a def. SQL não é válida */
    if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
     throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-                           .arg(QString::fromUtf8(objeto->obterNome(true)))
+                           .arg(QString::fromUtf8(objeto->getName(true)))
                            .arg(objeto->getTypeName()),
                   ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
    else
@@ -357,8 +357,8 @@ void ModeloBD::__adicionarObjeto(BaseObject *objeto, int idx_obj)
    if(esp_tab->obterDiretorio()==esp_tab_aux->obterDiretorio())
    {
     throw Exception(Exception::getErrorMessage(ERR_ASG_DUP_TABLESPACE_DIR)
-                         .arg(QString::fromUtf8(esp_tab->obterNome()))
-                         .arg(esp_tab_aux->obterNome()),
+                         .arg(QString::fromUtf8(esp_tab->getName()))
+                         .arg(esp_tab_aux->getName()),
                   ERR_ASG_DUP_TABLESPACE_DIR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
@@ -367,16 +367,16 @@ void ModeloBD::__adicionarObjeto(BaseObject *objeto, int idx_obj)
  }
 
  //Verifica se o objeto a ser inserido já existe no modelo, buscando através do nome.
- if((tipo_obj!=OBJ_FUNCTION && obterObjeto(objeto->obterNome(true), tipo_obj, idx)) ||
+ if((tipo_obj!=OBJ_FUNCTION && obterObjeto(objeto->getName(true), tipo_obj, idx)) ||
     (tipo_obj==OBJ_FUNCTION &&
      obterObjeto(dynamic_cast<Funcao *>(objeto)->obterAssinatura(), tipo_obj, idx)))
  {
   QString str_aux;
 
   str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-          .arg(objeto->obterNome(true))
+          .arg(objeto->getName(true))
           .arg(objeto->getTypeName())
-          .arg(this->obterNome(true))
+          .arg(this->getName(true))
           .arg(this->getTypeName());
 
   throw Exception(str_aux,ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -437,7 +437,7 @@ void ModeloBD::__removerObjeto(BaseObject *objeto, int idx_obj)
    if(idx_obj < 0)
    {
     if(tipo_obj!=OBJ_FUNCTION && tipo_obj!=OBJ_OPERATOR)
-     obterObjeto(objeto->obterNome(true), tipo_obj, idx_obj);
+     obterObjeto(objeto->getName(true), tipo_obj, idx_obj);
     else if(tipo_obj==OBJ_FUNCTION)
      obterObjeto(dynamic_cast<Funcao *>(objeto)->obterAssinatura(), tipo_obj, idx_obj);
     else
@@ -519,7 +519,7 @@ BaseObject *ModeloBD::obterObjeto(const QString &nome, ObjectType tipo_obj, int 
    {
     /* Caso o nome do objeto atual seja igual ao nome passado
       o while será quebrado */
-    nome_aux=(*itr)->obterNome(true);
+    nome_aux=(*itr)->getName(true);
     enc=(nome_aux==nome_aux1);
     if(!enc) itr++;
    }
@@ -644,7 +644,7 @@ QString ModeloBD::obterAutor(void)
  return(autor);
 }
 
-void ModeloBD::definirProtegido(bool protegido)
+void ModeloBD::setProtected(bool protegido)
 {
  ObjectType tipos[19]={
           OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
@@ -668,12 +668,12 @@ void ModeloBD::definirProtegido(bool protegido)
   while(itr!=itr_end)
   {
    objeto=(*itr);
-   objeto->definirProtegido(protegido);
+   objeto->setProtected(protegido);
    itr++;
   }
  }
 
- BaseObject::definirProtegido(protegido);
+ BaseObject::setProtected(protegido);
 }
 
 void ModeloBD::destruirObjetos(void)
@@ -722,7 +722,7 @@ void ModeloBD::adicionarTabela(Tabela *tabela, int idx_obj)
   /* Ao ser inserido uma nova tabela a mesma tem
    seu nome é adicionad  lista de tipos válidos
    do PostgreSQL */
-  TipoPgSQL::adicionarTipoUsuario(tabela->obterNome(true), tabela, this, ConfigTipoUsuario::TIPO_TABELA);
+  TipoPgSQL::adicionarTipoUsuario(tabela->getName(true), tabela, this, ConfigTipoUsuario::TIPO_TABELA);
  }
  catch(Exception &e)
  {
@@ -756,9 +756,9 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
     {
      tipo_err=ERR_REM_DIRECT_REFERENCE;
      str_aux=QString(Exception::getErrorMessage(tipo_err))
-             .arg(tabela->obterNome(true))
+             .arg(tabela->getName(true))
              .arg(tabela->getTypeName())
-             .arg(vet_refs[0]->obterNome(true))
+             .arg(vet_refs[0]->getName(true))
              .arg(vet_refs[0]->getTypeName());
     }
     else
@@ -768,11 +768,11 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
      //Formata a mensagem caso exista uma referência indireta ao objeto a ser removido
      tipo_err=ERR_REM_INDIRECT_REFERENCE;
      str_aux=QString(Exception::getErrorMessage(tipo_err))
-             .arg(tabela->obterNome(true))
+             .arg(tabela->getName(true))
              .arg(tabela->getTypeName())
-             .arg(vet_refs[0]->obterNome(true))
+             .arg(vet_refs[0]->getName(true))
              .arg(vet_refs[0]->getTypeName())
-             .arg(obj_ref_pai->obterNome(true))
+             .arg(obj_ref_pai->getName(true))
              .arg(obj_ref_pai->getTypeName());
     }
 
@@ -783,7 +783,7 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
 
   /* Ao ser removido do modelo a sequencia tem
    seu nome removido da lista de tipos válidos do PostgreSQL */
- TipoPgSQL::removerTipoUsuario(tabela->obterNome(true), tabela);
+ TipoPgSQL::removerTipoUsuario(tabela->getName(true), tabela);
  }
 }
 
@@ -795,7 +795,7 @@ void ModeloBD::adicionarSequencia(Sequencia *sequencia, int idx_obj)
   /* Ao ser inserido uma nova sequencia a mesma tem
    seu nome é adicionad  lista de tipos válidos
    do PostgreSQL */
-  TipoPgSQL::adicionarTipoUsuario(sequencia->obterNome(true), sequencia, this, ConfigTipoUsuario::TIPO_SEQUENCIA);
+  TipoPgSQL::adicionarTipoUsuario(sequencia->getName(true), sequencia, this, ConfigTipoUsuario::TIPO_SEQUENCIA);
  }
  catch(Exception &e)
  {
@@ -816,7 +816,7 @@ void ModeloBD::removerSequencia(Sequencia *sequencia, int idx_obj)
   __removerObjeto(sequencia, idx_obj);
   /* Ao ser removido do modelo a sequencia tem
    seu nome removido da lista de tipos válidos do PostgreSQL */
-  //TipoPgSQL::removerTipoUsuario(sequencia->obterNome(true), sequencia);
+  //TipoPgSQL::removerTipoUsuario(sequencia->getName(true), sequencia);
  }
 }
 
@@ -947,7 +947,7 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
    rel=obterRelacionamento(visao,tab);
    if(tab && !rel)
    {
-    /* rel=new RelacionamentoBase("rel_" + visao->obterNome() + "_" + tab->obterNome(),
+    /* rel=new RelacionamentoBase("rel_" + visao->getName() + "_" + tab->getName(),
                                RelacionamentoBase::RELACIONAMENTO_DEP,visao,tab,false,false); */
     rel=new RelacionamentoBase(RelacionamentoBase::RELACIONAMENTO_DEP,visao,tab,false,false);
     adicionarRelacionamento(rel);
@@ -1275,7 +1275,7 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
       //A tabela receptora passará a ser a tabela receptora do relacionamento atual
       tabela_rec=rel_aux->obterTabelaReceptora();
       //Armazena o nome do relacionamento para disparar erro caso um ciclo seja fechado
-      str_aux+=rel_aux->obterNome() + ", ";
+      str_aux+=rel_aux->getName() + ", ";
       /* Um ciclo será detectado caso a tabela receptora seja igual a tabela referência
          do relacionamento usado na validação */
       ciclo_enc=(tabela_rec==tabela_ref);
@@ -1289,9 +1289,9 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
       relacionamentos os quais fecham o ciclo */
    if(ciclo_enc)
    {
-    str_aux+=rel->obterNome();
+    str_aux+=rel->getName();
     msg=Exception::getErrorMessage(ERR_INS_REL_GENS_REDUNDACY)
-        .arg(rel->obterNome())
+        .arg(rel->getName())
         .arg(str_aux);
     throw Exception(msg,ERR_INS_REL_GENS_REDUNDACY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
@@ -1398,7 +1398,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
      if(enc)
      {
       //Remove o mesmo da tabela possuidora
-      tabela->removerObjeto(obj_tab->obterNome(), obj_tab->obterTipoObjeto());
+      tabela->removerObjeto(obj_tab->getName(), obj_tab->obterTipoObjeto());
 
       //Remove as permissões existentes para o objeto
       removerPermissoes(obj_tab);
@@ -1558,9 +1558,9 @@ void ModeloBD::adicionarRelacionamento(RelacionamentoBase *relacao, int idx_obj)
     //__removerObjeto(relacao);
     msg=Exception::getErrorMessage(ERR_DUPLIC_RELATIONSHIP)
         .arg(tab1->getTypeName())
-        .arg(tab1->obterNome(true))
+        .arg(tab1->getName(true))
         .arg(tab2->getTypeName())
-        .arg(tab2->obterNome(true));
+        .arg(tab2->getName(true));
     throw Exception(msg,ERR_DUPLIC_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
   }
@@ -1742,9 +1742,9 @@ void ModeloBD::removerEsquema(Esquema *esquema, int idx_obj)
       do objeto referenciado */
 
    throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-                 .arg(esquema->obterNome(true))
+                 .arg(esquema->getName(true))
                  .arg(esquema->getTypeName())
-                 .arg(vet_refs[0]->obterNome(true))
+                 .arg(vet_refs[0]->getName(true))
                  .arg(vet_refs[0]->getTypeName()),
                  ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -1786,9 +1786,9 @@ void ModeloBD::removerPapel(Papel *papel, int idx_obj)
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
    throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-                 .arg(papel->obterNome(true))
+                 .arg(papel->getName(true))
                  .arg(papel->getTypeName())
-                 .arg(vet_refs[0]->obterNome(true))
+                 .arg(vet_refs[0]->getName(true))
                  .arg(vet_refs[0]->getTypeName()),
                  ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -1837,9 +1837,9 @@ void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
     //Formata a mensagem para referencia direta
     tipo_err=ERR_REM_DIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(tipo_err))
-            .arg(espaco_tab->obterNome(true))
+            .arg(espaco_tab->getName(true))
             .arg(espaco_tab->getTypeName())
-            .arg(vet_refs[0]->obterNome(true))
+            .arg(vet_refs[0]->getName(true))
             .arg(vet_refs[0]->getTypeName());
    }
    else
@@ -1848,11 +1848,11 @@ void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
     //Formata a mensagem para referencia indireta
     tipo_err=ERR_REM_INDIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(tipo_err))
-            .arg(espaco_tab->obterNome(true))
+            .arg(espaco_tab->getName(true))
             .arg(espaco_tab->getTypeName())
-            .arg(vet_refs[0]->obterNome(true))
+            .arg(vet_refs[0]->getName(true))
             .arg(vet_refs[0]->getTypeName())
-            .arg(obj_ref_pai->obterNome(true))
+            .arg(obj_ref_pai->getName(true))
             .arg(obj_ref_pai->getTypeName());
 
    }
@@ -1942,7 +1942,7 @@ void ModeloBD::removerLinguagem(Linguagem *linguagem, int idx_obj)
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
    throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-                 .arg(linguagem->obterNome(true))
+                 .arg(linguagem->getName(true))
                  .arg(linguagem->getTypeName())
                  .arg(dynamic_cast<Funcao *>(vet_refs[0])->obterAssinatura())
                  .arg(vet_refs[0]->getTypeName()),
@@ -1995,7 +1995,7 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
     str_aux=QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
             .arg(funcao->obterAssinatura())
             .arg(funcao->getTypeName())
-            .arg(vet_refs[0]->obterNome(true))
+            .arg(vet_refs[0]->getName(true))
             .arg(vet_refs[0]->getTypeName());
 
    }
@@ -2007,9 +2007,9 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
     str_aux=QString(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE))
             .arg(funcao->obterAssinatura())
             .arg(funcao->getTypeName())
-            .arg(vet_refs[0]->obterNome(true))
+            .arg(vet_refs[0]->getName(true))
             .arg(vet_refs[0]->getTypeName())
-            .arg(obj_ref_pai->obterNome(true))
+            .arg(obj_ref_pai->getName(true))
             .arg(obj_ref_pai->getTypeName());
 
    }
@@ -2057,7 +2057,7 @@ void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
   itr_end=tipos.end();
   while(itr!=itr_end && !enc)
   {
-   enc=((*itr)->obterNome(true)==dominio->obterNome(true));
+   enc=((*itr)->getName(true)==dominio->getName(true));
    itr++;
   }
 
@@ -2065,9 +2065,9 @@ void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
   if(enc)
   {
    str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-           .arg(dominio->obterNome(true))
+           .arg(dominio->getName(true))
            .arg(dominio->getTypeName())
-           .arg(this->obterNome(true))
+           .arg(this->getName(true))
            .arg(this->getTypeName());
    throw Exception(str_aux, ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -2080,7 +2080,7 @@ void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
    /* Ao ser inserido um novo tipo o mesmo tem
     seu nome é adicionad  lista de tipos válidos
     do PostgreSQL */
-   TipoPgSQL::adicionarTipoUsuario(dominio->obterNome(true), dominio, this, ConfigTipoUsuario::TIPO_DOMINIO);
+   TipoPgSQL::adicionarTipoUsuario(dominio->getName(true), dominio, this, ConfigTipoUsuario::TIPO_DOMINIO);
   }
   catch(Exception &e)
   {
@@ -2139,9 +2139,9 @@ void ModeloBD::removerFamiliaOperadores(FamiliaOperadores *familia_op, int idx_o
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
    throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-                 .arg(familia_op->obterNome(true))
+                 .arg(familia_op->getName(true))
                  .arg(familia_op->getTypeName())
-                 .arg(vet_refs[0]->obterNome(true))
+                 .arg(vet_refs[0]->getName(true))
                  .arg(vet_refs[0]->getTypeName()),
                  ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -2203,7 +2203,7 @@ void ModeloBD::removerOperador(Operador *operador, int idx_obj)
    throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
                  .arg(operador->obterAssinatura(true))
                  .arg(operador->getTypeName())
-                 .arg(vet_refs[0]->obterNome(true))
+                 .arg(vet_refs[0]->getName(true))
                  .arg(vet_refs[0]->getTypeName()),
                  ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -2231,7 +2231,7 @@ void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
   itr_end=dominios.end();
   while(itr!=itr_end && !enc)
   {
-   enc=((*itr)->obterNome(true)==tipo->obterNome(true));
+   enc=((*itr)->getName(true)==tipo->getName(true));
    itr++;
   }
 
@@ -2239,9 +2239,9 @@ void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
   if(enc)
   {
    str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-           .arg(tipo->obterNome(true))
+           .arg(tipo->getName(true))
            .arg(tipo->getTypeName())
-           .arg(this->obterNome(true))
+           .arg(this->getName(true))
            .arg(this->getTypeName());
    throw Exception(str_aux, ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -2254,7 +2254,7 @@ void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
    /* Ao ser inserido um novo tipo o mesmo tem
     seu nome é adicionad  lista de tipos válidos
     do PostgreSQL */
-   TipoPgSQL::adicionarTipoUsuario(tipo->obterNome(true), tipo, this, ConfigTipoUsuario::TIPO_BASE);
+   TipoPgSQL::adicionarTipoUsuario(tipo->getName(true), tipo, this, ConfigTipoUsuario::TIPO_BASE);
   }
   catch(Exception &e)
   {
@@ -2303,9 +2303,9 @@ void ModeloBD::removerTipoUsuario(BaseObject *objeto, int idx_obj)
     //Formata a mensagem para referência direta
     tipo_err=ERR_REM_DIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(tipo_err))
-            .arg(objeto->obterNome(true))
+            .arg(objeto->getName(true))
             .arg(objeto->getTypeName())
-            .arg(vet_refs[0]->obterNome(true))
+            .arg(vet_refs[0]->getName(true))
             .arg(vet_refs[0]->getTypeName());
    }
    else
@@ -2315,11 +2315,11 @@ void ModeloBD::removerTipoUsuario(BaseObject *objeto, int idx_obj)
     //Formata a mensagem para referência indireta
     tipo_err=ERR_REM_INDIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(tipo_err))
-            .arg(objeto->obterNome(true))
+            .arg(objeto->getName(true))
             .arg(objeto->getTypeName())
-            .arg(vet_refs[0]->obterNome(true))
+            .arg(vet_refs[0]->getName(true))
             .arg(vet_refs[0]->getTypeName())
-            .arg(obj_ref_pai->obterNome(true))
+            .arg(obj_ref_pai->getName(true))
             .arg(obj_ref_pai->getTypeName());
    }
 
@@ -2329,7 +2329,7 @@ void ModeloBD::removerTipoUsuario(BaseObject *objeto, int idx_obj)
   __removerObjeto(objeto, idx_obj);
    /* Ao ser removido do modelo o objeto (tipo ou domínio) classe tem
     seu nome removido da lista de tipos válidos do PostgreSQL */
-  TipoPgSQL::removerTipoUsuario(objeto->obterNome(true), objeto);
+  TipoPgSQL::removerTipoUsuario(objeto->getName(true), objeto);
  }
 }
 
@@ -2346,7 +2346,7 @@ void ModeloBD::adicionarPermissao(Permissao *permissao)
     o resultado da chamada ao metodo obterIndicePermissao() sejá >= 0,
     um erro será disparado */
    throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
-                .arg(QString::fromUtf8(permissao->obterObjeto()->obterNome()))
+                .arg(QString::fromUtf8(permissao->obterObjeto()->getName()))
                 .arg(permissao->obterObjeto()->getTypeName()),
                 ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -2358,7 +2358,7 @@ void ModeloBD::adicionarPermissao(Permissao *permissao)
   if(e.getErrorType()==ERR_ASG_DUPLIC_OBJECT)
    throw
    Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
-           .arg(QString::fromUtf8(permissao->obterObjeto()->obterNome()))
+           .arg(QString::fromUtf8(permissao->obterObjeto()->getName()))
            .arg(permissao->obterObjeto()->getTypeName()),
            ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 
@@ -2756,7 +2756,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
           {
            emit s_objetoCarregado(XMLParser::getCurrentBufferLine()/XMLParser::getBufferLineCount(),
                                   trUtf8("Loading object: %1 (%2)")
-                                   .arg(QString::fromUtf8(objeto->obterNome()))
+                                   .arg(QString::fromUtf8(objeto->getName()))
                                    .arg(objeto->getTypeName()),
                                   tipo_obj);
           }
@@ -2827,7 +2827,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
     throw Exception(vet_erros[0].getErrorMessage(),vet_erros[0].getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     //Protege o modelo com base no atributo obtido do xml
-   this->BaseObject::definirProtegido(modelo_protegido);
+   this->BaseObject::setProtected(modelo_protegido);
    carregando_modelo=false;
 
    /* Faz uma última validação nos relacionamentos para abranger qualquer modificação de colunas
@@ -2974,7 +2974,7 @@ void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
      //Acessa o elemento filho o qual contém o conteúdo do comentário
      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
      //Atributo o conteúdo do elemento filho ao atributo cometário do novo papel
-     objeto->definirComentario(XMLParser::getElementContent());
+     objeto->setComment(XMLParser::getElementContent());
      //Restaura a posição de navegação do parser, ou seja, volta para o elemento <comment>
      XMLParser::restorePosition();
     }
@@ -2984,7 +2984,7 @@ void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
      tipo_obj=OBJ_SCHEMA;
      XMLParser::getElementAttributes(atribs_aux);
      esquema=dynamic_cast<Esquema *>(obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj));
-     objeto->definirEsquema(esquema);
+     objeto->setSchema(esquema);
      erro=(!esquema && !atribs_aux[ParsersAttributes::NAME].isEmpty());
     }
 
@@ -2994,7 +2994,7 @@ void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
      tipo_obj=OBJ_TABLESPACE;
      XMLParser::getElementAttributes(atribs_aux);
      esp_tabela=obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj);
-     objeto->definirEspacoTabela(esp_tabela);
+     objeto->setTablespace(esp_tabela);
      erro=(!esp_tabela && !atribs_aux[ParsersAttributes::NAME].isEmpty());
     }
 
@@ -3004,7 +3004,7 @@ void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
      tipo_obj=OBJ_ROLE;
      XMLParser::getElementAttributes(atribs_aux);
      dono=obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj);
-     objeto->definirDono(dono);
+     objeto->setOwner(dono);
      erro=(!dono && !atribs_aux[ParsersAttributes::NAME].isEmpty());
     }
     //Obténdo o atributo a posição do objeto (apenas para objetos gráficos)
@@ -3030,7 +3030,7 @@ void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
  }
 
  XMLParser::restorePosition();
- objeto->definirProtegido(protegido);
+ objeto->setProtected(protegido);
 
  if(erro)
  {
@@ -3039,7 +3039,7 @@ void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
 
   //Dispara a exceção
   throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                   .arg(QString::fromUtf8(objeto->obterNome()))
+                   .arg(QString::fromUtf8(objeto->getName()))
                    .arg(objeto->getTypeName())
                    .arg(QString::fromUtf8(atribs_aux[ParsersAttributes::NAME]))
                    .arg(BaseObject::getTypeName(tipo_obj)),
@@ -3055,7 +3055,7 @@ void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
           tipo_obj_aux==OBJ_OPCLASS))
  {
   throw Exception(Exception::getErrorMessage(ERR_ALOC_OBJECT_NO_SCHEMA)
-                        .arg(QString::fromUtf8(objeto->obterNome()))
+                        .arg(QString::fromUtf8(objeto->getName()))
                         .arg(objeto->getTypeName()),
           ERR_ALOC_OBJECT_NO_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
@@ -3165,7 +3165,7 @@ Papel *ModeloBD::criarPapel(void)
        {
         //Dispara a exceção
         throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                               .arg(QString::fromUtf8(papel->obterNome()))
+                               .arg(QString::fromUtf8(papel->getName()))
                                .arg(BaseObject::getTypeName(OBJ_ROLE))
                                .arg(QString::fromUtf8(lista[i]))
                                .arg(BaseObject::getTypeName(OBJ_ROLE)),
@@ -3311,7 +3311,7 @@ Linguagem *ModeloBD::criarLinguagem(void)
         if(!funcao)
          //Dispara a exceção indicando que o objeto está incompleto
          throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                               .arg(QString::fromUtf8(linguagem->obterNome()))
+                               .arg(QString::fromUtf8(linguagem->getName()))
                                .arg(linguagem->getTypeName())
                                .arg(QString::fromUtf8(assinatura))
                                .arg(BaseObject::getTypeName(OBJ_FUNCTION)),
@@ -3441,7 +3441,7 @@ Funcao *ModeloBD::criarFuncao(void)
          {
           param=criarParametro();
           //Adiciona o tipo de retorno   função
-          funcao->adicionarTipoRetTabela(param.obterNome(), param.obterTipo());
+          funcao->adicionarTipoRetTabela(param.getName(), param.obterTipo());
          }
         }
        }
@@ -3467,7 +3467,7 @@ Funcao *ModeloBD::criarFuncao(void)
       //Caso a linguagem não existe será disparada uma exceção
       if(!objeto)
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                              .arg(QString::fromUtf8(funcao->obterNome()))
+                              .arg(QString::fromUtf8(funcao->getName()))
                               .arg(funcao->getTypeName())
                               .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
                               .arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
@@ -3516,7 +3516,7 @@ Funcao *ModeloBD::criarFuncao(void)
   //Remove o espaco de tabela alocado
   if(funcao)
   {
-   str_aux=funcao->obterNome(true);
+   str_aux=funcao->getName(true);
    delete(funcao);
   }
 
@@ -3652,7 +3652,7 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
    tipo_usr=reinterpret_cast<Tipo *>(ptipo);
 
    //Caso o nome passado no XML for igual ao nome do objeto Tipo atual
-   enc=(tipo_usr->obterNome(true)==nome);
+   enc=(tipo_usr->getName(true)==nome);
    itr++;
   }
 
@@ -3802,7 +3802,7 @@ Tipo *ModeloBD::criarTipo(void)
          se a função referenciada não existe */
       if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                              .arg(QString::fromUtf8(tipo->obterNome()))
+                              .arg(QString::fromUtf8(tipo->getName()))
                               .arg(tipo->getTypeName())
                               .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                               .arg(BaseObject::getTypeName(OBJ_FUNCTION)),
@@ -3831,7 +3831,7 @@ Tipo *ModeloBD::criarTipo(void)
   //Remove o tipo alocado
   if(tipo)
   {
-   str_aux=tipo->obterNome(true);
+   str_aux=tipo->getName(true);
    delete(tipo);
   }
 
@@ -3987,7 +3987,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                             .arg(QString::fromUtf8(conv_tipo->obterNome()))
+                             .arg(QString::fromUtf8(conv_tipo->getName()))
                              .arg(conv_tipo->getTypeName())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                              .arg(BaseObject::getTypeName(OBJ_FUNCTION)),
@@ -4063,7 +4063,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                             .arg(QString::fromUtf8(conv_codif->obterNome()))
+                             .arg(QString::fromUtf8(conv_codif->getName()))
                              .arg(conv_codif->getTypeName())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                              .arg(BaseObject::getTypeName(OBJ_FUNCTION)),
@@ -4195,7 +4195,7 @@ Operador *ModeloBD::criarOperador(void)
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                             .arg(QString::fromUtf8(operador->obterNome()))
+                             .arg(QString::fromUtf8(operador->getName()))
                              .arg(operador->getTypeName())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                              .arg(BaseObject::getTypeName(OBJ_FUNCTION)),
@@ -4278,7 +4278,7 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
       //Dispara uma exceção caso o operador referenciado não exista
       if(!objeto && !atributos[ParsersAttributes::NAME].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                             .arg(QString::fromUtf8(classe_op->obterNome()))
+                             .arg(QString::fromUtf8(classe_op->getName()))
                              .arg(classe_op->getTypeName())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
                              .arg(BaseObject::getTypeName(OBJ_OPFAMILY)),
@@ -4428,7 +4428,7 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
       //Dispara uma exceção caso a função referenciada não exista
       if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                             .arg(QString::fromUtf8(func_agreg->obterNome()))
+                             .arg(QString::fromUtf8(func_agreg->getName()))
                              .arg(func_agreg->getTypeName())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                              .arg(BaseObject::getTypeName(OBJ_FUNCTION)),
@@ -4512,7 +4512,7 @@ Tabela *ModeloBD::criarTabela(void)
    while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
 
-  tabela->definirProtegido(tabela->isProtected());
+  tabela->setProtected(tabela->isProtected());
  }
  catch(Exception &e)
  {
@@ -4693,7 +4693,7 @@ Restricao *ModeloBD::criarRestricao(BaseObject *objeto)
      ter certeza que a mesma é uma chave primária. */
   if(!objeto && tipo_rest==TipoRestricao::primary_key)
     throw Exception(Exception::getErrorMessage(ERR_INV_PRIM_KEY_ALOCATION)
-                  .arg(QString::fromUtf8(restricao->obterNome())),
+                  .arg(QString::fromUtf8(restricao->getName())),
                   ERR_INV_PRIM_KEY_ALOCATION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Efetuando configurações específicas para chaves estrangeiras
@@ -4721,7 +4721,7 @@ Restricao *ModeloBD::criarRestricao(BaseObject *objeto)
 
    /* Caso a tabela referenciada não seja encontrada verifica se esta não é a própria
       tabela a qual receberá a restrição (usado para auto-relacionamentos) */
-   if(!tabela_ref && tabela->obterNome(true)==atributos[ParsersAttributes::REF_TABLE])
+   if(!tabela_ref && tabela->getName(true)==atributos[ParsersAttributes::REF_TABLE])
     tabela_ref=tabela;
 
    /* Caso a tabela referenciada não foi encontrada uma exceção será disparada pois
@@ -4730,7 +4730,7 @@ Restricao *ModeloBD::criarRestricao(BaseObject *objeto)
    {
     //Configura os argumentos da mensagem de erro
     str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-          .arg(QString::fromUtf8(restricao->obterNome()))
+          .arg(QString::fromUtf8(restricao->getName()))
           .arg(restricao->getTypeName())
           .arg(QString::fromUtf8(atributos[ParsersAttributes::REF_TABLE]))
           .arg(BaseObject::getTypeName(OBJ_TABLE));
@@ -4927,7 +4927,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
          {
           //Configura os argumentos da mensagem de erro
           str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-                          .arg(QString::fromUtf8(indice->obterNome()))
+                          .arg(QString::fromUtf8(indice->getName()))
                           .arg(BaseObject::getTypeName(OBJ_INDEX))
                           .arg(QString::fromUtf8(atributos[ParsersAttributes::OP_CLASS]))
                           .arg(BaseObject::getTypeName(OBJ_OPCLASS));
@@ -5180,7 +5180,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
       if(!funcao && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
       {
        str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-               .arg(QString::fromUtf8(gatilho->obterNome()))
+               .arg(QString::fromUtf8(gatilho->getName()))
                .arg(gatilho->getTypeName())
                .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                .arg(BaseObject::getTypeName(OBJ_FUNCTION));
@@ -5304,7 +5304,7 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
    if(!tabela)
    {
     str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-            .arg(QString::fromUtf8(sequencia->obterNome()))
+            .arg(QString::fromUtf8(sequencia->getName()))
             .arg(BaseObject::getTypeName(OBJ_SEQUENCE))
             .arg(QString::fromUtf8(nome_tab))
             .arg(BaseObject::getTypeName(OBJ_TABLE));
@@ -5324,7 +5324,7 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
       um erro será disparado */
    if(!coluna && !ignorar_possuidora)
     throw Exception(Exception::getErrorMessage(ERR_ASG_INEXIST_OWNER_COL_SEQ)
-                  .arg(QString::fromUtf8(sequencia->obterNome(true))),
+                  .arg(QString::fromUtf8(sequencia->getName(true))),
                   ERR_ASG_INEXIST_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    sequencia->definirPossuidora(coluna);
@@ -5387,7 +5387,7 @@ Visao *ModeloBD::criarVisao(void)
        if(!tabela)
        {
         str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-                        .arg(QString::fromUtf8(visao->obterNome()))
+                        .arg(QString::fromUtf8(visao->getName()))
                         .arg(BaseObject::getTypeName(OBJ_VIEW))
                         .arg(QString::fromUtf8(atributos[ParsersAttributes::TABLE]))
                         .arg(BaseObject::getTypeName(OBJ_TABLE));
@@ -5411,7 +5411,7 @@ Visao *ModeloBD::criarVisao(void)
          if(!coluna)
          {
           str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-                          .arg(QString::fromUtf8(visao->obterNome()))
+                          .arg(QString::fromUtf8(visao->getName()))
                           .arg(BaseObject::getTypeName(OBJ_VIEW))
                           .arg(QString::fromUtf8(atributos[ParsersAttributes::TABLE]) + "." +
                                QString::fromUtf8(atributos[ParsersAttributes::COLUMN]))
@@ -5588,7 +5588,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
    //Caso o relacionamento tabela-visão nao seja encontrado o erro será disparado
    if(!relacao_base)
     throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                             .arg(QString::fromUtf8(this->obterNome()))
+                             .arg(QString::fromUtf8(this->getName()))
                              .arg(this->getTypeName())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
                              .arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
@@ -5738,7 +5738,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
  }
 
  //Define a proteção do relacionamento
- relacao_base->definirProtegido(protegido);
+ relacao_base->setProtected(protegido);
 
  //Reconecta o relacionamento caso o mesmo seja um rel. tabela-visao
  if(relacao_base && relacao_base->obterTipoObjeto()==BASE_RELATIONSHIP)
@@ -5839,7 +5839,7 @@ Permissao *ModeloBD::criarPermissao(void)
      {
       //Dispara a exceção
       throw Exception(Exception::getErrorMessage(ERR_PERM_REF_INEXIST_OBJECT)
-                              .arg(QString::fromUtf8(objeto->obterNome()))
+                              .arg(QString::fromUtf8(objeto->getName()))
                               .arg(objeto->getTypeName())
                               .arg(QString::fromUtf8(lista[i]))
                               .arg(BaseObject::getTypeName(OBJ_ROLE)),
@@ -5931,9 +5931,9 @@ void ModeloBD::validarRemocaoColuna(Coluna *coluna)
   if(!vet_refs.empty())
    //Dispara um erro informando que a coluna não pde ser remove e qual objeto a referencia
    throw Exception(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE)
-                 .arg(QString::fromUtf8(coluna->obterTabelaPai()->obterNome(true)) + "." + QString::fromUtf8(coluna->obterNome(true)))
+                 .arg(QString::fromUtf8(coluna->obterTabelaPai()->getName(true)) + "." + QString::fromUtf8(coluna->getName(true)))
                  .arg(coluna->getTypeName())
-                 .arg(QString::fromUtf8(vet_refs[0]->obterNome(true)))
+                 .arg(QString::fromUtf8(vet_refs[0]->getName(true)))
                  .arg(vet_refs[0]->getTypeName()),
                  ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
@@ -6082,7 +6082,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
 
     if(objeto->obterTipoObjeto()!=OBJ_SCHEMA ||
        (objeto->obterTipoObjeto()==OBJ_SCHEMA &&
-        objeto->obterNome()!="public"))
+        objeto->getName()!="public"))
     {
      //Gera o codigo e o concatena com os demais já gerados
      atribs_aux[atrib]+=validarDefinicaoObjeto(objeto, tipo_def);
@@ -6092,7 +6092,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
      {
       emit s_objetoCarregado((qtd_defs_geradas/qtd_geral_obj) * 100,
                              msg.arg(tipo_def_str)
-                               .arg(QString::fromUtf8(objeto->obterNome()))
+                               .arg(QString::fromUtf8(objeto->getName()))
                                .arg(objeto->getTypeName()),
                             objeto->obterTipoObjeto());
      }
@@ -6350,9 +6350,9 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
        pois as mesmas não precisam ser declaradas explicitamente poir serem built-in */
     if(//tipo_def==ParserEsquema::DEFINICAO_SQL &&
        (tipo_obj==OBJ_LANGUAGE &&
-        (objeto->obterNome()==~TipoLinguagem("c") ||
-         objeto->obterNome()==~TipoLinguagem("sql") ||
-         objeto->obterNome()==~TipoLinguagem("plpgsql"))))
+        (objeto->getName()==~TipoLinguagem("c") ||
+         objeto->getName()==~TipoLinguagem("sql") ||
+         objeto->getName()==~TipoLinguagem("plpgsql"))))
      atribs_aux[atrib]+="";
     else
      atribs_aux[atrib]+=validarDefinicaoObjeto(objeto, tipo_def);
@@ -6364,7 +6364,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
    {
     emit s_objetoCarregado((qtd_defs_geradas/qtd_geral_obj) * 100,
                            msg.arg(tipo_def_str)
-                              .arg(QString::fromUtf8(objeto->obterNome()))
+                              .arg(QString::fromUtf8(objeto->getName()))
                               .arg(objeto->getTypeName()),
                            objeto->obterTipoObjeto());
    }
@@ -6385,7 +6385,7 @@ QString ModeloBD::obterDefinicaoObjeto(unsigned tipo_def, bool exportar_arq)
    {
     emit s_objetoCarregado((qtd_defs_geradas/qtd_geral_obj) * 100,
                            msg.arg(tipo_def_str)
-                              .arg(QString::fromUtf8((*itr)->obterNome()))
+                              .arg(QString::fromUtf8((*itr)->getName()))
                               .arg(objeto->getTypeName()),
                            objeto->obterTipoObjeto());
    }
@@ -6558,8 +6558,8 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    unsigned qtd, i;
 
    //Caso a linguagem da função não seja C ou SQL obtém as dependências da mesma
-   if(func->obterLinguagem()->obterNome()!=~TipoLinguagem("c") &&
-      func->obterLinguagem()->obterNome()!=~TipoLinguagem("sql"))
+   if(func->obterLinguagem()->getName()!=~TipoLinguagem("c") &&
+      func->obterLinguagem()->getName()!=~TipoLinguagem("sql"))
     obterDependenciasObjeto(func->obterLinguagem(), vet_deps, inc_dep_indiretas);
 
    //Obtém as dependências do tipo de retorno caso o mesmo seja um tipo definido pelo usuário

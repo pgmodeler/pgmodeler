@@ -71,7 +71,7 @@ void ListaObjetosWidget::atualizarListaObjetos(vector<BaseObject *> &objetos, QT
 
    //Aloca o item de nome do objeto de ref/dep
    item_tab=new QTableWidgetItem;
-   item_tab->setText(QString::fromUtf8(objetos[i]->obterNome()));
+   item_tab->setText(QString::fromUtf8(objetos[i]->getName()));
    item_tab->setIcon(QPixmap(QString(":/icones/icones/") +
                      BaseObject::getSchemaName(objetos[i]->obterTipoObjeto())+ QString(".png")));
    listaobjetos_tbw->setItem(id_lin, 0, item_tab);
@@ -92,7 +92,7 @@ void ListaObjetosWidget::atualizarListaObjetos(vector<BaseObject *> &objetos, QT
     obj_pai=this->modelo;
 
    //Aloca o item de tipo do objeto pai do objeto de ref/dep
-   item_tab->setText(QString::fromUtf8(obj_pai->obterNome()));
+   item_tab->setText(QString::fromUtf8(obj_pai->getName()));
    item_tab->setIcon(QPixmap(QString(":/icones/icones/") +
                      BaseObject::getSchemaName(obj_pai->obterTipoObjeto())+ QString(".png")));
    listaobjetos_tbw->setItem(id_lin, 2, item_tab);

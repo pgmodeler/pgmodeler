@@ -64,7 +64,7 @@ bool Coluna::naoNulo(void)
 QString Coluna::obterReferenciaTipo(void)
 {
  if(tabela_pai)
-  return(tabela_pai->obterNome(true) + QString(".") + this->obterNome(true) + QString("%TYPE"));
+  return(tabela_pai->getName(true) + QString(".") + this->getName(true) + QString("%TYPE"));
  else
   return("");
 }
@@ -74,7 +74,7 @@ QString Coluna::obterValorPadrao(void)
  return(valor_padrao);
 }
 
-QString Coluna::obterNomeAntigo(bool formatar)
+QString Coluna::getNameAntigo(bool formatar)
 {
  if(formatar)
   return(BaseObject::formatName(nome_antigo));
@@ -85,7 +85,7 @@ QString Coluna::obterNomeAntigo(bool formatar)
 QString Coluna::obterDefinicaoObjeto(unsigned tipo_def)
 {
  if(this->tabela_pai)
-  attributes[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
+  attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
 
  attributes[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
  attributes[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;

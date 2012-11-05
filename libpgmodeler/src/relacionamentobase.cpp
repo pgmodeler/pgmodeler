@@ -38,7 +38,7 @@ RelacionamentoBase::RelacionamentoBase(/*const QString &nome,*/ unsigned tipo_re
   configurarRelacionamento();
 
   str_aux=QApplication::translate("RelacionamentoBase","rel_%1_%2","",QApplication::UnicodeUTF8);
-  definirNome(str_aux.arg(tab_orig->obterNome()).arg(tab_dest->obterNome()));
+  definirNome(str_aux.arg(tab_orig->getName()).arg(tab_dest->getName()));
  }
  catch(Exception &e)
  {
@@ -79,7 +79,7 @@ void RelacionamentoBase::configurarRelacionamento(void)
       não estão alocadas, caso isso ocorra, dispara uma exceção */
    if(!tabela_orig || !tabela_dest)
     throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_TABLE)
-                         .arg(QString::fromUtf8(this->obterNome()))
+                         .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
                   ERR_ASG_NOT_ALOC_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -138,7 +138,7 @@ void RelacionamentoBase::definirNome(const QString &nome)
   ObjetoGraficoBase::definirNome(nome);
 
   if(rotulos[ROTULO_NOME_RELAC])
-   rotulos[ROTULO_NOME_RELAC]->definirComentario(nome);
+   rotulos[ROTULO_NOME_RELAC]->setComment(nome);
  }
  catch(Exception &e)
  {
@@ -190,12 +190,12 @@ void RelacionamentoBase::definirTabelaObrigatoria(unsigned id_tabela, bool valor
  {
   //Configurando o rótulo para o relacionamento 1-1
   if(tipo_relac==RELACIONAMENTO_11)
-   rotulos[tipo_rot]->definirComentario("(" + cmin + ",1)");
+   rotulos[tipo_rot]->setComment("(" + cmin + ",1)");
   //Configurando o rótulo para o relacionamento 1-n
   else if(tipo_relac==RELACIONAMENTO_1N)
   {
    aux=(id_tabela==TABELA_ORIGEM ? "1" : "n");
-   rotulos[tipo_rot]->definirComentario("(" + cmin + "," + aux + ")");
+   rotulos[tipo_rot]->setComment("(" + cmin + "," + aux + ")");
   }
   else if(tipo_relac==RELACIONAMENTO_NN)
   {
@@ -203,7 +203,7 @@ void RelacionamentoBase::definirTabelaObrigatoria(unsigned id_tabela, bool valor
       será gerada uma tabela própria, portanto a cardinalidade mínima
       é ignorada */
    //rotulos[tipo_rot]->definirComentario("(" + cmin + ",n)");
-   rotulos[tipo_rot]->definirComentario("(n)");
+   rotulos[tipo_rot]->setComment("(n)");
   }
   rotulos[tipo_rot]->definirModificado(true);
  }
@@ -308,10 +308,10 @@ void RelacionamentoBase::definirAtributosRelacionamento(void)
  attributes[ParsersAttributes::DST_REQUIRED]=(obrig_dest ? "1" : "");
 
  if(tabela_orig)
-  attributes[ParsersAttributes::SRC_TABLE]=tabela_orig->obterNome(true);
+  attributes[ParsersAttributes::SRC_TABLE]=tabela_orig->getName(true);
 
  if(tabela_dest)
-  attributes[ParsersAttributes::DST_TABLE]=tabela_dest->obterNome(true);
+  attributes[ParsersAttributes::DST_TABLE]=tabela_dest->getName(true);
 
 
  //Criando a definição XML da linha do relacionamento

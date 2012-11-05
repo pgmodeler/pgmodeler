@@ -58,13 +58,13 @@ void OGTituloObjeto::configurarObjeto(ObjetoGraficoBase *objeto)
  fmt=config_fonte[atrib_nome_esquema];
  esquema->setFont(fmt.font());
  esquema->setBrush(fmt.foreground());
- esquema->setText(QString::fromUtf8(objeto->getSchema()->obterNome() + "."));
+ esquema->setText(QString::fromUtf8(objeto->getSchema()->getName() + "."));
 
  //Configura o descritor de nome do objeto
  fmt=config_fonte[atrib_nome];
  nome->setFont(fmt.font());
  nome->setBrush(fmt.foreground());
- nome->setText(QString::fromUtf8(objeto->obterNome()));
+ nome->setText(QString::fromUtf8(objeto->getName()));
 
  //Configura a caixa do título
  caixa->setBrush(this->obterEstiloPreenchimento(atrib_cor_titulo));

@@ -46,31 +46,31 @@ Tipo::~Tipo(void)
  /* Ao ser destruído um objeto desta classe tem
     seu nome removido da lista de tipos válidos
     do PostgreSQL */
- TipoPgSQL::removerTipoUsuario(this->obterNome(true), this);
+ TipoPgSQL::removerTipoUsuario(this->getName(true), this);
 }
 
 void Tipo::definirNome(const QString &nome)
 {
  QString nome_ant;
 
- nome_ant=this->obterNome(true);//this->nome;
+ nome_ant=this->getName(true);//this->nome;
  BaseObject::definirNome(nome);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 
-void Tipo::definirEsquema(BaseObject *esquema)
+void Tipo::setSchema(BaseObject *esquema)
 {
  QString nome_ant;
 
- nome_ant=this->obterNome(true);
- BaseObject::definirEsquema(esquema);
+ nome_ant=this->getName(true);
+ BaseObject::setSchema(esquema);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 
 bool Tipo::atributoExiste(const QString &nome_atrib)
@@ -83,7 +83,7 @@ bool Tipo::atributoExiste(const QString &nome_atrib)
 
  while(itr!=itr_end && !enc)
  {
-  enc=(itr->obterNome()==nome_atrib);
+  enc=(itr->getName()==nome_atrib);
   itr++;
  }
 
@@ -93,13 +93,13 @@ bool Tipo::atributoExiste(const QString &nome_atrib)
 void Tipo::adicionarAtributo(Parametro atrib)
 {
  //O atributo não pode ter o nome vazio nem tipo nulo
- if(atrib.obterNome()=="" || atrib.obterTipo()==TipoPgSQL::nulo)
+ if(atrib.getName()=="" || atrib.obterTipo()==TipoPgSQL::nulo)
   throw Exception(ERR_INS_INV_TYPE_ATTRIB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(TipoPgSQL::obterIndiceTipoUsuario(this->obterNome(true), this) == !atrib.obterTipo())
-  throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->obterNome(true))),
+ else if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !atrib.obterTipo())
+  throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Verifica se o atributo com mesmo nome já não foi inserido no tipo
- else if(atributoExiste(atrib.obterNome()))
+ else if(atributoExiste(atrib.getName()))
   throw Exception(ERR_INS_DUPLIC_ITEMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  attributes.push_back(atrib);
@@ -220,7 +220,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
     pois estas duas são obrigatórias para um tipo base */
  if(!funcao && (conf_func==FUNCAO_INPUT || conf_func==FUNCAO_OUTPUT))
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-                         .arg(QString::fromUtf8(this->obterNome(true)))
+                         .arg(QString::fromUtf8(this->getName(true)))
                          .arg(BaseObject::getTypeName(OBJ_TYPE)),
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -228,7 +228,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
  {
   /* Verifica se a função está escrita em C. Para a criação de um tipo base
    apenas funções nesta linguagem podem ser atribuídas */
-  if(funcao->obterLinguagem()->obterNome()!=(~ling))
+  if(funcao->obterLinguagem()->getName()!=(~ling))
    throw Exception(ERR_ASG_FUNC_INV_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Verificando a quantidade de parâmetros da função em relação ao tipo.
@@ -241,7 +241,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
            conf_func==FUNCAO_TPMOD_IN || conf_func==FUNCAO_TPMOD_OUT ||
            conf_func==FUNCAO_ANALYZE)))
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-                          .arg(QString::fromUtf8(this->obterNome()))
+                          .arg(QString::fromUtf8(this->getName()))
                           .arg(BaseObject::getTypeName(OBJ_TYPE)),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -260,7 +260,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
           (conf_func==FUNCAO_TPMOD_OUT && funcao->obterTipoRetorno()!="cstring") ||
           (conf_func==FUNCAO_ANALYZE && funcao->obterTipoRetorno()!="boolean"))
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
-                          .arg(QString::fromUtf8(this->obterNome()))
+                          .arg(QString::fromUtf8(this->getName()))
                           .arg(BaseObject::getTypeName(OBJ_TYPE)),
                  ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -289,7 +289,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
           (conf_func==FUNCAO_ANALYZE && funcao->obterParametro(0).obterTipo()!="internal"))
    throw Exception(ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  funcao->definirProtegido(false);
+  funcao->setProtected(false);
  }
 
  funcoes[conf_func]=funcao;
@@ -359,7 +359,7 @@ void Tipo::definirAlinhamento(TipoPgSQL tipo)
  /* Verifica se o tipo a ser atribuído ao alinhamento é
     diferente de char, smallint, integer e double (os únicos aceitos) */
  if(tp!="char" && tp!="smallint" && tp!="integer" && tp!="double precision")
-  throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ALIGNMENT_TYPE).arg(QString::fromUtf8(this->obterNome(true))),
+  throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ALIGNMENT_TYPE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_ASG_INV_ALIGNMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
@@ -375,13 +375,13 @@ void Tipo::definirValorPadrao(const QString &valor_padrao)
 
 void Tipo::definirElemento(TipoPgSQL elemento)
 {
- if(TipoPgSQL::obterIndiceTipoUsuario(this->obterNome(true), this) == !elemento)
-  throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->obterNome(true))),
+ if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !elemento)
+  throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(elemento!="any" &&
    (elemento.tipoOID() || elemento.pseudoTipo() ||
     elemento.tipoUsuario() || elemento.tipoArray()))
-  throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ELEMENT_TYPE).arg(QString::fromUtf8(this->obterNome(true))),
+  throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ELEMENT_TYPE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_ASG_INV_ELEMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->elemento=elemento;
@@ -405,7 +405,7 @@ void Tipo::definirAtributoElementos(unsigned tipo_def)
 
   if(tipo_def==SchemaParser::SQL_DEFINITION)
   {
-   str_elem+=param.obterNome() + " " + (*param.obterTipo());
+   str_elem+=param.getName() + " " + (*param.obterTipo());
    if(i < (qtd-1)) str_elem+=",";
   }
   else
@@ -448,8 +448,8 @@ void Tipo::definirPreferido(bool preferido)
 
 void Tipo::definirTipoCopia(TipoPgSQL tipo_copia)
 {
- if(TipoPgSQL::obterIndiceTipoUsuario(this->obterNome(true), this) == !tipo_copia)
-  throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->obterNome(true))),
+ if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !tipo_copia)
+  throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->tipo_copia=tipo_copia;
@@ -579,7 +579,7 @@ QString Tipo::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
    if(funcoes[i])
    {
     if(tipo_def==SchemaParser::SQL_DEFINITION)
-     BaseObject::attributes[atrib_func[i]]=funcoes[i]->obterNome();
+     BaseObject::attributes[atrib_func[i]]=funcoes[i]->getName();
     else
     {
      funcoes[i]->setAttribute(ParsersAttributes::REF_TYPE, atrib_func[i]);
@@ -620,7 +620,7 @@ void Tipo::operator = (Tipo &tipo)
  QString nome_ant;
  unsigned i=0;
 
- nome_ant=this->obterNome(true);
+ nome_ant=this->getName(true);
  *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(tipo);
 
  this->config=tipo.config;
@@ -645,6 +645,6 @@ void Tipo::operator = (Tipo &tipo)
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 

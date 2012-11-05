@@ -167,30 +167,30 @@ class BaseObject {
   static unsigned getGlobalId(void);
 
   //Define o comentário do objeto que será anexado a definição SQL do mesmo
-  virtual void definirComentario(const QString &comment);
+  virtual void setComment(const QString &comment);
 
   //Define o nome do objeto
   virtual void definirNome(const QString &obj_name);
 
   //Define o esquema ao qual o objeto pertence
-  virtual void definirEsquema(BaseObject *schema);
+  virtual void setSchema(BaseObject *schema);
 
   //Define o dono do objeto em banco de dados
-  virtual void definirDono(BaseObject *owner);
+  virtual void setOwner(BaseObject *owner);
 
   //Define o espaço de tabelas ao qual o objeto pertence
-  virtual void definirEspacoTabela(BaseObject *tablespace);
+  virtual void setTablespace(BaseObject *tablespace);
 
   //Define se o objeto está protegido ou não
-  virtual void definirProtegido(bool valor);
+  virtual void setProtected(bool valor);
 
   /* Retorna o nome do objeto. O parâmetro 'formatar'
      é usado para obter o nome do objeto com o nome do esquema
      e as aspas concatenados */
-  QString obterNome(bool formatar=false);
+  QString getName(bool formatar=false);
 
   //Retorna o comentário do objeto
-  QString obterComentario(void);
+  QString getComment(void);
 
   /* Retorna a definição SQL ou XML do objeto. O atributo 'forma_reduzida'
      indica que a geração do código XML será uma representação mínima do

@@ -510,7 +510,7 @@ void ListaOperacoes::adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int i
     //Caso um índice específico para o objeto não foi especificado
     if(idx_objeto < 0)
      //Armazena na operação o índice do objeto em seu pai
-     idx_obj=tabela_pai->obterIndiceObjeto(objeto->obterNome(false), tipo_obj);
+     idx_obj=tabela_pai->obterIndiceObjeto(objeto->getName(false), tipo_obj);
     else
      //Atribui o índice específico definido pelo usuário ao índice do objeto na operação
      idx_obj=idx_objeto;
@@ -563,15 +563,15 @@ void ListaOperacoes::obterDadosOperacao(unsigned idx_oper, unsigned &tipo_oper, 
  tipo_obj=operacao->obj_pool->obterTipoObjeto();
 
  if(tipo_obj==OBJ_CAST)
-  nome_obj=operacao->obj_pool->obterNome();
+  nome_obj=operacao->obj_pool->getName();
  else
-  nome_obj=operacao->obj_pool->obterNome(true);
+  nome_obj=operacao->obj_pool->getName(true);
 
  //Formata o nome especificamente para objetos da tabela incluindo o nome da tabela pai ao nome do objeto
  if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT || tipo_obj==OBJ_RULE ||
     tipo_obj==OBJ_TRIGGER || tipo_obj==OBJ_INDEX)
  {
-  nome_obj=operacao->obj_pai->obterNome(true) + "." + nome_obj;
+  nome_obj=operacao->obj_pai->getName(true) + "." + nome_obj;
  }
 }
 
@@ -656,7 +656,7 @@ void ListaOperacoes::desfazerOperacao(void)
      pos++;
      emit s_operacaoExecutada((pos/static_cast<float>(tam_enc))*100,
                                trUtf8("Undoing operation on object: %1 (%2)")
-                                      .arg(operacao->obj_pool->obterNome())
+                                      .arg(operacao->obj_pool->getName())
                                       .arg(operacao->obj_pool->getTypeName()),
                                        operacao->obj_pool->obterTipoObjeto());
     }
@@ -721,7 +721,7 @@ void ListaOperacoes::refazerOperacao(void)
      pos++;
      emit s_operacaoExecutada((pos/static_cast<float>(tam_enc))*100,
                                trUtf8("Redoing operation on object:: %1 (%2)")
-                                      .arg(operacao->obj_pool->obterNome())
+                                      .arg(operacao->obj_pool->getName())
                                       .arg(operacao->obj_pool->getTypeName()),
                                        operacao->obj_pool->obterTipoObjeto());
     }

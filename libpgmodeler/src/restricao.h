@@ -113,7 +113,7 @@ class Restricao: public ObjetoTabela{
   /* Define o espaço de tabela usado pela restrição.
      Espaços de tabelas só podem ser atribuídas a restrições
      do tipo UNIQUE ou PRIMARY KEY */
-  void definirEspacoTabela(EspacoTabela *tablespace);
+  void setTablespace(EspacoTabela *tablespace);
 
   //Define o fator preenchimento da restrição
   void definirFatorPreenchimento(unsigned fator);

@@ -104,7 +104,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
    /* Caso um alias de tabela não esteja definido,
       o nome da própria tabela será usada */
    if(alias=="")
-    nome_tab=tabela->obterNome(true);
+    nome_tab=tabela->getName(true);
    else
     //Caso haja um alias de tabela, formata o seu nome e passa a usá-la na def. SQL
     nome_tab=BaseObject::formatName(alias);
@@ -120,7 +120,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
    else
    {
     //Caso haja uma coluna definida, atribui o seu nome   definição SQL
-    def_sql=nome_tab + coluna->obterNome(true);
+    def_sql=nome_tab + coluna->getName(true);
 
     //Caso haja um alias para a coluna o mesmo será concatenad  definição
     if(alias_coluna!="")
@@ -152,7 +152,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
   if(tipo_refer==REFER_COLUNA)
   {
    //Concatena o nome da tabela
-   def_sql+=tabela->obterNome(true);
+   def_sql+=tabela->getName(true);
 
    //Caso um alias exista
    if(alias!="")
@@ -178,7 +178,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
    /* Caso não existe um alias de tabel, o próprio nome
       da mesma é concatenad  definição */
    if(alias=="")
-    def_sql=tabela->obterNome(true);
+    def_sql=tabela->getName(true);
    else
     def_sql=BaseObject::formatName(alias);
 
@@ -186,7 +186,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
 
    //Concatena o nome da coluna
    if(coluna)
-    def_sql+=coluna->obterNome(true);
+    def_sql+=coluna->getName(true);
   }
   else if(tipo_refer==REFER_EXPRESSAO)
    def_sql=expressao;
@@ -204,10 +204,10 @@ QString Referencia::obterDefinicaoXML(void)
  atributos[ParsersAttributes::COLUMN]="";
 
  if(tabela)
-  atributos[ParsersAttributes::TABLE]=tabela->obterNome(true);
+  atributos[ParsersAttributes::TABLE]=tabela->getName(true);
 
  if(coluna)
-  atributos[ParsersAttributes::COLUMN]=coluna->obterNome();
+  atributos[ParsersAttributes::COLUMN]=coluna->getName();
 
  atributos[ParsersAttributes::EXPRESSION]=expressao;
  atributos[ParsersAttributes::ALIAS]=alias;

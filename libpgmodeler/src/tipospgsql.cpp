@@ -960,7 +960,7 @@ unsigned TipoPgSQL::obterIndiceTipoUsuario(const QString &nome, void *ptipo, voi
  else return(TipoBase::nulo);
 }
 
-QString TipoPgSQL::obterNomeTipoUsuario(unsigned idx)
+QString TipoPgSQL::getNameTipoUsuario(unsigned idx)
 {
  unsigned lim1, lim2;
 

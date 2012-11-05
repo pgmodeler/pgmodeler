@@ -138,10 +138,10 @@ class ModeloWidget: public QWidget {
   ~ModeloWidget(void);
 
   //Obtém o nome do arquivo que deu origem ao modelo
-  QString obterNomeArquivo(void);
+  QString getNameArquivo(void);
 
   //Obtém o nome temporário do arquivo usado para salvar uma cópia de segurança na pasta tmp do pgModeler
-  QString obterNomeArquivoTemp(void);
+  QString getNameArquivoTemp(void);
 
   //Exibe o formulário de edição do objeto conforme o tipo passado
   void exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto=NULL, BaseObject *objeto_pai=NULL, QPointF pos=QPointF(NAN, NAN));

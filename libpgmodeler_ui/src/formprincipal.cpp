@@ -535,11 +535,11 @@ void FormPrincipal::closeEvent(QCloseEvent *)
   {
    modelo=dynamic_cast<ModeloWidget *>(modelos_tab->widget(i));
 
-   if(!modelo->obterNomeArquivo().isEmpty())
+   if(!modelo->getNameArquivo().isEmpty())
    {
     id_param=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
     atribs[ParsersAttributes::ID]=id_param;
-    atribs[ParsersAttributes::PATH]=modelo->obterNomeArquivo();
+    atribs[ParsersAttributes::PATH]=modelo->getNameArquivo();
     conf_wgt->adicionarParamConfiguracao(id_param, atribs);
     atribs.clear();
    }
@@ -571,7 +571,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
  tab_modelo->setObjectName(QString::fromUtf8(nome_obj));
 
  //Adiciona a aba criada ao conjuto de abas existentes
- nome_obj=tab_modelo->modelo->obterNome();
+ nome_obj=tab_modelo->modelo->getName();
  modelos_tab->addTab(tab_modelo, QString::fromUtf8(nome_obj));
  modelos_tab->setCurrentIndex(modelos_tab->count()-1);
  layout=modelos_tab->currentWidget()->layout();
@@ -601,7 +601,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
    //Carrega o modelo caso o nome do arquivo esteja especificado
    tab_modelo->carregarModelo(nome_arq);
    modelos_tab->setTabText(modelos_tab->currentIndex(),
-                           QString::fromUtf8(tab_modelo->modelo->obterNome()));
+                           QString::fromUtf8(tab_modelo->modelo->getName()));
   }
   catch(Exception &e)
   {
@@ -682,11 +682,11 @@ void FormPrincipal::definirModeloAtual(void)
   menuEditar->addAction(modelo_atual->action_excluir);
 
   //Configura o titulo da janela da aplicação
-  if(modelo_atual->obterNomeArquivo().isEmpty())
+  if(modelo_atual->getNameArquivo().isEmpty())
    this->setWindowTitle(titulo_janela);
   else
    //Caso o modelo atual venha de um arquivo, concatena o caminho para o arquivo
-   this->setWindowTitle(titulo_janela + " - " + QDir::toNativeSeparators(modelo_atual->obterNomeArquivo()));
+   this->setWindowTitle(titulo_janela + " - " + QDir::toNativeSeparators(modelo_atual->getNameArquivo()));
 
   connect(modelo_atual, SIGNAL(s_objetoModificado(void)),lista_oper, SLOT(atualizarListaOperacoes(void)));
   connect(modelo_atual, SIGNAL(s_objetoCriado(void)),lista_oper, SLOT(atualizarListaOperacoes(void)));
@@ -847,7 +847,7 @@ void FormPrincipal::fecharModelo(int idx_modelo)
 
   //Remove o arquivo temporário relacionado ao modelo
   QDir arq_tmp;
-  arq_tmp.remove(modelo->obterNomeArquivoTemp());
+  arq_tmp.remove(modelo->getNameArquivoTemp());
 
   //Se o modelo foi modificado então solicita o salvamento ao usuário
   if(modelo->modeloModificado())
@@ -944,7 +944,7 @@ void FormPrincipal::salvarModelo(ModeloWidget *modelo)
     QFileDialog arquivo_dlg;
 
     //Exibe o diálogo de salvamento do arquivo
-    arquivo_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(modelo->modelo->obterNome()));
+    arquivo_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(modelo->modelo->getName()));
 
     /** issue#9 **/
     //Ateração da extensão dos modelos de .pgmodel para .dbm
@@ -1297,7 +1297,7 @@ void FormPrincipal::executarPlugin(void)
 void FormPrincipal::salvarModeloTemporario(void)
 {
  if(modelo_atual)
-  modelo_atual->modelo->salvarModelo(modelo_atual->obterNomeArquivoTemp(), SchemaParser::XML_DEFINITION);
+  modelo_atual->modelo->salvarModelo(modelo_atual->getNameArquivoTemp(), SchemaParser::XML_DEFINITION);
 }
 
 void FormPrincipal::exibirVisaoGeral(bool exibir)

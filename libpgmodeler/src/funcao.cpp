@@ -96,9 +96,9 @@ void Funcao::definirNome(const QString &nome)
  criarAssinatura();
 }
 
-void Funcao::definirEsquema(BaseObject *esquema)
+void Funcao::setSchema(BaseObject *esquema)
 {
- BaseObject::definirEsquema(esquema);
+ BaseObject::setSchema(esquema);
  criarAssinatura();
 }
 
@@ -117,7 +117,7 @@ void Funcao::adicionarParametro(Parametro param)
  {
   /* Verifica se o nome do parametro atual ('itr->nome')
      é igual ao nome do novo param. ('nome') */
-  enc=(itr->obterNome()==param.obterNome());
+  enc=(itr->getName()==param.getName());
   itr++;
  }
 
@@ -125,7 +125,7 @@ void Funcao::adicionarParametro(Parametro param)
  if(enc)
   //Dispara exceção relatando o erro
   throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PARAM_FUNCTION)
-                .arg(QString::fromUtf8(param.obterNome()))
+                .arg(QString::fromUtf8(param.getName()))
                 .arg(QString::fromUtf8(this->assinatura)),
                 ERR_ASG_DUPLIC_PARAM_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
@@ -158,7 +158,7 @@ void Funcao::adicionarTipoRetTabela(const QString &nome, TipoPgSQL tipo)
   {
    /* Verifica se o nome do parametro atual ('itr->nome')
       é igual ao nome do novo param. ('nome') */
-   enc=(itr->obterNome()==nome);
+   enc=(itr->getName()==nome);
    itr++;
   }
 
@@ -227,7 +227,7 @@ void Funcao::definirQuantidadeLinhas(unsigned qtd_linhas)
 
 void Funcao::definirBiblioteca(const QString &biblioteca)
 {
- if(linguagem->obterNome().toLower()!=~TipoLinguagem("c"))
+ if(linguagem->getName().toLower()!=~TipoLinguagem("c"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
                 .arg(QString::fromUtf8(this->obterAssinatura())),
                 ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -237,7 +237,7 @@ void Funcao::definirBiblioteca(const QString &biblioteca)
 
 void Funcao::definirSimbolo(const QString &simbolo)
 {
- if(linguagem->obterNome().toLower()!=~TipoLinguagem("c"))
+ if(linguagem->getName().toLower()!=~TipoLinguagem("c"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
                 .arg(QString::fromUtf8(this->obterAssinatura())),
                 ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -293,7 +293,7 @@ void Funcao::definirTipoComportamento(TipoComportamento tipo)
 
 void Funcao::definirCodigoFonte(const QString &codigo)
 {
- if(linguagem->obterNome().toLower()==~TipoLinguagem("c"))
+ if(linguagem->getName().toLower()==~TipoLinguagem("c"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_CODE_FUNC_C_LANGUAGE)
                 .arg(QString::fromUtf8(this->obterAssinatura())),
                 ERR_ASG_CODE_FUNC_C_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -423,7 +423,7 @@ void Funcao::removerParametro(const QString &nome, TipoPgSQL tipo)
  {
   /* Verifica se o parâmetro atual (itr) tem o nome igual ao passado pelo método,
      o mesmo vale para o tipo */
-  if(itr->obterNome()==nome && itr->obterTipo()==(~tipo))
+  if(itr->getName()==nome && itr->obterTipo()==(~tipo))
   {
    //Caso o parâmetro seja encontrado
    params.erase(itr); //Exclui da lista
@@ -488,7 +488,7 @@ void Funcao::criarAssinatura(bool formatar)
  }
 
  //Formato da assinatura NOME(TIPO_PARAM1,TIPO_PARAM2,...,TIPO_PARAMn)
- assinatura=this->obterNome(formatar) + QString("(") + str_param + QString(")");
+ assinatura=this->getName(formatar) + QString("(") + str_param + QString(")");
 }
 
 QString Funcao::obterDefinicaoObjeto(unsigned tipo_def)
@@ -506,7 +506,7 @@ QString Funcao::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
-  attributes[ParsersAttributes::LANGUAGE]=linguagem->obterNome(false);
+  attributes[ParsersAttributes::LANGUAGE]=linguagem->getName(false);
   attributes[ParsersAttributes::RETURN_TYPE]=(*tipo_retorno);
  }
  else
@@ -523,7 +523,7 @@ QString Funcao::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
  attributes[ParsersAttributes::BEHAVIOR_TYPE]=(~tipo_comportamento);
  attributes[ParsersAttributes::DEFINITION]=codigo_fonte;
 
- if(linguagem->obterNome()==~TipoLinguagem(TipoLinguagem::c))
+ if(linguagem->getName()==~TipoLinguagem(TipoLinguagem::c))
  {
   attributes[ParsersAttributes::SYMBOL]=simbolo;
   attributes[ParsersAttributes::LIBRARY]=biblioteca;

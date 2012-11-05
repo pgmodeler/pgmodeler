@@ -700,11 +700,11 @@ void ModeloWidget::converterRelacionamentoNN(void)
      XMLParser::restartParser();
      XMLParser::loadXMLBuffer(xml_tab);
      tab=modelo->criarTabela();
-     nome_tab=tab->obterNome();
+     nome_tab=tab->getName();
 
      /* Caso haja outras tabelas no modelo com o nome da tabela recém criada a mesma terá
         seu nome alterado até que não existam tabelas com mesmo nome que ela */
-     while(modelo->obterObjeto(tab->obterNome(true), OBJ_TABLE))
+     while(modelo->obterObjeto(tab->getName(true), OBJ_TABLE))
      {
       tab->definirNome(nome_tab + QString("_%1").arg(i));
       i++;
@@ -735,7 +735,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
        qtd1=rest_aux->obterNumColunas(x);
        for(idx1=0; idx1 < qtd1; idx1++)
        {
-        col=tab->obterColuna(rest_aux->obterColuna(idx, x)->obterNome());
+        col=tab->obterColuna(rest_aux->obterColuna(idx, x)->getName());
         if(col) rest->adicionarColuna(col, x);
        }
       }
@@ -761,7 +761,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
      //lista_op->adicionarObjeto(tab, Operacao::OBJETO_CRIADO);
 
      //Aloca um relacionamento entre a nova tabela e a tabela de origem do relacionamento
-     //nome_rel=QString("rel_") + tab->obterNome(false) + QString("_") + tab_orig->obterNome(false);
+     //nome_rel=QString("rel_") + tab->getName(false) + QString("_") + tab_orig->getName(false);
      rel1=new Relacionamento(Relacionamento::RELACIONAMENTO_1N,
                              tab_orig, tab, obrig_orig, false, true,
                              "", "", true);
@@ -771,7 +771,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
      //lista_op->adicionarObjeto(rel1, Operacao::OBJETO_CRIADO);
 
      //Aloca um relacionamento entre a nova tabela e a tabela de destino do relacionamento
-     //nome_rel=QString("rel_") + tab->obterNome() + QString("_") + tab_dest->obterNome();
+     //nome_rel=QString("rel_") + tab->getName() + QString("_") + tab_dest->getName();
      //if(rel->autoRelacionamento())
      // nome_rel+=QString("1");
 
@@ -1084,12 +1084,12 @@ void ModeloWidget::salvarModelo(const QString &nome_arq)
  }
 }
 
-QString ModeloWidget::obterNomeArquivo(void)
+QString ModeloWidget::getNameArquivo(void)
 {
  return(this->nome_arquivo);
 }
 
-QString ModeloWidget::obterNomeArquivoTemp(void)
+QString ModeloWidget::getNameArquivoTemp(void)
 {
  return(this->nome_arquivo_tmp);
 }
@@ -1131,11 +1131,11 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
      por serem do sistema, caso o usuário tente esta operação um erro será disparado */
   if(objeto &&
      ((tipo_obj==OBJ_LANGUAGE &&
-       (objeto->obterNome()==~TipoLinguagem("c") ||
-        objeto->obterNome()==~TipoLinguagem("sql") ||
-        objeto->obterNome()==~TipoLinguagem("plpgsql"))) ||
+       (objeto->getName()==~TipoLinguagem("c") ||
+        objeto->getName()==~TipoLinguagem("sql") ||
+        objeto->getName()==~TipoLinguagem("plpgsql"))) ||
       (tipo_obj==OBJ_SCHEMA &&
-       objeto->obterNome()=="public")))
+       objeto->getName()=="public")))
     throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   switch(tipo_obj)
@@ -1401,13 +1401,13 @@ void ModeloWidget::protegerObjeto(void)
    if(obj_graf)
    {
     //Caso seja uma tabela, usa o método de proteção/desproteção da tabela
-    obj_graf->definirProtegido(!obj_graf->isProtected());
+    obj_graf->setProtected(!obj_graf->isProtected());
    }
    else if(obj_tab)
    {
     /* Caso seja um objto de tabela protege/desprotege o mesmo e marca como modificada a tabela pai
        para forçar o seu redesenho */
-    obj_tab->definirProtegido(!obj_tab->isProtected());
+    obj_tab->setProtected(!obj_tab->isProtected());
     dynamic_cast<Tabela *>(obj_tab->obterTabelaPai())->definirModificado(true);
    }
    else
@@ -1416,21 +1416,21 @@ void ModeloWidget::protegerObjeto(void)
        por serem do sistema, caso o usuário tente esta operação um erro será disparado */
     if(this->objs_selecionados[0] &&
        ((this->objs_selecionados[0]->obterTipoObjeto()==OBJ_LANGUAGE &&
-         (this->objs_selecionados[0]->obterNome()==~TipoLinguagem("c") ||
-          this->objs_selecionados[0]->obterNome()==~TipoLinguagem("sql") ||
-          this->objs_selecionados[0]->obterNome()==~TipoLinguagem("plpgsql"))) ||
+         (this->objs_selecionados[0]->getName()==~TipoLinguagem("c") ||
+          this->objs_selecionados[0]->getName()==~TipoLinguagem("sql") ||
+          this->objs_selecionados[0]->getName()==~TipoLinguagem("plpgsql"))) ||
         (this->objs_selecionados[0]->obterTipoObjeto()==OBJ_SCHEMA &&
-         this->objs_selecionados[0]->obterNome()=="public")))
+         this->objs_selecionados[0]->getName()=="public")))
       throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-    this->objs_selecionados[0]->definirProtegido(!this->objs_selecionados[0]->isProtected());
+    this->objs_selecionados[0]->setProtected(!this->objs_selecionados[0]->isProtected());
    }
   }
   //Caso não haja objetos selecionados faz a proteção/desproteção do modelo
   else if(this->objs_selecionados.empty())
   {
    if(obj_sender==action_proteger || obj_sender==action_desproteger)
-    modelo->definirProtegido(!modelo->isProtected());
+    modelo->setProtected(!modelo->isProtected());
   }
   //Caso haja mais de um objeto selecionado, faz a proteção em lote
   else
@@ -1454,11 +1454,11 @@ void ModeloWidget::protegerObjeto(void)
        por serem do sistema, caso o usuário tente esta operação um erro será disparado */
     if(objeto &&
        ((tipo_obj==OBJ_LANGUAGE &&
-         (objeto->obterNome()==~TipoLinguagem("c") ||
-          objeto->obterNome()==~TipoLinguagem("sql") ||
-          objeto->obterNome()==~TipoLinguagem("plpgsql") )) ||
+         (objeto->getName()==~TipoLinguagem("c") ||
+          objeto->getName()==~TipoLinguagem("sql") ||
+          objeto->getName()==~TipoLinguagem("plpgsql") )) ||
         (tipo_obj==OBJ_SCHEMA &&
-         objeto->obterNome()=="public")))
+         objeto->getName()=="public")))
       throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     else if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT)
     {
@@ -1467,12 +1467,12 @@ void ModeloWidget::protegerObjeto(void)
      {
       //Monta a mensagem de que o objeto não pode ser removido por estar protegido
       throw Exception(QString(Exception::getErrorMessage(ERR_OPR_REL_INCL_OBJECT))
-                    .arg(objeto->obterNome()).arg(objeto->getTypeName()),
+                    .arg(objeto->getName()).arg(objeto->getTypeName()),
                     ERR_OPR_REL_INCL_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
      }
     }
 
-    objeto->definirProtegido(proteger);
+    objeto->setProtected(proteger);
    }
   }
 
@@ -1629,7 +1629,7 @@ void ModeloWidget::colarObjetos(void)
   //Atualiza a mensagem do widget de progresso de tarefa
   pos++;
   prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
-                                trUtf8("Validating object: %1 (%2)").arg(objeto->obterNome())
+                                trUtf8("Validating object: %1 (%2)").arg(objeto->getName())
                                                                .arg(objeto->getTypeName()),
                                 objeto->obterTipoObjeto());
 
@@ -1651,7 +1651,7 @@ void ModeloWidget::colarObjetos(void)
     nome_aux=dynamic_cast<Operador *>(objeto)->obterAssinatura();
    //Para os demais tipos de objeto checa através do nome completo
    else
-    nome_aux=objeto->obterNome(true);
+    nome_aux=objeto->getName(true);
 
    //Tenta obter um objeto de mesmo nome no modelo
    if(!dynamic_cast<ObjetoTabela *>(objeto))
@@ -1672,7 +1672,7 @@ void ModeloWidget::colarObjetos(void)
     {
      func=NULL; oper=NULL;  //tipo=NULL;
      //Armazena o nome original do objeto em um mapa
-     nome_orig_objs[objeto]=objeto->obterNome();
+     nome_orig_objs[objeto]=objeto->getName();
 
      do
      {
@@ -1701,13 +1701,13 @@ void ModeloWidget::colarObjetos(void)
       {
        tipo=dynamic_cast<Tipo *>(objeto);
        tipo->definirNome(nome_orig_objs[objeto] + nome_aux);
-       nome_obj_copia=tipo->obterNome(true);
+       nome_obj_copia=tipo->getName(true);
        tipo->definirNome(nome_orig_objs[objeto]);
       } */
       else
       {
        objeto->definirNome(nome_orig_objs[objeto] + nome_aux);
-       nome_obj_copia=objeto->obterNome(true);
+       nome_obj_copia=objeto->getName(true);
        objeto->definirNome(nome_orig_objs[objeto]);
       }
      }
@@ -1744,7 +1744,7 @@ void ModeloWidget::colarObjetos(void)
   //Atualiza a mensagem do widget de progresso de tarefa
   pos++;
   prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
-                                trUtf8("Generating XML code of object: %1 (%2)").arg(objeto->obterNome())
+                                trUtf8("Generating XML code of object: %1 (%2)").arg(objeto->getName())
                                                                             .arg(objeto->getTypeName()),
                                 objeto->obterTipoObjeto());
 
@@ -1801,7 +1801,7 @@ void ModeloWidget::colarObjetos(void)
    //Atualiza a mensagem do widget de progresso de tarefa
    pos++;
    prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
-                                 trUtf8("Pasting object: %1 (%2)").arg(objeto->obterNome())
+                                 trUtf8("Pasting object: %1 (%2)").arg(objeto->getName())
                                                                 .arg(objeto->getTypeName()),
                                  objeto->obterTipoObjeto());
 
@@ -1967,17 +1967,17 @@ void ModeloWidget::excluirObjetos(void)
         por serem do sistema, caso o usuário tente esta operação um erro será disparado */
      if(objeto &&
         ((tipo_obj==OBJ_LANGUAGE &&
-          (objeto->obterNome()==~TipoLinguagem("c") ||
-           objeto->obterNome()==~TipoLinguagem("sql") ||
-           objeto->obterNome()==~TipoLinguagem("plpgsql") )) ||
+          (objeto->getName()==~TipoLinguagem("c") ||
+           objeto->getName()==~TipoLinguagem("sql") ||
+           objeto->getName()==~TipoLinguagem("plpgsql") )) ||
          (tipo_obj==OBJ_SCHEMA &&
-          objeto->obterNome()=="public")))
+          objeto->getName()=="public")))
        throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
      else if(objeto->isProtected())
      {
       //Monta a mensagem de que o objeto não pode ser removido por estar protegido
       throw Exception(QString(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT))
-                    .arg(objeto->obterNome(true))
+                    .arg(objeto->getName(true))
                     .arg(objeto->getTypeName()),
                     ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
      }
@@ -1988,7 +1988,7 @@ void ModeloWidget::excluirObjetos(void)
       if(objeto_tab)
       {
        tabela=dynamic_cast<Tabela *>(objeto_tab->obterTabelaPai());
-       idx_obj=tabela->obterIndiceObjeto(objeto_tab->obterNome(true), tipo_obj);
+       idx_obj=tabela->obterIndiceObjeto(objeto_tab->getName(true), tipo_obj);
 
        try
        {
@@ -2300,7 +2300,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
      submenu=new QMenu(&menu_popup);
      submenu->setIcon(QPixmap(QString(":/icones/icones/") +
                       BaseObject::getSchemaName(OBJ_CONSTRAINT) + str_aux + QString(".png")));
-     submenu->setTitle(QString::fromUtf8(rest->obterNome()));
+     submenu->setTitle(QString::fromUtf8(rest->getName()));
 
      acao=new QAction(dynamic_cast<QObject *>(submenu));
      acao->setIcon(QPixmap(QString(":/icones/icones/editar.png")));

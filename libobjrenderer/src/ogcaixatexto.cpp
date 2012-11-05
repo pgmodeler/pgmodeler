@@ -61,7 +61,7 @@ void OGCaixaTexto::configurarObjeto(void)
  fonte.setUnderline(cxtexto->obterAtributoTexto(CaixaTexto::TEXTO_SUBLINHADO));
 
  //Configura o texto e o estilo de fonte da caixa
- texto->setText(QString::fromUtf8(cxtexto->obterComentario()));
+ texto->setText(QString::fromUtf8(cxtexto->getComment()));
  texto->setFont(fonte);
  texto->setZValue(1);
  texto->setBrush(cxtexto->obterCorTexto());

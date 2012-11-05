@@ -336,7 +336,7 @@ class Relacionamento: public RelacionamentoBase {
 
    //Métodos de manipulação do nome da tabela gerada pelo rel. n-n
    void definirNomeTabelaRelNN(const QString &obj_name);
-   QString obterNomeTabelaRelNN(void);
+   QString getNameTabelaRelNN(void);
 
    //Métodos de manipulação dos sufixos da tas tabelas
    void definirSufixoTabela(unsigned tipo_tab, const QString &sufixo);

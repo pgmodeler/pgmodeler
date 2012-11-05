@@ -37,7 +37,7 @@ void CaixaTextoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
   palette.setColor(QPalette::Button, caixa_texto->obterCorTexto());
   sel_cor_tb->setPalette(palette);
 
-  texto_txt->setPlainText(QString::fromUtf8(caixa_texto->obterComentario()));
+  texto_txt->setPlainText(QString::fromUtf8(caixa_texto->getComment()));
   negrito_chk->setChecked(caixa_texto->obterAtributoTexto(CaixaTexto::TEXTO_NEGRITO));
   italico_chk->setChecked(caixa_texto->obterAtributoTexto(CaixaTexto::TEXTO_ITALICO));
   sublinhado_chk->setChecked(caixa_texto->obterAtributoTexto(CaixaTexto::TEXTO_SUBLINHADO));
@@ -72,7 +72,7 @@ void CaixaTextoWidget::aplicarConfiguracao(void)
 
   caixa=dynamic_cast<CaixaTexto *>(this->objeto);
   //caixa->definirPosicaoObjeto(QPointF(this->px_objeto, this->py_objeto));
-  caixa->definirComentario(texto_txt->toPlainText());
+  caixa->setComment(texto_txt->toPlainText());
   caixa->definirAtributoTexto(CaixaTexto::TEXTO_ITALICO, italico_chk->isChecked());
   caixa->definirAtributoTexto(CaixaTexto::TEXTO_NEGRITO, negrito_chk->isChecked());
   caixa->definirAtributoTexto(CaixaTexto::TEXTO_SUBLINHADO, sublinhado_chk->isChecked());

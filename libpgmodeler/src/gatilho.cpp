@@ -74,7 +74,7 @@ void Gatilho::definirFuncao(Funcao *funcao)
  if(!funcao)
   //Dispara exceção relatando o erro
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-                         .arg(QString::fromUtf8(this->obterNome()))
+                         .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_TRIGGER)),
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
@@ -87,7 +87,7 @@ void Gatilho::definirFuncao(Funcao *funcao)
   else if(funcao->obterNumParams()==0)
    //Dispara exceção relatando o erro
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-                         .arg(QString::fromUtf8(this->obterNome()))
+                         .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_TRIGGER)),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
@@ -104,13 +104,13 @@ void Gatilho::adicionarColuna(Coluna *coluna)
 {
  if(!coluna)
   throw Exception(QString(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN))
-                .arg(this->obterNome(true))
+                .arg(this->getName(true))
                 .arg(this->getTypeName()),
                 ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(coluna->obterTabelaPai() != this->obterTabelaPai())
   throw Exception(QString(Exception::getErrorMessage(ERR_ASG_INV_COLUMN_TRIGGER))
-                .arg(coluna->obterNome(true))
-                .arg(this->obterNome(true)),
+                .arg(coluna->getName(true))
+                .arg(this->getName(true)),
                 ERR_ASG_INV_COLUMN_TRIGGER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   colunas_upd.push_back(coluna);
@@ -305,7 +305,7 @@ void Gatilho::definirAtributosBasicosGatilho(unsigned tipo_def)
     attributes[ParsersAttributes::COLUMNS]="";
     for(i1=0; i1 < qtd; i1++)
     {
-     attributes[ParsersAttributes::COLUMNS]+=colunas_upd.at(i1)->obterNome(true);
+     attributes[ParsersAttributes::COLUMNS]+=colunas_upd.at(i1)->getName(true);
      if(i1 < qtd-1)
       attributes[ParsersAttributes::COLUMNS]+=",";
     }
@@ -319,7 +319,7 @@ void Gatilho::definirAtributosBasicosGatilho(unsigned tipo_def)
  if(funcao)
  {
   if(tipo_def==SchemaParser::SQL_DEFINITION)
-   attributes[ParsersAttributes::TRIGGER_FUNC]=funcao->obterNome(true);
+   attributes[ParsersAttributes::TRIGGER_FUNC]=funcao->getName(true);
   else
    attributes[ParsersAttributes::TRIGGER_FUNC]=funcao->obterDefinicaoObjeto(tipo_def, true);
  }
@@ -339,7 +339,7 @@ QString Gatilho::obterDefinicaoObjeto(unsigned tipo_def)
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
  if(this->tabela_pai)
-  attributes[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
+  attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
 
  attributes[ParsersAttributes::FIRING_TYPE]=(~tipo_disparo);
 
@@ -350,7 +350,7 @@ QString Gatilho::obterDefinicaoObjeto(unsigned tipo_def)
 
  if(tabela_ref)
  {
-  attributes[ParsersAttributes::REF_TABLE]=tabela_ref->obterNome(true);
+  attributes[ParsersAttributes::REF_TABLE]=tabela_ref->getName(true);
   attributes[ParsersAttributes::DEFERRABLE]=(postergavel ? "1" : "");
   attributes[ParsersAttributes::DEFER_TYPE]=(~tipo_postergacao);
  }

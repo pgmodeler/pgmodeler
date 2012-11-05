@@ -52,7 +52,7 @@ int Indice::elementoExiste(Coluna *coluna)
   col=elementos[idx].obterColuna();
 
   if(col && coluna)
-   enc=(col==coluna || col->obterNome()==coluna->obterNome());
+   enc=(col==coluna || col->getName()==coluna->getName());
 
   if(!enc) idx++;
  }
@@ -110,7 +110,7 @@ void Indice::adicionarElemento(Coluna *coluna, ClasseOperadores *classe_oper, bo
  if(!coluna)
  {
  throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
-                        .arg(QString::fromUtf8(this->obterNome()))
+                        .arg(QString::fromUtf8(this->getName()))
                         .arg(BaseObject::getTypeName(OBJ_INDEX)),
                ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
@@ -252,7 +252,7 @@ QString Indice::obterDefinicaoObjeto(unsigned tipo_def)
  attributes[ParsersAttributes::CONDITION]=exp_condicional;
 
  if(this->tabela_pai)
-  attributes[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
+  attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
 
  attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fator_preenc);
 

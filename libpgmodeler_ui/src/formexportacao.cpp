@@ -205,7 +205,7 @@ void FormExportacao::exportarModelo(void)
       for(i=0; i < qtd; i++)
       {
        objeto=modelo_wgt->modelo->obterObjeto(i, vet_tipos[id_tipo]);
-       rot_prog_lbl->setText(trUtf8("Creating object '%1' (%2)...").arg(QString::fromUtf8(objeto->obterNome())).arg(objeto->getTypeName()));
+       rot_prog_lbl->setText(trUtf8("Creating object '%1' (%2)...").arg(QString::fromUtf8(objeto->getName())).arg(objeto->getTypeName()));
        rot_prog_lbl->repaint();
 
        try
@@ -232,7 +232,7 @@ void FormExportacao::exportarModelo(void)
      }
 
      //Cria o banco de dados no servidor
-     rot_prog_lbl->setText(trUtf8("Creating database '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->obterNome())));
+     rot_prog_lbl->setText(trUtf8("Creating database '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->getName())));
      rot_prog_lbl->repaint();
 
      try
@@ -257,14 +257,14 @@ void FormExportacao::exportarModelo(void)
      prog_pb->setValue(30);
 
      conex_novo_bd=(*conexao);
-     conex_novo_bd.setConnectionParam(DBConnection::PARAM_DB_NAME, modelo_wgt->modelo->obterNome());
-     rot_prog_lbl->setText(trUtf8("Connecting to database '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->obterNome())));
+     conex_novo_bd.setConnectionParam(DBConnection::PARAM_DB_NAME, modelo_wgt->modelo->getName());
+     rot_prog_lbl->setText(trUtf8("Connecting to database '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->getName())));
      rot_prog_lbl->repaint();
      conex_novo_bd.connect();
      prog_pb->setValue(50);
 
      //Cria os demais objetos no novo banco
-     rot_prog_lbl->setText(trUtf8("Creating objects on database '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->obterNome())));
+     rot_prog_lbl->setText(trUtf8("Creating objects on database '%1'...").arg(QString::fromUtf8(modelo_wgt->modelo->getName())));
      rot_prog_lbl->repaint();
 
      //Gera o código SQL de todo o banco
@@ -351,7 +351,7 @@ void FormExportacao::exportarModelo(void)
      if(bd_criado)
       conexao->executeDDLCommand(drop_cmd
                                   .arg(modelo_wgt->modelo->getSQLName())
-                                  .arg(modelo_wgt->modelo->obterNome(true)));
+                                  .arg(modelo_wgt->modelo->getName(true)));
 
      //Removendo os espaços de tabela e papéis
      for(id_tipo=1; id_tipo >=0; id_tipo--)
@@ -364,7 +364,7 @@ void FormExportacao::exportarModelo(void)
        {
         conexao->executeDDLCommand(drop_cmd
                                     .arg(objeto->getSQLName())
-                                    .arg(objeto->obterNome(true)));
+                                    .arg(objeto->getName(true)));
        }
        catch(Exception &e)
        {}

@@ -101,7 +101,7 @@ class Tabela: public TabelaBase {
   ~Tabela(void);
 
   void definirNome(const QString &obj_name);
-  void definirEsquema(BaseObject *schema);
+  void setSchema(BaseObject *schema);
 
   //Define se a tabela aceita oids ou não
   void definirAceitaOids(bool valor);
@@ -218,7 +218,7 @@ class Tabela: public TabelaBase {
      da classe ObjetoBase. O metodo sobrecarregado protege
      ou desprotege todos os objetos da tabela em uma
      só chamada */
-  void definirProtegido(bool protected_obj);
+  void setProtected(bool protected_obj);
 
   //Retorna se a coluna é referenciada por uma das restrições do tipo especificado
   bool restricaoReferenciaColuna(Coluna *coluna, TipoRestricao tipo_rest);

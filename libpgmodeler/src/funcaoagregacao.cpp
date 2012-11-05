@@ -25,7 +25,7 @@ void FuncaoAgregacao::definirFuncao(unsigned idx_func, Funcao *func)
     regras necessária para o tipo especfico */
  if(!funcaoValida(idx_func, func))
   throw Exception(Exception::getErrorMessage(ERR_USING_INV_FUNC_CONFIG)
-                         .arg(QString::fromUtf8(this->obterNome()))
+                         .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_AGGREGATE)),
                 ERR_USING_INV_FUNC_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -132,7 +132,7 @@ void FuncaoAgregacao::adicionarTipoDado(TipoPgSQL tipo)
   //Caso existe um erro é gerado
   throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_TYPE)
                 .arg(QString::fromUtf8(~tipo))
-                .arg(QString::fromUtf8(this->obterNome(true))),
+                .arg(QString::fromUtf8(this->getName(true))),
                 ERR_INS_DUPLIC_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Insere o tipo ao final da lista
@@ -244,7 +244,7 @@ QString FuncaoAgregacao::obterDefinicaoObjeto(unsigned tipo_def)
  if(op_ordenacao)
  {
   if(tipo_def==SchemaParser::SQL_DEFINITION)
-   attributes[ParsersAttributes::SORT_OP]=op_ordenacao->obterNome(true);
+   attributes[ParsersAttributes::SORT_OP]=op_ordenacao->getName(true);
   else
    attributes[ParsersAttributes::SORT_OP]=op_ordenacao->obterDefinicaoObjeto(tipo_def,true);
  }

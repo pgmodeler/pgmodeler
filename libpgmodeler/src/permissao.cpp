@@ -294,7 +294,7 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
  if(tipo_obj==OBJ_FUNCTION)
   attributes[ParsersAttributes::OBJECT]=dynamic_cast<Funcao *>(objeto)->obterAssinatura();
  else
-  attributes[ParsersAttributes::OBJECT]=objeto->obterNome(true);
+  attributes[ParsersAttributes::OBJECT]=objeto->getName(true);
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
   attributes[ParsersAttributes::TYPE]=BaseObject::getSQLName(objeto->obterTipoObjeto());
@@ -302,7 +302,7 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
   attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(objeto->obterTipoObjeto());
 
  if(tipo_obj==OBJ_COLUMN)
-  attributes[ParsersAttributes::PARENT]=dynamic_cast<Coluna *>(objeto)->obterTabelaPai()->obterNome(true);
+  attributes[ParsersAttributes::PARENT]=dynamic_cast<Coluna *>(objeto)->obterTabelaPai()->getName(true);
 
  if(tipo_def==SchemaParser::XML_DEFINITION)
  {
@@ -339,7 +339,7 @@ QString Permissao::obterDefinicaoObjeto(unsigned tipo_def)
     permissão separando-os por vírgula */
  for(i=0; i < qtd; i++)
  {
-  attributes[ParsersAttributes::ROLES]+=papeis[i]->obterNome(true) + ",";
+  attributes[ParsersAttributes::ROLES]+=papeis[i]->getName(true) + ",";
  }
 
  attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);

@@ -169,7 +169,7 @@ void PapelWidget::exibirDadosPapel(Papel *papel, unsigned idx_tabela, unsigned l
   tab_membros[idx_tabela]->definirDadoLinha(QVariant::fromValue(reinterpret_cast<void *>(papel)), lin);
 
   //Configura as informações básicas do membro
-  tab_membros[idx_tabela]->definirTextoCelula(QString::fromUtf8(papel->obterNome()), lin, 0);
+  tab_membros[idx_tabela]->definirTextoCelula(QString::fromUtf8(papel->getName()), lin, 0);
   tab_membros[idx_tabela]->definirTextoCelula(QString("%1").arg(papel->obterSysid()), lin, 1);
   tab_membros[idx_tabela]->definirTextoCelula(papel->obterValidade(), lin, 2);
 
@@ -185,7 +185,7 @@ void PapelWidget::exibirDadosPapel(Papel *papel, unsigned idx_tabela, unsigned l
    for(i=0; i < qtd; i++)
    {
     papel_aux=papel->obterPapel(tipo_papeis[id_tipo], i);
-    str_aux+=papel_aux->obterNome();
+    str_aux+=papel_aux->getName();
     if(i < qtd-1) str_aux+=", ";
    }
 
@@ -270,7 +270,7 @@ void PapelWidget::exibirDadosPapelSelecionado(void)
  if(obj_sel && obj_sel==this->objeto)
  {
   throw Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
-                               .arg(QString::fromUtf8(obj_sel->obterNome()))
+                               .arg(QString::fromUtf8(obj_sel->getName()))
                                .arg(QString::fromUtf8(nome_edt->text())),
                  ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
@@ -291,7 +291,7 @@ void PapelWidget::exibirDadosPapelSelecionado(void)
   if(obj_sel && idx_lin >= 0)
   {
    throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
-                               .arg(QString::fromUtf8(obj_sel->obterNome()))
+                               .arg(QString::fromUtf8(obj_sel->getName()))
                                .arg(QString::fromUtf8(nome_edt->text())),
                  ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }

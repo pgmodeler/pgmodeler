@@ -256,12 +256,12 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
  //Lista a as tabelas ancestrais da tabela em edição
  qtd=tabela->obterNumTabelasPai();
  for(i=0; i < qtd; i++)
-  tabs_ancestrais_lst->addItem(QString::fromUtf8(tabela->obterTabelaPai(i)->obterNome(true)));
+  tabs_ancestrais_lst->addItem(QString::fromUtf8(tabela->obterTabelaPai(i)->getName(true)));
 
  //Lista a as tabelas copiadas pela tabela em edição
  qtd=tabela->obterNumTabelasCopia();
  for(i=0; i < qtd; i++)
-  tabs_copiadas_lst->addItem(QString::fromUtf8(tabela->obterTabelaCopia(i)->obterNome(true)));
+  tabs_copiadas_lst->addItem(QString::fromUtf8(tabela->obterTabelaCopia(i)->getName(true)));
 }
 
 void TabelaWidget::listarObjetos(ObjectType tipo_obj)
@@ -361,7 +361,7 @@ void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
  tab=mapa_tab_objetos[tipo_obj];
 
  //Coluna 0: Nome do objeto
- tab->definirTextoCelula(QString::fromUtf8(objeto->obterNome()),idx_lin,0);
+ tab->definirTextoCelula(QString::fromUtf8(objeto->getName()),idx_lin,0);
 
  /* Para cada tipo de objeto existe uma rotina
     de exibição do objeto na respectiva tabela. */
@@ -407,7 +407,7 @@ void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
 
   //Coluna 1: Tabela referenciada pelo gatilho
   if(gatilho->obterTabReferenciada())
-   tab->definirTextoCelula(QString::fromUtf8(gatilho->obterTabReferenciada()->obterNome(true)),idx_lin,1);
+   tab->definirTextoCelula(QString::fromUtf8(gatilho->obterTabReferenciada()->getName(true)),idx_lin,1);
   else
    tab->definirTextoCelula(QString("-"),idx_lin,1);
 
@@ -487,7 +487,7 @@ void TabelaWidget::removerObjetos(void)
    }
    else
     throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
-                  .arg(QString::fromUtf8(objeto->obterNome()))
+                  .arg(QString::fromUtf8(objeto->getName()))
                   .arg(objeto->getTypeName()),
                   ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -548,7 +548,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
   }
   else
    throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
-                 .arg(QString::fromUtf8(objeto->obterNome()))
+                 .arg(QString::fromUtf8(objeto->getName()))
                  .arg(objeto->getTypeName()),
                  ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }

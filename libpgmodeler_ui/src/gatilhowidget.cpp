@@ -120,7 +120,7 @@ void GatilhoWidget::adicionarColuna(Coluna *coluna, int idx_lin)
  {
   /* Exibe os dados da coluna na linha especificada, definindo a referênci  coluna
      como dado da linha */
-  tab_colunas->definirTextoCelula(QString::fromUtf8(coluna->obterNome()),idx_lin,0);
+  tab_colunas->definirTextoCelula(QString::fromUtf8(coluna->getName()),idx_lin,0);
   tab_colunas->definirTextoCelula(QString::fromUtf8(~coluna->obterTipo()),idx_lin,1);
   tab_colunas->definirDadoLinha(QVariant::fromValue<void *>(coluna), idx_lin);
  }
@@ -146,7 +146,7 @@ void GatilhoWidget::atualizarComboColunas(void)
       coluna não está presente na tabela */
    if(tab_colunas->obterIndiceLinha(QVariant::fromValue<void *>(coluna)) < 0)
    {
-    coluna_cmb->addItem(QString::fromUtf8(coluna->obterNome()) + " (" + ~coluna->obterTipo() +")",
+    coluna_cmb->addItem(QString::fromUtf8(coluna->getName()) + " (" + ~coluna->obterTipo() +")",
                             QVariant::fromValue<void *>(coluna));
    }
   }

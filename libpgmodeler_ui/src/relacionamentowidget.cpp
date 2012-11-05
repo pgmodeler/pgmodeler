@@ -164,7 +164,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
   QString nome;
 
   //Cria um nome temporário para o relacionamento
-  //nome=QString("rel_") + tab_orig->obterNome() + QString("_") + tab_dest->obterNome();
+  //nome=QString("rel_") + tab_orig->getName() + QString("_") + tab_dest->getName();
 
   //Aloca o novo relacionamento
   //rel=new Relacionamento(nome, tipo_rel, tab_orig, tab_dest);
@@ -234,8 +234,8 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
  }
 
  //Exibe o nome das tabelas participantes relacionamento no formulário
- tabela_orig_txt->setPlainText(QString::fromUtf8(relacao->obterTabela(RelacionamentoBase::TABELA_ORIGEM)->obterNome(true)));
- tabela_dest_txt->setPlainText(QString::fromUtf8(relacao->obterTabela(RelacionamentoBase::TABELA_DESTINO)->obterNome(true)));
+ tabela_orig_txt->setPlainText(QString::fromUtf8(relacao->obterTabela(RelacionamentoBase::TABELA_ORIGEM)->getName(true)));
+ tabela_dest_txt->setPlainText(QString::fromUtf8(relacao->obterTabela(RelacionamentoBase::TABELA_DESTINO)->getName(true)));
 
  //Caso o relacionamento seja entre tabelas
  if(relacao->obterTipoObjeto()==OBJ_RELATIONSHIP)
@@ -261,7 +261,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
   tab_dest_obrig_chk->setChecked(relacao_aux->tabelaObrigatoria(RelacionamentoBase::TABELA_DESTINO));
   identificador_chk->setChecked(relacao_aux->relacionamentoIdentificador());
   postergavel_chk->setChecked(relacao_aux->obterPostergavel());
-  nome_tab_relnn_edt->setText(relacao_aux->obterNomeTabelaRelNN());
+  nome_tab_relnn_edt->setText(relacao_aux->getNameTabelaRelNN());
 
   //Habilita os botões das tabelas de restições e atributos caso o relacionamento esteja protegido
   tab_atributos->habilitarBotoes(TabelaObjetosWidget::TODOS_BOTOES, !relacao_aux->isProtected());
@@ -511,7 +511,7 @@ void RelacionamentoWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
   tab_restricoes->definirTextoCelula(QString::fromUtf8(~dynamic_cast<Restricao *>(objeto)->obterTipoRestricao()),idx_lin,1);
  }
 
- tab->definirTextoCelula(QString::fromUtf8(objeto->obterNome()),idx_lin,0);
+ tab->definirTextoCelula(QString::fromUtf8(objeto->getName()),idx_lin,0);
 
  //Define como dado da linha o próprio objeto para facilitar referências ao mesmo
  tab->definirDadoLinha(QVariant::fromValue<void *>(objeto), idx_lin);

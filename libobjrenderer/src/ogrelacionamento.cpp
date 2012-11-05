@@ -601,16 +601,16 @@ void OGRelacionamento::configurarLinha(void)
   configurando_linha=false;
 
   //O tool tip do objeto grafico será o nome formatado do objeto de origem
-  this->setToolTip(QString::fromUtf8(rel_base->obterNome(true)));
+  this->setToolTip(QString::fromUtf8(rel_base->getName(true)));
 
   for(i=0; i < 3; i++)
   {
    if(rotulos[i])
-    rotulos[i]->setToolTip(QString::fromUtf8(rel_base->obterNome(true)));
+    rotulos[i]->setToolTip(QString::fromUtf8(rel_base->getName(true)));
   }
 
   //O tool tip do objeto grafico será o nome formatado do objeto de origem
-  descritor->setToolTip(QString::fromUtf8(rel_base->obterNome(true)));
+  descritor->setToolTip(QString::fromUtf8(rel_base->getName(true)));
  }
 }
 
@@ -805,7 +805,7 @@ void OGRelacionamento::configurarAtributos(void)
    atributo->setPos(px, py);
 
    //Define o texto e a posição do mesmo no atributo
-   texto->setText(QString::fromUtf8(atrib->obterNome()));
+   texto->setText(QString::fromUtf8(atrib->getName()));
    texto->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (ESP_HORIZONTAL * fator), 0));
    desc->setPos(0, ESP_VERTICAL * fator);
 

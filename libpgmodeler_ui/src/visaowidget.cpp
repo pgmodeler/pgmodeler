@@ -283,12 +283,12 @@ void VisaoWidget::exibirDadosReferencia(Referencia refer, bool selec_from, bool 
      será para todas as colunas (*), para isso exibe uma string
      no formatdo: [NOME_ESQUEMA].[NOME_TABELA].*  */
   if(tab && !col)
-   tab_referencias->definirTextoCelula(QString::fromUtf8(tab->obterNome(true) + QString(".*")),idx_lin,0);
+   tab_referencias->definirTextoCelula(QString::fromUtf8(tab->getName(true) + QString(".*")),idx_lin,0);
   /* Caso a tabela e coluna estejam alocadas indica que a referência
      será para a coluna em questão para isso exibe uma string
      no formatdo: [NOME_ESQUEMA].[NOME_TABELA].[NOME_COLUNA]  */
   else
-   tab_referencias->definirTextoCelula(QString::fromUtf8(tab->obterNome(true) + QString(".") + col->obterNome(true)),idx_lin,0);
+   tab_referencias->definirTextoCelula(QString::fromUtf8(tab->getName(true) + QString(".") + col->getName(true)),idx_lin,0);
 
   //Exibe o alias da tabela e a exibe na segunda coluna da linha
   tab_referencias->definirTextoCelula(QString::fromUtf8(refer.obterAlias()),idx_lin,1);
@@ -343,7 +343,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
   visao_aux.definirNome(nome_edt->text());
 
   //Configura o esquema da visão com o que está no formulário
-  visao_aux.definirEsquema(sel_esquema->obterObjeto());
+  visao_aux.setSchema(sel_esquema->obterObjeto());
 
   /* Insere as referências da tabela na visão auxiliar
      porém estas são inseridas conforme a string de

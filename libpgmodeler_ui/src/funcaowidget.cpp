@@ -225,7 +225,7 @@ void FuncaoWidget::exibirDadosParametro(Parametro param, TabelaObjetosWidget *ta
 
   /* Para as duas tabelas (tab_parametros ou tab_retorno) as duas primeiras colunas
      são destinadas, respectivamente, ao nome e tipo do parâmetro */
-  tab->definirTextoCelula(QString::fromUtf8(param.obterNome()),idx_lin,0);
+  tab->definirTextoCelula(QString::fromUtf8(param.getName()),idx_lin,0);
   tab->definirTextoCelula(QString::fromUtf8(*param.obterTipo()),idx_lin,1);
 
   /* Armazena na linha da tabela uma cópia do tipo do parâmetro.
@@ -271,7 +271,7 @@ void FuncaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
  {
   ling=dynamic_cast<Linguagem *>(linguagens.back());
   linguagens.pop_back();
-  lista.append(ling->obterNome());
+  lista.append(ling->getName());
  }
 
  //Ordena e insere as linguagens num combobox
@@ -283,7 +283,7 @@ void FuncaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
   tipo_aux=funcao->obterTipoRetorno();
 
   //Seleciona no combobox a linguagem configurada para a função
-  linguagem_cmb->setCurrentIndex(linguagem_cmb->findText(funcao->obterLinguagem()->obterNome()));
+  linguagem_cmb->setCurrentIndex(linguagem_cmb->findText(funcao->obterLinguagem()->getName()));
 
   //Seleciona no combobox o tipo da função
   tipo_func_cmb->setCurrentIndex(tipo_func_cmb->findText(~funcao->obterTipoFuncao()));
@@ -552,7 +552,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
  {
   //Caso alguma validação acima dispare um erro o mesmo é redirecionado
   throw Exception(Exception::getErrorMessage(ERR_FUNC_CONFIG_INV_OBJECT)
-                .arg(QString::fromUtf8(objeto->obterNome(true)))
+                .arg(QString::fromUtf8(objeto->getName(true)))
                 .arg(objeto->getTypeName()),
                 ERR_FUNC_CONFIG_INV_OBJECT,
                 __PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

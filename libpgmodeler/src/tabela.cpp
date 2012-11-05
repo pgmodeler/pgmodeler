@@ -33,24 +33,24 @@ Tabela::~Tabela(void)
 
 void Tabela::definirNome(const QString &nome)
 {
- QString nome_ant=this->obterNome(true);
+ QString nome_ant=this->getName(true);
  BaseObject::definirNome(nome);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 
-void Tabela::definirEsquema(BaseObject *esquema)
+void Tabela::setSchema(BaseObject *esquema)
 {
- QString nome_ant=this->obterNome(true);
+ QString nome_ant=this->getName(true);
 
  //Atribui o esquema   tabela
- BaseObject::definirEsquema(esquema);
+ BaseObject::setSchema(esquema);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 
 void Tabela::definirAceitaOids(bool valor)
@@ -58,7 +58,7 @@ void Tabela::definirAceitaOids(bool valor)
  aceita_oids=valor;
 }
 
-void Tabela::definirProtegido(bool protegido)
+void Tabela::setProtected(bool protegido)
 {
  ObjectType tipos_obj[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
                               OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER };
@@ -83,12 +83,12 @@ void Tabela::definirProtegido(bool protegido)
       por relacionamento pois quando é o caso os mesmos
       já vem protegidos */
    if(!obj_tab->incluidoPorRelacionamento())
-    obj_tab->definirProtegido(protegido);
+    obj_tab->setProtected(protegido);
    itr++;
   }
  }
 
- ObjetoGraficoBase::definirProtegido(protegido);
+ ObjetoGraficoBase::setProtected(protegido);
 }
 
 void Tabela::definirAtributoColunas(unsigned tipo_def)
@@ -278,13 +278,13 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
 
   /* Verifica se o objeto a ser adicionado   tabela possua o mesmo nome de um objeto que já
      existente,efetuando uma busca na lista de objetos através do nome do novo objeto */
-  if(obterObjeto(obj->obterNome(),tipo_obj,idx))
+  if(obterObjeto(obj->getName(),tipo_obj,idx))
   {
    //Dispara uma exceçaõ indica a duplicidade de nomes de objetos
    str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-           .arg(obj->obterNome(true))
+           .arg(obj->getName(true))
            .arg(obj->getTypeName())
-           .arg(this->obterNome(true))
+           .arg(this->getName(true))
            .arg(this->getTypeName());
    throw Exception(str_aux,ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -402,7 +402,7 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
       indica que a def. SQL não é válida */
    if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
     throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-                              .arg(QString::fromUtf8(obj->obterNome()))
+                              .arg(QString::fromUtf8(obj->getName()))
                               .arg(obj->getTypeName()),
                   ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
    else
@@ -450,7 +450,7 @@ void Tabela::adicionarTabelaCopia(Tabela *tab, int idx_tab)
 void Tabela::removerObjeto(BaseObject *objeto)
 {
  if(objeto)
-  removerObjeto(objeto->obterNome(), objeto->obterTipoObjeto());
+  removerObjeto(objeto->getName(), objeto->obterTipoObjeto());
 }
 
 void Tabela::removerObjeto(const QString &nome, ObjectType tipo_obj)
@@ -527,11 +527,11 @@ void Tabela::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
    if(!vet_refs.empty())
    {
     throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
-                          .arg(QString::fromUtf8(coluna->obterNome()))
+                          .arg(QString::fromUtf8(coluna->getName()))
                           .arg(coluna->getTypeName())
-                          .arg(QString::fromUtf8(vet_refs[0]->obterNome()))
+                          .arg(QString::fromUtf8(vet_refs[0]->getName()))
                           .arg(vet_refs[0]->getTypeName())
-                          .arg(QString::fromUtf8(this->obterNome(true)))
+                          .arg(QString::fromUtf8(this->getName(true)))
                           .arg(this->getTypeName()),
                  ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
@@ -624,7 +624,7 @@ int Tabela::obterIndiceObjeto(ObjetoTabela *objeto)
  if(!objeto)
   return(-1);
  else
-  return(obterIndiceObjeto(objeto->obterNome(true), objeto->obterTipoObjeto()));
+  return(obterIndiceObjeto(objeto->getName(true), objeto->obterTipoObjeto()));
 }
 
 BaseObject *Tabela::obterObjeto(const QString &nome, ObjectType tipo_obj)
@@ -663,7 +663,7 @@ BaseObject *Tabela::obterObjeto(const QString &nome, ObjectType tipo_obj, int &i
   while(itr!=itr_end)
   {
    //Verifica se o nome a ser encontrado é igual o nome do objeto atual
-   enc=((*itr)->obterNome(formatar)==nome_aux);
+   enc=((*itr)->getName(formatar)==nome_aux);
    if(!enc) itr++; //Caso não seja encontrado passa para outro elemento da lista
    else break; //Caso seja encontrado, interrompe a varredura pela lista
   }
@@ -706,7 +706,7 @@ BaseObject *Tabela::obterObjeto(const QString &nome, ObjectType tipo_obj, int &i
    /* Diferente de outros tipos de objeto, as tabelas são sempre comparadas
       COM O NOME FORMATADO por precisam ser 'schema-qualified' evitando que
       uma tabelas de nomes iguais porém de esquemas diferentes sejam confundidas */
-   enc=((*itr_tab)->obterNome(true)==nome_aux);
+   enc=((*itr_tab)->getName(true)==nome_aux);
    if(!enc) itr_tab++; //Caso seja encontrado, interrompe a varredura pela lista
    else break; //Caso seja encontrado, interrompe a varredura pela lista
   }
@@ -795,7 +795,7 @@ Coluna *Tabela::obterColuna(const QString &nome, bool ref_nome_antigo)
   {
    coluna=dynamic_cast<Coluna *>(*itr);
    itr++;
-   enc=(nome!="" && coluna->obterNomeAntigo(formatar)==nome);
+   enc=(nome!="" && coluna->getNameAntigo(formatar)==nome);
   }
 
   /* Caso nenhuma coluna for encontrada zera o ponteiro de coluna
@@ -1004,13 +1004,13 @@ QString Tabela::obterDefinicaoObjeto(unsigned tipo_def)
 
 void Tabela::operator = (Tabela &tabela)
 {
- QString nome_ant = this->obterNome(true);
+ QString nome_ant = this->getName(true);
 
  (*dynamic_cast<ObjetoGraficoBase *>(this))=dynamic_cast<ObjetoGraficoBase &>(tabela);
  this->aceita_oids=tabela.aceita_oids;
- definirProtegido(tabela.protected_obj);
+ setProtected(tabela.protected_obj);
 
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 
 bool Tabela::referenciaObjetoIncRelacao(void)
@@ -1119,8 +1119,8 @@ void Tabela::obterReferenciasColuna(Coluna *coluna, vector<ObjetoTabela *> &vet_
    rest=dynamic_cast<Restricao *>(*itr);
    itr++;
 
-   col=rest->obterColuna(coluna->obterNome(),true);
-   col1=rest->obterColuna(coluna->obterNome(),false);
+   col=rest->obterColuna(coluna->getName(),true);
+   col1=rest->obterColuna(coluna->getName(),false);
 
    if((col && col==coluna) || (col1 && col1==coluna))
    {

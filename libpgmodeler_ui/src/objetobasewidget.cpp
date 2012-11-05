@@ -199,7 +199,7 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
  }
 
  edt_permissoes_tb->setEnabled(objeto!=NULL);
- objeto_pai_txt->setPlainText(QString::fromUtf8(objeto_pai->obterNome(true)));
+ objeto_pai_txt->setPlainText(QString::fromUtf8(objeto_pai->getName(true)));
 
  iconeobjpai_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + objeto_pai->getSchemaName() + QString(".png")));
  iconeobjpai_lbl->setToolTip(objeto_pai->getTypeName());
@@ -216,8 +216,8 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
   bool protegido;
 
   //Configura os campos de nome e comentário
-  nome_edt->setText(QString::fromUtf8(objeto->obterNome()));
-  comentario_edt->setText(QString::fromUtf8(objeto->obterComentario()));
+  nome_edt->setText(QString::fromUtf8(objeto->getName()));
+  comentario_edt->setText(QString::fromUtf8(objeto->getComment()));
 
   sel_dono->definirObjeto(objeto->getOwner());
   sel_esquema->definirObjeto(objeto->getSchema());
@@ -515,7 +515,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
    nome_obj=BaseObject::formatName(nome_edt->text().toUtf8(), tipo_obj==OBJ_OPERATOR);
 
    if(sel_esquema->obterObjeto())
-    nome_obj=sel_esquema->obterObjeto()->obterNome(true) + "." + nome_obj;
+    nome_obj=sel_esquema->obterObjeto()->getName(true) + "." + nome_obj;
 
    /* Caso o tipo do objeto nao seja um dos três da condição  faz a verificação
       de duplicidade de objetos.
@@ -533,7 +533,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
      //Validação do objeto em relação a sua tabela pai
      obj_pai=tabela;
      obj_aux=tabela->obterObjeto(nome_obj,tipo_obj);
-     obj_aux1=tabela->obterObjeto(objeto->obterNome(),tipo_obj);
+     obj_aux1=tabela->obterObjeto(objeto->getName(),tipo_obj);
      novo_obj=(!obj_aux && !obj_aux1);
      //obj_graf=tabela;
     }
@@ -542,7 +542,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
      //Validação do objeto em relação a sua tabela pai
      obj_pai=relacionamento;
      obj_aux=relacionamento->obterObjeto(nome_obj,tipo_obj);
-     obj_aux1=relacionamento->obterObjeto(objeto->obterNome(),tipo_obj);
+     obj_aux1=relacionamento->obterObjeto(objeto->getName(),tipo_obj);
      novo_obj=(!obj_aux && !obj_aux1);
      //obj_graf=relacionamento;
     }
@@ -557,7 +557,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
      else if(tipo_obj==OBJ_OPERATOR)
       obj_aux1=modelo->obterObjeto(dynamic_cast<Operador *>(objeto)->obterAssinatura(),tipo_obj);
      else
-      obj_aux1=modelo->obterObjeto(objeto->obterNome(),tipo_obj);
+      obj_aux1=modelo->obterObjeto(objeto->getName(),tipo_obj);
 
      novo_obj=(!obj_aux && !obj_aux1);
     }
@@ -567,7 +567,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
      throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
                    .arg(nome_obj)
                    .arg(BaseObject::getTypeName(tipo_obj))
-                   .arg(obj_pai->obterNome(true))
+                   .arg(obj_pai->getName(true))
                    .arg(obj_pai->getTypeName()),
                     ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     }
@@ -583,7 +583,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
 
    //Configura o comentário do objeto
    if(comentario_edt->isVisible())
-    objeto->definirComentario(comentario_edt->text().toUtf8());
+    objeto->setComment(comentario_edt->text().toUtf8());
 
    /* Selecionando o espaço de tabelas do objeto somente se o mesmo
       aceita receber um espaço de tabela, para se validar esta situação
@@ -591,14 +591,14 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
       está visível, pois este campo é escondido ou mostrado no momento da
       alocação do formulário de cada tipo de objeto. */
    if(sel_esptabela->isVisible())
-    objeto->definirEspacoTabela(sel_esptabela->obterObjeto());
+    objeto->setTablespace(sel_esptabela->obterObjeto());
 
    /* Selecionando o dono do objeto somente se o mesmo aceita receber um dono,
       para se validar esta situação basta verificar se o campo de texto com o
       nome do dono está visível, pois este campo é escondido ou mostrado no momento da
       alocação do formulário de cada tipo de objeto. */
    if(sel_dono->isVisible())
-    objeto->definirDono(sel_dono->obterObjeto());
+    objeto->setOwner(sel_dono->obterObjeto());
 
    /* Selecionando o esquema do objeto somente se o mesmo aceita receber um esquema,
       para se validar esta situação basta verificar se o campo de texto com o
@@ -607,7 +607,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
    if(sel_esquema->isVisible())
    {
     Esquema *esquema=dynamic_cast<Esquema *>(sel_esquema->obterObjeto());
-    objeto->definirEsquema(esquema);
+    objeto->setSchema(esquema);
    }
   }
   catch(Exception &e)

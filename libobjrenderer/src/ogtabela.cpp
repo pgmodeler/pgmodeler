@@ -324,6 +324,6 @@ void OGTabela::configurarObjeto(void)
  ObjetoGrafico::configurarSelecaoObjeto();
 
  //O tool tip do objeto grafico será o nome formatado do objeto de origem
- this->setToolTip(QString::fromUtf8(tabela->obterNome(true)));
+ this->setToolTip(QString::fromUtf8(tabela->getName(true)));
 }
 

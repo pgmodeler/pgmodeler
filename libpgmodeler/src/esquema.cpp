@@ -12,7 +12,7 @@ void Esquema::definirNome(const QString &nome)
     não podem ser criados pelo usuário */
  if(nome.mid(0,3)=="pg_")
   throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
-                         .arg(QString::fromUtf8(this->obterNome()))
+                         .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_SCHEMA)),
                 ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

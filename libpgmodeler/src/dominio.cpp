@@ -13,32 +13,32 @@ Dominio::Dominio(void)
 
 Dominio::~Dominio(void)
 {
- TipoPgSQL::removerTipoUsuario(this->obterNome(true), this);
+ TipoPgSQL::removerTipoUsuario(this->getName(true), this);
 }
 
 void Dominio::definirNome(const QString &nome)
 {
  QString nome_ant, novo_nome;
 
- nome_ant=this->obterNome(true);
+ nome_ant=this->getName(true);
  BaseObject::definirNome(nome);
- novo_nome=this->obterNome(true);
+ novo_nome=this->getName(true);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, novo_nome);
 }
 
-void Dominio::definirEsquema(BaseObject *esquema)
+void Dominio::setSchema(BaseObject *esquema)
 {
  QString nome_ant;
 
- nome_ant=this->obterNome(true);
- BaseObject::definirEsquema(esquema);
+ nome_ant=this->getName(true);
+ BaseObject::setSchema(esquema);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 
 void Dominio::definirNomeRestricao(const QString &nome_constr)
@@ -71,7 +71,7 @@ void Dominio::definirTipo(TipoPgSQL tipo)
  this->tipo=tipo;
 }
 
-QString Dominio::obterNomeRestricao(void)
+QString Dominio::getNameRestricao(void)
 {
  return(nome_rest);
 }
@@ -115,7 +115,7 @@ QString Dominio::obterDefinicaoObjeto(unsigned tipo_def)
 
 void Dominio::operator = (Dominio &dominio)
 {
- QString nome_ant=this->obterNome(true);
+ QString nome_ant=this->getName(true);
 
  *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(dominio);
  this->nome_rest=dominio.nome_rest;
@@ -126,6 +126,6 @@ void Dominio::operator = (Dominio &dominio)
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 

@@ -229,7 +229,7 @@ class ModeloBD:  public QObject, public BaseObject {
      da classe ObjetoBase. O metodo sobrecarregado protege
      ou desprotege todos os objetos do modelo em uma
      só chamada */
-  void definirProtegido(bool protected_obj);
+  void setProtected(bool protected_obj);
 
   //Destrói todos os objetos do modelo
   void destruirObjetos(void);

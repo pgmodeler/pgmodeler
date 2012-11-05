@@ -76,9 +76,9 @@ QString ElementoIndice::obterDefinicaoObjeto(unsigned tipo_def)
  if(coluna)
  {
   /*if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-   atributos[AtributosParsers::COLUNA]=coluna->obterTabelaPai()->obterNome(true) + "." + coluna->obterNome(true);
+   atributos[AtributosParsers::COLUNA]=coluna->obterTabelaPai()->getName(true) + "." + coluna->getName(true);
   else */
-   atributos[ParsersAttributes::COLUMN]=coluna->obterNome(true);
+   atributos[ParsersAttributes::COLUMN]=coluna->getName(true);
  }
  else
   atributos[ParsersAttributes::EXPRESSION]=expressao;
@@ -86,7 +86,7 @@ QString ElementoIndice::obterDefinicaoObjeto(unsigned tipo_def)
  if(classe_oper)
  {
   if(tipo_def==SchemaParser::SQL_DEFINITION)
-   atributos[ParsersAttributes::OP_CLASS]=classe_oper->obterNome(true);
+   atributos[ParsersAttributes::OP_CLASS]=classe_oper->getName(true);
   else
    atributos[ParsersAttributes::OP_CLASS]=classe_oper->obterDefinicaoObjeto(tipo_def, true);
  }

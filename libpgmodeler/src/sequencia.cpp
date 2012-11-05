@@ -147,18 +147,18 @@ int Sequencia::compararValores(QString valor1, QString valor2)
 
 void Sequencia::definirNome(const QString &nome)
 {
- QString nome_ant=this->obterNome(true);
+ QString nome_ant=this->getName(true);
  BaseObject::definirNome(nome);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 
-void Sequencia::definirEsquema(BaseObject *esquema)
+void Sequencia::setSchema(BaseObject *esquema)
 {
  Tabela *tabela=NULL;
- QString nome_ant=this->obterNome(true);
+ QString nome_ant=this->getName(true);
 
  //Caso a coluna possuidora da sequencia exista
  if(coluna)
@@ -172,11 +172,11 @@ void Sequencia::definirEsquema(BaseObject *esquema)
  }
 
  //Atribui o esquema   sequencia
- BaseObject::definirEsquema(esquema);
+ BaseObject::setSchema(esquema);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 
 void Sequencia::definirCiclica(bool valor)
@@ -224,14 +224,14 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
   //   Caso não pertença, dispara uma exceção.
   if(tabela->getSchema()!=this->schema)
    throw Exception(Exception::getErrorMessage(ERR_ASG_TAB_DIF_SEQ_SCHEMA)
-                 .arg(QString::fromUtf8(this->obterNome(true))),
+                 .arg(QString::fromUtf8(this->getName(true))),
                  ERR_ASG_TAB_DIF_SEQ_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     /* Verifica se a tabela não pertence ao mesmo dono da sequencia.
      Caso não pertença, dispara uma exceção. */
   if(tabela->getOwner()!=this->owner)
    throw Exception(Exception::getErrorMessage(ERR_ASG_SEQ_OWNER_DIF_TABLE)
-                 .arg(QString::fromUtf8(this->obterNome(true))),
+                 .arg(QString::fromUtf8(this->getName(true))),
                  ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Obtém a coluna da tabela com base no nome passado
@@ -245,7 +245,7 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
   //Caso a coluna não exista
   if(!this->coluna)
    throw Exception(Exception::getErrorMessage(ERR_ASG_INEXIST_OWNER_COL_SEQ)
-                 .arg(QString::fromUtf8(this->obterNome(true))),
+                 .arg(QString::fromUtf8(this->getName(true))),
                  ERR_ASG_INEXIST_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
@@ -263,21 +263,21 @@ void Sequencia::definirPossuidora(Coluna *coluna)
   //CAso a coluna possuidor não seja de uma tabela
   if(!tabela)
    throw Exception(Exception::getErrorMessage(ERR_ASG_INV_OWNER_COL_SEQ)
-                 .arg(QString::fromUtf8(this->obterNome(true))),
+                 .arg(QString::fromUtf8(this->getName(true))),
                  ERR_ASG_INV_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Verifica se a tabela não pertence ao mesmo esquema da sequencia.
      Caso não pertença, dispara uma exceção. */
   if(tabela->getSchema()!=this->schema)
    throw Exception(Exception::getErrorMessage(ERR_ASG_TAB_DIF_SEQ_SCHEMA)
-                 .arg(QString::fromUtf8(this->obterNome(true))),
+                 .arg(QString::fromUtf8(this->getName(true))),
                  ERR_ASG_TAB_DIF_SEQ_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Verifica se a tabela não pertence ao mesmo dono da sequencia.
      Caso não pertença, dispara uma exceção. */
   if(tabela->getOwner()!=this->owner)
    throw Exception(Exception::getErrorMessage(ERR_ASG_SEQ_OWNER_DIF_TABLE)
-                 .arg(QString::fromUtf8(this->obterNome(true))),
+                 .arg(QString::fromUtf8(this->getName(true))),
                  ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   this->coluna=coluna;
@@ -339,7 +339,7 @@ QString Sequencia::obterDefinicaoObjeto(unsigned tipo_def)
   tabela=dynamic_cast<Tabela *>(coluna->obterTabelaPai());
   /* Formata o atributo possuidora como sendo o nome da tabela
      e a coluna possuidora */
-  str_aux=tabela->obterNome(true) + "." + coluna->obterNome(true);
+  str_aux=tabela->getName(true) + "." + coluna->getName(true);
  }
  attributes[ParsersAttributes::OWNER_COLUMN]=str_aux;
 
@@ -355,7 +355,7 @@ QString Sequencia::obterDefinicaoObjeto(unsigned tipo_def)
 
 void Sequencia::operator = (Sequencia &seq)
 {
- QString nome_ant=this->obterNome(true);
+ QString nome_ant=this->getName(true);
 
  *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(seq);
 
@@ -367,6 +367,6 @@ void Sequencia::operator = (Sequencia &seq)
  this->cache=seq.cache;
  this->coluna=seq.coluna;
 
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->obterNome(true));
+ TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 

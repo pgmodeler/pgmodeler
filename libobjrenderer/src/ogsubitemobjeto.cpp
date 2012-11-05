@@ -233,7 +233,7 @@ void OGSubItemObjeto::configurarObjeto(void)
 
   /* Configurando os rótulos do subitem.
      Os rótulos do subitem têm o seguinte esquema: [nome do objeto] [tipo] [restrições] */
-  rotulos[0]->setText(QString::fromUtf8(objeto_tab->obterNome()));
+  rotulos[0]->setText(QString::fromUtf8(objeto_tab->getName()));
   rotulos[0]->setFont(fmt.font());
   rotulos[0]->setBrush(fmt.foreground());
   rotulos[0]->setPos(px, 0);
@@ -336,7 +336,7 @@ void OGSubItemObjeto::configurarObjeto(Referencia referencia)
  {
   //Configura o rótulo de nome no formato: [tabela].[coluna]
   fmt=config_fonte[ParsersAttributes::REF_TABLE];
-  rotulos[0]->setText(referencia.obterTabela()->obterNome() + ".");
+  rotulos[0]->setText(referencia.obterTabela()->getName() + ".");
   rotulos[0]->setFont(fmt.font());
   rotulos[0]->setBrush(fmt.foreground());
   rotulos[0]->setPos(px, 0);
@@ -344,7 +344,7 @@ void OGSubItemObjeto::configurarObjeto(Referencia referencia)
 
   fmt=config_fonte[ParsersAttributes::REF_COLUMN];
   if(referencia.obterColuna())
-   rotulos[1]->setText(referencia.obterColuna()->obterNome());
+   rotulos[1]->setText(referencia.obterColuna()->getName());
   else
    rotulos[1]->setText("*");
 
@@ -445,7 +445,7 @@ QString OGSubItemObjeto::obterStringRestricoes(Coluna *coluna)
    itr++; //Passa para a próxima da lista
 
    //Verfica se a coluna está sendo referenciada dentro da constraint
-   if(restricao->obterColuna(coluna->obterNome(), Restricao::COLUNA_ORIGEM))
+   if(restricao->obterColuna(coluna->getName(), Restricao::COLUNA_ORIGEM))
    {
     //Obtém o tipo da constraint
     tipo_rest=restricao->obterTipoRestricao();

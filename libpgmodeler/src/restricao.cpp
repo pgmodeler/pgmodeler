@@ -77,7 +77,7 @@ bool Restricao::colunaExistente(Coluna *coluna, unsigned tipo_coluna)
  while(itr!=itr_end && !enc)
  {
   col_aux=(*itr);
-  enc=(col_aux==coluna || col_aux->obterNome()==coluna->obterNome());
+  enc=(col_aux==coluna || col_aux->getName()==coluna->getName());
   itr++;
  }
 
@@ -89,7 +89,7 @@ void Restricao::adicionarColuna(Coluna *coluna, unsigned tipo_coluna)
  //Caso a coluna não esteja aloca, dispara exceção.
  if(!coluna)
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
-                        .arg(QString::fromUtf8(this->obterNome()))
+                        .arg(QString::fromUtf8(this->getName()))
                         .arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
                  ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(tipo!=TipoRestricao::check)
@@ -107,7 +107,7 @@ void Restricao::adicionarColuna(Coluna *coluna, unsigned tipo_coluna)
  }
 }
 
-void Restricao::definirEspacoTabela(EspacoTabela *espacotabela)
+void Restricao::setTablespace(EspacoTabela *espacotabela)
 {
  try
  {
@@ -116,7 +116,7 @@ void Restricao::definirEspacoTabela(EspacoTabela *espacotabela)
      tipo!=TipoRestricao::unique)
    throw Exception(ERR_ASG_TABSPC_INV_CONSTR_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  BaseObject::definirEspacoTabela(espacotabela);
+  BaseObject::setTablespace(espacotabela);
  }
  catch(Exception &e)
  {
@@ -164,7 +164,7 @@ void Restricao::definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, 
        (inc_insporrelacao && !col->incluidoPorRelacionamento()) ||
        (!inc_insporrelacao && !col->incluidoPorRelacionamento()))))
   {
-   str_cols+=col->obterNome(formatar);
+   str_cols+=col->getName(formatar);
    str_cols+=",";
   }
  }
@@ -255,7 +255,7 @@ Coluna *Restricao::obterColuna(const QString &nome, unsigned tipo_coluna)
  //Varre a lista de colunas verificando se existe alguma ocorrencia do nome passado
  while(itr_col!=itr_end_col)
  {
-  enc=((*itr_col)->obterNome()==nome);
+  enc=((*itr_col)->getName()==nome);
   //Caso o no não seja encontrado passa para o próximo elemento
   if(!enc) itr_col++;
   else break; //Caso seja encontrado, encerra a execuação da varredura
@@ -310,7 +310,7 @@ void Restricao::removerColuna(const QString &nome, unsigned tipo_coluna)
   col=(*itr); //Obtém a coluna
 
   //Caso o nome da coluna coincida com o nome a se localizar
-  if(col->obterNome()==nome)
+  if(col->getName()==nome)
   {
    //Remove o elemento da lista
    cols->erase(itr);
@@ -425,13 +425,13 @@ QString Restricao::obterDefinicaoObjeto(unsigned tipo_def, bool inc_insporrelaca
    definirAtributoColunas(COLUNA_REFER, tipo_def, inc_insporrelacao);
  }
 
- attributes[ParsersAttributes::REF_TABLE]=(tabela_ref ? tabela_ref->obterNome(true) : "");
+ attributes[ParsersAttributes::REF_TABLE]=(tabela_ref ? tabela_ref->getName(true) : "");
  attributes[ParsersAttributes::DEFERRABLE]=(postergavel ? "1" : "");
  attributes[ParsersAttributes::COMPARISON_TYPE]=(~tipo_comp);
  attributes[ParsersAttributes::DEFER_TYPE]=(~tipo_postergacao);
 
  if(this->tabela_pai)
-  attributes[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
+  attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
 
  /* Caso a restrição não esteja referenciando alguma coluna incluída por relacionamento
     a mesma será declarada dentro do código da tabela pai e para tanto existe um atributo

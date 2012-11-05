@@ -113,7 +113,7 @@ QString Regra::obterDefinicaoObjeto(unsigned tipo_def)
  attributes[ParsersAttributes::EVENT_TYPE]=(~tipo_evento);
 
  if(this->tabela_pai)
-  attributes[ParsersAttributes::TABLE]=this->tabela_pai->obterNome(true);
+  attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
 
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def));

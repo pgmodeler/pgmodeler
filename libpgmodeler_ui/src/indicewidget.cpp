@@ -110,7 +110,7 @@ void IndiceWidget::atualizarComboColunas(void)
   for(i=0; i < qtd_col; i++)
   {
    coluna=tabela->obterColuna(i);
-   coluna_cmb->addItem(QString::fromUtf8(coluna->obterNome()),
+   coluna_cmb->addItem(QString::fromUtf8(coluna->getName()),
                        QVariant::fromValue<void *>(coluna));
   }
  }
@@ -126,7 +126,7 @@ void IndiceWidget::exibirDadosElemento(ElementoIndice elem, int idx_elem)
  if(elem.obterColuna())
  {
   //Exibe os dados da coluna
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterColuna()->obterNome()), idx_elem, 0);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterColuna()->getName()), idx_elem, 0);
   tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterColuna()->getTypeName()), idx_elem, 1);
  }
  //Caso possua uma expressão
@@ -140,7 +140,7 @@ void IndiceWidget::exibirDadosElemento(ElementoIndice elem, int idx_elem)
  /* Exibindo o nome da classe de operadores caso exista.
     se não existir exibe um '-' */
  if(elem.obterClasseOperadores())
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterClasseOperadores()->obterNome(true)), idx_elem, 2);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterClasseOperadores()->getName(true)), idx_elem, 2);
  else
   tab_elementos->definirTextoCelula("-", idx_elem, 2);
 
@@ -203,7 +203,7 @@ void IndiceWidget::editarElemento(int idx_elem)
  if(elem.obterColuna())
  {
   coluna_rb->setChecked(true);
-  coluna_cmb->setCurrentIndex(coluna_cmb->findText(QString::fromUtf8(elem.obterColuna()->obterNome())));
+  coluna_cmb->setCurrentIndex(coluna_cmb->findText(QString::fromUtf8(elem.obterColuna()->getName())));
  }
  /* Caso seja uma expressão marca o radiobox de expressão e a
     insere no campo de expressão */

@@ -283,7 +283,7 @@ bool BaseObject::isValidName(const QString &nome_obj)
  }
 }
 
-void BaseObject::definirProtegido(bool valor)
+void BaseObject::setProtected(bool valor)
 {
  protected_obj=valor;
 }
@@ -313,12 +313,12 @@ void BaseObject::definirNome(const QString &nome)
  }
 }
 
-void BaseObject::definirComentario(const QString &comentario)
+void BaseObject::setComment(const QString &comentario)
 {
  this->comment=comentario;
 }
 
-void BaseObject::definirEsquema(BaseObject *esquema)
+void BaseObject::setSchema(BaseObject *esquema)
 {
  if(!esquema)
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_SCHEMA)
@@ -342,7 +342,7 @@ void BaseObject::definirEsquema(BaseObject *esquema)
  }
 }
 
-void BaseObject::definirDono(BaseObject *dono)
+void BaseObject::setOwner(BaseObject *dono)
 {
  if(dono && dono->obterTipoObjeto()!=OBJ_ROLE)
   throw Exception(ERR_ASG_INV_ROLE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -363,7 +363,7 @@ void BaseObject::definirDono(BaseObject *dono)
  }
 }
 
-void BaseObject::definirEspacoTabela(BaseObject *espacotabela)
+void BaseObject::setTablespace(BaseObject *espacotabela)
 {
  if(espacotabela && espacotabela->obterTipoObjeto()!=OBJ_TABLESPACE)
   throw Exception(ERR_ASG_INV_TABLESPACE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -381,7 +381,7 @@ void BaseObject::definirEspacoTabela(BaseObject *espacotabela)
  }
 }
 
-QString BaseObject::obterNome(bool formatar)
+QString BaseObject::getName(bool formatar)
 {
  if(formatar)
  {
@@ -392,14 +392,14 @@ QString BaseObject::obterNome(bool formatar)
   nome_aux=formatName(this->obj_name, (obj_type==OBJ_OPERATOR));
 
   if(this->schema)
-   nome_aux=formatName(this->schema->obterNome()) + "." + nome_aux;
+   nome_aux=formatName(this->schema->getName()) + "." + nome_aux;
 
   return(nome_aux);
  }
  else return(this->obj_name);
 }
 
-QString BaseObject::obterComentario(void)
+QString BaseObject::getComment(void)
 {
  return(comment);
 }
@@ -507,7 +507,7 @@ QString BaseObject::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
    break;
   }
 
-  attributes[ParsersAttributes::NAME]=this->obterNome(formatar);
+  attributes[ParsersAttributes::NAME]=this->getName(formatar);
   attributes[ParsersAttributes::SQL_OBJECT]=objs_sql[this->obj_type];
 
   if(tipo_def==SchemaParser::XML_DEFINITION && schema)
@@ -536,7 +536,7 @@ QString BaseObject::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   if(tablespace)
   {
    if(tipo_def==SchemaParser::SQL_DEFINITION)
-    attributes[ParsersAttributes::TABLESPACE]=tablespace->obterNome(formatar);
+    attributes[ParsersAttributes::TABLESPACE]=tablespace->getName(formatar);
    else
     attributes[ParsersAttributes::TABLESPACE]=tablespace->obterDefinicaoObjeto(tipo_def, true);
   }
@@ -545,7 +545,7 @@ QString BaseObject::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   {
    if(tipo_def==SchemaParser::SQL_DEFINITION)
    {
-    attributes[ParsersAttributes::OWNER]=owner->obterNome(formatar);
+    attributes[ParsersAttributes::OWNER]=owner->getName(formatar);
 
     /** Apenas espaços de tabelas e banco de dados não têm um comando ALTER SET OWNER
         pois por regra do PostgreSQL, espaços de tabelas e banco de dados devem ser criados

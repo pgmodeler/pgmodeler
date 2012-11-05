@@ -93,14 +93,14 @@ void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
      como função executada pelo operador */
   if(!funcao)
     throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-                         .arg(QString::fromUtf8(this->obterNome(true)))
+                         .arg(QString::fromUtf8(this->getName(true)))
                          .arg(BaseObject::getTypeName(OBJ_OPERATOR)),
                   ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Caso o número de parâmetros da função seja inválido. Para operadores
      a mesma deve possuir 1 ou 2 parâmetros */
   else if(funcao->obterNumParams()==0 || funcao->obterNumParams() > 2)
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-                         .arg(QString::fromUtf8(this->obterNome()))
+                         .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_OPERATOR)),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
@@ -246,7 +246,7 @@ QString Operador::obterAssinatura(bool formatar_nome)
  QString assinatura, str_aux;
  unsigned i;
 
- assinatura=this->obterNome(formatar_nome);
+ assinatura=this->getName(formatar_nome);
 
  for(i=0; i < 2; i++)
  {
@@ -299,7 +299,7 @@ QString Operador::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   if(operadores[i])
   {
    if(tipo_def==SchemaParser::SQL_DEFINITION)
-    attributes[atribs_ops[i]]=operadores[i]->obterNome(true);
+    attributes[atribs_ops[i]]=operadores[i]->getName(true);
    else
    {
     operadores[i]->attributes[ParsersAttributes::REF_TYPE]=atribs_ops[i];

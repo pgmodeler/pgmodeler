@@ -74,17 +74,17 @@ void SeletorObjetoWidget::definirObjeto(BaseObject *objeto)
    if(tab_pai)
    {
    /*if(tab_pai->obterEsquema())
-      nome_obj+=tab_pai->obterEsquema()->obterNome() + ".";*/
-    nome_obj+=tab_pai->obterNome(true) + ".";
+      nome_obj+=tab_pai->obterEsquema()->getName() + ".";*/
+    nome_obj+=tab_pai->getName(true) + ".";
    }
-   nome_obj+=objeto->obterNome();
+   nome_obj+=objeto->getName();
   }
   else
   {
    /* if(objeto->obterEsquema())
-    nome_obj=objeto->obterEsquema()->obterNome() + ".";
-   nome_obj+=objeto->obterNome(); */
-   nome_obj=objeto->obterNome(true);
+    nome_obj=objeto->obterEsquema()->getName() + ".";
+   nome_obj+=objeto->getName(); */
+   nome_obj=objeto->getName(true);
   }
  }
 

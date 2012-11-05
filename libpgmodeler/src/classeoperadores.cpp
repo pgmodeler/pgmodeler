@@ -159,7 +159,7 @@ QString ClasseOperadores::obterDefinicaoObjeto(unsigned tipo_def, bool forma_red
 
  if(familia)
  {
-  attributes[ParsersAttributes::FAMILY]=familia->obterNome(true);
+  attributes[ParsersAttributes::FAMILY]=familia->getName(true);
  }
 
  return(BaseObject::obterDefinicaoObjeto(tipo_def, forma_reduzida));

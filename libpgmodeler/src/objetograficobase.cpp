@@ -19,7 +19,7 @@ ObjetoGraficoBase::~ObjetoGraficoBase(void)
  this->blockSignals(true);
 }
 
-void ObjetoGraficoBase::definirProtegido(bool valor)
+void ObjetoGraficoBase::setProtected(bool valor)
 {
  protected_obj=valor;
  if(!this->signalsBlocked())

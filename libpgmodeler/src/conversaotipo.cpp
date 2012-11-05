@@ -23,7 +23,7 @@ void ConversaoTipo::definirTipoDado(unsigned idx_tipo, TipoPgSQL tipo_dado)
      de uma conversão */
   if((*tipo_dado)=="")
    throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
-                         .arg(QString::fromUtf8(this->obterNome()))
+                         .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_CAST)),
                  ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -61,7 +61,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
 
  if(!funcao_conv)
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-                         .arg(QString::fromUtf8(this->obterNome()))
+                         .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_CAST)),
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -71,7 +71,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  //A função deve possuir número de parâmetros de 1 a 3
  if(qtd_param==0 || qtd_param > 3)
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-                         .arg(QString::fromUtf8(this->obterNome()))
+                         .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_CAST)),
                 ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
@@ -91,7 +91,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
   //Caso alguma das validações acima falhe dispara-se uma exceção
   if(erro)
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
-                         .arg(QString::fromUtf8(this->obterNome()))
+                         .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_CAST)),
                  ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
@@ -99,7 +99,7 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  //Verifica se o tipo de retorno da função é diferente do tipo de destino da conversão
  if(funcao_conv->obterTipoRetorno()!=this->tipos[CONV_TIPO_DESTINO])
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
-                         .arg(QString::fromUtf8(this->obterNome()))
+                         .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_CAST)),
                 ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

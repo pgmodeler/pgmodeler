@@ -20,7 +20,7 @@ void Linguagem::definirNome(const QString &nome)
     para o SGBD e não podem ser criados pelo usuário */
  if(nome.toLower()==~TipoLinguagem("c") || nome.toLower()==~TipoLinguagem("sql"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
-                         .arg(QString::fromUtf8(this->obterNome()))
+                         .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
                 ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -44,7 +44,7 @@ void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
       ((tipo_func==FUNC_HANDLER &&
         funcao->obterTipoRetorno()=="language_handler" &&
         funcao->obterNumParams()==0 &&
-        funcao->obterLinguagem()->obterNome()==(~ling)) ||
+        funcao->obterLinguagem()->getName()==(~ling)) ||
        /* Obrigatoriamente a função de validator de ser escrita em C,
           retornar "void", possuir apenas 1 parâmetro e que o mesmo
           seja do tipo "oid" */
@@ -52,7 +52,7 @@ void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
         funcao->obterTipoRetorno()=="void" &&
         funcao->obterNumParams()==1 &&
         funcao->obterParametro(0).obterTipo() == "oid" &&
-        funcao->obterLinguagem()->obterNome()==(~ling)) ||
+        funcao->obterLinguagem()->getName()==(~ling)) ||
       /* Obrigatoriamente a função inline de ser escrita em C,
          retornar "void", possuir apenas 1 parâmetro e que o mesmo
          seja do tipo "internal" */
@@ -60,7 +60,7 @@ void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
         funcao->obterTipoRetorno()=="void" &&
         funcao->obterNumParams()==1 &&
         funcao->obterParametro(0).obterTipo() == "internal" &&
-        funcao->obterLinguagem()->obterNome()==(~ling)) )))
+        funcao->obterLinguagem()->getName()==(~ling)) )))
  {
   this->funcoes[tipo_func]=funcao;
  }
@@ -68,7 +68,7 @@ void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
  else if((tipo_func==FUNC_HANDLER && funcao->obterTipoRetorno()!="language_handler") ||
          ((tipo_func==FUNC_VALIDATOR || tipo_func==FUNC_INLINE) && funcao->obterTipoRetorno()!="void"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
-                         .arg(this->obterNome(true))
+                         .arg(this->getName(true))
                          .arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
                 ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
@@ -111,7 +111,7 @@ QString Linguagem::obterDefinicaoObjeto(unsigned tipo_def, bool forma_reduzida)
   if(funcoes[i])
   {
    if(tipo_def==SchemaParser::SQL_DEFINITION)
-    attributes[atrib_func[i]]=funcoes[i]->obterNome(true);
+    attributes[atrib_func[i]]=funcoes[i]->getName(true);
    else
    {
     funcoes[i]->setAttribute(ParsersAttributes::REF_TYPE, atrib_func[i]);

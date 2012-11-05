@@ -2,7 +2,7 @@
 
 CaixaTexto::CaixaTexto(void)
 {
- definirComentario(" ");
+ setComment(" ");
  obj_type=OBJ_TEXTBOX;
  atributo_texto[0]=atributo_texto[1]=atributo_texto[2]=false;
  attributes[ParsersAttributes::ITALIC]="";

@@ -75,7 +75,7 @@ class Coluna: public ObjetoTabela{
   QString obterDefinicaoObjeto(unsigned tipo_def);
 
   //Retorna o nome anterior da coluna
-  QString obterNomeAntigo(bool formatar=false);
+  QString getNameAntigo(bool formatar=false);
 
   //Obtém a referência ao tipo da coluna na forma [esquema].tabela.nome_coluna%TYPE
   QString obterReferenciaTipo(void);

@@ -374,8 +374,8 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
      //Caso o objeto seja uma função ou operador a assinatura será exibida ao invés do nome do objeto
      if(tipos[id_tipo]!=OBJ_FUNCTION && tipos[id_tipo]!=OBJ_OPERATOR)
      {
-      item_tab->setText(QString::fromUtf8(objeto->obterNome()));
-      item_tab->setToolTip(QString::fromUtf8(objeto->obterNome()));
+      item_tab->setText(QString::fromUtf8(objeto->getName()));
+      item_tab->setToolTip(QString::fromUtf8(objeto->getName()));
      }
      else if(tipos[id_tipo]==OBJ_FUNCTION)
      {
@@ -471,7 +471,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
                         QString(BaseObject::getSchemaName(OBJ_SCHEMA)) +
 		        QString(".png"));
 
-          item_tab->setText(QString::fromUtf8(objeto->getSchema()->obterNome()));
+          item_tab->setText(QString::fromUtf8(objeto->getSchema()->getName()));
 
           //Atribui o icone ao item da tabela e configura o nome do tipo
           item_tab1->setIcon(icone);
@@ -496,7 +496,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
           icone=QPixmap(QString(":/icones/icones/") +
                         QString(BaseObject::getSchemaName(OBJ_DATABASE)) +
 		        QString(".png"));
-          item_tab->setText(QString::fromUtf8(modelo_bd->obterNome()));
+          item_tab->setText(QString::fromUtf8(modelo_bd->getName()));
           item_tab1->setIcon(icone);
           item_tab1->setText(QString::fromUtf8(BaseObject::getTypeName(OBJ_DATABASE)));
 
@@ -529,8 +529,8 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
       //Cria o item descritor de nome do objeto
       item_tab=new QTableWidgetItem;
       listaobjetos_tbw->setItem(id_lin, 0, item_tab);
-      item_tab->setText(QString::fromUtf8(objeto_tab->obterNome()));
-      item_tab->setToolTip(QString::fromUtf8(objeto_tab->obterNome()));
+      item_tab->setText(QString::fromUtf8(objeto_tab->getName()));
+      item_tab->setToolTip(QString::fromUtf8(objeto_tab->getName()));
       item_tab->setData(Qt::UserRole, gerarValorItem(objeto_tab));
 
       /* Caso o objeto seja uma coluna ou restrição e o mesmo foi incluído por relacionamento,
@@ -585,7 +585,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
 
       listaobjetos_tbw->setItem(id_lin, 2, item_tab);
       listaobjetos_tbw->setItem(id_lin, 3, item_tab1);
-      item_tab->setText(QString::fromUtf8(tabela->obterNome()));
+      item_tab->setText(QString::fromUtf8(tabela->getName()));
       item_tab->setData(Qt::UserRole, gerarValorItem(objeto_tab));
 
       //Configura o ícone de tabela (container)
@@ -666,8 +666,8 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
      /* Configura um item para o esquema obtido, cujo texto
         será o próprio nome do objeto obtido */
      item2=new QTreeWidgetItem(item);
-     item2->setText(0,QString::fromUtf8(esquema->obterNome()));
-     item2->setToolTip(0,QString::fromUtf8(esquema->obterNome()));
+     item2->setText(0,QString::fromUtf8(esquema->getName()));
+     item2->setToolTip(0,QString::fromUtf8(esquema->getName()));
      item2->setIcon(0,icone_esq);
      item2->setData(0, Qt::UserRole, gerarValorItem(esquema));
     }
@@ -750,8 +750,8 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
        else
        {
         //Caso não seja uma função, o texto do item será o próprio nome do objeto
-        item4->setText(0,QString::fromUtf8(objeto->obterNome()));
-        item4->setToolTip(0,QString::fromUtf8(objeto->obterNome()));
+        item4->setText(0,QString::fromUtf8(objeto->getName()));
+        item4->setToolTip(0,QString::fromUtf8(objeto->getName()));
        }
 
         //Configura o icone do do item como sendo o icone para o tipo atual
@@ -815,8 +815,8 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
     tabela=dynamic_cast<Tabela *>(lista_obj[i]);
     item1=new QTreeWidgetItem(item);
     //O nome do item será o próprio nome da tabela
-    item1->setText(0,QString::fromUtf8(tabela->obterNome()));
-    item1->setToolTip(0,QString::fromUtf8(tabela->obterNome()));
+    item1->setText(0,QString::fromUtf8(tabela->getName()));
+    item1->setToolTip(0,QString::fromUtf8(tabela->getName()));
     //Configura o ícone do item como sendo o ícone de tabela
     item1->setIcon(0,QPixmap(QString(":/icones/icones/") +
                    QString(BaseObject::getSchemaName(OBJ_TABLE)) +
@@ -862,8 +862,8 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
        objeto=tabela->obterObjeto(i2,tipos[i1]);
        //Configura o item atribuindo-lhe o texto como sendo o próprio nome do objeto
        item3=new QTreeWidgetItem(item2);
-       item3->setText(0,QString::fromUtf8(objeto->obterNome()));
-       item3->setToolTip(0,QString::fromUtf8(objeto->obterNome()));
+       item3->setText(0,QString::fromUtf8(objeto->getName()));
+       item3->setToolTip(0,QString::fromUtf8(objeto->getName()));
        item3->setData(0, Qt::UserRole, gerarValorItem(objeto));
 
        /* Caso o objeto foi incluido   tabela por um relacionamento, configura um estilo de fonte para
@@ -953,8 +953,8 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
                     QString(".png")));
     arvoreobjetos_tw->insertTopLevelItem(0,raiz);
     //O texto do item é o próprio nome do banco de dados
-    raiz->setText(0,QString::fromUtf8(/*modelo_wgt->*/modelo_bd->obterNome()));
-    raiz->setToolTip(0,QString::fromUtf8(/*modelo_wgt->*/modelo_bd->obterNome()));
+    raiz->setText(0,QString::fromUtf8(/*modelo_wgt->*/modelo_bd->getName()));
+    raiz->setToolTip(0,QString::fromUtf8(/*modelo_wgt->*/modelo_bd->getName()));
     raiz->setData(0, Qt::UserRole, gerarValorItem(/*modelo_wgt->*/modelo_bd));
 
     /* Caso o objeto esteja protegido, configura um estilo de fonte para
@@ -1005,8 +1005,8 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
        objeto=/*modelo_wgt->*/modelo_bd->obterObjeto(i1,tipos[i]);
        //Cria um item na árvore e seta seu texto como sendo próprio nome do objeto
        item2=new QTreeWidgetItem(item1);
-       item2->setText(0,QString::fromUtf8(objeto->obterNome()));
-       item2->setToolTip(0,QString::fromUtf8(objeto->obterNome()));
+       item2->setText(0,QString::fromUtf8(objeto->getName()));
+       item2->setToolTip(0,QString::fromUtf8(objeto->getName()));
        item2->setData(0, Qt::UserRole, gerarValorItem(objeto));
 
        /* Caso o objeto esteja protegido, configura um estilo de fonte para

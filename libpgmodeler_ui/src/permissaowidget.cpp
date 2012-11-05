@@ -146,7 +146,7 @@ void PermissaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
   connect(tab_permissoes, SIGNAL(s_linhasRemovidas(void)), this, SLOT(removerPermissoes(void)));
 
   //Preenche os campos do formulario com os atributos do objeto
-  nome_edt->setText(QString::fromUtf8(objeto->obterNome(true)));
+  nome_edt->setText(QString::fromUtf8(objeto->getName(true)));
   comentario_edt->setText(QString::fromUtf8(objeto->getTypeName()));
   tipo_obj=objeto->obterTipoObjeto();
 
@@ -257,7 +257,7 @@ void PermissaoWidget::listarPermissoes(void)
    //Define como dado da linha adicionada a permissão atual
    tab_permissoes->definirDadoLinha(QVariant::fromValue<void *>(reinterpret_cast<void *>(perm)),i);
    //Define o texto da celuna (0) da linha atual com o nome do privilégio (gerado automaticamente)
-   tab_permissoes->definirTextoCelula(perm->obterNome(),i,0);
+   tab_permissoes->definirTextoCelula(perm->getName(),i,0);
    //A segunda coluna da linha será a string que define os privilégios da permissão
    tab_permissoes->definirTextoCelula(perm->obterStringPrivilegios(),i,2);
 
@@ -266,7 +266,7 @@ void PermissaoWidget::listarPermissoes(void)
    qtd1=perm->obterNumPapeis();
    for(i1=0; i1 < qtd1; i1++)
    {
-    str_aux+=QString::fromUtf8(perm->obterPapel(i1)->obterNome());
+    str_aux+=QString::fromUtf8(perm->obterPapel(i1)->getName());
     str_aux+=",";
    }
    str_aux.remove(str_aux.size()-1,1);
@@ -297,7 +297,7 @@ void PermissaoWidget::exibirDadosPapelSelecionado(void)
  //Se o objeto da seleção não existir na tabela exibe seus dados
  if(papel && idx_lin < 0)
  {
-  tab_papeis->definirTextoCelula(QString::fromUtf8(papel->obterNome()), lin, 0);
+  tab_papeis->definirTextoCelula(QString::fromUtf8(papel->getName()), lin, 0);
   tab_papeis->definirDadoLinha(QVariant::fromValue<void *>(dynamic_cast<void *>(papel)), lin);
  }
  else
@@ -314,7 +314,7 @@ void PermissaoWidget::exibirDadosPapelSelecionado(void)
   if(papel && idx_lin >= 0)
   {
    throw Exception(Exception::getErrorMessage(ERR_ASG_DUPL_OBJ_CONTAINER)
-                               .arg(QString::fromUtf8(papel->obterNome()))
+                               .arg(QString::fromUtf8(papel->getName()))
                                .arg(papel->getTypeName())
                                .arg(papeis_gb->title()),
                  ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -409,7 +409,7 @@ void PermissaoWidget::atualizarPermissao(void)
    /* Qualquer outra situação além da comentado no if acima é considerada duplicação
       de permissões gerando assim um erro */
    throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
-                 .arg(QString::fromUtf8(permissao->obterObjeto()->obterNome()))
+                 .arg(QString::fromUtf8(permissao->obterObjeto()->getName()))
                  .arg(permissao->obterObjeto()->getTypeName()),
                  ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -449,7 +449,7 @@ void PermissaoWidget::editarPermissao(void)
   //Limpa a tabela de papéis
   tab_papeis->removerLinhas();
   //Preenche o campo do formulário com o noome da permissão selecionada
-  id_perm_edt->setText(permissao->obterNome());
+  id_perm_edt->setText(permissao->getName());
 
   /* Obtém a quantidade de papéis relacionao   permissão para que os
      mesmos possam ser exibidos na tabela de papéis */
@@ -463,7 +463,7 @@ void PermissaoWidget::editarPermissao(void)
    //Define como dado da linha atual o papel obtido
    tab_papeis->definirDadoLinha(QVariant::fromValue<void *>(reinterpret_cast<void *>(papel)), i);
    //Define como texo da linha atual o nome do papel
-   tab_papeis->definirTextoCelula(QString::fromUtf8(papel->obterNome()),i,0);
+   tab_papeis->definirTextoCelula(QString::fromUtf8(papel->getName()),i,0);
   }
 
   //Reconect o sinal de adição de linha da tabela de papéis ao método selecionarPapel
