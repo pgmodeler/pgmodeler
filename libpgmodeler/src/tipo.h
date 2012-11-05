@@ -24,7 +24,7 @@
 #ifndef TIPO_H
 #define TIPO_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 #include "esquema.h"
 #include "funcao.h"
 #include "papel.h"

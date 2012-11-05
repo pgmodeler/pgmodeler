@@ -24,7 +24,7 @@
 #ifndef CLASSEOPERADORES_H
 #define CLASSEOPERADORES_H                                                                                                                                                                                         
                                                                                                                                                                                                                    
-#include "objetobase.h"                                                                                                                                                                                            
+#include "baseobject.h"                                                                                                                                                                                            
 #include "elemclasseoperadores.h"                                                                                                                                                                                  
 #include "familiaoperadores.h"                                                                                                                                                                                     
                                                                                                                                                       

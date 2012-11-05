@@ -24,7 +24,7 @@
 #ifndef CONVERSAOCODIFICACAO_H
 #define CONVERSAOCODIFICACAO_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 #include "funcao.h"
 #include "papel.h"
 

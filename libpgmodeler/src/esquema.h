@@ -23,7 +23,7 @@
 #ifndef ESQUEMA_H
 #define ESQUEMA_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 
 class Esquema: public BaseObject {
  private:

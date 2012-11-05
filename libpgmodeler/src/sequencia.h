@@ -23,7 +23,7 @@
 #ifndef SEQUENCIA_H
 #define SEQUENCIA_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 #include "tabela.h"
 
 class Sequencia: public BaseObject {

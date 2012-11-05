@@ -22,7 +22,7 @@
 #ifndef OPERADOR_H
 #define OPERADOR_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 #include "funcao.h"
 #include "esquema.h"
 #include "papel.h"

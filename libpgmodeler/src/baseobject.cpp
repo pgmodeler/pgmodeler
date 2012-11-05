@@ -1,9 +1,9 @@
-#include "objetobase.h"
+#include "baseobject.h"
 #include <QApplication>
 
-/* Atenção: Se a ordem e quantidade das enumerações forem modificados
-   então a ordem e quantidade dos elementos deste vetor
-   também devem ser modificados */
+/* CAUTION: If both amount and order of the enumerations are modified
+   then the order and amount of the elements of this vector
+   must also be modified */
 QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
   "column",  "constraint", "function", "trigger",
   "index", "rule", "table", "view",
@@ -37,11 +37,11 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
   "OPERATOR FAMILY", "OPERATOR CLASS", "DATABASE"
 };
 
-/* Inicializa o id global o qual é compartilhado entre as instâncias
-   de classes derivadas da classe ObjetoBase. O valor do id_global
-   inicia-se em 60k pois as faixas de ids 0,10k,20k,30k,40k e 50k
-   estão atribuídos respectivamente aos objetos das classes Papel, EspacoTabela,
-   ModeloBD, Esquema, Função e Tipo */
+/* Initializes the global id which is shared between instances
+   of classes derived from the this class. The value of global_id
+   starts at 60k because the id ranges 0, 10k, 20k, 30k, 40k and 50k
+   are respectively assigned to objects of classes Role, Tablespace
+   DBModel, Schema, Function and Type */
 unsigned BaseObject::global_id=60000;
 
 BaseObject::BaseObject(void)
@@ -68,9 +68,9 @@ unsigned BaseObject::getGlobalId(void)
 QString BaseObject::getTypeName(ObjectType obj_type)
 {
  if(obj_type!=BASE_OBJECT)
-  /* Devido a classe ObjetoBase não ser derivada de QObject a função tr() é ineficiente para traduzir os nomes
-     dos tipos de objetos sendo assim é chamado o metódo de tradução diretamente da aplicação especificando o
-     contexto (ObjetoBase) no arquivo .ts e o texto a ser traduzido */
+  /* Due to the class BaseObject not be derived from QObject the function tr() is inefficient to
+     translate the type names thus the method called to do the translation is from the application
+     specifying the context (BaseObject) in the ts file and the text to be translated */
   return(QApplication::translate("BaseObject",obj_type_names[obj_type],"",QApplication::UnicodeUTF8));
  else
   return("");
@@ -100,32 +100,30 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
                         QRegExp("(.)+(\\.)(.)+")
                       };
 
- /* Verifica através de expressões regulares
-    se o nome passado para formatação já não se encontra
-    formatado. As formas prováveis de formatação são:
-    1) "NOME_OBJETO"
-    2) "NOME_ESQUEMA"."NOME_OBJETO"
-    3) "NOME_ESQUEMA".NOME_OBJETO
-    4) NOME_ESQUEMA."NOME_OBJETO"
-    5) NOME_ESQUEMA.NOME_OBJETO */
+ /* Checks through regular expressions
+    if the name passed to be formatted is yet
+    formatted. The forms likely to be formatted are:
+
+    1) "OBJECT_NAME"
+    2) "SCHEMA_NAME"."OBJECT_NAME"
+    3) "SCHEMA_NAME".OBJECT_NAME
+    4) SCHEMA_NAME."OBJECT_NAME"
+    5) SCHEMA_NAME.OBJECT_NAME */
  for(i=0; i < 5 && !is_formated; i++)
   is_formated=regexp_vect[i].exactMatch(name);
 
- /* Caso o nome não esteja formatado ou
-    o mesmo simboliza o nome de um operador (o qual possui caracteres
-    inválidos de acordo com a regra e é a única exceção a qual seu
-    nome é formatado mesmo sendo inválido) ou se nome é valido de acordo
-    com as regras do SGBD para os demais tipos de objetos */
+ /* If the name is not formatted or it symbolizes the name of an operator
+    (which has characters invalid according to the rule and is the only exception
+     to which its name is formatted even being invalid) or if the name is valid according
+     with PostgreSQL rules for other types of objects */
  if(!is_formated && (is_operator || isValidName(name)))
  {
   bool is_upper=false;
   unsigned i, qtd;
 
-  /* Verifica se o nome passado possui alguma
-     letra maíuscula, caso possui, o nome será
-     colocado entre aspas */
+  /* Checks if the name has some upper case letter. If its the
+     case the name will be enclosed in quotes */
   qtd=name.size();
-  //for(i=0; i < qtd && !maiusc; i++)
   i=0;
   while(i < qtd && !is_upper)
   {
@@ -151,11 +149,11 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
    else
     i++;
 
-   //Caractere UTF-8 com 2 bytes
+   //2 bytes UTF-8 character
    if((chr  >= 0xC2 && chr <= 0xDF &&
        chr1 >= 0x80 && chr1 <= 0xBF) ||
 
-       //Caractere UTF-8 com 3 bytes
+       //3 bytes UTF-8 character
        (chr  >= 0xE0 && chr <= 0xEF &&
         chr1 >= 0x80 && chr1 <= 0xBF &&
         chr2 >= 0x80 && chr2 <= 0xBF) ||
@@ -167,7 +165,6 @@ QString BaseObject::formatName(const QString &name, bool is_operator)
 
   }
 
-  //Caso o nome possua letras maiúsculas
   if(is_upper)
    frmt_name="\"" + name + "\"";
   else
@@ -183,13 +180,11 @@ bool BaseObject::isValidName(const QString &name)
 {
  int len;
 
- /* No cálculo do tamanho de uma QString o '\0' é considerado,
-    sendo assim, para evitar comparações desnecessárias com
-    o caracterece \0, o tamanho original é decrementado em 1 */
  len=name.size();
 
- /* Caso o nome seja maior do que o tamanho máximo
-    aceito pelo SGBD (atualmente 63 bytes) */
+ /* If the name is greater than the maximum size accepted
+    by PostgreSQL (currently 63 bytes) or it is empty
+    the name is invalid */
  if(name.isEmpty() || len > OBJECT_NAME_MAX_LENGTH)
   return(false);
  else
@@ -202,12 +197,11 @@ bool BaseObject::isValidName(const QString &name)
   if(len > 1)
    chr1=name[len-1];
 
-  /* Verifica se o nome do objeto está entre aspas ou não.
-     Situações do tipo "nome ou nome" não são aceitas */
+  //Checks if the name is enclosed in quotes
   if(chr=='\"' && chr1=='\"')
   {
-   /* Valida o nome mas a contagem de caracteres se iniciará
-      após a primeira aspa e finaliza antes de última */
+   /* Validates the name but the validation will continue until the
+      end of string (or the last quote) */
    valid=true; i++; len--;
   }
 
@@ -215,9 +209,8 @@ bool BaseObject::isValidName(const QString &name)
   {
    chr=name[i];
 
-   //Validação de caracteres ascii simples
-   /* Verifica se o nome possui apenas os caracteres
-     a-z A-Z 0-9 _ */
+   /* Validation of simple ASCI characters.
+      Checks if the name has the characters in the set [ a-z A-Z 0-9 _ ] */
    if((chr >= 'a' && chr <='z') ||
       (chr >= 'A' && chr <='Z') ||
       (chr >= '0' && chr <='9') ||
@@ -228,13 +221,11 @@ bool BaseObject::isValidName(const QString &name)
    }
    else valid=false;
 
-   /* Validação de caracteres utf8. Caracteres UTF8 possuem 2 bytes.
-      Sendo que o primeiro byte deve estar entre 0xC2 e 0xDF e o segundo/terceiro
-      deve estar entre 0x80 e 0xBF.
-      Ref.: http://www.fileformat.info/info/unicode/utf8.htm
-            http://en.wikipedia.org/wiki/UTF-8
+   /* Validation of UTF8 charactes (2 and 3 bytes long).
+      Reference: http://www.fileformat.info/info/unicode/utf8.htm
+                 http://en.wikipedia.org/wiki/UTF-8
 
-      Trecho extraído da url:
+      Snippet extracted from the above url:
 
       The value of each individual byte indicates its UTF-8 function, as follows:
       00 to 7F hex (0 to 127): first and only byte of a sequence.
@@ -250,23 +241,22 @@ bool BaseObject::isValidName(const QString &name)
     else
      chr2=0;
 
-       //Caractere UTF-8 com 2 bytes
+       //UTF-8 character with 2 bytes length
     if((chr  >= 0xC2 && chr <= 0xDF &&
         chr1 >= 0x80 && chr1 <= 0xBF) ||
 
-       //Caractere UTF-8 com 3 bytes
+       //UTF-8 character with 3 bytes length
        (chr  >= 0xE0 && chr <= 0xEF &&
         chr1 >= 0x80 && chr1 <= 0xBF &&
         chr2 >= 0x80 && chr2 <= 0xBF))
     valid=true;
 
-    //Caso o caractere validado seja de 2 bytes
+    //Increments the counter in the size of the validated char
     if(chr >= 0xC2 && chr <= 0xDF)
-     //Incrementa em 2 a posição na string
+     //2 bytes char
      i+=2;
     else
-     /* Incrementa em 3 a posição na string pois o
-        caractere validado é de 3 bytes */
+     //3 bytes char
      i+=3;
    }
   }
@@ -282,8 +272,7 @@ void BaseObject::setProtected(bool value)
 
 void BaseObject::setName(const QString &name)
 {
- /* Caso se tente atribuir um nome vazio ao objeto
-    é disparada uma exceção */
+ //Raises an error if the passed name is empty
  if(name.isEmpty())
   throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
@@ -294,7 +283,7 @@ void BaseObject::setName(const QString &name)
   count=aux_name.count(QChar('\0'));
   if(count >=1) aux_name.chop(count);
 
-  //Caso o nome não seja válido dispara uma exceção
+  //Raises an error if the passed name is invalid
   if(!isValidName(aux_name))
    throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
@@ -379,8 +368,6 @@ QString BaseObject::getName(bool format)
  {
   QString aux_name;
 
-  /* Formata o nome do objeto e marca o flag que indica se o objeto
-     é um operador ou não */
   aux_name=formatName(this->obj_name, (obj_type==OBJ_OPERATOR));
 
   if(this->schema)
@@ -469,16 +456,16 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
  {
   bool format;
 
-  //Formata o nome dos objetos caso uma definição SQL está sendo gerada
+  //Formats the object's name in case the SQL definition is being generated
   format=(def_type==SchemaParser::SQL_DEFINITION ||
             (def_type==SchemaParser::XML_DEFINITION && reduced_form &&
              obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP &&
              obj_type!=BASE_RELATIONSHIP));
   attributes[objs_schemas[obj_type]]="1";
 
-  /* Marcando a flag que indica que o a forma de comentário a ser gerada
-     para o objeto é específica para o mesmo, fugindo da regra padrão.
-     (Ver arquivo de esquema SQL para comentários) */
+  /* Marking the flag that indicates that the comment form to be generated
+     for the object is specific to it, ignoring the default rule.
+     (See SQL schema file for comments) */
   switch(obj_type)
   {
    case OBJ_COLUMN:
@@ -563,10 +550,8 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 
   try
   {
-   /* Caso seja a definição XML a ser obtida, os atributos
-      terão os caracteres <, >, ', " e & substituídos pelos
-      equivalentes no XML, evitando assim a construção de
-      código XMl com erros de sintaxe */
+   /* Case the code definition being generated is XML the attributes values will have the
+      <, >, ', ", & replaced by the related XML entity preventing syntax error on XML definition */
    code_def=SchemaParser::getObjectDefinition(objs_schemas[obj_type], attributes, def_type);
    if(def_type==SchemaParser::XML_DEFINITION)
    {
@@ -583,14 +568,15 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
     do
     {
      prev_pos=pos1;
-     //Tenta extrair os valores dos atributos
+
+     //Try to extract the values using regular expressions
      pos=regexp_vect[0].indexIn(code_def, pos);
      pos+=regexp_vect[0].matchedLength();
      pos1=regexp_vect[1].indexIn(code_def, pos);
 
-     /* CAso não consigua extrair os valores dos atributos
-        usa expressões regulares para retirada de conteúdo
-        de tags vazias (sem atributos) ex.: <comment>,<condition>,<expression> */
+     /* If you can not extract attribute values (pos < 0)
+        uses regular expressions to extract the content from empty tags
+        (without attributes)  e.g.: <comment>,<condition>,<expression> */
      if(pos < 0)
      {
       pos=regexp_vect[2].indexIn(code_def, prev_pos);
@@ -598,24 +584,27 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
       pos1=regexp_vect[3].indexIn(code_def, pos);
      }
 
-     //Calcula a quantidade de caracteres extraidos
+     //Calculates the amount of extracted characters
      count=(pos > 0 ? (pos1-pos) : 0);
+
      if(pos >= 0)
      {
-      //Obtém a substring extraída com as expressões regulares
+      //Gets the substring extracted using regexp
       str_aux=code_def.mid(pos, count);
-      //Substitui os caracteres especiais pelas entidades XML
+      //Replaces the char by the XML entities
       str_aux.replace('\"',XMLParser::CHAR_QUOT);
       str_aux.replace('<',XMLParser::CHAR_LT);
       str_aux.replace('>',XMLParser::CHAR_GT);
-      //Substitui na definição XML original pela string modificada
+
+      //Puts on the original XML definition the modified string
       code_def.replace(pos,count,str_aux);
       pos+=count;
      }
     }
-    /* Enquanto as posições das expressões encontradas sejam válidas
-       Posições menores que 0 indicam que nenhuma das expressões regulares
-       conseguiram encontrar valores */
+
+    /* Iterates while the positions of the expressions found is valid.
+       Positions less than 0 indicates that no regular expressions
+       managed to find values */
     while(pos >=0 && pos1 >=0);
    }
 

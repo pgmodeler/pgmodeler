@@ -22,7 +22,7 @@
 #ifndef PAPEL_H
 #define PAPEL_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 
 class Papel: public BaseObject {
  private:

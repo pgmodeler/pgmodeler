@@ -24,7 +24,7 @@
 #ifndef CONVERSAOTIPO_H
 #define CONVERSAOTIPO_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 #include "funcao.h"
 
 class ConversaoTipo: public BaseObject {

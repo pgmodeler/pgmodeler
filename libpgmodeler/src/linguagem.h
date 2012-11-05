@@ -23,7 +23,7 @@
 #ifndef LINGUAGEM_H
 #define LINGUAGEM_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 #include "funcao.h"
 #include "papel.h"
 

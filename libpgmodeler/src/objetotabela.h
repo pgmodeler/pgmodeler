@@ -23,7 +23,7 @@
 #ifndef OBJETOTABELA_H
 #define OBJETOTABELA_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 
 class ObjetoTabela: public BaseObject {
  protected:

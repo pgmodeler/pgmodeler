@@ -24,7 +24,7 @@
 #ifndef FUNCAO_AGREGACAO_H
 #define FUNCAO_AGREGACAO_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 #include "funcao.h"
 #include "operador.h"
 

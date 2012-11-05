@@ -23,7 +23,7 @@
 #ifndef FAMILIAOPERADORES_H
 #define FAMILIAOPERADORES_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 
 class FamiliaOperadores: public BaseObject {
  private:

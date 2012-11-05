@@ -26,7 +26,7 @@
 
 #include <QFile>
 #include <QObject>
-#include "objetobase.h"
+#include "baseobject.h"
 #include "tabela.h"
 #include "funcao.h"
 #include "esquema.h"

@@ -22,7 +22,7 @@
 #ifndef FUNCAO_H
 #define FUNCAO_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 #include "esquema.h"
 #include "papel.h"
 #include "coluna.h"

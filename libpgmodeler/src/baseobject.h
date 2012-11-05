@@ -20,8 +20,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef OBJETOBASE_H
-#define OBJETOBASE_H
+#ifndef BASE_OBJECT_H
+#define BASE_OBJECT_H
 
 #include "parsersattributes.h"
 #include "exception.h"
@@ -127,10 +127,6 @@ class BaseObject {
      It was used a numeric type to avoid the use excessive of RTTI. */
   ObjectType obj_type;
 
-  /* Armazena os atributos e seus valores em forma de QString
-     para serem usados pelo ParserEsquema no momento da criação
-     da definição SQL do objeto */
-
   /* Stores the attributes and their values ​​shaped in strings to be used
      by SchemaParser on the object's code definition creation. The attribute
      name related to model objects are defined in ParsersAttributes namespace. */
@@ -149,11 +145,6 @@ class BaseObject {
       PostgreSQL object naming rule.
      (e.g. 63 bytes long and chars in set [a-zA-z0-9_] */
   static bool isValidName(const QString &name);
-
-  /* A flag obj_operador indica que o nome passado é de um operador
-     o único tipo de objeto que aceita caracteres fora do alfabeto (ex. sinais matemáticos)
-     na composição do seu nome. Neste caso a função de formatação apenas ignora a validação
-     caso o flag esteja marcado */
 
   /* Formats the passed name following the PostgreSQL object naming rule.
      The 'is_operator' parameter indicates that the passed name is a for an operator

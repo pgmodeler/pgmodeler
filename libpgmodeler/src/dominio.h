@@ -22,7 +22,7 @@
 #ifndef DOMINIO_H
 #define DOMINIO_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 #include "esquema.h"
 
 class Dominio: public BaseObject{

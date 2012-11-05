@@ -24,7 +24,7 @@
 #ifndef PERMISSAO_H
 #define PERMISSAO_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 #include "funcao.h"
 #include "papel.h"
 #include <algorithm>

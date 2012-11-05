@@ -23,7 +23,7 @@
 #ifndef ELEMCLASSEOPERADORES_H
 #define ELEMCLASSEOPERADORES_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 #include "operador.h"
 #include "funcao.h"
 

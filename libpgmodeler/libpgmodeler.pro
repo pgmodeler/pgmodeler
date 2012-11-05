@@ -23,7 +23,7 @@ HEADERS += $$PWD/src/caixatexto.h \
            $$PWD/src/tipo.h \
            $$PWD/src/espacotabela.h \
            $$PWD/src/gatilho.h \
-           $$PWD/src/objetobase.h \
+           $$PWD/src/baseobject.h \
            $$PWD/src/regra.h \
            $$PWD/src/sequencia.h \
            $$PWD/src/tipospgsql.h \
@@ -68,7 +68,7 @@ SOURCES +=  $$PWD/src/caixatexto.cpp \
             $$PWD/src/tabela.cpp \
             $$PWD/src/conversaotipo.cpp \
             $$PWD/src/funcaoagregacao.cpp \
-            $$PWD/src/objetobase.cpp \
+            $$PWD/src/baseobject.cpp \
             $$PWD/src/relacionamento.cpp \
             $$PWD/src/tabelabase.cpp \
             $$PWD/src/familiaoperadores.cpp \

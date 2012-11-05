@@ -24,7 +24,7 @@
 #ifndef ESPACOTABELA_H
 #define ESPACOTABELA_H
 
-#include "objetobase.h"
+#include "baseobject.h"
 
 class EspacoTabela: public BaseObject{
  private:
