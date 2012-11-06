@@ -56,8 +56,8 @@ class Indice: public ObjetoTabela{
   Indice(void);
 
   //Adiciona um elemento ao índice
-  void adicionarElemento(Coluna *coluna, ClasseOperadores *classe_oper, bool ordem_asc, bool nulos_primeiro);
-  void adicionarElemento(const QString &expressao, ClasseOperadores *classe_oper, bool ordem_asc, bool nulos_primeiro);
+  void adicionarElemento(Coluna *coluna, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro);
+  void adicionarElemento(const QString &expressao, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro);
   void adicionarElemento(ElementoIndice elem);
 
   /* Retorna se um dado elemento existe no índice. O método

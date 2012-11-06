@@ -171,7 +171,7 @@ void IndiceWidget::manipularElemento(int idx_elem)
   //Configura um elemento com todos os dados configurados no formulário d elementos
   elem.definirAtributo(ElementoIndice::NULOS_PRIMEIRO, nulos_primeiro_chk->isChecked());
   elem.definirAtributo(ElementoIndice::ORDEM_ASCENDENTE, ascendente_rb->isChecked());
-  elem.definirClasseOperadores(dynamic_cast<ClasseOperadores *>(sel_classe_op->obterObjeto()));
+  elem.definirClasseOperadores(dynamic_cast<OperatorClass *>(sel_classe_op->obterObjeto()));
 
   if(expressao_rb->isChecked())
    elem.definirExpressao(exp_elemento_txt->toPlainText());

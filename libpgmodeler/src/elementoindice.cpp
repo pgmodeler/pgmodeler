@@ -26,7 +26,7 @@ void ElementoIndice::definirExpressao(const QString &expressao)
  }
 }
 
-void ElementoIndice::definirClasseOperadores(ClasseOperadores *classe_oper)
+void ElementoIndice::definirClasseOperadores(OperatorClass *classe_oper)
 {
  this->classe_oper=classe_oper;
 }
@@ -57,7 +57,7 @@ QString ElementoIndice::obterExpressao(void)
  return(expressao);
 }
 
-ClasseOperadores *ElementoIndice::obterClasseOperadores(void)
+OperatorClass *ElementoIndice::obterClasseOperadores(void)
 {
  return(classe_oper);
 }

@@ -79,7 +79,7 @@ int Indice::elementoExiste(const QString &expressao)
  return(idx);
 }
 
-void Indice::adicionarElemento(const QString &expressao, ClasseOperadores *classe_oper, bool ordem_asc, bool nulos_primeiro)
+void Indice::adicionarElemento(const QString &expressao, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro)
 {
  //Caso a expressão esteja vazia, dispara exceção.
  if(expressao.isEmpty())
@@ -104,7 +104,7 @@ void Indice::adicionarElemento(const QString &expressao, ClasseOperadores *class
  }
 }
 
-void Indice::adicionarElemento(Coluna *coluna, ClasseOperadores *classe_oper, bool ordem_asc, bool nulos_primeiro)
+void Indice::adicionarElemento(Coluna *coluna, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro)
 {
  //Caso a coluna não esteja aloca, dispara exceção.
  if(!coluna)

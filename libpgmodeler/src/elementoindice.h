@@ -24,7 +24,7 @@
 #define ELEMENTO_INDICE_H
 
 #include "coluna.h"
-#include "classeoperadores.h"
+#include "operatorclass.h"
 
 class ElementoIndice {
  private:
@@ -39,7 +39,7 @@ class ElementoIndice {
   QString expressao;
 
   //Classe de operadores referenciada pelo elemento
-  ClasseOperadores *classe_oper;
+  OperatorClass *classe_oper;
 
   //Atributos booleanos do elemento (ASC|DESC, NULLS FIRST|LAST)
   bool atrib_elemento[2];
@@ -54,7 +54,7 @@ class ElementoIndice {
    //Métodos de configuração do elemento
    void definirColuna(Coluna *coluna);
    void definirExpressao(const QString &expressao);
-   void definirClasseOperadores(ClasseOperadores *classe_oper);
+   void definirClasseOperadores(OperatorClass *classe_oper);
 
    //Define o estado de uma das 2 configurações booleanas do elemento
    void definirAtributo(unsigned id_atrib, bool valor);
@@ -65,7 +65,7 @@ class ElementoIndice {
    //Métodos de obtenção dos atributos do elemento
    Coluna *obterColuna(void);
    QString obterExpressao(void);
-   ClasseOperadores *obterClasseOperadores(void);
+   OperatorClass *obterClasseOperadores(void);
 
    //Retorna a definição SQL ou XML do objeto
    QString obterDefinicaoObjeto(unsigned tipo_def);

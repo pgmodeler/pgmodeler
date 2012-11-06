@@ -1201,7 +1201,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_OPCLASS:
-    classeop_wgt->definirAtributos(modelo, lista_op, dynamic_cast<ClasseOperadores *>(objeto));
+    classeop_wgt->definirAtributos(modelo, lista_op, dynamic_cast<OperatorClass *>(objeto));
     classeop_wgt->show();
    break;
 

@@ -189,7 +189,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_OPERATOR)
     adicionarOperador(dynamic_cast<Operador *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_OPCLASS)
-    adicionarClasseOperadores(dynamic_cast<ClasseOperadores *>(objeto), idx_obj);
+    adicionarClasseOperadores(dynamic_cast<OperatorClass *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_OPFAMILY)
     adicionarFamiliaOperadores(dynamic_cast<FamiliaOperadores *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_DOMAIN)
@@ -247,7 +247,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_OPERATOR)
     removerOperador(dynamic_cast<Operador *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_OPCLASS)
-    removerClasseOperadores(dynamic_cast<ClasseOperadores *>(objeto), idx_obj);
+    removerClasseOperadores(dynamic_cast<OperatorClass *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_OPFAMILY)
     removerFamiliaOperadores(dynamic_cast<FamiliaOperadores *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_DOMAIN)
@@ -312,7 +312,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
  else if(tipo_obj==OBJ_OPERATOR)
   removerOperador(dynamic_cast<Operador *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_OPCLASS)
-  removerClasseOperadores(dynamic_cast<ClasseOperadores *>(objeto), idx_obj);
+  removerClasseOperadores(dynamic_cast<OperatorClass *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_OPFAMILY)
   removerFamiliaOperadores(dynamic_cast<FamiliaOperadores *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_DOMAIN)
@@ -2152,7 +2152,7 @@ void ModeloBD::removerFamiliaOperadores(FamiliaOperadores *familia_op, int idx_o
  }
 }
 
-void ModeloBD::adicionarClasseOperadores(ClasseOperadores *classe_op, int idx_obj)
+void ModeloBD::adicionarClasseOperadores(OperatorClass *classe_op, int idx_obj)
 {
  try
  {
@@ -2164,14 +2164,14 @@ void ModeloBD::adicionarClasseOperadores(ClasseOperadores *classe_op, int idx_ob
  }
 }
 
-void ModeloBD::removerClasseOperadores(ClasseOperadores *classe_op, int idx_obj)
+void ModeloBD::removerClasseOperadores(OperatorClass *classe_op, int idx_obj)
 {
  __removerObjeto(classe_op, idx_obj);
 }
 
-ClasseOperadores *ModeloBD::obterClasseOperadores(unsigned idx_obj)
+OperatorClass *ModeloBD::obterClasseOperadores(unsigned idx_obj)
 {
- return(dynamic_cast<ClasseOperadores *>(obterObjeto(idx_obj, OBJ_OPCLASS)));
+ return(dynamic_cast<OperatorClass *>(obterObjeto(idx_obj, OBJ_OPCLASS)));
 }
 
 void ModeloBD::adicionarOperador(Operador *operador, int idx_obj)
@@ -4229,21 +4229,21 @@ Operador *ModeloBD::criarOperador(void)
  return(operador);
 }
 
-ClasseOperadores *ModeloBD::criarClasseOperadores(void)
+OperatorClass *ModeloBD::criarClasseOperadores(void)
 {
  map<QString, QString> atributos;
  map<QString, unsigned> tipos_elem;
  BaseObject *objeto=NULL;
  QString elem;
  TipoPgSQL tipo;
- ClasseOperadores *classe_op=NULL;
+ OperatorClass *classe_op=NULL;
  ElemClasseOperadores elem_classe;
  bool rechecar;
  unsigned num_estrategia, tp_elem;
 
  try
  {
-  classe_op=new ClasseOperadores;
+  classe_op=new OperatorClass;
 
   //Lê do parser os atributos basicos
   definirAtributosBasicos(classe_op);
@@ -4251,8 +4251,8 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
   //Obtém os atributos
   XMLParser::getElementAttributes(atributos);
 
-  classe_op->definirTipoIndexacao(TipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]));
-  classe_op->definirPadrao(atributos[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
+  classe_op->setIndexingType(TipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]));
+  classe_op->setDefault(atributos[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
 
   tipos_elem[ParsersAttributes::FUNCTION]=ElemClasseOperadores::ELEM_FUNCAO;
   tipos_elem[ParsersAttributes::OPERATOR]=ElemClasseOperadores::ELEM_OPERADOR;
@@ -4286,14 +4286,14 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
                              .arg(BaseObject::getTypeName(OBJ_OPFAMILY)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      classe_op->definirFamilia(dynamic_cast<FamiliaOperadores *>(objeto));
+      classe_op->setFamily(dynamic_cast<FamiliaOperadores *>(objeto));
      }
      else if(elem==ParsersAttributes::TYPE)
      {
       //Obtém os atributos do tipo
       XMLParser::getElementAttributes(atributos);
       tipo=criarTipoPgSQL();
-      classe_op->definirTipoDado(tipo);
+      classe_op->setDataType(tipo);
      }
      else if(elem==ParsersAttributes::ELEMENT)
      {
@@ -4323,7 +4323,7 @@ ClasseOperadores *ModeloBD::criarClasseOperadores(void)
        elem_classe.definirOperador(dynamic_cast<Operador *>(objeto),num_estrategia,rechecar);
       }
 
-      classe_op->adicionarElementoClasse(elem_classe);
+      classe_op->addElement(elem_classe);
       XMLParser::restorePosition();
      }
     }
@@ -4852,7 +4852,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
  map<QString, QString> atributos;
  Indice *indice=NULL;
  Coluna *coluna=NULL;
- ClasseOperadores *classe_oper=NULL;
+ OperatorClass *classe_oper=NULL;
  QString elem, str_aux, expr;
  bool inc_ind_tabela=false,
       ordem_asc=false, nulos_primeiro=false;
@@ -4922,7 +4922,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
         if(elem==ParsersAttributes::OP_CLASS)
         {
          XMLParser::getElementAttributes(atributos);
-         classe_oper=dynamic_cast<ClasseOperadores *>(obterObjeto(atributos[ParsersAttributes::NAME], OBJ_OPCLASS));
+         classe_oper=dynamic_cast<OperatorClass *>(obterObjeto(atributos[ParsersAttributes::NAME], OBJ_OPCLASS));
 
          //Caso o índice esteja referenciando uma classe de operadores inexistente
          if(!classe_oper)
@@ -6498,20 +6498,20 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   //** Obtendo as dependências de Classe de Operadores **
   if(tipo_obj==OBJ_OPCLASS)
   {
-   ClasseOperadores *classe_op=dynamic_cast<ClasseOperadores *>(objeto);
+   OperatorClass *classe_op=dynamic_cast<OperatorClass *>(objeto);
 
    /* Obtém a referência para o tipo de dado da classe, caso um ponteiro válido seja retornado
       indica que o tipo de dado é um definido pelo usuário (classe Tipo) e que este precisa
       também ter as dependências obtidas */
-  BaseObject *tipo_usr=obterObjetoTipoPgSQL(classe_op->obterTipoDado());
+  BaseObject *tipo_usr=obterObjetoTipoPgSQL(classe_op->getDataType());
   //obterObjeto(*classe_op->obterTipoDado(), OBJETO_TIPO);
 
    if(tipo_usr)
     obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
 
    //Caso haja uma família de operadores obtém as dependências dela também
-   if(classe_op->obterFamilia())
-    obterDependenciasObjeto(classe_op->obterFamilia(), vet_deps, inc_dep_indiretas);
+   if(classe_op->getFamily())
+    obterDependenciasObjeto(classe_op->getFamily(), vet_deps, inc_dep_indiretas);
   }
   //** Obtendo as dependências de Domínios **
   else if(tipo_obj==OBJ_DOMAIN)
@@ -7151,7 +7151,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
                            OBJ_DOMAIN, OBJ_FUNCTION, OBJ_AGGREGATE,
                            OBJ_OPERATOR, OBJ_TYPE };
    unsigned i, i1, qtd;
-   ClasseOperadores *classe_op=NULL;
+   OperatorClass *classe_op=NULL;
    Tabela *tab=NULL;
    Coluna *col=NULL;
    ConversaoTipo *conv_tipo=NULL;
@@ -7214,11 +7214,11 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Obtém a referência ao objeto
-      classe_op=dynamic_cast<ClasseOperadores *>(*itr);
+      classe_op=dynamic_cast<OperatorClass *>(*itr);
       itr++;
 
       //Verifica se o tipo de dado da classe é o próprio tipo a ser removido
-      if(classe_op->obterTipoDado()==ptr_tipopgsql)
+      if(classe_op->getDataType()==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(classe_op);
@@ -7523,7 +7523,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
                             OBJ_AGGREGATE,
                             OBJ_OPERATOR};
    unsigned i, i1, qtd;
-   ClasseOperadores *classe_op=NULL;
+   OperatorClass *classe_op=NULL;
    Operador *oper=NULL, *operador=dynamic_cast<Operador *>(objeto);
 
    /* Varre todas as listas de objetos os quais podem
@@ -7540,15 +7540,15 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Obtém a referência ao objeto
-      classe_op=dynamic_cast<ClasseOperadores *>(*itr);
+      classe_op=dynamic_cast<OperatorClass *>(*itr);
       itr++;
 
       //Varre a lista de elementos da classe de operadores
-      qtd=classe_op->obterNumElemClasseOperadores();
+      qtd=classe_op->getElementCount();
       for(i1=0; i1 < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
       {
        //Verifica se o objeto não referencia o operador
-       if(classe_op->obterElementoClasse(i1).obterOperador()==operador)
+       if(classe_op->getElement(i1).obterOperador()==operador)
        {
         refer=true;
         vet_refs.push_back(classe_op);
@@ -7604,7 +7604,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
 
    while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
    {
-    if(dynamic_cast<ClasseOperadores *>(*itr)->obterFamilia()==familia_op)
+    if(dynamic_cast<OperatorClass *>(*itr)->getFamily()==familia_op)
     {
      refer=true;
      vet_refs.push_back(*itr);

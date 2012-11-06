@@ -66,7 +66,7 @@ void copiarObjeto(BaseObject **pobj_orig, BaseObject *obj_copia, ObjectType tipo
     copiarObjeto(pobj_orig, dynamic_cast<Textbox *>(obj_copia));
   break;
   case OBJ_OPCLASS:
-    copiarObjeto(pobj_orig, dynamic_cast<ClasseOperadores *>(obj_copia));
+    copiarObjeto(pobj_orig, dynamic_cast<OperatorClass *>(obj_copia));
   break;
   case OBJ_CONVERSION:
     copiarObjeto(pobj_orig, dynamic_cast<ConversaoCodificacao *>(obj_copia));

@@ -41,7 +41,7 @@
 #include "funcaoagregacao.h"
 #include "conversaotipo.h"
 #include "conversaocodificacao.h"
-#include "classeoperadores.h"
+#include "operatorclass.h"
 #include "xmlparser.h"
 #include "permissao.h"
 #include <algorithm>
@@ -350,9 +350,9 @@ class ModeloBD:  public QObject, public BaseObject {
   Operador *obterOperador(unsigned idx_obj);
 
   //Métodos de manipulação de classe de operadores
-  void adicionarClasseOperadores(ClasseOperadores *classe_op, int idx_obj=-1);
-  void removerClasseOperadores(ClasseOperadores *classe_op, int idx_obj=-1);
-  ClasseOperadores *obterClasseOperadores(unsigned idx_obj);
+  void adicionarClasseOperadores(OperatorClass *classe_op, int idx_obj=-1);
+  void removerClasseOperadores(OperatorClass *classe_op, int idx_obj=-1);
+  OperatorClass *obterClasseOperadores(unsigned idx_obj);
 
   //Métodos de manipulação de famílias de operadores
   void adicionarFamiliaOperadores(FamiliaOperadores *familia_op, int idx_obj=-1);
@@ -408,7 +408,7 @@ class ModeloBD:  public QObject, public BaseObject {
   ConversaoCodificacao *criarConversaoCodificacao(void);
   Operador *criarOperador(void);
   FamiliaOperadores *criarFamiliaOperadores(void);
-  ClasseOperadores *criarClasseOperadores(void);
+  OperatorClass *criarClasseOperadores(void);
   FuncaoAgregacao *criarFuncaoAgregacao(void);
   Tabela *criarTabela(void);
   Coluna *criarColuna(void);

@@ -230,7 +230,7 @@ void ClasseOperadoresWidget::manipularElemento(int idx_linha)
  }
 }
 
-void ClasseOperadoresWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, ClasseOperadores *classe_op)
+void ClasseOperadoresWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, OperatorClass *classe_op)
 {
  TipoPgSQL tipo;
  unsigned i, qtd;
@@ -248,24 +248,24 @@ void ClasseOperadoresWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *
  if(classe_op)
  {
   //Obtém o tipo de dado que a classe opera
-  tipo=classe_op->obterTipoDado();
+  tipo=classe_op->getDataType();
 
   //Exibe no formulário a família de operadores usada pela classe
-  sel_familiaop->definirObjeto(classe_op->obterFamilia());
+  sel_familiaop->definirObjeto(classe_op->getFamily());
 
   //Marca no formulário se a classe é considerada padrão
-  classepadrao_chk->setChecked(classe_op->classePadrao());
+  classepadrao_chk->setChecked(classe_op->isDefault());
 
   //Marca no combobox o tipo de indexão usada pela classe
-  tipo_index_cmb->setCurrentIndex(tipo_index_cmb->findText(~(classe_op->obterTipoIndexacao())));
+  tipo_index_cmb->setCurrentIndex(tipo_index_cmb->findText(~(classe_op->getIndexingType())));
 
   //Exibe na tabela os elementos configuradas para a classe de operadores
   tab_elementos->blockSignals(true);
-  qtd=classe_op->obterNumElemClasseOperadores();
+  qtd=classe_op->getElementCount();
   for(i=0; i < qtd; i++)
   {
    tab_elementos->adicionarLinha();
-   exibirDadosElemento(classe_op->obterElementoClasse(i), i);
+   exibirDadosElemento(classe_op->getElement(i), i);
   }
   tab_elementos->blockSignals(false);
   tab_elementos->limparSelecao();
@@ -279,27 +279,27 @@ void ClasseOperadoresWidget::aplicarConfiguracao(void)
 {
  try
  {
-  ClasseOperadores *classe_op=NULL;
+  OperatorClass *classe_op=NULL;
   unsigned i, qtd;
 
-  iniciarConfiguracao<ClasseOperadores>();
+  iniciarConfiguracao<OperatorClass>();
 
   //Obtém a referência    classe de objetos que está sendo manipulada
-  classe_op=dynamic_cast<ClasseOperadores *>(this->objeto);
+  classe_op=dynamic_cast<OperatorClass *>(this->objeto);
 
   //Atribui os valores configurados no formulário    classe de operadores
-  classe_op->definirPadrao(classe_op->classePadrao());
-  classe_op->definirFamilia(dynamic_cast<FamiliaOperadores *>(sel_familiaop->obterObjeto()));
-  classe_op->definirTipoIndexacao(TipoIndexacao(tipo_index_cmb->currentText()));
-  classe_op->definirTipoDado(tipo_dado->obterTipoPgSQL());
+  classe_op->setDefault(classe_op->isDefault());
+  classe_op->setFamily(dynamic_cast<FamiliaOperadores *>(sel_familiaop->obterObjeto()));
+  classe_op->setIndexingType(TipoIndexacao(tipo_index_cmb->currentText()));
+  classe_op->setDataType(tipo_dado->obterTipoPgSQL());
 
   /* Remove todos os elementos da classe de operadores e em seguida
      insere aqueles configurados na tabela    classe */
-  classe_op->removerElementosClasse();
+  classe_op->removeElements();
   qtd=tab_elementos->obterNumLinhas();
 
   for(i=0; i < qtd; i++)
-   classe_op->adicionarElementoClasse(tab_elementos->obterDadoLinha(i).value<ElemClasseOperadores>());
+   classe_op->addElement(tab_elementos->obterDadoLinha(i).value<ElemClasseOperadores>());
 
   //Aplica e finaliza a configuração da classe de operadores
   ObjetoBaseWidget::aplicarConfiguracao();
