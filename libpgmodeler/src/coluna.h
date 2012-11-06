@@ -21,10 +21,10 @@
 #ifndef COLUNA_H
 #define COLUNA_H
 
-#include "objetotabela.h"
+#include "tableobject.h"
 #include "dominio.h"
 
-class Coluna: public ObjetoTabela{
+class Coluna: public TableObject{
  protected:
   /* Armazena o nome anterior da coluna antes da mudança de nome da mesma.
      Este atributo auxilia no processo de referência de colunas adicionadas

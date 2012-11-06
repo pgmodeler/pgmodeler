@@ -45,7 +45,7 @@ class TabelaWidget: public ObjetoBaseWidget, public Ui::TabelaWidget {
    void listarObjetos(ObjectType tipo_obj);
 
    //Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
-   void exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin);
+   void exibirDadosObjeto(TableObject *objeto, int idx_lin);
 
    //Seleciona a tabela de objetos de acordo com o tipo passado
    TabelaObjetosWidget *selecionarTabelaObjetos(ObjectType tipo_obj);

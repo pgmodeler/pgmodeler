@@ -23,10 +23,10 @@
 #ifndef GATILHO_H
 #define GATILHO_H
 
-#include "objetotabela.h"
+#include "tableobject.h"
 #include "funcao.h"
 
-class Gatilho: public ObjetoTabela{
+class Gatilho: public TableObject{
  protected:
   //Argumentos que são passados a função que o gatilho executa
   vector<QString> argumentos;

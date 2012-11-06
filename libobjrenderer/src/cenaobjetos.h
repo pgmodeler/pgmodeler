@@ -110,7 +110,7 @@ class CenaObjetos: public QGraphicsScene {
      tratar o sinal s_objetoFilhoSelecionado exibindo um menupop, somente com o auxilio dos métodos
      abaixo isso é possível */
   void sinalizarModificacaoObjeto(BaseGraphicObject *objeto);
-  void sinalizarObjetoFilhoSelecionado(ObjetoTabela *obj_filho);
+  void sinalizarObjetoFilhoSelecionado(TableObject *obj_filho);
   void sinalizarObjetoSelecionado(BaseGraphicObject *objeto, bool selecionado);
 
  signals:

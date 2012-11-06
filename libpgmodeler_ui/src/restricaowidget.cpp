@@ -189,7 +189,7 @@ void RestricaoWidget::adicionarColuna(Coluna *coluna, unsigned tipo_col, int idx
 
   /* Caso o objeto esteja protegido ou foi incluído por relacionamento
      muda a coloração da linha para denotar o fato */
-  if(coluna->incluidoPorRelacionamento() || coluna->isProtected())
+  if(coluna->isAddedByRelationship() || coluna->isProtected())
   {
    QFont fonte;
    fonte=tabela_wgt->font();

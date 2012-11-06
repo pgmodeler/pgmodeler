@@ -754,7 +754,7 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
 
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
        do objeto referenciado */
-    if(!dynamic_cast<ObjetoTabela *>(vet_refs[0]))
+    if(!dynamic_cast<TableObject *>(vet_refs[0]))
     {
      tipo_err=ERR_REM_DIRECT_REFERENCE;
      str_aux=QString(Exception::getErrorMessage(tipo_err))
@@ -765,7 +765,7 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
     }
     else
     {
-     BaseObject *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
+     BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(vet_refs[0])->getParentTable();
 
      //Formata a mensagem caso exista uma referência indireta ao objeto a ser removido
      tipo_err=ERR_REM_INDIRECT_REFERENCE;
@@ -1312,7 +1312,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
  vector<BaseObject *>::iterator itr, itr_end;
  Sequencia *sequencia=NULL;
  Tabela *tabela=NULL;
- ObjetoTabela *obj_tab=NULL;
+ TableObject *obj_tab=NULL;
  Restricao *restricao=NULL;
  Indice *indice=NULL;
  Gatilho *gatilho=NULL;
@@ -1345,7 +1345,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
     for(i=0; i < qtd; i++)
     {
      //Obtém um objeto da lista atual na posição atual
-     obj_tab=dynamic_cast<ObjetoTabela *>(tabela->obterObjeto(i, tipo_obj_tab[id_tipo]));
+     obj_tab=dynamic_cast<TableObject *>(tabela->obterObjeto(i, tipo_obj_tab[id_tipo]));
      enc=false;
 
      //Caso seja uma restrição
@@ -1357,7 +1357,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
       /* Uma restrição só será considerada como caso especial quando a mesma não foi
          incluída por relacionamento, ou seja, tal restrição a qual referencia colunas
          adicionadas por relacionamentos foi criada pelo usuário. */
-      enc=(!restricao->incluidoPorRelacionamento() &&
+      enc=(!restricao->isAddedByRelationship() &&
             restricao->referenciaColunaIncRelacao() &&
             restricao->obterTipoRestricao()!=TipoRestricao::primary_key);
 
@@ -1834,7 +1834,7 @@ void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
 
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
-   if(!dynamic_cast<ObjetoTabela *>(vet_refs[0]))
+   if(!dynamic_cast<TableObject *>(vet_refs[0]))
    {
     //Formata a mensagem para referencia direta
     tipo_err=ERR_REM_DIRECT_REFERENCE;
@@ -1846,7 +1846,7 @@ void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
    }
    else
    {
-    BaseObject *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
+    BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(vet_refs[0])->getParentTable();
     //Formata a mensagem para referencia indireta
     tipo_err=ERR_REM_INDIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(tipo_err))
@@ -1990,7 +1990,7 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
 
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
-   if(!dynamic_cast<ObjetoTabela *>(vet_refs[0]))
+   if(!dynamic_cast<TableObject *>(vet_refs[0]))
    {
     //Formata a mensagem para referência direta
     tipo_err=ERR_REM_DIRECT_REFERENCE;
@@ -2003,7 +2003,7 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
    }
    else
    {
-    BaseObject *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
+    BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(vet_refs[0])->getParentTable();
     //Formata a mensagem para referência indireta
     tipo_err=ERR_REM_INDIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE))
@@ -2300,7 +2300,7 @@ void ModeloBD::removerTipoUsuario(BaseObject *objeto, int idx_obj)
 
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
-   if(!dynamic_cast<ObjetoTabela *>(vet_refs[0]))
+   if(!dynamic_cast<TableObject *>(vet_refs[0]))
    {
     //Formata a mensagem para referência direta
     tipo_err=ERR_REM_DIRECT_REFERENCE;
@@ -2312,7 +2312,7 @@ void ModeloBD::removerTipoUsuario(BaseObject *objeto, int idx_obj)
    }
    else
    {
-    BaseObject *obj_ref_pai=dynamic_cast<ObjetoTabela *>(vet_refs[0])->obterTabelaPai();
+    BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(vet_refs[0])->getParentTable();
 
     //Formata a mensagem para referência indireta
     tipo_err=ERR_REM_INDIRECT_REFERENCE;
@@ -2746,7 +2746,7 @@ void ModeloBD::carregarModelo(const QString &nome_arq)
          //Caso o objeto foi criado com sucesso
          if(objeto)
          {
-          if(!dynamic_cast<ObjetoTabela *>(objeto) &&
+          if(!dynamic_cast<TableObject *>(objeto) &&
              tipo_obj!=OBJ_RELATIONSHIP && tipo_obj!=BASE_RELATIONSHIP)
           {
            //Usa o método de inserção de objetos genéricos
@@ -4469,7 +4469,7 @@ Tabela *ModeloBD::criarTabela(void)
  map<QString, QString> atributos;
  QString elem;
  Tabela *tabela=NULL;
- ObjetoTabela *objeto=NULL;
+ TableObject *objeto=NULL;
 
  try
  {
@@ -4638,7 +4638,7 @@ Restricao *ModeloBD::criarRestricao(BaseObject *objeto)
   }
 
   restricao=new Restricao;
-  restricao->definirTabelaPai(tabela);
+  restricao->setParentTable(tabela);
 
   //Configurando o tipo da restrição
   if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::CK_CONSTR)
@@ -4883,7 +4883,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
 
   indice=new Indice;
   definirAtributosBasicos(indice);
-  indice->definirTabelaPai(tabela);
+  indice->setParentTable(tabela);
   indice->definirAtributo(Indice::CONCORRENTE, atributos[ParsersAttributes::CONCURRENT]==ParsersAttributes::_TRUE_);
   indice->definirAtributo(Indice::UNIQUE, atributos[ParsersAttributes::UNIQUE]==ParsersAttributes::_TRUE_);
   indice->definirAtributo(Indice::ATUAL_RAPIDA, atributos[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::_TRUE_);
@@ -5109,7 +5109,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
   }
 
   gatilho=new Gatilho;
-  gatilho->definirTabelaPai(tabela);
+  gatilho->setParentTable(tabela);
 
   definirAtributosBasicos(gatilho);
 
@@ -5924,7 +5924,7 @@ Permissao *ModeloBD::criarPermissao(void)
 
 void ModeloBD::validarRemocaoColuna(Coluna *coluna)
 {
- if(coluna && coluna->obterTabelaPai())
+ if(coluna && coluna->getParentTable())
  {
   vector<BaseObject *> vet_refs;
   obterReferenciasObjeto(coluna, vet_refs);
@@ -5933,7 +5933,7 @@ void ModeloBD::validarRemocaoColuna(Coluna *coluna)
   if(!vet_refs.empty())
    //Dispara um erro informando que a coluna não pde ser remove e qual objeto a referencia
    throw Exception(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE)
-                 .arg(QString::fromUtf8(coluna->obterTabelaPai()->getName(true)) + "." + QString::fromUtf8(coluna->getName(true)))
+                 .arg(QString::fromUtf8(coluna->getParentTable()->getName(true)) + "." + QString::fromUtf8(coluna->getName(true)))
                  .arg(coluna->getTypeName())
                  .arg(QString::fromUtf8(vet_refs[0]->getName(true)))
                  .arg(vet_refs[0]->getTypeName()),
@@ -5941,7 +5941,7 @@ void ModeloBD::validarRemocaoColuna(Coluna *coluna)
  }
 }
 
-void ModeloBD::validarRelacObjetoTabela(ObjetoTabela *objeto, Tabela *tabela_pai)
+void ModeloBD::validarRelacObjetoTabela(TableObject *objeto, Tabela *tabela_pai)
 {
  try
  {
@@ -6176,7 +6176,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
      restricao=tabela->obterRestricao(i);
 
      //Caso a restrição seja um objeto especial armazena o mesmo no mapa de objetos
-     if(!restricao->incluidoPorLigacao() &&
+     if(!restricao->isAddedByLinking() &&
          restricao->obterTipoRestricao()!=TipoRestricao::primary_key &&
          restricao->referenciaColunaIncRelacao())
      {
@@ -6720,7 +6720,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   {
    Sequencia *seq=dynamic_cast<Sequencia *>(objeto);
    if(seq->obterPossuidora())
-    obterDependenciasObjeto(seq->obterPossuidora()->obterTabelaPai(), vet_deps, inc_dep_indiretas);
+    obterDependenciasObjeto(seq->obterPossuidora()->getParentTable(), vet_deps, inc_dep_indiretas);
   }
   //** Obtendo as dependências de Tabelas **
   else if(tipo_obj==OBJ_TABLE)
@@ -6741,7 +6741,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
     tipo_usr=obterObjetoTipoPgSQL(col->obterTipo());
       //obterObjeto(*col->obterTipo(), OBJETO_TIPO);
 
-    if(!col->incluidoPorLigacao() && tipo_usr)
+    if(!col->isAddedByLinking() && tipo_usr)
      obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
    }
 
@@ -6750,11 +6750,11 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    for(i=0; i < qtd; i++)
    {
     rest=dynamic_cast<Restricao *>(tab->obterRestricao(i));
-    if(!rest->incluidoPorLigacao() &&
+    if(!rest->isAddedByLinking() &&
         rest->obterTipoRestricao()==TipoRestricao::foreign_key)
      obterDependenciasObjeto(rest->obterTabReferenciada(), vet_deps, inc_dep_indiretas);
 
-    if(!rest->incluidoPorLigacao() && rest->getTablespace())
+    if(!rest->isAddedByLinking() && rest->getTablespace())
      obterDependenciasObjeto(rest->getTablespace(), vet_deps, inc_dep_indiretas);
    }
 
@@ -6896,7 +6896,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    {
     seq=dynamic_cast<Sequencia *>(*itr);
     if(seq->obterPossuidora() &&
-       seq->obterPossuidora()->obterTabelaPai()==tabela)
+       seq->obterPossuidora()->getParentTable()==tabela)
     {
      refer=true;
      vet_refs.push_back(seq);

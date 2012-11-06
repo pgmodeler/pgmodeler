@@ -9,7 +9,7 @@ const QString OGSubItemObjeto::TEXTO_NOT_NULL("nn");
 const QString OGSubItemObjeto::DELIMITADOR_REST_INI("«");
 const QString OGSubItemObjeto::DELIMITADOR_REST_FIM("»");
 
-OGSubItemObjeto::OGSubItemObjeto(ObjetoTabela *objeto) : ObjetoGrafico(objeto)
+OGSubItemObjeto::OGSubItemObjeto(TableObject *objeto) : ObjetoGrafico(objeto)
 {
  //O descritor é alocado no método de configuração conforme o tipo do objeto de origem
  descritor=NULL;
@@ -146,7 +146,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
          tipo_obj==OBJ_RULE ||
          tipo_obj==OBJ_TRIGGER)
  {
-  ObjetoTabela *objeto_tab=dynamic_cast<ObjetoTabela *>(this->obterObjetoOrigem());
+  TableObject *objeto_tab=dynamic_cast<TableObject *>(this->obterObjetoOrigem());
   QGraphicsPolygonItem *desc=dynamic_cast<QGraphicsPolygonItem *>(descritor);
   QPolygonF pol;
 
@@ -182,7 +182,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   QTextCharFormat fmt;
   float px;
   QString str_rest;
-  ObjetoTabela *objeto_tab=dynamic_cast<ObjetoTabela *>(this->obterObjetoOrigem());
+  TableObject *objeto_tab=dynamic_cast<TableObject *>(this->obterObjetoOrigem());
   Coluna *coluna=dynamic_cast<Coluna *>(objeto_tab);
   TipoRestricao tipo_rest=TipoRestricao::nulo;
 
@@ -215,7 +215,7 @@ void OGSubItemObjeto::configurarObjeto(void)
    else
     fmt=config_fonte[ParsersAttributes::COLUMN];
 
-   if(coluna->incluidoPorRelacionamento())
+   if(coluna->isAddedByRelationship())
     fmt=config_fonte[ParsersAttributes::INH_COLUMN];
    else if(coluna->isProtected())
     fmt=config_fonte[ParsersAttributes::PROT_COLUMN];
@@ -421,9 +421,9 @@ QGraphicsItem *OGSubItemObjeto::obterObjetoFilho(unsigned idx_obj)
 
 QString OGSubItemObjeto::obterStringRestricoes(Coluna *coluna)
 {
- if(coluna && coluna->obterTabelaPai())
+ if(coluna && coluna->getParentTable())
  {
-  Tabela *tabela=dynamic_cast<Tabela *>(coluna->obterTabelaPai());
+  Tabela *tabela=dynamic_cast<Tabela *>(coluna->getParentTable());
   QString str_rest;
   Restricao *restricao=NULL;
   vector<Restricao *>::iterator itr,itr_end;

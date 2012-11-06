@@ -40,7 +40,7 @@ class OGTabela: public OGTabelaBase {
   QGraphicsItemGroup *colunas, *atributos_ext;
 
   //Armazena a referência ao objeto de tabela selecionado na tabela
-  ObjetoTabela *obj_filho_sel;
+  TableObject *obj_filho_sel;
 
   //Métodos que controlam o foco/seleção subitens da tabela
   void hoverLeaveEvent(QGraphicsSceneHoverEvent *evento);
@@ -60,7 +60,7 @@ class OGTabela: public OGTabelaBase {
  signals:
   /* Este sinal sempre é disparado quando o usuário clica com o botão direito
      sobre um item da tabela em foco */
-  void s_objetoFilhoSelecionado(ObjetoTabela *);
+  void s_objetoFilhoSelecionado(TableObject *);
 };
 
 #endif

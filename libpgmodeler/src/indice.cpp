@@ -234,7 +234,7 @@ bool Indice::referenciaColunaIncRelacao(void)
   col=(*itr).obterColuna();
 
   //Obtém se a coluna foi incluída por relacionamento ou não
-  enc=(col && col->incluidoPorRelacionamento());
+  enc=(col && col->isAddedByRelationship());
   //Passa para a próxima coluna
   itr++;
  }
@@ -251,8 +251,8 @@ QString Indice::getCodeDefinition(unsigned tipo_def)
  attributes[ParsersAttributes::INDEX_TYPE]=(~tipo_indexacao);
  attributes[ParsersAttributes::CONDITION]=exp_condicional;
 
- if(this->tabela_pai)
-  attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
+ if(this->parent_table)
+  attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
  attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fator_preenc);
 

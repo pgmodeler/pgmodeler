@@ -308,7 +308,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
  if(modelo_bd)
  {
   BaseObject *objeto=NULL, *esquema=NULL;
-  ObjetoTabela *objeto_tab=NULL;
+  TableObject *objeto_tab=NULL;
   QTableWidgetItem *item_tab=NULL, *item_tab1=NULL;
   Tabela *tabela=NULL;
   Funcao *funcao=NULL;
@@ -524,7 +524,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
      for(id_lin=0; map_objs_visiveis[subtipos[id_tipo]] && id_lin < qtd1; id_lin++)
      {
       listaobjetos_tbw->insertRow(id_lin);
-      objeto_tab=dynamic_cast<ObjetoTabela *>(tabela->obterObjeto(id_lin, subtipos[id_tipo]));
+      objeto_tab=dynamic_cast<TableObject *>(tabela->obterObjeto(id_lin, subtipos[id_tipo]));
 
       //Cria o item descritor de nome do objeto
       item_tab=new QTableWidgetItem;
@@ -535,7 +535,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
 
       /* Caso o objeto seja uma coluna ou restrição e o mesmo foi incluído por relacionamento,
         configura um estilo de fonte para indicar esta situação */
-      if(objeto_tab->incluidoPorRelacionamento())
+      if(objeto_tab->isAddedByRelationship())
       {
        fonte=item_tab->font();
        fonte.setItalic(true);
@@ -868,7 +868,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
 
        /* Caso o objeto foi incluido   tabela por um relacionamento, configura um estilo de fonte para
           indicar esta situação */
-       if(dynamic_cast<ObjetoTabela *>(objeto)->incluidoPorRelacionamento())
+       if(dynamic_cast<TableObject *>(objeto)->isAddedByRelationship())
        {
         fonte=item3->font(0);
         fonte.setItalic(true);

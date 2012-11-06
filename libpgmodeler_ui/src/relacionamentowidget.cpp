@@ -493,7 +493,7 @@ void RelacionamentoWidget::editarObjeto(int idx_lin)
  }
 }
 
-void RelacionamentoWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
+void RelacionamentoWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
 {
  TabelaObjetosWidget *tab=NULL;
 
@@ -522,7 +522,7 @@ void RelacionamentoWidget::removerObjetos(void)
  Relacionamento *relacao=NULL;
  ObjectType tipo_obj=BASE_OBJECT;
  unsigned qtd, qtd_op=0, i;
- ObjetoTabela *objeto=NULL;
+ TableObject *objeto=NULL;
 
  try
  {
@@ -596,7 +596,7 @@ void RelacionamentoWidget::removerObjeto(int idx_lin)
 {
  Relacionamento *relacao=NULL;
  ObjectType tipo_obj=BASE_OBJECT;
- ObjetoTabela *objeto=NULL;
+ TableObject *objeto=NULL;
 
  try
  {

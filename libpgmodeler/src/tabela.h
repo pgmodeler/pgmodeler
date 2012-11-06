@@ -36,19 +36,19 @@
 class Tabela: public BaseTable {
  private:
   //Armazena as colunas da tabela
-  vector<ObjetoTabela *> colunas;
+  vector<TableObject *> colunas;
 
   //Armazena as constraints que se aplicam a  tabela
-  vector<ObjetoTabela *> restricoes;
+  vector<TableObject *> restricoes;
 
   //Armazena os índices que se aplicam a tabela
-  vector<ObjetoTabela *> indices;
+  vector<TableObject *> indices;
 
   //Armazena as regras que se aplicam a  tabela
-  vector<ObjetoTabela *> regras;
+  vector<TableObject *> regras;
 
   //Armazena os gatilhos que se aplicam a  tabela
-  vector<ObjetoTabela *> gatilhos;
+  vector<TableObject *> gatilhos;
 
   //Armazena as tabelas das quais a tabela atual herda atributos
   vector<Tabela *> tabelas_pai;
@@ -206,7 +206,7 @@ class Tabela: public BaseTable {
 
   //Obtém o índice de um determinado objeto através de seu nome
   int obterIndiceObjeto(const QString &obj_name, ObjectType tipo_obj);
-  int obterIndiceObjeto(ObjetoTabela *objeto);
+  int obterIndiceObjeto(TableObject *objeto);
 
   //Retorna a chave primária da tabela se possuir
   Restricao *obterChavePrimaria(void);
@@ -234,13 +234,13 @@ class Tabela: public BaseTable {
   void operator = (Tabela &tabela);
 
   //Retorna a lista de objetos referente ao tipo de objeto passado
-  vector<ObjetoTabela *> *obterListaObjetos(ObjectType tipo_obj);
+  vector<TableObject *> *obterListaObjetos(ObjectType tipo_obj);
 
   /* Obtém objetos os quais referenciam o objeto do parâmetro (direta ou indiretamente) e os armazena num vetor.
      O parâmetro 'modo_exclusao' é usado para agilizar a execução do método quando este é usado para validação
      da exclusão do objeto, obtendo apenas a primeira referência ao objeto candidato a exclusão.
      Para se obter TODAS as referências ao objeto, deve-se espeficicar como 'false' o parâmetro 'modo_exclusão'. */
-  void obterReferenciasColuna(Coluna *coluna, vector<ObjetoTabela *> &vet_refs, bool modo_exclusao=false);
+  void obterReferenciasColuna(Coluna *coluna, vector<TableObject *> &vet_refs, bool modo_exclusao=false);
 
   friend class Relacionamento;
   friend class ListaOperacoes;

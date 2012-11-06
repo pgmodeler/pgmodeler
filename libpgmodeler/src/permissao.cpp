@@ -302,7 +302,7 @@ QString Permissao::getCodeDefinition(unsigned tipo_def)
   attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(objeto->getType());
 
  if(tipo_obj==OBJ_COLUMN)
-  attributes[ParsersAttributes::PARENT]=dynamic_cast<Coluna *>(objeto)->obterTabelaPai()->getName(true);
+  attributes[ParsersAttributes::PARENT]=dynamic_cast<Coluna *>(objeto)->getParentTable()->getName(true);
 
  if(tipo_def==SchemaParser::XML_DEFINITION)
  {

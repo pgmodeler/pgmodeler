@@ -22,10 +22,10 @@
 #ifndef REGRA_H
 #define REGRA_H
 
-#include "objetotabela.h"
+#include "tableobject.h"
 #include "coluna.h"
 
-class Regra: public ObjetoTabela{
+class Regra: public TableObject{
  private:
   //Comandos que a regra executará ao ser chamada
   vector<QString> comandos;

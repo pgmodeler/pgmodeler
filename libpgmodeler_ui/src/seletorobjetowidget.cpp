@@ -70,7 +70,7 @@ void SeletorObjetoWidget::definirObjeto(BaseObject *objeto)
   else if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT || tipo_obj==OBJ_RULE ||
      tipo_obj==OBJ_TRIGGER ||tipo_obj==OBJ_INDEX)
   {
-   BaseObject *tab_pai=dynamic_cast<ObjetoTabela *>(objeto)->obterTabelaPai();
+   BaseObject *tab_pai=dynamic_cast<TableObject *>(objeto)->getParentTable();
    if(tab_pai)
    {
    /*if(tab_pai->obterEsquema())

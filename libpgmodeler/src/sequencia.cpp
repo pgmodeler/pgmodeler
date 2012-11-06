@@ -164,7 +164,7 @@ void Sequencia::setSchema(BaseObject *esquema)
  if(coluna)
  {
   //Obtém a tabela pai da coluna
-  tabela=dynamic_cast<Tabela *>(coluna->obterTabelaPai());
+  tabela=dynamic_cast<Tabela *>(coluna->getParentTable());
 
   //Verifica se o esquema sendo atribuíd  seqüência é o mesmo da tabela possuidora
   if(tabela && tabela->getSchema()!=esquema)
@@ -237,7 +237,7 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
   //Obtém a coluna da tabela com base no nome passado
   this->coluna=tabela->obterColuna(nome_coluna);
 
-  if(this->coluna && this->coluna->incluidoPorRelacionamento() &&
+  if(this->coluna && this->coluna->isAddedByRelationship() &&
      this->coluna->getObjectId() > this->object_id)
    this->object_id=BaseObject::getGlobalId();
 
@@ -258,7 +258,7 @@ void Sequencia::definirPossuidora(Coluna *coluna)
   this->coluna=NULL;
  else
  {
-  tabela=dynamic_cast<Tabela *>(coluna->obterTabelaPai());
+  tabela=dynamic_cast<Tabela *>(coluna->getParentTable());
 
   //CAso a coluna possuidor não seja de uma tabela
   if(!tabela)
@@ -282,7 +282,7 @@ void Sequencia::definirPossuidora(Coluna *coluna)
 
   this->coluna=coluna;
 
-  if(coluna && coluna->incluidoPorRelacionamento() &&
+  if(coluna && coluna->isAddedByRelationship() &&
      coluna->getObjectId() > this->object_id)
    this->object_id=BaseObject::getGlobalId();
  }
@@ -290,7 +290,7 @@ void Sequencia::definirPossuidora(Coluna *coluna)
 
 bool Sequencia::referenciaColunaIncRelacao(void)
 {
- return(coluna && coluna->incluidoPorRelacionamento());
+ return(coluna && coluna->isAddedByRelationship());
 }
 
 bool Sequencia::sequenciaCiclica(void)
@@ -336,7 +336,7 @@ QString Sequencia::getCodeDefinition(unsigned tipo_def)
  //Caso haja uma coluna possuidora
  if(coluna)
  {
-  tabela=dynamic_cast<Tabela *>(coluna->obterTabelaPai());
+  tabela=dynamic_cast<Tabela *>(coluna->getParentTable());
   /* Formata o atributo possuidora como sendo o nome da tabela
      e a coluna possuidora */
   str_aux=tabela->getName(true) + "." + coluna->getName(true);

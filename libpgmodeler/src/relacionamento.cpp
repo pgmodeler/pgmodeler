@@ -217,7 +217,7 @@ void Relacionamento::criarChavePrimariaEspecial(void)
   pk_especial=new Restricao;
   pk_especial->setName(this->getName() + QString("_pk"));
   pk_especial->definirTipo(TipoRestricao::primary_key);
-  pk_especial->definirIncPorLigacao(true);
+  pk_especial->setAddedByLinking(true);
   pk_especial->setProtected(true);
   pk_especial->setTablespace(dynamic_cast<EspacoTabela *>(obterTabelaReceptora()->getTablespace()));
 
@@ -275,11 +275,11 @@ TipoPostergacao Relacionamento::obterTipoPostergacao(void)
  return(tipo_postergacao);
 }
 
-int Relacionamento::obterIndiceObjeto(ObjetoTabela *objeto)
+int Relacionamento::obterIndiceObjeto(TableObject *objeto)
 {
- vector<ObjetoTabela *>::iterator itr, itr_end;
- vector<ObjetoTabela *> *lista=NULL;
- ObjetoTabela *obj_aux=NULL;
+ vector<TableObject *>::iterator itr, itr_end;
+ vector<TableObject *> *lista=NULL;
+ TableObject *obj_aux=NULL;
  ObjectType tipo_obj;
  bool enc=false;
 
@@ -341,17 +341,17 @@ bool Relacionamento::colunaExistente(Coluna *coluna)
  return(enc);
 }
 
-void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
+void Relacionamento::adicionarObjeto(TableObject *objeto_tab, int idx_obj)
 {
  ObjectType tipo_obj;
- vector<ObjetoTabela *> *lista_obj=NULL;
+ vector<TableObject *> *lista_obj=NULL;
 
  /* Somente a chave primária especial (criada pelo relacionamento)
     só pode ser adicionado a um relacionamento de generalização ou dependência.
     Caso o tipo do objeto a ser adionado não obedeça a esta condição um erro é retornado */
  if((tipo_relac==RELACIONAMENTO_GEN ||
      tipo_relac==RELACIONAMENTO_DEP) &&
-    !(objeto_tab->incluidoPorRelacionamento() &&
+    !(objeto_tab->isAddedByRelationship() &&
       objeto_tab->isProtected() &&
       objeto_tab->getType()==OBJ_CONSTRAINT))
   throw Exception(ERR_ASG_OBJ_INV_REL_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -362,7 +362,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
      Um atributo/restrição de um relacionamento não pode
      ser atribuido ao relacionamento caso este já pertença a uma tabela,
      caso isso aconteça o método aborta a inserção do objeto */
-  if(!objeto_tab->obterTabelaPai() &&
+  if(!objeto_tab->getParentTable() &&
      obterIndiceObjeto(objeto_tab) < 0)
   {
    /* Obtém a lista de objetos de acordo com o tipo
@@ -380,7 +380,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
    /* Como atributos recém criados não possuem uma tabela pai até que sejam
       adicionados   tabela receptora, para medidas de validação do código do atributo,
       a tabela de origem do relacionamento é atribuída como tabela pai */
-   objeto_tab->definirTabelaPai(tabela_orig);
+   objeto_tab->setParentTable(tabela_orig);
 
    if(tipo_obj==OBJ_COLUMN)
     dynamic_cast<Coluna *>(objeto_tab)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
@@ -397,7 +397,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
    }
 
    //Após a validação do novo objeto a tabela pai é setada como nula
-   objeto_tab->definirTabelaPai(NULL);
+   objeto_tab->setParentTable(NULL);
 
    /* Caso o índice passado seja menor que zero ou superior ao tamanho da lista
       o objeto será inserido ao final da mesma */
@@ -417,7 +417,7 @@ void Relacionamento::adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj)
       e restrições são aproveitados quando o relacionamento n-n é convertido
       em tabela */
    //if(tipo_relac!=RELACIONAMENTO_NN)
-   objeto_tab->definirIncPorLigacao(true);
+   objeto_tab->setAddedByLinking(true);
 
    this->invalidado=true;
   }
@@ -466,7 +466,7 @@ void Relacionamento::destruirObjetos(void)
 
 void Relacionamento::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
 {
- vector<ObjetoTabela *> *lista_obj=NULL;
+ vector<TableObject *> *lista_obj=NULL;
 
  //Seleciona a lista de objetos de acordo com o tipo passado
  if(tipo_obj==OBJ_COLUMN)
@@ -487,7 +487,7 @@ void Relacionamento::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
  {
   Coluna *coluna=NULL;
   Restricao *rest=NULL;
-  vector<ObjetoTabela *>::iterator itr, itr_end;
+  vector<TableObject *>::iterator itr, itr_end;
   bool refer=false;
 
   itr=restricoes_rel.begin();
@@ -527,7 +527,7 @@ void Relacionamento::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
  conectarRelacionamento();
 }
 
-void Relacionamento::removerObjeto(ObjetoTabela *objeto)
+void Relacionamento::removerObjeto(TableObject *objeto)
 {
  if(!objeto)
   throw Exception(ERR_REM_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -570,9 +570,9 @@ Coluna *Relacionamento::obterColunaReferenciada(const QString &nome_col)
   return(NULL);
 }
 
-ObjetoTabela *Relacionamento::obterObjeto(unsigned idx_obj, ObjectType tipo_obj)
+TableObject *Relacionamento::obterObjeto(unsigned idx_obj, ObjectType tipo_obj)
 {
- vector<ObjetoTabela *> *lista=NULL;
+ vector<TableObject *> *lista=NULL;
 
  //Selecionando a lista de objetos de acordo com o tipo do objeto
  if(tipo_obj==OBJ_COLUMN)
@@ -588,11 +588,11 @@ ObjetoTabela *Relacionamento::obterObjeto(unsigned idx_obj, ObjectType tipo_obj)
  return(lista->at(idx_obj));
 }
 
-ObjetoTabela *Relacionamento::obterObjeto(const QString &nome_atrib, ObjectType tipo_obj)
+TableObject *Relacionamento::obterObjeto(const QString &nome_atrib, ObjectType tipo_obj)
 {
- vector<ObjetoTabela *>::iterator itr, itr_end;
- vector<ObjetoTabela *> *lista=NULL;
- ObjetoTabela *obj_aux=NULL;
+ vector<TableObject *>::iterator itr, itr_end;
+ vector<TableObject *> *lista=NULL;
+ TableObject *obj_aux=NULL;
  bool enc=false;
 
  //Selecionando a lista de objetos de acordo com o tipo do objeto
@@ -694,7 +694,7 @@ void Relacionamento::adicionarRestricoes(Tabela *tab_dest)
 
    /* Interrompe o processamento caso a restrição já
       tenha sido incluída a uma das tabelas */
-   if(rest->obterTabelaPai())
+   if(rest->getParentTable())
     break;
 
    /* Caso ela não seja uma chave primária, a mesma é inserida
@@ -917,11 +917,11 @@ void Relacionamento::adicionarColunasRelGen(void)
      (*coluna)=(*col_dest);
 
      if(tipo_relac==RELACIONAMENTO_GEN)
-      coluna->definirIncPorGeneralizacao(true);
+      coluna->setAddedByGeneralization(true);
      else
-      coluna->definirIncPorDependencia(true);
+      coluna->setAddedByCopy(true);
 
-     coluna->definirTabelaPai(NULL);
+     coluna->setParentTable(NULL);
 
      //Converte seu tipo de '' para 'integer', se necessário
      if(coluna->obterTipo()=="serial")
@@ -1100,7 +1100,7 @@ void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
    {
     pk=new Restricao;
     pk->definirTipo(TipoRestricao::primary_key);
-    pk->definirIncPorLigacao(true);
+    pk->setAddedByLinking(true);
     this->pk_relident=pk;
    }
    else
@@ -1153,7 +1153,7 @@ void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_rec
   {
    uq=new Restricao;
    uq->definirTipo(TipoRestricao::unique);
-   uq->definirIncPorLigacao(true);
+   uq->setAddedByLinking(true);
    uq_rel11=uq;
   }
 
@@ -1210,7 +1210,7 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
    fk->definirPostergavel(this->postergavel);
    fk->definirTipoPostergacao(this->tipo_postergacao);
    fk->definirTipo(TipoRestricao::foreign_key);
-   fk->definirIncPorLigacao(true);
+   fk->setAddedByLinking(true);
    //Define a tabela de destino da chave estrangeira
    fk->definirTabReferenciada(tab_referencia);
 
@@ -1329,7 +1329,7 @@ void Relacionamento::adicionarAtributos(Tabela *tab_receptora)
    coluna=dynamic_cast<Coluna *>(atributos_rel[i]);
 
    //Caso o atributo já pertença a uma tabela interrompe o processamento
-   if(coluna->obterTabelaPai())
+   if(coluna->getParentTable())
     break;
 
    nome=coluna->getName();
@@ -1444,10 +1444,10 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
    nome_ant=nome_ant_cols_ref[coluna->getObjectId()];
 
    //Protege a nova coluna, evitando que o usuário a modifique ou remova
-   coluna->definirIncPorLigacao(true);
+   coluna->setAddedByLinking(true);
 
    //Desfaz a referência da coluna a uma tabela pai
-   coluna->definirTabelaPai(NULL);
+   coluna->setParentTable(NULL);
 
    /* Caso o tipo da nova coluna seja "serial" o mesmo será
       convertido para "integer" */
@@ -1708,7 +1708,7 @@ void Relacionamento::adicionarColunasRelNn(void)
   pk_tabnn=new Restricao;
   pk_tabnn->setName(tabela_relnn->getName() + "_pk");
   pk_tabnn->definirTipo(TipoRestricao::primary_key);
-  pk_tabnn->definirIncPorLigacao(true);
+  pk_tabnn->setAddedByLinking(true);
   qtd=colunas_ref.size();
 
   for(i=0; i < qtd; i++)
@@ -1828,7 +1828,7 @@ void Relacionamento::removerObjetosTabelaRefCols(Tabela *tabela)
  for(i=0; i < qtd; i++)
  {
   rest=tabela->obterRestricao(i);
-  if(!rest->incluidoPorRelacionamento() &&
+  if(!rest->isAddedByRelationship() &&
      rest->obterTipoRestricao()!=TipoRestricao::primary_key &&
      rest->referenciaColunaIncRelacao())
   {
@@ -1871,7 +1871,7 @@ void Relacionamento::removerColsChavePrimariaTabela(Tabela *tabela)
 
     /* Caso a coluna foi incluída por relacionamento e a mesma pertence
        ao próprio relacionamento */
-    if(coluna->incluidoPorRelacionamento() &&
+    if(coluna->isAddedByRelationship() &&
       (colunaExistente(coluna) || obterIndiceObjeto(coluna) >= 0))
     {
      //Remove a coluna da chave primária
@@ -1893,9 +1893,9 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
    Coluna *coluna=NULL;
    Tabela *tabela=NULL;
    unsigned idx_lista=0;
-   vector<ObjetoTabela *> *lista_atrib=NULL;
-   vector<ObjetoTabela *>::iterator itr_atrib, itr_atrib_end;
-   ObjetoTabela *obj_tab=NULL;
+   vector<TableObject *> *lista_atrib=NULL;
+   vector<TableObject *>::iterator itr_atrib, itr_atrib_end;
+   TableObject *obj_tab=NULL;
    //TipoObjetoBase tipo_obj;
 
    if(tipo_relac==RELACIONAMENTO_GEN ||
@@ -1929,7 +1929,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
      /* Obtém a tabela a qual possui a chave estrangeira que representa o
         relacionamento (tabela esta onde foi inserida a chave estrangeira
         no momento da conexão do relacionamento) */
-     tabela=dynamic_cast<Tabela *>(fk_rel1n->obterTabelaPai());
+     tabela=dynamic_cast<Tabela *>(fk_rel1n->getParentTable());
 
      //Remove a chave estrangeira da tabela
      tabela->removerRestricao(fk_rel1n->getName());
@@ -1965,7 +1965,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
      {
       /* Obtém a tabela a qual possui a chave primária criada pelo relacionamento
          caso este seja um relacionamento identificador */
-      tabela=dynamic_cast<Tabela *>(pk_relident->obterTabelaPai());
+      tabela=dynamic_cast<Tabela *>(pk_relident->getParentTable());
       //Remove a chave primária da tabela
       tabela->removerRestricao(pk_relident->getName());
 
@@ -1989,7 +1989,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
          e sim uma restrição criada quando o relacionamento é conectado (ex. chave primária e chaves estrangeiras).
          A segunda parte da condição obterIndiceObjeto(rest) < 0 verifica se a restrição a ser removida não fazer
          parte da lista de restrições criadas pelo usuário, caso faça parte, não será destruída */
-      if(rest->incluidoPorRelacionamento() && obterIndiceObjeto(rest) < 0)
+      if(rest->isAddedByRelationship() && obterIndiceObjeto(rest) < 0)
       {
        //Remove a restrição da tabela
        tabela_relnn->removerRestricao(rest->getName());
@@ -2027,7 +2027,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
      {
       //Remove o atributo da tabela através do nome e tipo
       tabela->removerObjeto(obj_tab->getName(), obj_tab->getType());
-      obj_tab->definirTabelaPai(NULL);
+      obj_tab->setParentTable(NULL);
      }
      //Para para o atributo posterior
      itr_atrib++;
@@ -2090,7 +2090,7 @@ bool Relacionamento::relacionamentoIdentificador(void)
 
 bool Relacionamento::possuiAtributoIdentificador(void)
 {
- vector<ObjetoTabela *>::iterator itr, itr_end;
+ vector<TableObject *>::iterator itr, itr_end;
  Restricao *rest=NULL;
  bool enc=false;
 
@@ -2131,9 +2131,9 @@ bool Relacionamento::relacionamentoInvalidado(void)
      a tabela receptora fique sem chave primária em consequência
      todo e qualquer relacionamento 1-1, 1-n ou n-n ligado a ela
      deverá ser revalidado */
-  if(pk_relident && pk_relident->incluidoPorLigacao())
+  if(pk_relident && pk_relident->isAddedByLinking())
   {
-   dynamic_cast<Tabela *>(pk_relident->obterTabelaPai())->removerObjeto(pk_relident);
+   dynamic_cast<Tabela *>(pk_relident->getParentTable())->removerObjeto(pk_relident);
    pk_relident=NULL;
   }
   return(true);

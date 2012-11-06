@@ -176,10 +176,10 @@ class Relacionamento: public RelacionamentoBase {
   map<unsigned, QString> nome_ant_cols_ref;
 
   //Atributos do relacionamento
-  vector<ObjetoTabela *> atributos_rel;
+  vector<TableObject *> atributos_rel;
 
   //Restrições aplicadas aos atributos do relacionamento
-  vector<ObjetoTabela *> restricoes_rel;
+  vector<TableObject *> restricoes_rel;
 
   //Chave estrangeira que representa o relacionamento 1-n
   Restricao *fk_rel1n,
@@ -364,17 +364,17 @@ class Relacionamento: public RelacionamentoBase {
 
   /* Adiciona um atributo ou restrição ao relacionamento, caso este seja
      apenas dos tipos 1-1, 1-n ou n-n. */
-  void adicionarObjeto(ObjetoTabela *objeto_tab, int idx_obj=-1);
+  void adicionarObjeto(TableObject *objeto_tab, int idx_obj=-1);
 
   //Retorna uma atributo ou restrição do relacionamento através do nome
-  ObjetoTabela *obterObjeto(const QString &nome_atrib, ObjectType tipo_obj);
-  ObjetoTabela *obterObjeto(unsigned idx_obj, ObjectType tipo_obj);
+  TableObject *obterObjeto(const QString &nome_atrib, ObjectType tipo_obj);
+  TableObject *obterObjeto(unsigned idx_obj, ObjectType tipo_obj);
 
   //Remove um atributo ou restricao através do índice
   void removerObjeto(unsigned id_obj, ObjectType tipo_obj);
 
   //Remove um atributo ou restrição do relacionamento através da ref. do objeto
-  void removerObjeto(ObjetoTabela *objeto);
+  void removerObjeto(TableObject *objeto);
 
   //Remove os atributos e restrições do relacionamento
   void removerObjetos(void);
@@ -399,7 +399,7 @@ class Relacionamento: public RelacionamentoBase {
   /* Indica se um dado objeto (coluna [atributo] ou restrição) já não existe
      em uma das lista de atributos do relacionamento retornando seu código.
      Retorna -1 caso o objeto não exista. */
-  int obterIndiceObjeto(ObjetoTabela *objeto);
+  int obterIndiceObjeto(TableObject *objeto);
 
   //Obtém o número de atributos
   unsigned obterNumAtributos(void);

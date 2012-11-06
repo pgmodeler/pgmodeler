@@ -107,7 +107,7 @@ void Gatilho::adicionarColuna(Coluna *coluna)
                 .arg(this->getName(true))
                 .arg(this->getTypeName()),
                 ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(coluna->obterTabelaPai() != this->obterTabelaPai())
+ else if(coluna->getParentTable() != this->getParentTable())
   throw Exception(QString(Exception::getErrorMessage(ERR_ASG_INV_COLUMN_TRIGGER))
                 .arg(coluna->getName(true))
                 .arg(this->getName(true)),
@@ -272,7 +272,7 @@ bool Gatilho::referenciaColunaIncRelacao(void)
   //Obtém a coluna
   col=(*itr);
   //Obtém se a coluna foi incluída por relacionamento ou não
-  enc=col->incluidoPorRelacionamento();
+  enc=col->isAddedByRelationship();
   //Passa para a próxima coluna
   itr++;
  }
@@ -338,8 +338,8 @@ QString Gatilho::getCodeDefinition(unsigned tipo_def)
  if(!referenciaColunaIncRelacao())
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
- if(this->tabela_pai)
-  attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
+ if(this->parent_table)
+  attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
  attributes[ParsersAttributes::FIRING_TYPE]=(~tipo_disparo);
 

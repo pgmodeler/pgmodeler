@@ -117,7 +117,7 @@ void OGTabela::hoverMoveEvent(QGraphicsSceneHoverEvent *evento)
    selecao_obj->setPos(QPointF(titulo->pos().x() + ESP_HORIZONTAL,-ret1.top()));
 
    //Armazena a referência ao objeto de tabela referente ao subitem
-   obj_filho_sel=dynamic_cast<ObjetoTabela *>(item->obterObjetoOrigem());
+   obj_filho_sel=dynamic_cast<TableObject *>(item->obterObjetoOrigem());
   }
  }
 }
@@ -132,10 +132,10 @@ void OGTabela::configurarObjeto(void)
  OGSubItemObjeto *item_coluna=NULL;
  QList<QGraphicsItem *> subitens;
  QList<OGSubItemObjeto *> itens_cols;
- ObjetoTabela *obj_tab=NULL;
+ TableObject *obj_tab=NULL;
  QGraphicsItemGroup *grupos[]={ colunas, atributos_ext };
  QGraphicsPolygonItem *corpos[]={ corpo, corpo_atribs_ext };
- vector<ObjetoTabela *> objs_filhos;
+ vector<TableObject *> objs_filhos;
  QString atribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
 
  //Configura o título da tabela

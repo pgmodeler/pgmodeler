@@ -23,10 +23,10 @@
 #ifndef INDICE_H
 #define INDICE_H
 
-#include "objetotabela.h"
+#include "tableobject.h"
 #include "elementoindice.h"
 
-class Indice: public ObjetoTabela{
+class Indice: public TableObject{
  private:
   /* Vetor de classe de operadores o qual relacionada cada
      coluna ou expressão a um elemento deste container */

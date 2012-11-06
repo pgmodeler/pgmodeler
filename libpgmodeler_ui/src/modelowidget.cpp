@@ -716,7 +716,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
      {
       col=new Coluna;
       (*col)=(*rel->obterAtributo(idx));
-      col->definirTabelaPai(NULL);
+      col->setParentTable(NULL);
       tab->adicionarColuna(col);
      }
 
@@ -728,7 +728,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
       rest_aux=rel->obterRestricao(idx);
       (*rest)=(*rest_aux);
       rest->removerColunas();
-      rest->definirTabelaPai(NULL);
+      rest->setParentTable(NULL);
 
       for(x=Restricao::COLUNA_ORIGEM; x <= Restricao::COLUNA_REFER; x++)
       {
@@ -1356,7 +1356,7 @@ void ModeloWidget::cancelarAdicaoObjeto(void)
 void ModeloWidget::editarObjeto(void)
 {
  QObject *obj_sender=dynamic_cast<QAction *>(sender());
- ObjetoTabela *obj_tab=NULL;
+ TableObject *obj_tab=NULL;
  BaseObject *objeto=NULL;
 
  /* Workaround: Para possibilitar a edição de objetos com duplo clique na visão de objetos
@@ -1368,12 +1368,12 @@ void ModeloWidget::editarObjeto(void)
  objeto=reinterpret_cast<BaseObject *>(dynamic_cast<QAction *>(obj_sender)->data().value<void *>());
  /* Tenta convertê-lo para objeto de tabela. Caso este seja convertido com sucesso
     envia para o formulário a tabela possuidora deste objeto */
- obj_tab=dynamic_cast<ObjetoTabela *>(objeto);
+ obj_tab=dynamic_cast<TableObject *>(objeto);
 
  //Exibe o formulário pra o objeto
  if(objeto)
   exibirFormObjeto(objeto->getType(), objeto,
-                  (obj_tab ? obj_tab->obterTabelaPai() : NULL));
+                  (obj_tab ? obj_tab->getParentTable() : NULL));
 }
 
 void ModeloWidget::protegerObjeto(void)
@@ -1382,7 +1382,7 @@ void ModeloWidget::protegerObjeto(void)
  {
   QObject *obj_sender=sender();
   ObjectType tipo_obj;
-  ObjetoTabela *obj_tab=NULL;
+  TableObject *obj_tab=NULL;
   BaseObject *objeto=NULL;
   BaseGraphicObject *obj_graf=NULL;
   bool proteger;
@@ -1394,7 +1394,7 @@ void ModeloWidget::protegerObjeto(void)
   if(this->objs_selecionados.size()==1)
   {
    //Tenta convertê-lo para objeto de tabela e objeto gráfico
-   obj_tab=dynamic_cast<ObjetoTabela *>(this->objs_selecionados[0]);
+   obj_tab=dynamic_cast<TableObject *>(this->objs_selecionados[0]);
    obj_graf=dynamic_cast<BaseGraphicObject *>(this->objs_selecionados[0]);
 
    //Caso seja um objeto gráfico
@@ -1408,7 +1408,7 @@ void ModeloWidget::protegerObjeto(void)
     /* Caso seja um objto de tabela protege/desprotege o mesmo e marca como modificada a tabela pai
        para forçar o seu redesenho */
     obj_tab->setProtected(!obj_tab->isProtected());
-    dynamic_cast<Tabela *>(obj_tab->obterTabelaPai())->setModefied(true);
+    dynamic_cast<Tabela *>(obj_tab->getParentTable())->setModefied(true);
    }
    else
    {
@@ -1462,8 +1462,8 @@ void ModeloWidget::protegerObjeto(void)
       throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     else if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT)
     {
-     obj_tab=dynamic_cast<ObjetoTabela *>(objeto);
-     if(obj_tab->incluidoPorRelacionamento())
+     obj_tab=dynamic_cast<TableObject *>(objeto);
+     if(obj_tab->isAddedByRelationship())
      {
       //Monta a mensagem de que o objeto não pode ser removido por estar protegido
       throw Exception(QString(Exception::getErrorMessage(ERR_OPR_REL_INCL_OBJECT))
@@ -1511,7 +1511,7 @@ void ModeloWidget::copiarObjetos(void)
  vector<unsigned>::iterator itr1, itr1_end;
  vector<BaseObject *> vet_deps;
  BaseObject *objeto=NULL;
- ObjetoTabela *obj_tab=NULL;
+ TableObject *obj_tab=NULL;
  Tabela *tabela=NULL;
  ObjectType tipos[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT };
  unsigned i, id_tipo, qtd;
@@ -1550,12 +1550,12 @@ void ModeloWidget::copiarObjetos(void)
      for(i=0; i < qtd; i++)
      {
       //Obtém um objeto especial
-      obj_tab=dynamic_cast<ObjetoTabela *>(tabela->obterObjeto(i, tipos[id_tipo]));
+      obj_tab=dynamic_cast<TableObject *>(tabela->obterObjeto(i, tipos[id_tipo]));
 
       /* O objeto só será incluído na lista se o mesmo não foi incluído por relacionamento mas
          referencia colunas incluídas por relacionamento. Caso se tratar de uma restrição, a mesma
          não pode ser chave primária pois estas são tratadas separadamente nos relacionamentos */
-      if(!obj_tab->incluidoPorRelacionamento() &&
+      if(!obj_tab->isAddedByRelationship() &&
          ((tipos[id_tipo]==OBJ_CONSTRAINT &&
            dynamic_cast<Restricao *>(obj_tab)->obterTipoRestricao()!=TipoRestricao::primary_key &&
            dynamic_cast<Restricao *>(obj_tab)->referenciaColunaIncRelacao()) ||
@@ -1603,7 +1603,7 @@ void ModeloWidget::colarObjetos(void)
  vector<BaseObject *>::iterator itr, itr_end;
  map<BaseObject *, QString> nome_orig_objs;
  BaseObject *objeto=NULL, *objeto_aux=NULL;
- ObjetoTabela *obj_tab=NULL;
+ TableObject *obj_tab=NULL;
  Funcao *func=NULL;
  //Tipo *tipo=NULL;
  Operador *oper=NULL;
@@ -1635,7 +1635,7 @@ void ModeloWidget::colarObjetos(void)
 
 
   //Caso não seja um objeto de tabela
-  if(!dynamic_cast<ObjetoTabela *>(objeto))
+  if(!dynamic_cast<TableObject *>(objeto))
   {
    /* A primeira validação a ser feita é checar se o objeto a ser colado
      não conflita com algum objeto de mesmo nome no modelo onde se está
@@ -1654,7 +1654,7 @@ void ModeloWidget::colarObjetos(void)
     nome_aux=objeto->getName(true);
 
    //Tenta obter um objeto de mesmo nome no modelo
-   if(!dynamic_cast<ObjetoTabela *>(objeto))
+   if(!dynamic_cast<TableObject *>(objeto))
     objeto_aux=modelo->obterObjeto(nome_aux, tipo_obj);
 
    /* Segunda operação na colagem: caso um objeto de mesmo nome é encontrado no modelo é necessário
@@ -1796,7 +1796,7 @@ void ModeloWidget::colarObjetos(void)
   {
    //Cria um objeto com o xml obtido
    objeto=modelo->criarObjeto(modelo->getType(XMLParser::getElementName()));
-   obj_tab=dynamic_cast<ObjetoTabela *>(objeto);
+   obj_tab=dynamic_cast<TableObject *>(objeto);
 
    //Atualiza a mensagem do widget de progresso de tarefa
    pos++;
@@ -1808,13 +1808,13 @@ void ModeloWidget::colarObjetos(void)
    /* Com o objeto criado o mesmo é inserido no modelo, exceto para relacionamentos e objetos
       de tabelas pois estes são inseridos automaticamente em seus objetos pais */
    if(objeto &&
-      !dynamic_cast<ObjetoTabela *>(objeto) &&
+      !dynamic_cast<TableObject *>(objeto) &&
       !dynamic_cast<Relacionamento *>(objeto))
     modelo->adicionarObjeto(objeto);
 
    //Adiciona o objeto criado   lista de operações
    if(obj_tab)
-    lista_op->adicionarObjeto(obj_tab, Operacao::OBJETO_CRIADO, -1, obj_tab->obterTabelaPai());
+    lista_op->adicionarObjeto(obj_tab, Operacao::OBJETO_CRIADO, -1, obj_tab->getParentTable());
    else
     lista_op->adicionarObjeto(objeto, Operacao::OBJETO_CRIADO);
   }
@@ -1879,7 +1879,7 @@ void ModeloWidget::excluirObjetos(void)
  Tabela *tabela=NULL;
  BaseTable *tab_orig=NULL, *tab_dest=NULL;
  RelacionamentoBase *relac=NULL;
- ObjetoTabela *objeto_tab=NULL;
+ TableObject *objeto_tab=NULL;
  ObjectType tipo_obj;
  BaseObject *objeto=NULL;
  vector<BaseObject *>::iterator itr, itr_end;
@@ -1983,11 +1983,11 @@ void ModeloWidget::excluirObjetos(void)
      }
      else if(tipo_obj!=BASE_RELATIONSHIP)
      {
-      objeto_tab=dynamic_cast<ObjetoTabela *>(objeto);
+      objeto_tab=dynamic_cast<TableObject *>(objeto);
 
       if(objeto_tab)
       {
-       tabela=dynamic_cast<Tabela *>(objeto_tab->obterTabelaPai());
+       tabela=dynamic_cast<Tabela *>(objeto_tab->getParentTable());
        idx_obj=tabela->obterIndiceObjeto(objeto_tab->getName(true), tipo_obj);
 
        try
@@ -2130,7 +2130,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
  vector<QMenu *> submenus;
  Restricao *rest=NULL;
  QAction *acao=NULL;
- ObjetoTabela *obj_tab=NULL;
+ TableObject *obj_tab=NULL;
  QString str_aux;
  bool obj_protegido=false;
 
@@ -2221,7 +2221,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
    action_editar->setData(QVariant::fromValue<void *>(obj));
    action_codigo_fonte->setData(QVariant::fromValue<void *>(obj));
    action_deps_refs->setData(QVariant::fromValue<void *>(obj));
-   obj_tab=dynamic_cast<ObjetoTabela *>(obj);
+   obj_tab=dynamic_cast<TableObject *>(obj);
 
    menu_popup.addAction(action_editar);
    menu_popup.addAction(action_codigo_fonte);
@@ -2236,7 +2236,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
     todo o modelo para depois manipular os demais objetos */
  if(!objs_sel.empty() &&
     !this->modelo->isProtected() &&
-    (!obj_tab || (obj_tab && !obj_tab->obterTabelaPai()->isProtected() && !obj_tab->incluidoPorRelacionamento())))
+    (!obj_tab || (obj_tab && !obj_tab->getParentTable()->isProtected() && !obj_tab->isAddedByRelationship())))
  {
   if(!objs_sel[0]->isProtected())
     menu_popup.addAction(action_proteger);
@@ -2273,7 +2273,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
     a coluna */
  if(obj_tab)
  {
-  tabela=dynamic_cast<Tabela *>(obj_tab->obterTabelaPai());
+  tabela=dynamic_cast<Tabela *>(obj_tab->getParentTable());
 
   if(obj_tab->getType()==OBJ_COLUMN)
   {
@@ -2316,9 +2316,9 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
      connect(acao, SIGNAL(triggered(bool)), this, SLOT(exibirCodigoFonte(void)));
      submenu->addAction(acao);
 
-     if(!rest->incluidoPorRelacionamento())
+     if(!rest->isAddedByRelationship())
      {
-      if(!rest->obterTabelaPai()->isProtected())
+      if(!rest->getParentTable()->isProtected())
       {
        acao=new QAction(dynamic_cast<QObject *>(&menu_popup));
        acao->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(rest)));

@@ -63,8 +63,8 @@ bool Coluna::naoNulo(void)
 
 QString Coluna::obterReferenciaTipo(void)
 {
- if(tabela_pai)
-  return(tabela_pai->getName(true) + QString(".") + this->getName(true) + QString("%TYPE"));
+ if(parent_table)
+  return(parent_table->getName(true) + QString(".") + this->getName(true) + QString("%TYPE"));
  else
   return("");
 }
@@ -84,8 +84,8 @@ QString Coluna::getNameAntigo(bool formatar)
 
 QString Coluna::getCodeDefinition(unsigned tipo_def)
 {
- if(this->tabela_pai)
-  attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
+ if(this->parent_table)
+  attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
  attributes[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
  attributes[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
@@ -105,12 +105,12 @@ void Coluna::operator = (Coluna &coluna)
  this->tipo=coluna.tipo;
  this->valor_padrao=coluna.valor_padrao;
 
- this->tabela_pai=coluna.tabela_pai;
+ this->parent_table=coluna.parent_table;
  /*this->inc_dependencia=coluna.inc_dependencia;
  this->inc_ligacao=coluna.inc_ligacao;
  this->inc_generalizacao=coluna.inc_generalizacao;*/
- this->inc_dependencia=false;
- this->inc_generalizacao=false;
- this->inc_ligacao=false;
+ this->add_by_copy=false;
+ this->add_by_generalization=false;
+ this->add_by_linking=false;
 }
 

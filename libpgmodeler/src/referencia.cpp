@@ -19,7 +19,7 @@ Referencia::Referencia(Tabela *tabela, Coluna *coluna, const QString &alias_tab,
 
  /* Caso se tente criar uma referência a uma coluna cuja tabela pai seja
     diferente da tabela informada no parâmetro */
- else if(coluna && coluna->obterTabelaPai()!=tabela)
+ else if(coluna && coluna->getParentTable()!=tabela)
   throw Exception(ERR_ASG_OBJ_BELONGS_OTHER_TABLE ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Atribui os parâmetros aos atributos do objeto

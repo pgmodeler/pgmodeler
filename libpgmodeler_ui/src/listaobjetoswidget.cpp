@@ -84,8 +84,8 @@ void ListaObjetosWidget::atualizarListaObjetos(vector<BaseObject *> &objetos, QT
    //Aloca o item do objeto pai do objeto de ref/dep
    item_tab=new QTableWidgetItem;
    objeto=objetos[i];
-   if(dynamic_cast<ObjetoTabela *>(objetos[i]))
-    obj_pai=dynamic_cast<ObjetoTabela *>(objetos[i])->obterTabelaPai();
+   if(dynamic_cast<TableObject *>(objetos[i]))
+    obj_pai=dynamic_cast<TableObject *>(objetos[i])->getParentTable();
    else if(objetos[i]->getSchema())
     obj_pai=objetos[i]->getSchema();
    else

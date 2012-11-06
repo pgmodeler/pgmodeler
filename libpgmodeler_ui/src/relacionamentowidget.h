@@ -48,7 +48,7 @@ class RelacionamentoWidget: public ObjetoBaseWidget, public Ui::RelacionamentoWi
    void listarObjetos(ObjectType tipo_obj);
 
    //Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
-   void exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin);
+   void exibirDadosObjeto(TableObject *objeto, int idx_lin);
 
  protected:
    void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Tabela *tab_orig, Tabela *tab_dest, unsigned tipo_rel);

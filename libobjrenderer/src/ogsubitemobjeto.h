@@ -67,7 +67,7 @@ class OGSubItemObjeto: public ObjetoGrafico
   }
 
  public:
-  OGSubItemObjeto(ObjetoTabela *objeto=NULL);
+  OGSubItemObjeto(TableObject *objeto=NULL);
   ~OGSubItemObjeto(void);
 
   //Configura o subitem como uma referência de visão

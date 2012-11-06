@@ -464,7 +464,7 @@ class ModeloBD:  public QObject, public BaseObject {
   void validarRemocaoColuna(Coluna *coluna);
 
   //Valida os relacionamentos para refletirem as modificações nas coluna/restrição da tabela passada
-  void validarRelacObjetoTabela(ObjetoTabela *objeto, Tabela *tabela_pai);
+  void validarRelacObjetoTabela(TableObject *objeto, Tabela *tabela_pai);
 
   /* Retorna um erro caso um ciclo de relacionamentos for criado caso o relacionamento
      passado seja inserido no modelo. Um ciclo de relacionamentos é proibido

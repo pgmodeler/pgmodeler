@@ -257,7 +257,7 @@ void VisaoWidget::exibirNomeObjeto(void)
   /* Caso a coluna esteja alocada, o seletor de tabela recebe automaticamente
      o nome da tabela pai desta coluna */
   if(col)
-   sel_tabela->definirObjeto(col->obterTabelaPai());
+   sel_tabela->definirObjeto(col->getParentTable());
   else
    sel_tabela->removerObjetoSelecionado();
 

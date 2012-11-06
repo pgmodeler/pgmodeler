@@ -23,11 +23,11 @@
 #ifndef RESTRICAO_H
 #define RESTRICAO_H
 
-#include "objetotabela.h"
+#include "tableobject.h"
 #include "espacotabela.h"
 #include "coluna.h"
 
-class Restricao: public ObjetoTabela{
+class Restricao: public TableObject{
  private:
   //Tipo da constraint
   TipoRestricao tipo;

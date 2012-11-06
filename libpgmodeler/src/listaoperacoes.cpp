@@ -275,7 +275,7 @@ void ListaOperacoes::adicionarObjetoPool(BaseObject *objeto, unsigned tipo_op)
 void ListaOperacoes::removerOperacoes(void)
 {
  BaseObject *objeto=NULL;
- ObjetoTabela *obj_tab=NULL;
+ TableObject *obj_tab=NULL;
  Tabela *tab=NULL;
 
  //Limpando a lista de operações
@@ -293,13 +293,13 @@ void ListaOperacoes::removerOperacoes(void)
  while(!objs_nao_excluidos.empty())
  {
   objeto=objs_nao_excluidos.back();
-  obj_tab=dynamic_cast<ObjetoTabela *>(objeto);
+  obj_tab=dynamic_cast<TableObject *>(objeto);
 
   if(!obj_tab && modelo->obterIndiceObjeto(objeto) < 0)
    delete(objeto);
   else if(obj_tab)
   {
-   tab=dynamic_cast<Tabela *>(obj_tab->obterTabelaPai());
+   tab=dynamic_cast<Tabela *>(obj_tab->getParentTable());
    if(!tab || (tab && tab->obterIndiceObjeto(obj_tab)) < 0)
     delete(obj_tab);
   }
@@ -467,8 +467,8 @@ void ListaOperacoes::adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int i
      tipo_obj==OBJ_INDEX || tipo_obj==OBJ_TRIGGER ||
      tipo_obj==OBJ_RULE)
   {
-   ObjetoTabela *obj_tab=NULL;
-   obj_tab=dynamic_cast<ObjetoTabela *>(objeto);
+   TableObject *obj_tab=NULL;
+   obj_tab=dynamic_cast<TableObject *>(objeto);
 
    if(objeto_pai->getType()==OBJ_TABLE)
     tabela_pai=dynamic_cast<Tabela *>(objeto_pai);
@@ -484,7 +484,7 @@ void ListaOperacoes::adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int i
             (tipo_obj==OBJ_CONSTRAINT && dynamic_cast<Restricao *>(obj_tab)->referenciaColunaIncRelacao())))
    {
     if(tipo_op==Operacao::OBJETO_REMOVIDO)
-     obj_tab->definirTabelaPai(tabela_pai);
+     obj_tab->setParentTable(tabela_pai);
 
     operacao->def_xml=modelo->validarDefinicaoObjeto(obj_tab, SchemaParser::XML_DEFINITION);
    }
@@ -810,9 +810,9 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
 
     //Obtém a objeto atual da tabela/relacionamento pai no índice especificado
     if(tabela_pai)
-     obj_orig=dynamic_cast<ObjetoTabela *>(tabela_pai->obterObjeto(oper->idx_obj, tipo));
+     obj_orig=dynamic_cast<TableObject *>(tabela_pai->obterObjeto(oper->idx_obj, tipo));
     else if(relac_pai)
-     obj_orig=dynamic_cast<ObjetoTabela *>(relac_pai->obterObjeto(oper->idx_obj, tipo));
+     obj_orig=dynamic_cast<TableObject *>(relac_pai->obterObjeto(oper->idx_obj, tipo));
     else
      obj_orig=modelo->obterObjeto(oper->idx_obj, tipo);
 
@@ -841,9 +841,9 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
      copiarObjeto(reinterpret_cast<BaseObject **>(&objeto), obj_aux, tipo);
 
     if(tabela_pai)
-     tabela_pai->adicionarObjeto(dynamic_cast<ObjetoTabela *>(objeto), oper->idx_obj);
+     tabela_pai->adicionarObjeto(dynamic_cast<TableObject *>(objeto), oper->idx_obj);
     else if(relac_pai)
-     relac_pai->adicionarObjeto(dynamic_cast<ObjetoTabela *>(objeto), oper->idx_obj);
+     relac_pai->adicionarObjeto(dynamic_cast<TableObject *>(objeto), oper->idx_obj);
     else
      if(dynamic_cast<Tabela *>(objeto))
       dynamic_cast<Tabela *>(objeto)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
@@ -877,7 +877,7 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
     if(tabela_pai &&
       (objeto->getType()==OBJ_COLUMN ||
        objeto->getType()==OBJ_CONSTRAINT))
-     modelo->validarRelacObjetoTabela(dynamic_cast<ObjetoTabela *>(objeto), tabela_pai);
+     modelo->validarRelacObjetoTabela(dynamic_cast<TableObject *>(objeto), tabela_pai);
     else if(relac_pai)
      modelo->validarRelacionamentos();
    }

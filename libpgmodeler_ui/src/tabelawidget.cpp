@@ -121,7 +121,7 @@ void TabelaWidget::hideEvent(QHideEvent *evento)
 
 void TabelaWidget::exibirFormObjetoTabela(ObjectType tipo_obj)
 {
- ObjetoTabela *objeto=NULL;
+ TableObject *objeto=NULL;
  TabelaObjetosWidget *tab_obj=NULL;
  Tabela *tabela=NULL;
 
@@ -131,7 +131,7 @@ void TabelaWidget::exibirFormObjetoTabela(ObjectType tipo_obj)
  /* Caso haja um item selecionado na tabela, obtém a referência ao objeto
     de tabela que ela representa */
  if(tab_obj->obterLinhaSelecionada()>=0)
-  objeto=reinterpret_cast<ObjetoTabela *>(tab_obj->obterDadoLinha(tab_obj->obterLinhaSelecionada()).value<void *>());
+  objeto=reinterpret_cast<TableObject *>(tab_obj->obterDadoLinha(tab_obj->obterLinhaSelecionada()).value<void *>());
 
  //Obtém a referência a tabela que é dona do objeto a ser editado
  tabela=dynamic_cast<Tabela *>(this->objeto);
@@ -289,7 +289,7 @@ void TabelaWidget::listarObjetos(ObjectType tipo_obj)
    //Adicionar uma linha
    tab->adicionarLinha();
    //Exibe o objeto atual na linha atual da tabela
-   exibirDadosObjeto(dynamic_cast<ObjetoTabela*>(tabela->obterObjeto(i, tipo_obj)), i);
+   exibirDadosObjeto(dynamic_cast<TableObject*>(tabela->obterObjeto(i, tipo_obj)), i);
   }
   tab->limparSelecao();
   tab->blockSignals(false);
@@ -333,7 +333,7 @@ void TabelaWidget::manipularObjeto(void)
  }
 }
 
-void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
+void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
 {
  TabelaObjetosWidget *tab=NULL;
  Coluna *coluna=NULL;
@@ -437,7 +437,7 @@ void TabelaWidget::exibirDadosObjeto(ObjetoTabela *objeto, int idx_lin)
 
  /* Caso o objeto esteja protegido ou foi incluído por relacionamento
     muda a coloração da linha para denotar o fato */
- if(objeto->incluidoPorRelacionamento() || objeto->isProtected())
+ if(objeto->isAddedByRelationship() || objeto->isProtected())
  {
   fonte=tab->font();
   fonte.setItalic(true);
@@ -477,7 +477,7 @@ void TabelaWidget::removerObjetos(void)
    objeto=tabela->obterObjeto(0, tipo_obj);
 
    if(!objeto->isProtected() &&
-      !dynamic_cast<ObjetoTabela *>(objeto)->incluidoPorRelacionamento())
+      !dynamic_cast<TableObject *>(objeto)->isAddedByRelationship())
    {
     //Tenta removê-lo da tabela
     tabela->removerObjeto(objeto);
@@ -538,7 +538,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
   objeto=tabela->obterObjeto(idx_lin, tipo_obj);
 
   if(!objeto->isProtected() &&
-     !dynamic_cast<ObjetoTabela *>(objeto)->incluidoPorRelacionamento())
+     !dynamic_cast<TableObject *>(objeto)->isAddedByRelationship())
   {
    //Tenta removê-lo da tabela
    tabela->removerObjeto(objeto);

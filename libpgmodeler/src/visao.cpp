@@ -88,7 +88,7 @@ void Visao::adicionarReferencia(Referencia &refer, unsigned tipo_sql, int id_exp
   vet_idref->push_back(static_cast<unsigned>(idx));
 
  col=refer.obterColuna();
- if(col && col->incluidoPorRelacionamento() &&
+ if(col && col->isAddedByRelationship() &&
     col->getObjectId() > this->object_id)
   this->object_id=BaseObject::getGlobalId();
 }
@@ -354,7 +354,7 @@ bool Visao::referenciaColunaIncRelacao(void)
  for(i=0; i < qtd && !enc; i++)
  {
   coluna=referencias[i].obterColuna();
-  enc=(coluna && coluna->incluidoPorRelacionamento());
+  enc=(coluna && coluna->isAddedByRelationship());
  }
 
  return(enc);

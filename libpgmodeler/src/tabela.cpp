@@ -15,7 +15,7 @@ Tabela::~Tabela(void)
 {
  ObjectType tipos[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE,
                           OBJ_CONSTRAINT, OBJ_COLUMN };
- vector<ObjetoTabela *> *lista=NULL;
+ vector<TableObject *> *lista=NULL;
 
  for(unsigned i=0; i < 5; i++)
  {
@@ -63,9 +63,9 @@ void Tabela::setProtected(bool protegido)
  ObjectType tipos_obj[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
                               OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER };
  unsigned i;
- vector<ObjetoTabela *>::iterator itr, itr_end;
- vector<ObjetoTabela *> *lista=NULL;
- ObjetoTabela *obj_tab=NULL;
+ vector<TableObject *>::iterator itr, itr_end;
+ vector<TableObject *> *lista=NULL;
+ TableObject *obj_tab=NULL;
 
  for(i=0; i < 5; i++)
  {
@@ -82,7 +82,7 @@ void Tabela::setProtected(bool protegido)
    /* Só protegerá o objeto caso o mesmo não foi incluído
       por relacionamento pois quando é o caso os mesmos
       já vem protegidos */
-   if(!obj_tab->incluidoPorRelacionamento())
+   if(!obj_tab->isAddedByRelationship())
     obj_tab->setProtected(protegido);
    itr++;
   }
@@ -111,7 +111,7 @@ void Tabela::definirAtributoColunas(unsigned tipo_def)
      (!colunas[i]->incluidoPorRelacionamento())) */
   if(tipo_def==SchemaParser::SQL_DEFINITION ||
      (tipo_def==SchemaParser::XML_DEFINITION &&
-      !colunas[i]->incluidoPorRelacionamento()))
+      !colunas[i]->isAddedByRelationship()))
    str_cols+=colunas[i]->getCodeDefinition(tipo_def);
  }
 
@@ -147,7 +147,7 @@ void Tabela::definirAtributoRestricoes(unsigned tipo_def)
   if((tipo_def==SchemaParser::SQL_DEFINITION &&
       (!rest->referenciaColunaIncRelacao() || rest->obterTipoRestricao()==TipoRestricao::primary_key)) ||
 
-     (tipo_def==SchemaParser::XML_DEFINITION && !rest->incluidoPorRelacionamento() &&
+     (tipo_def==SchemaParser::XML_DEFINITION && !rest->isAddedByRelationship() &&
       ((rest->obterTipoRestricao()!=TipoRestricao::primary_key && !rest->referenciaColunaIncRelacao()) ||
        (rest->obterTipoRestricao()==TipoRestricao::primary_key))))
   {
@@ -208,7 +208,7 @@ void Tabela::definirAtributoIndices(unsigned tipo_def)
  for(i=0; i < qtd; i++)
  {
   ind=dynamic_cast<Indice *>(indices[i]);
-  if((!ind->incluidoPorRelacionamento() &&
+  if((!ind->isAddedByRelationship() &&
       !ind->referenciaColunaIncRelacao() &&
       tipo_def==SchemaParser::XML_DEFINITION) ||
       tipo_def==SchemaParser::SQL_DEFINITION)
@@ -236,7 +236,7 @@ void Tabela::definirAtributoRegras(unsigned tipo_def)
  attributes[ParsersAttributes::RULES]=str_reg;
 }
 
-vector<ObjetoTabela *> *Tabela::obterListaObjetos(ObjectType tipo_obj)
+vector<TableObject *> *Tabela::obterListaObjetos(ObjectType tipo_obj)
 {
  //Retorna a referencia da lista equivalente ao tipo passado
  if(tipo_obj==OBJ_COLUMN)
@@ -303,16 +303,16 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
     case OBJ_TRIGGER:
     case OBJ_INDEX:
     case OBJ_RULE:
-      ObjetoTabela *obj_tab;
-      vector<ObjetoTabela *> *lista_obj;
+      TableObject *obj_tab;
+      vector<TableObject *> *lista_obj;
 
       //Converte o objeto base para objeto de tabela
-      obj_tab=dynamic_cast<ObjetoTabela *>(obj);
+      obj_tab=dynamic_cast<TableObject *>(obj);
 
       //Verifica se o objeto não está relacionado com uma outra tabela
-      if(!obj_tab->obterTabelaPai())
-       obj_tab->definirTabelaPai(this);
-      else if(obj_tab->obterTabelaPai()!=this)
+      if(!obj_tab->getParentTable())
+       obj_tab->setParentTable(this);
+      else if(obj_tab->getParentTable()!=this)
        throw Exception(ERR_ASG_OBJ_BELONGS_OTHER_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Testando a definição sql do objeto
@@ -495,8 +495,8 @@ void Tabela::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
  }
  else if(tipo_obj!=OBJ_TABLE && tipo_obj!=BASE_TABLE)
  {
-  vector<ObjetoTabela *> *lista_obj=NULL;
-  vector<ObjetoTabela *>::iterator itr;
+  vector<TableObject *> *lista_obj=NULL;
+  vector<TableObject *>::iterator itr;
 
   //Obtém a lista de objetos de acordo com o tipo passado
   lista_obj=obterListaObjetos(tipo_obj);
@@ -509,12 +509,12 @@ void Tabela::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
   if(tipo_obj!=OBJ_COLUMN)
   {
    itr=lista_obj->begin() + idx_obj; //Obtendo a referência ao objeto
-   (*itr)->definirTabelaPai(NULL);
+   (*itr)->setParentTable(NULL);
    lista_obj->erase(itr); //Remove a regra da lista
   }
   else
   {
-   vector<ObjetoTabela *> vet_refs;
+   vector<TableObject *> vet_refs;
    Coluna *coluna=NULL;
 
    //Obtém a referência para a coluna
@@ -536,7 +536,7 @@ void Tabela::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
                  ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
-   coluna->definirTabelaPai(NULL);
+   coluna->setParentTable(NULL);
    colunas.erase(itr); //Remove a coluna da lista
   }
  }
@@ -619,7 +619,7 @@ int Tabela::obterIndiceObjeto(const QString &nome, ObjectType tipo_obj)
  return(idx);
 }
 
-int Tabela::obterIndiceObjeto(ObjetoTabela *objeto)
+int Tabela::obterIndiceObjeto(TableObject *objeto)
 {
  if(!objeto)
   return(-1);
@@ -645,8 +645,8 @@ BaseObject *Tabela::obterObjeto(const QString &nome, ObjectType tipo_obj, int &i
     tipo_obj==OBJ_TRIGGER ||
     tipo_obj==OBJ_INDEX || tipo_obj==OBJ_RULE)
  {
-  vector<ObjetoTabela *>::iterator itr, itr_end;
-  vector<ObjetoTabela *> *lista_obj=NULL;
+  vector<TableObject *>::iterator itr, itr_end;
+  vector<TableObject *> *lista_obj=NULL;
   int qtd;
   QString nome_aux=nome;
 
@@ -730,7 +730,7 @@ BaseObject *Tabela::obterObjeto(const QString &nome, ObjectType tipo_obj, int &i
 
 BaseObject *Tabela::obterObjeto(unsigned idx_obj, ObjectType tipo_obj)
 {
- vector<ObjetoTabela *> *lista_obj=NULL;
+ vector<TableObject *> *lista_obj=NULL;
 
  if(tipo_obj==OBJ_TABLE)
  {
@@ -783,7 +783,7 @@ Coluna *Tabela::obterColuna(const QString &nome, bool ref_nome_antigo)
  else
  {
   Coluna *coluna=NULL;
-  vector<ObjetoTabela *>::iterator itr, itr_end;
+  vector<TableObject *>::iterator itr, itr_end;
   bool enc=false, formatar=false;
 
   formatar=nome.contains("\"");
@@ -917,20 +917,20 @@ unsigned Tabela::obterNumObjetos(ObjectType tipo_obj, bool inc_insporrelacao)
   }
   else
   {
-   vector<ObjetoTabela *> *lista=NULL;
+   vector<TableObject *> *lista=NULL;
    lista=obterListaObjetos(tipo_obj);
 
    //Faz a contagem apenas dos objetos que não são auto-incluidos (incluídos por relacionamento)
    if(!inc_insporrelacao)
    {
-    vector<ObjetoTabela *>::iterator itr, itr_end;
+    vector<TableObject *>::iterator itr, itr_end;
     unsigned qtd=0;
 
     itr=lista->begin();
     itr_end=lista->end();
     while(itr!=itr_end)
     {
-     if(!(*itr)->incluidoPorRelacionamento()) qtd++;
+     if(!(*itr)->isAddedByRelationship()) qtd++;
      itr++;
     }
 
@@ -967,7 +967,7 @@ bool Tabela::aceitaOids(void)
 bool Tabela::restricaoReferenciaColuna(Coluna *coluna, TipoRestricao tipo_rest)
 {
  bool enc=false;
- vector<ObjetoTabela *>::iterator itr, itr_end;
+ vector<TableObject *>::iterator itr, itr_end;
  Restricao *rest=NULL;
 
  if(coluna)
@@ -1015,7 +1015,7 @@ void Tabela::operator = (Tabela &tabela)
 
 bool Tabela::referenciaObjetoIncRelacao(void)
 {
- vector<ObjetoTabela *>::iterator itr, itr_end;
+ vector<TableObject *>::iterator itr, itr_end;
  ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT };
  bool enc=false;
 
@@ -1033,7 +1033,7 @@ bool Tabela::referenciaObjetoIncRelacao(void)
   while(itr!=itr_end && !enc)
   {
    //Obtém se a coluna foi incluída por relacionamento ou não
-   enc=(*itr)->incluidoPorRelacionamento();
+   enc=(*itr)->isAddedByRelationship();
    //Passa para a próxima coluna
    itr++;
   }
@@ -1044,9 +1044,9 @@ bool Tabela::referenciaObjetoIncRelacao(void)
 
 void Tabela::trocarIndicesObjetos(ObjectType tipo_obj, unsigned idx1, unsigned idx2)
 {
- vector<ObjetoTabela *> *lista_obj=NULL;
- vector<ObjetoTabela *>::iterator itr1, itr2;
- ObjetoTabela *obj_aux=NULL;
+ vector<TableObject *> *lista_obj=NULL;
+ vector<TableObject *>::iterator itr1, itr2;
+ TableObject *obj_aux=NULL;
 
  try
  {
@@ -1071,17 +1071,17 @@ void Tabela::trocarIndicesObjetos(ObjectType tipo_obj, unsigned idx1, unsigned i
  }
 }
 
-void Tabela::obterReferenciasColuna(Coluna *coluna, vector<ObjetoTabela *> &vet_refs, bool modo_exclusao)
+void Tabela::obterReferenciasColuna(Coluna *coluna, vector<TableObject *> &vet_refs, bool modo_exclusao)
 {
  /* Caso a coluna não foi incluída por relacionamento, será verificado se esta
     não está sendo referenciada. Para colunas adicionadas automaticamente por
     relacionamentos, sua remoção é feita sem verificação alguma */
- if(coluna && !coluna->incluidoPorRelacionamento())
+ if(coluna && !coluna->isAddedByRelationship())
  {
   unsigned qtd, i;
   ElementoIndice elem;
   Coluna *col=NULL, *col1=NULL;
-  vector<ObjetoTabela *>::iterator itr, itr_end;
+  vector<TableObject *>::iterator itr, itr_end;
   bool enc=false;
   Indice *ind=NULL;
   Restricao *rest=NULL;

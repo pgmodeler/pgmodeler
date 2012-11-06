@@ -160,9 +160,9 @@ void Restricao::definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, 
      por isso o parâmetro 'inc_insporrelacao' pode ser usado para resolver esse caso. */
   if((tipo_def==SchemaParser::SQL_DEFINITION) ||
      ((tipo_def==SchemaParser::XML_DEFINITION) &&
-      ((inc_insporrelacao && col->incluidoPorRelacionamento()) ||
-       (inc_insporrelacao && !col->incluidoPorRelacionamento()) ||
-       (!inc_insporrelacao && !col->incluidoPorRelacionamento()))))
+      ((inc_insporrelacao && col->isAddedByRelationship()) ||
+       (inc_insporrelacao && !col->isAddedByRelationship()) ||
+       (!inc_insporrelacao && !col->isAddedByRelationship()))))
   {
    str_cols+=col->getName(formatar);
    str_cols+=",";
@@ -353,7 +353,7 @@ bool Restricao::referenciaColunaIncRelacao(void)
   //Obtém a coluna
   col=(*itr);
   //Obtém se a coluna foi incluída por relacionamento ou não
-  enc=col->incluidoPorRelacionamento();
+  enc=col->isAddedByRelationship();
   //Passa para a próxima coluna
   itr++;
 
@@ -430,8 +430,8 @@ QString Restricao::getCodeDefinition(unsigned tipo_def, bool inc_insporrelacao)
  attributes[ParsersAttributes::COMPARISON_TYPE]=(~tipo_comp);
  attributes[ParsersAttributes::DEFER_TYPE]=(~tipo_postergacao);
 
- if(this->tabela_pai)
-  attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
+ if(this->parent_table)
+  attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
  /* Caso a restrição não esteja referenciando alguma coluna incluída por relacionamento
     a mesma será declarada dentro do código da tabela pai e para tanto existe um atributo

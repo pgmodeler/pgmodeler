@@ -112,8 +112,8 @@ QString Regra::getCodeDefinition(unsigned tipo_def)
  attributes[ParsersAttributes::EXEC_TYPE]=(~tipo_exec);
  attributes[ParsersAttributes::EVENT_TYPE]=(~tipo_evento);
 
- if(this->tabela_pai)
-  attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
+ if(this->parent_table)
+  attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
 
  return(BaseObject::__getCodeDefinition(tipo_def));

@@ -244,7 +244,7 @@ void CenaObjetos::sinalizarModificacaoObjeto(BaseGraphicObject *objeto)
  emit s_objetoModificado(objeto);
 }
 
-void CenaObjetos::sinalizarObjetoFilhoSelecionado(ObjetoTabela *obj_filho)
+void CenaObjetos::sinalizarObjetoFilhoSelecionado(TableObject *obj_filho)
 {
  /* Trata o sinal de OGTabela::objetoFilhoSelecionado somente quando não
     houver outros objetos selecionados na cena */
@@ -280,8 +280,8 @@ void CenaObjetos::addItem(QGraphicsItem *item)
    connect(rel, SIGNAL(s_relacionamentoModificado(BaseGraphicObject*)),
            this, SLOT(sinalizarModificacaoObjeto(BaseGraphicObject*)));
   else if(tab)
-   connect(tab, SIGNAL(s_objetoFilhoSelecionado(ObjetoTabela*)),
-           this, SLOT(sinalizarObjetoFilhoSelecionado(ObjetoTabela*)));
+   connect(tab, SIGNAL(s_objetoFilhoSelecionado(TableObject*)),
+           this, SLOT(sinalizarObjetoFilhoSelecionado(TableObject*)));
 
   if(obj)
    connect(obj, SIGNAL(s_objetoSelecionado(BaseGraphicObject*,bool)),
