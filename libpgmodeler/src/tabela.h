@@ -24,7 +24,7 @@
 #define TABELA_H
 
 #include "basegraphicobject.h"
-#include "tabelabase.h"
+#include "basetable.h"
 #include "coluna.h"
 #include "restricao.h"
 #include "indice.h"
@@ -33,7 +33,7 @@
 #include "funcao.h"
 #include "papel.h"
 
-class Tabela: public TabelaBase {
+class Tabela: public BaseTable {
  private:
   //Armazena as colunas da tabela
   vector<ObjetoTabela *> colunas;

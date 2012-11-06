@@ -1,8 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe TabelaBase que implementa operações
-#             comuns para manipulação grafica de objetos do tipo tabela (visões)
+# Class: BaseTable
+# Description: Base class used to define table like objects (views and tables)
 # Creation date: 09/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -19,15 +19,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef TABELABASE_H
-#define TABELABASE_H
+#ifndef BASE_TABLE_H
+#define BASE_TABLE_H
 
 #include "basegraphicobject.h"
 
-class TabelaBase: public BaseGraphicObject {
+class BaseTable: public BaseGraphicObject {
  public:
-  TabelaBase(void);
-
+  BaseTable(void);
   virtual QString getCodeDefinition(unsigned tipo_def)=0;
 
   friend class RelacionamentoBase;

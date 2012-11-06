@@ -127,7 +127,7 @@ QString ModeloBD::validarDefinicaoObjeto(BaseObject *objeto, unsigned tipo_def)
    if(tipo_obj==BASE_RELATIONSHIP && tipo_def==SchemaParser::XML_DEFINITION)
     def_obj=dynamic_cast<RelacionamentoBase *>(objeto)->getCodeDefinition();
    else if(tipo_obj==OBJ_TEXTBOX && tipo_def==SchemaParser::XML_DEFINITION)
-    def_obj=dynamic_cast<CaixaTexto *>(objeto)->getCodeDefinition();
+    def_obj=dynamic_cast<Textbox *>(objeto)->getCodeDefinition();
    else
     def_obj=objeto->getCodeDefinition(tipo_def);
   }
@@ -163,7 +163,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
       tipo_obj==BASE_RELATIONSHIP)
     adicionarRelacionamento(dynamic_cast<RelacionamentoBase *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TEXTBOX)
-    adicionarCaixaTexto(dynamic_cast<CaixaTexto *>(objeto), idx_obj);
+    adicionarCaixaTexto(dynamic_cast<Textbox *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TABLE)
     adicionarTabela(dynamic_cast<Tabela *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_FUNCTION)
@@ -221,7 +221,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
       tipo_obj==BASE_RELATIONSHIP)
     removerRelacionamento(dynamic_cast<RelacionamentoBase *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TEXTBOX)
-    removerCaixaTexto(dynamic_cast<CaixaTexto *>(objeto), idx_obj);
+    removerCaixaTexto(dynamic_cast<Textbox *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TABLE)
     removerTabela(dynamic_cast<Tabela *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_FUNCTION)
@@ -286,7 +286,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
 
   objeto=(*lista_obj)[idx_obj];
   if(tipo_obj==OBJ_TEXTBOX)
-   removerCaixaTexto(dynamic_cast<CaixaTexto *>(objeto), idx_obj);
+   removerCaixaTexto(dynamic_cast<Textbox *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_TABLE)
    removerTabela(dynamic_cast<Tabela *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_FUNCTION)
@@ -1227,7 +1227,7 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
      (tipo_rel==Relacionamento::RELACIONAMENTO_GEN ||
       tipo_rel==Relacionamento::RELACIONAMENTO_DEP))
   {
-   TabelaBase *tabela_ref=NULL, *tab_orig=NULL;
+   BaseTable *tabela_ref=NULL, *tab_orig=NULL;
    Tabela *tabela_rec=NULL;
    Relacionamento *rel_aux=NULL;
    RelacionamentoBase *rel_base=NULL;
@@ -1542,7 +1542,7 @@ void ModeloBD::adicionarRelacionamento(RelacionamentoBase *relacao, int idx_obj)
 {
  try
  {
-  TabelaBase *tab1=NULL, *tab2=NULL;
+  BaseTable *tab1=NULL, *tab2=NULL;
   QString msg;
 
 
@@ -1629,12 +1629,12 @@ RelacionamentoBase *ModeloBD::obterRelacionamento(unsigned idx_obj, ObjectType t
  return(dynamic_cast<RelacionamentoBase *>(obterObjeto(idx_obj, tipo_rel)));
 }
 
-RelacionamentoBase *ModeloBD::obterRelacionamento(TabelaBase *tab_orig, TabelaBase *tab_dest)
+RelacionamentoBase *ModeloBD::obterRelacionamento(BaseTable *tab_orig, BaseTable *tab_dest)
 {
  vector<BaseObject *>::iterator itr, itr_end;
  RelacionamentoBase *rel=NULL;
  bool enc=false, buscar_tab_unica=false;
- TabelaBase *tab1=NULL, *tab2=NULL;
+ BaseTable *tab1=NULL, *tab2=NULL;
 
  if(tab_orig)
  {
@@ -1688,7 +1688,7 @@ RelacionamentoBase *ModeloBD::obterRelacionamento(TabelaBase *tab_orig, TabelaBa
  return(rel);
 }
 
-void ModeloBD::adicionarCaixaTexto(CaixaTexto *caixa, int idx_obj)
+void ModeloBD::adicionarCaixaTexto(Textbox *caixa, int idx_obj)
 {
  try
  {
@@ -1700,14 +1700,14 @@ void ModeloBD::adicionarCaixaTexto(CaixaTexto *caixa, int idx_obj)
  }
 }
 
-void ModeloBD::removerCaixaTexto(CaixaTexto *caixa, int idx_obj)
+void ModeloBD::removerCaixaTexto(Textbox *caixa, int idx_obj)
 {
  __removerObjeto(caixa, idx_obj);
 }
 
-CaixaTexto *ModeloBD::obterCaixaTexto(unsigned idx_obj)
+Textbox *ModeloBD::obterCaixaTexto(unsigned idx_obj)
 {
- return(dynamic_cast<CaixaTexto *>(obterObjeto(idx_obj, OBJ_TEXTBOX)));
+ return(dynamic_cast<Textbox *>(obterObjeto(idx_obj, OBJ_TEXTBOX)));
 }
 
 void ModeloBD::adicionarEsquema(Esquema *esquema, int idx_obj)
@@ -5494,29 +5494,29 @@ Visao *ModeloBD::criarVisao(void)
  return(visao);
 }
 
-CaixaTexto *ModeloBD::criarCaixaTexto(void)
+Textbox *ModeloBD::criarCaixaTexto(void)
 {
- CaixaTexto *caixa_texto=NULL;
+ Textbox *caixa_texto=NULL;
  map<QString, QString> atributos;
 
  try
  {
-  caixa_texto=new CaixaTexto;
+  caixa_texto=new Textbox;
   definirAtributosBasicos(caixa_texto);
 
   XMLParser::getElementAttributes(atributos);
 
   if(atributos[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_)
-   caixa_texto->definirAtributoTexto(CaixaTexto::TEXTO_ITALICO, true);
+   caixa_texto->setTextAttribute(Textbox::ITALIC_TXT, true);
 
   if(atributos[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_)
-   caixa_texto->definirAtributoTexto(CaixaTexto::TEXTO_NEGRITO, true);
+   caixa_texto->setTextAttribute(Textbox::BOLD_TXT, true);
 
   if(atributos[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_)
-   caixa_texto->definirAtributoTexto(CaixaTexto::TEXTO_SUBLINHADO, true);
+   caixa_texto->setTextAttribute(Textbox::UNDERLINE_TXT, true);
 
   if(!atributos[ParsersAttributes::COLOR].isEmpty())
-   caixa_texto->definirCorTexto(QColor(atributos[ParsersAttributes::COLOR]));
+   caixa_texto->setTextColor(QColor(atributos[ParsersAttributes::COLOR]));
  }
  catch(Exception &e)
  {
@@ -5539,7 +5539,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
  map<QString, QString> atributos;
  RelacionamentoBase *relacao_base=NULL;
  Relacionamento *relacao=NULL;
- TabelaBase *tabelas[2]={NULL, NULL};
+ BaseTable *tabelas[2]={NULL, NULL};
  bool obrig_orig, obrig_dest, identificador, protegido, postergavel, sufixo_auto;
  TipoPostergacao tipo_postergacao;
  unsigned tipo_relac=0, i;
@@ -5567,7 +5567,7 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
   for(i=0; i < 2; i++)
   {
    //Localiza a tabela
-   tabelas[i]=dynamic_cast<TabelaBase *>(obterObjeto(atributos[atribs[i]], tipos_tab[i]));
+   tabelas[i]=dynamic_cast<BaseTable *>(obterObjeto(atributos[atribs[i]], tipos_tab[i]));
 
    //Dispara uma exceção caso a tabela referenciada não exista
    if(!tabelas[i])
@@ -7708,7 +7708,7 @@ void ModeloBD::definirObjetosModificados(void)
                          OBJ_TEXTBOX};
  vector<BaseObject *>::iterator itr, itr_end;
  vector<BaseObject *> *lista_obj=NULL;
- CaixaTexto *rot=NULL;
+ Textbox *rot=NULL;
  RelacionamentoBase *rel=NULL;
  unsigned i, i1;
 

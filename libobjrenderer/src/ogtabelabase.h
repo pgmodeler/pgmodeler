@@ -25,7 +25,7 @@
 #define OG_TABELABASE_H
 
 #include "objetografico.h"
-#include "tabelabase.h"
+#include "basetable.h"
 #include "ogtituloobjeto.h"
 #include "ogsubitemobjeto.h"
 
@@ -44,7 +44,7 @@ class OGTabelaBase: public ObjetoGrafico {
   QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
  public:
-  OGTabelaBase(TabelaBase *);
+  OGTabelaBase(BaseTable *);
   ~OGTabelaBase(void);
 
  signals:

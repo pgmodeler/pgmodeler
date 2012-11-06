@@ -63,7 +63,7 @@ void copiarObjeto(BaseObject **pobj_orig, BaseObject *obj_copia, ObjectType tipo
     copiarObjeto(pobj_orig, dynamic_cast<Tabela *>(obj_copia));
   break;
   case OBJ_TEXTBOX:
-    copiarObjeto(pobj_orig, dynamic_cast<CaixaTexto *>(obj_copia));
+    copiarObjeto(pobj_orig, dynamic_cast<Textbox *>(obj_copia));
   break;
   case OBJ_OPCLASS:
     copiarObjeto(pobj_orig, dynamic_cast<ClasseOperadores *>(obj_copia));
@@ -898,7 +898,7 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
     if(tipo==OBJ_VIEW && oper->tipo_op==Operacao::OBJETO_MODIFICADO)
      modelo->atualizarRelTabelaVisao(dynamic_cast<Visao *>(obj_grafico));
     else if((tipo==OBJ_RELATIONSHIP ||
-             (tipo==OBJ_TABLE && modelo->obterRelacionamento(dynamic_cast<TabelaBase *>(objeto), NULL))) &&
+             (tipo==OBJ_TABLE && modelo->obterRelacionamento(dynamic_cast<BaseTable *>(objeto), NULL))) &&
             oper->tipo_op==Operacao::OBJETO_MODIFICADO)
      modelo->validarRelacionamentos();
    }

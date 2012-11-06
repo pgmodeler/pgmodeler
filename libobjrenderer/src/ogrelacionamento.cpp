@@ -12,7 +12,7 @@ OGRelacionamento::OGRelacionamento(RelacionamentoBase *relacao) : ObjetoGrafico(
   //Aloca os rótulos
   if(relacao->obterRotulo(i))
   {
-   relacao->obterRotulo(i)->definirCorTexto(ObjetoGrafico::obterEstiloFonte(ParsersAttributes::LABEL).foreground());
+   relacao->obterRotulo(i)->setTextColor(ObjetoGrafico::obterEstiloFonte(ParsersAttributes::LABEL).foreground());
    rotulos[i]=new OGCaixaTexto(relacao->obterRotulo(i),
                                ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::LABEL),
                                ObjetoGrafico::obterEstiloBorda(ParsersAttributes::LABEL));
@@ -871,7 +871,7 @@ void OGRelacionamento::configurarRotulos(void)
 
  //Move o rótulo para o ponto calculado
  rotulos[RelacionamentoBase::ROTULO_NOME_RELAC]->setPos(x,y);
- dynamic_cast<CaixaTexto *>(rotulos[RelacionamentoBase::ROTULO_NOME_RELAC]->obterObjetoOrigem())->setModefied(true);
+ dynamic_cast<Textbox *>(rotulos[RelacionamentoBase::ROTULO_NOME_RELAC]->obterObjetoOrigem())->setModefied(true);
 
  /* Caso o relacionamento não seja de generalização ou dependência,
     a posição dos rótulos de cardinalidade será atualizada */
@@ -1007,7 +1007,7 @@ void OGRelacionamento::configurarRotulos(void)
 
    //Move o rótulo para a posição calculada
    rotulos[tipos_rot[idx]]->setPos(x,y);
-   dynamic_cast<CaixaTexto *>(rotulos[tipos_rot[idx]]->obterObjetoOrigem())->setModefied(true);
+   dynamic_cast<Textbox *>(rotulos[tipos_rot[idx]]->obterObjetoOrigem())->setModefied(true);
   }
  }
 }

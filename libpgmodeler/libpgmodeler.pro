@@ -7,13 +7,13 @@ DESTDIR = ../build/lib
 LIBS += $$DESTDIR/$$LIBUTIL \
         $$DESTDIR/$$LIBPARSERS
 
-HEADERS += $$PWD/src/caixatexto.h \
+HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/conversaotipo.h \
            $$PWD/src/funcao.h \
            $$PWD/src/linguagem.h \
            $$PWD/src/operador.h \
            $$PWD/src/relacionamentobase.h \
-           $$PWD/src/tabelabase.h \
+           $$PWD/src/basetable.h \
            $$PWD/src/coluna.h \
            $$PWD/src/dominio.h \
            $$PWD/src/funcaoagregacao.h \
@@ -43,7 +43,7 @@ HEADERS += $$PWD/src/caixatexto.h \
            $$PWD/src/referencia.h \
            $$PWD/src/permissao.h
 
-SOURCES +=  $$PWD/src/caixatexto.cpp \
+SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/dominio.cpp \
             $$PWD/src/gatilho.cpp \
             $$PWD/src/basegraphicobject.cpp \
@@ -70,7 +70,7 @@ SOURCES +=  $$PWD/src/caixatexto.cpp \
             $$PWD/src/funcaoagregacao.cpp \
             $$PWD/src/baseobject.cpp \
             $$PWD/src/relacionamento.cpp \
-            $$PWD/src/tabelabase.cpp \
+            $$PWD/src/basetable.cpp \
             $$PWD/src/familiaoperadores.cpp \
             $$PWD/src/elemclasseoperadores.cpp \
             $$PWD/src/classeoperadores.cpp \

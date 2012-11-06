@@ -14,7 +14,7 @@ RelacionamentoBase::RelacionamentoBase(RelacionamentoBase *relacao)
 }
 
 RelacionamentoBase::RelacionamentoBase(/*const QString &nome,*/ unsigned tipo_rel,
-                                       TabelaBase *tab_orig, TabelaBase *tab_dest,
+                                       BaseTable *tab_orig, BaseTable *tab_dest,
                                         bool obrig_orig, bool obrig_dest)
 
 {
@@ -92,8 +92,8 @@ void RelacionamentoBase::configurarRelacionamento(void)
 
    /* Aloca o rótulo de nome do relacionamento, todos os tipos de relacionamento
       possui esse rótulo */
-   rotulos[ROTULO_NOME_RELAC]=new CaixaTexto;
-   rotulos[ROTULO_NOME_RELAC]->definirAtributoTexto(CaixaTexto::TEXTO_ITALICO, true);
+   rotulos[ROTULO_NOME_RELAC]=new Textbox;
+   rotulos[ROTULO_NOME_RELAC]->setTextAttribute(Textbox::ITALIC_TXT, true);
 
    /* Alocando os rótulos de cardinalidade, exceto para os relacionamentos
       de generalização e dependência, pois esses não trabalham com cardinalidade */
@@ -101,10 +101,10 @@ void RelacionamentoBase::configurarRelacionamento(void)
       tipo_relac!=RELACIONAMENTO_DEP)
    {
     //Aloca os rótulos
-    rotulos[ROTULO_CARD_ORIGEM]=new CaixaTexto;
-    rotulos[ROTULO_CARD_DESTINO]=new CaixaTexto;
-    rotulos[ROTULO_CARD_ORIGEM]->definirAtributoTexto(CaixaTexto::TEXTO_ITALICO, true);
-    rotulos[ROTULO_CARD_DESTINO]->definirAtributoTexto(CaixaTexto::TEXTO_ITALICO, true);
+    rotulos[ROTULO_CARD_ORIGEM]=new Textbox;
+    rotulos[ROTULO_CARD_DESTINO]=new Textbox;
+    rotulos[ROTULO_CARD_ORIGEM]->setTextAttribute(Textbox::ITALIC_TXT, true);
+    rotulos[ROTULO_CARD_DESTINO]->setTextAttribute(Textbox::ITALIC_TXT, true);
 
     /* Define a obrigatoriedade das tabelas e já cria o texto
        dos rótulos de cardinalidade */
@@ -209,7 +209,7 @@ void RelacionamentoBase::definirTabelaObrigatoria(unsigned id_tabela, bool valor
  }
 }
 
-TabelaBase *RelacionamentoBase::obterTabela(unsigned id_tabela)
+BaseTable *RelacionamentoBase::obterTabela(unsigned id_tabela)
 {
  //Retorna a tabela de acordo o índice passado
  if(id_tabela==TABELA_ORIGEM)
@@ -255,7 +255,7 @@ void RelacionamentoBase::conectarRelacionamento(void)
  }
 }
 
-CaixaTexto *RelacionamentoBase::obterRotulo(unsigned idx_rot)
+Textbox *RelacionamentoBase::obterRotulo(unsigned idx_rot)
 {
  // Retorna o rótulo na posição especificada, caso o índice
  //   do mesmo seja válido
@@ -397,7 +397,7 @@ void RelacionamentoBase::operator = (RelacionamentoBase &rel)
   if(rel.rotulos[i])
   {
    if(!this->rotulos[i])
-    this->rotulos[i]=new CaixaTexto;
+    this->rotulos[i]=new Textbox;
 
    (*this->rotulos[i])=(*rel.rotulos[i]);
   }

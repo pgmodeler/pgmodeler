@@ -1,6 +1,6 @@
 #include "visao.h"
 
-Visao::Visao(void) : TabelaBase()
+Visao::Visao(void) : BaseTable()
 {
  //Definindo configurações inicias para a visão
  obj_type=OBJ_VIEW;

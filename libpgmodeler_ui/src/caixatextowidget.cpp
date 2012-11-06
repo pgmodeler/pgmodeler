@@ -27,20 +27,20 @@ void CaixaTextoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void CaixaTextoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, CaixaTexto *caixa_texto, float px_objeto, float py_objeto)
+void CaixaTextoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Textbox *caixa_texto, float px_objeto, float py_objeto)
 {
  /* Caso a caixa de texto esteja alocada, preenche o formulário
     com os valores deste objeto */
  if(caixa_texto)
  {
   QPalette palette;
-  palette.setColor(QPalette::Button, caixa_texto->obterCorTexto());
+  palette.setColor(QPalette::Button, caixa_texto->getTextColor());
   sel_cor_tb->setPalette(palette);
 
   texto_txt->setPlainText(QString::fromUtf8(caixa_texto->getComment()));
-  negrito_chk->setChecked(caixa_texto->obterAtributoTexto(CaixaTexto::TEXTO_NEGRITO));
-  italico_chk->setChecked(caixa_texto->obterAtributoTexto(CaixaTexto::TEXTO_ITALICO));
-  sublinhado_chk->setChecked(caixa_texto->obterAtributoTexto(CaixaTexto::TEXTO_SUBLINHADO));
+  negrito_chk->setChecked(caixa_texto->getTextAttribute(Textbox::BOLD_TXT));
+  italico_chk->setChecked(caixa_texto->getTextAttribute(Textbox::ITALIC_TXT));
+  sublinhado_chk->setChecked(caixa_texto->getTextAttribute(Textbox::UNDERLINE_TXT));
  }
 
  //Define os atributos do formulários e da janela pai
@@ -66,17 +66,17 @@ void CaixaTextoWidget::aplicarConfiguracao(void)
 {
  try
  {
-  CaixaTexto *caixa=NULL;
+  Textbox *caixa=NULL;
 
-  iniciarConfiguracao<CaixaTexto>();
+  iniciarConfiguracao<Textbox>();
 
-  caixa=dynamic_cast<CaixaTexto *>(this->objeto);
+  caixa=dynamic_cast<Textbox *>(this->objeto);
   //caixa->definirPosicaoObjeto(QPointF(this->px_objeto, this->py_objeto));
   caixa->setComment(texto_txt->toPlainText());
-  caixa->definirAtributoTexto(CaixaTexto::TEXTO_ITALICO, italico_chk->isChecked());
-  caixa->definirAtributoTexto(CaixaTexto::TEXTO_NEGRITO, negrito_chk->isChecked());
-  caixa->definirAtributoTexto(CaixaTexto::TEXTO_SUBLINHADO, sublinhado_chk->isChecked());
-  caixa->definirCorTexto(sel_cor_tb->palette().color(QPalette::Button));
+  caixa->setTextAttribute(Textbox::ITALIC_TXT, italico_chk->isChecked());
+  caixa->setTextAttribute(Textbox::BOLD_TXT, negrito_chk->isChecked());
+  caixa->setTextAttribute(Textbox::UNDERLINE_TXT, sublinhado_chk->isChecked());
+  caixa->setTextColor(sel_cor_tb->palette().color(QPalette::Button));
 
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();

@@ -23,7 +23,7 @@
 #ifndef OG_CAIXA_TEXTO_H
 #define OG_CAIXA_TEXTO_H
 
-#include "caixatexto.h"
+#include "textbox.h"
 #include "objetografico.h"
 
 class OGCaixaTexto: public ObjetoGrafico {
@@ -41,7 +41,7 @@ class OGCaixaTexto: public ObjetoGrafico {
   QGraphicsSimpleTextItem *texto;
 
  public:
-  OGCaixaTexto(CaixaTexto *caixa, const QBrush &brush=Qt::NoBrush, const QPen &pen=Qt::NoPen);
+  OGCaixaTexto(Textbox *caixa, const QBrush &brush=Qt::NoBrush, const QPen &pen=Qt::NoPen);
   ~OGCaixaTexto(void);
 
  protected slots:

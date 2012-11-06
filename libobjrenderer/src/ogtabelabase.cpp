@@ -1,6 +1,6 @@
 #include "ogtabelabase.h"
 
-OGTabelaBase::OGTabelaBase(TabelaBase *tab_base) : ObjetoGrafico(tab_base)
+OGTabelaBase::OGTabelaBase(BaseTable *tab_base) : ObjetoGrafico(tab_base)
 {
  if(!tab_base)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);

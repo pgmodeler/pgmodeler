@@ -25,7 +25,7 @@
 
 #include "relacionamentobase.h"
 #include "tabela.h"
-#include "caixatexto.h"
+#include "textbox.h"
 
 /*
 ### Regras de implementação de relacionamentos: ###

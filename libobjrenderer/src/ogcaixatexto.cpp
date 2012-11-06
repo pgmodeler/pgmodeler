@@ -1,6 +1,6 @@
 #include "ogcaixatexto.h"
 
-OGCaixaTexto::OGCaixaTexto(CaixaTexto *cxtexto, const QBrush &brush, const QPen &pen) : ObjetoGrafico(cxtexto)
+OGCaixaTexto::OGCaixaTexto(Textbox *cxtexto, const QBrush &brush, const QPen &pen) : ObjetoGrafico(cxtexto)
 {
  connect(cxtexto, SIGNAL(s_objectModified(void)), this, SLOT(configurarObjeto(void)));
 
@@ -39,7 +39,7 @@ OGCaixaTexto::~OGCaixaTexto(void)
 
 void OGCaixaTexto::configurarObjeto(void)
 {
- CaixaTexto *cxtexto=dynamic_cast<CaixaTexto *>(this->obterObjetoOrigem());
+ Textbox *cxtexto=dynamic_cast<Textbox *>(this->obterObjetoOrigem());
  QTextCharFormat fmt=config_fonte[ParsersAttributes::GLOBAL];
  QFont fonte;
  QPolygonF poligono;
@@ -56,15 +56,15 @@ void OGCaixaTexto::configurarObjeto(void)
  /* Configura o estilo da fonte do texto conforme os parâmetros definidos
     na caixa de texto que deu origem ao objeto gráfico */
  fonte=fmt.font();
- fonte.setItalic(cxtexto->obterAtributoTexto(CaixaTexto::TEXTO_ITALICO));
- fonte.setBold(cxtexto->obterAtributoTexto(CaixaTexto::TEXTO_NEGRITO));
- fonte.setUnderline(cxtexto->obterAtributoTexto(CaixaTexto::TEXTO_SUBLINHADO));
+ fonte.setItalic(cxtexto->getTextAttribute(Textbox::ITALIC_TXT));
+ fonte.setBold(cxtexto->getTextAttribute(Textbox::BOLD_TXT));
+ fonte.setUnderline(cxtexto->getTextAttribute(Textbox::UNDERLINE_TXT));
 
  //Configura o texto e o estilo de fonte da caixa
  texto->setText(QString::fromUtf8(cxtexto->getComment()));
  texto->setFont(fonte);
  texto->setZValue(1);
- texto->setBrush(cxtexto->obterCorTexto());
+ texto->setBrush(cxtexto->getTextColor());
 
  //Move o texto para a posição inicial considerando os espaçamentos vertical e horizontal
  texto->setPos(ESP_HORIZONTAL, ESP_VERTICAL);

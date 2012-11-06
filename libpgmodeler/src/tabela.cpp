@@ -1,6 +1,6 @@
 #include "tabela.h"
 
-Tabela::Tabela(void) : TabelaBase()
+Tabela::Tabela(void) : BaseTable()
 {
  obj_type=OBJ_TABLE;
  attributes[ParsersAttributes::COLUMNS]="";

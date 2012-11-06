@@ -23,9 +23,9 @@
 #define VISAO_H
 
 #include "referencia.h"
-#include "tabelabase.h"
+#include "basetable.h"
 
-class Visao: public TabelaBase {
+class Visao: public BaseTable {
  private:
   //Armazena as referências para objetos e expressões
   vector<Referencia> referencias;

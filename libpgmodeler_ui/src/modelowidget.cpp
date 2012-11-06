@@ -443,7 +443,7 @@ void ModeloWidget::manipularAdicaoObjeto(BaseObject *objeto)
    break;
 
    default:
-    item=new OGCaixaTexto(dynamic_cast<CaixaTexto *>(obj_graf)); break;
+    item=new OGCaixaTexto(dynamic_cast<Textbox *>(obj_graf)); break;
    break;
   }
 
@@ -1218,8 +1218,8 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_TEXTBOX:
-    CaixaTexto *caixa;
-    caixa=dynamic_cast<CaixaTexto *>(objeto);
+    Textbox *caixa;
+    caixa=dynamic_cast<Textbox *>(objeto);
     caixatexto_wgt->definirAtributos(modelo, lista_op, caixa, pos.x(), pos.y());
     caixatexto_wgt->show();
    break;
@@ -1877,7 +1877,7 @@ void ModeloWidget::excluirObjetos(void)
  int idx_obj=-1;
  unsigned qtd, qtd_op;
  Tabela *tabela=NULL;
- TabelaBase *tab_orig=NULL, *tab_dest=NULL;
+ BaseTable *tab_orig=NULL, *tab_dest=NULL;
  RelacionamentoBase *relac=NULL;
  ObjetoTabela *objeto_tab=NULL;
  ObjectType tipo_obj;

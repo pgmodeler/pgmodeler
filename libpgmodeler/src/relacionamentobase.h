@@ -22,8 +22,8 @@
 #ifndef RELACIONAMENTOBASE_H
 #define RELACIONAMENTOBASE_H
 
-#include "tabelabase.h"
-#include "caixatexto.h"
+#include "basetable.h"
+#include "textbox.h"
 #include <cmath>
 
 class RelacionamentoBase: public BaseGraphicObject {
@@ -45,13 +45,13 @@ class RelacionamentoBase: public BaseGraphicObject {
      0 - Rótulo Cardinalidade Origem
      1 - Rótulo Cardinalidade Destino
      2 - Rótulo Nome do Relacionamento */
-  CaixaTexto *rotulos[3];
+  Textbox *rotulos[3];
 
   //Armazena a distâncias dos rótulos de suas origens
   QPointF dist_rotulos[3];
 
   //Entidades envolvidas no relacionamento
-  TabelaBase *tabela_orig,
+  BaseTable *tabela_orig,
              *tabela_dest;
 
   //Tipo do relacionamento (1-1, 1-n, n-n, gen ou dep)
@@ -91,7 +91,7 @@ class RelacionamentoBase: public BaseGraphicObject {
 
   RelacionamentoBase(RelacionamentoBase *relacao);
 
-  RelacionamentoBase(unsigned tipo_rel, TabelaBase *tab_orig, TabelaBase *tab_dest,
+  RelacionamentoBase(unsigned tipo_rel, BaseTable *tab_orig, BaseTable *tab_dest,
                      bool obrig_orig, bool obrig_dest);
   ~RelacionamentoBase(void);
 
@@ -103,10 +103,10 @@ class RelacionamentoBase: public BaseGraphicObject {
   void definirTabelaObrigatoria(unsigned id_tabela, bool valor);
 
   //Obtém um rótulo através de seu índice
-  CaixaTexto *obterRotulo(unsigned idx_rot);
+  Textbox *obterRotulo(unsigned idx_rot);
 
   //Obtém uma tabela participante da relação através de seu índice
-  TabelaBase *obterTabela(unsigned id_tabela);
+  BaseTable *obterTabela(unsigned id_tabela);
 
   //Retorna o tipo do relacionamento
   unsigned obterTipoRelacionamento(void);

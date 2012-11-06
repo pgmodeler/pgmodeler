@@ -33,7 +33,7 @@
 #include "visao.h"
 #include "sequencia.h"
 #include "relacionamento.h"
-#include "caixatexto.h"
+#include "textbox.h"
 #include "papel.h"
 #include "tipo.h"
 #include "espacotabela.h"
@@ -282,12 +282,12 @@ class ModeloBD:  public QObject, public BaseObject {
   /* Obtém o relacionamento usando uma ou duas tabelas para se obtê-lo. Caso o segundo parâmetro
      seja omitido, o método encontra a primeira ocorrência de relacionamento em que a tabela do
      1º parâmetro estiver participando */
-  RelacionamentoBase *obterRelacionamento(TabelaBase *tab_orig, TabelaBase *tab_dest);
+  RelacionamentoBase *obterRelacionamento(BaseTable *tab_orig, BaseTable *tab_dest);
 
   //Métodos de manipulação de caixas de texto
-  void adicionarCaixaTexto(CaixaTexto *caixa, int idx_obj=-1);
-  void removerCaixaTexto(CaixaTexto *caixa, int idx_obj=-1);
-  CaixaTexto *obterCaixaTexto(unsigned idx_obj);
+  void adicionarCaixaTexto(Textbox *caixa, int idx_obj=-1);
+  void removerCaixaTexto(Textbox *caixa, int idx_obj=-1);
+  Textbox *obterCaixaTexto(unsigned idx_obj);
 
   //Métodos de manipulação de funções
   void adicionarFuncao(Funcao *funcao, int idx_obj=-1);
@@ -425,7 +425,7 @@ class ModeloBD:  public QObject, public BaseObject {
   Visao *criarVisao(void);
   Permissao *criarPermissao(void);
 
-  CaixaTexto *criarCaixaTexto(void);
+  Textbox *criarCaixaTexto(void);
   RelacionamentoBase *criarRelacionamento(void);
 
   /* Cria automaticamente relacionamentos entre tabelas e a visão passada
