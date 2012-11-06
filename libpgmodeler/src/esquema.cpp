@@ -21,3 +21,8 @@ void Esquema::setName(const QString &nome)
  BaseObject::setName(nome); //Chama o método da classe descendente
 }
 
+QString Esquema::getCodeDefinition(unsigned def_type)
+{
+ return(BaseObject::__getCodeDefinition(def_type));
+}
+

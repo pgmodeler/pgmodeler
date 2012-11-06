@@ -34,6 +34,7 @@ class Esquema: public BaseObject {
 
   //Define o nome do esquema
   void setName(const QString &obj_name);
+  QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

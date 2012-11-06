@@ -438,7 +438,7 @@ bool BaseObject::operator != (const QString &name)
  return(this->obj_name!=name);
 }
 
-QString BaseObject::getCodeDefinition(unsigned def_type)
+QString BaseObject::__getCodeDefinition(unsigned def_type)
 {
  return(BaseObject::getCodeDefinition(def_type, false));
 }

@@ -2,8 +2,8 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe ObjetoBaseGrafico que é uma implementação básica para
-#             representar graficamente as tabelas, relacionamentos, caixas de texto.
-#             A representação gráfica efetiva do objeto é feita pela classe ObjetoGrafico (libobjrenderer)
+#              representar graficamente as tabelas, relacionamentos, caixas de texto.
+#              A representação gráfica efetiva do objeto é feita pela classe ObjetoGrafico (libobjrenderer)
 # Creation date: 17/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -79,6 +79,8 @@ class BaseGraphicObject: public QObject, public BaseObject {
   void operator = (BaseGraphicObject &obj);
 
   QObject *getReceiverObject(void);
+
+  virtual QString getCodeDefinition(unsigned tipo_def)=0;
 
  signals:
   void s_objectModified(void);

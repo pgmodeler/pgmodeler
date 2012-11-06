@@ -6017,7 +6017,7 @@ QString ModeloBD::__obterDefinicaoObjeto(unsigned tipo_def)
  }
 
  attributes[ParsersAttributes::TEMPLATE_DB]=bd_modelo;
- return(this->BaseObject::getCodeDefinition(tipo_def));
+ return(this->BaseObject::__getCodeDefinition(tipo_def));
 }
 
 QString ModeloBD::getCodeDefinition(unsigned tipo_def)

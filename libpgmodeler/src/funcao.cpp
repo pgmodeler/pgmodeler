@@ -56,7 +56,7 @@ QString Parametro::getCodeDefinition(unsigned tipo_def)
  attributes[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
 
  //return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::PARAMETRO,atributos, tipo_def));
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 
 unsigned Funcao::function_id=40000;

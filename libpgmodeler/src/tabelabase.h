@@ -25,9 +25,11 @@
 #include "basegraphicobject.h"
 
 class TabelaBase: public BaseGraphicObject {
- protected:
  public:
   TabelaBase(void);
+
+  virtual QString getCodeDefinition(unsigned tipo_def)=0;
+
   friend class RelacionamentoBase;
   friend class ModeloBD;
 };

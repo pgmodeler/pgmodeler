@@ -350,7 +350,7 @@ QString Sequencia::getCodeDefinition(unsigned tipo_def)
  attributes[ParsersAttributes::CACHE]=cache;
  attributes[ParsersAttributes::CYCLE]=(ciclica ? "1" : "");
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 
 void Sequencia::operator = (Sequencia &seq)

@@ -105,6 +105,6 @@ QString ConversaoCodificacao::getCodeDefinition(unsigned tipo_def)
    attributes[ParsersAttributes::FUNCTION]=funcao_conv->getCodeDefinition(tipo_def, true);
  }
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 

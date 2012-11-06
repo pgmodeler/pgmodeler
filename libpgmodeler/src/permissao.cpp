@@ -344,6 +344,6 @@ QString Permissao::getCodeDefinition(unsigned tipo_def)
 
  attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 

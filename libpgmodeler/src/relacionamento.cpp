@@ -2387,7 +2387,7 @@ QString Relacionamento::getCodeDefinition(unsigned tipo_def)
    attributes[ParsersAttributes::ANCESTOR_TABLE]=obterTabelaReferencia()->getName(true);
   }
 
-  return(this->BaseObject::getCodeDefinition(SchemaParser::SQL_DEFINITION));
+  return(this->BaseObject::__getCodeDefinition(SchemaParser::SQL_DEFINITION));
  }
  else
  {

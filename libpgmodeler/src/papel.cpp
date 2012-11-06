@@ -362,6 +362,6 @@ QString Papel::getCodeDefinition(unsigned tipo_def)
 
  attributes[ParsersAttributes::SYSID]=QString("%1").arg(sysid);
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 

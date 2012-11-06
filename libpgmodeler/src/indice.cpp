@@ -265,6 +265,6 @@ QString Indice::getCodeDefinition(unsigned tipo_def)
  if(!referenciaColunaIncRelacao())
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 

@@ -355,6 +355,6 @@ QString Gatilho::getCodeDefinition(unsigned tipo_def)
   attributes[ParsersAttributes::DEFER_TYPE]=(~tipo_postergacao);
  }
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 

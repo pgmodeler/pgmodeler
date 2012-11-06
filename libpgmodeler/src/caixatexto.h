@@ -34,6 +34,8 @@ class CaixaTexto: public BaseGraphicObject{
   //Cor do texto da caixa
   QColor cor_texto;
 
+  QString getCodeDefinition(unsigned){ return(""); }
+
  public:
   //Constantes usadas para configura os atributos de texto
   static const unsigned TEXTO_ITALICO=0,

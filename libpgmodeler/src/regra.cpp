@@ -116,6 +116,6 @@ QString Regra::getCodeDefinition(unsigned tipo_def)
   attributes[ParsersAttributes::TABLE]=this->tabela_pai->getName(true);
 
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 

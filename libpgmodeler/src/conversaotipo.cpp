@@ -163,6 +163,6 @@ QString ConversaoTipo::getCodeDefinition(unsigned tipo_def)
 
  attributes[ParsersAttributes::IO_CAST]=(entrada_saida ? "1" : "");
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 

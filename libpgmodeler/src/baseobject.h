@@ -132,6 +132,10 @@ class BaseObject {
      name related to model objects are defined in ParsersAttributes namespace. */
   map<QString, QString> attributes;
 
+  /* This method calls the getCodeDefinition(unsigned, bool) method with the 'reduced_form' defined as 'false',
+     This is the real implementation of the virtual method getCodeDefinition(unsigned). */
+  virtual QString __getCodeDefinition(unsigned def_type);
+
  public:
   BaseObject(void);
   virtual ~BaseObject(void){}
@@ -194,15 +198,6 @@ class BaseObject {
   //Retorns the object's comment
   QString getComment(void);
 
-  /* Returns the object's SQL or XML code definition. The attribute 'reduced_form'
-     indicates that the code generation will be an XML minimum representation
-     of the object. See schema file for: functions, schemas, domains, types. */
-  virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
-
-  /* Override of the above method. This calls getCodeDefinition(unsigned,bool)
-     with the 'reduced_form' defined as 'false' */
-  virtual QString getCodeDefinition(unsigned def_type);
-
   //Returns the object's type
   ObjectType getType(void);
 
@@ -241,6 +236,15 @@ class BaseObject {
 
   //Clears all the attributes used by the SchemaParser
   void clearAttributes(void);
+
+  /* Forcing the class to be virtual. This means that derivated classes may
+     override this method in order to be possible its instatiation. */
+  virtual QString getCodeDefinition(unsigned)=0;
+
+  /* Returns the object's SQL or XML code definition. The attribute 'reduced_form'
+     indicates that the code generation will be an XML minimum representation
+     of the object. See schema file for: functions, schemas, domains, types. */
+  virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
   friend class ModeloBD;
 };

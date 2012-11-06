@@ -447,6 +447,6 @@ QString Restricao::getCodeDefinition(unsigned tipo_def, bool inc_insporrelacao)
  else
   attributes[ParsersAttributes::FACTOR]="";
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 

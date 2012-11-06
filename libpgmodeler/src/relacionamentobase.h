@@ -27,6 +27,9 @@
 #include <cmath>
 
 class RelacionamentoBase: public BaseGraphicObject {
+ private:
+   QString getCodeDefinition(unsigned){ return(""); }
+
  protected:
   vector<QPointF> pontos;
 

@@ -257,6 +257,6 @@ QString FuncaoAgregacao::getCodeDefinition(unsigned tipo_def)
  else
   attributes[ParsersAttributes::STATE_TYPE]=tipo_estado.obterDefinicaoObjeto(tipo_def,ParsersAttributes::STATE_TYPE);
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 

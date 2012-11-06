@@ -401,7 +401,7 @@ QString Visao::getCodeDefinition(unsigned tipo_def)
   definirAtributoReferencias();
  }
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 
 void Visao::operator = (Visao &visao)

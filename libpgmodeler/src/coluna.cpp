@@ -90,7 +90,7 @@ QString Coluna::getCodeDefinition(unsigned tipo_def)
  attributes[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
  attributes[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
  attributes[ParsersAttributes::NOT_NULL]=(!nao_nulo ? "" : "1");
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 
 void Coluna::operator = (Coluna &coluna)

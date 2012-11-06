@@ -110,7 +110,7 @@ QString Dominio::getCodeDefinition(unsigned tipo_def)
   attributes[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
  }
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 
 void Dominio::operator = (Dominio &dominio)

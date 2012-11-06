@@ -999,7 +999,7 @@ QString Tabela::getCodeDefinition(unsigned tipo_def)
  if(tipo_def==SchemaParser::XML_DEFINITION)
   setPositionAttribute();
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 
 void Tabela::operator = (Tabela &tabela)

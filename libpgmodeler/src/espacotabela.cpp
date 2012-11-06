@@ -48,6 +48,6 @@ QString EspacoTabela::getCodeDefinition(unsigned tipo_def)
  if(diretorio!="")
   attributes[ParsersAttributes::DIRECTORY]="'" + diretorio + "'";
 
- return(BaseObject::getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(tipo_def));
 }
 
