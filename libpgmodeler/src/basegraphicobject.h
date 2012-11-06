@@ -1,9 +1,11 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe ObjetoBaseGrafico que é uma implementação básica para
-#              representar graficamente as tabelas, relacionamentos, caixas de texto.
-#              A representação gráfica efetiva do objeto é feita pela classe ObjetoGrafico (libobjrenderer)
+# Class: BaseGraphicObject
+# Description: This is a basice implementation to control graphical objects such as
+#              tables, relationships, textboxes, views.
+#              The full graphical representation of these objects are made in an separated layer
+#              this is treated in the GraphicObject class on libobjrenderer library
 # Creation date: 17/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -31,12 +33,12 @@ class BaseGraphicObject: public QObject, public BaseObject {
  private:
   Q_OBJECT
 
-  /* Armazena a posição do objeto. Este atributo é usado apenas
-     para memorizar a posição do objeto na geração do código xml do mesmo */
+  /* Stores the position of the object on the model. This attribute is used only
+     to memorize the position of the object in xml code generation */
   QPointF position;
 
-  /* Indica que de alguma forma a estrutura do objeto foi modificado
-     e o mesmo precisa ser redimensionado ou tratado de forma especial */
+  /* Indicates that the object structure was modified somehow
+     and it is needed to be updated or specially treated */
   bool is_modified;
 
   /* Armazena a referência ao objeto que atualmente é o receptor
