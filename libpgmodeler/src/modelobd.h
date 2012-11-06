@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe ModeloBD que é usado para
 #             representar graficamente o modelo do banco de dados, gerar os
 #             códigos SQL do banco de dados, salvar em arquivo, executar
@@ -231,7 +231,7 @@ class ModeloBD:  public QObject, public BaseObject {
      da classe ObjetoBase. O metodo sobrecarregado protege
      ou desprotege todos os objetos do modelo em uma
      só chamada */
-  void setProtected(bool protected_obj);
+  void setProtected(bool is_protected);
 
   //Destrói todos os objetos do modelo
   void destruirObjetos(void);

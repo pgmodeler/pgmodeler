@@ -141,7 +141,7 @@ void RelacionamentoWidget::hideEvent(QHideEvent *evento)
 
   /* Caso o objeto seja novo e o usuário fecha a janela sem aplicar
      as configurações o mesmo será destruído */
- if(rel && !rel->objetoModificado())
+ if(rel && !rel->isModified())
  {
   this->cancelarConfiguracao();
 
@@ -713,7 +713,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
        do relacionamento */
     modelo->validarRelacionamentos();
     relacao->blockSignals(false);
-    relacao->definirModificado(true);
+    relacao->setModefied(true);
    }
    catch(Exception &e)
    {

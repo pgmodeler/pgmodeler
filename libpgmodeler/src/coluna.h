@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description:Definição da classe Coluna que é utilizada pela classe Tabela.
 # Creation date: 12/09/2006
 #

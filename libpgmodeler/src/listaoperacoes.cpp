@@ -869,10 +869,10 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
    {
     if(tabela_pai)
      //Marca que a tabela pai foi modificada forçando assim seu redimensionamento
-     tabela_pai->definirModificado(true);
+     tabela_pai->setModefied(true);
     else
      //Marca que o relacionamento pai foi modificado forçando assim seu redimensionamento
-    relac_pai->definirModificado(true);
+    relac_pai->setModefied(true);
 
     if(tabela_pai &&
       (objeto->getType()==OBJ_COLUMN ||
@@ -888,11 +888,11 @@ void ListaOperacoes::executarOperacao(Operacao *oper, bool refazer)
       tipo==BASE_RELATIONSHIP || tipo==OBJ_RELATIONSHIP ||
       tipo==OBJ_TEXTBOX)
    {
-    ObjetoGraficoBase *obj_grafico=dynamic_cast<ObjetoGraficoBase *>(objeto);
+    BaseGraphicObject *obj_grafico=dynamic_cast<BaseGraphicObject *>(objeto);
 
     if(oper->tipo_op==Operacao::OBJETO_MODIFICADO ||
        oper->tipo_op==Operacao::OBJETO_MOVIMENTADO)
-     obj_grafico->definirModificado(true);
+     obj_grafico->setModefied(true);
 
     //Caso seja uma visão atualiza os relacionamentos entre as tabelas e a visão
     if(tipo==OBJ_VIEW && oper->tipo_op==Operacao::OBJETO_MODIFICADO)

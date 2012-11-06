@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe CaixaTexto que é usada para
 #             representar graficamente os textos adicionados pelo usuário.
 #             Também é usada para representar os rótulos dos relacionamentos.
@@ -23,10 +23,10 @@
 #ifndef CAIXATEXTO_H
 #define CAIXATEXTO_H
 
-#include "objetograficobase.h"
+#include "basegraphicobject.h"
 #include <QColor>
 
-class CaixaTexto: public ObjetoGraficoBase{
+class CaixaTexto: public BaseGraphicObject{
  private:
   //Armazena os atributos do texto a ser exibido (negrito / italico / sublinhado)
   bool atributo_texto[3];

@@ -26,7 +26,7 @@ OGTituloObjeto::~OGTituloObjeto(void)
  delete(caixa);
 }
 
-void OGTituloObjeto::configurarObjeto(ObjetoGraficoBase *objeto)
+void OGTituloObjeto::configurarObjeto(BaseGraphicObject *objeto)
 {
  QTextCharFormat fmt;
  QString atrib_nome, atrib_nome_esquema, atrib_cor_titulo;

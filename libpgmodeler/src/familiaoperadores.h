@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe FamiliaOperadores que é usada para
 #             gerar os códigos SQL pertinente s famílias de operadores
 #             referenciadas pelas classes de operadores

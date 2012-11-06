@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe ObjetoBaseGrafico que é uma implementação básica para
 #             representar graficamente as tabelas, relacionamentos, caixas de texto.
 #             A representação gráfica efetiva do objeto é feita pela classe ObjetoGrafico (libobjrenderer)
@@ -20,69 +20,69 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef OBJETO_GRAFICO_BASE_H
-#define OBJETO_GRAFICO_BASE_H
+#ifndef BASE_GRAPHIC_OBJECT_H
+#define BASE_GRAPHIC_OBJECT_H
 
 #include <QObject>
 #include <QPointF>
 #include "baseobject.h"
 
-class ObjetoGraficoBase: public QObject, public BaseObject {
- Q_OBJECT
-
+class BaseGraphicObject: public QObject, public BaseObject {
  private:
+  Q_OBJECT
+
   /* Armazena a posição do objeto. Este atributo é usado apenas
      para memorizar a posição do objeto na geração do código xml do mesmo */
-  QPointF posicao;
+  QPointF position;
 
   /* Indica que de alguma forma a estrutura do objeto foi modificado
      e o mesmo precisa ser redimensionado ou tratado de forma especial */
-  bool modificado;
+  bool is_modified;
 
   /* Armazena a referência ao objeto que atualmente é o receptor
      dos sinais emitidos pela instância desta classe. Este atributo quebra
      alguns conceitos da OO mas é necessário para o caso de quando um OGRelacionamento
      é alocado, não ser necessário pesquisar no modelo, quem é o objeto gráfico
      relacionado  s tabelas do relacionamento */
-  QObject *objeto_receptor;
+  QObject *receiver_object;
 
  protected:
   /* Método que define os atributos de posição de objetos usados na obtenção
      da definição XML */
-  void definirAtributoPosicao(void);
+  void setPositionAttribute(void);
 
-  void definirObjetoReceptor(QObject *objeto);
+  void setReceiverObject(QObject *obj);
 
  public:
-  ObjetoGraficoBase(void);
-  ~ObjetoGraficoBase(void);
+  BaseGraphicObject(void);
+  ~BaseGraphicObject(void){}
 
   /* Define se o objeto está protegido ou não
     (sobrecarga do método da classe ObjetoBase) a diferença
     é que este método dispara o sinal isProtecteddo() */
-  virtual void setProtected(bool valor);
+  virtual void setProtected(bool value);
 
   //Define a posição do objeto
-  void definirPosicaoObjeto(QPointF p);
+  void setPosition(QPointF pos);
 
   /* Define se o objeto está modificado ou não.
      Este método dispara o sinal s_objetoModificado() */
-  virtual void definirModificado(bool valor);
+  virtual void setModefied(bool value);
 
   //Retorna se o objeto está modificado ou não
-  bool objetoModificado(void);
+  bool isModified(void);
 
   //Retorna a posição do objeto
-  QPointF obterPosicaoObjeto();
+  QPointF getPosition();
 
   //Operado que faz a atribuição entre um objeto e outro
-  void operator = (ObjetoGraficoBase &obj);
+  void operator = (BaseGraphicObject &obj);
 
-  QObject *obterObjetoReceptor(void);
+  QObject *getReceiverObject(void);
 
  signals:
-  void s_objetoModificado(void);
-  void s_isProtected(bool);
+  void s_objectModified(void);
+  void s_objectProtected(bool);
 
   friend class CenaObjetos;
   friend class ObjetoGrafico;

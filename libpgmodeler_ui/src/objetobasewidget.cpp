@@ -181,16 +181,16 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
    objeto_pai=modelo;
  }
 
- if(dynamic_cast<ObjetoGraficoBase *>(objeto))
-  dynamic_cast<ObjetoGraficoBase *>(objeto)->definirModificado(false);
+ if(dynamic_cast<BaseGraphicObject *>(objeto))
+  dynamic_cast<BaseGraphicObject *>(objeto)->setModefied(false);
 
  this->lista_op=lista_op;
  this->objeto=objeto;
 
  if(this->tabela)
  {
-  this->px_objeto=this->tabela->obterPosicaoObjeto().x();
-  this->py_objeto=this->tabela->obterPosicaoObjeto().y();
+  this->px_objeto=this->tabela->getPosition().x();
+  this->py_objeto=this->tabela->getPosition().y();
  }
  else
  {
@@ -622,7 +622,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
  if(this->objeto)
  {
   ObjectType tipo_obj=this->objeto->getType();
-  ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->objeto);
+  BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(this->objeto);
   ObjetoTabela *obj_tab=dynamic_cast<ObjetoTabela *>(this->objeto);
 
   /* Caso o objeto seja novo, é necessário adicion-o   lista
@@ -667,7 +667,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
    ObjectType tipos[]={ OBJ_TABLE, OBJ_VIEW,
                             OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
    unsigned i;
-   ObjetoGraficoBase *obj=NULL, *obj1=NULL;
+   BaseGraphicObject *obj=NULL, *obj1=NULL;
    RelacionamentoBase *rel=NULL;
 
    for(i=0; i < 4; i++)
@@ -681,7 +681,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
     while(itr!=itr_end)
     {
      //Obtém o objeto do iterador atual
-     obj=dynamic_cast<ObjetoGraficoBase *>(*itr);
+     obj=dynamic_cast<BaseGraphicObject *>(*itr);
      itr++;
 
      //Caso o objeto seja um relacionamento
@@ -701,20 +701,20 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
 
      //Caso o objeto referencia o esquema, marca como modificado
      if(obj->getSchema()==this->objeto)
-      obj->definirModificado(true);
+      obj->setModefied(true);
 
      /* Caso o objeto1, neste caso sempre será uma tabela participante
         de um relacionamento quando alocado, referencia o esquema, marca-o como
         modificado */
      if(obj1 && obj1->getSchema()==this->objeto)
-      obj1->definirModificado(true);
+      obj1->setModefied(true);
 
      /* Caso o relacionamento esteja alocado, sinal de que o objeto atual é um relacionamento
         verifica uma das tabelas participantes estão modificadas, caso seja veradeiro
         o próprio relacionamento é marcado como modificado */
-     if(rel && (obj->objetoModificado() || (obj1 && obj1->objetoModificado())))
+     if(rel && (obj->isModified() || (obj1 && obj1->isModified())))
      {
-      rel->definirModificado(true);
+      rel->setModefied(true);
       obj1=NULL;
       rel=NULL;
      }
@@ -735,20 +735,20 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
    if(!obj_graf && obj_tab && obj_tab->getType()!=OBJ_PARAMETER)
    {
     if(this->tabela)
-     obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->tabela);
+     obj_graf=dynamic_cast<BaseGraphicObject *>(this->tabela);
     else
-     obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->relacionamento);
+     obj_graf=dynamic_cast<BaseGraphicObject *>(this->relacionamento);
 
-    obj_graf->definirModificado(true);
+    obj_graf->setModefied(true);
    }
    //Caso não seja um objeto de tabela atualiza o próprio objeto
    else if(obj_graf)
    {
     if(!isnan(px_objeto) && !isnan(py_objeto))
-     obj_graf->definirPosicaoObjeto(QPointF(px_objeto, py_objeto));
+     obj_graf->setPosition(QPointF(px_objeto, py_objeto));
 
     //Força o redesenho do objeto gráfico marcando-o como modificado
-    obj_graf->definirModificado(true);
+    obj_graf->setModefied(true);
    }
   }
 

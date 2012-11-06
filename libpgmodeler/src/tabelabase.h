@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe TabelaBase que implementa operações
 #             comuns para manipulação grafica de objetos do tipo tabela (visões)
 # Creation date: 09/04/2008
@@ -22,9 +22,9 @@
 #ifndef TABELABASE_H
 #define TABELABASE_H
 
-#include "objetograficobase.h"
+#include "basegraphicobject.h"
 
-class TabelaBase: public ObjetoGraficoBase {
+class TabelaBase: public BaseGraphicObject {
  protected:
  public:
   TabelaBase(void);

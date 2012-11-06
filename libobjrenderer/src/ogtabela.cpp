@@ -2,7 +2,7 @@
 
 OGTabela::OGTabela(Tabela *tabela) : OGTabelaBase(tabela)
 {
- connect(tabela, SIGNAL(s_objetoModificado(void)), this, SLOT(configurarObjeto(void)));
+ connect(tabela, SIGNAL(s_objectModified(void)), this, SLOT(configurarObjeto(void)));
 
  obj_filho_sel=NULL;
  corpo_atribs_ext=new QGraphicsPolygonItem;

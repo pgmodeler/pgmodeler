@@ -397,7 +397,7 @@ QString Visao::getCodeDefinition(unsigned tipo_def)
   definirAtributoDeclaracao();
  else
  {
-  definirAtributoPosicao();
+  setPositionAttribute();
   definirAtributoReferencias();
  }
 
@@ -406,7 +406,7 @@ QString Visao::getCodeDefinition(unsigned tipo_def)
 
 void Visao::operator = (Visao &visao)
 {
- (*dynamic_cast<ObjetoGraficoBase *>(this))=reinterpret_cast<ObjetoGraficoBase &>(visao);
+ (*dynamic_cast<BaseGraphicObject *>(this))=reinterpret_cast<BaseGraphicObject &>(visao);
 
  this->referencias=visao.referencias;
  this->exp_select=visao.exp_select;

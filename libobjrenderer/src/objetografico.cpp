@@ -22,13 +22,13 @@ ObjetoGrafico::~ObjetoGrafico(void)
 
 void ObjetoGrafico::definirObjetoOrigem(BaseObject *objeto)
 {
- ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(objeto);
+ BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(objeto);
 
  disconnect(this, SLOT(exibirProtecaoObjeto(bool)));
 
  //Caso o objeto de origem seja gráfico (ObjetoGraficoBase), desconecta todos os sinais/slots relacionados
  if(obj_graf)
-  obj_graf->definirObjetoReceptor(NULL);
+  obj_graf->setReceiverObject(NULL);
 
  //Armazena a referência ao objeto de origem no objeto gráfico
  this->setData(0, QVariant::fromValue<void *>(objeto));
@@ -76,8 +76,8 @@ void ObjetoGrafico::definirObjetoOrigem(BaseObject *objeto)
   QGraphicsPolygonItem *item_pol=NULL;
 
   //Conecta os sinais da classe ObjetoGraficoBase aos slots correspondentes da classe ObjetoGrafico
-  connect(obj_graf, SIGNAL(s_isProtected(bool)), this, SLOT(exibirProtecaoObjeto(bool)));
-  obj_graf->definirObjetoReceptor(this);
+  connect(obj_graf, SIGNAL(s_objectProtected(bool)), this, SLOT(exibirProtecaoObjeto(bool)));
+  obj_graf->setReceiverObject(this);
 
   /* Por padrão, todo objeto gráfico pode ser selecionado, movido e também comunica a instâncias
      superiores sobre alterações em sua geometria */
@@ -355,11 +355,11 @@ QVariant ObjetoGrafico::itemChange(GraphicsItemChange change, const QVariant &va
     de sua representação gráfica */
  if(change==ItemPositionHasChanged)
  {
-  ObjetoGraficoBase *obj_grafico=dynamic_cast<ObjetoGraficoBase *>(this->obterObjetoOrigem());
+  BaseGraphicObject *obj_grafico=dynamic_cast<BaseGraphicObject *>(this->obterObjetoOrigem());
 
   if(obj_grafico && !obj_grafico->isProtected())
   {
-   obj_grafico->definirPosicaoObjeto(this->scenePos());
+   obj_grafico->setPosition(this->scenePos());
    this->configurarInfoPosicao(this->pos());
   }
  }
@@ -370,7 +370,7 @@ QVariant ObjetoGrafico::itemChange(GraphicsItemChange change, const QVariant &va
    this->ordem_selecao=++ObjetoGrafico::ordem_selecao_global;
 
   //Envia um sinal indicando a mudança na seleção do objeto
-  emit s_objetoSelecionado(dynamic_cast<ObjetoGraficoBase *>(this->obterObjetoOrigem()), value.toBool());
+  emit s_objetoSelecionado(dynamic_cast<BaseGraphicObject *>(this->obterObjetoOrigem()), value.toBool());
 
   pol_info_pos->setVisible(value.toBool());
   txt_info_pos->setVisible(value.toBool());
@@ -388,7 +388,7 @@ QRectF ObjetoGrafico::boundingRect(void) const
 
 void ObjetoGrafico::exibirProtecaoObjeto(bool valor)
 {
- ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->obterObjetoOrigem());
+ BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(this->obterObjetoOrigem());
 
  /* Exibe o ícone de proteção e marca a flag impedindo que
     o objeto seja movimentado */
@@ -396,7 +396,7 @@ void ObjetoGrafico::exibirProtecaoObjeto(bool valor)
  this->setFlag(QGraphicsItem::ItemIsMovable, !valor);
 
  if(obj_graf)
-  obj_graf->definirModificado(true);
+  obj_graf->setModefied(true);
 }
 
 void ObjetoGrafico::configurarInfoPosicao(QPointF pos_info)
@@ -513,16 +513,16 @@ void ObjetoGrafico::configurarIconeProtecao(void)
 
 void ObjetoGrafico::configurarObjeto(void)
 {
- ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->obterObjetoOrigem());
+ BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(this->obterObjetoOrigem());
 
  if(obj_graf)
  {
-  this->setPos(obj_graf->obterPosicaoObjeto());
+  this->setPos(obj_graf->getPosition());
 
   //O tool tip do objeto grafico será o nome formatado do objeto de origem
   this->setToolTip(QString::fromUtf8(obj_graf->getName(true)));
 
-  this->configurarInfoPosicao(obj_graf->obterPosicaoObjeto());
+  this->configurarInfoPosicao(obj_graf->getPosition());
   this->configurarIconeProtecao();
  }
 }

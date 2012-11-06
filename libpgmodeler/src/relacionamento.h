@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe Relacionamento que é usado para
 #             representar graficamente os relacionamentos entre tabelas
 #             e gerar os códigos SQL pertinentes a estes.

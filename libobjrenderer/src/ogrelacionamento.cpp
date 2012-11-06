@@ -107,7 +107,7 @@ QVariant OGRelacionamento::itemChange(GraphicsItemChange change, const QVariant 
   if(value.toBool())
    this->ordem_selecao=++ObjetoGrafico::ordem_selecao_global;
 
-  emit s_objetoSelecionado(dynamic_cast<ObjetoGraficoBase *>(this->obterObjetoOrigem()), value.toBool());
+  emit s_objetoSelecionado(dynamic_cast<BaseGraphicObject *>(this->obterObjetoOrigem()), value.toBool());
 
   pol_info_pos->setVisible(value.toBool());
   txt_info_pos->setVisible(value.toBool());
@@ -357,8 +357,8 @@ void OGRelacionamento::configurarObjeto(void)
  RelacionamentoBase *rel_base=this->obterObjetoOrigem();
 
  //Armazena as tabelas envolvidas no relacionamento
- tabelas[0]=dynamic_cast<OGTabelaBase *>(rel_base->obterTabela(RelacionamentoBase::TABELA_ORIGEM)->obterObjetoReceptor());
- tabelas[1]=dynamic_cast<OGTabelaBase *>(rel_base->obterTabela(RelacionamentoBase::TABELA_DESTINO)->obterObjetoReceptor());
+ tabelas[0]=dynamic_cast<OGTabelaBase *>(rel_base->obterTabela(RelacionamentoBase::TABELA_ORIGEM)->getReceiverObject());
+ tabelas[1]=dynamic_cast<OGTabelaBase *>(rel_base->obterTabela(RelacionamentoBase::TABELA_DESTINO)->getReceiverObject());
 
  //Executa a configuração inicial do relacionamento
  this->configurarLinha();
@@ -369,7 +369,7 @@ void OGRelacionamento::configurarObjeto(void)
  for(unsigned i=0; i < 2; i++)
   connect(tabelas[i], SIGNAL(s_objetoMovido(void)), this, SLOT(configurarLinha(void)));
 
- connect(rel_base, SIGNAL(s_objetoModificado()), this, SLOT(configurarLinha(void)));
+ connect(rel_base, SIGNAL(s_objectModified()), this, SLOT(configurarLinha(void)));
 }
 
 void OGRelacionamento::configurarInfoPosicao(void)
@@ -446,8 +446,8 @@ void OGRelacionamento::configurarLinha(void)
       rel->obterTipoRelacionamento()==Relacionamento::RELACIONAMENTO_11 &&
       rel->relacionamentoIdentificador())
    {
-    tabelas[0]=dynamic_cast<OGTabelaBase *>(rel->obterTabelaReferencia()->obterObjetoReceptor());
-    tabelas[1]=dynamic_cast<OGTabelaBase *>(rel->obterTabelaReceptora()->obterObjetoReceptor());
+    tabelas[0]=dynamic_cast<OGTabelaBase *>(rel->obterTabelaReferencia()->getReceiverObject());
+    tabelas[1]=dynamic_cast<OGTabelaBase *>(rel->obterTabelaReceptora()->getReceiverObject());
    }
 
    /* Cria linhas horizontais e verticais denotando as bordas das tabela.
@@ -871,7 +871,7 @@ void OGRelacionamento::configurarRotulos(void)
 
  //Move o rótulo para o ponto calculado
  rotulos[RelacionamentoBase::ROTULO_NOME_RELAC]->setPos(x,y);
- dynamic_cast<CaixaTexto *>(rotulos[RelacionamentoBase::ROTULO_NOME_RELAC]->obterObjetoOrigem())->definirModificado(true);
+ dynamic_cast<CaixaTexto *>(rotulos[RelacionamentoBase::ROTULO_NOME_RELAC]->obterObjetoOrigem())->setModefied(true);
 
  /* Caso o relacionamento não seja de generalização ou dependência,
     a posição dos rótulos de cardinalidade será atualizada */
@@ -928,7 +928,7 @@ void OGRelacionamento::configurarRotulos(void)
   for(idx=0; idx < 2; idx++)
   {
    /* Caso não haja distância configurada para o rótulo em questão,
-      ele será posicionado automaticamente em relaç�o �   linha fixa
+      ele será posicionado automaticamente em relaço    linha fixa
       respectiva. Os rótulos de cardinalidade por padrão são posicionados
       de forma a ficarem rente   s linhas fixas. O exemplos mostra os casos
       possíveis:
@@ -937,13 +937,13 @@ void OGRelacionamento::configurarRotulos(void)
          ----------                              ----------
          | Tabela |-[rotulo]-----<>-----[rotulo]-| Tabela |
          ----------                              ----------
-         >> Os rótulos de cadinalidade são posicionado �   frente (ou atrás)
-            da tabela e centralizados verticalmente em relaçã �  s linhas fixas.
+         >> Os rótulos de cadinalidade são posicionado    frente (ou atrás)
+            da tabela e centralizados verticalmente em relaçã   s linhas fixas.
 
       2) Linha vertical:
          ----------
          | Tabela | >> Os rótulos são posicionados abaixo ou acima das tabelas
-         ----------    e centralizados horizontalmente em relaçã �  s linhas fixas.
+         ----------    e centralizados horizontalmente em relaçã   s linhas fixas.
               |
            [rotulo]
               |
@@ -1007,7 +1007,7 @@ void OGRelacionamento::configurarRotulos(void)
 
    //Move o rótulo para a posição calculada
    rotulos[tipos_rot[idx]]->setPos(x,y);
-   dynamic_cast<CaixaTexto *>(rotulos[tipos_rot[idx]]->obterObjetoOrigem())->definirModificado(true);
+   dynamic_cast<CaixaTexto *>(rotulos[tipos_rot[idx]]->obterObjetoOrigem())->setModefied(true);
   }
  }
 }

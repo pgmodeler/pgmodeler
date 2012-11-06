@@ -47,7 +47,7 @@ unsigned BaseObject::global_id=60000;
 BaseObject::BaseObject(void)
 {
  object_id=BaseObject::global_id++;
- protected_obj=false;
+ is_protected=false;
  obj_type=BASE_OBJECT;
  schema=NULL;
  owner=NULL;
@@ -267,7 +267,7 @@ bool BaseObject::isValidName(const QString &name)
 
 void BaseObject::setProtected(bool value)
 {
- protected_obj=value;
+ is_protected=value;
 }
 
 void BaseObject::setName(const QString &name)
@@ -420,7 +420,7 @@ QString BaseObject::getSQLName(void)
 
 bool BaseObject::isProtected(void)
 {
- return(protected_obj);
+ return(is_protected);
 }
 
 unsigned BaseObject::getObjectId(void)
@@ -495,7 +495,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
   }
 
   if(def_type==SchemaParser::XML_DEFINITION)
-    attributes[ParsersAttributes::PROTECTED]=(protected_obj ? "1" : "");
+    attributes[ParsersAttributes::PROTECTED]=(is_protected ? "1" : "");
 
   if(comment!="")
   {
@@ -648,6 +648,6 @@ void BaseObject::operator = (BaseObject &obj)
  this->comment=obj.comment;
  this->obj_name=obj.obj_name;
  this->obj_type=obj.obj_type;
- this->protected_obj=obj.protected_obj;
+ this->is_protected=obj.is_protected;
 }
 

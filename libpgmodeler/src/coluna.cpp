@@ -97,7 +97,7 @@ void Coluna::operator = (Coluna &coluna)
 {
  this->comment=coluna.comment;
  this->object_id=coluna.object_id;
- this->protected_obj=coluna.protected_obj;
+ this->is_protected=coluna.is_protected;
 
  this->obj_name=coluna.obj_name;
  this->nome_antigo=coluna.nome_antigo;

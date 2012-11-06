@@ -2,7 +2,7 @@
 
 OGVisao::OGVisao(Visao *visao) : OGTabelaBase(visao)
 {
- connect(visao, SIGNAL(s_objetoModificado(void)), this, SLOT(configurarObjeto(void)));
+ connect(visao, SIGNAL(s_objectModified(void)), this, SLOT(configurarObjeto(void)));
 
  referencias=new QGraphicsItemGroup;
  referencias->setZValue(1);

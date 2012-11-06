@@ -109,9 +109,9 @@ class CenaObjetos: public QGraphicsScene {
      através do sinais s_menupopRequisitado, s_objetoModificado ou s_objetoSelecionado. Ex.: A classe ModeloWidget precisa
      tratar o sinal s_objetoFilhoSelecionado exibindo um menupop, somente com o auxilio dos métodos
      abaixo isso é possível */
-  void sinalizarModificacaoObjeto(ObjetoGraficoBase *objeto);
+  void sinalizarModificacaoObjeto(BaseGraphicObject *objeto);
   void sinalizarObjetoFilhoSelecionado(ObjetoTabela *obj_filho);
-  void sinalizarObjetoSelecionado(ObjetoGraficoBase *objeto, bool selecionado);
+  void sinalizarObjetoSelecionado(BaseGraphicObject *objeto, bool selecionado);
 
  signals:
   /* Este sinal é emitdo sempre quando se inicia ou finaliza o movimento de objetos.
@@ -120,18 +120,18 @@ class CenaObjetos: public QGraphicsScene {
   void s_objetosMovimentados(bool fim_movimento);
 
   //Emitido quando um objeto é modificado
-  void s_objetoModificado(ObjetoGraficoBase *objeto);
+  void s_objetoModificado(BaseGraphicObject *objeto);
 
   //Emitido quando um usuário pressiona botão direito do mouse na cena
   void s_menupopupRequisitado(vector<BaseObject *>);
 
   //Emitido quando o usuário dá um duplo clique com esquerdo no objeto
-  void s_objetoDuploClique(ObjetoGraficoBase *objeto);
+  void s_objetoDuploClique(BaseGraphicObject *objeto);
 
   /* Emitido quando um objeto é selecionado no modelo, este sinal pode ser usado
      quando se deseja obter o objeto selecionado no momento do clique, pois o sinal
      CenaObjetos::selectionChanged() não dá esta possibilidade. */
-  void s_objetoSelecionado(ObjetoGraficoBase *objeto, bool selecionado);
+  void s_objetoSelecionado(BaseGraphicObject *objeto, bool selecionado);
 
   friend class ModeloWidget;
 };

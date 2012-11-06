@@ -88,7 +88,7 @@ void Tabela::setProtected(bool protegido)
   }
  }
 
- ObjetoGraficoBase::setProtected(protegido);
+ BaseGraphicObject::setProtected(protegido);
 }
 
 void Tabela::definirAtributoColunas(unsigned tipo_def)
@@ -997,7 +997,7 @@ QString Tabela::getCodeDefinition(unsigned tipo_def)
  definirAtributoRegras(tipo_def);
 
  if(tipo_def==SchemaParser::XML_DEFINITION)
-  definirAtributoPosicao();
+  setPositionAttribute();
 
  return(BaseObject::getCodeDefinition(tipo_def));
 }
@@ -1006,9 +1006,9 @@ void Tabela::operator = (Tabela &tabela)
 {
  QString nome_ant = this->getName(true);
 
- (*dynamic_cast<ObjetoGraficoBase *>(this))=dynamic_cast<ObjetoGraficoBase &>(tabela);
+ (*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tabela);
  this->aceita_oids=tabela.aceita_oids;
- setProtected(tabela.protected_obj);
+ setProtected(tabela.is_protected);
 
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }

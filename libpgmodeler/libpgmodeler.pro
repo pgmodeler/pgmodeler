@@ -31,7 +31,7 @@ HEADERS += $$PWD/src/caixatexto.h \
            $$PWD/src/esquema.h \
            $$PWD/src/elementoindice.h \
            $$PWD/src/indice.h \
-           $$PWD/src/objetograficobase.h \
+           $$PWD/src/basegraphicobject.h \
            $$PWD/src/relacionamento.h \
            $$PWD/src/tabela.h \
            $$PWD/src/visao.h \
@@ -46,7 +46,7 @@ HEADERS += $$PWD/src/caixatexto.h \
 SOURCES +=  $$PWD/src/caixatexto.cpp \
             $$PWD/src/dominio.cpp \
             $$PWD/src/gatilho.cpp \
-            $$PWD/src/objetograficobase.cpp \
+            $$PWD/src/basegraphicobject.cpp \
             $$PWD/src/relacionamentobase.cpp \
             $$PWD/src/tipo.cpp \
             $$PWD/src/coluna.cpp \

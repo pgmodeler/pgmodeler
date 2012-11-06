@@ -89,7 +89,7 @@ class BaseObject {
      (e.g. can not be moved or rotated) can not have your name / text changed,
      and deleted. This is only a flag, the cited operations are controled in a
      upper class layer */
-  bool protected_obj;
+  bool is_protected;
 
   /* This map stores the name of each object type associated to a schema file
      that generates the object's code definition */

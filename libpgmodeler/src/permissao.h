@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe Permissao que é usada para controlar
 #             permissões em certos tipos de objetos de banco de dados
 #             além de gerar os códigos SQL que implante as permissões

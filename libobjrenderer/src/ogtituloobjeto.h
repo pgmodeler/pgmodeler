@@ -42,7 +42,7 @@ class OGTituloObjeto: public ObjetoGrafico
   OGTituloObjeto(void);
   ~OGTituloObjeto(void);
 
-  void configurarObjeto(ObjetoGraficoBase *objeto);
+  void configurarObjeto(BaseGraphicObject *objeto);
   void redimensionarTitulo(float larg, float alt);
 };
 

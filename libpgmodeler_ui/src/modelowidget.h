@@ -162,8 +162,8 @@ class ModeloWidget: public QWidget {
   void manipularAdicaoObjeto(BaseObject *objeto);
   void manipularRemocaoObjeto(BaseObject *objeto);
   void manipularMovimentoObjetos(bool fim_movimento);
-  void manipularModificacaoObjeto(ObjetoGraficoBase *objeto);
-  void manipularDuploCliqueObjeto(ObjetoGraficoBase *objeto);
+  void manipularModificacaoObjeto(BaseGraphicObject *objeto);
+  void manipularDuploCliqueObjeto(BaseGraphicObject *objeto);
 
   //Configura o menu popup conforme a lista de objetos passada
   void configurarMenuPopup(vector<BaseObject *> objs_selecionados=vector<BaseObject *>());

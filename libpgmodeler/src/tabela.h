@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe Tabela que é usado para
 #             representar graficamente as tabelas e gerar os códigos SQL
 #             pertinentes a esta.
@@ -23,7 +23,7 @@
 #ifndef TABELA_H
 #define TABELA_H
 
-#include "objetograficobase.h"
+#include "basegraphicobject.h"
 #include "tabelabase.h"
 #include "coluna.h"
 #include "restricao.h"
@@ -218,7 +218,7 @@ class Tabela: public TabelaBase {
      da classe ObjetoBase. O metodo sobrecarregado protege
      ou desprotege todos os objetos da tabela em uma
      só chamada */
-  void setProtected(bool protected_obj);
+  void setProtected(bool is_protected);
 
   //Retorna se a coluna é referenciada por uma das restrições do tipo especificado
   bool restricaoReferenciaColuna(Coluna *coluna, TipoRestricao tipo_rest);

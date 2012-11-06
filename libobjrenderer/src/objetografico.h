@@ -23,7 +23,7 @@
 #define OBJETO_GRAFICO_H
 
 #include <QtGui>
-#include "objetograficobase.h"
+#include "basegraphicobject.h"
 #include "relacionamentobase.h"
 #include "xmlparser.h"
 
@@ -139,7 +139,7 @@ class ObjetoGrafico: public QObject, public QGraphicsItemGroup {
   void exibirProtecaoObjeto(bool valor);
 
  signals:
-  void s_objetoSelecionado(ObjetoGraficoBase *objeto, bool selecionado);
+  void s_objetoSelecionado(BaseGraphicObject *objeto, bool selecionado);
 };
 
 #endif

@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe Papel que é usada para gerar os
 #             códigos SQL para os papéis no banco de dados (roles).
 # Creation date: 12/05/2008

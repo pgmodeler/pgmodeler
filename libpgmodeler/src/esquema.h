@@ -1,6 +1,6 @@
 /* 
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe Esquema que é usado para
 #             representar graficamente os esquemas em banco de dados
 #             e gerar os códigos SQL pertinentes a estes.

@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe ElementoIndice que é usada para
 #             armazenar e gerar os códigos SQL/XML pertinentes aos atributos
 #             usados nas índices.

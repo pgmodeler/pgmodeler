@@ -3018,7 +3018,7 @@ void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
         (tipo_obj_aux!=OBJ_RELATIONSHIP &&
          tipo_obj_aux!=BASE_RELATIONSHIP))
      {
-      dynamic_cast<ObjetoGraficoBase *>(objeto)->definirPosicaoObjeto(QPointF(atributos[ParsersAttributes::X_POS].toFloat(),
+      dynamic_cast<BaseGraphicObject *>(objeto)->setPosition(QPointF(atributos[ParsersAttributes::X_POS].toFloat(),
                                                                        atributos[ParsersAttributes::Y_POS].toFloat()));
 
 
@@ -4827,7 +4827,7 @@ Restricao *ModeloBD::criarRestricao(BaseObject *objeto)
        Isso é útil para atualizar tabelas as quais tiveram restrições adicionadas após a sua
        criação */
     if(this->obterIndiceObjeto(tabela) >= 0)
-      tabela->definirModificado(true);
+      tabela->setModefied(true);
    }
   }
  }
@@ -4986,7 +4986,7 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
   if(inc_ind_tabela)
   {
    tabela->adicionarIndice(indice);
-   tabela->definirModificado(true);
+   tabela->setModefied(true);
   }
  }
  catch(Exception &e)
@@ -5235,7 +5235,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
   if(inc_gat_tabela)
   {
    tabela->adicionarObjeto(gatilho);
-   tabela->definirModificado(true);
+   tabela->setModefied(true);
   }
  }
  catch(Exception &e)
@@ -6400,7 +6400,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
 
   if(tipo_def==SchemaParser::XML_DEFINITION)
   {
-   atribs_aux[ParsersAttributes::PROTECTED]=(this->protected_obj ? "1" : "");
+   atribs_aux[ParsersAttributes::PROTECTED]=(this->is_protected ? "1" : "");
   }
   else
   {
@@ -7720,7 +7720,7 @@ void ModeloBD::definirObjetosModificados(void)
 
   while(itr!=itr_end)
   {
-   dynamic_cast<ObjetoGraficoBase *>(*itr)->definirModificado(true);
+   dynamic_cast<BaseGraphicObject *>(*itr)->setModefied(true);
 
    /* Caso especial: Caso o objeto seja um relacionamento, os rótulos
       do mesmo que são caixas de texto, devem também ser marcados
@@ -7731,7 +7731,7 @@ void ModeloBD::definirObjetosModificados(void)
     for(i1=0; i1 < 3; i1++)
     {
      rot=rel->obterRotulo(i1);
-     if(rot) rot->definirModificado(true);
+     if(rot) rot->setModefied(true);
     }
    }
 

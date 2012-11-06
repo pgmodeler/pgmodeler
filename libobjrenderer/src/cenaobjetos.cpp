@@ -158,7 +158,7 @@ void CenaObjetos::exibirLinhaRelacionamento(bool valor, const QPointF &p)
  QList<QGraphicsItem *> itens=this->items();
  QGraphicsItem::GraphicsItemFlags flags;
  ObjetoGrafico *objeto=NULL;
- ObjetoGraficoBase *obj_base=NULL;
+ BaseGraphicObject *obj_base=NULL;
 
  if(!isnan(p.x()) && !isnan(p.y()))
   linha_rel->setLine(QLineF(p,p));
@@ -177,7 +177,7 @@ void CenaObjetos::exibirLinhaRelacionamento(bool valor, const QPointF &p)
 
   if(objeto && objeto->obterObjetoOrigem())
   {
-   obj_base=dynamic_cast<ObjetoGraficoBase *>(objeto->obterObjetoOrigem());
+   obj_base=dynamic_cast<BaseGraphicObject *>(objeto->obterObjetoOrigem());
 
    /* Caso o objeto gráfico seja uma tabela, visão ou caixa texto, ativa
       a flag de movimento caso o mesmo não esteja protegido */
@@ -239,7 +239,7 @@ void CenaObjetos::obterConfiguracaoPagina(QPrinter::PaperSize &tam_papel, QPrint
  margens=CenaObjetos::margens_pag;
 }
 
-void CenaObjetos::sinalizarModificacaoObjeto(ObjetoGraficoBase *objeto)
+void CenaObjetos::sinalizarModificacaoObjeto(BaseGraphicObject *objeto)
 {
  emit s_objetoModificado(objeto);
 }
@@ -259,7 +259,7 @@ void CenaObjetos::sinalizarObjetoFilhoSelecionado(ObjetoTabela *obj_filho)
  }
 }
 
-void CenaObjetos::sinalizarObjetoSelecionado(ObjetoGraficoBase *objeto, bool selecionado)
+void CenaObjetos::sinalizarObjetoSelecionado(BaseGraphicObject *objeto, bool selecionado)
 {
  if(objeto)
   emit s_objetoSelecionado(objeto, selecionado);
@@ -277,15 +277,15 @@ void CenaObjetos::addItem(QGraphicsItem *item)
      conecta os sinais quando novos objetos dos tipos acima são
      inseridos no modelo */
   if(rel)
-   connect(rel, SIGNAL(s_relacionamentoModificado(ObjetoGraficoBase*)),
-           this, SLOT(sinalizarModificacaoObjeto(ObjetoGraficoBase*)));
+   connect(rel, SIGNAL(s_relacionamentoModificado(BaseGraphicObject*)),
+           this, SLOT(sinalizarModificacaoObjeto(BaseGraphicObject*)));
   else if(tab)
    connect(tab, SIGNAL(s_objetoFilhoSelecionado(ObjetoTabela*)),
            this, SLOT(sinalizarObjetoFilhoSelecionado(ObjetoTabela*)));
 
   if(obj)
-   connect(obj, SIGNAL(s_objetoSelecionado(ObjetoGraficoBase*,bool)),
-           this, SLOT(sinalizarObjetoSelecionado(ObjetoGraficoBase*,bool)));
+   connect(obj, SIGNAL(s_objetoSelecionado(BaseGraphicObject*,bool)),
+           this, SLOT(sinalizarObjetoSelecionado(BaseGraphicObject*,bool)));
 
   QGraphicsScene::addItem(item);
  }
@@ -341,7 +341,7 @@ void CenaObjetos::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evento)
 
   //Caso seja mesmo um objeto, emite o sinal com o objeto de origem
   if(obj)
-   emit s_objetoDuploClique(dynamic_cast<ObjetoGraficoBase *>(obj->obterObjetoOrigem()));
+   emit s_objetoDuploClique(dynamic_cast<BaseGraphicObject *>(obj->obterObjetoOrigem()));
  }
 }
 

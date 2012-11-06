@@ -2,7 +2,7 @@
 
 OGCaixaTexto::OGCaixaTexto(CaixaTexto *cxtexto, const QBrush &brush, const QPen &pen) : ObjetoGrafico(cxtexto)
 {
- connect(cxtexto, SIGNAL(s_objetoModificado(void)), this, SLOT(configurarObjeto(void)));
+ connect(cxtexto, SIGNAL(s_objectModified(void)), this, SLOT(configurarObjeto(void)));
 
  //Aloca os objetos que definem a representação gráfica de caixa de texto
  caixa=new QGraphicsPolygonItem;

@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe Restricao que é usado para
 #             configurar e gerar os códigos SQL referentes a chaves primárias
 #             e estrangeiras, de checagem, únicas.

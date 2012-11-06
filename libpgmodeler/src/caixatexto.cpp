@@ -13,7 +13,7 @@ CaixaTexto::CaixaTexto(void)
 
 QString CaixaTexto::getCodeDefinition(void)
 {
- definirAtributoPosicao();
+ setPositionAttribute();
 
  if(atributo_texto[TEXTO_ITALICO])
   attributes[ParsersAttributes::ITALIC]="1";
@@ -32,7 +32,7 @@ QString CaixaTexto::getCodeDefinition(void)
 
 void CaixaTexto::operator = (CaixaTexto &caixa)
 {
- (*dynamic_cast<ObjetoGraficoBase *>(this))=reinterpret_cast<ObjetoGraficoBase &>(caixa);
+ (*dynamic_cast<BaseGraphicObject *>(this))=reinterpret_cast<BaseGraphicObject &>(caixa);
  this->comment=caixa.comment;
  this->atributo_texto[0]=caixa.atributo_texto[0];
  this->atributo_texto[1]=caixa.atributo_texto[1];

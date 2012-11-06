@@ -124,7 +124,7 @@ class OGRelacionamento: public ObjetoGrafico {
 
  signals:
   //Este sinal é emitido sempre que um ponto é adicionado ou removido do relacionamento
-  void s_relacionamentoModificado(ObjetoGraficoBase *rel);
+  void s_relacionamentoModificado(BaseGraphicObject *rel);
 };
 
 #endif

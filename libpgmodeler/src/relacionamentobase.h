@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe RelacionamentoBase que implementa operações
 #             básicas de manipulação gráfica de relacionamento entre tabelas
 # Creation date: 09/04/2008
@@ -26,7 +26,7 @@
 #include "caixatexto.h"
 #include <cmath>
 
-class RelacionamentoBase: public ObjetoGraficoBase {
+class RelacionamentoBase: public BaseGraphicObject {
  protected:
   vector<QPointF> pontos;
 

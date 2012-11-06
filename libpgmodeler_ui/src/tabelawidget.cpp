@@ -113,7 +113,7 @@ void TabelaWidget::hideEvent(QHideEvent *evento)
   itr++;
  }
 
- if(this->novo_obj && !tab->objetoModificado())
+ if(this->novo_obj && !tab->isModified())
   this->cancelarConfiguracao();
 
  ObjetoBaseWidget::hideEvent(evento);

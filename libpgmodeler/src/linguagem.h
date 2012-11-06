@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe Linguagem que é usado para
 #             e gerar os códigos SQL pertinente s linguagens
 #             procedurais.

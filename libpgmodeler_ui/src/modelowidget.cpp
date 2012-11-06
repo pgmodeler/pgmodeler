@@ -256,11 +256,11 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  connect(modelo, SIGNAL(s_objetoAdicionado(BaseObject*)), this, SLOT(manipularAdicaoObjeto(BaseObject *)));
  connect(modelo, SIGNAL(s_objetoRemovido(BaseObject*)), this, SLOT(manipularRemocaoObjeto(BaseObject *)));
  connect(cena, SIGNAL(s_objetosMovimentados(bool)), this, SLOT(manipularMovimentoObjetos(bool)));
- connect(cena, SIGNAL(s_objetoModificado(ObjetoGraficoBase*)), this, SLOT(manipularModificacaoObjeto(ObjetoGraficoBase*)));
- connect(cena, SIGNAL(s_objetoDuploClique(ObjetoGraficoBase*)), this, SLOT(manipularDuploCliqueObjeto(ObjetoGraficoBase*)));
+ connect(cena, SIGNAL(s_objetoModificado(BaseGraphicObject*)), this, SLOT(manipularModificacaoObjeto(BaseGraphicObject*)));
+ connect(cena, SIGNAL(s_objetoDuploClique(BaseGraphicObject*)), this, SLOT(manipularDuploCliqueObjeto(BaseGraphicObject*)));
  connect(cena, SIGNAL(s_menupopupRequisitado(vector<BaseObject*>)), this, SLOT(exibirMenuObjetoTabela(vector<BaseObject *>)));
 
- connect(cena, SIGNAL(s_objetoSelecionado(ObjetoGraficoBase*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
+ connect(cena, SIGNAL(s_objetoSelecionado(BaseGraphicObject*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
 
  /*
  connect(this, SIGNAL(s_objetoCriado(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
@@ -418,7 +418,7 @@ float ModeloWidget::zoomAtual(void)
 void ModeloWidget::manipularAdicaoObjeto(BaseObject *objeto)
 {
  //Converte o objeto base para objeto gráfico
- ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(objeto);
+ BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(objeto);
 
  //Caso seja um objeto gráfico
  if(obj_graf)
@@ -496,20 +496,20 @@ void ModeloWidget::adicionarNovoObjeto(void)
 
 void ModeloWidget::manipularRemocaoObjeto(BaseObject *objeto)
 {
- ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(objeto);
+ BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(objeto);
 
  //Caso o objeto seja gráfico remove-o da cena
  if(obj_graf)
   //Remove o objeto obtendo a referência ao objeto receptor (representação gráfico do mesmo na cena)
-  cena->removeItem(dynamic_cast<QGraphicsItem *>(obj_graf->obterObjetoReceptor()));
+  cena->removeItem(dynamic_cast<QGraphicsItem *>(obj_graf->getReceiverObject()));
 
  this->modificado=true;
 }
 
-void ModeloWidget::manipularDuploCliqueObjeto(ObjetoGraficoBase *objeto)
+void ModeloWidget::manipularDuploCliqueObjeto(BaseGraphicObject *objeto)
 {
  if(objeto)
-  this->exibirFormObjeto(objeto->getType(), objeto, NULL, objeto->obterPosicaoObjeto());
+  this->exibirFormObjeto(objeto->getType(), objeto, NULL, objeto->getPosition());
 }
 
 void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
@@ -521,7 +521,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
  if(!fim_movimento)
  {
   vector<BaseObject *> ::iterator itr, itr_end;
-  ObjetoGraficoBase *obj=NULL;
+  BaseGraphicObject *obj=NULL;
 
   itr=objs_selecionados.begin();
   itr_end=objs_selecionados.end();
@@ -532,7 +532,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
   //Varre a lista de objetos selec
   while(itr!=itr_end)
   {
-   obj=dynamic_cast<ObjetoGraficoBase *>(*itr);
+   obj=dynamic_cast<BaseGraphicObject *>(*itr);
    if(!dynamic_cast<RelacionamentoBase *>(obj) && (obj && !obj->isProtected()))
     lista_op->adicionarObjeto(obj, Operacao::OBJETO_MOVIMENTADO);
 
@@ -549,7 +549,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
  }
 }
 
-void ModeloWidget::manipularModificacaoObjeto(ObjetoGraficoBase *objeto)
+void ModeloWidget::manipularModificacaoObjeto(BaseGraphicObject *objeto)
 {
  //Adciona o objeto modificado   lista de operações
  lista_op->adicionarObjeto(objeto, Operacao::OBJETO_MODIFICADO);
@@ -618,8 +618,8 @@ void ModeloWidget::configurarSelecaoObjetos(void)
        tipo_novo_obj > BASE_TABLE &&
        QApplication::keyboardModifiers()==0)
     {
-     ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(objs_selecionados[0]);
-     ObjetoGrafico *objeto=dynamic_cast<ObjetoGrafico *>(obj_graf->obterObjetoReceptor());
+     BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(objs_selecionados[0]);
+     ObjetoGrafico *objeto=dynamic_cast<ObjetoGrafico *>(obj_graf->getReceiverObject());
 
      cena->exibirLinhaRelacionamento(true,
                                      QPointF(objeto->scenePos().x() + objeto->boundingRect().width()/2,
@@ -751,9 +751,9 @@ void ModeloWidget::converterRelacionamentoNN(void)
      //lista_op->adicionarObjeto(rel, Operacao::OBJETO_REMOVIDO);
 
      //A posição padrão da tabela originada será o ponto médio entre as tabelas participantes do relacionamento
-     pnt.setX((tab_orig->obterPosicaoObjeto().x() + tab_dest->obterPosicaoObjeto().x())/2.0f);
-     pnt.setY((tab_orig->obterPosicaoObjeto().y() + tab_dest->obterPosicaoObjeto().y())/2.0f);
-     tab->definirPosicaoObjeto(pnt);
+     pnt.setX((tab_orig->getPosition().x() + tab_dest->getPosition().x())/2.0f);
+     pnt.setY((tab_orig->getPosition().y() + tab_dest->getPosition().y())/2.0f);
+     tab->setPosition(pnt);
 
      //Adiciona a tabela criada ao modelo
      modelo->adicionarObjeto(tab);
@@ -1124,8 +1124,8 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
   /* Caso o objeto esteja alocado e seja gráfico indica que o mesmo será editado,
      sendo assim sua posição precisa ser armazena e em seguida informada ao
      formulário de edição respectivo */
-  if(objeto && dynamic_cast<ObjetoGraficoBase *>(objeto))
-   pos=dynamic_cast<ObjetoGraficoBase *>(objeto)->obterPosicaoObjeto();
+  if(objeto && dynamic_cast<BaseGraphicObject *>(objeto))
+   pos=dynamic_cast<BaseGraphicObject *>(objeto)->getPosition();
 
   /* O esquema 'public' e as linguagens C e SQL não pode ser manipuladas
      por serem do sistema, caso o usuário tente esta operação um erro será disparado */
@@ -1384,7 +1384,7 @@ void ModeloWidget::protegerObjeto(void)
   ObjectType tipo_obj;
   ObjetoTabela *obj_tab=NULL;
   BaseObject *objeto=NULL;
-  ObjetoGraficoBase *obj_graf=NULL;
+  BaseGraphicObject *obj_graf=NULL;
   bool proteger;
   vector<BaseObject *>::iterator itr, itr_end;
 
@@ -1395,7 +1395,7 @@ void ModeloWidget::protegerObjeto(void)
   {
    //Tenta convertê-lo para objeto de tabela e objeto gráfico
    obj_tab=dynamic_cast<ObjetoTabela *>(this->objs_selecionados[0]);
-   obj_graf=dynamic_cast<ObjetoGraficoBase *>(this->objs_selecionados[0]);
+   obj_graf=dynamic_cast<BaseGraphicObject *>(this->objs_selecionados[0]);
 
    //Caso seja um objeto gráfico
    if(obj_graf)
@@ -1408,7 +1408,7 @@ void ModeloWidget::protegerObjeto(void)
     /* Caso seja um objto de tabela protege/desprotege o mesmo e marca como modificada a tabela pai
        para forçar o seu redesenho */
     obj_tab->setProtected(!obj_tab->isProtected());
-    dynamic_cast<Tabela *>(obj_tab->obterTabelaPai())->definirModificado(true);
+    dynamic_cast<Tabela *>(obj_tab->obterTabelaPai())->setModefied(true);
    }
    else
    {
@@ -1442,7 +1442,7 @@ void ModeloWidget::protegerObjeto(void)
    while(itr!=itr_end)
    {
     objeto=(*itr);
-    obj_graf=dynamic_cast<ObjetoGraficoBase *>(objeto);
+    obj_graf=dynamic_cast<BaseGraphicObject *>(objeto);
     itr++;
 
     /* Caso o objeto seja uma coluna ou restrição adicionada automaticamente por um
@@ -1663,7 +1663,7 @@ void ModeloWidget::colarObjetos(void)
       ao objeto que não foi colado. Essa alternativa não se aplica a objetos gráficos, que idependentemente
       de terem ou não o mesmo nome ou definição XML serão SEMPRE colados no modelo. */
    if(objeto_aux &&
-      (dynamic_cast<ObjetoGraficoBase *>(objeto) ||
+      (dynamic_cast<BaseGraphicObject *>(objeto) ||
        (modelo->validarDefinicaoObjeto(objeto_aux, SchemaParser::SchemaParser::XML_DEFINITION) !=
         modelo->validarDefinicaoObjeto(objeto, SchemaParser::SchemaParser::XML_DEFINITION))))
    {
@@ -2003,7 +2003,7 @@ void ModeloWidget::excluirObjetos(void)
         lista_op->adicionarObjeto(objeto_tab, Operacao::OBJETO_REMOVIDO, idx_obj, tabela);
         tabela->removerObjeto(idx_obj, tipo_obj);
 
-        tabela->definirModificado(true);
+        tabela->setModefied(true);
 
         modelo->validarRelacObjetoTabela(objeto_tab, tabela);
        }
@@ -2041,8 +2041,8 @@ void ModeloWidget::excluirObjetos(void)
            para o caso de alguma coluna ter sido removido das tabelas */
         if(relac)
         {
-         tab_orig->definirModificado(true);
-         tab_dest->definirModificado(true);
+         tab_orig->setModefied(true);
+         tab_dest->setModefied(true);
          relac=NULL;
          tab_dest=tab_orig=NULL;
         }

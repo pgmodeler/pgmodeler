@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description: Definição da classe Operador que é usada para
 #             gerar os códigos SQL pertinentes a operadores
 # Creation date: 16/04/2008

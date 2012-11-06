@@ -205,7 +205,7 @@ void RelacionamentoBase::definirTabelaObrigatoria(unsigned id_tabela, bool valor
    //rotulos[tipo_rot]->definirComentario("(" + cmin + ",n)");
    rotulos[tipo_rot]->setComment("(n)");
   }
-  rotulos[tipo_rot]->definirModificado(true);
+  rotulos[tipo_rot]->setModefied(true);
  }
 }
 
@@ -235,8 +235,8 @@ void RelacionamentoBase::desconectarRelacionamento(void)
  if(conectado)
  {
   conectado=false;
-  tabela_orig->definirModificado(true);
-  tabela_dest->definirModificado(true);
+  tabela_orig->setModefied(true);
+  tabela_dest->setModefied(true);
  }
 }
 
@@ -250,8 +250,8 @@ void RelacionamentoBase::conectarRelacionamento(void)
 
   /* Marca que as tabelas do relacionamentos estão modificadas para forçar
      o redimensionamento das mesmas */
-  tabela_orig->definirModificado(true);
-  tabela_dest->definirModificado(true);
+  tabela_orig->setModefied(true);
+  tabela_dest->setModefied(true);
  }
 }
 
@@ -380,7 +380,7 @@ vector<QPointF> RelacionamentoBase::obterPontos(void)
 
 void RelacionamentoBase::operator = (RelacionamentoBase &rel)
 {
- (*dynamic_cast<ObjetoGraficoBase *>(this))=dynamic_cast<ObjetoGraficoBase &>(rel);
+ (*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(rel);
  //this->conectado=rel.conectado;
  this->conectado=false;
  this->tabela_orig=rel.tabela_orig;

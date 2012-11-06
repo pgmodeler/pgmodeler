@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)m
+# Sub-project: Core library (libpgmodeler)
 # Description:Definição da classe Funcao que é usado para
 #            configurar e gerar os códigos SQL referentes a funções (procedimentos).
 # Creation date: 28/09/2006
