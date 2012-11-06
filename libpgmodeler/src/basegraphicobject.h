@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
 # Class: BaseGraphicObject
-# Description: This is a basice implementation to control graphical objects such as
+# Description: This is a basic implementation to control graphical objects such as
 #              tables, relationships, textboxes, views.
 #              The full graphical representation of these objects are made in an separated layer
 #              this is treated in the GraphicObject class on libobjrenderer library
@@ -41,51 +41,57 @@ class BaseGraphicObject: public QObject, public BaseObject {
      and it is needed to be updated or specially treated */
   bool is_modified;
 
-  /* Armazena a referência ao objeto que atualmente é o receptor
-     dos sinais emitidos pela instância desta classe. Este atributo quebra
-     alguns conceitos da OO mas é necessário para o caso de quando um OGRelacionamento
-     é alocado, não ser necessário pesquisar no modelo, quem é o objeto gráfico
-     relacionado  s tabelas do relacionamento */
+  /* Stores a reference to the object which is currently the receiver
+     of signals emitted by the instance of this class. The receiver is an object that
+     represents the 'this' object in the QGraphicsScene. This attribute breaks
+     some concepts of OO but is required for some cases when is necessary to
+     recover the graphical object in a fast way (rather than find
+     it in the QGraphcisScene) */
   QObject *receiver_object;
 
  protected:
-  /* Método que define os atributos de posição de objetos usados na obtenção
-     da definição XML */
+  /* Method that defines the objects position attributes used in generation
+     of XML code definition */
   void setPositionAttribute(void);
 
+  //Defines the receveir objects that represents the 'this' object on the QGraphicsScene
   void setReceiverObject(QObject *obj);
 
  public:
   BaseGraphicObject(void);
   ~BaseGraphicObject(void){}
 
-  /* Define se o objeto está protegido ou não
-    (sobrecarga do método da classe ObjetoBase) a diferença
-    é que este método dispara o sinal isProtecteddo() */
+  /* Sets whether the object is protected or not (method overloading
+     from base class BaseObject) the difference is that this method
+     emits the signal s_objectProtected() */
   virtual void setProtected(bool value);
 
-  //Define a posição do objeto
+  //Sets the object's position
   void setPosition(QPointF pos);
 
-  /* Define se o objeto está modificado ou não.
-     Este método dispara o sinal s_objetoModificado() */
+  /* Sets if the objects is modified or not.
+     This method emits the signal s_objectModified() */
   virtual void setModefied(bool value);
 
-  //Retorna se o objeto está modificado ou não
+  //Returns the modified status of the object
   bool isModified(void);
 
-  //Retorna a posição do objeto
+  //Returns the current position of the object
   QPointF getPosition();
 
-  //Operado que faz a atribuição entre um objeto e outro
+  //Assigns on object to other mading the correct attribute copy
   void operator = (BaseGraphicObject &obj);
 
+  //Gets the current receiver object that graphically represents the 'this' object
   QObject *getReceiverObject(void);
 
+  //Returns the code definition of the object
   virtual QString getCodeDefinition(unsigned tipo_def)=0;
 
  signals:
+  //Signal emitted when the user calls the setModified() method
   void s_objectModified(void);
+  //Signal emitted when the user calls the setProtected() method
   void s_objectProtected(bool);
 
   friend class CenaObjetos;

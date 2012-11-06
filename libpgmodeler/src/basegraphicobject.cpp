@@ -2,15 +2,10 @@
 
 BaseGraphicObject::BaseGraphicObject(void)
 {
- /* Por padrão o objeto é definido como modificado
-    para forçar o seu redesenho  */
  is_modified=true;
-
- //Atributos de posição do objeto, usado apenas na definição XML
  attributes[ParsersAttributes::X_POS]="";
  attributes[ParsersAttributes::Y_POS]="";
  attributes[ParsersAttributes::POSITION]="";
-
  receiver_object=NULL;
 }
 
