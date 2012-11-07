@@ -193,7 +193,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_OPFAMILY)
     adicionarFamiliaOperadores(dynamic_cast<FamiliaOperadores *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_DOMAIN)
-    adicionarDominio(dynamic_cast<Dominio *>(objeto), idx_obj);
+    adicionarDominio(dynamic_cast<Domain *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_SEQUENCE)
     adicionarSequencia(dynamic_cast<Sequencia *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_PERMISSION)
@@ -251,7 +251,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_OPFAMILY)
     removerFamiliaOperadores(dynamic_cast<FamiliaOperadores *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_DOMAIN)
-    removerDominio(dynamic_cast<Dominio *>(objeto), idx_obj);
+    removerDominio(dynamic_cast<Domain *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_SEQUENCE)
     removerSequencia(dynamic_cast<Sequencia *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_PERMISSION)
@@ -316,7 +316,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
  else if(tipo_obj==OBJ_OPFAMILY)
   removerFamiliaOperadores(dynamic_cast<FamiliaOperadores *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_DOMAIN)
-  removerDominio(dynamic_cast<Dominio *>(objeto), idx_obj);
+  removerDominio(dynamic_cast<Domain *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_SEQUENCE)
   removerSequencia(dynamic_cast<Sequencia *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_RELATIONSHIP || tipo_obj==BASE_RELATIONSHIP)
@@ -2045,7 +2045,7 @@ void ModeloBD::removerFuncaoAgregacao(FuncaoAgregacao *func_agregacao, int idx_o
  __removerObjeto(func_agregacao, idx_obj);
 }
 
-void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
+void ModeloBD::adicionarDominio(Domain *dominio, int idx_obj)
 {
  if(dominio)
  {
@@ -2091,7 +2091,7 @@ void ModeloBD::adicionarDominio(Dominio *dominio, int idx_obj)
  }
 }
 
-void ModeloBD::removerDominio(Dominio *dominio, int idx_obj)
+void ModeloBD::removerDominio(Domain *dominio, int idx_obj)
 {
  try
  {
@@ -2103,9 +2103,9 @@ void ModeloBD::removerDominio(Dominio *dominio, int idx_obj)
  }
 }
 
-Dominio *ModeloBD::obterDominio(unsigned idx_obj)
+Domain *ModeloBD::obterDominio(unsigned idx_obj)
 {
- return(dynamic_cast<Dominio *>(obterObjeto(idx_obj, OBJ_DOMAIN)));
+ return(dynamic_cast<Domain *>(obterObjeto(idx_obj, OBJ_DOMAIN)));
 }
 
 void ModeloBD::adicionarFamiliaOperadores(FamiliaOperadores *familia_op, int idx_obj)
@@ -3850,15 +3850,15 @@ Tipo *ModeloBD::criarTipo(void)
  return(tipo);
 }
 
-Dominio *ModeloBD::criarDominio(void)
+Domain *ModeloBD::criarDominio(void)
 {
  map<QString, QString> atributos;
- Dominio *dominio=NULL;
+ Domain *dominio=NULL;
  QString elem;
 
  try
  {
-  dominio=new Dominio;
+  dominio=new Domain;
 
   //Lê do parser os atributos basicos
   definirAtributosBasicos(dominio);
@@ -3867,12 +3867,12 @@ Dominio *ModeloBD::criarDominio(void)
   XMLParser::getElementAttributes(atributos);
 
   if(!atributos[ParsersAttributes::CONSTRAINT].isEmpty())
-   dominio->definirNomeRestricao(atributos[ParsersAttributes::CONSTRAINT]);
+   dominio->setConstraintName(atributos[ParsersAttributes::CONSTRAINT]);
 
   if(!atributos[ParsersAttributes::DEFAULT_VALUE].isEmpty())
-   dominio->definirValorPadrao(atributos[ParsersAttributes::DEFAULT_VALUE]);
+   dominio->setDefaultValue(atributos[ParsersAttributes::DEFAULT_VALUE]);
 
-  dominio->definirNaoNulo(atributos[ParsersAttributes::NOT_NULL]==
+  dominio->setNotNull(atributos[ParsersAttributes::NOT_NULL]==
                             ParsersAttributes::_TRUE_);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
@@ -3889,7 +3889,7 @@ Dominio *ModeloBD::criarDominio(void)
         o tipo ao qual o domínio se aplica */
      if(elem==ParsersAttributes::TYPE)
      {
-      dominio->definirTipo(criarTipoPgSQL());
+      dominio->setType(criarTipoPgSQL());
      }
      //Caso o elemento seja uma expressão
      else if(elem==ParsersAttributes::EXPRESSION)
@@ -3901,7 +3901,7 @@ Dominio *ModeloBD::criarDominio(void)
       //Acessa o elemento filho o qual contém o conteúdo da expressão
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
       //dominio->definirExpressao(QString::fromUtf8(ParserXML::obterConteudoElemento()));
-      dominio->definirExpressao(XMLParser::getElementContent());
+      dominio->setExpression(XMLParser::getElementContent());
       //Restaura a posição de navegação do parser, ou seja, volta para o elemento <expression>
       XMLParser::restorePosition();
      }
@@ -6519,7 +6519,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    /* Obtém a referência para o tipo de dado do domínio, caso um ponteiro válido seja retornado
       indica que o tipo de dado é um definido pelo usuário (classe Tipo) e que este precisa
       também ter as dependências obtidas */
-   BaseObject *tipo_usr=obterObjetoTipoPgSQL(dynamic_cast<Dominio *>(objeto)->obterTipo());
+   BaseObject *tipo_usr=obterObjetoTipoPgSQL(dynamic_cast<Domain *>(objeto)->getType());
    //obterObjeto(*dynamic_cast<Dominio *>(objeto)->obterTipo(), OBJETO_TIPO);
 
    if(tipo_usr)
@@ -7155,7 +7155,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    Tabela *tab=NULL;
    Column *col=NULL;
    Cast *conv_tipo=NULL;
-   Dominio *dom=NULL;
+   Domain *dom=NULL;
    Funcao *func=NULL;
    FuncaoAgregacao *func_ag=NULL;
    Operador *oper=NULL;
@@ -7169,7 +7169,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    switch(tipo_obj)
    {
     case OBJ_TYPE: ptr_tipopgsql=dynamic_cast<Tipo*>(objeto); break;
-    case OBJ_DOMAIN: ptr_tipopgsql=dynamic_cast<Dominio*>(objeto); break;
+    case OBJ_DOMAIN: ptr_tipopgsql=dynamic_cast<Domain*>(objeto); break;
     case OBJ_SEQUENCE: ptr_tipopgsql=dynamic_cast<Sequencia*>(objeto); break;
     default: ptr_tipopgsql=dynamic_cast<Tabela*>(objeto); break;
    }
@@ -7232,11 +7232,11 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Obtém a referência ao objeto
-      dom=dynamic_cast<Dominio *>(*itr);
+      dom=dynamic_cast<Domain *>(*itr);
       itr++;
 
       //Verifica se o tipo de dado do dominio é o próprio tipo a ser removido
-      if(dom->obterTipo()==ptr_tipopgsql)
+      if(dom->getType()==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(dom);

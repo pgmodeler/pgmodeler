@@ -44,7 +44,7 @@
 #include "operatorclass.h"
 #include "xmlparser.h"
 #include "permissao.h"
-#include "dominio.h"
+#include "domain.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -361,9 +361,9 @@ class ModeloBD:  public QObject, public BaseObject {
   FamiliaOperadores *obterFamiliaOperadores(unsigned idx_obj);
 
   //Métodos de manipulação de domínios
-  void adicionarDominio(Dominio *dominio, int idx_obj=-1);
-  void removerDominio(Dominio *dominio, int idx_obj=-1);
-  Dominio *obterDominio(unsigned idx_obj);
+  void adicionarDominio(Domain *dominio, int idx_obj=-1);
+  void removerDominio(Domain *dominio, int idx_obj=-1);
+  Domain *obterDominio(unsigned idx_obj);
 
   //Métodos de manipulação de sequencia
   void adicionarSequencia(Sequencia *sequencia, int idx_obj=-1);
@@ -404,7 +404,7 @@ class ModeloBD:  public QObject, public BaseObject {
   Funcao *criarFuncao(void);
   Parametro criarParametro(void);
   Tipo *criarTipo(void);
-  Dominio *criarDominio(void);
+  Domain *criarDominio(void);
   Cast *criarConversaoTipo(void);
   Conversion *criarConversaoCodificacao(void);
   Operador *criarOperador(void);

@@ -1176,7 +1176,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_DOMAIN:
-    dominio_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Dominio *>(objeto));
+    dominio_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Domain *>(objeto));
     dominio_wgt->show();
    break;
 

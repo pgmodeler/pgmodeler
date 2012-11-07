@@ -40,7 +40,7 @@ void DominioWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void DominioWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Dominio *dominio)
+void DominioWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Domain *dominio)
 {
  TipoPgSQL tipo;
 
@@ -51,11 +51,11 @@ void DominioWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op,
  if(dominio)
  {
   //Preenche o formulário com os atributos do domínio
-  tipo=dominio->obterTipo();
-  valor_padrao_edt->setText(QString::fromUtf8(dominio->obterValorPadrao()));
-  expr_checagem_txt->setPlainText(QString::fromUtf8(dominio->obterExpressao()));
-  nome_rest_edt->setText(QString::fromUtf8(dominio->getNameRestricao()));
-  nao_nulo_chk->setChecked(dominio->naoNulo());
+  tipo=dominio->getType();
+  valor_padrao_edt->setText(QString::fromUtf8(dominio->getDefaultValue()));
+  expr_checagem_txt->setPlainText(QString::fromUtf8(dominio->getExpression()));
+  nome_rest_edt->setText(QString::fromUtf8(dominio->getConstraintName()));
+  nao_nulo_chk->setChecked(dominio->isNotNull());
  }
 
  //Marca o tipo do domínio no widget de tipos pgsql
@@ -66,18 +66,18 @@ void DominioWidget::aplicarConfiguracao(void)
 {
  try
  {
-  Dominio *dominio=NULL;
-  iniciarConfiguracao<Dominio>();
+  Domain *dominio=NULL;
+  iniciarConfiguracao<Domain>();
 
   //Obtém a referência ao domínio que está sendo editado/criado
-  dominio=dynamic_cast<Dominio *>(this->objeto);
+  dominio=dynamic_cast<Domain *>(this->objeto);
 
   //Configura os atributos do mesmo com os valores definidos no formulário
-  dominio->definirTipo(tipo_dominio->obterTipoPgSQL());
-  dominio->definirValorPadrao(valor_padrao_edt->text());
-  dominio->definirExpressao(expr_checagem_txt->toPlainText());
-  dominio->definirNomeRestricao(nome_rest_edt->text());
-  dominio->definirNaoNulo(nao_nulo_chk->isChecked());
+  dominio->setType(tipo_dominio->obterTipoPgSQL());
+  dominio->setDefaultValue(valor_padrao_edt->text());
+  dominio->setExpression(expr_checagem_txt->toPlainText());
+  dominio->setConstraintName(nome_rest_edt->text());
+  dominio->setNotNull(nao_nulo_chk->isChecked());
 
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();

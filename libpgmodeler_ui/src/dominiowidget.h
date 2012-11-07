@@ -35,7 +35,7 @@ class DominioWidget: public ObjetoBaseWidget, public Ui::DominioWidget {
 
  public:
    DominioWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Dominio *dominio);
+   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Domain *dominio);
 
  private slots:
   void hideEvent(QHideEvent *);

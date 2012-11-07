@@ -75,7 +75,7 @@ void copiarObjeto(BaseObject **pobj_orig, BaseObject *obj_copia, ObjectType tipo
     copiarObjeto(pobj_orig, dynamic_cast<Cast *>(obj_copia));
   break;
   case OBJ_DOMAIN:
-    copiarObjeto(pobj_orig, dynamic_cast<Dominio *>(obj_copia));
+    copiarObjeto(pobj_orig, dynamic_cast<Domain *>(obj_copia));
   break;
   case OBJ_TABLESPACE:
     copiarObjeto(pobj_orig, dynamic_cast<EspacoTabela *>(obj_copia));

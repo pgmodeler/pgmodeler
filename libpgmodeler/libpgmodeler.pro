@@ -15,7 +15,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/relacionamentobase.h \
            $$PWD/src/basetable.h \
            $$PWD/src/column.h \
-           $$PWD/src/dominio.h \
+           $$PWD/src/domain.h \
            $$PWD/src/funcaoagregacao.h \
            $$PWD/src/modelobd.h \
            $$PWD/src/papel.h \
@@ -44,7 +44,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/permissao.h
 
 SOURCES +=  $$PWD/src/textbox.cpp \
-            $$PWD/src/dominio.cpp \
+            $$PWD/src/domain.cpp \
             $$PWD/src/gatilho.cpp \
             $$PWD/src/basegraphicobject.cpp \
             $$PWD/src/relacionamentobase.cpp \
