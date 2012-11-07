@@ -1,7 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description:Definição da classe Coluna que é utilizada pela classe Tabela.
+# Class: Column
+# Description: Implements basic operations to manipulate table columns.
 # Creation date: 12/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -25,60 +26,66 @@
 
 class Column: public TableObject{
  protected:
-  /* Armazena o nome anterior da coluna antes da mudança de nome da mesma.
-     Este atributo auxilia no processo de referência de colunas adicionadas
-     por relacionamentos. */
+  /* Stores the previous name of the column before its name has changed.
+     This attribute assists in the process of reference columns added
+     by relationships. */
   QString old_name;
 
-  //Indica se a coluna será não nula (com obrigatoriedade de preenchimento)
+  //Indicate that the column accpets null values or not
   bool not_null;
 
-  //Tipo da coluna da tabela
+  //Data type of the column
   TipoPgSQL type;
 
-  /* Valor padrão da coluna.
-     Obs: O usuário deve formatar o valor padrão de
-          acordo com o exigido por cada tipo do banco de dados.
-          Ex.: para um varchar(10) o valor padrão deve ser 'abcdef'(incluindo o ') ou
-               para uma data '2006-09-12' e assim por diante. */
+  /* Default value of the column.
+     Note: The user must format the default value in
+           accordance with the requirements for each data type.
+           E.g.: for a varchar(10) default value should be 'abcdef' (including apostrophe)
+           for a date the defaul value should be '2006-09-12 ' and so on. */
   QString default_value;
 
  public:
   Column(void);
 
-  //Define que a coluna é de preenchimento obrigatório (NOT NULL)
+  //Defines if the column accepts null values or not
   void setNotNull(bool value);
 
-  //Define o tipo da coluna
+  //Defines the column data type
   void setType(TipoPgSQL type);
 
-  /* Define o valor padrão da coluna. Devem ser informados junto ao valor
-     as particularidades de cada tipo, como aspas, hifens e etc. */
+  /* Sets the default value of the column. Must be informed together with the value
+     the particularities of each type, such as quotation marks, hyphens, etc. */
   void setDefaultValue(const QString &value);
 
     /* Define o nome da coluna. Este método mantém o último nome da coluna
      armazenado para auxiliar os métodos de relacionamento de colunas
      adicionadas por relacionamentos com restrições/indices e sequencias */
+
+  /* Defines the column name. This method keeps the last column name
+     stored to assist the objects like constraints / indixes and sequences
+     that is referencing the column by its old name. */
   void setName(const QString &name);
 
-  //Retorna se o campo é de preenchimento obrigatório
+  //Returns the not null state of the column
   bool isNotNull(void);
 
-  //Retorna o tipo da coluna
+  //Returns the data type of the column
   TipoPgSQL getType(void);
 
-  //Retorna o valor padrão da coluna
+  //Returns the default value of the column
   QString getDefaultValue(void);
 
-  //Retorna a definição SQL ou XML do objeto
+  //Returns the SQL/XML code definition for the column
   QString getCodeDefinition(unsigned def_type);
 
-  //Retorna o nome anterior da coluna
+  /* Returns the old column name. The parameter 'format' indicates
+     whether the name must be formatted or not */
   QString getOldName(bool format=false);
 
-  //Obtém a referência ao tipo da coluna na forma [esquema].tabela.nome_coluna%TYPE
+  //Returns the reference to the column type in the form [schema].table.column_name%TYPE
   QString getTypeReference(void);
 
+  //Copies on column to other
   void operator = (Column &col);
 
   friend class Tabela;

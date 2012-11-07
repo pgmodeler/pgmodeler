@@ -16,13 +16,14 @@ void Column::setName(const QString &name)
  {
   QString prev_name;
 
-  //Obtém o nome atual da coluna o qual passará a ser o antigo
+  //The current column name will be used as the old name
   prev_name=this->obj_name;
 
-  //Tenta definir o novo nome da coluna
+  //Tries to define the new name to column
   BaseObject::setName(name);
-  /* Caso nenhuma exceção foi disparada atribui o nome anterior
-     obtido ao respectivo atributo da coluna */
+
+  /* Case no error is raised stored the old name on the
+     respective column attribute */
   this->old_name=prev_name;
  }
  catch(Exception &e)
@@ -33,8 +34,7 @@ void Column::setName(const QString &name)
 
 void Column::setType(TipoPgSQL type)
 {
- /* Caso o tipo a ser atribuíd  coluna seja um pseudo-tipo
-    será disparada uma exceção */
+ //An error is raised if the column receive a pseudo-type as data type.
  if(type.pseudoTipo())
   throw Exception(ERR_ASG_PSDTYPE_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
