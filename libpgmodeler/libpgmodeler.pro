@@ -21,7 +21,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/papel.h \
            $$PWD/src/restricao.h \
            $$PWD/src/tipo.h \
-           $$PWD/src/espacotabela.h \
+           $$PWD/src/tablespace.h \
            $$PWD/src/gatilho.h \
            $$PWD/src/baseobject.h \
            $$PWD/src/regra.h \
@@ -50,7 +50,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/relacionamentobase.cpp \
             $$PWD/src/tipo.cpp \
             $$PWD/src/column.cpp \
-            $$PWD/src/espacotabela.cpp \
+            $$PWD/src/tablespace.cpp \
             $$PWD/src/indexelement.cpp \
             $$PWD/src/indice.cpp \
             $$PWD/src/operador.cpp \

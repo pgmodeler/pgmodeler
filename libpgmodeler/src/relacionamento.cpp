@@ -219,7 +219,7 @@ void Relacionamento::criarChavePrimariaEspecial(void)
   pk_especial->definirTipo(TipoRestricao::primary_key);
   pk_especial->setAddedByLinking(true);
   pk_especial->setProtected(true);
-  pk_especial->setTablespace(dynamic_cast<EspacoTabela *>(obterTabelaReceptora()->getTablespace()));
+  pk_especial->setTablespace(dynamic_cast<Tablespace *>(obterTabelaReceptora()->getTablespace()));
 
   //Adiciona as colunas   chave primária obtendo-as através dos seus índices armazenados em 'id_colunas_pk_rel'
   qtd=id_colunas_pk_rel.size();

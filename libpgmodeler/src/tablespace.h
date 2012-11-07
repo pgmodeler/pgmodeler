@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe EspacoTabela que é usada para
-#             gerar os códigos SQL pertinentes aos tablespaces
-#             em banco de dados.
+# Class: Tablespace
+# Description: Implements the operations to manipulate tablespace on the database.
 #
 # Creation date: 05/06/2008
 #
@@ -21,32 +20,31 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef ESPACOTABELA_H
-#define ESPACOTABELA_H
+#ifndef TABLESPACE_H
+#define TABLESPACE_H
 
 #include "baseobject.h"
 
-class EspacoTabela: public BaseObject{
+class Tablespace: public BaseObject{
  private:
   static unsigned tabspace_id;
 
-  //Diretório em que se encontra o espaco de tabela
-  QString diretorio;
+  //Directory where the tablespace resides
+  QString directory;
 
  public:
-  EspacoTabela(void);
+  Tablespace(void);
 
-  //Define o nome do espaço de tabela
-  void setName(const QString &obj_name);
+  void setName(const QString &name);
 
-  //Define o diretório do tablespace
-  void definirDiretorio(const QString &diretorio);
+  //Sets the directory where tablespace resides
+  void setDirectory(const QString &dir);
 
-  //Retorna o diretório configurado para o espaço de tabela
-  QString obterDiretorio(void);
+  //Returns the directory where the tablespace resides
+  QString getDirectory(void);
 
-  //Retorna a definição SQL ou XML do objeto
-  QString getCodeDefinition(unsigned tipo_def);
+  //Returns the SQL / XML code for the tablespace
+  QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

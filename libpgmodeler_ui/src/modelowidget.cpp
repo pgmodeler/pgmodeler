@@ -1151,7 +1151,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_TABLESPACE:
-    espacotabela_wgt->definirAtributos(modelo, lista_op, dynamic_cast<EspacoTabela *>(objeto));
+    espacotabela_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Tablespace *>(objeto));
     espacotabela_wgt->show();
    break;
 

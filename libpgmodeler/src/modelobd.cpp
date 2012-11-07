@@ -179,7 +179,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_ROLE)
     adicionarPapel(dynamic_cast<Papel *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TABLESPACE)
-    adicionarEspacoTabela(dynamic_cast<EspacoTabela *>(objeto), idx_obj);
+    adicionarEspacoTabela(dynamic_cast<Tablespace *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_LANGUAGE)
     adicionarLinguagem(dynamic_cast<Linguagem *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_CAST)
@@ -237,7 +237,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_ROLE)
     removerPapel(dynamic_cast<Papel *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TABLESPACE)
-    removerEspacoTabela(dynamic_cast<EspacoTabela *>(objeto), idx_obj);
+    removerEspacoTabela(dynamic_cast<Tablespace *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_LANGUAGE)
     removerLinguagem(dynamic_cast<Linguagem *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_CAST)
@@ -302,7 +302,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
   else if(tipo_obj==OBJ_ROLE)
    removerPapel(dynamic_cast<Papel *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_TABLESPACE)
-   removerEspacoTabela(dynamic_cast<EspacoTabela *>(objeto), idx_obj);
+   removerEspacoTabela(dynamic_cast<Tablespace *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_LANGUAGE)
    removerLinguagem(dynamic_cast<Linguagem *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_CAST)
@@ -344,19 +344,19 @@ void ModeloBD::__adicionarObjeto(BaseObject *objeto, int idx_obj)
     o que é considerado erro */
  if(tipo_obj==OBJ_TABLESPACE)
  {
-  EspacoTabela *esp_tab=NULL, *esp_tab_aux=NULL;
+  Tablespace *esp_tab=NULL, *esp_tab_aux=NULL;
 
   lista_obj=obterListaObjetos(tipo_obj);
   itr=lista_obj->begin();
   itr_end=lista_obj->end();
-  esp_tab=dynamic_cast<EspacoTabela *>(objeto);
+  esp_tab=dynamic_cast<Tablespace *>(objeto);
 
   while(itr!=itr_end)
   {
-   esp_tab_aux=dynamic_cast<EspacoTabela *>(*itr);
+   esp_tab_aux=dynamic_cast<Tablespace *>(*itr);
 
    //Caso o diretório dos mesmos sejam iguais um erro é disparado
-   if(esp_tab->obterDiretorio()==esp_tab_aux->obterDiretorio())
+   if(esp_tab->getDirectory()==esp_tab_aux->getDirectory())
    {
     throw Exception(Exception::getErrorMessage(ERR_ASG_DUP_TABLESPACE_DIR)
                          .arg(QString::fromUtf8(esp_tab->getName()))
@@ -1799,7 +1799,7 @@ void ModeloBD::removerPapel(Papel *papel, int idx_obj)
  }
 }
 
-void ModeloBD::adicionarEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
+void ModeloBD::adicionarEspacoTabela(Tablespace *espaco_tab, int idx_obj)
 {
  try
  {
@@ -1811,12 +1811,12 @@ void ModeloBD::adicionarEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
  }
 }
 
-EspacoTabela *ModeloBD::getTablespace(unsigned idx_obj)
+Tablespace *ModeloBD::getTablespace(unsigned idx_obj)
 {
- return(dynamic_cast<EspacoTabela *>(obterObjeto(idx_obj, OBJ_TABLESPACE)));
+ return(dynamic_cast<Tablespace *>(obterObjeto(idx_obj, OBJ_TABLESPACE)));
 }
 
-void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
+void ModeloBD::removerEspacoTabela(Tablespace *espaco_tab, int idx_obj)
 {
  if(espaco_tab)
  {
@@ -3201,22 +3201,22 @@ Papel *ModeloBD::criarPapel(void)
  return(papel);
 }
 
-EspacoTabela *ModeloBD::criarEspacoTabela(void)
+Tablespace *ModeloBD::criarEspacoTabela(void)
 {
  map<QString, QString> atributos;
- EspacoTabela *esp_tabela=NULL;
+ Tablespace *esp_tabela=NULL;
 
  try
  {
   //Aloca no novo espaço de tabelas
-  esp_tabela=new EspacoTabela;
+  esp_tabela=new Tablespace;
   definirAtributosBasicos(esp_tabela);
 
   //Obtém os atributos do elemento
   XMLParser::getElementAttributes(atributos);
 
   //Definindo os valores de atributos básicos do papel
-  esp_tabela->definirDiretorio(atributos[ParsersAttributes::DIRECTORY]);
+  esp_tabela->setDirectory(atributos[ParsersAttributes::DIRECTORY]);
  }
  catch(Exception &e)
  {

@@ -36,7 +36,7 @@
 #include "textbox.h"
 #include "papel.h"
 #include "tipo.h"
-#include "espacotabela.h"
+#include "tablespace.h"
 #include "linguagem.h"
 #include "funcaoagregacao.h"
 #include "cast.h"
@@ -321,9 +321,9 @@ class ModeloBD:  public QObject, public BaseObject {
   Papel *obterPapel(unsigned idx_obj);
 
   //Métodos de manipulação de espaços de tabela
-  void adicionarEspacoTabela(EspacoTabela *espaco_tab, int idx_obj=-1);
-  void removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj=-1);
-  EspacoTabela *getTablespace(unsigned idx_obj);
+  void adicionarEspacoTabela(Tablespace *espaco_tab, int idx_obj=-1);
+  void removerEspacoTabela(Tablespace *espaco_tab, int idx_obj=-1);
+  Tablespace *getTablespace(unsigned idx_obj);
 
   //Métodos de manipulação de linguagens
   void adicionarLinguagem(Linguagem *linguagem, int idx_obj=-1);
@@ -398,7 +398,7 @@ class ModeloBD:  public QObject, public BaseObject {
   BaseObject *criarObjeto(ObjectType tipo_obj);
 
   Papel *criarPapel(void);
-  EspacoTabela *criarEspacoTabela(void);
+  Tablespace *criarEspacoTabela(void);
   Esquema *criarEsquema(void);
   Linguagem *criarLinguagem(void);
   Funcao *criarFuncao(void);

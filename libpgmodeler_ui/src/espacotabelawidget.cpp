@@ -19,27 +19,27 @@ void EspacoTabelaWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void EspacoTabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, EspacoTabela *espaco_tab)
+void EspacoTabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Tablespace *espaco_tab)
 {
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, espaco_tab);
 
  if(espaco_tab)
-  diretorio_edt->setText(espaco_tab->obterDiretorio());
+  diretorio_edt->setText(espaco_tab->getDirectory());
 }
 
 void EspacoTabelaWidget::aplicarConfiguracao(void)
 {
  try
  {
-  EspacoTabela *esp_tab=NULL;
+  Tablespace *esp_tab=NULL;
 
-  iniciarConfiguracao<EspacoTabela>();
+  iniciarConfiguracao<Tablespace>();
 
   //Converte o objeto para espaço de tabela
-  esp_tab=dynamic_cast<EspacoTabela *>(this->objeto);
+  esp_tab=dynamic_cast<Tablespace *>(this->objeto);
   //Configura o diretório do espaço de tabelas com o caminho configurado no formulário
-  esp_tab->definirDiretorio(diretorio_edt->text());
+  esp_tab->setDirectory(diretorio_edt->text());
 
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();

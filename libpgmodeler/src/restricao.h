@@ -24,7 +24,7 @@
 #define RESTRICAO_H
 
 #include "tableobject.h"
-#include "espacotabela.h"
+#include "tablespace.h"
 #include "column.h"
 
 class Restricao: public TableObject{
@@ -113,7 +113,7 @@ class Restricao: public TableObject{
   /* Define o espaço de tabela usado pela restrição.
      Espaços de tabelas só podem ser atribuídas a restrições
      do tipo UNIQUE ou PRIMARY KEY */
-  void setTablespace(EspacoTabela *tablespace);
+  void setTablespace(Tablespace *tablespace);
 
   //Define o fator preenchimento da restrição
   void definirFatorPreenchimento(unsigned fator);

@@ -107,7 +107,7 @@ void Restricao::adicionarColuna(Column *coluna, unsigned tipo_coluna)
  }
 }
 
-void Restricao::setTablespace(EspacoTabela *espacotabela)
+void Restricao::setTablespace(Tablespace *espacotabela)
 {
  try
  {
