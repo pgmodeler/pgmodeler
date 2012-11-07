@@ -20,8 +20,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef CONVERSAOCODIFICACAO_H
-#define CONVERSAOCODIFICACAO_H
+#ifndef CONVERSION_H
+#define CONVERSION_H
 
 #include "baseobject.h"
 #include "funcao.h"

@@ -8,7 +8,7 @@ LIBS += $$DESTDIR/$$LIBUTIL \
         $$DESTDIR/$$LIBPARSERS
 
 HEADERS += $$PWD/src/textbox.h \
-           $$PWD/src/conversaotipo.h \
+           $$PWD/src/cast.h \
            $$PWD/src/funcao.h \
            $$PWD/src/linguagem.h \
            $$PWD/src/operador.h \
@@ -66,7 +66,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/modelobd.cpp \
             $$PWD/src/regra.cpp \
             $$PWD/src/tabela.cpp \
-            $$PWD/src/conversaotipo.cpp \
+            $$PWD/src/cast.cpp \
             $$PWD/src/funcaoagregacao.cpp \
             $$PWD/src/baseobject.cpp \
             $$PWD/src/relacionamento.cpp \

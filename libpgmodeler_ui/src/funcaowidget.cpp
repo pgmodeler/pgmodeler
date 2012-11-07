@@ -435,7 +435,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
  vector<BaseObject *> *lista_obj;
  vector<BaseObject *>::iterator itr, itr_end;
  Conversion *conv_cod=NULL;
- ConversaoTipo *conv_tipo=NULL;
+ Cast *conv_tipo=NULL;
  FuncaoAgregacao *func_ag=NULL;
  Gatilho *gatilho=NULL;
  Linguagem *ling=NULL;
@@ -486,9 +486,9 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
     }
     else if(tipos[i]==OBJ_CAST)
     {
-     conv_tipo=dynamic_cast<ConversaoTipo *>(objeto);
-     if(conv_tipo->obterFuncaoConversao()==funcao)
-      conv_tipo->definirFuncaoConversao(funcao);
+     conv_tipo=dynamic_cast<Cast *>(objeto);
+     if(conv_tipo->getCastFunction()==funcao)
+      conv_tipo->setCastFunction(funcao);
     }
     else if(tipos[i]==OBJ_AGGREGATE)
     {

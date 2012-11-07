@@ -1,6 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
+# Class: Domain
 # Description: Definição da classe domínio que é usada para
 #             gerar os códigos SQL pertinentes a estes.
 # Creation date: 07/04/2008

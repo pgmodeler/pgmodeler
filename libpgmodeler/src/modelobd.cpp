@@ -183,7 +183,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_LANGUAGE)
     adicionarLinguagem(dynamic_cast<Linguagem *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_CAST)
-    adicionarConversaoTipo(dynamic_cast<ConversaoTipo *>(objeto), idx_obj);
+    adicionarConversaoTipo(dynamic_cast<Cast *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_CONVERSION)
     adicionarConversaoCodificacao(dynamic_cast<Conversion *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_OPERATOR)
@@ -241,7 +241,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_LANGUAGE)
     removerLinguagem(dynamic_cast<Linguagem *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_CAST)
-    removerConversaoTipo(dynamic_cast<ConversaoTipo *>(objeto), idx_obj);
+    removerConversaoTipo(dynamic_cast<Cast *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_CONVERSION)
     removerConversaoCodificacao(dynamic_cast<Conversion *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_OPERATOR)
@@ -306,7 +306,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
  else if(tipo_obj==OBJ_LANGUAGE)
    removerLinguagem(dynamic_cast<Linguagem *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_CAST)
-   removerConversaoTipo(dynamic_cast<ConversaoTipo *>(objeto), idx_obj);
+   removerConversaoTipo(dynamic_cast<Cast *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_CONVERSION)
    removerConversaoCodificacao(dynamic_cast<Conversion *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_OPERATOR)
@@ -1866,7 +1866,7 @@ void ModeloBD::removerEspacoTabela(EspacoTabela *espaco_tab, int idx_obj)
  }
 }
 
-void ModeloBD::adicionarConversaoTipo(ConversaoTipo *conv_tipo, int idx_obj)
+void ModeloBD::adicionarConversaoTipo(Cast *conv_tipo, int idx_obj)
 {
  try
  {
@@ -1878,14 +1878,14 @@ void ModeloBD::adicionarConversaoTipo(ConversaoTipo *conv_tipo, int idx_obj)
  }
 }
 
-void ModeloBD::removerConversaoTipo(ConversaoTipo *conv_tipo, int idx_obj)
+void ModeloBD::removerConversaoTipo(Cast *conv_tipo, int idx_obj)
 {
  __removerObjeto(conv_tipo, idx_obj);
 }
 
-ConversaoTipo *ModeloBD::obterConversaoTipo(unsigned idx_obj)
+Cast *ModeloBD::obterConversaoTipo(unsigned idx_obj)
 {
- return(dynamic_cast<ConversaoTipo *>(obterObjeto(idx_obj, OBJ_CAST)));
+ return(dynamic_cast<Cast *>(obterObjeto(idx_obj, OBJ_CAST)));
 }
 
 void ModeloBD::adicionarConversaoCodificacao(Conversion *conv_codificacao, int idx_obj)
@@ -3926,10 +3926,10 @@ Dominio *ModeloBD::criarDominio(void)
  return(dominio);
 }
 
-ConversaoTipo *ModeloBD::criarConversaoTipo(void)
+Cast *ModeloBD::criarConversaoTipo(void)
 {
  map<QString, QString> atributos;
- ConversaoTipo *conv_tipo=NULL;
+ Cast *conv_tipo=NULL;
  QString elem;
  unsigned idx_tipo=0;
  TipoPgSQL tipo;
@@ -3937,7 +3937,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
 
  try
  {
-  conv_tipo=new ConversaoTipo;
+  conv_tipo=new Cast;
 
   //Lê do parser os atributos basicos
   definirAtributosBasicos(conv_tipo);
@@ -3947,11 +3947,11 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
 
   if(atributos[ParsersAttributes::CAST_TYPE]==
       ParsersAttributes::IMPLICIT)
-   conv_tipo->definirTipoConversao(ConversaoTipo::CONV_IMPLICITA);
+   conv_tipo->setCastType(Cast::IMPLICIT);
   else
-   conv_tipo->definirTipoConversao(ConversaoTipo::CONV_ATRIBUICAO);
+   conv_tipo->setCastType(Cast::ASSIGNMENT);
 
-  conv_tipo->definirEntradaSaida(atributos[ParsersAttributes::IO_CAST]==ParsersAttributes::_TRUE_);
+  conv_tipo->setInOut(atributos[ParsersAttributes::IO_CAST]==ParsersAttributes::_TRUE_);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
@@ -3969,9 +3969,9 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
      {
       tipo=criarTipoPgSQL();
       if(idx_tipo==0)
-       conv_tipo->definirTipoDado(ConversaoTipo::CONV_TIPO_ORIGEM, tipo);
+       conv_tipo->setDataType(Cast::SRC_TYPE, tipo);
       else
-       conv_tipo->definirTipoDado(ConversaoTipo::CONV_TIPO_DESTINO, tipo);
+       conv_tipo->setDataType(Cast::DST_TYPE, tipo);
       idx_tipo++;
      }
      //Extraíndo a função de conversão do XML
@@ -3996,7 +3996,7 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Atribui a funç   conversão de tipos
-      conv_tipo->definirFuncaoConversao(dynamic_cast<Funcao *>(funcao));
+      conv_tipo->setCastFunction(dynamic_cast<Funcao *>(funcao));
      }
     }
    }
@@ -6535,13 +6535,13 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   //** Obtendo as dependências de Conversões de Tipo **
   else if(tipo_obj==OBJ_CAST)
   {
-   ConversaoTipo *conv=dynamic_cast<ConversaoTipo *>(objeto);
+   Cast *conv=dynamic_cast<Cast *>(objeto);
    BaseObject *tipo_usr=NULL;
 
    //Obtém as dependências dos tipos usados na conversão de tipo
-   for(unsigned i=ConversaoTipo::CONV_TIPO_ORIGEM; i <= ConversaoTipo::CONV_TIPO_DESTINO; i++)
+   for(unsigned i=Cast::SRC_TYPE; i <= Cast::DST_TYPE; i++)
    {
-    tipo_usr=obterObjetoTipoPgSQL(conv->obterTipoDado(i));
+    tipo_usr=obterObjetoTipoPgSQL(conv->getDataType(i));
       //obterObjeto(*conv->obterTipoDado(i), OBJETO_TIPO);
 
     if(tipo_usr)
@@ -6549,7 +6549,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    }
 
    //Obtém as dependências da função de conversão que define a conversão de tipo
-   obterDependenciasObjeto(conv->obterFuncaoConversao(), vet_deps, inc_dep_indiretas);
+   obterDependenciasObjeto(conv->getCastFunction(), vet_deps, inc_dep_indiretas);
   }
   //** Obtendo as dependências de Funções **
   else if(tipo_obj==OBJ_FUNCTION)
@@ -6996,7 +6996,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Verifica se o objeto não referencia o papel
-      if(dynamic_cast<ConversaoTipo *>(*itr)->obterFuncaoConversao()==funcao)
+      if(dynamic_cast<Cast *>(*itr)->getCastFunction()==funcao)
       {
        refer=true;
        vet_refs.push_back(*itr);
@@ -7154,7 +7154,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    OperatorClass *classe_op=NULL;
    Tabela *tab=NULL;
    Column *col=NULL;
-   ConversaoTipo *conv_tipo=NULL;
+   Cast *conv_tipo=NULL;
    Dominio *dom=NULL;
    Funcao *func=NULL;
    FuncaoAgregacao *func_ag=NULL;
@@ -7342,12 +7342,12 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Obtém a referência ao objeto
-      conv_tipo=dynamic_cast<ConversaoTipo *>(*itr);
+      conv_tipo=dynamic_cast<Cast *>(*itr);
       itr++;
 
       //Verifica se o objeto não referencia o tipo
-      if(conv_tipo->obterTipoDado(ConversaoTipo::CONV_TIPO_ORIGEM)==ptr_tipopgsql ||
-         conv_tipo->obterTipoDado(ConversaoTipo::CONV_TIPO_DESTINO)==ptr_tipopgsql)
+      if(conv_tipo->getDataType(Cast::SRC_TYPE)==ptr_tipopgsql ||
+         conv_tipo->getDataType(Cast::DST_TYPE)==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(conv_tipo);

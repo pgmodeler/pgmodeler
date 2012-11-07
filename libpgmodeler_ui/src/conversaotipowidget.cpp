@@ -60,7 +60,7 @@ void ConversaoTipoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 //---------------------------------------------------------
-void ConversaoTipoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, ConversaoTipo *conv_tipo)
+void ConversaoTipoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Cast *conv_tipo)
 {
  TipoPgSQL tipo_orig, tipo_dest;
 
@@ -72,19 +72,19 @@ void ConversaoTipoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lis
  if(conv_tipo)
  {
   //Obtém os tipos envolvidos na conversão
-  tipo_orig=conv_tipo->obterTipoDado(ConversaoTipo::CONV_TIPO_ORIGEM);
-  tipo_dest=conv_tipo->obterTipoDado(ConversaoTipo::CONV_TIPO_DESTINO);
+  tipo_orig=conv_tipo->getDataType(Cast::SRC_TYPE);
+  tipo_dest=conv_tipo->getDataType(Cast::DST_TYPE);
 
   //Atribui a função da conversão ao widget seletor
-  sel_funcao_conv->definirObjeto(conv_tipo->obterFuncaoConversao());
+  sel_funcao_conv->definirObjeto(conv_tipo->getCastFunction());
 
   /* Marca o se a conversão é de entrada/saida de acordo com o que está configurado
      na instância passada */
-  entradasaida_chk->setChecked(conv_tipo->obterEntradaSaida());
+  entradasaida_chk->setChecked(conv_tipo->isInOut());
 
   /* Configura o tipo da conversão de acordo com o que está configurado
      na instância passada */
-  implicita_rb->setChecked(conv_tipo->obterTipoConversao()==ConversaoTipo::CONV_IMPLICITA);
+  implicita_rb->setChecked(conv_tipo->getCastType()==Cast::IMPLICIT);
   atribuicao_rb->setChecked(!implicita_rb->isChecked());
  }
 
@@ -97,29 +97,29 @@ void ConversaoTipoWidget::aplicarConfiguracao(void)
 {
  try
  {
-  ConversaoTipo *conv_tipo=NULL;
+  Cast *conv_tipo=NULL;
 
-  iniciarConfiguracao<ConversaoTipo>();
+  iniciarConfiguracao<Cast>();
 
   //Obtém a conversão a partir da refência ao objeto configurado
-  conv_tipo=dynamic_cast<ConversaoTipo *>(this->objeto);
+  conv_tipo=dynamic_cast<Cast *>(this->objeto);
 
   //Configura os tipos de dados da conversão obtendo-os dos widgets de configuração de tipos
-  conv_tipo->definirTipoDado(ConversaoTipo::CONV_TIPO_ORIGEM, tipo_dado_orig->obterTipoPgSQL());
-  conv_tipo->definirTipoDado(ConversaoTipo::CONV_TIPO_DESTINO, tipo_dado_dest->obterTipoPgSQL());
+  conv_tipo->setDataType(Cast::SRC_TYPE, tipo_dado_orig->obterTipoPgSQL());
+  conv_tipo->setDataType(Cast::DST_TYPE, tipo_dado_dest->obterTipoPgSQL());
 
   /* Configura se a conversão é de entrada/saída conforme o estado do
      checkbox que representa o atributo no formulário */
-  conv_tipo->definirEntradaSaida(entradasaida_chk->isChecked());
+  conv_tipo->setInOut(entradasaida_chk->isChecked());
 
   //Configura o tipo da conversão conforme o radiobox selecionado no formulário
   if(implicita_rb->isChecked())
-   conv_tipo->definirTipoConversao(ConversaoTipo::CONV_IMPLICITA);
+   conv_tipo->setCastType(Cast::IMPLICIT);
   else
-   conv_tipo->definirTipoConversao(ConversaoTipo::CONV_ATRIBUICAO);
+   conv_tipo->setCastType(Cast::ASSIGNMENT);
 
   //Atribui a função de conversão com aquela que está selecionada no seletor de função
-  conv_tipo->definirFuncaoConversao(dynamic_cast<Funcao*>(sel_funcao_conv->obterObjeto()));
+  conv_tipo->setCastFunction(dynamic_cast<Funcao*>(sel_funcao_conv->obterObjeto()));
 
   //Aplica as configurações básicas
   ObjetoBaseWidget::aplicarConfiguracao();

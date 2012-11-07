@@ -39,7 +39,7 @@
 #include "espacotabela.h"
 #include "linguagem.h"
 #include "funcaoagregacao.h"
-#include "conversaotipo.h"
+#include "cast.h"
 #include "conversion.h"
 #include "operatorclass.h"
 #include "xmlparser.h"
@@ -336,9 +336,9 @@ class ModeloBD:  public QObject, public BaseObject {
   FuncaoAgregacao *obterFuncaoAgregacao(unsigned idx_obj);
 
   //Métodos de manipulação de conversões de tipo
-  void adicionarConversaoTipo(ConversaoTipo *conv_tipo, int idx_obj=-1);
-  void removerConversaoTipo(ConversaoTipo *conv_tipo, int idx_obj=-1);
-  ConversaoTipo *obterConversaoTipo(unsigned idx_obj);
+  void adicionarConversaoTipo(Cast *conv_tipo, int idx_obj=-1);
+  void removerConversaoTipo(Cast *conv_tipo, int idx_obj=-1);
+  Cast *obterConversaoTipo(unsigned idx_obj);
 
   //Métodos de manipulação de conversões de codificação
   void adicionarConversaoCodificacao(Conversion *conv_codificacao, int idx_obj=-1);
@@ -405,7 +405,7 @@ class ModeloBD:  public QObject, public BaseObject {
   Parametro criarParametro(void);
   Tipo *criarTipo(void);
   Dominio *criarDominio(void);
-  ConversaoTipo *criarConversaoTipo(void);
+  Cast *criarConversaoTipo(void);
   Conversion *criarConversaoCodificacao(void);
   Operador *criarOperador(void);
   FamiliaOperadores *criarFamiliaOperadores(void);
