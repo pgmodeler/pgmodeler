@@ -4237,7 +4237,7 @@ OperatorClass *ModeloBD::criarClasseOperadores(void)
  QString elem;
  TipoPgSQL tipo;
  OperatorClass *classe_op=NULL;
- ElemClasseOperadores elem_classe;
+ OperatorClassElement elem_classe;
  bool rechecar;
  unsigned num_estrategia, tp_elem;
 
@@ -4254,9 +4254,9 @@ OperatorClass *ModeloBD::criarClasseOperadores(void)
   classe_op->setIndexingType(TipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]));
   classe_op->setDefault(atributos[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
 
-  tipos_elem[ParsersAttributes::FUNCTION]=ElemClasseOperadores::ELEM_FUNCAO;
-  tipos_elem[ParsersAttributes::OPERATOR]=ElemClasseOperadores::ELEM_OPERADOR;
-  tipos_elem[ParsersAttributes::STORAGE]=ElemClasseOperadores::ELEM_ARMAZENAMENTO;
+  tipos_elem[ParsersAttributes::FUNCTION]=OperatorClassElement::FUNCTION_ELEM;
+  tipos_elem[ParsersAttributes::OPERATOR]=OperatorClassElement::OPERATOR_ELEM;
+  tipos_elem[ParsersAttributes::STORAGE]=OperatorClassElement::STORAGE_ELEM;
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
@@ -4307,20 +4307,20 @@ OperatorClass *ModeloBD::criarClasseOperadores(void)
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
       XMLParser::getElementAttributes(atributos);
 
-      if(tp_elem==ElemClasseOperadores::ELEM_ARMAZENAMENTO)
+      if(tp_elem==OperatorClassElement::STORAGE_ELEM)
       {
        tipo=criarTipoPgSQL();
-       elem_classe.definirArmazenamento(tipo);
+       elem_classe.setStorage(tipo);
       }
-      else if(tp_elem==ElemClasseOperadores::ELEM_FUNCAO)
+      else if(tp_elem==OperatorClassElement::FUNCTION_ELEM)
       {
        objeto=obterObjeto(atributos[ParsersAttributes::SIGNATURE],OBJ_FUNCTION);
-       elem_classe.definirFuncao(dynamic_cast<Funcao *>(objeto),num_estrategia);
+       elem_classe.setFunction(dynamic_cast<Funcao *>(objeto),num_estrategia);
       }
-      else if(tp_elem==ElemClasseOperadores::ELEM_OPERADOR)
+      else if(tp_elem==OperatorClassElement::OPERATOR_ELEM)
       {
        objeto=obterObjeto(atributos[ParsersAttributes::SIGNATURE],OBJ_OPERATOR);
-       elem_classe.definirOperador(dynamic_cast<Operador *>(objeto),num_estrategia,rechecar);
+       elem_classe.setOperator(dynamic_cast<Operador *>(objeto),num_estrategia,rechecar);
       }
 
       classe_op->addElement(elem_classe);
@@ -6783,11 +6783,11 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
 
     for(i1=0; i1 < qtd1; i1++)
     {
-     if(ind->obterElemento(i1).obterClasseOperadores())
-      obterDependenciasObjeto(ind->obterElemento(i1).obterClasseOperadores(), vet_deps, inc_dep_indiretas);
-     else if(ind->obterElemento(i1).obterColuna())
+     if(ind->obterElemento(i1).getOperatorClass())
+      obterDependenciasObjeto(ind->obterElemento(i1).getOperatorClass(), vet_deps, inc_dep_indiretas);
+     else if(ind->obterElemento(i1).getColumn())
      {
-      tipo_usr=obterObjetoTipoPgSQL(ind->obterElemento(i1).obterColuna()->getType());
+      tipo_usr=obterObjetoTipoPgSQL(ind->obterElemento(i1).getColumn()->getType());
         //obterObjeto(*ind->obterElemento(i1).obterColuna()->obterTipo(), OBJETO_TIPO);
 
       if(tipo_usr)
@@ -7548,7 +7548,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       for(i1=0; i1 < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
       {
        //Verifica se o objeto não referencia o operador
-       if(classe_op->getElement(i1).obterOperador()==operador)
+       if(classe_op->getElement(i1).getOperator()==operador)
        {
         refer=true;
         vet_refs.push_back(classe_op);

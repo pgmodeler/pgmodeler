@@ -1079,7 +1079,7 @@ void Tabela::obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_r
  if(coluna && !coluna->isAddedByRelationship())
  {
   unsigned qtd, i;
-  ElementoIndice elem;
+  IndexElement elem;
   Column *col=NULL, *col1=NULL;
   vector<TableObject *>::iterator itr, itr_end;
   bool enc=false;
@@ -1100,7 +1100,7 @@ void Tabela::obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_r
    for(i=0; i < qtd  && (!modo_exclusao || (modo_exclusao && !enc)); i++)
    {
     elem=ind->obterElemento(i);
-    col=elem.obterColuna();
+    col=elem.getColumn();
     if(col && col==coluna)
     {
      enc=true;

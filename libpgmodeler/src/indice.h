@@ -30,7 +30,7 @@ class Indice: public TableObject{
  private:
   /* Vetor de classe de operadores o qual relacionada cada
      coluna ou expressão a um elemento deste container */
-  vector<ElementoIndice> elementos;
+  vector<IndexElement> elementos;
 
   //Expressão condicional do índice
   QString exp_condicional;
@@ -58,7 +58,7 @@ class Indice: public TableObject{
   //Adiciona um elemento ao índice
   void adicionarElemento(Column *coluna, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro);
   void adicionarElemento(const QString &expressao, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro);
-  void adicionarElemento(ElementoIndice elem);
+  void adicionarElemento(IndexElement elem);
 
   /* Retorna se um dado elemento existe no índice. O método
      retorna -1 quando o mesmo não é encontrado caso contrário
@@ -67,7 +67,7 @@ class Indice: public TableObject{
   int elementoExiste(const QString &expressao);
 
   //Obtém um elemento através de seu índice
-  ElementoIndice obterElemento(unsigned idx_elem);
+  IndexElement obterElemento(unsigned idx_elem);
 
   //Remove um elemento através de seu índice
   void removerElemento(unsigned idx_elem);

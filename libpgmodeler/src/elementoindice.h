@@ -26,49 +26,48 @@
 #include "column.h"
 #include "operatorclass.h"
 
-class ElementoIndice {
+class IndexElement {
  private:
   /* Coluna referenciada pelo elemento do índice. Este atributo é
      mutuamente exclusivo com o atributo expressao, ou seja,
      quando um é setado o outro tem seu valor zerado */
-  Column *coluna;
+  Column *column;
 
   /*Expressão referenciada pelo elemento do índice. Este atributo é
     mutuamente exclusivo com o atributo coluna, ou seja,
     quando um é setado o outro tem seu valor zerado */
-  QString expressao;
+  QString expression;
 
   //Classe de operadores referenciada pelo elemento
-  OperatorClass *classe_oper;
+  OperatorClass *operator_class;
 
   //Atributos booleanos do elemento (ASC|DESC, NULLS FIRST|LAST)
-  bool atrib_elemento[2];
+  bool attributes[2];
 
  public:
-   const static unsigned ORDEM_ASCENDENTE=0;
-   const static unsigned NULOS_PRIMEIRO=1;
+   const static unsigned ASC_ORDER=0;
+   const static unsigned NULLS_FIRST=1;
 
-   ElementoIndice(void);
-   ~ElementoIndice(void){};
+   IndexElement(void);
 
    //Métodos de configuração do elemento
-   void definirColuna(Column *coluna);
-   void definirExpressao(const QString &expressao);
-   void definirClasseOperadores(OperatorClass *classe_oper);
+   void setColumn(Column *column);
+   void setExpression(const QString &expression);
+   void setOperatorClass(OperatorClass *operator_class);
 
    //Define o estado de uma das 2 configurações booleanas do elemento
-   void definirAtributo(unsigned id_atrib, bool valor);
+   void setAttribute(unsigned id_atrib, bool valor);
 
    //Obtém uma das configurações do elemento
-   bool obterAtributo(unsigned id_atrib);
+   bool getAttribute(unsigned id_atrib);
 
    //Métodos de obtenção dos atributos do elemento
-   Column *obterColuna(void);
-   QString obterExpressao(void);
-   OperatorClass *obterClasseOperadores(void);
+   Column *getColumn(void);
+   QString getExpression(void);
+   OperatorClass *getOperatorClass(void);
 
    //Retorna a definição SQL ou XML do objeto
-   QString obterDefinicaoObjeto(unsigned tipo_def);
+   QString getCodeDefinition(unsigned tipo_def);
 };
 
 #endif

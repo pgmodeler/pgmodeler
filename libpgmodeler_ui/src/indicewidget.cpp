@@ -120,43 +120,43 @@ void IndiceWidget::atualizarComboColunas(void)
  }
 }
 
-void IndiceWidget::exibirDadosElemento(ElementoIndice elem, int idx_elem)
+void IndiceWidget::exibirDadosElemento(IndexElement elem, int idx_elem)
 {
  //Caso o elemento possua uma coluna
- if(elem.obterColuna())
+ if(elem.getColumn())
  {
   //Exibe os dados da coluna
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterColuna()->getName()), idx_elem, 0);
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterColuna()->getTypeName()), idx_elem, 1);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getColumn()->getName()), idx_elem, 0);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getColumn()->getTypeName()), idx_elem, 1);
  }
  //Caso possua uma expressão
  else
  {
   //Exibe a expressão
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterExpressao()), idx_elem, 0);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getExpression()), idx_elem, 0);
   tab_elementos->definirTextoCelula(trUtf8("Expressão"), idx_elem, 1);
  }
 
  /* Exibindo o nome da classe de operadores caso exista.
     se não existir exibe um '-' */
- if(elem.obterClasseOperadores())
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterClasseOperadores()->getName(true)), idx_elem, 2);
+ if(elem.getOperatorClass())
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getOperatorClass()->getName(true)), idx_elem, 2);
  else
   tab_elementos->definirTextoCelula("-", idx_elem, 2);
 
- if(elem.obterAtributo(ElementoIndice::ORDEM_ASCENDENTE))
+ if(elem.getAttribute(IndexElement::ASC_ORDER))
   tab_elementos->definirTextoCelula(ascendente_rb->text(), idx_elem, 3);
  else
   tab_elementos->definirTextoCelula(descendente_rb->text(), idx_elem, 3);
 
- if(elem.obterAtributo(ElementoIndice::NULOS_PRIMEIRO))
+ if(elem.getAttribute(IndexElement::NULLS_FIRST))
   tab_elementos->definirTextoCelula(trUtf8("Sim"), idx_elem, 4);
  else
   tab_elementos->definirTextoCelula(trUtf8("Não"), idx_elem, 4);
 
  /* O elemento é definido como dado da linha para facilitar a configuração
     no método aplicarConfiguracao() */
- tab_elementos->definirDadoLinha(QVariant::fromValue<ElementoIndice>(elem), idx_elem);
+ tab_elementos->definirDadoLinha(QVariant::fromValue<IndexElement>(elem), idx_elem);
 }
 
 void IndiceWidget::manipularElemento(int idx_elem)
@@ -166,17 +166,17 @@ void IndiceWidget::manipularElemento(int idx_elem)
  if(coluna_rb->isChecked() ||
    (expressao_rb->isChecked() && !exp_elemento_txt->toPlainText().isEmpty()))
  {
-  ElementoIndice elem;
+  IndexElement elem;
 
   //Configura um elemento com todos os dados configurados no formulário d elementos
-  elem.definirAtributo(ElementoIndice::NULOS_PRIMEIRO, nulos_primeiro_chk->isChecked());
-  elem.definirAtributo(ElementoIndice::ORDEM_ASCENDENTE, ascendente_rb->isChecked());
-  elem.definirClasseOperadores(dynamic_cast<OperatorClass *>(sel_classe_op->obterObjeto()));
+  elem.setAttribute(IndexElement::NULLS_FIRST, nulos_primeiro_chk->isChecked());
+  elem.setAttribute(IndexElement::ASC_ORDER, ascendente_rb->isChecked());
+  elem.setOperatorClass(dynamic_cast<OperatorClass *>(sel_classe_op->obterObjeto()));
 
   if(expressao_rb->isChecked())
-   elem.definirExpressao(exp_elemento_txt->toPlainText());
+   elem.setExpression(exp_elemento_txt->toPlainText());
   else
-   elem.definirColuna(reinterpret_cast<Column *>(coluna_cmb->itemData(coluna_cmb->currentIndex()).value<void *>()));
+   elem.setColumn(reinterpret_cast<Column *>(coluna_cmb->itemData(coluna_cmb->currentIndex()).value<void *>()));
 
   //Exibe os dados do elemento na tabela de elementos do índice
   exibirDadosElemento(elem, idx_elem);
@@ -193,35 +193,35 @@ void IndiceWidget::manipularElemento(int idx_elem)
 
 void IndiceWidget::editarElemento(int idx_elem)
 {
- ElementoIndice elem;
+ IndexElement elem;
 
  //Obtém o elemento na linha especificada
- elem=tab_elementos->obterDadoLinha(idx_elem).value<ElementoIndice>();
+ elem=tab_elementos->obterDadoLinha(idx_elem).value<IndexElement>();
 
  /* Caso possua coluna marca o radio box de coluna
     e marca no combo box o nome da coluna que o elemento possui */
- if(elem.obterColuna())
+ if(elem.getColumn())
  {
   coluna_rb->setChecked(true);
-  coluna_cmb->setCurrentIndex(coluna_cmb->findText(QString::fromUtf8(elem.obterColuna()->getName())));
+  coluna_cmb->setCurrentIndex(coluna_cmb->findText(QString::fromUtf8(elem.getColumn()->getName())));
  }
  /* Caso seja uma expressão marca o radiobox de expressão e a
     insere no campo de expressão */
  else
  {
   expressao_rb->setChecked(true);
-  exp_elemento_txt->setPlainText(elem.obterExpressao());
+  exp_elemento_txt->setPlainText(elem.getExpression());
  }
 
  //Configura a ordenação do formulário conforme configurado no elemento
- if(elem.obterAtributo(ElementoIndice::ORDEM_ASCENDENTE))
+ if(elem.getAttribute(IndexElement::ASC_ORDER))
   ascendente_rb->setChecked(true);
  else
   descendente_rb->setChecked(true);
- nulos_primeiro_chk->setChecked(elem.obterAtributo(ElementoIndice::NULOS_PRIMEIRO));
+ nulos_primeiro_chk->setChecked(elem.getAttribute(IndexElement::NULLS_FIRST));
 
  //Exibe a classe de operadores no formulário
- sel_classe_op->definirObjeto(elem.obterClasseOperadores());
+ sel_classe_op->definirObjeto(elem.getOperatorClass());
 }
 
 void IndiceWidget::selecionarObjetoElemento(void)
@@ -303,7 +303,7 @@ void IndiceWidget::aplicarConfiguracao(void)
  {
   Indice *indice=NULL;
   unsigned i, qtd;
-  ElementoIndice elem;
+  IndexElement elem;
 
   iniciarConfiguracao<Indice>();
 
@@ -325,19 +325,19 @@ void IndiceWidget::aplicarConfiguracao(void)
   for(i=0; i < qtd; i++)
   {
    //Obtém o elemento na linha da tabela
-   elem=tab_elementos->obterDadoLinha(i).value<ElementoIndice>();
+   elem=tab_elementos->obterDadoLinha(i).value<IndexElement>();
 
    //Caso o mesmo possua uma coluna
-   if(elem.obterColuna())
+   if(elem.getColumn())
     //Adiciona um elmento como sendo um com coluna
-    indice->adicionarElemento(elem.obterColuna(), elem.obterClasseOperadores(),
-                              elem.obterAtributo(ElementoIndice::ORDEM_ASCENDENTE),
-                              elem.obterAtributo(ElementoIndice::NULOS_PRIMEIRO));
+    indice->adicionarElemento(elem.getColumn(), elem.getOperatorClass(),
+                              elem.getAttribute(IndexElement::ASC_ORDER),
+                              elem.getAttribute(IndexElement::NULLS_FIRST));
    else
     //Adiciona um elmento como sendo um com expressão
-    indice->adicionarElemento(elem.obterExpressao(), elem.obterClasseOperadores(),
-                              elem.obterAtributo(ElementoIndice::ORDEM_ASCENDENTE),
-                              elem.obterAtributo(ElementoIndice::NULOS_PRIMEIRO));
+    indice->adicionarElemento(elem.getExpression(), elem.getOperatorClass(),
+                              elem.getAttribute(IndexElement::ASC_ORDER),
+                              elem.getAttribute(IndexElement::NULLS_FIRST));
   }
 
   //Aplica as configurações básicas

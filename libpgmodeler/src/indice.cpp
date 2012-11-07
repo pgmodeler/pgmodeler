@@ -30,7 +30,7 @@ void Indice::definirAtributoElementos(unsigned tipo_def)
  qtd=elementos.size();
  for(i=0; i < qtd; i++)
  {
-  str_elem+=elementos[i].obterDefinicaoObjeto(tipo_def);
+  str_elem+=elementos[i].getCodeDefinition(tipo_def);
   if(i < (qtd-1) && tipo_def==SchemaParser::SQL_DEFINITION) str_elem+=",";
  }
 
@@ -49,7 +49,7 @@ int Indice::elementoExiste(Column *coluna)
  while(idx < qtd && !enc)
  {
   //Obtém a coluna
-  col=elementos[idx].obterColuna();
+  col=elementos[idx].getColumn();
 
   if(col && coluna)
    enc=(col==coluna || col->getName()==coluna->getName());
@@ -71,7 +71,7 @@ int Indice::elementoExiste(const QString &expressao)
 
  while(idx < qtd && !enc)
  {
-  enc=(!expressao.isEmpty() && elementos[idx].obterExpressao()==expressao);
+  enc=(!expressao.isEmpty() && elementos[idx].getExpression()==expressao);
   if(!enc) idx++;
  }
 
@@ -88,16 +88,16 @@ void Indice::adicionarElemento(const QString &expressao, OperatorClass *classe_o
  }
  else
  {
-  ElementoIndice elem;
+  IndexElement elem;
 
   //Caso a expressão a ser atribuída ao índice já exista, dispara-se uma exceção
   if(elementoExiste(expressao) >= 0)
    throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  elem.definirExpressao(expressao);
-  elem.definirClasseOperadores(classe_oper);
-  elem.definirAtributo(ElementoIndice::NULOS_PRIMEIRO, nulos_primeiro);
-  elem.definirAtributo(ElementoIndice::ORDEM_ASCENDENTE, ordem_asc);
+  elem.setExpression(expressao);
+  elem.setOperatorClass(classe_oper);
+  elem.setAttribute(IndexElement::NULLS_FIRST, nulos_primeiro);
+  elem.setAttribute(IndexElement::ASC_ORDER, ordem_asc);
 
   //Adiciona o elemento ao final da lista de elementos do índice
   elementos.push_back(elem);
@@ -116,16 +116,16 @@ void Indice::adicionarElemento(Column *coluna, OperatorClass *classe_oper, bool 
  }
  else
  {
-  ElementoIndice elem;
+  IndexElement elem;
 
   //Caso a coluna a ser atribuída ao índice já exista, dispara-se uma exceção
   if(elementoExiste(coluna) >= 0)
    throw Exception(ERR_INS_DUPLIC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  elem.definirColuna(coluna);
-  elem.definirClasseOperadores(classe_oper);
-  elem.definirAtributo(ElementoIndice::NULOS_PRIMEIRO, nulos_primeiro);
-  elem.definirAtributo(ElementoIndice::ORDEM_ASCENDENTE, ordem_asc);
+  elem.setColumn(coluna);
+  elem.setOperatorClass(classe_oper);
+  elem.setAttribute(IndexElement::NULLS_FIRST, nulos_primeiro);
+  elem.setAttribute(IndexElement::ASC_ORDER, ordem_asc);
 
   //Adiciona o elemento ao final da lista de elementos do índice
   elementos.push_back(elem);
@@ -134,7 +134,7 @@ void Indice::adicionarElemento(Column *coluna, OperatorClass *classe_oper, bool 
 
 void Indice::removerElemento(unsigned idx_elem)
 {
- vector<ElementoIndice>::iterator itr;
+ vector<IndexElement>::iterator itr;
 
  /* Verifica se o índice condiz com o tamanho das listas de elementos,
    caso não conincida, dispara exceção */
@@ -177,7 +177,7 @@ unsigned Indice::obterFatorPreenchimento(void)
  return(fator_preenc);
 }
 
-ElementoIndice Indice::obterElemento(unsigned idx_elem)
+IndexElement Indice::obterElemento(unsigned idx_elem)
 {
 /* Verifica se o índice condiz com o tamanho das listas de elementos,
    caso não conincida, dispara exceção */
@@ -212,7 +212,7 @@ QString Indice::obterExpCondicional(void)
 
 bool Indice::referenciaColunaIncRelacao(void)
 {
- vector<ElementoIndice>::iterator itr, itr_end;
+ vector<IndexElement>::iterator itr, itr_end;
  Column *col=NULL;
  bool enc=false;
 
@@ -231,7 +231,7 @@ bool Indice::referenciaColunaIncRelacao(void)
  while(itr!=itr_end && !enc)
  {
   //Obtém a coluna
-  col=(*itr).obterColuna();
+  col=(*itr).getColumn();
 
   //Obtém se a coluna foi incluída por relacionamento ou não
   enc=(col && col->isAddedByRelationship());

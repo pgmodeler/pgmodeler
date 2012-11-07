@@ -35,7 +35,6 @@ class Parametro: public Column {
 
  public:
   Parametro(void);
-  ~Parametro(void){}
 
   void setType(TipoPgSQL type);
 

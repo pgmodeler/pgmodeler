@@ -25,7 +25,7 @@
 #define OPERATOR_CLASS_H
                                                                                                                                                                                                                    
 #include "baseobject.h"                                                                                                                                                                                            
-#include "elemclasseoperadores.h"                                                                                                                                                                                  
+#include "operatorclasselement.h"                                                                                                                                                                                  
 #include "familiaoperadores.h"                                                                                                                                                                                     
                                                                                                                                                       
 class OperatorClass: public BaseObject {
@@ -44,7 +44,7 @@ class OperatorClass: public BaseObject {
   bool is_default;
 
   //Operator class attributes list
-  vector<ElemClasseOperadores> elements;
+  vector<OperatorClassElement> elements;
 
   /* Formats the elements string used by the SchemaParser on the
      SQL/XML code definition for operator classes */
@@ -67,10 +67,10 @@ class OperatorClass: public BaseObject {
   void setDefault(bool value);
 
   //Methods used to manipulate the elements FUNCTION, OPERATOR and STORAGE
-  void addElement(ElemClasseOperadores elem);
+  void addElement(OperatorClassElement elem);
   void removeElement(unsigned elem_idx);
-  ElemClasseOperadores getElement(unsigned elem_idx);
-  bool isElementExists(ElemClasseOperadores elem);
+  OperatorClassElement getElement(unsigned elem_idx);
+  bool isElementExists(OperatorClassElement elem);
   void removeElements(void);
 
   //Methods used to obtain the class attributes

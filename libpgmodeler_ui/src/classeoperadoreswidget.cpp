@@ -98,71 +98,71 @@ void ClasseOperadoresWidget::selecionarTipoElemento(int tipo)
  //Exibe os campos do elemento conforme o tipo selecionado
 
  //Campos exclusivos para o tipo FUNÇÃO
- funcao_lbl->setVisible(tipo_sel==ElemClasseOperadores::ELEM_FUNCAO);
- sel_funcao->setVisible(tipo_sel==ElemClasseOperadores::ELEM_FUNCAO);
+ funcao_lbl->setVisible(tipo_sel==OperatorClassElement::FUNCTION_ELEM);
+ sel_funcao->setVisible(tipo_sel==OperatorClassElement::FUNCTION_ELEM);
 
  //Campos exclusivos para o tipo OPERADOR
- operador_lbl->setVisible(tipo_sel==ElemClasseOperadores::ELEM_OPERADOR);
- sel_operador->setVisible(tipo_sel==ElemClasseOperadores::ELEM_OPERADOR);
- rechecar_chk->setVisible(tipo_sel==ElemClasseOperadores::ELEM_OPERADOR);
+ operador_lbl->setVisible(tipo_sel==OperatorClassElement::OPERATOR_ELEM);
+ sel_operador->setVisible(tipo_sel==OperatorClassElement::OPERATOR_ELEM);
+ rechecar_chk->setVisible(tipo_sel==OperatorClassElement::OPERATOR_ELEM);
 
  //Campos exclusivos para o tipo ARMAZENAMENTO
- tipo_armazenamento->setVisible(tipo_sel==ElemClasseOperadores::ELEM_ARMAZENAMENTO);
+ tipo_armazenamento->setVisible(tipo_sel==OperatorClassElement::STORAGE_ELEM);
 
  //Campos comuns aos tipos FUNÇÃO e OPERADOR
- num_suporte_lbl->setVisible(tipo_sel!=ElemClasseOperadores::ELEM_ARMAZENAMENTO);
- num_suporte_sb->setVisible(tipo_sel!=ElemClasseOperadores::ELEM_ARMAZENAMENTO);
+ num_suporte_lbl->setVisible(tipo_sel!=OperatorClassElement::STORAGE_ELEM);
+ num_suporte_sb->setVisible(tipo_sel!=OperatorClassElement::STORAGE_ELEM);
 }
 
 void ClasseOperadoresWidget::editarElemento(int idx_linha)
 {
- ElemClasseOperadores elem;
+ OperatorClassElement elem;
 
  //Obtém o elemento da linha selecionada na tabela
- elem=tab_elementos->obterDadoLinha(idx_linha).value<ElemClasseOperadores>();
+ elem=tab_elementos->obterDadoLinha(idx_linha).value<OperatorClassElement>();
 
  //Preenche o formulário com atributos do elemento
- tipo_elem_cmb->setCurrentIndex(elem.obterTipoElemento());
- sel_funcao->definirObjeto(elem.obterFuncao());
- sel_operador->definirObjeto(elem.obterOperador());
- rechecar_chk->setChecked(elem.rechecarElemento());
- num_suporte_sb->setValue(elem.obterNumEstrategia());
- tipo_armazenamento->definirAtributos(elem.obterTipoArmazenamento(),this->modelo);
+ tipo_elem_cmb->setCurrentIndex(elem.getElementType());
+ sel_funcao->definirObjeto(elem.getFunction());
+ sel_operador->definirObjeto(elem.getOperator());
+ rechecar_chk->setChecked(elem.isRecheck());
+ num_suporte_sb->setValue(elem.getStrategyNumber());
+ tipo_armazenamento->definirAtributos(elem.getStorage(),this->modelo);
 }
 
-void ClasseOperadoresWidget::exibirDadosElemento(ElemClasseOperadores elem, int idx_linha)
+void ClasseOperadoresWidget::exibirDadosElemento(OperatorClassElement elem, int idx_linha)
 {
  unsigned tipo_elem;
 
  //Obtém o tipo do elemento
- tipo_elem=elem.obterTipoElemento();
+ tipo_elem=elem.getElementType();
 
  /* Para o tipo FUNÇÃO são exibidas na coluna 0 e 1, respectivamente,
     a assinatura da função e o tipo do objeto (função) */
- if(tipo_elem==ElemClasseOperadores::ELEM_FUNCAO)
+ if(tipo_elem==OperatorClassElement::FUNCTION_ELEM)
  {
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterFuncao()->obterAssinatura()), idx_linha, 0);
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterFuncao()->getTypeName()), idx_linha, 1);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getFunction()->obterAssinatura()), idx_linha, 0);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getFunction()->getTypeName()), idx_linha, 1);
  }
  /* Para o tipo OPERADOR são exibidas na coluna 0 e 1, respectivamente,
     a assinatura do operador e o tipo do objeto (operador) */
- else if(tipo_elem==ElemClasseOperadores::ELEM_OPERADOR)
+ else if(tipo_elem==OperatorClassElement::OPERATOR_ELEM)
  {
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterOperador()->obterAssinatura()), idx_linha, 0);
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.obterOperador()->getTypeName()), idx_linha, 1);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getOperator()->obterAssinatura()), idx_linha, 0);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getOperator()->getTypeName()), idx_linha, 1);
  }
   /* Para o tipo ARMAZENAMENTO são exibidas na coluna 0 e 1, respectivamente,
     a nome completo do tipo e o tipo do objeto (tipo) */
  else
  {
-  tab_elementos->definirTextoCelula(*elem.obterTipoArmazenamento(), idx_linha, 0);
+  tab_elementos->definirTextoCelula(*elem.getStorage(), idx_linha, 0);
   tab_elementos->definirTextoCelula(QString::fromUtf8(BaseObject::getTypeName(OBJ_TYPE)), idx_linha, 1);
  }
 
  /* Para os tipos FUNÇÃO e OPERADOR é na coluna 2
     o número de suporte/estratégia da função ou operador */
- if(tipo_elem!=ElemClasseOperadores::ELEM_ARMAZENAMENTO)
-  tab_elementos->definirTextoCelula(QString("%1").arg(elem.obterNumEstrategia()), idx_linha, 2);
+ if(tipo_elem!=OperatorClassElement::STORAGE_ELEM)
+  tab_elementos->definirTextoCelula(QString("%1").arg(elem.getStrategyNumber()), idx_linha, 2);
  /* Para o tipo ARMAZENAMENTO este campo não é preenchido pois não aplica
     esta categoria de elemento */
  else
@@ -170,9 +170,9 @@ void ClasseOperadoresWidget::exibirDadosElemento(ElemClasseOperadores elem, int 
 
  /* Para o tipo OPERADOR na coluna 3 é exibido se o operador
     necessita ser rechecado ou não */
- if(tipo_elem==ElemClasseOperadores::ELEM_OPERADOR)
+ if(tipo_elem==OperatorClassElement::OPERATOR_ELEM)
  {
-  if(elem.rechecarElemento())
+  if(elem.isRecheck())
    tab_elementos->definirTextoCelula(trUtf8("Yes"), idx_linha, 3);
   else
    tab_elementos->definirTextoCelula(trUtf8("No"), idx_linha, 3);
@@ -183,12 +183,12 @@ void ClasseOperadoresWidget::exibirDadosElemento(ElemClasseOperadores elem, int 
   tab_elementos->definirTextoCelula("-", idx_linha, 3);
 
  //Define o dado da linha como sendo o elemento fornecido no parâmetro.
- tab_elementos->definirDadoLinha(QVariant::fromValue<ElemClasseOperadores>(elem), idx_linha);
+ tab_elementos->definirDadoLinha(QVariant::fromValue<OperatorClassElement>(elem), idx_linha);
 }
 
 void ClasseOperadoresWidget::manipularElemento(int idx_linha)
 {
- ElemClasseOperadores elem;
+ OperatorClassElement elem;
  unsigned tipo_elem;
 
  //Obtém o tipo do elemento
@@ -198,15 +198,15 @@ void ClasseOperadoresWidget::manipularElemento(int idx_linha)
  {
   /* Caso seja do tipo FUNÇÃO, atribui a função selecionado no widget seletor de função
      e também o valor configurado como suporte no formulário */
-  if(tipo_elem==ElemClasseOperadores::ELEM_FUNCAO)
-   elem.definirFuncao(dynamic_cast<Funcao *>(sel_funcao->obterObjeto()), num_suporte_sb->value());
+  if(tipo_elem==OperatorClassElement::FUNCTION_ELEM)
+   elem.setFunction(dynamic_cast<Funcao *>(sel_funcao->obterObjeto()), num_suporte_sb->value());
   /* Caso seja do tipo OPERADOR, atribui o operador selecionado no widget seletor de operador,
      o valor configurado como suporte no formulário e o estado do checkbox de rechecagem */
-  else  if(tipo_elem==ElemClasseOperadores::ELEM_OPERADOR)
-   elem.definirOperador(dynamic_cast<Operador *>(sel_operador->obterObjeto()), num_suporte_sb->value(), rechecar_chk->isChecked());
+  else  if(tipo_elem==OperatorClassElement::OPERATOR_ELEM)
+   elem.setOperator(dynamic_cast<Operador *>(sel_operador->obterObjeto()), num_suporte_sb->value(), rechecar_chk->isChecked());
   //Caso seja do tipo ARMAZENAMENTO, atribui o tipo configurado no widget de configuração de tipo
   else
-   elem.definirArmazenamento(tipo_armazenamento->obterTipoPgSQL());
+   elem.setStorage(tipo_armazenamento->obterTipoPgSQL());
 
   //Exibe o elemento configurado na tabela
   exibirDadosElemento(elem, idx_linha);
@@ -299,7 +299,7 @@ void ClasseOperadoresWidget::aplicarConfiguracao(void)
   qtd=tab_elementos->obterNumLinhas();
 
   for(i=0; i < qtd; i++)
-   classe_op->addElement(tab_elementos->obterDadoLinha(i).value<ElemClasseOperadores>());
+   classe_op->addElement(tab_elementos->obterDadoLinha(i).value<OperatorClassElement>());
 
   //Aplica e finaliza a configuração da classe de operadores
   ObjetoBaseWidget::aplicarConfiguracao();

@@ -91,8 +91,6 @@ class Permissao: public BaseObject {
      relacionados ao objeto */
   Permissao(BaseObject *objeto);
 
-  ~Permissao(void){};
-
   //Define o papel que deterá os privilégios sobre o objeto
   void adicionarPapel(Papel *papel);
 

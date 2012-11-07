@@ -78,7 +78,6 @@ class Operacao {
   Operacao(void)
   { obj_pai=NULL; obj_pool=NULL; obj_gerador=NULL;
     idx_obj=-1; tipo_enc=SEM_ENCADEAMENTO; }
-  ~Operacao(void){}
 
  friend class ListaOperacoes;
 };

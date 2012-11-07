@@ -51,7 +51,7 @@ void OperatorClass::setElementsAttribute(unsigned def_type)
  count=elements.size();
  for(i=0; i < count; i++)
  {
-  str_elems+=elements[i].obterDefinicaoObjeto(def_type);
+  str_elems+=elements[i].getCodeDefinition(def_type);
   if(def_type==SchemaParser::SQL_DEFINITION &&
      i < count-1) str_elems+=",\n";
  }
@@ -59,7 +59,7 @@ void OperatorClass::setElementsAttribute(unsigned def_type)
  attributes[ParsersAttributes::ELEMENTS]=str_elems;
 }
 
-void OperatorClass::addElement(ElemClasseOperadores elem)
+void OperatorClass::addElement(OperatorClassElement elem)
 {
  //The operator class does not accept duplicate elements on the list
  if(isElementExists(elem))
@@ -83,7 +83,7 @@ void OperatorClass::removeElements(void)
  elements.clear();
 }
 
-ElemClasseOperadores OperatorClass::getElement(unsigned elem_idx)
+OperatorClassElement OperatorClass::getElement(unsigned elem_idx)
 {
  //Raises an error in case the element index is out of bound
  if(elem_idx >= elements.size())
@@ -93,11 +93,11 @@ ElemClasseOperadores OperatorClass::getElement(unsigned elem_idx)
  return(elements[elem_idx]);
 }
 
-bool OperatorClass::isElementExists(ElemClasseOperadores elem)
+bool OperatorClass::isElementExists(OperatorClassElement elem)
 {
  bool exists=false;
- vector<ElemClasseOperadores>::iterator itr, itr_end;
- ElemClasseOperadores elem_aux;
+ vector<OperatorClassElement>::iterator itr, itr_end;
+ OperatorClassElement elem_aux;
 
  itr=elements.begin();
  itr_end=elements.end();

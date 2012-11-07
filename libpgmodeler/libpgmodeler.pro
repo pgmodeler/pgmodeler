@@ -36,7 +36,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/tabela.h \
            $$PWD/src/visao.h \
            $$PWD/src/familiaoperadores.h \
-           $$PWD/src/elemclasseoperadores.h \
+           $$PWD/src/operatorclasselement.h \
            $$PWD/src/operatorclass.h \
            $$PWD/src/listaoperacoes.h \
            $$PWD/src/tableobject.h \
@@ -72,7 +72,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/relacionamento.cpp \
             $$PWD/src/basetable.cpp \
             $$PWD/src/familiaoperadores.cpp \
-            $$PWD/src/elemclasseoperadores.cpp \
+            $$PWD/src/operatorclasselement.cpp \
             $$PWD/src/operatorclass.cpp \
             $$PWD/src/listaoperacoes.cpp \
             $$PWD/src/tableobject.cpp \

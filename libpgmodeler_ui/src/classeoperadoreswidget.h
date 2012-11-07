@@ -33,7 +33,7 @@
  do Qt e está sendo usada para facilitar o uso com o formulário de edição
  de classes de operadores.*/
 #include <QMetaType>
-Q_DECLARE_METATYPE(ElemClasseOperadores)
+Q_DECLARE_METATYPE(OperatorClassElement)
 
 class ClasseOperadoresWidget: public ObjetoBaseWidget, public Ui::ClasseOperadoresWidget {
  Q_OBJECT
@@ -61,7 +61,7 @@ class ClasseOperadoresWidget: public ObjetoBaseWidget, public Ui::ClasseOperador
    void selecionarTipoElemento(int tipo);
 
    //Exibe as informações de um dado elemento na tabela de elementos na linha especificada
-   void exibirDadosElemento(ElemClasseOperadores elem, int idx_linha);
+   void exibirDadosElemento(OperatorClassElement elem, int idx_linha);
 
    /* Configura uma instância da classe ElemClasseOperadores com os dados fornecidos no formulário
       adicionalmente o elemento configurado é exibido na linha especificada da tabela de elementos */

@@ -56,7 +56,6 @@ class TableObject: public BaseObject {
 
  public:
   TableObject(void);
-  ~TableObject(void){}
 
   //Define a tabela a qual possui o objeto
   void setParentTable(BaseTable *table);

@@ -1,96 +1,91 @@
 #include "elementoindice.h"
 
-ElementoIndice::ElementoIndice(void)
+IndexElement::IndexElement(void)
 {
- coluna=NULL;
- classe_oper=NULL;
- atrib_elemento[NULOS_PRIMEIRO]=false;
- atrib_elemento[ORDEM_ASCENDENTE]=true;
+ column=NULL;
+ operator_class=NULL;
+ attributes[NULLS_FIRST]=false;
+ attributes[ASC_ORDER]=true;
 }
 
-void ElementoIndice::definirColuna(Column *coluna)
+void IndexElement::setColumn(Column *column)
 {
- if(coluna)
+ if(column)
  {
-  this->coluna=coluna;
-  this->expressao="";
+  this->column=column;
+  this->expression="";
  }
 }
 
-void ElementoIndice::definirExpressao(const QString &expressao)
+void IndexElement::setExpression(const QString &expression)
 {
- if(!expressao.isEmpty())
+ if(!expression.isEmpty())
  {
-  this->expressao=expressao;
-  this->coluna=NULL;
+  this->expression=expression;
+  this->column=NULL;
  }
 }
 
-void ElementoIndice::definirClasseOperadores(OperatorClass *classe_oper)
+void IndexElement::setOperatorClass(OperatorClass *oper_class)
 {
- this->classe_oper=classe_oper;
+ this->operator_class=oper_class;
 }
 
-void ElementoIndice::definirAtributo(unsigned id_atrib, bool valor)
+void IndexElement::setAttribute(unsigned attrib, bool value)
 {
- if(id_atrib > NULOS_PRIMEIRO)
+ if(attrib > NULLS_FIRST)
   throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  
- atrib_elemento[id_atrib]=valor;
+ attributes[attrib]=value;
 }
 
-bool ElementoIndice::obterAtributo(unsigned id_atrib)
+bool IndexElement::getAttribute(unsigned attrib)
 {
- if(id_atrib > NULOS_PRIMEIRO)
+ if(attrib > NULLS_FIRST)
   throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  
- return(atrib_elemento[id_atrib]);
+ return(attributes[attrib]);
 }
 
-Column *ElementoIndice::obterColuna(void)
+Column *IndexElement::getColumn(void)
 {
- return(coluna);
+ return(column);
 }
 
-QString ElementoIndice::obterExpressao(void)
+QString IndexElement::getExpression(void)
 {
- return(expressao);
+ return(expression);
 }
 
-OperatorClass *ElementoIndice::obterClasseOperadores(void)
+OperatorClass *IndexElement::getOperatorClass(void)
 {
- return(classe_oper);
+ return(operator_class);
 }
 
-QString ElementoIndice::obterDefinicaoObjeto(unsigned tipo_def)
+QString IndexElement::getCodeDefinition(unsigned def_type)
 {
- map<QString, QString> atributos;
+ map<QString, QString> attributes;
 
- atributos[ParsersAttributes::COLUMN]="";
- atributos[ParsersAttributes::EXPRESSION]="";
- atributos[ParsersAttributes::OP_CLASS]="";
+ attributes[ParsersAttributes::COLUMN]="";
+ attributes[ParsersAttributes::EXPRESSION]="";
+ attributes[ParsersAttributes::OP_CLASS]="";
  
- atributos[ParsersAttributes::NULLS_FIRST]=(atrib_elemento[NULOS_PRIMEIRO] ? "1" : "");
- atributos[ParsersAttributes::ASC_ORDER]=(atrib_elemento[ORDEM_ASCENDENTE] ? "1" : "");
+ attributes[ParsersAttributes::NULLS_FIRST]=(attributes[NULLS_FIRST] ? "1" : "");
+ attributes[ParsersAttributes::ASC_ORDER]=(attributes[ASC_ORDER] ? "1" : "");
  
- if(coluna)
- {
-  /*if(tipo_def==ParserEsquema::DEFINICAO_SQL)
-   atributos[AtributosParsers::COLUNA]=coluna->obterTabelaPai()->getName(true) + "." + coluna->getName(true);
-  else */
-   atributos[ParsersAttributes::COLUMN]=coluna->getName(true);
- }
+ if(column)
+  attributes[ParsersAttributes::COLUMN]=column->getName(true);
  else
-  atributos[ParsersAttributes::EXPRESSION]=expressao;
+  attributes[ParsersAttributes::EXPRESSION]=expression;
  
- if(classe_oper)
+ if(operator_class)
  {
-  if(tipo_def==SchemaParser::SQL_DEFINITION)
-   atributos[ParsersAttributes::OP_CLASS]=classe_oper->getName(true);
+  if(def_type==SchemaParser::SQL_DEFINITION)
+   attributes[ParsersAttributes::OP_CLASS]=operator_class->getName(true);
   else
-   atributos[ParsersAttributes::OP_CLASS]=classe_oper->getCodeDefinition(tipo_def, true);
+   attributes[ParsersAttributes::OP_CLASS]=operator_class->getCodeDefinition(def_type, true);
  }
  
- return(SchemaParser::getObjectDefinition(ParsersAttributes::INDEX_ELEMENT,atributos, tipo_def));
+ return(SchemaParser::getObjectDefinition(ParsersAttributes::INDEX_ELEMENT,attributes, def_type));
 }
 

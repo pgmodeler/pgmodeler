@@ -34,7 +34,7 @@
  Essa declaração não afeta o comportamento das demais classes que de algum
  modo referenciam a classe ElementoIndice.*/
 #include <QMetaType>
-Q_DECLARE_METATYPE(ElementoIndice);
+Q_DECLARE_METATYPE(IndexElement);
 
 class IndiceWidget: public ObjetoBaseWidget, public Ui::IndiceWidget {
  Q_OBJECT
@@ -54,7 +54,7 @@ class IndiceWidget: public ObjetoBaseWidget, public Ui::IndiceWidget {
    void atualizarComboColunas(void);
 
    //Exibe o dado de um elemento na linha especificada da tabela
-   void exibirDadosElemento(ElementoIndice elem, int idx_elem);
+   void exibirDadosElemento(IndexElement elem, int idx_elem);
 
  public:
    IndiceWidget(QWidget * parent = 0);
