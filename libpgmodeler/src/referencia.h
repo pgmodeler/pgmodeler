@@ -31,7 +31,7 @@ class Referencia {
   Tabela *tabela;
 
   //Guarda a referência para uma coluna da tabela
-  Coluna *coluna;
+  Column *coluna;
 
   //Armazena uma expressão que forma a declaração de uma visão
   QString expressao,
@@ -53,7 +53,7 @@ class Referencia {
   Referencia(void);
 
   //Construtor o qual cria uma referência a uma coluna/tabela
-  Referencia(Tabela *tabela, Coluna *coluna, const QString &alias_tab, const QString &alias_col);
+  Referencia(Tabela *tabela, Column *coluna, const QString &alias_tab, const QString &alias_col);
 
   //Construtor o qual cria uma referência a uma expressão
   Referencia(const QString &expressao, const QString &alias_exp);
@@ -62,7 +62,7 @@ class Referencia {
   Tabela *obterTabela(void);
 
   //Obtém a coluna referenciada
-  Coluna *obterColuna(void);
+  Column *obterColuna(void);
 
   //Retorna o alias da coluna referenciada
   QString obterAliasColuna(void);

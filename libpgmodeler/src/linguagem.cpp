@@ -51,7 +51,7 @@ void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
        (tipo_func==FUNC_VALIDATOR &&
         funcao->obterTipoRetorno()=="void" &&
         funcao->obterNumParams()==1 &&
-        funcao->obterParametro(0).obterTipo() == "oid" &&
+        funcao->obterParametro(0).getType() == "oid" &&
         funcao->obterLinguagem()->getName()==(~ling)) ||
       /* Obrigatoriamente a função inline de ser escrita em C,
          retornar "void", possuir apenas 1 parâmetro e que o mesmo
@@ -59,7 +59,7 @@ void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
        (tipo_func==FUNC_INLINE &&
         funcao->obterTipoRetorno()=="void" &&
         funcao->obterNumParams()==1 &&
-        funcao->obterParametro(0).obterTipo() == "internal" &&
+        funcao->obterParametro(0).getType() == "internal" &&
         funcao->obterLinguagem()->getName()==(~ling)) )))
  {
   this->funcoes[tipo_func]=funcao;

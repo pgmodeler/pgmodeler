@@ -73,7 +73,7 @@ void CodigoFonteWidget::definirAbaCodigoFonte(int)
  QString icone_codigo;
  bool campos_ativos=false;
  QPixmap icone;
- ObjectType tipo_obj=objeto->getType();
+ ObjectType tipo_obj=objeto->getObjectType();
 
  //Caso a aba código SQL esteja visível configura o icone de código SQL
  if(codigofonte_twg->currentIndex()==0)
@@ -111,7 +111,7 @@ void CodigoFonteWidget::gerarCodigoFonteObjeto(int)
   codigoxml_txt->clear();
 
   //Obtém o código SQL do objeto caso o mesmo não seja um relacionamento ou caixa de texto
-  tipo_obj=objeto->getType();
+  tipo_obj=objeto->getObjectType();
   if(tipo_obj!=BASE_RELATIONSHIP && tipo_obj!=OBJ_TEXTBOX)
   {
    if(tipo_obj==OBJ_DATABASE)
@@ -165,7 +165,7 @@ void CodigoFonteWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto)
 
    //Configura o icone do objeto a ser exibido
    icone_obj=QPixmap(QString(":/icones/icones/") +
-                     BaseObject::getSchemaName(objeto->getType()) + QString(".png"));
+                     BaseObject::getSchemaName(objeto->getObjectType()) + QString(".png"));
    iconeobj_lbl->setPixmap(icone_obj);
 
    //Preenche os campos do formulario com os atributos do objeto

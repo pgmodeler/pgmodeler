@@ -38,7 +38,7 @@ void ColunaWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void ColunaWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, ListaOperacoes *lista_op, Coluna *coluna)
+void ColunaWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, ListaOperacoes *lista_op, Column *coluna)
 {
  TipoPgSQL tipo;
 
@@ -50,9 +50,9 @@ void ColunaWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, Li
 
  if(coluna)
  {
-  tipo=coluna->obterTipo();
-  nao_nulo_chk->setChecked(coluna->naoNulo());
-  valor_padrao_txt->setPlainText(QString::fromUtf8(coluna->obterValorPadrao()));
+  tipo=coluna->getType();
+  nao_nulo_chk->setChecked(coluna->isNotNull());
+  valor_padrao_txt->setPlainText(QString::fromUtf8(coluna->getDefaultValue()));
  }
 
  //Marca o tipo do domínio no widget de tipos pgsql
@@ -63,17 +63,17 @@ void ColunaWidget::aplicarConfiguracao(void)
 {
  try
  {
-  Coluna *coluna=NULL;
+  Column *coluna=NULL;
 
-  iniciarConfiguracao<Coluna>();
+  iniciarConfiguracao<Column>();
 
   //Obtém a referên �  coluna que está sendo criada/editada
-  coluna=dynamic_cast<Coluna *>(this->objeto);
+  coluna=dynamic_cast<Column *>(this->objeto);
 
   //Atribui os dados do formulár�  coluna
-  coluna->definirNaoNulo(nao_nulo_chk->isChecked());
-  coluna->definirValorPadrao(valor_padrao_txt->toPlainText());
-  coluna->definirTipo(tipo_col->obterTipoPgSQL());
+  coluna->setNotNull(nao_nulo_chk->isChecked());
+  coluna->setDefaultValue(valor_padrao_txt->toPlainText());
+  coluna->setType(tipo_col->obterTipoPgSQL());
 
   ObjetoBaseWidget::aplicarConfiguracao();
 

@@ -297,7 +297,7 @@ void RelacionamentoBase::definirAtributosRelacionamento(void)
   case RELACIONAMENTO_NN: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_NN; break;
   case RELACIONAMENTO_GEN: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_GEN; break;
   default:
-    if(tabela_orig->getType()==OBJ_VIEW)
+    if(tabela_orig->getObjectType()==OBJ_VIEW)
      attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATION_TAB_VIEW;
     else
      attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_DEP;

@@ -28,7 +28,7 @@ void ListaObjetosWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto, 
 
  //Configura o icone do objeto a ser exibido
  iconeobj_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
-                                 BaseObject::getSchemaName(objeto->getType()) + QString(".png")));
+                                 BaseObject::getSchemaName(objeto->getObjectType()) + QString(".png")));
 
  //Carrega as dependências e referências do objeto
  modelo->obterDependenciasObjeto(objeto, vet_objs);
@@ -73,7 +73,7 @@ void ListaObjetosWidget::atualizarListaObjetos(vector<BaseObject *> &objetos, QT
    item_tab=new QTableWidgetItem;
    item_tab->setText(QString::fromUtf8(objetos[i]->getName()));
    item_tab->setIcon(QPixmap(QString(":/icones/icones/") +
-                     BaseObject::getSchemaName(objetos[i]->getType())+ QString(".png")));
+                     BaseObject::getSchemaName(objetos[i]->getObjectType())+ QString(".png")));
    listaobjetos_tbw->setItem(id_lin, 0, item_tab);
 
    //Aloca o item de tipo do objeto de ref/dep
@@ -94,7 +94,7 @@ void ListaObjetosWidget::atualizarListaObjetos(vector<BaseObject *> &objetos, QT
    //Aloca o item de tipo do objeto pai do objeto de ref/dep
    item_tab->setText(QString::fromUtf8(obj_pai->getName()));
    item_tab->setIcon(QPixmap(QString(":/icones/icones/") +
-                     BaseObject::getSchemaName(obj_pai->getType())+ QString(".png")));
+                     BaseObject::getSchemaName(obj_pai->getObjectType())+ QString(".png")));
    listaobjetos_tbw->setItem(id_lin, 2, item_tab);
 
    item_tab=new QTableWidgetItem;

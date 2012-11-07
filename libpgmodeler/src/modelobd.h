@@ -44,6 +44,7 @@
 #include "operatorclass.h"
 #include "xmlparser.h"
 #include "permissao.h"
+#include "dominio.h"
 #include <algorithm>
 #include <locale.h>
 
@@ -389,7 +390,7 @@ class ModeloBD:  public QObject, public BaseObject {
   void operator = (ModeloBD &modelo);
 
   //Métodos de criação de objetos a partir do documento XML
-  ObjectType getType(const QString &str_tipo);
+  ObjectType getObjectType(const QString &str_tipo);
   void definirAtributosBasicos(BaseObject *objeto);
   TipoPgSQL criarTipoPgSQL(void);
 
@@ -411,7 +412,7 @@ class ModeloBD:  public QObject, public BaseObject {
   OperatorClass *criarClasseOperadores(void);
   FuncaoAgregacao *criarFuncaoAgregacao(void);
   Tabela *criarTabela(void);
-  Coluna *criarColuna(void);
+  Column *criarColuna(void);
   Regra *criarRegra(void);
 
   /* O parâmetro 'ignorar_possuidora' quando 'true' indica que o método deve
@@ -461,7 +462,7 @@ class ModeloBD:  public QObject, public BaseObject {
      Esse método deve ser usado antes da remoção da coluna. O não uso deste método
      pode quebrar as referência   coluna e causar resultados inesperados e inconsistências
      no modelo. Este método varre a lista de objetos do tipo: sequencia e visao */
-  void validarRemocaoColuna(Coluna *coluna);
+  void validarRemocaoColuna(Column *coluna);
 
   //Valida os relacionamentos para refletirem as modificações nas coluna/restrição da tabela passada
   void validarRelacObjetoTabela(TableObject *objeto, Tabela *tabela_pai);

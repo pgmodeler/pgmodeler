@@ -140,7 +140,7 @@ void TabelaWidget::exibirFormObjetoTabela(ObjectType tipo_obj)
  switch(tipo_obj)
  {
   case OBJ_COLUMN:
-   coluna_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Coluna *>(objeto));
+   coluna_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Column *>(objeto));
    coluna_wgt->show();
   break;
 
@@ -336,7 +336,7 @@ void TabelaWidget::manipularObjeto(void)
 void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
 {
  TabelaObjetosWidget *tab=NULL;
- Coluna *coluna=NULL;
+ Column *coluna=NULL;
  Restricao *restricao=NULL;
  Gatilho *gatilho=NULL;
  Regra *regra=NULL;
@@ -355,7 +355,7 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
                         TipoEvento::on_truncate,
                         TipoEvento::on_update };
 
- tipo_obj=objeto->getType();
+ tipo_obj=objeto->getObjectType();
 
  //Obtém a tabela referênte ao tipo do objeto
  tab=mapa_tab_objetos[tipo_obj];
@@ -367,12 +367,12 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
     de exibição do objeto na respectiva tabela. */
  if(tipo_obj==OBJ_COLUMN)
  {
-  coluna=dynamic_cast<Coluna *>(objeto);
+  coluna=dynamic_cast<Column *>(objeto);
   //Coluna 1: Tipo da coluna
-  tab->definirTextoCelula(QString::fromUtf8(~coluna->obterTipo()),idx_lin,1);
+  tab->definirTextoCelula(QString::fromUtf8(~coluna->getType()),idx_lin,1);
 
   //Coluna 2: Valor padrão da coluna
-  str_aux=coluna->obterValorPadrao();
+  str_aux=coluna->getDefaultValue();
   if(str_aux.isEmpty()) str_aux="-";
   tab->definirTextoCelula(str_aux,idx_lin,2);
 

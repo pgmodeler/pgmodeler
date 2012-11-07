@@ -97,7 +97,7 @@ void IndiceWidget::hideEvent(QHideEvent *evento)
 
 void IndiceWidget::atualizarComboColunas(void)
 {
- Coluna *coluna=NULL;
+ Column *coluna=NULL;
  unsigned i, qtd_col=0;
 
  try
@@ -176,7 +176,7 @@ void IndiceWidget::manipularElemento(int idx_elem)
   if(expressao_rb->isChecked())
    elem.definirExpressao(exp_elemento_txt->toPlainText());
   else
-   elem.definirColuna(reinterpret_cast<Coluna *>(coluna_cmb->itemData(coluna_cmb->currentIndex()).value<void *>()));
+   elem.definirColuna(reinterpret_cast<Column *>(coluna_cmb->itemData(coluna_cmb->currentIndex()).value<void *>()));
 
   //Exibe os dados do elemento na tabela de elementos do índice
   exibirDadosElemento(elem, idx_elem);

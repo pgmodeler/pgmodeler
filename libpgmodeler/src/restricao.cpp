@@ -50,10 +50,10 @@ void Restricao::definirExpChecagem(const QString &exp)
  exp_checagem=exp;
 }
 
-bool Restricao::colunaExistente(Coluna *coluna, unsigned tipo_coluna)
+bool Restricao::colunaExistente(Column *coluna, unsigned tipo_coluna)
 {
- vector<Coluna *>::iterator itr, itr_end;
- Coluna *col_aux=NULL;
+ vector<Column *>::iterator itr, itr_end;
+ Column *col_aux=NULL;
  bool enc=false;
 
  //Caso a coluna a ser buscada não esteja aloca, dispara uma exceção
@@ -84,7 +84,7 @@ bool Restricao::colunaExistente(Coluna *coluna, unsigned tipo_coluna)
  return(enc);
 }
 
-void Restricao::adicionarColuna(Coluna *coluna, unsigned tipo_coluna)
+void Restricao::adicionarColuna(Column *coluna, unsigned tipo_coluna)
 {
  //Caso a coluna não esteja aloca, dispara exceção.
  if(!coluna)
@@ -126,8 +126,8 @@ void Restricao::setTablespace(EspacoTabela *espacotabela)
 
 void Restricao::definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, bool inc_insporrelacao)
 {
- vector<Coluna *> *vet_col=NULL;
- Coluna *col;
+ vector<Column *> *vet_col=NULL;
+ Column *col;
  QString str_cols, atrib;
  unsigned i, qtd;
  bool formatar=(tipo_def==SchemaParser::SQL_DEFINITION);
@@ -223,9 +223,9 @@ QString Restricao::obterExpChecagem(void)
  return(exp_checagem);
 }
 
-Coluna *Restricao::obterColuna(unsigned idx_col, unsigned tipo_coluna)
+Column *Restricao::obterColuna(unsigned idx_col, unsigned tipo_coluna)
 {
- vector<Coluna *> *lista_col=NULL;
+ vector<Column *> *lista_col=NULL;
 
  //Obtendo a lista de colunas de acorodo com o tipo de coluna selecionado
  lista_col=(tipo_coluna==COLUNA_ORIGEM ? &colunas : &colunas_ref);
@@ -239,11 +239,11 @@ Coluna *Restricao::obterColuna(unsigned idx_col, unsigned tipo_coluna)
   return(lista_col->at(idx_col));
 }
 
-Coluna *Restricao::obterColuna(const QString &nome, unsigned tipo_coluna)
+Column *Restricao::obterColuna(const QString &nome, unsigned tipo_coluna)
 {
  bool enc=false;
- vector<Coluna *> *lista_col=NULL;
- vector<Coluna *>::iterator itr_col, itr_end_col;
+ vector<Column *> *lista_col=NULL;
+ vector<Column *>::iterator itr_col, itr_end_col;
 
  //Obtém a lista de colunas de acordo com o tipo
  lista_col=(tipo_coluna==COLUNA_ORIGEM? &colunas : &colunas_ref);
@@ -287,9 +287,9 @@ void Restricao::removerColunas(void)
 
 void Restricao::removerColuna(const QString &nome, unsigned tipo_coluna)
 {
- vector<Coluna *>::iterator itr, itr_end;
- vector<Coluna *> *cols=NULL;
- Coluna *col=NULL;
+ vector<Column *>::iterator itr, itr_end;
+ vector<Column *> *cols=NULL;
+ Column *col=NULL;
 
  //Se col_dest==true, a lista a ser pesquisada será a de destino
  if(tipo_coluna==COLUNA_REFER)
@@ -332,8 +332,8 @@ bool Restricao::restricaoPostergavel(void)
 
 bool Restricao::referenciaColunaIncRelacao(void)
 {
- vector<Coluna *>::iterator itr, itr_end;
- Coluna *col=NULL;
+ vector<Column *>::iterator itr, itr_end;
+ Column *col=NULL;
  bool enc=false;
 
  /* Primeira lista de colunas da origem é que será varrida

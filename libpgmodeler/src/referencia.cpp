@@ -6,7 +6,7 @@ Referencia::Referencia(void)
  this->coluna=NULL;
 }
 
-Referencia::Referencia(Tabela *tabela, Coluna *coluna, const QString &alias_tab, const QString &alias_col)
+Referencia::Referencia(Tabela *tabela, Column *coluna, const QString &alias_tab, const QString &alias_col)
 {
  if(!tabela)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -51,7 +51,7 @@ Tabela *Referencia::obterTabela(void)
  return(tabela);
 }
 
-Coluna *Referencia::obterColuna(void)
+Column *Referencia::obterColuna(void)
 {
  return(coluna);
 }

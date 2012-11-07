@@ -264,7 +264,7 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
  else
  {
   int idx;
-  tipo_obj=obj->getType();
+  tipo_obj=obj->getObjectType();
   TipoRestricao tipo_rest;
   QString str_aux;
 
@@ -318,8 +318,8 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
       //Testando a definição sql do objeto
       if(tipo_obj==OBJ_COLUMN)
       {
-       Coluna *col;
-       col=dynamic_cast<Coluna *>(obj_tab);
+       Column *col;
+       col=dynamic_cast<Column *>(obj_tab);
        col->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       }
       else if(tipo_obj==OBJ_CONSTRAINT)
@@ -412,7 +412,7 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
  }
 }
 
-void Tabela::adicionarColuna(Coluna *col, int idx_col)
+void Tabela::adicionarColuna(Column *col, int idx_col)
 {
  adicionarObjeto(col, idx_col);
 }
@@ -450,7 +450,7 @@ void Tabela::adicionarTabelaCopia(Tabela *tab, int idx_tab)
 void Tabela::removerObjeto(BaseObject *objeto)
 {
  if(objeto)
-  removerObjeto(objeto->getName(), objeto->getType());
+  removerObjeto(objeto->getName(), objeto->getObjectType());
 }
 
 void Tabela::removerObjeto(const QString &nome, ObjectType tipo_obj)
@@ -515,11 +515,11 @@ void Tabela::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
   else
   {
    vector<TableObject *> vet_refs;
-   Coluna *coluna=NULL;
+   Column *coluna=NULL;
 
    //Obtém a referência para a coluna
    itr=lista_obj->begin() + idx_obj;
-   coluna=dynamic_cast<Coluna *>(*itr); //Obtém a coluna
+   coluna=dynamic_cast<Column *>(*itr); //Obtém a coluna
    obterReferenciasColuna(coluna, vet_refs, true);
 
    /* Caso a coluna esteja sendo referenciada no gatilho, interrompe a
@@ -624,7 +624,7 @@ int Tabela::obterIndiceObjeto(TableObject *objeto)
  if(!objeto)
   return(-1);
  else
-  return(obterIndiceObjeto(objeto->getName(true), objeto->getType()));
+  return(obterIndiceObjeto(objeto->getName(true), objeto->getObjectType()));
 }
 
 BaseObject *Tabela::obterObjeto(const QString &nome, ObjectType tipo_obj)
@@ -773,16 +773,16 @@ Tabela *Tabela::obterTabelaPai(unsigned idx_tab)
  return(dynamic_cast<Tabela *>(obterObjeto(idx_tab,OBJ_TABLE)));
 }
 
-Coluna *Tabela::obterColuna(const QString &nome, bool ref_nome_antigo)
+Column *Tabela::obterColuna(const QString &nome, bool ref_nome_antigo)
 {
  if(!ref_nome_antigo)
  {
   int idx;
-  return(dynamic_cast<Coluna *>(obterObjeto(nome,OBJ_COLUMN,idx)));
+  return(dynamic_cast<Column *>(obterObjeto(nome,OBJ_COLUMN,idx)));
  }
  else
  {
-  Coluna *coluna=NULL;
+  Column *coluna=NULL;
   vector<TableObject *>::iterator itr, itr_end;
   bool enc=false, formatar=false;
 
@@ -793,9 +793,9 @@ Coluna *Tabela::obterColuna(const QString &nome, bool ref_nome_antigo)
   //Varre a lista de colunas buscando pelo nome antigo das mesmas
   while(itr!=itr_end && !enc)
   {
-   coluna=dynamic_cast<Coluna *>(*itr);
+   coluna=dynamic_cast<Column *>(*itr);
    itr++;
-   enc=(nome!="" && coluna->getNameAntigo(formatar)==nome);
+   enc=(nome!="" && coluna->getOldName(formatar)==nome);
   }
 
   /* Caso nenhuma coluna for encontrada zera o ponteiro de coluna
@@ -806,9 +806,9 @@ Coluna *Tabela::obterColuna(const QString &nome, bool ref_nome_antigo)
  }
 }
 
-Coluna *Tabela::obterColuna(unsigned idx_col)
+Column *Tabela::obterColuna(unsigned idx_col)
 {
- return(dynamic_cast<Coluna *>(obterObjeto(idx_col,OBJ_COLUMN)));
+ return(dynamic_cast<Column *>(obterObjeto(idx_col,OBJ_COLUMN)));
 }
 
 Gatilho *Tabela::obterGatilho(const QString &nome)
@@ -964,7 +964,7 @@ bool Tabela::aceitaOids(void)
  return(aceita_oids);
 }
 
-bool Tabela::restricaoReferenciaColuna(Coluna *coluna, TipoRestricao tipo_rest)
+bool Tabela::restricaoReferenciaColuna(Column *coluna, TipoRestricao tipo_rest)
 {
  bool enc=false;
  vector<TableObject *>::iterator itr, itr_end;
@@ -1071,7 +1071,7 @@ void Tabela::trocarIndicesObjetos(ObjectType tipo_obj, unsigned idx1, unsigned i
  }
 }
 
-void Tabela::obterReferenciasColuna(Coluna *coluna, vector<TableObject *> &vet_refs, bool modo_exclusao)
+void Tabela::obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_refs, bool modo_exclusao)
 {
  /* Caso a coluna não foi incluída por relacionamento, será verificado se esta
     não está sendo referenciada. Para colunas adicionadas automaticamente por
@@ -1080,7 +1080,7 @@ void Tabela::obterReferenciasColuna(Coluna *coluna, vector<TableObject *> &vet_r
  {
   unsigned qtd, i;
   ElementoIndice elem;
-  Coluna *col=NULL, *col1=NULL;
+  Column *col=NULL, *col1=NULL;
   vector<TableObject *>::iterator itr, itr_end;
   bool enc=false;
   Indice *ind=NULL;

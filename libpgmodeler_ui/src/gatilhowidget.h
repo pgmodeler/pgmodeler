@@ -42,7 +42,7 @@ class GatilhoWidget: public ObjetoBaseWidget, public Ui::GatilhoWidget {
                        *sel_funcao;
 
    //Adiciona uma coluna   tabelade colunas referenciadas pelo gatilho
-   void adicionarColuna(Coluna *coluna, int idx_lin);
+   void adicionarColuna(Column *coluna, int idx_lin);
 
  public:
    GatilhoWidget(QWidget * parent = 0);

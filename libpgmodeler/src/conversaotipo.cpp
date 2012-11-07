@@ -78,15 +78,15 @@ void ConversaoTipo::definirFuncaoConversao(Funcao *funcao_conv)
  {
   /* Verifica se o tipo do primeiro parâmetro é diferente do tipo do
      tipo de dado de origem da conversão */
-  erro=(funcao_conv->obterParametro(0).obterTipo()!=this->tipos[CONV_TIPO_ORIGEM]);
+  erro=(funcao_conv->obterParametro(0).getType()!=this->tipos[CONV_TIPO_ORIGEM]);
 
   //Verifica se o tipo do segundo parâmetro é diferente do tipo integer
   if(!erro && qtd_param>=2)
-   erro=(funcao_conv->obterParametro(1).obterTipo()!="integer");
+   erro=(funcao_conv->obterParametro(1).getType()!="integer");
 
   //Verifica se o tipo do terceiro parâmetro é diferente do tipo boolean
   if(!erro && qtd_param==3)
-   erro=(funcao_conv->obterParametro(2).obterTipo()!="boolean");
+   erro=(funcao_conv->obterParametro(2).getType()!="boolean");
 
   //Caso alguma das validações acima falhe dispara-se uma exceção
   if(erro)

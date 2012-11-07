@@ -41,7 +41,7 @@ bool FuncaoAgregacao::funcaoValida(unsigned idx_func, Funcao *func)
    /* A função final deve possuir apenas 1 parâmetro de tipo
       igual ao atributo 'tipo_estado' */
    return((func->obterNumParams()==1 &&
-           func->obterParametro(0).obterTipo()==tipo_estado));
+           func->obterParametro(0).getType()==tipo_estado));
   }
   else
   {
@@ -56,11 +56,11 @@ bool FuncaoAgregacao::funcaoValida(unsigned idx_func, Funcao *func)
       da lista de tipos da função de agregação. */
    cond1=(func->obterTipoRetorno()==tipo_estado) &&
          (func->obterNumParams()==tipo_dados.size() + 1) &&
-         (func->obterParametro(0).obterTipo()==tipo_estado);
+         (func->obterParametro(0).getType()==tipo_estado);
 
    qtd=func->obterNumParams();
    for(i=1 ; i < qtd && cond2; i++)
-    cond2=(func->obterParametro(i).obterTipo()==tipo_dados[i-1]);
+    cond2=(func->obterParametro(i).getType()==tipo_dados[i-1]);
 
    return(cond1 && cond2);
   }
@@ -94,8 +94,8 @@ void FuncaoAgregacao::definirOperadorOrdenacao(Operador *op_ordenacao)
   if(tipo_dados.size()!=1)
    throw Exception(ERR_ASG_INV_OPER_ARGS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   //Validando a condição 2
-  else if(func->obterParametro(0).obterTipo()!=tipo_dados[0] ||
-         (func->obterNumParams()==2 && func->obterParametro(1).obterTipo()!=tipo_dados[0]))
+  else if(func->obterParametro(0).getType()!=tipo_dados[0] ||
+         (func->obterNumParams()==2 && func->obterParametro(1).getType()!=tipo_dados[0]))
    throw Exception(ERR_ASG_INV_OPERATOR_TYPES,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 

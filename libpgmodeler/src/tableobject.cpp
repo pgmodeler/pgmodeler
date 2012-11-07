@@ -10,7 +10,7 @@ void TableObject::setParentTable(BaseTable *table)
 {
  /* Caso o objeto a ser atribuído não seja uma tabela
     um erro é gerado */
- if(table && table->getType()!=OBJ_TABLE)
+ if(table && table->getObjectType()!=OBJ_TABLE)
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  parent_table=table;

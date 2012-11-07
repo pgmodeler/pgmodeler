@@ -43,7 +43,7 @@ class Sequencia: public BaseObject {
           cache;
 
   //Objeto possuidor da sequencia
-  Coluna *coluna;
+  Column *coluna;
 
   /* Retorna se o valor passado é constituido de números
      e inicia com + ou - */
@@ -80,7 +80,7 @@ class Sequencia: public BaseObject {
 
   //Define a tabela/coluna possuidora da sequência
   void definirPossuidora(Tabela *tabela, const QString &nome_coluna);
-  void definirPossuidora(Coluna *coluna);
+  void definirPossuidora(Column *coluna);
 
   void setName(const QString &obj_name);
 
@@ -94,7 +94,7 @@ class Sequencia: public BaseObject {
   QString obterIncremento(void);
   QString obterInicio(void);
   QString obterCache(void);
-  Coluna *obterPossuidora(void);
+  Column *obterPossuidora(void);
   bool referenciaColunaIncRelacao(void);
 
   void operator = (Sequencia &seq);

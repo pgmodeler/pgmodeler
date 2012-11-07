@@ -47,7 +47,7 @@ class RestricaoWidget: public ObjetoBaseWidget, public Ui::RestricaoWidget {
 
    /* Adiciona uma coluna   tabela de tipo especificado (origem ou referenciada)
       na linha especificada */
-   void adicionarColuna(Coluna *coluna, unsigned tipo_col, int idx_lin);
+   void adicionarColuna(Column *coluna, unsigned tipo_col, int idx_lin);
 
  public:
    RestricaoWidget(QWidget * parent = 0);

@@ -25,7 +25,7 @@
 
 #include "tableobject.h"
 #include "espacotabela.h"
-#include "coluna.h"
+#include "column.h"
 
 class Restricao: public TableObject{
  private:
@@ -51,11 +51,11 @@ class Restricao: public TableObject{
   TipoAcao acao_del,acao_upd;
 
   //Armazena as colunas que formam a constraint (não utilizado para ck)
-  vector<Coluna *> colunas;
+  vector<Column *> colunas;
 
   /* (Apenas para chaves estrageiras) Armazena as colunas que
      são referenciadas na tabela referenciada */
-  vector<Coluna *> colunas_ref;
+  vector<Column *> colunas_ref;
 
   /* (Apenas para constraints CHECK) Armazena a expressão
      que será usada como checagem */
@@ -84,7 +84,7 @@ class Restricao: public TableObject{
   /* Adiciona uma coluna a uma das listas de colunas da constraint
      Caso o parâmetro col_dest estiver como true a lista 'colunas_dest'
      será usada caso contrário 'colunas' é que será usada.  */
-  void adicionarColuna(Coluna *coluna, unsigned tipo_coluna);
+  void adicionarColuna(Column *coluna, unsigned tipo_coluna);
 
   //Define o tipo da constraint
   void definirTipo(TipoRestricao tipo);
@@ -130,13 +130,13 @@ class Restricao: public TableObject{
      true, uma coluna da lista 'colunas_dest' será retornada, caso contrário
      uma coluna da lista 'colunas' será retornada. */
   //Coluna *obterColuna(unsigned idx_col, bool col_dest=false);
-  Coluna *obterColuna(unsigned idx_col, unsigned tipo_coluna);
+  Column *obterColuna(unsigned idx_col, unsigned tipo_coluna);
 
   /* Obtém uma coluna através de seu nome. Caso 'col_dest' esteja como
      true, uma coluna da lista 'colunas_dest' será retornada, caso contrário
      uma coluna da lista 'colunas' será retornada. */
   //Coluna *obterColuna(QString nome, bool col_dest=false);
-  Coluna *obterColuna(const QString &obj_name, unsigned tipo_coluna);
+  Column *obterColuna(const QString &obj_name, unsigned tipo_coluna);
 
   /* Obtém o número de colunas de uma das listas. Caso 'col_dest' esteja como
      true, o número de colunas da lista 'colunas_dest' será retornado, caso contrário
@@ -187,7 +187,7 @@ class Restricao: public TableObject{
   QString getCodeDefinition(unsigned tipo_def, bool inc_insporrelacao);
 
   //Indica se uma dada coluna existe na lista de colunas de origem ou de destino
-  bool colunaExistente(Coluna *coluna, unsigned tipo_coluna);
+  bool colunaExistente(Column *coluna, unsigned tipo_coluna);
 
   friend class Tabela;
   friend class Relacionamento;

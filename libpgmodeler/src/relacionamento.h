@@ -147,7 +147,7 @@ class Relacionamento: public RelacionamentoBase {
   /* Vetor usado para armazenar as colunas as quais
      são criadas para serem referenciadas pelas chaves estrangeiras
      que representam o relacionamento */
-  vector<Coluna *> colunas_ref,
+  vector<Column *> colunas_ref,
 
   /* Vetor usado para armazenar as colunas da chave primária as quais
      deram origem as colunas do vetor acima. Este vetor é usado no
@@ -217,7 +217,7 @@ class Relacionamento: public RelacionamentoBase {
   QString nome_tab_relnn;
 
   //Indica se uma dada coluna existe na lista de colunas
-  bool colunaExistente(Coluna *coluna);
+  bool colunaExistente(Column *coluna);
 
   /* Executa a operação de adição de colunas especificamente para
      relacionamentos do tipo 1-1 */
@@ -386,15 +386,15 @@ class Relacionamento: public RelacionamentoBase {
   void removerRestricao(unsigned id_rest);
 
   //Obtém um atributo do relacionamento
-  Coluna *obterAtributo(unsigned id_atrib);
-  Coluna *obterAtributo(const QString &nome_atrib);
+  Column *obterAtributo(unsigned id_atrib);
+  Column *obterAtributo(const QString &nome_atrib);
 
   //Obtém uma restrição de um atributo do relacionamento
   Restricao *obterRestricao(unsigned id_rest);
   Restricao *obterRestricao(const QString &nome_rest);
 
   //Retorna a coluna referenciada através de seu nome
-  Coluna *obterColunaReferenciada(const QString &nome_col);
+  Column *obterColunaReferenciada(const QString &nome_col);
 
   /* Indica se um dado objeto (coluna [atributo] ou restrição) já não existe
      em uma das lista de atributos do relacionamento retornando seu código.

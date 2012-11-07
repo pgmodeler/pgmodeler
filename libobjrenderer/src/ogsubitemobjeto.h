@@ -85,7 +85,7 @@ class OGSubItemObjeto: public ObjetoGrafico
   /* Retorna uma string formatada para exibição, contendo as configurações de
      restrições de uma coluna. Coluna alocadas porém não atribuídas a nenhuma tabela
      são ignoradas pelo método */
-  static QString obterStringRestricoes(Coluna *coluna);
+  static QString obterStringRestricoes(Column *coluna);
 };
 
 #endif

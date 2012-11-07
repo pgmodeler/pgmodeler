@@ -398,7 +398,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
 
      if(tipos[id_tipo]==BASE_RELATIONSHIP || tipos[id_tipo]==OBJ_RELATIONSHIP)
      {
-      str_aux=QString(BaseObject::getSchemaName(objeto->getType()));
+      str_aux=QString(BaseObject::getSchemaName(objeto->getObjectType()));
 
       if(tipos[id_tipo]==BASE_RELATIONSHIP)
         str_aux+="tv";
@@ -419,7 +419,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
       }
      }
      else
-      str_aux=QString(BaseObject::getSchemaName(objeto->getType()));
+      str_aux=QString(BaseObject::getSchemaName(objeto->getObjectType()));
 
      icone=QPixmap(QString(":/icones/icones/") + str_aux + QString(".png"));
 
@@ -555,7 +555,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
       //Cria o item descritor de tipo do objeto
       item_tab=new QTableWidgetItem;
       icone=QPixmap(QString(":/icones/icones/") +
-                    QString(BaseObject::getSchemaName(objeto_tab->getType())) +
+                    QString(BaseObject::getSchemaName(objeto_tab->getObjectType())) +
 		    QString(".png"));
       listaobjetos_tbw->setItem(id_lin, 1, item_tab);
       item_tab->setText(QString::fromUtf8(objeto_tab->getTypeName()));

@@ -38,13 +38,13 @@ OGSubItemObjeto::~OGSubItemObjeto(void)
 void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
 {
  ObjectType tipo_obj=BASE_OBJECT;
- Coluna *coluna=dynamic_cast<Coluna *>(this->obterObjetoOrigem());
+ Column *coluna=dynamic_cast<Column *>(this->obterObjetoOrigem());
  float fator=config_fonte[ParsersAttributes::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
  bool desc_elipse=false;
 
  //Obtém o tipo do objeto de origem, é com base nele que o descritor será alocado
  if(this->obterObjetoOrigem())
-  tipo_obj=this->obterObjetoOrigem()->getType();
+  tipo_obj=this->obterObjetoOrigem()->getObjectType();
 
  /* Descritores em forma de elipse são alocados para colunas (com ou sem not-null)
     todos os demais tipos têm descritores poligonais */
@@ -90,7 +90,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
    desc->setRect(QRectF(QPointF(0,0),
                         QSizeF(9.0f * fator, 9.0f * fator)));
 
-   if(coluna->naoNulo())
+   if(coluna->isNotNull())
     atrib=ParsersAttributes::NN_COLUMN;
    else
     atrib=ParsersAttributes::COLUMN;
@@ -183,7 +183,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   float px;
   QString str_rest;
   TableObject *objeto_tab=dynamic_cast<TableObject *>(this->obterObjetoOrigem());
-  Coluna *coluna=dynamic_cast<Coluna *>(objeto_tab);
+  Column *coluna=dynamic_cast<Column *>(objeto_tab);
   TipoRestricao tipo_rest=TipoRestricao::nulo;
 
   //Caso seja uma coluna
@@ -242,7 +242,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   //Configura o rótulo de tipo
   fmt=config_fonte[ParsersAttributes::OBJECT_TYPE];
   if(coluna)
-   rotulos[1]->setText(QString::fromUtf8(SEPARADOR_TIPO + (*coluna->obterTipo())));
+   rotulos[1]->setText(QString::fromUtf8(SEPARADOR_TIPO + (*coluna->getType())));
   else
    rotulos[1]->setText(QString::fromUtf8(SEPARADOR_TIPO + objeto_tab->getSchemaName()));
 
@@ -419,7 +419,7 @@ QGraphicsItem *OGSubItemObjeto::obterObjetoFilho(unsigned idx_obj)
   return(rotulos[idx_obj-1]);
 }
 
-QString OGSubItemObjeto::obterStringRestricoes(Coluna *coluna)
+QString OGSubItemObjeto::obterStringRestricoes(Column *coluna)
 {
  if(coluna && coluna->getParentTable())
  {
@@ -462,7 +462,7 @@ QString OGSubItemObjeto::obterStringRestricoes(Coluna *coluna)
   }
 
   //Caso a coluna seja não-nula adiciona a QString formatada o texto referente�   constraint NOT NULL
-  if(coluna->naoNulo()) str_rest+=TEXTO_NOT_NULL + SEPARADOR_REST;
+  if(coluna->isNotNull()) str_rest+=TEXTO_NOT_NULL + SEPARADOR_REST;
 
   //Caso a QString formatada tenha sido criada
   if(str_rest!="")

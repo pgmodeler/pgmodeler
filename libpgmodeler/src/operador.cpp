@@ -109,8 +109,8 @@ void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
    TipoPgSQL tipo_param1=TipoPgSQL("any"), tipo_param2=TipoPgSQL("any");
 
    //Obtém os prâmetros da função
-   tipo_param1=funcao->obterParametro(0).obterTipo();
-   if(qtd_params==2) tipo_param2=funcao->obterParametro(1).obterTipo();
+   tipo_param1=funcao->obterParametro(0).getType();
+   if(qtd_params==2) tipo_param2=funcao->obterParametro(1).getType();
 
    /* Verificando os parâmetros da função de acordo com o tipo dos
       argumentos dos operadores */

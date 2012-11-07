@@ -199,7 +199,7 @@ class BaseObject {
   QString getComment(void);
 
   //Returns the object's type
-  ObjectType getType(void);
+  ObjectType getObjectType(void);
 
   //Returns the object's type name
   QString getTypeName(void);

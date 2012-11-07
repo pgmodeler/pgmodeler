@@ -122,7 +122,7 @@ vector<QString> Relacionamento::obterColunasRelacionamento(void)
  for(i=0; i < qtd; i++)
  {
   vet_nomes.push_back(QString::fromUtf8(colunas_ref[i]->getName()) + " (" +
-                      QString::fromUtf8(*colunas_ref[i]->obterTipo()) + ")");
+                      QString::fromUtf8(*colunas_ref[i]->getType()) + ")");
  }
 
  return(vet_nomes);
@@ -288,7 +288,7 @@ int Relacionamento::obterIndiceObjeto(TableObject *objeto)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Selecionando a lista de objetos de acordo com o tipo do objeto
- tipo_obj=objeto->getType();
+ tipo_obj=objeto->getObjectType();
  if(tipo_obj==OBJ_COLUMN)
   lista=&atributos_rel;
  else if(tipo_obj==OBJ_CONSTRAINT)
@@ -315,10 +315,10 @@ int Relacionamento::obterIndiceObjeto(TableObject *objeto)
   return(-1);
 }
 
-bool Relacionamento::colunaExistente(Coluna *coluna)
+bool Relacionamento::colunaExistente(Column *coluna)
 {
- vector<Coluna *>::iterator itr, itr_end;
- Coluna *col_aux=NULL;
+ vector<Column *>::iterator itr, itr_end;
+ Column *col_aux=NULL;
  bool enc=false;
 
  //Caso a coluna a ser buscada não esteja aloca, dispara uma exceção
@@ -353,7 +353,7 @@ void Relacionamento::adicionarObjeto(TableObject *objeto_tab, int idx_obj)
      tipo_relac==RELACIONAMENTO_DEP) &&
     !(objeto_tab->isAddedByRelationship() &&
       objeto_tab->isProtected() &&
-      objeto_tab->getType()==OBJ_CONSTRAINT))
+      objeto_tab->getObjectType()==OBJ_CONSTRAINT))
   throw Exception(ERR_ASG_OBJ_INV_REL_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  try
@@ -367,7 +367,7 @@ void Relacionamento::adicionarObjeto(TableObject *objeto_tab, int idx_obj)
   {
    /* Obtém a lista de objetos de acordo com o tipo
       do objeto a ser inserido */
-   tipo_obj=objeto_tab->getType();
+   tipo_obj=objeto_tab->getObjectType();
    if(tipo_obj==OBJ_COLUMN)
     lista_obj=&atributos_rel;
    else if(tipo_obj==OBJ_CONSTRAINT)
@@ -383,7 +383,7 @@ void Relacionamento::adicionarObjeto(TableObject *objeto_tab, int idx_obj)
    objeto_tab->setParentTable(tabela_orig);
 
    if(tipo_obj==OBJ_COLUMN)
-    dynamic_cast<Coluna *>(objeto_tab)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+    dynamic_cast<Column *>(objeto_tab)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
    else
    {
     Restricao *rest=NULL;
@@ -485,14 +485,14 @@ void Relacionamento::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
     um erro. */
  if(tipo_obj==OBJ_COLUMN)
  {
-  Coluna *coluna=NULL;
+  Column *coluna=NULL;
   Restricao *rest=NULL;
   vector<TableObject *>::iterator itr, itr_end;
   bool refer=false;
 
   itr=restricoes_rel.begin();
   itr_end=restricoes_rel.end();
-  coluna=dynamic_cast<Coluna *>(lista_obj->at(id_obj));
+  coluna=dynamic_cast<Column *>(lista_obj->at(id_obj));
 
   while(itr!=itr_end && !refer)
   {
@@ -532,7 +532,7 @@ void Relacionamento::removerObjeto(TableObject *objeto)
  if(!objeto)
   throw Exception(ERR_REM_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- removerObjeto(obterIndiceObjeto(objeto),objeto->getType());
+ removerObjeto(obterIndiceObjeto(objeto),objeto->getObjectType());
 }
 
 void Relacionamento::removerAtributo(unsigned id_atrib)
@@ -545,10 +545,10 @@ void Relacionamento::removerRestricao(unsigned id_rest)
  removerObjeto(id_rest, OBJ_CONSTRAINT);
 }
 
-Coluna *Relacionamento::obterColunaReferenciada(const QString &nome_col)
+Column *Relacionamento::obterColunaReferenciada(const QString &nome_col)
 {
- vector<Coluna *>::iterator itr, itr_end;
- Coluna *col=NULL;
+ vector<Column *>::iterator itr, itr_end;
+ Column *col=NULL;
  bool enc=false, formatar;
 
  formatar=nome_col.contains("\"");
@@ -622,18 +622,18 @@ TableObject *Relacionamento::obterObjeto(const QString &nome_atrib, ObjectType t
   return(NULL);
 }
 
-Coluna *Relacionamento::obterAtributo(unsigned id_atrib)
+Column *Relacionamento::obterAtributo(unsigned id_atrib)
 {
  /* Caso o índice do atributo esteja fora da quantidade da lista de
     atributos dispara uma exceção */
  if(id_atrib >= atributos_rel.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- return(dynamic_cast<Coluna *>(atributos_rel[id_atrib]));
+ return(dynamic_cast<Column *>(atributos_rel[id_atrib]));
 }
 
-Coluna *Relacionamento::obterAtributo(const QString &nome_atrib)
+Column *Relacionamento::obterAtributo(const QString &nome_atrib)
 {
- return(dynamic_cast<Coluna *>(obterObjeto(nome_atrib,OBJ_COLUMN)));
+ return(dynamic_cast<Column *>(obterObjeto(nome_atrib,OBJ_COLUMN)));
 }
 
 Restricao *Relacionamento::obterRestricao(unsigned id_rest)
@@ -760,12 +760,12 @@ void Relacionamento::adicionarColunasRelGen(void)
 {
  Tabela *tab_orig=NULL, *tab_dest=NULL,
         *tab_pai=NULL, *tab_aux=NULL;
- Coluna *col_orig=NULL, *col_dest=NULL,
+ Column *col_orig=NULL, *col_dest=NULL,
         *coluna=NULL, *col_aux=NULL;
  unsigned qtd_orig, qtd_dest,
           i, i1, i2, id_tab,
           idx, qtd_tab;
- vector<Coluna *> colunas;
+ vector<Column *> colunas;
  ObjectType tipos[2]={OBJ_TABLE, BASE_TABLE};
  ErrorType tipo_erro=ERR_CUSTOM;
  bool duplic=false, cond,
@@ -796,7 +796,7 @@ void Relacionamento::adicionarColunasRelGen(void)
       serial, pois em caso de se comparar um 'serial' de um coluna
       com o integer de outra, pode-se gerar um erro, mesmo estes
       tipos sendo compatíveis */
-   tipo_dest=col_dest->obterTipo();
+   tipo_dest=col_dest->getType();
    if(tipo_dest=="serial") tipo_dest="integer";
    else if(tipo_dest=="bigserial") tipo_dest="bigint";
 
@@ -810,7 +810,7 @@ void Relacionamento::adicionarColunasRelGen(void)
    {
     //Obtém uma coluna da origem e converte seu tipo
     col_orig=tab_orig->obterColuna(i1);
-    tipo_orig=col_orig->obterTipo();
+    tipo_orig=col_orig->getType();
     if(tipo_orig=="serial") tipo_orig="integer";
     else if(tipo_orig=="bigserial") tipo_orig="bigint";
 
@@ -912,7 +912,7 @@ void Relacionamento::adicionarColunasRelGen(void)
     if(!duplic)
     {
      //Cria uma nova coluna e faz as configurações iniciais
-     coluna=new Coluna;
+     coluna=new Column;
 
      (*coluna)=(*col_dest);
 
@@ -924,10 +924,10 @@ void Relacionamento::adicionarColunasRelGen(void)
      coluna->setParentTable(NULL);
 
      //Converte seu tipo de '' para 'integer', se necessário
-     if(coluna->obterTipo()=="serial")
-      coluna->definirTipo(TipoPgSQL("integer"));
-     else if(coluna->obterTipo()=="bigserial")
-      coluna->definirTipo(TipoPgSQL("bigint"));
+     if(coluna->getType()=="serial")
+      coluna->setType(TipoPgSQL("integer"));
+     else if(coluna->getType()=="bigserial")
+      coluna->setType(TipoPgSQL("bigint"));
 
      //Adiciona a nova coluna   lista temporária de colunas
      colunas.push_back(coluna);
@@ -944,7 +944,7 @@ void Relacionamento::adicionarColunasRelGen(void)
   //Caso nenhum erro de duplicidade foi detectado
   if(tipo_erro==ERR_CUSTOM)
   {
-   vector<Coluna *>::iterator itr, itr_end;
+   vector<Column *>::iterator itr, itr_end;
 
    /* As colunas da lista temporária serão inseridas
       na lista de colunas de referência, do relacionamento e além disso
@@ -1196,7 +1196,7 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
 {
  Restricao *pk=NULL, *pk_aux=NULL, *fk=NULL;
  unsigned i, i1, qtd;
- Coluna *coluna=NULL, *coluna_aux=NULL;
+ Column *coluna=NULL, *coluna_aux=NULL;
  QString nome, aux;
 
  try
@@ -1314,7 +1314,7 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
 void Relacionamento::adicionarAtributos(Tabela *tab_receptora)
 {
  unsigned i, qtd, i1;
- Coluna *coluna=NULL;
+ Column *coluna=NULL;
  QString nome, aux;
 
  try
@@ -1326,7 +1326,7 @@ void Relacionamento::adicionarAtributos(Tabela *tab_receptora)
   for(i=0, i1=1; i < qtd; i++)
   {
    //Obtém o atributo
-   coluna=dynamic_cast<Coluna *>(atributos_rel[i]);
+   coluna=dynamic_cast<Column *>(atributos_rel[i]);
 
    //Caso o atributo já pertença a uma tabela interrompe o processamento
    if(coluna->getParentTable())
@@ -1361,7 +1361,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
 {
  Restricao *pk_dest=NULL, *pk_orig=NULL, *pk=NULL;
  unsigned i, qtd, i1;
- Coluna *coluna=NULL, *coluna_aux=NULL;
+ Column *coluna=NULL, *coluna_aux=NULL;
  QString nome, sufixo, aux, nome_ant;
 
  try
@@ -1429,7 +1429,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
    aux="";
 
    //Aloca uma nova coluna
-   coluna=new Coluna;
+   coluna=new Column;
    colunas_ref.push_back(coluna);
 
    /* Copia o conteúdo da coluna da chave primária no indice i para
@@ -1438,7 +1438,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
    colunas_pk.push_back(coluna_aux);
 
    (*coluna)=(*coluna_aux);
-   coluna->definirNaoNulo(nao_nulo);
+   coluna->setNotNull(nao_nulo);
 
    //Obtém o nome anterior da coluna antes da desconexão do relacionamento
    nome_ant=nome_ant_cols_ref[coluna->getObjectId()];
@@ -1451,10 +1451,10 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
 
    /* Caso o tipo da nova coluna seja "serial" o mesmo será
       convertido para "integer" */
-   if(coluna->obterTipo()=="serial")
-    coluna->definirTipo(TipoPgSQL("integer"));
-   else if(coluna->obterTipo()=="bigserial")
-    coluna->definirTipo(TipoPgSQL("bigint"));
+   if(coluna->getType()=="serial")
+    coluna->setType(TipoPgSQL("integer"));
+   else if(coluna->getType()=="bigserial")
+    coluna->setType(TipoPgSQL("bigint"));
    /* O nome da nova coluna, será o nome original concatenado
       com o sufixo da tabela a qual ela pertence. Isso é feito
       para se saber de onde tal coluna foi originada */
@@ -1845,7 +1845,7 @@ void Relacionamento::removerColsChavePrimariaTabela(Tabela *tabela)
  if(tabela)
  {
   Restricao *pk=NULL;
-  Coluna *coluna=NULL;
+  Column *coluna=NULL;
   unsigned i, qtd;
 
   /* Obtém a chave primáira da tabela e remove desta
@@ -1889,8 +1889,8 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
  {
   if(conectado)
   {
-   vector<Coluna *>::iterator itr, itr_end;
-   Coluna *coluna=NULL;
+   vector<Column *>::iterator itr, itr_end;
+   Column *coluna=NULL;
    Tabela *tabela=NULL;
    unsigned idx_lista=0;
    vector<TableObject *> *lista_atrib=NULL;
@@ -2026,7 +2026,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
      if(tabela && obterIndiceObjeto(obj_tab) >= 0)
      {
       //Remove o atributo da tabela através do nome e tipo
-      tabela->removerObjeto(obj_tab->getName(), obj_tab->getType());
+      tabela->removerObjeto(obj_tab->getName(), obj_tab->getObjectType());
       obj_tab->setParentTable(NULL);
      }
      //Para para o atributo posterior
@@ -2118,7 +2118,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
  Tabela *tabela=NULL, *tabela1=NULL;
  Restricao *fk=NULL, *fk1=NULL, *rest=NULL, *pk=NULL;
  bool valido=false;
- Coluna *col1=NULL, *col2=NULL, *col3=NULL;
+ Column *col1=NULL, *col2=NULL, *col3=NULL;
  QString nome_col;
 
  /* Caso o relacionamento foi invaldado por modificação
@@ -2207,9 +2207,9 @@ bool Relacionamento::relacionamentoInvalidado(void)
      nome_col=col1->getName() + sufixo_cols[i];
      valido=(col1==col3 &&
              (nome_col==col2->getName()) &&
-             (col1->obterTipo()==col2->obterTipo() ||
-             (col1->obterTipo()=="serial" && col2->obterTipo()=="integer") ||
-             (col1->obterTipo()=="bigserial" && col2->obterTipo()=="bigint")));
+             (col1->getType()==col2->getType() ||
+             (col1->getType()=="serial" && col2->getType()=="integer") ||
+             (col1->getType()=="bigserial" && col2->getType()=="bigint")));
     }
    }
   }
@@ -2408,7 +2408,7 @@ QString Relacionamento::getCodeDefinition(unsigned tipo_def)
   qtd=atributos_rel.size();
   for(i=0; i < qtd; i++)
   {
-   attributes[ParsersAttributes::COLUMNS]+=dynamic_cast<Coluna *>(atributos_rel[i])->
+   attributes[ParsersAttributes::COLUMNS]+=dynamic_cast<Column *>(atributos_rel[i])->
                     getCodeDefinition(SchemaParser::XML_DEFINITION);
   }
 

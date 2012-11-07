@@ -34,7 +34,7 @@ class Gatilho: public TableObject{
   /* Lista de colunas usadas como condição de disparo da trigger
      Este atributo foi adicionado no PostgreSQL 9.1 é usado somente
      quando o evento UPDATE está presente. */
-  vector<Coluna *> colunas_upd;
+  vector<Column *> colunas_upd;
 
   //Função que será executada com o disparo do gatilho
   Funcao *funcao;
@@ -77,7 +77,7 @@ class Gatilho: public TableObject{
   /* Adiciona uma coluna como condição de disparo (apenas para evento update)
      As colunas adicionadas por esse método devem obrigatoriamente pertencer
        coluna dona do gatilho e nã  outras tabelas */
-  void adicionarColuna(Coluna *coluna);
+  void adicionarColuna(Column *coluna);
 
   //Adiciona um argumento ao gatilho
   void adicionarArgumento(const QString &arg);
@@ -114,7 +114,7 @@ class Gatilho: public TableObject{
   bool executaNoEvento(TipoEvento evento);
 
   //Obtém uma coluna referenciada pelo gatilho através do índice
-  Coluna *obterColuna(unsigned idx_col);
+  Column *obterColuna(unsigned idx_col);
 
   //Obtém um argumento através de seu índice
   QString obterArgumento(unsigned idx_arg);

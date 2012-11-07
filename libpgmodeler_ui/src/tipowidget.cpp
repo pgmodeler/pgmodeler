@@ -185,7 +185,7 @@ void TipoWidget::manipularAtributo(int res)
   param=parametro_wgt->obterParametro();
   //Insere-o na tabela de atributos
   tab_atributos->definirTextoCelula(QString::fromUtf8(param.getName()), lin, 0);
-  tab_atributos->definirTextoCelula(QString::fromUtf8(*param.obterTipo()), lin, 1);
+  tab_atributos->definirTextoCelula(QString::fromUtf8(*param.getType()), lin, 1);
   tab_atributos->definirDadoLinha(QVariant::fromValue<Parametro>(param), lin);
  }
  //Caso o usuário clique no botão 'cancelar' da janela de conf. de parâmetro
@@ -265,7 +265,7 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Ti
     param=tipo->obterAtributo(i);
     //Exibe os dados do atributo na tabela
     tab_atributos->definirTextoCelula(QString::fromUtf8(param.getName()), i, 0);
-    tab_atributos->definirTextoCelula(QString::fromUtf8(*param.obterTipo()), i, 1);
+    tab_atributos->definirTextoCelula(QString::fromUtf8(*param.getType()), i, 1);
     //Armazena o próprio atributo na linha da tabela
     tab_atributos->definirDadoLinha(QVariant::fromValue<Parametro>(param), i);
    }

@@ -6,9 +6,9 @@ Parametro::Parametro(void)
  entrada=saida=false;
 }
 
-void Parametro::definirTipo(TipoPgSQL tipo)
+void Parametro::setType(TipoPgSQL tipo)
 {
- this->tipo=tipo;
+ this->type=tipo;
 }
 
 void Parametro::definirEntrada(bool valor)
@@ -34,8 +34,8 @@ bool Parametro::parametroSaida(void)
 void Parametro::operator = (const Parametro &param)
 {
  this->obj_name=param.obj_name;
- this->tipo=param.tipo;
- this->valor_padrao=param.valor_padrao;
+ this->type=param.type;
+ this->default_value=param.default_value;
  this->entrada=param.entrada;
  this->saida=param.saida;
 }
@@ -52,8 +52,8 @@ QString Parametro::getCodeDefinition(unsigned tipo_def)
 
  attributes[ParsersAttributes::PARAM_IN]=(entrada ? "1" : "");
  attributes[ParsersAttributes::PARAM_OUT]=(saida ? "1" : "");
- attributes[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
- attributes[ParsersAttributes::TYPE]=tipo.obterDefinicaoObjeto(tipo_def);
+ attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
+ attributes[ParsersAttributes::TYPE]=type.obterDefinicaoObjeto(tipo_def);
 
  //return(ParserEsquema::obterDefinicaoObjeto(AtributosParsers::PARAMETRO,atributos, tipo_def));
  return(BaseObject::__getCodeDefinition(tipo_def));
@@ -177,7 +177,7 @@ void Funcao::adicionarTipoRetTabela(const QString &nome, TipoPgSQL tipo)
 
    //Insere o parâmetro na lista de parâmetros
    p.setName(nome);
-   p.definirTipo(tipo);
+   p.setType(tipo);
    tipos_ret_tabela.push_back(p);
   }
  }
@@ -265,7 +265,7 @@ void Funcao::definirLinguagem(BaseObject *linguagem)
   throw Exception(ERR_ASG_NOT_ALOC_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Caso se tente inserir um objeto alocado porém que não é uma linguagem
     um erro é gerado */
- else if(linguagem->getType()!=OBJ_LANGUAGE)
+ else if(linguagem->getObjectType()!=OBJ_LANGUAGE)
   throw Exception(ERR_ASG_INV_LANGUAGE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -425,7 +425,7 @@ void Funcao::removerParametro(const QString &nome, TipoPgSQL tipo)
  {
   /* Verifica se o parâmetro atual (itr) tem o nome igual ao passado pelo método,
      o mesmo vale para o tipo */
-  if(itr->getName()==nome && itr->obterTipo()==(~tipo))
+  if(itr->getName()==nome && itr->getType()==(~tipo))
   {
    //Caso o parâmetro seja encontrado
    params.erase(itr); //Exclui da lista
@@ -484,7 +484,7 @@ void Funcao::criarAssinatura(bool formatar)
  for(i=0; i < qtd; i++)
  {
   param=params[i];
-  str_param+=(*param.obterTipo());
+  str_param+=(*param.getType());
 
   if(i < (qtd-1)) str_param+=",";
  }

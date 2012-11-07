@@ -48,11 +48,11 @@ void ConversaoCodificacao::definirFuncaoConversao(Funcao *funcao_conv)
  /* Verifica os tipos dos parâmetros da função de conversão.
     Os mesmos devem ser, em ordem, do tipo integer, integer, cstring,
     internal, integer */
- else if(funcao_conv->obterParametro(0).obterTipo()!="integer" ||
-         funcao_conv->obterParametro(1).obterTipo()!="integer" ||
-         funcao_conv->obterParametro(2).obterTipo()!="cstring" ||
-         funcao_conv->obterParametro(3).obterTipo()!="internal" ||
-         funcao_conv->obterParametro(4).obterTipo()!="integer")
+ else if(funcao_conv->obterParametro(0).getType()!="integer" ||
+         funcao_conv->obterParametro(1).getType()!="integer" ||
+         funcao_conv->obterParametro(2).getType()!="cstring" ||
+         funcao_conv->obterParametro(3).getType()!="internal" ||
+         funcao_conv->obterParametro(4).getType()!="integer")
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
                          .arg(QString::fromUtf8(this->getName(true)))
                          .arg(BaseObject::getTypeName(OBJ_CONVERSION)),

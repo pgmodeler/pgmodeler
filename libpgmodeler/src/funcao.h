@@ -25,9 +25,9 @@
 #include "baseobject.h"
 #include "esquema.h"
 #include "papel.h"
-#include "coluna.h"
+#include "column.h"
 
-class Parametro: public Coluna {
+class Parametro: public Column {
  private:
   /* Atributos que indicam que o parâmetro é de
      entrada e saida (IN, OUT, INOUT) */
@@ -37,7 +37,7 @@ class Parametro: public Coluna {
   Parametro(void);
   ~Parametro(void){}
 
-  void definirTipo(TipoPgSQL tipo);
+  void setType(TipoPgSQL type);
 
   void definirEntrada(bool valor);
   void definirSaida(bool valor);

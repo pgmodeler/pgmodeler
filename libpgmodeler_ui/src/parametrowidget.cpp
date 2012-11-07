@@ -52,8 +52,8 @@ void ParametroWidget::definirAtributos(Parametro param, ModeloBD *modelo)
  //Configura os campos do formulário com os valores do parâmetro passado
  param_in_chk->setChecked(param.parametroEntrada());
  param_out_chk->setChecked(param.parametroSaida());
- valorpadrao_edt->setText(QString::fromUtf8(param.obterValorPadrao()));
- tipo_pgsql->definirAtributos(param.obterTipo(), modelo);
+ valorpadrao_edt->setText(QString::fromUtf8(param.getDefaultValue()));
+ tipo_pgsql->definirAtributos(param.getType(), modelo);
 
  ObjetoBaseWidget::definirAtributos(modelo,NULL,&this->parametro);
 }
@@ -67,8 +67,8 @@ void ParametroWidget::aplicarConfiguracao(void)
   //Configura o parâmetro com os valores do formulário
   parametro.definirEntrada(param_in_chk->isChecked());
   parametro.definirSaida(param_out_chk->isChecked());
-  parametro.definirValorPadrao(valorpadrao_edt->text());
-  parametro.definirTipo(tipo_pgsql->obterTipoPgSQL());
+  parametro.setDefaultValue(valorpadrao_edt->text());
+  parametro.setType(tipo_pgsql->obterTipoPgSQL());
 
   /* Efetiva as configurações chamando o método de
      aplicação das configurações da classe pai */

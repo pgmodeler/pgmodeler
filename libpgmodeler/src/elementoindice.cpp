@@ -8,7 +8,7 @@ ElementoIndice::ElementoIndice(void)
  atrib_elemento[ORDEM_ASCENDENTE]=true;
 }
 
-void ElementoIndice::definirColuna(Coluna *coluna)
+void ElementoIndice::definirColuna(Column *coluna)
 {
  if(coluna)
  {
@@ -47,7 +47,7 @@ bool ElementoIndice::obterAtributo(unsigned id_atrib)
  return(atrib_elemento[id_atrib]);
 }
 
-Coluna *ElementoIndice::obterColuna(void)
+Column *ElementoIndice::obterColuna(void)
 {
  return(coluna);
 }

@@ -56,14 +56,14 @@ class Indice: public TableObject{
   Indice(void);
 
   //Adiciona um elemento ao índice
-  void adicionarElemento(Coluna *coluna, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro);
+  void adicionarElemento(Column *coluna, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro);
   void adicionarElemento(const QString &expressao, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro);
   void adicionarElemento(ElementoIndice elem);
 
   /* Retorna se um dado elemento existe no índice. O método
      retorna -1 quando o mesmo não é encontrado caso contrário
      retorna o próprio indice do mesmo */
-  int elementoExiste(Coluna *coluna);
+  int elementoExiste(Column *coluna);
   int elementoExiste(const QString &expressao);
 
   //Obtém um elemento através de seu índice

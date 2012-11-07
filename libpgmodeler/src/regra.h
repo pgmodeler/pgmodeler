@@ -23,7 +23,7 @@
 #define REGRA_H
 
 #include "tableobject.h"
-#include "coluna.h"
+#include "column.h"
 
 class Regra: public TableObject{
  private:

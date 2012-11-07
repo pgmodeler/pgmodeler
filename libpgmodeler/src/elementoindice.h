@@ -23,7 +23,7 @@
 #ifndef ELEMENTO_INDICE_H
 #define ELEMENTO_INDICE_H
 
-#include "coluna.h"
+#include "column.h"
 #include "operatorclass.h"
 
 class ElementoIndice {
@@ -31,7 +31,7 @@ class ElementoIndice {
   /* Coluna referenciada pelo elemento do índice. Este atributo é
      mutuamente exclusivo com o atributo expressao, ou seja,
      quando um é setado o outro tem seu valor zerado */
-  Coluna *coluna;
+  Column *coluna;
 
   /*Expressão referenciada pelo elemento do índice. Este atributo é
     mutuamente exclusivo com o atributo coluna, ou seja,
@@ -52,7 +52,7 @@ class ElementoIndice {
    ~ElementoIndice(void){};
 
    //Métodos de configuração do elemento
-   void definirColuna(Coluna *coluna);
+   void definirColuna(Column *coluna);
    void definirExpressao(const QString &expressao);
    void definirClasseOperadores(OperatorClass *classe_oper);
 
@@ -63,7 +63,7 @@ class ElementoIndice {
    bool obterAtributo(unsigned id_atrib);
 
    //Métodos de obtenção dos atributos do elemento
-   Coluna *obterColuna(void);
+   Column *obterColuna(void);
    QString obterExpressao(void);
    OperatorClass *obterClasseOperadores(void);
 

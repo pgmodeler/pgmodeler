@@ -305,7 +305,7 @@ void BaseObject::setSchema(BaseObject *schema)
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_SCHEMA)
                 .arg(QString::fromUtf8(this->obj_name)).arg(this->getTypeName()),
                 ERR_ASG_NOT_ALOC_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(schema && schema->getType()!=OBJ_SCHEMA)
+ else if(schema && schema->getObjectType()!=OBJ_SCHEMA)
   throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -325,7 +325,7 @@ void BaseObject::setSchema(BaseObject *schema)
 
 void BaseObject::setOwner(BaseObject *owner)
 {
- if(owner && owner->getType()!=OBJ_ROLE)
+ if(owner && owner->getObjectType()!=OBJ_ROLE)
   throw Exception(ERR_ASG_INV_ROLE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -346,7 +346,7 @@ void BaseObject::setOwner(BaseObject *owner)
 
 void BaseObject::setTablespace(BaseObject *tablespace)
 {
- if(tablespace && tablespace->getType()!=OBJ_TABLESPACE)
+ if(tablespace && tablespace->getObjectType()!=OBJ_TABLESPACE)
   throw Exception(ERR_ASG_INV_TABLESPACE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -398,7 +398,7 @@ BaseObject *BaseObject::getTablespace(void)
  return(tablespace);
 }
 
-ObjectType BaseObject::getType(void)
+ObjectType BaseObject::getObjectType(void)
 {
  return(obj_type);
 }

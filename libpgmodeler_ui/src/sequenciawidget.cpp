@@ -85,7 +85,7 @@ void SequenciaWidget::aplicarConfiguracao(void)
   sequencia->definirCiclica(ciclica_chk->isChecked());
   sequencia->definirValores(minimo_edt->text(), maximo_edt->text(), incremento_edt->text(),
                             inicio_edt->text(), cache_edt->text());
-  sequencia->definirPossuidora(dynamic_cast<Coluna *>(sel_coluna->obterObjeto()));
+  sequencia->definirPossuidora(dynamic_cast<Column *>(sel_coluna->obterObjeto()));
 
   //Finaliza a configuração
   ObjetoBaseWidget::aplicarConfiguracao();

@@ -36,12 +36,12 @@ void OGTituloObjeto::configurarObjeto(BaseGraphicObject *objeto)
  if(!objeto)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
  //Dispara uma exceção caso o objeto dono do título não seja uma visão ou tabela
- else if(objeto->getType()!=OBJ_TABLE  &&
-         objeto->getType()!=OBJ_VIEW)
+ else if(objeto->getObjectType()!=OBJ_TABLE  &&
+         objeto->getObjectType()!=OBJ_VIEW)
   throw Exception(ERR_OPR_OBJ_INV_TYPE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  //Selecionando os atributos de cores conforme o tipo do objeto dono
- if(objeto->getType()==OBJ_VIEW)
+ if(objeto->getObjectType()==OBJ_VIEW)
  {
   atrib_nome=ParsersAttributes::VIEW_NAME;
   atrib_nome_esquema=ParsersAttributes::VIEW_SCHEMA_NAME;
@@ -71,7 +71,7 @@ void OGTituloObjeto::configurarObjeto(BaseGraphicObject *objeto)
  pen=this->obterEstiloBorda(atrib_cor_titulo);
 
  //Caso especial para visão: a borda do título é pontilhada
- if(objeto->getType()==OBJ_VIEW)
+ if(objeto->getObjectType()==OBJ_VIEW)
   pen.setStyle(Qt::DashLine);
  caixa->setPen(pen);
 

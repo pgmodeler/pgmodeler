@@ -52,7 +52,7 @@ void Visao::adicionarReferencia(Referencia &refer, unsigned tipo_sql, int id_exp
 {
  int idx;
  vector<unsigned> *vet_idref=NULL;
- Coluna *col=NULL;
+ Column *col=NULL;
 
  //Verifica se a referência já existe na visão
  idx=obterIndiceReferencia(refer);
@@ -345,7 +345,7 @@ void Visao::definirAtributoReferencias(void)
 
 bool Visao::referenciaColunaIncRelacao(void)
 {
- Coluna *coluna=NULL;
+ Column *coluna=NULL;
  unsigned qtd, i;
  bool enc=false;
 
@@ -377,7 +377,7 @@ bool Visao::referenciaTabela(Tabela *tab)
  return(enc);
 }
 
-bool Visao::referenciaColuna(Coluna *col)
+bool Visao::referenciaColuna(Column *col)
 {
  unsigned qtd, i;
  bool enc=false;

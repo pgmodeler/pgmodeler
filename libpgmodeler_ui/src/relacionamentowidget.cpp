@@ -238,7 +238,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
  tabela_dest_txt->setPlainText(QString::fromUtf8(relacao->obterTabela(RelacionamentoBase::TABELA_DESTINO)->getName(true)));
 
  //Caso o relacionamento seja entre tabelas
- if(relacao->getType()==OBJ_RELATIONSHIP)
+ if(relacao->getObjectType()==OBJ_RELATIONSHIP)
  {
   vector<QString> vet_cols;
   vector<unsigned> vet_id_cols;
@@ -365,7 +365,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
   for(i=0; i < 2; i++)
    atributosrel_tbw->addTab(tabs[i], rot_tabs[i]);
  }
- else if(relgen_dep && relacao->getType()==OBJ_RELATIONSHIP)
+ else if(relgen_dep && relacao->getObjectType()==OBJ_RELATIONSHIP)
  { 
   atributosrel_tbw->addTab(tabs[2], rot_tabs[2]);
  }
@@ -472,7 +472,7 @@ void RelacionamentoWidget::editarObjeto(int idx_lin)
    /* Procede com a edição de uma coluna (atributo), sendo que a coluna a ser
       editada é obtida do dado armazenado na linha 'idx_lin' da tabela */
    coluna_wgt->definirAtributos(this->modelo, this->objeto, this->lista_op,
-                               reinterpret_cast<Coluna *>(tab_atributos->obterDadoLinha(idx_lin).value<void *>()));
+                               reinterpret_cast<Column *>(tab_atributos->obterDadoLinha(idx_lin).value<void *>()));
    coluna_wgt->show();
   }
   else
@@ -498,11 +498,11 @@ void RelacionamentoWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  TabelaObjetosWidget *tab=NULL;
 
  //Caso o tipo do objeto seja uma coluna
- if(objeto->getType()==OBJ_COLUMN)
+ if(objeto->getObjectType()==OBJ_COLUMN)
  {
   //Exibe o nome do tipo da coluna na tabela de atributos
   tab=tab_atributos;
-  tab_atributos->definirTextoCelula(QString::fromUtf8(~dynamic_cast<Coluna *>(objeto)->obterTipo()),idx_lin,1);
+  tab_atributos->definirTextoCelula(QString::fromUtf8(~dynamic_cast<Column *>(objeto)->getType()),idx_lin,1);
  }
  else
  {
@@ -650,7 +650,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
   ObjetoBaseWidget::aplicarConfiguracao();
 
   //Caso o objeto seja um relacionamento tabela-tabela
-  if(this->objeto->getType()==OBJ_RELATIONSHIP)
+  if(this->objeto->getObjectType()==OBJ_RELATIONSHIP)
   {
    //Obtém a referência ao mesmo fazendo o cast correto
    relacao=dynamic_cast<Relacionamento *>(this->objeto);

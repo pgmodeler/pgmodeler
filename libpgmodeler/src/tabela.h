@@ -25,7 +25,7 @@
 
 #include "basegraphicobject.h"
 #include "basetable.h"
-#include "coluna.h"
+#include "column.h"
 #include "restricao.h"
 #include "indice.h"
 #include "regra.h"
@@ -132,7 +132,7 @@ class Tabela: public BaseTable {
   /* Os métodos de adição de objetos abaixo são usados apenas por conveniência
      pois necessitam de apenas um parâmetro (o objeto a ser inserido). Internamente
      eles executam uma chamada ao método adicionarObjeto(OBJETO,TIPO_OBJETO) */
-  void adicionarColuna(Coluna *col, int idx_col=-1);
+  void adicionarColuna(Column *col, int idx_col=-1);
   void adicionarRestricao(Restricao *constr, int idx_rest=-1);
   void adicionarGatilho(Gatilho *gat, int idx_gat=-1);
   void adicionarIndice(Indice *ind, int idx_ind=-1);
@@ -144,8 +144,8 @@ class Tabela: public BaseTable {
      atual mas o nome antigo da coluna. Este parâmetro é usado para auxiliar
      as operações de referência a colunas adicionadas por relacionamentos
      a tabela */
-  Coluna *obterColuna(const QString &obj_name, bool ref_nome_antigo=false);
-  Coluna *obterColuna(unsigned idx_col);
+  Column *obterColuna(const QString &obj_name, bool ref_nome_antigo=false);
+  Column *obterColuna(unsigned idx_col);
 
   //Métodos que retornam uma constraint através de seu nome ou índice
   Restricao *obterRestricao(const QString &obj_name);
@@ -221,7 +221,7 @@ class Tabela: public BaseTable {
   void setProtected(bool is_protected);
 
   //Retorna se a coluna é referenciada por uma das restrições do tipo especificado
-  bool restricaoReferenciaColuna(Coluna *coluna, TipoRestricao tipo_rest);
+  bool restricaoReferenciaColuna(Column *coluna, TipoRestricao tipo_rest);
 
   /* Método utilitário que faz a inversão de posição entre dois objetos na lista.
      Este método auxilia na ordenação dos objetos da tabela conforme o usuário desejar */
@@ -240,7 +240,7 @@ class Tabela: public BaseTable {
      O parâmetro 'modo_exclusao' é usado para agilizar a execução do método quando este é usado para validação
      da exclusão do objeto, obtendo apenas a primeira referência ao objeto candidato a exclusão.
      Para se obter TODAS as referências ao objeto, deve-se espeficicar como 'false' o parâmetro 'modo_exclusão'. */
-  void obterReferenciasColuna(Coluna *coluna, vector<TableObject *> &vet_refs, bool modo_exclusao=false);
+  void obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_refs, bool modo_exclusao=false);
 
   friend class Relacionamento;
   friend class ListaOperacoes;

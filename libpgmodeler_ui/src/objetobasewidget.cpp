@@ -160,7 +160,7 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
 
  if(objeto_pai)
  {
-  tipo_obj_pai=objeto_pai->getType();
+  tipo_obj_pai=objeto_pai->getObjectType();
 
   if(tipo_obj_pai==OBJ_TABLE)
    this->tabela=dynamic_cast<Tabela *>(objeto_pai);
@@ -229,7 +229,7 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_
      é desconsiderado pois quando conectado o relacionamento marca as flags citadas, e para
      permitir que o usuário edite uma restrição ou atributo do relacionamento é necessária
      essa exceção */
-  tipo_obj=objeto->getType();
+  tipo_obj=objeto->getObjectType();
   protegido=(tipo_obj_pai!=OBJ_RELATIONSHIP &&
              (objeto->isProtected() ||
               ((tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT) &&
@@ -511,7 +511,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
    ObjectType tipo_obj;
    QString nome_obj;
 
-   tipo_obj=objeto->getType();
+   tipo_obj=objeto->getObjectType();
    nome_obj=BaseObject::formatName(nome_edt->text().toUtf8(), tipo_obj==OBJ_OPERATOR);
 
    if(sel_esquema->obterObjeto())
@@ -621,7 +621,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
 {
  if(this->objeto)
  {
-  ObjectType tipo_obj=this->objeto->getType();
+  ObjectType tipo_obj=this->objeto->getObjectType();
   BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(this->objeto);
   TableObject *obj_tab=dynamic_cast<TableObject *>(this->objeto);
 
@@ -685,8 +685,8 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
      itr++;
 
      //Caso o objeto seja um relacionamento
-     if(obj->getType()==OBJ_RELATIONSHIP ||
-        obj->getType()==BASE_RELATIONSHIP)
+     if(obj->getObjectType()==OBJ_RELATIONSHIP ||
+        obj->getObjectType()==BASE_RELATIONSHIP)
      {
       //Converte o objeto para relacionamento básico
       rel=dynamic_cast<RelacionamentoBase *>(obj);
@@ -732,7 +732,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
   {
    /* Caso o objeto editado seja um objeto de tabela (exceto um parâmetro de função,
    pois este herda a classe Coluna), atualiza a tabela pai */
-   if(!obj_graf && obj_tab && obj_tab->getType()!=OBJ_PARAMETER)
+   if(!obj_graf && obj_tab && obj_tab->getObjectType()!=OBJ_PARAMETER)
    {
     if(this->tabela)
      obj_graf=dynamic_cast<BaseGraphicObject *>(this->tabela);
@@ -763,7 +763,7 @@ void ObjetoBaseWidget::cancelarConfiguracao(void)
 {
  ObjectType tipo_obj;
 
- tipo_obj=this->objeto->getType();
+ tipo_obj=this->objeto->getObjectType();
 
  /* Cancela a configuração do objeto caso o mesmo seja um novo objeto
     e não seja do tipo banco de dados, pois este tipo de objeto

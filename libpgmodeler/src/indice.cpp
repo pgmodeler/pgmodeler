@@ -37,10 +37,10 @@ void Indice::definirAtributoElementos(unsigned tipo_def)
  attributes[ParsersAttributes::ELEMENTS]=str_elem;
 }
 
-int Indice::elementoExiste(Coluna *coluna)
+int Indice::elementoExiste(Column *coluna)
 {
  int qtd, idx;
- Coluna *col=NULL;
+ Column *col=NULL;
  bool enc=false;
 
  idx=0;
@@ -104,7 +104,7 @@ void Indice::adicionarElemento(const QString &expressao, OperatorClass *classe_o
  }
 }
 
-void Indice::adicionarElemento(Coluna *coluna, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro)
+void Indice::adicionarElemento(Column *coluna, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro)
 {
  //Caso a coluna não esteja aloca, dispara exceção.
  if(!coluna)
@@ -213,7 +213,7 @@ QString Indice::obterExpCondicional(void)
 bool Indice::referenciaColunaIncRelacao(void)
 {
  vector<ElementoIndice>::iterator itr, itr_end;
- Coluna *col=NULL;
+ Column *col=NULL;
  bool enc=false;
 
  /* Primeira lista de elementos é que será varrida

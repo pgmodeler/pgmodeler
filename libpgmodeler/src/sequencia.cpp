@@ -250,7 +250,7 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
  }
 }
 
-void Sequencia::definirPossuidora(Coluna *coluna)
+void Sequencia::definirPossuidora(Column *coluna)
 {
  Tabela *tabela=NULL;
 
@@ -323,7 +323,7 @@ QString Sequencia::obterInicio(void)
  return(inicio);
 }
 
-Coluna *Sequencia::obterPossuidora(void)
+Column *Sequencia::obterPossuidora(void)
 {
  return(coluna);
 }

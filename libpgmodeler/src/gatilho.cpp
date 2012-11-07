@@ -100,7 +100,7 @@ void Gatilho::definirCondicao(const QString &cond)
  this->condicao=cond;
 }
 
-void Gatilho::adicionarColuna(Coluna *coluna)
+void Gatilho::adicionarColuna(Column *coluna)
 {
  if(!coluna)
   throw Exception(QString(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN))
@@ -157,7 +157,7 @@ QString Gatilho::obterArgumento(unsigned idx_arg)
   return(argumentos[idx_arg]);
 }
 
-Coluna *Gatilho::obterColuna(unsigned idx_col)
+Column *Gatilho::obterColuna(unsigned idx_col)
 {
  if(idx_col>=colunas_upd.size())
   throw Exception(ERR_REF_COLUMN_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -220,7 +220,7 @@ void Gatilho::definirTabReferenciada(BaseObject *tabela_ref)
 {
  /* Caso a tabela referenciada a ser atribuída esteja alocada, porém
     seu tipo não seja OBJETO_TABELA, isso gera um erro */
- if(tabela_ref && tabela_ref->getType()!=OBJ_TABLE)
+ if(tabela_ref && tabela_ref->getObjectType()!=OBJ_TABLE)
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Atribui a tabela referenciada ao gatilho
@@ -254,8 +254,8 @@ bool Gatilho::gatilhoPostergavel(void)
 
 bool Gatilho::referenciaColunaIncRelacao(void)
 {
- vector<Coluna *>::iterator itr, itr_end;
- Coluna *col=NULL;
+ vector<Column *>::iterator itr, itr_end;
+ Column *col=NULL;
  bool enc=false;
 
  itr=colunas_upd.begin();

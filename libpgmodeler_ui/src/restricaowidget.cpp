@@ -102,7 +102,7 @@ void RestricaoWidget::adicionarColuna(int idx_lin)
  QObject *obj_sender=sender();
  TabelaObjetosWidget *tab_col_aux=NULL;
  QComboBox *combo=NULL;
- Coluna *coluna=NULL;
+ Column *coluna=NULL;
  unsigned tipo_col;
 
  try
@@ -126,7 +126,7 @@ void RestricaoWidget::adicionarColuna(int idx_lin)
   }
 
   //Obtém a referêni   coluna no item atual do combo box
-  coluna=reinterpret_cast<Coluna *>(combo->itemData(combo->currentIndex(),Qt::UserRole).value<void *>());
+  coluna=reinterpret_cast<Column *>(combo->itemData(combo->currentIndex(),Qt::UserRole).value<void *>());
   //Quando a coluna vai ser atribuída a tabela a mesma é removida do combo
   combo->removeItem(combo->currentIndex());
   //Adiciona a coluna   tabela
@@ -167,7 +167,7 @@ void RestricaoWidget::removerColunas(void)
  }
 }
 
-void RestricaoWidget::adicionarColuna(Coluna *coluna, unsigned tipo_col, int idx_lin)
+void RestricaoWidget::adicionarColuna(Column *coluna, unsigned tipo_col, int idx_lin)
 {
  TabelaObjetosWidget *tabela_wgt=NULL;
 
@@ -184,7 +184,7 @@ void RestricaoWidget::adicionarColuna(Coluna *coluna, unsigned tipo_col, int idx
   /* Exibe os dados da coluna na linha especificada, definindo a referênci  coluna
      como dado da linha */
   tabela_wgt->definirTextoCelula(QString::fromUtf8(coluna->getName()),idx_lin,0);
-  tabela_wgt->definirTextoCelula(QString::fromUtf8(~coluna->obterTipo()),idx_lin,1);
+  tabela_wgt->definirTextoCelula(QString::fromUtf8(~coluna->getType()),idx_lin,1);
   tabela_wgt->definirDadoLinha(QVariant::fromValue<void *>(coluna), idx_lin);
 
   /* Caso o objeto esteja protegido ou foi incluído por relacionamento
@@ -206,7 +206,7 @@ void RestricaoWidget::adicionarColuna(Coluna *coluna, unsigned tipo_col, int idx
 void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
 {
  TabelaObjetosWidget *tab_col_aux=NULL;
- Coluna *coluna=NULL;
+ Column *coluna=NULL;
  Tabela *tabela=NULL;
  QComboBox *combo=NULL;
  Relacionamento *relacao=NULL;
@@ -269,7 +269,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
       coluna não está presente na tabela */
    if(tab_col_aux->obterIndiceLinha(QVariant::fromValue<void *>(coluna)) < 0)
    {
-    combo->addItem(QString::fromUtf8(coluna->getName()) + " (" + ~coluna->obterTipo() +")", QVariant::fromValue<void *>(coluna));
+    combo->addItem(QString::fromUtf8(coluna->getName()) + " (" + ~coluna->getType() +")", QVariant::fromValue<void *>(coluna));
    }
   }
   //Desabilita o obtão de inserir itens na tabela caso não hajam itens no combobox
@@ -375,7 +375,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
 {
  ObjectType tipo_obj;
  unsigned qtd, i, lin_tab;
- Coluna *coluna=NULL;
+ Column *coluna=NULL;
  Tabela *tabela_ref=NULL;
 
  if(!objeto_pai)
@@ -390,7 +390,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
  sel_tabela_ref->definirModelo(modelo);
 
  //Obtém o tipo de objeto pai da restrição o qual pode ser uma tabela ou relacionamento
- tipo_obj=objeto_pai->getType();
+ tipo_obj=objeto_pai->getObjectType();
 
  //Obtém a quantidade de colunas existentes no objeto pai
  if(tipo_obj==OBJ_TABLE)
@@ -480,7 +480,7 @@ void RestricaoWidget::aplicarConfiguracao(void)
  {
   Restricao *restricao=NULL;
   unsigned i, tipo_col, qtd;
-  Coluna *coluna=NULL;
+  Column *coluna=NULL;
   TabelaObjetosWidget *tab_obj_aux=NULL;
 
   iniciarConfiguracao<Restricao>();
@@ -514,7 +514,7 @@ void RestricaoWidget::aplicarConfiguracao(void)
   qtd=tab_obj_aux->obterNumLinhas();
    for(i=0; i < qtd; i++)
    {
-    coluna=reinterpret_cast<Coluna *>(tab_obj_aux->obterDadoLinha(i).value<void *>());
+    coluna=reinterpret_cast<Column *>(tab_obj_aux->obterDadoLinha(i).value<void *>());
     restricao->adicionarColuna(coluna, tipo_col);
    }
   }

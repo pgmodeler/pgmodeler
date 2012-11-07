@@ -719,7 +719,7 @@ void OGRelacionamento::configurarAtributos(void)
  if(relacao)
  {
   int i, qtd;
-  Coluna *atrib=NULL;
+  Column *atrib=NULL;
   QGraphicsItemGroup *atributo=NULL;
   QGraphicsLineItem *lin=NULL;
   QGraphicsEllipseItem *desc=NULL;

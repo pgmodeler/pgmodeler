@@ -194,7 +194,7 @@ Parametro FuncaoWidget::obterParametro(TabelaObjetosWidget *tab, unsigned idx_li
    param.setName(tab->obterTextoCelula(idx_lin,0));
 
    //Configura o tipo do parâmetro com o tipo armazenado na linha atual da tabela
-   param.definirTipo(tab->obterDadoLinha(idx_lin).value<TipoPgSQL>());
+   param.setType(tab->obterDadoLinha(idx_lin).value<TipoPgSQL>());
 
    //Obtendo informações específicas quando se trata da tabela de parâmetros
    if(tab==tab_parametros)
@@ -205,7 +205,7 @@ Parametro FuncaoWidget::obterParametro(TabelaObjetosWidget *tab, unsigned idx_li
     param.definirSaida(str_aux.contains("OUT"));
 
     //Configura o valor padrâo do parâmetro
-    param.definirValorPadrao(tab->obterTextoCelula(idx_lin,3));
+    param.setDefaultValue(tab->obterTextoCelula(idx_lin,3));
    }
   }
   catch(Exception &e)
@@ -226,12 +226,12 @@ void FuncaoWidget::exibirDadosParametro(Parametro param, TabelaObjetosWidget *ta
   /* Para as duas tabelas (tab_parametros ou tab_retorno) as duas primeiras colunas
      são destinadas, respectivamente, ao nome e tipo do parâmetro */
   tab->definirTextoCelula(QString::fromUtf8(param.getName()),idx_lin,0);
-  tab->definirTextoCelula(QString::fromUtf8(*param.obterTipo()),idx_lin,1);
+  tab->definirTextoCelula(QString::fromUtf8(*param.getType()),idx_lin,1);
 
   /* Armazena na linha da tabela uma cópia do tipo do parâmetro.
       Isso é usado pelo método obterParametro() quando o usuário
       solicita obter um parâmetro a partir de um a linha da tabela */
-  tab->definirDadoLinha(QVariant::fromValue<TipoPgSQL>(param.obterTipo()), idx_lin);
+  tab->definirDadoLinha(QVariant::fromValue<TipoPgSQL>(param.getType()), idx_lin);
 
   /* Caso a tabela passada seja a de parâmetro configura as demais
      colunas com os demais atributos do parâmetro */
@@ -243,7 +243,7 @@ void FuncaoWidget::exibirDadosParametro(Parametro param, TabelaObjetosWidget *ta
    tab->definirTextoCelula(str_aux,idx_lin,2);
 
    //Exibe o valor padrão do parâmetro
-   tab->definirTextoCelula(QString::fromUtf8(param.obterValorPadrao()),idx_lin,3);
+   tab->definirTextoCelula(QString::fromUtf8(param.getDefaultValue()),idx_lin,3);
   }
  }
 }
@@ -595,13 +595,13 @@ void FuncaoWidget::aplicarConfiguracao(void)
    /* Cria um parâmetro auxiliar e os configura de acordo com os valores
       do parâmetro atual (i) na tabela */
    param.setName(tab_parametros->obterTextoCelula(i,0));
-   param.definirTipo(tab_parametros->obterDadoLinha(i).value<TipoPgSQL>());
+   param.setType(tab_parametros->obterDadoLinha(i).value<TipoPgSQL>());
 
    str_aux=tab_parametros->obterTextoCelula(i,2);
    param.definirEntrada(str_aux.indexOf("IN") >= 0);
    param.definirSaida(str_aux.indexOf("OUT") >= 0);
 
-   param.definirValorPadrao(tab_parametros->obterTextoCelula(i,3));
+   param.setDefaultValue(tab_parametros->obterTextoCelula(i,3));
 
    //Uma vez configurado esse parâmetro e inserido na função
    func->adicionarParametro(param);

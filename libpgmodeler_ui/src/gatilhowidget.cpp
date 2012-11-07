@@ -93,12 +93,12 @@ void GatilhoWidget::definirGratilhoRestricao(bool valor)
 
 void GatilhoWidget::adicionarColuna(int idx_lin)
 {
- Coluna *coluna=NULL;
+ Column *coluna=NULL;
 
  try
  {
   //Obtém a referêni   coluna no item atual do combo box
-  coluna=reinterpret_cast<Coluna *>(coluna_cmb->itemData(coluna_cmb->currentIndex(),Qt::UserRole).value<void *>());
+  coluna=reinterpret_cast<Column *>(coluna_cmb->itemData(coluna_cmb->currentIndex(),Qt::UserRole).value<void *>());
   //Quando a coluna vai ser atribuída a tabela a mesma é removida do combo
   coluna_cmb->removeItem(coluna_cmb->currentIndex());
   //Adiciona a coluna   tabela
@@ -113,7 +113,7 @@ void GatilhoWidget::adicionarColuna(int idx_lin)
  }
 }
 
-void GatilhoWidget::adicionarColuna(Coluna *coluna, int idx_lin)
+void GatilhoWidget::adicionarColuna(Column *coluna, int idx_lin)
 {
  //Caso a coluna esteja alocada e o índice da linha seja válido (não-negativo)
  if(coluna && idx_lin >= 0)
@@ -121,14 +121,14 @@ void GatilhoWidget::adicionarColuna(Coluna *coluna, int idx_lin)
   /* Exibe os dados da coluna na linha especificada, definindo a referênci  coluna
      como dado da linha */
   tab_colunas->definirTextoCelula(QString::fromUtf8(coluna->getName()),idx_lin,0);
-  tab_colunas->definirTextoCelula(QString::fromUtf8(~coluna->obterTipo()),idx_lin,1);
+  tab_colunas->definirTextoCelula(QString::fromUtf8(~coluna->getType()),idx_lin,1);
   tab_colunas->definirDadoLinha(QVariant::fromValue<void *>(coluna), idx_lin);
  }
 }
 
 void GatilhoWidget::atualizarComboColunas(void)
 {
- Coluna *coluna=NULL;
+ Column *coluna=NULL;
  unsigned i, qtd_col=0;
 
  try
@@ -146,7 +146,7 @@ void GatilhoWidget::atualizarComboColunas(void)
       coluna não está presente na tabela */
    if(tab_colunas->obterIndiceLinha(QVariant::fromValue<void *>(coluna)) < 0)
    {
-    coluna_cmb->addItem(QString::fromUtf8(coluna->getName()) + " (" + ~coluna->obterTipo() +")",
+    coluna_cmb->addItem(QString::fromUtf8(coluna->getName()) + " (" + ~coluna->getType() +")",
                             QVariant::fromValue<void *>(coluna));
    }
   }
@@ -210,7 +210,7 @@ void GatilhoWidget::hideEvent(QHideEvent *evento)
 void GatilhoWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaOperacoes *lista_op, Gatilho *gatilho)
 {
  unsigned qtd=0, i;
- Coluna *coluna=NULL;
+ Column *coluna=NULL;
 
  if(!tabela_pai)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -275,7 +275,7 @@ void GatilhoWidget::aplicarConfiguracao(void)
  {
   Gatilho *gatilho=NULL;
   unsigned i, qtd;
-  Coluna *coluna=NULL;
+  Column *coluna=NULL;
 
   iniciarConfiguracao<Gatilho>();
 
@@ -309,7 +309,7 @@ void GatilhoWidget::aplicarConfiguracao(void)
   qtd=tab_colunas->obterNumLinhas();
   for(i=0; i < qtd; i++)
   {
-   coluna=reinterpret_cast<Coluna *>(tab_colunas->obterDadoLinha(i).value<void *>());
+   coluna=reinterpret_cast<Column *>(tab_colunas->obterDadoLinha(i).value<void *>());
    gatilho->adicionarColuna(coluna);
   }
 

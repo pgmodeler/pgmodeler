@@ -100,7 +100,7 @@ class Visao: public BaseTable {
   bool referenciaTabela(Tabela *tab);
 
   //Retorna se a visão referencia uma dada coluna
-  bool referenciaColuna(Coluna *col);
+  bool referenciaColuna(Column *col);
 
   //Copia os atributos do objeto do parâmetro para o objeto this
   void operator = (Visao &visao);

@@ -95,9 +95,9 @@ bool Tipo::atributoExiste(const QString &nome_atrib)
 void Tipo::adicionarAtributo(Parametro atrib)
 {
  //O atributo não pode ter o nome vazio nem tipo nulo
- if(atrib.getName()=="" || atrib.obterTipo()==TipoPgSQL::nulo)
+ if(atrib.getName()=="" || atrib.getType()==TipoPgSQL::nulo)
   throw Exception(ERR_INS_INV_TYPE_ATTRIB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !atrib.obterTipo())
+ else if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !atrib.getType())
   throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Verifica se o atributo com mesmo nome já não foi inserido no tipo
@@ -275,20 +275,20 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
      A função TPMOD_OUT deve possuir um parâmetro do tipo (integer).
      A função ANALYZE deve possuir um parâmetro do tipo (internal). */
   else if((conf_func==FUNCAO_INPUT &&
-          (funcao->obterParametro(0).obterTipo()!="cstring" ||
+          (funcao->obterParametro(0).getType()!="cstring" ||
            (qtd_params==3 &&
-            (funcao->obterParametro(1).obterTipo()!="oid" ||
-             funcao->obterParametro(2).obterTipo()!="integer")))) ||
-          (conf_func==FUNCAO_OUTPUT && funcao->obterParametro(0).obterTipo()!="any") ||
+            (funcao->obterParametro(1).getType()!="oid" ||
+             funcao->obterParametro(2).getType()!="integer")))) ||
+          (conf_func==FUNCAO_OUTPUT && funcao->obterParametro(0).getType()!="any") ||
           (conf_func==FUNCAO_RECV &&
-           (funcao->obterParametro(0).obterTipo()!="internal" ||
+           (funcao->obterParametro(0).getType()!="internal" ||
             (qtd_params==3 &&
-             (funcao->obterParametro(1).obterTipo()!="oid" ||
-              funcao->obterParametro(2).obterTipo()!="integer")))) ||
-           (conf_func==FUNCAO_SEND && funcao->obterParametro(0).obterTipo()!="any") ||
-          (conf_func==FUNCAO_TPMOD_IN && *(funcao->obterParametro(0).obterTipo())!="cstring[]") ||
-          (conf_func==FUNCAO_TPMOD_OUT && funcao->obterParametro(0).obterTipo()!="integer") ||
-          (conf_func==FUNCAO_ANALYZE && funcao->obterParametro(0).obterTipo()!="internal"))
+             (funcao->obterParametro(1).getType()!="oid" ||
+              funcao->obterParametro(2).getType()!="integer")))) ||
+           (conf_func==FUNCAO_SEND && funcao->obterParametro(0).getType()!="any") ||
+          (conf_func==FUNCAO_TPMOD_IN && *(funcao->obterParametro(0).getType())!="cstring[]") ||
+          (conf_func==FUNCAO_TPMOD_OUT && funcao->obterParametro(0).getType()!="integer") ||
+          (conf_func==FUNCAO_ANALYZE && funcao->obterParametro(0).getType()!="internal"))
    throw Exception(ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   funcao->setProtected(false);
@@ -320,12 +320,12 @@ void Tipo::converterParametrosFuncoes(bool conv_inversa)
 
     if(!conv_inversa)
     {
-     param.definirTipo(TipoPgSQL(this));
+     param.setType(TipoPgSQL(this));
      funcao->adicionarParametro(param);
     }
     else
     {
-     param.definirTipo(TipoPgSQL("any"));
+     param.setType(TipoPgSQL("any"));
      funcao->adicionarParametro(param);
     }
    }
@@ -407,7 +407,7 @@ void Tipo::definirAtributoElementos(unsigned tipo_def)
 
   if(tipo_def==SchemaParser::SQL_DEFINITION)
   {
-   str_elem+=param.getName() + " " + (*param.obterTipo());
+   str_elem+=param.getName() + " " + (*param.getType());
    if(i < (qtd-1)) str_elem+=",";
   }
   else

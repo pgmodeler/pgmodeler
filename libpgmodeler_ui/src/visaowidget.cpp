@@ -134,7 +134,7 @@ void VisaoWidget::manipularReferencia(int idx_ref)
    /* Chama o método de construtor de referência informando os parâmetros necessários
       para relacioná-la a uma coluna de tabela */
    ref=Referencia(dynamic_cast<Tabela *>(sel_tabela->obterObjeto()),
-                  dynamic_cast<Coluna *>(sel_coluna->obterObjeto()),
+                  dynamic_cast<Column *>(sel_coluna->obterObjeto()),
                   alias_tab_edt->text(), alias_col_edt->text());
   }
   /* Se o combo de tipo de referência estiver selecionado como referência a uma expressão
@@ -225,7 +225,7 @@ void VisaoWidget::editarReferencia(int idx_ref)
 
 void VisaoWidget::exibirNomeObjeto(void)
 {
- Coluna *col=NULL;
+ Column *col=NULL;
  QObject *obj_sender=sender();
 
  /* Caso o objeto sender seja o seletor de tabela, isso indica
@@ -247,7 +247,7 @@ void VisaoWidget::exibirNomeObjeto(void)
  else
  {
   //Obtém a coluna do seletor
-  col=dynamic_cast<Coluna *>(sel_coluna->obterObjeto());
+  col=dynamic_cast<Column *>(sel_coluna->obterObjeto());
 
   /* Bloqueia os sinais do seletor de tabela pois qualquer
      alteração sem bloqueio de sinal pode causar a chamada indefinida
@@ -269,7 +269,7 @@ void VisaoWidget::exibirNomeObjeto(void)
 void VisaoWidget::exibirDadosReferencia(Referencia refer, bool selec_from, bool from_where, bool apos_where, unsigned idx_lin)
 {
  Tabela *tab=NULL;
- Coluna *col=NULL;
+ Column *col=NULL;
  QString str_aux;
 
  //Caso a referência seja a uma coluna
