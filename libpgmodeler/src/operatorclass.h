@@ -26,7 +26,7 @@
                                                                                                                                                                                                                    
 #include "baseobject.h"                                                                                                                                                                                            
 #include "operatorclasselement.h"                                                                                                                                                                                  
-#include "familiaoperadores.h"                                                                                                                                                                                     
+#include "operatorfamily.h"
                                                                                                                                                       
 class OperatorClass: public BaseObject {
  private:                                                                                                                                                                                                          
@@ -34,7 +34,7 @@ class OperatorClass: public BaseObject {
   TipoPgSQL data_type;
 
   //Operator family that the operator class is part
-  FamiliaOperadores *family;
+  OperatorFamily *family;
 
   //Indexing type (method) adopted by the operator class
   TipoIndexacao indexing_type;
@@ -58,7 +58,7 @@ class OperatorClass: public BaseObject {
   void setDataType(TipoPgSQL data_type);
 
   //Sets the operator family that the operator class is part
-  void setFamily(FamiliaOperadores *family);
+  void setFamily(OperatorFamily *family);
 
   //Set the indexing type used by the operator class
   void setIndexingType(TipoIndexacao index_type);
@@ -75,7 +75,7 @@ class OperatorClass: public BaseObject {
 
   //Methods used to obtain the class attributes
   TipoPgSQL getDataType(void);
-  FamiliaOperadores *getFamily(void);
+  OperatorFamily *getFamily(void);
   TipoIndexacao getIndexingType(void);
   bool isDefault(void);
   unsigned getElementCount(void);

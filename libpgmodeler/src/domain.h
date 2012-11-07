@@ -23,7 +23,7 @@
 #define DOMAIN_H
 
 #include "baseobject.h"
-#include "esquema.h"
+#include "schema.h"
 
 class Domain: public BaseObject{
  private:

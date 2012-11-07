@@ -28,14 +28,14 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/sequencia.h \
            $$PWD/src/tipospgsql.h \
            $$PWD/src/conversion.h \
-           $$PWD/src/esquema.h \
+           $$PWD/src/schema.h \
            $$PWD/src/indexelement.h \
            $$PWD/src/indice.h \
            $$PWD/src/basegraphicobject.h \
            $$PWD/src/relacionamento.h \
            $$PWD/src/tabela.h \
            $$PWD/src/visao.h \
-           $$PWD/src/familiaoperadores.h \
+           $$PWD/src/operatorfamily.h \
            $$PWD/src/operatorclasselement.h \
            $$PWD/src/operatorclass.h \
            $$PWD/src/listaoperacoes.h \
@@ -56,7 +56,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/operador.cpp \
             $$PWD/src/restricao.cpp \
             $$PWD/src/tipospgsql.cpp \
-            $$PWD/src/esquema.cpp \
+            $$PWD/src/schema.cpp \
             $$PWD/src/linguagem.cpp \
             $$PWD/src/papel.cpp \
             $$PWD/src/sequencia.cpp \
@@ -71,7 +71,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/baseobject.cpp \
             $$PWD/src/relacionamento.cpp \
             $$PWD/src/basetable.cpp \
-            $$PWD/src/familiaoperadores.cpp \
+            $$PWD/src/operatorfamily.cpp \
             $$PWD/src/operatorclasselement.cpp \
             $$PWD/src/operatorclass.cpp \
             $$PWD/src/listaoperacoes.cpp \

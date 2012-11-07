@@ -10,7 +10,7 @@ EsquemaWidget::EsquemaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_SCHE
  janela_pai->setMaximumSize(16777215, 220);
 }
 
-void EsquemaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Esquema *esquema)
+void EsquemaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Schema *esquema)
 {
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, esquema);
@@ -20,7 +20,7 @@ void EsquemaWidget::aplicarConfiguracao(void)
 {
  try
  {
-  iniciarConfiguracao<Esquema>();
+  iniciarConfiguracao<Schema>();
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();
  }

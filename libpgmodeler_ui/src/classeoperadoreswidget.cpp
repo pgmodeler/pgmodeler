@@ -289,7 +289,7 @@ void ClasseOperadoresWidget::aplicarConfiguracao(void)
 
   //Atribui os valores configurados no formulário    classe de operadores
   classe_op->setDefault(classe_op->isDefault());
-  classe_op->setFamily(dynamic_cast<FamiliaOperadores *>(sel_familiaop->obterObjeto()));
+  classe_op->setFamily(dynamic_cast<OperatorFamily *>(sel_familiaop->obterObjeto()));
   classe_op->setIndexingType(TipoIndexacao(tipo_index_cmb->currentText()));
   classe_op->setDataType(tipo_dado->obterTipoPgSQL());
 

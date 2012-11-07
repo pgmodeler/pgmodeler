@@ -25,7 +25,7 @@
 #define TIPO_H
 
 #include "baseobject.h"
-#include "esquema.h"
+#include "schema.h"
 #include "funcao.h"
 #include "papel.h"
 

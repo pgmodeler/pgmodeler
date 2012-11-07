@@ -23,7 +23,7 @@
 #define REFERENCIA_H
 
 #include "tabela.h"
-#include "esquema.h"
+#include "schema.h"
 
 class Referencia {
  private:

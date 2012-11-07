@@ -171,7 +171,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_AGGREGATE)
     adicionarFuncaoAgregacao(dynamic_cast<FuncaoAgregacao *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_SCHEMA)
-    adicionarEsquema(dynamic_cast<Esquema *>(objeto), idx_obj);
+    adicionarEsquema(dynamic_cast<Schema *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_VIEW)
     adicionarVisao(dynamic_cast<Visao *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TYPE)
@@ -191,7 +191,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_OPCLASS)
     adicionarClasseOperadores(dynamic_cast<OperatorClass *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_OPFAMILY)
-    adicionarFamiliaOperadores(dynamic_cast<FamiliaOperadores *>(objeto), idx_obj);
+    adicionarFamiliaOperadores(dynamic_cast<OperatorFamily *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_DOMAIN)
     adicionarDominio(dynamic_cast<Domain *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_SEQUENCE)
@@ -229,7 +229,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_AGGREGATE)
     removerFuncaoAgregacao(dynamic_cast<FuncaoAgregacao *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_SCHEMA)
-    removerEsquema(dynamic_cast<Esquema *>(objeto), idx_obj);
+    removerEsquema(dynamic_cast<Schema *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_VIEW)
     removerVisao(dynamic_cast<Visao *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TYPE)
@@ -249,7 +249,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_OPCLASS)
     removerClasseOperadores(dynamic_cast<OperatorClass *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_OPFAMILY)
-    removerFamiliaOperadores(dynamic_cast<FamiliaOperadores *>(objeto), idx_obj);
+    removerFamiliaOperadores(dynamic_cast<OperatorFamily *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_DOMAIN)
     removerDominio(dynamic_cast<Domain *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_SEQUENCE)
@@ -294,7 +294,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
   else if(tipo_obj==OBJ_AGGREGATE)
    removerFuncaoAgregacao(dynamic_cast<FuncaoAgregacao *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_SCHEMA)
-   removerEsquema(dynamic_cast<Esquema *>(objeto), idx_obj);
+   removerEsquema(dynamic_cast<Schema *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_VIEW)
    removerVisao(dynamic_cast<Visao *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_TYPE)
@@ -314,7 +314,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
  else if(tipo_obj==OBJ_OPCLASS)
   removerClasseOperadores(dynamic_cast<OperatorClass *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_OPFAMILY)
-  removerFamiliaOperadores(dynamic_cast<FamiliaOperadores *>(objeto), idx_obj);
+  removerFamiliaOperadores(dynamic_cast<OperatorFamily *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_DOMAIN)
   removerDominio(dynamic_cast<Domain *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_SEQUENCE)
@@ -1710,7 +1710,7 @@ Textbox *ModeloBD::obterCaixaTexto(unsigned idx_obj)
  return(dynamic_cast<Textbox *>(obterObjeto(idx_obj, OBJ_TEXTBOX)));
 }
 
-void ModeloBD::adicionarEsquema(Esquema *esquema, int idx_obj)
+void ModeloBD::adicionarEsquema(Schema *esquema, int idx_obj)
 {
  try
  {
@@ -1722,12 +1722,12 @@ void ModeloBD::adicionarEsquema(Esquema *esquema, int idx_obj)
  }
 }
 
-Esquema *ModeloBD::getSchema(unsigned idx_obj)
+Schema *ModeloBD::getSchema(unsigned idx_obj)
 {
- return(dynamic_cast<Esquema *>(obterObjeto(idx_obj, OBJ_SCHEMA)));
+ return(dynamic_cast<Schema *>(obterObjeto(idx_obj, OBJ_SCHEMA)));
 }
 
-void ModeloBD::removerEsquema(Esquema *esquema, int idx_obj)
+void ModeloBD::removerEsquema(Schema *esquema, int idx_obj)
 {
  if(esquema)
  {
@@ -2108,7 +2108,7 @@ Domain *ModeloBD::obterDominio(unsigned idx_obj)
  return(dynamic_cast<Domain *>(obterObjeto(idx_obj, OBJ_DOMAIN)));
 }
 
-void ModeloBD::adicionarFamiliaOperadores(FamiliaOperadores *familia_op, int idx_obj)
+void ModeloBD::adicionarFamiliaOperadores(OperatorFamily *familia_op, int idx_obj)
 {
  try
  {
@@ -2120,12 +2120,12 @@ void ModeloBD::adicionarFamiliaOperadores(FamiliaOperadores *familia_op, int idx
  }
 }
 
-FamiliaOperadores *ModeloBD::obterFamiliaOperadores(unsigned idx_obj)
+OperatorFamily *ModeloBD::obterFamiliaOperadores(unsigned idx_obj)
 {
- return(dynamic_cast<FamiliaOperadores *>(obterObjeto(idx_obj, OBJ_OPFAMILY)));
+ return(dynamic_cast<OperatorFamily *>(obterObjeto(idx_obj, OBJ_OPFAMILY)));
 }
 
-void ModeloBD::removerFamiliaOperadores(FamiliaOperadores *familia_op, int idx_obj)
+void ModeloBD::removerFamiliaOperadores(OperatorFamily *familia_op, int idx_obj)
 {
  if(familia_op)
  {
@@ -2934,7 +2934,7 @@ void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
  map<QString, QString> atributos, atribs_aux;
  QString nome_elem;//, str_aux;
  BaseObject *esp_tabela=NULL, *dono=NULL;
- Esquema *esquema=NULL;
+ Schema *esquema=NULL;
  ObjectType tipo_obj=BASE_OBJECT, tipo_obj_aux;
  bool erro=false, protegido=false;
 
@@ -2985,7 +2985,7 @@ void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
     {
      tipo_obj=OBJ_SCHEMA;
      XMLParser::getElementAttributes(atribs_aux);
-     esquema=dynamic_cast<Esquema *>(obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj));
+     esquema=dynamic_cast<Schema *>(obterObjeto(atribs_aux[ParsersAttributes::NAME], tipo_obj));
      objeto->setSchema(esquema);
      erro=(!esquema && !atribs_aux[ParsersAttributes::NAME].isEmpty());
     }
@@ -3234,15 +3234,15 @@ Tablespace *ModeloBD::criarEspacoTabela(void)
  return(esp_tabela);
 }
 
-Esquema *ModeloBD::criarEsquema(void)
+Schema *ModeloBD::criarEsquema(void)
 {
  map<QString, QString> atributos;
- Esquema *esquema=NULL;
+ Schema *esquema=NULL;
 
  try
  {
   //Aloca no novo esquema
-  esquema=new Esquema;
+  esquema=new Schema;
 
   //Lê do parser os atributos basicos
   definirAtributosBasicos(esquema);
@@ -4286,7 +4286,7 @@ OperatorClass *ModeloBD::criarClasseOperadores(void)
                              .arg(BaseObject::getTypeName(OBJ_OPFAMILY)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      classe_op->setFamily(dynamic_cast<FamiliaOperadores *>(objeto));
+      classe_op->setFamily(dynamic_cast<OperatorFamily *>(objeto));
      }
      else if(elem==ParsersAttributes::TYPE)
      {
@@ -4346,21 +4346,21 @@ OperatorClass *ModeloBD::criarClasseOperadores(void)
  return(classe_op);
 }
 
-FamiliaOperadores *ModeloBD::criarFamiliaOperadores(void)
+OperatorFamily *ModeloBD::criarFamiliaOperadores(void)
 {
  map<QString, QString> atributos;
- FamiliaOperadores *familia_op=NULL;
+ OperatorFamily *familia_op=NULL;
 
  try
  {
-  familia_op=new FamiliaOperadores;
+  familia_op=new OperatorFamily;
   definirAtributosBasicos(familia_op);
 
   //Obtém os atributos do elemento
   XMLParser::getElementAttributes(atributos);
 
   //Definindo os valores de atributos básicos do objeto
-  familia_op->definirTipoIndexacao(TipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]));
+  familia_op->setIndexingType(TipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]));
  }
  catch(Exception &e)
  {
@@ -7595,7 +7595,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
   if(tipo_obj==OBJ_OPFAMILY)
   {
    vector<BaseObject *>::iterator itr, itr_end;
-   FamiliaOperadores *familia_op=dynamic_cast<FamiliaOperadores *>(objeto);
+   OperatorFamily *familia_op=dynamic_cast<OperatorFamily *>(objeto);
 
    /* Varre a lista de classe de operadores e verifica se um
       de seus elementos está referenciando a família de operadores */

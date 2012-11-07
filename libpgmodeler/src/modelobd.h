@@ -29,7 +29,7 @@
 #include "baseobject.h"
 #include "tabela.h"
 #include "funcao.h"
-#include "esquema.h"
+#include "schema.h"
 #include "visao.h"
 #include "sequencia.h"
 #include "relacionamento.h"
@@ -296,9 +296,9 @@ class ModeloBD:  public QObject, public BaseObject {
   Funcao *obterFuncao(unsigned idx_obj);
 
   //Métodos de manipulação de esquemas
-  void adicionarEsquema(Esquema *schema, int idx_obj=-1);
-  void removerEsquema(Esquema *schema, int idx_obj=-1);
-  Esquema *getSchema(unsigned idx_obj);
+  void adicionarEsquema(Schema *schema, int idx_obj=-1);
+  void removerEsquema(Schema *schema, int idx_obj=-1);
+  Schema *getSchema(unsigned idx_obj);
 
   //Métodos de manipulação de visões
   void adicionarVisao(Visao *visao, int idx_obj=-1);
@@ -356,9 +356,9 @@ class ModeloBD:  public QObject, public BaseObject {
   OperatorClass *obterClasseOperadores(unsigned idx_obj);
 
   //Métodos de manipulação de famílias de operadores
-  void adicionarFamiliaOperadores(FamiliaOperadores *familia_op, int idx_obj=-1);
-  void removerFamiliaOperadores(FamiliaOperadores *familia_op, int idx_obj=-1);
-  FamiliaOperadores *obterFamiliaOperadores(unsigned idx_obj);
+  void adicionarFamiliaOperadores(OperatorFamily *familia_op, int idx_obj=-1);
+  void removerFamiliaOperadores(OperatorFamily *familia_op, int idx_obj=-1);
+  OperatorFamily *obterFamiliaOperadores(unsigned idx_obj);
 
   //Métodos de manipulação de domínios
   void adicionarDominio(Domain *dominio, int idx_obj=-1);
@@ -399,7 +399,7 @@ class ModeloBD:  public QObject, public BaseObject {
 
   Papel *criarPapel(void);
   Tablespace *criarEspacoTabela(void);
-  Esquema *criarEsquema(void);
+  Schema *criarEsquema(void);
   Linguagem *criarLinguagem(void);
   Funcao *criarFuncao(void);
   Parametro criarParametro(void);
@@ -408,7 +408,7 @@ class ModeloBD:  public QObject, public BaseObject {
   Cast *criarConversaoTipo(void);
   Conversion *criarConversaoCodificacao(void);
   Operador *criarOperador(void);
-  FamiliaOperadores *criarFamiliaOperadores(void);
+  OperatorFamily *criarFamiliaOperadores(void);
   OperatorClass *criarClasseOperadores(void);
   FuncaoAgregacao *criarFuncaoAgregacao(void);
   Tabela *criarTabela(void);

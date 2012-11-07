@@ -11,7 +11,7 @@ Tablespace::Tablespace(void)
 
 void Tablespace::setName(const QString &name)
 {
- /* Object names starting with pg_ is reserved to PostgreSQL if its the case
+ /* Tablespace names starting with pg_ is reserved to PostgreSQL if its the case
     raises an error */
  if(name.mid(0,3)=="pg_")
   throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)

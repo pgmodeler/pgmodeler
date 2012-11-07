@@ -24,7 +24,7 @@
 
 #include "baseobject.h"
 #include "funcao.h"
-#include "esquema.h"
+#include "schema.h"
 #include "papel.h"
 
 class Operador: public BaseObject {

@@ -81,10 +81,10 @@ void copiarObjeto(BaseObject **pobj_orig, BaseObject *obj_copia, ObjectType tipo
     copiarObjeto(pobj_orig, dynamic_cast<Tablespace *>(obj_copia));
   break;
   case OBJ_SCHEMA:
-    copiarObjeto(pobj_orig, dynamic_cast<Esquema *>(obj_copia));
+    copiarObjeto(pobj_orig, dynamic_cast<Schema *>(obj_copia));
   break;
   case OBJ_OPFAMILY:
-    copiarObjeto(pobj_orig, dynamic_cast<FamiliaOperadores *>(obj_copia));
+    copiarObjeto(pobj_orig, dynamic_cast<OperatorFamily *>(obj_copia));
   break;
   case OBJ_FUNCTION:
     copiarObjeto(pobj_orig, dynamic_cast<Funcao *>(obj_copia));

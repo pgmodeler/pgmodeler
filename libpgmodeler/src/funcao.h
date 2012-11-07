@@ -23,7 +23,7 @@
 #define FUNCAO_H
 
 #include "baseobject.h"
-#include "esquema.h"
+#include "schema.h"
 #include "papel.h"
 #include "column.h"
 

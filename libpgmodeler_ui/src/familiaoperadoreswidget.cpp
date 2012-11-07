@@ -25,7 +25,7 @@ void FamiliaOperadoresWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void FamiliaOperadoresWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, FamiliaOperadores *familia_op)
+void FamiliaOperadoresWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, OperatorFamily *familia_op)
 {
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, familia_op);
@@ -33,18 +33,18 @@ void FamiliaOperadoresWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes 
  /* Caso a familia de operadores esteja alocada, marca o tipo de indexação
     que o objeto usa */
  if(familia_op)
-  tipo_index_cmb->setCurrentIndex(tipo_index_cmb->findText(~(familia_op->obterTipoIndexacao())));
+  tipo_index_cmb->setCurrentIndex(tipo_index_cmb->findText(~(familia_op->getIndexingType())));
 }
 
 void FamiliaOperadoresWidget::aplicarConfiguracao(void)
 {
  try
  {
-  FamiliaOperadores *familia_op=NULL;
+  OperatorFamily *familia_op=NULL;
 
-  iniciarConfiguracao<FamiliaOperadores>();
-  familia_op=dynamic_cast<FamiliaOperadores *>(this->objeto);
-  familia_op->definirTipoIndexacao(TipoIndexacao(tipo_index_cmb->currentText()));
+  iniciarConfiguracao<OperatorFamily>();
+  familia_op=dynamic_cast<OperatorFamily *>(this->objeto);
+  familia_op->setIndexingType(TipoIndexacao(tipo_index_cmb->currentText()));
 
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();

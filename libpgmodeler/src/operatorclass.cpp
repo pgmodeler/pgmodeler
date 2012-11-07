@@ -26,7 +26,7 @@ void OperatorClass::setDataType(TipoPgSQL data_type)
  this->data_type=data_type;
 }
 
-void OperatorClass::setFamily(FamiliaOperadores *family)
+void OperatorClass::setFamily(OperatorFamily *family)
 {
  this->family=family;
 }
@@ -122,7 +122,7 @@ TipoPgSQL OperatorClass::getDataType(void)
  return(data_type);
 }
 
-FamiliaOperadores *OperatorClass::getFamily(void)
+OperatorFamily *OperatorClass::getFamily(void)
 {
  return(family);
 }

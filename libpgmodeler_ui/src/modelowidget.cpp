@@ -1141,7 +1141,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
   switch(tipo_obj)
   {
    case OBJ_SCHEMA:
-    esquema_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Esquema *>(objeto));
+    esquema_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Schema *>(objeto));
     esquema_wgt->show();
    break;
 
@@ -1196,7 +1196,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_OPFAMILY:
-    familiaop_wgt->definirAtributos(modelo, lista_op, dynamic_cast<FamiliaOperadores *>(objeto));
+    familiaop_wgt->definirAtributos(modelo, lista_op, dynamic_cast<OperatorFamily *>(objeto));
     familiaop_wgt->show();
    break;
 

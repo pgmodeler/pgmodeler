@@ -555,7 +555,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
 {
  ModeloWidget *tab_modelo;
  QString nome_obj, nome_tab, str_aux;
- Esquema *esq_publico=NULL;
+ Schema *esq_publico=NULL;
  Linguagem *ling=NULL;
  QLayout *layout=NULL;
 
@@ -578,7 +578,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
  layout->setContentsMargins(4,4,4,4);
 
  //Cria objetos do sistema (esquema public e linguagens c, sql e plpgsql)
- esq_publico=new Esquema;
+ esq_publico=new Schema;
  esq_publico->setName("public");
  tab_modelo->modelo->adicionarObjeto(esq_publico);
 

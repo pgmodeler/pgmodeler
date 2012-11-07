@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe FamiliaOperadores que é usada para
-#             gerar os códigos SQL pertinente s famílias de operadores
-#             referenciadas pelas classes de operadores
+# Class: OperatorFamily
+# Description: Implements the operations to manipulate operator family on the database.
 # Creation date: 08/07/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -20,28 +19,28 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef FAMILIAOPERADORES_H
-#define FAMILIAOPERADORES_H
+#ifndef OPERATOR_FAMILY_H
+#define OPERATOR_FAMILY_H
 
 #include "baseobject.h"
 
-class FamiliaOperadores: public BaseObject {
+class OperatorFamily: public BaseObject {
  private:
-  //Tipo de indexação usada na família de operadores
-  TipoIndexacao tipo_index;
+  //Indexing type used by the operator family
+  TipoIndexacao indexing_type;
 
  public:
-  FamiliaOperadores(void);
+  OperatorFamily(void);
 
-  //Define o tipo de indexacao usado na família
-  void definirTipoIndexacao(TipoIndexacao tipo);
+  //Sets the indexing type of the operator family
+  void setIndexingType(TipoIndexacao idx_type);
 
-  //Retorna o tipo de indexação
-  TipoIndexacao obterTipoIndexacao(void);
+  //Returns the indexing type of the operator family
+  TipoIndexacao getIndexingType(void);
 
-  //Retorna a definição SQL ou XML do objeto
-  QString getCodeDefinition(unsigned tipo_def, bool forma_reduzida);
-  QString getCodeDefinition(unsigned tipo_def);
+  //Returns the SQL / XML code definition for the operator family
+  QString getCodeDefinition(unsigned def_type, bool reduced_form);
+  QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

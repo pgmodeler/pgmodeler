@@ -606,7 +606,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
       alocação do formulário de cada tipo de objeto. */
    if(sel_esquema->isVisible())
    {
-    Esquema *esquema=dynamic_cast<Esquema *>(sel_esquema->obterObjeto());
+    Schema *esquema=dynamic_cast<Schema *>(sel_esquema->obterObjeto());
     objeto->setSchema(esquema);
    }
   }

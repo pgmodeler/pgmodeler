@@ -1,9 +1,8 @@
 /* 
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Esquema que é usado para
-#             representar graficamente os esquemas em banco de dados
-#             e gerar os códigos SQL pertinentes a estes.
+# Class: Schema
+# Description: Implements the operations to manipulate schemas on the database.
 # Creation date: 07/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -20,20 +19,18 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef ESQUEMA_H
-#define ESQUEMA_H
+#ifndef SCHEMA_H
+#define SCHEMA_H
 
 #include "baseobject.h"
 
-class Esquema: public BaseObject {
+class Schema: public BaseObject {
  private:
   static unsigned schema_id;
 
  public:
-  Esquema(void);
-
-  //Define o nome do esquema
-  void setName(const QString &obj_name);
+  Schema(void);
+  void setName(const QString &name);
   QString getCodeDefinition(unsigned def_type);
 };
 
