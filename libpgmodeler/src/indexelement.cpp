@@ -1,11 +1,11 @@
-#include "elementoindice.h"
+#include "indexelement.h"
 
 IndexElement::IndexElement(void)
 {
  column=NULL;
  operator_class=NULL;
- attributes[NULLS_FIRST]=false;
- attributes[ASC_ORDER]=true;
+ sort_attibutes[NULLS_FIRST]=false;
+ sort_attibutes[ASC_ORDER]=true;
 }
 
 void IndexElement::setColumn(Column *column)
@@ -31,20 +31,20 @@ void IndexElement::setOperatorClass(OperatorClass *oper_class)
  this->operator_class=oper_class;
 }
 
-void IndexElement::setAttribute(unsigned attrib, bool value)
+void IndexElement::setSortAttribute(unsigned attrib, bool value)
 {
  if(attrib > NULLS_FIRST)
   throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  
- attributes[attrib]=value;
+ sort_attibutes[attrib]=value;
 }
 
-bool IndexElement::getAttribute(unsigned attrib)
+bool IndexElement::getSortAttribute(unsigned attrib)
 {
  if(attrib > NULLS_FIRST)
   throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  
- return(attributes[attrib]);
+ return(sort_attibutes[attrib]);
 }
 
 Column *IndexElement::getColumn(void)
@@ -70,8 +70,8 @@ QString IndexElement::getCodeDefinition(unsigned def_type)
  attributes[ParsersAttributes::EXPRESSION]="";
  attributes[ParsersAttributes::OP_CLASS]="";
  
- attributes[ParsersAttributes::NULLS_FIRST]=(attributes[NULLS_FIRST] ? "1" : "");
- attributes[ParsersAttributes::ASC_ORDER]=(attributes[ASC_ORDER] ? "1" : "");
+ attributes[ParsersAttributes::NULLS_FIRST]=(this->sort_attibutes[NULLS_FIRST] ? "1" : "");
+ attributes[ParsersAttributes::ASC_ORDER]=(this->sort_attibutes[ASC_ORDER] ? "1" : "");
  
  if(column)
   attributes[ParsersAttributes::COLUMN]=column->getName(true);

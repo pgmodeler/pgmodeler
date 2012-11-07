@@ -96,8 +96,8 @@ void Indice::adicionarElemento(const QString &expressao, OperatorClass *classe_o
 
   elem.setExpression(expressao);
   elem.setOperatorClass(classe_oper);
-  elem.setAttribute(IndexElement::NULLS_FIRST, nulos_primeiro);
-  elem.setAttribute(IndexElement::ASC_ORDER, ordem_asc);
+  elem.setSortAttribute(IndexElement::NULLS_FIRST, nulos_primeiro);
+  elem.setSortAttribute(IndexElement::ASC_ORDER, ordem_asc);
 
   //Adiciona o elemento ao final da lista de elementos do índice
   elementos.push_back(elem);
@@ -124,8 +124,8 @@ void Indice::adicionarElemento(Column *coluna, OperatorClass *classe_oper, bool 
 
   elem.setColumn(coluna);
   elem.setOperatorClass(classe_oper);
-  elem.setAttribute(IndexElement::NULLS_FIRST, nulos_primeiro);
-  elem.setAttribute(IndexElement::ASC_ORDER, ordem_asc);
+  elem.setSortAttribute(IndexElement::NULLS_FIRST, nulos_primeiro);
+  elem.setSortAttribute(IndexElement::ASC_ORDER, ordem_asc);
 
   //Adiciona o elemento ao final da lista de elementos do índice
   elementos.push_back(elem);

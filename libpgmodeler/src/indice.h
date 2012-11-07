@@ -24,7 +24,7 @@
 #define INDICE_H
 
 #include "tableobject.h"
-#include "elementoindice.h"
+#include "indexelement.h"
 
 class Indice: public TableObject{
  private:

@@ -144,12 +144,12 @@ void IndiceWidget::exibirDadosElemento(IndexElement elem, int idx_elem)
  else
   tab_elementos->definirTextoCelula("-", idx_elem, 2);
 
- if(elem.getAttribute(IndexElement::ASC_ORDER))
+ if(elem.getSortAttribute(IndexElement::ASC_ORDER))
   tab_elementos->definirTextoCelula(ascendente_rb->text(), idx_elem, 3);
  else
   tab_elementos->definirTextoCelula(descendente_rb->text(), idx_elem, 3);
 
- if(elem.getAttribute(IndexElement::NULLS_FIRST))
+ if(elem.getSortAttribute(IndexElement::NULLS_FIRST))
   tab_elementos->definirTextoCelula(trUtf8("Sim"), idx_elem, 4);
  else
   tab_elementos->definirTextoCelula(trUtf8("Não"), idx_elem, 4);
@@ -169,8 +169,8 @@ void IndiceWidget::manipularElemento(int idx_elem)
   IndexElement elem;
 
   //Configura um elemento com todos os dados configurados no formulário d elementos
-  elem.setAttribute(IndexElement::NULLS_FIRST, nulos_primeiro_chk->isChecked());
-  elem.setAttribute(IndexElement::ASC_ORDER, ascendente_rb->isChecked());
+  elem.setSortAttribute(IndexElement::NULLS_FIRST, nulos_primeiro_chk->isChecked());
+  elem.setSortAttribute(IndexElement::ASC_ORDER, ascendente_rb->isChecked());
   elem.setOperatorClass(dynamic_cast<OperatorClass *>(sel_classe_op->obterObjeto()));
 
   if(expressao_rb->isChecked())
@@ -214,11 +214,11 @@ void IndiceWidget::editarElemento(int idx_elem)
  }
 
  //Configura a ordenação do formulário conforme configurado no elemento
- if(elem.getAttribute(IndexElement::ASC_ORDER))
+ if(elem.getSortAttribute(IndexElement::ASC_ORDER))
   ascendente_rb->setChecked(true);
  else
   descendente_rb->setChecked(true);
- nulos_primeiro_chk->setChecked(elem.getAttribute(IndexElement::NULLS_FIRST));
+ nulos_primeiro_chk->setChecked(elem.getSortAttribute(IndexElement::NULLS_FIRST));
 
  //Exibe a classe de operadores no formulário
  sel_classe_op->definirObjeto(elem.getOperatorClass());
@@ -331,13 +331,13 @@ void IndiceWidget::aplicarConfiguracao(void)
    if(elem.getColumn())
     //Adiciona um elmento como sendo um com coluna
     indice->adicionarElemento(elem.getColumn(), elem.getOperatorClass(),
-                              elem.getAttribute(IndexElement::ASC_ORDER),
-                              elem.getAttribute(IndexElement::NULLS_FIRST));
+                              elem.getSortAttribute(IndexElement::ASC_ORDER),
+                              elem.getSortAttribute(IndexElement::NULLS_FIRST));
    else
     //Adiciona um elmento como sendo um com expressão
     indice->adicionarElemento(elem.getExpression(), elem.getOperatorClass(),
-                              elem.getAttribute(IndexElement::ASC_ORDER),
-                              elem.getAttribute(IndexElement::NULLS_FIRST));
+                              elem.getSortAttribute(IndexElement::ASC_ORDER),
+                              elem.getSortAttribute(IndexElement::NULLS_FIRST));
   }
 
   //Aplica as configurações básicas

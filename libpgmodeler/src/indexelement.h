@@ -1,9 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe ElementoIndice que é usada para
-#             armazenar e gerar os códigos SQL/XML pertinentes aos atributos
-#             usados nas índices.
+# Description: Implements the operations to manipulate index elements.
 # Creation date: 26/05/2010
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -28,46 +26,47 @@
 
 class IndexElement {
  private:
-  /* Coluna referenciada pelo elemento do índice. Este atributo é
-     mutuamente exclusivo com o atributo expressao, ou seja,
-     quando um é setado o outro tem seu valor zerado */
+  /* Column referenced by the index element. This attribute is
+     mutually exclusive with the expression attribute, this means,
+     when one is set the other has empty (null) value */
   Column *column;
 
-  /*Expressão referenciada pelo elemento do índice. Este atributo é
-    mutuamente exclusivo com o atributo coluna, ou seja,
-    quando um é setado o outro tem seu valor zerado */
+  /* Expression referenced by the index element. This attribute is
+     mutually exclusive with the column attribute, this means
+     when one is set the other has empty (null) value */
   QString expression;
 
-  //Classe de operadores referenciada pelo elemento
+  //Operator class used by the index element
   OperatorClass *operator_class;
 
-  //Atributos booleanos do elemento (ASC|DESC, NULLS FIRST|LAST)
-  bool attributes[2];
+  /* Sorting attributes of the element (ASC|DESC, NULLS [FIRST|LAST])
+     This attibutes can be configured used the constants ASC_ORDER and NULLS_FIRST */
+  bool sort_attibutes[2];
 
  public:
-   const static unsigned ASC_ORDER=0;
-   const static unsigned NULLS_FIRST=1;
+  //Constants used to reference the sorting method of the element
+  const static unsigned ASC_ORDER=0,
+                        NULLS_FIRST=1;
 
    IndexElement(void);
 
-   //Métodos de configuração do elemento
+   //Element configuration methods
    void setColumn(Column *column);
    void setExpression(const QString &expression);
-   void setOperatorClass(OperatorClass *operator_class);
+   void setOperatorClass(OperatorClass *oper_class);
 
-   //Define o estado de uma das 2 configurações booleanas do elemento
-   void setAttribute(unsigned id_atrib, bool valor);
+   //Sets the state of one of the element sorting method
+   void setSortAttribute(unsigned attrib, bool value);
 
-   //Obtém uma das configurações do elemento
-   bool getAttribute(unsigned id_atrib);
+   //Gets the curret state of the element sorting attribute
+   bool getSortAttribute(unsigned attrib);
 
-   //Métodos de obtenção dos atributos do elemento
    Column *getColumn(void);
    QString getExpression(void);
    OperatorClass *getOperatorClass(void);
 
-   //Retorna a definição SQL ou XML do objeto
-   QString getCodeDefinition(unsigned tipo_def);
+   //Returns the SQL / XML code definition for the index element
+   QString getCodeDefinition(unsigned def_type);
 };
 
 #endif
