@@ -434,7 +434,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
 {
  vector<BaseObject *> *lista_obj;
  vector<BaseObject *>::iterator itr, itr_end;
- ConversaoCodificacao *conv_cod=NULL;
+ Conversion *conv_cod=NULL;
  ConversaoTipo *conv_tipo=NULL;
  FuncaoAgregacao *func_ag=NULL;
  Gatilho *gatilho=NULL;
@@ -480,9 +480,9 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
          a validade da função em relação aos objetos que a referenciam. */
     if(tipos[i]==OBJ_CONVERSION)
     {
-     conv_cod=dynamic_cast<ConversaoCodificacao *>(objeto);
-     if(conv_cod->obterFuncaoConversao()==funcao)
-      conv_cod->definirFuncaoConversao(funcao);
+     conv_cod=dynamic_cast<Conversion *>(objeto);
+     if(conv_cod->getConversionFunction()==funcao)
+      conv_cod->setConversionFunction(funcao);
     }
     else if(tipos[i]==OBJ_CAST)
     {

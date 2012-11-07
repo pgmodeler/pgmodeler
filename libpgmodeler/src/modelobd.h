@@ -40,7 +40,7 @@
 #include "linguagem.h"
 #include "funcaoagregacao.h"
 #include "conversaotipo.h"
-#include "conversaocodificacao.h"
+#include "conversion.h"
 #include "operatorclass.h"
 #include "xmlparser.h"
 #include "permissao.h"
@@ -341,9 +341,9 @@ class ModeloBD:  public QObject, public BaseObject {
   ConversaoTipo *obterConversaoTipo(unsigned idx_obj);
 
   //Métodos de manipulação de conversões de codificação
-  void adicionarConversaoCodificacao(ConversaoCodificacao *conv_codificacao, int idx_obj=-1);
-  void removerConversaoCodificacao(ConversaoCodificacao *conv_codificacao, int idx_obj=-1);
-  ConversaoCodificacao *obterConversaoCodificacao(unsigned idx_obj);
+  void adicionarConversaoCodificacao(Conversion *conv_codificacao, int idx_obj=-1);
+  void removerConversaoCodificacao(Conversion *conv_codificacao, int idx_obj=-1);
+  Conversion *obterConversaoCodificacao(unsigned idx_obj);
 
   //Métodos de manipulação de operadores
   void adicionarOperador(Operador *operador, int idx_obj=-1);
@@ -406,7 +406,7 @@ class ModeloBD:  public QObject, public BaseObject {
   Tipo *criarTipo(void);
   Dominio *criarDominio(void);
   ConversaoTipo *criarConversaoTipo(void);
-  ConversaoCodificacao *criarConversaoCodificacao(void);
+  Conversion *criarConversaoCodificacao(void);
   Operador *criarOperador(void);
   FamiliaOperadores *criarFamiliaOperadores(void);
   OperatorClass *criarClasseOperadores(void);

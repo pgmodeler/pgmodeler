@@ -27,7 +27,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/regra.h \
            $$PWD/src/sequencia.h \
            $$PWD/src/tipospgsql.h \
-           $$PWD/src/conversaocodificacao.h \
+           $$PWD/src/conversion.h \
            $$PWD/src/esquema.h \
            $$PWD/src/elementoindice.h \
            $$PWD/src/indice.h \
@@ -61,7 +61,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/papel.cpp \
             $$PWD/src/sequencia.cpp \
             $$PWD/src/visao.cpp \
-            $$PWD/src/conversaocodificacao.cpp \
+            $$PWD/src/conversion.cpp \
             $$PWD/src/funcao.cpp \
             $$PWD/src/modelobd.cpp \
             $$PWD/src/regra.cpp \

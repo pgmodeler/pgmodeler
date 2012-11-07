@@ -48,7 +48,7 @@ void ConversaoCodificacaoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 //---------------------------------------------------------
-void ConversaoCodificacaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, ConversaoCodificacao *conv_cod)
+void ConversaoCodificacaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Conversion *conv_cod)
 {
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, conv_cod);
@@ -56,10 +56,10 @@ void ConversaoCodificacaoWidget::definirAtributos(ModeloBD *modelo, ListaOperaco
 
  if(conv_cod)
  {
-  sel_funcao_conv->definirObjeto(conv_cod->obterFuncaoConversao());
-  conv_cod->definirPadrao(conv_padrao_chk->isChecked());
-  cod_orig_cmb->setCurrentIndex(cod_dest_cmb->findText(~(conv_cod->obterCodificacao(ConversaoCodificacao::CONV_COD_ORIGEM))));
-  cod_dest_cmb->setCurrentIndex(cod_dest_cmb->findText(~(conv_cod->obterCodificacao(ConversaoCodificacao::CONV_COD_DESTINO))));
+  sel_funcao_conv->definirObjeto(conv_cod->getConversionFunction());
+  conv_cod->setDefault(conv_padrao_chk->isChecked());
+  cod_orig_cmb->setCurrentIndex(cod_dest_cmb->findText(~(conv_cod->getEncoding(Conversion::SRC_ENCODING))));
+  cod_dest_cmb->setCurrentIndex(cod_dest_cmb->findText(~(conv_cod->getEncoding(Conversion::DST_ENCODING))));
  }
 }
 
@@ -67,21 +67,21 @@ void ConversaoCodificacaoWidget::aplicarConfiguracao(void)
 {
  try
  {
-  ConversaoCodificacao *conv_cod=NULL;
+  Conversion *conv_cod=NULL;
 
-  iniciarConfiguracao<ConversaoCodificacao>();
-  conv_cod=dynamic_cast<ConversaoCodificacao *>(this->objeto);
+  iniciarConfiguracao<Conversion>();
+  conv_cod=dynamic_cast<Conversion *>(this->objeto);
 
   //Aplica as configurações básicas
   ObjetoBaseWidget::aplicarConfiguracao();
 
   //Configurando a conversão com os atributos especificados no formulário
-  conv_cod->definirCodificacao(ConversaoCodificacao::CONV_COD_ORIGEM, cod_orig_cmb->currentText());
-  conv_cod->definirCodificacao(ConversaoCodificacao::CONV_COD_DESTINO, cod_dest_cmb->currentText());
-  conv_cod->definirPadrao(conv_padrao_chk->isChecked());
+  conv_cod->setEncoding(Conversion::SRC_ENCODING, cod_orig_cmb->currentText());
+  conv_cod->setEncoding(Conversion::DST_ENCODING, cod_dest_cmb->currentText());
+  conv_cod->setDefault(conv_padrao_chk->isChecked());
 
   //Atribui a função de conversão com aquela que está selecionada no seletor de função
-  conv_cod->definirFuncaoConversao(dynamic_cast<Funcao*>(sel_funcao_conv->obterObjeto()));
+  conv_cod->setConversionFunction(dynamic_cast<Funcao*>(sel_funcao_conv->obterObjeto()));
 
   finalizarConfiguracao();
  }

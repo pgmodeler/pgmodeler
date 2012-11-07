@@ -185,7 +185,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_CAST)
     adicionarConversaoTipo(dynamic_cast<ConversaoTipo *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_CONVERSION)
-    adicionarConversaoCodificacao(dynamic_cast<ConversaoCodificacao *>(objeto), idx_obj);
+    adicionarConversaoCodificacao(dynamic_cast<Conversion *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_OPERATOR)
     adicionarOperador(dynamic_cast<Operador *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_OPCLASS)
@@ -243,7 +243,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_CAST)
     removerConversaoTipo(dynamic_cast<ConversaoTipo *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_CONVERSION)
-    removerConversaoCodificacao(dynamic_cast<ConversaoCodificacao *>(objeto), idx_obj);
+    removerConversaoCodificacao(dynamic_cast<Conversion *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_OPERATOR)
     removerOperador(dynamic_cast<Operador *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_OPCLASS)
@@ -308,7 +308,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
  else if(tipo_obj==OBJ_CAST)
    removerConversaoTipo(dynamic_cast<ConversaoTipo *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_CONVERSION)
-   removerConversaoCodificacao(dynamic_cast<ConversaoCodificacao *>(objeto), idx_obj);
+   removerConversaoCodificacao(dynamic_cast<Conversion *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_OPERATOR)
   removerOperador(dynamic_cast<Operador *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_OPCLASS)
@@ -1888,7 +1888,7 @@ ConversaoTipo *ModeloBD::obterConversaoTipo(unsigned idx_obj)
  return(dynamic_cast<ConversaoTipo *>(obterObjeto(idx_obj, OBJ_CAST)));
 }
 
-void ModeloBD::adicionarConversaoCodificacao(ConversaoCodificacao *conv_codificacao, int idx_obj)
+void ModeloBD::adicionarConversaoCodificacao(Conversion *conv_codificacao, int idx_obj)
 {
  try
  {
@@ -1900,14 +1900,14 @@ void ModeloBD::adicionarConversaoCodificacao(ConversaoCodificacao *conv_codifica
  }
 }
 
-void ModeloBD::removerConversaoCodificacao(ConversaoCodificacao *conv_codificacao, int idx_obj)
+void ModeloBD::removerConversaoCodificacao(Conversion *conv_codificacao, int idx_obj)
 {
  __removerObjeto(conv_codificacao, idx_obj);
 }
 
-ConversaoCodificacao *ModeloBD::obterConversaoCodificacao(unsigned idx_obj)
+Conversion *ModeloBD::obterConversaoCodificacao(unsigned idx_obj)
 {
- return(dynamic_cast<ConversaoCodificacao *>(obterObjeto(idx_obj,
+ return(dynamic_cast<Conversion *>(obterObjeto(idx_obj,
  OBJ_CONVERSION)));
 }
 
@@ -4018,16 +4018,16 @@ ConversaoTipo *ModeloBD::criarConversaoTipo(void)
  return(conv_tipo);
 }
 
-ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
+Conversion *ModeloBD::criarConversaoCodificacao(void)
 {
  map<QString, QString> atributos;
- ConversaoCodificacao *conv_codif=NULL;
+ Conversion *conv_codif=NULL;
  QString elem;
  BaseObject *funcao=NULL;
 
  try
  {
-  conv_codif=new ConversaoCodificacao;
+  conv_codif=new Conversion;
 
   //Lê do parser os atributos basicos
   definirAtributosBasicos(conv_codif);
@@ -4035,10 +4035,10 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
   //Obtém os atributos
   XMLParser::getElementAttributes(atributos);
 
-  conv_codif->definirCodificacao(ConversaoCodificacao::CONV_COD_ORIGEM,
+  conv_codif->setEncoding(Conversion::SRC_ENCODING,
                                  TipoCodificacao(atributos[ParsersAttributes::SRC_ENCODING]));
 
-  conv_codif->definirCodificacao(ConversaoCodificacao::CONV_COD_DESTINO,
+  conv_codif->setEncoding(Conversion::DST_ENCODING,
                                  TipoCodificacao(atributos[ParsersAttributes::DST_ENCODING]));
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
@@ -4072,7 +4072,7 @@ ConversaoCodificacao *ModeloBD::criarConversaoCodificacao(void)
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Atribui a funç   conversão de tipos
-      conv_codif->definirFuncaoConversao(dynamic_cast<Funcao *>(funcao));
+      conv_codif->setConversionFunction(dynamic_cast<Funcao *>(funcao));
      }
     }
    }
@@ -6529,7 +6529,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   else if(tipo_obj==OBJ_CONVERSION)
   {
    //Obtém as dependências da função de conversão que define a conversão de codificação
-   Funcao *func=dynamic_cast<ConversaoCodificacao *>(objeto)->obterFuncaoConversao();
+   Funcao *func=dynamic_cast<Conversion *>(objeto)->getConversionFunction();
    obterDependenciasObjeto(func, vet_deps, inc_dep_indiretas);
   }
   //** Obtendo as dependências de Conversões de Tipo **
@@ -7009,7 +7009,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Verifica se o objeto não referencia o papel
-      if(dynamic_cast<ConversaoCodificacao *>(*itr)->obterFuncaoConversao()==funcao)
+      if(dynamic_cast<Conversion *>(*itr)->getConversionFunction()==funcao)
       {
        refer=true;
        vet_refs.push_back(*itr);

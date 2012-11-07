@@ -1171,7 +1171,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_CONVERSION:
-    convcodif_wgt->definirAtributos(modelo, lista_op, dynamic_cast<ConversaoCodificacao *>(objeto));
+    convcodif_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Conversion *>(objeto));
     convcodif_wgt->show();
    break;
 
