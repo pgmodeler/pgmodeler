@@ -1,17 +1,17 @@
-#include "gatilho.h"
+#include "trigger.h"
 
 Gatilho::Gatilho(void)
 {
  unsigned i, tipos[4]={TipoEvento::on_insert, TipoEvento::on_delete,
                        TipoEvento::on_update, TipoEvento::on_truncate};
 
- funcao=NULL;
- por_linha=false;
+ function=NULL;
+ is_exec_per_row=false;
  obj_type=OBJ_TRIGGER;
- tabela_ref=NULL;
+ referenced_table=NULL;
 
  for(i=0; i < 4; i++)
-  eventos[tipos[i]]=false;
+  events[tipos[i]]=false;
 
  attributes[ParsersAttributes::ARGUMENTS]="";
  attributes[ParsersAttributes::EVENTS]="";
@@ -31,47 +31,47 @@ Gatilho::Gatilho(void)
  attributes[ParsersAttributes::DECL_IN_TABLE]="";
 }
 
-void Gatilho::adicionarArgumento(const QString &arg)
+void Gatilho::addArgument(const QString &arg)
 {
- argumentos.push_back(arg);
+ arguments.push_back(arg);
 }
 
-void Gatilho::definirAtributoArgumentos(unsigned tipo_def)
+void Gatilho::setArgumentAttribute(unsigned def_type)
 {
  QString str_args;
- unsigned i, qtd;
+ unsigned i, count;
 
- qtd=argumentos.size();
- for(i=0; i < qtd; i++)
+ count=arguments.size();
+ for(i=0; i < count; i++)
  {
-  if(tipo_def==SchemaParser::SQL_DEFINITION)
-   str_args+="'" + argumentos[i] + "'";
+  if(def_type==SchemaParser::SQL_DEFINITION)
+   str_args+="'" + arguments[i] + "'";
   else
-   str_args+=argumentos[i];
+   str_args+=arguments[i];
 
-  if(i < (qtd-1)) str_args+=",";
+  if(i < (count-1)) str_args+=",";
  }
 
  attributes[ParsersAttributes::ARGUMENTS]=str_args;
 }
 
-void Gatilho::definirTipoDisparo(TipoDisparo tipo_disp)
+void Gatilho::setFiringType(TipoDisparo firing_type)
 {
- tipo_disparo=tipo_disp;
+ this->firing_type=firing_type;
 }
 
-void Gatilho::definirEvento(TipoEvento evento, bool valor)
+void Gatilho::setEvent(TipoEvento event, bool value)
 {
- if(evento==TipoEvento::on_select)
+ if(event==TipoEvento::on_select)
   throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- eventos[!evento]=valor;
+ events[!event]=value;
 }
 
-void Gatilho::definirFuncao(Function *funcao)
+void Gatilho::setFunction(Function *func)
 {
  //Caso a função a ser atribuida ao gatilho esteja nula
- if(!funcao)
+ if(!func)
   //Dispara exceção relatando o erro
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->getName()))
@@ -80,186 +80,186 @@ void Gatilho::definirFuncao(Function *funcao)
  else
  {
   //Caso a função não possua tipo de retorno 'trigger', ela não pode ser usada em um gatilho
-  if(funcao->getReturnType()!="trigger")
+  if(func->getReturnType()!="trigger")
    //Dispara exceção relatando o erro
    throw Exception(ERR_ASG_INV_TRIGGER_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   //Caso a função não possua parâmetros, ela não pode ser usada em um gatilho
-  else if(funcao->getParameterCount()==0)
+  else if(func->getParameterCount()==0)
    //Dispara exceção relatando o erro
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_TRIGGER)),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
-   this->funcao=funcao;
+   this->function=func;
  }
 }
 
-void Gatilho::definirCondicao(const QString &cond)
+void Gatilho::setCondition(const QString &cond)
 {
- this->condicao=cond;
+ this->condition=cond;
 }
 
-void Gatilho::adicionarColuna(Column *coluna)
+void Gatilho::addColumn(Column *column)
 {
- if(!coluna)
+ if(!column)
   throw Exception(QString(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN))
                 .arg(this->getName(true))
                 .arg(this->getTypeName()),
                 ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(coluna->getParentTable() != this->getParentTable())
+ else if(column->getParentTable() != this->getParentTable())
   throw Exception(QString(Exception::getErrorMessage(ERR_ASG_INV_COLUMN_TRIGGER))
-                .arg(coluna->getName(true))
+                .arg(column->getName(true))
                 .arg(this->getName(true)),
                 ERR_ASG_INV_COLUMN_TRIGGER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  colunas_upd.push_back(coluna);
+  upd_columns.push_back(column);
 }
 
-void Gatilho::editarArgumento(unsigned idx_arg, const QString &novo_arg)
+void Gatilho::editArgument(unsigned arg_idx, const QString &new_arg)
 {
  /* Caso o índice do argumento esteja fora da capacidade
     da lista de argumentos */
- if(idx_arg>=argumentos.size())
+ if(arg_idx>=arguments.size())
   //Dispara exceção relatando o erro
   throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   vector<QString>::iterator itr;
 
-  itr=argumentos.begin()+idx_arg;
-  (*itr)=novo_arg; //Muda o valor do argumento
+  itr=arguments.begin()+arg_idx;
+  (*itr)=new_arg; //Muda o valor do argumento
  }
 }
 
-void Gatilho::executarPorLinha(bool valor)
+void Gatilho::setExecutePerRow(bool value)
 {
- por_linha=valor;
+ is_exec_per_row=value;
 }
 
-bool Gatilho::executaNoEvento(TipoEvento evento)
+bool Gatilho::isExecuteOnEvent(TipoEvento event)
 {
- if(evento==TipoEvento::on_select)
+ if(event==TipoEvento::on_select)
   throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(eventos.at(!evento));
+ return(events.at(!event));
 }
 
-QString Gatilho::obterArgumento(unsigned idx_arg)
+QString Gatilho::getArgument(unsigned arg_idx)
 {
  /* Caso o índice do argumento esteja fora da capacidade
     da lista de argumentos */
- if(idx_arg>=argumentos.size())
+ if(arg_idx>=arguments.size())
   //Dispara exceção relatando o erro
   throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Retorna o argumento no índice desejado
-  return(argumentos[idx_arg]);
+  return(arguments[arg_idx]);
 }
 
-Column *Gatilho::obterColuna(unsigned idx_col)
+Column *Gatilho::getColumn(unsigned col_idx)
 {
- if(idx_col>=colunas_upd.size())
+ if(col_idx>=upd_columns.size())
   throw Exception(ERR_REF_COLUMN_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Retorna a coluna no índice desejado
-  return(colunas_upd[idx_col]);
+  return(upd_columns[col_idx]);
 }
 
-unsigned Gatilho::obterNumArgs(void)
+unsigned Gatilho::getArgumentCount(void)
 {
- return(argumentos.size());
+ return(arguments.size());
 }
 
-unsigned Gatilho::obterNumColunas(void)
+unsigned Gatilho::getColumnCount(void)
 {
- return(colunas_upd.size());
+ return(upd_columns.size());
 }
 
-Function *Gatilho::obterFuncao(void)
+Function *Gatilho::getFunction(void)
 {
- return(funcao);
+ return(function);
 }
 
-QString Gatilho::obterCondicao(void)
+QString Gatilho::getCondition(void)
 {
- return(condicao);
+ return(condition);
 }
 
-TipoDisparo Gatilho::obterTipoDisparo(void)
+TipoDisparo Gatilho::getFiringType(void)
 {
- return(tipo_disparo);
+ return(firing_type);
 }
 
-void Gatilho::removerArgumento(unsigned idx_arg)
+void Gatilho::removeArgument(unsigned arg_idx)
 {
  /* Caso o índice do argumento steja fora da capacidade
     da lista de argumentos */
- if(idx_arg>=argumentos.size())
+ if(arg_idx>=arguments.size())
   //Dispara exceção relatando o erro
   throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   vector<QString>::iterator itr;
-  itr=argumentos.begin()+idx_arg;
-  argumentos.erase(itr); //Remove o argumento encontrado
+  itr=arguments.begin()+arg_idx;
+  arguments.erase(itr); //Remove o argumento encontrado
  }
 }
 
-void Gatilho::removerArgumentos(void)
+void Gatilho::removeArguments(void)
 {
- argumentos.clear();
+ arguments.clear();
 }
 
-void Gatilho::removerColunas(void)
+void Gatilho::removeColumns(void)
 {
- colunas_upd.clear();
+ upd_columns.clear();
 }
 
-void Gatilho::definirTabReferenciada(BaseObject *tabela_ref)
+void Gatilho::setReferecendTable(BaseObject *ref_table)
 {
  /* Caso a tabela referenciada a ser atribuída esteja alocada, porém
     seu tipo não seja OBJETO_TABELA, isso gera um erro */
- if(tabela_ref && tabela_ref->getObjectType()!=OBJ_TABLE)
+ if(ref_table && ref_table->getObjectType()!=OBJ_TABLE)
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Atribui a tabela referenciada ao gatilho
- this->tabela_ref=tabela_ref;
+ this->referenced_table=ref_table;
 }
 
-void Gatilho::definirTipoPostergacao(TipoPostergacao tipo)
+void Gatilho::setDeferralType(TipoPostergacao tipo)
 {
- tipo_postergacao=tipo;
+ deferral_type=tipo;
 }
 
-void Gatilho::definirPostergavel(bool valor)
+void Gatilho::setDeferrable(bool valor)
 {
- postergavel=valor;
+ is_deferrable=valor;
 }
 
-BaseObject *Gatilho::obterTabReferenciada(void)
+BaseObject *Gatilho::getReferencedTable(void)
 {
- return(tabela_ref);
+ return(referenced_table);
 }
 
-TipoPostergacao Gatilho::obterTipoPostergacao(void)
+TipoPostergacao Gatilho::getDeferralType(void)
 {
- return(tipo_postergacao);
+ return(deferral_type);
 }
 
-bool Gatilho::gatilhoPostergavel(void)
+bool Gatilho::isDeferrable(void)
 {
- return(postergavel);
+ return(is_deferrable);
 }
 
-bool Gatilho::referenciaColunaIncRelacao(void)
+bool Gatilho::isReferRelationshipColumn(void)
 {
  vector<Column *>::iterator itr, itr_end;
  Column *col=NULL;
  bool enc=false;
 
- itr=colunas_upd.begin();
- itr_end=colunas_upd.end();
+ itr=upd_columns.begin();
+ itr_end=upd_columns.end();
 
  /* Efetua uma iteração verifica se as colunas da lista
     foram incluídas por relacionamento, caso uma coluna
@@ -280,33 +280,33 @@ bool Gatilho::referenciaColunaIncRelacao(void)
  return(enc);
 }
 
-void Gatilho::definirAtributosBasicosGatilho(unsigned tipo_def)
+void Gatilho::setBasicAttributes(unsigned def_type)
 {
  QString str_aux,
-         atribs[4]={ParsersAttributes::INS_EVENT, ParsersAttributes::DEL_EVENT,
+         attribs[4]={ParsersAttributes::INS_EVENT, ParsersAttributes::DEL_EVENT,
                     ParsersAttributes::TRUNC_EVENT, ParsersAttributes::UPD_EVENT },
-         sql_evento[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
- unsigned qtd, i, i1, tipo_eventos[4]={TipoEvento::on_insert, TipoEvento::on_delete,
-                                   TipoEvento::on_truncate, TipoEvento::on_update};
+         sql_event[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
+ unsigned count, i, i1, event_types[4]={TipoEvento::on_insert, TipoEvento::on_delete,
+                                      TipoEvento::on_truncate, TipoEvento::on_update};
 
 
- definirAtributoArgumentos(tipo_def);
+ setArgumentAttribute(def_type);
 
  for(i=0; i < 4; i++)
  {
-  if(eventos.at(tipo_eventos[i]))
+  if(events.at(event_types[i]))
   {
-   str_aux+=sql_evento[i];
-   attributes[atribs[i]]="1";
+   str_aux+=sql_event[i];
+   attributes[attribs[i]]="1";
 
-   if(tipo_eventos[i]==TipoEvento::on_update)
+   if(event_types[i]==TipoEvento::on_update)
    {
-    qtd=colunas_upd.size();
+    count=upd_columns.size();
     attributes[ParsersAttributes::COLUMNS]="";
-    for(i1=0; i1 < qtd; i1++)
+    for(i1=0; i1 < count; i1++)
     {
-     attributes[ParsersAttributes::COLUMNS]+=colunas_upd.at(i1)->getName(true);
-     if(i1 < qtd-1)
+     attributes[ParsersAttributes::COLUMNS]+=upd_columns.at(i1)->getName(true);
+     if(i1 < count-1)
       attributes[ParsersAttributes::COLUMNS]+=",";
     }
    }
@@ -316,18 +316,18 @@ void Gatilho::definirAtributosBasicosGatilho(unsigned tipo_def)
  if(str_aux!="") str_aux.remove(str_aux.size()-3,3);
  attributes[ParsersAttributes::EVENTS]=str_aux;
 
- if(funcao)
+ if(function)
  {
-  if(tipo_def==SchemaParser::SQL_DEFINITION)
-   attributes[ParsersAttributes::TRIGGER_FUNC]=funcao->getName(true);
+  if(def_type==SchemaParser::SQL_DEFINITION)
+   attributes[ParsersAttributes::TRIGGER_FUNC]=function->getName(true);
   else
-   attributes[ParsersAttributes::TRIGGER_FUNC]=funcao->getCodeDefinition(tipo_def, true);
+   attributes[ParsersAttributes::TRIGGER_FUNC]=function->getCodeDefinition(def_type, true);
  }
 }
 
-QString Gatilho::getCodeDefinition(unsigned tipo_def)
+QString Gatilho::getCodeDefinition(unsigned def_type)
 {
- definirAtributosBasicosGatilho(tipo_def);
+ setBasicAttributes(def_type);
 
  /* Caso o gatilho não esteja referenciando alguma coluna incluída por relacionamento
     a mesma será declarada dentro do código da tabela pai e para tanto existe um atributo
@@ -335,26 +335,26 @@ QString Gatilho::getCodeDefinition(unsigned tipo_def)
     para indicar ao parser quando a declaração do gatilho está dentro da declaração da
     tabela pai. Este atributo é usado apenas para ajudar na formatação do código SQL e
     não tem nenhuma outra utilidade. */
- if(!referenciaColunaIncRelacao())
+ if(!isReferRelationshipColumn())
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
  if(this->parent_table)
   attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
- attributes[ParsersAttributes::FIRING_TYPE]=(~tipo_disparo);
+ attributes[ParsersAttributes::FIRING_TYPE]=(~firing_type);
 
  //** Gatilhos Restrições SEMPRE devem executar por linha (FOR EACH ROW) **
- attributes[ParsersAttributes::PER_LINE]=((por_linha && !tabela_ref) || tabela_ref ? "1" : "");
+ attributes[ParsersAttributes::PER_LINE]=((is_exec_per_row && !referenced_table) || referenced_table ? "1" : "");
 
- attributes[ParsersAttributes::CONDITION]=condicao;
+ attributes[ParsersAttributes::CONDITION]=condition;
 
- if(tabela_ref)
+ if(referenced_table)
  {
-  attributes[ParsersAttributes::REF_TABLE]=tabela_ref->getName(true);
-  attributes[ParsersAttributes::DEFERRABLE]=(postergavel ? "1" : "");
-  attributes[ParsersAttributes::DEFER_TYPE]=(~tipo_postergacao);
+  attributes[ParsersAttributes::REF_TABLE]=referenced_table->getName(true);
+  attributes[ParsersAttributes::DEFERRABLE]=(is_deferrable ? "1" : "");
+  attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
  }
 
- return(BaseObject::__getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(def_type));
 }
 

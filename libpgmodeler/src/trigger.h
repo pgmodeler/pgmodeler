@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Gatilho que é usada para
-#             configurar e gerar os códigos SQL referentes
-#             a gatilhos (triggers) em tabelas.
+# Class: Trigger
+# Description: Implements the operations to manipulate triggers on the database.
 # Creation date: 11/10/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -20,8 +19,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef GATILHO_H
-#define GATILHO_H
+#ifndef TRIGGER_H
+#define TRIGGER_H
 
 #include "tableobject.h"
 #include "function.h"
@@ -29,124 +28,124 @@
 class Gatilho: public TableObject{
  protected:
   //Argumentos que são passados a função que o gatilho executa
-  vector<QString> argumentos;
+  vector<QString> arguments;
 
   /* Lista de colunas usadas como condição de disparo da trigger
      Este atributo foi adicionado no PostgreSQL 9.1 é usado somente
      quando o evento UPDATE está presente. */
-  vector<Column *> colunas_upd;
+  vector<Column *> upd_columns;
 
   //Função que será executada com o disparo do gatilho
-  Function *funcao;
+  Function *function;
 
   //Condição que garante ou não a execução do gatilhos
-  QString condicao;
+  QString condition;
 
   //Momento de disparo da a trigger (BEFORE, AFTER, INSTEAD OF)
-  TipoDisparo tipo_disparo;
+  TipoDisparo firing_type;
 
   //Mapa de flags que indica em que evento o gatilho de ver disparado
-  map<unsigned, bool> eventos;
+  map<unsigned, bool> events;
 
   //Flag que indica que a função do gatilho deve ser executada por linha da tabela
-  bool por_linha;
+  bool is_exec_per_row;
 
   //Tabela referenciada pelo gatilho (apenas para gatilho restrição)
-  BaseObject *tabela_ref;
+  BaseObject *referenced_table;
 
   //Indica se o gatílho é postergavel ou não (apenas para gatilho restrição)
-  bool postergavel;
+  bool is_deferrable;
 
   //Tipo de postergação do gatilho (apenas para gatilho restrição)
-  TipoPostergacao tipo_postergacao;
+  TipoPostergacao deferral_type;
 
-  void definirAtributosBasicosGatilho(unsigned tipo_def);
+  void setBasicAttributes(unsigned def_type);
 
   /* Formata a QString de argumentos usada pelo parser de esquema
      na geração da definição SQL do gatilho */
-  void definirAtributoArgumentos(unsigned tipo_def);
+  void setArgumentAttribute(unsigned tipo_def);
 
 
  public:
-  static const unsigned MODO_BEFORE=0;
-  static const unsigned MODO_AFTER=1;
-  static const unsigned MODO_INSTEADOF=2;
+  static const unsigned BEFORE_MODE=0;
+  static const unsigned AFTER_MODE=1;
+  static const unsigned INSTEADOF_MODE=2;
 
   Gatilho(void);
 
   /* Adiciona uma coluna como condição de disparo (apenas para evento update)
      As colunas adicionadas por esse método devem obrigatoriamente pertencer
        coluna dona do gatilho e nã  outras tabelas */
-  void adicionarColuna(Column *coluna);
+  void addColumn(Column *column);
 
   //Adiciona um argumento ao gatilho
-  void adicionarArgumento(const QString &arg);
+  void addArgument(const QString &arg);
 
   //Define em quais eventos (INSERT, DELETE, UPDATE, TRUNCATE) o gatilho pode ser executado
-  void definirEvento(TipoEvento evento, bool valor);
+  void setEvent(TipoEvento event, bool value);
 
   //Define a função que será executada quando o gatilho for chamado
-  void definirFuncao(Function *funcao);
+  void setFunction(Function *func);
 
   //Define a condição de execução do gatilho
-  void definirCondicao(const QString &cond);
+  void setCondition(const QString &cond);
 
   //Define a tabela referenciada
-  void definirTabReferenciada(BaseObject *tabela_ref);
+  void setReferecendTable(BaseObject *ref_table);
 
   //Define o tipo de deferimento
-  void definirTipoPostergacao(TipoPostergacao tipo);
+  void setDeferralType(TipoPostergacao tipo);
 
   //Define se o gatilho é postgergavel ou não
-  void definirPostergavel(bool valor);
+  void setDeferrable(bool valor);
 
   /* Edita um argumento através de seu índice, passando também
      o novo valor que este receberá */
-  void editarArgumento(unsigned idx_arg, const QString &novo_arg);
+  void editArgument(unsigned arg_idx, const QString &new_arg);
 
   //Define o momento de execução do gatilho
-  void definirTipoDisparo(TipoDisparo tipo_disp);
+  void setFiringType(TipoDisparo firing_type);
 
   //Define se o gatlho deve ser executado por linha da tabela
-  void executarPorLinha(bool valor);
+  void setExecutePerRow(bool value);
 
   //Retorna se o gatlho é executado no evento informado
-  bool executaNoEvento(TipoEvento evento);
+  bool isExecuteOnEvent(TipoEvento event);
 
   //Obtém uma coluna referenciada pelo gatilho através do índice
-  Column *obterColuna(unsigned idx_col);
+  Column *getColumn(unsigned col_idx);
 
   //Obtém um argumento através de seu índice
-  QString obterArgumento(unsigned idx_arg);
+  QString getArgument(unsigned arg_idx);
 
   //Obtém a condição definida para execução do gatilho
-  QString obterCondicao(void);
+  QString getCondition(void);
 
   //Obtém a função executada pelo gatilho chamado
-  Function *obterFuncao(void);
+  Function *getFunction(void);
 
   //Obtém o número de argumentos
-  unsigned obterNumArgs(void);
+  unsigned getArgumentCount(void);
 
   //Obtém o número de colunas
-  unsigned obterNumColunas(void);
+  unsigned getColumnCount(void);
 
   //Retorna se o gatilho executa antes de evento
-  TipoDisparo obterTipoDisparo(void);
+  TipoDisparo getFiringType(void);
 
   //Remove um argumento pelo seu índice
-  void removerArgumento(unsigned idx_arg);
-  void removerArgumentos(void);
-  void removerColunas(void);
+  void removeArgument(unsigned arg_idx);
+  void removeArguments(void);
+  void removeColumns(void);
 
   //Obtém a tabela referenciada
-  BaseObject *obterTabReferenciada(void);
+  BaseObject *getReferencedTable(void);
 
   //Obtém o tipo de deferimento da restrição
-  TipoPostergacao obterTipoPostergacao(void);
+  TipoPostergacao getDeferralType(void);
 
   //Obtém se a restrição é postgergavel ou não
-  bool gatilhoPostergavel(void);
+  bool isDeferrable(void);
 
   /* Retorna se o gatilho referencia colunas adicionadas
      por relacionamento. Este método é usado como auxiliar
@@ -154,10 +153,10 @@ class Gatilho: public TableObject{
      referenciam colunas adicionadas por relacionamento a
      fim de se evitar quebra de ligações devido as constantes
      conexões e desconexões de relacionamentos */
-  bool referenciaColunaIncRelacao(void);
+  bool isReferRelationshipColumn(void);
 
   //Retorna a definição SQL ou XML do objeto
-  QString getCodeDefinition(unsigned tipo_def);
+  QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

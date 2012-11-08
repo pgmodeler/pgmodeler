@@ -274,12 +274,12 @@ void OGSubItemObjeto::configurarObjeto(void)
    //Configurando a string de restrições para gatilho
    else if(gatilho)
    {
-    str_rest+=(~gatilho->obterTipoDisparo()).mid(0,1);
+    str_rest+=(~gatilho->getFiringType()).mid(0,1);
     str_rest+=SEPARADOR_REST;
 
     for(unsigned i=TipoEvento::on_insert; i < TipoEvento::on_truncate; i++)
     {
-     if(gatilho->executaNoEvento(TipoEvento(i)))
+     if(gatilho->isExecuteOnEvent(TipoEvento(i)))
       str_rest+=(~TipoEvento(i)).mid(3,1);
     }
     str_rest=str_rest.lower();

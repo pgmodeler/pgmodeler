@@ -186,7 +186,7 @@ void Tabela::definirAtributoGatilhos(unsigned tipo_def)
   gat=dynamic_cast<Gatilho *>(gatilhos.at(i));
 
   if((/*!gat->isProtected() &&*/
-      !gat->referenciaColunaIncRelacao() &&
+      !gat->isReferRelationshipColumn() &&
       tipo_def==SchemaParser::XML_DEFINITION) ||
       tipo_def==SchemaParser::SQL_DEFINITION)
   {
@@ -1139,10 +1139,10 @@ void Tabela::obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_r
    gat=dynamic_cast<Gatilho *>(*itr);
    itr++;
 
-   qtd=gat->obterNumColunas();
+   qtd=gat->getColumnCount();
    for(i=0; i < qtd && (!modo_exclusao || (modo_exclusao && !enc)); i++)
    {
-    if(gat->obterColuna(i)==coluna)
+    if(gat->getColumn(i)==coluna)
     {
      enc=true;
      vet_refs.push_back(gat);

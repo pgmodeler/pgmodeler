@@ -1373,7 +1373,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
 
       /* O gatilho só será considerado como especial caso referencie
          colunas adicionadas por relacionamento */
-      enc=gatilho->referenciaColunaIncRelacao();
+      enc=gatilho->isReferRelationshipColumn();
 
       /* Caso um índice seja encontrado obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
@@ -5114,28 +5114,28 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
   definirAtributosBasicos(gatilho);
 
   //Marcando os eventos de execução do gatilho
-  gatilho->definirEvento(TipoEvento::on_insert,
+  gatilho->setEvent(TipoEvento::on_insert,
                         (atributos[ParsersAttributes::INS_EVENT]==
                          ParsersAttributes::_TRUE_));
 
-  gatilho->definirEvento(TipoEvento::on_delete,
+  gatilho->setEvent(TipoEvento::on_delete,
                         (atributos[ParsersAttributes::DEL_EVENT]==
                          ParsersAttributes::_TRUE_));
 
-  gatilho->definirEvento(TipoEvento::on_update,
+  gatilho->setEvent(TipoEvento::on_update,
                         (atributos[ParsersAttributes::UPD_EVENT]==
                          ParsersAttributes::_TRUE_));
 
-  gatilho->definirEvento(TipoEvento::on_truncate,
+  gatilho->setEvent(TipoEvento::on_truncate,
                         (atributos[ParsersAttributes::TRUNC_EVENT]==
                          ParsersAttributes::_TRUE_));
 
   //Marcando e o gatilho é executado por linha ou não
-  gatilho->executarPorLinha(atributos[ParsersAttributes::PER_LINE]==
+  gatilho->setExecutePerRow(atributos[ParsersAttributes::PER_LINE]==
                             ParsersAttributes::_TRUE_);
 
   //Define o modo de disparo do gatilho
-  gatilho->definirTipoDisparo(TipoDisparo(atributos[ParsersAttributes::FIRING_TYPE]));
+  gatilho->setFiringType(TipoDisparo(atributos[ParsersAttributes::FIRING_TYPE]));
 
 
   /* Atribuindo os argumentos vindo do XML ao gatilho.
@@ -5147,18 +5147,18 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
   for(i=0; i < qtd; i++)
   {
    if(!lista_aux[i].isEmpty())
-    gatilho->adicionarArgumento(lista_aux[i]);
+    gatilho->addArgument(lista_aux[i]);
   }
 
   //Caso o objeto alocado seja um gatilho
-  gatilho->definirPostergavel(atributos[ParsersAttributes::DEFERRABLE]==
+  gatilho->setDeferrable(atributos[ParsersAttributes::DEFERRABLE]==
                               ParsersAttributes::_TRUE_);
-  if(gatilho->gatilhoPostergavel())
-    gatilho->definirTipoPostergacao(atributos[ParsersAttributes::DEFER_TYPE]);
+  if(gatilho->isDeferrable())
+    gatilho->setDeferralType(atributos[ParsersAttributes::DEFER_TYPE]);
 
   //Obtém a tabela referenciada no gatilho
   tabela_ref=obterObjeto(atributos[ParsersAttributes::REF_TABLE], OBJ_TABLE);
-  gatilho->definirTabReferenciada(tabela_ref);
+  gatilho->setReferecendTable(tabela_ref);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
@@ -5192,7 +5192,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
       }
 
       //Define a função executada pelo gatilho
-      gatilho->definirFuncao(dynamic_cast<Function *>(funcao));
+      gatilho->setFunction(dynamic_cast<Function *>(funcao));
      }
      else if(elem==ParsersAttributes::CONDITION)
      {
@@ -5201,7 +5201,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
       str_aux=XMLParser::getElementContent();
       XMLParser::restorePosition();
-      gatilho->definirCondicao(str_aux);
+      gatilho->setCondition(str_aux);
      }
      else if(elem==ParsersAttributes::COLUMNS)
      {
@@ -5224,7 +5224,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
        if(!coluna)
         coluna=tabela->obterColuna(lista_aux[i], true);
 
-       gatilho->adicionarColuna(coluna);
+       gatilho->addColumn(coluna);
       }
      }
     }
@@ -6194,7 +6194,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
      gatilho=tabela->obterGatilho(i);
 
      //Caso o gatilho seja um objeto especial armazena-o no mapa de objetos
-     if(gatilho->referenciaColunaIncRelacao())
+     if(gatilho->isReferRelationshipColumn())
      {
       //Armazena o objeto em si no mapa de objetos
       mapa_objetos[gatilho->getObjectId()]=gatilho;
@@ -6763,11 +6763,11 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    for(i=0; i < qtd; i++)
    {
     gat=dynamic_cast<Gatilho *>(tab->obterGatilho(i));
-    if(gat->obterTabReferenciada())
-     obterDependenciasObjeto(gat->obterTabReferenciada(), vet_deps, inc_dep_indiretas);
+    if(gat->getReferencedTable())
+     obterDependenciasObjeto(gat->getReferencedTable(), vet_deps, inc_dep_indiretas);
 
-    if(gat->obterFuncao())
-     obterDependenciasObjeto(gat->obterFuncao(), vet_deps, inc_dep_indiretas);
+    if(gat->getFunction())
+     obterDependenciasObjeto(gat->getFunction(), vet_deps, inc_dep_indiretas);
 
     //qtd1=gat->obterNumColunas();
     //for(i1=0; i1 < qtd1; i1++)
@@ -6934,7 +6934,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
     for(i=0; i < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i++)
     {
      gat=tab->obterGatilho(i);
-     if(gat->obterTabReferenciada()==tabela)
+     if(gat->getReferencedTable()==tabela)
      {
       refer=true;
       vet_refs.push_back(gat);
@@ -7062,7 +7062,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       {
        gat=tab->obterGatilho(i1);
        //Verifica se o gatilho não referencia a função
-       if(gat->obterFuncao()==funcao)
+       if(gat->getFunction()==funcao)
        {
         refer=true;
         vet_refs.push_back(gat);
@@ -7665,11 +7665,11 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       for(idx=0; idx < qtd_gat && (!modo_exclusao || (modo_exclusao && !refer)); idx++)
       {
        gat=tab->obterGatilho(idx);
-       qtd1=gat->obterNumColunas();
+       qtd1=gat->getColumnCount();
 
        for(i1=0; i1 < qtd1 && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
        {
-        if(gat->obterColuna(i1)==coluna)
+        if(gat->getColumn(i1)==coluna)
         {
          refer=true;
          vet_refs.push_back(gat);

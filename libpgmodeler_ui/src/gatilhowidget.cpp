@@ -226,38 +226,38 @@ void GatilhoWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, Lista
  if(gatilho)
  {
   //Preenche os demais campos do formulário com os valores presentes na instância da restrição
-  gat_rest_chk->setChecked(gatilho->obterTabReferenciada());
-  exp_condicional_txt->setPlainText(QString::fromUtf8(gatilho->obterCondicao()));
-  postergavel_chk->setChecked(gatilho->gatilhoPostergavel());
-  tipo_postergacao_cmb->setCurrentIndex(tipo_postergacao_cmb->findText(~gatilho->obterTipoPostergacao()));
-  tipo_disparo_cmb->setCurrentIndex(tipo_disparo_cmb->findText(~gatilho->obterTipoDisparo()));
+  gat_rest_chk->setChecked(gatilho->getReferencedTable());
+  exp_condicional_txt->setPlainText(QString::fromUtf8(gatilho->getCondition()));
+  postergavel_chk->setChecked(gatilho->isDeferrable());
+  tipo_postergacao_cmb->setCurrentIndex(tipo_postergacao_cmb->findText(~gatilho->getDeferralType()));
+  tipo_disparo_cmb->setCurrentIndex(tipo_disparo_cmb->findText(~gatilho->getFiringType()));
 
-  insert_chk->setChecked(gatilho->executaNoEvento(TipoEvento::on_insert));
-  delete_chk->setChecked(gatilho->executaNoEvento(TipoEvento::on_delete));
-  update_chk->setChecked(gatilho->executaNoEvento(TipoEvento::on_update));
-  truncate_chk->setChecked(gatilho->executaNoEvento(TipoEvento::on_truncate));
-  sel_tabela_ref->definirObjeto(gatilho->obterTabReferenciada());
-  sel_funcao->definirObjeto(gatilho->obterFuncao());
+  insert_chk->setChecked(gatilho->isExecuteOnEvent(TipoEvento::on_insert));
+  delete_chk->setChecked(gatilho->isExecuteOnEvent(TipoEvento::on_delete));
+  update_chk->setChecked(gatilho->isExecuteOnEvent(TipoEvento::on_update));
+  truncate_chk->setChecked(gatilho->isExecuteOnEvent(TipoEvento::on_truncate));
+  sel_tabela_ref->definirObjeto(gatilho->getReferencedTable());
+  sel_funcao->definirObjeto(gatilho->getFunction());
 
   tab_colunas->blockSignals(true);
   tab_argumentos->blockSignals(true);
 
   //Adicionando as colunas referenciadas pelo gatilho na tabela do formulário
-  qtd=gatilho->obterNumColunas();
+  qtd=gatilho->getColumnCount();
   for(i=0; i < qtd; i++)
   {
-   coluna=gatilho->obterColuna(i);
+   coluna=gatilho->getColumn(i);
    //Adiciona uma linha na tabela e adiciona a coluna
    tab_colunas->adicionarLinha();
    adicionarColuna(coluna, i);
   }
 
-  qtd=gatilho->obterNumArgs();
+  qtd=gatilho->getArgumentCount();
   for(i=0; i < qtd; i++)
   {
    //Adiciona uma linha na tabela e adiciona o argumento
    tab_argumentos->adicionarLinha();
-   tab_argumentos->definirTextoCelula(gatilho->obterArgumento(i), i, 0);
+   tab_argumentos->definirTextoCelula(gatilho->getArgument(i), i, 0);
   }
 
   tab_colunas->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (coluna_cmb->count()!=0));
@@ -283,34 +283,34 @@ void GatilhoWidget::aplicarConfiguracao(void)
   gatilho=dynamic_cast<Gatilho *>(this->objeto);
 
   //Configura no gatilhos todos os atributos preenchidos no formulário
-  gatilho->definirTipoDisparo(TipoDisparo(tipo_disparo_cmb->currentText()));
-  gatilho->executarPorLinha(exec_por_linha_chk->isChecked());
-  gatilho->definirPostergavel(postergavel_chk->isChecked());
-  gatilho->definirTipoPostergacao(TipoPostergacao(tipo_postergacao_cmb->currentText()));
-  gatilho->definirCondicao(exp_condicional_txt->toPlainText());
-  gatilho->definirFuncao(dynamic_cast<Function *>(sel_funcao->obterObjeto()));
-  gatilho->definirTabReferenciada(dynamic_cast<Tabela *>(sel_tabela_ref->obterObjeto()));
-  gatilho->definirEvento(TipoEvento::on_insert, insert_chk->isChecked());
-  gatilho->definirEvento(TipoEvento::on_update, update_chk->isChecked());
-  gatilho->definirEvento(TipoEvento::on_delete, delete_chk->isChecked());
-  gatilho->definirEvento(TipoEvento::on_truncate, truncate_chk->isChecked());
+  gatilho->setFiringType(TipoDisparo(tipo_disparo_cmb->currentText()));
+  gatilho->setExecutePerRow(exec_por_linha_chk->isChecked());
+  gatilho->setDeferrable(postergavel_chk->isChecked());
+  gatilho->setDeferralType(TipoPostergacao(tipo_postergacao_cmb->currentText()));
+  gatilho->setCondition(exp_condicional_txt->toPlainText());
+  gatilho->setFunction(dynamic_cast<Function *>(sel_funcao->obterObjeto()));
+  gatilho->setReferecendTable(dynamic_cast<Tabela *>(sel_tabela_ref->obterObjeto()));
+  gatilho->setEvent(TipoEvento::on_insert, insert_chk->isChecked());
+  gatilho->setEvent(TipoEvento::on_update, update_chk->isChecked());
+  gatilho->setEvent(TipoEvento::on_delete, delete_chk->isChecked());
+  gatilho->setEvent(TipoEvento::on_truncate, truncate_chk->isChecked());
 
   /* Remove todas as colunas e argumentos para inserir aqueles
      configurados no formulário */
-  gatilho->removerArgumentos();
-  gatilho->removerColunas();
+  gatilho->removeArguments();
+  gatilho->removeColumns();
 
   //Adiciona os argumentos
   qtd=tab_argumentos->obterNumLinhas();
   for(i=0; i < qtd; i++)
-   gatilho->adicionarArgumento(tab_argumentos->obterTextoCelula(i, 0));
+   gatilho->addArgument(tab_argumentos->obterTextoCelula(i, 0));
 
   //Adiciona as colunas
   qtd=tab_colunas->obterNumLinhas();
   for(i=0; i < qtd; i++)
   {
    coluna=reinterpret_cast<Column *>(tab_colunas->obterDadoLinha(i).value<void *>());
-   gatilho->adicionarColuna(coluna);
+   gatilho->addColumn(coluna);
   }
 
   //Aplica as configurações básicas

@@ -22,7 +22,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/restricao.h \
            $$PWD/src/tipo.h \
            $$PWD/src/tablespace.h \
-           $$PWD/src/gatilho.h \
+           $$PWD/src/trigger.h \
            $$PWD/src/baseobject.h \
            $$PWD/src/regra.h \
            $$PWD/src/sequencia.h \
@@ -46,7 +46,7 @@ HEADERS += $$PWD/src/textbox.h \
 
 SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/domain.cpp \
-            $$PWD/src/gatilho.cpp \
+            $$PWD/src/trigger.cpp \
             $$PWD/src/basegraphicobject.cpp \
             $$PWD/src/relacionamentobase.cpp \
             $$PWD/src/tipo.cpp \

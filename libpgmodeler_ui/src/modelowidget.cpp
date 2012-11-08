@@ -1559,7 +1559,7 @@ void ModeloWidget::copiarObjetos(void)
          ((tipos[id_tipo]==OBJ_CONSTRAINT &&
            dynamic_cast<Restricao *>(obj_tab)->obterTipoRestricao()!=TipoRestricao::primary_key &&
            dynamic_cast<Restricao *>(obj_tab)->referenciaColunaIncRelacao()) ||
-          (tipos[id_tipo]==OBJ_TRIGGER && dynamic_cast<Gatilho *>(obj_tab)->referenciaColunaIncRelacao()) ||
+          (tipos[id_tipo]==OBJ_TRIGGER && dynamic_cast<Gatilho *>(obj_tab)->isReferRelationshipColumn()) ||
           (tipos[id_tipo]==OBJ_INDEX && dynamic_cast<Indice *>(obj_tab)->referenciaColunaIncRelacao())))
        vet_deps.push_back(obj_tab);
      }

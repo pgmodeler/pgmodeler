@@ -1800,7 +1800,7 @@ void Relacionamento::removerObjetosTabelaRefCols(Tabela *tabela)
  for(i=0; i < qtd; i++)
  {
   gat=tabela->obterGatilho(i);
-  if(gat->referenciaColunaIncRelacao())
+  if(gat->isReferRelationshipColumn())
   {
    tabela->removerObjeto(gat);
    delete(gat);

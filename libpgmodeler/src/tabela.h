@@ -29,7 +29,7 @@
 #include "restricao.h"
 #include "indice.h"
 #include "regra.h"
-#include "gatilho.h"
+#include "trigger.h"
 #include "function.h"
 #include "papel.h"
 

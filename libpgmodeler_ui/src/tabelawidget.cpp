@@ -403,18 +403,18 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  {
   gatilho=dynamic_cast<Gatilho *>(objeto);
   //Coluna 2: Tipo de disparo do gatilho
-  tab->definirTextoCelula(~gatilho->obterTipoDisparo(),idx_lin,2);
+  tab->definirTextoCelula(~gatilho->getFiringType(),idx_lin,2);
 
   //Coluna 1: Tabela referenciada pelo gatilho
-  if(gatilho->obterTabReferenciada())
-   tab->definirTextoCelula(QString::fromUtf8(gatilho->obterTabReferenciada()->getName(true)),idx_lin,1);
+  if(gatilho->getReferencedTable())
+   tab->definirTextoCelula(QString::fromUtf8(gatilho->getReferencedTable()->getName(true)),idx_lin,1);
   else
    tab->definirTextoCelula(QString("-"),idx_lin,1);
 
   //Coluna 3: Eventos que disparam o gatilho
   for(i=0; i < 4; i++)
   {
-   if(gatilho->executaNoEvento(eventos[i]))
+   if(gatilho->isExecuteOnEvent(eventos[i]))
     str_aux+=~eventos[i] + QString(", ");
   }
   str_aux.remove(str_aux.size()-2, 2);

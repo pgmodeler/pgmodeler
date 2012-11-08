@@ -510,8 +510,8 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
      for(i1=0; i1 < qtd; i1++)
      {
       gatilho=tab->obterGatilho(i1);
-      if(gatilho->obterFuncao()==funcao)
-       gatilho->definirFuncao(funcao);
+      if(gatilho->getFunction()==funcao)
+       gatilho->setFunction(funcao);
      }
     }
     else if(tipos[i]==OBJ_LANGUAGE)
