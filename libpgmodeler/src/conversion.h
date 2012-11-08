@@ -24,7 +24,7 @@
 #define CONVERSION_H
 
 #include "baseobject.h"
-#include "funcao.h"
+#include "function.h"
 #include "papel.h"
 
 class Conversion: public BaseObject {

@@ -25,7 +25,7 @@
 #define PERMISSAO_H
 
 #include "baseobject.h"
-#include "funcao.h"
+#include "function.h"
 #include "papel.h"
 #include <algorithm>
  #include <QTextStream>

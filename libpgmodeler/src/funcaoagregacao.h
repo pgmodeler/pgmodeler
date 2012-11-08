@@ -25,7 +25,7 @@
 #define FUNCAO_AGREGACAO_H
 
 #include "baseobject.h"
-#include "funcao.h"
+#include "function.h"
 #include "operador.h"
 
 class FuncaoAgregacao: public BaseObject {

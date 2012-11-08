@@ -30,7 +30,7 @@
 #include "indice.h"
 #include "regra.h"
 #include "gatilho.h"
-#include "funcao.h"
+#include "function.h"
 #include "papel.h"
 
 class Tabela: public BaseTable {

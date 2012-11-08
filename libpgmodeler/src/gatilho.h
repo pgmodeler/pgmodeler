@@ -24,7 +24,7 @@
 #define GATILHO_H
 
 #include "tableobject.h"
-#include "funcao.h"
+#include "function.h"
 
 class Gatilho: public TableObject{
  protected:

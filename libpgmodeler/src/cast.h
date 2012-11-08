@@ -24,7 +24,7 @@
 #define CAST_H
 
 #include "baseobject.h"
-#include "funcao.h"
+#include "function.h"
 
 class Cast: public BaseObject {
  private:

@@ -1,8 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description:Definição da classe Funcao que é usado para
-#            configurar e gerar os códigos SQL referentes a funções (procedimentos).
+# Description: Implements the operations to manipulate stored
+#              procedures (function) on the database.
 # Creation date: 28/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -29,8 +29,8 @@
 
 class Parameter: public Column {
  private:
-  /* Atributos que indicam que o parâmetro é de
-     entrada e saida (IN, OUT, INOUT) */
+ /* This attributes indicates whether the parameter
+    is in, out or both (IN, OUT, INOUT) */
   bool is_in, is_out;
 
  public:
@@ -38,14 +38,15 @@ class Parameter: public Column {
 
   void setType(TipoPgSQL type);
 
-  void setIn(bool valor);
-  void setOut(bool valor);
+  void setIn(bool value);
+  void setOut(bool value);
 
   bool isIn(void);
   bool isOut(void);
 
-  //Retorna a definição SQL ou XML do objeto
-  QString getCodeDefinition(unsigned tipo_def);
+  //Returns the SQL / XML code definition for the parameter
+  QString getCodeDefinition(unsigned def_type);
+
   void operator = (const Parameter &param);
 };
 
@@ -105,17 +106,17 @@ class Function: public BaseObject {
 
   /* Formata a string de parâmetros usada pelo parser de esquema
      na geração da definição SQL da função */
-  void setParametersAttribute(unsigned tipo_def);
+  void setParametersAttribute(unsigned def_type);
 
   /* Formata a string de tipos de retorno usada pelo parser de esquema
      na geração da definição da função */
-  void setTableReturnTypeAttribute(unsigned tipo_def);
+  void setTableReturnTypeAttribute(unsigned def_type);
 
  public:
   Function(void);
 
   //Define o nome da função
-  void setName(const QString &obj_name);
+  void setName(const QString &name);
 
   //Define o esquema ao qual a função faz parte
   void setSchema(BaseObject *schema);
@@ -124,10 +125,10 @@ class Function: public BaseObject {
   void addParameter(Parameter param);
 
   //Adiciona um tipo de retorno específico para a cláusula RETURNS TABLE
-  void addTableReturnType(const QString &obj_name, TipoPgSQL tipo);
+  void addTableReturnType(const QString &name, TipoPgSQL type);
 
   //Define o corpo da função (comandos que serão executados por esta)
-  void setSourceCode(const QString &codigo);
+  void setSourceCode(const QString &src_code);
 
   //Define a biblioteca que define a função em C
   void setLibrary(const QString &library);
@@ -139,28 +140,28 @@ class Function: public BaseObject {
   void setLanguage(BaseObject *language);
 
   //Define o custo de execução da função
-  void setExecutionCost(unsigned custo);
+  void setExecutionCost(unsigned exec_cost);
 
   //Define o custo de execução da função
   void setRowAmount(unsigned row_amount);
 
   //Define se a função retora um conjunto de valores
-  void setReturnSetOf(bool valor);
+  void setReturnSetOf(bool value);
 
   //Define se a função é do tipo janela
-  void setWindowFunction(bool valor);
+  void setWindowFunction(bool value);
 
   //Define a configuração de retorno de valores da função
-  void setBehaviorType(TipoComportamento tipo);
+  void setBehaviorType(TipoComportamento behav_type);
 
   //Define o tipo da função (volátil, imutável, estável)
-  void setFunctionType(TipoFuncao tipo);
+  void setFunctionType(TipoFuncao func_type);
 
   //Define o tipo de retorno da função
-  void setReturnType(TipoPgSQL tipo);
+  void setReturnType(TipoPgSQL type);
 
   //Define o tipo de segurança ao chamar a função no SGBD
-  void setSecurityType(TipoSeguranca tipo);
+  void setSecurityType(TipoSeguranca sec_type);
 
   //Retorna o corpo da função
   QString getSourceCode(void);
@@ -181,10 +182,10 @@ class Function: public BaseObject {
   unsigned getTableReturnTypeCount(void);
 
   //Obtém um parâmetro através de seu índice
-  Parameter getParameter(unsigned idx_param);
+  Parameter getParameter(unsigned param_idx);
 
   //Obtém um tipo retorno de tabela através de seu índice
-  Parameter getTableReturnType(unsigned idx_tipo);
+  Parameter getTableReturnType(unsigned type_idx);
 
   //Indica se a função retorna ou não um conjunto de dados
   bool isReturnSetOf(void);
@@ -214,16 +215,16 @@ class Function: public BaseObject {
   unsigned getRowAmount(void);
 
   //Remove um parâmetro através de seu nome e tipo
-  void removeParameter(const QString &obj_name, TipoPgSQL tipo);
+  void removeParameter(const QString &name, TipoPgSQL type);
 
   //Remove um parâmetro através de seu índice
-  void removeParameter(unsigned idx_param);
+  void removeParameter(unsigned param_idx);
 
   //Remove todos os parâmetros da função
   void removeParameters(void);
 
   //Remove um tipo de retorno de tabela através de seu índice
-  void removeTableReturnType(unsigned idx_tipo);
+  void removeTableReturnType(unsigned type_idx);
 
   //Remove todos os parâmetros da tabela de retorno da função
   void removeTableReturnTypes(void);
@@ -234,11 +235,11 @@ class Function: public BaseObject {
   /* Formata a string de assinaturada da função, o parâmetro padrão
      'formatar' indica se o nome da função deve ser formatado.
      Por padrão, a formatação é feita */
-  void createSignature(bool formatar=true);
+  void createSignature(bool format=true);
 
   //Retorna a definição SQL ou XML do objeto
-  QString getCodeDefinition(unsigned tipo_def, bool forma_reduzida);
-  QString getCodeDefinition(unsigned tipo_def);
+  QString getCodeDefinition(unsigned def_type, bool reduced_form);
+  QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

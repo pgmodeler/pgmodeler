@@ -9,7 +9,7 @@ LIBS += $$DESTDIR/$$LIBUTIL \
 
 HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/cast.h \
-           $$PWD/src/funcao.h \
+           $$PWD/src/function.h \
            $$PWD/src/linguagem.h \
            $$PWD/src/operador.h \
            $$PWD/src/relacionamentobase.h \
@@ -62,7 +62,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/sequencia.cpp \
             $$PWD/src/visao.cpp \
             $$PWD/src/conversion.cpp \
-            $$PWD/src/funcao.cpp \
+            $$PWD/src/function.cpp \
             $$PWD/src/modelobd.cpp \
             $$PWD/src/regra.cpp \
             $$PWD/src/tabela.cpp \

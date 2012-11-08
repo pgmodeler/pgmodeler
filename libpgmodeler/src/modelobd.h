@@ -28,7 +28,7 @@
 #include <QObject>
 #include "baseobject.h"
 #include "tabela.h"
-#include "funcao.h"
+#include "function.h"
 #include "schema.h"
 #include "visao.h"
 #include "sequencia.h"

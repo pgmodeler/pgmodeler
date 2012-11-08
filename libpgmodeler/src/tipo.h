@@ -26,7 +26,7 @@
 
 #include "baseobject.h"
 #include "schema.h"
-#include "funcao.h"
+#include "function.h"
 #include "papel.h"
 
 class Tipo: public BaseObject {

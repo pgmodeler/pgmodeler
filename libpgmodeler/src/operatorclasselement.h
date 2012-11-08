@@ -25,7 +25,7 @@
 
 #include "baseobject.h"
 #include "operador.h"
-#include "funcao.h"
+#include "function.h"
 
 class OperatorClassElement {
  private:

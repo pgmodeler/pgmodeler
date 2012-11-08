@@ -23,7 +23,7 @@
 #define OPERADOR_H
 
 #include "baseobject.h"
-#include "funcao.h"
+#include "function.h"
 #include "schema.h"
 #include "papel.h"
 

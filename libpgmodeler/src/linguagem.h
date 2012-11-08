@@ -24,7 +24,7 @@
 #define LINGUAGEM_H
 
 #include "baseobject.h"
-#include "funcao.h"
+#include "function.h"
 #include "papel.h"
 
 class Linguagem: public BaseObject{
