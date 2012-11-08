@@ -340,7 +340,7 @@ void FuncaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
   /* Obtém a quantidade de colunas na tabela de retorno.
      caso exista algum a tabela é exibida e as colunas
      da tabela de retorno da função exibidas */
-  qtd=funcao->getTableReturnTypeCount();
+  qtd=funcao->getReturnedTableColumnCount();
   if(qtd > 0)
   {
    tabela_ret_gb->setVisible(true);
@@ -350,7 +350,7 @@ void FuncaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
    for(i=0; i < qtd; i++)
    {
     tab_retorno->adicionarLinha();
-    param=funcao->getTableReturnType(i);
+    param=funcao->getReturnedTableColumn(i);
     exibirDadosParametro(param,tab_retorno,i);
    }
   }
@@ -636,14 +636,14 @@ void FuncaoWidget::aplicarConfiguracao(void)
   //Caso a função retorna uma tabela, a mesma é atrua   função
   else
   {
-   func->removeTableReturnTypes();
+   func->removeReturnedTableColumns();
    qtd=tab_retorno->obterNumLinhas();
 
    /* Adiciona uma coluna na tabela de retorno com os dados configurados na tabela
       respectiva do formulário */
    for(i=0; i<qtd; i++)
    {
-    func->addTableReturnType(tab_retorno->obterTextoCelula(i,0),
+    func->addReturnedTableColumn(tab_retorno->obterTextoCelula(i,0),
                                  tab_retorno->obterDadoLinha(i).value<TipoPgSQL>());
    }
   }

@@ -51,193 +51,189 @@ class Parameter: public Column {
 };
 
 
-
 class Function: public BaseObject {
  private:
   static unsigned function_id;
 
-  //Assinatura da função
+  //Function unique signature
   QString signature;
 
-  //Biblioteca C que armazena a função.
+  //Shared library (commonly developed in C language) that stores the function routine
   QString library;
 
-  //Simbolo que identifica a função na Biblioteca C
+  //Symbol that identify the function on the shared library
   QString symbol;
 
-  //Definição (comandos que esta executa)
+  //Function source code (except for C language defined functions)
   QString source_code;
 
-  //Linguagem em que foi escrita a função
+  //Language that is used to construct the language
   BaseObject *language;
 
-  //Parâmetros da função
+  //Function parameters
   vector<Parameter> parameters;
 
-  //Flag que indica se a função retorna um conjunto da dados
+  //Indicates whether the function returns a set of data (RETURNS SET OF)
   bool returns_setof;
 
-  //Indica se a função janela (WINDOW)
+  //Indicate whether the object is a windows function or not
   bool is_wnd_function;
 
-  //Tipo de comportamento da função
+  //Type of execution behavior applied to the function
   TipoComportamento behavior_type;
 
-  //Tipo da função (volátil, imutável, estável)
+  //Function type. It can be VOLATILE, IMMUTABLE, STABLE
   TipoFuncao function_type;
 
-  //Tipo de retorno da função
+  //Function return type
   TipoPgSQL return_type;
 
-  /* Vetor usado para armazenas as colunas retornadas
-     pela clausula RETURNS TABLE. Esta cláusula, ao invés de retornar
-     um elemento em específico, retorna uma tabela inteira.
-     Esta estrutura é usada apenas para geração de SQL da versão >=8.4 */
-  vector<Parameter> table_return_types;
+  /* Stores the table columns returned by the clause RETURNS TABLE. This clause instead
+     of return a specific element returns a whole table. This structure is available
+     only on PostgreSQL 8.4 and later */
+  vector<Parameter> ret_table_columns;
 
-  //Tipo de segurança da função (SECURITY [INVOKER | DEFINER])
+  //Function security type. It can be SECURITY [INVOKER | DEFINER]
   TipoSeguranca security_type;
 
-  //Custo de execução da função
+  //Execution cost for the function
   unsigned execution_cost;
 
-  //Quantidade estimada de linhas retornadas pela função
+  //Estimated returned row (tuple) amount
   unsigned row_amount;
 
-  /* Formata a string de parâmetros usada pelo parser de esquema
-     na geração da definição SQL da função */
+  //Formats the function parameter attribute to be used by the SchemaParser
   void setParametersAttribute(unsigned def_type);
 
-  /* Formata a string de tipos de retorno usada pelo parser de esquema
-     na geração da definição da função */
+  //Formats the function return type to be used by the SchemaParser
   void setTableReturnTypeAttribute(unsigned def_type);
 
  public:
   Function(void);
 
-  //Define o nome da função
+  //Sets the function name updating its signature
   void setName(const QString &name);
 
-  //Define o esquema ao qual a função faz parte
+  //Sets the function schema updating its signature
   void setSchema(BaseObject *schema);
 
-  //Adiciona um parâmetr  função (com nome e tipo especificados)
+  //Adds a parameter to the function
   void addParameter(Parameter param);
 
-  //Adiciona um tipo de retorno específico para a cláusula RETURNS TABLE
-  void addTableReturnType(const QString &name, TipoPgSQL type);
+  //Adds a column to the function returned table
+  void addReturnedTableColumn(const QString &name, TipoPgSQL type);
 
-  //Define o corpo da função (comandos que serão executados por esta)
+  //Defines the function source code (if its not use the C language)
   void setSourceCode(const QString &src_code);
 
-  //Define a biblioteca que define a função em C
+  //Defines the shared library that stores the function routine
   void setLibrary(const QString &library);
 
-  //Define o simbolo que identifica a biblioteca na função
+  //Defines the symbol that identifies the function on shared library
   void setSymbol(const QString &symbol);
 
-  //Define a linguagem que a função usará como base
+  //Defines the language used to construct the function
   void setLanguage(BaseObject *language);
 
-  //Define o custo de execução da função
+  //Defines the execution cost for the function
   void setExecutionCost(unsigned exec_cost);
 
-  //Define o custo de execução da função
+  //Defines the estimated amount of rows (tuples) returned by the function
   void setRowAmount(unsigned row_amount);
 
-  //Define se a função retora um conjunto de valores
+  //Defines whether returns a set of values or not
   void setReturnSetOf(bool value);
 
-  //Define se a função é do tipo janela
+  //Defines whether the function is a windows function or not
   void setWindowFunction(bool value);
 
-  //Define a configuração de retorno de valores da função
+  //Defines the function's execution behavior
   void setBehaviorType(TipoComportamento behav_type);
 
-  //Define o tipo da função (volátil, imutável, estável)
+  //Defines the function type (VOLATILE, IMMUTABLE, STABLE)
   void setFunctionType(TipoFuncao func_type);
 
-  //Define o tipo de retorno da função
+  //Defines the function return type
   void setReturnType(TipoPgSQL type);
 
-  //Define o tipo de segurança ao chamar a função no SGBD
+  //Defines the security type of the function
   void setSecurityType(TipoSeguranca sec_type);
 
-  //Retorna o corpo da função
+  //Returns the function's source code
   QString getSourceCode(void);
 
-  //Retorna a biblioteca que define a função
+  //Returns the shared library that stores the function definition
   QString getLibrary(void);
 
-  //Retorna o simbolo que define a função na biblioteca
+  //Returns the symbol that identifies the function on the shared library
   QString getSymbol(void);
 
-  //Retorna o nome da linguagem usada pela função
+  //Returns the language used to construct the function
   BaseObject *getLanguage(void);
 
-  //Retorna o número de parâmetros da função
+  //Returns the function parameter count
   unsigned getParameterCount(void);
 
-  //Retorna o número de colunas na tabela de retorno
-  unsigned getTableReturnTypeCount(void);
+  //Returns the returned table column count
+  unsigned getReturnedTableColumnCount(void);
 
-  //Obtém um parâmetro através de seu índice
+  //Returns a parameter using its index
   Parameter getParameter(unsigned param_idx);
 
-  //Obtém um tipo retorno de tabela através de seu índice
-  Parameter getTableReturnType(unsigned type_idx);
+  //Returns a column from returned table using its index
+  Parameter getReturnedTableColumn(unsigned column_idx);
 
-  //Indica se a função retorna ou não um conjunto de dados
+  //Indicates whether the function returns setof or not
   bool isReturnSetOf(void);
 
-  //Indica se a função retorna ou não uma tabela
+  //Indicates whether the fucntion returns a table or not
   bool isReturnTable(void);
 
-  //Indica se a função é do tipo janela
+  //Indicates whether the function is window or not
   bool isWindowFunction(void);
 
-  //Retorna o tipo de comportamento da função
+  //Returns the function execution behavior
   TipoComportamento getBehaviorType(void);
 
-  //Retorna o tipo da função
+  //Returns the function type
   TipoFuncao getFunctionType(void);
 
-  //Obtém o tipo de retorno da função
+  //Returns the function returned type
   TipoPgSQL getReturnType(void);
 
-  //Retorna o tipo de segurança da função
+  //Returns the security type used by the function
   TipoSeguranca getSecurityType(void);
 
-  //Retorna o custo de execução da função
+  //Returns the function's execution cost
   unsigned getExecutionCost(void);
 
-  //Retorna a quantidade de linhas retornadas
+  //Returns the estimated returned row amount
   unsigned getRowAmount(void);
 
-  //Remove um parâmetro através de seu nome e tipo
+  //Removes a parameter using its name and type
   void removeParameter(const QString &name, TipoPgSQL type);
 
-  //Remove um parâmetro através de seu índice
+  //Removes a parameter using its index
   void removeParameter(unsigned param_idx);
 
-  //Remove todos os parâmetros da função
+  //Removes all the parameters from the function
   void removeParameters(void);
 
-  //Remove um tipo de retorno de tabela através de seu índice
-  void removeTableReturnType(unsigned type_idx);
+  //Removes a column from returned table using its index
+  void removeReturnedTableColumn(unsigned column_idx);
 
-  //Remove todos os parâmetros da tabela de retorno da função
-  void removeTableReturnTypes(void);
+  //Removes all the columns from returned table column
+  void removeReturnedTableColumns(void);
 
-  //Retorna a assinatura da função nome completo + tipo de parâmetros
+  //Returns the complete function signature
   QString getSignature(void);
 
-  /* Formata a string de assinaturada da função, o parâmetro padrão
-     'formatar' indica se o nome da função deve ser formatado.
-     Por padrão, a formatação é feita */
+  /* Generates the function's signature. The 'format' parameter is used
+     to adequately format the function and parameters names. By default
+     this formating is always done. */
   void createSignature(bool format=true);
 
-  //Retorna a definição SQL ou XML do objeto
+  //Returns the SQL / XML code definition for the function
   QString getCodeDefinition(unsigned def_type, bool reduced_form);
   QString getCodeDefinition(unsigned def_type);
 };

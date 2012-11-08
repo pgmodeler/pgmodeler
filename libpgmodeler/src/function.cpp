@@ -66,7 +66,6 @@ Function::Function(void)
  is_wnd_function=false;
  obj_type=OBJ_FUNCTION;
 
- //Este dois valores são criados por padrão pelo SGBD
  execution_cost=100;
  row_amount=1000;
 
@@ -108,75 +107,60 @@ void Function::addParameter(Parameter param)
  itr=parameters.begin();
  itr_end=parameters.end();
 
- /* Faz uma busca pela lista de parâmetros verificando se
-    não existe um parâmetro com mesmo nome daquele que está
-    sendo inserido. */
+ //Checks the duplicity of parameter names
  while(itr!=itr_end && !found)
  {
-  /* Verifica se o nome do parametro atual ('itr->nome')
-     é igual ao nome do novo param. ('nome') */
+  /* Compares the parameters name storing in the 'found' flag
+     if already exists in the function */
   found=(itr->getName()==param.getName());
   itr++;
  }
 
- //Caso seja encontrado um parâmetro com mesmo nome
+ //If a duplicated parameter is found an error is raised
  if(found)
-  //Dispara exceção relatando o erro
   throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PARAM_FUNCTION)
                 .arg(QString::fromUtf8(param.getName()))
                 .arg(QString::fromUtf8(this->signature)),
                 ERR_ASG_DUPLIC_PARAM_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
- {
-  //Insere o parâmetro na lista de parâmetros
-  parameters.push_back(param);
- }
+
+ //Inserts the parameter in the function
+ parameters.push_back(param);
+
  createSignature();
 }
 
-void Function::addTableReturnType(const QString &name, TipoPgSQL type)
+void Function::addReturnedTableColumn(const QString &name, TipoPgSQL type)
 {
- //Verifica se o nome do elemento não está vazio
+ //Raises an error if the column name is empty
  if(name=="")
-  //Caso esteja vazio, dispara uma exceção relatando o erro
   throw Exception(ERR_ASG_EMPTY_NAME_RET_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
- //Caso não esteja vazio
+
+ vector<Parameter>::iterator itr,itr_end;
+ bool found=false;
+
+ itr=ret_table_columns.begin();
+ itr_end=ret_table_columns.end();
+
+ //Checks the duplicity of table column names
+ while(itr!=itr_end && !found)
  {
-  vector<Parameter>::iterator itr,itr_end;
-  bool found=false;
-
-  itr=table_return_types.begin();
-  itr_end=table_return_types.end();
-
-  /* Faz uma busca pela lista de de retorno verificando se
-     não existe um elemento com mesmo nome daquele que está
-     sendo inserido. */
-  while(itr!=itr_end && !found)
-  {
-   /* Verifica se o nome do parametro atual ('itr->nome')
-      é igual ao nome do novo param. ('nome') */
-   found=(itr->getName()==name);
-   itr++;
-  }
-
-  //Caso seja encontrado um parâmetro com mesmo nome
-  if(found)
-   //Dispara exceção relatando o erro
-   throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_RET_TAB_TYPE)
-                 .arg(QString::fromUtf8(name))
-                 .arg(QString::fromUtf8(this->signature)),
-                 ERR_INS_DUPLIC_RET_TAB_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-  else
-  {//Dispara exceção relatando o erro
-   Parameter p;
-
-   //Insere o parâmetro na lista de parâmetros
-   p.setName(name);
-   p.setType(type);
-   table_return_types.push_back(p);
-  }
+  /* Compares the column name storing in the 'found' flag
+     if already exists in the returned table */
+  found=(itr->getName()==name);
+  itr++;
  }
+
+ //Raises an error if the column is duplicated
+ if(found)
+  throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_RET_TAB_TYPE)
+                .arg(QString::fromUtf8(name))
+                .arg(QString::fromUtf8(this->signature)),
+                ERR_INS_DUPLIC_RET_TAB_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+ Parameter p;
+ p.setName(name);
+ p.setType(type);
+ ret_table_columns.push_back(p);
 }
 
 void Function::setParametersAttribute(unsigned def_type)
@@ -201,10 +185,10 @@ void Function::setTableReturnTypeAttribute(unsigned def_type)
  QString str_type;
  unsigned i, count;
 
- count=table_return_types.size();
+ count=ret_table_columns.size();
  for(i=0; i < count; i++)
  {
-  str_type+=table_return_types[i].getCodeDefinition(def_type);
+  str_type+=ret_table_columns[i].getCodeDefinition(def_type);
  }
 
  if(def_type==SchemaParser::SQL_DEFINITION)
@@ -255,18 +239,14 @@ void Function::setFunctionType(TipoFuncao func_type)
 
 void Function::setLanguage(BaseObject *language)
 {
- /* Caso se tente atribuir uma linguagem não alocada  função
-    um erro é gerado */
+ //Raises an error if the language is not allocated
  if(!language)
   throw Exception(ERR_ASG_NOT_ALOC_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- /* Caso se tente inserir um objeto alocado porém que não é uma linguagem
-    um erro é gerado */
+ //Raises an error if the language object is invalid
  else if(language->getObjectType()!=OBJ_LANGUAGE)
   throw Exception(ERR_ASG_INV_LANGUAGE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
- {
-  this->language=language;
- }
+
+ this->language=language;
 }
 
 void Function::setReturnSetOf(bool value)
@@ -319,9 +299,9 @@ unsigned Function::getParameterCount(void)
  return(parameters.size());
 }
 
-unsigned Function::getTableReturnTypeCount(void)
+unsigned Function::getReturnedTableColumnCount(void)
 {
- return(table_return_types.size());
+ return(ret_table_columns.size());
 }
 
 bool Function::isReturnSetOf(void)
@@ -331,7 +311,7 @@ bool Function::isReturnSetOf(void)
 
 bool Function::isReturnTable(void)
 {
- return(table_return_types.size() > 0);
+ return(ret_table_columns.size() > 0);
 }
 
 bool Function::isWindowFunction(void)
@@ -356,26 +336,20 @@ QString Function::getSourceCode(void)
 
 Parameter Function::getParameter(unsigned param_idx)
 {
- /* Caso o índice do parâmtro esteja fora da capacidade
-    da lista de parâmetros */
+ //Raises an error if the parameter index is out of bound
  if(param_idx>=parameters.size())
-  //Dispara exceção relatando o erro
   throw Exception(ERR_REF_PARAM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
-  //Retorna o parâmetro no índice desejado
-  return(parameters[param_idx]);
+
+ return(parameters[param_idx]);
 }
 
-Parameter Function::getTableReturnType(unsigned type_idx)
+Parameter Function::getReturnedTableColumn(unsigned column_idx)
 {
- /* Caso o índice do tipo esteja fora da capacidade
-    da lista de tipos de retorno */
- if(type_idx>=table_return_types.size())
-  //Dispara exceção relatando o erro
+ //Raises an error if the column index is out of bound
+ if(column_idx>=ret_table_columns.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
-  //Retorna o item no índice desejado
-  return(table_return_types[type_idx]);
+
+ return(ret_table_columns[column_idx]);
 }
 
 unsigned Function::getExecutionCost(void)
@@ -404,9 +378,9 @@ void Function::removeParameters(void)
  createSignature();
 }
 
-void Function::removeTableReturnTypes(void)
+void Function::removeReturnedTableColumns(void)
 {
- table_return_types.clear();
+ ret_table_columns.clear();
 }
 
 void Function::removeParameter(const QString &name, TipoPgSQL type)
@@ -416,53 +390,42 @@ void Function::removeParameter(const QString &name, TipoPgSQL type)
  itr=parameters.begin();
  itr_end=parameters.end();
 
- //Faz uma busca pela lista de parâmetros
  while(itr!=itr_end)
  {
-  /* Verifica se o parâmetro atual (itr) tem o nome igual ao passado pelo método,
-     o mesmo vale para o tipo */
+  //Compares the iterator name and type with the passed name an type
   if(itr->getName()==name && itr->getType()==(~type))
   {
-   //Caso o parâmetro seja encontrado
-   parameters.erase(itr); //Exclui da lista
+   parameters.erase(itr);
    break;
   }
   itr++;
  }
 
+ //After remove the parameter is necessary updated the signature
  createSignature();
 }
 
 void Function::removeParameter(unsigned param_idx)
 {
- /* Caso o índice do parâmtro esteja fora da capacidade
-    da lista de parâmetros */
+ //Raises an error if parameter index is out of bound
  if(param_idx>=parameters.size())
-  //Dispara exceção relatando o erro
   throw Exception(ERR_REF_PARAM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
- {
-  vector<Parameter>::iterator itr;
-  itr=parameters.begin()+param_idx;
-  parameters.erase(itr); //Remove o parâmetro encontrado
- }
+
+ vector<Parameter>::iterator itr;
+ itr=parameters.begin()+param_idx;
+ parameters.erase(itr);
 
  createSignature();
 }
 
-void Function::removeTableReturnType(unsigned type_idx)
+void Function::removeReturnedTableColumn(unsigned column_idx)
 {
- /* Caso o índice do parâmtro esteja fora da capacidade
-    da lista de parâmetros */
- if(type_idx>=table_return_types.size())
-  //Dispara exceção relatando o erro
+ if(column_idx>=ret_table_columns.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
- {
-  vector<Parameter>::iterator itr;
-  itr=table_return_types.begin()+type_idx;
-  table_return_types.erase(itr); //Remove o parâmetro encontrado
- }
+
+ vector<Parameter>::iterator itr;
+ itr=ret_table_columns.begin()+column_idx;
+ ret_table_columns.erase(itr);
 }
 
 QString Function::getSignature(void)
@@ -485,7 +448,7 @@ void Function::createSignature(bool format)
   if(i < (count-1)) str_param+=",";
  }
 
- //Formato da assinatura NOME(TIPO_PARAM1,TIPO_PARAM2,...,TIPO_PARAMn)
+ //Signature format NAME(PARAM1_TYPE,PARAM2_TYPE,...,PARAMn_TYPE)
  signature=this->getName(format) + QString("(") + str_param + QString(")");
 }
 

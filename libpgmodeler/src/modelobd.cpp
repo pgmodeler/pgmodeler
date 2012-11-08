@@ -3443,7 +3443,7 @@ Function *ModeloBD::criarFuncao(void)
          {
           param=criarParametro();
           //Adiciona o tipo de retorno   função
-          funcao->addTableReturnType(param.getName(), param.getType());
+          funcao->addReturnedTableColumn(param.getName(), param.getType());
          }
         }
        }
@@ -6580,10 +6580,10 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    }
 
    //Obtém as dependências dos elementos da tabela de retorno
-   qtd=func->getTableReturnTypeCount();
+   qtd=func->getReturnedTableColumnCount();
    for(i=0; i < qtd; i++)
    {
-    tipo_usr=obterObjetoTipoPgSQL(func->getTableReturnType(i).getType());
+    tipo_usr=obterObjetoTipoPgSQL(func->getReturnedTableColumn(i).getType());
     //obterObjeto(*func->obterTipoRetTabela(i).obterTipo(), OBJETO_TIPO);
 
     if(tipo_usr)
