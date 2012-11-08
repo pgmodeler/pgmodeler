@@ -1181,7 +1181,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_AGGREGATE:
-    funcaoag_wgt->definirAtributos(modelo, lista_op, dynamic_cast<FuncaoAgregacao *>(objeto));
+    funcaoag_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Aggregate *>(objeto));
     funcaoag_wgt->show();
    break;
 

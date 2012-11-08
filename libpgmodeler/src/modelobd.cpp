@@ -169,7 +169,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_FUNCTION)
     adicionarFuncao(dynamic_cast<Function *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_AGGREGATE)
-    adicionarFuncaoAgregacao(dynamic_cast<FuncaoAgregacao *>(objeto), idx_obj);
+    adicionarFuncaoAgregacao(dynamic_cast<Aggregate *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_SCHEMA)
     adicionarEsquema(dynamic_cast<Schema *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_VIEW)
@@ -227,7 +227,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_FUNCTION)
     removerFuncao(dynamic_cast<Function *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_AGGREGATE)
-    removerFuncaoAgregacao(dynamic_cast<FuncaoAgregacao *>(objeto), idx_obj);
+    removerFuncaoAgregacao(dynamic_cast<Aggregate *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_SCHEMA)
     removerEsquema(dynamic_cast<Schema *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_VIEW)
@@ -292,7 +292,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
   else if(tipo_obj==OBJ_FUNCTION)
    removerFuncao(dynamic_cast<Function *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_AGGREGATE)
-   removerFuncaoAgregacao(dynamic_cast<FuncaoAgregacao *>(objeto), idx_obj);
+   removerFuncaoAgregacao(dynamic_cast<Aggregate *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_SCHEMA)
    removerEsquema(dynamic_cast<Schema *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_VIEW)
@@ -2023,7 +2023,7 @@ void ModeloBD::removerFuncao(Function *funcao, int idx_obj)
  }
 }
 
-void ModeloBD::adicionarFuncaoAgregacao(FuncaoAgregacao *func_agregacao, int idx_obj)
+void ModeloBD::adicionarFuncaoAgregacao(Aggregate *func_agregacao, int idx_obj)
 {
  try
  {
@@ -2035,12 +2035,12 @@ void ModeloBD::adicionarFuncaoAgregacao(FuncaoAgregacao *func_agregacao, int idx
  }
 }
 
-FuncaoAgregacao *ModeloBD::obterFuncaoAgregacao(unsigned idx_obj)
+Aggregate *ModeloBD::obterFuncaoAgregacao(unsigned idx_obj)
 {
- return(dynamic_cast<FuncaoAgregacao *>(obterObjeto(idx_obj, OBJ_AGGREGATE)));
+ return(dynamic_cast<Aggregate *>(obterObjeto(idx_obj, OBJ_AGGREGATE)));
 }
 
-void ModeloBD::removerFuncaoAgregacao(FuncaoAgregacao *func_agregacao, int idx_obj)
+void ModeloBD::removerFuncaoAgregacao(Aggregate *func_agregacao, int idx_obj)
 {
  __removerObjeto(func_agregacao, idx_obj);
 }
@@ -4377,24 +4377,24 @@ OperatorFamily *ModeloBD::criarFamiliaOperadores(void)
  return(familia_op);
 }
 
-FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
+Aggregate *ModeloBD::criarFuncaoAgregacao(void)
 {
  map<QString, QString> atributos;
  BaseObject *funcao=NULL;
  QString elem;
  TipoPgSQL tipo;
- FuncaoAgregacao *func_agreg=NULL;
+ Aggregate *func_agreg=NULL;
 
  try
  {
-  func_agreg=new FuncaoAgregacao;
+  func_agreg=new Aggregate;
 
   //Lê do parser os atributos basicos
   definirAtributosBasicos(func_agreg);
 
   //Obtém os atributos
   XMLParser::getElementAttributes(atributos);
-  func_agreg->definirCondicaoInicial(atributos[ParsersAttributes::INITIAL_COND]);
+  func_agreg->setInitialCondition(atributos[ParsersAttributes::INITIAL_COND]);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
@@ -4415,9 +4415,9 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
       //Define o tipo   função agregada de acordo com o tipo de referência do mesmo
       if(atributos[ParsersAttributes::REF_TYPE]==
           ParsersAttributes::STATE_TYPE)
-       func_agreg->definirTipoEstado(tipo);
+       func_agreg->setStateType(tipo);
       else
-       func_agreg->adicionarTipoDado(tipo);
+       func_agreg->addDataType(tipo);
      }
      else if(elem==ParsersAttributes::FUNCTION)
      {
@@ -4438,10 +4438,10 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
 
       //Define a função de acordo com o tipo de referência da mesma
       if(atributos[ParsersAttributes::REF_TYPE]==ParsersAttributes::TRANSITION_FUNC)
-       func_agreg->definirFuncao(FuncaoAgregacao::FUNCAO_TRANSICAO,
+       func_agreg->setFunction(Aggregate::TRANSITION_FUNC,
                                  dynamic_cast<Function *>(funcao));
       else
-       func_agreg->definirFuncao(FuncaoAgregacao::FUNCAO_FINAL,
+       func_agreg->setFunction(Aggregate::FINAL_FUNC,
                                  dynamic_cast<Function *>(funcao));
      }
     }
@@ -6593,30 +6593,30 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   //** Obtendo as dependências de Funções de Agregação **
   else if(tipo_obj==OBJ_AGGREGATE)
   {
-   FuncaoAgregacao *func=dynamic_cast<FuncaoAgregacao *>(objeto);
+   Aggregate *func=dynamic_cast<Aggregate *>(objeto);
    BaseObject *tipo_usr=NULL;
    unsigned qtd, i;
 
    //Obtém as dependências das funções que definem a função de agregação
-   for(i=FuncaoAgregacao::FUNCAO_FINAL; i <= FuncaoAgregacao::FUNCAO_TRANSICAO; i++)
-    obterDependenciasObjeto(func->obterFuncao(i), vet_deps, inc_dep_indiretas);
+   for(i=Aggregate::FINAL_FUNC; i <= Aggregate::TRANSITION_FUNC; i++)
+    obterDependenciasObjeto(func->getFunction(i), vet_deps, inc_dep_indiretas);
 
    //Obtém a dependência do tipo de estado da função de agregação
-   tipo_usr=obterObjetoTipoPgSQL(func->obterTipoEstado());
+   tipo_usr=obterObjetoTipoPgSQL(func->getStateType());
      //obterObjeto(*func->obterTipoEstado(), OBJETO_TIPO);
 
    if(tipo_usr)
     obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
 
    //Obtém as dependências do operador de ordenação caso este esteja alocado
-   if(func->obterOperadorOrdenacao())
-    obterDependenciasObjeto(func->obterOperadorOrdenacao(), vet_deps, inc_dep_indiretas);
+   if(func->getSortOperator())
+    obterDependenciasObjeto(func->getSortOperator(), vet_deps, inc_dep_indiretas);
 
    //Obtém as dependências dos tipos de dados usados na função de agregação
-   qtd=func->obterNumTipoDados();
+   qtd=func->getDataTypeCount();
    for(i=0; i < qtd; i++)
    {
-    tipo_usr=obterObjetoTipoPgSQL(func->obterTipoDado(i));
+    tipo_usr=obterObjetoTipoPgSQL(func->getDataType(i));
       //obterObjeto(*func->obterTipoDado(i), OBJETO_TIPO);
 
     if(tipo_usr)
@@ -6976,7 +6976,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
                             OBJ_TABLE, OBJ_TYPE, OBJ_LANGUAGE };
    unsigned i, i1, qtd;
    Tabela *tab=NULL;
-   FuncaoAgregacao *func_ag=NULL;
+   Aggregate *func_ag=NULL;
    Operador *oper=NULL;
    Gatilho *gat=NULL;
    Tipo *tipo=NULL;
@@ -7021,10 +7021,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
     {
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
-      func_ag=dynamic_cast<FuncaoAgregacao *>(*itr);
+      func_ag=dynamic_cast<Aggregate *>(*itr);
       //Verifica se o objeto não referencia o papel
-      if(func_ag->obterFuncao(FuncaoAgregacao::FUNCAO_FINAL)==funcao ||
-         func_ag->obterFuncao(FuncaoAgregacao::FUNCAO_TRANSICAO)==funcao)
+      if(func_ag->getFunction(Aggregate::FINAL_FUNC)==funcao ||
+         func_ag->getFunction(Aggregate::TRANSITION_FUNC)==funcao)
       {
        refer=true;
        vet_refs.push_back(func_ag);
@@ -7157,7 +7157,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    Cast *conv_tipo=NULL;
    Domain *dom=NULL;
    Function *func=NULL;
-   FuncaoAgregacao *func_ag=NULL;
+   Aggregate *func_ag=NULL;
    Operador *oper=NULL;
    Tipo *tipo=NULL;
    void *ptr_tipopgsql=NULL;
@@ -7269,15 +7269,15 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Obtém a referência ao objeto
-      func_ag=dynamic_cast<FuncaoAgregacao *>(*itr);
+      func_ag=dynamic_cast<Aggregate *>(*itr);
       itr++;
 
       /* Verifica se os tipos de dados da função agregada referenciam
          tipo a ser removido */
-      qtd=func_ag->obterNumTipoDados();
+      qtd=func_ag->getDataTypeCount();
       for(i1=0; i1 < qtd  && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
       {
-       if(func_ag->obterTipoDado(i1)==ptr_tipopgsql)
+       if(func_ag->getDataType(i1)==ptr_tipopgsql)
        {
         refer=true;
         vet_refs.push_back(func_ag);
@@ -7560,7 +7560,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
     {
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
-      if(dynamic_cast<FuncaoAgregacao *>(*itr)->obterOperadorOrdenacao()==operador)
+      if(dynamic_cast<Aggregate *>(*itr)->getSortOperator()==operador)
       {
        refer=true;
        vet_refs.push_back(*itr);

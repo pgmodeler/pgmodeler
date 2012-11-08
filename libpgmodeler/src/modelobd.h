@@ -38,7 +38,7 @@
 #include "tipo.h"
 #include "tablespace.h"
 #include "linguagem.h"
-#include "funcaoagregacao.h"
+#include "aggregate.h"
 #include "cast.h"
 #include "conversion.h"
 #include "operatorclass.h"
@@ -331,9 +331,9 @@ class ModeloBD:  public QObject, public BaseObject {
   Linguagem *obterLinguagem(unsigned idx_obj);
 
   //Métodos de manipulação de funções agregadas
-  void adicionarFuncaoAgregacao(FuncaoAgregacao *func_agregada, int idx_obj=-1);
-  void removerFuncaoAgregacao(FuncaoAgregacao *func_agregada, int idx_obj=-1);
-  FuncaoAgregacao *obterFuncaoAgregacao(unsigned idx_obj);
+  void adicionarFuncaoAgregacao(Aggregate *func_agregada, int idx_obj=-1);
+  void removerFuncaoAgregacao(Aggregate *func_agregada, int idx_obj=-1);
+  Aggregate *obterFuncaoAgregacao(unsigned idx_obj);
 
   //Métodos de manipulação de conversões de tipo
   void adicionarConversaoTipo(Cast *conv_tipo, int idx_obj=-1);
@@ -410,7 +410,7 @@ class ModeloBD:  public QObject, public BaseObject {
   Operador *criarOperador(void);
   OperatorFamily *criarFamiliaOperadores(void);
   OperatorClass *criarClasseOperadores(void);
-  FuncaoAgregacao *criarFuncaoAgregacao(void);
+  Aggregate *criarFuncaoAgregacao(void);
   Tabela *criarTabela(void);
   Column *criarColuna(void);
   Regra *criarRegra(void);

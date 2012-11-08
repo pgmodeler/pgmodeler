@@ -19,8 +19,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef FUNCAO_H
-#define FUNCAO_H
+#ifndef FUNCTION_H
+#define FUNCTION_H
 
 #include "baseobject.h"
 #include "schema.h"

@@ -51,7 +51,7 @@ class FuncaoAgregacaoWidget: public ObjetoBaseWidget, public Ui::FuncaoAgregacao
 
  public:
    FuncaoAgregacaoWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, FuncaoAgregacao *funcao_ag);
+   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Aggregate *funcao_ag);
 
  private slots:
   void hideEvent(QHideEvent *);

@@ -436,7 +436,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
  vector<BaseObject *>::iterator itr, itr_end;
  Conversion *conv_cod=NULL;
  Cast *conv_tipo=NULL;
- FuncaoAgregacao *func_ag=NULL;
+ Aggregate *func_ag=NULL;
  Gatilho *gatilho=NULL;
  Linguagem *ling=NULL;
  Operador *oper=NULL;
@@ -492,11 +492,11 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
     }
     else if(tipos[i]==OBJ_AGGREGATE)
     {
-     func_ag=dynamic_cast<FuncaoAgregacao *>(objeto);
-     if(func_ag->obterFuncao(FuncaoAgregacao::FUNCAO_FINAL)==funcao)
-      func_ag->definirFuncao(FuncaoAgregacao::FUNCAO_FINAL, funcao);
-     else if(func_ag->obterFuncao(FuncaoAgregacao::FUNCAO_TRANSICAO)==funcao)
-      func_ag->definirFuncao(FuncaoAgregacao::FUNCAO_TRANSICAO, funcao);
+     func_ag=dynamic_cast<Aggregate *>(objeto);
+     if(func_ag->getFunction(Aggregate::FINAL_FUNC)==funcao)
+      func_ag->setFunction(Aggregate::FINAL_FUNC, funcao);
+     else if(func_ag->getFunction(Aggregate::TRANSITION_FUNC)==funcao)
+      func_ag->setFunction(Aggregate::TRANSITION_FUNC, funcao);
     }
     /* A única validação diferente é para gatilhos, como gatilhos são objetos,
       internos das tabelas, primeiro são obtidas as tabelas e em seguida

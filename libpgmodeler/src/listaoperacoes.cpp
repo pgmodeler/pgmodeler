@@ -90,7 +90,7 @@ void copiarObjeto(BaseObject **pobj_orig, BaseObject *obj_copia, ObjectType tipo
     copiarObjeto(pobj_orig, dynamic_cast<Function *>(obj_copia));
   break;
   case OBJ_AGGREGATE:
-    copiarObjeto(pobj_orig, dynamic_cast<FuncaoAgregacao *>(obj_copia));
+    copiarObjeto(pobj_orig, dynamic_cast<Aggregate *>(obj_copia));
   break;
   case OBJ_LANGUAGE:
     copiarObjeto(pobj_orig, dynamic_cast<Linguagem *>(obj_copia));

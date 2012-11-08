@@ -88,7 +88,7 @@ void FuncaoAgregacaoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void FuncaoAgregacaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, FuncaoAgregacao *funcao_ag)
+void FuncaoAgregacaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Aggregate *funcao_ag)
 {
  unsigned qtd, i;
  TipoPgSQL tipo;
@@ -107,21 +107,21 @@ void FuncaoAgregacaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *l
  if(funcao_ag)
  {
   //Preenche os seletores de função e operador com as funções e operador configurados na função de agregação
-  sel_func_final->definirObjeto(funcao_ag->obterFuncao(FuncaoAgregacao::FUNCAO_FINAL));
-  sel_func_transicao->definirObjeto(funcao_ag->obterFuncao(FuncaoAgregacao::FUNCAO_TRANSICAO));
-  sel_op_ordenacao->definirObjeto(funcao_ag->obterOperadorOrdenacao());
+  sel_func_final->definirObjeto(funcao_ag->getFunction(Aggregate::FINAL_FUNC));
+  sel_func_transicao->definirObjeto(funcao_ag->getFunction(Aggregate::TRANSITION_FUNC));
+  sel_op_ordenacao->definirObjeto(funcao_ag->getSortOperator());
 
   //Exibe a expressão de condição inicial da função no formulário
-  cond_inicial_txt->setPlainText(QString::fromUtf8(funcao_ag->obterCondicaoInicial()));
+  cond_inicial_txt->setPlainText(QString::fromUtf8(funcao_ag->getInitialCondition()));
 
   //Preenche a tabela de tipos de entrada com os tipos configurados na função de agregação
   tab_tipos_entrada->blockSignals(true);
-  qtd=funcao_ag->obterNumTipoDados();
+  qtd=funcao_ag->getDataTypeCount();
 
   for(i=0; i < qtd; i++)
   {
    tab_tipos_entrada->adicionarLinha();
-   tipo=funcao_ag->obterTipoDado(i);
+   tipo=funcao_ag->getDataType(i);
    tab_tipos_entrada->definirDadoLinha(QVariant::fromValue<TipoPgSQL>(tipo), i);
    tab_tipos_entrada->definirTextoCelula(QString::fromUtf8(*tipo),i,0);
   }
@@ -129,7 +129,7 @@ void FuncaoAgregacaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *l
   tab_tipos_entrada->limparSelecao();
 
   //Configura o widget de tipo de estado marcando o tipo de dado configurado na função
-  tipo_estado->definirAtributos(funcao_ag->obterTipoEstado(), modelo);
+  tipo_estado->definirAtributos(funcao_ag->getStateType(), modelo);
  }
 }
 //---------------------------------------------------------
@@ -148,33 +148,33 @@ void FuncaoAgregacaoWidget::aplicarConfiguracao(void)
 {
  try
  {
-  FuncaoAgregacao *funcao_ag=NULL;
+  Aggregate *funcao_ag=NULL;
   unsigned qtd, i;
 
-  iniciarConfiguracao<FuncaoAgregacao>();
+  iniciarConfiguracao<Aggregate>();
 
   //Obtém a referêni   função de agregação que está sendo editada/criada
-  funcao_ag=dynamic_cast<FuncaoAgregacao *>(this->objeto);
+  funcao_ag=dynamic_cast<Aggregate *>(this->objeto);
 
   //Configura os atributos do mesmo com os valores definidos no formulário
-  funcao_ag->definirCondicaoInicial(cond_inicial_txt->toPlainText());
-  funcao_ag->definirTipoEstado(tipo_estado->obterTipoPgSQL());
+  funcao_ag->setInitialCondition(cond_inicial_txt->toPlainText());
+  funcao_ag->setStateType(tipo_estado->obterTipoPgSQL());
 
   /* Remove todos os tipos de dados da função de agregação para inserir os
      que estão na tabela de tipos de entrada */
-  funcao_ag->removerTiposDado();
+  funcao_ag->removeDataTypes();
   qtd=tab_tipos_entrada->obterNumLinhas();
 
   /* Obtém de cada linha da tabela de tipos de entrada o dado interno o qual é
      uma instância da classe TipoPgSQL e que será atribía   função de agregação
      como tipo de dado de entrada */
   for(i=0; i < qtd; i++)
-   funcao_ag->adicionarTipoDado(tab_tipos_entrada->obterDadoLinha(i).value<TipoPgSQL>());
+   funcao_ag->addDataType(tab_tipos_entrada->obterDadoLinha(i).value<TipoPgSQL>());
 
   //Define as funções e operador obtendo tais objetos dos respectivos seletores
-  funcao_ag->definirFuncao(FuncaoAgregacao::FUNCAO_TRANSICAO, dynamic_cast<Function *>(sel_func_transicao->obterObjeto()));
-  funcao_ag->definirFuncao(FuncaoAgregacao::FUNCAO_FINAL, dynamic_cast<Function *>(sel_func_final->obterObjeto()));
-  funcao_ag->definirOperadorOrdenacao(dynamic_cast<Operador *>(sel_op_ordenacao->obterObjeto()));
+  funcao_ag->setFunction(Aggregate::TRANSITION_FUNC, dynamic_cast<Function *>(sel_func_transicao->obterObjeto()));
+  funcao_ag->setFunction(Aggregate::FINAL_FUNC, dynamic_cast<Function *>(sel_func_final->obterObjeto()));
+  funcao_ag->setSortOperator(dynamic_cast<Operador *>(sel_op_ordenacao->obterObjeto()));
 
   //Finaliza a configuração da função de agregação
   ObjetoBaseWidget::aplicarConfiguracao();
