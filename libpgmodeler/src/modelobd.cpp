@@ -167,7 +167,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_TABLE)
     adicionarTabela(dynamic_cast<Tabela *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_FUNCTION)
-    adicionarFuncao(dynamic_cast<Funcao *>(objeto), idx_obj);
+    adicionarFuncao(dynamic_cast<Function *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_AGGREGATE)
     adicionarFuncaoAgregacao(dynamic_cast<FuncaoAgregacao *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_SCHEMA)
@@ -225,7 +225,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_TABLE)
     removerTabela(dynamic_cast<Tabela *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_FUNCTION)
-    removerFuncao(dynamic_cast<Funcao *>(objeto), idx_obj);
+    removerFuncao(dynamic_cast<Function *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_AGGREGATE)
     removerFuncaoAgregacao(dynamic_cast<FuncaoAgregacao *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_SCHEMA)
@@ -290,7 +290,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
   else if(tipo_obj==OBJ_TABLE)
    removerTabela(dynamic_cast<Tabela *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_FUNCTION)
-   removerFuncao(dynamic_cast<Funcao *>(objeto), idx_obj);
+   removerFuncao(dynamic_cast<Function *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_AGGREGATE)
    removerFuncaoAgregacao(dynamic_cast<FuncaoAgregacao *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_SCHEMA)
@@ -371,7 +371,7 @@ void ModeloBD::__adicionarObjeto(BaseObject *objeto, int idx_obj)
  //Verifica se o objeto a ser inserido já existe no modelo, buscando através do nome.
  if((tipo_obj!=OBJ_FUNCTION && obterObjeto(objeto->getName(true), tipo_obj, idx)) ||
     (tipo_obj==OBJ_FUNCTION &&
-     obterObjeto(dynamic_cast<Funcao *>(objeto)->obterAssinatura(), tipo_obj, idx)))
+     obterObjeto(dynamic_cast<Function *>(objeto)->getSignature(), tipo_obj, idx)))
  {
   QString str_aux;
 
@@ -441,7 +441,7 @@ void ModeloBD::__removerObjeto(BaseObject *objeto, int idx_obj)
     if(tipo_obj!=OBJ_FUNCTION && tipo_obj!=OBJ_OPERATOR)
      obterObjeto(objeto->getName(true), tipo_obj, idx_obj);
     else if(tipo_obj==OBJ_FUNCTION)
-     obterObjeto(dynamic_cast<Funcao *>(objeto)->obterAssinatura(), tipo_obj, idx_obj);
+     obterObjeto(dynamic_cast<Function *>(objeto)->getSignature(), tipo_obj, idx_obj);
     else
      obterObjeto(dynamic_cast<Operador *>(objeto)->obterAssinatura(), tipo_obj, idx_obj);
    }
@@ -538,7 +538,7 @@ BaseObject *ModeloBD::obterObjeto(const QString &nome, ObjectType tipo_obj, int 
        o parâmetro informado ao método deve ser uma assinatura de função/operador
        e não seu nome */
     if(tipo_obj==OBJ_FUNCTION)
-     assinatura=dynamic_cast<Funcao *>(*itr)->obterAssinatura();
+     assinatura=dynamic_cast<Function *>(*itr)->getSignature();
     else
      assinatura=dynamic_cast<Operador *>(*itr)->obterAssinatura();
 
@@ -1946,7 +1946,7 @@ void ModeloBD::removerLinguagem(Linguagem *linguagem, int idx_obj)
    throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
                  .arg(linguagem->getName(true))
                  .arg(linguagem->getTypeName())
-                 .arg(dynamic_cast<Funcao *>(vet_refs[0])->obterAssinatura())
+                 .arg(dynamic_cast<Function *>(vet_refs[0])->getSignature())
                  .arg(vet_refs[0]->getTypeName()),
                  ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -1955,7 +1955,7 @@ void ModeloBD::removerLinguagem(Linguagem *linguagem, int idx_obj)
  }
 }
 
-void ModeloBD::adicionarFuncao(Funcao *funcao, int idx_obj)
+void ModeloBD::adicionarFuncao(Function *funcao, int idx_obj)
 {
  try
  {
@@ -1967,12 +1967,12 @@ void ModeloBD::adicionarFuncao(Funcao *funcao, int idx_obj)
  }
 }
 
-Funcao *ModeloBD::obterFuncao(unsigned idx_obj)
+Function *ModeloBD::obterFuncao(unsigned idx_obj)
 {
- return(dynamic_cast<Funcao *>(obterObjeto(idx_obj, OBJ_FUNCTION)));
+ return(dynamic_cast<Function *>(obterObjeto(idx_obj, OBJ_FUNCTION)));
 }
 
-void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
+void ModeloBD::removerFuncao(Function *funcao, int idx_obj)
 {
  if(funcao)
  {
@@ -1995,7 +1995,7 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
     //Formata a mensagem para referência direta
     tipo_err=ERR_REM_DIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-            .arg(funcao->obterAssinatura())
+            .arg(funcao->getSignature())
             .arg(funcao->getTypeName())
             .arg(vet_refs[0]->getName(true))
             .arg(vet_refs[0]->getTypeName());
@@ -2007,7 +2007,7 @@ void ModeloBD::removerFuncao(Funcao *funcao, int idx_obj)
     //Formata a mensagem para referência indireta
     tipo_err=ERR_REM_INDIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE))
-            .arg(funcao->obterAssinatura())
+            .arg(funcao->getSignature())
             .arg(funcao->getTypeName())
             .arg(vet_refs[0]->getName(true))
             .arg(vet_refs[0]->getTypeName())
@@ -3321,11 +3321,11 @@ Linguagem *ModeloBD::criarLinguagem(void)
 
         if(tipo_ref==ParsersAttributes::VALIDATOR_FUNC)
 
-         linguagem->definirFuncao(dynamic_cast<Funcao *>(funcao), Linguagem::FUNC_VALIDATOR);
+         linguagem->definirFuncao(dynamic_cast<Function *>(funcao), Linguagem::FUNC_VALIDATOR);
         else if(tipo_ref==ParsersAttributes::HANDLER_FUNC)
-         linguagem->definirFuncao(dynamic_cast<Funcao *>(funcao), Linguagem::FUNC_HANDLER);
+         linguagem->definirFuncao(dynamic_cast<Function *>(funcao), Linguagem::FUNC_HANDLER);
         else
-         linguagem->definirFuncao(dynamic_cast<Funcao *>(funcao), Linguagem::FUNC_INLINE);
+         linguagem->definirFuncao(dynamic_cast<Function *>(funcao), Linguagem::FUNC_INLINE);
 
        }
        else
@@ -3354,19 +3354,19 @@ Linguagem *ModeloBD::criarLinguagem(void)
  return(linguagem);
 }
 
-Funcao *ModeloBD::criarFuncao(void)
+Function *ModeloBD::criarFuncao(void)
 {
  map<QString, QString> atributos, atrib_aux;
- Funcao *funcao=NULL;
+ Function *funcao=NULL;
  ObjectType tipo_obj;
  BaseObject *objeto=NULL;
  TipoPgSQL tipo;
- Parametro param;
+ Parameter param;
  QString str_aux, elem;
 
  try
  {
-  funcao=new Funcao;
+  funcao=new Function;
   //Lê do parser os atributos basicos
   definirAtributosBasicos(funcao);
 
@@ -3375,33 +3375,33 @@ Funcao *ModeloBD::criarFuncao(void)
 
   //Define se a função retorna setof, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::RETURNS_SETOF].isEmpty())
-   funcao->definirRetornaSetOf(atributos[ParsersAttributes::RETURNS_SETOF]==
+   funcao->setReturnSetOf(atributos[ParsersAttributes::RETURNS_SETOF]==
                                ParsersAttributes::_TRUE_);
 
   //Define se a função é do tipo janela, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::WINDOW_FUNC].isEmpty())
-   funcao->definirFuncaoJanela(atributos[ParsersAttributes::WINDOW_FUNC]==
+   funcao->setWindowFunction(atributos[ParsersAttributes::WINDOW_FUNC]==
                                ParsersAttributes::_TRUE_);
 
   //Define a configuração de retorno da função, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::BEHAVIOR_TYPE].isEmpty())
-   funcao->definirTipoComportamento(TipoComportamento(atributos[ParsersAttributes::BEHAVIOR_TYPE]));
+   funcao->setBehaviorType(TipoComportamento(atributos[ParsersAttributes::BEHAVIOR_TYPE]));
 
   //Define o tipo da função, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::FUNCTION_TYPE].isEmpty())
-   funcao->definirTipoFuncao(TipoFuncao(atributos[ParsersAttributes::FUNCTION_TYPE]));
+   funcao->setFunctionType(TipoFuncao(atributos[ParsersAttributes::FUNCTION_TYPE]));
 
   //Define o tipo de segurança da função, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::SECURITY_TYPE].isEmpty())
-   funcao->definirTipoSeguranca(TipoSeguranca(atributos[ParsersAttributes::SECURITY_TYPE]));
+   funcao->setSecurityType(TipoSeguranca(atributos[ParsersAttributes::SECURITY_TYPE]));
 
   //Define o custo de execução da função, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::EXECUTION_COST].isEmpty())
-   funcao->definirCustoExecucao(atributos[ParsersAttributes::EXECUTION_COST].toInt());
+   funcao->setExecutionCost(atributos[ParsersAttributes::EXECUTION_COST].toInt());
 
   //Define a quantidade de linhas retornadas pela função, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::ROW_AMOUNT].isEmpty())
-   funcao->definirQuantidadeLinhas(atributos[ParsersAttributes::ROW_AMOUNT].toInt());
+   funcao->setRowAmount(atributos[ParsersAttributes::ROW_AMOUNT].toInt());
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
@@ -3435,7 +3435,7 @@ Funcao *ModeloBD::criarFuncao(void)
           //Cria o tipo
           tipo=criarTipoPgSQL();
           //Atribui ao retorno da função
-          funcao->definirTipoRetorno(tipo);
+          funcao->setReturnType(tipo);
          }
          /* Criação dos tipo de retorno de tabela da função. Os mesmos vem descritos
             dentro da tag <return-type> em forma de parâmetros */
@@ -3443,7 +3443,7 @@ Funcao *ModeloBD::criarFuncao(void)
          {
           param=criarParametro();
           //Adiciona o tipo de retorno   função
-          funcao->adicionarTipoRetTabela(param.getName(), param.getType());
+          funcao->addTableReturnType(param.getName(), param.getType());
          }
         }
        }
@@ -3476,13 +3476,13 @@ Funcao *ModeloBD::criarFuncao(void)
                       ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Define a linguagem da função
-      funcao->definirLinguagem(dynamic_cast<Linguagem *>(objeto));
+      funcao->setLanguage(dynamic_cast<Linguagem *>(objeto));
      }
      else if(XMLParser::getElementName()==ParsersAttributes::PARAMETER)
      {
       param=criarParametro();
       //Adiciona o parâmet  função
-      funcao->adicionarParametro(param);
+      funcao->addParameter(param);
      }
      //Extraíndo a definição (corpo) da função (tag <definition>)
      else if(XMLParser::getElementName()==ParsersAttributes::DEFINITION)
@@ -3494,13 +3494,13 @@ Funcao *ModeloBD::criarFuncao(void)
 
       if(!atrib_aux[ParsersAttributes::LIBRARY].isEmpty())
       {
-       funcao->definirBiblioteca(atrib_aux[ParsersAttributes::LIBRARY]);
-       funcao->definirSimbolo(atrib_aux[ParsersAttributes::SYMBOL]);
+       funcao->setLibrary(atrib_aux[ParsersAttributes::LIBRARY]);
+       funcao->setSymbol(atrib_aux[ParsersAttributes::SYMBOL]);
       }
       /* Para se ter acesso ao código que define a função é preciso acessar
          o filho da tag <definition> e obter seu conteúdo */
       else if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
-       funcao->definirCodigoFonte(XMLParser::getElementContent());
+       funcao->setSourceCode(XMLParser::getElementContent());
 
       XMLParser::restorePosition();
      }
@@ -3535,10 +3535,10 @@ Funcao *ModeloBD::criarFuncao(void)
  return(funcao);
 }
 
-Parametro ModeloBD::criarParametro(void)
+Parameter ModeloBD::criarParametro(void)
 {
  TipoPgSQL tipo;
- Parametro param;
+ Parameter param;
  map<QString, QString> atributos;
  QString elem;
 
@@ -3552,8 +3552,8 @@ Parametro ModeloBD::criarParametro(void)
   param.setName(atributos[ParsersAttributes::NAME]);
   /* Configurando atributos in e out do parâmetro caso estes estejam
      definidos como true no XML */
-  param.definirEntrada(atributos[ParsersAttributes::PARAM_IN]==ParsersAttributes::_TRUE_);
-  param.definirSaida(atributos[ParsersAttributes::PARAM_OUT]==ParsersAttributes::_TRUE_);
+  param.setIn(atributos[ParsersAttributes::PARAM_IN]==ParsersAttributes::_TRUE_);
+  param.setOut(atributos[ParsersAttributes::PARAM_OUT]==ParsersAttributes::_TRUE_);
   param.setDefaultValue(atributos[ParsersAttributes::DEFAULT_VALUE]);
 
   //Acessa os elementos filhos do parâmetro, que no caso será apenas <type> ou <domain>
@@ -3678,7 +3678,7 @@ Tipo *ModeloBD::criarTipo(void)
  int qtd, i;
  QStringList enums;
  QString elem, str_aux;
- Parametro param;
+ Parameter param;
  BaseObject *funcao=NULL;
  unsigned tipo_func=0;
  TipoPgSQL tipo_copia;
@@ -3817,7 +3817,7 @@ Tipo *ModeloBD::criarTipo(void)
       tipo_func=tipo_funcoes[atributos[ParsersAttributes::REF_TYPE]];
 
       //Atribui a função ao tipo na configuração obtida
-      tipo->definirFuncao(tipo_func, dynamic_cast<Funcao *>(funcao));
+      tipo->definirFuncao(tipo_func, dynamic_cast<Function *>(funcao));
      }
     }
    }
@@ -3996,7 +3996,7 @@ Cast *ModeloBD::criarConversaoTipo(void)
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Atribui a funç   conversão de tipos
-      conv_tipo->setCastFunction(dynamic_cast<Funcao *>(funcao));
+      conv_tipo->setCastFunction(dynamic_cast<Function *>(funcao));
      }
     }
    }
@@ -4072,7 +4072,7 @@ Conversion *ModeloBD::criarConversaoCodificacao(void)
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Atribui a funç   conversão de tipos
-      conv_codif->setConversionFunction(dynamic_cast<Funcao *>(funcao));
+      conv_codif->setConversionFunction(dynamic_cast<Function *>(funcao));
      }
     }
    }
@@ -4208,7 +4208,7 @@ Operador *ModeloBD::criarOperador(void)
       tipo_func=tipo_funcoes[atributos[ParsersAttributes::REF_TYPE]];
 
       //Atribui a função ao tipo na configuração obtida
-      operador->definirFuncao(dynamic_cast<Funcao *>(funcao), tipo_func);
+      operador->definirFuncao(dynamic_cast<Function *>(funcao), tipo_func);
      }
     }
    }
@@ -4315,7 +4315,7 @@ OperatorClass *ModeloBD::criarClasseOperadores(void)
       else if(tp_elem==OperatorClassElement::FUNCTION_ELEM)
       {
        objeto=obterObjeto(atributos[ParsersAttributes::SIGNATURE],OBJ_FUNCTION);
-       elem_classe.setFunction(dynamic_cast<Funcao *>(objeto),num_estrategia);
+       elem_classe.setFunction(dynamic_cast<Function *>(objeto),num_estrategia);
       }
       else if(tp_elem==OperatorClassElement::OPERATOR_ELEM)
       {
@@ -4439,10 +4439,10 @@ FuncaoAgregacao *ModeloBD::criarFuncaoAgregacao(void)
       //Define a função de acordo com o tipo de referência da mesma
       if(atributos[ParsersAttributes::REF_TYPE]==ParsersAttributes::TRANSITION_FUNC)
        func_agreg->definirFuncao(FuncaoAgregacao::FUNCAO_TRANSICAO,
-                                 dynamic_cast<Funcao *>(funcao));
+                                 dynamic_cast<Function *>(funcao));
       else
        func_agreg->definirFuncao(FuncaoAgregacao::FUNCAO_FINAL,
-                                 dynamic_cast<Funcao *>(funcao));
+                                 dynamic_cast<Function *>(funcao));
      }
     }
    }
@@ -5192,7 +5192,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
       }
 
       //Define a função executada pelo gatilho
-      gatilho->definirFuncao(dynamic_cast<Funcao *>(funcao));
+      gatilho->definirFuncao(dynamic_cast<Function *>(funcao));
      }
      else if(elem==ParsersAttributes::CONDITION)
      {
@@ -6529,7 +6529,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   else if(tipo_obj==OBJ_CONVERSION)
   {
    //Obtém as dependências da função de conversão que define a conversão de codificação
-   Funcao *func=dynamic_cast<Conversion *>(objeto)->getConversionFunction();
+   Function *func=dynamic_cast<Conversion *>(objeto)->getConversionFunction();
    obterDependenciasObjeto(func, vet_deps, inc_dep_indiretas);
   }
   //** Obtendo as dependências de Conversões de Tipo **
@@ -6554,25 +6554,25 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   //** Obtendo as dependências de Funções **
   else if(tipo_obj==OBJ_FUNCTION)
   {
-   Funcao *func=dynamic_cast<Funcao *>(objeto);
-   BaseObject *tipo_usr=obterObjetoTipoPgSQL(func->obterTipoRetorno());
+   Function *func=dynamic_cast<Function *>(objeto);
+   BaseObject *tipo_usr=obterObjetoTipoPgSQL(func->getReturnType());
      //obterObjeto(*func->obterTipoRetorno(), OBJETO_TIPO);
    unsigned qtd, i;
 
    //Caso a linguagem da função não seja C ou SQL obtém as dependências da mesma
-   if(func->obterLinguagem()->getName()!=~TipoLinguagem("c") &&
-      func->obterLinguagem()->getName()!=~TipoLinguagem("sql"))
-    obterDependenciasObjeto(func->obterLinguagem(), vet_deps, inc_dep_indiretas);
+   if(func->getLanguage()->getName()!=~TipoLinguagem("c") &&
+      func->getLanguage()->getName()!=~TipoLinguagem("sql"))
+    obterDependenciasObjeto(func->getLanguage(), vet_deps, inc_dep_indiretas);
 
    //Obtém as dependências do tipo de retorno caso o mesmo seja um tipo definido pelo usuário
    if(tipo_usr)
     obterDependenciasObjeto(tipo_usr, vet_deps, inc_dep_indiretas);
 
    //Obtém as dependências dos tipos dos parâmetros
-   qtd=func->obterNumParams();
+   qtd=func->getParameterCount();
    for(i=0; i < qtd; i++)
    {
-    tipo_usr=obterObjetoTipoPgSQL(func->obterParametro(i).getType());
+    tipo_usr=obterObjetoTipoPgSQL(func->getParameter(i).getType());
     //obterObjeto(*func->obterParametro(i).obterTipo(), OBJETO_TIPO);
 
     if(tipo_usr)
@@ -6580,10 +6580,10 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    }
 
    //Obtém as dependências dos elementos da tabela de retorno
-   qtd=func->obterNumTiposRetTabela();
+   qtd=func->getTableReturnTypeCount();
    for(i=0; i < qtd; i++)
    {
-    tipo_usr=obterObjetoTipoPgSQL(func->obterTipoRetTabela(i).getType());
+    tipo_usr=obterObjetoTipoPgSQL(func->getTableReturnType(i).getType());
     //obterObjeto(*func->obterTipoRetTabela(i).obterTipo(), OBJETO_TIPO);
 
     if(tipo_usr)
@@ -6968,7 +6968,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
 
   if(tipo_obj==OBJ_FUNCTION)
   {
-   Funcao *funcao=dynamic_cast<Funcao *>(objeto);
+   Function *funcao=dynamic_cast<Function *>(objeto);
    vector<BaseObject *> *lista_obj=NULL;
    vector<BaseObject *>::iterator itr, itr_end;
    ObjectType tipos[7]={OBJ_CAST, OBJ_CONVERSION,
@@ -7156,7 +7156,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    Column *col=NULL;
    Cast *conv_tipo=NULL;
    Domain *dom=NULL;
-   Funcao *func=NULL;
+   Function *func=NULL;
    FuncaoAgregacao *func_ag=NULL;
    Operador *oper=NULL;
    Tipo *tipo=NULL;
@@ -7293,11 +7293,11 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Obtém a referência ao objeto
-      func=dynamic_cast<Funcao *>(*itr);
+      func=dynamic_cast<Function *>(*itr);
       itr++;
 
       //Verifica se o tipo de retorno é o próprio tipo a ser removido
-      if(func->obterTipoRetorno()==ptr_tipopgsql)
+      if(func->getReturnType()==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(func);
@@ -7306,10 +7306,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       {
        /* Verifica se os tipos de dados dos parâmetros da função
           referenciam tipo a ser removido */
-       qtd=func->obterNumParams();
+       qtd=func->getParameterCount();
        for(i1=0; i1 < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
        {
-        if(func->obterParametro(i1).getType()==ptr_tipopgsql)
+        if(func->getParameter(i1).getType()==ptr_tipopgsql)
         {
          refer=true;
          vet_refs.push_back(func);
@@ -7495,7 +7495,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
   if(tipo_obj==OBJ_LANGUAGE)
   {
    vector<BaseObject *>::iterator itr, itr_end;
-   Funcao *func=NULL;
+   Function *func=NULL;
 
    /* Varre a lista de funções e verifica se estas
       não estão referenciando a linguage a ser removida */
@@ -7505,8 +7505,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
    {
     //Verifica se referencia o espaço de tabela
-    func=dynamic_cast<Funcao *>(*itr);
-    if(func->obterLinguagem()==objeto)
+    func=dynamic_cast<Function *>(*itr);
+    if(func->getLanguage()==objeto)
     {
      refer=true;
      vet_refs.push_back(func);

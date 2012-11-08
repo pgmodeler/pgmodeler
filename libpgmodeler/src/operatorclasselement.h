@@ -37,7 +37,7 @@ class OperatorClassElement {
   unsigned element_type;
 
   //Function used by the element (only for type FUNCTION_ELEM)
-  Funcao *function;
+  Function *function;
 
   //Operator used by the element (only for type OPERATOR_ELEM)
   Operador *_operator;
@@ -62,7 +62,7 @@ class OperatorClassElement {
   OperatorClassElement(void);
 
   //Defines the element as a function clause
-  void setFunction(Funcao *func, unsigned stg_number);
+  void setFunction(Function *func, unsigned stg_number);
 
   //Defines the element as an operator clause
   void setOperator(Operador *oper, unsigned stg_number, bool recheck);
@@ -75,7 +75,7 @@ class OperatorClassElement {
 
   /* Returns the current assigned function.
      This method returns NULL when the element is not an FUNCTION_ELEM */
-  Funcao *getFunction(void);
+  Function *getFunction(void);
 
   /* Returns the current assigned operator.
      This method returns NULL when the element is not an OPERATOR_ELEM */

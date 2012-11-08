@@ -291,9 +291,9 @@ class ModeloBD:  public QObject, public BaseObject {
   Textbox *obterCaixaTexto(unsigned idx_obj);
 
   //Métodos de manipulação de funções
-  void adicionarFuncao(Funcao *funcao, int idx_obj=-1);
-  void removerFuncao(Funcao *funcao, int idx_obj=-1);
-  Funcao *obterFuncao(unsigned idx_obj);
+  void adicionarFuncao(Function *funcao, int idx_obj=-1);
+  void removerFuncao(Function *funcao, int idx_obj=-1);
+  Function *obterFuncao(unsigned idx_obj);
 
   //Métodos de manipulação de esquemas
   void adicionarEsquema(Schema *schema, int idx_obj=-1);
@@ -401,8 +401,8 @@ class ModeloBD:  public QObject, public BaseObject {
   Tablespace *criarEspacoTabela(void);
   Schema *criarEsquema(void);
   Linguagem *criarLinguagem(void);
-  Funcao *criarFuncao(void);
-  Parametro criarParametro(void);
+  Function *criarFuncao(void);
+  Parameter criarParametro(void);
   Tipo *criarTipo(void);
   Domain *criarDominio(void);
   Cast *criarConversaoTipo(void);

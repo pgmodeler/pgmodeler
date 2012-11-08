@@ -151,7 +151,7 @@ void OperadorWidget::aplicarConfiguracao(void)
 
   //Atribuindo as funções selecionadas no formulário ao operador
   for(i=Operador::FUNC_OPERADOR; i <= Operador::FUNC_RESTRICAO; i++)
-   operador->definirFuncao(dynamic_cast<Funcao *>(sel_funcoes[i]->obterObjeto()), i);
+   operador->definirFuncao(dynamic_cast<Function *>(sel_funcoes[i]->obterObjeto()), i);
 
   //Atribuindo os operadores selecionados no formulário ao operador
   for(i=Operador::OPER_COMUTACAO; i <= Operador::OPER_MAIOR; i++)

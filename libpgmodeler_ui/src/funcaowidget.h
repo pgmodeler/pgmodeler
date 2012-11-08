@@ -44,10 +44,10 @@ class FuncaoWidget: public ObjetoBaseWidget, public Ui::FuncaoWidget  {
                        *tab_parametros;
 
    //Converte os dados da linha da tabela informada em um parâmetro
-   Parametro obterParametro(TabelaObjetosWidget *tab, unsigned idx_lin);
+   Parameter obterParametro(TabelaObjetosWidget *tab, unsigned idx_lin);
 
    //Exibe os dados do parâmetro na tabela e linha selecionadas
-   void exibirDadosParametro(Parametro param, TabelaObjetosWidget *tab, unsigned idx_lin);
+   void exibirDadosParametro(Parameter param, TabelaObjetosWidget *tab, unsigned idx_lin);
 
    /* Valida a nova configuração da função em relação a demais objetos que a referenciam.
      A exemplo disso temos objetos das classes ConversaoCodificacao, ConversaoTipo,
@@ -56,7 +56,7 @@ class FuncaoWidget: public ObjetoBaseWidget, public Ui::FuncaoWidget  {
 
  public:
    FuncaoWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Funcao *funcao);
+   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Function *funcao);
 
  private slots:
    void alternarTiposRetorno(void);

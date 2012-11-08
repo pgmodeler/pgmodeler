@@ -141,7 +141,7 @@ void ClasseOperadoresWidget::exibirDadosElemento(OperatorClassElement elem, int 
     a assinatura da função e o tipo do objeto (função) */
  if(tipo_elem==OperatorClassElement::FUNCTION_ELEM)
  {
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getFunction()->obterAssinatura()), idx_linha, 0);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getFunction()->getSignature()), idx_linha, 0);
   tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getFunction()->getTypeName()), idx_linha, 1);
  }
  /* Para o tipo OPERADOR são exibidas na coluna 0 e 1, respectivamente,
@@ -199,7 +199,7 @@ void ClasseOperadoresWidget::manipularElemento(int idx_linha)
   /* Caso seja do tipo FUNÇÃO, atribui a função selecionado no widget seletor de função
      e também o valor configurado como suporte no formulário */
   if(tipo_elem==OperatorClassElement::FUNCTION_ELEM)
-   elem.setFunction(dynamic_cast<Funcao *>(sel_funcao->obterObjeto()), num_suporte_sb->value());
+   elem.setFunction(dynamic_cast<Function *>(sel_funcao->obterObjeto()), num_suporte_sb->value());
   /* Caso seja do tipo OPERADOR, atribui o operador selecionado no widget seletor de operador,
      o valor configurado como suporte no formulário e o estado do checkbox de rechecagem */
   else  if(tipo_elem==OperatorClassElement::OPERATOR_ELEM)

@@ -553,7 +553,7 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
      obj_aux=modelo->obterObjeto(nome_obj,tipo_obj);
 
      if(tipo_obj==OBJ_FUNCTION)
-      obj_aux1=modelo->obterObjeto(dynamic_cast<Funcao *>(objeto)->obterAssinatura(),tipo_obj);
+      obj_aux1=modelo->obterObjeto(dynamic_cast<Function *>(objeto)->getSignature(),tipo_obj);
      else if(tipo_obj==OBJ_OPERATOR)
       obj_aux1=modelo->obterObjeto(dynamic_cast<Operador *>(objeto)->obterAssinatura(),tipo_obj);
      else

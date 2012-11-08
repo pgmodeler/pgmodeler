@@ -1161,7 +1161,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_FUNCTION:
-    funcao_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Funcao *>(objeto));
+    funcao_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Function *>(objeto));
     funcao_wgt->show();
    break;
 
@@ -1604,7 +1604,7 @@ void ModeloWidget::colarObjetos(void)
  map<BaseObject *, QString> nome_orig_objs;
  BaseObject *objeto=NULL, *objeto_aux=NULL;
  TableObject *obj_tab=NULL;
- Funcao *func=NULL;
+ Function *func=NULL;
  //Tipo *tipo=NULL;
  Operador *oper=NULL;
  QString nome_aux, nome_obj_copia;
@@ -1644,8 +1644,8 @@ void ModeloWidget::colarObjetos(void)
    //Para isso, no caso de função e operador, checa esse conflito através de sua assinatura
    if(tipo_obj==OBJ_FUNCTION)
    {
-    dynamic_cast<Funcao *>(objeto)->criarAssinatura(true);
-    nome_aux=dynamic_cast<Funcao *>(objeto)->obterAssinatura();
+    dynamic_cast<Function *>(objeto)->createSignature(true);
+    nome_aux=dynamic_cast<Function *>(objeto)->getSignature();
    }
    else if(tipo_obj==OBJ_OPERATOR)
     nome_aux=dynamic_cast<Operador *>(objeto)->obterAssinatura();
@@ -1685,9 +1685,9 @@ void ModeloWidget::colarObjetos(void)
          conflitar com algum objeto no modelo, esta validação será executada */
       if(tipo_obj==OBJ_FUNCTION)
       {
-       func=dynamic_cast<Funcao *>(objeto);
+       func=dynamic_cast<Function *>(objeto);
        func->setName(nome_orig_objs[objeto] + nome_aux);
-       nome_obj_copia=func->obterAssinatura();
+       nome_obj_copia=func->getSignature();
        func->setName(nome_orig_objs[objeto]);
       }
       else if(tipo_obj==OBJ_OPERATOR)

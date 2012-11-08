@@ -45,13 +45,13 @@ void ParametroWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void ParametroWidget::definirAtributos(Parametro param, ModeloBD *modelo)
+void ParametroWidget::definirAtributos(Parameter param, ModeloBD *modelo)
 {
  this->parametro=param;
 
  //Configura os campos do formulário com os valores do parâmetro passado
- param_in_chk->setChecked(param.parametroEntrada());
- param_out_chk->setChecked(param.parametroSaida());
+ param_in_chk->setChecked(param.isIn());
+ param_out_chk->setChecked(param.isOut());
  valorpadrao_edt->setText(QString::fromUtf8(param.getDefaultValue()));
  tipo_pgsql->definirAtributos(param.getType(), modelo);
 
@@ -65,8 +65,8 @@ void ParametroWidget::aplicarConfiguracao(void)
   //iniciarConfiguracao<Parametro>();
 
   //Configura o parâmetro com os valores do formulário
-  parametro.definirEntrada(param_in_chk->isChecked());
-  parametro.definirSaida(param_out_chk->isChecked());
+  parametro.setIn(param_in_chk->isChecked());
+  parametro.setOut(param_out_chk->isChecked());
   parametro.setDefaultValue(valorpadrao_edt->text());
   parametro.setType(tipo_pgsql->obterTipoPgSQL());
 
@@ -82,7 +82,7 @@ void ParametroWidget::aplicarConfiguracao(void)
  }
 }
 
-Parametro ParametroWidget::obterParametro(void)
+Parameter ParametroWidget::obterParametro(void)
 {
  return(parametro);
 }

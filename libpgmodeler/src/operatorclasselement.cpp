@@ -9,7 +9,7 @@ OperatorClassElement::OperatorClassElement(void)
  strategy_number=0;
 }
 
-void OperatorClassElement::setFunction(Funcao *func, unsigned stg_number)
+void OperatorClassElement::setFunction(Function *func, unsigned stg_number)
 {
  //Raises an exception case the function is not allocated
  if(!func)
@@ -65,7 +65,7 @@ unsigned OperatorClassElement::getElementType(void)
  return(element_type);
 }
 
-Funcao *OperatorClassElement::getFunction(void)
+Function *OperatorClassElement::getFunction(void)
 {
  return(function);
 }
@@ -110,7 +110,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
   attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
 
   if(def_type==SchemaParser::SQL_DEFINITION)
-   attributes[ParsersAttributes::SIGNATURE]=function->obterAssinatura();
+   attributes[ParsersAttributes::SIGNATURE]=function->getSignature();
   else
    attributes[ParsersAttributes::DEFINITION]=function->getCodeDefinition(def_type,true);
  }

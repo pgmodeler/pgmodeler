@@ -93,9 +93,9 @@ void LinguagemWidget::aplicarConfiguracao(void)
   linguagem=dynamic_cast<Linguagem *>(this->objeto);
   linguagem->definirConfiavel(confiavel_chk->isChecked());
 
-  linguagem->definirFuncao(dynamic_cast<Funcao *>(sel_func_handler->obterObjeto()), Linguagem::FUNC_HANDLER);
-  linguagem->definirFuncao(dynamic_cast<Funcao *>(sel_func_validator->obterObjeto()), Linguagem::FUNC_VALIDATOR);
-  linguagem->definirFuncao(dynamic_cast<Funcao *>(sel_func_inline->obterObjeto()), Linguagem::FUNC_INLINE);
+  linguagem->definirFuncao(dynamic_cast<Function *>(sel_func_handler->obterObjeto()), Linguagem::FUNC_HANDLER);
+  linguagem->definirFuncao(dynamic_cast<Function *>(sel_func_validator->obterObjeto()), Linguagem::FUNC_VALIDATOR);
+  linguagem->definirFuncao(dynamic_cast<Function *>(sel_func_inline->obterObjeto()), Linguagem::FUNC_INLINE);
 
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();

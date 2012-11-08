@@ -30,7 +30,7 @@
 class Operador: public BaseObject {
  private:
   //Armazena as referências para as funções do operador
-  Funcao *funcoes[3];
+  Function *funcoes[3];
 
   //Armazena os argumentos (esquerda e direita) do operador
   TipoPgSQL tipo_args[2];
@@ -62,7 +62,7 @@ class Operador: public BaseObject {
   void setName(const QString &obj_name);
 
   //Define as funções usadas pelo operador (operador, junção, restrição)
-  void definirFuncao(Funcao *funcao, unsigned tipo_funcao);
+  void definirFuncao(Function *funcao, unsigned tipo_funcao);
 
   //Define o tipo de dado dos argumentos (esquerda e direita) do operador
   void definirTipoDadoArgumento(TipoPgSQL tipo_dado, unsigned tipo_arg);
@@ -77,7 +77,7 @@ class Operador: public BaseObject {
   void definirMerges(bool valor);
 
   //Retorna uma determinada função do operador
-  Funcao *obterFuncao(unsigned tipo_funcao);
+  Function *obterFuncao(unsigned tipo_funcao);
 
   //Retorna o tipo de dado de um determinado argumento
   TipoPgSQL obterTipoDadoArgumento(unsigned tipo_arg);

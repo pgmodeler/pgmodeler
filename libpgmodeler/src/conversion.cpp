@@ -31,7 +31,7 @@ void Conversion::setEncoding(unsigned encoding_idx, TipoCodificacao encoding_typ
   throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Conversion::setConversionFunction(Funcao *conv_func)
+void Conversion::setConversionFunction(Function *conv_func)
 {
  //Raises an error in case the passed conversion function is null
  if(!conv_func)
@@ -41,24 +41,24 @@ void Conversion::setConversionFunction(Funcao *conv_func)
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* The conversion function must have 5 parameters if it's not the case
     raises an error. */
- else if(conv_func->obterNumParams()!=5)
+ else if(conv_func->getParameterCount()!=5)
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->getName(true)))
                          .arg(BaseObject::getTypeName(OBJ_CONVERSION)),
                 ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Raises an error if the function parameters does not following the type order:
     interger, integer, cstring, internal, integer */
- else if(conv_func->obterParametro(0).getType()!="integer" ||
-         conv_func->obterParametro(1).getType()!="integer" ||
-         conv_func->obterParametro(2).getType()!="cstring" ||
-         conv_func->obterParametro(3).getType()!="internal" ||
-         conv_func->obterParametro(4).getType()!="integer")
+ else if(conv_func->getParameter(0).getType()!="integer" ||
+         conv_func->getParameter(1).getType()!="integer" ||
+         conv_func->getParameter(2).getType()!="cstring" ||
+         conv_func->getParameter(3).getType()!="internal" ||
+         conv_func->getParameter(4).getType()!="integer")
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
                          .arg(QString::fromUtf8(this->getName(true)))
                          .arg(BaseObject::getTypeName(OBJ_CONVERSION)),
                 ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Raises an error if the conversion function return type is not 'void'
- else if(conv_func->obterTipoRetorno()!="void")
+ else if(conv_func->getReturnType()!="void")
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
                          .arg(QString::fromUtf8(this->getName(true)))
                          .arg(BaseObject::getTypeName(OBJ_CONVERSION)),
@@ -80,7 +80,7 @@ TipoCodificacao Conversion::getEncoding(unsigned encoding_idx)
   throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-Funcao *Conversion::getConversionFunction(void)
+Function *Conversion::getConversionFunction(void)
 {
  return(conversion_func);
 }

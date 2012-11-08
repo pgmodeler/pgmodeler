@@ -81,7 +81,7 @@ void ConversaoCodificacaoWidget::aplicarConfiguracao(void)
   conv_cod->setDefault(conv_padrao_chk->isChecked());
 
   //Atribui a função de conversão com aquela que está selecionada no seletor de função
-  conv_cod->setConversionFunction(dynamic_cast<Funcao*>(sel_funcao_conv->obterObjeto()));
+  conv_cod->setConversionFunction(dynamic_cast<Function*>(sel_funcao_conv->obterObjeto()));
 
   finalizarConfiguracao();
  }

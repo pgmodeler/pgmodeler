@@ -37,14 +37,14 @@ class Tipo: public BaseObject {
   unsigned config;
 
   //Atributos para a configuração TIPO_COMPOSTO
-  vector<Parametro> attributes;
+  vector<Parameter> attributes;
 
   //Atributos para a configuração TIPO_ENUMERACAO
   vector<QString> enumeracoes;
 
   //Atributos para a configuração TIPO_BASE
   //Funções usadas pelo tipo
-  Funcao *funcoes[7];
+  Function *funcoes[7];
 
   //Comprimento interno ( > 0 - TAMANHO FIXO, 0 - TAMANHO VARIÁVEL)
   unsigned comp_interno; //INTERNALLENGTH
@@ -124,7 +124,7 @@ class Tipo: public BaseObject {
   void definirConfiguracao(unsigned conf);
 
   //Métodos de configuração para TIPO_COMPOSTO
-  void adicionarAtributo(Parametro atrib);
+  void adicionarAtributo(Parameter atrib);
   void removerAtributo(unsigned idx_atrib);
   void removerAtributos(void);
 
@@ -134,7 +134,7 @@ class Tipo: public BaseObject {
   void removerEnumeracoes(void);
 
   //Métodos de configuração para TIPO_BASE
-  void definirFuncao(unsigned conf_func, Funcao *funcao);
+  void definirFuncao(unsigned conf_func, Function *funcao);
   void definirCompInterno(unsigned comp);
   void definirPorValor(bool valor);
   void definirAlinhamento(TipoPgSQL tipo);
@@ -146,7 +146,7 @@ class Tipo: public BaseObject {
   void definirPreferido(bool preferido);
   void definirTipoCopia(TipoPgSQL tipo_copia);
 
-  Parametro obterAtributo(unsigned idx_atrib);
+  Parameter obterAtributo(unsigned idx_atrib);
   unsigned obterNumAtributos(void);
   QString obterEnumeracao(unsigned idx_enum);
   unsigned obterNumEnumeracoes(void);
@@ -158,7 +158,7 @@ class Tipo: public BaseObject {
 
 
   //Métodos de obtenção para TIPO_BASE
-  Funcao *obterFuncao(unsigned conf_func);
+  Function *obterFuncao(unsigned conf_func);
   unsigned obterCompInterno(void);
   bool passadoPorValor(void);
   TipoPgSQL obterAlinhamento(void);

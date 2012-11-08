@@ -292,7 +292,7 @@ QString Permissao::getCodeDefinition(unsigned tipo_def)
  tipo_obj=objeto->getObjectType();
 
  if(tipo_obj==OBJ_FUNCTION)
-  attributes[ParsersAttributes::OBJECT]=dynamic_cast<Funcao *>(objeto)->obterAssinatura();
+  attributes[ParsersAttributes::OBJECT]=dynamic_cast<Function *>(objeto)->getSignature();
  else
   attributes[ParsersAttributes::OBJECT]=objeto->getName(true);
 

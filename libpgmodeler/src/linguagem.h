@@ -35,7 +35,7 @@ class Linguagem: public BaseObject{
   bool confiavel;
 
   //Função que definem o funcionamento da linguagem
-  Funcao *funcoes[3];
+  Function *funcoes[3];
 
  public:                //Função de validação sintática da linguagem
   const static unsigned FUNC_VALIDATOR=0,
@@ -52,9 +52,9 @@ class Linguagem: public BaseObject{
   //Define se a linguagem é confiável ou não
   void definirConfiavel(bool valor);
 
-  void definirFuncao(Funcao *funcao, unsigned tipo_func);
+  void definirFuncao(Function *funcao, unsigned tipo_func);
   bool linguagemConfiavel(void);
-  Funcao *obterFuncao(unsigned tipo_func);
+  Function *obterFuncao(unsigned tipo_func);
 
   QString getCodeDefinition(unsigned tipo_def, bool forma_reduzida);
   QString getCodeDefinition(unsigned tipo_def);

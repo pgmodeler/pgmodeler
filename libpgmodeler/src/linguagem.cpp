@@ -32,7 +32,7 @@ void Linguagem::definirConfiavel(bool valor)
  confiavel=valor;
 }
 
-void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
+void  Linguagem::definirFuncao(Function *funcao, unsigned tipo_func)
 {
  TipoLinguagem ling;
  ling=TipoLinguagem::c;
@@ -42,31 +42,31 @@ void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
       /* Obrigatóriamente uma função de manipulação deve ser escrita em C,
          e possuir tipo de retorno "language_handler" */
       ((tipo_func==FUNC_HANDLER &&
-        funcao->obterTipoRetorno()=="language_handler" &&
-        funcao->obterNumParams()==0 &&
-        funcao->obterLinguagem()->getName()==(~ling)) ||
+        funcao->getReturnType()=="language_handler" &&
+        funcao->getParameterCount()==0 &&
+        funcao->getLanguage()->getName()==(~ling)) ||
        /* Obrigatoriamente a função de validator de ser escrita em C,
           retornar "void", possuir apenas 1 parâmetro e que o mesmo
           seja do tipo "oid" */
        (tipo_func==FUNC_VALIDATOR &&
-        funcao->obterTipoRetorno()=="void" &&
-        funcao->obterNumParams()==1 &&
-        funcao->obterParametro(0).getType() == "oid" &&
-        funcao->obterLinguagem()->getName()==(~ling)) ||
+        funcao->getReturnType()=="void" &&
+        funcao->getParameterCount()==1 &&
+        funcao->getParameter(0).getType() == "oid" &&
+        funcao->getLanguage()->getName()==(~ling)) ||
       /* Obrigatoriamente a função inline de ser escrita em C,
          retornar "void", possuir apenas 1 parâmetro e que o mesmo
          seja do tipo "internal" */
        (tipo_func==FUNC_INLINE &&
-        funcao->obterTipoRetorno()=="void" &&
-        funcao->obterNumParams()==1 &&
-        funcao->obterParametro(0).getType() == "internal" &&
-        funcao->obterLinguagem()->getName()==(~ling)) )))
+        funcao->getReturnType()=="void" &&
+        funcao->getParameterCount()==1 &&
+        funcao->getParameter(0).getType() == "internal" &&
+        funcao->getLanguage()->getName()==(~ling)) )))
  {
   this->funcoes[tipo_func]=funcao;
  }
  //Disparando uma exceção caso o tipo de retorno da função não coincida com o aceito para cada tipo de função
- else if((tipo_func==FUNC_HANDLER && funcao->obterTipoRetorno()!="language_handler") ||
-         ((tipo_func==FUNC_VALIDATOR || tipo_func==FUNC_INLINE) && funcao->obterTipoRetorno()!="void"))
+ else if((tipo_func==FUNC_HANDLER && funcao->getReturnType()!="language_handler") ||
+         ((tipo_func==FUNC_VALIDATOR || tipo_func==FUNC_INLINE) && funcao->getReturnType()!="void"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
                          .arg(this->getName(true))
                          .arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
@@ -76,7 +76,7 @@ void  Linguagem::definirFuncao(Funcao *funcao, unsigned tipo_func)
   throw Exception(ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-Funcao * Linguagem::obterFuncao(unsigned tipo_func)
+Function * Linguagem::obterFuncao(unsigned tipo_func)
 {
  if(tipo_func > FUNC_INLINE)
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);

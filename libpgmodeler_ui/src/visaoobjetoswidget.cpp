@@ -311,7 +311,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
   TableObject *objeto_tab=NULL;
   QTableWidgetItem *item_tab=NULL, *item_tab1=NULL;
   Tabela *tabela=NULL;
-  Funcao *funcao=NULL;
+  Function *funcao=NULL;
   Operador *operador=NULL;
   QPixmap icone;
   QFont fonte;
@@ -379,11 +379,11 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
      }
      else if(tipos[id_tipo]==OBJ_FUNCTION)
      {
-      funcao=dynamic_cast<Funcao *>(objeto);
-      funcao->criarAssinatura(false);
-      item_tab->setText(QString::fromUtf8(funcao->obterAssinatura()));
-      item_tab->setToolTip(QString::fromUtf8(funcao->obterAssinatura()));
-      funcao->criarAssinatura(true);
+      funcao=dynamic_cast<Function *>(objeto);
+      funcao->createSignature(false);
+      item_tab->setText(QString::fromUtf8(funcao->getSignature()));
+      item_tab->setToolTip(QString::fromUtf8(funcao->getSignature()));
+      funcao->createSignature(true);
      }
      else
      {
@@ -614,7 +614,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
  if(modelo_bd && map_objs_visiveis[OBJ_SCHEMA])
  {
   BaseObject *objeto=NULL, *esquema=NULL;
-  Funcao *funcao=NULL;
+  Function *funcao=NULL;
   Operador *operador=NULL;
   vector<BaseObject *> lista_obj;
   QFont fonte;
@@ -731,15 +731,15 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
        //Caso particular para funções
        if(tipos[i1]==OBJ_FUNCTION)
        {
-        funcao=dynamic_cast<Funcao *>(objeto);
+        funcao=dynamic_cast<Function *>(objeto);
         //Cria a assinatura sem formatar o nome
-        funcao->criarAssinatura(false);
+        funcao->createSignature(false);
         //O texto do ítem será a assinatura da função e não o nome do objeto
-        item4->setText(0,QString::fromUtf8(funcao->obterAssinatura()));
-        item4->setToolTip(0,QString::fromUtf8(funcao->obterAssinatura()));
+        item4->setText(0,QString::fromUtf8(funcao->getSignature()));
+        item4->setToolTip(0,QString::fromUtf8(funcao->getSignature()));
         /* Cria a assinatura formatando o nome, para não quebrar possíveis
            referências a esse objeto */
-        funcao->criarAssinatura(true);
+        funcao->createSignature(true);
        }
        else if(tipos[i1]==OBJ_OPERATOR)
        {

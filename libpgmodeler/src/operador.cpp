@@ -82,7 +82,7 @@ void Operador::setName(const QString &nome)
  }
 }
 
-void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
+void Operador::definirFuncao(Function *funcao, unsigned tipo_funcao)
 {
  //Caso o tipo de função seja inválido
  if(tipo_funcao > FUNC_RESTRICAO)
@@ -98,19 +98,19 @@ void Operador::definirFuncao(Funcao *funcao, unsigned tipo_funcao)
                   ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Caso o número de parâmetros da função seja inválido. Para operadores
      a mesma deve possuir 1 ou 2 parâmetros */
-  else if(funcao->obterNumParams()==0 || funcao->obterNumParams() > 2)
+  else if(funcao->getParameterCount()==0 || funcao->getParameterCount() > 2)
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_OPERATOR)),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
-   unsigned qtd_params=funcao->obterNumParams();
+   unsigned qtd_params=funcao->getParameterCount();
    TipoPgSQL tipo_param1=TipoPgSQL("any"), tipo_param2=TipoPgSQL("any");
 
    //Obtém os prâmetros da função
-   tipo_param1=funcao->obterParametro(0).getType();
-   if(qtd_params==2) tipo_param2=funcao->obterParametro(1).getType();
+   tipo_param1=funcao->getParameter(0).getType();
+   if(qtd_params==2) tipo_param2=funcao->getParameter(1).getType();
 
    /* Verificando os parâmetros da função de acordo com o tipo dos
       argumentos dos operadores */
@@ -206,7 +206,7 @@ void Operador::definirMerges(bool valor)
  merges=valor;
 }
 
-Funcao *Operador::obterFuncao(unsigned tipo_funcao)
+Function *Operador::obterFuncao(unsigned tipo_funcao)
 {
  //Caso o tipo de função seja inválido
  if(tipo_funcao > FUNC_RESTRICAO)
@@ -313,7 +313,7 @@ QString Operador::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
   if(funcoes[i])
   {
    if(tipo_def==SchemaParser::SQL_DEFINITION)
-    attributes[atribs_funcoes[i]]=funcoes[i]->obterAssinatura();
+    attributes[atribs_funcoes[i]]=funcoes[i]->getSignature();
    else
    {
     funcoes[i]->setAttribute(ParsersAttributes::REF_TYPE, atribs_funcoes[i]);

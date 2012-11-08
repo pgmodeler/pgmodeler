@@ -37,7 +37,7 @@ class Cast: public BaseObject {
   unsigned cast_type;
 
   //Function used to do the type cast
-  Funcao *cast_function;
+  Function *cast_function;
 
   /* Indicates that the type cast is inout, this means that
      the function used to cast the types will be the 'output'
@@ -61,7 +61,7 @@ class Cast: public BaseObject {
   void setCastType(unsigned cast_type);
 
   //Defines the function used to do the type cast
-  void setCastFunction(Funcao *cast_func);
+  void setCastFunction(Function *cast_func);
 
   /* Defines if the conversion is inout. If so the conversion function
      assigned to the cast is  ignored since the PostgreSQL will use
@@ -75,7 +75,7 @@ class Cast: public BaseObject {
   unsigned getCastType(void);
 
   //Returns the cast function
-  Funcao *getCastFunction(void);
+  Function *getCastFunction(void);
 
   //Returs whether the cast is inout or not
   bool isInOut(void);

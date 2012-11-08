@@ -119,7 +119,7 @@ void ConversaoTipoWidget::aplicarConfiguracao(void)
    conv_tipo->setCastType(Cast::ASSIGNMENT);
 
   //Atribui a função de conversão com aquela que está selecionada no seletor de função
-  conv_tipo->setCastFunction(dynamic_cast<Funcao*>(sel_funcao_conv->obterObjeto()));
+  conv_tipo->setCastFunction(dynamic_cast<Function*>(sel_funcao_conv->obterObjeto()));
 
   //Aplica as configurações básicas
   ObjetoBaseWidget::aplicarConfiguracao();

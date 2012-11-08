@@ -14,7 +14,7 @@ FuncaoAgregacao::FuncaoAgregacao(void)
  attributes[ParsersAttributes::SORT_OP]="";
 }
 
-void FuncaoAgregacao::definirFuncao(unsigned idx_func, Funcao *func)
+void FuncaoAgregacao::definirFuncao(unsigned idx_func, Function *func)
 {
  /* Caso o usuário tente acessar um índice de função inválido,
     é gerado um erro */
@@ -32,7 +32,7 @@ void FuncaoAgregacao::definirFuncao(unsigned idx_func, Funcao *func)
  funcoes[idx_func]=func;
 }
 
-bool FuncaoAgregacao::funcaoValida(unsigned idx_func, Funcao *func)
+bool FuncaoAgregacao::funcaoValida(unsigned idx_func, Function *func)
 {
  if(func)
  {
@@ -40,8 +40,8 @@ bool FuncaoAgregacao::funcaoValida(unsigned idx_func, Funcao *func)
   {
    /* A função final deve possuir apenas 1 parâmetro de tipo
       igual ao atributo 'tipo_estado' */
-   return((func->obterNumParams()==1 &&
-           func->obterParametro(0).getType()==tipo_estado));
+   return((func->getParameterCount()==1 &&
+           func->getParameter(0).getType()==tipo_estado));
   }
   else
   {
@@ -54,13 +54,13 @@ bool FuncaoAgregacao::funcaoValida(unsigned idx_func, Funcao *func)
       ser iguais ao tipo de dados de estado (tipo_estado) da função de agregação.
       E por fim, os demais parâmetros da função devem ser iguais aos tipos
       da lista de tipos da função de agregação. */
-   cond1=(func->obterTipoRetorno()==tipo_estado) &&
-         (func->obterNumParams()==tipo_dados.size() + 1) &&
-         (func->obterParametro(0).getType()==tipo_estado);
+   cond1=(func->getReturnType()==tipo_estado) &&
+         (func->getParameterCount()==tipo_dados.size() + 1) &&
+         (func->getParameter(0).getType()==tipo_estado);
 
-   qtd=func->obterNumParams();
+   qtd=func->getParameterCount();
    for(i=1 ; i < qtd && cond2; i++)
-    cond2=(func->obterParametro(i).getType()==tipo_dados[i-1]);
+    cond2=(func->getParameter(i).getType()==tipo_dados[i-1]);
 
    return(cond1 && cond2);
   }
@@ -82,7 +82,7 @@ void FuncaoAgregacao::definirOperadorOrdenacao(Operador *op_ordenacao)
 {
  if(op_ordenacao)
  {
-  Funcao *func=NULL;
+  Function *func=NULL;
 
   /* De acordo com a documentação, um operador só pode ser atribuido a uma
      função de agregação quando:
@@ -94,8 +94,8 @@ void FuncaoAgregacao::definirOperadorOrdenacao(Operador *op_ordenacao)
   if(tipo_dados.size()!=1)
    throw Exception(ERR_ASG_INV_OPER_ARGS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   //Validando a condição 2
-  else if(func->obterParametro(0).getType()!=tipo_dados[0] ||
-         (func->obterNumParams()==2 && func->obterParametro(1).getType()!=tipo_dados[0]))
+  else if(func->getParameter(0).getType()!=tipo_dados[0] ||
+         (func->getParameterCount()==2 && func->getParameter(1).getType()!=tipo_dados[0]))
    throw Exception(ERR_ASG_INV_OPERATOR_TYPES,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
@@ -177,7 +177,7 @@ unsigned FuncaoAgregacao::obterNumTipoDados(void)
  return(tipo_dados.size());
 }
 
-Funcao *FuncaoAgregacao::obterFuncao(unsigned idx_func)
+Function *FuncaoAgregacao::obterFuncao(unsigned idx_func)
 {
  //Verifica se o índice usado para referenciar a função é inválido
  if(idx_func!=FUNCAO_FINAL && idx_func!=FUNCAO_TRANSICAO)
@@ -220,7 +220,7 @@ QString FuncaoAgregacao::getCodeDefinition(unsigned tipo_def)
  if(funcoes[FUNCAO_TRANSICAO])
  {
   if(tipo_def==SchemaParser::SQL_DEFINITION)
-   attributes[ParsersAttributes::TRANSITION_FUNC]=funcoes[FUNCAO_TRANSICAO]->obterAssinatura();
+   attributes[ParsersAttributes::TRANSITION_FUNC]=funcoes[FUNCAO_TRANSICAO]->getSignature();
   else
   {
    funcoes[FUNCAO_TRANSICAO]->setAttribute(ParsersAttributes::REF_TYPE,
@@ -232,7 +232,7 @@ QString FuncaoAgregacao::getCodeDefinition(unsigned tipo_def)
  if(funcoes[FUNCAO_FINAL])
  {
   if(tipo_def==SchemaParser::SQL_DEFINITION)
-   attributes[ParsersAttributes::FINAL_FUNC]=funcoes[FUNCAO_FINAL]->obterAssinatura();
+   attributes[ParsersAttributes::FINAL_FUNC]=funcoes[FUNCAO_FINAL]->getSignature();
   else
   {
    funcoes[FUNCAO_FINAL]->setAttribute(ParsersAttributes::REF_TYPE,

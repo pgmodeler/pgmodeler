@@ -37,7 +37,7 @@ class Gatilho: public TableObject{
   vector<Column *> colunas_upd;
 
   //Função que será executada com o disparo do gatilho
-  Funcao *funcao;
+  Function *funcao;
 
   //Condição que garante ou não a execução do gatilhos
   QString condicao;
@@ -86,7 +86,7 @@ class Gatilho: public TableObject{
   void definirEvento(TipoEvento evento, bool valor);
 
   //Define a função que será executada quando o gatilho for chamado
-  void definirFuncao(Funcao *funcao);
+  void definirFuncao(Function *funcao);
 
   //Define a condição de execução do gatilho
   void definirCondicao(const QString &cond);
@@ -123,7 +123,7 @@ class Gatilho: public TableObject{
   QString obterCondicao(void);
 
   //Obtém a função executada pelo gatilho chamado
-  Funcao *obterFuncao(void);
+  Function *obterFuncao(void);
 
   //Obtém o número de argumentos
   unsigned obterNumArgs(void);

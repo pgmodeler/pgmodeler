@@ -172,8 +172,8 @@ void FuncaoAgregacaoWidget::aplicarConfiguracao(void)
    funcao_ag->adicionarTipoDado(tab_tipos_entrada->obterDadoLinha(i).value<TipoPgSQL>());
 
   //Define as funções e operador obtendo tais objetos dos respectivos seletores
-  funcao_ag->definirFuncao(FuncaoAgregacao::FUNCAO_TRANSICAO, dynamic_cast<Funcao *>(sel_func_transicao->obterObjeto()));
-  funcao_ag->definirFuncao(FuncaoAgregacao::FUNCAO_FINAL, dynamic_cast<Funcao *>(sel_func_final->obterObjeto()));
+  funcao_ag->definirFuncao(FuncaoAgregacao::FUNCAO_TRANSICAO, dynamic_cast<Function *>(sel_func_transicao->obterObjeto()));
+  funcao_ag->definirFuncao(FuncaoAgregacao::FUNCAO_FINAL, dynamic_cast<Function *>(sel_func_final->obterObjeto()));
   funcao_ag->definirOperadorOrdenacao(dynamic_cast<Operador *>(sel_op_ordenacao->obterObjeto()));
 
   //Finaliza a configuração da função de agregação

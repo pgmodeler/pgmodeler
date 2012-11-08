@@ -50,7 +50,7 @@ void Cast::setInOut(bool value)
  is_in_out=value;
 }
 
-void Cast::setCastFunction(Funcao *cast_func)
+void Cast::setCastFunction(Function *cast_func)
 {
  unsigned param_count;
  bool error=false;
@@ -62,7 +62,7 @@ void Cast::setCastFunction(Funcao *cast_func)
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Retrieve the cast function parameter count for specific validations
- param_count=cast_func->obterNumParams();
+ param_count=cast_func->getParameterCount();
 
  //Raises an error if the function don't have at least 1 parameter or a maximum of 3
  if(param_count==0 || param_count > 3)
@@ -74,17 +74,17 @@ void Cast::setCastFunction(Funcao *cast_func)
  {
   /* Error condition 1: Check if the first function parameter data type differs
      from cast source data type */
-  error=(cast_func->obterParametro(0).getType()!=this->types[SRC_TYPE]);
+  error=(cast_func->getParameter(0).getType()!=this->types[SRC_TYPE]);
 
   /* Error condition 2: Check if the second function parameter data type
      is different from 'integer' */
   if(!error && param_count>=2)
-   error=(cast_func->obterParametro(1).getType()!="integer");
+   error=(cast_func->getParameter(1).getType()!="integer");
 
   /* Error condition 3: Check if the third function parameter data type is
      different from 'boolean' */
   if(!error && param_count==3)
-   error=(cast_func->obterParametro(2).getType()!="boolean");
+   error=(cast_func->getParameter(2).getType()!="boolean");
 
   //In case some error condition is reached raises an error
   if(error)
@@ -95,7 +95,7 @@ void Cast::setCastFunction(Funcao *cast_func)
  }
 
  //Raises an error if the return type of the function differs from the destination data type
- if(cast_func->obterTipoRetorno()!=this->types[DST_TYPE])
+ if(cast_func->getReturnType()!=this->types[DST_TYPE])
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
                          .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_CAST)),
@@ -117,7 +117,7 @@ bool Cast::isInOut(void)
  return(is_in_out);
 }
 
-Funcao *Cast::getCastFunction(void)
+Function *Cast::getCastFunction(void)
 {
  return(cast_function);
 }
@@ -143,7 +143,7 @@ QString Cast::getCodeDefinition(unsigned def_type)
  if(cast_function)
  {
   if(def_type==SchemaParser::SQL_DEFINITION)
-   attributes[ParsersAttributes::SIGNATURE]=cast_function->obterAssinatura();
+   attributes[ParsersAttributes::SIGNATURE]=cast_function->getSignature();
   else
    attributes[ParsersAttributes::SIGNATURE]=cast_function->getCodeDefinition(def_type, true);
  }

@@ -43,7 +43,7 @@ class FuncaoAgregacao: public BaseObject {
   vector<TipoPgSQL> tipo_dados;
 
   //Função de transição
-  Funcao *funcoes[2];
+  Function *funcoes[2];
 
   //Tipo de dado para o valor de estado da função
   TipoPgSQL tipo_estado;
@@ -60,7 +60,7 @@ class FuncaoAgregacao: public BaseObject {
 
   /* Valida as funções atribuia   função de agregação de acordo
      com as regras da documentação */
-  bool funcaoValida(unsigned idx_func, Funcao *func);
+  bool funcaoValida(unsigned idx_func, Function *func);
 
  public:
   //Constantes usadas para referenciar as funções usadas pela função de agregação
@@ -70,7 +70,7 @@ class FuncaoAgregacao: public BaseObject {
   FuncaoAgregacao(void);
 
   //Define uma função executada pela função de agregação
-  void definirFuncao(unsigned idx_func, Funcao *func);
+  void definirFuncao(unsigned idx_func, Function *func);
 
   //Define o tipo de dados do estado da função
   void definirTipoEstado(TipoPgSQL tipo_estado);
@@ -94,7 +94,7 @@ class FuncaoAgregacao: public BaseObject {
   bool tipoDadoExiste(TipoPgSQL tipo);
 
   //Métodos de obtenção de atributos da função de agregação
-  Funcao *obterFuncao(unsigned idx_func);
+  Function *obterFuncao(unsigned idx_func);
   TipoPgSQL obterTipoEstado(void);
   QString obterCondicaoInicial(void);
   Operador *obterOperadorOrdenacao(void);

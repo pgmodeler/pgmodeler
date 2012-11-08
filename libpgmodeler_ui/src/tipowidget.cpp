@@ -173,7 +173,7 @@ void TipoWidget::manipularEnumeracao(int idx_linha)
 void TipoWidget::manipularAtributo(int res)
 {
  int lin;
- Parametro param;
+ Parameter param;
 
  //Obtém a linha selecionada da tabela.
  lin=tab_atributos->obterLinhaSelecionada();
@@ -186,7 +186,7 @@ void TipoWidget::manipularAtributo(int res)
   //Insere-o na tabela de atributos
   tab_atributos->definirTextoCelula(QString::fromUtf8(param.getName()), lin, 0);
   tab_atributos->definirTextoCelula(QString::fromUtf8(*param.getType()), lin, 1);
-  tab_atributos->definirDadoLinha(QVariant::fromValue<Parametro>(param), lin);
+  tab_atributos->definirDadoLinha(QVariant::fromValue<Parameter>(param), lin);
  }
  //Caso o usuário clique no botão 'cancelar' da janela de conf. de parâmetro
  else if(res==QDialog::Rejected)
@@ -215,7 +215,7 @@ void TipoWidget::exibirFormAtributo(void)
  if(idx_lin >= 0)
   /* Preenche o formulário de edição de parâmetros com os dados do atributo
      especificado na linha selecionada */
-  parametro_wgt->definirAtributos(tab_atributos->obterDadoLinha(idx_lin).value<Parametro>(), this->modelo);
+  parametro_wgt->definirAtributos(tab_atributos->obterDadoLinha(idx_lin).value<Parameter>(), this->modelo);
 
  parametro_wgt->show();
 }
@@ -224,7 +224,7 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Ti
 {
  TipoPgSQL tp_copia, tp_elem;
  unsigned conf_tipo, i, qtd;
- Parametro param;
+ Parameter param;
 
  //Conecta o método de manipulação de atributos ao formulário de parâmetros
  connect(parametro_wgt, SIGNAL(finished(int)), this, SLOT(manipularAtributo(int)));
@@ -267,7 +267,7 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Ti
     tab_atributos->definirTextoCelula(QString::fromUtf8(param.getName()), i, 0);
     tab_atributos->definirTextoCelula(QString::fromUtf8(*param.getType()), i, 1);
     //Armazena o próprio atributo na linha da tabela
-    tab_atributos->definirDadoLinha(QVariant::fromValue<Parametro>(param), i);
+    tab_atributos->definirDadoLinha(QVariant::fromValue<Parameter>(param), i);
    }
 
    //Desbloqueia os sinais da tabela de atributos
@@ -366,7 +366,7 @@ void TipoWidget::aplicarConfiguracao(void)
    //Insere na instância de tipo os atributos configurados no formulário
    qtd=tab_atributos->obterNumLinhas();
    for(i=0; i < qtd; i++)
-    tipo->adicionarAtributo(tab_atributos->obterDadoLinha(i).value<Parametro>());
+    tipo->adicionarAtributo(tab_atributos->obterDadoLinha(i).value<Parameter>());
   }
   //Caso o mesmo seja marcado como um tipo base no formulário
   else
@@ -388,7 +388,7 @@ void TipoWidget::aplicarConfiguracao(void)
 
    //Atribui todas as funções definidas nos seletoe   instância de tipo
    for(i=Tipo::FUNCAO_INPUT; i <= Tipo::FUNCAO_ANALYZE; i++)
-    tipo->definirFuncao(i, dynamic_cast<Funcao *>(sel_funcoes[i]->obterObjeto()));
+    tipo->definirFuncao(i, dynamic_cast<Function *>(sel_funcoes[i]->obterObjeto()));
   }
 
   ObjetoBaseWidget::aplicarConfiguracao();

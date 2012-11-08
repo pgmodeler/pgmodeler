@@ -35,7 +35,7 @@ class Conversion: public BaseObject {
   TipoCodificacao encodings[2];
 
   //Function used to perform the conversion between the encodings
-  Funcao *conversion_func;
+  Function *conversion_func;
 
   //Indicates whether the conversion is the default for the envolved encodings
   bool is_default;
@@ -54,13 +54,13 @@ class Conversion: public BaseObject {
   void setEncoding(unsigned encoding_idx, TipoCodificacao encoding_type);
 
   //Sets the conversion function used to convert character between encodings
-  void setConversionFunction(Funcao *conv_func);
+  void setConversionFunction(Function *conv_func);
 
   //Returns the encoding related to the index (using the encoding index constants)
   TipoCodificacao getEncoding(unsigned encoding_idx);
 
   //Returns the current used conversion function
-  Funcao *getConversionFunction(void);
+  Function *getConversionFunction(void);
 
   //Returns if the conversion is the default for the envolved encodings
   bool isDefault(void);

@@ -68,7 +68,7 @@ void Gatilho::definirEvento(TipoEvento evento, bool valor)
  eventos[!evento]=valor;
 }
 
-void Gatilho::definirFuncao(Funcao *funcao)
+void Gatilho::definirFuncao(Function *funcao)
 {
  //Caso a função a ser atribuida ao gatilho esteja nula
  if(!funcao)
@@ -80,11 +80,11 @@ void Gatilho::definirFuncao(Funcao *funcao)
  else
  {
   //Caso a função não possua tipo de retorno 'trigger', ela não pode ser usada em um gatilho
-  if(funcao->obterTipoRetorno()!="trigger")
+  if(funcao->getReturnType()!="trigger")
    //Dispara exceção relatando o erro
    throw Exception(ERR_ASG_INV_TRIGGER_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   //Caso a função não possua parâmetros, ela não pode ser usada em um gatilho
-  else if(funcao->obterNumParams()==0)
+  else if(funcao->getParameterCount()==0)
    //Dispara exceção relatando o erro
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->getName()))
@@ -176,7 +176,7 @@ unsigned Gatilho::obterNumColunas(void)
  return(colunas_upd.size());
 }
 
-Funcao *Gatilho::obterFuncao(void)
+Function *Gatilho::obterFuncao(void)
 {
  return(funcao);
 }

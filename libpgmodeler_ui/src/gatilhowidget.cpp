@@ -288,7 +288,7 @@ void GatilhoWidget::aplicarConfiguracao(void)
   gatilho->definirPostergavel(postergavel_chk->isChecked());
   gatilho->definirTipoPostergacao(TipoPostergacao(tipo_postergacao_cmb->currentText()));
   gatilho->definirCondicao(exp_condicional_txt->toPlainText());
-  gatilho->definirFuncao(dynamic_cast<Funcao *>(sel_funcao->obterObjeto()));
+  gatilho->definirFuncao(dynamic_cast<Function *>(sel_funcao->obterObjeto()));
   gatilho->definirTabReferenciada(dynamic_cast<Tabela *>(sel_tabela_ref->obterObjeto()));
   gatilho->definirEvento(TipoEvento::on_insert, insert_chk->isChecked());
   gatilho->definirEvento(TipoEvento::on_update, update_chk->isChecked());

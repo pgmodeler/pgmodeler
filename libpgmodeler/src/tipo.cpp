@@ -77,7 +77,7 @@ void Tipo::setSchema(BaseObject *esquema)
 
 bool Tipo::atributoExiste(const QString &nome_atrib)
 {
- vector<Parametro>::iterator itr, itr_end;
+ vector<Parameter>::iterator itr, itr_end;
  bool enc=false;
 
  itr=attributes.begin();
@@ -92,7 +92,7 @@ bool Tipo::atributoExiste(const QString &nome_atrib)
  return(enc);
 }
 
-void Tipo::adicionarAtributo(Parametro atrib)
+void Tipo::adicionarAtributo(Parameter atrib)
 {
  //O atributo não pode ter o nome vazio nem tipo nulo
  if(atrib.getName()=="" || atrib.getType()==TipoPgSQL::nulo)
@@ -204,7 +204,7 @@ void Tipo::definirConfiguracao(unsigned conf)
  this->config=conf;
 }
 
-void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
+void Tipo::definirFuncao(unsigned conf_func, Function *funcao)
 {
  unsigned qtd_params;
  TipoLinguagem ling;
@@ -216,7 +216,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
 
  //Obtém a quantidade de parâmetros da função
  if(funcao)
-  qtd_params=funcao->obterNumParams();
+  qtd_params=funcao->getParameterCount();
 
  /* Verifica se a função está alocada quando o tipo de função é INPUT ou OUTPUT,
     pois estas duas são obrigatórias para um tipo base */
@@ -230,7 +230,7 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
  {
   /* Verifica se a função está escrita em C. Para a criação de um tipo base
    apenas funções nesta linguagem podem ser atribuídas */
-  if(funcao->obterLinguagem()->getName()!=(~ling))
+  if(funcao->getLanguage()->getName()!=(~ling))
    throw Exception(ERR_ASG_FUNC_INV_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Verificando a quantidade de parâmetros da função em relação ao tipo.
@@ -254,13 +254,13 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
      da geração do SQL da função. Funções do tipo OUTPUT e TPMOD_OUT devem retornar cstring.
      As demais funções SEND, TPMOD_IN e ANALYZE devem retornar bytea, integer e boolean,
      respectivamente. */
-  else if((conf_func==FUNCAO_INPUT && funcao->obterTipoRetorno()!="any") ||
-          (conf_func==FUNCAO_OUTPUT && funcao->obterTipoRetorno()!="cstring") ||
-          (conf_func==FUNCAO_RECV && funcao->obterTipoRetorno()!="any") ||
-          (conf_func==FUNCAO_SEND && funcao->obterTipoRetorno()!="bytea") ||
-          (conf_func==FUNCAO_TPMOD_IN && funcao->obterTipoRetorno()!="integer") ||
-          (conf_func==FUNCAO_TPMOD_OUT && funcao->obterTipoRetorno()!="cstring") ||
-          (conf_func==FUNCAO_ANALYZE && funcao->obterTipoRetorno()!="boolean"))
+  else if((conf_func==FUNCAO_INPUT && funcao->getReturnType()!="any") ||
+          (conf_func==FUNCAO_OUTPUT && funcao->getReturnType()!="cstring") ||
+          (conf_func==FUNCAO_RECV && funcao->getReturnType()!="any") ||
+          (conf_func==FUNCAO_SEND && funcao->getReturnType()!="bytea") ||
+          (conf_func==FUNCAO_TPMOD_IN && funcao->getReturnType()!="integer") ||
+          (conf_func==FUNCAO_TPMOD_OUT && funcao->getReturnType()!="cstring") ||
+          (conf_func==FUNCAO_ANALYZE && funcao->getReturnType()!="boolean"))
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
                           .arg(QString::fromUtf8(this->getName()))
                           .arg(BaseObject::getTypeName(OBJ_TYPE)),
@@ -275,20 +275,20 @@ void Tipo::definirFuncao(unsigned conf_func, Funcao *funcao)
      A função TPMOD_OUT deve possuir um parâmetro do tipo (integer).
      A função ANALYZE deve possuir um parâmetro do tipo (internal). */
   else if((conf_func==FUNCAO_INPUT &&
-          (funcao->obterParametro(0).getType()!="cstring" ||
+          (funcao->getParameter(0).getType()!="cstring" ||
            (qtd_params==3 &&
-            (funcao->obterParametro(1).getType()!="oid" ||
-             funcao->obterParametro(2).getType()!="integer")))) ||
-          (conf_func==FUNCAO_OUTPUT && funcao->obterParametro(0).getType()!="any") ||
+            (funcao->getParameter(1).getType()!="oid" ||
+             funcao->getParameter(2).getType()!="integer")))) ||
+          (conf_func==FUNCAO_OUTPUT && funcao->getParameter(0).getType()!="any") ||
           (conf_func==FUNCAO_RECV &&
-           (funcao->obterParametro(0).getType()!="internal" ||
+           (funcao->getParameter(0).getType()!="internal" ||
             (qtd_params==3 &&
-             (funcao->obterParametro(1).getType()!="oid" ||
-              funcao->obterParametro(2).getType()!="integer")))) ||
-           (conf_func==FUNCAO_SEND && funcao->obterParametro(0).getType()!="any") ||
-          (conf_func==FUNCAO_TPMOD_IN && *(funcao->obterParametro(0).getType())!="cstring[]") ||
-          (conf_func==FUNCAO_TPMOD_OUT && funcao->obterParametro(0).getType()!="integer") ||
-          (conf_func==FUNCAO_ANALYZE && funcao->obterParametro(0).getType()!="internal"))
+             (funcao->getParameter(1).getType()!="oid" ||
+              funcao->getParameter(2).getType()!="integer")))) ||
+           (conf_func==FUNCAO_SEND && funcao->getParameter(0).getType()!="any") ||
+          (conf_func==FUNCAO_TPMOD_IN && *(funcao->getParameter(0).getType())!="cstring[]") ||
+          (conf_func==FUNCAO_TPMOD_OUT && funcao->getParameter(0).getType()!="integer") ||
+          (conf_func==FUNCAO_ANALYZE && funcao->getParameter(0).getType()!="internal"))
    throw Exception(ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   funcao->setProtected(false);
@@ -302,8 +302,8 @@ void Tipo::converterParametrosFuncoes(bool conv_inversa)
  unsigned i, conf_funcs[]={ FUNCAO_INPUT, FUNCAO_RECV,
                             FUNCAO_OUTPUT, FUNCAO_SEND };
  TipoFuncao conf_func;
- Parametro param;
- Funcao *funcao=NULL;
+ Parameter param;
+ Function *funcao=NULL;
 
  for(i=0; i < 4; i++)
  {
@@ -315,18 +315,18 @@ void Tipo::converterParametrosFuncoes(bool conv_inversa)
       parâmetro de 'any' para o tipo 'this' já a conversão inversa faz o processo contrário */
    if(conf_funcs[i]==FUNCAO_OUTPUT || conf_funcs[i]==FUNCAO_SEND)
    {
-    param=funcao->obterParametro(0);
-    funcao->removerParametro(0);
+    param=funcao->getParameter(0);
+    funcao->removeParameter(0);
 
     if(!conv_inversa)
     {
      param.setType(TipoPgSQL(this));
-     funcao->adicionarParametro(param);
+     funcao->addParameter(param);
     }
     else
     {
      param.setType(TipoPgSQL("any"));
-     funcao->adicionarParametro(param);
+     funcao->addParameter(param);
     }
    }
 
@@ -335,9 +335,9 @@ void Tipo::converterParametrosFuncoes(bool conv_inversa)
    else if(conf_funcs[i]==FUNCAO_INPUT || conf_funcs[i]==FUNCAO_RECV)
    {
     if(!conv_inversa)
-     funcao->definirTipoRetorno(TipoPgSQL(this));
+     funcao->setReturnType(TipoPgSQL(this));
     else
-     funcao->definirTipoRetorno(TipoPgSQL("any"));
+     funcao->setReturnType(TipoPgSQL("any"));
    }
   }
  }
@@ -396,7 +396,7 @@ void Tipo::definirDelimitador(char delim)
 
 void Tipo::definirAtributoElementos(unsigned tipo_def)
 {
- Parametro param;
+ Parameter param;
  QString str_elem;
  unsigned i, qtd;
 
@@ -457,7 +457,7 @@ void Tipo::definirTipoCopia(TipoPgSQL tipo_copia)
  this->tipo_copia=tipo_copia;
 }
 
-Parametro Tipo::obterAtributo(unsigned idx_atrib)
+Parameter Tipo::obterAtributo(unsigned idx_atrib)
 {
  if(idx_atrib >= attributes.size())
   throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -483,7 +483,7 @@ unsigned Tipo::obterNumEnumeracoes(void)
  return(enumeracoes.size());
 }
 
-Funcao *Tipo::obterFuncao(unsigned conf_func)
+Function *Tipo::obterFuncao(unsigned conf_func)
 {
  if(conf_func > FUNCAO_ANALYZE)
   throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
