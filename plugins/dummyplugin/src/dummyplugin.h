@@ -22,7 +22,7 @@
 #define DUMMY_PLUGIN_H
 
 #include "pgmodelerplugin.h"
-//***********************************************************
+
 class DummyPlugin: public QObject, public PgModelerPlugin {
  private:
   Q_OBJECT
@@ -39,5 +39,5 @@ class DummyPlugin: public QObject, public PgModelerPlugin {
   //Método de execução do plugin sobrecarregado da classe PgModelerPlugin
   void executarPlugin(ModeloWidget *modelo);
 };
-//***********************************************************
+
 #endif

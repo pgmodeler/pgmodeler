@@ -155,7 +155,7 @@ void TabelaWidget::exibirFormObjetoTabela(ObjectType tipo_obj)
   break;
 
   case OBJ_INDEX:
-   indice_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Indice *>(objeto));
+   indice_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Index *>(objeto));
    indice_wgt->show();
   break;
 
@@ -340,7 +340,7 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  Restricao *restricao=NULL;
  Gatilho *gatilho=NULL;
  Regra *regra=NULL;
- Indice *indice=NULL;
+ Index *indice=NULL;
  ObjectType tipo_obj;
  QString str_aux, str_aux1,
          vet_tipo_rest[]={ ~TipoRestricao(TipoRestricao::primary_key), ~TipoRestricao(TipoRestricao::foreign_key),
@@ -430,7 +430,7 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  }
  else
  {
-  indice=dynamic_cast<Indice *>(objeto);
+  indice=dynamic_cast<Index *>(objeto);
   //Coluna 1: Tipo de indexação do índice
   tab->definirTextoCelula(~indice->obterTipoIndexacao(),idx_lin,1);
  }

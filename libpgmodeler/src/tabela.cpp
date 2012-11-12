@@ -201,13 +201,13 @@ void Tabela::definirAtributoIndices(unsigned tipo_def)
 {
  QString str_ind;
  unsigned i, qtd;
- Indice *ind=NULL;
+ Index *ind=NULL;
 
  //Concatena a definição SQL dos índices da tabela
  qtd=indices.size();
  for(i=0; i < qtd; i++)
  {
-  ind=dynamic_cast<Indice *>(indices[i]);
+  ind=dynamic_cast<Index *>(indices[i]);
   if((!ind->isAddedByRelationship() &&
       !ind->referenciaColunaIncRelacao() &&
       tipo_def==SchemaParser::XML_DEFINITION) ||
@@ -331,8 +331,8 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
       }
       else if(tipo_obj==OBJ_INDEX)
       {
-       Indice *ind;
-       ind=dynamic_cast<Indice *>(obj_tab);
+       Index *ind;
+       ind=dynamic_cast<Index *>(obj_tab);
        ind->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       }
       else if(tipo_obj==OBJ_RULE)
@@ -422,7 +422,7 @@ void Tabela::adicionarGatilho(Gatilho *gat, int idx_gat)
  adicionarObjeto(gat, idx_gat);
 }
 
-void Tabela::adicionarIndice(Indice *ind, int idx_ind)
+void Tabela::adicionarIndice(Index *ind, int idx_ind)
 {
  adicionarObjeto(ind, idx_ind);
 }
@@ -833,15 +833,15 @@ Restricao *Tabela::obterRestricao(unsigned idx_constr)
  return(dynamic_cast<Restricao *>(obterObjeto(idx_constr,OBJ_CONSTRAINT)));
 }
 
-Indice *Tabela::obterIndice(const QString &nome)
+Index *Tabela::obterIndice(const QString &nome)
 {
  int idx;
- return(dynamic_cast<Indice *>(obterObjeto(nome,OBJ_INDEX,idx)));
+ return(dynamic_cast<Index *>(obterObjeto(nome,OBJ_INDEX,idx)));
 }
 
-Indice *Tabela::obterIndice(unsigned idx_ind)
+Index *Tabela::obterIndice(unsigned idx_ind)
 {
- return(dynamic_cast<Indice *>(obterObjeto(idx_ind,OBJ_INDEX)));
+ return(dynamic_cast<Index *>(obterObjeto(idx_ind,OBJ_INDEX)));
 }
 
 Regra *Tabela::obterRegra(const QString &nome)
@@ -1083,7 +1083,7 @@ void Tabela::obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_r
   Column *col=NULL, *col1=NULL;
   vector<TableObject *>::iterator itr, itr_end;
   bool enc=false;
-  Indice *ind=NULL;
+  Index *ind=NULL;
   Restricao *rest=NULL;
   Gatilho *gat=NULL;
 
@@ -1093,7 +1093,7 @@ void Tabela::obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_r
 
   while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !enc)))
   {
-   ind=dynamic_cast<Indice *>(*itr);
+   ind=dynamic_cast<Index *>(*itr);
    itr++;
 
    qtd=ind->obterNumElementos();

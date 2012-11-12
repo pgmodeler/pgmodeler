@@ -27,7 +27,7 @@
 #include "basetable.h"
 #include "column.h"
 #include "restricao.h"
-#include "indice.h"
+#include "index.h"
 #include "regra.h"
 #include "trigger.h"
 #include "function.h"
@@ -135,7 +135,7 @@ class Tabela: public BaseTable {
   void adicionarColuna(Column *col, int idx_col=-1);
   void adicionarRestricao(Restricao *constr, int idx_rest=-1);
   void adicionarGatilho(Gatilho *gat, int idx_gat=-1);
-  void adicionarIndice(Indice *ind, int idx_ind=-1);
+  void adicionarIndice(Index *ind, int idx_ind=-1);
   void adicionarRegra(Regra *reg, int idx_reg=-1);
 
   /* Métodos que retornam uma coluna através de seu nome ou índice.
@@ -156,8 +156,8 @@ class Tabela: public BaseTable {
   Gatilho *obterGatilho(unsigned idx_gat);
 
   //Métodos que retornam um índice através de seu nome ou índice
-  Indice *obterIndice(const QString &obj_name);
-  Indice *obterIndice(unsigned idx_ind);
+  Index *obterIndice(const QString &obj_name);
+  Index *obterIndice(unsigned idx_ind);
 
   //Métodos que retornam o número de objetos na tabela
   unsigned obterNumColunas(void);

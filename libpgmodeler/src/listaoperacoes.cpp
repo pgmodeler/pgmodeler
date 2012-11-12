@@ -57,7 +57,7 @@ void copiarObjeto(BaseObject **pobj_orig, BaseObject *obj_copia, ObjectType tipo
     copiarObjeto(pobj_orig, dynamic_cast<Regra *>(obj_copia));
   break;
   case OBJ_INDEX:
-    copiarObjeto(pobj_orig, dynamic_cast<Indice *>(obj_copia));
+    copiarObjeto(pobj_orig, dynamic_cast<Index *>(obj_copia));
   break;
   case OBJ_TABLE:
     copiarObjeto(pobj_orig, dynamic_cast<Tabela *>(obj_copia));
@@ -480,7 +480,7 @@ void ListaOperacoes::adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int i
    if(tipo_obj==OBJ_COLUMN && tipo_op==Operacao::OBJETO_REMOVIDO)
     modelo->removerPermissoes(obj_tab);
    else if(((tipo_obj==OBJ_TRIGGER && dynamic_cast<Gatilho *>(obj_tab)->isReferRelationshipColumn()) ||
-            (tipo_obj==OBJ_INDEX && dynamic_cast<Indice *>(obj_tab)->referenciaColunaIncRelacao()) ||
+            (tipo_obj==OBJ_INDEX && dynamic_cast<Index *>(obj_tab)->referenciaColunaIncRelacao()) ||
             (tipo_obj==OBJ_CONSTRAINT && dynamic_cast<Restricao *>(obj_tab)->referenciaColunaIncRelacao())))
    {
     if(tipo_op==Operacao::OBJETO_REMOVIDO)

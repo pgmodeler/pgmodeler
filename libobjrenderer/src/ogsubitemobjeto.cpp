@@ -261,7 +261,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   {
    Regra *regra=dynamic_cast<Regra *>(objeto_tab);
    Gatilho *gatilho=dynamic_cast<Gatilho *>(objeto_tab);
-   Indice *indice=dynamic_cast<Indice *>(objeto_tab);
+   Index *indice=dynamic_cast<Index *>(objeto_tab);
 
    //Configurando a string de restrições para regra
    if(regra)
@@ -287,13 +287,13 @@ void OGSubItemObjeto::configurarObjeto(void)
    //Configurando a string de restrições para índice
    else if(indice)
    {
-    if(indice->obterAtributo(Indice::UNIQUE))
+    if(indice->obterAtributo(Index::UNIQUE))
      str_rest+="u";
 
-    if(indice->obterAtributo(Indice::CONCORRENTE))
+    if(indice->obterAtributo(Index::CONCORRENTE))
      str_rest+="c";
 
-    if(indice->obterAtributo(Indice::ATUAL_RAPIDA))
+    if(indice->obterAtributo(Index::ATUAL_RAPIDA))
      str_rest+="f";
    }
 

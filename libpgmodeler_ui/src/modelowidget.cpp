@@ -1261,7 +1261,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_INDEX:
-    indice_wgt->definirAtributos(modelo, dynamic_cast<Tabela *>(objeto_pai), lista_op, dynamic_cast<Indice *>(objeto));
+    indice_wgt->definirAtributos(modelo, dynamic_cast<Tabela *>(objeto_pai), lista_op, dynamic_cast<Index *>(objeto));
     indice_wgt->show();
    break;
 
@@ -1560,7 +1560,7 @@ void ModeloWidget::copiarObjetos(void)
            dynamic_cast<Restricao *>(obj_tab)->obterTipoRestricao()!=TipoRestricao::primary_key &&
            dynamic_cast<Restricao *>(obj_tab)->referenciaColunaIncRelacao()) ||
           (tipos[id_tipo]==OBJ_TRIGGER && dynamic_cast<Gatilho *>(obj_tab)->isReferRelationshipColumn()) ||
-          (tipos[id_tipo]==OBJ_INDEX && dynamic_cast<Indice *>(obj_tab)->referenciaColunaIncRelacao())))
+          (tipos[id_tipo]==OBJ_INDEX && dynamic_cast<Index *>(obj_tab)->referenciaColunaIncRelacao())))
        vet_deps.push_back(obj_tab);
      }
     }

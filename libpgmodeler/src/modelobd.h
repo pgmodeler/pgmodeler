@@ -448,7 +448,7 @@ class ModeloBD:  public QObject, public BaseObject {
      e uma chave primária está sendo recriada por este método e a tabela já possua um chave primária, isso
      evita que seja disparado um erro indicando que a tabela já possui uma chave-primária. */
   Restricao *criarRestricao(BaseObject *objeto);
-  Indice *criarIndice(Tabela *tabela);
+  Index *criarIndice(Tabela *tabela);
   Gatilho *criarGatilho(Tabela *tabela);
 
   /* Atualiza a referência dos tipos das colunas da tabela na lista

@@ -1314,7 +1314,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
  Tabela *tabela=NULL;
  TableObject *obj_tab=NULL;
  Restricao *restricao=NULL;
- Indice *indice=NULL;
+ Index *indice=NULL;
  Gatilho *gatilho=NULL;
  Visao *visao=NULL;
  RelacionamentoBase *rel=NULL;
@@ -1384,7 +1384,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
      else
      {
       //Converte o objeto tabela genérico em índice
-      indice=dynamic_cast<Indice *>(obj_tab);
+      indice=dynamic_cast<Index *>(obj_tab);
 
       /* O índice só será considerado como especial caso referencie
          colunas adicionadas por relacionamento */
@@ -4847,10 +4847,10 @@ Restricao *ModeloBD::criarRestricao(BaseObject *objeto)
  return(restricao);
 }
 
-Indice *ModeloBD::criarIndice(Tabela *tabela)
+Index *ModeloBD::criarIndice(Tabela *tabela)
 {
  map<QString, QString> atributos;
- Indice *indice=NULL;
+ Index *indice=NULL;
  Column *coluna=NULL;
  OperatorClass *classe_oper=NULL;
  QString elem, str_aux, expr;
@@ -4881,12 +4881,12 @@ Indice *ModeloBD::criarIndice(Tabela *tabela)
    }
   }
 
-  indice=new Indice;
+  indice=new Index;
   definirAtributosBasicos(indice);
   indice->setParentTable(tabela);
-  indice->definirAtributo(Indice::CONCORRENTE, atributos[ParsersAttributes::CONCURRENT]==ParsersAttributes::_TRUE_);
-  indice->definirAtributo(Indice::UNIQUE, atributos[ParsersAttributes::UNIQUE]==ParsersAttributes::_TRUE_);
-  indice->definirAtributo(Indice::ATUAL_RAPIDA, atributos[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::_TRUE_);
+  indice->definirAtributo(Index::CONCORRENTE, atributos[ParsersAttributes::CONCURRENT]==ParsersAttributes::_TRUE_);
+  indice->definirAtributo(Index::UNIQUE, atributos[ParsersAttributes::UNIQUE]==ParsersAttributes::_TRUE_);
+  indice->definirAtributo(Index::ATUAL_RAPIDA, atributos[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::_TRUE_);
 
   indice->definirTipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]);
   indice->definirFatorPreenchimento(atributos[ParsersAttributes::FACTOR].toUInt());
@@ -6041,7 +6041,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
  map<unsigned, BaseObject *> mapa_objetos;
  vector<unsigned> vet_id_objs, vet_id_objs_tab;
  Tabela *tabela=NULL;
- Indice *indice=NULL;
+ Index *indice=NULL;
  Gatilho *gatilho=NULL;
  Restricao *restricao=NULL;
  Relacionamento *relacao=NULL;
@@ -6729,7 +6729,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    BaseObject *tipo_usr=NULL;
    Restricao *rest=NULL;
    Gatilho *gat=NULL;
-   Indice *ind=NULL;
+   Index *ind=NULL;
    Column *col=NULL;
    unsigned qtd, qtd1, i, i1;
 
@@ -6778,7 +6778,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    qtd=tab->obterNumIndices();
    for(i=0; i < qtd; i++)
    {
-    ind=dynamic_cast<Indice *>(tab->obterIndice(i));
+    ind=dynamic_cast<Index *>(tab->obterIndice(i));
     qtd1=ind->obterNumElementos();
 
     for(i1=0; i1 < qtd1; i1++)
@@ -7435,7 +7435,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    vector<BaseObject *>::iterator itr, itr_end;
    unsigned i, qtd;
    Tabela *tab=NULL;
-   Indice *ind=NULL;
+   Index *ind=NULL;
    Restricao *rest=NULL;
 
    /* Varre a lista de tabelas e verifica se estas e seus índices

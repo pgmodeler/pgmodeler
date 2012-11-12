@@ -257,7 +257,7 @@ void IndiceWidget::selecionarObjetoElemento(void)
  expressao_rb->blockSignals(false);
 }
 
-void IndiceWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaOperacoes *lista_op, Indice *indice)
+void IndiceWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaOperacoes *lista_op, Index *indice)
 {
  unsigned i, qtd;
 
@@ -280,9 +280,9 @@ void IndiceWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaO
      configurados no índice */
   tipo_index_cmb->setCurrentIndex(tipo_index_cmb->findText(~indice->obterTipoIndexacao()));
   fator_preenc_sb->setValue(indice->obterFatorPreenchimento());
-  concorrente_chk->setChecked(indice->obterAtributo(Indice::CONCORRENTE));
-  atual_rapida_chk->setChecked(indice->obterAtributo(Indice::ATUAL_RAPIDA));
-  unico_chk->setChecked(indice->obterAtributo(Indice::UNIQUE));
+  concorrente_chk->setChecked(indice->obterAtributo(Index::CONCORRENTE));
+  atual_rapida_chk->setChecked(indice->obterAtributo(Index::ATUAL_RAPIDA));
+  unico_chk->setChecked(indice->obterAtributo(Index::UNIQUE));
   exp_condicional_txt->setPlainText(indice->obterExpCondicional());
 
   //Exibe os elementos do índice na tabela
@@ -301,19 +301,19 @@ void IndiceWidget::aplicarConfiguracao(void)
 {
  try
  {
-  Indice *indice=NULL;
+  Index *indice=NULL;
   unsigned i, qtd;
   IndexElement elem;
 
-  iniciarConfiguracao<Indice>();
+  iniciarConfiguracao<Index>();
 
   //Obtém a referência ao índice que está sendo criado/editado
-  indice=dynamic_cast<Indice *>(this->objeto);
+  indice=dynamic_cast<Index *>(this->objeto);
 
   //Configura no índice os valores preenchidos no formulário
-  indice->definirAtributo(Indice::ATUAL_RAPIDA, atual_rapida_chk->isChecked());
-  indice->definirAtributo(Indice::CONCORRENTE, concorrente_chk->isChecked());
-  indice->definirAtributo(Indice::UNIQUE, unico_chk->isChecked());
+  indice->definirAtributo(Index::ATUAL_RAPIDA, atual_rapida_chk->isChecked());
+  indice->definirAtributo(Index::CONCORRENTE, concorrente_chk->isChecked());
+  indice->definirAtributo(Index::UNIQUE, unico_chk->isChecked());
   indice->definirExpCondicional(exp_condicional_txt->toPlainText());
   indice->definirTipoIndexacao(TipoIndexacao(tipo_index_cmb->currentText()));
   indice->definirFatorPreenchimento(fator_preenc_sb->value());

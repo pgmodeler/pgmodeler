@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Constraint que é usado para
-#              configurar e gerar os códigos SQL referentes a chaves primárias
-#              e estrangeiras, de checagem, únicas.
+# Class: Index
+# Description: Implements the operations to manipulate indexes on the database.
 # Creation date: 23/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -20,13 +19,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef INDICE_H
-#define INDICE_H
+#ifndef INDEX_H
+#define INDEX_H
 
 #include "tableobject.h"
 #include "indexelement.h"
 
-class Indice: public TableObject{
+class Index: public TableObject{
  private:
   /* Vetor de classe de operadores o qual relacionada cada
      coluna ou expressão a um elemento deste container */
@@ -53,7 +52,7 @@ class Indice: public TableObject{
   const static unsigned CONCORRENTE=1;
   const static unsigned ATUAL_RAPIDA=2;
 
-  Indice(void);
+  Index(void);
 
   //Adiciona um elemento ao índice
   void adicionarElemento(Column *coluna, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro);

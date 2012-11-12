@@ -1791,7 +1791,7 @@ Tabela *Relacionamento::obterTabelaReceptora(void)
 void Relacionamento::removerObjetosTabelaRefCols(Tabela *tabela)
 {
  Gatilho *gat=NULL;
- Indice *ind=NULL;
+ Index *ind=NULL;
  Restricao *rest=NULL;
  int i, qtd;
 

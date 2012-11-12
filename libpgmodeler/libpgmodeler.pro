@@ -30,7 +30,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/conversion.h \
            $$PWD/src/schema.h \
            $$PWD/src/indexelement.h \
-           $$PWD/src/indice.h \
+           $$PWD/src/index.h \
            $$PWD/src/basegraphicobject.h \
            $$PWD/src/relacionamento.h \
            $$PWD/src/tabela.h \
@@ -53,7 +53,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/column.cpp \
             $$PWD/src/tablespace.cpp \
             $$PWD/src/indexelement.cpp \
-            $$PWD/src/indice.cpp \
+            $$PWD/src/index.cpp \
             $$PWD/src/operador.cpp \
             $$PWD/src/restricao.cpp \
             $$PWD/src/tipospgsql.cpp \
