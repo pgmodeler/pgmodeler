@@ -54,8 +54,10 @@ class Index: public TableObject{
 
   //Adds an element to the index using an column
   void addElement(Column *column, OperatorClass *op_class, bool asc_order, bool nulls_first);
+
   //Adds an element to the index using an expression
   void addElement(const QString &expr, OperatorClass *op_class, bool asc_order, bool nulls_first);
+
   //Adds an element to the index using other pre-configured element
   void addElement(IndexElement elem);
 

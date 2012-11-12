@@ -48,7 +48,6 @@ int Index::isElementExists(Column *column)
 
  while(idx < count && !found)
  {
-  //Obtém a coluna
   col=elements[idx].getColumn();
 
   if(col && column)
@@ -81,7 +80,7 @@ int Index::isElementExists(const QString &expr)
 
 void Index::addElement(const QString &expr, OperatorClass *op_class, bool asc_order, bool nulls_first)
 {
- //Caso a expressão esteja vazia, dispara exceção.
+ //Raises an error if the expression is empty
  if(expr.isEmpty())
  {
   throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -90,23 +89,23 @@ void Index::addElement(const QString &expr, OperatorClass *op_class, bool asc_or
  {
   IndexElement elem;
 
-  //Caso a expressão a ser atribuída ao índice já exista, dispara-se uma exceção
+  //Case the expression exists on index
   if(isElementExists(expr) >= 0)
    throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+  //Configures the element
   elem.setExpression(expr);
   elem.setOperatorClass(op_class);
   elem.setSortAttribute(IndexElement::NULLS_FIRST, nulls_first);
   elem.setSortAttribute(IndexElement::ASC_ORDER, asc_order);
 
-  //Adiciona o elemento ao final da lista de elementos do índice
   elements.push_back(elem);
  }
 }
 
 void Index::addElement(Column *column, OperatorClass *op_class, bool asc_order, bool nulls_first)
 {
- //Caso a coluna não esteja aloca, dispara exceção.
+ //Case the column is not allocated raises an error
  if(!column)
  {
  throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
@@ -118,30 +117,27 @@ void Index::addElement(Column *column, OperatorClass *op_class, bool asc_order, 
  {
   IndexElement elem;
 
-  //Caso a coluna a ser atribuída ao índice já exista, dispara-se uma exceção
+  //Case the column exists on index
   if(isElementExists(column) >= 0)
    throw Exception(ERR_INS_DUPLIC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+  //Configures the element
   elem.setColumn(column);
   elem.setOperatorClass(op_class);
   elem.setSortAttribute(IndexElement::NULLS_FIRST, nulls_first);
   elem.setSortAttribute(IndexElement::ASC_ORDER, asc_order);
 
-  //Adiciona o elemento ao final da lista de elementos do índice
   elements.push_back(elem);
  }
 }
 
 void Index::removeElement(unsigned idx_elem)
 {
- vector<IndexElement>::iterator itr;
-
- /* Verifica se o índice condiz com o tamanho das listas de elementos,
-   caso não conincida, dispara exceção */
- if(idx_elem < elements.size())
+ //Case the element index is out of bound raises an error
+ if(idx_elem >= elements.size())
   throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
-  elements.erase(elements.begin() + idx_elem);
+
+ elements.erase(elements.begin() + idx_elem);
 }
 
 void Index::removeElements(void)
@@ -179,8 +175,7 @@ unsigned Index::getFillFactor(void)
 
 IndexElement Index::getElement(unsigned elem_idx)
 {
-/* Verifica se o índice condiz com o tamanho das listas de elementos,
-   caso não conincida, dispara exceção */
+ //Case the element index is out of bound raises an error
  if(elem_idx >= elements.size())
   throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
@@ -214,32 +209,20 @@ bool Index::isReferRelationshipColumn(void)
 {
  vector<IndexElement>::iterator itr, itr_end;
  Column *col=NULL;
- bool enc=false;
+ bool found=false;
 
- /* Primeira lista de elementos é que será varrida
-    para isso as referências ao primeiro e ultimo elementos
-    serão obtidas */
  itr=elements.begin();
  itr_end=elements.end();
 
- /* Efetua uma iteração verifica se as colunas dos elementos
-    foram incluídas por relacionamento, caso uma coluna
-    for detectada como incluída desta forma é suficiente
-    dizer que a restrição referencia colunas vindas de
-    relacionamento fazendo com que esta seja tratada de forma
-    especial evitando a quebra de referêncais */
- while(itr!=itr_end && !enc)
+ //Checks if some o the elements (columns) is added by relationship
+ while(itr!=itr_end && !found)
  {
-  //Obtém a coluna
   col=(*itr).getColumn();
-
-  //Obtém se a coluna foi incluída por relacionamento ou não
-  enc=(col && col->isAddedByRelationship());
-  //Passa para a próxima coluna
+  found=(col && col->isAddedByRelationship());
   itr++;
  }
 
- return(enc);
+ return(found);
 }
 
 QString Index::getCodeDefinition(unsigned tipo_def)
@@ -256,12 +239,8 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 
  attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
 
- /* Caso o índice não esteja referenciando alguma coluna incluída por relacionamento
-    a mesma será declarada dentro do código da tabela pai e para tanto existe um atributo
-    específico na definição SQL/XML do objeto chamado 'decl-in-table' que é usado
-    para indicar ao parser quando a declaração do índice está dentro da declaração da
-    tabela pai. Este atributo é usado apenas para ajudar na formatação do código SQL e
-    não tem nenhuma outra utilidade. */
+ /* Case the index doesn't referece some column added by relationship it will be declared
+    inside the parent table construction by the use of 'decl-in-table' schema attribute */
  if(!isReferRelationshipColumn())
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
