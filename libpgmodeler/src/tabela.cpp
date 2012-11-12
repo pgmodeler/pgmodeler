@@ -209,7 +209,7 @@ void Tabela::definirAtributoIndices(unsigned tipo_def)
  {
   ind=dynamic_cast<Index *>(indices[i]);
   if((!ind->isAddedByRelationship() &&
-      !ind->referenciaColunaIncRelacao() &&
+      !ind->isReferRelationshipColumn() &&
       tipo_def==SchemaParser::XML_DEFINITION) ||
       tipo_def==SchemaParser::SQL_DEFINITION)
    str_ind+=ind->getCodeDefinition(tipo_def);
@@ -1096,10 +1096,10 @@ void Tabela::obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_r
    ind=dynamic_cast<Index *>(*itr);
    itr++;
 
-   qtd=ind->obterNumElementos();
+   qtd=ind->getElementCount();
    for(i=0; i < qtd  && (!modo_exclusao || (modo_exclusao && !enc)); i++)
    {
-    elem=ind->obterElemento(i);
+    elem=ind->getElement(i);
     col=elem.getColumn();
     if(col && col==coluna)
     {

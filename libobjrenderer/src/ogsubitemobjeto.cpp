@@ -287,13 +287,13 @@ void OGSubItemObjeto::configurarObjeto(void)
    //Configurando a string de restrições para índice
    else if(indice)
    {
-    if(indice->obterAtributo(Index::UNIQUE))
+    if(indice->getIndexAttribute(Index::UNIQUE))
      str_rest+="u";
 
-    if(indice->obterAtributo(Index::CONCORRENTE))
+    if(indice->getIndexAttribute(Index::CONCURRENT))
      str_rest+="c";
 
-    if(indice->obterAtributo(Index::ATUAL_RAPIDA))
+    if(indice->getIndexAttribute(Index::FAST_UPDATE))
      str_rest+="f";
    }
 

@@ -278,20 +278,20 @@ void IndiceWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaO
  {
   /* Configura os campos do formulário com os respectivos valores
      configurados no índice */
-  tipo_index_cmb->setCurrentIndex(tipo_index_cmb->findText(~indice->obterTipoIndexacao()));
-  fator_preenc_sb->setValue(indice->obterFatorPreenchimento());
-  concorrente_chk->setChecked(indice->obterAtributo(Index::CONCORRENTE));
-  atual_rapida_chk->setChecked(indice->obterAtributo(Index::ATUAL_RAPIDA));
-  unico_chk->setChecked(indice->obterAtributo(Index::UNIQUE));
-  exp_condicional_txt->setPlainText(indice->obterExpCondicional());
+  tipo_index_cmb->setCurrentIndex(tipo_index_cmb->findText(~indice->getIndexingType()));
+  fator_preenc_sb->setValue(indice->getFillFactor());
+  concorrente_chk->setChecked(indice->getIndexAttribute(Index::CONCURRENT));
+  atual_rapida_chk->setChecked(indice->getIndexAttribute(Index::FAST_UPDATE));
+  unico_chk->setChecked(indice->getIndexAttribute(Index::UNIQUE));
+  exp_condicional_txt->setPlainText(indice->getConditionalExpression());
 
   //Exibe os elementos do índice na tabela
   tab_elementos->blockSignals(true);
-  qtd=indice->obterNumElementos();
+  qtd=indice->getElementCount();
   for(i=0; i < qtd; i++)
   {
    tab_elementos->adicionarLinha();
-   exibirDadosElemento(indice->obterElemento(i), i);
+   exibirDadosElemento(indice->getElement(i), i);
   }
   tab_elementos->blockSignals(false);
  }
@@ -311,15 +311,15 @@ void IndiceWidget::aplicarConfiguracao(void)
   indice=dynamic_cast<Index *>(this->objeto);
 
   //Configura no índice os valores preenchidos no formulário
-  indice->definirAtributo(Index::ATUAL_RAPIDA, atual_rapida_chk->isChecked());
-  indice->definirAtributo(Index::CONCORRENTE, concorrente_chk->isChecked());
-  indice->definirAtributo(Index::UNIQUE, unico_chk->isChecked());
-  indice->definirExpCondicional(exp_condicional_txt->toPlainText());
-  indice->definirTipoIndexacao(TipoIndexacao(tipo_index_cmb->currentText()));
-  indice->definirFatorPreenchimento(fator_preenc_sb->value());
+  indice->setIndexAttribute(Index::FAST_UPDATE, atual_rapida_chk->isChecked());
+  indice->setIndexAttribute(Index::CONCURRENT, concorrente_chk->isChecked());
+  indice->setIndexAttribute(Index::UNIQUE, unico_chk->isChecked());
+  indice->setConditionalExpression(exp_condicional_txt->toPlainText());
+  indice->setIndexingType(TipoIndexacao(tipo_index_cmb->currentText()));
+  indice->setFillFactor(fator_preenc_sb->value());
 
   //Insere os elementos da tabela no índice
-  indice->removerElementos();
+  indice->removeElements();
   qtd=tab_elementos->obterNumLinhas();
 
   for(i=0; i < qtd; i++)
@@ -330,12 +330,12 @@ void IndiceWidget::aplicarConfiguracao(void)
    //Caso o mesmo possua uma coluna
    if(elem.getColumn())
     //Adiciona um elmento como sendo um com coluna
-    indice->adicionarElemento(elem.getColumn(), elem.getOperatorClass(),
+    indice->addElement(elem.getColumn(), elem.getOperatorClass(),
                               elem.getSortAttribute(IndexElement::ASC_ORDER),
                               elem.getSortAttribute(IndexElement::NULLS_FIRST));
    else
     //Adiciona um elmento como sendo um com expressão
-    indice->adicionarElemento(elem.getExpression(), elem.getOperatorClass(),
+    indice->addElement(elem.getExpression(), elem.getOperatorClass(),
                               elem.getSortAttribute(IndexElement::ASC_ORDER),
                               elem.getSortAttribute(IndexElement::NULLS_FIRST));
   }

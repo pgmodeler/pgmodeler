@@ -27,88 +27,89 @@
 
 class Index: public TableObject{
  private:
-  /* Vetor de classe de operadores o qual relacionada cada
-     coluna ou expressão a um elemento deste container */
-  vector<IndexElement> elementos;
+  //Stores the elements that defines the index
+  vector<IndexElement> elements;
 
-  //Expressão condicional do índice
-  QString exp_condicional;
+  //Conditional expression for the index
+  QString conditional_expr;
 
-  //Fator de preenchimento do método usado pelo índice (FILLFACTOR)
-  unsigned fator_preenc;
+  //Fill factor used by the index
+  unsigned fill_factor;
 
-  //Tipo de método de indexação do índice
-  TipoIndexacao tipo_indexacao;
+  //Indexing method used by the index
+  TipoIndexacao indexing_type;
 
-  //Atributos booleanos do indice (UNIQUE, CONCORRENTE, ATUAL_RAPIDA)
-  bool atrib_indice[3];
+  //Boolean attributes that define some index features  (UNIQUE, CONCURRENT, FAST UPDATE)
+  bool index_attribs[3];
 
-  /* Formata a QString de colunas usada pelo parser de esquema
-     na geração da definição SQL do índice */
-  void definirAtributoElementos(unsigned formatar);
+  //Formats the elements string used by the SchemaParser
+  void setElementsAttribute(unsigned def_type);
 
  public:
-  const static unsigned UNIQUE=0;
-  const static unsigned CONCORRENTE=1;
-  const static unsigned ATUAL_RAPIDA=2;
+  const static unsigned UNIQUE=0,
+                        CONCURRENT=1,
+                        FAST_UPDATE=2;
 
   Index(void);
 
-  //Adiciona um elemento ao índice
-  void adicionarElemento(Column *coluna, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro);
-  void adicionarElemento(const QString &expressao, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro);
-  void adicionarElemento(IndexElement elem);
+  //Adds an element to the index using an column
+  void addElement(Column *column, OperatorClass *op_class, bool asc_order, bool nulls_first);
+  //Adds an element to the index using an expression
+  void addElement(const QString &expr, OperatorClass *op_class, bool asc_order, bool nulls_first);
+  //Adds an element to the index using other pre-configured element
+  void addElement(IndexElement elem);
 
-  /* Retorna se um dado elemento existe no índice. O método
-     retorna -1 quando o mesmo não é encontrado caso contrário
-     retorna o próprio indice do mesmo */
-  int elementoExiste(Column *coluna);
-  int elementoExiste(const QString &expressao);
+  //Returns the element index if it exists or -1 if not
+  int isElementExists(Column *column);
+  //Returns the element index if it exists or -1 if not
+  int isElementExists(const QString &expr);
 
-  //Obtém um elemento através de seu índice
-  IndexElement obterElemento(unsigned idx_elem);
+  //Returns one element using its index
+  IndexElement getElement(unsigned elem_idx);
 
-  //Remove um elemento através de seu índice
-  void removerElemento(unsigned idx_elem);
-  void removerElementos(void);
+  //Remove an element using its index
+  void removeElement(unsigned idx_elem);
 
-  //Define a expressão condicional do índice
-  void definirExpCondicional(const QString &exp);
+  //Remove all elements from the index
+  void removeElements(void);
 
-  //Define o tipo do método de indexação
-  void definirTipoIndexacao(TipoIndexacao tipo_indexacao);
+  //Defines the conditional expression used by the index
+  void setConditionalExpression(const QString &expr);
 
-  //Define o estado de uma das 2 configurações do índice
-  void definirAtributo(unsigned id_atrib, bool valor);
+  //Defines the indexing method used by the index
+  void setIndexingType(TipoIndexacao idx_type);
 
-  //Define o fator preenchimento do índice
-  void definirFatorPreenchimento(unsigned fator);
+  /* Configures the attributes for the indexs. These attributes can be
+     referencede using the UNIQUE, CONCURRENT and FAST_UPDATE constants */
+  void setIndexAttribute(unsigned attrib_id, bool value);
 
-  //Obtém a expressão condicional do índice
-  QString obterExpCondicional(void);
+  //Defines the index fill factor
+  void setFillFactor(unsigned factor);
 
-  //Obtém o número de elementos do índice
-  unsigned obterNumElementos(void);
+  //Gets the index conditional expression
+  QString getConditionalExpression(void);
 
-  //Obtém o tipo de método de indexação
-  TipoIndexacao obterTipoIndexacao(void);
+  //Gets the index element count
+  unsigned getElementCount(void);
 
-  //Obtém uma das configurações do indice
-  bool obterAtributo(unsigned id_conf);
+  //Returns the indexing method used by the index
+  TipoIndexacao getIndexingType(void);
 
-  //Obtém o fator de preenchimento do índice
-  unsigned obterFatorPreenchimento(void);
+  //Returns the current state of one index attribute (UNIQUE, CONCURRENT, FAST UPDATE)
+  bool getIndexAttribute(unsigned attrib_id);
 
-  //Retorna a definição SQL ou XML do objeto
+  //Returns the index fill factor
+  unsigned getFillFactor(void);
+
+  //Returns the SQL / XML definition for the index
   QString getCodeDefinition(unsigned tipo_def);
 
-  /* Retorna se o índice referencia colunas adicionadas
-     por relacionamento. Este método é usado como auxiliar
-     para controlar índices criadas pelo usuário os quais
-     referenciam colunas adicionadas por relacionamento a
-     fim de se evitar quebra de ligações devido as constantes
-     conexões e desconexões de relacionamentos */
-  bool referenciaColunaIncRelacao(void);
+  /* Returns whether the index references columns added
+     by relationship. This method is used as auxiliary
+     to control which triggers reference columns added by the
+     relationship in order to avoid referece breaking due constants
+     connections and disconnections of relationships */
+  bool isReferRelationshipColumn(void);
 };
 
 #endif

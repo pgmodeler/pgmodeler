@@ -2,10 +2,10 @@
 
 Index::Index(void)
 {
- atrib_indice[UNIQUE]=false;
- atrib_indice[CONCORRENTE]=false;
+ index_attribs[UNIQUE]=false;
+ index_attribs[CONCURRENT]=false;
  obj_type=OBJ_INDEX;
- fator_preenc=90;
+ fill_factor=90;
  attributes[ParsersAttributes::UNIQUE]="";
  attributes[ParsersAttributes::CONCURRENT]="";
  attributes[ParsersAttributes::TABLE]="";
@@ -22,67 +22,67 @@ Index::Index(void)
  attributes[ParsersAttributes::FAST_UPDATE]="";
 }
 
-void Index::definirAtributoElementos(unsigned tipo_def)
+void Index::setElementsAttribute(unsigned def_type)
 {
  QString str_elem;
- unsigned i, qtd;
+ unsigned i, count;
 
- qtd=elementos.size();
- for(i=0; i < qtd; i++)
+ count=elements.size();
+ for(i=0; i < count; i++)
  {
-  str_elem+=elementos[i].getCodeDefinition(tipo_def);
-  if(i < (qtd-1) && tipo_def==SchemaParser::SQL_DEFINITION) str_elem+=",";
+  str_elem+=elements[i].getCodeDefinition(def_type);
+  if(i < (count-1) && def_type==SchemaParser::SQL_DEFINITION) str_elem+=",";
  }
 
  attributes[ParsersAttributes::ELEMENTS]=str_elem;
 }
 
-int Index::elementoExiste(Column *coluna)
+int Index::isElementExists(Column *column)
 {
- int qtd, idx;
+ int count, idx;
  Column *col=NULL;
- bool enc=false;
+ bool found=false;
 
  idx=0;
- qtd=elementos.size();
+ count=elements.size();
 
- while(idx < qtd && !enc)
+ while(idx < count && !found)
  {
   //Obtém a coluna
-  col=elementos[idx].getColumn();
+  col=elements[idx].getColumn();
 
-  if(col && coluna)
-   enc=(col==coluna || col->getName()==coluna->getName());
+  if(col && column)
+   found=(col==column || col->getName()==column->getName());
 
-  if(!enc) idx++;
+  if(!found) idx++;
  }
 
- if(!enc) idx=-1;
+ if(!found) idx=-1;
  return(idx);
 }
 
-int Index::elementoExiste(const QString &expressao)
+int Index::isElementExists(const QString &expr)
 {
- int qtd, idx;
- bool enc=false;
+ int count, idx;
+ bool found=false;
 
  idx=0;
- qtd=elementos.size();
+ count=elements.size();
 
- while(idx < qtd && !enc)
+ while(idx < count && !found)
  {
-  enc=(!expressao.isEmpty() && elementos[idx].getExpression()==expressao);
-  if(!enc) idx++;
+  found=(!expr.isEmpty() && elements[idx].getExpression()==expr);
+  if(!found) idx++;
  }
 
- if(!enc) idx=-1;
+ if(!found) idx=-1;
  return(idx);
 }
 
-void Index::adicionarElemento(const QString &expressao, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro)
+void Index::addElement(const QString &expr, OperatorClass *op_class, bool asc_order, bool nulls_first)
 {
  //Caso a expressão esteja vazia, dispara exceção.
- if(expressao.isEmpty())
+ if(expr.isEmpty())
  {
   throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
@@ -91,23 +91,23 @@ void Index::adicionarElemento(const QString &expressao, OperatorClass *classe_op
   IndexElement elem;
 
   //Caso a expressão a ser atribuída ao índice já exista, dispara-se uma exceção
-  if(elementoExiste(expressao) >= 0)
+  if(isElementExists(expr) >= 0)
    throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  elem.setExpression(expressao);
-  elem.setOperatorClass(classe_oper);
-  elem.setSortAttribute(IndexElement::NULLS_FIRST, nulos_primeiro);
-  elem.setSortAttribute(IndexElement::ASC_ORDER, ordem_asc);
+  elem.setExpression(expr);
+  elem.setOperatorClass(op_class);
+  elem.setSortAttribute(IndexElement::NULLS_FIRST, nulls_first);
+  elem.setSortAttribute(IndexElement::ASC_ORDER, asc_order);
 
   //Adiciona o elemento ao final da lista de elementos do índice
-  elementos.push_back(elem);
+  elements.push_back(elem);
  }
 }
 
-void Index::adicionarElemento(Column *coluna, OperatorClass *classe_oper, bool ordem_asc, bool nulos_primeiro)
+void Index::addElement(Column *column, OperatorClass *op_class, bool asc_order, bool nulls_first)
 {
  //Caso a coluna não esteja aloca, dispara exceção.
- if(!coluna)
+ if(!column)
  {
  throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
                         .arg(QString::fromUtf8(this->getName()))
@@ -119,98 +119,98 @@ void Index::adicionarElemento(Column *coluna, OperatorClass *classe_oper, bool o
   IndexElement elem;
 
   //Caso a coluna a ser atribuída ao índice já exista, dispara-se uma exceção
-  if(elementoExiste(coluna) >= 0)
+  if(isElementExists(column) >= 0)
    throw Exception(ERR_INS_DUPLIC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  elem.setColumn(coluna);
-  elem.setOperatorClass(classe_oper);
-  elem.setSortAttribute(IndexElement::NULLS_FIRST, nulos_primeiro);
-  elem.setSortAttribute(IndexElement::ASC_ORDER, ordem_asc);
+  elem.setColumn(column);
+  elem.setOperatorClass(op_class);
+  elem.setSortAttribute(IndexElement::NULLS_FIRST, nulls_first);
+  elem.setSortAttribute(IndexElement::ASC_ORDER, asc_order);
 
   //Adiciona o elemento ao final da lista de elementos do índice
-  elementos.push_back(elem);
+  elements.push_back(elem);
  }
 }
 
-void Index::removerElemento(unsigned idx_elem)
+void Index::removeElement(unsigned idx_elem)
 {
  vector<IndexElement>::iterator itr;
 
  /* Verifica se o índice condiz com o tamanho das listas de elementos,
    caso não conincida, dispara exceção */
- if(idx_elem < elementos.size())
+ if(idx_elem < elements.size())
   throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
-  elementos.erase(elementos.begin() + idx_elem);
+  elements.erase(elements.begin() + idx_elem);
 }
 
-void Index::removerElementos(void)
+void Index::removeElements(void)
 {
- elementos.clear();
+ elements.clear();
 }
 
-void Index::definirAtributo(unsigned id_atrib, bool valor)
+void Index::setIndexAttribute(unsigned attrib_id, bool value)
 {
- if(id_atrib > ATUAL_RAPIDA)
+ if(attrib_id > FAST_UPDATE)
   throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- atrib_indice[id_atrib]=valor;
+ index_attribs[attrib_id]=value;
 }
 
-void Index::definirFatorPreenchimento(unsigned fator)
+void Index::setFillFactor(unsigned factor)
 {
- fator_preenc=fator;
+ fill_factor=factor;
 }
 
-void Index::definirTipoIndexacao(TipoIndexacao tipo_indexacao)
+void Index::setIndexingType(TipoIndexacao idx_type)
 {
- this->tipo_indexacao=tipo_indexacao;
+ this->indexing_type=idx_type;
 }
 
-void Index::definirExpCondicional(const QString &exp)
+void Index::setConditionalExpression(const QString &expr)
 {
- exp_condicional=exp;
+ conditional_expr=expr;
 }
 
-unsigned Index::obterFatorPreenchimento(void)
+unsigned Index::getFillFactor(void)
 {
- return(fator_preenc);
+ return(fill_factor);
 }
 
-IndexElement Index::obterElemento(unsigned idx_elem)
+IndexElement Index::getElement(unsigned elem_idx)
 {
 /* Verifica se o índice condiz com o tamanho das listas de elementos,
    caso não conincida, dispara exceção */
- if(idx_elem >= elementos.size())
+ if(elem_idx >= elements.size())
   throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
-  return(elementos[idx_elem]);
+  return(elements[elem_idx]);
 }
 
-unsigned Index::obterNumElementos(void)
+unsigned Index::getElementCount(void)
 {
- return(elementos.size());
+ return(elements.size());
 }
 
-bool Index::obterAtributo(unsigned id_atrib)
+bool Index::getIndexAttribute(unsigned attrib_id)
 {
- if(id_atrib > ATUAL_RAPIDA)
+ if(attrib_id > FAST_UPDATE)
   throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(atrib_indice[id_atrib]);
+ return(index_attribs[attrib_id]);
 }
 
-TipoIndexacao Index::obterTipoIndexacao(void)
+TipoIndexacao Index::getIndexingType(void)
 {
- return(tipo_indexacao);
+ return(indexing_type);
 }
 
-QString Index::obterExpCondicional(void)
+QString Index::getConditionalExpression(void)
 {
- return(exp_condicional);
+ return(conditional_expr);
 }
 
-bool Index::referenciaColunaIncRelacao(void)
+bool Index::isReferRelationshipColumn(void)
 {
  vector<IndexElement>::iterator itr, itr_end;
  Column *col=NULL;
@@ -219,8 +219,8 @@ bool Index::referenciaColunaIncRelacao(void)
  /* Primeira lista de elementos é que será varrida
     para isso as referências ao primeiro e ultimo elementos
     serão obtidas */
- itr=elementos.begin();
- itr_end=elementos.end();
+ itr=elements.begin();
+ itr_end=elements.end();
 
  /* Efetua uma iteração verifica se as colunas dos elementos
     foram incluídas por relacionamento, caso uma coluna
@@ -244,17 +244,17 @@ bool Index::referenciaColunaIncRelacao(void)
 
 QString Index::getCodeDefinition(unsigned tipo_def)
 {
- definirAtributoElementos(tipo_def);
- attributes[ParsersAttributes::UNIQUE]=(atrib_indice[UNIQUE] ? "1" : "");
- attributes[ParsersAttributes::CONCURRENT]=(atrib_indice[CONCORRENTE] ? "1" : "");
- attributes[ParsersAttributes::FAST_UPDATE]=(atrib_indice[ATUAL_RAPIDA] ? "1" : "");
- attributes[ParsersAttributes::INDEX_TYPE]=(~tipo_indexacao);
- attributes[ParsersAttributes::CONDITION]=exp_condicional;
+ setElementsAttribute(tipo_def);
+ attributes[ParsersAttributes::UNIQUE]=(index_attribs[UNIQUE] ? "1" : "");
+ attributes[ParsersAttributes::CONCURRENT]=(index_attribs[CONCURRENT] ? "1" : "");
+ attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? "1" : "");
+ attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
+ attributes[ParsersAttributes::CONDITION]=conditional_expr;
 
  if(this->parent_table)
   attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
- attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fator_preenc);
+ attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
 
  /* Caso o índice não esteja referenciando alguma coluna incluída por relacionamento
     a mesma será declarada dentro do código da tabela pai e para tanto existe um atributo
@@ -262,7 +262,7 @@ QString Index::getCodeDefinition(unsigned tipo_def)
     para indicar ao parser quando a declaração do índice está dentro da declaração da
     tabela pai. Este atributo é usado apenas para ajudar na formatação do código SQL e
     não tem nenhuma outra utilidade. */
- if(!referenciaColunaIncRelacao())
+ if(!isReferRelationshipColumn())
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
  return(BaseObject::__getCodeDefinition(tipo_def));

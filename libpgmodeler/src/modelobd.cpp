@@ -1388,7 +1388,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
 
       /* O índice só será considerado como especial caso referencie
          colunas adicionadas por relacionamento */
-      enc=indice->referenciaColunaIncRelacao();
+      enc=indice->isReferRelationshipColumn();
 
       /* Caso um índice seja encontrado obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
@@ -4884,12 +4884,12 @@ Index *ModeloBD::criarIndice(Tabela *tabela)
   indice=new Index;
   definirAtributosBasicos(indice);
   indice->setParentTable(tabela);
-  indice->definirAtributo(Index::CONCORRENTE, atributos[ParsersAttributes::CONCURRENT]==ParsersAttributes::_TRUE_);
-  indice->definirAtributo(Index::UNIQUE, atributos[ParsersAttributes::UNIQUE]==ParsersAttributes::_TRUE_);
-  indice->definirAtributo(Index::ATUAL_RAPIDA, atributos[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::_TRUE_);
+  indice->setIndexAttribute(Index::CONCURRENT, atributos[ParsersAttributes::CONCURRENT]==ParsersAttributes::_TRUE_);
+  indice->setIndexAttribute(Index::UNIQUE, atributos[ParsersAttributes::UNIQUE]==ParsersAttributes::_TRUE_);
+  indice->setIndexAttribute(Index::FAST_UPDATE, atributos[ParsersAttributes::FAST_UPDATE]==ParsersAttributes::_TRUE_);
 
-  indice->definirTipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]);
-  indice->definirFatorPreenchimento(atributos[ParsersAttributes::FACTOR].toUInt());
+  indice->setIndexingType(atributos[ParsersAttributes::INDEX_TYPE]);
+  indice->setFillFactor(atributos[ParsersAttributes::FACTOR].toUInt());
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
@@ -4963,9 +4963,9 @@ Index *ModeloBD::criarIndice(Tabela *tabela)
       while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 
       if(!expr.isEmpty())
-       indice->adicionarElemento(expr, classe_oper, ordem_asc, nulos_primeiro);
+       indice->addElement(expr, classe_oper, ordem_asc, nulos_primeiro);
       else
-       indice->adicionarElemento(coluna, classe_oper, ordem_asc, nulos_primeiro);
+       indice->addElement(coluna, classe_oper, ordem_asc, nulos_primeiro);
 
       XMLParser::restorePosition();
      }
@@ -4976,7 +4976,7 @@ Index *ModeloBD::criarIndice(Tabela *tabela)
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
       str_aux=XMLParser::getElementContent();
       XMLParser::restorePosition();
-      indice->definirExpCondicional(str_aux);
+      indice->setConditionalExpression(str_aux);
      }
     }
    }
@@ -6210,7 +6210,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
      indice=tabela->obterIndice(i);
 
      //Caso o índice seja um objeto especial armazena-o no mapa de objetos
-     if(indice->referenciaColunaIncRelacao())
+     if(indice->isReferRelationshipColumn())
      {
       //Armazena o objeto em si no mapa de objetos
       mapa_objetos[indice->getObjectId()]=indice;
@@ -6779,15 +6779,15 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    for(i=0; i < qtd; i++)
    {
     ind=dynamic_cast<Index *>(tab->obterIndice(i));
-    qtd1=ind->obterNumElementos();
+    qtd1=ind->getElementCount();
 
     for(i1=0; i1 < qtd1; i1++)
     {
-     if(ind->obterElemento(i1).getOperatorClass())
-      obterDependenciasObjeto(ind->obterElemento(i1).getOperatorClass(), vet_deps, inc_dep_indiretas);
-     else if(ind->obterElemento(i1).getColumn())
+     if(ind->getElement(i1).getOperatorClass())
+      obterDependenciasObjeto(ind->getElement(i1).getOperatorClass(), vet_deps, inc_dep_indiretas);
+     else if(ind->getElement(i1).getColumn())
      {
-      tipo_usr=obterObjetoTipoPgSQL(ind->obterElemento(i1).getColumn()->getType());
+      tipo_usr=obterObjetoTipoPgSQL(ind->getElement(i1).getColumn()->getType());
         //obterObjeto(*ind->obterElemento(i1).obterColuna()->obterTipo(), OBJETO_TIPO);
 
       if(tipo_usr)

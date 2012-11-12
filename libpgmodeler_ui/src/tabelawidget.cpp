@@ -432,7 +432,7 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  {
   indice=dynamic_cast<Index *>(objeto);
   //Coluna 1: Tipo de indexação do índice
-  tab->definirTextoCelula(~indice->obterTipoIndexacao(),idx_lin,1);
+  tab->definirTextoCelula(~indice->getIndexingType(),idx_lin,1);
  }
 
  /* Caso o objeto esteja protegido ou foi incluído por relacionamento

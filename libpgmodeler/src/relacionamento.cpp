@@ -1814,7 +1814,7 @@ void Relacionamento::removerObjetosTabelaRefCols(Tabela *tabela)
  for(i=0; i < qtd; i++)
  {
   ind=tabela->obterIndice(i);
-  if(ind->referenciaColunaIncRelacao())
+  if(ind->isReferRelationshipColumn())
   {
    tabela->removerObjeto(ind);
    delete(ind);
