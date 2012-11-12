@@ -137,6 +137,11 @@ class TipoEvento: public TipoBase{
   static void obterTipos(QStringList &tipos);
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
+
+  /* These two operators where created to permit the use the
+     class TipoEvento on STL containers (specially maps) */
+  bool operator < (TipoEvento tipo) const;
+  bool operator < (unsigned idx_tipo) const;
 };
 
 class TipoExecucao: public TipoBase{

@@ -398,6 +398,16 @@ unsigned TipoEvento::operator = (const QString &nome_tipo)
  return(idx_tipo);
 }
 
+bool TipoEvento::operator < (TipoEvento tipo) const
+{
+ return(idx_tipo < tipo.idx_tipo);
+}
+
+bool TipoEvento::operator < (unsigned idx) const
+{
+ return(idx_tipo < idx);
+}
+
 /************************
  * CLASSE: TipoExecucao *
  ************************/

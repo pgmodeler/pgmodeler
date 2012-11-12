@@ -5131,7 +5131,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
                          ParsersAttributes::_TRUE_));
 
   //Marcando e o gatilho é executado por linha ou não
-  gatilho->setExecutePerRow(atributos[ParsersAttributes::PER_LINE]==
+  gatilho->setExecutePerRow(atributos[ParsersAttributes::PER_ROW]==
                             ParsersAttributes::_TRUE_);
 
   //Define o modo de disparo do gatilho

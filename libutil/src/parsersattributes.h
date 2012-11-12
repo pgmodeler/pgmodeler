@@ -132,7 +132,7 @@ static const QString
   PARAM_OUT="out",
   PARAMETER="parameter",
   PARAMETERS="parameters",
-  PER_LINE="per-line",
+  PER_ROW="per-line",
   BY_VALUE="by-value",
   OWNER_COLUMN="owner",
   PRECISION="precision",

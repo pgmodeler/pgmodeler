@@ -2,8 +2,9 @@
 
 Gatilho::Gatilho(void)
 {
- unsigned i, tipos[4]={TipoEvento::on_insert, TipoEvento::on_delete,
-                       TipoEvento::on_update, TipoEvento::on_truncate};
+ unsigned i;
+ TipoEvento tipos[4]={TipoEvento::on_insert, TipoEvento::on_delete,
+                      TipoEvento::on_update, TipoEvento::on_truncate};
 
  function=NULL;
  is_exec_per_row=false;
@@ -19,7 +20,7 @@ Gatilho::Gatilho(void)
  attributes[ParsersAttributes::TABLE]="";
  attributes[ParsersAttributes::COLUMNS]="";
  attributes[ParsersAttributes::FIRING_TYPE]="";
- attributes[ParsersAttributes::PER_LINE]="";
+ attributes[ParsersAttributes::PER_ROW]="";
  attributes[ParsersAttributes::INS_EVENT]="";
  attributes[ParsersAttributes::DEL_EVENT]="";
  attributes[ParsersAttributes::UPD_EVENT]="";
@@ -65,27 +66,24 @@ void Gatilho::setEvent(TipoEvento event, bool value)
  if(event==TipoEvento::on_select)
   throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- events[!event]=value;
+ events[event]=value;
 }
 
 void Gatilho::setFunction(Function *func)
 {
- //Caso a função a ser atribuida ao gatilho esteja nula
+ //Case the function is null an error is raised
  if(!func)
-  //Dispara exceção relatando o erro
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_TRIGGER)),
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  //Caso a função não possua tipo de retorno 'trigger', ela não pode ser usada em um gatilho
+  //Case the function doesn't returns 'trigger' it cannot be used with the trigger thus raise an error
   if(func->getReturnType()!="trigger")
-   //Dispara exceção relatando o erro
    throw Exception(ERR_ASG_INV_TRIGGER_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-  //Caso a função não possua parâmetros, ela não pode ser usada em um gatilho
+  //Case the functions does not has any parameter raise an error
   else if(func->getParameterCount()==0)
-   //Dispara exceção relatando o erro
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_TRIGGER)),
@@ -118,18 +116,14 @@ void Gatilho::addColumn(Column *column)
 
 void Gatilho::editArgument(unsigned arg_idx, const QString &new_arg)
 {
- /* Caso o índice do argumento esteja fora da capacidade
-    da lista de argumentos */
+ //Raises an error if the argument index is invalid (out of bound)
  if(arg_idx>=arguments.size())
-  //Dispara exceção relatando o erro
   throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
- {
-  vector<QString>::iterator itr;
 
-  itr=arguments.begin()+arg_idx;
-  (*itr)=new_arg; //Muda o valor do argumento
- }
+ vector<QString>::iterator itr;
+
+ itr=arguments.begin()+arg_idx;
+ (*itr)=new_arg;
 }
 
 void Gatilho::setExecutePerRow(bool value)
@@ -147,23 +141,20 @@ bool Gatilho::isExecuteOnEvent(TipoEvento event)
 
 QString Gatilho::getArgument(unsigned arg_idx)
 {
- /* Caso o índice do argumento esteja fora da capacidade
-    da lista de argumentos */
+ //Raises an error if the argument index is invalid (out of bound)
  if(arg_idx>=arguments.size())
-  //Dispara exceção relatando o erro
   throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
-  //Retorna o argumento no índice desejado
-  return(arguments[arg_idx]);
+
+ return(arguments[arg_idx]);
 }
 
 Column *Gatilho::getColumn(unsigned col_idx)
 {
+ //Raises an error if the column index is invalid (out of bound)
  if(col_idx>=upd_columns.size())
   throw Exception(ERR_REF_COLUMN_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
-  //Retorna a coluna no índice desejado
-  return(upd_columns[col_idx]);
+
+ return(upd_columns[col_idx]);
 }
 
 unsigned Gatilho::getArgumentCount(void)
@@ -193,17 +184,13 @@ TipoDisparo Gatilho::getFiringType(void)
 
 void Gatilho::removeArgument(unsigned arg_idx)
 {
- /* Caso o índice do argumento steja fora da capacidade
-    da lista de argumentos */
+ //Raises an error if the argument index is invalid (out of bound)
  if(arg_idx>=arguments.size())
-  //Dispara exceção relatando o erro
   throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
- {
-  vector<QString>::iterator itr;
-  itr=arguments.begin()+arg_idx;
-  arguments.erase(itr); //Remove o argumento encontrado
- }
+
+ vector<QString>::iterator itr;
+ itr=arguments.begin()+arg_idx;
+ arguments.erase(itr);
 }
 
 void Gatilho::removeArguments(void)
@@ -218,12 +205,10 @@ void Gatilho::removeColumns(void)
 
 void Gatilho::setReferecendTable(BaseObject *ref_table)
 {
- /* Caso a tabela referenciada a ser atribuída esteja alocada, porém
-    seu tipo não seja OBJETO_TABELA, isso gera um erro */
+ //If the referenced table isn't valid raises an error
  if(ref_table && ref_table->getObjectType()!=OBJ_TABLE)
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Atribui a tabela referenciada ao gatilho
  this->referenced_table=ref_table;
 }
 
@@ -261,19 +246,10 @@ bool Gatilho::isReferRelationshipColumn(void)
  itr=upd_columns.begin();
  itr_end=upd_columns.end();
 
- /* Efetua uma iteração verifica se as colunas da lista
-    foram incluídas por relacionamento, caso uma coluna
-    for detectada como incluída desta forma é suficiente
-    dizer que o gatilho referencia colunas vindas de
-    relacionamento fazendo com que esta seja tratada de forma
-    especial evitando a quebra de referêncais */
  while(itr!=itr_end && !enc)
  {
-  //Obtém a coluna
   col=(*itr);
-  //Obtém se a coluna foi incluída por relacionamento ou não
   enc=col->isAddedByRelationship();
-  //Passa para a próxima coluna
   itr++;
  }
 
@@ -329,12 +305,8 @@ QString Gatilho::getCodeDefinition(unsigned def_type)
 {
  setBasicAttributes(def_type);
 
- /* Caso o gatilho não esteja referenciando alguma coluna incluída por relacionamento
-    a mesma será declarada dentro do código da tabela pai e para tanto existe um atributo
-    específico na definição SQL/XML do objeto chamado 'decl-in-table' que é usado
-    para indicar ao parser quando a declaração do gatilho está dentro da declaração da
-    tabela pai. Este atributo é usado apenas para ajudar na formatação do código SQL e
-    não tem nenhuma outra utilidade. */
+ /* Case the trigger doesn't referece some column added by relationship it will be declared
+    inside the parent table construction by the use of 'decl-in-table' schema attribute */
  if(!isReferRelationshipColumn())
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
@@ -343,8 +315,8 @@ QString Gatilho::getCodeDefinition(unsigned def_type)
 
  attributes[ParsersAttributes::FIRING_TYPE]=(~firing_type);
 
- //** Gatilhos Restrições SEMPRE devem executar por linha (FOR EACH ROW) **
- attributes[ParsersAttributes::PER_LINE]=((is_exec_per_row && !referenced_table) || referenced_table ? "1" : "");
+ //** Constraint trigger MUST execute per row **
+ attributes[ParsersAttributes::PER_ROW]=((is_exec_per_row && !referenced_table) || referenced_table ? "1" : "");
 
  attributes[ParsersAttributes::CONDITION]=condition;
 

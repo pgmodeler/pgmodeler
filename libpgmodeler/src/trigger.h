@@ -27,135 +27,132 @@
 
 class Gatilho: public TableObject{
  protected:
-  //Argumentos que são passados a função que o gatilho executa
+  //Arguments passed to the function that trigger executes
   vector<QString> arguments;
 
-  /* Lista de colunas usadas como condição de disparo da trigger
-     Este atributo foi adicionado no PostgreSQL 9.1 é usado somente
-     quando o evento UPDATE está presente. */
+  /* Column list used as the trigger firing condition. This attribute was
+     introduced in PostgreSQL 9.1 and it is used only when the UPDATE event
+     is assigned to trigger. */
   vector<Column *> upd_columns;
 
-  //Função que será executada com o disparo do gatilho
+  //Function that is excuted when the trigger is activated
   Function *function;
 
-  //Condição que garante ou não a execução do gatilhos
+  //Condition that guarantees the trigger's execution
   QString condition;
 
-  //Momento de disparo da a trigger (BEFORE, AFTER, INSTEAD OF)
+  //Trigger firing mode (BEFORE, AFTER, INSTEAD OF)
   TipoDisparo firing_type;
 
-  //Mapa de flags que indica em que evento o gatilho de ver disparado
-  map<unsigned, bool> events;
+  //Map that marks which events activates the trigger
+  map<TipoEvento, bool> events;
 
-  //Flag que indica que a função do gatilho deve ser executada por linha da tabela
+  //Flag that indicates whether the function must be executed by row
   bool is_exec_per_row;
 
-  //Tabela referenciada pelo gatilho (apenas para gatilho restrição)
+  //Table referecend by the trigger (only for constraint trigger)
   BaseObject *referenced_table;
 
-  //Indica se o gatílho é postergavel ou não (apenas para gatilho restrição)
+  //Indicates whether the trigger is deferrable (only for constraint trigger)
   bool is_deferrable;
 
-  //Tipo de postergação do gatilho (apenas para gatilho restrição)
+  //Deferral type for the trigger (only for constraint trigger)
   TipoPostergacao deferral_type;
 
+  //Formats the basic trigger attributes to be used by SchemaParser
   void setBasicAttributes(unsigned def_type);
 
-  /* Formata a QString de argumentos usada pelo parser de esquema
-     na geração da definição SQL do gatilho */
+  //Format the function arguments to be used by the SchemaParser
   void setArgumentAttribute(unsigned tipo_def);
 
 
  public:
-  static const unsigned BEFORE_MODE=0;
-  static const unsigned AFTER_MODE=1;
-  static const unsigned INSTEADOF_MODE=2;
-
   Gatilho(void);
 
-  /* Adiciona uma coluna como condição de disparo (apenas para evento update)
-     As colunas adicionadas por esse método devem obrigatoriamente pertencer
-       coluna dona do gatilho e nã  outras tabelas */
+  /* Adds a column as a firing condition (only when the event UPDATE is used).
+     The columns added by this method must belongs to the trigger owner table. */
   void addColumn(Column *column);
 
-  //Adiciona um argumento ao gatilho
+  //Adds an argument to the trigger
   void addArgument(const QString &arg);
 
-  //Define em quais eventos (INSERT, DELETE, UPDATE, TRUNCATE) o gatilho pode ser executado
+  //Defines in which events the trigger is executed
   void setEvent(TipoEvento event, bool value);
 
-  //Define a função que será executada quando o gatilho for chamado
+  //Defines the function to be executed by the trigger
   void setFunction(Function *func);
 
-  //Define a condição de execução do gatilho
+  //Defines the firing condition for trigger
   void setCondition(const QString &cond);
 
-  //Define a tabela referenciada
+  //Defines the referenced table (only for constraint trigger)
   void setReferecendTable(BaseObject *ref_table);
 
-  //Define o tipo de deferimento
+  //Defines the deferral type
   void setDeferralType(TipoPostergacao tipo);
 
-  //Define se o gatilho é postgergavel ou não
+  //Defines whether the trigger is deferrable or not
   void setDeferrable(bool valor);
 
-  /* Edita um argumento através de seu índice, passando também
-     o novo valor que este receberá */
+  //Changes the specified trigger agument replacing the current argument by the 'new_arg'
   void editArgument(unsigned arg_idx, const QString &new_arg);
 
-  //Define o momento de execução do gatilho
+  //Defines the moment when the trigger must be executed
   void setFiringType(TipoDisparo firing_type);
 
-  //Define se o gatlho deve ser executado por linha da tabela
+  //Define wheter the trigger executes per row
   void setExecutePerRow(bool value);
 
-  //Retorna se o gatlho é executado no evento informado
+  //Returns true if the trigger executes on the passed event
   bool isExecuteOnEvent(TipoEvento event);
 
-  //Obtém uma coluna referenciada pelo gatilho através do índice
+  //Gets one reference column by its index
   Column *getColumn(unsigned col_idx);
 
-  //Obtém um argumento através de seu índice
+  //Gets one argument by its index
   QString getArgument(unsigned arg_idx);
 
-  //Obtém a condição definida para execução do gatilho
+  //Gets the trigger firing condition
   QString getCondition(void);
 
-  //Obtém a função executada pelo gatilho chamado
+  //Returns the function executed by the trigger
   Function *getFunction(void);
 
-  //Obtém o número de argumentos
+  //Returns the trigger argument count
   unsigned getArgumentCount(void);
 
-  //Obtém o número de colunas
+  //Returns the reference column count
   unsigned getColumnCount(void);
 
-  //Retorna se o gatilho executa antes de evento
+  //Returns when the trigger executes
   TipoDisparo getFiringType(void);
 
-  //Remove um argumento pelo seu índice
+  //Remove an argument using its index
   void removeArgument(unsigned arg_idx);
+
+  //Remove all arguments
   void removeArguments(void);
+
+  //Remove all referenced columns
   void removeColumns(void);
 
-  //Obtém a tabela referenciada
+  //Returns the referenced table
   BaseObject *getReferencedTable(void);
 
-  //Obtém o tipo de deferimento da restrição
+  //Returns the deferral type of the constraint trigger
   TipoPostergacao getDeferralType(void);
 
-  //Obtém se a restrição é postgergavel ou não
+  //Returns if the constraint trigger is deferrable or not
   bool isDeferrable(void);
 
-  /* Retorna se o gatilho referencia colunas adicionadas
-     por relacionamento. Este método é usado como auxiliar
-     para controlar gatilhos os quais
-     referenciam colunas adicionadas por relacionamento a
-     fim de se evitar quebra de ligações devido as constantes
-     conexões e desconexões de relacionamentos */
+  /* Returns whether the trigger references columns added
+     by relationship. This method is used as auxiliary
+     to control which triggers reference columns added by the
+     relationship in order to avoid referece breaking due constants
+     connections and disconnections of relationships */
   bool isReferRelationshipColumn(void);
 
-  //Retorna a definição SQL ou XML do objeto
+  //Returns the SQL / XML definition for the trigger
   QString getCodeDefinition(unsigned def_type);
 };
 
