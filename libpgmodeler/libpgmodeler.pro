@@ -10,7 +10,7 @@ LIBS += $$DESTDIR/$$LIBUTIL \
 HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/cast.h \
            $$PWD/src/function.h \
-           $$PWD/src/linguagem.h \
+           $$PWD/src/language.h \
            $$PWD/src/operador.h \
            $$PWD/src/relacionamentobase.h \
            $$PWD/src/basetable.h \
@@ -58,7 +58,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/restricao.cpp \
             $$PWD/src/tipospgsql.cpp \
             $$PWD/src/schema.cpp \
-            $$PWD/src/linguagem.cpp \
+            $$PWD/src/language.cpp \
             $$PWD/src/papel.cpp \
             $$PWD/src/sequencia.cpp \
             $$PWD/src/visao.cpp \

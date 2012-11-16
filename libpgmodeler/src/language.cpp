@@ -1,4 +1,4 @@
-#include "linguagem.h"
+#include "language.h"
 
 Language::Language(void)
 {
@@ -16,15 +16,14 @@ Language::Language(void)
 
 void Language::setName(const QString &name)
 {
- /* Tratando nome de linguagem. Nomes como SQL, C são reservados
-    para o SGBD e não podem ser criados pelo usuário */
+ //Raises an error if the user try to set an system reserved language name (C, SQL)
  if(name.toLower()==~TipoLinguagem("c") || name.toLower()==~TipoLinguagem("sql"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
                          .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
                 ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- BaseObject::setName(name); //Chama o método da classe base
+ BaseObject::setName(name);
 }
 
 void Language::setTrusted(bool value)
@@ -38,23 +37,21 @@ void  Language::setFunction(Function *func, unsigned func_type)
 
  if(!func ||
      (func &&
-      /* Obrigatóriamente uma função de manipulação deve ser escrita em C,
-         e possuir tipo de retorno "language_handler" */
+      /* The handler function must be written in C and have
+         'language_handler' as return type */
       ((func_type==HANDLER_FUNC &&
         func->getReturnType()=="language_handler" &&
         func->getParameterCount()==0 &&
         func->getLanguage()->getName()==(~lang)) ||
-       /* Obrigatoriamente a função de validator de ser escrita em C,
-          retornar "void", possuir apenas 1 parâmetro e que o mesmo
-          seja do tipo "oid" */
+       /* The validator function must be written in C and return 'void' also
+          must have only one parameter of the type 'oid' */
        (func_type==VALIDATOR_FUNC &&
         func->getReturnType()=="void" &&
         func->getParameterCount()==1 &&
         func->getParameter(0).getType() == "oid" &&
         func->getLanguage()->getName()==(~lang)) ||
-      /* Obrigatoriamente a função inline de ser escrita em C,
-         retornar "void", possuir apenas 1 parâmetro e que o mesmo
-         seja do tipo "internal" */
+       /* The inline function must be written in C and return 'void' also
+          must have only one parameter of the type 'internal' */
        (func_type==INLINE_FUNC &&
         func->getReturnType()=="void" &&
         func->getParameterCount()==1 &&
@@ -63,7 +60,7 @@ void  Language::setFunction(Function *func, unsigned func_type)
  {
   this->functions[func_type]=func;
  }
- //Disparando uma exceção caso o tipo de retorno da função não coincida com o aceito para cada tipo de função
+ //Raises an error in case the function return type doesn't matches the required by each rule
  else if((func_type==HANDLER_FUNC && func->getReturnType()!="language_handler") ||
          ((func_type==VALIDATOR_FUNC || func_type==INLINE_FUNC) && func->getReturnType()!="void"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
@@ -71,7 +68,7 @@ void  Language::setFunction(Function *func, unsigned func_type)
                          .arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
                 ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
-  //Dispara um erro se a função possuir parâmetros inválidos
+  //Raises an error in case the function has invalid parameters (count and types)
   throw Exception(ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
