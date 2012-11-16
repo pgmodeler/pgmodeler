@@ -126,7 +126,7 @@ OperationList::OperationList(ModeloBD *modelo)
 
  this->modelo=modelo;
  idx_atual=0;
- enc_prox_oper=Operation::SEM_ENCADEAMENTO;
+ enc_prox_oper=Operation::NO_CHAIN;
  anular_enc=false;
 }
 
@@ -154,12 +154,12 @@ void OperationList::iniciarEncadeamentoOperacoes(void)
 {
  /* Caso o encadeamento esteja iniciado e o usuário tente inicializa-lo
     novamente, o encadeamento anterior será finalizado */
- if(enc_prox_oper!=Operation::SEM_ENCADEAMENTO)
+ if(enc_prox_oper!=Operation::NO_CHAIN)
   finalizarEncadeamentoOperacoes();
 
  /* Marca o tipo de encadeamento da próxima operação com sendo
     primeira operação do encadeamento */
- enc_prox_oper=Operation::ENC_INICIO;
+ enc_prox_oper=Operation::CHAIN_START;
 }
 
 void OperationList::finalizarEncadeamentoOperacoes(void)
@@ -168,12 +168,12 @@ void OperationList::finalizarEncadeamentoOperacoes(void)
     indica que o próximo elemento da lista já não
     fará parte do encadeamento */
  if(!anular_enc)
-  enc_prox_oper=Operation::SEM_ENCADEAMENTO;
+  enc_prox_oper=Operation::NO_CHAIN;
  else if(anular_enc)
   /* Caso o encadeamento esteja anulado,
     indica que o próximo elemento da lista
     continuará fazendo parte do encadeamento */
-  enc_prox_oper=Operation::ENC_MEIO;
+  enc_prox_oper=Operation::CHAIN_MIDDLE;
 
  if(operacoes.size() > 0 && !anular_enc)
  {
@@ -181,16 +181,16 @@ void OperationList::finalizarEncadeamentoOperacoes(void)
 
   /* Marca a ultima operação da lista como sendo a ultima do encadeamento
      caso esta esteja no meio do encadeamento */
-  if(operacoes[idx]->tipo_enc==Operation::ENC_MEIO)
-   operacoes[idx]->tipo_enc=Operation::ENC_FINAL;
+  if(operacoes[idx]->chain_type==Operation::CHAIN_MIDDLE)
+   operacoes[idx]->chain_type=Operation::CHAIN_END;
 
   /* Caso a última operação esteja marcada como ENC_INICIO indica que
      o encademanto foi aberto porém somente uma operação está registrada
      neste encadeamento, sendo assim a operação é marcada como SEM_ENCADEAMENTO
      pois por se tratar de apenas uma operação não há necessidade de tratá-la como
      encadeamento */
-  else if(operacoes[idx]->tipo_enc==Operation::ENC_INICIO)
-   operacoes[idx]->tipo_enc=Operation::SEM_ENCADEAMENTO;
+  else if(operacoes[idx]->chain_type==Operation::CHAIN_START)
+   operacoes[idx]->chain_type=Operation::NO_CHAIN;
  }
 }
 
@@ -201,8 +201,8 @@ void OperationList::anularEncadeamentoOperacoes(bool valor)
 
 bool OperationList::encadeamentoIniciado(void)
 {
- return(enc_prox_oper==Operation::ENC_INICIO ||
-        enc_prox_oper==Operation::ENC_MEIO);
+ return(enc_prox_oper==Operation::CHAIN_START ||
+        enc_prox_oper==Operation::CHAIN_MIDDLE);
 }
 
 bool OperationList::refazerHabilitado(void)
@@ -244,8 +244,8 @@ void OperationList::adicionarObjetoPool(BaseObject *objeto, unsigned tipo_op)
 
  /* Caso o objeto está prestes a ser removido ou modificado, será armazenado no pool
     uma cópia do mesmo e não o objeto em si */
- if(tipo_op==Operation::OBJETO_MODIFICADO ||
-    tipo_op==Operation::OBJETO_MOVIMENTADO)
+ if(tipo_op==Operation::OBJECT_MODIFIED ||
+    tipo_op==Operation::OBJECT_MOVED)
  {
   BaseObject *obj_copia=NULL;
 
@@ -321,7 +321,7 @@ void OperationList::validarOperacoes(void)
  {
   //Obtém a referência ao objeto
   operacao=(*itr);
-  if(!objetoNoPool((*itr)->obj_pool))
+  if(!objetoNoPool((*itr)->pool_obj))
   {
    //Remove o elemento do pool
    operacoes.erase(itr);
@@ -443,21 +443,21 @@ void OperationList::adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int id
 
   //Cria a operação a ser armazenada na lista
   operacao=new Operation;
-  operacao->tipo_op=tipo_op;
-  operacao->tipo_enc=enc_prox_oper;
-  operacao->obj_gerador=objeto;
+  operacao->op_type=tipo_op;
+  operacao->chain_type=enc_prox_oper;
+  operacao->generator_obj=objeto;
 
   //Adiciona o objeto no pool
   adicionarObjetoPool(objeto, tipo_op);
 
   //Atribui   operação o objeto inserido no pool
-  operacao->obj_pool=pool_objetos.back();
+  operacao->pool_obj=pool_objetos.back();
 
   /* Caso o tipo de encadeamento atual da operação seja de início de
      encademaneto, configura o tipo para a próxima operação a ser
      inserida como sendo uma operação no meio do encadeamento. */
-   if(enc_prox_oper==Operation::ENC_INICIO)
-    enc_prox_oper=Operation::ENC_MEIO;
+   if(enc_prox_oper==Operation::CHAIN_START)
+    enc_prox_oper=Operation::CHAIN_MIDDLE;
 
   /* Executando operações específicada de acorodo com o tipo de objeto.
      Caso o objeto possua um objeto pai, o mesmo precisa ser descoberto
@@ -477,19 +477,19 @@ void OperationList::adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int id
 
    /* Caso específico para colunas: em operações de remoção do objeto
       as permissões daquele objeto precisam ser removidas. */
-   if(tipo_obj==OBJ_COLUMN && tipo_op==Operation::OBJETO_REMOVIDO)
+   if(tipo_obj==OBJ_COLUMN && tipo_op==Operation::OBJECT_REMOVED)
     modelo->removerPermissoes(obj_tab);
    else if(((tipo_obj==OBJ_TRIGGER && dynamic_cast<Gatilho *>(obj_tab)->isReferRelationshipColumn()) ||
             (tipo_obj==OBJ_INDEX && dynamic_cast<Index *>(obj_tab)->isReferRelationshipColumn()) ||
             (tipo_obj==OBJ_CONSTRAINT && dynamic_cast<Restricao *>(obj_tab)->referenciaColunaIncRelacao())))
    {
-    if(tipo_op==Operation::OBJETO_REMOVIDO)
+    if(tipo_op==Operation::OBJECT_REMOVED)
      obj_tab->setParentTable(tabela_pai);
 
-    operacao->def_xml=modelo->validarDefinicaoObjeto(obj_tab, SchemaParser::XML_DEFINITION);
+    operacao->xml_definition=modelo->validarDefinicaoObjeto(obj_tab, SchemaParser::XML_DEFINITION);
    }
 
-   operacao->obj_pai=objeto_pai;
+   operacao->parent_obj=objeto_pai;
 
    /* Caso haja um relacionamento pai será obtido o índice do objeto.
       Apenas colunas e restrições são manipuladas caso o pai seja
@@ -531,7 +531,7 @@ void OperationList::adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int id
     idx_obj=idx_objeto;
   }
 
-  operacao->idx_obj=idx_obj;
+  operacao->object_idx=idx_obj;
 
   //Insere a operação na lista de operações
   operacoes.push_back(operacao);
@@ -558,20 +558,20 @@ void OperationList::obterDadosOperacao(unsigned idx_oper, unsigned &tipo_oper, Q
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  operacao=operacoes[idx_oper];
- tipo_oper=operacao->tipo_op;
+ tipo_oper=operacao->op_type;
 
- tipo_obj=operacao->obj_pool->getObjectType();
+ tipo_obj=operacao->pool_obj->getObjectType();
 
  if(tipo_obj==OBJ_CAST)
-  nome_obj=operacao->obj_pool->getName();
+  nome_obj=operacao->pool_obj->getName();
  else
-  nome_obj=operacao->obj_pool->getName(true);
+  nome_obj=operacao->pool_obj->getName(true);
 
  //Formata o nome especificamente para objetos da tabela incluindo o nome da tabela pai ao nome do objeto
  if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT || tipo_obj==OBJ_RULE ||
     tipo_obj==OBJ_TRIGGER || tipo_obj==OBJ_INDEX)
  {
-  nome_obj=operacao->obj_pai->getName(true) + "." + nome_obj;
+  nome_obj=operacao->parent_obj->getName(true) + "." + nome_obj;
  }
 }
 
@@ -585,26 +585,26 @@ unsigned OperationList::obterTamanhoEncadeamento(void)
 
  //Verifica se a operação atual é de encadeamento
  if(!operacoes.empty() &&
-    operacoes[i]->tipo_enc!=Operation::SEM_ENCADEAMENTO)
+    operacoes[i]->chain_type!=Operation::NO_CHAIN)
  {
   unsigned tipo_enc=0;
   int inc=0;
 
   //Caso seja um encadeamento final varre a lista de tras para frente
-  if(operacoes[i]->tipo_enc==Operation::ENC_FINAL)
+  if(operacoes[i]->chain_type==Operation::CHAIN_END)
   {
-   tipo_enc=Operation::ENC_INICIO;
+   tipo_enc=Operation::CHAIN_START;
    inc=-1;
   }
   //Caso seja um encadeamento inicial varre a lista de frente para tras
-  else if(operacoes[i]->tipo_enc==Operation::ENC_INICIO)
+  else if(operacoes[i]->chain_type==Operation::CHAIN_START)
   {
-   tipo_enc=Operation::ENC_FINAL;
+   tipo_enc=Operation::CHAIN_END;
    inc=1;
   }
 
   //Varre a lista na sequencia definida contando as operações encadeadas
-  while(i>=0 && i < static_cast<int>(operacoes.size()) && operacoes[i]->tipo_enc!=tipo_enc)
+  while(i>=0 && i < static_cast<int>(operacoes.size()) && operacoes[i]->chain_type!=tipo_enc)
   {
    i+=inc;
    tam++;
@@ -638,14 +638,14 @@ void OperationList::desfazerOperacao(void)
       flag para dar início a executação de várias operações de uma
       só vez */
    if(!anular_enc && !enc_ativo &&
-       operacao->tipo_enc!=Operation::SEM_ENCADEAMENTO)
+       operacao->chain_type!=Operation::NO_CHAIN)
      enc_ativo=true;
 
    /* Caso o encadeamento esteja ativo e a operação atual não faça parte do
       encadeamento, aborta a execução da operação */
    else if(enc_ativo &&
-           (operacao->tipo_enc==Operation::ENC_FINAL ||
-            operacao->tipo_enc==Operation::SEM_ENCADEAMENTO))
+           (operacao->chain_type==Operation::CHAIN_END ||
+            operacao->chain_type==Operation::NO_CHAIN))
     break;
 
    try
@@ -656,9 +656,9 @@ void OperationList::desfazerOperacao(void)
      pos++;
      emit s_operacaoExecutada((pos/static_cast<float>(tam_enc))*100,
                                trUtf8("Undoing operation on object: %1 (%2)")
-                                      .arg(operacao->obj_pool->getName())
-                                      .arg(operacao->obj_pool->getTypeName()),
-                                       operacao->obj_pool->getObjectType());
+                                      .arg(operacao->pool_obj->getName())
+                                      .arg(operacao->pool_obj->getTypeName()),
+                                       operacao->pool_obj->getObjectType());
     }
 
     //Executa a operação de desfazer
@@ -673,7 +673,7 @@ void OperationList::desfazerOperacao(void)
   }
   /* Executa a operação enquanto a operação faça parte de encadeamento
      ou a opção de desfazer esteja habilidata */
-  while(!anular_enc && desfazerHabilitado() && operacao->tipo_enc!=Operation::SEM_ENCADEAMENTO);
+  while(!anular_enc && desfazerHabilitado() && operacao->chain_type!=Operation::NO_CHAIN);
 
   if(erro.getErrorType()!=ERR_CUSTOM)
    throw Exception(erro.getErrorMessage(), erro.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -703,14 +703,14 @@ void OperationList::refazerOperacao(void)
       flag para dar início a executação de várias operações de uma
       só vez */
    if(!anular_enc && !enc_ativo &&
-      operacao->tipo_enc!=Operation::SEM_ENCADEAMENTO)
+      operacao->chain_type!=Operation::NO_CHAIN)
     enc_ativo=true;
 
    /* Caso o encadeamento esteja ativo e a operação atual não faça parte do
       encadeamento, aborta a execução da operação */
    else if(enc_ativo &&
-           (operacao->tipo_enc==Operation::ENC_INICIO ||
-            operacao->tipo_enc==Operation::SEM_ENCADEAMENTO))
+           (operacao->chain_type==Operation::CHAIN_START ||
+            operacao->chain_type==Operation::NO_CHAIN))
     break;
 
    try
@@ -721,9 +721,9 @@ void OperationList::refazerOperacao(void)
      pos++;
      emit s_operacaoExecutada((pos/static_cast<float>(tam_enc))*100,
                                trUtf8("Redoing operation on object:: %1 (%2)")
-                                      .arg(operacao->obj_pool->getName())
-                                      .arg(operacao->obj_pool->getTypeName()),
-                                       operacao->obj_pool->getObjectType());
+                                      .arg(operacao->pool_obj->getName())
+                                      .arg(operacao->pool_obj->getTypeName()),
+                                       operacao->pool_obj->getObjectType());
     }
 
     //Executa a operação de refazer (segundo parametro = true)
@@ -737,7 +737,7 @@ void OperationList::refazerOperacao(void)
   }
   /* Executa a operação enquanto a operação faça parte de encadeamento
      ou a opção de refazer esteja habilidata */
-  while(!anular_enc && refazerHabilitado()  && operacao->tipo_enc!=Operation::SEM_ENCADEAMENTO);
+  while(!anular_enc && refazerHabilitado()  && operacao->chain_type!=Operation::NO_CHAIN);
 
   if(erro.getErrorType()!=ERR_CUSTOM)
    throw Exception(erro.getErrorMessage(), erro.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -753,7 +753,7 @@ void OperationList::executarOperacao(Operation *oper, bool refazer)
    Tabela *tabela_pai=NULL;
    Relacionamento *relac_pai=NULL;
 
-   objeto=oper->obj_pool;
+   objeto=oper->pool_obj;
    tipo=objeto->getObjectType();
 
    /* Convertendo o objeto pai, caso exista, para a classe correta conforme
@@ -762,25 +762,25 @@ void OperationList::executarOperacao(Operation *oper, bool refazer)
       será usado como referencial nas operações abaixo.
       Caso o objeto pai seja um relacionamento, o ponteiro
       'relac_pai' receberá a referência ao relacionamento */
-   if(oper->obj_pai)
+   if(oper->parent_obj)
    {
-    if(oper->obj_pai->getObjectType()==OBJ_TABLE)
-     tabela_pai=dynamic_cast<Tabela *>(oper->obj_pai);
+    if(oper->parent_obj->getObjectType()==OBJ_TABLE)
+     tabela_pai=dynamic_cast<Tabela *>(oper->parent_obj);
     else
-     relac_pai=dynamic_cast<Relacionamento *>(oper->obj_pai);
+     relac_pai=dynamic_cast<Relacionamento *>(oper->parent_obj);
    }
 
    /* Caso a definição xml do objeto esteja definida
       indica que o mesmo referencia uma coluna incluída por relacionamento */
-   if(!oper->def_xml.isEmpty() &&
-      ((oper->tipo_op==Operation::OBJETO_REMOVIDO && !refazer) ||
-       (oper->tipo_op==Operation::OBJETO_CRIADO && refazer) ||
-       (oper->tipo_op==Operation::OBJETO_MODIFICADO ||
-        oper->tipo_op==Operation::OBJETO_MOVIMENTADO)))
+   if(!oper->xml_definition.isEmpty() &&
+      ((oper->op_type==Operation::OBJECT_REMOVED && !refazer) ||
+       (oper->op_type==Operation::OBJECT_CREATED && refazer) ||
+       (oper->op_type==Operation::OBJECT_MODIFIED ||
+        oper->op_type==Operation::OBJECT_MOVED)))
    {
     //Reinicia o parser e carrega o buffer do mesmo com o código xml da operação
     XMLParser::restartParser();
-    XMLParser::loadXMLBuffer(oper->def_xml);
+    XMLParser::loadXMLBuffer(oper->xml_definition);
 
     //Cria uma cópia do objeto conforme o tipo do mesmo
     if(tipo==OBJ_TRIGGER)
@@ -788,15 +788,15 @@ void OperationList::executarOperacao(Operation *oper, bool refazer)
     else if(tipo==OBJ_INDEX)
      obj_aux=modelo->criarIndice(tabela_pai);
     else if(tipo==OBJ_CONSTRAINT)
-     obj_aux=modelo->criarRestricao(oper->obj_pai);
+     obj_aux=modelo->criarRestricao(oper->parent_obj);
     else if(tipo==OBJ_SEQUENCE)
      obj_aux=modelo->criarSequencia();
    }
 
    /* Caso a operação seja de objeto modificado, a cópia do objeto
       armazenada no pool (no caso o parâmetro 'objeto') será restaurada */
-   if(oper->tipo_op==Operation::OBJETO_MODIFICADO ||
-      oper->tipo_op==Operation::OBJETO_MOVIMENTADO)
+   if(oper->op_type==Operation::OBJECT_MODIFIED ||
+      oper->op_type==Operation::OBJECT_MOVED)
    {
     if(tipo==OBJ_RELATIONSHIP)
     {
@@ -810,14 +810,14 @@ void OperationList::executarOperacao(Operation *oper, bool refazer)
 
     //Obtém a objeto atual da tabela/relacionamento pai no índice especificado
     if(tabela_pai)
-     obj_orig=dynamic_cast<TableObject *>(tabela_pai->obterObjeto(oper->idx_obj, tipo));
+     obj_orig=dynamic_cast<TableObject *>(tabela_pai->obterObjeto(oper->object_idx, tipo));
     else if(relac_pai)
-     obj_orig=dynamic_cast<TableObject *>(relac_pai->obterObjeto(oper->idx_obj, tipo));
+     obj_orig=dynamic_cast<TableObject *>(relac_pai->obterObjeto(oper->object_idx, tipo));
     else
-     obj_orig=modelo->obterObjeto(oper->idx_obj, tipo);
+     obj_orig=modelo->obterObjeto(oper->object_idx, tipo);
 
     if(obj_aux)
-     oper->def_xml=modelo->validarDefinicaoObjeto(obj_orig, SchemaParser::SQL_DEFINITION);
+     oper->xml_definition=modelo->validarDefinicaoObjeto(obj_orig, SchemaParser::SQL_DEFINITION);
 
      /* A objeto original (obtido da tabela, relacionamento pai ou modelo) tera seus valores anteriores
         restaurados com a cópia existente no pool. Após a restauração o objeto
@@ -834,33 +834,33 @@ void OperationList::executarOperacao(Operation *oper, bool refazer)
    /* Caso a operação seja de objeto removido e não seja uma operação de refazer, ou
       se o objeto foi criado anteriormente e se deseja refazer a operação.
       A objeto existente no pool será inserida na tabela ou relacionamento pai e no seu índice original */
-   else if((oper->tipo_op==Operation::OBJETO_REMOVIDO && !refazer) ||
-           (oper->tipo_op==Operation::OBJETO_CRIADO && refazer))
+   else if((oper->op_type==Operation::OBJECT_REMOVED && !refazer) ||
+           (oper->op_type==Operation::OBJECT_CREATED && refazer))
    {
     if(obj_aux)
      copiarObjeto(reinterpret_cast<BaseObject **>(&objeto), obj_aux, tipo);
 
     if(tabela_pai)
-     tabela_pai->adicionarObjeto(dynamic_cast<TableObject *>(objeto), oper->idx_obj);
+     tabela_pai->adicionarObjeto(dynamic_cast<TableObject *>(objeto), oper->object_idx);
     else if(relac_pai)
-     relac_pai->adicionarObjeto(dynamic_cast<TableObject *>(objeto), oper->idx_obj);
+     relac_pai->adicionarObjeto(dynamic_cast<TableObject *>(objeto), oper->object_idx);
     else
      if(dynamic_cast<Tabela *>(objeto))
       dynamic_cast<Tabela *>(objeto)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-     modelo->adicionarObjeto(objeto, oper->idx_obj);
+     modelo->adicionarObjeto(objeto, oper->object_idx);
    }
    /* Caso a operação seja de objeto criado anteriormente ou caso o objeto
      foi removido e se deseja refazer a operação o mesmo será
      excluído da tabela ou relacionamento pai */
-   else if((oper->tipo_op==Operation::OBJETO_CRIADO && !refazer) ||
-           (oper->tipo_op==Operation::OBJETO_REMOVIDO && refazer))
+   else if((oper->op_type==Operation::OBJECT_CREATED && !refazer) ||
+           (oper->op_type==Operation::OBJECT_REMOVED && refazer))
    {
     if(tabela_pai)
-     tabela_pai->removerObjeto(oper->idx_obj,tipo);
+     tabela_pai->removerObjeto(oper->object_idx,tipo);
     else if(relac_pai)
-     relac_pai->removerObjeto(oper->idx_obj,tipo);
+     relac_pai->removerObjeto(oper->object_idx,tipo);
     else
-     modelo->removerObjeto(objeto, oper->idx_obj);
+     modelo->removerObjeto(objeto, oper->object_idx);
    }
 
    /* Caso a tabela pai ou relacionamento pai esteja setados
@@ -890,16 +890,16 @@ void OperationList::executarOperacao(Operation *oper, bool refazer)
    {
     BaseGraphicObject *obj_grafico=dynamic_cast<BaseGraphicObject *>(objeto);
 
-    if(oper->tipo_op==Operation::OBJETO_MODIFICADO ||
-       oper->tipo_op==Operation::OBJETO_MOVIMENTADO)
+    if(oper->op_type==Operation::OBJECT_MODIFIED ||
+       oper->op_type==Operation::OBJECT_MOVED)
      obj_grafico->setModefied(true);
 
     //Caso seja uma visão atualiza os relacionamentos entre as tabelas e a visão
-    if(tipo==OBJ_VIEW && oper->tipo_op==Operation::OBJETO_MODIFICADO)
+    if(tipo==OBJ_VIEW && oper->op_type==Operation::OBJECT_MODIFIED)
      modelo->atualizarRelTabelaVisao(dynamic_cast<Visao *>(obj_grafico));
     else if((tipo==OBJ_RELATIONSHIP ||
              (tipo==OBJ_TABLE && modelo->obterRelacionamento(dynamic_cast<BaseTable *>(objeto), NULL))) &&
-            oper->tipo_op==Operation::OBJETO_MODIFICADO)
+            oper->op_type==Operation::OBJECT_MODIFIED)
      modelo->validarRelacionamentos();
    }
   }
@@ -932,8 +932,8 @@ void OperationList::removerUltimaOperacao(void)
    */
    fim=(anular_enc ||
         (!anular_enc &&
-         (oper->tipo_enc==Operation::SEM_ENCADEAMENTO ||
-          oper->tipo_enc==Operation::ENC_INICIO)));
+         (oper->chain_type==Operation::NO_CHAIN ||
+          oper->chain_type==Operation::CHAIN_START)));
 
    //Passa para a operação anterior   atual
    itr++; idx_obj--;
@@ -942,8 +942,8 @@ void OperationList::removerUltimaOperacao(void)
  /* Se o cabeça do encademanto for removido (ENC_INICIO)
     marca que o próximo elemento da lista será o novo
     início do encadeamnto */
- if(oper && oper->tipo_enc==Operation::ENC_INICIO)
-  enc_prox_oper=Operation::ENC_INICIO;
+ if(oper && oper->chain_type==Operation::CHAIN_START)
+  enc_prox_oper=Operation::CHAIN_START;
 
   /* Executa a validação das operações removendo aquelas
      que possivelmente referenciam objetos inexistentes
@@ -972,8 +972,8 @@ void OperationList::atualizarIndiceObjeto(BaseObject *objeto, unsigned idx_novo)
  while(itr!=itr_end)
  {
   oper=(*itr);
-  if(oper->obj_gerador==objeto)
-   oper->idx_obj=idx_novo;
+  if(oper->generator_obj==objeto)
+   oper->object_idx=idx_novo;
   itr++;
  }
 }

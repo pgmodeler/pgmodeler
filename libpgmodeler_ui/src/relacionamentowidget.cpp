@@ -183,7 +183,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
   qtd_operacoes=lista_op->obterTamanhoAtual();
 
   //Adiciona o relacionamento criado   lista de operações
-  lista_op->adicionarObjeto(rel, Operation::OBJETO_CRIADO);
+  lista_op->adicionarObjeto(rel, Operation::OBJECT_CREATED);
 
   //Chama o método publico de definição dos atributos
   this->definirAtributos(modelo, lista_op, rel);
@@ -558,7 +558,7 @@ void RelacionamentoWidget::removerObjetos(void)
    relacao->removerObjeto(objeto);
 
    //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
-   lista_op->adicionarObjeto(objeto, Operation::OBJETO_REMOVIDO, 0, relacao);
+   lista_op->adicionarObjeto(objeto, Operation::OBJECT_REMOVED, 0, relacao);
   }
  }
  catch(Exception &e)
@@ -616,7 +616,7 @@ void RelacionamentoWidget::removerObjeto(int idx_lin)
   //Remove o objeto e o adiciona a lista de operações para ser restaurado se necessário
   relacao->removerObjeto(objeto);
 
-  lista_op->adicionarObjeto(objeto, Operation::OBJETO_REMOVIDO, 0, relacao);
+  lista_op->adicionarObjeto(objeto, Operation::OBJECT_REMOVED, 0, relacao);
  }
  catch(Exception &e)
  {
@@ -643,7 +643,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
   if(!this->novo_obj)
   {
    //Adiciona o relacionamento   lista de operações antes de ser modificado
-   lista_op->adicionarObjeto(this->objeto, Operation::OBJETO_MODIFICADO);
+   lista_op->adicionarObjeto(this->objeto, Operation::OBJECT_MODIFIED);
   }
 
   //Aplica as configurações básicas

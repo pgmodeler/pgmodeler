@@ -226,7 +226,7 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, T
   this->novo_obj=true;
 
   //Adiciona o relacionamento criado   lista de operações
-  lista_op->adicionarObjeto(tabela, Operation::OBJETO_CRIADO);
+  lista_op->adicionarObjeto(tabela, Operation::OBJECT_CREATED);
  }
 
  //Define os atributos do formulários e da janela pai
@@ -483,7 +483,7 @@ void TabelaWidget::removerObjetos(void)
     tabela->removerObjeto(objeto);
 
     //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
-    lista_op->adicionarObjeto(objeto, Operation::OBJETO_REMOVIDO, 0, this->objeto);
+    lista_op->adicionarObjeto(objeto, Operation::OBJECT_REMOVED, 0, this->objeto);
    }
    else
     throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
@@ -544,7 +544,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
    tabela->removerObjeto(objeto);
 
    //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
-   lista_op->adicionarObjeto(objeto, Operation::OBJETO_REMOVIDO, idx_lin, this->objeto);
+   lista_op->adicionarObjeto(objeto, Operation::OBJECT_REMOVED, idx_lin, this->objeto);
   }
   else
    throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
@@ -590,7 +590,7 @@ void TabelaWidget::aplicarConfiguracao(void)
   if(!this->novo_obj)
   {
    //Adiciona o relacionamento   lista de operações antes de ser modificado
-   lista_op->adicionarObjeto(this->objeto, Operation::OBJETO_MODIFICADO);
+   lista_op->adicionarObjeto(this->objeto, Operation::OBJECT_MODIFIED);
   }
 
   tabela=dynamic_cast<Tabela *>(this->objeto);

@@ -109,22 +109,22 @@ void ListaOperacoesWidget::atualizarListaOperacoes(void)
    item2->setText(0,QString::fromUtf8(trUtf8("Name: %1").arg(nome_obj)));
 
    //Identifica o tipo da operação executada
-   if(tipo_op==Operation::OBJETO_CRIADO)
+   if(tipo_op==Operation::OBJECT_CREATED)
    {
     icone_op="criado";
     nome_op=trUtf8("created");
    }
-   else if(tipo_op==Operation::OBJETO_REMOVIDO)
+   else if(tipo_op==Operation::OBJECT_REMOVED)
    {
     icone_op="removido";
     nome_op=trUtf8("removed");
    }
-   else if(tipo_op==Operation::OBJETO_MODIFICADO)
+   else if(tipo_op==Operation::OBJECT_MODIFIED)
    {
     icone_op="modificado";
     nome_op=trUtf8("modified");
    }
-   else if(tipo_op==Operation::OBJETO_MOVIMENTADO)
+   else if(tipo_op==Operation::OBJECT_MOVED)
    {
     icone_op="movimentado";
     nome_op=trUtf8("moved");

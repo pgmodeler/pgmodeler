@@ -34,50 +34,50 @@ class Operation {
      como colunas, indices, restrições, regras. Para os demais
      tipos de objeto não há necessidade de se usar este atributo
      pois o objeto pai dos demais objetos será o modelo de objetos */
-  BaseObject *obj_pai;
+  BaseObject *parent_obj;
 
   //Referência ao objeto no pool (objeto copiado)
-  BaseObject *obj_pool;
+  BaseObject *pool_obj;
 
   /* Referência ao objeto gerador da operação. Este atributo é
      usado no método atualizarIndicesObjeto() da lista de operações */
-  BaseObject *obj_gerador;
+  BaseObject *generator_obj;
 
   /* Armazena a definição XML do objeto para casos especiais de
      restuarar objetos os quais referenciam colunas criadas por
      relacionamentos. É o caso de gatilhos, índices, sequencias, restrições. */
-  QString def_xml;
+  QString xml_definition;
 
   //Tipo de operação da lista
-  unsigned tipo_op;
+  unsigned op_type;
 
   //Tipo de encadeamento da operação
-  unsigned tipo_enc;
+  unsigned chain_type;
 
   //Índice do objeto dentro da lista de seu objeto pai (caso possua)
-  int idx_obj;
+  int object_idx;
 
  public:
-  static const unsigned OBJETO_MODIFICADO=0,
-                        OBJETO_CRIADO=1,
-                        OBJETO_REMOVIDO=2,
+  static const unsigned OBJECT_MODIFIED=0,
+                        OBJECT_CREATED=1,
+                        OBJECT_REMOVED=2,
                         /* Este tipo de operação tem o mesmo efeito da operação OBJETO_MODIFICADO
                            porém não (re)valida os relacionamentos como acontece com operações do
                            tipo OBJETO_MODIFICADO. Este tipo de operação OBJETO_MOVIMENTADO é util
                            para desfazer modificações de posição em objetos gráficos sem executar
                            revalidações de relacionamentos desnecessárias */
-                        OBJETO_MOVIMENTADO=3;
+                        OBJECT_MOVED=3;
 
   //Tipos de encademaneto de operação
-  static const unsigned SEM_ENCADEAMENTO=10, //Operação não faz parte de encadeamento
-                        ENC_INICIO=11, //Operação é a primeira do encadeamento
-                        ENC_MEIO=12, //Operação está no meio do encadeamento
-                        ENC_FINAL=13; //Operação é a última do encadeamento
+  static const unsigned NO_CHAIN=10, //Operação não faz parte de encadeamento
+                        CHAIN_START=11, //Operação é a primeira do encadeamento
+                        CHAIN_MIDDLE=12, //Operação está no meio do encadeamento
+                        CHAIN_END=13; //Operação é a última do encadeamento
 
 
   Operation(void)
-  { obj_pai=NULL; obj_pool=NULL; obj_gerador=NULL;
-    idx_obj=-1; tipo_enc=SEM_ENCADEAMENTO; }
+  { parent_obj=NULL; pool_obj=NULL; generator_obj=NULL;
+    object_idx=-1; chain_type=NO_CHAIN; }
 
  friend class OperationList;
 };

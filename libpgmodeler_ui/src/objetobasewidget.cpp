@@ -642,11 +642,11 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
    if(lista_op)
    {
     if(this->tabela)
-     lista_op->adicionarObjeto(this->objeto, Operation::OBJETO_CRIADO, -1, this->tabela);
+     lista_op->adicionarObjeto(this->objeto, Operation::OBJECT_CREATED, -1, this->tabela);
     /* Relacionamento não são adicionao   lista de operações por este trecho de código.
        Isso é tratado no método definirAtributos() da classe RelacionamentoWidget */
     else if(tipo_obj!=OBJ_RELATIONSHIP && tipo_obj!=OBJ_TABLE)
-     lista_op->adicionarObjeto(this->objeto, Operation::OBJETO_CRIADO, -1, this->relacionamento);
+     lista_op->adicionarObjeto(this->objeto, Operation::OBJECT_CREATED, -1, this->relacionamento);
    }
    novo_obj=false;
   }

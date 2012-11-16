@@ -534,7 +534,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
   {
    obj=dynamic_cast<BaseGraphicObject *>(*itr);
    if(!dynamic_cast<RelacionamentoBase *>(obj) && (obj && !obj->isProtected()))
-    lista_op->adicionarObjeto(obj, Operation::OBJETO_MOVIMENTADO);
+    lista_op->adicionarObjeto(obj, Operation::OBJECT_MOVED);
 
    itr++;
   }
@@ -552,7 +552,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
 void ModeloWidget::manipularModificacaoObjeto(BaseGraphicObject *objeto)
 {
  //Adciona o objeto modificado   lista de operações
- lista_op->adicionarObjeto(objeto, Operation::OBJETO_MODIFICADO);
+ lista_op->adicionarObjeto(objeto, Operation::OBJECT_MODIFIED);
  this->modificado=true;
  //Emite um sinal indicando que um objeto foi modificado
  emit s_objetoModificado();
@@ -1814,9 +1814,9 @@ void ModeloWidget::colarObjetos(void)
 
    //Adiciona o objeto criado   lista de operações
    if(obj_tab)
-    lista_op->adicionarObjeto(obj_tab, Operation::OBJETO_CRIADO, -1, obj_tab->getParentTable());
+    lista_op->adicionarObjeto(obj_tab, Operation::OBJECT_CREATED, -1, obj_tab->getParentTable());
    else
-    lista_op->adicionarObjeto(objeto, Operation::OBJETO_CRIADO);
+    lista_op->adicionarObjeto(objeto, Operation::OBJECT_CREATED);
   }
   catch(Exception &e)
   {
@@ -2000,7 +2000,7 @@ void ModeloWidget::excluirObjetos(void)
         modelo->removerPermissoes(objeto_tab);
 
         //Adiciona o objeto removido   lista de operações e redesenha o modelo
-        lista_op->adicionarObjeto(objeto_tab, Operation::OBJETO_REMOVIDO, idx_obj, tabela);
+        lista_op->adicionarObjeto(objeto_tab, Operation::OBJECT_REMOVED, idx_obj, tabela);
         tabela->removerObjeto(idx_obj, tipo_obj);
 
         tabela->setModefied(true);
@@ -2029,7 +2029,7 @@ void ModeloWidget::excluirObjetos(void)
         try
         {
          //Adiciona o objeto removido   lista de operações e redesenha o modelo
-         lista_op->adicionarObjeto(objeto, Operation::OBJETO_REMOVIDO, idx_obj);
+         lista_op->adicionarObjeto(objeto, Operation::OBJECT_REMOVED, idx_obj);
          modelo->removerObjeto(objeto, idx_obj);
         }
         catch(Exception &e)
