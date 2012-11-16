@@ -27,7 +27,7 @@ void CaixaTextoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void CaixaTextoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Textbox *caixa_texto, float px_objeto, float py_objeto)
+void CaixaTextoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Textbox *caixa_texto, float px_objeto, float py_objeto)
 {
  /* Caso a caixa de texto esteja alocada, preenche o formulário
     com os valores deste objeto */

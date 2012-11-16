@@ -24,7 +24,7 @@
 #include "ui_confgeralwidget.h"
 #include "confbasewidget.h"
 #include "cenaobjetos.h"
-#include "listaoperacoes.h"
+#include "operationlist.h"
 
 class ConfGeralWidget: public QWidget, public Ui::ConfGeralWidget, public ConfBaseWidget {
  private:

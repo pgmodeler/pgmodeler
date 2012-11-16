@@ -51,11 +51,11 @@ class RelacionamentoWidget: public ObjetoBaseWidget, public Ui::RelacionamentoWi
    void exibirDadosObjeto(TableObject *objeto, int idx_lin);
 
  protected:
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Tabela *tab_orig, Tabela *tab_dest, unsigned tipo_rel);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tabela *tab_orig, Tabela *tab_dest, unsigned tipo_rel);
 
  public:
    RelacionamentoWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, RelacionamentoBase *relacao);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, RelacionamentoBase *relacao);
 
  private slots:
   void hideEvent(QHideEvent *);

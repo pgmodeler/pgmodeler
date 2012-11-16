@@ -34,7 +34,7 @@ class LinguagemWidget: public ObjetoBaseWidget, public Ui::LinguagemWidget {
                        *sel_func_inline;
  public:
    LinguagemWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Language *linguagem);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Language *linguagem);
 
  private slots:
    void hideEvent(QHideEvent *);

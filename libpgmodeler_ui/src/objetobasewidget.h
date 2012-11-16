@@ -25,7 +25,7 @@
 
 #include <QtGui>
 #include "modelobd.h"
-#include "listaoperacoes.h"
+#include "operationlist.h"
 #include "formbasico.h"
 #include "seletorobjetowidget.h"
 #include "ui_objetobasewidget.h"
@@ -71,7 +71,7 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
    Relacionamento *relacionamento;
 
    //Lista de operações de referência
-   ListaOperacoes *lista_op;
+   OperationList *lista_op;
 
    //Objeto que está sendo editado ou criado
    BaseObject *objeto;
@@ -155,7 +155,7 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
   ~ObjetoBaseWidget(void);
    void hideEvent(QHideEvent *);
    void showEvent(QShowEvent *);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op,
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op,
                          BaseObject *objeto, BaseObject *objeto_pai=NULL,
                          float px_objeto=NAN, float py_objeto=NAN);
 
@@ -180,9 +180,9 @@ void ObjetoBaseWidget::iniciarConfiguracao(void)
      this->objeto->getObjectType()!=OBJ_DATABASE)
   {
    if(this->tabela)
-    lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_MODIFICADO, -1, this->tabela);
+    lista_op->adicionarObjeto(this->objeto, Operation::OBJETO_MODIFICADO, -1, this->tabela);
    else
-    lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_MODIFICADO, -1, this->relacionamento);
+    lista_op->adicionarObjeto(this->objeto, Operation::OBJETO_MODIFICADO, -1, this->relacionamento);
    novo_obj=false;
   }
   /* Caso o formulário esteja sendo usado para criar um novo

@@ -69,7 +69,7 @@ class VisaoWidget: public ObjetoBaseWidget, public Ui::VisaoWidget {
 
  public:
    VisaoWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Visao *visao, float px, float py);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Visao *visao, float px, float py);
 
  private slots:
   void hideEvent(QHideEvent *);

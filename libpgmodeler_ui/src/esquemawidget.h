@@ -31,7 +31,7 @@ class EsquemaWidget: public ObjetoBaseWidget {
 
  public:
    EsquemaWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Schema *esquema);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Schema *esquema);
 
  private slots:
 

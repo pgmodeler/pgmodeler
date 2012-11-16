@@ -55,7 +55,7 @@ class TipoWidget: public ObjetoBaseWidget, public Ui::TipoWidget {
  public:
    TipoWidget(QWidget * parent = 0);
    //~TipoWidget(void);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Tipo *tipo);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tipo *tipo);
 
  private slots:
    void hideEvent(QHideEvent *);

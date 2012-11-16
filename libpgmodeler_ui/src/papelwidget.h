@@ -44,7 +44,7 @@ class PapelWidget: public ObjetoBaseWidget, public Ui::PapelWidget {
    PapelWidget(QWidget * parent = 0);
 
    void hideEvent(QHideEvent *);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Papel *papel);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Papel *papel);
 
  private slots:
    /* Preenche com informações relacionadas ao papel selecionado

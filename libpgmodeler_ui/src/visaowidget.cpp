@@ -377,7 +377,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
  }
 }
 
-void VisaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Visao *visao, float px, float py)
+void VisaoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Visao *visao, float px, float py)
 {
  unsigned i, qtd;
  bool sel_from, from_where, apos_where;

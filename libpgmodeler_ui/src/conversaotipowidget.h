@@ -39,7 +39,7 @@ class ConversaoTipoWidget: public ObjetoBaseWidget, public Ui::ConversaoTipoWidg
 
  public:
    ConversaoTipoWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Cast *conv_tipo);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Cast *conv_tipo);
 
  private slots:
    void hideEvent(QHideEvent *);

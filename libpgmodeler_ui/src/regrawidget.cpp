@@ -87,7 +87,7 @@ void RegraWidget::manipularComando(int idx_lin)
   tab_comandos->removerLinha(idx_lin);
 }
 
-void RegraWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaOperacoes *lista_op, Regra *regra)
+void RegraWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, OperationList *lista_op, Regra *regra)
 {
  unsigned qtd, i;
 

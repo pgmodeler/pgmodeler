@@ -33,7 +33,7 @@ class CaixaTextoWidget: public ObjetoBaseWidget, public Ui::CaixaTextoWidget {
  public:
    CaixaTextoWidget(QWidget * parent = 0);
    void hideEvent(QHideEvent *evento);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Textbox *caixa_texto=NULL, float px_objeto=NAN, float py_objeto=NAN);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Textbox *caixa_texto=NULL, float px_objeto=NAN, float py_objeto=NAN);
 
  private slots:
   void selecionarCorTexto(void);

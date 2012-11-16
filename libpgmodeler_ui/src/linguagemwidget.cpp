@@ -60,7 +60,7 @@ void LinguagemWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void LinguagemWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Language *linguagem)
+void LinguagemWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Language *linguagem)
 {
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, linguagem);

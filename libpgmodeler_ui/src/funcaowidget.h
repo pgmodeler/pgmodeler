@@ -56,7 +56,7 @@ class FuncaoWidget: public ObjetoBaseWidget, public Ui::FuncaoWidget  {
 
  public:
    FuncaoWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Function *funcao);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Function *funcao);
 
  private slots:
    void alternarTiposRetorno(void);

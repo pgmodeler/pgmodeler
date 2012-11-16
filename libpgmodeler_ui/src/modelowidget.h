@@ -25,7 +25,7 @@
 
 #include <QtGui>
 #include "modelobd.h"
-#include "listaoperacoes.h"
+#include "operationlist.h"
 #include "caixamensagem.h"
 #include "formbasico.h"
 #include "cenaobjetos.h"
@@ -99,7 +99,7 @@ class ModeloWidget: public QWidget {
   ObjectType tipo_novo_obj;
 
   //Lista de operações executadas sobre os objetos do modelo
-  ListaOperacoes *lista_op;
+  OperationList *lista_op;
 
   //Modelo de objetos do widget
   ModeloBD *modelo;

@@ -58,7 +58,7 @@ class IndiceWidget: public ObjetoBaseWidget, public Ui::IndiceWidget {
 
  public:
    IndiceWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, ListaOperacoes *lista_op, Index *indice);
+   void definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, OperationList *lista_op, Index *indice);
 
  private slots:
   void hideEvent(QHideEvent *);

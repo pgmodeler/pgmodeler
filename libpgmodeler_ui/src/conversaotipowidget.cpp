@@ -60,7 +60,7 @@ void ConversaoTipoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 //---------------------------------------------------------
-void ConversaoTipoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Cast *conv_tipo)
+void ConversaoTipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Cast *conv_tipo)
 {
  TipoPgSQL tipo_orig, tipo_dest;
 

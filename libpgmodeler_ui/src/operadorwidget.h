@@ -36,7 +36,7 @@ class OperadorWidget: public ObjetoBaseWidget, public Ui::OperadorWidget {
 
  public:
    OperadorWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Operador *operador);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Operador *operador);
 
  private slots:
   void hideEvent(QHideEvent *);

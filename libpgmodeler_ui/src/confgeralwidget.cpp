@@ -156,7 +156,7 @@ void ConfGeralWidget::aplicarConfiguracao(void)
  CenaObjetos::definirGrade(tam_grade_spb->value());
 
  //Aplica as configuraçe   lista de operações
- ListaOperacoes::definirTamanhoMaximo(tam_lista_spb->value());
+ OperationList::definirTamanhoMaximo(tam_lista_spb->value());
 }
 
 void ConfGeralWidget::restaurarPadroes(void)

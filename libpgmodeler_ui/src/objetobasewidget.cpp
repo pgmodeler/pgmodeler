@@ -149,7 +149,7 @@ void ObjetoBaseWidget::hideEvent(QHideEvent *)
  janela_pai->blockSignals(false);
 }
 
-void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, BaseObject *objeto, BaseObject *objeto_pai, float px_objeto, float py_objeto)
+void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, BaseObject *objeto, BaseObject *objeto_pai, float px_objeto, float py_objeto)
 {
  ObjectType tipo_obj, tipo_obj_pai=BASE_OBJECT;
 
@@ -642,11 +642,11 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
    if(lista_op)
    {
     if(this->tabela)
-     lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_CRIADO, -1, this->tabela);
+     lista_op->adicionarObjeto(this->objeto, Operation::OBJETO_CRIADO, -1, this->tabela);
     /* Relacionamento não são adicionao   lista de operações por este trecho de código.
        Isso é tratado no método definirAtributos() da classe RelacionamentoWidget */
     else if(tipo_obj!=OBJ_RELATIONSHIP && tipo_obj!=OBJ_TABLE)
-     lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_CRIADO, -1, this->relacionamento);
+     lista_op->adicionarObjeto(this->objeto, Operation::OBJETO_CRIADO, -1, this->relacionamento);
    }
    novo_obj=false;
   }

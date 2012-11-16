@@ -38,7 +38,7 @@ class ColunaWidget: public ObjetoBaseWidget, public Ui::ColunaWidget {
 
  public:
    ColunaWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, ListaOperacoes *lista_op, Column *coluna);
+   void definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, OperationList *lista_op, Column *coluna);
 
  private slots:
   void hideEvent(QHideEvent *);

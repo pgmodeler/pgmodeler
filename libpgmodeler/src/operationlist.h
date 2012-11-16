@@ -27,7 +27,7 @@
 #include "modelobd.h"
 #include <QObject>
 
-class Operacao {
+class Operation {
  protected:
   /* Referência ao objeto pai do objeto que sofreu a operação,
      este parâmetro só é usado no caso de objetos de tabela
@@ -75,14 +75,14 @@ class Operacao {
                         ENC_FINAL=13; //Operação é a última do encadeamento
 
 
-  Operacao(void)
+  Operation(void)
   { obj_pai=NULL; obj_pool=NULL; obj_gerador=NULL;
     idx_obj=-1; tipo_enc=SEM_ENCADEAMENTO; }
 
- friend class ListaOperacoes;
+ friend class OperationList;
 };
 
-class ListaOperacoes: public QObject {
+class OperationList: public QObject {
  private:
   Q_OBJECT
 
@@ -99,7 +99,7 @@ class ListaOperacoes: public QObject {
   vector<BaseObject *> objs_nao_excluidos;
 
   //Lista de operações executadas pelo usuário
-  vector<Operacao *> operacoes;
+  vector<Operation *> operacoes;
 
   //Modelo ao qual a lista se aplica
   ModeloBD *modelo;
@@ -133,14 +133,14 @@ class ListaOperacoes: public QObject {
   void removerObjetoPool(unsigned idx_obj);
 
   //Executa uma operação da lista
-  void executarOperacao(Operacao *operacao, bool refazer);
+  void executarOperacao(Operation *operacao, bool refazer);
 
   //Retorna o tamanho do encadeamento de operações a partir da posição atual
   unsigned obterTamanhoEncadeamento(void);
 
  public:
-  ListaOperacoes(ModeloBD *modelo);
-  ~ListaOperacoes(void);
+  OperationList(ModeloBD *modelo);
+  ~OperationList(void);
 
   /* Inicia o encadeamento de operações.
      Isso significa que todas as operações adicionadas

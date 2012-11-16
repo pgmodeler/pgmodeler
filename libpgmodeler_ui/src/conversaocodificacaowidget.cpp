@@ -48,7 +48,7 @@ void ConversaoCodificacaoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 //---------------------------------------------------------
-void ConversaoCodificacaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Conversion *conv_cod)
+void ConversaoCodificacaoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Conversion *conv_cod)
 {
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, conv_cod);

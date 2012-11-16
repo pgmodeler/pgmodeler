@@ -90,7 +90,7 @@ void OperadorWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void OperadorWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Operador *operador)
+void OperadorWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Operador *operador)
 {
  unsigned i;
  TipoPgSQL tipo_esq, tipo_dir;

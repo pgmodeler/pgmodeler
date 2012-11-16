@@ -155,7 +155,7 @@ void RelacionamentoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Tabela *tab_orig, Tabela *tab_dest, unsigned tipo_rel)
+void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tabela *tab_orig, Tabela *tab_dest, unsigned tipo_rel)
 {
  Relacionamento *rel=NULL;
 
@@ -183,7 +183,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
   qtd_operacoes=lista_op->obterTamanhoAtual();
 
   //Adiciona o relacionamento criado   lista de operações
-  lista_op->adicionarObjeto(rel, Operacao::OBJETO_CRIADO);
+  lista_op->adicionarObjeto(rel, Operation::OBJETO_CRIADO);
 
   //Chama o método publico de definição dos atributos
   this->definirAtributos(modelo, lista_op, rel);
@@ -195,7 +195,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *li
  }
 }
 
-void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, RelacionamentoBase *relacao)
+void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, RelacionamentoBase *relacao)
 {
  static QWidget *tabs[3]={ atributosrel_tbw->widget(1), atributosrel_tbw->widget(2), atributosrel_tbw->widget(3) };
  static QString rot_tabs[3]={ atributosrel_tbw->tabText(1), atributosrel_tbw->tabText(2), atributosrel_tbw->tabText(3) };
@@ -558,7 +558,7 @@ void RelacionamentoWidget::removerObjetos(void)
    relacao->removerObjeto(objeto);
 
    //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
-   lista_op->adicionarObjeto(objeto, Operacao::OBJETO_REMOVIDO, 0, relacao);
+   lista_op->adicionarObjeto(objeto, Operation::OBJETO_REMOVIDO, 0, relacao);
   }
  }
  catch(Exception &e)
@@ -616,7 +616,7 @@ void RelacionamentoWidget::removerObjeto(int idx_lin)
   //Remove o objeto e o adiciona a lista de operações para ser restaurado se necessário
   relacao->removerObjeto(objeto);
 
-  lista_op->adicionarObjeto(objeto, Operacao::OBJETO_REMOVIDO, 0, relacao);
+  lista_op->adicionarObjeto(objeto, Operation::OBJETO_REMOVIDO, 0, relacao);
  }
  catch(Exception &e)
  {
@@ -643,7 +643,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
   if(!this->novo_obj)
   {
    //Adiciona o relacionamento   lista de operações antes de ser modificado
-   lista_op->adicionarObjeto(this->objeto, Operacao::OBJETO_MODIFICADO);
+   lista_op->adicionarObjeto(this->objeto, Operation::OBJETO_MODIFICADO);
   }
 
   //Aplica as configurações básicas

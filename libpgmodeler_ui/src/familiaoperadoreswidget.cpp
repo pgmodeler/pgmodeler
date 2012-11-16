@@ -25,7 +25,7 @@ void FamiliaOperadoresWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void FamiliaOperadoresWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, OperatorFamily *familia_op)
+void FamiliaOperadoresWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, OperatorFamily *familia_op)
 {
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, familia_op);

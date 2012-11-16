@@ -58,7 +58,7 @@ class TabelaWidget: public ObjetoBaseWidget, public Ui::TabelaWidget {
 
  public:
    TabelaWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Tabela *tabela, float pos_x, float pos_y);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tabela *tabela, float pos_x, float pos_y);
 
  private slots:
   void hideEvent(QHideEvent *);

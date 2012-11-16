@@ -19,7 +19,7 @@ void EspacoTabelaWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void EspacoTabelaWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Tablespace *espaco_tab)
+void EspacoTabelaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tablespace *espaco_tab)
 {
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, espaco_tab);
