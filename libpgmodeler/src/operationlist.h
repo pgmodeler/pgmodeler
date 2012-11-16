@@ -1,10 +1,11 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Classe: ListaOperacoes
-# Description: Definição da classe ListaOperacoes que é usada para
-#             armazenar e restaurar a ações executadas pelo usuário
-#             no modelo de banco de dados.
+# Class: OperationList
+# Description: Implements the operations to maintain a list of modifications made
+#              by the user on database model objects. This class permits that user
+#              undo / redo all the operations made.
+#
 # Creation date: 17/07/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -29,54 +30,52 @@
 
 class Operation {
  protected:
-  /* Referência ao objeto pai do objeto que sofreu a operação,
-     este parâmetro só é usado no caso de objetos de tabela
-     como colunas, indices, restrições, regras. Para os demais
-     tipos de objeto não há necessidade de se usar este atributo
-     pois o objeto pai dos demais objetos será o modelo de objetos */
+ /* Reference to the parent object of the original object that has suffered the operation,
+    This attribute is used only in the case of table objects such as columns, indexes,
+    constraints, rules. For other object types there is no need to use this attribute
+    because the parent object for other objects is always the database model */
   BaseObject *parent_obj;
 
-  //Referência ao objeto no pool (objeto copiado)
+  //Reference (on the pool) to the copy of the original object
   BaseObject *pool_obj;
 
-  /* Referência ao objeto gerador da operação. Este atributo é
-     usado no método atualizarIndicesObjeto() da lista de operações */
-  BaseObject *generator_obj;
+  //Reference to the original object that generates the operation.
+  BaseObject *original_obj;
 
-  /* Armazena a definição XML do objeto para casos especiais de
-     restuarar objetos os quais referenciam colunas criadas por
-     relacionamentos. É o caso de gatilhos, índices, sequencias, restrições. */
+  /* Stores the XML definition of the special objects this means the objects
+     that reference columns added by relationship. This is the case of triggers,
+     indexes, sequences, constraints. */
   QString xml_definition;
 
-  //Tipo de operação da lista
+  //Operation type (Constants OBJECT_[MODIFIED | CREATED | REMOVED | MOVED]
   unsigned op_type;
 
-  //Tipo de encadeamento da operação
+  //Operation chain type. This attribute is used to redo/undo several operations at once
   unsigned chain_type;
 
-  //Índice do objeto dentro da lista de seu objeto pai (caso possua)
+  //Object index inside the list on its parent object
   int object_idx;
 
  public:
+  //Constants used to reference the type of operations
   static const unsigned OBJECT_MODIFIED=0,
                         OBJECT_CREATED=1,
                         OBJECT_REMOVED=2,
-                        /* Este tipo de operação tem o mesmo efeito da operação OBJETO_MODIFICADO
-                           porém não (re)valida os relacionamentos como acontece com operações do
-                           tipo OBJETO_MODIFICADO. Este tipo de operação OBJETO_MOVIMENTADO é util
-                           para desfazer modificações de posição em objetos gráficos sem executar
-                           revalidações de relacionamentos desnecessárias */
+                        /* This type of operation has the same effect of operation OBJETO_MODIFIED
+                           except that it not (re)validate relationships as happens with operations.
+                           This type of operation (OBJECT_MOVED) is useful to undo position changes of
+                           graphical objects without executing unnecessary revalidations of relationships */
                         OBJECT_MOVED=3;
 
-  //Tipos de encademaneto de operação
-  static const unsigned NO_CHAIN=10, //Operação não faz parte de encadeamento
-                        CHAIN_START=11, //Operação é a primeira do encadeamento
-                        CHAIN_MIDDLE=12, //Operação está no meio do encadeamento
-                        CHAIN_END=13; //Operação é a última do encadeamento
+  //Operation chain types
+  static const unsigned NO_CHAIN=10, //The operation is not part of a chain
+                        CHAIN_START=11, //The operation is the head of the chain
+                        CHAIN_MIDDLE=12, //The operation is in the middle of the chain
+                        CHAIN_END=13; //The operation is the last on the chain
 
 
   Operation(void)
-  { parent_obj=NULL; pool_obj=NULL; generator_obj=NULL;
+  { parent_obj=NULL; pool_obj=NULL; original_obj=NULL;
     object_idx=-1; chain_type=NO_CHAIN; }
 
  friend class OperationList;

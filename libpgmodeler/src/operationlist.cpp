@@ -445,7 +445,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
   operation=new Operation;
   operation->op_type=op_type;
   operation->chain_type=next_op_chain;
-  operation->generator_obj=object;
+  operation->original_obj=object;
 
   //Adiciona o objeto no pool
   addToPool(object, op_type);
@@ -972,7 +972,7 @@ void OperationList::updateObjectIndex(BaseObject *object, unsigned new_idx)
  while(itr!=itr_end)
  {
   oper=(*itr);
-  if(oper->generator_obj==object)
+  if(oper->original_obj==object)
    oper->object_idx=new_idx;
   itr++;
  }
