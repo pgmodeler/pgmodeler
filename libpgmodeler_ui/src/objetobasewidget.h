@@ -180,9 +180,9 @@ void ObjetoBaseWidget::iniciarConfiguracao(void)
      this->objeto->getObjectType()!=OBJ_DATABASE)
   {
    if(this->tabela)
-    lista_op->adicionarObjeto(this->objeto, Operation::OBJECT_MODIFIED, -1, this->tabela);
+    lista_op->registerObject(this->objeto, Operation::OBJECT_MODIFIED, -1, this->tabela);
    else
-    lista_op->adicionarObjeto(this->objeto, Operation::OBJECT_MODIFIED, -1, this->relacionamento);
+    lista_op->registerObject(this->objeto, Operation::OBJECT_MODIFIED, -1, this->relacionamento);
    novo_obj=false;
   }
   /* Caso o formulário esteja sendo usado para criar um novo

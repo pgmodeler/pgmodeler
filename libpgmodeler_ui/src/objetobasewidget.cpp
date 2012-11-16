@@ -642,11 +642,11 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
    if(lista_op)
    {
     if(this->tabela)
-     lista_op->adicionarObjeto(this->objeto, Operation::OBJECT_CREATED, -1, this->tabela);
+     lista_op->registerObject(this->objeto, Operation::OBJECT_CREATED, -1, this->tabela);
     /* Relacionamento não são adicionao   lista de operações por este trecho de código.
        Isso é tratado no método definirAtributos() da classe RelacionamentoWidget */
     else if(tipo_obj!=OBJ_RELATIONSHIP && tipo_obj!=OBJ_TABLE)
-     lista_op->adicionarObjeto(this->objeto, Operation::OBJECT_CREATED, -1, this->relacionamento);
+     lista_op->registerObject(this->objeto, Operation::OBJECT_CREATED, -1, this->relacionamento);
    }
    novo_obj=false;
   }
@@ -796,7 +796,7 @@ void ObjetoBaseWidget::cancelarConfiguracao(void)
   }
 
   if(lista_op)
-   lista_op->removerUltimaOperacao();
+   lista_op->removeLastOperation();
  }
 
  /* Caso o objeto não seja novo, restaura seu estado anterior
@@ -808,9 +808,9 @@ void ObjetoBaseWidget::cancelarConfiguracao(void)
  {
   try
   {
-   lista_op->desfazerOperacao();
+   lista_op->undoOperation();
    //Remove a ultima operação adicionada referente ao objeto editado/criado
-   lista_op->removerUltimaOperacao();
+   lista_op->removeLastOperation();
   }
   catch(Exception &e)
   {}

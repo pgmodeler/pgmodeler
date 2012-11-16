@@ -60,16 +60,16 @@ void ListaOperacoesWidget::atualizarListaOperacoes(void)
   //Ativa o formulário
   dockWidgetContents->setEnabled(true);
   //Atualiza os labels com seus respectivos valores
-  num_operacao_lb->setText(QString("%1").arg(modelo_wgt->lista_op->obterTamanhoAtual()));
-  num_posicao_lb->setText(QString("%1").arg(modelo_wgt->lista_op->obterIndiceAtual()));
+  num_operacao_lb->setText(QString("%1").arg(modelo_wgt->lista_op->getCurrentSize()));
+  num_posicao_lb->setText(QString("%1").arg(modelo_wgt->lista_op->getCurrentIndex()));
 
   /* Ativa/desativa os botões de refazer e defazer de acordo com
      com a situação das respectivas operações na lista */
-  refazer_tb->setEnabled(modelo_wgt->lista_op->refazerHabilitado());
-  desfazer_tb->setEnabled(modelo_wgt->lista_op->desfazerHabilitado());
+  refazer_tb->setEnabled(modelo_wgt->lista_op->isRedoAvailable());
+  desfazer_tb->setEnabled(modelo_wgt->lista_op->isUndoAvailable());
 
   //Obtém a quantidade de operações
-  qtd=modelo_wgt->lista_op->obterTamanhoAtual();
+  qtd=modelo_wgt->lista_op->getCurrentSize();
 
   //Limpa a lista
   operacoes_tw->clear();
@@ -79,11 +79,11 @@ void ListaOperacoesWidget::atualizarListaOperacoes(void)
   for(i=0; i < qtd; i++)
   {
    //Obtém os dados da operação atual
-   modelo_wgt->lista_op->obterDadosOperacao(i,tipo_op,nome_obj,tipo_obj);
+   modelo_wgt->lista_op->getOperationData(i,tipo_op,nome_obj,tipo_obj);
 
    /* Caso o indice atual seja o mesmo da operação atual na lista
       a mesma será destacada como negrito e itálico na lista de operações */
-   valor=(i==static_cast<unsigned>(modelo_wgt->lista_op->obterIndiceAtual()-1));
+   valor=(i==static_cast<unsigned>(modelo_wgt->lista_op->getCurrentIndex()-1));
    fonte.setBold(valor);
    fonte.setItalic(valor);
 
@@ -158,11 +158,11 @@ void ListaOperacoesWidget::desfazerOperacao(void)
  try
  {
   //Exibe o progresso de operações de desfazer
-  connect(modelo_wgt->lista_op, SIGNAL(s_operacaoExecutada(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
+  connect(modelo_wgt->lista_op, SIGNAL(s_operationExecuted(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
   prog_tarefa->setWindowTitle(trUtf8("Undoing operations..."));
   prog_tarefa->show();
 
-  modelo_wgt->lista_op->desfazerOperacao();
+  modelo_wgt->lista_op->undoOperation();
 
   prog_tarefa->close();
   disconnect(modelo_wgt->lista_op, NULL, prog_tarefa, NULL);
@@ -189,7 +189,7 @@ void ListaOperacoesWidget::refazerOperacao(void)
   prog_tarefa->setWindowTitle(trUtf8("Redoing operations..."));
   prog_tarefa->show();
 
-  modelo_wgt->lista_op->refazerOperacao();
+  modelo_wgt->lista_op->redoOperation();
 
   prog_tarefa->close();
   disconnect(modelo_wgt->lista_op, NULL, prog_tarefa, NULL);
@@ -218,7 +218,7 @@ void ListaOperacoesWidget::excluirOperacoes(void)
  //Caso o usuário confirme a exclusão a lista é limpa e atualizada
  if(caixa_msg->result()==QDialog::Accepted)
  {
-  modelo_wgt->lista_op->removerOperacoes();
+  modelo_wgt->lista_op->removeOperations();
   atualizarListaOperacoes();
   excluiroperacoes_tb->setEnabled(false);
  }

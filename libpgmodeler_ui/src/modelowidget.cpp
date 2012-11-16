@@ -527,14 +527,14 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
   itr_end=objs_selecionados.end();
 
   //Inicia um encadeamento de operações
-  lista_op->iniciarEncadeamentoOperacoes();
+  lista_op->startOperationChain();
 
   //Varre a lista de objetos selec
   while(itr!=itr_end)
   {
    obj=dynamic_cast<BaseGraphicObject *>(*itr);
    if(!dynamic_cast<RelacionamentoBase *>(obj) && (obj && !obj->isProtected()))
-    lista_op->adicionarObjeto(obj, Operation::OBJECT_MOVED);
+    lista_op->registerObject(obj, Operation::OBJECT_MOVED);
 
    itr++;
   }
@@ -542,7 +542,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
  else
  {
   //Caso seja o final do movimento finaliza o encadeamento de operações
-  lista_op->finalizarEncadeamentoOperacoes();
+  lista_op->finishOperationChain();
   this->modificado=true;
   //Emite um sinal indicando que objetos foram movimentados
   emit s_objetosMovimentados();
@@ -552,7 +552,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
 void ModeloWidget::manipularModificacaoObjeto(BaseGraphicObject *objeto)
 {
  //Adciona o objeto modificado   lista de operações
- lista_op->adicionarObjeto(objeto, Operation::OBJECT_MODIFIED);
+ lista_op->registerObject(objeto, Operation::OBJECT_MODIFIED);
  this->modificado=true;
  //Emite um sinal indicando que um objeto foi modificado
  emit s_objetoModificado();
@@ -786,7 +786,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
 
      //Finaliza o encademanento de operações
      //lista_op->finalizarEncadeamentoOperacoes();
-     lista_op->removerOperacoes();
+     lista_op->removeOperations();
 
      emit s_objetoCriado();
     }
@@ -1783,7 +1783,7 @@ void ModeloWidget::colarObjetos(void)
  itr_end=objs_copiados.end();
  pos=0;
 
- lista_op->iniciarEncadeamentoOperacoes();
+ lista_op->startOperationChain();
 
  while(itr!=itr_end)
  {
@@ -1814,16 +1814,16 @@ void ModeloWidget::colarObjetos(void)
 
    //Adiciona o objeto criado   lista de operações
    if(obj_tab)
-    lista_op->adicionarObjeto(obj_tab, Operation::OBJECT_CREATED, -1, obj_tab->getParentTable());
+    lista_op->registerObject(obj_tab, Operation::OBJECT_CREATED, -1, obj_tab->getParentTable());
    else
-    lista_op->adicionarObjeto(objeto, Operation::OBJECT_CREATED);
+    lista_op->registerObject(objeto, Operation::OBJECT_CREATED);
   }
   catch(Exception &e)
   {
    erro=e;
   }
  }
- lista_op->finalizarEncadeamentoOperacoes();
+ lista_op->finishOperationChain();
 
  //Força a validação de relacionamentos para refletir qualquer alteração de colunas não propagadas
  modelo->validarRelacionamentos();
@@ -1954,8 +1954,8 @@ void ModeloWidget::excluirObjetos(void)
      objeto=NULL;
     }
 
-    qtd_op=lista_op->obterTamanhoAtual();
-    lista_op->iniciarEncadeamentoOperacoes();
+    qtd_op=lista_op->getCurrentSize();
+    lista_op->startOperationChain();
 
     do
     {
@@ -2000,7 +2000,7 @@ void ModeloWidget::excluirObjetos(void)
         modelo->removerPermissoes(objeto_tab);
 
         //Adiciona o objeto removido   lista de operações e redesenha o modelo
-        lista_op->adicionarObjeto(objeto_tab, Operation::OBJECT_REMOVED, idx_obj, tabela);
+        lista_op->registerObject(objeto_tab, Operation::OBJECT_REMOVED, idx_obj, tabela);
         tabela->removerObjeto(idx_obj, tipo_obj);
 
         tabela->setModefied(true);
@@ -2029,7 +2029,7 @@ void ModeloWidget::excluirObjetos(void)
         try
         {
          //Adiciona o objeto removido   lista de operações e redesenha o modelo
-         lista_op->adicionarObjeto(objeto, Operation::OBJECT_REMOVED, idx_obj);
+         lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, idx_obj);
          modelo->removerObjeto(objeto, idx_obj);
         }
         catch(Exception &e)
@@ -2053,7 +2053,7 @@ void ModeloWidget::excluirObjetos(void)
     }
     while(ritr!=ritr_end);
 
-    lista_op->finalizarEncadeamentoOperacoes();
+    lista_op->finishOperationChain();
     cena->clearSelection();
     this->configurarMenuPopup();
     this->modificado=true;
@@ -2062,29 +2062,29 @@ void ModeloWidget::excluirObjetos(void)
    catch(Exception &e)
    {
     if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
-     lista_op->removerOperacoes();
+     lista_op->removeOperations();
 
-    if(lista_op->encadeamentoIniciado())
-     lista_op->finalizarEncadeamentoOperacoes();
+    if(lista_op->isOperationChainStarted())
+     lista_op->finishOperationChain();
 
     /* Caso a quantidade de operações seja diferente da quantidade inicial
        obtida antes da remoção dos objetos */
-    if(qtd_op < lista_op->obterTamanhoAtual())
+    if(qtd_op < lista_op->getCurrentSize())
     {
      //Obtém a quantidade de operações que necessitam ser removidas
-     qtd=lista_op->obterTamanhoAtual()-qtd_op;
+     qtd=lista_op->getCurrentSize()-qtd_op;
 
      /* Anula o encadeamento de operações para que as mesmas seja
         desfeitas uma a uma ignorando o encadeamento */
-     lista_op->anularEncadeamentoOperacoes(true);
+     lista_op->ignoreOperationChain(true);
 
      /* Desfaz as operações na quantidade calculada e remove a
         operação da lista */
      for(unsigned i=0; i < qtd; i++)
-      lista_op->removerUltimaOperacao();
+      lista_op->removeLastOperation();
 
      //Desfaz a anulação do encadeamento
-     lista_op->anularEncadeamentoOperacoes(false);
+     lista_op->ignoreOperationChain(false);
     }
 
     cena->clearSelection();

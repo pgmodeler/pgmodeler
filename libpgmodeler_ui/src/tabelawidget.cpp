@@ -211,8 +211,8 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, T
     da tabela será encadeado na lista, desta forma quando o usuário
     necessitar desfazer as modificações da tabela, os objetos da
     tabela também serão restaurados */
- lista_op->iniciarEncadeamentoOperacoes();
- qtd_operacoes=lista_op->obterTamanhoAtual();
+ lista_op->startOperationChain();
+ qtd_operacoes=lista_op->getCurrentSize();
 
  if(!tabela)
  {
@@ -226,7 +226,7 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, T
   this->novo_obj=true;
 
   //Adiciona o relacionamento criado   lista de operações
-  lista_op->adicionarObjeto(tabela, Operation::OBJECT_CREATED);
+  lista_op->registerObject(tabela, Operation::OBJECT_CREATED);
  }
 
  //Define os atributos do formulários e da janela pai
@@ -469,7 +469,7 @@ void TabelaWidget::removerObjetos(void)
      Caso um erro seja gerado e a quantidade de operações na lista
      seja diferente do valor na variável 'qtd_op' indica que operações
      foram inseridas na lista e precisam ser removidas */
-  qtd_op=lista_op->obterTamanhoAtual();
+  qtd_op=lista_op->getCurrentSize();
 
   for(i=0; i < qtd; i++)
   {
@@ -483,7 +483,7 @@ void TabelaWidget::removerObjetos(void)
     tabela->removerObjeto(objeto);
 
     //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
-    lista_op->adicionarObjeto(objeto, Operation::OBJECT_REMOVED, 0, this->objeto);
+    lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, 0, this->objeto);
    }
    else
     throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
@@ -496,25 +496,25 @@ void TabelaWidget::removerObjetos(void)
  {
   /* Caso a quantidade de operações seja diferente da quantidade inicial
      obtida antes da remoção dos objetos */
-  if(qtd_op < lista_op->obterTamanhoAtual())
+  if(qtd_op < lista_op->getCurrentSize())
   {
    //Obtém a quantidade de operações que necessitam ser removidas
-   qtd=lista_op->obterTamanhoAtual()-qtd_op;
+   qtd=lista_op->getCurrentSize()-qtd_op;
 
    /* Anula o encadeamento de operações para que as mesmas seja
       desfeitas uma a uma ignorando o encadeamento */
-   lista_op->anularEncadeamentoOperacoes(true);
+   lista_op->ignoreOperationChain(true);
 
    /* Desfaz as operações na quantidade calculada e remove a
       operação da lista */
    for(i=0; i < qtd; i++)
    {
-    lista_op->desfazerOperacao();
-    lista_op->removerUltimaOperacao();
+    lista_op->undoOperation();
+    lista_op->removeLastOperation();
    }
 
    //Desfaz a anulação do encadeamento
-   lista_op->anularEncadeamentoOperacoes(false);
+   lista_op->ignoreOperationChain(false);
   }
 
   //Atualiza a lista de objeto da tabela
@@ -544,7 +544,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
    tabela->removerObjeto(objeto);
 
    //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
-   lista_op->adicionarObjeto(objeto, Operation::OBJECT_REMOVED, idx_lin, this->objeto);
+   lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, idx_lin, this->objeto);
   }
   else
    throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
@@ -569,8 +569,8 @@ void TabelaWidget::TabelaWidget::moverObjetos(int idx1, int idx2)
  {
   tipo_obj=selecionarTipoObjeto(sender());
   tabela=dynamic_cast<Tabela *>(this->objeto);
-  lista_op->atualizarIndiceObjeto(tabela->obterObjeto(idx1, tipo_obj), idx2);
-  lista_op->atualizarIndiceObjeto(tabela->obterObjeto(idx2, tipo_obj), idx1);
+  lista_op->updateObjectIndex(tabela->obterObjeto(idx1, tipo_obj), idx2);
+  lista_op->updateObjectIndex(tabela->obterObjeto(idx2, tipo_obj), idx1);
   tabela->trocarIndicesObjetos(tipo_obj, idx1, idx2);
  }
  catch(Exception &e)
@@ -590,7 +590,7 @@ void TabelaWidget::aplicarConfiguracao(void)
   if(!this->novo_obj)
   {
    //Adiciona o relacionamento   lista de operações antes de ser modificado
-   lista_op->adicionarObjeto(this->objeto, Operation::OBJECT_MODIFIED);
+   lista_op->registerObject(this->objeto, Operation::OBJECT_MODIFIED);
   }
 
   tabela=dynamic_cast<Tabela *>(this->objeto);
@@ -620,7 +620,7 @@ void TabelaWidget::aplicarConfiguracao(void)
   }
 
   //Finaliza o encademanto de operações aberto
-  lista_op->finalizarEncadeamentoOperacoes();
+  lista_op->finishOperationChain();
 
   //Finaliza a configuração da tabela
   finalizarConfiguracao();
@@ -630,20 +630,20 @@ void TabelaWidget::aplicarConfiguracao(void)
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  lista_op->anularEncadeamentoOperacoes(true);
+  lista_op->ignoreOperationChain(true);
   this->cancelarConfiguracao();
-  lista_op->anularEncadeamentoOperacoes(false);
+  lista_op->ignoreOperationChain(false);
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
 void TabelaWidget::cancelarConfiguracao(void)
 {
- if(lista_op->encadeamentoIniciado())
-  lista_op->finalizarEncadeamentoOperacoes();
+ if(lista_op->isOperationChainStarted())
+  lista_op->finishOperationChain();
 
  //Caso a lista de operações sofreu modificações
- if(qtd_operacoes < lista_op->obterTamanhoAtual())
+ if(qtd_operacoes < lista_op->getCurrentSize())
   /* Executa o cancelamento da configuração e remove as operações
      adicionadas durante a edição da tabela */
   ObjetoBaseWidget::cancelarConfiguracao();

@@ -87,59 +87,59 @@ class OperationList: public QObject {
   Q_OBJECT
 
   //Indica que o encadeamento de operações está anulado temporariamente
-  bool anular_enc;
+  bool ignore_chain;
 
   //Lista de objetos excluídos / modificado no modelo
-  vector<BaseObject *> pool_objetos;
+  vector<BaseObject *> object_pool;
 
   /* Lista de objetos que no momento da exclusão do pool ainda eram referenciados
      de algum modo no modelo. Os mesmo são armazenados nesta lista secundária e
      excluídos quando a lista de operações objeto da lista
      em si é destruído */
-  vector<BaseObject *> objs_nao_excluidos;
+  vector<BaseObject *> not_removed_objs;
 
   //Lista de operações executadas pelo usuário
-  vector<Operation *> operacoes;
+  vector<Operation *> operations;
 
   //Modelo ao qual a lista se aplica
-  ModeloBD *modelo;
+  ModeloBD *model;
 
   //Número máximo de entradas que a lista pode aceitar (global)
-  static unsigned tam_maximo;
+  static unsigned max_size;
 
            /* Armazena o tipo de encadeamento para a próxima
               operação a ser armazenada na lista. Este atributo
               é usado em conjunto com os metodos de inicialização
               e encerramento de encademanento de operações */
-  unsigned enc_prox_oper;
+  unsigned next_op_chain;
 
   //Índice atual da lista de operações
-  int idx_atual;
+  int current_index;
 
   /* Valida as operações verificando se as mesmas possuem objetos registrados no pool.
      Caso seja encontrada alguma operação cujo objeto não se encontra no pool
      ela será removida, pois um objeto fora do pool não dá a garantia de que está
      sendo referenciado no modelo. */
-  void validarOperacoes(void);
+  void validateOperations(void);
 
   //Verifica se o objeto passado encontra-se no pool
-  bool objetoNoPool(BaseObject *objeto);
+  bool isObjectOnPool(BaseObject *objeto);
 
   //Adiciona o objeto no pool de acordo com o tipo da operação informado
-  void adicionarObjetoPool(BaseObject *objeto, unsigned tipo_op);
+  void addToPool(BaseObject *objeto, unsigned tipo_op);
 
   /* Remove um objeto do pool através de seu índice efetuando a desalocação caso
      nenhum objeto esteja referenciando o mesmo */
-  void removerObjetoPool(unsigned idx_obj);
+  void removeFromPool(unsigned idx_obj);
 
   //Executa uma operação da lista
-  void executarOperacao(Operation *operacao, bool refazer);
+  void executeOperation(Operation *operacao, bool refazer);
 
   //Retorna o tamanho do encadeamento de operações a partir da posição atual
-  unsigned obterTamanhoEncadeamento(void);
+  unsigned getChainSize(void);
 
  public:
-  OperationList(ModeloBD *modelo);
+  OperationList(ModeloBD *model);
   ~OperationList(void);
 
   /* Inicia o encadeamento de operações.
@@ -147,12 +147,12 @@ class OperationList: public QObject {
      após a chamada deste método serão consideradas a
      serem executadas todas em cadeia com uma única chamada
      aos métodos refazerOperacao ou desfazerOperacao. */
-  void iniciarEncadeamentoOperacoes(void);
+  void startOperationChain(void);
 
   /* Finaliza o encadeamento das operações definindo que a
      ultima operação adicionada é o final da lista de
      encadeamento */
-  void finalizarEncadeamentoOperacoes(void);
+  void finishOperationChain(void);
 
   /* Anula a execução das operações em forma de encadeamento,
      porém caso a lista esteja com encadeamento aberto, as operações
@@ -163,25 +163,25 @@ class OperationList: public QObject {
      Obs.: O usuário deve cancelar o anulamento do encademanto para
            conseguir finalizaer o encadeamento de operações, se isso não
            acontecer, as operações serão criadas encadeadas idefinidademente */
-  void anularEncadeamentoOperacoes(bool valor);
+  void ignoreOperationChain(bool valor);
 
   //Retorna se um encadeamento na lista já foi iniciado
-  bool encadeamentoIniciado(void);
+  bool isOperationChainStarted(void);
 
   //Desfaz a última operação criada na lista
-  void desfazerOperacao(void);
+  void undoOperation(void);
 
   //Refaz a próxima operação criada na lista
-  void refazerOperacao(void);
+  void redoOperation(void);
 
   //Remove todas as operações da lista
-  void removerOperacoes(void);
+  void removeOperations(void);
 
   //Obtém os dados da operação no índice especificado
-  void obterDadosOperacao(unsigned idx_oper, unsigned &tipo_oper, QString &nome_obj, ObjectType &tipo_obj);
+  void getOperationData(unsigned idx_oper, unsigned &tipo_oper, QString &nome_obj, ObjectType &tipo_obj);
 
   //Define o tamanho máximo da lista
-  static void definirTamanhoMaximo(unsigned tam_max);
+  static void setMaximumSize(unsigned tam_max);
 
   /* Registra na lista de operaçõe que o objeto passado sofreu algum tipo
      de operação (modificação, removido, inserido) além de armazenar o conteúdo
@@ -189,21 +189,21 @@ class OperationList: public QObject {
      sofra qualquer operação no modelo. Caso este método seja chamado após uma operação sobre o
      objeto, a ordem de restauração/reexecução de operações pode ser quebrada
      ocasionando em segmentations fault. */
-  void adicionarObjeto(BaseObject *objeto, unsigned tipo_op, int idx_objeto=-1, BaseObject *objeto_pai=NULL);
+  void registerObject(BaseObject *objeto, unsigned tipo_op, int idx_objeto=-1, BaseObject *objeto_pai=NULL);
 
   //Obtém o tamanho máximo da lista
-  unsigned obterTamanhoMaximo(void);
+  unsigned getMaximumSize(void);
 
   //Obtém o tamanho atual da lista
-  unsigned obterTamanhoAtual(void);
+  unsigned getCurrentSize(void);
 
   //Obtém o indice atual da lista
-  int obterIndiceAtual(void);
+  int getCurrentIndex(void);
 
   /* Retorna se a lista de operações está preparada para executar
      as operações de refazer e desfazer */
-  bool refazerHabilitado(void);
-  bool desfazerHabilitado(void);
+  bool isRedoAvailable(void);
+  bool isUndoAvailable(void);
 
   /* Remove a última operação da lista. Este método deve ser usado com
      cuidado pois ele pode quebrar o encadeamento de operações. Deve ser
@@ -214,7 +214,7 @@ class OperationList: public QObject {
      é diferente do método de desfazer operação, pois os objetos são removidos
      do pool porém seus estados anteriores a adição dos mesmos a  lista não são
      restaurados, por isso este não pode ser usado deliberadamente. */
-  void removerUltimaOperacao(void);
+  void removeLastOperation(void);
 
   /* Atualiza o índice do objeto quando o mesmo sofre uma movimentação no objeto
      pai. Geralmente este método não precisa ser chamado, mas no caso de objetos
@@ -222,11 +222,11 @@ class OperationList: public QObject {
      este método atualiza o índice do objeto com o novo valor para que as operações
      as quais referenciam tal objeto não seja executadas de forma incorreta usando
      o índice anterior */
-  void atualizarIndiceObjeto(BaseObject *objeto, unsigned idx_novo);
+  void updateObjectIndex(BaseObject *objeto, unsigned idx_novo);
 
   signals:
    //Sinal disparado para cada operação encadeada que for executada
-   void s_operacaoExecutada(int progresso, QString id_objeto, unsigned id_icone);
+   void s_operationExecuted(int progresso, QString id_objeto, unsigned id_icone);
 };
 
 
@@ -236,10 +236,10 @@ class OperationList: public QObject {
    caso ambos estejam alocados.
    -- Sintaxe no estilo  brainfuck! :p -- */
 template <class Classe>
-void copiarObjeto(BaseObject **pobj_orig, Classe *obj_copia);
+void copyObject(BaseObject **pobj_orig, Classe *obj_copia);
 
 /* Esta função apenas chama a função modelo acima fazendo o dynamic_cast correto,
    de acordo com o tipo passado */
-void copiarObjeto(BaseObject **pobj_orig, BaseObject *obj_copia, ObjectType tipo);
+void copyObject(BaseObject **pobj_orig, BaseObject *obj_copia, ObjectType tipo);
 
 #endif

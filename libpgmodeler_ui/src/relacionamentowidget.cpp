@@ -178,12 +178,12 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
      do relacionameto será encadeado na lista, desta forma quando o usuário
      necessitar desfazer as modificações do relacionamentos, os objetos do
      relacionemento também serão restaurados */
-  lista_op->iniciarEncadeamentoOperacoes();
+  lista_op->startOperationChain();
 
-  qtd_operacoes=lista_op->obterTamanhoAtual();
+  qtd_operacoes=lista_op->getCurrentSize();
 
   //Adiciona o relacionamento criado   lista de operações
-  lista_op->adicionarObjeto(rel, Operation::OBJECT_CREATED);
+  lista_op->registerObject(rel, Operation::OBJECT_CREATED);
 
   //Chama o método publico de definição dos atributos
   this->definirAtributos(modelo, lista_op, rel);
@@ -216,8 +216,8 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
     relacionemento também serão restaurados */
  if(!this->novo_obj)
  {
-  lista_op->iniciarEncadeamentoOperacoes();
-  qtd_operacoes=lista_op->obterTamanhoAtual();
+  lista_op->startOperationChain();
+  qtd_operacoes=lista_op->getCurrentSize();
  }
 
 
@@ -464,7 +464,7 @@ void RelacionamentoWidget::editarObjeto(int idx_lin)
  {
   /* Anula a operação de encadeamento para que, em caso de erro na edição do objeto,
      as demais operações encadeadas não sejam desfeitas desnecessariamente */
-  lista_op->anularEncadeamentoOperacoes(true);
+  lista_op->ignoreOperationChain(true);
 
   //Caso seja a tabela de atributos que acionou o método
   if(sender()==tab_atributos)
@@ -484,11 +484,11 @@ void RelacionamentoWidget::editarObjeto(int idx_lin)
   }
 
   //Desfaz a anulação do encadeamento da lista de operações
-  lista_op->anularEncadeamentoOperacoes(false);
+  lista_op->ignoreOperationChain(false);
  }
  catch(Exception &e)
  {
-  lista_op->anularEncadeamentoOperacoes(false);
+  lista_op->ignoreOperationChain(false);
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
@@ -547,7 +547,7 @@ void RelacionamentoWidget::removerObjetos(void)
      Caso um erro seja gerado e a quantidade de operações na lista
      seja diferente do valor na variável 'qtd_op' indica que operações
      foram inseridas na lista e precisam ser removidas */
-  qtd_op=lista_op->obterTamanhoAtual();
+  qtd_op=lista_op->getCurrentSize();
 
   for(i=0; i < qtd; i++)
   {
@@ -558,32 +558,32 @@ void RelacionamentoWidget::removerObjetos(void)
    relacao->removerObjeto(objeto);
 
    //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
-   lista_op->adicionarObjeto(objeto, Operation::OBJECT_REMOVED, 0, relacao);
+   lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, 0, relacao);
   }
  }
  catch(Exception &e)
  {
   /* Caso a quantidade de operações seja diferente da quantidade inicial
      obtida antes da remoção dos objetos */
-  if(qtd_op < lista_op->obterTamanhoAtual())
+  if(qtd_op < lista_op->getCurrentSize())
   {
    //Obtém a quantidade de operações que necessitam ser removidas
-   qtd=lista_op->obterTamanhoAtual()-qtd_op;
+   qtd=lista_op->getCurrentSize()-qtd_op;
 
    /* Anula o encadeamento de operações para que as mesmas seja
       desfeitas uma a uma ignorando o encadeamento */
-   lista_op->anularEncadeamentoOperacoes(true);
+   lista_op->ignoreOperationChain(true);
 
    /* Desfaz as operações na quantidade calculada e remove a
       operação da lista */
    for(i=0; i < qtd; i++)
    {
-    lista_op->desfazerOperacao();
-    lista_op->removerUltimaOperacao();
+    lista_op->undoOperation();
+    lista_op->removeLastOperation();
    }
 
    //Desfaz a anulação do encadeamento
-   lista_op->anularEncadeamentoOperacoes(false);
+   lista_op->ignoreOperationChain(false);
   }
 
   //Atualiza a lista de objeto do relacionamento
@@ -616,7 +616,7 @@ void RelacionamentoWidget::removerObjeto(int idx_lin)
   //Remove o objeto e o adiciona a lista de operações para ser restaurado se necessário
   relacao->removerObjeto(objeto);
 
-  lista_op->adicionarObjeto(objeto, Operation::OBJECT_REMOVED, 0, relacao);
+  lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, 0, relacao);
  }
  catch(Exception &e)
  {
@@ -643,7 +643,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
   if(!this->novo_obj)
   {
    //Adiciona o relacionamento   lista de operações antes de ser modificado
-   lista_op->adicionarObjeto(this->objeto, Operation::OBJECT_MODIFIED);
+   lista_op->registerObject(this->objeto, Operation::OBJECT_MODIFIED);
   }
 
   //Aplica as configurações básicas
@@ -730,7 +730,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
   }
 
   //Finaliza o encademanto de operações aberto
-  lista_op->finalizarEncadeamentoOperacoes();
+  lista_op->finishOperationChain();
 
   //Finaliza a configuração do relacionamento
   finalizarConfiguracao();
@@ -740,9 +740,9 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  lista_op->anularEncadeamentoOperacoes(true);
+  lista_op->ignoreOperationChain(true);
   this->cancelarConfiguracao();
-  lista_op->anularEncadeamentoOperacoes(false);
+  lista_op->ignoreOperationChain(false);
 
   /* Faz a validação dos relacionamentos para refletir a nova configuração
      do relacionamento */
@@ -754,11 +754,11 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
 
 void RelacionamentoWidget::cancelarConfiguracao(void)
 {
- if(lista_op->encadeamentoIniciado())
-  lista_op->finalizarEncadeamentoOperacoes();
+ if(lista_op->isOperationChainStarted())
+  lista_op->finishOperationChain();
 
  //Caso a lista de operações sofreu modificações
- if(qtd_operacoes < lista_op->obterTamanhoAtual())
+ if(qtd_operacoes < lista_op->getCurrentSize())
   /* Executa o cancelamento da configuração e remove as operações
      adicionadas durante a edição do relacionamento */
   ObjetoBaseWidget::cancelarConfiguracao();

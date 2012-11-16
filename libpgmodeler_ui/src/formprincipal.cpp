@@ -1149,8 +1149,8 @@ void FormPrincipal::atualizarEstadoFerramentas(bool modelo_fechado)
                               modelos_tab->count() > 1);
   action_proximo->setEnabled(modelos_tab->currentIndex() >= 0 &&
                              modelos_tab->currentIndex()!=(modelos_tab->count()-1));
-  action_desfazer->setEnabled(modelo_atual->lista_op->desfazerHabilitado());
-  action_refazer->setEnabled(modelo_atual->lista_op->refazerHabilitado());
+  action_desfazer->setEnabled(modelo_atual->lista_op->isUndoAvailable());
+  action_refazer->setEnabled(modelo_atual->lista_op->isRedoAvailable());
 
   action_ampliar_zoom->setEnabled(modelo_atual->zoomAtual() <= ModeloWidget::ZOOM_MAXIMO - ModeloWidget::INC_ZOOM);
   action_zoom_normal->setEnabled(modelo_atual->zoomAtual()!=0);
