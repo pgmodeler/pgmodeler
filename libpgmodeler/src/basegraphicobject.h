@@ -71,7 +71,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 
   /* Sets if the objects is modified or not.
      This method emits the signal s_objectModified() */
-  virtual void setModefied(bool value);
+  virtual void setModified(bool value);
 
   //Returns the modified status of the object
   bool isModified(void);

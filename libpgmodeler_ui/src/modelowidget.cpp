@@ -1408,7 +1408,7 @@ void ModeloWidget::protegerObjeto(void)
     /* Caso seja um objto de tabela protege/desprotege o mesmo e marca como modificada a tabela pai
        para forçar o seu redesenho */
     obj_tab->setProtected(!obj_tab->isProtected());
-    dynamic_cast<Tabela *>(obj_tab->getParentTable())->setModefied(true);
+    dynamic_cast<Tabela *>(obj_tab->getParentTable())->setModified(true);
    }
    else
    {
@@ -2003,7 +2003,7 @@ void ModeloWidget::excluirObjetos(void)
         lista_op->registerObject(objeto_tab, Operation::OBJECT_REMOVED, idx_obj, tabela);
         tabela->removerObjeto(idx_obj, tipo_obj);
 
-        tabela->setModefied(true);
+        tabela->setModified(true);
 
         modelo->validarRelacObjetoTabela(objeto_tab, tabela);
        }
@@ -2041,8 +2041,8 @@ void ModeloWidget::excluirObjetos(void)
            para o caso de alguma coluna ter sido removido das tabelas */
         if(relac)
         {
-         tab_orig->setModefied(true);
-         tab_dest->setModefied(true);
+         tab_orig->setModified(true);
+         tab_dest->setModified(true);
          relac=NULL;
          tab_dest=tab_orig=NULL;
         }

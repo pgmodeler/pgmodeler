@@ -396,7 +396,7 @@ void ObjetoGrafico::exibirProtecaoObjeto(bool valor)
  this->setFlag(QGraphicsItem::ItemIsMovable, !valor);
 
  if(obj_graf)
-  obj_graf->setModefied(true);
+  obj_graf->setModified(true);
 }
 
 void ObjetoGrafico::configurarInfoPosicao(QPointF pos_info)

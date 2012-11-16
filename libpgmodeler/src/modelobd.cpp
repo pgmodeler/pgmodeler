@@ -4827,7 +4827,7 @@ Restricao *ModeloBD::criarRestricao(BaseObject *objeto)
        Isso é útil para atualizar tabelas as quais tiveram restrições adicionadas após a sua
        criação */
     if(this->obterIndiceObjeto(tabela) >= 0)
-      tabela->setModefied(true);
+      tabela->setModified(true);
    }
   }
  }
@@ -4986,7 +4986,7 @@ Index *ModeloBD::criarIndice(Tabela *tabela)
   if(inc_ind_tabela)
   {
    tabela->adicionarIndice(indice);
-   tabela->setModefied(true);
+   tabela->setModified(true);
   }
  }
  catch(Exception &e)
@@ -5235,7 +5235,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
   if(inc_gat_tabela)
   {
    tabela->adicionarObjeto(gatilho);
-   tabela->setModefied(true);
+   tabela->setModified(true);
   }
  }
  catch(Exception &e)
@@ -7720,7 +7720,7 @@ void ModeloBD::definirObjetosModificados(void)
 
   while(itr!=itr_end)
   {
-   dynamic_cast<BaseGraphicObject *>(*itr)->setModefied(true);
+   dynamic_cast<BaseGraphicObject *>(*itr)->setModified(true);
 
    /* Caso especial: Caso o objeto seja um relacionamento, os rótulos
       do mesmo que são caixas de texto, devem também ser marcados
@@ -7731,7 +7731,7 @@ void ModeloBD::definirObjetosModificados(void)
     for(i1=0; i1 < 3; i1++)
     {
      rot=rel->obterRotulo(i1);
-     if(rot) rot->setModefied(true);
+     if(rot) rot->setModified(true);
     }
    }
 

@@ -871,7 +871,7 @@ void OGRelacionamento::configurarRotulos(void)
 
  //Move o rótulo para o ponto calculado
  rotulos[RelacionamentoBase::ROTULO_NOME_RELAC]->setPos(x,y);
- dynamic_cast<Textbox *>(rotulos[RelacionamentoBase::ROTULO_NOME_RELAC]->obterObjetoOrigem())->setModefied(true);
+ dynamic_cast<Textbox *>(rotulos[RelacionamentoBase::ROTULO_NOME_RELAC]->obterObjetoOrigem())->setModified(true);
 
  /* Caso o relacionamento não seja de generalização ou dependência,
     a posição dos rótulos de cardinalidade será atualizada */
@@ -1007,7 +1007,7 @@ void OGRelacionamento::configurarRotulos(void)
 
    //Move o rótulo para a posição calculada
    rotulos[tipos_rot[idx]]->setPos(x,y);
-   dynamic_cast<Textbox *>(rotulos[tipos_rot[idx]]->obterObjetoOrigem())->setModefied(true);
+   dynamic_cast<Textbox *>(rotulos[tipos_rot[idx]]->obterObjetoOrigem())->setModified(true);
   }
  }
 }

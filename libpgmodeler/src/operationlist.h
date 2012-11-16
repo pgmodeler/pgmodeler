@@ -21,8 +21,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef LISTAOPERACOES_H
-#define LISTAOPERACOES_H
+#ifndef OPERATIONLIST_H
+#define OPERATIONLIST_H
 
 #include "modelobd.h"
 #include <QObject>
@@ -123,17 +123,17 @@ class OperationList: public QObject {
   void validateOperations(void);
 
   //Verifica se o objeto passado encontra-se no pool
-  bool isObjectOnPool(BaseObject *objeto);
+  bool isObjectOnPool(BaseObject *object);
 
   //Adiciona o objeto no pool de acordo com o tipo da operação informado
-  void addToPool(BaseObject *objeto, unsigned tipo_op);
+  void addToPool(BaseObject *object, unsigned op_type);
 
   /* Remove um objeto do pool através de seu índice efetuando a desalocação caso
      nenhum objeto esteja referenciando o mesmo */
-  void removeFromPool(unsigned idx_obj);
+  void removeFromPool(unsigned obj_idx);
 
   //Executa uma operação da lista
-  void executeOperation(Operation *operacao, bool refazer);
+  void executeOperation(Operation *operacao, bool redo);
 
   //Retorna o tamanho do encadeamento de operações a partir da posição atual
   unsigned getChainSize(void);
@@ -163,7 +163,7 @@ class OperationList: public QObject {
      Obs.: O usuário deve cancelar o anulamento do encademanto para
            conseguir finalizaer o encadeamento de operações, se isso não
            acontecer, as operações serão criadas encadeadas idefinidademente */
-  void ignoreOperationChain(bool valor);
+  void ignoreOperationChain(bool value);
 
   //Retorna se um encadeamento na lista já foi iniciado
   bool isOperationChainStarted(void);
@@ -178,10 +178,10 @@ class OperationList: public QObject {
   void removeOperations(void);
 
   //Obtém os dados da operação no índice especificado
-  void getOperationData(unsigned idx_oper, unsigned &tipo_oper, QString &nome_obj, ObjectType &tipo_obj);
+  void getOperationData(unsigned oper_idx, unsigned &oper_type, QString &obj_name, ObjectType &obj_type);
 
   //Define o tamanho máximo da lista
-  static void setMaximumSize(unsigned tam_max);
+  static void setMaximumSize(unsigned max);
 
   /* Registra na lista de operaçõe que o objeto passado sofreu algum tipo
      de operação (modificação, removido, inserido) além de armazenar o conteúdo
@@ -189,7 +189,7 @@ class OperationList: public QObject {
      sofra qualquer operação no modelo. Caso este método seja chamado após uma operação sobre o
      objeto, a ordem de restauração/reexecução de operações pode ser quebrada
      ocasionando em segmentations fault. */
-  void registerObject(BaseObject *objeto, unsigned tipo_op, int idx_objeto=-1, BaseObject *objeto_pai=NULL);
+  void registerObject(BaseObject *object, unsigned op_type, int object_idx=-1, BaseObject *parent_obj=NULL);
 
   //Obtém o tamanho máximo da lista
   unsigned getMaximumSize(void);
@@ -222,11 +222,11 @@ class OperationList: public QObject {
      este método atualiza o índice do objeto com o novo valor para que as operações
      as quais referenciam tal objeto não seja executadas de forma incorreta usando
      o índice anterior */
-  void updateObjectIndex(BaseObject *objeto, unsigned idx_novo);
+  void updateObjectIndex(BaseObject *object, unsigned new_idx);
 
   signals:
    //Sinal disparado para cada operação encadeada que for executada
-   void s_operationExecuted(int progresso, QString id_objeto, unsigned id_icone);
+   void s_operationExecuted(int progress, QString object_id, unsigned icon_id);
 };
 
 
@@ -236,10 +236,10 @@ class OperationList: public QObject {
    caso ambos estejam alocados.
    -- Sintaxe no estilo  brainfuck! :p -- */
 template <class Classe>
-void copyObject(BaseObject **pobj_orig, Classe *obj_copia);
+void copyObject(BaseObject **porig_obj, Classe *copy_obj);
 
 /* Esta função apenas chama a função modelo acima fazendo o dynamic_cast correto,
    de acordo com o tipo passado */
-void copyObject(BaseObject **pobj_orig, BaseObject *obj_copia, ObjectType tipo);
+void copyObject(BaseObject **porig_obj, BaseObject *copy_obj, ObjectType obj_type);
 
 #endif

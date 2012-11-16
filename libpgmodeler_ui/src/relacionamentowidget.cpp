@@ -713,7 +713,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
        do relacionamento */
     modelo->validarRelacionamentos();
     relacao->blockSignals(false);
-    relacao->setModefied(true);
+    relacao->setModified(true);
    }
    catch(Exception &e)
    {

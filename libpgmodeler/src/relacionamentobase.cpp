@@ -205,7 +205,7 @@ void RelacionamentoBase::definirTabelaObrigatoria(unsigned id_tabela, bool valor
    //rotulos[tipo_rot]->definirComentario("(" + cmin + ",n)");
    rotulos[tipo_rot]->setComment("(n)");
   }
-  rotulos[tipo_rot]->setModefied(true);
+  rotulos[tipo_rot]->setModified(true);
  }
 }
 
@@ -235,8 +235,8 @@ void RelacionamentoBase::desconectarRelacionamento(void)
  if(conectado)
  {
   conectado=false;
-  tabela_orig->setModefied(true);
-  tabela_dest->setModefied(true);
+  tabela_orig->setModified(true);
+  tabela_dest->setModified(true);
  }
 }
 
@@ -250,8 +250,8 @@ void RelacionamentoBase::conectarRelacionamento(void)
 
   /* Marca que as tabelas do relacionamentos estão modificadas para forçar
      o redimensionamento das mesmas */
-  tabela_orig->setModefied(true);
-  tabela_dest->setModefied(true);
+  tabela_orig->setModified(true);
+  tabela_dest->setModified(true);
  }
 }
 

@@ -17,7 +17,7 @@ void BaseGraphicObject::setProtected(bool value)
   emit s_objectProtected(value);
 }
 
-void BaseGraphicObject::setModefied(bool value)
+void BaseGraphicObject::setModified(bool value)
 {
  is_modified=value;
 
