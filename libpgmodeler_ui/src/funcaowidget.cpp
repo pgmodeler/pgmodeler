@@ -251,7 +251,7 @@ void FuncaoWidget::exibirDadosParametro(Parameter param, TabelaObjetosWidget *ta
 void FuncaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Function *funcao)
 {
  vector<BaseObject *> linguagens;
- Linguagem *ling=NULL;
+ Language *ling=NULL;
  QStringList lista;
  unsigned qtd=0, i;
  Parameter param;
@@ -269,7 +269,7 @@ void FuncaoWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, 
  //Caso existam linguagens insere-as numa QStringList para ordená-las alfabeticamente
  while(!linguagens.empty())
  {
-  ling=dynamic_cast<Linguagem *>(linguagens.back());
+  ling=dynamic_cast<Language *>(linguagens.back());
   linguagens.pop_back();
   lista.append(ling->getName());
  }
@@ -438,7 +438,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
  Cast *conv_tipo=NULL;
  Aggregate *func_ag=NULL;
  Gatilho *gatilho=NULL;
- Linguagem *ling=NULL;
+ Language *ling=NULL;
  Operador *oper=NULL;
  Tipo *tipo=NULL;
  Tabela *tab=NULL;
@@ -516,12 +516,12 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
     }
     else if(tipos[i]==OBJ_LANGUAGE)
     {
-     ling=dynamic_cast<Linguagem *>(objeto);
+     ling=dynamic_cast<Language *>(objeto);
 
-     for(i1=Linguagem::FUNC_VALIDATOR; i1 <= Linguagem::FUNC_INLINE; i1++)
+     for(i1=Language::VALIDATOR_FUNC; i1 <= Language::INLINE_FUNC; i1++)
      {
-      if(ling->obterFuncao(i1)==funcao)
-       ling->definirFuncao(funcao, i1);
+      if(ling->getFunction(i1)==funcao)
+       ling->setFunction(funcao, i1);
      }
     }
     else if(tipos[i]==OBJ_OPERATOR)

@@ -181,7 +181,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_TABLESPACE)
     adicionarEspacoTabela(dynamic_cast<Tablespace *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_LANGUAGE)
-    adicionarLinguagem(dynamic_cast<Linguagem *>(objeto), idx_obj);
+    adicionarLinguagem(dynamic_cast<Language *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_CAST)
     adicionarConversaoTipo(dynamic_cast<Cast *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_CONVERSION)
@@ -239,7 +239,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_TABLESPACE)
     removerEspacoTabela(dynamic_cast<Tablespace *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_LANGUAGE)
-    removerLinguagem(dynamic_cast<Linguagem *>(objeto), idx_obj);
+    removerLinguagem(dynamic_cast<Language *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_CAST)
     removerConversaoTipo(dynamic_cast<Cast *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_CONVERSION)
@@ -304,7 +304,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
  else if(tipo_obj==OBJ_TABLESPACE)
    removerEspacoTabela(dynamic_cast<Tablespace *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_LANGUAGE)
-   removerLinguagem(dynamic_cast<Linguagem *>(objeto), idx_obj);
+   removerLinguagem(dynamic_cast<Language *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_CAST)
    removerConversaoTipo(dynamic_cast<Cast *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_CONVERSION)
@@ -1911,7 +1911,7 @@ Conversion *ModeloBD::obterConversaoCodificacao(unsigned idx_obj)
  OBJ_CONVERSION)));
 }
 
-void ModeloBD::adicionarLinguagem(Linguagem *linguagem, int idx_obj)
+void ModeloBD::adicionarLinguagem(Language *linguagem, int idx_obj)
 {
  try
  {
@@ -1923,12 +1923,12 @@ void ModeloBD::adicionarLinguagem(Linguagem *linguagem, int idx_obj)
  }
 }
 
-Linguagem *ModeloBD::obterLinguagem(unsigned idx_obj)
+Language *ModeloBD::obterLinguagem(unsigned idx_obj)
 {
- return(dynamic_cast<Linguagem *>(obterObjeto(idx_obj, OBJ_LANGUAGE)));
+ return(dynamic_cast<Language *>(obterObjeto(idx_obj, OBJ_LANGUAGE)));
 }
 
-void ModeloBD::removerLinguagem(Linguagem *linguagem, int idx_obj)
+void ModeloBD::removerLinguagem(Language *linguagem, int idx_obj)
 {
  if(linguagem)
  {
@@ -3263,23 +3263,23 @@ Schema *ModeloBD::criarEsquema(void)
  return(esquema);
 }
 
-Linguagem *ModeloBD::criarLinguagem(void)
+Language *ModeloBD::criarLinguagem(void)
 {
  map<QString, QString> atributos;
- Linguagem *linguagem=NULL;
+ Language *linguagem=NULL;
  BaseObject *funcao=NULL;
  QString assinatura, tipo_ref;
  ObjectType tipo_obj;
 
  try
  {
-  linguagem=new Linguagem;
+  linguagem=new Language;
 
   //Obtém os atributos do elemento
   XMLParser::getElementAttributes(atributos);
   definirAtributosBasicos(linguagem);
 
-  linguagem->definirConfiavel(atributos[ParsersAttributes::TRUSTED]==
+  linguagem->setTrusted(atributos[ParsersAttributes::TRUSTED]==
                                ParsersAttributes::_TRUE_);
 
    if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
@@ -3321,11 +3321,11 @@ Linguagem *ModeloBD::criarLinguagem(void)
 
         if(tipo_ref==ParsersAttributes::VALIDATOR_FUNC)
 
-         linguagem->definirFuncao(dynamic_cast<Function *>(funcao), Linguagem::FUNC_VALIDATOR);
+         linguagem->setFunction(dynamic_cast<Function *>(funcao), Language::VALIDATOR_FUNC);
         else if(tipo_ref==ParsersAttributes::HANDLER_FUNC)
-         linguagem->definirFuncao(dynamic_cast<Function *>(funcao), Linguagem::FUNC_HANDLER);
+         linguagem->setFunction(dynamic_cast<Function *>(funcao), Language::HANDLER_FUNC);
         else
-         linguagem->definirFuncao(dynamic_cast<Function *>(funcao), Linguagem::FUNC_INLINE);
+         linguagem->setFunction(dynamic_cast<Function *>(funcao), Language::INLINE_FUNC);
 
        }
        else
@@ -3476,7 +3476,7 @@ Function *ModeloBD::criarFuncao(void)
                       ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Define a linguagem da função
-      funcao->setLanguage(dynamic_cast<Linguagem *>(objeto));
+      funcao->setLanguage(dynamic_cast<Language *>(objeto));
      }
      else if(XMLParser::getElementName()==ParsersAttributes::PARAMETER)
      {
@@ -6626,12 +6626,12 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   //** Obtendo as dependências de Linguagens **
   else if(tipo_obj==OBJ_LANGUAGE)
   {
-   Linguagem *ling=dynamic_cast<Linguagem *>(objeto);
+   Language *ling=dynamic_cast<Language *>(objeto);
 
-   for(unsigned i=Linguagem::FUNC_VALIDATOR; i <= Linguagem::FUNC_INLINE; i++)
+   for(unsigned i=Language::VALIDATOR_FUNC; i <= Language::INLINE_FUNC; i++)
    {
-    if(ling->obterFuncao(i))
-     obterDependenciasObjeto(ling->obterFuncao(i), vet_deps, inc_dep_indiretas);
+    if(ling->getFunction(i))
+     obterDependenciasObjeto(ling->getFunction(i), vet_deps, inc_dep_indiretas);
    }
   }
   //** Obtendo as dependências de Operadores **
@@ -6980,7 +6980,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    Operador *oper=NULL;
    Gatilho *gat=NULL;
    Tipo *tipo=NULL;
-   Linguagem *ling=NULL;
+   Language *ling=NULL;
 
    /* Varre todas as listas de objetos os quais podem
       referenciar direta ou indiretamente uma função */
@@ -7094,12 +7094,12 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Obtém a referência ao objeto
-      ling=dynamic_cast<Linguagem *>(*itr);
+      ling=dynamic_cast<Language *>(*itr);
       itr++;
       //Verifica se a função a ser removida é uma função handler ou validator da linguagem
-      if(ling->obterFuncao(Linguagem::FUNC_HANDLER)==funcao ||
-         ling->obterFuncao(Linguagem::FUNC_VALIDATOR)==funcao ||
-         ling->obterFuncao(Linguagem::FUNC_INLINE)==funcao)
+      if(ling->getFunction(Language::HANDLER_FUNC)==funcao ||
+         ling->getFunction(Language::VALIDATOR_FUNC)==funcao ||
+         ling->getFunction(Language::INLINE_FUNC)==funcao)
       {
        refer=true;
        vet_refs.push_back(ling);

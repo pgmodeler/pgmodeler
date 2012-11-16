@@ -556,7 +556,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
  ModeloWidget *tab_modelo;
  QString nome_obj, nome_tab, str_aux;
  Schema *esq_publico=NULL;
- Linguagem *ling=NULL;
+ Language *ling=NULL;
  QLayout *layout=NULL;
 
  //Converte a quantidade de abas para QString
@@ -582,15 +582,15 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
  esq_publico->setName("public");
  tab_modelo->modelo->adicionarObjeto(esq_publico);
 
- ling=new Linguagem;
+ ling=new Language;
  ling->BaseObject::setName(~TipoLinguagem(TipoLinguagem::c));
  tab_modelo->modelo->adicionarObjeto(ling);
 
- ling=new Linguagem;
+ ling=new Language;
  ling->BaseObject::setName(~TipoLinguagem(TipoLinguagem::sql));
  tab_modelo->modelo->adicionarObjeto(ling);
 
- ling=new Linguagem;
+ ling=new Language;
  ling->BaseObject::setName(~TipoLinguagem(TipoLinguagem::plpgsql));
  tab_modelo->modelo->adicionarObjeto(ling);
 

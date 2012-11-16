@@ -326,9 +326,9 @@ class ModeloBD:  public QObject, public BaseObject {
   Tablespace *getTablespace(unsigned idx_obj);
 
   //Métodos de manipulação de linguagens
-  void adicionarLinguagem(Linguagem *linguagem, int idx_obj=-1);
-  void removerLinguagem(Linguagem *linguagem, int idx_obj=-1);
-  Linguagem *obterLinguagem(unsigned idx_obj);
+  void adicionarLinguagem(Language *linguagem, int idx_obj=-1);
+  void removerLinguagem(Language *linguagem, int idx_obj=-1);
+  Language *obterLinguagem(unsigned idx_obj);
 
   //Métodos de manipulação de funções agregadas
   void adicionarFuncaoAgregacao(Aggregate *func_agregada, int idx_obj=-1);
@@ -400,7 +400,7 @@ class ModeloBD:  public QObject, public BaseObject {
   Papel *criarPapel(void);
   Tablespace *criarEspacoTabela(void);
   Schema *criarEsquema(void);
-  Linguagem *criarLinguagem(void);
+  Language *criarLinguagem(void);
   Function *criarFuncao(void);
   Parameter criarParametro(void);
   Tipo *criarTipo(void);

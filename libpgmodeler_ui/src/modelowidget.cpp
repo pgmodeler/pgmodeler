@@ -1156,7 +1156,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_LANGUAGE:
-    linguagem_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Linguagem *>(objeto));
+    linguagem_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Language *>(objeto));
     linguagem_wgt->show();
    break;
 

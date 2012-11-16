@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Linguagem que é usado para
-#             e gerar os códigos SQL pertinente s linguagens
-#             procedurais.
+# Class: Language
+# Description: Implements the operations to manipulate procedural languages on the database.
 # Creation date: 19/05/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -20,44 +19,52 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef LINGUAGEM_H
-#define LINGUAGEM_H
+#ifndef LANGUAGE_H
+#define LANGUAGE_H
 
 #include "baseobject.h"
 #include "function.h"
 #include "papel.h"
 
-class Linguagem: public BaseObject{
+class Language: public BaseObject{
  private:
-  /* Indica se a linguaguem é confiável ou não.
-     Ser confiável indica que a linguaguem pode ser usada por um usuário
-     sem privilégios sem comprometar a segurança do SGBD */
-  bool confiavel;
+ /* Indicates whether the language is trusted on the database which means
+    that the object can be used by an unprivileged user without compromise
+    the entire database security */
+  bool is_trusted;
 
-  //Função que definem o funcionamento da linguagem
-  Function *funcoes[3];
+  //Functions that defines the language behavior
+  Function *functions[3];
 
- public:                //Função de validação sintática da linguagem
-  const static unsigned FUNC_VALIDATOR=0,
-                        //Função usada para executar as funções escritas nesta linguagem
-                        FUNC_HANDLER=1,
-                        //Função usada para executar instruções inlines (DO's) nesta linguagem (apenas para pgsql 9.x)
-                        FUNC_INLINE=2;
+ public:
+  /* Constants used to reference the language's functions:
+      > VALIDATOR: Function that validates the code written in the language's syntax
+      > HANDLER: Function that executes the functions written in the language's syntax
+      > INLINE: Function that executes inline instructions (DO's) (only on PostgreSQL 9.x) */
+  const static unsigned VALIDATOR_FUNC=0,
+                        HANDLER_FUNC=1,
+                        INLINE_FUNC=2;
 
-  Linguagem(void);
+  Language(void);
 
-  //Define o nome da linguagem
-  void setName(const QString &obj_name);
+  //Sets the language name
+  void setName(const QString &name);
 
-  //Define se a linguagem é confiável ou não
-  void definirConfiavel(bool valor);
+  //Sets whether the language is trusted or not
+  void setTrusted(bool value);
 
-  void definirFuncao(Function *funcao, unsigned tipo_func);
-  bool linguagemConfiavel(void);
-  Function *obterFuncao(unsigned tipo_func);
+  //Sets one of the language auxiliary functions
+  void setFunction(Function *func, unsigned func_type);
 
-  QString getCodeDefinition(unsigned tipo_def, bool forma_reduzida);
-  QString getCodeDefinition(unsigned tipo_def);
+  //Returs the trusted state of the language
+  bool isTrusted(void);
+
+  //Returns one of the auxiliary functions
+  Function *getFunction(unsigned func_type);
+
+  //Returns the SQL / XML code definition for the language
+  QString getCodeDefinition(unsigned def_type, bool reduced_form);
+  QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

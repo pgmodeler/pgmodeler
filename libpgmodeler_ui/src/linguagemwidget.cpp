@@ -60,7 +60,7 @@ void LinguagemWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void LinguagemWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Linguagem *linguagem)
+void LinguagemWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_op, Language *linguagem)
 {
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, linguagem);
@@ -74,10 +74,10 @@ void LinguagemWidget::definirAtributos(ModeloBD *modelo, ListaOperacoes *lista_o
  if(linguagem)
  {
   //Marca o checkbox de confiável de acordo com o que está definido na linguagem
-  confiavel_chk->setChecked(linguagem->linguagemConfiavel());
-  sel_func_handler->definirObjeto(linguagem->obterFuncao(Linguagem::FUNC_HANDLER));
-  sel_func_validator->definirObjeto(linguagem->obterFuncao(Linguagem::FUNC_VALIDATOR));
-  sel_func_inline->definirObjeto(linguagem->obterFuncao(Linguagem::FUNC_INLINE));
+  confiavel_chk->setChecked(linguagem->isTrusted());
+  sel_func_handler->definirObjeto(linguagem->getFunction(Language::HANDLER_FUNC));
+  sel_func_validator->definirObjeto(linguagem->getFunction(Language::VALIDATOR_FUNC));
+  sel_func_inline->definirObjeto(linguagem->getFunction(Language::INLINE_FUNC));
  }
 }
 
@@ -85,17 +85,17 @@ void LinguagemWidget::aplicarConfiguracao(void)
 {
  try
  {
-  Linguagem *linguagem=NULL;
+  Language *linguagem=NULL;
 
-  iniciarConfiguracao<Linguagem>();
+  iniciarConfiguracao<Language>();
 
   //Converte o objeto para linguagem
-  linguagem=dynamic_cast<Linguagem *>(this->objeto);
-  linguagem->definirConfiavel(confiavel_chk->isChecked());
+  linguagem=dynamic_cast<Language *>(this->objeto);
+  linguagem->setTrusted(confiavel_chk->isChecked());
 
-  linguagem->definirFuncao(dynamic_cast<Function *>(sel_func_handler->obterObjeto()), Linguagem::FUNC_HANDLER);
-  linguagem->definirFuncao(dynamic_cast<Function *>(sel_func_validator->obterObjeto()), Linguagem::FUNC_VALIDATOR);
-  linguagem->definirFuncao(dynamic_cast<Function *>(sel_func_inline->obterObjeto()), Linguagem::FUNC_INLINE);
+  linguagem->setFunction(dynamic_cast<Function *>(sel_func_handler->obterObjeto()), Language::HANDLER_FUNC);
+  linguagem->setFunction(dynamic_cast<Function *>(sel_func_validator->obterObjeto()), Language::VALIDATOR_FUNC);
+  linguagem->setFunction(dynamic_cast<Function *>(sel_func_inline->obterObjeto()), Language::INLINE_FUNC);
 
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();
