@@ -137,6 +137,8 @@ class ModeloWidget: public QWidget {
    ModeloWidget(QWidget *parent = 0);
   ~ModeloWidget(void);
 
+  void definirModificado(bool valor);
+
   //Obtém o nome do arquivo que deu origem ao modelo
   QString getNameArquivo(void);
 

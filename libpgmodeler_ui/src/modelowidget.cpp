@@ -285,6 +285,11 @@ ModeloWidget::~ModeloWidget(void)
  delete(modelo);
 }
 
+void ModeloWidget::definirModificado(bool valor)
+{
+ this->modificado=valor;
+}
+
 void ModeloWidget::resizeEvent(QResizeEvent *)
 {
  //Obtém o tamanho da cena

@@ -25,6 +25,6 @@ $tb [<column name=] "@{name}"
 
  $tb @{type}
 
- %if @{comment} %then @{comment} %end
+ %if @{comment} %then $tb @{comment} %end
 
 $tb </column> $br

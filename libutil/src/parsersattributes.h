@@ -334,7 +334,8 @@ static const QString
   CONNECTIONS="connections",
   AUTO_SUFFIX="auto-sufix",
   VARIATION="variation",
-  SPATIAL_TYPE="spatial-type";
+  SPATIAL_TYPE="spatial-type",
+  COLS_COMMENT="cols-comment";
 }
 
 #endif

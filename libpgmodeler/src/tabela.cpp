@@ -9,6 +9,7 @@ Tabela::Tabela(void) : BaseTable()
  attributes[ParsersAttributes::TRIGGERS]="";
  attributes[ParsersAttributes::RULES]="";
  attributes[ParsersAttributes::OIDS]="";
+ attributes[ParsersAttributes::COLS_COMMENT]="";
 }
 
 Tabela::~Tabela(void)
@@ -91,6 +92,27 @@ void Tabela::setProtected(bool protegido)
  BaseGraphicObject::setProtected(protegido);
 }
 
+void Tabela::definirAtributoComentario(TableObject *obj_tab)
+{
+ if(obj_tab && !obj_tab->getComment().isEmpty())
+ {
+  map<QString, QString> attribs;
+
+  attribs[ParsersAttributes::DIF_SQL]="1";
+  attribs[ParsersAttributes::SQL_OBJECT]=obj_tab->getSQLName();
+  attribs[ParsersAttributes::COLUMN]=(obj_tab->getObjectType()==OBJ_COLUMN ? "1" : "");
+  attribs[ParsersAttributes::CONSTRAINT]=(obj_tab->getObjectType()==OBJ_CONSTRAINT ? "1" : "");
+  attribs[ParsersAttributes::TABLE]=this->getName(true);
+  attribs[ParsersAttributes::NAME]=obj_tab->getName(true);
+  attribs[ParsersAttributes::COMMENT]=obj_tab->getComment();
+
+  SchemaParser::setIgnoreUnkownAttributes(true);
+  attributes[ParsersAttributes::COLS_COMMENT]+=SchemaParser::getObjectDefinition(ParsersAttributes::COMMENT, attribs,
+                                                                                 SchemaParser::SQL_DEFINITION);
+  SchemaParser::setIgnoreUnkownAttributes(false);
+ }
+}
+
 void Tabela::definirAtributoColunas(unsigned tipo_def)
 {
  QString str_cols;
@@ -112,7 +134,12 @@ void Tabela::definirAtributoColunas(unsigned tipo_def)
   if(tipo_def==SchemaParser::SQL_DEFINITION ||
      (tipo_def==SchemaParser::XML_DEFINITION &&
       !colunas[i]->isAddedByRelationship()))
+  {
    str_cols+=colunas[i]->getCodeDefinition(tipo_def);
+
+   if(tipo_def==SchemaParser::SQL_DEFINITION)
+    definirAtributoComentario(colunas[i]);
+  }
  }
 
  if(tipo_def==SchemaParser::SQL_DEFINITION)
@@ -153,6 +180,9 @@ void Tabela::definirAtributoRestricoes(unsigned tipo_def)
   {
    inc_insporrelacao=(tipo_def==SchemaParser::SQL_DEFINITION);
    str_rest+=rest->getCodeDefinition(tipo_def,inc_insporrelacao);
+
+   if(tipo_def==SchemaParser::SQL_DEFINITION)
+    definirAtributoComentario(rest);
   }
  }
 

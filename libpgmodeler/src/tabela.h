@@ -83,6 +83,8 @@ class Tabela: public BaseTable {
      na geração da definição SQL da tabela */
   void definirAtributoRegras(unsigned tipo_def);
 
+  void definirAtributoComentario(TableObject *obj_tab);
+
  protected:
 
   void adicionarTabelaPai(Tabela *tab, int idx_tab=-1);

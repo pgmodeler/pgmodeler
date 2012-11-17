@@ -6,7 +6,7 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT constraint (tablespace?,comment?,columns*,expression?)>
+<!ELEMENT constraint (tablespace?,columns*,expression?,comment?)>
 <!ATTLIST constraint name CDATA #REQUIRED>
 <!ATTLIST constraint type CDATA #REQUIRED>
 <!ATTLIST constraint deferrable (true | false) "false">

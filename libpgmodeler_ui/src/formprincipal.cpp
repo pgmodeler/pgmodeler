@@ -609,6 +609,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
   }
  }
 
+ tab_modelo->definirModificado(false);
  definirModeloAtual();
 }
 

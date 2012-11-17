@@ -61,7 +61,7 @@
    %end
  %end
 
- %if @{comment} %then @{comment} %end
+ %if @{comment} %then $tb @{comment} %end
  
 %if @{decl-in-table} %then $tb %end
 </constraint> $br
