@@ -1212,11 +1212,11 @@ void FormPrincipal::carregarPlugins(void)
   //Resolve do o sufixo da biblioteca em tempo de compilação
   #ifdef Q_OS_WIN
    lib=dir_plugins + nome_plugin +
-       AtributosGlobais::SEP_DIRETORIO  +
+       GlobalAttributes::DIR_SEPARATOR  +
        nome_plugin + QString(".dll"); //Sufixo em Windows
   #elif Q_OS_MAC
    lib=dir_plugins + nome_plugin +
-       AtributosGlobais::SEP_DIRETORIO  +
+       GlobalAttributes::DIR_SEPARATOR  +
        nome_plugin + QString(".dylib"); //Sufixo em Mac
   #else
     lib=dir_plugins + nome_plugin +
