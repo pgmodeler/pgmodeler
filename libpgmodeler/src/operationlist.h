@@ -85,160 +85,158 @@ class OperationList: public QObject {
  private:
   Q_OBJECT
 
-  //Indica que o encadeamento de operações está anulado temporariamente
+  //Inidcates that operation chaining is ignored temporarily
   bool ignore_chain;
 
-  //Lista de objetos excluídos / modificado no modelo
+  //List of objects that were removed / modified on the model
   vector<BaseObject *> object_pool;
 
-  /* Lista de objetos que no momento da exclusão do pool ainda eram referenciados
-     de algum modo no modelo. Os mesmo são armazenados nesta lista secundária e
-     excluídos quando a lista de operações objeto da lista
-     em si é destruído */
+  /* List of objects that at the time of deletion from pool were still referenced
+     somehow on the model. The object is stored in this secondary list and
+     deleted when the whole list of operations is destroyed */
   vector<BaseObject *> not_removed_objs;
 
-  //Lista de operações executadas pelo usuário
+  //Stores the operations executed by the user
   vector<Operation *> operations;
 
-  //Modelo ao qual a lista se aplica
+  //Database model that is linked with this operation list
   ModeloBD *model;
 
-  //Número máximo de entradas que a lista pode aceitar (global)
+  //Maximum number of stored operations (global)
   static unsigned max_size;
 
-           /* Armazena o tipo de encadeamento para a próxima
-              operação a ser armazenada na lista. Este atributo
-              é usado em conjunto com os metodos de inicialização
-              e encerramento de encademanento de operações */
+  /* Stores the type of chain to the next operation to be stored
+     in the list. This attribute is used in conjunction with the chaining
+     initialization / finalization methods. */
   unsigned next_op_chain;
 
-  //Índice atual da lista de operações
+  //Current operation index
   int current_index;
 
-  /* Valida as operações verificando se as mesmas possuem objetos registrados no pool.
-     Caso seja encontrada alguma operação cujo objeto não se encontra no pool
-     ela será removida, pois um objeto fora do pool não dá a garantia de que está
-     sendo referenciado no modelo. */
+  /* Validates operations by checking whether they have registered objects in the pool.
+     If found any operation whose object is not in the pool it will be removed
+     because an object outside the pool does not give a guarantee that is being
+     referenced in the model. */
   void validateOperations(void);
 
-  //Verifica se o objeto passado encontra-se no pool
+  //Checks whether the passed object is in the pool
   bool isObjectOnPool(BaseObject *object);
 
-  //Adiciona o objeto no pool de acordo com o tipo da operação informado
+  //Adds the object on the pool according to the operation type passed
   void addToPool(BaseObject *object, unsigned op_type);
 
-  /* Remove um objeto do pool através de seu índice efetuando a desalocação caso
-     nenhum objeto esteja referenciando o mesmo */
+  /* Removes one object from the pool using its index and deallocating
+     it in case the object is not referenced on the model */
   void removeFromPool(unsigned obj_idx);
 
-  //Executa uma operação da lista
+  /* Executes the passed operation. The default behavior is the 'undo' if
+     the user passes the parameter 'redo=true' the method executes the
+     redo function */
   void executeOperation(Operation *operacao, bool redo);
 
-  //Retorna o tamanho do encadeamento de operações a partir da posição atual
+  //Returns the chain size from the current element
   unsigned getChainSize(void);
 
  public:
   OperationList(ModeloBD *model);
   ~OperationList(void);
 
-  /* Inicia o encadeamento de operações.
-     Isso significa que todas as operações adicionadas
-     após a chamada deste método serão consideradas a
-     serem executadas todas em cadeia com uma única chamada
-     aos métodos refazerOperacao ou desfazerOperacao. */
+  /* Starts chaining operations.
+     This means that all operations added after calling this
+     method will be considered to be performed all at once
+     with a single call to the redoOperation / undoOperation methods */
   void startOperationChain(void);
 
-  /* Finaliza o encadeamento das operações definindo que a
-     ultima operação adicionada é o final da lista de
-     encadeamento */
+  /* Finalizes the chaining marking the last operation on the list
+     as the end of operation chain */
   void finishOperationChain(void);
 
-  /* Anula a execução das operações em forma de encadeamento,
-     porém caso a lista esteja com encadeamento aberto, as operações
-     serão inseridas em cadeia. Este método ajuda em situações onde
-     é necessário remover operações ou executá-las uma a uma porém
-     mantendo-se o encadeamento criado anteriormente.
+  /* Cancels the execution of operations in the form of chaining,
+     but if the list is open with chaining operations included will be chained too.
+     This method helps in situations where is necessary to remove operations or
+     execute them one by one but keeping the chaining created earlier.
 
-     Obs.: O usuário deve cancelar o anulamento do encademanto para
-           conseguir finalizaer o encadeamento de operações, se isso não
-           acontecer, as operações serão criadas encadeadas idefinidademente */
+     Note: The user must cancel the annulment of chaining
+           to be able to finalize the operations chaining. If it does not
+           happens the operations will be created chained indefinitely */
   void ignoreOperationChain(bool value);
 
-  //Retorna se um encadeamento na lista já foi iniciado
+  //Returns if the operation chaining where started
   bool isOperationChainStarted(void);
 
-  //Desfaz a última operação criada na lista
+  //Undo the current operation on the list
   void undoOperation(void);
 
-  //Refaz a próxima operação criada na lista
+  //Redo the current operation on the list
   void redoOperation(void);
 
-  //Remove todas as operações da lista
+  //Removes all the operations from the list
   void removeOperations(void);
 
-  //Obtém os dados da operação no índice especificado
+  //Gets the data from the operation with specified index
   void getOperationData(unsigned oper_idx, unsigned &oper_type, QString &obj_name, ObjectType &obj_type);
 
-  //Define o tamanho máximo da lista
+  //Sets the maximum size for the list
   static void setMaximumSize(unsigned max);
 
-  /* Registra na lista de operaçõe que o objeto passado sofreu algum tipo
-     de operação (modificação, removido, inserido) além de armazenar o conteúdo
-     antigo do mesmo. Este método SEMPRE deve ser chamado antes de que o objeto em questão
-     sofra qualquer operação no modelo. Caso este método seja chamado após uma operação sobre o
-     objeto, a ordem de restauração/reexecução de operações pode ser quebrada
-     ocasionando em segmentations fault. */
+  /* Registers in the list of operations that the object passed suffered some kind
+     of modification (modified, removed, inserted, moved) in addition the method stores
+     its original content.
+     This method should ALWAYS be called before the object in question
+     suffers any operation in the model. If this method is called after an operation on the
+     object the order of restoration / re-execution of operations can be broken and cause
+     segmentations fault. */
   void registerObject(BaseObject *object, unsigned op_type, int object_idx=-1, BaseObject *parent_obj=NULL);
 
-  //Obtém o tamanho máximo da lista
+  //Gets the maximum size for the operation list
   unsigned getMaximumSize(void);
 
-  //Obtém o tamanho atual da lista
+  //Gets the current size for the operation list
   unsigned getCurrentSize(void);
 
-  //Obtém o indice atual da lista
+  //Gets the current operation index
   int getCurrentIndex(void);
 
-  /* Retorna se a lista de operações está preparada para executar
-     as operações de refazer e desfazer */
+  //Returns if the list is prepared to execute redo operations
   bool isRedoAvailable(void);
+
+  //Returns if the list is prepared to execute undo operations
   bool isUndoAvailable(void);
 
-  /* Remove a última operação da lista. Este método deve ser usado com
-     cuidado pois ele pode quebrar o encadeamento de operações. Deve ser
-     usado somente quando uma exceção é disparada no momento após a adição
-     de algum objeto a lista e se deseja descartar esse operação devido
-     a exceção disparada. Caso a última operação for parte de um encadeamento,
-     toda a cadeia de operações é removido. Atenção: O funcionamento dste método
-     é diferente do método de desfazer operação, pois os objetos são removidos
-     do pool porém seus estados anteriores a adição dos mesmos a  lista não são
-     restaurados, por isso este não pode ser usado deliberadamente. */
+  /* Removes the last operation from the list. This method should be used with
+     care as it can break the chain of operations. It should be
+     used only when an exception is thrown after adding
+     some object on the list and if the user wants to discard this operation due
+     the thrown exception. If the last operation is part of a chain the entire chain
+     of operations is removed.
+     Warning: The execution of this method is different from the undo method because
+     the objects are removed pool but their states prior to adding it to the list are not
+     restored so this method can not be used deliberately. */
   void removeLastOperation(void);
 
-  /* Atualiza o índice do objeto quando o mesmo sofre uma movimentação no objeto
-     pai. Geralmente este método não precisa ser chamado, mas no caso de objetos
-     de tabela os quais podem ser movimentado (ter sua posição no objeto pai alterada)
-     este método atualiza o índice do objeto com o novo valor para que as operações
-     as quais referenciam tal objeto não seja executadas de forma incorreta usando
-     o índice anterior */
+  /* Updates the index of the object when it suffers a movement in the parente object.
+     Generally this method need not be called manually but in the case of table objects
+     (like columns, rules, constraints, indexes and triggers) which can be moved
+     (to have their position changed in the parent object). This method updates the index
+     of the object with the new value for the operations which refer the object is not
+     executed incorrectly using previous index */
   void updateObjectIndex(BaseObject *object, unsigned new_idx);
 
   signals:
-   //Sinal disparado para cada operação encadeada que for executada
+   //Signal emitted when one operation is executed
    void s_operationExecuted(int progress, QString object_id, unsigned icon_id);
 };
 
 
-/* Função modelo faz a cópia dos atributos do obj_copia para obj_orig fazendo
-   o cast para o tipo de objeto correto. Caso o objeto de origem não esteja alocado
-   a função o aloca antes de copiar os atributos. Os dois objetos devem ser do mesmo tipo
-   caso ambos estejam alocados.
-   -- Sintaxe no estilo  brainfuck! :p -- */
+/* Template function that makes a copy from 'copy_obj' to 'porig_obj' doing the cast to the
+   correct object type. If the source object is not allocated the function allocates the attributes
+   before copying. Both objects must be the same type if both are allocated.
+   -- Brainfuck syntax style! :p -- */
 template <class Classe>
 void copyObject(BaseObject **porig_obj, Classe *copy_obj);
 
-/* Esta função apenas chama a função modelo acima fazendo o dynamic_cast correto,
-   de acordo com o tipo passado */
+/* This functions is a second way to make a copy between two objects. It simply calls
+   the template function above. */
 void copyObject(BaseObject **porig_obj, BaseObject *copy_obj, ObjectType obj_type);
 
 #endif
