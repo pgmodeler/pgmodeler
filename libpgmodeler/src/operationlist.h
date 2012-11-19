@@ -228,15 +228,15 @@ class OperationList: public QObject {
 };
 
 
-/* Template function that makes a copy from 'copy_obj' to 'porig_obj' doing the cast to the
-   correct object type. If the source object is not allocated the function allocates the attributes
+/* Template function that makes a copy from 'copy_obj' to 'psrc_obj' doing the cast to the
+   correct object type. If the source object (psrc_obj) is not allocated the function allocates the attributes
    before copying. Both objects must be the same type if both are allocated.
    -- Brainfuck syntax style! :p -- */
 template <class Classe>
-void copyObject(BaseObject **porig_obj, Classe *copy_obj);
+void copyObject(BaseObject **psrc_obj, Classe *copy_obj);
 
 /* This functions is a second way to make a copy between two objects. It simply calls
    the template function above. */
-void copyObject(BaseObject **porig_obj, BaseObject *copy_obj, ObjectType obj_type);
+void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type);
 
 #endif

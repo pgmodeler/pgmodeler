@@ -1,114 +1,113 @@
 #include "operationlist.h"
 
 template <class Classe>
-void copyObject(BaseObject **porig_obj, Classe *copy_obj)
+void copyObject(BaseObject **psrc_obj, Classe *copy_obj)
 {
  Classe *orig_obj=NULL;
 
- //Obtém o endereço do objeto armazenado no ponteiro
- orig_obj=dynamic_cast<Classe *>(*porig_obj);
+ //Gets the objects stored in the pointer
+ orig_obj=dynamic_cast<Classe *>(*psrc_obj);
 
- //Caso o objeto de cópia não esteja aloca será disparada uma exceção
+ //Raises an error if the copy object is not allocated
  if(!copy_obj)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- /* Caso o objeto de origem não esteja alocado
-    o mesmo será alocado */
+ //Allocates the source object if its not allocated
  if(!orig_obj)
  {
   orig_obj=new Classe;
-  (*porig_obj)=orig_obj;
+  (*psrc_obj)=orig_obj;
  }
 
- //Efetua a cópia entre os objetos
+ //Makes the copy between the objects
  (*orig_obj)=(*copy_obj);
 }
 
-void copyObject(BaseObject **porig_obj, BaseObject *copy_obj, ObjectType obj_type)
+void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type)
 {
  switch(obj_type)
  {
   case OBJ_RELATIONSHIP:
     Relacionamento *rel1;
     rel1=new Relacionamento(dynamic_cast<Relacionamento *>(copy_obj));
-    if(!(*porig_obj))
-     (*porig_obj)=rel1;
+    if(!(*psrc_obj))
+     (*psrc_obj)=rel1;
     else
-     (*(dynamic_cast<Relacionamento *>(*porig_obj)))=(*rel1);
+     (*(dynamic_cast<Relacionamento *>(*psrc_obj)))=(*rel1);
   break;
   case BASE_RELATIONSHIP:
     RelacionamentoBase *rel;
     rel=new RelacionamentoBase(dynamic_cast<RelacionamentoBase *>(copy_obj));
-    if(!(*porig_obj))
-     (*porig_obj)=rel;
+    if(!(*psrc_obj))
+     (*psrc_obj)=rel;
     else
-     (*(dynamic_cast<RelacionamentoBase *>(*porig_obj)))=(*rel);
+     (*(dynamic_cast<RelacionamentoBase *>(*psrc_obj)))=(*rel);
   break;
   case OBJ_COLUMN:
-    copyObject(porig_obj, dynamic_cast<Column *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Column *>(copy_obj));
   break;
   case OBJ_CONSTRAINT:
-    copyObject(porig_obj, dynamic_cast<Restricao *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Restricao *>(copy_obj));
   break;
   case OBJ_TRIGGER:
-    copyObject(porig_obj, dynamic_cast<Gatilho *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Gatilho *>(copy_obj));
   break;
   case OBJ_RULE:
-    copyObject(porig_obj, dynamic_cast<Regra *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Regra *>(copy_obj));
   break;
   case OBJ_INDEX:
-    copyObject(porig_obj, dynamic_cast<Index *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Index *>(copy_obj));
   break;
   case OBJ_TABLE:
-    copyObject(porig_obj, dynamic_cast<Tabela *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Tabela *>(copy_obj));
   break;
   case OBJ_TEXTBOX:
-    copyObject(porig_obj, dynamic_cast<Textbox *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Textbox *>(copy_obj));
   break;
   case OBJ_OPCLASS:
-    copyObject(porig_obj, dynamic_cast<OperatorClass *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<OperatorClass *>(copy_obj));
   break;
   case OBJ_CONVERSION:
-    copyObject(porig_obj, dynamic_cast<Conversion *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Conversion *>(copy_obj));
   break;
   case OBJ_CAST:
-    copyObject(porig_obj, dynamic_cast<Cast *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Cast *>(copy_obj));
   break;
   case OBJ_DOMAIN:
-    copyObject(porig_obj, dynamic_cast<Domain *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Domain *>(copy_obj));
   break;
   case OBJ_TABLESPACE:
-    copyObject(porig_obj, dynamic_cast<Tablespace *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Tablespace *>(copy_obj));
   break;
   case OBJ_SCHEMA:
-    copyObject(porig_obj, dynamic_cast<Schema *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Schema *>(copy_obj));
   break;
   case OBJ_OPFAMILY:
-    copyObject(porig_obj, dynamic_cast<OperatorFamily *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<OperatorFamily *>(copy_obj));
   break;
   case OBJ_FUNCTION:
-    copyObject(porig_obj, dynamic_cast<Function *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Function *>(copy_obj));
   break;
   case OBJ_AGGREGATE:
-    copyObject(porig_obj, dynamic_cast<Aggregate *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Aggregate *>(copy_obj));
   break;
   case OBJ_LANGUAGE:
-    copyObject(porig_obj, dynamic_cast<Language *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Language *>(copy_obj));
   break;
   case OBJ_OPERATOR:
-    copyObject(porig_obj, dynamic_cast<Operador *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Operador *>(copy_obj));
   break;
   case OBJ_ROLE:
-    copyObject(porig_obj, dynamic_cast<Papel *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Papel *>(copy_obj));
   break;
   case OBJ_SEQUENCE:
-    copyObject(porig_obj, dynamic_cast<Sequencia *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Sequencia *>(copy_obj));
   break;
   case OBJ_TYPE:
-    copyObject(porig_obj, dynamic_cast<Tipo *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Tipo *>(copy_obj));
   break;
   case OBJ_VIEW:
-    copyObject(porig_obj, dynamic_cast<Visao *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Visao *>(copy_obj));
   break;
   default:
     throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -120,7 +119,8 @@ unsigned OperationList::max_size=500;
 
 OperationList::OperationList(ModeloBD *model)
 {
- //Dispara uma exceção caso o modelo passado não esteja alocado
+ /* Raises an error if the user tries to allocate an operation list linked to
+    to an unallocated model */
  if(!model)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -152,43 +152,40 @@ int OperationList::getCurrentIndex(void)
 
 void OperationList::startOperationChain(void)
 {
- /* Caso o encadeamento esteja iniciado e o usuário tente inicializa-lo
-    novamente, o encadeamento anterior será finalizado */
+ /* If the chaining is started and the user try it initializes
+    again, the earlier chaining is finished */
  if(next_op_chain!=Operation::NO_CHAIN)
   finishOperationChain();
 
- /* Marca o tipo de encadeamento da próxima operação com sendo
-    primeira operação do encadeamento */
+ /* The next operation inserted on the list will be the start
+    of the chaining */
  next_op_chain=Operation::CHAIN_START;
 }
 
 void OperationList::finishOperationChain(void)
 {
- /* Caso o encadeamento não esteja anulado,
-    indica que o próximo elemento da lista já não
-    fará parte do encadeamento */
+ /* If the chain is not ignored indicates that the next
+    element of the list no longer will be part of chaining */
  if(!ignore_chain)
   next_op_chain=Operation::NO_CHAIN;
  else if(ignore_chain)
-  /* Caso o encadeamento esteja anulado,
-    indica que o próximo elemento da lista
-    continuará fazendo parte do encadeamento */
+  /* If the chain is canceled indicates that the next element
+     of the list still part of the chaining */
   next_op_chain=Operation::CHAIN_MIDDLE;
 
  if(operations.size() > 0 && !ignore_chain)
  {
   unsigned idx=operations.size()-1;
 
-  /* Marca a ultima operação da lista como sendo a ultima do encadeamento
-     caso esta esteja no meio do encadeamento */
+  /* Marks the last operatin as being the end of chaining in case it is
+     on the middle of chain */
   if(operations[idx]->chain_type==Operation::CHAIN_MIDDLE)
    operations[idx]->chain_type=Operation::CHAIN_END;
 
-  /* Caso a última operação esteja marcada como ENC_INICIO indica que
-     o encademanto foi aberto porém somente uma operação está registrada
-     neste encadeamento, sendo assim a operação é marcada como SEM_ENCADEAMENTO
-     pois por se tratar de apenas uma operação não há necessidade de tratá-la como
-     encadeamento */
+  /* If the last operation is marked as CHAIN_START indicates that
+     the chaining was open but only one operation is recorded
+     and thus the operation is marked as NO_CHAIN because as it is
+     only one operation there is no need to treat it as chaining */
   else if(operations[idx]->chain_type==Operation::CHAIN_START)
    operations[idx]->chain_type=Operation::NO_CHAIN;
  }
@@ -207,27 +204,25 @@ bool OperationList::isOperationChainStarted(void)
 
 bool OperationList::isRedoAvailable(void)
 {
- /* Para que a operação de refazer possa ser executada
-    o índice atual da lista de operações deve estar no máximo
-    no penultimo elemento e a lista não pode estar vazia */
+ /* The redo operation only can be performed
+    if the current index from the list of operations is at most
+    the penultimate element and the list can not be empty */
  return(!operations.empty() && current_index < static_cast<int>(operations.size()));
 }
 
 bool OperationList::isUndoAvailable(void)
 {
- /* Para que a operação de desfazer possa ser executada é
-    suficiente que a lista de operações não esteja vazia */
+ /* For the undo operation be performed is
+    enough that the list of operations is not empty */
  return(!operations.empty() && current_index > 0);
 }
 
 void OperationList::setMaximumSize(unsigned max)
 {
- /* A lista de operações não pode ter valor 0 em seu tamanho máximo,
-    sendo assim é disparada uma exceção caso isso ocorra */
+ //Raises an error if a zero max size is assigned to the list
  if(max==0)
   throw Exception(ERR_ASG_INV_MAX_SIZE_OP_LIST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Define o tamanho máximo da lista
  max_size=max;
 }
 
@@ -235,40 +230,33 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 {
  ObjectType obj_type;
 
- /* Caso se tente inserir no pool um objeto não alocado
-    é disparada uma exceção */
+ //Raises an error if the object to be added is not allocated
  if(!object)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  obj_type=object->getObjectType();
 
- /* Caso o objeto está prestes a ser removido ou modificado, será armazenado no pool
-    uma cópia do mesmo e não o objeto em si */
+ //Stores a copy of the object if its about to be moved or modified
  if(op_type==Operation::OBJECT_MODIFIED ||
     op_type==Operation::OBJECT_MOVED)
  {
   BaseObject *copy_obj=NULL;
 
-  //Faz a cópia apenas de objetos descendetes das classes bases
   if(obj_type!=BASE_OBJECT && obj_type!=OBJ_DATABASE)
-  {
-   //Copia o objeto
    copyObject(&copy_obj, object, obj_type);
-  }
   else
    throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  /* Caso a cópia falhe esta retorna um objeto nulo e a adição de objeto
-     será cancelada com o disparo da exceção */
+  //Raises an error if the copy fails (returning a null object)
   if(!copy_obj)
    throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
-   //Insere a cópia do objeto no pool
+   //Inserts the copy on the pool
    object_pool.push_back(copy_obj);
-   object=copy_obj;
+   //object=copy_obj;
  }
  else
-  //Insere o próprio objeto no pool
+  //Inserts the original object on the pool (in case of adition or deletion operations)
   object_pool.push_back(object);
 }
 
@@ -278,27 +266,29 @@ void OperationList::removeOperations(void)
  TableObject *tab_obj=NULL;
  Tabela *tab=NULL;
 
- //Limpando a lista de operações
+ //Destroy the operations
  while(!operations.empty())
  {
   delete(operations.back());
   operations.pop_back();
  }
 
- //Limpando o pool de objetos
+ //Destroy the object pool
  while(!object_pool.empty())
   removeFromPool(0);
 
- //Removendo os objetos que não foram excluídos do pool
+ //Case there is not removed object
  while(!not_removed_objs.empty())
  {
   object=not_removed_objs.back();
   tab_obj=dynamic_cast<TableObject *>(object);
 
+  //Deletes the object if its not referenced on the model
   if(!tab_obj && model->obterIndiceObjeto(object) < 0)
    delete(object);
   else if(tab_obj)
   {
+   //Deletes the object if its not referenced by some table
    tab=dynamic_cast<Tabela *>(tab_obj->getParentTable());
    if(!tab || (tab && tab->obterIndiceObjeto(tab_obj)) < 0)
     delete(tab_obj);
@@ -319,13 +309,12 @@ void OperationList::validateOperations(void)
  itr_end=operations.end();
  while(itr!=itr_end)
  {
-  //Obtém a referência ao objeto
   oper=(*itr);
+  //Case the object isn't on the pool
   if(!isObjectOnPool((*itr)->pool_obj))
   {
-   //Remove o elemento do pool
+   //Remove the operation
    operations.erase(itr);
-   //Desaloca o objeto
    delete(oper);
    itr=operations.begin();
    itr_end=operations.end();
@@ -358,21 +347,21 @@ void OperationList::removeFromPool(unsigned obj_idx)
  BaseObject *object=NULL;
  vector<BaseObject *>::iterator itr;
 
- //Caso o índice do objeto a ser excluído seja inválido é disparada uma exceção
+ //Raises an error if the object index is invalid (out of bound)
  if(obj_idx >= object_pool.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Obtém o elemento a ser removido
+ //Gets the element to bo removed through its index
  itr=object_pool.begin() + obj_idx;
  object=(*itr);
 
- //Remove o elemento do pool
+ //Removes the object from pool
  object_pool.erase(itr);
 
- /* Armazena o objeto que antes se encontrava no pool no vetor 'objs_nao_excluidos' para que
-    o mesmo seja excluído no destrutor da lista. OBS.: O objeto não é deletado de imediato
-    pois no modelo / tabela / lista de operações o mesmo ainda pode estar sendo referenciado
-    ou passar a ser referenciado quando uma operação da lista for executada. */
+ /* Stores the object that was in the pool on the 'not_removed_objs' vector.
+    The object will be deleted in the destructor of the list. Note: The object is not
+    deleted immediately because the model / table / list of operations may still
+    referencing the object or it becomes referenced when an operation is performed on the list. */
   not_removed_objs.push_back(object);
 }
 
@@ -387,7 +376,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 
  try
  {
-  //Caso se tente adicionar uma operação com objeto não alocado, dispara uma exceção
+  //Raises an error if the user tries to register an operation with null object
   if(!object)
    throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -405,64 +394,49 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
         parent_obj->getObjectType()!=OBJ_TABLE)))
    throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  //Caso a lista de operações esteja cheia, faz a limpeza automática antes de inserir uma nova operação
+  //If the operations list is full makes the automatic cleaning before inserting a new operation
   if(current_index == static_cast<int>(max_size-1))
-  {
    removeOperations();
-  }
 
-  /* Caso se esteja adicionando uma operação e o índice atual não esteja apontando
-     para o final da lista (operação de refazer disponível / usuário executou operações
-     de desfazer), todos do índice atual até o fim da lista de operaçãoes serão excluídos
-     bem como os objetos no pool que estavam ligados  s operações excluídas */
-
+  /* If adding an operation and the current index is not pointing
+     to the end of the list (available redo / user ran undo operations)
+     all elements from the current index to the end of the list will be deleted
+     as well as the objects in the pool that were linked to the excluded operations */
   if(current_index>=0 && static_cast<unsigned>(current_index)!=operations.size())
   {
-   int i;
+   //Gets the last operation index
+   int i=operations.size()-1;
 
-   //Obtém o índice da última operação
-   i=operations.size()-1;
-
-   /* Remove as operações enquanto o indice da operação a ser removida (i)
-      não seja de uma operação anterior a  operação atual */
+   //Removes all the operation while the current index isn't reached
    while(i >= current_index)
    {
-    //Remove a operação pelo seu indice
     removeFromPool(i);
-    //Passa para operação anterior
     i--;
    }
 
-   /* Valida as operaçãos e os objetos no pool,
-      fazendo a sincronia entre as operações
-      restantes e os objetos no pool, excluindo
-      aquelas operações as quais referenciam objetos
-      inexistentes no pool */
+   //Validates the remaining operatoins after the deletion
    validateOperations();
   }
 
-  //Cria a operação a ser armazenada na lista
+  //Creates the new operation
   operation=new Operation;
   operation->op_type=op_type;
   operation->chain_type=next_op_chain;
   operation->original_obj=object;
 
-  //Adiciona o objeto no pool
+  //Adds the object on te pool
   addToPool(object, op_type);
 
-  //Atribui   operação o objeto inserido no pool
+  //Assigns the pool object to the operation
   operation->pool_obj=object_pool.back();
 
-  /* Caso o tipo de encadeamento atual da operação seja de início de
-     encademaneto, configura o tipo para a próxima operação a ser
-     inserida como sendo uma operação no meio do encadeamento. */
-   if(next_op_chain==Operation::CHAIN_START)
-    next_op_chain=Operation::CHAIN_MIDDLE;
+  if(next_op_chain==Operation::CHAIN_START)
+   next_op_chain=Operation::CHAIN_MIDDLE;
 
-  /* Executando operações específicada de acorodo com o tipo de objeto.
-     Caso o objeto possua um objeto pai, o mesmo precisa ser descoberto
-     e além disso é necessário descobrir e armazenar o índice do objeto
-     na lista contida em seu objeto pai */
+ /*  Performing specific operations according to the type of object.
+     If the object has a parent object, it must be discovered
+     and moreover it is necessary to find and store the index of the object
+     in the list on the parent object */
   if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT ||
      obj_type==OBJ_INDEX || obj_type==OBJ_TRIGGER ||
      obj_type==OBJ_RULE)
@@ -475,8 +449,8 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
    else
     parent_rel=dynamic_cast<Relacionamento *>(parent_obj);
 
-   /* Caso específico para colunas: em operações de remoção do objeto
-      as permissões daquele objeto precisam ser removidas. */
+   /* Specific case to columns: on removal operations the permissions of the objects
+      must be removed too */
    if(obj_type==OBJ_COLUMN && op_type==Operation::OBJECT_REMOVED)
     model->removerPermissoes(tab_obj);
    else if(((obj_type==OBJ_TRIGGER && dynamic_cast<Gatilho *>(tab_obj)->isReferRelationshipColumn()) ||
@@ -491,52 +465,44 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 
    operation->parent_obj=parent_obj;
 
-   /* Caso haja um relacionamento pai será obtido o índice do objeto.
-      Apenas colunas e restrições são manipuladas caso o pai seja
-      um relacionamento */
+   /* If there is a parent relationship will get the index of the object.
+      Only columns and constraints are handled case the parent is a relationship */
    if(parent_rel && (obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT))
    {
-    //Caso um índice específico para o objeto não foi especificado
+    //Case a specific index wasn't specified
     if(object_idx < 0)
-     //Armazena na operação o índice do objeto em seu pai
+     //Stores on the operation the index on its parent
      obj_idx=parent_rel->obterIndiceObjeto(tab_obj);
     else
-     //Atribui o índice específico definido pelo usuário ao índice do objeto na operação
+     //Assigns the specific index to operation
      obj_idx=object_idx;
    }
-   //Caso haja uma tabela pai será obtido o índice do objeto
+   //Case there is a parent table will get the object's index
    else if(parent_tab)
    {
-    //Caso um índice específico para o objeto não foi especificado
     if(object_idx < 0)
-     //Armazena na operação o índice do objeto em seu pai
+     //Stores on the operation the index of object on its parent
      obj_idx=parent_tab->obterIndiceObjeto(object->getName(false), obj_type);
     else
-     //Atribui o índice específico definido pelo usuário ao índice do objeto na operação
      obj_idx=object_idx;
    }
-   /* Caso nem tabela pai nem relacionametno pai estejam alocados
-      retorna um erro ao usuário e desaloca a operção criada */
+   //Raises an error if both parent table / relationship isn't allocated
    else
     throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
   else
   {
-   //Caso um índice específico para o objeto não foi especificado
+   //Case a specific index wasn't specified
    if(object_idx < 0)
-    //Armazena na operação o índice do objeto no modelo
+    //Stores on the operation the object index on the model
     obj_idx=model->obterIndiceObjeto(object);
    else
-    //Atribui o índice específico definido pelo usuário ao índice do objeto na operação
+    //Assigns the specific index to object
     obj_idx=object_idx;
   }
 
   operation->object_idx=obj_idx;
-
-  //Insere a operação na lista de operações
   operations.push_back(operation);
-
-  //O índice atual de operação será o próprio tamanho da lista
   current_index=operations.size();
  }
  catch(Exception &e)
@@ -567,7 +533,6 @@ void OperationList::getOperationData(unsigned oper_idx, unsigned &oper_type, QSt
  else
   obj_name=operation->pool_obj->getName(true);
 
- //Formata o nome especificamente para objetos da tabela incluindo o nome da tabela pai ao nome do objeto
  if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT || obj_type==OBJ_RULE ||
     obj_type==OBJ_TRIGGER || obj_type==OBJ_INDEX)
  {

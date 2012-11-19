@@ -185,7 +185,7 @@ void ListaOperacoesWidget::refazerOperacao(void)
  try
  {
   //Exibe o progresso de operações de refazer
-  connect(modelo_wgt->lista_op, SIGNAL(s_operacaoExecutada(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
+  connect(modelo_wgt->lista_op, SIGNAL(s_operationExecuted(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
   prog_tarefa->setWindowTitle(trUtf8("Redoing operations..."));
   prog_tarefa->show();
 
