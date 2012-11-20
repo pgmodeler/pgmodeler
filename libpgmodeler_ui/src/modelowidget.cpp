@@ -1653,7 +1653,7 @@ void ModeloWidget::colarObjetos(void)
     nome_aux=dynamic_cast<Function *>(objeto)->getSignature();
    }
    else if(tipo_obj==OBJ_OPERATOR)
-    nome_aux=dynamic_cast<Operator *>(objeto)->obterAssinatura();
+    nome_aux=dynamic_cast<Operator *>(objeto)->getSignature();
    //Para os demais tipos de objeto checa através do nome completo
    else
     nome_aux=objeto->getName(true);
@@ -1699,7 +1699,7 @@ void ModeloWidget::colarObjetos(void)
       {
        oper=dynamic_cast<Operator *>(objeto);
        oper->setName(nome_orig_objs[objeto] + nome_aux);
-       nome_obj_copia=oper->obterAssinatura();
+       nome_obj_copia=oper->getSignature();
        oper->setName(nome_orig_objs[objeto]);
       }
       /*else if(tipo_obj==OBJETO_TIPO)

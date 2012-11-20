@@ -527,10 +527,10 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
     else if(tipos[i]==OBJ_OPERATOR)
     {
      oper=dynamic_cast<Operator *>(objeto);
-     for(i1=Operator::FUNC_OPERADOR; i1 <= Operator::FUNC_RESTRICAO; i1++)
+     for(i1=Operator::FUNC_OPERATOR; i1 <= Operator::FUNC_RESTRICTION; i1++)
      {
-      if(oper->obterFuncao(i1)==funcao)
-       oper->definirFuncao(funcao, i1);
+      if(oper->getFunction(i1)==funcao)
+       oper->setFunction(funcao, i1);
      }
     }
     else if(tipos[i]==OBJ_TYPE)

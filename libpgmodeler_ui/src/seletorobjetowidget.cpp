@@ -63,7 +63,7 @@ void SeletorObjetoWidget::definirObjeto(BaseObject *objeto)
   if(tipo_obj==OBJ_FUNCTION)
    nome_obj=dynamic_cast<Function *>(objeto)->getSignature();
   else if(tipo_obj==OBJ_OPERATOR)
-   nome_obj=dynamic_cast<Operator *>(objeto)->obterAssinatura();
+   nome_obj=dynamic_cast<Operator *>(objeto)->getSignature();
   /* Formatando o nome do objeto caso o mesmo seja um objeto de tabela.
      nesse modo o nome será exibido da seguinte forma:
      esquema.tabela.objeto */

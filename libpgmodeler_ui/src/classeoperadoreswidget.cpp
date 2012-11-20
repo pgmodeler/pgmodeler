@@ -148,7 +148,7 @@ void ClasseOperadoresWidget::exibirDadosElemento(OperatorClassElement elem, int 
     a assinatura do operador e o tipo do objeto (operador) */
  else if(tipo_elem==OperatorClassElement::OPERATOR_ELEM)
  {
-  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getOperator()->obterAssinatura()), idx_linha, 0);
+  tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getOperator()->getSignature()), idx_linha, 0);
   tab_elementos->definirTextoCelula(QString::fromUtf8(elem.getOperator()->getTypeName()), idx_linha, 1);
  }
   /* Para o tipo ARMAZENAMENTO são exibidas na coluna 0 e 1, respectivamente,

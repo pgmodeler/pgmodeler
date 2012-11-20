@@ -443,7 +443,7 @@ void ModeloBD::__removerObjeto(BaseObject *objeto, int idx_obj)
     else if(tipo_obj==OBJ_FUNCTION)
      obterObjeto(dynamic_cast<Function *>(objeto)->getSignature(), tipo_obj, idx_obj);
     else
-     obterObjeto(dynamic_cast<Operator *>(objeto)->obterAssinatura(), tipo_obj, idx_obj);
+     obterObjeto(dynamic_cast<Operator *>(objeto)->getSignature(), tipo_obj, idx_obj);
    }
 
    if(idx_obj >= 0)
@@ -540,7 +540,7 @@ BaseObject *ModeloBD::obterObjeto(const QString &nome, ObjectType tipo_obj, int 
     if(tipo_obj==OBJ_FUNCTION)
      assinatura=dynamic_cast<Function *>(*itr)->getSignature();
     else
-     assinatura=dynamic_cast<Operator *>(*itr)->obterAssinatura();
+     assinatura=dynamic_cast<Operator *>(*itr)->getSignature();
 
     enc=(assinatura==nome_aux1);
     if(!enc) itr++;
@@ -2203,7 +2203,7 @@ void ModeloBD::removerOperador(Operator *operador, int idx_obj)
       do objeto referenciado */
    //Formata a mensagem para referência direta
    throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-                 .arg(operador->obterAssinatura(true))
+                 .arg(operador->getSignature(true))
                  .arg(operador->getTypeName())
                  .arg(vet_refs[0]->getName(true))
                  .arg(vet_refs[0]->getTypeName()),
@@ -4115,25 +4115,25 @@ Operator *ModeloBD::criarOperador(void)
   //Obtém os atributos
   XMLParser::getElementAttributes(atributos);
 
-  operador->definirMerges(atributos[ParsersAttributes::MERGES]==ParsersAttributes::_TRUE_);
-  operador->definirHashes(atributos[ParsersAttributes::HASHES]==ParsersAttributes::_TRUE_);
+  operador->setMerges(atributos[ParsersAttributes::MERGES]==ParsersAttributes::_TRUE_);
+  operador->setHashes(atributos[ParsersAttributes::HASHES]==ParsersAttributes::_TRUE_);
 
   /* O mapa de tipos de função abaixo é usado para se atribuir de forma
       mas simples, sem comparações, a função que for obtida do XML a qual
       o tipo em construção referencia */
-  tipo_funcoes[ParsersAttributes::OPERATOR_FUNC]=Operator::FUNC_OPERADOR;
-  tipo_funcoes[ParsersAttributes::JOIN_FUNC]=Operator::FUNC_JUNCAO;
-  tipo_funcoes[ParsersAttributes::RESTRICTION_FUNC]=Operator::FUNC_RESTRICAO;
+  tipo_funcoes[ParsersAttributes::OPERATOR_FUNC]=Operator::FUNC_OPERATOR;
+  tipo_funcoes[ParsersAttributes::JOIN_FUNC]=Operator::FUNC_JOIN;
+  tipo_funcoes[ParsersAttributes::RESTRICTION_FUNC]=Operator::FUNC_RESTRICTION;
 
   /* O mapa de tipos de operadores abaixo é usado para se atribuir de forma
       mais simples, sem comparações, o operador que for obtida do XML a qual
       o operador em construção referencia */
-  tipo_operadores[ParsersAttributes::COMMUTATOR_OP]=Operator::OPER_COMUTACAO;
-  tipo_operadores[ParsersAttributes::GREATER_OP]=Operator::OPER_MAIOR;
-  tipo_operadores[ParsersAttributes::LESS_OP]=Operator::OPER_MENOR;
-  tipo_operadores[ParsersAttributes::NEGATOR_OP]=Operator::OPER_NEGACAO;
-  tipo_operadores[ParsersAttributes::SORT_OP]=Operator::OPER_ORDENACAO1;
-  tipo_operadores[ParsersAttributes::SORT2_OP]=Operator::OPER_ORDENACAO2;
+  tipo_operadores[ParsersAttributes::COMMUTATOR_OP]=Operator::OPER_COMMUTATION;
+  tipo_operadores[ParsersAttributes::GREATER_OP]=Operator::OPER_GREATER;
+  tipo_operadores[ParsersAttributes::LESS_OP]=Operator::OPER_LESS;
+  tipo_operadores[ParsersAttributes::NEGATOR_OP]=Operator::OPER_NEGATION;
+  tipo_operadores[ParsersAttributes::SORT_OP]=Operator::OPER_SORT1;
+  tipo_operadores[ParsersAttributes::SORT2_OP]=Operator::OPER_SORT2;
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
@@ -4157,7 +4157,7 @@ Operator *ModeloBD::criarOperador(void)
       //Dispara uma exceção caso o operador referenciado não exista
       if(!oper_aux && !atributos[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                             .arg(QString::fromUtf8(operador->obterAssinatura(true)))
+                             .arg(QString::fromUtf8(operador->getSignature(true)))
                              .arg(operador->getTypeName())
                              .arg(QString::fromUtf8(atributos[ParsersAttributes::SIGNATURE]))
                              .arg(BaseObject::getTypeName(OBJ_OPERATOR)),
@@ -4166,7 +4166,7 @@ Operator *ModeloBD::criarOperador(void)
       /* Obtém o tipo de configuraçao de função do tipo de acordo com a referência
          da mesma obtida do XML */
       tipo_oper=tipo_operadores[atributos[ParsersAttributes::REF_TYPE]];
-      operador->definirOperador(dynamic_cast<Operator *>(oper_aux),tipo_oper);
+      operador->setOperator(dynamic_cast<Operator *>(oper_aux),tipo_oper);
      }
      else if(elem==ParsersAttributes::TYPE)
      {
@@ -4176,12 +4176,12 @@ Operator *ModeloBD::criarOperador(void)
 
       //Obtém o tipo de referência do tipo base (esquerda ou direita)
       if(atributos[ParsersAttributes::REF_TYPE]!=ParsersAttributes::RIGHT_TYPE)
-       tipo_arg=Operator::ARG_ESQUERDA;
+       tipo_arg=Operator::ARG_LEFT;
       else
-       tipo_arg=Operator::ARG_DIREITA;
+       tipo_arg=Operator::ARG_RIGHT;
 
       tipo=criarTipoPgSQL();
-      operador->definirTipoDadoArgumento(tipo, tipo_arg);
+      operador->setArgumentType(tipo, tipo_arg);
      }
      else if(elem==ParsersAttributes::FUNCTION)
      {
@@ -4208,7 +4208,7 @@ Operator *ModeloBD::criarOperador(void)
       tipo_func=tipo_funcoes[atributos[ParsersAttributes::REF_TYPE]];
 
       //Atribui a função ao tipo na configuração obtida
-      operador->definirFuncao(dynamic_cast<Function *>(funcao), tipo_func);
+      operador->setFunction(dynamic_cast<Function *>(funcao), tipo_func);
      }
     }
    }
@@ -6642,16 +6642,16 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    unsigned i;
 
    //Obtém as dependências das funções usadas pelo operador
-   for(i=Operator::FUNC_OPERADOR; i <= Operator::FUNC_RESTRICAO; i++)
+   for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
    {
-    if(oper->obterFuncao(i))
-     obterDependenciasObjeto(oper->obterFuncao(i), vet_deps, inc_dep_indiretas);
+    if(oper->getFunction(i))
+     obterDependenciasObjeto(oper->getFunction(i), vet_deps, inc_dep_indiretas);
    }
 
    //Obtém as dependências dos tipos dos argumentos do operador
-   for(i=Operator::ARG_ESQUERDA; i <= Operator::ARG_DIREITA; i++)
+   for(i=Operator::ARG_LEFT; i <= Operator::ARG_RIGHT; i++)
    {
-    tipo_usr=obterObjetoTipoPgSQL(oper->obterTipoDadoArgumento(i));
+    tipo_usr=obterObjetoTipoPgSQL(oper->getArgumentType(i));
       //obterObjeto(*oper->obterTipoDadoArgumento(i), OBJETO_TIPO);
 
     if(tipo_usr)
@@ -6659,10 +6659,10 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    }
 
    //Obtém as dependências dos operadores auxiliares
-   for(i=Operator::OPER_COMUTACAO; i <= Operator::OPER_MAIOR; i++)
+   for(i=Operator::OPER_COMMUTATION; i <= Operator::OPER_GREATER; i++)
    {
-    if(oper->obterOperador(i))
-     obterDependenciasObjeto(oper->obterOperador(i), vet_deps, inc_dep_indiretas);
+    if(oper->getOperator(i))
+     obterDependenciasObjeto(oper->getOperator(i), vet_deps, inc_dep_indiretas);
    }
   }
   //** Obtendo as dependências de Papéis **
@@ -7040,9 +7040,9 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       oper=dynamic_cast<Operator *>(*itr);
 
       //Verifica se o objeto não referencia o papel
-      if(oper->obterFuncao(Operator::FUNC_OPERADOR)==funcao ||
-         oper->obterFuncao(Operator::FUNC_JUNCAO)==funcao  ||
-         oper->obterFuncao(Operator::FUNC_RESTRICAO)==funcao)
+      if(oper->getFunction(Operator::FUNC_OPERATOR)==funcao ||
+         oper->getFunction(Operator::FUNC_JOIN)==funcao  ||
+         oper->getFunction(Operator::FUNC_RESTRICTION)==funcao)
       {
        refer=true;
        vet_refs.push_back(oper);
@@ -7329,8 +7329,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       itr++;
 
       //Verifica se um dos argumentos do operador é o próprio tipo a ser removido
-      if(oper->obterTipoDadoArgumento(Operator::ARG_ESQUERDA)==ptr_tipopgsql ||
-         oper->obterTipoDadoArgumento(Operator::ARG_DIREITA)==ptr_tipopgsql)
+      if(oper->getArgumentType(Operator::ARG_LEFT)==ptr_tipopgsql ||
+         oper->getArgumentType(Operator::ARG_RIGHT)==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(oper);
@@ -7578,10 +7578,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
 
       /* Verifica se um dos operadores agregados ao operador atual não referencia
          o objeto não referencia o operador */
-      for(i1=Operator::OPER_COMUTACAO; i1 <= Operator::OPER_MAIOR &&
+      for(i1=Operator::OPER_COMMUTATION; i1 <= Operator::OPER_GREATER &&
             (!modo_exclusao || (modo_exclusao && !refer)); i1++)
       {
-       if(oper->obterOperador(i1)==operador)
+       if(oper->getOperator(i1)==operador)
        {
         refer=true;
         vet_refs.push_back(oper);

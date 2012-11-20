@@ -122,7 +122,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
   if(recheck) attributes[ParsersAttributes::RECHECK]="1";
 
   if(def_type==SchemaParser::SQL_DEFINITION)
-   attributes[ParsersAttributes::SIGNATURE]=_operator->obterAssinatura();
+   attributes[ParsersAttributes::SIGNATURE]=_operator->getSignature();
   else
    attributes[ParsersAttributes::DEFINITION]=_operator->getCodeDefinition(def_type,true);
  }

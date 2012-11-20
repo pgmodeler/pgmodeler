@@ -388,8 +388,8 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
      else
      {
       operador=dynamic_cast<Operator *>(objeto);
-      item_tab->setText(QString::fromUtf8(operador->obterAssinatura(false)));
-      item_tab->setToolTip(QString::fromUtf8(operador->obterAssinatura(false)));
+      item_tab->setText(QString::fromUtf8(operador->getSignature(false)));
+      item_tab->setToolTip(QString::fromUtf8(operador->getSignature(false)));
      }
 
      //Cria o item descritor de tipo do objeto
@@ -744,8 +744,8 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
        else if(tipos[i1]==OBJ_OPERATOR)
        {
         operador=dynamic_cast<Operator *>(objeto);
-        item4->setText(0, QString::fromUtf8(operador->obterAssinatura(false)));
-        item4->setToolTip(0, QString::fromUtf8(operador->obterAssinatura(false)));
+        item4->setText(0, QString::fromUtf8(operador->getSignature(false)));
+        item4->setToolTip(0, QString::fromUtf8(operador->getSignature(false)));
        }
        else
        {

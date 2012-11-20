@@ -7,14 +7,14 @@ Operator::Operator(void)
  obj_type=OBJ_OPERATOR;
 
  for(i=0; i < 3; i++)
-  funcoes[i]=NULL;
+  functions[i]=NULL;
 
  for(i=0; i < 6; i++)
-  operadores[i]=NULL;
+  operators[i]=NULL;
 
  hashes=merges=false;
- tipo_args[ARG_ESQUERDA]=TipoPgSQL("any");
- tipo_args[ARG_DIREITA]=TipoPgSQL("any");
+ argument_types[ARG_LEFT]=TipoPgSQL("any");
+ argument_types[ARG_RIGHT]=TipoPgSQL("any");
 
  attributes[ParsersAttributes::LEFT_TYPE]="";
  attributes[ParsersAttributes::RIGHT_TYPE]="";
@@ -33,132 +33,132 @@ Operator::Operator(void)
  attributes[ParsersAttributes::REF_TYPE]="";
 }
 
-bool Operator::isValidName(const QString &nome)
+bool Operator::isValidName(const QString &name)
 {
  //ATENÇÃO: Não alterar a seqüência em que aparecem os caracteres.
- QString chr_validos="+-*/<>=~!@#%^&|'?";
- int pos, tam;
- bool valido=true;
+ QString valid_chars="+-*/<>=~!@#%^&|'?";
+ int pos, len;
+ bool valid=true;
 
  //Verifica se o tamanho do nome é válido
- valido=(nome.size() <= static_cast<int>(OBJECT_NAME_MAX_LENGTH));
+ valid=(name.size() <= static_cast<int>(OBJECT_NAME_MAX_LENGTH));
 
  //Verificando se o nome é válido de acordo com as condições:
  /* 1) O nome possui apenas caracteres do conjunto
        definido por chr_validos */
- tam=nome.size();
- for(pos=0; pos < tam && valido; pos++)
-  valido=!(chr_validos.find(nome[pos]) < 0);
+ len=name.size();
+ for(pos=0; pos < len && valid; pos++)
+  valid=!(valid_chars.find(name[pos]) < 0);
 
  /* 2) O nome não possui as sequencias -- ou / * as quais
        definem início de comentário SQL */
- if(valido) valido=(nome.indexOf("--") < 0);
- if(valido) valido=(nome.indexOf("/*") < 0);
+ if(valid) valid=(name.indexOf("--") < 0);
+ if(valid) valid=(name.indexOf("/*") < 0);
 
  /* 3) Se o nome terminar com um caractere - ou + o mesmo deve
        possuir um ou mais caracteres do conjunto ~!@#%^&|'? */
- if(nome[nome.size()-1]=='-' || nome[nome.size()-1]=='+')
+ if(name[name.size()-1]=='-' || name[name.size()-1]=='+')
  {
   /* O conjunto ~!@#%^&|'? é definido a partir da
      posição 7 do conjunto chr_validos */
-  tam=chr_validos.size();
-  for(pos=7; pos < tam && valido; pos++)
-   valido=(nome.indexOf(chr_validos[pos]) < 0);
+  len=valid_chars.size();
+  for(pos=7; pos < len && valid; pos++)
+   valid=(name.indexOf(valid_chars[pos]) < 0);
  }
 
- return(valido);
+ return(valid);
 }
 
-void Operator::setName(const QString &nome)
+void Operator::setName(const QString &name)
 {
- if(nome=="")
+ if(name=="")
   throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  if(!isValidName(nome))
+  if(!isValidName(name))
    throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
-   this->obj_name=nome;
+   this->obj_name=name;
  }
 }
 
-void Operator::definirFuncao(Function *funcao, unsigned tipo_funcao)
+void Operator::setFunction(Function *func, unsigned func_type)
 {
  //Caso o tipo de função seja inválido
- if(tipo_funcao > FUNC_RESTRICAO)
+ if(func_type > FUNC_RESTRICTION)
   throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(tipo_funcao==FUNC_OPERADOR)
+ else if(func_type==FUNC_OPERATOR)
  {
   /* Caso a função não esteja alocada e se tente atribuí-la
      como função executada pelo operador */
-  if(!funcao)
+  if(!func)
     throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->getName(true)))
                          .arg(BaseObject::getTypeName(OBJ_OPERATOR)),
                   ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Caso o número de parâmetros da função seja inválido. Para operadores
      a mesma deve possuir 1 ou 2 parâmetros */
-  else if(funcao->getParameterCount()==0 || funcao->getParameterCount() > 2)
+  else if(func->getParameterCount()==0 || func->getParameterCount() > 2)
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                          .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_OPERATOR)),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
-   unsigned qtd_params=funcao->getParameterCount();
-   TipoPgSQL tipo_param1=TipoPgSQL("any"), tipo_param2=TipoPgSQL("any");
+   unsigned param_count=func->getParameterCount();
+   TipoPgSQL param_type1=TipoPgSQL("any"), param_type2=TipoPgSQL("any");
 
    //Obtém os prâmetros da função
-   tipo_param1=funcao->getParameter(0).getType();
-   if(qtd_params==2) tipo_param2=funcao->getParameter(1).getType();
+   param_type1=func->getParameter(0).getType();
+   if(param_count==2) param_type2=func->getParameter(1).getType();
 
    /* Verificando os parâmetros da função de acordo com o tipo dos
       argumentos dos operadores */
 
    //A função não pode possuir parametros do tipo any
-   if((tipo_param1=="any" || (qtd_params==2 && tipo_param2=="any")) ||
+   if((param_type1=="any" || (param_count==2 && param_type2=="any")) ||
 
       /* Caso a quantidade de parametros é 1 e ambos os argumentos do
          operador esteja com tipos configurados (operador binário) */
-      (qtd_params==1 && tipo_args[0]!="any" && tipo_args[1]!="any") ||
+      (param_count==1 && argument_types[0]!="any" && argument_types[1]!="any") ||
 
       /* Caso a quantidade de parâmetros seja 2 verifica se ambos os argumentos
          do operador estão com tipos configurados */
-      (qtd_params==2 && ((tipo_args[0]=="any" && tipo_args[1]!="any") ||
-                         (tipo_args[0]!="any" && tipo_args[1]=="any"))) ||
+      (param_count==2 && ((argument_types[0]=="any" && argument_types[1]!="any") ||
+                         (argument_types[0]!="any" && argument_types[1]=="any"))) ||
 
     /* Quando a função possui 2 parametros os mesmo deve ser do mesmo tipo
       que os argumentos do operador */
-      (qtd_params==2 &&
-      ((tipo_args[0]=="any" || tipo_args[1]=="any") ||
-       (tipo_args[0]!=tipo_param1 || tipo_args[1]!=tipo_param2))) ||
+      (param_count==2 &&
+      ((argument_types[0]=="any" || argument_types[1]=="any") ||
+       (argument_types[0]!=param_type1 || argument_types[1]!=param_type2))) ||
 
        /* Quando possui apenas 1 parâmetro o tipo do mesmo deve coincidir
           com um dos argumentos do operador, sendo que um deles deve
           ser do tipo "any" indicando que apenas um argumento foi setado para o operador */
-      (qtd_params==1 &&
-       ((tipo_args[0]!="any" && tipo_args[0]!=tipo_param1) ||
-        (tipo_args[1]!="any" && tipo_args[1]!=tipo_param1))))
+      (param_count==1 &&
+       ((argument_types[0]!="any" && argument_types[0]!=param_type1) ||
+        (argument_types[1]!="any" && argument_types[1]!=param_type1))))
      throw Exception(ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
  }
 
- funcoes[tipo_funcao]=funcao;
+ functions[func_type]=func;
 }
 
-void Operator::definirTipoDadoArgumento(TipoPgSQL tipo_dado, unsigned tipo_arg)
+void Operator::setArgumentType(TipoPgSQL arg_type, unsigned arg_id)
 {
  //Caso o tipo de argumento seja inválido
- if(tipo_arg > ARG_DIREITA)
+ if(arg_id > ARG_RIGHT)
   throw Exception( ERR_REF_OPER_ARG_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
-  tipo_args[tipo_arg]=tipo_dado;
+  argument_types[arg_id]=arg_type;
 }
 
-void Operator::definirOperador(Operator *op, unsigned tipo_op)
+void Operator::setOperator(Operator *oper, unsigned op_type)
 {
  //Caso o tipo de operador seja inválido
- if(tipo_op > OPER_MAIOR)
+ if(op_type > OPER_GREATER)
    throw Exception(ERR_REF_OPER_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -169,11 +169,11 @@ void Operator::definirOperador(Operator *op, unsigned tipo_op)
      deste último deve ser +*+(tipoB, tipoA). A condição testa abaixo é a situação
      contrária, ou seja quando o operador de comutação não atende aos requisitos
      da documentação  */
-  if(op && tipo_op==OPER_COMUTACAO && tipo_args[ARG_ESQUERDA]!=op->tipo_args[ARG_DIREITA])
+  if(oper && op_type==OPER_COMMUTATION && argument_types[ARG_LEFT]!=oper->argument_types[ARG_RIGHT])
   {
    throw Exception(Exception::getErrorMessage(ERR_ASG_INV_COM_OPEERATOR)
-                         .arg(QString::fromUtf8(op->obterAssinatura(true)))
-                         .arg(QString::fromUtf8(this->obterAssinatura(true))),
+                         .arg(QString::fromUtf8(oper->getSignature(true)))
+                         .arg(QString::fromUtf8(this->getSignature(true))),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
   /* Validando OP Negação: De acordo com a documentação do PostgreSQL o operador
@@ -182,91 +182,91 @@ void Operator::definirOperador(Operator *op, unsigned tipo_op)
      definido e seu operador de negação é !*! então a assinatura deste
      último deve ser !*!(tipoA). A condição testa abaixo é a situação contrária,
      ou seja quando o operador de negação não atende aos requisitos da documentação */
-  else if(op && tipo_op==OPER_NEGACAO &&
-          (tipo_args[ARG_ESQUERDA]!=op->tipo_args[ARG_ESQUERDA] &&
-           tipo_args[ARG_DIREITA]!=op->tipo_args[ARG_DIREITA]))
+  else if(oper && op_type==OPER_NEGATION &&
+          (argument_types[ARG_LEFT]!=oper->argument_types[ARG_LEFT] &&
+           argument_types[ARG_RIGHT]!=oper->argument_types[ARG_RIGHT]))
   {
    throw Exception(Exception::getErrorMessage(ERR_ASG_INV_NEG_OPERATOR)
-                         .arg(QString::fromUtf8(op->obterAssinatura(true)))
-                         .arg(QString::fromUtf8(this->obterAssinatura(true))),
+                         .arg(QString::fromUtf8(oper->getSignature(true)))
+                         .arg(QString::fromUtf8(this->getSignature(true))),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
   else
-   operadores[tipo_op]=op;
+   operators[op_type]=oper;
  }
 }
 
-void Operator::definirHashes(bool valor)
+void Operator::setHashes(bool value)
 {
- hashes=valor;
+ hashes=value;
 }
 
-void Operator::definirMerges(bool valor)
+void Operator::setMerges(bool value)
 {
- merges=valor;
+ merges=value;
 }
 
-Function *Operator::obterFuncao(unsigned tipo_funcao)
+Function *Operator::getFunction(unsigned func_type)
 {
  //Caso o tipo de função seja inválido
- if(tipo_funcao > FUNC_RESTRICAO)
+ if(func_type > FUNC_RESTRICTION)
   throw Exception(ERR_REF_OPER_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(funcoes[tipo_funcao]);
+ return(functions[func_type]);
 }
 
-TipoPgSQL Operator::obterTipoDadoArgumento(unsigned tipo_arg)
+TipoPgSQL Operator::getArgumentType(unsigned arg_id)
 {
  //Caso o tipo de argumento seja inválido
- if(tipo_arg > ARG_DIREITA)
+ if(arg_id > ARG_RIGHT)
   throw Exception( ERR_REF_OPER_ARG_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- return(tipo_args[tipo_arg]);
+ return(argument_types[arg_id]);
 }
 
-Operator *Operator::obterOperador(unsigned tipo_op)
+Operator *Operator::getOperator(unsigned op_type)
 {
  //Caso o tipo de operador seja inválido
- if(tipo_op > OPER_MAIOR)
+ if(op_type > OPER_GREATER)
   throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- return(operadores[tipo_op]);
+ return(operators[op_type]);
 }
 
-bool Operator::aceitaHashes(void)
+bool Operator::isHashes(void)
 {
  return(hashes);
 }
 
-bool Operator::aceitaMerges(void)
+bool Operator::isMerges(void)
 {
  return(merges);
 }
 
-QString Operator::obterAssinatura(bool formatar_nome)
+QString Operator::getSignature(bool format_name)
 {
- QString assinatura, str_aux;
+ QString signature, str_aux;
  unsigned i;
 
- assinatura=this->getName(formatar_nome);
+ signature=this->getName(format_name);
 
  for(i=0; i < 2; i++)
  {
-  if(tipo_args[i]!="any")
+  if(argument_types[i]!="any")
   {
-   if(tipo_args[i]=="any") str_aux+="NONE";
-   else str_aux+=(*tipo_args[i]);
+   if(argument_types[i]=="any") str_aux+="NONE";
+   else str_aux+=(*argument_types[i]);
    if(i==0) str_aux+=",";
   }
  }
- assinatura+="(" + str_aux + ")";
- return(assinatura);
+ signature+="(" + str_aux + ")";
+ return(signature);
 }
 
-QString Operator::getCodeDefinition(unsigned tipo_def)
+QString Operator::getCodeDefinition(unsigned def_type)
 {
- return(this->getCodeDefinition(tipo_def, false));
+ return(this->getCodeDefinition(def_type, false));
 }
 
-QString Operator::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
+QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
  unsigned i;
  QString atribs_tipos[]={ParsersAttributes::LEFT_TYPE, ParsersAttributes::RIGHT_TYPE},
@@ -280,52 +280,52 @@ QString Operator::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
                           ParsersAttributes::JOIN_FUNC,
                           ParsersAttributes::RESTRICTION_FUNC};
 
- for(i=Operator::ARG_ESQUERDA; i <= Operator::ARG_DIREITA; i++)
+ for(i=Operator::ARG_LEFT; i <= Operator::ARG_RIGHT; i++)
  {
-  if(tipo_def==SchemaParser::SQL_DEFINITION)
+  if(def_type==SchemaParser::SQL_DEFINITION)
   {
-   if(tipo_args[i]!="any")
-    attributes[atribs_tipos[i]]=(*tipo_args[i]);
+   if(argument_types[i]!="any")
+    attributes[atribs_tipos[i]]=(*argument_types[i]);
   }
   else
   {
-   attributes[atribs_tipos[i]]=tipo_args[i].
+   attributes[atribs_tipos[i]]=argument_types[i].
                 obterDefinicaoObjeto(SchemaParser::XML_DEFINITION,atribs_tipos[i]);
   }
  }
 
- for(i=Operator::OPER_COMUTACAO; i <= Operator::OPER_MAIOR; i++)
+ for(i=Operator::OPER_COMMUTATION; i <= Operator::OPER_GREATER; i++)
  {
-  if(operadores[i])
+  if(operators[i])
   {
-   if(tipo_def==SchemaParser::SQL_DEFINITION)
-    attributes[atribs_ops[i]]=operadores[i]->getName(true);
+   if(def_type==SchemaParser::SQL_DEFINITION)
+    attributes[atribs_ops[i]]=operators[i]->getName(true);
    else
    {
-    operadores[i]->attributes[ParsersAttributes::REF_TYPE]=atribs_ops[i];
-    attributes[atribs_ops[i]]=operadores[i]->getCodeDefinition(tipo_def, true);
+    operators[i]->attributes[ParsersAttributes::REF_TYPE]=atribs_ops[i];
+    attributes[atribs_ops[i]]=operators[i]->getCodeDefinition(def_type, true);
    }
   }
  }
 
- for(i=Operator::FUNC_OPERADOR; i <= Operator::FUNC_RESTRICAO; i++)
+ for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
  {
-  if(funcoes[i])
+  if(functions[i])
   {
-   if(tipo_def==SchemaParser::SQL_DEFINITION)
-    attributes[atribs_funcoes[i]]=funcoes[i]->getSignature();
+   if(def_type==SchemaParser::SQL_DEFINITION)
+    attributes[atribs_funcoes[i]]=functions[i]->getSignature();
    else
    {
-    funcoes[i]->setAttribute(ParsersAttributes::REF_TYPE, atribs_funcoes[i]);
-    attributes[atribs_funcoes[i]]=funcoes[i]->getCodeDefinition(tipo_def, true);
+    functions[i]->setAttribute(ParsersAttributes::REF_TYPE, atribs_funcoes[i]);
+    attributes[atribs_funcoes[i]]=functions[i]->getCodeDefinition(def_type, true);
    }
   }
  }
 
  attributes[ParsersAttributes::HASHES]=(hashes ? "1" : "");
  attributes[ParsersAttributes::MERGES]=(merges ? "1" : "");
- attributes[ParsersAttributes::SIGNATURE]=obterAssinatura();
+ attributes[ParsersAttributes::SIGNATURE]=getSignature();
 
- return(BaseObject::getCodeDefinition(tipo_def, forma_reduzida));
+ return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 

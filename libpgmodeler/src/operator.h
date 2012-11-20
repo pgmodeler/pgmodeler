@@ -30,77 +30,77 @@
 class Operator: public BaseObject {
  private:
   //Armazena as referências para as funções do operador
-  Function *funcoes[3];
+  Function *functions[3];
 
   //Armazena os argumentos (esquerda e direita) do operador
-  TipoPgSQL tipo_args[2];
+  TipoPgSQL argument_types[2];
 
   //Armazena os operadores de comutação e negação do operador
-  Operator *operadores[6];
+  Operator *operators[6];
 
   bool hashes, //Indica que o operador pode executar um hash join
        merges;  //Indica que o operador pode executar um merge join
 
  public:
-  static const unsigned FUNC_OPERADOR=0, //Índice da função base do operador
-                        FUNC_JUNCAO=1,   //Índice da função de junção do operador
-                        FUNC_RESTRICAO=2, //Índice da função de restrição do operador
+  static const unsigned FUNC_OPERATOR=0, //Índice da função base do operador
+                        FUNC_JOIN=1,   //Índice da função de junção do operador
+                        FUNC_RESTRICTION=2, //Índice da função de restrição do operador
 
-                        ARG_ESQUERDA=0,
-                        ARG_DIREITA=1,
+                        ARG_LEFT=0,
+                        ARG_RIGHT=1,
 
-                        OPER_COMUTACAO=0,
-                        OPER_NEGACAO=1,
-                        OPER_ORDENACAO1=2,
-                        OPER_ORDENACAO2=3,
-                        OPER_MENOR=4,
-                        OPER_MAIOR=5;
+                        OPER_COMMUTATION=0,
+                        OPER_NEGATION=1,
+                        OPER_SORT1=2,
+                        OPER_SORT2=3,
+                        OPER_LESS=4,
+                        OPER_GREATER=5;
 
   Operator(void);
 
   //Define o nome do operador
-  void setName(const QString &obj_name);
+  void setName(const QString &name);
 
   //Define as funções usadas pelo operador (operador, junção, restrição)
-  void definirFuncao(Function *funcao, unsigned tipo_funcao);
+  void setFunction(Function *func, unsigned func_type);
 
   //Define o tipo de dado dos argumentos (esquerda e direita) do operador
-  void definirTipoDadoArgumento(TipoPgSQL tipo_dado, unsigned tipo_arg);
+  void setArgumentType(TipoPgSQL arg_type, unsigned arg_id);
 
   //Define os operadores de negação e comutação
-  void definirOperador(Operator *op, unsigned tipo_op);
+  void setOperator(Operator *oper, unsigned op_type);
 
   //Define se o operador aceita a operação HASHES
-  void definirHashes(bool valor);
+  void setHashes(bool value);
 
   //Define se o operador aceita a operação MERGES
-  void definirMerges(bool valor);
+  void setMerges(bool value);
 
   //Retorna uma determinada função do operador
-  Function *obterFuncao(unsigned tipo_funcao);
+  Function *getFunction(unsigned func_type);
 
   //Retorna o tipo de dado de um determinado argumento
-  TipoPgSQL obterTipoDadoArgumento(unsigned tipo_arg);
+  TipoPgSQL getArgumentType(unsigned arg_id);
 
   //Retorna um determinado operador
-  Operator *obterOperador(unsigned tipo_op);
+  Operator *getOperator(unsigned op_type);
 
   //Retorna se o operador aceita a operação HASHES
-  bool aceitaHashes(void);
+  bool isHashes(void);
 
   //Retorna se o operador aceita a operação MERGES
-  bool aceitaMerges(void);
+  bool isMerges(void);
 
   /* Verifica se o nome do operador é valido de acordo
      com as regras definidas na documentação */
-  static bool isValidName(const QString &obj_name);
+  static bool isValidName(const QString &name);
 
   //Retorna a definição SQL ou XML do objeto
-  QString getCodeDefinition(unsigned tipo_def, bool forma_reduzida);
-  QString getCodeDefinition(unsigned tipo_def);
+  QString getCodeDefinition(unsigned def_type, bool reduced_form);
+  QString getCodeDefinition(unsigned def_type);
 
   //Obtém a assinatura do operador
-  QString obterAssinatura(bool formatar_nome=true);
+  QString getSignature(bool format_name=true);
 };
 
 #endif

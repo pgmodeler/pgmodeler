@@ -29,7 +29,7 @@ OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_OP
 
   //Alocando os seletores de função
   grid=dynamic_cast<QGridLayout *>(atributos_twg->widget(1)->layout());
-  for(i=Operator::FUNC_OPERADOR; i <= Operator::FUNC_RESTRICAO; i++)
+  for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
   {
    sel_funcoes[i]=NULL;
    sel_funcoes[i]=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
@@ -38,7 +38,7 @@ OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_OP
 
   //Alocando os seletores de operador
   grid=dynamic_cast<QGridLayout *>(atributos_twg->widget(2)->layout());
-  for(i=Operator::OPER_COMUTACAO; i <= Operator::OPER_MAIOR; i++)
+  for(i=Operator::OPER_COMMUTATION; i <= Operator::OPER_GREATER; i++)
   {
    sel_operadores[i]=NULL;
    sel_operadores[i]=new SeletorObjetoWidget(OBJ_OPERATOR, true, this);
@@ -79,11 +79,11 @@ void OperadorWidget::hideEvent(QHideEvent *evento)
  merges_chk->setChecked(false);
 
  //Zera os valores do seletores de operador
- for(i=Operator::FUNC_OPERADOR; i <= Operator::FUNC_RESTRICAO; i++)
+ for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
   sel_funcoes[i]->removerObjetoSelecionado();
 
  //Zera os valores do seletores de função
- for(i=Operator::OPER_COMUTACAO; i <= Operator::OPER_MAIOR; i++)
+ for(i=Operator::OPER_COMMUTATION; i <= Operator::OPER_GREATER; i++)
   sel_operadores[i]->removerObjetoSelecionado();
 
  atributos_twg->setCurrentIndex(0);
@@ -99,30 +99,30 @@ void OperadorWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op,
  ObjetoBaseWidget::definirAtributos(modelo,lista_op,operador);
 
  //Define o modelo de objetos usado pelos seletores de função e operador
- for(i=Operator::FUNC_OPERADOR; i <= Operator::FUNC_RESTRICAO; i++)
+ for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
   sel_funcoes[i]->definirModelo(modelo);
 
- for(i=Operator::OPER_COMUTACAO; i <= Operator::OPER_MAIOR; i++)
+ for(i=Operator::OPER_COMMUTATION; i <= Operator::OPER_GREATER; i++)
   sel_operadores[i]->definirModelo(modelo);
 
  /* Caso o operador esteja alocado configura os atributos do formulário
     com os valores preenchidos na instância do operador */
  if(operador)
  {
-  hashes_chk->setChecked(operador->aceitaHashes());
-  merges_chk->setChecked(operador->aceitaMerges());
+  hashes_chk->setChecked(operador->isHashes());
+  merges_chk->setChecked(operador->isMerges());
 
   //Preenche os widget seletores de função com as funções usadas pelo operador
-  for(i=Operator::FUNC_OPERADOR; i <= Operator::FUNC_RESTRICAO; i++)
-   sel_funcoes[i]->definirObjeto(operador->obterFuncao(i));
+  for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
+   sel_funcoes[i]->definirObjeto(operador->getFunction(i));
 
   //Preenche os widget seletores de operador com os operadores usadas pelo operador
-  for(i=Operator::OPER_COMUTACAO; i <= Operator::OPER_MAIOR; i++)
-   sel_operadores[i]->definirObjeto(operador->obterOperador(i));
+  for(i=Operator::OPER_COMMUTATION; i <= Operator::OPER_GREATER; i++)
+   sel_operadores[i]->definirObjeto(operador->getOperator(i));
 
   //Obtém os tipos dos argumentos do operador
-  tipo_esq=operador->obterTipoDadoArgumento(Operator::ARG_ESQUERDA);
-  tipo_dir=operador->obterTipoDadoArgumento(Operator::ARG_DIREITA);
+  tipo_esq=operador->getArgumentType(Operator::ARG_LEFT);
+  tipo_dir=operador->getArgumentType(Operator::ARG_RIGHT);
  }
 
  tipo_args[0]->definirAtributos(tipo_esq, modelo);
@@ -142,20 +142,20 @@ void OperadorWidget::aplicarConfiguracao(void)
 
   /* Atribui os valores configurados no formulári  instância do
      operador que está sendo configurado */
-  operador->definirHashes(hashes_chk->isChecked());
-  operador->definirMerges(merges_chk->isChecked());
+  operador->setHashes(hashes_chk->isChecked());
+  operador->setMerges(merges_chk->isChecked());
 
   //Atribuindo os tipos de argumentos configurados no formulário ao operador
-  for(i=Operator::ARG_ESQUERDA; i <= Operator::ARG_DIREITA; i++)
-   operador->definirTipoDadoArgumento(tipo_args[i]->obterTipoPgSQL(), i);
+  for(i=Operator::ARG_LEFT; i <= Operator::ARG_RIGHT; i++)
+   operador->setArgumentType(tipo_args[i]->obterTipoPgSQL(), i);
 
   //Atribuindo as funções selecionadas no formulário ao operador
-  for(i=Operator::FUNC_OPERADOR; i <= Operator::FUNC_RESTRICAO; i++)
-   operador->definirFuncao(dynamic_cast<Function *>(sel_funcoes[i]->obterObjeto()), i);
+  for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
+   operador->setFunction(dynamic_cast<Function *>(sel_funcoes[i]->obterObjeto()), i);
 
   //Atribuindo os operadores selecionados no formulário ao operador
-  for(i=Operator::OPER_COMUTACAO; i <= Operator::OPER_MAIOR; i++)
-   operador->definirOperador(dynamic_cast<Operator *>(sel_operadores[i]->obterObjeto()), i);
+  for(i=Operator::OPER_COMMUTATION; i <= Operator::OPER_GREATER; i++)
+   operador->setOperator(dynamic_cast<Operator *>(sel_operadores[i]->obterObjeto()), i);
 
   //Finaliza a configuração
   ObjetoBaseWidget::aplicarConfiguracao();
