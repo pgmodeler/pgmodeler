@@ -95,7 +95,7 @@ void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type
     copyObject(psrc_obj, dynamic_cast<Language *>(copy_obj));
   break;
   case OBJ_OPERATOR:
-    copyObject(psrc_obj, dynamic_cast<Operador *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Operator *>(copy_obj));
   break;
   case OBJ_ROLE:
     copyObject(psrc_obj, dynamic_cast<Papel *>(copy_obj));

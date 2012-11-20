@@ -11,7 +11,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/cast.h \
            $$PWD/src/function.h \
            $$PWD/src/language.h \
-           $$PWD/src/operador.h \
+           $$PWD/src/operator.h \
            $$PWD/src/relacionamentobase.h \
            $$PWD/src/basetable.h \
            $$PWD/src/column.h \
@@ -54,7 +54,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/tablespace.cpp \
             $$PWD/src/indexelement.cpp \
             $$PWD/src/index.cpp \
-            $$PWD/src/operador.cpp \
+            $$PWD/src/operator.cpp \
             $$PWD/src/restricao.cpp \
             $$PWD/src/tipospgsql.cpp \
             $$PWD/src/schema.cpp \

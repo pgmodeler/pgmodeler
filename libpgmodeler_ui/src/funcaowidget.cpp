@@ -439,7 +439,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
  Aggregate *func_ag=NULL;
  Gatilho *gatilho=NULL;
  Language *ling=NULL;
- Operador *oper=NULL;
+ Operator *oper=NULL;
  Tipo *tipo=NULL;
  Tabela *tab=NULL;
  Function *funcao=NULL;
@@ -526,8 +526,8 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
     }
     else if(tipos[i]==OBJ_OPERATOR)
     {
-     oper=dynamic_cast<Operador *>(objeto);
-     for(i1=Operador::FUNC_OPERADOR; i1 <= Operador::FUNC_RESTRICAO; i1++)
+     oper=dynamic_cast<Operator *>(objeto);
+     for(i1=Operator::FUNC_OPERADOR; i1 <= Operator::FUNC_RESTRICAO; i1++)
      {
       if(oper->obterFuncao(i1)==funcao)
        oper->definirFuncao(funcao, i1);

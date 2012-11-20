@@ -19,15 +19,15 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef OPERADOR_H
-#define OPERADOR_H
+#ifndef OPERATOR_H
+#define OPERATOR_H
 
 #include "baseobject.h"
 #include "function.h"
 #include "schema.h"
 #include "papel.h"
 
-class Operador: public BaseObject {
+class Operator: public BaseObject {
  private:
   //Armazena as referências para as funções do operador
   Function *funcoes[3];
@@ -36,7 +36,7 @@ class Operador: public BaseObject {
   TipoPgSQL tipo_args[2];
 
   //Armazena os operadores de comutação e negação do operador
-  Operador *operadores[6];
+  Operator *operadores[6];
 
   bool hashes, //Indica que o operador pode executar um hash join
        merges;  //Indica que o operador pode executar um merge join
@@ -56,7 +56,7 @@ class Operador: public BaseObject {
                         OPER_MENOR=4,
                         OPER_MAIOR=5;
 
-  Operador(void);
+  Operator(void);
 
   //Define o nome do operador
   void setName(const QString &obj_name);
@@ -68,7 +68,7 @@ class Operador: public BaseObject {
   void definirTipoDadoArgumento(TipoPgSQL tipo_dado, unsigned tipo_arg);
 
   //Define os operadores de negação e comutação
-  void definirOperador(Operador *op, unsigned tipo_op);
+  void definirOperador(Operator *op, unsigned tipo_op);
 
   //Define se o operador aceita a operação HASHES
   void definirHashes(bool valor);
@@ -83,7 +83,7 @@ class Operador: public BaseObject {
   TipoPgSQL obterTipoDadoArgumento(unsigned tipo_arg);
 
   //Retorna um determinado operador
-  Operador *obterOperador(unsigned tipo_op);
+  Operator *obterOperador(unsigned tipo_op);
 
   //Retorna se o operador aceita a operação HASHES
   bool aceitaHashes(void);

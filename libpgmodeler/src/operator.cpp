@@ -1,6 +1,6 @@
-#include "operador.h"
+#include "operator.h"
 
-Operador::Operador(void)
+Operator::Operator(void)
 {
  unsigned i;
 
@@ -33,7 +33,7 @@ Operador::Operador(void)
  attributes[ParsersAttributes::REF_TYPE]="";
 }
 
-bool Operador::isValidName(const QString &nome)
+bool Operator::isValidName(const QString &nome)
 {
  //ATENÇÃO: Não alterar a seqüência em que aparecem os caracteres.
  QString chr_validos="+-*/<>=~!@#%^&|'?";
@@ -69,7 +69,7 @@ bool Operador::isValidName(const QString &nome)
  return(valido);
 }
 
-void Operador::setName(const QString &nome)
+void Operator::setName(const QString &nome)
 {
  if(nome=="")
   throw Exception(ERR_ASG_EMPTY_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -82,7 +82,7 @@ void Operador::setName(const QString &nome)
  }
 }
 
-void Operador::definirFuncao(Function *funcao, unsigned tipo_funcao)
+void Operator::definirFuncao(Function *funcao, unsigned tipo_funcao)
 {
  //Caso o tipo de função seja inválido
  if(tipo_funcao > FUNC_RESTRICAO)
@@ -146,7 +146,7 @@ void Operador::definirFuncao(Function *funcao, unsigned tipo_funcao)
  funcoes[tipo_funcao]=funcao;
 }
 
-void Operador::definirTipoDadoArgumento(TipoPgSQL tipo_dado, unsigned tipo_arg)
+void Operator::definirTipoDadoArgumento(TipoPgSQL tipo_dado, unsigned tipo_arg)
 {
  //Caso o tipo de argumento seja inválido
  if(tipo_arg > ARG_DIREITA)
@@ -155,7 +155,7 @@ void Operador::definirTipoDadoArgumento(TipoPgSQL tipo_dado, unsigned tipo_arg)
   tipo_args[tipo_arg]=tipo_dado;
 }
 
-void Operador::definirOperador(Operador *op, unsigned tipo_op)
+void Operator::definirOperador(Operator *op, unsigned tipo_op)
 {
  //Caso o tipo de operador seja inválido
  if(tipo_op > OPER_MAIOR)
@@ -196,17 +196,17 @@ void Operador::definirOperador(Operador *op, unsigned tipo_op)
  }
 }
 
-void Operador::definirHashes(bool valor)
+void Operator::definirHashes(bool valor)
 {
  hashes=valor;
 }
 
-void Operador::definirMerges(bool valor)
+void Operator::definirMerges(bool valor)
 {
  merges=valor;
 }
 
-Function *Operador::obterFuncao(unsigned tipo_funcao)
+Function *Operator::obterFuncao(unsigned tipo_funcao)
 {
  //Caso o tipo de função seja inválido
  if(tipo_funcao > FUNC_RESTRICAO)
@@ -215,7 +215,7 @@ Function *Operador::obterFuncao(unsigned tipo_funcao)
  return(funcoes[tipo_funcao]);
 }
 
-TipoPgSQL Operador::obterTipoDadoArgumento(unsigned tipo_arg)
+TipoPgSQL Operator::obterTipoDadoArgumento(unsigned tipo_arg)
 {
  //Caso o tipo de argumento seja inválido
  if(tipo_arg > ARG_DIREITA)
@@ -223,7 +223,7 @@ TipoPgSQL Operador::obterTipoDadoArgumento(unsigned tipo_arg)
  return(tipo_args[tipo_arg]);
 }
 
-Operador *Operador::obterOperador(unsigned tipo_op)
+Operator *Operator::obterOperador(unsigned tipo_op)
 {
  //Caso o tipo de operador seja inválido
  if(tipo_op > OPER_MAIOR)
@@ -231,17 +231,17 @@ Operador *Operador::obterOperador(unsigned tipo_op)
  return(operadores[tipo_op]);
 }
 
-bool Operador::aceitaHashes(void)
+bool Operator::aceitaHashes(void)
 {
  return(hashes);
 }
 
-bool Operador::aceitaMerges(void)
+bool Operator::aceitaMerges(void)
 {
  return(merges);
 }
 
-QString Operador::obterAssinatura(bool formatar_nome)
+QString Operator::obterAssinatura(bool formatar_nome)
 {
  QString assinatura, str_aux;
  unsigned i;
@@ -261,12 +261,12 @@ QString Operador::obterAssinatura(bool formatar_nome)
  return(assinatura);
 }
 
-QString Operador::getCodeDefinition(unsigned tipo_def)
+QString Operator::getCodeDefinition(unsigned tipo_def)
 {
  return(this->getCodeDefinition(tipo_def, false));
 }
 
-QString Operador::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
+QString Operator::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
 {
  unsigned i;
  QString atribs_tipos[]={ParsersAttributes::LEFT_TYPE, ParsersAttributes::RIGHT_TYPE},
@@ -280,7 +280,7 @@ QString Operador::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
                           ParsersAttributes::JOIN_FUNC,
                           ParsersAttributes::RESTRICTION_FUNC};
 
- for(i=Operador::ARG_ESQUERDA; i <= Operador::ARG_DIREITA; i++)
+ for(i=Operator::ARG_ESQUERDA; i <= Operator::ARG_DIREITA; i++)
  {
   if(tipo_def==SchemaParser::SQL_DEFINITION)
   {
@@ -294,7 +294,7 @@ QString Operador::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
   }
  }
 
- for(i=Operador::OPER_COMUTACAO; i <= Operador::OPER_MAIOR; i++)
+ for(i=Operator::OPER_COMUTACAO; i <= Operator::OPER_MAIOR; i++)
  {
   if(operadores[i])
   {
@@ -308,7 +308,7 @@ QString Operador::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
   }
  }
 
- for(i=Operador::FUNC_OPERADOR; i <= Operador::FUNC_RESTRICAO; i++)
+ for(i=Operator::FUNC_OPERADOR; i <= Operator::FUNC_RESTRICAO; i++)
  {
   if(funcoes[i])
   {

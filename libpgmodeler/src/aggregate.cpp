@@ -74,7 +74,7 @@ void Aggregate::setInitialCondition(const QString &cond)
  initial_condition=cond;
 }
 
-void Aggregate::setSortOperator(Operador *sort_op)
+void Aggregate::setSortOperator(Operator *sort_op)
 {
  if(sort_op)
  {
@@ -86,7 +86,7 @@ void Aggregate::setSortOperator(Operador *sort_op)
      1) The aggregate accepts only one data type
      2) The function that defines the operator has the parameter types identical
         as the input data type of the aggregate  */
-  func=sort_op->obterFuncao(Operador::FUNC_OPERADOR);
+  func=sort_op->obterFuncao(Operator::FUNC_OPERADOR);
   //Validating the condition 1
   if(data_types.size()!=1)
    throw Exception(ERR_ASG_INV_OPER_ARGS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -192,7 +192,7 @@ QString Aggregate::getInitialCondition(void)
  return(initial_condition);
 }
 
-Operador *Aggregate::getSortOperator(void)
+Operator *Aggregate::getSortOperator(void)
 {
  return(sort_operator);
 }

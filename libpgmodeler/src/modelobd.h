@@ -346,9 +346,9 @@ class ModeloBD:  public QObject, public BaseObject {
   Conversion *obterConversaoCodificacao(unsigned idx_obj);
 
   //Métodos de manipulação de operadores
-  void adicionarOperador(Operador *operador, int idx_obj=-1);
-  void removerOperador(Operador *operador, int idx_obj=-1);
-  Operador *obterOperador(unsigned idx_obj);
+  void adicionarOperador(Operator *operador, int idx_obj=-1);
+  void removerOperador(Operator *operador, int idx_obj=-1);
+  Operator *obterOperador(unsigned idx_obj);
 
   //Métodos de manipulação de classe de operadores
   void adicionarClasseOperadores(OperatorClass *classe_op, int idx_obj=-1);
@@ -407,7 +407,7 @@ class ModeloBD:  public QObject, public BaseObject {
   Domain *criarDominio(void);
   Cast *criarConversaoTipo(void);
   Conversion *criarConversaoCodificacao(void);
-  Operador *criarOperador(void);
+  Operator *criarOperador(void);
   OperatorFamily *criarFamiliaOperadores(void);
   OperatorClass *criarClasseOperadores(void);
   Aggregate *criarFuncaoAgregacao(void);

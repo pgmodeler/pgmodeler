@@ -312,7 +312,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
   QTableWidgetItem *item_tab=NULL, *item_tab1=NULL;
   Tabela *tabela=NULL;
   Function *funcao=NULL;
-  Operador *operador=NULL;
+  Operator *operador=NULL;
   QPixmap icone;
   QFont fonte;
   QString str_aux;
@@ -387,7 +387,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
      }
      else
      {
-      operador=dynamic_cast<Operador *>(objeto);
+      operador=dynamic_cast<Operator *>(objeto);
       item_tab->setText(QString::fromUtf8(operador->obterAssinatura(false)));
       item_tab->setToolTip(QString::fromUtf8(operador->obterAssinatura(false)));
      }
@@ -615,7 +615,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
  {
   BaseObject *objeto=NULL, *esquema=NULL;
   Function *funcao=NULL;
-  Operador *operador=NULL;
+  Operator *operador=NULL;
   vector<BaseObject *> lista_obj;
   QFont fonte;
   QTreeWidgetItem *item=NULL, *item1=NULL, *item2=NULL, *item3=NULL, *item4=NULL;
@@ -743,7 +743,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
        }
        else if(tipos[i1]==OBJ_OPERATOR)
        {
-        operador=dynamic_cast<Operador *>(objeto);
+        operador=dynamic_cast<Operator *>(objeto);
         item4->setText(0, QString::fromUtf8(operador->obterAssinatura(false)));
         item4->setToolTip(0, QString::fromUtf8(operador->obterAssinatura(false)));
        }

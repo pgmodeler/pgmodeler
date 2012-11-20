@@ -174,7 +174,7 @@ void FuncaoAgregacaoWidget::aplicarConfiguracao(void)
   //Define as funções e operador obtendo tais objetos dos respectivos seletores
   funcao_ag->setFunction(Aggregate::TRANSITION_FUNC, dynamic_cast<Function *>(sel_func_transicao->obterObjeto()));
   funcao_ag->setFunction(Aggregate::FINAL_FUNC, dynamic_cast<Function *>(sel_func_final->obterObjeto()));
-  funcao_ag->setSortOperator(dynamic_cast<Operador *>(sel_op_ordenacao->obterObjeto()));
+  funcao_ag->setSortOperator(dynamic_cast<Operator *>(sel_op_ordenacao->obterObjeto()));
 
   //Finaliza a configuração da função de agregação
   ObjetoBaseWidget::aplicarConfiguracao();

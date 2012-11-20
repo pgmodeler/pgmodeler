@@ -1196,7 +1196,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_OPERATOR:
-    operador_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Operador *>(objeto));
+    operador_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Operator *>(objeto));
     operador_wgt->show();
    break;
 
@@ -1611,7 +1611,7 @@ void ModeloWidget::colarObjetos(void)
  TableObject *obj_tab=NULL;
  Function *func=NULL;
  //Tipo *tipo=NULL;
- Operador *oper=NULL;
+ Operator *oper=NULL;
  QString nome_aux, nome_obj_copia;
  ObjectType tipo_obj;
  Exception erro;
@@ -1653,7 +1653,7 @@ void ModeloWidget::colarObjetos(void)
     nome_aux=dynamic_cast<Function *>(objeto)->getSignature();
    }
    else if(tipo_obj==OBJ_OPERATOR)
-    nome_aux=dynamic_cast<Operador *>(objeto)->obterAssinatura();
+    nome_aux=dynamic_cast<Operator *>(objeto)->obterAssinatura();
    //Para os demais tipos de objeto checa através do nome completo
    else
     nome_aux=objeto->getName(true);
@@ -1697,7 +1697,7 @@ void ModeloWidget::colarObjetos(void)
       }
       else if(tipo_obj==OBJ_OPERATOR)
       {
-       oper=dynamic_cast<Operador *>(objeto);
+       oper=dynamic_cast<Operator *>(objeto);
        oper->setName(nome_orig_objs[objeto] + nome_aux);
        nome_obj_copia=oper->obterAssinatura();
        oper->setName(nome_orig_objs[objeto]);

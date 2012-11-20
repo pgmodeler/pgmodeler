@@ -203,7 +203,7 @@ void ClasseOperadoresWidget::manipularElemento(int idx_linha)
   /* Caso seja do tipo OPERADOR, atribui o operador selecionado no widget seletor de operador,
      o valor configurado como suporte no formulário e o estado do checkbox de rechecagem */
   else  if(tipo_elem==OperatorClassElement::OPERATOR_ELEM)
-   elem.setOperator(dynamic_cast<Operador *>(sel_operador->obterObjeto()), num_suporte_sb->value(), rechecar_chk->isChecked());
+   elem.setOperator(dynamic_cast<Operator *>(sel_operador->obterObjeto()), num_suporte_sb->value(), rechecar_chk->isChecked());
   //Caso seja do tipo ARMAZENAMENTO, atribui o tipo configurado no widget de configuração de tipo
   else
    elem.setStorage(tipo_armazenamento->obterTipoPgSQL());

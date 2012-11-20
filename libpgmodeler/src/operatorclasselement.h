@@ -24,7 +24,7 @@
 #define OPERATOR_CLASS_ELEMENT_H
 
 #include "baseobject.h"
-#include "operador.h"
+#include "operator.h"
 #include "function.h"
 
 class OperatorClassElement {
@@ -40,7 +40,7 @@ class OperatorClassElement {
   Function *function;
 
   //Operator used by the element (only for type OPERATOR_ELEM)
-  Operador *_operator;
+  Operator *_operator;
 
   /* PostgreSQL type used in the indexing method of operator class.
      (only for type STORAGE_ELEM) */
@@ -65,7 +65,7 @@ class OperatorClassElement {
   void setFunction(Function *func, unsigned stg_number);
 
   //Defines the element as an operator clause
-  void setOperator(Operador *oper, unsigned stg_number, bool recheck);
+  void setOperator(Operator *oper, unsigned stg_number, bool recheck);
 
   //Defines the element as a storage clause
   void setStorage(TipoPgSQL storage);
@@ -79,7 +79,7 @@ class OperatorClassElement {
 
   /* Returns the current assigned operator.
      This method returns NULL when the element is not an OPERATOR_ELEM */
-  Operador *getOperator(void);
+  Operator *getOperator(void);
 
   //Storage type of the element
   TipoPgSQL getStorage(void);

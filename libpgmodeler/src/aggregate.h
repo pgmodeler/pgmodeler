@@ -24,7 +24,7 @@
 
 #include "baseobject.h"
 #include "function.h"
-#include "operador.h"
+#include "operator.h"
 
 class Aggregate: public BaseObject {
  private:
@@ -51,7 +51,7 @@ class Aggregate: public BaseObject {
   QString initial_condition;
 
   //Sort operator used by the aggregate
-  Operador *sort_operator;
+  Operator *sort_operator;
 
   //Formats the data types to be used as attribute by the SchemaParser
   void setTypesAttribute(unsigned def_type);
@@ -76,7 +76,7 @@ class Aggregate: public BaseObject {
   void setInitialCondition(const QString &cond);
 
   //Defines the sort operator used by the aggregate
-  void setSortOperator(Operador *sort_op);
+  void setSortOperator(Operator *sort_op);
 
   //Adds a data type in the group that is accepted by the aggregate
   void addDataType(TipoPgSQL type);
@@ -93,7 +93,7 @@ class Aggregate: public BaseObject {
   Function *getFunction(unsigned func_idx);
   TipoPgSQL getStateType(void);
   QString getInitialCondition(void);
-  Operador *getSortOperator(void);
+  Operator *getSortOperator(void);
   TipoPgSQL getDataType(unsigned type_idx);
   unsigned getDataTypeCount(void);
 

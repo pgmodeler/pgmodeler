@@ -28,7 +28,7 @@ void OperatorClassElement::setFunction(Function *func, unsigned stg_number)
  this->element_type=FUNCTION_ELEM;
 }
 
-void OperatorClassElement::setOperator(Operador *oper, unsigned stg_number, bool recheck)
+void OperatorClassElement::setOperator(Operator *oper, unsigned stg_number, bool recheck)
 {
  //Raises an error in case the operator is not allocated
  if(!oper)
@@ -70,7 +70,7 @@ Function *OperatorClassElement::getFunction(void)
  return(function);
 }
 
-Operador *OperatorClassElement::getOperator(void)
+Operator *OperatorClassElement::getOperator(void)
 {
  return(_operator);
 }
