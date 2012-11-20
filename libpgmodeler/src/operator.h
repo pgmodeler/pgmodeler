@@ -1,8 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Operador que é usada para
-#             gerar os códigos SQL pertinentes a operadores
+# Description: Implements the operations to manipulate operators on the database.
 # Creation date: 16/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -29,28 +28,28 @@
 
 class Operator: public BaseObject {
  private:
-  //Armazena as referências para as funções do operador
+  //Stores the functions that defines the operator
   Function *functions[3];
 
-  //Armazena os argumentos (esquerda e direita) do operador
+  //Stores the arguments types (left and right) used by the operator
   TipoPgSQL argument_types[2];
 
-  //Armazena os operadores de comutação e negação do operador
+  //Stores the auxiliary operators
   Operator *operators[6];
 
-  bool hashes, //Indica que o operador pode executar um hash join
-       merges;  //Indica que o operador pode executar um merge join
+  bool hashes, //Indicates that the operator can execute a hash join
+       merges;  //Indicates that the operator can execute a merge join
 
  public:
-  static const unsigned FUNC_OPERATOR=0, //Índice da função base do operador
-                        FUNC_JOIN=1,   //Índice da função de junção do operador
-                        FUNC_RESTRICTION=2, //Índice da função de restrição do operador
+  static const unsigned FUNC_OPERATOR=0,
+                        FUNC_JOIN=1,
+                        FUNC_RESTRICTION=2,
 
-                        ARG_LEFT=0,
-                        ARG_RIGHT=1,
+                        LEFT_ARG=0,
+                        RIGHT_ARG=1,
 
-                        OPER_COMMUTATION=0,
-                        OPER_NEGATION=1,
+                        OPER_COMMUTATOR=0,
+                        OPER_NEGATOR=1,
                         OPER_SORT1=2,
                         OPER_SORT2=3,
                         OPER_LESS=4,
@@ -58,48 +57,47 @@ class Operator: public BaseObject {
 
   Operator(void);
 
-  //Define o nome do operador
+  //Defines the name of the operator
   void setName(const QString &name);
 
-  //Define as funções usadas pelo operador (operador, junção, restrição)
+  //Defines the function used by the operator (constants FUNC_[OPERATOR | JOIN | RESTRICTION])
   void setFunction(Function *func, unsigned func_type);
 
-  //Define o tipo de dado dos argumentos (esquerda e direita) do operador
+  //Defines the argument data type for operator (constants ARG_[LEFT | RIGHT])
   void setArgumentType(TipoPgSQL arg_type, unsigned arg_id);
 
-  //Define os operadores de negação e comutação
+  //Defines the auxiliary operators (constants OPER_[COMMUTATOR | NEGATOR | SORT1 | SORT2 | LESS | GREATER])
   void setOperator(Operator *oper, unsigned op_type);
 
-  //Define se o operador aceita a operação HASHES
+  //Defines that the operator accepts hash join
   void setHashes(bool value);
 
-  //Define se o operador aceita a operação MERGES
+  //Defines that the operator accepts merge join
   void setMerges(bool value);
 
-  //Retorna uma determinada função do operador
+  //Returns the function used by the operator referencing it by its type
   Function *getFunction(unsigned func_type);
 
-  //Retorna o tipo de dado de um determinado argumento
+  //Returns the type of the passed argument id
   TipoPgSQL getArgumentType(unsigned arg_id);
 
-  //Retorna um determinado operador
+  //Returns on of the auxiliary operators
   Operator *getOperator(unsigned op_type);
 
-  //Retorna se o operador aceita a operação HASHES
+  //Returns whether the operator accepts hash join
   bool isHashes(void);
 
-  //Retorna se o operador aceita a operação MERGES
+  //Returns whether the operator accepts merge join
   bool isMerges(void);
 
-  /* Verifica se o nome do operador é valido de acordo
-     com as regras definidas na documentação */
+  //Validates the passed name using the naming rule for operators
   static bool isValidName(const QString &name);
 
-  //Retorna a definição SQL ou XML do objeto
+  //Returns the SQL / XML definition for the operator
   QString getCodeDefinition(unsigned def_type, bool reduced_form);
   QString getCodeDefinition(unsigned def_type);
 
-  //Obtém a assinatura do operador
+  //Returns the operator signature
   QString getSignature(bool format_name=true);
 };
 

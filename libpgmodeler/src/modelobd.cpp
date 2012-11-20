@@ -4128,10 +4128,10 @@ Operator *ModeloBD::criarOperador(void)
   /* O mapa de tipos de operadores abaixo é usado para se atribuir de forma
       mais simples, sem comparações, o operador que for obtida do XML a qual
       o operador em construção referencia */
-  tipo_operadores[ParsersAttributes::COMMUTATOR_OP]=Operator::OPER_COMMUTATION;
+  tipo_operadores[ParsersAttributes::COMMUTATOR_OP]=Operator::OPER_COMMUTATOR;
   tipo_operadores[ParsersAttributes::GREATER_OP]=Operator::OPER_GREATER;
   tipo_operadores[ParsersAttributes::LESS_OP]=Operator::OPER_LESS;
-  tipo_operadores[ParsersAttributes::NEGATOR_OP]=Operator::OPER_NEGATION;
+  tipo_operadores[ParsersAttributes::NEGATOR_OP]=Operator::OPER_NEGATOR;
   tipo_operadores[ParsersAttributes::SORT_OP]=Operator::OPER_SORT1;
   tipo_operadores[ParsersAttributes::SORT2_OP]=Operator::OPER_SORT2;
 
@@ -4176,9 +4176,9 @@ Operator *ModeloBD::criarOperador(void)
 
       //Obtém o tipo de referência do tipo base (esquerda ou direita)
       if(atributos[ParsersAttributes::REF_TYPE]!=ParsersAttributes::RIGHT_TYPE)
-       tipo_arg=Operator::ARG_LEFT;
+       tipo_arg=Operator::LEFT_ARG;
       else
-       tipo_arg=Operator::ARG_RIGHT;
+       tipo_arg=Operator::RIGHT_ARG;
 
       tipo=criarTipoPgSQL();
       operador->setArgumentType(tipo, tipo_arg);
@@ -6649,7 +6649,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    }
 
    //Obtém as dependências dos tipos dos argumentos do operador
-   for(i=Operator::ARG_LEFT; i <= Operator::ARG_RIGHT; i++)
+   for(i=Operator::LEFT_ARG; i <= Operator::RIGHT_ARG; i++)
    {
     tipo_usr=obterObjetoTipoPgSQL(oper->getArgumentType(i));
       //obterObjeto(*oper->obterTipoDadoArgumento(i), OBJETO_TIPO);
@@ -6659,7 +6659,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    }
 
    //Obtém as dependências dos operadores auxiliares
-   for(i=Operator::OPER_COMMUTATION; i <= Operator::OPER_GREATER; i++)
+   for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
    {
     if(oper->getOperator(i))
      obterDependenciasObjeto(oper->getOperator(i), vet_deps, inc_dep_indiretas);
@@ -7329,8 +7329,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       itr++;
 
       //Verifica se um dos argumentos do operador é o próprio tipo a ser removido
-      if(oper->getArgumentType(Operator::ARG_LEFT)==ptr_tipopgsql ||
-         oper->getArgumentType(Operator::ARG_RIGHT)==ptr_tipopgsql)
+      if(oper->getArgumentType(Operator::LEFT_ARG)==ptr_tipopgsql ||
+         oper->getArgumentType(Operator::RIGHT_ARG)==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(oper);
@@ -7578,7 +7578,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
 
       /* Verifica se um dos operadores agregados ao operador atual não referencia
          o objeto não referencia o operador */
-      for(i1=Operator::OPER_COMMUTATION; i1 <= Operator::OPER_GREATER &&
+      for(i1=Operator::OPER_COMMUTATOR; i1 <= Operator::OPER_GREATER &&
             (!modo_exclusao || (modo_exclusao && !refer)); i1++)
       {
        if(oper->getOperator(i1)==operador)
