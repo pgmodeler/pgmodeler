@@ -548,27 +548,27 @@ unsigned OperationList::getChainSize(void)
  if(i < 0 && !operations.empty())
   i=0;
 
- //Verifica se a operação atual é de encadeamento
+ //Checks if the current operations is chained
  if(!operations.empty() &&
     operations[i]->chain_type!=Operation::NO_CHAIN)
  {
   unsigned chain_type=0;
   int inc=0;
 
-  //Caso seja um encadeamento final varre a lista de tras para frente
+  //Case the operation is the end of a chain  runs the list in reverse order (from end to start)
   if(operations[i]->chain_type==Operation::CHAIN_END)
   {
    chain_type=Operation::CHAIN_START;
    inc=-1;
   }
-  //Caso seja um encadeamento inicial varre a lista de frente para tras
+  //Case the operation is the start of a chain  runs the list in normal order (from start to end)
   else if(operations[i]->chain_type==Operation::CHAIN_START)
   {
    chain_type=Operation::CHAIN_END;
    inc=1;
   }
 
-  //Varre a lista na sequencia definida contando as operações encadeadas
+  //Calculates the size of chain
   while(i>=0 && i < static_cast<int>(operations.size()) && operations[i]->chain_type!=chain_type)
   {
    i+=inc;
@@ -593,21 +593,20 @@ void OperationList::undoOperation(void)
 
   do
   {
-   /* Na operação de desfazer, é necessário obter o objeto
-      no índice atual decrementado em 1 pois o índice atual sempre
-      aponta para o elemento posterior ao último elemento */
+   /* In the undo operation, it is necessary to obtain the object
+      at current index decremented by 1 since the current index always
+      points to the element after the last element */
    operation=operations[current_index-1];
 
-   /* Caso seja detectada que a operação é encadeada com outras
-      e o flag de encadeamento ativo esteja desmarcado, marca o
-      flag para dar início a executação de várias operações de uma
-      só vez */
+   /* If it is detected that the operation is chained with other
+      and active chaining flag is cleared marks the flag to start
+      the execution several operations at once */
    if(!ignore_chain && !chain_active &&
        operation->chain_type!=Operation::NO_CHAIN)
      chain_active=true;
 
-   /* Caso o encadeamento esteja ativo e a operação atual não faça parte do
-      encadeamento, aborta a execução da operação */
+   /* If the chaining is active and the current operation is not part of
+      chain, aborts execution of the operation */
    else if(chain_active &&
            (operation->chain_type==Operation::CHAIN_END ||
             operation->chain_type==Operation::NO_CHAIN))
@@ -617,7 +616,7 @@ void OperationList::undoOperation(void)
    {
     if(!this->signalsBlocked() && chain_size > 0)
     {
-     //Dispara um sinal com o progresso da operação encadeada
+     //Emits a signal with the current progress of operation execution
      pos++;
      emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
                                trUtf8("Undoing operation on object: %1 (%2)")
@@ -626,7 +625,7 @@ void OperationList::undoOperation(void)
                                        operation->pool_obj->getObjectType());
     }
 
-    //Executa a operação de desfazer
+    //Executes the undo operation
     executeOperation(operation, false);
    }
    catch(Exception &e)
@@ -636,8 +635,8 @@ void OperationList::undoOperation(void)
 
    current_index--;
   }
-  /* Executa a operação enquanto a operação faça parte de encadeamento
-     ou a opção de desfazer esteja habilidata */
+  /* Performs the operations while the current operation is part of chain
+     or the undo option is available */
   while(!ignore_chain && isUndoAvailable() && operation->chain_type!=Operation::NO_CHAIN);
 
   if(error.getErrorType()!=ERR_CUSTOM)
@@ -654,25 +653,23 @@ void OperationList::redoOperation(void)
   Exception error;
   unsigned chain_size=0, pos=0;
 
-  //Calcula o tamanho do encademanto de operações atual
   if(!this->signalsBlocked())
    chain_size=getChainSize();
 
   do
   {
-   //Obtém elemento atual da lista de operações
+   //Gets the current operation
    operation=operations[current_index];
 
-   /* Caso seja detectada que a operação é encadeada com outras
-      e o flag de encadeamento ativo esteja desmarcado, marca o
-      flag para dar início a executação de várias operações de uma
-      só vez */
+   /* If it is detected that the operation is chained with other
+      and active chaining flag is cleared marks the flag to start
+      the execution several operations at once */
    if(!ignore_chain && !chain_active &&
       operation->chain_type!=Operation::NO_CHAIN)
     chain_active=true;
 
-   /* Caso o encadeamento esteja ativo e a operação atual não faça parte do
-      encadeamento, aborta a execução da operação */
+   /* If the chaining is active and the current operation is not part of
+      chain or it is at the start of chain, aborts execution of the operation */
    else if(chain_active &&
            (operation->chain_type==Operation::CHAIN_START ||
             operation->chain_type==Operation::NO_CHAIN))
@@ -682,7 +679,7 @@ void OperationList::redoOperation(void)
    {
     if(chain_size > 0)
     {
-     //Dispara um sinal com o progresso da operação encadeada
+     //Emits a signal with the current progress of operation execution
      pos++;
      emit s_operationExecuted((pos/static_cast<float>(chain_size))*100,
                                trUtf8("Redoing operation on object:: %1 (%2)")
@@ -691,7 +688,7 @@ void OperationList::redoOperation(void)
                                        operation->pool_obj->getObjectType());
     }
 
-    //Executa a operação de refazer (segundo parametro = true)
+    //Executes the redo operation (second argument as 'true')
     executeOperation(operation, true);
    }
    catch(Exception &e)
@@ -700,8 +697,8 @@ void OperationList::redoOperation(void)
    }
    current_index++;
   }
-  /* Executa a operação enquanto a operação faça parte de encadeamento
-     ou a opção de refazer esteja habilidata */
+  /* Performs the operations while the current operation is part of chain
+     or the redo option is available */
   while(!ignore_chain && isRedoAvailable()  && operation->chain_type!=Operation::NO_CHAIN);
 
   if(error.getErrorType()!=ERR_CUSTOM)
@@ -721,12 +718,11 @@ void OperationList::executeOperation(Operation *oper, bool redo)
    object=oper->pool_obj;
    obj_type=object->getObjectType();
 
-   /* Convertendo o objeto pai, caso exista, para a classe correta conforme
-      o tipo do objeto pai. Caso seja OBJETO_TABELA, o ponteiro
-      'tabela_pai' receberá a referência da tabela e
-      será usado como referencial nas operações abaixo.
-      Caso o objeto pai seja um relacionamento, o ponteiro
-      'relac_pai' receberá a referência ao relacionamento */
+   /* Converting the parent object, if any, to the correct class according
+      to the type of the parent object. If OBJ_TABLE, the pointer
+      'parent_tab' get the reference to table and will be used as referential
+      in the operations below. If the parent object is a relationship, the pointer
+          'parent_rel' get the reference to the relationship */
    if(oper->parent_obj)
    {
     if(oper->parent_obj->getObjectType()==OBJ_TABLE)
@@ -735,19 +731,18 @@ void OperationList::executeOperation(Operation *oper, bool redo)
      parent_rel=dynamic_cast<Relacionamento *>(oper->parent_obj);
    }
 
-   /* Caso a definição xml do objeto esteja definida
-      indica que o mesmo referencia uma coluna incluída por relacionamento */
+   /* If the XML definition of object is set indicates that it is referencing a column
+      included by relationship (special object) */
    if(!oper->xml_definition.isEmpty() &&
       ((oper->op_type==Operation::OBJECT_REMOVED && !redo) ||
        (oper->op_type==Operation::OBJECT_CREATED && redo) ||
        (oper->op_type==Operation::OBJECT_MODIFIED ||
         oper->op_type==Operation::OBJECT_MOVED)))
    {
-    //Reinicia o parser e carrega o buffer do mesmo com o código xml da operação
+    //Resets the XML parser and loads the buffer xml from the operation
     XMLParser::restartParser();
     XMLParser::loadXMLBuffer(oper->xml_definition);
 
-    //Cria uma cópia do objeto conforme o tipo do mesmo
     if(obj_type==OBJ_TRIGGER)
      aux_obj=model->criarGatilho(parent_tab);
     else if(obj_type==OBJ_INDEX)
@@ -758,22 +753,22 @@ void OperationList::executeOperation(Operation *oper, bool redo)
      aux_obj=model->criarSequencia();
    }
 
-   /* Caso a operação seja de objeto modificado, a cópia do objeto
-      armazenada no pool (no caso o parâmetro 'objeto') será restaurada */
+   /* If the operation is a modified/moved object, the object copy
+      stored in the pool will be restored */
    if(oper->op_type==Operation::OBJECT_MODIFIED ||
       oper->op_type==Operation::OBJECT_MOVED)
    {
     if(obj_type==OBJ_RELATIONSHIP)
     {
-     /* Devido a complexidade da classe Relacionamento e a forte ligação entre todos os
-        relacinamentos do modelo, é necessário armazenar o XML dos objetos especiais e
-        desconectar TODOS os relacionamentos, executar a modificação no
-        relacionamento e logo após revalidar todos os demais */
+     /* Due to the complexity of the class Relationship and the strong link between all
+        relationships of the model it is necessary to store XML for special objects and
+        disconnect ALL relationships, perform the modification at it and the revalidating
+        all relationships again. */
      model->obterXMLObjetosEspeciais();
      model->desconectarRelacionamentos();
     }
 
-    //Obtém a objeto atual da tabela/relacionamento pai no índice especificado
+    //Gets the object in the current state from the parent object
     if(parent_tab)
      orig_obj=dynamic_cast<TableObject *>(parent_tab->obterObjeto(oper->object_idx, obj_type));
     else if(parent_rel)
@@ -784,10 +779,10 @@ void OperationList::executeOperation(Operation *oper, bool redo)
     if(aux_obj)
      oper->xml_definition=model->validarDefinicaoObjeto(orig_obj, SchemaParser::SQL_DEFINITION);
 
-     /* A objeto original (obtido da tabela, relacionamento pai ou modelo) tera seus valores anteriores
-        restaurados com a cópia existente no pool. Após a restauração o objeto
-        no pool terá como atributos os mesmo do objeto antes de ser restaurado,
-        para possibilitar a operação de refazer */
+     /* The original object (obtained from the table, relationship or model) will have its
+        previous values restored with the existing copy on the pool. After restoring the object
+        on the pool will have the same attributes as the object before being restored
+        to enable redo operations */
     copyObject(reinterpret_cast<BaseObject **>(&bkp_obj), orig_obj, obj_type);
     copyObject(reinterpret_cast<BaseObject **>(&orig_obj), object, obj_type);
     copyObject(reinterpret_cast<BaseObject **>(&object), bkp_obj, obj_type);
@@ -796,9 +791,11 @@ void OperationList::executeOperation(Operation *oper, bool redo)
     if(aux_obj)
      copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
    }
-   /* Caso a operação seja de objeto removido e não seja uma operação de refazer, ou
-      se o objeto foi criado anteriormente e se deseja refazer a operação.
-      A objeto existente no pool será inserida na tabela ou relacionamento pai e no seu índice original */
+
+   /* If the operation is of object removed and is not a redo, or
+      if the object was previously created and wants to redo the operation
+      the existing pool object will be inserted into table or in your relationship
+      on its original index */
    else if((oper->op_type==Operation::OBJECT_REMOVED && !redo) ||
            (oper->op_type==Operation::OBJECT_CREATED && redo))
    {
@@ -814,9 +811,9 @@ void OperationList::executeOperation(Operation *oper, bool redo)
       dynamic_cast<Tabela *>(object)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
      model->adicionarObjeto(object, oper->object_idx);
    }
-   /* Caso a operação seja de objeto criado anteriormente ou caso o objeto
-     foi removido e se deseja refazer a operação o mesmo será
-     excluído da tabela ou relacionamento pai */
+   /* If the operation is a previously created object or if the object
+      was removed and wants to redo the operation it'll be
+      excluded from the table or relationship */
    else if((oper->op_type==Operation::OBJECT_CREATED && !redo) ||
            (oper->op_type==Operation::OBJECT_REMOVED && redo))
    {
@@ -828,16 +825,15 @@ void OperationList::executeOperation(Operation *oper, bool redo)
      model->removerObjeto(object, oper->object_idx);
    }
 
-   /* Caso a tabela pai ou relacionamento pai esteja setados
-      indica que a operação foi executada em um objeto filho desses objetos */
+   /* If the parent table or parent relationship is set
+      indicates that the operation was performed on a child object of these objects */
    if(parent_tab || parent_rel)
    {
+    //Marks the parent object as modified to for its redraw
     if(parent_tab)
-     //Marca que a tabela pai foi modificada forçando assim seu redimensionamento
      parent_tab->setModified(true);
     else
-     //Marca que o relacionamento pai foi modificado forçando assim seu redimensionamento
-    parent_rel->setModified(true);
+     parent_rel->setModified(true);
 
     if(parent_tab &&
       (object->getObjectType()==OBJ_COLUMN ||
@@ -846,9 +842,9 @@ void OperationList::executeOperation(Operation *oper, bool redo)
     else if(parent_rel)
      model->validarRelacionamentos();
    }
-   /* Caso o objeto em questão seja um grafico o mesmo tem seus flags
-      de modificado marcado em true e de selecionado em falso, para
-      forçar o redesenho do mesmo no momento de sua restauração */
+
+   /* If the object in question is graphical it has the modified flag
+      marked to force the redraw at the time of its restoration */
    else if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW ||
       obj_type==BASE_RELATIONSHIP || obj_type==OBJ_RELATIONSHIP ||
       obj_type==OBJ_TEXTBOX)
@@ -859,7 +855,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
        oper->op_type==Operation::OBJECT_MOVED)
      obj_grafico->setModified(true);
 
-    //Caso seja uma visão atualiza os relacionamentos entre as tabelas e a visão
+    //Case the object is a view is necessary to update the table-view relationships on the model
     if(obj_type==OBJ_VIEW && oper->op_type==Operation::OBJECT_MODIFIED)
      model->atualizarRelTabelaVisao(dynamic_cast<Visao *>(obj_grafico));
     else if((obj_type==OBJ_RELATIONSHIP ||
@@ -879,45 +875,41 @@ void OperationList::removeLastOperation(void)
   vector<Operation *>::reverse_iterator itr;
   unsigned obj_idx=operations.size()-1;
 
-  //Obtém a última operação da lista, utilizando um iterador reverso
+  //Gets the last operation on the list using reverse iterator
   itr=operations.rbegin();
 
   while(!end)
   {
-   //Obtém a operação armazenada no iterador para sua devida remoção
    oper=(*itr);
-   //Remove o objeto relacionado   operação e que se encontrar no pool
+
+   //Removes the object related to the operation from the pool
    removeFromPool(obj_idx);
-   /* Condição de parada de remoção da operação:
-      1) A operação não é encadeada com outras, ou
-      2) Caso a ultima operação seja o final de um encadeamento
-         todos as operações da cadeia serão removidas incluíndo
-         a primeira operação do encadeamento, quando esta última
-         é removida a iteração é interrompida.
-   */
+
+   /* Stop condition for removing the operation:
+       1) The operation is not chained with others, or
+       2) If the last operation at the end of a chain
+          all chained operations are removed including
+          the first operation of the chain, when the latter
+          is removed the iteration is stopped.*/
    end=(ignore_chain ||
         (!ignore_chain &&
          (oper->chain_type==Operation::NO_CHAIN ||
           oper->chain_type==Operation::CHAIN_START)));
 
-   //Passa para a operação anterior   atual
    itr++; obj_idx--;
   }
 
- /* Se o cabeça do encademanto for removido (ENC_INICIO)
-    marca que o próximo elemento da lista será o novo
-    início do encadeamnto */
- if(oper && oper->chain_type==Operation::CHAIN_START)
-  next_op_chain=Operation::CHAIN_START;
+  /* If the head of chaining is removed (CHAIN_START)
+     marks that the next element in the list is the new
+     start of chain */
+  if(oper && oper->chain_type==Operation::CHAIN_START)
+   next_op_chain=Operation::CHAIN_START;
 
-  /* Executa a validação das operações removendo aquelas
-     que possivelmente referenciam objetos inexistentes
-     no pool de objetos */
+  //Validates the remaining operations
   validateOperations();
 
-  /* Atualiza o indice atual da lista, caso este aponte
-     para um item além do final da lista de operações
-     o mesmo passará a apontar para o ultimo elemento */
+  /* Points the current index to the end of list if it is beyond
+     the last element */
   if(static_cast<unsigned>(current_index) > operations.size())
    current_index=operations.size();
  }
