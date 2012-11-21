@@ -138,27 +138,26 @@ void Operator::setFunction(Function *func, unsigned func_type)
 
 void Operator::setArgumentType(TipoPgSQL arg_type, unsigned arg_id)
 {
- //Caso o tipo de argumento seja inválido
+ //Raises an error if the argument id is invalid
  if(arg_id > RIGHT_ARG)
   throw Exception( ERR_REF_OPER_ARG_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
+
   argument_types[arg_id]=arg_type;
 }
 
 void Operator::setOperator(Operator *oper, unsigned op_type)
 {
- //Caso o tipo de operador seja inválido
+ //Raises an error if the operator type is invalid
  if(op_type > OPER_GREATER)
    throw Exception(ERR_REF_OPER_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  /* Validando OP Comutação: De acordo com a documentação do PostgreSQL o operador
-     de comutação deve possuir seu argumet   direita do mesmo tipo do argumento
-       esquerda do operador comutado. Ou seja, se o operador ++ (tipoA, tipoB)
-     está sendo definido e seu operador de comutação é +*+ então a assinatura
-     deste último deve ser +*+(tipoB, tipoA). A condição testa abaixo é a situação
-     contrária, ou seja quando o operador de comutação não atende aos requisitos
-     da documentação  */
+  /* Validating the Commutator OP: According to the PostgreSQL documentation
+     the commutator must have its right argument as the same type of left argument
+     from the commuted operator. That is, if the operator ++(typeA, typeB)
+     is being defined and its commutator operator is +*+ then the signature
+     of the latter should be +*+ (typeB, typeA). Raises an error when this condition
+     is not satisfied. */
   if(oper && op_type==OPER_COMMUTATOR && argument_types[LEFT_ARG]!=oper->argument_types[RIGHT_ARG])
   {
    throw Exception(Exception::getErrorMessage(ERR_ASG_INV_COM_OPEERATOR)
@@ -166,12 +165,11 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
                          .arg(QString::fromUtf8(this->getSignature(true))),
                  ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
-  /* Validando OP Negação: De acordo com a documentação do PostgreSQL o operador
-     de negação deve possuir seus argumentos do mesmo tipo dos argumentos
-     do operador a ser definido. Ou seja, se o operador !! (tipoA) está sendo
-     definido e seu operador de negação é !*! então a assinatura deste
-     último deve ser !*!(tipoA). A condição testa abaixo é a situação contrária,
-     ou seja quando o operador de negação não atende aos requisitos da documentação */
+  /* Validating Negator OP: According to the PostgreSQL documentation the negator
+     operator must have its arguments as the same type of arguments from the
+     operator to be defined. That is, if the operator !!(typeA) is being
+     set and its negator is !*! then the signature of the latter should be !*! (typeA).
+     Raises an error when this condition is not satisfied. */
   else if(oper && op_type==OPER_NEGATOR &&
           (argument_types[LEFT_ARG]!=oper->argument_types[LEFT_ARG] &&
            argument_types[RIGHT_ARG]!=oper->argument_types[RIGHT_ARG]))
@@ -198,7 +196,7 @@ void Operator::setMerges(bool value)
 
 Function *Operator::getFunction(unsigned func_type)
 {
- //Caso o tipo de função seja inválido
+ //Raises an error if the function type is invalid
  if(func_type > FUNC_RESTRICTION)
   throw Exception(ERR_REF_OPER_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -207,7 +205,7 @@ Function *Operator::getFunction(unsigned func_type)
 
 TipoPgSQL Operator::getArgumentType(unsigned arg_id)
 {
- //Caso o tipo de argumento seja inválido
+ //Raises an error if the argument id is invalid
  if(arg_id > RIGHT_ARG)
   throw Exception( ERR_REF_OPER_ARG_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  return(argument_types[arg_id]);
@@ -215,7 +213,7 @@ TipoPgSQL Operator::getArgumentType(unsigned arg_id)
 
 Operator *Operator::getOperator(unsigned op_type)
 {
- //Caso o tipo de operador seja inválido
+ //Raises an error if the operator type is invalid
  if(op_type > OPER_GREATER)
   throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  return(operators[op_type]);
