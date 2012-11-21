@@ -27,87 +27,86 @@ class Role: public BaseObject {
  private:
   static unsigned role_id;
 
-  //Id de usuário
+  //Role id
   unsigned sysid;
 
-  //Opções do papel
+  /* Options for the role (SUPERUSER, CREATEDB, CREATEROLE,
+     INHERIT, LOGIN, ENCRYPTED) */
   bool options[6];
 
-  //Limite de conexões do papel
+  //Connection limit for the role
   int conn_limit;
 
-         //Validade do papel
+  //Validity date for the role
   QString validity,
 
-         //Senha de autenticação do papel
+         //Authentication password
          password;
 
-                 //Papéis nos quais terão como membro o papel atual
+                 //Roles that has the 'this' role as member
   vector<Role *> ref_roles, //IN ROLE
 
-                 //Papéis os quais serão inseridos como membros do atual
+                 //Member roles of 'this' role
                  member_roles, //ROLE
 
-                 /* Papéis os quais serão inseridos como membros do atual
-                   com o privilégio de adminstrador */
+                 //Member roles of 'this' role whit admin privileges
                  admin_roles; //ADMIN
 
-  /* Formata as QStrings de papéis usadas pelo parser de esquema
-     na geração da definição SQL do papel */
-  void setRoleAttribute(unsigned tipo_papel);
+  //Formats the role attribute to be used by the SchemaParser
+  void setRoleAttribute(unsigned role_type);
 
  public:
-  //Constantes usadas para referenciar as opções do Papel
-  static const unsigned OP_SUPERUSER=0, //Mesmo que CREATEUSER
+  //Constants used to reference the available options for the role
+  static const unsigned OP_SUPERUSER=0,
                         OP_CREATEDB=1,
                         OP_CREATEROLE=2,
                         OP_INHERIT=3,
                         OP_LOGIN=4,
                         OP_ENCRYPTED=5;
 
-  //Constantes usadas para referenciar a lista de papéis internas da classe
+  //Constants used to reference the internal role lists of the class
   static const unsigned REF_ROLE=10,
                         MEMBER_ROLE=20,
                         ADMIN_ROLE=30;
 
   Role(void);
 
-  //Define o id de usuário
+  //Sets the role id
   void setSysid(unsigned uid);
 
-  //Define uma opção do papel
-  void setOption(unsigned tipo_op, bool valor);
+  //Sets one option for the role (Use constants OP_???)
+  void setOption(unsigned op_type, bool value);
 
   //Define um papel como pertencente a uma das listas de papéis internos
-  void addRole(unsigned tipo_papel, Role *papel);
+  void addRole(unsigned role_type, Role *role);
 
   //Define o limite de conexões que um papel pode fazer
-  void setConnectionLimit(int limite);
+  void setConnectionLimit(int limit);
 
   //Define a validade do papel
-  void setValidity(const QString &data);
+  void setValidity(const QString &date);
 
   //Define a senha do papel
-  void setPassword(const QString &password);
+  void setPassword(const QString &passwd);
 
   //Obtém uma opção do papel usando as constantes OP_???
-  bool getOption(unsigned tipo_op);
+  bool getOption(unsigned op_type);
 
   //Remove um papel do tipo especificado no índice informado
-  void removeRole(unsigned tipo_papel, unsigned idx_papel);
+  void removeRole(unsigned role_type, unsigned role_idx);
 
   //Remove todos os papéis membros no tipo especificado
-  void removeRoles(unsigned tipo_papel);
+  void removeRoles(unsigned role_type);
 
   /* Obtém um papel das listas internas usando o tipo da lista (PAPEL_???)
      e o índice do elemento na lista */
-  Role *getRole(unsigned tipo_papel, unsigned idx_papel);
+  Role *getRole(unsigned role_type, unsigned role_idx);
 
   //Retorna se o papel informado está dento de uma das listas de papeis
-  bool isRoleExists(unsigned tipo_papel, Role *papel);
+  bool isRoleExists(unsigned role_type, Role *role);
 
   //Obtém o número de papéis presentes em uma determinada lista
-  unsigned getRoleCount(unsigned tipo_papel);
+  unsigned getRoleCount(unsigned role_type);
 
   //Obtém o limite de conexões para o papel
   unsigned getConnectionLimit(void);
@@ -122,7 +121,7 @@ class Role: public BaseObject {
   unsigned getSysid(void);
 
   //Retorna a definição SQL ou XML do objeto
-  QString getCodeDefinition(unsigned tipo_def);
+  QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

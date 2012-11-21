@@ -39,54 +39,54 @@ void Role::setSysid(unsigned sysid)
  this->sysid=sysid;
 }
 
-void Role::setOption(unsigned tipo_op, bool valor)
+void Role::setOption(unsigned op_type, bool value)
 {
  //Caso o tipo de opção seja válido, atribui-se o valor ao mesmo
- if(tipo_op <= OP_ENCRYPTED)
-  options[tipo_op]=valor;
+ if(op_type <= OP_ENCRYPTED)
+  options[op_type]=value;
  else
   //Dispara-se uma exceção caso se use um tipo de opção inválido
   throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Role::addRole(unsigned tipo_papel, Role *papel)
+void Role::addRole(unsigned role_type, Role *role)
 {
  /* Caso o papel a ser inserido na lista não esteja alocado,
     um erro e disparado */
- if(!papel)
+ if(!role)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Caso o usuário tente atribuir como membro do papel 'this'
     o mesmo objeto representado por este ultimo */
- else if(papel && this==papel)
+ else if(role && this==role)
   throw Exception(Exception::getErrorMessage(ERR_ROLE_MEMBER_ITSELF)
-                               .arg(QString::fromUtf8(papel->getName())),
+                               .arg(QString::fromUtf8(role->getName())),
                 ERR_ROLE_MEMBER_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  bool papel_ref, papel_mem, papel_adm,
-       papel_ref1, papel_mem1, papel_adm1;
+  bool role_ref, role_mem, role_adm,
+       role_ref1, role_mem1, role_adm1;
 
 
   /* Verifica se o papel a ser atribuído ao papel 'this' já esta sendo
      referenciado em uma das listas do papel 'this' */
-  papel_ref=this->isRoleExists(REF_ROLE, papel);
-  papel_mem=this->isRoleExists(MEMBER_ROLE, papel);
-  papel_adm=this->isRoleExists(ADMIN_ROLE, papel);
+  role_ref=this->isRoleExists(REF_ROLE, role);
+  role_mem=this->isRoleExists(MEMBER_ROLE, role);
+  role_adm=this->isRoleExists(ADMIN_ROLE, role);
 
   /* Verifica se o papel 'this' está sendo referenciado em uma das
      listas do papel vindo do parâmetro */
-  papel_ref1=papel->isRoleExists(REF_ROLE, this);
-  papel_mem1=papel->isRoleExists(MEMBER_ROLE, this);
-  papel_adm1=papel->isRoleExists(ADMIN_ROLE, this);
+  role_ref1=role->isRoleExists(REF_ROLE, this);
+  role_mem1=role->isRoleExists(MEMBER_ROLE, this);
+  role_adm1=role->isRoleExists(ADMIN_ROLE, this);
 
   /* Erro de duplicação, disparado quando o papel a ser inserido
      já existe na lista do tipo de papel selecionado */
-  if((tipo_papel==REF_ROLE && papel_ref) ||
-     (tipo_papel==MEMBER_ROLE && (papel_mem || papel_adm)) ||
-     (tipo_papel==ADMIN_ROLE && (papel_adm || papel_mem)))
+  if((role_type==REF_ROLE && role_ref) ||
+     (role_type==MEMBER_ROLE && (role_mem || role_adm)) ||
+     (role_type==ADMIN_ROLE && (role_adm || role_mem)))
      //Dispara um erro caso o papel já foi inserido anteriormente na lista
    throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
-                               .arg(QString::fromUtf8(papel->getName()))
+                               .arg(QString::fromUtf8(role->getName()))
                                .arg(QString::fromUtf8(this->getName())),
                  ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   /* Erros de referência redundante ou seja um papel
@@ -112,131 +112,131 @@ void Role::addRole(unsigned tipo_papel, Role *papel)
           'this' e o usuário tente definir o objeto 'papel' (do parâmetro) como um elemento
           da lista de papeis_membros ou papeis_adm do papel 'this'
      */
-  else if((tipo_papel==REF_ROLE && ((papel_mem || papel_adm) || papel_ref1)) ||
-          (tipo_papel==MEMBER_ROLE && ((papel_mem1 || papel_adm1) || papel_ref)) ||
-          (tipo_papel==ADMIN_ROLE &&  ((papel_mem1 || papel_adm1) || papel_ref)))
+  else if((role_type==REF_ROLE && ((role_mem || role_adm) || role_ref1)) ||
+          (role_type==MEMBER_ROLE && ((role_mem1 || role_adm1) || role_ref)) ||
+          (role_type==ADMIN_ROLE &&  ((role_mem1 || role_adm1) || role_ref)))
    throw Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
                                .arg(QString::fromUtf8(this->getName()))
-                               .arg(QString::fromUtf8(papel->getName())),
+                               .arg(QString::fromUtf8(role->getName())),
                  ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
-   switch(tipo_papel)
+   switch(role_type)
    {
-    case MEMBER_ROLE: member_roles.push_back(papel); break;
-    case ADMIN_ROLE:  admin_roles.push_back(papel); break;
+    case MEMBER_ROLE: member_roles.push_back(role); break;
+    case ADMIN_ROLE:  admin_roles.push_back(role); break;
     case REF_ROLE:
     default:
-     ref_roles.push_back(papel);
+     ref_roles.push_back(role);
     break;
    }
   }
  }
 }
 
-void Role::setConnectionLimit(int limite)
+void Role::setConnectionLimit(int limit)
 {
- conn_limit=limite;
+ conn_limit=limit;
 }
 
-void Role::setValidity(const QString &data)
+void Role::setValidity(const QString &date)
 {
- validity=data;
+ validity=date;
 }
 
-void Role::setPassword(const QString &senha)
+void Role::setPassword(const QString &passwd)
 {
- this->password=senha;
+ this->password=passwd;
 }
 
-void Role::setRoleAttribute(unsigned tipo_papel)
+void Role::setRoleAttribute(unsigned role_type)
 {
- QString str_papeis, atrib;
- unsigned i, qtd;
- vector<Role *>  *vet_papeis=NULL;
+ QString str_roles, attrib;
+ unsigned i, count;
+ vector<Role *>  *roles_vect=NULL;
 
- switch(tipo_papel)
+ switch(role_type)
  {
   case MEMBER_ROLE:
-   vet_papeis=&member_roles;
-   atrib=ParsersAttributes::MEMBER_ROLES;
+   roles_vect=&member_roles;
+   attrib=ParsersAttributes::MEMBER_ROLES;
   break;
   case ADMIN_ROLE:
-   vet_papeis=&admin_roles;
-   atrib=ParsersAttributes::ADMIN_ROLES;
+   roles_vect=&admin_roles;
+   attrib=ParsersAttributes::ADMIN_ROLES;
   break;
   case REF_ROLE:
   default:
-   vet_papeis=&ref_roles;
-   atrib=ParsersAttributes::REF_ROLES;
+   roles_vect=&ref_roles;
+   attrib=ParsersAttributes::REF_ROLES;
   break;
  }
 
- qtd=vet_papeis->size();
- for(i=0; i < qtd; i++)
+ count=roles_vect->size();
+ for(i=0; i < count; i++)
  {
-  str_papeis+=vet_papeis->at(i)->getName(true);
-  if(i < (qtd-1)) str_papeis+=",";
+  str_roles+=roles_vect->at(i)->getName(true);
+  if(i < (count-1)) str_roles+=",";
  }
 
- attributes[atrib]=str_papeis;
+ attributes[attrib]=str_roles;
 }
 
-void Role::removeRole(unsigned tipo_papel, unsigned idx_papel)
+void Role::removeRole(unsigned role_type, unsigned role_idx)
 {
- vector<Role *> *lista=NULL;
+ vector<Role *> *list=NULL;
  vector<Role *>::iterator itr;
 
  //Selecionando a lista de papéis de acordo com o tipo passado
- switch(tipo_papel)
+ switch(role_type)
  {
-  case REF_ROLE: lista=&ref_roles; break;
-  case MEMBER_ROLE: lista=&member_roles; break;
-  case ADMIN_ROLE: lista=&admin_roles; break;
+  case REF_ROLE: list=&ref_roles; break;
+  case MEMBER_ROLE: list=&member_roles; break;
+  case ADMIN_ROLE: list=&admin_roles; break;
   default:
     //Dispara um erro caso se referencie um tipo inválido de lista de papéis
     throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
 
- if(idx_papel >= lista->size())
+ if(role_idx >= list->size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- itr=lista->begin() + idx_papel;
- lista->erase(itr);
+ itr=list->begin() + role_idx;
+ list->erase(itr);
 }
 
-void Role::removeRoles(unsigned tipo_papel)
+void Role::removeRoles(unsigned role_type)
 {
- vector<Role *> *lista=NULL;
+ vector<Role *> *list=NULL;
 
  //Selecionando a lista de papéis de acordo com o tipo passado
- switch(tipo_papel)
+ switch(role_type)
  {
-  case REF_ROLE: lista=&ref_roles; break;
-  case MEMBER_ROLE: lista=&member_roles; break;
-  case ADMIN_ROLE: lista=&admin_roles; break;
+  case REF_ROLE: list=&ref_roles; break;
+  case MEMBER_ROLE: list=&member_roles; break;
+  case ADMIN_ROLE: list=&admin_roles; break;
   default:
     //Dispara um erro caso se referencie um tipo inválido de lista de papéis
     throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
 
- lista->clear();
+ list->clear();
 }
 
-bool Role::isRoleExists(unsigned tipo_papel, Role *papel)
+bool Role::isRoleExists(unsigned role_type, Role *role)
 {
- vector<Role *> *lista=NULL;
+ vector<Role *> *list=NULL;
  vector<Role *>::iterator itr, itr_end;
- bool enc=false;
+ bool found=false;
 
  //Selecionando a lista de papéis de acordo com o tipo passado
- switch(tipo_papel)
+ switch(role_type)
  {
-  case REF_ROLE: lista=&ref_roles; break;
-  case MEMBER_ROLE: lista=&member_roles; break;
-  case ADMIN_ROLE: lista=&admin_roles; break;
+  case REF_ROLE: list=&ref_roles; break;
+  case MEMBER_ROLE: list=&member_roles; break;
+  case ADMIN_ROLE: list=&admin_roles; break;
   default:
     //Dispara um erro caso se referencie um tipo inválido de lista de papéis
     throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -245,17 +245,17 @@ bool Role::isRoleExists(unsigned tipo_papel, Role *papel)
 
   /* Varre a lista de papeis selecionada e verifica
     se o papel passado no parâmetro já existe em tal lista */
- itr=lista->begin();
- itr_end=lista->end();
- while(!enc && itr!=itr_end)
+ itr=list->begin();
+ itr_end=list->end();
+ while(!found && itr!=itr_end)
  {
-  if((*itr)==papel)
-    enc=true;
+  if((*itr)==role)
+    found=true;
   else
     itr++;
  }
 
- return(enc);
+ return(found);
 }
 
 unsigned Role::getSysid(void)
@@ -263,25 +263,25 @@ unsigned Role::getSysid(void)
  return(sysid);
 }
 
-bool Role::getOption(unsigned tipo_op)
+bool Role::getOption(unsigned op_type)
 {
- if(tipo_op <= OP_ENCRYPTED)
-  return(options[tipo_op]);
+ if(op_type <= OP_ENCRYPTED)
+  return(options[op_type]);
  else
   throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-Role *Role::getRole(unsigned tipo_papel, unsigned idx_papel)
+Role *Role::getRole(unsigned role_type, unsigned role_idx)
 {
- Role *papel=NULL;
- vector<Role *> *lista=NULL;
+ Role *role=NULL;
+ vector<Role *> *list=NULL;
 
  //Selecionando a lista de papéis de acordo com o tipo passado
- switch(tipo_papel)
+ switch(role_type)
  {
-  case REF_ROLE: lista=&ref_roles; break;
-  case MEMBER_ROLE: lista=&member_roles; break;
-  case ADMIN_ROLE: lista=&admin_roles; break;
+  case REF_ROLE: list=&ref_roles; break;
+  case MEMBER_ROLE: list=&member_roles; break;
+  case ADMIN_ROLE: list=&admin_roles; break;
   default:
     //Dispara um erro caso se referencie um tipo inválido de lista de papéis
     throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -290,24 +290,24 @@ Role *Role::getRole(unsigned tipo_papel, unsigned idx_papel)
 
  /* Caso o índice do papel a ser obtido seja inválido, um
     erro é gerado */
- if(idx_papel > lista->size())
+ if(role_idx > list->size())
   throw Exception(ERR_REF_ROLE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Obtém o papel na posição especificada
-  papel=lista->at(idx_papel);
+  role=list->at(role_idx);
 
- return(papel);
+ return(role);
 }
 
-unsigned Role::getRoleCount(unsigned tipo_papel)
+unsigned Role::getRoleCount(unsigned role_type)
 {
- vector<Role *> *lista=NULL;
+ vector<Role *> *list=NULL;
 
- switch(tipo_papel)
+ switch(role_type)
  {
-  case REF_ROLE: lista=&ref_roles; break;
-  case MEMBER_ROLE: lista=&member_roles; break;
-  case ADMIN_ROLE: lista=&admin_roles; break;
+  case REF_ROLE: list=&ref_roles; break;
+  case MEMBER_ROLE: list=&member_roles; break;
+  case ADMIN_ROLE: list=&admin_roles; break;
   default:
    //Dispara um erro caso se referencie um tipo inválido de lista de papéis
    throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -315,7 +315,7 @@ unsigned Role::getRoleCount(unsigned tipo_papel)
  }
 
  //Retorna o tamanho da lista selecionada
- return(lista->size());
+ return(list->size());
 }
 
 unsigned Role::getConnectionLimit(void)
@@ -333,10 +333,10 @@ QString Role::getPassword(void)
  return(password);
 }
 
-QString Role::getCodeDefinition(unsigned tipo_def)
+QString Role::getCodeDefinition(unsigned def_type)
 {
  unsigned i;
- QString atrib_ops[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
+ QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
                        ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
                        ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED };
 
@@ -345,7 +345,7 @@ QString Role::getCodeDefinition(unsigned tipo_def)
  setRoleAttribute(ADMIN_ROLE);
 
  for(i=0; i < 6; i++)
-  attributes[atrib_ops[i]]=(options[i] ? "1" : "");
+  attributes[op_attribs[i]]=(options[i] ? "1" : "");
 
  attributes[ParsersAttributes::PASSWORD]=password;
  attributes[ParsersAttributes::VALIDITY]=validity;
@@ -362,6 +362,6 @@ QString Role::getCodeDefinition(unsigned tipo_def)
 
  attributes[ParsersAttributes::SYSID]=QString("%1").arg(sysid);
 
- return(BaseObject::__getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(def_type));
 }
 
