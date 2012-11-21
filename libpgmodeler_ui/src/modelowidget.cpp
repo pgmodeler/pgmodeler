@@ -1151,7 +1151,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_ROLE:
-    papel_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Papel *>(objeto));
+    papel_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Role *>(objeto));
     papel_wgt->show();
    break;
 

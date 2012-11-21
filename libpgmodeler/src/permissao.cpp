@@ -37,9 +37,9 @@ Permissao::Permissao(BaseObject *objeto)
  attributes[ParsersAttributes::PRIVILEGES_GOP]="";
 }
 
-bool Permissao::papelReferenciado(Papel *papel)
+bool Permissao::papelReferenciado(Role *papel)
 {
- vector<Papel *>::iterator itr, itr_end;
+ vector<Role *>::iterator itr, itr_end;
  bool enc=false;
 
  //Verifica a existencia do papel na lista de papeis já relacionado  permissão
@@ -55,7 +55,7 @@ bool Permissao::papelReferenciado(Papel *papel)
  return(enc);
 }
 
-void Permissao::adicionarPapel(Papel *papel)
+void Permissao::adicionarPapel(Role *papel)
 {
  //Caso o usuário tente atribuir um papel não alocado um erro será disparado
  if(!papel)
@@ -144,7 +144,7 @@ void Permissao::removerPapeis(void)
  gerarIdPermissao();
 }
 
-Papel *Permissao::obterPapel(unsigned idx_papel)
+Role *Permissao::obterPapel(unsigned idx_papel)
 {
  if(idx_papel > papeis.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -221,9 +221,9 @@ QString Permissao::obterStringPrivilegios(void)
 
 void Permissao::gerarIdPermissao(void)
 {
- vector<Papel *>::iterator itr, itr_end;
+ vector<Role *>::iterator itr, itr_end;
  vector<QString> vet_end;
- Papel *papel=NULL;
+ Role *papel=NULL;
  QString str_aux;
  QString endereco;
  unsigned i, qtd;

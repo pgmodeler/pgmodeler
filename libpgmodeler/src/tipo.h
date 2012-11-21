@@ -27,7 +27,7 @@
 #include "baseobject.h"
 #include "schema.h"
 #include "function.h"
-#include "papel.h"
+#include "role.h"
 
 class Tipo: public BaseObject {
  private:

@@ -1,8 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Papel que é usada para gerar os
-#             códigos SQL para os papéis no banco de dados (roles).
+# Description: Implements the operations to manipulate roles on the database.
 # Creation date: 12/05/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -19,12 +18,12 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef PAPEL_H
-#define PAPEL_H
+#ifndef ROLE_H
+#define ROLE_H
 
 #include "baseobject.h"
 
-class Papel: public BaseObject {
+class Role: public BaseObject {
  private:
   static unsigned role_id;
 
@@ -32,30 +31,30 @@ class Papel: public BaseObject {
   unsigned sysid;
 
   //Opções do papel
-  bool opcoes[6];
+  bool options[6];
 
   //Limite de conexões do papel
-  int lim_conexao;
+  int conn_limit;
 
          //Validade do papel
-  QString validade,
+  QString validity,
 
          //Senha de autenticação do papel
-         senha;
+         password;
 
                  //Papéis nos quais terão como membro o papel atual
-  vector<Papel *> papeis_refs, //IN ROLE
+  vector<Role *> ref_roles, //IN ROLE
 
                  //Papéis os quais serão inseridos como membros do atual
-                 papeis_membros, //ROLE
+                 member_roles, //ROLE
 
                  /* Papéis os quais serão inseridos como membros do atual
                    com o privilégio de adminstrador */
-                 papeis_admins; //ADMIN
+                 admin_roles; //ADMIN
 
   /* Formata as QStrings de papéis usadas pelo parser de esquema
      na geração da definição SQL do papel */
-  void definirAtributoPapel(unsigned tipo_papel);
+  void setRoleAttribute(unsigned tipo_papel);
 
  public:
   //Constantes usadas para referenciar as opções do Papel
@@ -67,60 +66,60 @@ class Papel: public BaseObject {
                         OP_ENCRYPTED=5;
 
   //Constantes usadas para referenciar a lista de papéis internas da classe
-  static const unsigned PAPEL_REF=10,
-                        PAPEL_MEMBRO=20,
-                        PAPEL_ADMIN=30;
+  static const unsigned REF_ROLE=10,
+                        MEMBER_ROLE=20,
+                        ADMIN_ROLE=30;
 
-  Papel(void);
+  Role(void);
 
   //Define o id de usuário
-  void definirSysid(unsigned uid);
+  void setSysid(unsigned uid);
 
   //Define uma opção do papel
-  void definirOpcao(unsigned tipo_op, bool valor);
+  void setOption(unsigned tipo_op, bool valor);
 
   //Define um papel como pertencente a uma das listas de papéis internos
-  void definirPapel(unsigned tipo_papel, Papel *papel);
+  void addRole(unsigned tipo_papel, Role *papel);
 
   //Define o limite de conexões que um papel pode fazer
-  void definirLimiteConexao(int limite);
+  void setConnectionLimit(int limite);
 
   //Define a validade do papel
-  void definirValidade(const QString &data);
+  void setValidity(const QString &data);
 
   //Define a senha do papel
-  void definirSenha(const QString &senha);
+  void setPassword(const QString &password);
 
   //Obtém uma opção do papel usando as constantes OP_???
-  bool obterOpcao(unsigned tipo_op);
+  bool getOption(unsigned tipo_op);
 
   //Remove um papel do tipo especificado no índice informado
-  void removerPapel(unsigned tipo_papel, unsigned idx_papel);
+  void removeRole(unsigned tipo_papel, unsigned idx_papel);
 
   //Remove todos os papéis membros no tipo especificado
-  void removerPapeis(unsigned tipo_papel);
+  void removeRoles(unsigned tipo_papel);
 
   /* Obtém um papel das listas internas usando o tipo da lista (PAPEL_???)
      e o índice do elemento na lista */
-  Papel *obterPapel(unsigned tipo_papel, unsigned idx_papel);
+  Role *getRole(unsigned tipo_papel, unsigned idx_papel);
 
   //Retorna se o papel informado está dento de uma das listas de papeis
-  bool papelExiste(unsigned tipo_papel, Papel *papel);
+  bool isRoleExists(unsigned tipo_papel, Role *papel);
 
   //Obtém o número de papéis presentes em uma determinada lista
-  unsigned obterNumPapeis(unsigned tipo_papel);
+  unsigned getRoleCount(unsigned tipo_papel);
 
   //Obtém o limite de conexões para o papel
-  unsigned obterLimiteConexao(void);
+  unsigned getConnectionLimit(void);
 
   //Obtém a validade do papel
-  QString obterValidade(void);
+  QString getValidity(void);
 
   //Obtém a senha do papel
-  QString obterSenha(void);
+  QString getPassword(void);
 
   //Obtém o id de usuário do papel
-  unsigned obterSysid(void);
+  unsigned getSysid(void);
 
   //Retorna a definição SQL ou XML do objeto
   QString getCodeDefinition(unsigned tipo_def);

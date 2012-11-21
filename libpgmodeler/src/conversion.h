@@ -25,7 +25,7 @@
 
 #include "baseobject.h"
 #include "function.h"
-#include "papel.h"
+#include "role.h"
 
 class Conversion: public BaseObject {
  private:

@@ -1,17 +1,17 @@
-#include "papel.h"
+#include "role.h"
 
-unsigned Papel::role_id=0;
+unsigned Role::role_id=0;
 
-Papel::Papel(void)
+Role::Role(void)
 {
  obj_type=OBJ_ROLE;
- object_id=Papel::role_id++;
+ object_id=Role::role_id++;
  sysid=100;
 
  for(unsigned i=0; i < 6; i++)
-  opcoes[i]=false;
+  options[i]=false;
 
- lim_conexao=-1;
+ conn_limit=-1;
 
  attributes[ParsersAttributes::SUPERUSER]="";
  attributes[ParsersAttributes::CREATEDB]="";
@@ -29,7 +29,7 @@ Papel::Papel(void)
  attributes[ParsersAttributes::GROUP]="";
 }
 
-void Papel::definirSysid(unsigned sysid)
+void Role::setSysid(unsigned sysid)
 {
  /* IDs de usuário abaixo de 100 são reservados ao SGBD, sendo assim
     um erro será gerado */
@@ -39,17 +39,17 @@ void Papel::definirSysid(unsigned sysid)
  this->sysid=sysid;
 }
 
-void Papel::definirOpcao(unsigned tipo_op, bool valor)
+void Role::setOption(unsigned tipo_op, bool valor)
 {
  //Caso o tipo de opção seja válido, atribui-se o valor ao mesmo
  if(tipo_op <= OP_ENCRYPTED)
-  opcoes[tipo_op]=valor;
+  options[tipo_op]=valor;
  else
   //Dispara-se uma exceção caso se use um tipo de opção inválido
   throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
+void Role::addRole(unsigned tipo_papel, Role *papel)
 {
  /* Caso o papel a ser inserido na lista não esteja alocado,
     um erro e disparado */
@@ -69,21 +69,21 @@ void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
 
   /* Verifica se o papel a ser atribuído ao papel 'this' já esta sendo
      referenciado em uma das listas do papel 'this' */
-  papel_ref=this->papelExiste(PAPEL_REF, papel);
-  papel_mem=this->papelExiste(PAPEL_MEMBRO, papel);
-  papel_adm=this->papelExiste(PAPEL_ADMIN, papel);
+  papel_ref=this->isRoleExists(REF_ROLE, papel);
+  papel_mem=this->isRoleExists(MEMBER_ROLE, papel);
+  papel_adm=this->isRoleExists(ADMIN_ROLE, papel);
 
   /* Verifica se o papel 'this' está sendo referenciado em uma das
      listas do papel vindo do parâmetro */
-  papel_ref1=papel->papelExiste(PAPEL_REF, this);
-  papel_mem1=papel->papelExiste(PAPEL_MEMBRO, this);
-  papel_adm1=papel->papelExiste(PAPEL_ADMIN, this);
+  papel_ref1=papel->isRoleExists(REF_ROLE, this);
+  papel_mem1=papel->isRoleExists(MEMBER_ROLE, this);
+  papel_adm1=papel->isRoleExists(ADMIN_ROLE, this);
 
   /* Erro de duplicação, disparado quando o papel a ser inserido
      já existe na lista do tipo de papel selecionado */
-  if((tipo_papel==PAPEL_REF && papel_ref) ||
-     (tipo_papel==PAPEL_MEMBRO && (papel_mem || papel_adm)) ||
-     (tipo_papel==PAPEL_ADMIN && (papel_adm || papel_mem)))
+  if((tipo_papel==REF_ROLE && papel_ref) ||
+     (tipo_papel==MEMBER_ROLE && (papel_mem || papel_adm)) ||
+     (tipo_papel==ADMIN_ROLE && (papel_adm || papel_mem)))
      //Dispara um erro caso o papel já foi inserido anteriormente na lista
    throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
                                .arg(QString::fromUtf8(papel->getName()))
@@ -112,9 +112,9 @@ void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
           'this' e o usuário tente definir o objeto 'papel' (do parâmetro) como um elemento
           da lista de papeis_membros ou papeis_adm do papel 'this'
      */
-  else if((tipo_papel==PAPEL_REF && ((papel_mem || papel_adm) || papel_ref1)) ||
-          (tipo_papel==PAPEL_MEMBRO && ((papel_mem1 || papel_adm1) || papel_ref)) ||
-          (tipo_papel==PAPEL_ADMIN &&  ((papel_mem1 || papel_adm1) || papel_ref)))
+  else if((tipo_papel==REF_ROLE && ((papel_mem || papel_adm) || papel_ref1)) ||
+          (tipo_papel==MEMBER_ROLE && ((papel_mem1 || papel_adm1) || papel_ref)) ||
+          (tipo_papel==ADMIN_ROLE &&  ((papel_mem1 || papel_adm1) || papel_ref)))
    throw Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
                                .arg(QString::fromUtf8(this->getName()))
                                .arg(QString::fromUtf8(papel->getName())),
@@ -123,51 +123,51 @@ void Papel::definirPapel(unsigned tipo_papel, Papel *papel)
   {
    switch(tipo_papel)
    {
-    case PAPEL_MEMBRO: papeis_membros.push_back(papel); break;
-    case PAPEL_ADMIN:  papeis_admins.push_back(papel); break;
-    case PAPEL_REF:
+    case MEMBER_ROLE: member_roles.push_back(papel); break;
+    case ADMIN_ROLE:  admin_roles.push_back(papel); break;
+    case REF_ROLE:
     default:
-     papeis_refs.push_back(papel);
+     ref_roles.push_back(papel);
     break;
    }
   }
  }
 }
 
-void Papel::definirLimiteConexao(int limite)
+void Role::setConnectionLimit(int limite)
 {
- lim_conexao=limite;
+ conn_limit=limite;
 }
 
-void Papel::definirValidade(const QString &data)
+void Role::setValidity(const QString &data)
 {
- validade=data;
+ validity=data;
 }
 
-void Papel::definirSenha(const QString &senha)
+void Role::setPassword(const QString &senha)
 {
- this->senha=senha;
+ this->password=senha;
 }
 
-void Papel::definirAtributoPapel(unsigned tipo_papel)
+void Role::setRoleAttribute(unsigned tipo_papel)
 {
  QString str_papeis, atrib;
  unsigned i, qtd;
- vector<Papel *>  *vet_papeis=NULL;
+ vector<Role *>  *vet_papeis=NULL;
 
  switch(tipo_papel)
  {
-  case PAPEL_MEMBRO:
-   vet_papeis=&papeis_membros;
+  case MEMBER_ROLE:
+   vet_papeis=&member_roles;
    atrib=ParsersAttributes::MEMBER_ROLES;
   break;
-  case PAPEL_ADMIN:
-   vet_papeis=&papeis_admins;
+  case ADMIN_ROLE:
+   vet_papeis=&admin_roles;
    atrib=ParsersAttributes::ADMIN_ROLES;
   break;
-  case PAPEL_REF:
+  case REF_ROLE:
   default:
-   vet_papeis=&papeis_refs;
+   vet_papeis=&ref_roles;
    atrib=ParsersAttributes::REF_ROLES;
   break;
  }
@@ -182,17 +182,17 @@ void Papel::definirAtributoPapel(unsigned tipo_papel)
  attributes[atrib]=str_papeis;
 }
 
-void Papel::removerPapel(unsigned tipo_papel, unsigned idx_papel)
+void Role::removeRole(unsigned tipo_papel, unsigned idx_papel)
 {
- vector<Papel *> *lista=NULL;
- vector<Papel *>::iterator itr;
+ vector<Role *> *lista=NULL;
+ vector<Role *>::iterator itr;
 
  //Selecionando a lista de papéis de acordo com o tipo passado
  switch(tipo_papel)
  {
-  case PAPEL_REF: lista=&papeis_refs; break;
-  case PAPEL_MEMBRO: lista=&papeis_membros; break;
-  case PAPEL_ADMIN: lista=&papeis_admins; break;
+  case REF_ROLE: lista=&ref_roles; break;
+  case MEMBER_ROLE: lista=&member_roles; break;
+  case ADMIN_ROLE: lista=&admin_roles; break;
   default:
     //Dispara um erro caso se referencie um tipo inválido de lista de papéis
     throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -206,16 +206,16 @@ void Papel::removerPapel(unsigned tipo_papel, unsigned idx_papel)
  lista->erase(itr);
 }
 
-void Papel::removerPapeis(unsigned tipo_papel)
+void Role::removeRoles(unsigned tipo_papel)
 {
- vector<Papel *> *lista=NULL;
+ vector<Role *> *lista=NULL;
 
  //Selecionando a lista de papéis de acordo com o tipo passado
  switch(tipo_papel)
  {
-  case PAPEL_REF: lista=&papeis_refs; break;
-  case PAPEL_MEMBRO: lista=&papeis_membros; break;
-  case PAPEL_ADMIN: lista=&papeis_admins; break;
+  case REF_ROLE: lista=&ref_roles; break;
+  case MEMBER_ROLE: lista=&member_roles; break;
+  case ADMIN_ROLE: lista=&admin_roles; break;
   default:
     //Dispara um erro caso se referencie um tipo inválido de lista de papéis
     throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -225,18 +225,18 @@ void Papel::removerPapeis(unsigned tipo_papel)
  lista->clear();
 }
 
-bool Papel::papelExiste(unsigned tipo_papel, Papel *papel)
+bool Role::isRoleExists(unsigned tipo_papel, Role *papel)
 {
- vector<Papel *> *lista=NULL;
- vector<Papel *>::iterator itr, itr_end;
+ vector<Role *> *lista=NULL;
+ vector<Role *>::iterator itr, itr_end;
  bool enc=false;
 
  //Selecionando a lista de papéis de acordo com o tipo passado
  switch(tipo_papel)
  {
-  case PAPEL_REF: lista=&papeis_refs; break;
-  case PAPEL_MEMBRO: lista=&papeis_membros; break;
-  case PAPEL_ADMIN: lista=&papeis_admins; break;
+  case REF_ROLE: lista=&ref_roles; break;
+  case MEMBER_ROLE: lista=&member_roles; break;
+  case ADMIN_ROLE: lista=&admin_roles; break;
   default:
     //Dispara um erro caso se referencie um tipo inválido de lista de papéis
     throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -258,30 +258,30 @@ bool Papel::papelExiste(unsigned tipo_papel, Papel *papel)
  return(enc);
 }
 
-unsigned Papel::obterSysid(void)
+unsigned Role::getSysid(void)
 {
  return(sysid);
 }
 
-bool Papel::obterOpcao(unsigned tipo_op)
+bool Role::getOption(unsigned tipo_op)
 {
  if(tipo_op <= OP_ENCRYPTED)
-  return(opcoes[tipo_op]);
+  return(options[tipo_op]);
  else
   throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-Papel *Papel::obterPapel(unsigned tipo_papel, unsigned idx_papel)
+Role *Role::getRole(unsigned tipo_papel, unsigned idx_papel)
 {
- Papel *papel=NULL;
- vector<Papel *> *lista=NULL;
+ Role *papel=NULL;
+ vector<Role *> *lista=NULL;
 
  //Selecionando a lista de papéis de acordo com o tipo passado
  switch(tipo_papel)
  {
-  case PAPEL_REF: lista=&papeis_refs; break;
-  case PAPEL_MEMBRO: lista=&papeis_membros; break;
-  case PAPEL_ADMIN: lista=&papeis_admins; break;
+  case REF_ROLE: lista=&ref_roles; break;
+  case MEMBER_ROLE: lista=&member_roles; break;
+  case ADMIN_ROLE: lista=&admin_roles; break;
   default:
     //Dispara um erro caso se referencie um tipo inválido de lista de papéis
     throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -299,15 +299,15 @@ Papel *Papel::obterPapel(unsigned tipo_papel, unsigned idx_papel)
  return(papel);
 }
 
-unsigned Papel::obterNumPapeis(unsigned tipo_papel)
+unsigned Role::getRoleCount(unsigned tipo_papel)
 {
- vector<Papel *> *lista=NULL;
+ vector<Role *> *lista=NULL;
 
  switch(tipo_papel)
  {
-  case PAPEL_REF: lista=&papeis_refs; break;
-  case PAPEL_MEMBRO: lista=&papeis_membros; break;
-  case PAPEL_ADMIN: lista=&papeis_admins; break;
+  case REF_ROLE: lista=&ref_roles; break;
+  case MEMBER_ROLE: lista=&member_roles; break;
+  case ADMIN_ROLE: lista=&admin_roles; break;
   default:
    //Dispara um erro caso se referencie um tipo inválido de lista de papéis
    throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -318,47 +318,47 @@ unsigned Papel::obterNumPapeis(unsigned tipo_papel)
  return(lista->size());
 }
 
-unsigned Papel::obterLimiteConexao(void)
+unsigned Role::getConnectionLimit(void)
 {
- return(lim_conexao);
+ return(conn_limit);
 }
 
-QString Papel::obterValidade(void)
+QString Role::getValidity(void)
 {
- return(validade);
+ return(validity);
 }
 
-QString Papel::obterSenha(void)
+QString Role::getPassword(void)
 {
- return(senha);
+ return(password);
 }
 
-QString Papel::getCodeDefinition(unsigned tipo_def)
+QString Role::getCodeDefinition(unsigned tipo_def)
 {
  unsigned i;
  QString atrib_ops[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
                        ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
                        ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED };
 
- definirAtributoPapel(PAPEL_REF);
- definirAtributoPapel(PAPEL_MEMBRO);
- definirAtributoPapel(PAPEL_ADMIN);
+ setRoleAttribute(REF_ROLE);
+ setRoleAttribute(MEMBER_ROLE);
+ setRoleAttribute(ADMIN_ROLE);
 
  for(i=0; i < 6; i++)
-  attributes[atrib_ops[i]]=(opcoes[i] ? "1" : "");
+  attributes[atrib_ops[i]]=(options[i] ? "1" : "");
 
- attributes[ParsersAttributes::PASSWORD]=senha;
- attributes[ParsersAttributes::VALIDITY]=validade;
+ attributes[ParsersAttributes::PASSWORD]=password;
+ attributes[ParsersAttributes::VALIDITY]=validity;
 
  /* Configurando um atributo indicando se o papel é um group ou não,
     isso é usado apenas para manter a compatibilidade com o postgresql 8.0
     por ser o único que considera usuário e grupo, as demais versões tratam
     ambos como papeis. Um papel assume a forma de um grupo quando o mesmo
     não possui a opção de login setada */
- attributes[ParsersAttributes::GROUP]=(opcoes[OP_LOGIN] ? "" : "1");
+ attributes[ParsersAttributes::GROUP]=(options[OP_LOGIN] ? "" : "1");
 
- if(lim_conexao >= 0)
-  attributes[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(lim_conexao);
+ if(conn_limit >= 0)
+  attributes[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(conn_limit);
 
  attributes[ParsersAttributes::SYSID]=QString("%1").arg(sysid);
 

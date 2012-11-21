@@ -24,7 +24,7 @@
 #include "baseobject.h"
 #include "function.h"
 #include "schema.h"
-#include "papel.h"
+#include "role.h"
 
 class Operator: public BaseObject {
  private:

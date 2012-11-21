@@ -279,10 +279,10 @@ void PermissaoWidget::listarPermissoes(void)
 void PermissaoWidget::exibirDadosPapelSelecionado(void)
 {
  int lin, idx_lin=-1;
- Papel *papel=NULL;
+ Role *papel=NULL;
 
  //Obtém o papel selecionado na janela de seleção de objetos
- papel=dynamic_cast<Papel *>(selecaoobjetos_wgt->obterObjetoSelecao());
+ papel=dynamic_cast<Role *>(selecaoobjetos_wgt->obterObjetoSelecao());
 
  //Obtém a linha selecionada da tabela atual
  lin=tab_papeis->obterLinhaSelecionada();
@@ -439,7 +439,7 @@ void PermissaoWidget::editarPermissao(void)
  {
   unsigned priv, i, qtd;
   QCheckBox *chk=NULL, *chk1=NULL;
-  Papel *papel=NULL;
+  Role *papel=NULL;
 
   /* Disconecta o sinal de linhaAdicionada da tabela de papéis para que
      mesma possa ter linhas adicionadas sem qualquer tratamento pelo
@@ -519,7 +519,7 @@ void PermissaoWidget::configurarPermissao(Permissao *permissao)
 
   //Adiciona cada papel da tabela   permissão
   for(i=0; i < qtd; i++)
-   permissao->adicionarPapel(reinterpret_cast<Papel *>(tab_papeis->obterDadoLinha(i).value<void *>()));
+   permissao->adicionarPapel(reinterpret_cast<Role *>(tab_papeis->obterDadoLinha(i).value<void *>()));
 
   /* Configura os privilégios da permissão com base nos checkboxes
      selecionados ta tabela de privilégios */

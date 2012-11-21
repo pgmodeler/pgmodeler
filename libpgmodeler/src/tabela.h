@@ -31,7 +31,7 @@
 #include "regra.h"
 #include "trigger.h"
 #include "function.h"
-#include "papel.h"
+#include "role.h"
 
 class Tabela: public BaseTable {
  private:

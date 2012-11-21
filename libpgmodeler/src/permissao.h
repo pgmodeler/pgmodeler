@@ -26,7 +26,7 @@
 
 #include "baseobject.h"
 #include "function.h"
-#include "papel.h"
+#include "role.h"
 #include <algorithm>
  #include <QTextStream>
 
@@ -54,7 +54,7 @@ class Permissao: public BaseObject {
       Este vetor pode estar vazio caso se deseja
       dar permissão a todos os usuários/grupos do cluster (PUBLIC)
       sobre o objeto */
-   vector<Papel *> papeis;
+   vector<Role *> papeis;
 
    //Conjunto de privilégios que se aplicam ao objeto
    bool privilegios[13];
@@ -92,7 +92,7 @@ class Permissao: public BaseObject {
   Permissao(BaseObject *objeto);
 
   //Define o papel que deterá os privilégios sobre o objeto
-  void adicionarPapel(Papel *papel);
+  void adicionarPapel(Role *papel);
 
   //Define um dado privilégio para o papel sobre o objeto
   void definirPrivilegio(unsigned privilegio, bool valor, bool op_concessao);
@@ -107,7 +107,7 @@ class Permissao: public BaseObject {
   unsigned obterNumPapeis(void);
 
   //Obtém um papel que detém os privilégios sobre o objeto
-  Papel *obterPapel(unsigned idx_papel);
+  Role *obterPapel(unsigned idx_papel);
 
   //Obtém o objeto que está sujeito aos privilégios
   BaseObject *obterObjeto(void);
@@ -125,7 +125,7 @@ class Permissao: public BaseObject {
   QString obterStringPrivilegios(void);
 
   //Indica se o papel está referenciado na permissão
-  bool papelReferenciado(Papel *papel);
+  bool papelReferenciado(Role *papel);
 
   //Retorna a definição SQL ou XML do objeto
   QString getCodeDefinition(unsigned tipo_def);

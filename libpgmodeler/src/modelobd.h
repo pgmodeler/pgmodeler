@@ -34,7 +34,7 @@
 #include "sequencia.h"
 #include "relacionamento.h"
 #include "textbox.h"
-#include "papel.h"
+#include "role.h"
 #include "tipo.h"
 #include "tablespace.h"
 #include "language.h"
@@ -316,9 +316,9 @@ class ModeloBD:  public QObject, public BaseObject {
   Tipo *obterTipo(unsigned idx_obj);
 
   //Métodos de manipulação de papéis
-  void adicionarPapel(Papel *papel, int idx_obj=-1);
-  void removerPapel(Papel *papel, int idx_obj=-1);
-  Papel *obterPapel(unsigned idx_obj);
+  void adicionarPapel(Role *papel, int idx_obj=-1);
+  void removerPapel(Role *papel, int idx_obj=-1);
+  Role *obterPapel(unsigned idx_obj);
 
   //Métodos de manipulação de espaços de tabela
   void adicionarEspacoTabela(Tablespace *espaco_tab, int idx_obj=-1);
@@ -397,7 +397,7 @@ class ModeloBD:  public QObject, public BaseObject {
   //Cria um objeto a partir do tipo passado
   BaseObject *criarObjeto(ObjectType tipo_obj);
 
-  Papel *criarPapel(void);
+  Role *criarPapel(void);
   Tablespace *criarEspacoTabela(void);
   Schema *criarEsquema(void);
   Language *criarLinguagem(void);

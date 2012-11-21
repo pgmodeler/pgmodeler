@@ -24,7 +24,7 @@
 
 #include "baseobject.h"
 #include "schema.h"
-#include "papel.h"
+#include "role.h"
 #include "column.h"
 
 class Parameter: public Column {

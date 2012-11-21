@@ -24,7 +24,7 @@
 
 #include "baseobject.h"
 #include "function.h"
-#include "papel.h"
+#include "role.h"
 
 class Language: public BaseObject{
  private:

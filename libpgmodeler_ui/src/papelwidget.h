@@ -38,13 +38,13 @@ class PapelWidget: public ObjetoBaseWidget, public Ui::PapelWidget {
    void preencherTabelaMembros(void);
 
    //Exibe o dado do papel na tabela especificada
-   void exibirDadosPapel(Papel *papel, unsigned idx_tabela, unsigned lin);
+   void exibirDadosPapel(Role *papel, unsigned idx_tabela, unsigned lin);
 
  public:
    PapelWidget(QWidget * parent = 0);
 
    void hideEvent(QHideEvent *);
-   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Papel *papel);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Role *papel);
 
  private slots:
    /* Preenche com informações relacionadas ao papel selecionado

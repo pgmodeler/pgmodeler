@@ -120,25 +120,25 @@ void PapelWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void PapelWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Papel *papel)
+void PapelWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Role *papel)
 {
  if(papel)
  {
   /* Preenche os widgets do formulário específicos de objetos papel
      com os valores presentes no objeto papel passado */
-  sysid_sb->setValue(papel->obterSysid());
-  limconexao_sb->setValue(papel->obterLimiteConexao());
-  senha_edt->setText(papel->obterSenha());
-  validade_dte->setDateTime(QDateTime::fromString(papel->obterValidade(),"yyyy-MM-dd hh:mm"));
+  sysid_sb->setValue(papel->getSysid());
+  limconexao_sb->setValue(papel->getConnectionLimit());
+  senha_edt->setText(papel->getPassword());
+  validade_dte->setDateTime(QDateTime::fromString(papel->getValidity(),"yyyy-MM-dd hh:mm"));
 
   /* Marca as checkboxes de opção do papel de acordo com a configuração
      atual de tais opções no papel passado */
-  superusr_chk->setChecked(papel->obterOpcao(Papel::OP_SUPERUSER));
-  criarbd_chk->setChecked(papel->obterOpcao(Papel::OP_CREATEDB));
-  criarusr_chk->setChecked(papel->obterOpcao(Papel::OP_CREATEROLE));
-  senhacripto_chk->setChecked(papel->obterOpcao(Papel::OP_ENCRYPTED));
-  herdarperm_chk->setChecked(papel->obterOpcao(Papel::OP_INHERIT));
-  permitirlogin_chk->setChecked(papel->obterOpcao(Papel::OP_LOGIN));
+  superusr_chk->setChecked(papel->getOption(Role::OP_SUPERUSER));
+  criarbd_chk->setChecked(papel->getOption(Role::OP_CREATEDB));
+  criarusr_chk->setChecked(papel->getOption(Role::OP_CREATEROLE));
+  senhacripto_chk->setChecked(papel->getOption(Role::OP_ENCRYPTED));
+  herdarperm_chk->setChecked(papel->getOption(Role::OP_INHERIT));
+  permitirlogin_chk->setChecked(papel->getOption(Role::OP_LOGIN));
  }
 
  //Define os atributos do formulários e da janela pai
@@ -151,14 +151,14 @@ void PapelWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Pa
  configurarSelecaoPapeis();
 }
 
-void PapelWidget::exibirDadosPapel(Papel *papel, unsigned idx_tabela, unsigned lin)
+void PapelWidget::exibirDadosPapel(Role *papel, unsigned idx_tabela, unsigned lin)
 {
  if(papel)
  {
   QString str_aux;
-  Papel *papel_aux=NULL;
+  Role *papel_aux=NULL;
   unsigned qtd, i, id_tipo,
-           tipo_papeis[3]={ Papel::PAPEL_REF, Papel::PAPEL_MEMBRO, Papel::PAPEL_ADMIN };
+           tipo_papeis[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
 
   if(idx_tabela > 3)
    throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -170,8 +170,8 @@ void PapelWidget::exibirDadosPapel(Papel *papel, unsigned idx_tabela, unsigned l
 
   //Configura as informações básicas do membro
   tab_membros[idx_tabela]->definirTextoCelula(QString::fromUtf8(papel->getName()), lin, 0);
-  tab_membros[idx_tabela]->definirTextoCelula(QString("%1").arg(papel->obterSysid()), lin, 1);
-  tab_membros[idx_tabela]->definirTextoCelula(papel->obterValidade(), lin, 2);
+  tab_membros[idx_tabela]->definirTextoCelula(QString("%1").arg(papel->getSysid()), lin, 1);
+  tab_membros[idx_tabela]->definirTextoCelula(papel->getValidity(), lin, 2);
 
   /* Varre a lista de membros do papel obtido como membro atual
      concatena todos os nomes obtidos em uma string e a coloca
@@ -179,12 +179,12 @@ void PapelWidget::exibirDadosPapel(Papel *papel, unsigned idx_tabela, unsigned l
   for(id_tipo=0; id_tipo < 3; id_tipo++)
   {
    //Obtém a quantidade de tipos de membro atual do papel membro atual
-   qtd=papel->obterNumPapeis(tipo_papeis[id_tipo]);
+   qtd=papel->getRoleCount(tipo_papeis[id_tipo]);
 
    //Varre a lista atual concatenando os nomes
    for(i=0; i < qtd; i++)
    {
-    papel_aux=papel->obterPapel(tipo_papeis[id_tipo], i);
+    papel_aux=papel->getRole(tipo_papeis[id_tipo], i);
     str_aux+=papel_aux->getName();
     if(i < qtd-1) str_aux+=", ";
    }
@@ -202,12 +202,12 @@ void PapelWidget::preencherTabelaMembros(void)
  if(this->objeto)
  {
   QString str_aux;
-  Papel *papel_aux=NULL, *papel=NULL;
+  Role *papel_aux=NULL, *papel=NULL;
   unsigned qtd, i, id_tipo,
-           tipo_papeis[3]={ Papel::PAPEL_REF, Papel::PAPEL_MEMBRO, Papel::PAPEL_ADMIN };
+           tipo_papeis[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
 
   //Converte a referência do objeto a ser editado em um referência a um papel
-  papel=dynamic_cast<Papel *>(this->objeto);
+  papel=dynamic_cast<Role *>(this->objeto);
 
   /* O processo de preenchimento das tabelas se dá da seguinte forma:
       * Os membros do papel em cada tipo (PAPEL_REF, PAPEL_MEMBRO, PAPEL_ADMIN)
@@ -220,14 +220,14 @@ void PapelWidget::preencherTabelaMembros(void)
   for(id_tipo=0; id_tipo < 3; id_tipo++)
   {
    //Obtém o número de papéis membros do tipo atual
-   qtd=papel->obterNumPapeis(tipo_papeis[id_tipo]);
+   qtd=papel->getRoleCount(tipo_papeis[id_tipo]);
    tab_membros[id_tipo]->blockSignals(true);
 
    //Varre a lista de tipos atual
    for(i=0; i < qtd; i++)
    {
     //Obtém um papel da lista de membros
-    papel_aux=papel->obterPapel(tipo_papeis[id_tipo], i);
+    papel_aux=papel->getRole(tipo_papeis[id_tipo], i);
 
     //Adiciona uma linha na tabela respectiva ao tipo de membro
     tab_membros[id_tipo]->adicionarLinha();
@@ -276,7 +276,7 @@ void PapelWidget::exibirDadosPapelSelecionado(void)
  }
  //Se o objeto da seleção não existir na tabela exibe seus dados
  else if(obj_sel && idx_lin < 0)
-  exibirDadosPapel(dynamic_cast<Papel *>(obj_sel), idx_tab, lin);
+  exibirDadosPapel(dynamic_cast<Role *>(obj_sel), idx_tab, lin);
  else
  {
   /* Caso a linha atual da tabela não contenha nenhum dado isso indica
@@ -300,31 +300,31 @@ void PapelWidget::exibirDadosPapelSelecionado(void)
 
 void PapelWidget::aplicarConfiguracao(void)
 {
- Papel *papel=NULL, *papel_aux=NULL;
+ Role *papel=NULL, *papel_aux=NULL;
  unsigned qtd, i, id_tipo,
-          tipo_papeis[3]={ Papel::PAPEL_REF, Papel::PAPEL_MEMBRO, Papel::PAPEL_ADMIN };
+          tipo_papeis[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
 
  try
  {
   //Inicia configuração do papel, alocando-o caso seja um novo objeto
-  iniciarConfiguracao<Papel>();
+  iniciarConfiguracao<Role>();
 
   /* Converte o objeto em edição para o tipo Papel, para se ter acesso
      ao métodos específicos da classe */
-  papel=dynamic_cast<Papel *>(this->objeto);
+  papel=dynamic_cast<Role *>(this->objeto);
 
   //Configura o papel com os valores informados no formulário
-  papel->definirSysid(sysid_sb->value());
-  papel->definirLimiteConexao(limconexao_sb->value());
-  papel->definirSenha(senha_edt->text());
-  papel->definirValidade(validade_dte->dateTime().toString("yyyy-MM-dd hh:mm"));
+  papel->setSysid(sysid_sb->value());
+  papel->setConnectionLimit(limconexao_sb->value());
+  papel->setPassword(senha_edt->text());
+  papel->setValidity(validade_dte->dateTime().toString("yyyy-MM-dd hh:mm"));
 
-  papel->definirOpcao(Papel::OP_SUPERUSER, superusr_chk->isChecked());
-  papel->definirOpcao(Papel::OP_CREATEDB, criarbd_chk->isChecked());
-  papel->definirOpcao(Papel::OP_CREATEROLE, criarusr_chk->isChecked());
-  papel->definirOpcao(Papel::OP_ENCRYPTED, senhacripto_chk->isChecked());
-  papel->definirOpcao(Papel::OP_INHERIT, herdarperm_chk->isChecked());
-  papel->definirOpcao(Papel::OP_LOGIN, permitirlogin_chk->isChecked());
+  papel->setOption(Role::OP_SUPERUSER, superusr_chk->isChecked());
+  papel->setOption(Role::OP_CREATEDB, criarbd_chk->isChecked());
+  papel->setOption(Role::OP_CREATEROLE, criarusr_chk->isChecked());
+  papel->setOption(Role::OP_ENCRYPTED, senhacripto_chk->isChecked());
+  papel->setOption(Role::OP_INHERIT, herdarperm_chk->isChecked());
+  papel->setOption(Role::OP_LOGIN, permitirlogin_chk->isChecked());
 
   /* Varre as tabelas de membros atribuindo os papéis constantes
      nestas tabelas como papeis membros do papel em edição */
@@ -332,14 +332,14 @@ void PapelWidget::aplicarConfiguracao(void)
   {
    //Obtém a quantidade de elementos na tabela atual
    qtd=tab_membros[id_tipo]->obterNumLinhas();
-   if(qtd > 0) papel->removerPapeis(tipo_papeis[id_tipo]);
+   if(qtd > 0) papel->removeRoles(tipo_papeis[id_tipo]);
 
    for(i=0; i < qtd; i++)
    {
     //Extrái um objeto da linha atual
-    papel_aux=reinterpret_cast<Papel *>(tab_membros[id_tipo]->obterDadoLinha(i).value<void *>());
+    papel_aux=reinterpret_cast<Role *>(tab_membros[id_tipo]->obterDadoLinha(i).value<void *>());
     //Atribui o mesmo como papel membro do papel atual
-    papel->definirPapel(tipo_papeis[id_tipo], papel_aux);
+    papel->addRole(tipo_papeis[id_tipo], papel_aux);
    }
   }
 

@@ -177,7 +177,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_TYPE)
     adicionarTipo(dynamic_cast<Tipo *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_ROLE)
-    adicionarPapel(dynamic_cast<Papel *>(objeto), idx_obj);
+    adicionarPapel(dynamic_cast<Role *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TABLESPACE)
     adicionarEspacoTabela(dynamic_cast<Tablespace *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_LANGUAGE)
@@ -235,7 +235,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_TYPE)
     removerTipo(dynamic_cast<Tipo *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_ROLE)
-    removerPapel(dynamic_cast<Papel *>(objeto), idx_obj);
+    removerPapel(dynamic_cast<Role *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TABLESPACE)
     removerEspacoTabela(dynamic_cast<Tablespace *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_LANGUAGE)
@@ -300,7 +300,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
   else if(tipo_obj==OBJ_TYPE)
    removerTipo(dynamic_cast<Tipo *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_ROLE)
-   removerPapel(dynamic_cast<Papel *>(objeto), idx_obj);
+   removerPapel(dynamic_cast<Role *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_TABLESPACE)
    removerEspacoTabela(dynamic_cast<Tablespace *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_LANGUAGE)
@@ -1755,7 +1755,7 @@ void ModeloBD::removerEsquema(Schema *esquema, int idx_obj)
  }
 }
 
-void ModeloBD::adicionarPapel(Papel *papel, int idx_obj)
+void ModeloBD::adicionarPapel(Role *papel, int idx_obj)
 {
  try
  {
@@ -1767,12 +1767,12 @@ void ModeloBD::adicionarPapel(Papel *papel, int idx_obj)
  }
 }
 
-Papel *ModeloBD::obterPapel(unsigned idx_obj)
+Role *ModeloBD::obterPapel(unsigned idx_obj)
 {
- return(dynamic_cast<Papel *>(obterObjeto(idx_obj, OBJ_ROLE)));
+ return(dynamic_cast<Role *>(obterObjeto(idx_obj, OBJ_ROLE)));
 }
 
-void ModeloBD::removerPapel(Papel *papel, int idx_obj)
+void ModeloBD::removerPapel(Role *papel, int idx_obj)
 {
  if(papel)
  {
@@ -2467,7 +2467,7 @@ int ModeloBD::obterIndicePermissao(Permissao *permissao)
   Permissao *perm_aux=NULL;
   vector<BaseObject *>::iterator itr, itr_end;
   BaseObject *objeto=NULL;
-  Papel *papel=NULL;
+  Role *papel=NULL;
   unsigned qtd, i;
   bool papel_ref=false;
 
@@ -3063,10 +3063,10 @@ void ModeloBD::definirAtributosBasicos(BaseObject *objeto)
  }
 }
 
-Papel *ModeloBD::criarPapel(void)
+Role *ModeloBD::criarPapel(void)
 {
  map<QString, QString> atributos, atribs_aux;
- Papel *papel=NULL, *papel_ref=NULL;
+ Role *papel=NULL, *papel_ref=NULL;
  int i, tam;
  bool marcado;
  QStringList lista;
@@ -3081,34 +3081,34 @@ Papel *ModeloBD::criarPapel(void)
                        ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
                        ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED };
 
- unsigned vet_ops[]={ Papel::OP_SUPERUSER, Papel::OP_CREATEDB,
-                      Papel::OP_CREATEROLE, Papel::OP_INHERIT,
-                      Papel::OP_LOGIN, Papel::OP_ENCRYPTED };
+ unsigned vet_ops[]={ Role::OP_SUPERUSER, Role::OP_CREATEDB,
+                      Role::OP_CREATEROLE, Role::OP_INHERIT,
+                      Role::OP_LOGIN, Role::OP_ENCRYPTED };
 
  try
  {
   //Aloca no novo papel
-  papel=new Papel;
+  papel=new Role;
   definirAtributosBasicos(papel);
 
   //Obtém os atributos do elemento
   XMLParser::getElementAttributes(atributos);
 
   //Definindo os valores de atributos básicos do papel
-  papel->definirSenha(atributos[ParsersAttributes::PASSWORD]);
-  papel->definirValidade(atributos[ParsersAttributes::VALIDITY]);
+  papel->setPassword(atributos[ParsersAttributes::PASSWORD]);
+  papel->setValidity(atributos[ParsersAttributes::VALIDITY]);
 
   /* Caso o atributo de id de usuário esteja atribuído no xml.
      (atributos[AtributosParsers::UID] != "").
      Atribui ao papel o valor do atributo convertido para inteiro. */
   if(!atributos[ParsersAttributes::SYSID].isEmpty())
-   papel->definirSysid(atributos[ParsersAttributes::SYSID].toInt());
+   papel->setSysid(atributos[ParsersAttributes::SYSID].toInt());
 
   /* Caso o atributo de limite de conexão esteja atribuído no xml.
      (atributos[AtributosParsers::LIMITE_CONEXAO] != "").
      Atribui ao papel o valor do atributo convertido para inteiro. */
   if(!atributos[ParsersAttributes::CONN_LIMIT].isEmpty())
-   papel->definirLimiteConexao(atributos[ParsersAttributes::CONN_LIMIT].toInt());
+   papel->setConnectionLimit(atributos[ParsersAttributes::CONN_LIMIT].toInt());
 
   /* Identificando as opções do papel. Caso o atributo referet   uma
      estive com valor "true" no documento XML quer dizer que aquele
@@ -3117,7 +3117,7 @@ Papel *ModeloBD::criarPapel(void)
   {
    //Verifica se a opção está marcada no XML, valor de atributo = true
    marcado=atributos[atrib_ops[i]]==ParsersAttributes::_TRUE_;
-   papel->definirOpcao(vet_ops[i], marcado);
+   papel->setOption(vet_ops[i], marcado);
   }
 
   //Passa para os elementos filhos que provavelmente serão <roles> e <comment>
@@ -3149,17 +3149,17 @@ Papel *ModeloBD::criarPapel(void)
       /* Identificando o tipo da lista de papéis a qual será inserido os objetos
          cujos nomes foram extraídos acima */
       if(atribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::REFER)
-       tipo_papel=Papel::PAPEL_REF;
+       tipo_papel=Role::REF_ROLE;
       else if(atribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::MEMBER)
-       tipo_papel=Papel::PAPEL_MEMBRO;
+       tipo_papel=Role::MEMBER_ROLE;
       else
-       tipo_papel=Papel::PAPEL_ADMIN;
+       tipo_papel=Role::ADMIN_ROLE;
 
       //Varre a lista de nomes de papéis
       for(i=0; i < tam; i++)
       {
        //Tenta obter um papel do modelo cujo nome é o elemento atual da lista de nomes (lista[i])
-       papel_ref=dynamic_cast<Papel *>(obterObjeto(lista[i].trimmed(),OBJ_ROLE));
+       papel_ref=dynamic_cast<Role *>(obterObjeto(lista[i].trimmed(),OBJ_ROLE));
 
        /* Caso esse papel não exista um erro será disparado pois um novo papel
           não pode referenciar um outro papel que ainda nem foi criado */
@@ -3174,7 +3174,7 @@ Papel *ModeloBD::criarPapel(void)
                       ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
        //Caso o papel exista no modelo, o mesmo será relacionado ao novo papel
-       papel->definirPapel(tipo_papel, papel_ref);
+       papel->addRole(tipo_papel, papel_ref);
       }
      }
     }
@@ -5754,7 +5754,7 @@ Permissao *ModeloBD::criarPermissao(void)
  Permissao *permissao=NULL;
  BaseObject *objeto=NULL;
  Tabela *tabela_pai=NULL;
- Papel *papel=NULL;
+ Role *papel=NULL;
  map<QString, QString> atrib_priv, atributos;
  map<QString, QString>::iterator itr, itr_end;
  ObjectType tipo_obj;
@@ -5833,7 +5833,7 @@ Permissao *ModeloBD::criarPermissao(void)
     for(i=0; i < tam; i++)
     {
      //Tenta obter um papel do modelo cujo nome é o elemento atual da lista de nomes (lista[i])
-     papel=dynamic_cast<Papel *>(obterObjeto(lista[i].trimmed(),OBJ_ROLE));
+     papel=dynamic_cast<Role *>(obterObjeto(lista[i].trimmed(),OBJ_ROLE));
 
      /* Caso esse papel não exista um erro será disparado pois um novo papel
         não pode referenciar um outro papel que ainda nem foi criado */
@@ -6668,16 +6668,16 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   //** Obtendo as dependências de Papéis **
   else if(tipo_obj==OBJ_ROLE)
   {
-   Papel *papel=dynamic_cast<Papel *>(objeto);
+   Role *papel=dynamic_cast<Role *>(objeto);
    unsigned i, i1, qtd,
-            tipos[3]={ Papel::PAPEL_REF, Papel::PAPEL_MEMBRO, Papel::PAPEL_ADMIN };
+            tipos[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
 
    //Obtém as dependências dos papéis membros, papéis admins e papéis referenciados
    for(i=0; i < 3; i++)
    {
-    qtd=papel->obterNumPapeis(tipos[i]);
+    qtd=papel->getRoleCount(tipos[i]);
     for(i1=0; i1 < qtd; i1++)
-     obterDependenciasObjeto(papel->obterPapel(tipos[i], i1), vet_deps, inc_dep_indiretas);
+     obterDependenciasObjeto(papel->getRole(tipos[i], i1), vet_deps, inc_dep_indiretas);
    }
   }
   //** Obtendo as dependências de Relacionamentos **
@@ -7367,9 +7367,9 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
                              OBJ_LANGUAGE, OBJ_TABLESPACE,
                              OBJ_TYPE, OBJ_OPFAMILY, OBJ_OPCLASS};
    unsigned i,i1, qtd;
-   Papel *papel_aux=NULL;
-   Papel *papel=dynamic_cast<Papel *>(objeto);
-   unsigned tipo_papel[3]={Papel::PAPEL_REF, Papel::PAPEL_MEMBRO, Papel::PAPEL_ADMIN};
+   Role *papel_aux=NULL;
+   Role *papel=dynamic_cast<Role *>(objeto);
+   unsigned tipo_papel[3]={Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE};
 
    /* Caso especial: Varre a lista de papéis e verifica se o papel a ser
       removido se encontra em uma das três listas de papeis da classe
@@ -7379,18 +7379,18 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
    {
     //Obtém um papel
-    papel_aux=dynamic_cast<Papel *>(*itr);
+    papel_aux=dynamic_cast<Role *>(*itr);
     itr++;
 
     for(i1=0; i1 < 3 && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
     {
      //Obtém a quantidade de papeis presentes na lista atual (tipo_papel[i1])
-     qtd=papel_aux->obterNumPapeis(tipo_papel[i1]);
+     qtd=papel_aux->getRoleCount(tipo_papel[i1]);
      for(i=0; i < qtd && !refer; i++)
      {
       /* Caso o papel a ser excluído seja igual ao elemento atual
          da lista de papéis do papel aux */
-      if(papel_aux->obterPapel(tipo_papel[i1], i)==papel)
+      if(papel_aux->getRole(tipo_papel[i1], i)==papel)
       {
        refer=true;
        vet_refs.push_back(papel_aux);
