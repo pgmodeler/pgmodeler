@@ -259,14 +259,14 @@ void PermissaoWidget::listarPermissoes(void)
    //Define o texto da celuna (0) da linha atual com o nome do privilégio (gerado automaticamente)
    tab_permissoes->definirTextoCelula(perm->getName(),i,0);
    //A segunda coluna da linha será a string que define os privilégios da permissão
-   tab_permissoes->definirTextoCelula(perm->obterStringPrivilegios(),i,2);
+   tab_permissoes->definirTextoCelula(perm->getPrivilegeString(),i,2);
 
    /* A terceira coluna armazena os nomes concatenados de todos
       os papéis relacionado  permissão */
-   qtd1=perm->obterNumPapeis();
+   qtd1=perm->getRoleCount();
    for(i1=0; i1 < qtd1; i1++)
    {
-    str_aux+=QString::fromUtf8(perm->obterPapel(i1)->getName());
+    str_aux+=QString::fromUtf8(perm->getRole(i1)->getName());
     str_aux+=",";
    }
    str_aux.remove(str_aux.size()-1,1);
@@ -409,8 +409,8 @@ void PermissaoWidget::atualizarPermissao(void)
    /* Qualquer outra situação além da comentado no if acima é considerada duplicação
       de permissões gerando assim um erro */
    throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
-                 .arg(QString::fromUtf8(permissao->obterObjeto()->getName()))
-                 .arg(permissao->obterObjeto()->getTypeName()),
+                 .arg(QString::fromUtf8(permissao->getObject()->getName()))
+                 .arg(permissao->getObject()->getTypeName()),
                  ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
@@ -453,13 +453,13 @@ void PermissaoWidget::editarPermissao(void)
 
   /* Obtém a quantidade de papéis relacionao   permissão para que os
      mesmos possam ser exibidos na tabela de papéis */
-  qtd=permissao->obterNumPapeis();
+  qtd=permissao->getRoleCount();
   for(i=0; i < qtd; i++)
   {
    //Adiciona uma linha   tabela de permissão
    tab_papeis->adicionarLinha();
    //Obtém um papel da permissão
-   papel=permissao->obterPapel(i);
+   papel=permissao->getRole(i);
    //Define como dado da linha atual o papel obtido
    tab_papeis->definirDadoLinha(QVariant::fromValue<void *>(reinterpret_cast<void *>(papel)), i);
    //Define como texo da linha atual o nome do papel
@@ -476,8 +476,8 @@ void PermissaoWidget::editarPermissao(void)
    chk=dynamic_cast<QCheckBox *>(privilegios_tbw->cellWidget(priv,0));
    chk1=dynamic_cast<QCheckBox *>(privilegios_tbw->cellWidget(priv,1));
 
-   chk->setChecked(permissao->obterPrivilegio(priv));
-   chk1->setChecked(permissao->obterOpConcessao(priv));
+   chk->setChecked(permissao->getPrivilege(priv));
+   chk1->setChecked(permissao->getGrantOption(priv));
   }
 
   //Habilita os botões de edição da permissão
@@ -514,12 +514,12 @@ void PermissaoWidget::configurarPermissao(Permission *permissao)
 
   /* Remove os papéis da permissão pois esta receberá
      os papéis da tabela de papéis */
-  permissao->removerPapeis();
+  permissao->removeRoles();
   qtd=tab_papeis->obterNumLinhas();
 
   //Adiciona cada papel da tabela   permissão
   for(i=0; i < qtd; i++)
-   permissao->adicionarPapel(reinterpret_cast<Role *>(tab_papeis->obterDadoLinha(i).value<void *>()));
+   permissao->addRole(reinterpret_cast<Role *>(tab_papeis->obterDadoLinha(i).value<void *>()));
 
   /* Configura os privilégios da permissão com base nos checkboxes
      selecionados ta tabela de privilégios */
@@ -529,7 +529,7 @@ void PermissaoWidget::configurarPermissao(Permission *permissao)
    {
     chk=dynamic_cast<QCheckBox *>(privilegios_tbw->cellWidget(priv,0));
     chk1=dynamic_cast<QCheckBox *>(privilegios_tbw->cellWidget(priv,1));
-    permissao->definirPrivilegio(priv, chk->isChecked(), chk1->isChecked());
+    permissao->setPrivilege(priv, chk->isChecked(), chk1->isChecked());
    }
   }
  }

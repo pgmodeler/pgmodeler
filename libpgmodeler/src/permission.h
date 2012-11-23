@@ -45,27 +45,27 @@ class Permission: public BaseObject {
     * espaço de tabela */
  private:
    //Objeto o qual se aplicam os privilégios
-   BaseObject *objeto;
+   BaseObject *object;
 
    /* Usuários/grupos os quais detém as permissões sobre o objeto.
       Este vetor pode estar vazio caso se deseja
       dar permissão a todos os usuários/grupos do cluster (PUBLIC)
       sobre o objeto */
-   vector<Role *> papeis;
+   vector<Role *> roles;
 
    //Conjunto de privilégios que se aplicam ao objeto
-   bool privilegios[13];
+   bool privileges[13];
 
    /* Indica se um privilégio no índice dado pode ser atribuído a outros papéis
       sobre o mesmo objeto papéis (WITH GRANT OPTION). Este atributo não se aplica
       quando não há um papel especificado (PUBLIC). Este atributo é ignorado
       quando não há papel definido como detentor dos privilégios. */
-   bool op_concessao[13];
+   bool grant_option[13];
 
    /* Gera um identificador único para a permissão usando o atributo
       nome da classe base ObjetoBase este é usado apenas para evitar
       duplicidade de permissões no modelo */
-   void gerarIdPermissao(void);
+   void generatePermissionId(void);
 
  public:
    //Constantes usadas para referencias cada tipo de privilégio
@@ -86,46 +86,46 @@ class Permission: public BaseObject {
      não sendo possível alterar este objeto após a instância da classe
      ser criada. O que é possível é apenas manipular os papéis e privilégios
      relacionados ao objeto */
-  Permission(BaseObject *objeto);
+  Permission(BaseObject *obj);
 
   //Define o papel que deterá os privilégios sobre o objeto
-  void adicionarPapel(Role *papel);
+  void addRole(Role *role);
 
   //Define um dado privilégio para o papel sobre o objeto
-  void definirPrivilegio(unsigned privilegio, bool valor, bool op_concessao);
+  void setPrivilege(unsigned priv_id, bool value, bool grant_op);
 
   //Remove um papel através de seu índice
-  void removerPapel(unsigned idx_papel);
+  void removeRole(unsigned role_idx);
 
   //Remove todos os papeis da permissão
-  void removerPapeis(void);
+  void removeRoles(void);
 
   //Obtém o número de papés detentores de privilégios sobre o objeto
-  unsigned obterNumPapeis(void);
+  unsigned getRoleCount(void);
 
   //Obtém um papel que detém os privilégios sobre o objeto
-  Role *obterPapel(unsigned idx_papel);
+  Role *getRole(unsigned role_idx);
 
   //Obtém o objeto que está sujeito aos privilégios
-  BaseObject *obterObjeto(void);
+  BaseObject *getObject(void);
 
   //Obtém o estado atual do flag de opção de concessão de privilégios
-  bool obterOpConcessao(unsigned privilegio);
+  bool getGrantOption(unsigned priv_id);
 
   /* Obtém a situação do privilégio especificado, se o mesmo está
      ativo ou não para o papel */
-  bool obterPrivilegio(unsigned privilegio);
+  bool getPrivilege(unsigned priv_id);
 
   /* Retorna uma string contendo todos os privilégios
      configurados no formato interno de permissões do
      PostgreSQL (conforme documentação do comando GRANT) */
-  QString obterStringPrivilegios(void);
+  QString getPrivilegeString(void);
 
   //Indica se o papel está referenciado na permissão
-  bool papelReferenciado(Role *papel);
+  bool isRoleReferenced(Role *role);
 
   //Retorna a definição SQL ou XML do objeto
-  QString getCodeDefinition(unsigned tipo_def);
+  QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

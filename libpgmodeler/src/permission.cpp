@@ -1,31 +1,31 @@
 #include "permission.h"
 
-Permission::Permission(BaseObject *objeto)
+Permission::Permission(BaseObject *obj)
 {
- ObjectType tipo_obj;
- unsigned id_priv;
+ ObjectType obj_type;
+ unsigned priv_id;
 
  //Inicializa todos os privilégios como desmarcados
- for(id_priv=PRIV_SELECT; id_priv<=PRIV_USAGE; id_priv++)
-  privilegios[id_priv]=op_concessao[id_priv]=false;
+ for(priv_id=PRIV_SELECT; priv_id<=PRIV_USAGE; priv_id++)
+  privileges[priv_id]=grant_option[priv_id]=false;
 
  //Caso o usuário tente atribuir um objeto não alocd   permissão
- if(!objeto)
+ if(!obj)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém o tipo do objeto
- tipo_obj=objeto->getObjectType();
+ obj_type=obj->getObjectType();
 
  /* Caso o tipo do objeto a ser atribuído não seja válido de acordo com a regra
     (vide definição da Classe) dispara uma exceção */
- if(tipo_obj!=OBJ_TABLE && tipo_obj!=OBJ_COLUMN && tipo_obj!=OBJ_VIEW &&
-    tipo_obj!=OBJ_SEQUENCE && tipo_obj!=OBJ_DATABASE && tipo_obj!=OBJ_FUNCTION &&
-    tipo_obj!=OBJ_AGGREGATE && tipo_obj!=OBJ_LANGUAGE && tipo_obj!=OBJ_SCHEMA &&
-    tipo_obj!=OBJ_TABLESPACE)
+ if(obj_type!=OBJ_TABLE && obj_type!=OBJ_COLUMN && obj_type!=OBJ_VIEW &&
+    obj_type!=OBJ_SEQUENCE && obj_type!=OBJ_DATABASE && obj_type!=OBJ_FUNCTION &&
+    obj_type!=OBJ_AGGREGATE && obj_type!=OBJ_LANGUAGE && obj_type!=OBJ_SCHEMA &&
+    obj_type!=OBJ_TABLESPACE)
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Atribui o objeto   permissão
- this->objeto=objeto;
+ this->object=obj;
  this->obj_type=OBJ_PERMISSION;
 
  attributes[ParsersAttributes::OBJECT]="";
@@ -37,48 +37,48 @@ Permission::Permission(BaseObject *objeto)
  attributes[ParsersAttributes::PRIVILEGES_GOP]="";
 }
 
-bool Permission::papelReferenciado(Role *papel)
+bool Permission::isRoleReferenced(Role *role)
 {
  vector<Role *>::iterator itr, itr_end;
- bool enc=false;
+ bool found=false;
 
  //Verifica a existencia do papel na lista de papeis já relacionado  permissão
- itr=papeis.begin();
- itr_end=papeis.end();
+ itr=roles.begin();
+ itr_end=roles.end();
 
- while(itr!=itr_end && !enc)
+ while(itr!=itr_end && !found)
  {
-  enc=(*itr)==papel;
+  found=(*itr)==role;
   itr++;
  }
 
- return(enc);
+ return(found);
 }
 
-void Permission::adicionarPapel(Role *papel)
+void Permission::addRole(Role *role)
 {
  //Caso o usuário tente atribuir um papel não alocado um erro será disparado
- if(!papel)
+ if(!role)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso o papel já esteja inserido em tal lista um erro será disparado
- if(papelReferenciado(papel))
+ if(isRoleReferenced(role))
    throw Exception(ERR_INS_DUP_ROLE_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Adiciona o papel   lista de papeis da permissão
- papeis.push_back(papel);
- gerarIdPermissao();
+ roles.push_back(role);
+ generatePermissionId();
 }
 
-void Permission::definirPrivilegio(unsigned privilegio, bool valor, bool op_concessao)
+void Permission::setPrivilege(unsigned priv_id, bool value, bool grant_op)
 {
- ObjectType tipo_obj;
+ ObjectType obj_type;
 
  //Caso o tipo de privilégio sejá inválido dispara uma exceção
- if(privilegio > PRIV_USAGE)
+ if(priv_id > PRIV_USAGE)
   throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- tipo_obj=objeto->getObjectType();
+ obj_type=object->getObjectType();
 
  /* Alguns privilégios são válidos apenas para certos tipos
     de objetos. Caso o usuário tente atribuir um privilégio P
@@ -98,91 +98,91 @@ void Permission::definirPrivilegio(unsigned privilegio, bool valor, bool op_conc
     Visão: SELECT
  */
     //Validando o privilégio em relação ao tipo de objeto Tabela
- if((tipo_obj==OBJ_TABLE && privilegio!=PRIV_SELECT && privilegio!=PRIV_INSERT &&
-                                privilegio!=PRIV_UPDATE && privilegio!=PRIV_DELETE &&
-                                privilegio!=PRIV_TRUNCATE && privilegio!=PRIV_REFERENCES &&
-                                privilegio!=PRIV_TRIGGER) ||
+ if((obj_type==OBJ_TABLE && priv_id!=PRIV_SELECT && priv_id!=PRIV_INSERT &&
+                                priv_id!=PRIV_UPDATE && priv_id!=PRIV_DELETE &&
+                                priv_id!=PRIV_TRUNCATE && priv_id!=PRIV_REFERENCES &&
+                                priv_id!=PRIV_TRIGGER) ||
     //Validando o privilégio em relação ao tipo de objeto Coluna
-    (tipo_obj==OBJ_COLUMN && privilegio!=PRIV_SELECT && privilegio!=PRIV_INSERT &&
-                                privilegio!=PRIV_UPDATE && privilegio!=PRIV_REFERENCES) ||
+    (obj_type==OBJ_COLUMN && priv_id!=PRIV_SELECT && priv_id!=PRIV_INSERT &&
+                                priv_id!=PRIV_UPDATE && priv_id!=PRIV_REFERENCES) ||
     //Validando o privilégio em relação ao tipo de objeto Sequencia
-    (tipo_obj==OBJ_SEQUENCE && privilegio!=PRIV_USAGE && privilegio!=PRIV_SELECT &&
-                                   privilegio!=PRIV_UPDATE) ||
+    (obj_type==OBJ_SEQUENCE && priv_id!=PRIV_USAGE && priv_id!=PRIV_SELECT &&
+                                   priv_id!=PRIV_UPDATE) ||
     //Validando o privilégio em relação ao tipo de objeto Banco de Dados
-    (tipo_obj==OBJ_DATABASE && privilegio!=PRIV_CREATE && privilegio!=PRIV_CONNECT &&
-                                     privilegio!=PRIV_TEMPORARY) ||
+    (obj_type==OBJ_DATABASE && priv_id!=PRIV_CREATE && priv_id!=PRIV_CONNECT &&
+                                     priv_id!=PRIV_TEMPORARY) ||
     //Validando o privilégio em relação ao tipo de objeto Função (de Agregação)
-    ((tipo_obj==OBJ_FUNCTION || tipo_obj==OBJ_AGGREGATE) && privilegio!=PRIV_EXECUTE) ||
+    ((obj_type==OBJ_FUNCTION || obj_type==OBJ_AGGREGATE) && priv_id!=PRIV_EXECUTE) ||
     //Validando o privilégio em relação ao tipo de objeto Linguagem
-    (tipo_obj==OBJ_LANGUAGE && privilegio!=PRIV_USAGE) ||
+    (obj_type==OBJ_LANGUAGE && priv_id!=PRIV_USAGE) ||
     //Validando o privilégio em relação ao tipo de objeto Esquema
-    (tipo_obj==OBJ_SCHEMA && privilegio!=PRIV_USAGE && privilegio!=PRIV_CREATE) ||
+    (obj_type==OBJ_SCHEMA && priv_id!=PRIV_USAGE && priv_id!=PRIV_CREATE) ||
     //Validando o privilégio em relação ao tipo de objeto Espaço de Tabela
-    (tipo_obj==OBJ_TABLESPACE && privilegio!=PRIV_CREATE) ||
+    (obj_type==OBJ_TABLESPACE && priv_id!=PRIV_CREATE) ||
     //Validando o privilégio em relação ao tipo de objeto Visão
-    (tipo_obj==OBJ_VIEW && privilegio!=PRIV_SELECT))
+    (obj_type==OBJ_VIEW && priv_id!=PRIV_SELECT))
    /* Caso o privilégio a ser atribuído ao objeto seja incompatível com seu tipo
       um erro será retornado ao usuário */
    throw Exception(ERR_ASG_INCOMP_PRIV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Marca o privilégio com o valor passado
- privilegios[privilegio]=valor;
- this->op_concessao[privilegio]=op_concessao;
+ privileges[priv_id]=value;
+ this->grant_option[priv_id]=grant_op;
 }
 
-void Permission::removerPapel(unsigned idx_papel)
+void Permission::removeRole(unsigned role_idx)
 {
- if(idx_papel > papeis.size())
+ if(role_idx > roles.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- gerarIdPermissao();
+ generatePermissionId();
 }
 
-void Permission::removerPapeis(void)
+void Permission::removeRoles(void)
 {
- papeis.clear();
- gerarIdPermissao();
+ roles.clear();
+ generatePermissionId();
 }
 
-Role *Permission::obterPapel(unsigned idx_papel)
+Role *Permission::getRole(unsigned role_idx)
 {
- if(idx_papel > papeis.size())
+ if(role_idx > roles.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(papeis[idx_papel]);
+ return(roles[role_idx]);
 }
 
-unsigned Permission::obterNumPapeis(void)
+unsigned Permission::getRoleCount(void)
 {
- return(papeis.size());
+ return(roles.size());
 }
 
-BaseObject *Permission::obterObjeto(void)
+BaseObject *Permission::getObject(void)
 {
- return(objeto);
+ return(object);
 }
 
-bool Permission::obterPrivilegio(unsigned privilegio)
-{
- //Caso o tipo de privilégio sejá inválido dispara uma exceção
- if(privilegio > PRIV_USAGE)
-  throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
- return(privilegios[privilegio]);
-}
-
-bool Permission::obterOpConcessao(unsigned privilegio)
+bool Permission::getPrivilege(unsigned priv_id)
 {
  //Caso o tipo de privilégio sejá inválido dispara uma exceção
- if(privilegio > PRIV_USAGE)
+ if(priv_id > PRIV_USAGE)
   throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(op_concessao[privilegio]);
+ return(privileges[priv_id]);
 }
 
-QString Permission::obterStringPrivilegios(void)
+bool Permission::getGrantOption(unsigned priv_id)
 {
- unsigned char cod_privilegios[13]="rawdDxtCcTXU";
+ //Caso o tipo de privilégio sejá inválido dispara uma exceção
+ if(priv_id > PRIV_USAGE)
+  throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+ return(grant_option[priv_id]);
+}
+
+QString Permission::getPrivilegeString(void)
+{
+ unsigned char priv_codes[13]="rawdDxtCcTXU";
  QString str_priv;
  unsigned i;
 
@@ -209,54 +209,53 @@ QString Permission::obterStringPrivilegios(void)
         /yyyy -- role that granted this privilege  */
  for(i=0; i < 12; i++)
  {
-  if(privilegios[i])
-   str_priv.append(cod_privilegios[i]);
+  if(privileges[i])
+   str_priv.append(priv_codes[i]);
 
-  if(op_concessao[i])
+  if(grant_option[i])
   str_priv.append(QChar('*'));
  }
 
  return(str_priv);
 }
 
-void Permission::gerarIdPermissao(void)
+void Permission::generatePermissionId(void)
 {
  vector<Role *>::iterator itr, itr_end;
- vector<QString> vet_end;
- Role *papel=NULL;
+ vector<QString> addr_vect;
+ Role *role=NULL;
  QString str_aux;
- QString endereco;
- unsigned i, qtd;
- QTextStream stream(&endereco);
+ QString addr;
+ unsigned i, count;
+ QTextStream stream(&addr);
 
  //Caso haja algum papel associado   permissão
- if(papeis.size() > 0)
+ if(roles.size() > 0)
  {
-  itr=papeis.begin();
-  itr_end=papeis.end();
+  itr=roles.begin();
+  itr_end=roles.end();
 
   /* Converte o endereço dos mesmos em string pois este é um
      identificador único de cada papel */
   while(itr!=itr_end)
   {
-   papel=(*itr);
+   role=(*itr);
    //Converte o endereço
-   //endereco.sprintf("%x",reinterpret_cast<unsigned *>(papel));
-   stream << reinterpret_cast<unsigned *>(papel);
+   stream << reinterpret_cast<unsigned *>(role);
    //Armazena-o em um vetor
-   vet_end.push_back(endereco.mid(2));
+   addr_vect.push_back(addr.mid(2));
    itr++;
   }
 
   //Ordena os endereços obtido
-  sort(vet_end.begin(), vet_end.end());
-  qtd=vet_end.size();
+  sort(addr_vect.begin(), addr_vect.end());
+  count=addr_vect.size();
 
   //Concatena os endereços ordenados separando-os por '.'
-  for(i=0; i < qtd; i++)
+  for(i=0; i < count; i++)
   {
-   str_aux+=QString("%1").arg(vet_end[i]);
-   if(i < qtd-1) str_aux+=".";
+   str_aux+=QString("%1").arg(addr_vect[i]);
+   if(i < count-1) str_aux+=".";
   }
 
  }
@@ -274,47 +273,47 @@ void Permission::gerarIdPermissao(void)
     podendo gerar erros quando o usuário tenta criar uma permissão
     com o mesmo conjunto de papéis relacionados ao objeto */
  this->obj_name=QString(ParsersAttributes::PERMISSION + "_%1.%2")
-            .arg(objeto->getObjectId())
+            .arg(object->getObjectId())
             .arg(str_aux);
 }
 
-QString Permission::getCodeDefinition(unsigned tipo_def)
+QString Permission::getCodeDefinition(unsigned def_type)
 {
- unsigned i, qtd;
- ObjectType tipo_obj;
- QString vet_priv[12]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
-                        ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
-                        ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
-                        ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
-                        ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
-                        ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
+ unsigned i, count;
+ ObjectType obj_type;
+ QString priv_vect[12]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
+                         ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
+                         ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
+                         ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
+                         ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
+                         ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
 
- tipo_obj=objeto->getObjectType();
+ obj_type=object->getObjectType();
 
- if(tipo_obj==OBJ_FUNCTION)
-  attributes[ParsersAttributes::OBJECT]=dynamic_cast<Function *>(objeto)->getSignature();
+ if(obj_type==OBJ_FUNCTION)
+  attributes[ParsersAttributes::OBJECT]=dynamic_cast<Function *>(object)->getSignature();
  else
-  attributes[ParsersAttributes::OBJECT]=objeto->getName(true);
+  attributes[ParsersAttributes::OBJECT]=object->getName(true);
 
- if(tipo_def==SchemaParser::SQL_DEFINITION)
-  attributes[ParsersAttributes::TYPE]=BaseObject::getSQLName(objeto->getObjectType());
+ if(def_type==SchemaParser::SQL_DEFINITION)
+  attributes[ParsersAttributes::TYPE]=BaseObject::getSQLName(object->getObjectType());
  else
-  attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(objeto->getObjectType());
+  attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(object->getObjectType());
 
- if(tipo_obj==OBJ_COLUMN)
-  attributes[ParsersAttributes::PARENT]=dynamic_cast<Column *>(objeto)->getParentTable()->getName(true);
+ if(obj_type==OBJ_COLUMN)
+  attributes[ParsersAttributes::PARENT]=dynamic_cast<Column *>(object)->getParentTable()->getName(true);
 
- if(tipo_def==SchemaParser::XML_DEFINITION)
+ if(def_type==SchemaParser::XML_DEFINITION)
  {
   //Marca os privilégios que estão setados atribuídos ao objeto
   for(i=0; i < 12; i++)
   {
-   if(privilegios[i] && op_concessao[i])
-    attributes[vet_priv[i]]=ParsersAttributes::GRANT_OP;
-   else if(privilegios[i])
-    attributes[vet_priv[i]]=ParsersAttributes::_TRUE_;
+   if(privileges[i] && grant_option[i])
+    attributes[priv_vect[i]]=ParsersAttributes::GRANT_OP;
+   else if(privileges[i])
+    attributes[priv_vect[i]]=ParsersAttributes::_TRUE_;
    else
-    attributes[vet_priv[i]]="";
+    attributes[priv_vect[i]]="";
   }
  }
  else
@@ -323,27 +322,27 @@ QString Permission::getCodeDefinition(unsigned tipo_def)
      na SQL que cria a permissão em BD */
   for(i=0; i < 12; i++)
   {
-   if(privilegios[i] && !op_concessao[i])
-    attributes[ParsersAttributes::PRIVILEGES]+=vet_priv[i].toUpper() + ",";
-   else if(op_concessao[i])
-    attributes[ParsersAttributes::PRIVILEGES_GOP]+=vet_priv[i].toUpper() + ",";
+   if(privileges[i] && !grant_option[i])
+    attributes[ParsersAttributes::PRIVILEGES]+=priv_vect[i].toUpper() + ",";
+   else if(grant_option[i])
+    attributes[ParsersAttributes::PRIVILEGES_GOP]+=priv_vect[i].toUpper() + ",";
   }
 
   attributes[ParsersAttributes::PRIVILEGES].remove(attributes[ParsersAttributes::PRIVILEGES].size()-1,1);
   attributes[ParsersAttributes::PRIVILEGES_GOP].remove(attributes[ParsersAttributes::PRIVILEGES_GOP].size()-1,1);
  }
 
- qtd=papeis.size();
+ count=roles.size();
 
  /* Concatena os nomes dos papéis que participam da
     permissão separando-os por vírgula */
- for(i=0; i < qtd; i++)
+ for(i=0; i < count; i++)
  {
-  attributes[ParsersAttributes::ROLES]+=papeis[i]->getName(true) + ",";
+  attributes[ParsersAttributes::ROLES]+=roles[i]->getName(true) + ",";
  }
 
  attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);
 
- return(BaseObject::__getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(def_type));
 }
 

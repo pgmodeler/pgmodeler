@@ -2348,8 +2348,8 @@ void ModeloBD::adicionarPermissao(Permission *permissao)
     o resultado da chamada ao metodo obterIndicePermissao() sejá >= 0,
     um erro será disparado */
    throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
-                .arg(QString::fromUtf8(permissao->obterObjeto()->getName()))
-                .arg(permissao->obterObjeto()->getTypeName()),
+                .arg(QString::fromUtf8(permissao->getObject()->getName()))
+                .arg(permissao->getObject()->getTypeName()),
                 ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
@@ -2360,8 +2360,8 @@ void ModeloBD::adicionarPermissao(Permission *permissao)
   if(e.getErrorType()==ERR_ASG_DUPLIC_OBJECT)
    throw
    Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
-           .arg(QString::fromUtf8(permissao->obterObjeto()->getName()))
-           .arg(permissao->obterObjeto()->getTypeName()),
+           .arg(QString::fromUtf8(permissao->getObject()->getName()))
+           .arg(permissao->getObject()->getTypeName()),
            ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 
   else
@@ -2401,7 +2401,7 @@ void ModeloBD::removerPermissoes(BaseObject *objeto)
   permissao=dynamic_cast<Permission *>(*itr);
 
   //Verifica se o objeto da permissão é igual ao objeto do parâmetro
-  if(permissao->obterObjeto()==objeto)
+  if(permissao->getObject()==objeto)
   {
    //Remove o iterador que possui a permissão
    permissoes.erase(itr);
@@ -2450,7 +2450,7 @@ void ModeloBD::obterPermissoes(BaseObject *objeto, vector<Permission *> &vet_per
   /* Caso a permissão esteja relacionada ao mesmo
      objeto do parâmetro insere tal permissão
        lista de permissões */
-  if(permissao->obterObjeto()==objeto)
+  if(permissao->getObject()==objeto)
    vet_perm.push_back(permissao);
 
   itr++;
@@ -2475,7 +2475,7 @@ int ModeloBD::obterIndicePermissao(Permission *permissao)
   itr_end=permissoes.end();
 
   //Obtém o objeto da permissão
-  objeto=permissao->obterObjeto();
+  objeto=permissao->getObject();
 
   /* Varre a lista de permissões enquanto não chegar ao final
      da lista ou enquanto o índice da permissão não for
@@ -2489,19 +2489,19 @@ int ModeloBD::obterIndicePermissao(Permission *permissao)
      será efetuada uma validação se todos os papeis
      de ambas as permissões são iguais, isso indica
      que ambas possuem o mesmo efeito */
-   if(objeto==perm_aux->obterObjeto())
+   if(objeto==perm_aux->getObject())
    {
     //Obtém a quantidade de papéis
-    qtd=permissao->obterNumPapeis();
+    qtd=permissao->getRoleCount();
 
     //Varre a lista de papéis das permissões
     for(i=0; i < qtd && !papel_ref; i++)
     {
      //Obtém um papel da permissão do parâmetro
-     papel=permissao->obterPapel(i);
+     papel=permissao->getRole(i);
      /* Com o papel obtido verifica-se se o mesmo é referenciado
         no papel obtido da lista principal de permissões */
-     papel_ref=perm_aux->papelReferenciado(papel);
+     papel_ref=perm_aux->isRoleReferenced(papel);
     }
    }
 
@@ -5849,7 +5849,7 @@ Permission *ModeloBD::criarPermissao(void)
 
      }
      //Adiciona o papel   permissão
-     permissao->adicionarPapel(papel);
+     permissao->addRole(papel);
     }
    }
    else if(XMLParser::getElementName()==ParsersAttributes::PRIVILEGES)
@@ -5898,7 +5898,7 @@ Permission *ModeloBD::criarPermissao(void)
        tipo_priv=Permission::PRIV_USAGE;
 
       //Configura o privilégio na permissão
-      permissao->definirPrivilegio(tipo_priv, (valor_priv || op_concessao), op_concessao);
+      permissao->setPrivilege(tipo_priv, (valor_priv || op_concessao), op_concessao);
      }
      itr++;
     }
