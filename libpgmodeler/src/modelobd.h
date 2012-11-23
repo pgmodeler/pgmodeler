@@ -43,7 +43,7 @@
 #include "conversion.h"
 #include "operatorclass.h"
 #include "xmlparser.h"
-#include "permissao.h"
+#include "permission.h"
 #include "domain.h"
 #include <algorithm>
 #include <locale.h>
@@ -371,17 +371,17 @@ class ModeloBD:  public QObject, public BaseObject {
   Sequencia *obterSequencia(unsigned idx_obj);
 
   //Métodos de manipulação de permissões
-  void adicionarPermissao(Permissao *permissao);
+  void adicionarPermissao(Permission *permissao);
   //Remove uma dada permissão obtida previamente
-  void removerPermissao(Permissao *permissao);
+  void removerPermissao(Permission *permissao);
   //Remove todas as permissões relacionadas ao objeto informado
   void removerPermissoes(BaseObject *objeto);
   /* Obtém as permissões relacionadas ao objeto informado armazenando-as
      no vetor passado */
-  void obterPermissoes(BaseObject *objeto, vector<Permissao *> &permissoes);
+  void obterPermissoes(BaseObject *objeto, vector<Permission *> &permissoes);
   /* Retorna o índice de uma dada permissão. Este método é usado
      como auxiliar nos métodos de inserção e remoção de permissões */
-  int obterIndicePermissao(Permissao *permissao);
+  int obterIndicePermissao(Permission *permissao);
 
   //Obtém um objeto através de seu nome e tipo
   BaseObject *obterObjeto(const QString &obj_name, ObjectType tipo_obj);
@@ -424,7 +424,7 @@ class ModeloBD:  public QObject, public BaseObject {
   Sequencia *criarSequencia(bool ignorar_possuidora=false);
 
   Visao *criarVisao(void);
-  Permissao *criarPermissao(void);
+  Permission *criarPermissao(void);
 
   Textbox *criarCaixaTexto(void);
   RelacionamentoBase *criarRelacionamento(void);

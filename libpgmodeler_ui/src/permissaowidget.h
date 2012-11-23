@@ -31,7 +31,7 @@ class PermissaoWidget: public ObjetoBaseWidget, public Ui::PermissaoWidget {
 
  private:
    //Armazena a permissão selecionada atualmente para edição
-   Permissao *permissao;
+   Permission *permissao;
    //Conteineres de papéis e de permissões
    TabelaObjetosWidget *tab_papeis, *tab_permissoes;
 
@@ -53,7 +53,7 @@ class PermissaoWidget: public ObjetoBaseWidget, public Ui::PermissaoWidget {
       faz a atribuição dos valores preenchidos no formulário
         permissão do parâmetro. Este método é compartilhado
       entre as ações de adição e atualização de permissão */
-   void configurarPermissao(Permissao *permissao);
+   void configurarPermissao(Permission *permissao);
 
    /* Preenche o formulário com os dados da permissão selecionada
       na tabela de permissões para uma posterior edição */

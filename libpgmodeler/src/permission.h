@@ -1,10 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Permissao que é usada para controlar
-#             permissões em certos tipos de objetos de banco de dados
-#             além de gerar os códigos SQL que implante as permissões
-#             no banco de dados.
+# Description:  Implements the operations to manipulate object permissions.
 # Creation date: 16/09/2010
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -21,8 +18,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef PERMISSAO_H
-#define PERMISSAO_H
+#ifndef PERMISSION_H
+#define PERMISSION_H
 
 #include "baseobject.h"
 #include "function.h"
@@ -30,7 +27,7 @@
 #include <algorithm>
  #include <QTextStream>
 
-class Permissao: public BaseObject {
+class Permission: public BaseObject {
  /* Permissões no PostgreSQL se aplicam somente aos objetos
     de banco de dados como a seguir:
     * tabela
@@ -89,7 +86,7 @@ class Permissao: public BaseObject {
      não sendo possível alterar este objeto após a instância da classe
      ser criada. O que é possível é apenas manipular os papéis e privilégios
      relacionados ao objeto */
-  Permissao(BaseObject *objeto);
+  Permission(BaseObject *objeto);
 
   //Define o papel que deterá os privilégios sobre o objeto
   void adicionarPapel(Role *papel);

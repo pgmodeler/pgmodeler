@@ -82,7 +82,7 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_
 
  /* Cria a lista de privilégios criando checkboxes com as
     descrições de cada privilégio */
- for(i=Permissao::PRIV_SELECT; i<=Permissao::PRIV_USAGE; i++)
+ for(i=Permission::PRIV_SELECT; i<=Permission::PRIV_USAGE; i++)
  {
   //O primeiro checkbox é o que possui o nome do privilégio
   check=new QCheckBox;
@@ -153,7 +153,7 @@ void PermissaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
   /* Faz uma varredura usando os privilégios disponíveis para os objetos.
      O objetivo é deixar visível ao usuário somente os privilégios referentes
      ao objeto atualmente em edição. */
-  for(priv=Permissao::PRIV_SELECT; priv<=Permissao::PRIV_USAGE; priv++)
+  for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
   {
    //Obtém os checkboxes que representam o priviléigo e a opção GRANT OPTION
    chk=dynamic_cast<QCheckBox *>(privilegios_tbw->cellWidget(priv,0));
@@ -166,33 +166,33 @@ void PermissaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
       caso o par (privilégio, tipo do objeto) coincida com uma das condições a
       seguir a linha referente ao privilégio é mostrada na tabela, caso contrário
       é ocultada */
-   if(((priv==Permissao::PRIV_SELECT || priv==Permissao::PRIV_UPDATE) &&
+   if(((priv==Permission::PRIV_SELECT || priv==Permission::PRIV_UPDATE) &&
         (tipo_obj==OBJ_TABLE || tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_SEQUENCE)) ||
 
-      ((priv==Permissao::PRIV_INSERT || priv==Permissao::PRIV_DELETE) &&
+      ((priv==Permission::PRIV_INSERT || priv==Permission::PRIV_DELETE) &&
         (tipo_obj==OBJ_TABLE)) ||
 
-      ((priv==Permissao::PRIV_INSERT) && (tipo_obj==OBJ_COLUMN)) ||
+      ((priv==Permission::PRIV_INSERT) && (tipo_obj==OBJ_COLUMN)) ||
 
-      ((priv==Permissao::PRIV_TRUNCATE || priv==Permissao::PRIV_TRIGGER) &&
+      ((priv==Permission::PRIV_TRUNCATE || priv==Permission::PRIV_TRIGGER) &&
         (tipo_obj==OBJ_TABLE)) ||
 
-       (priv==Permissao::PRIV_REFERENCES &&
+       (priv==Permission::PRIV_REFERENCES &&
         (tipo_obj==OBJ_TABLE || tipo_obj==OBJ_COLUMN)) ||
 
-       (priv==Permissao::PRIV_CREATE &&
+       (priv==Permission::PRIV_CREATE &&
         (tipo_obj==OBJ_DATABASE || tipo_obj==OBJ_SCHEMA || tipo_obj==OBJ_TABLESPACE)) ||
 
-      ((priv==Permissao::PRIV_CONNECT || priv==Permissao::PRIV_TEMPORARY) &&
+      ((priv==Permission::PRIV_CONNECT || priv==Permission::PRIV_TEMPORARY) &&
         (tipo_obj==OBJ_DATABASE)) ||
 
-       (priv==Permissao::PRIV_EXECUTE &&
+       (priv==Permission::PRIV_EXECUTE &&
         (tipo_obj==OBJ_FUNCTION || tipo_obj==OBJ_AGGREGATE)) ||
 
-       (priv==Permissao::PRIV_USAGE &&
+       (priv==Permission::PRIV_USAGE &&
         (tipo_obj==OBJ_SEQUENCE || tipo_obj==OBJ_LANGUAGE || tipo_obj==OBJ_SCHEMA)) ||
 
-       (priv==Permissao::PRIV_SELECT && tipo_obj==OBJ_VIEW))
+       (priv==Permission::PRIV_SELECT && tipo_obj==OBJ_VIEW))
    {
     privilegios_tbw->setRowHidden(priv, false);
    }
@@ -217,7 +217,7 @@ void PermissaoWidget::selecionarPapel(void)
 void PermissaoWidget::selecionarPermissao(int idx_perm)
 {
  if(idx_perm >= 0)
-  permissao=reinterpret_cast<Permissao *>(tab_permissoes->obterDadoLinha(idx_perm).value<void *>());
+  permissao=reinterpret_cast<Permission *>(tab_permissoes->obterDadoLinha(idx_perm).value<void *>());
  else
   permissao=NULL;
 }
@@ -226,8 +226,8 @@ void PermissaoWidget::listarPermissoes(void)
 {
  if(modelo)
  {
-  vector<Permissao *> permissoes;
-  Permissao *perm=NULL;
+  vector<Permission *> permissoes;
+  Permission *perm=NULL;
   unsigned i, qtd, i1, qtd1;
   QString str_aux;
 
@@ -324,12 +324,12 @@ void PermissaoWidget::exibirDadosPapelSelecionado(void)
 
 void PermissaoWidget::adicionarPermissao(void)
 {
- Permissao *perm_aux=NULL;
+ Permission *perm_aux=NULL;
 
  try
  {
   //Aloca uma permissão para o objeto
-  perm_aux=new Permissao(this->objeto);
+  perm_aux=new Permission(this->objeto);
 
   //Configura a nova permissão criada
   configurarPermissao(perm_aux);
@@ -368,18 +368,18 @@ void PermissaoWidget::adicionarPermissao(void)
 
 void PermissaoWidget::atualizarPermissao(void)
 {
- Permissao *perm_aux=NULL,*perm_bkp=NULL;
+ Permission *perm_aux=NULL,*perm_bkp=NULL;
  int idx_perm;
 
  try
  {
   //Aloca uma nova permissão para ser configurada
-  perm_aux=new Permissao(this->objeto);
+  perm_aux=new Permission(this->objeto);
 
   /* Cria uma permissão de backup. Esta receberá os
      os valores atuais da permissão que está sendo editada
      pois em caso de erro seus atributos originais são restaurados */
-  perm_bkp=new Permissao(this->objeto);
+  perm_bkp=new Permission(this->objeto);
   (*perm_bkp)=(*permissao);
 
   //Configura a nova permissão com os atributos preenchidos no formulário
@@ -470,7 +470,7 @@ void PermissaoWidget::editarPermissao(void)
   tab_papeis->blockSignals(false);
 
   //Preenchendo a tabela de privilégios com os valores dos privilégios da permissão
-  for(priv=Permissao::PRIV_SELECT; priv<=Permissao::PRIV_USAGE; priv++)
+  for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
   {
    //Obtém os checkboxes que representam o priviléigo e a opção GRANT OPTION
    chk=dynamic_cast<QCheckBox *>(privilegios_tbw->cellWidget(priv,0));
@@ -505,7 +505,7 @@ void PermissaoWidget::removerPermissoes(void)
  cancelarOperacao();
 }
 
-void PermissaoWidget::configurarPermissao(Permissao *permissao)
+void PermissaoWidget::configurarPermissao(Permission *permissao)
 {
  if(permissao)
  {
@@ -523,7 +523,7 @@ void PermissaoWidget::configurarPermissao(Permissao *permissao)
 
   /* Configura os privilégios da permissão com base nos checkboxes
      selecionados ta tabela de privilégios */
-  for(priv=Permissao::PRIV_SELECT; priv <= Permissao::PRIV_USAGE; priv++)
+  for(priv=Permission::PRIV_SELECT; priv <= Permission::PRIV_USAGE; priv++)
   {
    if(!privilegios_tbw->isRowHidden(priv))
    {
@@ -545,7 +545,7 @@ void PermissaoWidget::cancelarOperacao(void)
  permissao=NULL;
 
  //Desmarca todos os privilégios na tabela de privilégios
- for(priv=Permissao::PRIV_SELECT; priv<=Permissao::PRIV_USAGE; priv++)
+ for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
  {
   chk=dynamic_cast<QCheckBox *>(privilegios_tbw->cellWidget(priv,0));
   chk->setChecked(false);
@@ -578,7 +578,7 @@ void PermissaoWidget::marcarPrivilegio(void)
   //Converte o objeto sender em checkbox
   chk=dynamic_cast<QCheckBox *>(obj_sender);
 
-  for(priv=Permissao::PRIV_SELECT; priv<=Permissao::PRIV_USAGE; priv++)
+  for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE; priv++)
   {
    //Obtém os checkboxes que representam o priviléigo e a opção GRANT OPTION
    chk_priv=dynamic_cast<QCheckBox *>(privilegios_tbw->cellWidget(priv,0));
@@ -613,7 +613,7 @@ void PermissaoWidget::habilitarBotoesEdicao(void)
  unsigned priv;
  QCheckBox *chk=NULL, *chk1=NULL;
 
- for(priv=Permissao::PRIV_SELECT; priv<=Permissao::PRIV_USAGE && !priv_marcados; priv++)
+ for(priv=Permission::PRIV_SELECT; priv<=Permission::PRIV_USAGE && !priv_marcados; priv++)
  {
   //Obtém os checkboxes que representam o priviléigo e a opção GRANT OPTION
   chk=dynamic_cast<QCheckBox *>(privilegios_tbw->cellWidget(priv,0));

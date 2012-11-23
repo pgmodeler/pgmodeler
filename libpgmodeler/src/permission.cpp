@@ -1,6 +1,6 @@
-#include "permissao.h"
+#include "permission.h"
 
-Permissao::Permissao(BaseObject *objeto)
+Permission::Permission(BaseObject *objeto)
 {
  ObjectType tipo_obj;
  unsigned id_priv;
@@ -37,7 +37,7 @@ Permissao::Permissao(BaseObject *objeto)
  attributes[ParsersAttributes::PRIVILEGES_GOP]="";
 }
 
-bool Permissao::papelReferenciado(Role *papel)
+bool Permission::papelReferenciado(Role *papel)
 {
  vector<Role *>::iterator itr, itr_end;
  bool enc=false;
@@ -55,7 +55,7 @@ bool Permissao::papelReferenciado(Role *papel)
  return(enc);
 }
 
-void Permissao::adicionarPapel(Role *papel)
+void Permission::adicionarPapel(Role *papel)
 {
  //Caso o usuário tente atribuir um papel não alocado um erro será disparado
  if(!papel)
@@ -70,7 +70,7 @@ void Permissao::adicionarPapel(Role *papel)
  gerarIdPermissao();
 }
 
-void Permissao::definirPrivilegio(unsigned privilegio, bool valor, bool op_concessao)
+void Permission::definirPrivilegio(unsigned privilegio, bool valor, bool op_concessao)
 {
  ObjectType tipo_obj;
 
@@ -130,7 +130,7 @@ void Permissao::definirPrivilegio(unsigned privilegio, bool valor, bool op_conce
  this->op_concessao[privilegio]=op_concessao;
 }
 
-void Permissao::removerPapel(unsigned idx_papel)
+void Permission::removerPapel(unsigned idx_papel)
 {
  if(idx_papel > papeis.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -138,13 +138,13 @@ void Permissao::removerPapel(unsigned idx_papel)
  gerarIdPermissao();
 }
 
-void Permissao::removerPapeis(void)
+void Permission::removerPapeis(void)
 {
  papeis.clear();
  gerarIdPermissao();
 }
 
-Role *Permissao::obterPapel(unsigned idx_papel)
+Role *Permission::obterPapel(unsigned idx_papel)
 {
  if(idx_papel > papeis.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -152,17 +152,17 @@ Role *Permissao::obterPapel(unsigned idx_papel)
  return(papeis[idx_papel]);
 }
 
-unsigned Permissao::obterNumPapeis(void)
+unsigned Permission::obterNumPapeis(void)
 {
  return(papeis.size());
 }
 
-BaseObject *Permissao::obterObjeto(void)
+BaseObject *Permission::obterObjeto(void)
 {
  return(objeto);
 }
 
-bool Permissao::obterPrivilegio(unsigned privilegio)
+bool Permission::obterPrivilegio(unsigned privilegio)
 {
  //Caso o tipo de privilégio sejá inválido dispara uma exceção
  if(privilegio > PRIV_USAGE)
@@ -171,7 +171,7 @@ bool Permissao::obterPrivilegio(unsigned privilegio)
  return(privilegios[privilegio]);
 }
 
-bool Permissao::obterOpConcessao(unsigned privilegio)
+bool Permission::obterOpConcessao(unsigned privilegio)
 {
  //Caso o tipo de privilégio sejá inválido dispara uma exceção
  if(privilegio > PRIV_USAGE)
@@ -180,7 +180,7 @@ bool Permissao::obterOpConcessao(unsigned privilegio)
  return(op_concessao[privilegio]);
 }
 
-QString Permissao::obterStringPrivilegios(void)
+QString Permission::obterStringPrivilegios(void)
 {
  unsigned char cod_privilegios[13]="rawdDxtCcTXU";
  QString str_priv;
@@ -219,7 +219,7 @@ QString Permissao::obterStringPrivilegios(void)
  return(str_priv);
 }
 
-void Permissao::gerarIdPermissao(void)
+void Permission::gerarIdPermissao(void)
 {
  vector<Role *>::iterator itr, itr_end;
  vector<QString> vet_end;
@@ -278,7 +278,7 @@ void Permissao::gerarIdPermissao(void)
             .arg(str_aux);
 }
 
-QString Permissao::getCodeDefinition(unsigned tipo_def)
+QString Permission::getCodeDefinition(unsigned tipo_def)
 {
  unsigned i, qtd;
  ObjectType tipo_obj;

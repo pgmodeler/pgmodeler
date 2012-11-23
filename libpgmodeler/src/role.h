@@ -1,6 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
+# Class: Role
 # Description: Implements the operations to manipulate roles on the database.
 # Creation date: 12/05/2008
 #

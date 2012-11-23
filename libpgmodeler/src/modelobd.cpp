@@ -197,7 +197,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_SEQUENCE)
     adicionarSequencia(dynamic_cast<Sequencia *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_PERMISSION)
-    adicionarPermissao(dynamic_cast<Permissao *>(objeto));
+    adicionarPermissao(dynamic_cast<Permission *>(objeto));
   }
   catch(Exception &e)
   {
@@ -255,7 +255,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_SEQUENCE)
     removerSequencia(dynamic_cast<Sequencia *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_PERMISSION)
-    removerPermissao(dynamic_cast<Permissao *>(objeto));
+    removerPermissao(dynamic_cast<Permission *>(objeto));
   }
   catch(Exception &e)
   {
@@ -322,7 +322,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
  else if(tipo_obj==OBJ_RELATIONSHIP || tipo_obj==BASE_RELATIONSHIP)
   removerRelacionamento(dynamic_cast<RelacionamentoBase *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_PERMISSION)
-  removerPermissao(dynamic_cast<Permissao *>(objeto));
+  removerPermissao(dynamic_cast<Permission *>(objeto));
  }
 }
 
@@ -2335,7 +2335,7 @@ void ModeloBD::removerTipoUsuario(BaseObject *objeto, int idx_obj)
  }
 }
 
-void ModeloBD::adicionarPermissao(Permissao *permissao)
+void ModeloBD::adicionarPermissao(Permission *permissao)
 {
  try
  {
@@ -2369,7 +2369,7 @@ void ModeloBD::adicionarPermissao(Permissao *permissao)
  }
 }
 
-void ModeloBD::removerPermissao(Permissao *permissao)
+void ModeloBD::removerPermissao(Permission *permissao)
 {
  if(permissao)
  {
@@ -2379,9 +2379,9 @@ void ModeloBD::removerPermissao(Permissao *permissao)
 
 void ModeloBD::removerPermissoes(BaseObject *objeto)
 {
- vector<Permissao *> vet_perm;
+ vector<Permission *> vet_perm;
  vector<BaseObject *>::iterator itr, itr_end;
- Permissao *permissao=NULL;
+ Permission *permissao=NULL;
  unsigned idx=0;
 
  /* Caso o objeto o qual terá todas as permissões relacionadas removidas não
@@ -2398,7 +2398,7 @@ void ModeloBD::removerPermissoes(BaseObject *objeto)
  while(itr!=itr_end)
  {
   //Obtém a permissão
-  permissao=dynamic_cast<Permissao *>(*itr);
+  permissao=dynamic_cast<Permission *>(*itr);
 
   //Verifica se o objeto da permissão é igual ao objeto do parâmetro
   if(permissao->obterObjeto()==objeto)
@@ -2422,10 +2422,10 @@ void ModeloBD::removerPermissoes(BaseObject *objeto)
  }
 }
 
-void ModeloBD::obterPermissoes(BaseObject *objeto, vector<Permissao *> &vet_perm)
+void ModeloBD::obterPermissoes(BaseObject *objeto, vector<Permission *> &vet_perm)
 {
  vector<BaseObject *>::iterator itr, itr_end;
- Permissao *permissao=NULL;
+ Permission *permissao=NULL;
 
  /* Caso o objeto o qual terá todas as permissões relacionadas
     obtidas não esteja alocado um erro será disparado pois o
@@ -2445,7 +2445,7 @@ void ModeloBD::obterPermissoes(BaseObject *objeto, vector<Permissao *> &vet_perm
  while(itr!=itr_end)
  {
   //Obtém a permissão
-  permissao=dynamic_cast<Permissao *>(*itr);
+  permissao=dynamic_cast<Permission *>(*itr);
 
   /* Caso a permissão esteja relacionada ao mesmo
      objeto do parâmetro insere tal permissão
@@ -2457,14 +2457,14 @@ void ModeloBD::obterPermissoes(BaseObject *objeto, vector<Permissao *> &vet_perm
  }
 }
 
-int ModeloBD::obterIndicePermissao(Permissao *permissao)
+int ModeloBD::obterIndicePermissao(Permission *permissao)
 {
  int idx_perm=-1;
 
  //Obtém o índice da permissão somente se a mesma estive alocada
  if(permissao)
  {
-  Permissao *perm_aux=NULL;
+  Permission *perm_aux=NULL;
   vector<BaseObject *>::iterator itr, itr_end;
   BaseObject *objeto=NULL;
   Role *papel=NULL;
@@ -2483,7 +2483,7 @@ int ModeloBD::obterIndicePermissao(Permissao *permissao)
   while(itr!=itr_end && idx_perm < 0)
   {
    //Obtém uma permissão da lista
-   perm_aux=dynamic_cast<Permissao *>(*itr);
+   perm_aux=dynamic_cast<Permission *>(*itr);
 
    /*CAso o objeto do parâmetro seja o mesmo da permissão
      será efetuada uma validação se todos os papeis
@@ -5749,9 +5749,9 @@ RelacionamentoBase *ModeloBD::criarRelacionamento(void)
  return(relacao_base);
 }
 
-Permissao *ModeloBD::criarPermissao(void)
+Permission *ModeloBD::criarPermissao(void)
 {
- Permissao *permissao=NULL;
+ Permission *permissao=NULL;
  BaseObject *objeto=NULL;
  Tabela *tabela_pai=NULL;
  Role *papel=NULL;
@@ -5760,7 +5760,7 @@ Permissao *ModeloBD::criarPermissao(void)
  ObjectType tipo_obj;
  QString obj_pai, nome_obj;
  QStringList lista;
- unsigned i, tam, tipo_priv=Permissao::PRIV_SELECT;
+ unsigned i, tam, tipo_priv=Permission::PRIV_SELECT;
  bool valor_priv, op_concessao;
 
  try
@@ -5808,7 +5808,7 @@ Permissao *ModeloBD::criarPermissao(void)
                       ERR_PERM_REF_INEXIST_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Aloca a permissão relacionando-a com o objeto localizado
-  permissao=new Permissao(objeto);
+  permissao=new Permission(objeto);
 
   /* Acessa o elemento que armazena os privilégios dos papéis os quais
      compartilham da mesma permissão sobre o objeto. Informar estes
@@ -5873,29 +5873,29 @@ Permissao *ModeloBD::criarPermissao(void)
 
       //Identifica o tipo de privilégio atual
       if(itr->first==ParsersAttributes::CONNECT_PRIV)
-       tipo_priv=Permissao::PRIV_CONNECT;
+       tipo_priv=Permission::PRIV_CONNECT;
       else if(itr->first==ParsersAttributes::CREATE_PRIV)
-       tipo_priv=Permissao::PRIV_CREATE;
+       tipo_priv=Permission::PRIV_CREATE;
       else if(itr->first==ParsersAttributes::DELETE_PRIV)
-       tipo_priv=Permissao::PRIV_DELETE;
+       tipo_priv=Permission::PRIV_DELETE;
       else if(itr->first==ParsersAttributes::EXECUTE_PRIV)
-       tipo_priv=Permissao::PRIV_EXECUTE;
+       tipo_priv=Permission::PRIV_EXECUTE;
       else if(itr->first==ParsersAttributes::INSERT_PRIV)
-       tipo_priv=Permissao::PRIV_INSERT;
+       tipo_priv=Permission::PRIV_INSERT;
       else if(itr->first==ParsersAttributes::REFERENCES_PRIV)
-       tipo_priv=Permissao::PRIV_REFERENCES;
+       tipo_priv=Permission::PRIV_REFERENCES;
       else if(itr->first==ParsersAttributes::SELECT_PRIV)
-       tipo_priv=Permissao::PRIV_SELECT;
+       tipo_priv=Permission::PRIV_SELECT;
       else if(itr->first==ParsersAttributes::TEMPORARY_PRIV)
-       tipo_priv=Permissao::PRIV_TEMPORARY;
+       tipo_priv=Permission::PRIV_TEMPORARY;
       else if(itr->first==ParsersAttributes::TRIGGER_PRIV)
-       tipo_priv=Permissao::PRIV_TRIGGER;
+       tipo_priv=Permission::PRIV_TRIGGER;
       else if(itr->first==ParsersAttributes::TRUNCATE_PRIV)
-       tipo_priv=Permissao::PRIV_TRUNCATE;
+       tipo_priv=Permission::PRIV_TRUNCATE;
       else if(itr->first==ParsersAttributes::UPDATE_PRIV)
-       tipo_priv=Permissao::PRIV_UPDATE;
+       tipo_priv=Permission::PRIV_UPDATE;
       else if(itr->first==ParsersAttributes::USAGE_PRIV)
-       tipo_priv=Permissao::PRIV_USAGE;
+       tipo_priv=Permission::PRIV_USAGE;
 
       //Configura o privilégio na permissão
       permissao->definirPrivilegio(tipo_priv, (valor_priv || op_concessao), op_concessao);
@@ -6379,7 +6379,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
 
   while(itr!=itr_end)
   {
-   atribs_aux[ParsersAttributes::PERMISSION]+=dynamic_cast<Permissao *>(*itr)->getCodeDefinition(tipo_def);
+   atribs_aux[ParsersAttributes::PERMISSION]+=dynamic_cast<Permission *>(*itr)->getCodeDefinition(tipo_def);
 
    //Dispara um sinal para sinalizar o progresso final da geração de código
    qtd_defs_geradas++;

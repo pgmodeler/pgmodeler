@@ -41,7 +41,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/operationlist.h \
            $$PWD/src/tableobject.h \
            $$PWD/src/referencia.h \
-           $$PWD/src/permissao.h
+           $$PWD/src/permission.h
 
 
 SOURCES +=  $$PWD/src/textbox.cpp \
@@ -78,4 +78,4 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/operationlist.cpp \
             $$PWD/src/tableobject.cpp \
             $$PWD/src/referencia.cpp \
-            $$PWD/src/permissao.cpp
+            $$PWD/src/permission.cpp
