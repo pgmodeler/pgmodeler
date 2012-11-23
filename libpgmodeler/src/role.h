@@ -74,53 +74,53 @@ class Role: public BaseObject {
   //Sets the role id
   void setSysid(unsigned uid);
 
-  //Sets one option for the role (Use constants OP_???)
+  //Sets one option for the role (Via OP_??? constants)
   void setOption(unsigned op_type, bool value);
 
-  //Define um papel como pertencente a uma das listas de papéis internos
+  //Adds one role to the internal role list (Via ???_ROLE constants)
   void addRole(unsigned role_type, Role *role);
 
-  //Define o limite de conexões que um papel pode fazer
+  //Defines the connection limit for the role
   void setConnectionLimit(int limit);
 
-  //Define a validade do papel
+  //Defines the validity date for the role
   void setValidity(const QString &date);
 
-  //Define a senha do papel
+  //Sets the password for the role
   void setPassword(const QString &passwd);
 
-  //Obtém uma opção do papel usando as constantes OP_???
+  //Gets on option for the role (Via OP_??? constants)
   bool getOption(unsigned op_type);
 
-  //Remove um papel do tipo especificado no índice informado
+  //Remove one role from internal role list (Via ???_ROLE constants)
   void removeRole(unsigned role_type, unsigned role_idx);
 
-  //Remove todos os papéis membros no tipo especificado
+  //Remove all roles from one iternal list (Via ???_ROLE constants)
   void removeRoles(unsigned role_type);
 
-  /* Obtém um papel das listas internas usando o tipo da lista (PAPEL_???)
-     e o índice do elemento na lista */
+  /* Gets one role from internal list (Via ???_ROLE constants) referencing
+     the object by its index */
   Role *getRole(unsigned role_type, unsigned role_idx);
 
-  //Retorna se o papel informado está dento de uma das listas de papeis
+  //Returns whether the role exists on the internal lists (Via ???_ROLE constants)
   bool isRoleExists(unsigned role_type, Role *role);
 
-  //Obtém o número de papéis presentes em uma determinada lista
+  //Gets the role count on the specified internal list (Via ???_ROLE constants)
   unsigned getRoleCount(unsigned role_type);
 
-  //Obtém o limite de conexões para o papel
+  //Returns the connection limit for the role
   unsigned getConnectionLimit(void);
 
-  //Obtém a validade do papel
+  //Returns the validity date for the role
   QString getValidity(void);
 
-  //Obtém a senha do papel
+  //Returns the role password
   QString getPassword(void);
 
-  //Obtém o id de usuário do papel
+  //Returns the role id on the system
   unsigned getSysid(void);
 
-  //Retorna a definição SQL ou XML do objeto
+  //Returns the SQL / XML definition for the role
   QString getCodeDefinition(unsigned def_type);
 };
 

@@ -31,8 +31,7 @@ Role::Role(void)
 
 void Role::setSysid(unsigned sysid)
 {
- /* IDs de usuário abaixo de 100 são reservados ao SGBD, sendo assim
-    um erro será gerado */
+ //Raises an error if the id is less then 100 (sysid < 100 are system reserved)
  if(sysid < 100)
   throw Exception(ERR_ASG_INV_ID_USER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -41,22 +40,19 @@ void Role::setSysid(unsigned sysid)
 
 void Role::setOption(unsigned op_type, bool value)
 {
- //Caso o tipo de opção seja válido, atribui-se o valor ao mesmo
  if(op_type <= OP_ENCRYPTED)
   options[op_type]=value;
  else
-  //Dispara-se uma exceção caso se use um tipo de opção inválido
+  //Raises an error if the option type is invalid
   throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 void Role::addRole(unsigned role_type, Role *role)
 {
- /* Caso o papel a ser inserido na lista não esteja alocado,
-    um erro e disparado */
+ //Raises an error if the role to be added is not allocated
  if(!role)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- /* Caso o usuário tente atribuir como membro do papel 'this'
-    o mesmo objeto representado por este ultimo */
+ //Raises an error if the role to be added is the 'this' role
  else if(role && this==role)
   throw Exception(Exception::getErrorMessage(ERR_ROLE_MEMBER_ITSELF)
                                .arg(QString::fromUtf8(role->getName())),
@@ -66,52 +62,48 @@ void Role::addRole(unsigned role_type, Role *role)
   bool role_ref, role_mem, role_adm,
        role_ref1, role_mem1, role_adm1;
 
-
-  /* Verifica se o papel a ser atribuído ao papel 'this' já esta sendo
-     referenciado em uma das listas do papel 'this' */
+  //Check if the role to be added already exists in one of the internal role list
   role_ref=this->isRoleExists(REF_ROLE, role);
   role_mem=this->isRoleExists(MEMBER_ROLE, role);
   role_adm=this->isRoleExists(ADMIN_ROLE, role);
 
-  /* Verifica se o papel 'this' está sendo referenciado em uma das
-     listas do papel vindo do parâmetro */
+  /* Check if the role 'this' is referenced in one of the internal role list
+     of the role to be added */
   role_ref1=role->isRoleExists(REF_ROLE, this);
   role_mem1=role->isRoleExists(MEMBER_ROLE, this);
   role_adm1=role->isRoleExists(ADMIN_ROLE, this);
 
-  /* Erro de duplicação, disparado quando o papel a ser inserido
-     já existe na lista do tipo de papel selecionado */
+  //Raises an error if the role already exists in one of the internal list
   if((role_type==REF_ROLE && role_ref) ||
      (role_type==MEMBER_ROLE && (role_mem || role_adm)) ||
      (role_type==ADMIN_ROLE && (role_adm || role_mem)))
-     //Dispara um erro caso o papel já foi inserido anteriormente na lista
    throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
                                .arg(QString::fromUtf8(role->getName()))
                                .arg(QString::fromUtf8(this->getName())),
                  ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-  /* Erros de referência redundante ou seja um papel
-     referencia o outro indefinidamente. Uma referência redundante pode acontecer
-     quando:
-       1) O papel 'this' já faz parte da lista de papeis_refs do papel do parâmetro
-          e o usuário tente definir o objeto 'papel' (do parâmetro) como um elemento
-          da lista de papeis_refs do papel 'this'
 
-       2) O papel 'this' já faz parte da lista de papeis_membros do papel do parâmetro
-          e o usuário tente definir o objeto 'papel' (do parâmetro) como um elemento
-          da lista de papeis_membros do papel 'this'
+   /* Checking for redundant reference between roles.
+      A redundant reference can happen when:
 
-       3) O papel 'this' já faz parte da lista de papeis_admin do papel do parâmetro
-          e o usuário tente definir o objeto 'papel' (do parâmetro) como um elemento
-          da lista de papeis_admin do papel 'this'
+      1) The role 'this' is already part of the 'ref_roles' list of 'role' object and
+         the user try to add the object 'role' (from parameter) as an element
+         of 'ref_roles' list of role 'this'
 
-       4) O papel 'papel' já faz parte da lista de papeis_membros ou papeis_admin do papel
-          'this' e o usuário tente definir o objeto 'papel' (do parâmetro) como um elemento
-          da lista de papeis_refs do papel 'this'
+      2) The role 'this' is already part of the 'member_roles' list of 'role' object
+         and the user try to add the object 'role' (from parameter) as an element
+         of the 'member_roles' of role 'this'
 
-       5) O papel 'papel' já faz parte da lista de papeis_refs do papel
-          'this' e o usuário tente definir o objeto 'papel' (do parâmetro) como um elemento
-          da lista de papeis_membros ou papeis_adm do papel 'this'
-     */
+      3) The role 'this' is already part of the 'admin_roles' list of 'role' object and
+         the user try to add the 'role' object (from parameter) as an element
+         of 'admin_roles' list of role 'this'
+
+      4) The role 'role' (from parameter) is already part of the 'member_roles' or 'admin_roles' list of
+         the 'this' role and the user try to add the object 'role' as an element of
+         the 'ref_roles' of the role 'this'
+
+      5) The role 'role' (from parameter) is already part of the 'ref_roles' list of role 'this'
+         and the user try to add the object 'role' as an element of the 'member_roles' list
+         of the role 'this' */
   else if((role_type==REF_ROLE && ((role_mem || role_adm) || role_ref1)) ||
           (role_type==MEMBER_ROLE && ((role_mem1 || role_adm1) || role_ref)) ||
           (role_type==ADMIN_ROLE &&  ((role_mem1 || role_adm1) || role_ref)))
@@ -187,14 +179,13 @@ void Role::removeRole(unsigned role_type, unsigned role_idx)
  vector<Role *> *list=NULL;
  vector<Role *>::iterator itr;
 
- //Selecionando a lista de papéis de acordo com o tipo passado
  switch(role_type)
  {
   case REF_ROLE: list=&ref_roles; break;
   case MEMBER_ROLE: list=&member_roles; break;
   case ADMIN_ROLE: list=&admin_roles; break;
   default:
-    //Dispara um erro caso se referencie um tipo inválido de lista de papéis
+    //Raises an error if the role type is invalid
     throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
@@ -210,14 +201,13 @@ void Role::removeRoles(unsigned role_type)
 {
  vector<Role *> *list=NULL;
 
- //Selecionando a lista de papéis de acordo com o tipo passado
  switch(role_type)
  {
   case REF_ROLE: list=&ref_roles; break;
   case MEMBER_ROLE: list=&member_roles; break;
   case ADMIN_ROLE: list=&admin_roles; break;
   default:
-    //Dispara um erro caso se referencie um tipo inválido de lista de papéis
+    //Raises an error if the role type is invalid
     throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
@@ -231,28 +221,23 @@ bool Role::isRoleExists(unsigned role_type, Role *role)
  vector<Role *>::iterator itr, itr_end;
  bool found=false;
 
- //Selecionando a lista de papéis de acordo com o tipo passado
  switch(role_type)
  {
   case REF_ROLE: list=&ref_roles; break;
   case MEMBER_ROLE: list=&member_roles; break;
   case ADMIN_ROLE: list=&admin_roles; break;
   default:
-    //Dispara um erro caso se referencie um tipo inválido de lista de papéis
+    //Raises an error if the role type is invalid
     throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
 
-  /* Varre a lista de papeis selecionada e verifica
-    se o papel passado no parâmetro já existe em tal lista */
  itr=list->begin();
  itr_end=list->end();
  while(!found && itr!=itr_end)
  {
-  if((*itr)==role)
-    found=true;
-  else
-    itr++;
+  found=((*itr)==role);
+  itr++;
  }
 
  return(found);
@@ -273,30 +258,24 @@ bool Role::getOption(unsigned op_type)
 
 Role *Role::getRole(unsigned role_type, unsigned role_idx)
 {
- Role *role=NULL;
  vector<Role *> *list=NULL;
 
- //Selecionando a lista de papéis de acordo com o tipo passado
  switch(role_type)
  {
   case REF_ROLE: list=&ref_roles; break;
   case MEMBER_ROLE: list=&member_roles; break;
   case ADMIN_ROLE: list=&admin_roles; break;
   default:
-    //Dispara um erro caso se referencie um tipo inválido de lista de papéis
+    //Raises an error if the role type is invalid
     throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
 
- /* Caso o índice do papel a ser obtido seja inválido, um
-    erro é gerado */
+ //Raises an error if the role index is invalid (out of bound)
  if(role_idx > list->size())
   throw Exception(ERR_REF_ROLE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
-  //Obtém o papel na posição especificada
-  role=list->at(role_idx);
 
- return(role);
+ return(list->at(role_idx));
 }
 
 unsigned Role::getRoleCount(unsigned role_type)
@@ -309,12 +288,11 @@ unsigned Role::getRoleCount(unsigned role_type)
   case MEMBER_ROLE: list=&member_roles; break;
   case ADMIN_ROLE: list=&admin_roles; break;
   default:
-   //Dispara um erro caso se referencie um tipo inválido de lista de papéis
+   //Raises an error if the role type is invalid
    throw Exception(ERR_REF_INV_ROLE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   break;
  }
 
- //Retorna o tamanho da lista selecionada
  return(list->size());
 }
 
@@ -350,11 +328,6 @@ QString Role::getCodeDefinition(unsigned def_type)
  attributes[ParsersAttributes::PASSWORD]=password;
  attributes[ParsersAttributes::VALIDITY]=validity;
 
- /* Configurando um atributo indicando se o papel é um group ou não,
-    isso é usado apenas para manter a compatibilidade com o postgresql 8.0
-    por ser o único que considera usuário e grupo, as demais versões tratam
-    ambos como papeis. Um papel assume a forma de um grupo quando o mesmo
-    não possui a opção de login setada */
  attributes[ParsersAttributes::GROUP]=(options[OP_LOGIN] ? "" : "1");
 
  if(conn_limit >= 0)
