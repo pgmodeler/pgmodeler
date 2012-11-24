@@ -9,5 +9,5 @@
 <!ELEMENT column (type?,comment?)>
 <!ATTLIST column name CDATA #REQUIRED>
 <!ATTLIST column not-null (true | false) "false">
-<!ATTLIST column default CDATA #IMPLIED>
+<!ATTLIST column default-value CDATA #IMPLIED>
 <!ATTLIST column protected (false|true) "false">

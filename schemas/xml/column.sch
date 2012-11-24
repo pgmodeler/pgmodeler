@@ -14,7 +14,7 @@ $tb [<column name=] "@{name}"
  %end
 
  %if @{default-value} %then
-  [ default=] "@{default-value}"
+  [ default-value=] "@{default-value}"
  %end
 
  %if @{protected} %then 
