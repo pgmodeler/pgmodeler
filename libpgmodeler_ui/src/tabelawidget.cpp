@@ -145,7 +145,7 @@ void TabelaWidget::exibirFormObjetoTabela(ObjectType tipo_obj)
   break;
 
   case OBJ_CONSTRAINT:
-   restricao_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Restricao *>(objeto));
+   restricao_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Constraint *>(objeto));
    restricao_wgt->show();
   break;
 
@@ -337,7 +337,7 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
 {
  TabelaObjetosWidget *tab=NULL;
  Column *coluna=NULL;
- Restricao *restricao=NULL;
+ Constraint *restricao=NULL;
  Gatilho *gatilho=NULL;
  Rule *regra=NULL;
  Index *indice=NULL;
@@ -391,7 +391,7 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  }
  else if(tipo_obj==OBJ_CONSTRAINT)
  {
-  restricao=dynamic_cast<Restricao *>(objeto);
+  restricao=dynamic_cast<Constraint *>(objeto);
   //Coluna 1: Tipo de comparação da restrição
   tab->definirTextoCelula(~restricao->obterTipoComparacao(),idx_lin,1);
   //Coluna 2: Tipo de ação ON UPDATE da restrição

@@ -447,7 +447,7 @@ class ModeloBD:  public QObject, public BaseObject {
      principalmente quando o método ModeloBD::verificarRefColsIncRelacao() está em execução
      e uma chave primária está sendo recriada por este método e a tabela já possua um chave primária, isso
      evita que seja disparado um erro indicando que a tabela já possui uma chave-primária. */
-  Restricao *criarRestricao(BaseObject *objeto);
+  Constraint *criarRestricao(BaseObject *objeto);
   Index *criarIndice(Tabela *tabela);
   Gatilho *criarGatilho(Tabela *tabela);
 

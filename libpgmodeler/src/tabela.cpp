@@ -163,13 +163,13 @@ void Tabela::definirAtributoRestricoes(unsigned tipo_def)
  QString str_rest;
  unsigned i, qtd;
  bool inc_insporrelacao;
- Restricao *rest=NULL;
+ Constraint *rest=NULL;
 
  //Concatena a definiação SQL das restrições
  qtd=restricoes.size();
  for(i=0; i < qtd; i++)
  {
-  rest=dynamic_cast<Restricao *>(restricoes[i]);
+  rest=dynamic_cast<Constraint *>(restricoes[i]);
 
   if((tipo_def==SchemaParser::SQL_DEFINITION &&
       (!rest->referenciaColunaIncRelacao() || rest->obterTipoRestricao()==TipoRestricao::primary_key)) ||
@@ -354,8 +354,8 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
       }
       else if(tipo_obj==OBJ_CONSTRAINT)
       {
-       Restricao *rest;
-       rest=dynamic_cast<Restricao *>(obj_tab);
+       Constraint *rest;
+       rest=dynamic_cast<Constraint *>(obj_tab);
        rest->getCodeDefinition(SchemaParser::SQL_DEFINITION);
        tipo_rest=rest->obterTipoRestricao();
       }
@@ -462,7 +462,7 @@ void Tabela::adicionarRegra(Rule *reg, int idx_reg)
  adicionarObjeto(reg, idx_reg);
 }
 
-void Tabela::adicionarRestricao(Restricao *constr, int idx_rest)
+void Tabela::adicionarRestricao(Constraint *constr, int idx_rest)
 {
  adicionarObjeto(constr, idx_rest);
 }
@@ -852,15 +852,15 @@ Gatilho *Tabela::obterGatilho(unsigned idx_gat)
  return(dynamic_cast<Gatilho *>(obterObjeto(idx_gat,OBJ_TRIGGER)));
 }
 
-Restricao *Tabela::obterRestricao(const QString &nome)
+Constraint *Tabela::obterRestricao(const QString &nome)
 {
  int idx;
- return(dynamic_cast<Restricao *>(obterObjeto(nome,OBJ_CONSTRAINT,idx)));
+ return(dynamic_cast<Constraint *>(obterObjeto(nome,OBJ_CONSTRAINT,idx)));
 }
 
-Restricao *Tabela::obterRestricao(unsigned idx_constr)
+Constraint *Tabela::obterRestricao(unsigned idx_constr)
 {
- return(dynamic_cast<Restricao *>(obterObjeto(idx_constr,OBJ_CONSTRAINT)));
+ return(dynamic_cast<Constraint *>(obterObjeto(idx_constr,OBJ_CONSTRAINT)));
 }
 
 Index *Tabela::obterIndice(const QString &nome)
@@ -974,15 +974,15 @@ unsigned Tabela::obterNumObjetos(ObjectType tipo_obj, bool inc_insporrelacao)
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-Restricao *Tabela::obterChavePrimaria(void)
+Constraint *Tabela::obterChavePrimaria(void)
 {
  unsigned qtd,i;
- Restricao *pk=NULL, *rest=NULL;
+ Constraint *pk=NULL, *rest=NULL;
 
  qtd=restricoes.size();
  for(i=0; i < qtd && !pk; i++)
  {
-  rest=dynamic_cast<Restricao *>(restricoes[i]);
+  rest=dynamic_cast<Constraint *>(restricoes[i]);
   pk=(rest->obterTipoRestricao()==TipoRestricao::primary_key ? rest : NULL);
  }
 
@@ -998,7 +998,7 @@ bool Tabela::restricaoReferenciaColuna(Column *coluna, TipoRestricao tipo_rest)
 {
  bool enc=false;
  vector<TableObject *>::iterator itr, itr_end;
- Restricao *rest=NULL;
+ Constraint *rest=NULL;
 
  if(coluna)
  {
@@ -1006,11 +1006,11 @@ bool Tabela::restricaoReferenciaColuna(Column *coluna, TipoRestricao tipo_rest)
   itr_end=restricoes.end();
   while(itr!=itr_end && !enc)
   {
-   rest=dynamic_cast<Restricao *>(*itr);
+   rest=dynamic_cast<Constraint *>(*itr);
    itr++;
    enc=(rest->obterTipoRestricao()==tipo_rest &&
-        (rest->colunaExistente(coluna, Restricao::COLUNA_ORIGEM) ||
-         rest->colunaExistente(coluna, Restricao::COLUNA_REFER)));
+        (rest->colunaExistente(coluna, Constraint::COLUNA_ORIGEM) ||
+         rest->colunaExistente(coluna, Constraint::COLUNA_REFER)));
   }
  }
 
@@ -1114,7 +1114,7 @@ void Tabela::obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_r
   vector<TableObject *>::iterator itr, itr_end;
   bool enc=false;
   Index *ind=NULL;
-  Restricao *rest=NULL;
+  Constraint *rest=NULL;
   Gatilho *gat=NULL;
 
   //Verificando se a coluna não é referenciada nos indices
@@ -1146,7 +1146,7 @@ void Tabela::obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_r
   while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !enc)))
   {
    //Verfica se a coluna a ser removida não está presente nas daus lista de colunas da contraint
-   rest=dynamic_cast<Restricao *>(*itr);
+   rest=dynamic_cast<Constraint *>(*itr);
    itr++;
 
    col=rest->obterColuna(coluna->getName(),true);

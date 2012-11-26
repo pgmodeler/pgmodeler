@@ -47,7 +47,7 @@ void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type
     copyObject(psrc_obj, dynamic_cast<Column *>(copy_obj));
   break;
   case OBJ_CONSTRAINT:
-    copyObject(psrc_obj, dynamic_cast<Restricao *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Constraint *>(copy_obj));
   break;
   case OBJ_TRIGGER:
     copyObject(psrc_obj, dynamic_cast<Gatilho *>(copy_obj));
@@ -455,7 +455,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
     model->removerPermissoes(tab_obj);
    else if(((obj_type==OBJ_TRIGGER && dynamic_cast<Gatilho *>(tab_obj)->isReferRelationshipColumn()) ||
             (obj_type==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipColumn()) ||
-            (obj_type==OBJ_CONSTRAINT && dynamic_cast<Restricao *>(tab_obj)->referenciaColunaIncRelacao())))
+            (obj_type==OBJ_CONSTRAINT && dynamic_cast<Constraint *>(tab_obj)->referenciaColunaIncRelacao())))
    {
     if(op_type==Operation::OBJECT_REMOVED)
      tab_obj->setParentTable(parent_tab);

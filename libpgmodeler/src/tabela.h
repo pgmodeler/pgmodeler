@@ -26,7 +26,7 @@
 #include "basegraphicobject.h"
 #include "basetable.h"
 #include "column.h"
-#include "restricao.h"
+#include "constraint.h"
 #include "index.h"
 #include "rule.h"
 #include "trigger.h"
@@ -135,7 +135,7 @@ class Tabela: public BaseTable {
      pois necessitam de apenas um parâmetro (o objeto a ser inserido). Internamente
      eles executam uma chamada ao método adicionarObjeto(OBJETO,TIPO_OBJETO) */
   void adicionarColuna(Column *col, int idx_col=-1);
-  void adicionarRestricao(Restricao *constr, int idx_rest=-1);
+  void adicionarRestricao(Constraint *constr, int idx_rest=-1);
   void adicionarGatilho(Gatilho *gat, int idx_gat=-1);
   void adicionarIndice(Index *ind, int idx_ind=-1);
   void adicionarRegra(Rule *reg, int idx_reg=-1);
@@ -150,8 +150,8 @@ class Tabela: public BaseTable {
   Column *obterColuna(unsigned idx_col);
 
   //Métodos que retornam uma constraint através de seu nome ou índice
-  Restricao *obterRestricao(const QString &obj_name);
-  Restricao *obterRestricao(unsigned idx_constr);
+  Constraint *obterRestricao(const QString &obj_name);
+  Constraint *obterRestricao(unsigned idx_constr);
 
   //Métodos que retornam um gatilho através de seu nome ou índice
   Gatilho *obterGatilho(const QString &obj_name);
@@ -211,7 +211,7 @@ class Tabela: public BaseTable {
   int obterIndiceObjeto(TableObject *objeto);
 
   //Retorna a chave primária da tabela se possuir
-  Restricao *obterChavePrimaria(void);
+  Constraint *obterChavePrimaria(void);
 
   //Retorna se a a tabela aceita ou não OIDS
   bool aceitaOids(void);

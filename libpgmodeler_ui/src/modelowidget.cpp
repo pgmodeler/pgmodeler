@@ -687,7 +687,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
      Tabela *tab=NULL, *tab_nn=NULL,
        *tab_orig=dynamic_cast<Tabela *>(rel->obterTabela(Relacionamento::TABELA_ORIGEM)),
        *tab_dest=dynamic_cast<Tabela *>(rel->obterTabela(Relacionamento::TABELA_DESTINO));
-     Restricao *rest=NULL, *rest_aux=NULL;
+     Constraint *rest=NULL, *rest_aux=NULL;
      Column *col=NULL;
      bool obrig_orig=true,//rel->tabelaObrigatoria(Relacionamento::TABELA_ORIGEM),
        obrig_dest=true;//rel->tabelaObrigatoria(Relacionamento::TABELA_DESTINO);
@@ -729,13 +729,13 @@ void ModeloWidget::converterRelacionamentoNN(void)
      qtd=rel->obterNumRestricoes();
      for(idx=0; idx < qtd; idx++)
      {
-      rest=new Restricao;
+      rest=new Constraint;
       rest_aux=rel->obterRestricao(idx);
       (*rest)=(*rest_aux);
       rest->removerColunas();
       rest->setParentTable(NULL);
 
-      for(x=Restricao::COLUNA_ORIGEM; x <= Restricao::COLUNA_REFER; x++)
+      for(x=Constraint::COLUNA_ORIGEM; x <= Constraint::COLUNA_REFER; x++)
       {
        qtd1=rest_aux->obterNumColunas(x);
        for(idx1=0; idx1 < qtd1; idx1++)
@@ -1243,8 +1243,8 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_CONSTRAINT:
-    Restricao *restricao;
-    restricao=dynamic_cast<Restricao *>(objeto);
+    Constraint *restricao;
+    restricao=dynamic_cast<Constraint *>(objeto);
     restricao_wgt->definirAtributos(modelo, dynamic_cast<Tabela *>(objeto_pai), lista_op, restricao);
     restricao_wgt->show();
 
@@ -1562,8 +1562,8 @@ void ModeloWidget::copiarObjetos(void)
          não pode ser chave primária pois estas são tratadas separadamente nos relacionamentos */
       if(!obj_tab->isAddedByRelationship() &&
          ((tipos[id_tipo]==OBJ_CONSTRAINT &&
-           dynamic_cast<Restricao *>(obj_tab)->obterTipoRestricao()!=TipoRestricao::primary_key &&
-           dynamic_cast<Restricao *>(obj_tab)->referenciaColunaIncRelacao()) ||
+           dynamic_cast<Constraint *>(obj_tab)->obterTipoRestricao()!=TipoRestricao::primary_key &&
+           dynamic_cast<Constraint *>(obj_tab)->referenciaColunaIncRelacao()) ||
           (tipos[id_tipo]==OBJ_TRIGGER && dynamic_cast<Gatilho *>(obj_tab)->isReferRelationshipColumn()) ||
           (tipos[id_tipo]==OBJ_INDEX && dynamic_cast<Index *>(obj_tab)->isReferRelationshipColumn())))
        vet_deps.push_back(obj_tab);
@@ -2133,7 +2133,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
  Tabela *tabela=NULL;
  unsigned qtd, i;
  vector<QMenu *> submenus;
- Restricao *rest=NULL;
+ Constraint *rest=NULL;
  QAction *acao=NULL;
  TableObject *obj_tab=NULL;
  QString str_aux;
@@ -2287,7 +2287,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
    for(i=0; i < qtd; i++)
    {
     rest=tabela->obterRestricao(i);
-    if(rest->colunaExistente(dynamic_cast<Column *>(obj_tab), Restricao::COLUNA_ORIGEM))
+    if(rest->colunaExistente(dynamic_cast<Column *>(obj_tab), Constraint::COLUNA_ORIGEM))
     {
      /* Fazendo uma configuração específica de ícone para restrições.
         Cada tipo de restrição tem seu ícone específico.

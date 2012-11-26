@@ -114,7 +114,7 @@ void RestricaoWidget::adicionarColuna(int idx_lin)
       de origem e a tabela de colunas de origem */
    tab_col_aux=tab_colunas;
    combo=coluna_cmb;
-   tipo_col=Restricao::COLUNA_ORIGEM;
+   tipo_col=Constraint::COLUNA_ORIGEM;
   }
   else
   {
@@ -122,7 +122,7 @@ void RestricaoWidget::adicionarColuna(int idx_lin)
       de referência e a tabela de colunas de referência */
    tab_col_aux=tab_colunas_ref;
    combo=coluna_ref_cmb;
-   tipo_col=Restricao::COLUNA_REFER;
+   tipo_col=Constraint::COLUNA_REFER;
   }
 
   //Obtém a referêni   coluna no item atual do combo box
@@ -146,10 +146,10 @@ void RestricaoWidget::removerColuna(int)
  //Caso o sender seja a tabela de colunas da origem
  if(sender()==tab_colunas)
   //Atualiza o combo de colunas da origem
-  atualizarComboColunas(Restricao::COLUNA_ORIGEM);
+  atualizarComboColunas(Constraint::COLUNA_ORIGEM);
  else
   //Atualiza o combo de colunas de referência
-  atualizarComboColunas(Restricao::COLUNA_REFER);
+  atualizarComboColunas(Constraint::COLUNA_REFER);
 }
 
 void RestricaoWidget::removerColunas(void)
@@ -158,12 +158,12 @@ void RestricaoWidget::removerColunas(void)
  if(sender()==tab_colunas)
  {
   //Atualiza o combo de colunas da origem
-  atualizarComboColunas(Restricao::COLUNA_ORIGEM);
+  atualizarComboColunas(Constraint::COLUNA_ORIGEM);
  }
  else
  {
   //Atualiza o combo de colunas de referência
-  atualizarComboColunas(Restricao::COLUNA_REFER);
+  atualizarComboColunas(Constraint::COLUNA_REFER);
  }
 }
 
@@ -176,7 +176,7 @@ void RestricaoWidget::adicionarColuna(Column *coluna, unsigned tipo_col, int idx
  {
   /* Caso o tipo da coluna for de origem seleciona a tabela de colunas
      da origem caso contrário seleciona a tabela de colunas referenciadas */
-  if(tipo_col==Restricao::COLUNA_ORIGEM)
+  if(tipo_col==Constraint::COLUNA_ORIGEM)
    tabela_wgt=tab_colunas;
   else
    tabela_wgt=tab_colunas_ref;
@@ -215,7 +215,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
  try
  {
   //Caso o tipo de combo seja o de colunas da origem
-  if(tipo_cmb==Restricao::COLUNA_ORIGEM)
+  if(tipo_cmb==Constraint::COLUNA_ORIGEM)
   {
    //Serão considerados no método o combo e a tabela de colunas da origem
    combo=coluna_cmb;
@@ -300,7 +300,7 @@ void RestricaoWidget::selecionarTabelaReferenciada(void)
  {
   //Caso haja uma tabela selecionada, atualiza o combo de colunas de referência
   tab_colunas_ref->setEnabled(true);
-  atualizarComboColunas(Restricao::COLUNA_REFER);
+  atualizarComboColunas(Constraint::COLUNA_REFER);
  }
 }
 
@@ -371,7 +371,7 @@ void RestricaoWidget::selecionarTipoRestricao(void)
   colunas_tbw->addTab(tab, rot_tab);
 }
 
-void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, OperationList *lista_op, Restricao *restricao)
+void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, OperationList *lista_op, Constraint *restricao)
 {
  ObjectType tipo_obj;
  unsigned qtd, i, lin_tab;
@@ -413,16 +413,16 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
 
   /* Caso a restrição naõ seja nova, ou seja, esteja sendo editada e a coluna atual
      está sendo referenciada por ela */
-  if(restricao && restricao->colunaExistente(coluna, Restricao::COLUNA_ORIGEM))
+  if(restricao && restricao->colunaExistente(coluna, Constraint::COLUNA_ORIGEM))
   {
    //Adiciona uma linha na tabela de origem e adiciona a coluna
    tab_colunas->adicionarLinha();
-   adicionarColuna(coluna, Restricao::COLUNA_ORIGEM, lin_tab);
+   adicionarColuna(coluna, Constraint::COLUNA_ORIGEM, lin_tab);
    lin_tab++;
   }
  }
  //Atualiza o combo de colunas de origem com as colunas restantes da tabela
- atualizarComboColunas(Restricao::COLUNA_ORIGEM);
+ atualizarComboColunas(Constraint::COLUNA_ORIGEM);
  tab_colunas->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (coluna_cmb->count()!=0));
  tab_colunas->blockSignals(false);
 
@@ -458,16 +458,16 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
    for(i=0, lin_tab=0; i < qtd; i++)
    {
     coluna=tabela_ref->obterColuna(i);
-    if(restricao->colunaExistente(coluna, Restricao::COLUNA_REFER))
+    if(restricao->colunaExistente(coluna, Constraint::COLUNA_REFER))
     {
      tab_colunas_ref->adicionarLinha();
-     adicionarColuna(coluna, Restricao::COLUNA_REFER, lin_tab);
+     adicionarColuna(coluna, Constraint::COLUNA_REFER, lin_tab);
      lin_tab++;
     }
    }
    /* Atualiza o combo de colunas referenciadas com as demais colunas que
       não são usadas na restrição */
-   atualizarComboColunas(Restricao::COLUNA_REFER);
+   atualizarComboColunas(Constraint::COLUNA_REFER);
    tab_colunas_ref->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (coluna_cmb->count()!=0));
    tab_colunas_ref->blockSignals(false);
   }
@@ -478,15 +478,15 @@ void RestricaoWidget::aplicarConfiguracao(void)
 {
  try
  {
-  Restricao *restricao=NULL;
+  Constraint *restricao=NULL;
   unsigned i, tipo_col, qtd;
   Column *coluna=NULL;
   TabelaObjetosWidget *tab_obj_aux=NULL;
 
-  iniciarConfiguracao<Restricao>();
+  iniciarConfiguracao<Constraint>();
 
   //Obtém a referêni   restrição que está sendo criada/editada
-  restricao=dynamic_cast<Restricao *>(this->objeto);
+  restricao=dynamic_cast<Constraint *>(this->objeto);
 
   //Preenche os atributos básicos da restição com os valores configurados no formulário
   restricao->definirTipo(TipoRestricao(tipo_rest_cmb->currentText()));
@@ -504,10 +504,10 @@ void RestricaoWidget::aplicarConfiguracao(void)
 
   //Remove todas as colunas da restrição para inserir as presentes na tabela
   restricao->removerColunas();
-  for(tipo_col=Restricao::COLUNA_ORIGEM; tipo_col <= Restricao::COLUNA_REFER; tipo_col++)
+  for(tipo_col=Constraint::COLUNA_ORIGEM; tipo_col <= Constraint::COLUNA_REFER; tipo_col++)
   {
    //Seleciona uma tabela por vez
-   tab_obj_aux=(tipo_col==Restricao::COLUNA_ORIGEM ? tab_colunas : tab_colunas_ref);
+   tab_obj_aux=(tipo_col==Constraint::COLUNA_ORIGEM ? tab_colunas : tab_colunas_ref);
 
    /* Varre a tabela selecionada, obtendo o dado de cada linha que nada mais é do que
       uma coluna, inserindo a mesma na restrição */
@@ -526,9 +526,9 @@ void RestricaoWidget::aplicarConfiguracao(void)
      de colunas de origem e/ou de referência (para chaves primárias e estrangeiras) */
   if(((restricao->obterTipoRestricao()==TipoRestricao::foreign_key ||
        restricao->obterTipoRestricao()==TipoRestricao::primary_key) &&
-      restricao->obterNumColunas(Restricao::COLUNA_ORIGEM)==0) ||
+      restricao->obterNumColunas(Constraint::COLUNA_ORIGEM)==0) ||
      (restricao->obterTipoRestricao()==TipoRestricao::foreign_key &&
-      restricao->obterNumColunas(Restricao::COLUNA_REFER)==0))
+      restricao->obterNumColunas(Constraint::COLUNA_REFER)==0))
    throw Exception(ERR_CONSTR_NO_COLUMNS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   finalizarConfiguracao();

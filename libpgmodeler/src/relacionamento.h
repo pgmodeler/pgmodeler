@@ -182,7 +182,7 @@ class Relacionamento: public RelacionamentoBase {
   vector<TableObject *> restricoes_rel;
 
   //Chave estrangeira que representa o relacionamento 1-n
-  Restricao *fk_rel1n,
+  Constraint *fk_rel1n,
             /* Armazena a referência a chave primária
                criada automaticamente quando o relacionamento
                é identificador e a entidade fraca não possui
@@ -390,8 +390,8 @@ class Relacionamento: public RelacionamentoBase {
   Column *obterAtributo(const QString &nome_atrib);
 
   //Obtém uma restrição de um atributo do relacionamento
-  Restricao *obterRestricao(unsigned id_rest);
-  Restricao *obterRestricao(const QString &nome_rest);
+  Constraint *obterRestricao(unsigned id_rest);
+  Constraint *obterRestricao(const QString &nome_rest);
 
   //Retorna a coluna referenciada através de seu nome
   Column *obterColunaReferenciada(const QString &nome_col);

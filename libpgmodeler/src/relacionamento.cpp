@@ -214,7 +214,7 @@ void Relacionamento::criarChavePrimariaEspecial(void)
         forma ela é identificada únicamente nas operações internas do relacionamento
 
      2) O espaço de tabelas usado na restrição é o mesmo da tabela receptora */
-  pk_especial=new Restricao;
+  pk_especial=new Constraint;
   pk_especial->setName(this->getName() + QString("_pk"));
   pk_especial->definirTipo(TipoRestricao::primary_key);
   pk_especial->setAddedByLinking(true);
@@ -226,8 +226,8 @@ void Relacionamento::criarChavePrimariaEspecial(void)
   for(i=0; i < qtd; i++)
   {
    if(id_colunas_pk_rel[i] < colunas_ref.size() &&
-      !pk_especial->colunaExistente(colunas_ref[id_colunas_pk_rel[i]], Restricao::COLUNA_ORIGEM))
-    pk_especial->adicionarColuna(colunas_ref[id_colunas_pk_rel[i]], Restricao::COLUNA_ORIGEM);
+      !pk_especial->colunaExistente(colunas_ref[id_colunas_pk_rel[i]], Constraint::COLUNA_ORIGEM))
+    pk_especial->adicionarColuna(colunas_ref[id_colunas_pk_rel[i]], Constraint::COLUNA_ORIGEM);
   }
 
   try
@@ -386,8 +386,8 @@ void Relacionamento::adicionarObjeto(TableObject *objeto_tab, int idx_obj)
     dynamic_cast<Column *>(objeto_tab)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
    else
    {
-    Restricao *rest=NULL;
-    rest=dynamic_cast<Restricao *>(objeto_tab);
+    Constraint *rest=NULL;
+    rest=dynamic_cast<Constraint *>(objeto_tab);
     rest->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
     /* Caso se tente inserir uma chave estrangeira como restrição do relacionamento
@@ -486,7 +486,7 @@ void Relacionamento::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
  if(tipo_obj==OBJ_COLUMN)
  {
   Column *coluna=NULL;
-  Restricao *rest=NULL;
+  Constraint *rest=NULL;
   vector<TableObject *>::iterator itr, itr_end;
   bool refer=false;
 
@@ -496,10 +496,10 @@ void Relacionamento::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
 
   while(itr!=itr_end && !refer)
   {
-   rest=dynamic_cast<Restricao *>(*itr);
+   rest=dynamic_cast<Constraint *>(*itr);
    //Verifica se a coluna está em uma das listas das restições
-   refer=(rest->obterColuna(coluna->getName(), Restricao::COLUNA_ORIGEM) ||
-          rest->obterColuna(coluna->getName(), Restricao::COLUNA_REFER));
+   refer=(rest->obterColuna(coluna->getName(), Constraint::COLUNA_ORIGEM) ||
+          rest->obterColuna(coluna->getName(), Constraint::COLUNA_REFER));
    itr++;
   }
 
@@ -636,18 +636,18 @@ Column *Relacionamento::obterAtributo(const QString &nome_atrib)
  return(dynamic_cast<Column *>(obterObjeto(nome_atrib,OBJ_COLUMN)));
 }
 
-Restricao *Relacionamento::obterRestricao(unsigned id_rest)
+Constraint *Relacionamento::obterRestricao(unsigned id_rest)
 {
  /* Caso o índice da restrição esteja fora da quantidade da lista de
     restrições dispara uma exceção */
  if(id_rest >= restricoes_rel.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- return(dynamic_cast<Restricao *>(restricoes_rel[id_rest]));
+ return(dynamic_cast<Constraint *>(restricoes_rel[id_rest]));
 }
 
-Restricao *Relacionamento::obterRestricao(const QString &nome_rest)
+Constraint *Relacionamento::obterRestricao(const QString &nome_rest)
 {
- return(dynamic_cast<Restricao *>(obterObjeto(nome_rest,OBJ_CONSTRAINT)));
+ return(dynamic_cast<Constraint *>(obterObjeto(nome_rest,OBJ_CONSTRAINT)));
 }
 
 unsigned Relacionamento::obterNumAtributos(void)
@@ -672,7 +672,7 @@ unsigned Relacionamento::obterNumObjetos(ObjectType tipo_obj)
 
 void Relacionamento::adicionarRestricoes(Tabela *tab_dest)
 {
- Restricao *rest=NULL, *pk=NULL;
+ Constraint *rest=NULL, *pk=NULL;
  //vector<ObjetoTabela *>::iterator itr, itr_end;
  unsigned id_rest, qtd_rest, i, qtd;
  QString nome, nome_orig, aux;
@@ -690,7 +690,7 @@ void Relacionamento::adicionarRestricoes(Tabela *tab_dest)
   {
    //Obtém a restrição
    //rest=dynamic_cast<Restricao *>(*itr);
-   rest=dynamic_cast<Restricao *>(restricoes_rel[id_rest]);
+   rest=dynamic_cast<Constraint *>(restricoes_rel[id_rest]);
 
    /* Interrompe o processamento caso a restrição já
       tenha sido incluída a uma das tabelas */
@@ -729,12 +729,12 @@ void Relacionamento::adicionarRestricoes(Tabela *tab_dest)
     if(pk)
     {
      //Obtém a quantidade de colunas da restrição
-     qtd=rest->obterNumColunas(Restricao::COLUNA_ORIGEM);
+     qtd=rest->obterNumColunas(Constraint::COLUNA_ORIGEM);
 
      for(i=0; i < qtd; i++)
       //Adiciona cada coluna da restrição na chave primária da tabela
-      pk->adicionarColuna(rest->obterColuna(i, Restricao::COLUNA_ORIGEM),
-                          Restricao::COLUNA_ORIGEM);
+      pk->adicionarColuna(rest->obterColuna(i, Constraint::COLUNA_ORIGEM),
+                          Constraint::COLUNA_ORIGEM);
     }
     else
      /* Caso a tabela não possua uma chave primária, a própria restrição do relacionamento
@@ -1076,7 +1076,7 @@ void Relacionamento::conectarRelacionamento(void)
 
 void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
 {
- Restricao *pk=NULL;
+ Constraint *pk=NULL;
  unsigned i, qtd;
  QString nome, aux;
  bool nova_pk=false;
@@ -1098,7 +1098,7 @@ void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
    //Cria e configura a chave primária da entidade fraca
    if(!pk_relident)
    {
-    pk=new Restricao;
+    pk=new Constraint;
     pk->definirTipo(TipoRestricao::primary_key);
     pk->setAddedByLinking(true);
     this->pk_relident=pk;
@@ -1128,7 +1128,7 @@ void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
      primária da entidade fraca */
   qtd=colunas_ref.size();
   for(i=0; i < qtd; i++)
-   pk->adicionarColuna(colunas_ref[i], Restricao::COLUNA_ORIGEM);
+   pk->adicionarColuna(colunas_ref[i], Constraint::COLUNA_ORIGEM);
 
   //Caso a tabela não tenha uma chave primária a mesma será atrua   ela
   if(nova_pk)
@@ -1142,7 +1142,7 @@ void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
 
 void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_receptora)
 {
- Restricao *uq=NULL;
+ Constraint *uq=NULL;
  unsigned i, qtd;
  QString nome, aux;
 
@@ -1151,7 +1151,7 @@ void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_rec
   //Aloca a chave única
   if(!uq_rel11)
   {
-   uq=new Restricao;
+   uq=new Constraint;
    uq->definirTipo(TipoRestricao::unique);
    uq->setAddedByLinking(true);
    uq_rel11=uq;
@@ -1162,7 +1162,7 @@ void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_rec
   i=0;
 
   while(i < qtd)
-   uq->adicionarColuna(colunas_ref[i++], Restricao::COLUNA_ORIGEM);
+   uq->adicionarColuna(colunas_ref[i++], Constraint::COLUNA_ORIGEM);
 
   //Configura o nome da chave estrangeira
   i=1;
@@ -1194,7 +1194,7 @@ void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_rec
 
 void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *tab_receptora, TipoAcao acao_del, TipoAcao acao_upd)
 {
- Restricao *pk=NULL, *pk_aux=NULL, *fk=NULL;
+ Constraint *pk=NULL, *pk_aux=NULL, *fk=NULL;
  unsigned i, i1, qtd;
  Column *coluna=NULL, *coluna_aux=NULL;
  QString nome, aux;
@@ -1206,7 +1206,7 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
      (!fk_rel1n && (tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N)))
      //(!fk_rel1n && (tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N)))
   {
-   fk=new Restricao;
+   fk=new Constraint;
    fk->definirPostergavel(this->postergavel);
    fk->definirTipoPostergacao(this->tipo_postergacao);
    fk->definirTipo(TipoRestricao::foreign_key);
@@ -1262,12 +1262,12 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
    //Caso 1: decrementando a quantidade de colunas a serem varridas
    if((!autoRelacionamento() && tab_referencia==tabela_orig) ||
       (autoRelacionamento() && tabela_relnn->obterNumRestricoes()==0))
-    qtd-=dynamic_cast<Tabela *>(tabela_dest)->obterChavePrimaria()->obterNumColunas(Restricao::COLUNA_ORIGEM);
+    qtd-=dynamic_cast<Tabela *>(tabela_dest)->obterChavePrimaria()->obterNumColunas(Constraint::COLUNA_ORIGEM);
    //Caso 2: deslocando o índice de varredura
    else if(tab_referencia==tabela_dest)
    {
     pk_aux=dynamic_cast<Tabela *>(tabela_orig)->obterChavePrimaria();
-    i=pk_aux->obterNumColunas(Restricao::COLUNA_ORIGEM);
+    i=pk_aux->obterNumColunas(Constraint::COLUNA_ORIGEM);
    }
   }
 
@@ -1276,10 +1276,10 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
    //Obtém um coluna referenciada
    coluna=colunas_ref[i];
    //Obtém uma coluna da chave primária da tabela de origem
-   coluna_aux=pk->obterColuna(i1, Restricao::COLUNA_ORIGEM);
+   coluna_aux=pk->obterColuna(i1, Constraint::COLUNA_ORIGEM);
    //Faz a ligação das colunas na chave estrangeira
-   fk->adicionarColuna(coluna, Restricao::COLUNA_ORIGEM);
-   fk->adicionarColuna(coluna_aux, Restricao::COLUNA_REFER);
+   fk->adicionarColuna(coluna, Constraint::COLUNA_ORIGEM);
+   fk->adicionarColuna(coluna_aux, Constraint::COLUNA_REFER);
    i++; i1++;
   }
 
@@ -1359,7 +1359,7 @@ void Relacionamento::adicionarAtributos(Tabela *tab_receptora)
 
 void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora, bool nao_nulo)
 {
- Restricao *pk_dest=NULL, *pk_orig=NULL, *pk=NULL;
+ Constraint *pk_dest=NULL, *pk_orig=NULL, *pk=NULL;
  unsigned i, qtd, i1;
  Column *coluna=NULL, *coluna_aux=NULL;
  QString nome, sufixo, aux, nome_ant;
@@ -1417,7 +1417,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
 
   /* Obtém a quantidade de colunas referenciadas na chave
      primária selecionada */
-  qtd=pk->obterNumColunas(Restricao::COLUNA_ORIGEM);
+  qtd=pk->obterNumColunas(Constraint::COLUNA_ORIGEM);
 
   /* Varre a chave primária, obtendo as colunas e adicionando na lista
      de colunas selecionada acima. Isso é feito para se saber quais são
@@ -1434,7 +1434,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
 
    /* Copia o conteúdo da coluna da chave primária no indice i para
        a nova coluna criada */
-   coluna_aux=pk->obterColuna(i, Restricao::COLUNA_ORIGEM);
+   coluna_aux=pk->obterColuna(i, Constraint::COLUNA_ORIGEM);
    colunas_pk.push_back(coluna_aux);
 
    (*coluna)=(*coluna_aux);
@@ -1668,7 +1668,7 @@ void Relacionamento::adicionarColunasRel1n(void)
 void Relacionamento::adicionarColunasRelNn(void)
 {
  Tabela *tab=NULL, *tab1=NULL;
- Restricao *pk_tabnn=NULL;
+ Constraint *pk_tabnn=NULL;
  bool nao_nulo_orig=false, nao_nulo_dest=false;
  //TipoAcao acao_orig=TipoAcao::set_null, acao_dest=TipoAcao::set_null;
  TipoAcao acao_del_orig=TipoAcao::restrict, acao_del_dest=TipoAcao::restrict,
@@ -1705,14 +1705,14 @@ void Relacionamento::adicionarColunasRelNn(void)
 
   /* Cria a chave primária padrão da tabela que consiste nas colunas que
      identificam cada chave estrangeira na tabela. */
-  pk_tabnn=new Restricao;
+  pk_tabnn=new Constraint;
   pk_tabnn->setName(tabela_relnn->getName() + "_pk");
   pk_tabnn->definirTipo(TipoRestricao::primary_key);
   pk_tabnn->setAddedByLinking(true);
   qtd=colunas_ref.size();
 
   for(i=0; i < qtd; i++)
-   pk_tabnn->adicionarColuna(colunas_ref[i],Restricao::COLUNA_ORIGEM);
+   pk_tabnn->adicionarColuna(colunas_ref[i],Constraint::COLUNA_ORIGEM);
 
   tabela_relnn->adicionarRestricao(pk_tabnn);
 
@@ -1792,7 +1792,7 @@ void Relacionamento::removerObjetosTabelaRefCols(Tabela *tabela)
 {
  Gatilho *gat=NULL;
  Index *ind=NULL;
- Restricao *rest=NULL;
+ Constraint *rest=NULL;
  int i, qtd;
 
  //Remove os gatilhos que referenciam alguma coluna inc. por relação
@@ -1844,7 +1844,7 @@ void Relacionamento::removerColsChavePrimariaTabela(Tabela *tabela)
 {
  if(tabela)
  {
-  Restricao *pk=NULL;
+  Constraint *pk=NULL;
   Column *coluna=NULL;
   unsigned i, qtd;
 
@@ -1862,12 +1862,12 @@ void Relacionamento::removerColsChavePrimariaTabela(Tabela *tabela)
      a chave primária da tabela existe para não provocar segmentations fault */
   if(pk)
   {
-   qtd=pk->obterNumColunas(Restricao::COLUNA_ORIGEM);
+   qtd=pk->obterNumColunas(Constraint::COLUNA_ORIGEM);
 
    for(i=0; i < qtd; i++)
    {
     //Obtém uma coluna da chave primária
-    coluna=pk->obterColuna(i, Restricao::COLUNA_ORIGEM);
+    coluna=pk->obterColuna(i, Constraint::COLUNA_ORIGEM);
 
     /* Caso a coluna foi incluída por relacionamento e a mesma pertence
        ao próprio relacionamento */
@@ -1875,7 +1875,7 @@ void Relacionamento::removerColsChavePrimariaTabela(Tabela *tabela)
       (colunaExistente(coluna) || obterIndiceObjeto(coluna) >= 0))
     {
      //Remove a coluna da chave primária
-     pk->removerColuna(coluna->getName(), Restricao::COLUNA_ORIGEM);
+     pk->removerColuna(coluna->getName(), Constraint::COLUNA_ORIGEM);
      i--; qtd--;
     }
    }
@@ -1916,7 +1916,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
    }
    else
    {
-    Restricao *pk=NULL, *rest=NULL;
+    Constraint *pk=NULL, *rest=NULL;
     unsigned i, qtd;
 
     /* No caso de relacionamento 1-1 e 1-n é necessário
@@ -2091,7 +2091,7 @@ bool Relacionamento::relacionamentoIdentificador(void)
 bool Relacionamento::possuiAtributoIdentificador(void)
 {
  vector<TableObject *>::iterator itr, itr_end;
- Restricao *rest=NULL;
+ Constraint *rest=NULL;
  bool enc=false;
 
  itr=restricoes_rel.begin();
@@ -2101,7 +2101,7 @@ bool Relacionamento::possuiAtributoIdentificador(void)
  while(itr!=itr_end && !enc)
  {
   //Obtém uma restrição da lista
-  rest=dynamic_cast<Restricao *>(*itr);
+  rest=dynamic_cast<Constraint *>(*itr);
   /* Um relacionamento será considerado possuir um
      atributo identificandor quando for encontrada
      uma chave primária em sua lista de restrições */
@@ -2116,7 +2116,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
 {
  unsigned qtd_cols_rel, qtd_cols_tab, i, i1, qtd;
  Tabela *tabela=NULL, *tabela1=NULL;
- Restricao *fk=NULL, *fk1=NULL, *rest=NULL, *pk=NULL;
+ Constraint *fk=NULL, *fk1=NULL, *rest=NULL, *pk=NULL;
  bool valido=false;
  Column *col1=NULL, *col2=NULL, *col3=NULL;
  QString nome_col;
@@ -2161,7 +2161,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
    tabela=obterTabelaReferencia();
 
    //Obtém a quantidade de colunas da chave estrangeira que representa a relação
-   qtd_cols_rel=fk_rel1n->obterNumColunas(Restricao::COLUNA_ORIGEM);
+   qtd_cols_rel=fk_rel1n->obterNumColunas(Constraint::COLUNA_ORIGEM);
 
    //O relacionamento estára invalidado caso a tabela referência não possua uma chave primária
    pk=tabela->obterChavePrimaria();
@@ -2169,7 +2169,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
    if(pk)
    {
     //Obtém a quantidade de colunas da chave primária da tabela
-    qtd_cols_tab=pk->obterNumColunas(Restricao::COLUNA_ORIGEM);
+    qtd_cols_tab=pk->obterNumColunas(Constraint::COLUNA_ORIGEM);
 
     //Obtém a tabela de referencia do relacionamento
     tabela1=obterTabelaReceptora();
@@ -2188,7 +2188,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
 
      /* Obtém a coluna da pk em si. Com esta referência será verificado se os endereços são iguais
         caso não sejam invalida o relacionamento */
-     col3=pk->obterColuna(i, Restricao::COLUNA_ORIGEM);
+     col3=pk->obterColuna(i, Constraint::COLUNA_ORIGEM);
 
      /* Para se validar as colunas entre si as seguintes regras são seguidas:
 
@@ -2290,19 +2290,19 @@ bool Relacionamento::relacionamentoInvalidado(void)
 
     /* A quantidade de colunas do relacionamento é calculada pela soma
        das quantidades de colunas das chaves estrangeiras obtidas */
-    qtd_cols_rel=fk->obterNumColunas(Restricao::COLUNA_REFER) + fk1->obterNumColunas(Restricao::COLUNA_REFER);
+    qtd_cols_rel=fk->obterNumColunas(Constraint::COLUNA_REFER) + fk1->obterNumColunas(Constraint::COLUNA_REFER);
     /* A quantidade de colunas da tabela é obtida pela soma da quantidade
        de colunas das chaves primárias envolvidas no relacionamentos */
-    qtd_cols_tab=tabela->obterChavePrimaria()->obterNumColunas(Restricao::COLUNA_ORIGEM) +
-                 tabela1->obterChavePrimaria()->obterNumColunas(Restricao::COLUNA_ORIGEM);
+    qtd_cols_tab=tabela->obterChavePrimaria()->obterNumColunas(Constraint::COLUNA_ORIGEM) +
+                 tabela1->obterChavePrimaria()->obterNumColunas(Constraint::COLUNA_ORIGEM);
     valido=(qtd_cols_rel == qtd_cols_tab);
 
     /* Checando se as colunas criadas com a ligação ainda existem
       na tabela de referência */
-    qtd=fk->obterNumColunas(Restricao::COLUNA_ORIGEM);
+    qtd=fk->obterNumColunas(Constraint::COLUNA_ORIGEM);
     for(i=0; i < qtd && valido; i++)
     {
-     nome_col=fk->obterColuna(i, Restricao::COLUNA_ORIGEM)->getName();
+     nome_col=fk->obterColuna(i, Constraint::COLUNA_ORIGEM)->getName();
 
      /* Caso o sufixo da origem esteja especificado remove o mesmo do nome
         da coluna para que a mesma seja localizada na tabela de origem */
@@ -2312,16 +2312,16 @@ bool Relacionamento::relacionamentoInvalidado(void)
      //Verifica a existencia da coluna na tabela
      col1=tabela->obterColuna(nome_col);
      valido=col1 &&
-            tabela->obterChavePrimaria()->colunaExistente(col1, Restricao::COLUNA_ORIGEM);
+            tabela->obterChavePrimaria()->colunaExistente(col1, Constraint::COLUNA_ORIGEM);
     }
 
    /* Checando se as colunas criadas com a ligação ainda existem
       na tabela de receptora */
     i1=qtd;
-    qtd+=fk1->obterNumColunas(Restricao::COLUNA_ORIGEM);
+    qtd+=fk1->obterNumColunas(Constraint::COLUNA_ORIGEM);
     for(i=0; i1 < qtd && valido; i1++)
     {
-     nome_col=fk1->obterColuna(i++, Restricao::COLUNA_ORIGEM)->getName();
+     nome_col=fk1->obterColuna(i++, Constraint::COLUNA_ORIGEM)->getName();
 
      /* Caso o sufixo do destino esteja especificado remove o mesmo do nome
         da coluna para que a mesma seja localizada na tabela de destino */
@@ -2331,7 +2331,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
      //Verifica a existencia da coluna na tabela
      col1=tabela1->obterColuna(nome_col);
      valido=col1 &&
-            tabela1->obterChavePrimaria()->colunaExistente(col1, Restricao::COLUNA_ORIGEM);
+            tabela1->obterChavePrimaria()->colunaExistente(col1, Constraint::COLUNA_ORIGEM);
     }
    }
   }
@@ -2358,8 +2358,8 @@ QString Relacionamento::getCodeDefinition(unsigned tipo_def)
    qtd=restricoes_rel.size();
    for(i=0; i < qtd; i++)
    {
-    if(dynamic_cast<Restricao *>(restricoes_rel[i])->obterTipoRestricao()!=TipoRestricao::primary_key)
-     attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
+    if(dynamic_cast<Constraint *>(restricoes_rel[i])->obterTipoRestricao()!=TipoRestricao::primary_key)
+     attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(restricoes_rel[i])->
                                               getCodeDefinition(tipo_def, false);
 
    }
@@ -2417,7 +2417,7 @@ QString Relacionamento::getCodeDefinition(unsigned tipo_def)
   for(i=0; i < qtd; i++)
   {
    if(!restricoes_rel[i]->isProtected())
-    attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Restricao *>(restricoes_rel[i])->
+    attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(restricoes_rel[i])->
                        getCodeDefinition(SchemaParser::XML_DEFINITION, true);
   }
 

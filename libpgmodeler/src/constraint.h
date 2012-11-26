@@ -1,9 +1,9 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Restricao que é usado para
-#             configurar e gerar os códigos SQL referentes a chaves primárias
-#             e estrangeiras, de checagem, únicas.
+# Class: Constraint
+# Description: Implements the operations to manipulate table constraints
+#              (primary keys, foreign key, unique and check).
 # Creation date: 17/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -20,14 +20,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef RESTRICAO_H
-#define RESTRICAO_H
+#ifndef CONSTRAINT_H
+#define CONSTRAINT_H
 
 #include "tableobject.h"
 #include "tablespace.h"
 #include "column.h"
 
-class Restricao: public TableObject{
+class Constraint: public TableObject{
  private:
   //Tipo da constraint
   TipoRestricao tipo;
@@ -78,8 +78,8 @@ class Restricao: public TableObject{
   static const unsigned COLUNA_ORIGEM=0,
                         COLUNA_REFER=1;
 
-  Restricao(void);
-  ~Restricao(void);
+  Constraint(void);
+  ~Constraint(void);
 
   /* Adiciona uma coluna a uma das listas de colunas da constraint
      Caso o parâmetro col_dest estiver como true a lista 'colunas_dest'

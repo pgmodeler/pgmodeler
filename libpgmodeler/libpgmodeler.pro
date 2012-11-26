@@ -19,7 +19,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/aggregate.h \
            $$PWD/src/modelobd.h \
            $$PWD/src/role.h \
-           $$PWD/src/restricao.h \
+           $$PWD/src/constraint.h \
            $$PWD/src/tipo.h \
            $$PWD/src/tablespace.h \
            $$PWD/src/trigger.h \
@@ -55,7 +55,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/indexelement.cpp \
             $$PWD/src/index.cpp \
             $$PWD/src/operator.cpp \
-            $$PWD/src/restricao.cpp \
+            $$PWD/src/constraint.cpp \
             $$PWD/src/tipospgsql.cpp \
             $$PWD/src/schema.cpp \
             $$PWD/src/language.cpp \

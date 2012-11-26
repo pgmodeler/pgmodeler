@@ -1,6 +1,6 @@
-#include "restricao.h"
+#include "constraint.h"
 
-Restricao::Restricao(void)
+Constraint::Constraint(void)
 {
  tabela_ref=NULL;
  obj_type=OBJ_CONSTRAINT;
@@ -26,17 +26,17 @@ Restricao::Restricao(void)
  attributes[ParsersAttributes::FACTOR]="";
 }
 
-Restricao::~Restricao(void)
+Constraint::~Constraint(void)
 {
  removerColunas();
 }
 
-void Restricao::definirTipo(TipoRestricao tipo)
+void Constraint::definirTipo(TipoRestricao tipo)
 {
  this->tipo=tipo;
 }
 
-void Restricao::definirTipoAcao(TipoAcao tipo, bool upd)
+void Constraint::definirTipoAcao(TipoAcao tipo, bool upd)
 {
  //Se upd==true o tipo de ação no update é que será definido
  if(upd)
@@ -45,12 +45,12 @@ void Restricao::definirTipoAcao(TipoAcao tipo, bool upd)
   this->acao_del=tipo;
 }
 
-void Restricao::definirExpChecagem(const QString &exp)
+void Constraint::definirExpChecagem(const QString &exp)
 {
  exp_checagem=exp;
 }
 
-bool Restricao::colunaExistente(Column *coluna, unsigned tipo_coluna)
+bool Constraint::colunaExistente(Column *coluna, unsigned tipo_coluna)
 {
  vector<Column *>::iterator itr, itr_end;
  Column *col_aux=NULL;
@@ -84,7 +84,7 @@ bool Restricao::colunaExistente(Column *coluna, unsigned tipo_coluna)
  return(enc);
 }
 
-void Restricao::adicionarColuna(Column *coluna, unsigned tipo_coluna)
+void Constraint::adicionarColuna(Column *coluna, unsigned tipo_coluna)
 {
  //Caso a coluna não esteja aloca, dispara exceção.
  if(!coluna)
@@ -107,7 +107,7 @@ void Restricao::adicionarColuna(Column *coluna, unsigned tipo_coluna)
  }
 }
 
-void Restricao::setTablespace(Tablespace *espacotabela)
+void Constraint::setTablespace(Tablespace *espacotabela)
 {
  try
  {
@@ -124,7 +124,7 @@ void Restricao::setTablespace(Tablespace *espacotabela)
  }
 }
 
-void Restricao::definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, bool inc_insporrelacao)
+void Constraint::definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, bool inc_insporrelacao)
 {
  vector<Column *> *vet_col=NULL;
  Column *col;
@@ -173,43 +173,43 @@ void Restricao::definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, 
  attributes[atrib]=str_cols;
 }
 
-void Restricao::definirTabReferenciada(BaseObject *tab_ref)
+void Constraint::definirTabReferenciada(BaseObject *tab_ref)
 {
  this->tabela_ref=tab_ref;
 }
 
-void Restricao::definirTipoPostergacao(TipoPostergacao tipo)
+void Constraint::definirTipoPostergacao(TipoPostergacao tipo)
 {
  tipo_postergacao=tipo;
 }
 
-void Restricao::definirPostergavel(bool valor)
+void Constraint::definirPostergavel(bool valor)
 {
  postergavel=valor;
 }
 
-void Restricao::definirTipoComparacao(TipoComparacao tipo)
+void Constraint::definirTipoComparacao(TipoComparacao tipo)
 {
  tipo_comp=tipo;
 }
 
-void Restricao::definirFatorPreenchimento(unsigned fator)
+void Constraint::definirFatorPreenchimento(unsigned fator)
 {
  if(fator < 10) fator=10;
  fator_preenc=fator;
 }
 
-unsigned Restricao::obterFatorPreenchimento(void)
+unsigned Constraint::obterFatorPreenchimento(void)
 {
  return(fator_preenc);
 }
 
-TipoRestricao Restricao::obterTipoRestricao(void)
+TipoRestricao Constraint::obterTipoRestricao(void)
 {
  return(tipo);
 }
 
-TipoAcao Restricao::obterTipoAcao(bool upd)
+TipoAcao Constraint::obterTipoAcao(bool upd)
 {
  //Se upd==true o tipo de ação no update é que será retornado
  if(upd)
@@ -218,12 +218,12 @@ TipoAcao Restricao::obterTipoAcao(bool upd)
   return(acao_del);
 }
 
-QString Restricao::obterExpChecagem(void)
+QString Constraint::obterExpChecagem(void)
 {
  return(exp_checagem);
 }
 
-Column *Restricao::obterColuna(unsigned idx_col, unsigned tipo_coluna)
+Column *Constraint::obterColuna(unsigned idx_col, unsigned tipo_coluna)
 {
  vector<Column *> *lista_col=NULL;
 
@@ -239,7 +239,7 @@ Column *Restricao::obterColuna(unsigned idx_col, unsigned tipo_coluna)
   return(lista_col->at(idx_col));
 }
 
-Column *Restricao::obterColuna(const QString &nome, unsigned tipo_coluna)
+Column *Constraint::obterColuna(const QString &nome, unsigned tipo_coluna)
 {
  bool enc=false;
  vector<Column *> *lista_col=NULL;
@@ -266,12 +266,12 @@ Column *Restricao::obterColuna(const QString &nome, unsigned tipo_coluna)
  else return(NULL);
 }
 
-BaseObject *Restricao::obterTabReferenciada(void)
+BaseObject *Constraint::obterTabReferenciada(void)
 {
  return(tabela_ref);
 }
 
-unsigned Restricao::obterNumColunas(unsigned tipo_coluna)
+unsigned Constraint::obterNumColunas(unsigned tipo_coluna)
 {
  if(tipo_coluna==COLUNA_REFER)
   return(colunas_ref.size());
@@ -279,13 +279,13 @@ unsigned Restricao::obterNumColunas(unsigned tipo_coluna)
   return(colunas.size());
 }
 
-void Restricao::removerColunas(void)
+void Constraint::removerColunas(void)
 {
  colunas.clear();
  colunas_ref.clear();
 }
 
-void Restricao::removerColuna(const QString &nome, unsigned tipo_coluna)
+void Constraint::removerColuna(const QString &nome, unsigned tipo_coluna)
 {
  vector<Column *>::iterator itr, itr_end;
  vector<Column *> *cols=NULL;
@@ -320,17 +320,17 @@ void Restricao::removerColuna(const QString &nome, unsigned tipo_coluna)
  }
 }
 
-TipoPostergacao Restricao::obterTipoPostergacao(void)
+TipoPostergacao Constraint::obterTipoPostergacao(void)
 {
  return(tipo_postergacao);
 }
 
-bool Restricao::restricaoPostergavel(void)
+bool Constraint::restricaoPostergavel(void)
 {
  return(postergavel);
 }
 
-bool Restricao::referenciaColunaIncRelacao(void)
+bool Constraint::referenciaColunaIncRelacao(void)
 {
  vector<Column *>::iterator itr, itr_end;
  Column *col=NULL;
@@ -371,17 +371,17 @@ bool Restricao::referenciaColunaIncRelacao(void)
  return(enc);
 }
 
-TipoComparacao Restricao::obterTipoComparacao(void)
+TipoComparacao Constraint::obterTipoComparacao(void)
 {
  return(tipo_comp);
 }
 
-QString Restricao::getCodeDefinition(unsigned tipo_def)
+QString Constraint::getCodeDefinition(unsigned tipo_def)
 {
  return(getCodeDefinition(tipo_def, false));
 }
 
-QString Restricao::getCodeDefinition(unsigned tipo_def, bool inc_insporrelacao)
+QString Constraint::getCodeDefinition(unsigned tipo_def, bool inc_insporrelacao)
 {
  QString atrib;
 

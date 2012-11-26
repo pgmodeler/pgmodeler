@@ -479,7 +479,7 @@ void RelacionamentoWidget::editarObjeto(int idx_lin)
   {
    //Edita uma restrição caso a tabela de restrições for a acionadora do método
    restricao_wgt->definirAtributos(this->modelo, this->objeto, this->lista_op,
-                                   reinterpret_cast<Restricao *>(tab_restricoes->obterDadoLinha(idx_lin).value<void *>()));
+                                   reinterpret_cast<Constraint *>(tab_restricoes->obterDadoLinha(idx_lin).value<void *>()));
    restricao_wgt->show();
   }
 
@@ -508,7 +508,7 @@ void RelacionamentoWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  {
   //Exibe o nome do tipo da restrição na tabela de restrições
   tab=tab_restricoes;
-  tab_restricoes->definirTextoCelula(QString::fromUtf8(~dynamic_cast<Restricao *>(objeto)->obterTipoRestricao()),idx_lin,1);
+  tab_restricoes->definirTextoCelula(QString::fromUtf8(~dynamic_cast<Constraint *>(objeto)->obterTipoRestricao()),idx_lin,1);
  }
 
  tab->definirTextoCelula(QString::fromUtf8(objeto->getName()),idx_lin,0);

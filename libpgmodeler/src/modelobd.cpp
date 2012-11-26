@@ -1313,7 +1313,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
  Sequencia *sequencia=NULL;
  Tabela *tabela=NULL;
  TableObject *obj_tab=NULL;
- Restricao *restricao=NULL;
+ Constraint *restricao=NULL;
  Index *indice=NULL;
  Gatilho *gatilho=NULL;
  Visao *visao=NULL;
@@ -1352,7 +1352,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
      if(tipo_obj_tab[id_tipo]==OBJ_CONSTRAINT)
      {
       //Converte o objeto genérico (ObjetoTabela) para restrição
-      restricao=dynamic_cast<Restricao *>(obj_tab);
+      restricao=dynamic_cast<Constraint *>(obj_tab);
 
       /* Uma restrição só será considerada como caso especial quando a mesma não foi
          incluída por relacionamento, ou seja, tal restrição a qual referencia colunas
@@ -4582,10 +4582,10 @@ Column *ModeloBD::criarColuna(void)
  return(coluna);
 }
 
-Restricao *ModeloBD::criarRestricao(BaseObject *objeto)
+Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
 {
  map<QString, QString> atributos;
- Restricao *restricao=NULL;
+ Constraint *restricao=NULL;
  BaseObject *tabela_ref=NULL;
  Tabela *tabela=NULL,*tabela_aux=NULL;
  Column *coluna=NULL;
@@ -4637,7 +4637,7 @@ Restricao *ModeloBD::criarRestricao(BaseObject *objeto)
    }
   }
 
-  restricao=new Restricao;
+  restricao=new Constraint;
   restricao->setParentTable(tabela);
 
   //Configurando o tipo da restrição
@@ -4778,14 +4778,14 @@ Restricao *ModeloBD::criarRestricao(BaseObject *objeto)
       /* Obtém o tipo de referência das colunas de acordo com o atributo
          tipo de referência vindo do XML */
       if(atributos[ParsersAttributes::REF_TYPE]==ParsersAttributes::SRC_COLUMNS)
-       tipo_coluna=Restricao::COLUNA_ORIGEM;
+       tipo_coluna=Constraint::COLUNA_ORIGEM;
       else
-       tipo_coluna=Restricao::COLUNA_REFER;
+       tipo_coluna=Constraint::COLUNA_REFER;
 
       //Varre a lista de nomes de colunas e as obtém da tabela a qual possuirá a restrição
       for(i=0; i < qtd; i++)
       {
-       if(tipo_coluna==Restricao::COLUNA_ORIGEM)
+       if(tipo_coluna==Constraint::COLUNA_ORIGEM)
        {
         if(tipo_objeto==OBJ_TABLE)
         {
@@ -5960,7 +5960,7 @@ void ModeloBD::validarRelacObjetoTabela(TableObject *objeto, Tabela *tabela_pai)
     revalidar_rels=((tipo==OBJ_COLUMN &&
                      tabela_pai->restricaoReferenciaColuna(dynamic_cast<Column *>(objeto), TipoRestricao::primary_key)) ||
                     (tipo==OBJ_CONSTRAINT &&
-                     dynamic_cast<Restricao *>(objeto)->obterTipoRestricao()==TipoRestricao::primary_key));
+                     dynamic_cast<Constraint *>(objeto)->obterTipoRestricao()==TipoRestricao::primary_key));
 
    /* Caso seja uma coluna, verfica se a tabela pai participa de um relacionamento
      de generalização como tabela de destino (aquela que tem suas colunas copiadas
@@ -6043,7 +6043,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
  Tabela *tabela=NULL;
  Index *indice=NULL;
  Gatilho *gatilho=NULL;
- Restricao *restricao=NULL;
+ Constraint *restricao=NULL;
  Relacionamento *relacao=NULL;
  ObjectType tipo_obj,
                 tipos_obj_aux[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA },
@@ -6344,7 +6344,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
    }
    else if(tipo_obj==OBJ_CONSTRAINT)
    {
-    atribs_aux[atrib]+=dynamic_cast<Restricao *>(objeto)->getCodeDefinition(tipo_def, true);
+    atribs_aux[atrib]+=dynamic_cast<Constraint *>(objeto)->getCodeDefinition(tipo_def, true);
    }
    else
    {
@@ -6685,7 +6685,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   {
    Relacionamento *rel=dynamic_cast<Relacionamento *>(objeto);
    BaseObject *tipo_usr=NULL;
-   Restricao *rest=NULL;
+   Constraint *rest=NULL;
    unsigned i, qtd;
 
    //Obtém as dependências das tabelas referenciadas pelo relacionamento
@@ -6707,7 +6707,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    qtd=rel->obterNumRestricoes();
    for(i=0; i < qtd; i++)
    {
-    rest=dynamic_cast<Restricao *>(rel->obterRestricao(i));
+    rest=dynamic_cast<Constraint *>(rel->obterRestricao(i));
     if(rest->obterTipoRestricao()==TipoRestricao::foreign_key)
      obterDependenciasObjeto(rest->obterTabReferenciada(), vet_deps, inc_dep_indiretas);
 
@@ -6727,7 +6727,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   {
    Tabela *tab=dynamic_cast<Tabela *>(objeto);
    BaseObject *tipo_usr=NULL;
-   Restricao *rest=NULL;
+   Constraint *rest=NULL;
    Gatilho *gat=NULL;
    Index *ind=NULL;
    Column *col=NULL;
@@ -6749,7 +6749,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    qtd=tab->obterNumRestricoes();
    for(i=0; i < qtd; i++)
    {
-    rest=dynamic_cast<Restricao *>(tab->obterRestricao(i));
+    rest=dynamic_cast<Constraint *>(tab->obterRestricao(i));
     if(!rest->isAddedByLinking() &&
         rest->obterTipoRestricao()==TipoRestricao::foreign_key)
      obterDependenciasObjeto(rest->obterTabReferenciada(), vet_deps, inc_dep_indiretas);
@@ -6862,7 +6862,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
   {
    Tabela *tabela=dynamic_cast<Tabela *>(objeto);
    Sequencia *seq=NULL;
-   Restricao *rest=NULL;
+   Constraint *rest=NULL;
    Tabela *tab=NULL;
    Gatilho *gat=NULL;
    RelacionamentoBase *rel_base=NULL;
@@ -7436,7 +7436,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    unsigned i, qtd;
    Tabela *tab=NULL;
    Index *ind=NULL;
-   Restricao *rest=NULL;
+   Constraint *rest=NULL;
 
    /* Varre a lista de tabelas e verifica se estas e seus índices
       não estão referenciando o espaço de tabelas a ser removido */
@@ -7653,8 +7653,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       qtd_rest=tab->obterNumRestricoes();
       for(idx=0; idx < qtd_rest && (!modo_exclusao || (modo_exclusao && !refer)); idx++)
       {
-       if(tab->obterRestricao(idx)->colunaExistente(coluna, Restricao::COLUNA_ORIGEM) ||
-          tab->obterRestricao(idx)->colunaExistente(coluna, Restricao::COLUNA_REFER))
+       if(tab->obterRestricao(idx)->colunaExistente(coluna, Constraint::COLUNA_ORIGEM) ||
+          tab->obterRestricao(idx)->colunaExistente(coluna, Constraint::COLUNA_REFER))
        {
         refer=true;
         vet_refs.push_back(tab->obterRestricao(idx));
@@ -7685,8 +7685,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       qtd_rest=rel->obterNumRestricoes();
       for(idx=0; idx < qtd_rest && (!modo_exclusao || (modo_exclusao && !refer)); idx++)
       {
-       if(rel->obterRestricao(idx)->colunaExistente(coluna, Restricao::COLUNA_ORIGEM) ||
-          rel->obterRestricao(idx)->colunaExistente(coluna, Restricao::COLUNA_REFER))
+       if(rel->obterRestricao(idx)->colunaExistente(coluna, Constraint::COLUNA_ORIGEM) ||
+          rel->obterRestricao(idx)->colunaExistente(coluna, Constraint::COLUNA_REFER))
        {
         refer=true;
         vet_refs.push_back(rel);

@@ -892,7 +892,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
             Cada tipo de restrição tem seu ícone específico.
             O sufixos sufixo _pk, _fk, _ck, e _uq, são concatenados
             ao nome do tipo (constraint) para identificar o ícone */
-         tipo_rest=dynamic_cast<Restricao *>(objeto)->obterTipoRestricao();
+         tipo_rest=dynamic_cast<Constraint *>(objeto)->obterTipoRestricao();
          if(tipo_rest==TipoRestricao::primary_key)
           str_aux="_pk";
          else if(tipo_rest==TipoRestricao::foreign_key)
