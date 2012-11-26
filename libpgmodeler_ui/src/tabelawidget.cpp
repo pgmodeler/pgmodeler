@@ -161,7 +161,7 @@ void TabelaWidget::exibirFormObjetoTabela(ObjectType tipo_obj)
 
   default:
   case OBJ_RULE:
-   regra_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Regra *>(objeto));
+   regra_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Rule *>(objeto));
    regra_wgt->show();
   break;
  }
@@ -339,7 +339,7 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  Column *coluna=NULL;
  Restricao *restricao=NULL;
  Gatilho *gatilho=NULL;
- Regra *regra=NULL;
+ Rule *regra=NULL;
  Index *indice=NULL;
  ObjectType tipo_obj;
  QString str_aux, str_aux1,
@@ -422,7 +422,7 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  }
  else if(tipo_obj==OBJ_RULE)
  {
-  regra=dynamic_cast<Regra *>(objeto);
+  regra=dynamic_cast<Rule *>(objeto);
   //Coluna 1: Tipo de execução da regra
   tab->definirTextoCelula(~regra->obterTipoExecucao(),idx_lin,1);
   //Coluna 2: Tipo de evento que dispara a regra

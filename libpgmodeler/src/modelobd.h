@@ -413,7 +413,7 @@ class ModeloBD:  public QObject, public BaseObject {
   Aggregate *criarFuncaoAgregacao(void);
   Tabela *criarTabela(void);
   Column *criarColuna(void);
-  Regra *criarRegra(void);
+  Rule *criarRegra(void);
 
   /* O parâmetro 'ignorar_possuidora' quando 'true' indica que o método deve
      criar a sequência mesmo se a coluna possuidora referenciada não

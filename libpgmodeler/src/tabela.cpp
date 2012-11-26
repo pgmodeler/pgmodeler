@@ -367,8 +367,8 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
       }
       else if(tipo_obj==OBJ_RULE)
       {
-       Regra *reg;
-       reg=dynamic_cast<Regra *>(obj_tab);
+       Rule *reg;
+       reg=dynamic_cast<Rule *>(obj_tab);
        reg->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       }
       else if(tipo_obj==OBJ_TRIGGER)
@@ -457,7 +457,7 @@ void Tabela::adicionarIndice(Index *ind, int idx_ind)
  adicionarObjeto(ind, idx_ind);
 }
 
-void Tabela::adicionarRegra(Regra *reg, int idx_reg)
+void Tabela::adicionarRegra(Rule *reg, int idx_reg)
 {
  adicionarObjeto(reg, idx_reg);
 }
@@ -874,15 +874,15 @@ Index *Tabela::obterIndice(unsigned idx_ind)
  return(dynamic_cast<Index *>(obterObjeto(idx_ind,OBJ_INDEX)));
 }
 
-Regra *Tabela::obterRegra(const QString &nome)
+Rule *Tabela::obterRegra(const QString &nome)
 {
  int idx;
- return(dynamic_cast<Regra *>(obterObjeto(nome,OBJ_RULE,idx)));
+ return(dynamic_cast<Rule *>(obterObjeto(nome,OBJ_RULE,idx)));
 }
 
-Regra *Tabela::obterRegra(unsigned idx_reg)
+Rule *Tabela::obterRegra(unsigned idx_reg)
 {
- return(dynamic_cast<Regra *>(obterObjeto(idx_reg,OBJ_RULE)));
+ return(dynamic_cast<Rule *>(obterObjeto(idx_reg,OBJ_RULE)));
 }
 
 Tabela *Tabela::obterTabelaCopia(const QString &nome)

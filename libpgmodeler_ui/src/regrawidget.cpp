@@ -87,7 +87,7 @@ void RegraWidget::manipularComando(int idx_lin)
   tab_comandos->removerLinha(idx_lin);
 }
 
-void RegraWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, OperationList *lista_op, Regra *regra)
+void RegraWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, OperationList *lista_op, Rule *regra)
 {
  unsigned qtd, i;
 
@@ -120,13 +120,13 @@ void RegraWidget::aplicarConfiguracao(void)
 {
  try
  {
-  Regra *regra=NULL;
+  Rule *regra=NULL;
   unsigned qtd, i;
 
-  iniciarConfiguracao<Regra>();
+  iniciarConfiguracao<Rule>();
 
   //Obtém a referêni   regra que está sendo criada/editada
-  regra=dynamic_cast<Regra *>(this->objeto);
+  regra=dynamic_cast<Rule *>(this->objeto);
 
   //Configura a regra com base nos atributos preenchidos no formulário
   regra->definirTipoEvento(TipoEvento(tipo_evento_cmb->currentText()));

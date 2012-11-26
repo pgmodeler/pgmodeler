@@ -172,23 +172,23 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 
 QString Reference::getXMLDefinition(void)
 {
- map<QString, QString> atributos;
+ map<QString, QString> attribs;
 
- atributos[ParsersAttributes::TABLE]="";
- atributos[ParsersAttributes::COLUMN]="";
+ attribs[ParsersAttributes::TABLE]="";
+ attribs[ParsersAttributes::COLUMN]="";
 
  if(table)
-  atributos[ParsersAttributes::TABLE]=table->getName(true);
+  attribs[ParsersAttributes::TABLE]=table->getName(true);
 
  if(column)
-  atributos[ParsersAttributes::COLUMN]=column->getName();
+  attribs[ParsersAttributes::COLUMN]=column->getName();
 
- atributos[ParsersAttributes::EXPRESSION]=expression;
- atributos[ParsersAttributes::ALIAS]=alias;
- atributos[ParsersAttributes::COLUMN_ALIAS]=column_alias;
+ attribs[ParsersAttributes::EXPRESSION]=expression;
+ attribs[ParsersAttributes::ALIAS]=alias;
+ attribs[ParsersAttributes::COLUMN_ALIAS]=column_alias;
 
  return(SchemaParser::getObjectDefinition(ParsersAttributes::REFERENCE,
-                                            atributos, SchemaParser::XML_DEFINITION));
+                                            attribs, SchemaParser::XML_DEFINITION));
 }
 
 bool Reference::operator == (Reference &refer)

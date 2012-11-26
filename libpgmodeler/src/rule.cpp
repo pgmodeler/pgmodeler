@@ -1,6 +1,6 @@
-#include "regra.h"
+#include "rule.h"
 
-Regra::Regra(void)
+Rule::Rule(void)
 {
  tipo_exec=TipoBase::nulo;
  obj_type=OBJ_RULE;
@@ -11,7 +11,7 @@ Regra::Regra(void)
  attributes[ParsersAttributes::COMMANDS]="";
 }
 
-void Regra::definirAtributoComandos(void)
+void Rule::definirAtributoComandos(void)
 {
  QString str_cmds;
  unsigned i, qtd;
@@ -27,22 +27,22 @@ void Regra::definirAtributoComandos(void)
  attributes[ParsersAttributes::COMMANDS]=str_cmds;
 }
 
-void Regra::definirTipoEvento(TipoEvento tipo)
+void Rule::definirTipoEvento(TipoEvento tipo)
 {
  tipo_evento=tipo;
 }
 
-void Regra::definirTipoExecucao(TipoExecucao tipo)
+void Rule::definirTipoExecucao(TipoExecucao tipo)
 {
  tipo_exec=tipo;
 }
 
-void Regra::definirExpCondicional(const QString &exp)
+void Rule::definirExpCondicional(const QString &exp)
 {
  exp_condicional=exp;
 }
 
-void Regra::adicionarComando(const QString &comando)
+void Rule::adicionarComando(const QString &comando)
 {
  //Caso o comando a ser atribuido estaja vazio
  if(comando=="")
@@ -58,22 +58,22 @@ void Regra::adicionarComando(const QString &comando)
  }
 }
 
-TipoEvento Regra::obterTipoEvento(void)
+TipoEvento Rule::obterTipoEvento(void)
 {
  return(tipo_evento);
 }
 
-TipoExecucao Regra::obterTipoExecucao(void)
+TipoExecucao Rule::obterTipoExecucao(void)
 {
  return(tipo_exec);
 }
 
-QString Regra::obterExpCondicional(void)
+QString Rule::obterExpCondicional(void)
 {
  return(exp_condicional);
 }
 
-QString Regra::obterComando(unsigned idx_cmd)
+QString Rule::obterComando(unsigned idx_cmd)
 {
  /* Verifica se o índice condiz com o tamanho das listas de comandos,
     caso não conincida, dispara exceção */
@@ -84,12 +84,12 @@ QString Regra::obterComando(unsigned idx_cmd)
   return(comandos[idx_cmd]);
 }
 
-unsigned Regra::obterNumComandos(void)
+unsigned Rule::obterNumComandos(void)
 {
  return(comandos.size());
 }
 
-void Regra::removerComando(unsigned idx_cmd)
+void Rule::removerComando(unsigned idx_cmd)
 {
  /* Verifica se o índice condiz com o tamanho das listas de comandos,
     caso não conincida, dispara exceção */
@@ -100,12 +100,12 @@ void Regra::removerComando(unsigned idx_cmd)
   comandos.erase(comandos.begin() + idx_cmd);
 }
 
-void Regra::removerComandos(void)
+void Rule::removerComandos(void)
 {
  comandos.clear();
 }
 
-QString Regra::getCodeDefinition(unsigned tipo_def)
+QString Rule::getCodeDefinition(unsigned tipo_def)
 {
  definirAtributoComandos();
  attributes[ParsersAttributes::CONDITION]=exp_condicional;

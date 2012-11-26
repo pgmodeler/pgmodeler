@@ -53,7 +53,7 @@ void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type
     copyObject(psrc_obj, dynamic_cast<Gatilho *>(copy_obj));
   break;
   case OBJ_RULE:
-    copyObject(psrc_obj, dynamic_cast<Regra *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Rule *>(copy_obj));
   break;
   case OBJ_INDEX:
     copyObject(psrc_obj, dynamic_cast<Index *>(copy_obj));

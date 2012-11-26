@@ -259,7 +259,7 @@ void OGSubItemObjeto::configurarObjeto(void)
    rotulos[2]->setText(QString::fromUtf8(str_rest));
   else
   {
-   Regra *regra=dynamic_cast<Regra *>(objeto_tab);
+   Rule *regra=dynamic_cast<Rule *>(objeto_tab);
    Gatilho *gatilho=dynamic_cast<Gatilho *>(objeto_tab);
    Index *indice=dynamic_cast<Index *>(objeto_tab);
 

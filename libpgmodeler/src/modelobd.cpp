@@ -5004,17 +5004,17 @@ Index *ModeloBD::criarIndice(Tabela *tabela)
  return(indice);
 }
 
-Regra *ModeloBD::criarRegra(void)
+Rule *ModeloBD::criarRegra(void)
 {
  map<QString, QString> atributos;
  QStringList lista_cmd;
- Regra *regra=NULL;
+ Rule *regra=NULL;
  QString elem, str_aux;
  int qtd, i;
 
  try
  {
-  regra=new Regra;
+  regra=new Rule;
   definirAtributosBasicos(regra);
 
   //Obtém os atributos do elemento

@@ -19,13 +19,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef REGRA_H
-#define REGRA_H
+#ifndef RULE_H
+#define RULE_H
 
 #include "tableobject.h"
 #include "column.h"
 
-class Regra: public TableObject{
+class Rule: public TableObject{
  private:
   //Comandos que a regra executará ao ser chamada
   vector<QString> comandos;
@@ -44,7 +44,7 @@ class Regra: public TableObject{
   void definirAtributoComandos(void);
 
  public:
-  Regra(void);
+  Rule(void);
 
   //Adiciona um comando SQL que será executado pela regra
   void adicionarComando(const QString &comando);

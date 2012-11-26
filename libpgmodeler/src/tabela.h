@@ -28,7 +28,7 @@
 #include "column.h"
 #include "restricao.h"
 #include "index.h"
-#include "regra.h"
+#include "rule.h"
 #include "trigger.h"
 #include "function.h"
 #include "role.h"
@@ -138,7 +138,7 @@ class Tabela: public BaseTable {
   void adicionarRestricao(Restricao *constr, int idx_rest=-1);
   void adicionarGatilho(Gatilho *gat, int idx_gat=-1);
   void adicionarIndice(Index *ind, int idx_ind=-1);
-  void adicionarRegra(Regra *reg, int idx_reg=-1);
+  void adicionarRegra(Rule *reg, int idx_reg=-1);
 
   /* Métodos que retornam uma coluna através de seu nome ou índice.
      O método o qual busca uma coluna pelo nome tem um segundo parâmetro
@@ -172,8 +172,8 @@ class Tabela: public BaseTable {
   unsigned obterNumObjetos(ObjectType tipo_obj, bool inc_insporrelacao=true);
 
   //Métodos que retornam uma regra através de seu nome ou índice
-  Regra *obterRegra(const QString &obj_name);
-  Regra *obterRegra(unsigned idx_reg);
+  Rule *obterRegra(const QString &obj_name);
+  Rule *obterRegra(unsigned idx_reg);
 
   //Métodos que retornam uma tabela descendente através de seu nome ou índice
   Tabela *obterTabelaPai(const QString &obj_name);

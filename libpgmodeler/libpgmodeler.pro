@@ -24,7 +24,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/tablespace.h \
            $$PWD/src/trigger.h \
            $$PWD/src/baseobject.h \
-           $$PWD/src/regra.h \
+           $$PWD/src/rule.h \
            $$PWD/src/sequencia.h \
            $$PWD/src/tipospgsql.h \
            $$PWD/src/conversion.h \
@@ -65,7 +65,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/conversion.cpp \
             $$PWD/src/function.cpp \
             $$PWD/src/modelobd.cpp \
-            $$PWD/src/regra.cpp \
+            $$PWD/src/rule.cpp \
             $$PWD/src/tabela.cpp \
             $$PWD/src/cast.cpp \
             $$PWD/src/aggregate.cpp \
