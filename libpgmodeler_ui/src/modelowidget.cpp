@@ -732,16 +732,16 @@ void ModeloWidget::converterRelacionamentoNN(void)
       rest=new Constraint;
       rest_aux=rel->obterRestricao(idx);
       (*rest)=(*rest_aux);
-      rest->removerColunas();
+      rest->removeColumns();
       rest->setParentTable(NULL);
 
-      for(x=Constraint::COLUNA_ORIGEM; x <= Constraint::COLUNA_REFER; x++)
+      for(x=Constraint::SOURCE_COL; x <= Constraint::REFERENCED_COL; x++)
       {
-       qtd1=rest_aux->obterNumColunas(x);
+       qtd1=rest_aux->getColumnCount(x);
        for(idx1=0; idx1 < qtd1; idx1++)
        {
-        col=tab->obterColuna(rest_aux->obterColuna(idx, x)->getName());
-        if(col) rest->adicionarColuna(col, x);
+        col=tab->obterColuna(rest_aux->getColumn(idx, x)->getName());
+        if(col) rest->addColumn(col, x);
        }
       }
       tab->adicionarRestricao(rest);
@@ -1562,8 +1562,8 @@ void ModeloWidget::copiarObjetos(void)
          não pode ser chave primária pois estas são tratadas separadamente nos relacionamentos */
       if(!obj_tab->isAddedByRelationship() &&
          ((tipos[id_tipo]==OBJ_CONSTRAINT &&
-           dynamic_cast<Constraint *>(obj_tab)->obterTipoRestricao()!=TipoRestricao::primary_key &&
-           dynamic_cast<Constraint *>(obj_tab)->referenciaColunaIncRelacao()) ||
+           dynamic_cast<Constraint *>(obj_tab)->getConstraintType()!=TipoRestricao::primary_key &&
+           dynamic_cast<Constraint *>(obj_tab)->isReferRelationshipColumn()) ||
           (tipos[id_tipo]==OBJ_TRIGGER && dynamic_cast<Gatilho *>(obj_tab)->isReferRelationshipColumn()) ||
           (tipos[id_tipo]==OBJ_INDEX && dynamic_cast<Index *>(obj_tab)->isReferRelationshipColumn())))
        vet_deps.push_back(obj_tab);
@@ -2287,13 +2287,13 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
    for(i=0; i < qtd; i++)
    {
     rest=tabela->obterRestricao(i);
-    if(rest->colunaExistente(dynamic_cast<Column *>(obj_tab), Constraint::COLUNA_ORIGEM))
+    if(rest->isColumnExists(dynamic_cast<Column *>(obj_tab), Constraint::SOURCE_COL))
     {
      /* Fazendo uma configuração específica de ícone para restrições.
         Cada tipo de restrição tem seu ícone específico.
         O sufixos sufixo _pk, _fk, _ck, e _uq, são concatenados
         ao nome do tipo (constraint) para identificar o ícone */
-     switch(!rest->obterTipoRestricao())
+     switch(!rest->getConstraintType())
      {
       case TipoRestricao::primary_key: str_aux="_pk"; break;
       case TipoRestricao::foreign_key: str_aux="_fk"; break;

@@ -30,36 +30,36 @@
 class Constraint: public TableObject{
  private:
   //Tipo da constraint
-  TipoRestricao tipo;
+  TipoRestricao constr_type;
 
   //Indica se a restrição é postergável ou não (apenas para fk)
-  bool postergavel;
+  bool deferrable;
 
   //Tipo de postergacao da restrição (apenas para fk)
-  TipoPostergacao tipo_postergacao;
+  TipoPostergacao deferral_type;
 
   //Tipo de comparação da restrição (apenas para fk)
-  TipoComparacao tipo_comp;
+  TipoComparacao match_type;
 
   /* Fator de preenchimento do método usado pela restrição (FILLFACTOR)
      usado apenas por chaves primárias e chaves únicas */
-  unsigned fator_preenc;
+  unsigned fill_factor;
 
   /* (Apenas para chaves estrageiras) Especifica que tipo de
      ação deve ser tomada ao excluir (acao_del) e
      ao atualizar (acao_upd) */
-  TipoAcao acao_del,acao_upd;
+  TipoAcao del_action, upd_action;
 
   //Armazena as colunas que formam a constraint (não utilizado para ck)
-  vector<Column *> colunas;
+  vector<Column *> columns;
 
   /* (Apenas para chaves estrageiras) Armazena as colunas que
      são referenciadas na tabela referenciada */
-  vector<Column *> colunas_ref;
+  vector<Column *> ref_columns;
 
   /* (Apenas para constraints CHECK) Armazena a expressão
      que será usada como checagem */
-  QString exp_checagem;
+  QString check_expr;
 
   /* (Apenas para chaves estrangeiras) Armazena o endereço
      da tabela de destino das referências. Na modelagem desta classe
@@ -67,16 +67,16 @@ class Constraint: public TableObject{
      ObjetoBase está sendo usada que de qualquer forma serve como
      referencia a uma tabela, pois esta ultima herda as propriedades de
      ObjetoGraficoBase. */
-  BaseObject *tabela_ref;
+  BaseObject *ref_table;
 
   /* Formata a QString de colunas usada pelo parser de esquema
      na geração da definição SQL da restrição */
-  void definirAtributoColunas(unsigned tipo_coluna, unsigned tipo_def, bool inc_autoincluidos=false);
+  void setColumnsAttribute(unsigned col_type, unsigned def_type, bool inc_addedbyrel=false);
 
  public:
   //Constantes utilizadas para referenciar as colunas de origem e destino
-  static const unsigned COLUNA_ORIGEM=0,
-                        COLUNA_REFER=1;
+  static const unsigned SOURCE_COL=0,
+                        REFERENCED_COL=1;
 
   Constraint(void);
   ~Constraint(void);
@@ -84,88 +84,88 @@ class Constraint: public TableObject{
   /* Adiciona uma coluna a uma das listas de colunas da constraint
      Caso o parâmetro col_dest estiver como true a lista 'colunas_dest'
      será usada caso contrário 'colunas' é que será usada.  */
-  void adicionarColuna(Column *coluna, unsigned tipo_coluna);
+  void addColumn(Column *column, unsigned col_type);
 
   //Define o tipo da constraint
-  void definirTipo(TipoRestricao tipo);
+  void setConstraintType(TipoRestricao constr_type);
 
   /* Define o tipo de ação nas chaves estrangeiras (ON DELETE e ON UPDATE).
      Caso o parâmetro 'upd' esteja como true, o atributo 'acao_upd' é que
      receberá o valor do parametro 'tipo' caso contrário será 'acao_del'
      que receberá. */
-  void definirTipoAcao(TipoAcao tipo, bool upd);
+  void setActionType(TipoAcao action_type, bool upd);
 
   //Define o tipo de postergação da restrição
-  void definirTipoPostergacao(TipoPostergacao tipo);
+  void setDeferralType(TipoPostergacao deferral_type);
 
   //Define se a restrição é postergavel ou não
-  void definirPostergavel(bool valor);
+  void setDeferrable(bool value);
 
   //Define o tipo de comparação da restrição
-  void definirTipoComparacao(TipoComparacao tipo);
+  void setMatchType(TipoComparacao constr_type);
 
   //Define a expressão de checagem caso a constraint seja do tipo CHECK
-  void definirExpChecagem(const QString &exp);
+  void setCheckExpression(const QString &expr);
 
   //Define a tabela de destino nas referências da chave estrangeira.
-  void definirTabReferenciada(BaseObject *tab_ref);
+  void setReferencedTable(BaseObject *tab_ref);
 
   /* Define o espaço de tabela usado pela restrição.
      Espaços de tabelas só podem ser atribuídas a restrições
      do tipo UNIQUE ou PRIMARY KEY */
-  void setTablespace(Tablespace *tablespace);
+  void setTablespace(Tablespace *tabspc);
 
   //Define o fator preenchimento da restrição
-  void definirFatorPreenchimento(unsigned fator);
+  void setFillFactor(unsigned factor);
 
   //Retorna o fator de preenchimento da restrição
-  unsigned obterFatorPreenchimento(void);
+  unsigned getFillFactor(void);
 
   /* Obtém o tipo de ação da chave estrangeira.
      Caso 'upd' esteja como true, o atributo 'acao_upd' será retornado
      caso contrário 'acao_del' é que será retornado. */
-  TipoAcao obterTipoAcao(bool upd);
+  TipoAcao getActionType(bool upd);
 
   /* Obtém uma coluna através de seu índice. Caso 'col_dest' esteja como
      true, uma coluna da lista 'colunas_dest' será retornada, caso contrário
      uma coluna da lista 'colunas' será retornada. */
   //Coluna *obterColuna(unsigned idx_col, bool col_dest=false);
-  Column *obterColuna(unsigned idx_col, unsigned tipo_coluna);
+  Column *getColumn(unsigned col_idx, unsigned col_type);
 
   /* Obtém uma coluna através de seu nome. Caso 'col_dest' esteja como
      true, uma coluna da lista 'colunas_dest' será retornada, caso contrário
      uma coluna da lista 'colunas' será retornada. */
   //Coluna *obterColuna(QString nome, bool col_dest=false);
-  Column *obterColuna(const QString &obj_name, unsigned tipo_coluna);
+  Column *getColumn(const QString &name, unsigned col_type);
 
   /* Obtém o número de colunas de uma das listas. Caso 'col_dest' esteja como
      true, o número de colunas da lista 'colunas_dest' será retornado, caso contrário
      o número de colunas da lista 'colunas' será retornado. */
   //unsigned obterNumColunas(bool col_dest=false);
-  unsigned obterNumColunas(unsigned tipo_coluna);
+  unsigned getColumnCount(unsigned col_type);
 
  /* Remove uma coluna de uma das listas através de seu nome. Caso 'col_dest' esteja como
     true, uma coluna da lista 'colunas_dest' será removida, caso contrário
     uma coluna da lista 'colunas_dest' será removida. */
-  void removerColuna(const QString &obj_name, unsigned tipo_coluna);
+  void removeColumn(const QString &name, unsigned col_type);
 
   //Limpa as listas de colunas
-  void removerColunas(void);
+  void removeColumns(void);
 
   //Obtém o tipo da restrição
-  TipoRestricao obterTipoRestricao(void);
+  TipoRestricao getConstraintType(void);
 
   //Obtém a expressão de checagem da restrição
-  QString obterExpChecagem(void);
+  QString getCheckExpression(void);
 
   //Obtém a tabela de destino
-  BaseObject *obterTabReferenciada(void);
+  BaseObject *getReferencedTable(void);
 
   //Obtém o tipo de postergação da restrição
-  TipoPostergacao obterTipoPostergacao(void);
+  TipoPostergacao getDeferralType(void);
 
   //Obtém se a restrição é postergável ou não
-  bool restricaoPostergavel(void);
+  bool isDeferrable(void);
 
   /* Retorna se a restrição referencia colunas adicionadas
      por relacionamento. Este método é usado como auxiliar
@@ -173,21 +173,21 @@ class Constraint: public TableObject{
      referenciam colunas adicionadas por relacionamento a
      fim de se evitar quebra de ligações devido as constantes
      conexões e desconexões de relacionamentos */
-  bool referenciaColunaIncRelacao(void);
+  bool isReferRelationshipColumn(void);
 
   //Obtém o tipo de comparação da restrição
-  TipoComparacao obterTipoComparacao(void);
+  TipoComparacao getMatchType(void);
 
   //Retorna a definição SQL ou XML do objeto
   /* Para manter a compatibilidade com o método puramente virtual da classe ancestral
      esse método retorna por padrão da definição SQL/XML sem incluir os objetos protegidos */
-  QString getCodeDefinition(unsigned tipo_def);
+  QString getCodeDefinition(unsigned def_type);
 
   //Retorna a definição SQL/XML filtrando por objetos incluídos por relacionamento ou não
-  QString getCodeDefinition(unsigned tipo_def, bool inc_insporrelacao);
+  QString getCodeDefinition(unsigned def_type, bool inc_addedbyrel);
 
   //Indica se uma dada coluna existe na lista de colunas de origem ou de destino
-  bool colunaExistente(Column *coluna, unsigned tipo_coluna);
+  bool isColumnExists(Column *column, unsigned col_type);
 
   friend class Tabela;
   friend class Relacionamento;

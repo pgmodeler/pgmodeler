@@ -1358,8 +1358,8 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
          incluída por relacionamento, ou seja, tal restrição a qual referencia colunas
          adicionadas por relacionamentos foi criada pelo usuário. */
       enc=(!restricao->isAddedByRelationship() &&
-            restricao->referenciaColunaIncRelacao() &&
-            restricao->obterTipoRestricao()!=TipoRestricao::primary_key);
+            restricao->isReferRelationshipColumn() &&
+            restricao->getConstraintType()!=TipoRestricao::primary_key);
 
       /* Caso uma restrição seja encontrada obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
@@ -4650,9 +4650,9 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
   else
    tipo_rest=TipoRestricao::unique;
 
-  restricao->definirTipo(tipo_rest);
+  restricao->setConstraintType(tipo_rest);
   if(!atributos[ParsersAttributes::FACTOR].isEmpty())
-   restricao->definirFatorPreenchimento(atributos[ParsersAttributes::FACTOR].toUInt());
+   restricao->setFillFactor(atributos[ParsersAttributes::FACTOR].toUInt());
   definirAtributosBasicos(restricao);
 
   /* Caso o tipo de restrição seja uma chave primária uma verificação importante
@@ -4703,20 +4703,20 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
   {
    //Define se a restrição é postergavel (apenas para chaves estrangeiras)
    postergavel=(atributos[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
-   restricao->definirPostergavel(postergavel);
+   restricao->setDeferrable(postergavel);
 
    if(postergavel && !atributos[ParsersAttributes::DEFER_TYPE].isEmpty())
-    restricao->definirTipoPostergacao(atributos[ParsersAttributes::DEFER_TYPE]);
+    restricao->setDeferralType(atributos[ParsersAttributes::DEFER_TYPE]);
 
    if(!atributos[ParsersAttributes::COMPARISON_TYPE].isEmpty())
-    restricao->definirTipoComparacao(atributos[ParsersAttributes::COMPARISON_TYPE]);
+    restricao->setMatchType(atributos[ParsersAttributes::COMPARISON_TYPE]);
 
    //Definindo os tipos de ação nos eventos DELETE e UPDATE
    if(!atributos[ParsersAttributes::DEL_ACTION].isEmpty())
-    restricao->definirTipoAcao(atributos[ParsersAttributes::DEL_ACTION], false);
+    restricao->setActionType(atributos[ParsersAttributes::DEL_ACTION], false);
 
    if(!atributos[ParsersAttributes::UPD_ACTION].isEmpty())
-    restricao->definirTipoAcao(atributos[ParsersAttributes::UPD_ACTION], true);
+    restricao->setActionType(atributos[ParsersAttributes::UPD_ACTION], true);
 
    //Obtém a tabela referenciada na chave estrangeira
    tabela_ref=obterObjeto(atributos[ParsersAttributes::REF_TABLE], OBJ_TABLE);
@@ -4741,7 +4741,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
    }
 
    //Define a tabela de destino da chave estrangeira
-   restricao->definirTabReferenciada(tabela_ref);
+   restricao->setReferencedTable(tabela_ref);
   }
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
@@ -4760,7 +4760,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
       //Acessa o elemento filho o qual contém o conteúdo da expressão ou condição
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
       //Obtém o contéudo do elemento <expression>
-      restricao->definirExpChecagem(XMLParser::getElementContent());
+      restricao->setCheckExpression(XMLParser::getElementContent());
       XMLParser::restorePosition();
      }
      else if(elem==ParsersAttributes::COLUMNS)
@@ -4778,14 +4778,14 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
       /* Obtém o tipo de referência das colunas de acordo com o atributo
          tipo de referência vindo do XML */
       if(atributos[ParsersAttributes::REF_TYPE]==ParsersAttributes::SRC_COLUMNS)
-       tipo_coluna=Constraint::COLUNA_ORIGEM;
+       tipo_coluna=Constraint::SOURCE_COL;
       else
-       tipo_coluna=Constraint::COLUNA_REFER;
+       tipo_coluna=Constraint::REFERENCED_COL;
 
       //Varre a lista de nomes de colunas e as obtém da tabela a qual possuirá a restrição
       for(i=0; i < qtd; i++)
       {
-       if(tipo_coluna==Constraint::COLUNA_ORIGEM)
+       if(tipo_coluna==Constraint::SOURCE_COL)
        {
         if(tipo_objeto==OBJ_TABLE)
         {
@@ -4808,7 +4808,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
        }
 
        //Adiciona a coluna   restrição
-       restricao->adicionarColuna(coluna, tipo_coluna);
+       restricao->addColumn(coluna, tipo_coluna);
       }
      }
     }
@@ -4819,7 +4819,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
   if(ins_rest_tabela)
   {
    //Caso a restrição criada não seja uma chave primária insere-a normalmente na tabela
-   if(restricao->obterTipoRestricao()!=TipoRestricao::primary_key)
+   if(restricao->getConstraintType()!=TipoRestricao::primary_key)
    {
     tabela->adicionarRestricao(restricao);
 
@@ -5960,7 +5960,7 @@ void ModeloBD::validarRelacObjetoTabela(TableObject *objeto, Tabela *tabela_pai)
     revalidar_rels=((tipo==OBJ_COLUMN &&
                      tabela_pai->restricaoReferenciaColuna(dynamic_cast<Column *>(objeto), TipoRestricao::primary_key)) ||
                     (tipo==OBJ_CONSTRAINT &&
-                     dynamic_cast<Constraint *>(objeto)->obterTipoRestricao()==TipoRestricao::primary_key));
+                     dynamic_cast<Constraint *>(objeto)->getConstraintType()==TipoRestricao::primary_key));
 
    /* Caso seja uma coluna, verfica se a tabela pai participa de um relacionamento
      de generalização como tabela de destino (aquela que tem suas colunas copiadas
@@ -6177,8 +6177,8 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
 
      //Caso a restrição seja um objeto especial armazena o mesmo no mapa de objetos
      if(!restricao->isAddedByLinking() &&
-         restricao->obterTipoRestricao()!=TipoRestricao::primary_key &&
-         restricao->referenciaColunaIncRelacao())
+         restricao->getConstraintType()!=TipoRestricao::primary_key &&
+         restricao->isReferRelationshipColumn())
      {
       //Armazena o objeto em si no mapa de objetos
       mapa_objetos[restricao->getObjectId()]=restricao;
@@ -6708,8 +6708,8 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    for(i=0; i < qtd; i++)
    {
     rest=dynamic_cast<Constraint *>(rel->obterRestricao(i));
-    if(rest->obterTipoRestricao()==TipoRestricao::foreign_key)
-     obterDependenciasObjeto(rest->obterTabReferenciada(), vet_deps, inc_dep_indiretas);
+    if(rest->getConstraintType()==TipoRestricao::foreign_key)
+     obterDependenciasObjeto(rest->getReferencedTable(), vet_deps, inc_dep_indiretas);
 
     if(rest->getTablespace())
      obterDependenciasObjeto(rest->getTablespace(), vet_deps, inc_dep_indiretas);
@@ -6751,8 +6751,8 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    {
     rest=dynamic_cast<Constraint *>(tab->obterRestricao(i));
     if(!rest->isAddedByLinking() &&
-        rest->obterTipoRestricao()==TipoRestricao::foreign_key)
-     obterDependenciasObjeto(rest->obterTabReferenciada(), vet_deps, inc_dep_indiretas);
+        rest->getConstraintType()==TipoRestricao::foreign_key)
+     obterDependenciasObjeto(rest->getReferencedTable(), vet_deps, inc_dep_indiretas);
 
     if(!rest->isAddedByLinking() && rest->getTablespace())
      obterDependenciasObjeto(rest->getTablespace(), vet_deps, inc_dep_indiretas);
@@ -6921,8 +6921,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
     for(i=0; i < qtd&& (!modo_exclusao || (modo_exclusao && !refer)); i++)
     {
      rest=tab->obterRestricao(i);
-     if(rest->obterTipoRestricao()==TipoRestricao::foreign_key &&
-        rest->obterTabReferenciada()==tabela)
+     if(rest->getConstraintType()==TipoRestricao::foreign_key &&
+        rest->getReferencedTable()==tabela)
      {
       refer=true;
       vet_refs.push_back(rest);
@@ -7653,8 +7653,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       qtd_rest=tab->obterNumRestricoes();
       for(idx=0; idx < qtd_rest && (!modo_exclusao || (modo_exclusao && !refer)); idx++)
       {
-       if(tab->obterRestricao(idx)->colunaExistente(coluna, Constraint::COLUNA_ORIGEM) ||
-          tab->obterRestricao(idx)->colunaExistente(coluna, Constraint::COLUNA_REFER))
+       if(tab->obterRestricao(idx)->isColumnExists(coluna, Constraint::SOURCE_COL) ||
+          tab->obterRestricao(idx)->isColumnExists(coluna, Constraint::REFERENCED_COL))
        {
         refer=true;
         vet_refs.push_back(tab->obterRestricao(idx));
@@ -7685,8 +7685,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       qtd_rest=rel->obterNumRestricoes();
       for(idx=0; idx < qtd_rest && (!modo_exclusao || (modo_exclusao && !refer)); idx++)
       {
-       if(rel->obterRestricao(idx)->colunaExistente(coluna, Constraint::COLUNA_ORIGEM) ||
-          rel->obterRestricao(idx)->colunaExistente(coluna, Constraint::COLUNA_REFER))
+       if(rel->obterRestricao(idx)->isColumnExists(coluna, Constraint::SOURCE_COL) ||
+          rel->obterRestricao(idx)->isColumnExists(coluna, Constraint::REFERENCED_COL))
        {
         refer=true;
         vet_refs.push_back(rel);

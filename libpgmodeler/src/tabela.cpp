@@ -172,11 +172,11 @@ void Tabela::definirAtributoRestricoes(unsigned tipo_def)
   rest=dynamic_cast<Constraint *>(restricoes[i]);
 
   if((tipo_def==SchemaParser::SQL_DEFINITION &&
-      (!rest->referenciaColunaIncRelacao() || rest->obterTipoRestricao()==TipoRestricao::primary_key)) ||
+      (!rest->isReferRelationshipColumn() || rest->getConstraintType()==TipoRestricao::primary_key)) ||
 
      (tipo_def==SchemaParser::XML_DEFINITION && !rest->isAddedByRelationship() &&
-      ((rest->obterTipoRestricao()!=TipoRestricao::primary_key && !rest->referenciaColunaIncRelacao()) ||
-       (rest->obterTipoRestricao()==TipoRestricao::primary_key))))
+      ((rest->getConstraintType()!=TipoRestricao::primary_key && !rest->isReferRelationshipColumn()) ||
+       (rest->getConstraintType()==TipoRestricao::primary_key))))
   {
    inc_insporrelacao=(tipo_def==SchemaParser::SQL_DEFINITION);
    str_rest+=rest->getCodeDefinition(tipo_def,inc_insporrelacao);
@@ -357,7 +357,7 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
        Constraint *rest;
        rest=dynamic_cast<Constraint *>(obj_tab);
        rest->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-       tipo_rest=rest->obterTipoRestricao();
+       tipo_rest=rest->getConstraintType();
       }
       else if(tipo_obj==OBJ_INDEX)
       {
@@ -983,7 +983,7 @@ Constraint *Tabela::obterChavePrimaria(void)
  for(i=0; i < qtd && !pk; i++)
  {
   rest=dynamic_cast<Constraint *>(restricoes[i]);
-  pk=(rest->obterTipoRestricao()==TipoRestricao::primary_key ? rest : NULL);
+  pk=(rest->getConstraintType()==TipoRestricao::primary_key ? rest : NULL);
  }
 
  return(pk);
@@ -1008,9 +1008,9 @@ bool Tabela::restricaoReferenciaColuna(Column *coluna, TipoRestricao tipo_rest)
   {
    rest=dynamic_cast<Constraint *>(*itr);
    itr++;
-   enc=(rest->obterTipoRestricao()==tipo_rest &&
-        (rest->colunaExistente(coluna, Constraint::COLUNA_ORIGEM) ||
-         rest->colunaExistente(coluna, Constraint::COLUNA_REFER)));
+   enc=(rest->getConstraintType()==tipo_rest &&
+        (rest->isColumnExists(coluna, Constraint::SOURCE_COL) ||
+         rest->isColumnExists(coluna, Constraint::REFERENCED_COL)));
   }
  }
 
@@ -1149,8 +1149,8 @@ void Tabela::obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_r
    rest=dynamic_cast<Constraint *>(*itr);
    itr++;
 
-   col=rest->obterColuna(coluna->getName(),true);
-   col1=rest->obterColuna(coluna->getName(),false);
+   col=rest->getColumn(coluna->getName(),true);
+   col1=rest->getColumn(coluna->getName(),false);
 
    if((col && col==coluna) || (col1 && col1==coluna))
    {

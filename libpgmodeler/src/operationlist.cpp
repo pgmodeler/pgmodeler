@@ -455,7 +455,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
     model->removerPermissoes(tab_obj);
    else if(((obj_type==OBJ_TRIGGER && dynamic_cast<Gatilho *>(tab_obj)->isReferRelationshipColumn()) ||
             (obj_type==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipColumn()) ||
-            (obj_type==OBJ_CONSTRAINT && dynamic_cast<Constraint *>(tab_obj)->referenciaColunaIncRelacao())))
+            (obj_type==OBJ_CONSTRAINT && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipColumn())))
    {
     if(op_type==Operation::OBJECT_REMOVED)
      tab_obj->setParentTable(parent_tab);

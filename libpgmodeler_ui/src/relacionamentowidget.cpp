@@ -508,7 +508,7 @@ void RelacionamentoWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  {
   //Exibe o nome do tipo da restrição na tabela de restrições
   tab=tab_restricoes;
-  tab_restricoes->definirTextoCelula(QString::fromUtf8(~dynamic_cast<Constraint *>(objeto)->obterTipoRestricao()),idx_lin,1);
+  tab_restricoes->definirTextoCelula(QString::fromUtf8(~dynamic_cast<Constraint *>(objeto)->getConstraintType()),idx_lin,1);
  }
 
  tab->definirTextoCelula(QString::fromUtf8(objeto->getName()),idx_lin,0);
