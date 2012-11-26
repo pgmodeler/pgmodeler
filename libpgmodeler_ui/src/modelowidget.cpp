@@ -735,7 +735,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
       rest->removeColumns();
       rest->setParentTable(NULL);
 
-      for(x=Constraint::SOURCE_COL; x <= Constraint::REFERENCED_COL; x++)
+      for(x=Constraint::SOURCE_COLS; x <= Constraint::REFERENCED_COLS; x++)
       {
        qtd1=rest_aux->getColumnCount(x);
        for(idx1=0; idx1 < qtd1; idx1++)
@@ -2287,7 +2287,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
    for(i=0; i < qtd; i++)
    {
     rest=tabela->obterRestricao(i);
-    if(rest->isColumnExists(dynamic_cast<Column *>(obj_tab), Constraint::SOURCE_COL))
+    if(rest->isColumnExists(dynamic_cast<Column *>(obj_tab), Constraint::SOURCE_COLS))
     {
      /* Fazendo uma configuração específica de ícone para restrições.
         Cada tipo de restrição tem seu ícone específico.

@@ -108,7 +108,7 @@ class Index: public TableObject{
 
   /* Returns whether the index references columns added
      by relationship. This method is used as auxiliary
-     to control which triggers reference columns added by the
+     to control which index reference columns added by the
      relationship in order to avoid referece breaking due constants
      connections and disconnections of relationships */
   bool isReferRelationshipColumn(void);

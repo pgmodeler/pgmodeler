@@ -1009,8 +1009,8 @@ bool Tabela::restricaoReferenciaColuna(Column *coluna, TipoRestricao tipo_rest)
    rest=dynamic_cast<Constraint *>(*itr);
    itr++;
    enc=(rest->getConstraintType()==tipo_rest &&
-        (rest->isColumnExists(coluna, Constraint::SOURCE_COL) ||
-         rest->isColumnExists(coluna, Constraint::REFERENCED_COL)));
+        (rest->isColumnExists(coluna, Constraint::SOURCE_COLS) ||
+         rest->isColumnExists(coluna, Constraint::REFERENCED_COLS)));
   }
  }
 

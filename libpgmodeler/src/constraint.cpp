@@ -60,7 +60,7 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
  if(!column)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(col_type==SOURCE_COL)
+ if(col_type==SOURCE_COLS)
  {
   itr=columns.begin();
   itr_end=columns.end();
@@ -98,7 +98,7 @@ void Constraint::addColumn(Column *column, unsigned col_type)
   if(!isColumnExists(column,col_type))
   {
    //Caso a coluna a ser atribuida seja da lista de colunas de destino
-   if(col_type==REFERENCED_COL)
+   if(col_type==REFERENCED_COLS)
     //Insere a coluna na lista de destino
     ref_columns.push_back(column);
    else
@@ -136,7 +136,7 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
     obtém a lista de colunas de destino e marca
     que o atributo a ser configurado é do de
     colunas da tabela de destino */
- if(col_type==REFERENCED_COL)
+ if(col_type==REFERENCED_COLS)
  {
   col_vector=&ref_columns;
   attrib=ParsersAttributes::DST_COLUMNS;
@@ -228,7 +228,7 @@ Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
  vector<Column *> *col_list=NULL;
 
  //Obtendo a lista de colunas de acorodo com o tipo de coluna selecionado
- col_list=(col_type==SOURCE_COL ? &columns : &ref_columns);
+ col_list=(col_type==SOURCE_COLS ? &columns : &ref_columns);
 
  /* Caso o índice de coluna a ser obtido seja inválido, um erro
     será retornado */
@@ -246,7 +246,7 @@ Column *Constraint::getColumn(const QString &name, unsigned col_type)
  vector<Column *>::iterator itr_col, itr_end_col;
 
  //Obtém a lista de colunas de acordo com o tipo
- col_list=(col_type==SOURCE_COL? &columns : &ref_columns);
+ col_list=(col_type==SOURCE_COLS? &columns : &ref_columns);
 
  //Obtém as referencias para o primeiro e o ultimo elemento da lista de colunas
  itr_col=col_list->begin();
@@ -273,7 +273,7 @@ BaseObject *Constraint::getReferencedTable(void)
 
 unsigned Constraint::getColumnCount(unsigned col_type)
 {
- if(col_type==REFERENCED_COL)
+ if(col_type==REFERENCED_COLS)
   return(ref_columns.size());
  else
   return(columns.size());
@@ -292,7 +292,7 @@ void Constraint::removeColumn(const QString &name, unsigned col_type)
  Column *col=NULL;
 
  //Se col_dest==true, a lista a ser pesquisada será a de destino
- if(col_type==REFERENCED_COL)
+ if(col_type==REFERENCED_COLS)
   //Selecionando a lista de destino para pesquisa
   cols=&ref_columns;
  else
@@ -414,7 +414,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 
  if(constr_type!=TipoRestricao::check)
  {
-  setColumnsAttribute(SOURCE_COL, def_type, inc_addedbyrel);
+  setColumnsAttribute(SOURCE_COLS, def_type, inc_addedbyrel);
 
   /* Só gera a definição das colunas referenciadas da chave estrangeira
      caso o número de colunas da origem e destino sejam iguais, isso significa
@@ -422,7 +422,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
      forçando o parser de esquemas a retornar um erro pois a chave estrangeira está
      mal configurada. */
   if(constr_type==TipoRestricao::foreign_key && columns.size() == ref_columns.size())
-   setColumnsAttribute(REFERENCED_COL, def_type, inc_addedbyrel);
+   setColumnsAttribute(REFERENCED_COLS, def_type, inc_addedbyrel);
  }
 
  attributes[ParsersAttributes::REF_TABLE]=(ref_table ? ref_table->getName(true) : "");

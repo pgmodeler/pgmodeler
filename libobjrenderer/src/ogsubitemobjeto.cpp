@@ -445,7 +445,7 @@ QString OGSubItemObjeto::obterStringRestricoes(Column *coluna)
    itr++; //Passa para a próxima da lista
 
    //Verfica se a coluna está sendo referenciada dentro da constraint
-   if(restricao->getColumn(coluna->getName(), Constraint::SOURCE_COL))
+   if(restricao->getColumn(coluna->getName(), Constraint::SOURCE_COLS))
    {
     //Obtém o tipo da constraint
     tipo_rest=restricao->getConstraintType();

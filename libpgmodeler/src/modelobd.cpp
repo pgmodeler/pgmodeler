@@ -4778,14 +4778,14 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
       /* Obtém o tipo de referência das colunas de acordo com o atributo
          tipo de referência vindo do XML */
       if(atributos[ParsersAttributes::REF_TYPE]==ParsersAttributes::SRC_COLUMNS)
-       tipo_coluna=Constraint::SOURCE_COL;
+       tipo_coluna=Constraint::SOURCE_COLS;
       else
-       tipo_coluna=Constraint::REFERENCED_COL;
+       tipo_coluna=Constraint::REFERENCED_COLS;
 
       //Varre a lista de nomes de colunas e as obtém da tabela a qual possuirá a restrição
       for(i=0; i < qtd; i++)
       {
-       if(tipo_coluna==Constraint::SOURCE_COL)
+       if(tipo_coluna==Constraint::SOURCE_COLS)
        {
         if(tipo_objeto==OBJ_TABLE)
         {
@@ -7653,8 +7653,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       qtd_rest=tab->obterNumRestricoes();
       for(idx=0; idx < qtd_rest && (!modo_exclusao || (modo_exclusao && !refer)); idx++)
       {
-       if(tab->obterRestricao(idx)->isColumnExists(coluna, Constraint::SOURCE_COL) ||
-          tab->obterRestricao(idx)->isColumnExists(coluna, Constraint::REFERENCED_COL))
+       if(tab->obterRestricao(idx)->isColumnExists(coluna, Constraint::SOURCE_COLS) ||
+          tab->obterRestricao(idx)->isColumnExists(coluna, Constraint::REFERENCED_COLS))
        {
         refer=true;
         vet_refs.push_back(tab->obterRestricao(idx));
@@ -7685,8 +7685,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       qtd_rest=rel->obterNumRestricoes();
       for(idx=0; idx < qtd_rest && (!modo_exclusao || (modo_exclusao && !refer)); idx++)
       {
-       if(rel->obterRestricao(idx)->isColumnExists(coluna, Constraint::SOURCE_COL) ||
-          rel->obterRestricao(idx)->isColumnExists(coluna, Constraint::REFERENCED_COL))
+       if(rel->obterRestricao(idx)->isColumnExists(coluna, Constraint::SOURCE_COLS) ||
+          rel->obterRestricao(idx)->isColumnExists(coluna, Constraint::REFERENCED_COLS))
        {
         refer=true;
         vet_refs.push_back(rel);
