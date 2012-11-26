@@ -5019,8 +5019,8 @@ Rule *ModeloBD::criarRegra(void)
 
   //Obtém os atributos do elemento
   XMLParser::getElementAttributes(atributos);
-  regra->definirTipoExecucao(atributos[ParsersAttributes::EXEC_TYPE]);
-  regra->definirTipoEvento(atributos[ParsersAttributes::EVENT_TYPE]);
+  regra->setExecutionType(atributos[ParsersAttributes::EXEC_TYPE]);
+  regra->setEventType(atributos[ParsersAttributes::EVENT_TYPE]);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
@@ -5052,11 +5052,11 @@ Rule *ModeloBD::criarRegra(void)
        {
         //Caso o comando não esteja vazio
         if(!lista_cmd[i].isEmpty())
-         regra->adicionarComando(lista_cmd[i]);
+         regra->addCommand(lista_cmd[i]);
        }
       }
       else
-       regra->definirExpCondicional(str_aux);
+       regra->setConditionalExpression(str_aux);
      }
     }
    }

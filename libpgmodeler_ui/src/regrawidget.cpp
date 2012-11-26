@@ -100,17 +100,17 @@ void RegraWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, Operati
  if(regra)
  {
   //Configura o formulário com os valores dos atributos da regra
-  tipo_evento_cmb->setCurrentIndex(tipo_evento_cmb->findText(~regra->obterTipoEvento()));
-  tipo_execucao_cmb->setCurrentIndex(tipo_execucao_cmb->findText(~regra->obterTipoExecucao()));
-  exp_condicional_txt->setPlainText(regra->obterExpCondicional());
+  tipo_evento_cmb->setCurrentIndex(tipo_evento_cmb->findText(~regra->getEventType()));
+  tipo_execucao_cmb->setCurrentIndex(tipo_execucao_cmb->findText(~regra->getExecutionType()));
+  exp_condicional_txt->setPlainText(regra->getConditionalExpression());
 
   //Insere na tabela de comandos os comandos presentes na regra
   tab_comandos->blockSignals(true);
-  qtd=regra->obterNumComandos();
+  qtd=regra->getCommandCount();
   for(i=0; i < qtd; i++)
   {
    tab_comandos->adicionarLinha();
-   tab_comandos->definirTextoCelula(regra->obterComando(i),i,0);
+   tab_comandos->definirTextoCelula(regra->getCommand(i),i,0);
   }
   tab_comandos->blockSignals(false);
  }
@@ -129,18 +129,18 @@ void RegraWidget::aplicarConfiguracao(void)
   regra=dynamic_cast<Rule *>(this->objeto);
 
   //Configura a regra com base nos atributos preenchidos no formulário
-  regra->definirTipoEvento(TipoEvento(tipo_evento_cmb->currentText()));
-  regra->definirTipoExecucao(TipoExecucao(tipo_execucao_cmb->currentText()));
-  regra->definirExpCondicional(exp_condicional_txt->toPlainText());
+  regra->setEventType(TipoEvento(tipo_evento_cmb->currentText()));
+  regra->setExecutionType(TipoExecucao(tipo_execucao_cmb->currentText()));
+  regra->setConditionalExpression(exp_condicional_txt->toPlainText());
 
   /* Remove todos os comandos da regra para inserção dos que
      foram criados no formulário */
-  regra->removerComandos();
+  regra->removeCommands();
   qtd=tab_comandos->obterNumLinhas();
 
   //Inserindo os comandos sql do formulário na regra
   for(i=0; i < qtd; i++)
-   regra->adicionarComando(tab_comandos->obterTextoCelula(i,0));
+   regra->addCommand(tab_comandos->obterTextoCelula(i,0));
 
   //Aplica as configurações básicas
   ObjetoBaseWidget::aplicarConfiguracao();

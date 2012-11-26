@@ -266,9 +266,9 @@ void OGSubItemObjeto::configurarObjeto(void)
    //Configurando a string de restrições para regra
    if(regra)
    {
-    str_rest+=(~regra->obterTipoEvento()).mid(3,1);
+    str_rest+=(~regra->getEventType()).mid(3,1);
     str_rest+=SEPARADOR_REST;
-    str_rest+=(~regra->obterTipoExecucao()).mid(0,1);
+    str_rest+=(~regra->getExecutionType()).mid(0,1);
     str_rest=str_rest.lower();
    }
    //Configurando a string de restrições para gatilho

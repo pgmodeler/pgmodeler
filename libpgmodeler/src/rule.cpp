@@ -2,7 +2,7 @@
 
 Rule::Rule(void)
 {
- tipo_exec=TipoBase::nulo;
+ execution_type=TipoBase::nulo;
  obj_type=OBJ_RULE;
  attributes[ParsersAttributes::EVENT_TYPE]="";
  attributes[ParsersAttributes::TABLE]="";
@@ -11,111 +11,103 @@ Rule::Rule(void)
  attributes[ParsersAttributes::COMMANDS]="";
 }
 
-void Rule::definirAtributoComandos(void)
+void Rule::setCommandsAttribute(void)
 {
  QString str_cmds;
  unsigned i, qtd;
 
- qtd=comandos.size();
+ qtd=commands.size();
  for(i=0; i < qtd; i++)
  {
-  str_cmds+=comandos[i];
+  str_cmds+=commands[i];
   if(i < (qtd-1)) str_cmds+=";";
  }
 
- //if(str_cmds!="") str_cmds="(" + str_cmds + ")";
  attributes[ParsersAttributes::COMMANDS]=str_cmds;
 }
 
-void Rule::definirTipoEvento(TipoEvento tipo)
+void Rule::setEventType(TipoEvento type)
 {
- tipo_evento=tipo;
+ event_type=type;
 }
 
-void Rule::definirTipoExecucao(TipoExecucao tipo)
+void Rule::setExecutionType(TipoExecucao type)
 {
- tipo_exec=tipo;
+ execution_type=type;
 }
 
-void Rule::definirExpCondicional(const QString &exp)
+void Rule::setConditionalExpression(const QString &expr)
 {
- exp_condicional=exp;
+ conditional_expr=expr;
 }
 
-void Rule::adicionarComando(const QString &comando)
+void Rule::addCommand(const QString &cmd)
 {
- //Caso o comando a ser atribuido estaja vazio
- if(comando=="")
-  //Dispara a exceção avisando tal fato
+ //Raises an error if the command is empty
+ if(cmd=="")
   throw Exception(ERR_INS_EMPTY_RULE_COMMAND,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  QString cmd_aux=comando;
-
-  //Adiciona o comando a lista de comandos da regra
+  QString cmd_aux=cmd;
   cmd_aux.remove(";");
-  comandos.push_back(cmd_aux);
+  commands.push_back(cmd_aux);
  }
 }
 
-TipoEvento Rule::obterTipoEvento(void)
+TipoEvento Rule::getEventType(void)
 {
- return(tipo_evento);
+ return(event_type);
 }
 
-TipoExecucao Rule::obterTipoExecucao(void)
+TipoExecucao Rule::getExecutionType(void)
 {
- return(tipo_exec);
+ return(execution_type);
 }
 
-QString Rule::obterExpCondicional(void)
+QString Rule::getConditionalExpression(void)
 {
- return(exp_condicional);
+ return(conditional_expr);
 }
 
-QString Rule::obterComando(unsigned idx_cmd)
+QString Rule::getCommand(unsigned cmd_idx)
 {
- /* Verifica se o índice condiz com o tamanho das listas de comandos,
-    caso não conincida, dispara exceção */
- if(idx_cmd >= comandos.size())
+ //Raises an error if the command index is out of bound
+ if(cmd_idx >= commands.size())
   throw Exception(ERR_REF_RULE_CMD_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
-  //Retorna o comando no índice passado
-  return(comandos[idx_cmd]);
+
+ return(commands[cmd_idx]);
 }
 
-unsigned Rule::obterNumComandos(void)
+unsigned Rule::getCommandCount(void)
 {
- return(comandos.size());
+ return(commands.size());
 }
 
-void Rule::removerComando(unsigned idx_cmd)
+void Rule::removeCommand(unsigned cmd_idx)
 {
- /* Verifica se o índice condiz com o tamanho das listas de comandos,
-    caso não conincida, dispara exceção */
- if(idx_cmd>=comandos.size())
+ //Raises an error if the command index is out of bound
+ if(cmd_idx>=commands.size())
   throw Exception(ERR_REF_RULE_CMD_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
-  //Remove o comando no índice específico
-  comandos.erase(comandos.begin() + idx_cmd);
+
+ commands.erase(commands.begin() + cmd_idx);
 }
 
-void Rule::removerComandos(void)
+void Rule::removeCommands(void)
 {
- comandos.clear();
+ commands.clear();
 }
 
-QString Rule::getCodeDefinition(unsigned tipo_def)
+QString Rule::getCodeDefinition(unsigned def_type)
 {
- definirAtributoComandos();
- attributes[ParsersAttributes::CONDITION]=exp_condicional;
- attributes[ParsersAttributes::EXEC_TYPE]=(~tipo_exec);
- attributes[ParsersAttributes::EVENT_TYPE]=(~tipo_evento);
+ setCommandsAttribute();
+ attributes[ParsersAttributes::CONDITION]=conditional_expr;
+ attributes[ParsersAttributes::EXEC_TYPE]=(~execution_type);
+ attributes[ParsersAttributes::EVENT_TYPE]=(~event_type);
 
  if(this->parent_table)
   attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
 
- return(BaseObject::__getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(def_type));
 }
 

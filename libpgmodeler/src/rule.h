@@ -1,8 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Regra que é usado para configurar
-#              e gerar os códigos SQL referentes a regras para tabelas.
+# Class: Rule
+# Description: Implements the operations to manipulate table rules.
 # Creation date: 26/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -27,60 +27,59 @@
 
 class Rule: public TableObject{
  private:
-  //Comandos que a regra executará ao ser chamada
-  vector<QString> comandos;
+  //Commands executed by the rule when activated
+  vector<QString> commands;
 
-  //Expressão condicional da regra
-  QString exp_condicional;
+  //Conditional expression for the rule activation
+  QString conditional_expr;
 
-  //Tipo de execução dos comandos da regra (ALSO, INSTEAD)
-  TipoExecucao tipo_exec;
+  //Rule execution type (ALSO or INSTEAD)
+  TipoExecucao execution_type;
 
-  //Tipo de evento que dispara a regra (ON SELECT, NO UPDATE, ON INSERT, ON DELETE)
-  TipoEvento tipo_evento;
+  //Event when the rule is triggered (ON SELECT, NO UPDATE, ON INSERT, ON DELETE)
+  TipoEvento event_type;
 
-  /* Formata a QString de comandos usada pelo parser de esquema
-     na geração da definição SQL da regra */
-  void definirAtributoComandos(void);
+  //Formats the commands string to be used by the SchemaParser
+  void setCommandsAttribute(void);
 
  public:
   Rule(void);
 
-  //Adiciona um comando SQL que será executado pela regra
-  void adicionarComando(const QString &comando);
+  //Adds the SQL command to be executed by the rule
+  void addCommand(const QString &cmd);
 
-  //Define a expressão condicional da regra
-  void definirExpCondicional(const QString &exp);
+  //Sets the conditional expression for the rule
+  void setConditionalExpression(const QString &expr);
 
-  //Define o tipo de execução da regra
-  void definirTipoExecucao(TipoExecucao tipo);
+  //Sets the rule execution type (ALSO, INSTEAD)
+  void setExecutionType(TipoExecucao type);
 
-  //Define o tipo de evento no qual a regra é executada
-  void definirTipoEvento(TipoEvento tipo);
+  //Defines the event when the rule is triggered
+  void setEventType(TipoEvento type);
 
-  //Obtém um comando executado pela regra através de seu índice
-  QString obterComando(unsigned idx_cmd);
+  //Returns one command executed by the rule using its index
+  QString getCommand(unsigned cmd_idx);
 
-  //Retorna a quantidade de comandos existentes
-  unsigned obterNumComandos(void);
+  //Returns the SQL command count
+  unsigned getCommandCount(void);
 
-  //Obtém a expressão condicional da regra
-  QString obterExpCondicional(void);
+  //Returns the conditional expression for the rule
+  QString getConditionalExpression(void);
 
-  //Retorna o tipo de evento de execução da regra
-  TipoEvento obterTipoEvento(void);
+  //Returns the event when the rule is triggered
+  TipoEvento getEventType(void);
 
-  //Retorna o tipo de execução da regra
-  TipoExecucao obterTipoExecucao(void);
+  //Returns the execution type for the rule
+  TipoExecucao getExecutionType(void);
 
-  //Remove um comando da regra através do índice
-  void removerComando(unsigned idx_cmd);
+  //Removes one command form the rule using its index
+  void removeCommand(unsigned cmd_idx);
 
-  //Remove todos os comandos da regra
-  void removerComandos(void);
+  //Remove all commands from the rule
+  void removeCommands(void);
 
-  //Retorna a definição SQL ou XML do objeto
-  QString getCodeDefinition(unsigned tipo_def);
+  //Returns the SQL / XML definition for the rule
+  QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

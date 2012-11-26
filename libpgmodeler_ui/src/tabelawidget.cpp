@@ -424,9 +424,9 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  {
   regra=dynamic_cast<Rule *>(objeto);
   //Coluna 1: Tipo de execução da regra
-  tab->definirTextoCelula(~regra->obterTipoExecucao(),idx_lin,1);
+  tab->definirTextoCelula(~regra->getExecutionType(),idx_lin,1);
   //Coluna 2: Tipo de evento que dispara a regra
-  tab->definirTextoCelula(~regra->obterTipoEvento(),idx_lin,2);
+  tab->definirTextoCelula(~regra->getEventType(),idx_lin,2);
  }
  else
  {
