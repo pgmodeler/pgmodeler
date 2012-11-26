@@ -2501,7 +2501,7 @@ int ModeloBD::obterIndicePermissao(Permission *permissao)
      papel=permissao->getRole(i);
      /* Com o papel obtido verifica-se se o mesmo é referenciado
         no papel obtido da lista principal de permissões */
-     papel_ref=perm_aux->isRoleReferenced(papel);
+     papel_ref=perm_aux->isRoleExists(papel);
     }
    }
 

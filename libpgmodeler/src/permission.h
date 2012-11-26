@@ -25,50 +25,50 @@
 #include "function.h"
 #include "role.h"
 #include <algorithm>
- #include <QTextStream>
+#include <QTextStream>
 
 class Permission: public BaseObject {
- /* Permissões no PostgreSQL se aplicam somente aos objetos
-    de banco de dados como a seguir:
-    * tabela
-    * coluna
-    * visão
-    * sequencia
-    * banco de dados
-    * foreign-data wrapper (não implementado)
-    * foreign server (não implementado)
-    * large objects (não implementado)
-    * função
-    * função agregada
-    * linguagem
-    * esquema
-    * espaço de tabela */
+ /* Permissions on PostgreSQL are only applied to the following
+    object type:
+
+    * table
+    * column
+    * view
+    * sequence
+    * database
+    * foreign-data wrapper (not implemented)
+    * foreign server (not implemented)
+    * large objects (not implemented)
+    * function
+    * aggregate
+    * linguage
+    * schema
+    * tablespace */
  private:
-   //Objeto o qual se aplicam os privilégios
+   //Object which the permission is applied
    BaseObject *object;
 
-   /* Usuários/grupos os quais detém as permissões sobre o objeto.
-      Este vetor pode estar vazio caso se deseja
-      dar permissão a todos os usuários/grupos do cluster (PUBLIC)
-      sobre o objeto */
+   /* Roles that has permissions over the object. This vector can be
+      empty indicating that all roles on the cluster has permission over
+      the object. */
    vector<Role *> roles;
 
-   //Conjunto de privilégios que se aplicam ao objeto
+   //Privileges set applied to the object (Accessed via constants PRIV_???)
    bool privileges[13];
 
-   /* Indica se um privilégio no índice dado pode ser atribuído a outros papéis
-      sobre o mesmo objeto papéis (WITH GRANT OPTION). Este atributo não se aplica
-      quando não há um papel especificado (PUBLIC). Este atributo é ignorado
-      quando não há papel definido como detentor dos privilégios. */
+   /* Indicates whether a privilege with given index can be assigned to other roles
+      over the same object (WITH GRANT OPTION). This attribute is not applicable
+      when there is no specified role (PUBLIC). This attribute is ignored
+      when there is no defined role as holder of the privilege. */
    bool grant_option[13];
 
-   /* Gera um identificador único para a permissão usando o atributo
-      nome da classe base ObjetoBase este é usado apenas para evitar
-      duplicidade de permissões no modelo */
+   /* Generates a unique identifier for permission using the attribute
+      'name' of base class BaseObject. This is only used to avoid
+       duplicate permissions in the model */
    void generatePermissionId(void);
 
  public:
-   //Constantes usadas para referencias cada tipo de privilégio
+   //Constants used to reference the privileges
    static const unsigned PRIV_SELECT=0,
                          PRIV_INSERT=1,
                          PRIV_UPDATE=2,
@@ -82,49 +82,47 @@ class Permission: public BaseObject {
                          PRIV_EXECUTE=10,
                          PRIV_USAGE=11;
 
-  /* No construtor é obrigatório especificar qual objeto receberá as permissões
-     não sendo possível alterar este objeto após a instância da classe
-     ser criada. O que é possível é apenas manipular os papéis e privilégios
-     relacionados ao objeto */
+  /* In the constructor is required to specify which object will receive
+     the permissions this can not be changed after the object instance of
+     the class is created. */
   Permission(BaseObject *obj);
 
-  //Define o papel que deterá os privilégios sobre o objeto
+  //Adds a role that will have privileges over the object
   void addRole(Role *role);
 
-  //Define um dado privilégio para o papel sobre o objeto
+  //Sets the state of one permission's privilege (Accessed via constants PRIV_???)
   void setPrivilege(unsigned priv_id, bool value, bool grant_op);
 
-  //Remove um papel através de seu índice
+  //Remove a role using its index
   void removeRole(unsigned role_idx);
 
-  //Remove todos os papeis da permissão
+  //Remove all roles from the permission
   void removeRoles(void);
 
-  //Obtém o número de papés detentores de privilégios sobre o objeto
+  //Gets the role count associated to the permission
   unsigned getRoleCount(void);
 
-  //Obtém um papel que detém os privilégios sobre o objeto
+  //Gets one role from permission using its index
   Role *getRole(unsigned role_idx);
 
-  //Obtém o objeto que está sujeito aos privilégios
+  //Gets the object that is subject to the privileges
   BaseObject *getObject(void);
 
-  //Obtém o estado atual do flag de opção de concessão de privilégios
+  //Gets the actual state of the GRANT OPTION for the given privilege
   bool getGrantOption(unsigned priv_id);
 
-  /* Obtém a situação do privilégio especificado, se o mesmo está
-     ativo ou não para o papel */
+  //Gets the current state for the given privilege
   bool getPrivilege(unsigned priv_id);
 
-  /* Retorna uma string contendo todos os privilégios
-     configurados no formato interno de permissões do
-     PostgreSQL (conforme documentação do comando GRANT) */
+  /* Returns a string containing all the privileges
+     configured as the internal format of permissions
+     as documented on PostgreSQL GRANT command */
   QString getPrivilegeString(void);
 
-  //Indica se o papel está referenciado na permissão
-  bool isRoleReferenced(Role *role);
+  //Indicates whether the role is present on the permission
+  bool isRoleExists(Role *role);
 
-  //Retorna a definição SQL ou XML do objeto
+  //Returns the SQL / XML definition for the permission
   QString getCodeDefinition(unsigned def_type);
 };
 

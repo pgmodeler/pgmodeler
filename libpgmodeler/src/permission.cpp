@@ -5,26 +5,27 @@ Permission::Permission(BaseObject *obj)
  ObjectType obj_type;
  unsigned priv_id;
 
- //Inicializa todos os privilégios como desmarcados
+ //Initializes all the privileges as unchecked
  for(priv_id=PRIV_SELECT; priv_id<=PRIV_USAGE; priv_id++)
   privileges[priv_id]=grant_option[priv_id]=false;
 
- //Caso o usuário tente atribuir um objeto não alocd   permissão
+ //Raises an error if the object associated to the permission is no allocated
  if(!obj)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Obtém o tipo do objeto
  obj_type=obj->getObjectType();
 
  /* Caso o tipo do objeto a ser atribuído não seja válido de acordo com a regra
     (vide definição da Classe) dispara uma exceção */
+
+ /* Raises an error if the object type to be associated to the permission is
+    invalid according to the rule (see class definition) */
  if(obj_type!=OBJ_TABLE && obj_type!=OBJ_COLUMN && obj_type!=OBJ_VIEW &&
     obj_type!=OBJ_SEQUENCE && obj_type!=OBJ_DATABASE && obj_type!=OBJ_FUNCTION &&
     obj_type!=OBJ_AGGREGATE && obj_type!=OBJ_LANGUAGE && obj_type!=OBJ_SCHEMA &&
     obj_type!=OBJ_TABLESPACE)
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Atribui o objeto   permissão
  this->object=obj;
  this->obj_type=OBJ_PERMISSION;
 
@@ -37,12 +38,11 @@ Permission::Permission(BaseObject *obj)
  attributes[ParsersAttributes::PRIVILEGES_GOP]="";
 }
 
-bool Permission::isRoleReferenced(Role *role)
+bool Permission::isRoleExists(Role *role)
 {
  vector<Role *>::iterator itr, itr_end;
  bool found=false;
 
- //Verifica a existencia do papel na lista de papeis já relacionado  permissão
  itr=roles.begin();
  itr_end=roles.end();
 
@@ -57,16 +57,17 @@ bool Permission::isRoleReferenced(Role *role)
 
 void Permission::addRole(Role *role)
 {
- //Caso o usuário tente atribuir um papel não alocado um erro será disparado
+ //Raises an error if the role is not allocated
  if(!role)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Caso o papel já esteja inserido em tal lista um erro será disparado
- if(isRoleReferenced(role))
+ //Raises an error if the role already exists in the permission
+ if(isRoleExists(role))
    throw Exception(ERR_INS_DUP_ROLE_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Adiciona o papel   lista de papeis da permissão
  roles.push_back(role);
+
+ //Updates the permission Id
  generatePermissionId();
 }
 
@@ -80,52 +81,49 @@ void Permission::setPrivilege(unsigned priv_id, bool value, bool grant_op)
 
  obj_type=object->getObjectType();
 
- /* Alguns privilégios são válidos apenas para certos tipos
-    de objetos. Caso o usuário tente atribuir um privilégio P
-    para um objeto que não aceita este privilégio o mesmo
-    será ignorado. O esquema abaixo mostra os privilégios para
-    cada objeto:
+ /* Some privileges are valid only for certain types
+    of objects. If the user try to assign a privilege P
+    for an object that does not accept this privilege the same
+    is ignored. The schema below shows the privileges for
+    each object:
 
-    Tabela:   SELECT | INSERT | UPDATE | DELETE | TRUNCATE | REFERENCES | TRIGGER
-    Coluna:   SELECT | INSERT | UPDATE | REFERENCES
-    Sequência:  USAGE | SELECT | UPDATE
-    Banco de Dados: CREATE | CONNECT | TEMPORARY | TEMP
-    Função: EXECUTE
-    Função Agregada: EXECUTE
-    Linguagem: USAGE
-    Esquema: CREATE | USAGE
-    Espaço de Tabela: CREATE
-    Visão: SELECT
- */
-    //Validando o privilégio em relação ao tipo de objeto Tabela
+    Table:   SELECT | INSERT | UPDATE | DELETE | TRUNCATE | REFERENCES | TRIGGER
+    Column:   SELECT | INSERT | UPDATE | REFERENCES
+    Sequence:  USAGE | SELECT | UPDATE
+    Database: CREATE | CONNECT | TEMPORARY | TEMP
+    Function: EXECUTE
+    Aggregate: EXECUTE
+    Linguage: USAGE
+    Schema: CREATE | USAGE
+    Tablespace: CREATE
+    View: SELECT */
  if((obj_type==OBJ_TABLE && priv_id!=PRIV_SELECT && priv_id!=PRIV_INSERT &&
                                 priv_id!=PRIV_UPDATE && priv_id!=PRIV_DELETE &&
                                 priv_id!=PRIV_TRUNCATE && priv_id!=PRIV_REFERENCES &&
                                 priv_id!=PRIV_TRIGGER) ||
-    //Validando o privilégio em relação ao tipo de objeto Coluna
+
     (obj_type==OBJ_COLUMN && priv_id!=PRIV_SELECT && priv_id!=PRIV_INSERT &&
                                 priv_id!=PRIV_UPDATE && priv_id!=PRIV_REFERENCES) ||
-    //Validando o privilégio em relação ao tipo de objeto Sequencia
+
     (obj_type==OBJ_SEQUENCE && priv_id!=PRIV_USAGE && priv_id!=PRIV_SELECT &&
                                    priv_id!=PRIV_UPDATE) ||
-    //Validando o privilégio em relação ao tipo de objeto Banco de Dados
+
     (obj_type==OBJ_DATABASE && priv_id!=PRIV_CREATE && priv_id!=PRIV_CONNECT &&
                                      priv_id!=PRIV_TEMPORARY) ||
-    //Validando o privilégio em relação ao tipo de objeto Função (de Agregação)
+
     ((obj_type==OBJ_FUNCTION || obj_type==OBJ_AGGREGATE) && priv_id!=PRIV_EXECUTE) ||
-    //Validando o privilégio em relação ao tipo de objeto Linguagem
+
     (obj_type==OBJ_LANGUAGE && priv_id!=PRIV_USAGE) ||
-    //Validando o privilégio em relação ao tipo de objeto Esquema
+
     (obj_type==OBJ_SCHEMA && priv_id!=PRIV_USAGE && priv_id!=PRIV_CREATE) ||
-    //Validando o privilégio em relação ao tipo de objeto Espaço de Tabela
+
     (obj_type==OBJ_TABLESPACE && priv_id!=PRIV_CREATE) ||
-    //Validando o privilégio em relação ao tipo de objeto Visão
+
     (obj_type==OBJ_VIEW && priv_id!=PRIV_SELECT))
-   /* Caso o privilégio a ser atribuído ao objeto seja incompatível com seu tipo
-      um erro será retornado ao usuário */
+
+   //Raises an error if the privilege is invalid according to the object type
    throw Exception(ERR_ASG_INCOMP_PRIV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Marca o privilégio com o valor passado
  privileges[priv_id]=value;
  this->grant_option[priv_id]=grant_op;
 }
@@ -164,7 +162,7 @@ BaseObject *Permission::getObject(void)
 
 bool Permission::getPrivilege(unsigned priv_id)
 {
- //Caso o tipo de privilégio sejá inválido dispara uma exceção
+ //Raises an error if the privilege is invalid
  if(priv_id > PRIV_USAGE)
   throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -173,7 +171,7 @@ bool Permission::getPrivilege(unsigned priv_id)
 
 bool Permission::getGrantOption(unsigned priv_id)
 {
- //Caso o tipo de privilégio sejá inválido dispara uma exceção
+ //Raises an error if the privilege is invalid
  if(priv_id > PRIV_USAGE)
   throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -186,7 +184,7 @@ QString Permission::getPrivilegeString(void)
  QString str_priv;
  unsigned i;
 
- /* Montagem da string de acordo com a documentação:
+ /* Schema to build the privilege string:
 
     rolename=xxxx -- privileges granted to a role
             =xxxx -- privileges granted to PUBLIC
@@ -229,29 +227,24 @@ void Permission::generatePermissionId(void)
  unsigned i, count;
  QTextStream stream(&addr);
 
- //Caso haja algum papel associado   permissão
+ //Generates the id only when there is associated roles to the permission
  if(roles.size() > 0)
  {
   itr=roles.begin();
   itr_end=roles.end();
 
-  /* Converte o endereço dos mesmos em string pois este é um
-     identificador único de cada papel */
   while(itr!=itr_end)
   {
    role=(*itr);
-   //Converte o endereço
+   //Convertes the role address to string and use it as the id for the permission
    stream << reinterpret_cast<unsigned *>(role);
-   //Armazena-o em um vetor
    addr_vect.push_back(addr.mid(2));
    itr++;
   }
 
-  //Ordena os endereços obtido
   sort(addr_vect.begin(), addr_vect.end());
   count=addr_vect.size();
 
-  //Concatena os endereços ordenados separando-os por '.'
   for(i=0; i < count; i++)
   {
    str_aux+=QString("%1").arg(addr_vect[i]);
@@ -259,19 +252,18 @@ void Permission::generatePermissionId(void)
   }
 
  }
- /* Caso nenhum papel esteja associado a permissão (public)
-    gera um identificador com zeros indicando que a permissão
-    não está ligada diretamente a nenhum papel do modelo */
+ /* If no role is associated with permissions (public)
+    generates an identifier with zeros indicating that permission
+    is not linked directly to any role on the model */
  else
    str_aux="000000";
 
- /* Configura o nome da permissão da seguinte forma:
-    grant_[ID_OBJETO]_([END_PAPEL1].[END_PAPELN])
+ /* Configures the permission name as the following:
+    grant_[OBJECT_ID]_([ROLE1_ADDR].[ROLEN_ADDR])
 
-    Com esse formato de nome é possivel criar um identificador
-    interno para a permissão e assim
-    podendo gerar erros quando o usuário tenta criar uma permissão
-    com o mesmo conjunto de papéis relacionados ao objeto */
+    With this name format its possible create an unique id for the permission.
+    Generating errors when the user try to create a second permission
+    with the same configuration as the first. */
  this->obj_name=QString(ParsersAttributes::PERMISSION + "_%1.%2")
             .arg(object->getObjectId())
             .arg(str_aux);
@@ -305,7 +297,6 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
  if(def_type==SchemaParser::XML_DEFINITION)
  {
-  //Marca os privilégios que estão setados atribuídos ao objeto
   for(i=0; i < 12; i++)
   {
    if(privileges[i] && grant_option[i])
@@ -318,8 +309,6 @@ QString Permission::getCodeDefinition(unsigned def_type)
  }
  else
  {
-  /* Concatena os nomes dos privilégios para que os mesmos sejam incluídos
-     na SQL que cria a permissão em BD */
   for(i=0; i < 12; i++)
   {
    if(privileges[i] && !grant_option[i])
@@ -334,12 +323,8 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
  count=roles.size();
 
- /* Concatena os nomes dos papéis que participam da
-    permissão separando-os por vírgula */
  for(i=0; i < count; i++)
- {
   attributes[ParsersAttributes::ROLES]+=roles[i]->getName(true) + ",";
- }
 
  attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);
 
