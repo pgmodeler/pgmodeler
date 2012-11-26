@@ -1,12 +1,12 @@
-#include "referencia.h"
+#include "reference.h"
 
-Referencia::Referencia(void)
+Reference::Reference(void)
 {
- this->tabela=NULL;
- this->coluna=NULL;
+ this->table=NULL;
+ this->column=NULL;
 }
 
-Referencia::Referencia(Tabela *tabela, Column *coluna, const QString &alias_tab, const QString &alias_col)
+Reference::Reference(Tabela *tabela, Column *coluna, const QString &alias_tab, const QString &alias_col)
 {
  if(!tabela)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -23,13 +23,13 @@ Referencia::Referencia(Tabela *tabela, Column *coluna, const QString &alias_tab,
   throw Exception(ERR_ASG_OBJ_BELONGS_OTHER_TABLE ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Atribui os parâmetros aos atributos do objeto
- this->tabela=tabela;
- this->coluna=coluna;
+ this->table=tabela;
+ this->column=coluna;
  this->alias=alias_tab;
- this->alias_coluna=alias_col;
+ this->column_alias=alias_col;
 }
 
-Referencia::Referencia(const QString &expressao, const QString &alias_exp)
+Reference::Reference(const QString &expressao, const QString &alias_exp)
 {
  if(expressao=="")
   throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -38,63 +38,63 @@ Referencia::Referencia(const QString &expressao, const QString &alias_exp)
  else if(!BaseObject::isValidName(alias_exp))
   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- tabela=NULL;
- coluna=NULL;
+ table=NULL;
+ column=NULL;
 
  //Atribui os parâmetros aos atributos do objeto
  alias=alias_exp;
- this->expressao=expressao;
+ this->expression=expressao;
 }
 
-Tabela *Referencia::obterTabela(void)
+Tabela *Reference::getTable(void)
 {
- return(tabela);
+ return(table);
 }
 
-Column *Referencia::obterColuna(void)
+Column *Reference::getColumn(void)
 {
- return(coluna);
+ return(column);
 }
 
-QString Referencia::obterAliasColuna(void)
+QString Reference::getColumnAlias(void)
 {
- return(alias_coluna);
+ return(column_alias);
 }
 
-QString Referencia::obterAlias(void)
+QString Reference::getAlias(void)
 {
  return(alias);
 }
 
-QString Referencia::obterExpressao(void)
+QString Reference::getExpression(void)
 {
- return(expressao);
+ return(expression);
 }
 
-unsigned Referencia::obterTipoReferencia(void)
+unsigned Reference::getReferenceType(void)
 {
  /* Caso o atributo expressão esteja preenchido o tipo do
     objeto será referência a uma expressão */
- if(expressao=="")
-  return(REFER_COLUNA);
+ if(expression=="")
+  return(REFER_COLUMN);
  else
-  return(REFER_EXPRESSAO);
+  return(REFER_EXPRESSION);
 }
 
-QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
+QString Reference::getSQLDefinition(unsigned tipo_sql)
 {
  QString def_sql, nome_tab, nome_cols;
  unsigned tipo_refer;
 
  //Obtém o tipo de referência do objeto this
- tipo_refer=obterTipoReferencia();
+ tipo_refer=getReferenceType();
 
  /* Caso seja uma referênci  parte SELECT-FROM,
     formata a SQL do objeto de acordo com este tipo */
  if(tipo_sql==SQL_REFER_SELECT)
  {
   //Caso seja um referênci  objetos (colunas, esquemas, tabelas, alias)
-  if(tipo_refer==REFER_COLUNA)
+  if(tipo_refer==REFER_COLUMN)
   {
    /*
     Definição SQL gerada:
@@ -104,7 +104,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
    /* Caso um alias de tabela não esteja definido,
       o nome da própria tabela será usada */
    if(alias=="")
-    nome_tab=tabela->getName(true);
+    nome_tab=table->getName(true);
    else
     //Caso haja um alias de tabela, formata o seu nome e passa a usá-la na def. SQL
     nome_tab=BaseObject::formatName(alias);
@@ -115,16 +115,16 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
 
    /* Caso não haja uma coluna definida, todas as colunas da tabela
       serão considerada, desta forma um '*' será concatenado */
-   if(!coluna)
+   if(!column)
     def_sql=nome_tab + "*";
    else
    {
     //Caso haja uma coluna definida, atribui o seu nome   definição SQL
-    def_sql=nome_tab + coluna->getName(true);
+    def_sql=nome_tab + column->getName(true);
 
     //Caso haja um alias para a coluna o mesmo será concatenad  definição
-    if(alias_coluna!="")
-     def_sql+=" AS " + BaseObject::formatName(alias_coluna);
+    if(column_alias!="")
+     def_sql+=" AS " + BaseObject::formatName(column_alias);
    }
   }
   //Caso seja um referênci  uma expressão na parte SELECT-FROM
@@ -134,7 +134,7 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
     Definição SQL gerada:
     {expressão} [AS ALIAS]
    */
-   def_sql=expressao;
+   def_sql=expression;
    if(alias!="")
     def_sql+=" AS " + BaseObject::formatName(alias);
   }
@@ -149,10 +149,10 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
      ... FROM {NOME_TABELA} [AS ALIAS] ou
      ... FROM {EXPRESSÃO}
   */
-  if(tipo_refer==REFER_COLUNA)
+  if(tipo_refer==REFER_COLUMN)
   {
    //Concatena o nome da tabela
-   def_sql+=tabela->getName(true);
+   def_sql+=table->getName(true);
 
    //Caso um alias exista
    if(alias!="")
@@ -160,14 +160,14 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
    def_sql+=", ";
   }
   else
-   def_sql=expressao;
+   def_sql=expression;
  }
  //Último tipo de referência, [JOIN | WHERE]-...
  else
  {
   /* Caso seja uma referência a um objeto e uma
      coluna exista */
-  if(tipo_refer==REFER_COLUNA && coluna)
+  if(tipo_refer==REFER_COLUMN && column)
   {
    /*
     Definição SQL gerada:
@@ -178,24 +178,24 @@ QString Referencia::obterDefinicaoSQL(unsigned tipo_sql)
    /* Caso não existe um alias de tabel, o próprio nome
       da mesma é concatenad  definição */
    if(alias=="")
-    def_sql=tabela->getName(true);
+    def_sql=table->getName(true);
    else
     def_sql=BaseObject::formatName(alias);
 
    def_sql+=".";
 
    //Concatena o nome da coluna
-   if(coluna)
-    def_sql+=coluna->getName(true);
+   if(column)
+    def_sql+=column->getName(true);
   }
-  else if(tipo_refer==REFER_EXPRESSAO)
-   def_sql=expressao;
+  else if(tipo_refer==REFER_EXPRESSION)
+   def_sql=expression;
  }
 
  return(def_sql);
 }
 
-QString Referencia::obterDefinicaoXML(void)
+QString Reference::getXMLDefinition(void)
 {
  QString def_xml;
  map<QString, QString> atributos;
@@ -203,43 +203,43 @@ QString Referencia::obterDefinicaoXML(void)
  atributos[ParsersAttributes::TABLE]="";
  atributos[ParsersAttributes::COLUMN]="";
 
- if(tabela)
-  atributos[ParsersAttributes::TABLE]=tabela->getName(true);
+ if(table)
+  atributos[ParsersAttributes::TABLE]=table->getName(true);
 
- if(coluna)
-  atributos[ParsersAttributes::COLUMN]=coluna->getName();
+ if(column)
+  atributos[ParsersAttributes::COLUMN]=column->getName();
 
- atributos[ParsersAttributes::EXPRESSION]=expressao;
+ atributos[ParsersAttributes::EXPRESSION]=expression;
  atributos[ParsersAttributes::ALIAS]=alias;
- atributos[ParsersAttributes::COLUMN_ALIAS]=alias_coluna;
+ atributos[ParsersAttributes::COLUMN_ALIAS]=column_alias;
 
  //Retorna a definição XML da referencia
  return(SchemaParser::getObjectDefinition(ParsersAttributes::REFERENCE,
                                             atributos, SchemaParser::XML_DEFINITION));
 }
 
-bool Referencia::operator == (Referencia &refer)
+bool Reference::operator == (Reference &refer)
 {
  unsigned tipo_ref;
 
- tipo_ref=this->obterTipoReferencia();
+ tipo_ref=this->getReferenceType();
 
  //Compara o tipo de referência dos objetos
- if(tipo_ref==refer.obterTipoReferencia())
+ if(tipo_ref==refer.getReferenceType())
  {
   /* Caso o tipo de referencia do objeto for de objeto
      compara apenas os atributos pertinentes a este tipo */
-  if(tipo_ref==REFER_COLUNA)
+  if(tipo_ref==REFER_COLUMN)
   {
-   return(this->tabela==refer.tabela &&
-          this->coluna==refer.coluna &&
+   return(this->table==refer.table &&
+          this->column==refer.column &&
           this->alias==refer.alias &&
-          this->alias_coluna==refer.alias_coluna);
+          this->column_alias==refer.column_alias);
   }
   else
   {
    //Compara os atributos pertinentes ao tipo expressão
-   return(this->expressao==refer.expressao &&
+   return(this->expression==refer.expression &&
           this->alias==refer.alias);
   }
  }

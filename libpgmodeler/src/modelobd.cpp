@@ -856,7 +856,7 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
 {
  Tabela *tab=NULL;
  RelacionamentoBase *rel=NULL;
- Referencia ref;
+ Reference ref;
  unsigned i, qtd_ref, idx;
  vector<BaseObject *>::iterator itr, itr_end;
 
@@ -937,12 +937,12 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
   /* Cria automaticamente os relacionamentos entre as tabelas e a visão.
      As tabelas referenciadas são obtidas das referências na parte SELECT
      da consulta que gera a visão  */
-  qtd_ref=visao->obterNumReferencias(Referencia::SQL_REFER_SELECT);
+  qtd_ref=visao->obterNumReferencias(Reference::SQL_REFER_SELECT);
 
   for(i=0; i < qtd_ref; i++)
   {
-   ref=visao->obterReferencia(i, Referencia::SQL_REFER_SELECT);
-   tab=ref.obterTabela();
+   ref=visao->obterReferencia(i, Reference::SQL_REFER_SELECT);
+   tab=ref.getTable();
 
    /* Caso a tabela exista, um relacionamento tabela-visão será automaticamente criado
       (caso este já não existe) e inserido no modelo */
@@ -1318,7 +1318,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
  Gatilho *gatilho=NULL;
  Visao *visao=NULL;
  RelacionamentoBase *rel=NULL;
- Referencia ref;
+ Reference ref;
  ObjectType tipo_obj_tab[3]={ OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_INDEX };
  bool enc=false;
 
@@ -1456,14 +1456,14 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
        recriação */
 
     //Obtém a quantidade de referências as tabelas
-    qtd=visao->obterNumReferencias(Referencia::SQL_REFER_SELECT);
+    qtd=visao->obterNumReferencias(Reference::SQL_REFER_SELECT);
 
     for(i=0; i < qtd; i++)
     {
      //Obtém uma referência
-     ref=visao->obterReferencia(i, Referencia::SQL_REFER_SELECT);
+     ref=visao->obterReferencia(i, Reference::SQL_REFER_SELECT);
      //Obtém a tabela da referência
-     tabela=ref.obterTabela();
+     tabela=ref.getTable();
 
      if(tabela)
      {
@@ -5354,7 +5354,7 @@ Visao *ModeloBD::criarVisao(void)
  Tabela *tabela=NULL;
  QString elem, str_aux;
  QStringList lista_aux;
- vector<Referencia> vet_refs;
+ vector<Reference> vet_refs;
  unsigned tipo;
  int idx_ref, i, qtd;
 
@@ -5425,7 +5425,7 @@ Visao *ModeloBD::criarVisao(void)
         }
 
        //Adiciona a referência configurad  lista temporária de referências
-       vet_refs.push_back(Referencia(tabela, coluna,
+       vet_refs.push_back(Reference(tabela, coluna,
                                      atributos[ParsersAttributes::ALIAS],
                                      atributos[ParsersAttributes::COLUMN_ALIAS]));
       }
@@ -5439,7 +5439,7 @@ Visao *ModeloBD::criarVisao(void)
        //Acessa e obtém o conteúdo da expressão
        XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
        XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-       vet_refs.push_back(Referencia(XMLParser::getElementContent(),str_aux));
+       vet_refs.push_back(Reference(XMLParser::getElementContent(),str_aux));
 
        XMLParser::restorePosition();
       }
@@ -5454,11 +5454,11 @@ Visao *ModeloBD::criarVisao(void)
 
       //Armazena o alias da expressão
       if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::SELECT_EXP)
-       tipo=Referencia::SQL_REFER_SELECT;
+       tipo=Reference::SQL_REFER_SELECT;
       else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::FROM_EXP)
-       tipo=Referencia::SQL_REFER_FROM;
+       tipo=Reference::SQL_REFER_FROM;
       else
-       tipo=Referencia::SQL_REFER_WHERE;
+       tipo=Reference::SQL_REFER_WHERE;
 
       //Acessa e obtém o conteúdo da expressão
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
@@ -6842,8 +6842,8 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    qtd=visao->obterNumReferencias();
    for(i=0; i < qtd; i++)
    {
-    if(visao->obterReferencia(i).obterTabela())
-     obterDependenciasObjeto(visao->obterReferencia(i).obterTabela(), vet_deps, inc_dep_indiretas);
+    if(visao->obterReferencia(i).getTable())
+     obterDependenciasObjeto(visao->obterReferencia(i).getTable(), vet_deps, inc_dep_indiretas);
    }
   }
  }

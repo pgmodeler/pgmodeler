@@ -320,7 +320,7 @@ void OGSubItemObjeto::configurarObjeto(void)
  }
 }
 
-void OGSubItemObjeto::configurarObjeto(Referencia referencia)
+void OGSubItemObjeto::configurarObjeto(Reference referencia)
 {
  QTextCharFormat fmt;
  float px;
@@ -332,19 +332,19 @@ void OGSubItemObjeto::configurarObjeto(Referencia referencia)
  px=descritor->pos().x() + descritor->boundingRect().width() + (2 * ESP_HORIZONTAL);
 
  //Caso o tipo da referência seja a uma coluna
- if(referencia.obterTipoReferencia()==Referencia::REFER_COLUNA)
+ if(referencia.getReferenceType()==Reference::REFER_COLUMN)
  {
   //Configura o rótulo de nome no formato: [tabela].[coluna]
   fmt=config_fonte[ParsersAttributes::REF_TABLE];
-  rotulos[0]->setText(referencia.obterTabela()->getName() + ".");
+  rotulos[0]->setText(referencia.getTable()->getName() + ".");
   rotulos[0]->setFont(fmt.font());
   rotulos[0]->setBrush(fmt.foreground());
   rotulos[0]->setPos(px, 0);
   px+=rotulos[0]->boundingRect().width();
 
   fmt=config_fonte[ParsersAttributes::REF_COLUMN];
-  if(referencia.obterColuna())
-   rotulos[1]->setText(referencia.obterColuna()->getName());
+  if(referencia.getColumn())
+   rotulos[1]->setText(referencia.getColumn()->getName());
   else
    rotulos[1]->setText("*");
 
@@ -359,8 +359,8 @@ void OGSubItemObjeto::configurarObjeto(Referencia referencia)
   fmt=config_fonte[ParsersAttributes::REF_TABLE];
 
   //Trunca a expressão em 20 caracters caso a mesma ultrapasse este comprimento
-  str_aux=referencia.obterExpressao().mid(0,20);
-  if(referencia.obterExpressao().size() > 20) str_aux+="...";
+  str_aux=referencia.getExpression().mid(0,20);
+  if(referencia.getExpression().size() > 20) str_aux+="...";
 
   rotulos[0]->setText(str_aux);
   rotulos[0]->setFont(fmt.font());
@@ -371,13 +371,13 @@ void OGSubItemObjeto::configurarObjeto(Referencia referencia)
  }
 
  //Caso a referência possua um alias configura o rótulo para exibi-lo
- if((referencia.obterColuna() && referencia.obterAliasColuna()!="") ||
-    (referencia.obterAlias()!="" && referencia.obterTipoReferencia()==Referencia::REFER_EXPRESSAO))
+ if((referencia.getColumn() && referencia.getColumnAlias()!="") ||
+    (referencia.getAlias()!="" && referencia.getReferenceType()==Reference::REFER_EXPRESSION))
  {
-  if(referencia.obterTipoReferencia()==Referencia::REFER_EXPRESSAO)
-   str_aux=referencia.obterAlias();
+  if(referencia.getReferenceType()==Reference::REFER_EXPRESSION)
+   str_aux=referencia.getAlias();
   else
-   str_aux=referencia.obterAliasColuna();
+   str_aux=referencia.getColumnAlias();
 
   str_aux=" (" + str_aux + ") ";
   fmt=config_fonte[ParsersAttributes::ALIAS];

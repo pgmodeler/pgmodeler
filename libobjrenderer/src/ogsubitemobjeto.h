@@ -71,7 +71,7 @@ class OGSubItemObjeto: public ObjetoGrafico
   ~OGSubItemObjeto(void);
 
   //Configura o subitem como uma referência de visão
-  void configurarObjeto(Referencia referencia);
+  void configurarObjeto(Reference referencia);
 
   //Configura o subitem como um objeto de tabela
   void configurarObjeto(void);

@@ -21,7 +21,7 @@ void OGVisao::configurarObjeto(void)
  Visao *visao=dynamic_cast<Visao *>(this->obterObjetoOrigem());
  QPolygonF pol;
  int i, qtd;
- Referencia ref_visao;
+ Reference ref_visao;
  float larg;
  QPen pen;
  OGSubItemObjeto *referencia=NULL;
@@ -31,7 +31,7 @@ void OGVisao::configurarObjeto(void)
  titulo->configurarObjeto(visao);
 
  //Obtém a quantidade de referências na parte SELECT
- qtd=visao->obterNumReferencias(Referencia::SQL_REFER_SELECT);
+ qtd=visao->obterNumReferencias(Reference::SQL_REFER_SELECT);
 
  //Move o container de referências para origem para ser reposicionado posteriormente
  referencias->moveBy(-referencias->scenePos().x(),
@@ -41,7 +41,7 @@ void OGVisao::configurarObjeto(void)
  for(i=0; i < qtd; i++)
  {
   //Obtém uma referência
-  ref_visao=visao->obterReferencia(i, Referencia::SQL_REFER_SELECT);
+  ref_visao=visao->obterReferencia(i, Reference::SQL_REFER_SELECT);
 
   /* Caso o índice 'i' esteja dentro dos limites de subitens de referência
      reaproveita o item e o reconfigura */

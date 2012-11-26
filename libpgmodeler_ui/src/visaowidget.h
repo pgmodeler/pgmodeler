@@ -35,7 +35,7 @@
  Essa declaração não afeta o comportamento das demais classes que de algum
  modo referenciam a classe Referencia.*/
 #include <QMetaType>
-Q_DECLARE_METATYPE(Referencia)
+Q_DECLARE_METATYPE(Reference)
 
 class VisaoWidget: public ObjetoBaseWidget, public Ui::VisaoWidget {
  Q_OBJECT
@@ -61,7 +61,7 @@ class VisaoWidget: public ObjetoBaseWidget, public Ui::VisaoWidget {
                        *sel_coluna;
 
    //Exibe os dados de uma dada referência na tabela de referências
-   void exibirDadosReferencia(Referencia refer, bool selec_from, bool from_where,
+   void exibirDadosReferencia(Reference refer, bool selec_from, bool from_where,
                               bool apos_where, unsigned idx_ref);
 
    //Método auxiliar que limpa os campos do formulário de referências

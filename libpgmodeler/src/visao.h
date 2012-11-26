@@ -22,13 +22,13 @@
 #ifndef VISAO_H
 #define VISAO_H
 
-#include "referencia.h"
+#include "reference.h"
 #include "basetable.h"
 
 class Visao: public BaseTable {
  private:
   //Armazena as referências para objetos e expressões
-  vector<Referencia> referencias;
+  vector<Reference> referencias;
 
   /* Vetores que armazenam os ponteiros para as referências
      da visão. Estes vetores significam as expressões na
@@ -47,7 +47,7 @@ class Visao: public BaseTable {
 
   /* Verifica se uma determinada referência já está cadastrada
      retornando -1 caso não exista ou seu índice caso exista */
-  int obterIndiceReferencia(Referencia &refer);
+  int obterIndiceReferencia(Reference &refer);
 
  public:
   Visao(void);
@@ -55,7 +55,7 @@ class Visao: public BaseTable {
 
   /* Adiciona um referência a  visão e ao mesmo tempo em um dos vetores
      de expressão usandos os parâmetros tipo_sql e idx_exp (opcional) */
-  void adicionarReferencia(Referencia &refer, unsigned tipo_sql, int idx_exp=-1);
+  void adicionarReferencia(Reference &refer, unsigned tipo_sql, int idx_exp=-1);
 
   /* Remove uma referência da visão, caso o elemento a ser removido esteja
      sendo referenciado pelos vetores de expressão, os elementos desses
@@ -75,15 +75,15 @@ class Visao: public BaseTable {
   unsigned obterNumReferencias(unsigned tipo_sql, int tipo_ref=-1);
 
   //Obtém uma referência da visão através do índice
-  Referencia obterReferencia(unsigned id_ref);
+  Reference obterReferencia(unsigned id_ref);
 
   /* Obtém uma referência numa determinada posição de uma lista
      de expressões da visão */
-  Referencia obterReferencia(unsigned id_ref, unsigned tipo_sql);
+  Reference obterReferencia(unsigned id_ref, unsigned tipo_sql);
 
   /* Retorna o índice de uma dada referência em uma das lista de
      expressões SQL: SELECT-FROM, FROM-WHERE ou após WHERE */
-  int obterIndiceReferencia(Referencia &ref, unsigned tipo_sql);
+  int obterIndiceReferencia(Reference &ref, unsigned tipo_sql);
 
   //Retorna a definição SQL ou XML do objeto
   QString getCodeDefinition(unsigned tipo_def);

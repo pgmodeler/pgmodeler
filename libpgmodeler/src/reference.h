@@ -19,70 +19,70 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef REFERENCIA_H
-#define REFERENCIA_H
+#ifndef REFERENCE_H
+#define REFERENCE_H
 
 #include "tabela.h"
 #include "schema.h"
 
-class Referencia {
+class Reference {
  private:
   //Guarda a referência para uma tabela
-  Tabela *tabela;
+  Tabela *table;
 
   //Guarda a referência para uma coluna da tabela
-  Column *coluna;
+  Column *column;
 
   //Armazena uma expressão que forma a declaração de uma visão
-  QString expressao,
+  QString expression,
          //Armazena um alias para expressão ou tabela
          alias,
          //Armazena um alias para coluna
-         alias_coluna;
+         column_alias;
 
  public:
   //Constantes usada para identificar o tipo de referência
-  static const unsigned REFER_COLUNA=0,
-                        REFER_EXPRESSAO=1;
+  static const unsigned REFER_COLUMN=0,
+                        REFER_EXPRESSION=1;
 
   //Constantes usadas na geração do SQL da referência
   static const unsigned SQL_REFER_WHERE=10,
                         SQL_REFER_SELECT=20,
                         SQL_REFER_FROM=30;
 
-  Referencia(void);
+  Reference(void);
 
   //Construtor o qual cria uma referência a uma coluna/tabela
-  Referencia(Tabela *tabela, Column *coluna, const QString &alias_tab, const QString &alias_col);
+  Reference(Tabela *table, Column *column, const QString &alias_tab, const QString &alias_col);
 
   //Construtor o qual cria uma referência a uma expressão
-  Referencia(const QString &expressao, const QString &alias_exp);
+  Reference(const QString &expression, const QString &alias_exp);
 
   //Obtém a tabela referenciada
-  Tabela *obterTabela(void);
+  Tabela *getTable(void);
 
   //Obtém a coluna referenciada
-  Column *obterColuna(void);
+  Column *getColumn(void);
 
   //Retorna o alias da coluna referenciada
-  QString obterAliasColuna(void);
+  QString getColumnAlias(void);
 
   //Retorna o alias da tabela ou expressão
-  QString obterAlias(void);
+  QString getAlias(void);
 
   //Retorna a expressão
-  QString obterExpressao(void);
+  QString getExpression(void);
 
   /* Retorna o tipo da referência
     (ref. a um objeto ou ref. a uma expressão) */
-  unsigned obterTipoReferencia(void);
+  unsigned getReferenceType(void);
 
   //Obtém a definição SQL da referência
-  QString obterDefinicaoSQL(unsigned tipo_sql);
-  QString obterDefinicaoXML(void);
+  QString getSQLDefinition(unsigned tipo_sql);
+  QString getXMLDefinition(void);
 
   //Compara os atributos de duas referências
-  bool operator == (Referencia &refer);
+  bool operator == (Reference &refer);
 };
 
 #endif
