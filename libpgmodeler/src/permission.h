@@ -1,7 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description:  Implements the operations to manipulate object permissions.
+# Class: Permission
+# Description: Implements the operations to manipulate object permissions.
 # Creation date: 16/09/2010
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

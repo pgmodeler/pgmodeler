@@ -6,44 +6,40 @@ Reference::Reference(void)
  this->column=NULL;
 }
 
-Reference::Reference(Tabela *tabela, Column *coluna, const QString &alias_tab, const QString &alias_col)
+Reference::Reference(Tabela *table, Column *column, const QString &tab_alias, const QString &col_alias)
 {
- if(!tabela)
+ //Raises an error if the table is not allocated
+ if(!table)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- /* Caso o alias atribuido   tabela/expressão ou coluna seja inválido
-    de acordo com a regra de nomenclatura do PostgreSQL */
- else if((!alias_tab.isEmpty() && !BaseObject::isValidName(alias_tab)) ||
-         (!alias_col.isEmpty() && !BaseObject::isValidName(alias_col)))
+ //Raises an error if the table/column alias has an invalid name
+ else if((!tab_alias.isEmpty() && !BaseObject::isValidName(tab_alias)) ||
+         (!col_alias.isEmpty() && !BaseObject::isValidName(col_alias)))
   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- /* Caso se tente criar uma referência a uma coluna cuja tabela pai seja
-    diferente da tabela informada no parâmetro */
- else if(coluna && coluna->getParentTable()!=tabela)
+ //Raises an error if the column parent table differs from the passed table
+ else if(column && column->getParentTable()!=table)
   throw Exception(ERR_ASG_OBJ_BELONGS_OTHER_TABLE ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Atribui os parâmetros aos atributos do objeto
- this->table=tabela;
- this->column=coluna;
- this->alias=alias_tab;
- this->column_alias=alias_col;
+ this->table=table;
+ this->column=column;
+ this->alias=tab_alias;
+ this->column_alias=col_alias;
 }
 
-Reference::Reference(const QString &expressao, const QString &alias_exp)
+Reference::Reference(const QString &expression, const QString &expr_alias)
 {
- if(expressao=="")
+ //Raises an error if the user try to create an reference using an empty expression
+ if(expression=="")
   throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- /* Caso o alias da expressão seja inválido de acordo com as regras de
-    nomenclatura do PostgreSQL */
- else if(!BaseObject::isValidName(alias_exp))
+ //Raises an error if the expression alias has an invalid name
+ else if(!BaseObject::isValidName(expr_alias))
   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  table=NULL;
  column=NULL;
-
- //Atribui os parâmetros aos atributos do objeto
- alias=alias_exp;
- this->expression=expressao;
+ alias=expr_alias;
+ this->expression=expression;
 }
 
 Tabela *Reference::getTable(void)
@@ -73,131 +69,109 @@ QString Reference::getExpression(void)
 
 unsigned Reference::getReferenceType(void)
 {
- /* Caso o atributo expressão esteja preenchido o tipo do
-    objeto será referência a uma expressão */
  if(expression=="")
   return(REFER_COLUMN);
  else
   return(REFER_EXPRESSION);
 }
 
-QString Reference::getSQLDefinition(unsigned tipo_sql)
+QString Reference::getSQLDefinition(unsigned sql_type)
 {
- QString def_sql, nome_tab, nome_cols;
- unsigned tipo_refer;
+ QString sql_def, tab_name;
+ unsigned refer_type;
 
- //Obtém o tipo de referência do objeto this
- tipo_refer=getReferenceType();
+ refer_type=getReferenceType();
 
- /* Caso seja uma referênci  parte SELECT-FROM,
-    formata a SQL do objeto de acordo com este tipo */
- if(tipo_sql==SQL_REFER_SELECT)
+ //Case the reference is between the SELECT-FROM keywords
+ if(sql_type==SQL_REFER_SELECT)
  {
-  //Caso seja um referênci  objetos (colunas, esquemas, tabelas, alias)
-  if(tipo_refer==REFER_COLUMN)
+  //Case the reference is linked to a column
+  if(refer_type==REFER_COLUMN)
   {
-   /*
-    Definição SQL gerada:
-    {NOME_TABELA|ALIAS_TABELA}.{NOME_COLUNA | *} [AS ALIAS_COLUNA]
-   */
+   /* Generated SQL definition:
+      {TABLE_NAME|TABLE_ALIAS}.{COLUMN_NAME | *} [AS COLUMN_ALIAS] */
 
-   /* Caso um alias de tabela não esteja definido,
-      o nome da própria tabela será usada */
+   //Use the real table name when its alias isn't defined
    if(alias=="")
-    nome_tab=table->getName(true);
+    tab_name=table->getName(true);
    else
-    //Caso haja um alias de tabela, formata o seu nome e passa a usá-la na def. SQL
-    nome_tab=BaseObject::formatName(alias);
+    //Use the table alias when its not empty
+    tab_name=BaseObject::formatName(alias);
 
-   /* Adiciona um ponto logo após o nome da tabela (ou alias), para
-      a concatenação do nome da coluna */
-   nome_tab+=".";
+   tab_name+=".";
 
-   /* Caso não haja uma coluna definida, todas as colunas da tabela
-      serão considerada, desta forma um '*' será concatenado */
+   /* Case there is no column definede the default behavior is consider
+      all the table columns (e.g. table.*) */
    if(!column)
-    def_sql=nome_tab + "*";
+    sql_def=tab_name + "*";
    else
    {
-    //Caso haja uma coluna definida, atribui o seu nome   definição SQL
-    def_sql=nome_tab + column->getName(true);
+    //Case there is an column concatenates its name to the code definition
+    sql_def=tab_name + column->getName(true);
 
-    //Caso haja um alias para a coluna o mesmo será concatenad  definição
+    //Case there is a column alias concatenate it to the definition
     if(column_alias!="")
-     def_sql+=" AS " + BaseObject::formatName(column_alias);
+     sql_def+=" AS " + BaseObject::formatName(column_alias);
    }
   }
-  //Caso seja um referênci  uma expressão na parte SELECT-FROM
+  //Case the reference is linked to an expression
   else
   {
-   /*
-    Definição SQL gerada:
-    {expressão} [AS ALIAS]
-   */
-   def_sql=expression;
+   /* Generated SQL definition:
+      {expression} [AS ALIAS] */
+   sql_def=expression;
    if(alias!="")
-    def_sql+=" AS " + BaseObject::formatName(alias);
+    sql_def+=" AS " + BaseObject::formatName(alias);
   }
-  def_sql+=", ";
+  sql_def+=", ";
  }
- //Caso seja um referência na parte FROM-[JOIN | WHERE]
- else if(tipo_sql==SQL_REFER_FROM)
+ //Case the reference is between the FROM-[JOIN | WHERE] keywords
+ else if(sql_type==SQL_REFER_FROM)
  {
-  /* Caso seja uma referência a uma objeto, apenas
-     o nome e alias da tabela é usado, isso é feito
-     para que a definição SQL seja na forma:
-     ... FROM {NOME_TABELA} [AS ALIAS] ou
-     ... FROM {EXPRESSÃO}
-  */
-  if(tipo_refer==REFER_COLUMN)
-  {
-   //Concatena o nome da tabela
-   def_sql+=table->getName(true);
+  /* Case the reference is linked to a column only the table name is used.
+     For expression the complete code is used thus the generated code is:
 
-   //Caso um alias exista
+     ... FROM {TABLE_NAME} [AS ALIAS] or
+     ... FROM {EXPRESSION} */
+  if(refer_type==REFER_COLUMN)
+  {
+   sql_def+=table->getName(true);
+
    if(alias!="")
-    def_sql+=" AS " + BaseObject::formatName(alias);
-   def_sql+=", ";
+    sql_def+=" AS " + BaseObject::formatName(alias);
+   sql_def+=", ";
   }
   else
-   def_sql=expression;
+   sql_def=expression;
  }
- //Último tipo de referência, [JOIN | WHERE]-...
+ //Case the reference is after [JOIN | WHERE] keywords
  else
  {
-  /* Caso seja uma referência a um objeto e uma
-     coluna exista */
-  if(tipo_refer==REFER_COLUMN && column)
+  //Case the column is allocated
+  if(refer_type==REFER_COLUMN && column)
   {
-   /*
-    Definição SQL gerada:
+   /* Generated SQL definition:
+      ... WHERE {TABLE_NAME | ALIAS}.{COLUMN_NAME} */
 
-    ... WHERE {NOME_TABELA | ALIAS}.{NOME_COLUNA}
-   */
-
-   /* Caso não existe um alias de tabel, o próprio nome
-      da mesma é concatenad  definição */
    if(alias=="")
-    def_sql=table->getName(true);
+    sql_def=table->getName(true);
    else
-    def_sql=BaseObject::formatName(alias);
+    sql_def=BaseObject::formatName(alias);
 
-   def_sql+=".";
+   sql_def+=".";
 
-   //Concatena o nome da coluna
    if(column)
-    def_sql+=column->getName(true);
+    sql_def+=column->getName(true);
   }
-  else if(tipo_refer==REFER_EXPRESSION)
-   def_sql=expression;
+  else if(refer_type==REFER_EXPRESSION)
+   sql_def=expression;
  }
 
- return(def_sql);
+ return(sql_def);
 }
 
 QString Reference::getXMLDefinition(void)
 {
- QString def_xml;
  map<QString, QString> atributos;
 
  atributos[ParsersAttributes::TABLE]="";
@@ -213,23 +187,19 @@ QString Reference::getXMLDefinition(void)
  atributos[ParsersAttributes::ALIAS]=alias;
  atributos[ParsersAttributes::COLUMN_ALIAS]=column_alias;
 
- //Retorna a definição XML da referencia
  return(SchemaParser::getObjectDefinition(ParsersAttributes::REFERENCE,
                                             atributos, SchemaParser::XML_DEFINITION));
 }
 
 bool Reference::operator == (Reference &refer)
 {
- unsigned tipo_ref;
+ unsigned ref_type;
 
- tipo_ref=this->getReferenceType();
+ ref_type=this->getReferenceType();
 
- //Compara o tipo de referência dos objetos
- if(tipo_ref==refer.getReferenceType())
+ if(ref_type==refer.getReferenceType())
  {
-  /* Caso o tipo de referencia do objeto for de objeto
-     compara apenas os atributos pertinentes a este tipo */
-  if(tipo_ref==REFER_COLUMN)
+  if(ref_type==REFER_COLUMN)
   {
    return(this->table==refer.table &&
           this->column==refer.column &&
@@ -238,8 +208,7 @@ bool Reference::operator == (Reference &refer)
   }
   else
   {
-   //Compara os atributos pertinentes ao tipo expressão
-   return(this->expression==refer.expression &&
+    return(this->expression==refer.expression &&
           this->alias==refer.alias);
   }
  }

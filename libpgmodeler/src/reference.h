@@ -1,8 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Referencia que é usada para
-#             para montar a declaração SQL das visões
+# Class: Reference
+# Description: This auxiliary class is used to define SQL/XML for views
 # Creation date: 05/09/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -27,61 +27,63 @@
 
 class Reference {
  private:
-  //Guarda a referência para uma tabela
+ //Stores the table used by the reference
   Tabela *table;
 
-  //Guarda a referência para uma coluna da tabela
+  //Stores the column used by the reference
   Column *column;
 
-  //Armazena uma expressão que forma a declaração de uma visão
+  //Stores the expression that defines one reference
   QString expression,
-         //Armazena um alias para expressão ou tabela
+         //Stores the alias to the expression or table
          alias,
-         //Armazena um alias para coluna
+         //Stores only the alias for the column
          column_alias;
 
  public:
-  //Constantes usada para identificar o tipo de referência
-  static const unsigned REFER_COLUMN=0,
-                        REFER_EXPRESSION=1;
+  //Constants used to define the reference type
+  static const unsigned REFER_COLUMN=0, //The reference is based on a table column
+                        REFER_EXPRESSION=1; //The reference is based on an expression
 
-  //Constantes usadas na geração do SQL da referência
+  //Constants used on the view code generation
   static const unsigned SQL_REFER_WHERE=10,
                         SQL_REFER_SELECT=20,
                         SQL_REFER_FROM=30;
 
   Reference(void);
 
-  //Construtor o qual cria uma referência a uma coluna/tabela
-  Reference(Tabela *table, Column *column, const QString &alias_tab, const QString &alias_col);
+  //Creates a reference based on a table column
+  Reference(Tabela *table, Column *column, const QString &tab_alias, const QString &col_alias);
 
-  //Construtor o qual cria uma referência a uma expressão
-  Reference(const QString &expression, const QString &alias_exp);
+  //Creates a reference based on a expression
+  Reference(const QString &expression, const QString &expr_alias);
 
-  //Obtém a tabela referenciada
+  //Gets the referenced table
   Tabela *getTable(void);
 
-  //Obtém a coluna referenciada
+  //Gets the referenced column
   Column *getColumn(void);
 
-  //Retorna o alias da coluna referenciada
+  //Returns the alias for the referenced column
   QString getColumnAlias(void);
 
-  //Retorna o alias da tabela ou expressão
+  //Returs the reference for the table or expression
   QString getAlias(void);
 
-  //Retorna a expressão
+  //Returns the expression for the reference
   QString getExpression(void);
 
-  /* Retorna o tipo da referência
-    (ref. a um objeto ou ref. a uma expressão) */
+  //Returns the reference typ (see REFER_??? constants)
   unsigned getReferenceType(void);
 
-  //Obtém a definição SQL da referência
-  QString getSQLDefinition(unsigned tipo_sql);
+  //Returns the SQL code definition
+  QString getSQLDefinition(unsigned sql_type);
+
+  //Returns the XML code definition
   QString getXMLDefinition(void);
 
-  //Compara os atributos de duas referências
+  /* Compare the attributes of two references returning true
+     when they have the same values */
   bool operator == (Reference &refer);
 };
 
