@@ -563,8 +563,8 @@ void CenaObjetos::alinharObjetosGrade(void)
     }
 
     //Alinha os r√≥tulos√   grade
-    for(i1=RelacionamentoBase::ROTULO_CARD_ORIGEM;
-        i1<=RelacionamentoBase::ROTULO_NOME_RELAC; i1++)
+    for(i1=BaseRelationship::ROTULO_CARD_ORIGEM;
+        i1<=BaseRelationship::ROTULO_NOME_RELAC; i1++)
     {
      rot=rel->obterRotulo(i1);
      if(rot)

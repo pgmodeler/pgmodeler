@@ -668,7 +668,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
                             OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
    unsigned i;
    BaseGraphicObject *obj=NULL, *obj1=NULL;
-   RelacionamentoBase *rel=NULL;
+   BaseRelationship *rel=NULL;
 
    for(i=0; i < 4; i++)
    {
@@ -689,14 +689,14 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
         obj->getObjectType()==BASE_RELATIONSHIP)
      {
       //Converte o objeto para relacionamento básico
-      rel=dynamic_cast<RelacionamentoBase *>(obj);
+      rel=dynamic_cast<BaseRelationship *>(obj);
 
       /* Obtém as tabelas participantes do relacionamento para
          verificar se uma delas referencia o esquema modificado,
          caso isso seja verdadeiro as tabelas e o relacionamento
          serão marcados como modificados */
-      obj=rel->obterTabela(RelacionamentoBase::TABELA_ORIGEM);
-      obj1=rel->obterTabela(RelacionamentoBase::TABELA_DESTINO);
+      obj=rel->obterTabela(BaseRelationship::TABELA_ORIGEM);
+      obj1=rel->obterTabela(BaseRelationship::TABELA_DESTINO);
      }
 
      //Caso o objeto referencia o esquema, marca como modificado

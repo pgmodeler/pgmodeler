@@ -12,7 +12,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/function.h \
            $$PWD/src/language.h \
            $$PWD/src/operator.h \
-           $$PWD/src/relacionamentobase.h \
+           $$PWD/src/baserelationship.h \
            $$PWD/src/basetable.h \
            $$PWD/src/column.h \
            $$PWD/src/domain.h \
@@ -48,7 +48,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/domain.cpp \
             $$PWD/src/trigger.cpp \
             $$PWD/src/basegraphicobject.cpp \
-            $$PWD/src/relacionamentobase.cpp \
+            $$PWD/src/baserelationship.cpp \
             $$PWD/src/tipo.cpp \
             $$PWD/src/column.cpp \
             $$PWD/src/tablespace.cpp \

@@ -118,7 +118,7 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
 
 void RelacionamentoWidget::hideEvent(QHideEvent *evento)
 {
- RelacionamentoBase *rel=dynamic_cast<RelacionamentoBase *>(this->objeto);
+ BaseRelationship *rel=dynamic_cast<BaseRelationship *>(this->objeto);
 
  identificador_chk->setChecked(false);
  tab_orig_obrig_chk->setChecked(false);
@@ -195,7 +195,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
  }
 }
 
-void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, RelacionamentoBase *relacao)
+void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, BaseRelationship *relacao)
 {
  static QWidget *tabs[3]={ atributosrel_tbw->widget(1), atributosrel_tbw->widget(2), atributosrel_tbw->widget(3) };
  static QString rot_tabs[3]={ atributosrel_tbw->tabText(1), atributosrel_tbw->tabText(2), atributosrel_tbw->tabText(3) };
@@ -226,16 +226,16 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
  //Marcado o radiobox que indica o tipo do relacionamento
  switch(tipo_rel)
  {
-  case RelacionamentoBase::RELACIONAMENTO_11: rel_11_rb->setChecked(true); break;
-  case RelacionamentoBase::RELACIONAMENTO_1N: rel_1n_rb->setChecked(true); break;
-  case RelacionamentoBase::RELACIONAMENTO_NN: rel_nn_rb->setChecked(true); break;
-  case RelacionamentoBase::RELACIONAMENTO_GEN: rel_gen_rb->setChecked(true); break;
-  case RelacionamentoBase::RELACIONAMENTO_DEP: rel_dep_rb->setChecked(true); break;
+  case BaseRelationship::RELACIONAMENTO_11: rel_11_rb->setChecked(true); break;
+  case BaseRelationship::RELACIONAMENTO_1N: rel_1n_rb->setChecked(true); break;
+  case BaseRelationship::RELACIONAMENTO_NN: rel_nn_rb->setChecked(true); break;
+  case BaseRelationship::RELACIONAMENTO_GEN: rel_gen_rb->setChecked(true); break;
+  case BaseRelationship::RELACIONAMENTO_DEP: rel_dep_rb->setChecked(true); break;
  }
 
  //Exibe o nome das tabelas participantes relacionamento no formulário
- tabela_orig_txt->setPlainText(QString::fromUtf8(relacao->obterTabela(RelacionamentoBase::TABELA_ORIGEM)->getName(true)));
- tabela_dest_txt->setPlainText(QString::fromUtf8(relacao->obterTabela(RelacionamentoBase::TABELA_DESTINO)->getName(true)));
+ tabela_orig_txt->setPlainText(QString::fromUtf8(relacao->obterTabela(BaseRelationship::TABELA_ORIGEM)->getName(true)));
+ tabela_dest_txt->setPlainText(QString::fromUtf8(relacao->obterTabela(BaseRelationship::TABELA_DESTINO)->getName(true)));
 
  //Caso o relacionamento seja entre tabelas
  if(relacao->getObjectType()==OBJ_RELATIONSHIP)
@@ -253,12 +253,12 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
 
   if(!sufixo_auto_chk->isChecked())
   {
-   sufixo_orig_edt->setText(QString::fromUtf8(relacao_aux->obterSufixoTabela(RelacionamentoBase::TABELA_ORIGEM)));
-   sufixo_dest_edt->setText(QString::fromUtf8(relacao_aux->obterSufixoTabela(RelacionamentoBase::TABELA_DESTINO)));
+   sufixo_orig_edt->setText(QString::fromUtf8(relacao_aux->obterSufixoTabela(BaseRelationship::TABELA_ORIGEM)));
+   sufixo_dest_edt->setText(QString::fromUtf8(relacao_aux->obterSufixoTabela(BaseRelationship::TABELA_DESTINO)));
   }
 
-  tab_orig_obrig_chk->setChecked(relacao_aux->tabelaObrigatoria(RelacionamentoBase::TABELA_ORIGEM));
-  tab_dest_obrig_chk->setChecked(relacao_aux->tabelaObrigatoria(RelacionamentoBase::TABELA_DESTINO));
+  tab_orig_obrig_chk->setChecked(relacao_aux->tabelaObrigatoria(BaseRelationship::TABELA_ORIGEM));
+  tab_dest_obrig_chk->setChecked(relacao_aux->tabelaObrigatoria(BaseRelationship::TABELA_DESTINO));
   identificador_chk->setChecked(relacao_aux->relacionamentoIdentificador());
   postergavel_chk->setChecked(relacao_aux->obterPostergavel());
   nome_tab_relnn_edt->setText(relacao_aux->getNameTabelaRelNN());
@@ -274,8 +274,8 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
   /* Caso seja um novo objeto é necessário conectar o relacionamento para que
      as colunas sejam criadas na tabela receptora e seus nomes obtidos
      para listagem no campo "chave primária" */
-  if(tipo_rel==RelacionamentoBase::RELACIONAMENTO_GEN ||
-     tipo_rel==RelacionamentoBase::RELACIONAMENTO_DEP)
+  if(tipo_rel==BaseRelationship::RELACIONAMENTO_GEN ||
+     tipo_rel==BaseRelationship::RELACIONAMENTO_DEP)
   {
    if(this->novo_obj)
    {
@@ -310,13 +310,13 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
  }
 
  //Configurando quais objetos do formulário devem ser exibidos conforme o tipo do relacionamento
- rel1n=(tipo_rel==RelacionamentoBase::RELACIONAMENTO_11 ||
-        tipo_rel==RelacionamentoBase::RELACIONAMENTO_1N);
+ rel1n=(tipo_rel==BaseRelationship::RELACIONAMENTO_11 ||
+        tipo_rel==BaseRelationship::RELACIONAMENTO_1N);
 
- relnn=(tipo_rel==RelacionamentoBase::RELACIONAMENTO_NN);
+ relnn=(tipo_rel==BaseRelationship::RELACIONAMENTO_NN);
 
- relgen_dep=(tipo_rel==RelacionamentoBase::RELACIONAMENTO_DEP ||
-             tipo_rel==RelacionamentoBase::RELACIONAMENTO_GEN);
+ relgen_dep=(tipo_rel==BaseRelationship::RELACIONAMENTO_DEP ||
+             tipo_rel==BaseRelationship::RELACIONAMENTO_GEN);
 
  //Sufixo de origem: exibido para 1-n ou n-n
  sufixo_orig_lbl->setVisible(rel1n || relnn);
@@ -337,14 +337,14 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
  tab_orig_obrig_chk->setEnabled(rel1n);
  tab_orig_obrig_chk->setVisible(rel1n);
  //Obrigatoriedade de tabela de destino: exibido para 1-1 e n-n
- tab_dest_obrig_chk->setEnabled(tipo_rel==RelacionamentoBase::RELACIONAMENTO_11);
+ tab_dest_obrig_chk->setEnabled(tipo_rel==BaseRelationship::RELACIONAMENTO_11);
  tab_dest_obrig_chk->setVisible(rel1n);
 
  /* Rel. Identificador: exibido para 1-n E quando as tabelas participantes
     são diferentes (não é autorelacionamento) */
  identificador_chk->setVisible(rel1n &&
-                               (relacao->obterTabela(RelacionamentoBase::TABELA_ORIGEM) !=
-                                relacao->obterTabela(RelacionamentoBase::TABELA_DESTINO)));
+                               (relacao->obterTabela(BaseRelationship::TABELA_ORIGEM) !=
+                                relacao->obterTabela(BaseRelationship::TABELA_DESTINO)));
 
  //Postergação de restrição: exibido para 1-n
  /*postergavel_lbl->setVisible(rel1n);
@@ -660,21 +660,21 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
    /* Atribui os valores configurados no formulário ao relacionamento.
       Alguns campos são atribuído ao objeto somente para um tipo específico
       de relacionamento */
-   relacao->definirSufixoTabela(RelacionamentoBase::TABELA_ORIGEM, sufixo_orig_edt->text());
-   relacao->definirSufixoTabela(RelacionamentoBase::TABELA_DESTINO, sufixo_dest_edt->text());
+   relacao->definirSufixoTabela(BaseRelationship::TABELA_ORIGEM, sufixo_orig_edt->text());
+   relacao->definirSufixoTabela(BaseRelationship::TABELA_DESTINO, sufixo_dest_edt->text());
    relacao->definirSufixoAutomatico(sufixo_auto_chk->isChecked());
 
-   relacao->definirTabelaObrigatoria(RelacionamentoBase::TABELA_ORIGEM, false);
-   relacao->definirTabelaObrigatoria(RelacionamentoBase::TABELA_DESTINO, false);
+   relacao->definirTabelaObrigatoria(BaseRelationship::TABELA_ORIGEM, false);
+   relacao->definirTabelaObrigatoria(BaseRelationship::TABELA_DESTINO, false);
 
    if(tab_orig_obrig_chk->isEnabled())
-    relacao->definirTabelaObrigatoria(RelacionamentoBase::TABELA_ORIGEM, tab_orig_obrig_chk->isChecked());
+    relacao->definirTabelaObrigatoria(BaseRelationship::TABELA_ORIGEM, tab_orig_obrig_chk->isChecked());
 
    if(tab_dest_obrig_chk->isEnabled())
-    relacao->definirTabelaObrigatoria(RelacionamentoBase::TABELA_DESTINO, tab_dest_obrig_chk->isChecked());
+    relacao->definirTabelaObrigatoria(BaseRelationship::TABELA_DESTINO, tab_dest_obrig_chk->isChecked());
 
-   if(tipo_rel==RelacionamentoBase::RELACIONAMENTO_GEN ||
-      tipo_rel==RelacionamentoBase::RELACIONAMENTO_DEP)
+   if(tipo_rel==BaseRelationship::RELACIONAMENTO_GEN ||
+      tipo_rel==BaseRelationship::RELACIONAMENTO_DEP)
    {
     //Obtém os ids das colunas selecionadas como participantes da chave primária especial
     qtd=coluna_rel_lst->count();
@@ -689,23 +689,23 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
     relacao->definirColsChavePrimariaEspecial(id_cols);
    }
    //Campos específicos para relacionamentos 1-n e 1-1
-   else if(tipo_rel==RelacionamentoBase::RELACIONAMENTO_1N ||
-      tipo_rel==RelacionamentoBase::RELACIONAMENTO_11)
+   else if(tipo_rel==BaseRelationship::RELACIONAMENTO_1N ||
+      tipo_rel==BaseRelationship::RELACIONAMENTO_11)
    {
     relacao->definirIdentificador(identificador_chk->isChecked());
     relacao->definirPostergavel(postergavel_chk->isChecked());
     relacao->definirTipoPostergacao(TipoPostergacao(tipo_postergacao_cmb->currentText()));
    }
    //Campos específicos para relacionamentos n-n
-   else if(tipo_rel==RelacionamentoBase::RELACIONAMENTO_NN)
+   else if(tipo_rel==BaseRelationship::RELACIONAMENTO_NN)
     relacao->definirNomeTabelaRelNN(nome_tab_relnn_edt->text());
 
    try
    {
     /* Caso o relacinamento seja de dependência, generalização ou
        identificador verifica se existe redundância de relacionamentos */
-    if(tipo_rel==RelacionamentoBase::RELACIONAMENTO_DEP ||
-       tipo_rel==RelacionamentoBase::RELACIONAMENTO_GEN ||
+    if(tipo_rel==BaseRelationship::RELACIONAMENTO_DEP ||
+       tipo_rel==BaseRelationship::RELACIONAMENTO_GEN ||
        relacao->relacionamentoIdentificador())
      modelo->verificarRedundanciaRelacoes(relacao);
 

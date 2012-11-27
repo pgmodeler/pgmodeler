@@ -19,14 +19,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef RELACIONAMENTOBASE_H
-#define RELACIONAMENTOBASE_H
+#ifndef BASE_RELATIONSHIP_H
+#define BASE_RELATIONSHIP_H
 
 #include "basetable.h"
 #include "textbox.h"
 #include <cmath>
 
-class RelacionamentoBase: public BaseGraphicObject {
+class BaseRelationship: public BaseGraphicObject {
  private:
    QString getCodeDefinition(unsigned){ return(""); }
 
@@ -89,11 +89,11 @@ class RelacionamentoBase: public BaseGraphicObject {
   static const unsigned TABELA_ORIGEM=3,
                         TABELA_DESTINO=4;
 
-  RelacionamentoBase(RelacionamentoBase *relacao);
+  BaseRelationship(BaseRelationship *relacao);
 
-  RelacionamentoBase(unsigned tipo_rel, BaseTable *tab_orig, BaseTable *tab_dest,
+  BaseRelationship(unsigned tipo_rel, BaseTable *tab_orig, BaseTable *tab_dest,
                      bool obrig_orig, bool obrig_dest);
-  ~RelacionamentoBase(void);
+  ~BaseRelationship(void);
 
 
   //Método específico de definição do nome de relacionamentos
@@ -143,7 +143,7 @@ class RelacionamentoBase: public BaseGraphicObject {
   QPointF obterDistanciaRotulo(unsigned idx_rot);
 
   //Operador que faz a atribuição entre um objeto e outro
-  void operator = (RelacionamentoBase &rel);
+  void operator = (BaseRelationship &rel);
 
   friend class ModeloBD;
 };

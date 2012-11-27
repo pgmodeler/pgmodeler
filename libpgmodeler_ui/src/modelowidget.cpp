@@ -77,9 +77,9 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
                           OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE,
                           OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE, OBJ_TRIGGER, OBJ_INDEX, OBJ_TABLESPACE };
  unsigned i, qtd=23,
-          tipos_rel[]={ RelacionamentoBase::RELACIONAMENTO_11, RelacionamentoBase::RELACIONAMENTO_1N,
-                        RelacionamentoBase::RELACIONAMENTO_NN, RelacionamentoBase::RELACIONAMENTO_DEP,
-                        RelacionamentoBase::RELACIONAMENTO_GEN };
+          tipos_rel[]={ BaseRelationship::RELACIONAMENTO_11, BaseRelationship::RELACIONAMENTO_1N,
+                        BaseRelationship::RELACIONAMENTO_NN, BaseRelationship::RELACIONAMENTO_DEP,
+                        BaseRelationship::RELACIONAMENTO_GEN };
 
  zoom_atual=1;
  modificado=false;
@@ -444,7 +444,7 @@ void ModeloWidget::manipularAdicaoObjeto(BaseObject *objeto)
 
    case OBJ_RELATIONSHIP:
    case BASE_RELATIONSHIP:
-     item=new OGRelacionamento(dynamic_cast<RelacionamentoBase *>(obj_graf)); break;
+     item=new OGRelacionamento(dynamic_cast<BaseRelationship *>(obj_graf)); break;
    break;
 
    default:
@@ -538,7 +538,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
   while(itr!=itr_end)
   {
    obj=dynamic_cast<BaseGraphicObject *>(*itr);
-   if(!dynamic_cast<RelacionamentoBase *>(obj) && (obj && !obj->isProtected()))
+   if(!dynamic_cast<BaseRelationship *>(obj) && (obj && !obj->isProtected()))
     lista_op->registerObject(obj, Operation::OBJECT_MOVED);
 
    itr++;
@@ -1285,7 +1285,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
      relacao_wgt->definirAtributos(modelo, lista_op, tab1, tab2, tipo_rel);
     }
     else
-     relacao_wgt->definirAtributos(modelo, lista_op, dynamic_cast<RelacionamentoBase *>(objeto));
+     relacao_wgt->definirAtributos(modelo, lista_op, dynamic_cast<BaseRelationship *>(objeto));
 
     relacao_wgt->show();
    break;
@@ -1883,7 +1883,7 @@ void ModeloWidget::excluirObjetos(void)
  unsigned qtd, qtd_op;
  Tabela *tabela=NULL;
  BaseTable *tab_orig=NULL, *tab_dest=NULL;
- RelacionamentoBase *relac=NULL;
+ BaseRelationship *relac=NULL;
  TableObject *objeto_tab=NULL;
  ObjectType tipo_obj;
  BaseObject *objeto=NULL;
@@ -2026,9 +2026,9 @@ void ModeloWidget::excluirObjetos(void)
        {
         if(tipo_obj==OBJ_RELATIONSHIP)
         {
-         relac=dynamic_cast<RelacionamentoBase *>(objeto);
-         tab_orig=relac->obterTabela(RelacionamentoBase::TABELA_ORIGEM);
-         tab_dest=relac->obterTabela(RelacionamentoBase::TABELA_DESTINO);
+         relac=dynamic_cast<BaseRelationship *>(objeto);
+         tab_orig=relac->obterTabela(BaseRelationship::TABELA_ORIGEM);
+         tab_dest=relac->obterTabela(BaseRelationship::TABELA_DESTINO);
         }
 
         try

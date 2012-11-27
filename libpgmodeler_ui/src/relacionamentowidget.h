@@ -55,7 +55,7 @@ class RelacionamentoWidget: public ObjetoBaseWidget, public Ui::RelacionamentoWi
 
  public:
    RelacionamentoWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, RelacionamentoBase *relacao);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, BaseRelationship *relacao);
 
  private slots:
   void hideEvent(QHideEvent *);

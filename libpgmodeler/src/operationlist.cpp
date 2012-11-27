@@ -36,12 +36,12 @@ void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type
      (*(dynamic_cast<Relacionamento *>(*psrc_obj)))=(*rel1);
   break;
   case BASE_RELATIONSHIP:
-    RelacionamentoBase *rel;
-    rel=new RelacionamentoBase(dynamic_cast<RelacionamentoBase *>(copy_obj));
+    BaseRelationship *rel;
+    rel=new BaseRelationship(dynamic_cast<BaseRelationship *>(copy_obj));
     if(!(*psrc_obj))
      (*psrc_obj)=rel;
     else
-     (*(dynamic_cast<RelacionamentoBase *>(*psrc_obj)))=(*rel);
+     (*(dynamic_cast<BaseRelationship *>(*psrc_obj)))=(*rel);
   break;
   case OBJ_COLUMN:
     copyObject(psrc_obj, dynamic_cast<Column *>(copy_obj));

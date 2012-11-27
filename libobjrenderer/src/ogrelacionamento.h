@@ -106,14 +106,14 @@ class OGRelacionamento: public ObjetoGrafico {
   void configurarObjeto(void);
 
  public:
-  OGRelacionamento(RelacionamentoBase *relacao);
+  OGRelacionamento(BaseRelationship *relacao);
   ~OGRelacionamento(void);
 
   //Calcula o boundingRect do relacionamento considerando todos os objetos filhos
   QRectF __boundingRect(void);
 
   //Retorna o objeto de origem convertido em relacionamento
-  RelacionamentoBase *obterObjetoOrigem(void);
+  BaseRelationship *obterObjetoOrigem(void);
 
   /** issue#2 **/
   /* Desconecta do relacionamento os sinais emitidos pelas tabelas.

@@ -1,7 +1,7 @@
-#include "relacionamentobase.h"
+#include "baserelationship.h"
 #include <QApplication>
 
-RelacionamentoBase::RelacionamentoBase(RelacionamentoBase *relacao)
+BaseRelationship::BaseRelationship(BaseRelationship *relacao)
 {
  if(!relacao)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -13,7 +13,7 @@ RelacionamentoBase::RelacionamentoBase(RelacionamentoBase *relacao)
  (*(this))=(*relacao);
 }
 
-RelacionamentoBase::RelacionamentoBase(/*const QString &nome,*/ unsigned tipo_rel,
+BaseRelationship::BaseRelationship(/*const QString &nome,*/ unsigned tipo_rel,
                                        BaseTable *tab_orig, BaseTable *tab_dest,
                                         bool obrig_orig, bool obrig_dest)
 
@@ -46,7 +46,7 @@ RelacionamentoBase::RelacionamentoBase(/*const QString &nome,*/ unsigned tipo_re
  }
 }
 
-void RelacionamentoBase::configurarRelacionamento(void)
+void BaseRelationship::configurarRelacionamento(void)
 {
  obj_type=BASE_RELATIONSHIP;
 
@@ -121,7 +121,7 @@ void RelacionamentoBase::configurarRelacionamento(void)
   throw Exception(ERR_ALOC_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-RelacionamentoBase::~RelacionamentoBase(void)
+BaseRelationship::~BaseRelationship(void)
 {
  //Desconecta o relacionamento
  desconectarRelacionamento();
@@ -131,7 +131,7 @@ RelacionamentoBase::~RelacionamentoBase(void)
   if(rotulos[i]) delete(rotulos[i]);
 }
 
-void RelacionamentoBase::setName(const QString &nome)
+void BaseRelationship::setName(const QString &nome)
 {
  try
  {
@@ -146,7 +146,7 @@ void RelacionamentoBase::setName(const QString &nome)
  }
 }
 
-void RelacionamentoBase::definirTabelaObrigatoria(unsigned id_tabela, bool valor)
+void BaseRelationship::definirTabelaObrigatoria(unsigned id_tabela, bool valor)
 {
  QString cmin, aux;
  unsigned tipo_rot;
@@ -209,7 +209,7 @@ void RelacionamentoBase::definirTabelaObrigatoria(unsigned id_tabela, bool valor
  }
 }
 
-BaseTable *RelacionamentoBase::obterTabela(unsigned id_tabela)
+BaseTable *BaseRelationship::obterTabela(unsigned id_tabela)
 {
  //Retorna a tabela de acordo o índice passado
  if(id_tabela==TABELA_ORIGEM)
@@ -220,7 +220,7 @@ BaseTable *RelacionamentoBase::obterTabela(unsigned id_tabela)
   return(NULL);
 }
 
-bool RelacionamentoBase::tabelaObrigatoria(unsigned id_tabela)
+bool BaseRelationship::tabelaObrigatoria(unsigned id_tabela)
 {
  /* Retorna o flag de obrigatoriedade de acordo o índice
     da tabela passado */
@@ -230,7 +230,7 @@ bool RelacionamentoBase::tabelaObrigatoria(unsigned id_tabela)
   return(obrig_dest);
 }
 
-void RelacionamentoBase::desconectarRelacionamento(void)
+void BaseRelationship::desconectarRelacionamento(void)
 {
  if(conectado)
  {
@@ -240,7 +240,7 @@ void RelacionamentoBase::desconectarRelacionamento(void)
  }
 }
 
-void RelacionamentoBase::conectarRelacionamento(void)
+void BaseRelationship::conectarRelacionamento(void)
 {
  //Caso o relacionamento não esteja conectado
  if(!conectado)
@@ -255,7 +255,7 @@ void RelacionamentoBase::conectarRelacionamento(void)
  }
 }
 
-Textbox *RelacionamentoBase::obterRotulo(unsigned idx_rot)
+Textbox *BaseRelationship::obterRotulo(unsigned idx_rot)
 {
  // Retorna o rótulo na posição especificada, caso o índice
  //   do mesmo seja válido
@@ -266,22 +266,22 @@ Textbox *RelacionamentoBase::obterRotulo(unsigned idx_rot)
   throw Exception(ERR_REF_LABEL_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
  
-unsigned RelacionamentoBase::obterTipoRelacionamento(void)
+unsigned BaseRelationship::obterTipoRelacionamento(void)
 {
  return(tipo_relac);
 }
 
-bool RelacionamentoBase::relacionamentoConectado(void)
+bool BaseRelationship::relacionamentoConectado(void)
 {
  return(conectado);
 }
 
-bool RelacionamentoBase::autoRelacionamento(void)
+bool BaseRelationship::autoRelacionamento(void)
 {
  return(tabela_dest==tabela_orig);
 }
 
-void RelacionamentoBase::definirAtributosRelacionamento(void)
+void BaseRelationship::definirAtributosRelacionamento(void)
 {
  unsigned qtd, i;
  QString str_aux,
@@ -343,7 +343,7 @@ void RelacionamentoBase::definirAtributosRelacionamento(void)
  attributes[ParsersAttributes::LABELS_POS]=str_aux;
 }
 
-QString RelacionamentoBase::getCodeDefinition(void)
+QString BaseRelationship::getCodeDefinition(void)
 {
  bool forma_reduzida;
 
@@ -352,12 +352,12 @@ QString RelacionamentoBase::getCodeDefinition(void)
  return(BaseObject::getCodeDefinition(SchemaParser::XML_DEFINITION,forma_reduzida));
 }
 
-void RelacionamentoBase::definirPontos(const vector<QPointF> &pontos)
+void BaseRelationship::definirPontos(const vector<QPointF> &pontos)
 {
  this->pontos=pontos;
 }
 
-void RelacionamentoBase::definirDistanciaRotulo(unsigned idx_rot, QPointF dist_rotulo)
+void BaseRelationship::definirDistanciaRotulo(unsigned idx_rot, QPointF dist_rotulo)
 {
  if(idx_rot > ROTULO_NOME_RELAC)
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -365,7 +365,7 @@ void RelacionamentoBase::definirDistanciaRotulo(unsigned idx_rot, QPointF dist_r
  this->dist_rotulos[idx_rot]=dist_rotulo;
 }
 
-QPointF RelacionamentoBase::obterDistanciaRotulo(unsigned idx_rot)
+QPointF BaseRelationship::obterDistanciaRotulo(unsigned idx_rot)
 {
  if(idx_rot > ROTULO_NOME_RELAC)
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -373,12 +373,12 @@ QPointF RelacionamentoBase::obterDistanciaRotulo(unsigned idx_rot)
  return(this->dist_rotulos[idx_rot]);
 }
 
-vector<QPointF> RelacionamentoBase::obterPontos(void)
+vector<QPointF> BaseRelationship::obterPontos(void)
 {
  return(pontos);
 }
 
-void RelacionamentoBase::operator = (RelacionamentoBase &rel)
+void BaseRelationship::operator = (BaseRelationship &rel)
 {
  (*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(rel);
  //this->conectado=rel.conectado;

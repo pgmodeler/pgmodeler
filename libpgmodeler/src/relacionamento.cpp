@@ -4,7 +4,7 @@
 //Inicialização de atributos estáticos da classe
 const QString Relacionamento::SEPARADOR_SUFIXO("_");
 
-Relacionamento::Relacionamento(Relacionamento *relacao) : RelacionamentoBase(relacao)
+Relacionamento::Relacionamento(Relacionamento *relacao) : BaseRelationship(relacao)
 {
  if(!relacao)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -38,7 +38,7 @@ Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabel
                                Tabela *tab_dest, bool obrig_orig, bool obrig_dest,
                                bool sufixo_auto, const QString &sufix_orig, const QString &sufix_dest,
                                bool identificador,  bool postergavel, TipoPostergacao tipo_postergacao) :
-                RelacionamentoBase(tipo_rel, tab_orig, tab_dest, obrig_orig, obrig_dest)
+                BaseRelationship(tipo_rel, tab_orig, tab_dest, obrig_orig, obrig_dest)
 {
  try
  {
@@ -130,7 +130,7 @@ vector<QString> Relacionamento::obterColunasRelacionamento(void)
 
 void Relacionamento::definirTabelaObrigatoria(unsigned id_tabela, bool valor)
 {
- RelacionamentoBase::definirTabelaObrigatoria(id_tabela, valor);
+ BaseRelationship::definirTabelaObrigatoria(id_tabela, valor);
  this->invalidado=true;
 }
 
@@ -1056,7 +1056,7 @@ void Relacionamento::conectarRelacionamento(void)
 
    /* Faz uma chamada ao método de conexão do relacionamento da
       classe base */
-   RelacionamentoBase::conectarRelacionamento();
+   BaseRelationship::conectarRelacionamento();
 
    /* Indica que o relacionameto foi conetado corretamente e que não está
    invalidado por modificação de atributos */
@@ -2074,7 +2074,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
    }
 
    //Executa o método de desconexão de relacionamento da classe base
-   RelacionamentoBase::desconectarRelacionamento();
+   BaseRelationship::desconectarRelacionamento();
   }
  }
  catch(Exception &e)
@@ -2457,7 +2457,7 @@ bool Relacionamento::obterSufixoAutomatico(void)
 
 void Relacionamento::operator = (Relacionamento &rel)
 {
- (*dynamic_cast<RelacionamentoBase *>(this))=dynamic_cast<RelacionamentoBase &>(rel);
+ (*dynamic_cast<BaseRelationship *>(this))=dynamic_cast<BaseRelationship &>(rel);
  this->invalidado=true;
  this->id_colunas_pk_rel=rel.id_colunas_pk_rel;
  this->atributos_rel=rel.atributos_rel;

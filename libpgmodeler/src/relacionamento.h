@@ -23,7 +23,7 @@
 #ifndef RELACIONAMENTO_H
 #define RELACIONAMENTO_H
 
-#include "relacionamentobase.h"
+#include "baserelationship.h"
 #include "tabela.h"
 #include "textbox.h"
 
@@ -126,7 +126,7 @@ binários convencionais.
       forte também existirem.
 */
 
-class Relacionamento: public RelacionamentoBase {
+class Relacionamento: public BaseRelationship {
  private:
   /* Indica que o relacionamento teve algum atributo crítico modificado e precisa
      ser revalidado */

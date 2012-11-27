@@ -276,14 +276,14 @@ class ModeloBD:  public QObject, public BaseObject {
   QString __obterDefinicaoObjeto(unsigned tipo_def);
 
   //Métodos de manipulação de relacionamentos
-  void adicionarRelacionamento(RelacionamentoBase *relacao, int idx_obj=-1);
-  void removerRelacionamento(RelacionamentoBase *relacao, int idx_obj=-1);
-  RelacionamentoBase *obterRelacionamento(unsigned idx_obj, ObjectType tipo_rel);
+  void adicionarRelacionamento(BaseRelationship *relacao, int idx_obj=-1);
+  void removerRelacionamento(BaseRelationship *relacao, int idx_obj=-1);
+  BaseRelationship *obterRelacionamento(unsigned idx_obj, ObjectType tipo_rel);
 
   /* Obtém o relacionamento usando uma ou duas tabelas para se obtê-lo. Caso o segundo parâmetro
      seja omitido, o método encontra a primeira ocorrência de relacionamento em que a tabela do
      1º parâmetro estiver participando */
-  RelacionamentoBase *obterRelacionamento(BaseTable *tab_orig, BaseTable *tab_dest);
+  BaseRelationship *obterRelacionamento(BaseTable *tab_orig, BaseTable *tab_dest);
 
   //Métodos de manipulação de caixas de texto
   void adicionarCaixaTexto(Textbox *caixa, int idx_obj=-1);
@@ -427,7 +427,7 @@ class ModeloBD:  public QObject, public BaseObject {
   Permission *criarPermissao(void);
 
   Textbox *criarCaixaTexto(void);
-  RelacionamentoBase *criarRelacionamento(void);
+  BaseRelationship *criarRelacionamento(void);
 
   /* Cria automaticamente relacionamentos entre tabelas e a visão passada
      caso estes não existam no modelo. Remove relacionamentos os quais se
