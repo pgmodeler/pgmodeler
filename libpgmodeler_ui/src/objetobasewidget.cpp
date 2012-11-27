@@ -695,8 +695,8 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
          verificar se uma delas referencia o esquema modificado,
          caso isso seja verdadeiro as tabelas e o relacionamento
          serão marcados como modificados */
-      obj=rel->obterTabela(BaseRelationship::TABELA_ORIGEM);
-      obj1=rel->obterTabela(BaseRelationship::TABELA_DESTINO);
+      obj=rel->getTable(BaseRelationship::SRC_TABLE);
+      obj1=rel->getTable(BaseRelationship::DST_TABLE);
      }
 
      //Caso o objeto referencia o esquema, marca como modificado

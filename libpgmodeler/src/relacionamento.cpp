@@ -45,9 +45,9 @@ Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabel
   obj_type=OBJ_RELATIONSHIP;
   QString str_aux;
 
-  if(((tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N) &&
+  if(((rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N) &&
       !this->obterTabelaReferencia()->obterChavePrimaria()) ||
-     (tipo_relac==RELACIONAMENTO_NN && (!tab_orig->obterChavePrimaria() || !tab_dest->obterChavePrimaria())))
+     (rel_type==RELATIONSHIP_NN && (!tab_orig->obterChavePrimaria() || !tab_dest->obterChavePrimaria())))
      throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
                            .arg(QString::fromUtf8(obj_name))
                            .arg(QString::fromUtf8(tab_orig->getName(true)))
@@ -69,23 +69,23 @@ Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabel
   this->invalidado=true;
 
   //Configura o nome do relacionamento conforme o tipo
-  if(tipo_rel==RELACIONAMENTO_11)
+  if(tipo_rel==RELATIONSHIP_11)
    str_aux=QApplication::translate("Relacionamento","%1_has_one_%2","",QApplication::UnicodeUTF8);
-  else if(tipo_rel==RELACIONAMENTO_1N)
+  else if(tipo_rel==RELATIONSHIP_1N)
    str_aux=QApplication::translate("Relacionamento","%1_has_many_%2","",QApplication::UnicodeUTF8);
-  else if(tipo_rel==RELACIONAMENTO_NN)
+  else if(tipo_rel==RELATIONSHIP_NN)
    str_aux=QApplication::translate("Relacionamento","many_%1_has_many_%2","",QApplication::UnicodeUTF8);
-  else if(tipo_rel==RELACIONAMENTO_GEN)
+  else if(tipo_rel==RELATIONSHIP_GEN)
    str_aux=QApplication::translate("Relacionamento","%1_inherits_%2","",QApplication::UnicodeUTF8);
   else
    str_aux=QApplication::translate("Relacionamento","%1_copies_%2","",QApplication::UnicodeUTF8);
 
-  if(tipo_rel!=RELACIONAMENTO_NN)
+  if(tipo_rel!=RELATIONSHIP_NN)
    str_aux=str_aux.arg(this->obterTabelaReferencia()->getName())
                      .arg(this->obterTabelaReceptora()->getName());
   else
-   str_aux=str_aux.arg(this->tabela_orig->getName())
-                  .arg(this->tabela_dest->getName());
+   str_aux=str_aux.arg(this->src_table->getName())
+                  .arg(this->dst_table->getName());
 
   setName(str_aux);
 
@@ -128,15 +128,15 @@ vector<QString> Relacionamento::obterColunasRelacionamento(void)
  return(vet_nomes);
 }
 
-void Relacionamento::definirTabelaObrigatoria(unsigned id_tabela, bool valor)
+void Relacionamento::setMandatoryTable(unsigned id_tabela, bool valor)
 {
- BaseRelationship::definirTabelaObrigatoria(id_tabela, valor);
+ BaseRelationship::setMandatoryTable(id_tabela, valor);
  this->invalidado=true;
 }
 
 void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufixo)
 {
- if(tipo_tab > TABELA_DESTINO)
+ if(tipo_tab > DST_TABLE)
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  if(!sufixo.isEmpty() && !BaseObject::isValidName(sufixo))
@@ -144,7 +144,7 @@ void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufix
                 .arg(QString::fromUtf8(this->getName())),
                 ERR_ASG_INV_SUFFIX_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(tipo_tab==TABELA_ORIGEM)
+ if(tipo_tab==SRC_TABLE)
   sufixo_orig=sufixo;
  else
   sufixo_dest=sufixo;
@@ -154,10 +154,10 @@ void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufix
 
 QString Relacionamento::obterSufixoTabela(unsigned tipo_tab)
 {
- if(tipo_tab > TABELA_DESTINO)
+ if(tipo_tab > DST_TABLE)
   throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(tipo_tab==TABELA_ORIGEM)
+ if(tipo_tab==SRC_TABLE)
   return(sufixo_orig);
  else
   return(sufixo_dest);
@@ -176,10 +176,10 @@ void Relacionamento::definirIdentificador(bool valor)
     autorelacionamento, relacionamento n-n, de generalização, de dependência
     ou do tipo criado pelo próprio usuário. */
  if(valor &&
-   (tabela_orig==tabela_dest ||
-    (tipo_relac==RELACIONAMENTO_NN ||
-     tipo_relac==RELACIONAMENTO_GEN ||
-     tipo_relac==RELACIONAMENTO_DEP)))
+   (src_table==dst_table ||
+    (rel_type==RELATIONSHIP_NN ||
+     rel_type==RELATIONSHIP_GEN ||
+     rel_type==RELATIONSHIP_DEP)))
   throw Exception(ERR_INV_IDENT_RELATIOSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  identificador=valor;
@@ -190,7 +190,7 @@ void Relacionamento::definirColsChavePrimariaEspecial(vector<unsigned> &cols)
 {
  /* Dispara um erro caso o usuário tente usar a chave primária especial em autorelacionamento
     e/ou relacionamento n-n */
- if(autoRelacionamento() || relacionamentoIdentificador() || tipo_relac==RELACIONAMENTO_NN)
+ if(isSelfRelationship() || relacionamentoIdentificador() || rel_type==RELATIONSHIP_NN)
   throw Exception(Exception::getErrorMessage(ERR_INV_USE_ESPECIAL_PK)
                 .arg(QString::fromUtf8(this->getName())),
                 ERR_INV_USE_ESPECIAL_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -349,8 +349,8 @@ void Relacionamento::adicionarObjeto(TableObject *objeto_tab, int idx_obj)
  /* Somente a chave primária especial (criada pelo relacionamento)
     só pode ser adicionado a um relacionamento de generalização ou dependência.
     Caso o tipo do objeto a ser adionado não obedeça a esta condição um erro é retornado */
- if((tipo_relac==RELACIONAMENTO_GEN ||
-     tipo_relac==RELACIONAMENTO_DEP) &&
+ if((rel_type==RELATIONSHIP_GEN ||
+     rel_type==RELATIONSHIP_DEP) &&
     !(objeto_tab->isAddedByRelationship() &&
       objeto_tab->isProtected() &&
       objeto_tab->getObjectType()==OBJ_CONSTRAINT))
@@ -380,7 +380,7 @@ void Relacionamento::adicionarObjeto(TableObject *objeto_tab, int idx_obj)
    /* Como atributos recém criados não possuem uma tabela pai até que sejam
       adicionados   tabela receptora, para medidas de validação do código do atributo,
       a tabela de origem do relacionamento é atribuída como tabela pai */
-   objeto_tab->setParentTable(tabela_orig);
+   objeto_tab->setParentTable(src_table);
 
    if(tipo_obj==OBJ_COLUMN)
     dynamic_cast<Column *>(objeto_tab)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
@@ -518,13 +518,13 @@ void Relacionamento::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
  /* Antes da remoção de qualquer objeto é necessário desconectar
     o relacionamento pois o objeto a ser removido pode estar sendo
     referenciado por outros objetos */
- desconectarRelacionamento(false);
+ disconnectRelationship(false);
 
  //Remove o item da lista
  lista_obj->erase(lista_obj->begin() + id_obj);
 
  //Reconecta o relacionamento
- conectarRelacionamento();
+ connectRelationship();
 }
 
 void Relacionamento::removerObjeto(TableObject *objeto)
@@ -778,8 +778,8 @@ void Relacionamento::adicionarColunasRelGen(void)
 
  try
  {
-  tab_orig=dynamic_cast<Tabela *>(tabela_orig);
-  tab_dest=dynamic_cast<Tabela *>(tabela_dest);
+  tab_orig=dynamic_cast<Tabela *>(src_table);
+  tab_dest=dynamic_cast<Tabela *>(dst_table);
 
   //Obtém o número de colunas de ambas as tabelas
   qtd_orig=tab_orig->obterNumColunas();
@@ -887,7 +887,7 @@ void Relacionamento::adicionarColunasRelGen(void)
         e a coluna de origem é da própria tabela ou vinda de uma tabela cópia
         e a coluna de destino é da própria tabela de destino ou veio de uma
         tabela de cópia da própria tabela de destino */
-     if(tipo_relac==RELACIONAMENTO_DEP &&
+     if(rel_type==RELATIONSHIP_DEP &&
 
        ((!flags_orig[0] && !flags_orig[1]) ||
         (!flags_orig[0] &&  flags_orig[1])) &&
@@ -899,7 +899,7 @@ void Relacionamento::adicionarColunasRelGen(void)
      }
      /* Condição de erro 2: O tipo de relacionamento é de generalização e o tipo
         das colunas são incompatíveis */
-     else if(tipo_relac==RELACIONAMENTO_GEN &&
+     else if(rel_type==RELATIONSHIP_GEN &&
              tipo_orig!=tipo_dest)
       tipo_erro=ERR_INCOMP_COLS_INHERIT_REL;
     }
@@ -916,7 +916,7 @@ void Relacionamento::adicionarColunasRelGen(void)
 
      (*coluna)=(*col_dest);
 
-     if(tipo_relac==RELACIONAMENTO_GEN)
+     if(rel_type==RELATIONSHIP_GEN)
       coluna->setAddedByGeneralization(true);
      else
       coluna->setAddedByCopy(true);
@@ -1005,13 +1005,13 @@ void Relacionamento::adicionarColunasRelGen(void)
  }
 }
 
-void Relacionamento::conectarRelacionamento(void)
+void Relacionamento::connectRelationship(void)
 {
  try
  {
-  if(!conectado)
+  if(!connected)
   {
-   if(tipo_relac==RELACIONAMENTO_GEN)
+   if(rel_type==RELATIONSHIP_GEN)
    {
     /* Definindo que a tabela de destino é a tabela pai
        da tabela de origem como indicado pelo relacionamento
@@ -1021,7 +1021,7 @@ void Relacionamento::conectarRelacionamento(void)
     //Adicionar a tabela referência como tabela pai da tabela receptora
     obterTabelaReceptora()->adicionarTabelaPai(dynamic_cast<Tabela *>(obterTabelaReferencia()));
    }
-   else if(tipo_relac==RELACIONAMENTO_DEP)
+   else if(rel_type==RELATIONSHIP_DEP)
    {
     /* Definindo que a tabela de origem depende da tabela
        de destino pois parte de seus atributos virão da
@@ -1030,15 +1030,15 @@ void Relacionamento::conectarRelacionamento(void)
     //Adiciona a tabela referência como tabela cópia da tabela receptora
     obterTabelaReceptora()->adicionarTabelaCopia(dynamic_cast<Tabela *>(obterTabelaReferencia()));
    }
-   else if(tipo_relac==RELACIONAMENTO_11 ||
-           tipo_relac==RELACIONAMENTO_1N)
+   else if(rel_type==RELATIONSHIP_11 ||
+           rel_type==RELATIONSHIP_1N)
    {
-    if(tipo_relac==RELACIONAMENTO_11)
+    if(rel_type==RELATIONSHIP_11)
      adicionarColunasRel11();
     else
      adicionarColunasRel1n();
    }
-   else if(tipo_relac==RELACIONAMENTO_NN)
+   else if(rel_type==RELATIONSHIP_NN)
    {
     if(!tabela_relnn)
      /* Caso o tipo de relacionamento seja n-n e a tabela que representa
@@ -1048,15 +1048,15 @@ void Relacionamento::conectarRelacionamento(void)
      /* O esquema e espaço de tabelas da tabela resultante será, por padrão,
         os mesmos da tabela de origem */
     tabela_relnn->setName(nome_tab_relnn);
-    tabela_relnn->setSchema(tabela_orig->getSchema());
-    tabela_relnn->setTablespace(tabela_orig->getTablespace());
+    tabela_relnn->setSchema(src_table->getSchema());
+    tabela_relnn->setTablespace(src_table->getTablespace());
 
     adicionarColunasRelNn();
    }
 
    /* Faz uma chamada ao método de conexão do relacionamento da
       classe base */
-   BaseRelationship::conectarRelacionamento();
+   BaseRelationship::connectRelationship();
 
    /* Indica que o relacionameto foi conetado corretamente e que não está
    invalidado por modificação de atributos */
@@ -1202,8 +1202,8 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
  try
  {
   //Aloca uma chave estrangeira para ser configurada
-  if((tipo_relac==RELACIONAMENTO_NN) ||
-     (!fk_rel1n && (tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N)))
+  if((rel_type==RELATIONSHIP_NN) ||
+     (!fk_rel1n && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)))
      //(!fk_rel1n && (tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N)))
   {
    fk=new Constraint;
@@ -1216,7 +1216,7 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
 
    /* Caso o relacionamento seja 1-1 ou 1-n a chave estrangeira alocada
       será atribud   chave estrangeira que representa o relacionamento */
-   if(tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N)
+   if(rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)
     fk_rel1n=fk;
   }
   /*else if(fk_rel1n)
@@ -1257,16 +1257,16 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
              chave primária da tabela de origem, pois, sempre são inseridas na lista de colunas
              as colunas da origem (vindas da chave primária da origem) e depois as colunas
              da chave primária de destino. */
-  if(tipo_relac==RELACIONAMENTO_NN)
+  if(rel_type==RELATIONSHIP_NN)
   {
    //Caso 1: decrementando a quantidade de colunas a serem varridas
-   if((!autoRelacionamento() && tab_referencia==tabela_orig) ||
-      (autoRelacionamento() && tabela_relnn->obterNumRestricoes()==0))
-    qtd-=dynamic_cast<Tabela *>(tabela_dest)->obterChavePrimaria()->getColumnCount(Constraint::SOURCE_COLS);
+   if((!isSelfRelationship() && tab_referencia==src_table) ||
+      (isSelfRelationship() && tabela_relnn->obterNumRestricoes()==0))
+    qtd-=dynamic_cast<Tabela *>(dst_table)->obterChavePrimaria()->getColumnCount(Constraint::SOURCE_COLS);
    //Caso 2: deslocando o índice de varredura
-   else if(tab_referencia==tabela_dest)
+   else if(tab_referencia==dst_table)
    {
-    pk_aux=dynamic_cast<Tabela *>(tabela_orig)->obterChavePrimaria();
+    pk_aux=dynamic_cast<Tabela *>(src_table)->obterChavePrimaria();
     i=pk_aux->getColumnCount(Constraint::SOURCE_COLS);
    }
   }
@@ -1377,37 +1377,37 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
       será o da própria tabela de destino. */
   if(sufixo_auto)
   {
-   if(tipo_relac==RELACIONAMENTO_1N || tipo_relac==RELACIONAMENTO_11)
+   if(rel_type==RELATIONSHIP_1N || rel_type==RELATIONSHIP_11)
    {
     sufixo=SEPARADOR_SUFIXO + tab_referencia->getName();
 
-    if(tab_referencia==tabela_orig)
+    if(tab_referencia==src_table)
      sufixo_orig=sufixo;
     else
      sufixo_dest=sufixo;
    }
-   else if(tipo_relac==RELACIONAMENTO_NN)
+   else if(rel_type==RELATIONSHIP_NN)
    {
-    if(tab_referencia==tabela_dest)
-    sufixo=sufixo_dest=SEPARADOR_SUFIXO + tabela_dest->getName();
+    if(tab_referencia==dst_table)
+    sufixo=sufixo_dest=SEPARADOR_SUFIXO + dst_table->getName();
    else
-    sufixo=sufixo_orig=SEPARADOR_SUFIXO + tabela_orig->getName();
+    sufixo=sufixo_orig=SEPARADOR_SUFIXO + src_table->getName();
    }
   }
-  else if(((tipo_relac!=RELACIONAMENTO_NN && tab_receptora==tabela_orig) ||
-           (tipo_relac==RELACIONAMENTO_NN && tab_referencia==tabela_dest))
+  else if(((rel_type!=RELATIONSHIP_NN && tab_receptora==src_table) ||
+           (rel_type==RELATIONSHIP_NN && tab_referencia==dst_table))
       && !sufixo_dest.isEmpty())
    sufixo=SEPARADOR_SUFIXO + sufixo_dest;
-  else if(((tipo_relac!=RELACIONAMENTO_NN && tab_receptora==tabela_dest) ||
-           (tipo_relac==RELACIONAMENTO_NN && tab_referencia==tabela_orig))
+  else if(((rel_type!=RELATIONSHIP_NN && tab_receptora==dst_table) ||
+           (rel_type==RELATIONSHIP_NN && tab_referencia==src_table))
            && !sufixo_orig.isEmpty())
    sufixo=SEPARADOR_SUFIXO + sufixo_orig;
 
   /* Caso o relacionamento seja 1-n e a tabela de origem não possua
      uma chave primária ou se o relacionamento seja n-n e ambas as tabelas
      não possuam chave primária, uma exceção será disparada */
-  if((!pk_orig && (tipo_relac==RELACIONAMENTO_1N || tipo_relac==RELACIONAMENTO_11)) ||
-     (!pk_orig && !pk_dest && tipo_relac==RELACIONAMENTO_NN))
+  if((!pk_orig && (rel_type==RELATIONSHIP_1N || rel_type==RELATIONSHIP_11)) ||
+     (!pk_orig && !pk_dest && rel_type==RELATIONSHIP_NN))
    throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
                           .arg(QString::fromUtf8(this->obj_name))
                           .arg(QString::fromUtf8(tab_referencia->getName(true)))
@@ -1493,7 +1493,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
       Essa operação só é executada para relacionamentos 1-n e 1-n para relacionamentos
       n-n as colunas são sempre recriadas sem a necessidade de manter o histórico pois
       o usuário não consegue referenciar as colunas criadas pelos relacionamentos n-n.*/
-    if(nome_ant!=nome && (tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N))
+    if(nome_ant!=nome && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
      nome_ant_cols_ref[coluna->getObjectId()]=coluna->getName();
 
    /* Adiciona a coluna na tabela a qual foi definida para receber os
@@ -1543,13 +1543,13 @@ void Relacionamento::adicionarColunasRel11(void)
   tab_recep=dynamic_cast<Tabela *>(this->obterTabelaReceptora());
 
   //Caso a tabela de referência seja obrigatória seta como RESTRICT a ação de delete na chave estrangeira
-  if((tab_ref==this->tabela_orig && this->tabelaObrigatoria(TABELA_ORIGEM)) ||
-     (tab_ref==this->tabela_dest && this->tabelaObrigatoria(TABELA_DESTINO)))
+  if((tab_ref==this->src_table && this->isTableMandatory(SRC_TABLE)) ||
+     (tab_ref==this->dst_table && this->isTableMandatory(DST_TABLE)))
     acao_del=TipoAcao::restrict;
   else
     acao_del=TipoAcao::set_null;
 
-  if(autoRelacionamento())
+  if(isSelfRelationship())
   {
    adicionarAtributos(tab_recep);
    adicionarRestricoes(tab_recep);
@@ -1566,13 +1566,13 @@ void Relacionamento::adicionarColunasRel11(void)
     /* Quando o relacionamento é identificador, serão desprezadas as cardinalidades
        das tabelas pois, obrigatóriamente a entidade forte tem participação mandatória
         na entidade fraca, sendo assim, marca a tabela de referência como obrigatória */
-    this->definirTabelaObrigatoria(TABELA_DESTINO, false);
-    this->definirTabelaObrigatoria(TABELA_ORIGEM, false);
+    this->setMandatoryTable(DST_TABLE, false);
+    this->setMandatoryTable(SRC_TABLE, false);
 
-    if(tab_ref==this->tabela_orig)
-     this->definirTabelaObrigatoria(TABELA_ORIGEM, true);
+    if(tab_ref==this->src_table)
+     this->setMandatoryTable(SRC_TABLE, true);
     else
-     this->definirTabelaObrigatoria(TABELA_DESTINO, true);
+     this->setMandatoryTable(DST_TABLE, true);
 
     configurarRelIdentificador(tab_recep);
    }
@@ -1615,7 +1615,7 @@ void Relacionamento::adicionarColunasRel1n(void)
      de referência (origem) seja obrigatória (1,1)--<>--(0|1,n) as colunas da chave estrangeiras
      não podem aceitar valores nulos e além disso as ações ON DELETE e ON UPDATE
      será RESTRIC */
-  if(!identificador && obrig_orig)
+  if(!identificador && dst_mandatory)
   {
    if(!postergavel)
     acao_del=TipoAcao::restrict;
@@ -1631,7 +1631,7 @@ void Relacionamento::adicionarColunasRel1n(void)
   else if(identificador)
    acao_del=TipoAcao::cascade;
 
-  if(autoRelacionamento())
+  if(isSelfRelationship())
   {
    adicionarAtributos(tab_recep);
    adicionarRestricoes(tab_recep);
@@ -1647,8 +1647,8 @@ void Relacionamento::adicionarColunasRel1n(void)
     /* Quando o relacionamento é identificador, serão desprezadas as cardinalidades
        das tabelas pois, obrigatóriamente a entidade forte tem participação mandatória
         na entidade fraca, sendo assim, marca a tabela de referência como obrigatória */
-    this->definirTabelaObrigatoria(TABELA_ORIGEM, true);
-    this->definirTabelaObrigatoria(TABELA_DESTINO, false);
+    this->setMandatoryTable(SRC_TABLE, true);
+    this->setMandatoryTable(DST_TABLE, false);
 
     configurarRelIdentificador(tab_recep);
    }
@@ -1681,8 +1681,8 @@ void Relacionamento::adicionarColunasRelNn(void)
      será a tabela que representa o relacionamento (tabela_relnn). As tabelas
      participantes do relacionamento sempre serão as tabelas de origem pois as colunas
      destas precisam ser adicionadas na tabela que define o relacionamento */
-  tab=dynamic_cast<Tabela *>(tabela_orig);
-  tab1=dynamic_cast<Tabela *>(tabela_dest);
+  tab=dynamic_cast<Tabela *>(src_table);
+  tab1=dynamic_cast<Tabela *>(dst_table);
 
   /* Pela implementação correta (documental) a cardinalidade do rel. n-n é ignorada
      gerando sempre uma tabela própria cuja chave primária é a junção das
@@ -1732,7 +1732,7 @@ Tabela *Relacionamento::obterTabelaReferencia(void)
 {
  /* Para relacionamentos n-n que possuem 2 tabelas de refência,
     este método sempre retornará NULL. */
- if(tipo_relac==RELACIONAMENTO_NN)
+ if(rel_type==RELATIONSHIP_NN)
   return(NULL);
  else
  {
@@ -1740,27 +1740,27 @@ Tabela *Relacionamento::obterTabelaReferencia(void)
      tabela receptora das colunas que representam o relacionamento,
      retorna que a tabela de destino do relacionamento e a tabela
      de referência para cópia de colunas. */
-  if(tabela_orig==obterTabelaReceptora())
-   return(dynamic_cast<Tabela *>(tabela_dest));
+  if(src_table==obterTabelaReceptora())
+   return(dynamic_cast<Tabela *>(dst_table));
   else
-   return(dynamic_cast<Tabela *>(tabela_orig));
+   return(dynamic_cast<Tabela *>(src_table));
  }
 }
 
 Tabela *Relacionamento::obterTabelaReceptora(void)
 {
- if(tipo_relac==RELACIONAMENTO_11)
+ if(rel_type==RELATIONSHIP_11)
  {
   /* Caso 1: (0,1) ---<>--- (0,1)
      Caso 2: (1,1) ---<>--- (0,1) */
-  if((!obrig_orig && !obrig_dest) ||
-      (obrig_orig && !obrig_dest))
-   return(dynamic_cast<Tabela *>(tabela_dest));
+  if((!dst_mandatory && !src_mandatory) ||
+      (dst_mandatory && !src_mandatory))
+   return(dynamic_cast<Tabela *>(dst_table));
   /* Caso 3: (0,1) ---<>--- (1,1)
               Adição de colunas na tabela cuja cardinalidade mínima é 0
               (opcionalidade de participação no relacionamento) */
-  else if(!obrig_orig && obrig_dest)
-   return(dynamic_cast<Tabela *>(tabela_orig));
+  else if(!dst_mandatory && src_mandatory)
+   return(dynamic_cast<Tabela *>(src_table));
    // Caso 4: (1,1) ---<>--- (1,1)
   else
     /* Caso o usuário tente criar um relacionamento 1-1 onde ambas as entidades
@@ -1772,14 +1772,14 @@ Tabela *Relacionamento::obterTabelaReceptora(void)
  /* Para relacionamentos 1-n , a ordem das
     tabelas não se alteram, ou seja, as colunas são sempre adicionadas
     na tabela de destino */
- else if(tipo_relac==RELACIONAMENTO_1N)
-  return(dynamic_cast<Tabela *>(tabela_dest));
+ else if(rel_type==RELATIONSHIP_1N)
+  return(dynamic_cast<Tabela *>(dst_table));
   //return(dynamic_cast<Tabela *>(tabela_orig));
  /* Para relacionamentos gen ou dep as colunas são sempre adicionadas
     na tabela de origem do relacionamento */
- else if(tipo_relac==RELACIONAMENTO_GEN ||
-         tipo_relac==RELACIONAMENTO_DEP)
-  return(dynamic_cast<Tabela *>(tabela_orig));
+ else if(rel_type==RELATIONSHIP_GEN ||
+         rel_type==RELATIONSHIP_DEP)
+  return(dynamic_cast<Tabela *>(src_table));
  /* Para relacionamentos n-n, a tabela de destino onde serão adicionadas as colunas
     será a tabela que representa o relacionamento (tabela_relnn). As tabelas
     participantes do relacionamento sempre serão as tabelas de origem pois as colunas
@@ -1883,11 +1883,11 @@ void Relacionamento::removerColsChavePrimariaTabela(Tabela *tabela)
  }
 }
 
-void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
+void Relacionamento::disconnectRelationship(bool rem_objs_tab)
 {
  try
  {
-  if(conectado)
+  if(connected)
   {
    vector<Column *>::iterator itr, itr_end;
    Column *coluna=NULL;
@@ -1898,8 +1898,8 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
    TableObject *obj_tab=NULL;
    //TipoObjetoBase tipo_obj;
 
-   if(tipo_relac==RELACIONAMENTO_GEN ||
-      tipo_relac==RELACIONAMENTO_DEP)
+   if(rel_type==RELATIONSHIP_GEN ||
+      rel_type==RELATIONSHIP_DEP)
    {
     tabela=obterTabelaReceptora();
 
@@ -1909,7 +1909,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
      removerColsChavePrimariaTabela(tabela);
 
     //Remove a tabela cópia/pai dependendo do tipo do relacionamento
-    if(tipo_relac==RELACIONAMENTO_GEN)
+    if(rel_type==RELATIONSHIP_GEN)
      tabela->removerObjeto(obterTabelaReferencia()->getName(true), OBJ_TABLE);
     else
      tabela->removerObjeto(obterTabelaReferencia()->getName(true), BASE_TABLE);
@@ -1924,7 +1924,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
        relacionamento da tabela, além disso colunas
        adicionadas   chave primária (no caso de um
        relacionamento identificador) precisam ser removidas */
-    if(fk_rel1n && (tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N))
+    if(fk_rel1n && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
     {
      /* Obtém a tabela a qual possui a chave estrangeira que representa o
         relacionamento (tabela esta onde foi inserida a chave estrangeira
@@ -1974,7 +1974,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
       pk_relident=NULL;
      }
     }
-    else if(tipo_relac==RELACIONAMENTO_NN)
+    else if(rel_type==RELATIONSHIP_NN)
     {
      /* Caso o relacionamento seja n-n, apenas remove as restrições sem
         qualquer validação */
@@ -2074,7 +2074,7 @@ void Relacionamento::desconectarRelacionamento(bool rem_objs_tab)
    }
 
    //Executa o método de desconexão de relacionamento da classe base
-   BaseRelationship::desconectarRelacionamento();
+   BaseRelationship::disconnectRelationship();
   }
  }
  catch(Exception &e)
@@ -2140,13 +2140,13 @@ bool Relacionamento::relacionamentoInvalidado(void)
  }
  /* Caso o relacionamento esteja conectado e não esteja invalidado
     por modificação de atributos */
- else if(conectado)
+ else if(connected)
  {
    /* Valida os sufixos caso a geração automática de sufixos esteja ativa.
       Checa se os sufixos, quando preenchidos, coincidem  com os nomes das tabelas respectivas */
    if(sufixo_auto &&
-      ((!sufixo_orig.isEmpty() &&  sufixo_orig!=QString(SEPARADOR_SUFIXO) + tabela_orig->getName()) ||
-       (!sufixo_dest.isEmpty() &&  sufixo_dest!=QString(SEPARADOR_SUFIXO) + tabela_dest->getName())))
+      ((!sufixo_orig.isEmpty() &&  sufixo_orig!=QString(SEPARADOR_SUFIXO) + src_table->getName()) ||
+       (!sufixo_dest.isEmpty() &&  sufixo_dest!=QString(SEPARADOR_SUFIXO) + dst_table->getName())))
     return(true);
 
   /* Pare relacionamentos 1-1 e 1-n a verificação de
@@ -2154,8 +2154,8 @@ bool Relacionamento::relacionamentoInvalidado(void)
      quantidade de colunas da chave estrangeira configurada
      pela conexão do mesmo com a quantidade de colunas da
      chave primária da tabela de origem do relacionamento */
-  if(tipo_relac==RELACIONAMENTO_11 ||
-     tipo_relac==RELACIONAMENTO_1N)
+  if(rel_type==RELATIONSHIP_11 ||
+     rel_type==RELATIONSHIP_1N)
   {
    //Obtém a tabela de referencia do relacionamento
    tabela=obterTabelaReferencia();
@@ -2217,8 +2217,8 @@ bool Relacionamento::relacionamentoInvalidado(void)
      obtem-se a quantidade de colunas criadas pela ligação do
      relacionamento e a compara com a quantidade de colunas
      da tabela de origem */
-  else if(tipo_relac==RELACIONAMENTO_DEP ||
-          tipo_relac==RELACIONAMENTO_GEN)
+  else if(rel_type==RELATIONSHIP_DEP ||
+          rel_type==RELATIONSHIP_GEN)
   {
    //Obtém a tabela de referencia do relacionamento
    tabela=obterTabelaReferencia();
@@ -2256,11 +2256,11 @@ bool Relacionamento::relacionamentoInvalidado(void)
      só que em rela   chave primaria da tabela de destino
      2) É necessário validar se os nomes das colunas da tabela gerada
         coincidem com os nomes das colunas das tabelas originárias */
-  else if(tipo_relac==RELACIONAMENTO_NN)
+  else if(rel_type==RELATIONSHIP_NN)
   {
    //Obtém a referência para a tabela de destino do relacionamento
-   tabela=dynamic_cast<Tabela *>(tabela_orig);
-   tabela1=dynamic_cast<Tabela *>(tabela_dest);
+   tabela=dynamic_cast<Tabela *>(src_table);
+   tabela1=dynamic_cast<Tabela *>(dst_table);
 
    /* Para se validado um relacionamento n-n, a primeira condição é que
       ambas as tabelas possuam chave estrangeira */
@@ -2345,7 +2345,7 @@ QString Relacionamento::getCodeDefinition(unsigned tipo_def)
 {
  if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
-  if(fk_rel1n && (tipo_relac==RELACIONAMENTO_11 || tipo_relac==RELACIONAMENTO_1N))
+  if(fk_rel1n && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
   {
    unsigned qtd, i;
 
@@ -2366,7 +2366,7 @@ QString Relacionamento::getCodeDefinition(unsigned tipo_def)
 
    attributes[ParsersAttributes::TABLE]=obterTabelaReceptora()->getName(true);
   }
-  else if(tabela_relnn && tipo_relac==RELACIONAMENTO_NN)
+  else if(tabela_relnn && rel_type==RELATIONSHIP_NN)
   {
    unsigned qtd, i;
 
@@ -2380,7 +2380,7 @@ QString Relacionamento::getCodeDefinition(unsigned tipo_def)
      attributes[ParsersAttributes::CONSTRAINTS]+=tabela_relnn->obterRestricao(i)->getCodeDefinition(tipo_def, true);
    }
   }
-  else if(tipo_relac==RELACIONAMENTO_GEN)
+  else if(rel_type==RELATIONSHIP_GEN)
   {
    attributes[ParsersAttributes::RELATIONSHIP_GEN]="1";
    attributes[ParsersAttributes::TABLE]=obterTabelaReceptora()->getName(true);
@@ -2394,7 +2394,7 @@ QString Relacionamento::getCodeDefinition(unsigned tipo_def)
   unsigned qtd, i;
   bool forma_reduzida;
 
-  definirAtributosRelacionamento();
+  setRelationshipAttributes();
   attributes[ParsersAttributes::SRC_SUFFIX]=(!sufixo_auto ? sufixo_orig : "");
   attributes[ParsersAttributes::DST_SUFFIX]=(!sufixo_auto ? sufixo_dest : "");
   attributes[ParsersAttributes::IDENTIFIER]=(identificador ? "1" : "");

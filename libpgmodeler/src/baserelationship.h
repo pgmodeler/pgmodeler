@@ -31,96 +31,96 @@ class BaseRelationship: public BaseGraphicObject {
    QString getCodeDefinition(unsigned){ return(""); }
 
  protected:
-  vector<QPointF> pontos;
+  vector<QPointF> points;
 
   //Indica que o relacionamento está conectado
-  bool conectado;
+  bool connected;
 
   /*Indica a obrigatoriedade da participação da entidade
     (tabela) no relacionamento. (Padrão: false) */
-  bool obrig_dest,
-       obrig_orig;
+  bool src_mandatory,
+       dst_mandatory;
 
   /* Rótulos do relacionamento:
      0 - Rótulo Cardinalidade Origem
      1 - Rótulo Cardinalidade Destino
      2 - Rótulo Nome do Relacionamento */
-  Textbox *rotulos[3];
+  Textbox *lables[3];
 
   //Armazena a distâncias dos rótulos de suas origens
-  QPointF dist_rotulos[3];
+  QPointF lables_dist[3];
 
   //Entidades envolvidas no relacionamento
-  BaseTable *tabela_orig,
-             *tabela_dest;
+  BaseTable *src_table,
+            *dst_table;
 
   //Tipo do relacionamento (1-1, 1-n, n-n, gen ou dep)
-  unsigned tipo_relac;
+  unsigned rel_type;
 
   //Define os atributos usados na obtenção do código XML do relacionamento
-  void definirAtributosRelacionamento(void);
+  void setRelationshipAttributes(void);
 
   /* Efetua a configuração do relacionamento, criando o objeto gráfico,
      a linha do relacionamento e os demais objetos necessários a sua
      exibição */
-  void configurarRelacionamento(void);
+  void configureRelationship(void);
 
   /* Cria as linhas de conexão do relacionamento (linhas
      que se conectam as tabelas) */
-  void conectarRelacionamento(void);
+  void connectRelationship(void);
 
   //Remove as linhas de conexão do relacionamento
-  void desconectarRelacionamento(void);
+  void disconnectRelationship(void);
 
  public:
   //Constantes usadas para referenciar os tipos de relacionamento
-  static const unsigned RELACIONAMENTO_11=10, //Relacionamento 1-1
-                        RELACIONAMENTO_1N=20, //Relacionamento 1-n
-                        RELACIONAMENTO_NN=30, //Relacionamento n-n
-                        RELACIONAMENTO_GEN=40, //Relacionamento de Generalização
-                        RELACIONAMENTO_DEP=50; //Relacionamento de Dependência (tabela-visão) / Cópia (tabela-tabela)
+  static const unsigned RELATIONSHIP_11=10, //Relacionamento 1-1
+                        RELATIONSHIP_1N=20, //Relacionamento 1-n
+                        RELATIONSHIP_NN=30, //Relacionamento n-n
+                        RELATIONSHIP_GEN=40, //Relacionamento de Generalização
+                        RELATIONSHIP_DEP=50; //Relacionamento de Dependência (tabela-visão) / Cópia (tabela-tabela)
 
   //Constantes utilizadas pelo método de movimentação de rótulos do relacionamento
-  static const unsigned ROTULO_CARD_ORIGEM=0,
-                        ROTULO_CARD_DESTINO=1,
-                        ROTULO_NOME_RELAC=2;
+  static const unsigned LABEL_SRC_CARD=0,
+                        LABEL_DST_CARD=1,
+                        LABEL_REL_NAME=2;
 
   //Constantes utilizadas para referenciar tabelas de origem e destino
-  static const unsigned TABELA_ORIGEM=3,
-                        TABELA_DESTINO=4;
+  static const unsigned SRC_TABLE=3,
+                        DST_TABLE=4;
 
-  BaseRelationship(BaseRelationship *relacao);
+  BaseRelationship(BaseRelationship *rel);
 
-  BaseRelationship(unsigned tipo_rel, BaseTable *tab_orig, BaseTable *tab_dest,
-                     bool obrig_orig, bool obrig_dest);
+  BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab,
+                     bool src_mandatory, bool dst_mandatory);
   ~BaseRelationship(void);
 
 
   //Método específico de definição do nome de relacionamentos
-  void setName(const QString &obj_name);
+  void setName(const QString &name);
 
   //Define a obrigatoriedade da participação de uma entidade no relacionamento
-  void definirTabelaObrigatoria(unsigned id_tabela, bool valor);
+  void setMandatoryTable(unsigned table_id, bool value);
 
   //Obtém um rótulo através de seu índice
-  Textbox *obterRotulo(unsigned idx_rot);
+  Textbox *getLabel(unsigned label_id);
 
   //Obtém uma tabela participante da relação através de seu índice
-  BaseTable *obterTabela(unsigned id_tabela);
+  BaseTable *getTable(unsigned table_id);
 
   //Retorna o tipo do relacionamento
-  unsigned obterTipoRelacionamento(void);
+  unsigned getRelationshipType(void);
 
   //Retorna se a tabela (origem ou destino) é obrigatória no relacionamento
-  bool tabelaObrigatoria(unsigned id_tabela);
+  bool isTableMandatory(unsigned table_id);
 
   //Retorna se o relacionamento está conectado ou não
-  bool relacionamentoConectado(void);
+  bool isRelationshipConnected(void);
 
   /* Reinicia a posição dos rótulos, fazendo que os mesmos sejam
      reajustados toda vez que a linha do relacionamento é
      modificada */
-  void reiniciarPosicaoRotulos(void);
+  void resetLabelsPosition(void);
 
   //Retorna a definição XMl do relacionamento
   QString getCodeDefinition(void);
@@ -129,18 +129,18 @@ class BaseRelationship: public BaseGraphicObject {
      Esse método evita a validação manual que é obter as
      duas tabelas e compará-las. Este método ja executa
      tal operação. */
-  bool autoRelacionamento(void);
+  bool isSelfRelationship(void);
 
   /* Armazena os pontos que definem a linha do relacionamento.
      Este pontos são usados somente para gravar no arquivo XML
      a posição atual da linha do relacionamento */
-  void definirPontos(const vector<QPointF> &pontos);
+  void setPoints(const vector<QPointF> &points);
 
   //Retorna a lista de pontos que define a linha do relacionamento
-  vector<QPointF> obterPontos(void);
+  vector<QPointF> getPoints(void);
 
-  void definirDistanciaRotulo(unsigned idx_rot, QPointF dist_rotulo);
-  QPointF obterDistanciaRotulo(unsigned idx_rot);
+  void setLabelDistance(unsigned label_id, QPointF label_dist);
+  QPointF getLabelDistance(unsigned label_id);
 
   //Operador que faz a atribuição entre um objeto e outro
   void operator = (BaseRelationship &rel);

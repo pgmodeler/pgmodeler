@@ -877,8 +877,8 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
    rel=dynamic_cast<BaseRelationship *>(*itr);
 
    //Caso a visão seja um dos elementos do relacionamento
-   if(rel->obterTabela(BaseRelationship::TABELA_ORIGEM)==visao ||
-      rel->obterTabela(BaseRelationship::TABELA_DESTINO)==visao)
+   if(rel->getTable(BaseRelationship::SRC_TABLE)==visao ||
+      rel->getTable(BaseRelationship::DST_TABLE)==visao)
    {
     //Remove o relacionamento
     removerRelacionamento(rel);
@@ -906,14 +906,14 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
    rel=dynamic_cast<BaseRelationship *>(*itr);
 
    //Caso a visão seja um dos elementos do relacionamento
-   if(rel->obterTabela(BaseRelationship::TABELA_ORIGEM)==visao ||
-      rel->obterTabela(BaseRelationship::TABELA_DESTINO)==visao)
+   if(rel->getTable(BaseRelationship::SRC_TABLE)==visao ||
+      rel->getTable(BaseRelationship::DST_TABLE)==visao)
    {
     //Obtém a tabela do relacionamento
-    if(rel->obterTabela(BaseRelationship::TABELA_ORIGEM)->getObjectType()==OBJ_TABLE)
-     tab=dynamic_cast<Tabela *>(rel->obterTabela(BaseRelationship::TABELA_ORIGEM));
+    if(rel->getTable(BaseRelationship::SRC_TABLE)->getObjectType()==OBJ_TABLE)
+     tab=dynamic_cast<Tabela *>(rel->getTable(BaseRelationship::SRC_TABLE));
     else
-     tab=dynamic_cast<Tabela *>(rel->obterTabela(BaseRelationship::TABELA_DESTINO));
+     tab=dynamic_cast<Tabela *>(rel->getTable(BaseRelationship::DST_TABLE));
 
     //Caso a visão não referencie mais a tabela
     if(!visao->referenciaTabela(tab))
@@ -951,7 +951,7 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
    {
     /* rel=new RelacionamentoBase("rel_" + visao->getName() + "_" + tab->getName(),
                                RelacionamentoBase::RELACIONAMENTO_DEP,visao,tab,false,false); */
-    rel=new BaseRelationship(BaseRelationship::RELACIONAMENTO_DEP,visao,tab,false,false);
+    rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_DEP,visao,tab,false,false);
     adicionarRelacionamento(rel);
    }
   }
@@ -983,10 +983,10 @@ void ModeloBD::desconectarRelacionamentos(void)
    {
     //Converte o objeto para relacionamento tabela-tabela
     rel=dynamic_cast<Relacionamento *>(rel_base);
-    rel->desconectarRelacionamento();
+    rel->disconnectRelationship();
    }
    else
-    rel_base->desconectarRelacionamento();
+    rel_base->disconnectRelationship();
   }
  }
  catch(Exception &e)
@@ -1085,7 +1085,7 @@ void ModeloBD::validarRelacionamentos(void)
     try
     {
      //Executa a conexão do relacionamento
-     rel->conectarRelacionamento();
+     rel->connectRelationship();
      idx++;
     }
     /* Caso um erro seja disparado durante a conexão do relacionamento o
@@ -1215,17 +1215,17 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
   if(!rel)
    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  tipo_rel=rel->obterTipoRelacionamento();
+  tipo_rel=rel->getRelationshipType();
 
   /* Auto relacionamentos são desconsiderados da verificação.
      Já relacionamentos identificadores ou relacionamentos
      os quais possuem atributos identificadores são verificados */
-  if((!rel->autoRelacionamento() &&
+  if((!rel->isSelfRelationship() &&
       (rel->relacionamentoIdentificador() ||
        rel->possuiAtributoIdentificador())) ||
 
-     (tipo_rel==Relacionamento::RELACIONAMENTO_GEN ||
-      tipo_rel==Relacionamento::RELACIONAMENTO_DEP))
+     (tipo_rel==Relacionamento::RELATIONSHIP_GEN ||
+      tipo_rel==Relacionamento::RELATIONSHIP_DEP))
   {
    BaseTable *tabela_ref=NULL, *tab_orig=NULL;
    Tabela *tabela_rec=NULL;
@@ -1256,7 +1256,7 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
      //Obtém um relacionamento da lista
      rel_aux=dynamic_cast<Relacionamento *>(rel_base);
      //Obtém o tipo do relacionamento atual
-     tipo_rel_aux=rel_aux->obterTipoRelacionamento();
+     tipo_rel_aux=rel_aux->getRelationshipType();
      //Obtém a tabela referência do relacionamento atual
      tab_orig=rel_aux->obterTabelaReferencia();
 
@@ -1267,11 +1267,11 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
         com a tabela receptora do relacionamento atual até que o a tabela receptora
         seja a própria tabela de referência do relacionamento da validação. */
      if(tabela_rec==tab_orig &&  tipo_rel_aux==tipo_rel &&
-        ((!rel_aux->autoRelacionamento() &&
+        ((!rel_aux->isSelfRelationship() &&
           (rel_aux->relacionamentoIdentificador() ||
            rel_aux->possuiAtributoIdentificador())) ||
-         (tipo_rel_aux==Relacionamento::RELACIONAMENTO_GEN ||
-          tipo_rel_aux==Relacionamento::RELACIONAMENTO_DEP)))
+         (tipo_rel_aux==Relacionamento::RELATIONSHIP_GEN ||
+          tipo_rel_aux==Relacionamento::RELATIONSHIP_DEP)))
 
      {
       //A tabela receptora passará a ser a tabela receptora do relacionamento atual
@@ -1551,8 +1551,8 @@ void ModeloBD::adicionarRelacionamento(BaseRelationship *relacao, int idx_obj)
    /* Caso o relacionamento esteja alocado verifica se já não existe um
       relacionamento no modelo entre as tabelas envolvidas */
    //tipo_rel=relacao->obterTipoObjeto();
-   tab1=relacao->obterTabela(BaseRelationship::TABELA_ORIGEM);
-   tab2=relacao->obterTabela(BaseRelationship::TABELA_DESTINO);
+   tab1=relacao->getTable(BaseRelationship::SRC_TABLE);
+   tab2=relacao->getTable(BaseRelationship::DST_TABLE);
 
    //Caso exista um relacionamento entre as tabelas será disparado um erro
    if(obterRelacionamento(tab1,tab2))
@@ -1576,13 +1576,13 @@ void ModeloBD::adicionarRelacionamento(BaseRelationship *relacao, int idx_obj)
   if(relacao->getObjectType()==OBJ_RELATIONSHIP)
   {
    //Conecta o novo relacionamento
-   dynamic_cast<Relacionamento *>(relacao)->conectarRelacionamento();
+   dynamic_cast<Relacionamento *>(relacao)->connectRelationship();
 
    //Valida os relacionamentos para propagação das colunas
    validarRelacionamentos();
   }
   else
-   relacao->conectarRelacionamento();
+   relacao->connectRelationship();
  }
  catch(Exception &e)
  {
@@ -1603,7 +1603,7 @@ void ModeloBD::removerRelacionamento(BaseRelationship *relacao, int idx_obj)
     desconectarRelacionamentos();
    }
    else if(relacao->getObjectType()==BASE_RELATIONSHIP)
-    relacao->desconectarRelacionamento();
+    relacao->disconnectRelationship();
 
    __removerObjeto(relacao, idx_obj);
 
@@ -1672,8 +1672,8 @@ BaseRelationship *ModeloBD::obterRelacionamento(BaseTable *tab_orig, BaseTable *
   {
    //Obtém a referência ao relacionamento
    rel=dynamic_cast<BaseRelationship *>(*itr);
-   tab1=rel->obterTabela(BaseRelationship::TABELA_ORIGEM);
-   tab2=rel->obterTabela(BaseRelationship::TABELA_DESTINO);
+   tab1=rel->getTable(BaseRelationship::SRC_TABLE);
+   tab2=rel->getTable(BaseRelationship::DST_TABLE);
 
    /* Verifica se os elementos do parâmetro coincidem com os elementos
       do relacionamento */
@@ -5597,7 +5597,7 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
                   ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    //Desconecta o relacionamento para configurá-lo
-   relacao_base->desconectarRelacionamento();
+   relacao_base->disconnectRelationship();
    //relacao_base->definirNome(atributos[ParsersAttributes::NAME]);
   }
   /* Caso o tipo de relacionamento não seja tabela-visão, isso indica que
@@ -5615,15 +5615,15 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
 
    //Configura o tipo do novo relacionamento
    if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_11)
-    tipo_relac=BaseRelationship::RELACIONAMENTO_11;
+    tipo_relac=BaseRelationship::RELATIONSHIP_11;
    else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_1N)
-    tipo_relac=BaseRelationship::RELACIONAMENTO_1N;
+    tipo_relac=BaseRelationship::RELATIONSHIP_1N;
    else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_NN)
-    tipo_relac=BaseRelationship::RELACIONAMENTO_NN;
+    tipo_relac=BaseRelationship::RELATIONSHIP_NN;
    else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_GEN)
-    tipo_relac=BaseRelationship::RELACIONAMENTO_GEN;
+    tipo_relac=BaseRelationship::RELATIONSHIP_GEN;
    else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_DEP)
-    tipo_relac=BaseRelationship::RELACIONAMENTO_DEP;
+    tipo_relac=BaseRelationship::RELATIONSHIP_DEP;
 
    //Cria o novo relacionamento
    relacao=new Relacionamento(tipo_relac,
@@ -5681,7 +5681,7 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
       }
       while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 
-      relacao_base->definirPontos(pontos);
+      relacao_base->setPoints(pontos);
       XMLParser::restorePosition();
      }
      //Configurando a posição dos rótulos
@@ -5744,7 +5744,7 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
 
  //Reconecta o relacionamento caso o mesmo seja um rel. tabela-visao
  if(relacao_base && relacao_base->getObjectType()==BASE_RELATIONSHIP)
-  relacao_base->conectarRelacionamento();
+  relacao_base->connectRelationship();
 
  return(relacao_base);
 }
@@ -5974,7 +5974,7 @@ void ModeloBD::validarRelacObjetoTabela(TableObject *objeto, Tabela *tabela_pai)
     {
      rel=dynamic_cast<Relacionamento *>(*itr);
      itr++;
-     tab_ref_heranca=(rel->obterTipoRelacionamento()==Relacionamento::RELACIONAMENTO_GEN &&
+     tab_ref_heranca=(rel->getRelationshipType()==Relacionamento::RELATIONSHIP_GEN &&
                       rel->obterTabelaReferencia()==tabela_pai);
     }
    }
@@ -6258,8 +6258,8 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
     if(objeto->getObjectType()==OBJ_RELATIONSHIP)
     {
      relacao=dynamic_cast<Relacionamento *>(objeto);
-     objetos[0]=relacao->obterTabela(Relacionamento::TABELA_ORIGEM);
-     objetos[1]=relacao->obterTabela(Relacionamento::TABELA_DESTINO);
+     objetos[0]=relacao->getTable(Relacionamento::SRC_TABLE);
+     objetos[1]=relacao->getTable(Relacionamento::DST_TABLE);
      objetos[2]=relacao;
 
      for(i=0; i < 3; i++)
@@ -6689,8 +6689,8 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    unsigned i, qtd;
 
    //Obtém as dependências das tabelas referenciadas pelo relacionamento
-   obterDependenciasObjeto(rel->obterTabela(Relacionamento::TABELA_ORIGEM), vet_deps, inc_dep_indiretas);
-   obterDependenciasObjeto(rel->obterTabela(Relacionamento::TABELA_DESTINO), vet_deps, inc_dep_indiretas);
+   obterDependenciasObjeto(rel->getTable(Relacionamento::SRC_TABLE), vet_deps, inc_dep_indiretas);
+   obterDependenciasObjeto(rel->getTable(Relacionamento::DST_TABLE), vet_deps, inc_dep_indiretas);
 
    //Obtém as dependências dos tipos usados pelos atributos do relacionamento
    qtd=rel->obterNumAtributos();
@@ -6878,8 +6878,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
    {
     rel_base=dynamic_cast<BaseRelationship *>(*itr);
-    if(rel_base->obterTabela(BaseRelationship::TABELA_ORIGEM)==tabela ||
-       rel_base->obterTabela(BaseRelationship::TABELA_DESTINO)==tabela)
+    if(rel_base->getTable(BaseRelationship::SRC_TABLE)==tabela ||
+       rel_base->getTable(BaseRelationship::DST_TABLE)==tabela)
     {
      refer=true;
      vet_refs.push_back(rel_base);
@@ -6952,15 +6952,15 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
    {
     rel_base=dynamic_cast<BaseRelationship *>(*itr);
-    if(rel_base->obterTabela(BaseRelationship::TABELA_ORIGEM)==tabela)
+    if(rel_base->getTable(BaseRelationship::SRC_TABLE)==tabela)
     {
      refer=true;
-     vet_refs.push_back(rel_base->obterTabela(BaseRelationship::TABELA_DESTINO));
+     vet_refs.push_back(rel_base->getTable(BaseRelationship::DST_TABLE));
     }
-    else if(rel_base->obterTabela(BaseRelationship::TABELA_DESTINO)==tabela)
+    else if(rel_base->getTable(BaseRelationship::DST_TABLE)==tabela)
     {
      refer=true;
-     vet_refs.push_back(rel_base->obterTabela(BaseRelationship::TABELA_ORIGEM));
+     vet_refs.push_back(rel_base->getTable(BaseRelationship::SRC_TABLE));
     }
     itr++;
    }
@@ -7730,7 +7730,7 @@ void ModeloBD::definirObjetosModificados(void)
     rel=dynamic_cast<BaseRelationship *>(*itr);
     for(i1=0; i1 < 3; i1++)
     {
-     rot=rel->obterRotulo(i1);
+     rot=rel->getLabel(i1);
      if(rot) rot->setModified(true);
     }
    }

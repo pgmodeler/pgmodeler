@@ -6,14 +6,14 @@ OGRelacionamento::OGRelacionamento(BaseRelationship *relacao) : ObjetoGrafico(re
  if(!relacao)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
- for(unsigned i=BaseRelationship::ROTULO_CARD_ORIGEM;
-      i <= BaseRelationship::ROTULO_NOME_RELAC; i++)
+ for(unsigned i=BaseRelationship::LABEL_SRC_CARD;
+      i <= BaseRelationship::LABEL_REL_NAME; i++)
  {
   //Aloca os rótulos
-  if(relacao->obterRotulo(i))
+  if(relacao->getLabel(i))
   {
-   relacao->obterRotulo(i)->setTextColor(ObjetoGrafico::obterEstiloFonte(ParsersAttributes::LABEL).foreground());
-   rotulos[i]=new OGCaixaTexto(relacao->obterRotulo(i),
+   relacao->getLabel(i)->setTextColor(ObjetoGrafico::obterEstiloFonte(ParsersAttributes::LABEL).foreground());
+   rotulos[i]=new OGCaixaTexto(relacao->getLabel(i),
                                ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::LABEL),
                                ObjetoGrafico::obterEstiloBorda(ParsersAttributes::LABEL));
    rotulos[i]->setZValue(1);
@@ -83,7 +83,7 @@ BaseRelationship *OGRelacionamento::obterObjetoOrigem(void)
 
 OGCaixaTexto *OGRelacionamento::obterRotulo(unsigned idx_rot)
 {
- if(idx_rot > BaseRelationship::ROTULO_NOME_RELAC)
+ if(idx_rot > BaseRelationship::LABEL_REL_NAME)
   return(NULL);
  else
   return(rotulos[idx_rot]);
@@ -181,7 +181,7 @@ void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
   if(evento->buttons()==Qt::MidButton)
   {
    for(unsigned i=0; i < 3; i++)
-    rel_base->definirDistanciaRotulo(i, QPointF(NAN,NAN));
+    rel_base->setLabelDistance(i, QPointF(NAN,NAN));
    this->configurarRotulos();
   }
   //Caso o usuário esteja com o SHIFT pressionado
@@ -192,9 +192,9 @@ void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
    QRectF ret;
    unsigned i, qtd;
    bool pnt_rem=false;
-   vector<QPointF> pontos=rel_base->obterPontos();
+   vector<QPointF> pontos=rel_base->getPoints();
 
-   if(!rel_base->autoRelacionamento())
+   if(!rel_base->isSelfRelationship())
    {
     /* Clicando com botão esquerdo sobre um ponto na linha de um relacionamento
        o mesmo será removido da linha */
@@ -213,7 +213,7 @@ void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
       if(ret.contains(evento->pos()))
       {
        pontos.erase(pontos.begin()+i);
-       rel_base->definirPontos(pontos);
+       rel_base->setPoints(pontos);
        this->configurarLinha();
        pnt_rem=true;
        break;
@@ -247,7 +247,7 @@ void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
         pontos.push_back( evento->pos());
        else
         pontos.insert(pontos.begin() + i, evento->pos());
-       rel_base->definirPontos(pontos);
+       rel_base->setPoints(pontos);
 
        //Reconfigura a linha
        this->configurarLinha();
@@ -311,10 +311,10 @@ void OGRelacionamento::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
   if(dynamic_cast<QGraphicsPolygonItem *>(objeto_sel))
   {
    BaseRelationship *rel_base=this->obterObjetoOrigem();
-   vector<QPointF> pontos=rel_base->obterPontos();
+   vector<QPointF> pontos=rel_base->getPoints();
 
    pontos[idx_objeto_sel]=evento->pos();
-   rel_base->definirPontos(pontos);
+   rel_base->setPoints(pontos);
    this->configurarLinha();
   }
   else if(dynamic_cast<OGCaixaTexto *>(objeto_sel))
@@ -335,7 +335,7 @@ void OGRelacionamento::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
   if(dynamic_cast<OGCaixaTexto *>(objeto_sel))
   {
    //Calcula o deslocamento do rótulo de sua posição inicial até a posição atual
-   rel_base->definirDistanciaRotulo(idx_objeto_sel,
+   rel_base->setLabelDistance(idx_objeto_sel,
                                     QPointF(objeto_sel->pos() - pos_ini_rotulos[idx_objeto_sel]));
   }
 
@@ -357,8 +357,8 @@ void OGRelacionamento::configurarObjeto(void)
  BaseRelationship *rel_base=this->obterObjetoOrigem();
 
  //Armazena as tabelas envolvidas no relacionamento
- tabelas[0]=dynamic_cast<OGTabelaBase *>(rel_base->obterTabela(BaseRelationship::TABELA_ORIGEM)->getReceiverObject());
- tabelas[1]=dynamic_cast<OGTabelaBase *>(rel_base->obterTabela(BaseRelationship::TABELA_DESTINO)->getReceiverObject());
+ tabelas[0]=dynamic_cast<OGTabelaBase *>(rel_base->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
+ tabelas[1]=dynamic_cast<OGTabelaBase *>(rel_base->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
 
  //Executa a configuração inicial do relacionamento
  this->configurarLinha();
@@ -404,7 +404,7 @@ void OGRelacionamento::configurarLinha(void)
   configurando_linha=true;
 
   //Caso seja um auto relacionamento
-  if(rel_base->autoRelacionamento())
+  if(rel_base->isSelfRelationship())
   {
    float fator=config_fonte[ParsersAttributes::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
 
@@ -429,7 +429,7 @@ void OGRelacionamento::configurarLinha(void)
    pontos.push_back(QPointF(p_central[0].x() + (10 * fator),  p_central[0].y()));
    pontos.push_back(QPointF(p_central[0].x() + (10 * fator),  p_central[1].y() - (10 * fator)));
    pontos.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (10 * fator)));
-   rel_base->definirPontos(pontos);
+   rel_base->setPoints(pontos);
   }
   //Caso não seja um autorelacionamento
   else
@@ -443,7 +443,7 @@ void OGRelacionamento::configurarLinha(void)
       identificador seja desenhado no lado correto da entidade fraca (tabela receptora)
    */
    if(rel &&
-      rel->obterTipoRelacionamento()==Relacionamento::RELACIONAMENTO_11 &&
+      rel->getRelationshipType()==Relacionamento::RELATIONSHIP_11 &&
       rel->relacionamentoIdentificador())
    {
     tabelas[0]=dynamic_cast<OGTabelaBase *>(rel->obterTabelaReferencia()->getReceiverObject());
@@ -465,7 +465,7 @@ void OGRelacionamento::configurarLinha(void)
    }
 
    //Obtém os pontos do relacionamento
-   pontos=rel_base->obterPontos();
+   pontos=rel_base->getPoints();
 
    /* Caso não haja pontos no relacionamento a linha auxiliar será entre
       os pontos centrais das tabelas */
@@ -522,7 +522,7 @@ void OGRelacionamento::configurarLinha(void)
 
   //Caso o relacionamento seja de dependência a linha será tracejada
   pen=ObjetoGrafico::obterEstiloBorda(ParsersAttributes::RELATIONSHIP);
-  if(rel_base->obterTipoRelacionamento()==BaseRelationship::RELACIONAMENTO_DEP)
+  if(rel_base->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP)
    pen.setStyle(Qt::DashLine);
 
   //Armazena os pontos de interseção das bordas da tabela no vetor de pontos do relacionamento
@@ -580,7 +580,7 @@ void OGRelacionamento::configurarLinha(void)
   }
 
   //Remove a linhas não utilizadas (caso não for auto relacionamento)
-  if(!rel_base->autoRelacionamento())
+  if(!rel_base->isSelfRelationship())
   {
    i=pontos.size()-1;
    i1=linhas.size();
@@ -620,15 +620,15 @@ void OGRelacionamento::configurarDescritor(void)
  QPolygonF pol;
  BaseRelationship *rel_base=this->obterObjetoOrigem();
  Relacionamento *relacao=dynamic_cast<Relacionamento *>(rel_base);
- unsigned tipo_rel=rel_base->obterTipoRelacionamento();
+ unsigned tipo_rel=rel_base->getRelationshipType();
  float x, y, fator=config_fonte[ParsersAttributes::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
  QPen pen;
  QPointF pnt;
- vector<QPointF> pontos=rel_base->obterPontos();
+ vector<QPointF> pontos=rel_base->getPoints();
 
  //Configura o estilo da borda do descritor
  pen=ObjetoGrafico::obterEstiloBorda(ParsersAttributes::RELATIONSHIP);
- if(tipo_rel==BaseRelationship::RELACIONAMENTO_DEP)
+ if(tipo_rel==BaseRelationship::RELATIONSHIP_DEP)
   pen.setStyle(Qt::DashLine);
 
  //Configura a borda e preenchimento do descritor
@@ -637,8 +637,8 @@ void OGRelacionamento::configurarDescritor(void)
 
  /* Cria um polígono triangular (para relacionamentos de dep. ou gen.)
     ou losangular (para relacionamentos 1n ou nn) */
- if(tipo_rel==BaseRelationship::RELACIONAMENTO_DEP ||
-    tipo_rel==BaseRelationship::RELACIONAMENTO_GEN)
+ if(tipo_rel==BaseRelationship::RELATIONSHIP_DEP ||
+    tipo_rel==BaseRelationship::RELATIONSHIP_GEN)
  {
   pol.append(QPointF(0,0)); pol.append(QPointF(21,13));
   pol.append(QPointF(0,26)); pol.append(QPointF(0,13));
@@ -657,7 +657,7 @@ void OGRelacionamento::configurarDescritor(void)
 
  /* Caso seja um auto relacionamento, o posição do descritor será
     baseada no ponto do meio da lista de pontos */
- if(rel_base->autoRelacionamento())
+ if(rel_base->isSelfRelationship())
   pnt=pontos.at(pontos.size()/2);
  else
  {
@@ -842,25 +842,25 @@ void OGRelacionamento::configurarRotulos(void)
  float x=0,y=0;
  QPointF pnt;
  BaseRelationship *rel_base=this->obterObjetoOrigem();
- unsigned tipo_relac=rel_base->obterTipoRelacionamento();
+ unsigned tipo_relac=rel_base->getRelationshipType();
  QPointF dist_rotulo;
 
  //Obtém os deslocamentos do rótulo de nome
- dist_rotulo=rel_base->obterDistanciaRotulo(BaseRelationship::ROTULO_NOME_RELAC);
+ dist_rotulo=rel_base->getLabelDistance(BaseRelationship::LABEL_REL_NAME);
 
  //Define a posição do rótulo como sendo abaixo do descritor
  pnt=descritor->pos();
  x=pnt.x() -
-   ((rotulos[BaseRelationship::ROTULO_NOME_RELAC]->boundingRect().width() -
+   ((rotulos[BaseRelationship::LABEL_REL_NAME]->boundingRect().width() -
      descritor->boundingRect().width())/2.0f);
 
- if(rel_base->autoRelacionamento())
+ if(rel_base->isSelfRelationship())
   y=pnt.y() -
-    rotulos[BaseRelationship::ROTULO_NOME_RELAC]->boundingRect().height() - (2 * ESP_VERTICAL);
+    rotulos[BaseRelationship::LABEL_REL_NAME]->boundingRect().height() - (2 * ESP_VERTICAL);
  else
   y=pnt.y() + descritor->boundingRect().height() + ESP_VERTICAL;
 
- pos_ini_rotulos[BaseRelationship::ROTULO_NOME_RELAC]=QPointF(x,y);
+ pos_ini_rotulos[BaseRelationship::LABEL_REL_NAME]=QPointF(x,y);
 
  //Caso haja um deslocamento anterior do rótulo, incrementa sua posição com o deslocamento
  if(!isnan(dist_rotulo.x()))
@@ -870,21 +870,21 @@ void OGRelacionamento::configurarRotulos(void)
  }
 
  //Move o rótulo para o ponto calculado
- rotulos[BaseRelationship::ROTULO_NOME_RELAC]->setPos(x,y);
- dynamic_cast<Textbox *>(rotulos[BaseRelationship::ROTULO_NOME_RELAC]->obterObjetoOrigem())->setModified(true);
+ rotulos[BaseRelationship::LABEL_REL_NAME]->setPos(x,y);
+ dynamic_cast<Textbox *>(rotulos[BaseRelationship::LABEL_REL_NAME]->obterObjetoOrigem())->setModified(true);
 
  /* Caso o relacionamento não seja de generalização ou dependência,
     a posição dos rótulos de cardinalidade será atualizada */
- if(tipo_relac!=BaseRelationship::RELACIONAMENTO_GEN &&
-    tipo_relac!=BaseRelationship::RELACIONAMENTO_DEP)
+ if(tipo_relac!=BaseRelationship::RELATIONSHIP_GEN &&
+    tipo_relac!=BaseRelationship::RELATIONSHIP_DEP)
  {
   QPointF pi, pf, p_int, pos;
   unsigned idx, i1;
   float dl, da;
   QLineF lins[2], bordas[2][4];
   QRectF ret_tab, ret;
-  unsigned tipos_rot[2]={ BaseRelationship::ROTULO_CARD_ORIGEM,
-                          BaseRelationship::ROTULO_CARD_DESTINO };
+  unsigned tipos_rot[2]={ BaseRelationship::LABEL_SRC_CARD,
+                          BaseRelationship::LABEL_DST_CARD };
 
   lins[0]=linhas[0]->line();
   lins[1]=linhas[linhas.size()-1]->line();
@@ -998,7 +998,7 @@ void OGRelacionamento::configurarRotulos(void)
     }
 
     pos_ini_rotulos[tipos_rot[idx]]=QPointF(x,y);
-    dist_rotulo=rel_base->obterDistanciaRotulo(tipos_rot[idx]);
+    dist_rotulo=rel_base->getLabelDistance(tipos_rot[idx]);
     if(!isnan(dist_rotulo.x()))
     {
      x+=dist_rotulo.x();
@@ -1018,7 +1018,7 @@ QRectF OGRelacionamento::__boundingRect(void)
  unsigned i, qtd;
  QPointF p;
  QRectF ret;
- vector<QPointF> pontos=dynamic_cast<BaseRelationship *>(this->obterObjetoOrigem())->obterPontos();
+ vector<QPointF> pontos=dynamic_cast<BaseRelationship *>(this->obterObjetoOrigem())->getPoints();
 
  //O tamanho de referência será o do descritor
  x1=descritor->pos().x();

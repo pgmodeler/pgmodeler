@@ -550,21 +550,21 @@ void CenaObjetos::alinharObjetosGrade(void)
    else if(rel)
    {
     //Obtém os pontos do relacionamento, alinha-os e os reatribui ao relacionamento
-    pontos=rel->obterObjetoOrigem()->obterPontos();
+    pontos=rel->obterObjetoOrigem()->getPoints();
     qtd1=pontos.size();
     for(i1=0; i1 < qtd1; i1++)
      pontos[i1]=this->alinharPontoGrade(pontos[i1]);
 
     if(qtd1 > 0)
     {
-     rel->obterObjetoOrigem()->definirPontos(pontos);
+     rel->obterObjetoOrigem()->setPoints(pontos);
      //Reconfigura a linha após o alinhamento dos pontos
      rel->configurarLinha();
     }
 
     //Alinha os rótulos�   grade
-    for(i1=BaseRelationship::ROTULO_CARD_ORIGEM;
-        i1<=BaseRelationship::ROTULO_NOME_RELAC; i1++)
+    for(i1=BaseRelationship::LABEL_SRC_CARD;
+        i1<=BaseRelationship::LABEL_REL_NAME; i1++)
     {
      rot=rel->obterRotulo(i1);
      if(rot)

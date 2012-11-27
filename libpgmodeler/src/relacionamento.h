@@ -292,7 +292,7 @@ class Relacionamento: public BaseRelationship {
 
   Relacionamento(unsigned tipo_rel,
                  Tabela *tab_orig, Tabela *tab_dest,
-                 bool obrig_orig=false, bool obrig_dest=false,
+                 bool dst_mandatory=false, bool src_mandatory=false,
                  bool sufixo_auto=true,
                  const QString &sufix_orig="", const QString &sufix_dest="",
                  bool identificador=false, bool postergavel=false,
@@ -302,18 +302,18 @@ class Relacionamento: public BaseRelationship {
 
    /* Conecta o relacionamento as tabelas e o configura de
       acordo o tipo de relacionamento */
-   void conectarRelacionamento(void);
+   void connectRelationship(void);
 
    /* Desconecta o relacionamento das tabelas e o remove os atributos do mesmo caso
       estes estiverem presente em alguma das tabelas. Este método desaloca todos os
       objetos criados na conexão. */
-   void desconectarRelacionamento(bool rem_objs_tab=true);
+   void disconnectRelationship(bool rem_objs_tab=true);
 
    //Retorna a lista de nomes das colunas geradas pela conexão do relacionamento
    vector<QString> obterColunasRelacionamento(void);
 
    //Define a obrigatoriedade da tabela de origem e destino
-   void definirTabelaObrigatoria(unsigned id_tabela, bool valor);
+   void setMandatoryTable(unsigned id_tabela, bool valor);
 
    //Define a geração automática de sufixos das colunas
    void definirSufixoAutomatico(bool valor);
