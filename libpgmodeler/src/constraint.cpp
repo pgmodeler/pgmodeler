@@ -38,7 +38,6 @@ void Constraint::setConstraintType(TipoRestricao constr_type)
 
 void Constraint::setActionType(TipoAcao action_type, bool upd)
 {
- //Se upd==true o tipo de ação no update é que será definido
  if(upd)
   this->upd_action=action_type;
  else
@@ -56,10 +55,11 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
  Column *col_aux=NULL;
  bool found=false;
 
- //Caso a coluna a ser buscada não esteja aloca, dispara uma exceção
+ //Raises an error if the column is not allocated
  if(!column)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+ //Gets the iterators from the specified internal list
  if(col_type==SOURCE_COLS)
  {
   itr=columns.begin();
@@ -71,9 +71,7 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
   itr_end=ref_columns.end();
  }
 
- /* Varre a lista de colunas selecionada verificando se o nome da
-    coluna é igual ao nome de uma das colunas da lista ou mesmo
-    se os endereços das colunas envolvidas são iguais */
+ //Tries to find the column  on the internal list
  while(itr!=itr_end && !found)
  {
   col_aux=(*itr);
@@ -86,7 +84,7 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 
 void Constraint::addColumn(Column *column, unsigned col_type)
 {
- //Caso a coluna não esteja aloca, dispara exceção.
+ //Raises an error if the column is not allocated
  if(!column)
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
                         .arg(QString::fromUtf8(this->getName()))
@@ -94,12 +92,10 @@ void Constraint::addColumn(Column *column, unsigned col_type)
                  ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(constr_type!=TipoRestricao::check)
  {
-  //Só adiciona a coluna em uma das lista caso a mesma não exista em uma delas
+  //Adds the column only if the column doesn't exists on the internal list
   if(!isColumnExists(column,col_type))
   {
-   //Caso a coluna a ser atribuida seja da lista de colunas de destino
    if(col_type==REFERENCED_COLS)
-    //Insere a coluna na lista de destino
     ref_columns.push_back(column);
    else
     columns.push_back(column);
@@ -130,12 +126,8 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
  Column *col=NULL;
  QString str_cols, attrib;
  unsigned i, count;
- bool formatar=(def_type==SchemaParser::SQL_DEFINITION);
+ bool format=(def_type==SchemaParser::SQL_DEFINITION);
 
- /* Caso a coluna selecionada seja a de destino,
-    obtém a lista de colunas de destino e marca
-    que o atributo a ser configurado é do de
-    colunas da tabela de destino */
  if(col_type==REFERENCED_COLS)
  {
   col_vector=&ref_columns;
@@ -147,24 +139,22 @@ void Constraint::setColumnsAttribute(unsigned col_type, unsigned def_type, bool 
   attrib=ParsersAttributes::SRC_COLUMNS;
  }
 
- /* Varre a lista de colunas contatenando os nomes
-    dos elementos separando-os por vírgula */
  count=col_vector->size();
  for(i=0; i < count; i++)
  {
   col=col_vector->at(i);
 
-  /* No caso de definição XML as colunas protegidas (adicionaa   restrição
-     por relacionamento) não podem ser incluídas pois estas serão inseridas
-     na restrição no momento da criação do relacionamento a partir do XML respectivo
-     por isso o parâmetro 'inc_insporrelacao' pode ser usado para resolver esse caso. */
+  /* For XML definition the columns added to the restriction
+     through relationship can not be included because they are inserted
+     to the restriction on the time of creation of the relationship from its XML
+     so the parameter 'inc_addedbyrel' can be used to solve this case. */
   if((def_type==SchemaParser::SQL_DEFINITION) ||
      ((def_type==SchemaParser::XML_DEFINITION) &&
       ((inc_addedbyrel && col->isAddedByRelationship()) ||
        (inc_addedbyrel && !col->isAddedByRelationship()) ||
        (!inc_addedbyrel && !col->isAddedByRelationship()))))
   {
-   str_cols+=col->getName(formatar);
+   str_cols+=col->getName(format);
    str_cols+=",";
   }
  }
@@ -211,7 +201,6 @@ TipoRestricao Constraint::getConstraintType(void)
 
 TipoAcao Constraint::getActionType(bool upd)
 {
- //Se upd==true o tipo de ação no update é que será retornado
  if(upd)
   return(upd_action);
  else
@@ -227,15 +216,12 @@ Column *Constraint::getColumn(unsigned col_idx, unsigned col_type)
 {
  vector<Column *> *col_list=NULL;
 
- //Obtendo a lista de colunas de acorodo com o tipo de coluna selecionado
  col_list=(col_type==SOURCE_COLS ? &columns : &ref_columns);
 
- /* Caso o índice de coluna a ser obtido seja inválido, um erro
-    será retornado */
+ //Raises an error if the column index is invalid (out of bound)
  if(col_idx>=col_list->size())
   throw Exception(ERR_REF_COLUMN_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Retorna a coluna no índice especificado
  return(col_list->at(col_idx));
 }
 
@@ -245,23 +231,18 @@ Column *Constraint::getColumn(const QString &name, unsigned col_type)
  vector<Column *> *col_list=NULL;
  vector<Column *>::iterator itr_col, itr_end_col;
 
- //Obtém a lista de colunas de acordo com o tipo
  col_list=(col_type==SOURCE_COLS? &columns : &ref_columns);
 
- //Obtém as referencias para o primeiro e o ultimo elemento da lista de colunas
  itr_col=col_list->begin();
  itr_end_col=col_list->end();
 
- //Varre a lista de colunas verificando se existe alguma ocorrencia do nome passado
  while(itr_col!=itr_end_col)
  {
   found=((*itr_col)->getName()==name);
-  //Caso o no não seja encontrado passa para o próximo elemento
   if(!found) itr_col++;
-  else break; //Caso seja encontrado, encerra a execuação da varredura
+  else break;
  }
 
- //caso seja encontrada, retorna a coluna senão retorna nulo
  if(found) return(*itr_col);
  else return(NULL);
 }
@@ -291,32 +272,27 @@ void Constraint::removeColumn(const QString &name, unsigned col_type)
  vector<Column *> *cols=NULL;
  Column *col=NULL;
 
- //Se col_dest==true, a lista a ser pesquisada será a de destino
+ //Gets the column list using the specified internal list type
  if(col_type==REFERENCED_COLS)
-  //Selecionando a lista de destino para pesquisa
   cols=&ref_columns;
  else
   cols=&columns;
 
- //Obtém a referência ao primeiro elemento da lista selecionada
  itr=cols->begin();
- //Obtém a referência ao ultimo elemento da lista selecionada
  itr_end=cols->end();
 
- /* Efetua um iteração comparando o nome de cada coluna da lista
-    com o nome que se deseja encontrar */
  while(itr!=itr_end)
  {
-  col=(*itr); //Obtém a coluna
+  col=(*itr);
 
-  //Caso o nome da coluna coincida com o nome a se localizar
+  //Case the column is found
   if(col->getName()==name)
   {
-   //Remove o elemento da lista
+   //Remove its iterator from the list
    cols->erase(itr);
    break;
   }
-  else itr++; //Passa para a próxima coluna
+  else itr++;
  }
 }
 
@@ -336,31 +312,19 @@ bool Constraint::isReferRelationshipColumn(void)
  Column *col=NULL;
  bool found=false;
 
- /* Primeira lista de colunas da origem é que será varrida
-    para isso as referências ao primeiro e ultimo elementos
-    serão obtidas */
+ //First iterates over the source columns list
  itr=columns.begin();
  itr_end=columns.end();
 
- /* Efetua uma iteração verifica se as colunas da lista
-    atual foram incluídas por relacionamento, caso uma coluna
-    for detectada como incluída desta forma é suficiente
-    dizer que a restrição referencia colunas vindas de
-    relacionamento fazendo com que esta seja tratada de forma
-    especial evitando a quebra de referêncais */
  while(itr!=itr_end && !found)
  {
-  //Obtém a coluna
   col=(*itr);
-  //Obtém se a coluna foi incluída por relacionamento ou não
+  //Check if the current column were added by relationship
   found=col->isAddedByRelationship();
-  //Passa para a próxima coluna
   itr++;
 
-  /* Caso a lista de colunas de origem foi completamente varrida
-     e nenhuma das colunas desta vieram de relacionamentos, a
-     lista de colunas referenciadas é que será varrida com o
-     mesmo intuito */
+  /* Case the source column list is completely iterated steps to
+     the referenced columns list iteration */
   if(itr==itr_end && itr_end!=ref_columns.end() && !found)
   {
    itr=ref_columns.begin();
@@ -416,11 +380,11 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
  {
   setColumnsAttribute(SOURCE_COLS, def_type, inc_addedbyrel);
 
-  /* Só gera a definição das colunas referenciadas da chave estrangeira
-     caso o número de colunas da origem e destino sejam iguais, isso significa
-     que a chave está configurada corretamente, caso contrário não gera o atributo
-     forçando o parser de esquemas a retornar um erro pois a chave estrangeira está
-     mal configurada. */
+  /* Only generates the definition of the foreign key referenced columns
+     if the number of columns of the source and referenced cols list are equal,
+     this means the constraint is configured correctly, otherwise don't generates
+     the attribute forcing the schema parser to return an error because the foreign key is
+     misconfigured. */
   if(constr_type==TipoRestricao::foreign_key && columns.size() == ref_columns.size())
    setColumnsAttribute(REFERENCED_COLS, def_type, inc_addedbyrel);
  }
@@ -433,12 +397,8 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
  if(this->parent_table)
   attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
- /* Caso a restrição não esteja referenciando alguma coluna incluída por relacionamento
-    a mesma será declarada dentro do código da tabela pai e para tanto existe um atributo
-    específico na definição SQL/XML do objeto chamado 'decl-in-table' que é usado
-    para indicar ao parser quando a declaração da restrição está dentro da declaração da
-    tabela pai. Este atributo é usado apenas para ajudar na formatação do código SQL e
-    não tem nenhuma outra utilidade. */
+ /* Case the constraint doesn't referece some column added by relationship it will be declared
+    inside the parent table construction by the use of 'decl-in-table' schema attribute */
  if(!isReferRelationshipColumn() || constr_type==TipoRestricao::primary_key)
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
