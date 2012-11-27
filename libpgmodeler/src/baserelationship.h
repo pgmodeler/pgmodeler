@@ -2,8 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
 # Class: BaseRelationship
-# Description: Definição da classe RelacionamentoBase que implementa operações
-#             básicas de manipulação gráfica de relacionamento entre tabelas
+# Description: Implements the basic operations to manipulate relationships between tables
 # Creation date: 09/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -74,19 +73,19 @@ class BaseRelationship: public BaseGraphicObject {
   void disconnectRelationship(void);
 
  public:
-  //Constantes usadas para referenciar os tipos de relacionamento
-  static const unsigned RELATIONSHIP_11=10, //Relacionamento 1-1
-                        RELATIONSHIP_1N=20, //Relacionamento 1-n
-                        RELATIONSHIP_NN=30, //Relacionamento n-n
-                        RELATIONSHIP_GEN=40, //Relacionamento de Generalização
-                        RELATIONSHIP_DEP=50; //Relacionamento de Dependência (tabela-visão) / Cópia (tabela-tabela)
+  //Constants used to assign the type to relationship
+  static const unsigned RELATIONSHIP_11=10, //One to one
+                        RELATIONSHIP_1N=20, //One to many
+                        RELATIONSHIP_NN=30, //Many to many
+                        RELATIONSHIP_GEN=40, //Generalization (Inheritance)
+                        RELATIONSHIP_DEP=50; //Dependency (table-view) / Copy (table-table)
 
-  //Constantes utilizadas pelo método de movimentação de rótulos do relacionamento
+  //Constats used to reference the relationship labels
   static const unsigned LABEL_SRC_CARD=0,
                         LABEL_DST_CARD=1,
                         LABEL_REL_NAME=2;
 
-  //Constantes utilizadas para referenciar tabelas de origem e destino
+  //Constants used to reference the source and destination tables
   static const unsigned SRC_TABLE=3,
                         DST_TABLE=4;
 
@@ -94,56 +93,49 @@ class BaseRelationship: public BaseGraphicObject {
 
   BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab,
                      bool src_mandatory, bool dst_mandatory);
+
   ~BaseRelationship(void);
 
-
-  //Método específico de definição do nome de relacionamentos
+  //Sets the name of the relationship
   void setName(const QString &name);
 
-  //Define a obrigatoriedade da participação de uma entidade no relacionamento
+  //Sets the mandatory participation for the specified table (Via constants SRC_TABLE | DST_TABLE)
   void setMandatoryTable(unsigned table_id, bool value);
 
-  //Obtém um rótulo através de seu índice
+  //Return one relationship label using its id (Via constants LABEL_???)
   Textbox *getLabel(unsigned label_id);
 
-  //Obtém uma tabela participante da relação através de seu índice
+  //Returns one of the participant tables (Via constants SRC_TABLE | DST_TABLE)
   BaseTable *getTable(unsigned table_id);
 
-  //Retorna o tipo do relacionamento
+  //Returns the relationship type
   unsigned getRelationshipType(void);
 
-  //Retorna se a tabela (origem ou destino) é obrigatória no relacionamento
+  //Returns the mandatory participation for the specified table (Via constants SRC_TABLE | DST_TABLE)
   bool isTableMandatory(unsigned table_id);
 
-  //Retorna se o relacionamento está conectado ou não
+  //Returns the relationship connection state
   bool isRelationshipConnected(void);
 
-  /* Reinicia a posição dos rótulos, fazendo que os mesmos sejam
-     reajustados toda vez que a linha do relacionamento é
-     modificada */
-  void resetLabelsPosition(void);
-
-  //Retorna a definição XMl do relacionamento
+  //Returns the XML definition for the relationship
   QString getCodeDefinition(void);
 
-  /* Retorna se o relacionamento é um auto-relacionamento.
-     Esse método evita a validação manual que é obter as
-     duas tabelas e compará-las. Este método ja executa
-     tal operação. */
+  //Returns whether the table is linked to itself via relationship (self-relationship)
   bool isSelfRelationship(void);
 
-  /* Armazena os pontos que definem a linha do relacionamento.
-     Este pontos são usados somente para gravar no arquivo XML
-     a posição atual da linha do relacionamento */
+  //Stores the points that defines the custom relationship line
   void setPoints(const vector<QPointF> &points);
 
-  //Retorna a lista de pontos que define a linha do relacionamento
+  //Returns the relationship point list
   vector<QPointF> getPoints(void);
 
+  //Sets the distance of the specified label in relation to its origin
   void setLabelDistance(unsigned label_id, QPointF label_dist);
+
+  //Gets the distance of the specified label in relation to its origin
   QPointF getLabelDistance(unsigned label_id);
 
-  //Operador que faz a atribuição entre um objeto e outro
+  //Assigns one relationship to other making the appropriate attribute copy
   void operator = (BaseRelationship &rel);
 
   friend class ModeloBD;
