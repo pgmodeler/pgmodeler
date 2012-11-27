@@ -409,7 +409,7 @@ void BaseRelationship::operator = (BaseRelationship &rel)
  this->setMandatoryTable(SRC_TABLE, false);
  this->setMandatoryTable(DST_TABLE, false);
 
- this->setMandatoryTable(SRC_TABLE, rel.dst_mandatory);
- this->setMandatoryTable(DST_TABLE, rel.src_mandatory);
+ this->setMandatoryTable(SRC_TABLE, rel.src_mandatory);
+ this->setMandatoryTable(DST_TABLE, rel.dst_mandatory);
 }
 
