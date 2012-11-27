@@ -6,7 +6,6 @@ BaseRelationship::BaseRelationship(BaseRelationship *rel)
  if(!rel)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Inicializa com NULL os rótulos pois os mesmos são copiados no operador =
  for(unsigned i=0; i < 3; i++)
   lables[i]=NULL;
 

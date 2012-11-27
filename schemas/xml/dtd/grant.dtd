@@ -1,4 +1,4 @@
-﻿<!--
+<!--
   ATENÇÃO: Não modifique este arquivo diretamente no código a não ser que você saiba
            o que está fazendo. Resultados inesperados podem acontecer
            caso o código seja alterado deliberadamente.
@@ -10,7 +10,7 @@
 <!ATTLIST privileges select (false|true|grant-op) "false">
 <!ATTLIST privileges insert (false|true|grant-op) "false">
 <!ATTLIST privileges update (false|true|grant-op) "false">
-<!ATTLIST privileges trucate (false|true|grant-op) "false">
+<!ATTLIST privileges truncate (false|true|grant-op) "false">
 <!ATTLIST privileges references (false|true|grant-op) "false">
 <!ATTLIST privileges trigger (false|true|grant-op) "false">
 <!ATTLIST privileges create (false|true|grant-op) "false">

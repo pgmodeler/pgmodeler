@@ -1,6 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
+# Class: BaseRelationship
 # Description: Definição da classe RelacionamentoBase que implementa operações
 #             básicas de manipulação gráfica de relacionamento entre tabelas
 # Creation date: 09/04/2008
@@ -31,45 +32,45 @@ class BaseRelationship: public BaseGraphicObject {
    QString getCodeDefinition(unsigned){ return(""); }
 
  protected:
+  //Represents the points added by the user on the relationship line
   vector<QPointF> points;
 
-  //Indica que o relacionamento está conectado
+  //Indicates whether the relationship is linked to the tables
   bool connected;
 
-  /*Indica a obrigatoriedade da participação da entidade
-    (tabela) no relacionamento. (Padrão: false) */
-  bool src_mandatory,
-       dst_mandatory;
+  //Indicates the mandatory participation of source and destination tables
+  bool src_mandatory, dst_mandatory;
 
-  /* Rótulos do relacionamento:
-     0 - Rótulo Cardinalidade Origem
-     1 - Rótulo Cardinalidade Destino
-     2 - Rótulo Nome do Relacionamento */
+  /* Relationship lables:
+     0 - Source cardinality
+     1 - Destination cardinality
+     2 - Relationship name */
   Textbox *lables[3];
 
-  //Armazena a distâncias dos rótulos de suas origens
+  /* Stores the distances of the labels from its respectively origins.
+     This is used to controle de position of the labels when they are
+     moved by the user */
   QPointF lables_dist[3];
 
   //Entidades envolvidas no relacionamento
   BaseTable *src_table,
             *dst_table;
 
-  //Tipo do relacionamento (1-1, 1-n, n-n, gen ou dep)
+  /* Relationship type. It can be "One to One", "One to Many", "Many to Many",
+     "Generalization", "Dependecy". The constants RELATIONSHIP_??? are used
+     to assign a type to the relationship */
   unsigned rel_type;
 
-  //Define os atributos usados na obtenção do código XML do relacionamento
+  //Sets the attributes used on the generation of XML definition for relationship
   void setRelationshipAttributes(void);
 
-  /* Efetua a configuração do relacionamento, criando o objeto gráfico,
-     a linha do relacionamento e os demais objetos necessários a sua
-     exibição */
+  //Makes the initial configuration creating the labels
   void configureRelationship(void);
 
-  /* Cria as linhas de conexão do relacionamento (linhas
-     que se conectam as tabelas) */
+  //Marks the flag indicating that relationship is connected
   void connectRelationship(void);
 
-  //Remove as linhas de conexão do relacionamento
+  //Uncheck the flag indicating that relationship is disconnected
   void disconnectRelationship(void);
 
  public:
