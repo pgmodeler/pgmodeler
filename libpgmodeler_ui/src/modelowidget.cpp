@@ -698,7 +698,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
      //qtd_op=lista_op->obterTamanhoAtual();
 
      //Obtém o xml que define a tabela do relacionamento
-     tab_nn=rel->obterTabelaReceptora();
+     tab_nn=rel->getReceiverTable();
      xml_tab=tab_nn->getCodeDefinition(SchemaParser::XML_DEFINITION);
 
      //Cria a mesma a partir do xml
@@ -716,21 +716,21 @@ void ModeloWidget::converterRelacionamentoNN(void)
      }
 
      //Copia os atributos do relacionamento n-n para a tabela gerada
-     qtd=rel->obterNumAtributos();
+     qtd=rel->getAttributeCount();
      for(idx=0; idx < qtd; idx++)
      {
       col=new Column;
-      (*col)=(*rel->obterAtributo(idx));
+      (*col)=(*rel->getAttribute(idx));
       col->setParentTable(NULL);
       tab->adicionarColuna(col);
      }
 
      //Copia as restrições  do relacionamento n-n para a tabela gerada
-     qtd=rel->obterNumRestricoes();
+     qtd=rel->getConstraintCount();
      for(idx=0; idx < qtd; idx++)
      {
       rest=new Constraint;
-      rest_aux=rel->obterRestricao(idx);
+      rest_aux=rel->getConstraint(idx);
       (*rest)=(*rest_aux);
       rest->removeColumns();
       rest->setParentTable(NULL);

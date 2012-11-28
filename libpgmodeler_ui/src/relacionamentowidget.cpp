@@ -249,19 +249,19 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
   relacao_aux=dynamic_cast<Relationship *>(relacao);
 
   //Preenche os campos do formulário com os valores presentes no relacionamento
-  sufixo_auto_chk->setChecked(relacao_aux->obterSufixoAutomatico());
+  sufixo_auto_chk->setChecked(relacao_aux->isAutomaticSuffix());
 
   if(!sufixo_auto_chk->isChecked())
   {
-   sufixo_orig_edt->setText(QString::fromUtf8(relacao_aux->obterSufixoTabela(BaseRelationship::SRC_TABLE)));
-   sufixo_dest_edt->setText(QString::fromUtf8(relacao_aux->obterSufixoTabela(BaseRelationship::DST_TABLE)));
+   sufixo_orig_edt->setText(QString::fromUtf8(relacao_aux->getTableSuffix(BaseRelationship::SRC_TABLE)));
+   sufixo_dest_edt->setText(QString::fromUtf8(relacao_aux->getTableSuffix(BaseRelationship::DST_TABLE)));
   }
 
   tab_orig_obrig_chk->setChecked(relacao_aux->isTableMandatory(BaseRelationship::SRC_TABLE));
   tab_dest_obrig_chk->setChecked(relacao_aux->isTableMandatory(BaseRelationship::DST_TABLE));
-  identificador_chk->setChecked(relacao_aux->relacionamentoIdentificador());
-  postergavel_chk->setChecked(relacao_aux->obterPostergavel());
-  nome_tab_relnn_edt->setText(relacao_aux->getNameTabelaRelNN());
+  identificador_chk->setChecked(relacao_aux->isIdentifier());
+  postergavel_chk->setChecked(relacao_aux->isDeferrable());
+  nome_tab_relnn_edt->setText(relacao_aux->getTableNameRelNN());
 
   //Habilita os botões das tabelas de restições e atributos caso o relacionamento esteja protegido
   tab_atributos->habilitarBotoes(TabelaObjetosWidget::TODOS_BOTOES, !relacao_aux->isProtected());
@@ -280,14 +280,14 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
    if(this->novo_obj)
    {
     relacao_aux->connectRelationship();
-    vet_cols=relacao_aux->obterColunasRelacionamento();
+    vet_cols=relacao_aux->getRelationshipColumns();
     relacao_aux->disconnectRelationship();
    }
    else
-    vet_cols=relacao_aux->obterColunasRelacionamento();
+    vet_cols=relacao_aux->getRelationshipColumns();
 
    //Obtém os índices das colunas da chave primária especial no relacionamento
-   vet_id_cols=relacao_aux->obterColChavePrimariaEspecial();
+   vet_id_cols=relacao_aux->getSpecialPrimaryKeyCols();
 
    //Lista os nomes da colunas criadas pelo relacionamento
    qtd=vet_cols.size();
@@ -393,13 +393,13 @@ void RelacionamentoWidget::listarObjetos(ObjectType tipo_obj)
   tab->removerLinhas();
 
   //Obtém a quantidade de elementos a serem exibidos
-  qtd=relacao->obterNumObjetos(tipo_obj);
+  qtd=relacao->getObjectCount(tipo_obj);
   for(i=0; i < qtd; i++)
   {
    //Adicionar uma linha
    tab->adicionarLinha();
    //Exibe o objeto atual na linha atual da tabela
-   exibirDadosObjeto(relacao->obterObjeto(i, tipo_obj), i);
+   exibirDadosObjeto(relacao->getObject(i, tipo_obj), i);
   }
   tab->limparSelecao();
   tab->blockSignals(false);
@@ -534,13 +534,13 @@ void RelacionamentoWidget::removerObjetos(void)
   {
    //Obtém a quantidade de atributos do relacionamento
    tipo_obj=OBJ_COLUMN;
-   qtd=relacao->obterNumAtributos();
+   qtd=relacao->getAttributeCount();
   }
   else
   {
    //Obtém a quantidade de restrições do relacionamento
    tipo_obj=OBJ_CONSTRAINT;
-   qtd=relacao->obterNumRestricoes();
+   qtd=relacao->getConstraintCount();
   }
 
   /* Armazena a quantidade de operações antes da remoção de objetos.
@@ -552,10 +552,10 @@ void RelacionamentoWidget::removerObjetos(void)
   for(i=0; i < qtd; i++)
   {
    //Obtém o objeto do relacionamento
-   objeto=relacao->obterObjeto(0, tipo_obj);
+   objeto=relacao->getObject(0, tipo_obj);
 
    //Tenta removê-lo do relacionamento
-   relacao->removerObjeto(objeto);
+   relacao->removeObject(objeto);
 
    //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
    lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, 0, relacao);
@@ -611,10 +611,10 @@ void RelacionamentoWidget::removerObjeto(int idx_lin)
    tipo_obj=OBJ_CONSTRAINT;
 
   //Obtém o objeto no índice especificado
-  objeto=relacao->obterObjeto(idx_lin, tipo_obj);
+  objeto=relacao->getObject(idx_lin, tipo_obj);
 
   //Remove o objeto e o adiciona a lista de operações para ser restaurado se necessário
-  relacao->removerObjeto(objeto);
+  relacao->removeObject(objeto);
 
   lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, 0, relacao);
  }
@@ -660,9 +660,9 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
    /* Atribui os valores configurados no formulário ao relacionamento.
       Alguns campos são atribuído ao objeto somente para um tipo específico
       de relacionamento */
-   relacao->definirSufixoTabela(BaseRelationship::SRC_TABLE, sufixo_orig_edt->text());
-   relacao->definirSufixoTabela(BaseRelationship::DST_TABLE, sufixo_dest_edt->text());
-   relacao->definirSufixoAutomatico(sufixo_auto_chk->isChecked());
+   relacao->setTableSuffix(BaseRelationship::SRC_TABLE, sufixo_orig_edt->text());
+   relacao->setTableSuffix(BaseRelationship::DST_TABLE, sufixo_dest_edt->text());
+   relacao->setAutomaticSuffix(sufixo_auto_chk->isChecked());
 
    relacao->setMandatoryTable(BaseRelationship::SRC_TABLE, false);
    relacao->setMandatoryTable(BaseRelationship::DST_TABLE, false);
@@ -686,19 +686,19 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
     }
 
     //Atribui o vetor de ids configurado acima como sendo os ids das colunas da chave primária especial
-    relacao->definirColsChavePrimariaEspecial(id_cols);
+    relacao->setSpecialPrimaryKeyCols(id_cols);
    }
    //Campos específicos para relacionamentos 1-n e 1-1
    else if(tipo_rel==BaseRelationship::RELATIONSHIP_1N ||
       tipo_rel==BaseRelationship::RELATIONSHIP_11)
    {
-    relacao->definirIdentificador(identificador_chk->isChecked());
-    relacao->definirPostergavel(postergavel_chk->isChecked());
-    relacao->definirTipoPostergacao(TipoPostergacao(tipo_postergacao_cmb->currentText()));
+    relacao->setIdentifier(identificador_chk->isChecked());
+    relacao->setDeferrable(postergavel_chk->isChecked());
+    relacao->setDeferralType(TipoPostergacao(tipo_postergacao_cmb->currentText()));
    }
    //Campos específicos para relacionamentos n-n
    else if(tipo_rel==BaseRelationship::RELATIONSHIP_NN)
-    relacao->definirNomeTabelaRelNN(nome_tab_relnn_edt->text());
+    relacao->setTableNameRelNN(nome_tab_relnn_edt->text());
 
    try
    {
@@ -706,7 +706,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
        identificador verifica se existe redundância de relacionamentos */
     if(tipo_rel==BaseRelationship::RELATIONSHIP_DEP ||
        tipo_rel==BaseRelationship::RELATIONSHIP_GEN ||
-       relacao->relacionamentoIdentificador())
+       relacao->isIdentifier())
      modelo->verificarRedundanciaRelacoes(relacao);
 
     /* Faz a validação dos relacionamentos para refletir a nova configuração

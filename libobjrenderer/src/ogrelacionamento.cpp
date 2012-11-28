@@ -444,10 +444,10 @@ void OGRelacionamento::configurarLinha(void)
    */
    if(rel &&
       rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
-      rel->relacionamentoIdentificador())
+      rel->isIdentifier())
    {
-    tabelas[0]=dynamic_cast<OGTabelaBase *>(rel->obterTabelaReferencia()->getReceiverObject());
-    tabelas[1]=dynamic_cast<OGTabelaBase *>(rel->obterTabelaReceptora()->getReceiverObject());
+    tabelas[0]=dynamic_cast<OGTabelaBase *>(rel->getReferenceTable()->getReceiverObject());
+    tabelas[1]=dynamic_cast<OGTabelaBase *>(rel->getReceiverTable()->getReceiverObject());
    }
 
    /* Cria linhas horizontais e verticais denotando as bordas das tabela.
@@ -533,7 +533,7 @@ void OGRelacionamento::configurarLinha(void)
      na mediana da linha que sustenta o descritor. Desta forma os seguimentos de linhas
      entre o descritor e a entidade fraca terão sua espessura modificada para denotar
      o relacionamento identificador */
-  if(relacao && relacao->relacionamentoIdentificador())
+  if(relacao && relacao->isIdentifier())
   {
    //Calcula o índice do ponto inicial da linha que sustenta o descritor
    idx_lin_desc=(pontos.size()/2);
@@ -570,7 +570,7 @@ void OGRelacionamento::configurarLinha(void)
    /* Caso seja identificador a linha atual tem sua espessura modificada
       caso seu indice seja igual ou superior ao índice da linha que sustenta
       o descritor */
-   if(relacao && relacao->relacionamentoIdentificador() && i >= idx_lin_desc)
+   if(relacao && relacao->isIdentifier() && i >= idx_lin_desc)
     pen.setWidthF(1.75f);
    else
     pen.setWidthF(1.0f);
@@ -666,7 +666,7 @@ void OGRelacionamento::configurarDescritor(void)
 
   /* Caso o relacionamento seja identificador usa como base de posição
      o ponto inicial da linha obtida */
-  if(relacao && relacao->relacionamentoIdentificador())
+  if(relacao && relacao->isIdentifier())
    pnt=lin.p1();
   //Caso contrário, calcula o ponto médio da linha obtida
   else
@@ -744,14 +744,14 @@ void OGRelacionamento::configurarAtributos(void)
   ret.setSize(QSizeF(8 * fator, 8 * fator));
 
   //Calcula a posição do primeiro atributo com base na quantidade de atributos e tamanho do descritor
-  qtd=relacao->obterNumAtributos();
+  qtd=relacao->getAttributeCount();
   px=descritor->pos().x() + descritor->boundingRect().width() + ((3 * ESP_HORIZONTAL) * fator);
   py=descritor->pos().y() - (qtd * ret.height()/(4.0f * fator));
 
   for(i=0; i < qtd; i++)
   {
    //Obtém um atributo do relacionamento
-   atrib=relacao->obterAtributo(i);
+   atrib=relacao->getAttribute(i);
 
    //Aloca um atributo
    if(i >= static_cast<int>(atributos.size()))

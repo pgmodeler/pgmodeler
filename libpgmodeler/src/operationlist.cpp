@@ -472,7 +472,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
     //Case a specific index wasn't specified
     if(object_idx < 0)
      //Stores on the operation the index on its parent
-     obj_idx=parent_rel->obterIndiceObjeto(tab_obj);
+     obj_idx=parent_rel->getObjectIndex(tab_obj);
     else
      //Assigns the specific index to operation
      obj_idx=object_idx;
@@ -772,7 +772,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
     if(parent_tab)
      orig_obj=dynamic_cast<TableObject *>(parent_tab->obterObjeto(oper->object_idx, obj_type));
     else if(parent_rel)
-     orig_obj=dynamic_cast<TableObject *>(parent_rel->obterObjeto(oper->object_idx, obj_type));
+     orig_obj=dynamic_cast<TableObject *>(parent_rel->getObject(oper->object_idx, obj_type));
     else
      orig_obj=model->obterObjeto(oper->object_idx, obj_type);
 
@@ -805,7 +805,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
     if(parent_tab)
      parent_tab->adicionarObjeto(dynamic_cast<TableObject *>(object), oper->object_idx);
     else if(parent_rel)
-     parent_rel->adicionarObjeto(dynamic_cast<TableObject *>(object), oper->object_idx);
+     parent_rel->addObject(dynamic_cast<TableObject *>(object), oper->object_idx);
     else
      if(dynamic_cast<Tabela *>(object))
       dynamic_cast<Tabela *>(object)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
@@ -820,7 +820,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
     if(parent_tab)
      parent_tab->removerObjeto(oper->object_idx,obj_type);
     else if(parent_rel)
-     parent_rel->removerObjeto(oper->object_idx,obj_type);
+     parent_rel->removeObject(oper->object_idx,obj_type);
     else
      model->removerObjeto(object, oper->object_idx);
    }

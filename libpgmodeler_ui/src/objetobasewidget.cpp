@@ -541,8 +541,8 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
     {
      //Validação do objeto em relação a sua tabela pai
      obj_pai=relacionamento;
-     obj_aux=relacionamento->obterObjeto(nome_obj,tipo_obj);
-     obj_aux1=relacionamento->obterObjeto(objeto->getName(),tipo_obj);
+     obj_aux=relacionamento->getObject(nome_obj,tipo_obj);
+     obj_aux1=relacionamento->getObject(objeto->getName(),tipo_obj);
      novo_obj=(!obj_aux && !obj_aux1);
      //obj_graf=relacionamento;
     }
@@ -635,7 +635,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
                  tipo_obj==OBJ_INDEX || tipo_obj==OBJ_CONSTRAINT))
     tabela->adicionarObjeto(this->objeto);
    else if(relacionamento && (tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT))
-    relacionamento->adicionarObjeto(dynamic_cast<TableObject *>(this->objeto));
+    relacionamento->addObject(dynamic_cast<TableObject *>(this->objeto));
    else if(tipo_obj!=OBJ_PARAMETER)
     modelo->adicionarObjeto(this->objeto);
 
@@ -785,7 +785,7 @@ void ObjetoBaseWidget::cancelarConfiguracao(void)
       é um objeto de tabela (coluna, restrição) sendo assim
       o mesmo será removido da própria */
   else if(relacionamento)
-   relacionamento->removerObjeto(dynamic_cast<TableObject *>(this->objeto));
+   relacionamento->removeObject(dynamic_cast<TableObject *>(this->objeto));
 
   /* Desaloca o objeto, porém tabelas e relacionamentos, que são casos especiais,
      não são desalocados */

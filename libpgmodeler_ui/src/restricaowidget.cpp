@@ -235,7 +235,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
    else
    {
     relacao=this->relacionamento;
-    qtd_col=relacao->obterNumAtributos();
+    qtd_col=relacao->getAttributeCount();
    }
   }
   //Caso o tipo de combo seja o de colunas de referência
@@ -259,7 +259,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
       obtém um atributo do mesmo para listar no combo
       caso contrário obtém uma coluna da tabela */
    if(relacao)
-    coluna=relacao->obterAtributo(i);
+    coluna=relacao->getAttribute(i);
    else
     coluna=tabela->obterColuna(i);
 
@@ -396,7 +396,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
  if(tipo_obj==OBJ_TABLE)
   qtd=tabela->obterNumColunas();
  else
-  qtd=relacionamento->obterNumAtributos();
+  qtd=relacionamento->getAttributeCount();
 
  //Adiciona as colunas de origem da tabela pai na tabela de colunas do formulário
  tab_colunas->blockSignals(true);
@@ -409,7 +409,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
   /* Caso contrário usa a referência ao relacionamento pai
      para obter a coluna atual */
   else
-   coluna=relacionamento->obterAtributo(i);
+   coluna=relacionamento->getAttribute(i);
 
   /* Caso a restrição naõ seja nova, ou seja, esteja sendo editada e a coluna atual
      está sendo referenciada por ela */
