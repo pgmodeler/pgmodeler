@@ -2,43 +2,21 @@
 #include <QApplication>
 
 //Inicialização de atributos estáticos da classe
-const QString Relationship::SEPARADOR_SUFIXO("_");
+const QString Relationship::SUFFIX_SEPARATOR("_");
 
-Relationship::Relationship(Relationship *relacao) : BaseRelationship(relacao)
+Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 {
- if(!relacao)
+ if(!rel)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- (*(this))=(*relacao);
+ (*(this))=(*rel);
 }
 
-/*Relacionamento::~Relacionamento(void)
-{
- if(!conectado)
- {
-  Tabela *tab=this->obterTabelaReceptora();
-
-  while(!restricoes_rel.empty())
-  {
-   if(tab && tab->obterIndiceObjeto(restricoes_rel.back()) < 0)
-    delete(restricoes_rel.back());
-   restricoes_rel.pop_back();
-  }
-
-  while(!atributos_rel.empty())
-  {
-   if(tab && tab->obterIndiceObjeto(atributos_rel.back()) < 0)
-    delete(atributos_rel.back());
-   atributos_rel.pop_back();
-  }
- }
-}*/
-
-Relationship::Relationship(/*const QString &nome,*/ unsigned tipo_rel, Tabela *tab_orig,
-                               Tabela *tab_dest, bool obrig_orig, bool obrig_dest,
-                               bool sufixo_auto, const QString &sufix_orig, const QString &sufix_dest,
-                               bool identificador,  bool postergavel, TipoPostergacao tipo_postergacao) :
-                BaseRelationship(tipo_rel, tab_orig, tab_dest, obrig_orig, obrig_dest)
+Relationship::Relationship(unsigned rel_type, Tabela *src_tab,
+                           Tabela *dst_tab, bool src_mdtry, bool dst_mdtry,
+                           bool auto_suffix, const QString &src_suffix, const QString &dst_suffix,
+                           bool identifier,  bool deferrable, TipoPostergacao deferral_type) :
+              BaseRelationship(rel_type, src_tab, dst_tab, src_mdtry, dst_mdtry)
 {
  try
  {
@@ -47,40 +25,40 @@ Relationship::Relationship(/*const QString &nome,*/ unsigned tipo_rel, Tabela *t
 
   if(((rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N) &&
       !this->getReferenceTable()->obterChavePrimaria()) ||
-     (rel_type==RELATIONSHIP_NN && (!tab_orig->obterChavePrimaria() || !tab_dest->obterChavePrimaria())))
+     (rel_type==RELATIONSHIP_NN && (!src_tab->obterChavePrimaria() || !dst_tab->obterChavePrimaria())))
      throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
                            .arg(QString::fromUtf8(obj_name))
-                           .arg(QString::fromUtf8(tab_orig->getName(true)))
-                           .arg(QString::fromUtf8(tab_dest->getName(true))),
+                           .arg(QString::fromUtf8(src_tab->getName(true)))
+                           .arg(QString::fromUtf8(dst_tab->getName(true))),
                   ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Atribuindo os sufixos ao relacionamento.
     Sufixos são palavras concatenadas ao final do nome de
     colunas as quais são adicionadas automaticamente nas tabelas
     pelo relacionamento e que participam de chaves estrangeiras */
-  this->src_suffix=sufix_orig;
-   this->dst_suffix=sufix_dest;
-  this->auto_suffix=sufixo_auto;
+  this->src_suffix=src_suffix;
+  this->dst_suffix=dst_suffix;
+  this->auto_suffix=auto_suffix;
 
   table_relnn=NULL;
   fk_rel1n=pk_relident=pk_special=uq_rel11=NULL;
-  this->deferrable=postergavel;
-  this->deferral_type=tipo_postergacao;
+  this->deferrable=deferrable;
+  this->deferral_type=deferral_type;
   this->invalidated=true;
 
   //Configura o nome do relacionamento conforme o tipo
-  if(tipo_rel==RELATIONSHIP_11)
+  if(rel_type==RELATIONSHIP_11)
    str_aux=QApplication::translate("Relacionamento","%1_has_one_%2","",QApplication::UnicodeUTF8);
-  else if(tipo_rel==RELATIONSHIP_1N)
+  else if(rel_type==RELATIONSHIP_1N)
    str_aux=QApplication::translate("Relacionamento","%1_has_many_%2","",QApplication::UnicodeUTF8);
-  else if(tipo_rel==RELATIONSHIP_NN)
+  else if(rel_type==RELATIONSHIP_NN)
    str_aux=QApplication::translate("Relacionamento","many_%1_has_many_%2","",QApplication::UnicodeUTF8);
-  else if(tipo_rel==RELATIONSHIP_GEN)
+  else if(rel_type==RELATIONSHIP_GEN)
    str_aux=QApplication::translate("Relacionamento","%1_inherits_%2","",QApplication::UnicodeUTF8);
   else
    str_aux=QApplication::translate("Relacionamento","%1_copies_%2","",QApplication::UnicodeUTF8);
 
-  if(tipo_rel!=RELATIONSHIP_NN)
+  if(rel_type!=RELATIONSHIP_NN)
    str_aux=str_aux.arg(this->getReferenceTable()->getName())
                      .arg(this->getReceiverTable()->getName());
   else
@@ -93,12 +71,12 @@ Relationship::Relationship(/*const QString &nome,*/ unsigned tipo_rel, Tabela *t
      a junção dos sufixos separados pelo separador de sufixos. Caso
      contrário o nome da tabela será o próprio nome do relacionamento */
   if(src_suffix!="" && dst_suffix!="")
-   tab_name_relnn=src_suffix + SEPARADOR_SUFIXO + dst_suffix;
+   tab_name_relnn=src_suffix + SUFFIX_SEPARATOR + dst_suffix;
   else
    tab_name_relnn=this->obj_name;
 
   rejected_col_count=0;
-  setIdentifier(identificador);
+  setIdentifier(identifier);
 
   attributes[ParsersAttributes::CONSTRAINTS]="";
   attributes[ParsersAttributes::TABLE]="";
@@ -115,74 +93,74 @@ Relationship::Relationship(/*const QString &nome,*/ unsigned tipo_rel, Tabela *t
 
 vector<QString> Relationship::getRelationshipColumns(void)
 {
- unsigned qtd, i;
- vector<QString> vet_nomes;
+ unsigned count, i;
+ vector<QString> name_vect;
 
- qtd=ref_columns.size();
- for(i=0; i < qtd; i++)
+ count=ref_columns.size();
+ for(i=0; i < count; i++)
  {
-  vet_nomes.push_back(QString::fromUtf8(ref_columns[i]->getName()) + " (" +
+  name_vect.push_back(QString::fromUtf8(ref_columns[i]->getName()) + " (" +
                       QString::fromUtf8(*ref_columns[i]->getType()) + ")");
  }
 
- return(vet_nomes);
+ return(name_vect);
 }
 
-void Relationship::setMandatoryTable(unsigned id_tabela, bool valor)
+void Relationship::setMandatoryTable(unsigned table_id, bool value)
 {
- BaseRelationship::setMandatoryTable(id_tabela, valor);
+ BaseRelationship::setMandatoryTable(table_id, value);
  this->invalidated=true;
 }
 
-void Relationship::setTableSuffix(unsigned tipo_tab, const QString &sufixo)
+void Relationship::setTableSuffix(unsigned table_id, const QString &suffix)
 {
- if(tipo_tab > DST_TABLE)
+ if(table_id > DST_TABLE)
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(!sufixo.isEmpty() && !BaseObject::isValidName(sufixo))
+ if(!suffix.isEmpty() && !BaseObject::isValidName(suffix))
   throw Exception(Exception::getErrorMessage(ERR_ASG_INV_SUFFIX_REL)
                 .arg(QString::fromUtf8(this->getName())),
                 ERR_ASG_INV_SUFFIX_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(tipo_tab==SRC_TABLE)
-  src_suffix=sufixo;
+ if(table_id==SRC_TABLE)
+  src_suffix=suffix;
  else
-  dst_suffix=sufixo;
+  dst_suffix=suffix;
 
  this->invalidated=true;
 }
 
-QString Relationship::getTableSuffix(unsigned tipo_tab)
+QString Relationship::getTableSuffix(unsigned table_id)
 {
- if(tipo_tab > DST_TABLE)
+ if(table_id > DST_TABLE)
   throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(tipo_tab==SRC_TABLE)
+ if(table_id==SRC_TABLE)
   return(src_suffix);
  else
   return(dst_suffix);
 }
 
-void Relationship::setDeferrable(bool valor)
+void Relationship::setDeferrable(bool value)
 {
- deferrable=valor;
+ deferrable=value;
  this->invalidated=true;
 }
 
-void Relationship::setIdentifier(bool valor)
+void Relationship::setIdentifier(bool value)
 {
  /* Validando o relacionamento identificador.
     Relacionamento identificador não pode ser criado quando este é um
     autorelacionamento, relacionamento n-n, de generalização, de dependência
     ou do tipo criado pelo próprio usuário. */
- if(valor &&
+ if(value &&
    (src_table==dst_table ||
     (rel_type==RELATIONSHIP_NN ||
      rel_type==RELATIONSHIP_GEN ||
      rel_type==RELATIONSHIP_DEP)))
   throw Exception(ERR_INV_IDENT_RELATIOSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- identifier=valor;
+ identifier=value;
  this->invalidated=true;
 }
 
@@ -207,7 +185,7 @@ void Relationship::createSpecialPrimaryKey(void)
 {
  if(!column_ids_pk_rel.empty())
  {
-  unsigned i, qtd;
+  unsigned i, count;
 
   /* Aloca a chave primária com as seguintes características:
      1) A mesma é marcada como protegida e incluída por relacionamento, desta
@@ -222,8 +200,8 @@ void Relationship::createSpecialPrimaryKey(void)
   pk_special->setTablespace(dynamic_cast<Tablespace *>(getReceiverTable()->getTablespace()));
 
   //Adiciona as colunas   chave primária obtendo-as através dos seus índices armazenados em 'id_colunas_pk_rel'
-  qtd=column_ids_pk_rel.size();
-  for(i=0; i < qtd; i++)
+  count=column_ids_pk_rel.size();
+  for(i=0; i < count; i++)
   {
    if(column_ids_pk_rel[i] < ref_columns.size() &&
       !pk_special->isColumnExists(ref_columns[column_ids_pk_rel[i]], Constraint::SOURCE_COLS))
@@ -245,12 +223,12 @@ void Relationship::createSpecialPrimaryKey(void)
  }
 }
 
-void Relationship::setTableNameRelNN(const QString &nome)
+void Relationship::setTableNameRelNN(const QString &name)
 {
- if(!BaseObject::isValidName(nome))
+ if(!BaseObject::isValidName(name))
   throw Exception(ERR_ASG_INV_NAME_TABLE_RELNN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- tab_name_relnn=nome;
+ tab_name_relnn=name;
  this->invalidated=true;
 }
 
@@ -264,9 +242,9 @@ bool Relationship::isDeferrable(void)
  return(deferrable);
 }
 
-void Relationship::setDeferralType(TipoPostergacao tipo_post)
+void Relationship::setDeferralType(TipoPostergacao defer_type)
 {
- deferral_type=tipo_post;
+ deferral_type=defer_type;
  this->invalidated=true;
 }
 
@@ -275,54 +253,54 @@ TipoPostergacao Relationship::getDeferralType(void)
  return(deferral_type);
 }
 
-int Relationship::getObjectIndex(TableObject *objeto)
+int Relationship::getObjectIndex(TableObject *object)
 {
  vector<TableObject *>::iterator itr, itr_end;
- vector<TableObject *> *lista=NULL;
+ vector<TableObject *> *list=NULL;
  TableObject *obj_aux=NULL;
- ObjectType tipo_obj;
- bool enc=false;
+ ObjectType obj_type;
+ bool found=false;
 
  //Dispara uma exceção caso o objeto a ser buscado não esteja alocado
- if(!objeto)
+ if(!object)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Selecionando a lista de objetos de acordo com o tipo do objeto
- tipo_obj=objeto->getObjectType();
- if(tipo_obj==OBJ_COLUMN)
-  lista=&rel_attributes;
- else if(tipo_obj==OBJ_CONSTRAINT)
-  lista=&rel_constraints;
+ obj_type=object->getObjectType();
+ if(obj_type==OBJ_COLUMN)
+  list=&rel_attributes;
+ else if(obj_type==OBJ_CONSTRAINT)
+  list=&rel_constraints;
  else
   throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- itr=lista->begin();
- itr_end=lista->end();
+ itr=list->begin();
+ itr_end=list->end();
 
  /* Varre a lista de objetos selecionada verificando se o nome do
     do objeto é igual ao nome de um dos objetos da lista ou mesmo
     se os endereços dos objetos envolvidos são iguais */
- while(itr!=itr_end && !enc)
+ while(itr!=itr_end && !found)
  {
   obj_aux=(*itr);
-  enc=(obj_aux==objeto || obj_aux->getName()==objeto->getName());
+  found=(obj_aux==object || obj_aux->getName()==object->getName());
   itr++;
  }
 
- if(enc)
-  return((itr-lista->begin())-1);
+ if(found)
+  return((itr-list->begin())-1);
  else
   return(-1);
 }
 
-bool Relationship::isColumnExists(Column *coluna)
+bool Relationship::isColumnExists(Column *column)
 {
  vector<Column *>::iterator itr, itr_end;
  Column *col_aux=NULL;
- bool enc=false;
+ bool found=false;
 
  //Caso a coluna a ser buscada não esteja aloca, dispara uma exceção
- if(!coluna)
+ if(!column)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=ref_columns.begin();
@@ -331,29 +309,29 @@ bool Relationship::isColumnExists(Column *coluna)
  /* Varre a lista de colunas selecionada verificando se o nome da
     coluna é igual ao nome de uma das colunas da lista ou mesmo
     se os endereços das colunas envolvidas são iguais */
- while(itr!=itr_end && !enc)
+ while(itr!=itr_end && !found)
  {
   col_aux=(*itr);
-  enc=(col_aux==coluna || col_aux->getName()==coluna->getName());
+  found=(col_aux==column || col_aux->getName()==column->getName());
   itr++;
  }
 
- return(enc);
+ return(found);
 }
 
-void Relationship::addObject(TableObject *objeto_tab, int idx_obj)
+void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 {
- ObjectType tipo_obj;
- vector<TableObject *> *lista_obj=NULL;
+ ObjectType obj_type;
+ vector<TableObject *> *obj_list=NULL;
 
  /* Somente a chave primária especial (criada pelo relacionamento)
     só pode ser adicionado a um relacionamento de generalização ou dependência.
     Caso o tipo do objeto a ser adionado não obedeça a esta condição um erro é retornado */
  if((rel_type==RELATIONSHIP_GEN ||
      rel_type==RELATIONSHIP_DEP) &&
-    !(objeto_tab->isAddedByRelationship() &&
-      objeto_tab->isProtected() &&
-      objeto_tab->getObjectType()==OBJ_CONSTRAINT))
+    !(tab_obj->isAddedByRelationship() &&
+      tab_obj->isProtected() &&
+      tab_obj->getObjectType()==OBJ_CONSTRAINT))
   throw Exception(ERR_ASG_OBJ_INV_REL_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  try
@@ -362,16 +340,16 @@ void Relationship::addObject(TableObject *objeto_tab, int idx_obj)
      Um atributo/restrição de um relacionamento não pode
      ser atribuido ao relacionamento caso este já pertença a uma tabela,
      caso isso aconteça o método aborta a inserção do objeto */
-  if(!objeto_tab->getParentTable() &&
-     getObjectIndex(objeto_tab) < 0)
+  if(!tab_obj->getParentTable() &&
+     getObjectIndex(tab_obj) < 0)
   {
    /* Obtém a lista de objetos de acordo com o tipo
       do objeto a ser inserido */
-   tipo_obj=objeto_tab->getObjectType();
-   if(tipo_obj==OBJ_COLUMN)
-    lista_obj=&rel_attributes;
-   else if(tipo_obj==OBJ_CONSTRAINT)
-    lista_obj=&rel_constraints;
+   obj_type=tab_obj->getObjectType();
+   if(obj_type==OBJ_COLUMN)
+    obj_list=&rel_attributes;
+   else if(obj_type==OBJ_CONSTRAINT)
+    obj_list=&rel_constraints;
 
    /* Tenta gerar a definição SQL do objeto para ver se o mesmo
       está bem configurado. Caso não esteja, uma exceção será
@@ -380,14 +358,14 @@ void Relationship::addObject(TableObject *objeto_tab, int idx_obj)
    /* Como atributos recém criados não possuem uma tabela pai até que sejam
       adicionados   tabela receptora, para medidas de validação do código do atributo,
       a tabela de origem do relacionamento é atribuída como tabela pai */
-   objeto_tab->setParentTable(src_table);
+   tab_obj->setParentTable(src_table);
 
-   if(tipo_obj==OBJ_COLUMN)
-    dynamic_cast<Column *>(objeto_tab)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+   if(obj_type==OBJ_COLUMN)
+    dynamic_cast<Column *>(tab_obj)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
    else
    {
     Constraint *rest=NULL;
-    rest=dynamic_cast<Constraint *>(objeto_tab);
+    rest=dynamic_cast<Constraint *>(tab_obj);
     rest->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
     /* Caso se tente inserir uma chave estrangeira como restrição do relacionamento
@@ -397,19 +375,19 @@ void Relationship::addObject(TableObject *objeto_tab, int idx_obj)
    }
 
    //Após a validação do novo objeto a tabela pai é setada como nula
-   objeto_tab->setParentTable(NULL);
+   tab_obj->setParentTable(NULL);
 
    /* Caso o índice passado seja menor que zero ou superior ao tamanho da lista
       o objeto será inserido ao final da mesma */
-   if(idx_obj < 0 || idx_obj >= static_cast<int>(lista_obj->size()))
-    lista_obj->push_back(objeto_tab);
+   if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
+    obj_list->push_back(tab_obj);
    else
    {
     //Caso o índice seja válido, insere o objeto na posição especificada
-    if(lista_obj->size() > 0)
-     lista_obj->insert((lista_obj->begin() + idx_obj), objeto_tab);
+    if(obj_list->size() > 0)
+     obj_list->insert((obj_list->begin() + obj_idx), tab_obj);
     else
-     lista_obj->push_back(objeto_tab);
+     obj_list->push_back(tab_obj);
    }
 
    /* Apenas para os relacinamentos n-n os atributos/restrições
@@ -417,14 +395,14 @@ void Relationship::addObject(TableObject *objeto_tab, int idx_obj)
       e restrições são aproveitados quando o relacionamento n-n é convertido
       em tabela */
    //if(tipo_relac!=RELACIONAMENTO_NN)
-   objeto_tab->setAddedByLinking(true);
+   tab_obj->setAddedByLinking(true);
 
    this->invalidated=true;
   }
   else
    throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-                 .arg(objeto_tab->getName(true))
-                 .arg(objeto_tab->getTypeName())
+                 .arg(tab_obj->getName(true))
+                 .arg(tab_obj->getTypeName())
                  .arg(this->getName(true))
                  .arg(this->getTypeName()),
                  ERR_ASG_DUPLIC_OBJECT, __PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -435,8 +413,8 @@ void Relationship::addObject(TableObject *objeto_tab, int idx_obj)
      a definição SQL do objeto está incompleta */
   if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
    throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-                              .arg(QString::fromUtf8(objeto_tab->getName()))
-                              .arg(objeto_tab->getTypeName()),
+                              .arg(QString::fromUtf8(tab_obj->getName()))
+                              .arg(tab_obj->getTypeName()),
                  ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
   else
    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -464,52 +442,52 @@ void Relationship::destroyObjects(void)
  }
 }
 
-void Relationship::removeObject(unsigned id_obj, ObjectType tipo_obj)
+void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 {
- vector<TableObject *> *lista_obj=NULL;
+ vector<TableObject *> *obj_list=NULL;
 
  //Seleciona a lista de objetos de acordo com o tipo passado
- if(tipo_obj==OBJ_COLUMN)
-  lista_obj=&rel_attributes;
- else if(tipo_obj==OBJ_CONSTRAINT)
-  lista_obj=&rel_constraints;
+ if(obj_type==OBJ_COLUMN)
+  obj_list=&rel_attributes;
+ else if(obj_type==OBJ_CONSTRAINT)
+  obj_list=&rel_constraints;
  else
   throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Se o índice do objeto for inválido, dispara o erro
- if(id_obj >= lista_obj->size())
+ if(obj_id >= obj_list->size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Verificação específica para coluna. Caso a coluna esteja sendo
     referenciada por uma restrição do relacionamento será disparado
     um erro. */
- if(tipo_obj==OBJ_COLUMN)
+ if(obj_type==OBJ_COLUMN)
  {
-  Column *coluna=NULL;
-  Constraint *rest=NULL;
+  Column *col=NULL;
+  Constraint *constr=NULL;
   vector<TableObject *>::iterator itr, itr_end;
   bool refer=false;
 
   itr=rel_constraints.begin();
   itr_end=rel_constraints.end();
-  coluna=dynamic_cast<Column *>(lista_obj->at(id_obj));
+  col=dynamic_cast<Column *>(obj_list->at(obj_id));
 
   while(itr!=itr_end && !refer)
   {
-   rest=dynamic_cast<Constraint *>(*itr);
+   constr=dynamic_cast<Constraint *>(*itr);
    //Verifica se a coluna está em uma das listas das restições
-   refer=(rest->getColumn(coluna->getName(), Constraint::SOURCE_COLS) ||
-          rest->getColumn(coluna->getName(), Constraint::REFERENCED_COLS));
+   refer=(constr->getColumn(col->getName(), Constraint::SOURCE_COLS) ||
+          constr->getColumn(col->getName(), Constraint::REFERENCED_COLS));
    itr++;
   }
 
   //Caso haja referência
   if(refer)
    throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
-                           .arg(QString::fromUtf8(coluna->getName()))
-                           .arg(coluna->getTypeName())
-                           .arg(QString::fromUtf8(rest->getName()))
-                           .arg(rest->getTypeName())
+                           .arg(QString::fromUtf8(col->getName()))
+                           .arg(col->getTypeName())
+                           .arg(QString::fromUtf8(constr->getName()))
+                           .arg(constr->getTypeName())
                            .arg(QString::fromUtf8(this->getName(true)))
                            .arg(this->getTypeName()),
                  ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -521,133 +499,133 @@ void Relationship::removeObject(unsigned id_obj, ObjectType tipo_obj)
  disconnectRelationship(false);
 
  //Remove o item da lista
- lista_obj->erase(lista_obj->begin() + id_obj);
+ obj_list->erase(obj_list->begin() + obj_id);
 
  //Reconecta o relacionamento
  connectRelationship();
 }
 
-void Relationship::removeObject(TableObject *objeto)
+void Relationship::removeObject(TableObject *object)
 {
- if(!objeto)
+ if(!object)
   throw Exception(ERR_REM_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- removeObject(getObjectIndex(objeto),objeto->getObjectType());
+ removeObject(getObjectIndex(object),object->getObjectType());
 }
 
-void Relationship::removeAttribute(unsigned id_atrib)
+void Relationship::removeAttribute(unsigned attrib_idx)
 {
- removeObject(id_atrib, OBJ_COLUMN);
+ removeObject(attrib_idx, OBJ_COLUMN);
 }
 
-void Relationship::removeConstraint(unsigned id_rest)
+void Relationship::removeConstraint(unsigned constr_idx)
 {
- removeObject(id_rest, OBJ_CONSTRAINT);
+ removeObject(constr_idx, OBJ_CONSTRAINT);
 }
 
-Column *Relationship::getReferencedColumn(const QString &nome_col)
+Column *Relationship::getReferencedColumn(const QString &col_name)
 {
  vector<Column *>::iterator itr, itr_end;
  Column *col=NULL;
- bool enc=false, formatar;
+ bool found=false, format;
 
- formatar=nome_col.contains("\"");
+ format=col_name.contains("\"");
  itr=ref_columns.begin();
  itr_end=ref_columns.end();
 
  /* Varre a lista colunas referenciadas verificando se o nome do
     do objeto é igual ao nome de um dos objetos da lista */
- while(itr!=itr_end && !enc)
+ while(itr!=itr_end && !found)
  {
   col=(*itr);
-  enc=(col->getName(formatar)==nome_col);
+  found=(col->getName(format)==col_name);
   itr++;
  }
 
- if(enc)
+ if(found)
   return(col);
  else
   return(NULL);
 }
 
-TableObject *Relationship::getObject(unsigned idx_obj, ObjectType tipo_obj)
+TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
 {
- vector<TableObject *> *lista=NULL;
+ vector<TableObject *> *list=NULL;
 
  //Selecionando a lista de objetos de acordo com o tipo do objeto
- if(tipo_obj==OBJ_COLUMN)
-  lista=&rel_attributes;
- else if(tipo_obj==OBJ_CONSTRAINT)
-  lista=&rel_constraints;
+ if(obj_type==OBJ_COLUMN)
+  list=&rel_attributes;
+ else if(obj_type==OBJ_CONSTRAINT)
+  list=&rel_constraints;
  else
   throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(idx_obj >= lista->size())
+ if(obj_idx >= list->size())
   throw Exception(ERR_REF_OBJ_INV_INDEX, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(lista->at(idx_obj));
+ return(list->at(obj_idx));
 }
 
-TableObject *Relationship::getObject(const QString &nome_atrib, ObjectType tipo_obj)
+TableObject *Relationship::getObject(const QString &name, ObjectType obj_type)
 {
  vector<TableObject *>::iterator itr, itr_end;
- vector<TableObject *> *lista=NULL;
+ vector<TableObject *> *list=NULL;
  TableObject *obj_aux=NULL;
- bool enc=false;
+ bool found=false;
 
  //Selecionando a lista de objetos de acordo com o tipo do objeto
- if(tipo_obj==OBJ_COLUMN)
-  lista=&rel_attributes;
- else if(tipo_obj==OBJ_CONSTRAINT)
-  lista=&rel_constraints;
+ if(obj_type==OBJ_COLUMN)
+  list=&rel_attributes;
+ else if(obj_type==OBJ_CONSTRAINT)
+  list=&rel_constraints;
  else
   throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- itr=lista->begin();
- itr_end=lista->end();
+ itr=list->begin();
+ itr_end=list->end();
 
  /* Varre a lista de objetos selecionada verificando se o nome do
     do objeto é igual ao nome de um dos objetos da lista ou mesmo
     se os endereços dos objetos envolvidos são iguais */
- while(itr!=itr_end && !enc)
+ while(itr!=itr_end && !found)
  {
   obj_aux=(*itr);
-  enc=(obj_aux->getName()==nome_atrib);
+  found=(obj_aux->getName()==name);
   itr++;
  }
 
- if(enc)
+ if(found)
   return(obj_aux);
  else
   return(NULL);
 }
 
-Column *Relationship::getAttribute(unsigned id_atrib)
+Column *Relationship::getAttribute(unsigned attrib_idx)
 {
  /* Caso o índice do atributo esteja fora da quantidade da lista de
     atributos dispara uma exceção */
- if(id_atrib >= rel_attributes.size())
+ if(attrib_idx >= rel_attributes.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- return(dynamic_cast<Column *>(rel_attributes[id_atrib]));
+ return(dynamic_cast<Column *>(rel_attributes[attrib_idx]));
 }
 
-Column *Relationship::getAttribute(const QString &nome_atrib)
+Column *Relationship::getAttribute(const QString &name)
 {
- return(dynamic_cast<Column *>(getObject(nome_atrib,OBJ_COLUMN)));
+ return(dynamic_cast<Column *>(getObject(name,OBJ_COLUMN)));
 }
 
-Constraint *Relationship::getConstraint(unsigned id_rest)
+Constraint *Relationship::getConstraint(unsigned constr_idx)
 {
  /* Caso o índice da restrição esteja fora da quantidade da lista de
     restrições dispara uma exceção */
- if(id_rest >= rel_constraints.size())
+ if(constr_idx >= rel_constraints.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- return(dynamic_cast<Constraint *>(rel_constraints[id_rest]));
+ return(dynamic_cast<Constraint *>(rel_constraints[constr_idx]));
 }
 
-Constraint *Relationship::getConstraint(const QString &nome_rest)
+Constraint *Relationship::getConstraint(const QString &name)
 {
- return(dynamic_cast<Constraint *>(getObject(nome_rest,OBJ_CONSTRAINT)));
+ return(dynamic_cast<Constraint *>(getObject(name,OBJ_CONSTRAINT)));
 }
 
 unsigned Relationship::getAttributeCount(void)
@@ -660,62 +638,56 @@ unsigned Relationship::getConstraintCount(void)
  return(rel_constraints.size());
 }
 
-unsigned Relationship::getObjectCount(ObjectType tipo_obj)
+unsigned Relationship::getObjectCount(ObjectType obj_type)
 {
- if(tipo_obj==OBJ_COLUMN)
+ if(obj_type==OBJ_COLUMN)
   return(rel_attributes.size());
- else if(tipo_obj==OBJ_CONSTRAINT)
+ else if(obj_type==OBJ_CONSTRAINT)
   return(rel_constraints.size());
  else
   throw Exception(ERR_REF_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Relationship::addConstraints(Tabela *tab_dest)
+void Relationship::addConstraints(Tabela *dst_table)
 {
- Constraint *rest=NULL, *pk=NULL;
- //vector<ObjetoTabela *>::iterator itr, itr_end;
- unsigned id_rest, qtd_rest, i, qtd;
- QString nome, nome_orig, aux;
+ Constraint *constr=NULL, *pk=NULL;
+ unsigned constr_id, constr_cnt, i, count;
+ QString name, orig_name, aux;
 
  try
  {
-  //itr=restricoes_rel.begin();
-  //itr_end=restricoes_rel.end();
-
-  qtd_rest=rel_constraints.size();
+  constr_cnt=rel_constraints.size();
 
   //Varre a lista de restrições do relacionamento
-  //while(itr!=itr_end)
-  for(id_rest=0; id_rest < qtd_rest; id_rest++)
+  for(constr_id=0; constr_id < constr_cnt; constr_id++)
   {
    //Obtém a restrição
-   //rest=dynamic_cast<Restricao *>(*itr);
-   rest=dynamic_cast<Constraint *>(rel_constraints[id_rest]);
+   constr=dynamic_cast<Constraint *>(rel_constraints[constr_id]);
 
    /* Interrompe o processamento caso a restrição já
       tenha sido incluída a uma das tabelas */
-   if(rest->getParentTable())
+   if(constr->getParentTable())
     break;
 
    /* Caso ela não seja uma chave primária, a mesma é inserida
       na tabela */
-   if(rest->getConstraintType()!=TipoRestricao::primary_key)
+   if(constr->getConstraintType()!=TipoRestricao::primary_key)
    {
     i=1; aux[0]='\0';
-    nome="";
+    name="";
     //Configura o nome da restrição a fim de resolver problemas de duplicidade
-    nome_orig=rest->getName();
-    while(tab_dest->obterRestricao(nome_orig + aux))
+    orig_name=constr->getName();
+    while(dst_table->obterRestricao(orig_name + aux))
     {
      aux=QString("%1").arg(i);
-     nome=nome_orig + aux;
+     name=orig_name + aux;
      i++;
     }
 
-    if(nome!="") rest->setName(nome);
+    if(name!="") constr->setName(name);
 
     //Adiciona a restrição na tabela
-    tab_dest->adicionarRestricao(rest);
+    dst_table->adicionarRestricao(constr);
    }
    else
    {
@@ -723,29 +695,29 @@ void Relationship::addConstraints(Tabela *tab_dest)
        chave primária da tabela. */
 
     //Obtém a chave primária da tabela
-    pk=tab_dest->obterChavePrimaria();
+    pk=dst_table->obterChavePrimaria();
 
     //Caso ela exista será executada a fusão
     if(pk)
     {
      //Obtém a quantidade de colunas da restrição
-     qtd=rest->getColumnCount(Constraint::SOURCE_COLS);
+     count=constr->getColumnCount(Constraint::SOURCE_COLS);
 
-     for(i=0; i < qtd; i++)
+     for(i=0; i < count; i++)
       //Adiciona cada coluna da restrição na chave primária da tabela
-      pk->addColumn(rest->getColumn(i, Constraint::SOURCE_COLS),
+      pk->addColumn(constr->getColumn(i, Constraint::SOURCE_COLS),
                           Constraint::SOURCE_COLS);
     }
     else
      /* Caso a tabela não possua uma chave primária, a própria restrição do relacionamento
         será a chave primária da tabela */
-     tab_dest->adicionarRestricao(rest);
+     dst_table->adicionarRestricao(constr);
 
     //Remove a chave primária especial da lista de restrições
-    if(rest==pk_special)
+    if(constr==pk_special)
     {
-     rel_constraints.erase(rel_constraints.begin()+id_rest);
-     qtd_rest=rel_constraints.size();
+     rel_constraints.erase(rel_constraints.begin()+constr_id);
+     constr_cnt=rel_constraints.size();
     }
    }
   }
@@ -1109,7 +1081,7 @@ void Relationship::configureIndentifierRel(Tabela *tab_receptora)
    nova_pk=true;
    i=1;
    aux[0]='\0';
-   nome=tab_receptora->getName() + SEPARADOR_SUFIXO + "pk";
+   nome=tab_receptora->getName() + SUFFIX_SEPARATOR + "pk";
 
    /* Verifica se já não existe uma restrição na tabela a qual se adiciona
       as retrições cujo nome seja o mesmo configurado acima. Enquanto isso
@@ -1167,7 +1139,7 @@ void Relationship::addUniqueKey(Tabela *tab_referencia, Tabela *tab_receptora)
   //Configura o nome da chave estrangeira
   i=1;
   aux[0]='\0';
-  nome=tab_referencia->getName() + SEPARADOR_SUFIXO + "uq";
+  nome=tab_referencia->getName() + SUFFIX_SEPARATOR + "uq";
 
   /* Verifica a existencia de alguma restrição com mesmo nome
      na tabela a qual receberá a chave única. Enquanto existir
@@ -1286,7 +1258,7 @@ void Relationship::addForeignKey(Tabela *tab_referencia, Tabela *tab_receptora, 
   //Configura o nome da chave estrangeira
   i=1;
   aux[0]='\0';
-  nome=tab_referencia->getName() + SEPARADOR_SUFIXO + "fk";
+  nome=tab_referencia->getName() + SUFFIX_SEPARATOR + "fk";
 
   /* Verifica a existencia de alguma restrição com mesmo nome
      na tabela a qual receberá a chave estrangeira. Enquanto existir
@@ -1379,7 +1351,7 @@ void Relationship::copyColumns(Tabela *tab_referencia, Tabela *tab_receptora, bo
   {
    if(rel_type==RELATIONSHIP_1N || rel_type==RELATIONSHIP_11)
    {
-    sufixo=SEPARADOR_SUFIXO + tab_referencia->getName();
+    sufixo=SUFFIX_SEPARATOR + tab_referencia->getName();
 
     if(tab_referencia==src_table)
      src_suffix=sufixo;
@@ -1389,19 +1361,19 @@ void Relationship::copyColumns(Tabela *tab_referencia, Tabela *tab_receptora, bo
    else if(rel_type==RELATIONSHIP_NN)
    {
     if(tab_referencia==dst_table)
-    sufixo=dst_suffix=SEPARADOR_SUFIXO + dst_table->getName();
+    sufixo=dst_suffix=SUFFIX_SEPARATOR + dst_table->getName();
    else
-    sufixo=src_suffix=SEPARADOR_SUFIXO + src_table->getName();
+    sufixo=src_suffix=SUFFIX_SEPARATOR + src_table->getName();
    }
   }
   else if(((rel_type!=RELATIONSHIP_NN && tab_receptora==src_table) ||
            (rel_type==RELATIONSHIP_NN && tab_referencia==dst_table))
       && !dst_suffix.isEmpty())
-   sufixo=SEPARADOR_SUFIXO + dst_suffix;
+   sufixo=SUFFIX_SEPARATOR + dst_suffix;
   else if(((rel_type!=RELATIONSHIP_NN && tab_receptora==dst_table) ||
            (rel_type==RELATIONSHIP_NN && tab_referencia==src_table))
            && !src_suffix.isEmpty())
-   sufixo=SEPARADOR_SUFIXO + src_suffix;
+   sufixo=SUFFIX_SEPARATOR + src_suffix;
 
   /* Caso o relacionamento seja 1-n e a tabela de origem não possua
      uma chave primária ou se o relacionamento seja n-n e ambas as tabelas
@@ -2145,8 +2117,8 @@ bool Relationship::isInvalidated(void)
    /* Valida os sufixos caso a geração automática de sufixos esteja ativa.
       Checa se os sufixos, quando preenchidos, coincidem  com os nomes das tabelas respectivas */
    if(auto_suffix &&
-      ((!src_suffix.isEmpty() &&  src_suffix!=QString(SEPARADOR_SUFIXO) + src_table->getName()) ||
-       (!dst_suffix.isEmpty() &&  dst_suffix!=QString(SEPARADOR_SUFIXO) + dst_table->getName())))
+      ((!src_suffix.isEmpty() &&  src_suffix!=QString(SUFFIX_SEPARATOR) + src_table->getName()) ||
+       (!dst_suffix.isEmpty() &&  dst_suffix!=QString(SUFFIX_SEPARATOR) + dst_table->getName())))
     return(true);
 
   /* Pare relacionamentos 1-1 e 1-n a verificação de

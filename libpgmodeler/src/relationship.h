@@ -217,7 +217,7 @@ class Relationship: public BaseRelationship {
   QString tab_name_relnn;
 
   //Indica se uma dada coluna existe na lista de colunas
-  bool isColumnExists(Column *coluna);
+  bool isColumnExists(Column *column);
 
   /* Executa a operação de adição de colunas especificamente para
      relacionamentos do tipo 1-1 */
@@ -252,7 +252,7 @@ class Relationship: public BaseRelationship {
      adicionadas na tabela resultante do relacionamento. Caso dentre as restrições
      exista uma chave primária, então a mesma será fundida com a chave primária de
      uma das tabelas envolvidas no relacionamento */
-  void addConstraints(Tabela *tab_receptora);
+  void addConstraints(Tabela *dst_table);
 
   //Executa configurações adicionais quando o relacionamento é identificador
   void configureIndentifierRel(Tabela *tab_receptora);
@@ -286,15 +286,15 @@ class Relationship: public BaseRelationship {
   /* Constante indicativa de separador de sufixo de nomes de colunas
      adicionadas automaticamente no relacionamento, quando são chaves
      estrangeiras (padrão '_') */
-  static const QString SEPARADOR_SUFIXO;
+  static const QString SUFFIX_SEPARATOR;
 
-  Relationship(Relationship *relacao);
+  Relationship(Relationship *rel);
 
-  Relationship(unsigned tipo_rel,
-                 Tabela *tab_orig, Tabela *tab_dest,
-                 bool src_mandatory=false, bool dst_mandatory=false,
+  Relationship(unsigned rel_type,
+                 Tabela *src_tab, Tabela *dst_tab,
+                 bool src_mdtry=false, bool dst_mdtry=false,
                  bool auto_suffix=true,
-                 const QString &sufix_orig="", const QString &sufix_dest="",
+                 const QString &src_suffix="", const QString &dst_suffix="",
                  bool identifier=false, bool deferrable=false,
                  TipoPostergacao deferral_type=TipoPostergacao::immediate);
 
@@ -313,7 +313,7 @@ class Relationship: public BaseRelationship {
    vector<QString> getRelationshipColumns(void);
 
    //Define a obrigatoriedade da tabela de origem e destino
-   void setMandatoryTable(unsigned id_tabela, bool valor);
+   void setMandatoryTable(unsigned table_id, bool value);
 
    //Define a geração automática de sufixos das colunas
    void setAutomaticSuffix(bool valor);
@@ -335,22 +335,22 @@ class Relationship: public BaseRelationship {
    vector<unsigned> getSpecialPrimaryKeyCols(void);
 
    //Métodos de manipulação do nome da tabela gerada pelo rel. n-n
-   void setTableNameRelNN(const QString &obj_name);
+   void setTableNameRelNN(const QString &name);
    QString getTableNameRelNN(void);
 
    //Métodos de manipulação dos sufixos da tas tabelas
-   void setTableSuffix(unsigned tipo_tab, const QString &sufixo);
-   QString getTableSuffix(unsigned tipo_tab);
+   void setTableSuffix(unsigned table_id, const QString &suffix);
+   QString getTableSuffix(unsigned table_id);
 
    /* Métodos de manipulação do tipo de postergação e se a restição
       gerada pelo relacionamento 1-n ou 1-1 é ou não postergável */
-   void setDeferrable(bool valor);
+   void setDeferrable(bool value);
    bool isDeferrable(void);
-   void setDeferralType(TipoPostergacao tipo_post);
+   void setDeferralType(TipoPostergacao defer_type);
    TipoPostergacao getDeferralType(void);
 
    //Define se um relacionamento é identificador ou não
-   void setIdentifier(bool valor);
+   void setIdentifier(bool value);
    //Retorna se o relacionamento é identificador ou não
    bool isIdentifier(void);
 
@@ -364,42 +364,42 @@ class Relationship: public BaseRelationship {
 
   /* Adiciona um atributo ou restrição ao relacionamento, caso este seja
      apenas dos tipos 1-1, 1-n ou n-n. */
-  void addObject(TableObject *objeto_tab, int idx_obj=-1);
+  void addObject(TableObject *tab_obj, int obj_idx=-1);
 
   //Retorna uma atributo ou restrição do relacionamento através do nome
-  TableObject *getObject(const QString &nome_atrib, ObjectType tipo_obj);
-  TableObject *getObject(unsigned idx_obj, ObjectType tipo_obj);
+  TableObject *getObject(const QString &name, ObjectType obj_type);
+  TableObject *getObject(unsigned obj_idx, ObjectType obj_type);
 
   //Remove um atributo ou restricao através do índice
-  void removeObject(unsigned id_obj, ObjectType tipo_obj);
+  void removeObject(unsigned obj_id, ObjectType obj_type);
 
   //Remove um atributo ou restrição do relacionamento através da ref. do objeto
-  void removeObject(TableObject *objeto);
+  void removeObject(TableObject *object);
 
   //Remove os atributos e restrições do relacionamento
   void removeObjects(void);
 
   //Remove um atributo através do índice
-  void removeAttribute(unsigned id_atrib);
+  void removeAttribute(unsigned attrib_idx);
 
   //Remove uma restrição de atributo através do índice
-  void removeConstraint(unsigned id_rest);
+  void removeConstraint(unsigned constr_idx);
 
   //Obtém um atributo do relacionamento
-  Column *getAttribute(unsigned id_atrib);
-  Column *getAttribute(const QString &nome_atrib);
+  Column *getAttribute(unsigned attrib_idx);
+  Column *getAttribute(const QString &name);
 
   //Obtém uma restrição de um atributo do relacionamento
-  Constraint *getConstraint(unsigned id_rest);
-  Constraint *getConstraint(const QString &nome_rest);
+  Constraint *getConstraint(unsigned constr_idx);
+  Constraint *getConstraint(const QString &name);
 
   //Retorna a coluna referenciada através de seu nome
-  Column *getReferencedColumn(const QString &nome_col);
+  Column *getReferencedColumn(const QString &col_name);
 
   /* Indica se um dado objeto (coluna [atributo] ou restrição) já não existe
      em uma das lista de atributos do relacionamento retornando seu código.
      Retorna -1 caso o objeto não exista. */
-  int getObjectIndex(TableObject *objeto);
+  int getObjectIndex(TableObject *object);
 
   //Obtém o número de atributos
   unsigned getAttributeCount(void);
@@ -408,7 +408,7 @@ class Relationship: public BaseRelationship {
   unsigned getConstraintCount(void);
 
   //Retorna a quantidade de atributos ou restrições conforme o parâmetro passado
-  unsigned getObjectCount(ObjectType tipo_obj);
+  unsigned getObjectCount(ObjectType obj_type);
 
   /* Retorna se o relacionamento possui um ou mais atributos identificadores.
      Atributos identificadores são atributos os quais fazem parte
