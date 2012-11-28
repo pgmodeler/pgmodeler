@@ -238,28 +238,28 @@ class Relationship: public BaseRelationship {
 
   /* Cria a chave estrangeira que representa o relacionamento e a adiciona a
      tabela de destino do relacionamento */
-  void addForeignKey(Tabela *tab_referencia, Tabela *tab_receptora, TipoAcao acao_del, TipoAcao acao_upd);
+  void addForeignKey(Tabela *ref_tab, Tabela *recv_tab, TipoAcao del_act, TipoAcao upd_act);
 
   /* Cria a chave única que representa o relacionamento 1-1 e a adiciona a
      tabela de destino do relacionamento */
-  void addUniqueKey(Tabela *tab_referencia, Tabela *tab_receptora);
+  void addUniqueKey(Tabela *ref_tab, Tabela *recv_tab);
 
   //Adiciona os atributos do relacionamento na tabela
-  void addAttributes(Tabela *tab_receptora);
+  void addAttributes(Tabela *recv_tab);
 
   /* Adiciona as restrições do relacionamento em uma das tabelas que compõe o
      relacionamento. Caso o relacionamento seja do tipo n-n, restrições serão
      adicionadas na tabela resultante do relacionamento. Caso dentre as restrições
      exista uma chave primária, então a mesma será fundida com a chave primária de
      uma das tabelas envolvidas no relacionamento */
-  void addConstraints(Tabela *dst_table);
+  void addConstraints(Tabela *dst_tab);
 
   //Executa configurações adicionais quando o relacionamento é identificador
-  void configureIndentifierRel(Tabela *tab_receptora);
+  void configureIndentifierRel(Tabela *dst_tab);
 
   /* Copia as colunas de uma tabela para outra. Este método é usado pelos métodos
      de adição de colunas para os relacionamentos 1-1, 1-n e n-n */
-  void copyColumns(Tabela *tab_referencia, Tabela *tab_receptora, bool nao_nulo);
+  void copyColumns(Tabela *ref_tab, Tabela *recv_tab, bool not_null);
 
   /* Este método é executado sempre antes da desconexão do relacionamento.
      A função dele é remover da tabela receptora todos os atributos os quais
@@ -267,7 +267,7 @@ class Relationship: public BaseRelationship {
      As restrições, gatilhos e índices removidos são restaurados na validação do relacionamento
      pelo modelo via ModeloBD::validarRelacionamentos(), ModeloBD::obterXMLObjetosEspeciais,
      ModeloBD::criarObjetosEspeciais(). */
-  void removeTableObjectsRefCols(Tabela *tabela);
+  void removeTableObjectsRefCols(Tabela *table);
 
   /* Cria a chave primária especial usando os nomes de colunas referenciadas
      no vetor cols_pk_rel */
@@ -275,7 +275,7 @@ class Relationship: public BaseRelationship {
 
   /* Método que remove as colunas criadas pelo relacionamento da chave primária da tabela, se houver.
      Este é executado sempre antes de se deletar as colunas_ref do relacionamento */
-  void removeColumnsFromTablePK(Tabela *tabela);
+  void removeColumnsFromTablePK(Tabela *table);
 
  protected:
   /* Destrói atributos e restrições do relacionamento, este método deve ser
@@ -298,8 +298,6 @@ class Relationship: public BaseRelationship {
                  bool identifier=false, bool deferrable=false,
                  TipoPostergacao deferral_type=TipoPostergacao::immediate);
 
-   //~Relacionamento(void);
-
    /* Conecta o relacionamento as tabelas e o configura de
       acordo o tipo de relacionamento */
    void connectRelationship(void);
@@ -307,7 +305,7 @@ class Relationship: public BaseRelationship {
    /* Desconecta o relacionamento das tabelas e o remove os atributos do mesmo caso
       estes estiverem presente em alguma das tabelas. Este método desaloca todos os
       objetos criados na conexão. */
-   void disconnectRelationship(bool rem_objs_tab=true);
+   void disconnectRelationship(bool rem_tab_objs=true);
 
    //Retorna a lista de nomes das colunas geradas pela conexão do relacionamento
    vector<QString> getRelationshipColumns(void);
@@ -316,7 +314,7 @@ class Relationship: public BaseRelationship {
    void setMandatoryTable(unsigned table_id, bool value);
 
    //Define a geração automática de sufixos das colunas
-   void setAutomaticSuffix(bool valor);
+   void setAutomaticSuffix(bool value);
    bool isAutomaticSuffix(void);
 
    /* Atenção: Este método só tem efeito quando o relacionamento está conectado, pois é só
@@ -440,7 +438,7 @@ class Relationship: public BaseRelationship {
      1-1,1-n pois possuem a chave estrangeira a qual denota o relacionamento
      e para o tipo n-n o qual possui a tabela descritora do relacionamento.
      Para os demais tipos de relacionamento retorna uma string vazia */
-  QString getCodeDefinition(unsigned tipo_def);
+  QString getCodeDefinition(unsigned def_type);
 
   //Operador que faz a atribuição entre um objeto e outro
   void operator = (Relationship &rel);
