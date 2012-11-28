@@ -389,7 +389,7 @@ void OGRelacionamento::configurarLinha(void)
  if(!configurando_linha)
  {
   BaseRelationship *rel_base=this->obterObjetoOrigem();
-  Relacionamento *relacao=dynamic_cast<Relacionamento *>(rel_base);
+  Relationship *relacao=dynamic_cast<Relationship *>(rel_base);
   vector<QPointF> pontos;
   QLineF lin_aux[2];
   QGraphicsLineItem *lin=NULL;
@@ -434,7 +434,7 @@ void OGRelacionamento::configurarLinha(void)
   //Caso não seja um autorelacionamento
   else
   {
-   Relacionamento *rel=dynamic_cast<Relacionamento *>(rel_base);
+   Relationship *rel=dynamic_cast<Relationship *>(rel_base);
 
    /* Caso especial: Relacionamento 1-1 identificadores.
 
@@ -443,7 +443,7 @@ void OGRelacionamento::configurarLinha(void)
       identificador seja desenhado no lado correto da entidade fraca (tabela receptora)
    */
    if(rel &&
-      rel->getRelationshipType()==Relacionamento::RELATIONSHIP_11 &&
+      rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
       rel->relacionamentoIdentificador())
    {
     tabelas[0]=dynamic_cast<OGTabelaBase *>(rel->obterTabelaReferencia()->getReceiverObject());
@@ -619,7 +619,7 @@ void OGRelacionamento::configurarDescritor(void)
  QLineF lin;
  QPolygonF pol;
  BaseRelationship *rel_base=this->obterObjetoOrigem();
- Relacionamento *relacao=dynamic_cast<Relacionamento *>(rel_base);
+ Relationship *relacao=dynamic_cast<Relationship *>(rel_base);
  unsigned tipo_rel=rel_base->getRelationshipType();
  float x, y, fator=config_fonte[ParsersAttributes::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
  QPen pen;
@@ -712,7 +712,7 @@ void OGRelacionamento::configurarDescritor(void)
 
 void OGRelacionamento::configurarAtributos(void)
 {
- Relacionamento *relacao=dynamic_cast<Relacionamento *>(this->obterObjetoOrigem());
+ Relationship *relacao=dynamic_cast<Relationship *>(this->obterObjetoOrigem());
 
  /* Atributos somente são configurados caso o objeto de origem seja um relacionamento
     entre tabelas. Relacionamentos entre tabela e visão são ignorados */

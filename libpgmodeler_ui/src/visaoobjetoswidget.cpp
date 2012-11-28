@@ -404,17 +404,17 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
         str_aux+="tv";
       else
       {
-       tipo_rel=dynamic_cast<Relacionamento *>(objeto)->getRelationshipType();
+       tipo_rel=dynamic_cast<Relationship *>(objeto)->getRelationshipType();
        //Concatena a uma string auxiliar a designação do tipo de relacionamento
-       if(tipo_rel==Relacionamento::RELATIONSHIP_11)
+       if(tipo_rel==Relationship::RELATIONSHIP_11)
         str_aux+="11";
-       else if(tipo_rel==Relacionamento::RELATIONSHIP_1N)
+       else if(tipo_rel==Relationship::RELATIONSHIP_1N)
         str_aux+="1n";
-       else if(tipo_rel==Relacionamento::RELATIONSHIP_NN)
+       else if(tipo_rel==Relationship::RELATIONSHIP_NN)
         str_aux+="nn";
-       else if(tipo_rel==Relacionamento::RELATIONSHIP_DEP)
+       else if(tipo_rel==Relationship::RELATIONSHIP_DEP)
         str_aux+="dep";
-       else if(tipo_rel==Relacionamento::RELATIONSHIP_GEN)
+       else if(tipo_rel==Relationship::RELATIONSHIP_GEN)
         str_aux+="gen";
       }
      }
@@ -1025,17 +1025,17 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
        {
         //Configura o ícone apenas para relacionamento
         case OBJ_RELATIONSHIP:
-        tipo_rel=dynamic_cast<Relacionamento *>(objeto)->getRelationshipType();
+        tipo_rel=dynamic_cast<Relationship *>(objeto)->getRelationshipType();
         //Concatena a uma string auxiliar a designação do tipo de relacionamento
-        if(tipo_rel==Relacionamento::RELATIONSHIP_11)
+        if(tipo_rel==Relationship::RELATIONSHIP_11)
          str_aux="11";
-        else if(tipo_rel==Relacionamento::RELATIONSHIP_1N)
+        else if(tipo_rel==Relationship::RELATIONSHIP_1N)
          str_aux="1n";
-        else if(tipo_rel==Relacionamento::RELATIONSHIP_NN)
+        else if(tipo_rel==Relationship::RELATIONSHIP_NN)
          str_aux="nn";
-        else if(tipo_rel==Relacionamento::RELATIONSHIP_DEP)
+        else if(tipo_rel==Relationship::RELATIONSHIP_DEP)
          str_aux="dep";
-        else if(tipo_rel==Relacionamento::RELATIONSHIP_GEN)
+        else if(tipo_rel==Relationship::RELATIONSHIP_GEN)
          str_aux="gen";
         break;
 

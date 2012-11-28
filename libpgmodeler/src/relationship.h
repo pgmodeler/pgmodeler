@@ -126,7 +126,7 @@ binários convencionais.
       forte também existirem.
 */
 
-class Relacionamento: public BaseRelationship {
+class Relationship: public BaseRelationship {
  private:
   /* Indica que o relacionamento teve algum atributo crítico modificado e precisa
      ser revalidado */
@@ -288,9 +288,9 @@ class Relacionamento: public BaseRelationship {
      estrangeiras (padrão '_') */
   static const QString SEPARADOR_SUFIXO;
 
-  Relacionamento(Relacionamento *relacao);
+  Relationship(Relationship *relacao);
 
-  Relacionamento(unsigned tipo_rel,
+  Relationship(unsigned tipo_rel,
                  Tabela *tab_orig, Tabela *tab_dest,
                  bool src_mandatory=false, bool dst_mandatory=false,
                  bool sufixo_auto=true,
@@ -443,7 +443,7 @@ class Relacionamento: public BaseRelationship {
   QString getCodeDefinition(unsigned tipo_def);
 
   //Operador que faz a atribuição entre um objeto e outro
-  void operator = (Relacionamento &rel);
+  void operator = (Relationship &rel);
 
   friend class ModeloBD;
 };

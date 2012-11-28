@@ -209,7 +209,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
  Column *coluna=NULL;
  Tabela *tabela=NULL;
  QComboBox *combo=NULL;
- Relacionamento *relacao=NULL;
+ Relationship *relacao=NULL;
  unsigned i, qtd_col=0;
 
  try

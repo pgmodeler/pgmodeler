@@ -157,7 +157,7 @@ void RelacionamentoWidget::hideEvent(QHideEvent *evento)
 
 void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tabela *tab_orig, Tabela *tab_dest, unsigned tipo_rel)
 {
- Relacionamento *rel=NULL;
+ Relationship *rel=NULL;
 
  try
  {
@@ -168,7 +168,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
 
   //Aloca o novo relacionamento
   //rel=new Relacionamento(nome, tipo_rel, tab_orig, tab_dest);
-  rel=new Relacionamento(tipo_rel, tab_orig, tab_dest);
+  rel=new Relationship(tipo_rel, tab_orig, tab_dest);
 
   /* Marca como novo objeto o relacionamento gerado, assim o mesmo é tratado
      de forma diferente nos métodos de configuração da classe superior */
@@ -200,7 +200,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
  static QWidget *tabs[3]={ atributosrel_tbw->widget(1), atributosrel_tbw->widget(2), atributosrel_tbw->widget(3) };
  static QString rot_tabs[3]={ atributosrel_tbw->tabText(1), atributosrel_tbw->tabText(2), atributosrel_tbw->tabText(3) };
  unsigned tipo_rel, i;
- Relacionamento *relacao_aux=NULL;
+ Relationship *relacao_aux=NULL;
  bool rel1n, relnn, relgen_dep;
 
  //Caso o relacionamento não esteja alocado dispara um erro
@@ -246,7 +246,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
   QListWidgetItem *item=NULL;
 
   //Converte o objeto para relacionamento entre tabelas para acessar os atributos
-  relacao_aux=dynamic_cast<Relacionamento *>(relacao);
+  relacao_aux=dynamic_cast<Relationship *>(relacao);
 
   //Preenche os campos do formulário com os valores presentes no relacionamento
   sufixo_auto_chk->setChecked(relacao_aux->obterSufixoAutomatico());
@@ -374,7 +374,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
 void RelacionamentoWidget::listarObjetos(ObjectType tipo_obj)
 {
  TabelaObjetosWidget *tab=NULL;
- Relacionamento *relacao=NULL;
+ Relationship *relacao=NULL;
  unsigned qtd, i;
 
  try
@@ -386,7 +386,7 @@ void RelacionamentoWidget::listarObjetos(ObjectType tipo_obj)
    tab=tab_restricoes;
 
   //Obtém a referência ao relacionamento
-  relacao=dynamic_cast<Relacionamento *>(this->objeto);
+  relacao=dynamic_cast<Relationship *>(this->objeto);
 
   //Remove as linhas da tabela antes da exibição dos elementos
   tab->blockSignals(true);
@@ -519,7 +519,7 @@ void RelacionamentoWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
 
 void RelacionamentoWidget::removerObjetos(void)
 {
- Relacionamento *relacao=NULL;
+ Relationship *relacao=NULL;
  ObjectType tipo_obj=BASE_OBJECT;
  unsigned qtd, qtd_op=0, i;
  TableObject *objeto=NULL;
@@ -527,7 +527,7 @@ void RelacionamentoWidget::removerObjetos(void)
  try
  {
   //Obtém a referência ao relacionamento
-  relacao=dynamic_cast<Relacionamento *>(this->objeto);
+  relacao=dynamic_cast<Relationship *>(this->objeto);
 
   //Caso seja remoção de atributos
   if(sender()==tab_atributos)
@@ -594,14 +594,14 @@ void RelacionamentoWidget::removerObjetos(void)
 
 void RelacionamentoWidget::removerObjeto(int idx_lin)
 {
- Relacionamento *relacao=NULL;
+ Relationship *relacao=NULL;
  ObjectType tipo_obj=BASE_OBJECT;
  TableObject *objeto=NULL;
 
  try
  {
   //Obtém a referência ao relacionamento
-  relacao=dynamic_cast<Relacionamento *>(this->objeto);
+  relacao=dynamic_cast<Relationship *>(this->objeto);
 
   //Caso o sender do método seja a tabela de atributos
   if(sender()==tab_atributos)
@@ -629,7 +629,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
 {
  try
  {
-  Relacionamento *relacao=NULL;
+  Relationship *relacao=NULL;
   unsigned tipo_rel, qtd, i;
   vector<unsigned> id_cols;
 
@@ -653,7 +653,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
   if(this->objeto->getObjectType()==OBJ_RELATIONSHIP)
   {
    //Obtém a referência ao mesmo fazendo o cast correto
-   relacao=dynamic_cast<Relacionamento *>(this->objeto);
+   relacao=dynamic_cast<Relationship *>(this->objeto);
    tipo_rel=relacao->getRelationshipType();
    relacao->blockSignals(true);
 

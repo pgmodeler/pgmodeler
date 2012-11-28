@@ -708,7 +708,7 @@ void ModeloBD::destruirObjetos(void)
    objeto=lista->back();
 
    if(objeto->getObjectType()==OBJ_RELATIONSHIP)
-    dynamic_cast<Relacionamento *>(objeto)->destruirObjetos();
+    dynamic_cast<Relationship *>(objeto)->destruirObjetos();
 
    delete(objeto);
    lista->pop_back();
@@ -963,7 +963,7 @@ void ModeloBD::desconectarRelacionamentos(void)
  try
  {
   BaseRelationship *rel_base=NULL;
-  Relacionamento *rel=NULL;
+  Relationship *rel=NULL;
   vector<BaseObject *>::reverse_iterator ritr_rel, ritr_rel_end;
 
   /* Varre a lista geral de relacionamentos
@@ -982,7 +982,7 @@ void ModeloBD::desconectarRelacionamentos(void)
    if(rel_base->getObjectType()==OBJ_RELATIONSHIP)
    {
     //Converte o objeto para relacionamento tabela-tabela
-    rel=dynamic_cast<Relacionamento *>(rel_base);
+    rel=dynamic_cast<Relationship *>(rel_base);
     rel->disconnectRelationship();
    }
    else
@@ -999,7 +999,7 @@ void ModeloBD::validarRelacionamentos(void)
 {
  vector<BaseObject *>::iterator itr, itr_end, itr_ant;
  //vector<unsigned> vet_id_objs;
- Relacionamento *rel=NULL;
+ Relationship *rel=NULL;
  BaseRelationship *rel_base=NULL;
  vector<BaseObject *> vet_rel, vet_rel_inv, rels;
  bool enc_rel_inv;
@@ -1030,7 +1030,7 @@ void ModeloBD::validarRelacionamentos(void)
    if(rel_base->getObjectType()==OBJ_RELATIONSHIP)
    {
     //Converte o relacionamento base para rel. tabela-tabela
-    rel=dynamic_cast<Relacionamento *>(rel_base);
+    rel=dynamic_cast<Relationship *>(rel_base);
 
     //Caso o relacionamento esteja invalidado
     if(rel->relacionamentoInvalidado())
@@ -1076,7 +1076,7 @@ void ModeloBD::validarRelacionamentos(void)
    while(itr!=itr_end)
    {
     //Obtém o relacionamento
-    rel=dynamic_cast<Relacionamento *>(*itr);
+    rel=dynamic_cast<Relationship *>(*itr);
     itr_ant=itr;
 
     //Passa para o próximo relacionamento da lista
@@ -1203,7 +1203,7 @@ void ModeloBD::validarRelacionamentos(void)
  }
 }
 
-void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
+void ModeloBD::verificarRedundanciaRelacoes(Relationship *rel)
 {
  try
  {
@@ -1224,12 +1224,12 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
       (rel->relacionamentoIdentificador() ||
        rel->possuiAtributoIdentificador())) ||
 
-     (tipo_rel==Relacionamento::RELATIONSHIP_GEN ||
-      tipo_rel==Relacionamento::RELATIONSHIP_DEP))
+     (tipo_rel==Relationship::RELATIONSHIP_GEN ||
+      tipo_rel==Relationship::RELATIONSHIP_DEP))
   {
    BaseTable *tabela_ref=NULL, *tab_orig=NULL;
    Tabela *tabela_rec=NULL;
-   Relacionamento *rel_aux=NULL;
+   Relationship *rel_aux=NULL;
    BaseRelationship *rel_base=NULL;
    vector<BaseObject *>::iterator itr, itr_end;
    bool ciclo_enc=false;
@@ -1254,7 +1254,7 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
     if(rel_base->getObjectType()==OBJ_RELATIONSHIP)
     {
      //Obtém um relacionamento da lista
-     rel_aux=dynamic_cast<Relacionamento *>(rel_base);
+     rel_aux=dynamic_cast<Relationship *>(rel_base);
      //Obtém o tipo do relacionamento atual
      tipo_rel_aux=rel_aux->getRelationshipType();
      //Obtém a tabela referência do relacionamento atual
@@ -1270,8 +1270,8 @@ void ModeloBD::verificarRedundanciaRelacoes(Relacionamento *rel)
         ((!rel_aux->isSelfRelationship() &&
           (rel_aux->relacionamentoIdentificador() ||
            rel_aux->possuiAtributoIdentificador())) ||
-         (tipo_rel_aux==Relacionamento::RELATIONSHIP_GEN ||
-          tipo_rel_aux==Relacionamento::RELATIONSHIP_DEP)))
+         (tipo_rel_aux==Relationship::RELATIONSHIP_GEN ||
+          tipo_rel_aux==Relationship::RELATIONSHIP_DEP)))
 
      {
       //A tabela receptora passará a ser a tabela receptora do relacionamento atual
@@ -1569,14 +1569,14 @@ void ModeloBD::adicionarRelacionamento(BaseRelationship *relacao, int idx_obj)
 
   //Adiciona o objeto no modelo
   if(relacao->getObjectType()==OBJ_RELATIONSHIP)
-   verificarRedundanciaRelacoes(dynamic_cast<Relacionamento *>(relacao));
+   verificarRedundanciaRelacoes(dynamic_cast<Relationship *>(relacao));
 
   __adicionarObjeto(relacao, idx_obj);
 
   if(relacao->getObjectType()==OBJ_RELATIONSHIP)
   {
    //Conecta o novo relacionamento
-   dynamic_cast<Relacionamento *>(relacao)->connectRelationship();
+   dynamic_cast<Relationship *>(relacao)->connectRelationship();
 
    //Valida os relacionamentos para propagação das colunas
    validarRelacionamentos();
@@ -4589,7 +4589,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
  BaseObject *tabela_ref=NULL;
  Tabela *tabela=NULL,*tabela_aux=NULL;
  Column *coluna=NULL;
- Relacionamento *relacao=NULL;
+ Relationship *relacao=NULL;
  QString elem, str_aux;
  bool postergavel, ins_rest_tabela=false;
  TipoRestricao tipo_rest;
@@ -4610,7 +4610,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
    if(tipo_objeto==OBJ_TABLE)
     tabela=dynamic_cast<Tabela *>(objeto);
    else if(tipo_objeto==OBJ_RELATIONSHIP)
-    relacao=dynamic_cast<Relacionamento *>(objeto);
+    relacao=dynamic_cast<Relationship *>(objeto);
    else
     throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
@@ -5538,7 +5538,7 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
  vector<unsigned> cols_pk_especial;
  map<QString, QString> atributos;
  BaseRelationship *relacao_base=NULL;
- Relacionamento *relacao=NULL;
+ Relationship *relacao=NULL;
  BaseTable *tabelas[2]={NULL, NULL};
  bool obrig_orig, obrig_dest, identificador, protegido, postergavel, sufixo_auto;
  TipoPostergacao tipo_postergacao;
@@ -5626,7 +5626,7 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
     tipo_relac=BaseRelationship::RELATIONSHIP_DEP;
 
    //Cria o novo relacionamento
-   relacao=new Relacionamento(tipo_relac,
+   relacao=new Relationship(tipo_relac,
                               dynamic_cast<Tabela *>(tabelas[0]),
                               dynamic_cast<Tabela *>(tabelas[1]),
                               obrig_orig, obrig_dest,
@@ -5946,7 +5946,7 @@ void ModeloBD::validarRelacObjetoTabela(TableObject *objeto, Tabela *tabela_pai)
  try
  {
   bool revalidar_rels=false, tab_ref_heranca=false;
-  Relacionamento *rel=NULL;
+  Relationship *rel=NULL;
   vector<BaseObject *>::iterator itr, itr_end;
   ObjectType tipo;
 
@@ -5972,9 +5972,9 @@ void ModeloBD::validarRelacObjetoTabela(TableObject *objeto, Tabela *tabela_pai)
 
     while(itr!=itr_end && !tab_ref_heranca)
     {
-     rel=dynamic_cast<Relacionamento *>(*itr);
+     rel=dynamic_cast<Relationship *>(*itr);
      itr++;
-     tab_ref_heranca=(rel->getRelationshipType()==Relacionamento::RELATIONSHIP_GEN &&
+     tab_ref_heranca=(rel->getRelationshipType()==Relationship::RELATIONSHIP_GEN &&
                       rel->obterTabelaReferencia()==tabela_pai);
     }
    }
@@ -6044,7 +6044,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
  Index *indice=NULL;
  Gatilho *gatilho=NULL;
  Constraint *restricao=NULL;
- Relacionamento *relacao=NULL;
+ Relationship *relacao=NULL;
  ObjectType tipo_obj,
                 tipos_obj_aux[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA },
                 tipos_obj[]={ OBJ_LANGUAGE, OBJ_FUNCTION, OBJ_TYPE,
@@ -6257,9 +6257,9 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
 
     if(objeto->getObjectType()==OBJ_RELATIONSHIP)
     {
-     relacao=dynamic_cast<Relacionamento *>(objeto);
-     objetos[0]=relacao->getTable(Relacionamento::SRC_TABLE);
-     objetos[1]=relacao->getTable(Relacionamento::DST_TABLE);
+     relacao=dynamic_cast<Relationship *>(objeto);
+     objetos[0]=relacao->getTable(Relationship::SRC_TABLE);
+     objetos[1]=relacao->getTable(Relationship::DST_TABLE);
      objetos[2]=relacao;
 
      for(i=0; i < 3; i++)
@@ -6683,14 +6683,14 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   //** Obtendo as dependências de Relacionamentos **
   else if(tipo_obj==OBJ_RELATIONSHIP)
   {
-   Relacionamento *rel=dynamic_cast<Relacionamento *>(objeto);
+   Relationship *rel=dynamic_cast<Relationship *>(objeto);
    BaseObject *tipo_usr=NULL;
    Constraint *rest=NULL;
    unsigned i, qtd;
 
    //Obtém as dependências das tabelas referenciadas pelo relacionamento
-   obterDependenciasObjeto(rel->getTable(Relacionamento::SRC_TABLE), vet_deps, inc_dep_indiretas);
-   obterDependenciasObjeto(rel->getTable(Relacionamento::DST_TABLE), vet_deps, inc_dep_indiretas);
+   obterDependenciasObjeto(rel->getTable(Relationship::SRC_TABLE), vet_deps, inc_dep_indiretas);
+   obterDependenciasObjeto(rel->getTable(Relationship::DST_TABLE), vet_deps, inc_dep_indiretas);
 
    //Obtém as dependências dos tipos usados pelos atributos do relacionamento
    qtd=rel->obterNumAtributos();
@@ -7679,7 +7679,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      }
      else if(tipos_obj[i]==OBJ_RELATIONSHIP)
      {
-      Relacionamento *rel=dynamic_cast<Relacionamento *>(*itr);
+      Relationship *rel=dynamic_cast<Relationship *>(*itr);
       unsigned qtd_rest, idx;
 
       qtd_rest=rel->obterNumRestricoes();

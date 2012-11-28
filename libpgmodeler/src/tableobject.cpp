@@ -8,8 +8,7 @@ TableObject::TableObject(void)
 
 void TableObject::setParentTable(BaseTable *table)
 {
- /* Caso o objeto a ser atribuído não seja uma tabela
-    um erro é gerado */
+ //Raises an error if the parent object is not a table
  if(table && table->getObjectType()!=OBJ_TABLE)
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -70,4 +69,3 @@ void TableObject::operator = (TableObject &object)
  this->add_by_generalization=false;
  this->add_by_linking=false;
 }
-

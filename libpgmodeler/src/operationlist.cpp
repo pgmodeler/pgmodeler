@@ -28,12 +28,12 @@ void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type
  switch(obj_type)
  {
   case OBJ_RELATIONSHIP:
-    Relacionamento *rel1;
-    rel1=new Relacionamento(dynamic_cast<Relacionamento *>(copy_obj));
+    Relationship *rel1;
+    rel1=new Relationship(dynamic_cast<Relationship *>(copy_obj));
     if(!(*psrc_obj))
      (*psrc_obj)=rel1;
     else
-     (*(dynamic_cast<Relacionamento *>(*psrc_obj)))=(*rel1);
+     (*(dynamic_cast<Relationship *>(*psrc_obj)))=(*rel1);
   break;
   case BASE_RELATIONSHIP:
     BaseRelationship *rel;
@@ -371,7 +371,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
  ObjectType obj_type;
  Operation *operation=NULL;
  Tabela *parent_tab=NULL;
- Relacionamento *parent_rel=NULL;
+ Relationship *parent_rel=NULL;
  int obj_idx=-1;
 
  try
@@ -447,7 +447,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
    if(parent_obj->getObjectType()==OBJ_TABLE)
     parent_tab=dynamic_cast<Tabela *>(parent_obj);
    else
-    parent_rel=dynamic_cast<Relacionamento *>(parent_obj);
+    parent_rel=dynamic_cast<Relationship *>(parent_obj);
 
    /* Specific case to columns: on removal operations the permissions of the objects
       must be removed too */
@@ -713,7 +713,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
    BaseObject *orig_obj=NULL, *bkp_obj=NULL, *object=NULL, *aux_obj=NULL;
    ObjectType obj_type;
    Tabela *parent_tab=NULL;
-   Relacionamento *parent_rel=NULL;
+   Relationship *parent_rel=NULL;
 
    object=oper->pool_obj;
    obj_type=object->getObjectType();
@@ -728,7 +728,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
     if(oper->parent_obj->getObjectType()==OBJ_TABLE)
      parent_tab=dynamic_cast<Tabela *>(oper->parent_obj);
     else
-     parent_rel=dynamic_cast<Relacionamento *>(oper->parent_obj);
+     parent_rel=dynamic_cast<Relationship *>(oper->parent_obj);
    }
 
    /* If the XML definition of object is set indicates that it is referencing a column

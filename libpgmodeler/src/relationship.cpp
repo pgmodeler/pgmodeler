@@ -1,10 +1,10 @@
-#include "relacionamento.h"
+#include "relationship.h"
 #include <QApplication>
 
 //Inicialização de atributos estáticos da classe
-const QString Relacionamento::SEPARADOR_SUFIXO("_");
+const QString Relationship::SEPARADOR_SUFIXO("_");
 
-Relacionamento::Relacionamento(Relacionamento *relacao) : BaseRelationship(relacao)
+Relationship::Relationship(Relationship *relacao) : BaseRelationship(relacao)
 {
  if(!relacao)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -34,7 +34,7 @@ Relacionamento::Relacionamento(Relacionamento *relacao) : BaseRelationship(relac
  }
 }*/
 
-Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabela *tab_orig,
+Relationship::Relationship(/*const QString &nome,*/ unsigned tipo_rel, Tabela *tab_orig,
                                Tabela *tab_dest, bool obrig_orig, bool obrig_dest,
                                bool sufixo_auto, const QString &sufix_orig, const QString &sufix_dest,
                                bool identificador,  bool postergavel, TipoPostergacao tipo_postergacao) :
@@ -113,7 +113,7 @@ Relacionamento::Relacionamento(/*const QString &nome,*/ unsigned tipo_rel, Tabel
  }
 }
 
-vector<QString> Relacionamento::obterColunasRelacionamento(void)
+vector<QString> Relationship::obterColunasRelacionamento(void)
 {
  unsigned qtd, i;
  vector<QString> vet_nomes;
@@ -128,13 +128,13 @@ vector<QString> Relacionamento::obterColunasRelacionamento(void)
  return(vet_nomes);
 }
 
-void Relacionamento::setMandatoryTable(unsigned id_tabela, bool valor)
+void Relationship::setMandatoryTable(unsigned id_tabela, bool valor)
 {
  BaseRelationship::setMandatoryTable(id_tabela, valor);
  this->invalidado=true;
 }
 
-void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufixo)
+void Relationship::definirSufixoTabela(unsigned tipo_tab, const QString &sufixo)
 {
  if(tipo_tab > DST_TABLE)
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -152,7 +152,7 @@ void Relacionamento::definirSufixoTabela(unsigned tipo_tab, const QString &sufix
  this->invalidado=true;
 }
 
-QString Relacionamento::obterSufixoTabela(unsigned tipo_tab)
+QString Relationship::obterSufixoTabela(unsigned tipo_tab)
 {
  if(tipo_tab > DST_TABLE)
   throw Exception(ERR_REF_ARG_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -163,13 +163,13 @@ QString Relacionamento::obterSufixoTabela(unsigned tipo_tab)
   return(sufixo_dest);
 }
 
-void Relacionamento::definirPostergavel(bool valor)
+void Relationship::definirPostergavel(bool valor)
 {
  postergavel=valor;
  this->invalidado=true;
 }
 
-void Relacionamento::definirIdentificador(bool valor)
+void Relationship::definirIdentificador(bool valor)
 {
  /* Validando o relacionamento identificador.
     Relacionamento identificador não pode ser criado quando este é um
@@ -186,7 +186,7 @@ void Relacionamento::definirIdentificador(bool valor)
  this->invalidado=true;
 }
 
-void Relacionamento::definirColsChavePrimariaEspecial(vector<unsigned> &cols)
+void Relationship::definirColsChavePrimariaEspecial(vector<unsigned> &cols)
 {
  /* Dispara um erro caso o usuário tente usar a chave primária especial em autorelacionamento
     e/ou relacionamento n-n */
@@ -198,12 +198,12 @@ void Relacionamento::definirColsChavePrimariaEspecial(vector<unsigned> &cols)
  this->id_colunas_pk_rel=cols;
 }
 
-vector<unsigned> Relacionamento::obterColChavePrimariaEspecial(void)
+vector<unsigned> Relationship::obterColChavePrimariaEspecial(void)
 {
  return(this->id_colunas_pk_rel);
 }
 
-void Relacionamento::criarChavePrimariaEspecial(void)
+void Relationship::criarChavePrimariaEspecial(void)
 {
  if(!id_colunas_pk_rel.empty())
  {
@@ -245,7 +245,7 @@ void Relacionamento::criarChavePrimariaEspecial(void)
  }
 }
 
-void Relacionamento::definirNomeTabelaRelNN(const QString &nome)
+void Relationship::definirNomeTabelaRelNN(const QString &nome)
 {
  if(!BaseObject::isValidName(nome))
   throw Exception(ERR_ASG_INV_NAME_TABLE_RELNN, __PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -254,28 +254,28 @@ void Relacionamento::definirNomeTabelaRelNN(const QString &nome)
  this->invalidado=true;
 }
 
-QString Relacionamento::getNameTabelaRelNN(void)
+QString Relationship::getNameTabelaRelNN(void)
 {
  return(nome_tab_relnn);
 }
 
-bool Relacionamento::obterPostergavel(void)
+bool Relationship::obterPostergavel(void)
 {
  return(postergavel);
 }
 
-void Relacionamento::definirTipoPostergacao(TipoPostergacao tipo_post)
+void Relationship::definirTipoPostergacao(TipoPostergacao tipo_post)
 {
  tipo_postergacao=tipo_post;
  this->invalidado=true;
 }
 
-TipoPostergacao Relacionamento::obterTipoPostergacao(void)
+TipoPostergacao Relationship::obterTipoPostergacao(void)
 {
  return(tipo_postergacao);
 }
 
-int Relacionamento::obterIndiceObjeto(TableObject *objeto)
+int Relationship::obterIndiceObjeto(TableObject *objeto)
 {
  vector<TableObject *>::iterator itr, itr_end;
  vector<TableObject *> *lista=NULL;
@@ -315,7 +315,7 @@ int Relacionamento::obterIndiceObjeto(TableObject *objeto)
   return(-1);
 }
 
-bool Relacionamento::colunaExistente(Column *coluna)
+bool Relationship::colunaExistente(Column *coluna)
 {
  vector<Column *>::iterator itr, itr_end;
  Column *col_aux=NULL;
@@ -341,7 +341,7 @@ bool Relacionamento::colunaExistente(Column *coluna)
  return(enc);
 }
 
-void Relacionamento::adicionarObjeto(TableObject *objeto_tab, int idx_obj)
+void Relationship::adicionarObjeto(TableObject *objeto_tab, int idx_obj)
 {
  ObjectType tipo_obj;
  vector<TableObject *> *lista_obj=NULL;
@@ -443,13 +443,13 @@ void Relacionamento::adicionarObjeto(TableObject *objeto_tab, int idx_obj)
  }
 }
 
-void Relacionamento::removerObjetos(void)
+void Relationship::removerObjetos(void)
 {
  atributos_rel.clear();
  restricoes_rel.clear();
 }
 
-void Relacionamento::destruirObjetos(void)
+void Relationship::destruirObjetos(void)
 {
  while(!restricoes_rel.empty())
  {
@@ -464,7 +464,7 @@ void Relacionamento::destruirObjetos(void)
  }
 }
 
-void Relacionamento::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
+void Relationship::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
 {
  vector<TableObject *> *lista_obj=NULL;
 
@@ -527,7 +527,7 @@ void Relacionamento::removerObjeto(unsigned id_obj, ObjectType tipo_obj)
  connectRelationship();
 }
 
-void Relacionamento::removerObjeto(TableObject *objeto)
+void Relationship::removerObjeto(TableObject *objeto)
 {
  if(!objeto)
   throw Exception(ERR_REM_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -535,17 +535,17 @@ void Relacionamento::removerObjeto(TableObject *objeto)
  removerObjeto(obterIndiceObjeto(objeto),objeto->getObjectType());
 }
 
-void Relacionamento::removerAtributo(unsigned id_atrib)
+void Relationship::removerAtributo(unsigned id_atrib)
 {
  removerObjeto(id_atrib, OBJ_COLUMN);
 }
 
-void Relacionamento::removerRestricao(unsigned id_rest)
+void Relationship::removerRestricao(unsigned id_rest)
 {
  removerObjeto(id_rest, OBJ_CONSTRAINT);
 }
 
-Column *Relacionamento::obterColunaReferenciada(const QString &nome_col)
+Column *Relationship::obterColunaReferenciada(const QString &nome_col)
 {
  vector<Column *>::iterator itr, itr_end;
  Column *col=NULL;
@@ -570,7 +570,7 @@ Column *Relacionamento::obterColunaReferenciada(const QString &nome_col)
   return(NULL);
 }
 
-TableObject *Relacionamento::obterObjeto(unsigned idx_obj, ObjectType tipo_obj)
+TableObject *Relationship::obterObjeto(unsigned idx_obj, ObjectType tipo_obj)
 {
  vector<TableObject *> *lista=NULL;
 
@@ -588,7 +588,7 @@ TableObject *Relacionamento::obterObjeto(unsigned idx_obj, ObjectType tipo_obj)
  return(lista->at(idx_obj));
 }
 
-TableObject *Relacionamento::obterObjeto(const QString &nome_atrib, ObjectType tipo_obj)
+TableObject *Relationship::obterObjeto(const QString &nome_atrib, ObjectType tipo_obj)
 {
  vector<TableObject *>::iterator itr, itr_end;
  vector<TableObject *> *lista=NULL;
@@ -622,7 +622,7 @@ TableObject *Relacionamento::obterObjeto(const QString &nome_atrib, ObjectType t
   return(NULL);
 }
 
-Column *Relacionamento::obterAtributo(unsigned id_atrib)
+Column *Relationship::obterAtributo(unsigned id_atrib)
 {
  /* Caso o índice do atributo esteja fora da quantidade da lista de
     atributos dispara uma exceção */
@@ -631,12 +631,12 @@ Column *Relacionamento::obterAtributo(unsigned id_atrib)
  return(dynamic_cast<Column *>(atributos_rel[id_atrib]));
 }
 
-Column *Relacionamento::obterAtributo(const QString &nome_atrib)
+Column *Relationship::obterAtributo(const QString &nome_atrib)
 {
  return(dynamic_cast<Column *>(obterObjeto(nome_atrib,OBJ_COLUMN)));
 }
 
-Constraint *Relacionamento::obterRestricao(unsigned id_rest)
+Constraint *Relationship::obterRestricao(unsigned id_rest)
 {
  /* Caso o índice da restrição esteja fora da quantidade da lista de
     restrições dispara uma exceção */
@@ -645,22 +645,22 @@ Constraint *Relacionamento::obterRestricao(unsigned id_rest)
  return(dynamic_cast<Constraint *>(restricoes_rel[id_rest]));
 }
 
-Constraint *Relacionamento::obterRestricao(const QString &nome_rest)
+Constraint *Relationship::obterRestricao(const QString &nome_rest)
 {
  return(dynamic_cast<Constraint *>(obterObjeto(nome_rest,OBJ_CONSTRAINT)));
 }
 
-unsigned Relacionamento::obterNumAtributos(void)
+unsigned Relationship::obterNumAtributos(void)
 {
  return(atributos_rel.size());
 }
 
-unsigned Relacionamento::obterNumRestricoes(void)
+unsigned Relationship::obterNumRestricoes(void)
 {
  return(restricoes_rel.size());
 }
 
-unsigned Relacionamento::obterNumObjetos(ObjectType tipo_obj)
+unsigned Relationship::obterNumObjetos(ObjectType tipo_obj)
 {
  if(tipo_obj==OBJ_COLUMN)
   return(atributos_rel.size());
@@ -670,7 +670,7 @@ unsigned Relacionamento::obterNumObjetos(ObjectType tipo_obj)
   throw Exception(ERR_REF_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Relacionamento::adicionarRestricoes(Tabela *tab_dest)
+void Relationship::adicionarRestricoes(Tabela *tab_dest)
 {
  Constraint *rest=NULL, *pk=NULL;
  //vector<ObjetoTabela *>::iterator itr, itr_end;
@@ -756,7 +756,7 @@ void Relacionamento::adicionarRestricoes(Tabela *tab_dest)
  }
 }
 
-void Relacionamento::adicionarColunasRelGen(void)
+void Relationship::adicionarColunasRelGen(void)
 {
  Tabela *tab_orig=NULL, *tab_dest=NULL,
         *tab_pai=NULL, *tab_aux=NULL;
@@ -1005,7 +1005,7 @@ void Relacionamento::adicionarColunasRelGen(void)
  }
 }
 
-void Relacionamento::connectRelationship(void)
+void Relationship::connectRelationship(void)
 {
  try
  {
@@ -1074,7 +1074,7 @@ void Relacionamento::connectRelationship(void)
  }
 }
 
-void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
+void Relationship::configurarRelIdentificador(Tabela *tab_receptora)
 {
  Constraint *pk=NULL;
  unsigned i, qtd;
@@ -1140,7 +1140,7 @@ void Relacionamento::configurarRelIdentificador(Tabela *tab_receptora)
  }
 }
 
-void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_receptora)
+void Relationship::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_receptora)
 {
  Constraint *uq=NULL;
  unsigned i, qtd;
@@ -1192,7 +1192,7 @@ void Relacionamento::adicionarChaveUnica(Tabela *tab_referencia, Tabela *tab_rec
  }
 }
 
-void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *tab_receptora, TipoAcao acao_del, TipoAcao acao_upd)
+void Relationship::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *tab_receptora, TipoAcao acao_del, TipoAcao acao_upd)
 {
  Constraint *pk=NULL, *pk_aux=NULL, *fk=NULL;
  unsigned i, i1, qtd;
@@ -1311,7 +1311,7 @@ void Relacionamento::adicionarChaveEstrangeira(Tabela *tab_referencia, Tabela *t
  }
 }
 
-void Relacionamento::adicionarAtributos(Tabela *tab_receptora)
+void Relationship::adicionarAtributos(Tabela *tab_receptora)
 {
  unsigned i, qtd, i1;
  Column *coluna=NULL;
@@ -1357,7 +1357,7 @@ void Relacionamento::adicionarAtributos(Tabela *tab_receptora)
  }
 }
 
-void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora, bool nao_nulo)
+void Relationship::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora, bool nao_nulo)
 {
  Constraint *pk_dest=NULL, *pk_orig=NULL, *pk=NULL;
  unsigned i, qtd, i1;
@@ -1507,7 +1507,7 @@ void Relacionamento::copiarColunas(Tabela *tab_referencia, Tabela *tab_receptora
  }
 }
 
-void Relacionamento::adicionarColunasRel11(void)
+void Relationship::adicionarColunasRel11(void)
 {
  Tabela *tab_ref=NULL, *tab_recep=NULL;
 
@@ -1597,7 +1597,7 @@ void Relacionamento::adicionarColunasRel11(void)
  }
 }
 
-void Relacionamento::adicionarColunasRel1n(void)
+void Relationship::adicionarColunasRel1n(void)
 {
  Tabela *tab_ref=NULL, *tab_recep=NULL;
  bool nao_nulo=false;
@@ -1665,7 +1665,7 @@ void Relacionamento::adicionarColunasRel1n(void)
  }
 }
 
-void Relacionamento::adicionarColunasRelNn(void)
+void Relationship::adicionarColunasRelNn(void)
 {
  Tabela *tab=NULL, *tab1=NULL;
  Constraint *pk_tabnn=NULL;
@@ -1728,7 +1728,7 @@ void Relacionamento::adicionarColunasRelNn(void)
  }
 }
 
-Tabela *Relacionamento::obterTabelaReferencia(void)
+Tabela *Relationship::obterTabelaReferencia(void)
 {
  /* Para relacionamentos n-n que possuem 2 tabelas de refência,
     este método sempre retornará NULL. */
@@ -1747,7 +1747,7 @@ Tabela *Relacionamento::obterTabelaReferencia(void)
  }
 }
 
-Tabela *Relacionamento::obterTabelaReceptora(void)
+Tabela *Relationship::obterTabelaReceptora(void)
 {
  if(rel_type==RELATIONSHIP_11)
  {
@@ -1788,7 +1788,7 @@ Tabela *Relacionamento::obterTabelaReceptora(void)
   return(dynamic_cast<Tabela *>(tabela_relnn));
 }
 
-void Relacionamento::removerObjetosTabelaRefCols(Tabela *tabela)
+void Relationship::removerObjetosTabelaRefCols(Tabela *tabela)
 {
  Gatilho *gat=NULL;
  Index *ind=NULL;
@@ -1840,7 +1840,7 @@ void Relacionamento::removerObjetosTabelaRefCols(Tabela *tabela)
  }
 }
 
-void Relacionamento::removerColsChavePrimariaTabela(Tabela *tabela)
+void Relationship::removerColsChavePrimariaTabela(Tabela *tabela)
 {
  if(tabela)
  {
@@ -1883,7 +1883,7 @@ void Relacionamento::removerColsChavePrimariaTabela(Tabela *tabela)
  }
 }
 
-void Relacionamento::disconnectRelationship(bool rem_objs_tab)
+void Relationship::disconnectRelationship(bool rem_objs_tab)
 {
  try
  {
@@ -2083,12 +2083,12 @@ void Relacionamento::disconnectRelationship(bool rem_objs_tab)
  }
 }
 
-bool Relacionamento::relacionamentoIdentificador(void)
+bool Relationship::relacionamentoIdentificador(void)
 {
  return(identificador);
 }
 
-bool Relacionamento::possuiAtributoIdentificador(void)
+bool Relationship::possuiAtributoIdentificador(void)
 {
  vector<TableObject *>::iterator itr, itr_end;
  Constraint *rest=NULL;
@@ -2112,7 +2112,7 @@ bool Relacionamento::possuiAtributoIdentificador(void)
  return(enc);
 }
 
-bool Relacionamento::relacionamentoInvalidado(void)
+bool Relationship::relacionamentoInvalidado(void)
 {
  unsigned qtd_cols_rel, qtd_cols_tab, i, i1, qtd;
  Tabela *tabela=NULL, *tabela1=NULL;
@@ -2341,7 +2341,7 @@ bool Relacionamento::relacionamentoInvalidado(void)
   return(true);
 }
 
-QString Relacionamento::getCodeDefinition(unsigned tipo_def)
+QString Relationship::getCodeDefinition(unsigned tipo_def)
 {
  if(tipo_def==SchemaParser::SQL_DEFINITION)
  {
@@ -2444,18 +2444,18 @@ QString Relacionamento::getCodeDefinition(unsigned tipo_def)
  }
 }
 
-void Relacionamento::definirSufixoAutomatico(bool valor)
+void Relationship::definirSufixoAutomatico(bool valor)
 {
  this->invalidado=(this->sufixo_auto!=valor);
  this->sufixo_auto=valor;
 }
 
-bool Relacionamento::obterSufixoAutomatico(void)
+bool Relationship::obterSufixoAutomatico(void)
 {
  return(this->sufixo_auto);
 }
 
-void Relacionamento::operator = (Relacionamento &rel)
+void Relationship::operator = (Relationship &rel)
 {
  (*dynamic_cast<BaseRelationship *>(this))=dynamic_cast<BaseRelationship &>(rel);
  this->invalidado=true;

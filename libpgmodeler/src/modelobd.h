@@ -32,7 +32,7 @@
 #include "schema.h"
 #include "visao.h"
 #include "sequencia.h"
-#include "relacionamento.h"
+#include "relationship.h"
 #include "textbox.h"
 #include "role.h"
 #include "tipo.h"
@@ -473,7 +473,7 @@ class ModeloBD:  public QObject, public BaseObject {
      caso provoca loopings infinitos no método de validação de relacionamentos.
      A existência de ciclos é considerada erro para relacionamentos identificadores
      e de generalização/dependência. */
-  void verificarRedundanciaRelacoes(Relacionamento *rel);
+  void verificarRedundanciaRelacoes(Relationship *rel);
 
   /* Obtém, recursivamente, os objetos os quais o objeto do parâmetro referencia
      (direta ou indiretamente) e os armazena num vetor */

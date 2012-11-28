@@ -68,7 +68,7 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
    /* Relacionamento de referência (pode ser usado em formulários
       de coluna e restrição relacionamentos tabela-tabela podem
       ter colunas (atributos) e restriões nos atributos */
-   Relacionamento *relacionamento;
+   Relationship *relacionamento;
 
    //Lista de operações de referência
    OperationList *lista_op;

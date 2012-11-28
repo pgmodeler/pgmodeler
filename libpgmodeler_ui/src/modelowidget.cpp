@@ -666,14 +666,14 @@ void ModeloWidget::selecionarTodos(void)
 void ModeloWidget::converterRelacionamentoNN(void)
 {
  //Obtém o relacionamento a ser convertido da ação que disparou o método
- Relacionamento *rel=reinterpret_cast<Relacionamento *>(action_converter_relnn->data().value<void *>());
+ Relationship *rel=reinterpret_cast<Relationship *>(action_converter_relnn->data().value<void *>());
 
  if(rel)
  {
   //unsigned qtd_op, qtd;
 
   //Só converte o relacionamento caso este seja n-n
-  if(rel->getRelationshipType()==Relacionamento::RELATIONSHIP_NN)
+  if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
   {
    caixa_msg->show(trUtf8("Confirmation"),
                    trUtf8("Convert a relationship is an irreversible operation and causes the deletion of all operation history! Do you want to continue?"),
@@ -683,10 +683,10 @@ void ModeloWidget::converterRelacionamentoNN(void)
    {
     try
     {
-     Relacionamento *rel1=NULL, *rel2=NULL;
+     Relationship *rel1=NULL, *rel2=NULL;
      Tabela *tab=NULL, *tab_nn=NULL,
-       *tab_orig=dynamic_cast<Tabela *>(rel->getTable(Relacionamento::SRC_TABLE)),
-       *tab_dest=dynamic_cast<Tabela *>(rel->getTable(Relacionamento::DST_TABLE));
+       *tab_orig=dynamic_cast<Tabela *>(rel->getTable(Relationship::SRC_TABLE)),
+       *tab_dest=dynamic_cast<Tabela *>(rel->getTable(Relationship::DST_TABLE));
      Constraint *rest=NULL, *rest_aux=NULL;
      Column *col=NULL;
      bool obrig_orig=true,//rel->tabelaObrigatoria(Relacionamento::TABELA_ORIGEM),
@@ -767,7 +767,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
 
      //Aloca um relacionamento entre a nova tabela e a tabela de origem do relacionamento
      //nome_rel=QString("rel_") + tab->getName(false) + QString("_") + tab_orig->getName(false);
-     rel1=new Relacionamento(Relacionamento::RELATIONSHIP_1N,
+     rel1=new Relationship(Relationship::RELATIONSHIP_1N,
                              tab_orig, tab, obrig_orig, false, true,
                              "", "", true);
 
@@ -780,7 +780,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
      //if(rel->autoRelacionamento())
      // nome_rel+=QString("1");
 
-     rel2=new Relacionamento(Relacionamento::RELATIONSHIP_1N,
+     rel2=new Relationship(Relationship::RELATIONSHIP_1N,
                              tab_dest, tab, obrig_dest, false, true,
                              "", "", true);
 
@@ -1814,7 +1814,7 @@ void ModeloWidget::colarObjetos(void)
       de tabelas pois estes são inseridos automaticamente em seus objetos pais */
    if(objeto &&
       !dynamic_cast<TableObject *>(objeto) &&
-      !dynamic_cast<Relacionamento *>(objeto))
+      !dynamic_cast<Relationship *>(objeto))
     modelo->adicionarObjeto(objeto);
 
    //Adiciona o objeto criado   lista de operações
@@ -2187,7 +2187,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
   else if(objs_sel.size()==1)
   {
    BaseObject *obj=objs_sel[0];
-   Relacionamento *rel=dynamic_cast<Relacionamento *>(obj);
+   Relationship *rel=dynamic_cast<Relationship *>(obj);
    ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
                             OBJ_RULE, OBJ_INDEX/*, OBJETO_RELACAO */ };
 
@@ -2211,7 +2211,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
      action_novo_obj->setMenu(&menu_novo_obj);
 
      //Caso seja um relacionametno N-N inclui a ação de conversão do relacionamento
-     if(rel->getRelationshipType()==Relacionamento::RELATIONSHIP_NN)
+     if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
      {
       action_converter_relnn->setData(QVariant::fromValue<void *>(rel));
       menu_popup.addAction(action_converter_relnn);

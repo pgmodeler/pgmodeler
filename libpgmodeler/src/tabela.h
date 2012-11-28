@@ -244,8 +244,8 @@ class Tabela: public BaseTable {
      Para se obter TODAS as referências ao objeto, deve-se espeficicar como 'false' o parâmetro 'modo_exclusão'. */
   void obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_refs, bool modo_exclusao=false);
 
-  friend class Relacionamento;
-  friend class ListaOperacoes;
+  friend class Relationship;
+  friend class OperationList;
 };
 
 #endif

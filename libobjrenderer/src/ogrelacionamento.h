@@ -26,7 +26,7 @@
 
 #include "ogcaixatexto.h"
 #include "ogtabelabase.h"
-#include "relacionamento.h"
+#include "relationship.h"
 
 class OGRelacionamento: public ObjetoGrafico {
  private:
