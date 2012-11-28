@@ -21,8 +21,8 @@ BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTa
   QString str_aux;
 
   this->connected=false;
-  this->dst_mandatory=dst_mandatory;
   this->src_mandatory=src_mandatory;
+  this->dst_mandatory=dst_mandatory;
   this->src_table=src_tab;
   this->dst_table=dst_tab;
   this->rel_type=rel_type;
@@ -68,46 +68,40 @@ void BaseRelationship::configureRelationship(void)
  attributes[ParsersAttributes::SPECIAL_PK_COLS]="";
 
 
- //Verifica se o tipo de relacionamento é valido
+ //Check if the relationship type is valid
  if(rel_type <= RELATIONSHIP_DEP)
  {
   try
   {
-   /* Verifica se uma das tabelas envolvidas no relacionamentos
-      não estão alocadas, caso isso ocorra, dispara uma exceção */
+   //Raises an error if one of the tables is not allocated
    if(!src_table || !dst_table)
     throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_TABLE)
                          .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
                   ERR_ASG_NOT_ALOC_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-   /* Caso o tipo de relacionamento seja de generalização ou de dependência
-      e as tabelas de origem e destino forem iguais, será disparada uma exceção
-      pois uma tabela não pode herdar/copiar atributos dela mesma */
+   /* Raises an error if the relationship type is generalization or dependency
+      and the source and destination table are the same. */
    if((rel_type==RELATIONSHIP_GEN ||
        rel_type==RELATIONSHIP_DEP) && src_table==dst_table)
     throw Exception(ERR_INV_INH_COPY_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-   /* Aloca o rótulo de nome do relacionamento, todos os tipos de relacionamento
-      possui esse rótulo */
+   //Allocates the textbox for the name label
    lables[LABEL_REL_NAME]=new Textbox;
    lables[LABEL_REL_NAME]->setTextAttribute(Textbox::ITALIC_TXT, true);
 
-   /* Alocando os rótulos de cardinalidade, exceto para os relacionamentos
-      de generalização e dependência, pois esses não trabalham com cardinalidade */
+   //Allocates the cardinality labels only when the relationship is not generalization or dependency (copy)
    if(rel_type!=RELATIONSHIP_GEN &&
       rel_type!=RELATIONSHIP_DEP)
    {
-    //Aloca os rótulos
     lables[LABEL_SRC_CARD]=new Textbox;
     lables[LABEL_DST_CARD]=new Textbox;
     lables[LABEL_SRC_CARD]->setTextAttribute(Textbox::ITALIC_TXT, true);
     lables[LABEL_DST_CARD]->setTextAttribute(Textbox::ITALIC_TXT, true);
 
-    /* Define a obrigatoriedade das tabelas e já cria o texto
-       dos rótulos de cardinalidade */
-    setMandatoryTable(SRC_TABLE,dst_mandatory);
-    setMandatoryTable(DST_TABLE,src_mandatory);
+    //Configures the mandatory participation for both tables
+    setMandatoryTable(SRC_TABLE,src_mandatory);
+    setMandatoryTable(DST_TABLE,dst_mandatory);
    }
   }
   catch(bad_alloc &e)
@@ -116,15 +110,15 @@ void BaseRelationship::configureRelationship(void)
   }
  }
  else
+  //Raises an error if the specified relationship typ is invalid
   throw Exception(ERR_ALOC_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
 BaseRelationship::~BaseRelationship(void)
 {
- //Desconecta o relacionamento
  disconnectRelationship();
 
- //Exclui os rótulos
+ //Unallocates the labels
  for(unsigned i=0; i<3; i++)
   if(lables[i]) delete(lables[i]);
 }
@@ -149,67 +143,56 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
  QString cmin, aux;
  unsigned label_id;
 
- /* Retona um erro ao usuário indicando que a combinação de cardinalidade
-    e tipo de relacionamento não é implementado. O unico caso onde isso
-    acontece é no relacionamento do tipo (1,1)-<>-(1,1) */
+ /* Raises an error if the user tries to create an relationship
+    One to One where both tables are mandatory partitipation
+    (1,1)-<>-(1,1). This type of relationship is not implemented because
+    it requires the table fusion. */
  if(rel_type==RELATIONSHIP_11 &&
-    ((table_id==SRC_TABLE && value && src_mandatory) ||
-     (table_id==DST_TABLE && value && dst_mandatory)))
+    ((table_id==SRC_TABLE && value && dst_mandatory) ||
+     (table_id==DST_TABLE && value && src_mandatory)))
   throw Exception(ERR_NOT_IMPL_REL_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Caso a tabela de origem seja obrigatório
+ //Case the source table is mandatory
  if(table_id==SRC_TABLE)
  {
-  dst_mandatory=value;
-  /* Indica que o rótulo de cardinalidade
-     de origem será configurado */
+  src_mandatory=value;
+  //Indicates that the source cardinality label will be configured
   label_id=LABEL_SRC_CARD;
  }
  else
  {
   if(rel_type!=RELATIONSHIP_1N)
-   src_mandatory=value;
+   dst_mandatory=value;
   else
-   /* Relacionamento do tipo 1-n,  a entidade do lado
-      n sempre será no formato (0,n) */
-   src_mandatory=false;
+   /* For One to many (1-n) relationship the entity on the "many" side
+      will be always in the format (0,n) */
+   dst_mandatory=false;
 
-  /* Indica que o rótulo de cardinalidade
-     de destino será configurado */
+  //Indicates that the destination cardinality label will be configured
   label_id=LABEL_DST_CARD;
  }
 
- /* Caso o valor seja false, indica que a participação
-    da tabela em questão é opcional */
  if(!value) cmin="0";
  else cmin="1";
 
  if(lables[label_id])
  {
-  //Configurando o rótulo para o relacionamento 1-1
   if(rel_type==RELATIONSHIP_11)
    lables[label_id]->setComment("(" + cmin + ",1)");
-  //Configurando o rótulo para o relacionamento 1-n
   else if(rel_type==RELATIONSHIP_1N)
   {
    aux=(table_id==SRC_TABLE ? "1" : "n");
    lables[label_id]->setComment("(" + cmin + "," + aux + ")");
   }
   else if(rel_type==RELATIONSHIP_NN)
-  {
-   /* A cardinalidade de relacionamentos n-n sempre será 0-n pois
-      será gerada uma tabela própria, portanto a cardinalidade mínima
-      é ignorada */
-   //rotulos[tipo_rot]->definirComentario("(" + cmin + ",n)");
    lables[label_id]->setComment("(n)");
-  }
+
   lables[label_id]->setModified(true);
  }
 }
 
 BaseTable *BaseRelationship::getTable(unsigned table_id)
 {
- //Retorna a tabela de acordo o índice passado
  if(table_id==SRC_TABLE)
   return(src_table);
  else if(table_id==DST_TABLE)
@@ -220,12 +203,10 @@ BaseTable *BaseRelationship::getTable(unsigned table_id)
 
 bool BaseRelationship::isTableMandatory(unsigned table_id)
 {
- /* Retorna o flag de obrigatoriedade de acordo o índice
-    da tabela passado */
  if(table_id==SRC_TABLE)
-  return(dst_mandatory);
- else
   return(src_mandatory);
+ else
+  return(dst_mandatory);
 }
 
 void BaseRelationship::disconnectRelationship(void)
@@ -240,14 +221,9 @@ void BaseRelationship::disconnectRelationship(void)
 
 void BaseRelationship::connectRelationship(void)
 {
- //Caso o relacionamento não esteja conectado
  if(!connected)
  {
-  //Indica que o relacionamento está conectado
   connected=true;
-
-  /* Marca que as tabelas do relacionamentos estão modificadas para forçar
-     o redimensionamento das mesmas */
   src_table->setModified(true);
   dst_table->setModified(true);
  }
@@ -255,12 +231,10 @@ void BaseRelationship::connectRelationship(void)
 
 Textbox *BaseRelationship::getLabel(unsigned label_id)
 {
- // Retorna o rótulo na posição especificada, caso o índice
- //   do mesmo seja válido
  if(label_id<=LABEL_REL_NAME)
   return(lables[label_id]);
  else
-  //Dispara uma exceção caso o índice usado seja inválido
+  //Raises an error when the label id is invalid
   throw Exception(ERR_REF_LABEL_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
  
@@ -287,7 +261,6 @@ void BaseRelationship::setRelationshipAttributes(void)
                             ParsersAttributes::DST_LABEL,
                             ParsersAttributes::NAME_LABEL};
 
- //Definindo o atributo de tipo de relacionamento
  switch(rel_type)
  {
   case RELATIONSHIP_11: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_11; break;
@@ -302,8 +275,8 @@ void BaseRelationship::setRelationshipAttributes(void)
   break;
  }
 
- attributes[ParsersAttributes::SRC_REQUIRED]=(dst_mandatory ? "1" : "");
- attributes[ParsersAttributes::DST_REQUIRED]=(src_mandatory ? "1" : "");
+ attributes[ParsersAttributes::SRC_REQUIRED]=(src_mandatory ? "1" : "");
+ attributes[ParsersAttributes::DST_REQUIRED]=(dst_mandatory ? "1" : "");
 
  if(src_table)
   attributes[ParsersAttributes::SRC_TABLE]=src_table->getName(true);
@@ -312,7 +285,6 @@ void BaseRelationship::setRelationshipAttributes(void)
   attributes[ParsersAttributes::DST_TABLE]=dst_table->getName(true);
 
 
- //Criando a definição XML da linha do relacionamento
  count=points.size();
  for(i=0; i < count; i++)
  {
@@ -323,7 +295,6 @@ void BaseRelationship::setRelationshipAttributes(void)
  }
  attributes[ParsersAttributes::POINTS]=str_aux;
 
- //Obtendo a posição dos rótulos
  str_aux="";
  for(i=0; i < 3; i++)
  {
@@ -379,17 +350,12 @@ vector<QPointF> BaseRelationship::getPoints(void)
 void BaseRelationship::operator = (BaseRelationship &rel)
 {
  (*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(rel);
- //this->conectado=rel.conectado;
  this->connected=false;
  this->src_table=rel.src_table;
  this->dst_table=rel.dst_table;
  this->rel_type=rel.rel_type;
  this->points=rel.points;
 
- /* Inicializa as distâncias dos rótulos com NAN.
-    Quando este valor está presente em uma das coordenadas
-    de uma distância de rótulo, o mesmo sempre será
-    ajustado automaticamente */
  for(int i=0; i < 3; i++)
  {
   if(rel.lables[i])
@@ -402,9 +368,6 @@ void BaseRelationship::operator = (BaseRelationship &rel)
   this->lables_dist[i]=rel.lables_dist[i];
  }
 
-
- /* Define ambas as tabelas como não obrigatórias temporariamente a fim de evitar
-    um disparo de erro prematuro, vide definirTabelaObrigatoria() */
  this->setMandatoryTable(SRC_TABLE, false);
  this->setMandatoryTable(DST_TABLE, false);
 

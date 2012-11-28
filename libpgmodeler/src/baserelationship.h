@@ -38,7 +38,7 @@ class BaseRelationship: public BaseGraphicObject {
   bool connected;
 
   //Indicates the mandatory participation of source and destination tables
-  bool src_mandatory, dst_mandatory;
+  bool dst_mandatory, src_mandatory;
 
   /* Relationship lables:
      0 - Source cardinality
@@ -92,7 +92,7 @@ class BaseRelationship: public BaseGraphicObject {
   BaseRelationship(BaseRelationship *rel);
 
   BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTable *dst_tab,
-                     bool src_mandatory, bool dst_mandatory);
+                     bool dst_mandatory, bool src_mandatory);
 
   ~BaseRelationship(void);
 

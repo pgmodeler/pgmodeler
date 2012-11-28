@@ -292,7 +292,7 @@ class Relacionamento: public BaseRelationship {
 
   Relacionamento(unsigned tipo_rel,
                  Tabela *tab_orig, Tabela *tab_dest,
-                 bool dst_mandatory=false, bool src_mandatory=false,
+                 bool src_mandatory=false, bool dst_mandatory=false,
                  bool sufixo_auto=true,
                  const QString &sufix_orig="", const QString &sufix_dest="",
                  bool identificador=false, bool postergavel=false,

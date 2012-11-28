@@ -1615,7 +1615,7 @@ void Relacionamento::adicionarColunasRel1n(void)
      de referência (origem) seja obrigatória (1,1)--<>--(0|1,n) as colunas da chave estrangeiras
      não podem aceitar valores nulos e além disso as ações ON DELETE e ON UPDATE
      será RESTRIC */
-  if(!identificador && dst_mandatory)
+  if(!identificador && src_mandatory)
   {
    if(!postergavel)
     acao_del=TipoAcao::restrict;
@@ -1753,13 +1753,13 @@ Tabela *Relacionamento::obterTabelaReceptora(void)
  {
   /* Caso 1: (0,1) ---<>--- (0,1)
      Caso 2: (1,1) ---<>--- (0,1) */
-  if((!dst_mandatory && !src_mandatory) ||
-      (dst_mandatory && !src_mandatory))
+  if((!src_mandatory && !dst_mandatory) ||
+      (src_mandatory && !dst_mandatory))
    return(dynamic_cast<Tabela *>(dst_table));
   /* Caso 3: (0,1) ---<>--- (1,1)
               Adição de colunas na tabela cuja cardinalidade mínima é 0
               (opcionalidade de participação no relacionamento) */
-  else if(!dst_mandatory && src_mandatory)
+  else if(!src_mandatory && dst_mandatory)
    return(dynamic_cast<Tabela *>(src_table));
    // Caso 4: (1,1) ---<>--- (1,1)
   else
