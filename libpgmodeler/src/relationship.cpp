@@ -1,7 +1,6 @@
 #include "relationship.h"
 #include <QApplication>
 
-//Inicialização de atributos estáticos da classe
 const QString Relationship::SUFFIX_SEPARATOR("_");
 
 Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
@@ -23,6 +22,8 @@ Relationship::Relationship(unsigned rel_type, Tabela *src_tab,
   obj_type=OBJ_RELATIONSHIP;
   QString str_aux;
 
+  /* Raise an error if the user tries to create a relationship which some
+     table doesn't has a primary key */
   if(((rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N) &&
       !this->getReferenceTable()->obterChavePrimaria()) ||
      (rel_type==RELATIONSHIP_NN && (!src_tab->obterChavePrimaria() || !dst_tab->obterChavePrimaria())))
@@ -32,11 +33,7 @@ Relationship::Relationship(unsigned rel_type, Tabela *src_tab,
                            .arg(QString::fromUtf8(dst_tab->getName(true))),
                   ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  /* Atribuindo os sufixos ao relacionamento.
-    Sufixos são palavras concatenadas ao final do nome de
-    colunas as quais são adicionadas automaticamente nas tabelas
-    pelo relacionamento e que participam de chaves estrangeiras */
-  this->src_suffix=src_suffix;
+   this->src_suffix=src_suffix;
   this->dst_suffix=dst_suffix;
   this->auto_suffix=auto_suffix;
 
@@ -46,17 +43,16 @@ Relationship::Relationship(unsigned rel_type, Tabela *src_tab,
   this->deferral_type=deferral_type;
   this->invalidated=true;
 
-  //Configura o nome do relacionamento conforme o tipo
   if(rel_type==RELATIONSHIP_11)
-   str_aux=QApplication::translate("Relacionamento","%1_has_one_%2","",QApplication::UnicodeUTF8);
+   str_aux=QApplication::translate("Relationship","%1_has_one_%2","",QApplication::UnicodeUTF8);
   else if(rel_type==RELATIONSHIP_1N)
-   str_aux=QApplication::translate("Relacionamento","%1_has_many_%2","",QApplication::UnicodeUTF8);
+   str_aux=QApplication::translate("Relationship","%1_has_many_%2","",QApplication::UnicodeUTF8);
   else if(rel_type==RELATIONSHIP_NN)
-   str_aux=QApplication::translate("Relacionamento","many_%1_has_many_%2","",QApplication::UnicodeUTF8);
+   str_aux=QApplication::translate("Relationship","many_%1_has_many_%2","",QApplication::UnicodeUTF8);
   else if(rel_type==RELATIONSHIP_GEN)
-   str_aux=QApplication::translate("Relacionamento","%1_inherits_%2","",QApplication::UnicodeUTF8);
+   str_aux=QApplication::translate("Relationship","%1_inherits_%2","",QApplication::UnicodeUTF8);
   else
-   str_aux=QApplication::translate("Relacionamento","%1_copies_%2","",QApplication::UnicodeUTF8);
+   str_aux=QApplication::translate("Relationship","%1_copies_%2","",QApplication::UnicodeUTF8);
 
   if(rel_type!=RELATIONSHIP_NN)
    str_aux=str_aux.arg(this->getReferenceTable()->getName())
@@ -67,9 +63,7 @@ Relationship::Relationship(unsigned rel_type, Tabela *src_tab,
 
   setName(str_aux);
 
-  /* Caso a os sufixos estejam especificados o nome da tabela será
-     a junção dos sufixos separados pelo separador de sufixos. Caso
-     contrário o nome da tabela será o próprio nome do relacionamento */
+  //Setting up the n-n relationship table name based on the suffixes, when they are defined
   if(src_suffix!="" && dst_suffix!="")
    tab_name_relnn=src_suffix + SUFFIX_SEPARATOR + dst_suffix;
   else
@@ -149,10 +143,9 @@ void Relationship::setDeferrable(bool value)
 
 void Relationship::setIdentifier(bool value)
 {
- /* Validando o relacionamento identificador.
-    Relacionamento identificador não pode ser criado quando este é um
-    autorelacionamento, relacionamento n-n, de generalização, de dependência
-    ou do tipo criado pelo próprio usuário. */
+ /* Raises an error if the user try to set an self relationship, n-n relationship,
+    generalization or copy as identifier. Only 1-1, 1-n relationships can be
+    set as identifier. */
  if(value &&
    (src_table==dst_table ||
     (rel_type==RELATIONSHIP_NN ||
@@ -166,8 +159,8 @@ void Relationship::setIdentifier(bool value)
 
 void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
 {
- /* Dispara um erro caso o usuário tente usar a chave primária especial em autorelacionamento
-    e/ou relacionamento n-n */
+ /* Raises an error if the user try to set columns for special primary key when the
+    relationship type is n-n or identifier or self relationship */
  if(isSelfRelationship() || isIdentifier() || rel_type==RELATIONSHIP_NN)
   throw Exception(Exception::getErrorMessage(ERR_INV_USE_ESPECIAL_PK)
                 .arg(QString::fromUtf8(this->getName())),
@@ -187,11 +180,11 @@ void Relationship::createSpecialPrimaryKey(void)
  {
   unsigned i, count;
 
-  /* Aloca a chave primária com as seguintes características:
-     1) A mesma é marcada como protegida e incluída por relacionamento, desta
-        forma ela é identificada únicamente nas operações internas do relacionamento
+  /* Allocates the primary key with the following feature:
+     1) Protected and included by linking in order to be easily identified
+        on internal operations of the relationship
 
-     2) O espaço de tabelas usado na restrição é o mesmo da tabela receptora */
+     2) Use the same tablespace as the receiver table */
   pk_special=new Constraint;
   pk_special->setName(this->getName() + QString("_pk"));
   pk_special->setConstraintType(TipoRestricao::primary_key);
@@ -199,7 +192,7 @@ void Relationship::createSpecialPrimaryKey(void)
   pk_special->setProtected(true);
   pk_special->setTablespace(dynamic_cast<Tablespace *>(getReceiverTable()->getTablespace()));
 
-  //Adiciona as colunas   chave primária obtendo-as através dos seus índices armazenados em 'id_colunas_pk_rel'
+  //Adds the columns to the primary key
   count=column_ids_pk_rel.size();
   for(i=0; i < count; i++)
   {
@@ -210,13 +203,11 @@ void Relationship::createSpecialPrimaryKey(void)
 
   try
   {
-   //Tenta adicionar a restrição ao relacionamento
    this->addObject(pk_special);
   }
   catch(Exception &e)
   {
-   /* Caso algum erro for detectado a restrição é removida mas o relacionamento não é invalidado
-      só será criado sem a chave primária especial */
+   //Case some error is raised deletes the special primary key
    delete(pk_special);
    pk_special=NULL;
   }
@@ -261,25 +252,23 @@ int Relationship::getObjectIndex(TableObject *object)
  ObjectType obj_type;
  bool found=false;
 
- //Dispara uma exceção caso o objeto a ser buscado não esteja alocado
+ //Raises an error if the object is not allocated
  if(!object)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Selecionando a lista de objetos de acordo com o tipo do objeto
+ //Selecting the correct list using the object type
  obj_type=object->getObjectType();
  if(obj_type==OBJ_COLUMN)
   list=&rel_attributes;
  else if(obj_type==OBJ_CONSTRAINT)
   list=&rel_constraints;
  else
+  //Raises an error if the object type isn't valid (not a column or constraint)
   throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=list->begin();
  itr_end=list->end();
 
- /* Varre a lista de objetos selecionada verificando se o nome do
-    do objeto é igual ao nome de um dos objetos da lista ou mesmo
-    se os endereços dos objetos envolvidos são iguais */
  while(itr!=itr_end && !found)
  {
   obj_aux=(*itr);
@@ -299,16 +288,13 @@ bool Relationship::isColumnExists(Column *column)
  Column *col_aux=NULL;
  bool found=false;
 
- //Caso a coluna a ser buscada não esteja aloca, dispara uma exceção
+ //Raises an error if the column is not allocated
  if(!column)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=ref_columns.begin();
  itr_end=ref_columns.end();
 
- /* Varre a lista de colunas selecionada verificando se o nome da
-    coluna é igual ao nome de uma das colunas da lista ou mesmo
-    se os endereços das colunas envolvidas são iguais */
  while(itr!=itr_end && !found)
  {
   col_aux=(*itr);
@@ -324,9 +310,8 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
  ObjectType obj_type;
  vector<TableObject *> *obj_list=NULL;
 
- /* Somente a chave primária especial (criada pelo relacionamento)
-    só pode ser adicionado a um relacionamento de generalização ou dependência.
-    Caso o tipo do objeto a ser adionado não obedeça a esta condição um erro é retornado */
+ /* Raises an error if the user try to add  manually a special primary key on
+    the relationship and the relationship type is not generalization or copy */
  if((rel_type==RELATIONSHIP_GEN ||
      rel_type==RELATIONSHIP_DEP) &&
     !(tab_obj->isAddedByRelationship() &&
@@ -336,67 +321,52 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 
  try
  {
-  /* Verifica se o objeto já não foi inserido.
-     Um atributo/restrição de um relacionamento não pode
-     ser atribuido ao relacionamento caso este já pertença a uma tabela,
-     caso isso aconteça o método aborta a inserção do objeto */
+  //Checks if the object isn't exists on the relationshi and doesn't belongs to a table
   if(!tab_obj->getParentTable() &&
      getObjectIndex(tab_obj) < 0)
   {
-   /* Obtém a lista de objetos de acordo com o tipo
-      do objeto a ser inserido */
+   //Gets the object list according the object type
    obj_type=tab_obj->getObjectType();
    if(obj_type==OBJ_COLUMN)
     obj_list=&rel_attributes;
    else if(obj_type==OBJ_CONSTRAINT)
     obj_list=&rel_constraints;
+   else
+    //Raises an error if the object type isn't valid (not a column or constraint)
+    throw Exception(ERR_ASG_OBJECT_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-   /* Tenta gerar a definição SQL do objeto para ver se o mesmo
-      está bem configurado. Caso não esteja, uma exceção será
-      disparada e o objeto não será inserido na lista */
-
-   /* Como atributos recém criados não possuem uma tabela pai até que sejam
-      adicionados   tabela receptora, para medidas de validação do código do atributo,
-      a tabela de origem do relacionamento é atribuída como tabela pai */
+   //Defines the parent table for the object only for validation
    tab_obj->setParentTable(src_table);
 
+   //Generates the code for the object only for validation
    if(obj_type==OBJ_COLUMN)
     dynamic_cast<Column *>(tab_obj)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
    else
    {
     Constraint *rest=NULL;
     rest=dynamic_cast<Constraint *>(tab_obj);
-    rest->getCodeDefinition(SchemaParser::SQL_DEFINITION);
 
-    /* Caso se tente inserir uma chave estrangeira como restrição do relacionamento
-       retorna um erro pois este é o único tipo que não pode ser incluído */
+    //Raises an error if the user try to add as foreign key to relationship
     if(rest->getConstraintType()==TipoRestricao::foreign_key)
      throw Exception(ERR_ASG_FOREIGN_KEY_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+    rest->getCodeDefinition(SchemaParser::SQL_DEFINITION);
    }
 
-   //Após a validação do novo objeto a tabela pai é setada como nula
+   //Switch back to null the object parent
    tab_obj->setParentTable(NULL);
 
-   /* Caso o índice passado seja menor que zero ou superior ao tamanho da lista
-      o objeto será inserido ao final da mesma */
    if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
     obj_list->push_back(tab_obj);
    else
    {
-    //Caso o índice seja válido, insere o objeto na posição especificada
     if(obj_list->size() > 0)
      obj_list->insert((obj_list->begin() + obj_idx), tab_obj);
     else
      obj_list->push_back(tab_obj);
    }
 
-   /* Apenas para os relacinamentos n-n os atributos/restrições
-      não são marcados como "incluídos por ligação" pois estes atributos
-      e restrições são aproveitados quando o relacionamento n-n é convertido
-      em tabela */
-   //if(tipo_relac!=RELACIONAMENTO_NN)
    tab_obj->setAddedByLinking(true);
-
    this->invalidated=true;
   }
   else
@@ -409,8 +379,6 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
  }
  catch(Exception &e)
  {
-  /* Caso a exceção capturada seja de atributo não preenchido, indice que
-     a definição SQL do objeto está incompleta */
   if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
    throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
                               .arg(QString::fromUtf8(tab_obj->getName()))
@@ -446,7 +414,6 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 {
  vector<TableObject *> *obj_list=NULL;
 
- //Seleciona a lista de objetos de acordo com o tipo passado
  if(obj_type==OBJ_COLUMN)
   obj_list=&rel_attributes;
  else if(obj_type==OBJ_CONSTRAINT)
@@ -454,13 +421,10 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
  else
   throw Exception(ERR_REF_OBJ_INV_TYPE, __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Se o índice do objeto for inválido, dispara o erro
+ //Raises an error if the object index is out of bound
  if(obj_id >= obj_list->size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- /* Verificação específica para coluna. Caso a coluna esteja sendo
-    referenciada por uma restrição do relacionamento será disparado
-    um erro. */
  if(obj_type==OBJ_COLUMN)
  {
   Column *col=NULL;
@@ -475,13 +439,13 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
   while(itr!=itr_end && !refer)
   {
    constr=dynamic_cast<Constraint *>(*itr);
-   //Verifica se a coluna está em uma das listas das restições
+   //Check is the column is referenced by one relationship constraints
    refer=(constr->getColumn(col->getName(), Constraint::SOURCE_COLS) ||
           constr->getColumn(col->getName(), Constraint::REFERENCED_COLS));
    itr++;
   }
 
-  //Caso haja referência
+  //Raises an error if the column to be removed is referenced by a relationship constraint
   if(refer)
    throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
                            .arg(QString::fromUtf8(col->getName()))
@@ -493,15 +457,13 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
                  ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
- /* Antes da remoção de qualquer objeto é necessário desconectar
-    o relacionamento pois o objeto a ser removido pode estar sendo
-    referenciado por outros objetos */
+ //Before the column removal is necessary disconnect the relationship
  disconnectRelationship(false);
 
- //Remove o item da lista
+ //Removes the column
  obj_list->erase(obj_list->begin() + obj_id);
 
- //Reconecta o relacionamento
+ //Reconnects the relationship
  connectRelationship();
 }
 
@@ -533,8 +495,6 @@ Column *Relationship::getReferencedColumn(const QString &col_name)
  itr=ref_columns.begin();
  itr_end=ref_columns.end();
 
- /* Varre a lista colunas referenciadas verificando se o nome do
-    do objeto é igual ao nome de um dos objetos da lista */
  while(itr!=itr_end && !found)
  {
   col=(*itr);
@@ -552,7 +512,6 @@ TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
 {
  vector<TableObject *> *list=NULL;
 
- //Selecionando a lista de objetos de acordo com o tipo do objeto
  if(obj_type==OBJ_COLUMN)
   list=&rel_attributes;
  else if(obj_type==OBJ_CONSTRAINT)
@@ -573,7 +532,6 @@ TableObject *Relationship::getObject(const QString &name, ObjectType obj_type)
  TableObject *obj_aux=NULL;
  bool found=false;
 
- //Selecionando a lista de objetos de acordo com o tipo do objeto
  if(obj_type==OBJ_COLUMN)
   list=&rel_attributes;
  else if(obj_type==OBJ_CONSTRAINT)
@@ -584,9 +542,6 @@ TableObject *Relationship::getObject(const QString &name, ObjectType obj_type)
  itr=list->begin();
  itr_end=list->end();
 
- /* Varre a lista de objetos selecionada verificando se o nome do
-    do objeto é igual ao nome de um dos objetos da lista ou mesmo
-    se os endereços dos objetos envolvidos são iguais */
  while(itr!=itr_end && !found)
  {
   obj_aux=(*itr);
@@ -602,10 +557,10 @@ TableObject *Relationship::getObject(const QString &name, ObjectType obj_type)
 
 Column *Relationship::getAttribute(unsigned attrib_idx)
 {
- /* Caso o índice do atributo esteja fora da quantidade da lista de
-    atributos dispara uma exceção */
+ //Raises an error if the attribute index is out of bound
  if(attrib_idx >= rel_attributes.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
  return(dynamic_cast<Column *>(rel_attributes[attrib_idx]));
 }
 
@@ -616,10 +571,10 @@ Column *Relationship::getAttribute(const QString &name)
 
 Constraint *Relationship::getConstraint(unsigned constr_idx)
 {
- /* Caso o índice da restrição esteja fora da quantidade da lista de
-    restrições dispara uma exceção */
+ //Raises an error if the constraint index is out of bound
  if(constr_idx >= rel_constraints.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
  return(dynamic_cast<Constraint *>(rel_constraints[constr_idx]));
 }
 
@@ -658,24 +613,20 @@ void Relationship::addConstraints(Tabela *dst_tab)
  {
   constr_cnt=rel_constraints.size();
 
-  //Varre a lista de restrições do relacionamento
   for(constr_id=0; constr_id < constr_cnt; constr_id++)
   {
-   //Obtém a restrição
    constr=dynamic_cast<Constraint *>(rel_constraints[constr_id]);
 
-   /* Interrompe o processamento caso a restrição já
-      tenha sido incluída a uma das tabelas */
+   //Breaks the iteration if the constraist has a parent
    if(constr->getParentTable())
     break;
 
-   /* Caso ela não seja uma chave primária, a mesma é inserida
-      na tabela */
    if(constr->getConstraintType()!=TipoRestricao::primary_key)
    {
     i=1; aux[0]='\0';
     name="";
-    //Configura o nome da restrição a fim de resolver problemas de duplicidade
+
+    //Configures the name of the constraint in order to avoid name duplication errors
     orig_name=constr->getName();
     while(dst_tab->obterRestricao(orig_name + aux))
     {
@@ -686,34 +637,30 @@ void Relationship::addConstraints(Tabela *dst_tab)
 
     if(name!="") constr->setName(name);
 
-    //Adiciona a restrição na tabela
+    //Adds the constraint to the table
     dst_tab->adicionarRestricao(constr);
    }
    else
    {
-    /* Caso a restição seja uma chave primária, esta será fundida com a
-       chave primária da tabela. */
+    /* Case the constraint is a primary key it will be merged with the
+       table's primary key */
 
-    //Obtém a chave primária da tabela
+    //Gets the table primary key
     pk=dst_tab->obterChavePrimaria();
 
-    //Caso ela exista será executada a fusão
     if(pk)
     {
-     //Obtém a quantidade de colunas da restrição
      count=constr->getColumnCount(Constraint::SOURCE_COLS);
 
      for(i=0; i < count; i++)
-      //Adiciona cada coluna da restrição na chave primária da tabela
+      //Adds the colums from the constraint into the table's primary key
       pk->addColumn(constr->getColumn(i, Constraint::SOURCE_COLS),
                           Constraint::SOURCE_COLS);
     }
     else
-     /* Caso a tabela não possua uma chave primária, a própria restrição do relacionamento
-        será a chave primária da tabela */
+     //Case the table doens't has a primary key the constraint will the be it
      dst_tab->adicionarRestricao(constr);
 
-    //Remove a chave primária especial da lista de restrições
     if(constr==pk_special)
     {
      rel_constraints.erase(rel_constraints.begin()+constr_id);
