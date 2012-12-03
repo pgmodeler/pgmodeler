@@ -490,7 +490,7 @@ void RestricaoWidget::aplicarConfiguracao(void)
 
   //Preenche os atributos básicos da restição com os valores configurados no formulário
   restricao->setConstraintType(TipoRestricao(tipo_rest_cmb->currentText()));
-  restricao->setCheckExpression(exp_checagem_txt->toPlainText());
+  restricao->setCheckExpression(exp_checagem_txt->toPlainText().toUtf8());
   restricao->setFillFactor(fator_preenc_sb->value());
   restricao->setMatchType(TipoComparacao(tipo_comparacao_cmb->currentText()));
   restricao->setDeferrable(postergavel_chk->isChecked());

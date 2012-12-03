@@ -26,7 +26,7 @@ $tb [<type name=] "@{name}"
 %end
 
 %if @{with-timezone} %then
- [ with-timezone=] "@{with-timezone}"
+ [ with-timezone=] "true"
 %end
 
 %if @{interval-type} %then

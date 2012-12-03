@@ -353,7 +353,7 @@ void TipoWidget::aplicarConfiguracao(void)
    //Insere na instância de tipo as enumerações configuradas no formulário
    qtd=tab_enumeracoes->obterNumLinhas();
    for(i=0; i < qtd; i++)
-    tipo->adicionarEnumeracao(tab_enumeracoes->obterTextoCelula(i,0));
+    tipo->adicionarEnumeracao(tab_enumeracoes->obterTextoCelula(i,0).toUtf8());
   }
   //Caso o mesmo seja marcado como  um tipo composto no formulário
   else if(composto_rb->isChecked())

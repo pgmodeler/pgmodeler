@@ -1115,11 +1115,9 @@ void VisaoObjetosWidget::close(void)
 {
  QObject *obj_sender=sender();
 
- /* Caso o sender do comando close seja o botão de selecionar objeto
-    quando o dockwidget está sendo usado de forma simplificada. Isso indica
-    que o comando close configurará o objeto a ser retornado pela visão de objetos
-    ao formulário que solicitou a seleção */
- if(obj_sender==selecionar_tb)
+ if(obj_sender==cancelar_tb)
+  objeto_selecao=NULL;
+ else
  {
   QVariant dado;
 
@@ -1133,8 +1131,6 @@ void VisaoObjetosWidget::close(void)
   //Converte o conteúdo do dado para um void *
   objeto_selecao=reinterpret_cast<BaseObject *>(dado.value<void *>());
  }
- else
-  objeto_selecao=NULL;
 
  QDockWidget::close();
 }
