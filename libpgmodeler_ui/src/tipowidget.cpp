@@ -290,7 +290,7 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tip
    for(i=0; i < qtd; i++)
    {
     tab_enumeracoes->adicionarLinha();
-    tab_enumeracoes->definirTextoCelula(tipo->obterEnumeracao(i), i, 0);
+    tab_enumeracoes->definirTextoCelula(QString::fromUtf8(tipo->obterEnumeracao(i)), i, 0);
    }
    //Desbloqueia os sinais da tabela de enumerações
    tab_enumeracoes->blockSignals(false);
