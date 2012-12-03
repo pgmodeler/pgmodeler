@@ -10,6 +10,7 @@ Tabela::Tabela(void) : BaseTable()
  attributes[ParsersAttributes::RULES]="";
  attributes[ParsersAttributes::OIDS]="";
  attributes[ParsersAttributes::COLS_COMMENT]="";
+ this->setName(trUtf8("new_table").toUtf8());
 }
 
 Tabela::~Tabela(void)
