@@ -1189,7 +1189,7 @@ QString TipoPgSQL::operator * (void)
    //aux+=(com_timezone ? " with" : " without");
    //aux+=" time zone";
    if(com_timezone)
-    aux+="with time zone";
+    aux+=" with time zone";
   }
   /* Tratando o tipo interval que possuem o formato:
      INTERVAL [TIPO_INTERVALO](PRECISÃO) */
