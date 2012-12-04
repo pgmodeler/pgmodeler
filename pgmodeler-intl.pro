@@ -8,5 +8,6 @@ include(crashhandler/crashhandler.pro)
 include(main/main.pro)
 
 TRANSLATIONS = lang/pt_BR.ts \
-               lang/zh_CN.ts
+               lang/zh_CN.ts \
+               lang/fr_FR.ts
 CODECFORTR = UTF8
