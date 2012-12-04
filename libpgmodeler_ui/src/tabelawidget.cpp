@@ -393,11 +393,20 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  {
   restricao=dynamic_cast<Constraint *>(objeto);
   //Coluna 1: Tipo de comparação da restrição
-  tab->definirTextoCelula(~restricao->getMatchType(),idx_lin,1);
-  //Coluna 2: Tipo de ação ON UPDATE da restrição
-  tab->definirTextoCelula(~restricao->getActionType(false),idx_lin,2);
-  //Coluna 3: Tipo de ação ON UPDATE da restrição
-  tab->definirTextoCelula(~restricao->getActionType(true),idx_lin,3);
+  tab->definirTextoCelula(~restricao->getConstraintType(),idx_lin,1);
+
+  if(restricao->getConstraintType()==TipoRestricao::foreign_key)
+  {
+   //Coluna 2: Tipo de ação ON UPDATE da restrição
+   tab->definirTextoCelula(~restricao->getActionType(false),idx_lin,2);
+   //Coluna 3: Tipo de ação ON UPDATE da restrição
+   tab->definirTextoCelula(~restricao->getActionType(true),idx_lin,3);
+  }
+  else
+  {
+   tab->definirTextoCelula("-",idx_lin,2);
+   tab->definirTextoCelula("-",idx_lin,3);
+  }
  }
  else if(tipo_obj==OBJ_TRIGGER)
  {
