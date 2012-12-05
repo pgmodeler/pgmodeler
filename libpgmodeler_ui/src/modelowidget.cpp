@@ -1518,8 +1518,21 @@ void ModeloWidget::copiarObjetos(void)
  BaseObject *objeto=NULL;
  TableObject *obj_tab=NULL;
  Tabela *tabela=NULL;
- ObjectType tipos[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT };
+ ObjectType tipos[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT }, tipo_obj;
  unsigned i, id_tipo, qtd;
+
+ if(objs_selecionados.size()==1)
+ {
+ /* O esquema 'public' e as linguagens C e SQL não podem ser manipuladas
+    por serem do sistema, caso o usuário tente esta operação um erro será disparado */
+ if((objs_selecionados[0]->getObjectType()==OBJ_LANGUAGE &&
+     (objs_selecionados[0]->getName()==~TipoLinguagem("c") ||
+      objs_selecionados[0]->getName()==~TipoLinguagem("sql") ||
+      objs_selecionados[0]->getName()==~TipoLinguagem("plpgsql"))) ||
+     (objs_selecionados[0]->getObjectType()==OBJ_SCHEMA &&
+      objs_selecionados[0]->getName()=="public"))
+   throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+ }
 
  //Solicia a confirmação ao usuário se o mesmo deseja copiar as dependências dos objetos
  caixa_msg->show(trUtf8("Confirmation"),
@@ -1597,7 +1610,19 @@ void ModeloWidget::copiarObjetos(void)
  //Insere na ordem os objetos na lista de objetos copiados
  while(itr1!=itr1_end)
  {
-  objs_copiados.push_back(mapa_objs[(*itr1)]);
+  objeto=mapa_objs[(*itr1)];
+  tipo_obj=objeto->getObjectType();
+
+  /* Objetos do sistema não são copiados.
+     Ex.: Esquema public, linguagens C, SQL, PLPGSQL */
+  if((tipo_obj==OBJ_LANGUAGE &&
+       (objeto->getName()!=~TipoLinguagem("c") &&
+        objeto->getName()!=~TipoLinguagem("sql") &&
+        objeto->getName()!=~TipoLinguagem("plpgsql"))) ||
+      (tipo_obj==OBJ_SCHEMA && objeto->getName()!="public") ||
+      (tipo_obj!=OBJ_SCHEMA && tipo_obj!=OBJ_LANGUAGE))
+    objs_copiados.push_back(objeto);
+
   itr1++;
  }
 }
