@@ -3,7 +3,7 @@
 # Sub-project: Core library (libpgmodeler)
 # Class: Relationship
 # Description: This class implements the operations to create relationship between tables
-#             also generates the SQL code definition to represente the table link on PostgreSQL.
+#              also generates the SQL code definition to represente the table link on PostgreSQL.
 # Creation date: 20/11/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

@@ -22,7 +22,7 @@ Relationship::Relationship(unsigned rel_type, Tabela *src_tab,
   obj_type=OBJ_RELATIONSHIP;
   QString str_aux;
 
-  /* Raise an error if the user tries to create a relationship which some
+  /* Raises an error if the user tries to create a relationship which some
      table doesn't has a primary key */
   if(((rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N) &&
       !this->getReferenceTable()->obterChavePrimaria()) ||
@@ -688,8 +688,8 @@ void Relationship::addColumnsRelGen(void)
  ObjectType types[2]={OBJ_TABLE, BASE_TABLE};
  ErrorType err_type=ERR_CUSTOM;
  bool duplic=false, cond,
-      /* 0 -> Coluna vinda de herança
-         1 -> Coluna vinda de cópia */
+      /* 0 -> Column created by inheritance relationship
+         1 -> Column created by copy relationship */
       src_flags[2]={false,false},
       dst_flags[2]={false,false};
  QString str_aux, msg;
@@ -700,112 +700,95 @@ void Relationship::addColumnsRelGen(void)
   src_tab=dynamic_cast<Tabela *>(src_table);
   dst_tab=dynamic_cast<Tabela *>(dst_table);
 
-  //Obtém o número de colunas de ambas as tabelas
+  //Gets the column count from participant tables
   src_count=src_tab->obterNumColunas();
   dst_count=dst_tab->obterNumColunas();
   rejected_col_count=0;
 
-  /* Este for compara cada coluna da tabela de destino com
-     cada coluna da tabela de origem */
+  /* This for compares the columns of the receiver table
+     with the columns of the reference table in order to
+     resolve the conflicting names */
   for(i=0; i < dst_count && err_type==ERR_CUSTOM; i++)
   {
-   //Obtém uma coluna do destino
+   //Gets the column from the receiver (destination) table
    dst_col=dst_tab->obterColuna(i);
-   /* Obtém o seu tipo e o converte para 'integer' caso seja
-      serial, pois em caso de se comparar um 'serial' de um coluna
-      com o integer de outra, pode-se gerar um erro, mesmo estes
-      tipos sendo compatíveis */
+
+   /* The copied column have the 'serial' like types converted to
+      integer like types in order to avoid error when configuring the
+      relationship foreign key */
    dst_type=dst_col->getType();
+
    if(dst_type=="serial") dst_type="integer";
    else if(dst_type=="bigserial") dst_type="bigint";
 
-   /* Este flag indica que a coluna de uma tabela possui o
-      mesmo nome de uma coluna da outra */
+   /* This flag indicates that the column name is registered
+      in the other table column (duplication). This situation need
+      to be resolved in order to evict the creation of duplicated column
+      on the receiver table */
    duplic=false;
 
-   /* Com a coluna de destino obtida, será feita uma comparação com
-      todas as colunas da origem */
    for(i1=0; i1 < src_count && !duplic; i1++)
    {
-    //Obtém uma coluna da origem e converte seu tipo
+    //Gets the reference (source) column converting its type
     src_col=src_tab->obterColuna(i1);
     src_type=src_col->getType();
+
     if(src_type=="serial") src_type="integer";
     else if(src_type=="bigserial") src_type="bigint";
 
-    //Compara o nome das duas colunas
+    //Check the duplication on the column names
     duplic=(src_col->getName()==dst_col->getName());
 
-    //Caso haja duplicidade de nomes
+    //In case of duplication
     if(duplic)
     {
-     /* É necessário verificar se a coluna de origem é da própria tabela,
-        se veio de uma tabela pai ou de uma tabela de cópia. A mesma
-        verificação é feita na coluna de destino.
+     /* It is necessary to check if the source column (reference) is of the table itself,
+        if it came from a parent table or a table copy. The same verification is the
+        destination column.
 
-        A duplicidade de colunas só gera erro quando a coluna de origem é
-        da própria tabela e a coluna de destino não veio de uma tabela pai
-        da tabela de destino no caso de um relacionamento de dependência.
+        The duplicity of columns only generates error when the source column is
+        of the table itself and the target column was not from a parent table
+        of the receiver table in the case of a copy relationship.
 
-        Caso a coluna de origem seja da tabela de origem ou vinda de um
-        relacionamento de dependência e o tipo do relacionamento atual seja
-        de herança, o único caso em que a duplicidade gera erro é a incompatibilidade
-        dos tipos das colunas envolvidas, caso contrário as mesmas são fundidas. */
+        If the source column is of the reference table or coming from a
+        copy relationship and the type of the current relationship is
+        inheritance, the only case in which the duplicity generates error is
+        the type incompatibility of the columns involved, otherwise they are merged. */
      for(id_tab=0; id_tab < 2; id_tab++)
      {
       if(id_tab==0)
       {
-       /* Selecionando a coluna de origem e a tabela
-          de origem para fazer a comparação descrita acima */
        aux_col=src_col;
        aux_tab=src_tab;
       }
       else
       {
-       /* Selecionando a coluna de destino e a tabela
-          de destino para fazer a comparação descrita acima */
        aux_col=dst_col;
        aux_tab=dst_tab;
       }
 
-      /* Varre a lista de tabelas pai (tipos[0]) e de
-         cópia tipos[1] da origem e destino */
       for(i2=0; i2 < 2; i2++)
       {
-       /* Obtém o número de objetos do tipo OBJETO_TABELA (tabela pai) ou
-          OBJETO_TABELA_BASE (tabela cópia), da tabela selecionada acima */
        tab_count=aux_tab->obterNumObjetos(types[i2]);
 
-       /* Este for obtém cada tabela da lista e verifica se a coluna auxiliar
-          existe na lista de colunas de tal tabela, isso é suficiente para
-          se saber se a coluna auxiliar veio de uma relacionamento de herança
-          ou de dependência */
+       //Checking if the column came from a inheritance or copy relationship
        for(idx=0; idx < tab_count; idx++)
        {
         parent_tab=dynamic_cast<Tabela *>(aux_tab->obterObjeto(idx, types[i2]));
-        //Verifica se a coluna existe na tabela obtida
         cond=(parent_tab->obterColuna(aux_col->getName()));
 
-        /* Caso o id_tab==0, indica que desejamos atribuir o resultado
-           da comparação acima ao vetor de flags na posição relativa
-           ao relacionamento de herança que indica que a coluna auxiliar
-           existe ou não na tabela pai */
         if(id_tab==0)
          src_flags[i2]=cond;
         else
-        /* Caso o id_tab==1, indica que desejamos atribuir o resultado
-           da comparação acima ao vetor de flags na posição relativa
-           ao relacionamento de dependência que indica que a coluna auxiliar
-           existe ou não na tabela cópia */
          dst_flags[i2]=cond;
        }
       }
      }
 
-     /* Condição de erro 1: O tipo de relacionamento é de dependência
-        e a coluna de origem é da própria tabela ou vinda de uma tabela cópia
-        e a coluna de destino é da própria tabela de destino ou veio de uma
-        tabela de cópia da própria tabela de destino */
+     /* Error condition 1: The relationship type is dependency and the source
+        column is from the table itself or it came from a copy table and the
+        destination column is from the destination table or came from a copy table
+        of the destination table itself */
      if(rel_type==RELATIONSHIP_DEP &&
 
        ((!src_flags[0] && !src_flags[1]) ||
@@ -816,21 +799,21 @@ void Relationship::addColumnsRelGen(void)
      {
       err_type=ERR_DUPLIC_COLS_COPY_REL;
      }
-     /* Condição de erro 2: O tipo de relacionamento é de generalização e o tipo
-        das colunas são incompatíveis */
+     /* Error condition 2: The relationship type is generalization and the column
+        types is incompatible */
      else if(rel_type==RELATIONSHIP_GEN &&
              src_type!=dst_type)
       err_type=ERR_INCOMP_COLS_INHERIT_REL;
     }
    }
 
-   //Caso não foi detectado nenhum erro
+   //In case that no error was detected (ERR_CUSTOM)
    if(err_type==ERR_CUSTOM)
    {
-    //Caso não haja duplicidade
+    //In case there is no column duplicity
     if(!duplic)
     {
-     //Cria uma nova coluna e faz as configurações iniciais
+     //Creates a new column making the initial configurations
      column=new Column;
 
      (*column)=(*dst_col);
@@ -842,34 +825,33 @@ void Relationship::addColumnsRelGen(void)
 
      column->setParentTable(NULL);
 
-     //Converte seu tipo de '' para 'integer', se necessário
+     //Converte the type
      if(column->getType()=="serial")
       column->setType(TipoPgSQL("integer"));
      else if(column->getType()=="bigserial")
       column->setType(TipoPgSQL("bigint"));
 
-     //Adiciona a nova coluna   lista temporária de colunas
+     //Adds the new column to the temporary column list
      columns.push_back(column);
     }
     else
-     /* Caso haja duplicidade, a coluna é rejeitada e não incluída na lista,
-        ao invés disso, incrementa o atributo o qual contabiliza a quantidade
-        de colunas duplicadas as quais foram rejeitadas por já existirem
-        na tabela de destino */
+     /* If there is duplicity, the column is discarded and not included in the list,
+        instead, increases the attribute which counts the amount
+        duplicate columns of which were rejected by already exist
+        in the target (receiver) table */
      rejected_col_count++;
    }
   }
 
-  //Caso nenhum erro de duplicidade foi detectado
+  //In case that no duplicity error is detected
   if(err_type==ERR_CUSTOM)
   {
    vector<Column *>::iterator itr, itr_end;
 
-   /* As colunas da lista temporária serão inseridas
-      na lista de colunas de referência, do relacionamento e além disso
-      as colunas também serão inseridas diretamente na tabela de origem
-      do relacionamento, a qual herda ou copia as colunas da tabela
-      de destino */
+   /* The columns of the temporary list will be inserted
+      in the list of referencing columns, and additionally the
+      relationship columns will also be inserted directly in the
+      source table, which inherits or copy table columns from target table */
    ref_columns=columns;
    itr=ref_columns.begin();
    itr_end=ref_columns.end();
@@ -881,19 +863,15 @@ void Relationship::addColumnsRelGen(void)
   }
   else
   {
-   /* Caso haja algum erro de duplicidade, a lista temporária de
-      colunas é destruida */
+   //In case of duplicity error the temporary columns are destroyed
    while(!columns.empty())
    {
     delete(columns.back());
     columns.pop_back();
    }
 
-   /* Obtém a mensagem de erro que será mostarada ao usuário de acordo com o
-      tipo de erro de duplicidade identificado */
    str_aux=Exception::getErrorMessage(err_type);
 
-   //Formata a mensagem de erro de acordo com o tipo do erro
    if(err_type==ERR_DUPLIC_COLS_COPY_REL)
    {
     msg=QString(str_aux)
@@ -910,12 +888,13 @@ void Relationship::addColumnsRelGen(void)
         .arg(src_tab->getName());
    }
 
-   //Dispara a exeção acusando a duplicidade
    throw Exception(msg, err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  //Cria a chave primária especial se houve
+  //Creates the special primary key if exists
   this->createSpecialPrimaryKey();
+
+  //Adds the constraint on the receiver table
   this->addConstraints(getReceiverTable());
  }
  catch(Exception &e)
