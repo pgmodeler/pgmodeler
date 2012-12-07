@@ -52,7 +52,7 @@
     <name>CaixaMensagem</name>
     <message>
         <source>Show/hide exceptions stack.</source>
-        <translation>Montrer/cacher la pile d'exceptions.</translation>
+        <translation>Afficher/cacher la pile d'exceptions.</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
@@ -104,7 +104,7 @@
     </message>
     <message>
         <source>Show excpetion stack in text format (useful to report errors).</source>
-        <translation>Montrer la pile d'exception au format texte (utile pour les rapports d'erreur).</translation>
+        <translation>Afficher la pile d'exception au format texte (utile pour les rapports d'erreur).</translation>
     </message>
 </context>
 <context>
@@ -661,11 +661,11 @@
     </message>
     <message>
         <source>Save widgets position</source>
-        <translation>Sauvegarder la position des widget</translation>
+        <translation>Enregistrer la position des widget</translation>
     </message>
     <message>
         <source>Save current session</source>
-        <translation>Sauvegarder la session courante</translation>
+        <translation>Enregistrer la session courante</translation>
     </message>
     <message>
         <source>Paper:</source>
@@ -1561,7 +1561,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) can not be deleted because it is protected!</source>
-        <translation>L'objet &apos;%1&apos; (%2) ne peut être effacé car il est protégé!</translation>
+        <translation>L'objet &apos;%1&apos; (%2) ne peut être effacé car il est vérrouillé!</translation>
     </message>
     <message>
         <source>The group &apos;%1&apos; has already been declared earlier!</source>
@@ -1853,7 +1853,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Show grid</source>
-        <translation>Montrer la grille</translation>
+        <translation>Afficher la grille</translation>
     </message>
     <message>
         <source>Ignore object duplicity</source>
@@ -1893,7 +1893,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Saving file &apos;%1&apos;</source>
-        <translation>Sauvegarde du fichier &apos;%1&apos;</translation>
+        <translation>Enregistrement du fichier &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Creating object &apos;%1&apos; (%2)...</source>
@@ -1945,7 +1945,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Show the page delimiters</source>
-        <translation>Montrer les délimitations de la page</translation>
+        <translation>Afficher les délimitations de la page</translation>
     </message>
     <message>
         <source>Check if the system user has write permission on image target folder.</source>
@@ -1992,15 +1992,15 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation>Sauvegarder</translation>
+        <translation>Enregistrer</translation>
     </message>
     <message>
         <source>Zoom -</source>
-        <translation>Diminuer le zoom</translation>
+        <translation>Zoom -</translation>
     </message>
     <message>
         <source>Load</source>
-        <translation>Charger</translation>
+        <translation>Ouvrir</translation>
     </message>
     <message>
         <source>Next</source>
@@ -2024,11 +2024,11 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation>Défaire</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>Redo</source>
-        <translation>Refaire</translation>
+        <translation>Rétablir</translation>
     </message>
     <message>
         <source>Export</source>
@@ -2036,7 +2036,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Show grid</source>
-        <translation>Montrer la grille</translation>
+        <translation>Afficher la grille</translation>
     </message>
     <message>
         <source>Align to grid</source>
@@ -2060,15 +2060,15 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Save all models</source>
-        <translation>Sauvegarder tous les modèles</translation>
+        <translation>Enregistrer tous les modèles</translation>
     </message>
     <message>
         <source>Some models were modified! Do you want to save them before finish the pgModeler?</source>
-        <translation>Certains modèles ont été modifié! Voulez vous les sauvegarder avant de quitter pgModeler?</translation>
+        <translation>Certains modèles ont été modifiés! Voulez vous les sauvegarder avant de quitter pgModeler?</translation>
     </message>
     <message>
         <source>Save &apos;%1&apos; as...</source>
-        <translation>Sauvegarder &apos;%1&apos; comme...</translation>
+        <translation>Enregistrer &apos;%1&apos; sous...</translation>
     </message>
     <message>
         <source>Print grid</source>
@@ -2096,7 +2096,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Show the model overview</source>
-        <translation>Affichier la vue d'ensemble du modèle</translation>
+        <translation>Afficher la vue d'ensemble du modèle</translation>
     </message>
     <message>
         <source>pgModeler - PostgreSQL Database Modeler</source>
@@ -2136,7 +2136,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Save as</source>
-        <translation>Sauvegarder sous</translation>
+        <translation>Enregistrer sous</translation>
     </message>
     <message>
         <source>F2</source>
@@ -2192,7 +2192,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Save all</source>
-        <translation>Tout sauvegarder</translation>
+        <translation>Tout enregistrer</translation>
     </message>
     <message>
         <source>Database model printing</source>
@@ -2220,7 +2220,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Save model</source>
-        <translation>Sauvegarder le modèle</translation>
+        <translation>Enregistrer le modèle</translation>
     </message>
     <message>
         <source>The model were modified! Do you want to save it before close?</source>
@@ -2549,7 +2549,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Fill Factor:</source>
-        <translation>Facteur de remplissage:</translation>
+        <translation>Taux de remplissage:</translation>
     </message>
     <message>
         <source>Options:</source>
@@ -2737,7 +2737,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Redo</source>
-        <translation>Refaire</translation>
+        <translation>Rétablir</translation>
     </message>
     <message>
         <source>Object: %1</source>
@@ -2811,7 +2811,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; The object model is protected! New objects will be inserted only when the protection is removed!</source>
-        <translation>&lt;strong&gt;ATTENTION:&lt;/strong&gt; Le modèle d'objet est protégé! Les nouveaux objets seront insérés lorsque la protection aura été supprimée</translation>
+        <translation>&lt;strong&gt;ATTENTION:&lt;/strong&gt; Le modèle d'objet est verrouillé! Les nouveaux objets seront insérés lorsque le vérrou sera enlevé</translation>
     </message>
     <message>
         <source>Source code</source>
@@ -2831,19 +2831,19 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Protect</source>
-        <translation>Protéger</translation>
+        <translation>Vérrouiller</translation>
     </message>
     <message>
         <source>Unprotect</source>
-        <translation>Déprotéger</translation>
+        <translation>Déverrouiller</translation>
     </message>
     <message>
         <source>Pretects the object(s) against modifications</source>
-        <translation>Protéger l(es)'objet(s) des modifications</translation>
+        <translation>Empêcher l(es)'objet(s) d'être modifiés</translation>
     </message>
     <message>
         <source>Removes from the objetc(s) the protection against modifications</source>
-        <translation>Supprimer des objets la protection contre les modfications </translation>
+        <translation>Autoriser le(s) objet(s) à être modfiés</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -2899,11 +2899,11 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Loading database model</source>
-        <translation>Chargement du modèle de base de données</translation>
+        <translation>Ouverture du modèle de base de données</translation>
     </message>
     <message>
         <source>Saving database model</source>
-        <translation>Sauvegarde du modèle de base de données</translation>
+        <translation>Enregistrement du modèle de base de données</translation>
     </message>
     <message>
         <source>Confirmation</source>
@@ -3070,7 +3070,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Permission</source>
-        <translation>Autorisation</translation>
+        <translation>Permission</translation>
     </message>
     <message>
         <source>Parameter</source>
@@ -3089,7 +3089,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Comment:</source>
-        <translation>Comentaire:</translation>
+        <translation>Commentaire:</translation>
     </message>
     <message>
         <source>Tablespace:</source>
@@ -3105,11 +3105,11 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Permissions:</source>
-        <translation>Autorisations:</translation>
+        <translation>Permissions:</translation>
     </message>
     <message>
         <source>This object is protected thus no change in form will be applied to it.</source>
-        <translation>L'objet est protégé, par conséquent aucun changement dans le formulaire ne lui sera appliqué.</translation>
+        <translation>L'objet est vérouillé, par conséquent aucun changement dans le formulaire ne lui sera appliqué.</translation>
     </message>
     <message>
         <source>Parent Object:</source>
@@ -3125,7 +3125,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>The field(s) or value(s) highlighted on the form is(are) for the exclusive use and/or mandatory in specific versions of PostgreSQL. Failure to complete that may cause errors in the generation of SQL code for each version shown in tool tips of the highlighted fields.</source>
-        <translation>Le(s) champs ou valeur(s) mis en évidence dans le formulaire est(sont) à l'usage exclusif et/ou obligatoire d'une version spécifique de PostgreSQL. Les échecs peuvent provoquer des erreurs dans la génération du code SQL pour chaque version affichées dans l'info-bulles des champs mis en évidence.</translation>
+        <translation>Le(s) champs ou valeur(s) mis en évidence dans le formulaire est(sont) dépendants de la version de PostgreSQL. Le non respect de ces dépendances peut provoquer des erreurs dans la génération du code SQL qui sont affichées dans l'info-bulles de ces champs.</translation>
     </message>
     <message>
         <source>Form</source>
@@ -3592,7 +3592,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Fill Factor:</source>
-        <translation>Fateur de remplissage:</translation>
+        <translation>Taux de remplissage:</translation>
     </message>
     <message>
         <source>Comparison:</source>
@@ -3644,7 +3644,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they will be ignored. To create primary key using columns included by relationship use the feature attributes, constraints and primary key on the relationship form.</source>
-        <translation>Les colonnes qui sont incluses par relation ne peuvent $etre ajoutées /supprimées manuellement depuis la clef primaire. De tels chamgements sont ignorés. Pour créer la clef primaire en utilisant les colonnes incluses dans la relation utilisez la fonctionnalité d'attributs, de contraintes et de clef primaire dans le formulaire de relation</translation>
+        <translation>Les colonnes qui sont incluses par relation ne peuvent être ajoutées /supprimées manuellement depuis la clef primaire. Ces changements sont ignorés. Pour créer la clef primaire en utilisant les colonnes incluses dans la relation utilisez la fonctionnalité d'attributs, de contraintes et de clef primaire dans le formulaire de relation</translation>
     </message>
 </context>
 <context>
@@ -3860,7 +3860,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>With OIDs:</source>
-        <translation>Com OIDs:</translation>
+        <translation>Avec OIDs:</translation>
     </message>
     <message>
         <source>Attribute</source>
