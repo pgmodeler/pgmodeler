@@ -518,7 +518,7 @@
     </message>
     <message>
         <source>Connection DB:</source>
-        <translation>Connection BDD:</translation>
+        <translation>Nom de la base:</translation>
     </message>
     <message>
         <source>Host/Port:</source>
@@ -546,11 +546,11 @@
     </message>
     <message>
         <source>Disable</source>
-        <translation>Désactiver</translation>
+        <translation>Désactivé</translation>
     </message>
     <message>
         <source>Allow</source>
-        <translation>Autoriser</translation>
+        <translation>Autorisé</translation>
     </message>
     <message>
         <source>Require</source>
@@ -590,7 +590,7 @@
     </message>
     <message>
         <source>Update</source>
-        <translation>Actualiser</translation>
+        <translation>Mettre à jour</translation>
     </message>
     <message>
         <source>Test</source>
@@ -649,11 +649,11 @@
     </message>
     <message>
         <source>items</source>
-        <translation>articles</translation>
+        <translation>entrées</translation>
     </message>
     <message>
         <source>Save model every:</source>
-        <translation>Fréquence de sauvegarde du modèle:</translation>
+        <translation>Fréquence de sauvegarde:</translation>
     </message>
     <message>
         <source>minute(s)</source>
@@ -2016,7 +2016,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>About pgModeler</source>
-        <translation>A propos de ppgModeler</translation>
+        <translation>A propos de pgModeler</translation>
     </message>
     <message>
         <source>Print</source>
@@ -2040,7 +2040,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Align to grid</source>
-        <translation>Aligner à la grille</translation>
+        <translation>Aligner sur la grille</translation>
     </message>
     <message>
         <source>Fullscreen</source>
@@ -2056,7 +2056,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Configurations</source>
-        <translation>Configurations</translation>
+        <translation>Configuration</translation>
     </message>
     <message>
         <source>Save all models</source>
@@ -2136,7 +2136,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Save as</source>
-        <translation>Sauvegarder commer</translation>
+        <translation>Sauvegarder sous</translation>
     </message>
     <message>
         <source>F2</source>
@@ -2160,7 +2160,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Close model</source>
-        <translation>Fermer le modèle</translation>
+        <translation>Fermer</translation>
     </message>
     <message>
         <source>Normal zoom</source>
@@ -2287,7 +2287,7 @@ The pgModeler project is a CASE tool for modeling relational databases for Postg
 Special thanks to friends of the software development team of the Legislative Assembly, Tocantins, Brazil: Michel de Almeida, Felipe Santana, Jonas Nepomuceno, Ricardo Ishibashi and Álvaro Nunes.</source>
         <translation>Copyright 2006-2012 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
 
-Le projet pgModeler est un outil CASE pour la modélisation de bases de données relationnelles pour le SGBD PostgreSQL à travers l'utilisation de techniques de modélisation des diagrammes entité-relation, comme également la fusion de concepts implémentés par PostgreSQL.
+Le projet pgModeler est un outil CASE dédié à la modélisation de bases de données relationnelles sous PostgreSQL qui utilise les techniques de modélisation des diagrammes entité-relation, ainsi que les concepts implémentés dans PostgreSQL.
 
 Remerciement spéciaux aux amis de l'équipe de développement de l'Assemblée Législative, Tocantins, Brésil: Michel de Almeida, Felipe Santana, Jonas Nepomuceno, Ricardo Ishibashi et Álvaro Nunes.</translation>
     </message>
@@ -3125,7 +3125,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>The field(s) or value(s) highlighted on the form is(are) for the exclusive use and/or mandatory in specific versions of PostgreSQL. Failure to complete that may cause errors in the generation of SQL code for each version shown in tool tips of the highlighted fields.</source>
-        <translation>Le(s) champs ou valeur(s) mis en évidence dans le formulaire est(sont) pour l'usage exclusif et/ou obligatoire d'une version spécifique de PostgreSQL. Les échecs peuvent provoque des erreurs dans la génération du code SQL pour chaque version affichées dans l'info-bulles des champs mis en évidence.</translation>
+        <translation>Le(s) champs ou valeur(s) mis en évidence dans le formulaire est(sont) à l'usage exclusif et/ou obligatoire d'une version spécifique de PostgreSQL. Les échecs peuvent provoquer des erreurs dans la génération du code SQL pour chaque version affichées dans l'info-bulles des champs mis en évidence.</translation>
     </message>
     <message>
         <source>Form</source>
@@ -3395,7 +3395,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <name>QObject</name>
     <message>
         <source>new_database</source>
-        <translation>nouvelle_base_de_données</translation>
+        <translation>nouvelle_base</translation>
     </message>
     <message>
         <source>%1 (line: %2)</source>
