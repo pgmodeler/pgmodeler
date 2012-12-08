@@ -1137,7 +1137,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of a function which language is invalid!</source>
-        <translation>Le langage associée à la fonction est invalide!</translation>
+        <translation>Le langage associé à la fonction est invalide!</translation>
     </message>
     <message>
         <source>Assignment of not allocated table to object &apos;%1&apos; (%2)!</source>
@@ -1177,7 +1177,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of owner object which type is invalid!</source>
-        <translation>Le type d'objet propriétaire associé est invalide!</translation>
+        <translation>Le type de l'objet propriétaire associé est invalide!</translation>
     </message>
     <message>
         <source>Assignment of owner to an invalid object!</source>
@@ -1197,7 +1197,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assigment of value to an invalid option type on role!</source>
-        <translation>La valeur assoicée au rôle à un type d'option invalide!</translation>
+        <translation>La valeur associée au rôle à un type d'option invalide!</translation>
     </message>
     <message>
         <source>Reference to an invalid role type!</source>
@@ -1237,7 +1237,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of a schema to the sequence which differs from the schema of the owner table!</source>
-        <translation>Le schéma à la séquence séquence diffère du schéma du propriétaire de la table!</translation>
+        <translation>Le schéma associé à la séquence diffère du schéma du propriétaire de la table!</translation>
     </message>
     <message>
         <source>Assignment of an invalid value to one of the sequence attributes!</source>
@@ -1253,11 +1253,11 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of a null increment value to the sequence!</source>
-        <translation>La valeur de l'incrément associé à la séquence est nul!</translation>
+        <translation>La valeur de l'incrément associé à la séquence est nulle!</translation>
     </message>
     <message>
         <source>Assignment of null cache value to the sequence!</source>
-        <translation>La valeur cache associé à la séquence est nul!</translation>
+        <translation>La valeur cache associée à la séquence est nul!</translation>
     </message>
     <message>
         <source>Assignment of owner table which is not in the same schema as the sequence &apos;%1&apos;!</source>
@@ -1353,7 +1353,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of an operator which input  type count is invalid to aggregate function!</source>
-        <translation>L'opérateur associé à la fonction d'aggégat possède un nombre invalid de type d'entrée!</translation>
+        <translation>L'opérateur associé à la fonction d'aggégat possède un nombre invalide de type d'entrée!</translation>
     </message>
     <message>
         <source>Assigment of an operator which types of arguments is invalid!</source>
@@ -1373,7 +1373,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of an invalid strategy/support number to an operator class element!</source>
-        <translation>Le numéro de stratégie/support associé un élément de la class opérateur est invalide!</translation>
+        <translation>Le numéro de stratégie/support associé àl'élément de la classe opérateur est invalide!</translation>
     </message>
     <message>
         <source>Insertion of element which already exists in the element list!</source>
@@ -1405,7 +1405,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Reference to object with invalid type!</source>
-        <translation>Référence à un objet dont le type invalide!</translation>
+        <translation>Référence à un objet dont le type est invalide!</translation>
     </message>
     <message>
         <source>Operation with object not allocated!</source>
