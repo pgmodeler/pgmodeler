@@ -673,7 +673,7 @@
     </message>
     <message>
         <source>Custom (Based on margins)</source>
-        <translation>Personnalisation (Basé sur les marges)</translation>
+        <translation>Personnalisation (Selon les marges)</translation>
     </message>
     <message>
         <source>Orientation:</source>
@@ -1053,15 +1053,15 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of a precision greater than the length of the type!</source>
-        <translation>Affectation d'une précision plus grande que la longueur du type!</translation>
+        <translation>La précision associée est plus grande que la longueur du type!</translation>
     </message>
     <message>
         <source>Assignment of an invalid precision to type time, timestamp or interval. The precision in this case must be equal to or less than 6!</source>
-        <translation>Affectation d'une précision invalide pour le type time, timestamp ou interval. La précision dans ce cas doit être inférieure ou égale à 6!</translation>
+        <translation>La précision associée au type, timestamp ou interval est invalide. La précision dans ce cas doit être inférieure ou égale à 6!</translation>
     </message>
     <message>
         <source>Assignment of a not allocated column to object &apos;%1&apos; (%2)!</source>
-        <translation>Affectation d'une colonne non attribuée à l'objet &apos;%1&apos; (%2)!</translation>
+        <translation>La colonne associée à l'objet &apos;%1&apos; (%2) est non attribuée!</translation>
     </message>
     <message>
         <source>Reference to a column which index is out of the capacity of the column list!</source>
@@ -1069,11 +1069,11 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of not allocated object!</source>
-        <translation>Affectation d'un objet non attribué!</translation>
+        <translation>L'objet associé est non alloué!</translation>
     </message>
     <message>
         <source>Assignment of a not allocated schema to object &apos;%1&apos; (%2)!</source>
-        <translation>Affectation d'un schéma non attribué à l'objet &apos;%1&apos; (%2)!</translation>
+        <translation>Le schéma associé à l'objet &apos;%1&apos; (%2) est non alloué!</translation>
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) has inconsistent configuration (invalid SQL/XML definition)!</source>
@@ -1081,7 +1081,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) already exists in the list of elements of the same type in the object &apos;%3&apos; (%4)!</source>
-        <translation>L'objet &apos;%1&apos; (%2) existe déjà dans la liste des éléments du même type de l'objet &apos;%3&apos; (%4)!</translation>
+        <translation>L'objet &apos;%1&apos; (%2) existe déjà dans la liste des éléments du même type dans l'objet &apos;%3&apos; (%4)!</translation>
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) can&apos;t be assigned because there is already exists in the container object &apos;%3&apos;!</source>
@@ -1097,19 +1097,19 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Obtaining an object of an invalid type!</source>
-        <translation>Obtention d'un objet de type invalide!</translation>
+        <translation>L'objet obtenu est de type invalide!</translation>
     </message>
     <message>
         <source>Assignment of empty name to table return type!</source>
-        <translation>Affectation d'un nom vide au type de retour de table</translation>
+        <translation>Le nom associé au type de retour de la table est vide!</translation>
     </message>
     <message>
         <source>The insertion of the parameter &apos;%1&apos; will not be possible because there is another parameter with same name in the function &apos;%2&apos;!</source>
-        <translation>L'insertion du paramètre &apos;%1&apos; n'est pas possible car un paramètre porte le même nom dans la fonction &apos;%2&apos;!</translation>
+        <translation>L'ajout du paramètre &apos;%1&apos; n'est pas possible car un paramètre porte le même nom dans la fonction &apos;%2&apos;!</translation>
     </message>
     <message>
         <source>The insertion of the table return type &apos;%1&apos; will not be possible because there is another return type with the same name in the &apos;%2&apos;!</source>
-        <translation>L'insertion du type de retour de table &apos;%1&apos; n'est pas possible car un autre type de retour porte le même nom dans &apos;%2&apos;!</translation>
+        <translation>L'ajout du type de retour à la table &apos;%1&apos; n'est pas possible car un autre type de retour porte le même nom dans &apos;%2&apos;!</translation>
     </message>
     <message>
         <source>Reference to a parameter which index is out of the parameter list capacity!</source>
@@ -1125,23 +1125,23 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of a not allocated function to object &apos;%1&apos; (%2)!</source>
-        <translation>Affectation d'une fonction non attribué à l'objet &apos;%1&apos; (%2)!</translation>
+        <translation>La fonction associée à l'objet &apos;%1&apos; (%2) est non allouée!</translation>
     </message>
     <message>
         <source>Assignment of a function which return type is different from &apos;trigger&apos;!</source>
-        <translation>Affectation d'une fonction dont le type de retour est différent de celui du &apos;déclencheur&apos;!</translation>
+        <translation>Le type de retour associé à la fonction est différent de celui du &apos;déclencheur&apos;!</translation>
     </message>
     <message>
         <source>Assignment of a function which parameter count is invalid to the object &apos;%1&apos; (%2)!</source>
-        <translation>Affectation d'une fonction dont le nombre de paramètre est invalide pour l'objet &apos;%1&apos; (%2)!</translation>
+        <translation>La fonction associée à l'objet &apos;%1&apos; (%2) a un nombre de paramètres invalides!</translation>
     </message>
     <message>
         <source>Assignment of a function which language is invalid!</source>
-        <translation>Affectation d'une fonction dont le langage est invalide!</translation>
+        <translation>Le langage associée à la fonction est invalide!</translation>
     </message>
     <message>
         <source>Assignment of not allocated table to object &apos;%1&apos; (%2)!</source>
-        <translation>Affectation d'une table non affectée à l'objet &apos;%1&apos; (%2)!</translation>
+        <translation>La table associée à l'objet &apos;%1&apos; (%2) n'est pas allouée!</translation>
     </message>
     <message>
         <source>Reference to an argument which index is out of argument list capacity!</source>
@@ -1149,39 +1149,39 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Insertion of a column which name is already registered to another column of the object!</source>
-        <translation>Insertion d'une colonne dont le nom est déjà associé à une autre colonne de l'objet!</translation>
+        <translation>La colonne ajoutée possède un nom déjà associé à une autre colonne de l'objet!</translation>
     </message>
     <message>
         <source>Assignment of empty name to an object!</source>
-        <translation>Affectation d'un nom vide à l'objet!</translation>
+        <translation>Le nom associé à l'objet est vide!</translation>
     </message>
     <message>
         <source>Assignment of invalid name to an object!</source>
-        <translation>Affectation d'un nom invalide à l'objet!</translation>
+        <translation>Le nom associé à l'objet est invalide!</translation>
     </message>
     <message>
         <source>Assignment of schema object which type is invalid!</source>
-        <translation>Affectation d'un objet schema dont le type est invalide!</translation>
+        <translation>Le type de l'objet schema associé est invalide!</translation>
     </message>
     <message>
         <source>Assignment of tablespace object with invalid type!</source>
-        <translation>Affectation d'un objet tablespace de type invalide!</translation>
+        <translation>Le type de l'objet tablespace associé est invalide!</translation>
     </message>
     <message>
         <source>Assignment of tablespace to an invalid object!</source>
-        <translation>Affectation d'un tablespace à un objet invalide!</translation>
+        <translation>Le tablespace est associé à un objet invalide!</translation>
     </message>
     <message>
         <source>Assignment of tablespace to a constraint which type is invalid! To belong to a tablespace the constraint must be a primary key or unique!</source>
-        <translation>Affectation d'un tablespace à une contrainte dont le type est invalide! Pour appartenir à un tablespace une contrainte doit être une clef primaire ou unique </translation>
+        <translation>Le tablespace est associé à une contrainte dont le type est invalide! Pour appartenir à un tablespace une contrainte doit être une clef primaire ou unique </translation>
     </message>
     <message>
         <source>Assignment of owner object which type is invalid!</source>
-        <translation>Affectation du propriétaire d'objet dont le type est invalide!</translation>
+        <translation>Le type d'objet propriétaire associé est invalide!</translation>
     </message>
     <message>
         <source>Assignment of owner to an invalid object!</source>
-        <translation>Affectation d'un propriétaire à un objet invalide!</translation>
+        <translation>Le propriétaire associé à l'objet est invalide!</translation>
     </message>
     <message>
         <source>Reference to a function with invalid type!</source>
@@ -1197,7 +1197,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assigment of value to an invalid option type on role!</source>
-        <translation>Affectation d'une valeur à un type d'option ou un rôle invalide!</translation>
+        <translation>La valeur assoicée au rôle à un type d'option invalide!</translation>
     </message>
     <message>
         <source>Reference to an invalid role type!</source>
@@ -1221,7 +1221,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Insertion of null command to the rule!</source>
-        <translation>Insertion d'une commande nulle au rôle!</translation>
+        <translation>La commande ajoutée au rôle est nulle!</translation>
     </message>
     <message>
         <source>Reference to a command which index is out of the command list capacity!</source>
@@ -1233,47 +1233,47 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of an object that already belongs to another table!</source>
-        <translation>Affectation d'un objet qui appartient déjà à une autre table!</translation>
+        <translation>L'objet associé appartient déjà à une autre table!</translation>
     </message>
     <message>
         <source>Assignment of a schema to the sequence which differs from the schema of the owner table!</source>
-        <translation>Affectation d'un schéma à une séquence qui diffère du schéma du propriétaire de la table!</translation>
+        <translation>Le schéma à la séquence séquence diffère du schéma du propriétaire de la table!</translation>
     </message>
     <message>
         <source>Assignment of an invalid value to one of the sequence attributes!</source>
-        <translation>Affectation d'une valeur invalide à l'une des séquences d'attributs!</translation>
+        <translation>La valeur associée l'une des séquences d'est invalide!</translation>
     </message>
     <message>
         <source>Assignment of a minimum value to the sequence which is greater than the maximum value!</source>
-        <translation>Affectation d'une valeur minimale à la séquence supérieure à la valeur maximale!</translation>
+        <translation>La valeur minimale associée à la séquence est supérieure à la valeur maximale!</translation>
     </message>
     <message>
         <source>Assignment of a start value to the sequence which is extrapolating the range defined by minimum and maximum values​​!</source>
-        <translation>Affectation d'une valeur de départ de la séquence en dehors de l'interval défini par les valeurs minimales et maximales!</translation>
+        <translation>La valeur de départ associée à la séquence est en dehors de l'interval défini par les valeurs minimales et maximales!</translation>
     </message>
     <message>
         <source>Assignment of a null increment value to the sequence!</source>
-        <translation>Affectation d'un incrément de valeur nulle à la séquence!</translation>
+        <translation>La valeur de l'incrément associé à la séquence est nul!</translation>
     </message>
     <message>
         <source>Assignment of null cache value to the sequence!</source>
-        <translation>Affectation d'un cache de valeur nulle à la séquence!</translation>
+        <translation>La valeur cache associé à la séquence est nul!</translation>
     </message>
     <message>
         <source>Assignment of owner table which is not in the same schema as the sequence &apos;%1&apos;!</source>
-        <translation>Affectation du propriétaire de la table qui n'est pas dans le même schema que la séquence &apos;%1&apos;!</translation>
+        <translation>Le propriétaire associé à la table n'est pas dans le même schema que la séquence &apos;%1&apos;!</translation>
     </message>
     <message>
         <source>Assignment of owner table which does not belong to the same owner of the sequence &apos;%1&apos;!</source>
-        <translation>Affectation du propriétaire de la table qui n'appartient pas au même propriétaire de la séquence &apos;%1&apos;!</translation>
+        <translation>Le propriétaire associé à la table n'appartient pas au propriétaire de la séquence &apos;%1&apos;!</translation>
     </message>
     <message>
         <source>Assignment of a nonexistent owner column to the sequence &apos;%1&apos;!</source>
-        <translation>Affectation d'un propriétaire non existant à la séquence &apos;%1&apos;!</translation>
+        <translation>Le propriétaire associé à la séquence &apos;%1&apos; n'existe pas!</translation>
     </message>
     <message>
         <source>Assignment of an owner column to the sequence &apos;%1&apos; that is not related to any table!</source>
-        <translation>Affectation d'un propriétaire de colonne de la séquence &apos;%1&apos; qui n'est référencé dans aucune table !</translation>
+        <translation>Le propriétaire de colonne associé à la séquence &apos;%1&apos; n'est référencé dans aucune table !</translation>
     </message>
     <message>
         <source>Reference to a label which index is out of labels list capacity!</source>
@@ -1281,23 +1281,23 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Allocation of object with invalid type!</source>
-        <translation>Affectation d'un objet dont le type est invalide!</translation>
+        <translation>Le type de l'objet affecté est invalide!</translation>
     </message>
     <message>
         <source>Assignment of a function with invalid return type to object &apos;%1&apos; (%2)!</source>
-        <translation>Affectation d'une fonction dont le type de retour est invalide à l'objet &apos;%1&apos; (%2)!</translation>
+        <translation>Le type de retour de la fonction associée à l'objet &apos;%1&apos; (%2) est invalide!</translation>
     </message>
     <message>
         <source>Assignment of a function with invalid parameter(s) type(s) to object &apos;%1&apos; (%2)!</source>
-        <translation>Affectation d'une fonction dont le(s) type(s) de paramètre(s) sont invalides à l'objet &apos;%1&apos; (%2)!</translation>
+        <translation>Le(s) type(s) de paramètre(s) de fonction associée à l'objet &apos;%1&apos; (%2) sont invalides!</translation>
     </message>
     <message>
         <source>Assignment of not allocated language!</source>
-        <translation>Affectation d'un langage non attribué!</translation>
+        <translation>Le langage associé est non alloué!</translation>
     </message>
     <message>
         <source>Assignment of language object which type is invalid!</source>
-        <translation>Affectation d'un langage d'objet dont le type est invalide!</translation>
+        <translation>L'objet langage associé a un type invalide!</translation>
     </message>
     <message>
         <source>Reference to data type with an index outside the capacity of data types list!</source>
@@ -1305,35 +1305,35 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of a null type to to object &apos;%1&apos; (%2)!</source>
-        <translation>Affectation d'un type nul à l'objet &apos;%1&apos; (%2)!</translation>
+        <translation>Le type associé à l'objet &apos;%1&apos; (%2) est nul!</translation>
     </message>
     <message>
         <source>Assignment of invalid type to the object!</source>
-        <translation>Affectation d'un type invalide à l'objet!</translation>
+        <translation>Le type associé à l'objet est invalide!</translation>
     </message>
     <message>
         <source>Assignment of an empty directory to object &apos;%1&apos; (%2)!</source>
-        <translation>Affectation d'un dossier vide à l'objet: &apos;%1&apos; (%2)!</translation>
+        <translation>Le dossier associé à l'objet: &apos;%1&apos; (%2) est vide!</translation>
     </message>
     <message>
         <source>Obtaining types with invalid quantity!</source>
-        <translation>Obtention de types dont la quantité est invalide!</translation>
+        <translation>La quantité de types obtenus est invalide!</translation>
     </message>
     <message>
         <source>Insertion of item which already exists in the attributes list of the type!</source>
-        <translation>Insertion d'item déjà existant dans la listes des attributs du type!</translation>
+        <translation>L'entrée ajoutée dans la listes des attributs du type existe déjà!</translation>
     </message>
     <message>
         <source>Insertion of invalid item in the attributes list of the type!</source>
-        <translation>Insertion d'item invalide dans la liste des attributs du type!</translation>
+        <translation>L'entrée ajoutée dans la liste des attributs du type est invalide!</translation>
     </message>
     <message>
         <source>Insertion of item which already exists in the enumarations list of the type!</source>
-        <translation>Insertion d'item déjà existant dans la liste d'énumérations du type!</translation>
+        <translation>L'entrée ajoutée dans la liste d'énumérations du type existe déjà!</translation>
     </message>
     <message>
         <source>Insertion of invalid item in the enumerations list of the type!</source>
-        <translation>Insertion d'item invalide dans la liste d'énumérations du type!</translation>
+        <translation>L'entrée ajoutée dans la liste d'énumérations du type est invalide!</translation>
     </message>
     <message>
         <source>Reference to an attribute which index is out of the attributes list capacity!</source>
@@ -1345,7 +1345,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of invalid configuration to the type!</source>
-        <translation>Affectation d'une configuration invalide au type!</translation>
+        <translation>La configuration associée au type est invalide!</translation>
     </message>
     <message>
         <source>The data type &apos;%1&apos; can not be assigned because it already exists in the types list of the aggregate function &apos;%2&apos;!</source>
@@ -1353,27 +1353,27 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of an operator which input  type count is invalid to aggregate function!</source>
-        <translation>Affectation d'un opérateur dont le type d'entrée est invalide pour la fonction d'aggrégat!</translation>
+        <translation>L'opérateur associé à la fonction d'aggégat possède un nombre invalid de type d'entrée!</translation>
     </message>
     <message>
         <source>Assigment of an operator which types of arguments is invalid!</source>
-        <translation>Affectation d'un opérateur dont le type d'arguments est invalide!</translation>
+        <translation>Le type d'arguments associé à l'oépérateur est invalide!</translation>
     </message>
     <message>
         <source>Assignment of system reserved name to the object &apos;%1&apos; (%2)!</source>
-        <translation>Affectation d'un nom système réservé à l'objet &apos;%1&apos; (%2)!</translation>
+        <translation>Le nom associé à l'objet &apos;%1&apos; (%2) est un nom système réservé!</translation>
     </message>
     <message>
         <source>One function with invalid configuration is been used by the object &apos;%1&apos; (%2)!</source>
-        <translation>Une fonction de configuration invalide est utilisée par l'objet &apos;%1&apos; (%2)!</translation>
+        <translation>L'objet &apos;%1&apos; (%2) utilise une fonction dont la configuration est invalide!</translation>
     </message>
     <message>
         <source>Assignment of invalid id to the user!</source>
-        <translation>Affectation d'un id invalide à l'utilisateur!</translation>
+        <translation>L'id associé à l'utilisateur est invalide!</translation>
     </message>
     <message>
         <source>Assignment of an invalid strategy/support number to an operator class element!</source>
-        <translation>Affectation d'un numéro de stratégie/support invalide à un élément de la class opérateur !</translation>
+        <translation>Le numéro de stratégie/support associé un élément de la class opérateur est invalide!</translation>
     </message>
     <message>
         <source>Insertion of element which already exists in the element list!</source>
@@ -1389,7 +1389,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Removal of an object not allocated!</source>
-        <translation>Suppression d'un objet non attribué!</translation>
+        <translation>Suppression d'un objet non alloué!</translation>
     </message>
     <message>
         <source>The object &apos;%1&apos; (%2) can not be removed because it is being referenced by object &apos;%3&apos; (%4)!</source>
@@ -1405,11 +1405,11 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Reference to object with invalid type!</source>
-        <translation>Référence à un objet de type invalide!</translation>
+        <translation>Référence à un objet dont le type invalide!</translation>
     </message>
     <message>
         <source>Operation with object not allocated!</source>
-        <translation>Opération d'objets non attribué!</translation>
+        <translation>Opération d'objets non alloués!</translation>
     </message>
     <message>
         <source>The creation of the relationship &apos;%1&apos; between the table &apos;%2&apos; and &apos;%3&apos; can not be done because one does not have a primary key. If the relationship is of the type n-n both tables must have primary keys!</source>
@@ -1421,11 +1421,11 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of an invalid expression to the object!</source>
-        <translation>Affectation d'une expression invalide à l'objet!</translation>
+        <translation>L'expression associée à l'objet est invalide!</translation>
     </message>
     <message>
         <source>Assignment of a primary key to a table which already has one!</source>
-        <translation>Affectation d'une clef primaire à la table alors qu'une existe déjà!</translation>
+        <translation>Impossible d'attribuer une clef primaire à la table car elle en possède déjà une!</translation>
     </message>
     <message>
         <source>Identifier relationship can not be created for a self relationship, relationships of the type n-n, dependency or generalization!</source>
@@ -1457,7 +1457,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of invalid maximum size to operation list!</source>
-        <translation>Affectation d'une taille maximum invalide à la liste d'opérations!</translation>
+        <translation>La taille maximum affectée à la liste d'opérations est invalide!</translation>
     </message>
     <message>
         <source>Unable to write the file %1! Make sure the directory exists, or if the user has access permissions on it!</source>
@@ -1477,7 +1477,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>One or more objects were invalidated and automatically removed because they were referencing table columns which were included through relationships and which no longer exists due to disconnection of relationships or exclusion of such generated columns!</source>
-        <translation>Un ou plusieurs objets ont été invalidés et automatiquement supprimés car ils référençaient des colonnes de table qui étaient inclues dans des relations et qui n'existaient plus du fait de déconnection de relation ou exclusion de ces colonnes générées!</translation>
+        <translation>Un ou plusieurs objets ont été invalidés et automatiquement supprimés car ils référençaient des colonnes de table qui étaient incluses dans des relations et qui n'existaient plus du fait de la suppression de relation ou exclusion de ces colonnes!</translation>
     </message>
     <message>
         <source>The primary key &apos;%1&apos; can only be allocated if declared within a block of code that defines a table or relationship!</source>
@@ -1489,15 +1489,15 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Insertion of an role which already exists in the role list of the permission!</source>
-        <translation>Insertion d'un rôle déjà existant dans la liste des rôles de la permission!</translation>
+        <translation>Le rôle ajouté dans la liste des rôles de la permission existe déjà!</translation>
     </message>
     <message>
         <source>Assignment of privilege incompatible with the type of object referenced by permission!</source>
-        <translation>Affectation d'un provilège incompatible avec le type d'objet référencé par la permission!</translation>
+        <translation>Le provilège affecté au type d'objet référencé par la permission est incompatible!</translation>
     </message>
     <message>
         <source>There is already a permission on object &apos;%1&apos; (%2) which has one or more equal roles from those present on permission to be assigned to the object!</source>
-        <translation>Il y a déjà une permission sur l'objet &apos;%1&apos; (%2) qui possède un ou plusieurs rôles parmis ceux présents sur l'autorisation d'affecter à l'objet!</translation>
+        <translation>Il y a déjà une permission sur l'objet &apos;%1&apos; (%2) qui possède un ou plusieurs rôles identiques parmis ceux présents sur la permission qui doit être affectée à l'objet!</translation>
     </message>
     <message>
         <source>A permission is referencing the object &apos;%1&apos; (%2) which was not found in the model!</source>
@@ -1529,7 +1529,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>The operator &apos;%1&apos; can not be assigned as negator of operator &apos;%2&apos; because it has incompatible settings!</source>
-        <translation>L'opérateur &apos;%1&apos; ne peut être assigné comme un n"gateur d'opérateur &apos;%2&apos; car il a des paramètres incompatibles!</translation>
+        <translation>L'opérateur &apos;%1&apos; ne peut être assigné comme un négateur d'opérateur &apos;%2&apos; car il a des paramètres incompatibles!</translation>
     </message>
     <message>
         <source>The type &apos;%1&apos; can not self refer in the attributes &apos;element&apos; or &apos;copy type&apos; or be used as a data type of an attribute in the configuration of a composite type!</source>
@@ -1537,15 +1537,15 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of invalid element to type &apos;%1&apos;!</source>
-        <translation>Affectation d'un élement invalide au type &apos;%1&apos;!</translation>
+        <translation>L'élement affecté au type &apos;%1&apos; est invalide!</translation>
     </message>
     <message>
         <source>Assignment of invalid alignment to type &apos;%1&apos;!</source>
-        <translation>Affectation d'un alignement invalide au type &apos;%1&apos;!</translation>
+        <translation>L'alignement affecté au type &apos;%1&apos; est invalide!</translation>
     </message>
     <message>
         <source>Assignment of invalid name to the table generated from N-N relationship!</source>
-        <translation>Affectation d'un nom invalide à la table générée par la relation N-N!</translation>
+        <translation>Le nom de la table générée par la relation N-N est invalide!</translation>
     </message>
     <message>
         <source>The relationship &apos;%1&apos; can not make use of the special primary key. Only generalization/dependency relationships have access to this resource!</source>
@@ -1597,7 +1597,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>The schema public and the languages plpgsql, c and sql can not be manipulated because they are reserved to PostgreSQL! They are present in the model database only as a reference!</source>
-        <translation>Le schéma public et les langages plpgsql, c et sql ne peuvent être manipulés car ils sont réservés à PostgreSQL! Ils sont présents dans la BDD des modèles seulement comme référence</translation>
+        <translation>Le schéma public et les langages plpgsql, c et sql ne peuvent être manipulés car ils sont réservés à PostgreSQL! Ils sont présents dans la BDD des modèles seulement en tant que référence!</translation>
     </message>
     <message>
         <source>The new configuration function invalidates the object &apos;%1&apos; (%2)! In this case it is needed to undo the relationship between the affected object and function so that the new configuration of the latter to take effect!</source>
@@ -1609,11 +1609,11 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!</source>
-        <translation>Les contraintes telles que clef primaire, clef étrangère ou l'unicité doivent avoir au moins une colonne lié à elle! Pour les clefs étrangères, les colonnes référencées doivent également être sélectionnées</translation>
+        <translation>Les contraintes telles que clef primaire, clef étrangère ou l'unicité doivent avoir au moins une colonne associée! Pour les clefs étrangères, les colonnes référencées doivent également être sélectionnées</translation>
     </message>
     <message>
         <source>Unable to load one or more configuration files! Please check if files exists in the configuration folder and if they are not corrupted to preventing this error to occur again on the next startup!</source>
-        <translation>Impossible de charger un ou plusieurs fichiers de configuration! Veuillez vérifier que les fichiers existent dans le dossier de configuration et qu'ils ne soientt pas corrompus pour éviter que l'erruer ne se produise à nouveau au prochain lancement</translation>
+        <translation>Impossible de charger un ou plusieurs fichiers de configuration! Veuillez vérifier que les fichiers existent dans le dossier de configuration et qu'ils ne soient pas corrompus pour éviter que l'erreur ne se produise à nouveau au prochain lancement</translation>
     </message>
     <message>
         <source>Could not find the default settings file &apos;%1&apos;! To restore default settings check the existence of the file and try again!</source>
@@ -1637,7 +1637,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.</source>
-        <translation>Une ou plusieurs extensions n'ont pas été activée car des erreurs sont apparues lors du processus de chargment.</translation>
+        <translation>Une ou plusieurs extensions n'ont pas été activée(s) car des erreurs sont apparues lors du processus de chargment.</translation>
     </message>
     <message>
         <source>Invalid syntax in file %1, line %2, column %3!</source>
@@ -1661,7 +1661,7 @@ Taille: %2 bytes
     </message>
     <message>
         <source>Assignment of empty XML buffer to parser!</source>
-        <translation>Affectation d'un buffer XML vide au parser!</translation>
+        <translation>Le parseur a reçu un tampon XML vide!</translation>
     </message>
     <message>
         <source>Could not access the file or directory %1! Make sure that it exists or if the user has access permissions on it!</source>
@@ -1687,7 +1687,7 @@ Message généré par l'analyseur: &apos;%3&apos;. %4</translation>
     </message>
     <message>
         <source>Could not load file %1. The same appears to be inconsistent or one of its dependencies (DTD files) has errors or is missing!</source>
-        <translation>Ne peut charger le fichier %1. Le fichier semble inconsistant ou une de ses dépendances (fichiers DTD) a des erreurs ou est manquant!</translation>
+        <translation>Ne peut charger le fichier %1. Le fichier semble inconsistant ou une de ses dépendances (fichiers DTD) a des erreurs ou est manquantes!</translation>
     </message>
     <message>
         <source>Operation with unallocated tree element!</source>
@@ -1695,7 +1695,7 @@ Message généré par l'analyseur: &apos;%3&apos;. %4</translation>
     </message>
     <message>
         <source>Operation with element which does not exists in the element tree currently loaded!</source>
-        <translation>Opération sur un élément qui n'existe pas dans l'arbre des élément actuellement chargé!</translation>
+        <translation>Opération sur un élément qui n'existe pas dans l'arbre des éléments chargés!</translation>
     </message>
     <message>
         <source>Assignment of a value to an invalid connection parameter!</source>
@@ -1721,21 +1721,21 @@ Message retourné: &apos;%1&apos;</translation>
     </message>
     <message>
         <source>Unable to allocate the result of the SQL command because the response from the DBMS was not understood by the client!</source>
-        <translation>Impossible d'attribuer le résultat de la commande SQL car la réponse du SGBD n'a pas été comprise par le client!</translation>
+        <translation>Impossible de retourner le résultat de la commande SQL car la réponse du SGBD n'a pas été comprise par le client!</translation>
     </message>
     <message>
         <source>Unable to allocate command result for the SQL because the server has generated a fatal error!
 Message returned by the DBMS: %1</source>
-        <translation>Impossible d'attribuer le résultat de la commande SQL car le serveur a généré une erreur fatale!
+        <translation>Impossible de retourner le résultat de la commande SQL car le serveur a généré une erreur fatale!
 Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Unable to allocate the result of the SQL command because the command passed was an empty SQL!</source>
-        <translation>Impossible d'attribuer le résultat de la commande SQL car la commande SQL passée était vide!</translation>
+        <translation>Impossible de retourner le résultat de la commande SQL car la commande SQL passée était vide!</translation>
     </message>
     <message>
         <source>Reference to a column of tuple with invalid index!</source>
-        <translation>Reference à une colonne de tuple dont l'index est invalide!</translation>
+        <translation>Référence à une colonne de tuple dont l'index est invalide!</translation>
     </message>
     <message>
         <source>Reference to a column of tuple with invalid name!</source>
@@ -1845,7 +1845,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Check if the system user has write permission on target folder.</source>
-        <translation>Vérifiez que l'utilisateur système à les droits d'écriture sur le fossier cible.</translation>
+        <translation>Vérifiez que l'utilisateur système à les droits d'écriture sur le dossier cible.</translation>
     </message>
     <message>
         <source>Options:</source>
@@ -1873,7 +1873,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>It is recommended to select this option only when the version of the DBMS, somehow, is not identifiable or if you need to generate a specific version of SQL code for testing.</source>
-        <translation>Il est recoomandé de sélectionner cette option seulement lorsque la version du SGBD n'est pas indentifiable ou si vous avez besoin de générer une version spécifique du code SQL pour test</translation>
+        <translation>Il est recoomandé de sélectionner cette option seulement lorsque la version du SGBD n'est pas indentifiable ou si vous avez besoin de générer une version spécifique du code SQL à des fins de tests</translation>
     </message>
     <message>
         <source>&amp;Export</source>
@@ -1921,7 +1921,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Export model as...</source>
-        <translation>Exporter le modèle comme...</translation>
+        <translation>Exporter le modèle sous...</translation>
     </message>
     <message>
         <source>SQL code (*.sql);;All files (*.*)</source>
@@ -2200,7 +2200,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <source>Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click &apos;No&apos; or &apos;Cancel&apos; to abort printing.</source>
-        <translation>Des modifications ont été détectées dans les définitions du papier/marges du modèle ce qui pourrait causer une mauvaise impression des objets. Souhaitez vous continuer l'impression aves les nouveaus paramètres. Pour utiliser les paramètres par défaut cliquez sur &apos;Non&apos; ou &apos;Annuler&apos; pour interrompre l'impression .</translation>
+        <translation>Des modifications ont été détectées dans les définitions du papier/marges du modèle ce qui pourrait causer une mauvaise impression des objets. Souhaitez vous continuer l'impression aves les nouveaux paramètres? Pour utiliser les paramètres par défaut cliquez sur &apos;Non&apos; ou &apos;Annuler&apos; pour interrompre l'impression.</translation>
     </message>
     <message>
         <source>Tools</source>
