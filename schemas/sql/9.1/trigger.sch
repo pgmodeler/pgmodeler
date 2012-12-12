@@ -1,10 +1,3 @@
-# pt_BR:
-# Definição SQL para gatilhos
-# Versão PostgreSQL: 9.1
-# ATENÇÃO: Não modifique este arquivo a não ser que você saiba
-#          o que está fazendo.
-#
-# en_US:
 # SQL definition for triggers
 # PostgreSQL Version: 9.1
 # CAUTION: Do not modify this file unless you know what

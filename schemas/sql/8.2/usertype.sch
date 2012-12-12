@@ -1,10 +1,3 @@
-# pt_BR:
-# Definição SQL para tipos definidos pelo usuario
-# Versão PostgreSQL: 8.2
-# ATENÇÃO: Não modifique este arquivo a não ser que você saiba
-#          o que está fazendo.
-#
-# en_US:
 # SQL definition for user defined types
 # PostgreSQL Version: 8.2
 # CAUTION: Do not modify this file unless you know what

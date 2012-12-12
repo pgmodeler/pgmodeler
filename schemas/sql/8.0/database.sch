@@ -1,10 +1,3 @@
-# pt_BR:
-# Definição SQL para banco de dados
-# Versão PostgreSQL: 8.0
-# ATENÇÃO: Não modifique este arquivo a não ser que você saiba
-#          o que está fazendo.
-#
-# en_US:
 # SQL definition for databases
 # PostgreSQL Version: 8.0
 # CAUTION: Do not modify this file unless that you know what

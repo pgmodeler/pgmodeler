@@ -1,9 +1,3 @@
-# pt_BR:
-# Definição XML para parâmetros de função
-# ATENÇÃO: Não modifique este arquivo a não ser que você saiba
-#          o que está fazendo.
-#
-# en_US:
 # XML definition for function parameters
 # CAUTION: Do not modify this file unless you know what
 #          you are doing.
