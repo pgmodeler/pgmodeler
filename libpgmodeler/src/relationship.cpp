@@ -825,7 +825,7 @@ void Relationship::addColumnsRelGen(void)
 
      column->setParentTable(NULL);
 
-     //Converte the type
+     //Converts the type
      if(column->getType()=="serial")
       column->setType(TipoPgSQL("integer"));
      else if(column->getType()=="bigserial")
@@ -911,21 +911,18 @@ void Relationship::connectRelationship(void)
   {
    if(rel_type==RELATIONSHIP_GEN)
    {
-    /* Definindo que a tabela de destino é a tabela pai
-       da tabela de origem como indicado pelo relacionamento
-       de generalização */
+    //Creates the columns on the receiver table following the rules for generalization rules
     addColumnsRelGen();
 
-    //Adicionar a tabela referência como tabela pai da tabela receptora
+    //The reference table is added as parent table on the receiver
     getReceiverTable()->adicionarTabelaPai(dynamic_cast<Tabela *>(getReferenceTable()));
    }
    else if(rel_type==RELATIONSHIP_DEP)
    {
-    /* Definindo que a tabela de origem depende da tabela
-       de destino pois parte de seus atributos virão da
-       primeira como indicado pelo relacionamento de dependência */
+    //Creates the columns on the receiver table following the rules for copy rules
     addColumnsRelGen();
-    //Adiciona a tabela referência como tabela cópia da tabela receptora
+
+    //The reference table is added as copy table on the receiver
     getReceiverTable()->adicionarTabelaCopia(dynamic_cast<Tabela *>(getReferenceTable()));
    }
    else if(rel_type==RELATIONSHIP_11 ||
@@ -939,12 +936,11 @@ void Relationship::connectRelationship(void)
    else if(rel_type==RELATIONSHIP_NN)
    {
     if(!table_relnn)
-     /* Caso o tipo de relacionamento seja n-n e a tabela que representa
-        o relacionamento será alocada e configurado o nome automaticamente */
+     //Allocates the table that represents the Many-to-Many relationship
      table_relnn=new Tabela;
 
-     /* O esquema e espaço de tabelas da tabela resultante será, por padrão,
-        os mesmos da tabela de origem */
+    /* By default the schema and tablespace for the new table is the same as
+       the relationship source table */
     table_relnn->setName(tab_name_relnn);
     table_relnn->setSchema(src_table->getSchema());
     table_relnn->setTablespace(src_table->getTablespace());
@@ -952,12 +948,7 @@ void Relationship::connectRelationship(void)
     addColumnsRelNn();
    }
 
-   /* Faz uma chamada ao método de conexão do relacionamento da
-      classe base */
    BaseRelationship::connectRelationship();
-
-   /* Indica que o relacionameto foi conetado corretamente e que não está
-   invalidado por modificação de atributos */
    this->invalidated=false;
   }
  }
@@ -981,19 +972,16 @@ void Relationship::configureIndentifierRel(Tabela *dst_tab)
 
  try
  {
-  /* Caso seja um relacionamento identificador, a chave primária
-     da tabela na qual se insere as colunas, caso exista, será composta
-     pelas colunas da chave primária da tabela de origem do relacionamento
-     (entidade forte) e pelas colunas da chave primária da tabela de destino
-     (entidade fraca) */
+  /* In the identifier relationship, the primary key of the receiver table (weak entity)
+     will be merged with the primary key of the reference table (strong entity) */
 
-  //Obtém a chave primária da tabela de destino
+  //Gets the primary key from the receiver table
   pk=dst_tab->obterChavePrimaria();
 
-  //Caso não exista a chave primária na entidade fraca, a mesma será criada
+  //Case the primary key doesn't exists it'll be created
   if(!pk)
   {
-   //Cria e configura a chave primária da entidade fraca
+   //Creates the primary key for the weak entity
    if(!pk_relident)
    {
     pk=new Constraint;
@@ -1007,28 +995,25 @@ void Relationship::configureIndentifierRel(Tabela *dst_tab)
    new_pk=true;
    i=1;
    aux[0]='\0';
+   //Configures a basic name for the primary key
    name=dst_tab->getName() + SUFFIX_SEPARATOR + "pk";
 
-   /* Verifica se já não existe uma restrição na tabela a qual se adiciona
-      as retrições cujo nome seja o mesmo configurado acima. Enquanto isso
-      ocorrer, será concatenado um número */
+   //Resolves any duplication of the new constraint name on the receiver table
    while(dst_tab->obterRestricao(name + aux))
    {
     aux=QString("%1").arg(i);
     i++;
    }
 
-   //Atribui o nome configurado   chave primaria criada
-   pk->setName(name);
+   pk->setName(name + aux);
   }
 
-  /* Adicionando as colunas da chave primária da entidade forte na chave
-     primária da entidade fraca */
+  //Adds the columns from the strong entity primary key on the weak entity primary key
   count=ref_columns.size();
   for(i=0; i < count; i++)
    pk->addColumn(ref_columns[i], Constraint::SOURCE_COLS);
 
-  //Caso a tabela não tenha uma chave primária a mesma será atrua   ela
+  //Inserts the configured primary key on the receiver table (if there is no pk on it)
   if(new_pk)
    dst_tab->adicionarRestricao(pk);
  }
@@ -1046,7 +1031,7 @@ void Relationship::addUniqueKey(Tabela *ref_tab, Tabela *recv_tab)
 
  try
  {
-  //Aloca a chave única
+  //Alocates the unique key
   if(!uq_rel11)
   {
    uq=new Constraint;
@@ -1055,33 +1040,26 @@ void Relationship::addUniqueKey(Tabela *ref_tab, Tabela *recv_tab)
    uq_rel11=uq;
   }
 
-  //Insere as colunas do relacionamentos   chave única
+  //Adds the referenced columns as the unique key columns
   count=ref_columns.size();
   i=0;
 
   while(i < count)
    uq->addColumn(ref_columns[i++], Constraint::SOURCE_COLS);
 
-  //Configura o nome da chave estrangeira
+  //Configures the name for the constraint
   i=1;
   aux[0]='\0';
   name=ref_tab->getName() + SUFFIX_SEPARATOR + "uq";
 
-  /* Verifica a existencia de alguma restrição com mesmo nome
-     na tabela a qual receberá a chave única. Enquanto existir
-     um novo nome será gerado concatenando um número inteiro para
-     pode diferenciar dos demais */
+ //Resolves any duplication of the new constraint name on the receiver table
   while(recv_tab->obterRestricao(name + aux))
   {
    aux=QString("%1").arg(i);
    i++;
   }
 
-  //Atribui o nome configurado   chave única
   uq->setName(name + aux);
-
-  /* Após configurada a chave única que define o
-     relacionamento é adicionado na tabela */
   recv_tab->adicionarRestricao(uq);
  }
  catch(Exception &e)
@@ -1093,13 +1071,13 @@ void Relationship::addUniqueKey(Tabela *ref_tab, Tabela *recv_tab)
 void Relationship::addForeignKey(Tabela *ref_tab, Tabela *recv_tab, TipoAcao del_act, TipoAcao upd_act)
 {
  Constraint *pk=NULL, *pk_aux=NULL, *fk=NULL;
- unsigned i, i1, qtd;
+ unsigned i, i1, qty;
  Column *column=NULL, *column_aux=NULL;
  QString name, aux;
 
  try
  {
-  //Aloca uma chave estrangeira para ser configurada
+  //Alocates the foreign key
   if((rel_type==RELATIONSHIP_NN) ||
      (!fk_rel1n && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)))
   {
@@ -1108,54 +1086,50 @@ void Relationship::addForeignKey(Tabela *ref_tab, Tabela *recv_tab, TipoAcao del
    fk->setDeferralType(this->deferral_type);
    fk->setConstraintType(TipoRestricao::foreign_key);
    fk->setAddedByLinking(true);
-   //Define a tabela de destino da chave estrangeira
+
+   //The reference table is the table referenced by the foreign key
    fk->setReferencedTable(ref_tab);
 
-   /* Caso o relacionamento seja 1-1 ou 1-n a chave estrangeira alocada
-      será atribud   chave estrangeira que representa o relacionamento */
+   /* The configured fk is assigned to the relatioship attibute in order to be
+      manipulated more easily */
    if(rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)
     fk_rel1n=fk;
   }
 
-  //Configura a ação de ON DELETE e ON UPDATE da chave estrangeira
+  //Sets the ON DELETE and ON UPDATE actions for the foreign key
   fk->setActionType(del_act, false);
   fk->setActionType(upd_act, true);
 
-  /* Obtém a chave primária da tabela de origem para ser referenciada
-     pela chave estrangeira */
+  /* Gets the primary key from the reference table in order to reference its columns
+     on the primary key */
   pk=ref_tab->obterChavePrimaria();
-
-  /* Relacionas as colunas da tabela de origem com as colunas da chave
-     primária da tabela de destino, na chave estrangeira do relacionamento */
-  qtd=ref_columns.size();
+  qty=ref_columns.size();
   i=i1=0;
 
-  /* Condição especial para relacionamentos n-n.
-     Como as colunas copiadas das tabelas participantes do relacinamentos
-     são armazenadas em uma só lista, é necessário fazer um deslocamento
-     na varredura para que as colunas nao sejam relacionadas de forma
-     incorreta na chave estrangeira.
+  /* Special condition for n-n relationships.
+     Because the columns copied from participants tables
+     are stored in a single list, its needed to make a shift
+     the scan them so that the columns are not related in a incorrect way
+     in the foreign key.
 
-     Caso 1: A quantidade de colunas (qtd) precisa ser decrementada da quantidade
-             de colunas presentes na chave primária da tabela de destino. Isso
-             quando o ponteirio 'tab_orig' aponta para a própria tabela de origem
-             do relacionamento. Desta forma, evita-se que colunas além da posição
-             final da lista de colunas da chave primária de origem sejam acessadas.
+      Case 1: The number of columns (qty) must be decremented from quantity of
+              columns present in the primary key of the target table. This is done
+              when the pointer 'ref_tab' points to the own source table
+              of the relationship. Thus, it is avoided that columns beyond the end of
+              columns list in the source primary key be accessed.
 
-     Caso 2: O índice inicial de varredura (i) apontará para a primeira coluna
-             na lista do relacionamento a qual corresponde ao conjunto de colunas
-             da tabela de destino. A primeira coluna referente a lista de colunas da tabela de
-             destino sempre terá seu indice como sendo a quantidade de colunas existentes na
-             chave primária da tabela de origem, pois, sempre são inseridas na lista de colunas
-             as colunas da origem (vindas da chave primária da origem) e depois as colunas
-             da chave primária de destino. */
+      Case 2: The initial scan index (i) points to the first column
+              of the columns list which corresponds to the set of columns
+              of the target table. The first column related to the destination table column list
+              always has its index starting at the existant columns count on the primary key on the
+              source table because they is always inserted after this position. */
   if(rel_type==RELATIONSHIP_NN)
   {
-   //Caso 1: decrementando a quantidade de colunas a serem varridas
+   //Case 1: decrementing the quantity of columns to be scanned
    if((!isSelfRelationship() && ref_tab==src_table) ||
       (isSelfRelationship() && table_relnn->obterNumRestricoes()==0))
-    qtd-=dynamic_cast<Tabela *>(dst_table)->obterChavePrimaria()->getColumnCount(Constraint::SOURCE_COLS);
-   //Caso 2: deslocando o índice de varredura
+    qty-=dynamic_cast<Tabela *>(dst_table)->obterChavePrimaria()->getColumnCount(Constraint::SOURCE_COLS);
+   //Case 2: shifiting the scan index
    else if(ref_tab==dst_table)
    {
     pk_aux=dynamic_cast<Tabela *>(src_table)->obterChavePrimaria();
@@ -1163,38 +1137,30 @@ void Relationship::addForeignKey(Tabela *ref_tab, Tabela *recv_tab, TipoAcao del
    }
   }
 
-  while(i < qtd)
+  while(i < qty)
   {
-   //Obtém um coluna referenciada
    column=ref_columns[i];
-   //Obtém uma coluna da chave primária da tabela de origem
    column_aux=pk->getColumn(i1, Constraint::SOURCE_COLS);
-   //Faz a ligação das colunas na chave estrangeira
+
+   //Link the two columns on the foreign key
    fk->addColumn(column, Constraint::SOURCE_COLS);
    fk->addColumn(column_aux, Constraint::REFERENCED_COLS);
    i++; i1++;
   }
 
-  //Configura o nome da chave estrangeira
+  //Configures the foreign key name
   i=1;
   aux[0]='\0';
   name=ref_tab->getName() + SUFFIX_SEPARATOR + "fk";
 
-  /* Verifica a existencia de alguma restrição com mesmo nome
-     na tabela a qual receberá a chave estrangeira. Enquanto existir
-     um novo nome será gerado concatenando um número inteiro para
-     pode diferenciar dos demais */
+ //Resolves any duplication of the new constraint name on the receiver table
   while(recv_tab->obterRestricao(name + aux))
   {
    aux=QString("%1").arg(i);
    i++;
   }
 
-  //Atribui o nome configurado   chave estrangeira
   fk->setName(name + aux);
-
-  /* Após configurada a chave estrangeira que define o
-     relacionamento é adicionado na tabela */
   recv_tab->adicionarRestricao(fk);
  }
  catch(Exception &e)
@@ -1211,35 +1177,30 @@ void Relationship::addAttributes(Tabela *recv_tab)
 
  try
  {
-  //Adicionando os atributos do relacionamento na tabela
   count=rel_attributes.size();
   aux[0]='\0';
 
   for(i=0, i1=1; i < count; i++)
   {
-   //Obtém o atributo
    column=dynamic_cast<Column *>(rel_attributes[i]);
 
-   //Caso o atributo já pertença a uma tabela interrompe o processamento
+   /* Case the attribute has a parent table interrupts the process
+      and the remaining attributes aren't inserted on the table */
    if(column->getParentTable())
     break;
 
    name=column->getName();
 
-   /* Verifica o se o nome da coluna já não existe na tabela. Equanto
-      existir, incrementa e concatena um número (i1) ao final do nome,
-      até que este nome não exista nas colunas da tabela onde será
-      inserido o atributo */
+   //Resolves any duplication of the attribute name on the receiver table
    while(recv_tab->obterColuna(name + aux))
    {
     aux=QString("%1").arg(i1);
     i1++;
    }
-   //Define o nome do atributo
+
    column->setName(name + aux);
    aux[0]='\0';
 
-   //Adiciona o atributo na tabela
    recv_tab->adicionarColuna(column);
   }
  }
@@ -1258,15 +1219,10 @@ void Relationship::copyColumns(Tabela *ref_tab, Tabela *recv_tab, bool not_null)
 
  try
  {
-  //Obtém as chaves primárias das tabelas de origem e destino
   dst_pk=recv_tab->obterChavePrimaria();
   pk=src_pk=ref_tab->obterChavePrimaria();
 
-   /* Selecionando a lista de colunas correta de acordo com a forma do relacionamento.
-     Caso a tabela a qual receberá a chave estrangeira (tab_dest) for uma
-     referênci  tabela de origem do relacionamento, o sufixo das colunas a serem criadas
-     será configurado como sendo o sufixo da tabela de origem. Caso contrário  o
-      será o da própria tabela de destino. */
+  //Selecting the correct column suffix according to the relationship configuration
   if(auto_suffix)
   {
    if(rel_type==RELATIONSHIP_1N || rel_type==RELATIONSHIP_11)
@@ -1295,9 +1251,8 @@ void Relationship::copyColumns(Tabela *ref_tab, Tabela *recv_tab, bool not_null)
            && !src_suffix.isEmpty())
    suffix=SUFFIX_SEPARATOR + src_suffix;
 
-  /* Caso o relacionamento seja 1-n e a tabela de origem não possua
-     uma chave primária ou se o relacionamento seja n-n e ambas as tabelas
-     não possuam chave primária, uma exceção será disparada */
+  /* Raises an error if some table doesn't has a primary key if
+     the relationship is 1-1, 1-n or n-n */
   if((!src_pk && (rel_type==RELATIONSHIP_1N || rel_type==RELATIONSHIP_11)) ||
      (!src_pk && !dst_pk && rel_type==RELATIONSHIP_NN))
    throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
@@ -1306,90 +1261,68 @@ void Relationship::copyColumns(Tabela *ref_tab, Tabela *recv_tab, bool not_null)
                           .arg(QString::fromUtf8(recv_tab->getName(true))),
                  ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-
-  /* Obtém a quantidade de colunas referenciadas na chave
-     primária selecionada */
   count=pk->getColumnCount(Constraint::SOURCE_COLS);
 
-  /* Varre a chave primária, obtendo as colunas e adicionando na lista
-     de colunas selecionada acima. Isso é feito para se saber quais são
-     as colunas da tabela, dona da chave primária, que serão usadas
-    no caso de se criar chaves estrangeiras */
+  /* Scans the primary key columns adding them
+     to the referenced column list of the relationship */
   for(i=0; i < count; i++)
   {
    i1=1;
    aux="";
 
-   //Aloca uma nova coluna
    column=new Column;
    ref_columns.push_back(column);
 
-   /* Copia o conteúdo da coluna da chave primária no indice i para
-       a nova coluna criada */
+   //Add the current primary key source column on the list
    column_aux=pk->getColumn(i, Constraint::SOURCE_COLS);
    pk_columns.push_back(column_aux);
 
    (*column)=(*column_aux);
    column->setNotNull(not_null);
 
-   //Obtém o nome anterior da coluna antes da desconexão do relacionamento
    prev_name=prev_ref_col_names[column->getObjectId()];
 
-   //Protege a nova coluna, evitando que o usuário a modifique ou remova
+   //Protects the column evicting that the user modifies it
    column->setAddedByLinking(true);
-
-   //Desfaz a referência da coluna a uma tabela pai
+   //Set the parent table as null permiting the column to be added on the receiver table
    column->setParentTable(NULL);
 
-   /* Caso o tipo da nova coluna seja "serial" o mesmo será
-      convertido para "integer" */
+   //Converting the serial like types
    if(column->getType()=="serial")
     column->setType(TipoPgSQL("integer"));
    else if(column->getType()=="bigserial")
     column->setType(TipoPgSQL("bigint"));
-   /* O nome da nova coluna, será o nome original concatenado
-      com o sufixo da tabela a qual ela pertence. Isso é feito
-      para se saber de onde tal coluna foi originada */
+
+   //Creates the column name based on the original name and the selected suffix
    name=column->getName() + suffix;
 
-   /* Verifica se o nome da coluna já não existe na tabela
-      na qual será inserida, caso exista, um número será concatenado
-      ao final de seu nome. Enquanto esta condição for verdadeira
-      este número (i1) será incrementado até que não exista uma coluna
-      com tal nome (nome original + sufixo + número) */
+   //Resolves any duplication of the column name on the receiver table
    while(recv_tab->obterColuna(name + aux))
    {
     aux=QString("%1").arg(i1);
     i1++;
    }
 
-   //Armazena o sufixo gerado para validações posteriores do relacionamento
+   //Stores the generated suffix to be used on later validations
    col_suffixes.push_back(suffix + aux);
 
-   //Concatena a string auxiliar ao nome inteiro da coluna
    name+=aux;
 
-   //Primeiramente a coluna é renomeada com seu nome antigo para manter o histórico
    if(prev_name!="")
     column->setName(prev_name);
 
-   /* Define o nome da coluna como sendo o nome configurado acima, desta forma a
-      coluna passará a ter como nome antigo o nome atribuido na iteração acima */
    column->setName(name);
 
-   /* Caso o nome anteriro atribuíd  coluna seja diferente do nome atual, o nome
-      atual da coluna passará a ser o nome antigo da mesma quando o relacionamento
-      for desconectado e reconectado novamente, desta forma o histórico de nomes da
-      colunas não se perde mesmo quando as colunas do relacionamento são desalocadas,
-      isso evita a quebra de referências as colunas criadas pelo relacionamento.
-      Essa operação só é executada para relacionamentos 1-n e 1-n para relacionamentos
-      n-n as colunas são sempre recriadas sem a necessidade de manter o histórico pois
-      o usuário não consegue referenciar as colunas criadas pelos relacionamentos n-n.*/
+   /* If the old name given to the column is different from the current name, the current name
+      of the column will be the old name when the relationship is disconnected and
+      reconnected again, so the column name history is not lost even when the columns
+      of the relationship is deallocated, this prevents the breakdown of the references to columns created
+      by the relationship. This operation is only performed for relationships 1-1, 1-n relationships to
+      the n-n relationships columns are always recreated without the need to keep the history because
+      the user can not reference the columns created by n-n relationships. */
     if(prev_name!=name && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
      prev_ref_col_names[column->getObjectId()]=column->getName();
 
-   /* Adiciona a coluna na tabela a qual foi definida para receber os
-      atributos, colunas e restições */
    recv_tab->adicionarColuna(column);
   }
  }
@@ -1410,7 +1343,7 @@ void Relationship::addColumnsRel11(void)
   ref_tab=dynamic_cast<Tabela *>(this->getReferenceTable());
   recv_tab=dynamic_cast<Tabela *>(this->getReceiverTable());
 
-  //Caso a tabela de referência seja obrigatória seta como RESTRICT a ação de delete na chave estrangeira
+  //Case the reference table is mandatory participation set as RESTRICT the delete action on the foreign key
   if((ref_tab==this->src_table && this->isTableMandatory(SRC_TABLE)) ||
      (ref_tab==this->dst_table && this->isTableMandatory(DST_TABLE)))
     del_action=TipoAcao::restrict;
@@ -1431,9 +1364,8 @@ void Relationship::addColumnsRel11(void)
 
    if(identifier)
    {
-    /* Quando o relacionamento é identificador, serão desprezadas as cardinalidades
-       das tabelas pois, obrigatóriamente a entidade forte tem participação mandatória
-        na entidade fraca, sendo assim, marca a tabela de referência como obrigatória */
+    /* When the relationship is identifier, the cardinalities are ignored because the
+       strong entity always is of mandatory participation. */
     this->setMandatoryTable(DST_TABLE, false);
     this->setMandatoryTable(SRC_TABLE, false);
 
@@ -1473,16 +1405,12 @@ void Relationship::addColumnsRel1n(void)
 
  try
  {
-  /* Para relacionamentos 1-n a ordem das tabelas não se alteram, ou seja,
-     as colunas da chave estrangeira são sempre adicionadas na tabela
-     de origem */
   recv_tab=dynamic_cast<Tabela *>(this->getReceiverTable());
   ref_tab=dynamic_cast<Tabela *>(this->getReferenceTable());
 
-  /* Caso o relacionamento não seja identificador e a participação da tabela
-     de referência (origem) seja obrigatória (1,1)--<>--(0|1,n) as colunas da chave estrangeiras
-     não podem aceitar valores nulos e além disso as ações ON DELETE e ON UPDATE
-     será RESTRIC */
+  /* Case the relationship isn't identifier and the source table is mandatory participation
+     the columns of the foreign key must not accept null values and the ON DELETE and ON UPDATE
+     action will be RESTRICT */
   if(!identifier && src_mandatory)
   {
    if(!deferrable)
@@ -1492,10 +1420,11 @@ void Relationship::addColumnsRel1n(void)
 
    not_null=true;
   }
-  /* Caso o relacionamento seja identificador configura as ações ON DELETE e ON UPDATE
-     da chave estrangeira como "cascade" pois a entidade fraca só existe se
-     a entidade forte existir, isto é, se uma tupla da tabela "entidade forte" for
-     removida todas as tuplas da tabela "entidade fraca" também serão excluídas */
+
+  /* Case the relationship is identifier configures the ON DELETE anda ON UPDATE action
+     on the foreign key as CASCADE because the weak entity exists only if the strong
+     entity also exists, this means if the strong entity tuple is removed the weak entity
+     tuple is also removed */
   else if(identifier)
    del_action=TipoAcao::cascade;
 
@@ -1512,9 +1441,6 @@ void Relationship::addColumnsRel1n(void)
 
    if(identifier)
    {
-    /* Quando o relacionamento é identificador, serão desprezadas as cardinalidades
-       das tabelas pois, obrigatóriamente a entidade forte tem participação mandatória
-        na entidade fraca, sendo assim, marca a tabela de referência como obrigatória */
     this->setMandatoryTable(SRC_TABLE, true);
     this->setMandatoryTable(DST_TABLE, false);
 
@@ -1544,18 +1470,15 @@ void Relationship::addColumnsRelNn(void)
 
  try
  {
-  /* Para relacionamentos n-n, a tabela de destino onde serão adicionadas as colunas
-     será a tabela que representa o relacionamento (tabela_relnn). As tabelas
-     participantes do relacionamento sempre serão as tabelas de origem pois as colunas
-     destas precisam ser adicionadas na tabela que define o relacionamento */
   tab=dynamic_cast<Tabela *>(src_table);
   tab1=dynamic_cast<Tabela *>(dst_table);
 
+  /* Copy the columns from the primary keys of the source and destination tables
+     to the table that represents the n-n relationship */
   copyColumns(tab, table_relnn, src_not_null);
   copyColumns(tab1, table_relnn, dst_not_null);
 
-  /* Cria a chave primária padrão da tabela que consiste nas colunas que
-     identificam cada chave estrangeira na tabela. */
+  //Creates the primary key for the n-n relationship table
   pk_tabnn=new Constraint;
   pk_tabnn->setName(table_relnn->getName() + "_pk");
   pk_tabnn->setConstraintType(TipoRestricao::primary_key);
@@ -1581,16 +1504,12 @@ void Relationship::addColumnsRelNn(void)
 
 Tabela *Relationship::getReferenceTable(void)
 {
- /* Para relacionamentos n-n que possuem 2 tabelas de refência,
-    este método sempre retornará NULL. */
+ /* Many to Many relationships doesn't has only one reference table so
+    is returned NULL */
  if(rel_type==RELATIONSHIP_NN)
   return(NULL);
  else
  {
-  /* Caso a tabela de origem do relacionamento seja também a
-     tabela receptora das colunas que representam o relacionamento,
-     retorna que a tabela de destino do relacionamento e a tabela
-     de referência para cópia de colunas. */
   if(src_table==getReceiverTable())
    return(dynamic_cast<Tabela *>(dst_table));
   else
