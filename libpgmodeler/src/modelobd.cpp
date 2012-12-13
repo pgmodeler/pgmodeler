@@ -6176,10 +6176,17 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
     {
      restricao=tabela->obterRestricao(i);
 
-     //Caso a restrição seja um objeto especial armazena o mesmo no mapa de objetos
-     if(!restricao->isAddedByLinking() &&
-         restricao->getConstraintType()!=TipoRestricao::primary_key &&
-         restricao->isReferRelationshipColumn())
+     /* Caso a restrição seja um objeto especial armazena o mesmo no mapa de objetos.
+        Idenpendente da configuração, chaves estrangeiras sempre serão descartadas nesta
+        iteração pois ao final do método as mesmas tem seu código SQL concatenado à definição
+        do modelo */
+     if((tipo_def==SchemaParser::XML_DEFINITION ||
+         (tipo_def==SchemaParser::SQL_DEFINITION &&
+          restricao->getConstraintType()!=TipoRestricao::foreign_key)) &&
+
+        (!restricao->isAddedByLinking() &&
+          restricao->getConstraintType()!=TipoRestricao::primary_key &&
+          restricao->isReferRelationshipColumn()))
      {
       //Armazena o objeto em si no mapa de objetos
       mapa_objetos[restricao->getObjectId()]=restricao;

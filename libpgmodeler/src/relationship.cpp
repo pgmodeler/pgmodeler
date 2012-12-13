@@ -1153,7 +1153,7 @@ void Relationship::addForeignKey(Tabela *ref_tab, Tabela *recv_tab, TipoAcao del
   aux[0]='\0';
   name=ref_tab->getName() + SUFFIX_SEPARATOR + "fk";
 
- //Resolves any duplication of the new constraint name on the receiver table
+  //Resolves any duplication of the new constraint name on the receiver table
   while(recv_tab->obterRestricao(name + aux))
   {
    aux=QString("%1").arg(i);
@@ -1521,38 +1521,30 @@ Tabela *Relationship::getReceiverTable(void)
 {
  if(rel_type==RELATIONSHIP_11)
  {
-  /* Caso 1: (0,1) ---<>--- (0,1)
-     Caso 2: (1,1) ---<>--- (0,1) */
+  /* Case 1: (0,1) ---<>--- (0,1)
+     Case 2: (1,1) ---<>--- (0,1) */
   if((!src_mandatory && !dst_mandatory) ||
       (src_mandatory && !dst_mandatory))
    return(dynamic_cast<Tabela *>(dst_table));
-  /* Caso 3: (0,1) ---<>--- (1,1)
-              Adição de colunas na tabela cuja cardinalidade mínima é 0
-              (opcionalidade de participação no relacionamento) */
+  /* Case 3: (0,1) ---<>--- (1,1) */
   else if(!src_mandatory && dst_mandatory)
    return(dynamic_cast<Tabela *>(src_table));
-   // Caso 4: (1,1) ---<>--- (1,1)
+  // Case 4: (1,1) ---<>--- (1,1)
   else
-    /* Caso o usuário tente criar um relacionamento 1-1 onde ambas as entidades
-     têm participação obrigatório, será retornado um valor nulo pois este tipo
-     de relacionamento não está implementado por quebrar a modelagem feita
-     pelo usuário */
+  /* Returns NULL since this type of relationship isn't implemented. Refer to
+     header file top comment for details */
   return(NULL);
  }
- /* Para relacionamentos 1-n , a ordem das
-    tabelas não se alteram, ou seja, as colunas são sempre adicionadas
-    na tabela de destino */
+ /* For 1-n relationships, the table order is unchagned this means that
+    the columns are always included in the destination table */
  else if(rel_type==RELATIONSHIP_1N)
   return(dynamic_cast<Tabela *>(dst_table));
- /* Para relacionamentos gen ou dep as colunas são sempre adicionadas
-    na tabela de origem do relacionamento */
+ /* For generalization / copy relationships the columns are always added
+    in the source table */
  else if(rel_type==RELATIONSHIP_GEN ||
          rel_type==RELATIONSHIP_DEP)
   return(dynamic_cast<Tabela *>(src_table));
- /* Para relacionamentos n-n, a tabela de destino onde serão adicionadas as colunas
-    será a tabela que representa o relacionamento (tabela_relnn). As tabelas
-    participantes do relacionamento sempre serão as tabelas de origem pois as colunas
-   destas precisam ser adicionadas na tabela que define o relacionamento */
+ //For n-n relationships, the columns are added in the table that represents the relationship (table_relnn)
  else
   return(dynamic_cast<Tabela *>(table_relnn));
 }
@@ -1564,7 +1556,7 @@ void Relationship::removeTableObjectsRefCols(Tabela *table)
  Constraint *constr=NULL;
  int i, count;
 
- //Remove os gatilhos que referenciam alguma coluna inc. por relação
+ //Remove all triggers that reference columns added by relationship
  count=table->obterNumGatilhos();
  for(i=0; i < count; i++)
  {
@@ -1578,7 +1570,7 @@ void Relationship::removeTableObjectsRefCols(Tabela *table)
   }
  }
 
- //Remove os índices que referenciam alguma coluna inc. por relação
+ //Remove all indexes that reference columns added by relationship
  count=table->obterNumIndices();
  for(i=0; i < count; i++)
  {
@@ -1592,7 +1584,7 @@ void Relationship::removeTableObjectsRefCols(Tabela *table)
   }
  }
 
- //Remove as restrições que referenciam alguma coluna inc. por relação
+ //Remove all constraints that reference columns added by relationship
  count=table->obterNumRestricoes();
  for(i=0; i < count; i++)
  {
@@ -1617,33 +1609,23 @@ void Relationship::removeColumnsFromTablePK(Tabela *table)
   Column *column=NULL;
   unsigned i, count;
 
-  /* Obtém a chave primáira da tabela e remove desta
-     as colunas adicionadas por relacionamento */
+  /* Gets the table primary key and removes the columns
+     created by the relationship from it */
   pk=table->obterChavePrimaria();
 
-  /* Verifica se a chave estrangeira da tabela existe.
-     Normalmente, esta chave sempre existirá, porém
-     caso a mesma deixe de existir por algum erro anterior a desconexão
-     do relacionamento, como é o caso do método de validação
-     ModeloBD::validarRefColsIncRelacao() o qual remove restrições caso
-     estas se tornem inválidas ou seja referenciem colunas de tabelas
-     que deixaram de existir, por isso é prudente sempre verificar se
-     a chave primária da tabela existe para não provocar segmentations fault */
   if(pk)
   {
    count=pk->getColumnCount(Constraint::SOURCE_COLS);
 
    for(i=0; i < count; i++)
    {
-    //Obtém uma coluna da chave primária
     column=pk->getColumn(i, Constraint::SOURCE_COLS);
 
-    /* Caso a coluna foi incluída por relacionamento e a mesma pertence
-       ao próprio relacionamento */
+    //Case the column was added by relationship and it belongs to the relationship
     if(column->isAddedByRelationship() &&
       (isColumnExists(column) || getObjectIndex(column) >= 0))
     {
-     //Remove a coluna da chave primária
+     //Removes the column from primary key
      pk->removeColumn(column->getName(), Constraint::SOURCE_COLS);
      i--; count--;
     }
@@ -1676,7 +1658,6 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 
      removeColumnsFromTablePK(table);
 
-    //Remove a tabela cópia/pai dependendo do tipo do relacionamento
     if(rel_type==RELATIONSHIP_GEN)
      table->removerObjeto(getReferenceTable()->getName(true), OBJ_TABLE);
     else
@@ -1687,79 +1668,70 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
     Constraint *pk=NULL, *constr=NULL;
     unsigned i, count;
 
-    /* No caso de relacionamento 1-1 e 1-n é necessário
-       remover a chave estrangeira que representa o
-       relacionamento da tabela, além disso colunas
-       adicionadas   chave primária (no caso de um
-       relacionamento identificador) precisam ser removidas */
+    /* In case of relationship 1-1 and 1-n is necessary remove the
+       foreign key that represents the relationship furthermore columns
+       added to primary key (in case of a identifier relationship) must be removed */
     if(fk_rel1n && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
     {
-     /* Obtém a tabela a qual possui a chave estrangeira que representa o
-        relacionamento (tabela esta onde foi inserida a chave estrangeira
-        no momento da conexão do relacionamento) */
+     /* Gets the table which has a foreign key that represents the
+        relationship (the table where the foreign key was inserted
+        upon connection of the relationship) */
      table=dynamic_cast<Tabela *>(fk_rel1n->getParentTable());
 
-     //Remove a chave estrangeira da tabela
+     //Removes the foreign key from table
      table->removerRestricao(fk_rel1n->getName());
 
-     /* Obtém a chave primária da tabela para checar se a mesma é igual a chave primária
-        que define o relacionamento identificador */
+     /* Gets the table primary key to check if it is the same as the primary key
+        that defines the identifier relationship */
      pk=table->obterChavePrimaria();
 
-     //Remove as colunas criadas pelo relacionamento da chave primária da tabela
+     //Removes the relationship created columns from table primary key
      removeColumnsFromTablePK(table);
 
      if(rem_tab_objs)
       removeTableObjectsRefCols(table);
 
-     /* Remove as colunas da chave estrangeira e a desaloca, apenas para
-        relacionamentos 1-1 e 1-n. */
+     //Destroy the foreign key
      fk_rel1n->removeColumns();
      delete(fk_rel1n);
      fk_rel1n=NULL;
 
+     //Destroy the auto created unique key if it exists
      if(uq_rel11)
      {
-      //Remove a chave única da tabela
       table->removerRestricao(uq_rel11->getName());
       uq_rel11->removeColumns();
       delete(uq_rel11);
       uq_rel11=NULL;
      }
 
-     /* Remove a chave primária da tabela caso esta foi criada automaticamente
-        (caso de relacionamento identificador e entidade fraca sem chave primária) */
+     /* Removes the primary key from the table in case of identifier relationship where
+        the primary key is created on the weak entity */
      if(pk && pk==this->pk_relident)
      {
-      /* Obtém a tabela a qual possui a chave primária criada pelo relacionamento
-         caso este seja um relacionamento identificador */
+      //Gets the table that own the identifier relationship primary key
       table=dynamic_cast<Tabela *>(pk_relident->getParentTable());
-      //Remove a chave primária da tabela
+
+      //Removes the primary key from table
       table->removerRestricao(pk_relident->getName());
 
-      //Desaloca a chave primária
+      //Destroy the primary key
       delete(pk);
       pk_relident=NULL;
      }
     }
     else if(rel_type==RELATIONSHIP_NN)
     {
-     /* Caso o relacionamento seja n-n, apenas remove as restrições sem
-        qualquer validação */
+     //In case of n-n relationship destroy the added constraints
      count=table_relnn->obterNumRestricoes();
 
      for(i=0; i < count ; i++)
      {
-      //Obtém a restrição
       constr=table_relnn->obterRestricao(i);
 
-      /* Caso a restrição foi adicionada por lgação porém não é uma restrição criada pelo usuário e
-         e sim uma restrição criada quando o relacionamento é conectado (ex. chave primária e chaves estrangeiras).
-         A segunda parte da condição obterIndiceObjeto(rest) < 0 verifica se a restrição a ser removida não fazer
-         parte da lista de restrições criadas pelo usuário, caso faça parte, não será destruída */
+      //Destroy the constraint only if it was created by the relationship
       if(constr->isAddedByRelationship() && getObjectIndex(constr) < 0)
       {
-       //Remove a restrição da tabela
        table_relnn->removerRestricao(constr->getName());
        i--; count--;
        delete(constr);
@@ -1768,80 +1740,64 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
     }
    }
 
-   /* Remover os atributos e restrições do relacionamento os quais
-      estão incluídos nas tabelas participantes. */
    table=getReceiverTable();
+
+   //Removing relationship attributes and constraints from the receiver table
    while(list_idx <= 1)
    {
-    /* Seleciona a lista de objetos, a primeira lista sempre deve ser a
-       de restrições para evitar de se remover colunas antes das restrições
-       gerando erro de remoção de coluna referenciada */
     attr_list=(list_idx==0 ? &rel_constraints : &rel_attributes);
 
     itr_atrib=attr_list->begin();
     itr_atrib_end=attr_list->end();
 
-    //Varre a lista de atributos selecionada
     while(itr_atrib!=itr_atrib_end)
     {
-     //Obtém o atributo
      tab_obj=(*itr_atrib);
-     //tipo_obj=obj_tab->obterTipoObjeto();
 
-     /* É necessário verificar se o objeto pertence ao relacionamento
-        a fim de evitar que atributos adicionados por outros relacionamentos
-          tabela também sejam removidos */
+     //Removes the attribute from the table only it were created by this relationship ( getObjectIndex >= 0)
      if(table && getObjectIndex(tab_obj) >= 0)
      {
-      //Remove o atributo da tabela através do nome e tipo
       table->removerObjeto(tab_obj->getName(), tab_obj->getObjectType());
       tab_obj->setParentTable(NULL);
      }
-     //Para para o atributo posterior
      itr_atrib++;
     }
-    //Passa para a lista seguinte de atributos
     list_idx++;
    }
 
-   //Excluindo as colunas incluídas na tabela pelo relacionamento
+
    itr=ref_columns.begin();
    itr_end=ref_columns.end();
 
-   /*  Varre a lista de colunas do relacionamento removendo cada uma
-      da tabela onde foi inserida e desalocando o espaço que esta
-      ocupa em memória */
+   //Destroy the columns created by the relationship
    while(itr!=itr_end)
    {
     column=(*itr);
-    //Remove a coluna da tabela pai
+
+    //Before the destruction the column is removed from table
     table->removerColuna(column->getName());
     itr++;
-    //Desaloca a coluna
+
     delete(column);
    }
 
-   //Limpa as lista de coluna do relacionamento
    ref_columns.clear();
    pk_columns.clear();
    col_suffixes.clear();
 
-   /* Caso o relacionamento seja n-n desaloca a tabela que representa
-      o relacionamento */
+
    if(table_relnn)
    {
     delete(table_relnn);
     table_relnn=NULL;
    }
 
-   //Caso a chave primária especial esteja alocada-remove-a
    if(pk_special)
    {
     delete(pk_special);
     pk_special=NULL;
    }
 
-   //Executa o método de desconexão de relacionamento da classe base
    BaseRelationship::disconnectRelationship();
   }
  }
@@ -1865,14 +1821,12 @@ bool Relationship::hasIndentifierAttribute(void)
  itr=rel_constraints.begin();
  itr_end=rel_constraints.end();
 
- //Varre a lista de restrições
  while(itr!=itr_end && !found)
  {
-  //Obtém uma restrição da lista
   constr=dynamic_cast<Constraint *>(*itr);
-  /* Um relacionamento será considerado possuir um
-     atributo identificandor quando for encontrada
-     uma chave primária em sua lista de restrições */
+
+  /* A relationship is considered to own a identifier attribute when
+     a primary key is found among the constraints */
   found=(constr->getConstraintType()==TipoRestricao::primary_key);
   itr++;
  }
@@ -1889,16 +1843,12 @@ bool Relationship::isInvalidated(void)
  Column *col1=NULL, *col2=NULL, *col3=NULL;
  QString col_name;
 
- /* Caso o relacionamento foi invaldado por modificação
-    de atributos críticos já retorna a invalidez sem
-    executar os procedimentos de validação abaixo */
  if(invalidated)
  {
-  /* Caso o relacionamento seja identificador, remove a chave primária
-     criada automaticamente quando o mesmo é conectado para forçar
-     a tabela receptora fique sem chave primária em consequência
-     todo e qualquer relacionamento 1-1, 1-n ou n-n ligado a ela
-     deverá ser revalidado */
+  /* If the relationship is identifier, removes the primary key
+     automatically created when the same is connected to force
+     the receiver table be without a primary key as a result
+     any relationship 1-1, 1-n or n-n connected to it should be revalidated */
   if(pk_relident && pk_relident->isAddedByLinking())
   {
    dynamic_cast<Tabela *>(pk_relident->getParentTable())->removerObjeto(pk_relident);
@@ -1906,72 +1856,66 @@ bool Relationship::isInvalidated(void)
   }
   return(true);
  }
- /* Caso o relacionamento esteja conectado e não esteja invalidado
-    por modificação de atributos */
  else if(connected)
  {
-   /* Valida os sufixos caso a geração automática de sufixos esteja ativa.
-      Checa se os sufixos, quando preenchidos, coincidem  com os nomes das tabelas respectivas */
+   /* Validates suffixes case automatic generation of suffixes is active.
+      Checks if the suffixes, when filled, coincide with the names of the respective tables */
    if(auto_suffix &&
       ((!src_suffix.isEmpty() &&  src_suffix!=QString(SUFFIX_SEPARATOR) + src_table->getName()) ||
        (!dst_suffix.isEmpty() &&  dst_suffix!=QString(SUFFIX_SEPARATOR) + dst_table->getName())))
     return(true);
 
-  /* Pare relacionamentos 1-1 e 1-n a verificação de
-     invalidação do relacionamento baseia-se na comparação da
-     quantidade de colunas da chave estrangeira configurada
-     pela conexão do mesmo com a quantidade de colunas da
-     chave primária da tabela de origem do relacionamento */
-  if(rel_type==RELATIONSHIP_11 ||
-     rel_type==RELATIONSHIP_1N)
+  /* For relationships 1-1 and 1-n the verification for
+     invalidation of the relationship is based on the comparison of
+     amount of foreign key columns and the number of columns of
+     primary key from the source table */
+  if(rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N)
   {
-   //Obtém a tabela de referencia do relacionamento
    table=getReferenceTable();
 
-   //Obtém a quantidade de colunas da chave estrangeira que representa a relação
+   //Gets the source columns from the foreign key that represents the relationship
    rel_cols_count=fk_rel1n->getColumnCount(Constraint::SOURCE_COLS);
 
-   //O relacionamento estára invalidado caso a tabela referência não possua uma chave primária
+   //The relationship is invalidated if the reference table doesn't has a primary key
    pk=table->obterChavePrimaria();
 
    if(pk)
    {
-    //Obtém a quantidade de colunas da chave primária da tabela
+    //Gets the amount of columns from the primary key
     tab_cols_count=pk->getColumnCount(Constraint::SOURCE_COLS);
 
-    //Obtém a tabela de referencia do relacionamento
     table1=getReceiverTable();
 
-    //Faz a verificação de quantidade de colunas
+    //Compares the column quantity
     valid=(rel_cols_count==tab_cols_count);
 
-    //A próxima validação é a de nome e tipo das colunas
+    //The next validation is on the name and type of columns
     for(i=0; i < rel_cols_count && valid; i++)
     {
-     //Obtém a da chave estrangeira
+     //Gets one column from the foreign key
      col2=ref_columns[i];
 
-     //Obtém a coluna da chave primária ligd   coluna atual da chave estrangeira
+     //Gets one column from the primary key
      col1=pk_columns[i];
 
-     /* Obtém a coluna da pk em si. Com esta referência será verificado se os endereços são iguais
-        caso não sejam invalida o relacionamento */
+     /* This third columns is get from the table primary key and will be checked if the columns
+        addresses is the same. If not the relationship is invalidated */
      col3=pk->getColumn(i, Constraint::SOURCE_COLS);
 
-     /* Para se validar as colunas entre si as seguintes regras são seguidas:
+     /* To validate the columns with each other the following rules are followed:
 
-      1) Verifica se os nomes são iguais. Caso seja iguais nada é feito.
-         Caso sejam diferentes é necessário verificar se já existe uma coluna
-         na tabela receptora com o mesmo nome da coluna atual da chave primária,
-         isso indica que a coluna da chave primária precisou ser renomeada na tabela
-         receptora pois esta já possuia uma coluna de mesmo nome.
+        1) Check if the names are the same. If they are nothing is done.
+           If they are different is necessary to check if there is already a column
+           on receiver table with the same name of the current primary key column ,
+           this indicates that the primary key column in the table had to be renamed
+           because the receiver table already had a column of the same name.
 
-      2) Verifica se os tipos das colunas são compatíveis.
-         A única exceção aceita é se o tipo da coluna de origem é do tipo 'serial' ou 'bigserial'
-         e da coluna de destino seja 'integer' ou 'bigint'
+        2) Check if the types of the columns are compatible.
+           The only accepted exception is if the type of the source column is 'serial' or 'bigserial'
+           and the target column is 'integer' or 'bigint'.
 
-      3) Checa se a coluna (endereço) vindo do vetor colunas_pk é iga   coluna
-         obtida diretamente da chave primária */
+        3) Check if the column (address) from the vector pk_columns is equal to the column
+           obtained directly from the primary key */
      col_name=col1->getName() + col_suffixes[i];
      valid=(col1==col3 &&
              (col_name==col2->getName()) &&
@@ -1981,74 +1925,64 @@ bool Relationship::isInvalidated(void)
     }
    }
   }
-  /* Para relacionamentos de dependência e generalização,
-     obtem-se a quantidade de colunas criadas pela ligação do
-     relacionamento e a compara com a quantidade de colunas
-     da tabela de origem */
+  /* For copy / generalization relationships,
+     is obtained the number of columns created when connecting it
+     and comparing with the number of columns of the source table */
   else if(rel_type==RELATIONSHIP_DEP ||
           rel_type==RELATIONSHIP_GEN)
   {
-   //Obtém a tabela de referencia do relacionamento
    table=getReferenceTable();
-
-   //Obtém a tabela de referencia do relacionamento
    table1=getReceiverTable();
 
-   /* Obtém o número total de colunas do relacionamento, incluído as
-      que foram adicionadas por relacionamentos */
+   //Gets the number of columns of the reference table
    tab_cols_count=table->obterNumColunas();
 
-   /* Obtém a quantidade de colunas criadas com a conexão da relação somando-se
-      com a quantidade de colunas rejeitadas no momento da ligaçã de acordo
-      com as regras */
+   /* Gets the number of columns created with the connection of the relationship
+      and summing with the number of columns rejected at the time of connection
+      according to the rules of copyColumns() method */
    rel_cols_count=ref_columns.size() + rejected_col_count;
+
    valid=(rel_cols_count == tab_cols_count);
 
-   /* Checando se as colunas criadas com a herança/dependência ainda existem
-      na tabela de referência */
+   /* Checking if the columns created with inheritance / copy still exist
+      in reference table */
    for(i=0; i < ref_columns.size() && valid; i++)
     valid=table->obterColuna(ref_columns[i]->getName(true));
 
-   /* Checando se as colunas da tabela referência existem na tabela
-      receptora. Na teoria todas as colunas devem existir pois uma
-      herda a outra logo todos possuirão as mesmas colunas. Caso isso
-      não acontença indica que uma coluna da tabela de referência foi
-      renomeada */
+   /* Checking if the reference table columns are in the receiver table.
+      In theory all columns must exist in the two table because one
+      inherits another soon they will possess all the same columns.
+      if this not happen indicates that a reference table column was renamed */
    for(i=0; i < tab_cols_count && valid; i++)
     valid=table1->obterColuna(table->obterColuna(i)->getName(true));
   }
-  /* Para relacionamentos n-n, é necessário as comparações:
-     1) Pega-se a chave estrangeira da tabela criada pela ligação
-     a qual referencia a tabela de origem e verifica se as quantidades
-     de colunas coincidem. O mesmo é feito para a segunda chave estrangeira
-     só que em rela   chave primaria da tabela de destino
-     2) É necessário validar se os nomes das colunas da tabela gerada
-        coincidem com os nomes das colunas das tabelas originárias */
+
+  /* For n-n relationships, it is necessary the comparisons:
+
+     1) Take up the foreign key table created by the connection
+        which references the source table and verifies if the quantities
+        of columns coincide. The same is done for the second foreign key
+        except that is in relation to the primary key of the target table
+
+     2) It is necessary to validate if the names of the table columns generated
+        matches the column names of the originating tables */
   else if(rel_type==RELATIONSHIP_NN)
   {
-   //Obtém a referência para a tabela de destino do relacionamento
    table=dynamic_cast<Tabela *>(src_table);
    table1=dynamic_cast<Tabela *>(dst_table);
 
-   /* Para se validado um relacionamento n-n, a primeira condição é que
-      ambas as tabelas possuam chave estrangeira */
+   /* To validated the n-n relationship, the first condition is that
+      both tables has primary key */
    if(table->obterChavePrimaria() && table1->obterChavePrimaria())
    {
-    //Obtém a quantidade de restrições da tabela criada pelo relacionamento
     count=table_relnn->obterNumRestricoes();
 
-    //Varre a lista de restrições da tabela
     for(i=0; i < count; i++)
     {
-     //Obtém uma restrição
      constr=table_relnn->obterRestricao(i);
 
-     //Caso a mesma seja uma chave estrangeira
      if(constr->getConstraintType()==TipoRestricao::foreign_key)
      {
-      /* Verifica se a tabela referenciada pela chave é a tabela de origem
-         caso seja, armazena seu endereço na referêni   chave estrangeira
-         da origem */
       if(!fk && constr->getReferencedTable()==table)
        fk=constr;
       else if(!fk1 && constr->getReferencedTable()==table1)
@@ -2056,47 +1990,51 @@ bool Relationship::isInvalidated(void)
      }
     }
 
-    /* A quantidade de colunas do relacionamento é calculada pela soma
-       das quantidades de colunas das chaves estrangeiras obtidas */
+    /* The number of columns of relationship is calculated by summing
+       quantities of foreign key columns obtained */
     rel_cols_count=fk->getColumnCount(Constraint::REFERENCED_COLS) + fk1->getColumnCount(Constraint::REFERENCED_COLS);
-    /* A quantidade de colunas da tabela é obtida pela soma da quantidade
-       de colunas das chaves primárias envolvidas no relacionamentos */
+
+    /* The number of columns in the table is obtained by summing the amount
+       of primary keys columns involved in the relationship */
     tab_cols_count=table->obterChavePrimaria()->getColumnCount(Constraint::SOURCE_COLS) +
-                 table1->obterChavePrimaria()->getColumnCount(Constraint::SOURCE_COLS);
+                   table1->obterChavePrimaria()->getColumnCount(Constraint::SOURCE_COLS);
+
     valid=(rel_cols_count == tab_cols_count);
 
-    /* Checando se as colunas criadas com a ligação ainda existem
-      na tabela de referência */
+    /* Checking if the columns created with the connection still exists
+       in reference table */
     count=fk->getColumnCount(Constraint::SOURCE_COLS);
+
     for(i=0; i < count && valid; i++)
     {
      col_name=fk->getColumn(i, Constraint::SOURCE_COLS)->getName();
 
-     /* Caso o sufixo da origem esteja especificado remove o mesmo do nome
-        da coluna para que a mesma seja localizada na tabela de origem */
+     /* If the suffix of origin is specified removes it from the column name
+        so that it can be located in the table */
      if(!col_suffixes[i].isEmpty())
       col_name=col_name.remove(col_suffixes[i]);
 
-     //Verifica a existencia da coluna na tabela
+     //Check if the column exists in table
      col1=table->obterColuna(col_name);
      valid=col1 &&
             table->obterChavePrimaria()->isColumnExists(col1, Constraint::SOURCE_COLS);
     }
 
-   /* Checando se as colunas criadas com a ligação ainda existem
-      na tabela de receptora */
+    /* Checking if the columns created with the connection still exists
+       in receiver table */
     i1=count;
     count+=fk1->getColumnCount(Constraint::SOURCE_COLS);
+
     for(i=0; i1 < count && valid; i1++)
     {
      col_name=fk1->getColumn(i++, Constraint::SOURCE_COLS)->getName();
 
-     /* Caso o sufixo do destino esteja especificado remove o mesmo do nome
-        da coluna para que a mesma seja localizada na tabela de destino */
+     /* If the suffix of destination is specified removes it from the column name
+        so that it can be located in the table */
      if(!col_suffixes[i1].isEmpty())
       col_name=col_name.remove(col_suffixes[i1]);
 
-     //Verifica a existencia da coluna na tabela
+     //Check if the column exists in table
      col1=table1->obterColuna(col_name);
      valid=col1 &&
             table1->obterChavePrimaria()->isColumnExists(col1, Constraint::SOURCE_COLS);
@@ -2192,7 +2130,6 @@ QString Relationship::getCodeDefinition(unsigned def_type)
   count=column_ids_pk_rel.size();
   for(i=0; i < count; i++)
   {
-   //Armazena o nome das colunas da chave primária especial se houver
    if(!ref_columns.empty() && i < ref_columns.size())
    {
     attributes[ParsersAttributes::SPECIAL_PK_COLS]+=QString("%1").arg(column_ids_pk_rel[i]);
@@ -2200,8 +2137,6 @@ QString Relationship::getCodeDefinition(unsigned def_type)
    }
   }
 
-  /* Caso não haja colunas, restrições e linha definida no relacionamento
-     a definição XML do rel. será em forma reduzida */
   reduced_form=(attributes[ParsersAttributes::COLUMNS].isEmpty() &&
                   attributes[ParsersAttributes::CONSTRAINTS].isEmpty() &&
                   attributes[ParsersAttributes::POINTS].isEmpty() &&
