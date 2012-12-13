@@ -1191,7 +1191,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_SEQUENCE:
-    sequencia_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Sequencia *>(objeto));
+    sequencia_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Sequence *>(objeto));
     sequencia_wgt->show();
    break;
 
@@ -1261,7 +1261,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_TRIGGER:
-    gatilho_wgt->definirAtributos(modelo, dynamic_cast<Tabela *>(objeto_pai), lista_op, dynamic_cast<Gatilho *>(objeto));
+    gatilho_wgt->definirAtributos(modelo, dynamic_cast<Tabela *>(objeto_pai), lista_op, dynamic_cast<Trigger *>(objeto));
     gatilho_wgt->show();
    break;
 
@@ -1577,7 +1577,7 @@ void ModeloWidget::copiarObjetos(void)
          ((tipos[id_tipo]==OBJ_CONSTRAINT &&
            dynamic_cast<Constraint *>(obj_tab)->getConstraintType()!=TipoRestricao::primary_key &&
            dynamic_cast<Constraint *>(obj_tab)->isReferRelationshipColumn()) ||
-          (tipos[id_tipo]==OBJ_TRIGGER && dynamic_cast<Gatilho *>(obj_tab)->isReferRelationshipColumn()) ||
+          (tipos[id_tipo]==OBJ_TRIGGER && dynamic_cast<Trigger *>(obj_tab)->isReferRelationshipColumn()) ||
           (tipos[id_tipo]==OBJ_INDEX && dynamic_cast<Index *>(obj_tab)->isReferRelationshipColumn())))
        vet_deps.push_back(obj_tab);
      }

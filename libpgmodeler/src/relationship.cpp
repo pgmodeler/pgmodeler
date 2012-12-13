@@ -1551,7 +1551,7 @@ Tabela *Relationship::getReceiverTable(void)
 
 void Relationship::removeTableObjectsRefCols(Tabela *table)
 {
- Gatilho *trigger=NULL;
+ Trigger *trigger=NULL;
  Index *index=NULL;
  Constraint *constr=NULL;
  int i, count;

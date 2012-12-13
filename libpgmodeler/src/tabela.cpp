@@ -209,14 +209,14 @@ void Tabela::definirAtributoGatilhos(unsigned tipo_def)
 {
  QString str_gat;
  unsigned i, qtd;
- Gatilho *gat=NULL;
+ Trigger *gat=NULL;
 
  //Concatena a definição SQL dos gatilhos da tabela
  qtd=gatilhos.size();
  for(i=0; i < qtd; i++)
  {
   //Obtém um gatilho
-  gat=dynamic_cast<Gatilho *>(gatilhos.at(i));
+  gat=dynamic_cast<Trigger *>(gatilhos.at(i));
 
   if((/*!gat->isProtected() &&*/
       !gat->isReferRelationshipColumn() &&
@@ -376,8 +376,8 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
       }
       else if(tipo_obj==OBJ_TRIGGER)
       {
-       Gatilho *gat;
-       gat=dynamic_cast<Gatilho *>(obj_tab);
+       Trigger *gat;
+       gat=dynamic_cast<Trigger *>(obj_tab);
        gat->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       }
 
@@ -450,7 +450,7 @@ void Tabela::adicionarColuna(Column *col, int idx_col)
  adicionarObjeto(col, idx_col);
 }
 
-void Tabela::adicionarGatilho(Gatilho *gat, int idx_gat)
+void Tabela::adicionarGatilho(Trigger *gat, int idx_gat)
 {
  adicionarObjeto(gat, idx_gat);
 }
@@ -844,15 +844,15 @@ Column *Tabela::obterColuna(unsigned idx_col)
  return(dynamic_cast<Column *>(obterObjeto(idx_col,OBJ_COLUMN)));
 }
 
-Gatilho *Tabela::obterGatilho(const QString &nome)
+Trigger *Tabela::obterGatilho(const QString &nome)
 {
  int idx;
- return(dynamic_cast<Gatilho *>(obterObjeto(nome,OBJ_TRIGGER,idx)));
+ return(dynamic_cast<Trigger *>(obterObjeto(nome,OBJ_TRIGGER,idx)));
 }
 
-Gatilho *Tabela::obterGatilho(unsigned idx_gat)
+Trigger *Tabela::obterGatilho(unsigned idx_gat)
 {
- return(dynamic_cast<Gatilho *>(obterObjeto(idx_gat,OBJ_TRIGGER)));
+ return(dynamic_cast<Trigger *>(obterObjeto(idx_gat,OBJ_TRIGGER)));
 }
 
 Constraint *Tabela::obterRestricao(const QString &nome)
@@ -1138,7 +1138,7 @@ void Tabela::obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_r
   bool enc=false;
   Index *ind=NULL;
   Constraint *rest=NULL;
-  Gatilho *gat=NULL;
+  Trigger *gat=NULL;
 
   //Verificando se a coluna não é referenciada nos indices
   itr=indices.begin();
@@ -1189,7 +1189,7 @@ void Tabela::obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_r
     while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !enc)))
   {
    //Verfica se a coluna a ser removida não está presente nas daus lista de colunas da contraint
-   gat=dynamic_cast<Gatilho *>(*itr);
+   gat=dynamic_cast<Trigger *>(*itr);
    itr++;
 
    qtd=gat->getColumnCount();

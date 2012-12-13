@@ -44,7 +44,7 @@ void SequenciaWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void SequenciaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Sequencia *sequencia)
+void SequenciaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Sequence *sequencia)
 {
  sel_coluna->definirModelo(modelo);
 
@@ -62,7 +62,7 @@ void SequenciaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op
  {
   ciclica_chk->setChecked(false);
   inicio_edt->setText("1");
-  maximo_edt->setText(Sequencia::VALOR_MAX_POSITIVO);
+  maximo_edt->setText(Sequence::VALOR_MAX_POSITIVO);
   minimo_edt->setText("0");
   cache_edt->setText("1");
   incremento_edt->setText("1");
@@ -76,11 +76,11 @@ void SequenciaWidget::aplicarConfiguracao(void)
 {
  try
  {
-  Sequencia *sequencia=NULL;
-  iniciarConfiguracao<Sequencia>();
+  Sequence *sequencia=NULL;
+  iniciarConfiguracao<Sequence>();
 
   //Obtém a referêni   sequência que está sendo editada/criada
-  sequencia=dynamic_cast<Sequencia *>(this->objeto);
+  sequencia=dynamic_cast<Sequence *>(this->objeto);
 
   sequencia->definirCiclica(ciclica_chk->isChecked());
   sequencia->definirValores(minimo_edt->text(), maximo_edt->text(), incremento_edt->text(),

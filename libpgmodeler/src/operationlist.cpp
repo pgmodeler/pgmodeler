@@ -50,7 +50,7 @@ void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type
     copyObject(psrc_obj, dynamic_cast<Constraint *>(copy_obj));
   break;
   case OBJ_TRIGGER:
-    copyObject(psrc_obj, dynamic_cast<Gatilho *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Trigger *>(copy_obj));
   break;
   case OBJ_RULE:
     copyObject(psrc_obj, dynamic_cast<Rule *>(copy_obj));
@@ -101,7 +101,7 @@ void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type
     copyObject(psrc_obj, dynamic_cast<Role *>(copy_obj));
   break;
   case OBJ_SEQUENCE:
-    copyObject(psrc_obj, dynamic_cast<Sequencia *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Sequence *>(copy_obj));
   break;
   case OBJ_TYPE:
     copyObject(psrc_obj, dynamic_cast<Tipo *>(copy_obj));
@@ -453,7 +453,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
       must be removed too */
    if(obj_type==OBJ_COLUMN && op_type==Operation::OBJECT_REMOVED)
     model->removerPermissoes(tab_obj);
-   else if(((obj_type==OBJ_TRIGGER && dynamic_cast<Gatilho *>(tab_obj)->isReferRelationshipColumn()) ||
+   else if(((obj_type==OBJ_TRIGGER && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipColumn()) ||
             (obj_type==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipColumn()) ||
             (obj_type==OBJ_CONSTRAINT && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipColumn())))
    {

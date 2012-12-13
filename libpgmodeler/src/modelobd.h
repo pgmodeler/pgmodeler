@@ -31,7 +31,7 @@
 #include "function.h"
 #include "schema.h"
 #include "visao.h"
-#include "sequencia.h"
+#include "sequence.h"
 #include "relationship.h"
 #include "textbox.h"
 #include "role.h"
@@ -366,9 +366,9 @@ class ModeloBD:  public QObject, public BaseObject {
   Domain *obterDominio(unsigned idx_obj);
 
   //Métodos de manipulação de sequencia
-  void adicionarSequencia(Sequencia *sequencia, int idx_obj=-1);
-  void removerSequencia(Sequencia *sequencia, int idx_obj=-1);
-  Sequencia *obterSequencia(unsigned idx_obj);
+  void adicionarSequencia(Sequence *sequencia, int idx_obj=-1);
+  void removerSequencia(Sequence *sequencia, int idx_obj=-1);
+  Sequence *obterSequencia(unsigned idx_obj);
 
   //Métodos de manipulação de permissões
   void adicionarPermissao(Permission *permissao);
@@ -421,7 +421,7 @@ class ModeloBD:  public QObject, public BaseObject {
      invalidadas caso a coluna possuidora deixe existir (desconectando um relacionamento) e
      por consequência, outros objetos como funções, funções de agregação, sejam invalidados
      por referenciar a sequência como um tipo de dado */
-  Sequencia *criarSequencia(bool ignorar_possuidora=false);
+  Sequence *criarSequencia(bool ignorar_possuidora=false);
 
   Visao *criarVisao(void);
   Permission *criarPermissao(void);
@@ -449,7 +449,7 @@ class ModeloBD:  public QObject, public BaseObject {
      evita que seja disparado um erro indicando que a tabela já possui uma chave-primária. */
   Constraint *criarRestricao(BaseObject *objeto);
   Index *criarIndice(Tabela *tabela);
-  Gatilho *criarGatilho(Tabela *tabela);
+  Trigger *criarGatilho(Tabela *tabela);
 
   /* Atualiza a referência dos tipos das colunas da tabela na lista
      de tipos do PostgreSQL. Sempre que uma tabela é removida, inserida,

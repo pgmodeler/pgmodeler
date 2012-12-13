@@ -1,9 +1,9 @@
-#include "sequencia.h"
+#include "sequence.h"
 
-const QString Sequencia::VALOR_MAX_POSITIVO="+9223372036854775807";
-const QString Sequencia::VALOR_MAX_NEGATIVO="-9223372036854775808";
+const QString Sequence::VALOR_MAX_POSITIVO="+9223372036854775807";
+const QString Sequence::VALOR_MAX_NEGATIVO="-9223372036854775808";
 
-Sequencia::Sequencia(void)
+Sequence::Sequence(void)
 {
  obj_type=OBJ_SEQUENCE;
  ciclica=false;
@@ -21,7 +21,7 @@ Sequencia::Sequencia(void)
  attributes[ParsersAttributes::OWNER_COLUMN]="";
 }
 
-bool Sequencia::valorNulo(const QString &valor)
+bool Sequence::valorNulo(const QString &valor)
 {
  unsigned i, qtd;
  bool nulo;
@@ -37,7 +37,7 @@ bool Sequencia::valorNulo(const QString &valor)
  return(nulo);
 }
 
-bool Sequencia::valorValido(const QString &valor)
+bool Sequence::valorValido(const QString &valor)
 {
  /*
   Para que um valor seja válido o mesmo deve ou não iniciar com
@@ -70,7 +70,7 @@ bool Sequencia::valorValido(const QString &valor)
  }
 }
 
-QString Sequencia::formatarValor(const QString &valor)
+QString Sequence::formatarValor(const QString &valor)
 {
  QString valor_fmt;
 
@@ -99,7 +99,7 @@ QString Sequencia::formatarValor(const QString &valor)
  return(valor_fmt);
 }
 
-int Sequencia::compararValores(QString valor1, QString valor2)
+int Sequence::compararValores(QString valor1, QString valor2)
 {
  if(valor1==valor2)
   return(0);
@@ -145,7 +145,7 @@ int Sequencia::compararValores(QString valor1, QString valor2)
  }
 }
 
-void Sequencia::setName(const QString &nome)
+void Sequence::setName(const QString &nome)
 {
  QString nome_ant=this->getName(true);
  BaseObject::setName(nome);
@@ -155,7 +155,7 @@ void Sequencia::setName(const QString &nome)
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 
-void Sequencia::setSchema(BaseObject *esquema)
+void Sequence::setSchema(BaseObject *esquema)
 {
  Tabela *tabela=NULL;
  QString nome_ant=this->getName(true);
@@ -179,12 +179,12 @@ void Sequencia::setSchema(BaseObject *esquema)
  TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
 }
 
-void Sequencia::definirCiclica(bool valor)
+void Sequence::definirCiclica(bool valor)
 {
  ciclica=valor;
 }
 
-void Sequencia::definirValores(QString vmin, QString vmax, QString inc, QString inicio, QString cache)
+void Sequence::definirValores(QString vmin, QString vmax, QString inc, QString inicio, QString cache)
 {
  vmin=formatarValor(vmin);
  vmax=formatarValor(vmax);
@@ -214,7 +214,7 @@ void Sequencia::definirValores(QString vmin, QString vmax, QString inc, QString 
  this->inicio=inicio;
 }
 
-void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
+void Sequence::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
 {
  if(!tabela || nome_coluna=="")
   this->coluna=NULL;
@@ -250,7 +250,7 @@ void Sequencia::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
  }
 }
 
-void Sequencia::definirPossuidora(Column *coluna)
+void Sequence::definirPossuidora(Column *coluna)
 {
  Tabela *tabela=NULL;
 
@@ -288,47 +288,47 @@ void Sequencia::definirPossuidora(Column *coluna)
  }
 }
 
-bool Sequencia::referenciaColunaIncRelacao(void)
+bool Sequence::referenciaColunaIncRelacao(void)
 {
  return(coluna && coluna->isAddedByRelationship());
 }
 
-bool Sequencia::sequenciaCiclica(void)
+bool Sequence::sequenciaCiclica(void)
 {
  return(ciclica);
 }
 
-QString Sequencia::obterValorMax(void)
+QString Sequence::obterValorMax(void)
 {
  return(valor_max);
 }
 
-QString Sequencia::obterValorMin(void)
+QString Sequence::obterValorMin(void)
 {
  return(valor_min);
 }
 
-QString Sequencia::obterCache(void)
+QString Sequence::obterCache(void)
 {
  return(cache);
 }
 
-QString Sequencia::obterIncremento(void)
+QString Sequence::obterIncremento(void)
 {
  return(incremento);
 }
 
-QString Sequencia::obterInicio(void)
+QString Sequence::obterInicio(void)
 {
  return(inicio);
 }
 
-Column *Sequencia::obterPossuidora(void)
+Column *Sequence::obterPossuidora(void)
 {
  return(coluna);
 }
 
-QString Sequencia::getCodeDefinition(unsigned tipo_def)
+QString Sequence::getCodeDefinition(unsigned tipo_def)
 {
  QString str_aux;
  Tabela *tabela=NULL;
@@ -353,7 +353,7 @@ QString Sequencia::getCodeDefinition(unsigned tipo_def)
  return(BaseObject::__getCodeDefinition(tipo_def));
 }
 
-void Sequencia::operator = (Sequencia &seq)
+void Sequence::operator = (Sequence &seq)
 {
  QString nome_ant=this->getName(true);
 

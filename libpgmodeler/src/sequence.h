@@ -20,13 +20,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef SEQUENCIA_H
-#define SEQUENCIA_H
+#ifndef SEQUENCE_H
+#define SEQUENCE_H
 
 #include "baseobject.h"
 #include "tabela.h"
 
-class Sequencia: public BaseObject {
+class Sequence: public BaseObject {
  private:
   //Define se a sequencia é cíclica
   bool ciclica;
@@ -66,7 +66,7 @@ class Sequencia: public BaseObject {
   static const QString VALOR_MAX_POSITIVO;
   static const QString VALOR_MAX_NEGATIVO;
 
-  Sequencia(void);
+  Sequence(void);
 
   //Define se a seqüência é cíclica
   void definirCiclica(bool valor);
@@ -97,7 +97,7 @@ class Sequencia: public BaseObject {
   Column *obterPossuidora(void);
   bool referenciaColunaIncRelacao(void);
 
-  void operator = (Sequencia &seq);
+  void operator = (Sequence &seq);
 
   //Retorna a definição SQL ou XML do objeto
   QString getCodeDefinition(unsigned tipo_def);

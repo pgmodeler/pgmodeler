@@ -1,6 +1,6 @@
 #include "trigger.h"
 
-Gatilho::Gatilho(void)
+Trigger::Trigger(void)
 {
  unsigned i;
  TipoEvento tipos[4]={TipoEvento::on_insert, TipoEvento::on_delete,
@@ -32,12 +32,12 @@ Gatilho::Gatilho(void)
  attributes[ParsersAttributes::DECL_IN_TABLE]="";
 }
 
-void Gatilho::addArgument(const QString &arg)
+void Trigger::addArgument(const QString &arg)
 {
  arguments.push_back(arg);
 }
 
-void Gatilho::setArgumentAttribute(unsigned def_type)
+void Trigger::setArgumentAttribute(unsigned def_type)
 {
  QString str_args;
  unsigned i, count;
@@ -56,12 +56,12 @@ void Gatilho::setArgumentAttribute(unsigned def_type)
  attributes[ParsersAttributes::ARGUMENTS]=str_args;
 }
 
-void Gatilho::setFiringType(TipoDisparo firing_type)
+void Trigger::setFiringType(TipoDisparo firing_type)
 {
  this->firing_type=firing_type;
 }
 
-void Gatilho::setEvent(TipoEvento event, bool value)
+void Trigger::setEvent(TipoEvento event, bool value)
 {
  if(event==TipoEvento::on_select)
   throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -69,7 +69,7 @@ void Gatilho::setEvent(TipoEvento event, bool value)
  events[event]=value;
 }
 
-void Gatilho::setFunction(Function *func)
+void Trigger::setFunction(Function *func)
 {
  //Case the function is null an error is raised
  if(!func)
@@ -93,12 +93,12 @@ void Gatilho::setFunction(Function *func)
  }
 }
 
-void Gatilho::setCondition(const QString &cond)
+void Trigger::setCondition(const QString &cond)
 {
  this->condition=cond;
 }
 
-void Gatilho::addColumn(Column *column)
+void Trigger::addColumn(Column *column)
 {
  if(!column)
   throw Exception(QString(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN))
@@ -114,7 +114,7 @@ void Gatilho::addColumn(Column *column)
   upd_columns.push_back(column);
 }
 
-void Gatilho::editArgument(unsigned arg_idx, const QString &new_arg)
+void Trigger::editArgument(unsigned arg_idx, const QString &new_arg)
 {
  //Raises an error if the argument index is invalid (out of bound)
  if(arg_idx>=arguments.size())
@@ -126,12 +126,12 @@ void Gatilho::editArgument(unsigned arg_idx, const QString &new_arg)
  (*itr)=new_arg;
 }
 
-void Gatilho::setExecutePerRow(bool value)
+void Trigger::setExecutePerRow(bool value)
 {
  is_exec_per_row=value;
 }
 
-bool Gatilho::isExecuteOnEvent(TipoEvento event)
+bool Trigger::isExecuteOnEvent(TipoEvento event)
 {
  if(event==TipoEvento::on_select)
   throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -139,7 +139,7 @@ bool Gatilho::isExecuteOnEvent(TipoEvento event)
  return(events.at(!event));
 }
 
-QString Gatilho::getArgument(unsigned arg_idx)
+QString Trigger::getArgument(unsigned arg_idx)
 {
  //Raises an error if the argument index is invalid (out of bound)
  if(arg_idx>=arguments.size())
@@ -148,7 +148,7 @@ QString Gatilho::getArgument(unsigned arg_idx)
  return(arguments[arg_idx]);
 }
 
-Column *Gatilho::getColumn(unsigned col_idx)
+Column *Trigger::getColumn(unsigned col_idx)
 {
  //Raises an error if the column index is invalid (out of bound)
  if(col_idx>=upd_columns.size())
@@ -157,32 +157,32 @@ Column *Gatilho::getColumn(unsigned col_idx)
  return(upd_columns[col_idx]);
 }
 
-unsigned Gatilho::getArgumentCount(void)
+unsigned Trigger::getArgumentCount(void)
 {
  return(arguments.size());
 }
 
-unsigned Gatilho::getColumnCount(void)
+unsigned Trigger::getColumnCount(void)
 {
  return(upd_columns.size());
 }
 
-Function *Gatilho::getFunction(void)
+Function *Trigger::getFunction(void)
 {
  return(function);
 }
 
-QString Gatilho::getCondition(void)
+QString Trigger::getCondition(void)
 {
  return(condition);
 }
 
-TipoDisparo Gatilho::getFiringType(void)
+TipoDisparo Trigger::getFiringType(void)
 {
  return(firing_type);
 }
 
-void Gatilho::removeArgument(unsigned arg_idx)
+void Trigger::removeArgument(unsigned arg_idx)
 {
  //Raises an error if the argument index is invalid (out of bound)
  if(arg_idx>=arguments.size())
@@ -193,17 +193,17 @@ void Gatilho::removeArgument(unsigned arg_idx)
  arguments.erase(itr);
 }
 
-void Gatilho::removeArguments(void)
+void Trigger::removeArguments(void)
 {
  arguments.clear();
 }
 
-void Gatilho::removeColumns(void)
+void Trigger::removeColumns(void)
 {
  upd_columns.clear();
 }
 
-void Gatilho::setReferecendTable(BaseObject *ref_table)
+void Trigger::setReferecendTable(BaseObject *ref_table)
 {
  //If the referenced table isn't valid raises an error
  if(ref_table && ref_table->getObjectType()!=OBJ_TABLE)
@@ -212,32 +212,32 @@ void Gatilho::setReferecendTable(BaseObject *ref_table)
  this->referenced_table=ref_table;
 }
 
-void Gatilho::setDeferralType(TipoPostergacao tipo)
+void Trigger::setDeferralType(TipoPostergacao tipo)
 {
  deferral_type=tipo;
 }
 
-void Gatilho::setDeferrable(bool valor)
+void Trigger::setDeferrable(bool valor)
 {
  is_deferrable=valor;
 }
 
-BaseObject *Gatilho::getReferencedTable(void)
+BaseObject *Trigger::getReferencedTable(void)
 {
  return(referenced_table);
 }
 
-TipoPostergacao Gatilho::getDeferralType(void)
+TipoPostergacao Trigger::getDeferralType(void)
 {
  return(deferral_type);
 }
 
-bool Gatilho::isDeferrable(void)
+bool Trigger::isDeferrable(void)
 {
  return(is_deferrable);
 }
 
-bool Gatilho::isReferRelationshipColumn(void)
+bool Trigger::isReferRelationshipColumn(void)
 {
  vector<Column *>::iterator itr, itr_end;
  Column *col=NULL;
@@ -256,7 +256,7 @@ bool Gatilho::isReferRelationshipColumn(void)
  return(enc);
 }
 
-void Gatilho::setBasicAttributes(unsigned def_type)
+void Trigger::setBasicAttributes(unsigned def_type)
 {
  QString str_aux,
          attribs[4]={ParsersAttributes::INS_EVENT, ParsersAttributes::DEL_EVENT,
@@ -301,7 +301,7 @@ void Gatilho::setBasicAttributes(unsigned def_type)
  }
 }
 
-QString Gatilho::getCodeDefinition(unsigned def_type)
+QString Trigger::getCodeDefinition(unsigned def_type)
 {
  setBasicAttributes(def_type);
 

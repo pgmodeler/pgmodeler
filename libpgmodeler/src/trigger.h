@@ -25,7 +25,7 @@
 #include "tableobject.h"
 #include "function.h"
 
-class Gatilho: public TableObject{
+class Trigger: public TableObject{
  protected:
   //Arguments passed to the function that trigger executes
   vector<QString> arguments;
@@ -67,7 +67,7 @@ class Gatilho: public TableObject{
 
 
  public:
-  Gatilho(void);
+  Trigger(void);
 
   /* Adds a column as a firing condition (only when the event UPDATE is used).
      The columns added by this method must belongs to the trigger owner table. */

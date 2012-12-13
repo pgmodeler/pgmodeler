@@ -25,7 +25,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/trigger.h \
            $$PWD/src/baseobject.h \
            $$PWD/src/rule.h \
-           $$PWD/src/sequencia.h \
+           $$PWD/src/sequence.h \
            $$PWD/src/tipospgsql.h \
            $$PWD/src/conversion.h \
            $$PWD/src/schema.h \
@@ -60,7 +60,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/schema.cpp \
             $$PWD/src/language.cpp \
             $$PWD/src/role.cpp \
-            $$PWD/src/sequencia.cpp \
+            $$PWD/src/sequence.cpp \
             $$PWD/src/visao.cpp \
             $$PWD/src/conversion.cpp \
             $$PWD/src/function.cpp \

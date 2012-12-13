@@ -195,7 +195,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_DOMAIN)
     adicionarDominio(dynamic_cast<Domain *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_SEQUENCE)
-    adicionarSequencia(dynamic_cast<Sequencia *>(objeto), idx_obj);
+    adicionarSequencia(dynamic_cast<Sequence *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_PERMISSION)
     adicionarPermissao(dynamic_cast<Permission *>(objeto));
   }
@@ -253,7 +253,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_DOMAIN)
     removerDominio(dynamic_cast<Domain *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_SEQUENCE)
-    removerSequencia(dynamic_cast<Sequencia *>(objeto), idx_obj);
+    removerSequencia(dynamic_cast<Sequence *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_PERMISSION)
     removerPermissao(dynamic_cast<Permission *>(objeto));
   }
@@ -318,7 +318,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
  else if(tipo_obj==OBJ_DOMAIN)
   removerDominio(dynamic_cast<Domain *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_SEQUENCE)
-  removerSequencia(dynamic_cast<Sequencia *>(objeto), idx_obj);
+  removerSequencia(dynamic_cast<Sequence *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_RELATIONSHIP || tipo_obj==BASE_RELATIONSHIP)
   removerRelacionamento(dynamic_cast<BaseRelationship *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_PERMISSION)
@@ -789,7 +789,7 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
  }
 }
 
-void ModeloBD::adicionarSequencia(Sequencia *sequencia, int idx_obj)
+void ModeloBD::adicionarSequencia(Sequence *sequencia, int idx_obj)
 {
  try
  {
@@ -805,12 +805,12 @@ void ModeloBD::adicionarSequencia(Sequencia *sequencia, int idx_obj)
  }
 }
 
-Sequencia *ModeloBD::obterSequencia(unsigned idx_obj)
+Sequence *ModeloBD::obterSequencia(unsigned idx_obj)
 {
- return(dynamic_cast<Sequencia *>(obterObjeto(idx_obj, OBJ_SEQUENCE)));
+ return(dynamic_cast<Sequence *>(obterObjeto(idx_obj, OBJ_SEQUENCE)));
 }
 
-void ModeloBD::removerSequencia(Sequencia *sequencia, int idx_obj)
+void ModeloBD::removerSequencia(Sequence *sequencia, int idx_obj)
 {
  if(sequencia)
  {
@@ -1310,12 +1310,12 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
  unsigned qtd, i, id_tipo;
 
  vector<BaseObject *>::iterator itr, itr_end;
- Sequencia *sequencia=NULL;
+ Sequence *sequencia=NULL;
  Tabela *tabela=NULL;
  TableObject *obj_tab=NULL;
  Constraint *restricao=NULL;
  Index *indice=NULL;
- Gatilho *gatilho=NULL;
+ Trigger *gatilho=NULL;
  Visao *visao=NULL;
  BaseRelationship *rel=NULL;
  Reference ref;
@@ -1369,7 +1369,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
      else if(tipo_obj_tab[id_tipo]==OBJ_TRIGGER)
      {
       //Converte o objeto tabela genérico em gatilho
-      gatilho=dynamic_cast<Gatilho *>(obj_tab);
+      gatilho=dynamic_cast<Trigger *>(obj_tab);
 
       /* O gatilho só será considerado como especial caso referencie
          colunas adicionadas por relacionamento */
@@ -1420,7 +1420,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
   while(itr!=itr_end)
   {
    //Obtém a sequencia atual através do iterador atual
-   sequencia=dynamic_cast<Sequencia *>(*itr);
+   sequencia=dynamic_cast<Sequence *>(*itr);
    itr++;
 
    /* Caso a coluna for incluída por relacionamento considera
@@ -1519,7 +1519,7 @@ void ModeloBD::criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj)
    objeto=criarObjeto(tipo_obj);
 
   if(tipo_obj==OBJ_SEQUENCE)
-   adicionarSequencia(dynamic_cast<Sequencia *>(objeto));
+   adicionarSequencia(dynamic_cast<Sequence *>(objeto));
   else if(tipo_obj==OBJ_VIEW)
    adicionarVisao(dynamic_cast<Visao *>(objeto));
 
@@ -5077,10 +5077,10 @@ Rule *ModeloBD::criarRegra(void)
  return(regra);
 }
 
-Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
+Trigger *ModeloBD::criarGatilho(Tabela *tabela)
 {
  map<QString, QString> atributos;
- Gatilho *gatilho=NULL;
+ Trigger *gatilho=NULL;
  QString elem, str_aux;
  QStringList lista_aux;
  int qtd, i;
@@ -5108,7 +5108,7 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
                   ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  gatilho=new Gatilho;
+  gatilho=new Trigger;
   gatilho->setParentTable(tabela);
 
   definirAtributosBasicos(gatilho);
@@ -5252,10 +5252,10 @@ Gatilho *ModeloBD::criarGatilho(Tabela *tabela)
  return(gatilho);
 }
 
-Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
+Sequence *ModeloBD::criarSequencia(bool ignorar_possuidora)
 {
  map<QString, QString> atributos;
- Sequencia *sequencia=NULL;
+ Sequence *sequencia=NULL;
  BaseObject *tabela=NULL;
  Column *coluna=NULL;
  QString elem, str_aux, nome_tab, nome_col;
@@ -5264,7 +5264,7 @@ Sequencia *ModeloBD::criarSequencia(bool ignorar_possuidora)
 
  try
  {
-  sequencia=new Sequencia;
+  sequencia=new Sequence;
   definirAtributosBasicos(sequencia);
 
   //Obtém os atributos do elemento
@@ -6043,7 +6043,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
  vector<Constraint *> vet_fks;
  Tabela *tabela=NULL;
  Index *indice=NULL;
- Gatilho *gatilho=NULL;
+ Trigger *gatilho=NULL;
  Constraint *restricao=NULL;
  Relationship *relacao=NULL;
  ObjectType tipo_obj,
@@ -6740,7 +6740,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   //** Obtendo as dependências de Sequências **
   else if(tipo_obj==OBJ_SEQUENCE)
   {
-   Sequencia *seq=dynamic_cast<Sequencia *>(objeto);
+   Sequence *seq=dynamic_cast<Sequence *>(objeto);
    if(seq->obterPossuidora())
     obterDependenciasObjeto(seq->obterPossuidora()->getParentTable(), vet_deps, inc_dep_indiretas);
   }
@@ -6750,7 +6750,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    Tabela *tab=dynamic_cast<Tabela *>(objeto);
    BaseObject *tipo_usr=NULL;
    Constraint *rest=NULL;
-   Gatilho *gat=NULL;
+   Trigger *gat=NULL;
    Index *ind=NULL;
    Column *col=NULL;
    unsigned qtd, qtd1, i, i1;
@@ -6784,7 +6784,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    qtd=tab->obterNumGatilhos();
    for(i=0; i < qtd; i++)
    {
-    gat=dynamic_cast<Gatilho *>(tab->obterGatilho(i));
+    gat=dynamic_cast<Trigger *>(tab->obterGatilho(i));
     if(gat->getReferencedTable())
      obterDependenciasObjeto(gat->getReferencedTable(), vet_deps, inc_dep_indiretas);
 
@@ -6883,10 +6883,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
   if(tipo_obj==OBJ_TABLE)
   {
    Tabela *tabela=dynamic_cast<Tabela *>(objeto);
-   Sequencia *seq=NULL;
+   Sequence *seq=NULL;
    Constraint *rest=NULL;
    Tabela *tab=NULL;
-   Gatilho *gat=NULL;
+   Trigger *gat=NULL;
    BaseRelationship *rel_base=NULL;
    vector<BaseObject *>::iterator itr, itr_end;
    unsigned i, qtd;
@@ -6916,7 +6916,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
 
    while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
    {
-    seq=dynamic_cast<Sequencia *>(*itr);
+    seq=dynamic_cast<Sequence *>(*itr);
     if(seq->obterPossuidora() &&
        seq->obterPossuidora()->getParentTable()==tabela)
     {
@@ -7000,7 +7000,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    Tabela *tab=NULL;
    Aggregate *func_ag=NULL;
    Operator *oper=NULL;
-   Gatilho *gat=NULL;
+   Trigger *gat=NULL;
    Tipo *tipo=NULL;
    Language *ling=NULL;
 
@@ -7192,7 +7192,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    {
     case OBJ_TYPE: ptr_tipopgsql=dynamic_cast<Tipo*>(objeto); break;
     case OBJ_DOMAIN: ptr_tipopgsql=dynamic_cast<Domain*>(objeto); break;
-    case OBJ_SEQUENCE: ptr_tipopgsql=dynamic_cast<Sequencia*>(objeto); break;
+    case OBJ_SEQUENCE: ptr_tipopgsql=dynamic_cast<Sequence*>(objeto); break;
     default: ptr_tipopgsql=dynamic_cast<Tabela*>(objeto); break;
    }
 
@@ -7660,7 +7660,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
         Caso 2: o tipo atual seja visão, faz o cast para a classe
         e chama do método da visão o qual retorna se a coluna
         é referenciada pelo elementos da visão. */
-     if((tipos_obj[i]==OBJ_SEQUENCE && dynamic_cast<Sequencia *>(*itr)->obterPossuidora()==coluna) ||
+     if((tipos_obj[i]==OBJ_SEQUENCE && dynamic_cast<Sequence *>(*itr)->obterPossuidora()==coluna) ||
         (tipos_obj[i]==OBJ_VIEW && dynamic_cast<Visao *>(*itr)->referenciaColuna(coluna)))
      {
       refer=true;
@@ -7670,7 +7670,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      {
       Tabela *tab=dynamic_cast<Tabela *>(*itr);
       unsigned qtd_gat, qtd_rest, idx, qtd1, i1;
-      Gatilho *gat=NULL;
+      Trigger *gat=NULL;
 
       qtd_rest=tab->obterNumRestricoes();
       for(idx=0; idx < qtd_rest && (!modo_exclusao || (modo_exclusao && !refer)); idx++)

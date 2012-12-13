@@ -207,7 +207,7 @@ void GatilhoWidget::hideEvent(QHideEvent *evento)
  sel_tabela_ref->removerObjetoSelecionado();
 }
 
-void GatilhoWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, OperationList *lista_op, Gatilho *gatilho)
+void GatilhoWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, OperationList *lista_op, Trigger *gatilho)
 {
  unsigned qtd=0, i;
  Column *coluna=NULL;
@@ -273,14 +273,14 @@ void GatilhoWidget::aplicarConfiguracao(void)
 {
  try
  {
-  Gatilho *gatilho=NULL;
+  Trigger *gatilho=NULL;
   unsigned i, qtd;
   Column *coluna=NULL;
 
-  iniciarConfiguracao<Gatilho>();
+  iniciarConfiguracao<Trigger>();
 
   //Obtém a referência ao gatilho que está sendo criado/editado
-  gatilho=dynamic_cast<Gatilho *>(this->objeto);
+  gatilho=dynamic_cast<Trigger *>(this->objeto);
 
   //Configura no gatilhos todos os atributos preenchidos no formulário
   gatilho->setFiringType(TipoDisparo(tipo_disparo_cmb->currentText()));

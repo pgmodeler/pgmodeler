@@ -150,7 +150,7 @@ void TabelaWidget::exibirFormObjetoTabela(ObjectType tipo_obj)
   break;
 
   case OBJ_TRIGGER:
-   gatilho_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Gatilho *>(objeto));
+   gatilho_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Trigger *>(objeto));
    gatilho_wgt->show();
   break;
 
@@ -338,7 +338,7 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  TabelaObjetosWidget *tab=NULL;
  Column *coluna=NULL;
  Constraint *restricao=NULL;
- Gatilho *gatilho=NULL;
+ Trigger *gatilho=NULL;
  Rule *regra=NULL;
  Index *indice=NULL;
  ObjectType tipo_obj;
@@ -410,7 +410,7 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  }
  else if(tipo_obj==OBJ_TRIGGER)
  {
-  gatilho=dynamic_cast<Gatilho *>(objeto);
+  gatilho=dynamic_cast<Trigger *>(objeto);
   //Coluna 2: Tipo de disparo do gatilho
   tab->definirTextoCelula(~gatilho->getFiringType(),idx_lin,2);
 

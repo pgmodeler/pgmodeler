@@ -260,7 +260,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   else
   {
    Rule *regra=dynamic_cast<Rule *>(objeto_tab);
-   Gatilho *gatilho=dynamic_cast<Gatilho *>(objeto_tab);
+   Trigger *gatilho=dynamic_cast<Trigger *>(objeto_tab);
    Index *indice=dynamic_cast<Index *>(objeto_tab);
 
    //Configurando a string de restrições para regra

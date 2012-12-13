@@ -136,7 +136,7 @@ class Tabela: public BaseTable {
      eles executam uma chamada ao método adicionarObjeto(OBJETO,TIPO_OBJETO) */
   void adicionarColuna(Column *col, int idx_col=-1);
   void adicionarRestricao(Constraint *constr, int idx_rest=-1);
-  void adicionarGatilho(Gatilho *gat, int idx_gat=-1);
+  void adicionarGatilho(Trigger *gat, int idx_gat=-1);
   void adicionarIndice(Index *ind, int idx_ind=-1);
   void adicionarRegra(Rule *reg, int idx_reg=-1);
 
@@ -154,8 +154,8 @@ class Tabela: public BaseTable {
   Constraint *obterRestricao(unsigned idx_constr);
 
   //Métodos que retornam um gatilho através de seu nome ou índice
-  Gatilho *obterGatilho(const QString &obj_name);
-  Gatilho *obterGatilho(unsigned idx_gat);
+  Trigger *obterGatilho(const QString &obj_name);
+  Trigger *obterGatilho(unsigned idx_gat);
 
   //Métodos que retornam um índice através de seu nome ou índice
   Index *obterIndice(const QString &obj_name);

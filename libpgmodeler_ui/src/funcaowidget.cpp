@@ -437,7 +437,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
  Conversion *conv_cod=NULL;
  Cast *conv_tipo=NULL;
  Aggregate *func_ag=NULL;
- Gatilho *gatilho=NULL;
+ Trigger *gatilho=NULL;
  Language *ling=NULL;
  Operator *oper=NULL;
  Tipo *tipo=NULL;

@@ -436,7 +436,7 @@ class TipoPgSQL: public TipoBase{
   friend class Tipo;
   friend class Domain;
   friend class Tabela;
-  friend class Sequencia;
+  friend class Sequence;
   friend class ModeloBD;
   friend class ListaOperacoes;
 };
