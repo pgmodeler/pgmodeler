@@ -1,16 +1,16 @@
 #include "sequence.h"
 
-const QString Sequence::VALOR_MAX_POSITIVO="+9223372036854775807";
-const QString Sequence::VALOR_MAX_NEGATIVO="-9223372036854775808";
+const QString Sequence::MAX_POSITIVE_VALUE="+9223372036854775807";
+const QString Sequence::MAX_NEGATIVE_VALUE="-9223372036854775808";
 
 Sequence::Sequence(void)
 {
  obj_type=OBJ_SEQUENCE;
- ciclica=false;
- incremento=inicio=cache="1";
- valor_min="0";
- valor_max=VALOR_MAX_POSITIVO;
- coluna=NULL;
+ cycle=false;
+ increment=start=cache="1";
+ min_value="0";
+ max_value=MAX_POSITIVE_VALUE;
+ owner_col=NULL;
 
  attributes[ParsersAttributes::INCREMENT]="";
  attributes[ParsersAttributes::MIN_VALUE]="";
@@ -21,121 +21,121 @@ Sequence::Sequence(void)
  attributes[ParsersAttributes::OWNER_COLUMN]="";
 }
 
-bool Sequence::valorNulo(const QString &valor)
+bool Sequence::isNullValue(const QString &value)
 {
- unsigned i, qtd;
- bool nulo;
+ unsigned i, count;
+ bool is_null;
 
  i=0;
- nulo=true;
- qtd=valor.size();
- while(i < qtd && nulo)
+ is_null=true;
+ count=value.size();
+ while(i < count && is_null)
  {
-  nulo=(valor[i]=='0' || valor[i]=='+' || valor[i]=='-');
+  is_null=(value[i]=='0' || value[i]=='+' || value[i]=='-');
   i++;
  }
- return(nulo);
+ return(is_null);
 }
 
-bool Sequence::valorValido(const QString &valor)
+bool Sequence::isValidValue(const QString &value)
 {
  /*
   Para que um valor seja válido o mesmo deve ou não iniciar com
   operador + ou - ser constituído apenas de números. E o seu
   tamanho não deve ultrapassar o tamanho da constante VALOR_MAX_POSITIVO
  */
- if(valor.size() > VALOR_MAX_POSITIVO.size())
+ if(value.size() > MAX_POSITIVE_VALUE.size())
   return(false);
  else
  {
-  unsigned i, qtd;
-  bool oper=false, num=false, valido=true;
+  unsigned i, count;
+  bool is_oper=false, is_num=false, is_valid=true;
 
-  qtd=valor.size();
-  for(i=0; i < qtd && valido; i++)
+  count=value.size();
+  for(i=0; i < count && is_valid; i++)
   {
-   if((valor[i]=='-' || valor[i]=='+') && !num)
+   if((value[i]=='-' || value[i]=='+') && !is_num)
    {
-    if(!oper) oper=true;
+    if(!is_oper) is_oper=true;
    }
-   else if((valor[i]>='0' && valor[i]<='9'))
+   else if((value[i]>='0' && value[i]<='9'))
    {
-    if(!num) num=true;
+    if(!is_num) is_num=true;
    }
-   else valido=false;
+   else is_valid=false;
   }
 
-  if(!num) valido=false;
-  return(valido);
+  if(!is_num) is_valid=false;
+  return(is_valid);
  }
 }
 
-QString Sequence::formatarValor(const QString &valor)
+QString Sequence::formatValue(const QString &value)
 {
- QString valor_fmt;
+ QString fmt_value;
 
  //Verifica se o valor é válido
- if(valorValido(valor))
+ if(isValidValue(value))
  {
-  unsigned i, qtd, qtd_neg;
+  unsigned i, count, neg_cnt;
 
-  i=qtd_neg=0;
-  qtd=valor.size();
+  i=neg_cnt=0;
+  count=value.size();
   /* Conta a quantidade de operadores negativo, pois
      dependendo da quantidade o mesmo pode interferir
      no sinal do número */
-  while((valor[i]=='+' || valor[i]=='-') && i < qtd)
+  while((value[i]=='+' || value[i]=='-') && i < count)
   {
-   if(valor[i]=='-') qtd_neg++;
+   if(value[i]=='-') neg_cnt++;
    i++;
   }
 
   //Caso a quantidade de negativos seja ímpar o número será negativo
-  if(qtd_neg % 2 != 0) valor_fmt+="-";
+  if(neg_cnt % 2 != 0) fmt_value+="-";
   //valor_fmt+=valor.substr(i, qtd);
-  valor_fmt+=valor.mid(i, qtd);
+  fmt_value+=value.mid(i, count);
  }
 
- return(valor_fmt);
+ return(fmt_value);
 }
 
-int Sequence::compararValores(QString valor1, QString valor2)
+int Sequence::compareValues(QString value1, QString value2)
 {
- if(valor1==valor2)
+ if(value1==value2)
   return(0);
  else
  {
   char ops[2];
-  unsigned i, idx, qtd;
-  QString *vet_valores[2]={&valor1, &valor2}, valor_aux;
+  unsigned i, idx, count;
+  QString *vet_values[2]={&value1, &value2}, aux_value;
 
   for(i=0; i < 2; i++)
   {
    //Obtém o sinal do número
-   ops[i]=vet_valores[i]->at(0).toAscii();
+   ops[i]=vet_values[i]->at(0).toAscii();
    //Caso não possua sinal, um + será adicionado
    if(ops[i]!='-' && ops[i]!='+') ops[i]='+';
 
    //Obtém o restante do número sem o sinal
    idx=1;
-   qtd=vet_valores[i]->size();
-   while(idx < qtd)
+   count=vet_values[i]->size();
+   while(idx < count)
    {
-    if(vet_valores[i]->at(idx)!='0')
-    valor_aux+=vet_valores[i]->at(idx);
+    if(vet_values[i]->at(idx)!='0')
+    aux_value+=vet_values[i]->at(idx);
     idx++;
    }
-   (*vet_valores[i])=valor_aux;
-   valor_aux="";
+   (*vet_values[i])=aux_value;
+   aux_value="";
   }
 
   //Compara os sinais e os valores, caso sejam iguais retorna 0
-  if(ops[0]==ops[1] && valor1==valor2)
+  if(ops[0]==ops[1] && value1==value2)
    return(0);
   /* Caso os operadores sejam iguais e o valor1 for menor que o valor2 ou
      se os sinais sejam diferentes */
-  else if((ops[0]=='-' && ops[1]=='-' && valor1 > valor2) ||
-          (ops[0]=='+' && ops[1]=='+' && valor1 < valor2) ||
+  else if((ops[0]=='-' && ops[1]=='-' && value1 > value2) ||
+          (ops[0]=='+' && ops[1]=='+' && value1 < value2) ||
           (ops[0]=='-' && ops[1]=='+'))
    //Retorna -1 indicando que o valor 1 é menor que o valor 2
    return(-1);
@@ -145,120 +145,121 @@ int Sequence::compararValores(QString valor1, QString valor2)
  }
 }
 
-void Sequence::setName(const QString &nome)
+void Sequence::setName(const QString &name)
 {
- QString nome_ant=this->getName(true);
- BaseObject::setName(nome);
+ QString prev_name=this->getName(true);
+
+ BaseObject::setName(name);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
+ TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
 }
 
-void Sequence::setSchema(BaseObject *esquema)
+void Sequence::setSchema(BaseObject *schema)
 {
- Tabela *tabela=NULL;
- QString nome_ant=this->getName(true);
+ Tabela *table=NULL;
+ QString prev_name=this->getName(true);
 
  //Caso a coluna possuidora da sequencia exista
- if(coluna)
+ if(owner_col)
  {
   //Obtém a tabela pai da coluna
-  tabela=dynamic_cast<Tabela *>(coluna->getParentTable());
+  table=dynamic_cast<Tabela *>(owner_col->getParentTable());
 
   //Verifica se o esquema sendo atribuíd  seqüência é o mesmo da tabela possuidora
-  if(tabela && tabela->getSchema()!=esquema)
+  if(table && table->getSchema()!=schema)
     throw Exception(ERR_ASG_SEQ_DIF_TABLE_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
  //Atribui o esquema   sequencia
- BaseObject::setSchema(esquema);
+ BaseObject::setSchema(schema);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
+ TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
 }
 
-void Sequence::definirCiclica(bool valor)
+void Sequence::setCycle(bool value)
 {
- ciclica=valor;
+ cycle=value;
 }
 
-void Sequence::definirValores(QString vmin, QString vmax, QString inc, QString inicio, QString cache)
+void Sequence::setValues(QString minv, QString maxv, QString inc, QString start, QString cache)
 {
- vmin=formatarValor(vmin);
- vmax=formatarValor(vmax);
- inc=formatarValor(inc);
- inicio=formatarValor(inicio);
- cache=formatarValor(cache);
+ minv=formatValue(minv);
+ maxv=formatValue(maxv);
+ inc=formatValue(inc);
+ start=formatValue(start);
+ cache=formatValue(cache);
 
  /* Caso algum atributo após a formatação esteja vazio quer dizer
     que seu valor é invalido, sendo assim uma exceção é disparada*/
- if(vmin==""   || vmax=="" || inc=="" ||
-    inicio=="" || cache=="")
+ if(minv==""   || maxv=="" || inc=="" ||
+    start=="" || cache=="")
   throw Exception(ERR_ASG_INV_VALUE_SEQ_ATTRIBS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(compararValores(vmin,vmax) > 0)
+ else if(compareValues(minv,maxv) > 0)
   throw Exception(ERR_ASG_INV_SEQ_MIN_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(compararValores(inicio, vmin) < 0 ||
-         compararValores(inicio, vmax) > 0)
+ else if(compareValues(start, minv) < 0 ||
+         compareValues(start, maxv) > 0)
   throw Exception(ERR_ASG_INV_SEQ_START_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(valorNulo(inc))
+ else if(isNullValue(inc))
   throw Exception(ERR_ASG_INV_SEQ_INCR_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(valorNulo(cache))
+ else if(isNullValue(cache))
   throw Exception(ERR_ASG_INV_SEQ_CACHE_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- this->valor_min=vmin;
- this->valor_max=vmax;
- this->incremento=inc;
+ this->min_value=minv;
+ this->max_value=maxv;
+ this->increment=inc;
  this->cache=cache;
- this->inicio=inicio;
+ this->start=start;
 }
 
-void Sequence::definirPossuidora(Tabela *tabela, const QString &nome_coluna)
+void Sequence::setOwnerColumn(Tabela *table, const QString &col_name)
 {
- if(!tabela || nome_coluna=="")
-  this->coluna=NULL;
- else if(tabela)
+ if(!table || col_name=="")
+  this->owner_col=NULL;
+ else if(table)
  {
   // Verifica se a tabela não pertence ao mesmo esquema da sequencia.
   //   Caso não pertença, dispara uma exceção.
-  if(tabela->getSchema()!=this->schema)
+  if(table->getSchema()!=this->schema)
    throw Exception(Exception::getErrorMessage(ERR_ASG_TAB_DIF_SEQ_SCHEMA)
                  .arg(QString::fromUtf8(this->getName(true))),
                  ERR_ASG_TAB_DIF_SEQ_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     /* Verifica se a tabela não pertence ao mesmo dono da sequencia.
      Caso não pertença, dispara uma exceção. */
-  if(tabela->getOwner()!=this->owner)
+  if(table->getOwner()!=this->owner)
    throw Exception(Exception::getErrorMessage(ERR_ASG_SEQ_OWNER_DIF_TABLE)
                  .arg(QString::fromUtf8(this->getName(true))),
                  ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Obtém a coluna da tabela com base no nome passado
-  this->coluna=tabela->obterColuna(nome_coluna);
+  this->owner_col=table->obterColuna(col_name);
 
-  if(this->coluna && this->coluna->isAddedByRelationship() &&
-     this->coluna->getObjectId() > this->object_id)
+  if(this->owner_col && this->owner_col->isAddedByRelationship() &&
+     this->owner_col->getObjectId() > this->object_id)
    this->object_id=BaseObject::getGlobalId();
 
 
   //Caso a coluna não exista
-  if(!this->coluna)
+  if(!this->owner_col)
    throw Exception(Exception::getErrorMessage(ERR_ASG_INEXIST_OWNER_COL_SEQ)
                  .arg(QString::fromUtf8(this->getName(true))),
                  ERR_ASG_INEXIST_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
 
-void Sequence::definirPossuidora(Column *coluna)
+void Sequence::setOwnerColumn(Column *column)
 {
  Tabela *tabela=NULL;
 
- if(!coluna)
-  this->coluna=NULL;
+ if(!column)
+  this->owner_col=NULL;
  else
  {
-  tabela=dynamic_cast<Tabela *>(coluna->getParentTable());
+  tabela=dynamic_cast<Tabela *>(column->getParentTable());
 
   //CAso a coluna possuidor não seja de uma tabela
   if(!tabela)
@@ -280,93 +281,93 @@ void Sequence::definirPossuidora(Column *coluna)
                  .arg(QString::fromUtf8(this->getName(true))),
                  ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  this->coluna=coluna;
+  this->owner_col=column;
 
-  if(coluna && coluna->isAddedByRelationship() &&
-     coluna->getObjectId() > this->object_id)
+  if(column && column->isAddedByRelationship() &&
+     column->getObjectId() > this->object_id)
    this->object_id=BaseObject::getGlobalId();
  }
 }
 
-bool Sequence::referenciaColunaIncRelacao(void)
+bool Sequence::isReferRelationshipColumn(void)
 {
- return(coluna && coluna->isAddedByRelationship());
+ return(owner_col && owner_col->isAddedByRelationship());
 }
 
-bool Sequence::sequenciaCiclica(void)
+bool Sequence::isCycle(void)
 {
- return(ciclica);
+ return(cycle);
 }
 
-QString Sequence::obterValorMax(void)
+QString Sequence::getMaxValue(void)
 {
- return(valor_max);
+ return(max_value);
 }
 
-QString Sequence::obterValorMin(void)
+QString Sequence::getMinValue(void)
 {
- return(valor_min);
+ return(min_value);
 }
 
-QString Sequence::obterCache(void)
+QString Sequence::getCache(void)
 {
  return(cache);
 }
 
-QString Sequence::obterIncremento(void)
+QString Sequence::getIncrement(void)
 {
- return(incremento);
+ return(increment);
 }
 
-QString Sequence::obterInicio(void)
+QString Sequence::getStart(void)
 {
- return(inicio);
+ return(start);
 }
 
-Column *Sequence::obterPossuidora(void)
+Column *Sequence::getOwnerColumn(void)
 {
- return(coluna);
+ return(owner_col);
 }
 
-QString Sequence::getCodeDefinition(unsigned tipo_def)
+QString Sequence::getCodeDefinition(unsigned def_type)
 {
  QString str_aux;
- Tabela *tabela=NULL;
+ Tabela *table=NULL;
 
  //Caso haja uma coluna possuidora
- if(coluna)
+ if(owner_col)
  {
-  tabela=dynamic_cast<Tabela *>(coluna->getParentTable());
+  table=dynamic_cast<Tabela *>(owner_col->getParentTable());
   /* Formata o atributo possuidora como sendo o nome da tabela
      e a coluna possuidora */
-  str_aux=tabela->getName(true) + "." + coluna->getName(true);
+  str_aux=table->getName(true) + "." + owner_col->getName(true);
  }
  attributes[ParsersAttributes::OWNER_COLUMN]=str_aux;
 
- attributes[ParsersAttributes::INCREMENT]=incremento;
- attributes[ParsersAttributes::MIN_VALUE]=valor_min;
- attributes[ParsersAttributes::MAX_VALUE]=valor_max;
- attributes[ParsersAttributes::START]=inicio;
+ attributes[ParsersAttributes::INCREMENT]=increment;
+ attributes[ParsersAttributes::MIN_VALUE]=min_value;
+ attributes[ParsersAttributes::MAX_VALUE]=max_value;
+ attributes[ParsersAttributes::START]=start;
  attributes[ParsersAttributes::CACHE]=cache;
- attributes[ParsersAttributes::CYCLE]=(ciclica ? "1" : "");
+ attributes[ParsersAttributes::CYCLE]=(cycle ? "1" : "");
 
- return(BaseObject::__getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(def_type));
 }
 
 void Sequence::operator = (Sequence &seq)
 {
- QString nome_ant=this->getName(true);
+ QString prev_name=this->getName(true);
 
  *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(seq);
 
- this->ciclica=seq.ciclica;
- this->valor_max=seq.valor_max;
- this->valor_min=seq.valor_min;
- this->inicio=seq.inicio;
- this->incremento=seq.incremento;
+ this->cycle=seq.cycle;
+ this->max_value=seq.max_value;
+ this->min_value=seq.min_value;
+ this->start=seq.start;
+ this->increment=seq.increment;
  this->cache=seq.cache;
- this->coluna=seq.coluna;
+ this->owner_col=seq.owner_col;
 
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
+ TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
 }
 

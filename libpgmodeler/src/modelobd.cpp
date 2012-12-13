@@ -1425,7 +1425,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
 
    /* Caso a coluna for incluída por relacionamento considera
       a sequencia como objeto especial */
-   if(sequencia->referenciaColunaIncRelacao())
+   if(sequencia->isReferRelationshipColumn())
    {
     xml_objs_especiais[sequencia->getObjectId()]=sequencia->getCodeDefinition(SchemaParser::XML_DEFINITION);
     removerSequencia(sequencia);
@@ -5269,12 +5269,12 @@ Sequence *ModeloBD::criarSequencia(bool ignorar_possuidora)
 
   //Obtém os atributos do elemento
   XMLParser::getElementAttributes(atributos);
-  sequencia->definirValores(atributos[ParsersAttributes::MIN_VALUE],
+  sequencia->setValues(atributos[ParsersAttributes::MIN_VALUE],
                             atributos[ParsersAttributes::MAX_VALUE],
                             atributos[ParsersAttributes::INCREMENT],
                             atributos[ParsersAttributes::START],
                             atributos[ParsersAttributes::CACHE]);
-  sequencia->definirCiclica(atributos[ParsersAttributes::CYCLE]==ParsersAttributes::_TRUE_);
+  sequencia->setCycle(atributos[ParsersAttributes::CYCLE]==ParsersAttributes::_TRUE_);
 
   //Caso o atributo de coluna possuidora da sequencia esteja preenchido
   if(!atributos[ParsersAttributes::OWNER_COLUMN].isEmpty())
@@ -5329,7 +5329,7 @@ Sequence *ModeloBD::criarSequencia(bool ignorar_possuidora)
                   .arg(QString::fromUtf8(sequencia->getName(true))),
                   ERR_ASG_INEXIST_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-   sequencia->definirPossuidora(coluna);
+   sequencia->setOwnerColumn(coluna);
   }
  }
  catch(Exception &e)
@@ -6178,7 +6178,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
 
      /* Caso a restrição seja um objeto especial armazena o mesmo no mapa de objetos.
         Idenpendente da configuração, chaves estrangeiras sempre serão descartadas nesta
-        iteração pois ao final do método as mesmas tem seu código SQL concatenado à definição
+        iteração pois ao final do método as mesmas tem seu código SQL concatenado �  definição
         do modelo */
      if((tipo_def==SchemaParser::XML_DEFINITION ||
          (tipo_def==SchemaParser::SQL_DEFINITION &&
@@ -6741,8 +6741,8 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   else if(tipo_obj==OBJ_SEQUENCE)
   {
    Sequence *seq=dynamic_cast<Sequence *>(objeto);
-   if(seq->obterPossuidora())
-    obterDependenciasObjeto(seq->obterPossuidora()->getParentTable(), vet_deps, inc_dep_indiretas);
+   if(seq->getOwnerColumn())
+    obterDependenciasObjeto(seq->getOwnerColumn()->getParentTable(), vet_deps, inc_dep_indiretas);
   }
   //** Obtendo as dependências de Tabelas **
   else if(tipo_obj==OBJ_TABLE)
@@ -6917,8 +6917,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
    {
     seq=dynamic_cast<Sequence *>(*itr);
-    if(seq->obterPossuidora() &&
-       seq->obterPossuidora()->getParentTable()==tabela)
+    if(seq->getOwnerColumn() &&
+       seq->getOwnerColumn()->getParentTable()==tabela)
     {
      refer=true;
      vet_refs.push_back(seq);
@@ -7660,7 +7660,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
         Caso 2: o tipo atual seja visão, faz o cast para a classe
         e chama do método da visão o qual retorna se a coluna
         é referenciada pelo elementos da visão. */
-     if((tipos_obj[i]==OBJ_SEQUENCE && dynamic_cast<Sequence *>(*itr)->obterPossuidora()==coluna) ||
+     if((tipos_obj[i]==OBJ_SEQUENCE && dynamic_cast<Sequence *>(*itr)->getOwnerColumn()==coluna) ||
         (tipos_obj[i]==OBJ_VIEW && dynamic_cast<Visao *>(*itr)->referenciaColuna(coluna)))
      {
       refer=true;

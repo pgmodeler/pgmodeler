@@ -50,19 +50,19 @@ void SequenciaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op
 
  if(sequencia)
  {
-  sel_coluna->definirObjeto(sequencia->obterPossuidora());
-  ciclica_chk->setChecked(sequencia->sequenciaCiclica());
-  inicio_edt->setText(sequencia->obterInicio());
-  maximo_edt->setText(sequencia->obterValorMax());
-  minimo_edt->setText(sequencia->obterValorMin());
-  cache_edt->setText(sequencia->obterCache());
-  incremento_edt->setText(sequencia->obterIncremento());
+  sel_coluna->definirObjeto(sequencia->getOwnerColumn());
+  ciclica_chk->setChecked(sequencia->isCycle());
+  inicio_edt->setText(sequencia->getStart());
+  maximo_edt->setText(sequencia->getMaxValue());
+  minimo_edt->setText(sequencia->getMinValue());
+  cache_edt->setText(sequencia->getCache());
+  incremento_edt->setText(sequencia->getIncrement());
  }
  else
  {
   ciclica_chk->setChecked(false);
   inicio_edt->setText("1");
-  maximo_edt->setText(Sequence::VALOR_MAX_POSITIVO);
+  maximo_edt->setText(Sequence::MAX_POSITIVE_VALUE);
   minimo_edt->setText("0");
   cache_edt->setText("1");
   incremento_edt->setText("1");
@@ -82,10 +82,10 @@ void SequenciaWidget::aplicarConfiguracao(void)
   //Obtém a referêni   sequência que está sendo editada/criada
   sequencia=dynamic_cast<Sequence *>(this->objeto);
 
-  sequencia->definirCiclica(ciclica_chk->isChecked());
-  sequencia->definirValores(minimo_edt->text(), maximo_edt->text(), incremento_edt->text(),
+  sequencia->setCycle(ciclica_chk->isChecked());
+  sequencia->setValues(minimo_edt->text(), maximo_edt->text(), incremento_edt->text(),
                             inicio_edt->text(), cache_edt->text());
-  sequencia->definirPossuidora(dynamic_cast<Column *>(sel_coluna->obterObjeto()));
+  sequencia->setOwnerColumn(dynamic_cast<Column *>(sel_coluna->obterObjeto()));
 
   //Finaliza a configuração
   ObjetoBaseWidget::aplicarConfiguracao();
