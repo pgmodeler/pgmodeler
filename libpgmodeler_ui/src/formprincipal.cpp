@@ -425,8 +425,8 @@ void FormPrincipal::showEvent(QShowEvent *)
  }
 
  //Caso não haja nenhum modelo pré-carregado (sessão restaurada) adiciona um novo
- if(!modelo_atual)
-   this->adicionarNovoModelo();
+ //if(!modelo_atual)
+   //this->adicionarNovoModelo();
 
  //Caso o intervalo de salvamento esteja setado inicializa o timer
  if(interv_salvar > 0)

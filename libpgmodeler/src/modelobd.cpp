@@ -6040,6 +6040,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
  Tipo *tipo_usr=NULL;
  map<unsigned, BaseObject *> mapa_objetos;
  vector<unsigned> vet_id_objs, vet_id_objs_tab;
+ vector<Constraint *> vet_fks;
  Tabela *tabela=NULL;
  Index *indice=NULL;
  Gatilho *gatilho=NULL;
@@ -6255,6 +6256,10 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
     objeto=(*itr);
     itr++;
 
+    //Stores the table's user added foreign keys
+    if(objeto->getObjectType()==OBJ_TABLE)
+     dynamic_cast<Tabela *>(objeto)->obterChavesEstrangeiras(vet_fks);
+
     if(objeto->getObjectType()==OBJ_RELATIONSHIP)
     {
      relacao=dynamic_cast<Relationship *>(objeto);
@@ -6369,6 +6374,16 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
                               .arg(QString::fromUtf8(objeto->getName()))
                               .arg(objeto->getTypeName()),
                            objeto->getObjectType());
+   }
+  }
+
+  //Creates the SQL definition for user added foreign keys
+  if(tipo_def==SchemaParser::SQL_DEFINITION)
+  {
+   while(!vet_fks.empty())
+   {
+    atribs_aux[atrib]+=vet_fks.back()->getCodeDefinition(tipo_def, true);
+    vet_fks.pop_back();
    }
   }
 

@@ -398,8 +398,11 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
   attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
  /* Case the constraint doesn't referece some column added by relationship it will be declared
-    inside the parent table construction by the use of 'decl-in-table' schema attribute */
- if(!isReferRelationshipColumn() || constr_type==TipoRestricao::primary_key)
+    inside the parent table construction by the use of 'decl-in-table' schema attribute.
+    Note: For reference track reason foreign keys ALWAYS will be created in a separeted (ALTER TABLE)
+    command outside the parent table declaration */
+ if(constr_type!=TipoRestricao::foreign_key &&
+    (!isReferRelationshipColumn() || constr_type==TipoRestricao::primary_key))
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
  if(constr_type==TipoRestricao::primary_key || constr_type==TipoRestricao::unique)

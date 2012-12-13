@@ -526,9 +526,9 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
    {
     attributes[ParsersAttributes::OWNER]=owner->getName(format);
 
-    /** Apenas espaços de tabelas e banco de dados não têm um comando ALTER SET OWNER
-        pois por regra do PostgreSQL, espaços de tabelas e banco de dados devem ser criados
-        com apenas por linha de comando isolada das demais **/
+    /** Only tablespaces and database do not have an ALTER OWNER SET
+         because the rule says that PostgreSQL tablespaces and database should be created
+         with just a command line isolated from the others **/
     if((def_type==SchemaParser::SQL_DEFINITION &&
         obj_type!=OBJ_TABLESPACE &&
         obj_type!=OBJ_DATABASE) ||

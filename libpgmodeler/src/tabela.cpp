@@ -172,7 +172,9 @@ void Tabela::definirAtributoRestricoes(unsigned tipo_def)
  {
   rest=dynamic_cast<Constraint *>(restricoes[i]);
 
+  //Chaves estrangeiras criadas pelo usuário não são incluídas na definição SQL da tabela
   if((tipo_def==SchemaParser::SQL_DEFINITION &&
+      rest->getConstraintType()!=TipoRestricao::foreign_key &&
       (!rest->isReferRelationshipColumn() || rest->getConstraintType()==TipoRestricao::primary_key)) ||
 
      (tipo_def==SchemaParser::XML_DEFINITION && !rest->isAddedByRelationship() &&
@@ -988,6 +990,26 @@ Constraint *Tabela::obterChavePrimaria(void)
  }
 
  return(pk);
+}
+
+void Tabela::obterChavesEstrangeiras(vector<Constraint *> &vet_fks, bool inc_insporrelacao)
+{
+ unsigned qtd,i;
+ Constraint *constr=NULL;
+
+ qtd=restricoes.size();
+ for(i=0; i < qtd; i++)
+ {
+  constr=dynamic_cast<Constraint *>(restricoes[i]);
+
+  /* Adiciona a restrição caso seja chave estrangeira, caso esta não foi
+     incluída por relacionamento ou se foi e o parametro inc_insporrelacao está
+     setado */
+  if(constr->getConstraintType()==TipoRestricao::foreign_key &&
+     (!constr->isAddedByLinking() ||
+      (constr->isAddedByLinking() && inc_insporrelacao)))
+   vet_fks.push_back(constr);
+ }
 }
 
 bool Tabela::aceitaOids(void)

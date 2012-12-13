@@ -213,6 +213,13 @@ class Tabela: public BaseTable {
   //Retorna a chave primária da tabela se possuir
   Constraint *obterChavePrimaria(void);
 
+  /* Retorna todas as chaves estrangeiras presentes na tabela. O parâmetro
+     inc_insporrelacao pode ser usado para se incluir ou não as restrições
+     adicionadas por relacionamento. Por padrão este método retorna o vetor
+     somente com as chaves estrangeiras criadas pelo usuário (sem o uso de
+     relacionamentos) */
+  void obterChavesEstrangeiras(vector<Constraint *> &vet_fks, bool inc_insporrelacao=false);
+
   //Retorna se a a tabela aceita ou não OIDS
   bool aceitaOids(void);
 
