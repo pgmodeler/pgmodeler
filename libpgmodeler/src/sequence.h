@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Sequencia que é usada para
-#             gerar os códigos SQL pertinentes as sequências
-#             ou auto-enumerações
+# Class: Sequence
+# Description: Implements the operations to manipulate sequences on the database.
 # Creation date: 26/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -28,66 +27,66 @@
 
 class Sequence: public BaseObject {
  private:
-  //Define se a sequencia é cíclica
+  /* Indicates taht the sequence is cyclic
+     (the counter resets when maximum value is reached) */
   bool cycle;
 
-          //Valor mínimo
-  QString  min_value,
-          //Valor máximo
+          //Minimum value
+  QString min_value,
+          //Maximum value
           max_value,
-          //Valor atual da sequencia
+          //Current sequence value
           start,
-          //Incemento da sequencia
+          //Sequence value increment
           increment,
-          //Valor de cache da sequencia
+          //Sequence cache value
           cache;
 
-  //Objeto possuidor da sequencia
+  //Column that owns the sequence
   Column *owner_col;
 
-  /* Retorna se o valor passado é constituido de números
-     e inicia com + ou - */
+  //Returns true when the passed value is a valid number
   bool isValidValue(const QString &value);
 
-  /* Retorna se o valor passado é nulo (0) */
+  //Returns true when the passed value is null (zero)
   bool isNullValue(const QString &value);
 
-  //Retorna um valor formatado excluindo operadores adicionais
+  //Returns the formated value excluding the aditional operators
   QString formatValue(const QString &value);
 
-  /* Compara dois valores QString em formato numérico e retorna
-     -1 se o valor1 é menor que o valor2, 0 se os dois são iguais
-     e 1 se valor1 é maior que valor 2 */
+  /* Compares two values and returns:
+     -1 when: value1 < value2
+      0 when: value1 = value2
+      1 when: value1 > value2 */
   int compareValues(QString value1, QString value2);
 
  public:
-  /* Constantes as quais indicam os valores mínimo e
-     máximo aceito por uma sequência */
+  //Constants that indicates the maximum and minimum values accepted by sequence
   static const QString MAX_POSITIVE_VALUE;
   static const QString MAX_NEGATIVE_VALUE;
 
   Sequence(void);
 
-  //Define se a seqüência é cíclica
+  //Defines if the sequence is a cycle
   void setCycle(bool value);
 
-  /* Define todos os valores numéricos da sequência de uma só vez.
-     Isso é feito pois existe uma dependência entre eles e validações
-     necessárias antes de atribuí-los a  sequência */
-  void setValues(QString minv, QString maxv,
-                      QString inc, QString start,
-                      QString cache);
+  //Sets at once all the necessary fields to define a sequence
+  void setValues(QString minv, QString maxv, QString inc, QString start, QString cache);
 
-  //Define a tabela/coluna possuidora da sequência
+  //Defines the owner column using a table and a column name
   void setOwnerColumn(Tabela *tabela, const QString &col_name);
+
+  //Defines the owner column using a column itself
   void setOwnerColumn(Column *column);
 
+  //Sets the sequence name
   void setName(const QString &name);
 
-  //Define o esquema ao qual a sequência pertence
+  /* Sets the schema that the sequence belongs. This method raises an error
+     when there is a owner column and the schema to be set is different from
+     the column parent table schema */
   void setSchema(BaseObject *schema);
 
-  //Métodos de obtenção dos atributos da seqüência
   bool isCycle(void);
   QString getMaxValue(void);
   QString getMinValue(void);
@@ -96,11 +95,17 @@ class Sequence: public BaseObject {
   QString getCache(void);
   Column *getOwnerColumn(void);
 
+  /* Returns whether the sequence references columns added
+     by relationship. This method is used as auxiliary
+     to control which sequence reference columns added by the
+     relationship in order to avoid referece breaking due constants
+     connections and disconnections of relationships */
   bool isReferRelationshipColumn(void);
 
+  //Makes a copy between two sequences
   void operator = (Sequence &seq);
 
-  //Retorna a definição SQL ou XML do objeto
+  //Returns the SQL / XML definition for the sequence
   QString getCodeDefinition(unsigned def_type);
 };
 

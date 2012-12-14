@@ -155,8 +155,6 @@ class Tipo: public BaseObject {
   bool tipoPreferido(void);
   TipoPgSQL obterTipoCopia(void);
 
-
-
   //Métodos de obtenção para TIPO_BASE
   Function *obterFuncao(unsigned conf_func);
   unsigned obterCompInterno(void);
