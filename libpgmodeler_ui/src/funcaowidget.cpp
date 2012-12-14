@@ -536,12 +536,12 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
     else if(tipos[i]==OBJ_TYPE)
     {
      tipo=dynamic_cast<Type *>(objeto);
-     if(tipo->obterConfiguracao()==Type::TIPO_BASE)
+     if(tipo->getConfiguration()==Type::BASE_TYPE)
      {
-      for(i1=Type::FUNCAO_INPUT; i1 <=Type::FUNCAO_ANALYZE; i1++)
+      for(i1=Type::INPUT_FUNC; i1 <=Type::ANALYZE_FUNC; i1++)
       {
-       if(tipo->obterFuncao(i1)==funcao)
-        tipo->definirFuncao(i1, funcao);
+       if(tipo->getFunction(i1)==funcao)
+        tipo->setFunction(i1, funcao);
       }
      }
     }

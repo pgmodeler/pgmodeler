@@ -32,7 +32,7 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TYPE)
 
   //Aloca os seletores de funções e os insere do layout da aba de funções
   grid=dynamic_cast<QGridLayout *>(atrib_base_twg->widget(1)->layout());
-  for(i=Type::FUNCAO_INPUT; i <= Type::FUNCAO_ANALYZE; i++)
+  for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
   {
    sel_funcoes[i]=NULL;
    sel_funcoes[i]=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
@@ -122,7 +122,7 @@ void TipoWidget::hideEvent(QHideEvent *evento)
  tab_atributos->removerLinhas();
 
  //Limpa os valores dos seletores de funções
- for(unsigned i=Type::FUNCAO_INPUT; i <= Type::FUNCAO_ANALYZE; i++)
+ for(unsigned i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
   sel_funcoes[i]->removerObjetoSelecionado();
 
  //Reinicia os demais campos do formulário para seus valores padrão
@@ -233,17 +233,17 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Typ
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, tipo);
 
  //Define o modelo de dados de referência dos seletores de função
- for(i=Type::FUNCAO_INPUT; i <= Type::FUNCAO_ANALYZE; i++)
+ for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
   sel_funcoes[i]->definirModelo(modelo);
 
  //Caso o tipo esteja especificado
  if(tipo)
  {
   //Obtém a configuração do mesmo
-  conf_tipo=tipo->obterConfiguracao();
+  conf_tipo=tipo->getConfiguration();
 
   //Caso o tipo seja composto
-  if(conf_tipo==Type::TIPO_COMPOSTO)
+  if(conf_tipo==Type::COMPOSITE_TYPE)
   {
    //Marca o radiobox no formulário que indica o tipo composto
    composto_rb->setChecked(true);
@@ -253,7 +253,7 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Typ
    tab_atributos->blockSignals(true);
 
    //Obtém a quantidade de atributos do tipo
-   qtd=tipo->obterNumAtributos();
+   qtd=tipo->getAttributeCount();
 
    /* Preenche a tabela de atributos, obtendo cada um e
       exibindo os dados na tabela */
@@ -262,7 +262,7 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Typ
     //Adiciona uma linha na tabela
     tab_atributos->adicionarLinha();
     //Obtém um atributo do tipo
-    param=tipo->obterAtributo(i);
+    param=tipo->getAttribute(i);
     //Exibe os dados do atributo na tabela
     tab_atributos->definirTextoCelula(QString::fromUtf8(param.getName()), i, 0);
     tab_atributos->definirTextoCelula(QString::fromUtf8(*param.getType()), i, 1);
@@ -276,7 +276,7 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Typ
    tab_atributos->limparSelecao();
   }
   //Caso o tipo seja enumeração
-  else if(conf_tipo==Type::TIPO_ENUMERACAO)
+  else if(conf_tipo==Type::ENUMERATION_TYPE)
   {
    //Marca o campo respectivo no formulário
    enumeracao_rb->setChecked(true);
@@ -284,13 +284,13 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Typ
    /* Desabilita os sinais da tabela de enumerações para inserção
      de todos as enumerações do tipo sem disparar sinais e executar slots */
    tab_enumeracoes->blockSignals(true);
-   qtd=tipo->obterNumEnumeracoes();
+   qtd=tipo->getEnumerationCount();
 
    //Insere todos as enumerações do tipo na tabela
    for(i=0; i < qtd; i++)
    {
     tab_enumeracoes->adicionarLinha();
-    tab_enumeracoes->definirTextoCelula(QString::fromUtf8(tipo->obterEnumeracao(i)), i, 0);
+    tab_enumeracoes->definirTextoCelula(QString::fromUtf8(tipo->getEnumeration(i)), i, 0);
    }
    //Desbloqueia os sinais da tabela de enumerações
    tab_enumeracoes->blockSignals(false);
@@ -303,24 +303,24 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Typ
    tipo_base_rb->setChecked(true);
 
    //Obtém o tipo cópia do tipo
-   tp_copia=tipo->obterTipoCopia();
+   tp_copia=tipo->getLikeType();
    //Obtém o tipo de elemento do tipo
-   tp_elem=tipo->obterElemento();
+   tp_elem=tipo->getElement();
 
    /* Configura os campos do formulário relacionados ao tipo base
       com os valores definidos na instância de tipo passada */
-   comp_int_sb->setValue(tipo->obterCompInterno());
-   por_valor_chk->setChecked(tipo->passadoPorValor());
-   preferido_chk->setChecked(tipo->tipoPreferido());
-   delimitador_edt->setText(QString(tipo->obterDelimitador()));
-   valor_padrao_edt->setText(QString::fromUtf8(tipo->obterValorPadrao()));
-   categoria_cmb->setCurrentIndex(categoria_cmb->findText(~tipo->obterCategoria()));
-   armazenamento_cmb->setCurrentIndex(armazenamento_cmb->findText(~tipo->obterArmazenamento()));
-   alinhamento_cmb->setCurrentIndex(alinhamento_cmb->findText(~tipo->obterAlinhamento()));
+   comp_int_sb->setValue(tipo->getInternalLength());
+   por_valor_chk->setChecked(tipo->isByValue());
+   preferido_chk->setChecked(tipo->isPreferred());
+   delimitador_edt->setText(QString(tipo->getDelimiter()));
+   valor_padrao_edt->setText(QString::fromUtf8(tipo->getDefaultValue()));
+   categoria_cmb->setCurrentIndex(categoria_cmb->findText(~tipo->getCategory()));
+   armazenamento_cmb->setCurrentIndex(armazenamento_cmb->findText(~tipo->getStorage()));
+   alinhamento_cmb->setCurrentIndex(alinhamento_cmb->findText(~tipo->getAlignment()));
 
    //Atribui aos seletores de funções todas as funções configuradas na instância
-   for(i=Type::FUNCAO_INPUT; i <= Type::FUNCAO_ANALYZE; i++)
-    sel_funcoes[i]->definirObjeto(tipo->obterFuncao(i));
+   for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
+    sel_funcoes[i]->definirObjeto(tipo->getFunction(i));
   }
  }
 
@@ -346,49 +346,49 @@ void TipoWidget::aplicarConfiguracao(void)
   if(enumeracao_rb->isChecked())
   {
    //Configura a instância como tipo enumeração
-   tipo->definirConfiguracao(Type::TIPO_ENUMERACAO);
+   tipo->setConfiguration(Type::ENUMERATION_TYPE);
    //Remove todas as enumerações atuais do tipo
-   tipo->removerEnumeracoes();
+   tipo->removeEnumerations();
 
    //Insere na instância de tipo as enumerações configuradas no formulário
    qtd=tab_enumeracoes->obterNumLinhas();
    for(i=0; i < qtd; i++)
-    tipo->adicionarEnumeracao(tab_enumeracoes->obterTextoCelula(i,0).toUtf8());
+    tipo->addEnumeration(tab_enumeracoes->obterTextoCelula(i,0).toUtf8());
   }
   //Caso o mesmo seja marcado como  um tipo composto no formulário
   else if(composto_rb->isChecked())
   {
    //Configura a instância como tipo composto
-   tipo->definirConfiguracao(Type::TIPO_COMPOSTO);
+   tipo->setConfiguration(Type::COMPOSITE_TYPE);
    //Remove todos os atributos do tipo
-   tipo->removerAtributos();
+   tipo->removeAttributes();
 
    //Insere na instância de tipo os atributos configurados no formulário
    qtd=tab_atributos->obterNumLinhas();
    for(i=0; i < qtd; i++)
-    tipo->adicionarAtributo(tab_atributos->obterDadoLinha(i).value<Parameter>());
+    tipo->addAttribute(tab_atributos->obterDadoLinha(i).value<Parameter>());
   }
   //Caso o mesmo seja marcado como um tipo base no formulário
   else
   {
    //Configura a instância como tipo base
-   tipo->definirConfiguracao(Type::TIPO_BASE);
+   tipo->setConfiguration(Type::BASE_TYPE);
 
    //Atribui todos os valores configurados no formulári  instância de tipo
-   tipo->definirTipoCopia(tipo_copia->obterTipoPgSQL());
-   tipo->definirElemento(tipo_elemento->obterTipoPgSQL());
-   tipo->definirCompInterno(comp_int_sb->value());
-   tipo->definirPorValor(por_valor_chk->isChecked());
-   tipo->definirPreferido(preferido_chk->isChecked());
-   tipo->definirDelimitador(delimitador_edt->text().at(0).toAscii());
-   tipo->definirValorPadrao(valor_padrao_edt->text());
-   tipo->definirCategoria(TipoCategoria(categoria_cmb->currentText()));
-   tipo->definirAlinhamento(TipoPgSQL(alinhamento_cmb->currentText()));
-   tipo->definirArmazenamento(TipoArmazenamento(armazenamento_cmb->currentText()));
+   tipo->setLikeType(tipo_copia->obterTipoPgSQL());
+   tipo->setElement(tipo_elemento->obterTipoPgSQL());
+   tipo->setInternalLength(comp_int_sb->value());
+   tipo->setByValue(por_valor_chk->isChecked());
+   tipo->setPreferred(preferido_chk->isChecked());
+   tipo->setDelimiter(delimitador_edt->text().at(0).toAscii());
+   tipo->setDefaultValue(valor_padrao_edt->text());
+   tipo->setCategory(TipoCategoria(categoria_cmb->currentText()));
+   tipo->setAlignment(TipoPgSQL(alinhamento_cmb->currentText()));
+   tipo->setStorage(TipoArmazenamento(armazenamento_cmb->currentText()));
 
    //Atribui todas as funções definidas nos seletoe   instância de tipo
-   for(i=Type::FUNCAO_INPUT; i <= Type::FUNCAO_ANALYZE; i++)
-    tipo->definirFuncao(i, dynamic_cast<Function *>(sel_funcoes[i]->obterObjeto()));
+   for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
+    tipo->setFunction(i, dynamic_cast<Function *>(sel_funcoes[i]->obterObjeto()));
   }
 
   ObjetoBaseWidget::aplicarConfiguracao();

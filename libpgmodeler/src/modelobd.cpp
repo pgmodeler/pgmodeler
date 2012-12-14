@@ -3695,61 +3695,61 @@ Type *ModeloBD::criarTipo(void)
   //Define a configuração do tipo
   if(atributos[ParsersAttributes::CONFIGURATION]==ParsersAttributes::BASE_TYPE)
   {
-   tipo->definirConfiguracao(Type::TIPO_BASE);
+   tipo->setConfiguration(Type::BASE_TYPE);
 
    //Definindos os atributos específicos para tipo base
 
    //Definindo se o tipo é passado por valor ou não
-   tipo->definirPorValor(atributos[ParsersAttributes::BY_VALUE]==ParsersAttributes::_TRUE_);
+   tipo->setByValue(atributos[ParsersAttributes::BY_VALUE]==ParsersAttributes::_TRUE_);
 
    //Definindo o comprimento interno do tipo caso esteja especificado no XML
    if(!atributos[ParsersAttributes::INTERNAL_LENGHT].isEmpty())
-    tipo->definirCompInterno(atributos[ParsersAttributes::INTERNAL_LENGHT].toUInt());
+    tipo->setInternalLength(atributos[ParsersAttributes::INTERNAL_LENGHT].toUInt());
 
    //Definindo o alinhamento interno do tipo caso esteja especificado no XML
    if(!atributos[ParsersAttributes::ALIGNMENT].isEmpty())
-    tipo->definirAlinhamento(atributos[ParsersAttributes::ALIGNMENT]);
+    tipo->setAlignment(atributos[ParsersAttributes::ALIGNMENT]);
 
    //Definindo o tipo de armazenamento do tipo caso esteja especificado no XML
    if(!atributos[ParsersAttributes::STORAGE].isEmpty())
-    tipo->definirArmazenamento(atributos[ParsersAttributes::STORAGE]);
+    tipo->setStorage(atributos[ParsersAttributes::STORAGE]);
 
    //Definindo o elemento do tipo caso esteja especificado no XML
    if(!atributos[ParsersAttributes::ELEMENT].isEmpty())
-    tipo->definirElemento(atributos[ParsersAttributes::ELEMENT]);
+    tipo->setElement(atributos[ParsersAttributes::ELEMENT]);
 
    //Definindo o delimitador do tipo caso esteja especificado no XML
    if(!atributos[ParsersAttributes::DELIMITER].isEmpty())
-    tipo->definirDelimitador(atributos[ParsersAttributes::DELIMITER][0].toAscii());
+    tipo->setDelimiter(atributos[ParsersAttributes::DELIMITER][0].toAscii());
 
    //Definindo o valor padrão do tipo caso esteja especificado no XML
    if(!atributos[ParsersAttributes::DEFAULT_VALUE].isEmpty())
-    tipo->definirValorPadrao(atributos[ParsersAttributes::DEFAULT_VALUE]);
+    tipo->setDefaultValue(atributos[ParsersAttributes::DEFAULT_VALUE]);
 
    //Definindo a categoria do tipo caso esteja especificado no XML
    if(!atributos[ParsersAttributes::CATEGORY].isEmpty())
-    tipo->definirCategoria(atributos[ParsersAttributes::CATEGORY]);
+    tipo->setCategory(atributos[ParsersAttributes::CATEGORY]);
 
    //Definindo a categoria do tipo caso esteja especificado no XML
    if(!atributos[ParsersAttributes::PREFERRED].isEmpty())
-    tipo->definirPreferido(atributos[ParsersAttributes::PREFERRED]==ParsersAttributes::_TRUE_);
+    tipo->setPreferred(atributos[ParsersAttributes::PREFERRED]==ParsersAttributes::_TRUE_);
 
 
    /* O mapa de tipos de função abaixo é usado para se atribuir de forma
       mas simples, sem comparações, a função que for obtida do XML a qual
       o tipo em construção referencia */
-   tipo_funcoes[ParsersAttributes::INPUT_FUNC]=Type::FUNCAO_INPUT;
-   tipo_funcoes[ParsersAttributes::OUTPUT_FUNC]=Type::FUNCAO_OUTPUT;
-   tipo_funcoes[ParsersAttributes::SEND_FUNC]=Type::FUNCAO_SEND;
-   tipo_funcoes[ParsersAttributes::RECV_FUNC]=Type::FUNCAO_RECV;
-   tipo_funcoes[ParsersAttributes::TPMOD_IN_FUNC]=Type::FUNCAO_TPMOD_IN;
-   tipo_funcoes[ParsersAttributes::TPMOD_OUT_FUNC]=Type::FUNCAO_TPMOD_OUT;
-   tipo_funcoes[ParsersAttributes::ANALYZE_FUNC]=Type::FUNCAO_ANALYZE;
+   tipo_funcoes[ParsersAttributes::INPUT_FUNC]=Type::INPUT_FUNC;
+   tipo_funcoes[ParsersAttributes::OUTPUT_FUNC]=Type::OUTPUT_FUNC;
+   tipo_funcoes[ParsersAttributes::SEND_FUNC]=Type::SEND_FUNC;
+   tipo_funcoes[ParsersAttributes::RECV_FUNC]=Type::RECV_FUNC;
+   tipo_funcoes[ParsersAttributes::TPMOD_IN_FUNC]=Type::TPMOD_IN_FUNC;
+   tipo_funcoes[ParsersAttributes::TPMOD_OUT_FUNC]=Type::TPMOD_OUT_FUNC;
+   tipo_funcoes[ParsersAttributes::ANALYZE_FUNC]=Type::ANALYZE_FUNC;
   }
   else if(atributos[ParsersAttributes::CONFIGURATION]==ParsersAttributes::COMPOSITE_TYPE)
-   tipo->definirConfiguracao(Type::TIPO_COMPOSTO);
+   tipo->setConfiguration(Type::COMPOSITE_TYPE);
   else
-   tipo->definirConfiguracao(Type::TIPO_ENUMERACAO);
+   tipo->setConfiguration(Type::ENUMERATION_TYPE);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
@@ -3773,7 +3773,7 @@ Type *ModeloBD::criarTipo(void)
       //Adiciona ao tipo todas as enumerações presentes no vetor
       qtd=enums.size();
       for(i=0; i < qtd; i++)
-       tipo->adicionarEnumeracao(enums[i]);
+       tipo->addEnumeration(enums[i]);
      }
      //Operação específica para tipo COMPOSTO
      else if(elem==ParsersAttributes::PARAMETER)
@@ -3782,13 +3782,13 @@ Type *ModeloBD::criarTipo(void)
          de elementos <parameter> os quais simbolizam os atributos do
          tipo */
       param=criarParametro();
-      tipo->adicionarAtributo(param);
+      tipo->addAttribute(param);
      }
      //Operação específica para tipo BASE
      else if(elem==ParsersAttributes::TYPE)
      {
       tipo_copia=criarTipoPgSQL();
-      tipo->definirTipoCopia(tipo_copia);
+      tipo->setLikeType(tipo_copia);
      }
      else if(elem==ParsersAttributes::FUNCTION)
      {
@@ -3817,7 +3817,7 @@ Type *ModeloBD::criarTipo(void)
       tipo_func=tipo_funcoes[atributos[ParsersAttributes::REF_TYPE]];
 
       //Atribui a função ao tipo na configuração obtida
-      tipo->definirFuncao(tipo_func, dynamic_cast<Function *>(funcao));
+      tipo->setFunction(tipo_func, dynamic_cast<Function *>(funcao));
      }
     }
    }
@@ -6314,8 +6314,8 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
     tipo_usr=dynamic_cast<Type *>(*itr);
     itr++;
 
-    if(tipo_usr->obterConfiguracao()==Type::TIPO_BASE)
-     tipo_usr->converterParametrosFuncoes();
+    if(tipo_usr->getConfiguration()==Type::BASE_TYPE)
+     tipo_usr->convertFunctionParameters();
    }
   }
 
@@ -6342,7 +6342,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
     tipo_usr=dynamic_cast<Type *>(objeto);
 
     //Obtendo a definição do tipo em forma de shell type
-    if(tipo_usr->obterConfiguracao()==Type::TIPO_BASE)
+    if(tipo_usr->getConfiguration()==Type::BASE_TYPE)
      atribs_aux[ParsersAttributes::SHELL_TYPES]+=tipo_usr->getCodeDefinition(tipo_def, true);
     else
      atribs_aux[atrib]+=tipo_usr->getCodeDefinition(tipo_def);
@@ -6432,10 +6432,10 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
    for(i=0; i < qtd1; i++)
    {
     tipo_usr=dynamic_cast<Type *>(tipos[i]);
-    if(tipo_usr->obterConfiguracao()==Type::TIPO_BASE)
+    if(tipo_usr->getConfiguration()==Type::BASE_TYPE)
     {
      atribs_aux[atrib]+=tipo_usr->getCodeDefinition(tipo_def);
-     tipo_usr->converterParametrosFuncoes(true);
+     tipo_usr->convertFunctionParameters(true);
     }
    }
   }
@@ -6450,8 +6450,8 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
    for(i=0; i < qtd1; i++)
    {
     tipo_usr=dynamic_cast<Type *>(tipos[i]);
-    if(tipo_usr->obterConfiguracao()==Type::TIPO_BASE)
-     tipo_usr->converterParametrosFuncoes(true);
+    if(tipo_usr->getConfiguration()==Type::BASE_TYPE)
+     tipo_usr->convertFunctionParameters(true);
    }
   }
   throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
@@ -6826,27 +6826,27 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    unsigned qtd, i;
 
    //Caso o tipo de usuário seja tipo base
-   if(tipo_usr->obterConfiguracao()==Type::TIPO_BASE)
+   if(tipo_usr->getConfiguration()==Type::BASE_TYPE)
    {
     //Obtém as dependências do tipo de cópia
-    tipo_aux=obterObjetoTipoPgSQL(tipo_usr->obterTipoCopia());
+    tipo_aux=obterObjetoTipoPgSQL(tipo_usr->getLikeType());
       //obterObjeto(*tipo_usr->obterTipoCopia(), OBJETO_TIPO);
 
     if(tipo_aux)
      obterDependenciasObjeto(tipo_aux, vet_deps, inc_dep_indiretas);
 
     //Obtém as dependências das funções usadas pelo tipo
-    for(i=Type::FUNCAO_INPUT; i <= Type::FUNCAO_ANALYZE; i++)
-     obterDependenciasObjeto(tipo_usr->obterFuncao(i), vet_deps, inc_dep_indiretas);
+    for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
+     obterDependenciasObjeto(tipo_usr->getFunction(i), vet_deps, inc_dep_indiretas);
    }
    //Caso seja um tipo composto
-   else if(tipo_usr->obterConfiguracao()==Type::TIPO_COMPOSTO)
+   else if(tipo_usr->getConfiguration()==Type::COMPOSITE_TYPE)
    {
     //Obtém as dependências dos tipos dos atributos
-    qtd=tipo_usr->obterNumAtributos();
+    qtd=tipo_usr->getAttributeCount();
     for(i=0; i < qtd; i++)
     {
-     tipo_aux=obterObjetoTipoPgSQL(tipo_usr->obterAtributo(i).getType());
+     tipo_aux=obterObjetoTipoPgSQL(tipo_usr->getAttribute(i).getType());
        //obterObjeto(*tipo_usr->obterAtributo(i).obterTipo(), OBJETO_TIPO);
 
      if(tipo_aux)
@@ -7100,10 +7100,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       tipo=dynamic_cast<Type *>(*itr);
       itr++;
 
-      for(i1=Type::FUNCAO_INPUT; i1 <= Type::FUNCAO_ANALYZE && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
+      for(i1=Type::INPUT_FUNC; i1 <= Type::ANALYZE_FUNC && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
       {
        //Verifica se o tipo não referencia a função
-       if(tipo->obterFuncao(i1)==funcao)
+       if(tipo->getFunction(i1)==funcao)
        {
         refer=true;
         vet_refs.push_back(tipo);
@@ -7275,9 +7275,9 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       tipo=dynamic_cast<Type *>(*itr);
       itr++;
 
-      if(tipo->obterAlinhamento()==ptr_tipopgsql ||
-         tipo->obterElemento()==ptr_tipopgsql ||
-         tipo->obterTipoCopia()==ptr_tipopgsql)
+      if(tipo->getAlignment()==ptr_tipopgsql ||
+         tipo->getElement()==ptr_tipopgsql ||
+         tipo->getLikeType()==ptr_tipopgsql)
       {
        refer=true;
        vet_refs.push_back(tipo);

@@ -6,17 +6,17 @@ Type::Type(void)
 {
  object_id=Type::type_id++;
  obj_type=OBJ_TYPE;
- config=TIPO_ENUMERACAO;
- //nome="novo_tipo";
- alinhamento="integer";
- delimitador='\0';
- armazenamento=TipoArmazenamento::plain;
- elemento="any";
- comp_interno=0;
+ config=ENUMERATION_TYPE;
 
- categoria=TipoCategoria::userdefined;
- preferido=false;
- tipo_copia="any";
+ alignment="integer";
+ delimiter='\0';
+ storage=TipoArmazenamento::plain;
+ element="any";
+ internal_len=0;
+
+ category=TipoCategoria::userdefined;
+ preferred=false;
+ like_type="any";
 
  BaseObject::attributes[ParsersAttributes::BASE_TYPE]="";
  BaseObject::attributes[ParsersAttributes::COMPOSITE_TYPE]="";
@@ -51,124 +51,124 @@ Type::~Type(void)
  TipoPgSQL::removerTipoUsuario(this->getName(true), this);
 }
 
-void Type::setName(const QString &nome)
+void Type::setName(const QString &name)
 {
- QString nome_ant;
+ QString prev_name;
 
- nome_ant=this->getName(true);//this->nome;
- BaseObject::setName(nome);
+ prev_name=this->getName(true);//this->nome;
+ BaseObject::setName(name);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
+ TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
 }
 
-void Type::setSchema(BaseObject *esquema)
+void Type::setSchema(BaseObject *schema)
 {
- QString nome_ant;
+ QString prev_name;
 
- nome_ant=this->getName(true);
- BaseObject::setSchema(esquema);
+ prev_name=this->getName(true);
+ BaseObject::setSchema(schema);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
+ TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
 }
 
-bool Type::atributoExiste(const QString &nome_atrib)
+bool Type::isAttributeExists(const QString &attrib_name)
 {
  vector<Parameter>::iterator itr, itr_end;
- bool enc=false;
+ bool found=false;
 
  itr=attributes.begin();
  itr_end=attributes.end();
 
- while(itr!=itr_end && !enc)
+ while(itr!=itr_end && !found)
  {
-  enc=(itr->getName()==nome_atrib);
+  found=(itr->getName()==attrib_name);
   itr++;
  }
 
- return(enc);
+ return(found);
 }
 
-void Type::adicionarAtributo(Parameter atrib)
+void Type::addAttribute(Parameter attrib)
 {
  //O atributo não pode ter o nome vazio nem tipo nulo
- if(atrib.getName()=="" || atrib.getType()==TipoPgSQL::nulo)
+ if(attrib.getName()=="" || attrib.getType()==TipoPgSQL::nulo)
   throw Exception(ERR_INS_INV_TYPE_ATTRIB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !atrib.getType())
+ else if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !attrib.getType())
   throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Verifica se o atributo com mesmo nome já não foi inserido no tipo
- else if(atributoExiste(atrib.getName()))
+ else if(isAttributeExists(attrib.getName()))
   throw Exception(ERR_INS_DUPLIC_ITEMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- attributes.push_back(atrib);
+ attributes.push_back(attrib);
 }
 
-void Type::removerAtributo(unsigned idx_atrib)
+void Type::removeAttribute(unsigned attrib_idx)
 {
  //Verifica se o índice do atributo é valido
- if(idx_atrib >= attributes.size())
+ if(attrib_idx >= attributes.size())
   throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Remove atributo no índice especificado
- attributes.erase(attributes.begin() + idx_atrib);
+ attributes.erase(attributes.begin() + attrib_idx);
 }
 
-void Type::removerAtributos(void)
+void Type::removeAttributes(void)
 {
  attributes.clear();
 }
 
-bool Type::enumeracaoExiste(const QString &nome_enum)
+bool Type::isEnumerationExists(const QString &enum_name)
 {
  vector<QString>::iterator itr, itr_end;
- bool enc=false;
+ bool found=false;
 
- itr=enumeracoes.begin();
- itr_end=enumeracoes.end();
+ itr=enumerations.begin();
+ itr_end=enumerations.end();
 
- while(itr!=itr_end && !enc)
+ while(itr!=itr_end && !found)
  {
-  enc=((*itr)==nome_enum);
+  found=((*itr)==enum_name);
   itr++;
  }
 
- return(enc);
+ return(found);
 }
 
-void Type::adicionarEnumeracao(const QString &enumer)
+void Type::addEnumeration(const QString &enum_name)
 {
  //Verifica se a enumeração é vazia
- if(enumer=="")
+ if(enum_name=="")
   throw Exception(ERR_INS_INV_TYPE_ENUM_ITEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Verifica se o nome da enumeração é válida de acordo com
     com a regra de nomenclatura de identificadores no PostgreSQL */
- else if(!BaseObject::isValidName(enumer))
+ else if(!BaseObject::isValidName(enum_name))
   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Verifica se uma enumeração com mesmo nome já não foi inserido no tipo
- else if(enumeracaoExiste(enumer))
+ else if(isEnumerationExists(enum_name))
   throw Exception(ERR_INS_DUPLIC_ENUM_ITEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- enumeracoes.push_back(enumer);
+ enumerations.push_back(enum_name);
 }
 
-void Type::removerEnumeracao(unsigned idx_enum)
+void Type::removeEnumeration(unsigned enum_idx)
 {
- if(idx_enum >= enumeracoes.size())
+ if(enum_idx >= enumerations.size())
   throw Exception(ERR_REF_ENUM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- enumeracoes.erase(enumeracoes.begin() + idx_enum);
+ enumerations.erase(enumerations.begin() + enum_idx);
 }
 
-void Type::removerEnumeracoes(void)
+void Type::removeEnumerations(void)
 {
- enumeracoes.clear();
+ enumerations.clear();
 }
 
-void Type::definirConfiguracao(unsigned conf)
+void Type::setConfiguration(unsigned conf)
 {
  unsigned idx;
 
@@ -176,72 +176,72 @@ void Type::definirConfiguracao(unsigned conf)
     pertinentes a esta serão limpos. */
 
  //Verifica se a configuração a ser atribuída ao tipo é válida
- if(conf < TIPO_BASE || conf > TIPO_COMPOSTO)
+ if(conf < BASE_TYPE || conf > COMPOSITE_TYPE)
   throw Exception(ERR_ASG_INV_TYPE_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- if(conf!=TIPO_BASE)
+ if(conf!=BASE_TYPE)
  {
-  if(conf==TIPO_ENUMERACAO)
+  if(conf==ENUMERATION_TYPE)
    attributes.clear();
   else
-   enumeracoes.clear();
+   enumerations.clear();
 
   for(idx=0; idx < 7; idx++)
-   funcoes[idx]=NULL;
+   functions[idx]=NULL;
 
-  valor_padrao="";
-  elemento="any";
-  delimitador='\0';
-  por_valor=false;
-  comp_interno=0;
+  default_value="";
+  element="any";
+  delimiter='\0';
+  by_value=false;
+  internal_len=0;
  }
  else
  {
   attributes.clear();
-  enumeracoes.clear();
+  enumerations.clear();
  }
 
  this->config=conf;
 }
 
-void Type::definirFuncao(unsigned conf_func, Function *funcao)
+void Type::setFunction(unsigned func_id, Function *func)
 {
- unsigned qtd_params;
- TipoLinguagem ling;
- ling=TipoLinguagem::c;
+ unsigned param_count;
+ TipoLinguagem lang;
+ lang=TipoLinguagem::c;
 
  //Verifica se o tipo da função é válido
- if(conf_func > FUNCAO_ANALYZE)
+ if(func_id > ANALYZE_FUNC)
   throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém a quantidade de parâmetros da função
- if(funcao)
-  qtd_params=funcao->getParameterCount();
+ if(func)
+  param_count=func->getParameterCount();
 
  /* Verifica se a função está alocada quando o tipo de função é INPUT ou OUTPUT,
     pois estas duas são obrigatórias para um tipo base */
- if(!funcao && (conf_func==FUNCAO_INPUT || conf_func==FUNCAO_OUTPUT))
+ if(!func && (func_id==INPUT_FUNC || func_id==OUTPUT_FUNC))
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->getName(true)))
                          .arg(BaseObject::getTypeName(OBJ_TYPE)),
                 ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- else if(funcao)
+ else if(func)
  {
   /* Verifica se a função está escrita em C. Para a criação de um tipo base
    apenas funções nesta linguagem podem ser atribuídas */
-  if(funcao->getLanguage()->getName()!=(~ling))
+  if(func->getLanguage()->getName()!=(~lang))
    throw Exception(ERR_ASG_FUNC_INV_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   /* Verificando a quantidade de parâmetros da função em relação ao tipo.
      Funções INPUT e RECV devem possuir 1 ou 3 parâmetros, já as demais funções
      devem ter somente 1 parâmetro. */
-  else if((qtd_params!=1 && qtd_params!=3 &&
-          (conf_func==FUNCAO_INPUT || conf_func==FUNCAO_RECV)) ||
-          (qtd_params!=1 &&
-          (conf_func==FUNCAO_OUTPUT   || conf_func==FUNCAO_SEND ||
-           conf_func==FUNCAO_TPMOD_IN || conf_func==FUNCAO_TPMOD_OUT ||
-           conf_func==FUNCAO_ANALYZE)))
+  else if((param_count!=1 && param_count!=3 &&
+          (func_id==INPUT_FUNC || func_id==RECV_FUNC)) ||
+          (param_count!=1 &&
+          (func_id==OUTPUT_FUNC   || func_id==SEND_FUNC ||
+           func_id==TPMOD_IN_FUNC || func_id==TPMOD_OUT_FUNC ||
+           func_id==ANALYZE_FUNC)))
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                           .arg(QString::fromUtf8(this->getName()))
                           .arg(BaseObject::getTypeName(OBJ_TYPE)),
@@ -254,13 +254,13 @@ void Type::definirFuncao(unsigned conf_func, Function *funcao)
      da geração do SQL da função. Funções do tipo OUTPUT e TPMOD_OUT devem retornar cstring.
      As demais funções SEND, TPMOD_IN e ANALYZE devem retornar bytea, integer e boolean,
      respectivamente. */
-  else if((conf_func==FUNCAO_INPUT && funcao->getReturnType()!="any") ||
-          (conf_func==FUNCAO_OUTPUT && funcao->getReturnType()!="cstring") ||
-          (conf_func==FUNCAO_RECV && funcao->getReturnType()!="any") ||
-          (conf_func==FUNCAO_SEND && funcao->getReturnType()!="bytea") ||
-          (conf_func==FUNCAO_TPMOD_IN && funcao->getReturnType()!="integer") ||
-          (conf_func==FUNCAO_TPMOD_OUT && funcao->getReturnType()!="cstring") ||
-          (conf_func==FUNCAO_ANALYZE && funcao->getReturnType()!="boolean"))
+  else if((func_id==INPUT_FUNC && func->getReturnType()!="any") ||
+          (func_id==OUTPUT_FUNC && func->getReturnType()!="cstring") ||
+          (func_id==RECV_FUNC && func->getReturnType()!="any") ||
+          (func_id==SEND_FUNC && func->getReturnType()!="bytea") ||
+          (func_id==TPMOD_IN_FUNC && func->getReturnType()!="integer") ||
+          (func_id==TPMOD_OUT_FUNC && func->getReturnType()!="cstring") ||
+          (func_id==ANALYZE_FUNC && func->getReturnType()!="boolean"))
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
                           .arg(QString::fromUtf8(this->getName()))
                           .arg(BaseObject::getTypeName(OBJ_TYPE)),
@@ -274,90 +274,88 @@ void Type::definirFuncao(unsigned conf_func, Function *funcao)
      A função TPMOD_IN deve possuir um parâmetro do tipo (ctring[]).
      A função TPMOD_OUT deve possuir um parâmetro do tipo (integer).
      A função ANALYZE deve possuir um parâmetro do tipo (internal). */
-  else if((conf_func==FUNCAO_INPUT &&
-          (funcao->getParameter(0).getType()!="cstring" ||
-           (qtd_params==3 &&
-            (funcao->getParameter(1).getType()!="oid" ||
-             funcao->getParameter(2).getType()!="integer")))) ||
-          (conf_func==FUNCAO_OUTPUT && funcao->getParameter(0).getType()!="any") ||
-          (conf_func==FUNCAO_RECV &&
-           (funcao->getParameter(0).getType()!="internal" ||
-            (qtd_params==3 &&
-             (funcao->getParameter(1).getType()!="oid" ||
-              funcao->getParameter(2).getType()!="integer")))) ||
-           (conf_func==FUNCAO_SEND && funcao->getParameter(0).getType()!="any") ||
-          (conf_func==FUNCAO_TPMOD_IN && *(funcao->getParameter(0).getType())!="cstring[]") ||
-          (conf_func==FUNCAO_TPMOD_OUT && funcao->getParameter(0).getType()!="integer") ||
-          (conf_func==FUNCAO_ANALYZE && funcao->getParameter(0).getType()!="internal"))
+  else if((func_id==INPUT_FUNC &&
+          (func->getParameter(0).getType()!="cstring" ||
+           (param_count==3 &&
+            (func->getParameter(1).getType()!="oid" ||
+             func->getParameter(2).getType()!="integer")))) ||
+          (func_id==OUTPUT_FUNC && func->getParameter(0).getType()!="any") ||
+          (func_id==RECV_FUNC &&
+           (func->getParameter(0).getType()!="internal" ||
+            (param_count==3 &&
+             (func->getParameter(1).getType()!="oid" ||
+              func->getParameter(2).getType()!="integer")))) ||
+           (func_id==SEND_FUNC && func->getParameter(0).getType()!="any") ||
+          (func_id==TPMOD_IN_FUNC && *(func->getParameter(0).getType())!="cstring[]") ||
+          (func_id==TPMOD_OUT_FUNC && func->getParameter(0).getType()!="integer") ||
+          (func_id==ANALYZE_FUNC && func->getParameter(0).getType()!="internal"))
    throw Exception(ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  funcao->setProtected(false);
+  func->setProtected(false);
  }
 
- funcoes[conf_func]=funcao;
+ functions[func_id]=func;
 }
 
-void Type::converterParametrosFuncoes(bool conv_inversa)
+void Type::convertFunctionParameters(bool inverse_conv)
 {
- unsigned i, conf_funcs[]={ FUNCAO_INPUT, FUNCAO_RECV,
-                            FUNCAO_OUTPUT, FUNCAO_SEND };
- TipoFuncao conf_func;
+ unsigned i, conf_funcs[]={ INPUT_FUNC, RECV_FUNC,
+                            OUTPUT_FUNC, SEND_FUNC };
  Parameter param;
- Function *funcao=NULL;
+ Function *func=NULL;
 
  for(i=0; i < 4; i++)
  {
-  funcao=funcoes[conf_funcs[i]];
+  func=functions[conf_funcs[i]];
 
-  if(funcao)
+  if(func)
   {
    /* Para as funções OUTPUT e SEND a conversão normal é mudar o tipo do primeiro
       parâmetro de 'any' para o tipo 'this' já a conversão inversa faz o processo contrário */
-   if(conf_funcs[i]==FUNCAO_OUTPUT || conf_funcs[i]==FUNCAO_SEND)
+   if(conf_funcs[i]==OUTPUT_FUNC || conf_funcs[i]==SEND_FUNC)
    {
-    param=funcao->getParameter(0);
-    funcao->removeParameter(0);
+    param=func->getParameter(0);
+    func->removeParameter(0);
 
-    if(!conv_inversa)
+    if(!inverse_conv)
     {
      param.setType(TipoPgSQL(this));
-     funcao->addParameter(param);
+     func->addParameter(param);
     }
     else
     {
      param.setType(TipoPgSQL("any"));
-     funcao->addParameter(param);
+     func->addParameter(param);
     }
    }
 
    /* Para as funções INPUT e RECV a conversão normal é mudar o tipo de retorno
       de 'any' para o tipo 'this' já a conversão inversa faz o processo contrário */
-   else if(conf_funcs[i]==FUNCAO_INPUT || conf_funcs[i]==FUNCAO_RECV)
+   else if(conf_funcs[i]==INPUT_FUNC || conf_funcs[i]==RECV_FUNC)
    {
-    if(!conv_inversa)
-     funcao->setReturnType(TipoPgSQL(this));
+    if(!inverse_conv)
+     func->setReturnType(TipoPgSQL(this));
     else
-     funcao->setReturnType(TipoPgSQL("any"));
+     func->setReturnType(TipoPgSQL("any"));
    }
   }
  }
 }
 
-void Type::definirCompInterno(unsigned comp)
+void Type::setInternalLength(unsigned length)
 {
- comp_interno=comp;
+ internal_len=length;
 }
 
-void Type::definirPorValor(bool valor)
+void Type::setByValue(bool value)
 {
- por_valor=valor;
+ by_value=value;
 }
 
-void Type::definirAlinhamento(TipoPgSQL tipo)
+void Type::setAlignment(TipoPgSQL type)
 {
- QString tp;
+ QString tp=(*type);
 
- tp=(*tipo);
  /* Verifica se o tipo a ser atribuído ao alinhamento é
     diferente de char, smallint, integer e double (os únicos aceitos) */
  if(tp!="char" && tp!="smallint" && tp!="integer" && tp!="double precision")
@@ -365,288 +363,288 @@ void Type::definirAlinhamento(TipoPgSQL tipo)
                 ERR_ASG_INV_ALIGNMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Type::definirArmazenamento(TipoArmazenamento armaz)
+void Type::setStorage(TipoArmazenamento strg)
 {
- armazenamento=armaz;
+ storage=strg;
 }
 
-void Type::definirValorPadrao(const QString &valor_padrao)
+void Type::setDefaultValue(const QString &value)
 {
- this->valor_padrao=valor_padrao;
+ this->default_value=value;
 }
 
-void Type::definirElemento(TipoPgSQL elemento)
+void Type::setElement(TipoPgSQL elem)
 {
- if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !elemento)
+ if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !elem)
   throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(elemento!="any" &&
-   (elemento.tipoOID() || elemento.pseudoTipo() ||
-    elemento.tipoUsuario() || elemento.tipoArray()))
+ else if(elem!="any" &&
+   (elem.tipoOID() || elem.pseudoTipo() ||
+    elem.tipoUsuario() || elem.tipoArray()))
   throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ELEMENT_TYPE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_ASG_INV_ELEMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- this->elemento=elemento;
+ this->element=elem;
 }
 
-void Type::definirDelimitador(char delim)
+void Type::setDelimiter(char delim)
 {
- delimitador=delim;
+ delimiter=delim;
 }
 
-void Type::definirAtributoElementos(unsigned tipo_def)
+void Type::setElementsAttribute(unsigned def_type)
 {
  Parameter param;
  QString str_elem;
- unsigned i, qtd;
+ unsigned i, count;
 
- qtd=Type::attributes.size();
- for(i=0; i < qtd; i++)
+ count=Type::attributes.size();
+ for(i=0; i < count; i++)
  {
   param=Type::attributes[i];
 
-  if(tipo_def==SchemaParser::SQL_DEFINITION)
+  if(def_type==SchemaParser::SQL_DEFINITION)
   {
    str_elem+=param.getName() + " " + (*param.getType());
-   if(i < (qtd-1)) str_elem+=",";
+   if(i < (count-1)) str_elem+=",";
   }
   else
   {
-   str_elem+=param.getCodeDefinition(tipo_def);
+   str_elem+=param.getCodeDefinition(def_type);
   }
  }
 
  BaseObject::attributes[ParsersAttributes::ELEMENTS]=str_elem;
 }
 
-void Type::definirAtributoEnumeracoes(unsigned tipo_def)
+void Type::setEnumerationsAttribute(unsigned def_type)
 {
  QString str_enum;
- unsigned i, qtd;
+ unsigned i, count;
 
- qtd=enumeracoes.size();
- for(i=0; i < qtd; i++)
+ count=enumerations.size();
+ for(i=0; i < count; i++)
  {
-  if(tipo_def==SchemaParser::SQL_DEFINITION)
-   str_enum+="'" + enumeracoes[i] + "'";
+  if(def_type==SchemaParser::SQL_DEFINITION)
+   str_enum+="'" + enumerations[i] + "'";
   else
-   str_enum+=enumeracoes[i];
+   str_enum+=enumerations[i];
 
-  if(i < (qtd-1)) str_enum+=",";
+  if(i < (count-1)) str_enum+=",";
  }
 
  BaseObject::attributes[ParsersAttributes::ENUMARATIONS]=str_enum;
 }
 
-void Type::definirCategoria(TipoCategoria categoria)
+void Type::setCategory(TipoCategoria categ)
 {
- this->categoria=categoria;
+ this->category=categ;
 }
 
-void Type::definirPreferido(bool preferido)
+void Type::setPreferred(bool value)
 {
- this->preferido=preferido;
+ this->preferred=value;
 }
 
-void Type::definirTipoCopia(TipoPgSQL tipo_copia)
+void Type::setLikeType(TipoPgSQL like_type)
 {
- if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !tipo_copia)
+ if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !like_type)
   throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- this->tipo_copia=tipo_copia;
+ this->like_type=like_type;
 }
 
-Parameter Type::obterAtributo(unsigned idx_atrib)
+Parameter Type::getAttribute(unsigned attrib_idx)
 {
- if(idx_atrib >= attributes.size())
+ if(attrib_idx >= attributes.size())
   throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(attributes[idx_atrib]);
+ return(attributes[attrib_idx]);
 }
 
-unsigned Type::obterNumAtributos(void)
+unsigned Type::getAttributeCount(void)
 {
  return(attributes.size());
 }
 
-QString Type::obterEnumeracao(unsigned idx_enum)
+QString Type::getEnumeration(unsigned idx_enum)
 {
- if(idx_enum >= enumeracoes.size())
+ if(idx_enum >= enumerations.size())
   throw Exception(ERR_REF_ENUM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(enumeracoes[idx_enum]);
+ return(enumerations[idx_enum]);
 }
 
-unsigned Type::obterNumEnumeracoes(void)
+unsigned Type::getEnumerationCount(void)
 {
- return(enumeracoes.size());
+ return(enumerations.size());
 }
 
-Function *Type::obterFuncao(unsigned conf_func)
+Function *Type::getFunction(unsigned func_id)
 {
- if(conf_func > FUNCAO_ANALYZE)
+ if(func_id > ANALYZE_FUNC)
   throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(funcoes[conf_func]);
+ return(functions[func_id]);
 }
 
-unsigned Type::obterCompInterno(void)
+unsigned Type::getInternalLength(void)
 {
- return(comp_interno);
+ return(internal_len);
 }
 
-bool Type::passadoPorValor(void)
+bool Type::isByValue(void)
 {
- return(por_valor);
+ return(by_value);
 }
 
-TipoPgSQL Type::obterAlinhamento(void)
+TipoPgSQL Type::getAlignment(void)
 {
- return(alinhamento);
+ return(alignment);
 }
 
-TipoArmazenamento Type::obterArmazenamento(void)
+TipoArmazenamento Type::getStorage(void)
 {
- return(armazenamento);
+ return(storage);
 }
 
-QString Type::obterValorPadrao(void)
+QString Type::getDefaultValue(void)
 {
- return(valor_padrao);
+ return(default_value);
 }
 
-TipoPgSQL Type::obterElemento(void)
+TipoPgSQL Type::getElement(void)
 {
- return(elemento);
+ return(element);
 }
 
-char Type::obterDelimitador(void)
+char Type::getDelimiter(void)
 {
- return(delimitador);
+ return(delimiter);
 }
 
-unsigned Type::obterConfiguracao(void)
+unsigned Type::getConfiguration(void)
 {
  return(config);
 }
 
-TipoCategoria Type::obterCategoria(void)
+TipoCategoria Type::getCategory(void)
 {
- return(categoria);
+ return(category);
 }
 
-bool Type::tipoPreferido(void)
+bool Type::isPreferred(void)
 {
- return(preferido);
+ return(preferred);
 }
 
-TipoPgSQL Type::obterTipoCopia(void)
+TipoPgSQL Type::getLikeType(void)
 {
- return(tipo_copia);
+ return(like_type);
 }
 
-QString Type::getCodeDefinition(unsigned tipo_def)
+QString Type::getCodeDefinition(unsigned def_type)
 {
- return(this->getCodeDefinition(tipo_def, false));
+ return(this->getCodeDefinition(def_type, false));
 }
 
-QString Type::getCodeDefinition(unsigned tipo_def, bool forma_reduzida)
+QString Type::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
- if(config==TIPO_ENUMERACAO)
+ if(config==ENUMERATION_TYPE)
  {
   BaseObject::attributes[ParsersAttributes::ENUM_TYPE]="1";
-  definirAtributoEnumeracoes(tipo_def);
+  setEnumerationsAttribute(def_type);
  }
- else if(config==TIPO_COMPOSTO)
+ else if(config==COMPOSITE_TYPE)
  {
   BaseObject::attributes[ParsersAttributes::COMPOSITE_TYPE]="1";
-  definirAtributoElementos(tipo_def);
+  setElementsAttribute(def_type);
  }
  else
  {
   unsigned i;
-  QString atrib_func[7]={ParsersAttributes::INPUT_FUNC,
-                         ParsersAttributes::OUTPUT_FUNC,
-                         ParsersAttributes::RECV_FUNC,
-                         ParsersAttributes::SEND_FUNC,
-                         ParsersAttributes::TPMOD_IN_FUNC,
-                         ParsersAttributes::TPMOD_OUT_FUNC,
-                         ParsersAttributes::ANALYZE_FUNC};
+  QString func_attrib[7]={ParsersAttributes::INPUT_FUNC,
+                          ParsersAttributes::OUTPUT_FUNC,
+                          ParsersAttributes::RECV_FUNC,
+                          ParsersAttributes::SEND_FUNC,
+                          ParsersAttributes::TPMOD_IN_FUNC,
+                          ParsersAttributes::TPMOD_OUT_FUNC,
+                          ParsersAttributes::ANALYZE_FUNC};
 
   BaseObject::attributes[ParsersAttributes::BASE_TYPE]="1";
 
   for(i=0; i < 7; i++)
   {
-   if(funcoes[i])
+   if(functions[i])
    {
-    if(tipo_def==SchemaParser::SQL_DEFINITION)
-     BaseObject::attributes[atrib_func[i]]=funcoes[i]->getName();
+    if(def_type==SchemaParser::SQL_DEFINITION)
+     BaseObject::attributes[func_attrib[i]]=functions[i]->getName();
     else
     {
-     funcoes[i]->setAttribute(ParsersAttributes::REF_TYPE, atrib_func[i]);
-     BaseObject::attributes[atrib_func[i]]=funcoes[i]->getCodeDefinition(tipo_def, true);
+     functions[i]->setAttribute(ParsersAttributes::REF_TYPE, func_attrib[i]);
+     BaseObject::attributes[func_attrib[i]]=functions[i]->getCodeDefinition(def_type, true);
     }
    }
   }
 
-  if(comp_interno==0 && tipo_def==SchemaParser::SQL_DEFINITION)
+  if(internal_len==0 && def_type==SchemaParser::SQL_DEFINITION)
    BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]="VARIABLE";
   else
-   BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]=QString("%1").arg(comp_interno);
+   BaseObject::attributes[ParsersAttributes::INTERNAL_LENGHT]=QString("%1").arg(internal_len);
 
-  BaseObject::attributes[ParsersAttributes::BY_VALUE]=(por_valor ? "1" : "");
-  BaseObject::attributes[ParsersAttributes::ALIGNMENT]=(*alinhamento);
-  BaseObject::attributes[ParsersAttributes::STORAGE]=(~armazenamento);
-  BaseObject::attributes[ParsersAttributes::DEFAULT_VALUE]=valor_padrao;
+  BaseObject::attributes[ParsersAttributes::BY_VALUE]=(by_value ? "1" : "");
+  BaseObject::attributes[ParsersAttributes::ALIGNMENT]=(*alignment);
+  BaseObject::attributes[ParsersAttributes::STORAGE]=(~storage);
+  BaseObject::attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
 
-  if(elemento!="any")
-   BaseObject::attributes[ParsersAttributes::ELEMENT]=(*elemento);
+  if(element!="any")
+   BaseObject::attributes[ParsersAttributes::ELEMENT]=(*element);
 
-  if(delimitador!='\0')
-   BaseObject::attributes[ParsersAttributes::DELIMITER]=delimitador;
+  if(delimiter!='\0')
+   BaseObject::attributes[ParsersAttributes::DELIMITER]=delimiter;
 
-  BaseObject::attributes[ParsersAttributes::CATEGORY]=~(categoria);
+  BaseObject::attributes[ParsersAttributes::CATEGORY]=~(category);
 
-  BaseObject::attributes[ParsersAttributes::PREFERRED]=(preferido ? "1" : "");
+  BaseObject::attributes[ParsersAttributes::PREFERRED]=(preferred ? "1" : "");
 
-  if(tipo_copia!="any")
-   BaseObject::attributes[ParsersAttributes::LIKE_TYPE]=(*tipo_copia);
+  if(like_type!="any")
+   BaseObject::attributes[ParsersAttributes::LIKE_TYPE]=(*like_type);
  }
 
- return(BaseObject::getCodeDefinition(tipo_def, forma_reduzida));
+ return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
-void Type::operator = (Type &tipo)
+void Type::operator = (Type &type)
 {
- QString nome_ant;
+ QString prev_name;
  unsigned i=0;
 
- nome_ant=this->getName(true);
- *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(tipo);
+ prev_name=this->getName(true);
+ *(dynamic_cast<BaseObject *>(this))=dynamic_cast<BaseObject &>(type);
 
- this->config=tipo.config;
- this->attributes=tipo.attributes;
- this->enumeracoes=tipo.enumeracoes;
- this->comp_interno=tipo.comp_interno;
- this->por_valor=tipo.por_valor;
- this->alinhamento=tipo.alinhamento;
- this->elemento=tipo.elemento;
- this->armazenamento=tipo.armazenamento;
- this->valor_padrao=tipo.valor_padrao;
- this->categoria=tipo.categoria;
- this->preferido=tipo.preferido;
- this->tipo_copia=tipo.tipo_copia;
- this->delimitador=tipo.delimitador;
+ this->config=type.config;
+ this->attributes=type.attributes;
+ this->enumerations=type.enumerations;
+ this->internal_len=type.internal_len;
+ this->by_value=type.by_value;
+ this->alignment=type.alignment;
+ this->element=type.element;
+ this->storage=type.storage;
+ this->default_value=type.default_value;
+ this->category=type.category;
+ this->preferred=type.preferred;
+ this->like_type=type.like_type;
+ this->delimiter=type.delimiter;
 
  while(i < 7)
  {
-  this->funcoes[i]=tipo.funcoes[i];
+  this->functions[i]=type.functions[i];
   i++;
  }
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
+ TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
 }
 
