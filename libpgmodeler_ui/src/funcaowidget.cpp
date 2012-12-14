@@ -440,7 +440,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
  Trigger *gatilho=NULL;
  Language *ling=NULL;
  Operator *oper=NULL;
- Tipo *tipo=NULL;
+ Type *tipo=NULL;
  Tabela *tab=NULL;
  Function *funcao=NULL;
  BaseObject *objeto=NULL;
@@ -535,10 +535,10 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
     }
     else if(tipos[i]==OBJ_TYPE)
     {
-     tipo=dynamic_cast<Tipo *>(objeto);
-     if(tipo->obterConfiguracao()==Tipo::TIPO_BASE)
+     tipo=dynamic_cast<Type *>(objeto);
+     if(tipo->obterConfiguracao()==Type::TIPO_BASE)
      {
-      for(i1=Tipo::FUNCAO_INPUT; i1 <=Tipo::FUNCAO_ANALYZE; i1++)
+      for(i1=Type::FUNCAO_INPUT; i1 <=Type::FUNCAO_ANALYZE; i1++)
       {
        if(tipo->obterFuncao(i1)==funcao)
         tipo->definirFuncao(i1, funcao);

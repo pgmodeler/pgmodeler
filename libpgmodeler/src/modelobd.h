@@ -35,7 +35,7 @@
 #include "relationship.h"
 #include "textbox.h"
 #include "role.h"
-#include "tipo.h"
+#include "type.h"
 #include "tablespace.h"
 #include "language.h"
 #include "aggregate.h"
@@ -311,9 +311,9 @@ class ModeloBD:  public QObject, public BaseObject {
   Tabela *obterTabela(unsigned idx_obj);
 
   //Métodos de manipulação de tipos
-  void adicionarTipo(Tipo *tipo, int idx_obj=-1);
-  void removerTipo(Tipo *tipo, int idx_obj=-1);
-  Tipo *obterTipo(unsigned idx_obj);
+  void adicionarTipo(Type *tipo, int idx_obj=-1);
+  void removerTipo(Type *tipo, int idx_obj=-1);
+  Type *obterTipo(unsigned idx_obj);
 
   //Métodos de manipulação de papéis
   void adicionarPapel(Role *papel, int idx_obj=-1);
@@ -403,7 +403,7 @@ class ModeloBD:  public QObject, public BaseObject {
   Language *criarLinguagem(void);
   Function *criarFuncao(void);
   Parameter criarParametro(void);
-  Tipo *criarTipo(void);
+  Type *criarTipo(void);
   Domain *criarDominio(void);
   Cast *criarConversaoTipo(void);
   Conversion *criarConversaoCodificacao(void);

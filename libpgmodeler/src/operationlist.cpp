@@ -104,7 +104,7 @@ void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type
     copyObject(psrc_obj, dynamic_cast<Sequence *>(copy_obj));
   break;
   case OBJ_TYPE:
-    copyObject(psrc_obj, dynamic_cast<Tipo *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Type *>(copy_obj));
   break;
   case OBJ_VIEW:
     copyObject(psrc_obj, dynamic_cast<Visao *>(copy_obj));

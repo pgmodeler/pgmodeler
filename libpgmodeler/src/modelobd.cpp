@@ -175,7 +175,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_VIEW)
     adicionarVisao(dynamic_cast<Visao *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TYPE)
-    adicionarTipo(dynamic_cast<Tipo *>(objeto), idx_obj);
+    adicionarTipo(dynamic_cast<Type *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_ROLE)
     adicionarPapel(dynamic_cast<Role *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TABLESPACE)
@@ -233,7 +233,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_VIEW)
     removerVisao(dynamic_cast<Visao *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TYPE)
-    removerTipo(dynamic_cast<Tipo *>(objeto), idx_obj);
+    removerTipo(dynamic_cast<Type *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_ROLE)
     removerPapel(dynamic_cast<Role *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TABLESPACE)
@@ -298,7 +298,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
   else if(tipo_obj==OBJ_VIEW)
    removerVisao(dynamic_cast<Visao *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_TYPE)
-   removerTipo(dynamic_cast<Tipo *>(objeto), idx_obj);
+   removerTipo(dynamic_cast<Type *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_ROLE)
    removerPapel(dynamic_cast<Role *>(objeto), idx_obj);
  else if(tipo_obj==OBJ_TABLESPACE)
@@ -2219,7 +2219,7 @@ Operator *ModeloBD::obterOperador(unsigned idx_obj)
  return(dynamic_cast<Operator *>(obterObjeto(idx_obj, OBJ_OPERATOR)));
 }
 
-void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
+void ModeloBD::adicionarTipo(Type *tipo, int idx_obj)
 {
  if(tipo)
  {
@@ -2265,7 +2265,7 @@ void ModeloBD::adicionarTipo(Tipo *tipo, int idx_obj)
  }
 }
 
-void ModeloBD::removerTipo(Tipo *tipo, int idx_obj)
+void ModeloBD::removerTipo(Type *tipo, int idx_obj)
 {
  try
  {
@@ -2277,9 +2277,9 @@ void ModeloBD::removerTipo(Tipo *tipo, int idx_obj)
  }
 }
 
-Tipo *ModeloBD::obterTipo(unsigned idx_obj)
+Type *ModeloBD::obterTipo(unsigned idx_obj)
 {
- return(dynamic_cast<Tipo *>(obterObjeto(idx_obj, OBJ_TYPE)));
+ return(dynamic_cast<Type *>(obterObjeto(idx_obj, OBJ_TYPE)));
 }
 
 void ModeloBD::removerTipoUsuario(BaseObject *objeto, int idx_obj)
@@ -3601,7 +3601,7 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  unsigned comprimento=1, dimensao=0, idx_tipo=0;
  int precisao=-1;
  QString nome;
- Tipo *tipo_usr=NULL;
+ Type *tipo_usr=NULL;
  void *ptipo=NULL;
  //TipoPgSQL tipo;
  bool enc=false, com_timezone;
@@ -3651,7 +3651,7 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
   {
    //Converte o elemento atual para a classe Tipo
    ptipo=(*itr);
-   tipo_usr=reinterpret_cast<Tipo *>(ptipo);
+   tipo_usr=reinterpret_cast<Type *>(ptipo);
 
    //Caso o nome passado no XML for igual ao nome do objeto Tipo atual
    enc=(tipo_usr->getName(true)==nome);
@@ -3670,11 +3670,11 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  }
 }
 
-Tipo *ModeloBD::criarTipo(void)
+Type *ModeloBD::criarTipo(void)
 {
  map<QString, QString> atributos;
  map<QString, unsigned> tipo_funcoes;
- Tipo *tipo=NULL;
+ Type *tipo=NULL;
  int qtd, i;
  QStringList enums;
  QString elem, str_aux;
@@ -3685,7 +3685,7 @@ Tipo *ModeloBD::criarTipo(void)
 
  try
  {
-  tipo=new Tipo;
+  tipo=new Type;
   //Lê do parser os atributos basicos
   definirAtributosBasicos(tipo);
 
@@ -3695,7 +3695,7 @@ Tipo *ModeloBD::criarTipo(void)
   //Define a configuração do tipo
   if(atributos[ParsersAttributes::CONFIGURATION]==ParsersAttributes::BASE_TYPE)
   {
-   tipo->definirConfiguracao(Tipo::TIPO_BASE);
+   tipo->definirConfiguracao(Type::TIPO_BASE);
 
    //Definindos os atributos específicos para tipo base
 
@@ -3738,18 +3738,18 @@ Tipo *ModeloBD::criarTipo(void)
    /* O mapa de tipos de função abaixo é usado para se atribuir de forma
       mas simples, sem comparações, a função que for obtida do XML a qual
       o tipo em construção referencia */
-   tipo_funcoes[ParsersAttributes::INPUT_FUNC]=Tipo::FUNCAO_INPUT;
-   tipo_funcoes[ParsersAttributes::OUTPUT_FUNC]=Tipo::FUNCAO_OUTPUT;
-   tipo_funcoes[ParsersAttributes::SEND_FUNC]=Tipo::FUNCAO_SEND;
-   tipo_funcoes[ParsersAttributes::RECV_FUNC]=Tipo::FUNCAO_RECV;
-   tipo_funcoes[ParsersAttributes::TPMOD_IN_FUNC]=Tipo::FUNCAO_TPMOD_IN;
-   tipo_funcoes[ParsersAttributes::TPMOD_OUT_FUNC]=Tipo::FUNCAO_TPMOD_OUT;
-   tipo_funcoes[ParsersAttributes::ANALYZE_FUNC]=Tipo::FUNCAO_ANALYZE;
+   tipo_funcoes[ParsersAttributes::INPUT_FUNC]=Type::FUNCAO_INPUT;
+   tipo_funcoes[ParsersAttributes::OUTPUT_FUNC]=Type::FUNCAO_OUTPUT;
+   tipo_funcoes[ParsersAttributes::SEND_FUNC]=Type::FUNCAO_SEND;
+   tipo_funcoes[ParsersAttributes::RECV_FUNC]=Type::FUNCAO_RECV;
+   tipo_funcoes[ParsersAttributes::TPMOD_IN_FUNC]=Type::FUNCAO_TPMOD_IN;
+   tipo_funcoes[ParsersAttributes::TPMOD_OUT_FUNC]=Type::FUNCAO_TPMOD_OUT;
+   tipo_funcoes[ParsersAttributes::ANALYZE_FUNC]=Type::FUNCAO_ANALYZE;
   }
   else if(atributos[ParsersAttributes::CONFIGURATION]==ParsersAttributes::COMPOSITE_TYPE)
-   tipo->definirConfiguracao(Tipo::TIPO_COMPOSTO);
+   tipo->definirConfiguracao(Type::TIPO_COMPOSTO);
   else
-   tipo->definirConfiguracao(Tipo::TIPO_ENUMERACAO);
+   tipo->definirConfiguracao(Type::TIPO_ENUMERACAO);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
@@ -6037,7 +6037,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
  QString msg=trUtf8("Generating %1 of the object: %2 (%3)"),
          atrib=ParsersAttributes::OBJECTS,
          tipo_def_str=(tipo_def==SchemaParser::SQL_DEFINITION ? "SQL" : "XML");
- Tipo *tipo_usr=NULL;
+ Type *tipo_usr=NULL;
  map<unsigned, BaseObject *> mapa_objetos;
  vector<unsigned> vet_id_objs, vet_id_objs_tab;
  vector<Constraint *> vet_fks;
@@ -6311,10 +6311,10 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
 
    while(itr!=itr_end)
    {
-    tipo_usr=dynamic_cast<Tipo *>(*itr);
+    tipo_usr=dynamic_cast<Type *>(*itr);
     itr++;
 
-    if(tipo_usr->obterConfiguracao()==Tipo::TIPO_BASE)
+    if(tipo_usr->obterConfiguracao()==Type::TIPO_BASE)
      tipo_usr->converterParametrosFuncoes();
    }
   }
@@ -6339,10 +6339,10 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
       dos tipos definidos pelo usuário */
    if(tipo_obj==OBJ_TYPE && tipo_def==SchemaParser::SQL_DEFINITION)
    {
-    tipo_usr=dynamic_cast<Tipo *>(objeto);
+    tipo_usr=dynamic_cast<Type *>(objeto);
 
     //Obtendo a definição do tipo em forma de shell type
-    if(tipo_usr->obterConfiguracao()==Tipo::TIPO_BASE)
+    if(tipo_usr->obterConfiguracao()==Type::TIPO_BASE)
      atribs_aux[ParsersAttributes::SHELL_TYPES]+=tipo_usr->getCodeDefinition(tipo_def, true);
     else
      atribs_aux[atrib]+=tipo_usr->getCodeDefinition(tipo_def);
@@ -6431,8 +6431,8 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
    qtd1=tipos.size();
    for(i=0; i < qtd1; i++)
    {
-    tipo_usr=dynamic_cast<Tipo *>(tipos[i]);
-    if(tipo_usr->obterConfiguracao()==Tipo::TIPO_BASE)
+    tipo_usr=dynamic_cast<Type *>(tipos[i]);
+    if(tipo_usr->obterConfiguracao()==Type::TIPO_BASE)
     {
      atribs_aux[atrib]+=tipo_usr->getCodeDefinition(tipo_def);
      tipo_usr->converterParametrosFuncoes(true);
@@ -6449,8 +6449,8 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
    qtd1=tipos.size();
    for(i=0; i < qtd1; i++)
    {
-    tipo_usr=dynamic_cast<Tipo *>(tipos[i]);
-    if(tipo_usr->obterConfiguracao()==Tipo::TIPO_BASE)
+    tipo_usr=dynamic_cast<Type *>(tipos[i]);
+    if(tipo_usr->obterConfiguracao()==Type::TIPO_BASE)
      tipo_usr->converterParametrosFuncoes(true);
    }
   }
@@ -6821,12 +6821,12 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   //** Obtendo as dependências de Tipos definidos pelo usuário **
   else if(tipo_obj==OBJ_TYPE)
   {
-   Tipo *tipo_usr=dynamic_cast<Tipo *>(objeto);
+   Type *tipo_usr=dynamic_cast<Type *>(objeto);
    BaseObject *tipo_aux=NULL;
    unsigned qtd, i;
 
    //Caso o tipo de usuário seja tipo base
-   if(tipo_usr->obterConfiguracao()==Tipo::TIPO_BASE)
+   if(tipo_usr->obterConfiguracao()==Type::TIPO_BASE)
    {
     //Obtém as dependências do tipo de cópia
     tipo_aux=obterObjetoTipoPgSQL(tipo_usr->obterTipoCopia());
@@ -6836,11 +6836,11 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
      obterDependenciasObjeto(tipo_aux, vet_deps, inc_dep_indiretas);
 
     //Obtém as dependências das funções usadas pelo tipo
-    for(i=Tipo::FUNCAO_INPUT; i <= Tipo::FUNCAO_ANALYZE; i++)
+    for(i=Type::FUNCAO_INPUT; i <= Type::FUNCAO_ANALYZE; i++)
      obterDependenciasObjeto(tipo_usr->obterFuncao(i), vet_deps, inc_dep_indiretas);
    }
    //Caso seja um tipo composto
-   else if(tipo_usr->obterConfiguracao()==Tipo::TIPO_COMPOSTO)
+   else if(tipo_usr->obterConfiguracao()==Type::TIPO_COMPOSTO)
    {
     //Obtém as dependências dos tipos dos atributos
     qtd=tipo_usr->obterNumAtributos();
@@ -7001,7 +7001,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    Aggregate *func_ag=NULL;
    Operator *oper=NULL;
    Trigger *gat=NULL;
-   Tipo *tipo=NULL;
+   Type *tipo=NULL;
    Language *ling=NULL;
 
    /* Varre todas as listas de objetos os quais podem
@@ -7097,10 +7097,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Obtém a referência ao objeto
-      tipo=dynamic_cast<Tipo *>(*itr);
+      tipo=dynamic_cast<Type *>(*itr);
       itr++;
 
-      for(i1=Tipo::FUNCAO_INPUT; i1 <= Tipo::FUNCAO_ANALYZE && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
+      for(i1=Type::FUNCAO_INPUT; i1 <= Type::FUNCAO_ANALYZE && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
       {
        //Verifica se o tipo não referencia a função
        if(tipo->obterFuncao(i1)==funcao)
@@ -7181,7 +7181,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    Function *func=NULL;
    Aggregate *func_ag=NULL;
    Operator *oper=NULL;
-   Tipo *tipo=NULL;
+   Type *tipo=NULL;
    void *ptr_tipopgsql=NULL;
 
    /* Devido a particuladade de se atribuir ponteiros de objetos como tipos base do pgsql (ver TipoPgSQL)
@@ -7190,7 +7190,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       base do pgsql.  */
    switch(tipo_obj)
    {
-    case OBJ_TYPE: ptr_tipopgsql=dynamic_cast<Tipo*>(objeto); break;
+    case OBJ_TYPE: ptr_tipopgsql=dynamic_cast<Type*>(objeto); break;
     case OBJ_DOMAIN: ptr_tipopgsql=dynamic_cast<Domain*>(objeto); break;
     case OBJ_SEQUENCE: ptr_tipopgsql=dynamic_cast<Sequence*>(objeto); break;
     default: ptr_tipopgsql=dynamic_cast<Tabela*>(objeto); break;
@@ -7272,7 +7272,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Obtém a referência ao objeto
-      tipo=dynamic_cast<Tipo *>(*itr);
+      tipo=dynamic_cast<Type *>(*itr);
       itr++;
 
       if(tipo->obterAlinhamento()==ptr_tipopgsql ||

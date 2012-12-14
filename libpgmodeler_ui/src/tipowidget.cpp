@@ -32,7 +32,7 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TYPE)
 
   //Aloca os seletores de funções e os insere do layout da aba de funções
   grid=dynamic_cast<QGridLayout *>(atrib_base_twg->widget(1)->layout());
-  for(i=Tipo::FUNCAO_INPUT; i <= Tipo::FUNCAO_ANALYZE; i++)
+  for(i=Type::FUNCAO_INPUT; i <= Type::FUNCAO_ANALYZE; i++)
   {
    sel_funcoes[i]=NULL;
    sel_funcoes[i]=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
@@ -122,7 +122,7 @@ void TipoWidget::hideEvent(QHideEvent *evento)
  tab_atributos->removerLinhas();
 
  //Limpa os valores dos seletores de funções
- for(unsigned i=Tipo::FUNCAO_INPUT; i <= Tipo::FUNCAO_ANALYZE; i++)
+ for(unsigned i=Type::FUNCAO_INPUT; i <= Type::FUNCAO_ANALYZE; i++)
   sel_funcoes[i]->removerObjetoSelecionado();
 
  //Reinicia os demais campos do formulário para seus valores padrão
@@ -220,7 +220,7 @@ void TipoWidget::exibirFormAtributo(void)
  parametro_wgt->show();
 }
 
-void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tipo *tipo)
+void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Type *tipo)
 {
  TipoPgSQL tp_copia, tp_elem;
  unsigned conf_tipo, i, qtd;
@@ -233,7 +233,7 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tip
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, tipo);
 
  //Define o modelo de dados de referência dos seletores de função
- for(i=Tipo::FUNCAO_INPUT; i <= Tipo::FUNCAO_ANALYZE; i++)
+ for(i=Type::FUNCAO_INPUT; i <= Type::FUNCAO_ANALYZE; i++)
   sel_funcoes[i]->definirModelo(modelo);
 
  //Caso o tipo esteja especificado
@@ -243,7 +243,7 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tip
   conf_tipo=tipo->obterConfiguracao();
 
   //Caso o tipo seja composto
-  if(conf_tipo==Tipo::TIPO_COMPOSTO)
+  if(conf_tipo==Type::TIPO_COMPOSTO)
   {
    //Marca o radiobox no formulário que indica o tipo composto
    composto_rb->setChecked(true);
@@ -276,7 +276,7 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tip
    tab_atributos->limparSelecao();
   }
   //Caso o tipo seja enumeração
-  else if(conf_tipo==Tipo::TIPO_ENUMERACAO)
+  else if(conf_tipo==Type::TIPO_ENUMERACAO)
   {
    //Marca o campo respectivo no formulário
    enumeracao_rb->setChecked(true);
@@ -319,7 +319,7 @@ void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tip
    alinhamento_cmb->setCurrentIndex(alinhamento_cmb->findText(~tipo->obterAlinhamento()));
 
    //Atribui aos seletores de funções todas as funções configuradas na instância
-   for(i=Tipo::FUNCAO_INPUT; i <= Tipo::FUNCAO_ANALYZE; i++)
+   for(i=Type::FUNCAO_INPUT; i <= Type::FUNCAO_ANALYZE; i++)
     sel_funcoes[i]->definirObjeto(tipo->obterFuncao(i));
   }
  }
@@ -334,19 +334,19 @@ void TipoWidget::aplicarConfiguracao(void)
 {
  try
  {
-  Tipo *tipo=NULL;
+  Type *tipo=NULL;
   unsigned i, qtd;
 
-  iniciarConfiguracao<Tipo>();
+  iniciarConfiguracao<Type>();
 
   //Obtém a referência ao tipo que está sendo configurado
-  tipo=dynamic_cast<Tipo *>(this->objeto);
+  tipo=dynamic_cast<Type *>(this->objeto);
 
   //Caso o mesmo seja marcado como uma enumeração no formulário
   if(enumeracao_rb->isChecked())
   {
    //Configura a instância como tipo enumeração
-   tipo->definirConfiguracao(Tipo::TIPO_ENUMERACAO);
+   tipo->definirConfiguracao(Type::TIPO_ENUMERACAO);
    //Remove todas as enumerações atuais do tipo
    tipo->removerEnumeracoes();
 
@@ -359,7 +359,7 @@ void TipoWidget::aplicarConfiguracao(void)
   else if(composto_rb->isChecked())
   {
    //Configura a instância como tipo composto
-   tipo->definirConfiguracao(Tipo::TIPO_COMPOSTO);
+   tipo->definirConfiguracao(Type::TIPO_COMPOSTO);
    //Remove todos os atributos do tipo
    tipo->removerAtributos();
 
@@ -372,7 +372,7 @@ void TipoWidget::aplicarConfiguracao(void)
   else
   {
    //Configura a instância como tipo base
-   tipo->definirConfiguracao(Tipo::TIPO_BASE);
+   tipo->definirConfiguracao(Type::TIPO_BASE);
 
    //Atribui todos os valores configurados no formulári  instância de tipo
    tipo->definirTipoCopia(tipo_copia->obterTipoPgSQL());
@@ -387,7 +387,7 @@ void TipoWidget::aplicarConfiguracao(void)
    tipo->definirArmazenamento(TipoArmazenamento(armazenamento_cmb->currentText()));
 
    //Atribui todas as funções definidas nos seletoe   instância de tipo
-   for(i=Tipo::FUNCAO_INPUT; i <= Tipo::FUNCAO_ANALYZE; i++)
+   for(i=Type::FUNCAO_INPUT; i <= Type::FUNCAO_ANALYZE; i++)
     tipo->definirFuncao(i, dynamic_cast<Function *>(sel_funcoes[i]->obterObjeto()));
   }
 

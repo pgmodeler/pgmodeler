@@ -21,15 +21,15 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef TIPO_H
-#define TIPO_H
+#ifndef TYPE_H
+#define TYPE_H
 
 #include "baseobject.h"
 #include "schema.h"
 #include "function.h"
 #include "role.h"
 
-class Tipo: public BaseObject {
+class Type: public BaseObject {
  private:
   static unsigned type_id;
 
@@ -111,8 +111,8 @@ class Tipo: public BaseObject {
                         FUNCAO_TPMOD_OUT=5,
                         FUNCAO_ANALYZE=6;
 
-  Tipo(void);
-  ~Tipo(void);
+  Type(void);
+  ~Type(void);
 
   //Atribui um nome ao tipo
   void setName(const QString &obj_name);
@@ -169,7 +169,7 @@ class Tipo: public BaseObject {
   QString getCodeDefinition(unsigned tipo_def, bool forma_reduzida);
   QString getCodeDefinition(unsigned tipo_def);
 
-  void operator = (Tipo &tipo);
+  void operator = (Type &tipo);
 
   friend class ModeloBD;
 };

@@ -433,12 +433,11 @@ class TipoPgSQL: public TipoBase{
   //Retorna o tipo de configuração do tipo quando o mesmo é definido pelo usuário
   unsigned obterConfTipoUsuario(void);
 
-  friend class Tipo;
+  friend class Type;
   friend class Domain;
   friend class Tabela;
   friend class Sequence;
   friend class ModeloBD;
-  friend class ListaOperacoes;
 };
 
 class TipoComportamento: public TipoBase{

@@ -20,7 +20,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/modelobd.h \
            $$PWD/src/role.h \
            $$PWD/src/constraint.h \
-           $$PWD/src/tipo.h \
+           $$PWD/src/type.h \
            $$PWD/src/tablespace.h \
            $$PWD/src/trigger.h \
            $$PWD/src/baseobject.h \
@@ -49,7 +49,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/trigger.cpp \
             $$PWD/src/basegraphicobject.cpp \
             $$PWD/src/baserelationship.cpp \
-            $$PWD/src/tipo.cpp \
+            $$PWD/src/type.cpp \
             $$PWD/src/column.cpp \
             $$PWD/src/tablespace.cpp \
             $$PWD/src/indexelement.cpp \
