@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Tipo que é usada para
-#             gerar os códigos SQL pertinentes aos tipos
-#             definidos pelo usuário
+# Class: Type
+# Description: Implements the operations to manipulate user defined types on database.
 #
 # Creation date: 05/06/2008
 #
@@ -33,69 +32,65 @@ class Type: public BaseObject {
  private:
   static unsigned type_id;
 
-  //Configuração do tipo
+  //Type configuration (BASE | ENUMERATION | COMPOSITE)
   unsigned config;
 
-  //Atributos para a configuração TIPO_COMPOSTO
+  //Attributes for composite type
   vector<Parameter> attributes;
 
-  //Atributos para a configuração TIPO_ENUMERACAO
+  //Enumerations of enumeration type
   vector<QString> enumerations;
 
-  //Atributos para a configuração TIPO_BASE
-  //Funções usadas pelo tipo
+  //Functions used by the base type
   Function *functions[7];
 
-  //Comprimento interno ( > 0 - TAMANHO FIXO, 0 - TAMANHO VARIÁVEL)
+  //Type's internal length ( > 0 - Fixed length, 0 - Variable length)
   unsigned internal_len; //INTERNALLENGTH
 
-  //Indica se o tipo é passado por valor
+  //Indicates that the type can be passed by value
   bool by_value; //PASSEDBYVALUE
 
-  //Alinhamento de armazenamento (char, smallint (int2), integer (int4) ou double precision)
+  //Storage alignmnet (char, smallint (int2), integer (int4) ou double precision)
   TipoPgSQL alignment, //ALIGNMENT
             element; //ELEMENT
 
-  //Tipo de armazenamento (plain, main, extended, external)
+  //Type's storage
   TipoArmazenamento storage; //STORAGE
 
-  //Valor padrão do tipo
+  //Default value for the type
   QString default_value; //DEFAULT
 
-  //** Atributos Adicionados devido a  alteraçõpes na versão 8.4 **/
-  //Categoria do tipo (apenas para tipo base) - PADRÃO 'U'
+  //Type's category (only for base type) - Default 'U'
   TipoCategoria category; //CATEGORY
 
-  //Usado em conjunto ao tipo de categoria (apenas para tipo base) - Padrão FALSE
+  //Used with the category attribute (only for base type) - Default FALSE
   bool preferred; //PREFERRED
 
-  /* Tipo o qual terá alguns de seus atributos copiados para o tipo atual
-     (apenas para tipo base). Caso o tipo_copia seja 'any' significa que o tipo
-     atual não copia atributos de tipo algum */
+  /* Type which will have some of its attributes copied to the current type
+     (only for base type). If like_type is 'any' means that the
+     current type does not copy attributes of any type */
   TipoPgSQL like_type; //LIKE
 
-  //Caractere delimitador de valores para arrays do tipo criado
+  //Character used as value delimiter when the type is used as array
   char delimiter; //DELIMITER
 
-  //Verifica se um atibuto com o nome no parâmetro já existe
+  //Checks if the named attribute exists
   bool isAttributeExists(const QString &attrib_name);
 
-  //Verifica se uma enumeração com o nome no parâmetro já existe
+  //Checks if the named enumeration exists
   bool isEnumerationExists(const QString &enum_name);
 
-  /* Formata a QString de elementos usada pelo parser de esquema
-     na geração da definição SQL da restrição */
+  //Formats the elements string used by the SchemaParser
   void setElementsAttribute(unsigned def_type);
 
-  /* Formata a QString de enumerações usada pelo parser de esquema
-     na geração da definição SQL da restrição */
+  //Formats the enumeration string used by the SchemaParser
   void setEnumerationsAttribute(unsigned def_type);
 
-  /* Efetua a conversão dos parâmetros e tipos de retornos, de funções.
-     Caso o parametro 'conv_inversa' estiver marcado, o método
-     faz a conversão de 'nome_do_tipo' para 'any' caso contrário
-     faz a conversão de 'any' para 'nome_do_tipo'. Este método é usado
-     quando se gera os codigos SQL do tipo definido pelo usuário */
+  /* Performs the conversion of parameters and return types of functions.
+     If the parameter 'inverse_conv' is selected, the method
+     makes the conversion from 'type_name' to 'any' otherwise
+     makes the conversion from 'any' to 'type_name'. This method is used
+     when generating the SQL codes for user-defined type */
   void convertFunctionParameters(bool inverse_conv=false);
 
  public:
@@ -114,36 +109,64 @@ class Type: public BaseObject {
   Type(void);
   ~Type(void);
 
-  //Atribui um nome ao tipo
+  //Sets the type name
   void setName(const QString &name);
 
-  //Atribui um esquema ao tipo
+  //Sets the type schema
   void setSchema(BaseObject *schema);
 
-  //Define a configuração do tipo
+  //Defines the type configuration (BASE | ENUMARATION | COMPOSITE)
   void setConfiguration(unsigned conf);
 
-  //Métodos de configuração para TIPO_COMPOSTO
+  //Adds an attribute to the type (only for composite type)
   void addAttribute(Parameter attrib);
+
+  //Removes an attribute from the type (only for composite type)
   void removeAttribute(unsigned attrib_idx);
+
+  //Removes all attributes from the type (only for composite type)
   void removeAttributes(void);
 
-  //Métodos de configuração para TIPO_ENUMERACAO
+  //Adds an enumeration to the type (only for enumeration type)
   void addEnumeration(const QString &enum_name);
+
+  //Removes an enumeration from the type (only for enumeration type)
   void removeEnumeration(unsigned enum_idx);
+
+  //Removes all enumerations from the type (only for enumeration type)
   void removeEnumerations(void);
 
-  //Métodos de configuração para TIPO_BASE
+  //Sets on function to the type (only for base type)
   void setFunction(unsigned func_id, Function *func);
+
+  //Sets the type internal length (only for base type)
   void setInternalLength(unsigned length);
+
+  //Sets if the type can be passed by value (only for base type)
   void setByValue(bool value);
+
+  //Sets the alignment for the type (only for base type)
   void setAlignment(TipoPgSQL type);
+
+  //Sets the storage type (only for base type)
   void setStorage(TipoArmazenamento strg);
+
+  //Sets the default value for the type (only for base type)
   void setDefaultValue(const QString &value);
+
+  //Sets the element for the type (only for base type)
   void setElement(TipoPgSQL elem);
+
+  //Sets the delimiter for the type (only for base type)
   void setDelimiter(char delim);
+
+  //Sets the category for the type (only for base type)
   void setCategory(TipoCategoria categ);
+
+  //Sets if the type is preferred (only for base type)
   void setPreferred(bool value);
+
+  //Sets the type that will be used as template (only for base type)
   void setLikeType(TipoPgSQL like_type);
 
   Parameter getAttribute(unsigned attrib_idx);
@@ -154,8 +177,6 @@ class Type: public BaseObject {
   TipoCategoria getCategory(void);
   bool isPreferred(void);
   TipoPgSQL getLikeType(void);
-
-  //Métodos de obtenção para TIPO_BASE
   Function *getFunction(unsigned func_id);
   unsigned getInternalLength(void);
   bool isByValue(void);
@@ -165,10 +186,15 @@ class Type: public BaseObject {
   TipoPgSQL getElement(void);
   char getDelimiter(void);
 
-  //Retorna a definição SQL ou XML do objeto
+  /* Returns the SQL / XML definition for the type. If the boolean
+     parameter is set the code definition is generated in a
+     reduced form (XML only) */
   QString getCodeDefinition(unsigned def_type, bool reduced_form);
+
+  //Returns the SQL / XML definition for the type
   QString getCodeDefinition(unsigned def_type);
 
+  //Makes a copy between two type
   void operator = (Type &tipo);
 
   friend class ModeloBD;

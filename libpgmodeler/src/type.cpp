@@ -45,9 +45,7 @@ Type::Type(void)
 
 Type::~Type(void)
 {
- /* Ao ser destruído um objeto desta classe tem
-    seu nome removido da lista de tipos válidos
-    do PostgreSQL */
+ //When destroyed the type must be removed from the PostgreSQL base types list
  TipoPgSQL::removerTipoUsuario(this->getName(true), this);
 }
 
@@ -57,9 +55,6 @@ void Type::setName(const QString &name)
 
  prev_name=this->getName(true);//this->nome;
  BaseObject::setName(name);
-
- /* Renomeia o tipo já definido anteriormente na
-    lista de tipos do PostgreSQL */
  TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
 }
 
@@ -69,9 +64,6 @@ void Type::setSchema(BaseObject *schema)
 
  prev_name=this->getName(true);
  BaseObject::setSchema(schema);
-
- /* Renomeia o tipo já definido anteriormente na
-    lista de tipos do PostgreSQL */
  TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
 }
 
@@ -94,13 +86,14 @@ bool Type::isAttributeExists(const QString &attrib_name)
 
 void Type::addAttribute(Parameter attrib)
 {
- //O atributo não pode ter o nome vazio nem tipo nulo
+ //Raises an error if the attribute has an empty name or null type
  if(attrib.getName()=="" || attrib.getType()==TipoPgSQL::nulo)
   throw Exception(ERR_INS_INV_TYPE_ATTRIB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+ //Raises an error if the passed attribute has the same type as the defining type (this)
  else if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !attrib.getType())
   throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- //Verifica se o atributo com mesmo nome já não foi inserido no tipo
+ //Raises an error when the attribute already exists
  else if(isAttributeExists(attrib.getName()))
   throw Exception(ERR_INS_DUPLIC_ITEMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -109,11 +102,10 @@ void Type::addAttribute(Parameter attrib)
 
 void Type::removeAttribute(unsigned attrib_idx)
 {
- //Verifica se o índice do atributo é valido
+ //Raises an error if the attribute index is out of bound
  if(attrib_idx >= attributes.size())
   throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Remove atributo no índice especificado
  attributes.erase(attributes.begin() + attrib_idx);
 }
 
@@ -141,14 +133,13 @@ bool Type::isEnumerationExists(const QString &enum_name)
 
 void Type::addEnumeration(const QString &enum_name)
 {
- //Verifica se a enumeração é vazia
+ //Raises an error if the enumaration name is empty
  if(enum_name=="")
   throw Exception(ERR_INS_INV_TYPE_ENUM_ITEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- /* Verifica se o nome da enumeração é válida de acordo com
-    com a regra de nomenclatura de identificadores no PostgreSQL */
+ //Raises an error if the enumeration name is invalid
  else if(!BaseObject::isValidName(enum_name))
   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- //Verifica se uma enumeração com mesmo nome já não foi inserido no tipo
+ //Raises an error if the enumeration already exists
  else if(isEnumerationExists(enum_name))
   throw Exception(ERR_INS_DUPLIC_ENUM_ITEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -172,10 +163,7 @@ void Type::setConfiguration(unsigned conf)
 {
  unsigned idx;
 
- /* Ao se definir uma configuração de tipo os atributos não
-    pertinentes a esta serão limpos. */
-
- //Verifica se a configuração a ser atribuída ao tipo é válida
+ //Raises an error if the configuration type is invalid
  if(conf < BASE_TYPE || conf > COMPOSITE_TYPE)
   throw Exception(ERR_ASG_INV_TYPE_CONFIG,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -210,16 +198,15 @@ void Type::setFunction(unsigned func_id, Function *func)
  TipoLinguagem lang;
  lang=TipoLinguagem::c;
 
- //Verifica se o tipo da função é válido
+ //Raises an error if the function id is invalid
  if(func_id > ANALYZE_FUNC)
   throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Obtém a quantidade de parâmetros da função
  if(func)
   param_count=func->getParameterCount();
 
- /* Verifica se a função está alocada quando o tipo de função é INPUT ou OUTPUT,
-    pois estas duas são obrigatórias para um tipo base */
+ /* Raises an error if the function isn't defined and the function id is INPUT or OUTPUT,
+    because this function is mandatory for base types */
  if(!func && (func_id==INPUT_FUNC || func_id==OUTPUT_FUNC))
   throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
                          .arg(QString::fromUtf8(this->getName(true)))
@@ -228,14 +215,13 @@ void Type::setFunction(unsigned func_id, Function *func)
 
  else if(func)
  {
-  /* Verifica se a função está escrita em C. Para a criação de um tipo base
-   apenas funções nesta linguagem podem ser atribuídas */
+  /* Raises an error if the function language is not C.
+     Functions assigned to base type must be written in C */
   if(func->getLanguage()->getName()!=(~lang))
    throw Exception(ERR_ASG_FUNC_INV_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  /* Verificando a quantidade de parâmetros da função em relação ao tipo.
-     Funções INPUT e RECV devem possuir 1 ou 3 parâmetros, já as demais funções
-     devem ter somente 1 parâmetro. */
+  /* Raises an error if the parameter count for INPUT and RECV functions
+     is different from 1 or 3. */
   else if((param_count!=1 && param_count!=3 &&
           (func_id==INPUT_FUNC || func_id==RECV_FUNC)) ||
           (param_count!=1 &&
@@ -245,15 +231,14 @@ void Type::setFunction(unsigned func_id, Function *func)
    throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
                           .arg(QString::fromUtf8(this->getName()))
                           .arg(BaseObject::getTypeName(OBJ_TYPE)),
-                 ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-  /* Verificando os tipos de returno da função em relação ao tipo.
-     Funções do tipo INPUT e RECV devem retornar dados do próprio tipo que está sendo
-     definido de acordo com a documentação, porém para facilitar a implementação esta função
-     precisa retornar dados do tipo 'any' o qual será substituído pelo nome do tipo no momento
-     da geração do SQL da função. Funções do tipo OUTPUT e TPMOD_OUT devem retornar cstring.
-     As demais funções SEND, TPMOD_IN e ANALYZE devem retornar bytea, integer e boolean,
-     respectivamente. */
+                 ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__); 
+  /* Checking the return types of function in relation to type.
+     INPUT and RECV functions must return the data type that is being defined according to the
+     documentation, but to facilitate the implementation the function must return data type
+     'any' which will be replaced by the defined type name at the moment of generation of SQL.
+     OUTPUT and TPMOD_OUT should return cstring.
+     The other functions SEND, TPMOD_IN and ANALYZE should return bytea, integer and boolean,
+     respectively. Raises an error if some of conditions above is not satisfied. */
   else if((func_id==INPUT_FUNC && func->getReturnType()!="any") ||
           (func_id==OUTPUT_FUNC && func->getReturnType()!="cstring") ||
           (func_id==RECV_FUNC && func->getReturnType()!="any") ||
@@ -266,14 +251,15 @@ void Type::setFunction(unsigned func_id, Function *func)
                           .arg(BaseObject::getTypeName(OBJ_TYPE)),
                  ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  /* Validando os tipos do parâmetro da função em rao   configuração do tipo.
-     A função INPUT deve possuir os parâmetros com tipo (cstring, oid, integer).
-     As funções OUTPUT e SEND devem possuir um parâmetro do mesmo tipo sendo definido,
-     neste caso, para facilitar a implementação basta usar um parâmetro de tipo 'any'.
-     A função RECV deve possuir os parâmetros (internal, oid, integer).
-     A função TPMOD_IN deve possuir um parâmetro do tipo (ctring[]).
-     A função TPMOD_OUT deve possuir um parâmetro do tipo (integer).
-     A função ANALYZE deve possuir um parâmetro do tipo (internal). */
+  /* Validating the parameter types of function in relation to the type configuration.
+     The INPUT function must have parameters with type (cstring, oid, integer).
+     SEND and OUTPUT must have a parameter of the same type being defined
+     in this case, to facilitate implementation simply use a type parameter "any".
+     The RECV function must have parameters (internal, oid, integer).
+     The function TPMOD_IN must have a type parameter (ctring []).
+     TPMOD_OUT function must have a parameter of type (integer).
+     The ANALYZE function must have a parameter of type (internal).
+     Raises an error if some of above conditions is not satisfied.*/
   else if((func_id==INPUT_FUNC &&
           (func->getParameter(0).getType()!="cstring" ||
            (param_count==3 &&
