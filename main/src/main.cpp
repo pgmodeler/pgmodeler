@@ -37,8 +37,7 @@ void executarCrashHandler(int)
   lin=QString("** pgModeler [v%1] crashed after receive signal: %2 **\n\nDate/Time:%3\n\n")
       .arg(GlobalAttributes::PGMODELER_VERSION)
       .arg("SIGSEGV")
-      .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"))
-      .arg(QLocale::system().name());
+      .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
 
   saida.write(lin.toStdString().c_str(), lin.size());
 

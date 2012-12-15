@@ -75,7 +75,7 @@ class ModeloBD:  public QObject, public BaseObject {
 
   /* Estrutura de dados que armazena os objetos da classe RelacionamentoBase
      usados para relacionar tabelas e visões */
-  vector<BaseObject *> relac_visoes;
+  vector<BaseObject *> relac_genericos;
 
   //Funções criadas no banco de dados
   vector<BaseObject *> funcoes;
@@ -433,6 +433,12 @@ class ModeloBD:  public QObject, public BaseObject {
      caso estes não existam no modelo. Remove relacionamentos os quais se
      tornaram inválidos ou seja, a visão deixa de referenciar uma dada tabela */
   void atualizarRelTabelaVisao(Visao *visao);
+
+  /* Cria automaticamente relacionamentos entre tabelas as quais estão relacionadas
+     através de chaves estrangeiras criadas pelo usuário. Caso já exista um relacionamento
+     entre duas tabelas mas o usuário crie uma segunda chave estrangeira com aplicação similiar
+     nenhum relacionamento será criado. */
+  void atualizarRelFkTabela(Tabela *tabela);
 
   /* Cria uma restrição a partir do XML. Caso o parâmetro 'objeto' seja uma tabela
      cria a restrição e já adiciona automaticaene    primeira. Caso seja um relacionamento

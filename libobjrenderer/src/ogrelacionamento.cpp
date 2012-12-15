@@ -520,7 +520,7 @@ void OGRelacionamento::configurarLinha(void)
    }
   }
 
-  //Caso o relacionamento seja de dependência a linha será tracejada
+  //Caso o relacionamento seja de dependência e seja entre uma tabela-visão a linha será tracejada
   pen=ObjetoGrafico::obterEstiloBorda(ParsersAttributes::RELATIONSHIP);
   if(rel_base->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP)
    pen.setStyle(Qt::DashLine);
@@ -628,6 +628,7 @@ void OGRelacionamento::configurarDescritor(void)
 
  //Configura o estilo da borda do descritor
  pen=ObjetoGrafico::obterEstiloBorda(ParsersAttributes::RELATIONSHIP);
+
  if(tipo_rel==BaseRelationship::RELATIONSHIP_DEP)
   pen.setStyle(Qt::DashLine);
 

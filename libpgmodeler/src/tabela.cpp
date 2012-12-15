@@ -178,6 +178,7 @@ void Tabela::definirAtributoRestricoes(unsigned tipo_def)
       (!rest->isReferRelationshipColumn() || rest->getConstraintType()==TipoRestricao::primary_key)) ||
 
      (tipo_def==SchemaParser::XML_DEFINITION && !rest->isAddedByRelationship() &&
+      rest->getConstraintType()!=TipoRestricao::foreign_key &&
       ((rest->getConstraintType()!=TipoRestricao::primary_key && !rest->isReferRelationshipColumn()) ||
        (rest->getConstraintType()==TipoRestricao::primary_key))))
   {
@@ -1015,6 +1016,24 @@ void Tabela::obterChavesEstrangeiras(vector<Constraint *> &vet_fks, bool inc_ins
 bool Tabela::aceitaOids(void)
 {
  return(aceita_oids);
+}
+
+bool Tabela::referenciaTabelaChaveEstrangeira(Tabela *tab_ref)
+{
+ unsigned qtd,i;
+ Constraint *constr=NULL;
+ bool found=false;
+
+ qtd=restricoes.size();
+ for(i=0; i < qtd && !found; i++)
+ {
+  constr=dynamic_cast<Constraint *>(restricoes[i]);
+  found=(constr->getConstraintType()==TipoRestricao::foreign_key &&
+         !constr->isAddedByLinking() &&
+          constr->getReferencedTable() == tab_ref);
+ }
+
+ return(found);
 }
 
 bool Tabela::restricaoReferenciaColuna(Column *coluna, TipoRestricao tipo_rest)

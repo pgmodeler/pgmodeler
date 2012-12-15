@@ -218,6 +218,7 @@ static const QString
   RELATIONSHIP_GEN="relgen",
   RELATIONSHIP_DEP="reldep",
   RELATION_TAB_VIEW="reltv",
+  RELATIONSHIP_FK="relfk",
   LABEL="label",
   LABELS_POS="labels-pos",
   DST_LABEL="dst-label",

@@ -2033,6 +2033,10 @@ void ModeloWidget::excluirObjetos(void)
         lista_op->registerObject(objeto_tab, Operation::OBJECT_REMOVED, idx_obj, tabela);
         tabela->removerObjeto(idx_obj, tipo_obj);
 
+        if(tipo_obj==OBJ_CONSTRAINT &&
+                dynamic_cast<Constraint *>(objeto_tab)->getConstraintType()==TipoRestricao::foreign_key)
+         modelo->atualizarRelFkTabela(tabela);
+
         tabela->setModified(true);
 
         modelo->validarRelacObjetoTabela(objeto_tab, tabela);
@@ -2277,7 +2281,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
  }
 
  //Adiciona a ação de copiar e recortar quando há objetos selecionados
- if(!(objs_sel.size()==1 && objs_sel[0]==modelo) &&
+ if(!(objs_sel.size()==1 && (objs_sel[0]==modelo || objs_sel[0]->getObjectType()==BASE_RELATIONSHIP)) &&
     !objs_sel.empty() && !obj_tab)
  {
   menu_popup.addAction(action_copiar);
@@ -2295,7 +2299,8 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
    menu_popup.addAction(action_colar);
 
  //Caso haja objeto selecionado adiciona a ação de excluir
- if((!(objs_sel.size()==1 && objs_sel[0]==modelo) && !objs_sel.empty()) || obj_tab)
+ if((!(objs_sel.size()==1 && (objs_sel[0]==modelo || objs_sel[0]->getObjectType()==BASE_RELATIONSHIP)) &&
+     !objs_sel.empty()) || obj_tab)
   menu_popup.addAction(action_excluir);
 
  /* Caso o objeto seja uma coluna (objeto de tabela) cria um menu

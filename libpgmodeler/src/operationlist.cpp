@@ -803,7 +803,13 @@ void OperationList::executeOperation(Operation *oper, bool redo)
      copyObject(reinterpret_cast<BaseObject **>(&object), aux_obj, obj_type);
 
     if(parent_tab)
+    {
      parent_tab->adicionarObjeto(dynamic_cast<TableObject *>(object), oper->object_idx);
+
+     if(object->getObjectType()==OBJ_CONSTRAINT &&
+        dynamic_cast<Constraint *>(object)->getConstraintType()==TipoRestricao::foreign_key)
+      model->atualizarRelFkTabela(parent_tab);
+    }
     else if(parent_rel)
      parent_rel->addObject(dynamic_cast<TableObject *>(object), oper->object_idx);
     else
@@ -838,7 +844,13 @@ void OperationList::executeOperation(Operation *oper, bool redo)
     if(parent_tab &&
       (object->getObjectType()==OBJ_COLUMN ||
        object->getObjectType()==OBJ_CONSTRAINT))
+    {
      model->validarRelacObjetoTabela(dynamic_cast<TableObject *>(object), parent_tab);
+
+     if(object->getObjectType()==OBJ_CONSTRAINT &&
+        dynamic_cast<Constraint *>(object)->getConstraintType()==TipoRestricao::foreign_key)
+      model->atualizarRelFkTabela(parent_tab);
+    }
     else if(parent_rel)
      model->validarRelacionamentos();
    }

@@ -230,6 +230,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
   case BaseRelationship::RELATIONSHIP_1N: rel_1n_rb->setChecked(true); break;
   case BaseRelationship::RELATIONSHIP_NN: rel_nn_rb->setChecked(true); break;
   case BaseRelationship::RELATIONSHIP_GEN: rel_gen_rb->setChecked(true); break;
+  case BaseRelationship::RELATIONSHIP_FK:  rel_fk_rb->setChecked(true); break;
   case BaseRelationship::RELATIONSHIP_DEP: rel_dep_rb->setChecked(true); break;
  }
 
@@ -316,7 +317,8 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
  relnn=(tipo_rel==BaseRelationship::RELATIONSHIP_NN);
 
  relgen_dep=(tipo_rel==BaseRelationship::RELATIONSHIP_DEP ||
-             tipo_rel==BaseRelationship::RELATIONSHIP_GEN);
+             tipo_rel==BaseRelationship::RELATIONSHIP_GEN ||
+             tipo_rel==BaseRelationship::RELATIONSHIP_FK);
 
  //Sufixo de origem: exibido para 1-n ou n-n
  sufixo_orig_lbl->setVisible(rel1n || relnn);
@@ -637,10 +639,13 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
      relacinamentos do modelo, é necessário armazenar o XML dos objetos especiais e
      desconectar TODOS os relacionamentos, executar a modificação no
      relacionamento e logo após revalidar todos os demais */
-  modelo->obterXMLObjetosEspeciais();
-  modelo->desconectarRelacionamentos();
+  if(this->objeto->getObjectType()==OBJ_RELATIONSHIP)
+  {
+   modelo->obterXMLObjetosEspeciais();
+   modelo->desconectarRelacionamentos();
+  }
 
-  if(!this->novo_obj)
+  if(!this->novo_obj && this->objeto->getObjectType()==OBJ_RELATIONSHIP)
   {
    //Adiciona o relacionamento   lista de operações antes de ser modificado
    lista_op->registerObject(this->objeto, Operation::OBJECT_MODIFIED);
@@ -709,9 +714,11 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
        relacao->isIdentifier())
      modelo->verificarRedundanciaRelacoes(relacao);
 
-    /* Faz a validação dos relacionamentos para refletir a nova configuração
-       do relacionamento */
-    modelo->validarRelacionamentos();
+    if(tipo_rel!=BaseRelationship::RELATIONSHIP_FK)
+     /* Faz a validação dos relacionamentos para refletir a nova configuração
+        do relacionamento */
+     modelo->validarRelacionamentos();
+
     relacao->blockSignals(false);
     relacao->setModified(true);
    }

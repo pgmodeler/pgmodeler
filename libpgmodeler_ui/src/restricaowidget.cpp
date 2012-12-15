@@ -532,6 +532,11 @@ void RestricaoWidget::aplicarConfiguracao(void)
    throw Exception(ERR_CONSTR_NO_COLUMNS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   finalizarConfiguracao();
+
+  /* Caso seja uma chave estrangeira atualiza os relacionamentos da tabela pai,
+     criando um novo caso seja necessário (relacionamento originário de chave estrangeira) */
+  if(restricao->getConstraintType()==TipoRestricao::foreign_key)
+   this->modelo->atualizarRelFkTabela(this->tabela);
  }
  catch(Exception &e)
  {

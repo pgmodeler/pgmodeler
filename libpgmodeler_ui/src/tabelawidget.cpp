@@ -614,6 +614,8 @@ void TabelaWidget::aplicarConfiguracao(void)
     /* Faz a validação dos relacionamentos para refletir a nova configuração
        da tabela */
     modelo->validarRelacionamentos();
+
+   modelo->atualizarRelFkTabela(tabela);
   }
   catch(Exception &e)
   {

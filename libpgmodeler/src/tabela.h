@@ -251,6 +251,11 @@ class Tabela: public BaseTable {
      Para se obter TODAS as referências ao objeto, deve-se espeficicar como 'false' o parâmetro 'modo_exclusão'. */
   void obterReferenciasColuna(Column *coluna, vector<TableObject *> &vet_refs, bool modo_exclusao=false);
 
+  /* Retorna se a tabela referencia a tabela passada em uma de suas chaves estrangeiras. Este método considera
+     apenas chaves estrangeiras criadas pelo usuário. Este método é usado como auxiliar no controle dos
+     relacionamentos originários de chaves estrangeiras no modelo. */
+  bool referenciaTabelaChaveEstrangeira(Tabela *tab_ref);
+
   friend class Relationship;
   friend class OperationList;
 };

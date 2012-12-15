@@ -1,4 +1,4 @@
-﻿<!--
+<!--
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
@@ -6,7 +6,7 @@
 <!ATTLIST relationship name CDATA #REQUIRED>
 <!ATTLIST relationship src-required (false|true) "false">
 <!ATTLIST relationship dst-required (false|true) "false">
-<!ATTLIST relationship type (rel11|rel1n|relnn|relgen|reldep|reltv) "rel11">
+<!ATTLIST relationship type (rel11|rel1n|relnn|relgen|reldep|reltv|relfk) "rel11">
 <!ATTLIST relationship protected (false|true) "false">
 <!ATTLIST relationship src-table CDATA #REQUIRED>
 <!ATTLIST relationship dst-table CDATA #REQUIRED>

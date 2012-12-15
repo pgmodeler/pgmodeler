@@ -69,7 +69,7 @@ void BaseRelationship::configureRelationship(void)
 
 
  //Check if the relationship type is valid
- if(rel_type <= RELATIONSHIP_DEP)
+ if(rel_type <= RELATIONSHIP_FK)
  {
   try
   {
@@ -179,10 +179,14 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
  {
   if(rel_type==RELATIONSHIP_11)
    lables[label_id]->setComment("(" + cmin + ",1)");
-  else if(rel_type==RELATIONSHIP_1N)
+  else if(rel_type==RELATIONSHIP_1N || rel_type==RELATIONSHIP_FK)
   {
    aux=(table_id==SRC_TABLE ? "1" : "n");
-   lables[label_id]->setComment("(" + cmin + "," + aux + ")");
+
+   if(rel_type==RELATIONSHIP_1N)
+    lables[label_id]->setComment("(" + cmin + "," + aux + ")");
+   else
+    lables[label_id]->setComment("(" + aux + ")");
   }
   else if(rel_type==RELATIONSHIP_NN)
    lables[label_id]->setComment("(n)");
@@ -216,6 +220,7 @@ void BaseRelationship::disconnectRelationship(void)
   connected=false;
   src_table->setModified(true);
   dst_table->setModified(true);
+  this->setModified(true);
  }
 }
 
@@ -226,6 +231,7 @@ void BaseRelationship::connectRelationship(void)
   connected=true;
   src_table->setModified(true);
   dst_table->setModified(true);
+  this->setModified(true);
  }
 }
 
@@ -267,6 +273,7 @@ void BaseRelationship::setRelationshipAttributes(void)
   case RELATIONSHIP_1N: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_1N; break;
   case RELATIONSHIP_NN: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_NN; break;
   case RELATIONSHIP_GEN: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_GEN; break;
+  case RELATIONSHIP_FK: attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATIONSHIP_FK; break;
   default:
     if(src_table->getObjectType()==OBJ_VIEW)
      attributes[ParsersAttributes::TYPE]=ParsersAttributes::RELATION_TAB_VIEW;

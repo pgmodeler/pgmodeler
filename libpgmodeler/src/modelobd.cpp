@@ -101,7 +101,7 @@ vector<BaseObject *> *ModeloBD::obterListaObjetos(ObjectType tipo_obj)
  else if(tipo_obj==OBJ_SEQUENCE)
   return(&sequencias);
  else if(tipo_obj==BASE_RELATIONSHIP)
-  return(&relac_visoes);
+  return(&relac_genericos);
  else if(tipo_obj==OBJ_RELATIONSHIP)
   return(&relacionamentos);
  else if(tipo_obj==OBJ_PERMISSION)
@@ -725,6 +725,8 @@ void ModeloBD::adicionarTabela(Tabela *tabela, int idx_obj)
    seu nome é adicionad  lista de tipos válidos
    do PostgreSQL */
   TipoPgSQL::adicionarTipoUsuario(tabela->getName(true), tabela, this, ConfigTipoUsuario::TIPO_TABELA);
+
+  atualizarRelFkTabela(tabela);
  }
  catch(Exception &e)
  {
@@ -751,41 +753,57 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
   if(!vet_refs.empty())
   {
    ErrorType tipo_err;
+   unsigned i=0, qtd=vet_refs.size();
 
-   /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
-       do objeto referenciado */
-    if(!dynamic_cast<TableObject *>(vet_refs[0]))
-    {
-     tipo_err=ERR_REM_DIRECT_REFERENCE;
-     str_aux=QString(Exception::getErrorMessage(tipo_err))
-             .arg(tabela->getName(true))
-             .arg(tabela->getTypeName())
-             .arg(vet_refs[0]->getName(true))
-             .arg(vet_refs[0]->getTypeName());
+   while(i < qtd)
+   {
+     /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
+        do objeto referenciado */
+     if(!dynamic_cast<TableObject *>(vet_refs[i]))
+     {
+      tipo_err=ERR_REM_DIRECT_REFERENCE;
+      str_aux=QString(Exception::getErrorMessage(tipo_err))
+              .arg(tabela->getName(true))
+              .arg(tabela->getTypeName())
+              .arg(vet_refs[0]->getName(true))
+              .arg(vet_refs[0]->getTypeName());
+
+       throw Exception(str_aux, tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+     }
+     else
+     {
+      BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(vet_refs[i])->getParentTable();
+
+      /* Um erro só é disparado para uma objetos de tabela quando este
+         não tem como pai a própria tabela a ser removida */
+      if(obj_ref_pai != tabela)
+      {
+       //Formata a mensagem caso exista uma referência indireta ao objeto a ser removido
+       tipo_err=ERR_REM_INDIRECT_REFERENCE;
+       str_aux=QString(Exception::getErrorMessage(tipo_err))
+               .arg(tabela->getName(true))
+               .arg(tabela->getTypeName())
+               .arg(vet_refs[0]->getName(true))
+               .arg(vet_refs[0]->getTypeName())
+               .arg(obj_ref_pai->getName(true))
+               .arg(obj_ref_pai->getTypeName());
+
+       throw Exception(str_aux, tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      }
+     }
+
+     i++;
     }
-    else
-    {
-     BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(vet_refs[0])->getParentTable();
-
-     //Formata a mensagem caso exista uma referência indireta ao objeto a ser removido
-     tipo_err=ERR_REM_INDIRECT_REFERENCE;
-     str_aux=QString(Exception::getErrorMessage(tipo_err))
-             .arg(tabela->getName(true))
-             .arg(tabela->getTypeName())
-             .arg(vet_refs[0]->getName(true))
-             .arg(vet_refs[0]->getTypeName())
-             .arg(obj_ref_pai->getName(true))
-             .arg(obj_ref_pai->getTypeName());
-    }
-
-    throw Exception(str_aux, tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
   __removerObjeto(tabela, idx_obj);
 
-  /* Ao ser removido do modelo a sequencia tem
-   seu nome removido da lista de tipos válidos do PostgreSQL */
- TipoPgSQL::removerTipoUsuario(tabela->getName(true), tabela);
+   /* Ao ser removido do modelo a sequencia tem
+    seu nome removido da lista de tipos válidos do PostgreSQL */
+  TipoPgSQL::removerTipoUsuario(tabela->getName(true), tabela);
+
+  //Remove qualquer relacionamento gerado por chave estrangeira
+  atualizarRelFkTabela(tabela);
  }
 }
 
@@ -852,6 +870,100 @@ void ModeloBD::removerVisao(Visao *visao, int idx_obj)
  }
 }
 
+
+void ModeloBD::atualizarRelFkTabela(Tabela *tabela)
+{
+ if(!tabela)
+  throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+ else
+ {
+  Tabela *ref_tab=NULL;
+  BaseRelationship *rel=NULL;
+  Constraint *fk=NULL;
+  unsigned idx;
+  vector<Constraint *> vet_fks;
+  vector<Constraint *>::iterator itr, itr_end;
+  vector<BaseObject *>::iterator itr1, itr1_end;
+
+  tabela->obterChavesEstrangeiras(vet_fks);
+  itr=vet_fks.begin();
+  itr_end=vet_fks.end();
+
+  //Caso a tabela foi excluida deve-se remove os relacionamentos
+  if(obterIndiceObjeto(tabela) < 0)
+  {
+   while(itr!=itr_end)
+   {
+    fk=(*itr);
+    ref_tab=dynamic_cast<Tabela *>(fk->getReferencedTable());
+    itr++;
+
+    rel=obterRelacionamento(tabela, ref_tab);
+
+    if(rel)
+     removerRelacionamento(rel);
+   }
+  }
+  //Atualiza os relacionamentos
+  else
+  {
+   /* Remove os relacionamentos os quais estão inválidos, ou seja,
+      a tabela do relacionametno não está sendo mais referenciada pela visao */
+   itr1=relac_genericos.begin();
+   itr1_end=relac_genericos.end();
+
+   //Varre a lista de relacionamentos tabela-visão
+   idx=0;
+   while(itr1!=itr1_end)
+   {
+    //Obtém a referência ao relacionamento
+    rel=dynamic_cast<BaseRelationship *>(*itr1);
+
+    //Caso a visão seja um dos elementos do relacionamento
+    if(rel->getTable(BaseRelationship::SRC_TABLE)==tabela ||
+       rel->getTable(BaseRelationship::DST_TABLE)->getObjectType()==OBJ_TABLE)
+    {
+     ref_tab=dynamic_cast<Tabela *>(rel->getTable(BaseRelationship::DST_TABLE));
+
+       //Caso a visão não referencie mais a tabela
+     if(!tabela->referenciaTabelaChaveEstrangeira(ref_tab))
+     {
+      //Remove o relacionamento
+      removerRelacionamento(rel);
+      itr1=relac_genericos.begin() + idx;
+      itr1_end=relac_genericos.end();
+     }
+     else
+     {
+      itr1++; idx++;
+     }
+    }
+    else
+    {
+     itr1++; idx++;
+    }
+   }
+
+   while(itr!=itr_end)
+   {
+    fk=(*itr);
+    ref_tab=dynamic_cast<Tabela *>(fk->getReferencedTable());
+    itr++;
+
+    /* Caso a tabela exista, um relacionamento tabela-visão será automaticamente criado
+       (caso este já não existe) e inserido no modelo */
+    rel=obterRelacionamento(tabela, ref_tab);
+    if(!rel)
+    {
+     rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK,
+                              tabela, ref_tab, false, false);
+     adicionarRelacionamento(rel);
+    }
+   }
+  }
+ }
+}
+
 void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
 {
  Tabela *tab=NULL;
@@ -866,8 +978,8 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
  {
   /* Quando uma visão é excluída, os relacionamentos tabela-visão os quais
      possuem a visão como um dos elementos serão excluídos automaticamente */
-  itr=relac_visoes.begin();
-  itr_end=relac_visoes.end();
+  itr=relac_genericos.begin();
+  itr_end=relac_genericos.end();
 
   //Varre a lista de relacionamentos tabela-visão
   idx=0;
@@ -882,8 +994,8 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
    {
     //Remove o relacionamento
     removerRelacionamento(rel);
-    itr=relac_visoes.begin() + idx;
-    itr_end=relac_visoes.end();
+    itr=relac_genericos.begin() + idx;
+    itr_end=relac_genericos.end();
    }
    else
    {
@@ -893,10 +1005,10 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
  }
  else
  {
-    /* Remove os relacionamentos visão-tabela os quais estão inválidos, ou seja,
+  /* Remove os relacionamentos visão-tabela os quais estão inválidos, ou seja,
      a tabela do relacionametno não está sendo mais referenciada pela visao */
-  itr=relac_visoes.begin();
-  itr_end=relac_visoes.end();
+  itr=relac_genericos.begin();
+  itr_end=relac_genericos.end();
 
   //Varre a lista de relacionamentos tabela-visão
   idx=0;
@@ -920,8 +1032,8 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
     {
      //Remove o relacionamento
      removerRelacionamento(rel);
-     itr=relac_visoes.begin() + idx;
-     itr_end=relac_visoes.end();
+     itr=relac_genericos.begin() + idx;
+     itr_end=relac_genericos.end();
     }
     else
     {
@@ -949,8 +1061,6 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
    rel=obterRelacionamento(visao,tab);
    if(tab && !rel)
    {
-    /* rel=new RelacionamentoBase("rel_" + visao->getName() + "_" + tab->getName(),
-                               RelacionamentoBase::RELACIONAMENTO_DEP,visao,tab,false,false); */
     rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_DEP,visao,tab,false,false);
     adicionarRelacionamento(rel);
    }
@@ -1632,6 +1742,7 @@ BaseRelationship *ModeloBD::obterRelacionamento(unsigned idx_obj, ObjectType tip
 BaseRelationship *ModeloBD::obterRelacionamento(BaseTable *tab_orig, BaseTable *tab_dest)
 {
  vector<BaseObject *>::iterator itr, itr_end;
+ vector<BaseObject *> rel_list;
  BaseRelationship *rel=NULL;
  bool enc=false, buscar_tab_unica=false;
  BaseTable *tab1=NULL, *tab2=NULL;
@@ -1648,7 +1759,7 @@ BaseRelationship *ModeloBD::obterRelacionamento(BaseTable *tab_orig, BaseTable *
   {
    tab_dest=tab_orig;
    buscar_tab_unica=true;
- }
+  }
 
   /* Definindo os iteradores de acordo com os objetos envolvidos
      no relacionamento */
@@ -1659,13 +1770,17 @@ BaseRelationship *ModeloBD::obterRelacionamento(BaseTable *tab_orig, BaseTable *
   if(tab_orig->getObjectType()==OBJ_VIEW ||
      tab_dest->getObjectType()==OBJ_VIEW)
   {
-   itr=relac_visoes.begin();
-   itr_end=relac_visoes.end();
+   itr=relac_genericos.begin();
+   itr_end=relac_genericos.end();
   }
   else
   {
-   itr=relacionamentos.begin();
-   itr_end=relacionamentos.end();
+   rel_list.assign(relac_genericos.begin(), relac_genericos.end());
+   rel_list.insert(rel_list.end(), relacionamentos.begin(), relacionamentos.end());
+   //itr=relacionamentos.begin();
+   //itr_end=relacionamentos.end();
+   itr=rel_list.begin();
+   itr_end=rel_list.end();
   }
 
   while(itr!=itr_end && !enc)
@@ -5554,13 +5669,19 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
   XMLParser::getElementAttributes(atributos);
   protegido=(atributos[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
-  if(atributos[ParsersAttributes::TYPE]!=ParsersAttributes::RELATION_TAB_VIEW)
+  if(atributos[ParsersAttributes::TYPE]!=ParsersAttributes::RELATION_TAB_VIEW &&
+     atributos[ParsersAttributes::TYPE]!=ParsersAttributes::RELATIONSHIP_FK)
   {
    tipos_tab[0]=OBJ_TABLE;
    tipo_obj_rel=OBJ_RELATIONSHIP;
   }
   else
+  {
+   if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_FK)
+    tipos_tab[0]=OBJ_TABLE;
+
    tipo_obj_rel=BASE_RELATIONSHIP;
+  }
 
   /* Esta iteração obtém as tabelas participantes do relacionamento a
      partir do modelo com base nos nomes das tabelas vindos do XML */
@@ -5583,10 +5704,11 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
    }
   }
 
-  //Caso o relacionamento entre tabela e visão exista
-  relacao_base=obterRelacionamento(tabelas[0], tabelas[1]);
   if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATION_TAB_VIEW)
   {
+   //Caso o relacionamento entre tabela e visão exista
+   relacao_base=obterRelacionamento(tabelas[0], tabelas[1]);
+
    //Caso o relacionamento tabela-visão nao seja encontrado o erro será disparado
    if(!relacao_base)
     throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
@@ -5598,11 +5720,17 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
 
    //Desconecta o relacionamento para configurá-lo
    relacao_base->disconnectRelationship();
-   //relacao_base->definirNome(atributos[ParsersAttributes::NAME]);
+   relacao_base->setName(atributos[ParsersAttributes::NAME]);
+  }
+  else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_FK)
+  {
+   relacao_base=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK,
+                                     tabelas[0], tabelas[1], false, false);
+   relacao_base->setName(atributos[ParsersAttributes::NAME]);
   }
   /* Caso o tipo de relacionamento não seja tabela-visão, isso indica que
      um relacionamento tabela-tabela deverá ser criado */
-  else if(atributos[ParsersAttributes::TYPE]!=ParsersAttributes::RELATION_TAB_VIEW)
+  else
   {
    //Obtém os atributos do relacionamento a partir do XML
    obrig_orig=atributos[ParsersAttributes::SRC_REQUIRED]==ParsersAttributes::_TRUE_;
@@ -5738,6 +5866,8 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
   obterXMLObjetosEspeciais();
   adicionarRelacionamento(relacao);
  }
+ else if(relacao_base->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+  adicionarRelacionamento(relacao_base);
 
  //Define a proteção do relacionamento
  relacao_base->setProtected(protegido);
@@ -6178,15 +6308,15 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
 
      /* Caso a restrição seja um objeto especial armazena o mesmo no mapa de objetos.
         Idenpendente da configuração, chaves estrangeiras sempre serão descartadas nesta
-        iteração pois ao final do método as mesmas tem seu código SQL concatenado �  definição
+        iteração pois ao final do método as mesmas tem seu código SQL concatenado   definição
         do modelo */
      if((tipo_def==SchemaParser::XML_DEFINITION ||
          (tipo_def==SchemaParser::SQL_DEFINITION &&
           restricao->getConstraintType()!=TipoRestricao::foreign_key)) &&
 
         (!restricao->isAddedByLinking() &&
-          restricao->getConstraintType()!=TipoRestricao::primary_key &&
-          restricao->isReferRelationshipColumn()))
+          ((restricao->getConstraintType()!=TipoRestricao::primary_key && restricao->isReferRelationshipColumn()) ||
+           (restricao->getConstraintType()==TipoRestricao::foreign_key))))
      {
       //Armazena o objeto em si no mapa de objetos
       mapa_objetos[restricao->getObjectId()]=restricao;
@@ -6499,7 +6629,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
  {
   //Adiciona o objeto na lista de dependências
   vet_deps.push_back(objeto);
- }
+
 
  if((vet_deps.size()==1 && !inc_dep_indiretas) || inc_dep_indiretas)
  {
@@ -6869,6 +6999,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    }
   }
  }
+ }
 }
 
 void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &vet_refs, bool modo_exclusao)
@@ -6968,8 +7099,8 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
 
    /* Vericando se existe algum relacionamento (tabela-visao)
       o qual um dos objetos participantes é a tabela */
-   itr=relac_visoes.begin();
-   itr_end=relac_visoes.end();
+   itr=relac_genericos.begin();
+   itr_end=relac_genericos.end();
 
    while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
    {

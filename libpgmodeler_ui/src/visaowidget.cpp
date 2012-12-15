@@ -420,7 +420,7 @@ void VisaoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Vi
   tab_referencias->limparSelecao();
  }
 }
-//---------------------------------------------------------
+
 void VisaoWidget::aplicarConfiguracao(void)
 {
  try
