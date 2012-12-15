@@ -890,7 +890,7 @@ void ModeloBD::atualizarRelFkTabela(Tabela *tabela)
   itr_end=vet_fks.end();
 
   //Caso a tabela foi excluida deve-se remove os relacionamentos
-  if(obterIndiceObjeto(tabela) < 0)
+  if(!vet_fks.empty() && obterIndiceObjeto(tabela) < 0)
   {
    while(itr!=itr_end)
    {
@@ -920,7 +920,7 @@ void ModeloBD::atualizarRelFkTabela(Tabela *tabela)
     rel=dynamic_cast<BaseRelationship *>(*itr1);
 
     //Caso a visão seja um dos elementos do relacionamento
-    if(rel->getTable(BaseRelationship::SRC_TABLE)==tabela ||
+    if(rel->getTable(BaseRelationship::SRC_TABLE)==tabela &&
        rel->getTable(BaseRelationship::DST_TABLE)->getObjectType()==OBJ_TABLE)
     {
      ref_tab=dynamic_cast<Tabela *>(rel->getTable(BaseRelationship::DST_TABLE));
@@ -6902,7 +6902,8 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    for(i=0; i < qtd; i++)
    {
     rest=dynamic_cast<Constraint *>(tab->obterRestricao(i));
-    if(!rest->isAddedByLinking() &&
+    if(inc_dep_indiretas &&
+       !rest->isAddedByLinking() &&
         rest->getConstraintType()==TipoRestricao::foreign_key)
      obterDependenciasObjeto(rest->getReferencedTable(), vet_deps, inc_dep_indiretas);
 
