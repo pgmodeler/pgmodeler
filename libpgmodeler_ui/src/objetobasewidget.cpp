@@ -220,7 +220,13 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_o
   comentario_edt->setText(QString::fromUtf8(objeto->getComment()));
 
   sel_dono->definirObjeto(objeto->getOwner());
-  sel_esquema->definirObjeto(objeto->getSchema());
+
+  //Caso o objeto não possua um esquema, preenche o campo com o esquema public
+  if(!objeto->getSchema())
+   sel_esquema->definirObjeto(modelo->obterObjeto("public", OBJ_SCHEMA));
+  else
+   sel_esquema->definirObjeto(objeto->getSchema());
+
   sel_esptabela->definirObjeto(objeto->getTablespace());
 
   /* Exibe o frame de objeto protegido caso o mesmo esteja protegido
@@ -238,7 +244,11 @@ void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_o
 
   janela_pai->aplicar_ok_btn->setEnabled(!protegido);
  }
- else obj_protegido_frm->setVisible(false);
+ else
+ {
+  obj_protegido_frm->setVisible(false);
+  sel_esquema->definirObjeto(modelo->obterObjeto("public", OBJ_SCHEMA));
+ }
 }
 
 void ObjetoBaseWidget::configurarLayouFormulario(QGridLayout *grid, ObjectType tipo_obj)
