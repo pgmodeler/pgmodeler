@@ -296,8 +296,6 @@ void Type::convertFunctionParameters(bool inverse_conv)
 
   if(func)
   {
-   /* Para as funções OUTPUT e SEND a conversão normal é mudar o tipo do primeiro
-      parâmetro de 'any' para o tipo 'this' já a conversão inversa faz o processo contrário */
    if(conf_funcs[i]==OUTPUT_FUNC || conf_funcs[i]==SEND_FUNC)
    {
     param=func->getParameter(0);
@@ -314,9 +312,6 @@ void Type::convertFunctionParameters(bool inverse_conv)
      func->addParameter(param);
     }
    }
-
-   /* Para as funções INPUT e RECV a conversão normal é mudar o tipo de retorno
-      de 'any' para o tipo 'this' já a conversão inversa faz o processo contrário */
    else if(conf_funcs[i]==INPUT_FUNC || conf_funcs[i]==RECV_FUNC)
    {
     if(!inverse_conv)
@@ -342,8 +337,7 @@ void Type::setAlignment(TipoPgSQL type)
 {
  QString tp=(*type);
 
- /* Verifica se o tipo a ser atribuído ao alinhamento é
-    diferente de char, smallint, integer e double (os únicos aceitos) */
+ //Raises an error if the type assigned to the alignment is invalid according to the rule
  if(tp!="char" && tp!="smallint" && tp!="integer" && tp!="double precision")
   throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ALIGNMENT_TYPE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_ASG_INV_ALIGNMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -629,8 +623,6 @@ void Type::operator = (Type &type)
   i++;
  }
 
- /* Renomeia o tipo já definido anteriormente na
-    lista de tipos do PostgreSQL */
  TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
 }
 
