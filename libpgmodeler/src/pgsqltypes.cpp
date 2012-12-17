@@ -1,4 +1,4 @@
-#include "tipospgsql.h"
+#include "pgsqltypes.h"
 
 /********************
  * CLASSE: TipoBase *

@@ -26,7 +26,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/baseobject.h \
            $$PWD/src/rule.h \
            $$PWD/src/sequence.h \
-           $$PWD/src/tipospgsql.h \
+           $$PWD/src/pgsqltypes.h \
            $$PWD/src/conversion.h \
            $$PWD/src/schema.h \
            $$PWD/src/indexelement.h \
@@ -56,7 +56,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/index.cpp \
             $$PWD/src/operator.cpp \
             $$PWD/src/constraint.cpp \
-            $$PWD/src/tipospgsql.cpp \
+            $$PWD/src/pgsqltypes.cpp \
             $$PWD/src/schema.cpp \
             $$PWD/src/language.cpp \
             $$PWD/src/role.cpp \

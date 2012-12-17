@@ -27,7 +27,7 @@
 
 #include <QtGui>
 #include "ui_tipopgsqlwidget.h"
-#include "tipospgsql.h"
+#include "pgsqltypes.h"
 #include "destaquesintaxe.h"
 #include "modelobd.h"
 
