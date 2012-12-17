@@ -179,14 +179,15 @@ void BaseRelationship::setMandatoryTable(unsigned table_id, bool value)
  {
   if(rel_type==RELATIONSHIP_11)
    lables[label_id]->setComment("(" + cmin + ",1)");
-  else if(rel_type==RELATIONSHIP_1N || rel_type==RELATIONSHIP_FK)
+  else if(rel_type==RELATIONSHIP_1N)
   {
    aux=(table_id==SRC_TABLE ? "1" : "n");
-
-   if(rel_type==RELATIONSHIP_1N)
-    lables[label_id]->setComment("(" + cmin + "," + aux + ")");
-   else
-    lables[label_id]->setComment("(" + aux + ")");
+   lables[label_id]->setComment("(" + cmin + "," + aux + ")");
+  }
+  else if(rel_type==RELATIONSHIP_FK)
+  {
+   aux=(table_id==SRC_TABLE ? "n" : "1");
+   lables[label_id]->setComment("(" + aux + ")");
   }
   else if(rel_type==RELATIONSHIP_NN)
    lables[label_id]->setComment("(n)");
