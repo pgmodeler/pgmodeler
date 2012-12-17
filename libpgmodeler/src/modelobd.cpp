@@ -920,8 +920,8 @@ void ModeloBD::atualizarRelFkTabela(Tabela *tabela)
     rel=dynamic_cast<BaseRelationship *>(*itr1);
 
     //Caso a visão seja um dos elementos do relacionamento
-    if(rel->getTable(BaseRelationship::SRC_TABLE)==tabela &&
-       rel->getTable(BaseRelationship::DST_TABLE)->getObjectType()==OBJ_TABLE)
+    if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK &&
+       rel->getTable(BaseRelationship::SRC_TABLE)==tabela)
     {
      ref_tab=dynamic_cast<Tabela *>(rel->getTable(BaseRelationship::DST_TABLE));
 
@@ -1308,6 +1308,26 @@ void ModeloBD::validarRelacionamentos(void)
     não recriados pela quebra das referências não sejam trabalhados pelo
     método de recriação dos objetos especiais */
   xml_objs_especiais.clear();
+
+  /* Revalida os relacionamentos gerados por chave estrangeira em caso de erro,
+     pois se uma chave estrangeira que referenciava uma coluna que deixou de existir
+     o relacionamento que a representa também deve ser removido */
+  itr=relac_genericos.begin();
+  itr_end=relac_genericos.end();
+
+  while(itr!=itr_end)
+  {
+   //Obtém um relacionamento generico
+   rel_base=dynamic_cast<BaseRelationship *>(*itr);
+
+   if(rel_base->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+    this->atualizarRelFkTabela(dynamic_cast<Tabela *>(rel_base->getTable(BaseRelationship::SRC_TABLE)));
+
+   itr++;
+  }
+
+  //Define os objetos como modificados para forçar seu redesenho
+  this->definirObjetosModificados();
 
   throw Exception(ERR_INVALIDATED_OBJECTS,__PRETTY_FUNCTION__,__FILE__,__LINE__,vet_erros);
  }
