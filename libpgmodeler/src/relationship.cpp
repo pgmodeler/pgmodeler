@@ -1068,7 +1068,7 @@ void Relationship::addUniqueKey(Tabela *ref_tab, Tabela *recv_tab)
  }
 }
 
-void Relationship::addForeignKey(Tabela *ref_tab, Tabela *recv_tab, TipoAcao del_act, TipoAcao upd_act)
+void Relationship::addForeignKey(Tabela *ref_tab, Tabela *recv_tab, ActionType del_act, ActionType upd_act)
 {
  Constraint *pk=NULL, *pk_aux=NULL, *fk=NULL;
  unsigned i, i1, qty;
@@ -1338,7 +1338,7 @@ void Relationship::addColumnsRel11(void)
 
  try
  {
-  TipoAcao del_action;
+  ActionType del_action;
 
   ref_tab=dynamic_cast<Tabela *>(this->getReferenceTable());
   recv_tab=dynamic_cast<Tabela *>(this->getReceiverTable());
@@ -1346,16 +1346,16 @@ void Relationship::addColumnsRel11(void)
   //Case the reference table is mandatory participation set as RESTRICT the delete action on the foreign key
   if((ref_tab==this->src_table && this->isTableMandatory(SRC_TABLE)) ||
      (ref_tab==this->dst_table && this->isTableMandatory(DST_TABLE)))
-    del_action=TipoAcao::restrict;
+    del_action=ActionType::restrict;
   else
-    del_action=TipoAcao::set_null;
+    del_action=ActionType::set_null;
 
   if(isSelfRelationship())
   {
    addAttributes(recv_tab);
    addConstraints(recv_tab);
    copyColumns(ref_tab, recv_tab, false);
-   addForeignKey(ref_tab, recv_tab, del_action, TipoAcao::cascade);
+   addForeignKey(ref_tab, recv_tab, del_action, ActionType::cascade);
    addUniqueKey(ref_tab, recv_tab);
   }
   else
@@ -1382,11 +1382,11 @@ void Relationship::addColumnsRel11(void)
 
    if(identifier)
    {
-    addForeignKey(ref_tab, recv_tab, TipoAcao::cascade, TipoAcao::cascade);
+    addForeignKey(ref_tab, recv_tab, ActionType::cascade, ActionType::cascade);
    }
    else
    {
-    addForeignKey(ref_tab, recv_tab, del_action,  TipoAcao::cascade);
+    addForeignKey(ref_tab, recv_tab, del_action,  ActionType::cascade);
     addUniqueKey(ref_tab, recv_tab);
    }
   }
@@ -1401,7 +1401,7 @@ void Relationship::addColumnsRel1n(void)
 {
  Tabela *ref_tab=NULL, *recv_tab=NULL;
  bool not_null=false;
- TipoAcao del_action=TipoAcao::set_null, upd_action=TipoAcao::cascade;
+ ActionType del_action=ActionType::set_null, upd_action=ActionType::cascade;
 
  try
  {
@@ -1414,9 +1414,9 @@ void Relationship::addColumnsRel1n(void)
   if(!identifier && src_mandatory)
   {
    if(!deferrable)
-    del_action=TipoAcao::restrict;
+    del_action=ActionType::restrict;
    else
-    del_action=TipoAcao::no_action;
+    del_action=ActionType::no_action;
 
    not_null=true;
   }
@@ -1426,7 +1426,7 @@ void Relationship::addColumnsRel1n(void)
      entity also exists, this means if the strong entity tuple is removed the weak entity
      tuple is also removed */
   else if(identifier)
-   del_action=TipoAcao::cascade;
+   del_action=ActionType::cascade;
 
   if(isSelfRelationship())
   {
@@ -1464,8 +1464,8 @@ void Relationship::addColumnsRelNn(void)
  Tabela *tab=NULL, *tab1=NULL;
  Constraint *pk_tabnn=NULL;
  bool src_not_null=false, dst_not_null=false;
- TipoAcao acao_del_orig=TipoAcao::restrict, acao_del_dest=TipoAcao::restrict,
-          acao_upd_orig=TipoAcao::cascade, acao_upd_dest=TipoAcao::cascade;
+ ActionType acao_del_orig=ActionType::restrict, acao_del_dest=ActionType::restrict,
+          acao_upd_orig=ActionType::cascade, acao_upd_dest=ActionType::cascade;
  unsigned i, count;
 
  try

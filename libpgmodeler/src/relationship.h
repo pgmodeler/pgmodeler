@@ -217,7 +217,7 @@ class Relationship: public BaseRelationship {
 
   /* Creates the foreign key that represents the relationship and adds it
      to the receiver table. Must be specified the actions ON DELETE and UPDATE. */
-  void addForeignKey(Tabela *ref_tab, Tabela *recv_tab, TipoAcao del_act, TipoAcao upd_act);
+  void addForeignKey(Tabela *ref_tab, Tabela *recv_tab, ActionType del_act, ActionType upd_act);
 
   /* Creates the unique key that represents the 1-1 relationship e adds it to
      the receiver table */

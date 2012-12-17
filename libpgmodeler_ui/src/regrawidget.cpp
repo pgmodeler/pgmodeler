@@ -38,11 +38,11 @@ RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_RULE)
   janela_pai->setMinimumSize(550, 520);
 
   //Configurando o combo de tipo de evento com os tipos disponíveis
-  TipoEvento::obterTipos(lista);
+  TipoEvento::getTypes(lista);
   tipo_evento_cmb->addItems(lista);
 
   //Configurando o combo de tipo de execução com os tipos disponíveis
-  TipoExecucao::obterTipos(lista);
+  TipoExecucao::getTypes(lista);
   tipo_execucao_cmb->addItems(lista);
 
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));

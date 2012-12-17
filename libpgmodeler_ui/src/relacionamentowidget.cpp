@@ -82,7 +82,7 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
   janela_pai->setMinimumSize(600, 520);
 
   //Configurando o combo de tipo de postergação com os tipos disponíveis
-  TipoPostergacao::obterTipos(lista);
+  TipoPostergacao::getTypes(lista);
   tipo_postergacao_cmb->addItems(lista);
 
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));

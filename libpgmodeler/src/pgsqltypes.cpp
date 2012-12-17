@@ -3,7 +3,7 @@
 /********************
  * CLASSE: TipoBase *
  ********************/
-QString TipoBase::tipos[qtd_tipos]=
+QString BaseType::tipos[types_count]=
 {
  /* Tipo vazio, quando se instância a classe TipoBase ao usar o operador ~
     este será o único tipo retornado */
@@ -179,145 +179,145 @@ QString TipoBase::tipos[qtd_tipos]=
  "GEOMETRYCOLLECTION"
 };
 
-TipoBase::TipoBase(void)
+BaseType::BaseType(void)
 {
- idx_tipo=0;
+ type_idx=0;
 }
 
-QString TipoBase::obterStringTipo(unsigned tipo)
+QString BaseType::getTypeString(unsigned type_id)
 {
- if(tipo > qtd_tipos)
+ if(type_id > types_count)
   throw Exception(ERR_REF_TYPE_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(tipos[tipo]);
+ return(tipos[type_id]);
 }
 
-void TipoBase::definirTipo(unsigned tipo,unsigned offset,unsigned qtd_tipos)
+void BaseType::setType(unsigned type_id,unsigned offset,unsigned count)
 {
  /* Caso a quantidade de tipos seja nula ou maior do que o tamanho da lista de tipos
     da classe base, dispara um exceção indicando o fato */
- if(qtd_tipos==0 || qtd_tipos > this->qtd_tipos)
+ if(count==0 || count > this->types_count)
   throw Exception(ERR_OBT_TYPES_INV_QUANTITY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Caso o tipo a ser atribuido não seja pertecente a classe de tipo atual
- else if(!tipoValido(tipo,offset,qtd_tipos))
+ else if(!isTypeValid(type_id,offset,count))
   throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
-  idx_tipo=tipo;
+  type_idx=type_id;
 }
 
-bool TipoBase::tipoValido(unsigned idx_tipo,unsigned offset,unsigned qtd_tipos)
+bool BaseType::isTypeValid(unsigned type_id,unsigned offset,unsigned count)
 {
  //Retorna se o indice do tipo está no intervalo (offset-qtd_tipos) da classe
- return((idx_tipo>=offset && idx_tipo<=(offset+qtd_tipos-1)) || idx_tipo==0);
+ return((type_id>=offset && type_id<=(offset+count-1)) || type_id==0);
 }
 
-void TipoBase::obterTipos(QStringList &tipos,unsigned offset,unsigned qtd_tipos)
+void BaseType::getTypes(QStringList &types,unsigned offset,unsigned count)
 {
  /* Caso a quantidade de tipos seja nula ou maior do que o tamanho da lista de tipos
     da classe base, dispara um exceção indicando o fato */
- if(qtd_tipos==0 || qtd_tipos > TipoBase::qtd_tipos)
+ if(count==0 || count > BaseType::types_count)
   throw Exception(ERR_OBT_TYPES_INV_QUANTITY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   unsigned idx,total;
 
-  tipos.clear(); //Limpa a lista de tipos
-  total=offset+qtd_tipos; //Calcula a quantidade total de tipos a serem obtidos
+  types.clear(); //Limpa a lista de tipos
+  total=offset+count; //Calcula a quantidade total de tipos a serem obtidos
 
   for(idx=offset; idx<total; idx++)
    //Insere na lista os tipos que vao do offset ao total de tipos
-   tipos.push_back(TipoBase::tipos[idx]);
+   types.push_back(BaseType::tipos[idx]);
  }
 }
 
-unsigned TipoBase::obterTipo(const QString &nome_tipo,unsigned offset,unsigned qtd_tipos)
+unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned count)
 {
  unsigned idx,total;
- bool enc=false;
+ bool found=false;
 
- if(nome_tipo=="")
-  return(TipoBase::nulo);
+ if(type_name=="")
+  return(BaseType::null);
  else
  {
-  total=offset + qtd_tipos; //Calculando o total de tipos da classe
+  total=offset + count; //Calculando o total de tipos da classe
 
   /*Verifica se o tipo passado pelo parametro está no conjunto de
    tipos da classe */
-  for(idx=offset; idx<total && !enc; idx++)
-   enc=(nome_tipo==TipoBase::tipos[idx]);
+  for(idx=offset; idx<total && !found; idx++)
+   found=(type_name==BaseType::tipos[idx]);
 
-  if(enc)
+  if(found)
   { idx--; return(idx); }
   else
-   return(TipoBase::nulo);
+   return(BaseType::null);
  }
 }
 
-QString TipoBase::operator ~ (void)
+QString BaseType::operator ~ (void)
 {
- return(tipos[idx_tipo]);
+ return(tipos[type_idx]);
 }
 
-unsigned TipoBase::operator ! (void)
+unsigned BaseType::operator ! (void)
 {
- return(idx_tipo);
+ return(type_idx);
 }
 
-bool TipoBase::operator == (TipoBase &tipo)
+bool BaseType::operator == (BaseType &type)
 {
- return(tipo.idx_tipo == idx_tipo);
+ return(type.type_idx == type_idx);
 }
 
-bool TipoBase::operator == (unsigned tipo)
+bool BaseType::operator == (unsigned type_id)
 {
- return(idx_tipo==tipo);
+ return(type_idx==type_id);
 }
 
-bool TipoBase::operator != (TipoBase &tipo)
+bool BaseType::operator != (BaseType &type)
 {
- return(tipo.idx_tipo != idx_tipo);
+ return(type.type_idx != type_idx);
 }
 
-bool TipoBase::operator != (unsigned tipo)
+bool BaseType::operator != (unsigned type_id)
 {
- return(idx_tipo!=tipo);
+ return(type_idx!=type_id);
 }
 
 /********************
  * CLASSE: TipoAcao *
  ********************/
-TipoAcao::TipoAcao(unsigned tipo)
+ActionType::ActionType(unsigned tipo)
 {
  (*this)=tipo;
 }
 
-TipoAcao::TipoAcao(const QString &nome_tipo)
+ActionType::ActionType(const QString &nome_tipo)
 {
  (*this)=nome_tipo;
 }
 
-TipoAcao::TipoAcao(void)
+ActionType::ActionType(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
-void TipoAcao::obterTipos(QStringList &tipos)
+void ActionType::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
-unsigned TipoAcao::operator = (unsigned tipo)
+unsigned ActionType::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
-unsigned TipoAcao::operator = (const QString &nome_tipo)
+unsigned ActionType::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -337,26 +337,26 @@ TipoRestricao::TipoRestricao(const QString &nome_tipo)
 
 TipoRestricao::TipoRestricao(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
-void TipoRestricao::obterTipos(QStringList &tipos)
+void TipoRestricao::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoRestricao::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoRestricao::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -365,7 +365,7 @@ unsigned TipoRestricao::operator = (const QString &nome_tipo)
  **********************/
 TipoEvento::TipoEvento(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoEvento::TipoEvento(const QString &nome_tipo)
@@ -378,34 +378,34 @@ TipoEvento::TipoEvento(unsigned tipo)
  (*this)=tipo;
 }
 
-void TipoEvento::obterTipos(QStringList &tipos)
+void TipoEvento::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoEvento::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoEvento::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
 bool TipoEvento::operator < (TipoEvento tipo) const
 {
- return(idx_tipo < tipo.idx_tipo);
+ return(type_idx < tipo.type_idx);
 }
 
 bool TipoEvento::operator < (unsigned idx) const
 {
- return(idx_tipo < idx);
+ return(type_idx < idx);
 }
 
 /************************
@@ -413,7 +413,7 @@ bool TipoEvento::operator < (unsigned idx) const
  ************************/
 TipoExecucao::TipoExecucao(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoExecucao::TipoExecucao(unsigned tipo)
@@ -426,23 +426,23 @@ TipoExecucao::TipoExecucao(const QString &nome_tipo)
  (*this)=nome_tipo;
 }
 
-void TipoExecucao::obterTipos(QStringList &tipos)
+void TipoExecucao::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoExecucao::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoExecucao::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -456,7 +456,7 @@ TipoFuncao::TipoFuncao(unsigned tipo)
 
 TipoFuncao::TipoFuncao(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoFuncao::TipoFuncao(const QString &nome_tipo)
@@ -464,23 +464,23 @@ TipoFuncao::TipoFuncao(const QString &nome_tipo)
  (*this)=nome_tipo;
 }
 
-void TipoFuncao::obterTipos(QStringList &tipos)
+void TipoFuncao::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoFuncao::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoFuncao::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -494,7 +494,7 @@ TipoIndexacao::TipoIndexacao(unsigned tipo)
 
 TipoIndexacao::TipoIndexacao(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoIndexacao::TipoIndexacao(const QString &nome_tipo)
@@ -502,23 +502,23 @@ TipoIndexacao::TipoIndexacao(const QString &nome_tipo)
  (*this)=nome_tipo;
 }
 
-void TipoIndexacao::obterTipos(QStringList &tipos)
+void TipoIndexacao::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoIndexacao::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoIndexacao::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -532,7 +532,7 @@ TipoIntervalo::TipoIntervalo(unsigned tipo)
 
 TipoIntervalo::TipoIntervalo(void)
 {
- idx_tipo=TipoBase::nulo;
+ type_idx=BaseType::null;
 }
 
 TipoIntervalo::TipoIntervalo(const QString &nome_tipo)
@@ -540,23 +540,23 @@ TipoIntervalo::TipoIntervalo(const QString &nome_tipo)
  (*this)=nome_tipo;
 }
 
-void TipoIntervalo::obterTipos(QStringList &tipos)
+void TipoIntervalo::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoIntervalo::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoIntervalo::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -565,20 +565,20 @@ unsigned TipoIntervalo::operator = (const QString &nome_tipo)
  ************************/
 TipoEspacial::TipoEspacial(const QString &nome_tipo, unsigned variacao)
 {
- TipoBase::definirTipo(TipoBase::obterTipo(nome_tipo, offset, qtd_tipos),
-                       offset, qtd_tipos);
+ BaseType::setType(BaseType::getType(nome_tipo, offset, types_count),
+                       offset, types_count);
  definirVariacao(variacao);
 }
 
 TipoEspacial::TipoEspacial(unsigned tipo, unsigned variacao)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
+ BaseType::setType(tipo,offset,types_count);
  definirVariacao(variacao);
 }
 
 TipoEspacial::TipoEspacial(void)
 {
- idx_tipo=point;
+ type_idx=point;
  variacao=no_var;
 }
 
@@ -595,9 +595,9 @@ unsigned TipoEspacial::obterVariacao(void)
  return(variacao);
 }
 
-void TipoEspacial::obterTipos(QStringList &tipos)
+void TipoEspacial::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 QString TipoEspacial::operator * (void)
@@ -613,7 +613,7 @@ QString TipoEspacial::operator * (void)
  }
 
  //Atualmente o PostGiS aceita somente SRID = 4326 (Vide documentação Postgis 2.0)
- return(QString("(%1%2, 4326)").arg(tipos[idx_tipo]).arg(var_str));
+ return(QString("(%1%2, 4326)").arg(tipos[type_idx]).arg(var_str));
 }
 
 /*********************
@@ -624,7 +624,7 @@ vector<ConfigTipoUsuario> TipoPgSQL::tipos_usr;
 
 TipoPgSQL::TipoPgSQL(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
  comprimento=1;
  precisao=-1;
  dimensao=0;
@@ -682,12 +682,12 @@ TipoPgSQL::TipoPgSQL(unsigned idx_tipo, unsigned comprimento, unsigned dimensao,
  definirTipoEspacial(tipo_esp);
 }
 
-void TipoPgSQL::obterTipos(QStringList &tipos, bool tipo_oid, bool pseudos)
+void TipoPgSQL::getTypes(QStringList &tipos, bool tipo_oid, bool pseudos)
 {
  unsigned idx,total;
 
  tipos.clear(); //Limpa a lista de tipos
- total=offset+qtd_tipos; //Calcula a quantidade total de tipos a serem obtidos
+ total=offset+types_count; //Calcula a quantidade total de tipos a serem obtidos
 
  for(idx=offset; idx<total; idx++)
  {
@@ -695,7 +695,7 @@ void TipoPgSQL::obterTipos(QStringList &tipos, bool tipo_oid, bool pseudos)
   if(idx<ini_oid ||
     (tipo_oid && idx>=ini_oid && idx<=fim_oid) ||
     (pseudos && idx>=ini_pseudo && idx<=fim_pseudo))
-  tipos.push_back(TipoBase::tipos[idx]);
+  tipos.push_back(BaseType::tipos[idx]);
  }
 }
 
@@ -704,25 +704,25 @@ unsigned TipoPgSQL::operator = (unsigned tipo)
  if(tipo>=offset)
   definirTipoUsuario(tipo);
  else if(tipo > 0)
-  TipoBase::definirTipo(tipo,offset,qtd_tipos);
+  BaseType::setType(tipo,offset,types_count);
  else if(tipo==0)
   throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(idx_tipo);
+ return(type_idx);
 }
 
 unsigned TipoPgSQL::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo, idx_tipo_usr;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
  idx_tipo_usr=obterIndiceTipoUsuario(nome_tipo, NULL);
 
  if(idx_tipo==0 && idx_tipo_usr==0)
   throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(idx_tipo!=0)
  {
-  TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+  BaseType::setType(idx_tipo,offset,types_count);
   return(idx_tipo);
  }
  else
@@ -735,7 +735,7 @@ unsigned TipoPgSQL::operator = (const QString &nome_tipo)
 void *TipoPgSQL::obterRefTipoUsuario(void)
 {
  if(this->tipoUsuario())
-  return(tipos_usr[this->idx_tipo - (fim_pseudo + 1)].ptipo);
+  return(tipos_usr[this->type_idx - (fim_pseudo + 1)].ptipo);
  else
   return(NULL);
 }
@@ -743,14 +743,14 @@ void *TipoPgSQL::obterRefTipoUsuario(void)
 unsigned TipoPgSQL::obterConfTipoUsuario(void)
 {
  if(this->tipoUsuario())
-  return(tipos_usr[this->idx_tipo - (fim_pseudo + 1)].conf_tipo);
+  return(tipos_usr[this->type_idx - (fim_pseudo + 1)].conf_tipo);
  else
   return(0);
 }
 
 bool TipoPgSQL::operator == (unsigned idx_tipo)
 {
- return(this->idx_tipo==idx_tipo);
+ return(this->type_idx==idx_tipo);
 }
 
 bool TipoPgSQL::operator == (const QString &nome_tipo)
@@ -758,17 +758,17 @@ bool TipoPgSQL::operator == (const QString &nome_tipo)
  unsigned idx,total;
  bool enc=false;
 
- total=offset + qtd_tipos; //Calculando o total de tipos da classe
+ total=offset + types_count; //Calculando o total de tipos da classe
 
  /*Verifica se o tipo passado pelo parametro está no conjunto de
   tipos da classe */
  for(idx=offset; idx<total && !enc; idx++)
-  enc=(nome_tipo==TipoBase::tipos[idx]);
+  enc=(nome_tipo==BaseType::tipos[idx]);
 
  if(enc) idx--;
 
  //Verifica se o código do tipo encontrado é igual ao codigo do tipo atual
- return(idx_tipo==idx);
+ return(type_idx==idx);
 }
 
 bool TipoPgSQL::operator != (const QString &nome_tipo)
@@ -778,24 +778,24 @@ bool TipoPgSQL::operator != (const QString &nome_tipo)
 
 bool TipoPgSQL::operator != (TipoPgSQL tipo)
 {
- return(this->idx_tipo!=tipo.idx_tipo);
+ return(this->type_idx!=tipo.type_idx);
 }
 
 bool TipoPgSQL::operator != (unsigned idx_tipo)
 {
- return(this->idx_tipo!=idx_tipo);
+ return(this->type_idx!=idx_tipo);
 }
 
 bool TipoPgSQL::operator == (TipoPgSQL tipo)
 {
- return(this->idx_tipo==tipo.idx_tipo);
+ return(this->type_idx==tipo.type_idx);
 }
 
 bool TipoPgSQL::operator == (void *ptipo)
 {
  int idx;
  idx=obterIndiceTipoUsuario("",ptipo);
- return(static_cast<int>(idx_tipo) == idx);
+ return(static_cast<int>(type_idx) == idx);
 }
 
 TipoIntervalo TipoPgSQL::obterTipoIntervalo(void)
@@ -816,19 +816,19 @@ bool TipoPgSQL::comTimezone(void)
 bool TipoPgSQL::tipoOID(void)
 {
  //Retorna se o tipo está no conjunto de tipos identificadores de objetos (oid)
- return(idx_tipo>=ini_oid && idx_tipo<=fim_oid);
+ return(type_idx>=ini_oid && type_idx<=fim_oid);
 }
 
 bool TipoPgSQL::pseudoTipo(void)
 {
  //Retorna se o tipo está no conjunto de pseudotipos
- return(idx_tipo>=ini_pseudo && idx_tipo<=fim_pseudo);
+ return(type_idx>=ini_pseudo && type_idx<=fim_pseudo);
 }
 
 unsigned TipoPgSQL::operator << (void *ptipo)
 {
  definirTipoUsuario(ptipo);
- return(idx_tipo);
+ return(type_idx);
 }
 
 void TipoPgSQL::definirTipoIntervalo(TipoIntervalo tipo_interv)
@@ -857,7 +857,7 @@ void TipoPgSQL::definirTipoUsuario(unsigned idx)
 
  if(TipoPgSQL::tipos_usr.size() > 0 &&
     (idx >= lim1 && idx < lim2))
-  idx_tipo=idx;
+  type_idx=idx;
  else
   throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
@@ -870,7 +870,7 @@ void TipoPgSQL::definirTipoUsuario(void *ptipo)
  if(idx <= 0)
   throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
-  idx_tipo=idx;
+  type_idx=idx;
 }
 
 void TipoPgSQL::adicionarTipoUsuario(const QString &nome, void *ptipo, void *pmodelo, unsigned conf_tipo_usr)
@@ -938,7 +938,7 @@ void TipoPgSQL::renomearTipoUsuario(const QString &nome, void *ptipo,const QStri
 
 unsigned TipoPgSQL::obterIndiceTipoBase(const QString &nome)
 {
- return(obterTipo(nome,offset,qtd_tipos));
+ return(getType(nome,offset,types_count));
 }
 
 unsigned TipoPgSQL::obterIndiceTipoUsuario(const QString &nome, void *ptipo, void *pmodelo)
@@ -965,9 +965,9 @@ unsigned TipoPgSQL::obterIndiceTipoUsuario(const QString &nome, void *ptipo, voi
    //return(offset + qtd_tipos + idx);
    return(fim_pseudo + 1 + idx);
   else
-   return(TipoBase::nulo);
+   return(BaseType::null);
  }
- else return(TipoBase::nulo);
+ else return(BaseType::null);
 }
 
 QString TipoPgSQL::getNameTipoUsuario(unsigned idx)
@@ -1022,10 +1022,10 @@ void TipoPgSQL::obterTiposUsuario(vector<void *> &ptipos, void *pmodelo, unsigne
 
 QString TipoPgSQL::operator ~ (void)
 {
- if(idx_tipo >= fim_pseudo + 1)//offset + qtd_tipos)
-  return(tipos_usr[idx_tipo - (fim_pseudo + 1)].nome);
+ if(type_idx >= fim_pseudo + 1)//offset + qtd_tipos)
+  return(tipos_usr[type_idx - (fim_pseudo + 1)].nome);
  else
-  return(TipoBase::tipos[idx_tipo]);
+  return(BaseType::tipos[type_idx]);
 }
 
 bool TipoPgSQL::tipoArray(void)
@@ -1035,23 +1035,23 @@ bool TipoPgSQL::tipoArray(void)
 
 bool TipoPgSQL::tipoUsuario(void)
 {
- return(idx_tipo > fim_pseudo);
+ return(type_idx > fim_pseudo);
 }
 
 bool TipoPgSQL::tipoCompVariavel(void )
 {
-return(tipos[this->idx_tipo]=="numeric" || tipos[this->idx_tipo]=="decimal" ||
-       tipos[this->idx_tipo]=="character varying" || tipos[this->idx_tipo]=="varchar" ||
-       tipos[this->idx_tipo]=="character" || tipos[this->idx_tipo]=="char" ||
-       tipos[this->idx_tipo]=="bit" || tipos[this->idx_tipo]=="bit varying" ||
-       tipos[this->idx_tipo]=="varbit");
+return(tipos[this->type_idx]=="numeric" || tipos[this->type_idx]=="decimal" ||
+       tipos[this->type_idx]=="character varying" || tipos[this->type_idx]=="varchar" ||
+       tipos[this->type_idx]=="character" || tipos[this->type_idx]=="char" ||
+       tipos[this->type_idx]=="bit" || tipos[this->type_idx]=="bit varying" ||
+       tipos[this->type_idx]=="varbit");
 }
 
 bool TipoPgSQL::tipoAceitaPrecisao(void )
 {
- return(tipos[this->idx_tipo]=="numeric" || tipos[this->idx_tipo]=="decimal" ||
-        tipos[this->idx_tipo]=="time" || tipos[this->idx_tipo]=="timestamp" ||
-        tipos[this->idx_tipo]=="interval");
+ return(tipos[this->type_idx]=="numeric" || tipos[this->type_idx]=="decimal" ||
+        tipos[this->type_idx]=="time" || tipos[this->type_idx]=="timestamp" ||
+        tipos[this->type_idx]=="interval");
 }
 
 void TipoPgSQL::definirDimensao(unsigned dim)
@@ -1081,12 +1081,12 @@ void TipoPgSQL::definirComprimento(unsigned comp)
 void TipoPgSQL::definirPrecisao(int prec)
 {
  //Caso o usuário tente definir uma precisao maior que o comprimento do tipo
- if(((TipoBase::tipos[idx_tipo]=="numeric" ||
-      TipoBase::tipos[idx_tipo]=="decimal") && prec > static_cast<int>(comprimento)))
+ if(((BaseType::tipos[type_idx]=="numeric" ||
+      BaseType::tipos[type_idx]=="decimal") && prec > static_cast<int>(comprimento)))
   throw Exception(ERR_ASG_INV_PRECISION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(((TipoBase::tipos[idx_tipo]=="time" ||
-           TipoBase::tipos[idx_tipo]=="timestamp" ||
-           TipoBase::tipos[idx_tipo]=="interval") && prec > 6))
+ else if(((BaseType::tipos[type_idx]=="time" ||
+           BaseType::tipos[type_idx]=="timestamp" ||
+           BaseType::tipos[type_idx]=="interval") && prec > 6))
   throw Exception(ERR_ASG_INV_PREC_TIMESTAMP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Define a precisão do tipo da coluna
@@ -1136,10 +1136,10 @@ QString TipoPgSQL::obterDefinicaoObjeto(unsigned tipo_def,QString tipo_ref)
   if(precisao >= 0)
    atributos[ParsersAttributes::PRECISION]=QString("%1").arg(this->precisao);
 
-  if(tipo_intervalo != TipoBase::nulo)
+  if(tipo_intervalo != BaseType::null)
    atributos[ParsersAttributes::INTERVAL_TYPE]=(~tipo_intervalo);
 
-  if(!tipoUsuario() && tipo_espacial != TipoBase::nulo)
+  if(!tipoUsuario() && tipo_espacial != BaseType::null)
   {
    atributos[ParsersAttributes::SPATIAL_TYPE]=(~tipo_espacial);
    atributos[ParsersAttributes::VARIATION]=QString("%1").arg(tipo_espacial.obterVariacao());
@@ -1168,10 +1168,10 @@ QString TipoPgSQL::operator * (void)
      A sintaxe desses tipos se altera ficando na forma TIPO(COMPRIMENTO,PRECISÃO).*/
   if((tipo=="numeric" || tipo=="decimal") && precisao>=0 &&
      precisao<=static_cast<int>(comprimento))
-   aux=QString("%1(%2,%3)").arg(TipoBase::tipos[idx_tipo]).arg(comprimento).arg(precisao);
+   aux=QString("%1(%2,%3)").arg(BaseType::tipos[type_idx]).arg(comprimento).arg(precisao);
    /* Trantado o caso dos tipos que necessitam apenas do comprimento */
   else
-   aux=QString("%1(%2)").arg(TipoBase::tipos[idx_tipo]).arg(comprimento);
+   aux=QString("%1(%2)").arg(BaseType::tipos[type_idx]).arg(comprimento);
 
   tipo_fmt=aux;
  }
@@ -1181,7 +1181,7 @@ QString TipoPgSQL::operator * (void)
      [TIME|TIMESTAMP] (PRECISÃO) [WITH|WITHOUT] TIMEZONE */
   if(tipo!="interval")
   {
-   aux=TipoBase::tipos[idx_tipo];
+   aux=BaseType::tipos[type_idx];
 
    if(precisao >= 0)
     aux+=QString("(%1)").arg(precisao);
@@ -1195,9 +1195,9 @@ QString TipoPgSQL::operator * (void)
      INTERVAL [TIPO_INTERVALO](PRECISÃO) */
   else
   {
-   aux=TipoBase::tipos[idx_tipo];
+   aux=BaseType::tipos[type_idx];
 
-   if(tipo_intervalo!=TipoBase::nulo)
+   if(tipo_intervalo!=BaseType::null)
     aux+=QString("[%1]").arg(~tipo_intervalo);
 
    if(precisao >= 0)
@@ -1229,7 +1229,7 @@ TipoComportamento::TipoComportamento(unsigned tipo)
 
 TipoComportamento::TipoComportamento(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoComportamento::TipoComportamento(const QString &nome_tipo)
@@ -1237,23 +1237,23 @@ TipoComportamento::TipoComportamento(const QString &nome_tipo)
  (*this)=nome_tipo;
 }
 
-void TipoComportamento::obterTipos(QStringList &tipos)
+void TipoComportamento::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoComportamento::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoComportamento::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -1262,7 +1262,7 @@ unsigned TipoComportamento::operator = (const QString &nome_tipo)
  *************************/
 TipoSeguranca::TipoSeguranca(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoSeguranca::TipoSeguranca(const QString &nome_tipo)
@@ -1275,23 +1275,23 @@ TipoSeguranca::TipoSeguranca(unsigned tipo)
  (*this)=tipo;
 }
 
-void TipoSeguranca::obterTipos(QStringList &tipos)
+void TipoSeguranca::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoSeguranca::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoSeguranca::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -1300,7 +1300,7 @@ unsigned TipoSeguranca::operator = (const QString &nome_tipo)
  *************************/
 TipoLinguagem::TipoLinguagem(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoLinguagem::TipoLinguagem(unsigned tipo)
@@ -1313,23 +1313,23 @@ TipoLinguagem::TipoLinguagem(const QString &nome_tipo)
  (*this)=nome_tipo;
 }
 
-void TipoLinguagem::obterTipos(QStringList &tipos)
+void TipoLinguagem::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoLinguagem::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoLinguagem::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -1338,7 +1338,7 @@ unsigned TipoLinguagem::operator = (const QString &nome_tipo)
  ***************************/
 TipoCodificacao::TipoCodificacao(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoCodificacao::TipoCodificacao(const QString &nome_tipo)
@@ -1346,23 +1346,23 @@ TipoCodificacao::TipoCodificacao(const QString &nome_tipo)
  (*this)=nome_tipo;
 }
 
-void TipoCodificacao::obterTipos(QStringList &tipos)
+void TipoCodificacao::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoCodificacao::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoCodificacao::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -1376,17 +1376,17 @@ bool TipoCodificacao::operator == (const QString &nome_tipo)
  unsigned idx,total;
  bool enc=false;
 
- total=offset + qtd_tipos; //Calculando o total de tipos da classe
+ total=offset + types_count; //Calculando o total de tipos da classe
 
  /*Verifica se o tipo passado pelo parametro está no conjunto de
   tipos da classe */
  for(idx=offset; idx<total && !enc; idx++)
-  enc=(nome_tipo==TipoBase::tipos[idx]);
+  enc=(nome_tipo==BaseType::tipos[idx]);
 
  if(enc) idx--;
 
  //Verifica se o código do tipo encontrado é igual ao codigo do tipo atual
- return(idx_tipo==idx);
+ return(type_idx==idx);
 }
 
 bool TipoCodificacao::operator != (const QString &nome_tipo)
@@ -1396,7 +1396,7 @@ bool TipoCodificacao::operator != (const QString &nome_tipo)
 
 bool TipoCodificacao::operator != (TipoCodificacao tipo)
 {
- return(this->idx_tipo!=tipo.idx_tipo);
+ return(this->type_idx!=tipo.type_idx);
 }
 
 /*****************************
@@ -1404,7 +1404,7 @@ bool TipoCodificacao::operator != (TipoCodificacao tipo)
  *****************************/
 TipoArmazenamento::TipoArmazenamento(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoArmazenamento::TipoArmazenamento(const QString &nome_tipo)
@@ -1412,23 +1412,23 @@ TipoArmazenamento::TipoArmazenamento(const QString &nome_tipo)
  (*this)=nome_tipo;
 }
 
-void TipoArmazenamento::obterTipos(QStringList &tipos)
+void TipoArmazenamento::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoArmazenamento::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoArmazenamento::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -1442,17 +1442,17 @@ bool TipoArmazenamento::operator == (const QString &nome_tipo)
  unsigned idx,total;
  bool enc=false;
 
- total=offset + qtd_tipos; //Calculando o total de tipos da classe
+ total=offset + types_count; //Calculando o total de tipos da classe
 
  /*Verifica se o tipo passado pelo parametro está no conjunto de
   tipos da classe */
  for(idx=offset; idx<total && !enc; idx++)
-  enc=(nome_tipo==TipoBase::tipos[idx]);
+  enc=(nome_tipo==BaseType::tipos[idx]);
 
  if(enc) idx--;
 
  //Verifica se o código do tipo encontrado é igual ao codigo do tipo atual
- return(idx_tipo==idx);
+ return(type_idx==idx);
 }
 
 bool TipoArmazenamento::operator != (const QString &nome_tipo)
@@ -1462,7 +1462,7 @@ bool TipoArmazenamento::operator != (const QString &nome_tipo)
 
 bool TipoArmazenamento::operator != (TipoArmazenamento tipo)
 {
- return(this->idx_tipo!=tipo.idx_tipo);
+ return(this->type_idx!=tipo.type_idx);
 }
 
 /*************************
@@ -1470,7 +1470,7 @@ bool TipoArmazenamento::operator != (TipoArmazenamento tipo)
  *************************/
 TipoComparacao::TipoComparacao(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoComparacao::TipoComparacao(const QString &nome_tipo)
@@ -1483,23 +1483,23 @@ TipoComparacao::TipoComparacao(unsigned tipo)
  (*this)=tipo;
 }
 
-void TipoComparacao::obterTipos(QStringList &tipos)
+void TipoComparacao::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoComparacao::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoComparacao::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -1508,7 +1508,7 @@ unsigned TipoComparacao::operator = (const QString &nome_tipo)
  ***************************/
 TipoPostergacao::TipoPostergacao(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoPostergacao::TipoPostergacao(const QString &nome_tipo)
@@ -1521,23 +1521,23 @@ TipoPostergacao::TipoPostergacao(unsigned tipo)
  (*this)=tipo;
 }
 
-void TipoPostergacao::obterTipos(QStringList &tipos)
+void TipoPostergacao::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoPostergacao::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoPostergacao::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -1546,7 +1546,7 @@ unsigned TipoPostergacao::operator = (const QString &nome_tipo)
  ***************************/
 TipoCategoria::TipoCategoria(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoCategoria::TipoCategoria(const QString &nome_tipo)
@@ -1559,23 +1559,23 @@ TipoCategoria::TipoCategoria(unsigned tipo)
  (*this)=tipo;
 }
 
-void TipoCategoria::obterTipos(QStringList &tipos)
+void TipoCategoria::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoCategoria::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoCategoria::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 
@@ -1584,7 +1584,7 @@ unsigned TipoCategoria::operator = (const QString &nome_tipo)
  ************************/
 TipoDisparo::TipoDisparo(void)
 {
- idx_tipo=offset;
+ type_idx=offset;
 }
 
 TipoDisparo::TipoDisparo(unsigned tipo)
@@ -1597,23 +1597,23 @@ TipoDisparo::TipoDisparo(const QString &nome_tipo)
  (*this)=nome_tipo;
 }
 
-void TipoDisparo::obterTipos(QStringList &tipos)
+void TipoDisparo::getTypes(QStringList &tipos)
 {
- TipoBase::obterTipos(tipos,offset,qtd_tipos);
+ BaseType::getTypes(tipos,offset,types_count);
 }
 
 unsigned TipoDisparo::operator = (unsigned tipo)
 {
- TipoBase::definirTipo(tipo,offset,qtd_tipos);
- return(idx_tipo);
+ BaseType::setType(tipo,offset,types_count);
+ return(type_idx);
 }
 
 unsigned TipoDisparo::operator = (const QString &nome_tipo)
 {
  unsigned idx_tipo;
 
- idx_tipo=TipoBase::obterTipo(nome_tipo, offset, qtd_tipos);
- TipoBase::definirTipo(idx_tipo,offset,qtd_tipos);
+ idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
+ BaseType::setType(idx_tipo,offset,types_count);
  return(idx_tipo);
 }
 

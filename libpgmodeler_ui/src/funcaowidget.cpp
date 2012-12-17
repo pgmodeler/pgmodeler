@@ -73,15 +73,15 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_FUNCTI
   janela_pai->setMinimumSize(645, 715);
 
   //Configura o combo de tipos de segurança da função
-  TipoSeguranca::obterTipos(tipos);
+  TipoSeguranca::getTypes(tipos);
   seguranca_cmb->addItems(tipos);
 
   //Configura o combo de tipo da função
-  TipoFuncao::obterTipos(tipos);
+  TipoFuncao::getTypes(tipos);
   tipo_func_cmb->addItems(tipos);
 
   //Configura o combo de tipo de comportamento da função
-  TipoComportamento::obterTipos(tipos);
+  TipoComportamento::getTypes(tipos);
   comportamento_cmb->addItems(tipos);
 
   connect(simples_rb, SIGNAL(clicked(bool)), this, SLOT(alternarTiposRetorno(void)));

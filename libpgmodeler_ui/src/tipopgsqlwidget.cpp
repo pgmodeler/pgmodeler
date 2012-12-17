@@ -24,12 +24,12 @@ TipoPgSQLWidget::TipoPgSQLWidget(QWidget *parent, const QString &rotulo) : QWidg
                                      GlobalAttributes::CONFIGURATION_EXT);
 
   //Configura o combo de tipos de intervalo
-  TipoIntervalo::obterTipos(tipo_interv);
+  TipoIntervalo::getTypes(tipo_interv);
   tipo_interv_cmb->addItem("");
   tipo_interv_cmb->addItems(tipo_interv);
 
   //Configura o combo de tipos espaciais
-  TipoEspacial::obterTipos(tipo_esp);
+  TipoEspacial::getTypes(tipo_esp);
   tipo_esp_cmb->addItems(tipo_esp);
 
   //Conecta os objetos do formulário com o método de atualização do formato do tipo
@@ -148,7 +148,7 @@ void TipoPgSQLWidget::obterTiposPgSQL(QComboBox *combo, ModeloBD *modelo, unsign
   /* Obtendo os demais tipos (builtin) do PostgreSQL. Neste caso, por serem tipos
      de fácil acesso não é necessário armazena os índices dos mesmos como
      acontece com os tipos definidos pelo usuário */
-  TipoPgSQL::obterTipos(tipos, tipo_oid, pseudo);
+  TipoPgSQL::getTypes(tipos, tipo_oid, pseudo);
   tipos.sort();
   combo->addItems(tipos);
  }

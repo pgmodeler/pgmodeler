@@ -45,7 +45,7 @@ IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_INDEX)
   configurarLayouFormulario(indice_grid, OBJ_INDEX);
   janela_pai->setMinimumSize(600, 640);
 
-  TipoIndexacao::obterTipos(lista);
+  TipoIndexacao::getTypes(lista);
   tipo_index_cmb->addItems(lista);
 
   //Define os campos exclusivos para cada versão

@@ -42,11 +42,11 @@ GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TRIG
   dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(tab_argumentos, 1,0,1,3);
 
   //Configurando o combo de tipo de postergação com os tipos disponíveis
-  TipoPostergacao::obterTipos(lista);
+  TipoPostergacao::getTypes(lista);
   tipo_postergacao_cmb->addItems(lista);
 
   //Configurando o combo de tipo disparo  com os tipos disponíveis
-  TipoDisparo::obterTipos(lista);
+  TipoDisparo::getTypes(lista);
   tipo_disparo_cmb->addItems(lista);
 
   //Define os campos exclusivos para cada versão

@@ -48,7 +48,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
 
  /* Descritores em forma de elipse são alocados para colunas (com ou sem not-null)
     todos os demais tipos têm descritores poligonais */
- desc_elipse=((coluna && tipo_rest==TipoBase::nulo) ||
+ desc_elipse=((coluna && tipo_rest==BaseType::null) ||
               (tipo_obj!=OBJ_INDEX && tipo_obj!=OBJ_RULE &&
                tipo_obj!=OBJ_TRIGGER && tipo_obj!=OBJ_COLUMN));
 
@@ -82,7 +82,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
 
   /* Caso o tipo da restrição não esteja definido (a coluna não tem nenhuma restrição ligada a ela)
      cria um descritor elíptico */
-  if(tipo_rest==TipoBase::nulo)
+  if(tipo_rest==BaseType::null)
   {
    QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descritor);
 
@@ -184,7 +184,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   QString str_rest;
   TableObject *objeto_tab=dynamic_cast<TableObject *>(this->obterObjetoOrigem());
   Column *coluna=dynamic_cast<Column *>(objeto_tab);
-  TipoRestricao tipo_rest=TipoRestricao::nulo;
+  TipoRestricao tipo_rest=TipoRestricao::null;
 
   //Caso seja uma coluna
   if(coluna)

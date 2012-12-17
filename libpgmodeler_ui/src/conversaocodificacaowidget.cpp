@@ -23,7 +23,7 @@ ConversaoCodificacaoWidget::ConversaoCodificacaoWidget(QWidget *parent): ObjetoB
 
 
   //Obtém os nomes das codificações e as insere no combo de codificação
-  TipoCodificacao::obterTipos(codificacoes);
+  TipoCodificacao::getTypes(codificacoes);
   cod_orig_cmb->addItems(codificacoes);
   cod_dest_cmb->addItems(codificacoes);
 

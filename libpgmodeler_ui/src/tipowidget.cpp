@@ -90,11 +90,11 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TYPE)
   janela_pai->setMinimumSize(625, 765);
 
   //Preenche o combo box com os tipos de armazenamento disponíveis
-  TipoArmazenamento::obterTipos(lista);
+  TipoArmazenamento::getTypes(lista);
   armazenamento_cmb->addItems(lista);
 
   //Preenche o combo box com os tipos de categoria disponíveis
-  TipoCategoria::obterTipos(lista);
+  TipoCategoria::getTypes(lista);
   categoria_cmb->addItems(lista);
  }
  catch(Exception &e)

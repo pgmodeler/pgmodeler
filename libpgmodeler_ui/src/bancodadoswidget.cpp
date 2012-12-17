@@ -29,7 +29,7 @@ BancoDadosWidget::BancoDadosWidget(QWidget *parent): ObjetoBaseWidget(parent, OB
  janela_pai->setMaximumHeight(420);
 
  //Obtém os nomes das codificações e as insere no combo de codificação
- TipoCodificacao::obterTipos(codificacoes);
+ TipoCodificacao::getTypes(codificacoes);
  codificacao_cmb->addItems(codificacoes);
 
  //Obtém todas as localizações padrão e as armazena em uma lista de QString

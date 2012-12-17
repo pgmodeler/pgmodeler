@@ -20,7 +20,7 @@ OperatorClass::~OperatorClass(void)
 void OperatorClass::setDataType(TipoPgSQL data_type)
 {
  //A null datatype is not accepted by the operator class
- if(data_type==TipoPgSQL::nulo)
+ if(data_type==TipoPgSQL::null)
   throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->data_type=data_type;

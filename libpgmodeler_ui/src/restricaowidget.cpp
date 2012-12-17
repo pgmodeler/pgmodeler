@@ -54,20 +54,20 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_
   janela_pai->setMinimumSize(580, 520);
 
   //Configurando o combo de tipo de restrição com os tipos disponíveis
-  TipoRestricao::obterTipos(lista);
+  TipoRestricao::getTypes(lista);
   tipo_rest_cmb->addItems(lista);
   selecionarTipoRestricao();
 
   //Configurando o combo de tipo de comparação com os tipos disponíveis
-  TipoComparacao::obterTipos(lista);
+  TipoComparacao::getTypes(lista);
   tipo_comparacao_cmb->addItems(lista);
 
   //Configurando o combo de tipo de postergação com os tipos disponíveis
-  TipoPostergacao::obterTipos(lista);
+  TipoPostergacao::getTypes(lista);
   tipo_postergacao_cmb->addItems(lista);
 
   //Configurando o combo de tipo de ação update e delete com os tipos disponíveis
-  TipoAcao::obterTipos(lista);
+  ActionType::getTypes(lista);
   acao_delete_cmb->addItems(lista);
   acao_update_cmb->addItems(lista);
 
@@ -495,8 +495,8 @@ void RestricaoWidget::aplicarConfiguracao(void)
   restricao->setMatchType(TipoComparacao(tipo_comparacao_cmb->currentText()));
   restricao->setDeferrable(postergavel_chk->isChecked());
   restricao->setDeferralType(TipoPostergacao(tipo_postergacao_cmb->currentText()));
-  restricao->setActionType(TipoAcao(acao_delete_cmb->currentText()),false);
-  restricao->setActionType(TipoAcao(acao_update_cmb->currentText()),true);
+  restricao->setActionType(ActionType(acao_delete_cmb->currentText()),false);
+  restricao->setActionType(ActionType(acao_update_cmb->currentText()),true);
 
   //Caso seja uma chave estrangeira, atribui a tabela referenciada
   if(restricao->getConstraintType()==TipoRestricao::foreign_key)

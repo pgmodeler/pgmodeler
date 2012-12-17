@@ -126,7 +126,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
   else
    attributes[ParsersAttributes::DEFINITION]=_operator->getCodeDefinition(def_type,true);
  }
- else if(element_type==STORAGE_ELEM && storage!=TipoPgSQL::nulo)
+ else if(element_type==STORAGE_ELEM && storage!=TipoPgSQL::null)
  {
   //STORAGE storage_type
   attributes[ParsersAttributes::STORAGE]="1";

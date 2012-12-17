@@ -2,7 +2,7 @@
 
 Rule::Rule(void)
 {
- execution_type=TipoBase::nulo;
+ execution_type=BaseType::null;
  obj_type=OBJ_RULE;
  attributes[ParsersAttributes::EVENT_TYPE]="";
  attributes[ParsersAttributes::TABLE]="";

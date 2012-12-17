@@ -36,7 +36,7 @@ void Constraint::setConstraintType(TipoRestricao constr_type)
  this->constr_type=constr_type;
 }
 
-void Constraint::setActionType(TipoAcao action_type, bool upd)
+void Constraint::setActionType(ActionType action_type, bool upd)
 {
  if(upd)
   this->upd_action=action_type;
@@ -199,7 +199,7 @@ TipoRestricao Constraint::getConstraintType(void)
  return(constr_type);
 }
 
-TipoAcao Constraint::getActionType(bool upd)
+ActionType Constraint::getActionType(bool upd)
 {
  if(upd)
   return(upd_action);

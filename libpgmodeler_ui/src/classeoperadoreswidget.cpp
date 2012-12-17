@@ -67,7 +67,7 @@ ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidge
   selecionarTipoElemento(0);
 
   //Configura o combobox do formulário listando todos os tipos de indexação do PostgreSQL
-  TipoIndexacao::obterTipos(tipos);
+  TipoIndexacao::getTypes(tipos);
   tipo_index_cmb->addItems(tipos);
  }
  catch(Exception &e)

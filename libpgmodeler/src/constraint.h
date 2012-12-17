@@ -48,7 +48,7 @@ class Constraint: public TableObject{
 
   /* Actions taken when delete and update event occurs. This is applicable
      only for foreign keys */
-  TipoAcao del_action, upd_action;
+  ActionType del_action, upd_action;
 
   //Stores the columns that is referenced by the constraint (except for check constraints)
   vector<Column *> columns;
@@ -88,7 +88,7 @@ class Constraint: public TableObject{
   /* Defines the type of action on foreign keys (ON DELETE and ON UPDATE).
      If the parameter 'upd' is set, it will be configured the action on update
      otherwise the action on delete is configured. (only for foreign key) */
-  void setActionType(TipoAcao action_type, bool upd);
+  void setActionType(ActionType action_type, bool upd);
 
   //Defines the deferral type for the constraint (only for foreign key)
   void setDeferralType(TipoPostergacao deferral_type);
@@ -116,7 +116,7 @@ class Constraint: public TableObject{
 
   /* Retuns the action type. Using upd = true is returned the ON UPDATE
      action otherwise the ON DELETE action is returned */
-  TipoAcao getActionType(bool upd);
+  ActionType getActionType(bool upd);
 
   /* Returns one column (using its index) from the internal constraint column lists.
      Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */

@@ -3766,7 +3766,7 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  nome=atributos[ParsersAttributes::NAME];
 
  idx_tipo=TipoPgSQL::obterIndiceTipoBase(nome);
- if(idx_tipo!=TipoPgSQL::nulo)
+ if(idx_tipo!=TipoPgSQL::null)
  {
   return(TipoPgSQL(nome,comprimento,dimensao,precisao,com_timezone,tipo_interv, tipo_esp));
  }

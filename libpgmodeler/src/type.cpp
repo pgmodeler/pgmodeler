@@ -87,7 +87,7 @@ bool Type::isAttributeExists(const QString &attrib_name)
 void Type::addAttribute(Parameter attrib)
 {
  //Raises an error if the attribute has an empty name or null type
- if(attrib.getName()=="" || attrib.getType()==TipoPgSQL::nulo)
+ if(attrib.getName()=="" || attrib.getType()==TipoPgSQL::null)
   throw Exception(ERR_INS_INV_TYPE_ATTRIB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Raises an error if the passed attribute has the same type as the defining type (this)
  else if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !attrib.getType())
