@@ -31,7 +31,7 @@ void OperatorClass::setFamily(OperatorFamily *family)
  this->family=family;
 }
 
-void OperatorClass::setIndexingType(TipoIndexacao index_type)
+void OperatorClass::setIndexingType(IndexingType index_type)
 {
  this->indexing_type=index_type;
 }
@@ -127,7 +127,7 @@ OperatorFamily *OperatorClass::getFamily(void)
  return(family);
 }
 
-TipoIndexacao OperatorClass::getIndexingType(void)
+IndexingType OperatorClass::getIndexingType(void)
 {
  return(indexing_type);
 }

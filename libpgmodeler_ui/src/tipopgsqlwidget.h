@@ -48,7 +48,7 @@ class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
       obtém a lista de tipos do modelo em questão dando a possiblidade
       de quais tipos obter */
    static void obterTiposPgSQL(QComboBox *combo, ModeloBD *modelo,
-                               unsigned conf_tipo_usr=ConfigTipoUsuario::TIPO_USR_TODOS,
+                               unsigned conf_tipo_usr=UserTypeConfig::ALL_USER_TYPES,
                                bool tipo_oid=true, bool pseudo=true);
 
  private slots:
@@ -58,7 +58,7 @@ class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
 
  public slots:
    void definirAtributos(TipoPgSQL tipo, ModeloBD *modelo,
-                         unsigned conf_tipo_usr=ConfigTipoUsuario::TIPO_USR_TODOS,
+                         unsigned conf_tipo_usr=UserTypeConfig::ALL_USER_TYPES,
                          bool tipo_oid=true, bool pseudo=true);
 
    //Obtém o tipo configurado no formulário

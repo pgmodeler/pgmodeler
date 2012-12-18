@@ -807,7 +807,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
      parent_tab->adicionarObjeto(dynamic_cast<TableObject *>(object), oper->object_idx);
 
      if(object->getObjectType()==OBJ_CONSTRAINT &&
-        dynamic_cast<Constraint *>(object)->getConstraintType()==TipoRestricao::foreign_key)
+        dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
       model->atualizarRelFkTabela(parent_tab);
     }
     else if(parent_rel)
@@ -848,7 +848,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
      model->validarRelacObjetoTabela(dynamic_cast<TableObject *>(object), parent_tab);
 
      if(object->getObjectType()==OBJ_CONSTRAINT &&
-        dynamic_cast<Constraint *>(object)->getConstraintType()==TipoRestricao::foreign_key)
+        dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
       model->atualizarRelFkTabela(parent_tab);
     }
     else if(parent_rel)

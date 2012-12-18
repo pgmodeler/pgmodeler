@@ -34,7 +34,7 @@ class BaseType{
   static const unsigned types_count=189;
 
  protected:
-  static QString tipos[types_count];
+  static QString type_list[types_count];
   unsigned type_idx;
 
   /* Define um valor ao tipo de dado (o código do tipo deve estar
@@ -83,20 +83,19 @@ class ActionType: public BaseType{
   static const unsigned set_null=offset+3;
   static const unsigned set_default=offset+4;
 
-  ActionType(const QString &nome_tipo);
-  ActionType(unsigned tipo);
+  ActionType(const QString &type_name);
+  ActionType(unsigned type_id);
   ActionType(void);
-  //~TipoAcao(void){};
 
   //Obtém todos os tipos válidos da classe e guarda em uma lista
-  static void getTypes(QStringList &tipos);
+  static void getTypes(QStringList &type_list);
 
   //Atribui um tipo a instancia this
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 };
 
-class TipoRestricao: public BaseType{
+class ConstraintType: public BaseType{
  private:
   static const unsigned offset=6;
   static const unsigned types_count=4;
@@ -107,17 +106,16 @@ class TipoRestricao: public BaseType{
   static const unsigned check=offset+2;
   static const unsigned unique=offset+3;
 
-  TipoRestricao(const QString &nome_tipo);
-  TipoRestricao(unsigned tipo);
-  TipoRestricao(void);
-  //~TipoRestricao(void){};
+  ConstraintType(const QString &type_name);
+  ConstraintType(unsigned type_id);
+  ConstraintType(void);
 
-  static void getTypes(QStringList &tipos);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  static void getTypes(QStringList &type_list);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 };
 
-class TipoEvento: public BaseType{
+class EventType: public BaseType{
  private:
   static const unsigned offset=10;
   static const unsigned types_count=5;
@@ -129,22 +127,21 @@ class TipoEvento: public BaseType{
   static const unsigned on_update=offset+3;
   static const unsigned on_truncate=offset+4;
 
-  TipoEvento(const QString &nome_tipo);
-  TipoEvento(unsigned tipo);
-  TipoEvento(void);
-  //~TipoEvento(void){};
+  EventType(const QString &type_name);
+  EventType(unsigned type_id);
+  EventType(void);
 
-  static void getTypes(QStringList &tipos);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  static void getTypes(QStringList &type_list);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 
   /* These two operators where created to permit the use the
      class TipoEvento on STL containers (specially maps) */
-  bool operator < (TipoEvento tipo) const;
-  bool operator < (unsigned type_idx) const;
+  bool operator < (EventType type) const;
+  bool operator < (unsigned type_id) const;
 };
 
-class TipoExecucao: public BaseType{
+class ExecutionType: public BaseType{
  private:
   static const unsigned offset=15;
   static const unsigned types_count=2;
@@ -153,37 +150,35 @@ class TipoExecucao: public BaseType{
   static const unsigned also=offset;
   static const unsigned instead=offset+1;
 
-  TipoExecucao(const QString &nome_tipo);
-  TipoExecucao(unsigned tipo);
-  TipoExecucao(void);
-  //~TipoExecucao(void){};
+  ExecutionType(const QString &type_name);
+  ExecutionType(unsigned type_id);
+  ExecutionType(void);
 
-  static void getTypes(QStringList&tipos);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  static void getTypes(QStringList&type_list);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 };
 
-class TipoFuncao: public BaseType{
+class FunctionType: public BaseType{
  private:
   static const unsigned offset=17;
   static const unsigned types_count=3;
 
  public:
-  static const unsigned volatil=offset;
-  static const unsigned estavel=offset+1;
-  static const unsigned imutavel=offset+2;
+  static const unsigned _volatile_=offset;
+  static const unsigned stable=offset+1;
+  static const unsigned immutable=offset+2;
 
-  TipoFuncao(const QString &nome_tipo);
-  TipoFuncao(unsigned tipo);
-  TipoFuncao(void);
-//   ~TipoFuncao(void){};
+  FunctionType(const QString &type_name);
+  FunctionType(unsigned type_id);
+  FunctionType(void);
 
-  static void getTypes(QStringList &tipos);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  static void getTypes(QStringList &type_list);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 };
 
-class TipoIndexacao: public BaseType{
+class IndexingType: public BaseType{
  private:
   static const unsigned offset=20;
   static const unsigned types_count=5;
@@ -195,17 +190,16 @@ class TipoIndexacao: public BaseType{
   static const unsigned hash=offset+3;
   static const unsigned gin=offset+4;
 
-  TipoIndexacao(const QString &nome_tipo);
-  TipoIndexacao(unsigned tipo);
-  TipoIndexacao(void);
-//   ~TipoIndexacao(void){};
+  IndexingType(const QString &type_name);
+  IndexingType(unsigned type_id);
+  IndexingType(void);
 
-  static void getTypes(QStringList &tipos);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  static void getTypes(QStringList &type_list);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 };
 
-class TipoIntervalo: public BaseType{
+class IntervalType: public BaseType{
  private:
   static const unsigned offset=91;
   static const unsigned types_count=13;
@@ -225,16 +219,16 @@ class TipoIntervalo: public BaseType{
   static const unsigned hour_to_second=offset+11;
   static const unsigned minute_to_second=offset+12;
 
-  TipoIntervalo(const QString &nome_tipo);
-  TipoIntervalo(unsigned tipo);
-  TipoIntervalo(void);
+  IntervalType(const QString &type_name);
+  IntervalType(unsigned type_id);
+  IntervalType(void);
 
-  static void getTypes(QStringList &tipos);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  static void getTypes(QStringList &type_list);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 };
 
-class TipoEspacial: public BaseType{
+class SpatialType: public BaseType{
  private:
   unsigned variacao;
   static const unsigned offset=182;
@@ -254,14 +248,14 @@ class TipoEspacial: public BaseType{
   static const unsigned multipolygon=offset+5;
   static const unsigned geometrycollection=offset+6;
 
-  TipoEspacial(const QString &nome_tipo, unsigned variacao=TipoEspacial::no_var);
-  TipoEspacial(unsigned tipo, unsigned variacao=TipoEspacial::no_var);
-  TipoEspacial(void);
+  SpatialType(const QString &type_name, unsigned variation_id=SpatialType::no_var);
+  SpatialType(unsigned type_id, unsigned var_id=SpatialType::no_var);
+  SpatialType(void);
 
-  void definirVariacao(unsigned var);
-  unsigned obterVariacao(void);
+  void setVariation(unsigned var);
+  unsigned getVariation(void);
 
-  static void getTypes(QStringList &tipos);
+  static void getTypes(QStringList &type_list);
   QString operator * (void);
 };
 
@@ -270,30 +264,30 @@ class TipoEspacial: public BaseType{
     entre tipos definidos pelo usuário e tipos internos
     do PostgreSQL de forma transparente. Poderá (deverá?)
     ser modificado em futuras versões do pgModeler. */
-class ConfigTipoUsuario {
+class UserTypeConfig {
   protected:
    //Ponteiro para a instância do tipo definido pelo usuário
-   void *ptipo;
+   void *ptype;
 
    //Ponteiro para a instância do modelo ao qual o tipo pertence
-   void *pmodelo;
+   void *pmodel;
 
    //Nome do tipo definido pelo usário
-   QString nome;
+   QString name;
 
-   unsigned conf_tipo;
+   unsigned type_conf;
 
   public:
-   static const unsigned TIPO_BASE=1,
-                         TIPO_DOMINIO=2,
-                         TIPO_TABELA=4,
-                         TIPO_SEQUENCIA=8,
+   static const unsigned BASE_TYPE=1,
+                         DOMAIN_TYPE=2,
+                         TABLE_TYPE=4,
+                         SEQUENCE_TYPE=8,
                          /* Esta constante é usada somente para referenciar todos os tipos de uma vez,
                             é não deve ser usado para definir um tipo de configuração */
-                         TIPO_USR_TODOS=15;
+                         ALL_USER_TYPES=15;
 
-   ConfigTipoUsuario(void)
-   { nome=""; ptipo=NULL; pmodelo=NULL; conf_tipo=TIPO_BASE; }
+   UserTypeConfig(void)
+   { name=""; ptype=NULL; pmodel=NULL; type_conf=BASE_TYPE; }
 
    friend class TipoPgSQL;
 };
@@ -315,7 +309,7 @@ class TipoPgSQL: public BaseType{
      e Dominio têm acesso a esta lista através de métodos de acesso. Esta classe é a
      responsável por inserir e remover itens desta lista ao ser criado um novo
      tipo ou excluido um já existente. */
-  static vector<ConfigTipoUsuario> tipos_usr; //Lista de tipos de dados definidos pelo usuário
+  static vector<UserTypeConfig> tipos_usr; //Lista de tipos de dados definidos pelo usuário
 
   //Dimensão do tipo caso ele seja um array ( > 0 indica que o mesmo é um array)
   unsigned dimensao,
@@ -332,10 +326,10 @@ class TipoPgSQL: public BaseType{
   bool com_timezone;
 
   //Tipo de intervalo de tempo usado pelo tipo de dado 'interval'
-  TipoIntervalo tipo_intervalo;
+  IntervalType tipo_intervalo;
 
   //Tipo espacial usado na criação de tipos do PostGiS
-  TipoEspacial tipo_espacial;
+  SpatialType tipo_espacial;
 
  protected:
   /* Adiciona uma nova referência ao tipo definido pelo usuário
@@ -363,16 +357,16 @@ class TipoPgSQL: public BaseType{
   TipoPgSQL(void *ptipo);
   TipoPgSQL(const QString &tipo, unsigned comprimento,
             unsigned dimensao, int precisao,
-            bool com_timezone, TipoIntervalo tipo_interv,
-            TipoEspacial tipo_esp);
+            bool com_timezone, IntervalType tipo_interv,
+            SpatialType tipo_esp);
   TipoPgSQL(void *ptipo, unsigned comprimento,
             unsigned dimensao, int precisao,
-            bool com_timezone, TipoIntervalo tipo_interv,
-            TipoEspacial tipo_esp);
+            bool com_timezone, IntervalType tipo_interv,
+            SpatialType tipo_esp);
   TipoPgSQL(unsigned type_idx, unsigned comprimento,
             unsigned dimensao, int precisao,
-            bool com_timezone, TipoIntervalo tipo_interv,
-            TipoEspacial tipo_esp);
+            bool com_timezone, IntervalType tipo_interv,
+            SpatialType tipo_esp);
 
   /* Obtém o índice referente a um tipo definido pelo usuário.
      Retorna 0 caso o tipo não exista na lista. */
@@ -380,22 +374,22 @@ class TipoPgSQL: public BaseType{
   static unsigned obterIndiceTipoBase(const QString &nome);
 
   //Obtém todos os tipos definidos pelo usuário
-  static void obterTiposUsuario(QStringList &tipos, void *pmodelo, unsigned inc_tipos_usr);
+  static void obterTiposUsuario(QStringList &type_list, void *pmodelo, unsigned inc_tipos_usr);
   static void obterTiposUsuario(vector<void *> &ptipos, void *pmodelo, unsigned inc_tipos_usr);
-  static void getTypes(QStringList &tipos, bool tipo_oid=true, bool pseudos=true);
+  static void getTypes(QStringList &type_list, bool tipo_oid=true, bool pseudos=true);
 
   void definirDimensao(unsigned dim);
   void definirComprimento(unsigned comp);
   void definirPrecisao(int prec);
   void definirComTimezone(bool com_timezone);
-  void definirTipoIntervalo(TipoIntervalo tipo_interv);
-  void definirTipoEspacial(TipoEspacial tipo_espacial);
+  void definirTipoIntervalo(IntervalType tipo_interv);
+  void definirTipoEspacial(SpatialType tipo_espacial);
 
   unsigned obterDimensao(void);
   unsigned obterComprimento(void);
   int obterPrecisao(void);
-  TipoIntervalo obterTipoIntervalo(void);
-  TipoEspacial obterTipoEspacial(void);
+  IntervalType obterTipoIntervalo(void);
+  SpatialType obterTipoEspacial(void);
 
   bool comTimezone(void); //Retorna se o tipo considera timezone
   bool pseudoTipo(void); //Retorna se o tipo é um pseudo-tipo
@@ -455,7 +449,7 @@ class TipoComportamento: public BaseType{
   TipoComportamento(void);
 //   ~TipoRetorno(void){};
 
-  static void getTypes(QStringList &tipos);
+  static void getTypes(QStringList &type_list);
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
@@ -474,7 +468,7 @@ class TipoSeguranca: public BaseType{
   TipoSeguranca(void);
 //   ~TipoSeguranca(void){};
 
-  static void getTypes(QStringList &tipos);
+  static void getTypes(QStringList &type_list);
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
@@ -497,7 +491,7 @@ class TipoLinguagem: public BaseType{
   TipoLinguagem(void);
 //   ~TipoLinguagem(void){};
 
-  static void getTypes(QStringList &tipos);
+  static void getTypes(QStringList &type_list);
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
@@ -512,7 +506,7 @@ class TipoCodificacao: public BaseType{
   TipoCodificacao(const QString &tipo);
 //   ~TipoCodificacao(void){};
 
-  static void getTypes(QStringList &tipos);
+  static void getTypes(QStringList &type_list);
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
   bool operator == (const QString &nome_tipo);
@@ -536,7 +530,7 @@ class TipoArmazenamento: public BaseType{
   TipoArmazenamento(const QString &tipo);
 //   ~TipoArmazenamento(void){};
 
-  static void getTypes(QStringList &tipos);
+  static void getTypes(QStringList &type_list);
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
   bool operator == (const QString &nome_tipo);
@@ -560,7 +554,7 @@ class TipoComparacao: public BaseType{
   TipoComparacao(void);
 //   ~TipoComparacao(void){};
 
-  static void getTypes(QStringList &tipos);
+  static void getTypes(QStringList &type_list);
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
@@ -579,7 +573,7 @@ class TipoPostergacao: public BaseType{
   TipoPostergacao(void);
 //   ~TipoPostergacao(void){};
 
-  static void getTypes(QStringList &tipos);
+  static void getTypes(QStringList &type_list);
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
@@ -609,7 +603,7 @@ class TipoCategoria: public BaseType{
   TipoCategoria(const QString &nome_tipo);
   TipoCategoria(void);
 
-  static void getTypes(QStringList &tipos);
+  static void getTypes(QStringList &type_list);
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };
@@ -628,7 +622,7 @@ class TipoDisparo: public BaseType{
   TipoDisparo(unsigned tipo);
   TipoDisparo(void);
 
-  static void getTypes(QStringList&tipos);
+  static void getTypes(QStringList&type_list);
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
 };

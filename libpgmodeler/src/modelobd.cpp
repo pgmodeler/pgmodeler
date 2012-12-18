@@ -724,7 +724,7 @@ void ModeloBD::adicionarTabela(Tabela *tabela, int idx_obj)
   /* Ao ser inserido uma nova tabela a mesma tem
    seu nome é adicionad  lista de tipos válidos
    do PostgreSQL */
-  TipoPgSQL::adicionarTipoUsuario(tabela->getName(true), tabela, this, ConfigTipoUsuario::TIPO_TABELA);
+  TipoPgSQL::adicionarTipoUsuario(tabela->getName(true), tabela, this, UserTypeConfig::TABLE_TYPE);
 
   atualizarRelFkTabela(tabela);
  }
@@ -815,7 +815,7 @@ void ModeloBD::adicionarSequencia(Sequence *sequencia, int idx_obj)
   /* Ao ser inserido uma nova sequencia a mesma tem
    seu nome é adicionad  lista de tipos válidos
    do PostgreSQL */
-  TipoPgSQL::adicionarTipoUsuario(sequencia->getName(true), sequencia, this, ConfigTipoUsuario::TIPO_SEQUENCIA);
+  TipoPgSQL::adicionarTipoUsuario(sequencia->getName(true), sequencia, this, UserTypeConfig::SEQUENCE_TYPE);
  }
  catch(Exception &e)
  {
@@ -1489,7 +1489,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
          adicionadas por relacionamentos foi criada pelo usuário. */
       enc=(!restricao->isAddedByRelationship() &&
             restricao->isReferRelationshipColumn() &&
-            restricao->getConstraintType()!=TipoRestricao::primary_key);
+            restricao->getConstraintType()!=ConstraintType::primary_key);
 
       /* Caso uma restrição seja encontrada obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
@@ -2217,7 +2217,7 @@ void ModeloBD::adicionarDominio(Domain *dominio, int idx_obj)
    /* Ao ser inserido um novo tipo o mesmo tem
     seu nome é adicionad  lista de tipos válidos
     do PostgreSQL */
-   TipoPgSQL::adicionarTipoUsuario(dominio->getName(true), dominio, this, ConfigTipoUsuario::TIPO_DOMINIO);
+   TipoPgSQL::adicionarTipoUsuario(dominio->getName(true), dominio, this, UserTypeConfig::DOMAIN_TYPE);
   }
   catch(Exception &e)
   {
@@ -2391,7 +2391,7 @@ void ModeloBD::adicionarTipo(Type *tipo, int idx_obj)
    /* Ao ser inserido um novo tipo o mesmo tem
     seu nome é adicionad  lista de tipos válidos
     do PostgreSQL */
-   TipoPgSQL::adicionarTipoUsuario(tipo->getName(true), tipo, this, ConfigTipoUsuario::TIPO_BASE);
+   TipoPgSQL::adicionarTipoUsuario(tipo->getName(true), tipo, this, UserTypeConfig::BASE_TYPE);
   }
   catch(Exception &e)
   {
@@ -3524,7 +3524,7 @@ Function *ModeloBD::criarFuncao(void)
 
   //Define o tipo da função, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::FUNCTION_TYPE].isEmpty())
-   funcao->setFunctionType(TipoFuncao(atributos[ParsersAttributes::FUNCTION_TYPE]));
+   funcao->setFunctionType(FunctionType(atributos[ParsersAttributes::FUNCTION_TYPE]));
 
   //Define o tipo de segurança da função, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::SECURITY_TYPE].isEmpty())
@@ -3740,8 +3740,8 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  void *ptipo=NULL;
  //TipoPgSQL tipo;
  bool enc=false, com_timezone;
- TipoIntervalo tipo_interv;
- TipoEspacial tipo_esp;
+ IntervalType tipo_interv;
+ SpatialType tipo_esp;
 
 
  //Obtém os atributos do tipo
@@ -3760,7 +3760,7 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  tipo_interv=atributos[ParsersAttributes::INTERVAL_TYPE];
 
  if(!atributos[ParsersAttributes::SPATIAL_TYPE].isEmpty())
-  tipo_esp=TipoEspacial(atributos[ParsersAttributes::SPATIAL_TYPE],
+  tipo_esp=SpatialType(atributos[ParsersAttributes::SPATIAL_TYPE],
                         atributos[ParsersAttributes::VARIATION].toUInt());
 
  nome=atributos[ParsersAttributes::NAME];
@@ -3774,10 +3774,10 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
  {
   //Obtém a lista de tipos definidios pelo usuario
   TipoPgSQL::obterTiposUsuario(vet_ptipos, this,
-                               ConfigTipoUsuario::TIPO_BASE |
-                               ConfigTipoUsuario::TIPO_DOMINIO |
-                               ConfigTipoUsuario::TIPO_TABELA |
-                               ConfigTipoUsuario::TIPO_SEQUENCIA);
+                               UserTypeConfig::BASE_TYPE |
+                               UserTypeConfig::DOMAIN_TYPE |
+                               UserTypeConfig::TABLE_TYPE |
+                               UserTypeConfig::SEQUENCE_TYPE);
   itr=vet_ptipos.begin();
   itr_end=vet_ptipos.end();
 
@@ -4386,7 +4386,7 @@ OperatorClass *ModeloBD::criarClasseOperadores(void)
   //Obtém os atributos
   XMLParser::getElementAttributes(atributos);
 
-  classe_op->setIndexingType(TipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]));
+  classe_op->setIndexingType(IndexingType(atributos[ParsersAttributes::INDEX_TYPE]));
   classe_op->setDefault(atributos[ParsersAttributes::DEFAULT]==ParsersAttributes::_TRUE_);
 
   tipos_elem[ParsersAttributes::FUNCTION]=OperatorClassElement::FUNCTION_ELEM;
@@ -4495,7 +4495,7 @@ OperatorFamily *ModeloBD::criarFamiliaOperadores(void)
   XMLParser::getElementAttributes(atributos);
 
   //Definindo os valores de atributos básicos do objeto
-  familia_op->setIndexingType(TipoIndexacao(atributos[ParsersAttributes::INDEX_TYPE]));
+  familia_op->setIndexingType(IndexingType(atributos[ParsersAttributes::INDEX_TYPE]));
  }
  catch(Exception &e)
  {
@@ -4727,7 +4727,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
  Relationship *relacao=NULL;
  QString elem, str_aux;
  bool postergavel, ins_rest_tabela=false;
- TipoRestricao tipo_rest;
+ ConstraintType tipo_rest;
  QStringList lista_cols;
  int qtd, i;
  unsigned tipo_coluna;
@@ -4777,13 +4777,13 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
 
   //Configurando o tipo da restrição
   if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::CK_CONSTR)
-   tipo_rest=TipoRestricao::check;
+   tipo_rest=ConstraintType::check;
   else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::PK_CONSTR)
-   tipo_rest=TipoRestricao::primary_key;
+   tipo_rest=ConstraintType::primary_key;
   else if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::FK_CONSTR)
-   tipo_rest=TipoRestricao::foreign_key;
+   tipo_rest=ConstraintType::foreign_key;
   else
-   tipo_rest=TipoRestricao::unique;
+   tipo_rest=ConstraintType::unique;
 
   restricao->setConstraintType(tipo_rest);
   if(!atributos[ParsersAttributes::FACTOR].isEmpty())
@@ -4828,13 +4828,13 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
      significando que a mesma está declarada fora dos dois blocos indicados.
      Adicionalmente é necessário verificar o tipo da restrição para se
      ter certeza que a mesma é uma chave primária. */
-  if(!objeto && tipo_rest==TipoRestricao::primary_key)
+  if(!objeto && tipo_rest==ConstraintType::primary_key)
     throw Exception(Exception::getErrorMessage(ERR_INV_PRIM_KEY_ALOCATION)
                   .arg(QString::fromUtf8(restricao->getName())),
                   ERR_INV_PRIM_KEY_ALOCATION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Efetuando configurações específicas para chaves estrangeiras
-  if(tipo_rest==TipoRestricao::foreign_key /*&& tipo_objeto==OBJETO_TABELA*/)
+  if(tipo_rest==ConstraintType::foreign_key /*&& tipo_objeto==OBJETO_TABELA*/)
   {
    //Define se a restrição é postergavel (apenas para chaves estrangeiras)
    postergavel=(atributos[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
@@ -4954,7 +4954,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
   if(ins_rest_tabela)
   {
    //Caso a restrição criada não seja uma chave primária insere-a normalmente na tabela
-   if(restricao->getConstraintType()!=TipoRestricao::primary_key)
+   if(restricao->getConstraintType()!=ConstraintType::primary_key)
    {
     tabela->adicionarRestricao(restricao);
 
@@ -5249,19 +5249,19 @@ Trigger *ModeloBD::criarGatilho(Tabela *tabela)
   definirAtributosBasicos(gatilho);
 
   //Marcando os eventos de execução do gatilho
-  gatilho->setEvent(TipoEvento::on_insert,
+  gatilho->setEvent(EventType::on_insert,
                         (atributos[ParsersAttributes::INS_EVENT]==
                          ParsersAttributes::_TRUE_));
 
-  gatilho->setEvent(TipoEvento::on_delete,
+  gatilho->setEvent(EventType::on_delete,
                         (atributos[ParsersAttributes::DEL_EVENT]==
                          ParsersAttributes::_TRUE_));
 
-  gatilho->setEvent(TipoEvento::on_update,
+  gatilho->setEvent(EventType::on_update,
                         (atributos[ParsersAttributes::UPD_EVENT]==
                          ParsersAttributes::_TRUE_));
 
-  gatilho->setEvent(TipoEvento::on_truncate,
+  gatilho->setEvent(EventType::on_truncate,
                         (atributos[ParsersAttributes::TRUNC_EVENT]==
                          ParsersAttributes::_TRUE_));
 
@@ -6108,9 +6108,9 @@ void ModeloBD::validarRelacObjetoTabela(TableObject *objeto, Tabela *tabela_pai)
       > Caso seja uma coluna e a mesma é referenciada pela chave primária da tabela pai
       > Caso seja uma restrição e a mesma seja uma chave primária da tabela */
     revalidar_rels=((tipo==OBJ_COLUMN &&
-                     tabela_pai->restricaoReferenciaColuna(dynamic_cast<Column *>(objeto), TipoRestricao::primary_key)) ||
+                     tabela_pai->restricaoReferenciaColuna(dynamic_cast<Column *>(objeto), ConstraintType::primary_key)) ||
                     (tipo==OBJ_CONSTRAINT &&
-                     dynamic_cast<Constraint *>(objeto)->getConstraintType()==TipoRestricao::primary_key));
+                     dynamic_cast<Constraint *>(objeto)->getConstraintType()==ConstraintType::primary_key));
 
    /* Caso seja uma coluna, verfica se a tabela pai participa de um relacionamento
      de generalização como tabela de destino (aquela que tem suas colunas copiadas
@@ -6332,11 +6332,11 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
         do modelo */
      if((tipo_def==SchemaParser::XML_DEFINITION ||
          (tipo_def==SchemaParser::SQL_DEFINITION &&
-          restricao->getConstraintType()!=TipoRestricao::foreign_key)) &&
+          restricao->getConstraintType()!=ConstraintType::foreign_key)) &&
 
         (!restricao->isAddedByLinking() &&
-          ((restricao->getConstraintType()!=TipoRestricao::primary_key && restricao->isReferRelationshipColumn()) ||
-           (restricao->getConstraintType()==TipoRestricao::foreign_key))))
+          ((restricao->getConstraintType()!=ConstraintType::primary_key && restricao->isReferRelationshipColumn()) ||
+           (restricao->getConstraintType()==ConstraintType::foreign_key))))
      {
       //Armazena o objeto em si no mapa de objetos
       mapa_objetos[restricao->getObjectId()]=restricao;
@@ -6880,7 +6880,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    for(i=0; i < qtd; i++)
    {
     rest=dynamic_cast<Constraint *>(rel->getConstraint(i));
-    if(rest->getConstraintType()==TipoRestricao::foreign_key)
+    if(rest->getConstraintType()==ConstraintType::foreign_key)
      obterDependenciasObjeto(rest->getReferencedTable(), vet_deps, inc_dep_indiretas);
 
     if(rest->getTablespace())
@@ -6924,7 +6924,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
     rest=dynamic_cast<Constraint *>(tab->obterRestricao(i));
     if(inc_dep_indiretas &&
        !rest->isAddedByLinking() &&
-        rest->getConstraintType()==TipoRestricao::foreign_key)
+        rest->getConstraintType()==ConstraintType::foreign_key)
      obterDependenciasObjeto(rest->getReferencedTable(), vet_deps, inc_dep_indiretas);
 
     if(!rest->isAddedByLinking() && rest->getTablespace())
@@ -7095,7 +7095,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
     for(i=0; i < qtd&& (!modo_exclusao || (modo_exclusao && !refer)); i++)
     {
      rest=tab->obterRestricao(i);
-     if(rest->getConstraintType()==TipoRestricao::foreign_key &&
+     if(rest->getConstraintType()==ConstraintType::foreign_key &&
         rest->getReferencedTable()==tabela)
      {
       refer=true;
@@ -7918,19 +7918,19 @@ BaseObject *ModeloBD::obterObjetoTipoPgSQL(TipoPgSQL tipo)
 {
  switch(tipo.obterConfTipoUsuario())
  {
-  case ConfigTipoUsuario::TIPO_BASE:
+  case UserTypeConfig::BASE_TYPE:
    return(this->obterObjeto(*tipo, OBJ_TYPE));
   break;
 
-  case ConfigTipoUsuario::TIPO_DOMINIO:
+  case UserTypeConfig::DOMAIN_TYPE:
    return(this->obterObjeto(*tipo, OBJ_DOMAIN));
   break;
 
-  case ConfigTipoUsuario::TIPO_TABELA:
+  case UserTypeConfig::TABLE_TYPE:
    return(this->obterObjeto(*tipo, OBJ_TABLE));
   break;
 
-  case ConfigTipoUsuario::TIPO_SEQUENCIA:
+  case UserTypeConfig::SEQUENCE_TYPE:
    return(this->obterObjeto(*tipo, OBJ_SEQUENCE));
   break;
 

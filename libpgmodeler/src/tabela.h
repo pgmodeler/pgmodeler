@@ -230,7 +230,7 @@ class Tabela: public BaseTable {
   void setProtected(bool is_protected);
 
   //Retorna se a coluna é referenciada por uma das restrições do tipo especificado
-  bool restricaoReferenciaColuna(Column *coluna, TipoRestricao tipo_rest);
+  bool restricaoReferenciaColuna(Column *coluna, ConstraintType tipo_rest);
 
   /* Método utilitário que faz a inversão de posição entre dois objetos na lista.
      Este método auxilia na ordenação dos objetos da tabela conforme o usuário desejar */

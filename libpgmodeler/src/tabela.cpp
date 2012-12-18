@@ -174,13 +174,13 @@ void Tabela::definirAtributoRestricoes(unsigned tipo_def)
 
   //Chaves estrangeiras criadas pelo usuário não são incluídas na definição SQL da tabela
   if((tipo_def==SchemaParser::SQL_DEFINITION &&
-      rest->getConstraintType()!=TipoRestricao::foreign_key &&
-      (!rest->isReferRelationshipColumn() || rest->getConstraintType()==TipoRestricao::primary_key)) ||
+      rest->getConstraintType()!=ConstraintType::foreign_key &&
+      (!rest->isReferRelationshipColumn() || rest->getConstraintType()==ConstraintType::primary_key)) ||
 
      (tipo_def==SchemaParser::XML_DEFINITION && !rest->isAddedByRelationship() &&
-      rest->getConstraintType()!=TipoRestricao::foreign_key &&
-      ((rest->getConstraintType()!=TipoRestricao::primary_key && !rest->isReferRelationshipColumn()) ||
-       (rest->getConstraintType()==TipoRestricao::primary_key))))
+      rest->getConstraintType()!=ConstraintType::foreign_key &&
+      ((rest->getConstraintType()!=ConstraintType::primary_key && !rest->isReferRelationshipColumn()) ||
+       (rest->getConstraintType()==ConstraintType::primary_key))))
   {
    inc_insporrelacao=(tipo_def==SchemaParser::SQL_DEFINITION);
    str_rest+=rest->getCodeDefinition(tipo_def,inc_insporrelacao);
@@ -299,7 +299,7 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
  {
   int idx;
   tipo_obj=obj->getObjectType();
-  TipoRestricao tipo_rest;
+  ConstraintType tipo_rest;
   QString str_aux;
 
   try
@@ -389,7 +389,7 @@ void Tabela::adicionarObjeto(BaseObject *obj, int idx_obj, bool tab_copia)
          será retornado um erro pois uma tabela pode possuir apenas 1
          chave primária */
       if(tipo_obj==OBJ_CONSTRAINT &&
-         tipo_rest==TipoRestricao::primary_key &&
+         tipo_rest==ConstraintType::primary_key &&
          this->obterChavePrimaria())
        throw Exception(ERR_ASG_EXISTING_PK_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -987,7 +987,7 @@ Constraint *Tabela::obterChavePrimaria(void)
  for(i=0; i < qtd && !pk; i++)
  {
   rest=dynamic_cast<Constraint *>(restricoes[i]);
-  pk=(rest->getConstraintType()==TipoRestricao::primary_key ? rest : NULL);
+  pk=(rest->getConstraintType()==ConstraintType::primary_key ? rest : NULL);
  }
 
  return(pk);
@@ -1006,7 +1006,7 @@ void Tabela::obterChavesEstrangeiras(vector<Constraint *> &vet_fks, bool inc_ins
   /* Adiciona a restrição caso seja chave estrangeira, caso esta não foi
      incluída por relacionamento ou se foi e o parametro inc_insporrelacao está
      setado */
-  if(constr->getConstraintType()==TipoRestricao::foreign_key &&
+  if(constr->getConstraintType()==ConstraintType::foreign_key &&
      (!constr->isAddedByLinking() ||
       (constr->isAddedByLinking() && inc_insporrelacao)))
    vet_fks.push_back(constr);
@@ -1028,7 +1028,7 @@ bool Tabela::referenciaTabelaChaveEstrangeira(Tabela *tab_ref)
  for(i=0; i < qtd && !found; i++)
  {
   constr=dynamic_cast<Constraint *>(restricoes[i]);
-  found=(constr->getConstraintType()==TipoRestricao::foreign_key &&
+  found=(constr->getConstraintType()==ConstraintType::foreign_key &&
          !constr->isAddedByLinking() &&
           constr->getReferencedTable() == tab_ref);
  }
@@ -1036,7 +1036,7 @@ bool Tabela::referenciaTabelaChaveEstrangeira(Tabela *tab_ref)
  return(found);
 }
 
-bool Tabela::restricaoReferenciaColuna(Column *coluna, TipoRestricao tipo_rest)
+bool Tabela::restricaoReferenciaColuna(Column *coluna, ConstraintType tipo_rest)
 {
  bool enc=false;
  vector<TableObject *>::iterator itr, itr_end;

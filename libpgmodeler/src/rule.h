@@ -34,10 +34,10 @@ class Rule: public TableObject{
   QString conditional_expr;
 
   //Rule execution type (ALSO or INSTEAD)
-  TipoExecucao execution_type;
+  ExecutionType execution_type;
 
   //Event when the rule is triggered (ON SELECT, NO UPDATE, ON INSERT, ON DELETE)
-  TipoEvento event_type;
+  EventType event_type;
 
   //Formats the commands string to be used by the SchemaParser
   void setCommandsAttribute(void);
@@ -52,10 +52,10 @@ class Rule: public TableObject{
   void setConditionalExpression(const QString &expr);
 
   //Sets the rule execution type (ALSO, INSTEAD)
-  void setExecutionType(TipoExecucao type);
+  void setExecutionType(ExecutionType type);
 
   //Defines the event when the rule is triggered
-  void setEventType(TipoEvento type);
+  void setEventType(EventType type);
 
   //Returns one command executed by the rule using its index
   QString getCommand(unsigned cmd_idx);
@@ -67,10 +67,10 @@ class Rule: public TableObject{
   QString getConditionalExpression(void);
 
   //Returns the event when the rule is triggered
-  TipoEvento getEventType(void);
+  EventType getEventType(void);
 
   //Returns the execution type for the rule
-  TipoExecucao getExecutionType(void);
+  ExecutionType getExecutionType(void);
 
   //Removes one command form the rule using its index
   void removeCommand(unsigned cmd_idx);

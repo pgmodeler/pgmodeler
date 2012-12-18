@@ -10,7 +10,7 @@ FamiliaOperadoresWidget::FamiliaOperadoresWidget(QWidget *parent): ObjetoBaseWid
  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
 
  //Configura o combobox do formulário listando todos os tipos de indexação do PostgreSQL
- TipoIndexacao::getTypes(tipos);
+ IndexingType::getTypes(tipos);
  tipo_index_cmb->addItems(tipos);
 
  janela_pai->setMinimumSize(480, 270);
@@ -44,7 +44,7 @@ void FamiliaOperadoresWidget::aplicarConfiguracao(void)
 
   iniciarConfiguracao<OperatorFamily>();
   familia_op=dynamic_cast<OperatorFamily *>(this->objeto);
-  familia_op->setIndexingType(TipoIndexacao(tipo_index_cmb->currentText()));
+  familia_op->setIndexingType(IndexingType(tipo_index_cmb->currentText()));
 
   ObjetoBaseWidget::aplicarConfiguracao();
   finalizarConfiguracao();

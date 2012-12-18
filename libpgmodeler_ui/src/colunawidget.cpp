@@ -56,7 +56,7 @@ void ColunaWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, Op
  }
 
  //Marca o tipo do domínio no widget de tipos pgsql
- tipo_col->definirAtributos(tipo, modelo, ConfigTipoUsuario::TIPO_BASE | ConfigTipoUsuario::TIPO_DOMINIO);
+ tipo_col->definirAtributos(tipo, modelo, UserTypeConfig::BASE_TYPE | UserTypeConfig::DOMAIN_TYPE);
 }
 
 void ColunaWidget::aplicarConfiguracao(void)

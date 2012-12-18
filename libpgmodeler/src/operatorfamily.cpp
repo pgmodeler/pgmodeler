@@ -6,12 +6,12 @@ OperatorFamily::OperatorFamily(void)
  attributes[ParsersAttributes::INDEX_TYPE]="";
 }
 
-void OperatorFamily::setIndexingType(TipoIndexacao idx_type)
+void OperatorFamily::setIndexingType(IndexingType idx_type)
 {
  indexing_type=idx_type;
 }
 
-TipoIndexacao OperatorFamily::getIndexingType(void)
+IndexingType OperatorFamily::getIndexingType(void)
 {
  return(indexing_type);
 }

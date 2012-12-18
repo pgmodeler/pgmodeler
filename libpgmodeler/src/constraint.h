@@ -30,7 +30,7 @@
 class Constraint: public TableObject{
  private:
   //Type of the constraint (primary key, foreign key, unique or check)
-  TipoRestricao constr_type;
+  ConstraintType constr_type;
 
   //Indicates if the constraint is deferrable (only for foreign key)
   bool deferrable;
@@ -83,7 +83,7 @@ class Constraint: public TableObject{
   void addColumn(Column *column, unsigned col_type);
 
   //Defines the constraint type
-  void setConstraintType(TipoRestricao constr_type);
+  void setConstraintType(ConstraintType constr_type);
 
   /* Defines the type of action on foreign keys (ON DELETE and ON UPDATE).
      If the parameter 'upd' is set, it will be configured the action on update
@@ -138,7 +138,7 @@ class Constraint: public TableObject{
   void removeColumns(void);
 
   //Returns the constraint type
-  TipoRestricao getConstraintType(void);
+  ConstraintType getConstraintType(void);
 
   //Returns the check expression
   QString getCheckExpression(void);

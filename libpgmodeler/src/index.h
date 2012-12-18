@@ -37,7 +37,7 @@ class Index: public TableObject{
   unsigned fill_factor;
 
   //Indexing method used by the index
-  TipoIndexacao indexing_type;
+  IndexingType indexing_type;
 
   //Boolean attributes that define some index features  (UNIQUE, CONCURRENT, FAST UPDATE)
   bool index_attribs[3];
@@ -79,7 +79,7 @@ class Index: public TableObject{
   void setConditionalExpression(const QString &expr);
 
   //Defines the indexing method used by the index
-  void setIndexingType(TipoIndexacao idx_type);
+  void setIndexingType(IndexingType idx_type);
 
   /* Configures the attributes for the indexs. These attributes can be
      referencede using the UNIQUE, CONCURRENT and FAST_UPDATE constants */
@@ -95,7 +95,7 @@ class Index: public TableObject{
   unsigned getElementCount(void);
 
   //Returns the indexing method used by the index
-  TipoIndexacao getIndexingType(void);
+  IndexingType getIndexingType(void);
 
   //Returns the current state of one index attribute (UNIQUE, CONCURRENT, FAST UPDATE)
   bool getIndexAttribute(unsigned attrib_id);

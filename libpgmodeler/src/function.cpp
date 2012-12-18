@@ -232,7 +232,7 @@ void Function::setReturnType(TipoPgSQL type)
  return_type=type;
 }
 
-void Function::setFunctionType(TipoFuncao func_type)
+void Function::setFunctionType(FunctionType func_type)
 {
  function_type=func_type;
 }
@@ -284,7 +284,7 @@ TipoPgSQL Function::getReturnType(void)
  return(return_type);
 }
 
-TipoFuncao Function::getFunctionType(void)
+FunctionType Function::getFunctionType(void)
 {
  return(function_type);
 }

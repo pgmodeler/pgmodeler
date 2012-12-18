@@ -24,12 +24,12 @@ TipoPgSQLWidget::TipoPgSQLWidget(QWidget *parent, const QString &rotulo) : QWidg
                                      GlobalAttributes::CONFIGURATION_EXT);
 
   //Configura o combo de tipos de intervalo
-  TipoIntervalo::getTypes(tipo_interv);
+  IntervalType::getTypes(tipo_interv);
   tipo_interv_cmb->addItem("");
   tipo_interv_cmb->addItems(tipo_interv);
 
   //Configura o combo de tipos espaciais
-  TipoEspacial::getTypes(tipo_esp);
+  SpatialType::getTypes(tipo_esp);
   tipo_esp_cmb->addItems(tipo_esp);
 
   //Conecta os objetos do formulário com o método de atualização do formato do tipo
@@ -91,7 +91,7 @@ void TipoPgSQLWidget::atualizarFormatoTipo(void)
 
   if(tipo_esp_cmb->isVisible())
   {
-   TipoEspacial tp_esp;
+   SpatialType tp_esp;
 
    tipo_esp_lbl->setVisible(tipo_esp_cmb->isVisible());
    variacao_lbl->setVisible(tipo_esp_cmb->isVisible());
@@ -99,13 +99,13 @@ void TipoPgSQLWidget::atualizarFormatoTipo(void)
    var_z_chk->setVisible(tipo_esp_cmb->isVisible());
 
    //Configurando o tipo espacial conforme o formulário
-   tp_esp=TipoEspacial(tipo_esp_cmb->currentText());
+   tp_esp=SpatialType(tipo_esp_cmb->currentText());
    if(var_z_chk->isChecked() && var_m_chk->isChecked())
-    tp_esp.definirVariacao(TipoEspacial::var_zm);
+    tp_esp.setVariation(SpatialType::var_zm);
    else if(var_m_chk->isChecked())
-    tp_esp.definirVariacao(TipoEspacial::var_m);
+    tp_esp.setVariation(SpatialType::var_m);
    else if(var_z_chk->isChecked())
-    tp_esp.definirVariacao(TipoEspacial::var_z);
+    tp_esp.setVariation(SpatialType::var_z);
 
    tipo.definirTipoEspacial(tp_esp);
   }

@@ -37,7 +37,7 @@ class OperatorClass: public BaseObject {
   OperatorFamily *family;
 
   //Indexing type (method) adopted by the operator class
-  TipoIndexacao indexing_type;
+  IndexingType indexing_type;
 
   /* Indicates if the operator class is the default for the
      specified data type */
@@ -61,7 +61,7 @@ class OperatorClass: public BaseObject {
   void setFamily(OperatorFamily *family);
 
   //Set the indexing type used by the operator class
-  void setIndexingType(TipoIndexacao index_type);
+  void setIndexingType(IndexingType index_type);
 
   //Sets if the opertor class is default for the specified data type
   void setDefault(bool value);
@@ -76,7 +76,7 @@ class OperatorClass: public BaseObject {
   //Methods used to obtain the class attributes
   TipoPgSQL getDataType(void);
   OperatorFamily *getFamily(void);
-  TipoIndexacao getIndexingType(void);
+  IndexingType getIndexingType(void);
   bool isDefault(void);
   unsigned getElementCount(void);
 

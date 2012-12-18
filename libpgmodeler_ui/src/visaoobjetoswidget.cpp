@@ -781,7 +781,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
   int qtd, qtd1, i, i1, i2;
   QString str_aux;
   QFont fonte;
-  TipoRestricao tipo_rest;
+  ConstraintType tipo_rest;
   ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_RULE,
                            OBJ_TRIGGER, OBJ_INDEX };
           //Configura o ícone que designa uma tabela
@@ -893,13 +893,13 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
             O sufixos sufixo _pk, _fk, _ck, e _uq, são concatenados
             ao nome do tipo (constraint) para identificar o ícone */
          tipo_rest=dynamic_cast<Constraint *>(objeto)->getConstraintType();
-         if(tipo_rest==TipoRestricao::primary_key)
+         if(tipo_rest==ConstraintType::primary_key)
           str_aux="_pk";
-         else if(tipo_rest==TipoRestricao::foreign_key)
+         else if(tipo_rest==ConstraintType::foreign_key)
           str_aux="_fk";
-         else if(tipo_rest==TipoRestricao::check)
+         else if(tipo_rest==ConstraintType::check)
           str_aux="_ck";
-         else if(tipo_rest==TipoRestricao::unique)
+         else if(tipo_rest==ConstraintType::unique)
           str_aux="_uq";
         break;
 

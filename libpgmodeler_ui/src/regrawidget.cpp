@@ -38,11 +38,11 @@ RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_RULE)
   janela_pai->setMinimumSize(550, 520);
 
   //Configurando o combo de tipo de evento com os tipos disponíveis
-  TipoEvento::getTypes(lista);
+  EventType::getTypes(lista);
   tipo_evento_cmb->addItems(lista);
 
   //Configurando o combo de tipo de execução com os tipos disponíveis
-  TipoExecucao::getTypes(lista);
+  ExecutionType::getTypes(lista);
   tipo_execucao_cmb->addItems(lista);
 
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
@@ -129,8 +129,8 @@ void RegraWidget::aplicarConfiguracao(void)
   regra=dynamic_cast<Rule *>(this->objeto);
 
   //Configura a regra com base nos atributos preenchidos no formulário
-  regra->setEventType(TipoEvento(tipo_evento_cmb->currentText()));
-  regra->setExecutionType(TipoExecucao(tipo_execucao_cmb->currentText()));
+  regra->setEventType(EventType(tipo_evento_cmb->currentText()));
+  regra->setExecutionType(ExecutionType(tipo_execucao_cmb->currentText()));
   regra->setConditionalExpression(exp_condicional_txt->toPlainText());
 
   /* Remove todos os comandos da regra para inserção dos que

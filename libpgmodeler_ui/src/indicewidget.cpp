@@ -45,7 +45,7 @@ IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_INDEX)
   configurarLayouFormulario(indice_grid, OBJ_INDEX);
   janela_pai->setMinimumSize(600, 640);
 
-  TipoIndexacao::getTypes(lista);
+  IndexingType::getTypes(lista);
   tipo_index_cmb->addItems(lista);
 
   //Define os campos exclusivos para cada versão
@@ -53,7 +53,7 @@ IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_INDEX)
   mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_82)].push_back(concorrente_chk);
   mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_83)].push_back(ordenacao_lbl);
   mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(atual_rapida_chk);
-  mapa_valores[tipo_index_lbl].push_back(~TipoIndexacao(TipoIndexacao::rtree));
+  mapa_valores[tipo_index_lbl].push_back(~IndexingType(IndexingType::rtree));
 
   //Gera o frame de alerta
   frame=gerarFrameAlertaVersao(mapa_campos, &mapa_valores);
@@ -315,7 +315,7 @@ void IndiceWidget::aplicarConfiguracao(void)
   indice->setIndexAttribute(Index::CONCURRENT, concorrente_chk->isChecked());
   indice->setIndexAttribute(Index::UNIQUE, unico_chk->isChecked());
   indice->setConditionalExpression(exp_condicional_txt->toPlainText());
-  indice->setIndexingType(TipoIndexacao(tipo_index_cmb->currentText()));
+  indice->setIndexingType(IndexingType(tipo_index_cmb->currentText()));
   indice->setFillFactor(fator_preenc_sb->value());
 
   //Insere os elementos da tabela no índice

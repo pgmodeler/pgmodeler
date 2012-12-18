@@ -67,7 +67,7 @@ ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidge
   selecionarTipoElemento(0);
 
   //Configura o combobox do formulário listando todos os tipos de indexação do PostgreSQL
-  TipoIndexacao::getTypes(tipos);
+  IndexingType::getTypes(tipos);
   tipo_index_cmb->addItems(tipos);
  }
  catch(Exception &e)
@@ -290,7 +290,7 @@ void ClasseOperadoresWidget::aplicarConfiguracao(void)
   //Atribui os valores configurados no formulário    classe de operadores
   classe_op->setDefault(classe_op->isDefault());
   classe_op->setFamily(dynamic_cast<OperatorFamily *>(sel_familiaop->obterObjeto()));
-  classe_op->setIndexingType(TipoIndexacao(tipo_index_cmb->currentText()));
+  classe_op->setIndexingType(IndexingType(tipo_index_cmb->currentText()));
   classe_op->setDataType(tipo_dado->obterTipoPgSQL());
 
   /* Remove todos os elementos da classe de operadores e em seguida

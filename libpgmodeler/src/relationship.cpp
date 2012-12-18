@@ -187,7 +187,7 @@ void Relationship::createSpecialPrimaryKey(void)
      2) Use the same tablespace as the receiver table */
   pk_special=new Constraint;
   pk_special->setName(this->getName() + QString("_pk"));
-  pk_special->setConstraintType(TipoRestricao::primary_key);
+  pk_special->setConstraintType(ConstraintType::primary_key);
   pk_special->setAddedByLinking(true);
   pk_special->setProtected(true);
   pk_special->setTablespace(dynamic_cast<Tablespace *>(getReceiverTable()->getTablespace()));
@@ -347,7 +347,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
     rest=dynamic_cast<Constraint *>(tab_obj);
 
     //Raises an error if the user try to add as foreign key to relationship
-    if(rest->getConstraintType()==TipoRestricao::foreign_key)
+    if(rest->getConstraintType()==ConstraintType::foreign_key)
      throw Exception(ERR_ASG_FOREIGN_KEY_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     rest->getCodeDefinition(SchemaParser::SQL_DEFINITION);
@@ -621,7 +621,7 @@ void Relationship::addConstraints(Tabela *dst_tab)
    if(constr->getParentTable())
     break;
 
-   if(constr->getConstraintType()!=TipoRestricao::primary_key)
+   if(constr->getConstraintType()!=ConstraintType::primary_key)
    {
     i=1; aux[0]='\0';
     name="";
@@ -985,7 +985,7 @@ void Relationship::configureIndentifierRel(Tabela *dst_tab)
    if(!pk_relident)
    {
     pk=new Constraint;
-    pk->setConstraintType(TipoRestricao::primary_key);
+    pk->setConstraintType(ConstraintType::primary_key);
     pk->setAddedByLinking(true);
     this->pk_relident=pk;
    }
@@ -1035,7 +1035,7 @@ void Relationship::addUniqueKey(Tabela *ref_tab, Tabela *recv_tab)
   if(!uq_rel11)
   {
    uq=new Constraint;
-   uq->setConstraintType(TipoRestricao::unique);
+   uq->setConstraintType(ConstraintType::unique);
    uq->setAddedByLinking(true);
    uq_rel11=uq;
   }
@@ -1084,7 +1084,7 @@ void Relationship::addForeignKey(Tabela *ref_tab, Tabela *recv_tab, ActionType d
    fk=new Constraint;
    fk->setDeferrable(this->deferrable);
    fk->setDeferralType(this->deferral_type);
-   fk->setConstraintType(TipoRestricao::foreign_key);
+   fk->setConstraintType(ConstraintType::foreign_key);
    fk->setAddedByLinking(true);
 
    //The reference table is the table referenced by the foreign key
@@ -1481,7 +1481,7 @@ void Relationship::addColumnsRelNn(void)
   //Creates the primary key for the n-n relationship table
   pk_tabnn=new Constraint;
   pk_tabnn->setName(table_relnn->getName() + "_pk");
-  pk_tabnn->setConstraintType(TipoRestricao::primary_key);
+  pk_tabnn->setConstraintType(ConstraintType::primary_key);
   pk_tabnn->setAddedByLinking(true);
   count=ref_columns.size();
 
@@ -1590,7 +1590,7 @@ void Relationship::removeTableObjectsRefCols(Tabela *table)
  {
   constr=table->obterRestricao(i);
   if(!constr->isAddedByRelationship() &&
-     constr->getConstraintType()!=TipoRestricao::primary_key &&
+     constr->getConstraintType()!=ConstraintType::primary_key &&
      constr->isReferRelationshipColumn())
   {
    table->removerObjeto(constr);
@@ -1827,7 +1827,7 @@ bool Relationship::hasIndentifierAttribute(void)
 
   /* A relationship is considered to own a identifier attribute when
      a primary key is found among the constraints */
-  found=(constr->getConstraintType()==TipoRestricao::primary_key);
+  found=(constr->getConstraintType()==ConstraintType::primary_key);
   itr++;
  }
 
@@ -1981,7 +1981,7 @@ bool Relationship::isInvalidated(void)
     {
      constr=table_relnn->obterRestricao(i);
 
-     if(constr->getConstraintType()==TipoRestricao::foreign_key)
+     if(constr->getConstraintType()==ConstraintType::foreign_key)
      {
       if(!fk && constr->getReferencedTable()==table)
        fk=constr;
@@ -2064,7 +2064,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
    count=rel_constraints.size();
    for(i=0; i < count; i++)
    {
-    if(dynamic_cast<Constraint *>(rel_constraints[i])->getConstraintType()!=TipoRestricao::primary_key)
+    if(dynamic_cast<Constraint *>(rel_constraints[i])->getConstraintType()!=ConstraintType::primary_key)
      attributes[ParsersAttributes::CONSTRAINTS]+=dynamic_cast<Constraint *>(rel_constraints[i])->
                                               getCodeDefinition(def_type, false);
 
@@ -2082,7 +2082,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
    count=table_relnn->obterNumRestricoes();
    for(i=0; i < count; i++)
    {
-    if(table_relnn->obterRestricao(i)->getConstraintType()!=TipoRestricao::primary_key)
+    if(table_relnn->obterRestricao(i)->getConstraintType()!=ConstraintType::primary_key)
      attributes[ParsersAttributes::CONSTRAINTS]+=table_relnn->obterRestricao(i)->getCodeDefinition(def_type, true);
    }
   }

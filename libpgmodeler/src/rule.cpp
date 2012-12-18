@@ -26,12 +26,12 @@ void Rule::setCommandsAttribute(void)
  attributes[ParsersAttributes::COMMANDS]=str_cmds;
 }
 
-void Rule::setEventType(TipoEvento type)
+void Rule::setEventType(EventType type)
 {
  event_type=type;
 }
 
-void Rule::setExecutionType(TipoExecucao type)
+void Rule::setExecutionType(ExecutionType type)
 {
  execution_type=type;
 }
@@ -54,12 +54,12 @@ void Rule::addCommand(const QString &cmd)
  }
 }
 
-TipoEvento Rule::getEventType(void)
+EventType Rule::getEventType(void)
 {
  return(event_type);
 }
 
-TipoExecucao Rule::getExecutionType(void)
+ExecutionType Rule::getExecutionType(void)
 {
  return(execution_type);
 }

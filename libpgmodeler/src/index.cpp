@@ -158,7 +158,7 @@ void Index::setFillFactor(unsigned factor)
  fill_factor=factor;
 }
 
-void Index::setIndexingType(TipoIndexacao idx_type)
+void Index::setIndexingType(IndexingType idx_type)
 {
  this->indexing_type=idx_type;
 }
@@ -195,7 +195,7 @@ bool Index::getIndexAttribute(unsigned attrib_id)
  return(index_attribs[attrib_id]);
 }
 
-TipoIndexacao Index::getIndexingType(void)
+IndexingType Index::getIndexingType(void)
 {
  return(indexing_type);
 }

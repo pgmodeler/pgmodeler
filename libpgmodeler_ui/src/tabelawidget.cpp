@@ -343,17 +343,17 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
  Index *indice=NULL;
  ObjectType tipo_obj;
  QString str_aux, str_aux1,
-         vet_tipo_rest[]={ ~TipoRestricao(TipoRestricao::primary_key), ~TipoRestricao(TipoRestricao::foreign_key),
-                           ~TipoRestricao(TipoRestricao::check), ~TipoRestricao(TipoRestricao::unique),
+         vet_tipo_rest[]={ ~ConstraintType(ConstraintType::primary_key), ~ConstraintType(ConstraintType::foreign_key),
+                           ~ConstraintType(ConstraintType::check), ~ConstraintType(ConstraintType::unique),
                            QString("NOT NULL") },
 
          vet_cod_rest[]={ "pk", "fk", "ck", "uq", "nn"};
  QFont fonte;
  unsigned i;
- TipoEvento eventos[]={ TipoEvento::on_insert,
-                        TipoEvento::on_delete,
-                        TipoEvento::on_truncate,
-                        TipoEvento::on_update };
+ EventType eventos[]={ EventType::on_insert,
+                        EventType::on_delete,
+                        EventType::on_truncate,
+                        EventType::on_update };
 
  tipo_obj=objeto->getObjectType();
 
@@ -395,7 +395,7 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
   //Coluna 1: Tipo de comparação da restrição
   tab->definirTextoCelula(~restricao->getConstraintType(),idx_lin,1);
 
-  if(restricao->getConstraintType()==TipoRestricao::foreign_key)
+  if(restricao->getConstraintType()==ConstraintType::foreign_key)
   {
    //Coluna 2: Tipo de ação ON UPDATE da restrição
    tab->definirTextoCelula(~restricao->getActionType(false),idx_lin,2);

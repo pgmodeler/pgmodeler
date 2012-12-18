@@ -1575,7 +1575,7 @@ void ModeloWidget::copiarObjetos(void)
          não pode ser chave primária pois estas são tratadas separadamente nos relacionamentos */
       if(!obj_tab->isAddedByRelationship() &&
          ((tipos[id_tipo]==OBJ_CONSTRAINT &&
-           dynamic_cast<Constraint *>(obj_tab)->getConstraintType()!=TipoRestricao::primary_key &&
+           dynamic_cast<Constraint *>(obj_tab)->getConstraintType()!=ConstraintType::primary_key &&
            dynamic_cast<Constraint *>(obj_tab)->isReferRelationshipColumn()) ||
           (tipos[id_tipo]==OBJ_TRIGGER && dynamic_cast<Trigger *>(obj_tab)->isReferRelationshipColumn()) ||
           (tipos[id_tipo]==OBJ_INDEX && dynamic_cast<Index *>(obj_tab)->isReferRelationshipColumn())))
@@ -2034,7 +2034,7 @@ void ModeloWidget::excluirObjetos(void)
         tabela->removerObjeto(idx_obj, tipo_obj);
 
         if(tipo_obj==OBJ_CONSTRAINT &&
-                dynamic_cast<Constraint *>(objeto_tab)->getConstraintType()==TipoRestricao::foreign_key)
+                dynamic_cast<Constraint *>(objeto_tab)->getConstraintType()==ConstraintType::foreign_key)
          modelo->atualizarRelFkTabela(tabela);
 
         tabela->setModified(true);
@@ -2325,10 +2325,10 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
         ao nome do tipo (constraint) para identificar o ícone */
      switch(!rest->getConstraintType())
      {
-      case TipoRestricao::primary_key: str_aux="_pk"; break;
-      case TipoRestricao::foreign_key: str_aux="_fk"; break;
-      case TipoRestricao::check: str_aux="_ck"; break;
-      case TipoRestricao::unique: str_aux="_uq"; break;
+      case ConstraintType::primary_key: str_aux="_pk"; break;
+      case ConstraintType::foreign_key: str_aux="_fk"; break;
+      case ConstraintType::check: str_aux="_ck"; break;
+      case ConstraintType::unique: str_aux="_uq"; break;
      }
 
      //Cria um menu poup para restrição. Para cada restrição as ações de editar, codigo fonte, bloquear/desbloquear e excluir são incluídas

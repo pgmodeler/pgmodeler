@@ -77,7 +77,7 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_FUNCTI
   seguranca_cmb->addItems(tipos);
 
   //Configura o combo de tipo da função
-  TipoFuncao::getTypes(tipos);
+  FunctionType::getTypes(tipos);
   tipo_func_cmb->addItems(tipos);
 
   //Configura o combo de tipo de comportamento da função

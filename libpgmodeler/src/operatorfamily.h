@@ -27,16 +27,16 @@
 class OperatorFamily: public BaseObject {
  private:
   //Indexing type used by the operator family
-  TipoIndexacao indexing_type;
+  IndexingType indexing_type;
 
  public:
   OperatorFamily(void);
 
   //Sets the indexing type of the operator family
-  void setIndexingType(TipoIndexacao idx_type);
+  void setIndexingType(IndexingType idx_type);
 
   //Returns the indexing type of the operator family
-  TipoIndexacao getIndexingType(void);
+  IndexingType getIndexingType(void);
 
   //Returns the SQL / XML code definition for the operator family
   QString getCodeDefinition(unsigned def_type, bool reduced_form);

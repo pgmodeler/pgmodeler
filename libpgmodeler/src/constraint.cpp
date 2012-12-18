@@ -31,7 +31,7 @@ Constraint::~Constraint(void)
  removeColumns();
 }
 
-void Constraint::setConstraintType(TipoRestricao constr_type)
+void Constraint::setConstraintType(ConstraintType constr_type)
 {
  this->constr_type=constr_type;
 }
@@ -90,7 +90,7 @@ void Constraint::addColumn(Column *column, unsigned col_type)
                         .arg(QString::fromUtf8(this->getName()))
                         .arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
                  ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(constr_type!=TipoRestricao::check)
+ else if(constr_type!=ConstraintType::check)
  {
   //Adds the column only if the column doesn't exists on the internal list
   if(!isColumnExists(column,col_type))
@@ -108,8 +108,8 @@ void Constraint::setTablespace(Tablespace *tabspc)
  try
  {
   if(tabspc &&
-     constr_type!=TipoRestricao::primary_key &&
-     constr_type!=TipoRestricao::unique)
+     constr_type!=ConstraintType::primary_key &&
+     constr_type!=ConstraintType::unique)
    throw Exception(ERR_ASG_TABSPC_INV_CONSTR_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   BaseObject::setTablespace(tabspc);
@@ -194,7 +194,7 @@ unsigned Constraint::getFillFactor(void)
  return(fill_factor);
 }
 
-TipoRestricao Constraint::getConstraintType(void)
+ConstraintType Constraint::getConstraintType(void)
 {
  return(constr_type);
 }
@@ -356,16 +356,16 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 
  switch(!constr_type)
  {
-  case TipoRestricao::check:
+  case ConstraintType::check:
    attrib=ParsersAttributes::CK_CONSTR;
   break;
-  case TipoRestricao::primary_key:
+  case ConstraintType::primary_key:
    attrib=ParsersAttributes::PK_CONSTR;
   break;
-  case TipoRestricao::foreign_key:
+  case ConstraintType::foreign_key:
    attrib=ParsersAttributes::FK_CONSTR;
   break;
-  case TipoRestricao::unique:
+  case ConstraintType::unique:
    attrib=ParsersAttributes::UQ_CONSTR;
   break;
  }
@@ -376,7 +376,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
  attributes[ParsersAttributes::DEL_ACTION]=(~del_action);
  attributes[ParsersAttributes::EXPRESSION]=check_expr;
 
- if(constr_type!=TipoRestricao::check)
+ if(constr_type!=ConstraintType::check)
  {
   setColumnsAttribute(SOURCE_COLS, def_type, inc_addedbyrel);
 
@@ -385,7 +385,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
      this means the constraint is configured correctly, otherwise don't generates
      the attribute forcing the schema parser to return an error because the foreign key is
      misconfigured. */
-  if(constr_type==TipoRestricao::foreign_key && columns.size() == ref_columns.size())
+  if(constr_type==ConstraintType::foreign_key && columns.size() == ref_columns.size())
    setColumnsAttribute(REFERENCED_COLS, def_type, inc_addedbyrel);
  }
 
@@ -401,11 +401,11 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
     inside the parent table construction by the use of 'decl-in-table' schema attribute.
     Note: For reference track reason foreign keys ALWAYS will be created in a separeted (ALTER TABLE)
     command outside the parent table declaration */
- if(constr_type!=TipoRestricao::foreign_key &&
-    (!isReferRelationshipColumn() || constr_type==TipoRestricao::primary_key))
+ if(constr_type!=ConstraintType::foreign_key &&
+    (!isReferRelationshipColumn() || constr_type==ConstraintType::primary_key))
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
- if(constr_type==TipoRestricao::primary_key || constr_type==TipoRestricao::unique)
+ if(constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique)
   attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
  else
   attributes[ParsersAttributes::FACTOR]="";

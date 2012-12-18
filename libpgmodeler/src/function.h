@@ -83,7 +83,7 @@ class Function: public BaseObject {
   TipoComportamento behavior_type;
 
   //Function type. It can be VOLATILE, IMMUTABLE, STABLE
-  TipoFuncao function_type;
+  FunctionType function_type;
 
   //Function return type
   TipoPgSQL return_type;
@@ -151,7 +151,7 @@ class Function: public BaseObject {
   void setBehaviorType(TipoComportamento behav_type);
 
   //Defines the function type (VOLATILE, IMMUTABLE, STABLE)
-  void setFunctionType(TipoFuncao func_type);
+  void setFunctionType(FunctionType func_type);
 
   //Defines the function return type
   void setReturnType(TipoPgSQL type);
@@ -196,7 +196,7 @@ class Function: public BaseObject {
   TipoComportamento getBehaviorType(void);
 
   //Returns the function type
-  TipoFuncao getFunctionType(void);
+  FunctionType getFunctionType(void);
 
   //Returns the function returned type
   TipoPgSQL getReturnType(void);

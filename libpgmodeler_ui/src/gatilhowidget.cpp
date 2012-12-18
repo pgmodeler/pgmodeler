@@ -232,10 +232,10 @@ void GatilhoWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, Opera
   tipo_postergacao_cmb->setCurrentIndex(tipo_postergacao_cmb->findText(~gatilho->getDeferralType()));
   tipo_disparo_cmb->setCurrentIndex(tipo_disparo_cmb->findText(~gatilho->getFiringType()));
 
-  insert_chk->setChecked(gatilho->isExecuteOnEvent(TipoEvento::on_insert));
-  delete_chk->setChecked(gatilho->isExecuteOnEvent(TipoEvento::on_delete));
-  update_chk->setChecked(gatilho->isExecuteOnEvent(TipoEvento::on_update));
-  truncate_chk->setChecked(gatilho->isExecuteOnEvent(TipoEvento::on_truncate));
+  insert_chk->setChecked(gatilho->isExecuteOnEvent(EventType::on_insert));
+  delete_chk->setChecked(gatilho->isExecuteOnEvent(EventType::on_delete));
+  update_chk->setChecked(gatilho->isExecuteOnEvent(EventType::on_update));
+  truncate_chk->setChecked(gatilho->isExecuteOnEvent(EventType::on_truncate));
   sel_tabela_ref->definirObjeto(gatilho->getReferencedTable());
   sel_funcao->definirObjeto(gatilho->getFunction());
 
@@ -290,10 +290,10 @@ void GatilhoWidget::aplicarConfiguracao(void)
   gatilho->setCondition(exp_condicional_txt->toPlainText());
   gatilho->setFunction(dynamic_cast<Function *>(sel_funcao->obterObjeto()));
   gatilho->setReferecendTable(dynamic_cast<Tabela *>(sel_tabela_ref->obterObjeto()));
-  gatilho->setEvent(TipoEvento::on_insert, insert_chk->isChecked());
-  gatilho->setEvent(TipoEvento::on_update, update_chk->isChecked());
-  gatilho->setEvent(TipoEvento::on_delete, delete_chk->isChecked());
-  gatilho->setEvent(TipoEvento::on_truncate, truncate_chk->isChecked());
+  gatilho->setEvent(EventType::on_insert, insert_chk->isChecked());
+  gatilho->setEvent(EventType::on_update, update_chk->isChecked());
+  gatilho->setEvent(EventType::on_delete, delete_chk->isChecked());
+  gatilho->setEvent(EventType::on_truncate, truncate_chk->isChecked());
 
   /* Remove todas as colunas e argumentos para inserir aqueles
      configurados no formulário */

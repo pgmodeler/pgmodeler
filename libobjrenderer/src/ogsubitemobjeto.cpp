@@ -35,7 +35,7 @@ OGSubItemObjeto::~OGSubItemObjeto(void)
  }
 }
 
-void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
+void OGSubItemObjeto::configurarDescritor(ConstraintType tipo_rest)
 {
  ObjectType tipo_obj=BASE_OBJECT;
  Column *coluna=dynamic_cast<Column *>(this->obterObjetoOrigem());
@@ -105,7 +105,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
    QGraphicsPolygonItem *desc=dynamic_cast<QGraphicsPolygonItem *>(descritor);
 
    //Cria um polígono conforme o tipo de restrição da coluna
-   if(tipo_rest==TipoRestricao::primary_key)
+   if(tipo_rest==ConstraintType::primary_key)
    {
     atrib=ParsersAttributes::PK_COLUMN;
     pol.append(QPointF(2,0)); pol.append(QPointF(0,2)); pol.append(QPointF(0,7));
@@ -114,7 +114,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
     pol.append(QPointF(7,5)); pol.append(QPointF(9,7)); pol.append(QPointF(9,3));
     pol.append(QPointF(3,3)); pol.append(QPointF(3,1));
    }
-   else if(tipo_rest==TipoRestricao::foreign_key)
+   else if(tipo_rest==ConstraintType::foreign_key)
    {
     atrib=ParsersAttributes::FK_COLUMN;
     pol.append(QPointF(0,3)); pol.append(QPointF(0,6)); pol.append(QPointF(4,6));
@@ -122,7 +122,7 @@ void OGSubItemObjeto::configurarDescritor(TipoRestricao tipo_rest)
     pol.append(QPointF(9,4)); pol.append(QPointF(5,0)); pol.append(QPointF(4,0));
     pol.append(QPointF(4,3));
    }
-   else if(tipo_rest==TipoRestricao::unique)
+   else if(tipo_rest==ConstraintType::unique)
    {
     atrib=ParsersAttributes::UQ_COLUMN;
     pol.append(QPointF(4,0)); pol.append(QPointF(0,4)); pol.append(QPointF(0,5));
@@ -184,7 +184,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   QString str_rest;
   TableObject *objeto_tab=dynamic_cast<TableObject *>(this->obterObjetoOrigem());
   Column *coluna=dynamic_cast<Column *>(objeto_tab);
-  TipoRestricao tipo_rest=TipoRestricao::null;
+  ConstraintType tipo_rest=ConstraintType::null;
 
   //Caso seja uma coluna
   if(coluna)
@@ -198,17 +198,17 @@ void OGSubItemObjeto::configurarObjeto(void)
    if(str_rest.find(TEXTO_PRIMARY_KEY)>=0)
    {
     fmt=config_fonte[ParsersAttributes::PK_COLUMN];
-    tipo_rest=TipoRestricao::primary_key;
+    tipo_rest=ConstraintType::primary_key;
    }
    else if(str_rest.find(TEXTO_FOREIGN_KEY)>=0)
    {
     fmt=config_fonte[ParsersAttributes::FK_COLUMN];
-    tipo_rest=TipoRestricao::foreign_key;
+    tipo_rest=ConstraintType::foreign_key;
    }
    else if(str_rest.find(TEXTO_UNIQUE)>=0)
    {
     fmt=config_fonte[ParsersAttributes::UQ_COLUMN];
-    tipo_rest=TipoRestricao::unique;
+    tipo_rest=ConstraintType::unique;
    }
    else if(str_rest.find(TEXTO_NOT_NULL)>=0)
     fmt=config_fonte[ParsersAttributes::NN_COLUMN];
@@ -277,10 +277,10 @@ void OGSubItemObjeto::configurarObjeto(void)
     str_rest+=(~gatilho->getFiringType()).mid(0,1);
     str_rest+=SEPARADOR_REST;
 
-    for(unsigned i=TipoEvento::on_insert; i < TipoEvento::on_truncate; i++)
+    for(unsigned i=EventType::on_insert; i < EventType::on_truncate; i++)
     {
-     if(gatilho->isExecuteOnEvent(TipoEvento(i)))
-      str_rest+=(~TipoEvento(i)).mid(3,1);
+     if(gatilho->isExecuteOnEvent(EventType(i)))
+      str_rest+=(~EventType(i)).mid(3,1);
     }
     str_rest=str_rest.lower();
    }
@@ -428,7 +428,7 @@ QString OGSubItemObjeto::obterStringRestricoes(Column *coluna)
   Constraint *restricao=NULL;
   vector<Constraint *>::iterator itr,itr_end;
   vector<Constraint *> restricoes;
-  TipoRestricao tipo_rest;
+  ConstraintType tipo_rest;
   unsigned i, qtd;
 
   qtd=tabela->obterNumRestricoes();
@@ -452,11 +452,11 @@ QString OGSubItemObjeto::obterStringRestricoes(Column *coluna)
 
     //Para cada tipo de constraint concatena-se o texto referente
     //   a mesma e um separadar de textos de constraints
-    if(tipo_rest==TipoRestricao::primary_key)
+    if(tipo_rest==ConstraintType::primary_key)
      str_rest=TEXTO_PRIMARY_KEY + SEPARADOR_REST;
-    else if(tipo_rest==TipoRestricao::foreign_key)
+    else if(tipo_rest==ConstraintType::foreign_key)
      str_rest+=TEXTO_FOREIGN_KEY + SEPARADOR_REST;
-    else if(tipo_rest==TipoRestricao::unique)
+    else if(tipo_rest==ConstraintType::unique)
      str_rest+=TEXTO_UNIQUE + SEPARADOR_REST;
    }
   }

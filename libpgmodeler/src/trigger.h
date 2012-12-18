@@ -45,7 +45,7 @@ class Trigger: public TableObject{
   TipoDisparo firing_type;
 
   //Map that marks which events activates the trigger
-  map<TipoEvento, bool> events;
+  map<EventType, bool> events;
 
   //Flag that indicates whether the function must be executed by row
   bool is_exec_per_row;
@@ -77,7 +77,7 @@ class Trigger: public TableObject{
   void addArgument(const QString &arg);
 
   //Defines in which events the trigger is executed
-  void setEvent(TipoEvento event, bool value);
+  void setEvent(EventType event, bool value);
 
   //Defines the function to be executed by the trigger
   void setFunction(Function *func);
@@ -104,7 +104,7 @@ class Trigger: public TableObject{
   void setExecutePerRow(bool value);
 
   //Returns true if the trigger executes on the passed event
-  bool isExecuteOnEvent(TipoEvento event);
+  bool isExecuteOnEvent(EventType event);
 
   //Gets one reference column by its index
   Column *getColumn(unsigned col_idx);

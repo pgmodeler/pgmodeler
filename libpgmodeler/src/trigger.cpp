@@ -3,8 +3,8 @@
 Trigger::Trigger(void)
 {
  unsigned i;
- TipoEvento tipos[4]={TipoEvento::on_insert, TipoEvento::on_delete,
-                      TipoEvento::on_update, TipoEvento::on_truncate};
+ EventType tipos[4]={EventType::on_insert, EventType::on_delete,
+                      EventType::on_update, EventType::on_truncate};
 
  function=NULL;
  is_exec_per_row=false;
@@ -61,9 +61,9 @@ void Trigger::setFiringType(TipoDisparo firing_type)
  this->firing_type=firing_type;
 }
 
-void Trigger::setEvent(TipoEvento event, bool value)
+void Trigger::setEvent(EventType event, bool value)
 {
- if(event==TipoEvento::on_select)
+ if(event==EventType::on_select)
   throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  events[event]=value;
@@ -131,9 +131,9 @@ void Trigger::setExecutePerRow(bool value)
  is_exec_per_row=value;
 }
 
-bool Trigger::isExecuteOnEvent(TipoEvento event)
+bool Trigger::isExecuteOnEvent(EventType event)
 {
- if(event==TipoEvento::on_select)
+ if(event==EventType::on_select)
   throw Exception(ERR_REF_INV_TRIGGER_EVENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(events.at(!event));
@@ -262,8 +262,8 @@ void Trigger::setBasicAttributes(unsigned def_type)
          attribs[4]={ParsersAttributes::INS_EVENT, ParsersAttributes::DEL_EVENT,
                     ParsersAttributes::TRUNC_EVENT, ParsersAttributes::UPD_EVENT },
          sql_event[4]={"INSERT OR ", "DELETE OR ", "TRUNCATE OR ", "UPDATE   "};
- unsigned count, i, i1, event_types[4]={TipoEvento::on_insert, TipoEvento::on_delete,
-                                      TipoEvento::on_truncate, TipoEvento::on_update};
+ unsigned count, i, i1, event_types[4]={EventType::on_insert, EventType::on_delete,
+                                      EventType::on_truncate, EventType::on_update};
 
 
  setArgumentAttribute(def_type);
@@ -275,7 +275,7 @@ void Trigger::setBasicAttributes(unsigned def_type)
    str_aux+=sql_event[i];
    attributes[attribs[i]]="1";
 
-   if(event_types[i]==TipoEvento::on_update)
+   if(event_types[i]==EventType::on_update)
    {
     count=upd_columns.size();
     attributes[ParsersAttributes::COLUMNS]="";

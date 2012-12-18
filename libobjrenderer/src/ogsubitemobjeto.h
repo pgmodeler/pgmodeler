@@ -56,7 +56,7 @@ class OGSubItemObjeto: public ObjetoGrafico
                        TEXTO_UNIQUE;
 
   //Configura o descritor do subitem conforme o tipo do objeto de origem
-  void configurarDescritor(TipoRestricao tipo_rest=BaseType::null);
+  void configurarDescritor(ConstraintType tipo_rest=BaseType::null);
 
   /* Sobrecarga do método da classe QGraphicsItemGroup::itemChange() e sua implentação
      controla as alterações durante a seleção e movimentação do objeto. Esta nova implementação

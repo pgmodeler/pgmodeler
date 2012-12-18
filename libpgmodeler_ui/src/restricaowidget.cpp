@@ -54,7 +54,7 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_
   janela_pai->setMinimumSize(580, 520);
 
   //Configurando o combo de tipo de restrição com os tipos disponíveis
-  TipoRestricao::getTypes(lista);
+  ConstraintType::getTypes(lista);
   tipo_rest_cmb->addItems(lista);
   selecionarTipoRestricao();
 
@@ -333,39 +333,39 @@ void RestricaoWidget::selecionarTipoRestricao(void)
  static QString rot_tab=colunas_tbw->tabText(1);
 
  //Obtém o tipo atual da restrição
- TipoRestricao tipo_rest=TipoRestricao(tipo_rest_cmb->currentText());
+ ConstraintType tipo_rest=ConstraintType(tipo_rest_cmb->currentText());
 
  //Campos exibidos somente para chaves primárias e únicas
- esptabela_lbl->setVisible(tipo_rest==TipoRestricao::primary_key || tipo_rest==TipoRestricao::unique);
- sel_esptabela->setVisible(tipo_rest==TipoRestricao::primary_key || tipo_rest==TipoRestricao::unique);
+ esptabela_lbl->setVisible(tipo_rest==ConstraintType::primary_key || tipo_rest==ConstraintType::unique);
+ sel_esptabela->setVisible(tipo_rest==ConstraintType::primary_key || tipo_rest==ConstraintType::unique);
 
  if(!sel_esptabela->isVisible()) sel_esptabela->removerObjetoSelecionado();
 
  //Campos exibidos somente para restrições de checagem
- exp_checagem_lbl->setVisible(tipo_rest==TipoRestricao::check);
- exp_checagem_txt->setVisible(tipo_rest==TipoRestricao::check);
+ exp_checagem_lbl->setVisible(tipo_rest==ConstraintType::check);
+ exp_checagem_txt->setVisible(tipo_rest==ConstraintType::check);
 
  //Campos exibidos somente para chaves primárias e estrangeiras
- fator_preenc_lbl->setVisible(tipo_rest==TipoRestricao::foreign_key || tipo_rest==TipoRestricao::primary_key);
- fator_preenc_sb->setVisible(tipo_rest==TipoRestricao::foreign_key || tipo_rest==TipoRestricao::primary_key);
+ fator_preenc_lbl->setVisible(tipo_rest==ConstraintType::foreign_key || tipo_rest==ConstraintType::primary_key);
+ fator_preenc_sb->setVisible(tipo_rest==ConstraintType::foreign_key || tipo_rest==ConstraintType::primary_key);
 
  //Campos exibidos somente para chaves estrangeiras
- postergavel_lbl->setVisible(tipo_rest==TipoRestricao::foreign_key);
- postergavel_chk->setVisible(tipo_rest==TipoRestricao::foreign_key);
- tipo_postergacao_cmb->setVisible(tipo_rest==TipoRestricao::foreign_key);
- tipo_postergacao_lbl->setVisible(tipo_rest==TipoRestricao::foreign_key);
- tipo_comparacao_lbl->setVisible(tipo_rest==TipoRestricao::foreign_key);
- tipo_comparacao_cmb->setVisible(tipo_rest==TipoRestricao::foreign_key);
- acao_delete_cmb->setVisible(tipo_rest==TipoRestricao::foreign_key);
- acao_delete_lbl->setVisible(tipo_rest==TipoRestricao::foreign_key);
- acao_update_cmb->setVisible(tipo_rest==TipoRestricao::foreign_key);
- acao_update_lbl->setVisible(tipo_rest==TipoRestricao::foreign_key);
+ postergavel_lbl->setVisible(tipo_rest==ConstraintType::foreign_key);
+ postergavel_chk->setVisible(tipo_rest==ConstraintType::foreign_key);
+ tipo_postergacao_cmb->setVisible(tipo_rest==ConstraintType::foreign_key);
+ tipo_postergacao_lbl->setVisible(tipo_rest==ConstraintType::foreign_key);
+ tipo_comparacao_lbl->setVisible(tipo_rest==ConstraintType::foreign_key);
+ tipo_comparacao_cmb->setVisible(tipo_rest==ConstraintType::foreign_key);
+ acao_delete_cmb->setVisible(tipo_rest==ConstraintType::foreign_key);
+ acao_delete_lbl->setVisible(tipo_rest==ConstraintType::foreign_key);
+ acao_update_cmb->setVisible(tipo_rest==ConstraintType::foreign_key);
+ acao_update_lbl->setVisible(tipo_rest==ConstraintType::foreign_key);
 
  //Campos exibidos para todos os tipos de restrições exceto restrições de checagem
- colunas_tbw->setVisible(tipo_rest!=TipoRestricao::check);
+ colunas_tbw->setVisible(tipo_rest!=ConstraintType::check);
 
  //Caso o tipo da restição não seja chave estrangeira esconde a aba de colunas referenciadas
- if(tipo_rest!=TipoRestricao::foreign_key)
+ if(tipo_rest!=ConstraintType::foreign_key)
   colunas_tbw->removeTab(1);
  else
   colunas_tbw->addTab(tab, rot_tab);
@@ -489,7 +489,7 @@ void RestricaoWidget::aplicarConfiguracao(void)
   restricao=dynamic_cast<Constraint *>(this->objeto);
 
   //Preenche os atributos básicos da restição com os valores configurados no formulário
-  restricao->setConstraintType(TipoRestricao(tipo_rest_cmb->currentText()));
+  restricao->setConstraintType(ConstraintType(tipo_rest_cmb->currentText()));
   restricao->setCheckExpression(exp_checagem_txt->toPlainText().toUtf8());
   restricao->setFillFactor(fator_preenc_sb->value());
   restricao->setMatchType(TipoComparacao(tipo_comparacao_cmb->currentText()));
@@ -499,7 +499,7 @@ void RestricaoWidget::aplicarConfiguracao(void)
   restricao->setActionType(ActionType(acao_update_cmb->currentText()),true);
 
   //Caso seja uma chave estrangeira, atribui a tabela referenciada
-  if(restricao->getConstraintType()==TipoRestricao::foreign_key)
+  if(restricao->getConstraintType()==ConstraintType::foreign_key)
    restricao->setReferencedTable(sel_tabela_ref->obterObjeto());
 
   //Remove todas as colunas da restrição para inserir as presentes na tabela
@@ -524,10 +524,10 @@ void RestricaoWidget::aplicarConfiguracao(void)
 
   /* Dispara um erro caso o tipo da restrição seja um que exija o uso
      de colunas de origem e/ou de referência (para chaves primárias e estrangeiras) */
-  if(((restricao->getConstraintType()==TipoRestricao::foreign_key ||
-       restricao->getConstraintType()==TipoRestricao::primary_key) &&
+  if(((restricao->getConstraintType()==ConstraintType::foreign_key ||
+       restricao->getConstraintType()==ConstraintType::primary_key) &&
       restricao->getColumnCount(Constraint::SOURCE_COLS)==0) ||
-     (restricao->getConstraintType()==TipoRestricao::foreign_key &&
+     (restricao->getConstraintType()==ConstraintType::foreign_key &&
       restricao->getColumnCount(Constraint::REFERENCED_COLS)==0))
    throw Exception(ERR_CONSTR_NO_COLUMNS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -535,7 +535,7 @@ void RestricaoWidget::aplicarConfiguracao(void)
 
   /* Caso seja uma chave estrangeira atualiza os relacionamentos da tabela pai,
      criando um novo caso seja necessário (relacionamento originário de chave estrangeira) */
-  if(restricao->getConstraintType()==TipoRestricao::foreign_key)
+  if(restricao->getConstraintType()==ConstraintType::foreign_key)
    this->modelo->atualizarRelFkTabela(this->tabela);
  }
  catch(Exception &e)
