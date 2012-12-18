@@ -1,7 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definições das classes de tipos de objetos no PostgreSQL
+# Description: Class definitions for the basic object/actions types on PostgreSQL
 # Creation date: 31/08/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -35,31 +35,33 @@ class BaseType{
 
  protected:
   static QString type_list[types_count];
+
+  //Index of the type on the type_list vector
   unsigned type_idx;
 
-  /* Define um valor ao tipo de dado (o código do tipo deve estar
-     dentro do limite definido por offset e qtd_tipos de cada classe de tipo) */
+  /* Sets an id to the type according to the limit stablished by the attribute
+     offset and type_count from each class */
   void setType(unsigned type_id, unsigned offset, unsigned count);
 
-  /* Verifica se um código de tipo a ser atribuído está no intervalo (offset-qtd_tipos)
-     aceito pela classe */
+  //Checks if the type id is valid according to the offset/count for the class
   bool isTypeValid(unsigned type_id, unsigned offset, unsigned count);
 
-  // Obtém todos os tipos de dados de uma classe de tipo
+  //Returns the string list for all types on the specified interval (offset-count)
   static void getTypes(QStringList &types, unsigned offset, unsigned count);
 
-  // Obtém o indice do tipo e o retorna caso o mesmo estena no intervalo
-  // [offset, offset+qtd_tipos], caso contrario retorna o tipo 'nulo'
+  //Returns the type id searching by its name. Returns BaseType::null when not found
   static unsigned getType(const QString &type_name, unsigned offset, unsigned count);
 
  public:
   static const unsigned null=0;
 
   BaseType(void);
-  ~BaseType(void){}
 
-  QString operator ~ (void); //Retorna o nome do tipo atual
-  unsigned operator ! (void); //Retorna o código do tipo atual
+  //Returns the name of the type
+  QString operator ~ (void);
+
+  //Returns the code (id) of the type
+  unsigned operator ! (void);
 
   bool operator == (BaseType &type);
   bool operator == (unsigned type_id);
@@ -71,12 +73,13 @@ class BaseType{
 
 class ActionType: public BaseType{
  private:
-  static const unsigned offset=1; //Posição inicial dos nomes de tipos da classe
-  static const unsigned types_count=5; //Quantidade de nomes de tipos da classe
+  //Initial position of the names related to the class on BaseType::type_list
+  static const unsigned offset=1;
+
+  //Type count for the class related to the list
+  static const unsigned types_count=5;
 
  public:
-  /* Estas constantes são os tipos válidos para a classe.
-     Ao usá-las deve ser referenciado da seguinte forma: Tipo???::NOME_TIPO */
   static const unsigned no_action=offset;
   static const unsigned restrict=offset+1;
   static const unsigned cascade=offset+2;
@@ -87,10 +90,8 @@ class ActionType: public BaseType{
   ActionType(unsigned type_id);
   ActionType(void);
 
-  //Obtém todos os tipos válidos da classe e guarda em uma lista
   static void getTypes(QStringList &type_list);
 
-  //Atribui um tipo a instancia this
   unsigned operator = (unsigned type_id);
   unsigned operator = (const QString &type_name);
 };
@@ -136,7 +137,7 @@ class EventType: public BaseType{
   unsigned operator = (const QString &type_name);
 
   /* These two operators where created to permit the use the
-     class TipoEvento on STL containers (specially maps) */
+     class EventType on STL containers (specially maps) */
   bool operator < (EventType type) const;
   bool operator < (unsigned type_id) const;
 };
@@ -259,31 +260,31 @@ class SpatialType: public BaseType{
   QString operator * (void);
 };
 
- /* Isso é feio, muito feio! :/
-    Mas foi preciso fazê-lo para resolver a interação
-    entre tipos definidos pelo usuário e tipos internos
-    do PostgreSQL de forma transparente. Poderá (deverá?)
-    ser modificado em futuras versões do pgModeler. */
+/* This class stores the user defined type configureation.
+   When the user creates a Type, Sequence, Domain, even a Table,
+   it can be used as a type on certain configurations so this
+   class implements a basic structure to control these types */
 class UserTypeConfig {
   protected:
-   //Ponteiro para a instância do tipo definido pelo usuário
+   //Pointer to the instance of the user defined type
    void *ptype;
 
-   //Ponteiro para a instância do modelo ao qual o tipo pertence
+   //Pointer to the model that the type belongs to
    void *pmodel;
 
-   //Nome do tipo definido pelo usário
+   //Name of the type
    QString name;
 
+   //Type configuration id (refer to ???_TYPE constants)
    unsigned type_conf;
 
   public:
-   static const unsigned BASE_TYPE=1,
-                         DOMAIN_TYPE=2,
-                         TABLE_TYPE=4,
-                         SEQUENCE_TYPE=8,
-                         /* Esta constante é usada somente para referenciar todos os tipos de uma vez,
-                            é não deve ser usado para definir um tipo de configuração */
+   static const unsigned BASE_TYPE=1, //The type refers to a user-defined base type (class Type)
+                         DOMAIN_TYPE=2, //The type refers to a domain
+                         TABLE_TYPE=4, //The type refers to a table
+                         SEQUENCE_TYPE=8, //The type refers to a sequence
+
+                         //This constant refers to all types above and must be used only on type searches
                          ALL_USER_TYPES=15;
 
    UserTypeConfig(void)
@@ -297,55 +298,47 @@ class PgSQLType: public BaseType{
   static const unsigned offset=25;
   static const unsigned types_count=66;
 
-  //Offset dos tipos oid
+  //Offset for oid types
   static const unsigned oid_start=67;
   static const unsigned oid_end=78;
 
-  //Offset dos pseudo-tipos
+  //Offset for pseudo types
   static const unsigned pseudo_start=79;
   static const unsigned pseudo_end=90;
 
-  /* Apenas as classes Tipo (a qual criar SQL para tipos definidos pelo usuário)
-     e Dominio têm acesso a esta lista através de métodos de acesso. Esta classe é a
-     responsável por inserir e remover itens desta lista ao ser criado um novo
-     tipo ou excluido um já existente. */
-  static vector<UserTypeConfig> user_types; //Lista de tipos de dados definidos pelo usuário
+  //Configuration for user defined types
+  static vector<UserTypeConfig> user_types;
 
-  //Dimensão do tipo caso ele seja um array ( > 0 indica que o mesmo é um array)
+  //Dimension of the type if it's configured as array
   unsigned dimension,
 
-          //Tamanho do tipo (exigido por tipos como varchar, date e bit)
-          length;
+           //Type's length (used for types like varchar, date e bit)
+           length;
 
-
-  //Precisão do valor do tipo (caso seja numeric/decimal)
+  //Type's precison (used by numeric/decimal)
   int precision;
 
-  /* Usado apenas para tipos time e timestamp e indica se o tempo
-     deve ser considerado com timezone (WITH/WITHOUT TIMEZONE) */
+  /* Indicates that the type (when used as timestamp or time) must
+     considers timezones */
   bool with_timezone;
 
-  //Tipo de intervalo de tempo usado pelo tipo de dado 'interval'
+  //Time interval used by 'interval' type
   IntervalType interval_type;
 
-  //Tipo espacial usado na criação de tipos do PostGiS
+  //Spatial type used by the PostGiS types
   SpatialType spatial_type;
 
  protected:
-  /* Adiciona uma nova referência ao tipo definido pelo usuário
-     (Esse método é chamando sempre que o tipo definido é criado) */
+  //Adds a new reference to the user defined type
   static void addUserType(const QString &type_name, void *ptype, void *pmodel, unsigned type_conf);
 
-  /* Remove uma referência ao tipo definido pelo usuário
-    (Esse método é chamando sempre que o tipo definido é destruído) */
+  //Removes a reference to the user defined type
   static void removeUserType(const QString &type_name, void *ptype);
 
-  /* Renomeia um tipo definido pelo usuário (Esse método é chamando sempre
-     que o tipo definido pelo usuário é renomeado) */
+  //Renames a user defined type
   static void renameUserType(const QString &type_name, void *ptype, const QString &new_name);
 
-  /* Obtém o nome do tipo definido pelo usuário através de seu índice.
-     Retorna vazio caso não índice seja inválido. */
+  //Returns the name of the type using its id
   static QString getUserTypeName(unsigned type_id);
 
   void setUserType(unsigned type_id);
@@ -368,12 +361,9 @@ class PgSQLType: public BaseType{
             bool with_timezone, IntervalType interv_type,
             SpatialType spatial_type);
 
-  /* Obtém o índice referente a um tipo definido pelo usuário.
-     Retorna 0 caso o tipo não exista na lista. */
   static unsigned getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel=NULL);
   static unsigned getBaseTypeIndex(const QString &type_name);
 
-  //Obtém todos os tipos definidos pelo usuário
   static void getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types);
   static void getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types);
   static void getTypes(QStringList &type_list, bool oids=true, bool pseudos=true);
@@ -391,24 +381,22 @@ class PgSQLType: public BaseType{
   IntervalType getIntervalType(void);
   SpatialType getSpatialType(void);
 
-  bool isWithTimezone(void); //Retorna se o tipo considera timezone
-  bool isPseudoType(void); //Retorna se o tipo é um pseudo-tipo
-  bool isOIDType(void); //Retorna se o tipo é um identificador de tipo (OID)
-  bool isUserType(void); //Retorna se o tipo é um definido pelo usuário
-  bool isArrayType(void); //Retorna se o tipo é usado como array
-  bool hasVariableLength(void); //Retorna se o tipo aceita comprimento variável (varchar, varbit, char, etc)
-  bool acceptsPrecision(void); //Retorna o tipo aceita precisão
+  bool isWithTimezone(void);
+  bool isPseudoType(void);
+  bool isOIDType(void);
+  bool isUserType(void);
+  bool isArrayType(void);
+  bool hasVariableLength(void);
+  bool acceptsPrecision(void);
 
-  /* Como é necessário que o tipo base do PgSQL tenha uma definição XML
-     este método foi adicionad  essa classe a qual configura um mapa
-     de atributos e passa ao parser de esquemas para que este retorne
-     a definição XML. Este método permite também se obter a definição
-     SQL do objeto, porém chamar este método para obtenção do SQL do tipo
-     é o mesmo que chamar o operador * do tipo. */
+
   QString getObjectDefinition(unsigned def_type, QString ref_type="");
 
   QString operator ~ (void);
-  QString operator * (void); //Retorna a definiação SQL completa do tipo
+
+  //Retorns the SQL definition for the type
+  QString operator * (void);
+
   unsigned operator << (void *ptype);
   unsigned operator = (unsigned type_id);
   unsigned operator = (const QString &type_name);
@@ -420,12 +408,11 @@ class PgSQLType: public BaseType{
   bool operator != (PgSQLType type);
   bool operator != (unsigned type_idx);
 
-  /* Retorna o ponteiro para o tipo definido pelo usuário que
-     denota o tipo pgsql em questão. Caso este operador seja usado
-     em um tipo que não é definido pelo usuário será retornado NULL */
+  /* Returns the pointer to the user defined type which denotes the
+     the pgsql type */
   void *getUserTypeReference(void);
 
-  //Retorna o tipo de configuração do tipo quando o mesmo é definido pelo usuário
+  //Returns the configuration id for the user defined type
   unsigned getUserTypeConfig(void);
 
   friend class Type;

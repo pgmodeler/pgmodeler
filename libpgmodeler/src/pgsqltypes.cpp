@@ -1,7 +1,7 @@
 #include "pgsqltypes.h"
 
 /********************
- * CLASSE: TipoBase *
+ * CLASS: BaseType  *
  ********************/
 QString BaseType::type_list[types_count]=
 {
@@ -10,50 +10,50 @@ QString BaseType::type_list[types_count]=
   //offsets 0
   "",
 
- //Tipos utilizados pela classe TipoAcao
- //offsets 1 a 5
+ //Types used by the class ActionType
+ //offsets 1 to 5
  "NO ACTION",
  "RESTRICT",
  "CASCADE",
  "SET NULL",
  "SET DEFAULT",
 
- //Tipos utilizados pela classe TipoRestricao
- //offsets 6 a 9
+ //Types used by the class ConstraintType
+ //offsets 6 to 9
  "PRIMARY KEY",
  "FOREIGN KEY",
  "CHECK",
  "UNIQUE",
 
- //Tipos utilizados pela classe TipoEvento
- //offsets 10 a 14
+ //Types used by the class EventType
+ //offsets 10 to 14
  "ON SELECT",
  "ON INSERT",
  "ON DELETE",
  "ON UPDATE",
  "ON TRUNCATE",
 
- //Tipos utilizados pela classe TipoExecucao
- //offsets 15 a 16
+ //Types used by the class ExecutionType
+ //offsets 15 to 16
  "ALSO",
  "INSTEAD",
 
- //Tipos utilizados pela classe TipoFuncao
- //offsets 17 a 19
+ //Types used by the class FunctionType
+ //offsets 17 to 19
  "VOLATILE",
  "STABLE",
  "IMMUTABLE",
 
- //Tipos utilizados pela classe TipoIndexacao
- //offsets 20 a 24
+ //Types used by the class IndexingType
+ //offsets 20 to 24
  "btree",
  "rtree",
  "gist",
  "hash",
  "gin",
 
- //Tipos utilizados pela classe TipoPgSQL
- //offsets 25 a 61
+ //Types used by the class PgSQLType
+ //offsets 25 to 61
  "smallint", "integer", "bigint", "decimal", "numeric",
  "real", "double precision", "float", "serial", "bigserial", "money",
  "character varying", "varchar", "character",
@@ -64,46 +64,44 @@ QString BaseType::type_list[types_count]=
  "polygon", "circle", "cidr", "inet",
  "macaddr", "bit", "bit varying", "varbit", "uuid", "xml",
 
- //Tipos espaciais específicos da extensão PostGis (integrantes da classe TipoPgSQL)
- //offsets 62 a 66
+ //Spatial type specifics for the PostGiS extension
+ //offsets 62 to 66
  "box2d","box3d","geometry",
  "geometry_dump","geography",
 
- //Tipos identificadores de objeto (OID)
- //offsets 67 a 78
+ //Object Identification type (OID)
+ //offsets 67 to 78
  "oid", "regproc", "regprocedure",
  "regoper", "regoperator", "regclass",
  "regtype", "regconfig", "regdictionary",
  "xid", "cid", "tid",
 
- //Pseudo-tipos
- //offsets 79 a 90
+ //Pseudo-types
+ //offsets 79 to 90
  "any","anyarray","anyelement","anyenum",
  "anynonarray","cstring","internal","language_handler",
  "record","trigger","void","opaque",
 
- /* Tipos utilizados pela classe TipoIntervalo usado
-    como auxiliar da classe TipoPgSQL quando se trata
-    do tipo de dado "interval" */
- //offsets 91 a 103
+ //Interval types
+ //offsets 91 to 103
  "YEAR", "MONTH", "DAY", "HOUR",
  "MINUTE", "SECOND","YEAR TO MONTH",
  "DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
  "HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND",
 
- //Tipos utilizados pela classe TipoComportamento
- //offsets 104 a 106
+ //Types used by the class BehaviorType
+ //offsets 104 to 106
  "CALLED ON NULL INPUT",
  "RETURNS NULL ON NULL INPUT",
  "STRICT",
 
- //Tipos utilizados pela classe TipoSeguranca
- //offsets 107 a 108
+ //Types used by the class SecurityType
+ //offsets 107 to 108
  "SECURITY INVOKER",
  "SECURITY DEFINER",
 
- //Tipos utilizados pela classe TipoLinguagem
- //offsets 109 a 114
+ //Types used by the class LanguageType
+ //offsets 109 to 114
  "sql",
  "c",
  "plpgsql",
@@ -111,8 +109,8 @@ QString BaseType::type_list[types_count]=
  "plperl",
  "plpython",
 
- //Tipos utilizados pela classe TipoCodificacao
- //offsets 115 a 155
+ //Types used by the class EncodingType
+ //offsets 115 to 155
  "UTF8", "BIG5", "EUC_CN",  "EUC_JP", "EUC_JIS_2004", "EUC_KR",
  "EUC_TW", "GB18030", "GBK", "ISO_8859_5", "ISO_8859_6",
  "ISO_8859_7", "ISO_8859_8", "JOHAB", "KOI", "LATIN1",
@@ -123,26 +121,26 @@ QString BaseType::type_list[types_count]=
  "WIN1253", "WIN1254", "WIN1255", "WIN1256", "WIN1257",
  "WIN1258",
 
- //Tipos utilizados pela classe TipoArmazenamento
- //offsets 156 a 159
+ //Types used by the class StorageType
+ //offsets 156 to 159
  "plain",
  "external",
  "extended",
  "main",
 
- //Tipos utilizados pela classe TipoComparacao
- //offsets 160 a 162
+ //Types used by the class MatchType
+ //offsets 160 to 162
  "MATCH FULL",
  "MATCH PARTIAL",
  "MATCH SIMPLE",
 
- //Tipos utilizados pela classe TipoPostergacao
- //offsets 163 a 164
+ //Types used by the class DeferralType
+ //offsets 163 to 164
  "INITIALLY IMMEDIATE",
  "INITIALLY DEFERRED",
 
- //Tipos utilizados pela classe TipoCategoria
- //offsets 165 a 178 - Vide tabela 44-43 da Documentação do PostgreSQL 8.4
+ //Types used by the class CategoryType
+ //offsets 165 to 178 - See table 44-43 on PostgreSQL 8.4 documentation
  "U", //User-defined types
  "A", //Array types
  "B", //Boolean types
@@ -158,18 +156,17 @@ QString BaseType::type_list[types_count]=
  "V", //Bit-string types
  "X", //Unknown type
 
- //Tipos utilizados pela classe TipoDisparo
- //offsets 179 a 181
+ //Types used by the class FiringType
+ //offsets 179 to 181
  "BEFORE",
  "AFTER",
  "INSTEAD OF",
 
- /* Tipos auxiliares usados pela classe TipoEspacial na configuração de
-    tipos de objetos do PostGiS na class TipoPgSQL.
-    Estes tipos aceitam as variações Z, M e ZM.
-     > Exemplo: POINT, POINTZ, POINTM, POINTZM
-    Referência: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
- //offsets 182 a 188
+ /* Auxiliary types used by PostGiS types.
+    These types accepts variations Z, M e ZM.
+     > Example: POINT, POINTZ, POINTM, POINTZM
+    Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
+ //offsets 182 to 188
  "POINT",
  "LINESTRING",
  "POLYGON",
@@ -194,11 +191,10 @@ QString BaseType::getTypeString(unsigned type_id)
 
 void BaseType::setType(unsigned type_id,unsigned offset,unsigned count)
 {
- /* Caso a quantidade de tipos seja nula ou maior do que o tamanho da lista de tipos
-    da classe base, dispara um exceção indicando o fato */
+ //Raises an error if the type count is invalid
  if(count==0 || count > this->types_count)
   throw Exception(ERR_OBT_TYPES_INV_QUANTITY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- //Caso o tipo a ser atribuido não seja pertecente a classe de tipo atual
+ //Raises an error if the type id is invalid
  else if(!isTypeValid(type_id,offset,count))
   throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
@@ -207,25 +203,23 @@ void BaseType::setType(unsigned type_id,unsigned offset,unsigned count)
 
 bool BaseType::isTypeValid(unsigned type_id,unsigned offset,unsigned count)
 {
- //Retorna se o indice do tipo está no intervalo (offset-qtd_tipos) da classe
+ //Returns if the type id is valid according to the specified interval (offset-count)
  return((type_id>=offset && type_id<=(offset+count-1)) || type_id==0);
 }
 
 void BaseType::getTypes(QStringList &types,unsigned offset,unsigned count)
 {
- /* Caso a quantidade de tipos seja nula ou maior do que o tamanho da lista de tipos
-    da classe base, dispara um exceção indicando o fato */
+ //Raises an error if the type count is invalid
  if(count==0 || count > BaseType::types_count)
   throw Exception(ERR_OBT_TYPES_INV_QUANTITY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   unsigned idx,total;
 
-  types.clear(); //Limpa a lista de tipos
-  total=offset+count; //Calcula a quantidade total de tipos a serem obtidos
+  types.clear();
+  total=offset+count;
 
   for(idx=offset; idx<total; idx++)
-   //Insere na lista os tipos que vao do offset ao total de tipos
    types.push_back(BaseType::type_list[idx]);
  }
 }
@@ -239,10 +233,8 @@ unsigned BaseType::getType(const QString &type_name,unsigned offset,unsigned cou
   return(BaseType::null);
  else
  {
-  total=offset + count; //Calculando o total de tipos da classe
+  total=offset + count;
 
-  /*Verifica se o tipo passado pelo parametro está no conjunto de
-   tipos da classe */
   for(idx=offset; idx<total && !found; idx++)
    found=(type_name==BaseType::type_list[idx]);
 
@@ -283,9 +275,9 @@ bool BaseType::operator != (unsigned type_id)
  return(type_idx!=type_id);
 }
 
-/********************
- * CLASSE: TipoAcao *
- ********************/
+/*********************
+ * CLASS: ActionType *
+ *********************/
 ActionType::ActionType(unsigned type_id)
 {
  (*this)=type_id;
@@ -321,10 +313,9 @@ unsigned ActionType::operator = (const QString &type_name)
  return(type_idx);
 }
 
-/**************************
- * CLASSE: TipoRestricao *
- **************************/
-
+/*************************
+ * CLASS: ConstraintType *
+ *************************/
 ConstraintType::ConstraintType(unsigned type_id)
 {
  (*this)=type_id;
@@ -360,9 +351,9 @@ unsigned ConstraintType::operator = (const QString &type_name)
  return(type_id);
 }
 
-/**********************
- * CLASSE: TipoEvento *
- **********************/
+/********************
+ * CLASS: EventType *
+ ********************/
 EventType::EventType(void)
 {
  type_idx=offset;
@@ -409,7 +400,7 @@ bool EventType::operator < (unsigned type_id) const
 }
 
 /************************
- * CLASSE: TipoExecucao *
+ * CLASS: ExecutionType *
  ************************/
 ExecutionType::ExecutionType(void)
 {
@@ -446,9 +437,9 @@ unsigned ExecutionType::operator = (const QString &type_name)
  return(type_id);
 }
 
-/**********************
- * CLASSE: TipoFuncao *
- **********************/
+/***********************
+ * CLASS: FunctionType *
+ ***********************/
 FunctionType::FunctionType(unsigned type_id)
 {
  (*this)=type_id;
@@ -484,9 +475,9 @@ unsigned FunctionType::operator = (const QString &type_name)
  return(type_id);
 }
 
-/**********************
- * CLASSE: TipoIndexacao *
- **********************/
+/***********************
+ * CLASS: IndexingType *
+ ***********************/
 IndexingType::IndexingType(unsigned type_id)
 {
  (*this)=type_id;
@@ -522,9 +513,9 @@ unsigned IndexingType::operator = (const QString &type_name)
  return(type_id);
 }
 
-/**********************
- * CLASSE: TipoIntervalo *
- **********************/
+/***********************
+ * CLASS: IntervalType *
+ ***********************/
 IntervalType::IntervalType(unsigned type_id)
 {
  (*this)=type_id;
@@ -560,9 +551,9 @@ unsigned IntervalType::operator = (const QString &type_name)
  return(type_id);
 }
 
-/************************
- * CLASSE: TipoEspacial *
- ************************/
+/**********************
+ * CLASS: SpatialType *
+ **********************/
 SpatialType::SpatialType(const QString &type_name, unsigned variation_id)
 {
  BaseType::setType(BaseType::getType(type_name, offset, types_count),
@@ -612,14 +603,13 @@ QString SpatialType::operator * (void)
   default: var_str=""; break;
  }
 
- //Atualmente o PostGiS aceita somente SRID = 4326 (Vide documentação Postgis 2.0)
+ //Currently PostGiS only accpets SRID = 4326 (See PostGiS 2.0 docs)
  return(QString("(%1%2, 4326)").arg(type_list[type_idx]).arg(var_str));
 }
 
-/*********************
- * CLASSE: TipoPgSQL *
- *********************/
-//Inicializando a lista estática da classe
+/********************
+ * CLASS: PgSQLType *
+ ********************/
 vector<UserTypeConfig> PgSQLType::user_types;
 
 PgSQLType::PgSQLType(void)
@@ -686,12 +676,11 @@ void PgSQLType::getTypes(QStringList &type_list, bool oids, bool pseudos)
 {
  unsigned idx,total;
 
- type_list.clear(); //Limpa a lista de tipos
- total=offset+types_count; //Calcula a quantidade total de tipos a serem obtidos
+ type_list.clear();
+ total=offset+types_count;
 
  for(idx=offset; idx<total; idx++)
  {
-  //Insere na lista os tipos que vao do offset ao total de tipos
   if(idx<oid_start ||
     (oids && idx>=oid_start && idx<=oid_end) ||
     (pseudos && idx>=pseudo_start && idx<=pseudo_end))
@@ -758,16 +747,13 @@ bool PgSQLType::operator == (const QString &type_name)
  unsigned idx,total;
  bool found=false;
 
- total=offset + types_count; //Calculando o total de tipos da classe
+ total=offset + types_count;
 
- /*Verifica se o tipo passado pelo parametro está no conjunto de
-  tipos da classe */
  for(idx=offset; idx<total && !found; idx++)
   found=(type_name==BaseType::type_list[idx]);
 
  if(found) idx--;
 
- //Verifica se o código do tipo encontrado é igual ao codigo do tipo atual
  return(type_idx==idx);
 }
 
@@ -815,13 +801,11 @@ bool PgSQLType::isWithTimezone(void)
 
 bool PgSQLType::isOIDType(void)
 {
- //Retorna se o tipo está no conjunto de tipos identificadores de objetos (oid)
  return(type_idx>=oid_start && type_idx<=oid_end);
 }
 
 bool PgSQLType::isPseudoType(void)
 {
- //Retorna se o tipo está no conjunto de pseudotipos
  return(type_idx>=pseudo_start && type_idx<=pseudo_end);
 }
 
@@ -960,7 +944,6 @@ unsigned PgSQLType::getUserTypeIndex(const QString &type_name, void *ptype, void
   }
 
   if(itr!=itr_end)
-   //return(offset + qtd_tipos + idx);
    return(pseudo_end + 1 + idx);
   else
    return(BaseType::null);
@@ -987,12 +970,12 @@ void PgSQLType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_
 {
  unsigned idx,total;
 
- type_list.clear(); //Limpa a lista de tipos
+ type_list.clear();
  total=PgSQLType::user_types.size();
 
  for(idx=0; idx < total; idx++)
  {
-  //Só obtem os tipos definidos pelo usuário do modelo especificado
+  //Only the user defined types of the specified model are retrieved
   if(user_types[idx].pmodel==pmodel &&
      ((inc_usr_types & user_types[idx].type_conf) == user_types[idx].type_conf))
    type_list.push_back(user_types[idx].name);
@@ -1003,12 +986,12 @@ void PgSQLType::getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_
 {
  unsigned idx, total;
 
- ptypes.clear(); //Limpa a lista de tipos
+ ptypes.clear();
  total=PgSQLType::user_types.size();
 
  for(idx=0; idx < total; idx++)
  {
-  //Só obtem os tipos definidos pelo usuário do modelo especificado
+    //Only the user defined types of the specified model are retrieved
   if(user_types[idx].pmodel==pmodel &&
      ((inc_usr_types & user_types[idx].type_conf) == user_types[idx].type_conf))
    ptypes.push_back(user_types[idx].ptype);
@@ -1017,7 +1000,7 @@ void PgSQLType::getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_
 
 QString PgSQLType::operator ~ (void)
 {
- if(type_idx >= pseudo_end + 1)//offset + qtd_tipos)
+ if(type_idx >= pseudo_end + 1)
   return(user_types[type_idx - (pseudo_end + 1)].name);
  else
   return(BaseType::type_list[type_idx]);
@@ -1064,28 +1047,26 @@ void PgSQLType::setDimension(unsigned dim)
 
 void PgSQLType::setLength(unsigned len)
 {
- //Caso o usuário tente criar um tipo de tamanho zero
+ //Raises an error if the length is 0
  if(len==0)
-  //throw Excecao("Atribuição de comprimento igual a zero!");
   throw Exception(ERR_ASG_ZERO_LENGTH,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
-  //Define o comprimento do tipo da coluna
-  this->length=len;
+
+ this->length=len;
 }
 
 void PgSQLType::setPrecision(int prec)
 {
- //Caso o usuário tente definir uma precisao maior que o comprimento do tipo
+ //Raises an error if the user tries to specify a precision > lenght
  if(((BaseType::type_list[type_idx]=="numeric" ||
       BaseType::type_list[type_idx]=="decimal") && prec > static_cast<int>(length)))
   throw Exception(ERR_ASG_INV_PRECISION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+ //Raises an error if the precision is greater thant 6
  else if(((BaseType::type_list[type_idx]=="time" ||
            BaseType::type_list[type_idx]=="timestamp" ||
            BaseType::type_list[type_idx]=="interval") && prec > 6))
   throw Exception(ERR_ASG_INV_PREC_TIMESTAMP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else
-  //Define a precisão do tipo da coluna
-  this->precision=prec;
+
+ this->precision=prec;
 }
 
 unsigned PgSQLType::getDimension(void)
@@ -1154,17 +1135,16 @@ QString PgSQLType::operator * (void)
 
  type=~(*this);
 
- //Gerando definição de tipos espaciais (PostGiS)
+ //Generation the definition for the spatial types (PostGiS)
  if(type=="geometry" || type=="geography")
   fmt_type=type + (*spatial_type);
  else if(length > 1 && hasVariableLength())
  {
-  /* Tratando o caso de tipos que necessitam de uma precisão.
-     A sintaxe desses tipos se altera ficando na forma TIPO(COMPRIMENTO,PRECISÃO).*/
+  //Configuring the precision
   if((type=="numeric" || type=="decimal") && precision>=0 &&
      precision<=static_cast<int>(length))
    aux=QString("%1(%2,%3)").arg(BaseType::type_list[type_idx]).arg(length).arg(precision);
-   /* Trantado o caso dos tipos que necessitam apenas do comprimento */
+  //Configuring the length for the type
   else
    aux=QString("%1(%2)").arg(BaseType::type_list[type_idx]).arg(length);
 
@@ -1172,8 +1152,6 @@ QString PgSQLType::operator * (void)
  }
  else if(type!="numeric" && type!="decimal" && acceptsPrecision())
  {
-  /* Tratando os tipos time e timestampe que possuem o formato:
-     [TIME|TIMESTAMP] (PRECISÃO) [WITH|WITHOUT] TIMEZONE */
   if(type!="interval")
   {
    aux=BaseType::type_list[type_idx];
@@ -1184,8 +1162,6 @@ QString PgSQLType::operator * (void)
    if(with_timezone)
     aux+=" with time zone";
   }
-  /* Tratando o tipo interval que possuem o formato:
-     INTERVAL [TIPO_INTERVALO](PRECISÃO) */
   else
   {
    aux=BaseType::type_list[type_idx];
@@ -1212,9 +1188,9 @@ QString PgSQLType::operator * (void)
  return(fmt_type);
 }
 
-/*************************
- * CLASSE: TipoCompFuncao *
- *************************/
+/***********************
+ * CLASS: BehaviorType *
+ ***********************/
 BehaviorType::BehaviorType(unsigned type_id)
 {
  (*this)=type_id;
@@ -1250,9 +1226,9 @@ unsigned BehaviorType::operator = (const QString &type_name)
  return(type_id);
 }
 
-/*************************
- * CLASSE: TipoSeguranca *
- *************************/
+/***********************
+ * CLASS: SecurityType *
+ ***********************/
 SecurityType::SecurityType(void)
 {
  type_idx=offset;
@@ -1288,9 +1264,9 @@ unsigned SecurityType::operator = (const QString &type_name)
  return(type_id);
 }
 
-/*************************
- * CLASSE: TipoLinguagem *
- *************************/
+/***********************
+ * CLASS: LanguageType *
+ ***********************/
 LanguageType::LanguageType(void)
 {
  type_idx=offset;
@@ -1326,9 +1302,9 @@ unsigned LanguageType::operator = (const QString &type_name)
  return(type_id);
 }
 
-/***************************
- * CLASSE: TipoCodificacao *
- ***************************/
+/***********************
+ * CLASS: EncodingType *
+ ***********************/
 EncodingType::EncodingType(void)
 {
  type_idx=offset;
@@ -1369,16 +1345,13 @@ bool EncodingType::operator == (const QString &type_name)
  unsigned idx,total;
  bool found=false;
 
- total=offset + types_count; //Calculando o total de tipos da classe
+ total=offset + types_count;
 
- /*Verifica se o tipo passado pelo parametro está no conjunto de
-  tipos da classe */
  for(idx=offset; idx<total && !found; idx++)
   found=(type_name==BaseType::type_list[idx]);
 
  if(found) idx--;
 
- //Verifica se o código do tipo encontrado é igual ao codigo do tipo atual
  return(type_idx==idx);
 }
 
@@ -1392,9 +1365,9 @@ bool EncodingType::operator != (EncodingType type)
  return(this->type_idx!=type.type_idx);
 }
 
-/*****************************
- * CLASSE: TipoArmazenamento *
- *****************************/
+/**********************
+ * CLASS: StorageType *
+ **********************/
 StorageType::StorageType(void)
 {
  type_idx=offset;
@@ -1435,16 +1408,13 @@ bool StorageType::operator == (const QString &type_name)
  unsigned idx,total;
  bool found=false;
 
- total=offset + types_count; //Calculando o total de tipos da classe
+ total=offset + types_count;
 
- /*Verifica se o tipo passado pelo parametro está no conjunto de
-  tipos da classe */
  for(idx=offset; idx<total && !found; idx++)
   found=(type_name==BaseType::type_list[idx]);
 
  if(found) idx--;
 
- //Verifica se o código do tipo encontrado é igual ao codigo do tipo atual
  return(type_idx==idx);
 }
 
@@ -1458,9 +1428,9 @@ bool StorageType::operator != (StorageType type)
  return(this->type_idx!=type.type_idx);
 }
 
-/*************************
- * CLASSE: TipoComparacao *
- *************************/
+/********************
+ * CLASS: MatchType *
+ ********************/
 MatchType::MatchType(void)
 {
  type_idx=offset;
@@ -1496,9 +1466,9 @@ unsigned MatchType::operator = (const QString &type_name)
  return(type_id);
 }
 
-/***************************
- * CLASSE: TipoPostergacao *
- ***************************/
+/***********************
+ * CLASS: DeferralType *
+ ***********************/
 DeferralType::DeferralType(void)
 {
  type_idx=offset;
@@ -1534,9 +1504,9 @@ unsigned DeferralType::operator = (const QString &type_name)
  return(type_id);
 }
 
-/***************************
- * CLASSE: TipoCategoria *
- ***************************/
+/***********************
+ * CLASS: CategoryType *
+ ***********************/
 CategoryType::CategoryType(void)
 {
  type_idx=offset;
@@ -1572,9 +1542,9 @@ unsigned CategoryType::operator = (const QString &type_name)
  return(type_id);
 }
 
-/************************
- * CLASSE: TipoExecucao *
- ************************/
+/*********************
+ * CLASS: FiringType *
+ *********************/
 FiringType::FiringType(void)
 {
  type_idx=offset;
