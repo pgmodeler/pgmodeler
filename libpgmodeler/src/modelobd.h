@@ -55,7 +55,7 @@ class ModeloBD:  public QObject, public BaseObject {
   static unsigned dbmodel_id;
 
   //Tipo de codificação do banco de dados
-  TipoCodificacao tipo_codif;
+  EncodingType tipo_codif;
 
   //Banco de dados modelo
   QString bd_modelo,
@@ -213,7 +213,7 @@ class ModeloBD:  public QObject, public BaseObject {
   bool carregandoModelo(void);
 
   //Define a codificação do banco de dados
-  void definirCodificacao(TipoCodificacao tipo_cod);
+  void definirCodificacao(EncodingType tipo_cod);
 
   /* Define uma das localizações do banco de dados. Os códigos
      de localização são padronizados e definidos em /usr/include/locale.h */
@@ -256,7 +256,7 @@ class ModeloBD:  public QObject, public BaseObject {
   QString obterAutor(void);
 
   //Retorna a codificação do banco de dados
-  TipoCodificacao obterCodificacao(void);
+  EncodingType obterCodificacao(void);
 
   //Salva o modelo em formato SQL ou XML no arquivo
   void salvarModelo(const QString &nome_arq, unsigned tipo_def);

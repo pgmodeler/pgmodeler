@@ -1215,398 +1215,398 @@ QString PgSQLType::operator * (void)
 /*************************
  * CLASSE: TipoCompFuncao *
  *************************/
-TipoComportamento::TipoComportamento(unsigned tipo)
+BehaviorType::BehaviorType(unsigned type_id)
 {
- (*this)=tipo;
+ (*this)=type_id;
 }
 
-TipoComportamento::TipoComportamento(void)
+BehaviorType::BehaviorType(void)
 {
  type_idx=offset;
 }
 
-TipoComportamento::TipoComportamento(const QString &nome_tipo)
+BehaviorType::BehaviorType(const QString &type_name)
 {
- (*this)=nome_tipo;
+ (*this)=type_name;
 }
 
-void TipoComportamento::getTypes(QStringList &tipos)
+void BehaviorType::getTypes(QStringList &type_list)
 {
- BaseType::getTypes(tipos,offset,types_count);
+ BaseType::getTypes(type_list,offset,types_count);
 }
 
-unsigned TipoComportamento::operator = (unsigned tipo)
+unsigned BehaviorType::operator = (unsigned type_id)
 {
- BaseType::setType(tipo,offset,types_count);
+ BaseType::setType(type_id,offset,types_count);
  return(type_idx);
 }
 
-unsigned TipoComportamento::operator = (const QString &nome_tipo)
+unsigned BehaviorType::operator = (const QString &type_name)
 {
- unsigned idx_tipo;
+ unsigned type_id;
 
- idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
- BaseType::setType(idx_tipo,offset,types_count);
- return(idx_tipo);
+ type_id=BaseType::getType(type_name, offset, types_count);
+ BaseType::setType(type_id,offset,types_count);
+ return(type_id);
 }
 
 /*************************
  * CLASSE: TipoSeguranca *
  *************************/
-TipoSeguranca::TipoSeguranca(void)
+SecurityType::SecurityType(void)
 {
  type_idx=offset;
 }
 
-TipoSeguranca::TipoSeguranca(const QString &nome_tipo)
+SecurityType::SecurityType(const QString &type_name)
 {
- (*this)=nome_tipo;
+ (*this)=type_name;
 }
 
-TipoSeguranca::TipoSeguranca(unsigned tipo)
+SecurityType::SecurityType(unsigned type_id)
 {
- (*this)=tipo;
+ (*this)=type_id;
 }
 
-void TipoSeguranca::getTypes(QStringList &tipos)
+void SecurityType::getTypes(QStringList &tipos)
 {
  BaseType::getTypes(tipos,offset,types_count);
 }
 
-unsigned TipoSeguranca::operator = (unsigned tipo)
+unsigned SecurityType::operator = (unsigned type_id)
 {
- BaseType::setType(tipo,offset,types_count);
+ BaseType::setType(type_id,offset,types_count);
  return(type_idx);
 }
 
-unsigned TipoSeguranca::operator = (const QString &nome_tipo)
+unsigned SecurityType::operator = (const QString &type_name)
 {
- unsigned idx_tipo;
+ unsigned type_id;
 
- idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
- BaseType::setType(idx_tipo,offset,types_count);
- return(idx_tipo);
+ type_id=BaseType::getType(type_name, offset, types_count);
+ BaseType::setType(type_id,offset,types_count);
+ return(type_id);
 }
 
 /*************************
  * CLASSE: TipoLinguagem *
  *************************/
-TipoLinguagem::TipoLinguagem(void)
+LanguageType::LanguageType(void)
 {
  type_idx=offset;
 }
 
-TipoLinguagem::TipoLinguagem(unsigned tipo)
+LanguageType::LanguageType(unsigned type_id)
 {
- (*this)=tipo;
+ (*this)=type_id;
 }
 
-TipoLinguagem::TipoLinguagem(const QString &nome_tipo)
+LanguageType::LanguageType(const QString &type_name)
 {
- (*this)=nome_tipo;
+ (*this)=type_name;
 }
 
-void TipoLinguagem::getTypes(QStringList &tipos)
+void LanguageType::getTypes(QStringList &tipos)
 {
  BaseType::getTypes(tipos,offset,types_count);
 }
 
-unsigned TipoLinguagem::operator = (unsigned tipo)
+unsigned LanguageType::operator = (unsigned tipo_id)
 {
- BaseType::setType(tipo,offset,types_count);
+ BaseType::setType(tipo_id,offset,types_count);
  return(type_idx);
 }
 
-unsigned TipoLinguagem::operator = (const QString &nome_tipo)
+unsigned LanguageType::operator = (const QString &type_name)
 {
- unsigned idx_tipo;
+ unsigned type_id;
 
- idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
- BaseType::setType(idx_tipo,offset,types_count);
- return(idx_tipo);
+ type_id=BaseType::getType(type_name, offset, types_count);
+ BaseType::setType(type_id,offset,types_count);
+ return(type_id);
 }
 
 /***************************
  * CLASSE: TipoCodificacao *
  ***************************/
-TipoCodificacao::TipoCodificacao(void)
+EncodingType::EncodingType(void)
 {
  type_idx=offset;
 }
 
-TipoCodificacao::TipoCodificacao(const QString &nome_tipo)
+EncodingType::EncodingType(const QString &type)
 {
- (*this)=nome_tipo;
+ (*this)=type;
 }
 
-void TipoCodificacao::getTypes(QStringList &tipos)
+void EncodingType::getTypes(QStringList &tipos)
 {
  BaseType::getTypes(tipos,offset,types_count);
 }
 
-unsigned TipoCodificacao::operator = (unsigned tipo)
+unsigned EncodingType::operator = (unsigned type_id)
 {
- BaseType::setType(tipo,offset,types_count);
+ BaseType::setType(type_id,offset,types_count);
  return(type_idx);
 }
 
-unsigned TipoCodificacao::operator = (const QString &nome_tipo)
+unsigned EncodingType::operator = (const QString &type_name)
 {
- unsigned idx_tipo;
+ unsigned type_id;
 
- idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
- BaseType::setType(idx_tipo,offset,types_count);
- return(idx_tipo);
+ type_id=BaseType::getType(type_name, offset, types_count);
+ BaseType::setType(type_id,offset,types_count);
+ return(type_id);
 }
 
-bool TipoCodificacao::operator == (const char *nome_tipo)
+bool EncodingType::operator == (const char *type_name)
 {
- return((*this)==QString(nome_tipo));
+ return((*this)==QString(type_name));
 }
 
-bool TipoCodificacao::operator == (const QString &nome_tipo)
+bool EncodingType::operator == (const QString &type_name)
 {
  unsigned idx,total;
- bool enc=false;
+ bool found=false;
 
  total=offset + types_count; //Calculando o total de tipos da classe
 
  /*Verifica se o tipo passado pelo parametro está no conjunto de
   tipos da classe */
- for(idx=offset; idx<total && !enc; idx++)
-  enc=(nome_tipo==BaseType::type_list[idx]);
+ for(idx=offset; idx<total && !found; idx++)
+  found=(type_name==BaseType::type_list[idx]);
 
- if(enc) idx--;
+ if(found) idx--;
 
  //Verifica se o código do tipo encontrado é igual ao codigo do tipo atual
  return(type_idx==idx);
 }
 
-bool TipoCodificacao::operator != (const QString &nome_tipo)
+bool EncodingType::operator != (const QString &type_name)
 {
- return(!((*this)==nome_tipo));
+ return(!((*this)==type_name));
 }
 
-bool TipoCodificacao::operator != (TipoCodificacao tipo)
+bool EncodingType::operator != (EncodingType type)
 {
- return(this->type_idx!=tipo.type_idx);
+ return(this->type_idx!=type.type_idx);
 }
 
 /*****************************
  * CLASSE: TipoArmazenamento *
  *****************************/
-TipoArmazenamento::TipoArmazenamento(void)
+StorageType::StorageType(void)
 {
  type_idx=offset;
 }
 
-TipoArmazenamento::TipoArmazenamento(const QString &nome_tipo)
+StorageType::StorageType(const QString &type_name)
 {
- (*this)=nome_tipo;
+ (*this)=type_name;
 }
 
-void TipoArmazenamento::getTypes(QStringList &tipos)
+void StorageType::getTypes(QStringList &tipos)
 {
  BaseType::getTypes(tipos,offset,types_count);
 }
 
-unsigned TipoArmazenamento::operator = (unsigned tipo)
+unsigned StorageType::operator = (unsigned type_id)
 {
- BaseType::setType(tipo,offset,types_count);
+ BaseType::setType(type_id,offset,types_count);
  return(type_idx);
 }
 
-unsigned TipoArmazenamento::operator = (const QString &nome_tipo)
+unsigned StorageType::operator = (const QString &type_name)
 {
- unsigned idx_tipo;
+ unsigned type_id;
 
- idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
- BaseType::setType(idx_tipo,offset,types_count);
- return(idx_tipo);
+ type_id=BaseType::getType(type_name, offset, types_count);
+ BaseType::setType(type_id,offset,types_count);
+ return(type_id);
 }
 
-bool TipoArmazenamento::operator == (const char *nome_tipo)
+bool StorageType::operator == (const char *type_name)
 {
- return((*this)==QString(nome_tipo));
+ return((*this)==QString(type_name));
 }
 
-bool TipoArmazenamento::operator == (const QString &nome_tipo)
+bool StorageType::operator == (const QString &type_name)
 {
  unsigned idx,total;
- bool enc=false;
+ bool found=false;
 
  total=offset + types_count; //Calculando o total de tipos da classe
 
  /*Verifica se o tipo passado pelo parametro está no conjunto de
   tipos da classe */
- for(idx=offset; idx<total && !enc; idx++)
-  enc=(nome_tipo==BaseType::type_list[idx]);
+ for(idx=offset; idx<total && !found; idx++)
+  found=(type_name==BaseType::type_list[idx]);
 
- if(enc) idx--;
+ if(found) idx--;
 
  //Verifica se o código do tipo encontrado é igual ao codigo do tipo atual
  return(type_idx==idx);
 }
 
-bool TipoArmazenamento::operator != (const QString &nome_tipo)
+bool StorageType::operator != (const QString &type_name)
 {
- return(!((*this)==nome_tipo));
+ return(!((*this)==type_name));
 }
 
-bool TipoArmazenamento::operator != (TipoArmazenamento tipo)
+bool StorageType::operator != (StorageType type)
 {
- return(this->type_idx!=tipo.type_idx);
+ return(this->type_idx!=type.type_idx);
 }
 
 /*************************
  * CLASSE: TipoComparacao *
  *************************/
-TipoComparacao::TipoComparacao(void)
+MatchType::MatchType(void)
 {
  type_idx=offset;
 }
 
-TipoComparacao::TipoComparacao(const QString &nome_tipo)
+MatchType::MatchType(const QString &type_name)
 {
- (*this)=nome_tipo;
+ (*this)=type_name;
 }
 
-TipoComparacao::TipoComparacao(unsigned tipo)
+MatchType::MatchType(unsigned type_id)
 {
- (*this)=tipo;
+ (*this)=type_id;
 }
 
-void TipoComparacao::getTypes(QStringList &tipos)
+void MatchType::getTypes(QStringList &tipos)
 {
  BaseType::getTypes(tipos,offset,types_count);
 }
 
-unsigned TipoComparacao::operator = (unsigned tipo)
+unsigned MatchType::operator = (unsigned type_id)
 {
- BaseType::setType(tipo,offset,types_count);
+ BaseType::setType(type_id,offset,types_count);
  return(type_idx);
 }
 
-unsigned TipoComparacao::operator = (const QString &nome_tipo)
+unsigned MatchType::operator = (const QString &type_name)
 {
- unsigned idx_tipo;
+ unsigned type_id;
 
- idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
- BaseType::setType(idx_tipo,offset,types_count);
- return(idx_tipo);
+ type_id=BaseType::getType(type_name, offset, types_count);
+ BaseType::setType(type_id,offset,types_count);
+ return(type_id);
 }
 
 /***************************
  * CLASSE: TipoPostergacao *
  ***************************/
-TipoPostergacao::TipoPostergacao(void)
+DeferralType::DeferralType(void)
 {
  type_idx=offset;
 }
 
-TipoPostergacao::TipoPostergacao(const QString &nome_tipo)
+DeferralType::DeferralType(const QString &type_name)
 {
- (*this)=nome_tipo;
+ (*this)=type_name;
 }
 
-TipoPostergacao::TipoPostergacao(unsigned tipo)
+DeferralType::DeferralType(unsigned type_id)
 {
- (*this)=tipo;
+ (*this)=type_id;
 }
 
-void TipoPostergacao::getTypes(QStringList &tipos)
+void DeferralType::getTypes(QStringList &tipos)
 {
  BaseType::getTypes(tipos,offset,types_count);
 }
 
-unsigned TipoPostergacao::operator = (unsigned tipo)
+unsigned DeferralType::operator = (unsigned type_id)
 {
- BaseType::setType(tipo,offset,types_count);
+ BaseType::setType(type_id,offset,types_count);
  return(type_idx);
 }
 
-unsigned TipoPostergacao::operator = (const QString &nome_tipo)
+unsigned DeferralType::operator = (const QString &type_name)
 {
- unsigned idx_tipo;
+ unsigned type_id;
 
- idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
- BaseType::setType(idx_tipo,offset,types_count);
- return(idx_tipo);
+ type_id=BaseType::getType(type_name, offset, types_count);
+ BaseType::setType(type_id,offset,types_count);
+ return(type_id);
 }
 
 /***************************
  * CLASSE: TipoCategoria *
  ***************************/
-TipoCategoria::TipoCategoria(void)
+CategoryType::CategoryType(void)
 {
  type_idx=offset;
 }
 
-TipoCategoria::TipoCategoria(const QString &nome_tipo)
+CategoryType::CategoryType(const QString &type_name)
 {
- (*this)=nome_tipo;
+ (*this)=type_name;
 }
 
-TipoCategoria::TipoCategoria(unsigned tipo)
+CategoryType::CategoryType(unsigned type_id)
 {
- (*this)=tipo;
+ (*this)=type_id;
 }
 
-void TipoCategoria::getTypes(QStringList &tipos)
+void CategoryType::getTypes(QStringList &tipos)
 {
  BaseType::getTypes(tipos,offset,types_count);
 }
 
-unsigned TipoCategoria::operator = (unsigned tipo)
+unsigned CategoryType::operator = (unsigned type_id)
 {
- BaseType::setType(tipo,offset,types_count);
+ BaseType::setType(type_id,offset,types_count);
  return(type_idx);
 }
 
-unsigned TipoCategoria::operator = (const QString &nome_tipo)
+unsigned CategoryType::operator = (const QString &type_name)
 {
- unsigned idx_tipo;
+ unsigned type_id;
 
- idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
- BaseType::setType(idx_tipo,offset,types_count);
- return(idx_tipo);
+ type_id=BaseType::getType(type_name, offset, types_count);
+ BaseType::setType(type_id,offset,types_count);
+ return(type_id);
 }
 
 /************************
  * CLASSE: TipoExecucao *
  ************************/
-TipoDisparo::TipoDisparo(void)
+FiringType::FiringType(void)
 {
  type_idx=offset;
 }
 
-TipoDisparo::TipoDisparo(unsigned tipo)
+FiringType::FiringType(unsigned type_id)
 {
- (*this)=tipo;
+ (*this)=type_id;
 }
 
-TipoDisparo::TipoDisparo(const QString &nome_tipo)
+FiringType::FiringType(const QString &type_name)
 {
- (*this)=nome_tipo;
+ (*this)=type_name;
 }
 
-void TipoDisparo::getTypes(QStringList &tipos)
+void FiringType::getTypes(QStringList &tipos)
 {
  BaseType::getTypes(tipos,offset,types_count);
 }
 
-unsigned TipoDisparo::operator = (unsigned tipo)
+unsigned FiringType::operator = (unsigned type_id)
 {
- BaseType::setType(tipo,offset,types_count);
+ BaseType::setType(type_id,offset,types_count);
  return(type_idx);
 }
 
-unsigned TipoDisparo::operator = (const QString &nome_tipo)
+unsigned FiringType::operator = (const QString &type_name)
 {
- unsigned idx_tipo;
+ unsigned type_id;
 
- idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
- BaseType::setType(idx_tipo,offset,types_count);
- return(idx_tipo);
+ type_id=BaseType::getType(type_name, offset, types_count);
+ BaseType::setType(type_id,offset,types_count);
+ return(type_id);
 }
 

@@ -29,7 +29,7 @@ BancoDadosWidget::BancoDadosWidget(QWidget *parent): ObjetoBaseWidget(parent, OB
  janela_pai->setMaximumHeight(420);
 
  //Obtém os nomes das codificações e as insere no combo de codificação
- TipoCodificacao::getTypes(codificacoes);
+ EncodingType::getTypes(codificacoes);
  codificacao_cmb->addItems(codificacoes);
 
  //Obtém todas as localizações padrão e as armazena em uma lista de QString
@@ -97,7 +97,7 @@ void BancoDadosWidget::aplicarConfiguracao(void)
   /* Define a condificação do modelo de acordo com a selecionada no formulário
      caso a codifição 'Padrão' seja selecionada o modelo usará a codificação padrão
      do SGBD em que for executado o script sql gerado */
-  modelo->definirCodificacao(TipoCodificacao(codificacao_cmb->currentText()));
+  modelo->definirCodificacao(EncodingType(codificacao_cmb->currentText()));
 
   /* Define as localização LC_COLLATE e LC_CTYPE do modelo de acordo com a selecionada
      no formulário caso a localização 'Padrão' seja selecionada o modelo usará a localização

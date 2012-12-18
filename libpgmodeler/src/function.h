@@ -80,7 +80,7 @@ class Function: public BaseObject {
   bool is_wnd_function;
 
   //Type of execution behavior applied to the function
-  TipoComportamento behavior_type;
+  BehaviorType behavior_type;
 
   //Function type. It can be VOLATILE, IMMUTABLE, STABLE
   FunctionType function_type;
@@ -94,7 +94,7 @@ class Function: public BaseObject {
   vector<Parameter> ret_table_columns;
 
   //Function security type. It can be SECURITY [INVOKER | DEFINER]
-  TipoSeguranca security_type;
+  SecurityType security_type;
 
   //Execution cost for the function
   unsigned execution_cost;
@@ -148,7 +148,7 @@ class Function: public BaseObject {
   void setWindowFunction(bool value);
 
   //Defines the function's execution behavior
-  void setBehaviorType(TipoComportamento behav_type);
+  void setBehaviorType(BehaviorType behav_type);
 
   //Defines the function type (VOLATILE, IMMUTABLE, STABLE)
   void setFunctionType(FunctionType func_type);
@@ -157,7 +157,7 @@ class Function: public BaseObject {
   void setReturnType(PgSQLType type);
 
   //Defines the security type of the function
-  void setSecurityType(TipoSeguranca sec_type);
+  void setSecurityType(SecurityType sec_type);
 
   //Returns the function's source code
   QString getSourceCode(void);
@@ -193,7 +193,7 @@ class Function: public BaseObject {
   bool isWindowFunction(void);
 
   //Returns the function execution behavior
-  TipoComportamento getBehaviorType(void);
+  BehaviorType getBehaviorType(void);
 
   //Returns the function type
   FunctionType getFunctionType(void);
@@ -202,7 +202,7 @@ class Function: public BaseObject {
   PgSQLType getReturnType(void);
 
   //Returns the security type used by the function
-  TipoSeguranca getSecurityType(void);
+  SecurityType getSecurityType(void);
 
   //Returns the function's execution cost
   unsigned getExecutionCost(void);

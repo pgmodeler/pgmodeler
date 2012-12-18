@@ -17,7 +17,7 @@ Language::Language(void)
 void Language::setName(const QString &name)
 {
  //Raises an error if the user try to set an system reserved language name (C, SQL)
- if(name.toLower()==~TipoLinguagem("c") || name.toLower()==~TipoLinguagem("sql"))
+ if(name.toLower()==~LanguageType("c") || name.toLower()==~LanguageType("sql"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
                          .arg(QString::fromUtf8(this->getName()))
                          .arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
@@ -33,7 +33,7 @@ void Language::setTrusted(bool value)
 
 void  Language::setFunction(Function *func, unsigned func_type)
 {
- TipoLinguagem lang=TipoLinguagem::c;
+ LanguageType lang=LanguageType::c;
 
  if(!func ||
      (func &&

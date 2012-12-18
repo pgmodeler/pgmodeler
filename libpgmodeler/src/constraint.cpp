@@ -168,7 +168,7 @@ void Constraint::setReferencedTable(BaseObject *tab_ref)
  this->ref_table=tab_ref;
 }
 
-void Constraint::setDeferralType(TipoPostergacao deferral_type)
+void Constraint::setDeferralType(DeferralType deferral_type)
 {
  this->deferral_type=deferral_type;
 }
@@ -178,7 +178,7 @@ void Constraint::setDeferrable(bool value)
  deferrable=value;
 }
 
-void Constraint::setMatchType(TipoComparacao match_type)
+void Constraint::setMatchType(MatchType match_type)
 {
  this->match_type=match_type;
 }
@@ -296,7 +296,7 @@ void Constraint::removeColumn(const QString &name, unsigned col_type)
  }
 }
 
-TipoPostergacao Constraint::getDeferralType(void)
+DeferralType Constraint::getDeferralType(void)
 {
  return(deferral_type);
 }
@@ -335,7 +335,7 @@ bool Constraint::isReferRelationshipColumn(void)
  return(found);
 }
 
-TipoComparacao Constraint::getMatchType(void)
+MatchType Constraint::getMatchType(void)
 {
  return(match_type);
 }

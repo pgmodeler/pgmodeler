@@ -42,7 +42,7 @@ class Trigger: public TableObject{
   QString condition;
 
   //Trigger firing mode (BEFORE, AFTER, INSTEAD OF)
-  TipoDisparo firing_type;
+  FiringType firing_type;
 
   //Map that marks which events activates the trigger
   map<EventType, bool> events;
@@ -57,7 +57,7 @@ class Trigger: public TableObject{
   bool is_deferrable;
 
   //Deferral type for the trigger (only for constraint trigger)
-  TipoPostergacao deferral_type;
+  DeferralType deferral_type;
 
   //Formats the basic trigger attributes to be used by SchemaParser
   void setBasicAttributes(unsigned def_type);
@@ -89,7 +89,7 @@ class Trigger: public TableObject{
   void setReferecendTable(BaseObject *ref_table);
 
   //Defines the deferral type
-  void setDeferralType(TipoPostergacao tipo);
+  void setDeferralType(DeferralType tipo);
 
   //Defines whether the trigger is deferrable or not
   void setDeferrable(bool valor);
@@ -98,7 +98,7 @@ class Trigger: public TableObject{
   void editArgument(unsigned arg_idx, const QString &new_arg);
 
   //Defines the moment when the trigger must be executed
-  void setFiringType(TipoDisparo firing_type);
+  void setFiringType(FiringType firing_type);
 
   //Define wheter the trigger executes per row
   void setExecutePerRow(bool value);
@@ -125,7 +125,7 @@ class Trigger: public TableObject{
   unsigned getColumnCount(void);
 
   //Returns when the trigger executes
-  TipoDisparo getFiringType(void);
+  FiringType getFiringType(void);
 
   //Remove an argument using its index
   void removeArgument(unsigned arg_idx);
@@ -140,7 +140,7 @@ class Trigger: public TableObject{
   BaseObject *getReferencedTable(void);
 
   //Returns the deferral type of the constraint trigger
-  TipoPostergacao getDeferralType(void);
+  DeferralType getDeferralType(void);
 
   //Returns if the constraint trigger is deferrable or not
   bool isDeferrable(void);

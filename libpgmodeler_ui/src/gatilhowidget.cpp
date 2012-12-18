@@ -42,11 +42,11 @@ GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TRIG
   dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(tab_argumentos, 1,0,1,3);
 
   //Configurando o combo de tipo de postergação com os tipos disponíveis
-  TipoPostergacao::getTypes(lista);
+  DeferralType::getTypes(lista);
   tipo_postergacao_cmb->addItems(lista);
 
   //Configurando o combo de tipo disparo  com os tipos disponíveis
-  TipoDisparo::getTypes(lista);
+  FiringType::getTypes(lista);
   tipo_disparo_cmb->addItems(lista);
 
   //Define os campos exclusivos para cada versão
@@ -283,10 +283,10 @@ void GatilhoWidget::aplicarConfiguracao(void)
   gatilho=dynamic_cast<Trigger *>(this->objeto);
 
   //Configura no gatilhos todos os atributos preenchidos no formulário
-  gatilho->setFiringType(TipoDisparo(tipo_disparo_cmb->currentText()));
+  gatilho->setFiringType(FiringType(tipo_disparo_cmb->currentText()));
   gatilho->setExecutePerRow(exec_por_linha_chk->isChecked());
   gatilho->setDeferrable(postergavel_chk->isChecked());
-  gatilho->setDeferralType(TipoPostergacao(tipo_postergacao_cmb->currentText()));
+  gatilho->setDeferralType(DeferralType(tipo_postergacao_cmb->currentText()));
   gatilho->setCondition(exp_condicional_txt->toPlainText());
   gatilho->setFunction(dynamic_cast<Function *>(sel_funcao->obterObjeto()));
   gatilho->setReferecendTable(dynamic_cast<Tabela *>(sel_tabela_ref->obterObjeto()));

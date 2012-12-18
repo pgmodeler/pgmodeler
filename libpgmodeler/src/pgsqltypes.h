@@ -409,15 +409,15 @@ class PgSQLType: public BaseType{
 
   QString operator ~ (void);
   QString operator * (void); //Retorna a definiação SQL completa do tipo
-  unsigned operator << (void *ptipo);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  unsigned operator << (void *ptype);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
   bool operator == (unsigned type_idx);
-  bool operator == (PgSQLType tipo);
-  bool operator == (const QString &nome_tipo);
-  bool operator == (void *ptipo);
-  bool operator != (const QString &nome_tipo);
-  bool operator != (PgSQLType tipo);
+  bool operator == (PgSQLType type);
+  bool operator == (const QString &type_name);
+  bool operator == (void *ptype);
+  bool operator != (const QString &type_name);
+  bool operator != (PgSQLType type);
   bool operator != (unsigned type_idx);
 
   /* Retorna o ponteiro para o tipo definido pelo usuário que
@@ -435,7 +435,7 @@ class PgSQLType: public BaseType{
   friend class ModeloBD;
 };
 
-class TipoComportamento: public BaseType{
+class BehaviorType: public BaseType{
  private:
   static const unsigned offset=104;
   static const unsigned types_count=3;
@@ -445,17 +445,16 @@ class TipoComportamento: public BaseType{
   static const unsigned returns_null_on_null_input=offset+1;
   static const unsigned strict=offset+2;
 
-  TipoComportamento(const QString &nome_tipo);
-  TipoComportamento(unsigned tipo);
-  TipoComportamento(void);
-//   ~TipoRetorno(void){};
+  BehaviorType(const QString &type_name);
+  BehaviorType(unsigned type_id);
+  BehaviorType(void);
 
   static void getTypes(QStringList &type_list);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 };
 
-class TipoSeguranca: public BaseType{
+class SecurityType: public BaseType{
  private:
   static const unsigned offset=107;
   static const unsigned types_count=2;
@@ -464,17 +463,16 @@ class TipoSeguranca: public BaseType{
   static const unsigned invoker=offset;
   static const unsigned definer=offset+1;
 
-  TipoSeguranca(unsigned tipo);
-  TipoSeguranca(const QString &nome_tipo);
-  TipoSeguranca(void);
-//   ~TipoSeguranca(void){};
+  SecurityType(unsigned type_id);
+  SecurityType(const QString &type_name);
+  SecurityType(void);
 
   static void getTypes(QStringList &type_list);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 };
 
-class TipoLinguagem: public BaseType{
+class LanguageType: public BaseType{
  private:
   static const unsigned offset=109;
   static const unsigned types_count=6;
@@ -487,36 +485,34 @@ class TipoLinguagem: public BaseType{
   static const unsigned plperl=offset+4;
   static const unsigned plpython=offset+5;
 
-  TipoLinguagem(const QString &nome_tipo);
-  TipoLinguagem(unsigned tipo);
-  TipoLinguagem(void);
-//   ~TipoLinguagem(void){};
+  LanguageType(const QString &type_name);
+  LanguageType(unsigned type_id);
+  LanguageType(void);
 
   static void getTypes(QStringList &type_list);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  unsigned operator = (unsigned tipo_id);
+  unsigned operator = (const QString &type_name);
 };
 
-class TipoCodificacao: public BaseType{
+class EncodingType: public BaseType{
  private:
   static const unsigned offset=115;
   static const unsigned types_count=41;
 
  public:
-  TipoCodificacao(void);
-  TipoCodificacao(const QString &tipo);
-//   ~TipoCodificacao(void){};
+  EncodingType(void);
+  EncodingType(const QString &type);
 
   static void getTypes(QStringList &type_list);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
-  bool operator == (const QString &nome_tipo);
-  bool operator == (const char *nome_tipo);
-  bool operator != (const QString &nome_tipo);
-  bool operator != (TipoCodificacao tipo);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
+  bool operator == (const QString &type_name);
+  bool operator == (const char *type_name);
+  bool operator != (const QString &type_name);
+  bool operator != (EncodingType type);
 };
 
-class TipoArmazenamento: public BaseType{
+class StorageType: public BaseType{
  private:
   static const unsigned offset=156;
   static const unsigned types_count=4;
@@ -527,20 +523,19 @@ class TipoArmazenamento: public BaseType{
   static const unsigned extended=offset+2;
   static const unsigned main=offset+3;
 
-  TipoArmazenamento(void);
-  TipoArmazenamento(const QString &tipo);
-//   ~TipoArmazenamento(void){};
+  StorageType(void);
+  StorageType(const QString &type_name);
 
   static void getTypes(QStringList &type_list);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
-  bool operator == (const QString &nome_tipo);
-  bool operator == (const char *nome_tipo);
-  bool operator != (const QString &nome_tipo);
-  bool operator != (TipoArmazenamento tipo);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
+  bool operator == (const QString &type_name);
+  bool operator == (const char *type_name);
+  bool operator != (const QString &type_name);
+  bool operator != (StorageType type);
 };
 
-class TipoComparacao: public BaseType{
+class MatchType: public BaseType{
  private:
   static const unsigned offset=160;
   static const unsigned types_count=3;
@@ -550,17 +545,16 @@ class TipoComparacao: public BaseType{
   static const unsigned partial=offset+1;
   static const unsigned simple=offset+2;
 
-  TipoComparacao(unsigned tipo);
-  TipoComparacao(const QString &nome_tipo);
-  TipoComparacao(void);
-//   ~TipoComparacao(void){};
+  MatchType(unsigned type_id);
+  MatchType(const QString &type_name);
+  MatchType(void);
 
   static void getTypes(QStringList &type_list);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 };
 
-class TipoPostergacao: public BaseType{
+class DeferralType: public BaseType{
  private:
   static const unsigned offset=163;
   static const unsigned types_count=2;
@@ -569,17 +563,16 @@ class TipoPostergacao: public BaseType{
   static const unsigned immediate=offset;
   static const unsigned deferred=offset+1;
 
-  TipoPostergacao(unsigned tipo);
-  TipoPostergacao(const QString &nome_tipo);
-  TipoPostergacao(void);
-//   ~TipoPostergacao(void){};
+  DeferralType(unsigned type_id);
+  DeferralType(const QString &type_name);
+  DeferralType(void);
 
   static void getTypes(QStringList &type_list);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 };
 
-class TipoCategoria: public BaseType{
+class CategoryType: public BaseType{
  private:
   static const unsigned offset=165;
   static const unsigned types_count=14;
@@ -600,16 +593,16 @@ class TipoCategoria: public BaseType{
   static const unsigned bitstring=offset+12;
   static const unsigned unknown=offset+13;
 
-  TipoCategoria(unsigned tipo);
-  TipoCategoria(const QString &nome_tipo);
-  TipoCategoria(void);
+  CategoryType(unsigned type_id);
+  CategoryType(const QString &type_name);
+  CategoryType(void);
 
   static void getTypes(QStringList &type_list);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 };
 
-class TipoDisparo: public BaseType{
+class FiringType: public BaseType{
  private:
   static const unsigned offset=179;
   static const unsigned types_count=3;
@@ -619,13 +612,13 @@ class TipoDisparo: public BaseType{
   static const unsigned after=offset;
   static const unsigned instead_of=offset+1;
 
-  TipoDisparo(const QString &nome_tipo);
-  TipoDisparo(unsigned tipo);
-  TipoDisparo(void);
+  FiringType(const QString &type_name);
+  FiringType(unsigned type_id);
+  FiringType(void);
 
   static void getTypes(QStringList&type_list);
-  unsigned operator = (unsigned tipo);
-  unsigned operator = (const QString &nome_tipo);
+  unsigned operator = (unsigned type_id);
+  unsigned operator = (const QString &type_name);
 };
 
 #endif

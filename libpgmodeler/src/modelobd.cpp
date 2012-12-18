@@ -24,7 +24,7 @@ ModeloBD::~ModeloBD(void)
  destruirObjetos();
 }
 
-void ModeloBD::definirCodificacao(TipoCodificacao tipo_cod)
+void ModeloBD::definirCodificacao(EncodingType tipo_cod)
 {
  tipo_codif=tipo_cod;
 }
@@ -636,7 +636,7 @@ QString ModeloBD::obterBDModelo(void)
  return(bd_modelo);
 }
 
-TipoCodificacao ModeloBD::obterCodificacao(void)
+EncodingType ModeloBD::obterCodificacao(void)
 {
  return(tipo_codif);
 }
@@ -3520,7 +3520,7 @@ Function *ModeloBD::criarFuncao(void)
 
   //Define a configuração de retorno da função, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::BEHAVIOR_TYPE].isEmpty())
-   funcao->setBehaviorType(TipoComportamento(atributos[ParsersAttributes::BEHAVIOR_TYPE]));
+   funcao->setBehaviorType(BehaviorType(atributos[ParsersAttributes::BEHAVIOR_TYPE]));
 
   //Define o tipo da função, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::FUNCTION_TYPE].isEmpty())
@@ -3528,7 +3528,7 @@ Function *ModeloBD::criarFuncao(void)
 
   //Define o tipo de segurança da função, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::SECURITY_TYPE].isEmpty())
-   funcao->setSecurityType(TipoSeguranca(atributos[ParsersAttributes::SECURITY_TYPE]));
+   funcao->setSecurityType(SecurityType(atributos[ParsersAttributes::SECURITY_TYPE]));
 
   //Define o custo de execução da função, caso o atributo esteja marcado no XML
   if(!atributos[ParsersAttributes::EXECUTION_COST].isEmpty())
@@ -4171,10 +4171,10 @@ Conversion *ModeloBD::criarConversaoCodificacao(void)
   XMLParser::getElementAttributes(atributos);
 
   conv_codif->setEncoding(Conversion::SRC_ENCODING,
-                                 TipoCodificacao(atributos[ParsersAttributes::SRC_ENCODING]));
+                                 EncodingType(atributos[ParsersAttributes::SRC_ENCODING]));
 
   conv_codif->setEncoding(Conversion::DST_ENCODING,
-                                 TipoCodificacao(atributos[ParsersAttributes::DST_ENCODING]));
+                                 EncodingType(atributos[ParsersAttributes::DST_ENCODING]));
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
@@ -5270,7 +5270,7 @@ Trigger *ModeloBD::criarGatilho(Tabela *tabela)
                             ParsersAttributes::_TRUE_);
 
   //Define o modo de disparo do gatilho
-  gatilho->setFiringType(TipoDisparo(atributos[ParsersAttributes::FIRING_TYPE]));
+  gatilho->setFiringType(FiringType(atributos[ParsersAttributes::FIRING_TYPE]));
 
 
   /* Atribuindo os argumentos vindo do XML ao gatilho.
@@ -5676,7 +5676,7 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
  Relationship *relacao=NULL;
  BaseTable *tabelas[2]={NULL, NULL};
  bool obrig_orig, obrig_dest, identificador, protegido, postergavel, sufixo_auto;
- TipoPostergacao tipo_postergacao;
+ DeferralType tipo_postergacao;
  unsigned tipo_relac=0, i;
  ObjectType tipos_tab[2]={OBJ_VIEW, OBJ_TABLE}, tipo_obj_rel;
  QString str_aux, elem,
@@ -5759,7 +5759,7 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
    postergavel=atributos[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_;
    sufixo_auto=(!atributos[ParsersAttributes::AUTO_SUFFIX].isEmpty() &&
                 atributos[ParsersAttributes::AUTO_SUFFIX]==ParsersAttributes::_TRUE_);
-   tipo_postergacao=TipoPostergacao(atributos[ParsersAttributes::DEFER_TYPE]);
+   tipo_postergacao=DeferralType(atributos[ParsersAttributes::DEFER_TYPE]);
 
    //Configura o tipo do novo relacionamento
    if(atributos[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_11)
@@ -6514,9 +6514,9 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
        pois as mesmas não precisam ser declaradas explicitamente poir serem built-in */
     if(//tipo_def==ParserEsquema::DEFINICAO_SQL &&
        (tipo_obj==OBJ_LANGUAGE &&
-        (objeto->getName()==~TipoLinguagem("c") ||
-         objeto->getName()==~TipoLinguagem("sql") ||
-         objeto->getName()==~TipoLinguagem("plpgsql"))))
+        (objeto->getName()==~LanguageType("c") ||
+         objeto->getName()==~LanguageType("sql") ||
+         objeto->getName()==~LanguageType("plpgsql"))))
      atribs_aux[atrib]+="";
     else
      atribs_aux[atrib]+=validarDefinicaoObjeto(objeto, tipo_def);
@@ -6732,8 +6732,8 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    unsigned qtd, i;
 
    //Caso a linguagem da função não seja C ou SQL obtém as dependências da mesma
-   if(func->getLanguage()->getName()!=~TipoLinguagem("c") &&
-      func->getLanguage()->getName()!=~TipoLinguagem("sql"))
+   if(func->getLanguage()->getName()!=~LanguageType("c") &&
+      func->getLanguage()->getName()!=~LanguageType("sql"))
     obterDependenciasObjeto(func->getLanguage(), vet_deps, inc_dep_indiretas);
 
    //Obtém as dependências do tipo de retorno caso o mesmo seja um tipo definido pelo usuário

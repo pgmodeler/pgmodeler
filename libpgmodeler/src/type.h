@@ -55,13 +55,13 @@ class Type: public BaseObject {
             element; //ELEMENT
 
   //Type's storage
-  TipoArmazenamento storage; //STORAGE
+  StorageType storage; //STORAGE
 
   //Default value for the type
   QString default_value; //DEFAULT
 
   //Type's category (only for base type) - Default 'U'
-  TipoCategoria category; //CATEGORY
+  CategoryType category; //CATEGORY
 
   //Used with the category attribute (only for base type) - Default FALSE
   bool preferred; //PREFERRED
@@ -149,7 +149,7 @@ class Type: public BaseObject {
   void setAlignment(PgSQLType type);
 
   //Sets the storage type (only for base type)
-  void setStorage(TipoArmazenamento strg);
+  void setStorage(StorageType strg);
 
   //Sets the default value for the type (only for base type)
   void setDefaultValue(const QString &value);
@@ -161,7 +161,7 @@ class Type: public BaseObject {
   void setDelimiter(char delim);
 
   //Sets the category for the type (only for base type)
-  void setCategory(TipoCategoria categ);
+  void setCategory(CategoryType categ);
 
   //Sets if the type is preferred (only for base type)
   void setPreferred(bool value);
@@ -174,14 +174,14 @@ class Type: public BaseObject {
   QString getEnumeration(unsigned idx_enum);
   unsigned getEnumerationCount(void);
   unsigned getConfiguration(void);
-  TipoCategoria getCategory(void);
+  CategoryType getCategory(void);
   bool isPreferred(void);
   PgSQLType getLikeType(void);
   Function *getFunction(unsigned func_id);
   unsigned getInternalLength(void);
   bool isByValue(void);
   PgSQLType getAlignment(void);
-  TipoArmazenamento getStorage(void);
+  StorageType getStorage(void);
   QString getDefaultValue(void);
   PgSQLType getElement(void);
   char getDelimiter(void);

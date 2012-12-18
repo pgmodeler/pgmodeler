@@ -583,15 +583,15 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
  tab_modelo->modelo->adicionarObjeto(esq_publico);
 
  ling=new Language;
- ling->BaseObject::setName(~TipoLinguagem(TipoLinguagem::c));
+ ling->BaseObject::setName(~LanguageType(LanguageType::c));
  tab_modelo->modelo->adicionarObjeto(ling);
 
  ling=new Language;
- ling->BaseObject::setName(~TipoLinguagem(TipoLinguagem::sql));
+ ling->BaseObject::setName(~LanguageType(LanguageType::sql));
  tab_modelo->modelo->adicionarObjeto(ling);
 
  ling=new Language;
- ling->BaseObject::setName(~TipoLinguagem(TipoLinguagem::plpgsql));
+ ling->BaseObject::setName(~LanguageType(LanguageType::plpgsql));
  tab_modelo->modelo->adicionarObjeto(ling);
 
  if(!nome_arq.isEmpty())

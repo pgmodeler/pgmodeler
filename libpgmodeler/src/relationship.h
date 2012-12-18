@@ -189,7 +189,7 @@ class Relationship: public BaseRelationship {
   bool deferrable;
 
   //Deferral type used by the foreign key when this is deferrable
-  TipoPostergacao deferral_type;
+  DeferralType deferral_type;
 
   /* This vector allows the user to define which columns inherited / copied (via its indexes)
      will be used on the special primary key in the receiver table */
@@ -266,7 +266,7 @@ class Relationship: public BaseRelationship {
                  bool auto_suffix=true,
                  const QString &src_suffix="", const QString &dst_suffix="",
                  bool identifier=false, bool deferrable=false,
-                 TipoPostergacao deferral_type=TipoPostergacao::immediate);
+                 DeferralType deferral_type=DeferralType::immediate);
 
    // Connects the relationship making the configuration according to its type
    void connectRelationship(void);
@@ -324,10 +324,10 @@ class Relationship: public BaseRelationship {
    bool isDeferrable(void);
 
    //Defines the deferral type for the created foreign key (only for 1-1, 1-n relationships)
-   void setDeferralType(TipoPostergacao defer_type);
+   void setDeferralType(DeferralType defer_type);
 
    //Returns the deferral tyep for the created foreign key (only for 1-1, 1-n relationships)
-   TipoPostergacao getDeferralType(void);
+   DeferralType getDeferralType(void);
 
    //Defines if the relationship is identifier
    void setIdentifier(bool value);

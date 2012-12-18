@@ -11,7 +11,7 @@ Conversion::Conversion(void)
  attributes[ParsersAttributes::FUNCTION]="";
 }
 
-void Conversion::setEncoding(unsigned encoding_idx, TipoCodificacao encoding_type)
+void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
 {
  //Checks if the encoding index is valid
  if(encoding_idx<=DST_ENCODING)
@@ -72,7 +72,7 @@ void Conversion::setDefault(bool value)
  is_default=value;
 }
 
-TipoCodificacao Conversion::getEncoding(unsigned encoding_idx)
+EncodingType Conversion::getEncoding(unsigned encoding_idx)
 {
  if(encoding_idx<=DST_ENCODING)
   return(this->encodings[encoding_idx]);

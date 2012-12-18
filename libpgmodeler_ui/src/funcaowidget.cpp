@@ -73,7 +73,7 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_FUNCTI
   janela_pai->setMinimumSize(645, 715);
 
   //Configura o combo de tipos de segurança da função
-  TipoSeguranca::getTypes(tipos);
+  SecurityType::getTypes(tipos);
   seguranca_cmb->addItems(tipos);
 
   //Configura o combo de tipo da função
@@ -81,7 +81,7 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_FUNCTI
   tipo_func_cmb->addItems(tipos);
 
   //Configura o combo de tipo de comportamento da função
-  TipoComportamento::getTypes(tipos);
+  BehaviorType::getTypes(tipos);
   comportamento_cmb->addItems(tipos);
 
   connect(simples_rb, SIGNAL(clicked(bool)), this, SLOT(alternarTiposRetorno(void)));
@@ -404,7 +404,7 @@ void FuncaoWidget::selecionarLinguagem(void)
 {
  bool ling_c;
 
- ling_c=(linguagem_cmb->currentText()==~TipoLinguagem(TipoLinguagem::c));
+ ling_c=(linguagem_cmb->currentText()==~LanguageType(LanguageType::c));
  codigofonte_frm->setVisible(!ling_c);
  biblioteca_frm->setVisible(ling_c);
 
@@ -612,7 +612,7 @@ void FuncaoWidget::aplicarConfiguracao(void)
      indica que a função está definida em uma biblioteca externa
      para tanto os valores dos campos biblioteca e simbolo
      serão atribuío   função que está sendo configurada */
-  if(linguagem_cmb->currentText()==~TipoLinguagem(TipoLinguagem::c))
+  if(linguagem_cmb->currentText()==~LanguageType(LanguageType::c))
   {
    func->setLibrary(biblioteca_edt->text());
    func->setSymbol(simbolo_edt->text());

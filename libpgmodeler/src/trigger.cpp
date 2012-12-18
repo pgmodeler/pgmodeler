@@ -56,7 +56,7 @@ void Trigger::setArgumentAttribute(unsigned def_type)
  attributes[ParsersAttributes::ARGUMENTS]=str_args;
 }
 
-void Trigger::setFiringType(TipoDisparo firing_type)
+void Trigger::setFiringType(FiringType firing_type)
 {
  this->firing_type=firing_type;
 }
@@ -177,7 +177,7 @@ QString Trigger::getCondition(void)
  return(condition);
 }
 
-TipoDisparo Trigger::getFiringType(void)
+FiringType Trigger::getFiringType(void)
 {
  return(firing_type);
 }
@@ -212,7 +212,7 @@ void Trigger::setReferecendTable(BaseObject *ref_table)
  this->referenced_table=ref_table;
 }
 
-void Trigger::setDeferralType(TipoPostergacao tipo)
+void Trigger::setDeferralType(DeferralType tipo)
 {
  deferral_type=tipo;
 }
@@ -227,7 +227,7 @@ BaseObject *Trigger::getReferencedTable(void)
  return(referenced_table);
 }
 
-TipoPostergacao Trigger::getDeferralType(void)
+DeferralType Trigger::getDeferralType(void)
 {
  return(deferral_type);
 }

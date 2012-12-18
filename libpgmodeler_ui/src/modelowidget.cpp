@@ -1136,9 +1136,9 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
      por serem do sistema, caso o usuário tente esta operação um erro será disparado */
   if(objeto &&
      ((tipo_obj==OBJ_LANGUAGE &&
-       (objeto->getName()==~TipoLinguagem("c") ||
-        objeto->getName()==~TipoLinguagem("sql") ||
-        objeto->getName()==~TipoLinguagem("plpgsql"))) ||
+       (objeto->getName()==~LanguageType("c") ||
+        objeto->getName()==~LanguageType("sql") ||
+        objeto->getName()==~LanguageType("plpgsql"))) ||
       (tipo_obj==OBJ_SCHEMA &&
        objeto->getName()=="public")))
     throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1421,9 +1421,9 @@ void ModeloWidget::protegerObjeto(void)
        por serem do sistema, caso o usuário tente esta operação um erro será disparado */
     if(this->objs_selecionados[0] &&
        ((this->objs_selecionados[0]->getObjectType()==OBJ_LANGUAGE &&
-         (this->objs_selecionados[0]->getName()==~TipoLinguagem("c") ||
-          this->objs_selecionados[0]->getName()==~TipoLinguagem("sql") ||
-          this->objs_selecionados[0]->getName()==~TipoLinguagem("plpgsql"))) ||
+         (this->objs_selecionados[0]->getName()==~LanguageType("c") ||
+          this->objs_selecionados[0]->getName()==~LanguageType("sql") ||
+          this->objs_selecionados[0]->getName()==~LanguageType("plpgsql"))) ||
         (this->objs_selecionados[0]->getObjectType()==OBJ_SCHEMA &&
          this->objs_selecionados[0]->getName()=="public")))
       throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1459,9 +1459,9 @@ void ModeloWidget::protegerObjeto(void)
        por serem do sistema, caso o usuário tente esta operação um erro será disparado */
     if(objeto &&
        ((tipo_obj==OBJ_LANGUAGE &&
-         (objeto->getName()==~TipoLinguagem("c") ||
-          objeto->getName()==~TipoLinguagem("sql") ||
-          objeto->getName()==~TipoLinguagem("plpgsql") )) ||
+         (objeto->getName()==~LanguageType("c") ||
+          objeto->getName()==~LanguageType("sql") ||
+          objeto->getName()==~LanguageType("plpgsql") )) ||
         (tipo_obj==OBJ_SCHEMA &&
          objeto->getName()=="public")))
       throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1526,9 +1526,9 @@ void ModeloWidget::copiarObjetos(void)
  /* O esquema 'public' e as linguagens C e SQL não podem ser manipuladas
     por serem do sistema, caso o usuário tente esta operação um erro será disparado */
  if((objs_selecionados[0]->getObjectType()==OBJ_LANGUAGE &&
-     (objs_selecionados[0]->getName()==~TipoLinguagem("c") ||
-      objs_selecionados[0]->getName()==~TipoLinguagem("sql") ||
-      objs_selecionados[0]->getName()==~TipoLinguagem("plpgsql"))) ||
+     (objs_selecionados[0]->getName()==~LanguageType("c") ||
+      objs_selecionados[0]->getName()==~LanguageType("sql") ||
+      objs_selecionados[0]->getName()==~LanguageType("plpgsql"))) ||
      (objs_selecionados[0]->getObjectType()==OBJ_SCHEMA &&
       objs_selecionados[0]->getName()=="public"))
    throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1616,9 +1616,9 @@ void ModeloWidget::copiarObjetos(void)
   /* Objetos do sistema não são copiados.
      Ex.: Esquema public, linguagens C, SQL, PLPGSQL */
   if((tipo_obj==OBJ_LANGUAGE &&
-       (objeto->getName()!=~TipoLinguagem("c") &&
-        objeto->getName()!=~TipoLinguagem("sql") &&
-        objeto->getName()!=~TipoLinguagem("plpgsql"))) ||
+       (objeto->getName()!=~LanguageType("c") &&
+        objeto->getName()!=~LanguageType("sql") &&
+        objeto->getName()!=~LanguageType("plpgsql"))) ||
       (tipo_obj==OBJ_SCHEMA && objeto->getName()!="public") ||
       (tipo_obj!=OBJ_SCHEMA && tipo_obj!=OBJ_LANGUAGE))
     objs_copiados.push_back(objeto);
@@ -1997,9 +1997,9 @@ void ModeloWidget::excluirObjetos(void)
         por serem do sistema, caso o usuário tente esta operação um erro será disparado */
      if(objeto &&
         ((tipo_obj==OBJ_LANGUAGE &&
-          (objeto->getName()==~TipoLinguagem("c") ||
-           objeto->getName()==~TipoLinguagem("sql") ||
-           objeto->getName()==~TipoLinguagem("plpgsql") )) ||
+          (objeto->getName()==~LanguageType("c") ||
+           objeto->getName()==~LanguageType("sql") ||
+           objeto->getName()==~LanguageType("plpgsql") )) ||
          (tipo_obj==OBJ_SCHEMA &&
           objeto->getName()=="public")))
        throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);

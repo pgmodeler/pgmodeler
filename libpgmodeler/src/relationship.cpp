@@ -14,7 +14,7 @@ Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 Relationship::Relationship(unsigned rel_type, Tabela *src_tab,
                            Tabela *dst_tab, bool src_mdtry, bool dst_mdtry,
                            bool auto_suffix, const QString &src_suffix, const QString &dst_suffix,
-                           bool identifier,  bool deferrable, TipoPostergacao deferral_type) :
+                           bool identifier,  bool deferrable, DeferralType deferral_type) :
               BaseRelationship(rel_type, src_tab, dst_tab, src_mdtry, dst_mdtry)
 {
  try
@@ -233,13 +233,13 @@ bool Relationship::isDeferrable(void)
  return(deferrable);
 }
 
-void Relationship::setDeferralType(TipoPostergacao defer_type)
+void Relationship::setDeferralType(DeferralType defer_type)
 {
  deferral_type=defer_type;
  this->invalidated=true;
 }
 
-TipoPostergacao Relationship::getDeferralType(void)
+DeferralType Relationship::getDeferralType(void)
 {
  return(deferral_type);
 }

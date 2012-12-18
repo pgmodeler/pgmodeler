@@ -82,7 +82,7 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
   janela_pai->setMinimumSize(600, 520);
 
   //Configurando o combo de tipo de postergação com os tipos disponíveis
-  TipoPostergacao::getTypes(lista);
+  DeferralType::getTypes(lista);
   tipo_postergacao_cmb->addItems(lista);
 
   connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
@@ -699,7 +699,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
    {
     relacao->setIdentifier(identificador_chk->isChecked());
     relacao->setDeferrable(postergavel_chk->isChecked());
-    relacao->setDeferralType(TipoPostergacao(tipo_postergacao_cmb->currentText()));
+    relacao->setDeferralType(DeferralType(tipo_postergacao_cmb->currentText()));
    }
    //Campos específicos para relacionamentos n-n
    else if(tipo_rel==BaseRelationship::RELATIONSHIP_NN)

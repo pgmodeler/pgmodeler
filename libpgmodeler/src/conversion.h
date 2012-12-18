@@ -32,7 +32,7 @@ class Conversion: public BaseObject {
   /* Encoding types vector:
      0 -> Source encoding
      1 -> Destination encoding */
-  TipoCodificacao encodings[2];
+  EncodingType encodings[2];
 
   //Function used to perform the conversion between the encodings
   Function *conversion_func;
@@ -51,13 +51,13 @@ class Conversion: public BaseObject {
   void setDefault(bool value);
 
   //Sets one of the conversion encodings (using the encoding index constants)
-  void setEncoding(unsigned encoding_idx, TipoCodificacao encoding_type);
+  void setEncoding(unsigned encoding_idx, EncodingType encoding_type);
 
   //Sets the conversion function used to convert character between encodings
   void setConversionFunction(Function *conv_func);
 
   //Returns the encoding related to the index (using the encoding index constants)
-  TipoCodificacao getEncoding(unsigned encoding_idx);
+  EncodingType getEncoding(unsigned encoding_idx);
 
   //Returns the current used conversion function
   Function *getConversionFunction(void);

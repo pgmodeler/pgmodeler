@@ -209,7 +209,7 @@ void Function::setRowAmount(unsigned row_amount)
 
 void Function::setLibrary(const QString &library)
 {
- if(language->getName().toLower()!=~TipoLinguagem("c"))
+ if(language->getName().toLower()!=~LanguageType("c"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
                 .arg(QString::fromUtf8(this->getSignature())),
                 ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -219,7 +219,7 @@ void Function::setLibrary(const QString &library)
 
 void Function::setSymbol(const QString &symbol)
 {
- if(language->getName().toLower()!=~TipoLinguagem("c"))
+ if(language->getName().toLower()!=~LanguageType("c"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
                 .arg(QString::fromUtf8(this->getSignature())),
                 ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -259,19 +259,19 @@ void Function::setWindowFunction(bool value)
  is_wnd_function=value;
 }
 
-void Function::setSecurityType(TipoSeguranca sec_type)
+void Function::setSecurityType(SecurityType sec_type)
 {
  security_type=sec_type;
 }
 
-void Function::setBehaviorType(TipoComportamento behav_type)
+void Function::setBehaviorType(BehaviorType behav_type)
 {
  behavior_type=behav_type;
 }
 
 void Function::setSourceCode(const QString &src_code)
 {
- if(language->getName().toLower()==~TipoLinguagem("c"))
+ if(language->getName().toLower()==~LanguageType("c"))
   throw Exception(Exception::getErrorMessage(ERR_ASG_CODE_FUNC_C_LANGUAGE)
                 .arg(QString::fromUtf8(this->getSignature())),
                 ERR_ASG_CODE_FUNC_C_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -319,12 +319,12 @@ bool Function::isWindowFunction(void)
  return(is_wnd_function);
 }
 
-TipoSeguranca Function::getSecurityType(void)
+SecurityType Function::getSecurityType(void)
 {
  return(security_type);
 }
 
-TipoComportamento Function::getBehaviorType(void)
+BehaviorType Function::getBehaviorType(void)
 {
  return(behavior_type);
 }
@@ -484,7 +484,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
  attributes[ParsersAttributes::BEHAVIOR_TYPE]=(~behavior_type);
  attributes[ParsersAttributes::DEFINITION]=source_code;
 
- if(language->getName()==~TipoLinguagem(TipoLinguagem::c))
+ if(language->getName()==~LanguageType(LanguageType::c))
  {
   attributes[ParsersAttributes::SYMBOL]=symbol;
   attributes[ParsersAttributes::LIBRARY]=library;

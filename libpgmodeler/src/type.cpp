@@ -10,11 +10,11 @@ Type::Type(void)
 
  alignment="integer";
  delimiter='\0';
- storage=TipoArmazenamento::plain;
+ storage=StorageType::plain;
  element="any";
  internal_len=0;
 
- category=TipoCategoria::userdefined;
+ category=CategoryType::userdefined;
  preferred=false;
  like_type="any";
 
@@ -195,8 +195,8 @@ void Type::setConfiguration(unsigned conf)
 void Type::setFunction(unsigned func_id, Function *func)
 {
  unsigned param_count;
- TipoLinguagem lang;
- lang=TipoLinguagem::c;
+ LanguageType lang;
+ lang=LanguageType::c;
 
  //Raises an error if the function id is invalid
  if(func_id > ANALYZE_FUNC)
@@ -343,7 +343,7 @@ void Type::setAlignment(PgSQLType type)
                 ERR_ASG_INV_ALIGNMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Type::setStorage(TipoArmazenamento strg)
+void Type::setStorage(StorageType strg)
 {
  storage=strg;
 }
@@ -416,7 +416,7 @@ void Type::setEnumerationsAttribute(unsigned def_type)
  BaseObject::attributes[ParsersAttributes::ENUMARATIONS]=str_enum;
 }
 
-void Type::setCategory(TipoCategoria categ)
+void Type::setCategory(CategoryType categ)
 {
  this->category=categ;
 }
@@ -484,7 +484,7 @@ PgSQLType Type::getAlignment(void)
  return(alignment);
 }
 
-TipoArmazenamento Type::getStorage(void)
+StorageType Type::getStorage(void)
 {
  return(storage);
 }
@@ -509,7 +509,7 @@ unsigned Type::getConfiguration(void)
  return(config);
 }
 
-TipoCategoria Type::getCategory(void)
+CategoryType Type::getCategory(void)
 {
  return(category);
 }

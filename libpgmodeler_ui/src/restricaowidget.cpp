@@ -59,11 +59,11 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_
   selecionarTipoRestricao();
 
   //Configurando o combo de tipo de comparação com os tipos disponíveis
-  TipoComparacao::getTypes(lista);
+  MatchType::getTypes(lista);
   tipo_comparacao_cmb->addItems(lista);
 
   //Configurando o combo de tipo de postergação com os tipos disponíveis
-  TipoPostergacao::getTypes(lista);
+  DeferralType::getTypes(lista);
   tipo_postergacao_cmb->addItems(lista);
 
   //Configurando o combo de tipo de ação update e delete com os tipos disponíveis
@@ -492,9 +492,9 @@ void RestricaoWidget::aplicarConfiguracao(void)
   restricao->setConstraintType(ConstraintType(tipo_rest_cmb->currentText()));
   restricao->setCheckExpression(exp_checagem_txt->toPlainText().toUtf8());
   restricao->setFillFactor(fator_preenc_sb->value());
-  restricao->setMatchType(TipoComparacao(tipo_comparacao_cmb->currentText()));
+  restricao->setMatchType(MatchType(tipo_comparacao_cmb->currentText()));
   restricao->setDeferrable(postergavel_chk->isChecked());
-  restricao->setDeferralType(TipoPostergacao(tipo_postergacao_cmb->currentText()));
+  restricao->setDeferralType(DeferralType(tipo_postergacao_cmb->currentText()));
   restricao->setActionType(ActionType(acao_delete_cmb->currentText()),false);
   restricao->setActionType(ActionType(acao_update_cmb->currentText()),true);
 

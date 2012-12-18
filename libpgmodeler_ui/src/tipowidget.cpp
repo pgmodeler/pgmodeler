@@ -90,11 +90,11 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TYPE)
   janela_pai->setMinimumSize(625, 765);
 
   //Preenche o combo box com os tipos de armazenamento disponíveis
-  TipoArmazenamento::getTypes(lista);
+  StorageType::getTypes(lista);
   armazenamento_cmb->addItems(lista);
 
   //Preenche o combo box com os tipos de categoria disponíveis
-  TipoCategoria::getTypes(lista);
+  CategoryType::getTypes(lista);
   categoria_cmb->addItems(lista);
  }
  catch(Exception &e)
@@ -382,9 +382,9 @@ void TipoWidget::aplicarConfiguracao(void)
    tipo->setPreferred(preferido_chk->isChecked());
    tipo->setDelimiter(delimitador_edt->text().at(0).toAscii());
    tipo->setDefaultValue(valor_padrao_edt->text());
-   tipo->setCategory(TipoCategoria(categoria_cmb->currentText()));
+   tipo->setCategory(CategoryType(categoria_cmb->currentText()));
    tipo->setAlignment(PgSQLType(alinhamento_cmb->currentText()));
-   tipo->setStorage(TipoArmazenamento(armazenamento_cmb->currentText()));
+   tipo->setStorage(StorageType(armazenamento_cmb->currentText()));
 
    //Atribui todas as funções definidas nos seletoe   instância de tipo
    for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
