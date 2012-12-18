@@ -36,7 +36,7 @@ class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
 
  private:
    //Tipo configurado pelo formulário
-   TipoPgSQL tipo;
+   PgSQLType tipo;
 
    //Destacador de sintaxe usado para destacar o formato do tipo
    DestaqueSintaxe *destaque_fmt;
@@ -57,12 +57,12 @@ class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
    void atualizarFormatoTipo(void);
 
  public slots:
-   void definirAtributos(TipoPgSQL tipo, ModeloBD *modelo,
+   void definirAtributos(PgSQLType tipo, ModeloBD *modelo,
                          unsigned conf_tipo_usr=UserTypeConfig::ALL_USER_TYPES,
                          bool tipo_oid=true, bool pseudo=true);
 
    //Obtém o tipo configurado no formulário
-   TipoPgSQL obterTipoPgSQL(void);
+   PgSQLType obterTipoPgSQL(void);
 };
 
 #endif

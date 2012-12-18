@@ -693,7 +693,7 @@ void Relationship::addColumnsRelGen(void)
       src_flags[2]={false,false},
       dst_flags[2]={false,false};
  QString str_aux, msg;
- TipoPgSQL src_type, dst_type;
+ PgSQLType src_type, dst_type;
 
  try
  {
@@ -827,9 +827,9 @@ void Relationship::addColumnsRelGen(void)
 
      //Converts the type
      if(column->getType()=="serial")
-      column->setType(TipoPgSQL("integer"));
+      column->setType(PgSQLType("integer"));
      else if(column->getType()=="bigserial")
-      column->setType(TipoPgSQL("bigint"));
+      column->setType(PgSQLType("bigint"));
 
      //Adds the new column to the temporary column list
      columns.push_back(column);
@@ -1289,9 +1289,9 @@ void Relationship::copyColumns(Tabela *ref_tab, Tabela *recv_tab, bool not_null)
 
    //Converting the serial like types
    if(column->getType()=="serial")
-    column->setType(TipoPgSQL("integer"));
+    column->setType(PgSQLType("integer"));
    else if(column->getType()=="bigserial")
-    column->setType(TipoPgSQL("bigint"));
+    column->setType(PgSQLType("bigint"));
 
    //Creates the column name based on the original name and the selected suffix
    name=column->getName() + suffix;

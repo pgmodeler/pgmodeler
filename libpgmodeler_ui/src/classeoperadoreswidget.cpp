@@ -232,7 +232,7 @@ void ClasseOperadoresWidget::manipularElemento(int idx_linha)
 
 void ClasseOperadoresWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, OperatorClass *classe_op)
 {
- TipoPgSQL tipo;
+ PgSQLType tipo;
  unsigned i, qtd;
 
  //Define os atributos do formulários e da janela pai

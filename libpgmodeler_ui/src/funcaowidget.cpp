@@ -194,7 +194,7 @@ Parameter FuncaoWidget::obterParametro(TabelaObjetosWidget *tab, unsigned idx_li
    param.setName(tab->obterTextoCelula(idx_lin,0));
 
    //Configura o tipo do parâmetro com o tipo armazenado na linha atual da tabela
-   param.setType(tab->obterDadoLinha(idx_lin).value<TipoPgSQL>());
+   param.setType(tab->obterDadoLinha(idx_lin).value<PgSQLType>());
 
    //Obtendo informações específicas quando se trata da tabela de parâmetros
    if(tab==tab_parametros)
@@ -231,7 +231,7 @@ void FuncaoWidget::exibirDadosParametro(Parameter param, TabelaObjetosWidget *ta
   /* Armazena na linha da tabela uma cópia do tipo do parâmetro.
       Isso é usado pelo método obterParametro() quando o usuário
       solicita obter um parâmetro a partir de um a linha da tabela */
-  tab->definirDadoLinha(QVariant::fromValue<TipoPgSQL>(param.getType()), idx_lin);
+  tab->definirDadoLinha(QVariant::fromValue<PgSQLType>(param.getType()), idx_lin);
 
   /* Caso a tabela passada seja a de parâmetro configura as demais
      colunas com os demais atributos do parâmetro */
@@ -256,7 +256,7 @@ void FuncaoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, F
  unsigned qtd=0, i;
  Parameter param;
  QString str_aux;
- TipoPgSQL tipo_aux;
+ PgSQLType tipo_aux;
 
  connect(parametro_wgt, SIGNAL(finished(int)), this, SLOT(manipularParametro(int)));
 
@@ -595,7 +595,7 @@ void FuncaoWidget::aplicarConfiguracao(void)
    /* Cria um parâmetro auxiliar e os configura de acordo com os valores
       do parâmetro atual (i) na tabela */
    param.setName(tab_parametros->obterTextoCelula(i,0));
-   param.setType(tab_parametros->obterDadoLinha(i).value<TipoPgSQL>());
+   param.setType(tab_parametros->obterDadoLinha(i).value<PgSQLType>());
 
    str_aux=tab_parametros->obterTextoCelula(i,2);
    param.setIn(str_aux.indexOf("IN") >= 0);
@@ -644,7 +644,7 @@ void FuncaoWidget::aplicarConfiguracao(void)
    for(i=0; i<qtd; i++)
    {
     func->addReturnedTableColumn(tab_retorno->obterTextoCelula(i,0),
-                                 tab_retorno->obterDadoLinha(i).value<TipoPgSQL>());
+                                 tab_retorno->obterDadoLinha(i).value<PgSQLType>());
    }
   }
 

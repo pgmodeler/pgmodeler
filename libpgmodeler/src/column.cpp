@@ -32,10 +32,10 @@ void Column::setName(const QString &name)
  }
 }
 
-void Column::setType(TipoPgSQL type)
+void Column::setType(PgSQLType type)
 {
  //An error is raised if the column receive a pseudo-type as data type.
- if(type.pseudoTipo())
+ if(type.isPseudoType())
   throw Exception(ERR_ASG_PSDTYPE_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   this->type=type;
@@ -51,7 +51,7 @@ void Column::setNotNull(bool value)
  not_null=value;
 }
 
-TipoPgSQL Column::getType(void)
+PgSQLType Column::getType(void)
 {
  return(type);
 }
@@ -87,7 +87,7 @@ QString Column::getCodeDefinition(unsigned def_type)
  if(this->parent_table)
   attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
- attributes[ParsersAttributes::TYPE]=type.obterDefinicaoObjeto(def_type);
+ attributes[ParsersAttributes::TYPE]=type.getObjectDefinition(def_type);
  attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
  attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : "1");
  return(BaseObject::__getCodeDefinition(def_type));

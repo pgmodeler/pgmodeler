@@ -724,7 +724,7 @@ void ModeloBD::adicionarTabela(Tabela *tabela, int idx_obj)
   /* Ao ser inserido uma nova tabela a mesma tem
    seu nome é adicionad  lista de tipos válidos
    do PostgreSQL */
-  TipoPgSQL::adicionarTipoUsuario(tabela->getName(true), tabela, this, UserTypeConfig::TABLE_TYPE);
+  PgSQLType::addUserType(tabela->getName(true), tabela, this, UserTypeConfig::TABLE_TYPE);
 
   atualizarRelFkTabela(tabela);
  }
@@ -800,7 +800,7 @@ void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
 
    /* Ao ser removido do modelo a sequencia tem
     seu nome removido da lista de tipos válidos do PostgreSQL */
-  TipoPgSQL::removerTipoUsuario(tabela->getName(true), tabela);
+  PgSQLType::removeUserType(tabela->getName(true), tabela);
 
   //Remove qualquer relacionamento gerado por chave estrangeira
   atualizarRelFkTabela(tabela);
@@ -815,7 +815,7 @@ void ModeloBD::adicionarSequencia(Sequence *sequencia, int idx_obj)
   /* Ao ser inserido uma nova sequencia a mesma tem
    seu nome é adicionad  lista de tipos válidos
    do PostgreSQL */
-  TipoPgSQL::adicionarTipoUsuario(sequencia->getName(true), sequencia, this, UserTypeConfig::SEQUENCE_TYPE);
+  PgSQLType::addUserType(sequencia->getName(true), sequencia, this, UserTypeConfig::SEQUENCE_TYPE);
  }
  catch(Exception &e)
  {
@@ -2217,7 +2217,7 @@ void ModeloBD::adicionarDominio(Domain *dominio, int idx_obj)
    /* Ao ser inserido um novo tipo o mesmo tem
     seu nome é adicionad  lista de tipos válidos
     do PostgreSQL */
-   TipoPgSQL::adicionarTipoUsuario(dominio->getName(true), dominio, this, UserTypeConfig::DOMAIN_TYPE);
+   PgSQLType::addUserType(dominio->getName(true), dominio, this, UserTypeConfig::DOMAIN_TYPE);
   }
   catch(Exception &e)
   {
@@ -2391,7 +2391,7 @@ void ModeloBD::adicionarTipo(Type *tipo, int idx_obj)
    /* Ao ser inserido um novo tipo o mesmo tem
     seu nome é adicionad  lista de tipos válidos
     do PostgreSQL */
-   TipoPgSQL::adicionarTipoUsuario(tipo->getName(true), tipo, this, UserTypeConfig::BASE_TYPE);
+   PgSQLType::addUserType(tipo->getName(true), tipo, this, UserTypeConfig::BASE_TYPE);
   }
   catch(Exception &e)
   {
@@ -2466,7 +2466,7 @@ void ModeloBD::removerTipoUsuario(BaseObject *objeto, int idx_obj)
   __removerObjeto(objeto, idx_obj);
    /* Ao ser removido do modelo o objeto (tipo ou domínio) classe tem
     seu nome removido da lista de tipos válidos do PostgreSQL */
-  TipoPgSQL::removerTipoUsuario(objeto->getName(true), objeto);
+  PgSQLType::removeUserType(objeto->getName(true), objeto);
  }
 }
 
@@ -3495,7 +3495,7 @@ Function *ModeloBD::criarFuncao(void)
  Function *funcao=NULL;
  ObjectType tipo_obj;
  BaseObject *objeto=NULL;
- TipoPgSQL tipo;
+ PgSQLType tipo;
  Parameter param;
  QString str_aux, elem;
 
@@ -3672,7 +3672,7 @@ Function *ModeloBD::criarFuncao(void)
 
 Parameter ModeloBD::criarParametro(void)
 {
- TipoPgSQL tipo;
+ PgSQLType tipo;
  Parameter param;
  map<QString, QString> atributos;
  QString elem;
@@ -3728,7 +3728,7 @@ Parameter ModeloBD::criarParametro(void)
  return(param);
 }
 
-TipoPgSQL ModeloBD::criarTipoPgSQL(void)
+PgSQLType ModeloBD::criarTipoPgSQL(void)
 {
  map<QString, QString> atributos;
  vector<void *> vet_ptipos;
@@ -3765,15 +3765,15 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
 
  nome=atributos[ParsersAttributes::NAME];
 
- idx_tipo=TipoPgSQL::obterIndiceTipoBase(nome);
- if(idx_tipo!=TipoPgSQL::null)
+ idx_tipo=PgSQLType::getBaseTypeIndex(nome);
+ if(idx_tipo!=PgSQLType::null)
  {
-  return(TipoPgSQL(nome,comprimento,dimensao,precisao,com_timezone,tipo_interv, tipo_esp));
+  return(PgSQLType(nome,comprimento,dimensao,precisao,com_timezone,tipo_interv, tipo_esp));
  }
  else
  {
   //Obtém a lista de tipos definidios pelo usuario
-  TipoPgSQL::obterTiposUsuario(vet_ptipos, this,
+  PgSQLType::getUserTypes(vet_ptipos, this,
                                UserTypeConfig::BASE_TYPE |
                                UserTypeConfig::DOMAIN_TYPE |
                                UserTypeConfig::TABLE_TYPE |
@@ -3800,8 +3800,8 @@ TipoPgSQL ModeloBD::criarTipoPgSQL(void)
   if(!enc)
     throw Exception(ERR_REF_INEXIST_USER_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  idx_tipo=TipoPgSQL::obterIndiceTipoUsuario(nome, ptipo);
-  return(TipoPgSQL(idx_tipo,comprimento,dimensao,precisao,com_timezone,tipo_interv,tipo_esp));
+  idx_tipo=PgSQLType::getUserTypeIndex(nome, ptipo);
+  return(PgSQLType(idx_tipo,comprimento,dimensao,precisao,com_timezone,tipo_interv,tipo_esp));
  }
 }
 
@@ -3816,7 +3816,7 @@ Type *ModeloBD::criarTipo(void)
  Parameter param;
  BaseObject *funcao=NULL;
  unsigned tipo_func=0;
- TipoPgSQL tipo_copia;
+ PgSQLType tipo_copia;
 
  try
  {
@@ -4067,7 +4067,7 @@ Cast *ModeloBD::criarConversaoTipo(void)
  Cast *conv_tipo=NULL;
  QString elem;
  unsigned idx_tipo=0;
- TipoPgSQL tipo;
+ PgSQLType tipo;
  BaseObject *funcao=NULL;
 
  try
@@ -4238,7 +4238,7 @@ Operator *ModeloBD::criarOperador(void)
  QString elem;
  BaseObject *funcao=NULL,*oper_aux=NULL;
  unsigned tipo_func, tipo_oper, tipo_arg;
- TipoPgSQL tipo;
+ PgSQLType tipo;
 
  try
  {
@@ -4370,7 +4370,7 @@ OperatorClass *ModeloBD::criarClasseOperadores(void)
  map<QString, unsigned> tipos_elem;
  BaseObject *objeto=NULL;
  QString elem;
- TipoPgSQL tipo;
+ PgSQLType tipo;
  OperatorClass *classe_op=NULL;
  OperatorClassElement elem_classe;
  bool rechecar;
@@ -4517,7 +4517,7 @@ Aggregate *ModeloBD::criarFuncaoAgregacao(void)
  map<QString, QString> atributos;
  BaseObject *funcao=NULL;
  QString elem;
- TipoPgSQL tipo;
+ PgSQLType tipo;
  Aggregate *func_agreg=NULL;
 
  try
@@ -7914,9 +7914,9 @@ void ModeloBD::definirObjetosModificados(void)
  }
 }
 
-BaseObject *ModeloBD::obterObjetoTipoPgSQL(TipoPgSQL tipo)
+BaseObject *ModeloBD::obterObjetoTipoPgSQL(PgSQLType tipo)
 {
- switch(tipo.obterConfTipoUsuario())
+ switch(tipo.getUserTypeConfig())
  {
   case UserTypeConfig::BASE_TYPE:
    return(this->obterObjeto(*tipo, OBJ_TYPE));

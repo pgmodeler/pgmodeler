@@ -17,10 +17,10 @@ OperatorClass::~OperatorClass(void)
  elements.clear();
 }
 
-void OperatorClass::setDataType(TipoPgSQL data_type)
+void OperatorClass::setDataType(PgSQLType data_type)
 {
  //A null datatype is not accepted by the operator class
- if(data_type==TipoPgSQL::null)
+ if(data_type==PgSQLType::null)
   throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->data_type=data_type;
@@ -117,7 +117,7 @@ unsigned OperatorClass::getElementCount(void)
  return(elements.size());
 }
 
-TipoPgSQL OperatorClass::getDataType(void)
+PgSQLType OperatorClass::getDataType(void)
 {
  return(data_type);
 }
@@ -151,7 +151,7 @@ QString OperatorClass::getCodeDefinition(unsigned def_type, bool reduced_form)
  if(def_type==SchemaParser::SQL_DEFINITION)
   attributes[ParsersAttributes::TYPE]=(*data_type);
  else
-  attributes[ParsersAttributes::TYPE]=data_type.obterDefinicaoObjeto(def_type);
+  attributes[ParsersAttributes::TYPE]=data_type.getObjectDefinition(def_type);
 
  if(family)
  {

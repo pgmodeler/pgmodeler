@@ -222,7 +222,7 @@ void TipoWidget::exibirFormAtributo(void)
 
 void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Type *tipo)
 {
- TipoPgSQL tp_copia, tp_elem;
+ PgSQLType tp_copia, tp_elem;
  unsigned conf_tipo, i, qtd;
  Parameter param;
 
@@ -383,7 +383,7 @@ void TipoWidget::aplicarConfiguracao(void)
    tipo->setDelimiter(delimitador_edt->text().at(0).toAscii());
    tipo->setDefaultValue(valor_padrao_edt->text());
    tipo->setCategory(TipoCategoria(categoria_cmb->currentText()));
-   tipo->setAlignment(TipoPgSQL(alinhamento_cmb->currentText()));
+   tipo->setAlignment(PgSQLType(alinhamento_cmb->currentText()));
    tipo->setStorage(TipoArmazenamento(armazenamento_cmb->currentText()));
 
    //Atribui todas as funções definidas nos seletoe   instância de tipo

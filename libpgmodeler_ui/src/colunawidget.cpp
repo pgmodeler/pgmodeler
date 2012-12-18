@@ -40,7 +40,7 @@ void ColunaWidget::hideEvent(QHideEvent *evento)
 
 void ColunaWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, OperationList *lista_op, Column *coluna)
 {
- TipoPgSQL tipo;
+ PgSQLType tipo;
 
  if(!objeto_pai)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);

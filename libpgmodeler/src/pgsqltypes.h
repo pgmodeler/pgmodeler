@@ -289,115 +289,115 @@ class UserTypeConfig {
    UserTypeConfig(void)
    { name=""; ptype=NULL; pmodel=NULL; type_conf=BASE_TYPE; }
 
-   friend class TipoPgSQL;
+   friend class PgSQLType;
 };
 
-class TipoPgSQL: public BaseType{
+class PgSQLType: public BaseType{
  private:
   static const unsigned offset=25;
   static const unsigned types_count=66;
 
   //Offset dos tipos oid
-  static const unsigned ini_oid=67;
-  static const unsigned fim_oid=78;
+  static const unsigned oid_start=67;
+  static const unsigned oid_end=78;
 
   //Offset dos pseudo-tipos
-  static const unsigned ini_pseudo=79;
-  static const unsigned fim_pseudo=90;
+  static const unsigned pseudo_start=79;
+  static const unsigned pseudo_end=90;
 
   /* Apenas as classes Tipo (a qual criar SQL para tipos definidos pelo usuário)
      e Dominio têm acesso a esta lista através de métodos de acesso. Esta classe é a
      responsável por inserir e remover itens desta lista ao ser criado um novo
      tipo ou excluido um já existente. */
-  static vector<UserTypeConfig> tipos_usr; //Lista de tipos de dados definidos pelo usuário
+  static vector<UserTypeConfig> user_types; //Lista de tipos de dados definidos pelo usuário
 
   //Dimensão do tipo caso ele seja um array ( > 0 indica que o mesmo é um array)
-  unsigned dimensao,
+  unsigned dimension,
 
           //Tamanho do tipo (exigido por tipos como varchar, date e bit)
-          comprimento;
+          length;
 
 
   //Precisão do valor do tipo (caso seja numeric/decimal)
-  int precisao;
+  int precision;
 
   /* Usado apenas para tipos time e timestamp e indica se o tempo
      deve ser considerado com timezone (WITH/WITHOUT TIMEZONE) */
-  bool com_timezone;
+  bool with_timezone;
 
   //Tipo de intervalo de tempo usado pelo tipo de dado 'interval'
-  IntervalType tipo_intervalo;
+  IntervalType interval_type;
 
   //Tipo espacial usado na criação de tipos do PostGiS
-  SpatialType tipo_espacial;
+  SpatialType spatial_type;
 
  protected:
   /* Adiciona uma nova referência ao tipo definido pelo usuário
      (Esse método é chamando sempre que o tipo definido é criado) */
-  static void adicionarTipoUsuario(const QString &nome, void *ptipo, void *pmodelo, unsigned conf_tipo);
+  static void addUserType(const QString &type_name, void *ptype, void *pmodel, unsigned type_conf);
 
   /* Remove uma referência ao tipo definido pelo usuário
     (Esse método é chamando sempre que o tipo definido é destruído) */
-  static void removerTipoUsuario(const QString &nome, void *ptipo);
+  static void removeUserType(const QString &type_name, void *ptype);
 
   /* Renomeia um tipo definido pelo usuário (Esse método é chamando sempre
      que o tipo definido pelo usuário é renomeado) */
-  static void renomearTipoUsuario(const QString &nome, void *ptipo, const QString &novo_nome);
+  static void renameUserType(const QString &type_name, void *ptype, const QString &new_name);
 
   /* Obtém o nome do tipo definido pelo usuário através de seu índice.
      Retorna vazio caso não índice seja inválido. */
-  static QString getNameTipoUsuario(unsigned idx);
+  static QString getUserTypeName(unsigned type_id);
 
-  void definirTipoUsuario(unsigned idx);
-  void definirTipoUsuario(void *ptipo);
+  void setUserType(unsigned type_id);
+  void setUserType(void *ptype);
 
  public:
-  TipoPgSQL(void);
-  TipoPgSQL(const QString &tipo);
-  TipoPgSQL(void *ptipo);
-  TipoPgSQL(const QString &tipo, unsigned comprimento,
-            unsigned dimensao, int precisao,
-            bool com_timezone, IntervalType tipo_interv,
-            SpatialType tipo_esp);
-  TipoPgSQL(void *ptipo, unsigned comprimento,
-            unsigned dimensao, int precisao,
-            bool com_timezone, IntervalType tipo_interv,
-            SpatialType tipo_esp);
-  TipoPgSQL(unsigned type_idx, unsigned comprimento,
-            unsigned dimensao, int precisao,
-            bool com_timezone, IntervalType tipo_interv,
-            SpatialType tipo_esp);
+  PgSQLType(void);
+  PgSQLType(const QString &type_name);
+  PgSQLType(void *ptype);
+  PgSQLType(const QString &type_name, unsigned length,
+            unsigned dimension, int precision,
+            bool with_timezone, IntervalType interv_type,
+            SpatialType spatial_type);
+  PgSQLType(void *ptipo, unsigned length,
+            unsigned dimension, int precision,
+            bool with_timezone, IntervalType interv_type,
+            SpatialType spatial_type);
+  PgSQLType(unsigned type_id, unsigned length,
+            unsigned dimension, int precision,
+            bool with_timezone, IntervalType interv_type,
+            SpatialType spatial_type);
 
   /* Obtém o índice referente a um tipo definido pelo usuário.
      Retorna 0 caso o tipo não exista na lista. */
-  static unsigned obterIndiceTipoUsuario(const QString &nome, void *ptipo, void *pmodelo=NULL);
-  static unsigned obterIndiceTipoBase(const QString &nome);
+  static unsigned getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel=NULL);
+  static unsigned getBaseTypeIndex(const QString &type_name);
 
   //Obtém todos os tipos definidos pelo usuário
-  static void obterTiposUsuario(QStringList &type_list, void *pmodelo, unsigned inc_tipos_usr);
-  static void obterTiposUsuario(vector<void *> &ptipos, void *pmodelo, unsigned inc_tipos_usr);
-  static void getTypes(QStringList &type_list, bool tipo_oid=true, bool pseudos=true);
+  static void getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types);
+  static void getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types);
+  static void getTypes(QStringList &type_list, bool oids=true, bool pseudos=true);
 
-  void definirDimensao(unsigned dim);
-  void definirComprimento(unsigned comp);
-  void definirPrecisao(int prec);
-  void definirComTimezone(bool com_timezone);
-  void definirTipoIntervalo(IntervalType tipo_interv);
-  void definirTipoEspacial(SpatialType tipo_espacial);
+  void setDimension(unsigned dim);
+  void setLength(unsigned len);
+  void setPrecision(int prec);
+  void setWithTimezone(bool with_tz);
+  void setIntervalType(IntervalType interv_type);
+  void setSpatialType(SpatialType spat_type);
 
-  unsigned obterDimensao(void);
-  unsigned obterComprimento(void);
-  int obterPrecisao(void);
-  IntervalType obterTipoIntervalo(void);
-  SpatialType obterTipoEspacial(void);
+  unsigned getDimension(void);
+  unsigned getLength(void);
+  int getPrecision(void);
+  IntervalType getIntervalType(void);
+  SpatialType getSpatialType(void);
 
-  bool comTimezone(void); //Retorna se o tipo considera timezone
-  bool pseudoTipo(void); //Retorna se o tipo é um pseudo-tipo
-  bool tipoOID(void); //Retorna se o tipo é um identificador de tipo (OID)
-  bool tipoUsuario(void); //Retorna se o tipo é um definido pelo usuário
-  bool tipoArray(void); //Retorna se o tipo é usado como array
-  bool tipoCompVariavel(void); //Retorna se o tipo aceita comprimento variável (varchar, varbit, char, etc)
-  bool tipoAceitaPrecisao(void); //Retorna o tipo aceita precisão
+  bool isWithTimezone(void); //Retorna se o tipo considera timezone
+  bool isPseudoType(void); //Retorna se o tipo é um pseudo-tipo
+  bool isOIDType(void); //Retorna se o tipo é um identificador de tipo (OID)
+  bool isUserType(void); //Retorna se o tipo é um definido pelo usuário
+  bool isArrayType(void); //Retorna se o tipo é usado como array
+  bool hasVariableLength(void); //Retorna se o tipo aceita comprimento variável (varchar, varbit, char, etc)
+  bool acceptsPrecision(void); //Retorna o tipo aceita precisão
 
   /* Como é necessário que o tipo base do PgSQL tenha uma definição XML
      este método foi adicionad  essa classe a qual configura um mapa
@@ -405,7 +405,7 @@ class TipoPgSQL: public BaseType{
      a definição XML. Este método permite também se obter a definição
      SQL do objeto, porém chamar este método para obtenção do SQL do tipo
      é o mesmo que chamar o operador * do tipo. */
-  QString obterDefinicaoObjeto(unsigned tipo_def,QString tipo_ref="");
+  QString getObjectDefinition(unsigned def_type, QString ref_type="");
 
   QString operator ~ (void);
   QString operator * (void); //Retorna a definiação SQL completa do tipo
@@ -413,19 +413,20 @@ class TipoPgSQL: public BaseType{
   unsigned operator = (unsigned tipo);
   unsigned operator = (const QString &nome_tipo);
   bool operator == (unsigned type_idx);
-  bool operator == (TipoPgSQL tipo);
+  bool operator == (PgSQLType tipo);
   bool operator == (const QString &nome_tipo);
   bool operator == (void *ptipo);
   bool operator != (const QString &nome_tipo);
-  bool operator != (TipoPgSQL tipo);
+  bool operator != (PgSQLType tipo);
   bool operator != (unsigned type_idx);
 
   /* Retorna o ponteiro para o tipo definido pelo usuário que
      denota o tipo pgsql em questão. Caso este operador seja usado
      em um tipo que não é definido pelo usuário será retornado NULL */
-  void *obterRefTipoUsuario(void);
+  void *getUserTypeReference(void);
+
   //Retorna o tipo de configuração do tipo quando o mesmo é definido pelo usuário
-  unsigned obterConfTipoUsuario(void);
+  unsigned getUserTypeConfig(void);
 
   friend class Type;
   friend class Domain;

@@ -91,7 +91,7 @@ void FuncaoAgregacaoWidget::hideEvent(QHideEvent *evento)
 void FuncaoAgregacaoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Aggregate *funcao_ag)
 {
  unsigned qtd, i;
- TipoPgSQL tipo;
+ PgSQLType tipo;
 
  //Preenchendo os campos básicos do formulário com os atributos da função de agregação
  ObjetoBaseWidget::definirAtributos(modelo,lista_op,funcao_ag);
@@ -122,7 +122,7 @@ void FuncaoAgregacaoWidget::definirAtributos(ModeloBD *modelo, OperationList *li
   {
    tab_tipos_entrada->adicionarLinha();
    tipo=funcao_ag->getDataType(i);
-   tab_tipos_entrada->definirDadoLinha(QVariant::fromValue<TipoPgSQL>(tipo), i);
+   tab_tipos_entrada->definirDadoLinha(QVariant::fromValue<PgSQLType>(tipo), i);
    tab_tipos_entrada->definirTextoCelula(QString::fromUtf8(*tipo),i,0);
   }
   tab_tipos_entrada->blockSignals(false);
@@ -135,12 +135,12 @@ void FuncaoAgregacaoWidget::definirAtributos(ModeloBD *modelo, OperationList *li
 //---------------------------------------------------------
 void FuncaoAgregacaoWidget::manipularTipoDado(int linha)
 {
- TipoPgSQL tipo;
+ PgSQLType tipo;
 
  //Obtém o tipo de dado configurado no widget de tipo de entrada
  tipo=tipo_entrada->obterTipoPgSQL();
  //O tipo obtido é inserido na tabela e a linha correspondente guarda-o como dado interno
- tab_tipos_entrada->definirDadoLinha(QVariant::fromValue<TipoPgSQL>(tipo), linha);
+ tab_tipos_entrada->definirDadoLinha(QVariant::fromValue<PgSQLType>(tipo), linha);
  tab_tipos_entrada->definirTextoCelula(QString::fromUtf8(*tipo),linha,0);
 }
 //---------------------------------------------------------
@@ -169,7 +169,7 @@ void FuncaoAgregacaoWidget::aplicarConfiguracao(void)
      uma instância da classe TipoPgSQL e que será atribía   função de agregação
      como tipo de dado de entrada */
   for(i=0; i < qtd; i++)
-   funcao_ag->addDataType(tab_tipos_entrada->obterDadoLinha(i).value<TipoPgSQL>());
+   funcao_ag->addDataType(tab_tipos_entrada->obterDadoLinha(i).value<PgSQLType>());
 
   //Define as funções e operador obtendo tais objetos dos respectivos seletores
   funcao_ag->setFunction(Aggregate::TRANSITION_FUNC, dynamic_cast<Function *>(sel_func_transicao->obterObjeto()));

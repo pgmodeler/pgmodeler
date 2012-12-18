@@ -51,7 +51,7 @@ class Type: public BaseObject {
   bool by_value; //PASSEDBYVALUE
 
   //Storage alignmnet (char, smallint (int2), integer (int4) ou double precision)
-  TipoPgSQL alignment, //ALIGNMENT
+  PgSQLType alignment, //ALIGNMENT
             element; //ELEMENT
 
   //Type's storage
@@ -69,7 +69,7 @@ class Type: public BaseObject {
   /* Type which will have some of its attributes copied to the current type
      (only for base type). If like_type is 'any' means that the
      current type does not copy attributes of any type */
-  TipoPgSQL like_type; //LIKE
+  PgSQLType like_type; //LIKE
 
   //Character used as value delimiter when the type is used as array
   char delimiter; //DELIMITER
@@ -146,7 +146,7 @@ class Type: public BaseObject {
   void setByValue(bool value);
 
   //Sets the alignment for the type (only for base type)
-  void setAlignment(TipoPgSQL type);
+  void setAlignment(PgSQLType type);
 
   //Sets the storage type (only for base type)
   void setStorage(TipoArmazenamento strg);
@@ -155,7 +155,7 @@ class Type: public BaseObject {
   void setDefaultValue(const QString &value);
 
   //Sets the element for the type (only for base type)
-  void setElement(TipoPgSQL elem);
+  void setElement(PgSQLType elem);
 
   //Sets the delimiter for the type (only for base type)
   void setDelimiter(char delim);
@@ -167,7 +167,7 @@ class Type: public BaseObject {
   void setPreferred(bool value);
 
   //Sets the type that will be used as template (only for base type)
-  void setLikeType(TipoPgSQL like_type);
+  void setLikeType(PgSQLType like_type);
 
   Parameter getAttribute(unsigned attrib_idx);
   unsigned getAttributeCount(void);
@@ -176,14 +176,14 @@ class Type: public BaseObject {
   unsigned getConfiguration(void);
   TipoCategoria getCategory(void);
   bool isPreferred(void);
-  TipoPgSQL getLikeType(void);
+  PgSQLType getLikeType(void);
   Function *getFunction(unsigned func_id);
   unsigned getInternalLength(void);
   bool isByValue(void);
-  TipoPgSQL getAlignment(void);
+  PgSQLType getAlignment(void);
   TipoArmazenamento getStorage(void);
   QString getDefaultValue(void);
-  TipoPgSQL getElement(void);
+  PgSQLType getElement(void);
   char getDelimiter(void);
 
   /* Returns the SQL / XML definition for the type. If the boolean

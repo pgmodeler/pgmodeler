@@ -13,7 +13,7 @@ Cast::Cast(void)
  attributes[ParsersAttributes::IO_CAST]="";
 }
 
-void Cast::setDataType(unsigned type_idx, TipoPgSQL type)
+void Cast::setDataType(unsigned type_idx, PgSQLType type)
 {
  //Check if the type index is valid
  if(type_idx<=DST_TYPE)
@@ -104,7 +104,7 @@ void Cast::setCastFunction(Function *cast_func)
  this->cast_function=cast_func;
 }
 
-TipoPgSQL Cast::getDataType(unsigned type_idx)
+PgSQLType Cast::getDataType(unsigned type_idx)
 {
  if(type_idx<=DST_TYPE)
   return(this->types[type_idx]);
@@ -136,8 +136,8 @@ QString Cast::getCodeDefinition(unsigned def_type)
  }
  else
  {
-  attributes[ParsersAttributes::SOURCE_TYPE]=types[SRC_TYPE].obterDefinicaoObjeto(def_type);
-  attributes[ParsersAttributes::DEST_TYPE]=types[DST_TYPE].obterDefinicaoObjeto(def_type);
+  attributes[ParsersAttributes::SOURCE_TYPE]=types[SRC_TYPE].getObjectDefinition(def_type);
+  attributes[ParsersAttributes::DEST_TYPE]=types[DST_TYPE].getObjectDefinition(def_type);
  }
 
  if(cast_function)

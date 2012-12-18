@@ -64,7 +64,7 @@ bool Aggregate::isValidFunction(unsigned func_idx, Function *func)
  else return(true);
 }
 
-void Aggregate::setStateType(TipoPgSQL state_type)
+void Aggregate::setStateType(PgSQLType state_type)
 {
  this->state_type=state_type;
 }
@@ -112,7 +112,7 @@ void Aggregate::setTypesAttribute(unsigned def_type)
    str_types+=*(data_types[i]);
    if(i < (count-1)) str_types+=",";
   }
-  else str_types+=data_types[i].obterDefinicaoObjeto(def_type);
+  else str_types+=data_types[i].getObjectDefinition(def_type);
  }
 
  /* Caso o usuário não especifique nenhum tipo de entrada para a função
@@ -124,7 +124,7 @@ void Aggregate::setTypesAttribute(unsigned def_type)
  attributes[ParsersAttributes::TYPES]=str_types;
 }
 
-void Aggregate::addDataType(TipoPgSQL type)
+void Aggregate::addDataType(PgSQLType type)
 {
  //Case the data type already exists in the aggregate raise an exception
  if(isDataTypeExist(type))
@@ -151,9 +151,9 @@ void Aggregate::removeDataTypes(void)
  data_types.clear();
 }
 
-bool Aggregate::isDataTypeExist(TipoPgSQL type)
+bool Aggregate::isDataTypeExist(PgSQLType type)
 {
- vector<TipoPgSQL>::iterator itr, itr_end;
+ vector<PgSQLType>::iterator itr, itr_end;
  bool enc=false;
 
  itr=data_types.begin();
@@ -182,7 +182,7 @@ Function *Aggregate::getFunction(unsigned func_idx)
  return(functions[func_idx]);
 }
 
-TipoPgSQL Aggregate::getStateType(void)
+PgSQLType Aggregate::getStateType(void)
 {
  return(state_type);
 }
@@ -197,7 +197,7 @@ Operator *Aggregate::getSortOperator(void)
  return(sort_operator);
 }
 
-TipoPgSQL Aggregate::getDataType(unsigned type_idx)
+PgSQLType Aggregate::getDataType(unsigned type_idx)
 {
  //Raises an exception if the type index is out of bound
  if(type_idx >= data_types.size())
@@ -248,7 +248,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
  if(def_type==SchemaParser::SQL_DEFINITION)
   attributes[ParsersAttributes::STATE_TYPE]=*(state_type);
  else
-  attributes[ParsersAttributes::STATE_TYPE]=state_type.obterDefinicaoObjeto(def_type,ParsersAttributes::STATE_TYPE);
+  attributes[ParsersAttributes::STATE_TYPE]=state_type.getObjectDefinition(def_type,ParsersAttributes::STATE_TYPE);
 
  return(BaseObject::__getCodeDefinition(def_type));
 }

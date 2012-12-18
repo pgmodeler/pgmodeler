@@ -46,7 +46,7 @@ Type::Type(void)
 Type::~Type(void)
 {
  //When destroyed the type must be removed from the PostgreSQL base types list
- TipoPgSQL::removerTipoUsuario(this->getName(true), this);
+ PgSQLType::removeUserType(this->getName(true), this);
 }
 
 void Type::setName(const QString &name)
@@ -55,7 +55,7 @@ void Type::setName(const QString &name)
 
  prev_name=this->getName(true);//this->nome;
  BaseObject::setName(name);
- TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
+ PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
 void Type::setSchema(BaseObject *schema)
@@ -64,7 +64,7 @@ void Type::setSchema(BaseObject *schema)
 
  prev_name=this->getName(true);
  BaseObject::setSchema(schema);
- TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
+ PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
 bool Type::isAttributeExists(const QString &attrib_name)
@@ -87,10 +87,10 @@ bool Type::isAttributeExists(const QString &attrib_name)
 void Type::addAttribute(Parameter attrib)
 {
  //Raises an error if the attribute has an empty name or null type
- if(attrib.getName()=="" || attrib.getType()==TipoPgSQL::null)
+ if(attrib.getName()=="" || attrib.getType()==PgSQLType::null)
   throw Exception(ERR_INS_INV_TYPE_ATTRIB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Raises an error if the passed attribute has the same type as the defining type (this)
- else if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !attrib.getType())
+ else if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !attrib.getType())
   throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  //Raises an error when the attribute already exists
@@ -303,21 +303,21 @@ void Type::convertFunctionParameters(bool inverse_conv)
 
     if(!inverse_conv)
     {
-     param.setType(TipoPgSQL(this));
+     param.setType(PgSQLType(this));
      func->addParameter(param);
     }
     else
     {
-     param.setType(TipoPgSQL("any"));
+     param.setType(PgSQLType("any"));
      func->addParameter(param);
     }
    }
    else if(conf_funcs[i]==INPUT_FUNC || conf_funcs[i]==RECV_FUNC)
    {
     if(!inverse_conv)
-     func->setReturnType(TipoPgSQL(this));
+     func->setReturnType(PgSQLType(this));
     else
-     func->setReturnType(TipoPgSQL("any"));
+     func->setReturnType(PgSQLType("any"));
    }
   }
  }
@@ -333,7 +333,7 @@ void Type::setByValue(bool value)
  by_value=value;
 }
 
-void Type::setAlignment(TipoPgSQL type)
+void Type::setAlignment(PgSQLType type)
 {
  QString tp=(*type);
 
@@ -353,14 +353,14 @@ void Type::setDefaultValue(const QString &value)
  this->default_value=value;
 }
 
-void Type::setElement(TipoPgSQL elem)
+void Type::setElement(PgSQLType elem)
 {
- if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !elem)
+ if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !elem)
   throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(elem!="any" &&
-   (elem.tipoOID() || elem.pseudoTipo() ||
-    elem.tipoUsuario() || elem.tipoArray()))
+   (elem.isOIDType() || elem.isPseudoType() ||
+    elem.isUserType() || elem.isArrayType()))
   throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ELEMENT_TYPE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_ASG_INV_ELEMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -426,9 +426,9 @@ void Type::setPreferred(bool value)
  this->preferred=value;
 }
 
-void Type::setLikeType(TipoPgSQL like_type)
+void Type::setLikeType(PgSQLType like_type)
 {
- if(TipoPgSQL::obterIndiceTipoUsuario(this->getName(true), this) == !like_type)
+ if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !like_type)
   throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
                 ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -479,7 +479,7 @@ bool Type::isByValue(void)
  return(by_value);
 }
 
-TipoPgSQL Type::getAlignment(void)
+PgSQLType Type::getAlignment(void)
 {
  return(alignment);
 }
@@ -494,7 +494,7 @@ QString Type::getDefaultValue(void)
  return(default_value);
 }
 
-TipoPgSQL Type::getElement(void)
+PgSQLType Type::getElement(void)
 {
  return(element);
 }
@@ -519,7 +519,7 @@ bool Type::isPreferred(void)
  return(preferred);
 }
 
-TipoPgSQL Type::getLikeType(void)
+PgSQLType Type::getLikeType(void)
 {
  return(like_type);
 }
@@ -623,6 +623,6 @@ void Type::operator = (Type &type)
   i++;
  }
 
- TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
+ PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 

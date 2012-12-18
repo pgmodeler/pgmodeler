@@ -6,7 +6,7 @@ Parameter::Parameter(void)
  is_in=is_out=false;
 }
 
-void Parameter::setType(TipoPgSQL type)
+void Parameter::setType(PgSQLType type)
 {
  this->type=type;
 }
@@ -50,7 +50,7 @@ QString Parameter::getCodeDefinition(unsigned def_type)
  attributes[ParsersAttributes::PARAM_IN]=(is_in ? "1" : "");
  attributes[ParsersAttributes::PARAM_OUT]=(is_out ? "1" : "");
  attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
- attributes[ParsersAttributes::TYPE]=type.obterDefinicaoObjeto(def_type);
+ attributes[ParsersAttributes::TYPE]=type.getObjectDefinition(def_type);
 
  return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -60,7 +60,7 @@ unsigned Function::function_id=40000;
 Function::Function(void)
 {
  object_id=Function::function_id++;
- return_type=TipoPgSQL("void");
+ return_type=PgSQLType("void");
  language=NULL;
  returns_setof=false;
  is_wnd_function=false;
@@ -129,7 +129,7 @@ void Function::addParameter(Parameter param)
  createSignature();
 }
 
-void Function::addReturnedTableColumn(const QString &name, TipoPgSQL type)
+void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 {
  //Raises an error if the column name is empty
  if(name=="")
@@ -227,7 +227,7 @@ void Function::setSymbol(const QString &symbol)
  this->symbol=symbol;
 }
 
-void Function::setReturnType(TipoPgSQL type)
+void Function::setReturnType(PgSQLType type)
 {
  return_type=type;
 }
@@ -279,7 +279,7 @@ void Function::setSourceCode(const QString &src_code)
  this->source_code=src_code;
 }
 
-TipoPgSQL Function::getReturnType(void)
+PgSQLType Function::getReturnType(void)
 {
  return(return_type);
 }
@@ -383,7 +383,7 @@ void Function::removeReturnedTableColumns(void)
  ret_table_columns.clear();
 }
 
-void Function::removeParameter(const QString &name, TipoPgSQL type)
+void Function::removeParameter(const QString &name, PgSQLType type)
 {
  vector<Parameter>::iterator itr,itr_end;
 
@@ -473,7 +473,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
  else
  {
   attributes[ParsersAttributes::LANGUAGE]=language->getCodeDefinition(def_type,true);
-  attributes[ParsersAttributes::RETURN_TYPE]=return_type.obterDefinicaoObjeto(def_type);
+  attributes[ParsersAttributes::RETURN_TYPE]=return_type.getObjectDefinition(def_type);
  }
 
  setTableReturnTypeAttribute(def_type);

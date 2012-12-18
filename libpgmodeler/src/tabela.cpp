@@ -40,7 +40,7 @@ void Tabela::setName(const QString &nome)
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
+ PgSQLType::renameUserType(nome_ant, this, this->getName(true));
 }
 
 void Tabela::setSchema(BaseObject *esquema)
@@ -52,7 +52,7 @@ void Tabela::setSchema(BaseObject *esquema)
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
+ PgSQLType::renameUserType(nome_ant, this, this->getName(true));
 }
 
 void Tabela::definirAceitaOids(bool valor)
@@ -1082,7 +1082,7 @@ void Tabela::operator = (Tabela &tabela)
  this->aceita_oids=tabela.aceita_oids;
  setProtected(tabela.is_protected);
 
- TipoPgSQL::renomearTipoUsuario(nome_ant, this, this->getName(true));
+ PgSQLType::renameUserType(nome_ant, this, this->getName(true));
 }
 
 bool Tabela::referenciaObjetoIncRelacao(void)

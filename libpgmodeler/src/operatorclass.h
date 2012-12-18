@@ -31,7 +31,7 @@
 class OperatorClass: public BaseObject {
  private:                                                                                                                                                                                                          
   //Data type witch the operator class acts on
-  TipoPgSQL data_type;
+  PgSQLType data_type;
 
   //Operator family that the operator class is part
   OperatorFamily *family;
@@ -55,7 +55,7 @@ class OperatorClass: public BaseObject {
   ~OperatorClass(void);
 
   //Sets the data type that the operator class works on
-  void setDataType(TipoPgSQL data_type);
+  void setDataType(PgSQLType data_type);
 
   //Sets the operator family that the operator class is part
   void setFamily(OperatorFamily *family);
@@ -74,7 +74,7 @@ class OperatorClass: public BaseObject {
   void removeElements(void);
 
   //Methods used to obtain the class attributes
-  TipoPgSQL getDataType(void);
+  PgSQLType getDataType(void);
   OperatorFamily *getFamily(void);
   IndexingType getIndexingType(void);
   bool isDefault(void);

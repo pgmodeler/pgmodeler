@@ -143,7 +143,7 @@ void Sequence::setName(const QString &name)
  QString prev_name=this->getName(true);
 
  BaseObject::setName(name);
- TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
+ PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
 void Sequence::setSchema(BaseObject *schema)
@@ -162,7 +162,7 @@ void Sequence::setSchema(BaseObject *schema)
  }
 
  BaseObject::setSchema(schema);
- TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
+ PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
 void Sequence::setCycle(bool value)
@@ -352,6 +352,6 @@ void Sequence::operator = (Sequence &seq)
  this->cache=seq.cache;
  this->owner_col=seq.owner_col;
 
- TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
+ PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 

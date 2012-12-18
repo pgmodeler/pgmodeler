@@ -62,7 +62,7 @@ void ConversaoTipoWidget::hideEvent(QHideEvent *evento)
 //---------------------------------------------------------
 void ConversaoTipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Cast *conv_tipo)
 {
- TipoPgSQL tipo_orig, tipo_dest;
+ PgSQLType tipo_orig, tipo_dest;
 
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, conv_tipo);

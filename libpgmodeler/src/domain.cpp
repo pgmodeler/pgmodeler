@@ -13,7 +13,7 @@ Domain::Domain(void)
 
 Domain::~Domain(void)
 {
- TipoPgSQL::removerTipoUsuario(this->getName(true), this);
+ PgSQLType::removeUserType(this->getName(true), this);
 }
 
 void Domain::setName(const QString &name)
@@ -25,7 +25,7 @@ void Domain::setName(const QString &name)
  new_name=this->getName(true);
 
  //Renames the PostgreSQL type represented by the domain
- TipoPgSQL::renomearTipoUsuario(prev_name, this, new_name);
+ PgSQLType::renameUserType(prev_name, this, new_name);
 }
 
 void Domain::setSchema(BaseObject *schema)
@@ -36,7 +36,7 @@ void Domain::setSchema(BaseObject *schema)
  BaseObject::setSchema(schema);
 
  //Renames the PostgreSQL type represented by the domain
- TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
+ PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
 void Domain::setConstraintName(const QString &constr_name)
@@ -63,7 +63,7 @@ void Domain::setNotNull(bool value)
  not_null=value;
 }
 
-void Domain::setType(TipoPgSQL type)
+void Domain::setType(PgSQLType type)
 {
  this->type=type;
 }
@@ -88,7 +88,7 @@ bool Domain::isNotNull(void)
  return(not_null);
 }
 
-TipoPgSQL Domain::getType(void)
+PgSQLType Domain::getType(void)
 {
  return(type);
 }
@@ -104,7 +104,7 @@ QString Domain::getCodeDefinition(unsigned def_type)
   attributes[ParsersAttributes::TYPE]=(*type);
  else
  {
-  attributes[ParsersAttributes::TYPE]=type.obterDefinicaoObjeto(def_type);
+  attributes[ParsersAttributes::TYPE]=type.getObjectDefinition(def_type);
  }
 
  return(BaseObject::__getCodeDefinition(def_type));
@@ -120,6 +120,6 @@ void Domain::operator = (Domain &domain)
  this->not_null=domain.not_null;
  this->default_value=domain.default_value;
  this->type=domain.type;
- TipoPgSQL::renomearTipoUsuario(prev_name, this, this->getName(true));
+ PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 

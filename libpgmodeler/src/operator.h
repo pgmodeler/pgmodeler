@@ -32,7 +32,7 @@ class Operator: public BaseObject {
   Function *functions[3];
 
   //Stores the arguments types (left and right) used by the operator
-  TipoPgSQL argument_types[2];
+  PgSQLType argument_types[2];
 
   //Stores the auxiliary operators
   Operator *operators[6];
@@ -64,7 +64,7 @@ class Operator: public BaseObject {
   void setFunction(Function *func, unsigned func_type);
 
   //Defines the argument data type for operator (constants ARG_[LEFT | RIGHT])
-  void setArgumentType(TipoPgSQL arg_type, unsigned arg_id);
+  void setArgumentType(PgSQLType arg_type, unsigned arg_id);
 
   //Defines the auxiliary operators (constants OPER_[COMMUTATOR | NEGATOR | SORT1 | SORT2 | LESS | GREATER])
   void setOperator(Operator *oper, unsigned op_type);
@@ -79,7 +79,7 @@ class Operator: public BaseObject {
   Function *getFunction(unsigned func_type);
 
   //Returns the type of the passed argument id
-  TipoPgSQL getArgumentType(unsigned arg_id);
+  PgSQLType getArgumentType(unsigned arg_id);
 
   //Returns on of the auxiliary operators
   Operator *getOperator(unsigned op_type);

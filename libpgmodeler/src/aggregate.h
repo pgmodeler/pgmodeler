@@ -37,7 +37,7 @@ class Aggregate: public BaseObject {
      To declare an aggregate function which works with several
      types in the old syntax, the only element of the list must
      be of type 'any' */
-  vector<TipoPgSQL> data_types;
+  vector<PgSQLType> data_types;
 
   /* Function that defines the aggregate behavior
      0 -> Final function
@@ -45,7 +45,7 @@ class Aggregate: public BaseObject {
   Function *functions[2];
 
   //Data type used as aggregate's state
-  TipoPgSQL state_type;
+  PgSQLType state_type;
 
   //Initial condition for the aggregate
   QString initial_condition;
@@ -70,7 +70,7 @@ class Aggregate: public BaseObject {
   void setFunction(unsigned func_idx, Function *func);
 
   //Defines the state data type of the aggregate
-  void setStateType(TipoPgSQL state_type);
+  void setStateType(PgSQLType state_type);
 
   //Defines the initial condition for the aggregate
   void setInitialCondition(const QString &cond);
@@ -79,7 +79,7 @@ class Aggregate: public BaseObject {
   void setSortOperator(Operator *sort_op);
 
   //Adds a data type in the group that is accepted by the aggregate
-  void addDataType(TipoPgSQL type);
+  void addDataType(PgSQLType type);
 
   //Removes one aggregate accepted data type
   void removeDataType(unsigned type_idx);
@@ -88,13 +88,13 @@ class Aggregate: public BaseObject {
   void removeDataTypes(void);
 
   //Checks whether the passed type exists in the aggregate's set of data types
-  bool isDataTypeExist(TipoPgSQL type);
+  bool isDataTypeExist(PgSQLType type);
 
   Function *getFunction(unsigned func_idx);
-  TipoPgSQL getStateType(void);
+  PgSQLType getStateType(void);
   QString getInitialCondition(void);
   Operator *getSortOperator(void);
-  TipoPgSQL getDataType(unsigned type_idx);
+  PgSQLType getDataType(unsigned type_idx);
   unsigned getDataTypeCount(void);
 
   //Returns the SQL / XML code definition for the aggregate

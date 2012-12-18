@@ -35,7 +35,7 @@ class Column: public TableObject{
   bool not_null;
 
   //Data type of the column
-  TipoPgSQL type;
+  PgSQLType type;
 
   /* Default value of the column.
      Note: The user must format the default value in
@@ -51,7 +51,7 @@ class Column: public TableObject{
   void setNotNull(bool value);
 
   //Defines the column data type
-  void setType(TipoPgSQL type);
+  void setType(PgSQLType type);
 
   /* Sets the default value of the column. Must be informed together with the value
      the particularities of each type, such as quotation marks, hyphens, etc. */
@@ -70,7 +70,7 @@ class Column: public TableObject{
   bool isNotNull(void);
 
   //Returns the data type of the column
-  TipoPgSQL getType(void);
+  PgSQLType getType(void);
 
   //Returns the default value of the column
   QString getDefaultValue(void);

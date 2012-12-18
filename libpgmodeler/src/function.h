@@ -36,7 +36,7 @@ class Parameter: public Column {
  public:
   Parameter(void);
 
-  void setType(TipoPgSQL type);
+  void setType(PgSQLType type);
 
   void setIn(bool value);
   void setOut(bool value);
@@ -86,7 +86,7 @@ class Function: public BaseObject {
   FunctionType function_type;
 
   //Function return type
-  TipoPgSQL return_type;
+  PgSQLType return_type;
 
   /* Stores the table columns returned by the clause RETURNS TABLE. This clause instead
      of return a specific element returns a whole table. This structure is available
@@ -121,7 +121,7 @@ class Function: public BaseObject {
   void addParameter(Parameter param);
 
   //Adds a column to the function returned table
-  void addReturnedTableColumn(const QString &name, TipoPgSQL type);
+  void addReturnedTableColumn(const QString &name, PgSQLType type);
 
   //Defines the function source code (if its not use the C language)
   void setSourceCode(const QString &src_code);
@@ -154,7 +154,7 @@ class Function: public BaseObject {
   void setFunctionType(FunctionType func_type);
 
   //Defines the function return type
-  void setReturnType(TipoPgSQL type);
+  void setReturnType(PgSQLType type);
 
   //Defines the security type of the function
   void setSecurityType(TipoSeguranca sec_type);
@@ -199,7 +199,7 @@ class Function: public BaseObject {
   FunctionType getFunctionType(void);
 
   //Returns the function returned type
-  TipoPgSQL getReturnType(void);
+  PgSQLType getReturnType(void);
 
   //Returns the security type used by the function
   TipoSeguranca getSecurityType(void);
@@ -211,7 +211,7 @@ class Function: public BaseObject {
   unsigned getRowAmount(void);
 
   //Removes a parameter using its name and type
-  void removeParameter(const QString &name, TipoPgSQL type);
+  void removeParameter(const QString &name, PgSQLType type);
 
   //Removes a parameter using its index
   void removeParameter(unsigned param_idx);

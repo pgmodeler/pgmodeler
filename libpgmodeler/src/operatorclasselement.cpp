@@ -48,7 +48,7 @@ void OperatorClassElement::setOperator(Operator *oper, unsigned stg_number, bool
  this->element_type=OPERATOR_ELEM;
 }
 
-void OperatorClassElement::setStorage(TipoPgSQL storage)
+void OperatorClassElement::setStorage(PgSQLType storage)
 {
  //Clear the attributes not related to the STORAGE element type
  this->function=NULL;
@@ -75,7 +75,7 @@ Operator *OperatorClassElement::getOperator(void)
  return(_operator);
 }
 
-TipoPgSQL OperatorClassElement::getStorage(void)
+PgSQLType OperatorClassElement::getStorage(void)
 {
  return(storage);
 }
@@ -126,7 +126,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
   else
    attributes[ParsersAttributes::DEFINITION]=_operator->getCodeDefinition(def_type,true);
  }
- else if(element_type==STORAGE_ELEM && storage!=TipoPgSQL::null)
+ else if(element_type==STORAGE_ELEM && storage!=PgSQLType::null)
  {
   //STORAGE storage_type
   attributes[ParsersAttributes::STORAGE]="1";
@@ -134,7 +134,7 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
   if(def_type==SchemaParser::SQL_DEFINITION)
    attributes[ParsersAttributes::TYPE]=(*storage);
   else
-   attributes[ParsersAttributes::DEFINITION]=storage.obterDefinicaoObjeto(def_type);
+   attributes[ParsersAttributes::DEFINITION]=storage.getObjectDefinition(def_type);
  }
 
  return(SchemaParser::getObjectDefinition(ParsersAttributes::ELEMENT,attributes, def_type));

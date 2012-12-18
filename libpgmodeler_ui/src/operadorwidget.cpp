@@ -93,7 +93,7 @@ void OperadorWidget::hideEvent(QHideEvent *evento)
 void OperadorWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Operator *operador)
 {
  unsigned i;
- TipoPgSQL tipo_esq, tipo_dir;
+ PgSQLType tipo_esq, tipo_dir;
 
  //Preenchendo os campos básicos do formulário com os atributos do operador
  ObjetoBaseWidget::definirAtributos(modelo,lista_op,operador);

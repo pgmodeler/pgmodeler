@@ -69,14 +69,14 @@ void TipoPgSQLWidget::atualizarFormatoTipo(void)
 
   /* O campo de comprimento só deve ser ativado quando o tipo de
     dado é de comprimento variável: varchar, char, varbit, etc */
-  comprimento_sb->setEnabled(tipo.tipoCompVariavel());
+  comprimento_sb->setEnabled(tipo.hasVariableLength());
 
   //O campo de timezone só deve ser ativado quando se tratar de um tipo relacionado a tempo
   timezone_chk->setVisible(tipo=="timestamp" || tipo=="time");
   timezone_lbl->setVisible(timezone_chk->isVisible());
 
   //O campo de precisão só é ativado quando o tipo em questão aceita precisão
-  precisao_sb->setEnabled(tipo.tipoAceitaPrecisao());
+  precisao_sb->setEnabled(tipo.acceptsPrecision());
 
   //O campo de dimensão só é ativado quando o tipo não é void
   dimensao_sb->setEnabled(tipo!="void");
@@ -107,15 +107,15 @@ void TipoPgSQLWidget::atualizarFormatoTipo(void)
    else if(var_z_chk->isChecked())
     tp_esp.setVariation(SpatialType::var_z);
 
-   tipo.definirTipoEspacial(tp_esp);
+   tipo.setSpatialType(tp_esp);
   }
 
   //Configura o tipo com os valores do formulário
-  tipo.definirComprimento(comprimento_sb->value());
-  tipo.definirPrecisao(precisao_sb->value());
-  tipo.definirDimensao(dimensao_sb->value());
-  tipo.definirTipoIntervalo(tipo_interv_cmb->currentText());
-  tipo.definirComTimezone(timezone_chk->isChecked());
+  tipo.setLength(comprimento_sb->value());
+  tipo.setPrecision(precisao_sb->value());
+  tipo.setDimension(dimensao_sb->value());
+  tipo.setIntervalType(tipo_interv_cmb->currentText());
+  tipo.setWithTimezone(timezone_chk->isChecked());
 
   //Atualiza o formato do tipo exibido no campo
   formato_txt->setPlainText(QString::fromUtf8(*tipo));
@@ -136,25 +136,25 @@ void TipoPgSQLWidget::obterTiposPgSQL(QComboBox *combo, ModeloBD *modelo, unsign
   combo->clear();
 
   //Obtém os tipo definidos pelo usuário e insere ao combo de tipo
-  TipoPgSQL::obterTiposUsuario(tipos,modelo, conf_tipo_usr);
+  PgSQLType::getUserTypes(tipos,modelo, conf_tipo_usr);
   tipos.sort();
   qtd=tipos.size();
 
   /* Adiciona cada indice referente ao tipo como dado do elemento do combobox
       para se referenciar de forma mais direta o tipo definido pelo usuário */
   for(idx=0; idx < qtd; idx++)
-   combo->addItem(QString::fromUtf8(tipos[idx]), QVariant(TipoPgSQL::obterIndiceTipoUsuario(tipos[idx],NULL,modelo)));
+   combo->addItem(QString::fromUtf8(tipos[idx]), QVariant(PgSQLType::getUserTypeIndex(tipos[idx],NULL,modelo)));
 
   /* Obtendo os demais tipos (builtin) do PostgreSQL. Neste caso, por serem tipos
      de fácil acesso não é necessário armazena os índices dos mesmos como
      acontece com os tipos definidos pelo usuário */
-  TipoPgSQL::getTypes(tipos, tipo_oid, pseudo);
+  PgSQLType::getTypes(tipos, tipo_oid, pseudo);
   tipos.sort();
   combo->addItems(tipos);
  }
 }
 
-void TipoPgSQLWidget::definirAtributos(TipoPgSQL tipo, ModeloBD *modelo,  unsigned conf_tipo_usr, bool tipo_oid, bool pseudo)
+void TipoPgSQLWidget::definirAtributos(PgSQLType tipo, ModeloBD *modelo,  unsigned conf_tipo_usr, bool tipo_oid, bool pseudo)
 {
  try
  {
@@ -181,14 +181,14 @@ void TipoPgSQLWidget::definirAtributos(TipoPgSQL tipo, ModeloBD *modelo,  unsign
 
   /* Configura os campos do formulário com os respectivos valores
      configurados no tipo de dado passado ao método */
-  precisao_sb->setValue(tipo.obterPrecisao());
-  dimensao_sb->setValue(tipo.obterDimensao());
-  comprimento_sb->setValue(tipo.obterComprimento());
+  precisao_sb->setValue(tipo.getPrecision());
+  dimensao_sb->setValue(tipo.getDimension());
+  comprimento_sb->setValue(tipo.getLength());
 
-  idx=tipo_interv_cmb->findText(~(tipo.obterTipoIntervalo()));
+  idx=tipo_interv_cmb->findText(~(tipo.getIntervalType()));
   tipo_interv_cmb->setCurrentIndex(idx);
 
-  timezone_chk->setChecked(tipo.comTimezone());
+  timezone_chk->setChecked(tipo.isWithTimezone());
 
   /* Atribui o tipo do parâmetro ao tipo de dado configurado
      pelo formulário o qual é retornado ao usuário */
@@ -203,7 +203,7 @@ void TipoPgSQLWidget::definirAtributos(TipoPgSQL tipo, ModeloBD *modelo,  unsign
  }
 }
 
-TipoPgSQL TipoPgSQLWidget::obterTipoPgSQL(void)
+PgSQLType TipoPgSQLWidget::obterTipoPgSQL(void)
 {
  return(tipo);
 }

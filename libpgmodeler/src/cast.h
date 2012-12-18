@@ -31,7 +31,7 @@ class Cast: public BaseObject {
   /* Data types used on the cast:
     0 -> Source data type
     1 -> Destination data type */
-  TipoPgSQL types[2];
+  PgSQLType types[2];
 
   //Conversion type (ASSIGNMENT or IMPLICIT)
   unsigned cast_type;
@@ -55,7 +55,7 @@ class Cast: public BaseObject {
 
   /* Defines one of the data types envolved on the cast
      (using constants SRC_TYPE | DST_TYPE) */
-  void setDataType(unsigned type_idx, TipoPgSQL type);
+  void setDataType(unsigned type_idx, PgSQLType type);
 
   //Defines the cast type (using constants ASSINGMENT | IMPLICIT)
   void setCastType(unsigned cast_type);
@@ -69,7 +69,7 @@ class Cast: public BaseObject {
   void setInOut(bool value);
 
   //Returns one of the cast envolved data types
-  TipoPgSQL getDataType(unsigned type_idx);
+  PgSQLType getDataType(unsigned type_idx);
 
   //Returns the cast type
   unsigned getCastType(void);

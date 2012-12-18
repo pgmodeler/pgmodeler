@@ -13,8 +13,8 @@ Operator::Operator(void)
   operators[i]=NULL;
 
  hashes=merges=false;
- argument_types[LEFT_ARG]=TipoPgSQL("any");
- argument_types[RIGHT_ARG]=TipoPgSQL("any");
+ argument_types[LEFT_ARG]=PgSQLType("any");
+ argument_types[RIGHT_ARG]=PgSQLType("any");
 
  attributes[ParsersAttributes::LEFT_TYPE]="";
  attributes[ParsersAttributes::RIGHT_TYPE]="";
@@ -101,7 +101,7 @@ void Operator::setFunction(Function *func, unsigned func_type)
   else
   {
    unsigned param_count=func->getParameterCount();
-   TipoPgSQL param_type1=TipoPgSQL("any"), param_type2=TipoPgSQL("any");
+   PgSQLType param_type1=PgSQLType("any"), param_type2=PgSQLType("any");
 
    //Get the function parameter to make validations
    param_type1=func->getParameter(0).getType();
@@ -136,7 +136,7 @@ void Operator::setFunction(Function *func, unsigned func_type)
  functions[func_type]=func;
 }
 
-void Operator::setArgumentType(TipoPgSQL arg_type, unsigned arg_id)
+void Operator::setArgumentType(PgSQLType arg_type, unsigned arg_id)
 {
  //Raises an error if the argument id is invalid
  if(arg_id > RIGHT_ARG)
@@ -203,7 +203,7 @@ Function *Operator::getFunction(unsigned func_type)
  return(functions[func_type]);
 }
 
-TipoPgSQL Operator::getArgumentType(unsigned arg_id)
+PgSQLType Operator::getArgumentType(unsigned arg_id)
 {
  //Raises an error if the argument id is invalid
  if(arg_id > RIGHT_ARG)
@@ -278,7 +278,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
   else
   {
    attributes[atribs_tipos[i]]=argument_types[i].
-                obterDefinicaoObjeto(SchemaParser::XML_DEFINITION,atribs_tipos[i]);
+                getObjectDefinition(SchemaParser::XML_DEFINITION,atribs_tipos[i]);
   }
  }
 

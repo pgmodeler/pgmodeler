@@ -158,7 +158,7 @@ class ModeloBD:  public QObject, public BaseObject {
   /* Retorna o objeto do modelo o qual representa o tipo da dado PostgreSQL.
      Basicamente esse método retorna uma tabela, sequencia, tipo ou domínio quando
      o 'tipo' é um tipo de dado definido pelo usuário */
-  BaseObject *obterObjetoTipoPgSQL(TipoPgSQL tipo);
+  BaseObject *obterObjetoTipoPgSQL(PgSQLType tipo);
 
  public:
   ModeloBD(void);
@@ -392,7 +392,7 @@ class ModeloBD:  public QObject, public BaseObject {
   //Métodos de criação de objetos a partir do documento XML
   ObjectType getObjectType(const QString &str_tipo);
   void definirAtributosBasicos(BaseObject *objeto);
-  TipoPgSQL criarTipoPgSQL(void);
+  PgSQLType criarTipoPgSQL(void);
 
   //Cria um objeto a partir do tipo passado
   BaseObject *criarObjeto(ObjectType tipo_obj);

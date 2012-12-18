@@ -38,7 +38,7 @@ class Domain: public BaseObject{
   bool not_null;
 
   //Domain data type
-  TipoPgSQL type;
+  PgSQLType type;
 
  public:
   Domain(void);
@@ -57,7 +57,7 @@ class Domain: public BaseObject{
   void setNotNull(bool value);
 
   //Defines the domain data type
-  void setType(TipoPgSQL type);
+  void setType(PgSQLType type);
 
   /* Overloaded BaseObject name definition method.
      Updates the reference of the domain as a PostgreSQL data type */
@@ -72,7 +72,7 @@ class Domain: public BaseObject{
   QString getExpression(void);
   QString getDefaultValue(void);
   bool isNotNull(void);
-  TipoPgSQL getType(void);
+  PgSQLType getType(void);
 
   //Returns the SQL / XML code definition for the domain
   QString getCodeDefinition(unsigned tipo_def);

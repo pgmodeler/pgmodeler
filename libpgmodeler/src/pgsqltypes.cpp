@@ -620,315 +620,313 @@ QString SpatialType::operator * (void)
  * CLASSE: TipoPgSQL *
  *********************/
 //Inicializando a lista estática da classe
-vector<UserTypeConfig> TipoPgSQL::tipos_usr;
+vector<UserTypeConfig> PgSQLType::user_types;
 
-TipoPgSQL::TipoPgSQL(void)
+PgSQLType::PgSQLType(void)
 {
  type_idx=offset;
- comprimento=1;
- precisao=-1;
- dimensao=0;
- com_timezone=false;
+ length=1;
+ precision=-1;
+ dimension=0;
+ with_timezone=false;
 }
 
-TipoPgSQL::TipoPgSQL(const QString &nome_tipo)
+PgSQLType::PgSQLType(const QString &type_name)
 {
- (*this)=nome_tipo;
- comprimento=1;
- precisao=-1;
- dimensao=0;
- com_timezone=false;
+ (*this)=type_name;
+ length=1;
+ precision=-1;
+ dimension=0;
+ with_timezone=false;
 }
 
-TipoPgSQL::TipoPgSQL(void *ptipo)
+PgSQLType::PgSQLType(void *ptype)
 {
- (*this) << ptipo;
- comprimento=1;
- precisao=-1;
- dimensao=0;
- com_timezone=false;
+ (*this) << ptype;
+ length=1;
+ precision=-1;
+ dimension=0;
+ with_timezone=false;
 }
 
-TipoPgSQL::TipoPgSQL(void *ptipo, unsigned comprimento, unsigned dimensao, int precisao, bool com_timezone, IntervalType tipo_interv, SpatialType tipo_esp)
+PgSQLType::PgSQLType(void *ptype, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type)
 {
- (*this) << ptipo;
- definirComprimento(comprimento);
- definirDimensao(dimensao);
- definirPrecisao(precisao);
- definirComTimezone(com_timezone);
- definirTipoIntervalo(tipo_interv);
- definirTipoEspacial(tipo_esp);
+ (*this) << ptype;
+ setLength(length);
+ setDimension(dimension);
+ setPrecision(precision);
+ setWithTimezone(with_timezone);
+ setIntervalType(interv_type);
+ setSpatialType(spatial_type);
 }
 
-TipoPgSQL::TipoPgSQL(const QString &tipo, unsigned comprimento, unsigned dimensao, int precisao, bool com_timezone, IntervalType tipo_interv, SpatialType tipo_esp)
+PgSQLType::PgSQLType(const QString &type_name, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type)
 {
- (*this)=tipo;
- definirComprimento(comprimento);
- definirDimensao(dimensao);
- definirPrecisao(precisao);
- definirComTimezone(com_timezone);
- definirTipoIntervalo(tipo_interv);
- definirTipoEspacial(tipo_esp);
+ (*this)=type_name;
+ setLength(length);
+ setDimension(dimension);
+ setPrecision(precision);
+ setWithTimezone(with_timezone);
+ setIntervalType(interv_type);
+ setSpatialType(spatial_type);
 }
 
-TipoPgSQL::TipoPgSQL(unsigned idx_tipo, unsigned comprimento, unsigned dimensao, int precisao, bool com_timezone, IntervalType tipo_interv, SpatialType tipo_esp)
+PgSQLType::PgSQLType(unsigned type_id, unsigned length, unsigned dimension, int precision, bool with_timezone, IntervalType interv_type, SpatialType spatial_type)
 {
- (*this)=idx_tipo;
- definirComprimento(comprimento);
- definirDimensao(dimensao);
- definirPrecisao(precisao);
- definirComTimezone(com_timezone);
- definirTipoIntervalo(tipo_interv);
- definirTipoEspacial(tipo_esp);
+ (*this)=type_id;
+ setLength(length);
+ setDimension(dimension);
+ setPrecision(precision);
+ setWithTimezone(with_timezone);
+ setIntervalType(interv_type);
+ setSpatialType(spatial_type);
 }
 
-void TipoPgSQL::getTypes(QStringList &tipos, bool tipo_oid, bool pseudos)
+void PgSQLType::getTypes(QStringList &type_list, bool oids, bool pseudos)
 {
  unsigned idx,total;
 
- tipos.clear(); //Limpa a lista de tipos
+ type_list.clear(); //Limpa a lista de tipos
  total=offset+types_count; //Calcula a quantidade total de tipos a serem obtidos
 
  for(idx=offset; idx<total; idx++)
  {
   //Insere na lista os tipos que vao do offset ao total de tipos
-  if(idx<ini_oid ||
-    (tipo_oid && idx>=ini_oid && idx<=fim_oid) ||
-    (pseudos && idx>=ini_pseudo && idx<=fim_pseudo))
-  tipos.push_back(BaseType::type_list[idx]);
+  if(idx<oid_start ||
+    (oids && idx>=oid_start && idx<=oid_end) ||
+    (pseudos && idx>=pseudo_start && idx<=pseudo_end))
+  type_list.push_back(BaseType::type_list[idx]);
  }
 }
 
-unsigned TipoPgSQL::operator = (unsigned tipo)
+unsigned PgSQLType::operator = (unsigned type_id)
 {
- if(tipo>=offset)
-  definirTipoUsuario(tipo);
- else if(tipo > 0)
-  BaseType::setType(tipo,offset,types_count);
- else if(tipo==0)
+ if(type_id>=offset)
+  setUserType(type_id);
+ else if(type_id > 0)
+  BaseType::setType(type_id,offset,types_count);
+ else if(type_id==0)
   throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  return(type_idx);
 }
 
-unsigned TipoPgSQL::operator = (const QString &nome_tipo)
+unsigned PgSQLType::operator = (const QString &type_name)
 {
- unsigned idx_tipo, idx_tipo_usr;
+ unsigned type_idx, usr_type_idx;
 
- idx_tipo=BaseType::getType(nome_tipo, offset, types_count);
- idx_tipo_usr=obterIndiceTipoUsuario(nome_tipo, NULL);
+ type_idx=BaseType::getType(type_name, offset, types_count);
+ usr_type_idx=getUserTypeIndex(type_name, NULL);
 
- if(idx_tipo==0 && idx_tipo_usr==0)
+ if(type_idx==0 && usr_type_idx==0)
   throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(idx_tipo!=0)
+ else if(type_idx!=0)
  {
-  BaseType::setType(idx_tipo,offset,types_count);
-  return(idx_tipo);
+  BaseType::setType(type_idx,offset,types_count);
+  return(type_idx);
  }
  else
  {
-  definirTipoUsuario(idx_tipo_usr);
-  return(idx_tipo_usr);
+  setUserType(usr_type_idx);
+  return(usr_type_idx);
  }
 }
 
-void *TipoPgSQL::obterRefTipoUsuario(void)
+void *PgSQLType::getUserTypeReference(void)
 {
- if(this->tipoUsuario())
-  return(tipos_usr[this->type_idx - (fim_pseudo + 1)].ptype);
+ if(this->isUserType())
+  return(user_types[this->type_idx - (pseudo_end + 1)].ptype);
  else
   return(NULL);
 }
 
-unsigned TipoPgSQL::obterConfTipoUsuario(void)
+unsigned PgSQLType::getUserTypeConfig(void)
 {
- if(this->tipoUsuario())
-  return(tipos_usr[this->type_idx - (fim_pseudo + 1)].type_conf);
+ if(this->isUserType())
+  return(user_types[this->type_idx - (pseudo_end + 1)].type_conf);
  else
   return(0);
 }
 
-bool TipoPgSQL::operator == (unsigned idx_tipo)
+bool PgSQLType::operator == (unsigned type_id)
 {
- return(this->type_idx==idx_tipo);
+ return(this->type_idx==type_id);
 }
 
-bool TipoPgSQL::operator == (const QString &nome_tipo)
+bool PgSQLType::operator == (const QString &type_name)
 {
  unsigned idx,total;
- bool enc=false;
+ bool found=false;
 
  total=offset + types_count; //Calculando o total de tipos da classe
 
  /*Verifica se o tipo passado pelo parametro está no conjunto de
   tipos da classe */
- for(idx=offset; idx<total && !enc; idx++)
-  enc=(nome_tipo==BaseType::type_list[idx]);
+ for(idx=offset; idx<total && !found; idx++)
+  found=(type_name==BaseType::type_list[idx]);
 
- if(enc) idx--;
+ if(found) idx--;
 
  //Verifica se o código do tipo encontrado é igual ao codigo do tipo atual
  return(type_idx==idx);
 }
 
-bool TipoPgSQL::operator != (const QString &nome_tipo)
+bool PgSQLType::operator != (const QString &type_name)
 {
- return(!((*this)==nome_tipo));
+ return(!((*this)==type_name));
 }
 
-bool TipoPgSQL::operator != (TipoPgSQL tipo)
+bool PgSQLType::operator != (PgSQLType type)
 {
- return(this->type_idx!=tipo.type_idx);
+ return(this->type_idx!=type.type_idx);
 }
 
-bool TipoPgSQL::operator != (unsigned idx_tipo)
+bool PgSQLType::operator != (unsigned type_id)
 {
- return(this->type_idx!=idx_tipo);
+ return(this->type_idx!=type_id);
 }
 
-bool TipoPgSQL::operator == (TipoPgSQL tipo)
+bool PgSQLType::operator == (PgSQLType type)
 {
- return(this->type_idx==tipo.type_idx);
+ return(this->type_idx==type.type_idx);
 }
 
-bool TipoPgSQL::operator == (void *ptipo)
+bool PgSQLType::operator == (void *ptype)
 {
  int idx;
- idx=obterIndiceTipoUsuario("",ptipo);
+ idx=getUserTypeIndex("",ptype);
  return(static_cast<int>(type_idx) == idx);
 }
 
-IntervalType TipoPgSQL::obterTipoIntervalo(void)
+IntervalType PgSQLType::getIntervalType(void)
 {
- return(tipo_intervalo);
+ return(interval_type);
 }
 
-SpatialType TipoPgSQL::obterTipoEspacial(void)
+SpatialType PgSQLType::getSpatialType(void)
 {
- return(tipo_espacial);
+ return(spatial_type);
 }
 
-bool TipoPgSQL::comTimezone(void)
+bool PgSQLType::isWithTimezone(void)
 {
- return(com_timezone);
+ return(with_timezone);
 }
 
-bool TipoPgSQL::tipoOID(void)
+bool PgSQLType::isOIDType(void)
 {
  //Retorna se o tipo está no conjunto de tipos identificadores de objetos (oid)
- return(type_idx>=ini_oid && type_idx<=fim_oid);
+ return(type_idx>=oid_start && type_idx<=oid_end);
 }
 
-bool TipoPgSQL::pseudoTipo(void)
+bool PgSQLType::isPseudoType(void)
 {
  //Retorna se o tipo está no conjunto de pseudotipos
- return(type_idx>=ini_pseudo && type_idx<=fim_pseudo);
+ return(type_idx>=pseudo_start && type_idx<=pseudo_end);
 }
 
-unsigned TipoPgSQL::operator << (void *ptipo)
+unsigned PgSQLType::operator << (void *ptype)
 {
- definirTipoUsuario(ptipo);
+ setUserType(ptype);
  return(type_idx);
 }
 
-void TipoPgSQL::definirTipoIntervalo(IntervalType tipo_interv)
+void PgSQLType::setIntervalType(IntervalType interv_type)
 {
- tipo_intervalo=tipo_interv;
+ interval_type=interv_type;
 }
 
-void TipoPgSQL::definirTipoEspacial(SpatialType tipo_esp)
+void PgSQLType::setSpatialType(SpatialType spat_type)
 {
- tipo_espacial=tipo_esp;
+ spatial_type=spat_type;
 }
 
-void TipoPgSQL::definirComTimezone(bool com_timezone)
+void PgSQLType::setWithTimezone(bool with_tz)
 {
- this->com_timezone=com_timezone;
+ this->with_timezone=with_tz;
 }
 
-void TipoPgSQL::definirTipoUsuario(unsigned idx)
+void PgSQLType::setUserType(unsigned type_id)
 {
  unsigned lim1, lim2;
 
- //lim1=offset + qtd_tipos +;
- //lim2=offset + qtd_tipos + TipoPgSQL::tipos_usr.size();
- lim1=fim_pseudo + 1;
- lim2=lim1 + TipoPgSQL::tipos_usr.size();
+ lim1=pseudo_end + 1;
+ lim2=lim1 + PgSQLType::user_types.size();
 
- if(TipoPgSQL::tipos_usr.size() > 0 &&
-    (idx >= lim1 && idx < lim2))
-  type_idx=idx;
+ if(PgSQLType::user_types.size() > 0 &&
+    (type_id >= lim1 && type_id < lim2))
+  type_idx=type_id;
  else
   throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void TipoPgSQL::definirTipoUsuario(void *ptipo)
+void PgSQLType::setUserType(void *ptype)
 {
  int idx;
 
- idx=obterIndiceTipoUsuario("",ptipo);
+ idx=getUserTypeIndex("",ptype);
  if(idx <= 0)
   throw Exception(ERR_ASG_INV_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   type_idx=idx;
 }
 
-void TipoPgSQL::adicionarTipoUsuario(const QString &nome, void *ptipo, void *pmodelo, unsigned conf_tipo_usr)
+void PgSQLType::addUserType(const QString &type_name, void *ptype, void *pmodel, unsigned type_conf)
 {
- if(nome!="" && ptipo && pmodelo &&
-    (conf_tipo_usr==UserTypeConfig::DOMAIN_TYPE ||
-     conf_tipo_usr==UserTypeConfig::SEQUENCE_TYPE ||
-     conf_tipo_usr==UserTypeConfig::TABLE_TYPE ||
-     conf_tipo_usr==UserTypeConfig::BASE_TYPE) &&
-    obterIndiceTipoUsuario(nome,ptipo,pmodelo)==0)
+ if(type_name!="" && ptype && pmodel &&
+    (type_conf==UserTypeConfig::DOMAIN_TYPE ||
+     type_conf==UserTypeConfig::SEQUENCE_TYPE ||
+     type_conf==UserTypeConfig::TABLE_TYPE ||
+     type_conf==UserTypeConfig::BASE_TYPE) &&
+    getUserTypeIndex(type_name,ptype,pmodel)==0)
  {
   UserTypeConfig cfg;
 
-  cfg.name=nome;
-  cfg.ptype=ptipo;
-  cfg.pmodel=pmodelo;
-  cfg.type_conf=conf_tipo_usr;
-  TipoPgSQL::tipos_usr.push_back(cfg);
+  cfg.name=type_name;
+  cfg.ptype=ptype;
+  cfg.pmodel=pmodel;
+  cfg.type_conf=type_conf;
+  PgSQLType::user_types.push_back(cfg);
  }
 }
 
-void TipoPgSQL::removerTipoUsuario(const QString &nome, void *ptipo)
+void PgSQLType::removeUserType(const QString &type_name, void *ptype)
 {
- if(TipoPgSQL::tipos_usr.size() > 0 &&
-    nome!="" && ptipo)
+ if(PgSQLType::user_types.size() > 0 &&
+    type_name!="" && ptype)
  {
   UserTypeConfig cfg;
   vector<UserTypeConfig>::iterator itr, itr_end;
 
-  itr=TipoPgSQL::tipos_usr.begin();
-  itr_end=TipoPgSQL::tipos_usr.end();
+  itr=PgSQLType::user_types.begin();
+  itr_end=PgSQLType::user_types.end();
 
   while(itr!=itr_end)
   {
-   if(itr->name==nome && itr->ptype==ptipo) break;
+   if(itr->name==type_name && itr->ptype==ptype) break;
    else itr++;
   }
 
   if(itr!=itr_end)
-   TipoPgSQL::tipos_usr.erase(itr);
+   PgSQLType::user_types.erase(itr);
  }
 }
 
-void TipoPgSQL::renomearTipoUsuario(const QString &nome, void *ptipo,const QString &novo_nome)
+void PgSQLType::renameUserType(const QString &type_name, void *ptype,const QString &new_name)
 {
- if(TipoPgSQL::tipos_usr.size() > 0 &&
-    nome!="" && ptipo && nome!=novo_nome)
+ if(PgSQLType::user_types.size() > 0 &&
+    type_name!="" && ptype && type_name!=new_name)
  {
   vector<UserTypeConfig>::iterator itr, itr_end;
 
-  itr=TipoPgSQL::tipos_usr.begin();
-  itr_end=TipoPgSQL::tipos_usr.end();
+  itr=PgSQLType::user_types.begin();
+  itr_end=PgSQLType::user_types.end();
 
   while(itr!=itr_end)
   {
-   if(itr->name==nome && itr->ptype==ptipo)
+   if(itr->name==type_name && itr->ptype==ptype)
    {
-    itr->name=novo_nome;
+    itr->name=new_name;
     break;
    }
    itr++;
@@ -936,25 +934,25 @@ void TipoPgSQL::renomearTipoUsuario(const QString &nome, void *ptipo,const QStri
  }
 }
 
-unsigned TipoPgSQL::obterIndiceTipoBase(const QString &nome)
+unsigned PgSQLType::getBaseTypeIndex(const QString &type_name)
 {
- return(getType(nome,offset,types_count));
+ return(getType(type_name,offset,types_count));
 }
 
-unsigned TipoPgSQL::obterIndiceTipoUsuario(const QString &nome, void *ptipo, void *pmodelo)
+unsigned PgSQLType::getUserTypeIndex(const QString &type_name, void *ptype, void *pmodel)
 {
- if(TipoPgSQL::tipos_usr.size() > 0 && (nome!="" || ptipo))
+ if(PgSQLType::user_types.size() > 0 && (type_name!="" || ptype))
  {
   vector<UserTypeConfig>::iterator itr, itr_end;
   int idx=0;
 
-  itr=TipoPgSQL::tipos_usr.begin();
-  itr_end=TipoPgSQL::tipos_usr.end();
+  itr=PgSQLType::user_types.begin();
+  itr_end=PgSQLType::user_types.end();
 
   while(itr!=itr_end)
   {
-   if(((nome!="" && itr->name==nome) || (ptipo && itr->ptype==ptipo)) &&
-      ((pmodelo && itr->pmodel==pmodelo) || !pmodelo))
+   if(((type_name!="" && itr->name==type_name) || (ptype && itr->ptype==ptype)) &&
+      ((pmodel && itr->pmodel==pmodel) || !pmodel))
     break;
 
    idx++;
@@ -963,82 +961,79 @@ unsigned TipoPgSQL::obterIndiceTipoUsuario(const QString &nome, void *ptipo, voi
 
   if(itr!=itr_end)
    //return(offset + qtd_tipos + idx);
-   return(fim_pseudo + 1 + idx);
+   return(pseudo_end + 1 + idx);
   else
    return(BaseType::null);
  }
  else return(BaseType::null);
 }
 
-QString TipoPgSQL::getNameTipoUsuario(unsigned idx)
+QString PgSQLType::getUserTypeName(unsigned type_id)
 {
  unsigned lim1, lim2;
 
- /*lim1=offset + qtd_tipos;
- lim2=offset + qtd_tipos + TipoPgSQL::tipos_usr.size();*/
-
- lim1=fim_pseudo + 1;
- lim2=lim1 + TipoPgSQL::tipos_usr.size();
+ lim1=pseudo_end + 1;
+ lim2=lim1 + PgSQLType::user_types.size();
 
 
- if(TipoPgSQL::tipos_usr.size() > 0 &&
-    (idx >= lim1 && idx < lim2))
-  return(TipoPgSQL::tipos_usr[idx - lim1].name);
+ if(PgSQLType::user_types.size() > 0 &&
+    (type_id >= lim1 && type_id < lim2))
+  return(PgSQLType::user_types[type_id - lim1].name);
  else
   return("");
 }
 
-void TipoPgSQL::obterTiposUsuario(QStringList &tipos, void *pmodelo, unsigned inc_tipos_usr)
+void PgSQLType::getUserTypes(QStringList &type_list, void *pmodel, unsigned inc_usr_types)
 {
  unsigned idx,total;
 
- tipos.clear(); //Limpa a lista de tipos
- total=TipoPgSQL::tipos_usr.size();
+ type_list.clear(); //Limpa a lista de tipos
+ total=PgSQLType::user_types.size();
 
  for(idx=0; idx < total; idx++)
  {
   //Só obtem os tipos definidos pelo usuário do modelo especificado
-  if(tipos_usr[idx].pmodel==pmodelo &&
-     ((inc_tipos_usr & tipos_usr[idx].type_conf) == tipos_usr[idx].type_conf))
-   tipos.push_back(tipos_usr[idx].name);
+  if(user_types[idx].pmodel==pmodel &&
+     ((inc_usr_types & user_types[idx].type_conf) == user_types[idx].type_conf))
+   type_list.push_back(user_types[idx].name);
  }
 }
 
-void TipoPgSQL::obterTiposUsuario(vector<void *> &ptipos, void *pmodelo, unsigned inc_tipos_usr)
+void PgSQLType::getUserTypes(vector<void *> &ptypes, void *pmodel, unsigned inc_usr_types)
 {
  unsigned idx, total;
 
- ptipos.clear(); //Limpa a lista de tipos
- total=TipoPgSQL::tipos_usr.size();
+ ptypes.clear(); //Limpa a lista de tipos
+ total=PgSQLType::user_types.size();
 
  for(idx=0; idx < total; idx++)
  {
   //Só obtem os tipos definidos pelo usuário do modelo especificado
-  if(tipos_usr[idx].pmodel==pmodelo &&
-     ((inc_tipos_usr & tipos_usr[idx].type_conf) == tipos_usr[idx].type_conf))
-   ptipos.push_back(tipos_usr[idx].ptype);
+  if(user_types[idx].pmodel==pmodel &&
+     ((inc_usr_types & user_types[idx].type_conf) == user_types[idx].type_conf))
+   ptypes.push_back(user_types[idx].ptype);
  }
 }
 
-QString TipoPgSQL::operator ~ (void)
+QString PgSQLType::operator ~ (void)
 {
- if(type_idx >= fim_pseudo + 1)//offset + qtd_tipos)
-  return(tipos_usr[type_idx - (fim_pseudo + 1)].name);
+ if(type_idx >= pseudo_end + 1)//offset + qtd_tipos)
+  return(user_types[type_idx - (pseudo_end + 1)].name);
  else
   return(BaseType::type_list[type_idx]);
 }
 
-bool TipoPgSQL::tipoArray(void)
+bool PgSQLType::isArrayType(void)
 {
- return(dimensao > 0);
+ return(dimension > 0);
 }
 
-bool TipoPgSQL::tipoUsuario(void)
+bool PgSQLType::isUserType(void)
 {
- return(type_idx > fim_pseudo);
+ return(type_idx > pseudo_end);
 }
 
-bool TipoPgSQL::tipoCompVariavel(void )
+bool PgSQLType::hasVariableLength(void )
 {
 return(type_list[this->type_idx]=="numeric" || type_list[this->type_idx]=="decimal" ||
        type_list[this->type_idx]=="character varying" || type_list[this->type_idx]=="varchar" ||
@@ -1047,42 +1042,42 @@ return(type_list[this->type_idx]=="numeric" || type_list[this->type_idx]=="decim
        type_list[this->type_idx]=="varbit");
 }
 
-bool TipoPgSQL::tipoAceitaPrecisao(void )
+bool PgSQLType::acceptsPrecision(void )
 {
  return(type_list[this->type_idx]=="numeric" || type_list[this->type_idx]=="decimal" ||
         type_list[this->type_idx]=="time" || type_list[this->type_idx]=="timestamp" ||
         type_list[this->type_idx]=="interval");
 }
 
-void TipoPgSQL::definirDimensao(unsigned dim)
+void PgSQLType::setDimension(unsigned dim)
 {
- if(dim > 0 && this->tipoUsuario())
+ if(dim > 0 && this->isUserType())
  {
-  int idx=obterIndiceTipoUsuario(~(*this), NULL);
-  if(tipos_usr[idx].type_conf==UserTypeConfig::DOMAIN_TYPE ||
-     tipos_usr[idx].type_conf==UserTypeConfig::SEQUENCE_TYPE)
+  int idx=getUserTypeIndex(~(*this), NULL);
+  if(user_types[idx].type_conf==UserTypeConfig::DOMAIN_TYPE ||
+     user_types[idx].type_conf==UserTypeConfig::SEQUENCE_TYPE)
     throw Exception(ERR_ASG_INV_DOMAIN_ARRAY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
- dimensao=dim;
+ dimension=dim;
 }
 
-void TipoPgSQL::definirComprimento(unsigned comp)
+void PgSQLType::setLength(unsigned len)
 {
  //Caso o usuário tente criar um tipo de tamanho zero
- if(comp==0)
+ if(len==0)
   //throw Excecao("Atribuição de comprimento igual a zero!");
   throw Exception(ERR_ASG_ZERO_LENGTH,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Define o comprimento do tipo da coluna
-  this->comprimento=comp;
+  this->length=len;
 }
 
-void TipoPgSQL::definirPrecisao(int prec)
+void PgSQLType::setPrecision(int prec)
 {
  //Caso o usuário tente definir uma precisao maior que o comprimento do tipo
  if(((BaseType::type_list[type_idx]=="numeric" ||
-      BaseType::type_list[type_idx]=="decimal") && prec > static_cast<int>(comprimento)))
+      BaseType::type_list[type_idx]=="decimal") && prec > static_cast<int>(length)))
   throw Exception(ERR_ASG_INV_PRECISION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(((BaseType::type_list[type_idx]=="time" ||
            BaseType::type_list[type_idx]=="timestamp" ||
@@ -1090,105 +1085,103 @@ void TipoPgSQL::definirPrecisao(int prec)
   throw Exception(ERR_ASG_INV_PREC_TIMESTAMP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
   //Define a precisão do tipo da coluna
-  this->precisao=prec;
+  this->precision=prec;
 }
 
-unsigned TipoPgSQL::obterDimensao(void)
+unsigned PgSQLType::getDimension(void)
 {
- return(dimensao);
+ return(dimension);
 }
 
-unsigned TipoPgSQL::obterComprimento(void)
+unsigned PgSQLType::getLength(void)
 {
- return(comprimento);
+ return(length);
 }
 
-int TipoPgSQL::obterPrecisao(void)
+int PgSQLType::getPrecision(void)
 {
- return(precisao);
+ return(precision);
 }
 
-QString TipoPgSQL::obterDefinicaoObjeto(unsigned tipo_def,QString tipo_ref)
+QString PgSQLType::getObjectDefinition(unsigned def_type,QString ref_type)
 {
- if(tipo_def==SchemaParser::SQL_DEFINITION)
+ if(def_type==SchemaParser::SQL_DEFINITION)
   return(*(*this));
  else
  {
-  map<QString, QString> atributos;
+  map<QString, QString> attribs;
 
-  atributos[ParsersAttributes::LENGTH]="";
-  atributos[ParsersAttributes::DIMENSION]="";
-  atributos[ParsersAttributes::PRECISION]="";
-  atributos[ParsersAttributes::WITH_TIMEZONE]="";
-  atributos[ParsersAttributes::INTERVAL_TYPE]="";
-  atributos[ParsersAttributes::SPATIAL_TYPE]="";
-  atributos[ParsersAttributes::VARIATION]="";
-  atributos[ParsersAttributes::REF_TYPE]=tipo_ref;
+  attribs[ParsersAttributes::LENGTH]="";
+  attribs[ParsersAttributes::DIMENSION]="";
+  attribs[ParsersAttributes::PRECISION]="";
+  attribs[ParsersAttributes::WITH_TIMEZONE]="";
+  attribs[ParsersAttributes::INTERVAL_TYPE]="";
+  attribs[ParsersAttributes::SPATIAL_TYPE]="";
+  attribs[ParsersAttributes::VARIATION]="";
+  attribs[ParsersAttributes::REF_TYPE]=ref_type;
 
-  atributos[ParsersAttributes::NAME]=(~(*this));
+  attribs[ParsersAttributes::NAME]=(~(*this));
 
-  if(comprimento > 1)
-   atributos[ParsersAttributes::LENGTH]=QString("%1").arg(this->comprimento);
+  if(length > 1)
+   attribs[ParsersAttributes::LENGTH]=QString("%1").arg(this->length);
 
-  if(dimensao > 0)
-   atributos[ParsersAttributes::DIMENSION]=QString("%1").arg(this->dimensao);
+  if(dimension > 0)
+   attribs[ParsersAttributes::DIMENSION]=QString("%1").arg(this->dimension);
 
-  if(precisao >= 0)
-   atributos[ParsersAttributes::PRECISION]=QString("%1").arg(this->precisao);
+  if(precision >= 0)
+   attribs[ParsersAttributes::PRECISION]=QString("%1").arg(this->precision);
 
-  if(tipo_intervalo != BaseType::null)
-   atributos[ParsersAttributes::INTERVAL_TYPE]=(~tipo_intervalo);
+  if(interval_type != BaseType::null)
+   attribs[ParsersAttributes::INTERVAL_TYPE]=(~interval_type);
 
-  if(!tipoUsuario() && tipo_espacial != BaseType::null)
+  if(!isUserType() && spatial_type != BaseType::null)
   {
-   atributos[ParsersAttributes::SPATIAL_TYPE]=(~tipo_espacial);
-   atributos[ParsersAttributes::VARIATION]=QString("%1").arg(tipo_espacial.getVariation());
+   attribs[ParsersAttributes::SPATIAL_TYPE]=(~spatial_type);
+   attribs[ParsersAttributes::VARIATION]=QString("%1").arg(spatial_type.getVariation());
   }
 
-  if(com_timezone)
-   atributos[ParsersAttributes::WITH_TIMEZONE]="1";
+  if(with_timezone)
+   attribs[ParsersAttributes::WITH_TIMEZONE]="1";
 
-  return(SchemaParser::getObjectDefinition("basetype",atributos, tipo_def));
+  return(SchemaParser::getObjectDefinition("basetype",attribs, def_type));
  }
 }
 
-QString TipoPgSQL::operator * (void)
+QString PgSQLType::operator * (void)
 {
- QString tipo_fmt, tipo, aux;
+ QString fmt_type, type, aux;
  unsigned idx;
 
- tipo=~(*this);
+ type=~(*this);
 
  //Gerando definição de tipos espaciais (PostGiS)
- if(tipo=="geometry" || tipo=="geography")
-  tipo_fmt=tipo + (*tipo_espacial);
- else if(comprimento > 1 && tipoCompVariavel())
+ if(type=="geometry" || type=="geography")
+  fmt_type=type + (*spatial_type);
+ else if(length > 1 && hasVariableLength())
  {
   /* Tratando o caso de tipos que necessitam de uma precisão.
      A sintaxe desses tipos se altera ficando na forma TIPO(COMPRIMENTO,PRECISÃO).*/
-  if((tipo=="numeric" || tipo=="decimal") && precisao>=0 &&
-     precisao<=static_cast<int>(comprimento))
-   aux=QString("%1(%2,%3)").arg(BaseType::type_list[type_idx]).arg(comprimento).arg(precisao);
+  if((type=="numeric" || type=="decimal") && precision>=0 &&
+     precision<=static_cast<int>(length))
+   aux=QString("%1(%2,%3)").arg(BaseType::type_list[type_idx]).arg(length).arg(precision);
    /* Trantado o caso dos tipos que necessitam apenas do comprimento */
   else
-   aux=QString("%1(%2)").arg(BaseType::type_list[type_idx]).arg(comprimento);
+   aux=QString("%1(%2)").arg(BaseType::type_list[type_idx]).arg(length);
 
-  tipo_fmt=aux;
+  fmt_type=aux;
  }
- else if(tipo!="numeric" && tipo!="decimal" && tipoAceitaPrecisao())
+ else if(type!="numeric" && type!="decimal" && acceptsPrecision())
  {
   /* Tratando os tipos time e timestampe que possuem o formato:
      [TIME|TIMESTAMP] (PRECISÃO) [WITH|WITHOUT] TIMEZONE */
-  if(tipo!="interval")
+  if(type!="interval")
   {
    aux=BaseType::type_list[type_idx];
 
-   if(precisao >= 0)
-    aux+=QString("(%1)").arg(precisao);
+   if(precision >= 0)
+    aux+=QString("(%1)").arg(precision);
 
-   //aux+=(com_timezone ? " with" : " without");
-   //aux+=" time zone";
-   if(com_timezone)
+   if(with_timezone)
     aux+=" with time zone";
   }
   /* Tratando o tipo interval que possuem o formato:
@@ -1197,26 +1190,26 @@ QString TipoPgSQL::operator * (void)
   {
    aux=BaseType::type_list[type_idx];
 
-   if(tipo_intervalo!=BaseType::null)
-    aux+=QString("[%1]").arg(~tipo_intervalo);
+   if(interval_type!=BaseType::null)
+    aux+=QString("[%1]").arg(~interval_type);
 
-   if(precisao >= 0)
-    aux+=QString("(%1)").arg(precisao);
+   if(precision >= 0)
+    aux+=QString("(%1)").arg(precision);
   }
 
-  tipo_fmt=aux;
+  fmt_type=aux;
  }
  else
-  tipo_fmt=tipo;
+  fmt_type=type;
 
 
- if(tipo!="void" && dimensao > 0)
+ if(type!="void" && dimension > 0)
  {
-  for(idx=0; idx < dimensao; idx++)
-   tipo_fmt+="[]";
+  for(idx=0; idx < dimension; idx++)
+   fmt_type+="[]";
  }
 
- return(tipo_fmt);
+ return(fmt_type);
 }
 
 /*************************

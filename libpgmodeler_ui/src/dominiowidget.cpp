@@ -42,7 +42,7 @@ void DominioWidget::hideEvent(QHideEvent *evento)
 
 void DominioWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Domain *dominio)
 {
- TipoPgSQL tipo;
+ PgSQLType tipo;
 
  //Define os atributos do formulários e da janela pai
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, dominio);

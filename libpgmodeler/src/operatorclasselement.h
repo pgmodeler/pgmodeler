@@ -44,7 +44,7 @@ class OperatorClassElement {
 
   /* PostgreSQL type used in the indexing method of operator class.
      (only for type STORAGE_ELEM) */
-  TipoPgSQL storage;
+  PgSQLType storage;
 
   //Inicates that the rechecking of retrieved lines is mandatory (only for OPERATOR_ELEM)
   bool recheck;
@@ -68,7 +68,7 @@ class OperatorClassElement {
   void setOperator(Operator *oper, unsigned stg_number, bool recheck);
 
   //Defines the element as a storage clause
-  void setStorage(TipoPgSQL storage);
+  void setStorage(PgSQLType storage);
 
   //Returns the element type
   unsigned getElementType(void);
@@ -82,7 +82,7 @@ class OperatorClassElement {
   Operator *getOperator(void);
 
   //Storage type of the element
-  TipoPgSQL getStorage(void);
+  PgSQLType getStorage(void);
 
   //Returns whether the elements is to be rechecked or not
   bool isRecheck(void);
