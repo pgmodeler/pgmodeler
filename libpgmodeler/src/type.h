@@ -3,7 +3,6 @@
 # Sub-project: Core library (libpgmodeler)
 # Class: Type
 # Description: Implements the operations to manipulate user defined types on database.
-#
 # Creation date: 05/06/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>

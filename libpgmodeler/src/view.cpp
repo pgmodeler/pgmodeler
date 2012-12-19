@@ -2,7 +2,6 @@
 
 View::View(void) : BaseTable()
 {
- //Definindo configurações inicias para a visão
  obj_type=OBJ_VIEW;
  attributes[ParsersAttributes::DECLARATION]="";
  attributes[ParsersAttributes::REFERENCES]="";
@@ -11,81 +10,64 @@ View::View(void) : BaseTable()
  attributes[ParsersAttributes::EXP_SIMPLES]="";
 }
 
-View::~View(void)
-{
- //Limpa a lista de referências da visão
- references.clear();
-
- //Limpa as demais listas
- exp_select.clear();
- exp_from.clear();
- exp_where.clear();
-}
-
 int View::getReferenceIndex(Reference &refer)
 {
  vector<Reference>::iterator itr, itr_end;
- bool existe=false;
+ bool found=false;
  int idx=-1;
 
- /* Varre a lista de referencias da visão para
-    comparar os elementos */
  itr=references.begin();
  itr_end=references.end();
 
- while(itr!=itr_end && !existe)
+ while(itr!=itr_end && !found)
  {
-  /* Compara o conteúdo do elemento atual (itr) com
-     o conteúdo da referência do parâmetro */
-  existe=((*itr)==refer);
+  found=((*itr)==refer);
   itr++;
   idx++;
  }
 
- /* Caso a referência não exista retorna -1 caso
-    contrário retorna o próprio índice */
- if(!existe) idx=-1;
+ if(!found) idx=-1;
  return(idx);
 }
 
-void View::addReference(Reference &refer, unsigned tipo_sql, int id_exp)
+vector<unsigned> *View::getExpressionList(unsigned sql_type)
+{
+ if(sql_type==Reference::SQL_REFER_SELECT)
+  return(&exp_select);
+ else if(sql_type==Reference::SQL_REFER_FROM)
+  return(&exp_from);
+ else
+  return(&exp_where);
+}
+
+void View::addReference(Reference &refer, unsigned sql_type, int expr_id)
 {
  int idx;
- vector<unsigned> *vet_idref=NULL;
+ vector<unsigned> *expr_list=NULL;
  Column *col=NULL;
 
- //Verifica se a referência já existe na visão
+ //Checks if the reference already exists
  idx=getReferenceIndex(refer);
 
- //Caso não seja encontrada (idx = -1)
+ //If not exists
  if(idx < 0)
  {
-  //Insere a nova referência na lista
+  //Inserts the reference on the view
   references.push_back(refer);
   idx=references.size()-1;
  }
 
- /* Selecionando a lista de expressões de acordo o
-    parâmetro tipo_sql. */
- if(tipo_sql==Reference::SQL_REFER_SELECT)
-  vet_idref=&exp_select;
- else if(tipo_sql==Reference::SQL_REFER_FROM)
-  vet_idref=&exp_from;
- else
-  vet_idref=&exp_where;
+ //Gets the expression list
+ expr_list=getExpressionList(sql_type);
 
- //Insere a referência na posição especificada por id_exp
- if(id_exp >= 0 && id_exp < static_cast<int>(vet_idref->size()))
-  vet_idref->insert(vet_idref->begin() + id_exp, static_cast<unsigned>(idx));
-
- /* Caso se tente inserir uma referência num índice inválido,
-    é disparada uma exceção */
- else if(id_exp >= 0 && id_exp >= static_cast<int>(vet_idref->size()))
+ //Inserts the reference id on the expression list
+ if(expr_id >= 0 && expr_id < static_cast<int>(expr_list->size()))
+  expr_list->insert(expr_list->begin() + expr_id, static_cast<unsigned>(idx));
+ //Raises an error if the expression id is invalid
+ else if(expr_id >= 0 && expr_id >= static_cast<int>(expr_list->size()))
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
- //Insere a referência no fim da lista de expressões
  else
-  vet_idref->push_back(static_cast<unsigned>(idx));
+  expr_list->push_back(static_cast<unsigned>(idx));
 
  col=refer.getColumn();
  if(col && col->isAddedByRelationship() &&
@@ -98,111 +80,77 @@ unsigned View::getReferenceCount(void)
  return(references.size());
 }
 
-unsigned View::getReferenceCount(unsigned tipo_sql, int tipo_ref)
+unsigned View::getReferenceCount(unsigned sql_type, int ref_type)
 {
- vector<unsigned> *vet_idref=NULL;
+ vector<unsigned> *vect_idref=getExpressionList(sql_type);
 
- /* Selecionando a lista de expressões de acordo o
-    parâmetro tipo_sql. */
- if(tipo_sql==Reference::SQL_REFER_SELECT)
-  vet_idref=&exp_select;
- else if(tipo_sql==Reference::SQL_REFER_FROM)
-  vet_idref=&exp_from;
- else
-  vet_idref=&exp_where;
-
- /* Caso o tipo de referência não esteja especificado
-    retorna o tamanho total do vetor de expressões */
- if(tipo_ref < 0)
-  return(vet_idref->size());
-
- /* Caso contrário, faz a contagem dos elementos da lista
-    de acordo com o tipo da referência */
+ if(ref_type < 0)
+  return(vect_idref->size());
  else
  {
   vector<unsigned>::iterator itr, itr_end;
   unsigned qtd;
 
   qtd=0;
-  itr=vet_idref->begin();
-  itr_end=vet_idref->end();
+  itr=vect_idref->begin();
+  itr_end=vect_idref->end();
   while(itr!=itr_end)
   {
-   /* Caso o tipo da referência atual seja igual ao tipo da referência
-      passada pelo parâmetro, incrementa a quantidade */
-   if(references[(*itr)].getReferenceType()==static_cast<unsigned>(tipo_ref)) qtd++;
+   if(references[(*itr)].getReferenceType()==static_cast<unsigned>(ref_type)) qtd++;
    itr++;
   }
 
-  //Retorna a quantidade calculada
   return(qtd);
  }
 }
 
-Reference View::getReference(unsigned id_ref)
+Reference View::getReference(unsigned ref_id)
 {
- /* Caso tente acessar uma referência com índice
-    inválido, dispara uma exceção */
- if(id_ref >= references.size())
+ //Raises an error if the reference id is out of bound
+ if(ref_id >= references.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(references[id_ref]);
+ return(references[ref_id]);
 }
 
-Reference View::getReference(unsigned id_ref, unsigned tipo_sql)
+Reference View::getReference(unsigned ref_id, unsigned sql_type)
 {
- vector<unsigned> *vet_idref=NULL;
- unsigned idx;
+ vector<unsigned> *vect_idref=getExpressionList(sql_type);
 
- /* Selecionando a lista de expressões de acordo o
-    parâmetro tipo_sql. */
- if(tipo_sql==Reference::SQL_REFER_SELECT)
-  vet_idref=&exp_select;
- else if(tipo_sql==Reference::SQL_REFER_FROM)
-  vet_idref=&exp_from;
- else
-  vet_idref=&exp_where;
+ //Raises an error if the reference id is out of bound
+ if(ref_id >= references.size())
+  throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Retorna a referência na posição indicada por id_ref
- idx=vet_idref->at(id_ref);
- return(references[idx]);
+ return(references[vect_idref->at(ref_id)]);
 }
 
-void View::removeReference(unsigned id_ref)
+void View::removeReference(unsigned ref_id)
 {
- vector<unsigned> *vet_idref[3]={&exp_select, &exp_from, &exp_where};
- vector<unsigned>::iterator itr, itr_aux, itr_end;
+ vector<unsigned> *vect_idref[3]={&exp_select, &exp_from, &exp_where};
+ vector<unsigned>::iterator itr, itr_end;
  unsigned i;
 
- /* Dispara uma exceção caso se tente remover uma referência
-    com índice inválido */
- if(id_ref >= references.size())
+ //Raises an error if the reference id is out of bound
+ if(ref_id >= references.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- /* Varre as três listas de expressões para verificar se o
-    a referência não está sendo usada em uma delas */
  for(i=0; i < 3; i++)
  {
-  //Obtém o ínicio e o fim da lista
-  itr=vet_idref[i]->begin();
-  itr_end=vet_idref[i]->end();
+  itr=vect_idref[i]->begin();
+  itr_end=vect_idref[i]->end();
 
-  //Varre a lista
-  while(itr!=itr_end && !vet_idref[i]->empty())
+  while(itr!=itr_end && !vect_idref[i]->empty())
   {
-   /* Caso a referencia atual seja igual   referência
-      a ser removeda, o item da lista de expressão atual
-      o qual contém a referência a ser excluída será
-      removido. */
-   if(references[*itr]==references[id_ref])
-    vet_idref[i]->erase(itr);
+   //Removes the reference id from the expression list
+   if(references[*itr]==references[ref_id])
+    vect_idref[i]->erase(itr);
 
    itr++;
   }
  }
 
- //Remove a referência da lista
- references.erase(references.begin() + id_ref);
+ //Removes the reference from the view
+ references.erase(references.begin() + ref_id);
 }
 
 void View::removeReferences(void)
@@ -213,53 +161,34 @@ void View::removeReferences(void)
  exp_where.clear();
 }
 
-void View::removeReference(unsigned id_exp, unsigned tipo_sql)
+void View::removeReference(unsigned expr_id, unsigned sql_type)
 {
- vector<unsigned> *vet_idref=NULL;
+ vector<unsigned> *vect_idref=getExpressionList(sql_type);
 
- /* Selecionando a lista de expressões de acordo o
-    parâmetro tipo_sql. */
- if(tipo_sql==Reference::SQL_REFER_SELECT)
-  vet_idref=&exp_select;
- else if(tipo_sql==Reference::SQL_REFER_FROM)
-  vet_idref=&exp_from;
- else
-  vet_idref=&exp_where;
-
- if(id_exp >= vet_idref->size())
+ if(expr_id >= vect_idref->size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Remove a referência da lista de expressão
- vet_idref->erase(vet_idref->begin() + id_exp);
+ vect_idref->erase(vect_idref->begin() + expr_id);
 }
 
-int View::getReferenceIndex(Reference &ref, unsigned tipo_sql)
+int View::getReferenceIndex(Reference &ref, unsigned sql_type)
 {
- vector<unsigned> *vet_idref=NULL;
+ vector<unsigned> *vet_idref=getExpressionList(sql_type);
  vector<unsigned>::iterator itr, itr_aux, itr_end;
  int idx_ref;
- bool enc=false;
-
-  /* Selecionando a lista de expressões de acordo o
-    parâmetro tipo_sql. */
- if(tipo_sql==Reference::SQL_REFER_SELECT)
-  vet_idref=&exp_select;
- else if(tipo_sql==Reference::SQL_REFER_FROM)
-  vet_idref=&exp_from;
- else
-  vet_idref=&exp_where;
+ bool found=false;
 
  idx_ref=getReferenceIndex(ref);
  itr=vet_idref->begin();
  itr_end=vet_idref->end();
 
- while(itr!=itr_end && !enc)
+ while(itr!=itr_end && !found)
  {
-  enc=(static_cast<int>(*itr)==idx_ref);
-  if(!enc) itr++;
+  found=(static_cast<int>(*itr)==idx_ref);
+  if(!found) itr++;
  }
 
- if(!enc)
+ if(!found)
   return(-1);
  else
   return(itr-vet_idref->begin());
@@ -278,21 +207,16 @@ void View::setDeclarationAttribute(void)
                                      Reference::SQL_REFER_FROM,
                                      Reference::SQL_REFER_WHERE};
 
-  //Varre as listas de expressões
   for(i=0; i < 3; i++)
   {
-   //Caso a lista não esteja vazia
    if(vet_ref[i]->size() > 0)
    {
-    //Concatena a palavra referente   lista de expressões
     decl+=palavras[i];
 
     itr=vet_ref[i]->begin();
     itr_end=vet_ref[i]->end();
     while(itr!=itr_end)
     {
-     /* Concatena   declaração da visão a sql da referência atual
-        especificando o tipo da sql a ser gerada */
      idx=(*itr);
      decl+=references[idx].getSQLDefinition(tipo_sql[i]);
      itr++;
@@ -301,10 +225,9 @@ void View::setDeclarationAttribute(void)
     if(tipo_sql[i]==Reference::SQL_REFER_SELECT ||
        tipo_sql[i]==Reference::SQL_REFER_FROM)
     {
-     //Removendo os espaços e vírgula finais
+     //Removing the final comma from SELECT / FROM declarations
      qtd=decl.size();
      if(decl[qtd-2]==',')
-       //decl.erase(qtd-2);
        decl.remove(qtd-2,2);
     }
    }
@@ -316,84 +239,81 @@ void View::setDeclarationAttribute(void)
 void View::setReferencesAttribute(void)
 {
  QString str_aux;
- QString vet_atrib[]={ ParsersAttributes::SELECT_EXP,
-                       ParsersAttributes::FROM_EXP,
-                       ParsersAttributes::EXP_SIMPLES };
- vector<unsigned> *vet_exp[]={&exp_select, &exp_from, &exp_where};
+ QString attribs[]={ ParsersAttributes::SELECT_EXP,
+                     ParsersAttributes::FROM_EXP,
+                     ParsersAttributes::EXP_SIMPLES };
+ vector<unsigned> *vect_exp[]={&exp_select, &exp_from, &exp_where};
  int qtd, i, i1;
 
- //Obtém a definição XMl das referências
  qtd=references.size();
  for(i=0; i < qtd; i++)
   str_aux+=references[i].getXMLDefinition();
  attributes[ParsersAttributes::REFERENCES]=str_aux;
 
- /* Este bloco concatena os indices de referências
-    em cada vetor de expressão separando-os por vírgula */
  for(i=0; i < 3; i++)
  {
   str_aux="";
-  qtd=vet_exp[i]->size();
+  qtd=vect_exp[i]->size();
   for(i1=0; i1 < qtd; i1++)
   {
-   str_aux+=QString("%1").arg(vet_exp[i]->at(i1));
+   str_aux+=QString("%1").arg(vect_exp[i]->at(i1));
    if(i1 < qtd-1) str_aux+=",";
   }
-  attributes[vet_atrib[i]]=str_aux;
+  attributes[attribs[i]]=str_aux;
  }
 }
 
 bool View::isReferRelationshipColumn(void)
 {
- Column *coluna=NULL;
- unsigned qtd, i;
- bool enc=false;
+ Column *column=NULL;
+ unsigned count, i;
+ bool found=false;
 
- qtd=references.size();
+ count=references.size();
 
- for(i=0; i < qtd && !enc; i++)
+ for(i=0; i < count && !found; i++)
  {
-  coluna=references[i].getColumn();
-  enc=(coluna && coluna->isAddedByRelationship());
+  column=references[i].getColumn();
+  found=(column && column->isAddedByRelationship());
  }
 
- return(enc);
+ return(found);
 }
 
 bool View::isReferencingTable(Tabela *tab)
 {
- Tabela *tab_aux=NULL;
- unsigned qtd, i;
- bool enc=false;
+ Tabela *aux_tab=NULL;
+ unsigned count, i;
+ bool found=false;
 
- qtd=references.size();
+ count=references.size();
 
- for(i=0; i < qtd && !enc; i++)
+ for(i=0; i < count && !found; i++)
  {
-  tab_aux=references[i].getTable();
-  enc=(tab_aux && (tab_aux == tab));
+  aux_tab=references[i].getTable();
+  found=(aux_tab && (aux_tab == tab));
  }
 
- return(enc);
+ return(found);
 }
 
 bool View::isReferencingColumn(Column *col)
 {
- unsigned qtd, i;
- bool enc=false;
+ unsigned count, i;
+ bool found=false;
 
  if(col)
  {
-  qtd=references.size();
-  for(i=0; i < qtd && !enc; i++)
-   enc=(col==references[i].getColumn());
+  count=references.size();
+  for(i=0; i < count && !found; i++)
+   found=(col==references[i].getColumn());
  }
- return(enc);
+ return(found);
 }
 
-QString View::getCodeDefinition(unsigned tipo_def)
+QString View::getCodeDefinition(unsigned def_type)
 {
- if(tipo_def==SchemaParser::SQL_DEFINITION)
+ if(def_type==SchemaParser::SQL_DEFINITION)
   setDeclarationAttribute();
  else
  {
@@ -401,16 +321,16 @@ QString View::getCodeDefinition(unsigned tipo_def)
   setReferencesAttribute();
  }
 
- return(BaseObject::__getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(def_type));
 }
 
-void View::operator = (View &visao)
+void View::operator = (View &view)
 {
- (*dynamic_cast<BaseGraphicObject *>(this))=reinterpret_cast<BaseGraphicObject &>(visao);
+ (*dynamic_cast<BaseGraphicObject *>(this))=reinterpret_cast<BaseGraphicObject &>(view);
 
- this->references=visao.references;
- this->exp_select=visao.exp_select;
- this->exp_from=visao.exp_from;
- this->exp_where=visao.exp_where;
+ this->references=view.references;
+ this->exp_select=view.exp_select;
+ this->exp_from=view.exp_from;
+ this->exp_where=view.exp_where;
 }
 

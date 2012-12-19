@@ -1,8 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Visao que é usada para
-#             gerar os códigos SQL pertinentes a estas.
+# Description: Implements the operations to manipulate views on database.
 # Creation date: 07/04/2008
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -27,82 +26,82 @@
 
 class View: public BaseTable {
  private:
-  //Armazena as referências para objetos e expressões
+  //Stores the references to expressions and objects
   vector<Reference> references;
 
-  /* Vetores que armazenam os ponteiros para as referências
-     da visão. Estes vetores significam as expressões na
-     parte SELECT-FROM, FROM-WHERE e após WHERE. */
+  /* Vectors that stores indexes to the view references in each
+     SQL part: SELECT-FROM, FROM-WHERE and after WHERE */
   vector<unsigned> exp_select,
                    exp_from,
                    exp_where;
 
-  /* Define o atributo declaração usado pelo parser de esquema
-     na geração da definição SQL da visão */
+  //Sets the declaration attribute used by the SchemaParser
   void setDeclarationAttribute(void);
 
-  /* Define o atributo de referências usado pelo parser de esquema
-     na geração da definição XML da visão */
+  //Sets the references attribute used by the SchemaParser
   void setReferencesAttribute(void);
 
-  /* Verifica se uma determinada referência já está cadastrada
-     retornando -1 caso não exista ou seu índice caso exista */
+  /* Returns the reference index on the view. When it doesn't exists,
+     the method returns -1 */
   int getReferenceIndex(Reference &refer);
+
+  //Returns the reference to internal expression list according to the SQL expression type
+  vector<unsigned> *getExpressionList(unsigned sql_type);
 
  public:
   View(void);
-  ~View(void);
 
-  /* Adiciona um referência a  visão e ao mesmo tempo em um dos vetores
-     de expressão usandos os parâmetros tipo_sql e idx_exp (opcional) */
-  void addReference(Reference &refer, unsigned tipo_sql, int idx_exp=-1);
+  /* Adds a reference to the view specifying the SQL expression type for it
+     (refer to class Reference::SQL_??? constants). The 'expr_id' parameter is the
+     index where the reference must be inserted. By defaul the method always adds
+     new references at the end of the list */
+  void addReference(Reference &refer, unsigned sql_type, int expr_id=-1);
 
-  /* Remove uma referência da visão, caso o elemento a ser removido esteja
-     sendo referenciado pelos vetores de expressão, os elementos desses
-     ultimos vetores também são removidos */
-  void removeReference(unsigned id_ref);
+  /* Remove the reference from the view using its index, removing all the elements
+     from the exp_??? vectors when they make use of the deleted reference. */
+  void removeReference(unsigned ref_id);
+
+  //Removes all the references from the view
   void removeReferences(void);
 
-  //Remove um elemento de uma das listas de expressão através do índice
-  void removeReference(unsigned idx_exp, unsigned tipo_sql);
+  //Removes an element from the expression list specified by the 'sql_type' parameter
+  void removeReference(unsigned expr_id, unsigned sql_type);
 
-  //Obtém o número de referências da visão
+  //Returns the reference count from view
   unsigned getReferenceCount(void);
 
-  /* Obtém o número de elementos em uma das listas de expressão.
-     Caso o parâmetro tipo_ref estiver especificado (>= 0) o usuário
-     pode filtar a contagem pelo tipo de referência (expressão ou objeto) */
-  unsigned getReferenceCount(unsigned tipo_sql, int tipo_ref=-1);
+  /* Returns the element count on the specified SQL expression type list (sql_type).
+     It possible to filter the reference type via 'ref_type' which must be filled
+     with the Reference::REFER_??? constants */
+  unsigned getReferenceCount(unsigned sql_type, int ref_type=-1);
 
-  //Obtém uma referência da visão através do índice
-  Reference getReference(unsigned id_ref);
+  //Returs one reference using its index
+  Reference getReference(unsigned ref_id);
 
-  /* Obtém uma referência numa determinada posição de uma lista
-     de expressões da visão */
-  Reference getReference(unsigned id_ref, unsigned tipo_sql);
+  /* Retuns one reference in the specified position (ref_id) on the
+     specified expression list (sql_type) */
+  Reference getReference(unsigned ref_id, unsigned sql_type);
 
-  /* Retorna o índice de uma dada referência em uma das lista de
-     expressões SQL: SELECT-FROM, FROM-WHERE ou após WHERE */
-  int getReferenceIndex(Reference &ref, unsigned tipo_sql);
+  //Returns the specified reference index on the specified expression list
+  int getReferenceIndex(Reference &ref, unsigned sql_type);
 
-  //Retorna a definição SQL ou XML do objeto
-  QString getCodeDefinition(unsigned tipo_def);
+  //Returns the SQL / XML definition for the view
+  QString getCodeDefinition(unsigned def_type);
 
-  /* Retorna se a visão referencia colunas adicionadas
-     por relacionamento. Este método é usado como auxiliar
-     para controlar visões criadas pelo usuário as quais
-     referenciam colunas adicionadas por relacionamento a
-     fim de se evitar quebra de ligações devido as constantes
-     conexões e desconexões de relacionamentos */
+  /* Returns whether the view references columns added
+     by relationship. This method is used as auxiliary
+     to control which view reference columns added by the
+     relationship in order to avoid referece breaking due constants
+     connections and disconnections of relationships */
   bool isReferRelationshipColumn(void);
 
-  //Retorna se a visão referencia uma dada tabela
+  //Returns if the view is referencing the specified table
   bool isReferencingTable(Tabela *tab);
 
-  //Retorna se a visão referencia uma dada coluna
+  //Returns if the view is referencing the specified column
   bool isReferencingColumn(Column *col);
 
-  //Copia os atributos do objeto do parâmetro para o objeto this
+  //Copy the attributes between two views
   void operator = (View &visao);
 };
 
