@@ -34,7 +34,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/basegraphicobject.h \
            $$PWD/src/relationship.h \
            $$PWD/src/tabela.h \
-           $$PWD/src/visao.h \
+           $$PWD/src/view.h \
            $$PWD/src/operatorfamily.h \
            $$PWD/src/operatorclasselement.h \
            $$PWD/src/operatorclass.h \
@@ -61,7 +61,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/language.cpp \
             $$PWD/src/role.cpp \
             $$PWD/src/sequence.cpp \
-            $$PWD/src/visao.cpp \
+            $$PWD/src/view.cpp \
             $$PWD/src/conversion.cpp \
             $$PWD/src/function.cpp \
             $$PWD/src/modelobd.cpp \

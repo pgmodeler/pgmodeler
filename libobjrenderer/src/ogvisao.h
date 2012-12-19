@@ -23,7 +23,7 @@
 #ifndef OG_VISAO_H
 #define OG_VISAO_H
 
-#include "visao.h"
+#include "view.h"
 #include "ogtabelabase.h"
 
 class OGVisao: public OGTabelaBase {
@@ -34,7 +34,7 @@ class OGVisao: public OGTabelaBase {
   QGraphicsItemGroup *referencias;
 
  public:
-  OGVisao(Visao *visao);
+  OGVisao(View *visao);
   ~OGVisao(void);
 
  private slots:

@@ -337,7 +337,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
  {
   /* Remove todas as referências da visão auxiliar para inserção daquelas
     presente na tabela */
-  visao_aux.removerReferencias();
+  visao_aux.removeReferences();
 
   //Configura o nome da visão com o que está no formulário
   visao_aux.BaseObject::setName(nome_edt->text());
@@ -363,7 +363,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
        esteja marcada com um 1, a referência será inserida no final da
        lista de referências cuja aplicação seja a atual */
     if(str_aux[i1]=='1')
-      visao_aux.adicionarReferencia(refer, tipo_exp[i1]);
+      visao_aux.addReference(refer, tipo_exp[i1]);
    }
   }
   //Exibe o código fonte da visão auxliar, para refletir a configuração atual da mesma
@@ -377,7 +377,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
  }
 }
 
-void VisaoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Visao *visao, float px, float py)
+void VisaoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, View *visao, float px, float py)
 {
  unsigned i, qtd;
  bool sel_from, from_where, apos_where;
@@ -394,7 +394,7 @@ void VisaoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Vi
  if(visao)
  {
   //Obtém o número de referências da visão
-  qtd=visao->obterNumReferencias();
+  qtd=visao->getReferenceCount();
 
   /* Bloqueia os sinais da tabela de referências para inserção de vários
      itens sem disparo de sinais */
@@ -404,12 +404,12 @@ void VisaoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Vi
    tab_referencias->adicionarLinha();
 
    //Obtém a referência da visão
-   refer=visao->obterReferencia(i);
+   refer=visao->getReference(i);
 
    //Verifica qual a aplicação SQL da referência na visão
-   sel_from=(visao->obterIndiceReferencia(refer,Reference::SQL_REFER_SELECT) >= 0);
-   from_where=(visao->obterIndiceReferencia(refer,Reference::SQL_REFER_FROM) >= 0);
-   apos_where=(visao->obterIndiceReferencia(refer,Reference::SQL_REFER_WHERE)>= 0);
+   sel_from=(visao->getReferenceIndex(refer,Reference::SQL_REFER_SELECT) >= 0);
+   from_where=(visao->getReferenceIndex(refer,Reference::SQL_REFER_FROM) >= 0);
+   apos_where=(visao->getReferenceIndex(refer,Reference::SQL_REFER_WHERE)>= 0);
 
    //Exibe a referência na tabela
    exibirDadosReferencia(refer, sel_from, from_where, apos_where, i);
@@ -425,12 +425,12 @@ void VisaoWidget::aplicarConfiguracao(void)
 {
  try
  {
-  Visao *visao=NULL;
+  View *visao=NULL;
 
-  iniciarConfiguracao<Visao>();
+  iniciarConfiguracao<View>();
 
   //Obtém a referêni   visao que está sendo editada/criada
-  visao=dynamic_cast<Visao *>(this->objeto);
+  visao=dynamic_cast<View *>(this->objeto);
 
   //Faz a cópia da visão auxiliar para a visão que está sendo editada
   (*visao)=visao_aux;

@@ -22,7 +22,7 @@
 #ifndef OG_TITULO_OBJETO_H
 #define OG_TITULO_OBJETO_H
 
-#include "visao.h"
+#include "view.h"
 #include "tabela.h"
 #include "objetografico.h"
 

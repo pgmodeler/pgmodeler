@@ -19,16 +19,16 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef VISAO_H
-#define VISAO_H
+#ifndef VIEW_H
+#define VIEW_H
 
 #include "reference.h"
 #include "basetable.h"
 
-class Visao: public BaseTable {
+class View: public BaseTable {
  private:
   //Armazena as referências para objetos e expressões
-  vector<Reference> referencias;
+  vector<Reference> references;
 
   /* Vetores que armazenam os ponteiros para as referências
      da visão. Estes vetores significam as expressões na
@@ -39,51 +39,51 @@ class Visao: public BaseTable {
 
   /* Define o atributo declaração usado pelo parser de esquema
      na geração da definição SQL da visão */
-  void definirAtributoDeclaracao(void);
+  void setDeclarationAttribute(void);
 
   /* Define o atributo de referências usado pelo parser de esquema
      na geração da definição XML da visão */
-  void definirAtributoReferencias(void);
+  void setReferencesAttribute(void);
 
   /* Verifica se uma determinada referência já está cadastrada
      retornando -1 caso não exista ou seu índice caso exista */
-  int obterIndiceReferencia(Reference &refer);
+  int getReferenceIndex(Reference &refer);
 
  public:
-  Visao(void);
-  ~Visao(void);
+  View(void);
+  ~View(void);
 
   /* Adiciona um referência a  visão e ao mesmo tempo em um dos vetores
      de expressão usandos os parâmetros tipo_sql e idx_exp (opcional) */
-  void adicionarReferencia(Reference &refer, unsigned tipo_sql, int idx_exp=-1);
+  void addReference(Reference &refer, unsigned tipo_sql, int idx_exp=-1);
 
   /* Remove uma referência da visão, caso o elemento a ser removido esteja
      sendo referenciado pelos vetores de expressão, os elementos desses
      ultimos vetores também são removidos */
-  void removerReferencia(unsigned id_ref);
-  void removerReferencias(void);
+  void removeReference(unsigned id_ref);
+  void removeReferences(void);
 
   //Remove um elemento de uma das listas de expressão através do índice
-  void removerReferencia(unsigned idx_exp, unsigned tipo_sql);
+  void removeReference(unsigned idx_exp, unsigned tipo_sql);
 
   //Obtém o número de referências da visão
-  unsigned obterNumReferencias(void);
+  unsigned getReferenceCount(void);
 
   /* Obtém o número de elementos em uma das listas de expressão.
      Caso o parâmetro tipo_ref estiver especificado (>= 0) o usuário
      pode filtar a contagem pelo tipo de referência (expressão ou objeto) */
-  unsigned obterNumReferencias(unsigned tipo_sql, int tipo_ref=-1);
+  unsigned getReferenceCount(unsigned tipo_sql, int tipo_ref=-1);
 
   //Obtém uma referência da visão através do índice
-  Reference obterReferencia(unsigned id_ref);
+  Reference getReference(unsigned id_ref);
 
   /* Obtém uma referência numa determinada posição de uma lista
      de expressões da visão */
-  Reference obterReferencia(unsigned id_ref, unsigned tipo_sql);
+  Reference getReference(unsigned id_ref, unsigned tipo_sql);
 
   /* Retorna o índice de uma dada referência em uma das lista de
      expressões SQL: SELECT-FROM, FROM-WHERE ou após WHERE */
-  int obterIndiceReferencia(Reference &ref, unsigned tipo_sql);
+  int getReferenceIndex(Reference &ref, unsigned tipo_sql);
 
   //Retorna a definição SQL ou XML do objeto
   QString getCodeDefinition(unsigned tipo_def);
@@ -94,16 +94,16 @@ class Visao: public BaseTable {
      referenciam colunas adicionadas por relacionamento a
      fim de se evitar quebra de ligações devido as constantes
      conexões e desconexões de relacionamentos */
-  bool referenciaColunaIncRelacao(void);
+  bool isReferRelationshipColumn(void);
 
   //Retorna se a visão referencia uma dada tabela
-  bool referenciaTabela(Tabela *tab);
+  bool isReferencingTable(Tabela *tab);
 
   //Retorna se a visão referencia uma dada coluna
-  bool referenciaColuna(Column *col);
+  bool isReferencingColumn(Column *col);
 
   //Copia os atributos do objeto do parâmetro para o objeto this
-  void operator = (Visao &visao);
+  void operator = (View &visao);
 };
 
 #endif

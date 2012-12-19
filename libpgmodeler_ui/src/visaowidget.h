@@ -47,7 +47,7 @@ class VisaoWidget: public ObjetoBaseWidget, public Ui::VisaoWidget {
   /* Esta instância de visão é usada para receber todos os atributos configurados no formulário.
      Uma vez atribuídos os dados e validados a mesma tem seus atributos copiados para a visão
      que realemente precisa ser modificada/criada (this->objeto) */
-  Visao visao_aux;
+  View visao_aux;
 
                    //Tabela de listagem das referências cadastradas para a visão
   TabelaObjetosWidget *tab_referencias;
@@ -69,7 +69,7 @@ class VisaoWidget: public ObjetoBaseWidget, public Ui::VisaoWidget {
 
  public:
    VisaoWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Visao *visao, float px, float py);
+   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, View *visao, float px, float py);
 
  private slots:
   void hideEvent(QHideEvent *);

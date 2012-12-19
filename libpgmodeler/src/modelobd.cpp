@@ -173,7 +173,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_SCHEMA)
     adicionarEsquema(dynamic_cast<Schema *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_VIEW)
-    adicionarVisao(dynamic_cast<Visao *>(objeto), idx_obj);
+    adicionarVisao(dynamic_cast<View *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TYPE)
     adicionarTipo(dynamic_cast<Type *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_ROLE)
@@ -231,7 +231,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_SCHEMA)
     removerEsquema(dynamic_cast<Schema *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_VIEW)
-    removerVisao(dynamic_cast<Visao *>(objeto), idx_obj);
+    removerVisao(dynamic_cast<View *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TYPE)
     removerTipo(dynamic_cast<Type *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_ROLE)
@@ -296,7 +296,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
   else if(tipo_obj==OBJ_SCHEMA)
    removerEsquema(dynamic_cast<Schema *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_VIEW)
-   removerVisao(dynamic_cast<Visao *>(objeto), idx_obj);
+   removerVisao(dynamic_cast<View *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_TYPE)
    removerTipo(dynamic_cast<Type *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_ROLE)
@@ -840,7 +840,7 @@ void ModeloBD::removerSequencia(Sequence *sequencia, int idx_obj)
  }
 }
 
-void ModeloBD::adicionarVisao(Visao *visao, int idx_obj)
+void ModeloBD::adicionarVisao(View *visao, int idx_obj)
 {
  if(visao)
  {
@@ -856,12 +856,12 @@ void ModeloBD::adicionarVisao(Visao *visao, int idx_obj)
  }
 }
 
-Visao *ModeloBD::obterVisao(unsigned idx_obj)
+View *ModeloBD::obterVisao(unsigned idx_obj)
 {
- return(dynamic_cast<Visao *>(obterObjeto(idx_obj, OBJ_VIEW)));
+ return(dynamic_cast<View *>(obterObjeto(idx_obj, OBJ_VIEW)));
 }
 
-void ModeloBD::removerVisao(Visao *visao, int idx_obj)
+void ModeloBD::removerVisao(View *visao, int idx_obj)
 {
  if(visao)
  {
@@ -964,7 +964,7 @@ void ModeloBD::atualizarRelFkTabela(Tabela *tabela)
  }
 }
 
-void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
+void ModeloBD::atualizarRelTabelaVisao(View *visao)
 {
  Tabela *tab=NULL;
  BaseRelationship *rel=NULL;
@@ -1028,7 +1028,7 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
      tab=dynamic_cast<Tabela *>(rel->getTable(BaseRelationship::DST_TABLE));
 
     //Caso a visão não referencie mais a tabela
-    if(!visao->referenciaTabela(tab))
+    if(!visao->isReferencingTable(tab))
     {
      //Remove o relacionamento
      removerRelacionamento(rel);
@@ -1049,11 +1049,11 @@ void ModeloBD::atualizarRelTabelaVisao(Visao *visao)
   /* Cria automaticamente os relacionamentos entre as tabelas e a visão.
      As tabelas referenciadas são obtidas das referências na parte SELECT
      da consulta que gera a visão  */
-  qtd_ref=visao->obterNumReferencias(Reference::SQL_REFER_SELECT);
+  qtd_ref=visao->getReferenceCount(Reference::SQL_REFER_SELECT);
 
   for(i=0; i < qtd_ref; i++)
   {
-   ref=visao->obterReferencia(i, Reference::SQL_REFER_SELECT);
+   ref=visao->getReference(i, Reference::SQL_REFER_SELECT);
    tab=ref.getTable();
 
    /* Caso a tabela exista, um relacionamento tabela-visão será automaticamente criado
@@ -1446,7 +1446,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
  Constraint *restricao=NULL;
  Index *indice=NULL;
  Trigger *gatilho=NULL;
- Visao *visao=NULL;
+ View *visao=NULL;
  BaseRelationship *rel=NULL;
  Reference ref;
  ObjectType tipo_obj_tab[3]={ OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_INDEX };
@@ -1571,12 +1571,12 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
   while(itr!=itr_end)
   {
    //Obtém a visão atual através do iterador atual
-   visao=dynamic_cast<Visao *>(*itr);
+   visao=dynamic_cast<View *>(*itr);
    itr++;
 
    /* Caso a visão esteja referenciando uma coluna incluída por
       relacionamento considera a mesma como objeto especial */
-   if(visao->referenciaColunaIncRelacao())
+   if(visao->isReferRelationshipColumn())
    {
     //Armazena a definição XML da visão
     xml_objs_especiais[visao->getObjectId()]=visao->getCodeDefinition(SchemaParser::XML_DEFINITION);
@@ -1586,12 +1586,12 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
        recriação */
 
     //Obtém a quantidade de referências as tabelas
-    qtd=visao->obterNumReferencias(Reference::SQL_REFER_SELECT);
+    qtd=visao->getReferenceCount(Reference::SQL_REFER_SELECT);
 
     for(i=0; i < qtd; i++)
     {
      //Obtém uma referência
-     ref=visao->obterReferencia(i, Reference::SQL_REFER_SELECT);
+     ref=visao->getReference(i, Reference::SQL_REFER_SELECT);
      //Obtém a tabela da referência
      tabela=ref.getTable();
 
@@ -1651,7 +1651,7 @@ void ModeloBD::criarObjetoEspecial(const QString &def_xml_obj, unsigned id_obj)
   if(tipo_obj==OBJ_SEQUENCE)
    adicionarSequencia(dynamic_cast<Sequence *>(objeto));
   else if(tipo_obj==OBJ_VIEW)
-   adicionarVisao(dynamic_cast<Visao *>(objeto));
+   adicionarVisao(dynamic_cast<View *>(objeto));
 
   /* Modifica o id do objeto para o valor do id passado no parâmetro.
      Como um novo id é atribuído quando o objeto é instanciado e levando
@@ -5481,10 +5481,10 @@ Sequence *ModeloBD::criarSequencia(bool ignorar_possuidora)
  return(sequencia);
 }
 
-Visao *ModeloBD::criarVisao(void)
+View *ModeloBD::criarVisao(void)
 {
  map<QString, QString> atributos;
- Visao *visao=NULL;
+ View *visao=NULL;
  Column *coluna=NULL;
  Tabela *tabela=NULL;
  QString elem, str_aux;
@@ -5495,7 +5495,7 @@ Visao *ModeloBD::criarVisao(void)
 
  try
  {
-  visao=new Visao;
+  visao=new View;
   definirAtributosBasicos(visao);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
@@ -5605,7 +5605,7 @@ Visao *ModeloBD::criarVisao(void)
       {
        //Obtém o índice da referência e a adiioa   visão
        idx_ref=lista_aux[i].toInt();
-       visao->adicionarReferencia(vet_refs[idx_ref],tipo);
+       visao->addReference(vet_refs[idx_ref],tipo);
       }
 
       XMLParser::restorePosition();
@@ -7008,15 +7008,15 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   //** Obtendo as dependências de Visões **
   else if(tipo_obj==OBJ_VIEW)
   {
-   Visao *visao=dynamic_cast<Visao *>(objeto);
+   View *visao=dynamic_cast<View *>(objeto);
    unsigned i, qtd;
 
    //Obtém as dependências das tabelas referenciadas pela visão
-   qtd=visao->obterNumReferencias();
+   qtd=visao->getReferenceCount();
    for(i=0; i < qtd; i++)
    {
-    if(visao->obterReferencia(i).getTable())
-     obterDependenciasObjeto(visao->obterReferencia(i).getTable(), vet_deps, inc_dep_indiretas);
+    if(visao->getReference(i).getTable())
+     obterDependenciasObjeto(visao->getReference(i).getTable(), vet_deps, inc_dep_indiretas);
    }
   }
  }
@@ -7813,7 +7813,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
         e chama do método da visão o qual retorna se a coluna
         é referenciada pelo elementos da visão. */
      if((tipos_obj[i]==OBJ_SEQUENCE && dynamic_cast<Sequence *>(*itr)->getOwnerColumn()==coluna) ||
-        (tipos_obj[i]==OBJ_VIEW && dynamic_cast<Visao *>(*itr)->referenciaColuna(coluna)))
+        (tipos_obj[i]==OBJ_VIEW && dynamic_cast<View *>(*itr)->isReferencingColumn(coluna)))
      {
       refer=true;
       vet_refs.push_back(*itr);

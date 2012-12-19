@@ -439,7 +439,7 @@ void ModeloWidget::manipularAdicaoObjeto(BaseObject *objeto)
    break;
 
    case OBJ_VIEW:
-     item=new OGVisao(dynamic_cast<Visao *>(obj_graf));
+     item=new OGVisao(dynamic_cast<View *>(obj_graf));
    break;
 
    case OBJ_RELATIONSHIP:
@@ -1216,8 +1216,8 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_VIEW:
-    Visao *visao;
-    visao=dynamic_cast<Visao *>(objeto);
+    View *visao;
+    visao=dynamic_cast<View *>(objeto);
     visao_wgt->definirAtributos(modelo, lista_op, visao, pos.x(), pos.y());
     visao_wgt->show();
    break;

@@ -1,6 +1,6 @@
-#include "visao.h"
+#include "view.h"
 
-Visao::Visao(void) : BaseTable()
+View::View(void) : BaseTable()
 {
  //Definindo configurações inicias para a visão
  obj_type=OBJ_VIEW;
@@ -11,10 +11,10 @@ Visao::Visao(void) : BaseTable()
  attributes[ParsersAttributes::EXP_SIMPLES]="";
 }
 
-Visao::~Visao(void)
+View::~View(void)
 {
  //Limpa a lista de referências da visão
- referencias.clear();
+ references.clear();
 
  //Limpa as demais listas
  exp_select.clear();
@@ -22,7 +22,7 @@ Visao::~Visao(void)
  exp_where.clear();
 }
 
-int Visao::obterIndiceReferencia(Reference &refer)
+int View::getReferenceIndex(Reference &refer)
 {
  vector<Reference>::iterator itr, itr_end;
  bool existe=false;
@@ -30,8 +30,8 @@ int Visao::obterIndiceReferencia(Reference &refer)
 
  /* Varre a lista de referencias da visão para
     comparar os elementos */
- itr=referencias.begin();
- itr_end=referencias.end();
+ itr=references.begin();
+ itr_end=references.end();
 
  while(itr!=itr_end && !existe)
  {
@@ -48,21 +48,21 @@ int Visao::obterIndiceReferencia(Reference &refer)
  return(idx);
 }
 
-void Visao::adicionarReferencia(Reference &refer, unsigned tipo_sql, int id_exp)
+void View::addReference(Reference &refer, unsigned tipo_sql, int id_exp)
 {
  int idx;
  vector<unsigned> *vet_idref=NULL;
  Column *col=NULL;
 
  //Verifica se a referência já existe na visão
- idx=obterIndiceReferencia(refer);
+ idx=getReferenceIndex(refer);
 
  //Caso não seja encontrada (idx = -1)
  if(idx < 0)
  {
   //Insere a nova referência na lista
-  referencias.push_back(refer);
-  idx=referencias.size()-1;
+  references.push_back(refer);
+  idx=references.size()-1;
  }
 
  /* Selecionando a lista de expressões de acordo o
@@ -93,12 +93,12 @@ void Visao::adicionarReferencia(Reference &refer, unsigned tipo_sql, int id_exp)
   this->object_id=BaseObject::getGlobalId();
 }
 
-unsigned Visao::obterNumReferencias(void)
+unsigned View::getReferenceCount(void)
 {
- return(referencias.size());
+ return(references.size());
 }
 
-unsigned Visao::obterNumReferencias(unsigned tipo_sql, int tipo_ref)
+unsigned View::getReferenceCount(unsigned tipo_sql, int tipo_ref)
 {
  vector<unsigned> *vet_idref=NULL;
 
@@ -130,7 +130,7 @@ unsigned Visao::obterNumReferencias(unsigned tipo_sql, int tipo_ref)
   {
    /* Caso o tipo da referência atual seja igual ao tipo da referência
       passada pelo parâmetro, incrementa a quantidade */
-   if(referencias[(*itr)].getReferenceType()==static_cast<unsigned>(tipo_ref)) qtd++;
+   if(references[(*itr)].getReferenceType()==static_cast<unsigned>(tipo_ref)) qtd++;
    itr++;
   }
 
@@ -139,17 +139,17 @@ unsigned Visao::obterNumReferencias(unsigned tipo_sql, int tipo_ref)
  }
 }
 
-Reference Visao::obterReferencia(unsigned id_ref)
+Reference View::getReference(unsigned id_ref)
 {
  /* Caso tente acessar uma referência com índice
     inválido, dispara uma exceção */
- if(id_ref >= referencias.size())
+ if(id_ref >= references.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(referencias[id_ref]);
+ return(references[id_ref]);
 }
 
-Reference Visao::obterReferencia(unsigned id_ref, unsigned tipo_sql)
+Reference View::getReference(unsigned id_ref, unsigned tipo_sql)
 {
  vector<unsigned> *vet_idref=NULL;
  unsigned idx;
@@ -165,10 +165,10 @@ Reference Visao::obterReferencia(unsigned id_ref, unsigned tipo_sql)
 
  //Retorna a referência na posição indicada por id_ref
  idx=vet_idref->at(id_ref);
- return(referencias[idx]);
+ return(references[idx]);
 }
 
-void Visao::removerReferencia(unsigned id_ref)
+void View::removeReference(unsigned id_ref)
 {
  vector<unsigned> *vet_idref[3]={&exp_select, &exp_from, &exp_where};
  vector<unsigned>::iterator itr, itr_aux, itr_end;
@@ -176,7 +176,7 @@ void Visao::removerReferencia(unsigned id_ref)
 
  /* Dispara uma exceção caso se tente remover uma referência
     com índice inválido */
- if(id_ref >= referencias.size())
+ if(id_ref >= references.size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  /* Varre as três listas de expressões para verificar se o
@@ -194,7 +194,7 @@ void Visao::removerReferencia(unsigned id_ref)
       a ser removeda, o item da lista de expressão atual
       o qual contém a referência a ser excluída será
       removido. */
-   if(referencias[*itr]==referencias[id_ref])
+   if(references[*itr]==references[id_ref])
     vet_idref[i]->erase(itr);
 
    itr++;
@@ -202,18 +202,18 @@ void Visao::removerReferencia(unsigned id_ref)
  }
 
  //Remove a referência da lista
- referencias.erase(referencias.begin() + id_ref);
+ references.erase(references.begin() + id_ref);
 }
 
-void Visao::removerReferencias(void)
+void View::removeReferences(void)
 {
- referencias.clear();
+ references.clear();
  exp_select.clear();
  exp_from.clear();
  exp_where.clear();
 }
 
-void Visao::removerReferencia(unsigned id_exp, unsigned tipo_sql)
+void View::removeReference(unsigned id_exp, unsigned tipo_sql)
 {
  vector<unsigned> *vet_idref=NULL;
 
@@ -233,7 +233,7 @@ void Visao::removerReferencia(unsigned id_exp, unsigned tipo_sql)
  vet_idref->erase(vet_idref->begin() + id_exp);
 }
 
-int Visao::obterIndiceReferencia(Reference &ref, unsigned tipo_sql)
+int View::getReferenceIndex(Reference &ref, unsigned tipo_sql)
 {
  vector<unsigned> *vet_idref=NULL;
  vector<unsigned>::iterator itr, itr_aux, itr_end;
@@ -249,7 +249,7 @@ int Visao::obterIndiceReferencia(Reference &ref, unsigned tipo_sql)
  else
   vet_idref=&exp_where;
 
- idx_ref=obterIndiceReferencia(ref);
+ idx_ref=getReferenceIndex(ref);
  itr=vet_idref->begin();
  itr_end=vet_idref->end();
 
@@ -265,7 +265,7 @@ int Visao::obterIndiceReferencia(Reference &ref, unsigned tipo_sql)
   return(itr-vet_idref->begin());
 }
 
-void Visao::definirAtributoDeclaracao(void)
+void View::setDeclarationAttribute(void)
 {
  QString decl;
 
@@ -294,7 +294,7 @@ void Visao::definirAtributoDeclaracao(void)
      /* Concatena   declaração da visão a sql da referência atual
         especificando o tipo da sql a ser gerada */
      idx=(*itr);
-     decl+=referencias[idx].getSQLDefinition(tipo_sql[i]);
+     decl+=references[idx].getSQLDefinition(tipo_sql[i]);
      itr++;
     }
 
@@ -313,7 +313,7 @@ void Visao::definirAtributoDeclaracao(void)
  attributes[ParsersAttributes::DECLARATION]=decl;
 }
 
-void Visao::definirAtributoReferencias(void)
+void View::setReferencesAttribute(void)
 {
  QString str_aux;
  QString vet_atrib[]={ ParsersAttributes::SELECT_EXP,
@@ -323,9 +323,9 @@ void Visao::definirAtributoReferencias(void)
  int qtd, i, i1;
 
  //Obtém a definição XMl das referências
- qtd=referencias.size();
+ qtd=references.size();
  for(i=0; i < qtd; i++)
-  str_aux+=referencias[i].getXMLDefinition();
+  str_aux+=references[i].getXMLDefinition();
  attributes[ParsersAttributes::REFERENCES]=str_aux;
 
  /* Este bloco concatena os indices de referências
@@ -343,72 +343,72 @@ void Visao::definirAtributoReferencias(void)
  }
 }
 
-bool Visao::referenciaColunaIncRelacao(void)
+bool View::isReferRelationshipColumn(void)
 {
  Column *coluna=NULL;
  unsigned qtd, i;
  bool enc=false;
 
- qtd=referencias.size();
+ qtd=references.size();
 
  for(i=0; i < qtd && !enc; i++)
  {
-  coluna=referencias[i].getColumn();
+  coluna=references[i].getColumn();
   enc=(coluna && coluna->isAddedByRelationship());
  }
 
  return(enc);
 }
 
-bool Visao::referenciaTabela(Tabela *tab)
+bool View::isReferencingTable(Tabela *tab)
 {
  Tabela *tab_aux=NULL;
  unsigned qtd, i;
  bool enc=false;
 
- qtd=referencias.size();
+ qtd=references.size();
 
  for(i=0; i < qtd && !enc; i++)
  {
-  tab_aux=referencias[i].getTable();
+  tab_aux=references[i].getTable();
   enc=(tab_aux && (tab_aux == tab));
  }
 
  return(enc);
 }
 
-bool Visao::referenciaColuna(Column *col)
+bool View::isReferencingColumn(Column *col)
 {
  unsigned qtd, i;
  bool enc=false;
 
  if(col)
  {
-  qtd=referencias.size();
+  qtd=references.size();
   for(i=0; i < qtd && !enc; i++)
-   enc=(col==referencias[i].getColumn());
+   enc=(col==references[i].getColumn());
  }
  return(enc);
 }
 
-QString Visao::getCodeDefinition(unsigned tipo_def)
+QString View::getCodeDefinition(unsigned tipo_def)
 {
  if(tipo_def==SchemaParser::SQL_DEFINITION)
-  definirAtributoDeclaracao();
+  setDeclarationAttribute();
  else
  {
   setPositionAttribute();
-  definirAtributoReferencias();
+  setReferencesAttribute();
  }
 
  return(BaseObject::__getCodeDefinition(tipo_def));
 }
 
-void Visao::operator = (Visao &visao)
+void View::operator = (View &visao)
 {
  (*dynamic_cast<BaseGraphicObject *>(this))=reinterpret_cast<BaseGraphicObject &>(visao);
 
- this->referencias=visao.referencias;
+ this->references=visao.references;
  this->exp_select=visao.exp_select;
  this->exp_from=visao.exp_from;
  this->exp_where=visao.exp_where;

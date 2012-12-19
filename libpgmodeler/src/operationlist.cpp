@@ -107,7 +107,7 @@ void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type
     copyObject(psrc_obj, dynamic_cast<Type *>(copy_obj));
   break;
   case OBJ_VIEW:
-    copyObject(psrc_obj, dynamic_cast<Visao *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<View *>(copy_obj));
   break;
   default:
     throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -869,7 +869,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
     //Case the object is a view is necessary to update the table-view relationships on the model
     if(obj_type==OBJ_VIEW && oper->op_type==Operation::OBJECT_MODIFIED)
-     model->atualizarRelTabelaVisao(dynamic_cast<Visao *>(obj_grafico));
+     model->atualizarRelTabelaVisao(dynamic_cast<View *>(obj_grafico));
     else if((obj_type==OBJ_RELATIONSHIP ||
              (obj_type==OBJ_TABLE && model->obterRelacionamento(dynamic_cast<BaseTable *>(object), NULL))) &&
             oper->op_type==Operation::OBJECT_MODIFIED)

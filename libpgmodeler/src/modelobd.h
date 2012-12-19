@@ -30,7 +30,7 @@
 #include "tabela.h"
 #include "function.h"
 #include "schema.h"
-#include "visao.h"
+#include "view.h"
 #include "sequence.h"
 #include "relationship.h"
 #include "textbox.h"
@@ -301,9 +301,9 @@ class ModeloBD:  public QObject, public BaseObject {
   Schema *getSchema(unsigned idx_obj);
 
   //Métodos de manipulação de visões
-  void adicionarVisao(Visao *visao, int idx_obj=-1);
-  void removerVisao(Visao *visao, int idx_obj=-1);
-  Visao *obterVisao(unsigned idx_obj);
+  void adicionarVisao(View *visao, int idx_obj=-1);
+  void removerVisao(View *visao, int idx_obj=-1);
+  View *obterVisao(unsigned idx_obj);
 
   //Métodos de manipulação de tabela
   void adicionarTabela(Tabela *tabela, int idx_obj=-1);
@@ -423,7 +423,7 @@ class ModeloBD:  public QObject, public BaseObject {
      por referenciar a sequência como um tipo de dado */
   Sequence *criarSequencia(bool ignorar_possuidora=false);
 
-  Visao *criarVisao(void);
+  View *criarVisao(void);
   Permission *criarPermissao(void);
 
   Textbox *criarCaixaTexto(void);
@@ -432,7 +432,7 @@ class ModeloBD:  public QObject, public BaseObject {
   /* Cria automaticamente relacionamentos entre tabelas e a visão passada
      caso estes não existam no modelo. Remove relacionamentos os quais se
      tornaram inválidos ou seja, a visão deixa de referenciar uma dada tabela */
-  void atualizarRelTabelaVisao(Visao *visao);
+  void atualizarRelTabelaVisao(View *visao);
 
   /* Cria automaticamente relacionamentos entre tabelas as quais estão relacionadas
      através de chaves estrangeiras criadas pelo usuário. Caso já exista um relacionamento
