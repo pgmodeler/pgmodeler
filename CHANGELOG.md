@@ -1,6 +1,25 @@
 Complete pgModeler Change Log
 -----------------------------
 
+[ v0.4.0 ]
+
+Attention: The v0.4.0 is in alpha stage so the change log can be modified at any moment when new bug fixes / features is implemented. This stable 0.4.0 has no release date yet because all the code is being refactored meaning that the new version will be completely decoupled from previous versions.
+
+* [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
+* [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
+* [Change]: relationship validation method now removes fk relationships when the foreign keys that gerenates is no longer exists.
+* [Change]: copy/cut/delete commands does not manipulates system objects like schema public and languages C, SQL and plpgsql.
+* [Fix]: corrected bug that was removing fk relationships when pasting objects.
+* [Fix]: corrected SQL syntax error of 'timestamp with time zone'.
+* [Fix]: corrected constraint type showing on editing form.
+* [Fix]: corrected bug on cyrillic typed enums and check constraints expressions.
+* [Fix]: corrected bug on enumeration type editing form.
+* [Fix]: corrected bug on 'truncate' table privilege code generation.
+* [Fix]: corrected column default value code generation.
+* [Fix]: dummyplugin build process corrected on Windows.
+* [Fix]: corrected bug on column comment code generation.
+* [Fix]: corrected bug that was deleting two tables at once.
+
 [ v0.3.4 ]
 
 * [New]: added chinese UI translation (provided by [gjunming](https://github.com/gjunming)).

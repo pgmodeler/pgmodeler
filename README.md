@@ -14,6 +14,15 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for details.
 
+Donate to pgModeler
+-------------------
+
+Making a software is no easy task! With pgModeler was no different. Much effort, coffee, chocolate, time and knowledge has been devoted to the project so that a usable and constantly improved product is delivered to the community free of charge.
+
+Despite all many feature contribution all open source project needs sometimes a financial incentive, this way the developer realizes that his product is even more valuable.
+
+If you like the project and think it deserves a contribution please donate any amount (via PayPal) on [project's official site](http://pgmodeler.com.br). The pgModeler's author will be immensely grateful for your support and will continue to improve the tool until its maximum pontential.
+
 Compiling/Installation
 ----------------------
 
@@ -37,24 +46,24 @@ Known bugs
 Change Log
 ----------
 
-[ v0.3.4 ]
+[ v0.4.0 ]
 
-* [New]: added chinese UI translation (provided by [gjunming](https://github.com/gjunming)).
-* [New]: added basic support for PostGiS 2.0 only data types: box2d, box3d, geometry and geography (suggested by [george-silva](https://github.com/george-silva) on [issue#28](https://github.com/pgmodeler/pgmodeler/issues/28))(EXPERIMENTAL). Note: when using these data types make sure that PostGiS extension is installed on database cluster since pgModeler WILL NOT install it automatically or generate the command to do it!
-* [New]: added a model restoration feature to reopen models after unexpected quit (crash).
-* [New]: added a crash handler to pgModeler. Now signal SIGSEGV is trapped (in most cases) and the crash handler pops up permiting the user to generate an error report. (EXPERIMENTAL)
-* [New]: to facilitate the error reporting exceptions stack now can be showed in text format. Users can post the complete error stack when creating an issue.
-* [New]: icon added to pgModeler executable (Windows only)
-* [Change]: update on pt_BR translation file.
-* [Change]: removed "pgmodeler" prefix from translation files.
-* [Change]: added the field "Underline" on textbox editing form.
-* [Fix]: corrected the "AlwayOnTop" bug on model overview widget. ([issue#30](https://github.com/pgmodeler/pgmodeler/issues/30))
-* [Fix]: little fix on startup scripts. Corrected de PGMODELER_ROOT on both Linux and Windows systems. ([issue#29](https://github.com/pgmodeler/pgmodeler/issues/29))
-* [Fix]: corrected the referece to environment variables PGMODELER_*. Now pgModeler search for necessary paths on current directory if some of these variables are not set.
-* [Fix]: corrected the validation of UTF-8 names that have 3 bytes length.
-* [Fix]: corrected the sources path reference on project (.pro) files. Now lupdate command do not generates empty TS files.
-* [Fix]: corrected a bug that was causing crash where user try to edit protected objects.
-* [Fix]: corrected the exhibition of UTF-8 messages on ```throw``` statements.
+Attention: The v0.4.0 is in alpha stage so the change log can be modified at any moment when new bug fixes / features is implemented. This stable 0.4.0 has no release date yet because all the code is being refactored meaning that the new version will be completely decoupled from previous versions.
+
+* [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
+* [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
+* [Change]: relationship validation method now removes fk relationships when the foreign keys that gerenates is no longer exists.
+* [Change]: copy/cut/delete commands does not manipulates system objects like schema public and languages C, SQL and plpgsql.
+* [Fix]: corrected bug that was removing fk relationships when pasting objects.
+* [Fix]: corrected SQL syntax error of 'timestamp with time zone'.
+* [Fix]: corrected constraint type showing on editing form.
+* [Fix]: corrected bug on cyrillic typed enums and check constraints expressions.
+* [Fix]: corrected bug on enumeration type editing form.
+* [Fix]: corrected bug on 'truncate' table privilege code generation.
+* [Fix]: corrected column default value code generation.
+* [Fix]: dummyplugin build process corrected on Windows.
+* [Fix]: corrected bug on column comment code generation.
+* [Fix]: corrected bug that was deleting two tables at once.
 
 The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 
