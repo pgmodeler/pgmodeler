@@ -3,7 +3,7 @@ Complete pgModeler Change Log
 
 [ v0.4.0 ]
 
-Attention: The v0.4.0 is in alpha stage so the change log can be modified at any moment when new bug fixes / features is implemented. This stable 0.4.0 has no release date yet because all the code is being refactored meaning that the new version will be completely decoupled from previous versions.
+Attention: The v0.4.0 is in alpha stage so the change log can be modified at any moment when new bug fixes / features is implemented. The stable 0.4.0 has no release date yet because all the code is being refactored meaning that the new version will be completely decoupled from previous versions.
 
 * [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
 * [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
