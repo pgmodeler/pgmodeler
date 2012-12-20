@@ -722,7 +722,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
       col=new Column;
       (*col)=(*rel->getAttribute(idx));
       col->setParentTable(NULL);
-      tab->adicionarColuna(col);
+      tab->addColumn(col);
      }
 
      //Copia as restrições  do relacionamento n-n para a tabela gerada
@@ -740,11 +740,11 @@ void ModeloWidget::converterRelacionamentoNN(void)
        qtd1=rest_aux->getColumnCount(x);
        for(idx1=0; idx1 < qtd1; idx1++)
        {
-        col=tab->obterColuna(rest_aux->getColumn(idx, x)->getName());
+        col=tab->getColumn(rest_aux->getColumn(idx, x)->getName());
         if(col) rest->addColumn(col, x);
        }
       }
-      tab->adicionarRestricao(rest);
+      tab->addConstraint(rest);
      }
 
      //Inicia o encadeamento de operaçẽos
@@ -1563,12 +1563,12 @@ void ModeloWidget::copiarObjetos(void)
     for(id_tipo=0; id_tipo < 3; id_tipo++)
     {
      //Varre cada lista de objetos especiais validando-os e inserindo-os na lista de dependências
-     qtd=tabela->obterNumObjetos(tipos[id_tipo]);
+     qtd=tabela->getObjectCount(tipos[id_tipo]);
 
      for(i=0; i < qtd; i++)
      {
       //Obtém um objeto especial
-      obj_tab=dynamic_cast<TableObject *>(tabela->obterObjeto(i, tipos[id_tipo]));
+      obj_tab=dynamic_cast<TableObject *>(tabela->getObject(i, tipos[id_tipo]));
 
       /* O objeto só será incluído na lista se o mesmo não foi incluído por relacionamento mas
          referencia colunas incluídas por relacionamento. Caso se tratar de uma restrição, a mesma
@@ -1576,9 +1576,9 @@ void ModeloWidget::copiarObjetos(void)
       if(!obj_tab->isAddedByRelationship() &&
          ((tipos[id_tipo]==OBJ_CONSTRAINT &&
            dynamic_cast<Constraint *>(obj_tab)->getConstraintType()!=ConstraintType::primary_key &&
-           dynamic_cast<Constraint *>(obj_tab)->isReferRelationshipColumn()) ||
-          (tipos[id_tipo]==OBJ_TRIGGER && dynamic_cast<Trigger *>(obj_tab)->isReferRelationshipColumn()) ||
-          (tipos[id_tipo]==OBJ_INDEX && dynamic_cast<Index *>(obj_tab)->isReferRelationshipColumn())))
+           dynamic_cast<Constraint *>(obj_tab)->isReferRelationshipAddedColumn()) ||
+          (tipos[id_tipo]==OBJ_TRIGGER && dynamic_cast<Trigger *>(obj_tab)->isReferRelationshipAddedColumn()) ||
+          (tipos[id_tipo]==OBJ_INDEX && dynamic_cast<Index *>(obj_tab)->isReferRelationshipAddedColumn())))
        vet_deps.push_back(obj_tab);
      }
     }
@@ -2018,7 +2018,7 @@ void ModeloWidget::excluirObjetos(void)
       if(objeto_tab)
       {
        tabela=dynamic_cast<Table *>(objeto_tab->getParentTable());
-       idx_obj=tabela->obterIndiceObjeto(objeto_tab->getName(true), tipo_obj);
+       idx_obj=tabela->getObjectIndex(objeto_tab->getName(true), tipo_obj);
 
        try
        {
@@ -2031,7 +2031,7 @@ void ModeloWidget::excluirObjetos(void)
 
         //Adiciona o objeto removido   lista de operações e redesenha o modelo
         lista_op->registerObject(objeto_tab, Operation::OBJECT_REMOVED, idx_obj, tabela);
-        tabela->removerObjeto(idx_obj, tipo_obj);
+        tabela->removeObject(idx_obj, tipo_obj);
 
         if(tipo_obj==OBJ_CONSTRAINT &&
                 dynamic_cast<Constraint *>(objeto_tab)->getConstraintType()==ConstraintType::foreign_key)
@@ -2312,11 +2312,11 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 
   if(obj_tab->getObjectType()==OBJ_COLUMN)
   {
-   qtd=tabela->obterNumRestricoes();
+   qtd=tabela->getConstraintCount();
 
    for(i=0; i < qtd; i++)
    {
-    rest=tabela->obterRestricao(i);
+    rest=tabela->getConstraint(i);
     if(rest->isColumnExists(dynamic_cast<Column *>(obj_tab), Constraint::SOURCE_COLS))
     {
      /* Fazendo uma configuração específica de ícone para restrições.

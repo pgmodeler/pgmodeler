@@ -263,7 +263,7 @@ void View::setReferencesAttribute(void)
  }
 }
 
-bool View::isReferRelationshipColumn(void)
+bool View::isReferRelationshipAddedColumn(void)
 {
  Column *column=NULL;
  unsigned count, i;

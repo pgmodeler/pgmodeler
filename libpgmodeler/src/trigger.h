@@ -150,7 +150,7 @@ class Trigger: public TableObject{
      to control which triggers reference columns added by the
      relationship in order to avoid referece breaking due constants
      connections and disconnections of relationships */
-  bool isReferRelationshipColumn(void);
+  bool isReferRelationshipAddedColumn(void);
 
   //Returns the SQL / XML definition for the trigger
   QString getCodeDefinition(unsigned def_type);

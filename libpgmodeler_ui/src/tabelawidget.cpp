@@ -243,7 +243,7 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, T
      relacionamentos   tabela */
   if(tipos[i]==OBJ_COLUMN || tipos[i]==OBJ_CONSTRAINT)
   {
-   if(this->novo_obj || !tabela->referenciaObjetoIncRelacao())
+   if(this->novo_obj || !tabela->isReferRelationshipAddedObject())
     mapa_tab_objetos[tipos[i]]->definirConfiguracaoBotoes(TabelaObjetosWidget::TODOS_BOTOES ^
                                                           (TabelaObjetosWidget::BTN_ATUALIZAR_ITEM));
    else
@@ -254,14 +254,14 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, T
  }
 
  //Lista a as tabelas ancestrais da tabela em edição
- qtd=tabela->obterNumTabelasPai();
+ qtd=tabela->getAncestorTable();
  for(i=0; i < qtd; i++)
-  tabs_ancestrais_lst->addItem(QString::fromUtf8(tabela->obterTabelaPai(i)->getName(true)));
+  tabs_ancestrais_lst->addItem(QString::fromUtf8(tabela->getAncestorTable(i)->getName(true)));
 
  //Lista a as tabelas copiadas pela tabela em edição
- qtd=tabela->obterNumTabelasCopia();
+ qtd=tabela->getCopyTable();
  for(i=0; i < qtd; i++)
-  tabs_copiadas_lst->addItem(QString::fromUtf8(tabela->obterTabelaCopia(i)->getName(true)));
+  tabs_copiadas_lst->addItem(QString::fromUtf8(tabela->getCopyTable(i)->getName(true)));
 }
 
 void TabelaWidget::listarObjetos(ObjectType tipo_obj)
@@ -283,13 +283,13 @@ void TabelaWidget::listarObjetos(ObjectType tipo_obj)
   tab->removerLinhas();
 
   //Obtém a quantidade de elementos a serem exibidos
-  qtd=tabela->obterNumObjetos(tipo_obj);
+  qtd=tabela->getObjectCount(tipo_obj);
   for(i=0; i < qtd; i++)
   {
    //Adicionar uma linha
    tab->adicionarLinha();
    //Exibe o objeto atual na linha atual da tabela
-   exibirDadosObjeto(dynamic_cast<TableObject*>(tabela->obterObjeto(i, tipo_obj)), i);
+   exibirDadosObjeto(dynamic_cast<TableObject*>(tabela->getObject(i, tipo_obj)), i);
   }
   tab->limparSelecao();
   tab->blockSignals(false);
@@ -472,7 +472,7 @@ void TabelaWidget::removerObjetos(void)
  {
   tabela=dynamic_cast<Table *>(this->objeto);
   tipo_obj=selecionarTipoObjeto(sender());
-  qtd=tabela->obterNumObjetos(tipo_obj);
+  qtd=tabela->getObjectCount(tipo_obj);
 
   /* Armazena a quantidade de operações antes da remoção de objetos.
      Caso um erro seja gerado e a quantidade de operações na lista
@@ -483,13 +483,13 @@ void TabelaWidget::removerObjetos(void)
   for(i=0; i < qtd; i++)
   {
    //Obtém o objeto da tabela
-   objeto=tabela->obterObjeto(0, tipo_obj);
+   objeto=tabela->getObject(0, tipo_obj);
 
    if(!objeto->isProtected() &&
       !dynamic_cast<TableObject *>(objeto)->isAddedByRelationship())
    {
     //Tenta removê-lo da tabela
-    tabela->removerObjeto(objeto);
+    tabela->removeObject(objeto);
 
     //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
     lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, 0, this->objeto);
@@ -544,13 +544,13 @@ void TabelaWidget::removerObjeto(int idx_lin)
   tipo_obj=selecionarTipoObjeto(sender());
 
   //Obtém o objeto da tabela
-  objeto=tabela->obterObjeto(idx_lin, tipo_obj);
+  objeto=tabela->getObject(idx_lin, tipo_obj);
 
   if(!objeto->isProtected() &&
      !dynamic_cast<TableObject *>(objeto)->isAddedByRelationship())
   {
    //Tenta removê-lo da tabela
-   tabela->removerObjeto(objeto);
+   tabela->removeObject(objeto);
 
    //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
    lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, idx_lin, this->objeto);
@@ -578,9 +578,9 @@ void TabelaWidget::TabelaWidget::moverObjetos(int idx1, int idx2)
  {
   tipo_obj=selecionarTipoObjeto(sender());
   tabela=dynamic_cast<Table *>(this->objeto);
-  lista_op->updateObjectIndex(tabela->obterObjeto(idx1, tipo_obj), idx2);
-  lista_op->updateObjectIndex(tabela->obterObjeto(idx2, tipo_obj), idx1);
-  tabela->trocarIndicesObjetos(tipo_obj, idx1, idx2);
+  lista_op->updateObjectIndex(tabela->getObject(idx1, tipo_obj), idx2);
+  lista_op->updateObjectIndex(tabela->getObject(idx2, tipo_obj), idx1);
+  tabela->swapObjectsIndexes(tipo_obj, idx1, idx2);
  }
  catch(Exception &e)
  {
@@ -603,7 +603,7 @@ void TabelaWidget::aplicarConfiguracao(void)
   }
 
   tabela=dynamic_cast<Table *>(this->objeto);
-  tabela->definirAceitaOids(aceita_oids_chk->isChecked());
+  tabela->setWithOIDs(aceita_oids_chk->isChecked());
 
   //Aplica as configurações básicas
   ObjetoBaseWidget::aplicarConfiguracao();

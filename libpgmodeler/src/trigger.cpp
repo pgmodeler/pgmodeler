@@ -237,7 +237,7 @@ bool Trigger::isDeferrable(void)
  return(is_deferrable);
 }
 
-bool Trigger::isReferRelationshipColumn(void)
+bool Trigger::isReferRelationshipAddedColumn(void)
 {
  vector<Column *>::iterator itr, itr_end;
  Column *col=NULL;
@@ -307,7 +307,7 @@ QString Trigger::getCodeDefinition(unsigned def_type)
 
  /* Case the trigger doesn't referece some column added by relationship it will be declared
     inside the parent table construction by the use of 'decl-in-table' schema attribute */
- if(!isReferRelationshipColumn())
+ if(!isReferRelationshipAddedColumn())
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
  if(this->parent_table)

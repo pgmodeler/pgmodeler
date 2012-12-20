@@ -306,7 +306,7 @@ bool Constraint::isDeferrable(void)
  return(deferrable);
 }
 
-bool Constraint::isReferRelationshipColumn(void)
+bool Constraint::isReferRelationshipAddedColumn(void)
 {
  vector<Column *>::iterator itr, itr_end;
  Column *col=NULL;
@@ -402,7 +402,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
     Note: For reference track reason foreign keys ALWAYS will be created in a separeted (ALTER TABLE)
     command outside the parent table declaration */
  if(constr_type!=ConstraintType::foreign_key &&
-    (!isReferRelationshipColumn() || constr_type==ConstraintType::primary_key))
+    (!isReferRelationshipAddedColumn() || constr_type==ConstraintType::primary_key))
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
  if(constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique)

@@ -205,7 +205,7 @@ QString Index::getConditionalExpression(void)
  return(conditional_expr);
 }
 
-bool Index::isReferRelationshipColumn(void)
+bool Index::isReferRelationshipAddedColumn(void)
 {
  vector<IndexElement>::iterator itr, itr_end;
  Column *col=NULL;
@@ -241,7 +241,7 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 
  /* Case the index doesn't referece some column added by relationship it will be declared
     inside the parent table construction by the use of 'decl-in-table' schema attribute */
- if(!isReferRelationshipColumn())
+ if(!isReferRelationshipAddedColumn())
   attributes[ParsersAttributes::DECL_IN_TABLE]="1";
 
  return(BaseObject::__getCodeDefinition(tipo_def));

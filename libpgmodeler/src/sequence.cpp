@@ -222,7 +222,7 @@ void Sequence::setOwnerColumn(Table *table, const QString &col_name)
                  ERR_ASG_SEQ_OWNER_DIF_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Gets the column with the passed name
-  this->owner_col=table->obterColuna(col_name);
+  this->owner_col=table->getColumn(col_name);
 
   //Raises an error if the column doesn't exists
   if(!this->owner_col)
@@ -276,7 +276,7 @@ void Sequence::setOwnerColumn(Column *column)
  }
 }
 
-bool Sequence::isReferRelationshipColumn(void)
+bool Sequence::isReferRelationshipAddedColumn(void)
 {
  return(owner_col && owner_col->isAddedByRelationship());
 }

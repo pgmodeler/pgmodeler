@@ -505,11 +505,11 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
     else if(tipos[i]==OBJ_TABLE)
     {
      tab=dynamic_cast<Table *>(objeto);
-     qtd=tab->obterNumGatilhos();
+     qtd=tab->getTriggerCount();
 
      for(i1=0; i1 < qtd; i1++)
      {
-      gatilho=tab->obterGatilho(i1);
+      gatilho=tab->getTrigger(i1);
       if(gatilho->getFunction()==funcao)
        gatilho->setFunction(funcao);
      }

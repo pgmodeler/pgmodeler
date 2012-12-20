@@ -25,8 +25,8 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
   /* Raises an error if the user tries to create a relationship which some
      table doesn't has a primary key */
   if(((rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N) &&
-      !this->getReferenceTable()->obterChavePrimaria()) ||
-     (rel_type==RELATIONSHIP_NN && (!src_tab->obterChavePrimaria() || !dst_tab->obterChavePrimaria())))
+      !this->getReferenceTable()->getPrimaryKey()) ||
+     (rel_type==RELATIONSHIP_NN && (!src_tab->getPrimaryKey() || !dst_tab->getPrimaryKey())))
      throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
                            .arg(QString::fromUtf8(obj_name))
                            .arg(QString::fromUtf8(src_tab->getName(true)))
@@ -628,7 +628,7 @@ void Relationship::addConstraints(Table *dst_tab)
 
     //Configures the name of the constraint in order to avoid name duplication errors
     orig_name=constr->getName();
-    while(dst_tab->obterRestricao(orig_name + aux))
+    while(dst_tab->getConstraint(orig_name + aux))
     {
      aux=QString("%1").arg(i);
      name=orig_name + aux;
@@ -638,7 +638,7 @@ void Relationship::addConstraints(Table *dst_tab)
     if(name!="") constr->setName(name);
 
     //Adds the constraint to the table
-    dst_tab->adicionarRestricao(constr);
+    dst_tab->addConstraint(constr);
    }
    else
    {
@@ -646,7 +646,7 @@ void Relationship::addConstraints(Table *dst_tab)
        table's primary key */
 
     //Gets the table primary key
-    pk=dst_tab->obterChavePrimaria();
+    pk=dst_tab->getPrimaryKey();
 
     if(pk)
     {
@@ -659,7 +659,7 @@ void Relationship::addConstraints(Table *dst_tab)
     }
     else
      //Case the table doens't has a primary key the constraint will the be it
-     dst_tab->adicionarRestricao(constr);
+     dst_tab->addConstraint(constr);
 
     if(constr==pk_special)
     {
@@ -701,8 +701,8 @@ void Relationship::addColumnsRelGen(void)
   dst_tab=dynamic_cast<Table *>(dst_table);
 
   //Gets the column count from participant tables
-  src_count=src_tab->obterNumColunas();
-  dst_count=dst_tab->obterNumColunas();
+  src_count=src_tab->getColumnCount();
+  dst_count=dst_tab->getColumnCount();
   rejected_col_count=0;
 
   /* This for compares the columns of the receiver table
@@ -711,7 +711,7 @@ void Relationship::addColumnsRelGen(void)
   for(i=0; i < dst_count && err_type==ERR_CUSTOM; i++)
   {
    //Gets the column from the receiver (destination) table
-   dst_col=dst_tab->obterColuna(i);
+   dst_col=dst_tab->getColumn(i);
 
    /* The copied column have the 'serial' like types converted to
       integer like types in order to avoid error when configuring the
@@ -730,7 +730,7 @@ void Relationship::addColumnsRelGen(void)
    for(i1=0; i1 < src_count && !duplic; i1++)
    {
     //Gets the reference (source) column converting its type
-    src_col=src_tab->obterColuna(i1);
+    src_col=src_tab->getColumn(i1);
     src_type=src_col->getType();
 
     if(src_type=="serial") src_type="integer";
@@ -769,13 +769,13 @@ void Relationship::addColumnsRelGen(void)
 
       for(i2=0; i2 < 2; i2++)
       {
-       tab_count=aux_tab->obterNumObjetos(types[i2]);
+       tab_count=aux_tab->getObjectCount(types[i2]);
 
        //Checking if the column came from a inheritance or copy relationship
        for(idx=0; idx < tab_count; idx++)
        {
-        parent_tab=dynamic_cast<Table *>(aux_tab->obterObjeto(idx, types[i2]));
-        cond=(parent_tab->obterColuna(aux_col->getName()));
+        parent_tab=dynamic_cast<Table *>(aux_tab->getObject(idx, types[i2]));
+        cond=(parent_tab->getColumn(aux_col->getName()));
 
         if(id_tab==0)
          src_flags[i2]=cond;
@@ -857,7 +857,7 @@ void Relationship::addColumnsRelGen(void)
    itr_end=ref_columns.end();
    while(itr!=itr_end)
    {
-    src_tab->adicionarColuna((*itr));
+    src_tab->addColumn((*itr));
     itr++;
    }
   }
@@ -915,7 +915,7 @@ void Relationship::connectRelationship(void)
     addColumnsRelGen();
 
     //The reference table is added as parent table on the receiver
-    getReceiverTable()->adicionarTabelaPai(dynamic_cast<Table *>(getReferenceTable()));
+    getReceiverTable()->addAncestorTable(dynamic_cast<Table *>(getReferenceTable()));
    }
    else if(rel_type==RELATIONSHIP_DEP)
    {
@@ -923,7 +923,7 @@ void Relationship::connectRelationship(void)
     addColumnsRelGen();
 
     //The reference table is added as copy table on the receiver
-    getReceiverTable()->adicionarTabelaCopia(dynamic_cast<Table *>(getReferenceTable()));
+    getReceiverTable()->addCopyTable(dynamic_cast<Table *>(getReferenceTable()));
    }
    else if(rel_type==RELATIONSHIP_11 ||
            rel_type==RELATIONSHIP_1N)
@@ -976,7 +976,7 @@ void Relationship::configureIndentifierRel(Table *dst_tab)
      will be merged with the primary key of the reference table (strong entity) */
 
   //Gets the primary key from the receiver table
-  pk=dst_tab->obterChavePrimaria();
+  pk=dst_tab->getPrimaryKey();
 
   //Case the primary key doesn't exists it'll be created
   if(!pk)
@@ -999,7 +999,7 @@ void Relationship::configureIndentifierRel(Table *dst_tab)
    name=dst_tab->getName() + SUFFIX_SEPARATOR + "pk";
 
    //Resolves any duplication of the new constraint name on the receiver table
-   while(dst_tab->obterRestricao(name + aux))
+   while(dst_tab->getConstraint(name + aux))
    {
     aux=QString("%1").arg(i);
     i++;
@@ -1015,7 +1015,7 @@ void Relationship::configureIndentifierRel(Table *dst_tab)
 
   //Inserts the configured primary key on the receiver table (if there is no pk on it)
   if(new_pk)
-   dst_tab->adicionarRestricao(pk);
+   dst_tab->addConstraint(pk);
  }
  catch(Exception &e)
  {
@@ -1053,14 +1053,14 @@ void Relationship::addUniqueKey(Table *ref_tab, Table *recv_tab)
   name=ref_tab->getName() + SUFFIX_SEPARATOR + "uq";
 
  //Resolves any duplication of the new constraint name on the receiver table
-  while(recv_tab->obterRestricao(name + aux))
+  while(recv_tab->getConstraint(name + aux))
   {
    aux=QString("%1").arg(i);
    i++;
   }
 
   uq->setName(name + aux);
-  recv_tab->adicionarRestricao(uq);
+  recv_tab->addConstraint(uq);
  }
  catch(Exception &e)
  {
@@ -1102,7 +1102,7 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 
   /* Gets the primary key from the reference table in order to reference its columns
      on the primary key */
-  pk=ref_tab->obterChavePrimaria();
+  pk=ref_tab->getPrimaryKey();
   qty=ref_columns.size();
   i=i1=0;
 
@@ -1127,12 +1127,12 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
   {
    //Case 1: decrementing the quantity of columns to be scanned
    if((!isSelfRelationship() && ref_tab==src_table) ||
-      (isSelfRelationship() && table_relnn->obterNumRestricoes()==0))
-    qty-=dynamic_cast<Table *>(dst_table)->obterChavePrimaria()->getColumnCount(Constraint::SOURCE_COLS);
+      (isSelfRelationship() && table_relnn->getConstraintCount()==0))
+    qty-=dynamic_cast<Table *>(dst_table)->getPrimaryKey()->getColumnCount(Constraint::SOURCE_COLS);
    //Case 2: shifiting the scan index
    else if(ref_tab==dst_table)
    {
-    pk_aux=dynamic_cast<Table *>(src_table)->obterChavePrimaria();
+    pk_aux=dynamic_cast<Table *>(src_table)->getPrimaryKey();
     i=pk_aux->getColumnCount(Constraint::SOURCE_COLS);
    }
   }
@@ -1154,14 +1154,14 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
   name=ref_tab->getName() + SUFFIX_SEPARATOR + "fk";
 
   //Resolves any duplication of the new constraint name on the receiver table
-  while(recv_tab->obterRestricao(name + aux))
+  while(recv_tab->getConstraint(name + aux))
   {
    aux=QString("%1").arg(i);
    i++;
   }
 
   fk->setName(name + aux);
-  recv_tab->adicionarRestricao(fk);
+  recv_tab->addConstraint(fk);
  }
  catch(Exception &e)
  {
@@ -1192,7 +1192,7 @@ void Relationship::addAttributes(Table *recv_tab)
    name=column->getName();
 
    //Resolves any duplication of the attribute name on the receiver table
-   while(recv_tab->obterColuna(name + aux))
+   while(recv_tab->getColumn(name + aux))
    {
     aux=QString("%1").arg(i1);
     i1++;
@@ -1201,7 +1201,7 @@ void Relationship::addAttributes(Table *recv_tab)
    column->setName(name + aux);
    aux[0]='\0';
 
-   recv_tab->adicionarColuna(column);
+   recv_tab->addColumn(column);
   }
  }
  catch(Exception &e)
@@ -1219,8 +1219,8 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 
  try
  {
-  dst_pk=recv_tab->obterChavePrimaria();
-  pk=src_pk=ref_tab->obterChavePrimaria();
+  dst_pk=recv_tab->getPrimaryKey();
+  pk=src_pk=ref_tab->getPrimaryKey();
 
   //Selecting the correct column suffix according to the relationship configuration
   if(auto_suffix)
@@ -1297,7 +1297,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
    name=column->getName() + suffix;
 
    //Resolves any duplication of the column name on the receiver table
-   while(recv_tab->obterColuna(name + aux))
+   while(recv_tab->getColumn(name + aux))
    {
     aux=QString("%1").arg(i1);
     i1++;
@@ -1323,7 +1323,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
     if(prev_name!=name && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
      prev_ref_col_names[column->getObjectId()]=column->getName();
 
-   recv_tab->adicionarColuna(column);
+   recv_tab->addColumn(column);
   }
  }
  catch(Exception &e)
@@ -1488,7 +1488,7 @@ void Relationship::addColumnsRelNn(void)
   for(i=0; i < count; i++)
    pk_tabnn->addColumn(ref_columns[i],Constraint::SOURCE_COLS);
 
-  table_relnn->adicionarRestricao(pk_tabnn);
+  table_relnn->addConstraint(pk_tabnn);
 
   addAttributes(table_relnn);
   addConstraints(table_relnn);
@@ -1557,13 +1557,13 @@ void Relationship::removeTableObjectsRefCols(Table *table)
  int i, count;
 
  //Remove all triggers that reference columns added by relationship
- count=table->obterNumGatilhos();
+ count=table->getTriggerCount();
  for(i=0; i < count; i++)
  {
-  trigger=table->obterGatilho(i);
-  if(trigger->isReferRelationshipColumn())
+  trigger=table->getTrigger(i);
+  if(trigger->isReferRelationshipAddedColumn())
   {
-   table->removerObjeto(trigger);
+   table->removeObject(trigger);
    delete(trigger);
    count--; i--;
    if(i < 0) i=0;
@@ -1571,13 +1571,13 @@ void Relationship::removeTableObjectsRefCols(Table *table)
  }
 
  //Remove all indexes that reference columns added by relationship
- count=table->obterNumIndices();
+ count=table->getIndexCount();
  for(i=0; i < count; i++)
  {
-  index=table->obterIndice(i);
-  if(index->isReferRelationshipColumn())
+  index=table->getIndex(i);
+  if(index->isReferRelationshipAddedColumn())
   {
-   table->removerObjeto(index);
+   table->removeObject(index);
    delete(index);
    count--; i--;
    if(i < 0) i=0;
@@ -1585,15 +1585,15 @@ void Relationship::removeTableObjectsRefCols(Table *table)
  }
 
  //Remove all constraints that reference columns added by relationship
- count=table->obterNumRestricoes();
+ count=table->getConstraintCount();
  for(i=0; i < count; i++)
  {
-  constr=table->obterRestricao(i);
+  constr=table->getConstraint(i);
   if(!constr->isAddedByRelationship() &&
      constr->getConstraintType()!=ConstraintType::primary_key &&
-     constr->isReferRelationshipColumn())
+     constr->isReferRelationshipAddedColumn())
   {
-   table->removerObjeto(constr);
+   table->removeObject(constr);
    delete(constr);
    count--; i--;
    if(i < 0) i=0;
@@ -1611,7 +1611,7 @@ void Relationship::removeColumnsFromTablePK(Table *table)
 
   /* Gets the table primary key and removes the columns
      created by the relationship from it */
-  pk=table->obterChavePrimaria();
+  pk=table->getPrimaryKey();
 
   if(pk)
   {
@@ -1659,9 +1659,9 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
      removeColumnsFromTablePK(table);
 
     if(rel_type==RELATIONSHIP_GEN)
-     table->removerObjeto(getReferenceTable()->getName(true), OBJ_TABLE);
+     table->removeObject(getReferenceTable()->getName(true), OBJ_TABLE);
     else
-     table->removerObjeto(getReferenceTable()->getName(true), BASE_TABLE);
+     table->removeObject(getReferenceTable()->getName(true), BASE_TABLE);
    }
    else
    {
@@ -1679,11 +1679,11 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
      table=dynamic_cast<Table *>(fk_rel1n->getParentTable());
 
      //Removes the foreign key from table
-     table->removerRestricao(fk_rel1n->getName());
+     table->removeConstraint(fk_rel1n->getName());
 
      /* Gets the table primary key to check if it is the same as the primary key
         that defines the identifier relationship */
-     pk=table->obterChavePrimaria();
+     pk=table->getPrimaryKey();
 
      //Removes the relationship created columns from table primary key
      removeColumnsFromTablePK(table);
@@ -1699,7 +1699,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
      //Destroy the auto created unique key if it exists
      if(uq_rel11)
      {
-      table->removerRestricao(uq_rel11->getName());
+      table->removeConstraint(uq_rel11->getName());
       uq_rel11->removeColumns();
       delete(uq_rel11);
       uq_rel11=NULL;
@@ -1713,7 +1713,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
       table=dynamic_cast<Table *>(pk_relident->getParentTable());
 
       //Removes the primary key from table
-      table->removerRestricao(pk_relident->getName());
+      table->removeConstraint(pk_relident->getName());
 
       //Destroy the primary key
       delete(pk);
@@ -1723,16 +1723,16 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
     else if(rel_type==RELATIONSHIP_NN)
     {
      //In case of n-n relationship destroy the added constraints
-     count=table_relnn->obterNumRestricoes();
+     count=table_relnn->getConstraintCount();
 
      for(i=0; i < count ; i++)
      {
-      constr=table_relnn->obterRestricao(i);
+      constr=table_relnn->getConstraint(i);
 
       //Destroy the constraint only if it was created by the relationship
       if(constr->isAddedByRelationship() && getObjectIndex(constr) < 0)
       {
-       table_relnn->removerRestricao(constr->getName());
+       table_relnn->removeConstraint(constr->getName());
        i--; count--;
        delete(constr);
       }
@@ -1757,7 +1757,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
      //Removes the attribute from the table only it were created by this relationship ( getObjectIndex >= 0)
      if(table && getObjectIndex(tab_obj) >= 0)
      {
-      table->removerObjeto(tab_obj->getName(), tab_obj->getObjectType());
+      table->removeObject(tab_obj->getName(), tab_obj->getObjectType());
       tab_obj->setParentTable(NULL);
      }
      itr_atrib++;
@@ -1775,7 +1775,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
     column=(*itr);
 
     //Before the destruction the column is removed from table
-    table->removerColuna(column->getName());
+    table->removeColumn(column->getName());
     itr++;
 
     delete(column);
@@ -1851,7 +1851,7 @@ bool Relationship::isInvalidated(void)
      any relationship 1-1, 1-n or n-n connected to it should be revalidated */
   if(pk_relident && pk_relident->isAddedByLinking())
   {
-   dynamic_cast<Table *>(pk_relident->getParentTable())->removerObjeto(pk_relident);
+   dynamic_cast<Table *>(pk_relident->getParentTable())->removeObject(pk_relident);
    pk_relident=NULL;
   }
   return(true);
@@ -1877,7 +1877,7 @@ bool Relationship::isInvalidated(void)
    rel_cols_count=fk_rel1n->getColumnCount(Constraint::SOURCE_COLS);
 
    //The relationship is invalidated if the reference table doesn't has a primary key
-   pk=table->obterChavePrimaria();
+   pk=table->getPrimaryKey();
 
    if(pk)
    {
@@ -1935,7 +1935,7 @@ bool Relationship::isInvalidated(void)
    table1=getReceiverTable();
 
    //Gets the number of columns of the reference table
-   tab_cols_count=table->obterNumColunas();
+   tab_cols_count=table->getColumnCount();
 
    /* Gets the number of columns created with the connection of the relationship
       and summing with the number of columns rejected at the time of connection
@@ -1947,14 +1947,14 @@ bool Relationship::isInvalidated(void)
    /* Checking if the columns created with inheritance / copy still exist
       in reference table */
    for(i=0; i < ref_columns.size() && valid; i++)
-    valid=table->obterColuna(ref_columns[i]->getName(true));
+    valid=table->getColumn(ref_columns[i]->getName(true));
 
    /* Checking if the reference table columns are in the receiver table.
       In theory all columns must exist in the two table because one
       inherits another soon they will possess all the same columns.
       if this not happen indicates that a reference table column was renamed */
    for(i=0; i < tab_cols_count && valid; i++)
-    valid=table1->obterColuna(table->obterColuna(i)->getName(true));
+    valid=table1->getColumn(table->getColumn(i)->getName(true));
   }
 
   /* For n-n relationships, it is necessary the comparisons:
@@ -1973,13 +1973,13 @@ bool Relationship::isInvalidated(void)
 
    /* To validated the n-n relationship, the first condition is that
       both tables has primary key */
-   if(table->obterChavePrimaria() && table1->obterChavePrimaria())
+   if(table->getPrimaryKey() && table1->getPrimaryKey())
    {
-    count=table_relnn->obterNumRestricoes();
+    count=table_relnn->getConstraintCount();
 
     for(i=0; i < count; i++)
     {
-     constr=table_relnn->obterRestricao(i);
+     constr=table_relnn->getConstraint(i);
 
      if(constr->getConstraintType()==ConstraintType::foreign_key)
      {
@@ -1996,8 +1996,8 @@ bool Relationship::isInvalidated(void)
 
     /* The number of columns in the table is obtained by summing the amount
        of primary keys columns involved in the relationship */
-    tab_cols_count=table->obterChavePrimaria()->getColumnCount(Constraint::SOURCE_COLS) +
-                   table1->obterChavePrimaria()->getColumnCount(Constraint::SOURCE_COLS);
+    tab_cols_count=table->getPrimaryKey()->getColumnCount(Constraint::SOURCE_COLS) +
+                   table1->getPrimaryKey()->getColumnCount(Constraint::SOURCE_COLS);
 
     valid=(rel_cols_count == tab_cols_count);
 
@@ -2015,9 +2015,9 @@ bool Relationship::isInvalidated(void)
       col_name=col_name.remove(col_suffixes[i]);
 
      //Check if the column exists in table
-     col1=table->obterColuna(col_name);
+     col1=table->getColumn(col_name);
      valid=col1 &&
-            table->obterChavePrimaria()->isColumnExists(col1, Constraint::SOURCE_COLS);
+            table->getPrimaryKey()->isColumnExists(col1, Constraint::SOURCE_COLS);
     }
 
     /* Checking if the columns created with the connection still exists
@@ -2035,9 +2035,9 @@ bool Relationship::isInvalidated(void)
       col_name=col_name.remove(col_suffixes[i1]);
 
      //Check if the column exists in table
-     col1=table1->obterColuna(col_name);
+     col1=table1->getColumn(col_name);
      valid=col1 &&
-            table1->obterChavePrimaria()->isColumnExists(col1, Constraint::SOURCE_COLS);
+            table1->getPrimaryKey()->isColumnExists(col1, Constraint::SOURCE_COLS);
     }
    }
   }
@@ -2079,11 +2079,11 @@ QString Relationship::getCodeDefinition(unsigned def_type)
    attributes[ParsersAttributes::RELATIONSHIP_NN]="1";
    attributes[ParsersAttributes::TABLE]=table_relnn->getCodeDefinition(def_type);
 
-   count=table_relnn->obterNumRestricoes();
+   count=table_relnn->getConstraintCount();
    for(i=0; i < count; i++)
    {
-    if(table_relnn->obterRestricao(i)->getConstraintType()!=ConstraintType::primary_key)
-     attributes[ParsersAttributes::CONSTRAINTS]+=table_relnn->obterRestricao(i)->getCodeDefinition(def_type, true);
+    if(table_relnn->getConstraint(i)->getConstraintType()!=ConstraintType::primary_key)
+     attributes[ParsersAttributes::CONSTRAINTS]+=table_relnn->getConstraint(i)->getCodeDefinition(def_type, true);
    }
   }
   else if(rel_type==RELATIONSHIP_GEN)

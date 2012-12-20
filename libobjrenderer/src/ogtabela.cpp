@@ -149,20 +149,20 @@ void OGTabela::configurarObjeto(void)
   if(idx==0)
   {
    //Usa uma lista auxiliar para varrer todas as colunas da tabela
-   objs_filhos.assign(tabela->obterListaObjetos(OBJ_COLUMN)->begin(),
-                      tabela->obterListaObjetos(OBJ_COLUMN)->end());
+   objs_filhos.assign(tabela->getObjectList(OBJ_COLUMN)->begin(),
+                      tabela->getObjectList(OBJ_COLUMN)->end());
   }
   else
   {
    //Usa uma lista auxiliar para varrer todas as regras, índices, gatilhos da tabela
-   objs_filhos.assign(tabela->obterListaObjetos(OBJ_RULE)->begin(),
-                       tabela->obterListaObjetos(OBJ_RULE)->end());
+   objs_filhos.assign(tabela->getObjectList(OBJ_RULE)->begin(),
+                       tabela->getObjectList(OBJ_RULE)->end());
    objs_filhos.insert(objs_filhos.end(),
-                       tabela->obterListaObjetos(OBJ_TRIGGER)->begin(),
-                       tabela->obterListaObjetos(OBJ_TRIGGER)->end());
+                       tabela->getObjectList(OBJ_TRIGGER)->begin(),
+                       tabela->getObjectList(OBJ_TRIGGER)->end());
    objs_filhos.insert(objs_filhos.end(),
-                       tabela->obterListaObjetos(OBJ_INDEX)->begin(),
-                       tabela->obterListaObjetos(OBJ_INDEX)->end());
+                       tabela->getObjectList(OBJ_INDEX)->begin(),
+                       tabela->getObjectList(OBJ_INDEX)->end());
   }
 
   //Obtém os subitens do grupo atual para que os itens obsoletos seja removidos posteriormente

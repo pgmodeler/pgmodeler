@@ -517,14 +517,14 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
     for(id_tipo=0; id_tipo < qtd_subtipos; id_tipo++)
     {
      //Obtém o número de objetos do subtipo atual
-     qtd1=tabela->obterNumObjetos(subtipos[id_tipo]);
+     qtd1=tabela->getObjectCount(subtipos[id_tipo]);
 
      /* Os objetos do subtipo atual só serão exibidos caso exista pelo menos um objeto
         e além disso o mesmo esteja marcado como visível na visão de objetos */
      for(id_lin=0; map_objs_visiveis[subtipos[id_tipo]] && id_lin < qtd1; id_lin++)
      {
       listaobjetos_tbw->insertRow(id_lin);
-      objeto_tab=dynamic_cast<TableObject *>(tabela->obterObjeto(id_lin, subtipos[id_tipo]));
+      objeto_tab=dynamic_cast<TableObject *>(tabela->getObject(id_lin, subtipos[id_tipo]));
 
       //Cria o item descritor de nome do objeto
       item_tab=new QTableWidgetItem;
@@ -851,7 +851,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
 
       /* Configura o texto do item como sendo o nome do tipo e a quantidade de
          objetos deste tipo presente na tabela */
-      qtd1=tabela->obterNumObjetos(tipos[i1]);
+      qtd1=tabela->getObjectCount(tipos[i1]);
       item2->setText(0,BaseObject::getTypeName(tipos[i1]) +
                       QString(" (%1)").arg(qtd1));
 
@@ -859,7 +859,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
       for(i2=0; i2 < qtd1; i2++)
       {
        //Obtém o elemento na posição atual do tipo atual
-       objeto=tabela->obterObjeto(i2,tipos[i1]);
+       objeto=tabela->getObject(i2,tipos[i1]);
        //Configura o item atribuindo-lhe o texto como sendo o próprio nome do objeto
        item3=new QTreeWidgetItem(item2);
        item3->setText(0,QString::fromUtf8(objeto->getName()));

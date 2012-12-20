@@ -106,10 +106,10 @@ void IndiceWidget::atualizarComboColunas(void)
 
   /* Varre a lista de colunas da tabela inserindo-as
      no combo box do formulário */
-  qtd_col=tabela->obterNumColunas();
+  qtd_col=tabela->getColumnCount();
   for(i=0; i < qtd_col; i++)
   {
-   coluna=tabela->obterColuna(i);
+   coluna=tabela->getColumn(i);
    coluna_cmb->addItem(QString::fromUtf8(coluna->getName()),
                        QVariant::fromValue<void *>(coluna));
   }

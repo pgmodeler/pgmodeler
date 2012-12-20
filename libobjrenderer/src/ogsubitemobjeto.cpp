@@ -431,9 +431,9 @@ QString OGSubItemObjeto::obterStringRestricoes(Column *coluna)
   ConstraintType tipo_rest;
   unsigned i, qtd;
 
-  qtd=tabela->obterNumRestricoes();
+  qtd=tabela->getConstraintCount();
   for(i=0; i < qtd; i++)
-   restricoes.push_back(tabela->obterRestricao(i));
+   restricoes.push_back(tabela->getConstraint(i));
 
   //Obtém as referências ao primeiro e último elemento da lita de constraints
   itr=restricoes.begin();

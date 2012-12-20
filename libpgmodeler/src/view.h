@@ -93,7 +93,7 @@ class View: public BaseTable {
      to control which view reference columns added by the
      relationship in order to avoid referece breaking due constants
      connections and disconnections of relationships */
-  bool isReferRelationshipColumn(void);
+  bool isReferRelationshipAddedColumn(void);
 
   //Returns if the view is referencing the specified table
   bool isReferencingTable(Table *tab);

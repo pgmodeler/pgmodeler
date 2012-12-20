@@ -228,7 +228,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
    if(!this->relacionamento)
    {
     tabela=this->tabela;
-    qtd_col=tabela->obterNumColunas();
+    qtd_col=tabela->getColumnCount();
    }
    /* Caso o relacionamento esteja especificado usa o mesmo como
       referência para obtenção das colunas */
@@ -247,7 +247,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
    tabela=dynamic_cast<Table *>(sel_tabela_ref->obterObjeto());
 
    if(tabela)
-    qtd_col=tabela->obterNumColunas();
+    qtd_col=tabela->getColumnCount();
   }
 
   //Limpa o combo de colunas
@@ -261,7 +261,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
    if(relacao)
     coluna=relacao->getAttribute(i);
    else
-    coluna=tabela->obterColuna(i);
+    coluna=tabela->getColumn(i);
 
    /* Insere a coluna na tabela somente a mesma não existir na tabela,
       essa checagem é feita tentando se obter o índice da linha na tabela
@@ -394,7 +394,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
 
  //Obtém a quantidade de colunas existentes no objeto pai
  if(tipo_obj==OBJ_TABLE)
-  qtd=tabela->obterNumColunas();
+  qtd=tabela->getColumnCount();
  else
   qtd=relacionamento->getAttributeCount();
 
@@ -405,7 +405,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
   /* Caso o objeto pai seja uma tabela usa a referênci  tabela pai
      para obter a coluna atual */
   if(tipo_obj==OBJ_TABLE)
-   coluna=tabela->obterColuna(i);
+   coluna=tabela->getColumn(i);
   /* Caso contrário usa a referência ao relacionamento pai
      para obter a coluna atual */
   else
@@ -454,10 +454,10 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
 
    /* Exibe, na tabela do formulário, todas as colunas da tabela referenciada
       usadas na restrição */
-   qtd=tabela_ref->obterNumColunas();
+   qtd=tabela_ref->getColumnCount();
    for(i=0, lin_tab=0; i < qtd; i++)
    {
-    coluna=tabela_ref->obterColuna(i);
+    coluna=tabela_ref->getColumn(i);
     if(restricao->isColumnExists(coluna, Constraint::REFERENCED_COLS))
     {
      tab_colunas_ref->adicionarLinha();

@@ -133,12 +133,12 @@ void GatilhoWidget::atualizarComboColunas(void)
 
  try
  {
-  qtd_col=tabela->obterNumColunas();
+  qtd_col=tabela->getColumnCount();
   coluna_cmb->clear();
 
   for(i=0; i < qtd_col; i++)
   {
-   coluna=tabela->obterColuna(i);
+   coluna=tabela->getColumn(i);
 
    /* Insere a coluna no combo somente a mesma não existir na tabela,
       essa checagem é feita tentando se obter o índice da linha na tabela

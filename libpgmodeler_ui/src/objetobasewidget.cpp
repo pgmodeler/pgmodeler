@@ -542,8 +542,8 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
     {
      //Validação do objeto em relação a sua tabela pai
      obj_pai=tabela;
-     obj_aux=tabela->obterObjeto(nome_obj,tipo_obj);
-     obj_aux1=tabela->obterObjeto(objeto->getName(),tipo_obj);
+     obj_aux=tabela->getObject(nome_obj,tipo_obj);
+     obj_aux1=tabela->getObject(objeto->getName(),tipo_obj);
      novo_obj=(!obj_aux && !obj_aux1);
      //obj_graf=tabela;
     }
@@ -643,7 +643,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
    if(tabela && (tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_RULE ||
                  tipo_obj==OBJ_TRIGGER ||
                  tipo_obj==OBJ_INDEX || tipo_obj==OBJ_CONSTRAINT))
-    tabela->adicionarObjeto(this->objeto);
+    tabela->addObject(this->objeto);
    else if(relacionamento && (tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT))
     relacionamento->addObject(dynamic_cast<TableObject *>(this->objeto));
    else if(tipo_obj!=OBJ_PARAMETER)
@@ -790,7 +790,7 @@ void ObjetoBaseWidget::cancelarConfiguracao(void)
    /* Caso o atributo 'tabela' esteja alocado indica que o objeto configurado
       é um objeto de tabela (coluna, restrição, gatilho, etc) sendo assim
       o mesmo será removido da própria */
-   tabela->removerObjeto(dynamic_cast<TableObject *>(this->objeto));
+   tabela->removeObject(dynamic_cast<TableObject *>(this->objeto));
   /* Caso o atributo 'relacionamento' esteja alocado indica que o objeto configurado
       é um objeto de tabela (coluna, restrição) sendo assim
       o mesmo será removido da própria */

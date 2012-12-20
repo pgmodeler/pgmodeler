@@ -100,7 +100,7 @@ class Sequence: public BaseObject {
      to control which sequence reference columns added by the
      relationship in order to avoid referece breaking due constants
      connections and disconnections of relationships */
-  bool isReferRelationshipColumn(void);
+  bool isReferRelationshipAddedColumn(void);
 
   //Makes a copy between two sequences
   void operator = (Sequence &seq);

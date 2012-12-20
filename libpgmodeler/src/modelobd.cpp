@@ -885,7 +885,7 @@ void ModeloBD::atualizarRelFkTabela(Table *tabela)
   vector<Constraint *>::iterator itr, itr_end;
   vector<BaseObject *>::iterator itr1, itr1_end;
 
-  tabela->obterChavesEstrangeiras(vet_fks);
+  tabela->getForeignKeys(vet_fks);
   itr=vet_fks.begin();
   itr_end=vet_fks.end();
 
@@ -926,7 +926,7 @@ void ModeloBD::atualizarRelFkTabela(Table *tabela)
      ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
 
        //Caso a visão não referencie mais a tabela
-     if(!tabela->referenciaTabelaChaveEstrangeira(ref_tab))
+     if(!tabela->isReferTableOnForeignKey(ref_tab))
      {
       //Remove o relacionamento
       removerRelacionamento(rel);
@@ -1469,13 +1469,13 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
    for(id_tipo=0; id_tipo < 3; id_tipo++)
    {
     //Obtém o a quantidade de objetos do tipo de objeto de tabela atual
-    qtd=tabela->obterNumObjetos(tipo_obj_tab[id_tipo]);
+    qtd=tabela->getObjectCount(tipo_obj_tab[id_tipo]);
 
     //Varre a lista atual de tipo de objetos de tabela
     for(i=0; i < qtd; i++)
     {
      //Obtém um objeto da lista atual na posição atual
-     obj_tab=dynamic_cast<TableObject *>(tabela->obterObjeto(i, tipo_obj_tab[id_tipo]));
+     obj_tab=dynamic_cast<TableObject *>(tabela->getObject(i, tipo_obj_tab[id_tipo]));
      enc=false;
 
      //Caso seja uma restrição
@@ -1488,7 +1488,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
          incluída por relacionamento, ou seja, tal restrição a qual referencia colunas
          adicionadas por relacionamentos foi criada pelo usuário. */
       enc=(!restricao->isAddedByRelationship() &&
-            restricao->isReferRelationshipColumn() &&
+            restricao->isReferRelationshipAddedColumn() &&
             restricao->getConstraintType()!=ConstraintType::primary_key);
 
       /* Caso uma restrição seja encontrada obedecendo a condição acima,
@@ -1503,7 +1503,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
 
       /* O gatilho só será considerado como especial caso referencie
          colunas adicionadas por relacionamento */
-      enc=gatilho->isReferRelationshipColumn();
+      enc=gatilho->isReferRelationshipAddedColumn();
 
       /* Caso um índice seja encontrado obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
@@ -1518,7 +1518,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
 
       /* O índice só será considerado como especial caso referencie
          colunas adicionadas por relacionamento */
-      enc=indice->isReferRelationshipColumn();
+      enc=indice->isReferRelationshipAddedColumn();
 
       /* Caso um índice seja encontrado obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
@@ -1530,7 +1530,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
      if(enc)
      {
       //Remove o mesmo da tabela possuidora
-      tabela->removerObjeto(obj_tab->getName(), obj_tab->getObjectType());
+      tabela->removeObject(obj_tab->getName(), obj_tab->getObjectType());
 
       //Remove as permissões existentes para o objeto
       removerPermissoes(obj_tab);
@@ -1555,7 +1555,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
 
    /* Caso a coluna for incluída por relacionamento considera
       a sequencia como objeto especial */
-   if(sequencia->isReferRelationshipColumn())
+   if(sequencia->isReferRelationshipAddedColumn())
    {
     xml_objs_especiais[sequencia->getObjectId()]=sequencia->getCodeDefinition(SchemaParser::XML_DEFINITION);
     removerSequencia(sequencia);
@@ -1576,7 +1576,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
 
    /* Caso a visão esteja referenciando uma coluna incluída por
       relacionamento considera a mesma como objeto especial */
-   if(visao->isReferRelationshipColumn())
+   if(visao->isReferRelationshipAddedColumn())
    {
     //Armazena a definição XML da visão
     xml_objs_especiais[visao->getObjectId()]=visao->getCodeDefinition(SchemaParser::XML_DEFINITION);
@@ -4615,7 +4615,7 @@ Table *ModeloBD::criarTabela(void)
 
   //Obtém os atributos
   XMLParser::getElementAttributes(atributos);
-  tabela->definirAceitaOids(atributos[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
+  tabela->setWithOIDs(atributos[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
@@ -4641,7 +4641,7 @@ Table *ModeloBD::criarTabela(void)
       objeto=criarGatilho(tabela);
 
      if(objeto)
-      tabela->adicionarObjeto(objeto);
+      tabela->addObject(objeto);
 
      XMLParser::restorePosition();
     }
@@ -4924,10 +4924,10 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
        {
         if(tipo_objeto==OBJ_TABLE)
         {
-         coluna=tabela->obterColuna(lista_cols[i]);
+         coluna=tabela->getColumn(lista_cols[i]);
          //Caso a coluna não for encontrada, tenta obtê-la referenciando seu nome antigo
          if(!coluna)
-          coluna=tabela->obterColuna(lista_cols[i], true);
+          coluna=tabela->getColumn(lista_cols[i], true);
         }
         else
          //Para os demais tipos de relacionamento as colunas a serem obtidas são os atributos do relacionamento
@@ -4936,10 +4936,10 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
        else
        {
         tabela_aux=dynamic_cast<Table *>(tabela_ref);
-        coluna=tabela_aux->obterColuna(lista_cols[i]);
+        coluna=tabela_aux->getColumn(lista_cols[i]);
         //Caso a coluna não for encontrada, tenta obtê-la referenciando seu nome antigo
         if(!coluna)
-         coluna=tabela_aux->obterColuna(lista_cols[i], true);
+         coluna=tabela_aux->getColumn(lista_cols[i], true);
        }
 
        //Adiciona a coluna   restrição
@@ -4956,7 +4956,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
    //Caso a restrição criada não seja uma chave primária insere-a normalmente na tabela
    if(restricao->getConstraintType()!=ConstraintType::primary_key)
    {
-    tabela->adicionarRestricao(restricao);
+    tabela->addConstraint(restricao);
 
     /* Caso a tabela receptora da restrição esteja inserida no modelo, força o seu redesenho.
        Isso é útil para atualizar tabelas as quais tiveram restrições adicionadas após a sua
@@ -5077,12 +5077,12 @@ Index *ModeloBD::criarIndice(Table *tabela)
         {
          //Obtém a coluna que o elemento referencia
          XMLParser::getElementAttributes(atributos);
-         coluna=tabela->obterColuna(atributos[ParsersAttributes::NAME]);
+         coluna=tabela->getColumn(atributos[ParsersAttributes::NAME]);
 
          /* Caso a coluna não exista tenta obtê-la novamente porém referenciando
             seu nome antigo */
          if(!coluna)
-          coluna=tabela->obterColuna(atributos[ParsersAttributes::NAME], true);
+          coluna=tabela->getColumn(atributos[ParsersAttributes::NAME], true);
         }
         //Caso o elemento atual seja um  <expression>
         else if(elem==ParsersAttributes::EXPRESSION)
@@ -5120,7 +5120,7 @@ Index *ModeloBD::criarIndice(Table *tabela)
 
   if(inc_ind_tabela)
   {
-   tabela->adicionarIndice(indice);
+   tabela->addIndex(indice);
    tabela->setModified(true);
   }
  }
@@ -5352,12 +5352,12 @@ Trigger *ModeloBD::criarGatilho(Table *tabela)
 
       for(i=0; i < qtd; i++)
       {
-       coluna=tabela->obterColuna(lista_aux[i]);
+       coluna=tabela->getColumn(lista_aux[i]);
 
        /* Caso a coluna não exista tenta obtê-la novamente porém referenciando
           seu nome antigo */
        if(!coluna)
-        coluna=tabela->obterColuna(lista_aux[i], true);
+        coluna=tabela->getColumn(lista_aux[i], true);
 
        gatilho->addColumn(coluna);
       }
@@ -5369,7 +5369,7 @@ Trigger *ModeloBD::criarGatilho(Table *tabela)
 
   if(inc_gat_tabela)
   {
-   tabela->adicionarObjeto(gatilho);
+   tabela->addObject(gatilho);
    tabela->setModified(true);
   }
  }
@@ -5451,11 +5451,11 @@ Sequence *ModeloBD::criarSequencia(bool ignorar_possuidora)
    }
 
    //Tenta obter a coluna da tabela com o nome vindo do XML
-   coluna=dynamic_cast<Table *>(tabela)->obterColuna(nome_col);
+   coluna=dynamic_cast<Table *>(tabela)->getColumn(nome_col);
 
    //Caso a coluna não for encontrada tenta obtê-la referenciando o antigo nome
    if(!coluna)
-    coluna=dynamic_cast<Table *>(tabela)->obterColuna(nome_col, true);
+    coluna=dynamic_cast<Table *>(tabela)->getColumn(nome_col, true);
 
    /* Caso a coluna não exista porém a mesma esteja sendo referenciada no xml
       um erro será disparado */
@@ -5536,11 +5536,11 @@ View *ModeloBD::criarVisao(void)
        if(!atributos[ParsersAttributes::COLUMN].isEmpty())
        {
         //Tenta obter a colna referenciada da tabela
-        coluna=tabela->obterColuna(atributos[ParsersAttributes::COLUMN]);
+        coluna=tabela->getColumn(atributos[ParsersAttributes::COLUMN]);
 
         //Caso a coluna não exista tenta obtê-la referenciando o nome antigo da mesma
         if(!coluna)
-         coluna=tabela->obterColuna(atributos[ParsersAttributes::COLUMN], true);
+         coluna=tabela->getColumn(atributos[ParsersAttributes::COLUMN], true);
 
         /* Caso o atributo coluna da referencia esteja preenchido mas um objeto coluna
            não foi encontrado na tabela, uma exceção será disparada pois a visão está
@@ -5938,7 +5938,7 @@ Permission *ModeloBD::criarPermissao(void)
    /* Caso a tabela pai existe obtém o objeto filho da mesma
       o qual é referenciado pela permissão */
    if(tabela_pai)
-    objeto=tabela_pai->obterColuna(nome_obj);
+    objeto=tabela_pai->getColumn(nome_obj);
   }
   else if(tipo_obj==OBJ_DATABASE)
   {
@@ -6108,7 +6108,7 @@ void ModeloBD::validarRelacObjetoTabela(TableObject *objeto, Table *tabela_pai)
       > Caso seja uma coluna e a mesma é referenciada pela chave primária da tabela pai
       > Caso seja uma restrição e a mesma seja uma chave primária da tabela */
     revalidar_rels=((tipo==OBJ_COLUMN &&
-                     tabela_pai->restricaoReferenciaColuna(dynamic_cast<Column *>(objeto), ConstraintType::primary_key)) ||
+                     tabela_pai->isConstraintRefColumn(dynamic_cast<Column *>(objeto), ConstraintType::primary_key)) ||
                     (tipo==OBJ_CONSTRAINT &&
                      dynamic_cast<Constraint *>(objeto)->getConstraintType()==ConstraintType::primary_key));
 
@@ -6321,10 +6321,10 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
     itr++;
 
     //Varre a lista de restrições da tabela
-    qtd=tabela->obterNumRestricoes();
+    qtd=tabela->getConstraintCount();
     for(i=0; i < qtd; i++)
     {
-     restricao=tabela->obterRestricao(i);
+     restricao=tabela->getConstraint(i);
 
      /* Caso a restrição seja um objeto especial armazena o mesmo no mapa de objetos.
         Idenpendente da configuração, chaves estrangeiras sempre serão descartadas nesta
@@ -6335,7 +6335,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
           restricao->getConstraintType()!=ConstraintType::foreign_key)) &&
 
         (!restricao->isAddedByLinking() &&
-          ((restricao->getConstraintType()!=ConstraintType::primary_key && restricao->isReferRelationshipColumn()) ||
+          ((restricao->getConstraintType()!=ConstraintType::primary_key && restricao->isReferRelationshipAddedColumn()) ||
            (restricao->getConstraintType()==ConstraintType::foreign_key))))
      {
       //Armazena o objeto em si no mapa de objetos
@@ -6346,13 +6346,13 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
     }
 
     //Varre a lista de gatilhos da tabela
-    qtd=tabela->obterNumGatilhos();
+    qtd=tabela->getTriggerCount();
     for(i=0; i < qtd; i++)
     {
-     gatilho=tabela->obterGatilho(i);
+     gatilho=tabela->getTrigger(i);
 
      //Caso o gatilho seja um objeto especial armazena-o no mapa de objetos
-     if(gatilho->isReferRelationshipColumn())
+     if(gatilho->isReferRelationshipAddedColumn())
      {
       //Armazena o objeto em si no mapa de objetos
       mapa_objetos[gatilho->getObjectId()]=gatilho;
@@ -6362,13 +6362,13 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
     }
 
     //Varre a lista de índices da tabela
-    qtd=tabela->obterNumIndices();
+    qtd=tabela->getIndexCount();
     for(i=0; i < qtd; i++)
     {
-     indice=tabela->obterIndice(i);
+     indice=tabela->getIndex(i);
 
      //Caso o índice seja um objeto especial armazena-o no mapa de objetos
-     if(indice->isReferRelationshipColumn())
+     if(indice->isReferRelationshipAddedColumn())
      {
       //Armazena o objeto em si no mapa de objetos
       mapa_objetos[indice->getObjectId()]=indice;
@@ -6415,7 +6415,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
 
     //Stores the table's user added foreign keys
     if(objeto->getObjectType()==OBJ_TABLE)
-     dynamic_cast<Table *>(objeto)->obterChavesEstrangeiras(vet_fks);
+     dynamic_cast<Table *>(objeto)->getForeignKeys(vet_fks);
 
     if(objeto->getObjectType()==OBJ_RELATIONSHIP)
     {
@@ -6906,10 +6906,10 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    unsigned qtd, qtd1, i, i1;
 
    //Obtém as dependências dos tipos das colunas não incluídas por relacionamento
-   qtd=tab->obterNumColunas();
+   qtd=tab->getColumnCount();
    for(i=0; i < qtd; i++)
    {
-    col=tab->obterColuna(i);
+    col=tab->getColumn(i);
     tipo_usr=obterObjetoTipoPgSQL(col->getType());
       //obterObjeto(*col->obterTipo(), OBJETO_TIPO);
 
@@ -6918,10 +6918,10 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    }
 
    //Obtém as dependências das restrições não incluídas por relacionamento
-   qtd=tab->obterNumRestricoes();
+   qtd=tab->getConstraintCount();
    for(i=0; i < qtd; i++)
    {
-    rest=dynamic_cast<Constraint *>(tab->obterRestricao(i));
+    rest=dynamic_cast<Constraint *>(tab->getConstraint(i));
     if(inc_dep_indiretas &&
        !rest->isAddedByLinking() &&
         rest->getConstraintType()==ConstraintType::foreign_key)
@@ -6932,10 +6932,10 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    }
 
    //Obtém as dependências das tabelas referenciadas nos gatilhos e as funções
-   qtd=tab->obterNumGatilhos();
+   qtd=tab->getTriggerCount();
    for(i=0; i < qtd; i++)
    {
-    gat=dynamic_cast<Trigger *>(tab->obterGatilho(i));
+    gat=dynamic_cast<Trigger *>(tab->getTrigger(i));
     if(gat->getReferencedTable())
      obterDependenciasObjeto(gat->getReferencedTable(), vet_deps, inc_dep_indiretas);
 
@@ -6948,10 +6948,10 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
    }
 
    //Obtém as dependências das colunas ou classe de operadores usados nos elementos do índices
-   qtd=tab->obterNumIndices();
+   qtd=tab->getIndexCount();
    for(i=0; i < qtd; i++)
    {
-    ind=dynamic_cast<Index *>(tab->obterIndice(i));
+    ind=dynamic_cast<Index *>(tab->getIndex(i));
     qtd1=ind->getElementCount();
 
     for(i1=0; i1 < qtd1; i1++)
@@ -7091,10 +7091,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
     tab=dynamic_cast<Table *>(*itr);
 
     //Verificando as restrições
-    qtd=tab->obterNumRestricoes();
+    qtd=tab->getConstraintCount();
     for(i=0; i < qtd&& (!modo_exclusao || (modo_exclusao && !refer)); i++)
     {
-     rest=tab->obterRestricao(i);
+     rest=tab->getConstraint(i);
      if(rest->getConstraintType()==ConstraintType::foreign_key &&
         rest->getReferencedTable()==tabela)
      {
@@ -7104,10 +7104,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
     }
 
     //Verificando os gatilhos
-    qtd=tab->obterNumGatilhos();
+    qtd=tab->getTriggerCount();
     for(i=0; i < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i++)
     {
-     gat=tab->obterGatilho(i);
+     gat=tab->getTrigger(i);
      if(gat->getReferencedTable()==tabela)
      {
       refer=true;
@@ -7231,10 +7231,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       //Obtém a referência ao objeto
       tab=dynamic_cast<Table *>(*itr);
       itr++;
-      qtd=tab->obterNumGatilhos();
+      qtd=tab->getTriggerCount();
       for(i1=0; i1 < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
       {
-       gat=tab->obterGatilho(i1);
+       gat=tab->getTrigger(i1);
        //Verifica se o gatilho não referencia a função
        if(gat->getFunction()==funcao)
        {
@@ -7368,10 +7368,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       itr++;
 
       //Varre a lista de colunas da tabela
-      qtd=tab->obterNumColunas();
+      qtd=tab->getColumnCount();
       for(i1=0; i1 < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
       {
-       col=tab->obterColuna(i1);
+       col=tab->getColumn(i1);
        //Verifica se o tipo da coluna é o próprio tipo a ser excluído
        if(col->getType()==objeto)
        {
@@ -7632,10 +7632,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
 
     /* Verifica se algum dos índices da tabela referecia
        o espaço de tabela */
-    qtd=tab->obterNumIndices();
+    qtd=tab->getIndexCount();
     for(i=0; i < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i++)
     {
-     ind=tab->obterIndice(i);
+     ind=tab->getIndex(i);
      if(ind->getTablespace()==objeto)
      {
       refer=true;
@@ -7645,10 +7645,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
 
     /* Verifica se alguma restrição da tabela referecia
        o espaço de tabela */
-    qtd=tab->obterNumRestricoes();
+    qtd=tab->getConstraintCount();
     for(i=0; i < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i++)
     {
-     rest=tab->obterRestricao(i);
+     rest=tab->getConstraint(i);
      if(rest->getTablespace()==objeto)
      {
       refer=true;
@@ -7824,21 +7824,21 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
       unsigned qtd_gat, qtd_rest, idx, qtd1, i1;
       Trigger *gat=NULL;
 
-      qtd_rest=tab->obterNumRestricoes();
+      qtd_rest=tab->getConstraintCount();
       for(idx=0; idx < qtd_rest && (!modo_exclusao || (modo_exclusao && !refer)); idx++)
       {
-       if(tab->obterRestricao(idx)->isColumnExists(coluna, Constraint::SOURCE_COLS) ||
-          tab->obterRestricao(idx)->isColumnExists(coluna, Constraint::REFERENCED_COLS))
+       if(tab->getConstraint(idx)->isColumnExists(coluna, Constraint::SOURCE_COLS) ||
+          tab->getConstraint(idx)->isColumnExists(coluna, Constraint::REFERENCED_COLS))
        {
         refer=true;
-        vet_refs.push_back(tab->obterRestricao(idx));
+        vet_refs.push_back(tab->getConstraint(idx));
        }
       }
 
-      qtd_gat=tab->obterNumGatilhos();
+      qtd_gat=tab->getTriggerCount();
       for(idx=0; idx < qtd_gat && (!modo_exclusao || (modo_exclusao && !refer)); idx++)
       {
-       gat=tab->obterGatilho(idx);
+       gat=tab->getTrigger(idx);
        qtd1=gat->getColumnCount();
 
        for(i1=0; i1 < qtd1 && (!modo_exclusao || (modo_exclusao && !refer)); i1++)

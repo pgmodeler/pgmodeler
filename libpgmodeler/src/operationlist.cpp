@@ -290,7 +290,7 @@ void OperationList::removeOperations(void)
   {
    //Deletes the object if its not referenced by some table
    tab=dynamic_cast<Table *>(tab_obj->getParentTable());
-   if(!tab || (tab && tab->obterIndiceObjeto(tab_obj)) < 0)
+   if(!tab || (tab && tab->getObjectIndex(tab_obj)) < 0)
     delete(tab_obj);
   }
 
@@ -453,9 +453,9 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
       must be removed too */
    if(obj_type==OBJ_COLUMN && op_type==Operation::OBJECT_REMOVED)
     model->removerPermissoes(tab_obj);
-   else if(((obj_type==OBJ_TRIGGER && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipColumn()) ||
-            (obj_type==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipColumn()) ||
-            (obj_type==OBJ_CONSTRAINT && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipColumn())))
+   else if(((obj_type==OBJ_TRIGGER && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipAddedColumn()) ||
+            (obj_type==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn()) ||
+            (obj_type==OBJ_CONSTRAINT && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipAddedColumn())))
    {
     if(op_type==Operation::OBJECT_REMOVED)
      tab_obj->setParentTable(parent_tab);
@@ -482,7 +482,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
    {
     if(object_idx < 0)
      //Stores on the operation the index of object on its parent
-     obj_idx=parent_tab->obterIndiceObjeto(object->getName(false), obj_type);
+     obj_idx=parent_tab->getObjectIndex(object->getName(false), obj_type);
     else
      obj_idx=object_idx;
    }
@@ -770,7 +770,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
     //Gets the object in the current state from the parent object
     if(parent_tab)
-     orig_obj=dynamic_cast<TableObject *>(parent_tab->obterObjeto(oper->object_idx, obj_type));
+     orig_obj=dynamic_cast<TableObject *>(parent_tab->getObject(oper->object_idx, obj_type));
     else if(parent_rel)
      orig_obj=dynamic_cast<TableObject *>(parent_rel->getObject(oper->object_idx, obj_type));
     else
@@ -804,7 +804,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
     if(parent_tab)
     {
-     parent_tab->adicionarObjeto(dynamic_cast<TableObject *>(object), oper->object_idx);
+     parent_tab->addObject(dynamic_cast<TableObject *>(object), oper->object_idx);
 
      if(object->getObjectType()==OBJ_CONSTRAINT &&
         dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
@@ -824,7 +824,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
            (oper->op_type==Operation::OBJECT_REMOVED && redo))
    {
     if(parent_tab)
-     parent_tab->removerObjeto(oper->object_idx,obj_type);
+     parent_tab->removeObject(oper->object_idx,obj_type);
     else if(parent_rel)
      parent_rel->removeObject(oper->object_idx,obj_type);
     else
