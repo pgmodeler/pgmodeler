@@ -15,17 +15,17 @@ Table::Table(void) : BaseTable()
 
 Table::~Table(void)
 {
- ObjectType tipos[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE,
+ ObjectType types[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE,
                           OBJ_CONSTRAINT, OBJ_COLUMN };
- vector<TableObject *> *lista=NULL;
+ vector<TableObject *> *list=NULL;
 
  for(unsigned i=0; i < 5; i++)
  {
-  lista=getObjectList(tipos[i]);
-  while(!lista->empty())
+  list=getObjectList(types[i]);
+  while(!list->empty())
   {
-   delete(lista->back());
-   lista->pop_back();
+   delete(list->back());
+   list->pop_back();
   }
  }
 
@@ -33,79 +33,80 @@ Table::~Table(void)
  ancestor_tables.clear();
 }
 
-void Table::setName(const QString &nome)
+void Table::setName(const QString &name)
 {
- QString nome_ant=this->getName(true);
- BaseObject::setName(nome);
+ QString prev_name=this->getName(true);
+
+ BaseObject::setName(name);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- PgSQLType::renameUserType(nome_ant, this, this->getName(true));
+ PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
-void Table::setSchema(BaseObject *esquema)
+void Table::setSchema(BaseObject *schema)
 {
- QString nome_ant=this->getName(true);
+ QString prev_name=this->getName(true);
 
  //Atribui o esquema   tabela
- BaseObject::setSchema(esquema);
+ BaseObject::setSchema(schema);
 
  /* Renomeia o tipo já definido anteriormente na
     lista de tipos do PostgreSQL */
- PgSQLType::renameUserType(nome_ant, this, this->getName(true));
+ PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
-void Table::setWithOIDs(bool valor)
+void Table::setWithOIDs(bool value)
 {
- with_oid=valor;
+ with_oid=value;
 }
 
-void Table::setProtected(bool protegido)
+void Table::setProtected(bool value)
 {
- ObjectType tipos_obj[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
-                              OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER };
+ ObjectType obj_types[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
+                          OBJ_INDEX, OBJ_RULE, OBJ_TRIGGER };
  unsigned i;
  vector<TableObject *>::iterator itr, itr_end;
- vector<TableObject *> *lista=NULL;
- TableObject *obj_tab=NULL;
+ vector<TableObject *> *list=NULL;
+ TableObject *tab_obj=NULL;
 
  for(i=0; i < 5; i++)
  {
   //Obtém a lista de objetos
-  lista=getObjectList(tipos_obj[i]);
-  itr=lista->begin();
-  itr_end=lista->end();
+  list=getObjectList(obj_types[i]);
+  itr=list->begin();
+  itr_end=list->end();
 
   //Varre a lista protegendo/desprotegendo os elementos
   while(itr!=itr_end)
   {
    //Obtém um objeto da lista
-   obj_tab=(*itr);
+   tab_obj=(*itr);
    /* Só protegerá o objeto caso o mesmo não foi incluído
       por relacionamento pois quando é o caso os mesmos
       já vem protegidos */
-   if(!obj_tab->isAddedByRelationship())
-    obj_tab->setProtected(protegido);
+   if(!tab_obj->isAddedByRelationship())
+    tab_obj->setProtected(value);
    itr++;
   }
  }
 
- BaseGraphicObject::setProtected(protegido);
+ BaseGraphicObject::setProtected(value);
 }
 
-void Table::setCommentAttribute(TableObject *obj_tab)
+void Table::setCommentAttribute(TableObject *tab_obj)
 {
- if(obj_tab && !obj_tab->getComment().isEmpty())
+ if(tab_obj && !tab_obj->getComment().isEmpty())
  {
   map<QString, QString> attribs;
 
   attribs[ParsersAttributes::DIF_SQL]="1";
-  attribs[ParsersAttributes::SQL_OBJECT]=obj_tab->getSQLName();
-  attribs[ParsersAttributes::COLUMN]=(obj_tab->getObjectType()==OBJ_COLUMN ? "1" : "");
-  attribs[ParsersAttributes::CONSTRAINT]=(obj_tab->getObjectType()==OBJ_CONSTRAINT ? "1" : "");
+  attribs[ParsersAttributes::SQL_OBJECT]=tab_obj->getSQLName();
+  attribs[ParsersAttributes::COLUMN]=(tab_obj->getObjectType()==OBJ_COLUMN ? "1" : "");
+  attribs[ParsersAttributes::CONSTRAINT]=(tab_obj->getObjectType()==OBJ_CONSTRAINT ? "1" : "");
   attribs[ParsersAttributes::TABLE]=this->getName(true);
-  attribs[ParsersAttributes::NAME]=obj_tab->getName(true);
-  attribs[ParsersAttributes::COMMENT]=obj_tab->getComment();
+  attribs[ParsersAttributes::NAME]=tab_obj->getName(true);
+  attribs[ParsersAttributes::COMMENT]=tab_obj->getComment();
 
   SchemaParser::setIgnoreUnkownAttributes(true);
   attributes[ParsersAttributes::COLS_COMMENT]+=SchemaParser::getObjectDefinition(ParsersAttributes::COMMENT, attribs,
@@ -114,14 +115,14 @@ void Table::setCommentAttribute(TableObject *obj_tab)
  }
 }
 
-void Table::setColumnsAttribute(unsigned tipo_def)
+void Table::setColumnsAttribute(unsigned def_type)
 {
  QString str_cols;
- unsigned i, qtd;
+ unsigned i, count;
 
  //Concatena a definiação SQL das colunas
- qtd=columns.size();
- for(i=0; i < qtd; i++)
+ count=columns.size();
+ for(i=0; i < count; i++)
  {
   /*
    Para a definição de uma colunar ser inclía   definição da tabela
@@ -132,165 +133,165 @@ void Table::setColumnsAttribute(unsigned tipo_def)
   /*if((tipo_def==ParserEsquema::DEFINICAO_SQL &&
       (colunas[i]->incluidoPorLigacao() || colunas[i]->incluidoPorDependencia())) ||
      (!colunas[i]->incluidoPorRelacionamento())) */
-  if(tipo_def==SchemaParser::SQL_DEFINITION ||
-     (tipo_def==SchemaParser::XML_DEFINITION &&
+  if(def_type==SchemaParser::SQL_DEFINITION ||
+     (def_type==SchemaParser::XML_DEFINITION &&
       !columns[i]->isAddedByRelationship()))
   {
-   str_cols+=columns[i]->getCodeDefinition(tipo_def);
+   str_cols+=columns[i]->getCodeDefinition(def_type);
 
-   if(tipo_def==SchemaParser::SQL_DEFINITION)
+   if(def_type==SchemaParser::SQL_DEFINITION)
     setCommentAttribute(columns[i]);
   }
  }
 
- if(tipo_def==SchemaParser::SQL_DEFINITION)
+ if(def_type==SchemaParser::SQL_DEFINITION)
  {
   /* Caso a operação acima tenha retornado uma QString
      não vazia, qualquer vírgula ou quebra de linha final
      será removida */
   if(str_cols!="")
   {
-   qtd=str_cols.size();
-   if(str_cols[qtd-2]==',' || str_cols[qtd-2]=='\n')
-    str_cols.remove(qtd-2,2);
+   count=str_cols.size();
+   if(str_cols[count-2]==',' || str_cols[count-2]=='\n')
+    str_cols.remove(count-2,2);
   }
  }
 
  attributes[ParsersAttributes::COLUMNS]=str_cols;
 }
 
-void Table::setConstraintsAttribute(unsigned tipo_def)
+void Table::setConstraintsAttribute(unsigned def_type)
 {
- QString str_rest;
- unsigned i, qtd;
- bool inc_insporrelacao;
- Constraint *rest=NULL;
+ QString str_constr;
+ unsigned i, count;
+ bool inc_added_by_rel;
+ Constraint *constr=NULL;
 
  //Concatena a definiação SQL das restrições
- qtd=constraints.size();
- for(i=0; i < qtd; i++)
+ count=constraints.size();
+ for(i=0; i < count; i++)
  {
-  rest=dynamic_cast<Constraint *>(constraints[i]);
+  constr=dynamic_cast<Constraint *>(constraints[i]);
 
   //Chaves estrangeiras criadas pelo usuário não são incluídas na definição SQL da tabela
-  if((tipo_def==SchemaParser::SQL_DEFINITION &&
-      rest->getConstraintType()!=ConstraintType::foreign_key &&
-      (!rest->isReferRelationshipAddedColumn() || rest->getConstraintType()==ConstraintType::primary_key)) ||
+  if((def_type==SchemaParser::SQL_DEFINITION &&
+      constr->getConstraintType()!=ConstraintType::foreign_key &&
+      (!constr->isReferRelationshipAddedColumn() || constr->getConstraintType()==ConstraintType::primary_key)) ||
 
-     (tipo_def==SchemaParser::XML_DEFINITION && !rest->isAddedByRelationship() &&
-      rest->getConstraintType()!=ConstraintType::foreign_key &&
-      ((rest->getConstraintType()!=ConstraintType::primary_key && !rest->isReferRelationshipAddedColumn()) ||
-       (rest->getConstraintType()==ConstraintType::primary_key))))
+     (def_type==SchemaParser::XML_DEFINITION && !constr->isAddedByRelationship() &&
+      constr->getConstraintType()!=ConstraintType::foreign_key &&
+      ((constr->getConstraintType()!=ConstraintType::primary_key && !constr->isReferRelationshipAddedColumn()) ||
+       (constr->getConstraintType()==ConstraintType::primary_key))))
   {
-   inc_insporrelacao=(tipo_def==SchemaParser::SQL_DEFINITION);
-   str_rest+=rest->getCodeDefinition(tipo_def,inc_insporrelacao);
+   inc_added_by_rel=(def_type==SchemaParser::SQL_DEFINITION);
+   str_constr+=constr->getCodeDefinition(def_type,inc_added_by_rel);
 
-   if(tipo_def==SchemaParser::SQL_DEFINITION)
-    setCommentAttribute(rest);
+   if(def_type==SchemaParser::SQL_DEFINITION)
+    setCommentAttribute(constr);
   }
  }
 
- if(tipo_def==SchemaParser::SQL_DEFINITION)
+ if(def_type==SchemaParser::SQL_DEFINITION)
  {
   /* Caso a operação acima tenha retornado uma QString
      não vazia, qualquer vírgula ou quebra de linha final
      será removida */
-  if(str_rest!="")
+  if(str_constr!="")
   {
-   qtd=str_rest.size();
-   if(str_rest[qtd-2]==',' || str_rest[qtd-2]=='\n')
-   str_rest.remove(qtd-2,2);
+   count=str_constr.size();
+   if(str_constr[count-2]==',' || str_constr[count-2]=='\n')
+   str_constr.remove(count-2,2);
   }
  }
 
- attributes[ParsersAttributes::CONSTRAINTS]=str_rest;
+ attributes[ParsersAttributes::CONSTRAINTS]=str_constr;
 }
 
-void Table::setTriggersAttribute(unsigned tipo_def)
+void Table::setTriggersAttribute(unsigned def_type)
 {
- QString str_gat;
- unsigned i, qtd;
- Trigger *gat=NULL;
+ QString str_trig;
+ unsigned i, count;
+ Trigger *trig=NULL;
 
  //Concatena a definição SQL dos gatilhos da tabela
- qtd=triggers.size();
- for(i=0; i < qtd; i++)
+ count=triggers.size();
+ for(i=0; i < count; i++)
  {
   //Obtém um gatilho
-  gat=dynamic_cast<Trigger *>(triggers.at(i));
+  trig=dynamic_cast<Trigger *>(triggers.at(i));
 
   if((/*!gat->isProtected() &&*/
-      !gat->isReferRelationshipAddedColumn() &&
-      tipo_def==SchemaParser::XML_DEFINITION) ||
-      tipo_def==SchemaParser::SQL_DEFINITION)
+      !trig->isReferRelationshipAddedColumn() &&
+      def_type==SchemaParser::XML_DEFINITION) ||
+      def_type==SchemaParser::SQL_DEFINITION)
   {
-   str_gat+=gat->getCodeDefinition(tipo_def);
+   str_trig+=trig->getCodeDefinition(def_type);
   }
  }
 
- attributes[ParsersAttributes::TRIGGERS]=str_gat;
+ attributes[ParsersAttributes::TRIGGERS]=str_trig;
 }
 
-void Table::setIndexesAttribute(unsigned tipo_def)
+void Table::setIndexesAttribute(unsigned def_type)
 {
  QString str_ind;
- unsigned i, qtd;
+ unsigned i, count;
  Index *ind=NULL;
 
  //Concatena a definição SQL dos índices da tabela
- qtd=indexes.size();
- for(i=0; i < qtd; i++)
+ count=indexes.size();
+ for(i=0; i < count; i++)
  {
   ind=dynamic_cast<Index *>(indexes[i]);
   if((!ind->isAddedByRelationship() &&
       !ind->isReferRelationshipAddedColumn() &&
-      tipo_def==SchemaParser::XML_DEFINITION) ||
-      tipo_def==SchemaParser::SQL_DEFINITION)
-   str_ind+=ind->getCodeDefinition(tipo_def);
+      def_type==SchemaParser::XML_DEFINITION) ||
+      def_type==SchemaParser::SQL_DEFINITION)
+   str_ind+=ind->getCodeDefinition(def_type);
  }
 
  attributes[ParsersAttributes::INDEXES]=str_ind;
 }
 
-void Table::setRulesAttribute(unsigned tipo_def)
+void Table::setRulesAttribute(unsigned def_type)
 {
- QString str_reg;
- unsigned i, qtd;
+ QString str_rule;
+ unsigned i, count;
 
  //Concatena a definição SQL das regras da tabela
- qtd=rules.size();
- for(i=0; i < qtd; i++)
+ count=rules.size();
+ for(i=0; i < count; i++)
  {
   if((/* !regras[i]->isProtected() && */
-      tipo_def==SchemaParser::XML_DEFINITION) ||
-      tipo_def==SchemaParser::SQL_DEFINITION)
-   str_reg+=rules[i]->getCodeDefinition(tipo_def);
+      def_type==SchemaParser::XML_DEFINITION) ||
+      def_type==SchemaParser::SQL_DEFINITION)
+   str_rule+=rules[i]->getCodeDefinition(def_type);
  }
 
- attributes[ParsersAttributes::RULES]=str_reg;
+ attributes[ParsersAttributes::RULES]=str_rule;
 }
 
-vector<TableObject *> *Table::getObjectList(ObjectType tipo_obj)
+vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 {
  //Retorna a referencia da lista equivalente ao tipo passado
- if(tipo_obj==OBJ_COLUMN)
+ if(obj_type==OBJ_COLUMN)
   return(&columns);
- else if(tipo_obj==OBJ_CONSTRAINT)
+ else if(obj_type==OBJ_CONSTRAINT)
   return(&constraints);
- else if(tipo_obj==OBJ_RULE)
+ else if(obj_type==OBJ_RULE)
   return(&rules);
- else if(tipo_obj==OBJ_TRIGGER)
+ else if(obj_type==OBJ_TRIGGER)
   return(&triggers);
- else if(tipo_obj==OBJ_INDEX)
+ else if(obj_type==OBJ_INDEX)
   return(&indexes);
  else
   //Dispara uma exceção caso o tipo de objeto seja inválido
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Table::addObject(BaseObject *obj, int idx_obj, bool tab_copia)
+void Table::addObject(BaseObject *obj, int obj_idx, bool copy_tab)
 {
- ObjectType tipo_obj;
+ ObjectType obj_type;
 
  if(!obj)
   //Caso o objeto não esteja alocado, dispara uma exceção
@@ -298,8 +299,8 @@ void Table::addObject(BaseObject *obj, int idx_obj, bool tab_copia)
  else
  {
   int idx;
-  tipo_obj=obj->getObjectType();
-  ConstraintType tipo_rest;
+  obj_type=obj->getObjectType();
+  ConstraintType constr_type;
   QString str_aux;
 
   try
@@ -307,12 +308,12 @@ void Table::addObject(BaseObject *obj, int idx_obj, bool tab_copia)
   /* Se o flag de tabela de cópia estiver marcado e o objeto passado
      for uma tabela muda o tipo para OBJETO_TABELA_BASE para forçar a
      inserção da tabela na lista de tabelas cópia */
-  if(tab_copia && tipo_obj==OBJ_TABLE)
-   tipo_obj=BASE_TABLE;
+  if(copy_tab && obj_type==OBJ_TABLE)
+   obj_type=BASE_TABLE;
 
   /* Verifica se o objeto a ser adicionado   tabela possua o mesmo nome de um objeto que já
      existente,efetuando uma busca na lista de objetos através do nome do novo objeto */
-  if(getObject(obj->getName(),tipo_obj,idx))
+  if(getObject(obj->getName(),obj_type,idx))
   {
    //Dispara uma exceçaõ indica a duplicidade de nomes de objetos
    str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
@@ -325,104 +326,104 @@ void Table::addObject(BaseObject *obj, int idx_obj, bool tab_copia)
 
   /* Caso o objeto seja uma tabela (herança) e a mesma for a própria tabela a se adicionar o objeto,
      significa um caso de herança inválida onde uma tabela tenta herdar atributos dela mesma */
-  else if(tipo_obj==OBJ_TABLE && obj==this)
+  else if(obj_type==OBJ_TABLE && obj==this)
    //Dispara a exceção indica o erro
    throw Exception(ERR_INV_INH_COPY_RELATIONSHIP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
    //Insere o objeto   lista de acordo com seu tipo
-   switch(tipo_obj)
+   switch(obj_type)
    {
     case OBJ_COLUMN:
     case OBJ_CONSTRAINT:
     case OBJ_TRIGGER:
     case OBJ_INDEX:
     case OBJ_RULE:
-      TableObject *obj_tab;
-      vector<TableObject *> *lista_obj;
+      TableObject *tab_obj;
+      vector<TableObject *> *obj_list;
 
       //Converte o objeto base para objeto de tabela
-      obj_tab=dynamic_cast<TableObject *>(obj);
+      tab_obj=dynamic_cast<TableObject *>(obj);
 
       //Verifica se o objeto não está relacionado com uma outra tabela
-      if(!obj_tab->getParentTable())
-       obj_tab->setParentTable(this);
-      else if(obj_tab->getParentTable()!=this)
+      if(!tab_obj->getParentTable())
+       tab_obj->setParentTable(this);
+      else if(tab_obj->getParentTable()!=this)
        throw Exception(ERR_ASG_OBJ_BELONGS_OTHER_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       //Testando a definição sql do objeto
-      if(tipo_obj==OBJ_COLUMN)
+      if(obj_type==OBJ_COLUMN)
       {
        Column *col;
-       col=dynamic_cast<Column *>(obj_tab);
+       col=dynamic_cast<Column *>(tab_obj);
        col->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       }
-      else if(tipo_obj==OBJ_CONSTRAINT)
+      else if(obj_type==OBJ_CONSTRAINT)
       {
-       Constraint *rest;
-       rest=dynamic_cast<Constraint *>(obj_tab);
-       rest->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-       tipo_rest=rest->getConstraintType();
+       Constraint *constr;
+       constr=dynamic_cast<Constraint *>(tab_obj);
+       constr->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+       constr_type=constr->getConstraintType();
       }
-      else if(tipo_obj==OBJ_INDEX)
+      else if(obj_type==OBJ_INDEX)
       {
        Index *ind;
-       ind=dynamic_cast<Index *>(obj_tab);
+       ind=dynamic_cast<Index *>(tab_obj);
        ind->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       }
-      else if(tipo_obj==OBJ_RULE)
+      else if(obj_type==OBJ_RULE)
       {
-       Rule *reg;
-       reg=dynamic_cast<Rule *>(obj_tab);
-       reg->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+       Rule *rule;
+       rule=dynamic_cast<Rule *>(tab_obj);
+       rule->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       }
-      else if(tipo_obj==OBJ_TRIGGER)
+      else if(obj_type==OBJ_TRIGGER)
       {
-       Trigger *gat;
-       gat=dynamic_cast<Trigger *>(obj_tab);
-       gat->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+       Trigger *trig;
+       trig=dynamic_cast<Trigger *>(tab_obj);
+       trig->getCodeDefinition(SchemaParser::SQL_DEFINITION);
       }
 
       //Insere o objeto na lista correta
-      lista_obj=getObjectList(tipo_obj);
+      obj_list=getObjectList(obj_type);
 
       /* Caso o usuário tente inserir mais uma chave primária na tabela
          será retornado um erro pois uma tabela pode possuir apenas 1
          chave primária */
-      if(tipo_obj==OBJ_CONSTRAINT &&
-         tipo_rest==ConstraintType::primary_key &&
+      if(obj_type==OBJ_CONSTRAINT &&
+         constr_type==ConstraintType::primary_key &&
          this->getPrimaryKey())
        throw Exception(ERR_ASG_EXISTING_PK_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
       /* Caso o índice passado seja menor que zero ou superior ao tamanho da lista
          o objeto será inserido ao final da mesma */
-      if(idx_obj < 0 || idx_obj >= static_cast<int>(lista_obj->size()))
-       lista_obj->push_back(obj_tab);
+      if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
+       obj_list->push_back(tab_obj);
       else
       {
        //Caso o índice seja válido, insere o objeto na posição especificada
-       if(lista_obj->size() > 0)
-        lista_obj->insert((lista_obj->begin() + idx_obj), obj_tab);
+       if(obj_list->size() > 0)
+        obj_list->insert((obj_list->begin() + obj_idx), tab_obj);
        else
-        lista_obj->push_back(obj_tab);
+        obj_list->push_back(tab_obj);
       }
     break;
 
     case OBJ_TABLE:
      Table *tab;
      tab=dynamic_cast<Table *>(obj);
-     if(idx_obj < 0 || idx_obj >= static_cast<int>(ancestor_tables.size()))
+     if(obj_idx < 0 || obj_idx >= static_cast<int>(ancestor_tables.size()))
       ancestor_tables.push_back(tab);
      else
-      ancestor_tables.insert((ancestor_tables.begin() + idx_obj), tab);
+      ancestor_tables.insert((ancestor_tables.begin() + obj_idx), tab);
     break;
 
     case BASE_TABLE:
      Table *tab1;
      tab1=dynamic_cast<Table *>(obj);
-     if(idx_obj < 0 || idx_obj >= static_cast<int>(copy_tables.size()))
+     if(obj_idx < 0 || obj_idx >= static_cast<int>(copy_tables.size()))
       copy_tables.push_back(tab1);
      else
-      copy_tables.insert((copy_tables.begin() + idx_obj), tab1);
+      copy_tables.insert((copy_tables.begin() + obj_idx), tab1);
     break;
 
     default:
@@ -446,19 +447,19 @@ void Table::addObject(BaseObject *obj, int idx_obj, bool tab_copia)
  }
 }
 
-void Table::addColumn(Column *col, int idx_col)
+void Table::addColumn(Column *col, int idx)
 {
- addObject(col, idx_col);
+ addObject(col, idx);
 }
 
-void Table::addTrigger(Trigger *gat, int idx_gat)
+void Table::addTrigger(Trigger *trig, int idx)
 {
- addObject(gat, idx_gat);
+ addObject(trig, idx);
 }
 
-void Table::addIndex(Index *ind, int idx_ind)
+void Table::addIndex(Index *ind, int idx)
 {
- addObject(ind, idx_ind);
+ addObject(ind, idx);
 }
 
 void Table::addRule(Rule *reg, int idx_reg)
@@ -466,272 +467,272 @@ void Table::addRule(Rule *reg, int idx_reg)
  addObject(reg, idx_reg);
 }
 
-void Table::addConstraint(Constraint *constr, int idx_rest)
+void Table::addConstraint(Constraint *constr, int idx)
 {
- addObject(constr, idx_rest);
+ addObject(constr, idx);
 }
 
-void Table::addAncestorTable(Table *tab, int idx_tab)
+void Table::addAncestorTable(Table *tab, int idx)
 {
- addObject(tab, idx_tab);
+ addObject(tab, idx);
 }
 
-void Table::addCopyTable(Table *tab, int idx_tab)
+void Table::addCopyTable(Table *tab, int idx)
 {
- addObject(tab, idx_tab, true);
+ addObject(tab, idx, true);
 }
 
-void Table::removeObject(BaseObject *objeto)
+void Table::removeObject(BaseObject *obj)
 {
- if(objeto)
-  removeObject(objeto->getName(), objeto->getObjectType());
+ if(obj)
+  removeObject(obj->getName(), obj->getObjectType());
 }
 
-void Table::removeObject(const QString &nome, ObjectType tipo_obj)
+void Table::removeObject(const QString &name, ObjectType obj_type)
 {
  int idx;
 
  //Obtém o índice do objeto localizando-o na lista de objetos
- getObject(nome,tipo_obj,idx);
+ getObject(name,obj_type,idx);
 
  //Caso seja encontrado (indice maior que 0)
  if(idx>=0)
   //Remove objeto através de seu índice
-  removeObject(static_cast<unsigned>(idx),tipo_obj);
+  removeObject(static_cast<unsigned>(idx),obj_type);
 }
 
-void Table::removeObject(unsigned idx_obj, ObjectType tipo_obj)
+void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 {
  /* Verfica se o tipo do objeto especifica está fora do conjunto dos que são
     aceitos pela classe tabela */
- if(tipo_obj!=OBJ_COLUMN && tipo_obj!=OBJ_CONSTRAINT &&
-    tipo_obj!=OBJ_TRIGGER && tipo_obj!=OBJ_INDEX &&
-    tipo_obj!=OBJ_RULE && tipo_obj!=OBJ_TABLE &&
-    tipo_obj!=BASE_TABLE)
+ if(obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT &&
+    obj_type!=OBJ_TRIGGER && obj_type!=OBJ_INDEX &&
+    obj_type!=OBJ_RULE && obj_type!=OBJ_TABLE &&
+    obj_type!=BASE_TABLE)
   //Caso o tipo esteja fora do conjunto, dispara uma exceção
   throw Exception(ERR_REM_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso o objeto a ser removido seja uma tabela pai e seu índice seja válido
- else if(tipo_obj==OBJ_TABLE && idx_obj < ancestor_tables.size())
+ else if(obj_type==OBJ_TABLE && obj_idx < ancestor_tables.size())
  {
   vector<Table *>::iterator itr;
 
-  itr=ancestor_tables.begin() + idx_obj; //Obtendo a referênci  tabela pai
+  itr=ancestor_tables.begin() + obj_idx; //Obtendo a referênci  tabela pai
   ancestor_tables.erase(itr); //Remove a tabela pai da lista
  }
  //Caso o objeto a ser removido seja uma tabela cópia e seu índice seja válido
- else if(tipo_obj==BASE_TABLE && idx_obj < copy_tables.size())
+ else if(obj_type==BASE_TABLE && obj_idx < copy_tables.size())
  {
   vector<Table *>::iterator itr;
 
-  itr=copy_tables.begin() + idx_obj; //Obtendo a referênci  tabela copia
+  itr=copy_tables.begin() + obj_idx; //Obtendo a referênci  tabela copia
   copy_tables.erase(itr); //Remove a tabela pai da lista
  }
- else if(tipo_obj!=OBJ_TABLE && tipo_obj!=BASE_TABLE)
+ else if(obj_type!=OBJ_TABLE && obj_type!=BASE_TABLE)
  {
-  vector<TableObject *> *lista_obj=NULL;
+  vector<TableObject *> *obj_list=NULL;
   vector<TableObject *>::iterator itr;
 
   //Obtém a lista de objetos de acordo com o tipo passado
-  lista_obj=getObjectList(tipo_obj);
+  obj_list=getObjectList(obj_type);
 
   //Caso o indice do objeto extrapole o tamanho da lista de objetos
-  if(idx_obj >= lista_obj->size())
+  if(obj_idx >= obj_list->size())
    throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Executando a remoção genérica de objetos que não sejam colunas
-  if(tipo_obj!=OBJ_COLUMN)
+  if(obj_type!=OBJ_COLUMN)
   {
-   itr=lista_obj->begin() + idx_obj; //Obtendo a referência ao objeto
+   itr=obj_list->begin() + obj_idx; //Obtendo a referência ao objeto
    (*itr)->setParentTable(NULL);
-   lista_obj->erase(itr); //Remove a regra da lista
+   obj_list->erase(itr); //Remove a regra da lista
   }
   else
   {
-   vector<TableObject *> vet_refs;
-   Column *coluna=NULL;
+   vector<TableObject *> refs;
+   Column *column=NULL;
 
    //Obtém a referência para a coluna
-   itr=lista_obj->begin() + idx_obj;
-   coluna=dynamic_cast<Column *>(*itr); //Obtém a coluna
-   getColumnReferences(coluna, vet_refs, true);
+   itr=obj_list->begin() + obj_idx;
+   column=dynamic_cast<Column *>(*itr); //Obtém a coluna
+   getColumnReferences(column, refs, true);
 
    /* Caso a coluna esteja sendo referenciada no gatilho, interrompe a
       remoção da mesma disparando uma exceção. */
-   if(!vet_refs.empty())
+   if(!refs.empty())
    {
     throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
-                          .arg(QString::fromUtf8(coluna->getName()))
-                          .arg(coluna->getTypeName())
-                          .arg(QString::fromUtf8(vet_refs[0]->getName()))
-                          .arg(vet_refs[0]->getTypeName())
+                          .arg(QString::fromUtf8(column->getName()))
+                          .arg(column->getTypeName())
+                          .arg(QString::fromUtf8(refs[0]->getName()))
+                          .arg(refs[0]->getTypeName())
                           .arg(QString::fromUtf8(this->getName(true)))
                           .arg(this->getTypeName()),
                  ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
-   coluna->setParentTable(NULL);
+   column->setParentTable(NULL);
    columns.erase(itr); //Remove a coluna da lista
   }
  }
 }
 
-void Table::removeColumn(const QString &nome)
+void Table::removeColumn(const QString &name)
 {
- removeObject(nome,OBJ_COLUMN);
+ removeObject(name,OBJ_COLUMN);
 }
 
-void Table::removeColumn(unsigned idx_col)
+void Table::removeColumn(unsigned idx)
 {
- removeObject(idx_col,OBJ_COLUMN);
+ removeObject(idx,OBJ_COLUMN);
 }
 
-void Table::removeTrigger(const QString &nome)
+void Table::removeTrigger(const QString &name)
 {
- removeObject(nome,OBJ_TRIGGER);
+ removeObject(name,OBJ_TRIGGER);
 }
 
-void Table::removeTrigger(unsigned idx_gat)
+void Table::removeTrigger(unsigned idx)
 {
- removeObject(idx_gat,OBJ_TRIGGER);
+ removeObject(idx,OBJ_TRIGGER);
 }
 
-void Table::removeIndex(const QString &nome)
+void Table::removeIndex(const QString &name)
 {
- removeObject(nome,OBJ_INDEX);
+ removeObject(name,OBJ_INDEX);
 }
 
-void Table::removeIndex(unsigned idx_ind)
+void Table::removeIndex(unsigned idx)
 {
- removeObject(idx_ind,OBJ_INDEX);
+ removeObject(idx,OBJ_INDEX);
 }
 
-void Table::removeRule(const QString &nome)
+void Table::removeRule(const QString &name)
 {
- removeObject(nome,OBJ_RULE);
+ removeObject(name,OBJ_RULE);
 }
 
-void Table::removeRule(unsigned idx_reg)
+void Table::removeRule(unsigned idx)
 {
- removeObject(idx_reg,OBJ_RULE);
+ removeObject(idx,OBJ_RULE);
 }
 
-void Table::removeConstraint(const QString &nome)
+void Table::removeConstraint(const QString &name)
 {
- removeObject(nome,OBJ_CONSTRAINT);
+ removeObject(name,OBJ_CONSTRAINT);
 }
 
-void Table::removeConstraint(unsigned idx_const)
+void Table::removeConstraint(unsigned idx)
 {
- removeObject(idx_const,OBJ_CONSTRAINT);
+ removeObject(idx,OBJ_CONSTRAINT);
 }
 
-void Table::removeAncestorTable(const QString &nome)
+void Table::removeAncestorTable(const QString &name)
 {
- removeObject(nome,OBJ_TABLE);
+ removeObject(name,OBJ_TABLE);
 }
 
-void Table::removeAncestorTable(unsigned idx_tab)
+void Table::removeAncestorTable(unsigned idx)
 {
- removeObject(idx_tab,OBJ_TABLE);
+ removeObject(idx,OBJ_TABLE);
 }
 
-void Table::removeCopyTable(const QString &nome)
+void Table::removeCopyTable(const QString &name)
 {
- removeObject(nome,BASE_TABLE);
+ removeObject(name,BASE_TABLE);
 }
 
-void Table::removeCopyTable(unsigned idx_tab)
+void Table::removeCopyTable(unsigned idx)
 {
- removeObject(idx_tab,BASE_TABLE);
+ removeObject(idx,BASE_TABLE);
 }
 
-int Table::getObjectIndex(const QString &nome, ObjectType tipo_obj)
+int Table::getObjectIndex(const QString &name, ObjectType obj_type)
 {
  int idx;
- getObject(nome, tipo_obj, idx);
+ getObject(name, obj_type, idx);
  return(idx);
 }
 
-int Table::getObjectIndex(TableObject *objeto)
+int Table::getObjectIndex(TableObject *obj)
 {
- if(!objeto)
+ if(!obj)
   return(-1);
  else
-  return(getObjectIndex(objeto->getName(true), objeto->getObjectType()));
+  return(getObjectIndex(obj->getName(true), obj->getObjectType()));
 }
 
-BaseObject *Table::getObject(const QString &nome, ObjectType tipo_obj)
+BaseObject *Table::getObject(const QString &name, ObjectType obj_type)
 {
  int idx;
- return(getObject(nome, tipo_obj, idx));
+ return(getObject(name, obj_type, idx));
 }
 
-BaseObject *Table::getObject(const QString &nome, ObjectType tipo_obj, int &idx_obj)
+BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_idx)
 {
- BaseObject *objeto=NULL;
- bool enc=false, formatar=false;
+ BaseObject *object=NULL;
+ bool found=false, format=false;
 
- formatar=nome.contains("\"");
+ format=name.contains("\"");
 
  //Caso o objeto a ser obtido seja uma coluna
- if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT ||
-    tipo_obj==OBJ_TRIGGER ||
-    tipo_obj==OBJ_INDEX || tipo_obj==OBJ_RULE)
+ if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT ||
+    obj_type==OBJ_TRIGGER ||
+    obj_type==OBJ_INDEX || obj_type==OBJ_RULE)
  {
   vector<TableObject *>::iterator itr, itr_end;
-  vector<TableObject *> *lista_obj=NULL;
-  int qtd;
-  QString nome_aux=nome;
+  vector<TableObject *> *obj_list=NULL;
+  int count;
+  QString aux_name=name;
 
-  qtd=nome_aux.count(QChar('\0'));
-  if(qtd >=1) nome_aux.chop(qtd);
+  count=aux_name.count(QChar('\0'));
+  if(count >=1) aux_name.chop(count);
 
-  lista_obj=getObjectList(tipo_obj);
+  obj_list=getObjectList(obj_type);
 
   //Obtém as referências ao primeiro e ultimo elementos da lista
-  itr=lista_obj->begin();
-  itr_end=lista_obj->end();
+  itr=obj_list->begin();
+  itr_end=obj_list->end();
 
   //Varre a lista de objetos
   while(itr!=itr_end)
   {
    //Verifica se o nome a ser encontrado é igual o nome do objeto atual
-   enc=((*itr)->getName(formatar)==nome_aux);
-   if(!enc) itr++; //Caso não seja encontrado passa para outro elemento da lista
+   found=((*itr)->getName(format)==aux_name);
+   if(!found) itr++; //Caso não seja encontrado passa para outro elemento da lista
    else break; //Caso seja encontrado, interrompe a varredura pela lista
   }
 
   //Caso o objeto seja encontrado
-  if(enc)
+  if(found)
   {
    //Define seu índice
-   idx_obj=(itr-lista_obj->begin());
+   obj_idx=(itr-obj_list->begin());
 
    //Armazena o objeto em um ponteiro que será retornado
-   objeto=(*itr);
+   object=(*itr);
   }
-  else idx_obj=-1;
+  else obj_idx=-1;
  }
 
  //Caso o objeto a ser obtido seja uma tabela pai
- else if(tipo_obj==OBJ_TABLE || tipo_obj==BASE_TABLE)
+ else if(obj_type==OBJ_TABLE || obj_type==BASE_TABLE)
  {
   vector<Table *>::iterator itr_tab, itr_end_tab;
-  vector<Table *> *tabelas;
-  QString nome_aux;
+  vector<Table *> *tables;
+  QString aux_name;
 
   //Obrigatoriamente todo nome de tabela deve ser formatado por conta do esquema
-  nome_aux=BaseObject::formatName(nome);
+  aux_name=BaseObject::formatName(name);
 
-  if(tipo_obj==OBJ_TABLE)
-   tabelas=&ancestor_tables;
+  if(obj_type==OBJ_TABLE)
+   tables=&ancestor_tables;
   else
-   tabelas=&copy_tables;
+   tables=&copy_tables;
 
   //Obtém as referências ao primeiro e ultimo elementos da lista de tabelas descendentes
-  itr_tab=tabelas->begin();
-  itr_end_tab=tabelas->end();
+  itr_tab=tables->begin();
+  itr_end_tab=tables->end();
 
   //Varre a lista de tabelas descendentes
   while(itr_tab!=itr_end_tab)
@@ -740,164 +741,164 @@ BaseObject *Table::getObject(const QString &nome, ObjectType tipo_obj, int &idx_
    /* Diferente de outros tipos de objeto, as tabelas são sempre comparadas
       COM O NOME FORMATADO por precisam ser 'schema-qualified' evitando que
       uma tabelas de nomes iguais porém de esquemas diferentes sejam confundidas */
-   enc=((*itr_tab)->getName(true)==nome_aux);
-   if(!enc) itr_tab++; //Caso seja encontrado, interrompe a varredura pela lista
+   found=((*itr_tab)->getName(true)==aux_name);
+   if(!found) itr_tab++; //Caso seja encontrado, interrompe a varredura pela lista
    else break; //Caso seja encontrado, interrompe a varredura pela lista
   }
 
   //Caso o objeto seja encontrado
-  if(enc)
+  if(found)
   {
    //Define seu índice
-   idx_obj=(itr_tab-tabelas->begin());
+   obj_idx=(itr_tab-tables->begin());
 
    //Armazena o objeto em um ponteiro que será retornado
-   objeto=(*itr_tab);
+   object=(*itr_tab);
   }
  }
  else
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Retorna o objeto encontrado
- return(objeto);
+ return(object);
 }
 
-BaseObject *Table::getObject(unsigned idx_obj, ObjectType tipo_obj)
+BaseObject *Table::getObject(unsigned obj_idx, ObjectType obj_type)
 {
- vector<TableObject *> *lista_obj=NULL;
+ vector<TableObject *> *obj_list=NULL;
 
- if(tipo_obj==OBJ_TABLE)
+ if(obj_type==OBJ_TABLE)
  {
   //Caso o índice do objeto seja inválido dispara uma exceção
-  if(idx_obj >= ancestor_tables.size())
+  if(obj_idx >= ancestor_tables.size())
    throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Retorna a tabela pai no índice especificado
-  return(ancestor_tables[idx_obj]);
+  return(ancestor_tables[obj_idx]);
  }
- else if(tipo_obj==BASE_TABLE)
+ else if(obj_type==BASE_TABLE)
  {
   //Caso o índice do objeto seja inválido dispara uma exceção
-  if(idx_obj >= copy_tables.size())
+  if(obj_idx >= copy_tables.size())
    throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Retorna a tabela cópia no índice especificado
-  return(copy_tables[idx_obj]);
+  return(copy_tables[obj_idx]);
  }
  else
  {
   /* Obtém um objeto de uma determinada lista de acordo com seu tipo
      e se seu índice seja válido */
-  lista_obj=getObjectList(tipo_obj);
-  if(idx_obj < lista_obj->size())
-   return(lista_obj->at(idx_obj));
+  obj_list=getObjectList(obj_type);
+  if(obj_idx < obj_list->size())
+   return(obj_list->at(obj_idx));
   else
    throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
 
-Table *Table::getAncestorTable(const QString &nome)
+Table *Table::getAncestorTable(const QString &name)
 {
  int idx;
- return(dynamic_cast<Table *>(getObject(nome,OBJ_TABLE,idx)));
+ return(dynamic_cast<Table *>(getObject(name,OBJ_TABLE,idx)));
 }
 
-Table *Table::getAncestorTable(unsigned idx_tab)
+Table *Table::getAncestorTable(unsigned idx)
 {
- return(dynamic_cast<Table *>(getObject(idx_tab,OBJ_TABLE)));
+ return(dynamic_cast<Table *>(getObject(idx,OBJ_TABLE)));
 }
 
-Column *Table::getColumn(const QString &nome, bool ref_nome_antigo)
+Column *Table::getColumn(const QString &name, bool ref_old_name)
 {
- if(!ref_nome_antigo)
+ if(!ref_old_name)
  {
   int idx;
-  return(dynamic_cast<Column *>(getObject(nome,OBJ_COLUMN,idx)));
+  return(dynamic_cast<Column *>(getObject(name,OBJ_COLUMN,idx)));
  }
  else
  {
-  Column *coluna=NULL;
+  Column *column=NULL;
   vector<TableObject *>::iterator itr, itr_end;
-  bool enc=false, formatar=false;
+  bool found=false, format=false;
 
-  formatar=nome.contains("\"");
+  format=name.contains("\"");
   itr=columns.begin();
   itr_end=columns.end();
 
   //Varre a lista de colunas buscando pelo nome antigo das mesmas
-  while(itr!=itr_end && !enc)
+  while(itr!=itr_end && !found)
   {
-   coluna=dynamic_cast<Column *>(*itr);
+   column=dynamic_cast<Column *>(*itr);
    itr++;
-   enc=(nome!="" && coluna->getOldName(formatar)==nome);
+   found=(name!="" && column->getOldName(format)==name);
   }
 
   /* Caso nenhuma coluna for encontrada zera o ponteiro de coluna
      para forçar o retorno de uma coluna nula indicando que a
      busca não retornou objeto */
-  if(!enc) coluna=NULL;
-  return(coluna);
+  if(!found) column=NULL;
+  return(column);
  }
 }
 
-Column *Table::getColumn(unsigned idx_col)
+Column *Table::getColumn(unsigned idx)
 {
- return(dynamic_cast<Column *>(getObject(idx_col,OBJ_COLUMN)));
+ return(dynamic_cast<Column *>(getObject(idx,OBJ_COLUMN)));
 }
 
-Trigger *Table::getTrigger(const QString &nome)
+Trigger *Table::getTrigger(const QString &name)
 {
  int idx;
- return(dynamic_cast<Trigger *>(getObject(nome,OBJ_TRIGGER,idx)));
+ return(dynamic_cast<Trigger *>(getObject(name,OBJ_TRIGGER,idx)));
 }
 
-Trigger *Table::getTrigger(unsigned idx_gat)
+Trigger *Table::getTrigger(unsigned idx)
 {
- return(dynamic_cast<Trigger *>(getObject(idx_gat,OBJ_TRIGGER)));
+ return(dynamic_cast<Trigger *>(getObject(idx,OBJ_TRIGGER)));
 }
 
-Constraint *Table::getConstraint(const QString &nome)
-{
- int idx;
- return(dynamic_cast<Constraint *>(getObject(nome,OBJ_CONSTRAINT,idx)));
-}
-
-Constraint *Table::getConstraint(unsigned idx_constr)
-{
- return(dynamic_cast<Constraint *>(getObject(idx_constr,OBJ_CONSTRAINT)));
-}
-
-Index *Table::getIndex(const QString &nome)
+Constraint *Table::getConstraint(const QString &name)
 {
  int idx;
- return(dynamic_cast<Index *>(getObject(nome,OBJ_INDEX,idx)));
+ return(dynamic_cast<Constraint *>(getObject(name,OBJ_CONSTRAINT,idx)));
 }
 
-Index *Table::getIndex(unsigned idx_ind)
+Constraint *Table::getConstraint(unsigned idx)
 {
- return(dynamic_cast<Index *>(getObject(idx_ind,OBJ_INDEX)));
+ return(dynamic_cast<Constraint *>(getObject(idx,OBJ_CONSTRAINT)));
 }
 
-Rule *Table::getRule(const QString &nome)
-{
- int idx;
- return(dynamic_cast<Rule *>(getObject(nome,OBJ_RULE,idx)));
-}
-
-Rule *Table::getRule(unsigned idx_reg)
-{
- return(dynamic_cast<Rule *>(getObject(idx_reg,OBJ_RULE)));
-}
-
-Table *Table::getCopyTable(const QString &nome)
+Index *Table::getIndex(const QString &name)
 {
  int idx;
- return(dynamic_cast<Table *>(getObject(nome,BASE_TABLE,idx)));
+ return(dynamic_cast<Index *>(getObject(name,OBJ_INDEX,idx)));
 }
 
-Table *Table::getCopyTable(unsigned idx_tab)
+Index *Table::getIndex(unsigned idx)
 {
- return(dynamic_cast<Table *>(getObject(idx_tab,BASE_TABLE)));
+ return(dynamic_cast<Index *>(getObject(idx,OBJ_INDEX)));
+}
+
+Rule *Table::getRule(const QString &name)
+{
+ int idx;
+ return(dynamic_cast<Rule *>(getObject(name,OBJ_RULE,idx)));
+}
+
+Rule *Table::getRule(unsigned idx)
+{
+ return(dynamic_cast<Rule *>(getObject(idx,OBJ_RULE)));
+}
+
+Table *Table::getCopyTable(const QString &name)
+{
+ int idx;
+ return(dynamic_cast<Table *>(getObject(name,BASE_TABLE,idx)));
+}
+
+Table *Table::getCopyTable(unsigned idx)
+{
+ return(dynamic_cast<Table *>(getObject(idx,BASE_TABLE)));
 }
 
 unsigned Table::getColumnCount(void)
@@ -935,43 +936,43 @@ unsigned Table::getCopyTable(void)
  return(copy_tables.size());
 }
 
-unsigned Table::getObjectCount(ObjectType tipo_obj, bool inc_insporrelacao)
+unsigned Table::getObjectCount(ObjectType obj_type, bool inc_added_by_rel)
 {
- if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT ||
-    tipo_obj==OBJ_TRIGGER ||/* tipo_obj==OBJETO_GAT_RESTRICAO ||*/
-    tipo_obj==OBJ_INDEX || tipo_obj==OBJ_RULE ||
-    tipo_obj==OBJ_TABLE || tipo_obj==BASE_TABLE)
+ if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT ||
+    obj_type==OBJ_TRIGGER ||/* tipo_obj==OBJETO_GAT_RESTRICAO ||*/
+    obj_type==OBJ_INDEX || obj_type==OBJ_RULE ||
+    obj_type==OBJ_TABLE || obj_type==BASE_TABLE)
  {
-  if(tipo_obj==OBJ_TABLE || tipo_obj==BASE_TABLE)
+  if(obj_type==OBJ_TABLE || obj_type==BASE_TABLE)
   {
-   if(tipo_obj==OBJ_TABLE)
+   if(obj_type==OBJ_TABLE)
     return(ancestor_tables.size());
    else
     return(copy_tables.size());
   }
   else
   {
-   vector<TableObject *> *lista=NULL;
-   lista=getObjectList(tipo_obj);
+   vector<TableObject *> *list=NULL;
+   list=getObjectList(obj_type);
 
    //Faz a contagem apenas dos objetos que não são auto-incluidos (incluídos por relacionamento)
-   if(!inc_insporrelacao)
+   if(!inc_added_by_rel)
    {
     vector<TableObject *>::iterator itr, itr_end;
-    unsigned qtd=0;
+    unsigned count=0;
 
-    itr=lista->begin();
-    itr_end=lista->end();
+    itr=list->begin();
+    itr_end=list->end();
     while(itr!=itr_end)
     {
-     if(!(*itr)->isAddedByRelationship()) qtd++;
+     if(!(*itr)->isAddedByRelationship()) count++;
      itr++;
     }
 
-    return(qtd);
+    return(count);
    }
    else
-    return(lista->size());
+    return(list->size());
   }
  }
  else
@@ -980,26 +981,26 @@ unsigned Table::getObjectCount(ObjectType tipo_obj, bool inc_insporrelacao)
 
 Constraint *Table::getPrimaryKey(void)
 {
- unsigned qtd,i;
- Constraint *pk=NULL, *rest=NULL;
+ unsigned count,i;
+ Constraint *pk=NULL, *constr=NULL;
 
- qtd=constraints.size();
- for(i=0; i < qtd && !pk; i++)
+ count=constraints.size();
+ for(i=0; i < count && !pk; i++)
  {
-  rest=dynamic_cast<Constraint *>(constraints[i]);
-  pk=(rest->getConstraintType()==ConstraintType::primary_key ? rest : NULL);
+  constr=dynamic_cast<Constraint *>(constraints[i]);
+  pk=(constr->getConstraintType()==ConstraintType::primary_key ? constr : NULL);
  }
 
  return(pk);
 }
 
-void Table::getForeignKeys(vector<Constraint *> &vet_fks, bool inc_insporrelacao)
+void Table::getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel)
 {
- unsigned qtd,i;
+ unsigned count,i;
  Constraint *constr=NULL;
 
- qtd=constraints.size();
- for(i=0; i < qtd; i++)
+ count=constraints.size();
+ for(i=0; i < count; i++)
  {
   constr=dynamic_cast<Constraint *>(constraints[i]);
 
@@ -1008,8 +1009,8 @@ void Table::getForeignKeys(vector<Constraint *> &vet_fks, bool inc_insporrelacao
      setado */
   if(constr->getConstraintType()==ConstraintType::foreign_key &&
      (!constr->isAddedByLinking() ||
-      (constr->isAddedByLinking() && inc_insporrelacao)))
-   vet_fks.push_back(constr);
+      (constr->isAddedByLinking() && inc_added_by_rel)))
+   fks.push_back(constr);
  }
 }
 
@@ -1018,123 +1019,123 @@ bool Table::isWithOIDs(void)
  return(with_oid);
 }
 
-bool Table::isReferTableOnForeignKey(Table *tab_ref)
+bool Table::isReferTableOnForeignKey(Table *ref_tab)
 {
- unsigned qtd,i;
+ unsigned count,i;
  Constraint *constr=NULL;
  bool found=false;
 
- qtd=constraints.size();
- for(i=0; i < qtd && !found; i++)
+ count=constraints.size();
+ for(i=0; i < count && !found; i++)
  {
   constr=dynamic_cast<Constraint *>(constraints[i]);
   found=(constr->getConstraintType()==ConstraintType::foreign_key &&
          !constr->isAddedByLinking() &&
-          constr->getReferencedTable() == tab_ref);
+          constr->getReferencedTable() == ref_tab);
  }
 
  return(found);
 }
 
-bool Table::isConstraintRefColumn(Column *coluna, ConstraintType tipo_rest)
+bool Table::isConstraintRefColumn(Column *column, ConstraintType constr_type)
 {
- bool enc=false;
+ bool found=false;
  vector<TableObject *>::iterator itr, itr_end;
- Constraint *rest=NULL;
+ Constraint *constr=NULL;
 
- if(coluna)
+ if(column)
  {
   itr=constraints.begin();
   itr_end=constraints.end();
-  while(itr!=itr_end && !enc)
+  while(itr!=itr_end && !found)
   {
-   rest=dynamic_cast<Constraint *>(*itr);
+   constr=dynamic_cast<Constraint *>(*itr);
    itr++;
-   enc=(rest->getConstraintType()==tipo_rest &&
-        (rest->isColumnExists(coluna, Constraint::SOURCE_COLS) ||
-         rest->isColumnExists(coluna, Constraint::REFERENCED_COLS)));
+   found=(constr->getConstraintType()==constr_type &&
+        (constr->isColumnExists(column, Constraint::SOURCE_COLS) ||
+         constr->isColumnExists(column, Constraint::REFERENCED_COLS)));
   }
  }
 
- return(enc);
+ return(found);
 }
 
-QString Table::getCodeDefinition(unsigned tipo_def)
+QString Table::getCodeDefinition(unsigned def_type)
 {
  attributes[ParsersAttributes::OIDS]=(with_oid ? "1" : "");
- setColumnsAttribute(tipo_def);
- setConstraintsAttribute(tipo_def);
- setTriggersAttribute(tipo_def);
- setIndexesAttribute(tipo_def);
- setRulesAttribute(tipo_def);
+ setColumnsAttribute(def_type);
+ setConstraintsAttribute(def_type);
+ setTriggersAttribute(def_type);
+ setIndexesAttribute(def_type);
+ setRulesAttribute(def_type);
 
- if(tipo_def==SchemaParser::XML_DEFINITION)
+ if(def_type==SchemaParser::XML_DEFINITION)
   setPositionAttribute();
 
- return(BaseObject::__getCodeDefinition(tipo_def));
+ return(BaseObject::__getCodeDefinition(def_type));
 }
 
-void Table::operator = (Table &tabela)
+void Table::operator = (Table &tab)
 {
- QString nome_ant = this->getName(true);
+ QString prev_name = this->getName(true);
 
- (*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tabela);
- this->with_oid=tabela.with_oid;
- setProtected(tabela.is_protected);
+ (*dynamic_cast<BaseGraphicObject *>(this))=dynamic_cast<BaseGraphicObject &>(tab);
+ this->with_oid=tab.with_oid;
+ setProtected(tab.is_protected);
 
- PgSQLType::renameUserType(nome_ant, this, this->getName(true));
+ PgSQLType::renameUserType(prev_name, this, this->getName(true));
 }
 
 bool Table::isReferRelationshipAddedObject(void)
 {
  vector<TableObject *>::iterator itr, itr_end;
- ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT };
- bool enc=false;
+ ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT };
+ bool found=false;
 
- for(unsigned i=0; i < 2 && !enc; i++)
+ for(unsigned i=0; i < 2 && !found; i++)
  {
   //Obtém a lista de tipos atual
-  itr=getObjectList(tipos[i])->begin();
-  itr_end=getObjectList(tipos[i])->end();
+  itr=getObjectList(types[i])->begin();
+  itr_end=getObjectList(types[i])->end();
 
   /* Efetua uma iteração verifica se os objetos da lista
      atual foram incluídas por relacionamento, caso uma objeto
      for detectada como incluída desta forma é suficiente
      dizer que a tabela referencia um objeto vindo de
      relacionamento */
-  while(itr!=itr_end && !enc)
+  while(itr!=itr_end && !found)
   {
    //Obtém se a coluna foi incluída por relacionamento ou não
-   enc=(*itr)->isAddedByRelationship();
+   found=(*itr)->isAddedByRelationship();
    //Passa para a próxima coluna
    itr++;
   }
  }
 
- return(enc);
+ return(found);
 }
 
-void Table::swapObjectsIndexes(ObjectType tipo_obj, unsigned idx1, unsigned idx2)
+void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2)
 {
- vector<TableObject *> *lista_obj=NULL;
+ vector<TableObject *> *obj_list=NULL;
  vector<TableObject *>::iterator itr1, itr2;
- TableObject *obj_aux=NULL;
+ TableObject *aux_obj=NULL;
 
  try
  {
   if(idx1!=idx2)
   {
-   lista_obj=getObjectList(tipo_obj);
+   obj_list=getObjectList(obj_type);
 
-   if(idx1 >= lista_obj->size() || idx2 >= lista_obj->size())
+   if(idx1 >= obj_list->size() || idx2 >= obj_list->size())
     throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-   obj_aux=lista_obj->at(idx1);
-   itr1=lista_obj->begin() + idx1;
-   itr2=lista_obj->begin() + idx2;
+   aux_obj=obj_list->at(idx1);
+   itr1=obj_list->begin() + idx1;
+   itr2=obj_list->begin() + idx2;
 
    (*itr1)=(*itr2);
-   (*itr2)=obj_aux;
+   (*itr2)=aux_obj;
   }
  }
  catch(Exception &e)
@@ -1143,40 +1144,40 @@ void Table::swapObjectsIndexes(ObjectType tipo_obj, unsigned idx1, unsigned idx2
  }
 }
 
-void Table::getColumnReferences(Column *coluna, vector<TableObject *> &vet_refs, bool modo_exclusao)
+void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode)
 {
  /* Caso a coluna não foi incluída por relacionamento, será verificado se esta
     não está sendo referenciada. Para colunas adicionadas automaticamente por
     relacionamentos, sua remoção é feita sem verificação alguma */
- if(coluna && !coluna->isAddedByRelationship())
+ if(column && !column->isAddedByRelationship())
  {
-  unsigned qtd, i;
+  unsigned count, i;
   IndexElement elem;
   Column *col=NULL, *col1=NULL;
   vector<TableObject *>::iterator itr, itr_end;
-  bool enc=false;
+  bool found=false;
   Index *ind=NULL;
-  Constraint *rest=NULL;
-  Trigger *gat=NULL;
+  Constraint *constr=NULL;
+  Trigger *trig=NULL;
 
   //Verificando se a coluna não é referenciada nos indices
   itr=indexes.begin();
   itr_end=indexes.end();
 
-  while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !enc)))
+  while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !found)))
   {
    ind=dynamic_cast<Index *>(*itr);
    itr++;
 
-   qtd=ind->getElementCount();
-   for(i=0; i < qtd  && (!modo_exclusao || (modo_exclusao && !enc)); i++)
+   count=ind->getElementCount();
+   for(i=0; i < count  && (!exclusion_mode || (exclusion_mode && !found)); i++)
    {
     elem=ind->getElement(i);
     col=elem.getColumn();
-    if(col && col==coluna)
+    if(col && col==column)
     {
-     enc=true;
-     vet_refs.push_back(ind);
+     found=true;
+     refs.push_back(ind);
     }
    }
   }
@@ -1185,19 +1186,19 @@ void Table::getColumnReferences(Column *coluna, vector<TableObject *> &vet_refs,
   itr=constraints.begin();
   itr_end=constraints.end();
 
-  while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !enc)))
+  while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !found)))
   {
    //Verfica se a coluna a ser removida não está presente nas daus lista de colunas da contraint
-   rest=dynamic_cast<Constraint *>(*itr);
+   constr=dynamic_cast<Constraint *>(*itr);
    itr++;
 
-   col=rest->getColumn(coluna->getName(),true);
-   col1=rest->getColumn(coluna->getName(),false);
+   col=constr->getColumn(column->getName(),true);
+   col1=constr->getColumn(column->getName(),false);
 
-   if((col && col==coluna) || (col1 && col1==coluna))
+   if((col && col==column) || (col1 && col1==column))
    {
-    enc=true;
-    vet_refs.push_back(rest);
+    found=true;
+    refs.push_back(constr);
    }
   }
 
@@ -1205,19 +1206,19 @@ void Table::getColumnReferences(Column *coluna, vector<TableObject *> &vet_refs,
   itr=triggers.begin();
   itr_end=triggers.end();
 
-    while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !enc)))
+    while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !found)))
   {
    //Verfica se a coluna a ser removida não está presente nas daus lista de colunas da contraint
-   gat=dynamic_cast<Trigger *>(*itr);
+   trig=dynamic_cast<Trigger *>(*itr);
    itr++;
 
-   qtd=gat->getColumnCount();
-   for(i=0; i < qtd && (!modo_exclusao || (modo_exclusao && !enc)); i++)
+   count=trig->getColumnCount();
+   for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !found)); i++)
    {
-    if(gat->getColumn(i)==coluna)
+    if(trig->getColumn(i)==column)
     {
-     enc=true;
-     vet_refs.push_back(gat);
+     found=true;
+     refs.push_back(trig);
     }
    }
   }
