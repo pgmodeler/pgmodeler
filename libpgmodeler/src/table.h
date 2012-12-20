@@ -1,9 +1,7 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe Tabela que é usado para
-#             representar graficamente as tabelas e gerar os códigos SQL
-#             pertinentes a esta.
+# Description: Implements the operations to manipulate tables on the database.
 # Creation date: 17/09/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -35,67 +33,51 @@
 
 class Table: public BaseTable {
  private:
-  //Armazena as colunas da tabela
+  //Vectors that store basic table attributes
   vector<TableObject *> columns;
-
-  //Armazena as constraints que se aplicam a  tabela
   vector<TableObject *> constraints;
-
-  //Armazena os índices que se aplicam a tabela
   vector<TableObject *> indexes;
-
-  //Armazena as regras que se aplicam a  tabela
   vector<TableObject *> rules;
-
-  //Armazena os gatilhos que se aplicam a  tabela
   vector<TableObject *> triggers;
 
-  //Armazena as tabelas das quais a tabela atual herda atributos
+  //Stores the tables that 'this' object inherits attributes
   vector<Table *> ancestor_tables;
 
-  //Indica se as linhas da tabela aceitam OIDs
-  bool with_oid;
-
-  //Tabelas das quais serão clonadas as colunas
+  //Stores the tables that 'this' object clones the attributes
   vector<Table *> copy_tables;
 
-   /* Obtém um objeto da tabela através de seu nome. Seu tipo deve ser especificado
-     para se seja buscado na lista de objetos correta. */
+  //Indicates if the table accepts OIDs
+  bool with_oid;
+
+  /* Gets one table ancestor (OBJ_TABLE) or copy (BASE_TABLE) using its name and stores
+     the index of the found object on parameter 'obj_idx' */
   BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
 
-  /* Formata a QString de colunas usada pelo parser de esquema
-     na geração da definição SQL da tabela */
+  //The methods below generates the table attributes used by the SchemaParser
   void setColumnsAttribute(unsigned def_type);
-
-  /* Formata a QString de restrições usada pelo parser de esquema
-     na geração da definição SQL da tabela */
   void setConstraintsAttribute(unsigned def_type);
-
-  /* Formata a QString de gatilhos usada pelo parser de esquema
-     na geração da definição SQL da tabela */
   void setTriggersAttribute(unsigned def_type);
-
-  /* Formata a QString de índices usada pelo parser de esquema
-     na geração da definição SQL da tabela */
   void setIndexesAttribute(unsigned def_type);
-
-  /* Formata a QString de regras usada pelo parser de esquema
-     na geração da definição SQL da tabela */
   void setRulesAttribute(unsigned def_type);
-
   void setCommentAttribute(TableObject *tab_obj);
 
  protected:
-
+  //Adds an ancestor table
   void addAncestorTable(Table *tab, int idx=-1);
+
+  //Adds an copy table
   void addCopyTable(Table *tab, int idx=-1);
 
-  //Métodos que removem uma tabela descendente através de seu nome ou índice
+  //Removes an acestor table using its name
   void removeAncestorTable(const QString &name);
+
+  //Removes an acestor table using its index
   void removeAncestorTable(unsigned idx);
 
-  //Métodos que removem uma tabela cópia através de seu nome ou índice
+  //Removes an copy table using its name
   void removeCopyTable(const QString &name);
+
+  //Removes an copy table using its index
   void removeCopyTable(unsigned idx);
 
  public:
@@ -103,158 +85,188 @@ class Table: public BaseTable {
   ~Table(void);
 
   void setName(const QString &name);
-
   void setSchema(BaseObject *schema);
 
-  //Define se a tabela aceita oids ou não
+  //Defines if the table accepts OIDs
   void setWithOIDs(bool value);
 
- /* Adiciona um objeto  tabela. Seu tipo deve ser especificado para se seja inserido
-     na lista de objetos correta. */
+  //Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
   void addObject(BaseObject *obj, int obj_idx=-1, bool copy_tab=false);
 
-  /* Obtém um objeto da tabela através de seu índice. Seu tipo deve ser especificado
-     para se seja buscado na lista de objetos correta. */
+  //Gets a object from table through its index and type
   BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
 
-  /* Obtém um objeto da tabela através de seu nome. Seu tipo deve ser especificado
-     para se seja buscado na lista de objetos correta. */
+  //Gets a object from table through its name and type
   BaseObject *getObject(const QString &name, ObjectType obj_type);
 
-  /* Remove um objeto da tabela através de seu índice. Seu tipo deve ser especificado
-     para se seja removido da lista de objetos correta. */
+  //Removes a object from table through its index and type
   void removeObject(unsigned obj_idx, ObjectType obj_type);
 
-  /* Remove um objeto da tabela através de seu nome. Seu tipo deve ser especificado
-     para se seja removido da lista de objetos correta. */
+  //Removes a object from table through its name and type
   void removeObject(const QString &name, ObjectType obj_type);
 
-  //Remove um objeto da tabela através de seu endereço em memória
+  //Removes the specified object from table
   void removeObject(BaseObject *obj);
 
-  /* Os métodos de adição de objetos abaixo são usados apenas por conveniência
-     pois necessitam de apenas um parâmetro (o objeto a ser inserido). Internamente
-     eles executam uma chamada ao método adicionarObjeto(OBJETO,TIPO_OBJETO) */
+  //Adds a column to table (optionally the user can add the object at the specified index 'idx')
   void addColumn(Column *col, int idx=-1);
+
+  //Adds a constraint to table (optionally the user can add the object at the specified index 'idx')
   void addConstraint(Constraint *constr, int idx=-1);
+
+  //Adds a trigger to table (optionally the user can add the object at the specified index 'idx')
   void addTrigger(Trigger *trig, int idx=-1);
+
+  //Adds a index to table (optionally the user can add the object at the specified index 'idx')
   void addIndex(Index *ind, int idx=-1);
+
+  //Adds a rule to table (optionally the user can add the object at the specified index 'idx')
   void addRule(Rule *reg, int idx_reg=-1);
 
-  /* Métodos que retornam uma coluna através de seu nome ou índice.
-     O método o qual busca uma coluna pelo nome tem um segundo parâmetro
-     booleano o qual é usado para buscar colunas referenciando não o nome
-     atual mas o nome antigo da coluna. Este parâmetro é usado para auxiliar
-     as operações de referência a colunas adicionadas por relacionamentos
-     a tabela */
+  /* Gets a column through its name. The boolean parameter is used
+     to search columns referencing their old names */
   Column *getColumn(const QString &name, bool ref_old_name=false);
+
+  //Gets a column through its index
   Column *getColumn(unsigned idx);
 
-  //Métodos que retornam uma constraint através de seu nome ou índice
+  //Gets a constraint through its name.
   Constraint *getConstraint(const QString &name);
+
+  //Gets a constraint through its index
   Constraint *getConstraint(unsigned idx);
 
-  //Métodos que retornam um gatilho através de seu nome ou índice
+  //Gets a trigger through its name.
   Trigger *getTrigger(const QString &name);
+
+  //Gets a trigger through its index
   Trigger *getTrigger(unsigned idx);
 
-  //Métodos que retornam um índice através de seu nome ou índice
+  //Gets a index object through its name
   Index *getIndex(const QString &name);
+
+  //Gets a index object through its position
   Index *getIndex(unsigned idx);
 
-  //Métodos que retornam o número de objetos na tabela
-  unsigned getColumnCount(void);
-  unsigned getConstraintCount(void);
-  unsigned getTriggerCount(void);
-  unsigned getIndexCount(void);
-  unsigned getRuleCount(void);
-  unsigned getAncestorTable(void);
-  unsigned getCopyTable(void);
-  unsigned getObjectCount(ObjectType obj_type, bool inc_added_by_rel=true);
-
-  //Métodos que retornam uma regra através de seu nome ou índice
+  //Gets a rule through its name
   Rule *getRule(const QString &name);
+
+  //Gets a rule through its index
   Rule *getRule(unsigned idx);
 
-  //Métodos que retornam uma tabela descendente através de seu nome ou índice
+  //Gets a ancestor table through its name
   Table *getAncestorTable(const QString &name);
+
+  //Gets a ancestor table through its index
   Table *getAncestorTable(unsigned idx);
 
-  //Métodos que retornam uma tabela descendente através de seu nome ou índice
+  //Gets a copy table through its name
   Table *getCopyTable(const QString &name);
+
+  //Gets a copy table through its index
   Table *getCopyTable(unsigned idx);
 
-  //Métodos que removem uma coluna através de seu nome ou índice
+  //Gets the column count
+  unsigned getColumnCount(void);
+
+  //Gets the constraint count
+  unsigned getConstraintCount(void);
+
+  //Gets the trigger count
+  unsigned getTriggerCount(void);
+
+  //Gets the index count
+  unsigned getIndexCount(void);
+
+  //Gets the rule count
+  unsigned getRuleCount(void);
+
+  //Gets the ancestor table count
+  unsigned getAncestorTable(void);
+
+  //Gets the copy tables count
+  unsigned getCopyTable(void);
+
+  /* Gets the the count for the specified object type. The boolean parameter indicates
+     that objects added by relationship must be counted */
+  unsigned getObjectCount(ObjectType obj_type, bool inc_added_by_rel=true);
+
+  //Removes a column through its name
   void removeColumn(const QString &name);
+
+  //Removes a column through its index
   void removeColumn(unsigned idx);
 
-  //Métodos que removem uma constraint através de seu nome ou índice
+  //Removes a constraint through its name
   void removeConstraint(const QString &name);
+
+  //Removes a constraint through its index
   void removeConstraint(unsigned idx);
 
-  //Métodos que removem um gatilho através de seu nome ou índice
+  //Removes a trigger through its name
   void removeTrigger(const QString &name);
+
+  //Removes a trigger through its index
   void removeTrigger(unsigned idx);
 
-  //Métodos que removem um índice através de seu nome ou índice
+  //Removes a index through its name
   void removeIndex(const QString &name);
+
+  //Removes a index through its position
   void removeIndex(unsigned idx);
 
-  //Métodos que removem uma regra através de seu nome ou índice
+  //Removes a rule through its name
   void removeRule(const QString &name);
+
+  //Removes a rule through its index
   void removeRule(unsigned idx);
 
-  //Retorna a definição SQL ou XML do objeto
+  //Returns the SQL / XML definition for table
   virtual QString getCodeDefinition(unsigned def_type);
 
-  //Obtém o índice de um determinado objeto através de seu nome
+  //Gets the object index using its name and type
   int getObjectIndex(const QString &name, ObjectType obj_type);
+
+  //Returns the index for the specified table object
   int getObjectIndex(TableObject *obj);
 
-  //Retorna a chave primária da tabela se possuir
+  //Returns the primary key of the table. Returns NULL when it doesn't exists
   Constraint *getPrimaryKey(void);
 
-  /* Retorna todas as chaves estrangeiras presentes na tabela. O parâmetro
-     inc_insporrelacao pode ser usado para se incluir ou não as restrições
-     adicionadas por relacionamento. Por padrão este método retorna o vetor
-     somente com as chaves estrangeiras criadas pelo usuário (sem o uso de
-     relacionamentos) */
+  /* Stores on the specified vector 'fks' the foreign key present on table. The
+     boolean paramenter is used to include those foreign keys includes by relationship. */
   void getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel=false);
 
-  //Retorna se a a tabela aceita ou não OIDS
+  //Returns if the table is configured with oids
   bool isWithOIDs(void);
 
-  /* Sobrecarga do método de definição de objeto protegido
-     da classe ObjetoBase. O metodo sobrecarregado protege
-     ou desprotege todos os objetos da tabela em uma
-     só chamada */
+  //Protects the table and its aggregated objects against modification
   void setProtected(bool value);
 
-  //Retorna se a coluna é referenciada por uma das restrições do tipo especificado
+  /* Returns if the specified column is referenced by one of the constraints on table.
+     The user must specify the constraint type */
   bool isConstraintRefColumn(Column *column, ConstraintType constr_type);
 
-  /* Método utilitário que faz a inversão de posição entre dois objetos na lista.
-     Este método auxilia na ordenação dos objetos da tabela conforme o usuário desejar */
+  //Swaps two objects position
   void swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2);
 
-  //Retorna se a tabela referencia colunas e restrições incluídas por relacionamentos
+  //Returns if the table references objects added by relationship
   bool isReferRelationshipAddedObject(void);
 
-  //Copia os atributos do objeto do parâmetro para o objeto this
+  //Copy the attributes between two tables
   void operator = (Table &tabela);
 
-  //Retorna a lista de objetos referente ao tipo de objeto passado
+  //Returns the specified object type list
   vector<TableObject *> *getObjectList(ObjectType obj_type);
 
-  /* Obtém objetos os quais referenciam o objeto do parâmetro (direta ou indiretamente) e os armazena num vetor.
-     O parâmetro 'modo_exclusao' é usado para agilizar a execução do método quando este é usado para validação
-     da exclusão do objeto, obtendo apenas a primeira referência ao objeto candidato a exclusão.
-     Para se obter TODAS as referências ao objeto, deve-se espeficicar como 'false' o parâmetro 'modo_exclusão'. */
+  /* Gets objects which refer to object of the parameter (directly or indirectly) and stores them in a vector.
+     The 'exclusion_mode' is used to speed up the execution of the method when it is used to validate the
+     deletion of the object, getting only the first reference to the object candidate for deletion.
+     To get ALL references to the object must be specified as 'false' the parameter 'exclusion_mode'. */
   void getColumnReferences(Column *column, vector<TableObject *> &refs, bool exclusion_mode=false);
 
-  /* Retorna se a tabela referencia a tabela passada em uma de suas chaves estrangeiras. Este método considera
-     apenas chaves estrangeiras criadas pelo usuário. Este método é usado como auxiliar no controle dos
-     relacionamentos originários de chaves estrangeiras no modelo. */
+  /* Returns if some of the foreign keys references the specified table. This method only considers the foreign keys
+     created by the user. Relationship created foreign keys are discarded from the search. */
   bool isReferTableOnForeignKey(Table *ref_tab);
 
   friend class Relationship;
