@@ -1349,11 +1349,11 @@ Taille: %2 bytes
     </message>
     <message>
         <source>The data type &apos;%1&apos; can not be assigned because it already exists in the types list of the aggregate function &apos;%2&apos;!</source>
-        <translation>Le type de donnée &apos;%1&apos; ne peut être attribué car il existe déjà dans la liste de types de la fonction d'aggrégat &apos;%2&apos;!</translation>
+        <translation>Le type de donnée &apos;%1&apos; ne peut être attribué car il existe déjà dans la liste de types de la fonction d'agrégation &apos;%2&apos;!</translation>
     </message>
     <message>
         <source>Assignment of an operator which input  type count is invalid to aggregate function!</source>
-        <translation>L'opérateur associé à la fonction d'aggégat possède un nombre invalide de type d'entrée!</translation>
+        <translation>L'opérateur associé à la fonction d'agrégation possède un nombre invalide de type d'entrée!</translation>
     </message>
     <message>
         <source>Assigment of an operator which types of arguments is invalid!</source>
@@ -1825,7 +1825,7 @@ Message retourné par le SGBD: %1</translation>
     <name>FormExportacao</name>
     <message>
         <source>Model Export</source>
-        <translation>Export de modèle</translation>
+        <translation>Export du modèle</translation>
     </message>
     <message>
         <source>Select the export type:</source>
@@ -2344,7 +2344,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>An aggregate function that accepts the types &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; and &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; as input types and which type of state is &lt;em&gt;&lt;strong&gt;state_type&lt;/strong&gt;&lt;/em&gt;, must obey the following rules: &lt;br/&gt;&lt;br/&gt; &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Final Function:&lt;/strong&gt; &lt;em&gt;void final_function(&lt;strong&gt;state_type&lt;/strong&gt;)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Transition Function:&lt;/strong&gt; &lt;em&gt;&lt;strong&gt;state_type&lt;/strong&gt; transition_function(&lt;strong&gt;state_type&lt;/strong&gt;, &lt;strong&gt;typeA&lt;/strong&gt;, &lt;strong&gt;typeB&lt;/strong&gt;)&lt;/em&gt;</source>
-        <translation>Une fonction d'aggégat qui accepte les types &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; et &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; comme types d'entrées et dont le type d'état est &lt;em&gt;&lt;strong&gt;type_etat&lt;/strong&gt;&lt;/em&gt;, doit obéir aux règles suivantes:&lt;br/&gt;&lt;br/&gt; &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Fonction Finale:&lt;/strong&gt; &lt;em&gt;void fonction_finale(&lt;strong&gt;type_etat&lt;/strong&gt;)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Fonction de Transition,:&lt;/strong&gt; &lt;em&gt;&lt;strong&gt;type_etat&lt;/strong&gt; fonction_transition(&lt;strong&gt;type_etat&lt;/strong&gt;, &lt;strong&gt;typeA&lt;/strong&gt;, &lt;strong&gt;typeB&lt;/strong&gt;)&lt;/em&gt;</translation>
+        <translation>Une fonction d'agrégation qui accepte les types &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; et &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; comme types d'entrées et dont le type d'état est &lt;em&gt;&lt;strong&gt;type_etat&lt;/strong&gt;&lt;/em&gt;, doit obéir aux règles suivantes:&lt;br/&gt;&lt;br/&gt; &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Fonction Finale:&lt;/strong&gt; &lt;em&gt;void fonction_finale(&lt;strong&gt;type_etat&lt;/strong&gt;)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Fonction de Transition,:&lt;/strong&gt; &lt;em&gt;&lt;strong&gt;type_etat&lt;/strong&gt; fonction_transition(&lt;strong&gt;type_etat&lt;/strong&gt;, &lt;strong&gt;typeA&lt;/strong&gt;, &lt;strong&gt;typeB&lt;/strong&gt;)&lt;/em&gt;</translation>
     </message>
     <message>
         <source>Form</source>
@@ -2367,7 +2367,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Window Function:</source>
-        <translation>Fonction Fenêtre:</translation>
+        <translation>Fonction window:</translation>
     </message>
     <message>
         <source>Execution Cost:</source>
@@ -2387,7 +2387,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Return Method:</source>
-        <translation>Méthode de retour:</translation>
+        <translation>Type de retour:</translation>
     </message>
     <message>
         <source>Simple</source>
@@ -2395,7 +2395,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Set</source>
-        <translation>Fixer</translation>
+        <translation>Multiple</translation>
     </message>
     <message>
         <source>Table</source>
@@ -2403,7 +2403,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Parameters</source>
-        <translation>Paramètres</translation>
+        <translation>Arguments</translation>
     </message>
     <message>
         <source>Definition</source>
@@ -2451,7 +2451,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>IN/OUT</source>
-        <translation>ENTREE/SORTIE</translation>
+        <translation>IN/OUT</translation>
     </message>
 </context>
 <context>
@@ -3014,7 +3014,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <source>Aggregate</source>
-        <translation>Fonction d'aggrégat</translation>
+        <translation>Agrégation</translation>
     </message>
     <message>
         <source>Operator</source>
