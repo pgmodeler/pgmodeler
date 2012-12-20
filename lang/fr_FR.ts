@@ -1825,7 +1825,7 @@ Message retourné par le SGBD: %1</translation>
     <name>FormExportacao</name>
     <message>
         <source>Model Export</source>
-        <translation>Export de modèle</translation>
+        <translation>Export du modèle</translation>
     </message>
     <message>
         <source>Select the export type:</source>
