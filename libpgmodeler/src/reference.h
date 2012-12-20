@@ -22,13 +22,13 @@
 #ifndef REFERENCE_H
 #define REFERENCE_H
 
-#include "tabela.h"
+#include "table.h"
 #include "schema.h"
 
 class Reference {
  private:
  //Stores the table used by the reference
-  Tabela *table;
+  Table *table;
 
   //Stores the column used by the reference
   Column *column;
@@ -53,13 +53,13 @@ class Reference {
   Reference(void);
 
   //Creates a reference based on a table column
-  Reference(Tabela *table, Column *column, const QString &tab_alias, const QString &col_alias);
+  Reference(Table *table, Column *column, const QString &tab_alias, const QString &col_alias);
 
   //Creates a reference based on a expression
   Reference(const QString &expression, const QString &expr_alias);
 
   //Gets the referenced table
-  Tabela *getTable(void);
+  Table *getTable(void);
 
   //Gets the referenced column
   Column *getColumn(void);

@@ -23,7 +23,7 @@
 #define SEQUENCE_H
 
 #include "baseobject.h"
-#include "tabela.h"
+#include "table.h"
 
 class Sequence: public BaseObject {
  private:
@@ -74,7 +74,7 @@ class Sequence: public BaseObject {
   void setValues(QString minv, QString maxv, QString inc, QString start, QString cache);
 
   //Defines the owner column using a table and a column name
-  void setOwnerColumn(Tabela *tabela, const QString &col_name);
+  void setOwnerColumn(Table *tabela, const QString &col_name);
 
   //Defines the owner column using a column itself
   void setOwnerColumn(Column *column);

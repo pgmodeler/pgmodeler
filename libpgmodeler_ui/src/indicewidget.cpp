@@ -257,7 +257,7 @@ void IndiceWidget::selecionarObjetoElemento(void)
  expressao_rb->blockSignals(false);
 }
 
-void IndiceWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, OperationList *lista_op, Index *indice)
+void IndiceWidget::definirAtributos(ModeloBD *modelo, Table *tabela_pai, OperationList *lista_op, Index *indice)
 {
  unsigned i, qtd;
 

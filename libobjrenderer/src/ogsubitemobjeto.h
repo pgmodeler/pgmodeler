@@ -23,7 +23,7 @@
 #define OG_SUBITEM_OBJETO_H
 
 #include "view.h"
-#include "tabela.h"
+#include "table.h"
 #include "objetografico.h"
 
 class OGSubItemObjeto: public ObjetoGrafico

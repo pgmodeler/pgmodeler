@@ -24,7 +24,7 @@
 #define RELATIONSHIP_H
 
 #include "baserelationship.h"
-#include "tabela.h"
+#include "table.h"
 #include "textbox.h"
 
 /*
@@ -177,7 +177,7 @@ class Relationship: public BaseRelationship {
              *uq_rel11;
 
   //Table created by the relationship n-n
-  Tabela *table_relnn;
+  Table *table_relnn;
 
   //Tables suffixes used to create unique names for the created columns
   QString src_suffix, dst_suffix;
@@ -217,38 +217,38 @@ class Relationship: public BaseRelationship {
 
   /* Creates the foreign key that represents the relationship and adds it
      to the receiver table. Must be specified the actions ON DELETE and UPDATE. */
-  void addForeignKey(Tabela *ref_tab, Tabela *recv_tab, ActionType del_act, ActionType upd_act);
+  void addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del_act, ActionType upd_act);
 
   /* Creates the unique key that represents the 1-1 relationship e adds it to
      the receiver table */
-  void addUniqueKey(Tabela *ref_tab, Tabela *recv_tab);
+  void addUniqueKey(Table *ref_tab, Table *recv_tab);
 
   //Adds the relationship attributes (columns) into receiver table
-  void addAttributes(Tabela *recv_tab);
+  void addAttributes(Table *recv_tab);
 
   /* Adds relationship constraints on the receiver table. If the relationship is
      of type n-n, constraints will be added to the created table. If among the constraints
      there is a primary key, then it will be merged with the primary key of receiver table */
-  void addConstraints(Tabela *dst_tab);
+  void addConstraints(Table *dst_tab);
 
   /* Executes adicional configurations on receiver table primary key when the
      relationship is identifier */
-  void configureIndentifierRel(Tabela *dst_tab);
+  void configureIndentifierRel(Table *dst_tab);
 
   /* Copy the columns from the reference table to the receiver table. The parameter not_null indicates
      that the columns must not accept null values */
-  void copyColumns(Tabela *ref_tab, Tabela *recv_tab, bool not_null);
+  void copyColumns(Table *ref_tab, Table *recv_tab, bool not_null);
 
   /* This method is always executed before disconnection of the relationship.
      Its function is to remove from the specified table all the attributes which
      references any relationship generated column avoiding reference break */
-  void removeTableObjectsRefCols(Tabela *table);
+  void removeTableObjectsRefCols(Table *table);
 
   //Creates the special primary key using the names stored in the 'column_ids_pk_rel' vector
   void createSpecialPrimaryKey(void);
 
   //Removes the columns created by the relationship from the specified table primary key if exists.
-  void removeColumnsFromTablePK(Tabela *table);
+  void removeColumnsFromTablePK(Table *table);
 
  protected:
   //Destroy all the relationship attributes and constraints
@@ -261,7 +261,7 @@ class Relationship: public BaseRelationship {
   Relationship(Relationship *rel);
 
   Relationship(unsigned rel_type,
-                 Tabela *src_tab, Tabela *dst_tab,
+                 Table *src_tab, Table *dst_tab,
                  bool src_mdtry=false, bool dst_mdtry=false,
                  bool auto_suffix=true,
                  const QString &src_suffix="", const QString &dst_suffix="",
@@ -406,7 +406,7 @@ class Relationship: public BaseRelationship {
 
      WARNING: Not necessarily this method returns the destination table this because not in all
      relationship configuration the receiver is the destination table */
-  Tabela *getReceiverTable(void);
+  Table *getReceiverTable(void);
 
   /* Returns table which serves as a reference when coping the columns to the
      receiver table.
@@ -416,7 +416,7 @@ class Relationship: public BaseRelationship {
 
      For n-n relationships this method returns NULL as this type of relationship
      has 2 reference tables, which may be obtained by the method BaseRelationship::getTable() */
-  Tabela *getReferenceTable(void);
+  Table *getReferenceTable(void);
 
   //Returns SQL / XML definition for the relationship.
   QString getCodeDefinition(unsigned def_type);

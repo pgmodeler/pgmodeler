@@ -133,7 +133,7 @@ void VisaoWidget::manipularReferencia(int idx_ref)
   {
    /* Chama o método de construtor de referência informando os parâmetros necessários
       para relacioná-la a uma coluna de tabela */
-   ref=Reference(dynamic_cast<Tabela *>(sel_tabela->obterObjeto()),
+   ref=Reference(dynamic_cast<Table *>(sel_tabela->obterObjeto()),
                   dynamic_cast<Column *>(sel_coluna->obterObjeto()),
                   alias_tab_edt->text(), alias_col_edt->text());
   }
@@ -268,7 +268,7 @@ void VisaoWidget::exibirNomeObjeto(void)
 
 void VisaoWidget::exibirDadosReferencia(Reference refer, bool selec_from, bool from_where, bool apos_where, unsigned idx_lin)
 {
- Tabela *tab=NULL;
+ Table *tab=NULL;
  Column *col=NULL;
  QString str_aux;
 

@@ -435,7 +435,7 @@ void ModeloWidget::manipularAdicaoObjeto(BaseObject *objeto)
   switch(tipo_obj)
   {
    case OBJ_TABLE:
-     item=new OGTabela(dynamic_cast<Tabela *>(obj_graf));
+     item=new OGTabela(dynamic_cast<Table *>(obj_graf));
    break;
 
    case OBJ_VIEW:
@@ -684,9 +684,9 @@ void ModeloWidget::converterRelacionamentoNN(void)
     try
     {
      Relationship *rel1=NULL, *rel2=NULL;
-     Tabela *tab=NULL, *tab_nn=NULL,
-       *tab_orig=dynamic_cast<Tabela *>(rel->getTable(Relationship::SRC_TABLE)),
-       *tab_dest=dynamic_cast<Tabela *>(rel->getTable(Relationship::DST_TABLE));
+     Table *tab=NULL, *tab_nn=NULL,
+       *tab_orig=dynamic_cast<Table *>(rel->getTable(Relationship::SRC_TABLE)),
+       *tab_dest=dynamic_cast<Table *>(rel->getTable(Relationship::DST_TABLE));
      Constraint *rest=NULL, *rest_aux=NULL;
      Column *col=NULL;
      bool obrig_orig=true,//rel->tabelaObrigatoria(Relacionamento::TABELA_ORIGEM),
@@ -1237,7 +1237,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
 
     //Valida os relacionamento para refletirem as modificações na coluna
     if(coluna)
-     modelo->validarRelacObjetoTabela(coluna, dynamic_cast<Tabela *>(objeto_pai));
+     modelo->validarRelacObjetoTabela(coluna, dynamic_cast<Table *>(objeto_pai));
     else
      modelo->validarRelacionamentos();
    break;
@@ -1245,28 +1245,28 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    case OBJ_CONSTRAINT:
     Constraint *restricao;
     restricao=dynamic_cast<Constraint *>(objeto);
-    restricao_wgt->definirAtributos(modelo, dynamic_cast<Tabela *>(objeto_pai), lista_op, restricao);
+    restricao_wgt->definirAtributos(modelo, dynamic_cast<Table *>(objeto_pai), lista_op, restricao);
     restricao_wgt->show();
 
     //Valida os relacionamento para refletirem as modificações na restrição
     if(restricao)
-     modelo->validarRelacObjetoTabela(restricao, dynamic_cast<Tabela *>(objeto_pai));
+     modelo->validarRelacObjetoTabela(restricao, dynamic_cast<Table *>(objeto_pai));
     else
      modelo->validarRelacionamentos();
    break;
 
    case OBJ_RULE:
-    regra_wgt->definirAtributos(modelo, dynamic_cast<Tabela *>(objeto_pai), lista_op, dynamic_cast<Rule *>(objeto));
+    regra_wgt->definirAtributos(modelo, dynamic_cast<Table *>(objeto_pai), lista_op, dynamic_cast<Rule *>(objeto));
     regra_wgt->show();
    break;
 
    case OBJ_TRIGGER:
-    gatilho_wgt->definirAtributos(modelo, dynamic_cast<Tabela *>(objeto_pai), lista_op, dynamic_cast<Trigger *>(objeto));
+    gatilho_wgt->definirAtributos(modelo, dynamic_cast<Table *>(objeto_pai), lista_op, dynamic_cast<Trigger *>(objeto));
     gatilho_wgt->show();
    break;
 
    case OBJ_INDEX:
-    indice_wgt->definirAtributos(modelo, dynamic_cast<Tabela *>(objeto_pai), lista_op, dynamic_cast<Index *>(objeto));
+    indice_wgt->definirAtributos(modelo, dynamic_cast<Table *>(objeto_pai), lista_op, dynamic_cast<Index *>(objeto));
     indice_wgt->show();
    break;
 
@@ -1279,9 +1279,9 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
        objs_selecionados.size() > 0 &&
        objs_selecionados[0]->getObjectType()==OBJ_TABLE)
     {
-     Tabela *tab1=dynamic_cast<Tabela *>(objs_selecionados[0]),
+     Table *tab1=dynamic_cast<Table *>(objs_selecionados[0]),
             *tab2=(objs_selecionados.size()==2 ?
-                       dynamic_cast<Tabela *>(objs_selecionados[1]) : tab1);
+                       dynamic_cast<Table *>(objs_selecionados[1]) : tab1);
      relacao_wgt->definirAtributos(modelo, lista_op, tab1, tab2, tipo_rel);
     }
     else
@@ -1291,7 +1291,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_TABLE:
-    tabela_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Tabela *>(objeto), pos.x(), pos.y());
+    tabela_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Table *>(objeto), pos.x(), pos.y());
     tabela_wgt->show();
    break;
 
@@ -1413,7 +1413,7 @@ void ModeloWidget::protegerObjeto(void)
     /* Caso seja um objto de tabela protege/desprotege o mesmo e marca como modificada a tabela pai
        para forçar o seu redesenho */
     obj_tab->setProtected(!obj_tab->isProtected());
-    dynamic_cast<Tabela *>(obj_tab->getParentTable())->setModified(true);
+    dynamic_cast<Table *>(obj_tab->getParentTable())->setModified(true);
    }
    else
    {
@@ -1517,7 +1517,7 @@ void ModeloWidget::copiarObjetos(void)
  vector<BaseObject *> vet_deps;
  BaseObject *objeto=NULL;
  TableObject *obj_tab=NULL;
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
  ObjectType tipos[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT }, tipo_obj;
  unsigned i, id_tipo, qtd;
 
@@ -1558,7 +1558,7 @@ void ModeloWidget::copiarObjetos(void)
       Para que seja possível a recriação dos mesmos quando colados */
    if(objeto->getObjectType()==OBJ_TABLE)
    {
-    tabela=dynamic_cast<Tabela *>(objeto);
+    tabela=dynamic_cast<Table *>(objeto);
 
     for(id_tipo=0; id_tipo < 3; id_tipo++)
     {
@@ -1906,7 +1906,7 @@ void ModeloWidget::excluirObjetos(void)
 {
  int idx_obj=-1;
  unsigned qtd, qtd_op;
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
  BaseTable *tab_orig=NULL, *tab_dest=NULL;
  BaseRelationship *relac=NULL;
  TableObject *objeto_tab=NULL;
@@ -2017,7 +2017,7 @@ void ModeloWidget::excluirObjetos(void)
 
       if(objeto_tab)
       {
-       tabela=dynamic_cast<Tabela *>(objeto_tab->getParentTable());
+       tabela=dynamic_cast<Table *>(objeto_tab->getParentTable());
        idx_obj=tabela->obterIndiceObjeto(objeto_tab->getName(true), tipo_obj);
 
        try
@@ -2159,7 +2159,7 @@ void ModeloWidget::desabilitarAcoesModelo(void)
 void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 {
  QMenu *submenu=NULL;
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
  unsigned qtd, i;
  vector<QMenu *> submenus;
  Constraint *rest=NULL;
@@ -2308,7 +2308,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
     a coluna */
  if(obj_tab)
  {
-  tabela=dynamic_cast<Tabela *>(obj_tab->getParentTable());
+  tabela=dynamic_cast<Table *>(obj_tab->getParentTable());
 
   if(obj_tab->getObjectType()==OBJ_COLUMN)
   {

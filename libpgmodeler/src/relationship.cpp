@@ -11,8 +11,8 @@ Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
  (*(this))=(*rel);
 }
 
-Relationship::Relationship(unsigned rel_type, Tabela *src_tab,
-                           Tabela *dst_tab, bool src_mdtry, bool dst_mdtry,
+Relationship::Relationship(unsigned rel_type, Table *src_tab,
+                           Table *dst_tab, bool src_mdtry, bool dst_mdtry,
                            bool auto_suffix, const QString &src_suffix, const QString &dst_suffix,
                            bool identifier,  bool deferrable, DeferralType deferral_type) :
               BaseRelationship(rel_type, src_tab, dst_tab, src_mdtry, dst_mdtry)
@@ -603,7 +603,7 @@ unsigned Relationship::getObjectCount(ObjectType obj_type)
   throw Exception(ERR_REF_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Relationship::addConstraints(Tabela *dst_tab)
+void Relationship::addConstraints(Table *dst_tab)
 {
  Constraint *constr=NULL, *pk=NULL;
  unsigned constr_id, constr_cnt, i, count;
@@ -677,7 +677,7 @@ void Relationship::addConstraints(Tabela *dst_tab)
 
 void Relationship::addColumnsRelGen(void)
 {
- Tabela *src_tab=NULL, *dst_tab=NULL,
+ Table *src_tab=NULL, *dst_tab=NULL,
         *parent_tab=NULL, *aux_tab=NULL;
  Column *src_col=NULL, *dst_col=NULL,
         *column=NULL, *aux_col=NULL;
@@ -697,8 +697,8 @@ void Relationship::addColumnsRelGen(void)
 
  try
  {
-  src_tab=dynamic_cast<Tabela *>(src_table);
-  dst_tab=dynamic_cast<Tabela *>(dst_table);
+  src_tab=dynamic_cast<Table *>(src_table);
+  dst_tab=dynamic_cast<Table *>(dst_table);
 
   //Gets the column count from participant tables
   src_count=src_tab->obterNumColunas();
@@ -774,7 +774,7 @@ void Relationship::addColumnsRelGen(void)
        //Checking if the column came from a inheritance or copy relationship
        for(idx=0; idx < tab_count; idx++)
        {
-        parent_tab=dynamic_cast<Tabela *>(aux_tab->obterObjeto(idx, types[i2]));
+        parent_tab=dynamic_cast<Table *>(aux_tab->obterObjeto(idx, types[i2]));
         cond=(parent_tab->obterColuna(aux_col->getName()));
 
         if(id_tab==0)
@@ -915,7 +915,7 @@ void Relationship::connectRelationship(void)
     addColumnsRelGen();
 
     //The reference table is added as parent table on the receiver
-    getReceiverTable()->adicionarTabelaPai(dynamic_cast<Tabela *>(getReferenceTable()));
+    getReceiverTable()->adicionarTabelaPai(dynamic_cast<Table *>(getReferenceTable()));
    }
    else if(rel_type==RELATIONSHIP_DEP)
    {
@@ -923,7 +923,7 @@ void Relationship::connectRelationship(void)
     addColumnsRelGen();
 
     //The reference table is added as copy table on the receiver
-    getReceiverTable()->adicionarTabelaCopia(dynamic_cast<Tabela *>(getReferenceTable()));
+    getReceiverTable()->adicionarTabelaCopia(dynamic_cast<Table *>(getReferenceTable()));
    }
    else if(rel_type==RELATIONSHIP_11 ||
            rel_type==RELATIONSHIP_1N)
@@ -937,7 +937,7 @@ void Relationship::connectRelationship(void)
    {
     if(!table_relnn)
      //Allocates the table that represents the Many-to-Many relationship
-     table_relnn=new Tabela;
+     table_relnn=new Table;
 
     /* By default the schema and tablespace for the new table is the same as
        the relationship source table */
@@ -963,7 +963,7 @@ void Relationship::connectRelationship(void)
  }
 }
 
-void Relationship::configureIndentifierRel(Tabela *dst_tab)
+void Relationship::configureIndentifierRel(Table *dst_tab)
 {
  Constraint *pk=NULL;
  unsigned i, count;
@@ -1023,7 +1023,7 @@ void Relationship::configureIndentifierRel(Tabela *dst_tab)
  }
 }
 
-void Relationship::addUniqueKey(Tabela *ref_tab, Tabela *recv_tab)
+void Relationship::addUniqueKey(Table *ref_tab, Table *recv_tab)
 {
  Constraint *uq=NULL;
  unsigned i, count;
@@ -1068,7 +1068,7 @@ void Relationship::addUniqueKey(Tabela *ref_tab, Tabela *recv_tab)
  }
 }
 
-void Relationship::addForeignKey(Tabela *ref_tab, Tabela *recv_tab, ActionType del_act, ActionType upd_act)
+void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del_act, ActionType upd_act)
 {
  Constraint *pk=NULL, *pk_aux=NULL, *fk=NULL;
  unsigned i, i1, qty;
@@ -1128,11 +1128,11 @@ void Relationship::addForeignKey(Tabela *ref_tab, Tabela *recv_tab, ActionType d
    //Case 1: decrementing the quantity of columns to be scanned
    if((!isSelfRelationship() && ref_tab==src_table) ||
       (isSelfRelationship() && table_relnn->obterNumRestricoes()==0))
-    qty-=dynamic_cast<Tabela *>(dst_table)->obterChavePrimaria()->getColumnCount(Constraint::SOURCE_COLS);
+    qty-=dynamic_cast<Table *>(dst_table)->obterChavePrimaria()->getColumnCount(Constraint::SOURCE_COLS);
    //Case 2: shifiting the scan index
    else if(ref_tab==dst_table)
    {
-    pk_aux=dynamic_cast<Tabela *>(src_table)->obterChavePrimaria();
+    pk_aux=dynamic_cast<Table *>(src_table)->obterChavePrimaria();
     i=pk_aux->getColumnCount(Constraint::SOURCE_COLS);
    }
   }
@@ -1169,7 +1169,7 @@ void Relationship::addForeignKey(Tabela *ref_tab, Tabela *recv_tab, ActionType d
  }
 }
 
-void Relationship::addAttributes(Tabela *recv_tab)
+void Relationship::addAttributes(Table *recv_tab)
 {
  unsigned i, count, i1;
  Column *column=NULL;
@@ -1210,7 +1210,7 @@ void Relationship::addAttributes(Tabela *recv_tab)
  }
 }
 
-void Relationship::copyColumns(Tabela *ref_tab, Tabela *recv_tab, bool not_null)
+void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 {
  Constraint *dst_pk=NULL, *src_pk=NULL, *pk=NULL;
  unsigned i, count, i1;
@@ -1334,14 +1334,14 @@ void Relationship::copyColumns(Tabela *ref_tab, Tabela *recv_tab, bool not_null)
 
 void Relationship::addColumnsRel11(void)
 {
- Tabela *ref_tab=NULL, *recv_tab=NULL;
+ Table *ref_tab=NULL, *recv_tab=NULL;
 
  try
  {
   ActionType del_action;
 
-  ref_tab=dynamic_cast<Tabela *>(this->getReferenceTable());
-  recv_tab=dynamic_cast<Tabela *>(this->getReceiverTable());
+  ref_tab=dynamic_cast<Table *>(this->getReferenceTable());
+  recv_tab=dynamic_cast<Table *>(this->getReceiverTable());
 
   //Case the reference table is mandatory participation set as RESTRICT the delete action on the foreign key
   if((ref_tab==this->src_table && this->isTableMandatory(SRC_TABLE)) ||
@@ -1399,14 +1399,14 @@ void Relationship::addColumnsRel11(void)
 
 void Relationship::addColumnsRel1n(void)
 {
- Tabela *ref_tab=NULL, *recv_tab=NULL;
+ Table *ref_tab=NULL, *recv_tab=NULL;
  bool not_null=false;
  ActionType del_action=ActionType::set_null, upd_action=ActionType::cascade;
 
  try
  {
-  recv_tab=dynamic_cast<Tabela *>(this->getReceiverTable());
-  ref_tab=dynamic_cast<Tabela *>(this->getReferenceTable());
+  recv_tab=dynamic_cast<Table *>(this->getReceiverTable());
+  ref_tab=dynamic_cast<Table *>(this->getReferenceTable());
 
   /* Case the relationship isn't identifier and the source table is mandatory participation
      the columns of the foreign key must not accept null values and the ON DELETE and ON UPDATE
@@ -1461,7 +1461,7 @@ void Relationship::addColumnsRel1n(void)
 
 void Relationship::addColumnsRelNn(void)
 {
- Tabela *tab=NULL, *tab1=NULL;
+ Table *tab=NULL, *tab1=NULL;
  Constraint *pk_tabnn=NULL;
  bool src_not_null=false, dst_not_null=false;
  ActionType acao_del_orig=ActionType::restrict, acao_del_dest=ActionType::restrict,
@@ -1470,8 +1470,8 @@ void Relationship::addColumnsRelNn(void)
 
  try
  {
-  tab=dynamic_cast<Tabela *>(src_table);
-  tab1=dynamic_cast<Tabela *>(dst_table);
+  tab=dynamic_cast<Table *>(src_table);
+  tab1=dynamic_cast<Table *>(dst_table);
 
   /* Copy the columns from the primary keys of the source and destination tables
      to the table that represents the n-n relationship */
@@ -1502,7 +1502,7 @@ void Relationship::addColumnsRelNn(void)
  }
 }
 
-Tabela *Relationship::getReferenceTable(void)
+Table *Relationship::getReferenceTable(void)
 {
  /* Many to Many relationships doesn't has only one reference table so
     is returned NULL */
@@ -1511,13 +1511,13 @@ Tabela *Relationship::getReferenceTable(void)
  else
  {
   if(src_table==getReceiverTable())
-   return(dynamic_cast<Tabela *>(dst_table));
+   return(dynamic_cast<Table *>(dst_table));
   else
-   return(dynamic_cast<Tabela *>(src_table));
+   return(dynamic_cast<Table *>(src_table));
  }
 }
 
-Tabela *Relationship::getReceiverTable(void)
+Table *Relationship::getReceiverTable(void)
 {
  if(rel_type==RELATIONSHIP_11)
  {
@@ -1525,10 +1525,10 @@ Tabela *Relationship::getReceiverTable(void)
      Case 2: (1,1) ---<>--- (0,1) */
   if((!src_mandatory && !dst_mandatory) ||
       (src_mandatory && !dst_mandatory))
-   return(dynamic_cast<Tabela *>(dst_table));
+   return(dynamic_cast<Table *>(dst_table));
   /* Case 3: (0,1) ---<>--- (1,1) */
   else if(!src_mandatory && dst_mandatory)
-   return(dynamic_cast<Tabela *>(src_table));
+   return(dynamic_cast<Table *>(src_table));
   // Case 4: (1,1) ---<>--- (1,1)
   else
   /* Returns NULL since this type of relationship isn't implemented. Refer to
@@ -1538,18 +1538,18 @@ Tabela *Relationship::getReceiverTable(void)
  /* For 1-n relationships, the table order is unchagned this means that
     the columns are always included in the destination table */
  else if(rel_type==RELATIONSHIP_1N)
-  return(dynamic_cast<Tabela *>(dst_table));
+  return(dynamic_cast<Table *>(dst_table));
  /* For generalization / copy relationships the columns are always added
     in the source table */
  else if(rel_type==RELATIONSHIP_GEN ||
          rel_type==RELATIONSHIP_DEP)
-  return(dynamic_cast<Tabela *>(src_table));
+  return(dynamic_cast<Table *>(src_table));
  //For n-n relationships, the columns are added in the table that represents the relationship (table_relnn)
  else
-  return(dynamic_cast<Tabela *>(table_relnn));
+  return(dynamic_cast<Table *>(table_relnn));
 }
 
-void Relationship::removeTableObjectsRefCols(Tabela *table)
+void Relationship::removeTableObjectsRefCols(Table *table)
 {
  Trigger *trigger=NULL;
  Index *index=NULL;
@@ -1601,7 +1601,7 @@ void Relationship::removeTableObjectsRefCols(Tabela *table)
  }
 }
 
-void Relationship::removeColumnsFromTablePK(Tabela *table)
+void Relationship::removeColumnsFromTablePK(Table *table)
 {
  if(table)
  {
@@ -1642,7 +1642,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
   {
    vector<Column *>::iterator itr, itr_end;
    Column *column=NULL;
-   Tabela *table=NULL;
+   Table *table=NULL;
    unsigned list_idx=0;
    vector<TableObject *> *attr_list=NULL;
    vector<TableObject *>::iterator itr_atrib, itr_atrib_end;
@@ -1676,7 +1676,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
      /* Gets the table which has a foreign key that represents the
         relationship (the table where the foreign key was inserted
         upon connection of the relationship) */
-     table=dynamic_cast<Tabela *>(fk_rel1n->getParentTable());
+     table=dynamic_cast<Table *>(fk_rel1n->getParentTable());
 
      //Removes the foreign key from table
      table->removerRestricao(fk_rel1n->getName());
@@ -1710,7 +1710,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
      if(pk && pk==this->pk_relident)
      {
       //Gets the table that own the identifier relationship primary key
-      table=dynamic_cast<Tabela *>(pk_relident->getParentTable());
+      table=dynamic_cast<Table *>(pk_relident->getParentTable());
 
       //Removes the primary key from table
       table->removerRestricao(pk_relident->getName());
@@ -1837,7 +1837,7 @@ bool Relationship::hasIndentifierAttribute(void)
 bool Relationship::isInvalidated(void)
 {
  unsigned rel_cols_count, tab_cols_count, i, i1, count;
- Tabela *table=NULL, *table1=NULL;
+ Table *table=NULL, *table1=NULL;
  Constraint *fk=NULL, *fk1=NULL, *constr=NULL, *pk=NULL;
  bool valid=false;
  Column *col1=NULL, *col2=NULL, *col3=NULL;
@@ -1851,7 +1851,7 @@ bool Relationship::isInvalidated(void)
      any relationship 1-1, 1-n or n-n connected to it should be revalidated */
   if(pk_relident && pk_relident->isAddedByLinking())
   {
-   dynamic_cast<Tabela *>(pk_relident->getParentTable())->removerObjeto(pk_relident);
+   dynamic_cast<Table *>(pk_relident->getParentTable())->removerObjeto(pk_relident);
    pk_relident=NULL;
   }
   return(true);
@@ -1968,8 +1968,8 @@ bool Relationship::isInvalidated(void)
         matches the column names of the originating tables */
   else if(rel_type==RELATIONSHIP_NN)
   {
-   table=dynamic_cast<Tabela *>(src_table);
-   table1=dynamic_cast<Tabela *>(dst_table);
+   table=dynamic_cast<Table *>(src_table);
+   table1=dynamic_cast<Table *>(dst_table);
 
    /* To validated the n-n relationship, the first condition is that
       both tables has primary key */

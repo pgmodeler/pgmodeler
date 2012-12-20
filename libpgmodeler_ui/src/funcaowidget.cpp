@@ -441,7 +441,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
  Language *ling=NULL;
  Operator *oper=NULL;
  Type *tipo=NULL;
- Tabela *tab=NULL;
+ Table *tab=NULL;
  Function *funcao=NULL;
  BaseObject *objeto=NULL;
  unsigned i, i1, qtd;
@@ -504,7 +504,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
       nas tabelas */
     else if(tipos[i]==OBJ_TABLE)
     {
-     tab=dynamic_cast<Tabela *>(objeto);
+     tab=dynamic_cast<Table *>(objeto);
      qtd=tab->obterNumGatilhos();
 
      for(i1=0; i1 < qtd; i1++)

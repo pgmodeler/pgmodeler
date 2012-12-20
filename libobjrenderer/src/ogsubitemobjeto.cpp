@@ -423,7 +423,7 @@ QString OGSubItemObjeto::obterStringRestricoes(Column *coluna)
 {
  if(coluna && coluna->getParentTable())
  {
-  Tabela *tabela=dynamic_cast<Tabela *>(coluna->getParentTable());
+  Table *tabela=dynamic_cast<Table *>(coluna->getParentTable());
   QString str_rest;
   Constraint *restricao=NULL;
   vector<Constraint *>::iterator itr,itr_end;

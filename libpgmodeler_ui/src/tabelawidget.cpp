@@ -95,7 +95,7 @@ TabelaWidget::TabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TABLE)
 void TabelaWidget::hideEvent(QHideEvent *evento)
 {
  map<ObjectType, TabelaObjetosWidget *>::iterator itr, itr_end;
- Tabela *tab=dynamic_cast<Tabela *>(this->objeto);
+ Table *tab=dynamic_cast<Table *>(this->objeto);
 
  aceita_oids_chk->setChecked(false);
  atributos_tbw->setCurrentIndex(0);
@@ -123,7 +123,7 @@ void TabelaWidget::exibirFormObjetoTabela(ObjectType tipo_obj)
 {
  TableObject *objeto=NULL;
  TabelaObjetosWidget *tab_obj=NULL;
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
 
  //Seleciona a tabela de objeto conforme o tipo passado
  tab_obj=selecionarTabelaObjetos(tipo_obj);
@@ -134,7 +134,7 @@ void TabelaWidget::exibirFormObjetoTabela(ObjectType tipo_obj)
   objeto=reinterpret_cast<TableObject *>(tab_obj->obterDadoLinha(tab_obj->obterLinhaSelecionada()).value<void *>());
 
  //Obtém a referência a tabela que é dona do objeto a ser editado
- tabela=dynamic_cast<Tabela *>(this->objeto);
+ tabela=dynamic_cast<Table *>(this->objeto);
 
  //Exibe o formulário correto de acordo com o tipo de objeto de tabela
  switch(tipo_obj)
@@ -201,7 +201,7 @@ ObjectType TabelaWidget::selecionarTipoObjeto(QObject *tab_sender)
  return(tipo_obj);
 }
 
-void TabelaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tabela *tabela, float pos_x, float pos_y)
+void TabelaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Table *tabela, float pos_x, float pos_y)
 {
  unsigned i, qtd;
  ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
@@ -219,7 +219,7 @@ void TabelaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, T
   //QString nome;
   //nome=trUtf8("new_table");
   //Aloca a nova tabela
-  tabela=new Tabela;
+  tabela=new Table;
 
   /* Marca como novo objeto o relacionamento gerado, assim o mesmo é tratado
      de forma diferente nos métodos de configuração da classe superior */
@@ -268,7 +268,7 @@ void TabelaWidget::listarObjetos(ObjectType tipo_obj)
 {
  TabelaObjetosWidget *tab=NULL;
  unsigned qtd, i;
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
 
  try
  {
@@ -276,7 +276,7 @@ void TabelaWidget::listarObjetos(ObjectType tipo_obj)
   tab=mapa_tab_objetos[tipo_obj];
 
   //Obtém a referêni   tabela em edição
-  tabela=dynamic_cast<Tabela *>(this->objeto);
+  tabela=dynamic_cast<Table *>(this->objeto);
 
   //Remove as linhas da tabela antes da exibição dos elementos
   tab->blockSignals(true);
@@ -463,14 +463,14 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
 
 void TabelaWidget::removerObjetos(void)
 {
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
  unsigned qtd, qtd_op=0, i;
  BaseObject *objeto=NULL;
  ObjectType tipo_obj=BASE_OBJECT;
 
  try
  {
-  tabela=dynamic_cast<Tabela *>(this->objeto);
+  tabela=dynamic_cast<Table *>(this->objeto);
   tipo_obj=selecionarTipoObjeto(sender());
   qtd=tabela->obterNumObjetos(tipo_obj);
 
@@ -534,13 +534,13 @@ void TabelaWidget::removerObjetos(void)
 
 void TabelaWidget::removerObjeto(int idx_lin)
 {
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
  BaseObject *objeto=NULL;
  ObjectType tipo_obj=BASE_OBJECT;
 
  try
  {
-  tabela=dynamic_cast<Tabela *>(this->objeto);
+  tabela=dynamic_cast<Table *>(this->objeto);
   tipo_obj=selecionarTipoObjeto(sender());
 
   //Obtém o objeto da tabela
@@ -572,12 +572,12 @@ void TabelaWidget::removerObjeto(int idx_lin)
 void TabelaWidget::TabelaWidget::moverObjetos(int idx1, int idx2)
 {
  ObjectType tipo_obj=BASE_OBJECT;
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
 
  try
  {
   tipo_obj=selecionarTipoObjeto(sender());
-  tabela=dynamic_cast<Tabela *>(this->objeto);
+  tabela=dynamic_cast<Table *>(this->objeto);
   lista_op->updateObjectIndex(tabela->obterObjeto(idx1, tipo_obj), idx2);
   lista_op->updateObjectIndex(tabela->obterObjeto(idx2, tipo_obj), idx1);
   tabela->trocarIndicesObjetos(tipo_obj, idx1, idx2);
@@ -594,7 +594,7 @@ void TabelaWidget::aplicarConfiguracao(void)
 {
  try
  {
-  Tabela *tabela=NULL;
+  Table *tabela=NULL;
 
   if(!this->novo_obj)
   {
@@ -602,7 +602,7 @@ void TabelaWidget::aplicarConfiguracao(void)
    lista_op->registerObject(this->objeto, Operation::OBJECT_MODIFIED);
   }
 
-  tabela=dynamic_cast<Tabela *>(this->objeto);
+  tabela=dynamic_cast<Table *>(this->objeto);
   tabela->definirAceitaOids(aceita_oids_chk->isChecked());
 
   //Aplica as configurações básicas

@@ -417,7 +417,7 @@ class PgSQLType: public BaseType{
 
   friend class Type;
   friend class Domain;
-  friend class Tabela;
+  friend class Table;
   friend class Sequence;
   friend class ModeloBD;
 };

@@ -59,7 +59,7 @@ void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type
     copyObject(psrc_obj, dynamic_cast<Index *>(copy_obj));
   break;
   case OBJ_TABLE:
-    copyObject(psrc_obj, dynamic_cast<Tabela *>(copy_obj));
+    copyObject(psrc_obj, dynamic_cast<Table *>(copy_obj));
   break;
   case OBJ_TEXTBOX:
     copyObject(psrc_obj, dynamic_cast<Textbox *>(copy_obj));
@@ -264,7 +264,7 @@ void OperationList::removeOperations(void)
 {
  BaseObject *object=NULL;
  TableObject *tab_obj=NULL;
- Tabela *tab=NULL;
+ Table *tab=NULL;
 
  //Destroy the operations
  while(!operations.empty())
@@ -289,7 +289,7 @@ void OperationList::removeOperations(void)
   else if(tab_obj)
   {
    //Deletes the object if its not referenced by some table
-   tab=dynamic_cast<Tabela *>(tab_obj->getParentTable());
+   tab=dynamic_cast<Table *>(tab_obj->getParentTable());
    if(!tab || (tab && tab->obterIndiceObjeto(tab_obj)) < 0)
     delete(tab_obj);
   }
@@ -370,7 +370,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
 {
  ObjectType obj_type;
  Operation *operation=NULL;
- Tabela *parent_tab=NULL;
+ Table *parent_tab=NULL;
  Relationship *parent_rel=NULL;
  int obj_idx=-1;
 
@@ -445,7 +445,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
    tab_obj=dynamic_cast<TableObject *>(object);
 
    if(parent_obj->getObjectType()==OBJ_TABLE)
-    parent_tab=dynamic_cast<Tabela *>(parent_obj);
+    parent_tab=dynamic_cast<Table *>(parent_obj);
    else
     parent_rel=dynamic_cast<Relationship *>(parent_obj);
 
@@ -712,7 +712,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
   {
    BaseObject *orig_obj=NULL, *bkp_obj=NULL, *object=NULL, *aux_obj=NULL;
    ObjectType obj_type;
-   Tabela *parent_tab=NULL;
+   Table *parent_tab=NULL;
    Relationship *parent_rel=NULL;
 
    object=oper->pool_obj;
@@ -726,7 +726,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
    if(oper->parent_obj)
    {
     if(oper->parent_obj->getObjectType()==OBJ_TABLE)
-     parent_tab=dynamic_cast<Tabela *>(oper->parent_obj);
+     parent_tab=dynamic_cast<Table *>(oper->parent_obj);
     else
      parent_rel=dynamic_cast<Relationship *>(oper->parent_obj);
    }
@@ -813,8 +813,8 @@ void OperationList::executeOperation(Operation *oper, bool redo)
     else if(parent_rel)
      parent_rel->addObject(dynamic_cast<TableObject *>(object), oper->object_idx);
     else
-     if(dynamic_cast<Tabela *>(object))
-      dynamic_cast<Tabela *>(object)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
+     if(dynamic_cast<Table *>(object))
+      dynamic_cast<Table *>(object)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
      model->adicionarObjeto(object, oper->object_idx);
    }
    /* If the operation is a previously created object or if the object

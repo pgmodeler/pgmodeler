@@ -165,7 +165,7 @@ void ModeloBD::adicionarObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_TEXTBOX)
     adicionarCaixaTexto(dynamic_cast<Textbox *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TABLE)
-    adicionarTabela(dynamic_cast<Tabela *>(objeto), idx_obj);
+    adicionarTabela(dynamic_cast<Table *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_FUNCTION)
     adicionarFuncao(dynamic_cast<Function *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_AGGREGATE)
@@ -223,7 +223,7 @@ void ModeloBD::removerObjeto(BaseObject *objeto, int idx_obj)
    else if(tipo_obj==OBJ_TEXTBOX)
     removerCaixaTexto(dynamic_cast<Textbox *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_TABLE)
-    removerTabela(dynamic_cast<Tabela *>(objeto), idx_obj);
+    removerTabela(dynamic_cast<Table *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_FUNCTION)
     removerFuncao(dynamic_cast<Function *>(objeto), idx_obj);
    else if(tipo_obj==OBJ_AGGREGATE)
@@ -288,7 +288,7 @@ void ModeloBD::removerObjeto(unsigned idx_obj, ObjectType tipo_obj)
   if(tipo_obj==OBJ_TEXTBOX)
    removerCaixaTexto(dynamic_cast<Textbox *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_TABLE)
-   removerTabela(dynamic_cast<Tabela *>(objeto), idx_obj);
+   removerTabela(dynamic_cast<Table *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_FUNCTION)
    removerFuncao(dynamic_cast<Function *>(objeto), idx_obj);
   else if(tipo_obj==OBJ_AGGREGATE)
@@ -716,7 +716,7 @@ void ModeloBD::destruirObjetos(void)
  }
 }
 
-void ModeloBD::adicionarTabela(Tabela *tabela, int idx_obj)
+void ModeloBD::adicionarTabela(Table *tabela, int idx_obj)
 {
  try
  {
@@ -734,12 +734,12 @@ void ModeloBD::adicionarTabela(Tabela *tabela, int idx_obj)
  }
 }
 
-Tabela *ModeloBD::obterTabela(unsigned idx_obj)
+Table *ModeloBD::obterTabela(unsigned idx_obj)
 {
- return(dynamic_cast<Tabela *>(obterObjeto(idx_obj, OBJ_TABLE)));
+ return(dynamic_cast<Table *>(obterObjeto(idx_obj, OBJ_TABLE)));
 }
 
-void ModeloBD::removerTabela(Tabela *tabela, int idx_obj)
+void ModeloBD::removerTabela(Table *tabela, int idx_obj)
 {
  if(tabela)
  {
@@ -871,13 +871,13 @@ void ModeloBD::removerVisao(View *visao, int idx_obj)
 }
 
 
-void ModeloBD::atualizarRelFkTabela(Tabela *tabela)
+void ModeloBD::atualizarRelFkTabela(Table *tabela)
 {
  if(!tabela)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  Tabela *ref_tab=NULL;
+  Table *ref_tab=NULL;
   BaseRelationship *rel=NULL;
   Constraint *fk=NULL;
   unsigned idx;
@@ -895,7 +895,7 @@ void ModeloBD::atualizarRelFkTabela(Tabela *tabela)
    while(itr!=itr_end)
    {
     fk=(*itr);
-    ref_tab=dynamic_cast<Tabela *>(fk->getReferencedTable());
+    ref_tab=dynamic_cast<Table *>(fk->getReferencedTable());
     itr++;
 
     rel=obterRelacionamento(tabela, ref_tab);
@@ -923,7 +923,7 @@ void ModeloBD::atualizarRelFkTabela(Tabela *tabela)
     if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK &&
        rel->getTable(BaseRelationship::SRC_TABLE)==tabela)
     {
-     ref_tab=dynamic_cast<Tabela *>(rel->getTable(BaseRelationship::DST_TABLE));
+     ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
 
        //Caso a visão não referencie mais a tabela
      if(!tabela->referenciaTabelaChaveEstrangeira(ref_tab))
@@ -947,7 +947,7 @@ void ModeloBD::atualizarRelFkTabela(Tabela *tabela)
    while(itr!=itr_end)
    {
     fk=(*itr);
-    ref_tab=dynamic_cast<Tabela *>(fk->getReferencedTable());
+    ref_tab=dynamic_cast<Table *>(fk->getReferencedTable());
     itr++;
 
     /* Caso a tabela exista, um relacionamento tabela-visão será automaticamente criado
@@ -966,7 +966,7 @@ void ModeloBD::atualizarRelFkTabela(Tabela *tabela)
 
 void ModeloBD::atualizarRelTabelaVisao(View *visao)
 {
- Tabela *tab=NULL;
+ Table *tab=NULL;
  BaseRelationship *rel=NULL;
  Reference ref;
  unsigned i, qtd_ref, idx;
@@ -1023,9 +1023,9 @@ void ModeloBD::atualizarRelTabelaVisao(View *visao)
    {
     //Obtém a tabela do relacionamento
     if(rel->getTable(BaseRelationship::SRC_TABLE)->getObjectType()==OBJ_TABLE)
-     tab=dynamic_cast<Tabela *>(rel->getTable(BaseRelationship::SRC_TABLE));
+     tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE));
     else
-     tab=dynamic_cast<Tabela *>(rel->getTable(BaseRelationship::DST_TABLE));
+     tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
 
     //Caso a visão não referencie mais a tabela
     if(!visao->isReferencingTable(tab))
@@ -1321,7 +1321,7 @@ void ModeloBD::validarRelacionamentos(void)
    rel_base=dynamic_cast<BaseRelationship *>(*itr);
 
    if(rel_base->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
-    this->atualizarRelFkTabela(dynamic_cast<Tabela *>(rel_base->getTable(BaseRelationship::SRC_TABLE)));
+    this->atualizarRelFkTabela(dynamic_cast<Table *>(rel_base->getTable(BaseRelationship::SRC_TABLE)));
 
    itr++;
   }
@@ -1358,7 +1358,7 @@ void ModeloBD::verificarRedundanciaRelacoes(Relationship *rel)
       tipo_rel==Relationship::RELATIONSHIP_DEP))
   {
    BaseTable *tabela_ref=NULL, *tab_orig=NULL;
-   Tabela *tabela_rec=NULL;
+   Table *tabela_rec=NULL;
    Relationship *rel_aux=NULL;
    BaseRelationship *rel_base=NULL;
    vector<BaseObject *>::iterator itr, itr_end;
@@ -1441,7 +1441,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
 
  vector<BaseObject *>::iterator itr, itr_end;
  Sequence *sequencia=NULL;
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
  TableObject *obj_tab=NULL;
  Constraint *restricao=NULL;
  Index *indice=NULL;
@@ -1462,7 +1462,7 @@ void ModeloBD::obterXMLObjetosEspeciais(void)
   while(itr!=itr_end)
   {
    //Obtém a tabela a partir do iterador atual
-   tabela=dynamic_cast<Tabela *>(*itr);
+   tabela=dynamic_cast<Table *>(*itr);
    itr++;
 
    //Varre as listas de restrição e índice
@@ -4599,16 +4599,16 @@ Aggregate *ModeloBD::criarFuncaoAgregacao(void)
  return(func_agreg);
 }
 
-Tabela *ModeloBD::criarTabela(void)
+Table *ModeloBD::criarTabela(void)
 {
  map<QString, QString> atributos;
  QString elem;
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
  TableObject *objeto=NULL;
 
  try
  {
-  tabela=new Tabela;
+  tabela=new Table;
 
   //Lê do parser os atributos basicos
   definirAtributosBasicos(tabela);
@@ -4722,7 +4722,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
  map<QString, QString> atributos;
  Constraint *restricao=NULL;
  BaseObject *tabela_ref=NULL;
- Tabela *tabela=NULL,*tabela_aux=NULL;
+ Table *tabela=NULL,*tabela_aux=NULL;
  Column *coluna=NULL;
  Relationship *relacao=NULL;
  QString elem, str_aux;
@@ -4743,7 +4743,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
   {
    tipo_objeto=objeto->getObjectType();
    if(tipo_objeto==OBJ_TABLE)
-    tabela=dynamic_cast<Tabela *>(objeto);
+    tabela=dynamic_cast<Table *>(objeto);
    else if(tipo_objeto==OBJ_RELATIONSHIP)
     relacao=dynamic_cast<Relationship *>(objeto);
    else
@@ -4755,7 +4755,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
   else
   {
    tipo_objeto=OBJ_TABLE;
-   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJ_TABLE));
+   tabela=dynamic_cast<Table *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJ_TABLE));
    ins_rest_tabela=true;
    /* Caso a tabela a qual possua a restição não for encontrada uma exceção será disparada pois
       não se pode criar uma restrição sem que esta seja atribuida a uma tabela, neste caso. */
@@ -4935,7 +4935,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
        }
        else
        {
-        tabela_aux=dynamic_cast<Tabela *>(tabela_ref);
+        tabela_aux=dynamic_cast<Table *>(tabela_ref);
         coluna=tabela_aux->obterColuna(lista_cols[i]);
         //Caso a coluna não for encontrada, tenta obtê-la referenciando seu nome antigo
         if(!coluna)
@@ -4982,7 +4982,7 @@ Constraint *ModeloBD::criarRestricao(BaseObject *objeto)
  return(restricao);
 }
 
-Index *ModeloBD::criarIndice(Tabela *tabela)
+Index *ModeloBD::criarIndice(Table *tabela)
 {
  map<QString, QString> atributos;
  Index *indice=NULL;
@@ -5000,7 +5000,7 @@ Index *ModeloBD::criarIndice(Tabela *tabela)
   if(!tabela)
   {
    inc_ind_tabela=true;
-   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJ_TABLE));
+   tabela=dynamic_cast<Table *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJ_TABLE));
    /* Caso a tabela a qual possua a restição não for encontrada uma exceção será disparada pois
       não se pode criar uma restrição sem que esta seja atribuida a uma tabela, neste caso. */
    if(!tabela)
@@ -5212,7 +5212,7 @@ Rule *ModeloBD::criarRegra(void)
  return(regra);
 }
 
-Trigger *ModeloBD::criarGatilho(Tabela *tabela)
+Trigger *ModeloBD::criarGatilho(Table *tabela)
 {
  map<QString, QString> atributos;
  Trigger *gatilho=NULL;
@@ -5233,7 +5233,7 @@ Trigger *ModeloBD::criarGatilho(Tabela *tabela)
   else if(!tabela && !atributos[ParsersAttributes::TABLE].isEmpty())
   {
    inc_gat_tabela=true;
-   tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJ_TABLE));
+   tabela=dynamic_cast<Table *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJ_TABLE));
    if(!tabela)
     throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
                   .arg(QString::fromUtf8(atributos[ParsersAttributes::NAME]))
@@ -5451,11 +5451,11 @@ Sequence *ModeloBD::criarSequencia(bool ignorar_possuidora)
    }
 
    //Tenta obter a coluna da tabela com o nome vindo do XML
-   coluna=dynamic_cast<Tabela *>(tabela)->obterColuna(nome_col);
+   coluna=dynamic_cast<Table *>(tabela)->obterColuna(nome_col);
 
    //Caso a coluna não for encontrada tenta obtê-la referenciando o antigo nome
    if(!coluna)
-    coluna=dynamic_cast<Tabela *>(tabela)->obterColuna(nome_col, true);
+    coluna=dynamic_cast<Table *>(tabela)->obterColuna(nome_col, true);
 
    /* Caso a coluna não exista porém a mesma esteja sendo referenciada no xml
       um erro será disparado */
@@ -5486,7 +5486,7 @@ View *ModeloBD::criarVisao(void)
  map<QString, QString> atributos;
  View *visao=NULL;
  Column *coluna=NULL;
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
  QString elem, str_aux;
  QStringList lista_aux;
  vector<Reference> vet_refs;
@@ -5518,7 +5518,7 @@ View *ModeloBD::criarVisao(void)
       if(!atributos[ParsersAttributes::TABLE].isEmpty())
       {
        coluna=NULL;
-       tabela=dynamic_cast<Tabela *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJ_TABLE));
+       tabela=dynamic_cast<Table *>(obterObjeto(atributos[ParsersAttributes::TABLE], OBJ_TABLE));
 
        //Dispara uma exceção caso a tabela referenciada não exista
        if(!tabela)
@@ -5775,8 +5775,8 @@ BaseRelationship *ModeloBD::criarRelacionamento(void)
 
    //Cria o novo relacionamento
    relacao=new Relationship(tipo_relac,
-                              dynamic_cast<Tabela *>(tabelas[0]),
-                              dynamic_cast<Tabela *>(tabelas[1]),
+                              dynamic_cast<Table *>(tabelas[0]),
+                              dynamic_cast<Table *>(tabelas[1]),
                               obrig_orig, obrig_dest,
                               sufixo_auto, atributos[ParsersAttributes::SRC_SUFFIX],
                               atributos[ParsersAttributes::DST_SUFFIX],
@@ -5903,7 +5903,7 @@ Permission *ModeloBD::criarPermissao(void)
 {
  Permission *permissao=NULL;
  BaseObject *objeto=NULL;
- Tabela *tabela_pai=NULL;
+ Table *tabela_pai=NULL;
  Role *papel=NULL;
  map<QString, QString> atrib_priv, atributos;
  map<QString, QString>::iterator itr, itr_end;
@@ -5933,7 +5933,7 @@ Permission *ModeloBD::criarPermissao(void)
   if(tipo_obj==OBJ_COLUMN)
   {
    //Primeiramente a tabela pai é obtida do modelo
-   tabela_pai=dynamic_cast<Tabela *>(obterObjeto(obj_pai, OBJ_TABLE));
+   tabela_pai=dynamic_cast<Table *>(obterObjeto(obj_pai, OBJ_TABLE));
 
    /* Caso a tabela pai existe obtém o objeto filho da mesma
       o qual é referenciado pela permissão */
@@ -6091,7 +6091,7 @@ void ModeloBD::validarRemocaoColuna(Column *coluna)
  }
 }
 
-void ModeloBD::validarRelacObjetoTabela(TableObject *objeto, Tabela *tabela_pai)
+void ModeloBD::validarRelacObjetoTabela(TableObject *objeto, Table *tabela_pai)
 {
  try
  {
@@ -6191,7 +6191,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
  map<unsigned, BaseObject *> mapa_objetos;
  vector<unsigned> vet_id_objs, vet_id_objs_tab;
  vector<Constraint *> vet_fks;
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
  Index *indice=NULL;
  Trigger *gatilho=NULL;
  Constraint *restricao=NULL;
@@ -6317,7 +6317,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
 
    while(itr!=itr_end)
    {
-    tabela=dynamic_cast<Tabela *>(*itr);
+    tabela=dynamic_cast<Table *>(*itr);
     itr++;
 
     //Varre a lista de restrições da tabela
@@ -6415,7 +6415,7 @@ QString ModeloBD::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
 
     //Stores the table's user added foreign keys
     if(objeto->getObjectType()==OBJ_TABLE)
-     dynamic_cast<Tabela *>(objeto)->obterChavesEstrangeiras(vet_fks);
+     dynamic_cast<Table *>(objeto)->obterChavesEstrangeiras(vet_fks);
 
     if(objeto->getObjectType()==OBJ_RELATIONSHIP)
     {
@@ -6897,7 +6897,7 @@ void ModeloBD::obterDependenciasObjeto(BaseObject *objeto, vector<BaseObject *> 
   //** Obtendo as dependências de Tabelas **
   else if(tipo_obj==OBJ_TABLE)
   {
-   Tabela *tab=dynamic_cast<Tabela *>(objeto);
+   Table *tab=dynamic_cast<Table *>(objeto);
    BaseObject *tipo_usr=NULL;
    Constraint *rest=NULL;
    Trigger *gat=NULL;
@@ -7034,10 +7034,10 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
 
   if(tipo_obj==OBJ_TABLE)
   {
-   Tabela *tabela=dynamic_cast<Tabela *>(objeto);
+   Table *tabela=dynamic_cast<Table *>(objeto);
    Sequence *seq=NULL;
    Constraint *rest=NULL;
-   Tabela *tab=NULL;
+   Table *tab=NULL;
    Trigger *gat=NULL;
    BaseRelationship *rel_base=NULL;
    vector<BaseObject *>::iterator itr, itr_end;
@@ -7088,7 +7088,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
 
    while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
    {
-    tab=dynamic_cast<Tabela *>(*itr);
+    tab=dynamic_cast<Table *>(*itr);
 
     //Verificando as restrições
     qtd=tab->obterNumRestricoes();
@@ -7149,7 +7149,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
                             OBJ_AGGREGATE, OBJ_OPERATOR,
                             OBJ_TABLE, OBJ_TYPE, OBJ_LANGUAGE };
    unsigned i, i1, qtd;
-   Tabela *tab=NULL;
+   Table *tab=NULL;
    Aggregate *func_ag=NULL;
    Operator *oper=NULL;
    Trigger *gat=NULL;
@@ -7229,7 +7229,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Obtém a referência ao objeto
-      tab=dynamic_cast<Tabela *>(*itr);
+      tab=dynamic_cast<Table *>(*itr);
       itr++;
       qtd=tab->obterNumGatilhos();
       for(i1=0; i1 < qtd && (!modo_exclusao || (modo_exclusao && !refer)); i1++)
@@ -7326,7 +7326,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
                            OBJ_OPERATOR, OBJ_TYPE };
    unsigned i, i1, qtd;
    OperatorClass *classe_op=NULL;
-   Tabela *tab=NULL;
+   Table *tab=NULL;
    Column *col=NULL;
    Cast *conv_tipo=NULL;
    Domain *dom=NULL;
@@ -7345,7 +7345,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
     case OBJ_TYPE: ptr_tipopgsql=dynamic_cast<Type*>(objeto); break;
     case OBJ_DOMAIN: ptr_tipopgsql=dynamic_cast<Domain*>(objeto); break;
     case OBJ_SEQUENCE: ptr_tipopgsql=dynamic_cast<Sequence*>(objeto); break;
-    default: ptr_tipopgsql=dynamic_cast<Tabela*>(objeto); break;
+    default: ptr_tipopgsql=dynamic_cast<Table*>(objeto); break;
    }
 
    /* Varre todas as listas de objetos os quais podem
@@ -7364,7 +7364,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
      {
       //Obtém a tabela
-      tab=dynamic_cast<Tabela *>(*itr);
+      tab=dynamic_cast<Table *>(*itr);
       itr++;
 
       //Varre a lista de colunas da tabela
@@ -7608,7 +7608,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
   {
    vector<BaseObject *>::iterator itr, itr_end;
    unsigned i, qtd;
-   Tabela *tab=NULL;
+   Table *tab=NULL;
    Index *ind=NULL;
    Constraint *rest=NULL;
 
@@ -7620,7 +7620,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
    while(itr!=itr_end && (!modo_exclusao || (modo_exclusao && !refer)))
    {
     //Obtém a tabela
-    tab=dynamic_cast<Tabela *>(*itr);
+    tab=dynamic_cast<Table *>(*itr);
 
     //Verifica se referencia o espaço de tabela
     if(tab->getTablespace()==objeto)
@@ -7820,7 +7820,7 @@ void ModeloBD::obterReferenciasObjeto(BaseObject *objeto, vector<BaseObject *> &
      }
      else if(tipos_obj[i]==OBJ_TABLE)
      {
-      Tabela *tab=dynamic_cast<Tabela *>(*itr);
+      Table *tab=dynamic_cast<Table *>(*itr);
       unsigned qtd_gat, qtd_rest, idx, qtd1, i1;
       Trigger *gat=NULL;
 

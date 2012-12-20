@@ -148,13 +148,13 @@ void Sequence::setName(const QString &name)
 
 void Sequence::setSchema(BaseObject *schema)
 {
- Tabela *table=NULL;
+ Table *table=NULL;
  QString prev_name=this->getName(true);
 
  if(owner_col)
  {
   //Gets the table that owns the column
-  table=dynamic_cast<Tabela *>(owner_col->getParentTable());
+  table=dynamic_cast<Table *>(owner_col->getParentTable());
 
   //Raises an error when the passed schema differs from the table schema
   if(table && table->getSchema()!=schema)
@@ -203,7 +203,7 @@ void Sequence::setValues(QString minv, QString maxv, QString inc, QString start,
  this->start=start;
 }
 
-void Sequence::setOwnerColumn(Tabela *table, const QString &col_name)
+void Sequence::setOwnerColumn(Table *table, const QString &col_name)
 {
  if(!table || col_name=="")
   this->owner_col=NULL;
@@ -240,13 +240,13 @@ void Sequence::setOwnerColumn(Tabela *table, const QString &col_name)
 
 void Sequence::setOwnerColumn(Column *column)
 {
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
 
  if(!column)
   this->owner_col=NULL;
  else
  {
-  tabela=dynamic_cast<Tabela *>(column->getParentTable());
+  tabela=dynamic_cast<Table *>(column->getParentTable());
 
   //Raises an error when the column doesn't has a parent table
   if(!tabela)
@@ -319,11 +319,11 @@ Column *Sequence::getOwnerColumn(void)
 QString Sequence::getCodeDefinition(unsigned def_type)
 {
  QString str_aux;
- Tabela *table=NULL;
+ Table *table=NULL;
 
  if(owner_col)
  {
-  table=dynamic_cast<Tabela *>(owner_col->getParentTable());
+  table=dynamic_cast<Table *>(owner_col->getParentTable());
   str_aux=table->getName(true) + "." + owner_col->getName(true);
  }
  attributes[ParsersAttributes::OWNER_COLUMN]=str_aux;

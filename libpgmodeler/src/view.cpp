@@ -280,9 +280,9 @@ bool View::isReferRelationshipColumn(void)
  return(found);
 }
 
-bool View::isReferencingTable(Tabela *tab)
+bool View::isReferencingTable(Table *tab)
 {
- Tabela *aux_tab=NULL;
+ Table *aux_tab=NULL;
  unsigned count, i;
  bool found=false;
 

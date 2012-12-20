@@ -96,7 +96,7 @@ class View: public BaseTable {
   bool isReferRelationshipColumn(void);
 
   //Returns if the view is referencing the specified table
-  bool isReferencingTable(Tabela *tab);
+  bool isReferencingTable(Table *tab);
 
   //Returns if the view is referencing the specified column
   bool isReferencingColumn(Column *col);

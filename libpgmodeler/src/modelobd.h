@@ -27,7 +27,7 @@
 #include <QFile>
 #include <QObject>
 #include "baseobject.h"
-#include "tabela.h"
+#include "table.h"
 #include "function.h"
 #include "schema.h"
 #include "view.h"
@@ -306,9 +306,9 @@ class ModeloBD:  public QObject, public BaseObject {
   View *obterVisao(unsigned idx_obj);
 
   //Métodos de manipulação de tabela
-  void adicionarTabela(Tabela *tabela, int idx_obj=-1);
-  void removerTabela(Tabela *tabela, int idx_obj=-1);
-  Tabela *obterTabela(unsigned idx_obj);
+  void adicionarTabela(Table *tabela, int idx_obj=-1);
+  void removerTabela(Table *tabela, int idx_obj=-1);
+  Table *obterTabela(unsigned idx_obj);
 
   //Métodos de manipulação de tipos
   void adicionarTipo(Type *tipo, int idx_obj=-1);
@@ -411,7 +411,7 @@ class ModeloBD:  public QObject, public BaseObject {
   OperatorFamily *criarFamiliaOperadores(void);
   OperatorClass *criarClasseOperadores(void);
   Aggregate *criarFuncaoAgregacao(void);
-  Tabela *criarTabela(void);
+  Table *criarTabela(void);
   Column *criarColuna(void);
   Rule *criarRegra(void);
 
@@ -438,7 +438,7 @@ class ModeloBD:  public QObject, public BaseObject {
      através de chaves estrangeiras criadas pelo usuário. Caso já exista um relacionamento
      entre duas tabelas mas o usuário crie uma segunda chave estrangeira com aplicação similiar
      nenhum relacionamento será criado. */
-  void atualizarRelFkTabela(Tabela *tabela);
+  void atualizarRelFkTabela(Table *tabela);
 
   /* Cria uma restrição a partir do XML. Caso o parâmetro 'objeto' seja uma tabela
      cria a restrição e já adiciona automaticaene    primeira. Caso seja um relacionamento
@@ -454,15 +454,15 @@ class ModeloBD:  public QObject, public BaseObject {
      e uma chave primária está sendo recriada por este método e a tabela já possua um chave primária, isso
      evita que seja disparado um erro indicando que a tabela já possui uma chave-primária. */
   Constraint *criarRestricao(BaseObject *objeto);
-  Index *criarIndice(Tabela *tabela);
-  Trigger *criarGatilho(Tabela *tabela);
+  Index *criarIndice(Table *tabela);
+  Trigger *criarGatilho(Table *tabela);
 
   /* Atualiza a referência dos tipos das colunas da tabela na lista
      de tipos do PostgreSQL. Sempre que uma tabela é removida, inserida,
      tem o nome alterado ou até mesmo tem o nome de uma coluna alterada,
      é necessário chamar este método para que as referências seja devidamente
      corrigidas ou removidas se necessário */
-  void atualizarReferenciaTipoColunas(Tabela *tabela);
+  void atualizarReferenciaTipoColunas(Table *tabela);
 
   /* Retorna se um dado objeto no modelo referência a coluna especificada.
      Esse método deve ser usado antes da remoção da coluna. O não uso deste método
@@ -471,7 +471,7 @@ class ModeloBD:  public QObject, public BaseObject {
   void validarRemocaoColuna(Column *coluna);
 
   //Valida os relacionamentos para refletirem as modificações nas coluna/restrição da tabela passada
-  void validarRelacObjetoTabela(TableObject *objeto, Tabela *tabela_pai);
+  void validarRelacObjetoTabela(TableObject *objeto, Table *tabela_pai);
 
   /* Retorna um erro caso um ciclo de relacionamentos for criado caso o relacionamento
      passado seja inserido no modelo. Um ciclo de relacionamentos é proibido

@@ -63,7 +63,7 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
    ModeloBD *modelo;
 
    //Tabela de referência (usado em formulário de objeto de tabela)
-   Tabela *tabela;
+   Table *tabela;
 
    /* Relacionamento de referência (pode ser usado em formulários
       de coluna e restrição relacionamentos tabela-tabela podem

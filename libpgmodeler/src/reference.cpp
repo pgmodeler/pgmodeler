@@ -6,7 +6,7 @@ Reference::Reference(void)
  this->column=NULL;
 }
 
-Reference::Reference(Tabela *table, Column *column, const QString &tab_alias, const QString &col_alias)
+Reference::Reference(Table *table, Column *column, const QString &tab_alias, const QString &col_alias)
 {
  //Raises an error if the table is not allocated
  if(!table)
@@ -42,7 +42,7 @@ Reference::Reference(const QString &expression, const QString &expr_alias)
  this->expression=expression;
 }
 
-Tabela *Reference::getTable(void)
+Table *Reference::getTable(void)
 {
  return(table);
 }

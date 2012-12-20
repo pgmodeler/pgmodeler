@@ -23,7 +23,7 @@
 #ifndef OG_TABELA_H
 #define OG_TABELA_H
 
-#include "tabela.h"
+#include "table.h"
 #include "ogtabelabase.h"
 #include "ogtituloobjeto.h"
 #include "ogsubitemobjeto.h"
@@ -51,7 +51,7 @@ class OGTabela: public OGTabelaBase {
   QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
  public:
-  OGTabela(Tabela *tabela);
+  OGTabela(Table *tabela);
   ~OGTabela(void);
 
  private slots:

@@ -310,7 +310,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
   BaseObject *objeto=NULL, *esquema=NULL;
   TableObject *objeto_tab=NULL;
   QTableWidgetItem *item_tab=NULL, *item_tab1=NULL;
-  Tabela *tabela=NULL;
+  Table *tabela=NULL;
   Function *funcao=NULL;
   Operator *operador=NULL;
   QPixmap icone;
@@ -512,7 +512,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
    for(id_tab=0; id_tab < qtd; id_tab++)
    {
     //Obtém uma tabela do modelo
-    tabela=dynamic_cast<Tabela *>(modelo_bd->obterTabela(id_tab));
+    tabela=dynamic_cast<Table *>(modelo_bd->obterTabela(id_tab));
 
     for(id_tipo=0; id_tipo < qtd_subtipos; id_tipo++)
     {
@@ -776,7 +776,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
  {
   BaseObject *objeto=NULL;
   vector<BaseObject *> lista_obj;
-  Tabela *tabela=NULL;
+  Table *tabela=NULL;
   QTreeWidgetItem *item=NULL, *item1=NULL, *item2=NULL, *item3=NULL;
   int qtd, qtd1, i, i1, i2;
   QString str_aux;
@@ -812,7 +812,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
    for(i=0; i < qtd; i++)
    {
     //Configura o elemento como sendo a tabela atual
-    tabela=dynamic_cast<Tabela *>(lista_obj[i]);
+    tabela=dynamic_cast<Table *>(lista_obj[i]);
     item1=new QTreeWidgetItem(item);
     //O nome do item será o próprio nome da tabela
     item1->setText(0,QString::fromUtf8(tabela->getName()));

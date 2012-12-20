@@ -20,8 +20,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef TABELA_H
-#define TABELA_H
+#ifndef TABLE_H
+#define TABLE_H
 
 #include "basegraphicobject.h"
 #include "basetable.h"
@@ -33,7 +33,7 @@
 #include "function.h"
 #include "role.h"
 
-class Tabela: public BaseTable {
+class Table: public BaseTable {
  private:
   //Armazena as colunas da tabela
   vector<TableObject *> colunas;
@@ -51,13 +51,13 @@ class Tabela: public BaseTable {
   vector<TableObject *> gatilhos;
 
   //Armazena as tabelas das quais a tabela atual herda atributos
-  vector<Tabela *> tabelas_pai;
+  vector<Table *> tabelas_pai;
 
   //Indica se as linhas da tabela aceitam OIDs
   bool aceita_oids;
 
   //Tabelas das quais serão clonadas as colunas
-  vector<Tabela *> tabelas_copia;
+  vector<Table *> tabelas_copia;
 
    /* Obtém um objeto da tabela através de seu nome. Seu tipo deve ser especificado
      para se seja buscado na lista de objetos correta. */
@@ -87,8 +87,8 @@ class Tabela: public BaseTable {
 
  protected:
 
-  void adicionarTabelaPai(Tabela *tab, int idx_tab=-1);
-  void adicionarTabelaCopia(Tabela *tab, int idx_tab=-1);
+  void adicionarTabelaPai(Table *tab, int idx_tab=-1);
+  void adicionarTabelaCopia(Table *tab, int idx_tab=-1);
 
   //Métodos que removem uma tabela descendente através de seu nome ou índice
   void removerTabelaPai(const QString &obj_name);
@@ -99,8 +99,8 @@ class Tabela: public BaseTable {
   void removerTabelaCopia(unsigned idx_tab);
 
  public:
-   Tabela(void);
-  ~Tabela(void);
+   Table(void);
+  ~Table(void);
 
   void setName(const QString &obj_name);
   void setSchema(BaseObject *schema);
@@ -176,12 +176,12 @@ class Tabela: public BaseTable {
   Rule *obterRegra(unsigned idx_reg);
 
   //Métodos que retornam uma tabela descendente através de seu nome ou índice
-  Tabela *obterTabelaPai(const QString &obj_name);
-  Tabela *obterTabelaPai(unsigned idx_tab);
+  Table *obterTabelaPai(const QString &obj_name);
+  Table *obterTabelaPai(unsigned idx_tab);
 
   //Métodos que retornam uma tabela descendente através de seu nome ou índice
-  Tabela *obterTabelaCopia(const QString &obj_name);
-  Tabela *obterTabelaCopia(unsigned idx_tab);
+  Table *obterTabelaCopia(const QString &obj_name);
+  Table *obterTabelaCopia(unsigned idx_tab);
 
   //Métodos que removem uma coluna através de seu nome ou índice
   void removerColuna(const QString &obj_name);
@@ -240,7 +240,7 @@ class Tabela: public BaseTable {
   bool referenciaObjetoIncRelacao(void);
 
   //Copia os atributos do objeto do parâmetro para o objeto this
-  void operator = (Tabela &tabela);
+  void operator = (Table &tabela);
 
   //Retorna a lista de objetos referente ao tipo de objeto passado
   vector<TableObject *> *obterListaObjetos(ObjectType tipo_obj);
@@ -254,7 +254,7 @@ class Tabela: public BaseTable {
   /* Retorna se a tabela referencia a tabela passada em uma de suas chaves estrangeiras. Este método considera
      apenas chaves estrangeiras criadas pelo usuário. Este método é usado como auxiliar no controle dos
      relacionamentos originários de chaves estrangeiras no modelo. */
-  bool referenciaTabelaChaveEstrangeira(Tabela *tab_ref);
+  bool referenciaTabelaChaveEstrangeira(Table *tab_ref);
 
   friend class Relationship;
   friend class OperationList;

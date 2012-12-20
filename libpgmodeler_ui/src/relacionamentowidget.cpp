@@ -155,7 +155,7 @@ void RelacionamentoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tabela *tab_orig, Tabela *tab_dest, unsigned tipo_rel)
+void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Table *tab_orig, Table *tab_dest, unsigned tipo_rel)
 {
  Relationship *rel=NULL;
 

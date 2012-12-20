@@ -1,6 +1,6 @@
 #include "ogtabela.h"
 
-OGTabela::OGTabela(Tabela *tabela) : OGTabelaBase(tabela)
+OGTabela::OGTabela(Table *tabela) : OGTabelaBase(tabela)
 {
  connect(tabela, SIGNAL(s_objectModified(void)), this, SLOT(configurarObjeto(void)));
 
@@ -124,7 +124,7 @@ void OGTabela::hoverMoveEvent(QGraphicsSceneHoverEvent *evento)
 
 void OGTabela::configurarObjeto(void)
 {
- Tabela *tabela=dynamic_cast<Tabela *>(this->obterObjetoOrigem());
+ Table *tabela=dynamic_cast<Table *>(this->obterObjetoOrigem());
  QPolygonF pol;
  int i, qtd, idx;
  float larg, larg_tipo=0, px=0;

@@ -207,7 +207,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
 {
  TabelaObjetosWidget *tab_col_aux=NULL;
  Column *coluna=NULL;
- Tabela *tabela=NULL;
+ Table *tabela=NULL;
  QComboBox *combo=NULL;
  Relationship *relacao=NULL;
  unsigned i, qtd_col=0;
@@ -244,7 +244,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
    //Serão considerados no método o combo e a tabela de colunas de referência
    combo=coluna_ref_cmb;
    tab_col_aux=tab_colunas_ref;
-   tabela=dynamic_cast<Tabela *>(sel_tabela_ref->obterObjeto());
+   tabela=dynamic_cast<Table *>(sel_tabela_ref->obterObjeto());
 
    if(tabela)
     qtd_col=tabela->obterNumColunas();
@@ -284,7 +284,7 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
 void RestricaoWidget::selecionarTabelaReferenciada(void)
 {
  //Obtém a tabela configurada no seletor
- Tabela *tabela=dynamic_cast<Tabela *>(sel_tabela_ref->obterObjeto());
+ Table *tabela=dynamic_cast<Table *>(sel_tabela_ref->obterObjeto());
 
  //Caso não haja tabela selecionada
  if(!tabela)
@@ -376,7 +376,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
  ObjectType tipo_obj;
  unsigned qtd, i, lin_tab;
  Column *coluna=NULL;
- Tabela *tabela_ref=NULL;
+ Table *tabela_ref=NULL;
 
  if(!objeto_pai)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -445,7 +445,7 @@ void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai,
   acao_update_cmb->setCurrentIndex(acao_update_cmb->findText(~restricao->getActionType(true)));
 
   //Caso a coluna esteja refereciando uma tabela (chave estrangeira)
-  tabela_ref=dynamic_cast<Tabela *>(restricao->getReferencedTable());
+  tabela_ref=dynamic_cast<Table *>(restricao->getReferencedTable());
   if(tabela_ref)
   {
    tab_colunas_ref->blockSignals(true);

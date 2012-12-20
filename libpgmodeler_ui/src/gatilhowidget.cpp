@@ -207,7 +207,7 @@ void GatilhoWidget::hideEvent(QHideEvent *evento)
  sel_tabela_ref->removerObjetoSelecionado();
 }
 
-void GatilhoWidget::definirAtributos(ModeloBD *modelo, Tabela *tabela_pai, OperationList *lista_op, Trigger *gatilho)
+void GatilhoWidget::definirAtributos(ModeloBD *modelo, Table *tabela_pai, OperationList *lista_op, Trigger *gatilho)
 {
  unsigned qtd=0, i;
  Column *coluna=NULL;
@@ -289,7 +289,7 @@ void GatilhoWidget::aplicarConfiguracao(void)
   gatilho->setDeferralType(DeferralType(tipo_postergacao_cmb->currentText()));
   gatilho->setCondition(exp_condicional_txt->toPlainText());
   gatilho->setFunction(dynamic_cast<Function *>(sel_funcao->obterObjeto()));
-  gatilho->setReferecendTable(dynamic_cast<Tabela *>(sel_tabela_ref->obterObjeto()));
+  gatilho->setReferecendTable(dynamic_cast<Table *>(sel_tabela_ref->obterObjeto()));
   gatilho->setEvent(EventType::on_insert, insert_chk->isChecked());
   gatilho->setEvent(EventType::on_update, update_chk->isChecked());
   gatilho->setEvent(EventType::on_delete, delete_chk->isChecked());
