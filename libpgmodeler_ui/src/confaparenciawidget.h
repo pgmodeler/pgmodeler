@@ -24,7 +24,7 @@
 #include "ui_confaparenciawidget.h"
 #include "confbasewidget.h"
 #include "cenaobjetos.h"
-#include "modelobd.h"
+#include "databasemodel.h"
 #include <algorithm>
 
 class ConfAparenciaWidget: public QWidget, public Ui::ConfAparenciaWidget, public ConfBaseWidget {
@@ -50,7 +50,7 @@ class ConfAparenciaWidget: public QWidget, public Ui::ConfAparenciaWidget, publi
   CenaObjetos *cena;
 
   //Modelo de objetos exemplo
-  ModeloBD *modelo;
+  DatabaseModel *modelo;
 
   //Vetor o qual armazena cada elemento de configuração de aparência do modelo
   vector<ItemConfAparencia> itens_conf;

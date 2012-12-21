@@ -38,7 +38,7 @@ void ColunaWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void ColunaWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, OperationList *lista_op, Column *coluna)
+void ColunaWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto_pai, OperationList *lista_op, Column *coluna)
 {
  PgSQLType tipo;
 

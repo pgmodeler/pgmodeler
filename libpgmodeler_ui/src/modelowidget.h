@@ -24,7 +24,7 @@
 #define MODELO_WIDGET_H
 
 #include <QtGui>
-#include "modelobd.h"
+#include "databasemodel.h"
 #include "operationlist.h"
 #include "caixamensagem.h"
 #include "formbasico.h"
@@ -102,7 +102,7 @@ class ModeloWidget: public QWidget {
   OperationList *lista_op;
 
   //Modelo de objetos do widget
-  ModeloBD *modelo;
+  DatabaseModel *modelo;
 
   //Armazena o nome do arquivo de modelo carregado no widget
   QString nome_arquivo,

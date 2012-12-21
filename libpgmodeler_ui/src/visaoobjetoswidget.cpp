@@ -1143,7 +1143,7 @@ void VisaoObjetosWidget::definirModelo(ModeloWidget *modelo_wgt)
   definirModelo(modelo_wgt->modelo);
 }
 
-void VisaoObjetosWidget::definirModelo(ModeloBD *modelo_bd)
+void VisaoObjetosWidget::definirModelo(DatabaseModel *modelo_bd)
 {
  this->modelo_bd=modelo_bd;
 

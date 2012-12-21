@@ -129,7 +129,7 @@ void PermissaoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void PermissaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, BaseObject *objeto)
+void PermissaoWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto_pai, BaseObject *objeto)
 {
  /* Chama o método de definição de atributos da classe Pai para depois
     configurar os atributos relacionados   classe PermissaoWidget */

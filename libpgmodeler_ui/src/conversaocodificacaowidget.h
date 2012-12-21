@@ -34,7 +34,7 @@ class ConversaoCodificacaoWidget: public ObjetoBaseWidget, public Ui::ConversaoC
 
  public:
    ConversaoCodificacaoWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Conversion *conv_cod);
+   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Conversion *conv_cod);
 
  private slots:
    void hideEvent(QHideEvent *);

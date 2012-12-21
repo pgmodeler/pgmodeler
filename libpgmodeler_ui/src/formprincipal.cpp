@@ -873,7 +873,7 @@ void FormPrincipal::fecharModelo(int idx_modelo)
  {
   modelo_atual=NULL;
   this->exibirTelaCheia(false);
-  visao_objs->definirModelo(static_cast<ModeloBD *>(NULL));
+  visao_objs->definirModelo(static_cast<DatabaseModel *>(NULL));
   lista_oper->definirModelo(static_cast<ModeloWidget *>(NULL));
   atualizarEstadoFerramentas(true);
  }

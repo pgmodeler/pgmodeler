@@ -32,7 +32,7 @@ class EspacoTabelaWidget: public ObjetoBaseWidget, public Ui::EspacoTabelaWidget
 
  public:
    EspacoTabelaWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Tablespace *espaco_tab);
+   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Tablespace *espaco_tab);
 
  private slots:
    void hideEvent(QHideEvent *);

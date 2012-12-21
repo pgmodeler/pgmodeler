@@ -21,8 +21,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef MODELOBD_H
-#define MODELOBD_H
+#ifndef DATABASE_MODEL_H
+#define DATABASE_MODEL_H
 
 #include <QFile>
 #include <QObject>
@@ -48,7 +48,7 @@
 #include <algorithm>
 #include <locale.h>
 
-class ModeloBD:  public QObject, public BaseObject {
+class DatabaseModel:  public QObject, public BaseObject {
  private:
   Q_OBJECT
 
@@ -161,8 +161,8 @@ class ModeloBD:  public QObject, public BaseObject {
   BaseObject *obterObjetoTipoPgSQL(PgSQLType tipo);
 
  public:
-  ModeloBD(void);
-  ~ModeloBD(void);
+  DatabaseModel(void);
+  ~DatabaseModel(void);
 
   //Retorna a lista de objetos referente ao tipo de objeto passado
   vector<BaseObject *> *obterListaObjetos(ObjectType tipo_obj);
@@ -387,7 +387,7 @@ class ModeloBD:  public QObject, public BaseObject {
   BaseObject *obterObjeto(const QString &obj_name, ObjectType tipo_obj);
 
   //Copia os atributos do objeto do parâmetro para o objeto this
-  void operator = (ModeloBD &modelo);
+  void operator = (DatabaseModel &modelo);
 
   //Métodos de criação de objetos a partir do documento XML
   ObjectType getObjectType(const QString &str_tipo);

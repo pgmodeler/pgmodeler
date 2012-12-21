@@ -117,7 +117,7 @@ void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type
 
 unsigned OperationList::max_size=500;
 
-OperationList::OperationList(ModeloBD *model)
+OperationList::OperationList(DatabaseModel *model)
 {
  /* Raises an error if the user tries to allocate an operation list linked to
     to an unallocated model */

@@ -149,7 +149,7 @@ void ObjetoBaseWidget::hideEvent(QHideEvent *)
  janela_pai->blockSignals(false);
 }
 
-void ObjetoBaseWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, BaseObject *objeto, BaseObject *objeto_pai, float px_objeto, float py_objeto)
+void ObjetoBaseWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, BaseObject *objeto, BaseObject *objeto_pai, float px_objeto, float py_objeto)
 {
  ObjectType tipo_obj, tipo_obj_pai=BASE_OBJECT;
 

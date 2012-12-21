@@ -45,7 +45,7 @@ void ParametroWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void ParametroWidget::definirAtributos(Parameter param, ModeloBD *modelo)
+void ParametroWidget::definirAtributos(Parameter param, DatabaseModel *modelo)
 {
  this->parametro=param;
 

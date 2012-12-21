@@ -44,7 +44,7 @@ void SequenciaWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void SequenciaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Sequence *sequencia)
+void SequenciaWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Sequence *sequencia)
 {
  sel_coluna->definirModelo(modelo);
 

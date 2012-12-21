@@ -25,7 +25,7 @@
 #ifndef OPERATIONLIST_H
 #define OPERATIONLIST_H
 
-#include "modelobd.h"
+#include "databasemodel.h"
 #include <QObject>
 
 class Operation {
@@ -100,7 +100,7 @@ class OperationList: public QObject {
   vector<Operation *> operations;
 
   //Database model that is linked with this operation list
-  ModeloBD *model;
+  DatabaseModel *model;
 
   //Maximum number of stored operations (global)
   static unsigned max_size;
@@ -138,7 +138,7 @@ class OperationList: public QObject {
   unsigned getChainSize(void);
 
  public:
-  OperationList(ModeloBD *model);
+  OperationList(DatabaseModel *model);
   ~OperationList(void);
 
   /* Starts chaining operations.

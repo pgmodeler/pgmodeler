@@ -39,7 +39,7 @@ class RegraWidget: public ObjetoBaseWidget, public Ui::RegraWidget {
 
  public:
    RegraWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, Table *tabela_pai, OperationList *lista_op, Rule *regra);
+   void definirAtributos(DatabaseModel *modelo, Table *tabela_pai, OperationList *lista_op, Rule *regra);
 
  private slots:
   void hideEvent(QHideEvent *);

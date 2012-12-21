@@ -246,7 +246,7 @@ class BaseObject {
      of the object. See schema file for: functions, schemas, domains, types. */
   virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
-  friend class ModeloBD;
+  friend class DatabaseModel;
 };
 
 #endif

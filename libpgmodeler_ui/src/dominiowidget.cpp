@@ -40,7 +40,7 @@ void DominioWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void DominioWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Domain *dominio)
+void DominioWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Domain *dominio)
 {
  PgSQLType tipo;
 

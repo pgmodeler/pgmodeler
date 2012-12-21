@@ -32,7 +32,7 @@ class BancoDadosWidget: public ObjetoBaseWidget, public Ui::BancoDadosWidget {
 
  public:
    BancoDadosWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo);
+   void definirAtributos(DatabaseModel *modelo);
 
  private slots:
 

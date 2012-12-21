@@ -32,7 +32,7 @@ class FamiliaOperadoresWidget: public ObjetoBaseWidget, public Ui::FamiliaOperad
 
  public:
    FamiliaOperadoresWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, OperatorFamily *familia_op);
+   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, OperatorFamily *familia_op);
 
  private slots:
    void hideEvent(QHideEvent *);

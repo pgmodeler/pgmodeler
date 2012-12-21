@@ -419,7 +419,7 @@ class PgSQLType: public BaseType{
   friend class Domain;
   friend class Table;
   friend class Sequence;
-  friend class ModeloBD;
+  friend class DatabaseModel;
 };
 
 class BehaviorType: public BaseType{

@@ -371,7 +371,7 @@ void RestricaoWidget::selecionarTipoRestricao(void)
   colunas_tbw->addTab(tab, rot_tab);
 }
 
-void RestricaoWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, OperationList *lista_op, Constraint *restricao)
+void RestricaoWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto_pai, OperationList *lista_op, Constraint *restricao)
 {
  ObjectType tipo_obj;
  unsigned qtd, i, lin_tab;

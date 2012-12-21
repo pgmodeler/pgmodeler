@@ -220,7 +220,7 @@ void TipoWidget::exibirFormAtributo(void)
  parametro_wgt->show();
 }
 
-void TipoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Type *tipo)
+void TipoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Type *tipo)
 {
  PgSQLType tp_copia, tp_elem;
  unsigned conf_tipo, i, qtd;

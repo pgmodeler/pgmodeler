@@ -36,7 +36,7 @@ ConfAparenciaWidget::ConfAparenciaWidget(QWidget * parent) : QWidget(parent)
   itens_conf[i].conf_obj=(std::find(ids_confs_obj.begin(), ids_confs_obj.end(), i)!=ids_confs_obj.end());
  }
 
- modelo=new ModeloBD;
+ modelo=new DatabaseModel;
  cena=new CenaObjetos;
  cena->setSceneRect(QRectF(0,0,500,500));
 

@@ -139,7 +139,7 @@ class BaseRelationship: public BaseGraphicObject {
   //Assigns one relationship to other making the appropriate attribute copy
   void operator = (BaseRelationship &rel);
 
-  friend class ModeloBD;
+  friend class DatabaseModel;
 };
 
 #endif

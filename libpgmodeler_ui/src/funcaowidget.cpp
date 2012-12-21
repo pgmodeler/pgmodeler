@@ -248,7 +248,7 @@ void FuncaoWidget::exibirDadosParametro(Parameter param, TabelaObjetosWidget *ta
  }
 }
 
-void FuncaoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Function *funcao)
+void FuncaoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Function *funcao)
 {
  vector<BaseObject *> linguagens;
  Language *ling=NULL;

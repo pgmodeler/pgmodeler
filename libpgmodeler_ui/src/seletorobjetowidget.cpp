@@ -106,7 +106,7 @@ void SeletorObjetoWidget::definirObjeto(BaseObject *objeto)
   removerObjetoSelecionado();
 }
 
-void SeletorObjetoWidget::definirModelo(ModeloBD *modelo)
+void SeletorObjetoWidget::definirModelo(DatabaseModel *modelo)
 {
  this->modelo=modelo;
 }

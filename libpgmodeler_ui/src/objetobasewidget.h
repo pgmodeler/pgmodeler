@@ -24,7 +24,7 @@
 #define OBJETO_BASE_WIDGET_H
 
 #include <QtGui>
-#include "modelobd.h"
+#include "databasemodel.h"
 #include "operationlist.h"
 #include "formbasico.h"
 #include "seletorobjetowidget.h"
@@ -60,7 +60,7 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
    FormBasico *janela_pai;
 
    //Modelo de banco de dados de referência
-   ModeloBD *modelo;
+   DatabaseModel *modelo;
 
    //Tabela de referência (usado em formulário de objeto de tabela)
    Table *tabela;
@@ -155,7 +155,7 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
   ~ObjetoBaseWidget(void);
    void hideEvent(QHideEvent *);
    void showEvent(QShowEvent *);
-   void definirAtributos(ModeloBD *modelo, OperationList *lista_op,
+   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op,
                          BaseObject *objeto, BaseObject *objeto_pai=NULL,
                          float px_objeto=NAN, float py_objeto=NAN);
 

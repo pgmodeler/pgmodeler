@@ -88,7 +88,7 @@ void FuncaoAgregacaoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void FuncaoAgregacaoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Aggregate *funcao_ag)
+void FuncaoAgregacaoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Aggregate *funcao_ag)
 {
  unsigned qtd, i;
  PgSQLType tipo;

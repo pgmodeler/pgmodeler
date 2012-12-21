@@ -54,7 +54,7 @@ BancoDadosWidget::BancoDadosWidget(QWidget *parent): ObjetoBaseWidget(parent, OB
  lcctype_cmb->addItems(lista_loc);
 }
 
-void BancoDadosWidget::definirAtributos(ModeloBD *modelo)
+void BancoDadosWidget::definirAtributos(DatabaseModel *modelo)
 {
  if(modelo)
  {

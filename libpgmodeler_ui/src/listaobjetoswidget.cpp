@@ -14,7 +14,7 @@ ListaObjetosWidget::ListaObjetosWidget(QWidget *parent): ObjetoBaseWidget(parent
  connect(janela_pai->aplicar_ok_btn, SIGNAL(clicked(bool)), janela_pai, SLOT(close(void)));
 }
 
-void ListaObjetosWidget::definirAtributos(ModeloBD *modelo, BaseObject *objeto, BaseObject *objeto_pai)
+void ListaObjetosWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto, BaseObject *objeto_pai)
 {
  vector<BaseObject *> vet_objs;
 

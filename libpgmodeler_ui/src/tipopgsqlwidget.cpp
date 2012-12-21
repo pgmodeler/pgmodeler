@@ -126,7 +126,7 @@ void TipoPgSQLWidget::atualizarFormatoTipo(void)
  }
 }
 
-void TipoPgSQLWidget::obterTiposPgSQL(QComboBox *combo, ModeloBD *modelo, unsigned conf_tipo_usr, bool tipo_oid, bool pseudo)
+void TipoPgSQLWidget::obterTiposPgSQL(QComboBox *combo, DatabaseModel *modelo, unsigned conf_tipo_usr, bool tipo_oid, bool pseudo)
 {
  if(combo)
  {
@@ -154,7 +154,7 @@ void TipoPgSQLWidget::obterTiposPgSQL(QComboBox *combo, ModeloBD *modelo, unsign
  }
 }
 
-void TipoPgSQLWidget::definirAtributos(PgSQLType tipo, ModeloBD *modelo,  unsigned conf_tipo_usr, bool tipo_oid, bool pseudo)
+void TipoPgSQLWidget::definirAtributos(PgSQLType tipo, DatabaseModel *modelo,  unsigned conf_tipo_usr, bool tipo_oid, bool pseudo)
 {
  try
  {

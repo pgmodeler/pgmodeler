@@ -57,7 +57,7 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
   ModeloWidget *modelo_wgt;
 
   //Modelo o qual é acessado quando um modelo widget não é especificado
-  ModeloBD *modelo_bd;
+  DatabaseModel *modelo_bd;
 
   //Armazena quais os tipos de objetos são visíveis na visão
   map<ObjectType, bool> map_objs_visiveis;
@@ -99,7 +99,7 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
 
  public slots:
    void definirModelo(ModeloWidget *modelo_wgt);
-   void definirModelo(ModeloBD *modelo_bd);
+   void definirModelo(DatabaseModel *modelo_bd);
    void mudarVisaoObjetos(void);
    void atualizarVisaoObjetos(void);
    void definirObjetoVisivel(ObjectType tipo_obj, bool visivel);

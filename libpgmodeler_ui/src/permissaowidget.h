@@ -37,7 +37,7 @@ class PermissaoWidget: public ObjetoBaseWidget, public Ui::PermissaoWidget {
 
  public:
    PermissaoWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, BaseObject *objeto_pai, BaseObject *objeto);
+   void definirAtributos(DatabaseModel *modelo, BaseObject *objeto_pai, BaseObject *objeto);
 
  private slots:
    //Exibe a janela de seleção de objetos do modelo

@@ -424,7 +424,7 @@ class Relationship: public BaseRelationship {
   //Copies the attributes from one relationship to another
   void operator = (Relationship &rel);
 
-  friend class ModeloBD;
+  friend class DatabaseModel;
 };
 
 #endif

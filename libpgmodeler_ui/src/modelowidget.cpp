@@ -132,7 +132,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  modelo_protegido_frm->setLayout(grid);
 
  //Aloca o modelo e a lista de operações
- modelo=new ModeloBD;
+ modelo=new DatabaseModel;
  lista_op=new OperationList(modelo);
  cena=new CenaObjetos;
  cena->setSceneRect(QRectF(0,0,2000,2000));

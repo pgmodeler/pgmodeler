@@ -51,7 +51,7 @@ class ClasseOperadoresWidget: public ObjetoBaseWidget, public Ui::ClasseOperador
 
  public:
    ClasseOperadoresWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, OperatorClass *classe_op);
+   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, OperatorClass *classe_op);
 
  private slots:
    void hideEvent(QHideEvent *);

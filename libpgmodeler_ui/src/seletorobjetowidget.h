@@ -26,7 +26,7 @@
 #define SELETOR_OBJETO_WIDGET_H
 
 #include <QtGui>
-#include "modelobd.h"
+#include "databasemodel.h"
 #include "destaquesintaxe.h"
 #include "ui_seletorobjetowidget.h"
 
@@ -53,7 +53,7 @@ class SeletorObjetoWidget: public QWidget, public Ui::SeletorObjetoWidget {
    /* Armazena o modelo usado como referencia para seleção dos objetos
       se este objeto não estive definido o seletor de objetos não
       será exibido ficando inativo */
-   ModeloBD *modelo;
+   DatabaseModel *modelo;
 
  public:
    /* Um seletor deve sempre ser instanciado com um rótulo e o tipo de objeto
@@ -67,7 +67,7 @@ class SeletorObjetoWidget: public QWidget, public Ui::SeletorObjetoWidget {
   void definirObjeto(BaseObject *objeto);
 
   //Define o modelo o qual o seletor de objeto buscará os objetos
-  void definirModelo(ModeloBD *modelo);
+  void definirModelo(DatabaseModel *modelo);
 
  private slots:
    //Preenche um dos campos os quais referenciam um esquema, espaço tabela ou dono.

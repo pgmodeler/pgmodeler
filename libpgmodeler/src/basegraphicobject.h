@@ -96,7 +96,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
 
   friend class CenaObjetos;
   friend class ObjetoGrafico;
-  friend class ModeloBD;
+  friend class DatabaseModel;
 };
 
 #endif

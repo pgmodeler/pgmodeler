@@ -201,7 +201,7 @@ ObjectType TabelaWidget::selecionarTipoObjeto(QObject *tab_sender)
  return(tipo_obj);
 }
 
-void TabelaWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Table *tabela, float pos_x, float pos_y)
+void TabelaWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Table *tabela, float pos_x, float pos_y)
 {
  unsigned i, qtd;
  ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,

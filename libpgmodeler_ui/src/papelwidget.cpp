@@ -120,7 +120,7 @@ void PapelWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void PapelWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Role *papel)
+void PapelWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Role *papel)
 {
  if(papel)
  {

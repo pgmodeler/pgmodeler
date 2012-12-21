@@ -33,7 +33,7 @@ class SequenciaWidget: public ObjetoBaseWidget, public Ui::SequenciaWidget {
 
  public:
    SequenciaWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, OperationList *lista_op, Sequence *sequencia);
+   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Sequence *sequencia);
 
  private slots:
   void hideEvent(QHideEvent *);

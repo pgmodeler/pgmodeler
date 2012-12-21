@@ -230,7 +230,7 @@ void ClasseOperadoresWidget::manipularElemento(int idx_linha)
  }
 }
 
-void ClasseOperadoresWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, OperatorClass *classe_op)
+void ClasseOperadoresWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, OperatorClass *classe_op)
 {
  PgSQLType tipo;
  unsigned i, qtd;

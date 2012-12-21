@@ -207,7 +207,7 @@ void GatilhoWidget::hideEvent(QHideEvent *evento)
  sel_tabela_ref->removerObjetoSelecionado();
 }
 
-void GatilhoWidget::definirAtributos(ModeloBD *modelo, Table *tabela_pai, OperationList *lista_op, Trigger *gatilho)
+void GatilhoWidget::definirAtributos(DatabaseModel *modelo, Table *tabela_pai, OperationList *lista_op, Trigger *gatilho)
 {
  unsigned qtd=0, i;
  Column *coluna=NULL;

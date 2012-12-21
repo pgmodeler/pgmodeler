@@ -17,7 +17,7 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/column.h \
            $$PWD/src/domain.h \
            $$PWD/src/aggregate.h \
-           $$PWD/src/modelobd.h \
+           $$PWD/src/databasemodel.h \
            $$PWD/src/role.h \
            $$PWD/src/constraint.h \
            $$PWD/src/type.h \
@@ -64,7 +64,7 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/view.cpp \
             $$PWD/src/conversion.cpp \
             $$PWD/src/function.cpp \
-            $$PWD/src/modelobd.cpp \
+            $$PWD/src/databasemodel.cpp \
             $$PWD/src/rule.cpp \
             $$PWD/src/table.cpp \
             $$PWD/src/cast.cpp \

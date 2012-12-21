@@ -46,7 +46,7 @@ class GatilhoWidget: public ObjetoBaseWidget, public Ui::GatilhoWidget {
 
  public:
    GatilhoWidget(QWidget * parent = 0);
-   void definirAtributos(ModeloBD *modelo, Table *tabela_pai, OperationList *lista_op, Trigger *restricao);
+   void definirAtributos(DatabaseModel *modelo, Table *tabela_pai, OperationList *lista_op, Trigger *restricao);
 
  private slots:
   void hideEvent(QHideEvent *);

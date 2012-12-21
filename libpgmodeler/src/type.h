@@ -196,7 +196,7 @@ class Type: public BaseObject {
   //Makes a copy between two type
   void operator = (Type &tipo);
 
-  friend class ModeloBD;
+  friend class DatabaseModel;
 };
 
 #endif

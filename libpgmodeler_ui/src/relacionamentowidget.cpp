@@ -155,7 +155,7 @@ void RelacionamentoWidget::hideEvent(QHideEvent *evento)
  ObjetoBaseWidget::hideEvent(evento);
 }
 
-void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, Table *tab_orig, Table *tab_dest, unsigned tipo_rel)
+void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Table *tab_orig, Table *tab_dest, unsigned tipo_rel)
 {
  Relationship *rel=NULL;
 
@@ -195,7 +195,7 @@ void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lis
  }
 }
 
-void RelacionamentoWidget::definirAtributos(ModeloBD *modelo, OperationList *lista_op, BaseRelationship *relacao)
+void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, BaseRelationship *relacao)
 {
  static QWidget *tabs[3]={ atributosrel_tbw->widget(1), atributosrel_tbw->widget(2), atributosrel_tbw->widget(3) };
  static QString rot_tabs[3]={ atributosrel_tbw->tabText(1), atributosrel_tbw->tabText(2), atributosrel_tbw->tabText(3) };

@@ -29,7 +29,7 @@
 #include "ui_tipopgsqlwidget.h"
 #include "pgsqltypes.h"
 #include "destaquesintaxe.h"
-#include "modelobd.h"
+#include "databasemodel.h"
 
 class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
  Q_OBJECT
@@ -47,7 +47,7 @@ class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
    /* Método utilitário disponibilizado para as demais classes o qual
       obtém a lista de tipos do modelo em questão dando a possiblidade
       de quais tipos obter */
-   static void obterTiposPgSQL(QComboBox *combo, ModeloBD *modelo,
+   static void obterTiposPgSQL(QComboBox *combo, DatabaseModel *modelo,
                                unsigned conf_tipo_usr=UserTypeConfig::ALL_USER_TYPES,
                                bool tipo_oid=true, bool pseudo=true);
 
@@ -57,7 +57,7 @@ class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
    void atualizarFormatoTipo(void);
 
  public slots:
-   void definirAtributos(PgSQLType tipo, ModeloBD *modelo,
+   void definirAtributos(PgSQLType tipo, DatabaseModel *modelo,
                          unsigned conf_tipo_usr=UserTypeConfig::ALL_USER_TYPES,
                          bool tipo_oid=true, bool pseudo=true);
 
