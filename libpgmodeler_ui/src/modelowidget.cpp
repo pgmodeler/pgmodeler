@@ -2034,7 +2034,7 @@ void ModeloWidget::excluirObjetos(void)
         tabela->removeObject(idx_obj, tipo_obj);
 
         if(tipo_obj==OBJ_CONSTRAINT &&
-                dynamic_cast<Constraint *>(objeto_tab)->getConstraintType()==ConstraintType::foreign_key)
+           dynamic_cast<Constraint *>(objeto_tab)->getConstraintType()==ConstraintType::foreign_key)
          modelo->atualizarRelFkTabela(tabela);
 
         tabela->setModified(true);
