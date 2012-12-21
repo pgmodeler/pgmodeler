@@ -24,16 +24,16 @@ DatabaseModel::~DatabaseModel(void)
  destroyObjects();
 }
 
-void DatabaseModel::setEncoding(EncodingType tipo_cod)
+void DatabaseModel::setEncoding(EncodingType encod)
 {
- encoding=tipo_cod;
+ encoding=encod;
 }
 
-void DatabaseModel::setLocalization(int cod_local, const QString &valor)
+void DatabaseModel::setLocalization(int localiz_id, const QString &value)
 {
  unsigned idx=0;
 
- switch(cod_local)
+ switch(localiz_id)
  {
   case LC_CTYPE: idx=0; break;
   case LC_COLLATE:
@@ -41,95 +41,95 @@ void DatabaseModel::setLocalization(int cod_local, const QString &valor)
    idx=1;
   break;
  }
- localizations[idx]=valor;
+ localizations[idx]=value;
 }
 
-void DatabaseModel::setConnectionLimit(int lim_conexao)
+void DatabaseModel::setConnectionLimit(int conn_lim)
 {
- if(lim_conexao < -1) lim_conexao=-1;
- this->conn_limit=lim_conexao;
+ if(conn_lim < -1) conn_lim=-1;
+ this->conn_limit=conn_lim;
 }
 
-void DatabaseModel::setTemplateDB(const QString &bd_modelo)
+void DatabaseModel::setTemplateDB(const QString &temp_db)
 {
- if(!bd_modelo.isEmpty() && !BaseObject::isValidName(bd_modelo))
+ if(!temp_db.isEmpty() && !BaseObject::isValidName(temp_db))
   throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- this->template_db=bd_modelo;
+ this->template_db=temp_db;
 }
 
-void DatabaseModel::setAuthor(const QString &autor)
+void DatabaseModel::setAuthor(const QString &author)
 {
- this->author=autor;
+ this->author=author;
 }
 
-vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType tipo_obj)
+vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 {
  //Retorna a referencia da lista equivalente ao tipo passado
- if(tipo_obj==OBJ_TEXTBOX)
+ if(obj_type==OBJ_TEXTBOX)
   return(&textboxes);
- else if(tipo_obj==OBJ_TABLE)
+ else if(obj_type==OBJ_TABLE)
   return(&tables);
- else if(tipo_obj==OBJ_FUNCTION)
+ else if(obj_type==OBJ_FUNCTION)
   return(&functions);
- else if(tipo_obj==OBJ_AGGREGATE)
+ else if(obj_type==OBJ_AGGREGATE)
   return(&aggregates);
- else if(tipo_obj==OBJ_SCHEMA)
+ else if(obj_type==OBJ_SCHEMA)
   return(&schemas);
- else if(tipo_obj==OBJ_VIEW)
+ else if(obj_type==OBJ_VIEW)
   return(&views);
- else if(tipo_obj==OBJ_TYPE)
+ else if(obj_type==OBJ_TYPE)
   return(&types);
- else if(tipo_obj==OBJ_ROLE)
+ else if(obj_type==OBJ_ROLE)
   return(&roles);
- else if(tipo_obj==OBJ_TABLESPACE)
+ else if(obj_type==OBJ_TABLESPACE)
   return(&tablespaces);
- else if(tipo_obj==OBJ_LANGUAGE)
+ else if(obj_type==OBJ_LANGUAGE)
   return(&languages);
- else if(tipo_obj==OBJ_CAST)
+ else if(obj_type==OBJ_CAST)
   return(&casts);
- else if(tipo_obj==OBJ_CONVERSION)
+ else if(obj_type==OBJ_CONVERSION)
   return(&conversions);
- else if(tipo_obj==OBJ_OPERATOR)
+ else if(obj_type==OBJ_OPERATOR)
   return(&operators);
- else if(tipo_obj==OBJ_OPCLASS)
+ else if(obj_type==OBJ_OPCLASS)
   return(&op_classes);
- else if(tipo_obj==OBJ_OPFAMILY)
+ else if(obj_type==OBJ_OPFAMILY)
   return(&op_families);
- else if(tipo_obj==OBJ_DOMAIN)
+ else if(obj_type==OBJ_DOMAIN)
   return(&domains);
- else if(tipo_obj==OBJ_SEQUENCE)
+ else if(obj_type==OBJ_SEQUENCE)
   return(&sequences);
- else if(tipo_obj==BASE_RELATIONSHIP)
+ else if(obj_type==BASE_RELATIONSHIP)
   return(&base_relationships);
- else if(tipo_obj==OBJ_RELATIONSHIP)
+ else if(obj_type==OBJ_RELATIONSHIP)
   return(&relationships);
- else if(tipo_obj==OBJ_PERMISSION)
+ else if(obj_type==OBJ_PERMISSION)
   return(&permissions);
  else
   return(NULL);
 }
 
-QString DatabaseModel::validateObjectDefinition(BaseObject *objeto, unsigned tipo_def)
+QString DatabaseModel::validateObjectDefinition(BaseObject *object, unsigned def_type)
 {
- ObjectType tipo_obj;
- QString def_obj;
+ ObjectType obj_type;
+ QString obj_def;
 
- if(objeto)
+ if(object)
  {
   /* Verifica se a definição SQL/XML do objeto é valida por intermédio
      do parser de esquemas, o qual retorna um erro quando existe
      algum problema com a definição sql do objeto */
   try
   {
-   tipo_obj=objeto->getObjectType();
+   obj_type=object->getObjectType();
 
-   if(tipo_obj==BASE_RELATIONSHIP && tipo_def==SchemaParser::XML_DEFINITION)
-    def_obj=dynamic_cast<BaseRelationship *>(objeto)->getCodeDefinition();
-   else if(tipo_obj==OBJ_TEXTBOX && tipo_def==SchemaParser::XML_DEFINITION)
-    def_obj=dynamic_cast<Textbox *>(objeto)->getCodeDefinition();
+   if(obj_type==BASE_RELATIONSHIP && def_type==SchemaParser::XML_DEFINITION)
+    obj_def=dynamic_cast<BaseRelationship *>(object)->getCodeDefinition();
+   else if(obj_type==OBJ_TEXTBOX && def_type==SchemaParser::XML_DEFINITION)
+    obj_def=dynamic_cast<Textbox *>(object)->getCodeDefinition();
    else
-    def_obj=objeto->getCodeDefinition(tipo_def);
+    obj_def=object->getCodeDefinition(def_type);
   }
   catch(Exception &e)
   {
@@ -137,8 +137,8 @@ QString DatabaseModel::validateObjectDefinition(BaseObject *objeto, unsigned tip
       indica que a def. SQL não é válida */
    if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
     throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-                           .arg(QString::fromUtf8(objeto->getName(true)))
-                           .arg(objeto->getTypeName()),
+                           .arg(QString::fromUtf8(object->getName(true)))
+                           .arg(object->getTypeName()),
                   ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
    else
     //Caso o parser dispare os demais erros, apenas redireciona o erro
@@ -146,58 +146,58 @@ QString DatabaseModel::validateObjectDefinition(BaseObject *objeto, unsigned tip
   }
  }
 
- return(def_obj);
+ return(obj_def);
 }
 
-void DatabaseModel::addObject(BaseObject *objeto, int idx_obj)
+void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 {
- ObjectType tipo_obj;
+ ObjectType obj_type;
 
- if(objeto)
+ if(object)
  {
   try
   {
-   tipo_obj=objeto->getObjectType();
+   obj_type=object->getObjectType();
 
-   if(tipo_obj==OBJ_RELATIONSHIP ||
-      tipo_obj==BASE_RELATIONSHIP)
-    addRelationship(dynamic_cast<BaseRelationship *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_TEXTBOX)
-    addTextbox(dynamic_cast<Textbox *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_TABLE)
-    addTable(dynamic_cast<Table *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_FUNCTION)
-    addFunction(dynamic_cast<Function *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_AGGREGATE)
-    addAggregate(dynamic_cast<Aggregate *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_SCHEMA)
-    addSchema(dynamic_cast<Schema *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_VIEW)
-    addView(dynamic_cast<View *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_TYPE)
-    addType(dynamic_cast<Type *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_ROLE)
-    addRole(dynamic_cast<Role *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_TABLESPACE)
-    addTablespace(dynamic_cast<Tablespace *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_LANGUAGE)
-    addLanguage(dynamic_cast<Language *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_CAST)
-    addCast(dynamic_cast<Cast *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_CONVERSION)
-    addConversion(dynamic_cast<Conversion *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_OPERATOR)
-    addOperator(dynamic_cast<Operator *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_OPCLASS)
-    addOperatorClass(dynamic_cast<OperatorClass *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_OPFAMILY)
-    addOperatorFamily(dynamic_cast<OperatorFamily *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_DOMAIN)
-    addDomain(dynamic_cast<Domain *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_SEQUENCE)
-    addSequence(dynamic_cast<Sequence *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_PERMISSION)
-    addPermission(dynamic_cast<Permission *>(objeto));
+   if(obj_type==OBJ_RELATIONSHIP ||
+      obj_type==BASE_RELATIONSHIP)
+    addRelationship(dynamic_cast<BaseRelationship *>(object), obj_idx);
+   else if(obj_type==OBJ_TEXTBOX)
+    addTextbox(dynamic_cast<Textbox *>(object), obj_idx);
+   else if(obj_type==OBJ_TABLE)
+    addTable(dynamic_cast<Table *>(object), obj_idx);
+   else if(obj_type==OBJ_FUNCTION)
+    addFunction(dynamic_cast<Function *>(object), obj_idx);
+   else if(obj_type==OBJ_AGGREGATE)
+    addAggregate(dynamic_cast<Aggregate *>(object), obj_idx);
+   else if(obj_type==OBJ_SCHEMA)
+    addSchema(dynamic_cast<Schema *>(object), obj_idx);
+   else if(obj_type==OBJ_VIEW)
+    addView(dynamic_cast<View *>(object), obj_idx);
+   else if(obj_type==OBJ_TYPE)
+    addType(dynamic_cast<Type *>(object), obj_idx);
+   else if(obj_type==OBJ_ROLE)
+    addRole(dynamic_cast<Role *>(object), obj_idx);
+   else if(obj_type==OBJ_TABLESPACE)
+    addTablespace(dynamic_cast<Tablespace *>(object), obj_idx);
+   else if(obj_type==OBJ_LANGUAGE)
+    addLanguage(dynamic_cast<Language *>(object), obj_idx);
+   else if(obj_type==OBJ_CAST)
+    addCast(dynamic_cast<Cast *>(object), obj_idx);
+   else if(obj_type==OBJ_CONVERSION)
+    addConversion(dynamic_cast<Conversion *>(object), obj_idx);
+   else if(obj_type==OBJ_OPERATOR)
+    addOperator(dynamic_cast<Operator *>(object), obj_idx);
+   else if(obj_type==OBJ_OPCLASS)
+    addOperatorClass(dynamic_cast<OperatorClass *>(object), obj_idx);
+   else if(obj_type==OBJ_OPFAMILY)
+    addOperatorFamily(dynamic_cast<OperatorFamily *>(object), obj_idx);
+   else if(obj_type==OBJ_DOMAIN)
+    addDomain(dynamic_cast<Domain *>(object), obj_idx);
+   else if(obj_type==OBJ_SEQUENCE)
+    addSequence(dynamic_cast<Sequence *>(object), obj_idx);
+   else if(obj_type==OBJ_PERMISSION)
+    addPermission(dynamic_cast<Permission *>(object));
   }
   catch(Exception &e)
   {
@@ -206,56 +206,56 @@ void DatabaseModel::addObject(BaseObject *objeto, int idx_obj)
  }
 }
 
-void DatabaseModel::removeObject(BaseObject *objeto, int idx_obj)
+void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 {
- ObjectType tipo_obj;
+ ObjectType obj_type;
 
 
- if(objeto)
+ if(object)
  {
   try
   {
-   tipo_obj=objeto->getObjectType();
+   obj_type=object->getObjectType();
 
-   if(tipo_obj==OBJ_RELATIONSHIP ||
-      tipo_obj==BASE_RELATIONSHIP)
-    removeRelationship(dynamic_cast<BaseRelationship *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_TEXTBOX)
-    removeTextbox(dynamic_cast<Textbox *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_TABLE)
-    removeTable(dynamic_cast<Table *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_FUNCTION)
-    removeFunction(dynamic_cast<Function *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_AGGREGATE)
-    removeAggregate(dynamic_cast<Aggregate *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_SCHEMA)
-    removeSchema(dynamic_cast<Schema *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_VIEW)
-    removeView(dynamic_cast<View *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_TYPE)
-    removeType(dynamic_cast<Type *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_ROLE)
-    removeRole(dynamic_cast<Role *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_TABLESPACE)
-    removeTablespace(dynamic_cast<Tablespace *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_LANGUAGE)
-    removeLanguage(dynamic_cast<Language *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_CAST)
-    removeCast(dynamic_cast<Cast *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_CONVERSION)
-    removeConversion(dynamic_cast<Conversion *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_OPERATOR)
-    removeOperator(dynamic_cast<Operator *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_OPCLASS)
-    removeOperatorClass(dynamic_cast<OperatorClass *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_OPFAMILY)
-    removeOperatorFamily(dynamic_cast<OperatorFamily *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_DOMAIN)
-    removeDomain(dynamic_cast<Domain *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_SEQUENCE)
-    removeSequence(dynamic_cast<Sequence *>(objeto), idx_obj);
-   else if(tipo_obj==OBJ_PERMISSION)
-    removePermission(dynamic_cast<Permission *>(objeto));
+   if(obj_type==OBJ_RELATIONSHIP ||
+      obj_type==BASE_RELATIONSHIP)
+    removeRelationship(dynamic_cast<BaseRelationship *>(object), obj_idx);
+   else if(obj_type==OBJ_TEXTBOX)
+    removeTextbox(dynamic_cast<Textbox *>(object), obj_idx);
+   else if(obj_type==OBJ_TABLE)
+    removeTable(dynamic_cast<Table *>(object), obj_idx);
+   else if(obj_type==OBJ_FUNCTION)
+    removeFunction(dynamic_cast<Function *>(object), obj_idx);
+   else if(obj_type==OBJ_AGGREGATE)
+    removeAggregate(dynamic_cast<Aggregate *>(object), obj_idx);
+   else if(obj_type==OBJ_SCHEMA)
+    removeSchema(dynamic_cast<Schema *>(object), obj_idx);
+   else if(obj_type==OBJ_VIEW)
+    removeView(dynamic_cast<View *>(object), obj_idx);
+   else if(obj_type==OBJ_TYPE)
+    removeType(dynamic_cast<Type *>(object), obj_idx);
+   else if(obj_type==OBJ_ROLE)
+    removeRole(dynamic_cast<Role *>(object), obj_idx);
+   else if(obj_type==OBJ_TABLESPACE)
+    removeTablespace(dynamic_cast<Tablespace *>(object), obj_idx);
+   else if(obj_type==OBJ_LANGUAGE)
+    removeLanguage(dynamic_cast<Language *>(object), obj_idx);
+   else if(obj_type==OBJ_CAST)
+    removeCast(dynamic_cast<Cast *>(object), obj_idx);
+   else if(obj_type==OBJ_CONVERSION)
+    removeConversion(dynamic_cast<Conversion *>(object), obj_idx);
+   else if(obj_type==OBJ_OPERATOR)
+    removeOperator(dynamic_cast<Operator *>(object), obj_idx);
+   else if(obj_type==OBJ_OPCLASS)
+    removeOperatorClass(dynamic_cast<OperatorClass *>(object), obj_idx);
+   else if(obj_type==OBJ_OPFAMILY)
+    removeOperatorFamily(dynamic_cast<OperatorFamily *>(object), obj_idx);
+   else if(obj_type==OBJ_DOMAIN)
+    removeDomain(dynamic_cast<Domain *>(object), obj_idx);
+   else if(obj_type==OBJ_SEQUENCE)
+    removeSequence(dynamic_cast<Sequence *>(object), obj_idx);
+   else if(obj_type==OBJ_PERMISSION)
+    removePermission(dynamic_cast<Permission *>(object));
   }
   catch(Exception &e)
   {
@@ -264,103 +264,103 @@ void DatabaseModel::removeObject(BaseObject *objeto, int idx_obj)
  }
 }
 
-void DatabaseModel::removeObject(unsigned idx_obj, ObjectType tipo_obj)
+void DatabaseModel::removeObject(unsigned obj_idx, ObjectType obj_type)
 {
- if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT ||
-    tipo_obj==OBJ_TRIGGER || tipo_obj==OBJ_INDEX ||
-    tipo_obj==OBJ_RULE ||
-    tipo_obj==BASE_OBJECT || tipo_obj==BASE_RELATIONSHIP ||
-    tipo_obj==OBJ_DATABASE)
+ if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT ||
+    obj_type==OBJ_TRIGGER || obj_type==OBJ_INDEX ||
+    obj_type==OBJ_RULE ||
+    obj_type==BASE_OBJECT || obj_type==BASE_RELATIONSHIP ||
+    obj_type==OBJ_DATABASE)
   //Caso o tipo esteja fora do conjunto, dispara uma exceção
   throw Exception(ERR_REM_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Caso o objeto a ser removido seja uma tabela pai e seu índice seja válido
  else
  {
-  vector<BaseObject *> *lista_obj=NULL;
-  BaseObject *objeto=NULL;
+  vector<BaseObject *> *obj_list=NULL;
+  BaseObject *object=NULL;
 
-  lista_obj=getObjectList(tipo_obj);
-  if(idx_obj >= lista_obj->size())
+  obj_list=getObjectList(obj_type);
+  if(obj_idx >= obj_list->size())
    throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  objeto=(*lista_obj)[idx_obj];
-  if(tipo_obj==OBJ_TEXTBOX)
-   removeTextbox(dynamic_cast<Textbox *>(objeto), idx_obj);
-  else if(tipo_obj==OBJ_TABLE)
-   removeTable(dynamic_cast<Table *>(objeto), idx_obj);
-  else if(tipo_obj==OBJ_FUNCTION)
-   removeFunction(dynamic_cast<Function *>(objeto), idx_obj);
-  else if(tipo_obj==OBJ_AGGREGATE)
-   removeAggregate(dynamic_cast<Aggregate *>(objeto), idx_obj);
-  else if(tipo_obj==OBJ_SCHEMA)
-   removeSchema(dynamic_cast<Schema *>(objeto), idx_obj);
-  else if(tipo_obj==OBJ_VIEW)
-   removeView(dynamic_cast<View *>(objeto), idx_obj);
-  else if(tipo_obj==OBJ_TYPE)
-   removeType(dynamic_cast<Type *>(objeto), idx_obj);
-  else if(tipo_obj==OBJ_ROLE)
-   removeRole(dynamic_cast<Role *>(objeto), idx_obj);
- else if(tipo_obj==OBJ_TABLESPACE)
-   removeTablespace(dynamic_cast<Tablespace *>(objeto), idx_obj);
- else if(tipo_obj==OBJ_LANGUAGE)
-   removeLanguage(dynamic_cast<Language *>(objeto), idx_obj);
- else if(tipo_obj==OBJ_CAST)
-   removeCast(dynamic_cast<Cast *>(objeto), idx_obj);
- else if(tipo_obj==OBJ_CONVERSION)
-   removeConversion(dynamic_cast<Conversion *>(objeto), idx_obj);
- else if(tipo_obj==OBJ_OPERATOR)
-  removeOperator(dynamic_cast<Operator *>(objeto), idx_obj);
- else if(tipo_obj==OBJ_OPCLASS)
-  removeOperatorClass(dynamic_cast<OperatorClass *>(objeto), idx_obj);
- else if(tipo_obj==OBJ_OPFAMILY)
-  removeOperatorFamily(dynamic_cast<OperatorFamily *>(objeto), idx_obj);
- else if(tipo_obj==OBJ_DOMAIN)
-  removeDomain(dynamic_cast<Domain *>(objeto), idx_obj);
- else if(tipo_obj==OBJ_SEQUENCE)
-  removeSequence(dynamic_cast<Sequence *>(objeto), idx_obj);
- else if(tipo_obj==OBJ_RELATIONSHIP || tipo_obj==BASE_RELATIONSHIP)
-  removeRelationship(dynamic_cast<BaseRelationship *>(objeto), idx_obj);
- else if(tipo_obj==OBJ_PERMISSION)
-  removePermission(dynamic_cast<Permission *>(objeto));
+  object=(*obj_list)[obj_idx];
+  if(obj_type==OBJ_TEXTBOX)
+   removeTextbox(dynamic_cast<Textbox *>(object), obj_idx);
+  else if(obj_type==OBJ_TABLE)
+   removeTable(dynamic_cast<Table *>(object), obj_idx);
+  else if(obj_type==OBJ_FUNCTION)
+   removeFunction(dynamic_cast<Function *>(object), obj_idx);
+  else if(obj_type==OBJ_AGGREGATE)
+   removeAggregate(dynamic_cast<Aggregate *>(object), obj_idx);
+  else if(obj_type==OBJ_SCHEMA)
+   removeSchema(dynamic_cast<Schema *>(object), obj_idx);
+  else if(obj_type==OBJ_VIEW)
+   removeView(dynamic_cast<View *>(object), obj_idx);
+  else if(obj_type==OBJ_TYPE)
+   removeType(dynamic_cast<Type *>(object), obj_idx);
+  else if(obj_type==OBJ_ROLE)
+   removeRole(dynamic_cast<Role *>(object), obj_idx);
+ else if(obj_type==OBJ_TABLESPACE)
+   removeTablespace(dynamic_cast<Tablespace *>(object), obj_idx);
+ else if(obj_type==OBJ_LANGUAGE)
+   removeLanguage(dynamic_cast<Language *>(object), obj_idx);
+ else if(obj_type==OBJ_CAST)
+   removeCast(dynamic_cast<Cast *>(object), obj_idx);
+ else if(obj_type==OBJ_CONVERSION)
+   removeConversion(dynamic_cast<Conversion *>(object), obj_idx);
+ else if(obj_type==OBJ_OPERATOR)
+  removeOperator(dynamic_cast<Operator *>(object), obj_idx);
+ else if(obj_type==OBJ_OPCLASS)
+  removeOperatorClass(dynamic_cast<OperatorClass *>(object), obj_idx);
+ else if(obj_type==OBJ_OPFAMILY)
+  removeOperatorFamily(dynamic_cast<OperatorFamily *>(object), obj_idx);
+ else if(obj_type==OBJ_DOMAIN)
+  removeDomain(dynamic_cast<Domain *>(object), obj_idx);
+ else if(obj_type==OBJ_SEQUENCE)
+  removeSequence(dynamic_cast<Sequence *>(object), obj_idx);
+ else if(obj_type==OBJ_RELATIONSHIP || obj_type==BASE_RELATIONSHIP)
+  removeRelationship(dynamic_cast<BaseRelationship *>(object), obj_idx);
+ else if(obj_type==OBJ_PERMISSION)
+  removePermission(dynamic_cast<Permission *>(object));
  }
 }
 
-void DatabaseModel::__addObject(BaseObject *objeto, int idx_obj)
+void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 {
  int idx;
- ObjectType tipo_obj;
- vector<BaseObject *> *lista_obj=NULL;
+ ObjectType obj_type;
+ vector<BaseObject *> *obj_list=NULL;
  vector<BaseObject *>::iterator itr, itr_end;
 
- if(!objeto)
+ if(!object)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
- tipo_obj=objeto->getObjectType();
+ obj_type=object->getObjectType();
 
  /* Caso o objeto seja um espaço de tabela verifica se não existem
     outro espaço de tabela que esteja apontando para o mesmo diretório
     o que é considerado erro */
- if(tipo_obj==OBJ_TABLESPACE)
+ if(obj_type==OBJ_TABLESPACE)
  {
-  Tablespace *esp_tab=NULL, *esp_tab_aux=NULL;
+  Tablespace *tabspc=NULL, *aux_tabspc=NULL;
 
-  lista_obj=getObjectList(tipo_obj);
-  itr=lista_obj->begin();
-  itr_end=lista_obj->end();
-  esp_tab=dynamic_cast<Tablespace *>(objeto);
+  obj_list=getObjectList(obj_type);
+  itr=obj_list->begin();
+  itr_end=obj_list->end();
+  tabspc=dynamic_cast<Tablespace *>(object);
 
   while(itr!=itr_end)
   {
-   esp_tab_aux=dynamic_cast<Tablespace *>(*itr);
+   aux_tabspc=dynamic_cast<Tablespace *>(*itr);
 
    //Caso o diretório dos mesmos sejam iguais um erro é disparado
-   if(esp_tab->getDirectory()==esp_tab_aux->getDirectory())
+   if(tabspc->getDirectory()==aux_tabspc->getDirectory())
    {
     throw Exception(Exception::getErrorMessage(ERR_ASG_DUP_TABLESPACE_DIR)
-                         .arg(QString::fromUtf8(esp_tab->getName()))
-                         .arg(esp_tab_aux->getName()),
+                         .arg(QString::fromUtf8(tabspc->getName()))
+                         .arg(aux_tabspc->getName()),
                   ERR_ASG_DUP_TABLESPACE_DIR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
@@ -369,15 +369,15 @@ void DatabaseModel::__addObject(BaseObject *objeto, int idx_obj)
  }
 
  //Verifica se o objeto a ser inserido já existe no modelo, buscando através do nome.
- if((tipo_obj!=OBJ_FUNCTION && getObject(objeto->getName(true), tipo_obj, idx)) ||
-    (tipo_obj==OBJ_FUNCTION &&
-     getObject(dynamic_cast<Function *>(objeto)->getSignature(), tipo_obj, idx)))
+ if((obj_type!=OBJ_FUNCTION && getObject(object->getName(true), obj_type, idx)) ||
+    (obj_type==OBJ_FUNCTION &&
+     getObject(dynamic_cast<Function *>(object)->getSignature(), obj_type, idx)))
  {
   QString str_aux;
 
   str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-          .arg(objeto->getName(true))
-          .arg(objeto->getTypeName())
+          .arg(object->getName(true))
+          .arg(object->getTypeName())
           .arg(this->getName(true))
           .arg(this->getTypeName());
 
@@ -387,7 +387,7 @@ void DatabaseModel::__addObject(BaseObject *objeto, int idx_obj)
  try
  {
   //Valida a definição sql do objeto
-  DatabaseModel::validateObjectDefinition(objeto, SchemaParser::SQL_DEFINITION);
+  DatabaseModel::validateObjectDefinition(object, SchemaParser::SQL_DEFINITION);
  }
  catch(Exception &e)
  {
@@ -395,207 +395,207 @@ void DatabaseModel::__addObject(BaseObject *objeto, int idx_obj)
  }
 
  //Obtém a lista de objetos do tipo do novo objeto
- lista_obj=getObjectList(objeto->getObjectType());
+ obj_list=getObjectList(object->getObjectType());
 
  //Insere o novo elemento na lista
- if(idx_obj < 0 || idx_obj >= static_cast<int>(lista_obj->size()))
-  lista_obj->push_back(objeto);
+ if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
+  obj_list->push_back(object);
  else
  {
-  if(idx_obj >=0 && idx < 0)
-   idx=idx_obj;
-  else if(idx_obj < 0 && idx < 0)
+  if(obj_idx >=0 && idx < 0)
+   idx=obj_idx;
+  else if(obj_idx < 0 && idx < 0)
    idx=0;
 
-  if(lista_obj->size() > 0)
-   lista_obj->insert((lista_obj->begin() + idx), objeto);
+  if(obj_list->size() > 0)
+   obj_list->insert((obj_list->begin() + idx), object);
   else
-   lista_obj->push_back(objeto);
+   obj_list->push_back(object);
  }
 
  //Emite um sinal indicando a adição do objeto no modelo
  if(!signalsBlocked())
-  emit s_objetoAdicionado(objeto);
+  emit s_objectAdded(object);
 }
 
-void DatabaseModel::__removeObject(BaseObject *objeto, int idx_obj)
+void DatabaseModel::__removeObject(BaseObject *object, int obj_idx)
 {
- if(!objeto)
+ if(!object)
   throw Exception(ERR_REM_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  vector<BaseObject *> *lista_obj=NULL;
-  ObjectType tipo_obj;
+  vector<BaseObject *> *obj_list=NULL;
+  ObjectType obj_type;
 
-  tipo_obj=objeto->getObjectType();
+  obj_type=object->getObjectType();
 
   //Obtém a lista de acordo com o tipo do objeto
-  lista_obj=getObjectList(tipo_obj);
-  if(!lista_obj)
+  obj_list=getObjectList(obj_type);
+  if(!obj_list)
    throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
    //Caso o índice do objeto não foi especificado o método tenta descobrí-lo
-   if(idx_obj < 0)
+   if(obj_idx < 0)
    {
-    if(tipo_obj!=OBJ_FUNCTION && tipo_obj!=OBJ_OPERATOR)
-     getObject(objeto->getName(true), tipo_obj, idx_obj);
-    else if(tipo_obj==OBJ_FUNCTION)
-     getObject(dynamic_cast<Function *>(objeto)->getSignature(), tipo_obj, idx_obj);
+    if(obj_type!=OBJ_FUNCTION && obj_type!=OBJ_OPERATOR)
+     getObject(object->getName(true), obj_type, obj_idx);
+    else if(obj_type==OBJ_FUNCTION)
+     getObject(dynamic_cast<Function *>(object)->getSignature(), obj_type, obj_idx);
     else
-     getObject(dynamic_cast<Operator *>(objeto)->getSignature(), tipo_obj, idx_obj);
+     getObject(dynamic_cast<Operator *>(object)->getSignature(), obj_type, obj_idx);
    }
 
-   if(idx_obj >= 0)
+   if(obj_idx >= 0)
    {
     //Remove as permissões do objeto
-    removePermissions(objeto);
-    lista_obj->erase(lista_obj->begin() + idx_obj);
+    removePermissions(object);
+    obj_list->erase(obj_list->begin() + obj_idx);
    }
   }
 
   //Emite um sinal indicando que o objeto foi removido
   if(!signalsBlocked())
-   emit s_objetoRemovido(objeto);
+   emit s_objectRemoved(object);
  }
 }
 
-vector<BaseObject *> DatabaseModel::getObjects(ObjectType tipo_obj, BaseObject *esquema)
+vector<BaseObject *> DatabaseModel::getObjects(ObjectType obj_type, BaseObject *schema)
 {
- vector<BaseObject *> *lista_obj=NULL, lista_sel;
+ vector<BaseObject *> *obj_list=NULL, sel_list;
  vector<BaseObject *>::iterator itr, itr_end;
 
  //Obtém a lista de acordo com o tipo do objeto
- lista_obj=getObjectList(tipo_obj);
+ obj_list=getObjectList(obj_type);
 
  /* Caso a lista não exista indica que foi passado um tipo inválido
     de objeto, dessa forma será retornado um erro */
- if(!lista_obj)
+ if(!obj_list)
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- itr=lista_obj->begin();
- itr_end=lista_obj->end();
+ itr=obj_list->begin();
+ itr_end=obj_list->end();
 
  while(itr!=itr_end)
  {
-  if((*itr)->getSchema()==esquema)
-   lista_sel.push_back(*itr);
+  if((*itr)->getSchema()==schema)
+   sel_list.push_back(*itr);
   itr++;
  }
 
- return(lista_sel);
+ return(sel_list);
 }
 
-BaseObject *DatabaseModel::getObject(const QString &nome, ObjectType tipo_obj, int &idx_obj)
+BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, int &obj_idx)
 {
- BaseObject *objeto=NULL;
- vector<BaseObject *> *lista_obj=NULL;
+ BaseObject *object=NULL;
+ vector<BaseObject *> *obj_list=NULL;
  vector<BaseObject *>::iterator itr, itr_end;
- bool enc=false;
- int qtd;
- QString nome_aux, nome_aux1;
+ bool found=false;
+ int count;
+ QString aux_name, aux_name1;
 
  //Obtém a lista de acordo com o tipo do objeto
- lista_obj=getObjectList(tipo_obj);
+ obj_list=getObjectList(obj_type);
 
  /* Caso a lista não exista indica que foi passado um tipo inválido
     de objeto, dessa forma será retornado um erro */
- if(!lista_obj)
+ if(!obj_list)
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   //Obtém as referências para o inicio e o fim da lista
-  itr=lista_obj->begin();
-  itr_end=lista_obj->end();
-  idx_obj=-1;
+  itr=obj_list->begin();
+  itr_end=obj_list->end();
+  obj_idx=-1;
 
-  nome_aux1=nome;
-  qtd=nome_aux1.count(QChar('\0'));
-  if(qtd >=1) nome_aux1.chop(qtd);
+  aux_name1=name;
+  count=aux_name1.count(QChar('\0'));
+  if(count >=1) aux_name1.chop(count);
 
-  if(tipo_obj!=OBJ_FUNCTION && tipo_obj!=OBJ_OPERATOR)
+  if(obj_type!=OBJ_FUNCTION && obj_type!=OBJ_OPERATOR)
   {
-   nome_aux1=BaseObject::formatName(nome_aux1);
+   aux_name1=BaseObject::formatName(aux_name1);
 
-   while(itr!=itr_end && !enc)
+   while(itr!=itr_end && !found)
    {
     /* Caso o nome do objeto atual seja igual ao nome passado
       o while será quebrado */
-    nome_aux=(*itr)->getName(true);
-    enc=(nome_aux==nome_aux1);
-    if(!enc) itr++;
+    aux_name=(*itr)->getName(true);
+    found=(aux_name==aux_name1);
+    if(!found) itr++;
    }
   }
   else
   {
-   QString assinatura;
+   QString signature;
 
-   while(itr!=itr_end && !enc)
+   while(itr!=itr_end && !found)
    {
     /* Caso especial para função/oeradores: para saber se uma função/operador está duplicada
        deve-se verificar a assinatura da mesma e não apenas o nome, pois
        o PostgreSQL permite a sobrecarga de funções e operadores. Neste caso especial
        o parâmetro informado ao método deve ser uma assinatura de função/operador
        e não seu nome */
-    if(tipo_obj==OBJ_FUNCTION)
-     assinatura=dynamic_cast<Function *>(*itr)->getSignature();
+    if(obj_type==OBJ_FUNCTION)
+     signature=dynamic_cast<Function *>(*itr)->getSignature();
     else
-     assinatura=dynamic_cast<Operator *>(*itr)->getSignature();
+     signature=dynamic_cast<Operator *>(*itr)->getSignature();
 
-    enc=(assinatura==nome_aux1);
-    if(!enc) itr++;
+    found=(signature==aux_name1);
+    if(!found) itr++;
    }
   }
 
-  if(enc)
+  if(found)
   {
    //Obtém a referência do objeto e calcula seu índice
-   objeto=(*itr);
-   idx_obj=(itr-lista_obj->begin());
+   object=(*itr);
+   obj_idx=(itr-obj_list->begin());
   }
-  else idx_obj=-1;
+  else obj_idx=-1;
  }
 
- return(objeto);
+ return(object);
 }
 
-BaseObject *DatabaseModel::getObject(unsigned idx_obj, ObjectType tipo_obj)
+BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
 {
- vector<BaseObject *> *lista_obj=NULL;
+ vector<BaseObject *> *obj_list=NULL;
 
  //Obtém a lista de acordo com o tipo do objeto
- lista_obj=getObjectList(tipo_obj);
+ obj_list=getObjectList(obj_type);
 
  /* Caso a lista não exista indica que foi passado um tipo inválido
     de objeto, dessa forma será retornado um erro */
- if(!lista_obj)
+ if(!obj_list)
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  /* Caso o índice do objeto a ser obtido esteja fora do
     intervalo de elementos da lista */
- else if(idx_obj >= lista_obj->size())
+ else if(obj_idx >= obj_list->size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
-  return(lista_obj->at(idx_obj));
+  return(obj_list->at(obj_idx));
 }
 
-unsigned DatabaseModel::getObjectCount(ObjectType tipo_obj)
+unsigned DatabaseModel::getObjectCount(ObjectType obj_type)
 {
- vector<BaseObject *> *lista_obj=NULL;
+ vector<BaseObject *> *obj_list=NULL;
 
  //Obtém a lista de acordo com o tipo do objeto
- lista_obj=getObjectList(tipo_obj);
+ obj_list=getObjectList(obj_type);
 
  /* Caso a lista não exista indica que foi passado um tipo inválido
     de objeto, dessa forma será retornado um erro */
- if(!lista_obj)
+ if(!obj_list)
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
-  return(lista_obj->size());
+  return(obj_list->size());
 }
 
 unsigned DatabaseModel::getObjectCount(void)
 {
- ObjectType tipos[20]={
+ ObjectType types[20]={
           BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
           OBJ_AGGREGATE, OBJ_OPERATOR,
           OBJ_SEQUENCE, OBJ_CONVERSION,
@@ -603,19 +603,19 @@ unsigned DatabaseModel::getObjectCount(void)
           BASE_RELATIONSHIP, OBJ_TEXTBOX,
           OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
           OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE };
- unsigned qtd=0, i;
+ unsigned count=0, i;
 
  for(i=0; i < 20; i++)
-  qtd+=getObjectList(tipos[i])->size();
+  count+=getObjectList(types[i])->size();
 
- return(qtd);
+ return(count);
 }
 
-QString DatabaseModel::getLocalization(int cod_local)
+QString DatabaseModel::getLocalization(int localiz_id)
 {
  unsigned idx=0;
 
- switch(cod_local)
+ switch(localiz_id)
  {
   case LC_CTYPE: idx=0; break;
   case LC_COLLATE:
@@ -646,9 +646,9 @@ QString DatabaseModel::getAuthor(void)
  return(author);
 }
 
-void DatabaseModel::setProtected(bool protegido)
+void DatabaseModel::setProtected(bool value)
 {
- ObjectType tipos[19]={
+ ObjectType types[19]={
           OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
           OBJ_AGGREGATE, OBJ_OPERATOR,
           OBJ_SEQUENCE, OBJ_CONVERSION,
@@ -663,19 +663,19 @@ void DatabaseModel::setProtected(bool protegido)
 
  for(i=0; i < 19; i++)
  {
-  lista=getObjectList(tipos[i]);
+  lista=getObjectList(types[i]);
   itr=lista->begin();
   itr_end=lista->end();
 
   while(itr!=itr_end)
   {
    objeto=(*itr);
-   objeto->setProtected(protegido);
+   objeto->setProtected(value);
    itr++;
   }
  }
 
- BaseObject::setProtected(protegido);
+ BaseObject::setProtected(value);
 }
 
 void DatabaseModel::destroyObjects(void)
@@ -685,7 +685,7 @@ void DatabaseModel::destroyObjects(void)
     evitar falha de segmentação onde, no momento da destruição de algum
     objeto, um dos objetos mais dependendidos sejam referenciados porém
     ja foram destruídos anteriormente. */
- ObjectType tipos[20]={
+ ObjectType types[20]={
           BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
           OBJ_AGGREGATE, OBJ_OPERATOR,
           OBJ_SEQUENCE, OBJ_CONVERSION,
@@ -693,40 +693,40 @@ void DatabaseModel::destroyObjects(void)
           BASE_RELATIONSHIP, OBJ_TEXTBOX,
           OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
           OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE };
- vector<BaseObject *> *lista=NULL;
- BaseObject *objeto=NULL;
+ vector<BaseObject *> *list=NULL;
+ BaseObject *object=NULL;
  unsigned i;
 
  disconnectRelationships();
 
  for(i=0; i < 20; i++)
  {
-  lista=getObjectList(tipos[i]);
+  list=getObjectList(types[i]);
 
-  while(!lista->empty())
+  while(!list->empty())
   {
-   objeto=lista->back();
+   object=list->back();
 
-   if(objeto->getObjectType()==OBJ_RELATIONSHIP)
-    dynamic_cast<Relationship *>(objeto)->destroyObjects();
+   if(object->getObjectType()==OBJ_RELATIONSHIP)
+    dynamic_cast<Relationship *>(object)->destroyObjects();
 
-   delete(objeto);
-   lista->pop_back();
+   delete(object);
+   list->pop_back();
   }
  }
 }
 
-void DatabaseModel::addTable(Table *tabela, int idx_obj)
+void DatabaseModel::addTable(Table *table, int obj_idx)
 {
  try
  {
-  __addObject(tabela, idx_obj);
+  __addObject(table, obj_idx);
   /* Ao ser inserido uma nova tabela a mesma tem
    seu nome é adicionad  lista de tipos válidos
    do PostgreSQL */
-  PgSQLType::addUserType(tabela->getName(true), tabela, this, UserTypeConfig::TABLE_TYPE);
+  PgSQLType::addUserType(table->getName(true), table, this, UserTypeConfig::TABLE_TYPE);
 
-  updateTableFKRelationships(tabela);
+  updateTableFKRelationships(table);
  }
  catch(Exception &e)
  {
@@ -734,61 +734,61 @@ void DatabaseModel::addTable(Table *tabela, int idx_obj)
  }
 }
 
-Table *DatabaseModel::getTable(unsigned idx_obj)
+Table *DatabaseModel::getTable(unsigned obj_idx)
 {
- return(dynamic_cast<Table *>(getObject(idx_obj, OBJ_TABLE)));
+ return(dynamic_cast<Table *>(getObject(obj_idx, OBJ_TABLE)));
 }
 
-void DatabaseModel::removeTable(Table *tabela, int idx_obj)
+void DatabaseModel::removeTable(Table *table, int obj_idx)
 {
- if(tabela)
+ if(table)
  {
-  vector<BaseObject *> vet_refs;
+  vector<BaseObject *> refs;
   QString str_aux;
 
   //Obtém as referênca   tabela
-  getObjectReferences(tabela, vet_refs, true);
+  getObjectReferences(table, refs, true);
 
   //Caso a tabela esteja sendo referenciada, a mesma não pode ser removida
-  if(!vet_refs.empty())
+  if(!refs.empty())
   {
-   ErrorType tipo_err;
-   unsigned i=0, qtd=vet_refs.size();
+   ErrorType err_type;
+   unsigned i=0, count=refs.size();
 
-   while(i < qtd)
+   while(i < count)
    {
      /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
         do objeto referenciado */
-     if(!dynamic_cast<TableObject *>(vet_refs[i]))
+     if(!dynamic_cast<TableObject *>(refs[i]))
      {
-      tipo_err=ERR_REM_DIRECT_REFERENCE;
-      str_aux=QString(Exception::getErrorMessage(tipo_err))
-              .arg(tabela->getName(true))
-              .arg(tabela->getTypeName())
-              .arg(vet_refs[0]->getName(true))
-              .arg(vet_refs[0]->getTypeName());
+      err_type=ERR_REM_DIRECT_REFERENCE;
+      str_aux=QString(Exception::getErrorMessage(err_type))
+              .arg(table->getName(true))
+              .arg(table->getTypeName())
+              .arg(refs[0]->getName(true))
+              .arg(refs[0]->getTypeName());
 
-       throw Exception(str_aux, tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(str_aux, err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
      }
      else
      {
-      BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(vet_refs[i])->getParentTable();
+      BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(refs[i])->getParentTable();
 
       /* Um erro só é disparado para uma objetos de tabela quando este
          não tem como pai a própria tabela a ser removida */
-      if(obj_ref_pai != tabela)
+      if(obj_ref_pai != table)
       {
        //Formata a mensagem caso exista uma referência indireta ao objeto a ser removido
-       tipo_err=ERR_REM_INDIRECT_REFERENCE;
-       str_aux=QString(Exception::getErrorMessage(tipo_err))
-               .arg(tabela->getName(true))
-               .arg(tabela->getTypeName())
-               .arg(vet_refs[0]->getName(true))
-               .arg(vet_refs[0]->getTypeName())
+       err_type=ERR_REM_INDIRECT_REFERENCE;
+       str_aux=QString(Exception::getErrorMessage(err_type))
+               .arg(table->getName(true))
+               .arg(table->getTypeName())
+               .arg(refs[0]->getName(true))
+               .arg(refs[0]->getTypeName())
                .arg(obj_ref_pai->getName(true))
                .arg(obj_ref_pai->getTypeName());
 
-       throw Exception(str_aux, tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+       throw Exception(str_aux, err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
      }
 
@@ -796,26 +796,26 @@ void DatabaseModel::removeTable(Table *tabela, int idx_obj)
     }
    }
 
-  __removeObject(tabela, idx_obj);
+  __removeObject(table, obj_idx);
 
    /* Ao ser removido do modelo a sequencia tem
     seu nome removido da lista de tipos válidos do PostgreSQL */
-  PgSQLType::removeUserType(tabela->getName(true), tabela);
+  PgSQLType::removeUserType(table->getName(true), table);
 
   //Remove qualquer relacionamento gerado por chave estrangeira
-  updateTableFKRelationships(tabela);
+  updateTableFKRelationships(table);
  }
 }
 
-void DatabaseModel::addSequence(Sequence *sequencia, int idx_obj)
+void DatabaseModel::addSequence(Sequence *sequence, int obj_idx)
 {
  try
  {
-  __addObject(sequencia, idx_obj);
+  __addObject(sequence, obj_idx);
   /* Ao ser inserido uma nova sequencia a mesma tem
    seu nome é adicionad  lista de tipos válidos
    do PostgreSQL */
-  PgSQLType::addUserType(sequencia->getName(true), sequencia, this, UserTypeConfig::SEQUENCE_TYPE);
+  PgSQLType::addUserType(sequence->getName(true), sequence, this, UserTypeConfig::SEQUENCE_TYPE);
  }
  catch(Exception &e)
  {
@@ -823,31 +823,31 @@ void DatabaseModel::addSequence(Sequence *sequencia, int idx_obj)
  }
 }
 
-Sequence *DatabaseModel::getSequence(unsigned idx_obj)
+Sequence *DatabaseModel::getSequence(unsigned obj_idx)
 {
- return(dynamic_cast<Sequence *>(getObject(idx_obj, OBJ_SEQUENCE)));
+ return(dynamic_cast<Sequence *>(getObject(obj_idx, OBJ_SEQUENCE)));
 }
 
-void DatabaseModel::removeSequence(Sequence *sequencia, int idx_obj)
+void DatabaseModel::removeSequence(Sequence *sequence, int obj_idx)
 {
- if(sequencia)
+ if(sequence)
  {
-  removeUserType(sequencia, idx_obj);
-  __removeObject(sequencia, idx_obj);
+  removeUserType(sequence, obj_idx);
+  __removeObject(sequence, obj_idx);
   /* Ao ser removido do modelo a sequencia tem
    seu nome removido da lista de tipos válidos do PostgreSQL */
   //TipoPgSQL::removerTipoUsuario(sequencia->getName(true), sequencia);
  }
 }
 
-void DatabaseModel::addView(View *visao, int idx_obj)
+void DatabaseModel::addView(View *view, int obj_idx)
 {
- if(visao)
+ if(view)
  {
   try
   {
-   __addObject(visao, idx_obj);
-   updateViewRelationships(visao);
+   __addObject(view, obj_idx);
+   updateViewRelationships(view);
   }
   catch(Exception &e)
   {
@@ -856,24 +856,24 @@ void DatabaseModel::addView(View *visao, int idx_obj)
  }
 }
 
-View *DatabaseModel::getView(unsigned idx_obj)
+View *DatabaseModel::getView(unsigned obj_idx)
 {
- return(dynamic_cast<View *>(getObject(idx_obj, OBJ_VIEW)));
+ return(dynamic_cast<View *>(getObject(obj_idx, OBJ_VIEW)));
 }
 
-void DatabaseModel::removeView(View *visao, int idx_obj)
+void DatabaseModel::removeView(View *view, int obj_idx)
 {
- if(visao)
+ if(view)
  {
-  __removeObject(visao, idx_obj);
-  updateViewRelationships(visao);
+  __removeObject(view, obj_idx);
+  updateViewRelationships(view);
  }
 }
 
 
-void DatabaseModel::updateTableFKRelationships(Table *tabela)
+void DatabaseModel::updateTableFKRelationships(Table *table)
 {
- if(!tabela)
+ if(!table)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
@@ -881,16 +881,16 @@ void DatabaseModel::updateTableFKRelationships(Table *tabela)
   BaseRelationship *rel=NULL;
   Constraint *fk=NULL;
   unsigned idx;
-  vector<Constraint *> vet_fks;
+  vector<Constraint *> fks;
   vector<Constraint *>::iterator itr, itr_end;
   vector<BaseObject *>::iterator itr1, itr1_end;
 
-  tabela->getForeignKeys(vet_fks);
-  itr=vet_fks.begin();
-  itr_end=vet_fks.end();
+  table->getForeignKeys(fks);
+  itr=fks.begin();
+  itr_end=fks.end();
 
   //Caso a tabela foi excluida deve-se remove os relacionamentos
-  if(!vet_fks.empty() && getObjectIndex(tabela) < 0)
+  if(!fks.empty() && getObjectIndex(table) < 0)
   {
    while(itr!=itr_end)
    {
@@ -898,7 +898,7 @@ void DatabaseModel::updateTableFKRelationships(Table *tabela)
     ref_tab=dynamic_cast<Table *>(fk->getReferencedTable());
     itr++;
 
-    rel=getRelationship(tabela, ref_tab);
+    rel=getRelationship(table, ref_tab);
 
     if(rel)
      removeRelationship(rel);
@@ -921,12 +921,12 @@ void DatabaseModel::updateTableFKRelationships(Table *tabela)
 
     //Caso a visão seja um dos elementos do relacionamento
     if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK &&
-       rel->getTable(BaseRelationship::SRC_TABLE)==tabela)
+       rel->getTable(BaseRelationship::SRC_TABLE)==table)
     {
      ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
 
        //Caso a visão não referencie mais a tabela
-     if(!tabela->isReferTableOnForeignKey(ref_tab))
+     if(!table->isReferTableOnForeignKey(ref_tab))
      {
       //Remove o relacionamento
       removeRelationship(rel);
@@ -952,11 +952,11 @@ void DatabaseModel::updateTableFKRelationships(Table *tabela)
 
     /* Caso a tabela exista, um relacionamento tabela-visão será automaticamente criado
        (caso este já não existe) e inserido no modelo */
-    rel=getRelationship(tabela, ref_tab);
+    rel=getRelationship(table, ref_tab);
     if(!rel)
     {
      rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK,
-                              tabela, ref_tab, false, false);
+                              table, ref_tab, false, false);
      addRelationship(rel);
     }
    }
@@ -964,17 +964,17 @@ void DatabaseModel::updateTableFKRelationships(Table *tabela)
  }
 }
 
-void DatabaseModel::updateViewRelationships(View *visao)
+void DatabaseModel::updateViewRelationships(View *view)
 {
  Table *tab=NULL;
  BaseRelationship *rel=NULL;
  Reference ref;
- unsigned i, qtd_ref, idx;
+ unsigned i, ref_count, idx;
  vector<BaseObject *>::iterator itr, itr_end;
 
- if(!visao)
+ if(!view)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- else if(getObjectIndex(visao) < 0)
+ else if(getObjectIndex(view) < 0)
  {
   /* Quando uma visão é excluída, os relacionamentos tabela-visão os quais
      possuem a visão como um dos elementos serão excluídos automaticamente */
@@ -989,8 +989,8 @@ void DatabaseModel::updateViewRelationships(View *visao)
    rel=dynamic_cast<BaseRelationship *>(*itr);
 
    //Caso a visão seja um dos elementos do relacionamento
-   if(rel->getTable(BaseRelationship::SRC_TABLE)==visao ||
-      rel->getTable(BaseRelationship::DST_TABLE)==visao)
+   if(rel->getTable(BaseRelationship::SRC_TABLE)==view ||
+      rel->getTable(BaseRelationship::DST_TABLE)==view)
    {
     //Remove o relacionamento
     removeRelationship(rel);
@@ -1018,8 +1018,8 @@ void DatabaseModel::updateViewRelationships(View *visao)
    rel=dynamic_cast<BaseRelationship *>(*itr);
 
    //Caso a visão seja um dos elementos do relacionamento
-   if(rel->getTable(BaseRelationship::SRC_TABLE)==visao ||
-      rel->getTable(BaseRelationship::DST_TABLE)==visao)
+   if(rel->getTable(BaseRelationship::SRC_TABLE)==view ||
+      rel->getTable(BaseRelationship::DST_TABLE)==view)
    {
     //Obtém a tabela do relacionamento
     if(rel->getTable(BaseRelationship::SRC_TABLE)->getObjectType()==OBJ_TABLE)
@@ -1028,7 +1028,7 @@ void DatabaseModel::updateViewRelationships(View *visao)
      tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
 
     //Caso a visão não referencie mais a tabela
-    if(!visao->isReferencingTable(tab))
+    if(!view->isReferencingTable(tab))
     {
      //Remove o relacionamento
      removeRelationship(rel);
@@ -1049,19 +1049,19 @@ void DatabaseModel::updateViewRelationships(View *visao)
   /* Cria automaticamente os relacionamentos entre as tabelas e a visão.
      As tabelas referenciadas são obtidas das referências na parte SELECT
      da consulta que gera a visão  */
-  qtd_ref=visao->getReferenceCount(Reference::SQL_REFER_SELECT);
+  ref_count=view->getReferenceCount(Reference::SQL_REFER_SELECT);
 
-  for(i=0; i < qtd_ref; i++)
+  for(i=0; i < ref_count; i++)
   {
-   ref=visao->getReference(i, Reference::SQL_REFER_SELECT);
+   ref=view->getReference(i, Reference::SQL_REFER_SELECT);
    tab=ref.getTable();
 
    /* Caso a tabela exista, um relacionamento tabela-visão será automaticamente criado
       (caso este já não existe) e inserido no modelo */
-   rel=getRelationship(visao,tab);
+   rel=getRelationship(view,tab);
    if(tab && !rel)
    {
-    rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_DEP,visao,tab,false,false);
+    rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_DEP,view,tab,false,false);
     addRelationship(rel);
    }
   }
@@ -1072,7 +1072,7 @@ void DatabaseModel::disconnectRelationships(void)
 {
  try
  {
-  BaseRelationship *rel_base=NULL;
+  BaseRelationship *base_rel=NULL;
   Relationship *rel=NULL;
   vector<BaseObject *>::reverse_iterator ritr_rel, ritr_rel_end;
 
@@ -1085,18 +1085,18 @@ void DatabaseModel::disconnectRelationships(void)
   while(ritr_rel!=ritr_rel_end)
   {
    //Converte o ponteiro de relacionamento da conexão para a classe base de relacionametno
-   rel_base=dynamic_cast<BaseRelationship *>(*ritr_rel);
+   base_rel=dynamic_cast<BaseRelationship *>(*ritr_rel);
    ritr_rel++;
 
    //Caso o relacionamento obtido da lista seja entre tabelas
-   if(rel_base->getObjectType()==OBJ_RELATIONSHIP)
+   if(base_rel->getObjectType()==OBJ_RELATIONSHIP)
    {
     //Converte o objeto para relacionamento tabela-tabela
-    rel=dynamic_cast<Relationship *>(rel_base);
+    rel=dynamic_cast<Relationship *>(base_rel);
     rel->disconnectRelationship();
    }
    else
-    rel_base->disconnectRelationship();
+    base_rel->disconnectRelationship();
   }
  }
  catch(Exception &e)
@@ -1108,14 +1108,13 @@ void DatabaseModel::disconnectRelationships(void)
 void DatabaseModel::validateRelationships(void)
 {
  vector<BaseObject *>::iterator itr, itr_end, itr_ant;
- //vector<unsigned> vet_id_objs;
  Relationship *rel=NULL;
- BaseRelationship *rel_base=NULL;
+ BaseRelationship *base_rel=NULL;
  vector<BaseObject *> vet_rel, vet_rel_inv, rels;
- bool enc_rel_inv;
- vector<Exception> vet_erros;
+ bool found_inval_rel;
+ vector<Exception> errors;
  map<unsigned, QString>::iterator itr1, itr1_end;
- map<unsigned, Exception> mapa_erros;
+ map<unsigned, Exception> error_map;
  map<unsigned, Exception>::iterator itr2, itr2_end;
  unsigned idx;
 
@@ -1128,37 +1127,37 @@ void DatabaseModel::validateRelationships(void)
   /* Marca como falso a flag indicativa de relacionamento invalidado.
      Este flag sempre será marcado quando 1 ou mais relacionamentos
      forem encontrados durante as interações. */
-  enc_rel_inv=false;
+  found_inval_rel=false;
 
   while(itr!=itr_end)
   {
    //Obtém um relacionamento a partir do iterador
-   rel_base=dynamic_cast<BaseRelationship *>(*itr);
+   base_rel=dynamic_cast<BaseRelationship *>(*itr);
    itr++;
 
    //Caso o relacionamento obtido seja tabela-tabela
-   if(rel_base->getObjectType()==OBJ_RELATIONSHIP)
+   if(base_rel->getObjectType()==OBJ_RELATIONSHIP)
    {
     //Converte o relacionamento base para rel. tabela-tabela
-    rel=dynamic_cast<Relationship *>(rel_base);
+    rel=dynamic_cast<Relationship *>(base_rel);
 
     //Caso o relacionamento esteja invalidado
     if(rel->isInvalidated())
     {
      //Insere-o na lista de relacionamentos invalidados
-     vet_rel_inv.push_back(rel_base);
+     vet_rel_inv.push_back(base_rel);
      /* Marca a flag indicando que pelo menos 1 relacionamento
         invalidado foi encontrado */
-     enc_rel_inv=true;
+     found_inval_rel=true;
     }
     else
      //Caso não esteja invalidado, insere-o na lista de relacionamentos válidos
-     vet_rel.push_back(rel_base);
+     vet_rel.push_back(base_rel);
    }
   }
 
   //Caso haja algum relacionamento invalidado
-  if(enc_rel_inv || !xml_special_objs.empty())
+  if(found_inval_rel || !xml_special_objs.empty())
   {
    if(!loading_model && xml_special_objs.empty())
     storeSpecialObjectsXML();
@@ -1222,7 +1221,7 @@ void DatabaseModel::validateRelationships(void)
      delete(rel);
 
      //Armazena o erro capturado na lista de erros
-     vet_erros.push_back(e);
+     errors.push_back(e);
     }
    }
 
@@ -1260,8 +1259,8 @@ void DatabaseModel::validateRelationships(void)
 
       /* Caso algum erro anterior de criação do objeto especial em questão for
          detectado o mesmo é removido do mapa de controle de erros */
-      if(mapa_erros.count(itr1->first))
-       mapa_erros.erase(mapa_erros.find(itr1->first));
+      if(error_map.count(itr1->first))
+       error_map.erase(error_map.find(itr1->first));
 
       /* Remove a definição xml do objeto atual da lista indicando
          que o mesmo foi criado com sucesso */
@@ -1276,7 +1275,7 @@ void DatabaseModel::validateRelationships(void)
       /* Caso uma exceção for caputarada na criação do objeto especial
          armazena o erro no mapa de erros sendo que a chave do mapa
          é o identificador do objeto gerador do erro */
-      mapa_erros[itr1->first]=e;
+      error_map[itr1->first]=e;
       //Passa para o próximo objeto especial para tentar sua recriação
       itr1++; idx++;
      }
@@ -1286,23 +1285,23 @@ void DatabaseModel::validateRelationships(void)
   }
  }
  //Continua a iteração enquanto houver relacionamentos invalidados
- while(enc_rel_inv);
+ while(found_inval_rel);
 
  /* Caso hajam elementos no mapa de controle de erros de criação
     dos objetos especiais, os mesmos são inseridos na lista geral
     de erros de validação para serem disparados ao final do método */
- itr2=mapa_erros.begin();
- itr2_end=mapa_erros.end();
+ itr2=error_map.begin();
+ itr2_end=error_map.end();
  while(itr2!=itr2_end)
  {
   //Insere o erro na lista geral de erros
-  vet_erros.push_back(itr2->second);
+  errors.push_back(itr2->second);
   itr2++;
  }
 
  /* Caso a lista geral de erros não esteja vazia os erros serão
     disparados ao usuário */
- if(!vet_erros.empty())
+ if(!errors.empty())
  {
   /* Limpa a lista de objetos especiais para garantir que eventuais objetos
     não recriados pela quebra das referências não sejam trabalhados pelo
@@ -1318,10 +1317,10 @@ void DatabaseModel::validateRelationships(void)
   while(itr!=itr_end)
   {
    //Obtém um relacionamento generico
-   rel_base=dynamic_cast<BaseRelationship *>(*itr);
+   base_rel=dynamic_cast<BaseRelationship *>(*itr);
 
-   if(rel_base->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
-    this->updateTableFKRelationships(dynamic_cast<Table *>(rel_base->getTable(BaseRelationship::SRC_TABLE)));
+   if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+    this->updateTableFKRelationships(dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE)));
 
    itr++;
   }
@@ -1329,7 +1328,7 @@ void DatabaseModel::validateRelationships(void)
   //Define os objetos como modificados para forçar seu redesenho
   this->setObjectsModified();
 
-  throw Exception(ERR_INVALIDATED_OBJECTS,__PRETTY_FUNCTION__,__FILE__,__LINE__,vet_erros);
+  throw Exception(ERR_INVALIDATED_OBJECTS,__PRETTY_FUNCTION__,__FILE__,__LINE__,errors);
  }
 }
 
@@ -1337,7 +1336,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 {
  try
  {
-  unsigned tipo_rel;
+  unsigned rel_type;
 
   /* Retorna um erro caso se tente verificar redundância
      de relacionamentos a partir de um relacionamento
@@ -1345,7 +1344,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
   if(!rel)
    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  tipo_rel=rel->getRelationshipType();
+  rel_type=rel->getRelationshipType();
 
   /* Auto relacionamentos são desconsiderados da verificação.
      Já relacionamentos identificadores ou relacionamentos
@@ -1354,21 +1353,21 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
       (rel->isIdentifier() ||
        rel->hasIndentifierAttribute())) ||
 
-     (tipo_rel==Relationship::RELATIONSHIP_GEN ||
-      tipo_rel==Relationship::RELATIONSHIP_DEP))
+     (rel_type==Relationship::RELATIONSHIP_GEN ||
+      rel_type==Relationship::RELATIONSHIP_DEP))
   {
-   BaseTable *tabela_ref=NULL, *tab_orig=NULL;
-   Table *tabela_rec=NULL;
+   BaseTable *ref_table=NULL, *src_table=NULL;
+   Table *recv_table=NULL;
    Relationship *rel_aux=NULL;
-   BaseRelationship *rel_base=NULL;
+   BaseRelationship *base_rel=NULL;
    vector<BaseObject *>::iterator itr, itr_end;
-   bool ciclo_enc=false;
-   unsigned tipo_rel_aux;
+   bool found_cycle=false;
+   unsigned aux_rel_type;
    QString str_aux, msg;
 
    //Obtém tabela referencia e tabela receptora do relacionamento
-   tabela_rec=rel->getReceiverTable();
-   tabela_ref=rel->getReferenceTable();
+   recv_table=rel->getReceiverTable();
+   ref_table=rel->getReferenceTable();
 
    itr=relationships.begin();
    itr_end=relationships.end();
@@ -1376,19 +1375,19 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
    /* Com base nas tabela obtidas, varre a lista de relacionamento em busca do ciclo.
       Um ciclo será detectado quando a tabela referencia de um relacionamento for
       a tabela recptora do relacionamento usado na validação. */
-   while(itr!=itr_end && !ciclo_enc)
+   while(itr!=itr_end && !found_cycle)
    {
-    rel_base=dynamic_cast<BaseRelationship *>(*itr);
+    base_rel=dynamic_cast<BaseRelationship *>(*itr);
     itr++;
 
-    if(rel_base->getObjectType()==OBJ_RELATIONSHIP)
+    if(base_rel->getObjectType()==OBJ_RELATIONSHIP)
     {
      //Obtém um relacionamento da lista
-     rel_aux=dynamic_cast<Relationship *>(rel_base);
+     rel_aux=dynamic_cast<Relationship *>(base_rel);
      //Obtém o tipo do relacionamento atual
-     tipo_rel_aux=rel_aux->getRelationshipType();
+     aux_rel_type=rel_aux->getRelationshipType();
      //Obtém a tabela referência do relacionamento atual
-     tab_orig=rel_aux->getReferenceTable();
+     src_table=rel_aux->getReferenceTable();
 
      /* Caso a tabela referencia obtida seja igual a tabela receptora
         do relacionamento usado na validação e o tipo do relacionamento
@@ -1396,21 +1395,21 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
         um princípio de fechamento de ciclo, para isso a validação prosseguirá
         com a tabela receptora do relacionamento atual até que o a tabela receptora
         seja a própria tabela de referência do relacionamento da validação. */
-     if(tabela_rec==tab_orig &&  tipo_rel_aux==tipo_rel &&
+     if(recv_table==src_table &&  aux_rel_type==rel_type &&
         ((!rel_aux->isSelfRelationship() &&
           (rel_aux->isIdentifier() ||
            rel_aux->hasIndentifierAttribute())) ||
-         (tipo_rel_aux==Relationship::RELATIONSHIP_GEN ||
-          tipo_rel_aux==Relationship::RELATIONSHIP_DEP)))
+         (aux_rel_type==Relationship::RELATIONSHIP_GEN ||
+          aux_rel_type==Relationship::RELATIONSHIP_DEP)))
 
      {
       //A tabela receptora passará a ser a tabela receptora do relacionamento atual
-      tabela_rec=rel_aux->getReceiverTable();
+      recv_table=rel_aux->getReceiverTable();
       //Armazena o nome do relacionamento para disparar erro caso um ciclo seja fechado
       str_aux+=rel_aux->getName() + ", ";
       /* Um ciclo será detectado caso a tabela receptora seja igual a tabela referência
          do relacionamento usado na validação */
-      ciclo_enc=(tabela_rec==tabela_ref);
+      found_cycle=(recv_table==ref_table);
       //Volta ao início da lista de relacionamento para uma nova validação
       itr=relationships.begin();
      }
@@ -1419,7 +1418,7 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 
    /* Caso um ciclo seja encontrado, dispara um erro contendo os nomes dos
       relacionamentos os quais fecham o ciclo */
-   if(ciclo_enc)
+   if(found_cycle)
    {
     str_aux+=rel->getName();
     msg=Exception::getErrorMessage(ERR_INS_REL_GENS_REDUNDACY)
@@ -1437,20 +1436,19 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 
 void DatabaseModel::storeSpecialObjectsXML(void)
 {
- unsigned qtd, i, id_tipo;
-
+ unsigned count, i, type_id;
  vector<BaseObject *>::iterator itr, itr_end;
- Sequence *sequencia=NULL;
- Table *tabela=NULL;
- TableObject *obj_tab=NULL;
- Constraint *restricao=NULL;
- Index *indice=NULL;
- Trigger *gatilho=NULL;
- View *visao=NULL;
+ Sequence *sequence=NULL;
+ Table *table=NULL;
+ TableObject *tab_obj=NULL;
+ Constraint *constr=NULL;
+ Index *index=NULL;
+ Trigger *trigger=NULL;
+ View *view=NULL;
  BaseRelationship *rel=NULL;
  Reference ref;
- ObjectType tipo_obj_tab[3]={ OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_INDEX };
- bool enc=false;
+ ObjectType tab_obj_type[3]={ OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_INDEX };
+ bool found=false;
 
  try
  {
@@ -1462,81 +1460,81 @@ void DatabaseModel::storeSpecialObjectsXML(void)
   while(itr!=itr_end)
   {
    //Obtém a tabela a partir do iterador atual
-   tabela=dynamic_cast<Table *>(*itr);
+   table=dynamic_cast<Table *>(*itr);
    itr++;
 
    //Varre as listas de restrição e índice
-   for(id_tipo=0; id_tipo < 3; id_tipo++)
+   for(type_id=0; type_id < 3; type_id++)
    {
     //Obtém o a quantidade de objetos do tipo de objeto de tabela atual
-    qtd=tabela->getObjectCount(tipo_obj_tab[id_tipo]);
+    count=table->getObjectCount(tab_obj_type[type_id]);
 
     //Varre a lista atual de tipo de objetos de tabela
-    for(i=0; i < qtd; i++)
+    for(i=0; i < count; i++)
     {
      //Obtém um objeto da lista atual na posição atual
-     obj_tab=dynamic_cast<TableObject *>(tabela->getObject(i, tipo_obj_tab[id_tipo]));
-     enc=false;
+     tab_obj=dynamic_cast<TableObject *>(table->getObject(i, tab_obj_type[type_id]));
+     found=false;
 
      //Caso seja uma restrição
-     if(tipo_obj_tab[id_tipo]==OBJ_CONSTRAINT)
+     if(tab_obj_type[type_id]==OBJ_CONSTRAINT)
      {
       //Converte o objeto genérico (ObjetoTabela) para restrição
-      restricao=dynamic_cast<Constraint *>(obj_tab);
+      constr=dynamic_cast<Constraint *>(tab_obj);
 
       /* Uma restrição só será considerada como caso especial quando a mesma não foi
          incluída por relacionamento, ou seja, tal restrição a qual referencia colunas
          adicionadas por relacionamentos foi criada pelo usuário. */
-      enc=(!restricao->isAddedByRelationship() &&
-            restricao->isReferRelationshipAddedColumn() &&
-            restricao->getConstraintType()!=ConstraintType::primary_key);
+      found=(!constr->isAddedByRelationship() &&
+            constr->isReferRelationshipAddedColumn() &&
+            constr->getConstraintType()!=ConstraintType::primary_key);
 
       /* Caso uma restrição seja encontrada obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
-      if(enc)
-       xml_special_objs[restricao->getObjectId()]=restricao->getCodeDefinition(SchemaParser::XML_DEFINITION, true);
+      if(found)
+       xml_special_objs[constr->getObjectId()]=constr->getCodeDefinition(SchemaParser::XML_DEFINITION, true);
      }
-     else if(tipo_obj_tab[id_tipo]==OBJ_TRIGGER)
+     else if(tab_obj_type[type_id]==OBJ_TRIGGER)
      {
       //Converte o objeto tabela genérico em gatilho
-      gatilho=dynamic_cast<Trigger *>(obj_tab);
+      trigger=dynamic_cast<Trigger *>(tab_obj);
 
       /* O gatilho só será considerado como especial caso referencie
          colunas adicionadas por relacionamento */
-      enc=gatilho->isReferRelationshipAddedColumn();
+      found=trigger->isReferRelationshipAddedColumn();
 
       /* Caso um índice seja encontrado obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
-      if(enc)
-       xml_special_objs[gatilho->getObjectId()]=gatilho->getCodeDefinition(SchemaParser::XML_DEFINITION);
+      if(found)
+       xml_special_objs[trigger->getObjectId()]=trigger->getCodeDefinition(SchemaParser::XML_DEFINITION);
      }
      //Caso seja um índice
      else
      {
       //Converte o objeto tabela genérico em índice
-      indice=dynamic_cast<Index *>(obj_tab);
+      index=dynamic_cast<Index *>(tab_obj);
 
       /* O índice só será considerado como especial caso referencie
          colunas adicionadas por relacionamento */
-      enc=indice->isReferRelationshipAddedColumn();
+      found=index->isReferRelationshipAddedColumn();
 
       /* Caso um índice seja encontrado obedecendo a condição acima,
          armazena sua definição XML na lista de xml de objetos especiais */
-      if(enc)
-       xml_special_objs[indice->getObjectId()]=indice->getCodeDefinition(SchemaParser::XML_DEFINITION);
+      if(found)
+       xml_special_objs[index->getObjectId()]=index->getCodeDefinition(SchemaParser::XML_DEFINITION);
      }
 
      //Caso algum objeto especial for encontrado
-     if(enc)
+     if(found)
      {
       //Remove o mesmo da tabela possuidora
-      tabela->removeObject(obj_tab->getName(), obj_tab->getObjectType());
+      table->removeObject(tab_obj->getName(), tab_obj->getObjectType());
 
       //Remove as permissões existentes para o objeto
-      removePermissions(obj_tab);
+      removePermissions(tab_obj);
 
       //Decrementa os controladores da iteração para reiniciar a varredura
-      i--; qtd--;
+      i--; count--;
      }
     }
    }
@@ -1550,16 +1548,16 @@ void DatabaseModel::storeSpecialObjectsXML(void)
   while(itr!=itr_end)
   {
    //Obtém a sequencia atual através do iterador atual
-   sequencia=dynamic_cast<Sequence *>(*itr);
+   sequence=dynamic_cast<Sequence *>(*itr);
    itr++;
 
    /* Caso a coluna for incluída por relacionamento considera
       a sequencia como objeto especial */
-   if(sequencia->isReferRelationshipAddedColumn())
+   if(sequence->isReferRelationshipAddedColumn())
    {
-    xml_special_objs[sequencia->getObjectId()]=sequencia->getCodeDefinition(SchemaParser::XML_DEFINITION);
-    removeSequence(sequencia);
-    delete(sequencia);
+    xml_special_objs[sequence->getObjectId()]=sequence->getCodeDefinition(SchemaParser::XML_DEFINITION);
+    removeSequence(sequence);
+    delete(sequence);
    }
   }
 
@@ -1571,36 +1569,36 @@ void DatabaseModel::storeSpecialObjectsXML(void)
   while(itr!=itr_end)
   {
    //Obtém a visão atual através do iterador atual
-   visao=dynamic_cast<View *>(*itr);
+   view=dynamic_cast<View *>(*itr);
    itr++;
 
    /* Caso a visão esteja referenciando uma coluna incluída por
       relacionamento considera a mesma como objeto especial */
-   if(visao->isReferRelationshipAddedColumn())
+   if(view->isReferRelationshipAddedColumn())
    {
     //Armazena a definição XML da visão
-    xml_special_objs[visao->getObjectId()]=visao->getCodeDefinition(SchemaParser::XML_DEFINITION);
+    xml_special_objs[view->getObjectId()]=view->getCodeDefinition(SchemaParser::XML_DEFINITION);
 
     /* Caso hajam relacionamentos ligando a visão e as tabelas referenciadas
        os mesmo também serão armazenados como objetos especiais para posterior
        recriação */
 
     //Obtém a quantidade de referências as tabelas
-    qtd=visao->getReferenceCount(Reference::SQL_REFER_SELECT);
+    count=view->getReferenceCount(Reference::SQL_REFER_SELECT);
 
-    for(i=0; i < qtd; i++)
+    for(i=0; i < count; i++)
     {
      //Obtém uma referência
-     ref=visao->getReference(i, Reference::SQL_REFER_SELECT);
+     ref=view->getReference(i, Reference::SQL_REFER_SELECT);
      //Obtém a tabela da referência
-     tabela=ref.getTable();
+     table=ref.getTable();
 
-     if(tabela)
+     if(table)
      {
       /* Caso a tabela exista e um relacionamento tabela-visão entra a visão
          em questão e a tabela obtida, o mesmo será obtido do modelo e
          sua definição XML armazenada */
-      rel=getRelationship(visao, tabela);
+      rel=getRelationship(view, table);
 
       if(rel)
       {
@@ -1615,8 +1613,8 @@ void DatabaseModel::storeSpecialObjectsXML(void)
     }
 
     //Remove a visão do modelo e a desaloca
-    removeView(visao);
-    delete(visao);
+    removeView(view);
+    delete(view);
    }
   }
  }
@@ -2886,7 +2884,7 @@ void DatabaseModel::loadModel(const QString &nome_arq)
           //Dispara um sinal com o progresso (aproximado) do carregamento de objetos
           if(!signalsBlocked())
           {
-           emit s_objetoCarregado(XMLParser::getCurrentBufferLine()/XMLParser::getBufferLineCount(),
+           emit s_objectLoaded(XMLParser::getCurrentBufferLine()/XMLParser::getBufferLineCount(),
                                   trUtf8("Loading object: %1 (%2)")
                                    .arg(QString::fromUtf8(objeto->getName()))
                                    .arg(objeto->getTypeName()),
@@ -6238,7 +6236,7 @@ QString DatabaseModel::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
      qtd_defs_geradas++;
      if(!signalsBlocked())
      {
-      emit s_objetoCarregado((qtd_defs_geradas/qtd_geral_obj) * 100,
+      emit s_objectLoaded((qtd_defs_geradas/qtd_geral_obj) * 100,
                              msg.arg(tipo_def_str)
                                .arg(QString::fromUtf8(objeto->getName()))
                                .arg(objeto->getTypeName()),
@@ -6521,7 +6519,7 @@ QString DatabaseModel::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
    qtd_defs_geradas++;
    if(!signalsBlocked())
    {
-    emit s_objetoCarregado((qtd_defs_geradas/qtd_geral_obj) * 100,
+    emit s_objectLoaded((qtd_defs_geradas/qtd_geral_obj) * 100,
                            msg.arg(tipo_def_str)
                               .arg(QString::fromUtf8(objeto->getName()))
                               .arg(objeto->getTypeName()),
@@ -6552,7 +6550,7 @@ QString DatabaseModel::getCodeDefinition(unsigned tipo_def, bool exportar_arq)
    qtd_defs_geradas++;
    if(!signalsBlocked())
    {
-    emit s_objetoCarregado((qtd_defs_geradas/qtd_geral_obj) * 100,
+    emit s_objectLoaded((qtd_defs_geradas/qtd_geral_obj) * 100,
                            msg.arg(tipo_def_str)
                               .arg(QString::fromUtf8((*itr)->getName()))
                               .arg(objeto->getTypeName()),

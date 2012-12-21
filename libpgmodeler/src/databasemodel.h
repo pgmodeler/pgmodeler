@@ -136,15 +136,15 @@ class DatabaseModel:  public QObject, public BaseObject {
   /* Retorna um objeto do modelo buscando através de seu nome
      e especificando o tipo do mesmo. Além disso o método armazena no 3º parâmetro
      o índice do objeto caso seja encontrado */
-  BaseObject *getObject(const QString &obj_name, ObjectType tipo_obj, int &idx_obj);
+  BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
 
   /* Adiciona um objeto ao modelo fazendo o cast necessário para o método
      de inserção específico para o objeto */
-  void __addObject(BaseObject *objeto, int idx_obj=-1);
+  void __addObject(BaseObject *object, int obj_idx=-1);
 
   /* Remove um objeto do modelo fazendo o cast necessário para o método
      de remoção específico para o objeto */
-  void __removeObject(BaseObject *objeto, int idx_obj=-1);
+  void __removeObject(BaseObject *object, int obj_idx=-1);
 
   /* Recria um objeto especial partir da definição xml do mesmo informada no parâmetro.
      Este método deve ser chamando SEMPRE quando todos os relacionamentos estão conectados
@@ -165,7 +165,7 @@ class DatabaseModel:  public QObject, public BaseObject {
   ~DatabaseModel(void);
 
   //Retorna a lista de objetos referente ao tipo de objeto passado
-  vector<BaseObject *> *getObjectList(ObjectType tipo_obj);
+  vector<BaseObject *> *getObjectList(ObjectType obj_type);
 
   //Desconecta os relacionamentos ordenadamente
   void disconnectRelationships(void);
@@ -181,10 +181,10 @@ class DatabaseModel:  public QObject, public BaseObject {
     /* Verifica se a definição SQL/XML do objeto é válida ou não, efetuando
      chamadas ao parser de esquemas para interpretar o arquivo referente
      ao objeto */
-  static QString validateObjectDefinition(BaseObject *objeto, unsigned tipo_def);
+  static QString validateObjectDefinition(BaseObject *object, unsigned def_type);
 
   /* Retorna os objetos do tipo especificado no esquema especificado */
-  vector<BaseObject *> getObjects(ObjectType tipo_obj, BaseObject *schema=NULL);
+  vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=NULL);
 
   //Obtém o índice de um objeto através de seu nome e tipo
   int getObjectIndex(const QString &obj_name, ObjectType tipo_obj);
@@ -193,36 +193,36 @@ class DatabaseModel:  public QObject, public BaseObject {
   int getObjectIndex(BaseObject *objeto);
 
   //Adiciona um objeto ao modelo do tipo especificado
-  void addObject(BaseObject *objeto, int idx_obj=-1);
+  void addObject(BaseObject *object, int obj_idx=-1);
 
   /* Remove um objeto de sua respecitva lista através de seu endereço
      em memória. Este método Não desaloca o objeto passado, isso deve
      ser feito a partir do método de exclusão a partir do qual este
      método foi chamado */
-  void removeObject(BaseObject *objeto, int idx_obj=-1);
+  void removeObject(BaseObject *object, int obj_idx=-1);
 
   //Remove um objeto através de seu índice e tipo
-  void removeObject(unsigned idx_obj, ObjectType tipo_obj);
+  void removeObject(unsigned obj_idx, ObjectType obj_type);
 
   /* Retorna um objeto do modelo buscando através de seu nome e espeficiando
      o tipo do mesmo */
-  BaseObject *getObject(unsigned idx_obj, ObjectType tipo_obj);
+  BaseObject *getObject(unsigned idx_obj, ObjectType obj_type);
 
   //Carrega o modelo de banco de dados de um arquivo
   void loadModel(const QString &nome_arq);
 
   //Define a codificação do banco de dados
-  void setEncoding(EncodingType tipo_cod);
+  void setEncoding(EncodingType encod);
 
   /* Define uma das localizações do banco de dados. Os códigos
      de localização são padronizados e definidos em /usr/include/locale.h */
-  void setLocalization(int cod_local, const QString &valor);
+  void setLocalization(int localiz_id, const QString &value);
 
   //Define o limite de conexão do banco de dados
-  void setConnectionLimit(int conn_limit);
+  void setConnectionLimit(int conn_lim);
 
   //Define o banco de dados modelo
-  void setTemplateDB(const QString &template_db);
+  void setTemplateDB(const QString &temp_db);
 
   //Define o autor do banco de dados
   void setAuthor(const QString &author);
@@ -231,19 +231,19 @@ class DatabaseModel:  public QObject, public BaseObject {
      da classe ObjetoBase. O metodo sobrecarregado protege
      ou desprotege todos os objetos do modelo em uma
      só chamada */
-  void setProtected(bool is_protected);
+  void setProtected(bool value);
 
   //Destrói todos os objetos do modelo
   void destroyObjects(void);
 
   //Obtém o número de objetos de um tipo especificado
-  unsigned getObjectCount(ObjectType tipo_obj);
+  unsigned getObjectCount(ObjectType obj_type);
 
   //Obtém o número total de objetos no modelo
   unsigned getObjectCount(void);
 
   //Obtém uma das localizações do modelo
-  QString getLocalization(int cod_local);
+  QString getLocalization(int localiz_id);
 
   //Obtém o limite de conexões do banco
   int getConnectionLimit(void);
@@ -300,14 +300,14 @@ class DatabaseModel:  public QObject, public BaseObject {
   Schema *getSchema(unsigned idx_obj);
 
   //Métodos de manipulação de visões
-  void addView(View *visao, int idx_obj=-1);
-  void removeView(View *visao, int idx_obj=-1);
-  View *getView(unsigned idx_obj);
+  void addView(View *view, int obj_idx=-1);
+  void removeView(View *view, int obj_idx=-1);
+  View *getView(unsigned obj_idx);
 
   //Métodos de manipulação de tabela
-  void addTable(Table *tabela, int idx_obj=-1);
-  void removeTable(Table *tabela, int idx_obj=-1);
-  Table *getTable(unsigned idx_obj);
+  void addTable(Table *table, int obj_idx=-1);
+  void removeTable(Table *table, int obj_idx=-1);
+  Table *getTable(unsigned obj_idx);
 
   //Métodos de manipulação de tipos
   void addType(Type *tipo, int idx_obj=-1);
@@ -365,9 +365,9 @@ class DatabaseModel:  public QObject, public BaseObject {
   Domain *getDomain(unsigned idx_obj);
 
   //Métodos de manipulação de sequencia
-  void addSequence(Sequence *sequencia, int idx_obj=-1);
-  void removeSequence(Sequence *sequencia, int idx_obj=-1);
-  Sequence *getSequence(unsigned idx_obj);
+  void addSequence(Sequence *sequence, int obj_idx=-1);
+  void removeSequence(Sequence *sequence, int obj_idx=-1);
+  Sequence *getSequence(unsigned obj_idx);
 
   //Métodos de manipulação de permissões
   void addPermission(Permission *permissao);
@@ -431,13 +431,13 @@ class DatabaseModel:  public QObject, public BaseObject {
   /* Cria automaticamente relacionamentos entre tabelas e a visão passada
      caso estes não existam no modelo. Remove relacionamentos os quais se
      tornaram inválidos ou seja, a visão deixa de referenciar uma dada tabela */
-  void updateViewRelationships(View *visao);
+  void updateViewRelationships(View *view);
 
   /* Cria automaticamente relacionamentos entre tabelas as quais estão relacionadas
      através de chaves estrangeiras criadas pelo usuário. Caso já exista um relacionamento
      entre duas tabelas mas o usuário crie uma segunda chave estrangeira com aplicação similiar
      nenhum relacionamento será criado. */
-  void updateTableFKRelationships(Table *tabela);
+  void updateTableFKRelationships(Table *table);
 
   /* Cria uma restrição a partir do XML. Caso o parâmetro 'objeto' seja uma tabela
      cria a restrição e já adiciona automaticaene    primeira. Caso seja um relacionamento
@@ -488,10 +488,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 
  signals:
   //Sinal emitido sempre que um novo objeto for adicionado ao modelo
-  void s_objetoAdicionado(BaseObject *objeto);
+  void s_objectAdded(BaseObject *objeto);
   //Sinal emitido sempre que um objeto for excluído do modelo
-  void s_objetoRemovido(BaseObject *objeto);
-  void s_objetoCarregado(int progresso, QString object_id, unsigned id_icone);
+  void s_objectRemoved(BaseObject *objeto);
+  void s_objectLoaded(int progresso, QString object_id, unsigned id_icone);
 };
 
 #endif

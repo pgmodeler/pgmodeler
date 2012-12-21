@@ -118,7 +118,7 @@ void CodigoFonteWidget::gerarCodigoFonteObjeto(int)
    {
     prog_tarefa->setWindowTitle(trUtf8("Generating source code..."));
     prog_tarefa->show();
-    connect(this->modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)),
+    connect(this->modelo, SIGNAL(s_objectLoaded(int,QString,unsigned)),
             prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
    }
 

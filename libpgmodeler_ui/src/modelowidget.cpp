@@ -253,8 +253,8 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  connect(action_colar, SIGNAL(triggered(bool)),this,SLOT(colarObjetos(void)));
  connect(action_recortar, SIGNAL(triggered(bool)),this,SLOT(recortarObjetos(void)));
 
- connect(modelo, SIGNAL(s_objetoAdicionado(BaseObject*)), this, SLOT(manipularAdicaoObjeto(BaseObject *)));
- connect(modelo, SIGNAL(s_objetoRemovido(BaseObject*)), this, SLOT(manipularRemocaoObjeto(BaseObject *)));
+ connect(modelo, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(manipularAdicaoObjeto(BaseObject *)));
+ connect(modelo, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(manipularRemocaoObjeto(BaseObject *)));
  connect(cena, SIGNAL(s_objetosMovimentados(bool)), this, SLOT(manipularMovimentoObjetos(bool)));
  connect(cena, SIGNAL(s_objetoModificado(BaseGraphicObject*)), this, SLOT(manipularModificacaoObjeto(BaseGraphicObject*)));
  connect(cena, SIGNAL(s_objetoDuploClique(BaseGraphicObject*)), this, SLOT(manipularDuploCliqueObjeto(BaseGraphicObject*)));
@@ -828,7 +828,7 @@ void ModeloWidget::carregarModelo(const QString &nome_arq)
  try
  {
   //Configura o widget de progresso para exibir o progresso de carregamento do modelo
-  connect(modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
+  connect(modelo, SIGNAL(s_objectLoaded(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
   prog_tarefa->setWindowTitle(trUtf8("Loading database model"));
   prog_tarefa->show();
 
@@ -1070,7 +1070,7 @@ void ModeloWidget::salvarModelo(const QString &nome_arq)
  try
  {
   //Configura o widget de progresso de tarefa para exibir o progresso do salvamento do arquivo
-  connect(modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
+  connect(modelo, SIGNAL(s_objectLoaded(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
   prog_tarefa->setWindowTitle(trUtf8("Saving database model"));
   prog_tarefa->show();
 
