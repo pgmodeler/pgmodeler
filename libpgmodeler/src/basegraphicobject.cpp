@@ -34,7 +34,7 @@ void BaseGraphicObject::setPositionAttribute(void)
 {
  attributes[ParsersAttributes::X_POS]=QString("%1").arg(position.x());
  attributes[ParsersAttributes::Y_POS]=QString("%1").arg(position.y());
- attributes[ParsersAttributes::POSITION]=SchemaParser::getObjectDefinition(ParsersAttributes::POSITION,
+ attributes[ParsersAttributes::POSITION]=SchemaParser::getCodeDefinition(ParsersAttributes::POSITION,
                                      attributes, SchemaParser::XML_DEFINITION);
 }
 

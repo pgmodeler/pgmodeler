@@ -390,7 +390,7 @@ class PgSQLType: public BaseType{
   bool acceptsPrecision(void);
 
 
-  QString getObjectDefinition(unsigned def_type, QString ref_type="");
+  QString getCodeDefinition(unsigned def_type, QString ref_type="");
 
   QString operator ~ (void);
 

@@ -264,7 +264,7 @@ void FuncaoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_
  ObjetoBaseWidget::definirAtributos(modelo, lista_op, funcao);
 
 //Obtém todas as linguagens criadas no modelo para armazená-las num combo
- linguagens=modelo->obterObjetos(OBJ_LANGUAGE);
+ linguagens=modelo->getObjects(OBJ_LANGUAGE);
 
  //Caso existam linguagens insere-as numa QStringList para ordená-las alfabeticamente
  while(!linguagens.empty())
@@ -459,7 +459,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
   for(i=0; i < 7; i++)
   {
    //Obtém a lista de objetos do tipo atual
-   lista_obj=modelo->obterListaObjetos(tipos[i]);
+   lista_obj=modelo->getObjectList(tipos[i]);
    itr=lista_obj->begin();
    itr_end=lista_obj->end();
 
@@ -575,7 +575,7 @@ void FuncaoWidget::aplicarConfiguracao(void)
   func=dynamic_cast<Function *>(this->objeto);
 
   //Atribui os valores básicos configurados no formulário para a função
-  func->setLanguage(modelo->obterObjeto(linguagem_cmb->currentText(), OBJ_LANGUAGE));
+  func->setLanguage(modelo->getObject(linguagem_cmb->currentText(), OBJ_LANGUAGE));
   func->setFunctionType(tipo_func_cmb->currentText());
   func->setWindowFunction(func_janela_chk->isChecked());
   func->setExecutionCost(custo_exec_spb->value());

@@ -136,8 +136,8 @@ QString Cast::getCodeDefinition(unsigned def_type)
  }
  else
  {
-  attributes[ParsersAttributes::SOURCE_TYPE]=types[SRC_TYPE].getObjectDefinition(def_type);
-  attributes[ParsersAttributes::DEST_TYPE]=types[DST_TYPE].getObjectDefinition(def_type);
+  attributes[ParsersAttributes::SOURCE_TYPE]=types[SRC_TYPE].getCodeDefinition(def_type);
+  attributes[ParsersAttributes::DEST_TYPE]=types[DST_TYPE].getCodeDefinition(def_type);
  }
 
  if(cast_function)

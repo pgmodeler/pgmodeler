@@ -378,7 +378,7 @@ bool SchemaParser::isSpecialCharacter(char chr)
         chr==CHR_END_PURETEXT);
 }
 
-QString SchemaParser::getObjectDefinition(const QString & obj_name, map<QString, QString> &attributes, unsigned def_type)
+QString SchemaParser::getCodeDefinition(const QString & obj_name, map<QString, QString> &attributes, unsigned def_type)
 {
  if(obj_name!="")
  {
@@ -394,7 +394,7 @@ QString SchemaParser::getObjectDefinition(const QString & obj_name, map<QString,
              GlobalAttributes::DIR_SEPARATOR + obj_name + GlobalAttributes::SCHEMA_EXT;
 
     //Try to get the object definitin from the specified path
-    return(getObjectDefinition(filename, attributes));
+    return(getCodeDefinition(filename, attributes));
    }
    catch(Exception &e)
    {
@@ -413,7 +413,7 @@ QString SchemaParser::getObjectDefinition(const QString & obj_name, map<QString,
              GlobalAttributes::COMMON_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
              obj_name + GlobalAttributes::SCHEMA_EXT;
 
-    return(getObjectDefinition(filename, attributes));
+    return(getCodeDefinition(filename, attributes));
    }
   }
   else
@@ -421,7 +421,7 @@ QString SchemaParser::getObjectDefinition(const QString & obj_name, map<QString,
    filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
             GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + obj_name +
             GlobalAttributes::SCHEMA_EXT;
-   return(getObjectDefinition(filename, attributes));
+   return(getCodeDefinition(filename, attributes));
   }
  }
  else return("");
@@ -432,7 +432,7 @@ void SchemaParser::setIgnoreUnkownAttributes(bool ignore)
  ignore_unk_atribs=ignore;
 }
 
-QString SchemaParser::getObjectDefinition(const QString &filename, map<QString,QString> &attributes)
+QString SchemaParser::getCodeDefinition(const QString &filename, map<QString,QString> &attributes)
 {
  QString object_def;
 

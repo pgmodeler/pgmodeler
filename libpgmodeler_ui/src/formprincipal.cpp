@@ -580,19 +580,19 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
  //Cria objetos do sistema (esquema public e linguagens c, sql e plpgsql)
  esq_publico=new Schema;
  esq_publico->setName("public");
- tab_modelo->modelo->adicionarObjeto(esq_publico);
+ tab_modelo->modelo->addObject(esq_publico);
 
  ling=new Language;
  ling->BaseObject::setName(~LanguageType(LanguageType::c));
- tab_modelo->modelo->adicionarObjeto(ling);
+ tab_modelo->modelo->addObject(ling);
 
  ling=new Language;
  ling->BaseObject::setName(~LanguageType(LanguageType::sql));
- tab_modelo->modelo->adicionarObjeto(ling);
+ tab_modelo->modelo->addObject(ling);
 
  ling=new Language;
  ling->BaseObject::setName(~LanguageType(LanguageType::plpgsql));
- tab_modelo->modelo->adicionarObjeto(ling);
+ tab_modelo->modelo->addObject(ling);
 
  if(!nome_arq.isEmpty())
  {
@@ -908,7 +908,7 @@ void FormPrincipal::atualizarModelos(void)
  //Força a atualização de todos os modelos abertos
  qtd=modelos_tab->count();
  for(i=0; i < qtd; i++)
-  dynamic_cast<ModeloWidget *>(modelos_tab->widget(i))->modelo->definirObjetosModificados();
+  dynamic_cast<ModeloWidget *>(modelos_tab->widget(i))->modelo->setObjectsModified();
 }
 
 void FormPrincipal::salvarTodosModelos(void)
@@ -1298,7 +1298,7 @@ void FormPrincipal::executarPlugin(void)
 void FormPrincipal::salvarModeloTemporario(void)
 {
  if(modelo_atual)
-  modelo_atual->modelo->salvarModelo(modelo_atual->getNameArquivoTemp(), SchemaParser::XML_DEFINITION);
+  modelo_atual->modelo->saveModel(modelo_atual->getNameArquivoTemp(), SchemaParser::XML_DEFINITION);
 }
 
 void FormPrincipal::exibirVisaoGeral(bool exibir)

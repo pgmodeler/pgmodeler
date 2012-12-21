@@ -427,7 +427,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
 
     //Gera o esquema da conexão e contatena    demais geradas
     params_config[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
-    SchemaParser::getObjectDefinition(GlobalAttributes::CONFIGURATIONS_DIR +
+    SchemaParser::getCodeDefinition(GlobalAttributes::CONFIGURATIONS_DIR +
                                         GlobalAttributes::DIR_SEPARATOR +
                                         GlobalAttributes::SCHEMAS_DIR +
                                         GlobalAttributes::DIR_SEPARATOR +

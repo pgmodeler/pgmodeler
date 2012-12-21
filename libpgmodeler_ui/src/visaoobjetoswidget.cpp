@@ -342,7 +342,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
       qtd=1;
     else
      //Para os demais objetos, a quantidade é obtida através de uma consulta ao modelo
-     qtd=modelo_bd->obterNumObjetos(tipos[id_tipo]);
+     qtd=modelo_bd->getObjectCount(tipos[id_tipo]);
 
     /* O preenchimento da tabela só é executando quando o tipo de objeto está
        marcado para ser exibido e exista pelo menos 1 objeto do tipo em questão
@@ -352,7 +352,7 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
      listaobjetos_tbw->insertRow(id_lin);
 
      if(tipos[id_tipo]!=OBJ_DATABASE)
-      objeto=modelo_bd->obterObjeto(id_lin, tipos[id_tipo]);
+      objeto=modelo_bd->getObject(id_lin, tipos[id_tipo]);
      else
       objeto=modelo_bd;
 
@@ -507,12 +507,12 @@ void VisaoObjetosWidget::atualizarListaObjetos(void)
    }
 
    //Insere os objetos (colunas, restrições, indices, gatilhos, etc) das tabelas do modelo
-   qtd=/*modelo_wgt->*/modelo_bd->obterNumObjetos(OBJ_TABLE);
+   qtd=/*modelo_wgt->*/modelo_bd->getObjectCount(OBJ_TABLE);
 
    for(id_tab=0; id_tab < qtd; id_tab++)
    {
     //Obtém uma tabela do modelo
-    tabela=dynamic_cast<Table *>(modelo_bd->obterTabela(id_tab));
+    tabela=dynamic_cast<Table *>(modelo_bd->getTable(id_tab));
 
     for(id_tipo=0; id_tipo < qtd_subtipos; id_tipo++)
     {
@@ -635,7 +635,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
 			      QString(".png"));
 
   //Obtém a quantidade de esquemas existentes no modelo
-  qtd=(modelo_bd->obterNumObjetos(OBJ_SCHEMA));
+  qtd=(modelo_bd->getObjectCount(OBJ_SCHEMA));
   item=new QTreeWidgetItem(raiz);
   item->setIcon(0,icone_grupo);
 
@@ -662,7 +662,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
     else
     {
      //Obtém o esquema no índice atual
-     esquema=/*modelo_wgt->*/modelo_bd->obterObjeto(i,OBJ_SCHEMA);
+     esquema=/*modelo_wgt->*/modelo_bd->getObject(i,OBJ_SCHEMA);
      /* Configura um item para o esquema obtido, cujo texto
         será o próprio nome do objeto obtido */
      item2=new QTreeWidgetItem(item);
@@ -699,7 +699,7 @@ void VisaoObjetosWidget::atualizarSubArvoreEsquema(QTreeWidgetItem *raiz)
 		       QString(".png")));
 
       //Obtém os objetos do tipo atual dentro do esquema atual
-      lista_obj=/*modelo_wgt->*/modelo_bd->obterObjetos(tipos[i1], esquema);
+      lista_obj=/*modelo_wgt->*/modelo_bd->getObjects(tipos[i1], esquema);
       /* Configura o texto do item como sendo o nome do tipo atual com a
          quantidade de objetos encontrados */
       qtd2=lista_obj.size();
@@ -795,7 +795,7 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
   try
   {
    //Obtém a lista de objetos do tipo tabela presentes no esquema passado
-   lista_obj=/*modelo_wgt->*/modelo_bd->obterObjetos(OBJ_TABLE, esquema);
+   lista_obj=/*modelo_wgt->*/modelo_bd->getObjects(OBJ_TABLE, esquema);
    //Configura o elemento raiz como sendo um grupo de tabelas
    item=new QTreeWidgetItem(raiz);
    item->setIcon(0,icone_grupo);
@@ -988,7 +988,7 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
                        str_aux + QString("_grp") + QString(".png")));
 
       //Obtém a quantidade de objetos do tipo atual
-      qtd=/*modelo_wgt->*/modelo_bd->obterNumObjetos(tipos[i]);
+      qtd=/*modelo_wgt->*/modelo_bd->getObjectCount(tipos[i]);
       /* Configura o texto do item de grupo com o nome do tipo e a quantidade
          de objetos daquele tipo presente no modelo */
       item1->setText(0,BaseObject::getTypeName(tipos[i]) +
@@ -1002,7 +1002,7 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
       for(i1=0; i1 < qtd; i1++)
       {
        //Obtém o objeto atual do tipo atual
-       objeto=/*modelo_wgt->*/modelo_bd->obterObjeto(i1,tipos[i]);
+       objeto=/*modelo_wgt->*/modelo_bd->getObject(i1,tipos[i]);
        //Cria um item na árvore e seta seu texto como sendo próprio nome do objeto
        item2=new QTreeWidgetItem(item1);
        item2->setText(0,QString::fromUtf8(objeto->getName()));

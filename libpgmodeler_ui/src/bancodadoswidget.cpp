@@ -61,21 +61,21 @@ void BancoDadosWidget::definirAtributos(DatabaseModel *modelo)
   int idx;
 
   //Configura os atributos de limite de conexão, banco modelo e autor
-  limconexao_sb->setValue(modelo->obterLimiteConexao());
-  bdmodelo_edt->setText(QString::fromUtf8(modelo->obterBDModelo()));
-  autor_edt->setText(QString::fromUtf8(modelo->obterAutor()));
+  limconexao_sb->setValue(modelo->getConnectionLimit());
+  bdmodelo_edt->setText(QString::fromUtf8(modelo->getTemplateDB()));
+  autor_edt->setText(QString::fromUtf8(modelo->getAuthor()));
 
   //Configura o combo de codificação com a codificação atual
-  idx=codificacao_cmb->findText(~modelo->obterCodificacao());
+  idx=codificacao_cmb->findText(~modelo->getEncoding());
   if(idx < 0) idx=0;
   codificacao_cmb->setCurrentIndex(idx);
 
   //Configura as localizações LC_COLLATE E LC_CTYPE de acordo com a conf. atual
-  idx=lccollate_cmb->findText(modelo->obterLocalizacao(LC_COLLATE));
+  idx=lccollate_cmb->findText(modelo->getLocalization(LC_COLLATE));
   if(idx < 0) idx=0;
   lccollate_cmb->setCurrentIndex(idx);
 
-  idx=lcctype_cmb->findText(modelo->obterLocalizacao(LC_CTYPE));
+  idx=lcctype_cmb->findText(modelo->getLocalization(LC_CTYPE));
   if(idx < 0) idx=0;
   lcctype_cmb->setCurrentIndex(idx);
 
@@ -92,25 +92,25 @@ void BancoDadosWidget::aplicarConfiguracao(void)
   ObjetoBaseWidget::aplicarConfiguracao();
 
   //Define o autor do modelo
-  modelo->definirAutor(autor_edt->text().toUtf8());
+  modelo->setAuthor(autor_edt->text().toUtf8());
 
   /* Define a condificação do modelo de acordo com a selecionada no formulário
      caso a codifição 'Padrão' seja selecionada o modelo usará a codificação padrão
      do SGBD em que for executado o script sql gerado */
-  modelo->definirCodificacao(EncodingType(codificacao_cmb->currentText()));
+  modelo->setEncoding(EncodingType(codificacao_cmb->currentText()));
 
   /* Define as localização LC_COLLATE e LC_CTYPE do modelo de acordo com a selecionada
      no formulário caso a localização 'Padrão' seja selecionada o modelo usará a localização
      padrão do SGBD em que for executado o script sql gerado */
   if(lccollate_cmb->currentIndex() > 0)
-   modelo->definirLocalizacao(LC_COLLATE, lccollate_cmb->currentText());
+   modelo->setLocalization(LC_COLLATE, lccollate_cmb->currentText());
   else
-   modelo->definirLocalizacao(LC_COLLATE, "");
+   modelo->setLocalization(LC_COLLATE, "");
 
   if(lcctype_cmb->currentIndex() > 0)
-   modelo->definirLocalizacao(LC_CTYPE, lcctype_cmb->currentText());
+   modelo->setLocalization(LC_CTYPE, lcctype_cmb->currentText());
   else
-   modelo->definirLocalizacao(LC_CTYPE, "");
+   modelo->setLocalization(LC_CTYPE, "");
 
   finalizarConfiguracao();
  }

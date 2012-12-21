@@ -610,12 +610,12 @@ void TabelaWidget::aplicarConfiguracao(void)
 
   try
   {
-   if(modelo->obterRelacionamento(tabela, NULL))
+   if(modelo->getRelationship(tabela, NULL))
     /* Faz a validação dos relacionamentos para refletir a nova configuração
        da tabela */
-    modelo->validarRelacionamentos();
+    modelo->validateRelationships();
 
-   modelo->atualizarRelFkTabela(tabela);
+   modelo->updateTableFKRelationships(tabela);
   }
   catch(Exception &e)
   {

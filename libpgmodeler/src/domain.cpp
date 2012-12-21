@@ -104,7 +104,7 @@ QString Domain::getCodeDefinition(unsigned def_type)
   attributes[ParsersAttributes::TYPE]=(*type);
  else
  {
-  attributes[ParsersAttributes::TYPE]=type.getObjectDefinition(def_type);
+  attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
  }
 
  return(BaseObject::__getCodeDefinition(def_type));

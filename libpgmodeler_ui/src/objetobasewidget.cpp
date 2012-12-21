@@ -223,7 +223,7 @@ void ObjetoBaseWidget::definirAtributos(DatabaseModel *modelo, OperationList *li
 
   //Caso o objeto não possua um esquema, preenche o campo com o esquema public
   if(!objeto->getSchema())
-   sel_esquema->definirObjeto(modelo->obterObjeto("public", OBJ_SCHEMA));
+   sel_esquema->definirObjeto(modelo->getObject("public", OBJ_SCHEMA));
   else
    sel_esquema->definirObjeto(objeto->getSchema());
 
@@ -247,7 +247,7 @@ void ObjetoBaseWidget::definirAtributos(DatabaseModel *modelo, OperationList *li
  else
  {
   obj_protegido_frm->setVisible(false);
-  sel_esquema->definirObjeto(modelo->obterObjeto("public", OBJ_SCHEMA));
+  sel_esquema->definirObjeto(modelo->getObject("public", OBJ_SCHEMA));
  }
 }
 
@@ -560,14 +560,14 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
     else
     {
      obj_pai=modelo;
-     obj_aux=modelo->obterObjeto(nome_obj,tipo_obj);
+     obj_aux=modelo->getObject(nome_obj,tipo_obj);
 
      if(tipo_obj==OBJ_FUNCTION)
-      obj_aux1=modelo->obterObjeto(dynamic_cast<Function *>(objeto)->getSignature(),tipo_obj);
+      obj_aux1=modelo->getObject(dynamic_cast<Function *>(objeto)->getSignature(),tipo_obj);
      else if(tipo_obj==OBJ_OPERATOR)
-      obj_aux1=modelo->obterObjeto(dynamic_cast<Operator *>(objeto)->getSignature(),tipo_obj);
+      obj_aux1=modelo->getObject(dynamic_cast<Operator *>(objeto)->getSignature(),tipo_obj);
      else
-      obj_aux1=modelo->obterObjeto(objeto->getName(),tipo_obj);
+      obj_aux1=modelo->getObject(objeto->getName(),tipo_obj);
 
      novo_obj=(!obj_aux && !obj_aux1);
     }
@@ -647,7 +647,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
    else if(relacionamento && (tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT))
     relacionamento->addObject(dynamic_cast<TableObject *>(this->objeto));
    else if(tipo_obj!=OBJ_PARAMETER)
-    modelo->adicionarObjeto(this->objeto);
+    modelo->addObject(this->objeto);
 
    if(lista_op)
    {
@@ -662,7 +662,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
   }
   else
    //Caso o objeto esteja sendo atualizado, apenas valida a definição do mesmo.
-   modelo->validarDefinicaoObjeto(this->objeto, SchemaParser::SQL_DEFINITION);
+   modelo->validateObjectDefinition(this->objeto, SchemaParser::SQL_DEFINITION);
 
 
   /* Caso o objeto em questão seja um esquema,faz com que os objetos do tipo
@@ -683,7 +683,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
    for(i=0; i < 4; i++)
    {
     //Obtém a lista do tipo de objeto atual
-    lista_obj=modelo->obterListaObjetos(tipos[i]);
+    lista_obj=modelo->getObjectList(tipos[i]);
     itr=lista_obj->begin();
     itr_end=lista_obj->end();
 
@@ -785,7 +785,7 @@ void ObjetoBaseWidget::cancelarConfiguracao(void)
      não é um objeto de tabela (coluna, restrição, gatilho, etc) sendo assim
      o mesmo será removido do modelo */
   if(!tabela)
-   modelo->removerObjeto(this->objeto);
+   modelo->removeObject(this->objeto);
   else if(tabela)
    /* Caso o atributo 'tabela' esteja alocado indica que o objeto configurado
       é um objeto de tabela (coluna, restrição, gatilho, etc) sendo assim

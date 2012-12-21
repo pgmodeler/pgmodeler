@@ -91,45 +91,45 @@ void ConfAparenciaWidget::criarObjetosExemplo(void)
   unsigned qtd, i;
 
   //Caso não existam objetos no modelo faz o carregamento do arquivo
-  if(modelo->obterNumObjetos()==0)
+  if(modelo->getObjectCount()==0)
   {
-   modelo->carregarModelo(GlobalAttributes::CONFIGURATIONS_DIR +
+   modelo->loadModel(GlobalAttributes::CONFIGURATIONS_DIR +
                           GlobalAttributes::DIR_SEPARATOR +
                           GlobalAttributes::EXAMPLE_MODEL);
 
-   qtd=modelo->obterNumObjetos(OBJ_TABLE);
+   qtd=modelo->getObjectCount(OBJ_TABLE);
    for(i=0; i < qtd; i++)
    {
-    tab=new OGTabela(modelo->obterTabela(i));
+    tab=new OGTabela(modelo->getTable(i));
     tab->setSelected(i==1);
     cena->addItem(tab);
    }
 
-   qtd=modelo->obterNumObjetos(OBJ_VIEW);
+   qtd=modelo->getObjectCount(OBJ_VIEW);
    for(i=0; i < qtd; i++)
    {
-    visao=new OGVisao(modelo->obterVisao(i));
+    visao=new OGVisao(modelo->getView(i));
     cena->addItem(visao);
    }
 
-   qtd=modelo->obterNumObjetos(OBJ_RELATIONSHIP);
+   qtd=modelo->getObjectCount(OBJ_RELATIONSHIP);
    for(i=0; i < qtd; i++)
    {
-    rel=new OGRelacionamento(modelo->obterRelacionamento(i, OBJ_RELATIONSHIP));
+    rel=new OGRelacionamento(modelo->getRelationship(i, OBJ_RELATIONSHIP));
     cena->addItem(rel);
    }
 
-   qtd=modelo->obterNumObjetos(BASE_RELATIONSHIP);
+   qtd=modelo->getObjectCount(BASE_RELATIONSHIP);
    for(i=0; i < qtd; i++)
    {
-    rel=new OGRelacionamento(modelo->obterRelacionamento(i, BASE_RELATIONSHIP));
+    rel=new OGRelacionamento(modelo->getRelationship(i, BASE_RELATIONSHIP));
     cena->addItem(rel);
    }
 
-   qtd=modelo->obterNumObjetos(OBJ_TEXTBOX);
+   qtd=modelo->getObjectCount(OBJ_TEXTBOX);
    for(i=0; i < qtd; i++)
    {
-    caixa=new OGCaixaTexto(modelo->obterCaixaTexto(i));
+    caixa=new OGCaixaTexto(modelo->getTextbox(i));
     caixa->setSelected(i==0);
     cena->addItem(caixa);
    }
@@ -176,7 +176,7 @@ void ConfAparenciaWidget::carregarConfiguracao(void)
   fonte_cmb->setCurrentFont(ObjetoGrafico::obterEstiloFonte(ParsersAttributes::GLOBAL).font());
 
   //Define todos os objetos do modelo de exemplo como modificados, forçando seu redesenho
-  modelo->definirObjetosModificados();
+  modelo->setObjectsModified();
   cena->update();
  }
  catch(Exception &e)
@@ -383,7 +383,7 @@ void ConfAparenciaWidget::aplicarCorElemento(void)
    }
 
    //Atualiza o modelo de exemplo para exibir as modificações de aparência
-   modelo->definirObjetosModificados();
+   modelo->setObjectsModified();
    cena->update();
   }
  }
@@ -406,7 +406,7 @@ void ConfAparenciaWidget::aplicarEstiloFonte(void)
                                    itens_conf[elemento_cmb->currentIndex()].fmt_fonte);
 
  //Atualiza o modelo de exemplo para exibir as modificações de aparência
- modelo->definirObjetosModificados();
+ modelo->setObjectsModified();
  cena->update();
 }
 

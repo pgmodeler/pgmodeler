@@ -704,12 +704,12 @@ void ModeloWidget::converterRelacionamentoNN(void)
      //Cria a mesma a partir do xml
      XMLParser::restartParser();
      XMLParser::loadXMLBuffer(xml_tab);
-     tab=modelo->criarTabela();
+     tab=modelo->createTable();
      nome_tab=tab->getName();
 
      /* Caso haja outras tabelas no modelo com o nome da tabela recém criada a mesma terá
         seu nome alterado até que não existam tabelas com mesmo nome que ela */
-     while(modelo->obterObjeto(tab->getName(true), OBJ_TABLE))
+     while(modelo->getObject(tab->getName(true), OBJ_TABLE))
      {
       tab->setName(nome_tab + QString("_%1").arg(i));
       i++;
@@ -751,7 +751,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
      //lista_op->iniciarEncadeamentoOperacoes();
 
      //Remove o relacionamento n-n do modelo
-     modelo->removerObjeto(rel);
+     modelo->removeObject(rel);
      //Adiciona-o   lista de operações
      //lista_op->adicionarObjeto(rel, Operacao::OBJETO_REMOVIDO);
 
@@ -761,7 +761,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
      tab->setPosition(pnt);
 
      //Adiciona a tabela criada ao modelo
-     modelo->adicionarObjeto(tab);
+     modelo->addObject(tab);
      //Adiciona uma operaç   lista de operações indicando a criação da tabela
      //lista_op->adicionarObjeto(tab, Operacao::OBJETO_CRIADO);
 
@@ -772,7 +772,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
                              "", "", true);
 
      //Adiciona o relacionamento criado ao modelo e   lista de operações
-     modelo->adicionarRelacionamento(rel1);
+     modelo->addRelationship(rel1);
      //lista_op->adicionarObjeto(rel1, Operacao::OBJETO_CRIADO);
 
      //Aloca um relacionamento entre a nova tabela e a tabela de destino do relacionamento
@@ -786,7 +786,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
 
 
      //Adiciona o relacionamento criado ao modelo e   lista de operações
-     modelo->adicionarRelacionamento(rel2);
+     modelo->addRelationship(rel2);
      //lista_op->adicionarObjeto(rel2, Operacao::OBJETO_CRIADO);
 
      //Finaliza o encademanento de operações
@@ -833,7 +833,7 @@ void ModeloWidget::carregarModelo(const QString &nome_arq)
   prog_tarefa->show();
 
   //Carrega o arquivo
-  modelo->carregarModelo(nome_arq);
+  modelo->loadModel(nome_arq);
   this->nome_arquivo=nome_arq;
 
   //Ajusta o tamanho da cena
@@ -1075,7 +1075,7 @@ void ModeloWidget::salvarModelo(const QString &nome_arq)
   prog_tarefa->show();
 
   //Salva o modelo em arquivo
-  modelo->salvarModelo(nome_arq, SchemaParser::XML_DEFINITION);
+  modelo->saveModel(nome_arq, SchemaParser::XML_DEFINITION);
   this->nome_arquivo=nome_arq;
 
   //Fecha o widget de progresso de tarefa
@@ -1237,9 +1237,9 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
 
     //Valida os relacionamento para refletirem as modificações na coluna
     if(coluna)
-     modelo->validarRelacObjetoTabela(coluna, dynamic_cast<Table *>(objeto_pai));
+     modelo->validateRelationships(coluna, dynamic_cast<Table *>(objeto_pai));
     else
-     modelo->validarRelacionamentos();
+     modelo->validateRelationships();
    break;
 
    case OBJ_CONSTRAINT:
@@ -1250,9 +1250,9 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
 
     //Valida os relacionamento para refletirem as modificações na restrição
     if(restricao)
-     modelo->validarRelacObjetoTabela(restricao, dynamic_cast<Table *>(objeto_pai));
+     modelo->validateRelationships(restricao, dynamic_cast<Table *>(objeto_pai));
     else
-     modelo->validarRelacionamentos();
+     modelo->validateRelationships();
    break;
 
    case OBJ_RULE:
@@ -1551,7 +1551,7 @@ void ModeloWidget::copiarObjetos(void)
   if(objeto->getObjectType()!=BASE_RELATIONSHIP)
   {
    //Obtém as dependências do objeto atual caso o usuário tenha confirmado a obtenção das mesmas
-   modelo->obterDependenciasObjeto(objeto, vet_deps, caixa_msg->result()==QDialog::Accepted);
+   modelo->getObjectDependecies(objeto, vet_deps, caixa_msg->result()==QDialog::Accepted);
 
    /* Caso especial para tabelas: É preciso copiar para a lista os objetos especiais
       (indices, gatilhos e restrições) que referenciam colunas incluídas por relacionamento.
@@ -1685,7 +1685,7 @@ void ModeloWidget::colarObjetos(void)
 
    //Tenta obter um objeto de mesmo nome no modelo
    if(!dynamic_cast<TableObject *>(objeto))
-    objeto_aux=modelo->obterObjeto(nome_aux, tipo_obj);
+    objeto_aux=modelo->getObject(nome_aux, tipo_obj);
 
    /* Segunda operação na colagem: caso um objeto de mesmo nome é encontrado no modelo é necessário
       validar se as definições XML de ambos são diferentes. Quandos estas são iguais o objeto não é
@@ -1694,8 +1694,8 @@ void ModeloWidget::colarObjetos(void)
       de terem ou não o mesmo nome ou definição XML serão SEMPRE colados no modelo. */
    if(objeto_aux &&
       (dynamic_cast<BaseGraphicObject *>(objeto) ||
-       (modelo->validarDefinicaoObjeto(objeto_aux, SchemaParser::SchemaParser::XML_DEFINITION) !=
-        modelo->validarDefinicaoObjeto(objeto, SchemaParser::SchemaParser::XML_DEFINITION))))
+       (modelo->validateObjectDefinition(objeto_aux, SchemaParser::SchemaParser::XML_DEFINITION) !=
+        modelo->validateObjectDefinition(objeto, SchemaParser::SchemaParser::XML_DEFINITION))))
    {
     //Resolvendo conflitos de nomes
     if(tipo_obj!=OBJ_CAST)
@@ -1741,7 +1741,7 @@ void ModeloWidget::colarObjetos(void)
        objeto->setName(nome_orig_objs[objeto]);
       }
      }
-     while(modelo->obterObjeto(nome_obj_copia, tipo_obj));
+     while(modelo->getObject(nome_obj_copia, tipo_obj));
 
      //Define o novo nome do objeto concatenando o nome original ao sufixo configurado.
      /*if(func)
@@ -1779,7 +1779,7 @@ void ModeloWidget::colarObjetos(void)
                                 objeto->getObjectType());
 
   //Armazena a definição XML do objeto num mapa de buffers xml
-  xml_objs[objeto]=modelo->validarDefinicaoObjeto(objeto, SchemaParser::XML_DEFINITION);
+  xml_objs[objeto]=modelo->validateObjectDefinition(objeto, SchemaParser::XML_DEFINITION);
  }
 
  /* O quarto passo da colagem é a restauração dos nomes originais dos objetos
@@ -1825,7 +1825,7 @@ void ModeloWidget::colarObjetos(void)
   try
   {
    //Cria um objeto com o xml obtido
-   objeto=modelo->criarObjeto(modelo->getObjectType(XMLParser::getElementName()));
+   objeto=modelo->createObject(modelo->getObjectType(XMLParser::getElementName()));
    obj_tab=dynamic_cast<TableObject *>(objeto);
 
    //Atualiza a mensagem do widget de progresso de tarefa
@@ -1840,7 +1840,7 @@ void ModeloWidget::colarObjetos(void)
    if(objeto &&
       !dynamic_cast<TableObject *>(objeto) &&
       !dynamic_cast<Relationship *>(objeto))
-    modelo->adicionarObjeto(objeto);
+    modelo->addObject(objeto);
 
    //Adiciona o objeto criado   lista de operações
    if(obj_tab)
@@ -1856,7 +1856,7 @@ void ModeloWidget::colarObjetos(void)
  lista_op->finishOperationChain();
 
  //Força a validação de relacionamentos para refletir qualquer alteração de colunas não propagadas
- modelo->validarRelacionamentos();
+ modelo->validateRelationships();
 
  //Ajusta o tamanho da cena para comportar os novos objetos inseridos
  this->ajustarTamanhoCena();
@@ -2025,9 +2025,9 @@ void ModeloWidget::excluirObjetos(void)
         /* Caso seja uma coluna valida a sua remoção verificando se outros objetos
            não estão referenciando a mesma */
         if(tipo_obj==OBJ_COLUMN)
-         modelo->validarRemocaoColuna(dynamic_cast<Column *>(objeto_tab));
+         modelo->validateColumnRemoval(dynamic_cast<Column *>(objeto_tab));
 
-        modelo->removerPermissoes(objeto_tab);
+        modelo->removePermissions(objeto_tab);
 
         //Adiciona o objeto removido   lista de operações e redesenha o modelo
         lista_op->registerObject(objeto_tab, Operation::OBJECT_REMOVED, idx_obj, tabela);
@@ -2035,11 +2035,11 @@ void ModeloWidget::excluirObjetos(void)
 
         if(tipo_obj==OBJ_CONSTRAINT &&
            dynamic_cast<Constraint *>(objeto_tab)->getConstraintType()==ConstraintType::foreign_key)
-         modelo->atualizarRelFkTabela(tabela);
+         modelo->updateTableFKRelationships(tabela);
 
         tabela->setModified(true);
 
-        modelo->validarRelacObjetoTabela(objeto_tab, tabela);
+        modelo->validateRelationships(objeto_tab, tabela);
        }
        catch(Exception &e)
        {
@@ -2049,7 +2049,7 @@ void ModeloWidget::excluirObjetos(void)
       else
       {
        //Remove o objeto do modelo usando seu indice
-       idx_obj=modelo->obterIndiceObjeto(objeto);
+       idx_obj=modelo->getObjectIndex(objeto);
 
        if(idx_obj >=0 )
        {
@@ -2064,7 +2064,7 @@ void ModeloWidget::excluirObjetos(void)
         {
          //Adiciona o objeto removido   lista de operações e redesenha o modelo
          lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, idx_obj);
-         modelo->removerObjeto(objeto, idx_obj);
+         modelo->removeObject(objeto, idx_obj);
         }
         catch(Exception &e)
         {

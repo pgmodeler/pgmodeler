@@ -126,12 +126,12 @@ class SchemaParser {
   /* Returns the complete xml/sql definition for an database object represented by the
      map 'attributes'. For SQL definition is necessary to indicate the version of PostgreSQL
      in order to the to correct schema be loaded */
-  static QString getObjectDefinition(const QString &obj_name, map<QString, QString> &attributes, unsigned def_type);
+  static QString getCodeDefinition(const QString &obj_name, map<QString, QString> &attributes, unsigned def_type);
 
   /* Generic method that loads a schema file and for a given map of attributes
      this method returns the data of the file analyzed and filled with the values ​​of the
      attributes map */
-  static QString getObjectDefinition(const QString &filename, map<QString, QString> &attributes);
+  static QString getCodeDefinition(const QString &filename, map<QString, QString> &attributes);
 
   /* Returns the PostgreSQL version available based on the subdirectories on schema/sql.
      To be recognized as a version, the directory name must follow the rule: [NUMBER].[NUMBER](.[NUMBER])*/

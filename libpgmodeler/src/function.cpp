@@ -50,7 +50,7 @@ QString Parameter::getCodeDefinition(unsigned def_type)
  attributes[ParsersAttributes::PARAM_IN]=(is_in ? "1" : "");
  attributes[ParsersAttributes::PARAM_OUT]=(is_out ? "1" : "");
  attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
- attributes[ParsersAttributes::TYPE]=type.getObjectDefinition(def_type);
+ attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
 
  return(BaseObject::__getCodeDefinition(def_type));
 }
@@ -473,7 +473,7 @@ QString Function::getCodeDefinition(unsigned def_type, bool reduced_form)
  else
  {
   attributes[ParsersAttributes::LANGUAGE]=language->getCodeDefinition(def_type,true);
-  attributes[ParsersAttributes::RETURN_TYPE]=return_type.getObjectDefinition(def_type);
+  attributes[ParsersAttributes::RETURN_TYPE]=return_type.getCodeDefinition(def_type);
  }
 
  setTableReturnTypeAttribute(def_type);

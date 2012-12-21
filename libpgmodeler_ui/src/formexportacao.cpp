@@ -177,7 +177,7 @@ void FormExportacao::exportarModelo(void)
      rot_prog_lbl->setText(trUtf8("Saving file '%1'").arg(arquivo_edt->text()));
 
      //Salva o modelo em arquivo
-     modelo_wgt->modelo->salvarModelo(arquivo_edt->text(), SchemaParser::SQL_DEFINITION);
+     modelo_wgt->modelo->saveModel(arquivo_edt->text(), SchemaParser::SQL_DEFINITION);
      prog_pb->setValue(25);
     }
     //Caso seja exportação direto para o SGBD
@@ -201,10 +201,10 @@ void FormExportacao::exportarModelo(void)
      //Cria os Papéis e espaços de tabela separadamente dos demais
      for(id_tipo=0; id_tipo < 2; id_tipo++)
      {
-      qtd=modelo_wgt->modelo->obterNumObjetos(vet_tipos[id_tipo]);
+      qtd=modelo_wgt->modelo->getObjectCount(vet_tipos[id_tipo]);
       for(i=0; i < qtd; i++)
       {
-       objeto=modelo_wgt->modelo->obterObjeto(i, vet_tipos[id_tipo]);
+       objeto=modelo_wgt->modelo->getObject(i, vet_tipos[id_tipo]);
        rot_prog_lbl->setText(trUtf8("Creating object '%1' (%2)...").arg(QString::fromUtf8(objeto->getName())).arg(objeto->getTypeName()));
        rot_prog_lbl->repaint();
 
@@ -237,7 +237,7 @@ void FormExportacao::exportarModelo(void)
 
      try
      {
-      conexao->executeDDLCommand(modelo_wgt->modelo->__obterDefinicaoObjeto(SchemaParser::SQL_DEFINITION));
+      conexao->executeDDLCommand(modelo_wgt->modelo->__getCodeDefinition(SchemaParser::SQL_DEFINITION));
       bd_criado=true;
      }
      catch(Exception &e)
@@ -358,7 +358,7 @@ void FormExportacao::exportarModelo(void)
      {
       while(idx_objs[id_tipo] >= 0)
       {
-       objeto=modelo_wgt->modelo->obterObjeto(idx_objs[id_tipo], vet_tipos[id_tipo]);
+       objeto=modelo_wgt->modelo->getObject(idx_objs[id_tipo], vet_tipos[id_tipo]);
 
        try
        {

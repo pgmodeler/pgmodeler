@@ -1084,7 +1084,7 @@ int PgSQLType::getPrecision(void)
  return(precision);
 }
 
-QString PgSQLType::getObjectDefinition(unsigned def_type,QString ref_type)
+QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
 {
  if(def_type==SchemaParser::SQL_DEFINITION)
   return(*(*this));
@@ -1124,7 +1124,7 @@ QString PgSQLType::getObjectDefinition(unsigned def_type,QString ref_type)
   if(with_timezone)
    attribs[ParsersAttributes::WITH_TIMEZONE]="1";
 
-  return(SchemaParser::getObjectDefinition("basetype",attribs, def_type));
+  return(SchemaParser::getCodeDefinition("basetype",attribs, def_type));
  }
 }
 

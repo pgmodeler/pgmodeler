@@ -187,7 +187,7 @@ QString Reference::getXMLDefinition(void)
  attribs[ParsersAttributes::ALIAS]=alias;
  attribs[ParsersAttributes::COLUMN_ALIAS]=column_alias;
 
- return(SchemaParser::getObjectDefinition(ParsersAttributes::REFERENCE,
+ return(SchemaParser::getCodeDefinition(ParsersAttributes::REFERENCE,
                                             attribs, SchemaParser::XML_DEFINITION));
 }
 

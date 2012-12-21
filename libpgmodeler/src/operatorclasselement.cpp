@@ -134,10 +134,10 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
   if(def_type==SchemaParser::SQL_DEFINITION)
    attributes[ParsersAttributes::TYPE]=(*storage);
   else
-   attributes[ParsersAttributes::DEFINITION]=storage.getObjectDefinition(def_type);
+   attributes[ParsersAttributes::DEFINITION]=storage.getCodeDefinition(def_type);
  }
 
- return(SchemaParser::getObjectDefinition(ParsersAttributes::ELEMENT,attributes, def_type));
+ return(SchemaParser::getCodeDefinition(ParsersAttributes::ELEMENT,attributes, def_type));
 }
 
 bool OperatorClassElement::operator == (OperatorClassElement &elem)

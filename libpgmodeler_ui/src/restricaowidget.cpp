@@ -536,7 +536,7 @@ void RestricaoWidget::aplicarConfiguracao(void)
   /* Caso seja uma chave estrangeira atualiza os relacionamentos da tabela pai,
      criando um novo caso seja necessário (relacionamento originário de chave estrangeira) */
   if(restricao->getConstraintType()==ConstraintType::foreign_key)
-   this->modelo->atualizarRelFkTabela(this->tabela);
+   this->modelo->updateTableFKRelationships(this->tabela);
  }
  catch(Exception &e)
  {

@@ -86,6 +86,6 @@ QString IndexElement::getCodeDefinition(unsigned def_type)
    attributes[ParsersAttributes::OP_CLASS]=operator_class->getCodeDefinition(def_type, true);
  }
  
- return(SchemaParser::getObjectDefinition(ParsersAttributes::INDEX_ELEMENT,attributes, def_type));
+ return(SchemaParser::getCodeDefinition(ParsersAttributes::INDEX_ELEMENT,attributes, def_type));
 }
 

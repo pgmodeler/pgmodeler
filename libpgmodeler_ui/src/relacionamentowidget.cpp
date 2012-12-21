@@ -641,8 +641,8 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
      relacionamento e logo após revalidar todos os demais */
   if(this->objeto->getObjectType()==OBJ_RELATIONSHIP)
   {
-   modelo->obterXMLObjetosEspeciais();
-   modelo->desconectarRelacionamentos();
+   modelo->storeSpecialObjectsXML();
+   modelo->disconnectRelationships();
   }
 
   if(!this->novo_obj && this->objeto->getObjectType()==OBJ_RELATIONSHIP)
@@ -712,12 +712,12 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
     if(tipo_rel==BaseRelationship::RELATIONSHIP_DEP ||
        tipo_rel==BaseRelationship::RELATIONSHIP_GEN ||
        relacao->isIdentifier())
-     modelo->verificarRedundanciaRelacoes(relacao);
+     modelo->checkRelationshipRedundancy(relacao);
 
     if(tipo_rel!=BaseRelationship::RELATIONSHIP_FK)
      /* Faz a validação dos relacionamentos para refletir a nova configuração
         do relacionamento */
-     modelo->validarRelacionamentos();
+     modelo->validateRelationships();
 
     relacao->blockSignals(false);
     relacao->setModified(true);
@@ -753,7 +753,7 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
 
   /* Faz a validação dos relacionamentos para refletir a nova configuração
      do relacionamento */
-  modelo->validarRelacionamentos();
+  modelo->validateRelationships();
 
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }

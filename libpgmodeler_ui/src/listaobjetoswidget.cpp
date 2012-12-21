@@ -31,10 +31,10 @@ void ListaObjetosWidget::definirAtributos(DatabaseModel *modelo, BaseObject *obj
                                  BaseObject::getSchemaName(objeto->getObjectType()) + QString(".png")));
 
  //Carrega as dependências e referências do objeto
- modelo->obterDependenciasObjeto(objeto, vet_objs);
+ modelo->getObjectDependecies(objeto, vet_objs);
  this->atualizarListaObjetos(vet_objs, dependencias_tbw);
 
- modelo->obterReferenciasObjeto(objeto, vet_objs);
+ modelo->getObjectReferences(objeto, vet_objs);
  this->atualizarListaObjetos(vet_objs, referencias_tbw);
 }
 

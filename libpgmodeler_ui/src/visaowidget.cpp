@@ -441,7 +441,7 @@ void VisaoWidget::aplicarConfiguracao(void)
   //Finaliza a configuração da função de agregação
   ObjetoBaseWidget::aplicarConfiguracao();
 
-  this->modelo->atualizarRelTabelaVisao(visao);
+  this->modelo->updateViewRelationships(visao);
   finalizarConfiguracao();
  }
  catch(Exception &e)

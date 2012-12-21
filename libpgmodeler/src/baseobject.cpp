@@ -508,7 +508,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
    {
     SchemaParser::setIgnoreUnkownAttributes(true);
     attributes[ParsersAttributes::COMMENT]=
-    SchemaParser::getObjectDefinition(ParsersAttributes::COMMENT, attributes, def_type);
+    SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
    }
   }
 
@@ -536,7 +536,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
     {
      SchemaParser::setIgnoreUnkownAttributes(true);
      attributes[ParsersAttributes::OWNER]=
-     SchemaParser::getObjectDefinition(ParsersAttributes::OWNER, attributes, def_type);
+     SchemaParser::getCodeDefinition(ParsersAttributes::OWNER, attributes, def_type);
     }
    }
    else
@@ -552,7 +552,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
   {
    /* Case the code definition being generated is XML the attributes values will have the
       <, >, ', ", & replaced by the related XML entity preventing syntax error on XML definition */
-   code_def=SchemaParser::getObjectDefinition(objs_schemas[obj_type], attributes, def_type);
+   code_def=SchemaParser::getCodeDefinition(objs_schemas[obj_type], attributes, def_type);
    if(def_type==SchemaParser::XML_DEFINITION)
    {
     QRegExp regexp_vect[]={

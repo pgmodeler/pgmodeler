@@ -87,7 +87,7 @@ QString Column::getCodeDefinition(unsigned def_type)
  if(this->parent_table)
   attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
- attributes[ParsersAttributes::TYPE]=type.getObjectDefinition(def_type);
+ attributes[ParsersAttributes::TYPE]=type.getCodeDefinition(def_type);
  attributes[ParsersAttributes::DEFAULT_VALUE]=default_value;
  attributes[ParsersAttributes::NOT_NULL]=(!not_null ? "" : "1");
  return(BaseObject::__getCodeDefinition(def_type));

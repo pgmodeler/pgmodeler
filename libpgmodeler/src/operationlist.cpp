@@ -284,7 +284,7 @@ void OperationList::removeOperations(void)
   tab_obj=dynamic_cast<TableObject *>(object);
 
   //Deletes the object if its not referenced on the model
-  if(!tab_obj && model->obterIndiceObjeto(object) < 0)
+  if(!tab_obj && model->getObjectIndex(object) < 0)
    delete(object);
   else if(tab_obj)
   {
@@ -452,7 +452,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
    /* Specific case to columns: on removal operations the permissions of the objects
       must be removed too */
    if(obj_type==OBJ_COLUMN && op_type==Operation::OBJECT_REMOVED)
-    model->removerPermissoes(tab_obj);
+    model->removePermissions(tab_obj);
    else if(((obj_type==OBJ_TRIGGER && dynamic_cast<Trigger *>(tab_obj)->isReferRelationshipAddedColumn()) ||
             (obj_type==OBJ_INDEX && dynamic_cast<Index *>(tab_obj)->isReferRelationshipAddedColumn()) ||
             (obj_type==OBJ_CONSTRAINT && dynamic_cast<Constraint *>(tab_obj)->isReferRelationshipAddedColumn())))
@@ -460,7 +460,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
     if(op_type==Operation::OBJECT_REMOVED)
      tab_obj->setParentTable(parent_tab);
 
-    operation->xml_definition=model->validarDefinicaoObjeto(tab_obj, SchemaParser::XML_DEFINITION);
+    operation->xml_definition=model->validateObjectDefinition(tab_obj, SchemaParser::XML_DEFINITION);
    }
 
    operation->parent_obj=parent_obj;
@@ -495,7 +495,7 @@ void OperationList::registerObject(BaseObject *object, unsigned op_type, int obj
    //Case a specific index wasn't specified
    if(object_idx < 0)
     //Stores on the operation the object index on the model
-    obj_idx=model->obterIndiceObjeto(object);
+    obj_idx=model->getObjectIndex(object);
    else
     //Assigns the specific index to object
     obj_idx=object_idx;
@@ -744,13 +744,13 @@ void OperationList::executeOperation(Operation *oper, bool redo)
     XMLParser::loadXMLBuffer(oper->xml_definition);
 
     if(obj_type==OBJ_TRIGGER)
-     aux_obj=model->criarGatilho(parent_tab);
+     aux_obj=model->createTrigger(parent_tab);
     else if(obj_type==OBJ_INDEX)
-     aux_obj=model->criarIndice(parent_tab);
+     aux_obj=model->createIndex(parent_tab);
     else if(obj_type==OBJ_CONSTRAINT)
-     aux_obj=model->criarRestricao(oper->parent_obj);
+     aux_obj=model->createConstraint(oper->parent_obj);
     else if(obj_type==OBJ_SEQUENCE)
-     aux_obj=model->criarSequencia();
+     aux_obj=model->createSequence();
    }
 
    /* If the operation is a modified/moved object, the object copy
@@ -764,8 +764,8 @@ void OperationList::executeOperation(Operation *oper, bool redo)
         relationships of the model it is necessary to store XML for special objects and
         disconnect ALL relationships, perform the modification at it and the revalidating
         all relationships again. */
-     model->obterXMLObjetosEspeciais();
-     model->desconectarRelacionamentos();
+     model->storeSpecialObjectsXML();
+     model->disconnectRelationships();
     }
 
     //Gets the object in the current state from the parent object
@@ -774,10 +774,10 @@ void OperationList::executeOperation(Operation *oper, bool redo)
     else if(parent_rel)
      orig_obj=dynamic_cast<TableObject *>(parent_rel->getObject(oper->object_idx, obj_type));
     else
-     orig_obj=model->obterObjeto(oper->object_idx, obj_type);
+     orig_obj=model->getObject(oper->object_idx, obj_type);
 
     if(aux_obj)
-     oper->xml_definition=model->validarDefinicaoObjeto(orig_obj, SchemaParser::SQL_DEFINITION);
+     oper->xml_definition=model->validateObjectDefinition(orig_obj, SchemaParser::SQL_DEFINITION);
 
      /* The original object (obtained from the table, relationship or model) will have its
         previous values restored with the existing copy on the pool. After restoring the object
@@ -808,14 +808,14 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
      if(object->getObjectType()==OBJ_CONSTRAINT &&
         dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
-      model->atualizarRelFkTabela(parent_tab);
+      model->updateTableFKRelationships(parent_tab);
     }
     else if(parent_rel)
      parent_rel->addObject(dynamic_cast<TableObject *>(object), oper->object_idx);
     else
      if(dynamic_cast<Table *>(object))
       dynamic_cast<Table *>(object)->getCodeDefinition(SchemaParser::SQL_DEFINITION);
-     model->adicionarObjeto(object, oper->object_idx);
+     model->addObject(object, oper->object_idx);
    }
    /* If the operation is a previously created object or if the object
       was removed and wants to redo the operation it'll be
@@ -828,7 +828,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
     else if(parent_rel)
      parent_rel->removeObject(oper->object_idx,obj_type);
     else
-     model->removerObjeto(object, oper->object_idx);
+     model->removeObject(object, oper->object_idx);
    }
 
    /* If the parent table or parent relationship is set
@@ -845,14 +845,14 @@ void OperationList::executeOperation(Operation *oper, bool redo)
       (object->getObjectType()==OBJ_COLUMN ||
        object->getObjectType()==OBJ_CONSTRAINT))
     {
-     model->validarRelacObjetoTabela(dynamic_cast<TableObject *>(object), parent_tab);
+     model->validateRelationships(dynamic_cast<TableObject *>(object), parent_tab);
 
      if(object->getObjectType()==OBJ_CONSTRAINT &&
         dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::foreign_key)
-      model->atualizarRelFkTabela(parent_tab);
+      model->updateTableFKRelationships(parent_tab);
     }
     else if(parent_rel)
-     model->validarRelacionamentos();
+     model->validateRelationships();
    }
 
    /* If the object in question is graphical it has the modified flag
@@ -869,11 +869,11 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
     //Case the object is a view is necessary to update the table-view relationships on the model
     if(obj_type==OBJ_VIEW && oper->op_type==Operation::OBJECT_MODIFIED)
-     model->atualizarRelTabelaVisao(dynamic_cast<View *>(obj_grafico));
+     model->updateViewRelationships(dynamic_cast<View *>(obj_grafico));
     else if((obj_type==OBJ_RELATIONSHIP ||
-             (obj_type==OBJ_TABLE && model->obterRelacionamento(dynamic_cast<BaseTable *>(object), NULL))) &&
+             (obj_type==OBJ_TABLE && model->getRelationship(dynamic_cast<BaseTable *>(object), NULL))) &&
             oper->op_type==Operation::OBJECT_MODIFIED)
-     model->validarRelacionamentos();
+     model->validateRelationships();
    }
   }
 }

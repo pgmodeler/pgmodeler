@@ -232,7 +232,7 @@ void PermissaoWidget::listarPermissoes(void)
   QString str_aux;
 
   //Obtém as permissões relacionadas ao objeto armazenando em uma lista
-  modelo->obterPermissoes(this->objeto, permissoes);
+  modelo->getPermissions(this->objeto, permissoes);
   qtd=permissoes.size();
 
   /* Disconecta o sinal linhasRemovidas da tabela de permissões para remover
@@ -335,7 +335,7 @@ void PermissaoWidget::adicionarPermissao(void)
   configurarPermissao(perm_aux);
 
   //Adiciona a permissão ao modelo
-  modelo->adicionarPermissao(perm_aux);
+  modelo->addPermission(perm_aux);
 
   //Atualiza a lista de permissões
   listarPermissoes();
@@ -352,7 +352,7 @@ void PermissaoWidget::adicionarPermissao(void)
      desalocada da memória */
   if(perm_aux)
   {
-   modelo->removerPermissao(perm_aux);
+   modelo->removePermission(perm_aux);
    delete(perm_aux);
   }
 
@@ -388,13 +388,13 @@ void PermissaoWidget::atualizarPermissao(void)
   /* Tenta obter o índice de uma permissão no modelo na qual
      suas configurações conincidam com as configurações da
      permissão recém configurada (perm_aux) */
-  idx_perm=modelo->obterIndicePermissao(perm_aux);
+  idx_perm=modelo->getPermissionIndex(perm_aux);
 
   /* Caso o índice seja negativo isso indica que a configuração da permissão auxiliar (perm_aux) não
      se assemelha a nehuma permissão no modelo. Já se o índice for positivo e a permissão no
      índice seja a mesma que está sendo edita (permissao) isso indica que a permissão auxiliar é
      igual   permissão atual, podendo claramente ser atualizada. */
-  if(idx_perm < 0 || (idx_perm >=0 && modelo->obterObjeto(idx_perm,OBJ_PERMISSION)==permissao))
+  if(idx_perm < 0 || (idx_perm >=0 && modelo->getObject(idx_perm,OBJ_PERMISSION)==permissao))
   {
    /* Copia os atributos da permissão auxiliar para a permissão atual
       efetivando as alterações */
@@ -488,7 +488,7 @@ void PermissaoWidget::editarPermissao(void)
 void PermissaoWidget::removerPermissao(void)
 {
  //Remove a permissão atualmente selecionada
- modelo->removerPermissao(permissao);
+ modelo->removePermission(permissao);
  //Limpa o formulário e desabilita os botões de edição
  cancelarOperacao();
  permissao=NULL;
@@ -501,7 +501,7 @@ void PermissaoWidget::removerPermissao(void)
 void PermissaoWidget::removerPermissoes(void)
 {
  //Remove todas as permissões relacionadas ao objeto
- modelo->removerPermissoes(objeto);
+ modelo->removePermissions(objeto);
  cancelarOperacao();
 }
 

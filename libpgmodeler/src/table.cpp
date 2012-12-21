@@ -100,7 +100,7 @@ void Table::setCommentAttribute(TableObject *tab_obj)
   attribs[ParsersAttributes::COMMENT]=tab_obj->getComment();
 
   SchemaParser::setIgnoreUnkownAttributes(true);
-  attributes[ParsersAttributes::COLS_COMMENT]+=SchemaParser::getObjectDefinition(ParsersAttributes::COMMENT, attribs,
+  attributes[ParsersAttributes::COLS_COMMENT]+=SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attribs,
                                                                                  SchemaParser::SQL_DEFINITION);
   SchemaParser::setIgnoreUnkownAttributes(false);
  }

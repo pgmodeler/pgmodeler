@@ -112,11 +112,9 @@ void Aggregate::setTypesAttribute(unsigned def_type)
    str_types+=*(data_types[i]);
    if(i < (count-1)) str_types+=",";
   }
-  else str_types+=data_types[i].getObjectDefinition(def_type);
+  else str_types+=data_types[i].getCodeDefinition(def_type);
  }
 
- /* Caso o usuário não especifique nenhum tipo de entrada para a função
-    cria uma função em parâmetros no seguinte formato: funcao(*). */
  /* Case none data type is specified for the aggregate creates
     an aggregate that accepts any possible data '*' e.g. function(*) */
  if(str_types.isEmpty()) str_types="*";
@@ -248,7 +246,7 @@ QString Aggregate::getCodeDefinition(unsigned def_type)
  if(def_type==SchemaParser::SQL_DEFINITION)
   attributes[ParsersAttributes::STATE_TYPE]=*(state_type);
  else
-  attributes[ParsersAttributes::STATE_TYPE]=state_type.getObjectDefinition(def_type,ParsersAttributes::STATE_TYPE);
+  attributes[ParsersAttributes::STATE_TYPE]=state_type.getCodeDefinition(def_type,ParsersAttributes::STATE_TYPE);
 
  return(BaseObject::__getCodeDefinition(def_type));
 }

@@ -278,7 +278,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
   else
   {
    attributes[atribs_tipos[i]]=argument_types[i].
-                getObjectDefinition(SchemaParser::XML_DEFINITION,atribs_tipos[i]);
+                getCodeDefinition(SchemaParser::XML_DEFINITION,atribs_tipos[i]);
   }
  }
 

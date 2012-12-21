@@ -123,7 +123,7 @@ void CodigoFonteWidget::gerarCodigoFonteObjeto(int)
    }
 
    SchemaParser::setPgSQLVersion(versoes_cmb->currentText());
-   codigosql_txt->setPlainText(QString::fromUtf8(DatabaseModel::validarDefinicaoObjeto(objeto, SchemaParser::SQL_DEFINITION)));
+   codigosql_txt->setPlainText(QString::fromUtf8(DatabaseModel::validateObjectDefinition(objeto, SchemaParser::SQL_DEFINITION)));
   }
 
   //Caso o objeto não possua uma definição SQL exibe o texto avisando o fato
@@ -131,7 +131,7 @@ void CodigoFonteWidget::gerarCodigoFonteObjeto(int)
    codigosql_txt->setPlainText(trUtf8("-- SQL code unavailable for this type of object --"));
 
   //Configura a caixa de código fonte XML com o código XML do objeto
-  codigoxml_txt->setPlainText(QString::fromUtf8(DatabaseModel::validarDefinicaoObjeto(objeto, SchemaParser::XML_DEFINITION)));
+  codigoxml_txt->setPlainText(QString::fromUtf8(DatabaseModel::validateObjectDefinition(objeto, SchemaParser::XML_DEFINITION)));
 
   //Configura a aba e os ícones de acordo com a que está em foco
   definirAbaCodigoFonte();
