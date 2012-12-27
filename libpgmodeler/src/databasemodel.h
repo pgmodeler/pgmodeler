@@ -1,10 +1,10 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
-# Description: Definição da classe ModeloBD que é usado para
-#             representar graficamente o modelo do banco de dados, gerar os
-#             códigos SQL do banco de dados, salvar em arquivo, executar
-#             engenharia reversa, etc.
+# Class: DatabaseModel
+# Description: This class reunites and manages all the other object types.
+#              Additionally, this class, saves, loads and generates the
+#              XML/SQL definition of a complete database.
 # Creation date: 20/10/2006
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -54,348 +54,263 @@ class DatabaseModel:  public QObject, public BaseObject {
 
   static unsigned dbmodel_id;
 
-  //Tipo de codificação do banco de dados
+  //Database encoding
   EncodingType encoding;
 
-  //Banco de dados modelo
+  //Template database
   QString template_db,
-          //Autor do modelo de banco de dados
+          //Model's author
           author,
-          //Armazena as localização (LC_CTYPE, LC_COLLATE) do banco de dados
+          //Database localizations (LC_CTYPE, LC_COLLATE)
           localizations[2];
 
-  //Número máximo de conexoes
+  //Maximum number of connections
   int conn_limit;
 
-  //Estrutura de dados que armazena os objetos da classe CaixaTexto
+  //Vectors that stores all the objects types
   vector<BaseObject *> textboxes;
-
-  //Estrutura de dados que armazena os objetos da classe Relacionamento
   vector<BaseObject *> relationships;
-
-  /* Estrutura de dados que armazena os objetos da classe RelacionamentoBase
-     usados para relacionar tabelas e visões */
   vector<BaseObject *> base_relationships;
-
-  //Funções criadas no banco de dados
   vector<BaseObject *> functions;
-
-  //Esquemas criados no banco de dados
   vector<BaseObject *> schemas;
-
-  //Visões criadas no banco de dados
   vector<BaseObject *> views;
-
-  //Tabelas criadas no banco de dados
   vector<BaseObject *> tables;
-
-  //Tipos definidos pelo usuário
   vector<BaseObject *> types;
-
-  //Papéis (usuários e grupos) definidos no banco de dados
   vector<BaseObject *> roles;
-
-  //Espaços de Tabelas criados no banco de dados
   vector<BaseObject *> tablespaces;
-
-  //Linguagens criadas no banco de dados
   vector<BaseObject *> languages;
-
-  //Funções Agregadas criadas no banco de dados
   vector<BaseObject *> aggregates;
-
-  //Conversões de tipos criadas no banco de dados
   vector<BaseObject *> casts;
-
-  //Conversões de codificação criadas no banco de dados
   vector<BaseObject *> conversions;
-
-  //Operadores criados no banco de dados
   vector<BaseObject *> operators;
-
-  //Classe de operadores criadas no banco de dados
   vector<BaseObject *> op_classes;
-
-  //Famílias de operadores criadas no banco de dados
   vector<BaseObject *> op_families;
-
-  //Domínios criados no banco de dados
   vector<BaseObject *> domains;
-
-  //Sequencias criadas no banco de dados
   vector<BaseObject *> sequences;
-
-  //Permissões que se aplicam a alguns tipos de objetos
   vector<BaseObject *> permissions;
 
+  /* Stores the xml definition for special objects. This map is used
+     when revalidating the relationships */
   map<unsigned, QString> xml_special_objs;
 
-  //Flag que indica que o modelo está sendo carregado
+  //Indicates if the model is being loaded
   bool loading_model;
 
-  /* Retorna um objeto do modelo buscando através de seu nome
-     e especificando o tipo do mesmo. Além disso o método armazena no 3º parâmetro
-     o índice do objeto caso seja encontrado */
+  /* Returns an object seaching it by its name and type. The third parameter stores
+     the object index */
   BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
 
-  /* Adiciona um objeto ao modelo fazendo o cast necessário para o método
-     de inserção específico para o objeto */
+  //Generic method that adds an object to the model
   void __addObject(BaseObject *object, int obj_idx=-1);
 
-  /* Remove um objeto do modelo fazendo o cast necessário para o método
-     de remoção específico para o objeto */
+  //Generic method that removes an object to the model
   void __removeObject(BaseObject *object, int obj_idx=-1);
 
-  /* Recria um objeto especial partir da definição xml do mesmo informada no parâmetro.
-     Este método deve ser chamando SEMPRE quando todos os relacionamentos estão conectados
-     e SEMPRE quando o passer XML não está em execução (carregando um arquivo de modelo, por exemplo)
-     pois o método substitui o buffer do parser e reinicia a navegação nos elementos XML quando chamado. */
+  //Recreates the special object from the passed xml code buffer
   void createSpecialObject(const QString &xml_def, unsigned obj_id=0);
 
-  //Método utilizado para remover um tipo definido pelo usuario (tipo ou domínio)
+  //Removes an user defined type (domain or type)
   void removeUserType(BaseObject *object, int obj_idx);
 
-  /* Retorna o objeto do modelo o qual representa o tipo da dado PostgreSQL.
-     Basicamente esse método retorna uma tabela, sequencia, tipo ou domínio quando
-     o 'tipo' é um tipo de dado definido pelo usuário */
+  /* Returns the object on the model that represents the base pgsql type. The possible
+     returned object can be: table, sequence, domain or type */
   BaseObject *getObjectPgSQLType(PgSQLType type);
 
  public:
   DatabaseModel(void);
   ~DatabaseModel(void);
 
-  //Retorna a lista de objetos referente ao tipo de objeto passado
+  //Returns the complete object list according to the type
   vector<BaseObject *> *getObjectList(ObjectType obj_type);
 
-  //Desconecta os relacionamentos ordenadamente
+  //Disconnects all the relationships in a ordered way
   void disconnectRelationships(void);
 
-  /* Detecta e armazena as definições XML dos objetos especiais (que referenciam colunas
-     incluídas por relacionamento) para criação posteriror */
+  /* Detects and stores the XML for special objects (that is referencing columns created
+     by relationship) in order to be reconstructed in a posterior moment */
   void storeSpecialObjectsXML(void);
 
-  /* Valida os relacionamentos de forma a propagar a inserção de colunas
-     nas tabelas corretamente */
+  //Validates all the relationship, propagating all column modifications over the tables
   void validateRelationships(void);
 
-    /* Verifica se a definição SQL/XML do objeto é válida ou não, efetuando
-     chamadas ao parser de esquemas para interpretar o arquivo referente
-     ao objeto */
+  //Validates the code definition for the passed object
   static QString validateObjectDefinition(BaseObject *object, unsigned def_type);
 
-  /* Retorna os objetos do tipo especificado no esquema especificado */
+  //Returns the list of objects that belongs to the passed schema
   vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=NULL);
 
-  //Obtém o índice de um objeto através de seu nome e tipo
+  //Returns the object index searching by its name
   int getObjectIndex(const QString &name, ObjectType obj_type);
 
-  //Obtém o índice de um objeto através de seu endere
+  //Retuns the passed object index
   int getObjectIndex(BaseObject *object);
 
-  //Adiciona um objeto ao modelo do tipo especificado
+  //Adds an object to the model
   void addObject(BaseObject *object, int obj_idx=-1);
 
-  /* Remove um objeto de sua respecitva lista através de seu endereço
-     em memória. Este método Não desaloca o objeto passado, isso deve
-     ser feito a partir do método de exclusão a partir do qual este
-     método foi chamado */
+  //Removes an object from the model
   void removeObject(BaseObject *object, int obj_idx=-1);
 
-  //Remove um objeto através de seu índice e tipo
+  //Removes an object using its index and type
   void removeObject(unsigned obj_idx, ObjectType obj_type);
 
-  /* Retorna um objeto do modelo buscando através de seu nome e espeficiando
-     o tipo do mesmo */
+  //Returns an object from the model using its index and type
   BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
 
-  //Carrega o modelo de banco de dados de um arquivo
+  //Loads a database model from a file
   void loadModel(const QString &filename);
 
-  //Define a codificação do banco de dados
+  //Sets the database encoding
   void setEncoding(EncodingType encod);
 
-  /* Define uma das localizações do banco de dados. Os códigos
-     de localização são padronizados e definidos em /usr/include/locale.h */
+  //Sets the database localizations
   void setLocalization(int localiz_id, const QString &value);
 
-  //Define o limite de conexão do banco de dados
+  //Sets the connections limit
   void setConnectionLimit(int conn_lim);
 
-  //Define o banco de dados modelo
+  //Sets the template database
   void setTemplateDB(const QString &temp_db);
 
-  //Define o autor do banco de dados
+  //Sets the model's author
   void setAuthor(const QString &author);
 
-   /* Sobrecarga do método de definição de objeto protegido
-     da classe ObjetoBase. O metodo sobrecarregado protege
-     ou desprotege todos os objetos do modelo em uma
-     só chamada */
+  //Sets the protection for all objects on the model
   void setProtected(bool value);
 
-  //Destrói todos os objetos do modelo
+  //Destroys all the objects
   void destroyObjects(void);
 
-  //Obtém o número de objetos de um tipo especificado
+  //Returns the object count for the specified type
   unsigned getObjectCount(ObjectType obj_type);
 
-  //Obtém o número total de objetos no modelo
+  //Returns the object count for all object types
   unsigned getObjectCount(void);
 
-  //Obtém uma das localizações do modelo
+  //Retuns the specified localization value
   QString getLocalization(int localiz_id);
 
-  //Obtém o limite de conexões do banco
+  //Returns the connection limit
   int getConnectionLimit(void);
 
-  //Obtém o banco de dados modelo
+  //Returns the template database
   QString getTemplateDB(void);
 
-  //Obtém o autor do modelo
+  //Returns the model's author
   QString getAuthor(void);
 
-  //Retorna a codificação do banco de dados
+  //Returns the database enconding
   EncodingType getEncoding(void);
 
-  //Salva o modelo em formato SQL ou XML no arquivo
+  //Saves the specified code definition for the model on the specified filename
   void saveModel(const QString &filename, unsigned def_type);
 
-  /* Retorna a definição SQL ou XML do modelo completo.
-     O parâmetro 'exportar_arq' por padrão é marcado como TRUE significando
-     que o código gerado será um que pode ser gravado em arquivo para
-     execução posterior. Quando este parâmetro é falso alguns detalhes
-     no código são modificados como a criação de roles e tablespaces não são feitas
-     pelo arquivo e sim diretamente pelo formulário de exportação do modelo.
-     (Vide pgmodeler_ui/FormExportacao). Adicionalmente, este parâmetro só é considerado
-     em geração de código SQL. */
+  /* Returns the complete SQL/XML defintion for the entire model (including all the other objects).
+     The parameter 'export_file' is used to format the generated code in a way that can be saved
+     in na SQL file and executed later on the DBMS server. This parameter is only used for SQL definition. */
   QString getCodeDefinition(unsigned def_type, bool export_file);
+
+  //Returns the complete SQL/XML definition for the entire model (including all the other objects).
   QString getCodeDefinition(unsigned def_type);
 
-  //Retorna a definição SOMENTE do banco de dados definido pelo modelo.
+  //Returns the code definition only for the database (excluding the definition of the other objects)
   QString __getCodeDefinition(unsigned def_type);
 
-  //Métodos de manipulação de relacionamentos
   void addRelationship(BaseRelationship *rel, int obj_idx=-1);
   void removeRelationship(BaseRelationship *rel, int obj_idx=-1);
   BaseRelationship *getRelationship(unsigned obj_idx, ObjectType rel_type);
 
-  /* Obtém o relacionamento usando uma ou duas tabelas para se obtê-lo. Caso o segundo parâmetro
-     seja omitido, o método encontra a primeira ocorrência de relacionamento em que a tabela do
-     1º parâmetro estiver participando */
+  /* Searchs and returns the relationship between the specified tables. If the second parameter
+     is ommited (NULL), the method returns the first relationship where the source table is
+     participating */
   BaseRelationship *getRelationship(BaseTable *src_tab, BaseTable *dst_tab);
 
-  //Métodos de manipulação de caixas de texto
   void addTextbox(Textbox *txtbox, int obj_idx=-1);
   void removeTextbox(Textbox *txtbox, int obj_idx=-1);
   Textbox *getTextbox(unsigned obj_idx);
 
-  //Métodos de manipulação de funções
   void addFunction(Function *func, int obj_idx=-1);
   void removeFunction(Function *func, int obj_idx=-1);
   Function *getFunction(unsigned obj_idx);
 
-  //Métodos de manipulação de esquemas
   void addSchema(Schema *schema, int obj_idx=-1);
   void removeSchema(Schema *schema, int obj_idx=-1);
   Schema *getSchema(unsigned obj_idx);
 
-  //Métodos de manipulação de visões
   void addView(View *view, int obj_idx=-1);
   void removeView(View *view, int obj_idx=-1);
   View *getView(unsigned obj_idx);
 
-  //Métodos de manipulação de tabela
   void addTable(Table *table, int obj_idx=-1);
   void removeTable(Table *table, int obj_idx=-1);
   Table *getTable(unsigned obj_idx);
 
-  //Métodos de manipulação de tipos
   void addType(Type *type, int obj_idx=-1);
   void removeType(Type *type, int obj_idx=-1);
   Type *getType(unsigned obj_idx);
 
-  //Métodos de manipulação de papéis
   void addRole(Role *role, int obj_idx=-1);
   void removeRole(Role *role, int obj_idx=-1);
   Role *getRole(unsigned obj_idx);
 
-  //Métodos de manipulação de espaços de tabela
   void addTablespace(Tablespace *tabspc, int obj_idx=-1);
   void removeTablespace(Tablespace *tabspc, int obj_idx=-1);
   Tablespace *getTablespace(unsigned obj_idx);
 
-  //Métodos de manipulação de linguagens
   void addLanguage(Language *lang, int obj_idx=-1);
   void removeLanguage(Language *lang, int obj_idx=-1);
   Language *getLanguage(unsigned obj_idx);
 
-  //Métodos de manipulação de funções agregadas
   void addAggregate(Aggregate *aggreg, int obj_idx=-1);
   void removeAggregate(Aggregate *aggreg, int obj_idx=-1);
   Aggregate *getAggregate(unsigned obj_idx);
 
-  //Métodos de manipulação de conversões de tipo
   void addCast(Cast *cast, int obj_idx=-1);
   void removeCast(Cast *cast, int obj_idx=-1);
   Cast *getCast(unsigned obj_idx);
 
-  //Métodos de manipulação de conversões de codificação
   void addConversion(Conversion *conv, int obj_idx=-1);
   void removeConversion(Conversion *conv, int obj_idx=-1);
   Conversion *getConversion(unsigned obj_idx);
 
-  //Métodos de manipulação de operadores
   void addOperator(Operator *oper, int obj_idx=-1);
   void removeOperator(Operator *oper, int obj_idx=-1);
   Operator *getOperator(unsigned obj_idx);
 
-  //Métodos de manipulação de classe de operadores
   void addOperatorClass(OperatorClass *op_class, int obj_idx=-1);
   void removeOperatorClass(OperatorClass *op_class, int obj_idx=-1);
   OperatorClass *getOperatorClass(unsigned obj_idx);
 
-  //Métodos de manipulação de famílias de operadores
   void addOperatorFamily(OperatorFamily *familia_op, int obj_idx=-1);
   void removeOperatorFamily(OperatorFamily *op_family, int obj_idx=-1);
   OperatorFamily *getOperatorFamily(unsigned obj_idx);
 
-  //Métodos de manipulação de domínios
   void addDomain(Domain *domain, int obj_idx=-1);
   void removeDomain(Domain *dominio, int obj_idx=-1);
   Domain *getDomain(unsigned obj_idx);
 
-  //Métodos de manipulação de sequencia
   void addSequence(Sequence *sequence, int obj_idx=-1);
   void removeSequence(Sequence *sequence, int obj_idx=-1);
   Sequence *getSequence(unsigned obj_idx);
 
-  //Métodos de manipulação de permissões
   void addPermission(Permission *perm);
-  //Remove uma dada permissão obtida previamente
   void removePermission(Permission *perm);
-  //Remove todas as permissões relacionadas ao objeto informado
-  void removePermissions(BaseObject *object);
-  /* Obtém as permissões relacionadas ao objeto informado armazenando-as
-     no vetor passado */
-  void getPermissions(BaseObject *object, vector<Permission *> &perms);
-  /* Retorna o índice de uma dada permissão. Este método é usado
-     como auxiliar nos métodos de inserção e remoção de permissões */
   int getPermissionIndex(Permission *perm);
 
-  //Obtém um objeto através de seu nome e tipo
+  //Removes all the permission related to the passed object
+  void removePermissions(BaseObject *object);
+
+  //Returns all the permissions related to the passed object
+  void getPermissions(BaseObject *object, vector<Permission *> &perms);
+
+  //Returns the object searching by its name and type
   BaseObject *getObject(const QString &name, ObjectType obj_type);
 
-  //Copia os atributos do objeto do parâmetro para o objeto this
-  void operator = (DatabaseModel &modelo);
-
-  //Métodos de criação de objetos a partir do documento XML
   ObjectType getObjectType(const QString &type_name);
   void setBasicAttributes(BaseObject *object);
+
   PgSQLType createPgSQLType(void);
-
-  //Cria um objeto a partir do tipo passado
   BaseObject *createObject(ObjectType obj_type);
-
   Role *createRole(void);
   Tablespace *createTablespace(void);
   Schema *createSchema(void);
@@ -413,84 +328,53 @@ class DatabaseModel:  public QObject, public BaseObject {
   Table *createTable(void);
   Column *createColumn(void);
   Rule *createRule(void);
-
-  /* O parâmetro 'ignorar_possuidora' quando 'true' indica que o método deve
-     criar a sequência mesmo se a coluna possuidora referenciada não
-     exista. Esse parâmetro foi adicionado para que sequencias não sejam
-     invalidadas caso a coluna possuidora deixe existir (desconectando um relacionamento) e
-     por consequência, outros objetos como funções, funções de agregação, sejam invalidados
-     por referenciar a sequência como um tipo de dado */
   Sequence *createSequence(bool ignore_onwer=false);
-
   View *createView(void);
   Permission *createPermission(void);
-
   Textbox *createTextbox(void);
   BaseRelationship *createRelationship(void);
-
-  /* Cria automaticamente relacionamentos entre tabelas e a visão passada
-     caso estes não existam no modelo. Remove relacionamentos os quais se
-     tornaram inválidos ou seja, a visão deixa de referenciar uma dada tabela */
-  void updateViewRelationships(View *view);
-
-  /* Cria automaticamente relacionamentos entre tabelas as quais estão relacionadas
-     através de chaves estrangeiras criadas pelo usuário. Caso já exista um relacionamento
-     entre duas tabelas mas o usuário crie uma segunda chave estrangeira com aplicação similiar
-     nenhum relacionamento será criado. */
-  void updateTableFKRelationships(Table *table);
-
-  /* Cria uma restrição a partir do XML. Caso o parâmetro 'objeto' seja uma tabela
-     cria a restrição e já adiciona automaticaene    primeira. Caso seja um relacionamento
-     adiciona a restrição criada a mesma referenciando as colunas que representam o
-     relacionamento. Caso o parâmetro 'objeto' seja nulo será considerado o atributo
-     'table' código XML o qual armazena o nome da tabela a qual irá armazenar a restrição,
-     desta forma o método busca a tabela automaticamente no modelo.
-
-     Caso  parâmetro 'objeto' seja nulo, ou seja, a tabela será obtida a partir do atributo
-     'table' do XML e esta tabela possua uma chave primária e a restrição criada pelo método seja
-     também uma chave-primária, esta última será fundida com a chave primária da tabela. Isto é usado
-     principalmente quando o método ModeloBD::verificarRefColsIncRelacao() está em execução
-     e uma chave primária está sendo recriada por este método e a tabela já possua um chave primária, isso
-     evita que seja disparado um erro indicando que a tabela já possui uma chave-primária. */
   Constraint *createConstraint(BaseObject *object);
   Index *createIndex(Table *table);
   Trigger *createTrigger(Table *table);
 
-  /* Retorna se um dado objeto no modelo referência a coluna especificada.
-     Esse método deve ser usado antes da remoção da coluna. O não uso deste método
-     pode quebrar as referência   coluna e causar resultados inesperados e inconsistências
-     no modelo. Este método varre a lista de objetos do tipo: sequencia e visao */
+  //Creates/removes the relationship between the passed view and the referecend tables
+  void updateViewRelationships(View *view);
+
+  //Creates/removes the relationship between the passed table and the referecend tables on its foreign keys
+  void updateTableFKRelationships(Table *table);
+
+  /* Validates the removal of the specified column raising errors when the passed object
+     is still being referecend */
   void validateColumnRemoval(Column *column);
 
-  //Valida os relacionamentos para refletirem as modificações nas coluna/restrição da tabela passada
+  //Validates the relationship to reflect the modifications on the column/constraint of the passed table
   void validateRelationships(TableObject *object, Table *parent_tab);
 
-  /* Retorna um erro caso um ciclo de relacionamentos for criado caso o relacionamento
-     passado seja inserido no modelo. Um ciclo de relacionamentos é proibido
-     na modelagem pois não proporciona a propagação de colunas e em certos
-     caso provoca loopings infinitos no método de validação de relacionamentos.
-     A existência de ciclos é considerada erro para relacionamentos identificadores
-     e de generalização/dependência. */
+  /* Checks if from the passed relationship some redundacy is found. Redundancy generates infinite column
+     propagation over the tables. This method raises an error when found some. */
   void checkRelationshipRedundancy(Relationship *rel);
 
-  /* Obtém, recursivamente, os objetos os quais o objeto do parâmetro referencia
-     (direta ou indiretamente) e os armazena num vetor */
+  /* Returns all the objects that the object depends on. The boolean paramenter is used to include the
+     indirect dependencies on the search. Indirect dependencies are objects that is not linked directly to
+     the informed object, e.g., a schema linked to a table that is referenced in a view */
   void getObjectDependecies(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
 
-  /* Obtém objetos os quais referenciam o objeto do parâmetro (direta ou indiretamente) e os armazena num vetor.
-     O parâmetro 'modo_exclusao' é usado para agilizar a execução do método quando este é usado para validação
-     da exclusão do objeto, obtendo apenas a primeira referência ao objeto candidato a exclusão.
-     Para se obter TODAS as referências ao objeto, deve-se espeficicar como 'false' o parâmetro 'modo_exclusão'. */
+  /* Returns all the objects that references the passed object. The boolean paramenter is used to performance purpose,
+     generally applied when excluding objects, this means that the method will stop the search when the first
+     reference is found */
   void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false);
 
-  //Marca todos os objetos gráficos do modelo como modificados forçando seu redesenho
+  //Marks all the graphical objects as modified forcing their redraw
   void setObjectsModified(void);
 
  signals:
-  //Sinal emitido sempre que um novo objeto for adicionado ao modelo
+  //Signal emitted when a new object is added to the model
   void s_objectAdded(BaseObject *objeto);
-  //Sinal emitido sempre que um objeto for excluído do modelo
+
+  //Signal emitted when an object is removed from the model
   void s_objectRemoved(BaseObject *objeto);
+
+  //Signal emitted when an object is created from a xml code
   void s_objectLoaded(int progresso, QString object_id, unsigned id_icone);
 };
 
