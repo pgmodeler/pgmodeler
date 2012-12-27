@@ -65,7 +65,6 @@ void DatabaseModel::setAuthor(const QString &author)
 
 vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 {
- //Retorna a referencia da lista equivalente ao tipo passado
  if(obj_type==OBJ_TEXTBOX)
   return(&textboxes);
  else if(obj_type==OBJ_TABLE)
@@ -117,9 +116,6 @@ QString DatabaseModel::validateObjectDefinition(BaseObject *object, unsigned def
 
  if(object)
  {
-  /* Verifica se a definição SQL/XML do objeto é valida por intermédio
-     do parser de esquemas, o qual retorna um erro quando existe
-     algum problema com a definição sql do objeto */
   try
   {
    obj_type=object->getObjectType();
@@ -133,15 +129,12 @@ QString DatabaseModel::validateObjectDefinition(BaseObject *object, unsigned def
   }
   catch(Exception &e)
   {
-   /* Caso o código do erro seja de atributo obrigatório não preenchido,
-      indica que a def. SQL não é válida */
    if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
     throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
                            .arg(QString::fromUtf8(object->getName(true)))
                            .arg(object->getTypeName()),
                   ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
    else
-    //Caso o parser dispare os demais erros, apenas redireciona o erro
     throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
   }
  }
@@ -271,10 +264,8 @@ void DatabaseModel::removeObject(unsigned obj_idx, ObjectType obj_type)
     obj_type==OBJ_RULE ||
     obj_type==BASE_OBJECT || obj_type==BASE_RELATIONSHIP ||
     obj_type==OBJ_DATABASE)
-  //Caso o tipo esteja fora do conjunto, dispara uma exceção
   throw Exception(ERR_REM_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Caso o objeto a ser removido seja uma tabela pai e seu índice seja válido
  else
  {
   vector<BaseObject *> *obj_list=NULL;
@@ -339,9 +330,6 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 
  obj_type=object->getObjectType();
 
- /* Caso o objeto seja um espaço de tabela verifica se não existem
-    outro espaço de tabela que esteja apontando para o mesmo diretório
-    o que é considerado erro */
  if(obj_type==OBJ_TABLESPACE)
  {
   Tablespace *tabspc=NULL, *aux_tabspc=NULL;
@@ -355,7 +343,8 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
   {
    aux_tabspc=dynamic_cast<Tablespace *>(*itr);
 
-   //Caso o diretório dos mesmos sejam iguais um erro é disparado
+   /* Raises an error if the object to be added is a tablespace and
+      there is some other tablespace pointing to the same directory */
    if(tabspc->getDirectory()==aux_tabspc->getDirectory())
    {
     throw Exception(Exception::getErrorMessage(ERR_ASG_DUP_TABLESPACE_DIR)
@@ -368,7 +357,7 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
   }
  }
 
- //Verifica se o objeto a ser inserido já existe no modelo, buscando através do nome.
+ //Raises an error if there is an object with the same name
  if((obj_type!=OBJ_FUNCTION && getObject(object->getName(true), obj_type, idx)) ||
     (obj_type==OBJ_FUNCTION &&
      getObject(dynamic_cast<Function *>(object)->getSignature(), obj_type, idx)))
@@ -386,7 +375,6 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 
  try
  {
-  //Valida a definição sql do objeto
   DatabaseModel::validateObjectDefinition(object, SchemaParser::SQL_DEFINITION);
  }
  catch(Exception &e)
@@ -394,10 +382,8 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
  }
 
- //Obtém a lista de objetos do tipo do novo objeto
  obj_list=getObjectList(object->getObjectType());
 
- //Insere o novo elemento na lista
  if(obj_idx < 0 || obj_idx >= static_cast<int>(obj_list->size()))
   obj_list->push_back(object);
  else
@@ -413,7 +399,6 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
    obj_list->push_back(object);
  }
 
- //Emite um sinal indicando a adição do objeto no modelo
  if(!signalsBlocked())
   emit s_objectAdded(object);
 }
@@ -428,14 +413,12 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx)
   ObjectType obj_type;
 
   obj_type=object->getObjectType();
-
-  //Obtém a lista de acordo com o tipo do objeto
   obj_list=getObjectList(obj_type);
+
   if(!obj_list)
    throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
-   //Caso o índice do objeto não foi especificado o método tenta descobrí-lo
    if(obj_idx < 0)
    {
     if(obj_type!=OBJ_FUNCTION && obj_type!=OBJ_OPERATOR)
@@ -448,13 +431,11 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx)
 
    if(obj_idx >= 0)
    {
-    //Remove as permissões do objeto
     removePermissions(object);
     obj_list->erase(obj_list->begin() + obj_idx);
    }
   }
 
-  //Emite um sinal indicando que o objeto foi removido
   if(!signalsBlocked())
    emit s_objectRemoved(object);
  }
@@ -465,11 +446,8 @@ vector<BaseObject *> DatabaseModel::getObjects(ObjectType obj_type, BaseObject *
  vector<BaseObject *> *obj_list=NULL, sel_list;
  vector<BaseObject *>::iterator itr, itr_end;
 
- //Obtém a lista de acordo com o tipo do objeto
  obj_list=getObjectList(obj_type);
 
- /* Caso a lista não exista indica que foi passado um tipo inválido
-    de objeto, dessa forma será retornado um erro */
  if(!obj_list)
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -495,16 +473,12 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
  int count;
  QString aux_name, aux_name1;
 
- //Obtém a lista de acordo com o tipo do objeto
  obj_list=getObjectList(obj_type);
 
- /* Caso a lista não exista indica que foi passado um tipo inválido
-    de objeto, dessa forma será retornado um erro */
  if(!obj_list)
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  //Obtém as referências para o inicio e o fim da lista
   itr=obj_list->begin();
   itr_end=obj_list->end();
   obj_idx=-1;
@@ -519,8 +493,6 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 
    while(itr!=itr_end && !found)
    {
-    /* Caso o nome do objeto atual seja igual ao nome passado
-      o while será quebrado */
     aux_name=(*itr)->getName(true);
     found=(aux_name==aux_name1);
     if(!found) itr++;
@@ -532,11 +504,8 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 
    while(itr!=itr_end && !found)
    {
-    /* Caso especial para função/oeradores: para saber se uma função/operador está duplicada
-       deve-se verificar a assinatura da mesma e não apenas o nome, pois
-       o PostgreSQL permite a sobrecarga de funções e operadores. Neste caso especial
-       o parâmetro informado ao método deve ser uma assinatura de função/operador
-       e não seu nome */
+    /* Special case for functions/operators: to check duplicity the signature must be
+       compared and not only the name */
     if(obj_type==OBJ_FUNCTION)
      signature=dynamic_cast<Function *>(*itr)->getSignature();
     else
@@ -549,7 +518,6 @@ BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type, i
 
   if(found)
   {
-   //Obtém a referência do objeto e calcula seu índice
    object=(*itr);
    obj_idx=(itr-obj_list->begin());
   }
@@ -563,15 +531,10 @@ BaseObject *DatabaseModel::getObject(unsigned obj_idx, ObjectType obj_type)
 {
  vector<BaseObject *> *obj_list=NULL;
 
- //Obtém a lista de acordo com o tipo do objeto
  obj_list=getObjectList(obj_type);
 
- /* Caso a lista não exista indica que foi passado um tipo inválido
-    de objeto, dessa forma será retornado um erro */
  if(!obj_list)
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
- /* Caso o índice do objeto a ser obtido esteja fora do
-    intervalo de elementos da lista */
  else if(obj_idx >= obj_list->size())
   throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
@@ -582,11 +545,8 @@ unsigned DatabaseModel::getObjectCount(ObjectType obj_type)
 {
  vector<BaseObject *> *obj_list=NULL;
 
- //Obtém a lista de acordo com o tipo do objeto
  obj_list=getObjectList(obj_type);
 
- /* Caso a lista não exista indica que foi passado um tipo inválido
-    de objeto, dessa forma será retornado um erro */
  if(!obj_list)
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
@@ -680,11 +640,6 @@ void DatabaseModel::setProtected(bool value)
 
 void DatabaseModel::destroyObjects(void)
 {
- /* A ordem de destruição de objetos deve ser seguida de forma que
-    os objetos menos dependidos sejam destruídos primeiro para
-    evitar falha de segmentação onde, no momento da destruição de algum
-    objeto, um dos objetos mais dependendidos sejam referenciados porém
-    ja foram destruídos anteriormente. */
  ObjectType types[20]={
           BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
           OBJ_AGGREGATE, OBJ_OPERATOR,
@@ -721,9 +676,7 @@ void DatabaseModel::addTable(Table *table, int obj_idx)
  try
  {
   __addObject(table, obj_idx);
-  /* Ao ser inserido uma nova tabela a mesma tem
-   seu nome é adicionad  lista de tipos válidos
-   do PostgreSQL */
+
   PgSQLType::addUserType(table->getName(true), table, this, UserTypeConfig::TABLE_TYPE);
 
   updateTableFKRelationships(table);
@@ -746,10 +699,10 @@ void DatabaseModel::removeTable(Table *table, int obj_idx)
   vector<BaseObject *> refs;
   QString str_aux;
 
-  //Obtém as referênca   tabela
+  //Get the table references
   getObjectReferences(table, refs, true);
 
-  //Caso a tabela esteja sendo referenciada, a mesma não pode ser removida
+  //If there are objects referencing the table
   if(!refs.empty())
   {
    ErrorType err_type;
@@ -757,8 +710,7 @@ void DatabaseModel::removeTable(Table *table, int obj_idx)
 
    while(i < count)
    {
-     /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
-        do objeto referenciado */
+     //Raises an error indicating the object that is referencing the table
      if(!dynamic_cast<TableObject *>(refs[i]))
      {
       err_type=ERR_REM_DIRECT_REFERENCE;
@@ -772,21 +724,18 @@ void DatabaseModel::removeTable(Table *table, int obj_idx)
      }
      else
      {
-      BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(refs[i])->getParentTable();
+      BaseObject *ref_obj_parent=dynamic_cast<TableObject *>(refs[i])->getParentTable();
 
-      /* Um erro só é disparado para uma objetos de tabela quando este
-         não tem como pai a própria tabela a ser removida */
-      if(obj_ref_pai != table)
+      if(ref_obj_parent != table)
       {
-       //Formata a mensagem caso exista uma referência indireta ao objeto a ser removido
        err_type=ERR_REM_INDIRECT_REFERENCE;
        str_aux=QString(Exception::getErrorMessage(err_type))
                .arg(table->getName(true))
                .arg(table->getTypeName())
                .arg(refs[0]->getName(true))
                .arg(refs[0]->getTypeName())
-               .arg(obj_ref_pai->getName(true))
-               .arg(obj_ref_pai->getTypeName());
+               .arg(ref_obj_parent->getName(true))
+               .arg(ref_obj_parent->getTypeName());
 
        throw Exception(str_aux, err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
@@ -797,12 +746,7 @@ void DatabaseModel::removeTable(Table *table, int obj_idx)
    }
 
   __removeObject(table, obj_idx);
-
-   /* Ao ser removido do modelo a sequencia tem
-    seu nome removido da lista de tipos válidos do PostgreSQL */
   PgSQLType::removeUserType(table->getName(true), table);
-
-  //Remove qualquer relacionamento gerado por chave estrangeira
   updateTableFKRelationships(table);
  }
 }
@@ -812,9 +756,6 @@ void DatabaseModel::addSequence(Sequence *sequence, int obj_idx)
  try
  {
   __addObject(sequence, obj_idx);
-  /* Ao ser inserido uma nova sequencia a mesma tem
-   seu nome é adicionad  lista de tipos válidos
-   do PostgreSQL */
   PgSQLType::addUserType(sequence->getName(true), sequence, this, UserTypeConfig::SEQUENCE_TYPE);
  }
  catch(Exception &e)
@@ -834,9 +775,6 @@ void DatabaseModel::removeSequence(Sequence *sequence, int obj_idx)
  {
   removeUserType(sequence, obj_idx);
   __removeObject(sequence, obj_idx);
-  /* Ao ser removido do modelo a sequencia tem
-   seu nome removido da lista de tipos válidos do PostgreSQL */
-  //TipoPgSQL::removerTipoUsuario(sequencia->getName(true), sequencia);
  }
 }
 
@@ -889,7 +827,7 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
   itr=fks.begin();
   itr_end=fks.end();
 
-  //Caso a tabela foi excluida deve-se remove os relacionamentos
+  //Case the table is removed the fk relationship must be removed too
   if(!fks.empty() && getObjectIndex(table) < 0)
   {
    while(itr!=itr_end)
@@ -904,31 +842,27 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
      removeRelationship(rel);
    }
   }
-  //Atualiza os relacionamentos
+  //Update the relationships
   else
   {
-   /* Remove os relacionamentos os quais estão inválidos, ou seja,
-      a tabela do relacionametno não está sendo mais referenciada pela visao */
+   /* First remove the invalid relationships (the foreign key that generates the
+      relationship no longer exists) */
    itr1=base_relationships.begin();
    itr1_end=base_relationships.end();
 
-   //Varre a lista de relacionamentos tabela-visão
    idx=0;
    while(itr1!=itr1_end)
    {
-    //Obtém a referência ao relacionamento
     rel=dynamic_cast<BaseRelationship *>(*itr1);
 
-    //Caso a visão seja um dos elementos do relacionamento
     if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK &&
        rel->getTable(BaseRelationship::SRC_TABLE)==table)
     {
      ref_tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
 
-       //Caso a visão não referencie mais a tabela
+     //Removes the relationship if the table does'nt references the 'ref_tab'
      if(!table->isReferTableOnForeignKey(ref_tab))
      {
-      //Remove o relacionamento
       removeRelationship(rel);
       itr1=base_relationships.begin() + idx;
       itr1_end=base_relationships.end();
@@ -944,15 +878,16 @@ void DatabaseModel::updateTableFKRelationships(Table *table)
     }
    }
 
+   //Creating the relationships from the foreign keys
    while(itr!=itr_end)
    {
     fk=(*itr);
     ref_tab=dynamic_cast<Table *>(fk->getReferencedTable());
     itr++;
 
-    /* Caso a tabela exista, um relacionamento tabela-visão será automaticamente criado
-       (caso este já não existe) e inserido no modelo */
+    //Only creates the relationship if does'nt exist one between the tables
     rel=getRelationship(table, ref_tab);
+
     if(!rel)
     {
      rel=new BaseRelationship(BaseRelationship::RELATIONSHIP_FK,
@@ -976,23 +911,18 @@ void DatabaseModel::updateViewRelationships(View *view)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else if(getObjectIndex(view) < 0)
  {
-  /* Quando uma visão é excluída, os relacionamentos tabela-visão os quais
-     possuem a visão como um dos elementos serão excluídos automaticamente */
+  //Remove all the relationship related to the view when this latter no longer exists
   itr=base_relationships.begin();
   itr_end=base_relationships.end();
 
-  //Varre a lista de relacionamentos tabela-visão
   idx=0;
   while(itr!=itr_end)
   {
-   //Obtém a referência ao relacionamento
    rel=dynamic_cast<BaseRelationship *>(*itr);
 
-   //Caso a visão seja um dos elementos do relacionamento
    if(rel->getTable(BaseRelationship::SRC_TABLE)==view ||
       rel->getTable(BaseRelationship::DST_TABLE)==view)
    {
-    //Remove o relacionamento
     removeRelationship(rel);
     itr=base_relationships.begin() + idx;
     itr_end=base_relationships.end();
@@ -1005,32 +935,26 @@ void DatabaseModel::updateViewRelationships(View *view)
  }
  else
  {
-  /* Remove os relacionamentos visão-tabela os quais estão inválidos, ou seja,
-     a tabela do relacionametno não está sendo mais referenciada pela visao */
+  /* Remove the relationships between tables and the view
+     when this latter doesn't reference the first */
   itr=base_relationships.begin();
   itr_end=base_relationships.end();
 
-  //Varre a lista de relacionamentos tabela-visão
   idx=0;
   while(itr!=itr_end)
   {
-   //Obtém a referência ao relacionamento
    rel=dynamic_cast<BaseRelationship *>(*itr);
 
-   //Caso a visão seja um dos elementos do relacionamento
    if(rel->getTable(BaseRelationship::SRC_TABLE)==view ||
       rel->getTable(BaseRelationship::DST_TABLE)==view)
    {
-    //Obtém a tabela do relacionamento
     if(rel->getTable(BaseRelationship::SRC_TABLE)->getObjectType()==OBJ_TABLE)
      tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE));
     else
      tab=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
 
-    //Caso a visão não referencie mais a tabela
     if(!view->isReferencingTable(tab))
     {
-     //Remove o relacionamento
      removeRelationship(rel);
      itr=base_relationships.begin() + idx;
      itr_end=base_relationships.end();
@@ -1046,9 +970,7 @@ void DatabaseModel::updateViewRelationships(View *view)
    }
   }
 
-  /* Cria automaticamente os relacionamentos entre as tabelas e a visão.
-     As tabelas referenciadas são obtidas das referências na parte SELECT
-     da consulta que gera a visão  */
+  //Creates the relationships from the view references
   ref_count=view->getReferenceCount(Reference::SQL_REFER_SELECT);
 
   for(i=0; i < ref_count; i++)
@@ -1056,8 +978,6 @@ void DatabaseModel::updateViewRelationships(View *view)
    ref=view->getReference(i, Reference::SQL_REFER_SELECT);
    tab=ref.getTable();
 
-   /* Caso a tabela exista, um relacionamento tabela-visão será automaticamente criado
-      (caso este já não existe) e inserido no modelo */
    rel=getRelationship(view,tab);
    if(tab && !rel)
    {
@@ -1076,22 +996,17 @@ void DatabaseModel::disconnectRelationships(void)
   Relationship *rel=NULL;
   vector<BaseObject *>::reverse_iterator ritr_rel, ritr_rel_end;
 
-  /* Varre a lista geral de relacionamentos
-     do último ao primeiro, desconectando os últimos relacionamentos primeiro
-     para evitar falha de segmentação */
+  //The relationships must be disconnected from the last to the first
   ritr_rel=relationships.rbegin();
   ritr_rel_end=relationships.rend();
 
   while(ritr_rel!=ritr_rel_end)
   {
-   //Converte o ponteiro de relacionamento da conexão para a classe base de relacionametno
    base_rel=dynamic_cast<BaseRelationship *>(*ritr_rel);
    ritr_rel++;
 
-   //Caso o relacionamento obtido da lista seja entre tabelas
    if(base_rel->getObjectType()==OBJ_RELATIONSHIP)
    {
-    //Converte o objeto para relacionamento tabela-tabela
     rel=dynamic_cast<Relationship *>(base_rel);
     rel->disconnectRelationship();
    }
