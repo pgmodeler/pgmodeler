@@ -158,7 +158,7 @@ class DatabaseModel:  public QObject, public BaseObject {
   /* Retorna o objeto do modelo o qual representa o tipo da dado PostgreSQL.
      Basicamente esse método retorna uma tabela, sequencia, tipo ou domínio quando
      o 'tipo' é um tipo de dado definido pelo usuário */
-  BaseObject *getObjectPgSQLType(PgSQLType tipo);
+  BaseObject *getObjectPgSQLType(PgSQLType type);
 
  public:
   DatabaseModel(void);
@@ -258,7 +258,7 @@ class DatabaseModel:  public QObject, public BaseObject {
   EncodingType getEncoding(void);
 
   //Salva o modelo em formato SQL ou XML no arquivo
-  void saveModel(const QString &nome_arq, unsigned tipo_def);
+  void saveModel(const QString &filename, unsigned def_type);
 
   /* Retorna a definição SQL ou XML do modelo completo.
      O parâmetro 'exportar_arq' por padrão é marcado como TRUE significando
@@ -475,13 +475,13 @@ class DatabaseModel:  public QObject, public BaseObject {
 
   /* Obtém, recursivamente, os objetos os quais o objeto do parâmetro referencia
      (direta ou indiretamente) e os armazena num vetor */
-  void getObjectDependecies(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_dep_indiretas=false);
+  void getObjectDependecies(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
 
   /* Obtém objetos os quais referenciam o objeto do parâmetro (direta ou indiretamente) e os armazena num vetor.
      O parâmetro 'modo_exclusao' é usado para agilizar a execução do método quando este é usado para validação
      da exclusão do objeto, obtendo apenas a primeira referência ao objeto candidato a exclusão.
      Para se obter TODAS as referências ao objeto, deve-se espeficicar como 'false' o parâmetro 'modo_exclusão'. */
-  void getObjectReferences(BaseObject *objeto, vector<BaseObject *> &vet_refs, bool modo_exclusao=false);
+  void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false);
 
   //Marca todos os objetos gráficos do modelo como modificados forçando seu redesenho
   void setObjectsModified(void);
