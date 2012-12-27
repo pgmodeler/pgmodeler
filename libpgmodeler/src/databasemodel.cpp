@@ -1624,10 +1624,10 @@ void DatabaseModel::storeSpecialObjectsXML(void)
  }
 }
 
-void DatabaseModel::createSpecialObject(const QString &def_xml_obj, unsigned id_obj)
+void DatabaseModel::createSpecialObject(const QString &xml_def, unsigned obj_id)
 {
- ObjectType tipo_obj;
- BaseObject *objeto=NULL;
+ ObjectType obj_type;
+ BaseObject *object=NULL;
 
  try
  {
@@ -1635,21 +1635,21 @@ void DatabaseModel::createSpecialObject(const QString &def_xml_obj, unsigned id_
   XMLParser::restartParser();
 
   //Carrega o buffer XML do parser com a definição XML do objeto especial
-  XMLParser::loadXMLBuffer(def_xml_obj);
+  XMLParser::loadXMLBuffer(xml_def);
 
   //Identificando o tipo de objeto de acordo com o elemento obtido anteriormente
-  tipo_obj=getObjectType(XMLParser::getElementName());
+  obj_type=getObjectType(XMLParser::getElementName());
 
   //Cria o objeto de acordo com o tipo identificado
-  if(tipo_obj==OBJ_SEQUENCE)
-   objeto=createSequence(true);
+  if(obj_type==OBJ_SEQUENCE)
+   object=createSequence(true);
   else
-   objeto=createObject(tipo_obj);
+   object=createObject(obj_type);
 
-  if(tipo_obj==OBJ_SEQUENCE)
-   addSequence(dynamic_cast<Sequence *>(objeto));
-  else if(tipo_obj==OBJ_VIEW)
-   addView(dynamic_cast<View *>(objeto));
+  if(obj_type==OBJ_SEQUENCE)
+   addSequence(dynamic_cast<Sequence *>(object));
+  else if(obj_type==OBJ_VIEW)
+   addView(dynamic_cast<View *>(object));
 
   /* Modifica o id do objeto para o valor do id passado no parâmetro.
      Como um novo id é atribuído quando o objeto é instanciado e levando
@@ -1657,16 +1657,16 @@ void DatabaseModel::createSpecialObject(const QString &def_xml_obj, unsigned id_
      isso é necessário para manter a ordem dos objetos da forma como
      os mesmos foram carregados a partir do arquivo evitando a quebra
      de referências. */
-  if(objeto && id_obj!=0)
-   objeto->object_id=id_obj;
+  if(object && obj_id!=0)
+   object->object_id=obj_id;
  }
  catch(Exception &e)
  {
-  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, def_xml_obj);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, xml_def);
  }
 }
 
-void DatabaseModel::addRelationship(BaseRelationship *relacao, int idx_obj)
+void DatabaseModel::addRelationship(BaseRelationship *rel, int obj_idx)
 {
  try
  {
@@ -1674,13 +1674,13 @@ void DatabaseModel::addRelationship(BaseRelationship *relacao, int idx_obj)
   QString msg;
 
 
-  if(relacao)
+  if(rel)
   {
    /* Caso o relacionamento esteja alocado verifica se já não existe um
       relacionamento no modelo entre as tabelas envolvidas */
    //tipo_rel=relacao->obterTipoObjeto();
-   tab1=relacao->getTable(BaseRelationship::SRC_TABLE);
-   tab2=relacao->getTable(BaseRelationship::DST_TABLE);
+   tab1=rel->getTable(BaseRelationship::SRC_TABLE);
+   tab2=rel->getTable(BaseRelationship::DST_TABLE);
 
    //Caso exista um relacionamento entre as tabelas será disparado um erro
    if(getRelationship(tab1,tab2))
@@ -1696,21 +1696,21 @@ void DatabaseModel::addRelationship(BaseRelationship *relacao, int idx_obj)
   }
 
   //Adiciona o objeto no modelo
-  if(relacao->getObjectType()==OBJ_RELATIONSHIP)
-   checkRelationshipRedundancy(dynamic_cast<Relationship *>(relacao));
+  if(rel->getObjectType()==OBJ_RELATIONSHIP)
+   checkRelationshipRedundancy(dynamic_cast<Relationship *>(rel));
 
-  __addObject(relacao, idx_obj);
+  __addObject(rel, obj_idx);
 
-  if(relacao->getObjectType()==OBJ_RELATIONSHIP)
+  if(rel->getObjectType()==OBJ_RELATIONSHIP)
   {
    //Conecta o novo relacionamento
-   dynamic_cast<Relationship *>(relacao)->connectRelationship();
+   dynamic_cast<Relationship *>(rel)->connectRelationship();
 
    //Valida os relacionamentos para propagação das colunas
    validateRelationships();
   }
   else
-   relacao->connectRelationship();
+   rel->connectRelationship();
  }
  catch(Exception &e)
  {
@@ -1718,24 +1718,24 @@ void DatabaseModel::addRelationship(BaseRelationship *relacao, int idx_obj)
  }
 }
 
-void DatabaseModel::removeRelationship(BaseRelationship *relacao, int idx_obj)
+void DatabaseModel::removeRelationship(BaseRelationship *rel, int obj_idx)
 {
  try
  {
-  if(getObjectIndex(relacao) >= 0)
+  if(getObjectIndex(rel) >= 0)
   {
-   if(relacao->getObjectType()==OBJ_RELATIONSHIP)
+   if(rel->getObjectType()==OBJ_RELATIONSHIP)
    {
     //Desconecta os relacionamentos
     storeSpecialObjectsXML();
     disconnectRelationships();
    }
-   else if(relacao->getObjectType()==BASE_RELATIONSHIP)
-    relacao->disconnectRelationship();
+   else if(rel->getObjectType()==BASE_RELATIONSHIP)
+    rel->disconnectRelationship();
 
-   __removeObject(relacao, idx_obj);
+   __removeObject(rel, obj_idx);
 
-   if(relacao->getObjectType()==OBJ_RELATIONSHIP)
+   if(rel->getObjectType()==OBJ_RELATIONSHIP)
    {
     //Valida os relacionamentos após a remoção de o relacionamento atual
     validateRelationships();
@@ -1748,24 +1748,24 @@ void DatabaseModel::removeRelationship(BaseRelationship *relacao, int idx_obj)
  }
 }
 
-BaseRelationship *DatabaseModel::getRelationship(unsigned idx_obj, ObjectType tipo_rel)
+BaseRelationship *DatabaseModel::getRelationship(unsigned obj_idx, ObjectType rel_type)
 {
  //Caso o tipo de relacionamento seja inválido
- if(tipo_rel!=OBJ_RELATIONSHIP && tipo_rel!=BASE_RELATIONSHIP)
+ if(rel_type!=OBJ_RELATIONSHIP && rel_type!=BASE_RELATIONSHIP)
   throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(dynamic_cast<BaseRelationship *>(getObject(idx_obj, tipo_rel)));
+ return(dynamic_cast<BaseRelationship *>(getObject(obj_idx, rel_type)));
 }
 
-BaseRelationship *DatabaseModel::getRelationship(BaseTable *tab_orig, BaseTable *tab_dest)
+BaseRelationship *DatabaseModel::getRelationship(BaseTable *src_tab, BaseTable *dst_tab)
 {
  vector<BaseObject *>::iterator itr, itr_end;
  vector<BaseObject *> rel_list;
  BaseRelationship *rel=NULL;
- bool enc=false, buscar_tab_unica=false;
+ bool found=false, search_uniq_tab=false;
  BaseTable *tab1=NULL, *tab2=NULL;
 
- if(tab_orig)
+ if(src_tab)
  {
   /* Caso a tabela de destino não esteja especificada,
      indica que que o método deve procurar por relacionamentos
@@ -1773,10 +1773,10 @@ BaseRelationship *DatabaseModel::getRelationship(BaseTable *tab_orig, BaseTable 
      referência ou a receptora. A execução normal (tab_dest!=NULL)
      o método só retorna um relacionamento onde ambas as tabelas estão
      presentas */
-  if(!tab_dest)
+  if(!dst_tab)
   {
-   tab_dest=tab_orig;
-   buscar_tab_unica=true;
+   dst_tab=src_tab;
+   search_uniq_tab=true;
   }
 
   /* Definindo os iteradores de acordo com os objetos envolvidos
@@ -1785,8 +1785,8 @@ BaseRelationship *DatabaseModel::getRelationship(BaseTable *tab_orig, BaseTable 
   /* Caso um dos objetos seja uma visão, a lista de relacionamentos
      tabela-visão será varrida, caso contrário a lista de relacionamentos
      tabela-tabela será usada */
-  if(tab_orig->getObjectType()==OBJ_VIEW ||
-     tab_dest->getObjectType()==OBJ_VIEW)
+  if(src_tab->getObjectType()==OBJ_VIEW ||
+     dst_tab->getObjectType()==OBJ_VIEW)
   {
    itr=base_relationships.begin();
    itr_end=base_relationships.end();
@@ -1801,7 +1801,7 @@ BaseRelationship *DatabaseModel::getRelationship(BaseTable *tab_orig, BaseTable 
    itr_end=rel_list.end();
   }
 
-  while(itr!=itr_end && !enc)
+  while(itr!=itr_end && !found)
   {
    //Obtém a referência ao relacionamento
    rel=dynamic_cast<BaseRelationship *>(*itr);
@@ -1810,10 +1810,10 @@ BaseRelationship *DatabaseModel::getRelationship(BaseTable *tab_orig, BaseTable 
 
    /* Verifica se os elementos do parâmetro coincidem com os elementos
       do relacionamento */
-   enc=((tab1==tab_orig && tab2==tab_dest) ||
-        (tab2==tab_orig && tab1==tab_dest) ||
-        (buscar_tab_unica && (tab1==tab_orig || tab2==tab_orig)));
-   if(!enc)
+   found=((tab1==src_tab && tab2==dst_tab) ||
+        (tab2==src_tab && tab1==dst_tab) ||
+        (search_uniq_tab && (tab1==src_tab || tab2==src_tab)));
+   if(!found)
    { rel=NULL; itr++; }
   }
  }
@@ -1821,11 +1821,11 @@ BaseRelationship *DatabaseModel::getRelationship(BaseTable *tab_orig, BaseTable 
  return(rel);
 }
 
-void DatabaseModel::addTextbox(Textbox *caixa, int idx_obj)
+void DatabaseModel::addTextbox(Textbox *txtbox, int obj_idx)
 {
  try
  {
-  __addObject(caixa, idx_obj);
+  __addObject(txtbox, obj_idx);
  }
  catch(Exception &e)
  {
@@ -1833,21 +1833,21 @@ void DatabaseModel::addTextbox(Textbox *caixa, int idx_obj)
  }
 }
 
-void DatabaseModel::removeTextbox(Textbox *caixa, int idx_obj)
+void DatabaseModel::removeTextbox(Textbox *txtbox, int obj_idx)
 {
- __removeObject(caixa, idx_obj);
+ __removeObject(txtbox, obj_idx);
 }
 
-Textbox *DatabaseModel::getTextbox(unsigned idx_obj)
+Textbox *DatabaseModel::getTextbox(unsigned obj_idx)
 {
- return(dynamic_cast<Textbox *>(getObject(idx_obj, OBJ_TEXTBOX)));
+ return(dynamic_cast<Textbox *>(getObject(obj_idx, OBJ_TEXTBOX)));
 }
 
-void DatabaseModel::addSchema(Schema *esquema, int idx_obj)
+void DatabaseModel::addSchema(Schema *schema, int obj_idx)
 {
  try
  {
-  __addObject(esquema, idx_obj);
+  __addObject(schema, obj_idx);
  }
  catch(Exception &e)
  {
@@ -1855,44 +1855,44 @@ void DatabaseModel::addSchema(Schema *esquema, int idx_obj)
  }
 }
 
-Schema *DatabaseModel::getSchema(unsigned idx_obj)
+Schema *DatabaseModel::getSchema(unsigned obj_idx)
 {
- return(dynamic_cast<Schema *>(getObject(idx_obj, OBJ_SCHEMA)));
+ return(dynamic_cast<Schema *>(getObject(obj_idx, OBJ_SCHEMA)));
 }
 
-void DatabaseModel::removeSchema(Schema *esquema, int idx_obj)
+void DatabaseModel::removeSchema(Schema *schema, int obj_idx)
 {
- if(esquema)
+ if(schema)
  {
-  vector<BaseObject *> vet_refs;
+  vector<BaseObject *> refs;
 
   //Obtém as referências ao esquema
-  getObjectReferences(esquema, vet_refs, true);
+  getObjectReferences(schema, refs, true);
 
  /* Caso o esquema esteja sendo referenciado, por algum objeto a
      mesma não pode ser removida */
-  if(!vet_refs.empty())
+  if(!refs.empty())
   {
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
 
    throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-                 .arg(esquema->getName(true))
-                 .arg(esquema->getTypeName())
-                 .arg(vet_refs[0]->getName(true))
-                 .arg(vet_refs[0]->getTypeName()),
+                 .arg(schema->getName(true))
+                 .arg(schema->getTypeName())
+                 .arg(refs[0]->getName(true))
+                 .arg(refs[0]->getTypeName()),
                  ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  __removeObject(esquema, idx_obj);
+  __removeObject(schema, obj_idx);
  }
 }
 
-void DatabaseModel::addRole(Role *papel, int idx_obj)
+void DatabaseModel::addRole(Role *role, int obj_idx)
 {
  try
  {
-  __addObject(papel, idx_obj);
+  __addObject(role, obj_idx);
  }
  catch(Exception &e)
  {
@@ -1900,43 +1900,43 @@ void DatabaseModel::addRole(Role *papel, int idx_obj)
  }
 }
 
-Role *DatabaseModel::getRole(unsigned idx_obj)
+Role *DatabaseModel::getRole(unsigned obj_idx)
 {
- return(dynamic_cast<Role *>(getObject(idx_obj, OBJ_ROLE)));
+ return(dynamic_cast<Role *>(getObject(obj_idx, OBJ_ROLE)));
 }
 
-void DatabaseModel::removeRole(Role *papel, int idx_obj)
+void DatabaseModel::removeRole(Role *role, int obj_idx)
 {
- if(papel)
+ if(role)
  {
-  vector<BaseObject *> vet_refs;
+  vector<BaseObject *> refs;
 
   //Obtém as referências ao papel
-  getObjectReferences(papel, vet_refs, true);
+  getObjectReferences(role, refs, true);
 
  /* Caso o papel esteja sendo referenciado, por algum objeto a
      mesma não pode ser removido */
-  if(!vet_refs.empty())
+  if(!refs.empty())
   {
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
    throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-                 .arg(papel->getName(true))
-                 .arg(papel->getTypeName())
-                 .arg(vet_refs[0]->getName(true))
-                 .arg(vet_refs[0]->getTypeName()),
+                 .arg(role->getName(true))
+                 .arg(role->getTypeName())
+                 .arg(refs[0]->getName(true))
+                 .arg(refs[0]->getTypeName()),
                  ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  __removeObject(papel, idx_obj);
+  __removeObject(role, obj_idx);
  }
 }
 
-void DatabaseModel::addTablespace(Tablespace *espaco_tab, int idx_obj)
+void DatabaseModel::addTablespace(Tablespace *tabspc, int obj_idx)
 {
  try
  {
-  __addObject(espaco_tab, idx_obj);
+  __addObject(tabspc, obj_idx);
  }
  catch(Exception &e)
  {
@@ -1944,66 +1944,66 @@ void DatabaseModel::addTablespace(Tablespace *espaco_tab, int idx_obj)
  }
 }
 
-Tablespace *DatabaseModel::getTablespace(unsigned idx_obj)
+Tablespace *DatabaseModel::getTablespace(unsigned obj_idx)
 {
- return(dynamic_cast<Tablespace *>(getObject(idx_obj, OBJ_TABLESPACE)));
+ return(dynamic_cast<Tablespace *>(getObject(obj_idx, OBJ_TABLESPACE)));
 }
 
-void DatabaseModel::removeTablespace(Tablespace *espaco_tab, int idx_obj)
+void DatabaseModel::removeTablespace(Tablespace *tabspc, int obj_idx)
 {
- if(espaco_tab)
+ if(tabspc)
  {
-  vector<BaseObject *> vet_refs;
+  vector<BaseObject *> refs;
   QString str_aux;
 
   //Obtém as referências ao espaço de tabela
-  getObjectReferences(espaco_tab, vet_refs, true);
+  getObjectReferences(tabspc, refs, true);
 
   /* Caso o esquema esteja sendo referenciado, por algum objeto a
      mesma não pode ser removida */
-  if(!vet_refs.empty())
+  if(!refs.empty())
   {
-   ErrorType tipo_err;
+   ErrorType err_type;
 
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
-   if(!dynamic_cast<TableObject *>(vet_refs[0]))
+   if(!dynamic_cast<TableObject *>(refs[0]))
    {
     //Formata a mensagem para referencia direta
-    tipo_err=ERR_REM_DIRECT_REFERENCE;
-    str_aux=QString(Exception::getErrorMessage(tipo_err))
-            .arg(espaco_tab->getName(true))
-            .arg(espaco_tab->getTypeName())
-            .arg(vet_refs[0]->getName(true))
-            .arg(vet_refs[0]->getTypeName());
+    err_type=ERR_REM_DIRECT_REFERENCE;
+    str_aux=QString(Exception::getErrorMessage(err_type))
+            .arg(tabspc->getName(true))
+            .arg(tabspc->getTypeName())
+            .arg(refs[0]->getName(true))
+            .arg(refs[0]->getTypeName());
    }
    else
    {
-    BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(vet_refs[0])->getParentTable();
+    BaseObject *ref_obj_parent=dynamic_cast<TableObject *>(refs[0])->getParentTable();
     //Formata a mensagem para referencia indireta
-    tipo_err=ERR_REM_INDIRECT_REFERENCE;
-    str_aux=QString(Exception::getErrorMessage(tipo_err))
-            .arg(espaco_tab->getName(true))
-            .arg(espaco_tab->getTypeName())
-            .arg(vet_refs[0]->getName(true))
-            .arg(vet_refs[0]->getTypeName())
-            .arg(obj_ref_pai->getName(true))
-            .arg(obj_ref_pai->getTypeName());
+    err_type=ERR_REM_INDIRECT_REFERENCE;
+    str_aux=QString(Exception::getErrorMessage(err_type))
+            .arg(tabspc->getName(true))
+            .arg(tabspc->getTypeName())
+            .arg(refs[0]->getName(true))
+            .arg(refs[0]->getTypeName())
+            .arg(ref_obj_parent->getName(true))
+            .arg(ref_obj_parent->getTypeName());
 
    }
 
-   throw Exception(str_aux,tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   throw Exception(str_aux,err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  __removeObject(espaco_tab, idx_obj);
+  __removeObject(tabspc, obj_idx);
  }
 }
 
-void DatabaseModel::addCast(Cast *conv_tipo, int idx_obj)
+void DatabaseModel::addCast(Cast *cast, int obj_idx)
 {
  try
  {
-  __addObject(conv_tipo, idx_obj);
+  __addObject(cast, obj_idx);
  }
  catch(Exception &e)
  {
@@ -2011,21 +2011,21 @@ void DatabaseModel::addCast(Cast *conv_tipo, int idx_obj)
  }
 }
 
-void DatabaseModel::removeCast(Cast *conv_tipo, int idx_obj)
+void DatabaseModel::removeCast(Cast *cast, int obj_idx)
 {
- __removeObject(conv_tipo, idx_obj);
+ __removeObject(cast, obj_idx);
 }
 
-Cast *DatabaseModel::getCast(unsigned idx_obj)
+Cast *DatabaseModel::getCast(unsigned obj_idx)
 {
- return(dynamic_cast<Cast *>(getObject(idx_obj, OBJ_CAST)));
+ return(dynamic_cast<Cast *>(getObject(obj_idx, OBJ_CAST)));
 }
 
-void DatabaseModel::addConversion(Conversion *conv_codificacao, int idx_obj)
+void DatabaseModel::addConversion(Conversion *conv, int obj_idx)
 {
  try
  {
-  __addObject(conv_codificacao, idx_obj);
+  __addObject(conv, obj_idx);
  }
  catch(Exception &e)
  {
@@ -2033,22 +2033,22 @@ void DatabaseModel::addConversion(Conversion *conv_codificacao, int idx_obj)
  }
 }
 
-void DatabaseModel::removeConversion(Conversion *conv_codificacao, int idx_obj)
+void DatabaseModel::removeConversion(Conversion *conv, int obj_idx)
 {
- __removeObject(conv_codificacao, idx_obj);
+ __removeObject(conv, obj_idx);
 }
 
-Conversion *DatabaseModel::getConversion(unsigned idx_obj)
+Conversion *DatabaseModel::getConversion(unsigned obj_idx)
 {
- return(dynamic_cast<Conversion *>(getObject(idx_obj,
+ return(dynamic_cast<Conversion *>(getObject(obj_idx,
  OBJ_CONVERSION)));
 }
 
-void DatabaseModel::addLanguage(Language *linguagem, int idx_obj)
+void DatabaseModel::addLanguage(Language *lang, int obj_idx)
 {
  try
  {
-  __addObject(linguagem, idx_obj);
+  __addObject(lang, obj_idx);
  }
  catch(Exception &e)
  {
@@ -2056,43 +2056,43 @@ void DatabaseModel::addLanguage(Language *linguagem, int idx_obj)
  }
 }
 
-Language *DatabaseModel::getLanguage(unsigned idx_obj)
+Language *DatabaseModel::getLanguage(unsigned obj_idx)
 {
- return(dynamic_cast<Language *>(getObject(idx_obj, OBJ_LANGUAGE)));
+ return(dynamic_cast<Language *>(getObject(obj_idx, OBJ_LANGUAGE)));
 }
 
-void DatabaseModel::removeLanguage(Language *linguagem, int idx_obj)
+void DatabaseModel::removeLanguage(Language *lang, int obj_idx)
 {
- if(linguagem)
+ if(lang)
  {
-  vector<BaseObject *> vet_refs;
+  vector<BaseObject *> refs;
 
   //Obtém as referênca   linguagem
-  getObjectReferences(linguagem, vet_refs, true);
+  getObjectReferences(lang, refs, true);
 
  /* Caso a linguagem esteja sendo referenciado, por algum objeto a
      mesma não pode ser removida */
-  if(!vet_refs.empty())
+  if(!refs.empty())
   {
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
    throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-                 .arg(linguagem->getName(true))
-                 .arg(linguagem->getTypeName())
-                 .arg(dynamic_cast<Function *>(vet_refs[0])->getSignature())
-                 .arg(vet_refs[0]->getTypeName()),
+                 .arg(lang->getName(true))
+                 .arg(lang->getTypeName())
+                 .arg(dynamic_cast<Function *>(refs[0])->getSignature())
+                 .arg(refs[0]->getTypeName()),
                  ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  __removeObject(linguagem, idx_obj);
+  __removeObject(lang, obj_idx);
  }
 }
 
-void DatabaseModel::addFunction(Function *funcao, int idx_obj)
+void DatabaseModel::addFunction(Function *func, int obj_idx)
 {
  try
  {
-  __addObject(funcao, idx_obj);
+  __addObject(func, obj_idx);
  }
  catch(Exception &e)
  {
@@ -2100,50 +2100,50 @@ void DatabaseModel::addFunction(Function *funcao, int idx_obj)
  }
 }
 
-Function *DatabaseModel::getFunction(unsigned idx_obj)
+Function *DatabaseModel::getFunction(unsigned obj_idx)
 {
- return(dynamic_cast<Function *>(getObject(idx_obj, OBJ_FUNCTION)));
+ return(dynamic_cast<Function *>(getObject(obj_idx, OBJ_FUNCTION)));
 }
 
-void DatabaseModel::removeFunction(Function *funcao, int idx_obj)
+void DatabaseModel::removeFunction(Function *func, int obj_idx)
 {
- if(funcao)
+ if(func)
  {
-  vector<BaseObject *> vet_refs;
+  vector<BaseObject *> refs;
   QString str_aux;
 
   //Obtém as referênca   função
-  getObjectReferences(funcao, vet_refs, true);
+  getObjectReferences(func, refs, true);
 
  /* Caso a função esteja sendo referenciado, por algum objeto a
      mesma não pode ser removida */
-  if(!vet_refs.empty())
+  if(!refs.empty())
   {
    ErrorType tipo_err;
 
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
-   if(!dynamic_cast<TableObject *>(vet_refs[0]))
+   if(!dynamic_cast<TableObject *>(refs[0]))
    {
     //Formata a mensagem para referência direta
     tipo_err=ERR_REM_DIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-            .arg(funcao->getSignature())
-            .arg(funcao->getTypeName())
-            .arg(vet_refs[0]->getName(true))
-            .arg(vet_refs[0]->getTypeName());
+            .arg(func->getSignature())
+            .arg(func->getTypeName())
+            .arg(refs[0]->getName(true))
+            .arg(refs[0]->getTypeName());
 
    }
    else
    {
-    BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(vet_refs[0])->getParentTable();
+    BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(refs[0])->getParentTable();
     //Formata a mensagem para referência indireta
     tipo_err=ERR_REM_INDIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE))
-            .arg(funcao->getSignature())
-            .arg(funcao->getTypeName())
-            .arg(vet_refs[0]->getName(true))
-            .arg(vet_refs[0]->getTypeName())
+            .arg(func->getSignature())
+            .arg(func->getTypeName())
+            .arg(refs[0]->getName(true))
+            .arg(refs[0]->getTypeName())
             .arg(obj_ref_pai->getName(true))
             .arg(obj_ref_pai->getTypeName());
 
@@ -2152,15 +2152,15 @@ void DatabaseModel::removeFunction(Function *funcao, int idx_obj)
    throw Exception(str_aux,tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  __removeObject(funcao, idx_obj);
+  __removeObject(func, obj_idx);
  }
 }
 
-void DatabaseModel::addAggregate(Aggregate *func_agregacao, int idx_obj)
+void DatabaseModel::addAggregate(Aggregate *aggreg, int obj_idx)
 {
  try
  {
-  __addObject(func_agregacao, idx_obj);
+  __addObject(aggreg, obj_idx);
  }
  catch(Exception &e)
  {
@@ -2168,40 +2168,40 @@ void DatabaseModel::addAggregate(Aggregate *func_agregacao, int idx_obj)
  }
 }
 
-Aggregate *DatabaseModel::getAggregate(unsigned idx_obj)
+Aggregate *DatabaseModel::getAggregate(unsigned obj_idx)
 {
- return(dynamic_cast<Aggregate *>(getObject(idx_obj, OBJ_AGGREGATE)));
+ return(dynamic_cast<Aggregate *>(getObject(obj_idx, OBJ_AGGREGATE)));
 }
 
-void DatabaseModel::removeAggregate(Aggregate *func_agregacao, int idx_obj)
+void DatabaseModel::removeAggregate(Aggregate *aggreg, int obj_idx)
 {
- __removeObject(func_agregacao, idx_obj);
+ __removeObject(aggreg, obj_idx);
 }
 
-void DatabaseModel::addDomain(Domain *dominio, int idx_obj)
+void DatabaseModel::addDomain(Domain *domain, int obj_idx)
 {
- if(dominio)
+ if(domain)
  {
   vector<BaseObject *>::iterator itr, itr_end;
-  bool enc=false;
+  bool found=false;
   QString str_aux;
 
   /* Varre a lista de tipos para verificar se existe algum tipo
      com o mesmo nome do domínio */
   itr=types.begin();
   itr_end=types.end();
-  while(itr!=itr_end && !enc)
+  while(itr!=itr_end && !found)
   {
-   enc=((*itr)->getName(true)==dominio->getName(true));
+   found=((*itr)->getName(true)==domain->getName(true));
    itr++;
   }
 
   //Caso exista um tipo de mesmo nome que o domínio dispara o erro
-  if(enc)
+  if(found)
   {
    str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-           .arg(dominio->getName(true))
-           .arg(dominio->getTypeName())
+           .arg(domain->getName(true))
+           .arg(domain->getTypeName())
            .arg(this->getName(true))
            .arg(this->getTypeName());
    throw Exception(str_aux, ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -2210,12 +2210,12 @@ void DatabaseModel::addDomain(Domain *dominio, int idx_obj)
   try
   {
    //Adiciona o domínio
-   __addObject(dominio, idx_obj);
+   __addObject(domain, obj_idx);
 
    /* Ao ser inserido um novo tipo o mesmo tem
     seu nome é adicionad  lista de tipos válidos
     do PostgreSQL */
-   PgSQLType::addUserType(dominio->getName(true), dominio, this, UserTypeConfig::DOMAIN_TYPE);
+   PgSQLType::addUserType(domain->getName(true), domain, this, UserTypeConfig::DOMAIN_TYPE);
   }
   catch(Exception &e)
   {
@@ -2224,11 +2224,11 @@ void DatabaseModel::addDomain(Domain *dominio, int idx_obj)
  }
 }
 
-void DatabaseModel::removeDomain(Domain *dominio, int idx_obj)
+void DatabaseModel::removeDomain(Domain *domain, int obj_idx)
 {
  try
  {
-  removeUserType(dominio, idx_obj);
+  removeUserType(domain, obj_idx);
  }
  catch(Exception &e)
  {
@@ -2236,16 +2236,16 @@ void DatabaseModel::removeDomain(Domain *dominio, int idx_obj)
  }
 }
 
-Domain *DatabaseModel::getDomain(unsigned idx_obj)
+Domain *DatabaseModel::getDomain(unsigned obj_idx)
 {
- return(dynamic_cast<Domain *>(getObject(idx_obj, OBJ_DOMAIN)));
+ return(dynamic_cast<Domain *>(getObject(obj_idx, OBJ_DOMAIN)));
 }
 
-void DatabaseModel::addOperatorFamily(OperatorFamily *familia_op, int idx_obj)
+void DatabaseModel::addOperatorFamily(OperatorFamily *op_family, int obj_idx)
 {
  try
  {
-  __addObject(familia_op, idx_obj);
+  __addObject(op_family, obj_idx);
  }
  catch(Exception &e)
  {
@@ -2253,43 +2253,43 @@ void DatabaseModel::addOperatorFamily(OperatorFamily *familia_op, int idx_obj)
  }
 }
 
-OperatorFamily *DatabaseModel::getOperatorFamily(unsigned idx_obj)
+OperatorFamily *DatabaseModel::getOperatorFamily(unsigned obj_idx)
 {
- return(dynamic_cast<OperatorFamily *>(getObject(idx_obj, OBJ_OPFAMILY)));
+ return(dynamic_cast<OperatorFamily *>(getObject(obj_idx, OBJ_OPFAMILY)));
 }
 
-void DatabaseModel::removeOperatorFamily(OperatorFamily *familia_op, int idx_obj)
+void DatabaseModel::removeOperatorFamily(OperatorFamily *op_family, int obj_idx)
 {
- if(familia_op)
+ if(op_family)
  {
-  vector<BaseObject *> vet_refs;
+  vector<BaseObject *> refs;
 
   //OBtém as referências ao objeto
-  getObjectReferences(familia_op, vet_refs, true);
+  getObjectReferences(op_family, refs, true);
 
    /* Caso a familía esteja sendo referenciada, por algum objeto a
        mesma não pode ser removida */
-  if(!vet_refs.empty())
+  if(!refs.empty())
   {
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
    throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-                 .arg(familia_op->getName(true))
-                 .arg(familia_op->getTypeName())
-                 .arg(vet_refs[0]->getName(true))
-                 .arg(vet_refs[0]->getTypeName()),
+                 .arg(op_family->getName(true))
+                 .arg(op_family->getTypeName())
+                 .arg(refs[0]->getName(true))
+                 .arg(refs[0]->getTypeName()),
                  ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  __removeObject(familia_op, idx_obj);
+  __removeObject(op_family, obj_idx);
  }
 }
 
-void DatabaseModel::addOperatorClass(OperatorClass *classe_op, int idx_obj)
+void DatabaseModel::addOperatorClass(OperatorClass *op_class, int obj_idx)
 {
  try
  {
-  __addObject(classe_op, idx_obj);
+  __addObject(op_class, obj_idx);
  }
  catch(Exception &e)
  {
@@ -2297,21 +2297,21 @@ void DatabaseModel::addOperatorClass(OperatorClass *classe_op, int idx_obj)
  }
 }
 
-void DatabaseModel::removeOperatorClass(OperatorClass *classe_op, int idx_obj)
+void DatabaseModel::removeOperatorClass(OperatorClass *op_class, int obj_idx)
 {
- __removeObject(classe_op, idx_obj);
+ __removeObject(op_class, obj_idx);
 }
 
-OperatorClass *DatabaseModel::getOperatorClass(unsigned idx_obj)
+OperatorClass *DatabaseModel::getOperatorClass(unsigned obj_idx)
 {
- return(dynamic_cast<OperatorClass *>(getObject(idx_obj, OBJ_OPCLASS)));
+ return(dynamic_cast<OperatorClass *>(getObject(obj_idx, OBJ_OPCLASS)));
 }
 
-void DatabaseModel::addOperator(Operator *operador, int idx_obj)
+void DatabaseModel::addOperator(Operator *oper, int obj_idx)
 {
  try
  {
-  __addObject(operador, idx_obj);
+  __addObject(oper, obj_idx);
  }
  catch(Exception &e)
  {
@@ -2319,63 +2319,63 @@ void DatabaseModel::addOperator(Operator *operador, int idx_obj)
  }
 }
 
-void DatabaseModel::removeOperator(Operator *operador, int idx_obj)
+void DatabaseModel::removeOperator(Operator *oper, int obj_idx)
 {
- if(operador)
+ if(oper)
  {
-  vector<BaseObject *> vet_refs;
+  vector<BaseObject *> refs;
 
   //Obtém as referências ao operador
-  getObjectReferences(operador, vet_refs, true);
+  getObjectReferences(oper, refs, true);
 
  /* Caso o operador esteja sendo referenciado, por algum objeto a
      mesma não pode ser removida */
-  if(!vet_refs.empty())
+  if(!refs.empty())
   {
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
    //Formata a mensagem para referência direta
    throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-                 .arg(operador->getSignature(true))
-                 .arg(operador->getTypeName())
-                 .arg(vet_refs[0]->getName(true))
-                 .arg(vet_refs[0]->getTypeName()),
+                 .arg(oper->getSignature(true))
+                 .arg(oper->getTypeName())
+                 .arg(refs[0]->getName(true))
+                 .arg(refs[0]->getTypeName()),
                  ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  __removeObject(operador, idx_obj);
+  __removeObject(oper, obj_idx);
  }
 }
 
-Operator *DatabaseModel::getOperator(unsigned idx_obj)
+Operator *DatabaseModel::getOperator(unsigned obj_idx)
 {
- return(dynamic_cast<Operator *>(getObject(idx_obj, OBJ_OPERATOR)));
+ return(dynamic_cast<Operator *>(getObject(obj_idx, OBJ_OPERATOR)));
 }
 
-void DatabaseModel::addType(Type *tipo, int idx_obj)
+void DatabaseModel::addType(Type *type, int obj_idx)
 {
- if(tipo)
+ if(type)
  {
   vector<BaseObject *>::iterator itr, itr_end;
-  bool enc=false;
+  bool found=false;
   QString str_aux;
 
   /* Varre a lista de dominios para verificar se existe algum
      domínio com o mesmo nome do tipo */
   itr=domains.begin();
   itr_end=domains.end();
-  while(itr!=itr_end && !enc)
+  while(itr!=itr_end && !found)
   {
-   enc=((*itr)->getName(true)==tipo->getName(true));
+   found=((*itr)->getName(true)==type->getName(true));
    itr++;
   }
 
   //Caso exista um dominio de mesmo nome que o tipo dispara o erro
-  if(enc)
+  if(found)
   {
    str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-           .arg(tipo->getName(true))
-           .arg(tipo->getTypeName())
+           .arg(type->getName(true))
+           .arg(type->getTypeName())
            .arg(this->getName(true))
            .arg(this->getTypeName());
    throw Exception(str_aux, ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -2384,12 +2384,12 @@ void DatabaseModel::addType(Type *tipo, int idx_obj)
   try
   {
    //Adiciona o tipo
-   __addObject(tipo, idx_obj);
+   __addObject(type, obj_idx);
 
    /* Ao ser inserido um novo tipo o mesmo tem
     seu nome é adicionad  lista de tipos válidos
     do PostgreSQL */
-   PgSQLType::addUserType(tipo->getName(true), tipo, this, UserTypeConfig::BASE_TYPE);
+   PgSQLType::addUserType(type->getName(true), type, this, UserTypeConfig::BASE_TYPE);
   }
   catch(Exception &e)
   {
@@ -2398,11 +2398,11 @@ void DatabaseModel::addType(Type *tipo, int idx_obj)
  }
 }
 
-void DatabaseModel::removeType(Type *tipo, int idx_obj)
+void DatabaseModel::removeType(Type *type, int obj_idx)
 {
  try
  {
-  removeUserType(tipo, idx_obj);
+  removeUserType(type, obj_idx);
  }
  catch(Exception &e)
  {
@@ -2410,50 +2410,50 @@ void DatabaseModel::removeType(Type *tipo, int idx_obj)
  }
 }
 
-Type *DatabaseModel::getType(unsigned idx_obj)
+Type *DatabaseModel::getType(unsigned obj_idx)
 {
- return(dynamic_cast<Type *>(getObject(idx_obj, OBJ_TYPE)));
+ return(dynamic_cast<Type *>(getObject(obj_idx, OBJ_TYPE)));
 }
 
-void DatabaseModel::removeUserType(BaseObject *objeto, int idx_obj)
+void DatabaseModel::removeUserType(BaseObject *object, int obj_idx)
 {
- if(objeto)
+ if(object)
  {
-  vector<BaseObject *> vet_refs;
+  vector<BaseObject *> refs;
   QString str_aux;
 
   //Obtém as referências ao objeto
-  getObjectReferences(objeto, vet_refs, true);
+  getObjectReferences(object, refs, true);
 
   /* Caso o tipo esteja sendo referenciado, por algum objeto o
      mesmo não pode ser removida */
-  if(!vet_refs.empty())
+  if(!refs.empty())
   {
    ErrorType tipo_err;
 
    /* Formatando a mensagem de erro com o nome e tipo do objeto que referencia e
       do objeto referenciado */
-   if(!dynamic_cast<TableObject *>(vet_refs[0]))
+   if(!dynamic_cast<TableObject *>(refs[0]))
    {
     //Formata a mensagem para referência direta
     tipo_err=ERR_REM_DIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(tipo_err))
-            .arg(objeto->getName(true))
-            .arg(objeto->getTypeName())
-            .arg(vet_refs[0]->getName(true))
-            .arg(vet_refs[0]->getTypeName());
+            .arg(object->getName(true))
+            .arg(object->getTypeName())
+            .arg(refs[0]->getName(true))
+            .arg(refs[0]->getTypeName());
    }
    else
    {
-    BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(vet_refs[0])->getParentTable();
+    BaseObject *obj_ref_pai=dynamic_cast<TableObject *>(refs[0])->getParentTable();
 
     //Formata a mensagem para referência indireta
     tipo_err=ERR_REM_INDIRECT_REFERENCE;
     str_aux=QString(Exception::getErrorMessage(tipo_err))
-            .arg(objeto->getName(true))
-            .arg(objeto->getTypeName())
-            .arg(vet_refs[0]->getName(true))
-            .arg(vet_refs[0]->getTypeName())
+            .arg(object->getName(true))
+            .arg(object->getTypeName())
+            .arg(refs[0]->getName(true))
+            .arg(refs[0]->getTypeName())
             .arg(obj_ref_pai->getName(true))
             .arg(obj_ref_pai->getTypeName());
    }
@@ -2461,40 +2461,40 @@ void DatabaseModel::removeUserType(BaseObject *objeto, int idx_obj)
    throw Exception(str_aux,tipo_err,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  __removeObject(objeto, idx_obj);
+  __removeObject(object, obj_idx);
    /* Ao ser removido do modelo o objeto (tipo ou domínio) classe tem
     seu nome removido da lista de tipos válidos do PostgreSQL */
-  PgSQLType::removeUserType(objeto->getName(true), objeto);
+  PgSQLType::removeUserType(object->getName(true), object);
  }
 }
 
-void DatabaseModel::addPermission(Permission *permissao)
+void DatabaseModel::addPermission(Permission *perm)
 {
  try
  {
-  if(!permissao)
+  if(!perm)
    throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  if(getPermissionIndex(permissao) >=0)
+  if(getPermissionIndex(perm) >=0)
   {
   /* Caso haja uma permissão semelhante a que está sendo inserida, ou seja,
     o resultado da chamada ao metodo obterIndicePermissao() sejá >= 0,
     um erro será disparado */
    throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
-                .arg(QString::fromUtf8(permissao->getObject()->getName()))
-                .arg(permissao->getObject()->getTypeName()),
+                .arg(QString::fromUtf8(perm->getObject()->getName()))
+                .arg(perm->getObject()->getTypeName()),
                 ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
 
-  permissions.push_back(permissao);
+  permissions.push_back(perm);
  }
  catch(Exception &e)
  {
   if(e.getErrorType()==ERR_ASG_DUPLIC_OBJECT)
    throw
    Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
-           .arg(QString::fromUtf8(permissao->getObject()->getName()))
-           .arg(permissao->getObject()->getTypeName()),
+           .arg(QString::fromUtf8(perm->getObject()->getName()))
+           .arg(perm->getObject()->getTypeName()),
            ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 
   else
@@ -2502,25 +2502,24 @@ void DatabaseModel::addPermission(Permission *permissao)
  }
 }
 
-void DatabaseModel::removePermission(Permission *permissao)
+void DatabaseModel::removePermission(Permission *perm)
 {
- if(permissao)
+ if(perm)
  {
-  __removeObject(permissao);
+  __removeObject(perm);
  }
 }
 
-void DatabaseModel::removePermissions(BaseObject *objeto)
+void DatabaseModel::removePermissions(BaseObject *object)
 {
- vector<Permission *> vet_perm;
  vector<BaseObject *>::iterator itr, itr_end;
- Permission *permissao=NULL;
+ Permission *perm=NULL;
  unsigned idx=0;
 
  /* Caso o objeto o qual terá todas as permissões relacionadas removidas não
     esteja alocado um erro será disparado pois o usuário está
     tentando remover permissões de um objeto inexistente */
- if(!objeto)
+ if(!object)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=permissions.begin();
@@ -2531,15 +2530,15 @@ void DatabaseModel::removePermissions(BaseObject *objeto)
  while(itr!=itr_end)
  {
   //Obtém a permissão
-  permissao=dynamic_cast<Permission *>(*itr);
+  perm=dynamic_cast<Permission *>(*itr);
 
   //Verifica se o objeto da permissão é igual ao objeto do parâmetro
-  if(permissao->getObject()==objeto)
+  if(perm->getObject()==object)
   {
    //Remove o iterador que possui a permissão
    permissions.erase(itr);
    //Desaloca a permissão
-   delete(permissao);
+   delete(perm);
    //Reinicializa os iteradores para uma nova varredura
    itr=itr_end=permissions.end();
 
@@ -2555,22 +2554,22 @@ void DatabaseModel::removePermissions(BaseObject *objeto)
  }
 }
 
-void DatabaseModel::getPermissions(BaseObject *objeto, vector<Permission *> &vet_perm)
+void DatabaseModel::getPermissions(BaseObject *object, vector<Permission *> &perms)
 {
  vector<BaseObject *>::iterator itr, itr_end;
- Permission *permissao=NULL;
+ Permission *perm=NULL;
 
  /* Caso o objeto o qual terá todas as permissões relacionadas
     obtidas não esteja alocado um erro será disparado pois o
     usuário está tentando obter permissões de um objeto inexistente */
- if(!objeto)
+ if(!object)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  itr=permissions.begin();
  itr_end=permissions.end();
 
  //Limpa a lista receptora de permissões
- vet_perm.clear();
+ perms.clear();
 
  /* Varre a lista de permissões em busca daquelas
     cujo objeto seja o mesmo do objeto especificado
@@ -2578,42 +2577,42 @@ void DatabaseModel::getPermissions(BaseObject *objeto, vector<Permission *> &vet
  while(itr!=itr_end)
  {
   //Obtém a permissão
-  permissao=dynamic_cast<Permission *>(*itr);
+  perm=dynamic_cast<Permission *>(*itr);
 
   /* Caso a permissão esteja relacionada ao mesmo
      objeto do parâmetro insere tal permissão
        lista de permissões */
-  if(permissao->getObject()==objeto)
-   vet_perm.push_back(permissao);
+  if(perm->getObject()==object)
+   perms.push_back(perm);
 
   itr++;
  }
 }
 
-int DatabaseModel::getPermissionIndex(Permission *permissao)
+int DatabaseModel::getPermissionIndex(Permission *perm)
 {
- int idx_perm=-1;
+ int perm_idx=-1;
 
  //Obtém o índice da permissão somente se a mesma estive alocada
- if(permissao)
+ if(perm)
  {
   Permission *perm_aux=NULL;
   vector<BaseObject *>::iterator itr, itr_end;
-  BaseObject *objeto=NULL;
-  Role *papel=NULL;
-  unsigned qtd, i;
-  bool papel_ref=false;
+  BaseObject *object=NULL;
+  Role *role=NULL;
+  unsigned count, i;
+  bool ref_role=false;
 
   itr=permissions.begin();
   itr_end=permissions.end();
 
   //Obtém o objeto da permissão
-  objeto=permissao->getObject();
+  object=perm->getObject();
 
   /* Varre a lista de permissões enquanto não chegar ao final
      da lista ou enquanto o índice da permissão não for
      descoberto */
-  while(itr!=itr_end && idx_perm < 0)
+  while(itr!=itr_end && perm_idx < 0)
   {
    //Obtém uma permissão da lista
    perm_aux=dynamic_cast<Permission *>(*itr);
@@ -2622,19 +2621,19 @@ int DatabaseModel::getPermissionIndex(Permission *permissao)
      será efetuada uma validação se todos os papeis
      de ambas as permissões são iguais, isso indica
      que ambas possuem o mesmo efeito */
-   if(objeto==perm_aux->getObject())
+   if(object==perm_aux->getObject())
    {
     //Obtém a quantidade de papéis
-    qtd=permissao->getRoleCount();
+    count=perm->getRoleCount();
 
     //Varre a lista de papéis das permissões
-    for(i=0; i < qtd && !papel_ref; i++)
+    for(i=0; i < count && !ref_role; i++)
     {
      //Obtém um papel da permissão do parâmetro
-     papel=permissao->getRole(i);
+     role=perm->getRole(i);
      /* Com o papel obtido verifica-se se o mesmo é referenciado
         no papel obtido da lista principal de permissões */
-     papel_ref=perm_aux->isRoleExists(papel);
+     ref_role=perm_aux->isRoleExists(role);
     }
    }
 
@@ -2642,84 +2641,84 @@ int DatabaseModel::getPermissionIndex(Permission *permissao)
       (mesmo endereço de memória) ou todos os papéis referenciados
       por ambas sejam os mesmos, o índice da permissão na lista
       será calculado */
-   if(permissao==perm_aux || papel_ref)
-    idx_perm=itr-permissions.begin();
+   if(perm==perm_aux || ref_role)
+    perm_idx=itr-permissions.begin();
 
    itr++;
   }
  }
 
- return(idx_perm);
+ return(perm_idx);
 }
 
-BaseObject *DatabaseModel::getObject(const QString &nome, ObjectType tipo_obj)
+BaseObject *DatabaseModel::getObject(const QString &name, ObjectType obj_type)
 {
  int idx;
- return(getObject(nome, tipo_obj, idx));
+ return(getObject(name, obj_type, idx));
 }
 
-int DatabaseModel::getObjectIndex(const QString &nome, ObjectType tipo_obj)
+int DatabaseModel::getObjectIndex(const QString &name, ObjectType obj_type)
 {
  int idx;
- getObject(nome, tipo_obj, idx);
+ getObject(name, obj_type, idx);
  return(idx);
 }
 
-int DatabaseModel::getObjectIndex(BaseObject *objeto)
+int DatabaseModel::getObjectIndex(BaseObject *object)
 {
- if(!objeto)
+ if(!object)
   return(-1);
  else
  {
-  ObjectType tipo_obj=objeto->getObjectType();
-  vector<BaseObject *> *lista_obj=NULL;
+  ObjectType obj_type=object->getObjectType();
+  vector<BaseObject *> *obj_list=NULL;
   vector<BaseObject *>::iterator itr, itr_end;
   bool enc=false;
 
   //Obtém a lista de acordo com o tipo do objeto
-  lista_obj=getObjectList(tipo_obj);
+  obj_list=getObjectList(obj_type);
 
   /* Caso a lista não exista indica que foi passado um tipo inválido
      de objeto, dessa forma será retornado um erro */
-  if(!lista_obj)
+  if(!obj_list)
    throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   else
   {
    //Obtém as referências para o inicio e o fim da lista
-   itr=lista_obj->begin();
-   itr_end=lista_obj->end();
+   itr=obj_list->begin();
+   itr_end=obj_list->end();
 
    while(itr!=itr_end && !enc)
    {
-    enc=((*itr)==objeto);
+    enc=((*itr)==object);
     if(!enc) itr++;
    }
 
    if(enc)
-    return(itr-lista_obj->begin());
+    return(itr-obj_list->begin());
    else
     return(-1);
   }
  }
 }
 
-void DatabaseModel::loadModel(const QString &nome_arq)
+void DatabaseModel::loadModel(const QString &filename)
 {
- if(nome_arq!="")
+ if(filename!="")
  {
-  QString arq_dtd, str_aux, nome_elem;
-  ObjectType tipo_obj;
-  map<QString, QString> atributos;
-  BaseObject *objeto=NULL;
-  deque<const xmlNode *> objetos_incomp;
-  bool reaval_objetos=false, modelo_protegido=false;
+  QString dtd_file, str_aux, elem_name;
+  ObjectType obj_type;
+  map<QString, QString> attribs;
+  BaseObject *object=NULL;
+  deque<const xmlNode *> incomplt_objs;
+  bool reeval_objs=false, protected_model=false;
   const xmlNode *elem_aux=NULL;
-  deque<Exception> vet_erros;
+  deque<Exception> errors;
   map<unsigned, QString>::iterator itr, itr_end;
 
   /* Montando o caminho padrão para localização dos esquemas DTD.
      Por padrão esta pasta se encontra na raiz dentro da pasta esquemas/xml*/
-  arq_dtd=GlobalAttributes::SCHEMAS_ROOT_DIR +
+  dtd_file=GlobalAttributes::SCHEMAS_ROOT_DIR +
            GlobalAttributes::DIR_SEPARATOR +
            GlobalAttributes::XML_SCHEMA_DIR +
            GlobalAttributes::DIR_SEPARATOR +
@@ -2733,18 +2732,18 @@ void DatabaseModel::loadModel(const QString &nome_arq)
    //Reinicia o parser XML para a leitura do arquivo
    XMLParser::restartParser();
    //Faz com que o parser carregue a DTD que armazena a sintaxe do arquivo de modelos
-   XMLParser::setDTDFile(arq_dtd + GlobalAttributes::ROOT_DTD +
+   XMLParser::setDTDFile(dtd_file + GlobalAttributes::ROOT_DTD +
                                 GlobalAttributes::OBJECT_DTD_EXT,
                                 GlobalAttributes::ROOT_DTD);
 
    //Carrega o arquivo validando-o de acordo com a DTD informada
-   XMLParser::loadXMLFile(nome_arq);
+   XMLParser::loadXMLFile(filename);
 
    //Obter as informações de versão, autor do modelo e versão postgresql
-   XMLParser::getElementAttributes(atributos);
-   this->author=atributos[ParsersAttributes::MODEL_AUTHOR];
+   XMLParser::getElementAttributes(attribs);
+   this->author=attribs[ParsersAttributes::MODEL_AUTHOR];
 
-   modelo_protegido=(atributos[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
+   protected_model=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
    //Passa para o próximo elemento que provavelmente será um <role> ou <tablespace>
    if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
@@ -2753,7 +2752,7 @@ void DatabaseModel::loadModel(const QString &nome_arq)
     {
      if(XMLParser::getElementType()==XML_ELEMENT_NODE)
      {
-      nome_elem=XMLParser::getElementName();
+      elem_name=XMLParser::getElementName();
 
       /* Caso o nome do elemento atual seja o que define uma permissão
          indica que o parser leu todos os objetos do modelo e o mesmo
@@ -2762,7 +2761,7 @@ void DatabaseModel::loadModel(const QString &nome_arq)
          só serão feitas caso não hajam objetos para serem reavaliados,
          caso contrário, os objetos são reavalias e logo apos as permissões
          obtidas. */
-      if(nome_elem==ParsersAttributes::PERMISSION && objetos_incomp.size()==0)
+      if(elem_name==ParsersAttributes::PERMISSION && incomplt_objs.size()==0)
       {
        /* Caso a lista de objetos especiais esteja com elementos
           efetua a recriação dos mesmos. Obs: Este processo é executado
@@ -2815,7 +2814,7 @@ void DatabaseModel::loadModel(const QString &nome_arq)
       else
       {
        //Obtém o tipo do elemento de acordo com a tag atual que o parser carregou
-       tipo_obj=getObjectType(nome_elem);
+       obj_type=getObjectType(elem_name);
 
        /* Este bloco faz a reavaliação de objetos. A reavaliação consiste em
           ler um trecho do arquivo XML novamente onde algum objeto foi referenciado
@@ -2829,34 +2828,34 @@ void DatabaseModel::loadModel(const QString &nome_arq)
              em algum trecho do XML existe um objeto o qual referencia outro que não
              foi encontrado (criado)
        */
-       if(!reaval_objetos && objetos_incomp.size() > 0 &&
-          tipo_obj!=OBJ_FUNCTION && tipo_obj!=OBJ_SCHEMA &&
-          tipo_obj!=OBJ_TABLESPACE && tipo_obj!=OBJ_LANGUAGE &&
-          tipo_obj!=OBJ_TYPE && tipo_obj!=OBJ_TABLE)
+       if(!reeval_objs && incomplt_objs.size() > 0 &&
+          obj_type!=OBJ_FUNCTION && obj_type!=OBJ_SCHEMA &&
+          obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_LANGUAGE &&
+          obj_type!=OBJ_TYPE && obj_type!=OBJ_TABLE)
        {
         //Faz o parser XML voltar ao elemento anterior
         XMLParser::accessElement(XMLParser::PREVIOUS_ELEMENT);
         //Armazena a posição atual do parser
         elem_aux=XMLParser::getCurrentElement();
 
-        reaval_objetos=true;
+        reeval_objs=true;
         //Restaura o parser para a posição onde o objeto incompleto foi lido
-        XMLParser::restorePosition(objetos_incomp.front());
+        XMLParser::restorePosition(incomplt_objs.front());
         //Obtém o tipo deste objeto
-        tipo_obj=getObjectType(XMLParser::getElementName());
+        obj_type=getObjectType(XMLParser::getElementName());
        }
 
        //Lendo um objeto banco de dados
-       if(tipo_obj==OBJ_DATABASE)
+       if(obj_type==OBJ_DATABASE)
        {
-        XMLParser::getElementAttributes(atributos);
-        encoding=atributos[ParsersAttributes::ENCODING];
-        template_db=atributos[ParsersAttributes::TEMPLATE_DB];
-        localizations[0]=atributos[ParsersAttributes::LC_CTYPE_DB];
-        localizations[1]=atributos[ParsersAttributes::LC_COLLATE_DB];
+        XMLParser::getElementAttributes(attribs);
+        encoding=attribs[ParsersAttributes::ENCODING];
+        template_db=attribs[ParsersAttributes::TEMPLATE_DB];
+        localizations[0]=attribs[ParsersAttributes::LC_CTYPE_DB];
+        localizations[1]=attribs[ParsersAttributes::LC_COLLATE_DB];
 
-        if(!atributos[ParsersAttributes::CONN_LIMIT].isEmpty())
-         conn_limit=atributos[ParsersAttributes::CONN_LIMIT].toInt();
+        if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
+         conn_limit=attribs[ParsersAttributes::CONN_LIMIT].toInt();
 
         setBasicAttributes(this);
        }
@@ -2869,16 +2868,16 @@ void DatabaseModel::loadModel(const QString &nome_arq)
             seja possível, quando for necessária */
          XMLParser::savePosition();
          //Cria o objeto de acordo com  o tipo obtido
-         objeto=createObject(tipo_obj);
+         object=createObject(obj_type);
 
          //Caso o objeto foi criado com sucesso
-         if(objeto)
+         if(object)
          {
-          if(!dynamic_cast<TableObject *>(objeto) &&
-             tipo_obj!=OBJ_RELATIONSHIP && tipo_obj!=BASE_RELATIONSHIP)
+          if(!dynamic_cast<TableObject *>(object) &&
+             obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP)
           {
            //Usa o método de inserção de objetos genéricos
-           addObject(objeto);
+           addObject(object);
           }
 
           //Dispara um sinal com o progresso (aproximado) do carregamento de objetos
@@ -2886,9 +2885,9 @@ void DatabaseModel::loadModel(const QString &nome_arq)
           {
            emit s_objectLoaded(XMLParser::getCurrentBufferLine()/XMLParser::getBufferLineCount(),
                                   trUtf8("Loading object: %1 (%2)")
-                                   .arg(QString::fromUtf8(objeto->getName()))
-                                   .arg(objeto->getTypeName()),
-                                  tipo_obj);
+                                   .arg(QString::fromUtf8(object->getName()))
+                                   .arg(object->getTypeName()),
+                                  obj_type);
           }
          }
 
@@ -2897,20 +2896,20 @@ void DatabaseModel::loadModel(const QString &nome_arq)
         }
         catch(Exception &e)
         {
-         if(!reaval_objetos &&
-            (((e.getErrorType()==ERR_REF_OBJ_INEXISTS_MODEL && tipo_obj==OBJ_TABLE)) ||
+         if(!reeval_objs &&
+            (((e.getErrorType()==ERR_REF_OBJ_INEXISTS_MODEL && obj_type==OBJ_TABLE)) ||
              (((e.getErrorType()==ERR_ASG_OBJ_INV_DEFINITION ||
                 e.getErrorType()==ERR_REF_OBJ_INEXISTS_MODEL ||
                 e.getErrorType()==ERR_ASG_INV_TYPE_OBJECT) &&
-               (tipo_obj==OBJ_LANGUAGE || tipo_obj==OBJ_FUNCTION || tipo_obj==OBJ_TYPE || tipo_obj==OBJ_OPERATOR)))))
+               (obj_type==OBJ_LANGUAGE || obj_type==OBJ_FUNCTION || obj_type==OBJ_TYPE || obj_type==OBJ_OPERATOR)))))
          {
           /* Adiciona o nó da arvore o qual possui o elemento incompleto
              para que o mesmo tente ser recriado após suas possíveis dependências
              serem carregadas */
           XMLParser::restorePosition();
-          objetos_incomp.push_back(XMLParser::getCurrentElement());
+          incomplt_objs.push_back(XMLParser::getCurrentElement());
           //Armazena a exceção capturada para verificações ao final do carregamento do modelo
-          vet_erros.push_back(e);
+          errors.push_back(e);
          }
          else
          {
@@ -2924,40 +2923,40 @@ void DatabaseModel::loadModel(const QString &nome_arq)
       /* Caso esteja num processo de reavaliação de objetos, o bloco abaixo
          faz a retirada do objeto que acaba de ser reavaliado da lista de
          objetos incompletos */
-      if(reaval_objetos && objetos_incomp.size() > 0)
+      if(reeval_objs && incomplt_objs.size() > 0)
       {
        //Remove o objeto incompleto da lista
-       objetos_incomp.pop_front();
+       incomplt_objs.pop_front();
 
        //Remove a exceção relacionada ao objeto incompleto
-       vet_erros.pop_front();
+       errors.pop_front();
 
        /* Caso a lista ainda possua elementos o parser será voltado para o
           elemento incompleto anterior ao atual */
-       if(objetos_incomp.size() > 0)
-        XMLParser::restorePosition(objetos_incomp.front());
+       if(incomplt_objs.size() > 0)
+        XMLParser::restorePosition(incomplt_objs.front());
        else
        {
         //Caso a lista esteja vazia o processo de reavaliação é interrompido
-        reaval_objetos=false;
+        reeval_objs=false;
         //O parser é retornad  posição em que se encontrava antes da reavaliação
         XMLParser::restorePosition(elem_aux);
        }
       }
      }
     }
-    while((!reaval_objetos && XMLParser::accessElement(XMLParser::NEXT_ELEMENT)) ||
-          (reaval_objetos));
+    while((!reeval_objs && XMLParser::accessElement(XMLParser::NEXT_ELEMENT)) ||
+          (reeval_objs));
    }
 
    /* Verificação final, caso hajam erros pendentes na lista de erros capturados durante o processo
       de leitura do arquivo os mesmo serão redirecionados e o processo de leitura do arquivo
       cancelado */
-   if(vet_erros.size() > 0)
-    throw Exception(vet_erros[0].getErrorMessage(),vet_erros[0].getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__);
+   if(errors.size() > 0)
+    throw Exception(errors[0].getErrorMessage(),errors[0].getErrorType(), __PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     //Protege o modelo com base no atributo obtido do xml
-   this->BaseObject::setProtected(modelo_protegido);
+   this->BaseObject::setProtected(protected_model);
    loading_model=false;
 
    /* Faz uma última validação nos relacionamentos para abranger qualquer modificação de colunas
@@ -2966,119 +2965,119 @@ void DatabaseModel::loadModel(const QString &nome_arq)
   }
   catch(Exception &e)
   {
-   QString info_adicional;
+   QString extra_info;
    loading_model=false;
    destroyObjects();
 
    if(XMLParser::getCurrentElement())
-    info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename()).arg(XMLParser::getCurrentElement()->line);
+    extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename()).arg(XMLParser::getCurrentElement()->line);
 
    //Caso o erro seja na biblioteca de parsers
    if(e.getErrorType()>=ERR_INVALID_SYNTAX)
    {
-    str_aux=QString(Exception::getErrorMessage(ERR_LOAD_INV_MODEL_FILE)).arg(nome_arq);
-    throw Exception(str_aux,ERR_LOAD_INV_MODEL_FILE,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+    str_aux=QString(Exception::getErrorMessage(ERR_LOAD_INV_MODEL_FILE)).arg(filename);
+    throw Exception(str_aux,ERR_LOAD_INV_MODEL_FILE,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
    }
    else
     //Captura e redireciona erros das demais bibliotecas
-    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+    throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
   }
  }
 }
 
-ObjectType DatabaseModel::getObjectType(const QString &str_tipo)
+ObjectType DatabaseModel::getObjectType(const QString &type_name)
 {
- ObjectType tipo_obj=BASE_OBJECT;
+ ObjectType obj_type=BASE_OBJECT;
  int i;
 
  for(i=0; i < BaseObject::OBJECT_TYPE_COUNT; i++)
  {
-  if(objs_schemas[i]==str_tipo)
+  if(objs_schemas[i]==type_name)
   {
-   tipo_obj=static_cast<ObjectType>(i);
+   obj_type=static_cast<ObjectType>(i);
    break;
   }
  }
 
- return(tipo_obj);
+ return(obj_type);
 }
 
-BaseObject *DatabaseModel::createObject(ObjectType tipo_obj)
+BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 {
- BaseObject *objeto=NULL;
+ BaseObject *object=NULL;
 
- if(tipo_obj!=BASE_OBJECT)
+ if(obj_type!=BASE_OBJECT)
  {
-  if(tipo_obj==OBJ_ROLE)
-   objeto=createRole();
-  else if(tipo_obj==OBJ_TABLESPACE)
-   objeto=createTablespace();
-  else if(tipo_obj==OBJ_SCHEMA)
-   objeto=createSchema();
-  else if(tipo_obj==OBJ_LANGUAGE)
-   objeto=createLanguage();
-  else if(tipo_obj==OBJ_FUNCTION)
-   objeto=createFunction();
-  else if(tipo_obj==OBJ_TYPE)
-   objeto=createType();
-  else if(tipo_obj==OBJ_DOMAIN)
-   objeto=createDomain();
-  else if(tipo_obj==OBJ_CAST)
-   objeto=createCast();
-  else if(tipo_obj==OBJ_CONVERSION)
-   objeto=createConversion();
-  else if(tipo_obj==OBJ_OPERATOR)
-   objeto=createOperator();
-  else if(tipo_obj==OBJ_OPFAMILY)
-   objeto=createOperatorFamily();
-  else if(tipo_obj==OBJ_OPCLASS)
-   objeto=createOperatorClass();
-  else if(tipo_obj==OBJ_AGGREGATE)
-   objeto=createAggregate();
-  else if(tipo_obj==OBJ_TABLE)
-   objeto=createTable();
-  else if(tipo_obj==OBJ_SEQUENCE)
-   objeto=createSequence();
-  else if(tipo_obj==OBJ_VIEW)
-   objeto=createView();
-  else if(tipo_obj==OBJ_TEXTBOX)
-   objeto=createTextbox();
-  else if(tipo_obj==OBJ_CONSTRAINT)
-   objeto=createConstraint(NULL);
-  else if(tipo_obj==OBJ_TRIGGER)
-   objeto=createTrigger(NULL);
-  else if(tipo_obj==OBJ_INDEX)
-   objeto=createIndex(NULL);
-  else if(tipo_obj==OBJ_RELATIONSHIP ||
-          tipo_obj==BASE_RELATIONSHIP)
-   objeto=createRelationship();
+  if(obj_type==OBJ_ROLE)
+   object=createRole();
+  else if(obj_type==OBJ_TABLESPACE)
+   object=createTablespace();
+  else if(obj_type==OBJ_SCHEMA)
+   object=createSchema();
+  else if(obj_type==OBJ_LANGUAGE)
+   object=createLanguage();
+  else if(obj_type==OBJ_FUNCTION)
+   object=createFunction();
+  else if(obj_type==OBJ_TYPE)
+   object=createType();
+  else if(obj_type==OBJ_DOMAIN)
+   object=createDomain();
+  else if(obj_type==OBJ_CAST)
+   object=createCast();
+  else if(obj_type==OBJ_CONVERSION)
+   object=createConversion();
+  else if(obj_type==OBJ_OPERATOR)
+   object=createOperator();
+  else if(obj_type==OBJ_OPFAMILY)
+   object=createOperatorFamily();
+  else if(obj_type==OBJ_OPCLASS)
+   object=createOperatorClass();
+  else if(obj_type==OBJ_AGGREGATE)
+   object=createAggregate();
+  else if(obj_type==OBJ_TABLE)
+   object=createTable();
+  else if(obj_type==OBJ_SEQUENCE)
+   object=createSequence();
+  else if(obj_type==OBJ_VIEW)
+   object=createView();
+  else if(obj_type==OBJ_TEXTBOX)
+   object=createTextbox();
+  else if(obj_type==OBJ_CONSTRAINT)
+   object=createConstraint(NULL);
+  else if(obj_type==OBJ_TRIGGER)
+   object=createTrigger(NULL);
+  else if(obj_type==OBJ_INDEX)
+   object=createIndex(NULL);
+  else if(obj_type==OBJ_RELATIONSHIP ||
+          obj_type==BASE_RELATIONSHIP)
+   object=createRelationship();
  }
 
- return(objeto);
+ return(object);
 }
 
-void DatabaseModel::setBasicAttributes(BaseObject *objeto)
+void DatabaseModel::setBasicAttributes(BaseObject *object)
 {
- map<QString, QString> atributos, atribs_aux;
- QString nome_elem;//, str_aux;
- BaseObject *esp_tabela=NULL, *dono=NULL;
- Schema *esquema=NULL;
- ObjectType tipo_obj=BASE_OBJECT, tipo_obj_aux;
- bool erro=false, protegido=false;
+ map<QString, QString> attribs, attribs_aux;
+ QString elem_name;//, str_aux;
+ BaseObject *tabspc=NULL, *owner=NULL;
+ Schema *schema=NULL;
+ ObjectType obj_type=BASE_OBJECT, obj_type_aux;
+ bool has_error=false, protected_obj=false;
 
  //Caso o objeto não esteja alocado uma exceção é disparada
- if(!objeto)
+ if(!object)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Obtém os atributos do elemento
- XMLParser::getElementAttributes(atributos);
+ XMLParser::getElementAttributes(attribs);
 
- tipo_obj_aux=objeto->getObjectType();
- if(tipo_obj_aux!=OBJ_CAST)
-  objeto->setName(atributos[ParsersAttributes::NAME]);
+ obj_type_aux=object->getObjectType();
+ if(obj_type_aux!=OBJ_CAST)
+  object->setName(attribs[ParsersAttributes::NAME]);
 
  //Definindo se o objeto está protegido ou não
- protegido=atributos[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_;
+ protected_obj=attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_;
 
  XMLParser::savePosition();
 
@@ -3092,10 +3091,10 @@ void DatabaseModel::setBasicAttributes(BaseObject *objeto)
    if(XMLParser::getElementType()==XML_ELEMENT_NODE)
    {
     //Obtém o nome do elemento filho
-    nome_elem=XMLParser::getElementName();
+    elem_name=XMLParser::getElementName();
 
     //Caso o elemento filho seja um comentáio <comment>
-    if(nome_elem==ParsersAttributes::COMMENT)
+    if(elem_name==ParsersAttributes::COMMENT)
     {
      /* Para se extraír o comentário, é necessário salvar a posição de navegação
         do parser, pois o conteúdo do comentário é um elemento filho do elemento
@@ -3104,50 +3103,50 @@ void DatabaseModel::setBasicAttributes(BaseObject *objeto)
      //Acessa o elemento filho o qual contém o conteúdo do comentário
      XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
      //Atributo o conteúdo do elemento filho ao atributo cometário do novo papel
-     objeto->setComment(XMLParser::getElementContent());
+     object->setComment(XMLParser::getElementContent());
      //Restaura a posição de navegação do parser, ou seja, volta para o elemento <comment>
      XMLParser::restorePosition();
     }
     //Caso o elemento filho seja uma referência a um esquema <schema>
-    else if(nome_elem==ParsersAttributes::SCHEMA)
+    else if(elem_name==ParsersAttributes::SCHEMA)
     {
-     tipo_obj=OBJ_SCHEMA;
-     XMLParser::getElementAttributes(atribs_aux);
-     esquema=dynamic_cast<Schema *>(getObject(atribs_aux[ParsersAttributes::NAME], tipo_obj));
-     objeto->setSchema(esquema);
-     erro=(!esquema && !atribs_aux[ParsersAttributes::NAME].isEmpty());
+     obj_type=OBJ_SCHEMA;
+     XMLParser::getElementAttributes(attribs_aux);
+     schema=dynamic_cast<Schema *>(getObject(attribs_aux[ParsersAttributes::NAME], obj_type));
+     object->setSchema(schema);
+     has_error=(!schema && !attribs_aux[ParsersAttributes::NAME].isEmpty());
     }
 
     //Caso o elemento filho seja uma referência a um tablespace <tablespace>
-    else if(nome_elem==ParsersAttributes::TABLESPACE)
+    else if(elem_name==ParsersAttributes::TABLESPACE)
     {
-     tipo_obj=OBJ_TABLESPACE;
-     XMLParser::getElementAttributes(atribs_aux);
-     esp_tabela=getObject(atribs_aux[ParsersAttributes::NAME], tipo_obj);
-     objeto->setTablespace(esp_tabela);
-     erro=(!esp_tabela && !atribs_aux[ParsersAttributes::NAME].isEmpty());
+     obj_type=OBJ_TABLESPACE;
+     XMLParser::getElementAttributes(attribs_aux);
+     tabspc=getObject(attribs_aux[ParsersAttributes::NAME], obj_type);
+     object->setTablespace(tabspc);
+     has_error=(!tabspc && !attribs_aux[ParsersAttributes::NAME].isEmpty());
     }
 
     //Caso o elemento filho seja uma referência a um dono (role/papel) <role>
-    else if(nome_elem==ParsersAttributes::ROLE)
+    else if(elem_name==ParsersAttributes::ROLE)
     {
-     tipo_obj=OBJ_ROLE;
-     XMLParser::getElementAttributes(atribs_aux);
-     dono=getObject(atribs_aux[ParsersAttributes::NAME], tipo_obj);
-     objeto->setOwner(dono);
-     erro=(!dono && !atribs_aux[ParsersAttributes::NAME].isEmpty());
+     obj_type=OBJ_ROLE;
+     XMLParser::getElementAttributes(attribs_aux);
+     owner=getObject(attribs_aux[ParsersAttributes::NAME], obj_type);
+     object->setOwner(owner);
+     has_error=(!owner && !attribs_aux[ParsersAttributes::NAME].isEmpty());
     }
     //Obténdo o atributo a posição do objeto (apenas para objetos gráficos)
-    else if(nome_elem==ParsersAttributes::POSITION)
+    else if(elem_name==ParsersAttributes::POSITION)
     {
-     XMLParser::getElementAttributes(atributos);
+     XMLParser::getElementAttributes(attribs);
 
-     if(nome_elem==ParsersAttributes::POSITION &&
-        (tipo_obj_aux!=OBJ_RELATIONSHIP &&
-         tipo_obj_aux!=BASE_RELATIONSHIP))
+     if(elem_name==ParsersAttributes::POSITION &&
+        (obj_type_aux!=OBJ_RELATIONSHIP &&
+         obj_type_aux!=BASE_RELATIONSHIP))
      {
-      dynamic_cast<BaseGraphicObject *>(objeto)->setPosition(QPointF(atributos[ParsersAttributes::X_POS].toFloat(),
-                                                                       atributos[ParsersAttributes::Y_POS].toFloat()));
+      dynamic_cast<BaseGraphicObject *>(object)->setPosition(QPointF(attribs[ParsersAttributes::X_POS].toFloat(),
+                                                                       attribs[ParsersAttributes::Y_POS].toFloat()));
 
 
      }
@@ -3156,87 +3155,87 @@ void DatabaseModel::setBasicAttributes(BaseObject *objeto)
   }
   /* A extração de elementos continuará até que se chegue no último elemento
      filho do elemento */
-  while(!erro && XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+  while(!has_error && XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
  }
 
  XMLParser::restorePosition();
- objeto->setProtected(protegido);
+ object->setProtected(protected_obj);
 
- if(erro)
+ if(has_error)
  {
   /* Caso o flag de erro esteja marcado indica que o novo objeto
      está referenciando um outro objeto o qual não existe no modelo */
 
   //Dispara a exceção
   throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                   .arg(QString::fromUtf8(objeto->getName()))
-                   .arg(objeto->getTypeName())
-                   .arg(QString::fromUtf8(atribs_aux[ParsersAttributes::NAME]))
-                   .arg(BaseObject::getTypeName(tipo_obj)),
+                   .arg(QString::fromUtf8(object->getName()))
+                   .arg(object->getTypeName())
+                   .arg(QString::fromUtf8(attribs_aux[ParsersAttributes::NAME]))
+                   .arg(BaseObject::getTypeName(obj_type)),
                 ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  //Caso o objeto não esteja atribuído a nenhum esquema gera um erro
- else if(!objeto->getSchema() &&
-         (tipo_obj_aux==OBJ_FUNCTION || tipo_obj_aux==OBJ_TABLE ||
-          tipo_obj_aux==OBJ_VIEW  || tipo_obj_aux==OBJ_DOMAIN ||
-          tipo_obj_aux==OBJ_AGGREGATE || tipo_obj_aux==OBJ_OPERATOR ||
-          tipo_obj_aux==OBJ_SEQUENCE || tipo_obj_aux==OBJ_CONVERSION ||
-          tipo_obj_aux==OBJ_TYPE || tipo_obj_aux==OBJ_OPFAMILY ||
-          tipo_obj_aux==OBJ_OPCLASS))
+ else if(!object->getSchema() &&
+         (obj_type_aux==OBJ_FUNCTION || obj_type_aux==OBJ_TABLE ||
+          obj_type_aux==OBJ_VIEW  || obj_type_aux==OBJ_DOMAIN ||
+          obj_type_aux==OBJ_AGGREGATE || obj_type_aux==OBJ_OPERATOR ||
+          obj_type_aux==OBJ_SEQUENCE || obj_type_aux==OBJ_CONVERSION ||
+          obj_type_aux==OBJ_TYPE || obj_type_aux==OBJ_OPFAMILY ||
+          obj_type_aux==OBJ_OPCLASS))
  {
   throw Exception(Exception::getErrorMessage(ERR_ALOC_OBJECT_NO_SCHEMA)
-                        .arg(QString::fromUtf8(objeto->getName()))
-                        .arg(objeto->getTypeName()),
+                        .arg(QString::fromUtf8(object->getName()))
+                        .arg(object->getTypeName()),
           ERR_ALOC_OBJECT_NO_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 }
 
 Role *DatabaseModel::createRole(void)
 {
- map<QString, QString> atributos, atribs_aux;
- Role *papel=NULL, *papel_ref=NULL;
- int i, tam;
- bool marcado;
- QStringList lista;
- QString nome_elem;
- unsigned tipo_papel;
+ map<QString, QString> attribs, attribs_aux;
+ Role *role=NULL, *ref_role=NULL;
+ int i, len;
+ bool marked;
+ QStringList list;
+ QString elem_name;
+ unsigned role_type;
 
  /* Os elementos dos dois elementos a seguir deve aparecer na
     mesma ordem pois seus valores serão trabalhados em conjunto
     na interação onde ser precisa identificar as opções do papel
     o qual está sendo criado */
- QString atrib_ops[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
-                       ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
-                       ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED };
+ QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
+                        ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
+                        ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED };
 
- unsigned vet_ops[]={ Role::OP_SUPERUSER, Role::OP_CREATEDB,
+ unsigned op_vect[]={ Role::OP_SUPERUSER, Role::OP_CREATEDB,
                       Role::OP_CREATEROLE, Role::OP_INHERIT,
                       Role::OP_LOGIN, Role::OP_ENCRYPTED };
 
  try
  {
   //Aloca no novo papel
-  papel=new Role;
-  setBasicAttributes(papel);
+  role=new Role;
+  setBasicAttributes(role);
 
   //Obtém os atributos do elemento
-  XMLParser::getElementAttributes(atributos);
+  XMLParser::getElementAttributes(attribs);
 
   //Definindo os valores de atributos básicos do papel
-  papel->setPassword(atributos[ParsersAttributes::PASSWORD]);
-  papel->setValidity(atributos[ParsersAttributes::VALIDITY]);
+  role->setPassword(attribs[ParsersAttributes::PASSWORD]);
+  role->setValidity(attribs[ParsersAttributes::VALIDITY]);
 
   /* Caso o atributo de id de usuário esteja atribuído no xml.
      (atributos[AtributosParsers::UID] != "").
      Atribui ao papel o valor do atributo convertido para inteiro. */
-  if(!atributos[ParsersAttributes::SYSID].isEmpty())
-   papel->setSysid(atributos[ParsersAttributes::SYSID].toInt());
+  if(!attribs[ParsersAttributes::SYSID].isEmpty())
+   role->setSysid(attribs[ParsersAttributes::SYSID].toInt());
 
   /* Caso o atributo de limite de conexão esteja atribuído no xml.
      (atributos[AtributosParsers::LIMITE_CONEXAO] != "").
      Atribui ao papel o valor do atributo convertido para inteiro. */
-  if(!atributos[ParsersAttributes::CONN_LIMIT].isEmpty())
-   papel->setConnectionLimit(atributos[ParsersAttributes::CONN_LIMIT].toInt());
+  if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
+   role->setConnectionLimit(attribs[ParsersAttributes::CONN_LIMIT].toInt());
 
   /* Identificando as opções do papel. Caso o atributo referet   uma
      estive com valor "true" no documento XML quer dizer que aquele
@@ -3244,8 +3243,8 @@ Role *DatabaseModel::createRole(void)
   for(i=0; i < 6; i++)
   {
    //Verifica se a opção está marcada no XML, valor de atributo = true
-   marcado=atributos[atrib_ops[i]]==ParsersAttributes::_TRUE_;
-   papel->setOption(vet_ops[i], marcado);
+   marked=attribs[op_attribs[i]]==ParsersAttributes::_TRUE_;
+   role->setOption(op_vect[i], marked);
   }
 
   //Passa para os elementos filhos que provavelmente serão <roles> e <comment>
@@ -3258,51 +3257,51 @@ Role *DatabaseModel::createRole(void)
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      //Obtém o nome do elemento filho
-     nome_elem=XMLParser::getElementName();
+     elem_name=XMLParser::getElementName();
 
      //Caso o elemento filho seja uma lista de papeis <roles>
-     if(nome_elem==ParsersAttributes::ROLES)
+     if(elem_name==ParsersAttributes::ROLES)
      {
       //Obtém os atributos do elemento <roles>, neste caso são names e reftype
-      XMLParser::getElementAttributes(atribs_aux);
+      XMLParser::getElementAttributes(attribs_aux);
 
       /* O atributo names armazena uma lista de nomes de papéis as quais o novo papel
          referenciará. A lista tem os elementos separados por vírgula, sendo assim a
          string será quebrada usando o delimitador ',') */
-      lista=atribs_aux[ParsersAttributes::NAMES].split(',');
+      list=attribs_aux[ParsersAttributes::NAMES].split(',');
 
       //Obtém a quantidade de nomes de papéis na lista
-      tam=lista.size();
+      len=list.size();
 
       /* Identificando o tipo da lista de papéis a qual será inserido os objetos
          cujos nomes foram extraídos acima */
-      if(atribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::REFER)
-       tipo_papel=Role::REF_ROLE;
-      else if(atribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::MEMBER)
-       tipo_papel=Role::MEMBER_ROLE;
+      if(attribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::REFER)
+       role_type=Role::REF_ROLE;
+      else if(attribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::MEMBER)
+       role_type=Role::MEMBER_ROLE;
       else
-       tipo_papel=Role::ADMIN_ROLE;
+       role_type=Role::ADMIN_ROLE;
 
       //Varre a lista de nomes de papéis
-      for(i=0; i < tam; i++)
+      for(i=0; i < len; i++)
       {
        //Tenta obter um papel do modelo cujo nome é o elemento atual da lista de nomes (lista[i])
-       papel_ref=dynamic_cast<Role *>(getObject(lista[i].trimmed(),OBJ_ROLE));
+       ref_role=dynamic_cast<Role *>(getObject(list[i].trimmed(),OBJ_ROLE));
 
        /* Caso esse papel não exista um erro será disparado pois um novo papel
           não pode referenciar um outro papel que ainda nem foi criado */
-       if(!papel_ref)
+       if(!ref_role)
        {
         //Dispara a exceção
         throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-                               .arg(QString::fromUtf8(papel->getName()))
+                               .arg(QString::fromUtf8(role->getName()))
                                .arg(BaseObject::getTypeName(OBJ_ROLE))
-                               .arg(QString::fromUtf8(lista[i]))
+                               .arg(QString::fromUtf8(list[i]))
                                .arg(BaseObject::getTypeName(OBJ_ROLE)),
                       ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
        //Caso o papel exista no modelo, o mesmo será relacionado ao novo papel
-       papel->addRole(tipo_papel, papel_ref);
+       role->addRole(role_type, ref_role);
       }
      }
     }
@@ -3314,37 +3313,37 @@ Role *DatabaseModel::createRole(void)
  }
  catch(Exception &e)
  {
-  QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+  QString extra_info;
+  extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
                                    .arg(XMLParser::getCurrentElement()->line);
 
   //Remove o papel alocado
-  if(papel) delete(papel);
+  if(role) delete(role);
 
   //Redireciona qualquer exceção capturada
-  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
  //Retorna o novo papel criado
- return(papel);
+ return(role);
 }
 
 Tablespace *DatabaseModel::createTablespace(void)
 {
- map<QString, QString> atributos;
- Tablespace *esp_tabela=NULL;
+ map<QString, QString> attribs;
+ Tablespace *tabspc=NULL;
 
  try
  {
   //Aloca no novo espaço de tabelas
-  esp_tabela=new Tablespace;
-  setBasicAttributes(esp_tabela);
+  tabspc=new Tablespace;
+  setBasicAttributes(tabspc);
 
   //Obtém os atributos do elemento
-  XMLParser::getElementAttributes(atributos);
+  XMLParser::getElementAttributes(attribs);
 
   //Definindo os valores de atributos básicos do papel
-  esp_tabela->setDirectory(atributos[ParsersAttributes::DIRECTORY]);
+  tabspc->setDirectory(attribs[ParsersAttributes::DIRECTORY]);
  }
  catch(Exception &e)
  {
@@ -3353,27 +3352,27 @@ Tablespace *DatabaseModel::createTablespace(void)
                                    .arg(XMLParser::getCurrentElement()->line);
 
   //Remove o espaco de tabela alocado
-  if(esp_tabela) delete(esp_tabela);
+  if(tabspc) delete(tabspc);
 
   //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
- return(esp_tabela);
+ return(tabspc);
 }
 
 Schema *DatabaseModel::createSchema(void)
 {
- map<QString, QString> atributos;
- Schema *esquema=NULL;
+ map<QString, QString> attribs;
+ Schema *schema=NULL;
 
  try
  {
   //Aloca no novo esquema
-  esquema=new Schema;
+  schema=new Schema;
 
   //Lê do parser os atributos basicos
-  setBasicAttributes(esquema);
+  setBasicAttributes(schema);
  }
  catch(Exception &e)
  {
@@ -3382,13 +3381,13 @@ Schema *DatabaseModel::createSchema(void)
                                    .arg(XMLParser::getCurrentElement()->line);
 
   //Remove o espaco de tabela alocado
-  if(esquema) delete(esquema);
+  if(schema) delete(schema);
 
   //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
- return(esquema);
+ return(schema);
 }
 
 Language *DatabaseModel::createLanguage(void)

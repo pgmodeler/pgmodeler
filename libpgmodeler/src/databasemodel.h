@@ -150,10 +150,10 @@ class DatabaseModel:  public QObject, public BaseObject {
      Este método deve ser chamando SEMPRE quando todos os relacionamentos estão conectados
      e SEMPRE quando o passer XML não está em execução (carregando um arquivo de modelo, por exemplo)
      pois o método substitui o buffer do parser e reinicia a navegação nos elementos XML quando chamado. */
-  void createSpecialObject(const QString &def_xml_obj, unsigned id_obj=0);
+  void createSpecialObject(const QString &xml_def, unsigned obj_id=0);
 
   //Método utilizado para remover um tipo definido pelo usuario (tipo ou domínio)
-  void removeUserType(BaseObject *objeto, int idx_obj);
+  void removeUserType(BaseObject *object, int obj_idx);
 
   /* Retorna o objeto do modelo o qual representa o tipo da dado PostgreSQL.
      Basicamente esse método retorna uma tabela, sequencia, tipo ou domínio quando
@@ -187,10 +187,10 @@ class DatabaseModel:  public QObject, public BaseObject {
   vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=NULL);
 
   //Obtém o índice de um objeto através de seu nome e tipo
-  int getObjectIndex(const QString &obj_name, ObjectType tipo_obj);
+  int getObjectIndex(const QString &name, ObjectType obj_type);
 
   //Obtém o índice de um objeto através de seu endere
-  int getObjectIndex(BaseObject *objeto);
+  int getObjectIndex(BaseObject *object);
 
   //Adiciona um objeto ao modelo do tipo especificado
   void addObject(BaseObject *object, int obj_idx=-1);
@@ -206,10 +206,10 @@ class DatabaseModel:  public QObject, public BaseObject {
 
   /* Retorna um objeto do modelo buscando através de seu nome e espeficiando
      o tipo do mesmo */
-  BaseObject *getObject(unsigned idx_obj, ObjectType obj_type);
+  BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
 
   //Carrega o modelo de banco de dados de um arquivo
-  void loadModel(const QString &nome_arq);
+  void loadModel(const QString &filename);
 
   //Define a codificação do banco de dados
   void setEncoding(EncodingType encod);
@@ -275,29 +275,29 @@ class DatabaseModel:  public QObject, public BaseObject {
   QString __getCodeDefinition(unsigned tipo_def);
 
   //Métodos de manipulação de relacionamentos
-  void addRelationship(BaseRelationship *relacao, int idx_obj=-1);
-  void removeRelationship(BaseRelationship *relacao, int idx_obj=-1);
-  BaseRelationship *getRelationship(unsigned idx_obj, ObjectType tipo_rel);
+  void addRelationship(BaseRelationship *rel, int obj_idx=-1);
+  void removeRelationship(BaseRelationship *rel, int obj_idx=-1);
+  BaseRelationship *getRelationship(unsigned obj_idx, ObjectType rel_type);
 
   /* Obtém o relacionamento usando uma ou duas tabelas para se obtê-lo. Caso o segundo parâmetro
      seja omitido, o método encontra a primeira ocorrência de relacionamento em que a tabela do
      1º parâmetro estiver participando */
-  BaseRelationship *getRelationship(BaseTable *tab_orig, BaseTable *tab_dest);
+  BaseRelationship *getRelationship(BaseTable *src_tab, BaseTable *dst_tab);
 
   //Métodos de manipulação de caixas de texto
-  void addTextbox(Textbox *caixa, int idx_obj=-1);
-  void removeTextbox(Textbox *caixa, int idx_obj=-1);
-  Textbox *getTextbox(unsigned idx_obj);
+  void addTextbox(Textbox *txtbox, int obj_idx=-1);
+  void removeTextbox(Textbox *txtbox, int obj_idx=-1);
+  Textbox *getTextbox(unsigned obj_idx);
 
   //Métodos de manipulação de funções
-  void addFunction(Function *funcao, int idx_obj=-1);
-  void removeFunction(Function *funcao, int idx_obj=-1);
-  Function *getFunction(unsigned idx_obj);
+  void addFunction(Function *func, int obj_idx=-1);
+  void removeFunction(Function *func, int obj_idx=-1);
+  Function *getFunction(unsigned obj_idx);
 
   //Métodos de manipulação de esquemas
-  void addSchema(Schema *schema, int idx_obj=-1);
-  void removeSchema(Schema *schema, int idx_obj=-1);
-  Schema *getSchema(unsigned idx_obj);
+  void addSchema(Schema *schema, int obj_idx=-1);
+  void removeSchema(Schema *schema, int obj_idx=-1);
+  Schema *getSchema(unsigned obj_idx);
 
   //Métodos de manipulação de visões
   void addView(View *view, int obj_idx=-1);
@@ -310,59 +310,59 @@ class DatabaseModel:  public QObject, public BaseObject {
   Table *getTable(unsigned obj_idx);
 
   //Métodos de manipulação de tipos
-  void addType(Type *tipo, int idx_obj=-1);
-  void removeType(Type *tipo, int idx_obj=-1);
-  Type *getType(unsigned idx_obj);
+  void addType(Type *type, int obj_idx=-1);
+  void removeType(Type *type, int obj_idx=-1);
+  Type *getType(unsigned obj_idx);
 
   //Métodos de manipulação de papéis
-  void addRole(Role *papel, int idx_obj=-1);
-  void removeRole(Role *papel, int idx_obj=-1);
-  Role *getRole(unsigned idx_obj);
+  void addRole(Role *role, int obj_idx=-1);
+  void removeRole(Role *role, int obj_idx=-1);
+  Role *getRole(unsigned obj_idx);
 
   //Métodos de manipulação de espaços de tabela
-  void addTablespace(Tablespace *espaco_tab, int idx_obj=-1);
-  void removeTablespace(Tablespace *espaco_tab, int idx_obj=-1);
-  Tablespace *getTablespace(unsigned idx_obj);
+  void addTablespace(Tablespace *tabspc, int obj_idx=-1);
+  void removeTablespace(Tablespace *tabspc, int obj_idx=-1);
+  Tablespace *getTablespace(unsigned obj_idx);
 
   //Métodos de manipulação de linguagens
-  void addLanguage(Language *linguagem, int idx_obj=-1);
-  void removeLanguage(Language *linguagem, int idx_obj=-1);
-  Language *getLanguage(unsigned idx_obj);
+  void addLanguage(Language *lang, int obj_idx=-1);
+  void removeLanguage(Language *lang, int obj_idx=-1);
+  Language *getLanguage(unsigned obj_idx);
 
   //Métodos de manipulação de funções agregadas
-  void addAggregate(Aggregate *func_agregada, int idx_obj=-1);
-  void removeAggregate(Aggregate *func_agregada, int idx_obj=-1);
-  Aggregate *getAggregate(unsigned idx_obj);
+  void addAggregate(Aggregate *aggreg, int obj_idx=-1);
+  void removeAggregate(Aggregate *aggreg, int obj_idx=-1);
+  Aggregate *getAggregate(unsigned obj_idx);
 
   //Métodos de manipulação de conversões de tipo
-  void addCast(Cast *conv_tipo, int idx_obj=-1);
-  void removeCast(Cast *conv_tipo, int idx_obj=-1);
-  Cast *getCast(unsigned idx_obj);
+  void addCast(Cast *cast, int obj_idx=-1);
+  void removeCast(Cast *cast, int obj_idx=-1);
+  Cast *getCast(unsigned obj_idx);
 
   //Métodos de manipulação de conversões de codificação
-  void addConversion(Conversion *conversions, int idx_obj=-1);
-  void removeConversion(Conversion *conversions, int idx_obj=-1);
-  Conversion *getConversion(unsigned idx_obj);
+  void addConversion(Conversion *conv, int obj_idx=-1);
+  void removeConversion(Conversion *conv, int obj_idx=-1);
+  Conversion *getConversion(unsigned obj_idx);
 
   //Métodos de manipulação de operadores
-  void addOperator(Operator *operador, int idx_obj=-1);
-  void removeOperator(Operator *operador, int idx_obj=-1);
-  Operator *getOperator(unsigned idx_obj);
+  void addOperator(Operator *oper, int obj_idx=-1);
+  void removeOperator(Operator *oper, int obj_idx=-1);
+  Operator *getOperator(unsigned obj_idx);
 
   //Métodos de manipulação de classe de operadores
-  void addOperatorClass(OperatorClass *classe_op, int idx_obj=-1);
-  void removeOperatorClass(OperatorClass *classe_op, int idx_obj=-1);
-  OperatorClass *getOperatorClass(unsigned idx_obj);
+  void addOperatorClass(OperatorClass *op_class, int obj_idx=-1);
+  void removeOperatorClass(OperatorClass *op_class, int obj_idx=-1);
+  OperatorClass *getOperatorClass(unsigned obj_idx);
 
   //Métodos de manipulação de famílias de operadores
-  void addOperatorFamily(OperatorFamily *familia_op, int idx_obj=-1);
-  void removeOperatorFamily(OperatorFamily *familia_op, int idx_obj=-1);
-  OperatorFamily *getOperatorFamily(unsigned idx_obj);
+  void addOperatorFamily(OperatorFamily *familia_op, int obj_idx=-1);
+  void removeOperatorFamily(OperatorFamily *op_family, int obj_idx=-1);
+  OperatorFamily *getOperatorFamily(unsigned obj_idx);
 
   //Métodos de manipulação de domínios
-  void addDomain(Domain *dominio, int idx_obj=-1);
-  void removeDomain(Domain *dominio, int idx_obj=-1);
-  Domain *getDomain(unsigned idx_obj);
+  void addDomain(Domain *domain, int obj_idx=-1);
+  void removeDomain(Domain *dominio, int obj_idx=-1);
+  Domain *getDomain(unsigned obj_idx);
 
   //Métodos de manipulação de sequencia
   void addSequence(Sequence *sequence, int obj_idx=-1);
@@ -370,31 +370,31 @@ class DatabaseModel:  public QObject, public BaseObject {
   Sequence *getSequence(unsigned obj_idx);
 
   //Métodos de manipulação de permissões
-  void addPermission(Permission *permissao);
+  void addPermission(Permission *perm);
   //Remove uma dada permissão obtida previamente
-  void removePermission(Permission *permissao);
+  void removePermission(Permission *perm);
   //Remove todas as permissões relacionadas ao objeto informado
-  void removePermissions(BaseObject *objeto);
+  void removePermissions(BaseObject *object);
   /* Obtém as permissões relacionadas ao objeto informado armazenando-as
      no vetor passado */
-  void getPermissions(BaseObject *objeto, vector<Permission *> &permissions);
+  void getPermissions(BaseObject *object, vector<Permission *> &perms);
   /* Retorna o índice de uma dada permissão. Este método é usado
      como auxiliar nos métodos de inserção e remoção de permissões */
-  int getPermissionIndex(Permission *permissao);
+  int getPermissionIndex(Permission *perm);
 
   //Obtém um objeto através de seu nome e tipo
-  BaseObject *getObject(const QString &obj_name, ObjectType tipo_obj);
+  BaseObject *getObject(const QString &name, ObjectType obj_type);
 
   //Copia os atributos do objeto do parâmetro para o objeto this
   void operator = (DatabaseModel &modelo);
 
   //Métodos de criação de objetos a partir do documento XML
-  ObjectType getObjectType(const QString &str_tipo);
-  void setBasicAttributes(BaseObject *objeto);
+  ObjectType getObjectType(const QString &type_name);
+  void setBasicAttributes(BaseObject *object);
   PgSQLType createPgSQLType(void);
 
   //Cria um objeto a partir do tipo passado
-  BaseObject *createObject(ObjectType tipo_obj);
+  BaseObject *createObject(ObjectType obj_type);
 
   Role *createRole(void);
   Tablespace *createTablespace(void);
