@@ -268,11 +268,11 @@ class DatabaseModel:  public QObject, public BaseObject {
      pelo arquivo e sim diretamente pelo formulário de exportação do modelo.
      (Vide pgmodeler_ui/FormExportacao). Adicionalmente, este parâmetro só é considerado
      em geração de código SQL. */
-  QString getCodeDefinition(unsigned tipo_def, bool exportar_arq);
-  QString getCodeDefinition(unsigned tipo_def);
+  QString getCodeDefinition(unsigned def_type, bool export_file);
+  QString getCodeDefinition(unsigned def_type);
 
   //Retorna a definição SOMENTE do banco de dados definido pelo modelo.
-  QString __getCodeDefinition(unsigned tipo_def);
+  QString __getCodeDefinition(unsigned def_type);
 
   //Métodos de manipulação de relacionamentos
   void addRelationship(BaseRelationship *rel, int obj_idx=-1);
@@ -420,7 +420,7 @@ class DatabaseModel:  public QObject, public BaseObject {
      invalidadas caso a coluna possuidora deixe existir (desconectando um relacionamento) e
      por consequência, outros objetos como funções, funções de agregação, sejam invalidados
      por referenciar a sequência como um tipo de dado */
-  Sequence *createSequence(bool ignorar_possuidora=false);
+  Sequence *createSequence(bool ignore_onwer=false);
 
   View *createView(void);
   Permission *createPermission(void);
@@ -452,18 +452,18 @@ class DatabaseModel:  public QObject, public BaseObject {
      principalmente quando o método ModeloBD::verificarRefColsIncRelacao() está em execução
      e uma chave primária está sendo recriada por este método e a tabela já possua um chave primária, isso
      evita que seja disparado um erro indicando que a tabela já possui uma chave-primária. */
-  Constraint *createConstraint(BaseObject *objeto);
-  Index *createIndex(Table *tabela);
-  Trigger *createTrigger(Table *tabela);
+  Constraint *createConstraint(BaseObject *object);
+  Index *createIndex(Table *table);
+  Trigger *createTrigger(Table *table);
 
   /* Retorna se um dado objeto no modelo referência a coluna especificada.
      Esse método deve ser usado antes da remoção da coluna. O não uso deste método
      pode quebrar as referência   coluna e causar resultados inesperados e inconsistências
      no modelo. Este método varre a lista de objetos do tipo: sequencia e visao */
-  void validateColumnRemoval(Column *coluna);
+  void validateColumnRemoval(Column *column);
 
   //Valida os relacionamentos para refletirem as modificações nas coluna/restrição da tabela passada
-  void validateRelationships(TableObject *objeto, Table *tabela_pai);
+  void validateRelationships(TableObject *object, Table *parent_tab);
 
   /* Retorna um erro caso um ciclo de relacionamentos for criado caso o relacionamento
      passado seja inserido no modelo. Um ciclo de relacionamentos é proibido
