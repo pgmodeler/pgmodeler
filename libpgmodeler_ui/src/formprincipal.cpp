@@ -989,42 +989,7 @@ void FormPrincipal::imprimirModelo(void)
   QPrinter::Orientation orientacao, orient_atual;
   QRectF margens;
   unsigned ml,mt,mr,mb, ml1, mt1, mr1, mb1;
-  QCheckBox *impgrade_chk=NULL, *impnumpag_chk;
-  QVBoxLayout *layout=NULL;
-  QGridLayout *grid=NULL;
-  deque<QWidget *> wgts;
-  QGroupBox *gb=new QGroupBox(&print_dlg);
-
-  /* Cria dois checkboxes no diálogo de impressão, um
-     que indica a impressão da grade e outro do número de páginas */
-  impgrade_chk=new QCheckBox(&print_dlg);
-  impgrade_chk->setText(trUtf8("Print grid"));
-  impgrade_chk->setChecked(true);
-
-  impnumpag_chk=new QCheckBox(&print_dlg);
-  impnumpag_chk->setText(trUtf8("Print page numbers"));
-  impnumpag_chk->setChecked(true);
-
-  grid=new QGridLayout;
-  grid->addWidget(impgrade_chk,0,0,1,1);
-  grid->addWidget(impnumpag_chk,0,1,1,1);
-  gb->setLayout(grid);
-  gb->setTitle(trUtf8("Model Options"));
-
-  layout=dynamic_cast<QVBoxLayout *>(print_dlg.layout());
-  while(layout->count()!=0)
-  {
-   wgts.push_back(layout->itemAt(0)->widget());
-   layout->removeItem(layout->itemAt(0));
-  }
-
-  //Adiciona os widgets no diálogo
-  layout->addWidget(gb);
-  while(!wgts.empty())
-  {
-   layout->addWidget(wgts.front());
-   wgts.pop_front();
-  }
+  ConfGeralWidget *conf_wgt=dynamic_cast<ConfGeralWidget *>(fconfiguracao->obterWidgetConfiguracao(0));
 
   print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
   print_dlg.setWindowTitle(trUtf8("Database model printing"));
@@ -1073,7 +1038,7 @@ void FormPrincipal::imprimirModelo(void)
     }
 
     //Imprime o modelo com as configurações setadas
-    modelo_atual->imprimirModelo(printer, impgrade_chk->isChecked(), impnumpag_chk->isChecked());
+    modelo_atual->imprimirModelo(printer, conf_wgt->print_grid_chk->isChecked(), conf_wgt->print_pg_num_chk->isChecked());
    }
   }
  }

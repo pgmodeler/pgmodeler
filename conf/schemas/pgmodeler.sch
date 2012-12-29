@@ -24,6 +24,8 @@ $sp [<configuration op-list-size="] @{op-list-size} ["] $br
 [		paper-type="] @{paper-type} ["] $br
 [		paper-orientation="] @{paper-orientation} ["] $br
 [		paper-margin="] @{paper-margin} ["] $br
+[		print-grid="] %if @{print-grid} %then true %else false %end ["] $br
+[		print-pg-num="] %if @{print-pg-num} %then true %else false %end ["] $br
 [		save-session="] %if @{save-session} %then true %else false %end ["] $br
 [		save-widgets="] %if @{save-widgets} %then true %else false %end ["/>] $br
 

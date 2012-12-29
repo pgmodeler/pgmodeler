@@ -28,6 +28,8 @@ ConfGeralWidget::ConfGeralWidget(QWidget * parent) : QWidget(parent)
  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS]="";
  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGET]="";
+ params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]="";
+ params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]="";
 }
 
 void ConfGeralWidget::carregarConfiguracao(void)
@@ -53,6 +55,9 @@ void ConfGeralWidget::carregarConfiguracao(void)
 
  salvar_wgts_chk->setChecked(params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS]==ParsersAttributes::_TRUE_);
  salvar_sessao_chk->setChecked(params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]==ParsersAttributes::_TRUE_);
+
+ print_grid_chk->setChecked(params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
+ print_pg_num_chk->setChecked(params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]==ParsersAttributes::_TRUE_);
 
  papel_cmb->setCurrentIndex((params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]).toUInt());
  retrato_rb->setChecked(params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::PORTRAIT);
@@ -106,6 +111,9 @@ void ConfGeralWidget::salvarConfiguracao()
 
   params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]=(salvar_sessao_chk->isChecked() ? "1" : "");
   params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS]=(salvar_wgts_chk->isChecked() ? "1" : "");
+  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? "1" : "");
+  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]=(print_grid_chk->isChecked() ? "1" : "");
+
   params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
   params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGET]="";
 

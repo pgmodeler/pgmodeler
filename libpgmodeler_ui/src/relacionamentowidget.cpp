@@ -1,10 +1,12 @@
 #include "relacionamentowidget.h"
 #include "restricaowidget.h"
 #include "colunawidget.h"
+#include "tabelawidget.h"
 #include "caixamensagem.h"
 
 extern RestricaoWidget *restricao_wgt;
 extern ColunaWidget *coluna_wgt;
+extern TabelaWidget *tabela_wgt;
 extern CaixaMensagem *caixa_msg;
 
 RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_RELATIONSHIP)
@@ -41,6 +43,8 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
                                         (TabelaObjetosWidget::BTN_ATUALIZAR_ITEM |
                                         TabelaObjetosWidget::BTN_MOVER_ITENS), true, this);
 
+  tab_objs_avancados=new TabelaObjetosWidget(TabelaObjetosWidget::BTN_EDITAR_ITEM, true, this);
+
   //Configurando os rótulos e ícones das colunas das tabelas
   tab_atributos->definirNumColunas(2);
   tab_atributos->definirRotuloCabecalho(trUtf8("Attribute"), 0);
@@ -53,6 +57,14 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
   tab_restricoes->definirIconeCabecalho(QPixmap(":/icones/icones/constraint.png"),0);
   tab_restricoes->definirRotuloCabecalho(trUtf8("Type"), 1);
   tab_restricoes->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+
+  tab_objs_avancados->definirNumColunas(2);
+  tab_objs_avancados->definirRotuloCabecalho(trUtf8("Name"), 0);
+  tab_objs_avancados->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
+  tab_objs_avancados->definirRotuloCabecalho(trUtf8("Type"), 1);
+  tab_objs_avancados->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+
+  connect(tab_objs_avancados, SIGNAL(s_linhaEditada(int)), this, SLOT(exibirObjetoAvancado(int)));
 
   //Adiciona as tabelas alocadas  s respectivas abas
   grid=new QGridLayout;
@@ -73,10 +85,21 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
 
   grid=dynamic_cast<QGridLayout *>(atributosrel_tbw->widget(3)->layout());
   //Gera um frame de informação sobre a criação de chave primária especial
-  frame=gerarFrameInformacao(trUtf8("Use the special primary key if you want to include a primary key containing inherited / copied columns to the receiving table. This is a feature available only for generalization / dependency relationships."));
+  frame=gerarFrameInformacao(trUtf8("Use the special primary key if you want to include a primary key containing inherited / copied columns to the receiving table. This is a feature available only for generalization / copy relationships."));
 
   grid->addWidget(frame, 1, 0, 1, 1);
   frame->setParent(atributosrel_tbw->widget(3));
+
+  grid=new QGridLayout;
+  grid->setContentsMargins(2,2,2,2);
+
+  grid->addWidget(tab_objs_avancados, 0, 0, 1, 1);
+
+  //Gera um frame de informação sobre a aba avançada
+  frame=gerarFrameInformacao(trUtf8("This advanced tab shows the objects (columns or table) auto created by the relationship's connection as well the foreign keys that represents the link between the participant tables."));
+  grid->addWidget(frame, 1, 0, 1, 1);
+
+  atributosrel_tbw->widget(4)->setLayout(grid);
 
   configurarLayouFormulario(relacionamento_grid, OBJ_RELATIONSHIP);
   janela_pai->setMinimumSize(600, 520);
@@ -197,8 +220,8 @@ void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList
 
 void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, BaseRelationship *relacao)
 {
- static QWidget *tabs[3]={ atributosrel_tbw->widget(1), atributosrel_tbw->widget(2), atributosrel_tbw->widget(3) };
- static QString rot_tabs[3]={ atributosrel_tbw->tabText(1), atributosrel_tbw->tabText(2), atributosrel_tbw->tabText(3) };
+ static QWidget *tabs[4]={ atributosrel_tbw->widget(1), atributosrel_tbw->widget(2), atributosrel_tbw->widget(3), atributosrel_tbw->widget(4) };
+ static QString rot_tabs[4]={ atributosrel_tbw->tabText(1), atributosrel_tbw->tabText(2), atributosrel_tbw->tabText(3), atributosrel_tbw->tabText(4)};
  unsigned tipo_rel, i;
  Relationship *relacao_aux=NULL;
  bool rel1n, relnn, relgen_dep;
@@ -241,7 +264,8 @@ void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList
  //Caso o relacionamento seja entre tabelas
  if(relacao->getObjectType()==OBJ_RELATIONSHIP)
  {
-  vector<QString> vet_cols;
+  //vector<QString> vet_cols;
+  vector<Column *> vet_cols;
   vector<unsigned> vet_id_cols;
   int qtd, i;
   QListWidgetItem *item=NULL;
@@ -281,11 +305,13 @@ void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList
    if(this->novo_obj)
    {
     relacao_aux->connectRelationship();
-    vet_cols=relacao_aux->getRelationshipColumns();
+    //vet_cols=relacao_aux->getRelationshipColumnsNames();
+    vet_cols=relacao_aux->getGeneratedColumns();
     relacao_aux->disconnectRelationship();
    }
    else
-    vet_cols=relacao_aux->getRelationshipColumns();
+    //vet_cols=relacao_aux->getRelationshipColumnsNames();
+    vet_cols=relacao_aux->getGeneratedColumns();
 
    //Obtém os índices das colunas da chave primária especial no relacionamento
    vet_id_cols=relacao_aux->getSpecialPrimaryKeyCols();
@@ -294,7 +320,8 @@ void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList
    qtd=vet_cols.size();
    for(i=0; i < qtd; i++)
    {
-    coluna_rel_lst->addItem(vet_cols[i]);
+    coluna_rel_lst->addItem(vet_cols[i]->getName().toUtf8() +
+                            " (" + QString::fromUtf8(*vet_cols[i]->getType()) + ")");
     item=coluna_rel_lst->item(i);
     item->setCheckState(Qt::Unchecked);
    }
@@ -359,7 +386,7 @@ void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList
  nome_tab_relnn_lbl->setVisible(relnn);
  nome_tab_relnn_edt->setVisible(relnn);
 
- for(i=0; i < 3; i++)
+ for(i=0; i < 4; i++)
   atributosrel_tbw->removeTab(1);
 
  if(!relgen_dep)
@@ -368,9 +395,15 @@ void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList
    atributosrel_tbw->addTab(tabs[i], rot_tabs[i]);
  }
  else if(relgen_dep && relacao->getObjectType()==OBJ_RELATIONSHIP)
- { 
   atributosrel_tbw->addTab(tabs[2], rot_tabs[2]);
- }
+
+ if(relacao->getObjectType()==OBJ_RELATIONSHIP ||
+    (relacao->getObjectType()==BASE_RELATIONSHIP &&
+     relacao->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK))
+  atributosrel_tbw->addTab(tabs[3], rot_tabs[3]);
+
+
+ listarObjetosAvancados();
 }
 
 void RelacionamentoWidget::listarObjetos(ObjectType tipo_obj)
@@ -413,6 +446,137 @@ void RelacionamentoWidget::listarObjetos(ObjectType tipo_obj)
  catch(Exception &e)
  {
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+ }
+}
+
+void RelacionamentoWidget::listarObjetosAvancados(void)
+{
+ BaseRelationship *rel_base=NULL;
+ Relationship *relacao=NULL;
+ Table *tab=NULL;
+ vector<Column *> cols;
+ vector<Constraint *> constrs;
+ unsigned qtd=0, i,i1;
+
+ try
+ {
+  //Obtém a referência ao relacionamento
+  rel_base=dynamic_cast<BaseRelationship *>(this->objeto);
+  relacao=dynamic_cast<Relationship *>(rel_base);
+
+  //Remove as linhas da tabela antes da exibição dos elementos
+  tab_objs_avancados->blockSignals(true);
+  tab_objs_avancados->removerLinhas();
+
+  if(relacao)
+  {
+   if(relacao->getRelationshipType()!=BaseRelationship::RELATIONSHIP_NN)
+   {
+    //Listando as colunas geradas pelo relacionamento
+    cols=relacao->getGeneratedColumns();
+    qtd=cols.size();
+
+    for(i=0; i < qtd; i++)
+    {
+     tab_objs_avancados->adicionarLinha();
+     tab_objs_avancados->definirTextoCelula(QString::fromUtf8(cols[i]->getName()),i,0);
+     tab_objs_avancados->definirTextoCelula(QString::fromUtf8(cols[i]->getTypeName()),i,1);
+     tab_objs_avancados->definirDadoLinha(QVariant::fromValue<void *>(cols[i]), i);
+    }
+
+    //Listando as restrições geradas pelo relacionamento
+    constrs=relacao->getGeneratedConstraints();
+    qtd=constrs.size();
+
+    for(i=0, i1=tab_objs_avancados->obterNumLinhas(); i < qtd; i++,i1++)
+    {
+     tab_objs_avancados->adicionarLinha();
+     tab_objs_avancados->definirTextoCelula(QString::fromUtf8(constrs[i]->getName()),i1,0);
+     tab_objs_avancados->definirTextoCelula(QString::fromUtf8(constrs[i]->getTypeName()),i1,1);
+     tab_objs_avancados->definirDadoLinha(QVariant::fromValue<void *>(constrs[i]), i1);
+    }
+   }
+   else
+   {
+    //Lista a tabela gerada pelo relacionamento n-n
+    tab=relacao->getGeneratedTable();
+    tab_objs_avancados->adicionarLinha();
+    tab_objs_avancados->definirTextoCelula(QString::fromUtf8(tab->getName()),0,0);
+    tab_objs_avancados->definirTextoCelula(QString::fromUtf8(tab->getTypeName()),0,1);
+    tab_objs_avancados->definirDadoLinha(QVariant::fromValue<void *>(tab), 0);
+   }
+  }
+  else if(rel_base->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+  {
+   //Listando as chaves estrangeiras da tabela receptora
+   dynamic_cast<Table *>(rel_base->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs);
+   tab=dynamic_cast<Table *>(rel_base->getTable(BaseRelationship::DST_TABLE));
+   qtd=constrs.size();
+
+   for(i=0, i1=tab_objs_avancados->obterNumLinhas(); i < qtd; i++)
+   {
+    //Lista apenas as fks que referenciam a tabela de destino do relacionamento
+    if(constrs[i]->getReferencedTable()==tab)
+    {
+     tab_objs_avancados->adicionarLinha();
+     tab_objs_avancados->definirTextoCelula(QString::fromUtf8(constrs[i]->getName()),i1,0);
+     tab_objs_avancados->definirTextoCelula(QString::fromUtf8(constrs[i]->getTypeName()),i1,1);
+     tab_objs_avancados->definirDadoLinha(QVariant::fromValue<void *>(constrs[i]), i1);
+     i1++;
+    }
+   }
+  }
+
+  tab_objs_avancados->limparSelecao();
+  tab_objs_avancados->blockSignals(false);
+
+ }
+ catch(Exception &e)
+ {
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+ }
+}
+
+void RelacionamentoWidget::exibirObjetoAvancado(int idx)
+{
+ BaseObject *objeto=reinterpret_cast<BaseObject *>(tab_objs_avancados->obterDadoLinha(idx).value<void *>());
+ bool prot=true;
+ Table *tab=NULL;
+ Constraint *constr=NULL;
+ Column *col=NULL;
+
+ switch(objeto->getObjectType())
+ {
+  case OBJ_COLUMN:
+   col=dynamic_cast<Column *>(objeto);
+   coluna_wgt->definirAtributos(this->modelo, col->getParentTable(), this->lista_op, col);
+   coluna_wgt->show();
+  break;
+
+  case OBJ_CONSTRAINT:
+   constr=dynamic_cast<Constraint *>(objeto);
+
+   if(!constr->isAddedByRelationship())
+   {
+    prot=constr->isProtected();
+    constr->setProtected(true);
+   }
+
+   restricao_wgt->definirAtributos(this->modelo, constr->getParentTable(), this->lista_op, constr);
+   restricao_wgt->show();
+   constr->setProtected(prot);
+  break;
+
+  default:
+   //Not working with dynamic_cast ???
+   tab=reinterpret_cast<Table *>(objeto);
+
+   tab->setProtected(true);
+   tabela_wgt->definirAtributos(this->modelo, this->lista_op, tab,
+                                tab->getPosition().x(), tab->getPosition().y());
+   tabela_wgt->show();
+   tab->setProtected(false);
+  break;
  }
 }
 

@@ -336,7 +336,9 @@ static const QString
   AUTO_SUFFIX="auto-sufix",
   VARIATION="variation",
   SPATIAL_TYPE="spatial-type",
-  COLS_COMMENT="cols-comment";
+  COLS_COMMENT="cols-comment",
+  PRINT_GRID="print-grid",
+  PRINT_PG_NUM="print-pg-num";
 }
 
 #endif

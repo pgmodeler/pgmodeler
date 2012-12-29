@@ -85,21 +85,6 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
  }
 }
 
-vector<QString> Relationship::getRelationshipColumns(void)
-{
- unsigned count, i;
- vector<QString> name_vect;
-
- count=ref_columns.size();
- for(i=0; i < count; i++)
- {
-  name_vect.push_back(QString::fromUtf8(ref_columns[i]->getName()) + " (" +
-                      QString::fromUtf8(*ref_columns[i]->getType()) + ")");
- }
-
- return(name_vect);
-}
-
 void Relationship::setMandatoryTable(unsigned table_id, bool value)
 {
  BaseRelationship::setMandatoryTable(table_id, value);
@@ -196,9 +181,9 @@ void Relationship::createSpecialPrimaryKey(void)
   count=column_ids_pk_rel.size();
   for(i=0; i < count; i++)
   {
-   if(column_ids_pk_rel[i] < ref_columns.size() &&
-      !pk_special->isColumnExists(ref_columns[column_ids_pk_rel[i]], Constraint::SOURCE_COLS))
-    pk_special->addColumn(ref_columns[column_ids_pk_rel[i]], Constraint::SOURCE_COLS);
+   if(column_ids_pk_rel[i] < gen_columns.size() &&
+      !pk_special->isColumnExists(gen_columns[column_ids_pk_rel[i]], Constraint::SOURCE_COLS))
+    pk_special->addColumn(gen_columns[column_ids_pk_rel[i]], Constraint::SOURCE_COLS);
   }
 
   try
@@ -292,8 +277,8 @@ bool Relationship::isColumnExists(Column *column)
  if(!column)
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- itr=ref_columns.begin();
- itr_end=ref_columns.end();
+ itr=gen_columns.begin();
+ itr_end=gen_columns.end();
 
  while(itr!=itr_end && !found)
  {
@@ -485,27 +470,30 @@ void Relationship::removeConstraint(unsigned constr_idx)
  removeObject(constr_idx, OBJ_CONSTRAINT);
 }
 
-Column *Relationship::getReferencedColumn(const QString &col_name)
+vector<Column *> Relationship::getGeneratedColumns(void)
 {
- vector<Column *>::iterator itr, itr_end;
- Column *col=NULL;
- bool found=false, format;
+ return(gen_columns);
+}
 
- format=col_name.contains("\"");
- itr=ref_columns.begin();
- itr_end=ref_columns.end();
+Table *Relationship::getGeneratedTable(void)
+{
+ return(table_relnn);
+}
 
- while(itr!=itr_end && !found)
- {
-  col=(*itr);
-  found=(col->getName(format)==col_name);
-  itr++;
- }
+vector<Constraint *> Relationship::getGeneratedConstraints(void)
+{
+ vector<Constraint *> vect;
 
- if(found)
-  return(col);
- else
-  return(NULL);
+ if(fk_rel1n)
+  vect.push_back(fk_rel1n);
+
+ if(uq_rel11)
+  vect.push_back(uq_rel11);
+
+ if(pk_relident)
+  vect.push_back(pk_relident);
+
+ return(vect);
 }
 
 TableObject *Relationship::getObject(unsigned obj_idx, ObjectType obj_type)
@@ -852,9 +840,9 @@ void Relationship::addColumnsRelGen(void)
       in the list of referencing columns, and additionally the
       relationship columns will also be inserted directly in the
       source table, which inherits or copy table columns from target table */
-   ref_columns=columns;
-   itr=ref_columns.begin();
-   itr_end=ref_columns.end();
+   gen_columns=columns;
+   itr=gen_columns.begin();
+   itr_end=gen_columns.end();
    while(itr!=itr_end)
    {
     src_tab->addColumn((*itr));
@@ -1009,9 +997,9 @@ void Relationship::configureIndentifierRel(Table *dst_tab)
   }
 
   //Adds the columns from the strong entity primary key on the weak entity primary key
-  count=ref_columns.size();
+  count=gen_columns.size();
   for(i=0; i < count; i++)
-   pk->addColumn(ref_columns[i], Constraint::SOURCE_COLS);
+   pk->addColumn(gen_columns[i], Constraint::SOURCE_COLS);
 
   //Inserts the configured primary key on the receiver table (if there is no pk on it)
   if(new_pk)
@@ -1041,11 +1029,11 @@ void Relationship::addUniqueKey(Table *ref_tab, Table *recv_tab)
   }
 
   //Adds the referenced columns as the unique key columns
-  count=ref_columns.size();
+  count=gen_columns.size();
   i=0;
 
   while(i < count)
-   uq->addColumn(ref_columns[i++], Constraint::SOURCE_COLS);
+   uq->addColumn(gen_columns[i++], Constraint::SOURCE_COLS);
 
   //Configures the name for the constraint
   i=1;
@@ -1103,7 +1091,7 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
   /* Gets the primary key from the reference table in order to reference its columns
      on the primary key */
   pk=ref_tab->getPrimaryKey();
-  qty=ref_columns.size();
+  qty=gen_columns.size();
   i=i1=0;
 
   /* Special condition for n-n relationships.
@@ -1139,7 +1127,7 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 
   while(i < qty)
   {
-   column=ref_columns[i];
+   column=gen_columns[i];
    column_aux=pk->getColumn(i1, Constraint::SOURCE_COLS);
 
    //Link the two columns on the foreign key
@@ -1271,7 +1259,7 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
    aux="";
 
    column=new Column;
-   ref_columns.push_back(column);
+   gen_columns.push_back(column);
 
    //Add the current primary key source column on the list
    column_aux=pk->getColumn(i, Constraint::SOURCE_COLS);
@@ -1483,10 +1471,10 @@ void Relationship::addColumnsRelNn(void)
   pk_tabnn->setName(table_relnn->getName() + "_pk");
   pk_tabnn->setConstraintType(ConstraintType::primary_key);
   pk_tabnn->setAddedByLinking(true);
-  count=ref_columns.size();
+  count=gen_columns.size();
 
   for(i=0; i < count; i++)
-   pk_tabnn->addColumn(ref_columns[i],Constraint::SOURCE_COLS);
+   pk_tabnn->addColumn(gen_columns[i],Constraint::SOURCE_COLS);
 
   table_relnn->addConstraint(pk_tabnn);
 
@@ -1766,8 +1754,8 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
    }
 
 
-   itr=ref_columns.begin();
-   itr_end=ref_columns.end();
+   itr=gen_columns.begin();
+   itr_end=gen_columns.end();
 
    //Destroy the columns created by the relationship
    while(itr!=itr_end)
@@ -1781,7 +1769,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
     delete(column);
    }
 
-   ref_columns.clear();
+   gen_columns.clear();
    pk_columns.clear();
    col_suffixes.clear();
 
@@ -1893,7 +1881,7 @@ bool Relationship::isInvalidated(void)
     for(i=0; i < rel_cols_count && valid; i++)
     {
      //Gets one column from the foreign key
-     col2=ref_columns[i];
+     col2=gen_columns[i];
 
      //Gets one column from the primary key
      col1=pk_columns[i];
@@ -1940,14 +1928,14 @@ bool Relationship::isInvalidated(void)
    /* Gets the number of columns created with the connection of the relationship
       and summing with the number of columns rejected at the time of connection
       according to the rules of copyColumns() method */
-   rel_cols_count=ref_columns.size() + rejected_col_count;
+   rel_cols_count=gen_columns.size() + rejected_col_count;
 
    valid=(rel_cols_count == tab_cols_count);
 
    /* Checking if the columns created with inheritance / copy still exist
       in reference table */
-   for(i=0; i < ref_columns.size() && valid; i++)
-    valid=table->getColumn(ref_columns[i]->getName(true));
+   for(i=0; i < gen_columns.size() && valid; i++)
+    valid=table->getColumn(gen_columns[i]->getName(true));
 
    /* Checking if the reference table columns are in the receiver table.
       In theory all columns must exist in the two table because one
@@ -2130,7 +2118,7 @@ QString Relationship::getCodeDefinition(unsigned def_type)
   count=column_ids_pk_rel.size();
   for(i=0; i < count; i++)
   {
-   if(!ref_columns.empty() && i < ref_columns.size())
+   if(!gen_columns.empty() && i < gen_columns.size())
    {
     attributes[ParsersAttributes::SPECIAL_PK_COLS]+=QString("%1").arg(column_ids_pk_rel[i]);
     if(i < count-1) attributes[ParsersAttributes::SPECIAL_PK_COLS]+=",";
@@ -2173,7 +2161,7 @@ void Relationship::operator = (Relationship &rel)
  this->tab_name_relnn=rel.tab_name_relnn;
  this->table_relnn=NULL;
  this->fk_rel1n=pk_relident=pk_special=NULL;
- this->ref_columns.clear();
+ this->gen_columns.clear();
  this->auto_suffix=rel.auto_suffix;
 }
 

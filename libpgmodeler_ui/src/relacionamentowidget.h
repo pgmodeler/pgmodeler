@@ -41,11 +41,15 @@ class RelacionamentoWidget: public ObjetoBaseWidget, public Ui::RelacionamentoWi
 
    //Tabela as quais armazenam os atributos e restrições do relacionamento
    TabelaObjetosWidget *tab_atributos,
-                       *tab_restricoes;
+                       *tab_restricoes,
+                       *tab_objs_avancados;
 
    /* Lista os objetos do relacionamento na tabela respectiva, de acordo
       com o tipo do objeto passado */
    void listarObjetos(ObjectType tipo_obj);
+
+   //Lista os objetos avançados
+   void listarObjetosAvancados(void);
 
    //Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
    void exibirDadosObjeto(TableObject *objeto, int idx_lin);
@@ -62,12 +66,18 @@ class RelacionamentoWidget: public ObjetoBaseWidget, public Ui::RelacionamentoWi
 
   //Adiciona um objeto   tabela a qual aciona o método
   void adicionarObjeto(void);
+
   //Edita um objeto selecionado  na tabela a qual aciona o método
   void editarObjeto(int idx_lin);
+
   //Remove um objeto selecionado  na tabela a qual aciona o método
   void removerObjeto(int idx_lin);
+
   //Remove todos os objetos da tabela a qual aciona o método
   void removerObjetos(void);
+
+  //Exibe o formulário referente ao objeto criado ou que representa o relationamento
+  void exibirObjetoAvancado(int idx);
 
  public slots:
    void aplicarConfiguracao(void);
