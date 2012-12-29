@@ -41,19 +41,21 @@ Known bugs
 ----------
 
 * Broken compilation process on MacOSX. ([issue#10](https://github.com/pgmodeler/pgmodeler/issues/10))
-* PgModeler, when compiled on Qt 4.7.x, crashes after activating the print dialog. [(issue#1)](https://github.com/pgmodeler/pgmodeler/issues/1)
 
 Change Log
 ----------
 
-[ v0.4.0 ]
+[ v0.4.0-alpha2 ]
 
-Attention: The v0.4.0 is in alpha stage so the change log can be modified at any moment when new bug fixes / features is implemented. The stable 0.4.0 has no release date yet because all the code is being refactored meaning that the new version will be completely decoupled from previous versions.
+Attention: The v0.4.0 is in alpha stage so the change log can be modified at any moment when new bug fixes / features are implemented. The stable 0.4.0 has no release date yet because all the code is being refactored meaning that the new version will be completely decoupled from previous versions.
 
+* [New]: the relationship editing form gained an "advanced" tab which shows the objects generated and/or represents the relatioship itself.
 * [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
 * [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
+* [Change]: the printing options for the model were moved to the general configuration form.
 * [Change]: relationship validation method now removes fk relationships when the foreign keys that gerenates is no longer exists.
 * [Change]: copy/cut/delete commands does not manipulates system objects like schema public and languages C, SQL and plpgsql.
+* [Fix]: pgModeler no longer crashes when the user activates the print dialog.
 * [Fix]: corrected bug that was removing fk relationships when pasting objects.
 * [Fix]: corrected SQL syntax error of 'timestamp with time zone'.
 * [Fix]: corrected constraint type showing on editing form.
