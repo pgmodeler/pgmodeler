@@ -1033,165 +1033,130 @@ void DatabaseModel::validateRelationships(void)
  map<unsigned, Exception>::iterator itr2, itr2_end;
  unsigned idx;
 
- //Obtém os iterador para varredura inicial na lista global de relacionamentos
  itr=relationships.begin();
  itr_end=relationships.end();
 
  do
  {
-  /* Marca como falso a flag indicativa de relacionamento invalidado.
-     Este flag sempre será marcado quando 1 ou mais relacionamentos
-     forem encontrados durante as interações. */
+  //Initializes the flag that indicates that some invalid relatioship was found.
   found_inval_rel=false;
 
   while(itr!=itr_end)
   {
-   //Obtém um relacionamento a partir do iterador
    base_rel=dynamic_cast<BaseRelationship *>(*itr);
    itr++;
 
-   //Caso o relacionamento obtido seja tabela-tabela
+   //Validates only table-table relationships
    if(base_rel->getObjectType()==OBJ_RELATIONSHIP)
    {
-    //Converte o relacionamento base para rel. tabela-tabela
+    //Makes a cast to the correct object class
     rel=dynamic_cast<Relationship *>(base_rel);
 
-    //Caso o relacionamento esteja invalidado
+    //If the relationships is invalid
     if(rel->isInvalidated())
     {
-     //Insere-o na lista de relacionamentos invalidados
+     //Inserts it to the invalid relationship vector
      vet_rel_inv.push_back(base_rel);
-     /* Marca a flag indicando que pelo menos 1 relacionamento
-        invalidado foi encontrado */
+
+     //Marks the flag indicating the at least one relationship was found invalidated
      found_inval_rel=true;
     }
     else
-     //Caso não esteja invalidado, insere-o na lista de relacionamentos válidos
+     //Otherwise inserts the relationship on the valid relationships
      vet_rel.push_back(base_rel);
    }
   }
 
-  //Caso haja algum relacionamento invalidado
+  //If there is some invalidated relationship or special objects to be recreated
   if(found_inval_rel || !xml_special_objs.empty())
   {
+   //Stores the special objects definition if there is some invalidated relationships
    if(!loading_model && xml_special_objs.empty())
     storeSpecialObjectsXML();
 
-   //Desconecta todos os relacionamentos
+   //Disconnects all the relationship
    disconnectRelationships();
 
-   //Concatena ambas as lista para reconexão dos relacionamentos
+   /* Merges the two lists (valid and invalid relationships),
+      taking care to insert the invalid ones at the end of the list */
    rels=vet_rel;
-
-   /* Os relacionamentos invalidados vão para o final da lista pois
-      estes precisam ser conectados por último para se tornarem válidos */
    rels.insert(rels.end(), vet_rel_inv.begin(), vet_rel_inv.end());
-
-   /* Após criação da lista de relacionamentos temporária (rels) limpa
-      as duas listas de relacionamentos usadas na iteração */
    vet_rel.clear();
    vet_rel_inv.clear();
 
-   //Varre a lista temporária de relacionamentos
+   //Walking through the created list connecting the relationships
    itr=rels.begin();
    itr_end=rels.end();
    idx=0;
 
    while(itr!=itr_end)
    {
-    //Obtém o relacionamento
     rel=dynamic_cast<Relationship *>(*itr);
-    itr_ant=itr;
 
-    //Passa para o próximo relacionamento da lista
+    //Stores the current iterator in a auxiliary one to remove from list in case of error
+    itr_ant=itr;
     itr++;
 
     try
     {
-     //Executa a conexão do relacionamento
+     //Try to connect the relationship
      rel->connectRelationship();
      idx++;
     }
-    /* Caso um erro seja disparado durante a conexão do relacionamento o
-       mesmo é considerado inválido permanentemente sendo necessário
-       sua remoção do modelo */
+    /* Case some error is raised during the connection the relationship is
+       permanently invalidated and need to be removed from the model */
     catch(Exception &e)
     {
-     /* Remove o relacionamento chamando o método de remoção
-        de objetos se verificação */
+     //Removes the relationship
      __removeObject(rel);
 
-     /* Remove o iterador da lista de relacionamentos inválidos para
-        evitar que o mesmo seja verificado novamente */
+     //Removes the iterator that stores the relationship from the list
      rels.erase(itr_ant);
 
-     /* Reconfigura a navegação na lista de relacionamentos invalidados.
-        Para evitar de que a lista seja varrida novamente desde seu início
-        a variável auxiliar 'idx' é usada para apontar o iterador atual
-        para o elemento posterior ao que foi removido */
+     /* Points the searching to the iterator immediately after the removed iterator
+        evicting to walk on the list from the first item */
      itr_end=rels.end();
      itr=rels.begin() + idx;
 
-     //Desaloca o relacionamento
      delete(rel);
 
-     //Armazena o erro capturado na lista de erros
+     //Stores the error raised in a list
      errors.push_back(e);
     }
    }
 
-   /* A nova lista (rels) criada com a nova ordenação de relacionamentos
-      passará a ser a lista de relacionamentos a ser varrida nas iterações
-      pois é nela que a ordenação de conexão dos relacionamentos é rearranjada. */
    itr=rels.begin();
 
-   /* Caso o flag de modelo em carregamento não esteja marcado será
-      feita a recriação dos objetos. Os objetos especiais são recriados
-      a cada revalidação dos relacionamentos, sendo assim, tais objetos
-      especiais em um dado momento podem ser criados com sucesso e em outros
-      não ser criados por quebrarem as referências devido a conexão e
-      desconexão constante dos relacionamentos. Quando um erro é encontrado
-      na recriação de um objeto especial o mesmo é armazenado em um mapa de
-      controle de erros do objeto, onde a chave deste mapa é o identificador
-      do próprio objeto gerador do erro. Enquanto tal objeto não for recriado
-      com sucesso o erro de geração é armazenado. Ao final, quando todos os
-      relacionamentos estiverem sido válidados e o mapa de erros estiver com
-      algum elemento de erro, os mesmos são disparados ao usuário indicando
-      que alguns objetos especiais não puderam ser criados na validação dos
-      relacionamentos. */
-   //Obtém os iteradores da lista de xml dos objetos especiais
+   //Recreating the special objects
    itr1=xml_special_objs.begin();
    itr1_end=xml_special_objs.end();
 
+   //The special objects are created only when the model is not being loaded
    if(!loading_model && itr1!=itr1_end)
    {
     do
     {
      try
      {
-      //Tenta criar o objeto especial a partir do iterador atual
+      //Try to create the special object
       createSpecialObject(itr1->second, itr1->first);
 
-      /* Caso algum erro anterior de criação do objeto especial em questão for
-         detectado o mesmo é removido do mapa de controle de erros */
+      /* If the special object is successfully created, remove the errors
+         related to a previous attempt to create it */
       if(error_map.count(itr1->first))
        error_map.erase(error_map.find(itr1->first));
 
-      /* Remove a definição xml do objeto atual da lista indicando
-         que o mesmo foi criado com sucesso */
+      //Removes the definition of the special object when it is created successfully
       xml_special_objs.erase(itr1);
 
-      //Reinicia a navegação na lista de objetos especiais
+      //Restart the special object creation
       itr1=xml_special_objs.begin();
       itr1_end=xml_special_objs.end();
      }
      catch(Exception &e)
      {
-      /* Caso uma exceção for caputarada na criação do objeto especial
-         armazena o erro no mapa de erros sendo que a chave do mapa
-         é o identificador do objeto gerador do erro */
+      //If some error related to the special object is raised, stores it for latter creation attempts
       error_map[itr1->first]=e;
-      //Passa para o próximo objeto especial para tentar sua recriação
       itr1++; idx++;
      }
     }
@@ -1199,39 +1164,30 @@ void DatabaseModel::validateRelationships(void)
    }
   }
  }
- //Continua a iteração enquanto houver relacionamentos invalidados
+ //The validation continues until there is some invalid relationship
  while(found_inval_rel);
 
- /* Caso hajam elementos no mapa de controle de erros de criação
-    dos objetos especiais, os mesmos são inseridos na lista geral
-    de erros de validação para serem disparados ao final do método */
+ //Stores the errors related to creation of special objects on the general error vector
  itr2=error_map.begin();
  itr2_end=error_map.end();
  while(itr2!=itr2_end)
  {
-  //Insere o erro na lista geral de erros
   errors.push_back(itr2->second);
   itr2++;
  }
 
- /* Caso a lista geral de erros não esteja vazia os erros serão
-    disparados ao usuário */
+ //If errors were caught on the above executions they will be redirected to the user
  if(!errors.empty())
  {
-  /* Limpa a lista de objetos especiais para garantir que eventuais objetos
-    não recriados pela quebra das referências não sejam trabalhados pelo
-    método de recriação dos objetos especiais */
   xml_special_objs.clear();
 
-  /* Revalida os relacionamentos gerados por chave estrangeira em caso de erro,
-     pois se uma chave estrangeira que referenciava uma coluna que deixou de existir
-     o relacionamento que a representa também deve ser removido */
+  /* Revalidates the fk relationships at this points because some fks must be removed due
+     to special object invalidation */
   itr=base_relationships.begin();
   itr_end=base_relationships.end();
 
   while(itr!=itr_end)
   {
-   //Obtém um relacionamento generico
    base_rel=dynamic_cast<BaseRelationship *>(*itr);
 
    if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
@@ -1240,9 +1196,10 @@ void DatabaseModel::validateRelationships(void)
    itr++;
   }
 
-  //Define os objetos como modificados para forçar seu redesenho
+  //Set all the model objects as modified to force the redraw of the entire model
   this->setObjectsModified();
 
+  //Redirects all the errors captured on the revalidation
   throw Exception(ERR_INVALIDATED_OBJECTS,__PRETTY_FUNCTION__,__FILE__,__LINE__,errors);
  }
 }
@@ -1253,17 +1210,14 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
  {
   unsigned rel_type;
 
-  /* Retorna um erro caso se tente verificar redundância
-     de relacionamentos a partir de um relacionamento
-     não alocado */
+  //Raises an error if the user try to check the redundancy starting from a unnallocated relationship
   if(!rel)
    throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   rel_type=rel->getRelationshipType();
 
-  /* Auto relacionamentos são desconsiderados da verificação.
-     Já relacionamentos identificadores ou relacionamentos
-     os quais possuem atributos identificadores são verificados */
+  /* Only identifier relationships or relationship that has identifier
+     attributes (primary keys) are checked */
   if((!rel->isSelfRelationship() &&
       (rel->isIdentifier() ||
        rel->hasIndentifierAttribute())) ||
@@ -1280,16 +1234,16 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
    unsigned aux_rel_type;
    QString str_aux, msg;
 
-   //Obtém tabela referencia e tabela receptora do relacionamento
+   //Gets the tables from the relationship
    recv_table=rel->getReceiverTable();
    ref_table=rel->getReferenceTable();
 
    itr=relationships.begin();
    itr_end=relationships.end();
 
-   /* Com base nas tabela obtidas, varre a lista de relacionamento em busca do ciclo.
-      Um ciclo será detectado quando a tabela referencia de um relacionamento for
-      a tabela recptora do relacionamento usado na validação. */
+   /* Based on the obtained tables, scans the list of relationships in search of the cycle.
+      A cycle is detected when a reference table from a relationship is the receiver table of
+      the relationship used in the validation. */
    while(itr!=itr_end && !found_cycle)
    {
     base_rel=dynamic_cast<BaseRelationship *>(*itr);
@@ -1297,19 +1251,15 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
 
     if(base_rel->getObjectType()==OBJ_RELATIONSHIP)
     {
-     //Obtém um relacionamento da lista
      rel_aux=dynamic_cast<Relationship *>(base_rel);
-     //Obtém o tipo do relacionamento atual
      aux_rel_type=rel_aux->getRelationshipType();
-     //Obtém a tabela referência do relacionamento atual
      src_table=rel_aux->getReferenceTable();
 
-     /* Caso a tabela referencia obtida seja igual a tabela receptora
-        do relacionamento usado na validação e o tipo do relacionamento
-        atual seja o mesmo do relacionamento da validação, isso pode indicar
-        um princípio de fechamento de ciclo, para isso a validação prosseguirá
-        com a tabela receptora do relacionamento atual até que o a tabela receptora
-        seja a própria tabela de referência do relacionamento da validação. */
+     /* Case the reference table is equal to the receiver table of the relationship used
+        as the start of validation and the current relationship type is the same as the
+        latter relationship, this can indicate a principle of closing cycle, in this way
+        the validation will proceed with the receiver table from the current relationship
+        until que receiver table is the reference table of the initial relationship */
      if(recv_table==src_table &&  aux_rel_type==rel_type &&
         ((!rel_aux->isSelfRelationship() &&
           (rel_aux->isIdentifier() ||
@@ -1318,21 +1268,22 @@ void DatabaseModel::checkRelationshipRedundancy(Relationship *rel)
           aux_rel_type==Relationship::RELATIONSHIP_DEP)))
 
      {
-      //A tabela receptora passará a ser a tabela receptora do relacionamento atual
+      //The receiver table will be the receiver from the current relationship
       recv_table=rel_aux->getReceiverTable();
-      //Armazena o nome do relacionamento para disparar erro caso um ciclo seja fechado
+
+      //Stores the relationship name to raise an error in case of closing cycle
       str_aux+=rel_aux->getName() + ", ";
-      /* Um ciclo será detectado caso a tabela receptora seja igual a tabela referência
-         do relacionamento usado na validação */
+
+      //Checking the closing cycle
       found_cycle=(recv_table==ref_table);
-      //Volta ao início da lista de relacionamento para uma nova validação
+
+      //Restart the validation
       itr=relationships.begin();
      }
     }
    }
 
-   /* Caso um ciclo seja encontrado, dispara um erro contendo os nomes dos
-      relacionamentos os quais fecham o ciclo */
+   //Raises an error indicating the relationship names that close the cycle
    if(found_cycle)
    {
     str_aux+=rel->getName();
