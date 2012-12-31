@@ -4620,28 +4620,22 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
  {
   sequence=new Sequence;
   setBasicAttributes(sequence);
-
-  //Obtém os atributos do elemento
   XMLParser::getElementAttributes(attribs);
+
   sequence->setValues(attribs[ParsersAttributes::MIN_VALUE],
                             attribs[ParsersAttributes::MAX_VALUE],
                             attribs[ParsersAttributes::INCREMENT],
                             attribs[ParsersAttributes::START],
                             attribs[ParsersAttributes::CACHE]);
+
   sequence->setCycle(attribs[ParsersAttributes::CYCLE]==ParsersAttributes::_TRUE_);
 
-  //Caso o atributo de coluna possuidora da sequencia esteja preenchido
+  //Getting the sequence's owner column
   if(!attribs[ParsersAttributes::OWNER_COLUMN].isEmpty())
   {
-   //Quebra o valor do atributo por .
    elem_list=attribs[ParsersAttributes::OWNER_COLUMN].split('.');
    count=elem_list.count();
 
-   /* Caso a lista de nomes gerada possua 3 elementos indica
-      que a coluna possuidora foi está no formato
-      [ESQUEMA].[TABELA].[COLUNA] caso contrário
-      supõe-se que esteja no formato
-      [TABELA].[COLUNA] */
    if(count==3)
    {
     tab_name=elem_list[0] + "." + elem_list[1];
@@ -4653,10 +4647,9 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
     col_name=elem_list[1];
    }
 
-   //Obtém a tabela do modelo
    table=getObject(tab_name, OBJ_TABLE);
 
-   //Dispara uma exceção caso a tabela referenciada não exista
+   //Raises an error if the column parent table doesn't exists
    if(!table)
    {
     str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
@@ -4665,19 +4658,15 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
             .arg(QString::fromUtf8(tab_name))
             .arg(BaseObject::getTypeName(OBJ_TABLE));
 
-    //Dispara a exceção
     throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
-   //Tenta obter a coluna da tabela com o nome vindo do XML
    column=dynamic_cast<Table *>(table)->getColumn(col_name);
 
-   //Caso a coluna não for encontrada tenta obtê-la referenciando o antigo nome
    if(!column)
     column=dynamic_cast<Table *>(table)->getColumn(col_name, true);
 
-   /* Caso a coluna não exista porém a mesma esteja sendo referenciada no xml
-      um erro será disparado */
+   //Raises an error if the column doesn't exists
    if(!column && !ignore_onwer)
     throw Exception(Exception::getErrorMessage(ERR_ASG_INEXIST_OWNER_COL_SEQ)
                   .arg(QString::fromUtf8(sequence->getName(true))),
@@ -4693,7 +4682,6 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
                                    .arg(XMLParser::getCurrentElement()->line);
   if(sequence) delete(sequence);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -4721,25 +4709,21 @@ View *DatabaseModel::createView(void)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
 
      if(elem==ParsersAttributes::REFERENCE)
      {
-      //Obtém os atributos da referência
       XMLParser::getElementAttributes(attribs);
 
-      /* Caso o nome da tabela referenciada esteja preenchido,
-         tentar criar uma referência específica a uma tabela/coluna */
+      //If the table name is specified tries to create a reference to a table/column
       if(!attribs[ParsersAttributes::TABLE].isEmpty())
       {
        column=NULL;
        table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
 
-       //Dispara uma exceção caso a tabela referenciada não exista
+       //Raises an error if the table doesn't exists
        if(!table)
        {
         str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
@@ -4748,22 +4732,17 @@ View *DatabaseModel::createView(void)
                         .arg(QString::fromUtf8(attribs[ParsersAttributes::TABLE]))
                         .arg(BaseObject::getTypeName(OBJ_TABLE));
 
-        //Dispara a exceção
         throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
 
        if(!attribs[ParsersAttributes::COLUMN].isEmpty())
        {
-        //Tenta obter a colna referenciada da tabela
         column=table->getColumn(attribs[ParsersAttributes::COLUMN]);
 
-        //Caso a coluna não exista tenta obtê-la referenciando o nome antigo da mesma
         if(!column)
          column=table->getColumn(attribs[ParsersAttributes::COLUMN], true);
 
-        /* Caso o atributo coluna da referencia esteja preenchido mas um objeto coluna
-           não foi encontrado na tabela, uma exceção será disparada pois a visão está
-           referenciando uma coluna inexistente na tabela */
+         //Raises an error if the view references an inexistant column
          if(!column)
          {
           str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
@@ -4773,24 +4752,20 @@ View *DatabaseModel::createView(void)
                                QString::fromUtf8(attribs[ParsersAttributes::COLUMN]))
                          .arg(BaseObject::getTypeName(OBJ_COLUMN));
 
-          //Dispara a exceção
           throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
          }
         }
 
-       //Adiciona a referência configurad  lista temporária de referências
+       //Adds the configured reference to a temporarily list
        refs.push_back(Reference(table, column,
                                      attribs[ParsersAttributes::ALIAS],
                                      attribs[ParsersAttributes::COLUMN_ALIAS]));
       }
-      //Extraindo uma referênci  uma expressão
       else
       {
        XMLParser::savePosition();
-       //Armazena o alias da expressão
        str_aux=attribs[ParsersAttributes::ALIAS];
 
-       //Acessa e obtém o conteúdo da expressão
        XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
        XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
        refs.push_back(Reference(XMLParser::getElementContent(),str_aux));
@@ -4798,15 +4773,11 @@ View *DatabaseModel::createView(void)
        XMLParser::restorePosition();
       }
      }
-     /* Extraindo as expressões as quais formam as partes da declaração da visão,
-        ou seja, expressões e referências as quais estão entre SELECT-FROM,
-        FROM-WHERE */
      else if(elem==ParsersAttributes::EXPRESSION)
      {
       XMLParser::savePosition();
       XMLParser::getElementAttributes(attribs);
 
-      //Armazena o alias da expressão
       if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::SELECT_EXP)
        type=Reference::SQL_REFER_SELECT;
       else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FROM_EXP)
@@ -4814,15 +4785,12 @@ View *DatabaseModel::createView(void)
       else
        type=Reference::SQL_REFER_WHERE;
 
-      //Acessa e obtém o conteúdo da expressão
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
       list_aux=XMLParser::getElementContent().split(',');
       count=list_aux.size();
 
-      //Construindo cada expressão na visão
       for(i=0; i < count; i++)
       {
-       //Obtém o índice da referência e a adiioa   visão
        ref_idx=list_aux[i].toInt();
        view->addReference(refs[ref_idx],type);
       }
@@ -4841,7 +4809,6 @@ View *DatabaseModel::createView(void)
                                    .arg(XMLParser::getCurrentElement()->line);
   if(view) delete(view);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -4880,7 +4847,6 @@ Textbox *DatabaseModel::createTextbox(void)
 
   if(txtbox) delete(txtbox);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
  }
 
@@ -4904,7 +4870,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
  try
  {
-  //Obtém os atributos do elemento
   XMLParser::getElementAttributes(attribs);
   protect=(attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_);
 
@@ -4922,14 +4887,12 @@ BaseRelationship *DatabaseModel::createRelationship(void)
    obj_rel_type=BASE_RELATIONSHIP;
   }
 
-  /* Esta iteração obtém as tabelas participantes do relacionamento a
-     partir do modelo com base nos nomes das tabelas vindos do XML */
+  //Gets the participant tables
   for(i=0; i < 2; i++)
   {
-   //Localiza a tabela
    tables[i]=dynamic_cast<BaseTable *>(getObject(attribs[tab_attribs[i]], table_types[i]));
 
-   //Dispara uma exceção caso a tabela referenciada não exista
+   //Raises an error if some table doesn't exists
    if(!tables[i])
    {
     str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
@@ -4938,17 +4901,14 @@ BaseRelationship *DatabaseModel::createRelationship(void)
                     .arg(QString::fromUtf8(attribs[tab_attribs[i]]))
                     .arg(BaseObject::getTypeName(table_types[i]));
 
-    //Dispara a exceção
     throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
   }
 
   if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATION_TAB_VIEW)
   {
-   //Caso o relacionamento entre tabela e visão exista
    base_rel=getRelationship(tables[0], tables[1]);
 
-   //Caso o relacionamento tabela-visão nao seja encontrado o erro será disparado
    if(!base_rel)
     throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                              .arg(QString::fromUtf8(this->getName()))
@@ -4957,7 +4917,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
                              .arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
                   ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-   //Desconecta o relacionamento para configurá-lo
    base_rel->disconnectRelationship();
    base_rel->setName(attribs[ParsersAttributes::NAME]);
   }
@@ -4967,11 +4926,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
                                      tables[0], tables[1], false, false);
    base_rel->setName(attribs[ParsersAttributes::NAME]);
   }
-  /* Caso o tipo de relacionamento não seja tabela-visão, isso indica que
-     um relacionamento tabela-tabela deverá ser criado */
   else
   {
-   //Obtém os atributos do relacionamento a partir do XML
    src_mand=attribs[ParsersAttributes::SRC_REQUIRED]==ParsersAttributes::_TRUE_;
    dst_mand=attribs[ParsersAttributes::DST_REQUIRED]==ParsersAttributes::_TRUE_;
    identifier=attribs[ParsersAttributes::IDENTIFIER]==ParsersAttributes::_TRUE_;
@@ -4980,7 +4936,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
                 attribs[ParsersAttributes::AUTO_SUFFIX]==ParsersAttributes::_TRUE_);
    defer_type=DeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
 
-   //Configura o tipo do novo relacionamento
    if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_11)
     rel_type=BaseRelationship::RELATIONSHIP_11;
    else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_1N)
@@ -4992,7 +4947,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
    else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::RELATIONSHIP_DEP)
     rel_type=BaseRelationship::RELATIONSHIP_DEP;
 
-   //Cria o novo relacionamento
    rel=new Relationship(rel_type,
                               dynamic_cast<Table *>(tables[0]),
                               dynamic_cast<Table *>(tables[1]),
@@ -5001,12 +4955,9 @@ BaseRelationship *DatabaseModel::createRelationship(void)
                               attribs[ParsersAttributes::DST_SUFFIX],
                               identifier, deferrable, defer_type);
 
-    if(!attribs[ParsersAttributes::TABLE_NAME].isEmpty())
+   if(!attribs[ParsersAttributes::TABLE_NAME].isEmpty())
     rel->setTableNameRelNN(attribs[ParsersAttributes::TABLE_NAME]);
 
-   /* Faz com que o ponteiro relacao_base aponte para o novo relacionamento
-      para executar as configurações geréricas as quais se aplicam tanto
-      para relacionametno tabela-visao quanto para rel. tabela-tabela */
    base_rel=rel;
   }
 
@@ -5014,8 +4965,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
@@ -5032,7 +4981,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
       rel->addObject(createConstraint(rel));
       XMLParser::restorePosition();
      }
-     //Configurando a linha do relacionamento
      else if(elem==ParsersAttributes::LINE)
      {
       vector<QPointF> points;
@@ -5041,7 +4989,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
       do
       {
-       //Lê o ponto do XML
        XMLParser::getElementAttributes(attribs);
        points.push_back(QPointF(attribs[ParsersAttributes::X_POS].toFloat(),
                                 attribs[ParsersAttributes::Y_POS].toFloat()));
@@ -5051,14 +4998,11 @@ BaseRelationship *DatabaseModel::createRelationship(void)
       base_rel->setPoints(points);
       XMLParser::restorePosition();
      }
-     //Configurando a posição dos rótulos
      else if(elem==ParsersAttributes::LABEL)
      {
       XMLParser::getElementAttributes(attribs);
-      //Obtém o tipo de rótulo a ser configurado
       str_aux=attribs[ParsersAttributes::REF_TYPE];
 
-      //Acessa o elemento filho da tag <label> o qual armazena a posição do rótulo
       XMLParser::savePosition();
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
       XMLParser::getElementAttributes(attribs);
@@ -5068,7 +5012,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
      {
       QList<QString> col_list;
 
-      //Obtém os atributos da tag <special-pk-cols>
       XMLParser::getElementAttributes(attribs);
       col_list=attribs[ParsersAttributes::INDEXES].split(',');
 
@@ -5078,7 +5021,6 @@ BaseRelationship *DatabaseModel::createRelationship(void)
        col_list.pop_front();
       }
 
-      //Define as colunas que fazem parte da chave primária especila
       rel->setSpecialPrimaryKeyCols(cols_special_pk);
      }
     }
@@ -5095,11 +5037,9 @@ BaseRelationship *DatabaseModel::createRelationship(void)
   if(base_rel && base_rel->getObjectType()==OBJ_RELATIONSHIP)
    delete(base_rel);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
- //Caso o relacionamento tabela-tabela foi criado o mesmo será adicionado no modelo
  if(rel)
  {
   storeSpecialObjectsXML();
@@ -5108,10 +5048,8 @@ BaseRelationship *DatabaseModel::createRelationship(void)
  else if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
   addRelationship(base_rel);
 
- //Define a proteção do relacionamento
  base_rel->setProtected(protect);
 
- //Reconecta o relacionamento caso o mesmo seja um rel. tabela-visao
  if(base_rel && base_rel->getObjectType()==BASE_RELATIONSHIP)
   base_rel->connectRelationship();
 
@@ -5134,28 +5072,21 @@ Permission *DatabaseModel::createPermission(void)
 
  try
  {
-  //Obtém os privilégios configurados para a permissão
   XMLParser::getElementAttributes(priv_attribs);
 
-  /* Acessa o elemento filho <object> o qual armazena o objeto
-     do modelo relacionado   permissão */
   XMLParser::savePosition();
   XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
   XMLParser::getElementAttributes(attribs);
 
-  //Obtém os atributos do objeto que é referenciado pela  permissão
   obj_type=getObjectType(attribs[ParsersAttributes::TYPE]);
   obj_name=attribs[ParsersAttributes::NAME];
   parent_name=attribs[ParsersAttributes::PARENT];
 
-  //Caso o objeto seja uma coluna a mesma será obtida da tabela pai
+  //If the object is a column its needed to get the parent table
   if(obj_type==OBJ_COLUMN)
   {
-   //Primeiramente a tabela pai é obtida do modelo
    parent_table=dynamic_cast<Table *>(getObject(parent_name, OBJ_TABLE));
 
-   /* Caso a tabela pai existe obtém o objeto filho da mesma
-      o qual é referenciado pela permissão */
    if(parent_table)
     object=parent_table->getColumn(obj_name);
   }
@@ -5164,48 +5095,31 @@ Permission *DatabaseModel::createPermission(void)
    object=this;
   }
   else
-   /* Para os demais tipos de objetos, aceitos como referenciados
-      por permissões, serão obtidos do modelo em si */
    object=getObject(obj_name, obj_type);
 
-  /* Caso o objeto não exista será disparada uma exceção pois uma permissão
-     não pode existir sem que referencie um objeto */
+  //Raises an error if the permission references an object that does not exists
   if(!object)
    throw Exception(Exception::getErrorMessage(ERR_PERM_REF_INEXIST_OBJECT)
                           .arg(QString::fromUtf8(obj_name))
                           .arg(BaseObject::getTypeName(obj_type)),
                       ERR_PERM_REF_INEXIST_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  //Aloca a permissão relacionando-a com o objeto localizado
   perm=new Permission(object);
 
-  /* Acessa o elemento que armazena os privilégios dos papéis os quais
-     compartilham da mesma permissão sobre o objeto. Informar estes
-     papéis não é obrigatório de acordo com a DTD e com a especificação
-     SQL para permissões */
   do
   {
    if(XMLParser::getElementName()==ParsersAttributes::ROLES)
    {
-    //Obtém os atributos do elemento <roles>, neste caso são names e reftype
     XMLParser::getElementAttributes(attribs);
 
-    /* O atributo names armazena uma lista de nomes de papéis as quais a permissão
-       referenciará. A lista tem os elementos separados por vírgula, sendo assim a
-       string será quebrada usando o delimitador ',') */
     list=attribs[ParsersAttributes::NAMES].split(',');
-
-    //Obtém a quantidade de nomes de papéis na lista
     len=list.size();
 
-    //Varre a lista de nomes de papéis
     for(i=0; i < len; i++)
     {
-     //Tenta obter um papel do modelo cujo nome é o elemento atual da lista de nomes (lista[i])
      role=dynamic_cast<Role *>(getObject(list[i].trimmed(),OBJ_ROLE));
 
-     /* Caso esse papel não exista um erro será disparado pois um novo papel
-        não pode referenciar um outro papel que ainda nem foi criado */
+     //Raises an error if the referenced role doesn't exists
      if(!role)
      {
       //Dispara a exceção
@@ -5217,30 +5131,24 @@ Permission *DatabaseModel::createPermission(void)
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
      }
-     //Adiciona o papel   permissão
+
      perm->addRole(role);
     }
    }
    else if(XMLParser::getElementName()==ParsersAttributes::PRIVILEGES)
    {
-    //Obtém os atributos do elemento <privileges>
     XMLParser::getElementAttributes(priv_attribs);
 
-    //Atribui os privilégio  permissão recém criada
     itr=priv_attribs.begin();
     itr_end=priv_attribs.end();
 
-    /* Varre o mapa de privilégios configurando-os na permissão caso
-       estes estejam definidos no XML */
     while(itr!=itr_end)
     {
      if(itr->first!=ParsersAttributes::GRANT_OP)
      {
-      //Obtém o valor do privilégio (true/false)
       priv_value=(itr->second==ParsersAttributes::_TRUE_);
       grant_op=(itr->second==ParsersAttributes::GRANT_OP);
 
-      //Identifica o tipo de privilégio atual
       if(itr->first==ParsersAttributes::CONNECT_PRIV)
        priv_type=Permission::PRIV_CONNECT;
       else if(itr->first==ParsersAttributes::CREATE_PRIV)
@@ -5266,7 +5174,6 @@ Permission *DatabaseModel::createPermission(void)
       else if(itr->first==ParsersAttributes::USAGE_PRIV)
        priv_type=Permission::PRIV_USAGE;
 
-      //Configura o privilégio na permissão
       perm->setPrivilege(priv_type, (priv_value || grant_op), grant_op);
      }
      itr++;
@@ -5284,7 +5191,6 @@ Permission *DatabaseModel::createPermission(void)
                                    .arg(XMLParser::getCurrentElement()->line);
   if(perm) delete(perm);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -5298,9 +5204,8 @@ void DatabaseModel::validateColumnRemoval(Column *column)
   vector<BaseObject *> refs;
   getObjectReferences(column, refs);
 
-  //Caso um objeto seja encontrado o qual referencia a coluna
+  //Raises an error if there are objects referencing the column
   if(!refs.empty())
-   //Dispara um erro informando que a coluna não pde ser remove e qual objeto a referencia
    throw Exception(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE)
                  .arg(QString::fromUtf8(column->getParentTable()->getName(true)) + "." + QString::fromUtf8(column->getName(true)))
                  .arg(column->getTypeName())
@@ -5323,17 +5228,16 @@ void DatabaseModel::validateRelationships(TableObject *object, Table *parent_tab
   {
    obj_type=object->getObjectType();
 
-   /* Condição de revalidação de relacionamentos:
-      > Caso seja uma coluna e a mesma é referenciada pela chave primária da tabela pai
-      > Caso seja uma restrição e a mesma seja uma chave primária da tabela */
-    revalidate_rels=((obj_type==OBJ_COLUMN &&
+   /* Relationship validation condition:
+      > Case the object is a column and its reference by the parent table primary key
+      > Case the object is a constraint and its a table primary key */
+   revalidate_rels=((obj_type==OBJ_COLUMN &&
                      parent_tab->isConstraintRefColumn(dynamic_cast<Column *>(object), ConstraintType::primary_key)) ||
                     (obj_type==OBJ_CONSTRAINT &&
                      dynamic_cast<Constraint *>(object)->getConstraintType()==ConstraintType::primary_key));
 
-   /* Caso seja uma coluna, verfica se a tabela pai participa de um relacionamento
-     de generalização como tabela de destino (aquela que tem suas colunas copiadas
-     para a tabela qua a herda) */
+   /* Additional validation for columns: checks if the parent table participates on a
+      generalization/copy as destination table */
    if(obj_type==OBJ_COLUMN)
    {
     itr=relationships.begin();
@@ -5348,10 +5252,8 @@ void DatabaseModel::validateRelationships(TableObject *object, Table *parent_tab
     }
    }
 
-   //Caso as duas condições acima sejam atendidas
    if(revalidate_rels || ref_tab_inheritance)
    {
-    //(Re)valida os relacionamento e os reconecta
     disconnectRelationships();
     validateRelationships();
    }
