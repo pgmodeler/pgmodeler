@@ -5329,38 +5329,35 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
   general_obj_cnt=this->getObjectCount();
   gen_defs_count=0;
 
-  /* Tratandos os objetos os quais tem ids fixos são eles: Papel, Espaço de Tabela,
-     e Esquema. Estes precisam ser tratados separadamente no laço abaixo pois não
-     entram na ordenação de ids executada para os demais tipos de objetos. */
+  /* Treating the objects which have fixed ids, they are: Paper, table space,
+     and Schema. They need to be treated separately in the loop down because they do not
+     enter in the id sorting performed for other types of objects. */
   for(i=0; i < 3; i++)
   {
-   //Obtém a lista de objetos do tipo
    obj_list=getObjectList(aux_obj_types[i]);
 
-   /* Caso o tipo de definição seja SQL obtem o nome do atributo
-      do tipo do objeto nos esquema SQL */
    if(def_type==SchemaParser::SQL_DEFINITION)
    {
     attrib=BaseObject::objs_schemas[aux_obj_types[i]];
     attribs_aux[attrib]="";
    }
 
-   //Obtém o início e o fim da lista para uma varredura
    itr=obj_list->begin();
    itr_end=obj_list->end();
 
    while(itr!=itr_end)
    {
-    //Obtém o objeto atual
     object=(*itr);
 
+    //The "public" schema does not have the SQL code definition generated
     if(object->getObjectType()!=OBJ_SCHEMA ||
        (object->getObjectType()==OBJ_SCHEMA &&
         object->getName()!="public"))
     {
-     //Gera o codigo e o concatena com os demais já gerados
+     //Generates the code definition and concatenates to the others
      attribs_aux[attrib]+=validateObjectDefinition(object, def_type);
-     //Dispara um sinal para sinalizar o progresso da geração do códgio
+
+     //Increments the generated definition count and emits the signal
      gen_defs_count++;
      if(!signalsBlocked())
      {
@@ -5375,19 +5372,11 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
    }
   }
 
-  /* Armazena os próprio objeto de modelo de objetos pois o mesmo também precisa estar na
-     ordenação de objetos para ser criado na ordem correta quando o parser xml ler
-     a definição */
+  //Includes the database model on the objects map permitting to create the code in a correct order
   objects_map[this->getObjectId()]=this;
   ids_objs.push_back(this->getObjectId());
 
-
-  /* Armazenando os demais tipos de objetos no mapa de objetos para
-     serem ordenados pelos ids. */
-  /* Para definição XML todos os 16 tipos da lista 'tipos_objs' são tratados.
-     Para definição SQL são tratados apenas os 12 primeiros (tabelas, relacionamentos, visões e sequências)
-     são tratadas separadamente pois existe uma ordem específica em que elas precisam ser criadas e essa
-     ordem é definida na interação após a ordenação dos objetos */
+  //Generating the definition for the other objects type
   if(def_type==SchemaParser::XML_DEFINITION)
    count=16;
   else
@@ -5395,44 +5384,33 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
   for(i=0; i < count; i++)
   {
-   /* Seleciona a lista de objetos para obter os identificadores e armazenar seus
-      elementos no mapa de objetos. No caso de definição SQL apenas os  objetos
-      caixa de texto e relacionamento tabela-visão não são obtidos pois os mesmos
-      não possuem código SQL */
+   //For SQL definition, only the textbox and base relationship does not has the code generated
    if(def_type==SchemaParser::SQL_DEFINITION &&
       (obj_types[i]==OBJ_TEXTBOX || obj_types[i]==BASE_RELATIONSHIP))
     obj_list=NULL;
    else
-    //Obtém a lista de objeto de acorodo com o tipo
     obj_list=getObjectList(obj_types[i]);
 
    if(obj_list)
    {
-    //Obtém o início e o fim da lista para uma varredura
     itr=obj_list->begin();
     itr_end=obj_list->end();
 
     while(itr!=itr_end)
     {
-     //Obtém o objeto atual
      object=(*itr);
-     //Armazena o objeto em si no mapa de objetos
      objects_map[object->getObjectId()]=object;
-     //Armazena o id do objeto na lista de ids usada para referenciar os objetos no mapa
      ids_objs.push_back(object->getObjectId());
      itr++;
     }
    }
   }
 
-  /* ** Trecho especial **:
-     Obtenção e armazenamento dos objetos especiais (os quais
-     referenciam colunas de tabelas adicionadas por relacionamentos)
-     no mapa de objetos e seus ids em um vetor auxiliar de ids 'vet_id_objs_tab'.
-     Para isso a lista de tabelas é varrida novamente e suas restrições e índices
-     são validados como especiais ou não. O vetor de ids é concatenado ao vetor de ids principal
-     antes de sua ordenação quando a definição é XML ou concatenado após a ordenação para def. SQL, desta
-     forma os objetos especiais são criados de forma correta em ambas as linguagens */
+   /* Getting and storing the special objects (which reference columns of tables added for relationships)
+      on the map of objects and their ids in an array of auxiliary ids 'ids_tab_objs'.
+      For this list of tables is scanned again and its constraints and indexes are validated as special or not.
+      The vector of ids is concatenated to the main vector of ids before his ordination when the definition is XML
+      or concatenated after ordination to SQL definition, so the special objects are created correctly in both languages */
    itr=tables.begin();
    itr_end=tables.end();
 
@@ -5441,16 +5419,14 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
     table=dynamic_cast<Table *>(*itr);
     itr++;
 
-    //Varre a lista de restrições da tabela
     count=table->getConstraintCount();
     for(i=0; i < count; i++)
     {
      constr=table->getConstraint(i);
 
-     /* Caso a restrição seja um objeto especial armazena o mesmo no mapa de objetos.
-        Idenpendente da configuração, chaves estrangeiras sempre serão descartadas nesta
-        iteração pois ao final do método as mesmas tem seu código SQL concatenado   definição
-        do modelo */
+     /* Case the constraint is a special object stores it on the objects map. Independently to the
+        configuration, foreign keys are discarded in this iteration because on the end of the method
+        they have the definition generated */
      if((def_type==SchemaParser::XML_DEFINITION ||
          (def_type==SchemaParser::SQL_DEFINITION &&
           constr->getConstraintType()!=ConstraintType::foreign_key)) &&
@@ -5459,63 +5435,50 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
           ((constr->getConstraintType()!=ConstraintType::primary_key && constr->isReferRelationshipAddedColumn()) ||
            (constr->getConstraintType()==ConstraintType::foreign_key))))
      {
-      //Armazena o objeto em si no mapa de objetos
       objects_map[constr->getObjectId()]=constr;
-      //Armazena o id do objeto na lista de ids usada para referenciar os objetos no mapa
       ids_tab_objs.push_back(constr->getObjectId());
      }
     }
 
-    //Varre a lista de gatilhos da tabela
     count=table->getTriggerCount();
     for(i=0; i < count; i++)
     {
      trigger=table->getTrigger(i);
 
-     //Caso o gatilho seja um objeto especial armazena-o no mapa de objetos
      if(trigger->isReferRelationshipAddedColumn())
      {
-      //Armazena o objeto em si no mapa de objetos
       objects_map[trigger->getObjectId()]=trigger;
-      //Armazena o id do objeto na lista de ids usada para referenciar os objetos no mapa
       ids_tab_objs.push_back(trigger->getObjectId());
      }
     }
 
-    //Varre a lista de índices da tabela
     count=table->getIndexCount();
     for(i=0; i < count; i++)
     {
      index=table->getIndex(i);
 
-     //Caso o índice seja um objeto especial armazena-o no mapa de objetos
      if(index->isReferRelationshipAddedColumn())
      {
-      //Armazena o objeto em si no mapa de objetos
       objects_map[index->getObjectId()]=index;
-      //Armazena o id do objeto na lista de ids usada para referenciar os objetos no mapa
       ids_tab_objs.push_back(index->getObjectId());
      }
     }
    }
 
-  /* Concatena o vetor de ids auxiliar (ids de objetos especiais) ao vetor de ids principal
-     antes da ordenação caso a definição seja XML */
   if(def_type==SchemaParser::XML_DEFINITION)
    ids_objs.insert(ids_objs.end(), ids_tab_objs.begin(), ids_tab_objs.end());
 
-  //Ordena o vetor de identificadores em ordem crescente
+  //Sort the objects id vector to created the definition in a correct way
   sort(ids_objs.begin(), ids_objs.end());
 
-  /* CASO ESPECIAL: Gerando a SQL de tabelas, visões, relacionamentos e sequencias de forma ordenada.
+  /* SPECIAL CASE: Generating the SQL for tables, views, relationships and sequences
 
-     Esta geração é feita da seguinte forma:
-     1) Com a lista de relacionamentos, gera o SQL de ambas as tabelas do relacionametno e logo em seguida a
-        SQL do relacionametno em si.
-     2) Para as demais tabelas que não participaram de relacionamentos, gerar o SQL de cada uma.
-     3) As sequencias devem ter seus SQL gerados após as tabelas restantes
-     4) Visões devem ser as últimas a terem o SQL gerado para não terem referências a colunas e tabelas quebradas
-  */
+     This generations is made in the following way:
+     1) Based on the relationship list, generates the SQL for the participant tables and after this the
+        SQL for the relationship itself.
+     2) Generates the SQL for the other tables (that does not participates in relationships)
+     3) The sequences must have its code generated after the tables
+     4) View are the last objects that has the code generated avoiding table/column reference breaking */
   if(def_type==SchemaParser::SQL_DEFINITION)
   {
    BaseObject *objs[3]={NULL, NULL, NULL};
@@ -5565,16 +5528,11 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
    }
   }
 
-  /* Concatena o vetor de ids auxiliar (ids de objetos especiais) ao vetor de ids principal
-     após a ordenação caso a definição seja SQL */
   if(def_type==SchemaParser::SQL_DEFINITION)
    ids_objs.insert(ids_objs.end(), ids_tab_objs.begin(), ids_tab_objs.end());
 
   attribs_aux[ParsersAttributes::SHELL_TYPES]="";
 
-  /* Caso a definição seja SQL e existam tipos definidos pelo usuário
-     faz a conversão dos parâmetros das funções usadas internamente
-     por estes */
   if(def_type==SchemaParser::SQL_DEFINITION)
   {
    itr=types.begin();
@@ -5590,29 +5548,21 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
    }
   }
 
-  //Varre a lista de ids de objetos para obtê-los do mapa de objetos
   itr1=ids_objs.begin();
   itr1_end=ids_objs.end();
 
   attrib=ParsersAttributes::OBJECTS;
   while(itr1!=itr1_end)
   {
-   /* Obtém o objeto do mapa a partir do seu identificador
-      armazenado no iterador atual */
    object=objects_map[(*itr1)];
-
-   //Obtém o tipo do objeto
    obj_type=object->getObjectType();
    itr1++;
 
-   /* Caso seja um objeto tipo e a definição seja SQL armazena a
-      definição shell dos tipos os quais são declarados antes da criação
-      dos tipos definidos pelo usuário */
    if(obj_type==OBJ_TYPE && def_type==SchemaParser::SQL_DEFINITION)
    {
     usr_type=dynamic_cast<Type *>(object);
 
-    //Obtendo a definição do tipo em forma de shell type
+    //Generating the shell type declaration (only for base types)
     if(usr_type->getConfiguration()==Type::BASE_TYPE)
      attribs_aux[ParsersAttributes::SHELL_TYPES]+=usr_type->getCodeDefinition(def_type, true);
     else
@@ -5631,10 +5581,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
    }
    else
    {
-    /* Desprezando as linguagens c e sql
-       pois as mesmas não precisam ser declaradas explicitamente poir serem built-in */
-    if(//tipo_def==ParserEsquema::DEFINICAO_SQL &&
-       (obj_type==OBJ_LANGUAGE &&
+    if((obj_type==OBJ_LANGUAGE &&
         (object->getName()==~LanguageType("c") ||
          object->getName()==~LanguageType("sql") ||
          object->getName()==~LanguageType("plpgsql"))))
@@ -5643,7 +5590,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
      attribs_aux[attrib]+=validateObjectDefinition(object, def_type);
    }
 
-   //Dispara um sinal para sinalizar o progresso da geração do códgio
    gen_defs_count++;
    if(!signalsBlocked())
    {
@@ -5665,7 +5611,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
    }
   }
 
-  //Gerando a definição sql/xml das permissões
+  //Gernerating the SQL/XML code for permissions
   itr=permissions.begin();
   itr_end=permissions.end();
   attribs_aux[ParsersAttributes::PERMISSION]="";
@@ -5674,7 +5620,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
   {
    attribs_aux[ParsersAttributes::PERMISSION]+=dynamic_cast<Permission *>(*itr)->getCodeDefinition(def_type);
 
-   //Dispara um sinal para sinalizar o progresso final da geração de código
    gen_defs_count++;
    if(!signalsBlocked())
    {
@@ -5688,7 +5633,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
    itr++;
   }
 
-  //Configura os atributos específicos do modelo de banco
   attribs_aux[ParsersAttributes::MODEL_AUTHOR]=author;
 
   if(def_type==SchemaParser::XML_DEFINITION)
@@ -5697,8 +5641,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
   }
   else
   {
-   /* Ao final da obtenção da definição SQL do modelo, faz a conversão inversa
-      dos parâmetros das funções usadas pelos tipos base */
    count1=types.size();
    for(i=0; i < count1; i++)
    {
@@ -5715,8 +5657,6 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
  {
   if(def_type==SchemaParser::SQL_DEFINITION)
   {
-   /* Em caso de erro na geração da definição SQL do modelo, faz a conversão inversa
-     dos parâmetros das funções usadas pelos tipos base */
    count1=types.size();
    for(i=0; i < count1; i++)
    {
@@ -5728,10 +5668,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
   throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 
- //Armazena o atributo que indica se a exportação é para arquivo ou não
  attribs_aux[ParsersAttributes::EXPORT_TO_FILE]=(export_file ? "1" : "");
 
- //Retorna a definição do modelo completa
  return(SchemaParser::getCodeDefinition(ParsersAttributes::DB_MODEL, attribs_aux, def_type));
 }
 
@@ -5742,7 +5680,6 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 
  output.open(QFile::WriteOnly);
 
- //Caso não consiga abrir o arquivo para gravação
  if(!output.isOpen())
  {
   str_aux=QString(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(filename));
@@ -5765,10 +5702,9 @@ void DatabaseModel::saveModel(const QString &filename, unsigned def_type)
 
 void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *> &deps, bool inc_indirect_deps)
 {
- //Caso o objeto esteja alocado e o mesmo ainda não exista na lista de dependências
+ //Case the object is allocated and is not included in the dependecies list
  if(object && std::find(deps.begin(), deps.end(), object)==deps.end())
  {
-  //Adiciona o objeto na lista de dependências
   deps.push_back(object);
 
 
@@ -5776,9 +5712,8 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
  {
   ObjectType obj_type=object->getObjectType();
 
-  /* Caso o objeto possua esquema, espaço de tabela e dono,
-     busca e inclui se necessário as dependências desses
-     objetos na lista */
+  /* if the object has a schema, tablespace and owner applies the
+     dependecy search in these objects */
   if(object->getSchema() && inc_indirect_deps)
    getObjectDependecies(object->getSchema(), deps, inc_indirect_deps);
 
@@ -5788,135 +5723,108 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
   if(object->getOwner()  && inc_indirect_deps)
    getObjectDependecies(object->getOwner(), deps, inc_indirect_deps);
 
-  //** Obtendo as dependências de Classe de Operadores **
+  //** Getting the dependecies for operator class **
   if(obj_type==OBJ_OPCLASS)
   {
    OperatorClass *op_class=dynamic_cast<OperatorClass *>(object);
-
-   /* Obtém a referência para o tipo de dado da classe, caso um ponteiro válido seja retornado
-      indica que o tipo de dado é um definido pelo usuário (classe Tipo) e que este precisa
-      também ter as dependências obtidas */
-  BaseObject *usr_type=getObjectPgSQLType(op_class->getDataType());
-  //obterObjeto(*classe_op->obterTipoDado(), OBJETO_TIPO);
+   BaseObject *usr_type=getObjectPgSQLType(op_class->getDataType());
 
    if(usr_type)
     getObjectDependecies(usr_type, deps, inc_indirect_deps);
 
-   //Caso haja uma família de operadores obtém as dependências dela também
    if(op_class->getFamily())
     getObjectDependecies(op_class->getFamily(), deps, inc_indirect_deps);
   }
-  //** Obtendo as dependências de Domínios **
+  //** Getting the dependecies for domain **
   else if(obj_type==OBJ_DOMAIN)
   {
-   /* Obtém a referência para o tipo de dado do domínio, caso um ponteiro válido seja retornado
-      indica que o tipo de dado é um definido pelo usuário (classe Tipo) e que este precisa
-      também ter as dependências obtidas */
    BaseObject *usr_type=getObjectPgSQLType(dynamic_cast<Domain *>(object)->getType());
-   //obterObjeto(*dynamic_cast<Dominio *>(objeto)->obterTipo(), OBJETO_TIPO);
 
    if(usr_type)
     getObjectDependecies(usr_type, deps, inc_indirect_deps);
   }
-  //** Obtendo as dependências de Conversões de Codificação **
+  //** Getting the dependecies for conversion **
   else if(obj_type==OBJ_CONVERSION)
   {
-   //Obtém as dependências da função de conversão que define a conversão de codificação
    Function *func=dynamic_cast<Conversion *>(object)->getConversionFunction();
    getObjectDependecies(func, deps, inc_indirect_deps);
   }
-  //** Obtendo as dependências de Conversões de Tipo **
+   //** Getting the dependecies for cast **
   else if(obj_type==OBJ_CAST)
   {
    Cast *cast=dynamic_cast<Cast *>(object);
    BaseObject *usr_type=NULL;
 
-   //Obtém as dependências dos tipos usados na conversão de tipo
    for(unsigned i=Cast::SRC_TYPE; i <= Cast::DST_TYPE; i++)
    {
     usr_type=getObjectPgSQLType(cast->getDataType(i));
-      //obterObjeto(*conv->obterTipoDado(i), OBJETO_TIPO);
 
     if(usr_type)
      getObjectDependecies(usr_type, deps, inc_indirect_deps);
    }
 
-   //Obtém as dependências da função de conversão que define a conversão de tipo
    getObjectDependecies(cast->getCastFunction(), deps, inc_indirect_deps);
   }
-  //** Obtendo as dependências de Funções **
+   //** Getting the dependecies for function **
   else if(obj_type==OBJ_FUNCTION)
   {
    Function *func=dynamic_cast<Function *>(object);
    BaseObject *usr_type=getObjectPgSQLType(func->getReturnType());
-     //obterObjeto(*func->obterTipoRetorno(), OBJETO_TIPO);
    unsigned count, i;
 
-   //Caso a linguagem da função não seja C ou SQL obtém as dependências da mesma
    if(func->getLanguage()->getName()!=~LanguageType("c") &&
       func->getLanguage()->getName()!=~LanguageType("sql"))
     getObjectDependecies(func->getLanguage(), deps, inc_indirect_deps);
 
-   //Obtém as dependências do tipo de retorno caso o mesmo seja um tipo definido pelo usuário
    if(usr_type)
     getObjectDependecies(usr_type, deps, inc_indirect_deps);
 
-   //Obtém as dependências dos tipos dos parâmetros
    count=func->getParameterCount();
    for(i=0; i < count; i++)
    {
     usr_type=getObjectPgSQLType(func->getParameter(i).getType());
-    //obterObjeto(*func->obterParametro(i).obterTipo(), OBJETO_TIPO);
 
     if(usr_type)
      getObjectDependecies(usr_type, deps, inc_indirect_deps);
    }
 
-   //Obtém as dependências dos elementos da tabela de retorno
    count=func->getReturnedTableColumnCount();
    for(i=0; i < count; i++)
    {
     usr_type=getObjectPgSQLType(func->getReturnedTableColumn(i).getType());
-    //obterObjeto(*func->obterTipoRetTabela(i).obterTipo(), OBJETO_TIPO);
 
     if(usr_type)
      getObjectDependecies(usr_type, deps, inc_indirect_deps);
    }
   }
-  //** Obtendo as dependências de Funções de Agregação **
+   //** Getting the dependecies for aggregate **
   else if(obj_type==OBJ_AGGREGATE)
   {
    Aggregate *aggreg=dynamic_cast<Aggregate *>(object);
    BaseObject *usr_type=NULL;
    unsigned count, i;
 
-   //Obtém as dependências das funções que definem a função de agregação
    for(i=Aggregate::FINAL_FUNC; i <= Aggregate::TRANSITION_FUNC; i++)
     getObjectDependecies(aggreg->getFunction(i), deps, inc_indirect_deps);
 
-   //Obtém a dependência do tipo de estado da função de agregação
    usr_type=getObjectPgSQLType(aggreg->getStateType());
-     //obterObjeto(*func->obterTipoEstado(), OBJETO_TIPO);
 
    if(usr_type)
     getObjectDependecies(usr_type, deps, inc_indirect_deps);
 
-   //Obtém as dependências do operador de ordenação caso este esteja alocado
    if(aggreg->getSortOperator())
     getObjectDependecies(aggreg->getSortOperator(), deps, inc_indirect_deps);
 
-   //Obtém as dependências dos tipos de dados usados na função de agregação
    count=aggreg->getDataTypeCount();
    for(i=0; i < count; i++)
    {
     usr_type=getObjectPgSQLType(aggreg->getDataType(i));
-      //obterObjeto(*func->obterTipoDado(i), OBJETO_TIPO);
 
     if(usr_type)
      getObjectDependecies(usr_type, deps, inc_indirect_deps);
    }
   }
-  //** Obtendo as dependências de Linguagens **
+   //** Getting the dependecies for language **
   else if(obj_type==OBJ_LANGUAGE)
   {
    Language *lang=dynamic_cast<Language *>(object);
@@ -5927,45 +5835,40 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
      getObjectDependecies(lang->getFunction(i), deps, inc_indirect_deps);
    }
   }
-  //** Obtendo as dependências de Operadores **
+   //** Getting the dependecies for operator **
   else if(obj_type==OBJ_OPERATOR)
   {
    Operator *oper=dynamic_cast<Operator *>(object);
    BaseObject *usr_type=NULL;
    unsigned i;
 
-   //Obtém as dependências das funções usadas pelo operador
    for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
    {
     if(oper->getFunction(i))
      getObjectDependecies(oper->getFunction(i), deps, inc_indirect_deps);
    }
 
-   //Obtém as dependências dos tipos dos argumentos do operador
    for(i=Operator::LEFT_ARG; i <= Operator::RIGHT_ARG; i++)
    {
     usr_type=getObjectPgSQLType(oper->getArgumentType(i));
-      //obterObjeto(*oper->obterTipoDadoArgumento(i), OBJETO_TIPO);
 
     if(usr_type)
      getObjectDependecies(usr_type, deps, inc_indirect_deps);
    }
 
-   //Obtém as dependências dos operadores auxiliares
    for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
    {
     if(oper->getOperator(i))
      getObjectDependecies(oper->getOperator(i), deps, inc_indirect_deps);
    }
   }
-  //** Obtendo as dependências de Papéis **
+   //** Getting the dependecies for role **
   else if(obj_type==OBJ_ROLE)
   {
    Role *role=dynamic_cast<Role *>(object);
    unsigned i, i1, count,
             role_types[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
 
-   //Obtém as dependências dos papéis membros, papéis admins e papéis referenciados
    for(i=0; i < 3; i++)
    {
     count=role->getRoleCount(role_types[i]);
@@ -5973,7 +5876,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
      getObjectDependecies(role->getRole(role_types[i], i1), deps, inc_indirect_deps);
    }
   }
-  //** Obtendo as dependências de Relacionamentos **
+   //** Getting the dependecies for relationships **
   else if(obj_type==OBJ_RELATIONSHIP)
   {
    Relationship *rel=dynamic_cast<Relationship *>(object);
@@ -5981,41 +5884,35 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
    Constraint *constr=NULL;
    unsigned i, count;
 
-   //Obtém as dependências das tabelas referenciadas pelo relacionamento
    getObjectDependecies(rel->getTable(Relationship::SRC_TABLE), deps, inc_indirect_deps);
    getObjectDependecies(rel->getTable(Relationship::DST_TABLE), deps, inc_indirect_deps);
 
-   //Obtém as dependências dos tipos usados pelos atributos do relacionamento
    count=rel->getAttributeCount();
    for(i=0; i < count; i++)
    {
     usr_type=getObjectPgSQLType(rel->getAttribute(i)->getType());
-      //obterObjeto(*rel->obterAtributo(i)->obterTipo(), OBJETO_TIPO);
 
     if(usr_type)
      getObjectDependecies(usr_type, deps, inc_indirect_deps);
    }
 
-   //Obtém as dependências das restrições (somente chave estrangeira) do relacionamento
    count=rel->getConstraintCount();
    for(i=0; i < count; i++)
    {
     constr=dynamic_cast<Constraint *>(rel->getConstraint(i));
-    if(constr->getConstraintType()==ConstraintType::foreign_key)
-     getObjectDependecies(constr->getReferencedTable(), deps, inc_indirect_deps);
 
     if(constr->getTablespace())
      getObjectDependecies(constr->getTablespace(), deps, inc_indirect_deps);
    }
   }
-  //** Obtendo as dependências de Sequências **
+   //** Getting the dependecies for sequence **
   else if(obj_type==OBJ_SEQUENCE)
   {
    Sequence *seq=dynamic_cast<Sequence *>(object);
    if(seq->getOwnerColumn())
     getObjectDependecies(seq->getOwnerColumn()->getParentTable(), deps, inc_indirect_deps);
   }
-  //** Obtendo as dependências de Tabelas **
+   //** Getting the dependecies for table **
   else if(obj_type==OBJ_TABLE)
   {
    Table *tab=dynamic_cast<Table *>(object);
@@ -6026,19 +5923,16 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
    Column *col=NULL;
    unsigned count, count1, i, i1;
 
-   //Obtém as dependências dos tipos das colunas não incluídas por relacionamento
    count=tab->getColumnCount();
    for(i=0; i < count; i++)
    {
     col=tab->getColumn(i);
     usr_type=getObjectPgSQLType(col->getType());
-      //obterObjeto(*col->obterTipo(), OBJETO_TIPO);
 
     if(!col->isAddedByLinking() && usr_type)
      getObjectDependecies(usr_type, deps, inc_indirect_deps);
    }
 
-   //Obtém as dependências das restrições não incluídas por relacionamento
    count=tab->getConstraintCount();
    for(i=0; i < count; i++)
    {
@@ -6052,7 +5946,6 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
      getObjectDependecies(constr->getTablespace(), deps, inc_indirect_deps);
    }
 
-   //Obtém as dependências das tabelas referenciadas nos gatilhos e as funções
    count=tab->getTriggerCount();
    for(i=0; i < count; i++)
    {
@@ -6062,13 +5955,8 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 
     if(trig->getFunction())
      getObjectDependecies(trig->getFunction(), deps, inc_indirect_deps);
-
-    //qtd1=gat->obterNumColunas();
-    //for(i1=0; i1 < qtd1; i1++)
-    //obterDependenciasObjeto(gat->obterColuna(i1), vet_deps, inc_dep_indiretas);
    }
 
-   //Obtém as dependências das colunas ou classe de operadores usados nos elementos do índices
    count=tab->getIndexCount();
    for(i=0; i < count; i++)
    {
@@ -6082,7 +5970,6 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
      else if(index->getElement(i1).getColumn())
      {
       usr_type=getObjectPgSQLType(index->getElement(i1).getColumn()->getType());
-        //obterObjeto(*ind->obterElemento(i1).obterColuna()->obterTipo(), OBJETO_TIPO);
 
       if(usr_type)
        getObjectDependecies(usr_type, deps, inc_indirect_deps);
@@ -6090,49 +5977,41 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
     }
    }
   }
-  //** Obtendo as dependências de Tipos definidos pelo usuário **
+  //** Getting the dependecies for user defined type **
   else if(obj_type==OBJ_TYPE)
   {
    Type *usr_type=dynamic_cast<Type *>(object);
    BaseObject *aux_type=NULL;
    unsigned count, i;
 
-   //Caso o tipo de usuário seja tipo base
    if(usr_type->getConfiguration()==Type::BASE_TYPE)
    {
-    //Obtém as dependências do tipo de cópia
     aux_type=getObjectPgSQLType(usr_type->getLikeType());
-      //obterObjeto(*tipo_usr->obterTipoCopia(), OBJETO_TIPO);
 
     if(aux_type)
      getObjectDependecies(aux_type, deps, inc_indirect_deps);
 
-    //Obtém as dependências das funções usadas pelo tipo
     for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
      getObjectDependecies(usr_type->getFunction(i), deps, inc_indirect_deps);
    }
-   //Caso seja um tipo composto
    else if(usr_type->getConfiguration()==Type::COMPOSITE_TYPE)
    {
-    //Obtém as dependências dos tipos dos atributos
     count=usr_type->getAttributeCount();
     for(i=0; i < count; i++)
     {
      aux_type=getObjectPgSQLType(usr_type->getAttribute(i).getType());
-       //obterObjeto(*tipo_usr->obterAtributo(i).obterTipo(), OBJETO_TIPO);
 
      if(aux_type)
       getObjectDependecies(aux_type, deps, inc_indirect_deps);
     }
    }
   }
-  //** Obtendo as dependências de Visões **
+   //** Getting the dependecies for view **
   else if(obj_type==OBJ_VIEW)
   {
    View *view=dynamic_cast<View *>(object);
    unsigned i, count;
 
-   //Obtém as dependências das tabelas referenciadas pela visão
    count=view->getReferenceCount();
    for(i=0; i < count; i++)
    {
@@ -6164,9 +6043,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
    vector<BaseObject *>::iterator itr, itr_end;
    unsigned i, count;
 
-   /* Vericando se existe algum relacionamento (tabela-tabela)
-      o qual um dos objetos participantes é a tabela
-      do parâmetro */
    itr=relationships.begin();
    itr_end=relationships.end();
 
@@ -6182,8 +6058,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     itr++;
    }
 
-   /* Vericando se existe alguma sequência a qual referencia
-      a tabela do parâmetro */
    itr=sequences.begin();
    itr_end=sequences.end();
 
@@ -6200,10 +6074,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     itr++;
    }
 
-   /* Vericando se existe alguma tabela cuja uma tabela cópia é
-      a própria tabela a ser excluída, verifica também se as
-      restrições das tabelas, especificamente, as chaves estrangeiras
-      estão referenciado a tabela */
    itr=tables.begin();
    itr_end=tables.end();
 
@@ -6211,7 +6081,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
    {
     tab=dynamic_cast<Table *>(*itr);
 
-    //Verificando as restrições
     count=tab->getConstraintCount();
     for(i=0; i < count&& (!exclusion_mode || (exclusion_mode && !refer)); i++)
     {
@@ -6224,7 +6093,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
      }
     }
 
-    //Verificando os gatilhos
     count=tab->getTriggerCount();
     for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
     {
@@ -6239,8 +6107,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     itr++;
    }
 
-   /* Vericando se existe algum relacionamento (tabela-visao)
-      o qual um dos objetos participantes é a tabela */
+
    itr=base_relationships.begin();
    itr_end=base_relationships.end();
 
@@ -6277,11 +6144,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
    Type *type=NULL;
    Language *lang=NULL;
 
-   /* Varre todas as listas de objetos os quais podem
-      referenciar direta ou indiretamente uma função */
    for(i=0; i < 7 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
    {
-    //Obtém uma lista
     obj_list=getObjectList(obj_types[i]);
     itr=obj_list->begin();
     itr_end=obj_list->end();
@@ -6290,7 +6154,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     {
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Verifica se o objeto não referencia o papel
       if(dynamic_cast<Cast *>(*itr)->getCastFunction()==func)
       {
        refer=true;
@@ -6303,7 +6166,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     {
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Verifica se o objeto não referencia o papel
       if(dynamic_cast<Conversion *>(*itr)->getConversionFunction()==func)
       {
        refer=true;
@@ -6317,7 +6179,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
       aggreg=dynamic_cast<Aggregate *>(*itr);
-      //Verifica se o objeto não referencia o papel
+
       if(aggreg->getFunction(Aggregate::FINAL_FUNC)==func ||
          aggreg->getFunction(Aggregate::TRANSITION_FUNC)==func)
       {
@@ -6331,10 +6193,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     {
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a referência ao objeto
       oper=dynamic_cast<Operator *>(*itr);
 
-      //Verifica se o objeto não referencia o papel
       if(oper->getFunction(Operator::FUNC_OPERATOR)==func ||
          oper->getFunction(Operator::FUNC_JOIN)==func  ||
          oper->getFunction(Operator::FUNC_RESTRICTION)==func)
@@ -6349,14 +6209,14 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     {
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a referência ao objeto
       tab=dynamic_cast<Table *>(*itr);
       itr++;
       count=tab->getTriggerCount();
+
       for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
       {
        trig=tab->getTrigger(i1);
-       //Verifica se o gatilho não referencia a função
+
        if(trig->getFunction()==func)
        {
         refer=true;
@@ -6369,13 +6229,11 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     {
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a referência ao objeto
       type=dynamic_cast<Type *>(*itr);
       itr++;
 
       for(i1=Type::INPUT_FUNC; i1 <= Type::ANALYZE_FUNC && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
       {
-       //Verifica se o tipo não referencia a função
        if(type->getFunction(i1)==func)
        {
         refer=true;
@@ -6388,10 +6246,9 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     {
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a referência ao objeto
       lang=dynamic_cast<Language *>(*itr);
       itr++;
-      //Verifica se a função a ser removida é uma função handler ou validator da linguagem
+
       if(lang->getFunction(Language::HANDLER_FUNC)==func ||
          lang->getFunction(Language::VALIDATOR_FUNC)==func ||
          lang->getFunction(Language::INLINE_FUNC)==func)
@@ -6414,19 +6271,14 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
                              OBJ_TYPE, OBJ_OPFAMILY, OBJ_OPCLASS};
    unsigned i;
 
-   /* Varre todas as listas de objetos os quais pode pertencer a
-      um esquema e verifica se o mesmos não estão referenciando
-      o esquema a ser removido */
    for(i=0; i < 11 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
    {
-    //Obtém uma lista
     obj_list=getObjectList(obj_types[i]);
     itr=obj_list->begin();
     itr_end=obj_list->end();
 
     while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
     {
-     //Verifica se o objeto não referencia o esquema
      if((*itr)->getSchema()==object)
      {
       refer=true;
@@ -6457,10 +6309,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
    Type *type=NULL;
    void *ptr_pgsqltype=NULL;
 
-   /* Devido a particuladade de se atribuir ponteiros de objetos como tipos base do pgsql (ver TipoPgSQL)
-      é necessário fazer um dynamic_cast para a classe correta do 'objeto'. Caso o dynamic_cast não seja
-      feita, mesmo que o objeto seja um tipopgsql válido o mesmo não será localizado na lista de tipos
-      base do pgsql.  */
    switch(obj_type)
    {
     case OBJ_TYPE: ptr_pgsqltype=dynamic_cast<Type*>(object); break;
@@ -6469,31 +6317,24 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     default: ptr_pgsqltype=dynamic_cast<Table*>(object); break;
    }
 
-   /* Varre todas as listas de objetos os quais podem
-     referenciar direta ou indiretamente um tipo definido
-     pelo usuário */
    for(i=0; i < 8 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
    {
-    //Obtém uma lista
     obj_list=getObjectList(obj_types[i]);
     itr=obj_list->begin();
     itr_end=obj_list->end();
 
     if(obj_types[i]==OBJ_TABLE)
     {
-     //Verifica se as colunas das tabelas não referenciam o tipo
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a tabela
       tab=dynamic_cast<Table *>(*itr);
       itr++;
 
-      //Varre a lista de colunas da tabela
       count=tab->getColumnCount();
       for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
       {
        col=tab->getColumn(i1);
-       //Verifica se o tipo da coluna é o próprio tipo a ser excluído
+
        if(col->getType()==object)
        {
         refer=true;
@@ -6504,15 +6345,11 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     }
     else if(obj_types[i]==OBJ_OPCLASS)
     {
-     /* Varre a lista de classe operadores e verifica se algum
-        objeto referencia o tipo a ser excluído */
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a referência ao objeto
       op_class=dynamic_cast<OperatorClass *>(*itr);
       itr++;
 
-      //Verifica se o tipo de dado da classe é o próprio tipo a ser removido
       if(op_class->getDataType()==ptr_pgsqltype)
       {
        refer=true;
@@ -6522,15 +6359,11 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     }
     else if(obj_types[i]==OBJ_DOMAIN)
     {
-     /* Varre a lista de domínios e verifica se algum
-        objeto referencia o tipo a ser excluído */
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a referência ao objeto
       dom=dynamic_cast<Domain *>(*itr);
       itr++;
 
-      //Verifica se o tipo de dado do dominio é o próprio tipo a ser removido
       if(dom->getType()==ptr_pgsqltype)
       {
        refer=true;
@@ -6540,11 +6373,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     }
     else if(obj_types[i]==OBJ_TYPE)
     {
-     /* Varre a lista de tipo definidos pelo usuário e verifica se algum
-        objeto referencia o tipo a ser excluído */
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a referência ao objeto
       type=dynamic_cast<Type *>(*itr);
       itr++;
 
@@ -6559,16 +6389,11 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     }
     else if(obj_types[i]==OBJ_AGGREGATE)
     {
-     /* Varre a lista de funções agregadas e verifica se algum
-        objeto referencia o tipo a ser excluído */
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a referência ao objeto
       aggreg=dynamic_cast<Aggregate *>(*itr);
       itr++;
 
-      /* Verifica se os tipos de dados da função agregada referenciam
-         tipo a ser removido */
       count=aggreg->getDataTypeCount();
       for(i1=0; i1 < count  && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
       {
@@ -6582,16 +6407,11 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     }
     else if(obj_types[i]==OBJ_FUNCTION)
     {
-     /* Varre a lista de funções e verifica se algum
-        objeto (parâmetros e tipo de retorno) referencia
-        o tipo a ser excluído */
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a referência ao objeto
       func=dynamic_cast<Function *>(*itr);
       itr++;
 
-      //Verifica se o tipo de retorno é o próprio tipo a ser removido
       if(func->getReturnType()==ptr_pgsqltype)
       {
        refer=true;
@@ -6599,8 +6419,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
       }
       else
       {
-       /* Verifica se os tipos de dados dos parâmetros da função
-          referenciam tipo a ser removido */
        count=func->getParameterCount();
        for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
        {
@@ -6615,15 +6433,11 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     }
     else if(obj_types[i]==OBJ_OPERATOR)
     {
-     /* Varre a lista de operadores e verifica se algum
-        objeto referencia o tipo a ser excluído */
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a referência ao objeto
       oper=dynamic_cast<Operator *>(*itr);
       itr++;
 
-      //Verifica se um dos argumentos do operador é o próprio tipo a ser removido
       if(oper->getArgumentType(Operator::LEFT_ARG)==ptr_pgsqltype ||
          oper->getArgumentType(Operator::RIGHT_ARG)==ptr_pgsqltype)
       {
@@ -6636,11 +6450,9 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     {
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a referência ao objeto
       cast=dynamic_cast<Cast *>(*itr);
       itr++;
 
-      //Verifica se o objeto não referencia o tipo
       if(cast->getDataType(Cast::SRC_TYPE)==ptr_pgsqltype ||
          cast->getDataType(Cast::DST_TYPE)==ptr_pgsqltype)
       {
@@ -6666,25 +6478,19 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
    Role *role=dynamic_cast<Role *>(object);
    unsigned role_types[3]={Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE};
 
-   /* Caso especial: Varre a lista de papéis e verifica se o papel a ser
-      removido se encontra em uma das três listas de papeis da classe
-      Papel (ref, membro ou admin) */
+   //Check if the role is being referenced in other roles
    itr=roles.begin();
    itr_end=roles.end();
    while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
    {
-    //Obtém um papel
     role_aux=dynamic_cast<Role *>(*itr);
     itr++;
 
     for(i1=0; i1 < 3 && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
     {
-     //Obtém a quantidade de papeis presentes na lista atual (tipo_papel[i1])
      count=role_aux->getRoleCount(role_types[i1]);
      for(i=0; i < count && !refer; i++)
      {
-      /* Caso o papel a ser excluído seja igual ao elemento atual
-         da lista de papéis do papel aux */
       if(role_aux->getRole(role_types[i1], i)==role)
       {
        refer=true;
@@ -6694,19 +6500,14 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     }
    }
 
-   /* Varre todas as listas de objetos os quais pode pertencer a
-      um dono e verifica se o mesmos não estão referenciando
-      o dono a ser removido */
    for(i=0; i < 13 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
    {
-    //Obtém uma lista
     obj_list=getObjectList(obj_types[i]);
     itr=obj_list->begin();
     itr_end=obj_list->end();
 
     while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
     {
-     //Verifica se o objeto não referencia o papel
      if((*itr)->getOwner()==role)
      {
       refer=true;
@@ -6716,8 +6517,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     }
    }
 
-   /*Caso especial: Verifica se o papel é a ser removido é dono
-     do próprio banco de dados */
+   //Special case: check if the role to be removed is the owner of the database
    if((!exclusion_mode || (exclusion_mode && !refer)) && this->getOwner()==role)
    {
     refer=true;
@@ -6733,26 +6533,19 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
    Index *ind=NULL;
    Constraint *rest=NULL;
 
-   /* Varre a lista de tabelas e verifica se estas e seus índices
-      não estão referenciando o espaço de tabelas a ser removido */
    itr=tables.begin();
    itr_end=tables.end();
 
    while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
    {
-    //Obtém a tabela
     tab=dynamic_cast<Table *>(*itr);
 
-    //Verifica se referencia o espaço de tabela
     if(tab->getTablespace()==object)
     {
      refer=true;
      refs.push_back(tab);
     }
 
-
-    /* Verifica se algum dos índices da tabela referecia
-       o espaço de tabela */
     count=tab->getIndexCount();
     for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
     {
@@ -6764,8 +6557,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
      }
     }
 
-    /* Verifica se alguma restrição da tabela referecia
-       o espaço de tabela */
     count=tab->getConstraintCount();
     for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
     {
@@ -6792,14 +6583,11 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
    vector<BaseObject *>::iterator itr, itr_end;
    Function *func=NULL;
 
-   /* Varre a lista de funções e verifica se estas
-      não estão referenciando a linguage a ser removida */
    itr=functions.begin();
    itr_end=functions.end();
 
    while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
    {
-    //Verifica se referencia o espaço de tabela
     func=dynamic_cast<Function *>(*itr);
     if(func->getLanguage()==object)
     {
@@ -6821,11 +6609,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
    OperatorClass *op_class=NULL;
    Operator *oper_aux=NULL, *oper=dynamic_cast<Operator *>(object);
 
-   /* Varre todas as listas de objetos os quais podem
-      referenciar direta ou indiretamente um operador */
    for(i=0; i < 3 && (!exclusion_mode || (exclusion_mode && !refer)); i++)
    {
-    //Obtém uma lista
     obj_list=getObjectList(obj_types[i]);
     itr=obj_list->begin();
     itr_end=obj_list->end();
@@ -6834,15 +6619,12 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     {
      while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
      {
-      //Obtém a referência ao objeto
       op_class=dynamic_cast<OperatorClass *>(*itr);
       itr++;
 
-      //Varre a lista de elementos da classe de operadores
       count=op_class->getElementCount();
       for(i1=0; i1 < count && (!exclusion_mode || (exclusion_mode && !refer)); i1++)
       {
-       //Verifica se o objeto não referencia o operador
        if(op_class->getElement(i1).getOperator()==oper)
        {
         refer=true;
@@ -6867,12 +6649,9 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     {
      while(itr!=itr_end && !refer)
      {
-      //Obtém a referência ao objeto
       oper_aux=dynamic_cast<Operator *>(*itr);
       itr++;
 
-      /* Verifica se um dos operadores agregados ao operador atual não referencia
-         o objeto não referencia o operador */
       for(i1=Operator::OPER_COMMUTATOR; i1 <= Operator::OPER_GREATER &&
             (!exclusion_mode || (exclusion_mode && !refer)); i1++)
       {
@@ -6892,8 +6671,6 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
    vector<BaseObject *>::iterator itr, itr_end;
    OperatorFamily *op_family=dynamic_cast<OperatorFamily *>(object);
 
-   /* Varre a lista de classe de operadores e verifica se um
-      de seus elementos está referenciando a família de operadores */
    itr=op_classes.begin();
    itr_end=op_classes.end();
 
@@ -6922,16 +6699,8 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
     itr=obj_list->begin();
     itr_end=obj_list->end();
 
-    //Varre a lista selecionada verificado se a coluna passada é referenciada
     while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
     {
-     /* Caso 1: o tipo atual seja sequência, faz o cast para a classe
-        e chama do método da sequencia que retorna a coluna possuidora
-        da mesma.
-
-        Caso 2: o tipo atual seja visão, faz o cast para a classe
-        e chama do método da visão o qual retorna se a coluna
-        é referenciada pelo elementos da visão. */
      if((obj_types[i]==OBJ_SEQUENCE && dynamic_cast<Sequence *>(*itr)->getOwnerColumn()==column) ||
         (obj_types[i]==OBJ_VIEW && dynamic_cast<View *>(*itr)->isReferencingColumn(column)))
      {
