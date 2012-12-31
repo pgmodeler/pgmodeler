@@ -1066,7 +1066,7 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
   }
 
   //Ordena os itens da árvore
-  arvoreobjetos_tw->sortByColumn(0, Qt::AscendingOrder);
+  //arvoreobjetos_tw->sortByColumn(0, Qt::AscendingOrder);
  }
 }
 

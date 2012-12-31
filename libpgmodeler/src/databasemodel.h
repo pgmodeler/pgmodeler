@@ -333,7 +333,7 @@ class DatabaseModel:  public QObject, public BaseObject {
   Permission *createPermission(void);
   Textbox *createTextbox(void);
   BaseRelationship *createRelationship(void);
-  Constraint *createConstraint(BaseObject *object);
+  Constraint *createConstraint(BaseObject *parent_obj);
   Index *createIndex(Table *table);
   Trigger *createTrigger(Table *table);
 

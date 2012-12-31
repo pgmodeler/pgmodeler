@@ -2820,10 +2820,6 @@ Role *DatabaseModel::createRole(void)
  QString elem_name;
  unsigned role_type;
 
- /* Os elementos dos dois elementos a seguir deve aparecer na
-    mesma ordem pois seus valores serão trabalhados em conjunto
-    na interação onde ser precisa identificar as opções do papel
-    o qual está sendo criado */
  QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
                         ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
                         ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED };
@@ -2834,67 +2830,47 @@ Role *DatabaseModel::createRole(void)
 
  try
  {
-  //Aloca no novo papel
   role=new Role;
   setBasicAttributes(role);
 
-  //Obtém os atributos do elemento
+  //Gets all the attributes values from the XML
   XMLParser::getElementAttributes(attribs);
 
-  //Definindo os valores de atributos básicos do papel
   role->setPassword(attribs[ParsersAttributes::PASSWORD]);
   role->setValidity(attribs[ParsersAttributes::VALIDITY]);
 
-  /* Caso o atributo de id de usuário esteja atribuído no xml.
-     (atributos[AtributosParsers::UID] != "").
-     Atribui ao papel o valor do atributo convertido para inteiro. */
   if(!attribs[ParsersAttributes::SYSID].isEmpty())
    role->setSysid(attribs[ParsersAttributes::SYSID].toInt());
 
-  /* Caso o atributo de limite de conexão esteja atribuído no xml.
-     (atributos[AtributosParsers::LIMITE_CONEXAO] != "").
-     Atribui ao papel o valor do atributo convertido para inteiro. */
   if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
    role->setConnectionLimit(attribs[ParsersAttributes::CONN_LIMIT].toInt());
 
-  /* Identificando as opções do papel. Caso o atributo referet   uma
-     estive com valor "true" no documento XML quer dizer que aquele
-     atributo está marcado para o papel */
+  //Setting up the role options according to the configured on the XML
   for(i=0; i < 6; i++)
   {
-   //Verifica se a opção está marcada no XML, valor de atributo = true
    marked=attribs[op_attribs[i]]==ParsersAttributes::_TRUE_;
    role->setOption(op_vect[i], marked);
   }
 
-  //Passa para os elementos filhos que provavelmente serão <roles> e <comment>
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser, qualquer outro
-       tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     //Obtém o nome do elemento filho
      elem_name=XMLParser::getElementName();
 
-     //Caso o elemento filho seja uma lista de papeis <roles>
+     //Getting the member roles
      if(elem_name==ParsersAttributes::ROLES)
      {
-      //Obtém os atributos do elemento <roles>, neste caso são names e reftype
+      //Gets the member roles attributes
       XMLParser::getElementAttributes(attribs_aux);
 
-      /* O atributo names armazena uma lista de nomes de papéis as quais o novo papel
-         referenciará. A lista tem os elementos separados por vírgula, sendo assim a
-         string será quebrada usando o delimitador ',') */
+      //The member roles names are separated by comma, so it is needed to split them
       list=attribs_aux[ParsersAttributes::NAMES].split(',');
-
-      //Obtém a quantidade de nomes de papéis na lista
       len=list.size();
 
-      /* Identificando o tipo da lista de papéis a qual será inserido os objetos
-         cujos nomes foram extraídos acima */
+      //Identifying the member role type
       if(attribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::REFER)
        role_type=Role::REF_ROLE;
       else if(attribs_aux[ParsersAttributes::ROLE_TYPE]==ParsersAttributes::MEMBER)
@@ -2902,17 +2878,14 @@ Role *DatabaseModel::createRole(void)
       else
        role_type=Role::ADMIN_ROLE;
 
-      //Varre a lista de nomes de papéis
       for(i=0; i < len; i++)
       {
-       //Tenta obter um papel do modelo cujo nome é o elemento atual da lista de nomes (lista[i])
+       //Gets the role using the name from the model using the name from the list
        ref_role=dynamic_cast<Role *>(getObject(list[i].trimmed(),OBJ_ROLE));
 
-       /* Caso esse papel não exista um erro será disparado pois um novo papel
-          não pode referenciar um outro papel que ainda nem foi criado */
+       //Raises an error if the roles doesn't exists
        if(!ref_role)
        {
-        //Dispara a exceção
         throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                                .arg(QString::fromUtf8(role->getName()))
                                .arg(BaseObject::getTypeName(OBJ_ROLE))
@@ -2920,14 +2893,12 @@ Role *DatabaseModel::createRole(void)
                                .arg(BaseObject::getTypeName(OBJ_ROLE)),
                       ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
        }
-       //Caso o papel exista no modelo, o mesmo será relacionado ao novo papel
+
        role->addRole(role_type, ref_role);
       }
      }
     }
    }
-   /* A extração de elementos continuará até que se chegue no último elemento
-      filho do elemento <role> */
    while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
  }
@@ -2937,14 +2908,11 @@ Role *DatabaseModel::createRole(void)
   extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
                                    .arg(XMLParser::getCurrentElement()->line);
 
-  //Remove o papel alocado
   if(role) delete(role);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
- //Retorna o novo papel criado
  return(role);
 }
 
@@ -2955,27 +2923,20 @@ Tablespace *DatabaseModel::createTablespace(void)
 
  try
  {
-  //Aloca no novo espaço de tabelas
   tabspc=new Tablespace;
   setBasicAttributes(tabspc);
-
-  //Obtém os atributos do elemento
   XMLParser::getElementAttributes(attribs);
-
-  //Definindo os valores de atributos básicos do papel
   tabspc->setDirectory(attribs[ParsersAttributes::DIRECTORY]);
  }
  catch(Exception &e)
  {
-  QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+  QString extra_info;
+  extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
                                    .arg(XMLParser::getCurrentElement()->line);
 
-  //Remove o espaco de tabela alocado
   if(tabspc) delete(tabspc);
 
-  //Redireciona qualquer exceção capturada
-  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
  return(tabspc);
@@ -2983,28 +2944,21 @@ Tablespace *DatabaseModel::createTablespace(void)
 
 Schema *DatabaseModel::createSchema(void)
 {
- map<QString, QString> attribs;
  Schema *schema=NULL;
 
  try
  {
-  //Aloca no novo esquema
   schema=new Schema;
-
-  //Lê do parser os atributos basicos
   setBasicAttributes(schema);
  }
  catch(Exception &e)
  {
-  QString info_adicional;
-  info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+  QString extra_info;
+  extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
                                    .arg(XMLParser::getCurrentElement()->line);
 
-  //Remove o espaco de tabela alocado
   if(schema) delete(schema);
-
-  //Redireciona qualquer exceção capturada
-  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
  return(schema);
@@ -3021,20 +2975,15 @@ Language *DatabaseModel::createLanguage(void)
  try
  {
   lang=new Language;
-
-  //Obtém os atributos do elemento
   XMLParser::getElementAttributes(attribs);
   setBasicAttributes(lang);
 
-  lang->setTrusted(attribs[ParsersAttributes::TRUSTED]==
-                               ParsersAttributes::_TRUE_);
+  lang->setTrusted(attribs[ParsersAttributes::TRUSTED]==ParsersAttributes::_TRUE_);
 
    if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
    {
     do
     {
-     /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
      if(XMLParser::getElementType()==XML_ELEMENT_NODE)
      {
       obj_type=getObjectType(XMLParser::getElementName());
@@ -3042,23 +2991,21 @@ Language *DatabaseModel::createLanguage(void)
       if(obj_type==OBJ_FUNCTION)
       {
        XMLParser::getElementAttributes(attribs);
-       //Obtém o tipo de referência da função
+
+       //Gets the function reference type
        ref_type=attribs[ParsersAttributes::REF_TYPE];
 
-       //Caso seja uma função handler ou validator
+       //Only VALIDATOR, HANDLER and INLINE functions are accepted for the language
        if(ref_type==ParsersAttributes::VALIDATOR_FUNC ||
           ref_type==ParsersAttributes::HANDLER_FUNC ||
           ref_type==ParsersAttributes::INLINE_FUNC)
        {
-        //Obtém a assinatura da função
+        //Gets the function signature and tries to retrieve it from the model
         signature=attribs[ParsersAttributes::SIGNATURE];
-
-        //Obtém a função do modelo
         func=getObject(signature, OBJ_FUNCTION);
 
-        //Caso a função não seja encontrada
+        //Raises an error if the function doesn't exists
         if(!func)
-         //Dispara a exceção indicando que o objeto está incompleto
          throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                                .arg(QString::fromUtf8(lang->getName()))
                                .arg(lang->getTypeName())
@@ -3067,7 +3014,6 @@ Language *DatabaseModel::createLanguage(void)
                        ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
         if(ref_type==ParsersAttributes::VALIDATOR_FUNC)
-
          lang->setFunction(dynamic_cast<Function *>(func), Language::VALIDATOR_FUNC);
         else if(ref_type==ParsersAttributes::HANDLER_FUNC)
          lang->setFunction(dynamic_cast<Function *>(func), Language::HANDLER_FUNC);
@@ -3076,7 +3022,7 @@ Language *DatabaseModel::createLanguage(void)
 
        }
        else
-        //Dispara uma exceção caso o tipo de referencia a função seja inválido
+        //Raises an error if the function type is invalid
         throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
      }
@@ -3091,10 +3037,8 @@ Language *DatabaseModel::createLanguage(void)
   extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
                                    .arg(XMLParser::getCurrentElement()->line);
 
-  //Remove a linguagem alocada
   if(lang) delete(lang);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -3114,39 +3058,29 @@ Function *DatabaseModel::createFunction(void)
  try
  {
   func=new Function;
-  //Lê do parser os atributos basicos
   setBasicAttributes(func);
-
-  //Obtém os atributos da função
   XMLParser::getElementAttributes(attribs);
 
-  //Define se a função retorna setof, caso o atributo esteja marcado no XML
   if(!attribs[ParsersAttributes::RETURNS_SETOF].isEmpty())
    func->setReturnSetOf(attribs[ParsersAttributes::RETURNS_SETOF]==
                                ParsersAttributes::_TRUE_);
 
-  //Define se a função é do tipo janela, caso o atributo esteja marcado no XML
   if(!attribs[ParsersAttributes::WINDOW_FUNC].isEmpty())
    func->setWindowFunction(attribs[ParsersAttributes::WINDOW_FUNC]==
                                ParsersAttributes::_TRUE_);
 
-  //Define a configuração de retorno da função, caso o atributo esteja marcado no XML
   if(!attribs[ParsersAttributes::BEHAVIOR_TYPE].isEmpty())
    func->setBehaviorType(BehaviorType(attribs[ParsersAttributes::BEHAVIOR_TYPE]));
 
-  //Define o tipo da função, caso o atributo esteja marcado no XML
   if(!attribs[ParsersAttributes::FUNCTION_TYPE].isEmpty())
    func->setFunctionType(FunctionType(attribs[ParsersAttributes::FUNCTION_TYPE]));
 
-  //Define o tipo de segurança da função, caso o atributo esteja marcado no XML
   if(!attribs[ParsersAttributes::SECURITY_TYPE].isEmpty())
    func->setSecurityType(SecurityType(attribs[ParsersAttributes::SECURITY_TYPE]));
 
-  //Define o custo de execução da função, caso o atributo esteja marcado no XML
   if(!attribs[ParsersAttributes::EXECUTION_COST].isEmpty())
    func->setExecutionCost(attribs[ParsersAttributes::EXECUTION_COST].toInt());
 
-  //Define a quantidade de linhas retornadas pela função, caso o atributo esteja marcado no XML
   if(!attribs[ParsersAttributes::ROW_AMOUNT].isEmpty())
    func->setRowAmount(attribs[ParsersAttributes::ROW_AMOUNT].toInt());
 
@@ -3154,42 +3088,34 @@ Function *DatabaseModel::createFunction(void)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
      obj_type=getObjectType(elem);
 
-     //Caso o parser acesso a tag que determina o tipo de retorno da função
+     //Gets the function return type from the XML
      if(elem==ParsersAttributes::RETURN_TYPE)
      {
       XMLParser::savePosition();
 
       try
       {
-       //Acesso os elementos filhos os quais podem ser um <type> ou vários <parameter>
        XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
 
        do
        {
         if(XMLParser::getElementType()==XML_ELEMENT_NODE)
         {
-         /* Caso o elemento atual no parser seja um <type>, indica que
-          será extraído o tipo de retorno da função */
+         //when the element found is a TYPE indicates that the function return type is a single one
          if(XMLParser::getElementName()==ParsersAttributes::TYPE)
          {
-          //Cria o tipo
           type=createPgSQLType();
-          //Atribui ao retorno da função
           func->setReturnType(type);
          }
-         /* Criação dos tipo de retorno de tabela da função. Os mesmos vem descritos
-            dentro da tag <return-type> em forma de parâmetros */
+         //when the element found is a PARAMETER indicates that the function return type is a table
          else if(XMLParser::getElementName()==ParsersAttributes::PARAMETER)
          {
           param=createParameter();
-          //Adiciona o tipo de retorno   função
           func->addReturnedTableColumn(param.getName(), param.getType());
          }
         }
@@ -3204,16 +3130,13 @@ Function *DatabaseModel::createFunction(void)
        throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
       }
      }
-     //Obtendo a linguagem da função
+     //Gets the function language
      else if(obj_type==OBJ_LANGUAGE)
      {
-      //Obtém seus atributos
       XMLParser::getElementAttributes(attribs);
-
-      //Busca a linguagem no modelo
       object=getObject(attribs[ParsersAttributes::NAME], obj_type);
 
-      //Caso a linguagem não existe será disparada uma exceção
+      //Raises an error if the function doesn't exisits
       if(!object)
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                               .arg(QString::fromUtf8(func->getName()))
@@ -3222,21 +3145,18 @@ Function *DatabaseModel::createFunction(void)
                               .arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
                       ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      //Define a linguagem da função
       func->setLanguage(dynamic_cast<Language *>(object));
      }
+     //Gets a function parameter
      else if(XMLParser::getElementName()==ParsersAttributes::PARAMETER)
      {
       param=createParameter();
-      //Adiciona o parâmet  função
       func->addParameter(param);
      }
-     //Extraíndo a definição (corpo) da função (tag <definition>)
+     //Gets the function code definition
      else if(XMLParser::getElementName()==ParsersAttributes::DEFINITION)
      {
       XMLParser::savePosition();
-
-      //Obtém os atributos da biblioteca
       XMLParser::getElementAttributes(attribs_aux);
 
       if(!attribs_aux[ParsersAttributes::LIBRARY].isEmpty())
@@ -3244,8 +3164,6 @@ Function *DatabaseModel::createFunction(void)
        func->setLibrary(attribs_aux[ParsersAttributes::LIBRARY]);
        func->setSymbol(attribs_aux[ParsersAttributes::SYMBOL]);
       }
-      /* Para se ter acesso ao código que define a função é preciso acessar
-         o filho da tag <definition> e obter seu conteúdo */
       else if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
        func->setSourceCode(XMLParser::getElementContent());
 
@@ -3262,14 +3180,12 @@ Function *DatabaseModel::createFunction(void)
   extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
                                    .arg(XMLParser::getCurrentElement()->line);
 
-  //Remove o espaco de tabela alocado
   if(func)
   {
    str_aux=func->getName(true);
    delete(func);
   }
 
-  //Redireciona qualquer exceção capturada
   if(e.getErrorType()==ERR_REF_INEXIST_USER_TYPE)
    throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
                               .arg(QString::fromUtf8(str_aux))
@@ -3290,25 +3206,18 @@ Parameter DatabaseModel::createParameter(void)
 
  try
  {
-  //Salva a posição do parser
   XMLParser::savePosition();
-  //Obtem os atributos do parâmetro (nome, in e out)
   XMLParser::getElementAttributes(attribs);
 
   param.setName(attribs[ParsersAttributes::NAME]);
-  /* Configurando atributos in e out do parâmetro caso estes estejam
-     definidos como true no XML */
   param.setIn(attribs[ParsersAttributes::PARAM_IN]==ParsersAttributes::_TRUE_);
   param.setOut(attribs[ParsersAttributes::PARAM_OUT]==ParsersAttributes::_TRUE_);
   param.setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
-  //Acessa os elementos filhos do parâmetro, que no caso será apenas <type> ou <domain>
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
@@ -3322,7 +3231,6 @@ Parameter DatabaseModel::createParameter(void)
    while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
   }
 
-  //Restaura a posição do parser
   XMLParser::restorePosition();
  }
  catch(Exception &e)
@@ -3330,8 +3238,6 @@ Parameter DatabaseModel::createParameter(void)
   QString extra_info;
   extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
                                    .arg(XMLParser::getCurrentElement()->line);
-
-  //Restaura a posição do parser
   XMLParser::restorePosition();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
@@ -3342,19 +3248,14 @@ Parameter DatabaseModel::createParameter(void)
 PgSQLType DatabaseModel::createPgSQLType(void)
 {
  map<QString, QString> attribs;
- vector<void *> ptypes_vect;
- vector<void *>::iterator itr, itr_end;
  unsigned length=1, dimension=0, type_idx=0;
  int precision=-1;
  QString name;
- Type *usr_type=NULL;
  void *ptype=NULL;
- bool found=false, with_timezone;
+ bool with_timezone;
  IntervalType interv_type;
  SpatialType spatial_type;
 
-
- //Obtém os atributos do tipo
  XMLParser::getElementAttributes(attribs);
 
  if(!attribs[ParsersAttributes::LENGTH].isEmpty())
@@ -3382,32 +3283,8 @@ PgSQLType DatabaseModel::createPgSQLType(void)
  }
  else
  {
-  //Obtém a lista de tipos definidios pelo usuario
-  PgSQLType::getUserTypes(ptypes_vect, this,
-                               UserTypeConfig::BASE_TYPE |
-                               UserTypeConfig::DOMAIN_TYPE |
-                               UserTypeConfig::TABLE_TYPE |
-                               UserTypeConfig::SEQUENCE_TYPE);
-  itr=ptypes_vect.begin();
-  itr_end=ptypes_vect.end();
-
-  //Faz uma varredura na lista de tipos
-  while(itr!=itr_end && !found)
-  {
-   //Converte o elemento atual para a classe Tipo
-   ptype=(*itr);
-   usr_type=reinterpret_cast<Type *>(ptype);
-
-   //Caso o nome passado no XML for igual ao nome do objeto Tipo atual
-   found=(usr_type->getName(true)==name);
-   itr++;
-  }
-
-  /* Caso o tipo não foi encontrado na lista de tipos quer dizer existe
-     a tentativa de se referenciar um tipo definido pelo usuário sem que o
-     mesmo exista no modelo, sendo assim, um erro será disparado e
-     a criação do tipo será abortada */
-  if(!found)
+  //Raises an error if the referenced type name doesn't exists
+  if(PgSQLType::getUserTypeIndex(name,NULL,this) == BaseType::null)
     throw Exception(ERR_REF_INEXIST_USER_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   type_idx=PgSQLType::getUserTypeIndex(name, ptype);
@@ -3425,64 +3302,44 @@ Type *DatabaseModel::createType(void)
  QString elem, str_aux;
  Parameter param;
  BaseObject *func=NULL;
- unsigned func_type=0;
  PgSQLType copy_type;
 
  try
  {
   type=new Type;
-  //Lê do parser os atributos basicos
   setBasicAttributes(type);
-
-  //Obtém os atributos do tipo
   XMLParser::getElementAttributes(attribs);
 
-  //Define a configuração do tipo
   if(attribs[ParsersAttributes::CONFIGURATION]==ParsersAttributes::BASE_TYPE)
   {
    type->setConfiguration(Type::BASE_TYPE);
-
-   //Definindos os atributos específicos para tipo base
-
-   //Definindo se o tipo é passado por valor ou não
    type->setByValue(attribs[ParsersAttributes::BY_VALUE]==ParsersAttributes::_TRUE_);
 
-   //Definindo o comprimento interno do tipo caso esteja especificado no XML
    if(!attribs[ParsersAttributes::INTERNAL_LENGHT].isEmpty())
     type->setInternalLength(attribs[ParsersAttributes::INTERNAL_LENGHT].toUInt());
 
-   //Definindo o alinhamento interno do tipo caso esteja especificado no XML
    if(!attribs[ParsersAttributes::ALIGNMENT].isEmpty())
     type->setAlignment(attribs[ParsersAttributes::ALIGNMENT]);
 
-   //Definindo o tipo de armazenamento do tipo caso esteja especificado no XML
    if(!attribs[ParsersAttributes::STORAGE].isEmpty())
     type->setStorage(attribs[ParsersAttributes::STORAGE]);
 
-   //Definindo o elemento do tipo caso esteja especificado no XML
    if(!attribs[ParsersAttributes::ELEMENT].isEmpty())
     type->setElement(attribs[ParsersAttributes::ELEMENT]);
 
-   //Definindo o delimitador do tipo caso esteja especificado no XML
    if(!attribs[ParsersAttributes::DELIMITER].isEmpty())
     type->setDelimiter(attribs[ParsersAttributes::DELIMITER][0].toAscii());
 
-   //Definindo o valor padrão do tipo caso esteja especificado no XML
    if(!attribs[ParsersAttributes::DEFAULT_VALUE].isEmpty())
     type->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
 
-   //Definindo a categoria do tipo caso esteja especificado no XML
    if(!attribs[ParsersAttributes::CATEGORY].isEmpty())
     type->setCategory(attribs[ParsersAttributes::CATEGORY]);
 
-   //Definindo a categoria do tipo caso esteja especificado no XML
    if(!attribs[ParsersAttributes::PREFERRED].isEmpty())
     type->setPreferred(attribs[ParsersAttributes::PREFERRED]==ParsersAttributes::_TRUE_);
 
-
-   /* O mapa de tipos de função abaixo é usado para se atribuir de forma
-      mas simples, sem comparações, a função que for obtida do XML a qual
-      o tipo em construção referencia */
+   //Configuring an auxiliary map used to reference the functions used by base type
    func_types[ParsersAttributes::INPUT_FUNC]=Type::INPUT_FUNC;
    func_types[ParsersAttributes::OUTPUT_FUNC]=Type::OUTPUT_FUNC;
    func_types[ParsersAttributes::SEND_FUNC]=Type::SEND_FUNC;
@@ -3500,53 +3357,42 @@ Type *DatabaseModel::createType(void)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
 
-     //Operação específica para tipo ENUM
+     //Specific operations for ENUM type
      if(elem==ParsersAttributes::ENUM_TYPE)
      {
-      //Obtém o atributo da tag <enumerations>
       XMLParser::getElementAttributes(attribs);
-      /* Como se trata de uma lista de enumerações separadas por vírgulas
-         a mesma será quebrada e transformada num vetor */
       enums=attribs[ParsersAttributes::VALUES].split(",");
 
-      //Adiciona ao tipo todas as enumerações presentes no vetor
       count=enums.size();
       for(i=0; i < count; i++)
        type->addEnumeration(enums[i]);
      }
-     //Operação específica para tipo COMPOSTO
+     //Specific operations for COMPOSITE types
      else if(elem==ParsersAttributes::PARAMETER)
      {
-      /* No caso de tipo composto, o mesmo possui indefinida quatidade
-         de elementos <parameter> os quais simbolizam os atributos do
-         tipo */
+      //The attributes is configured on XML as <parameter> tags
       param=createParameter();
       type->addAttribute(param);
      }
-     //Operação específica para tipo BASE
+     //Specific operations for BASE type
      else if(elem==ParsersAttributes::TYPE)
      {
       copy_type=createPgSQLType();
       type->setLikeType(copy_type);
      }
+     //Configuring the functions used by the type (only for BASE type)
      else if(elem==ParsersAttributes::FUNCTION)
      {
-      /*No caso de tipo base, serão extraídas referência a funções do modelo,
-        as quais serão atribuía  s funções que compoem o tipo base. */
       XMLParser::getElementAttributes(attribs);
 
-      /* Com a assinatura da função obtida di XML, a mesma será buscada no modelo, para
-         saber se existe a função correspondente */
+      //Tries to get the function from the model
       func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
-      /* Dispara uma exceção caso o tipo de referencia a função seja inválido ou
-         se a função referenciada não existe */
+      //Raises an error if the function doesn't exists
       if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                               .arg(QString::fromUtf8(type->getName()))
@@ -3554,15 +3400,12 @@ Type *DatabaseModel::createType(void)
                               .arg(QString::fromUtf8(attribs[ParsersAttributes::SIGNATURE]))
                               .arg(BaseObject::getTypeName(OBJ_FUNCTION)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+      //Raises an error if the function type is invalid
       else if(func_types.count(attribs[ParsersAttributes::REF_TYPE])==0)
        throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      /* Obtém o tipo de configuraçao de função do tipo de acordo com a referência
-         da mesma obtida do XML */
-      func_type=func_types[attribs[ParsersAttributes::REF_TYPE]];
-
-      //Atribui a função ao tipo na configuração obtida
-      type->setFunction(func_type, dynamic_cast<Function *>(func));
+      type->setFunction(func_types[attribs[ParsersAttributes::REF_TYPE]],
+                        dynamic_cast<Function *>(func));
      }
     }
    }
@@ -3575,14 +3418,12 @@ Type *DatabaseModel::createType(void)
   extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
                                    .arg(XMLParser::getCurrentElement()->line);
 
-  //Remove o tipo alocado
   if(type)
   {
    str_aux=type->getName(true);
    delete(type);
   }
 
-  //Redireciona qualquer exceção capturada
   if(e.getErrorType()==ERR_REF_INEXIST_USER_TYPE)
    throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
                               .arg(QString::fromUtf8(str_aux))
@@ -3604,11 +3445,7 @@ Domain *DatabaseModel::createDomain(void)
  try
  {
   domain=new Domain;
-
-  //Lê do parser os atributos basicos
   setBasicAttributes(domain);
-
-  //Obtém os atributos do domíno
   XMLParser::getElementAttributes(attribs);
 
   if(!attribs[ParsersAttributes::CONSTRAINT].isEmpty())
@@ -3624,30 +3461,20 @@ Domain *DatabaseModel::createDomain(void)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
 
-     /* Caso o elemento seja um <type>, será extraído do XML
-        o tipo ao qual o domínio se aplica */
+     //If a type element is found it'll be extracted an type which the domain is applied
      if(elem==ParsersAttributes::TYPE)
      {
       domain->setType(createPgSQLType());
      }
-     //Caso o elemento seja uma expressão
      else if(elem==ParsersAttributes::EXPRESSION)
      {
-      /* Para se extraír a expressão, é necessário salvar a posição de navegação
-         do parser, pois o conteúdo da mesma é um elemento filho do elemento
-         atual do parser XML */
       XMLParser::savePosition();
-      //Acessa o elemento filho o qual contém o conteúdo da expressão
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-      //dominio->definirExpressao(QString::fromUtf8(ParserXML::obterConteudoElemento()));
       domain->setExpression(XMLParser::getElementContent());
-      //Restaura a posição de navegação do parser, ou seja, volta para o elemento <expression>
       XMLParser::restorePosition();
      }
     }
@@ -3661,10 +3488,8 @@ Domain *DatabaseModel::createDomain(void)
   extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
                                    .arg(XMLParser::getCurrentElement()->line);
 
-  //Remove o domínio alocado
   if(domain) delete(domain);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -3683,15 +3508,10 @@ Cast *DatabaseModel::createCast(void)
  try
  {
   cast=new Cast;
-
-  //Lê do parser os atributos basicos
   setBasicAttributes(cast);
-
-  //Obtém os atributos do domíno
   XMLParser::getElementAttributes(attribs);
 
-  if(attribs[ParsersAttributes::CAST_TYPE]==
-      ParsersAttributes::IMPLICIT)
+  if(attribs[ParsersAttributes::CAST_TYPE]==ParsersAttributes::IMPLICIT)
    cast->setCastType(Cast::IMPLICIT);
   else
    cast->setCastType(Cast::ASSIGNMENT);
@@ -3702,14 +3522,11 @@ Cast *DatabaseModel::createCast(void)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
 
-     /* Caso o elemento seja um <type>, será extraído do XML
-        o tipo (de origem ou destino) da conversao */
+     //Extract one argument type from the XML
      if(elem==ParsersAttributes::TYPE)
      {
       type=createPgSQLType();
@@ -3719,19 +3536,13 @@ Cast *DatabaseModel::createCast(void)
        cast->setDataType(Cast::DST_TYPE, type);
       type_idx++;
      }
-     //Extraíndo a função de conversão do XML
+     //Extracts the conversion function
      else if(elem==ParsersAttributes::FUNCTION)
      {
-      /*No caso da conversão, será extraída a refeênia   função no modelo.
-        Será através da assinatura de função vinda do XML que a função no modelo
-        será localizada e atribud   conversão */
       XMLParser::getElementAttributes(attribs);
-
-      /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
-         saber se existe a função correspondente */
       func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
-      //Dispara uma exceção caso a função referenciada não exista
+      //Raises an error if the function doesn't exists
       if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                              .arg(QString::fromUtf8(cast->getName()))
@@ -3740,7 +3551,6 @@ Cast *DatabaseModel::createCast(void)
                              .arg(BaseObject::getTypeName(OBJ_FUNCTION)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      //Atribui a funç   conversão de tipos
       cast->setCastFunction(dynamic_cast<Function *>(func));
      }
     }
@@ -3756,7 +3566,6 @@ Cast *DatabaseModel::createCast(void)
 
   if(cast) delete(cast);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -3773,41 +3582,29 @@ Conversion *DatabaseModel::createConversion(void)
  try
  {
   conv=new Conversion;
-
-  //Lê do parser os atributos basicos
   setBasicAttributes(conv);
-
-  //Obtém os atributos
   XMLParser::getElementAttributes(attribs);
 
   conv->setEncoding(Conversion::SRC_ENCODING,
-                                 EncodingType(attribs[ParsersAttributes::SRC_ENCODING]));
+                    EncodingType(attribs[ParsersAttributes::SRC_ENCODING]));
 
   conv->setEncoding(Conversion::DST_ENCODING,
-                                 EncodingType(attribs[ParsersAttributes::DST_ENCODING]));
+                    EncodingType(attribs[ParsersAttributes::DST_ENCODING]));
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
 
      if(elem==ParsersAttributes::FUNCTION)
      {
-      /*No caso da conversão, será extraída a refeênia   função no modelo.
-        Será através da assinatura de função vinda do XML que a função no modelo
-        será localizada e atribud   conversão */
       XMLParser::getElementAttributes(attribs);
-
-      /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
-         saber se existe a função correspondente */
       func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
-      //Dispara uma exceção caso a função referenciada não exista
+      //Raises an error if the function doesn't exists
       if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                              .arg(QString::fromUtf8(conv->getName()))
@@ -3816,7 +3613,6 @@ Conversion *DatabaseModel::createConversion(void)
                              .arg(BaseObject::getTypeName(OBJ_FUNCTION)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      //Atribui a funç   conversão de tipos
       conv->setConversionFunction(dynamic_cast<Function *>(func));
      }
     }
@@ -3832,7 +3628,6 @@ Conversion *DatabaseModel::createConversion(void)
 
   if(conv) delete(conv);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -3847,32 +3642,22 @@ Operator *DatabaseModel::createOperator(void)
  Operator *oper=NULL;
  QString elem;
  BaseObject *func=NULL,*oper_aux=NULL;
- unsigned func_type, oper_type, arg_type;
+ unsigned arg_type;
  PgSQLType type;
 
  try
  {
   oper=new Operator;
-
-  //Lê do parser os atributos basicos
   setBasicAttributes(oper);
-
-  //Obtém os atributos
   XMLParser::getElementAttributes(attribs);
 
   oper->setMerges(attribs[ParsersAttributes::MERGES]==ParsersAttributes::_TRUE_);
   oper->setHashes(attribs[ParsersAttributes::HASHES]==ParsersAttributes::_TRUE_);
 
-  /* O mapa de tipos de função abaixo é usado para se atribuir de forma
-      mas simples, sem comparações, a função que for obtida do XML a qual
-      o tipo em construção referencia */
   func_types[ParsersAttributes::OPERATOR_FUNC]=Operator::FUNC_OPERATOR;
   func_types[ParsersAttributes::JOIN_FUNC]=Operator::FUNC_JOIN;
   func_types[ParsersAttributes::RESTRICTION_FUNC]=Operator::FUNC_RESTRICTION;
 
-  /* O mapa de tipos de operadores abaixo é usado para se atribuir de forma
-      mais simples, sem comparações, o operador que for obtida do XML a qual
-      o operador em construção referencia */
   oper_types[ParsersAttributes::COMMUTATOR_OP]=Operator::OPER_COMMUTATOR;
   oper_types[ParsersAttributes::GREATER_OP]=Operator::OPER_GREATER;
   oper_types[ParsersAttributes::LESS_OP]=Operator::OPER_LESS;
@@ -3884,22 +3669,16 @@ Operator *DatabaseModel::createOperator(void)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
 
      if(elem==objs_schemas[OBJ_OPERATOR])
      {
-      //Obtém os atributos do operador referenciado
       XMLParser::getElementAttributes(attribs);
-
-      /* Com a assinatura do operador obtida do XML, a mesma será buscada no modelo, para
-         saber se existe a função correspondente */
       oper_aux=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_OPERATOR);
 
-      //Dispara uma exceção caso o operador referenciado não exista
+      //Raises an error if the auxiliary operator doesn't exists
       if(!oper_aux && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                              .arg(QString::fromUtf8(oper->getSignature(true)))
@@ -3908,18 +3687,13 @@ Operator *DatabaseModel::createOperator(void)
                              .arg(BaseObject::getTypeName(OBJ_OPERATOR)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      /* Obtém o tipo de configuraçao de função do tipo de acordo com a referência
-         da mesma obtida do XML */
-      oper_type=oper_types[attribs[ParsersAttributes::REF_TYPE]];
-      oper->setOperator(dynamic_cast<Operator *>(oper_aux),oper_type);
+      oper->setOperator(dynamic_cast<Operator *>(oper_aux),
+                        oper_types[attribs[ParsersAttributes::REF_TYPE]]);
      }
      else if(elem==ParsersAttributes::TYPE)
      {
-      /* Obtém os atributos do tipo para saber se o mesmo é um tipo da
-         esquerda ou da direita */
       XMLParser::getElementAttributes(attribs);
 
-      //Obtém o tipo de referência do tipo base (esquerda ou direita)
       if(attribs[ParsersAttributes::REF_TYPE]!=ParsersAttributes::RIGHT_TYPE)
        arg_type=Operator::LEFT_ARG;
       else
@@ -3930,16 +3704,10 @@ Operator *DatabaseModel::createOperator(void)
      }
      else if(elem==ParsersAttributes::FUNCTION)
      {
-      /*No caso do operador, será extraída a refernca   função no modelo.
-        Será através da assinatura de função vinda do XML que a função no modelo
-        será localizada e atribuída ao operador */
       XMLParser::getElementAttributes(attribs);
-
-      /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
-         saber se existe a função correspondente */
       func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
-      //Dispara uma exceção caso a função referenciada não exista
+      //Raises an error if the function doesn't exists on the model
       if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                              .arg(QString::fromUtf8(oper->getName()))
@@ -3948,12 +3716,8 @@ Operator *DatabaseModel::createOperator(void)
                              .arg(BaseObject::getTypeName(OBJ_FUNCTION)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      /* Obtém o tipo de configuraçao de função do tipo de acordo com a referência
-         da mesma obtida do XML */
-      func_type=func_types[attribs[ParsersAttributes::REF_TYPE]];
-
-      //Atribui a função ao tipo na configuração obtida
-      oper->setFunction(dynamic_cast<Function *>(func), func_type);
+      oper->setFunction(dynamic_cast<Function *>(func),
+                        func_types[attribs[ParsersAttributes::REF_TYPE]]);
      }
     }
    }
@@ -3967,7 +3731,6 @@ Operator *DatabaseModel::createOperator(void)
                                    .arg(XMLParser::getCurrentElement()->line);
   if(oper) delete(oper);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -3989,11 +3752,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
  try
  {
   op_class=new OperatorClass;
-
-  //Lê do parser os atributos basicos
   setBasicAttributes(op_class);
-
-  //Obtém os atributos
   XMLParser::getElementAttributes(attribs);
 
   op_class->setIndexingType(IndexingType(attribs[ParsersAttributes::INDEX_TYPE]));
@@ -4007,22 +3766,16 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
 
      if(elem==objs_schemas[OBJ_OPFAMILY])
      {
-      //Obtém os atributos do operador referenciado
       XMLParser::getElementAttributes(attribs);
-
-      /* Com o nome da família do operador obtida do XML, a mesma será buscada no modelo, para
-         saber se existe um objeto correspondente */
       object=getObject(attribs[ParsersAttributes::NAME], OBJ_OPFAMILY);
 
-      //Dispara uma exceção caso o operador referenciado não exista
+      //Raises an error if the operator family doesn't exists
       if(!object && !attribs[ParsersAttributes::NAME].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                              .arg(QString::fromUtf8(op_class->getName()))
@@ -4035,7 +3788,6 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
      }
      else if(elem==ParsersAttributes::TYPE)
      {
-      //Obtém os atributos do tipo
       XMLParser::getElementAttributes(attribs);
       type=createPgSQLType();
       op_class->setDataType(type);
@@ -4084,7 +3836,6 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 
   if(op_class) delete(op_class);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -4100,11 +3851,7 @@ OperatorFamily *DatabaseModel::createOperatorFamily(void)
  {
   op_family=new OperatorFamily;
   setBasicAttributes(op_family);
-
-  //Obtém os atributos do elemento
   XMLParser::getElementAttributes(attribs);
-
-  //Definindo os valores de atributos básicos do objeto
   op_family->setIndexingType(IndexingType(attribs[ParsersAttributes::INDEX_TYPE]));
  }
  catch(Exception &e)
@@ -4115,7 +3862,6 @@ OperatorFamily *DatabaseModel::createOperatorFamily(void)
 
   if(op_family) delete(op_family);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -4133,33 +3879,25 @@ Aggregate *DatabaseModel::createAggregate(void)
  try
  {
   aggreg=new Aggregate;
-
-  //Lê do parser os atributos basicos
   setBasicAttributes(aggreg);
-
-  //Obtém os atributos
   XMLParser::getElementAttributes(attribs);
+
   aggreg->setInitialCondition(attribs[ParsersAttributes::INITIAL_COND]);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
 
      if(elem==ParsersAttributes::TYPE)
      {
-      //Obtém os atributos do tipo
       XMLParser::getElementAttributes(attribs);
       type=createPgSQLType();
 
-      //Define o tipo   função agregada de acordo com o tipo de referência do mesmo
-      if(attribs[ParsersAttributes::REF_TYPE]==
-          ParsersAttributes::STATE_TYPE)
+      if(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::STATE_TYPE)
        aggreg->setStateType(type);
       else
        aggreg->addDataType(type);
@@ -4167,12 +3905,9 @@ Aggregate *DatabaseModel::createAggregate(void)
      else if(elem==ParsersAttributes::FUNCTION)
      {
       XMLParser::getElementAttributes(attribs);
-
-      /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
-         saber se existe a função correspondente */
       func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
-      //Dispara uma exceção caso a função referenciada não exista
+      //Raises an error if the function doesn't exists on the model
       if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
        throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
                              .arg(QString::fromUtf8(aggreg->getName()))
@@ -4181,7 +3916,6 @@ Aggregate *DatabaseModel::createAggregate(void)
                              .arg(BaseObject::getTypeName(OBJ_FUNCTION)),
                      ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-      //Define a função de acordo com o tipo de referência da mesma
       if(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::TRANSITION_FUNC)
        aggreg->setFunction(Aggregate::TRANSITION_FUNC,
                                  dynamic_cast<Function *>(func));
@@ -4202,7 +3936,6 @@ Aggregate *DatabaseModel::createAggregate(void)
 
   if(aggreg) delete(aggreg);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -4219,20 +3952,15 @@ Table *DatabaseModel::createTable(void)
  try
  {
   table=new Table;
-
-  //Lê do parser os atributos basicos
   setBasicAttributes(table);
-
-  //Obtém os atributos
   XMLParser::getElementAttributes(attribs);
+
   table->setWithOIDs(attribs[ParsersAttributes::OIDS]==ParsersAttributes::_TRUE_);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
@@ -4268,9 +3996,9 @@ Table *DatabaseModel::createTable(void)
                                    .arg(XMLParser::getCurrentElement()->line);
 
   XMLParser::restorePosition();
+
   if(table) delete(table);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -4288,7 +4016,6 @@ Column *DatabaseModel::createColumn(void)
   column=new Column;
   setBasicAttributes(column);
 
-  //Obtém os atributos do elemento
   XMLParser::getElementAttributes(attribs);
   column->setNotNull(attribs[ParsersAttributes::NOT_NULL]==ParsersAttributes::_TRUE_);
   column->setDefaultValue(attribs[ParsersAttributes::DEFAULT_VALUE]);
@@ -4297,8 +4024,6 @@ Column *DatabaseModel::createColumn(void)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
@@ -4320,14 +4045,13 @@ Column *DatabaseModel::createColumn(void)
 
   if(column) delete(column);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
  return(column);
 }
 
-Constraint *DatabaseModel::createConstraint(BaseObject *object)
+Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 {
  map<QString, QString> attribs;
  Constraint *constr=NULL;
@@ -4345,39 +4069,37 @@ Constraint *DatabaseModel::createConstraint(BaseObject *object)
 
  try
  {
-  //Obtém os atributos do elemento
   XMLParser::getElementAttributes(attribs);
 
-  //Caso o objeto o qual será possuidor da restrição esteja alocado
-  if(object)
+  //If the constraint parent is allocated
+  if(parent_obj)
   {
-   obj_type=object->getObjectType();
+   obj_type=parent_obj->getObjectType();
+
+   //Identifies the correct parent type
    if(obj_type==OBJ_TABLE)
-    table=dynamic_cast<Table *>(object);
+    table=dynamic_cast<Table *>(parent_obj);
    else if(obj_type==OBJ_RELATIONSHIP)
-    rel=dynamic_cast<Relationship *>(object);
+    rel=dynamic_cast<Relationship *>(parent_obj);
    else
+    //Raises an error if the user tries to create a constraint in a invalid parent
     throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
-  /* Caso o objeto não esteja especificado então o objeto possuidor será considerado
-     como sendo sempre uma tabela e com base nisso o atributo "table" no código
-     xml da restrição será usado para localizar a tabela possuidora no modelo */
   else
   {
    obj_type=OBJ_TABLE;
    table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
    ins_constr_table=true;
-   /* Caso a tabela a qual possua a restição não for encontrada uma exceção será disparada pois
-      não se pode criar uma restrição sem que esta seja atribuida a uma tabela, neste caso. */
+
+   //Raises an error if the parent table doesn't exists
    if(!table)
    {
-    //Configura os argumentos da mensagem de erro
     str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
           .arg(QString::fromUtf8(attribs[ParsersAttributes::NAME]))
           .arg(BaseObject::getTypeName(OBJ_CONSTRAINT))
           .arg(QString::fromUtf8(attribs[ParsersAttributes::TABLE]))
           .arg(BaseObject::getTypeName(OBJ_TABLE));
-    //Dispara a exceção
+
     throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
   }
@@ -4385,7 +4107,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *object)
   constr=new Constraint;
   constr->setParentTable(table);
 
-  //Configurando o tipo da restrição
+  //Configuring the constraint type
   if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::CK_CONSTR)
    constr_type=ConstraintType::check;
   else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::PK_CONSTR)
@@ -4400,53 +4122,15 @@ Constraint *DatabaseModel::createConstraint(BaseObject *object)
    constr->setFillFactor(attribs[ParsersAttributes::FACTOR].toUInt());
   setBasicAttributes(constr);
 
-  /* Caso o tipo de restrição seja uma chave primária uma verificação importante
-     é feita. Se a chave primária está sendo criada como filha de uma tag
-     <table> ou <relationship> (vide exemplo 1).
 
-     Exemplo 1:
-
-      <table ...>        <relationship ...>
-         ...                ...
-         <constraint>       <constraint>
-      </table>           </relationship>
-
-     Esta restrição está declarada dentro de um bloco de código de uma tabela ou
-     de relacionamento a mesma sendo assim a mesma será construída normalmente.
-
-     Caso a mesma esteja sendo construída fora de ambos os blocos (vide exemplo 2)
-     e referenciando apenas uma tabela no modelo um erro será gerado pois chaves
-     primárias devem sempre ser construídas dentro de um dos dois blocos apresentados.
-
-     Exemplo 2:
-     <table name="tabela_X">
-       ...
-     </table>
-     <relationship>
-       ...
-     </relationship>
-     <constraint ... table="tabela_X">
-       ...
-     </constraint>  */
-
-  /* Na prática, para se fazer a verificação acima, é suficiente
-     verificar se o parâmetro 'objeto' está alocado pois o mesmo
-     armazena o endereço da tabela ou relacionamento recém criados
-     a partir do bloco <table> ou <relationship>, respectivamente.
-     Quando tal parâmetro está nulo indica que a restrição será criada
-     e atribuíd  tabela cujo nome está no atributo 'table' no XML
-     significando que a mesma está declarada fora dos dois blocos indicados.
-     Adicionalmente é necessário verificar o tipo da restrição para se
-     ter certeza que a mesma é uma chave primária. */
-  if(!object && constr_type==ConstraintType::primary_key)
+  //Raises an error if the constraint is a primary key and no parent object is specified
+  if(!parent_obj && constr_type==ConstraintType::primary_key)
     throw Exception(Exception::getErrorMessage(ERR_INV_PRIM_KEY_ALOCATION)
                   .arg(QString::fromUtf8(constr->getName())),
                   ERR_INV_PRIM_KEY_ALOCATION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  //Efetuando configurações específicas para chaves estrangeiras
-  if(constr_type==ConstraintType::foreign_key /*&& tipo_objeto==OBJETO_TABELA*/)
+  if(constr_type==ConstraintType::foreign_key)
   {
-   //Define se a restrição é postergavel (apenas para chaves estrangeiras)
    deferrable=(attribs[ParsersAttributes::DEFERRABLE]==ParsersAttributes::_TRUE_);
    constr->setDeferrable(deferrable);
 
@@ -4456,36 +4140,29 @@ Constraint *DatabaseModel::createConstraint(BaseObject *object)
    if(!attribs[ParsersAttributes::COMPARISON_TYPE].isEmpty())
     constr->setMatchType(attribs[ParsersAttributes::COMPARISON_TYPE]);
 
-   //Definindo os tipos de ação nos eventos DELETE e UPDATE
    if(!attribs[ParsersAttributes::DEL_ACTION].isEmpty())
     constr->setActionType(attribs[ParsersAttributes::DEL_ACTION], false);
 
    if(!attribs[ParsersAttributes::UPD_ACTION].isEmpty())
     constr->setActionType(attribs[ParsersAttributes::UPD_ACTION], true);
 
-   //Obtém a tabela referenciada na chave estrangeira
    ref_table=getObject(attribs[ParsersAttributes::REF_TABLE], OBJ_TABLE);
 
-   /* Caso a tabela referenciada não seja encontrada verifica se esta não é a própria
-      tabela a qual receberá a restrição (usado para auto-relacionamentos) */
    if(!ref_table && table->getName(true)==attribs[ParsersAttributes::REF_TABLE])
     ref_table=table;
 
-   /* Caso a tabela referenciada não foi encontrada uma exceção será disparada pois
-      não se pode criar uma chave estrangeira sem referenciar uma tabela de destino */
+   //Raises an error if the referenced table doesn't exists
    if(!ref_table)
    {
-    //Configura os argumentos da mensagem de erro
     str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
           .arg(QString::fromUtf8(constr->getName()))
           .arg(constr->getTypeName())
           .arg(QString::fromUtf8(attribs[ParsersAttributes::REF_TABLE]))
           .arg(BaseObject::getTypeName(OBJ_TABLE));
-    //Dispara a exceção
+
     throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
 
-   //Define a tabela de destino da chave estrangeira
    constr->setReferencedTable(ref_table);
   }
 
@@ -4493,8 +4170,6 @@ Constraint *DatabaseModel::createConstraint(BaseObject *object)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
@@ -4502,32 +4177,24 @@ Constraint *DatabaseModel::createConstraint(BaseObject *object)
      if(elem==ParsersAttributes::EXPRESSION)
      {
       XMLParser::savePosition();
-      //Acessa o elemento filho o qual contém o conteúdo da expressão ou condição
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-      //Obtém o contéudo do elemento <expression>
+
       constr->setCheckExpression(XMLParser::getElementContent());
+
       XMLParser::restorePosition();
      }
      else if(elem==ParsersAttributes::COLUMNS)
      {
-      //Obtém os atributos da tag <columns>
       XMLParser::getElementAttributes(attribs);
 
-      /* Obtém os nomes das colunas participantes da restrição
-         colocando seus nomes em um vetor pois os mesmos estão
-         unidos por vírgula, neste caso o método split é usado
-         para fazer a divisão */
       col_list=attribs[ParsersAttributes::NAMES].split(',');
       count=col_list.count();
 
-      /* Obtém o tipo de referência das colunas de acordo com o atributo
-         tipo de referência vindo do XML */
       if(attribs[ParsersAttributes::REF_TYPE]==ParsersAttributes::SRC_COLUMNS)
        col_type=Constraint::SOURCE_COLS;
       else
        col_type=Constraint::REFERENCED_COLS;
 
-      //Varre a lista de nomes de colunas e as obtém da tabela a qual possuirá a restrição
       for(i=0; i < count; i++)
       {
        if(col_type==Constraint::SOURCE_COLS)
@@ -4535,24 +4202,24 @@ Constraint *DatabaseModel::createConstraint(BaseObject *object)
         if(obj_type==OBJ_TABLE)
         {
          column=table->getColumn(col_list[i]);
-         //Caso a coluna não for encontrada, tenta obtê-la referenciando seu nome antigo
+
+         //If the column doesn't exists tries to get it searching by the old name
          if(!column)
           column=table->getColumn(col_list[i], true);
         }
         else
-         //Para os demais tipos de relacionamento as colunas a serem obtidas são os atributos do relacionamento
           column=dynamic_cast<Column *>(rel->getObject(col_list[i], OBJ_COLUMN));
        }
        else
        {
         table_aux=dynamic_cast<Table *>(ref_table);
         column=table_aux->getColumn(col_list[i]);
-        //Caso a coluna não for encontrada, tenta obtê-la referenciando seu nome antigo
+
+        //If the column doesn't exists tries to get it searching by the old name
         if(!column)
          column=table_aux->getColumn(col_list[i], true);
        }
 
-       //Adiciona a coluna   restrição
        constr->addColumn(column, col_type);
       }
      }
@@ -4563,14 +4230,9 @@ Constraint *DatabaseModel::createConstraint(BaseObject *object)
 
   if(ins_constr_table)
   {
-   //Caso a restrição criada não seja uma chave primária insere-a normalmente na tabela
    if(constr->getConstraintType()!=ConstraintType::primary_key)
    {
     table->addConstraint(constr);
-
-    /* Caso a tabela receptora da restrição esteja inserida no modelo, força o seu redesenho.
-       Isso é útil para atualizar tabelas as quais tiveram restrições adicionadas após a sua
-       criação */
     if(this->getObjectIndex(table) >= 0)
       table->setModified(true);
    }
@@ -4582,10 +4244,8 @@ Constraint *DatabaseModel::createConstraint(BaseObject *object)
   extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
                                    .arg(XMLParser::getCurrentElement()->line);
 
-  if(constr)
-   delete(constr);
+  if(constr) delete(constr);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -4604,24 +4264,22 @@ Index *DatabaseModel::createIndex(Table *table)
 
  try
  {
-  //Obtém os atributos do elemento
   XMLParser::getElementAttributes(attribs);
 
   if(!table)
   {
    inc_idx_table=true;
    table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
-   /* Caso a tabela a qual possua a restição não for encontrada uma exceção será disparada pois
-      não se pode criar uma restrição sem que esta seja atribuida a uma tabela, neste caso. */
+
+   //Raises an error if the parent table doesn't exists
    if(!table)
    {
-    //Configura os argumentos da mensagem de erro
     str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
           .arg(QString::fromUtf8(attribs[ParsersAttributes::NAME]))
           .arg(BaseObject::getTypeName(OBJ_INDEX))
           .arg(QString::fromUtf8(attribs[ParsersAttributes::TABLE]))
           .arg(BaseObject::getTypeName(OBJ_TABLE));
-    //Dispara a exceção
+
     throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
    }
   }
@@ -4640,15 +4298,10 @@ Index *DatabaseModel::createIndex(Table *table)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
 
-     /* Caso o elemento atual for do tipo <idxelement> indica que
-        os elementos filhos que podem ser extraídos são
-        <column>, <expression> ou <opclass> */
      if(elem==ParsersAttributes::INDEX_ELEMENT)
      {
       nulls_first=(attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
@@ -4663,42 +4316,34 @@ Index *DatabaseModel::createIndex(Table *table)
 
        if(XMLParser::getElementType()==XML_ELEMENT_NODE)
        {
-        //Caso o elemento atual seja um  <opclass>
         if(elem==ParsersAttributes::OP_CLASS)
         {
          XMLParser::getElementAttributes(attribs);
          op_class=dynamic_cast<OperatorClass *>(getObject(attribs[ParsersAttributes::NAME], OBJ_OPCLASS));
 
-         //Caso o índice esteja referenciando uma classe de operadores inexistente
+         //Raises an error if the operator class doesn't exists
          if(!op_class)
          {
-          //Configura os argumentos da mensagem de erro
           str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
                           .arg(QString::fromUtf8(index->getName()))
                           .arg(BaseObject::getTypeName(OBJ_INDEX))
                           .arg(QString::fromUtf8(attribs[ParsersAttributes::OP_CLASS]))
                           .arg(BaseObject::getTypeName(OBJ_OPCLASS));
-          //Dispara a exceção
+
           throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
          }
         }
-        //Caso o elemento atual seja um  <column>
         else if(elem==ParsersAttributes::COLUMN)
         {
-         //Obtém a coluna que o elemento referencia
          XMLParser::getElementAttributes(attribs);
          column=table->getColumn(attribs[ParsersAttributes::NAME]);
 
-         /* Caso a coluna não exista tenta obtê-la novamente porém referenciando
-            seu nome antigo */
          if(!column)
           column=table->getColumn(attribs[ParsersAttributes::NAME], true);
         }
-        //Caso o elemento atual seja um  <expression>
         else if(elem==ParsersAttributes::EXPRESSION)
         {
          XMLParser::savePosition();
-         //Acessa o elemento filho o qual contém o conteúdo da expressão
          XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
          expr=XMLParser::getElementContent();
          XMLParser::restorePosition();
@@ -4717,7 +4362,6 @@ Index *DatabaseModel::createIndex(Table *table)
      else if(elem==ParsersAttributes::CONDITION)
      {
       XMLParser::savePosition();
-      //Acessa o elemento filho o qual contém o conteúdo da expressão ou condição
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
       str_aux=XMLParser::getElementContent();
       XMLParser::restorePosition();
@@ -4742,7 +4386,6 @@ Index *DatabaseModel::createIndex(Table *table)
 
   if(index) delete(index);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -4762,7 +4405,6 @@ Rule *DatabaseModel::createRule(void)
   rule=new Rule;
   setBasicAttributes(rule);
 
-  //Obtém os atributos do elemento
   XMLParser::getElementAttributes(attribs);
   rule->setExecutionType(attribs[ParsersAttributes::EXEC_TYPE]);
   rule->setEventType(attribs[ParsersAttributes::EVENT_TYPE]);
@@ -4771,8 +4413,6 @@ Rule *DatabaseModel::createRule(void)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
@@ -4781,21 +4421,17 @@ Rule *DatabaseModel::createRule(void)
         elem==ParsersAttributes::CONDITION)
      {
       XMLParser::savePosition();
-      //Acessa o elemento filho o qual contém o conteúdo da condição ou comandos
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-      //str_aux=QString::fromUtf8(ParserXML::obterConteudoElemento());
+
       str_aux=XMLParser::getElementContent();
       XMLParser::restorePosition();
 
       if(elem==ParsersAttributes::COMMANDS)
       {
-       /* A lista de comandos é quebrada por ; e os comandos
-          inseridos um a um na regra */
        cmd_list=str_aux.split(';');
        count=cmd_list.count();
        for(i=0; i < count; i++)
        {
-        //Caso o comando não esteja vazio
         if(!cmd_list[i].isEmpty())
          rule->addCommand(cmd_list[i]);
        }
@@ -4815,7 +4451,6 @@ Rule *DatabaseModel::createRule(void)
                                    .arg(XMLParser::getCurrentElement()->line);
   if(rule) delete(rule);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
@@ -4835,7 +4470,6 @@ Trigger *DatabaseModel::createTrigger(Table *table)
 
  try
  {
-  //Obtém os atributos do elemento
   XMLParser::getElementAttributes(attribs);
 
   if(!table && attribs[ParsersAttributes::TABLE].isEmpty())
@@ -4858,7 +4492,6 @@ Trigger *DatabaseModel::createTrigger(Table *table)
 
   setBasicAttributes(trigger);
 
-  //Marcando os eventos de execução do gatilho
   trigger->setEvent(EventType::on_insert,
                         (attribs[ParsersAttributes::INS_EVENT]==
                          ParsersAttributes::_TRUE_));
@@ -4875,18 +4508,12 @@ Trigger *DatabaseModel::createTrigger(Table *table)
                         (attribs[ParsersAttributes::TRUNC_EVENT]==
                          ParsersAttributes::_TRUE_));
 
-  //Marcando e o gatilho é executado por linha ou não
   trigger->setExecutePerRow(attribs[ParsersAttributes::PER_ROW]==
                             ParsersAttributes::_TRUE_);
 
-  //Define o modo de disparo do gatilho
   trigger->setFiringType(FiringType(attribs[ParsersAttributes::FIRING_TYPE]));
 
 
-  /* Atribuindo os argumentos vindo do XML ao gatilho.
-     No XML os argumentos estão separados por vírgula,
-     sendo assim o método split é usado para quebrar a
-     string de argumentos e atribui-los ao objeto */
   list_aux=attribs[ParsersAttributes::ARGUMENTS].split(',');
   count=list_aux.count();
   for(i=0; i < count; i++)
@@ -4895,13 +4522,11 @@ Trigger *DatabaseModel::createTrigger(Table *table)
     trigger->addArgument(list_aux[i]);
   }
 
-  //Caso o objeto alocado seja um gatilho
   trigger->setDeferrable(attribs[ParsersAttributes::DEFERRABLE]==
                               ParsersAttributes::_TRUE_);
   if(trigger->isDeferrable())
     trigger->setDeferralType(attribs[ParsersAttributes::DEFER_TYPE]);
 
-  //Obtém a tabela referenciada no gatilho
   ref_table=getObject(attribs[ParsersAttributes::REF_TABLE], OBJ_TABLE);
   trigger->setReferecendTable(ref_table);
 
@@ -4909,8 +4534,6 @@ Trigger *DatabaseModel::createTrigger(Table *table)
   {
    do
    {
-    /* Certificando que só elementos xml serão lidos do parser,
-       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
      elem=XMLParser::getElementName();
@@ -4918,12 +4541,9 @@ Trigger *DatabaseModel::createTrigger(Table *table)
      if(elem==ParsersAttributes::FUNCTION)
      {
       XMLParser::getElementAttributes(attribs);
-
-      /* Com a assinatura da função obtida do XML, a mesma será buscada no modelo, para
-         saber se existe a função correspondente */
       func=getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_FUNCTION);
 
-      //Dispara uma exceção caso a função referenciada não exista
+      //Raises an error if the function doesn't exists
       if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
       {
        str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
@@ -4932,17 +4552,14 @@ Trigger *DatabaseModel::createTrigger(Table *table)
                .arg(QString::fromUtf8(attribs[ParsersAttributes::SIGNATURE]))
                .arg(BaseObject::getTypeName(OBJ_FUNCTION));
 
-       //Dispara a exceção
        throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
       }
 
-      //Define a função executada pelo gatilho
       trigger->setFunction(dynamic_cast<Function *>(func));
      }
      else if(elem==ParsersAttributes::CONDITION)
      {
       XMLParser::savePosition();
-      //Acessa o elemento filho o qual contém o conteúdo da expressão ou condição
       XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
       str_aux=XMLParser::getElementContent();
       XMLParser::restorePosition();
@@ -4950,13 +4567,8 @@ Trigger *DatabaseModel::createTrigger(Table *table)
      }
      else if(elem==ParsersAttributes::COLUMNS)
      {
-      //Obtém os atributos da tag <columns>
       XMLParser::getElementAttributes(attribs);
 
-      /* Obtém os nomes das colunas participantes do gatilho
-         colocando seus nomes em um vetor pois os mesmos estão
-         unidos por vírgula, neste caso o método split é usado
-         para fazer a divisão */
       list_aux=attribs[ParsersAttributes::NAMES].split(',');
       count=list_aux.count();
 
@@ -4964,8 +4576,6 @@ Trigger *DatabaseModel::createTrigger(Table *table)
       {
        column=table->getColumn(list_aux[i]);
 
-       /* Caso a coluna não exista tenta obtê-la novamente porém referenciando
-          seu nome antigo */
        if(!column)
         column=table->getColumn(list_aux[i], true);
 
@@ -4990,7 +4600,6 @@ Trigger *DatabaseModel::createTrigger(Table *table)
                                    .arg(XMLParser::getCurrentElement()->line);
   if(trigger) delete(trigger);
 
-  //Redireciona qualquer exceção capturada
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
  }
 
