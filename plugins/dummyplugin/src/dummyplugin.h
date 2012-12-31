@@ -2,7 +2,7 @@
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
 # Sub-projeto: Biblioteca libobjrenderer
 # Classe: DummyPlugin
-# Descrição: Esta classe implementa métodos básicos para criação de plugins do pgModeler.
+# Descrição: Example plugin for pgModeler (does not execute any operation)
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -26,18 +26,14 @@
 class DummyPlugin: public QObject, public PgModelerPlugin {
  private:
   Q_OBJECT
-  //Declara a interface na qual é usada para implementação de plugin
+  //Declares the interface which is used to implement the plugin
   Q_INTERFACES(PgModelerPlugin)
 
  public:
   DummyPlugin(void);
 
-  /* Método de obtenção do rótulo do plugin. Este rótulo é usado
-     como texto da ação que dispara o plugin na janela principal */
-  QString obterRotuloPlugin(void);
-
-  //Método de execução do plugin sobrecarregado da classe PgModelerPlugin
-  void executarPlugin(ModeloWidget *modelo);
+  QString getPluginLabel(void);
+  void executePlugin(ModeloWidget *);
 };
 
 #endif

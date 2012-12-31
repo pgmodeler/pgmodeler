@@ -1,64 +1,60 @@
 #include "formprincipal.h"
-#include "aplicacao.h"
+#include "application.h"
 #include <QTranslator>
 
 #ifndef Q_OS_WIN
  #include "execinfo.h"
 #endif
 
-void executarCrashHandler(int)
+void startCrashHandler(int)
 {
- ofstream saida;
+ ofstream output;
  QString lin, cmd;
 
- /** A função backtrace não é existe até o momento no MingW (Windows) desta forma
-     o trecho que gera a stacktrace do programa só é ativado em Linux/Unix **/
+ /** At the moment the backtrace function does not exists on MingW (Windows) this way
+     the code that generates the stacktrace is available only on Linux/Unix systems */
  #ifndef Q_OS_WIN
-  void *pilha[20];
-  size_t tam_pilha, i;
-  char **simbolos=NULL;
+  void *stack[20];
+  size_t stack_size, i;
+  char **symbols=NULL;
 
-  //Obtém os simbolos da stack trace (até 20 itens)
-  tam_pilha = backtrace(pilha, 20);
-  simbolos = backtrace_symbols(pilha, tam_pilha);
+  stack_size = backtrace(stack, 20);
+  symbols = backtrace_symbols(stack, stack_size);
   cmd="crashhandler";
  #else
   cmd="crashhandler.exe";
  #endif
 
- //Cria o arquivo que armazenará a stack trace
- saida.open(GlobalAttributes::TEMPORARY_DIR +
+ //Creates the stacktrace file
+ output.open(GlobalAttributes::TEMPORARY_DIR +
             GlobalAttributes::DIR_SEPARATOR +
             GlobalAttributes::STACKTRACE_FILE);
 
- //Caso o arquivo esteja aberto
- if(saida.is_open())
+ if(output.is_open())
  {
   lin=QString("** pgModeler [v%1] crashed after receive signal: %2 **\n\nDate/Time:%3\n\n")
       .arg(GlobalAttributes::PGMODELER_VERSION)
       .arg("SIGSEGV")
       .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
 
-  saida.write(lin.toStdString().c_str(), lin.size());
+  output.write(lin.toStdString().c_str(), lin.size());
 
   #ifndef Q_OS_WIN
-   //Grava cada linha da stack trace no arquivo
-   for(i=0; i < tam_pilha; i++)
+   for(i=0; i < stack_size; i++)
    {
-    lin=QString(simbolos[i]) + QString("\n");
-    saida.write(lin.toStdString().c_str(), lin.size());
+    lin=QString(symbols[i]) + QString("\n");
+    output.write(lin.toStdString().c_str(), lin.size());
    }
-   //Desaloca a stack trace
-   free(simbolos);
+   free(symbols);
   #else
     lin=QString("** Stack trace unavailable on Windows system **");
     saida.write(lin.toStdString().c_str(), lin.size());
   #endif
 
-  saida.close();
+  output.close();
  }
 
- //Executa o comando crashhandler (que obrigatoriamente deve estar na mesma pasta do pgModeler)
+ //Executes the crashhandler command (which must be on the same directory as the pgModeler executable)
  cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + cmd;
  system(cmd.toStdString().c_str());
  exit(1);
@@ -69,26 +65,26 @@ int main(int argc, char **argv)
 {
  try
  {
-  //Captura o sinal de segmentation fault e inicia o crashhandler
-  signal(SIGSEGV, executarCrashHandler);
+  //Install a signal handler to start crashhandler when SIGSEGV is emitted
+  signal(SIGSEGV, startCrashHandler);
 
-  Aplicacao app(argc,argv);
-  QTranslator tradutor;
+  Application app(argc,argv);
+  QTranslator translator;
 
   app.addLibraryPath(GlobalAttributes::PLUGINS_DIR);
 
-  //Tenta carregar a tradução conforme o locale do sistema
-  tradutor.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
+  //Tries to load the ui translation according to the system's locale
+  translator.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
 
-  //Instala o tradutor na aplicação
-  app.installTranslator(&tradutor);
+  //Installs the translator on the application
+  app.installTranslator(&translator);
 
-  //Carregando uma splash screen
+  //Loading the application splash screen
   QPixmap pixmap(":imagens/imagens/pgmodeler_logo.png");
   QPixmap alfa(":imagens/imagens/pgmodeler_logo_alfa.png");
   pixmap.setAlphaChannel(alfa);
 
-  //Desenha o texto da versão atual no canto inferior direito do pixmap
+  //Draws the current version code on the splash
   QFont fnt;
   QPainter p;
   fnt.setFamily("Dejavu Sans");
@@ -110,32 +106,20 @@ int main(int argc, char **argv)
   splash.show();
   splash.repaint();
 
-  /* Aloca o formulário principal.
-     Durante a sua alocação pode ser disparadas uma série de exceções que a
-     aplicação não é capaz de caputar pois o formulário ainda não foi atribuído
-     a esta, desta forma, a alocação do formulário e feita dentro de um
-     try-catch para possível captura de erros. A aplicação será abortada
-     e o erro mostrado no console caso ocorra. */
+  //Creates the main form
   FormPrincipal fmain;
-
-  //Atribui o formulário alocado à aplicação
   app.setMainWidget(&fmain);
 
-  //Indicando para a splash screen que ela deve fechar quando a janela principal for exibida
+  //Indicating that the splash screen must be closed when the main window is shown
   splash.finish(&fmain);
 
-  //Exibe o formulário principal e prossegue com a execução da aplicação
   fmain.showMaximized();
-
-  //Executa a aplicação
   app.exec();
 
   return(0);
  }
- //Caso um erro seja capturado durante a inicialização da aplicação
  catch(Exception &e)
  {
-  //Retorna o código de erro da última exceção e aborta a aplicação
   return(e.getErrorType());
  }
 }

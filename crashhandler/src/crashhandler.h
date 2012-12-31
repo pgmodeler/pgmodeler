@@ -1,9 +1,9 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: App crashhandler
+# Sub-project: crashhandler
 # Classe: CrashHandler
-# Description:Definição da classe que implementa o formulário de
-#            tratamentos de crashing do pgModeler.
+# Description: Implements the pgModeler's crash handler enabling the generation an analysis
+#              of crash report files.
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -37,22 +37,21 @@ class CrashHandler : public QDialog, Ui::CrashHandler
  private:
   Q_OBJECT
 
-  //Destacador de sintaxe para o código modelo
-  DestaqueSintaxe *dest_modelo_txt;
+  //Syntax highlight for model text widget
+  DestaqueSintaxe *hl_model_txt;
 
-  //Caractere delimitador que separa as seções no arquivo compactado
-  const static char CHR_DELIMITADOR;
+  //Delimiter character which separates the sections of the compressed file
+  const static char CHR_DELIMITER;
 
  public:
   CrashHandler(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
-  //Carrega um arquivo .crash para ser analisado
-  void carregarRelatorio(const QString &arquivo);
+  //Load a report file showing its contents on the form
+  void loadReport(const QString &filename);
 
  public slots:
-  //Gera um arquivo .crash
-  void gerarRelatorio(void);
-  void habilitarGeracao(void);
+  void generateReport(void);
+  void enableGeneration(void);
 };
 
 #endif

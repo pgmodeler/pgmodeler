@@ -4,28 +4,28 @@
 
 DummyPlugin::DummyPlugin(void)
 {
- QTranslator *tradutor=new QTranslator;
+ QTranslator *translator=new QTranslator;
 
- tradutor->load(QString("dummyplugin.") + QLocale::system().name(),
+ translator->load(QString("dummyplugin.") + QLocale::system().name(),
                 GlobalAttributes::PLUGINS_DIR +
                 GlobalAttributes::DIR_SEPARATOR +
                 QString("dummyplugin") +
                 GlobalAttributes::DIR_SEPARATOR +
                 QString("lang"));
 
- QCoreApplication::installTranslator(tradutor);
+ QCoreApplication::installTranslator(translator);
 }
 
-QString DummyPlugin::obterRotuloPlugin(void)
+QString DummyPlugin::getPluginLabel(void)
 {
  return(trUtf8("Dummy Plugin"));
 }
 
-void DummyPlugin::executarPlugin(ModeloWidget *modelo)
+void DummyPlugin::executePlugin(ModeloWidget *)
 {
- CaixaMensagem caixa_msg;
- caixa_msg.show(trUtf8("Plugin Carregado!"),
-                trUtf8("Plugin carregado com sucesso! Para detalhes de como criar seus próprios plugins consulte o arquivo PLUGINS.md"),
+ CaixaMensagem msgbox;
+ msgbox.show(trUtf8("Plugin successfully loaded!"),
+                trUtf8("Plugin successfully loaded! Check the file PLUGINS.md to know how to create your own plugins."),
                 CaixaMensagem::ICONE_INFO);
 }
 

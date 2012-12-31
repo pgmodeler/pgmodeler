@@ -16,5 +16,5 @@ LIBS += $$DESTDIR/lib/$$LIBUTIL \
         $$DESTDIR/lib/$$LIBPGMODELER \
         $$DESTDIR/lib/$$LIBPGMODELERUI
 
-HEADERS += $$PWD/src/aplicacao.h
+HEADERS += $$PWD/src/application.h
 SOURCES += $$PWD/src/main.cpp

@@ -1,11 +1,9 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: main
-# Classe: Aplicacao
-# Description:Esta classe é uma derivação da classe QApplication.
-#            A mesa apenas sobrecarrega o método notify() de sua
-#            classe pai para tratar as execeções disparadas cujas
-#            instâncias são da classe Excecao.
+# Classe: Application
+# Description: This class inherits from QApplication and has the notify() method modified
+#              to treat the exceptions raised by pgModeler components.
 # Creation date: 30/08/2007
 #
 # Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
@@ -22,8 +20,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef APLICACAO_H
-#define APLICACAO_H
+#ifndef APPLICATION_H
+#define APPLICATION_H
 
 #include <QApplication>
 #include <QMessageBox>
@@ -31,32 +29,26 @@
 
 extern CaixaMensagem *caixa_msg;
 
-class Aplicacao: public QApplication {
+class Application: public QApplication {
  private:
  public:
 
-  //O construtor da classe executa o construtor da classe pai
-  Aplicacao(int & argc, char ** argv) : QApplication(argc,argv)
-  {
-
-  }
+  Application(int & argc, char ** argv) : QApplication(argc,argv)
+  {}
 
   bool notify(QObject * receiver, QEvent * event)
   {
    try
    {
-    //Executa normalmente o notify da classe pai
     return(QApplication::notify(receiver,event));
    }
    catch(Exception &e)
    {
-    //Exibe uma caixa de mensagem de erro crítico com a mensagem da exceção
     caixa_msg->show(e);
     return(false);
    }
-   catch(...) //Capturando as demais execeções
+   catch(...)
    {
-    //Exibe uma caixa de mensagem de erro crítico com a mensagem da exceção
     caixa_msg->show(trUtf8("Error"),trUtf8("Unknown exception caught!"), CaixaMensagem::ICONE_ERRO);
     return(false);
    }

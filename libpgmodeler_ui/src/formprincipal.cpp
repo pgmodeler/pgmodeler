@@ -1199,7 +1199,7 @@ void FormPrincipal::carregarPlugins(void)
 
    //Cria a ação que é usada para disparar o plugin
    acao_plugin=new QAction(this);
-   acao_plugin->setText(plugin->obterRotuloPlugin());
+   acao_plugin->setText(plugin->getPluginLabel());
 
    /* O nome da ação é setado como o nome do plugin para que este possa ser
       referenciado no mapa de plugins quando o método FormPrincipal::executarPlugin()
@@ -1257,7 +1257,7 @@ void FormPrincipal::executarPlugin(void)
  /* Um plugin só será executado caso um modelo esteja aberto
     e ação tenha o nome de um plugin registrado  */
  if(modelo_atual && acao && plugins.count(acao->name())==1)
-  plugins[acao->name()]->executarPlugin(modelo_atual);
+  plugins[acao->name()]->executePlugin(modelo_atual);
 }
 
 void FormPrincipal::salvarModeloTemporario(void)
@@ -1273,4 +1273,3 @@ void FormPrincipal::exibirVisaoGeral(bool exibir)
  else if(!exibir)
   visaogeral_wgt->close();
 }
-//**********************************************************

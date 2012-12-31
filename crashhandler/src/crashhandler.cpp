@@ -1,125 +1,120 @@
 #include "crashhandler.h"
-const char CrashHandler::CHR_DELIMITADOR=static_cast<char>(3);
+const char CrashHandler::CHR_DELIMITER=static_cast<char>(3);
 
 CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
- ifstream entrada;
+ ifstream input;
  QString buf;
  char lin[1024];
 
  setupUi(this);
- connect(cancelar_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
- connect(criar_btn, SIGNAL(clicked(void)), this, SLOT(gerarRelatorio(void)));
- connect(acoes_txt, SIGNAL(textChanged(void)), this, SLOT(habilitarGeracao(void)));
+ connect(cancel_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
+ connect(create_btn, SIGNAL(clicked(void)), this, SLOT(generateReport(void)));
+ connect(actions_txt, SIGNAL(textChanged(void)), this, SLOT(enableGeneration(void)));
 
- //Abre o arquivo o qual armazena a stack trace do ultimo travamento
- entrada.open(GlobalAttributes::TEMPORARY_DIR +
+ //Open for reading the stack trace file generated on the last crash
+ input.open(GlobalAttributes::TEMPORARY_DIR +
               GlobalAttributes::DIR_SEPARATOR +
               GlobalAttributes::STACKTRACE_FILE);
 
- //Le cada linha do arquivo e concatena ao buffer
- while(entrada.is_open() && !entrada.eof())
+ while(input.is_open() && !input.eof())
  {
-  entrada.getline(lin, sizeof(lin), '\n');
+  input.getline(lin, sizeof(lin), '\n');
   buf += QString("%1\n").arg(lin);
  }
 
- entrada.close();
+ input.close();
 
- //Remove o arquivo stack trace
- QDir arq_stk;
- arq_stk.remove(GlobalAttributes::TEMPORARY_DIR +
+ //Removes the stack trace file
+ QDir stack_file;
+ stack_file.remove(GlobalAttributes::TEMPORARY_DIR +
                 GlobalAttributes::DIR_SEPARATOR +
                 GlobalAttributes::STACKTRACE_FILE);
 
- //Exibe o buffer no widget de stack trace
+ //Shows the stacktrace loaded on the widget
  stack_txt->setPlainText(buf);
 
- //Cria um destacador de sintaxe para o modelo
- dest_modelo_txt=new DestaqueSintaxe(modelo_txt, false);
- dest_modelo_txt->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+ //Installs a syntax highlighter on model_txt widget
+ hl_model_txt=new DestaqueSintaxe(model_txt, false);
+ hl_model_txt->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
                                        GlobalAttributes::DIR_SEPARATOR +
                                        GlobalAttributes::XML_HIGHLIGHT_CONF +
                                        GlobalAttributes::CONFIGURATION_EXT);
 
- QDir dir_tmp=QDir(GlobalAttributes::TEMPORARY_DIR, "*.dbm", QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
- dir_tmp.setSorting(QDir::Time);
- QStringList lista=dir_tmp.entryList();
+ QDir tmp_dir=QDir(GlobalAttributes::TEMPORARY_DIR, "*.dbm", QDir::Name, QDir::Files | QDir::NoDotAndDotDot);
+ tmp_dir.setSorting(QDir::Time);
+ QStringList lista=tmp_dir.entryList();
 
  if(!lista.isEmpty())
  {
-  //Abre o modelo temporário modificado pela última vez
-  entrada.open(GlobalAttributes::TEMPORARY_DIR +
+  //Opens the last modified model file showing it on the proper widget
+  input.open(GlobalAttributes::TEMPORARY_DIR +
                GlobalAttributes::DIR_SEPARATOR + lista[0]);
 
-  //Le cada linha do arquivo e concatena ao buffer
   buf.clear();
-  while(entrada.is_open() && !entrada.eof())
+  while(input.is_open() && !input.eof())
   {
-   entrada.getline(lin, sizeof(lin), '\n');
+   input.getline(lin, sizeof(lin), '\n');
    buf += QString("%1\n").arg(lin);
   }
 
-  entrada.close();
-  modelo_txt->setPlainText(QString::fromUtf8(buf));
+  input.close();
+  model_txt->setPlainText(QString::fromUtf8(buf));
  }
 }
 
-void CrashHandler::habilitarGeracao(void)
+void CrashHandler::enableGeneration(void)
 {
- criar_btn->setEnabled(!acoes_txt->text().isEmpty());
+ create_btn->setEnabled(!actions_txt->text().isEmpty());
 }
 
-void CrashHandler::carregarRelatorio(const QString &arquivo)
+void CrashHandler::loadReport(const QString &filename)
 {
- ifstream entrada;
+ ifstream input;
  QFileInfo fi;
  char *buf=NULL;
- CaixaMensagem caixa;
+ CaixaMensagem msgbox;
 
- //Abre o arquivo .crash
- fi.setFile(arquivo);
- entrada.open(arquivo);
+ fi.setFile(filename);
+ input.open(filename);
 
- titulo_lbl->setText(trUtf8("pgModeler crash file analysis"));
- criar_btn->setVisible(false);
+ title_lbl->setText(trUtf8("pgModeler crash file analysis"));
+ create_btn->setVisible(false);
  msg_lbl->clear();
 
- //Caso o arquivo  não foi aberto com sucesso, exibe um erro
- if(!entrada.is_open())
-  caixa.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(arquivo), CaixaMensagem::ICONE_ERRO);
+ //Raises an error if the file could not be opened
+ if(!input.is_open())
+  msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(filename), CaixaMensagem::ICONE_ERRO);
  else
  {
-  QByteArray buf_descomp;
+  QByteArray uncomp_buf;
   QString buf_aux, str_aux;
   int i, idx;
-  QTextEdit *txt_widgets[]={ acoes_txt, modelo_txt , stack_txt};
+  QTextEdit *txt_widgets[]={ actions_txt, model_txt , stack_txt};
 
-  //Exibe informações do arquivo
-  msg_lbl->setText(trUtf8("File: %1\nSize: %2 bytes\n\n").arg(arquivo).arg(fi.size()));
+  msg_lbl->setText(trUtf8("File: %1\nSize: %2 bytes\n\n").arg(filename).arg(fi.size()));
 
-  //Cria um buffer no tamanho total do arquivo
+  //Creates a text buffer
   buf=new char[fi.size()];
-  //Le todos os bytes do arquivo
-  entrada.read(buf, fi.size());
-  entrada.close();
 
-  //Descompacta o buffer lido
-  buf_descomp.append(buf, fi.size());
-  buf_descomp=qUncompress(buf_descomp);
+  //Reads the file storing it on the buffer
+  input.read(buf, fi.size());
+  input.close();
 
-  //Desaloca o buffer original
+  //Uncompress the buffer
+  uncomp_buf.append(buf, fi.size());
+  uncomp_buf=qUncompress(uncomp_buf);
+
   delete[](buf);
   buf=NULL;
 
-  //Obtém o buffer descompactado
-  buf_aux=QString(buf_descomp.data());
+  buf_aux=QString(uncomp_buf.data());
   i=idx=0;
 
-  //Varre todo o buffer separando jogando cada parte do buffer em sua respectiva seção
+  //Showing the sections of the uncompressed buffer on the respective widgets
   while(i < buf_aux.size() && idx <= 2)
   {
-   if(buf_aux.at(i).ascii()!=CHR_DELIMITADOR)
+   if(buf_aux.at(i).ascii()!=CHR_DELIMITER)
     str_aux.append(buf_aux.at(i));
    else
    {
@@ -131,47 +126,42 @@ void CrashHandler::carregarRelatorio(const QString &arquivo)
  }
 }
 
-void CrashHandler::gerarRelatorio(void)
+void CrashHandler::generateReport(void)
 {
- CaixaMensagem caixa;
- QByteArray buf, buf_comp;
- ofstream saida;
+ CaixaMensagem msgbox;
+ QByteArray buf, comp_buf;
+ ofstream output;
 
- //Configura o caminho para o arquivo .crash gerado
- QString arq_crash=(GlobalAttributes::TEMPORARY_DIR +
-                    GlobalAttributes::DIR_SEPARATOR +
-                    GlobalAttributes::CRASH_HANDLER_FILE).arg(QDateTime::currentDateTime().toString("_yyyyMMdd_hhmm"));
+ //Configures the path to the .crash file generated
+ QString crash_file=(GlobalAttributes::TEMPORARY_DIR +
+                     GlobalAttributes::DIR_SEPARATOR +
+                     GlobalAttributes::CRASH_HANDLER_FILE).arg(QDateTime::currentDateTime().toString("_yyyyMMdd_hhmm"));
 
- //Abre o arquivo para gravação
- saida.open(arq_crash);
+ //Opens the file for writting
+ output.open(crash_file);
 
- //Caso não possa ser aberto, exibe um erro
- if(!saida.is_open())
-  caixa.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(arq_crash), CaixaMensagem::ICONE_ERRO);
+ if(!output.is_open())
+  msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(crash_file), CaixaMensagem::ICONE_ERRO);
  else
  {
-  //Insere a descrição das ações no buffer
-  buf.append(acoes_txt->toPlainText().toUtf8());
-  buf.append(CHR_DELIMITADOR);
+  buf.append(actions_txt->toPlainText().toUtf8());
+  buf.append(CHR_DELIMITER);
 
-  //Anexa o modelo caso o usuário tenha selecionado
-  if(anexar_mod_chk->isChecked())
-   buf.append(modelo_txt->toPlainText().toUtf8());
-  buf.append(CHR_DELIMITADOR);
+  if(attach_mod_chk->isChecked())
+   buf.append(model_txt->toPlainText().toUtf8());
+  buf.append(CHR_DELIMITER);
 
-  //Anexa a stack trace
   buf.append(stack_txt->toPlainText().toUtf8());
-  buf.append(CHR_DELIMITADOR);
+  buf.append(CHR_DELIMITER);
 
-  //Compacta o buffer (usando a zlib) numa taxa de compressão 8
-  buf_comp=qCompress(buf, 8);
+  //Compress the buffer (using zlib) in a compression rate at 8
+  comp_buf=qCompress(buf, 8);
 
-  //Salva o buffer compactado
-  saida.write(buf_comp.data(), buf_comp.size());
-  saida.close();
+  //Saves the buffer
+  output.write(comp_buf.data(), comp_buf.size());
+  output.close();
 
-  //Exibe a imagem de sucesso e fecha o crash handler
-  caixa.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file '%1' to %2 in order be debugged. Thank you for the collaboration!").arg(arq_crash).arg("rkhaotix@gmail.com"), CaixaMensagem::ICONE_INFO);
+  msgbox.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file '%1' to %2 in order be debugged. Thank you for the collaboration!").arg(crash_file).arg("rkhaotix@gmail.com"), CaixaMensagem::ICONE_INFO);
   this->close();
  }
 }

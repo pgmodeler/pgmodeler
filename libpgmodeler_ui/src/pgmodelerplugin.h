@@ -42,10 +42,10 @@ class PgModelerPlugin {
   virtual ~PgModelerPlugin(void) {}
 
   //Método que executa o plugin
-  virtual void executarPlugin(ModeloWidget *modelo)=0;
+  virtual void executePlugin(ModeloWidget *modelo)=0;
 
   //Retorna o texto que é exibido na ação que executa o plugin
-  virtual QString obterRotuloPlugin(void)=0;
+  virtual QString getPluginLabel(void)=0;
 };
 
 /* Declara a classe PgModelerPlugin como interface, ou seja, a base para
