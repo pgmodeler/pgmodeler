@@ -1,29 +1,26 @@
 #include "textboxview.h"
 
-TextboxView::TextboxView(Textbox *cxtexto, const QBrush &brush, const QPen &pen) : BaseObjectView(cxtexto)
+TextboxView::TextboxView(Textbox *txtbox, const QBrush &fill_style, const QPen &border_style) : BaseObjectView(txtbox)
 {
- connect(cxtexto, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
+ connect(txtbox, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 
- //Aloca os objetos que definem a representação gráfica de caixa de texto
- caixa=new QGraphicsPolygonItem;
- texto=new QGraphicsSimpleTextItem;
+ box=new QGraphicsPolygonItem;
+ text=new QGraphicsSimpleTextItem;
 
- //Caso o brush ou pen não estejam especificados usa a cor padrão da caixa de texto
- if(brush.style()==Qt::NoBrush || pen.style()==Qt::NoPen)
+ //Case the fill or border style aren't specified use the default style for textbox
+ if(fill_style.style()==Qt::NoBrush || border_style.style()==Qt::NoPen)
  {
-  caixa->setBrush(this->getFillStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
-  caixa->setPen(this->pen=this->getBorderStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
+  box->setBrush(this->getFillStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
+  box->setPen(this->getBorderStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
  }
  else
  {
-  //Configura as cores da caixa de texto
-  caixa->setBrush(brush);
-  caixa->setPen(pen);
+  box->setBrush(fill_style);
+  box->setPen(border_style);
  }
 
- //Agrupa os objetos alocados e efetua a configuração gráfica da caixa de texto
- this->addToGroup(texto);
- this->addToGroup(caixa);
+ this->addToGroup(text);
+ this->addToGroup(box);
  this->configureObject();
 }
 
@@ -31,58 +28,48 @@ TextboxView::~TextboxView(void)
 {
  disconnect(this, SLOT(configureObject(void)));
 
- this->removeFromGroup(caixa);
- this->removeFromGroup(texto);
- delete(caixa);
- delete(texto);
+ this->removeFromGroup(box);
+ this->removeFromGroup(text);
+ delete(box);
+ delete(text);
 }
 
 void TextboxView::configureObject(void)
 {
- Textbox *cxtexto=dynamic_cast<Textbox *>(this->getSourceObject());
+ Textbox *txtbox=dynamic_cast<Textbox *>(this->getSourceObject());
  QTextCharFormat fmt=font_config[ParsersAttributes::GLOBAL];
- QFont fonte;
- QPolygonF poligono;
+ QFont font;
+ QPolygonF polygon;
 
- //Cria o polígono que define a caixa de texto em si
- poligono.append(QPointF(0.0f,0.0f));
- poligono.append(QPointF(1.0f,0.0f));
- poligono.append(QPointF(1.0f,1.0f));
- poligono.append(QPointF(0.0f,1.0f));
+ polygon.append(QPointF(0.0f,0.0f));
+ polygon.append(QPointF(1.0f,0.0f));
+ polygon.append(QPointF(1.0f,1.0f));
+ polygon.append(QPointF(0.0f,1.0f));
 
- //A caixa deve ficar abaixo dos demais objetos por isso um Z=0
- caixa->setZValue(0);
+ //The textbox view must be at the bottom of objects stack (Z = 0)
+ box->setZValue(0);
 
- /* Configura o estilo da fonte do texto conforme os parâmetros definidos
-    na caixa de texto que deu origem ao objeto gráfico */
- fonte=fmt.font();
- fonte.setItalic(cxtexto->getTextAttribute(Textbox::ITALIC_TXT));
- fonte.setBold(cxtexto->getTextAttribute(Textbox::BOLD_TXT));
- fonte.setUnderline(cxtexto->getTextAttribute(Textbox::UNDERLINE_TXT));
+ font=fmt.font();
+ font.setItalic(txtbox->getTextAttribute(Textbox::ITALIC_TXT));
+ font.setBold(txtbox->getTextAttribute(Textbox::BOLD_TXT));
+ font.setUnderline(txtbox->getTextAttribute(Textbox::UNDERLINE_TXT));
 
- //Configura o texto e o estilo de fonte da caixa
- texto->setText(QString::fromUtf8(cxtexto->getComment()));
- texto->setFont(fonte);
- texto->setZValue(1);
- texto->setBrush(cxtexto->getTextColor());
+ text->setText(QString::fromUtf8(txtbox->getComment()));
+ text->setFont(font);
+ text->setZValue(1);
+ text->setBrush(txtbox->getTextColor());
 
- //Move o texto para a posição inicial considerando os espaçamentos vertical e horizontal
- texto->setPos(HORIZ_SPACING, VERT_SPACING);
+ text->setPos(HORIZ_SPACING, VERT_SPACING);
+ this->resizePolygon(polygon, roundf(text->boundingRect().width() + (2 * HORIZ_SPACING)),
+                              roundf(text->boundingRect().height() + (2* VERT_SPACING)));
+ box->setPos(0,0);
+ box->setPolygon(polygon);
 
- /* Redimensiona o polígono da caixa de texto para que seu tamanho seja compatível
-    com o tamanho do texto */
- this->resizePolygon(poligono, roundf(texto->boundingRect().width() + (2 * HORIZ_SPACING)),
-                                       roundf(texto->boundingRect().height() + (2* VERT_SPACING)));
- caixa->setPos(0,0);
- caixa->setPolygon(poligono);
+ protected_icon->setPos(box->boundingRect().right() - (protected_icon->boundingRect().width() + 2 * HORIZ_SPACING),
+                        box->boundingRect().bottom()- (protected_icon->boundingRect().height() + 2 * VERT_SPACING));
 
- /* Configura a posição do ícone de protegido do objeto, para que
-    este esteja situado no canto inferior direito da caixa de texto */
- protected_icon->setPos(caixa->boundingRect().right() - (protected_icon->boundingRect().width() + 2 * HORIZ_SPACING),
-                         caixa->boundingRect().bottom()- (protected_icon->boundingRect().height() + 2 * VERT_SPACING));
-
- this->bounding_rect.setTopLeft(caixa->boundingRect().topLeft());
- this->bounding_rect.setBottomRight(caixa->boundingRect().bottomRight());
+ this->bounding_rect.setTopLeft(box->boundingRect().topLeft());
+ this->bounding_rect.setBottomRight(box->boundingRect().bottomRight());
 
  BaseObjectView::__configureObject();
  BaseObjectView::configureObjectShadow();

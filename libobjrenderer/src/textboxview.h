@@ -1,10 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libobjrenderer
-# Classe: OGCaixaTexto
-# Description:Esta classe deriva a classe ObjetoGrafico e implementa a representação gráfica
-#            da classe CaixaTexto. O sufixo OG foi adicionado ao nome da caixa para evitar conflitos
-#            de nomes entra a classe CaixaTexto da biblioteca libpgmodeler e a classe abaixo definida.
+# Sub-project: Graphical objects renderer (libobjrenderer)
+# Class: TextboxView
+# Description: Represents the textbox in a graphical way on the object scene
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -30,18 +28,14 @@ class TextboxView: public BaseObjectView {
  private:
   Q_OBJECT
 
-  //Parâmetros de cores da caixa
-  QPen pen; //Borda
-  QBrush brush; //Preenchimento
+  //Graphical item that represent the box
+  QGraphicsPolygonItem *box;
 
-  //Objeto gráfico poligonal que define a caixa de texto
-  QGraphicsPolygonItem *caixa;
-
-  //Objeto gráfico de texto que define o conteúdo textual da caixa
-  QGraphicsSimpleTextItem *texto;
+  //Graphical item that represent the text
+  QGraphicsSimpleTextItem *text;
 
  public:
-  TextboxView(Textbox *caixa, const QBrush &brush=Qt::NoBrush, const QPen &pen=Qt::NoPen);
+  TextboxView(Textbox *txtbox, const QBrush &fill_style=Qt::NoBrush, const QPen &border_style=Qt::NoPen);
   ~TextboxView(void);
 
  protected slots:
