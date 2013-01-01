@@ -85,7 +85,7 @@ void ConfAparenciaWidget::criarObjetosExemplo(void)
  try
  {
   OGRelacionamento *rel=NULL;
-  OGCaixaTexto *caixa=NULL;
+  TextboxView *caixa=NULL;
   OGTabela *tab=NULL;
   OGVisao *visao=NULL;
   unsigned qtd, i;
@@ -129,7 +129,7 @@ void ConfAparenciaWidget::criarObjetosExemplo(void)
    qtd=modelo->getObjectCount(OBJ_TEXTBOX);
    for(i=0; i < qtd; i++)
    {
-    caixa=new OGCaixaTexto(modelo->getTextbox(i));
+    caixa=new TextboxView(modelo->getTextbox(i));
     caixa->setSelected(i==0);
     cena->addItem(caixa);
    }

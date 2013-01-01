@@ -5,7 +5,7 @@
 # Description:Implementa operações básicas para gravação de arquios  e cesso  s configuraçoẽs
 #            nos widgets de configurações.
 #
-# Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

@@ -58,7 +58,7 @@ CenaObjetos::~CenaObjetos(void)
       o item pode ser removido */
    if(item && !item->parentItem() &&
       ((dynamic_cast<OGRelacionamento *>(item) && tipos[i]==OBJ_RELATIONSHIP) ||
-       (dynamic_cast<OGCaixaTexto *>(item) && tipos[i]==OBJ_TEXTBOX) ||
+       (dynamic_cast<TextboxView *>(item) && tipos[i]==OBJ_TEXTBOX) ||
        (dynamic_cast<OGVisao *>(item) && tipos[i]==OBJ_VIEW) ||
        (dynamic_cast<OGTabela *>(item) && tipos[i]==OBJ_TABLE)))
 
@@ -522,7 +522,7 @@ void CenaObjetos::alinharObjetosGrade(void)
  QList<QGraphicsItem *> itens=this->items();
  OGRelacionamento *rel=NULL;
  OGTabelaBase *tab=NULL;
- OGCaixaTexto *rot=NULL;
+ TextboxView *rot=NULL;
  vector<QPointF> pontos;
  unsigned i, qtd, i1, qtd1;
 

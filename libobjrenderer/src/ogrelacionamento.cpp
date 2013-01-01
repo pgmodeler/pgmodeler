@@ -13,7 +13,7 @@ OGRelacionamento::OGRelacionamento(BaseRelationship *relacao) : BaseObjectView(r
   if(relacao->getLabel(i))
   {
    relacao->getLabel(i)->setTextColor(BaseObjectView::getFontStyle(ParsersAttributes::LABEL).foreground());
-   rotulos[i]=new OGCaixaTexto(relacao->getLabel(i),
+   rotulos[i]=new TextboxView(relacao->getLabel(i),
                                BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
                                BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
    rotulos[i]->setZValue(1);
@@ -81,7 +81,7 @@ BaseRelationship *OGRelacionamento::getSourceObject(void)
  return(dynamic_cast<BaseRelationship *>(this->BaseObjectView::getSourceObject()));
 }
 
-OGCaixaTexto *OGRelacionamento::obterRotulo(unsigned idx_rot)
+TextboxView *OGRelacionamento::obterRotulo(unsigned idx_rot)
 {
  if(idx_rot > BaseRelationship::LABEL_REL_NAME)
   return(NULL);
@@ -317,7 +317,7 @@ void OGRelacionamento::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
    rel_base->setPoints(pontos);
    this->configurarLinha();
   }
-  else if(dynamic_cast<OGCaixaTexto *>(objeto_sel))
+  else if(dynamic_cast<TextboxView *>(objeto_sel))
    objeto_sel->setPos(evento->pos());
  }
 
@@ -332,7 +332,7 @@ void OGRelacionamento::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
  {
   /* Caso o usuário libere o botão esquerdo e objeto anteriormente
      selecionado seja um rótulo */
-  if(dynamic_cast<OGCaixaTexto *>(objeto_sel))
+  if(dynamic_cast<TextboxView *>(objeto_sel))
   {
    //Calcula o deslocamento do rótulo de sua posição inicial até a posição atual
    rel_base->setLabelDistance(idx_objeto_sel,

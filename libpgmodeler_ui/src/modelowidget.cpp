@@ -448,7 +448,7 @@ void ModeloWidget::manipularAdicaoObjeto(BaseObject *objeto)
    break;
 
    default:
-    item=new OGCaixaTexto(dynamic_cast<Textbox *>(obj_graf)); break;
+    item=new TextboxView(dynamic_cast<Textbox *>(obj_graf)); break;
    break;
   }
 

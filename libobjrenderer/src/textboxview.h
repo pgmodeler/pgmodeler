@@ -6,7 +6,7 @@
 #            da classe CaixaTexto. O sufixo OG foi adicionado ao nome da caixa para evitar conflitos
 #            de nomes entra a classe CaixaTexto da biblioteca libpgmodeler e a classe abaixo definida.
 #
-# Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef OG_CAIXA_TEXTO_H
-#define OG_CAIXA_TEXTO_H
+#ifndef TEXTBOX_VIEW_H
+#define TEXTBOX_VIEW_H
 
 #include "textbox.h"
 #include "baseobjectview.h"
 
-class OGCaixaTexto: public BaseObjectView {
+class TextboxView: public BaseObjectView {
  private:
   Q_OBJECT
 
@@ -41,8 +41,8 @@ class OGCaixaTexto: public BaseObjectView {
   QGraphicsSimpleTextItem *texto;
 
  public:
-  OGCaixaTexto(Textbox *caixa, const QBrush &brush=Qt::NoBrush, const QPen &pen=Qt::NoPen);
-  ~OGCaixaTexto(void);
+  TextboxView(Textbox *caixa, const QBrush &brush=Qt::NoBrush, const QPen &pen=Qt::NoPen);
+  ~TextboxView(void);
 
  protected slots:
   void configureObject(void);

@@ -8,7 +8,7 @@
 #            de se criar esta classe com esse fim específico evitando
 #            a redundância de código e de objetos gráficos.
 #
-# Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

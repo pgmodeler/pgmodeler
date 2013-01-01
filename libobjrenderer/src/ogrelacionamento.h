@@ -7,7 +7,7 @@
 #            da classe para evitar conflitos de nomes entra a classe Tabela da biblioteca
 #            libpgmodeler e a classe abaixo definida.
 #
-# Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #ifndef OG_RELACIONAMENTO_H
 #define OG_RELACIONAMENTO_H
 
-#include "ogcaixatexto.h"
+#include "textboxview.h"
 #include "ogtabelabase.h"
 #include "relationship.h"
 
@@ -42,7 +42,7 @@ class OGRelacionamento: public BaseObjectView {
   QPainterPath shape_rel;
 
   //Armazena a representação gráfica dos rótulos
-  OGCaixaTexto *rotulos[3];
+  TextboxView *rotulos[3];
 
   //Armazena a representação gráfica das tabelas envolvidas no relacionamento
   OGTabelaBase *tabelas[2];
@@ -99,7 +99,7 @@ class OGRelacionamento: public BaseObjectView {
   void configurarLinha(void);
 
   //Obtém um rótulo através do índice
-  OGCaixaTexto *obterRotulo(unsigned idx_rot);
+  TextboxView *obterRotulo(unsigned idx_rot);
 
  private slots:
   //Configura o objeto relacionamento completo

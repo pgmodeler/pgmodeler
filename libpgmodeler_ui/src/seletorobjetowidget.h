@@ -8,7 +8,7 @@
 #            do próprio seletor, usados para limpar o campo e para abrir a janela
 #            de seleção.
 #
-# Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

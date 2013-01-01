@@ -4,7 +4,7 @@
 # Classe: FormRestrauracaoModelos
 # Description:Formulário de restauração de modelos temporários
 #
-# Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

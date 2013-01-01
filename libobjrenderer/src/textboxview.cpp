@@ -1,6 +1,6 @@
-#include "ogcaixatexto.h"
+#include "textboxview.h"
 
-OGCaixaTexto::OGCaixaTexto(Textbox *cxtexto, const QBrush &brush, const QPen &pen) : BaseObjectView(cxtexto)
+TextboxView::TextboxView(Textbox *cxtexto, const QBrush &brush, const QPen &pen) : BaseObjectView(cxtexto)
 {
  connect(cxtexto, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 
@@ -27,7 +27,7 @@ OGCaixaTexto::OGCaixaTexto(Textbox *cxtexto, const QBrush &brush, const QPen &pe
  this->configureObject();
 }
 
-OGCaixaTexto::~OGCaixaTexto(void)
+TextboxView::~TextboxView(void)
 {
  disconnect(this, SLOT(configureObject(void)));
 
@@ -37,7 +37,7 @@ OGCaixaTexto::~OGCaixaTexto(void)
  delete(texto);
 }
 
-void OGCaixaTexto::configureObject(void)
+void TextboxView::configureObject(void)
 {
  Textbox *cxtexto=dynamic_cast<Textbox *>(this->getSourceObject());
  QTextCharFormat fmt=font_config[ParsersAttributes::GLOBAL];

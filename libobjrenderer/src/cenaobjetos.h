@@ -5,7 +5,7 @@
 # Description:Esta classe deriva a classe QGraphicsScene e implementa a visualização
 #            e outras operações relacionados aos objetos gráficos do modelo.
 #
-# Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ class CenaObjetos: public QGraphicsScene {
 
   QGraphicsLineItem *linha_rel;
 
-  //Método utilitário para alinhar um pont �  grade
+  //Método utilitário para alinhar um pont �  grade
   static QPointF alinharPontoGrade(const QPointF &pnt);
 
  protected:

@@ -8,7 +8,7 @@
 #            é usada como auxiliar em formulários os quais trabalham com vários objetos
 #            filhos de um objeto pai único (ex.: Tabelas, Indices, Restrições).
 #
-# Copyright 2006-2012 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
