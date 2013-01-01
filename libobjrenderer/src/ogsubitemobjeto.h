@@ -24,9 +24,9 @@
 
 #include "view.h"
 #include "table.h"
-#include "objetografico.h"
+#include "baseobjectview.h"
 
-class OGSubItemObjeto: public ObjetoGrafico
+class OGSubItemObjeto: public BaseObjectView
 {
  private:
   Q_OBJECT
@@ -71,10 +71,10 @@ class OGSubItemObjeto: public ObjetoGrafico
   ~OGSubItemObjeto(void);
 
   //Configura o subitem como uma referência de visão
-  void configurarObjeto(Reference referencia);
+  void configureObject(Reference referencia);
 
   //Configura o subitem como um objeto de tabela
-  void configurarObjeto(void);
+  void configureObject(void);
 
   //Define a posição horizontal de um objeto filho
   void definirPosXObjetoFilho(unsigned idx_obj, float px);

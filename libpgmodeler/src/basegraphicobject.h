@@ -95,7 +95,7 @@ class BaseGraphicObject: public QObject, public BaseObject {
   void s_objectProtected(bool);
 
   friend class CenaObjetos;
-  friend class ObjetoGrafico;
+  friend class BaseObjectView;
   friend class DatabaseModel;
 };
 

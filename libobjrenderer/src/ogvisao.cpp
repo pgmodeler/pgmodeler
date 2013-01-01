@@ -2,12 +2,12 @@
 
 OGVisao::OGVisao(View *visao) : OGTabelaBase(visao)
 {
- connect(visao, SIGNAL(s_objectModified(void)), this, SLOT(configurarObjeto(void)));
+ connect(visao, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 
  referencias=new QGraphicsItemGroup;
  referencias->setZValue(1);
  this->addToGroup(referencias);
- this->configurarObjeto();
+ this->configureObject();
 }
 
 OGVisao::~OGVisao(void)
@@ -16,9 +16,9 @@ OGVisao::~OGVisao(void)
  delete(referencias);
 }
 
-void OGVisao::configurarObjeto(void)
+void OGVisao::configureObject(void)
 {
- View *visao=dynamic_cast<View *>(this->obterObjetoOrigem());
+ View *visao=dynamic_cast<View *>(this->getSourceObject());
  QPolygonF pol;
  int i, qtd;
  Reference ref_visao;
@@ -28,7 +28,7 @@ void OGVisao::configurarObjeto(void)
  QList<QGraphicsItem *> subitens;
 
  //Configura o título da visão
- titulo->configurarObjeto(visao);
+ titulo->configureObject(visao);
 
  //Obtém a quantidade de referências na parte SELECT
  qtd=visao->getReferenceCount(Reference::SQL_REFER_SELECT);
@@ -59,8 +59,8 @@ void OGVisao::configurarObjeto(void)
 
   //Configura o subitem (referência)
   referencias->removeFromGroup(referencia);
-  referencia->configurarObjeto(ref_visao);
-  referencia->moveBy(ESP_HORIZONTAL, (i * referencia->boundingRect().height()) + ESP_VERTICAL);
+  referencia->configureObject(ref_visao);
+  referencia->moveBy(HORIZ_SPACING, (i * referencia->boundingRect().height()) + VERT_SPACING);
   //Adiciona a referência configurada ao grupo
   referencias->addToGroup(referencia);
  }
@@ -78,9 +78,9 @@ void OGVisao::configurarObjeto(void)
  /* Calcula a maior largura dentre o título e corpo de referências. Esta largura
     é usada como largura uniforme de toda a visão */
  if(referencias->boundingRect().width() > titulo->boundingRect().width())
-  larg=referencias->boundingRect().width() + (2 * ESP_HORIZONTAL);
+  larg=referencias->boundingRect().width() + (2 * HORIZ_SPACING);
  else
-  larg=titulo->boundingRect().width() + (2 * ESP_HORIZONTAL);
+  larg=titulo->boundingRect().width() + (2 * HORIZ_SPACING);
 
  titulo->redimensionarTitulo(larg, titulo->boundingRect().height());
 
@@ -90,13 +90,13 @@ void OGVisao::configurarObjeto(void)
  pol.append(QPointF(0.0f,1.0f));
 
  //Redimensiona o polígono do corpo de referências
- this->redimensionarPoligono(pol, larg, referencias->boundingRect().height() + (2 * ESP_VERTICAL));
+ this->resizePolygon(pol, larg, referencias->boundingRect().height() + (2 * VERT_SPACING));
 
  corpo->setPolygon(pol);
- corpo->setBrush(this->obterEstiloPreenchimento(ParsersAttributes::VIEW_BODY));
+ corpo->setBrush(this->getFillStyle(ParsersAttributes::VIEW_BODY));
 
  //Define que a borda de visão é traceja
- pen=this->obterEstiloBorda(ParsersAttributes::VIEW_BODY);
+ pen=this->getBorderStyle(ParsersAttributes::VIEW_BODY);
  pen.setStyle(Qt::DashLine);
 
  corpo->setPen(pen);
@@ -110,13 +110,13 @@ void OGVisao::configurarObjeto(void)
   referencia=dynamic_cast<OGSubItemObjeto *>(subitens.front());
   subitens.pop_front();
   referencia->definirPosXObjetoFilho(3, corpo->boundingRect().width() -
-                                     referencia->boundingRect().width() - (2 * ESP_HORIZONTAL));
+                                     referencia->boundingRect().width() - (2 * HORIZ_SPACING));
  }
 
 
  //Reposiciona o ícone de proteção da visão na extrema direita do título
- icone_protegido->setPos(titulo->pos().x() + titulo->boundingRect().width() * 0.925f,
-                         2 * ESP_VERTICAL);
+ protected_icon->setPos(titulo->pos().x() + titulo->boundingRect().width() * 0.925f,
+                         2 * VERT_SPACING);
 
  /* Define o retângulo de dimensão da visão como sendo o ponto inicial o topLeft() do título
     e a largura sendo a do corpo de referências, já a altura da visão é a soma das alturas
@@ -125,8 +125,8 @@ void OGVisao::configurarObjeto(void)
  this->bounding_rect.setWidth(corpo->boundingRect().width());
  this->bounding_rect.setHeight(titulo->boundingRect().height() + corpo->boundingRect().height() - 1);
 
- ObjetoGrafico::configurarObjeto();
- ObjetoGrafico::configurarSombraObjeto();
- ObjetoGrafico::configurarSelecaoObjeto();
+ BaseObjectView::__configureObject();
+ BaseObjectView::configureObjectShadow();
+ BaseObjectView::configureObjectSelection();
 }
 

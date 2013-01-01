@@ -1,8 +1,8 @@
 #include "ogcaixatexto.h"
 
-OGCaixaTexto::OGCaixaTexto(Textbox *cxtexto, const QBrush &brush, const QPen &pen) : ObjetoGrafico(cxtexto)
+OGCaixaTexto::OGCaixaTexto(Textbox *cxtexto, const QBrush &brush, const QPen &pen) : BaseObjectView(cxtexto)
 {
- connect(cxtexto, SIGNAL(s_objectModified(void)), this, SLOT(configurarObjeto(void)));
+ connect(cxtexto, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 
  //Aloca os objetos que definem a representação gráfica de caixa de texto
  caixa=new QGraphicsPolygonItem;
@@ -11,8 +11,8 @@ OGCaixaTexto::OGCaixaTexto(Textbox *cxtexto, const QBrush &brush, const QPen &pe
  //Caso o brush ou pen não estejam especificados usa a cor padrão da caixa de texto
  if(brush.style()==Qt::NoBrush || pen.style()==Qt::NoPen)
  {
-  caixa->setBrush(this->obterEstiloPreenchimento(BaseObject::getSchemaName(OBJ_TEXTBOX)));
-  caixa->setPen(this->pen=this->obterEstiloBorda(BaseObject::getSchemaName(OBJ_TEXTBOX)));
+  caixa->setBrush(this->getFillStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
+  caixa->setPen(this->pen=this->getBorderStyle(BaseObject::getSchemaName(OBJ_TEXTBOX)));
  }
  else
  {
@@ -24,12 +24,12 @@ OGCaixaTexto::OGCaixaTexto(Textbox *cxtexto, const QBrush &brush, const QPen &pe
  //Agrupa os objetos alocados e efetua a configuração gráfica da caixa de texto
  this->addToGroup(texto);
  this->addToGroup(caixa);
- this->configurarObjeto();
+ this->configureObject();
 }
 
 OGCaixaTexto::~OGCaixaTexto(void)
 {
- disconnect(this, SLOT(configurarObjeto(void)));
+ disconnect(this, SLOT(configureObject(void)));
 
  this->removeFromGroup(caixa);
  this->removeFromGroup(texto);
@@ -37,10 +37,10 @@ OGCaixaTexto::~OGCaixaTexto(void)
  delete(texto);
 }
 
-void OGCaixaTexto::configurarObjeto(void)
+void OGCaixaTexto::configureObject(void)
 {
- Textbox *cxtexto=dynamic_cast<Textbox *>(this->obterObjetoOrigem());
- QTextCharFormat fmt=config_fonte[ParsersAttributes::GLOBAL];
+ Textbox *cxtexto=dynamic_cast<Textbox *>(this->getSourceObject());
+ QTextCharFormat fmt=font_config[ParsersAttributes::GLOBAL];
  QFont fonte;
  QPolygonF poligono;
 
@@ -67,25 +67,25 @@ void OGCaixaTexto::configurarObjeto(void)
  texto->setBrush(cxtexto->getTextColor());
 
  //Move o texto para a posição inicial considerando os espaçamentos vertical e horizontal
- texto->setPos(ESP_HORIZONTAL, ESP_VERTICAL);
+ texto->setPos(HORIZ_SPACING, VERT_SPACING);
 
  /* Redimensiona o polígono da caixa de texto para que seu tamanho seja compatível
     com o tamanho do texto */
- this->redimensionarPoligono(poligono, roundf(texto->boundingRect().width() + (2 * ESP_HORIZONTAL)),
-                                       roundf(texto->boundingRect().height() + (2* ESP_VERTICAL)));
+ this->resizePolygon(poligono, roundf(texto->boundingRect().width() + (2 * HORIZ_SPACING)),
+                                       roundf(texto->boundingRect().height() + (2* VERT_SPACING)));
  caixa->setPos(0,0);
  caixa->setPolygon(poligono);
 
  /* Configura a posição do ícone de protegido do objeto, para que
     este esteja situado no canto inferior direito da caixa de texto */
- icone_protegido->setPos(caixa->boundingRect().right() - (icone_protegido->boundingRect().width() + 2 * ESP_HORIZONTAL),
-                         caixa->boundingRect().bottom()- (icone_protegido->boundingRect().height() + 2 * ESP_VERTICAL));
+ protected_icon->setPos(caixa->boundingRect().right() - (protected_icon->boundingRect().width() + 2 * HORIZ_SPACING),
+                         caixa->boundingRect().bottom()- (protected_icon->boundingRect().height() + 2 * VERT_SPACING));
 
  this->bounding_rect.setTopLeft(caixa->boundingRect().topLeft());
  this->bounding_rect.setBottomRight(caixa->boundingRect().bottomRight());
 
- ObjetoGrafico::configurarObjeto();
- ObjetoGrafico::configurarSombraObjeto();
- ObjetoGrafico::configurarSelecaoObjeto();
+ BaseObjectView::__configureObject();
+ BaseObjectView::configureObjectShadow();
+ BaseObjectView::configureObjectSelection();
 }
 

@@ -24,9 +24,9 @@
 
 #include "view.h"
 #include "table.h"
-#include "objetografico.h"
+#include "baseobjectview.h"
 
-class OGTituloObjeto: public ObjetoGrafico
+class OGTituloObjeto: public BaseObjectView
 {
  private:
   Q_OBJECT
@@ -38,11 +38,13 @@ class OGTituloObjeto: public ObjetoGrafico
   QGraphicsSimpleTextItem *nome,
                           *esquema;
 
+  void configureObject(void){}
+
  public:
   OGTituloObjeto(void);
   ~OGTituloObjeto(void);
 
-  void configurarObjeto(BaseGraphicObject *objeto);
+  void configureObject(BaseGraphicObject *objeto);
   void redimensionarTitulo(float larg, float alt);
 };
 

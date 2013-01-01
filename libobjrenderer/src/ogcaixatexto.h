@@ -24,9 +24,9 @@
 #define OG_CAIXA_TEXTO_H
 
 #include "textbox.h"
-#include "objetografico.h"
+#include "baseobjectview.h"
 
-class OGCaixaTexto: public ObjetoGrafico {
+class OGCaixaTexto: public BaseObjectView {
  private:
   Q_OBJECT
 
@@ -45,7 +45,7 @@ class OGCaixaTexto: public ObjetoGrafico {
   ~OGCaixaTexto(void);
 
  protected slots:
-  void configurarObjeto(void);
+  void configureObject(void);
 };
 
 #endif

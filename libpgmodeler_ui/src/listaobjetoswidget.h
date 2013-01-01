@@ -24,7 +24,7 @@
 
 #include "ui_listaobjetoswidget.h"
 #include "objetobasewidget.h"
-#include "objetografico.h"
+#include "baseobjectview.h"
 
 class ListaObjetosWidget: public ObjetoBaseWidget, public Ui::ListaObjetosWidget {
  Q_OBJECT

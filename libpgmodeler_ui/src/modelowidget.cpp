@@ -566,7 +566,7 @@ void ModeloWidget::manipularModificacaoObjeto(BaseGraphicObject *objeto)
 void ModeloWidget::configurarSelecaoObjetos(void)
 {
  QList<QGraphicsItem *> itens=cena->selectedItems();
- ObjetoGrafico *item=NULL;
+ BaseObjectView *item=NULL;
  map<unsigned, QGraphicsItem *> mapa_objs;
  deque<unsigned> vet_ordenacao;
 
@@ -577,14 +577,14 @@ void ModeloWidget::configurarSelecaoObjetos(void)
  while(!itens.isEmpty())
  {
   //Obtém um item da lista de objetos da cena
-  item=dynamic_cast<ObjetoGrafico *>(itens.front());
+  item=dynamic_cast<BaseObjectView *>(itens.front());
   itens.pop_front();
 
   if(item)
   {
    //Armazena o objeto origem da representação gráfica no mapa para ordenação posterior
-   mapa_objs[item->obterOrdemSelecao()]=item;
-   vet_ordenacao.push_front(item->obterOrdemSelecao());
+   mapa_objs[item->getSelectionOrder()]=item;
+   vet_ordenacao.push_front(item->getSelectionOrder());
   }
  }
 
@@ -595,8 +595,8 @@ void ModeloWidget::configurarSelecaoObjetos(void)
  while(!vet_ordenacao.empty())
  {
   //Armazena o objeto origem da representação gráfica na lista de objetos selecionados
-  item=dynamic_cast<ObjetoGrafico *>(mapa_objs[vet_ordenacao.front()]);
-  objs_selecionados.push_back(item->obterObjetoOrigem());
+  item=dynamic_cast<BaseObjectView *>(mapa_objs[vet_ordenacao.front()]);
+  objs_selecionados.push_back(item->getSourceObject());
   vet_ordenacao.pop_front();
  }
 
@@ -624,7 +624,7 @@ void ModeloWidget::configurarSelecaoObjetos(void)
        QApplication::keyboardModifiers()==0)
     {
      BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(objs_selecionados[0]);
-     ObjetoGrafico *objeto=dynamic_cast<ObjetoGrafico *>(obj_graf->getReceiverObject());
+     BaseObjectView *objeto=dynamic_cast<BaseObjectView *>(obj_graf->getReceiverObject());
 
      cena->exibirLinhaRelacionamento(true,
                                      QPointF(objeto->scenePos().x() + objeto->boundingRect().width()/2,

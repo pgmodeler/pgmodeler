@@ -1,6 +1,6 @@
 #include "ogtituloobjeto.h"
 
-OGTituloObjeto::OGTituloObjeto(void) : ObjetoGrafico(NULL)
+OGTituloObjeto::OGTituloObjeto(void) : BaseObjectView(NULL)
 {
  esquema=new QGraphicsSimpleTextItem;
  esquema->setZValue(1);
@@ -26,7 +26,7 @@ OGTituloObjeto::~OGTituloObjeto(void)
  delete(caixa);
 }
 
-void OGTituloObjeto::configurarObjeto(BaseGraphicObject *objeto)
+void OGTituloObjeto::configureObject(BaseGraphicObject *objeto)
 {
  QTextCharFormat fmt;
  QString atrib_nome, atrib_nome_esquema, atrib_cor_titulo;
@@ -55,20 +55,20 @@ void OGTituloObjeto::configurarObjeto(BaseGraphicObject *objeto)
  }
 
  //Configura o descritor de esquema do objeto
- fmt=config_fonte[atrib_nome_esquema];
+ fmt=font_config[atrib_nome_esquema];
  esquema->setFont(fmt.font());
  esquema->setBrush(fmt.foreground());
  esquema->setText(QString::fromUtf8(objeto->getSchema()->getName() + "."));
 
  //Configura o descritor de nome do objeto
- fmt=config_fonte[atrib_nome];
+ fmt=font_config[atrib_nome];
  nome->setFont(fmt.font());
  nome->setBrush(fmt.foreground());
  nome->setText(QString::fromUtf8(objeto->getName()));
 
  //Configura a caixa do título
- caixa->setBrush(this->obterEstiloPreenchimento(atrib_cor_titulo));
- pen=this->obterEstiloBorda(atrib_cor_titulo);
+ caixa->setBrush(this->getFillStyle(atrib_cor_titulo));
+ pen=this->getBorderStyle(atrib_cor_titulo);
 
  //Caso especial para visão: a borda do título é pontilhada
  if(objeto->getObjectType()==OBJ_VIEW)
@@ -76,8 +76,8 @@ void OGTituloObjeto::configurarObjeto(BaseGraphicObject *objeto)
  caixa->setPen(pen);
 
  //Define uma dimensão padrão para o título
- this->redimensionarTitulo(nome->boundingRect().width() + esquema->boundingRect().width() + (2 * ESP_HORIZONTAL),
-                           esquema->boundingRect().height() + (2 * ESP_VERTICAL));
+ this->redimensionarTitulo(nome->boundingRect().width() + esquema->boundingRect().width() + (2 * HORIZ_SPACING),
+                           esquema->boundingRect().height() + (2 * VERT_SPACING));
 }
 
 void OGTituloObjeto::redimensionarTitulo(float larg, float alt)
@@ -95,12 +95,12 @@ void OGTituloObjeto::redimensionarTitulo(float larg, float alt)
  }
 
  //Redimensiona o polígono e o atribui a caixa
- this->redimensionarPoligono(pol, larg, alt);
+ this->resizePolygon(pol, larg, alt);
  caixa->setPolygon(pol);
 
  //Define as posições das caixas de esquema e nome
- esquema->setPos((caixa->boundingRect().width() - (esquema->boundingRect().width() + nome->boundingRect().width()))/2.0f, ESP_VERTICAL);
- nome->setPos(esquema->pos().x() + esquema->boundingRect().width(), ESP_VERTICAL);
+ esquema->setPos((caixa->boundingRect().width() - (esquema->boundingRect().width() + nome->boundingRect().width()))/2.0f, VERT_SPACING);
+ nome->setPos(esquema->pos().x() + esquema->boundingRect().width(), VERT_SPACING);
 
  //O retângulo de dimensão do título será o próprio retângulo de dimensão da caixa
  this->bounding_rect.setTopLeft(this->pos());

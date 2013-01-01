@@ -157,7 +157,7 @@ void CenaObjetos::exibirLinhaRelacionamento(bool valor, const QPointF &p)
 {
  QList<QGraphicsItem *> itens=this->items();
  QGraphicsItem::GraphicsItemFlags flags;
- ObjetoGrafico *objeto=NULL;
+ BaseObjectView *objeto=NULL;
  BaseGraphicObject *obj_base=NULL;
 
  if(!isnan(p.x()) && !isnan(p.y()))
@@ -173,11 +173,11 @@ void CenaObjetos::exibirLinhaRelacionamento(bool valor, const QPointF &p)
   flags=QGraphicsItem::ItemIsSelectable |
         QGraphicsItem::ItemSendsGeometryChanges;
 
-  objeto=dynamic_cast<ObjetoGrafico *>(itens.front());
+  objeto=dynamic_cast<BaseObjectView *>(itens.front());
 
-  if(objeto && objeto->obterObjetoOrigem())
+  if(objeto && objeto->getSourceObject())
   {
-   obj_base=dynamic_cast<BaseGraphicObject *>(objeto->obterObjetoOrigem());
+   obj_base=dynamic_cast<BaseGraphicObject *>(objeto->getSourceObject());
 
    /* Caso o objeto gráfico seja uma tabela, visão ou caixa texto, ativa
       a flag de movimento caso o mesmo não esteja protegido */
@@ -271,7 +271,7 @@ void CenaObjetos::addItem(QGraphicsItem *item)
  {
   OGRelacionamento *rel=dynamic_cast<OGRelacionamento *>(item);
   OGTabela *tab=dynamic_cast<OGTabela *>(item);
-  ObjetoGrafico *obj=dynamic_cast<ObjetoGrafico *>(item);
+  BaseObjectView *obj=dynamic_cast<BaseObjectView *>(item);
 
   /* Caso particular para classes OGRelacionamento e OGTabela:
      conecta os sinais quando novos objetos dos tipos acima são
@@ -284,7 +284,7 @@ void CenaObjetos::addItem(QGraphicsItem *item)
            this, SLOT(sinalizarObjetoFilhoSelecionado(TableObject*)));
 
   if(obj)
-   connect(obj, SIGNAL(s_objetoSelecionado(BaseGraphicObject*,bool)),
+   connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)),
            this, SLOT(sinalizarObjetoSelecionado(BaseGraphicObject*,bool)));
 
   QGraphicsScene::addItem(item);
@@ -295,7 +295,7 @@ void CenaObjetos::removeItem(QGraphicsItem *item)
 {
  if(item)
  {
-  ObjetoGrafico *objeto=dynamic_cast<ObjetoGrafico *>(item);
+  BaseObjectView *objeto=dynamic_cast<BaseObjectView *>(item);
   OGRelacionamento *rel=dynamic_cast<OGRelacionamento *>(item);
   OGTabela *tab=dynamic_cast<OGTabela *>(item);
 
@@ -337,11 +337,11 @@ void CenaObjetos::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evento)
  if(this->selectedItems().size()==1 && evento->buttons()==Qt::LeftButton)
  {
   //Obtém o objeto gráfico selecionado
-  ObjetoGrafico *obj=dynamic_cast<ObjetoGrafico *>(this->selectedItems().at(0));
+  BaseObjectView *obj=dynamic_cast<BaseObjectView *>(this->selectedItems().at(0));
 
   //Caso seja mesmo um objeto, emite o sinal com o objeto de origem
   if(obj)
-   emit s_objetoDuploClique(dynamic_cast<BaseGraphicObject *>(obj->obterObjetoOrigem()));
+   emit s_objetoDuploClique(dynamic_cast<BaseGraphicObject *>(obj->getSourceObject()));
  }
 }
 
@@ -392,7 +392,7 @@ void CenaObjetos::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
    }
 
    /*Caso o alinhamento esteja ativo e haja objetos selecionados efetua o alinhamento
-     do ponto (posição do evento �   grade */
+     do ponto (posição do evento �   grade */
    if(alin_objs_grade && !ret_selecao->isVisible())
     evento->setScenePos(this->alinharPontoGrade(evento->scenePos()));
    else if(ret_selecao->isVisible())
@@ -404,8 +404,8 @@ void CenaObjetos::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
     pol.append(QPointF(evento->scenePos().x(), evento->scenePos().y()));
     pol.append(QPointF(sel_ini.x(), evento->scenePos().y()));
     ret_selecao->setPolygon(pol);
-    ret_selecao->setBrush(ObjetoGrafico::obterEstiloPreenchimento(ParsersAttributes::OBJ_SELECTION));
-    ret_selecao->setPen(ObjetoGrafico::obterEstiloBorda(ParsersAttributes::OBJ_SELECTION));
+    ret_selecao->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION));
+    ret_selecao->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION));
    }
   }
  }
@@ -529,7 +529,7 @@ void CenaObjetos::alinharObjetosGrade(void)
  qtd=itens.size();
  for(i=0; i < qtd; i++)
  {
-  /* Obtém somente os objetos que são convertido �   classe QGraphicsItemGroup e
+  /* Obtém somente os objetos que são convertido �   classe QGraphicsItemGroup e
      que não tenham objeto pai. Isso é feito pois o método items() retorna TODOS
      os itens desconsiderando se eles pertencem ou não a grupos, e isso no contexto
      dos objetos do modelo é errado pois todos os objetos do grupo precisam ser alinhados
@@ -543,26 +543,26 @@ void CenaObjetos::alinharObjetosGrade(void)
 
    //Caso o item foi convertido para tabela
    if(tab)
-    //Move o objeto usando o método setPos da classe OGTabelaBase com o ponto alinhado�   grade
+    //Move o objeto usando o método setPos da classe OGTabelaBase com o ponto alinhado�   grade
     tab->setPos(this->alinharPontoGrade(tab->pos()));
    /* Caso o item foi convertido para relacionamento, efetua um tratamento diferenciado,
       movendo pontos e rótulos individualmente */
    else if(rel)
    {
     //Obtém os pontos do relacionamento, alinha-os e os reatribui ao relacionamento
-    pontos=rel->obterObjetoOrigem()->getPoints();
+    pontos=rel->getSourceObject()->getPoints();
     qtd1=pontos.size();
     for(i1=0; i1 < qtd1; i1++)
      pontos[i1]=this->alinharPontoGrade(pontos[i1]);
 
     if(qtd1 > 0)
     {
-     rel->obterObjetoOrigem()->setPoints(pontos);
+     rel->getSourceObject()->setPoints(pontos);
      //Reconfigura a linha após o alinhamento dos pontos
      rel->configurarLinha();
     }
 
-    //Alinha os rótulos�   grade
+    //Alinha os rótulos�   grade
     for(i1=BaseRelationship::LABEL_SRC_CARD;
         i1<=BaseRelationship::LABEL_REL_NAME; i1++)
     {

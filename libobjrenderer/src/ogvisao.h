@@ -38,7 +38,7 @@ class OGVisao: public OGTabelaBase {
   ~OGVisao(void);
 
  private slots:
-  void configurarObjeto(void);
+  void configureObject(void);
 };
 
 #endif

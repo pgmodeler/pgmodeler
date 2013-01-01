@@ -148,7 +148,7 @@ void ConfAparenciaWidget::carregarConfiguracao(void)
   int i, qtd=itens_conf.size();
 
   //Carrega o arquivo de estilo de objetos
-  ObjetoGrafico::carregarEstiloObjetos();
+  BaseObjectView::loadObjectsStyle();
 
   //Cria os objetos de exemplo
   this->criarObjetosExemplo();
@@ -160,20 +160,20 @@ void ConfAparenciaWidget::carregarConfiguracao(void)
    if(itens_conf[i].conf_obj)
    {
     //Obtém o estilo de preenchimento e da borda e os armazena no item atual
-    ObjetoGrafico::obterEstiloPreenchimento(itens_conf[i].id_conf,
+    BaseObjectView::getFillStyle(itens_conf[i].id_conf,
                                             itens_conf[i].cores[0], itens_conf[i].cores[1]);
-    itens_conf[i].cores[2]=ObjetoGrafico::obterEstiloBorda(itens_conf[i].id_conf).color();
+    itens_conf[i].cores[2]=BaseObjectView::getBorderStyle(itens_conf[i].id_conf).color();
    }
    else
     //Caso o item atual seja um elemento de configuração de fonte, obtém o estilo de fonte respectivo
-    itens_conf[i].fmt_fonte=ObjetoGrafico::obterEstiloFonte(itens_conf[i].id_conf);
+    itens_conf[i].fmt_fonte=BaseObjectView::getFontStyle(itens_conf[i].id_conf);
   }
 
   //Inicializa o formulário de configuração de aparência
   this->habilitarElemConfiguracao();
 
   //Marca no combo de fontes, a fonte global
-  fonte_cmb->setCurrentFont(ObjetoGrafico::obterEstiloFonte(ParsersAttributes::GLOBAL).font());
+  fonte_cmb->setCurrentFont(BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font());
 
   //Define todos os objetos do modelo de exemplo como modificados, forçando seu redesenho
   modelo->setObjectsModified();
@@ -298,7 +298,7 @@ void ConfAparenciaWidget::habilitarElemConfiguracao(void)
     preenche os widgets com os dados da fonte */
  if(!itens_conf[idx].conf_obj)
  {
-  QTextCharFormat fmt=ObjetoGrafico::obterEstiloFonte(itens_conf[idx].id_conf);
+  QTextCharFormat fmt=BaseObjectView::getFontStyle(itens_conf[idx].id_conf);
   pal.setColor(QPalette::Button, fmt.foreground());
   cor1_tb->setPalette(pal);
   sublinhado_chk->setChecked(fmt.font().underline());
@@ -313,7 +313,7 @@ void ConfAparenciaWidget::habilitarElemConfiguracao(void)
  {
   QColor cor1, cor2;
 
-  ObjetoGrafico::obterEstiloPreenchimento(itens_conf[idx].id_conf, cor1, cor2);
+  BaseObjectView::getFillStyle(itens_conf[idx].id_conf, cor1, cor2);
 
   pal.setColor(QPalette::Button, cor1);
   cor1_tb->setPalette(pal);
@@ -321,7 +321,7 @@ void ConfAparenciaWidget::habilitarElemConfiguracao(void)
   pal.setColor(QPalette::Button, cor2);
   cor2_tb->setPalette(pal);
 
-  pal.setColor(QPalette::Button, ObjetoGrafico::obterEstiloBorda(itens_conf[idx].id_conf).color());
+  pal.setColor(QPalette::Button, BaseObjectView::getBorderStyle(itens_conf[idx].id_conf).color());
   cor3_tb->setPalette(pal);
 
   sublinhado_chk->setChecked(false);
@@ -371,14 +371,14 @@ void ConfAparenciaWidget::aplicarCorElemento(void)
 
     //Atribui a cor configurada ao elemento atual
     itens_conf[elemento_cmb->currentIndex()].cores[idx_cor]=cor_dlg.selectedColor();
-    ObjetoGrafico::definirCorElemento(itens_conf[elemento_cmb->currentIndex()].id_conf, cor_dlg.selectedColor(), idx_cor);
+    BaseObjectView::setElementColor(itens_conf[elemento_cmb->currentIndex()].id_conf, cor_dlg.selectedColor(), idx_cor);
    }
    //Caso seja uma configuração de fonte
    else
    {
     //Atribui a cor selecionada   cor da fonte do elemento atual
     itens_conf[elemento_cmb->currentIndex()].fmt_fonte.setForeground(cor_dlg.selectedColor());
-    ObjetoGrafico::definirEstiloFonte(itens_conf[elemento_cmb->currentIndex()].id_conf,
+    BaseObjectView::setFontStyle(itens_conf[elemento_cmb->currentIndex()].id_conf,
                                       itens_conf[elemento_cmb->currentIndex()].fmt_fonte);
    }
 
@@ -402,7 +402,7 @@ void ConfAparenciaWidget::aplicarEstiloFonte(void)
 
  //Atribui a fonte configurada ao elemento
  itens_conf[elemento_cmb->currentIndex()].fmt_fonte.setFont(fonte);
- ObjetoGrafico::definirEstiloFonte(itens_conf[elemento_cmb->currentIndex()].id_conf,
+ BaseObjectView::setFontStyle(itens_conf[elemento_cmb->currentIndex()].id_conf,
                                    itens_conf[elemento_cmb->currentIndex()].fmt_fonte);
 
  //Atualiza o modelo de exemplo para exibir as modificações de aparência

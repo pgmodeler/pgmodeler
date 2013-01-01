@@ -9,7 +9,7 @@ const QString OGSubItemObjeto::TEXTO_NOT_NULL("nn");
 const QString OGSubItemObjeto::DELIMITADOR_REST_INI("«");
 const QString OGSubItemObjeto::DELIMITADOR_REST_FIM("»");
 
-OGSubItemObjeto::OGSubItemObjeto(TableObject *objeto) : ObjetoGrafico(objeto)
+OGSubItemObjeto::OGSubItemObjeto(TableObject *objeto) : BaseObjectView(objeto)
 {
  //O descritor é alocado no método de configuração conforme o tipo do objeto de origem
  descritor=NULL;
@@ -38,13 +38,13 @@ OGSubItemObjeto::~OGSubItemObjeto(void)
 void OGSubItemObjeto::configurarDescritor(ConstraintType tipo_rest)
 {
  ObjectType tipo_obj=BASE_OBJECT;
- Column *coluna=dynamic_cast<Column *>(this->obterObjetoOrigem());
- float fator=config_fonte[ParsersAttributes::GLOBAL].font().pointSizeF()/TAM_PADRAO_FONTE;
+ Column *coluna=dynamic_cast<Column *>(this->getSourceObject());
+ float fator=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
  bool desc_elipse=false;
 
  //Obtém o tipo do objeto de origem, é com base nele que o descritor será alocado
- if(this->obterObjetoOrigem())
-  tipo_obj=this->obterObjetoOrigem()->getObjectType();
+ if(this->getSourceObject())
+  tipo_obj=this->getSourceObject()->getObjectType();
 
  /* Descritores em forma de elipse são alocados para colunas (com ou sem not-null)
     todos os demais tipos têm descritores poligonais */
@@ -96,8 +96,8 @@ void OGSubItemObjeto::configurarDescritor(ConstraintType tipo_rest)
     atrib=ParsersAttributes::COLUMN;
 
    //Configura o preenchimento de acordo com o atributo selecionado acima
-   desc->setBrush(this->obterEstiloPreenchimento(atrib));
-   desc->setPen(this->obterEstiloBorda(atrib));
+   desc->setBrush(this->getFillStyle(atrib));
+   desc->setPen(this->getBorderStyle(atrib));
   }
   //Configura o descritor poligonal
   else
@@ -131,14 +131,14 @@ void OGSubItemObjeto::configurarDescritor(ConstraintType tipo_rest)
    }
 
    if(fator!=1.0f)
-    this->redimensionarPoligono(pol,
+    this->resizePolygon(pol,
                                 pol.boundingRect().width() * fator,
                                 pol.boundingRect().height()  * fator);
 
    //Atribui o polígono configurado e configura o estilo de cores do descritor
    desc->setPolygon(pol);
-   desc->setBrush(this->obterEstiloPreenchimento(atrib));
-   desc->setPen(this->obterEstiloBorda(atrib));
+   desc->setBrush(this->getFillStyle(atrib));
+   desc->setPen(this->getBorderStyle(atrib));
   }
  }
  //Configura um descritor poligonal para indice, regra ou gatilho
@@ -146,7 +146,7 @@ void OGSubItemObjeto::configurarDescritor(ConstraintType tipo_rest)
          tipo_obj==OBJ_RULE ||
          tipo_obj==OBJ_TRIGGER)
  {
-  TableObject *objeto_tab=dynamic_cast<TableObject *>(this->obterObjetoOrigem());
+  TableObject *objeto_tab=dynamic_cast<TableObject *>(this->getSourceObject());
   QGraphicsPolygonItem *desc=dynamic_cast<QGraphicsPolygonItem *>(descritor);
   QPolygonF pol;
 
@@ -154,13 +154,13 @@ void OGSubItemObjeto::configurarDescritor(ConstraintType tipo_rest)
   pol.append(QPointF(9,9)); pol.append(QPointF(9,4));
 
   if(fator!=1.0f)
-   this->redimensionarPoligono(pol,
+   this->resizePolygon(pol,
                                pol.boundingRect().width() * fator ,
                                pol.boundingRect().height() * fator);
 
   desc->setPolygon(pol);
-  desc->setBrush(this->obterEstiloPreenchimento(objeto_tab->getSchemaName()));
-  desc->setPen(this->obterEstiloBorda(objeto_tab->getSchemaName()));
+  desc->setBrush(this->getFillStyle(objeto_tab->getSchemaName()));
+  desc->setPen(this->getBorderStyle(objeto_tab->getSchemaName()));
  }
  //Configura um descritor elíptico padrão (usado para referências de visões)
  else
@@ -169,20 +169,20 @@ void OGSubItemObjeto::configurarDescritor(ConstraintType tipo_rest)
 
   desc->setRect(QRectF(QPointF(0,0),
                        QSizeF(9.0f * fator, 9.0f * fator)));
-  desc->setBrush(this->obterEstiloPreenchimento(ParsersAttributes::REFERENCE));
-  desc->setPen(this->obterEstiloBorda(ParsersAttributes::REFERENCE));
+  desc->setBrush(this->getFillStyle(ParsersAttributes::REFERENCE));
+  desc->setPen(this->getBorderStyle(ParsersAttributes::REFERENCE));
  }
 }
 
-void OGSubItemObjeto::configurarObjeto(void)
+void OGSubItemObjeto::configureObject(void)
 {
  //Caso haja um objeto de tabela atribuído ao subitem
- if(this->obterObjetoOrigem())
+ if(this->getSourceObject())
  {
   QTextCharFormat fmt;
   float px;
   QString str_rest;
-  TableObject *objeto_tab=dynamic_cast<TableObject *>(this->obterObjetoOrigem());
+  TableObject *objeto_tab=dynamic_cast<TableObject *>(this->getSourceObject());
   Column *coluna=dynamic_cast<Column *>(objeto_tab);
   ConstraintType tipo_rest=ConstraintType::null;
 
@@ -197,39 +197,39 @@ void OGSubItemObjeto::configurarObjeto(void)
       obtém a formatação de fonte para o tipo da restrição */
    if(str_rest.find(TEXTO_PRIMARY_KEY)>=0)
    {
-    fmt=config_fonte[ParsersAttributes::PK_COLUMN];
+    fmt=font_config[ParsersAttributes::PK_COLUMN];
     tipo_rest=ConstraintType::primary_key;
    }
    else if(str_rest.find(TEXTO_FOREIGN_KEY)>=0)
    {
-    fmt=config_fonte[ParsersAttributes::FK_COLUMN];
+    fmt=font_config[ParsersAttributes::FK_COLUMN];
     tipo_rest=ConstraintType::foreign_key;
    }
    else if(str_rest.find(TEXTO_UNIQUE)>=0)
    {
-    fmt=config_fonte[ParsersAttributes::UQ_COLUMN];
+    fmt=font_config[ParsersAttributes::UQ_COLUMN];
     tipo_rest=ConstraintType::unique;
    }
    else if(str_rest.find(TEXTO_NOT_NULL)>=0)
-    fmt=config_fonte[ParsersAttributes::NN_COLUMN];
+    fmt=font_config[ParsersAttributes::NN_COLUMN];
    else
-    fmt=config_fonte[ParsersAttributes::COLUMN];
+    fmt=font_config[ParsersAttributes::COLUMN];
 
    if(coluna->isAddedByRelationship())
-    fmt=config_fonte[ParsersAttributes::INH_COLUMN];
+    fmt=font_config[ParsersAttributes::INH_COLUMN];
    else if(coluna->isProtected())
-    fmt=config_fonte[ParsersAttributes::PROT_COLUMN];
+    fmt=font_config[ParsersAttributes::PROT_COLUMN];
   }
   //Caso não seja uma coluna, obtém a formatação para o tipo do objeto de tabela
   else
-   fmt=config_fonte[objeto_tab->getSchemaName()];
+   fmt=font_config[objeto_tab->getSchemaName()];
 
   //Configura o descritor com o tipo da restrição
   configurarDescritor(tipo_rest);
 
   //Posiciona o descritor como o primeiro item
-  descritor->setPos(ESP_HORIZONTAL, 1);
-  px=descritor->pos().x() + descritor->boundingRect().width() + (2 * ESP_HORIZONTAL);
+  descritor->setPos(HORIZ_SPACING, 1);
+  px=descritor->pos().x() + descritor->boundingRect().width() + (2 * HORIZ_SPACING);
 
   /* Configurando os rótulos do subitem.
      Os rótulos do subitem têm o seguinte esquema: [nome do objeto] [tipo] [restrições] */
@@ -240,7 +240,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   px+=rotulos[0]->boundingRect().width();
 
   //Configura o rótulo de tipo
-  fmt=config_fonte[ParsersAttributes::OBJECT_TYPE];
+  fmt=font_config[ParsersAttributes::OBJECT_TYPE];
   if(coluna)
    rotulos[1]->setText(QString::fromUtf8(SEPARADOR_TIPO + (*coluna->getType())));
   else
@@ -249,12 +249,12 @@ void OGSubItemObjeto::configurarObjeto(void)
   rotulos[1]->setFont(fmt.font());
   rotulos[1]->setBrush(fmt.foreground());
   rotulos[1]->setPos(px, 0);
-  px+=rotulos[1]->boundingRect().width() + (3 * ESP_HORIZONTAL);
+  px+=rotulos[1]->boundingRect().width() + (3 * HORIZ_SPACING);
 
   /* Configura o rótulo de restrições. Para objetos índice, regras e gatilho
      o rótulo de restrições armazena informações sobre modo de disparo,
      eventos, entre outros */
-  fmt=config_fonte[ParsersAttributes::CONSTRAINTS];
+  fmt=font_config[ParsersAttributes::CONSTRAINTS];
   if(coluna)
    rotulos[2]->setText(QString::fromUtf8(str_rest));
   else
@@ -309,7 +309,7 @@ void OGSubItemObjeto::configurarObjeto(void)
   rotulos[2]->setPos(px, 0);
 
   //Calcula o retângulo de dimensão do subitem, que é composto pela junção de todas as dimensões dos objetos (descritor e rótulos)
-  descritor->setPos(ESP_HORIZONTAL, rotulos[0]->boundingRect().center().y() - descritor->boundingRect().center().y());
+  descritor->setPos(HORIZ_SPACING, rotulos[0]->boundingRect().center().y() - descritor->boundingRect().center().y());
   bounding_rect.setTopLeft(QPointF(descritor->boundingRect().left(), rotulos[0]->boundingRect().top()));
 
   //Caso particular: Caso o rótulo de restrições esteja vazio usa a dimensão do rótulo de tipo
@@ -320,7 +320,7 @@ void OGSubItemObjeto::configurarObjeto(void)
  }
 }
 
-void OGSubItemObjeto::configurarObjeto(Reference referencia)
+void OGSubItemObjeto::configureObject(Reference referencia)
 {
  QTextCharFormat fmt;
  float px;
@@ -328,21 +328,21 @@ void OGSubItemObjeto::configurarObjeto(Reference referencia)
 
  //Configura e posiciona o descritor da referência
  configurarDescritor();
- descritor->setPos(ESP_HORIZONTAL, 1);
- px=descritor->pos().x() + descritor->boundingRect().width() + (2 * ESP_HORIZONTAL);
+ descritor->setPos(HORIZ_SPACING, 1);
+ px=descritor->pos().x() + descritor->boundingRect().width() + (2 * HORIZ_SPACING);
 
  //Caso o tipo da referência seja a uma coluna
  if(referencia.getReferenceType()==Reference::REFER_COLUMN)
  {
   //Configura o rótulo de nome no formato: [tabela].[coluna]
-  fmt=config_fonte[ParsersAttributes::REF_TABLE];
+  fmt=font_config[ParsersAttributes::REF_TABLE];
   rotulos[0]->setText(referencia.getTable()->getName() + ".");
   rotulos[0]->setFont(fmt.font());
   rotulos[0]->setBrush(fmt.foreground());
   rotulos[0]->setPos(px, 0);
   px+=rotulos[0]->boundingRect().width();
 
-  fmt=config_fonte[ParsersAttributes::REF_COLUMN];
+  fmt=font_config[ParsersAttributes::REF_COLUMN];
   if(referencia.getColumn())
    rotulos[1]->setText(referencia.getColumn()->getName());
   else
@@ -356,7 +356,7 @@ void OGSubItemObjeto::configurarObjeto(Reference referencia)
  //Caso a referência seja a uma expressão
  else
  {
-  fmt=config_fonte[ParsersAttributes::REF_TABLE];
+  fmt=font_config[ParsersAttributes::REF_TABLE];
 
   //Trunca a expressão em 20 caracters caso a mesma ultrapasse este comprimento
   str_aux=referencia.getExpression().mid(0,20);
@@ -380,7 +380,7 @@ void OGSubItemObjeto::configurarObjeto(Reference referencia)
    str_aux=referencia.getColumnAlias();
 
   str_aux=" (" + str_aux + ") ";
-  fmt=config_fonte[ParsersAttributes::ALIAS];
+  fmt=font_config[ParsersAttributes::ALIAS];
   rotulos[2]->setText(str_aux);
   rotulos[2]->setFont(fmt.font());
   rotulos[2]->setBrush(fmt.foreground());
@@ -388,7 +388,7 @@ void OGSubItemObjeto::configurarObjeto(Reference referencia)
  }
 
  //Configura o retângulo de dimensão do subitem
- descritor->setPos(ESP_HORIZONTAL, rotulos[0]->boundingRect().center().y() - descritor->boundingRect().center().y());
+ descritor->setPos(HORIZ_SPACING, rotulos[0]->boundingRect().center().y() - descritor->boundingRect().center().y());
  bounding_rect.setTopLeft(QPointF(descritor->pos().x(), rotulos[0]->pos().y()));
 
  if(rotulos[2]->text().isEmpty())

@@ -7,7 +7,7 @@ LIBS += $$DESTDIR/$$LIBUTIL \
         $$DESTDIR/$$LIBPARSERS \
         $$DESTDIR/$$LIBPGMODELER
 
-HEADERS +=  $$PWD/src/objetografico.h \
+HEADERS +=  $$PWD/src/baseobjectview.h \
             $$PWD/src/ogcaixatexto.h \
             $$PWD/src/ogtabela.h \
             $$PWD/src/ogvisao.h \
@@ -17,7 +17,7 @@ HEADERS +=  $$PWD/src/objetografico.h \
             $$PWD/src/ogtabelabase.h \
             $$PWD/src/cenaobjetos.h
 
-SOURCES +=  $$PWD/src/objetografico.cpp \
+SOURCES +=  $$PWD/src/baseobjectview.cpp \
             $$PWD/src/ogcaixatexto.cpp \
             $$PWD/src/ogtabela.cpp \
             $$PWD/src/ogvisao.cpp \

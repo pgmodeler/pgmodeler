@@ -2,7 +2,7 @@
 
 OGTabela::OGTabela(Table *tabela) : OGTabelaBase(tabela)
 {
- connect(tabela, SIGNAL(s_objectModified(void)), this, SLOT(configurarObjeto(void)));
+ connect(tabela, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 
  obj_filho_sel=NULL;
  corpo_atribs_ext=new QGraphicsPolygonItem;
@@ -15,14 +15,14 @@ OGTabela::OGTabela(Table *tabela) : OGTabelaBase(tabela)
  this->addToGroup(colunas);
  this->addToGroup(atributos_ext);
  this->addToGroup(corpo_atribs_ext);
- this->configurarObjeto();
+ this->configureObject();
 
  this->setAcceptHoverEvents(true);
 }
 
 OGTabela::~OGTabela(void)
 {
- disconnect(this, SLOT(configurarObjeto(void)));
+ disconnect(this, SLOT(configureObject(void)));
 
  this->removeFromGroup(corpo_atribs_ext);
  this->removeFromGroup(colunas);
@@ -41,7 +41,7 @@ void OGTabela::mousePressEvent(QGraphicsSceneMouseEvent *evento)
   emit s_objetoFilhoSelecionado(obj_filho_sel);
 
  //Executa o método mousePress() da classe superior
- ObjetoGrafico::mousePressEvent(evento);
+ BaseObjectView::mousePressEvent(evento);
 }
 
 QVariant OGTabela::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -50,7 +50,7 @@ QVariant OGTabela::itemChange(GraphicsItemChange change, const QVariant &value)
     quando o usuário clicar na tabela o seletor precisa ser reconfigurado
     para que toda a tabela seja coberta por ele */
  if(change==ItemSelectedHasChanged)
-  ObjetoGrafico::configurarSelecaoObjeto();
+  BaseObjectView::configureObjectSelection();
 
  //Executa o método itemChange() da classe superior
  return(OGTabelaBase::itemChange(change, value));
@@ -61,8 +61,8 @@ void OGTabela::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
  /* Caso o objeto não esteja selecionado porém o objeto de seleção esteja,
     (indicando que um objeto filho da tabela está selecionado), quando o
     mouse deixar os limites da tabela, o seletor é escondido */
- if(!this->isSelected() && selecao_obj->isVisible())
-  selecao_obj->setVisible(false);
+ if(!this->isSelected() && obj_selection->isVisible())
+  obj_selection->setVisible(false);
 
  //Desfaz a referência o objeto selecionado
  obj_filho_sel=NULL;
@@ -97,34 +97,34 @@ void OGTabela::hoverMoveEvent(QGraphicsSceneHoverEvent *evento)
   else if(!itens.isEmpty())
   {
    QPolygonF pol;
-   ObjetoGrafico *item=dynamic_cast<OGSubItemObjeto *>(itens[idx_item]);
+   BaseObjectView *item=dynamic_cast<OGSubItemObjeto *>(itens[idx_item]);
 
    //Configura a seleção para o tamanho do item selecionado
-   if(selecao_obj->boundingRect().height()!=item->boundingRect().height())
+   if(obj_selection->boundingRect().height()!=item->boundingRect().height())
    {
     pol.append(QPointF(0.0f,0.0f));
     pol.append(QPointF(1.0f,0.0f));
     pol.append(QPointF(1.0f,1.0f));
     pol.append(QPointF(0.0f,1.0f));
-    this->redimensionarPoligono(pol, titulo->boundingRect().width() - (2.5 * ESP_HORIZONTAL),
+    this->resizePolygon(pol, titulo->boundingRect().width() - (2.5 * HORIZ_SPACING),
                                      item->boundingRect().height());
-    selecao_obj->setPolygon(pol);
+    obj_selection->setPolygon(pol);
    }
 
    //Posiciona a seleção de objeto sobre o item da tabela
    ret1=this->mapRectToItem(item, item->boundingRect());
-   selecao_obj->setVisible(true);   
-   selecao_obj->setPos(QPointF(titulo->pos().x() + ESP_HORIZONTAL,-ret1.top()));
+   obj_selection->setVisible(true);   
+   obj_selection->setPos(QPointF(titulo->pos().x() + HORIZ_SPACING,-ret1.top()));
 
    //Armazena a referência ao objeto de tabela referente ao subitem
-   obj_filho_sel=dynamic_cast<TableObject *>(item->obterObjetoOrigem());
+   obj_filho_sel=dynamic_cast<TableObject *>(item->getSourceObject());
   }
  }
 }
 
-void OGTabela::configurarObjeto(void)
+void OGTabela::configureObject(void)
 {
- Table *tabela=dynamic_cast<Table *>(this->obterObjetoOrigem());
+ Table *tabela=dynamic_cast<Table *>(this->getSourceObject());
  QPolygonF pol;
  int i, qtd, idx;
  float larg, larg_tipo=0, px=0;
@@ -139,7 +139,7 @@ void OGTabela::configurarObjeto(void)
  QString atribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
 
  //Configura o título da tabela
- titulo->configurarObjeto(tabela);
+ titulo->configureObject(tabela);
  px=0;
 
  for(idx=0; idx < 2; idx++)
@@ -196,8 +196,8 @@ void OGTabela::configurarObjeto(void)
     //Obtém o item da lista
     item_coluna=dynamic_cast<OGSubItemObjeto *>(subitens[i]);
     //Redefine o objeto de origem
-    item_coluna->definirObjetoOrigem(obj_tab);
-    item_coluna->configurarObjeto();
+    item_coluna->setSourceObject(obj_tab);
+    item_coluna->configureObject();
 
     //Move o item para a origem para ser reposicionado posteriormente
     item_coluna->moveBy(-item_coluna->scenePos().x(),
@@ -208,18 +208,18 @@ void OGTabela::configurarObjeto(void)
     item_coluna=new OGSubItemObjeto(obj_tab);
 
    //Configura o subitem e o reposiciona
-   item_coluna->configurarObjeto();
-   item_coluna->moveBy(ESP_HORIZONTAL, (i * item_coluna->boundingRect().height()) + ESP_VERTICAL);
+   item_coluna->configureObject();
+   item_coluna->moveBy(HORIZ_SPACING, (i * item_coluna->boundingRect().height()) + VERT_SPACING);
 
    /* Calcula a largura do nome + o tipo do objeto filho. Isso é usado para alinhar
       todos os rótulos de restrições da tabela */
    larg=item_coluna->obterObjetoFilho(0)->boundingRect().width() +
-        item_coluna->obterObjetoFilho(1)->boundingRect().width() + (3 * ESP_HORIZONTAL);
+        item_coluna->obterObjetoFilho(1)->boundingRect().width() + (3 * HORIZ_SPACING);
    if(px < larg)  px=larg;
 
    //Obtém a largura máxima dos rótulos de tipo para que todos da tabela sejam alinhados
    if(larg_tipo < item_coluna->obterObjetoFilho(2)->boundingRect().width())
-    larg_tipo=item_coluna->obterObjetoFilho(2)->boundingRect().width() + (3 * ESP_HORIZONTAL);
+    larg_tipo=item_coluna->obterObjetoFilho(2)->boundingRect().width() + (3 * HORIZ_SPACING);
 
    //Adiciona o item a uma lista temporária
    itens_cols.push_back(item_coluna);
@@ -253,13 +253,13 @@ void OGTabela::configurarObjeto(void)
  if(!colunas->children().isEmpty() &&
     (colunas->boundingRect().width() > titulo->boundingRect().width() &&
      colunas->boundingRect().width() > atributos_ext->boundingRect().width()))
-  larg=colunas->boundingRect().width() + (2 * ESP_HORIZONTAL);
+  larg=colunas->boundingRect().width() + (2 * HORIZ_SPACING);
  else if(!atributos_ext->children().isEmpty() &&
          (atributos_ext->boundingRect().width() > titulo->boundingRect().width() &&
           atributos_ext->boundingRect().width() > colunas->boundingRect().width()))
-  larg=atributos_ext->boundingRect().width() + (2 * ESP_HORIZONTAL);
+  larg=atributos_ext->boundingRect().width() + (2 * HORIZ_SPACING);
  else
-  larg=titulo->boundingRect().width() + (2 * ESP_HORIZONTAL);
+  larg=titulo->boundingRect().width() + (2 * HORIZ_SPACING);
 
  //Redimensiona o título com a nova largura
  titulo->redimensionarTitulo(larg, titulo->boundingRect().height());
@@ -273,10 +273,10 @@ void OGTabela::configurarObjeto(void)
  //Redimensiona os corpos de colunas e atributos extendidos com a nova largura
  for(idx=0; idx < 2; idx++)
  {
-  this->redimensionarPoligono(pol, larg, grupos[idx]->boundingRect().height() + (2 * ESP_VERTICAL));
+  this->resizePolygon(pol, larg, grupos[idx]->boundingRect().height() + (2 * VERT_SPACING));
   corpos[idx]->setPolygon(pol);
-  corpos[idx]->setBrush(this->obterEstiloPreenchimento(atribs[idx]));
-  pen=this->obterEstiloBorda(atribs[idx]);
+  corpos[idx]->setBrush(this->getFillStyle(atribs[idx]));
+  pen=this->getBorderStyle(atribs[idx]);
   corpos[idx]->setPen(pen);
 
   //Para o corpo de colunas a posição Y será logo abaixo do descritor de título
@@ -296,13 +296,13 @@ void OGTabela::configurarObjeto(void)
    item_coluna=dynamic_cast<OGSubItemObjeto *>(subitens.front());
    subitens.pop_front();
    item_coluna->definirPosXObjetoFilho(3, larg -
-                                          item_coluna->boundingRect().width() - (2 * ESP_HORIZONTAL) - 1);
+                                          item_coluna->boundingRect().width() - (2 * HORIZ_SPACING) - 1);
   }
  }
 
  //Posiciona o ícone de proteção no canto direito do descritor de título
- icone_protegido->setPos(titulo->pos().x() + titulo->boundingRect().width() * 0.925f,
-                         2 * ESP_VERTICAL);
+ protected_icon->setPos(titulo->pos().x() + titulo->boundingRect().width() * 0.925f,
+                         2 * VERT_SPACING);
 
  /* Configura a dimensão da tabela, considerando o canto superior esquerdo do título
     como ponto inicial e a altura da tabela será a soma das alturas dos elementos que
@@ -319,9 +319,9 @@ void OGTabela::configurarObjeto(void)
                                 corpo_atribs_ext->boundingRect().height() -2);
 
  //Executa os demais méotodos de configuração da classe superior
- ObjetoGrafico::configurarObjeto();
- ObjetoGrafico::configurarSombraObjeto();
- ObjetoGrafico::configurarSelecaoObjeto();
+ BaseObjectView::__configureObject();
+ BaseObjectView::configureObjectShadow();
+ BaseObjectView::configureObjectSelection();
 
  //O tool tip do objeto grafico será o nome formatado do objeto de origem
  this->setToolTip(QString::fromUtf8(tabela->getName(true)));

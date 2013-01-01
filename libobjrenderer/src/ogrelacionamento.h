@@ -28,7 +28,7 @@
 #include "ogtabelabase.h"
 #include "relationship.h"
 
-class OGRelacionamento: public ObjetoGrafico {
+class OGRelacionamento: public BaseObjectView {
  private:
   //Raio padrão da representação gráfica do ponto.
   static const float RAIO_PNT_GRAFICO=2.5f;
@@ -82,7 +82,7 @@ class OGRelacionamento: public ObjetoGrafico {
   /* Sobrecarga do método ObjetoGrafico::configurarInfoPosicao.
      Esta implementação configura a posição do objeto de informação
      da posição em relação ao descritor do relacionamento */
-  void configurarInfoPosicao(void);
+  void configurePositionInfo(void);
 
  protected:
   //Sobrecarga do método ObjetoGrafico::itemChange() que faz operações adicionais quando objeto sobre modificações
@@ -103,7 +103,7 @@ class OGRelacionamento: public ObjetoGrafico {
 
  private slots:
   //Configura o objeto relacionamento completo
-  void configurarObjeto(void);
+  void configureObject(void);
 
  public:
   OGRelacionamento(BaseRelationship *relacao);
@@ -113,7 +113,7 @@ class OGRelacionamento: public ObjetoGrafico {
   QRectF __boundingRect(void);
 
   //Retorna o objeto de origem convertido em relacionamento
-  BaseRelationship *obterObjetoOrigem(void);
+  BaseRelationship *getSourceObject(void);
 
   /** issue#2 **/
   /* Desconecta do relacionamento os sinais emitidos pelas tabelas.

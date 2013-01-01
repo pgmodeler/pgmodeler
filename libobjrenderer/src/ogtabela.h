@@ -55,7 +55,7 @@ class OGTabela: public OGTabelaBase {
   ~OGTabela(void);
 
  private slots:
-  void configurarObjeto(void);
+  void configureObject(void);
 
  signals:
   /* Este sinal sempre é disparado quando o usuário clica com o botão direito

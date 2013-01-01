@@ -1,6 +1,6 @@
 #include "ogtabelabase.h"
 
-OGTabelaBase::OGTabelaBase(BaseTable *tab_base) : ObjetoGrafico(tab_base)
+OGTabelaBase::OGTabelaBase(BaseTable *tab_base) : BaseObjectView(tab_base)
 {
  if(!tab_base)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
@@ -22,7 +22,7 @@ OGTabelaBase::~OGTabelaBase(void)
 QVariant OGTabelaBase::itemChange(GraphicsItemChange change, const QVariant &value)
 {
  //Executa o método itemChange() da classe superior
- ObjetoGrafico::itemChange(change, value);
+ BaseObjectView::itemChange(change, value);
 
  if(change==ItemPositionHasChanged)
   emit s_objetoMovido();

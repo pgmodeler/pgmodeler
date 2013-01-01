@@ -24,12 +24,12 @@
 #ifndef OG_TABELABASE_H
 #define OG_TABELABASE_H
 
-#include "objetografico.h"
+#include "baseobjectview.h"
 #include "basetable.h"
 #include "ogtituloobjeto.h"
 #include "ogsubitemobjeto.h"
 
-class OGTabelaBase: public ObjetoGrafico {
+class OGTabelaBase: public BaseObjectView {
  private:
   Q_OBJECT
 
