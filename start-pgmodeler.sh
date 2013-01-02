@@ -1,5 +1,5 @@
 #/bin/bash
-export PGMODELER_ROOT="`pwd`"
+export PGMODELER_ROOT="$(dirname $(readlink -f $0 ))"
 export PGMODELER_CONF_DIR=$PGMODELER_ROOT/conf
 export PGMODELER_SCHEMAS_DIR=$PGMODELER_ROOT/schemas
 export PGMODELER_LANG_DIR=$PGMODELER_ROOT/lang
