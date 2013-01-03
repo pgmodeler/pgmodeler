@@ -500,10 +500,13 @@ void RelacionamentoWidget::listarObjetosAvancados(void)
    {
     //Lista a tabela gerada pelo relacionamento n-n
     tab=relacao->getGeneratedTable();
-    tab_objs_avancados->adicionarLinha();
-    tab_objs_avancados->definirTextoCelula(QString::fromUtf8(tab->getName()),0,0);
-    tab_objs_avancados->definirTextoCelula(QString::fromUtf8(tab->getTypeName()),0,1);
-    tab_objs_avancados->definirDadoLinha(QVariant::fromValue<void *>(tab), 0);
+    if(tab)
+    {
+     tab_objs_avancados->adicionarLinha();
+     tab_objs_avancados->definirTextoCelula(QString::fromUtf8(tab->getName()),0,0);
+     tab_objs_avancados->definirTextoCelula(QString::fromUtf8(tab->getTypeName()),0,1);
+     tab_objs_avancados->definirDadoLinha(QVariant::fromValue<void *>(tab), 0);
+    }
    }
   }
   else if(rel_base->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
