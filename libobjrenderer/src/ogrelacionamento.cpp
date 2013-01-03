@@ -357,8 +357,8 @@ void OGRelacionamento::configureObject(void)
  BaseRelationship *rel_base=this->getSourceObject();
 
  //Armazena as tabelas envolvidas no relacionamento
- tabelas[0]=dynamic_cast<OGTabelaBase *>(rel_base->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
- tabelas[1]=dynamic_cast<OGTabelaBase *>(rel_base->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
+ tabelas[0]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
+ tabelas[1]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
 
  //Executa a configuração inicial do relacionamento
  this->configurarLinha();
@@ -367,7 +367,7 @@ void OGRelacionamento::configureObject(void)
     que a linha / rotulos da relacionamento sejam reposicionados sempre quando
     uma das tabelas for movida */
  for(unsigned i=0; i < 2; i++)
-  connect(tabelas[i], SIGNAL(s_objetoMovido(void)), this, SLOT(configurarLinha(void)));
+  connect(tabelas[i], SIGNAL(s_objectMoved(void)), this, SLOT(configurarLinha(void)));
 
  connect(rel_base, SIGNAL(s_objectModified()), this, SLOT(configurarLinha(void)));
 }
@@ -446,8 +446,8 @@ void OGRelacionamento::configurarLinha(void)
       rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
       rel->isIdentifier())
    {
-    tabelas[0]=dynamic_cast<OGTabelaBase *>(rel->getReferenceTable()->getReceiverObject());
-    tabelas[1]=dynamic_cast<OGTabelaBase *>(rel->getReceiverTable()->getReceiverObject());
+    tabelas[0]=dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
+    tabelas[1]=dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
    }
 
    /* Cria linhas horizontais e verticais denotando as bordas das tabela.

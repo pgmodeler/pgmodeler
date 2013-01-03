@@ -1,10 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libobjrenderer
-# Classe: OGVisao
-# Description:Esta classe deriva a classe ObjetoGrafico e implementa a representação gráfica
-#            da classe Visao. O sufixo OG foi adicionado ao nome da classe para evitar conflitos
-#            de nomes entra a classe Visao da biblioteca libpgsqldbm e a classe abaixo definida.
+# Sub-project: Graphical objects renderer (libobjrenderer)
+# Classe: TableTitleView
+# Description: implements the graphical representation for table title
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -20,25 +18,33 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef OG_VISAO_H
-#define OG_VISAO_H
+#ifndef TABLE_TITLE_VIEW_H
+#define TABLE_TITLE_VIEW_H
 
 #include "view.h"
-#include "basetableview.h"
+#include "table.h"
+#include "baseobjectview.h"
 
-class OGVisao: public BaseTableView {
+class TableTitleView: public BaseObjectView
+{
  private:
   Q_OBJECT
 
- //Objeto gráfico agrupador que armanzena os subitens que denotam as referências da visão
-  QGraphicsItemGroup *referencias;
+  //Polygonal object that defines the title border
+  QGraphicsPolygonItem *box;
+
+  //Graphical texts that is used to store the object name and schema name
+  QGraphicsSimpleTextItem *obj_name,
+                          *schema_name;
+
+  void configureObject(void){}
 
  public:
-  OGVisao(View *visao);
-  ~OGVisao(void);
+  TableTitleView(void);
+  ~TableTitleView(void);
 
- private slots:
-  void configureObject(void);
+  void configureObject(BaseGraphicObject *object);
+  void resizeTitle(float width, float height);
 };
 
 #endif

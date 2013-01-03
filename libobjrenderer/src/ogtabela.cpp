@@ -1,6 +1,6 @@
 #include "ogtabela.h"
 
-OGTabela::OGTabela(Table *tabela) : OGTabelaBase(tabela)
+OGTabela::OGTabela(Table *tabela) : BaseTableView(tabela)
 {
  connect(tabela, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 
@@ -53,7 +53,7 @@ QVariant OGTabela::itemChange(GraphicsItemChange change, const QVariant &value)
   BaseObjectView::configureObjectSelection();
 
  //Executa o método itemChange() da classe superior
- return(OGTabelaBase::itemChange(change, value));
+ return(BaseTableView::itemChange(change, value));
 }
 
 void OGTabela::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
@@ -88,7 +88,7 @@ void OGTabela::hoverMoveEvent(QGraphicsSceneHoverEvent *evento)
                    atributos_ext->boundingRect().height()) / static_cast<float>(itens.size()));
 
   //Calcula o índice do subitem selecionado com base na posição do mouse
-  ret=this->mapRectToItem(titulo, titulo->boundingRect());
+  ret=this->mapRectToItem(title, title->boundingRect());
   idx_item=(evento->pos().y() - ret.bottom()) / alt_cols;
 
   //Caso o índice do item seja inválido, limpa a seleção
@@ -106,7 +106,7 @@ void OGTabela::hoverMoveEvent(QGraphicsSceneHoverEvent *evento)
     pol.append(QPointF(1.0f,0.0f));
     pol.append(QPointF(1.0f,1.0f));
     pol.append(QPointF(0.0f,1.0f));
-    this->resizePolygon(pol, titulo->boundingRect().width() - (2.5 * HORIZ_SPACING),
+    this->resizePolygon(pol, title->boundingRect().width() - (2.5 * HORIZ_SPACING),
                                      item->boundingRect().height());
     obj_selection->setPolygon(pol);
    }
@@ -114,7 +114,7 @@ void OGTabela::hoverMoveEvent(QGraphicsSceneHoverEvent *evento)
    //Posiciona a seleção de objeto sobre o item da tabela
    ret1=this->mapRectToItem(item, item->boundingRect());
    obj_selection->setVisible(true);   
-   obj_selection->setPos(QPointF(titulo->pos().x() + HORIZ_SPACING,-ret1.top()));
+   obj_selection->setPos(QPointF(title->pos().x() + HORIZ_SPACING,-ret1.top()));
 
    //Armazena a referência ao objeto de tabela referente ao subitem
    obj_filho_sel=dynamic_cast<TableObject *>(item->getSourceObject());
@@ -134,12 +134,12 @@ void OGTabela::configureObject(void)
  QList<OGSubItemObjeto *> itens_cols;
  TableObject *obj_tab=NULL;
  QGraphicsItemGroup *grupos[]={ colunas, atributos_ext };
- QGraphicsPolygonItem *corpos[]={ corpo, corpo_atribs_ext };
+ QGraphicsPolygonItem *corpos[]={ body, corpo_atribs_ext };
  vector<TableObject *> objs_filhos;
  QString atribs[]={ ParsersAttributes::TABLE_BODY, ParsersAttributes::TABLE_EXT_BODY };
 
  //Configura o título da tabela
- titulo->configureObject(tabela);
+ title->configureObject(tabela);
  px=0;
 
  for(idx=0; idx < 2; idx++)
@@ -251,18 +251,18 @@ void OGTabela::configureObject(void)
  /* Definindo a maior largura entre o titulo, colunas e atributos extendidos.
     Essa largura será usada como largura uniforme da tabela */
  if(!colunas->children().isEmpty() &&
-    (colunas->boundingRect().width() > titulo->boundingRect().width() &&
+    (colunas->boundingRect().width() > title->boundingRect().width() &&
      colunas->boundingRect().width() > atributos_ext->boundingRect().width()))
   larg=colunas->boundingRect().width() + (2 * HORIZ_SPACING);
  else if(!atributos_ext->children().isEmpty() &&
-         (atributos_ext->boundingRect().width() > titulo->boundingRect().width() &&
+         (atributos_ext->boundingRect().width() > title->boundingRect().width() &&
           atributos_ext->boundingRect().width() > colunas->boundingRect().width()))
   larg=atributos_ext->boundingRect().width() + (2 * HORIZ_SPACING);
  else
-  larg=titulo->boundingRect().width() + (2 * HORIZ_SPACING);
+  larg=title->boundingRect().width() + (2 * HORIZ_SPACING);
 
  //Redimensiona o título com a nova largura
- titulo->redimensionarTitulo(larg, titulo->boundingRect().height());
+ title->resizeTitle(larg, title->boundingRect().height());
 
  pol.clear();
  pol.append(QPointF(0.0f,0.0f));
@@ -281,11 +281,11 @@ void OGTabela::configureObject(void)
 
   //Para o corpo de colunas a posição Y será logo abaixo do descritor de título
   if(idx==0)
-   corpos[idx]->setPos(titulo->pos().x(), titulo->boundingRect().height()-1);
+   corpos[idx]->setPos(title->pos().x(), title->boundingRect().height()-1);
   //Para o corpo de atributos extendidos a posição Y será logo abaixo do corpo de colunas
   else
-   corpos[idx]->setPos(titulo->pos().x(),
-                       titulo->boundingRect().height() +
+   corpos[idx]->setPos(title->pos().x(),
+                       title->boundingRect().height() +
                        corpos[0]->boundingRect().height() - 2);
   grupos[idx]->setPos(corpos[idx]->pos());
 
@@ -301,21 +301,21 @@ void OGTabela::configureObject(void)
  }
 
  //Posiciona o ícone de proteção no canto direito do descritor de título
- protected_icon->setPos(titulo->pos().x() + titulo->boundingRect().width() * 0.925f,
+ protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.925f,
                          2 * VERT_SPACING);
 
  /* Configura a dimensão da tabela, considerando o canto superior esquerdo do título
     como ponto inicial e a altura da tabela será a soma das alturas dos elementos que
     a constitui. A largura será a própria largura do título */
- this->bounding_rect.setTopLeft(titulo->boundingRect().topLeft());
- this->bounding_rect.setWidth(titulo->boundingRect().width());
+ this->bounding_rect.setTopLeft(title->boundingRect().topLeft());
+ this->bounding_rect.setWidth(title->boundingRect().width());
 
  if(!atributos_ext->isVisible())
-  this->bounding_rect.setHeight(titulo->boundingRect().height() +
-                                corpo->boundingRect().height() - 1);
+  this->bounding_rect.setHeight(title->boundingRect().height() +
+                                body->boundingRect().height() - 1);
  else
-  this->bounding_rect.setHeight(titulo->boundingRect().height() +
-                                corpo->boundingRect().height() +
+  this->bounding_rect.setHeight(title->boundingRect().height() +
+                                body->boundingRect().height() +
                                 corpo_atribs_ext->boundingRect().height() -2);
 
  //Executa os demais méotodos de configuração da classe superior

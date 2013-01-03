@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libobjrenderer
-# Classe: OGTituloObjeto
-# Description:Esta classe deriva a classe ObjetoGrafico e implementa a representação gráfica
-#            do título de visões e tabelas.
+# Sub-project: Graphical objects renderer (libobjrenderer)
+# Class: BaseTableView
+# Description: Base class shared by the classes TableView and GraphicalView
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,33 +18,34 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef OG_TITULO_OBJETO_H
-#define OG_TITULO_OBJETO_H
+#ifndef BASE_TABLE_VIEW_H
+#define BASE_TABLE_VIEW_H
 
-#include "view.h"
-#include "table.h"
 #include "baseobjectview.h"
+#include "basetable.h"
+#include "tabletitleview.h"
+#include "ogsubitemobjeto.h"
 
-class OGTituloObjeto: public BaseObjectView
-{
+class BaseTableView: public BaseObjectView {
  private:
   Q_OBJECT
 
-  //Objeto gráfico poligonal que define a borda do título
-  QGraphicsPolygonItem *caixa;
+ protected:
+  //Polygonal object that defines the table body
+  QGraphicsPolygonItem *body;
 
-  //Objetos gráifcos textuais que definem o nome e esquema do objeto dono do título
-  QGraphicsSimpleTextItem *nome,
-                          *esquema;
+  //Table title
+  TableTitleView *title;
 
-  void configureObject(void){}
+  QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
  public:
-  OGTituloObjeto(void);
-  ~OGTituloObjeto(void);
+  BaseTableView(BaseTable *base_tab);
+  ~BaseTableView(void);
 
-  void configureObject(BaseGraphicObject *objeto);
-  void redimensionarTitulo(float larg, float alt);
+ signals:
+  //Signal emmited when a table is moved over the scene
+  void s_objectMoved(void);
 };
 
 #endif

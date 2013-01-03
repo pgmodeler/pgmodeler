@@ -521,7 +521,7 @@ void CenaObjetos::alinharObjetosGrade(void)
 {
  QList<QGraphicsItem *> itens=this->items();
  OGRelacionamento *rel=NULL;
- OGTabelaBase *tab=NULL;
+ BaseTableView *tab=NULL;
  TextboxView *rot=NULL;
  vector<QPointF> pontos;
  unsigned i, qtd, i1, qtd1;
@@ -537,7 +537,7 @@ void CenaObjetos::alinharObjetosGrade(void)
   if(dynamic_cast<QGraphicsItemGroup *>(itens[i]) && !itens[i]->parentItem())
   {
    //Converte o item atual para tabela
-   tab=dynamic_cast<OGTabelaBase *>(itens[i]);
+   tab=dynamic_cast<BaseTableView *>(itens[i]);
    //Converte o item atual para relacionamento
    rel=dynamic_cast<OGRelacionamento *>(itens[i]);
 

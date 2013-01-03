@@ -25,7 +25,7 @@
 #define OG_RELACIONAMENTO_H
 
 #include "textboxview.h"
-#include "ogtabelabase.h"
+#include "basetableview.h"
 #include "relationship.h"
 
 class OGRelacionamento: public BaseObjectView {
@@ -45,7 +45,7 @@ class OGRelacionamento: public BaseObjectView {
   TextboxView *rotulos[3];
 
   //Armazena a representação gráfica das tabelas envolvidas no relacionamento
-  OGTabelaBase *tabelas[2];
+  BaseTableView *tabelas[2];
 
   /* Representação gráfica dos pontos adicionados ao relacionamento pelo usuário.
      Estes objetos são usados para facilitar a movimentação dos pontos pela tela */

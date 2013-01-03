@@ -1,6 +1,6 @@
 #include "ogvisao.h"
 
-OGVisao::OGVisao(View *visao) : OGTabelaBase(visao)
+OGVisao::OGVisao(View *visao) : BaseTableView(visao)
 {
  connect(visao, SIGNAL(s_objectModified(void)), this, SLOT(configureObject(void)));
 
@@ -28,7 +28,7 @@ void OGVisao::configureObject(void)
  QList<QGraphicsItem *> subitens;
 
  //Configura o título da visão
- titulo->configureObject(visao);
+ title->configureObject(visao);
 
  //Obtém a quantidade de referências na parte SELECT
  qtd=visao->getReferenceCount(Reference::SQL_REFER_SELECT);
@@ -77,12 +77,12 @@ void OGVisao::configureObject(void)
 
  /* Calcula a maior largura dentre o título e corpo de referências. Esta largura
     é usada como largura uniforme de toda a visão */
- if(referencias->boundingRect().width() > titulo->boundingRect().width())
+ if(referencias->boundingRect().width() > title->boundingRect().width())
   larg=referencias->boundingRect().width() + (2 * HORIZ_SPACING);
  else
-  larg=titulo->boundingRect().width() + (2 * HORIZ_SPACING);
+  larg=title->boundingRect().width() + (2 * HORIZ_SPACING);
 
- titulo->redimensionarTitulo(larg, titulo->boundingRect().height());
+ title->resizeTitle(larg, title->boundingRect().height());
 
  pol.append(QPointF(0.0f,0.0f));
  pol.append(QPointF(1.0f,0.0f));
@@ -92,16 +92,16 @@ void OGVisao::configureObject(void)
  //Redimensiona o polígono do corpo de referências
  this->resizePolygon(pol, larg, referencias->boundingRect().height() + (2 * VERT_SPACING));
 
- corpo->setPolygon(pol);
- corpo->setBrush(this->getFillStyle(ParsersAttributes::VIEW_BODY));
+ body->setPolygon(pol);
+ body->setBrush(this->getFillStyle(ParsersAttributes::VIEW_BODY));
 
  //Define que a borda de visão é traceja
  pen=this->getBorderStyle(ParsersAttributes::VIEW_BODY);
  pen.setStyle(Qt::DashLine);
 
- corpo->setPen(pen);
- corpo->setPos(0, titulo->boundingRect().height()-1);
- referencias->setPos(corpo->pos());
+ body->setPen(pen);
+ body->setPos(0, title->boundingRect().height()-1);
+ referencias->setPos(body->pos());
 
  //Reposiciona os rótulos de aliases para o canto direito da visão
  subitens=referencias->children();
@@ -109,21 +109,21 @@ void OGVisao::configureObject(void)
  {
   referencia=dynamic_cast<OGSubItemObjeto *>(subitens.front());
   subitens.pop_front();
-  referencia->definirPosXObjetoFilho(3, corpo->boundingRect().width() -
+  referencia->definirPosXObjetoFilho(3, body->boundingRect().width() -
                                      referencia->boundingRect().width() - (2 * HORIZ_SPACING));
  }
 
 
  //Reposiciona o ícone de proteção da visão na extrema direita do título
- protected_icon->setPos(titulo->pos().x() + titulo->boundingRect().width() * 0.925f,
+ protected_icon->setPos(title->pos().x() + title->boundingRect().width() * 0.925f,
                          2 * VERT_SPACING);
 
  /* Define o retângulo de dimensão da visão como sendo o ponto inicial o topLeft() do título
     e a largura sendo a do corpo de referências, já a altura da visão é a soma das alturas
     do elementos que a constitui */
- this->bounding_rect.setTopLeft(titulo->boundingRect().topLeft());
- this->bounding_rect.setWidth(corpo->boundingRect().width());
- this->bounding_rect.setHeight(titulo->boundingRect().height() + corpo->boundingRect().height() - 1);
+ this->bounding_rect.setTopLeft(title->boundingRect().topLeft());
+ this->bounding_rect.setWidth(body->boundingRect().width());
+ this->bounding_rect.setHeight(title->boundingRect().height() + body->boundingRect().height() - 1);
 
  BaseObjectView::__configureObject();
  BaseObjectView::configureObjectShadow();

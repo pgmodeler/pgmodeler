@@ -24,11 +24,11 @@
 #define OG_TABELA_H
 
 #include "table.h"
-#include "ogtabelabase.h"
-#include "ogtituloobjeto.h"
+#include "basetableview.h"
+#include "tabletitleview.h"
 #include "ogsubitemobjeto.h"
 
-class OGTabela: public OGTabelaBase {
+class OGTabela: public BaseTableView {
  private:
   Q_OBJECT
 
