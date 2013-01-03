@@ -6,15 +6,13 @@ const QString TableObjectView::TXT_UNIQUE("uq");
 const QString TableObjectView::TXT_PRIMARY_KEY("pk");
 const QString TableObjectView::TXT_FOREIGN_KEY("fk");
 const QString TableObjectView::TXT_NOT_NULL("nn");
-const QString TableObjectView::DELIMITADOR_REST_INI("«");
-const QString TableObjectView::DELIMITADOR_REST_FIM("»");
+const QString TableObjectView::CONSTR_DELIM_START("«");
+const QString TableObjectView::CONSTR_DELIM_END("»");
 
 TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 {
- //O descritor é alocado no método de configuração conforme o tipo do objeto de origem
  descriptor=NULL;
 
- //Aloca os rótulos e os adiciona ao grupo
  for(unsigned i=0; i < 3; i++)
  {
   lables[i]=new QGraphicsSimpleTextItem;
@@ -24,7 +22,6 @@ TableObjectView::TableObjectView(TableObject *object) : BaseObjectView(object)
 
 TableObjectView::~TableObjectView(void)
 {
- //Desaloca e remove do grupo todos os objetos filhos
  this->removeFromGroup(descriptor);
  delete(descriptor);
 
@@ -42,17 +39,16 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
  float factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
  bool ellipse_desc=false;
 
- //Obtém o tipo do objeto de origem, é com base nele que o descritor será alocado
+ //Based upon the source object type the descriptor is allocated
  if(this->getSourceObject())
   obj_type=this->getSourceObject()->getObjectType();
 
- /* Descritores em forma de elipse são alocados para colunas (com ou sem not-null)
-    todos os demais tipos têm descritores poligonais */
+ /* Elliptical descriptors is used to columns (with or without not-null constraint),
+    for other object types, polygonal descriptor is usded */
  ellipse_desc=((column && constr_type==BaseType::null) ||
               (obj_type!=OBJ_INDEX && obj_type!=OBJ_RULE &&
                obj_type!=OBJ_TRIGGER && obj_type!=OBJ_COLUMN));
 
- //Destrói o descritor quando o tipo atual é diferente do novo
  if(descriptor && ((ellipse_desc && !dynamic_cast<QGraphicsEllipseItem *>(descriptor)) ||
                   (!ellipse_desc && dynamic_cast<QGraphicsEllipseItem *>(descriptor))))
  {
@@ -61,32 +57,25 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
   descriptor=NULL;
  }
 
- //Aloca o descritor e o adiciona ao grupo
  if(!descriptor)
  {
-  //Caso seja em elipse, cria um QGraphicsEllipseItem
   if(ellipse_desc)
    descriptor=new QGraphicsEllipseItem;
-  //Caso contrário que um QGraphicsPolygonItem
   else
    descriptor=new QGraphicsPolygonItem;
 
   this->addToGroup(descriptor);
  }
 
- //Caso o objeto de origem seja coluna
  if(column)
  {
   QString attrib;
   QPolygonF pol;
 
-  /* Caso o tipo da restrição não esteja definido (a coluna não tem nenhuma restrição ligada a ela)
-     cria um descritor elíptico */
   if(constr_type==BaseType::null)
   {
    QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
 
-   //Cria um descritor elíptico de 10x10 (por padrão) porém aplica o fator entre a fonte padrão e fonte configurada
    desc->setRect(QRectF(QPointF(0,0),
                         QSizeF(9.0f * factor, 9.0f * factor)));
 
@@ -95,16 +84,13 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
    else
     attrib=ParsersAttributes::COLUMN;
 
-   //Configura o preenchimento de acordo com o atributo selecionado acima
    desc->setBrush(this->getFillStyle(attrib));
    desc->setPen(this->getBorderStyle(attrib));
   }
-  //Configura o descritor poligonal
   else
   {
    QGraphicsPolygonItem *desc=dynamic_cast<QGraphicsPolygonItem *>(descriptor);
 
-   //Cria um polígono conforme o tipo de restrição da coluna
    if(constr_type==ConstraintType::primary_key)
    {
     attrib=ParsersAttributes::PK_COLUMN;
@@ -135,13 +121,11 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
                         pol.boundingRect().width() * factor,
                         pol.boundingRect().height()  * factor);
 
-   //Atribui o polígono configurado e configura o estilo de cores do descritor
    desc->setPolygon(pol);
    desc->setBrush(this->getFillStyle(attrib));
    desc->setPen(this->getBorderStyle(attrib));
   }
  }
- //Configura um descritor poligonal para indice, regra ou gatilho
  else if(obj_type==OBJ_INDEX ||
          obj_type==OBJ_RULE ||
          obj_type==OBJ_TRIGGER)
@@ -162,7 +146,6 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
   desc->setBrush(this->getFillStyle(tab_obj->getSchemaName()));
   desc->setPen(this->getBorderStyle(tab_obj->getSchemaName()));
  }
- //Configura um descritor elíptico padrão (usado para referências de visões)
  else
  {
   QGraphicsEllipseItem *desc=dynamic_cast<QGraphicsEllipseItem *>(descriptor);
@@ -176,7 +159,6 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
 
 void TableObjectView::configureObject(void)
 {
- //Caso haja um objeto de tabela atribuído ao subitem
  if(this->getSourceObject())
  {
   QTextCharFormat fmt;
@@ -186,15 +168,10 @@ void TableObjectView::configureObject(void)
   Column *column=dynamic_cast<Column *>(tab_obj);
   ConstraintType constr_type=ConstraintType::null;
 
-  //Caso seja uma coluna
   if(column)
   {
-   //Obtém a string de restrições relacionads   coluna
    str_constr=this->getConstraintString(column);
 
-   /* Determina o tipo primário de restrição conforme as checagens a seguir.
-      É com base no tipo da restrição que o descritor será criado. Adicionalmente
-      obtém a formatação de fonte para o tipo da restrição */
    if(str_constr.find(TXT_PRIMARY_KEY)>=0)
    {
     fmt=font_config[ParsersAttributes::PK_COLUMN];
@@ -220,26 +197,24 @@ void TableObjectView::configureObject(void)
    else if(column->isProtected())
     fmt=font_config[ParsersAttributes::PROT_COLUMN];
   }
-  //Caso não seja uma coluna, obtém a formatação para o tipo do objeto de tabela
   else
    fmt=font_config[tab_obj->getSchemaName()];
 
-  //Configura o descritor com o tipo da restrição
   configureDescriptor(constr_type);
 
-  //Posiciona o descritor como o primeiro item
+  //Set the descriptor position as the first item on the view
   descriptor->setPos(HORIZ_SPACING, 1);
   px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HORIZ_SPACING);
 
-  /* Configurando os rótulos do subitem.
-     Os rótulos do subitem têm o seguinte esquema: [nome do objeto] [tipo] [restrições] */
+  //Configuring the labels as follow: [object name] [type] [constraints]
+  //Configuring tha name label
   lables[0]->setText(QString::fromUtf8(tab_obj->getName()));
   lables[0]->setFont(fmt.font());
   lables[0]->setBrush(fmt.foreground());
   lables[0]->setPos(px, 0);
   px+=lables[0]->boundingRect().width();
 
-  //Configura o rótulo de tipo
+  //Configuring the type label
   fmt=font_config[ParsersAttributes::OBJECT_TYPE];
   if(column)
    lables[1]->setText(QString::fromUtf8(TYPE_SEPARATOR + (*column->getType())));
@@ -251,9 +226,7 @@ void TableObjectView::configureObject(void)
   lables[1]->setPos(px, 0);
   px+=lables[1]->boundingRect().width() + (3 * HORIZ_SPACING);
 
-  /* Configura o rótulo de restrições. Para objetos índice, regras e gatilho
-     o rótulo de restrições armazena informações sobre modo de disparo,
-     eventos, entre outros */
+  //Configuring the constraints label
   fmt=font_config[ParsersAttributes::CONSTRAINTS];
   if(column)
    lables[2]->setText(QString::fromUtf8(str_constr));
@@ -263,7 +236,6 @@ void TableObjectView::configureObject(void)
    Trigger *trigger=dynamic_cast<Trigger *>(tab_obj);
    Index *index=dynamic_cast<Index *>(tab_obj);
 
-   //Configurando a string de restrições para regra
    if(rule)
    {
     str_constr+=(~rule->getEventType()).mid(3,1);
@@ -271,7 +243,6 @@ void TableObjectView::configureObject(void)
     str_constr+=(~rule->getExecutionType()).mid(0,1);
     str_constr=str_constr.lower();
    }
-   //Configurando a string de restrições para gatilho
    else if(trigger)
    {
     str_constr+=(~trigger->getFiringType()).mid(0,1);
@@ -284,7 +255,6 @@ void TableObjectView::configureObject(void)
     }
     str_constr=str_constr.lower();
    }
-   //Configurando a string de restrições para índice
    else if(index)
    {
     if(index->getIndexAttribute(Index::UNIQUE))
@@ -298,9 +268,9 @@ void TableObjectView::configureObject(void)
    }
 
    if(!str_constr.isEmpty())
-    lables[2]->setText(QString::fromUtf8(DELIMITADOR_REST_INI + " " +
+    lables[2]->setText(QString::fromUtf8(CONSTR_DELIM_START + " " +
                                           str_constr + " " +
-                                          DELIMITADOR_REST_FIM));
+                                          CONSTR_DELIM_END));
 
   }
 
@@ -308,11 +278,11 @@ void TableObjectView::configureObject(void)
   lables[2]->setBrush(fmt.foreground());
   lables[2]->setPos(px, 0);
 
-  //Calcula o retângulo de dimensão do subitem, que é composto pela junção de todas as dimensões dos objetos (descritor e rótulos)
+  //Calculating the object bounding rect that is composed by the join of the all object's child dimensions
   descriptor->setPos(HORIZ_SPACING, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
   bounding_rect.setTopLeft(QPointF(descriptor->boundingRect().left(), lables[0]->boundingRect().top()));
 
-  //Caso particular: Caso o rótulo de restrições esteja vazio usa a dimensão do rótulo de tipo
+  //Special case: when the constraint label has no text use the type label dimension
   if(lables[2]->boundingRect().width()==0)
    bounding_rect.setBottomRight(QPointF(lables[1]->boundingRect().right(), lables[0]->boundingRect().bottom()));
   else
@@ -326,15 +296,13 @@ void TableObjectView::configureObject(Reference reference)
  float px;
  QString str_aux;
 
- //Configura e posiciona o descritor da referência
  configureDescriptor();
  descriptor->setPos(HORIZ_SPACING, 1);
  px=descriptor->pos().x() + descriptor->boundingRect().width() + (2 * HORIZ_SPACING);
 
- //Caso o tipo da referência seja a uma coluna
  if(reference.getReferenceType()==Reference::REFER_COLUMN)
  {
-  //Configura o rótulo de nome no formato: [tabela].[coluna]
+  //Configures the name label as: [table].[column]
   fmt=font_config[ParsersAttributes::REF_TABLE];
   lables[0]->setText(reference.getTable()->getName() + ".");
   lables[0]->setFont(fmt.font());
@@ -353,12 +321,10 @@ void TableObjectView::configureObject(Reference reference)
   lables[1]->setPos(px, 0);
   px+=lables[1]->boundingRect().width();
  }
- //Caso a referência seja a uma expressão
  else
  {
   fmt=font_config[ParsersAttributes::REF_TABLE];
 
-  //Trunca a expressão em 20 caracters caso a mesma ultrapasse este comprimento
   str_aux=reference.getExpression().mid(0,20);
   if(reference.getExpression().size() > 20) str_aux+="...";
 
@@ -370,7 +336,7 @@ void TableObjectView::configureObject(Reference reference)
   px+=lables[0]->boundingRect().width();
  }
 
- //Caso a referência possua um alias configura o rótulo para exibi-lo
+ //Configures a label for the alias (if there is one)
  if((reference.getColumn() && reference.getColumnAlias()!="") ||
     (reference.getAlias()!="" && reference.getReferenceType()==Reference::REFER_EXPRESSION))
  {
@@ -387,7 +353,6 @@ void TableObjectView::configureObject(Reference reference)
   lables[2]->setPos(px, 0);
  }
 
- //Configura o retângulo de dimensão do subitem
  descriptor->setPos(HORIZ_SPACING, lables[0]->boundingRect().center().y() - descriptor->boundingRect().center().y());
  bounding_rect.setTopLeft(QPointF(descriptor->pos().x(), lables[0]->pos().y()));
 
@@ -435,23 +400,19 @@ QString TableObjectView::getConstraintString(Column *column)
   for(i=0; i < count; i++)
    constraints.push_back(table->getConstraint(i));
 
-  //Obtém as referências ao primeiro e último elemento da lita de constraints
   itr=constraints.begin();
   itr_end=constraints.end();
 
   while(itr!=itr_end)
   {
-   constr=(*itr); //Obtém uma constraint
-   itr++; //Passa para a próxima da lista
+   constr=(*itr);
+   itr++;
 
-   //Verfica se a coluna está sendo referenciada dentro da constraint
+   //Check if the column is referecend by the constraint
    if(constr->getColumn(column->getName(), Constraint::SOURCE_COLS))
    {
-    //Obtém o tipo da constraint
     constr_type=constr->getConstraintType();
 
-    //Para cada tipo de constraint concatena-se o texto referente
-    //   a mesma e um separadar de textos de constraints
     if(constr_type==ConstraintType::primary_key)
      str_constr=TXT_PRIMARY_KEY + CONSTR_SEPARATOR;
     else if(constr_type==ConstraintType::foreign_key)
@@ -461,15 +422,12 @@ QString TableObjectView::getConstraintString(Column *column)
    }
   }
 
-  //Caso a coluna seja não-nula adiciona a QString formatada o texto referente   constraint NOT NULL
   if(column->isNotNull()) str_constr+=TXT_NOT_NULL + CONSTR_SEPARATOR;
 
-  //Caso a QString formatada tenha sido criada
   if(str_constr!="")
-   //Termina sua formatação concatenando a QString formatada aos caracteres delimitadores de restricoes
-   str_constr= DELIMITADOR_REST_INI +
+   str_constr= CONSTR_DELIM_START +
               CONSTR_SEPARATOR + str_constr +
-              DELIMITADOR_REST_FIM;
+              CONSTR_DELIM_END;
 
   return(str_constr);
  }
