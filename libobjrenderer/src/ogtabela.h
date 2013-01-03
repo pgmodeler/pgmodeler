@@ -26,7 +26,7 @@
 #include "table.h"
 #include "basetableview.h"
 #include "tabletitleview.h"
-#include "ogsubitemobjeto.h"
+#include "tableobjectview.h"
 
 class OGTabela: public BaseTableView {
  private:

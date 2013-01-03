@@ -19,23 +19,23 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef OG_SUBITEM_OBJETO_H
-#define OG_SUBITEM_OBJETO_H
+#ifndef TABLE_OBJECT_VIEW_H
+#define TABLE_OBJECT_VIEW_H
 
 #include "view.h"
 #include "table.h"
 #include "baseobjectview.h"
 
-class OGSubItemObjeto: public BaseObjectView
+class TableObjectView: public BaseObjectView
 {
  private:
   Q_OBJECT
 
   //Objeto descritor do subitem
-  QGraphicsItem *descritor;
+  QGraphicsItem *descriptor;
 
   //Rótulos do subitem (nome, tipo e restrições/alias)
-  QGraphicsSimpleTextItem *rotulos[3];
+  QGraphicsSimpleTextItem *lables[3];
 
   /* Contanstes usadas para a montagem dos rótulos
    das colunas das tabelas quando desenhadas no viewport */
@@ -43,20 +43,20 @@ class OGSubItemObjeto: public BaseObjectView
   static const QString DELIMITADOR_REST_FIM,
                        //String que inicia um bloco de constraints da coluna
                        DELIMITADOR_REST_INI,
-                       SEPARADOR_TIPO,
+                       TYPE_SEPARATOR,
                        //String que separa os tipos de constraints que se aplicam a coluna
-                       SEPARADOR_REST,
+                       CONSTR_SEPARATOR,
                        //String que indica a constraint FOREIGN KEY
-                       TEXTO_FOREIGN_KEY,
+                       TXT_FOREIGN_KEY,
                        //String que indica a constraint NOT NULL
-                       TEXTO_NOT_NULL,
+                       TXT_NOT_NULL,
                        //String que indica a constraint PRIMARY KEY
-                       TEXTO_PRIMARY_KEY,
+                       TXT_PRIMARY_KEY,
                        //String que indica a constraint UNIQUE
-                       TEXTO_UNIQUE;
+                       TXT_UNIQUE;
 
   //Configura o descritor do subitem conforme o tipo do objeto de origem
-  void configurarDescritor(ConstraintType tipo_rest=BaseType::null);
+  void configureDescriptor(ConstraintType constr_type=BaseType::null);
 
   /* Sobrecarga do método da classe QGraphicsItemGroup::itemChange() e sua implentação
      controla as alterações durante a seleção e movimentação do objeto. Esta nova implementação
@@ -67,25 +67,25 @@ class OGSubItemObjeto: public BaseObjectView
   }
 
  public:
-  OGSubItemObjeto(TableObject *objeto=NULL);
-  ~OGSubItemObjeto(void);
+  TableObjectView(TableObject *object=NULL);
+  ~TableObjectView(void);
 
   //Configura o subitem como uma referência de visão
-  void configureObject(Reference referencia);
+  void configureObject(Reference reference);
 
   //Configura o subitem como um objeto de tabela
   void configureObject(void);
 
   //Define a posição horizontal de um objeto filho
-  void definirPosXObjetoFilho(unsigned idx_obj, float px);
+  void setChildObjectXPos(unsigned obj_idx, float px);
 
   //Obtém o objeto filho que compõem o grupo através o índice
-  QGraphicsItem *obterObjetoFilho(unsigned idx_obj);
+  QGraphicsItem *getChildObject(unsigned obj_idx);
 
   /* Retorna uma string formatada para exibição, contendo as configurações de
      restrições de uma coluna. Coluna alocadas porém não atribuídas a nenhuma tabela
      são ignoradas pelo método */
-  static QString obterStringRestricoes(Column *coluna);
+  static QString getConstraintString(Column *column);
 };
 
 #endif

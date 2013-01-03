@@ -24,7 +24,7 @@
 #include "baseobjectview.h"
 #include "basetable.h"
 #include "tabletitleview.h"
-#include "ogsubitemobjeto.h"
+#include "tableobjectview.h"
 
 class BaseTableView: public BaseObjectView {
  private:

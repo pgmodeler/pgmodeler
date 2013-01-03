@@ -377,7 +377,7 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
   tab->definirTextoCelula(str_aux,idx_lin,2);
 
   //Coluna 3: Atributos da coluna (restrições a qual ela pertence)
-  str_aux=QString::fromUtf8(OGSubItemObjeto::obterStringRestricoes(coluna));
+  str_aux=QString::fromUtf8(TableObjectView::getConstraintString(coluna));
   for(i=0; i < 5; i++)
   {
    if(str_aux.indexOf(vet_cod_rest[i]) >= 0)

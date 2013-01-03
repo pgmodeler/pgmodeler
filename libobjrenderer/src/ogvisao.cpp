@@ -24,7 +24,7 @@ void OGVisao::configureObject(void)
  Reference ref_visao;
  float larg;
  QPen pen;
- OGSubItemObjeto *referencia=NULL;
+ TableObjectView *referencia=NULL;
  QList<QGraphicsItem *> subitens;
 
  //Configura o título da visão
@@ -48,14 +48,14 @@ void OGVisao::configureObject(void)
   if(!subitens.isEmpty() && i < subitens.size())
   {
    //Obtém a referência ao subitem na posição 'i'
-   referencia=dynamic_cast<OGSubItemObjeto *>(subitens[i]);
+   referencia=dynamic_cast<TableObjectView *>(subitens[i]);
    //Move a referência para a origem para reposicionar posteriormente
    referencia->moveBy(-referencia->scenePos().x(),
                       -referencia->scenePos().y());
   }
   //Caso o índice esteja fora da capacidade de subitens, aloca um novo
   else
-   referencia=new OGSubItemObjeto;
+   referencia=new TableObjectView;
 
   //Configura o subitem (referência)
   referencias->removeFromGroup(referencia);
@@ -69,7 +69,7 @@ void OGVisao::configureObject(void)
  i=subitens.size()-1;
  while(i > qtd-1)
  {
-  referencia=dynamic_cast<OGSubItemObjeto *>(subitens[i]);
+  referencia=dynamic_cast<TableObjectView *>(subitens[i]);
   referencias->removeFromGroup(referencia);
   delete(referencia);
   i--;
@@ -107,9 +107,9 @@ void OGVisao::configureObject(void)
  subitens=referencias->children();
  while(!subitens.isEmpty())
  {
-  referencia=dynamic_cast<OGSubItemObjeto *>(subitens.front());
+  referencia=dynamic_cast<TableObjectView *>(subitens.front());
   subitens.pop_front();
-  referencia->definirPosXObjetoFilho(3, body->boundingRect().width() -
+  referencia->setChildObjectXPos(3, body->boundingRect().width() -
                                      referencia->boundingRect().width() - (2 * HORIZ_SPACING));
  }
 

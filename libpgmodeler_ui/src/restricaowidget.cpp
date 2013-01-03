@@ -324,6 +324,8 @@ void RestricaoWidget::hideEvent(QHideEvent *evento)
  tab_colunas->blockSignals(false);
  tab_colunas_ref->blockSignals(false);
 
+ sel_tabela_ref->removerObjetoSelecionado();
+
  ObjetoBaseWidget::hideEvent(evento);
 }
 

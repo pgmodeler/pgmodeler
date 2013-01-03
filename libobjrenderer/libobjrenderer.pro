@@ -13,7 +13,7 @@ HEADERS +=  $$PWD/src/baseobjectview.h \
             $$PWD/src/ogvisao.h \
             $$PWD/src/ogrelacionamento.h \
             $$PWD/src/tabletitleview.h \
-            $$PWD/src/ogsubitemobjeto.h \
+            $$PWD/src/tableobjectview.h \
             $$PWD/src/basetableview.h \
             $$PWD/src/cenaobjetos.h
 
@@ -23,6 +23,6 @@ SOURCES +=  $$PWD/src/baseobjectview.cpp \
             $$PWD/src/ogvisao.cpp \
             $$PWD/src/ogrelacionamento.cpp \
             $$PWD/src/tabletitleview.cpp \
-            $$PWD/src/ogsubitemobjeto.cpp \
+            $$PWD/src/tableobjectview.cpp \
             $$PWD/src/basetableview.cpp \
             $$PWD/src/cenaobjetos.cpp

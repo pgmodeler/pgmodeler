@@ -97,7 +97,7 @@ void OGTabela::hoverMoveEvent(QGraphicsSceneHoverEvent *evento)
   else if(!itens.isEmpty())
   {
    QPolygonF pol;
-   BaseObjectView *item=dynamic_cast<OGSubItemObjeto *>(itens[idx_item]);
+   BaseObjectView *item=dynamic_cast<TableObjectView *>(itens[idx_item]);
 
    //Configura a seleção para o tamanho do item selecionado
    if(obj_selection->boundingRect().height()!=item->boundingRect().height())
@@ -129,9 +129,9 @@ void OGTabela::configureObject(void)
  int i, qtd, idx;
  float larg, larg_tipo=0, px=0;
  QPen pen;
- OGSubItemObjeto *item_coluna=NULL;
+ TableObjectView *item_coluna=NULL;
  QList<QGraphicsItem *> subitens;
- QList<OGSubItemObjeto *> itens_cols;
+ QList<TableObjectView *> itens_cols;
  TableObject *obj_tab=NULL;
  QGraphicsItemGroup *grupos[]={ colunas, atributos_ext };
  QGraphicsPolygonItem *corpos[]={ body, corpo_atribs_ext };
@@ -194,7 +194,7 @@ void OGTabela::configureObject(void)
    if(!subitens.isEmpty() && i < subitens.size())
    {
     //Obtém o item da lista
-    item_coluna=dynamic_cast<OGSubItemObjeto *>(subitens[i]);
+    item_coluna=dynamic_cast<TableObjectView *>(subitens[i]);
     //Redefine o objeto de origem
     item_coluna->setSourceObject(obj_tab);
     item_coluna->configureObject();
@@ -205,7 +205,7 @@ void OGTabela::configureObject(void)
    }
    //Caso o índice esteja além da quantidade de subitens, aloca um novo subitem
    else
-    item_coluna=new OGSubItemObjeto(obj_tab);
+    item_coluna=new TableObjectView(obj_tab);
 
    //Configura o subitem e o reposiciona
    item_coluna->configureObject();
@@ -213,13 +213,13 @@ void OGTabela::configureObject(void)
 
    /* Calcula a largura do nome + o tipo do objeto filho. Isso é usado para alinhar
       todos os rótulos de restrições da tabela */
-   larg=item_coluna->obterObjetoFilho(0)->boundingRect().width() +
-        item_coluna->obterObjetoFilho(1)->boundingRect().width() + (3 * HORIZ_SPACING);
+   larg=item_coluna->getChildObject(0)->boundingRect().width() +
+        item_coluna->getChildObject(1)->boundingRect().width() + (3 * HORIZ_SPACING);
    if(px < larg)  px=larg;
 
    //Obtém a largura máxima dos rótulos de tipo para que todos da tabela sejam alinhados
-   if(larg_tipo < item_coluna->obterObjetoFilho(2)->boundingRect().width())
-    larg_tipo=item_coluna->obterObjetoFilho(2)->boundingRect().width() + (3 * HORIZ_SPACING);
+   if(larg_tipo < item_coluna->getChildObject(2)->boundingRect().width())
+    larg_tipo=item_coluna->getChildObject(2)->boundingRect().width() + (3 * HORIZ_SPACING);
 
    //Adiciona o item a uma lista temporária
    itens_cols.push_back(item_coluna);
@@ -229,7 +229,7 @@ void OGTabela::configureObject(void)
   i=subitens.size()-1;
   while(i > qtd-1)
   {
-   item_coluna=dynamic_cast<OGSubItemObjeto *>(subitens[i]);
+   item_coluna=dynamic_cast<TableObjectView *>(subitens[i]);
    grupos[idx]->removeFromGroup(item_coluna);
    delete(item_coluna);
    i--;
@@ -238,13 +238,13 @@ void OGTabela::configureObject(void)
   //Varre a lista temporária reposicionando os itens configurados
   while(!itens_cols.isEmpty())
   {
-   item_coluna=dynamic_cast<OGSubItemObjeto *>(itens_cols.front());
+   item_coluna=dynamic_cast<TableObjectView *>(itens_cols.front());
    grupos[idx]->removeFromGroup(item_coluna);
    itens_cols.pop_front();
    //Posiciona o rótulo de tipo
-   item_coluna->definirPosXObjetoFilho(2, px);
+   item_coluna->setChildObjectXPos(2, px);
    //Posiciona o rótulo de restrições
-   item_coluna->definirPosXObjetoFilho(3, px + larg_tipo);
+   item_coluna->setChildObjectXPos(3, px + larg_tipo);
    grupos[idx]->addToGroup(item_coluna);
   }
  }
@@ -293,9 +293,9 @@ void OGTabela::configureObject(void)
   subitens=grupos[idx]->children();
   while(!subitens.isEmpty())
   {
-   item_coluna=dynamic_cast<OGSubItemObjeto *>(subitens.front());
+   item_coluna=dynamic_cast<TableObjectView *>(subitens.front());
    subitens.pop_front();
-   item_coluna->definirPosXObjetoFilho(3, larg -
+   item_coluna->setChildObjectXPos(3, larg -
                                           item_coluna->boundingRect().width() - (2 * HORIZ_SPACING) - 1);
   }
  }
