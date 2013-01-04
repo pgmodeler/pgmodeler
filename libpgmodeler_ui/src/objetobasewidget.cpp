@@ -40,7 +40,7 @@ ObjetoBaseWidget::ObjetoBaseWidget(QWidget *parent, ObjectType tipo_obj): QDialo
                                      GlobalAttributes::CONFIGURATION_EXT);
 
   janela_pai=new FormBasico(NULL, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
-  janela_pai->setWindowTitle(trUtf8("Criate / Edit: ") + BaseObject::getTypeName(tipo_obj));
+  janela_pai->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(tipo_obj));
   janela_pai->widgetgeral_wgt->insertWidget(0, this);
   janela_pai->widgetgeral_wgt->setCurrentIndex(0);
   janela_pai->definirBotoes(CaixaMensagem::BOTAO_OK_CANCELAR);
@@ -198,6 +198,7 @@ void ObjetoBaseWidget::definirAtributos(DatabaseModel *modelo, OperationList *li
   this->py_objeto=py_objeto;
  }
 
+ nome_edt->setFocus();
  edt_permissoes_tb->setEnabled(objeto!=NULL);
  objeto_pai_txt->setPlainText(QString::fromUtf8(objeto_pai->getName(true)));
 
