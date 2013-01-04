@@ -43,7 +43,7 @@ void TableObjectView::configureDescriptor(ConstraintType constr_type)
  if(this->getSourceObject())
   obj_type=this->getSourceObject()->getObjectType();
 
- /* Elliptical descriptors is used to columns (with or without not-null constraint),
+ /* Elliptical descriptor is used to columns (with or without not-null constraint),
     for other object types, polygonal descriptor is usded */
  ellipse_desc=((column && constr_type==BaseType::null) ||
               (obj_type!=OBJ_INDEX && obj_type!=OBJ_RULE &&

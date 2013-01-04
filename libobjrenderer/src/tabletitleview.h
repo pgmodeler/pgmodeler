@@ -2,7 +2,7 @@
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Graphical objects renderer (libobjrenderer)
 # Classe: TableTitleView
-# Description: implements the graphical representation for table title
+# Description: Implements the graphical representation for table title
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #

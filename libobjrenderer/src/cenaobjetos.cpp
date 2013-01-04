@@ -57,10 +57,10 @@ CenaObjetos::~CenaObjetos(void)
       classes OGRelacionamento, OGTabela, OGCaixaTexto ou OGVisao, significa que
       o item pode ser removido */
    if(item && !item->parentItem() &&
-      ((dynamic_cast<OGRelacionamento *>(item) && tipos[i]==OBJ_RELATIONSHIP) ||
+      ((dynamic_cast<RelationshipView *>(item) && tipos[i]==OBJ_RELATIONSHIP) ||
        (dynamic_cast<TextboxView *>(item) && tipos[i]==OBJ_TEXTBOX) ||
-       (dynamic_cast<OGVisao *>(item) && tipos[i]==OBJ_VIEW) ||
-       (dynamic_cast<OGTabela *>(item) && tipos[i]==OBJ_TABLE)))
+       (dynamic_cast<GraphicalView *>(item) && tipos[i]==OBJ_VIEW) ||
+       (dynamic_cast<TableView *>(item) && tipos[i]==OBJ_TABLE)))
 
    {
     this->removeItem(item);
@@ -269,18 +269,18 @@ void CenaObjetos::addItem(QGraphicsItem *item)
 {
  if(item)
  {
-  OGRelacionamento *rel=dynamic_cast<OGRelacionamento *>(item);
-  OGTabela *tab=dynamic_cast<OGTabela *>(item);
+  RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
+  TableView *tab=dynamic_cast<TableView *>(item);
   BaseObjectView *obj=dynamic_cast<BaseObjectView *>(item);
 
   /* Caso particular para classes OGRelacionamento e OGTabela:
      conecta os sinais quando novos objetos dos tipos acima são
      inseridos no modelo */
   if(rel)
-   connect(rel, SIGNAL(s_relacionamentoModificado(BaseGraphicObject*)),
+   connect(rel, SIGNAL(s_relationshipModified(BaseGraphicObject*)),
            this, SLOT(sinalizarModificacaoObjeto(BaseGraphicObject*)));
   else if(tab)
-   connect(tab, SIGNAL(s_objetoFilhoSelecionado(TableObject*)),
+   connect(tab, SIGNAL(s_childObjectSelected(TableObject*)),
            this, SLOT(sinalizarObjetoFilhoSelecionado(TableObject*)));
 
   if(obj)
@@ -296,8 +296,8 @@ void CenaObjetos::removeItem(QGraphicsItem *item)
  if(item)
  {
   BaseObjectView *objeto=dynamic_cast<BaseObjectView *>(item);
-  OGRelacionamento *rel=dynamic_cast<OGRelacionamento *>(item);
-  OGTabela *tab=dynamic_cast<OGTabela *>(item);
+  RelationshipView *rel=dynamic_cast<RelationshipView *>(item);
+  TableView *tab=dynamic_cast<TableView *>(item);
 
   /* Caso particular para classes OGRelacionamento e OGTabela:
      desconecta os sinais anteriormente conectados    cena e que
@@ -310,7 +310,7 @@ void CenaObjetos::removeItem(QGraphicsItem *item)
       não eram desconectadas do relacionamento a ser removido,
       assim, quando uma delas era movimentada faziam referência
       a um objeto inexistente, causando o crash da aplicação */
-   rel->desconectarTabelas();
+   rel->disconnectTables();
   }
   else if(tab)
    disconnect(tab, NULL, this, NULL);
@@ -429,7 +429,7 @@ void CenaObjetos::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
   QList<QGraphicsItem *> itens=this->selectedItems();
   float x1,y1,x2,y2;
   QRectF ret;
-  OGRelacionamento *rel=NULL;
+  RelationshipView *rel=NULL;
 
   /* Obtém os pontos extremos da cena para verificar se algum objeto
      ultrapassa estes limites. Caso isso aconteça, reconfigura o tamanho da
@@ -445,7 +445,7 @@ void CenaObjetos::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
   {
    /* A partir do objeto atual da lista tenta convertê-lo em relacionamento, pois
       este tipo de objeto deve ser tratato de forma diferente */
-   rel=dynamic_cast<OGRelacionamento *>(itens[i]);
+   rel=dynamic_cast<RelationshipView *>(itens[i]);
 
    //Caso o objeto não seja um relacionamento
    if(!rel)
@@ -520,7 +520,7 @@ void CenaObjetos::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
 void CenaObjetos::alinharObjetosGrade(void)
 {
  QList<QGraphicsItem *> itens=this->items();
- OGRelacionamento *rel=NULL;
+ RelationshipView *rel=NULL;
  BaseTableView *tab=NULL;
  TextboxView *rot=NULL;
  vector<QPointF> pontos;
@@ -539,7 +539,7 @@ void CenaObjetos::alinharObjetosGrade(void)
    //Converte o item atual para tabela
    tab=dynamic_cast<BaseTableView *>(itens[i]);
    //Converte o item atual para relacionamento
-   rel=dynamic_cast<OGRelacionamento *>(itens[i]);
+   rel=dynamic_cast<RelationshipView *>(itens[i]);
 
    //Caso o item foi convertido para tabela
    if(tab)
@@ -559,14 +559,14 @@ void CenaObjetos::alinharObjetosGrade(void)
     {
      rel->getSourceObject()->setPoints(pontos);
      //Reconfigura a linha após o alinhamento dos pontos
-     rel->configurarLinha();
+     rel->configureLine();
     }
 
     //Alinha os rótulos�   grade
     for(i1=BaseRelationship::LABEL_SRC_CARD;
         i1<=BaseRelationship::LABEL_REL_NAME; i1++)
     {
-     rot=rel->obterRotulo(i1);
+     rot=rel->getLabel(i1);
      if(rot)
       rot->setPos(this->alinharPontoGrade(rot->pos()));
     }

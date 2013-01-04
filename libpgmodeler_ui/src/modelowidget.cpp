@@ -435,16 +435,16 @@ void ModeloWidget::manipularAdicaoObjeto(BaseObject *objeto)
   switch(tipo_obj)
   {
    case OBJ_TABLE:
-     item=new OGTabela(dynamic_cast<Table *>(obj_graf));
+     item=new TableView(dynamic_cast<Table *>(obj_graf));
    break;
 
    case OBJ_VIEW:
-     item=new OGVisao(dynamic_cast<View *>(obj_graf));
+     item=new GraphicalView(dynamic_cast<View *>(obj_graf));
    break;
 
    case OBJ_RELATIONSHIP:
    case BASE_RELATIONSHIP:
-     item=new OGRelacionamento(dynamic_cast<BaseRelationship *>(obj_graf)); break;
+     item=new RelationshipView(dynamic_cast<BaseRelationship *>(obj_graf)); break;
    break;
 
    default:

@@ -1,37 +1,37 @@
-#include "ogrelacionamento.h"
+#include "relationshipview.h"
 
-OGRelacionamento::OGRelacionamento(BaseRelationship *relacao) : BaseObjectView(relacao)
+RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 {
  //Dispara uma exceção caso tente criar um relacionamento a partir de um objeto não alocado
- if(!relacao)
+ if(!rel)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
  for(unsigned i=BaseRelationship::LABEL_SRC_CARD;
       i <= BaseRelationship::LABEL_REL_NAME; i++)
  {
   //Aloca os rótulos
-  if(relacao->getLabel(i))
+  if(rel->getLabel(i))
   {
-   relacao->getLabel(i)->setTextColor(BaseObjectView::getFontStyle(ParsersAttributes::LABEL).foreground());
-   rotulos[i]=new TextboxView(relacao->getLabel(i),
+   rel->getLabel(i)->setTextColor(BaseObjectView::getFontStyle(ParsersAttributes::LABEL).foreground());
+   labels[i]=new TextboxView(rel->getLabel(i),
                                BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
                                BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
-   rotulos[i]->setZValue(1);
-   this->addToGroup(rotulos[i]);
+   labels[i]->setZValue(1);
+   this->addToGroup(labels[i]);
   }
   else
-   rotulos[i]=NULL;
+   labels[i]=NULL;
  }
 
- objeto_sel=NULL;
- idx_objeto_sel=-1;
- configurando_linha=false;
+ sel_object=NULL;
+ sel_object_idx=-1;
+ configuring_line=false;
 
- descritor=new QGraphicsPolygonItem;
- descritor->setZValue(0);
- this->addToGroup(descritor);
+ descriptor=new QGraphicsPolygonItem;
+ descriptor->setZValue(0);
+ this->addToGroup(descriptor);
 
- tabelas[0]=tabelas[1]=NULL;
+ tables[0]=tables[1]=NULL;
 
  /* Relacionamento tem o menor Z para ficar abaixo de todos os
     demais objetos do modelo */
@@ -39,57 +39,54 @@ OGRelacionamento::OGRelacionamento(BaseRelationship *relacao) : BaseObjectView(r
  this->configureObject();
 }
 
-OGRelacionamento::~OGRelacionamento(void)
+RelationshipView::~RelationshipView(void)
 {
  QGraphicsItem *item=NULL;
-
- /*for(int i=0; i < 2; i++)
-  disconnect(this, SLOT(configurarLinha(void)));*/
 
  //Exclui todos os objetos criados e agregados ao relacionamento
  for(int i=0; i < 3; i++)
  {
-  if(rotulos[i])
+  if(labels[i])
   {
-   this->removeFromGroup(rotulos[i]);
-   delete(rotulos[i]);
+   this->removeFromGroup(labels[i]);
+   delete(labels[i]);
   }
  }
 
- while(!linhas.empty())
+ while(!lines.empty())
  {
-  item=linhas.back();
+  item=lines.back();
   this->removeFromGroup(item);
-  linhas.pop_back();
+  lines.pop_back();
   delete(item);
  }
 
- while(!atributos.empty())
+ while(!attributes.empty())
  {
-  item=atributos.back();
+  item=attributes.back();
   this->removeFromGroup(item);
-  atributos.pop_back();
+  attributes.pop_back();
   delete(item);
  }
 
- this->removeFromGroup(descritor);
- delete(descritor);
+ this->removeFromGroup(descriptor);
+ delete(descriptor);
 }
 
-BaseRelationship *OGRelacionamento::getSourceObject(void)
+BaseRelationship *RelationshipView::getSourceObject(void)
 {
  return(dynamic_cast<BaseRelationship *>(this->BaseObjectView::getSourceObject()));
 }
 
-TextboxView *OGRelacionamento::obterRotulo(unsigned idx_rot)
+TextboxView *RelationshipView::getLabel(unsigned lab_idx)
 {
- if(idx_rot > BaseRelationship::LABEL_REL_NAME)
+ if(lab_idx > BaseRelationship::LABEL_REL_NAME)
   return(NULL);
  else
-  return(rotulos[idx_rot]);
+  return(labels[lab_idx]);
 }
 
-QVariant OGRelacionamento::itemChange(GraphicsItemChange change, const QVariant &value)
+QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant &value)
 {
  //Caso seja uma mudança na posição
  if(change==ItemPositionChange)
@@ -100,9 +97,9 @@ QVariant OGRelacionamento::itemChange(GraphicsItemChange change, const QVariant 
  //Caso a mundança no objeto foi a de seleção ou deseleção
  else if(change==ItemSelectedHasChanged)
  {
-  unsigned i, qtd;
+  unsigned i, count;
   QPen pen;
-  QColor cor;
+  QColor color;
 
   if(value.toBool())
    this->sel_order=++BaseObjectView::global_sel_order;
@@ -117,14 +114,14 @@ QVariant OGRelacionamento::itemChange(GraphicsItemChange change, const QVariant 
   //Seleciona ou não os rótulos conforme o parâmetro 'value'
   for(i=0; i < 3; i++)
   {
-   if(rotulos[i])
-    rotulos[i]->itemChange(change, value);
+   if(labels[i])
+    labels[i]->itemChange(change, value);
   }
 
   //Deixa visível os pontos do relacionamento caso 'value' seja true
-  qtd=pontos_graf.size();
-  for(i=0; i < qtd; i++)
-   pontos_graf[i]->setVisible(value.toBool());
+  count=graph_points.size();
+  for(i=0; i < count; i++)
+   graph_points[i]->setVisible(value.toBool());
 
   /* Caso o relacionamento está selecionado (value = true)
      as linhas do relacionamento tem sua cor alterada para denotar
@@ -134,32 +131,32 @@ QVariant OGRelacionamento::itemChange(GraphicsItemChange change, const QVariant 
    QColor cor1=BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION).color(),
           cor2=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP).color();
 
-   cor.setRedF((cor1.redF() + cor2.greenF())/2.0f);
-   cor.setGreenF((cor1.greenF() + cor2.greenF())/2.0f);
-   cor.setBlueF((cor1.blueF() + cor2.blueF())/2.0f);
+   color.setRedF((cor1.redF() + cor2.greenF())/2.0f);
+   color.setGreenF((cor1.greenF() + cor2.greenF())/2.0f);
+   color.setBlueF((cor1.blueF() + cor2.blueF())/2.0f);
   }
   else
-   cor=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP).color();
+   color=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP).color();
 
   //Aplica a cor nas linhas do relacionamento
-  qtd=linhas.size();
-  for(i=0; i < qtd; i++)
+  count=lines.size();
+  for(i=0; i < count; i++)
   {
-   pen=linhas[i]->pen();
-   pen.setColor(cor);
-   linhas[i]->setPen(pen);
+   pen=lines[i]->pen();
+   pen.setColor(color);
+   lines[i]->setPen(pen);
   }
 
   //Exibe/esconde a seleção dos atributos
-  qtd=atributos.size();
-  for(i=0; i < qtd; i++)
-   atributos[i]->children().at(3)->setVisible(value.toBool());
+  count=attributes.size();
+  for(i=0; i < count; i++)
+   attributes[i]->children().at(3)->setVisible(value.toBool());
  }
 
  return(value);
 }
 
-void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
+void RelationshipView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
  /* O relacionamento em sim não pode ser movimentado pelo usuário, porém pode ser selecionado.
     Mas para que isso aconteça é necessário marcar a flag QGraphicsItem::ItemIsMovable,
@@ -167,7 +164,7 @@ void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
  this->setFlag(QGraphicsItem::ItemIsMovable);
 
  //Executa o mousePressEvent da classe base para selecionar o relacionamento
- BaseObjectView::mousePressEvent(evento);
+ BaseObjectView::mousePressEvent(event);
 
  //Desmarca a flag QGraphicsItem::ItemIsMovable para que o relacionamento não seja movido pelo usuário
  this->setFlag(QGraphicsItem::ItemIsMovable, false);
@@ -175,46 +172,46 @@ void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
  //Caso o relacionamento não esteja protegido
  if(!this->getSourceObject()->isProtected())
  {
-  BaseRelationship *rel_base=this->getSourceObject();
+  BaseRelationship *base_rel=this->getSourceObject();
 
   //Reseta a posição dos rótulos caso o botão do meio esteja pressionado
-  if(evento->buttons()==Qt::MidButton)
+  if(event->buttons()==Qt::MidButton)
   {
    for(unsigned i=0; i < 3; i++)
-    rel_base->setLabelDistance(i, QPointF(NAN,NAN));
-   this->configurarRotulos();
+    base_rel->setLabelDistance(i, QPointF(NAN,NAN));
+   this->configureLabels();
   }
   //Caso o usuário esteja com o SHIFT pressionado
-  else if(evento->modifiers()==Qt::ShiftModifier)
+  else if(event->modifiers()==Qt::ShiftModifier)
   {
    QLineF lin;
    QPointF p;
-   QRectF ret;
-   unsigned i, qtd;
+   QRectF rect;
+   unsigned i, count;
    bool pnt_rem=false;
-   vector<QPointF> pontos=rel_base->getPoints();
+   vector<QPointF> pontos=base_rel->getPoints();
 
-   if(!rel_base->isSelfRelationship())
+   if(!base_rel->isSelfRelationship())
    {
     /* Clicando com botão esquerdo sobre um ponto na linha de um relacionamento
        o mesmo será removido da linha */
-    if(evento->buttons()==Qt::LeftButton)
+    if(event->buttons()==Qt::LeftButton)
     {
-     emit s_relacionamentoModificado(rel_base);
+     emit s_relationshipModified(base_rel);
 
-     qtd=pontos_graf.size();
-     for(i=0; i < qtd; i++)
+     count=graph_points.size();
+     for(i=0; i < count; i++)
      {
       //Obtém a dimensão do ponto gráfico
-      ret.setTopLeft(pontos_graf[i]->pos());
-      ret.setSize(pontos_graf[i]->boundingRect().size());
+      rect.setTopLeft(graph_points[i]->pos());
+      rect.setSize(graph_points[i]->boundingRect().size());
 
       //Caso a posição do mouse esteja dentro do ponto efetua a remoção
-      if(ret.contains(evento->pos()))
+      if(rect.contains(event->pos()))
       {
        pontos.erase(pontos.begin()+i);
-       rel_base->setPoints(pontos);
-       this->configurarLinha();
+       base_rel->setPoints(pontos);
+       this->configureLine();
        pnt_rem=true;
        break;
       }
@@ -222,35 +219,35 @@ void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
 
      /* Clicando com botão esquerdo sobre a linha de um relacionamento
         um novo ponto será criado na linha */
-     qtd=linhas.size();
-     for(i=0; i < qtd && !pnt_rem; i++)
+     count=lines.size();
+     for(i=0; i < count && !pnt_rem; i++)
      {
       /* Cria uma linha com base na posição do cursor. Esta
          linha será usada para calcular o ponto exato (intersecção)
          onde o novo ponto deve ser inserido na linha */
-      if(linhas[i]->line().angle()>=179 || linhas[i]->line().angle()>=359)
+      if(lines[i]->line().angle()>=179 || lines[i]->line().angle()>=359)
       {
-       lin.setP1(QPointF(evento->pos().x(), evento->pos().y()-50));
-       lin.setP2(QPointF(evento->pos().x(), evento->pos().y()+50));
+       lin.setP1(QPointF(event->pos().x(), event->pos().y()-50));
+       lin.setP2(QPointF(event->pos().x(), event->pos().y()+50));
       }
       else
       {
-       lin.setP1(QPointF(evento->pos().x()-50, evento->pos().y()));
-       lin.setP2(QPointF(evento->pos().x()+50, evento->pos().y()));
+       lin.setP1(QPointF(event->pos().x()-50, event->pos().y()));
+       lin.setP2(QPointF(event->pos().x()+50, event->pos().y()));
       }
 
       //Caso a linha criada acima intercepta uma linha do relacionamento
-      if(linhas[i]->line().intersect(lin,&p)==QLineF::BoundedIntersection)
+      if(lines[i]->line().intersect(lin,&p)==QLineF::BoundedIntersection)
       {
        //Insere o ponto na linha
        if(i >= pontos.size())
-        pontos.push_back( evento->pos());
+        pontos.push_back( event->pos());
        else
-        pontos.insert(pontos.begin() + i, evento->pos());
-       rel_base->setPoints(pontos);
+        pontos.insert(pontos.begin() + i, event->pos());
+       base_rel->setPoints(pontos);
 
        //Reconfigura a linha
-       this->configurarLinha();
+       this->configureLine();
        break;
       }
      }
@@ -259,41 +256,41 @@ void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
   }
   /* Caso o usuário clique com o esquerdo sem nenhum modificado do teclado pressionado.
      Será verificado se algum objeto filho pode ser selecionado na posição do cursor */
-  else if(evento->button()==Qt::LeftButton)
+  else if(event->button()==Qt::LeftButton)
   {
-   QRectF ret;
-   unsigned qtd, i;
+   QRectF rect;
+   unsigned count, i;
 
    //Verifica se algum ponto está selecionado sob o cursor
-   qtd=pontos_graf.size();
-   for(i=0; i < qtd && !objeto_sel; i++)
+   count=graph_points.size();
+   for(i=0; i < count && !sel_object; i++)
    {
-    ret.setTopLeft(pontos_graf[i]->pos());
-    ret.setSize(pontos_graf[i]->boundingRect().size());
+    rect.setTopLeft(graph_points[i]->pos());
+    rect.setSize(graph_points[i]->boundingRect().size());
 
     /* Caso o retangulo do objeto contenha o ponto,
        seleciona o mesmo */
-    if(ret.contains(evento->pos()))
+    if(rect.contains(event->pos()))
     {
-     objeto_sel=pontos_graf[i];
-     idx_objeto_sel=i;
+     sel_object=graph_points[i];
+     sel_object_idx=i;
     }
    }
 
    //Verifica se algum rótulo está selecionado sob o cursor
-   for(i=0; i < 3 && !objeto_sel; i++)
+   for(i=0; i < 3 && !sel_object; i++)
    {
-    if(rotulos[i])
+    if(labels[i])
     {
-     ret.setTopLeft(rotulos[i]->pos());
-     ret.setSize(rotulos[i]->boundingRect().size());
+     rect.setTopLeft(labels[i]->pos());
+     rect.setSize(labels[i]->boundingRect().size());
 
      /* Caso o retangulo do objeto contenha o ponto,
         seleciona o mesmo */
-     if(ret.contains(evento->pos()))
+     if(rect.contains(event->pos()))
      {
-      objeto_sel=rotulos[i];
-      idx_objeto_sel=i;
+      sel_object=labels[i];
+      sel_object_idx=i;
      }
     }
    }
@@ -301,110 +298,110 @@ void OGRelacionamento::mousePressEvent(QGraphicsSceneMouseEvent *evento)
  }
 }
 
-void OGRelacionamento::mouseMoveEvent(QGraphicsSceneMouseEvent *evento)
+void RelationshipView::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
  //Caso o relacionamento esteja selecionado e não esteja protegido
- if(this->isSelected() && evento->buttons()==Qt::LeftButton &&
+ if(this->isSelected() && event->buttons()==Qt::LeftButton &&
     !this->getSourceObject()->isProtected())
  {
   //Move o objeto filho selecionado (ponto ou rótulo)
-  if(dynamic_cast<QGraphicsPolygonItem *>(objeto_sel))
+  if(dynamic_cast<QGraphicsPolygonItem *>(sel_object))
   {
    BaseRelationship *rel_base=this->getSourceObject();
    vector<QPointF> pontos=rel_base->getPoints();
 
-   pontos[idx_objeto_sel]=evento->pos();
+   pontos[sel_object_idx]=event->pos();
    rel_base->setPoints(pontos);
-   this->configurarLinha();
+   this->configureLine();
   }
-  else if(dynamic_cast<TextboxView *>(objeto_sel))
-   objeto_sel->setPos(evento->pos());
+  else if(dynamic_cast<TextboxView *>(sel_object))
+   sel_object->setPos(event->pos());
  }
 
- BaseObjectView::mouseMoveEvent(evento);
+ BaseObjectView::mouseMoveEvent(event);
 }
 
-void OGRelacionamento::mouseReleaseEvent(QGraphicsSceneMouseEvent *evento)
+void RelationshipView::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
- BaseRelationship *rel_base=this->getSourceObject();
+ BaseRelationship *base_rel=this->getSourceObject();
 
- if(evento->button()==Qt::LeftButton)
+ if(event->button()==Qt::LeftButton)
  {
   /* Caso o usuário libere o botão esquerdo e objeto anteriormente
      selecionado seja um rótulo */
-  if(dynamic_cast<TextboxView *>(objeto_sel))
+  if(dynamic_cast<TextboxView *>(sel_object))
   {
    //Calcula o deslocamento do rótulo de sua posição inicial até a posição atual
-   rel_base->setLabelDistance(idx_objeto_sel,
-                                    QPointF(objeto_sel->pos() - pos_ini_rotulos[idx_objeto_sel]));
+   base_rel->setLabelDistance(sel_object_idx,
+                                    QPointF(sel_object->pos() - labels_ini_pos[sel_object_idx]));
   }
 
-  idx_objeto_sel=-1;
-  objeto_sel=NULL;
+  sel_object_idx=-1;
+  sel_object=NULL;
  }
 
- BaseObjectView::mouseReleaseEvent(evento);
+ BaseObjectView::mouseReleaseEvent(event);
 }
 
-void OGRelacionamento::desconectarTabelas(void)
+void RelationshipView::disconnectTables(void)
 {
  for(unsigned i=0; i < 2; i++)
-  disconnect(tabelas[i], NULL, this, NULL);
+  disconnect(tables[i], NULL, this, NULL);
 }
 
-void OGRelacionamento::configureObject(void)
+void RelationshipView::configureObject(void)
 {
  BaseRelationship *rel_base=this->getSourceObject();
 
  //Armazena as tabelas envolvidas no relacionamento
- tabelas[0]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
- tabelas[1]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
+ tables[0]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::SRC_TABLE)->getReceiverObject());
+ tables[1]=dynamic_cast<BaseTableView *>(rel_base->getTable(BaseRelationship::DST_TABLE)->getReceiverObject());
 
  //Executa a configuração inicial do relacionamento
- this->configurarLinha();
+ this->configureLine();
 
  /* Conecta os slots do relacionamento com o sinal de movimento das tabelas para
     que a linha / rotulos da relacionamento sejam reposicionados sempre quando
     uma das tabelas for movida */
  for(unsigned i=0; i < 2; i++)
-  connect(tabelas[i], SIGNAL(s_objectMoved(void)), this, SLOT(configurarLinha(void)));
+  connect(tables[i], SIGNAL(s_objectMoved(void)), this, SLOT(configureLine(void)));
 
- connect(rel_base, SIGNAL(s_objectModified()), this, SLOT(configurarLinha(void)));
+ connect(rel_base, SIGNAL(s_objectModified()), this, SLOT(configureLine(void)));
 }
 
-void OGRelacionamento::configurePositionInfo(void)
+void RelationshipView::configurePositionInfo(void)
 {
  if(this->isSelected())
  {
-  BaseObjectView::configurePositionInfo(descritor->pos());
-  pos_info_txt->setPos(descritor->pos().x(),
-                       descritor->pos().y() - pos_info_txt->boundingRect().height());
-  pos_info_pol->setPos(descritor->pos().x(),
-                       descritor->pos().y() - pos_info_pol->boundingRect().height());
+  BaseObjectView::configurePositionInfo(descriptor->pos());
+  pos_info_txt->setPos(descriptor->pos().x(),
+                       descriptor->pos().y() - pos_info_txt->boundingRect().height());
+  pos_info_pol->setPos(descriptor->pos().x(),
+                       descriptor->pos().y() - pos_info_pol->boundingRect().height());
  }
 }
 
-void OGRelacionamento::configurarLinha(void)
+void RelationshipView::configureLine(void)
 {
- if(!configurando_linha)
+ if(!configuring_line)
  {
-  BaseRelationship *rel_base=this->getSourceObject();
-  Relationship *relacao=dynamic_cast<Relationship *>(rel_base);
-  vector<QPointF> pontos;
+  BaseRelationship *base_rel=this->getSourceObject();
+  Relationship *rel=dynamic_cast<Relationship *>(base_rel);
+  vector<QPointF> points;
   QLineF lin_aux[2];
   QGraphicsLineItem *lin=NULL;
   QPointF pos, p_int, p_central[2];
-  QRectF ret;
+  QRectF rect;
   QGraphicsItem *item=NULL;
   QPen pen;
   QGraphicsPolygonItem *pol=NULL;
   QPolygonF pol_aux;
-  int i, i1, qtd, idx_lin_desc=0;
+  int i, i1, count, idx_lin_desc=0;
 
-  configurando_linha=true;
+  configuring_line=true;
 
   //Caso seja um auto relacionamento
-  if(rel_base->isSelfRelationship())
+  if(base_rel->isSelfRelationship())
   {
    float fator=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
 
@@ -417,24 +414,24 @@ void OGRelacionamento::configurarLinha(void)
      ----------
 
      Esta linha não pode ser movida nem ter pontos adicionados */
-   pos=tabelas[0]->pos();
-   ret=tabelas[0]->boundingRect();
+   pos=tables[0]->pos();
+   rect=tables[0]->boundingRect();
 
-   p_central[0].setX(pos.x() + ret.width());
-   p_central[0].setY(pos.y() + (ret.height()/2.5f));
+   p_central[0].setX(pos.x() + rect.width());
+   p_central[0].setY(pos.y() + (rect.height()/2.5f));
 
-   p_central[1].setX(pos.x() + (ret.width()/1.5f));
+   p_central[1].setX(pos.x() + (rect.width()/1.5f));
    p_central[1].setY(pos.y());
 
-   pontos.push_back(QPointF(p_central[0].x() + (10 * fator),  p_central[0].y()));
-   pontos.push_back(QPointF(p_central[0].x() + (10 * fator),  p_central[1].y() - (10 * fator)));
-   pontos.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (10 * fator)));
-   rel_base->setPoints(pontos);
+   points.push_back(QPointF(p_central[0].x() + (10 * fator),  p_central[0].y()));
+   points.push_back(QPointF(p_central[0].x() + (10 * fator),  p_central[1].y() - (10 * fator)));
+   points.push_back(QPointF(p_central[1].x(),  p_central[1].y() - (10 * fator)));
+   base_rel->setPoints(points);
   }
   //Caso não seja um autorelacionamento
   else
   {
-   Relationship *rel=dynamic_cast<Relationship *>(rel_base);
+   Relationship *rel=dynamic_cast<Relationship *>(base_rel);
 
    /* Caso especial: Relacionamento 1-1 identificadores.
 
@@ -446,8 +443,8 @@ void OGRelacionamento::configurarLinha(void)
       rel->getRelationshipType()==Relationship::RELATIONSHIP_11 &&
       rel->isIdentifier())
    {
-    tabelas[0]=dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
-    tabelas[1]=dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
+    tables[0]=dynamic_cast<BaseTableView *>(rel->getReferenceTable()->getReceiverObject());
+    tables[1]=dynamic_cast<BaseTableView *>(rel->getReceiverTable()->getReceiverObject());
    }
 
    /* Cria linhas horizontais e verticais denotando as bordas das tabela.
@@ -456,20 +453,20 @@ void OGRelacionamento::configurarLinha(void)
       é onde será conectada a linha do relacionamento na tabela */
    for(i=0; i < 2; i++)
    {
-    ret=tabelas[i]->boundingRect();
-    pos=tabelas[i]->pos();
+    rect=tables[i]->boundingRect();
+    pos=tables[i]->pos();
 
     //Calcula o ponto central da tabela
-    p_central[i].setX(pos.x() + (ret.width()/2.0f));
-    p_central[i].setY(pos.y() + (ret.height()/2.0f));
+    p_central[i].setX(pos.x() + (rect.width()/2.0f));
+    p_central[i].setY(pos.y() + (rect.height()/2.0f));
    }
 
    //Obtém os pontos do relacionamento
-   pontos=rel_base->getPoints();
+   points=base_rel->getPoints();
 
    /* Caso não haja pontos no relacionamento a linha auxiliar será entre
       os pontos centrais das tabelas */
-   if(pontos.empty())
+   if(points.empty())
    {
     lin_aux[0].setPoints(p_central[0], p_central[1]);
     lin_aux[1]=lin_aux[0];
@@ -479,21 +476,21 @@ void OGRelacionamento::configurarLinha(void)
      2) entre o ponto central da tabela de destino com o último ponto do relacionamento */
    else
    {
-    lin_aux[0].setPoints(p_central[0], pontos[0]);
-    lin_aux[1].setPoints(p_central[1], pontos[pontos.size()-1]);
+    lin_aux[0].setPoints(p_central[0], points[0]);
+    lin_aux[1].setPoints(p_central[1], points[points.size()-1]);
    }
 
    //Criando uma representação gráfica para os pontos do relacionamento
-   qtd=pontos.size();
+   count=points.size();
    pol_aux.append(QPointF(0,0)); pol_aux.append(QPointF(5,0));
    pol_aux.append(QPointF(5,5)); pol_aux.append(QPointF(0,5));
 
-   for(i=0; i < qtd; i++)
+   for(i=0; i < count; i++)
    {
-    if(i >= static_cast<int>(pontos_graf.size()))
+    if(i >= static_cast<int>(graph_points.size()))
     {
      pol=new QGraphicsPolygonItem;
-     pontos_graf.push_back(pol);
+     graph_points.push_back(pol);
      pol->setZValue(0);
      pol->setPolygon(pol_aux);
      pol->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION));
@@ -501,19 +498,19 @@ void OGRelacionamento::configurarLinha(void)
      this->addToGroup(pol);
     }
     else
-     pol=pontos_graf[i];
+     pol=graph_points[i];
 
-    pol->setPos(QPointF(pontos[i].x()-RAIO_PNT_GRAFICO,
-                        pontos[i].y()-RAIO_PNT_GRAFICO));
+    pol->setPos(QPointF(points[i].x()-GRAPHIC_PNT_RADIUS,
+                        points[i].y()-GRAPHIC_PNT_RADIUS));
     pol->setVisible(this->isSelected());
    }
 
    //Remove os pontos gráficos não usados
-   i=pontos_graf.size()-1;
-   while(i > qtd-1)
+   i=graph_points.size()-1;
+   while(i > count-1)
    {
-    item=pontos_graf.back();
-    pontos_graf.pop_back();
+    item=graph_points.back();
+    graph_points.pop_back();
     this->removeFromGroup(item);
     delete(item);
     i--;
@@ -522,72 +519,72 @@ void OGRelacionamento::configurarLinha(void)
 
   //Caso o relacionamento seja de dependência e seja entre uma tabela-visão a linha será tracejada
   pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
-  if(rel_base->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP)
+  if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_DEP)
    pen.setStyle(Qt::DashLine);
 
   //Armazena os pontos de interseção das bordas da tabela no vetor de pontos do relacionamento
-  pontos.insert(pontos.begin(),p_central[0]);
-  pontos.push_back(p_central[1]);
+  points.insert(points.begin(),p_central[0]);
+  points.push_back(p_central[1]);
 
   /* Caso o relacionamento seja identificador, é criado um ponto adicional
      na mediana da linha que sustenta o descritor. Desta forma os seguimentos de linhas
      entre o descritor e a entidade fraca terão sua espessura modificada para denotar
      o relacionamento identificador */
-  if(relacao && relacao->isIdentifier())
+  if(rel && rel->isIdentifier())
   {
    //Calcula o índice do ponto inicial da linha que sustenta o descritor
-   idx_lin_desc=(pontos.size()/2);
-   p_central[0]=pontos[idx_lin_desc];
+   idx_lin_desc=(points.size()/2);
+   p_central[0]=points[idx_lin_desc];
 
    //Obtém o segundo ponto da linha
-   if(idx_lin_desc + 1 > static_cast<int>(pontos.size()))
-    p_central[1]=pontos[idx_lin_desc+1];
+   if(idx_lin_desc + 1 > static_cast<int>(points.size()))
+    p_central[1]=points[idx_lin_desc+1];
    else
-    p_central[1]=pontos[idx_lin_desc-1];
+    p_central[1]=points[idx_lin_desc-1];
 
    //Cria o ponto mediano da linha
    p_int.setX((p_central[0].x() + p_central[1].x())/2.0f);
    p_int.setY((p_central[0].y() + p_central[1].y())/2.0f);
 
    //Insere o mesmo no meio da lista de pontos
-   pontos.insert(pontos.begin() + idx_lin_desc, p_int);
+   points.insert(points.begin() + idx_lin_desc, p_int);
   }
 
   //Criando as linhas do relacionamento
-  qtd=pontos.size();
-  for(i=0; i < qtd-1; i++)
+  count=points.size();
+  for(i=0; i < count-1; i++)
   {
-   if(i >= static_cast<int>(linhas.size()))
+   if(i >= static_cast<int>(lines.size()))
    {
     lin=new QGraphicsLineItem;
     lin->setZValue(-1);
-    linhas.push_back(lin);
+    lines.push_back(lin);
     this->addToGroup(lin);
    }
    else
-    lin=linhas[i];
+    lin=lines[i];
 
    /* Caso seja identificador a linha atual tem sua espessura modificada
       caso seu indice seja igual ou superior ao índice da linha que sustenta
       o descritor */
-   if(relacao && relacao->isIdentifier() && i >= idx_lin_desc)
+   if(rel && rel->isIdentifier() && i >= idx_lin_desc)
     pen.setWidthF(1.75f);
    else
     pen.setWidthF(1.0f);
 
-   lin->setLine(QLineF(pontos[i], pontos[i+1]));
+   lin->setLine(QLineF(points[i], points[i+1]));
    lin->setPen(pen);
   }
 
   //Remove a linhas não utilizadas (caso não for auto relacionamento)
-  if(!rel_base->isSelfRelationship())
+  if(!base_rel->isSelfRelationship())
   {
-   i=pontos.size()-1;
-   i1=linhas.size();
+   i=points.size()-1;
+   i1=lines.size();
    while(i1 > i)
    {
-    item=linhas.back();
-    linhas.pop_back();
+    item=lines.back();
+    lines.pop_back();
     this->removeFromGroup(item);
     delete(item);
     i1--;
@@ -595,51 +592,51 @@ void OGRelacionamento::configurarLinha(void)
   }
 
   //Configura os rótulos e o descritor
-  this->configurarDescritor();
-  this->configurarRotulos();
+  this->configureDescriptor();
+  this->configureLabels();
   this->configureProtectedIcon();
-  configurando_linha=false;
+  configuring_line=false;
 
   //O tool tip do objeto grafico será o nome formatado do objeto de origem
-  this->setToolTip(QString::fromUtf8(rel_base->getName(true)));
+  this->setToolTip(QString::fromUtf8(base_rel->getName(true)));
 
   for(i=0; i < 3; i++)
   {
-   if(rotulos[i])
-    rotulos[i]->setToolTip(QString::fromUtf8(rel_base->getName(true)));
+   if(labels[i])
+    labels[i]->setToolTip(QString::fromUtf8(base_rel->getName(true)));
   }
 
   //O tool tip do objeto grafico será o nome formatado do objeto de origem
-  descritor->setToolTip(QString::fromUtf8(rel_base->getName(true)));
+  descriptor->setToolTip(QString::fromUtf8(base_rel->getName(true)));
  }
 }
 
-void OGRelacionamento::configurarDescritor(void)
+void RelationshipView::configureDescriptor(void)
 {
  QLineF lin;
  QPolygonF pol;
- BaseRelationship *rel_base=this->getSourceObject();
- Relationship *relacao=dynamic_cast<Relationship *>(rel_base);
- unsigned tipo_rel=rel_base->getRelationshipType();
- float x, y, fator=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+ BaseRelationship *base_rel=this->getSourceObject();
+ Relationship *rel=dynamic_cast<Relationship *>(base_rel);
+ unsigned rel_type=base_rel->getRelationshipType();
+ float x, y, factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
  QPen pen;
  QPointF pnt;
- vector<QPointF> pontos=rel_base->getPoints();
+ vector<QPointF> points=base_rel->getPoints();
 
  //Configura o estilo da borda do descritor
  pen=BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP);
 
- if(tipo_rel==BaseRelationship::RELATIONSHIP_DEP)
+ if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
   pen.setStyle(Qt::DashLine);
 
  //Configura a borda e preenchimento do descritor
- descritor->setPen(pen);
- descritor->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP));
+ descriptor->setPen(pen);
+ descriptor->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::RELATIONSHIP));
 
  /* Cria um polígono triangular (para relacionamentos de dep. ou gen.)
     ou losangular (para relacionamentos 1n ou nn) */
- if(tipo_rel==BaseRelationship::RELATIONSHIP_DEP ||
-    tipo_rel==BaseRelationship::RELATIONSHIP_GEN)
+ if(rel_type==BaseRelationship::RELATIONSHIP_DEP ||
+    rel_type==BaseRelationship::RELATIONSHIP_GEN)
  {
   pol.append(QPointF(0,0)); pol.append(QPointF(21,13));
   pol.append(QPointF(0,26)); pol.append(QPointF(0,13));
@@ -651,23 +648,23 @@ void OGRelacionamento::configurarDescritor(void)
  }
 
  //Redimensiona o polígono conforme o fator de tamanho da fonte
- if(fator!=1.0f)
+ if(factor!=1.0f)
   this->resizePolygon(pol,
-                              pol.boundingRect().width() * fator ,
-                              pol.boundingRect().height() * fator);
+                              pol.boundingRect().width() * factor ,
+                              pol.boundingRect().height() * factor);
 
  /* Caso seja um auto relacionamento, o posição do descritor será
     baseada no ponto do meio da lista de pontos */
- if(rel_base->isSelfRelationship())
-  pnt=pontos.at(pontos.size()/2);
+ if(base_rel->isSelfRelationship())
+  pnt=points.at(points.size()/2);
  else
  {
   //Obtém a linha do meio
-  lin=linhas.at(linhas.size()/2)->line();
+  lin=lines.at(lines.size()/2)->line();
 
   /* Caso o relacionamento seja identificador usa como base de posição
      o ponto inicial da linha obtida */
-  if(relacao && relacao->isIdentifier())
+  if(rel && rel->isIdentifier())
    pnt=lin.p1();
   //Caso contrário, calcula o ponto médio da linha obtida
   else
@@ -678,7 +675,7 @@ void OGRelacionamento::configurarDescritor(void)
 
   /* Configura o angulo de rotação do descritor, sua sombra e da seleção
      com base na inclinação da linha de sustentação */
-  descritor->setRotation(-lin.angle());
+  descriptor->setRotation(-lin.angle());
   obj_selection->setRotation(-lin.angle());
   obj_shadow->setRotation(-lin.angle());
  }
@@ -691,9 +688,9 @@ void OGRelacionamento::configurarDescritor(void)
  protected_icon->setPos(x + ((pol.boundingRect().width()/2.0f) * 0.60f),
                          y + ((pol.boundingRect().height()/2.0f) * 0.55f));
 
- descritor->setPolygon(pol);
- descritor->setTransformOriginPoint(descritor->boundingRect().center());
- descritor->setPos(x, y);
+ descriptor->setPolygon(pol);
+ descriptor->setTransformOriginPoint(descriptor->boundingRect().center());
+ descriptor->setPos(x, y);
 
  obj_selection->setPolygon(pol);
  obj_selection->setTransformOriginPoint(obj_selection->boundingRect().center());
@@ -707,130 +704,130 @@ void OGRelacionamento::configurarDescritor(void)
  obj_shadow->setBrush(QColor(0,0,0,100));
 
  //Configura os atributos do relacionamento
- this->configurarAtributos();
+ this->configureAttributes();
  this->configurePositionInfo();
 }
 
-void OGRelacionamento::configurarAtributos(void)
+void RelationshipView::configureAttributes(void)
 {
- Relationship *relacao=dynamic_cast<Relationship *>(this->getSourceObject());
+ Relationship *rel=dynamic_cast<Relationship *>(this->getSourceObject());
 
  /* Atributos somente são configurados caso o objeto de origem seja um relacionamento
     entre tabelas. Relacionamentos entre tabela e visão são ignorados */
- if(relacao)
+ if(rel)
  {
-  int i, qtd;
-  Column *atrib=NULL;
-  QGraphicsItemGroup *atributo=NULL;
+  int i, count;
+  Column *col=NULL;
+  QGraphicsItemGroup *attrib=NULL;
   QGraphicsLineItem *lin=NULL;
   QGraphicsEllipseItem *desc=NULL;
-  QGraphicsPolygonItem *sel_atrib=NULL;
-  QGraphicsSimpleTextItem *texto=NULL;
+  QGraphicsPolygonItem *sel_attrib=NULL;
+  QGraphicsSimpleTextItem *text=NULL;
   QGraphicsItemGroup *item=NULL;
   QPointF p_aux;
   QTextCharFormat fmt;
-  QFont fonte;
-  QRectF ret;
+  QFont font;
+  QRectF rect;
   QPolygonF pol;
   float py, px,
-        fator=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
+        factor=font_config[ParsersAttributes::GLOBAL].font().pointSizeF()/DEFAULT_FONT_SIZE;
 
   //Obtém configuração de fonte dos atributos
   fmt=font_config[ParsersAttributes::ATTRIBUTE];
-  fonte=fmt.font();
-  fonte.setPointSizeF(fonte.pointSizeF() * 0.80f);
+  font=fmt.font();
+  font.setPointSizeF(font.pointSizeF() * 0.80f);
 
   //Configura o retângulo base para criação do descritor do atributo
-  ret.setTopLeft(QPointF(0,0));
-  ret.setSize(QSizeF(8 * fator, 8 * fator));
+  rect.setTopLeft(QPointF(0,0));
+  rect.setSize(QSizeF(8 * factor, 8 * factor));
 
   //Calcula a posição do primeiro atributo com base na quantidade de atributos e tamanho do descritor
-  qtd=relacao->getAttributeCount();
-  px=descritor->pos().x() + descritor->boundingRect().width() + ((3 * HORIZ_SPACING) * fator);
-  py=descritor->pos().y() - (qtd * ret.height()/(4.0f * fator));
+  count=rel->getAttributeCount();
+  px=descriptor->pos().x() + descriptor->boundingRect().width() + ((3 * HORIZ_SPACING) * factor);
+  py=descriptor->pos().y() - (count * rect.height()/(4.0f * factor));
 
-  for(i=0; i < qtd; i++)
+  for(i=0; i < count; i++)
   {
    //Obtém um atributo do relacionamento
-   atrib=relacao->getAttribute(i);
+   col=rel->getAttribute(i);
 
    //Aloca um atributo
-   if(i >= static_cast<int>(atributos.size()))
+   if(i >= static_cast<int>(attributes.size()))
    {
-    atributo=new QGraphicsItemGroup;
-    atributo->setZValue(-1);
+    attrib=new QGraphicsItemGroup;
+    attrib->setZValue(-1);
 
     //Cria a linha que conecta o atributo ao centro do descritor
     lin=new QGraphicsLineItem;
     lin->setZValue(-1);
-    atributo->addToGroup(lin);
+    attrib->addToGroup(lin);
 
     //Cria o descritor do atributo
     desc=new QGraphicsEllipseItem;
     desc->setZValue(0);
-    atributo->addToGroup(desc);
+    attrib->addToGroup(desc);
 
     //Cria o texto do atributo
-    texto=new QGraphicsSimpleTextItem;
-    texto->setZValue(0);
-    atributo->addToGroup(texto);
+    text=new QGraphicsSimpleTextItem;
+    text->setZValue(0);
+    attrib->addToGroup(text);
 
-    sel_atrib=new QGraphicsPolygonItem;
-    sel_atrib->setZValue(1);
-    sel_atrib->setVisible(false);
-    atributo->addToGroup(sel_atrib);
+    sel_attrib=new QGraphicsPolygonItem;
+    sel_attrib->setZValue(1);
+    sel_attrib->setVisible(false);
+    attrib->addToGroup(sel_attrib);
 
     //Adiciona o atributo recém criado ao relacionamento
-    this->addToGroup(atributo);
-    atributos.push_back(atributo);
+    this->addToGroup(attrib);
+    attributes.push_back(attrib);
    }
    else
    {
-    atributo=atributos[i];
-    lin=dynamic_cast<QGraphicsLineItem *>(atributo->children().at(0));
-    desc=dynamic_cast<QGraphicsEllipseItem *>(atributo->children().at(1));
-    texto=dynamic_cast<QGraphicsSimpleTextItem *>(atributo->children().at(2));
-    sel_atrib=dynamic_cast<QGraphicsPolygonItem *>(atributo->children().at(3));
+    attrib=attributes[i];
+    lin=dynamic_cast<QGraphicsLineItem *>(attrib->children().at(0));
+    desc=dynamic_cast<QGraphicsEllipseItem *>(attrib->children().at(1));
+    text=dynamic_cast<QGraphicsSimpleTextItem *>(attrib->children().at(2));
+    sel_attrib=dynamic_cast<QGraphicsPolygonItem *>(attrib->children().at(3));
    }
 
-   desc->setRect(ret);
+   desc->setRect(rect);
    desc->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::ATTRIBUTE));
    desc->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::ATTRIBUTE));
    lin->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::RELATIONSHIP));
-   texto->setBrush(fmt.foreground());
-   texto->setFont(fonte);
-   sel_atrib->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION));
-   sel_atrib->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION));
+   text->setBrush(fmt.foreground());
+   text->setFont(font);
+   sel_attrib->setPen(BaseObjectView::getBorderStyle(ParsersAttributes::OBJ_SELECTION));
+   sel_attrib->setBrush(BaseObjectView::getFillStyle(ParsersAttributes::OBJ_SELECTION));
 
    //Move o atributo para a posição calculada
-   atributo->setPos(px, py);
+   attrib->setPos(px, py);
 
    //Define o texto e a posição do mesmo no atributo
-   texto->setText(QString::fromUtf8(atrib->getName()));
-   texto->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HORIZ_SPACING * fator), 0));
-   desc->setPos(0, VERT_SPACING * fator);
+   text->setText(QString::fromUtf8(col->getName()));
+   text->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HORIZ_SPACING * factor), 0));
+   desc->setPos(0, VERT_SPACING * factor);
 
    pol.clear();
-   pol.append(texto->boundingRect().topLeft());
-   pol.append(texto->boundingRect().topRight()  + QPointF(desc->boundingRect().width() + (HORIZ_SPACING * fator), 0));
-   pol.append(texto->boundingRect().bottomRight() + QPointF(desc->boundingRect().width() + (HORIZ_SPACING * fator), 0));
-   pol.append(texto->boundingRect().bottomLeft());
-   sel_atrib->setPolygon(pol);
+   pol.append(text->boundingRect().topLeft());
+   pol.append(text->boundingRect().topRight()  + QPointF(desc->boundingRect().width() + (HORIZ_SPACING * factor), 0));
+   pol.append(text->boundingRect().bottomRight() + QPointF(desc->boundingRect().width() + (HORIZ_SPACING * factor), 0));
+   pol.append(text->boundingRect().bottomLeft());
+   sel_attrib->setPolygon(pol);
 
    //Calcula o ponto central do descritor para a configuração da linha entre o descritor e o atributo
-   p_aux=this->mapToItem(atributo, descritor->pos().x() + (descritor->boundingRect().width()/2.0f),
-                                   descritor->pos().y() + (descritor->boundingRect().height()/2.0f));
+   p_aux=this->mapToItem(attrib, descriptor->pos().x() + (descriptor->boundingRect().width()/2.0f),
+                                   descriptor->pos().y() + (descriptor->boundingRect().height()/2.0f));
    lin->setLine(QLineF(p_aux, desc->boundingRect().center()));
 
    py+=desc->boundingRect().height() + (2 * VERT_SPACING);
   }
 
   //Remove os atributos não utilizados
-  i=atributos.size()-1;
-  while(i > qtd-1)
+  i=attributes.size()-1;
+  while(i > count-1)
   {
-   item=atributos.back();
-   atributos.pop_back();
+   item=attributes.back();
+   attributes.pop_back();
    this->removeFromGroup(item);
    delete(item);
    i--;
@@ -838,57 +835,57 @@ void OGRelacionamento::configurarAtributos(void)
  }
 }
 
-void OGRelacionamento::configurarRotulos(void)
+void RelationshipView::configureLabels(void)
 {
  float x=0,y=0;
  QPointF pnt;
- BaseRelationship *rel_base=this->getSourceObject();
- unsigned tipo_relac=rel_base->getRelationshipType();
- QPointF dist_rotulo;
+ BaseRelationship *base_rel=this->getSourceObject();
+ unsigned rel_type=base_rel->getRelationshipType();
+ QPointF label_dist;
 
  //Obtém os deslocamentos do rótulo de nome
- dist_rotulo=rel_base->getLabelDistance(BaseRelationship::LABEL_REL_NAME);
+ label_dist=base_rel->getLabelDistance(BaseRelationship::LABEL_REL_NAME);
 
  //Define a posição do rótulo como sendo abaixo do descritor
- pnt=descritor->pos();
+ pnt=descriptor->pos();
  x=pnt.x() -
-   ((rotulos[BaseRelationship::LABEL_REL_NAME]->boundingRect().width() -
-     descritor->boundingRect().width())/2.0f);
+   ((labels[BaseRelationship::LABEL_REL_NAME]->boundingRect().width() -
+     descriptor->boundingRect().width())/2.0f);
 
- if(rel_base->isSelfRelationship())
+ if(base_rel->isSelfRelationship())
   y=pnt.y() -
-    rotulos[BaseRelationship::LABEL_REL_NAME]->boundingRect().height() - (2 * VERT_SPACING);
+    labels[BaseRelationship::LABEL_REL_NAME]->boundingRect().height() - (2 * VERT_SPACING);
  else
-  y=pnt.y() + descritor->boundingRect().height() + VERT_SPACING;
+  y=pnt.y() + descriptor->boundingRect().height() + VERT_SPACING;
 
- pos_ini_rotulos[BaseRelationship::LABEL_REL_NAME]=QPointF(x,y);
+ labels_ini_pos[BaseRelationship::LABEL_REL_NAME]=QPointF(x,y);
 
  //Caso haja um deslocamento anterior do rótulo, incrementa sua posição com o deslocamento
- if(!isnan(dist_rotulo.x()))
+ if(!isnan(label_dist.x()))
  {
-  x+=dist_rotulo.x();
-  y+=dist_rotulo.y();
+  x+=label_dist.x();
+  y+=label_dist.y();
  }
 
  //Move o rótulo para o ponto calculado
- rotulos[BaseRelationship::LABEL_REL_NAME]->setPos(x,y);
- dynamic_cast<Textbox *>(rotulos[BaseRelationship::LABEL_REL_NAME]->getSourceObject())->setModified(true);
+ labels[BaseRelationship::LABEL_REL_NAME]->setPos(x,y);
+ dynamic_cast<Textbox *>(labels[BaseRelationship::LABEL_REL_NAME]->getSourceObject())->setModified(true);
 
  /* Caso o relacionamento não seja de generalização ou dependência,
     a posição dos rótulos de cardinalidade será atualizada */
- if(tipo_relac!=BaseRelationship::RELATIONSHIP_GEN &&
-    tipo_relac!=BaseRelationship::RELATIONSHIP_DEP)
+ if(rel_type!=BaseRelationship::RELATIONSHIP_GEN &&
+    rel_type!=BaseRelationship::RELATIONSHIP_DEP)
  {
   QPointF pi, pf, p_int, pos;
   unsigned idx, i1;
   float dl, da;
-  QLineF lins[2], bordas[2][4];
-  QRectF ret_tab, ret;
-  unsigned tipos_rot[2]={ BaseRelationship::LABEL_SRC_CARD,
+  QLineF lins[2], borders[2][4];
+  QRectF tab_rect, rect;
+  unsigned label_ids[2]={ BaseRelationship::LABEL_SRC_CARD,
                           BaseRelationship::LABEL_DST_CARD };
 
-  lins[0]=linhas[0]->line();
-  lins[1]=linhas[linhas.size()-1]->line();
+  lins[0]=lines[0]->line();
+  lins[1]=lines[lines.size()-1]->line();
 
   /* Cria linhas horizontais e verticais denotando as bordas das tabela.
      É com base nestas bordas que serão calculados os pontos de interseção
@@ -896,16 +893,16 @@ void OGRelacionamento::configurarRotulos(void)
      é onde será posicionado inicialmente o rótulo de cardinalidade de cada tabela */
   for(idx=0; idx < 2; idx++)
   {
-   ret=tabelas[idx]->boundingRect();
-   pos=tabelas[idx]->pos();
+   rect=tables[idx]->boundingRect();
+   pos=tables[idx]->pos();
 
    //Cria as linhas de borda da tabela
-   bordas[idx][0].setPoints(pos, QPointF(pos.x(), pos.y() + ret.height()));
-   bordas[idx][1].setPoints(QPointF(pos.x(), pos.y() + ret.height()),
-                            QPointF(pos.x() + ret.width(), pos.y() + ret.height()));
-   bordas[idx][2].setPoints(QPointF(pos.x() + ret.width(), pos.y()),
-                            QPointF(pos.x() + ret.width(), pos.y() + ret.height()));
-   bordas[idx][3].setPoints(pos, QPointF(pos.x() + ret.width(), pos.y()));
+   borders[idx][0].setPoints(pos, QPointF(pos.x(), pos.y() + rect.height()));
+   borders[idx][1].setPoints(QPointF(pos.x(), pos.y() + rect.height()),
+                             QPointF(pos.x() + rect.width(), pos.y() + rect.height()));
+   borders[idx][2].setPoints(QPointF(pos.x() + rect.width(), pos.y()),
+                             QPointF(pos.x() + rect.width(), pos.y() + rect.height()));
+   borders[idx][3].setPoints(pos, QPointF(pos.x() + rect.width(), pos.y()));
   }
 
   /* Calcula os pontos de interseção entre as linhas auxiliares e as bordas das tabela,
@@ -914,7 +911,7 @@ void OGRelacionamento::configurarRotulos(void)
   {
    for(i1=0; i1 < 4; i1++)
    {
-    if(lins[idx].intersect(bordas[idx][i1], &p_int)==QLineF::BoundedIntersection)
+    if(lins[idx].intersect(borders[idx][i1], &p_int)==QLineF::BoundedIntersection)
     {
      //O ponto central passa a ser o ponto de interseção na borda da tabela
      if(idx==0)
@@ -965,90 +962,90 @@ void OGRelacionamento::configurarRotulos(void)
      pf=lins[idx].p1();
     }
 
-    dl=rotulos[tipos_rot[idx]]->boundingRect().width()/2.0f;
-    da=rotulos[tipos_rot[idx]]->boundingRect().height()/2.0f;
+    dl=labels[label_ids[idx]]->boundingRect().width()/2.0f;
+    da=labels[label_ids[idx]]->boundingRect().height()/2.0f;
 
     x=pi.x() - dl;
     y=pi.y() - da;
 
-    ret_tab.setTopLeft(tabelas[idx]->pos());
-    ret_tab.setSize(tabelas[idx]->boundingRect().size());
+    tab_rect.setTopLeft(tables[idx]->pos());
+    tab_rect.setSize(tables[idx]->boundingRect().size());
 
-    ret.setTopLeft(QPointF(x,y));
-    ret.setSize(rotulos[idx]->boundingRect().size());
+    rect.setTopLeft(QPointF(x,y));
+    rect.setSize(labels[idx]->boundingRect().size());
 
-    if(ret.contains(ret_tab.bottomRight()))
+    if(rect.contains(tab_rect.bottomRight()))
     { x+=dl + HORIZ_SPACING; y+=da + VERT_SPACING; }
-    else if(ret.contains(ret_tab.bottomLeft()))
+    else if(rect.contains(tab_rect.bottomLeft()))
     { x-=dl + HORIZ_SPACING; y+=da + VERT_SPACING; }
-    else if(ret.contains(ret_tab.topLeft()))
+    else if(rect.contains(tab_rect.topLeft()))
     { x-=dl + HORIZ_SPACING; y-=da + VERT_SPACING; }
-    else if(ret.contains(ret_tab.topRight()))
+    else if(rect.contains(tab_rect.topRight()))
     { x+=dl + HORIZ_SPACING;  y-=da + VERT_SPACING; }
     else
     {
-     if(ret_tab.contains(ret.bottomLeft()) && ret_tab.contains(ret.bottomRight()))
+     if(tab_rect.contains(rect.bottomLeft()) && tab_rect.contains(rect.bottomRight()))
       y-=da + VERT_SPACING;
-     else if(ret_tab.contains(ret.topLeft()) && ret_tab.contains(ret.topRight()))
+     else if(tab_rect.contains(rect.topLeft()) && tab_rect.contains(rect.topRight()))
       y+=da + VERT_SPACING;
 
-     if(ret_tab.contains(ret.topRight()) && ret_tab.contains(ret.bottomRight()))
+     if(tab_rect.contains(rect.topRight()) && tab_rect.contains(rect.bottomRight()))
       x-=dl + HORIZ_SPACING;
-     else if(ret_tab.contains(ret.topLeft()) && ret_tab.contains(ret.bottomLeft()))
+     else if(tab_rect.contains(rect.topLeft()) && tab_rect.contains(rect.bottomLeft()))
       x+=dl + HORIZ_SPACING;
     }
 
-    pos_ini_rotulos[tipos_rot[idx]]=QPointF(x,y);
-    dist_rotulo=rel_base->getLabelDistance(tipos_rot[idx]);
-    if(!isnan(dist_rotulo.x()))
+    labels_ini_pos[label_ids[idx]]=QPointF(x,y);
+    label_dist=base_rel->getLabelDistance(label_ids[idx]);
+    if(!isnan(label_dist.x()))
     {
-     x+=dist_rotulo.x();
-     y+=dist_rotulo.y();
+     x+=label_dist.x();
+     y+=label_dist.y();
     }
 
    //Move o rótulo para a posição calculada
-   rotulos[tipos_rot[idx]]->setPos(x,y);
-   dynamic_cast<Textbox *>(rotulos[tipos_rot[idx]]->getSourceObject())->setModified(true);
+   labels[label_ids[idx]]->setPos(x,y);
+   dynamic_cast<Textbox *>(labels[label_ids[idx]]->getSourceObject())->setModified(true);
   }
  }
 }
 
-QRectF OGRelacionamento::__boundingRect(void)
+QRectF RelationshipView::__boundingRect(void)
 {
  float x1=0, y1=0, x2=0, y2=0;
- unsigned i, qtd;
+ unsigned i, count;
  QPointF p;
- QRectF ret;
- vector<QPointF> pontos=dynamic_cast<BaseRelationship *>(this->getSourceObject())->getPoints();
+ QRectF rect;
+ vector<QPointF> points=dynamic_cast<BaseRelationship *>(this->getSourceObject())->getPoints();
 
  //O tamanho de referência será o do descritor
- x1=descritor->pos().x();
- y1=descritor->pos().y();
- x2=descritor->pos().x() + descritor->boundingRect().width();
- y2=descritor->pos().y() + descritor->boundingRect().height();
+ x1=descriptor->pos().x();
+ y1=descriptor->pos().y();
+ x2=descriptor->pos().x() + descriptor->boundingRect().width();
+ y2=descriptor->pos().y() + descriptor->boundingRect().height();
 
  //Verifica se algum dos pontos extrapola a dimensão de referência
- qtd=pontos.size();
- for(i=0; i < qtd; i++)
+ count=points.size();
+ for(i=0; i < count; i++)
  {
-  p=pontos[i];
-  if(x1 > p.x()) x1=p.x() - RAIO_PNT_GRAFICO;
-  if(y1 > p.y()) y1=p.y() - RAIO_PNT_GRAFICO;
-  if(x2 < p.x()) x2=p.x() + RAIO_PNT_GRAFICO;
-  if(y2 < p.y()) y2=p.y() + RAIO_PNT_GRAFICO;
+  p=points[i];
+  if(x1 > p.x()) x1=p.x() - GRAPHIC_PNT_RADIUS;
+  if(y1 > p.y()) y1=p.y() - GRAPHIC_PNT_RADIUS;
+  if(x2 < p.x()) x2=p.x() + GRAPHIC_PNT_RADIUS;
+  if(y2 < p.y()) y2=p.y() + GRAPHIC_PNT_RADIUS;
  }
 
  //Verifica se a dimensão de um dos rótulos extrapola a dimensão de referência
  for(i=0; i < 3; i++)
  {
-  if(rotulos[i])
+  if(labels[i])
   {
-   ret.setTopLeft(rotulos[i]->scenePos());
-   ret.setSize(rotulos[i]->boundingRect().size());
-   if(x1 > ret.left()) x1=ret.left();
-   if(y1 > ret.top()) y1=ret.top();
-   if(x2 < ret.right()) x2=ret.right();
-   if(y2 < ret.bottom()) y2=ret.bottom();
+   rect.setTopLeft(labels[i]->scenePos());
+   rect.setSize(labels[i]->boundingRect().size());
+   if(x1 > rect.left()) x1=rect.left();
+   if(y1 > rect.top()) y1=rect.top();
+   if(x2 < rect.right()) x2=rect.right();
+   if(y2 < rect.bottom()) y2=rect.bottom();
   }
  }
 

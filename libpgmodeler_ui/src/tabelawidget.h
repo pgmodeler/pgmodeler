@@ -25,7 +25,7 @@
 #include "objetobasewidget.h"
 #include "ui_tabelawidget.h"
 #include "tabelaobjetoswidget.h"
-#include "ogtabela.h"
+#include "tableview.h"
 
 class TabelaWidget: public ObjetoBaseWidget, public Ui::TabelaWidget {
  Q_OBJECT
