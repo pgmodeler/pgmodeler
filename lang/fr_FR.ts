@@ -3883,7 +3883,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Objet Parent:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/objetobasewidget.cpp" line="+438"/>
+        <location filename="../libpgmodeler_ui/src/objetobasewidget.cpp" line="+43"/>
+        <source>Create / Edit: </source>
+        <translation>Créer / Éditer: </translation>
+    </message>
+    <message>
+        <location line="+396"/>
         <source>Value(s)</source>
         <translation>Valeur(s)</translation>
     </message>
@@ -3909,12 +3914,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/objetobasewidget.cpp" line="-449"/>
-        <source>Criate / Edit: </source>
-        <translation>Créer / Editer: </translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/objetobasewidget.ui" line="-130"/>
+        <location line="-130"/>
         <source>Edit Permissions</source>
         <translation>Editer les permissions</translation>
     </message>
