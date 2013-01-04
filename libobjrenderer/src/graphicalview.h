@@ -1,10 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libobjrenderer
-# Classe: OGVisao
-# Description:Esta classe deriva a classe ObjetoGrafico e implementa a representação gráfica
-#            da classe Visao. O sufixo OG foi adicionado ao nome da classe para evitar conflitos
-#            de nomes entra a classe Visao da biblioteca libpgsqldbm e a classe abaixo definida.
+# Sub-project: Graphical objects renderer (libobjrenderer)
+# Classe: GraphicalView
+# Description: Implements the graphical representation for Views
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -20,22 +18,20 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef OG_VISAO_H
-#define OG_VISAO_H
+#ifndef GRAPHICAL_VIEW_H
+#define GRAPHICAL_VIEW_H
 
 #include "view.h"
 #include "basetableview.h"
 
-class OGVisao: public BaseTableView {
+class GraphicalView: public BaseTableView {
  private:
   Q_OBJECT
-
- //Objeto gráfico agrupador que armanzena os subitens que denotam as referências da visão
-  QGraphicsItemGroup *referencias;
+  QGraphicsItemGroup *references;
 
  public:
-  OGVisao(View *visao);
-  ~OGVisao(void);
+  GraphicalView(View *view);
+  ~GraphicalView(void);
 
  private slots:
   void configureObject(void);

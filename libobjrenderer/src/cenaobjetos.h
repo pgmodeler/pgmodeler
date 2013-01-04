@@ -23,9 +23,9 @@
 #define CENA_OBJETOS_H
 
 #include <QtGui>
-#include "ogrelacionamento.h"
-#include "ogvisao.h"
-#include "ogtabela.h"
+#include "relationshipview.h"
+#include "graphicalview.h"
+#include "tableview.h"
 
 class CenaObjetos: public QGraphicsScene {
  private:

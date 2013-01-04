@@ -84,10 +84,10 @@ void ConfAparenciaWidget::criarObjetosExemplo(void)
 {
  try
  {
-  OGRelacionamento *rel=NULL;
+  RelationshipView *rel=NULL;
   TextboxView *caixa=NULL;
-  OGTabela *tab=NULL;
-  OGVisao *visao=NULL;
+  TableView *tab=NULL;
+  GraphicalView *visao=NULL;
   unsigned qtd, i;
 
   //Caso não existam objetos no modelo faz o carregamento do arquivo
@@ -100,7 +100,7 @@ void ConfAparenciaWidget::criarObjetosExemplo(void)
    qtd=modelo->getObjectCount(OBJ_TABLE);
    for(i=0; i < qtd; i++)
    {
-    tab=new OGTabela(modelo->getTable(i));
+    tab=new TableView(modelo->getTable(i));
     tab->setSelected(i==1);
     cena->addItem(tab);
    }
@@ -108,21 +108,21 @@ void ConfAparenciaWidget::criarObjetosExemplo(void)
    qtd=modelo->getObjectCount(OBJ_VIEW);
    for(i=0; i < qtd; i++)
    {
-    visao=new OGVisao(modelo->getView(i));
+    visao=new GraphicalView(modelo->getView(i));
     cena->addItem(visao);
    }
 
    qtd=modelo->getObjectCount(OBJ_RELATIONSHIP);
    for(i=0; i < qtd; i++)
    {
-    rel=new OGRelacionamento(modelo->getRelationship(i, OBJ_RELATIONSHIP));
+    rel=new RelationshipView(modelo->getRelationship(i, OBJ_RELATIONSHIP));
     cena->addItem(rel);
    }
 
    qtd=modelo->getObjectCount(BASE_RELATIONSHIP);
    for(i=0; i < qtd; i++)
    {
-    rel=new OGRelacionamento(modelo->getRelationship(i, BASE_RELATIONSHIP));
+    rel=new RelationshipView(modelo->getRelationship(i, BASE_RELATIONSHIP));
     cena->addItem(rel);
    }
 

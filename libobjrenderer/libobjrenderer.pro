@@ -9,9 +9,9 @@ LIBS += $$DESTDIR/$$LIBUTIL \
 
 HEADERS +=  $$PWD/src/baseobjectview.h \
             $$PWD/src/textboxview.h \
-            $$PWD/src/ogtabela.h \
-            $$PWD/src/ogvisao.h \
-            $$PWD/src/ogrelacionamento.h \
+            $$PWD/src/tableview.h \
+            $$PWD/src/graphicalview.h \
+            $$PWD/src/relationshipview.h \
             $$PWD/src/tabletitleview.h \
             $$PWD/src/tableobjectview.h \
             $$PWD/src/basetableview.h \
@@ -19,9 +19,9 @@ HEADERS +=  $$PWD/src/baseobjectview.h \
 
 SOURCES +=  $$PWD/src/baseobjectview.cpp \
             $$PWD/src/textboxview.cpp \
-            $$PWD/src/ogtabela.cpp \
-            $$PWD/src/ogvisao.cpp \
-            $$PWD/src/ogrelacionamento.cpp \
+            $$PWD/src/tableview.cpp \
+            $$PWD/src/graphicalview.cpp \
+            $$PWD/src/relationshipview.cpp \
             $$PWD/src/tabletitleview.cpp \
             $$PWD/src/tableobjectview.cpp \
             $$PWD/src/basetableview.cpp \

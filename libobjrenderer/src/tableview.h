@@ -1,8 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Graphical objects renderer (libobjrenderer)
-# Class: BaseTableView
-# Description: Base class shared by the classes TableView and GraphicalView
+# Class: TableView
+# Description: Implements the graphical representation for tables.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,34 +18,42 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef BASE_TABLE_VIEW_H
-#define BASE_TABLE_VIEW_H
+#ifndef TABLE_VIEW_H
+#define TABLE_VIEW_H
 
-#include "baseobjectview.h"
-#include "basetable.h"
+#include "table.h"
+#include "basetableview.h"
 #include "tabletitleview.h"
 #include "tableobjectview.h"
 
-class BaseTableView: public BaseObjectView {
+class TableView: public BaseTableView {
  private:
   Q_OBJECT
 
- protected:
-  //Polygonal object that defines the table body
-  QGraphicsPolygonItem *body;
+  //Extended table attributes (indexes, rules, triggers) section body
+  QGraphicsPolygonItem  *ext_attribs_body;
 
-  //Table title
-  TableTitleView *title;
+  //Item groups that stores columns and extended attributes, respectively
+  QGraphicsItemGroup *columns, *ext_attribs;
 
+  //Stores the reference to the child object currently selected on table
+  TableObject *sel_child_obj;
+
+  void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
+  void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+  void mousePressEvent(QGraphicsSceneMouseEvent *event);
   QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
  public:
-  BaseTableView(BaseTable *base_tab);
-  ~BaseTableView(void);
+  TableView(Table *table);
+  ~TableView(void);
+
+ private slots:
+  void configureObject(void);
 
  signals:
-  //Signal emitted when a table is moved over the scene
-  void s_objectMoved(void);
+  //Signal emitted when the user right-click a focused table child object
+  void s_childObjectSelected(TableObject *);
 };
 
 #endif
