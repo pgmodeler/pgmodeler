@@ -103,6 +103,8 @@ class TabelaObjetosWidget: public QWidget, public Ui::TabelaObjetosWidget {
    //Define os botões disponíveis para controle da tabela
    void definirConfiguracaoBotoes(unsigned botoes);
 
+   void adicionarLinha(unsigned idx);
+
  private slots:
   /* Move a linha selecionada para cima ou para baixo de acordo com o
      botão de movimentação acionado pelo usuário */

@@ -1049,15 +1049,34 @@ void Table::swapObjectsIndexes(ObjectType obj_type, unsigned idx1, unsigned idx2
   {
    obj_list=getObjectList(obj_type);
 
-   if(idx1 >= obj_list->size() || idx2 >= obj_list->size())
+   //Raises an error if both index is out of list bounds
+   if(idx1 >= obj_list->size() && idx2 >= obj_list->size())
     throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+   //If the idx1 is out of bound inserts the element idx2 at the list's begin
+   else if(idx1 >= obj_list->size())
+   {
+    itr2=obj_list->begin() + idx2;
+    aux_obj=(*itr2);
+    obj_list->erase(itr2);
+    obj_list->insert(obj_list->begin(), aux_obj);
+   }
+   //If the idx2 is out of bound inserts the element idx1 on the list's end
+   else if(idx2 >= obj_list->size())
+   {
+    itr1=obj_list->begin() + idx1;
+    aux_obj=(*itr1);
+    obj_list->erase(itr1);
+    obj_list->push_back(aux_obj);
+   }
+   else
+   {
+    aux_obj=obj_list->at(idx1);
+    itr1=obj_list->begin() + idx1;
+    itr2=obj_list->begin() + idx2;
 
-   aux_obj=obj_list->at(idx1);
-   itr1=obj_list->begin() + idx1;
-   itr2=obj_list->begin() + idx2;
-
-   (*itr1)=(*itr2);
-   (*itr2)=aux_obj;
+    (*itr1)=(*itr2);
+    (*itr2)=aux_obj;
+   }
   }
  }
  catch(Exception &e)

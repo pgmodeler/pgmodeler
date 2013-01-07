@@ -573,13 +573,29 @@ void TabelaWidget::TabelaWidget::moverObjetos(int idx1, int idx2)
 {
  ObjectType tipo_obj=BASE_OBJECT;
  Table *tabela=NULL;
+ int qtd;
 
  try
  {
   tipo_obj=selecionarTipoObjeto(sender());
   tabela=dynamic_cast<Table *>(this->objeto);
-  lista_op->updateObjectIndex(tabela->getObject(idx1, tipo_obj), idx2);
-  lista_op->updateObjectIndex(tabela->getObject(idx2, tipo_obj), idx1);
+  qtd=tabela->getObjectCount(tipo_obj);
+
+  if(idx1 >= qtd)
+   /* Caso especial 1: Caso o objeto foi movido para o início da lista
+      seu índice será trocado para 0 */
+   lista_op->updateObjectIndex(tabela->getObject(idx2, tipo_obj), 0);
+  else if(idx2 >= qtd)
+   /* Caso especial 2: Caso o objeto foi movido para o final da lista seu
+      índice será trocado para qtd-1 */
+   lista_op->updateObjectIndex(tabela->getObject(idx1, tipo_obj), qtd-1);
+  else
+  {
+   //Atualizando o índice dos objetos na lista de operações
+   lista_op->updateObjectIndex(tabela->getObject(idx1, tipo_obj), idx2);
+   lista_op->updateObjectIndex(tabela->getObject(idx2, tipo_obj), idx1);
+  }
+
   tabela->swapObjectsIndexes(tipo_obj, idx1, idx2);
  }
  catch(Exception &e)
