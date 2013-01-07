@@ -283,7 +283,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Copyright 2006-2012 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
+         <string>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
 
 The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.
 
