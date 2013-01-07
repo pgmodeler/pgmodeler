@@ -338,7 +338,8 @@ static const QString
   SPATIAL_TYPE="spatial-type",
   COLS_COMMENT="cols-comment",
   PRINT_GRID="print-grid",
-  PRINT_PG_NUM="print-pg-num";
+  PRINT_PG_NUM="print-pg-num",
+  SRID="srid";
 }
 
 #endif

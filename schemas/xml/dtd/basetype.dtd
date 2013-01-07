@@ -11,5 +11,6 @@
 <!ATTLIST type with-timezone (false|true) "false">
 <!ATTLIST type interval-type CDATA #IMPLIED>
 <!ATTLIST type spatial-type CDATA #IMPLIED>
+<!ATTLIST type srid CDATA #IMPLIED>
 <!ATTLIST type variation CDATA #IMPLIED>
 <!ATTLIST type ref-type (none|left-type|right-type|state-type) "none">
