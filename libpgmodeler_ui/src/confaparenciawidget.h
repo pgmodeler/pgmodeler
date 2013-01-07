@@ -23,7 +23,7 @@
 
 #include "ui_confaparenciawidget.h"
 #include "confbasewidget.h"
-#include "cenaobjetos.h"
+#include "objectsscene.h"
 #include "databasemodel.h"
 #include <algorithm>
 

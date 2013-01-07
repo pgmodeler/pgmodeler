@@ -31,73 +31,72 @@ class ObjectsScene: public QGraphicsScene {
   Q_OBJECT
 
   //Opções de alinhamento de objetos, exibição da grade e limites das paginas
-  static bool alin_objs_grade, exibir_grade, exibir_lim_pagina;
+  static bool align_objs_grid, show_grid, show_page_delim;
 
   //Tamanho da grade da cena
-  static unsigned tam_grade;
+  static unsigned grid_size;
 
   //Tamanho do papel (vide QPrinter::PaperSize)
-  static QPrinter::PaperSize tam_papel;
+  static QPrinter::PaperSize paper_size;
 
   //Orientacao do papel (Landscape ou portrait, QPrinter::Orientation)
-  static QPrinter::Orientation orientacao_pag;
+  static QPrinter::Orientation page_orientation;
 
   //Margens do papel
-  static QRectF margens_pag;
+  static QRectF page_margins;
 
   /* Flag que indica que está ocorrendo a movimentção de objetos.
      Isso indica quando o sinal s_inicioMovimentoObjetos() ou
      s_finalMovimentoObjetos() deve ser disparado */
-  bool movendo_objs;
+  bool moving_objs;
 
   //Ponto inicial do retângulo de seleção
-  QPointF sel_ini;
+  QPointF sel_ini_pnt;
 
   //Retângulo de seleção de objetos na cena
-  QGraphicsPolygonItem *ret_selecao;
+  QGraphicsPolygonItem *selection_rect;
 
-  QGraphicsLineItem *linha_rel;
+  QGraphicsLineItem *rel_line;
 
   //Método utilitário para alinhar um pont �  grade
-  static QPointF alinharPontoGrade(const QPointF &pnt);
+  static QPointF alignPointToGrid(const QPointF &pnt);
 
  protected:
+  //Brush que define o padrão da grade
+  static QBrush grid;
+
   /* Método sobrecarregados de eventos do mouse. Executa operações adicionais antes das
      operações de mouse padrão da classe superior QGraphicsScene */
-  void mousePressEvent(QGraphicsSceneMouseEvent *evento);
-  void mouseMoveEvent(QGraphicsSceneMouseEvent *evento);
-  void	mouseReleaseEvent(QGraphicsSceneMouseEvent *evento);
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *evento);
+  void mousePressEvent(QGraphicsSceneMouseEvent *event);
+  void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+  void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
   //Exibe uma linha a partir do ponto 'p' que simula a criação de um relacionamento entre tabelas
-  void exibirLinhaRelacionamento(bool valor, const QPointF &p=QPointF(NAN,NAN));
+  void showRelationshipLine(bool value, const QPointF &p=QPointF(NAN,NAN));
 
  public:
-
-  //Brush que define o padrão da grade
-  static QBrush grade;
-
   ObjectsScene(void);
   ~ObjectsScene(void);
 
   /* Métodos estáticos que definem o tamanho da grade e as opções de
      alinhamento de objetos   grade e exibição da própria grade. */
-  static void definirGrade(unsigned tam);
-  static void definirOpcoesGrade(bool exibir_grade, bool alin_objs_grade, bool exibir_lim_pagina);
-  static void obterOpcoesGrade(bool &exibir_grade, bool &alin_objs_grade, bool &exibir_lim_pagina);
+  static void setGridSize(unsigned size);
+  static void setGridOptions(bool show_grd, bool align_objs_grd, bool show_page_dlm);
+  static void getGridOptions(bool &show_grd, bool &align_objs_grd, bool &show_pag_dlm);
 
   /* Métodos de configuração das propriedades da página. Obs.: O usuário precisa chamar o método definirGrade
      para atualiza as configurações da página */
-  static void definirConfiguracaoPagina(QPrinter::PaperSize tam_papel, QPrinter::Orientation orientacao, QRectF margens);
-  static void obterConfiguracaoPagina(QPrinter::PaperSize &tam_papel, QPrinter::Orientation &orientacao, QRectF &margens);
+  static void setPageConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins);
+  static void getPageConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins);
 
   void addItem(QGraphicsItem *item);
   void removeItem(QGraphicsItem *item);
-  void setSceneRect(const QRectF &ret);
+  void setSceneRect(const QRectF &rect);
 
  public slots:
   //Alinha todos os objetos do modelo   grade
-  void alinharObjetosGrade(void);
+  void alignObjectsToGrid(void);
   void update(void);
 
  private slots:
@@ -108,29 +107,29 @@ class ObjectsScene: public QGraphicsScene {
      através do sinais s_menupopRequisitado, s_objetoModificado ou s_objetoSelecionado. Ex.: A classe ModeloWidget precisa
      tratar o sinal s_objetoFilhoSelecionado exibindo um menupop, somente com o auxilio dos métodos
      abaixo isso é possível */
-  void sinalizarModificacaoObjeto(BaseGraphicObject *objeto);
-  void sinalizarObjetoFilhoSelecionado(TableObject *obj_filho);
-  void sinalizarObjetoSelecionado(BaseGraphicObject *objeto, bool selecionado);
+  void emitObjectModification(BaseGraphicObject *object);
+  void emitChildObjectSelection(TableObject *child_obj);
+  void emitObjectSelection(BaseGraphicObject *object, bool selected);
 
  signals:
   /* Este sinal é emitdo sempre quando se inicia ou finaliza o movimento de objetos.
      o parâmetro 'fim_movimento' indica se o sinal foi emitido ou não no término
      do movimento */
-  void s_objetosMovimentados(bool fim_movimento);
+  void s_objectsMoved(bool fim_movimento);
 
   //Emitido quando um objeto é modificado
-  void s_objetoModificado(BaseGraphicObject *objeto);
+  void s_objectModified(BaseGraphicObject *objeto);
 
   //Emitido quando um usuário pressiona botão direito do mouse na cena
-  void s_menupopupRequisitado(vector<BaseObject *>);
+  void s_popupMenuRequested(vector<BaseObject *>);
 
   //Emitido quando o usuário dá um duplo clique com esquerdo no objeto
-  void s_objetoDuploClique(BaseGraphicObject *objeto);
+  void s_objectDoubleClicked(BaseGraphicObject *objeto);
 
   /* Emitido quando um objeto é selecionado no modelo, este sinal pode ser usado
      quando se deseja obter o objeto selecionado no momento do clique, pois o sinal
      CenaObjetos::selectionChanged() não dá esta possibilidade. */
-  void s_objetoSelecionado(BaseGraphicObject *objeto, bool selecionado);
+  void s_objectSelected(BaseGraphicObject *objeto, bool selecionado);
 
   friend class ModeloWidget;
 };

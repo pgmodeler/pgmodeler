@@ -28,7 +28,7 @@
 #include "operationlist.h"
 #include "caixamensagem.h"
 #include "formbasico.h"
-#include "cenaobjetos.h"
+#include "objectsscene.h"
 #include "progressotarefa.h"
 //#include "visaogeralwidget.h"
 

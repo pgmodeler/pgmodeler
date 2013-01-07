@@ -255,12 +255,12 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 
  connect(modelo, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(manipularAdicaoObjeto(BaseObject *)));
  connect(modelo, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(manipularRemocaoObjeto(BaseObject *)));
- connect(cena, SIGNAL(s_objetosMovimentados(bool)), this, SLOT(manipularMovimentoObjetos(bool)));
- connect(cena, SIGNAL(s_objetoModificado(BaseGraphicObject*)), this, SLOT(manipularModificacaoObjeto(BaseGraphicObject*)));
- connect(cena, SIGNAL(s_objetoDuploClique(BaseGraphicObject*)), this, SLOT(manipularDuploCliqueObjeto(BaseGraphicObject*)));
- connect(cena, SIGNAL(s_menupopupRequisitado(vector<BaseObject*>)), this, SLOT(exibirMenuObjetoTabela(vector<BaseObject *>)));
 
- connect(cena, SIGNAL(s_objetoSelecionado(BaseGraphicObject*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
+ connect(cena, SIGNAL(s_objectsMoved(bool)), this, SLOT(manipularMovimentoObjetos(bool)));
+ connect(cena, SIGNAL(s_objectModified(BaseGraphicObject*)), this, SLOT(manipularModificacaoObjeto(BaseGraphicObject*)));
+ connect(cena, SIGNAL(s_objectDoubleClicked(BaseGraphicObject*)), this, SLOT(manipularDuploCliqueObjeto(BaseGraphicObject*)));
+ connect(cena, SIGNAL(s_popupMenuRequested(vector<BaseObject*>)), this, SLOT(exibirMenuObjetoTabela(vector<BaseObject *>)));
+ connect(cena, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
 
  /*
  connect(this, SIGNAL(s_objetoCriado(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
@@ -626,7 +626,7 @@ void ModeloWidget::configurarSelecaoObjetos(void)
      BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(objs_selecionados[0]);
      BaseObjectView *objeto=dynamic_cast<BaseObjectView *>(obj_graf->getReceiverObject());
 
-     cena->exibirLinhaRelacionamento(true,
+     cena->showRelationshipLine(true,
                                      QPointF(objeto->scenePos().x() + objeto->boundingRect().width()/2,
                                              objeto->scenePos().y() + objeto->boundingRect().height()/2));
     }
@@ -858,7 +858,7 @@ void ModeloWidget::ajustarTamanhoCena(void)
  QRectF ret_cena, ret_objs;
  bool alin_objs, exibir_grade, exibir_lim_pag;
 
- ObjectsScene::obterOpcoesGrade(exibir_grade, alin_objs, exibir_lim_pag);
+ ObjectsScene::getGridOptions(exibir_grade, alin_objs, exibir_lim_pag);
 
  /* Reconfigura o retângulo da cena, para isso obtem-se o boundingRect
     de todos os itens juntos e caso esse retangulo seja maior que o
@@ -877,7 +877,7 @@ void ModeloWidget::ajustarTamanhoCena(void)
 
  //Alinha os objetos   grade caso a opção esteja ativa
  if(alin_objs)
-  cena->alinharObjetosGrade();
+  cena->alignObjectsToGrid();
 }
 
 vector<QRectF> ModeloWidget::obterPaginasImpressao(const QSizeF &tam_papel, unsigned &qtd_pag_h, unsigned &qtd_pag_v)
@@ -943,10 +943,10 @@ void ModeloWidget::imprimirModelo(QPrinter *printer, bool exibir_grade_imp, bool
           meio_h_sup, meio_h_inf, meio_v_esq, meio_v_dir, dx, dy;
 
   //Faz um backup das configurações de grade da cena
-  ObjectsScene::obterOpcoesGrade(exibir_grade, alin_grade, exibir_lim_pag);
+  ObjectsScene::getGridOptions(exibir_grade, alin_grade, exibir_lim_pag);
 
   //Reconfigura a grade do modelo com as opções passadas, escondendo os limites de página
-  ObjectsScene::definirOpcoesGrade(exibir_grade_imp, alin_grade, false);
+  ObjectsScene::setGridOptions(exibir_grade_imp, alin_grade, false);
 
   //Atualiza o cena e limpa a seleção
   cena->update();
@@ -1055,7 +1055,7 @@ void ModeloWidget::imprimirModelo(QPrinter *printer, bool exibir_grade_imp, bool
   }
 
   //Restaura as opções da grade
-  ObjectsScene::definirOpcoesGrade(exibir_grade, alin_grade, exibir_lim_pag);
+  ObjectsScene::setGridOptions(exibir_grade, alin_grade, exibir_lim_pag);
   cena->update();
  }
 }
@@ -1354,7 +1354,7 @@ void ModeloWidget::cancelarAdicaoObjeto(void)
  //Restaura o cursor original do mouse
  viewport->setCursor(QCursor(Qt::ArrowCursor));
  //Esconde a linha que simula a inserção de relacionamento
- cena->exibirLinhaRelacionamento(false);
+ cena->showRelationshipLine(false);
  this->configurarMenuPopup(this->objs_selecionados);
 }
 
