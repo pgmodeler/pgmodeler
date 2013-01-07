@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libobjrenderer
-# Classe: CenaObjetos
-# Description:Esta classe deriva a classe QGraphicsScene e implementa a visualização
-#            e outras operações relacionados aos objetos gráficos do modelo.
+# Sub-project: Graphical objects renderer (libobjrenderer)
+# Class: ObjectsScene
+# Description: Implements the basic operations to visualize and manipulate the graphical objects.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,15 +18,15 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef CENA_OBJETOS_H
-#define CENA_OBJETOS_H
+#ifndef OBJECTS_SCENE_H
+#define OBJECTS_SCENE_H
 
 #include <QtGui>
 #include "relationshipview.h"
 #include "graphicalview.h"
 #include "tableview.h"
 
-class CenaObjetos: public QGraphicsScene {
+class ObjectsScene: public QGraphicsScene {
  private:
   Q_OBJECT
 
@@ -78,8 +77,8 @@ class CenaObjetos: public QGraphicsScene {
   //Brush que define o padrão da grade
   static QBrush grade;
 
-  CenaObjetos(void);
-  ~CenaObjetos(void);
+  ObjectsScene(void);
+  ~ObjectsScene(void);
 
   /* Métodos estáticos que definem o tamanho da grade e as opções de
      alinhamento de objetos   grade e exibição da própria grade. */

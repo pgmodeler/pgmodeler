@@ -729,7 +729,7 @@ void FormPrincipal::definirModeloAtual(void)
 void FormPrincipal::definirOpcoesGrade(void)
 {
  //Configura, globalmente na cena, as opçoẽs da grade
- CenaObjetos::definirOpcoesGrade(action_exibir_grade->isChecked(),
+ ObjectsScene::definirOpcoesGrade(action_exibir_grade->isChecked(),
                                  action_alin_objs_grade->isChecked(),
                                  action_exibir_lim_paginas->isChecked());
 
@@ -995,7 +995,7 @@ void FormPrincipal::imprimirModelo(void)
   print_dlg.setWindowTitle(trUtf8("Database model printing"));
 
   //Obtém as configurações de impressão da cena
-  CenaObjetos::obterConfiguracaoPagina(tam_papel, orientacao, margens);
+  ObjectsScene::obterConfiguracaoPagina(tam_papel, orientacao, margens);
 
   //Obtém a referência   impressora configuada no diálogo de impressão
   printer=print_dlg.printer();

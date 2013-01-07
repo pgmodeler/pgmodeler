@@ -47,7 +47,7 @@ class ConfAparenciaWidget: public QWidget, public Ui::ConfAparenciaWidget, publi
   QGraphicsView *viewp;
 
   //Cena que armazena os objetos do modelo de exemplo
-  CenaObjetos *cena;
+  ObjectsScene *cena;
 
   //Modelo de objetos exemplo
   DatabaseModel *modelo;

@@ -134,7 +134,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  //Aloca o modelo e a lista de operações
  modelo=new DatabaseModel;
  lista_op=new OperationList(modelo);
- cena=new CenaObjetos;
+ cena=new ObjectsScene;
  cena->setSceneRect(QRectF(0,0,2000,2000));
 
  //Aloca o viewport com algumas opções de otimização na renderização
@@ -858,7 +858,7 @@ void ModeloWidget::ajustarTamanhoCena(void)
  QRectF ret_cena, ret_objs;
  bool alin_objs, exibir_grade, exibir_lim_pag;
 
- CenaObjetos::obterOpcoesGrade(exibir_grade, alin_objs, exibir_lim_pag);
+ ObjectsScene::obterOpcoesGrade(exibir_grade, alin_objs, exibir_lim_pag);
 
  /* Reconfigura o retângulo da cena, para isso obtem-se o boundingRect
     de todos os itens juntos e caso esse retangulo seja maior que o
@@ -943,10 +943,10 @@ void ModeloWidget::imprimirModelo(QPrinter *printer, bool exibir_grade_imp, bool
           meio_h_sup, meio_h_inf, meio_v_esq, meio_v_dir, dx, dy;
 
   //Faz um backup das configurações de grade da cena
-  CenaObjetos::obterOpcoesGrade(exibir_grade, alin_grade, exibir_lim_pag);
+  ObjectsScene::obterOpcoesGrade(exibir_grade, alin_grade, exibir_lim_pag);
 
   //Reconfigura a grade do modelo com as opções passadas, escondendo os limites de página
-  CenaObjetos::definirOpcoesGrade(exibir_grade_imp, alin_grade, false);
+  ObjectsScene::definirOpcoesGrade(exibir_grade_imp, alin_grade, false);
 
   //Atualiza o cena e limpa a seleção
   cena->update();
@@ -1055,7 +1055,7 @@ void ModeloWidget::imprimirModelo(QPrinter *printer, bool exibir_grade_imp, bool
   }
 
   //Restaura as opções da grade
-  CenaObjetos::definirOpcoesGrade(exibir_grade, alin_grade, exibir_lim_pag);
+  ObjectsScene::definirOpcoesGrade(exibir_grade, alin_grade, exibir_lim_pag);
   cena->update();
  }
 }
