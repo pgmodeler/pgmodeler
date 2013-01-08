@@ -1414,7 +1414,7 @@ Taille: %2 bytes
         <translation>Chargement de l&apos;objet: %1 (%2)</translation>
     </message>
     <message>
-        <location line="+2759"/>
+        <location line="+2760"/>
         <source>Generating %1 of the object: %2 (%3)</source>
         <translation>Génération %1 de l&apos;objet : %2 (%3)</translation>
     </message>
@@ -2631,29 +2631,17 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>FormPrincipal</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="+102"/>
-        <location line="+72"/>
+        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="+174"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location line="-55"/>
-        <location line="+133"/>
+        <location line="+78"/>
         <source>Edit</source>
         <translation>Editer</translation>
     </message>
     <message>
-        <location line="-123"/>
-        <source>Help</source>
-        <translation>Aide</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Show</source>
-        <translation>Afficher</translation>
-    </message>
-    <message>
-        <location line="+208"/>
+        <location line="+91"/>
         <source>New</source>
         <translation>Nouveau</translation>
     </message>
@@ -2690,7 +2678,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+15"/>
         <source>About pgModeler</source>
         <translation>A propos de pgModeler</translation>
     </message>
@@ -2715,13 +2703,13 @@ Message retourné par le SGBD: %1</translation>
         <translation>Exporter</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+21"/>
         <location line="+3"/>
         <source>Show grid</source>
         <translation>Afficher la grille</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+51"/>
         <source>Align to grid</source>
         <translation>Aligner sur la grille</translation>
     </message>
@@ -2781,12 +2769,41 @@ Message retourné par le SGBD: %1</translation>
         <translation>Afficher la vue d&apos;ensemble du modèle</translation>
     </message>
     <message>
-        <location line="-669"/>
+        <location line="-678"/>
         <source>pgModeler - PostgreSQL Database Modeler</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+131"/>
+        <location line="+76"/>
+        <source>&amp;File</source>
+        <translation>&amp;Fichier</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>&amp;Edit</source>
+        <translation>Édit&amp;er</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&amp;Help</source>
+        <translation>A&amp;ide</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&amp;Show</source>
+        <translation>&amp;Afficher</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&amp;Tools</source>
+        <translation>&amp;Outils</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>&amp;Plugins</source>
+        <translation>E&amp;xtensions</translation>
+    </message>
+    <message>
         <location line="+168"/>
         <source>Plugins</source>
         <translation>Extensions</translation>
@@ -2834,7 +2851,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+15"/>
+        <source>Ctrl+Q</source>
+        <translation>Ctrl+Q</translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>F2</source>
         <translation></translation>
     </message>
@@ -2854,7 +2876,12 @@ Message retourné par le SGBD: %1</translation>
         <translation></translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+15"/>
+        <source>Ctrl+Shift+S</source>
+        <translation>Ctrl+Maj+S</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>Ctrl+G</source>
         <translation></translation>
     </message>
@@ -2862,6 +2889,11 @@ Message retourné par le SGBD: %1</translation>
         <location line="+12"/>
         <source>Close model</source>
         <translation>Fermer</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+W</source>
+        <translation>Ctrl+W</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2914,12 +2946,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Des modifications ont été détectées dans les définitions du papier/marges du modèle ce qui pourrait causer une mauvaise impression des objets. Souhaitez vous continuer l&apos;impression aves les nouveaux paramètres? Pour utiliser les paramètres par défaut cliquez sur &apos;Non&apos; ou &apos;Annuler&apos; pour interrompre l&apos;impression.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="-538"/>
-        <source>Tools</source>
-        <translation>Outils</translation>
-    </message>
-    <message>
-        <location line="+74"/>
+        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="-473"/>
         <source>View</source>
         <translation>Vue</translation>
     </message>
@@ -3010,12 +3037,12 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+49"/>
-        <source>Copyright 2006-2012 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
+        <source>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
 
 The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.
 
 Special thanks to friends of the software development team of the Legislative Assembly, Tocantins, Brazil: Michel de Almeida, Felipe Santana, Jonas Nepomuceno, Ricardo Ishibashi and Álvaro Nunes.</source>
-        <translation>Copyright 2006-2012 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
+        <translation>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
 
 Le projet pgModeler est un outil CASE dédié à la modélisation de bases de données relationnelles sous PostgreSQL qui utilise les techniques de modélisation des diagrammes entité-relation, ainsi que les concepts implémentés dans PostgreSQL.
 
@@ -3883,7 +3910,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Objet Parent:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/objetobasewidget.cpp" line="+438"/>
+        <location filename="../libpgmodeler_ui/src/objetobasewidget.cpp" line="+43"/>
+        <source>Create / Edit: </source>
+        <translation>Créer / Éditer: </translation>
+    </message>
+    <message>
+        <location line="+396"/>
         <source>Value(s)</source>
         <translation>Valeur(s)</translation>
     </message>
@@ -3909,12 +3941,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/objetobasewidget.cpp" line="-449"/>
-        <source>Criate / Edit: </source>
-        <translation>Créer / Editer: </translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/objetobasewidget.ui" line="-130"/>
+        <location line="-130"/>
         <source>Edit Permissions</source>
         <translation>Editer les permissions</translation>
     </message>
@@ -4246,7 +4273,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5298"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5299"/>
         <source>new_database</source>
         <translation>nouvelle_base</translation>
     </message>
@@ -4259,7 +4286,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location line="+80"/>
         <location line="+143"/>
         <location line="+59"/>
-        <location line="+179"/>
+        <location line="+180"/>
         <location line="+70"/>
         <location line="+76"/>
         <location line="+62"/>
@@ -4767,7 +4794,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Déplacer à la fin</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tabelaobjetoswidget.cpp" line="+405"/>
+        <location filename="../libpgmodeler_ui/src/tabelaobjetoswidget.cpp" line="+435"/>
         <source>Do you really want to remove the selected item?</source>
         <translation>Souhaitez vous réellement supprimer l&apos;item sélectionné?</translation>
     </message>
@@ -4972,65 +4999,70 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Type de donnée</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+57"/>
+        <source>SRID:</source>
+        <translation>SRID:</translation>
+    </message>
+    <message>
+        <location line="+288"/>
         <source>Type:</source>
         <translation>Type:</translation>
     </message>
     <message>
-        <location line="+57"/>
-        <location line="+31"/>
+        <location line="+95"/>
+        <location line="+42"/>
         <source>Length</source>
         <translation>Longueur</translation>
     </message>
     <message>
-        <location line="-25"/>
+        <location line="+6"/>
         <source>L:</source>
         <translation>L:</translation>
     </message>
     <message>
-        <location line="+67"/>
-        <location line="+31"/>
+        <location line="-338"/>
+        <location line="+225"/>
         <source>Precision</source>
         <translation>Précision</translation>
     </message>
     <message>
-        <location line="-25"/>
+        <location line="+6"/>
         <source>P:</source>
         <translation>P:</translation>
     </message>
     <message>
-        <location line="+70"/>
-        <location line="+31"/>
+        <location line="-155"/>
+        <location line="+328"/>
         <source>Dimension</source>
         <translation>Dimension</translation>
     </message>
     <message>
-        <location line="-25"/>
+        <location line="+6"/>
         <source>[ ]:</source>
         <translation>[ ]:</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="-36"/>
         <source>Interval:</source>
         <translation>Intervalle:</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="-323"/>
         <source>Spatial:</source>
         <translation>Spatial:</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+94"/>
         <source>Timezone:</source>
         <translation>Fuseau horaire:</translation>
     </message>
     <message>
-        <location line="+50"/>
+        <location line="-32"/>
         <source>Format:</source>
         <translation>Format:</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="-160"/>
         <source>Variation:</source>
         <translation>Variation:</translation>
     </message>
