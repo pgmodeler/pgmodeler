@@ -88,13 +88,13 @@ void TipoPgSQLWidget::atualizarFormatoTipo(void)
   tipo_interv_lbl->setVisible(tipo_interv_cmb->isVisible());
 
   //O campo de tipo espacial só é ativado quando o tipo é 'geometry' ou 'geography' é selecionado
-  tipo_esp_cmb->setVisible(tipo=="geometry" || tipo=="geography");
-  tipo_esp_lbl->setVisible(tipo_esp_cmb->isVisible());
-  variacao_lbl->setVisible(tipo_esp_cmb->isVisible());
-  srid_lbl->setVisible(tipo_esp_cmb->isVisible());
-  srid_spb->setVisible(tipo_esp_cmb->isVisible());
-  var_m_chk->setVisible(tipo_esp_cmb->isVisible());
-  var_z_chk->setVisible(tipo_esp_cmb->isVisible());
+  tipo_esp_cmb->setVisible(tipo.isGiSType());
+  tipo_esp_lbl->setVisible(tipo.isGiSType());
+  variacao_lbl->setVisible(tipo.isGiSType());
+  srid_lbl->setVisible(tipo.isGiSType());
+  srid_spb->setVisible(tipo.isGiSType());
+  var_m_chk->setVisible(tipo.isGiSType());
+  var_z_chk->setVisible(tipo.isGiSType());
 
   if(tipo_esp_cmb->isVisible())
   {

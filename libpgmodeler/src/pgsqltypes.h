@@ -394,6 +394,7 @@ class PgSQLType: public BaseType{
   bool isOIDType(void);
   bool isUserType(void);
   bool isArrayType(void);
+  bool isGiSType(void);
   bool hasVariableLength(void);
   bool acceptsPrecision(void);
 

@@ -1518,6 +1518,7 @@ void ModeloWidget::copiarObjetos(void)
  BaseObject *objeto=NULL;
  TableObject *obj_tab=NULL;
  Table *tabela=NULL;
+ Constraint *constr=NULL;
  ObjectType tipos[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT }, tipo_obj;
  unsigned i, id_tipo, qtd;
 
@@ -1569,14 +1570,16 @@ void ModeloWidget::copiarObjetos(void)
      {
       //Obtém um objeto especial
       obj_tab=dynamic_cast<TableObject *>(tabela->getObject(i, tipos[id_tipo]));
+      constr=dynamic_cast<Constraint *>(obj_tab);
 
       /* O objeto só será incluído na lista se o mesmo não foi incluído por relacionamento mas
          referencia colunas incluídas por relacionamento. Caso se tratar de uma restrição, a mesma
          não pode ser chave primária pois estas são tratadas separadamente nos relacionamentos */
       if(!obj_tab->isAddedByRelationship() &&
-         ((tipos[id_tipo]==OBJ_CONSTRAINT &&
-           dynamic_cast<Constraint *>(obj_tab)->getConstraintType()!=ConstraintType::primary_key &&
-           dynamic_cast<Constraint *>(obj_tab)->isReferRelationshipAddedColumn()) ||
+         ((constr &&
+           (constr->getConstraintType()==ConstraintType::foreign_key ||
+            (constr->getConstraintType()==ConstraintType::unique &&
+             constr->isReferRelationshipAddedColumn()))) ||
           (tipos[id_tipo]==OBJ_TRIGGER && dynamic_cast<Trigger *>(obj_tab)->isReferRelationshipAddedColumn()) ||
           (tipos[id_tipo]==OBJ_INDEX && dynamic_cast<Index *>(obj_tab)->isReferRelationshipAddedColumn())))
        vet_deps.push_back(obj_tab);
@@ -1635,6 +1638,7 @@ void ModeloWidget::colarObjetos(void)
  BaseObject *objeto=NULL, *objeto_aux=NULL;
  TableObject *obj_tab=NULL;
  Function *func=NULL;
+ Constraint *constr=NULL;
  //Tipo *tipo=NULL;
  Operator *oper=NULL;
  QString nome_aux, nome_obj_copia;
@@ -1827,6 +1831,7 @@ void ModeloWidget::colarObjetos(void)
    //Cria um objeto com o xml obtido
    objeto=modelo->createObject(modelo->getObjectType(XMLParser::getElementName()));
    obj_tab=dynamic_cast<TableObject *>(objeto);
+   constr=dynamic_cast<Constraint *>(obj_tab);
 
    //Atualiza a mensagem do widget de progresso de tarefa
    pos++;
@@ -1838,13 +1843,18 @@ void ModeloWidget::colarObjetos(void)
    /* Com o objeto criado o mesmo é inserido no modelo, exceto para relacionamentos e objetos
       de tabelas pois estes são inseridos automaticamente em seus objetos pais */
    if(objeto &&
-      !dynamic_cast<TableObject *>(objeto) &&
+      !obj_tab &&
       !dynamic_cast<Relationship *>(objeto))
     modelo->addObject(objeto);
 
    //Adiciona o objeto criado   lista de operações
    if(obj_tab)
+   {
+    if(constr && constr->getConstraintType()==ConstraintType::foreign_key)
+     modelo->updateTableFKRelationships(dynamic_cast<Table *>(obj_tab->getParentTable()));
+
     lista_op->registerObject(obj_tab, Operation::OBJECT_CREATED, -1, obj_tab->getParentTable());
+   }
    else
     lista_op->registerObject(objeto, Operation::OBJECT_CREATED);
   }

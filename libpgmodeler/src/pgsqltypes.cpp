@@ -1028,6 +1028,13 @@ bool PgSQLType::isUserType(void)
  return(type_idx > pseudo_end);
 }
 
+bool PgSQLType::isGiSType(void)
+{
+ return(type_list[this->type_idx]=="geography" ||
+        type_list[this->type_idx]=="geometry" ||
+        type_list[this->type_idx]=="geometry_dump");
+}
+
 bool PgSQLType::hasVariableLength(void )
 {
 return(type_list[this->type_idx]=="numeric" || type_list[this->type_idx]=="decimal" ||
@@ -1128,7 +1135,7 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
   if(interval_type != BaseType::null)
    attribs[ParsersAttributes::INTERVAL_TYPE]=(~interval_type);
 
-  if(!isUserType() && spatial_type != BaseType::null)
+  if(isGiSType())
   {
    attribs[ParsersAttributes::SPATIAL_TYPE]=(~spatial_type);
    attribs[ParsersAttributes::VARIATION]=QString("%1").arg(spatial_type.getVariation());
