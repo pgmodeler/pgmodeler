@@ -2631,29 +2631,17 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>FormPrincipal</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="+102"/>
-        <location line="+72"/>
+        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="+174"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location line="-55"/>
-        <location line="+133"/>
+        <location line="+78"/>
         <source>Edit</source>
         <translation>Editer</translation>
     </message>
     <message>
-        <location line="-123"/>
-        <source>Help</source>
-        <translation>Aide</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Show</source>
-        <translation>Afficher</translation>
-    </message>
-    <message>
-        <location line="+208"/>
+        <location line="+91"/>
         <source>New</source>
         <translation>Nouveau</translation>
     </message>
@@ -2690,7 +2678,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+15"/>
         <source>About pgModeler</source>
         <translation>A propos de pgModeler</translation>
     </message>
@@ -2715,13 +2703,13 @@ Message retourné par le SGBD: %1</translation>
         <translation>Exporter</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+21"/>
         <location line="+3"/>
         <source>Show grid</source>
         <translation>Afficher la grille</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+51"/>
         <source>Align to grid</source>
         <translation>Aligner sur la grille</translation>
     </message>
@@ -2781,12 +2769,41 @@ Message retourné par le SGBD: %1</translation>
         <translation>Afficher la vue d&apos;ensemble du modèle</translation>
     </message>
     <message>
-        <location line="-669"/>
+        <location line="-678"/>
         <source>pgModeler - PostgreSQL Database Modeler</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+131"/>
+        <location line="+76"/>
+        <source>&amp;File</source>
+        <translation>&amp;Fichier</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>&amp;Edit</source>
+        <translation>Édit&amp;er</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&amp;Help</source>
+        <translation>A&amp;ide</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&amp;Show</source>
+        <translation>&amp;Afficher</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&amp;Tools</source>
+        <translation>&amp;Outils</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>&amp;Plugins</source>
+        <translation>E&amp;xtensions</translation>
+    </message>
+    <message>
         <location line="+168"/>
         <source>Plugins</source>
         <translation>Extensions</translation>
@@ -2834,7 +2851,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+15"/>
+        <source>Ctrl+Q</source>
+        <translation>Ctrl+Q</translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>F2</source>
         <translation></translation>
     </message>
@@ -2854,7 +2876,12 @@ Message retourné par le SGBD: %1</translation>
         <translation></translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+15"/>
+        <source>Ctrl+Shift+S</source>
+        <translation>Ctrl+Maj+S</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>Ctrl+G</source>
         <translation></translation>
     </message>
@@ -2862,6 +2889,11 @@ Message retourné par le SGBD: %1</translation>
         <location line="+12"/>
         <source>Close model</source>
         <translation>Fermer</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+W</source>
+        <translation>Ctrl+W</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2914,12 +2946,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Des modifications ont été détectées dans les définitions du papier/marges du modèle ce qui pourrait causer une mauvaise impression des objets. Souhaitez vous continuer l&apos;impression aves les nouveaux paramètres? Pour utiliser les paramètres par défaut cliquez sur &apos;Non&apos; ou &apos;Annuler&apos; pour interrompre l&apos;impression.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="-538"/>
-        <source>Tools</source>
-        <translation>Outils</translation>
-    </message>
-    <message>
-        <location line="+74"/>
+        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="-473"/>
         <source>View</source>
         <translation>Vue</translation>
     </message>
