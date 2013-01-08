@@ -102,10 +102,10 @@ void FormExportacao::exportarModelo(void)
    bool exibir_grade, exibir_lim, alin_objs;
 
    //Faz um backup das opções de grade da cena
-   CenaObjetos::obterOpcoesGrade(exibir_grade, alin_objs, exibir_lim);
+   ObjectsScene::getGridOptions(exibir_grade, alin_objs, exibir_lim);
 
    //Redefine as opções da grade conforme os checkboxes
-   CenaObjetos::definirOpcoesGrade(grade_chk->isChecked(), false, lim_paginas_chk->isChecked());
+   ObjectsScene::setGridOptions(grade_chk->isChecked(), false, lim_paginas_chk->isChecked());
 
    //Cria o pixmap
    pix.resize(ret.size().toSize());
@@ -116,7 +116,7 @@ void FormExportacao::exportarModelo(void)
    modelo_wgt->cena->render(&p, QRectF(QPointF(0,0), pix.size()), ret);
 
    //Restaura as definições da grade
-   CenaObjetos::definirOpcoesGrade(exibir_grade, alin_objs, exibir_lim);
+   ObjectsScene::setGridOptions(exibir_grade, alin_objs, exibir_lim);
    modelo_wgt->cena->update();
 
    //Caso a imagem não possa ser salva, retorna um erro

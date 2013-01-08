@@ -42,6 +42,7 @@ TipoPgSQLWidget::TipoPgSQLWidget(QWidget *parent, const QString &rotulo) : QWidg
   connect(tipo_esp_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(atualizarFormatoTipo(void)));
   connect(var_m_chk, SIGNAL(toggled(bool)), this, SLOT(atualizarFormatoTipo(void)));
   connect(var_z_chk, SIGNAL(toggled(bool)), this, SLOT(atualizarFormatoTipo(void)));
+  connect(srid_spb, SIGNAL(valueChanged(int)), this, SLOT(atualizarFormatoTipo(void)));
  }
  catch(Exception &e)
  {
@@ -88,18 +89,22 @@ void TipoPgSQLWidget::atualizarFormatoTipo(void)
 
   //O campo de tipo espacial só é ativado quando o tipo é 'geometry' ou 'geography' é selecionado
   tipo_esp_cmb->setVisible(tipo=="geometry" || tipo=="geography");
+  tipo_esp_lbl->setVisible(tipo_esp_cmb->isVisible());
+  variacao_lbl->setVisible(tipo_esp_cmb->isVisible());
+  srid_lbl->setVisible(tipo_esp_cmb->isVisible());
+  srid_spb->setVisible(tipo_esp_cmb->isVisible());
+  var_m_chk->setVisible(tipo_esp_cmb->isVisible());
+  var_z_chk->setVisible(tipo_esp_cmb->isVisible());
 
   if(tipo_esp_cmb->isVisible())
   {
    SpatialType tp_esp;
 
-   tipo_esp_lbl->setVisible(tipo_esp_cmb->isVisible());
-   variacao_lbl->setVisible(tipo_esp_cmb->isVisible());
-   var_m_chk->setVisible(tipo_esp_cmb->isVisible());
-   var_z_chk->setVisible(tipo_esp_cmb->isVisible());
+   if(tipo=="geography") srid_spb->setValue(4326);
 
    //Configurando o tipo espacial conforme o formulário
-   tp_esp=SpatialType(tipo_esp_cmb->currentText());
+   tp_esp=SpatialType(tipo_esp_cmb->currentText(), srid_spb->value());
+
    if(var_z_chk->isChecked() && var_m_chk->isChecked())
     tp_esp.setVariation(SpatialType::var_zm);
    else if(var_m_chk->isChecked())

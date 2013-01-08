@@ -30,6 +30,7 @@ $tb [<type name=] "@{name}"
 %if @{spatial-type} %then
  [ spatial-type=] "@{spatial-type}"
  [ variation=] "@{variation}"
+ [ srid=] "@{srid}"
 %end
 
 />  $br

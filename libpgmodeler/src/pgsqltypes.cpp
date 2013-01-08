@@ -554,17 +554,19 @@ unsigned IntervalType::operator = (const QString &type_name)
 /**********************
  * CLASS: SpatialType *
  **********************/
-SpatialType::SpatialType(const QString &type_name, unsigned variation_id)
+SpatialType::SpatialType(const QString &type_name, int srid, unsigned variation_id)
 {
  BaseType::setType(BaseType::getType(type_name, offset, types_count),
                        offset, types_count);
  setVariation(variation_id);
+ setSRID(srid);
 }
 
-SpatialType::SpatialType(unsigned type_id, unsigned var_id)
+SpatialType::SpatialType(unsigned type_id, int srid, unsigned var_id)
 {
  BaseType::setType(type_id,offset,types_count);
  setVariation(var_id);
+ setSRID(srid);
 }
 
 SpatialType::SpatialType(void)
@@ -591,6 +593,17 @@ void SpatialType::getTypes(QStringList &type_list)
  BaseType::getTypes(type_list,offset,types_count);
 }
 
+void SpatialType::setSRID(int srid)
+{
+ if(srid < -1) srid=-1;
+ this->srid=srid;
+}
+
+int SpatialType::getSRID(void)
+{
+ return(srid);
+}
+
 QString SpatialType::operator * (void)
 {
  QString var_str;
@@ -603,8 +616,7 @@ QString SpatialType::operator * (void)
   default: var_str=""; break;
  }
 
- //Currently PostGiS only accpets SRID = 4326 (See PostGiS 2.0 docs)
- return(QString("(%1%2, 4326)").arg(type_list[type_idx]).arg(var_str));
+ return(QString("(%1%2, %3)").arg(type_list[type_idx]).arg(var_str)).arg(srid);
 }
 
 /********************
@@ -1099,6 +1111,7 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
   attribs[ParsersAttributes::INTERVAL_TYPE]="";
   attribs[ParsersAttributes::SPATIAL_TYPE]="";
   attribs[ParsersAttributes::VARIATION]="";
+  attribs[ParsersAttributes::SRID]="";
   attribs[ParsersAttributes::REF_TYPE]=ref_type;
 
   attribs[ParsersAttributes::NAME]=(~(*this));
@@ -1119,6 +1132,7 @@ QString PgSQLType::getCodeDefinition(unsigned def_type,QString ref_type)
   {
    attribs[ParsersAttributes::SPATIAL_TYPE]=(~spatial_type);
    attribs[ParsersAttributes::VARIATION]=QString("%1").arg(spatial_type.getVariation());
+   attribs[ParsersAttributes::SRID]=QString("%1").arg(spatial_type.getSRID());
   }
 
   if(with_timezone)

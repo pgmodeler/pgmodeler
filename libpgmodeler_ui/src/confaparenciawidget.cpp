@@ -37,7 +37,7 @@ ConfAparenciaWidget::ConfAparenciaWidget(QWidget * parent) : QWidget(parent)
  }
 
  modelo=new DatabaseModel;
- cena=new CenaObjetos;
+ cena=new ObjectsScene;
  cena->setSceneRect(QRectF(0,0,500,500));
 
  //Aloca o viewport com algumas opções de otimização na renderização

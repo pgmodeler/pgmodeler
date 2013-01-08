@@ -324,9 +324,37 @@ void TabelaObjetosWidget::selecionarLinha(int idx_lin)
  }
 }
 
-void TabelaObjetosWidget::adicionarLinha(void)
+void TabelaObjetosWidget::adicionarLinha(unsigned idx_lin)
 {
  QTableWidgetItem *item=NULL;
+ unsigned i, qtd_col=tabela_tbw->columnCount();
+
+ tabela_tbw->insertRow(idx_lin);
+
+ //Cria o cabeçalho vertical da linha adicionada
+ item=new QTableWidgetItem;
+ item->setText(QString("%1").arg(idx_lin+1));
+ tabela_tbw->setVerticalHeaderItem(idx_lin,item);
+
+ /* Após inserida a linha as colunas da nova linha
+    precisam ser criadas */
+ for(i=0; i < qtd_col; i++)
+ {
+  //Cria um item que representa a coluna atual da nova linha
+  item=new QTableWidgetItem;
+  //Insere o item criado na coluna atual (i)
+  tabela_tbw->setItem(idx_lin,i,item);
+ }
+
+ //Seleciona os itens da linha inserida
+ item=tabela_tbw->item(idx_lin,0);
+ item->setSelected(true);
+ tabela_tbw->setCurrentItem(item);
+}
+
+void TabelaObjetosWidget::adicionarLinha(void)
+{
+ /*QTableWidgetItem *item=NULL;
  unsigned i, lin, qtd_col=tabela_tbw->columnCount();
 
  //A nova linha será inserida após a última linha
@@ -336,11 +364,11 @@ void TabelaObjetosWidget::adicionarLinha(void)
  //Cria o cabeçalho vertical da linha adicionada
  item=new QTableWidgetItem;
  item->setText(QString("%1").arg(lin+1));
- tabela_tbw->setVerticalHeaderItem(lin,item);
+ tabela_tbw->setVerticalHeaderItem(lin,item);*/
 
  /* Após inserida a linha as colunas da nova linha
     precisam ser criadas */
- for(i=0; i < qtd_col; i++)
+ /*for(i=0; i < qtd_col; i++)
  {
   //Cria um item que representa a coluna atual da nova linha
   item=new QTableWidgetItem;
@@ -351,13 +379,15 @@ void TabelaObjetosWidget::adicionarLinha(void)
  //Seleciona os itens da linha inserida
  item=tabela_tbw->item(lin,0);
  item->setSelected(true);
- tabela_tbw->setCurrentItem(item);
+ tabela_tbw->setCurrentItem(item);*/
+
+ this->adicionarLinha(tabela_tbw->rowCount());
 
  /* Executa o método de habilitação dos botões de acordo
     com a linha atual */
  habilitarBotoes();
  //Emite um sinal com o índice da linha adicionada
- emit s_linhaAdicionada(lin);
+ emit s_linhaAdicionada(tabela_tbw->rowCount()-1);
 }
 
 void TabelaObjetosWidget::removerLinha(unsigned idx_lin)
@@ -493,12 +523,21 @@ void TabelaObjetosWidget::moverLinhas(void)
     a linha selecionada terá sua posição trocada com a
     primeira linha da tabela */
  else if(obj_sender==mover_primeiro_tb)
+ {
+  this->adicionarLinha(0);
   lin1=0;
+  lin++;
+ }
  /* Caso o botão de mover para a última linha for acionado
     a linha selecionada terá sua posição trocada com a
     última linha da tabela */
  else if(obj_sender==mover_ultimo_tb)
+ {
+  this->adicionarLinha(tabela_tbw->rowCount());
   lin1=tabela_tbw->rowCount()-1;
+ }
+
+
  /* Verifica se os índices da linhas a serem trocadas são válidos
     ou seja, são diferentes entre si e não ultrapassam o limite de
     linhas presentes na tabela */
@@ -545,6 +584,22 @@ void TabelaObjetosWidget::moverLinhas(void)
    dado_aux=item->data(Qt::UserRole);
    item->setData(Qt::UserRole, item1->data(Qt::UserRole));
    item1->setData(Qt::UserRole, dado_aux);
+  }
+
+  //Caso especial para botões de mover para ultimo e primeiro
+  if(obj_sender==mover_ultimo_tb || obj_sender==mover_primeiro_tb)
+  {
+   //Remove a linha selecionada
+   tabela_tbw->removeRow(lin);
+
+   /* Para o botão de mover para o primeiro, os índices das linhas precisam ser
+      invertidos para que o método de troca de índices na tabela entenda que
+      elemento selecionado passou a ser o primeiro da lista */
+   if(obj_sender==mover_primeiro_tb)
+   {
+    lin1=lin-1;
+    lin=tabela_tbw->rowCount();
+   }
   }
 
   habilitarBotoes();

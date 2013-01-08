@@ -235,6 +235,11 @@ class SpatialType: public BaseType{
   static const unsigned offset=182;
   static const unsigned types_count=7;
 
+  /* Used in conjunction with spatial_type, and denotes the SRID value
+     for the spatial type. For geometry type this value goes from -1 to n
+     and for geography only the value 4326 is accepted. */
+  int srid;
+
  public:
   static const unsigned no_var=0;
   static const unsigned var_z=1;
@@ -249,12 +254,15 @@ class SpatialType: public BaseType{
   static const unsigned multipolygon=offset+5;
   static const unsigned geometrycollection=offset+6;
 
-  SpatialType(const QString &type_name, unsigned variation_id=SpatialType::no_var);
-  SpatialType(unsigned type_id, unsigned var_id=SpatialType::no_var);
+  SpatialType(const QString &type_name, int srid, unsigned variation_id=SpatialType::no_var);
+  SpatialType(unsigned type_id, int srid, unsigned var_id=SpatialType::no_var);
   SpatialType(void);
 
   void setVariation(unsigned var);
   unsigned getVariation(void);
+
+  void setSRID(int srid);
+  int getSRID(void);
 
   static void getTypes(QStringList &type_list);
   QString operator * (void);

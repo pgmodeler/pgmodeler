@@ -43,15 +43,12 @@ namespace GlobalAttributes {
 */
 
 static const QString
-  /** ticket#1 **/
   /* According to the libxml documentation , the paths used by the parser are
      in URI format (eg file://a/b/c) then, in Windows, the paths are shaped
      C:\a\b\c, this caused the error in the parser that could not find
      the DTD's. The solution to this problem is to replace the '\' by the way '/' */
 
-  /** issue#7 **/
-  /* Fix incorrect reference to environment variables.
-     If the variable is not specified, pgModeler searches the required folder in the current directory "." */
+  /* If the variable is not specified, pgModeler searches the required folder in the current directory "." */
   SCHEMAS_ROOT_DIR=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString("./schemas")),
   CONFIGURATIONS_DIR=(getenv("PGMODELER_CONF_DIR") ? QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") : QString("./conf")),
   LANGUAGES_DIR=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString("./lang")),

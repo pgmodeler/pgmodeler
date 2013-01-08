@@ -23,7 +23,7 @@
 
 #include "ui_confaparenciawidget.h"
 #include "confbasewidget.h"
-#include "cenaobjetos.h"
+#include "objectsscene.h"
 #include "databasemodel.h"
 #include <algorithm>
 
@@ -47,7 +47,7 @@ class ConfAparenciaWidget: public QWidget, public Ui::ConfAparenciaWidget, publi
   QGraphicsView *viewp;
 
   //Cena que armazena os objetos do modelo de exemplo
-  CenaObjetos *cena;
+  ObjectsScene *cena;
 
   //Modelo de objetos exemplo
   DatabaseModel *modelo;

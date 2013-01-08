@@ -3272,7 +3272,8 @@ PgSQLType DatabaseModel::createPgSQLType(void)
 
  if(!attribs[ParsersAttributes::SPATIAL_TYPE].isEmpty())
   spatial_type=SpatialType(attribs[ParsersAttributes::SPATIAL_TYPE],
-                        attribs[ParsersAttributes::VARIATION].toUInt());
+                           attribs[ParsersAttributes::SRID].toUInt(),
+                           attribs[ParsersAttributes::VARIATION].toUInt());
 
  name=attribs[ParsersAttributes::NAME];
 

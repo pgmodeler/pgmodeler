@@ -28,7 +28,7 @@
 #include "operationlist.h"
 #include "caixamensagem.h"
 #include "formbasico.h"
-#include "cenaobjetos.h"
+#include "objectsscene.h"
 #include "progressotarefa.h"
 //#include "visaogeralwidget.h"
 
@@ -65,7 +65,7 @@ class ModeloWidget: public QWidget {
   QFrame *modelo_protegido_frm;
 
   //Cena de objetos gráficos do modelo
-  CenaObjetos *cena;
+  ObjectsScene *cena;
 
   //Viewport que gerencia a cena de objetos
   QGraphicsView *viewport;
