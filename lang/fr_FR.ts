@@ -2878,7 +2878,7 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+15"/>
         <source>Ctrl+Shift+S</source>
-        <translation>Ctrl+Maj+S</translation>
+        <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
         <location line="+24"/>
