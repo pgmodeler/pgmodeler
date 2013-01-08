@@ -99,7 +99,7 @@
    </property>
    <widget class="QMenu" name="menuArquivo">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="action_novo_modelo"/>
     <addaction name="action_carregar_modelo"/>
@@ -116,7 +116,7 @@
    </widget>
    <widget class="QMenu" name="menuEditar">
     <property name="title">
-     <string>Edit</string>
+     <string>&amp;Edit</string>
     </property>
     <addaction name="action_desfazer"/>
     <addaction name="action_refazer"/>
@@ -126,17 +126,17 @@
    </widget>
    <widget class="QMenu" name="menuSobre">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="action_sobre"/>
    </widget>
    <widget class="QMenu" name="menuExibir">
     <property name="title">
-     <string>Show</string>
+     <string>&amp;Show</string>
     </property>
     <widget class="QMenu" name="menuFerramentas">
      <property name="title">
-      <string>Tools</string>
+      <string>&amp;Tools</string>
      </property>
     </widget>
     <addaction name="action_exibir_grade"/>
@@ -154,7 +154,7 @@
      <bool>false</bool>
     </property>
     <property name="title">
-     <string>Plugins</string>
+     <string>&amp;Plugins</string>
     </property>
    </widget>
    <addaction name="menuArquivo"/>
@@ -471,6 +471,9 @@
    <property name="menuRole">
     <enum>QAction::QuitRole</enum>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
   <action name="action_sobre">
    <property name="icon">
@@ -540,6 +543,9 @@
    <property name="text">
     <string>Export</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
   </action>
   <action name="action_exibir_grade">
    <property name="checkable">
@@ -575,6 +581,9 @@
    </property>
    <property name="text">
     <string>Close model</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
   <action name="action_zoom_normal">
