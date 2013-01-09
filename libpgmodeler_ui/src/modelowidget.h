@@ -42,8 +42,6 @@ class ModeloWidget: public QWidget {
   //Indica que o modelo foi modificado por alguma operação
   bool modificado;
 
-  //VisaoGeralWidget *visaogeral_wgt;
-
  protected:
   //Constantes usadas nas operações de zoom
   static const float ZOOM_MINIMO=0.35f,
@@ -73,7 +71,8 @@ class ModeloWidget: public QWidget {
         //Menu popup geral do modelo
   QMenu menu_popup,
         //Menu de inserção de novo objeto no modelo
-        menu_novo_obj;
+        menu_novo_obj,
+        menu_acoes_rapidas;
 
   //Ações do menu popup
   QAction *action_codigo_fonte,
@@ -87,7 +86,9 @@ class ModeloWidget: public QWidget {
           *action_colar,
           *action_recortar,
           *action_deps_refs,
-          *action_novo_obj;
+          *action_novo_obj,
+          *action_rename,
+          *action_acoes_rapidas;
 
   //Ações de inserção de novos objetos no modelo
   map<ObjectType, QAction *> acoes_ins_objs;
@@ -181,6 +182,9 @@ class ModeloWidget: public QWidget {
 
   //Protege os objetos selecionados
   void protegerObjeto(void);
+
+  //Executa o widget de renomeio de objeto
+  void renomearObjeto(void);
 
   //Exclui os objetos selecionados
   void excluirObjetos(void);

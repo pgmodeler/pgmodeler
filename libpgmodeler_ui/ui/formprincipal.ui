@@ -468,11 +468,11 @@
    <property name="text">
     <string>Exit</string>
    </property>
-   <property name="menuRole">
-    <enum>QAction::QuitRole</enum>
-   </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
    </property>
   </action>
   <action name="action_sobre">
@@ -484,7 +484,7 @@
     <string>About pgModeler</string>
    </property>
    <property name="shortcut">
-    <string>F2</string>
+    <string>F1</string>
    </property>
   </action>
   <action name="action_imprimir">

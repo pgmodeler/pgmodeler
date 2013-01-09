@@ -27,7 +27,8 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_
  connect(janela_pai->aplicar_ok_btn, SIGNAL(clicked(bool)), janela_pai, SLOT(close(void)));
 
  //Configura a dimensão da janela pai
- janela_pai->setMinimumSize(670, 480);
+ janela_pai->setMinimumSize(670, 500);
+ janela_pai->resize(670, 500);
 
  /* Alterando o texto do label de comentário para 'Tipo:'.
     como este formulário é herdado do formulário padrão, o

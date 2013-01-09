@@ -26,6 +26,7 @@
 #include "tabelawidget.h"
 #include "progressotarefa.h"
 #include "listaobjetoswidget.h"
+#include "quickrenamewidget.h"
 
 extern CaixaMensagem *caixa_msg;
 extern BancoDadosWidget *bancodados_wgt;
@@ -55,6 +56,7 @@ extern RelacionamentoWidget *relacao_wgt;
 extern TabelaWidget *tabela_wgt;
 extern ProgressoTarefa *prog_tarefa;
 extern ListaObjetosWidget *deps_refs_wgt;
+extern QuickRenameWidget *quickrename_wgt;
 
 vector<BaseObject *> ModeloWidget::objs_copiados;
 bool ModeloWidget::op_recortar=false;
@@ -206,6 +208,13 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  action_novo_obj=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New object"), this);
  action_novo_obj->setToolTip(trUtf8("Add a new object in the model"));
 
+ action_acoes_rapidas=new QAction(QIcon(QString(":/icones/icones/quickactions.png")), trUtf8("Quick actions"), this);
+ action_acoes_rapidas->setMenu(&menu_acoes_rapidas);
+
+ action_rename=new QAction(QIcon(QString(":/icones/icones/rename.png")), trUtf8("Rename"), this);
+ action_rename->setShortcut(QKeySequence("F2"));
+ action_rename->setToolTip(trUtf8("Quick renames the object"));
+
  //Aloca as ações de criação de novo objeto
  for(i=0; i < qtd; i++)
  {
@@ -252,6 +261,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  connect(action_copiar, SIGNAL(triggered(bool)),this,SLOT(copiarObjetos(void)));
  connect(action_colar, SIGNAL(triggered(bool)),this,SLOT(colarObjetos(void)));
  connect(action_recortar, SIGNAL(triggered(bool)),this,SLOT(recortarObjetos(void)));
+ connect(action_rename, SIGNAL(triggered(bool)), this, SLOT(renomearObjeto(void)));
 
  connect(modelo, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(manipularAdicaoObjeto(BaseObject *)));
  connect(modelo, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(manipularRemocaoObjeto(BaseObject *)));
@@ -277,7 +287,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 
 ModeloWidget::~ModeloWidget(void)
 {
- objs_copiados.clear();
+ //objs_copiados.clear();
  //delete(visaogeral_wgt);
  delete(viewport);
  delete(cena);
@@ -1358,6 +1368,23 @@ void ModeloWidget::cancelarAdicaoObjeto(void)
  this->configurarMenuPopup(this->objs_selecionados);
 }
 
+void ModeloWidget::renomearObjeto(void)
+{
+ QAction *act=dynamic_cast<QAction *>(sender());
+
+ //if(!menu_popup.pos().isNull())
+  //quickrename_wgt->move(menu_popup.pos());
+
+ quickrename_wgt->setAttributes(reinterpret_cast<BaseObject *>(act->data().value<void *>()), this->modelo, this->lista_op);
+ quickrename_wgt->exec();
+
+ if(quickrename_wgt->result()==QDialog::Accepted)
+ {
+  this->modificado=true;
+  emit s_objetoModificado();
+ }
+}
+
 void ModeloWidget::editarObjeto(void)
 {
  QObject *obj_sender=dynamic_cast<QAction *>(sender());
@@ -2164,6 +2191,7 @@ void ModeloWidget::desabilitarAcoesModelo(void)
  action_colar->setEnabled(false);
  action_recortar->setEnabled(false);
  action_excluir->setEnabled(false);
+ action_rename->setEnabled(false);
 }
 
 void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
@@ -2180,7 +2208,9 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 
  //Limpa os menus padrão do modelo
  menu_novo_obj.clear();
+ menu_acoes_rapidas.clear();
  menu_popup.clear();
+ //menu_popup.move(0,0);
 
  //Desabilitar as ações padrão do menu popup
  this->desabilitarAcoesModelo();
@@ -2258,13 +2288,19 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
     }
 
     menu_popup.addAction(action_novo_obj);
-    menu_popup.addSeparator();
    }
+
+   if(obj->getObjectType()!=OBJ_CAST)
+    menu_acoes_rapidas.addAction(action_rename);
+
+   menu_popup.addAction(action_acoes_rapidas);
+   menu_popup.addSeparator();
 
    //Adiciona as ações de edição, exibição do código fonte e dependências/referências do objeto
    action_editar->setData(QVariant::fromValue<void *>(obj));
    action_codigo_fonte->setData(QVariant::fromValue<void *>(obj));
    action_deps_refs->setData(QVariant::fromValue<void *>(obj));
+   action_rename->setData(QVariant::fromValue<void *>(obj));
    obj_tab=dynamic_cast<TableObject *>(obj);
 
    menu_popup.addAction(action_editar);
@@ -2414,6 +2450,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 
  //Ativa as ações do menu popup principal que estão visíveis
  QList<QAction *> acoes=menu_popup.actions();
+ acoes.append(menu_acoes_rapidas.actions());
  while(!acoes.isEmpty())
  {
   acoes.back()->setEnabled(true);

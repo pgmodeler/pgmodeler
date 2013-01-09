@@ -348,6 +348,12 @@
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
               <widget class="QToolButton" name="marcar_tb">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Select All</string>
                </property>
@@ -355,6 +361,12 @@
              </item>
              <item>
               <widget class="QToolButton" name="desmarcar_tb">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="text">
                 <string>Clear All</string>
                </property>
@@ -399,6 +411,18 @@
       </item>
       <item>
        <widget class="QToolButton" name="selecionar_tb">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="toolTip">
          <string>Select</string>
         </property>
@@ -419,6 +443,18 @@
       </item>
       <item>
        <widget class="QToolButton" name="cancelar_tb">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="toolTip">
          <string>Cancel</string>
         </property>
@@ -439,10 +475,16 @@
       </item>
       <item>
        <widget class="QToolButton" name="opcoesvisao_tb">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>0</width>
+          <height>0</height>
          </size>
         </property>
         <property name="toolTip">
@@ -471,10 +513,16 @@
       </item>
       <item>
        <widget class="QToolButton" name="visaoarvore_tb">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>0</width>
+          <height>0</height>
          </size>
         </property>
         <property name="toolTip">
@@ -506,10 +554,16 @@
       </item>
       <item>
        <widget class="QToolButton" name="visaolista_tb">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
-          <width>30</width>
-          <height>30</height>
+          <width>0</width>
+          <height>0</height>
          </size>
         </property>
         <property name="toolTip">

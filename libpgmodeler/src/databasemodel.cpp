@@ -6828,3 +6828,47 @@ BaseObject *DatabaseModel::getObjectPgSQLType(PgSQLType type)
  }
 }
 
+void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_sch_name)
+{
+ ObjectType types[]={ OBJ_TABLE, OBJ_VIEW, OBJ_DOMAIN, OBJ_TYPE, OBJ_SEQUENCE };
+ vector<BaseObject *> list, vet;
+ BaseObject *obj=NULL;
+ QString prev_name;
+
+ //Raise an error if the schema is not allocated
+ if(!schema)
+  throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+ //Get all the objects on the informed schema
+ for(unsigned i; i < 5; i++)
+ {
+  vet=getObjects(types[i], schema);
+  list.insert(list.end(), vet.begin(), vet.end());
+ }
+
+ while(!list.empty())
+ {
+  obj=list.back();
+
+  //For objects that is not a Views is needed to rename the pgsql type represented by the object
+  if(obj->getObjectType()!=OBJ_VIEW)
+  {
+   //Configures the previous type name
+   prev_name=BaseObject::formatName(prev_sch_name) + "." +
+             BaseObject::formatName(obj->getName(), false);
+
+   /* Special case for tables. Need to make a dynamic_cast before the reinterpret_cast to get
+      the correct reference to table */
+   if(obj->getObjectType()==OBJ_TABLE)
+    PgSQLType::renameUserType(prev_name, reinterpret_cast<void *>(dynamic_cast<Table *>(obj)), obj->getName(true));
+   else
+    PgSQLType::renameUserType(prev_name, reinterpret_cast<void *>(obj), obj->getName(true));
+  }
+
+  //For graphical objects set them as modified to redraw them
+  if(obj->getObjectType()==OBJ_TABLE || obj->getObjectType()==OBJ_VIEW)
+   dynamic_cast<BaseGraphicObject *>(obj)->setModified(true);
+
+  list.pop_back();
+ }
+}

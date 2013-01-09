@@ -576,10 +576,10 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
     if(!novo_obj && obj_aux && obj_aux!=objeto)
     {
      throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-                   .arg(nome_obj)
-                   .arg(BaseObject::getTypeName(tipo_obj))
-                   .arg(obj_pai->getName(true))
-                   .arg(obj_pai->getTypeName()),
+                   .arg(QString::fromUtf8(nome_obj))
+                   .arg(QString::fromUtf8(BaseObject::getTypeName(tipo_obj)))
+                   .arg(QString::fromUtf8(obj_pai->getName(true)))
+                   .arg(QString::fromUtf8(obj_pai->getTypeName())),
                     ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     }
    }
@@ -587,10 +587,13 @@ void ObjetoBaseWidget::aplicarConfiguracao(void)
    /* Executa a nomeção do objeto chamando o método
       de acordo com a classe referente ao tipo de objeto */
    if(tipo_obj!=OBJ_CAST)
+   {
+    nome_ant=objeto->getName();
     /* Caso o objeto ser renomeado não seja de nenhum dos tipos acima
        e não seja conversão de tipo (o unico objeto que não recebe um nome explicitamente)
        utiliza o método de nomeação geral da classe ObjetoBase */
     objeto->setName(nome_edt->text().toUtf8());
+   }
 
    //Configura o comentário do objeto
    if(comentario_edt->isVisible())
@@ -673,10 +676,11 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
      do esquema é exibido nos objtos. */
   if(tipo_obj==OBJ_SCHEMA)
   {
-   vector<BaseObject *> *lista_obj=NULL;
+   modelo->validateSchemaRenaming(dynamic_cast<Schema *>(this->objeto), this->nome_ant);
+   /*vector<BaseObject *> *lista_obj=NULL;
    vector<BaseObject *>::iterator itr, itr_end;
    ObjectType tipos[]={ OBJ_TABLE, OBJ_VIEW,
-                            OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
+                        OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
    unsigned i;
    BaseGraphicObject *obj=NULL, *obj1=NULL;
    BaseRelationship *rel=NULL;
@@ -702,10 +706,10 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
       //Converte o objeto para relacionamento básico
       rel=dynamic_cast<BaseRelationship *>(obj);
 
-      /* Obtém as tabelas participantes do relacionamento para
-         verificar se uma delas referencia o esquema modificado,
-         caso isso seja verdadeiro as tabelas e o relacionamento
-         serão marcados como modificados */
+      // Obtém as tabelas participantes do relacionamento para
+      //   verificar se uma delas referencia o esquema modificado,
+      //   caso isso seja verdadeiro as tabelas e o relacionamento
+      //   serão marcados como modificados
       obj=rel->getTable(BaseRelationship::SRC_TABLE);
       obj1=rel->getTable(BaseRelationship::DST_TABLE);
      }
@@ -714,15 +718,15 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
      if(obj->getSchema()==this->objeto)
       obj->setModified(true);
 
-     /* Caso o objeto1, neste caso sempre será uma tabela participante
-        de um relacionamento quando alocado, referencia o esquema, marca-o como
-        modificado */
+     // Caso o objeto1, neste caso sempre será uma tabela participante
+     //   de um relacionamento quando alocado, referencia o esquema, marca-o como
+     //   modificado *
      if(obj1 && obj1->getSchema()==this->objeto)
       obj1->setModified(true);
 
-     /* Caso o relacionamento esteja alocado, sinal de que o objeto atual é um relacionamento
-        verifica uma das tabelas participantes estão modificadas, caso seja veradeiro
-        o próprio relacionamento é marcado como modificado */
+     // Caso o relacionamento esteja alocado, sinal de que o objeto atual é um relacionamento
+     //   verifica uma das tabelas participantes estão modificadas, caso seja veradeiro
+     //   o próprio relacionamento é marcado como modificado
      if(rel && (obj->isModified() || (obj1 && obj1->isModified())))
      {
       rel->setModified(true);
@@ -730,7 +734,7 @@ void ObjetoBaseWidget::finalizarConfiguracao(void)
       rel=NULL;
      }
     }
-   }
+   } */
   }
 
   //Seta o resultado como Accepted para indicar que o objeto foi criado/editado com sucesso

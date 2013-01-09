@@ -31,6 +31,7 @@
 #include "listaobjetoswidget.h"
 #include "formconfiguracao.h"
 #include "formexportacao.h"
+#include "quickrenamewidget.h"
 
 /* Formulários globais. Como são formulários os mesmos podem ser
    compartilhados e usados em outros arquivos não havendo a necessidade
@@ -70,6 +71,7 @@ ProgressoTarefa *prog_tarefa=NULL;
 ListaObjetosWidget *deps_refs_wgt=NULL;
 FormConfiguracao *fconfiguracao=NULL;
 FormExportacao *fexportacao=NULL;
+QuickRenameWidget *quickrename_wgt=NULL;
 
 FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
@@ -145,6 +147,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   tabela_wgt=new TabelaWidget(this);
   prog_tarefa=new ProgressoTarefa();
   deps_refs_wgt=new ListaObjetosWidget(this);
+  quickrename_wgt=new QuickRenameWidget(this);
  }
  catch(Exception &e)
  {
@@ -664,6 +667,7 @@ void FormPrincipal::definirModeloAtual(void)
   //Seta o modo de popup do menu para "InstantPopup" assim o usuário não precisa pressionar a setinha para ativar o popup
   dynamic_cast<QToolButton *>(modelo_tb->widgetForAction(modelo_atual->action_novo_obj))->setPopupMode(QToolButton::InstantPopup);
 
+  modelo_tb->addAction(modelo_atual->action_rename);
   modelo_tb->addAction(modelo_atual->action_editar);
   modelo_tb->addAction(modelo_atual->action_codigo_fonte);
   modelo_tb->addAction(modelo_atual->action_converter_relnn);

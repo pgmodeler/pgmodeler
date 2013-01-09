@@ -13,13 +13,13 @@
   <property name="minimumSize">
    <size>
     <width>0</width>
-    <height>25</height>
+    <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>33</height>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -76,10 +76,16 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
-       <width>30</width>
-       <height>25</height>
+       <width>0</width>
+       <height>0</height>
       </size>
      </property>
      <property name="toolTip">
@@ -92,14 +98,26 @@
       <iconset resource="../res/resources.qrc">
        <normaloff>:/icones/icones/limpartexto.png</normaloff>:/icones/icones/limpartexto.png</iconset>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
+     </property>
     </widget>
    </item>
    <item row="0" column="2">
     <widget class="QToolButton" name="sel_objeto_tb">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
-       <width>30</width>
-       <height>25</height>
+       <width>0</width>
+       <height>0</height>
       </size>
      </property>
      <property name="toolTip">
@@ -111,6 +129,12 @@
      <property name="icon">
       <iconset resource="../res/resources.qrc">
        <normaloff>:/icones/icones/visaogeral.png</normaloff>:/icones/icones/visaogeral.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>20</width>
+       <height>20</height>
+      </size>
      </property>
     </widget>
    </item>

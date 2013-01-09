@@ -28,4 +28,3 @@ QVariant BaseTableView::itemChange(GraphicsItemChange change, const QVariant &va
 
  return(value);
 }
-

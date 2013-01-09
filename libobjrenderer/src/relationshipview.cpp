@@ -927,4 +927,3 @@ QRectF RelationshipView::__boundingRect(void)
 
  return(QRectF(x1, y1, x2, y2));
 }
-

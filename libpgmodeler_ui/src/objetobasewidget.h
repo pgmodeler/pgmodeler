@@ -65,6 +65,8 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
    //Tabela de referência (usado em formulário de objeto de tabela)
    Table *tabela;
 
+   QString nome_ant;
+
    /* Relacionamento de referência (pode ser usado em formulários
       de coluna e restrição relacionamentos tabela-tabela podem
       ter colunas (atributos) e restriões nos atributos */

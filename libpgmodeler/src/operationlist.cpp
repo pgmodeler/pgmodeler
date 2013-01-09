@@ -875,6 +875,8 @@ void OperationList::executeOperation(Operation *oper, bool redo)
             oper->op_type==Operation::OBJECT_MODIFIED)
      model->validateRelationships();
    }
+   else if(obj_type==OBJ_SCHEMA && oper->op_type==Operation::OBJECT_MODIFIED)
+    model->validateSchemaRenaming(dynamic_cast<Schema *>(object), bkp_obj->getName());
   }
 }
 

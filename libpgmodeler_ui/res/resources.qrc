@@ -134,6 +134,8 @@
         <file>icones/telacheia.png</file>
         <file>icones/exibirlimpag.png</file>
         <file>icones/padroes.png</file>
+        <file>icones/rename.png</file>
+        <file>icones/quickactions.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

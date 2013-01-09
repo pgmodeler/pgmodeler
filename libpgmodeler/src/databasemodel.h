@@ -367,6 +367,11 @@ class DatabaseModel:  public QObject, public BaseObject {
   //Marks all the graphical objects as modified forcing their redraw
   void setObjectsModified(void);
 
+  /* Updates the user type names which belongs to the passed schema. This method must be executed whenever
+     the schema is renamed to propagate the new name to the user types on the PgSQLTypes list. Additionally
+     the previous schema name must be informed in order to rename the types correctly */
+  void validateSchemaRenaming(Schema *schema, const QString &prev_sch_name);
+
  signals:
   //Signal emitted when a new object is added to the model
   void s_objectAdded(BaseObject *objeto);
