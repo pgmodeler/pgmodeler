@@ -2380,7 +2380,7 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+35"/>
         <source>&amp;Cancel</source>
-        <translation>&amp;Annuler</translation>
+        <translation>A&amp;nnuler</translation>
     </message>
     <message>
         <location line="-155"/>
@@ -2408,7 +2408,7 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+26"/>
         <source>&amp;Cancel</source>
-        <translation>&amp;Annuler</translation>
+        <translation>A&amp;nnuler</translation>
     </message>
     <message>
         <location line="+26"/>
