@@ -27,6 +27,7 @@
 #include "progressotarefa.h"
 #include "listaobjetoswidget.h"
 #include "quickrenamewidget.h"
+#include "permissaowidget.h"
 
 extern CaixaMensagem *caixa_msg;
 extern BancoDadosWidget *bancodados_wgt;
@@ -57,6 +58,7 @@ extern TabelaWidget *tabela_wgt;
 extern ProgressoTarefa *prog_tarefa;
 extern ListaObjetosWidget *deps_refs_wgt;
 extern QuickRenameWidget *quickrename_wgt;
+extern PermissaoWidget *permissao_wgt;
 
 vector<BaseObject *> ModeloWidget::objs_copiados;
 bool ModeloWidget::op_recortar=false;
@@ -213,7 +215,19 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 
  action_rename=new QAction(QIcon(QString(":/icones/icones/rename.png")), trUtf8("Rename"), this);
  action_rename->setShortcut(QKeySequence("F2"));
- action_rename->setToolTip(trUtf8("Quick renames the object"));
+ action_rename->setToolTip(trUtf8("Quick rename the object"));
+
+ action_moveto_schema=new QAction(QIcon(QString(":/icones/icones/movetoschema.png")), trUtf8("Move to schema"), this);
+ action_moveto_schema->setToolTip(trUtf8("Move the object to another schema"));
+ action_moveto_schema->setMenu(&menu_esquemas);
+
+ action_edit_perms=new QAction(QIcon(QString(":/icones/icones/grant.png")), trUtf8("Edit permissions"), this);
+ action_edit_perms->setToolTip(trUtf8("Edit object's permissions"));
+ action_edit_perms->setShortcut(QKeySequence("Ctrl+E"));
+
+ action_change_owner=new QAction(QIcon(QString(":/icones/icones/changeowner.png")), trUtf8("Change owner"), this);
+ action_change_owner->setToolTip(trUtf8("Edit object's permissions"));
+ action_change_owner->setMenu(&menu_donos);
 
  //Aloca as ações de criação de novo objeto
  for(i=0; i < qtd; i++)
@@ -262,6 +276,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  connect(action_colar, SIGNAL(triggered(bool)),this,SLOT(colarObjetos(void)));
  connect(action_recortar, SIGNAL(triggered(bool)),this,SLOT(recortarObjetos(void)));
  connect(action_rename, SIGNAL(triggered(bool)), this, SLOT(renomearObjeto(void)));
+ connect(action_edit_perms, SIGNAL(triggered(bool)), this, SLOT(editarPermissoes(void)));
 
  connect(modelo, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(manipularAdicaoObjeto(BaseObject *)));
  connect(modelo, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(manipularRemocaoObjeto(BaseObject *)));
@@ -293,6 +308,17 @@ ModeloWidget::~ModeloWidget(void)
  delete(cena);
  delete(lista_op);
  delete(modelo);
+}
+
+bool ModeloWidget::isReservedObject(BaseObject *obj)
+{
+ return(obj &&
+        ((obj->getObjectType()==OBJ_LANGUAGE &&
+         (obj->getName()==~LanguageType("c") ||
+          obj->getName()==~LanguageType("sql") ||
+          obj->getName()==~LanguageType("plpgsql"))) ||
+         (obj->getObjectType()==OBJ_SCHEMA &&
+          obj->getName()=="public")));
 }
 
 void ModeloWidget::definirModificado(bool valor)
@@ -1144,13 +1170,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
 
   /* O esquema 'public' e as linguagens C e SQL não pode ser manipuladas
      por serem do sistema, caso o usuário tente esta operação um erro será disparado */
-  if(objeto &&
-     ((tipo_obj==OBJ_LANGUAGE &&
-       (objeto->getName()==~LanguageType("c") ||
-        objeto->getName()==~LanguageType("sql") ||
-        objeto->getName()==~LanguageType("plpgsql"))) ||
-      (tipo_obj==OBJ_SCHEMA &&
-       objeto->getName()=="public")))
+  if(isReservedObject(objeto))
     throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   switch(tipo_obj)
@@ -1371,11 +1391,12 @@ void ModeloWidget::cancelarAdicaoObjeto(void)
 void ModeloWidget::renomearObjeto(void)
 {
  QAction *act=dynamic_cast<QAction *>(sender());
+ BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
- //if(!menu_popup.pos().isNull())
-  //quickrename_wgt->move(menu_popup.pos());
+ if(isReservedObject(obj))
+  throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- quickrename_wgt->setAttributes(reinterpret_cast<BaseObject *>(act->data().value<void *>()), this->modelo, this->lista_op);
+ quickrename_wgt->setAttributes(obj, this->modelo, this->lista_op);
  quickrename_wgt->exec();
 
  if(quickrename_wgt->result()==QDialog::Accepted)
@@ -1383,6 +1404,62 @@ void ModeloWidget::renomearObjeto(void)
   this->modificado=true;
   emit s_objetoModificado();
  }
+}
+
+void ModeloWidget::moverParaEsquema(void)
+{
+ QAction *act=dynamic_cast<QAction *>(sender());
+ BaseObject *schema=reinterpret_cast<BaseObject *>(act->data().value<void *>());
+ BaseGraphicObject *obj_graph=NULL;
+
+ try
+ {
+  lista_op->registerObject(objs_selecionados[0], Operation::OBJECT_MODIFIED, -1);
+  objs_selecionados[0]->setSchema(schema);
+  obj_graph=dynamic_cast<BaseGraphicObject *>(objs_selecionados[0]);
+
+  if(obj_graph)
+   obj_graph->setModified(true);
+
+  emit s_objetoModificado();
+ }
+ catch(Exception &e)
+ {
+  lista_op->removeLastOperation();
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+ }
+}
+
+void ModeloWidget::alterarDono(void)
+{
+ QAction *act=dynamic_cast<QAction *>(sender());
+ BaseObject *owner=reinterpret_cast<BaseObject *>(act->data().value<void *>()),
+            *obj=(!objs_selecionados.empty() ? objs_selecionados[0] : this->modelo);
+
+ try
+ {
+  if(obj->getObjectType()!=OBJ_DATABASE)
+   lista_op->registerObject(obj, Operation::OBJECT_MODIFIED, -1);
+
+  obj->setOwner(owner);
+  emit s_objetoModificado();
+ }
+ catch(Exception &e)
+ {
+  if(obj->getObjectType()!=OBJ_DATABASE)
+   lista_op->removeLastOperation();
+
+  throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+ }
+}
+
+void ModeloWidget::editarPermissoes(void)
+{
+ QAction *act=dynamic_cast<QAction *>(sender());
+ BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
+
+ permissao_wgt->definirAtributos(this->modelo, NULL, obj);
+ permissao_wgt->show();
 }
 
 void ModeloWidget::editarObjeto(void)
@@ -1446,13 +1523,7 @@ void ModeloWidget::protegerObjeto(void)
    {
     /* O esquema 'public' e as linguagens C e SQL não pode ser manipuladas
        por serem do sistema, caso o usuário tente esta operação um erro será disparado */
-    if(this->objs_selecionados[0] &&
-       ((this->objs_selecionados[0]->getObjectType()==OBJ_LANGUAGE &&
-         (this->objs_selecionados[0]->getName()==~LanguageType("c") ||
-          this->objs_selecionados[0]->getName()==~LanguageType("sql") ||
-          this->objs_selecionados[0]->getName()==~LanguageType("plpgsql"))) ||
-        (this->objs_selecionados[0]->getObjectType()==OBJ_SCHEMA &&
-         this->objs_selecionados[0]->getName()=="public")))
+    if(isReservedObject(this->objs_selecionados[0]))
       throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
     this->objs_selecionados[0]->setProtected(!this->objs_selecionados[0]->isProtected());
@@ -1484,13 +1555,7 @@ void ModeloWidget::protegerObjeto(void)
 
     /* O esquema 'public' e as linguagens C e SQL não pode ser manipuladas
        por serem do sistema, caso o usuário tente esta operação um erro será disparado */
-    if(objeto &&
-       ((tipo_obj==OBJ_LANGUAGE &&
-         (objeto->getName()==~LanguageType("c") ||
-          objeto->getName()==~LanguageType("sql") ||
-          objeto->getName()==~LanguageType("plpgsql") )) ||
-        (tipo_obj==OBJ_SCHEMA &&
-         objeto->getName()=="public")))
+    if(isReservedObject(objeto))
       throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     else if(tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT)
     {
@@ -1553,12 +1618,7 @@ void ModeloWidget::copiarObjetos(void)
  {
  /* O esquema 'public' e as linguagens C e SQL não podem ser manipuladas
     por serem do sistema, caso o usuário tente esta operação um erro será disparado */
- if((objs_selecionados[0]->getObjectType()==OBJ_LANGUAGE &&
-     (objs_selecionados[0]->getName()==~LanguageType("c") ||
-      objs_selecionados[0]->getName()==~LanguageType("sql") ||
-      objs_selecionados[0]->getName()==~LanguageType("plpgsql"))) ||
-     (objs_selecionados[0]->getObjectType()==OBJ_SCHEMA &&
-      objs_selecionados[0]->getName()=="public"))
+  if(isReservedObject(objs_selecionados[0]))
    throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
 
@@ -2032,13 +2092,7 @@ void ModeloWidget::excluirObjetos(void)
      //Caso o objeto esteja protegido a exclusão será negada
      /* O esquema 'public' e as linguagens C e SQL não pode ser manipuladas
         por serem do sistema, caso o usuário tente esta operação um erro será disparado */
-     if(objeto &&
-        ((tipo_obj==OBJ_LANGUAGE &&
-          (objeto->getName()==~LanguageType("c") ||
-           objeto->getName()==~LanguageType("sql") ||
-           objeto->getName()==~LanguageType("plpgsql") )) ||
-         (tipo_obj==OBJ_SCHEMA &&
-          objeto->getName()=="public")))
+     if(isReservedObject(objeto))
        throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
      else if(objeto->isProtected())
      {
@@ -2194,6 +2248,84 @@ void ModeloWidget::desabilitarAcoesModelo(void)
  action_rename->setEnabled(false);
 }
 
+void ModeloWidget::configurarSubMenu(BaseObject *obj)
+{
+ if(obj)
+ {
+  if(obj->acceptsOwner() || obj->acceptsSchema())
+  {
+   QAction *act=NULL;
+   vector<BaseObject *> obj_list;
+   map<QString, QAction *> act_map;
+   QStringList name_list;
+   QMenu *menus[]={ &menu_esquemas, &menu_donos };
+   ObjectType types[]={ OBJ_SCHEMA, OBJ_ROLE };
+
+   for(unsigned i; i < 2; i++)
+   {
+    menus[i]->clear();
+
+    if((i==0 && obj->acceptsSchema()) ||
+       (i==1 && obj->acceptsOwner()))
+    {
+     obj_list=modelo->getObjects(types[i]);
+
+     while(!obj_list.empty())
+     {
+      act=new QAction(QString::fromUtf8(obj_list.back()->getName()), menus[i]);
+      act->setIcon(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString(".png")));
+      act->setCheckable(true);
+
+      act->setChecked(obj->getSchema()==obj_list.back() ||
+                      obj->getOwner()==obj_list.back());
+
+      act->setEnabled(!act->isChecked());
+      act->setData(QVariant::fromValue<void *>(obj_list.back()));
+
+      if(i==0)
+       connect(act, SIGNAL(triggered(bool)), this, SLOT(moverParaEsquema(void)));
+      else
+       connect(act, SIGNAL(triggered(bool)), this, SLOT(alterarDono(void)));
+
+      act_map[obj_list.back()->getName()]=act;
+      name_list.push_back(obj_list.back()->getName());
+      obj_list.pop_back();
+     }
+
+     name_list.sort();
+     while(!name_list.isEmpty())
+     {
+      menus[i]->addAction(act_map[name_list.front()]);
+      name_list.pop_front();
+     }
+
+     act_map.clear();
+    }
+   }
+  }
+
+  if(obj->getObjectType()!=OBJ_CAST)
+  {
+   menu_acoes_rapidas.addAction(action_rename);
+   action_rename->setData(QVariant::fromValue<void *>(obj));
+  }
+
+  if(obj->acceptsSchema())
+   menu_acoes_rapidas.addAction(action_moveto_schema);
+
+  if(obj->acceptsOwner())
+   menu_acoes_rapidas.addAction(action_change_owner);
+
+  if(Permission::objectAcceptsPermission(obj->getObjectType()))
+  {
+   menu_acoes_rapidas.addAction(action_edit_perms);
+   action_edit_perms->setData(QVariant::fromValue<void *>(obj));
+  }
+
+  menu_popup.addAction(action_acoes_rapidas);
+ }
+}
+
 void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 {
  QMenu *submenu=NULL;
@@ -2210,7 +2342,6 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
  menu_novo_obj.clear();
  menu_acoes_rapidas.clear();
  menu_popup.clear();
- //menu_popup.move(0,0);
 
  //Desabilitar as ações padrão do menu popup
  this->desabilitarAcoesModelo();
@@ -2235,6 +2366,9 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
    //Adiciona o menu configurado   ação de novo objeto
    action_novo_obj->setMenu(&menu_novo_obj);
    menu_popup.addAction(action_novo_obj);
+
+   configurarSubMenu(modelo);
+
    menu_popup.addSeparator();
 
    //Inclui a ação de edição do modelo e exibição de seu código fonte
@@ -2257,23 +2391,23 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
   {
    BaseObject *obj=objs_sel[0];
    Relationship *rel=dynamic_cast<Relationship *>(obj);
-   ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
-                            OBJ_RULE, OBJ_INDEX/*, OBJETO_RELACAO */ };
+   ObjectType obj_type=obj->getObjectType(),
+              tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
+                        OBJ_RULE, OBJ_INDEX/*, OBJETO_RELACAO */ };
 
    //Se o objeto não está protegido e o mesmo seja um relacionamento ou tabela
    if(!obj->isProtected() &&
-      (obj->getObjectType()==OBJ_TABLE ||
-       obj->getObjectType()==OBJ_RELATIONSHIP))
+      (obj_type==OBJ_TABLE ||obj_type==OBJ_RELATIONSHIP))
    {
     //Caso seja tabela, inclui a ação de adição de objetos de tabela
-    if(obj->getObjectType() == OBJ_TABLE)
+    if(obj_type == OBJ_TABLE)
     {
      for(i=0; i < 5; i++)
       menu_novo_obj.addAction(acoes_ins_objs[tipos[i]]);
      action_novo_obj->setMenu(&menu_novo_obj);
     }
     //Caso seja tabela, inclui a ação de adição de atributos e restrições ao relacionamento
-    else if(obj->getObjectType()==OBJ_RELATIONSHIP)
+    else if(obj_type==OBJ_RELATIONSHIP)
     {
      for(i=0; i < 2; i++)
       menu_novo_obj.addAction(acoes_ins_objs[tipos[i]]);
@@ -2290,17 +2424,29 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
     menu_popup.addAction(action_novo_obj);
    }
 
-   if(obj->getObjectType()!=OBJ_CAST)
+   configurarSubMenu(obj);
+
+   /*if(obj_type!=OBJ_CAST)
     menu_acoes_rapidas.addAction(action_rename);
 
-   menu_popup.addAction(action_acoes_rapidas);
+   if(obj->acceptsSchema())
+    menu_acoes_rapidas.addAction(action_moveto_schema);
+
+   if(obj->acceptsOwner())
+    menu_acoes_rapidas.addAction(action_change_owner);
+
+   if(Permission::objectAcceptsPermission(obj_type))
+    menu_acoes_rapidas.addAction(action_edit_perms);
+
+   action_rename->setData(QVariant::fromValue<void *>(obj)); */
+
+   //menu_popup.addAction(action_acoes_rapidas);
    menu_popup.addSeparator();
 
    //Adiciona as ações de edição, exibição do código fonte e dependências/referências do objeto
    action_editar->setData(QVariant::fromValue<void *>(obj));
    action_codigo_fonte->setData(QVariant::fromValue<void *>(obj));
    action_deps_refs->setData(QVariant::fromValue<void *>(obj));
-   action_rename->setData(QVariant::fromValue<void *>(obj));
    obj_tab=dynamic_cast<TableObject *>(obj);
 
    menu_popup.addAction(action_editar);

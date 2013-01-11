@@ -42,11 +42,10 @@ class ModeloWidget: public QWidget {
   //Indica que o modelo foi modificado por alguma operação
   bool modificado;
 
- protected:
-  //Constantes usadas nas operações de zoom
-  static const float ZOOM_MINIMO=0.35f,
-                     ZOOM_MAXIMO=4.0f,
-                     INC_ZOOM=0.05f;
+  bool isReservedObject(BaseObject *obj);
+
+  void configurarSubMenu(BaseObject *obj);
+
 
   /* Flag que indica se o modelo está em uma operação de recorte.
      Essa flag modifica o funcionamento dos métodos colarObjetos, excluirObjeto e
@@ -72,7 +71,9 @@ class ModeloWidget: public QWidget {
   QMenu menu_popup,
         //Menu de inserção de novo objeto no modelo
         menu_novo_obj,
-        menu_acoes_rapidas;
+        menu_acoes_rapidas,
+        menu_esquemas,
+        menu_donos;
 
   //Ações do menu popup
   QAction *action_codigo_fonte,
@@ -88,6 +89,9 @@ class ModeloWidget: public QWidget {
           *action_deps_refs,
           *action_novo_obj,
           *action_rename,
+          *action_moveto_schema,
+          *action_edit_perms,
+          *action_change_owner,
           *action_acoes_rapidas;
 
   //Ações de inserção de novos objetos no modelo
@@ -108,6 +112,12 @@ class ModeloWidget: public QWidget {
   //Armazena o nome do arquivo de modelo carregado no widget
   QString nome_arquivo,
           nome_arquivo_tmp;
+
+ protected:
+  //Constantes usadas nas operações de zoom
+  static const float ZOOM_MINIMO=0.35f,
+                     ZOOM_MAXIMO=4.0f,
+                     INC_ZOOM=0.05f;
 
   /* Configura a cena alinhando os objetos e a redimensionando quandos
      os objetos extrapolam o tamanho máximo dela */
@@ -185,6 +195,12 @@ class ModeloWidget: public QWidget {
 
   //Executa o widget de renomeio de objeto
   void renomearObjeto(void);
+
+  void moverParaEsquema(void);
+
+  void alterarDono(void);
+
+  void editarPermissoes(void);
 
   //Exclui os objetos selecionados
   void excluirObjetos(void);

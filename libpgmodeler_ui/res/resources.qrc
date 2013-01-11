@@ -136,6 +136,8 @@
         <file>icones/padroes.png</file>
         <file>icones/rename.png</file>
         <file>icones/quickactions.png</file>
+        <file>icones/movetoschema.png</file>
+        <file>icones/changeowner.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

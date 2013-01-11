@@ -166,7 +166,7 @@ void ObjetoBaseWidget::definirAtributos(DatabaseModel *modelo, OperationList *li
    this->tabela=dynamic_cast<Table *>(objeto_pai);
   else if(tipo_obj_pai==OBJ_RELATIONSHIP)
    this->relacionamento=dynamic_cast<Relationship *>(objeto_pai);
-  else
+  else if(tipo_obj_pai!=OBJ_DATABASE)
    throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  else

@@ -2,7 +2,6 @@
 
 Permission::Permission(BaseObject *obj)
 {
- ObjectType obj_type;
  unsigned priv_id;
 
  //Initializes all the privileges as unchecked
@@ -13,17 +12,9 @@ Permission::Permission(BaseObject *obj)
  if(!obj)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- obj_type=obj->getObjectType();
-
- /* Caso o tipo do objeto a ser atribuído não seja válido de acordo com a regra
-    (vide definição da Classe) dispara uma exceção */
-
  /* Raises an error if the object type to be associated to the permission is
     invalid according to the rule (see class definition) */
- if(obj_type!=OBJ_TABLE && obj_type!=OBJ_COLUMN && obj_type!=OBJ_VIEW &&
-    obj_type!=OBJ_SEQUENCE && obj_type!=OBJ_DATABASE && obj_type!=OBJ_FUNCTION &&
-    obj_type!=OBJ_AGGREGATE && obj_type!=OBJ_LANGUAGE && obj_type!=OBJ_SCHEMA &&
-    obj_type!=OBJ_TABLESPACE)
+ if(!objectAcceptsPermission(obj->getObjectType()))
   throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  this->object=obj;
@@ -36,6 +27,14 @@ Permission::Permission(BaseObject *obj)
  attributes[ParsersAttributes::ROLES]="";
  attributes[ParsersAttributes::PRIVILEGES]="";
  attributes[ParsersAttributes::PRIVILEGES_GOP]="";
+}
+
+bool Permission::objectAcceptsPermission(ObjectType obj_type)
+{
+ return(obj_type==OBJ_TABLE || obj_type==OBJ_COLUMN || obj_type==OBJ_VIEW ||
+        obj_type==OBJ_SEQUENCE || obj_type==OBJ_DATABASE || obj_type==OBJ_FUNCTION ||
+        obj_type==OBJ_AGGREGATE || obj_type==OBJ_LANGUAGE || obj_type==OBJ_SCHEMA ||
+        obj_type==OBJ_TABLESPACE);
 }
 
 bool Permission::isRoleExists(Role *role)

@@ -299,6 +299,16 @@ void BaseObject::setComment(const QString &comment)
  this->comment=comment;
 }
 
+bool BaseObject::acceptsSchema(void)
+{
+ return(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE ||
+        obj_type==OBJ_VIEW  || obj_type==OBJ_DOMAIN ||
+        obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
+        obj_type==OBJ_SEQUENCE || obj_type==OBJ_CONVERSION ||
+        obj_type==OBJ_TYPE || obj_type==OBJ_OPCLASS ||
+        obj_type==OBJ_OPFAMILY);
+}
+
 void BaseObject::setSchema(BaseObject *schema)
 {
  if(!schema)
@@ -309,18 +319,22 @@ void BaseObject::setSchema(BaseObject *schema)
   throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  if(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE ||
-     obj_type==OBJ_VIEW  || obj_type==OBJ_DOMAIN ||
-     obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
-     obj_type==OBJ_SEQUENCE || obj_type==OBJ_CONVERSION ||
-     obj_type==OBJ_TYPE || obj_type==OBJ_OPCLASS ||
-     obj_type==OBJ_OPFAMILY)
-  {
+  if(acceptsSchema())
    this->schema=schema;
-  }
   else
    throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
+}
+
+bool BaseObject::acceptsOwner(void)
+{
+ return(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE ||
+        obj_type==OBJ_DOMAIN || obj_type==OBJ_SCHEMA ||
+        obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
+        obj_type==OBJ_CONVERSION ||
+        obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
+        obj_type==OBJ_TABLESPACE || obj_type==OBJ_DATABASE ||
+        obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY);
 }
 
 void BaseObject::setOwner(BaseObject *owner)
@@ -329,19 +343,19 @@ void BaseObject::setOwner(BaseObject *owner)
   throw Exception(ERR_ASG_INV_ROLE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  if(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE ||
-     obj_type==OBJ_DOMAIN || obj_type==OBJ_SCHEMA ||
-     obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
-     obj_type==OBJ_CONVERSION ||
-     obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
-     obj_type==OBJ_TABLESPACE || obj_type==OBJ_DATABASE ||
-     obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY)
-  {
+  if(acceptsOwner())
    this->owner=owner;
-  }
   else
    throw Exception(ERR_ASG_ROLE_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
+}
+
+bool BaseObject::acceptsTablespace(void)
+{
+ return(obj_type==OBJ_INDEX ||
+        obj_type==OBJ_TABLE ||
+        obj_type==OBJ_CONSTRAINT ||
+        obj_type==OBJ_DATABASE);
 }
 
 void BaseObject::setTablespace(BaseObject *tablespace)
@@ -350,13 +364,8 @@ void BaseObject::setTablespace(BaseObject *tablespace)
   throw Exception(ERR_ASG_INV_TABLESPACE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
-  if(obj_type==OBJ_INDEX ||
-     obj_type==OBJ_TABLE ||
-     obj_type==OBJ_CONSTRAINT ||
-     obj_type==OBJ_DATABASE)
-  {
+  if(acceptsTablespace())
    this->tablespace=tablespace;
-  }
   else
    throw Exception(ERR_ASG_TABSPC_INV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }

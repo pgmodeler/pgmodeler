@@ -22,6 +22,7 @@ void QuickRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model, 
  if(!object || !op_list)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+ this->adjustSize();
  this->object=object;
  this->op_list=op_list;
  this->model=model;
@@ -50,6 +51,8 @@ void QuickRenameWidget::hideEvent(QHideEvent *)
 
 void QuickRenameWidget::applyRenaming(void)
 {
+ ObjectType obj_type;
+
  try
  {
   //Apply the new name only when its not empty and its differs from the original one
@@ -59,44 +62,47 @@ void QuickRenameWidget::applyRenaming(void)
    BaseGraphicObject *obj_graph=dynamic_cast<BaseGraphicObject *>(object);
    TableObject *tab_obj=dynamic_cast<TableObject *>(object);
    BaseObject *aux_obj=NULL, *parent_obj=NULL;
-   ObjectType obj_type;
    QString fmt_name;
 
-   //Register the object on operations list before the modification
-   op_list->registerObject(object, Operation::OBJECT_MODIFIED, -1, (tab_obj ? tab_obj->getParentTable() : NULL));
-
-   //Format the object name to check if it will have a conflicting name
    obj_type=object->getObjectType();
-   fmt_name=BaseObject::formatName(new_name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
 
-   if(object->getSchema())
-    fmt_name=object->getSchema()->getName(true) + "." + fmt_name;
-
-   //For table child object, check if there is another object with the same new name
-   if(tab_obj)
+   if(obj_type!=OBJ_DATABASE)
    {
-    parent_obj=tab_obj->getParentTable();
-    aux_obj=dynamic_cast<Table *>(tab_obj->getParentTable())->getObject(fmt_name, obj_type);
-   }
-   //For database child object, check if there is another object with the same new name
-   else
-   {
-    parent_obj=model;
-    aux_obj=model->getObject(fmt_name, obj_type);
+    //Register the object on operations list before the modification
+    op_list->registerObject(object, Operation::OBJECT_MODIFIED, -1, (tab_obj ? tab_obj->getParentTable() : NULL));
+
+    //Format the object name to check if it will have a conflicting name
+    fmt_name=BaseObject::formatName(new_name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
+
+    if(object->getSchema())
+     fmt_name=object->getSchema()->getName(true) + "." + fmt_name;
+
+    //For table child object, check if there is another object with the same new name
+    if(tab_obj)
+    {
+     parent_obj=tab_obj->getParentTable();
+     aux_obj=dynamic_cast<Table *>(tab_obj->getParentTable())->getObject(fmt_name, obj_type);
+    }
+    //For database child object, check if there is another object with the same new name
+    else
+    {
+     parent_obj=model;
+     aux_obj=model->getObject(fmt_name, obj_type);
+    }
+
+    //Raises a error if another object is found
+    if(aux_obj && aux_obj!=object)
+    {
+     throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
+                     .arg(QString::fromUtf8(fmt_name))
+                     .arg(QString::fromUtf8(object->getTypeName()))
+                     .arg(QString::fromUtf8(parent_obj->getName(true)))
+                     .arg(QString::fromUtf8(parent_obj->getTypeName())),
+                      ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+    }
    }
 
-   //Raises a error if another object is found
-   if(aux_obj && aux_obj!=object)
-   {
-    throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-                    .arg(QString::fromUtf8(fmt_name))
-                    .arg(QString::fromUtf8(object->getTypeName()))
-                    .arg(QString::fromUtf8(parent_obj->getName(true)))
-                    .arg(QString::fromUtf8(parent_obj->getTypeName())),
-                     ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-   }
-
-   object->setName(new_name_edt->text());
+   object->setName(new_name_edt->text().toUtf8());
 
    //If the renamed object is a graphical one, set as modified to force its redraw
    if(obj_graph)
@@ -121,7 +127,9 @@ void QuickRenameWidget::applyRenaming(void)
  }
  catch(Exception &e)
  {
-  op_list->removeLastOperation();
+  if(obj_type!=OBJ_DATABASE)
+   op_list->removeLastOperation();
+
   caixa_msg->show(e);
  }
 }

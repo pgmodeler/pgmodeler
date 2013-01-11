@@ -206,6 +206,8 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  /* Conectando os sinais de objetos manipulados disparados pelos formulários de criação de objetos
     para forçar a atualização da visão de objetos */
  connect(bancodados_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(bancodados_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(atualizarNomeAba(void)));
+
  connect(esquema_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
  connect(papel_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
  connect(caixatexto_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
@@ -667,6 +669,9 @@ void FormPrincipal::definirModeloAtual(void)
   //Seta o modo de popup do menu para "InstantPopup" assim o usuário não precisa pressionar a setinha para ativar o popup
   dynamic_cast<QToolButton *>(modelo_tb->widgetForAction(modelo_atual->action_novo_obj))->setPopupMode(QToolButton::InstantPopup);
 
+  modelo_tb->addAction(modelo_atual->action_acoes_rapidas);
+  dynamic_cast<QToolButton *>(modelo_tb->widgetForAction(modelo_atual->action_acoes_rapidas))->setPopupMode(QToolButton::InstantPopup);
+
   modelo_tb->addAction(modelo_atual->action_rename);
   modelo_tb->addAction(modelo_atual->action_editar);
   modelo_tb->addAction(modelo_atual->action_codigo_fonte);
@@ -703,6 +708,8 @@ void FormPrincipal::definirModeloAtual(void)
   connect(modelo_atual, SIGNAL(s_objetoRemovido(void)),visao_objs, SLOT(atualizarVisaoObjetos(void)));
 
   connect(modelo_atual, SIGNAL(s_zoomModificado(float)), this, SLOT(atualizarEstadoFerramentas(void)));
+  connect(modelo_atual, SIGNAL(s_objetoModificado(void)), this, SLOT(atualizarNomeAba(void)));
+
 
   connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
   connect(action_exibir_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
@@ -885,6 +892,12 @@ void FormPrincipal::fecharModelo(int idx_modelo)
  {
   definirModeloAtual();
  }
+}
+
+void FormPrincipal::atualizarNomeAba(void)
+{
+ if(modelo_atual && modelo_atual->modelo->getName()!=modelos_tab->tabText(modelos_tab->currentIndex()))
+  modelos_tab->setTabText(modelos_tab->currentIndex(), modelo_atual->modelo->getName());
 }
 
 void FormPrincipal::atualizarModelos(void)

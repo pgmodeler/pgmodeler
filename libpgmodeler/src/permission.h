@@ -123,6 +123,9 @@ class Permission: public BaseObject {
   //Indicates whether the role is present on the permission
   bool isRoleExists(Role *role);
 
+  //Returns if the passed object type accepts permission
+  static bool objectAcceptsPermission(ObjectType obj_type);
+
   //Returns the SQL / XML definition for the permission
   QString getCodeDefinition(unsigned def_type);
 };

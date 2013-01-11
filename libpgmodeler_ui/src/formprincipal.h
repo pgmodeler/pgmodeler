@@ -151,6 +151,9 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
 
   //Exibe a visão geral do modelo atualmente aberto
   void exibirVisaoGeral(bool exibir);
+
+  //Atualiza o nome da aba do modelo atual caso o nome do banco de dados seja alterado
+  void atualizarNomeAba(void);
 };
 
 #endif
