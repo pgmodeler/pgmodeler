@@ -69,6 +69,7 @@ VisaoObjetosWidget::VisaoObjetosWidget(bool visao_simplificada, QWidget *parent,
  modelo_wgt=NULL;
  modelo_bd=NULL;
  this->visao_simplificada=visao_simplificada;
+ this->salvar_arvore=!visao_simplificada;
 
  selecionar_tb->setVisible(visao_simplificada);
  cancelar_tb->setVisible(visao_simplificada);
@@ -146,10 +147,10 @@ void VisaoObjetosWidget::exibirMenuObjeto(void)
 {
  if(objeto_selecao && QApplication::mouseButtons()==Qt::RightButton && modelo_wgt && !visao_simplificada)
  {
-  vector<BaseObject *> vet;
+  /* vector<BaseObject *> vet;
   vet.push_back(objeto_selecao);
   modelo_wgt->cena->clearSelection();
-  modelo_wgt->configurarMenuPopup(vet);
+  modelo_wgt->configurarMenuPopup(vet); */
   modelo_wgt->menu_popup.exec(QCursor::pos());
  }
 }
@@ -158,10 +159,10 @@ void VisaoObjetosWidget::editarObjeto(void)
 {
  if(objeto_selecao && modelo_wgt && !visao_simplificada)
  {
-  vector<BaseObject *> vet;
+  /*vector<BaseObject *> vet;
   vet.push_back(objeto_selecao);
   modelo_wgt->cena->clearSelection();
-  modelo_wgt->configurarMenuPopup(vet);
+  modelo_wgt->configurarMenuPopup(vet);*/
   modelo_wgt->editarObjeto();
  }
 }
@@ -179,6 +180,14 @@ void VisaoObjetosWidget::selecionarObjeto(void)
   QTableWidgetItem *item_tab=listaobjetos_tbw->currentItem();
   if(item_tab)
    objeto_selecao=reinterpret_cast<BaseObject *>(item_tab->data(Qt::UserRole).value<void *>());
+ }
+
+ if(objeto_selecao)
+ {
+  vector<BaseObject *> vet;
+  vet.push_back(objeto_selecao);
+  modelo_wgt->cena->clearSelection();
+  modelo_wgt->configurarMenuPopup(vet);
  }
 
  exibirMenuObjeto();
@@ -925,14 +934,16 @@ void VisaoObjetosWidget::atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObj
 
 void VisaoObjetosWidget::atualizarArvoreObjetos(void)
 {
- arvoreobjetos_tw->clear();
- if(modelo_bd)
+ if(!modelo_bd)
+   arvoreobjetos_tw->clear();
+ else
  {
   QString str_aux;
   BaseObject *objeto=NULL;
   unsigned qtd, i, i1, tipo_rel;
   QTreeWidgetItem *raiz=NULL,*item1=NULL, *item2=NULL;
   QFont fonte;
+  vector<BaseObject *> estado_arv;
 
   //Lista de tipos de objetos a nivel de banco de dados
   ObjectType tipos[]={ OBJ_ROLE, OBJ_TABLESPACE,
@@ -941,6 +952,12 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
 
   try
   {
+   if(salvar_arvore)
+    salvarEstadoArvore(estado_arv);
+
+   arvoreobjetos_tw->clear();
+
+
    /* Só executa a exibição dos objetos do banco de dados caso o tipo
       banco de dados esteja marcado como visível */
    if(map_objs_visiveis[OBJ_DATABASE])
@@ -1058,6 +1075,9 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
     }
     //Expande o item raiz da árvore
     arvoreobjetos_tw->expandItem(raiz);
+
+    if(salvar_arvore)
+     restaurarEstadoArvore(estado_arv);
    }
   }
   catch(Exception &e)
@@ -1073,42 +1093,6 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
 BaseObject *VisaoObjetosWidget::obterObjetoSelecao(void)
 {
  return(objeto_selecao);
-}
-
-void VisaoObjetosWidget::expandirItemArvore(BaseObject *objeto)
-{
- if(objeto)
- {
-  QList<QTreeWidgetItem *> itens;
-  QList<QTreeWidgetItem *>::iterator itr, itr_end;
-  BaseObject *obj_aux=NULL;
-  QTreeWidgetItem *item_arv=NULL;
-
-  //Obtém todos os elementos da árvore e os dispoem em forma de lista
-  itens=arvoreobjetos_tw->findItems("(.)*",Qt::MatchRegExp | Qt::MatchRecursive,0);
-  itr=itens.begin();
-  itr_end=itens.end();
-
-  //Varre a lista obtida em busca do objeto passado no parâmetro
-  while(itr!=itr_end)
-  {
-   //Obtém cada objeto que cada item da lista armazena
-   item_arv=(*itr);
-   obj_aux=reinterpret_cast<BaseObject *>(item_arv->data(0,Qt::UserRole).value<void *>());
-
-   /* Compara o objeto obtido da lista com o objeto do parâmeto
-      caso os dois sejam os mesmo procede com a expansão do elemento
-      referente ao objeto */
-   if(obj_aux==objeto)
-   {
-    arvoreobjetos_tw->expandItem(item_arv);
-    arvoreobjetos_tw->scrollToItem(item_arv);
-    break;
-   }
-
-   itr++;
-  }
- }
 }
 
 void VisaoObjetosWidget::close(void)
@@ -1216,3 +1200,86 @@ void VisaoObjetosWidget::mouseMoveEvent(QMouseEvent *)
  }
 }
 
+void VisaoObjetosWidget::salvarEstadoArvore(bool valor)
+{
+ salvar_arvore=(!visao_simplificada && valor);
+}
+
+void VisaoObjetosWidget::salvarEstadoArvore(vector<BaseObject *> &itens_arv)
+{
+ QList<QTreeWidgetItem *> itens;
+ BaseObject *obj=NULL;
+ QTreeWidgetItem *item=NULL;
+
+ itens_arv.clear();
+ itens=arvoreobjetos_tw->findItems("*",Qt::MatchWildcard | Qt::MatchRecursive,0);
+
+ while(!itens.isEmpty())
+ {
+  item=itens.front();
+  obj=reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
+
+  //Insere o objecto caso o mesmo tenha um pai e o mesmo esteja expandido
+  if(obj && item->parent() && item->parent()->isExpanded())
+   itens_arv.push_back(obj);
+
+  itens.pop_front();
+ }
+
+ unique(itens_arv.begin(), itens_arv.end());
+}
+
+void VisaoObjetosWidget::restaurarEstadoArvore(vector<BaseObject *> &itens_arv)
+{
+ QTreeWidgetItem *item=NULL, *item_pai=NULL;
+
+ while(!itens_arv.empty())
+ {
+  item=obterItemArvore(itens_arv.back());
+
+  if(item)
+  {
+   item_pai=item->parent();
+
+   if(item_pai)
+    arvoreobjetos_tw->expandItem(item_pai);
+
+   if(item_pai && item_pai->parent())
+    arvoreobjetos_tw->expandItem(item_pai->parent());
+  }
+
+  itens_arv.pop_back();
+ }
+}
+
+QTreeWidgetItem *VisaoObjetosWidget::obterItemArvore(BaseObject *objeto)
+{
+ if(objeto)
+ {
+  QList<QTreeWidgetItem *> itens;
+  BaseObject *obj_aux=NULL;
+  QTreeWidgetItem *item=NULL;
+
+  //Obtém todos os elementos da árvore e os dispoem em forma de lista
+  itens=arvoreobjetos_tw->findItems("*",Qt::MatchWildcard | Qt::MatchRecursive,0);
+
+  //Varre a lista obtida em busca do objeto passado no parâmetro
+  while(!itens.isEmpty())
+  {
+   //Obtém cada objeto que cada item da lista armazena
+   item=itens.front();
+   obj_aux=reinterpret_cast<BaseObject *>(item->data(0,Qt::UserRole).value<void *>());
+
+   if(obj_aux==objeto)
+    break;
+   else
+    item=NULL;
+
+   itens.pop_front();
+  }
+
+  return(item);
+ }
+ else
+  return(NULL);
+}

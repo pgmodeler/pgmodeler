@@ -2245,7 +2245,7 @@ void ModeloWidget::desabilitarAcoesModelo(void)
  action_colar->setEnabled(false);
  action_recortar->setEnabled(false);
  action_excluir->setEnabled(false);
- action_rename->setEnabled(false);
+ action_acoes_rapidas->setEnabled(false);
 }
 
 void ModeloWidget::configurarSubMenu(BaseObject *obj)
@@ -2270,36 +2270,44 @@ void ModeloWidget::configurarSubMenu(BaseObject *obj)
     {
      obj_list=modelo->getObjects(types[i]);
 
-     while(!obj_list.empty())
+     if(obj_list.empty())
      {
-      act=new QAction(QString::fromUtf8(obj_list.back()->getName()), menus[i]);
-      act->setIcon(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString(".png")));
-      act->setCheckable(true);
-
-      act->setChecked(obj->getSchema()==obj_list.back() ||
-                      obj->getOwner()==obj_list.back());
-
-      act->setEnabled(!act->isChecked());
-      act->setData(QVariant::fromValue<void *>(obj_list.back()));
-
-      if(i==0)
-       connect(act, SIGNAL(triggered(bool)), this, SLOT(moverParaEsquema(void)));
-      else
-       connect(act, SIGNAL(triggered(bool)), this, SLOT(alterarDono(void)));
-
-      act_map[obj_list.back()->getName()]=act;
-      name_list.push_back(obj_list.back()->getName());
-      obj_list.pop_back();
+      menus[i]->addAction(trUtf8("(no objects)"));
+      menus[i]->actions().at(0)->setEnabled(false);
      }
-
-     name_list.sort();
-     while(!name_list.isEmpty())
+     else
      {
-      menus[i]->addAction(act_map[name_list.front()]);
-      name_list.pop_front();
-     }
+      while(!obj_list.empty())
+      {
+       act=new QAction(QString::fromUtf8(obj_list.back()->getName()), menus[i]);
+       act->setIcon(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString(".png")));
+       act->setCheckable(true);
 
-     act_map.clear();
+       act->setChecked(obj->getSchema()==obj_list.back() ||
+                       obj->getOwner()==obj_list.back());
+
+       act->setEnabled(!act->isChecked());
+       act->setData(QVariant::fromValue<void *>(obj_list.back()));
+
+       if(i==0)
+        connect(act, SIGNAL(triggered(bool)), this, SLOT(moverParaEsquema(void)));
+       else
+        connect(act, SIGNAL(triggered(bool)), this, SLOT(alterarDono(void)));
+
+       act_map[obj_list.back()->getName()]=act;
+       name_list.push_back(obj_list.back()->getName());
+       obj_list.pop_back();
+      }
+
+      name_list.sort();
+      while(!name_list.isEmpty())
+      {
+       menus[i]->addAction(act_map[name_list.front()]);
+       name_list.pop_front();
+      }
+
+      act_map.clear();
+     }
     }
    }
   }

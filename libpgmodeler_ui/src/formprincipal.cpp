@@ -650,6 +650,13 @@ void FormPrincipal::definirModeloAtual(void)
   disconnect(modelo_atual->visaogeral_wgt, NULL, action_visao_geral, NULL);
  } */
 
+ /* Inibe o salvamento automatico do estado da árvore para que
+    a árvore do modelo atual seja restaurada */
+ visao_objs->salvarEstadoArvore(false);
+
+ if(modelo_atual)
+  visao_objs->salvarEstadoArvore(confs_arv_objs[modelo_atual]);
+
  //O modelo atual obtido a partir da aba atual no 'modelos_tab'
  modelo_atual=dynamic_cast<ModeloWidget *>(modelos_tab->currentWidget());
 
@@ -672,7 +679,6 @@ void FormPrincipal::definirModeloAtual(void)
   modelo_tb->addAction(modelo_atual->action_acoes_rapidas);
   dynamic_cast<QToolButton *>(modelo_tb->widgetForAction(modelo_atual->action_acoes_rapidas))->setPopupMode(QToolButton::InstantPopup);
 
-  modelo_tb->addAction(modelo_atual->action_rename);
   modelo_tb->addAction(modelo_atual->action_editar);
   modelo_tb->addAction(modelo_atual->action_codigo_fonte);
   modelo_tb->addAction(modelo_atual->action_converter_relnn);
@@ -732,6 +738,12 @@ void FormPrincipal::definirModeloAtual(void)
  //Atualiza os dockwidgets com os dados do modelo atual
  lista_oper->definirModelo(modelo_atual);
  visao_objs->definirModelo(modelo_atual);
+
+ if(modelo_atual)
+  visao_objs->restaurarEstadoArvore(confs_arv_objs[modelo_atual]);
+
+ //Reativa o salvamento automático do estado da árvore
+ visao_objs->salvarEstadoArvore(true);
 
  //Salva o arquivo temporário referente ao modelo
  this->salvarModeloTemporario();
@@ -850,6 +862,8 @@ void FormPrincipal::fecharModelo(int idx_modelo)
  if(tab)
  {
   ModeloWidget *modelo=dynamic_cast<ModeloWidget *>(tab);
+
+  confs_arv_objs.erase(modelo);
 
   disconnect(tab, NULL, lista_oper, NULL);
   disconnect(tab, NULL, visao_objs, NULL);

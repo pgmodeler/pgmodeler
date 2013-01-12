@@ -59,6 +59,8 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
   //Armazena a referência para o modelo atualmente aberto
   ModeloWidget *modelo_atual;
 
+  map<ModeloWidget *, vector<BaseObject *> > confs_arv_objs;
+
   //Armazena o nome da operação atualmente selecionada
   QLabel *nome_op;
 

@@ -35,7 +35,9 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
       seletora de objetos auxiliar de outros formulários. Interações
       como excluir, destacar, editar e exibir código dos objetos
       são desabilitadas */
-   bool visao_simplificada;
+   bool visao_simplificada,
+
+        salvar_arvore;
 
    /* Armazena o endereço do objeto relacionado ao item marcado na árvore
      ou na lista de objetos */
@@ -77,6 +79,9 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
   //Atualiza a lista de objetos
   void atualizarListaObjetos(void);
 
+  //Retorna um item da árvore relacionado ao objeto passado
+  QTreeWidgetItem *obterItemArvore(BaseObject *objeto);
+
   /* Gera um valor em um objeto QVariant para armazenamento dos
      endereços dos objetos do modelo para armazenamento em
      itens de QTreeWidgets e QListWidgetItem para permitir
@@ -84,18 +89,24 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
      no modelo */
   QVariant gerarValorItem(BaseObject *objeto);
 
-  /* Expande os itens da árvore até que o item refente ao objeto informado
-     no parâmetro esteja visível */
-  void expandirItemArvore(BaseObject *objeto);
+  //Implementa a movimentação da janela quando esta é exibida de forma simplificada
+  void mouseMoveEvent(QMouseEvent *);
+
+  void closeEvent(QCloseEvent *);
 
  public:
-   VisaoObjetosWidget(bool visao_simplificada=false, QWidget * parent = 0, Qt::WindowFlags f = 0);
-  void closeEvent(QCloseEvent *);
+  VisaoObjetosWidget(bool visao_simplificada=false, QWidget * parent = 0, Qt::WindowFlags f = 0);
   BaseObject *obterObjetoSelecao(void);
 
- private:
-   //Implementa a movimentação da janela quando esta é exibida de forma simplificada
-   void mouseMoveEvent(QMouseEvent *);
+ protected:
+   //Salva os itens atualmente expandidos na árvore no vetor passado
+   void salvarEstadoArvore(vector<BaseObject *> &itens_arv);
+
+   //Restaura a árvore ao estado anterior expandindo os itens do vetor passado
+   void restaurarEstadoArvore(vector<BaseObject *> &itens_arv);
+
+   //Indica ao widget que o estado da árvore de objetos deve ser salvo/restaurado automaticamente
+   void salvarEstadoArvore(bool valor);
 
  public slots:
    void definirModelo(ModeloWidget *modelo_wgt);
@@ -118,6 +129,8 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
      form principal para atualizar as ferramentas */
   void s_visaoObjetosModificada(void);
   void s_visibilityChanged(BaseObject *,bool);
+
+  friend class FormPrincipal;
 };
 
 #endif
