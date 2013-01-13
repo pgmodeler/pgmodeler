@@ -182,15 +182,15 @@ void VisaoObjetosWidget::selecionarObjeto(void)
    objeto_selecao=reinterpret_cast<BaseObject *>(item_tab->data(Qt::UserRole).value<void *>());
  }
 
- if(objeto_selecao)
+ if(objeto_selecao && !visao_simplificada)
  {
   vector<BaseObject *> vet;
   vet.push_back(objeto_selecao);
   modelo_wgt->cena->clearSelection();
   modelo_wgt->configurarMenuPopup(vet);
- }
 
- exibirMenuObjeto();
+  exibirMenuObjeto();
+ }
 }
 
 QVariant VisaoObjetosWidget::gerarValorItem(BaseObject *objeto)
@@ -1078,6 +1078,8 @@ void VisaoObjetosWidget::atualizarArvoreObjetos(void)
 
     if(salvar_arvore)
      restaurarEstadoArvore(estado_arv);
+    else if(visao_simplificada)
+     arvoreobjetos_tw->expandAll();
    }
   }
   catch(Exception &e)
