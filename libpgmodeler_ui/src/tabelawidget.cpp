@@ -13,7 +13,7 @@ extern IndiceWidget *indice_wgt;
 extern GatilhoWidget *gatilho_wgt;
 extern CaixaMensagem *caixa_msg;
 
-TabelaWidget::TabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TABLE)
+TabelaWidget::TabelaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
  //QStringList lista;
  QGridLayout *grid=NULL;
@@ -85,17 +85,17 @@ TabelaWidget::TabelaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TABLE)
  mapa_tab_objetos[OBJ_INDEX]->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
  mapa_tab_objetos[OBJ_INDEX]->definirRotuloCabecalho(trUtf8("Indexing"), 1);
 
- configurarLayouFormulario(tabela_grid, OBJ_TABLE);
- janela_pai->setMinimumSize(550, 500);
+ configureFormLayout(tabela_grid, OBJ_TABLE);
+ parent_form->setMinimumSize(550, 500);
 
- connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
- connect(janela_pai->cancelar_btn,SIGNAL(clicked(bool)), this, SLOT(cancelarConfiguracao(void)));
+ connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+ connect(parent_form->cancelar_btn,SIGNAL(clicked(bool)), this, SLOT(cancelConfiguration(void)));
 }
 
 void TabelaWidget::hideEvent(QHideEvent *evento)
 {
  map<ObjectType, TabelaObjetosWidget *>::iterator itr, itr_end;
- Table *tab=dynamic_cast<Table *>(this->objeto);
+ Table *tab=dynamic_cast<Table *>(this->object);
 
  aceita_oids_chk->setChecked(false);
  atributos_tbw->setCurrentIndex(0);
@@ -113,10 +113,10 @@ void TabelaWidget::hideEvent(QHideEvent *evento)
   itr++;
  }
 
- if(this->novo_obj && !tab->isModified())
-  this->cancelarConfiguracao();
+ if(this->new_object && !tab->isModified())
+  this->cancelConfiguration();
 
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
 void TabelaWidget::exibirFormObjetoTabela(ObjectType tipo_obj)
@@ -134,34 +134,34 @@ void TabelaWidget::exibirFormObjetoTabela(ObjectType tipo_obj)
   objeto=reinterpret_cast<TableObject *>(tab_obj->obterDadoLinha(tab_obj->obterLinhaSelecionada()).value<void *>());
 
  //Obtém a referência a tabela que é dona do objeto a ser editado
- tabela=dynamic_cast<Table *>(this->objeto);
+ tabela=dynamic_cast<Table *>(this->object);
 
  //Exibe o formulário correto de acordo com o tipo de objeto de tabela
  switch(tipo_obj)
  {
   case OBJ_COLUMN:
-   coluna_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Column *>(objeto));
+   coluna_wgt->setAttributes(this->model, tabela, this->op_list, dynamic_cast<Column *>(objeto));
    coluna_wgt->show();
   break;
 
   case OBJ_CONSTRAINT:
-   restricao_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Constraint *>(objeto));
+   restricao_wgt->setAttributes(this->model, tabela, this->op_list, dynamic_cast<Constraint *>(objeto));
    restricao_wgt->show();
   break;
 
   case OBJ_TRIGGER:
-   gatilho_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Trigger *>(objeto));
+   gatilho_wgt->setAttributes(this->model, tabela, this->op_list, dynamic_cast<Trigger *>(objeto));
    gatilho_wgt->show();
   break;
 
   case OBJ_INDEX:
-   indice_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Index *>(objeto));
+   indice_wgt->setAttributes(this->model, tabela, this->op_list, dynamic_cast<Index *>(objeto));
    indice_wgt->show();
   break;
 
   default:
   case OBJ_RULE:
-   regra_wgt->definirAtributos(this->modelo, tabela, this->lista_op, dynamic_cast<Rule *>(objeto));
+   regra_wgt->setAttributes(this->model, tabela, this->op_list, dynamic_cast<Rule *>(objeto));
    regra_wgt->show();
   break;
  }
@@ -201,7 +201,7 @@ ObjectType TabelaWidget::selecionarTipoObjeto(QObject *tab_sender)
  return(tipo_obj);
 }
 
-void TabelaWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Table *tabela, float pos_x, float pos_y)
+void TabelaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Table *tabela, float pos_x, float pos_y)
 {
  unsigned i, qtd;
  ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
@@ -223,14 +223,14 @@ void TabelaWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_
 
   /* Marca como novo objeto o relacionamento gerado, assim o mesmo é tratado
      de forma diferente nos métodos de configuração da classe superior */
-  this->novo_obj=true;
+  this->new_object=true;
 
   //Adiciona o relacionamento criado   lista de operações
   lista_op->registerObject(tabela, Operation::OBJECT_CREATED);
  }
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, tabela, NULL, pos_x, pos_y);
+ BaseObjectWidget::setAttributes(modelo, lista_op, tabela, NULL, pos_x, pos_y);
 
  //Lista todos os objetos da tabela
  for(i=0; i < 5; i++)
@@ -243,7 +243,7 @@ void TabelaWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_
      relacionamentos   tabela */
   if(tipos[i]==OBJ_COLUMN || tipos[i]==OBJ_CONSTRAINT)
   {
-   if(this->novo_obj || !tabela->isReferRelationshipAddedObject())
+   if(this->new_object || !tabela->isReferRelationshipAddedObject())
     mapa_tab_objetos[tipos[i]]->definirConfiguracaoBotoes(TabelaObjetosWidget::TODOS_BOTOES ^
                                                           (TabelaObjetosWidget::BTN_ATUALIZAR_ITEM));
    else
@@ -276,7 +276,7 @@ void TabelaWidget::listarObjetos(ObjectType tipo_obj)
   tab=mapa_tab_objetos[tipo_obj];
 
   //Obtém a referêni   tabela em edição
-  tabela=dynamic_cast<Table *>(this->objeto);
+  tabela=dynamic_cast<Table *>(this->object);
 
   //Remove as linhas da tabela antes da exibição dos elementos
   tab->blockSignals(true);
@@ -470,7 +470,7 @@ void TabelaWidget::removerObjetos(void)
 
  try
  {
-  tabela=dynamic_cast<Table *>(this->objeto);
+  tabela=dynamic_cast<Table *>(this->object);
   tipo_obj=selecionarTipoObjeto(sender());
   qtd=tabela->getObjectCount(tipo_obj);
 
@@ -478,7 +478,7 @@ void TabelaWidget::removerObjetos(void)
      Caso um erro seja gerado e a quantidade de operações na lista
      seja diferente do valor na variável 'qtd_op' indica que operações
      foram inseridas na lista e precisam ser removidas */
-  qtd_op=lista_op->getCurrentSize();
+  qtd_op=op_list->getCurrentSize();
 
   for(i=0; i < qtd; i++)
   {
@@ -492,7 +492,7 @@ void TabelaWidget::removerObjetos(void)
     tabela->removeObject(objeto);
 
     //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
-    lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, 0, this->objeto);
+    op_list->registerObject(objeto, Operation::OBJECT_REMOVED, 0, this->object);
    }
    else
     throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
@@ -505,25 +505,25 @@ void TabelaWidget::removerObjetos(void)
  {
   /* Caso a quantidade de operações seja diferente da quantidade inicial
      obtida antes da remoção dos objetos */
-  if(qtd_op < lista_op->getCurrentSize())
+  if(qtd_op < op_list->getCurrentSize())
   {
    //Obtém a quantidade de operações que necessitam ser removidas
-   qtd=lista_op->getCurrentSize()-qtd_op;
+   qtd=op_list->getCurrentSize()-qtd_op;
 
    /* Anula o encadeamento de operações para que as mesmas seja
       desfeitas uma a uma ignorando o encadeamento */
-   lista_op->ignoreOperationChain(true);
+   op_list->ignoreOperationChain(true);
 
    /* Desfaz as operações na quantidade calculada e remove a
       operação da lista */
    for(i=0; i < qtd; i++)
    {
-    lista_op->undoOperation();
-    lista_op->removeLastOperation();
+    op_list->undoOperation();
+    op_list->removeLastOperation();
    }
 
    //Desfaz a anulação do encadeamento
-   lista_op->ignoreOperationChain(false);
+   op_list->ignoreOperationChain(false);
   }
 
   //Atualiza a lista de objeto da tabela
@@ -540,7 +540,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
 
  try
  {
-  tabela=dynamic_cast<Table *>(this->objeto);
+  tabela=dynamic_cast<Table *>(this->object);
   tipo_obj=selecionarTipoObjeto(sender());
 
   //Obtém o objeto da tabela
@@ -553,7 +553,7 @@ void TabelaWidget::removerObjeto(int idx_lin)
    tabela->removeObject(objeto);
 
    //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
-   lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, idx_lin, this->objeto);
+   op_list->registerObject(objeto, Operation::OBJECT_REMOVED, idx_lin, this->object);
   }
   else
    throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
@@ -578,22 +578,22 @@ void TabelaWidget::TabelaWidget::moverObjetos(int idx1, int idx2)
  try
  {
   tipo_obj=selecionarTipoObjeto(sender());
-  tabela=dynamic_cast<Table *>(this->objeto);
+  tabela=dynamic_cast<Table *>(this->object);
   qtd=tabela->getObjectCount(tipo_obj);
 
   if(idx1 >= qtd)
    /* Caso especial 1: Caso o objeto foi movido para o início da lista
       seu índice será trocado para 0 */
-   lista_op->updateObjectIndex(tabela->getObject(idx2, tipo_obj), 0);
+   op_list->updateObjectIndex(tabela->getObject(idx2, tipo_obj), 0);
   else if(idx2 >= qtd)
    /* Caso especial 2: Caso o objeto foi movido para o final da lista seu
       índice será trocado para qtd-1 */
-   lista_op->updateObjectIndex(tabela->getObject(idx1, tipo_obj), qtd-1);
+   op_list->updateObjectIndex(tabela->getObject(idx1, tipo_obj), qtd-1);
   else
   {
    //Atualizando o índice dos objetos na lista de operações
-   lista_op->updateObjectIndex(tabela->getObject(idx1, tipo_obj), idx2);
-   lista_op->updateObjectIndex(tabela->getObject(idx2, tipo_obj), idx1);
+   op_list->updateObjectIndex(tabela->getObject(idx1, tipo_obj), idx2);
+   op_list->updateObjectIndex(tabela->getObject(idx2, tipo_obj), idx1);
   }
 
   tabela->swapObjectsIndexes(tipo_obj, idx1, idx2);
@@ -606,32 +606,32 @@ void TabelaWidget::TabelaWidget::moverObjetos(int idx1, int idx2)
  }
 }
 
-void TabelaWidget::aplicarConfiguracao(void)
+void TabelaWidget::applyConfiguration(void)
 {
  try
  {
   Table *tabela=NULL;
 
-  if(!this->novo_obj)
+  if(!this->new_object)
   {
    //Adiciona o relacionamento   lista de operações antes de ser modificado
-   lista_op->registerObject(this->objeto, Operation::OBJECT_MODIFIED);
+   op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
   }
 
-  tabela=dynamic_cast<Table *>(this->objeto);
+  tabela=dynamic_cast<Table *>(this->object);
   tabela->setWithOIDs(aceita_oids_chk->isChecked());
 
   //Aplica as configurações básicas
-  ObjetoBaseWidget::aplicarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
 
   try
   {
-   if(modelo->getRelationship(tabela, NULL))
+   if(model->getRelationship(tabela, NULL))
     /* Faz a validação dos relacionamentos para refletir a nova configuração
        da tabela */
-    modelo->validateRelationships();
+    model->validateRelationships();
 
-   modelo->updateTableFKRelationships(tabela);
+   model->updateTableFKRelationships(tabela);
   }
   catch(Exception &e)
   {
@@ -647,32 +647,32 @@ void TabelaWidget::aplicarConfiguracao(void)
   }
 
   //Finaliza o encademanto de operações aberto
-  lista_op->finishOperationChain();
+  op_list->finishOperationChain();
 
   //Finaliza a configuração da tabela
-  finalizarConfiguracao();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  lista_op->ignoreOperationChain(true);
-  this->cancelarConfiguracao();
-  lista_op->ignoreOperationChain(false);
+  op_list->ignoreOperationChain(true);
+  this->cancelConfiguration();
+  op_list->ignoreOperationChain(false);
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
-void TabelaWidget::cancelarConfiguracao(void)
+void TabelaWidget::cancelConfiguration(void)
 {
- if(lista_op->isOperationChainStarted())
-  lista_op->finishOperationChain();
+ if(op_list->isOperationChainStarted())
+  op_list->finishOperationChain();
 
  //Caso a lista de operações sofreu modificações
- if(qtd_operacoes < lista_op->getCurrentSize())
+ if(qtd_operacoes < op_list->getCurrentSize())
   /* Executa o cancelamento da configuração e remove as operações
      adicionadas durante a edição da tabela */
-  ObjetoBaseWidget::cancelarConfiguracao();
+  BaseObjectWidget::cancelConfiguration();
 }
 

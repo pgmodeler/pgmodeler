@@ -9,7 +9,7 @@ extern ColunaWidget *coluna_wgt;
 extern TabelaWidget *tabela_wgt;
 extern CaixaMensagem *caixa_msg;
 
-RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_RELATIONSHIP)
+RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
 {
  try
  {
@@ -79,13 +79,13 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
 
   grid=dynamic_cast<QGridLayout *>(atributosrel_tbw->widget(0)->layout());
   //Gera um frame de alerta sobre a edição de atributos do relacionamento
-  frame=gerarFrameInformacao(trUtf8("Editing attributes of an existing relationship is allowed, but must be done carefully because it may break references to columns and cause invalidation of objects such as triggers, indexes, constraints and sequences."));
+  frame=generateInformationFrame(trUtf8("Editing attributes of an existing relationship is allowed, but must be done carefully because it may break references to columns and cause invalidation of objects such as triggers, indexes, constraints and sequences."));
   grid->addWidget(frame, grid->count()+1, 0, 1, 3);
   frame->setParent(atributosrel_tbw->widget(0));
 
   grid=dynamic_cast<QGridLayout *>(atributosrel_tbw->widget(3)->layout());
   //Gera um frame de informação sobre a criação de chave primária especial
-  frame=gerarFrameInformacao(trUtf8("Use the special primary key if you want to include a primary key containing inherited / copied columns to the receiving table. This is a feature available only for generalization / copy relationships."));
+  frame=generateInformationFrame(trUtf8("Use the special primary key if you want to include a primary key containing inherited / copied columns to the receiving table. This is a feature available only for generalization / copy relationships."));
 
   grid->addWidget(frame, 1, 0, 1, 1);
   frame->setParent(atributosrel_tbw->widget(3));
@@ -96,20 +96,20 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
   grid->addWidget(tab_objs_avancados, 0, 0, 1, 1);
 
   //Gera um frame de informação sobre a aba avançada
-  frame=gerarFrameInformacao(trUtf8("This advanced tab shows the objects (columns or table) auto created by the relationship's connection as well the foreign keys that represents the link between the participant tables."));
+  frame=generateInformationFrame(trUtf8("This advanced tab shows the objects (columns or table) auto created by the relationship's connection as well the foreign keys that represents the link between the participant tables."));
   grid->addWidget(frame, 1, 0, 1, 1);
 
   atributosrel_tbw->widget(4)->setLayout(grid);
 
-  configurarLayouFormulario(relacionamento_grid, OBJ_RELATIONSHIP);
-  janela_pai->setMinimumSize(600, 520);
+  configureFormLayout(relacionamento_grid, OBJ_RELATIONSHIP);
+  parent_form->setMinimumSize(600, 520);
 
   //Configurando o combo de tipo de postergação com os tipos disponíveis
   DeferralType::getTypes(lista);
   tipo_postergacao_cmb->addItems(lista);
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
-  connect(janela_pai->cancelar_btn,SIGNAL(clicked(bool)), this, SLOT(cancelarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+  connect(parent_form->cancelar_btn,SIGNAL(clicked(bool)), this, SLOT(cancelConfiguration(void)));
   connect(postergavel_chk, SIGNAL(toggled(bool)), tipo_postergacao_cmb, SLOT(setEnabled(bool)));
   connect(postergavel_chk, SIGNAL(toggled(bool)), tipo_postergacao_lbl, SLOT(setEnabled(bool)));
 
@@ -141,7 +141,7 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): ObjetoBaseWidget(pa
 
 void RelacionamentoWidget::hideEvent(QHideEvent *evento)
 {
- BaseRelationship *rel=dynamic_cast<BaseRelationship *>(this->objeto);
+ BaseRelationship *rel=dynamic_cast<BaseRelationship *>(this->object);
 
  identificador_chk->setChecked(false);
  tab_orig_obrig_chk->setChecked(false);
@@ -166,7 +166,7 @@ void RelacionamentoWidget::hideEvent(QHideEvent *evento)
      as configurações o mesmo será destruído */
  if(rel && !rel->isModified())
  {
-  this->cancelarConfiguracao();
+  this->cancelConfiguration();
 
   /*if(this->novo_obj)
   {
@@ -175,10 +175,10 @@ void RelacionamentoWidget::hideEvent(QHideEvent *evento)
   }*/
  }
 
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
-void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Table *tab_orig, Table *tab_dest, unsigned tipo_rel)
+void RelacionamentoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Table *tab_orig, Table *tab_dest, unsigned tipo_rel)
 {
  Relationship *rel=NULL;
 
@@ -195,7 +195,7 @@ void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList
 
   /* Marca como novo objeto o relacionamento gerado, assim o mesmo é tratado
      de forma diferente nos métodos de configuração da classe superior */
-  this->novo_obj=true;
+  this->new_object=true;
 
   /* Inicia o encademanento de operações, assim todo objeto editado dentro
      do relacionameto será encadeado na lista, desta forma quando o usuário
@@ -209,7 +209,7 @@ void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList
   lista_op->registerObject(rel, Operation::OBJECT_CREATED);
 
   //Chama o método publico de definição dos atributos
-  this->definirAtributos(modelo, lista_op, rel);
+  this->setAttributes(modelo, lista_op, rel);
  }
  catch(Exception &e)
  {
@@ -218,7 +218,7 @@ void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList
  }
 }
 
-void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, BaseRelationship *relacao)
+void RelacionamentoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, BaseRelationship *relacao)
 {
  static QWidget *tabs[4]={ atributosrel_tbw->widget(1), atributosrel_tbw->widget(2), atributosrel_tbw->widget(3), atributosrel_tbw->widget(4) };
  static QString rot_tabs[4]={ atributosrel_tbw->tabText(1), atributosrel_tbw->tabText(2), atributosrel_tbw->tabText(3), atributosrel_tbw->tabText(4)};
@@ -231,13 +231,13 @@ void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, relacao);
+ BaseObjectWidget::setAttributes(modelo, lista_op, relacao);
 
  /* Inicia o encademanento de operações, assim todo objeto editado dentro
     do relacionameto será encadeado na lista, desta forma quando o usuário
     necessitar desfazer as modificações do relacionamentos, os objetos do
     relacionemento também serão restaurados */
- if(!this->novo_obj)
+ if(!this->new_object)
  {
   lista_op->startOperationChain();
   qtd_operacoes=lista_op->getCurrentSize();
@@ -302,7 +302,7 @@ void RelacionamentoWidget::definirAtributos(DatabaseModel *modelo, OperationList
   if(tipo_rel==BaseRelationship::RELATIONSHIP_GEN ||
      tipo_rel==BaseRelationship::RELATIONSHIP_DEP)
   {
-   if(this->novo_obj)
+   if(this->new_object)
    {
     relacao_aux->connectRelationship();
     //vet_cols=relacao_aux->getRelationshipColumnsNames();
@@ -421,7 +421,7 @@ void RelacionamentoWidget::listarObjetos(ObjectType tipo_obj)
    tab=tab_restricoes;
 
   //Obtém a referência ao relacionamento
-  relacao=dynamic_cast<Relationship *>(this->objeto);
+  relacao=dynamic_cast<Relationship *>(this->object);
 
   //Remove as linhas da tabela antes da exibição dos elementos
   tab->blockSignals(true);
@@ -461,7 +461,7 @@ void RelacionamentoWidget::listarObjetosAvancados(void)
  try
  {
   //Obtém a referência ao relacionamento
-  rel_base=dynamic_cast<BaseRelationship *>(this->objeto);
+  rel_base=dynamic_cast<BaseRelationship *>(this->object);
   relacao=dynamic_cast<Relationship *>(rel_base);
 
   //Remove as linhas da tabela antes da exibição dos elementos
@@ -552,7 +552,7 @@ void RelacionamentoWidget::exibirObjetoAvancado(int idx)
  {
   case OBJ_COLUMN:
    col=dynamic_cast<Column *>(objeto);
-   coluna_wgt->definirAtributos(this->modelo, col->getParentTable(), this->lista_op, col);
+   coluna_wgt->setAttributes(this->model, col->getParentTable(), this->op_list, col);
    coluna_wgt->show();
   break;
 
@@ -565,7 +565,7 @@ void RelacionamentoWidget::exibirObjetoAvancado(int idx)
     constr->setProtected(true);
    }
 
-   restricao_wgt->definirAtributos(this->modelo, constr->getParentTable(), this->lista_op, constr);
+   restricao_wgt->setAttributes(this->model, constr->getParentTable(), this->op_list, constr);
    restricao_wgt->show();
    constr->setProtected(prot);
   break;
@@ -575,7 +575,7 @@ void RelacionamentoWidget::exibirObjetoAvancado(int idx)
    tab=reinterpret_cast<Table *>(objeto);
 
    tab->setProtected(true);
-   tabela_wgt->definirAtributos(this->modelo, this->lista_op, tab,
+   tabela_wgt->setAttributes(this->model, this->op_list, tab,
                                 tab->getPosition().x(), tab->getPosition().y());
    tabela_wgt->show();
    tab->setProtected(false);
@@ -607,13 +607,13 @@ void RelacionamentoWidget::adicionarObjeto(void)
   if(tipo_obj==OBJ_COLUMN)
   {
    //Exibe o formulário de criação de colunas (atributos)
-   coluna_wgt->definirAtributos(this->modelo, this->objeto, this->lista_op, NULL);
+   coluna_wgt->setAttributes(this->model, this->object, this->op_list, NULL);
    coluna_wgt->show();
   }
   else
   {
    //Exibe o formulário de criação de restrições
-   restricao_wgt->definirAtributos(this->modelo, this->objeto, this->lista_op, NULL);
+   restricao_wgt->setAttributes(this->model, this->object, this->op_list, NULL);
    restricao_wgt->show();
   }
 
@@ -633,31 +633,31 @@ void RelacionamentoWidget::editarObjeto(int idx_lin)
  {
   /* Anula a operação de encadeamento para que, em caso de erro na edição do objeto,
      as demais operações encadeadas não sejam desfeitas desnecessariamente */
-  lista_op->ignoreOperationChain(true);
+  op_list->ignoreOperationChain(true);
 
   //Caso seja a tabela de atributos que acionou o método
   if(sender()==tab_atributos)
   {
    /* Procede com a edição de uma coluna (atributo), sendo que a coluna a ser
       editada é obtida do dado armazenado na linha 'idx_lin' da tabela */
-   coluna_wgt->definirAtributos(this->modelo, this->objeto, this->lista_op,
+   coluna_wgt->setAttributes(this->model, this->object, this->op_list,
                                reinterpret_cast<Column *>(tab_atributos->obterDadoLinha(idx_lin).value<void *>()));
    coluna_wgt->show();
   }
   else
   {
    //Edita uma restrição caso a tabela de restrições for a acionadora do método
-   restricao_wgt->definirAtributos(this->modelo, this->objeto, this->lista_op,
+   restricao_wgt->setAttributes(this->model, this->object, this->op_list,
                                    reinterpret_cast<Constraint *>(tab_restricoes->obterDadoLinha(idx_lin).value<void *>()));
    restricao_wgt->show();
   }
 
   //Desfaz a anulação do encadeamento da lista de operações
-  lista_op->ignoreOperationChain(false);
+  op_list->ignoreOperationChain(false);
  }
  catch(Exception &e)
  {
-  lista_op->ignoreOperationChain(false);
+  op_list->ignoreOperationChain(false);
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
@@ -696,7 +696,7 @@ void RelacionamentoWidget::removerObjetos(void)
  try
  {
   //Obtém a referência ao relacionamento
-  relacao=dynamic_cast<Relationship *>(this->objeto);
+  relacao=dynamic_cast<Relationship *>(this->object);
 
   //Caso seja remoção de atributos
   if(sender()==tab_atributos)
@@ -716,7 +716,7 @@ void RelacionamentoWidget::removerObjetos(void)
      Caso um erro seja gerado e a quantidade de operações na lista
      seja diferente do valor na variável 'qtd_op' indica que operações
      foram inseridas na lista e precisam ser removidas */
-  qtd_op=lista_op->getCurrentSize();
+  qtd_op=op_list->getCurrentSize();
 
   for(i=0; i < qtd; i++)
   {
@@ -727,32 +727,32 @@ void RelacionamentoWidget::removerObjetos(void)
    relacao->removeObject(objeto);
 
    //Adiciona o objeto removido na lista de operações para ser restaurado se necessário
-   lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, 0, relacao);
+   op_list->registerObject(objeto, Operation::OBJECT_REMOVED, 0, relacao);
   }
  }
  catch(Exception &e)
  {
   /* Caso a quantidade de operações seja diferente da quantidade inicial
      obtida antes da remoção dos objetos */
-  if(qtd_op < lista_op->getCurrentSize())
+  if(qtd_op < op_list->getCurrentSize())
   {
    //Obtém a quantidade de operações que necessitam ser removidas
-   qtd=lista_op->getCurrentSize()-qtd_op;
+   qtd=op_list->getCurrentSize()-qtd_op;
 
    /* Anula o encadeamento de operações para que as mesmas seja
       desfeitas uma a uma ignorando o encadeamento */
-   lista_op->ignoreOperationChain(true);
+   op_list->ignoreOperationChain(true);
 
    /* Desfaz as operações na quantidade calculada e remove a
       operação da lista */
    for(i=0; i < qtd; i++)
    {
-    lista_op->undoOperation();
-    lista_op->removeLastOperation();
+    op_list->undoOperation();
+    op_list->removeLastOperation();
    }
 
    //Desfaz a anulação do encadeamento
-   lista_op->ignoreOperationChain(false);
+   op_list->ignoreOperationChain(false);
   }
 
   //Atualiza a lista de objeto do relacionamento
@@ -770,7 +770,7 @@ void RelacionamentoWidget::removerObjeto(int idx_lin)
  try
  {
   //Obtém a referência ao relacionamento
-  relacao=dynamic_cast<Relationship *>(this->objeto);
+  relacao=dynamic_cast<Relationship *>(this->object);
 
   //Caso o sender do método seja a tabela de atributos
   if(sender()==tab_atributos)
@@ -785,7 +785,7 @@ void RelacionamentoWidget::removerObjeto(int idx_lin)
   //Remove o objeto e o adiciona a lista de operações para ser restaurado se necessário
   relacao->removeObject(objeto);
 
-  lista_op->registerObject(objeto, Operation::OBJECT_REMOVED, 0, relacao);
+  op_list->registerObject(objeto, Operation::OBJECT_REMOVED, 0, relacao);
  }
  catch(Exception &e)
  {
@@ -794,7 +794,7 @@ void RelacionamentoWidget::removerObjeto(int idx_lin)
  }
 }
 
-void RelacionamentoWidget::aplicarConfiguracao(void)
+void RelacionamentoWidget::applyConfiguration(void)
 {
  try
  {
@@ -806,26 +806,26 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
      relacinamentos do modelo, é necessário armazenar o XML dos objetos especiais e
      desconectar TODOS os relacionamentos, executar a modificação no
      relacionamento e logo após revalidar todos os demais */
-  if(this->objeto->getObjectType()==OBJ_RELATIONSHIP)
+  if(this->object->getObjectType()==OBJ_RELATIONSHIP)
   {
-   modelo->storeSpecialObjectsXML();
-   modelo->disconnectRelationships();
+   model->storeSpecialObjectsXML();
+   model->disconnectRelationships();
   }
 
-  if(!this->novo_obj && this->objeto->getObjectType()==OBJ_RELATIONSHIP)
+  if(!this->new_object && this->object->getObjectType()==OBJ_RELATIONSHIP)
   {
    //Adiciona o relacionamento   lista de operações antes de ser modificado
-   lista_op->registerObject(this->objeto, Operation::OBJECT_MODIFIED);
+   op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
   }
 
   //Aplica as configurações básicas
-  ObjetoBaseWidget::aplicarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
 
   //Caso o objeto seja um relacionamento tabela-tabela
-  if(this->objeto->getObjectType()==OBJ_RELATIONSHIP)
+  if(this->object->getObjectType()==OBJ_RELATIONSHIP)
   {
    //Obtém a referência ao mesmo fazendo o cast correto
-   relacao=dynamic_cast<Relationship *>(this->objeto);
+   relacao=dynamic_cast<Relationship *>(this->object);
    tipo_rel=relacao->getRelationshipType();
    relacao->blockSignals(true);
 
@@ -879,12 +879,12 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
     if(tipo_rel==BaseRelationship::RELATIONSHIP_DEP ||
        tipo_rel==BaseRelationship::RELATIONSHIP_GEN ||
        relacao->isIdentifier())
-     modelo->checkRelationshipRedundancy(relacao);
+     model->checkRelationshipRedundancy(relacao);
 
     if(tipo_rel!=BaseRelationship::RELATIONSHIP_FK)
      /* Faz a validação dos relacionamentos para refletir a nova configuração
         do relacionamento */
-     modelo->validateRelationships();
+     model->validateRelationships();
 
     relacao->blockSignals(false);
     relacao->setModified(true);
@@ -904,37 +904,37 @@ void RelacionamentoWidget::aplicarConfiguracao(void)
   }
 
   //Finaliza o encademanto de operações aberto
-  lista_op->finishOperationChain();
+  op_list->finishOperationChain();
 
   //Finaliza a configuração do relacionamento
-  finalizarConfiguracao();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  lista_op->ignoreOperationChain(true);
-  this->cancelarConfiguracao();
-  lista_op->ignoreOperationChain(false);
+  op_list->ignoreOperationChain(true);
+  this->cancelConfiguration();
+  op_list->ignoreOperationChain(false);
 
   /* Faz a validação dos relacionamentos para refletir a nova configuração
      do relacionamento */
-  modelo->validateRelationships();
+  model->validateRelationships();
 
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
-void RelacionamentoWidget::cancelarConfiguracao(void)
+void RelacionamentoWidget::cancelConfiguration(void)
 {
- if(lista_op->isOperationChainStarted())
-  lista_op->finishOperationChain();
+ if(op_list->isOperationChainStarted())
+  op_list->finishOperationChain();
 
  //Caso a lista de operações sofreu modificações
- if(qtd_operacoes < lista_op->getCurrentSize())
+ if(qtd_operacoes < op_list->getCurrentSize())
   /* Executa o cancelamento da configuração e remove as operações
      adicionadas durante a edição do relacionamento */
-  ObjetoBaseWidget::cancelarConfiguracao();
+  BaseObjectWidget::cancelConfiguration();
 }
 

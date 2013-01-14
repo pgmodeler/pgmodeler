@@ -1,6 +1,6 @@
 #include "gatilhowidget.h"
 
-GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TRIGGER)
+GatilhoWidget::GatilhoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIGGER)
 {
  try
  {
@@ -50,21 +50,21 @@ GatilhoWidget::GatilhoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TRIG
   tipo_disparo_cmb->addItems(lista);
 
   //Define os campos exclusivos para cada versão
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(truncate_chk);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_90)].push_back(exp_condicional_lbl);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_90)].push_back(coluna_lbl);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_91)].push_back(tipo_disparo_lbl);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(truncate_chk);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_90)].push_back(exp_condicional_lbl);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_90)].push_back(coluna_lbl);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_91)].push_back(tipo_disparo_lbl);
   mapa_valores[tipo_disparo_lbl].push_back(tipo_disparo_cmb->itemText(tipo_disparo_cmb->count()-1));
 
   //Gera o frame de alerta
-  frame=gerarFrameAlertaVersao(mapa_campos, &mapa_valores);
+  frame=generateVersionWarningFrame(mapa_campos, &mapa_valores);
   gatilho_grid->addWidget(frame, gatilho_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 
-  configurarLayouFormulario(gatilho_grid, OBJ_TRIGGER);
-  janela_pai->setMinimumSize(600, 640);
+  configureFormLayout(gatilho_grid, OBJ_TRIGGER);
+  parent_form->setMinimumSize(600, 640);
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
   connect(postergavel_chk, SIGNAL(toggled(bool)), tipo_postergacao_cmb, SLOT(setEnabled(bool)));
   connect(postergavel_chk, SIGNAL(toggled(bool)), tipo_postergacao_lbl, SLOT(setEnabled(bool)));
   connect(tab_colunas, SIGNAL(s_linhaAdicionada(int)), this, SLOT(adicionarColuna(int)));
@@ -133,12 +133,12 @@ void GatilhoWidget::atualizarComboColunas(void)
 
  try
  {
-  qtd_col=tabela->getColumnCount();
+  qtd_col=table->getColumnCount();
   coluna_cmb->clear();
 
   for(i=0; i < qtd_col; i++)
   {
-   coluna=tabela->getColumn(i);
+   coluna=table->getColumn(i);
 
    /* Insere a coluna no combo somente a mesma não existir na tabela,
       essa checagem é feita tentando se obter o índice da linha na tabela
@@ -181,7 +181,7 @@ void GatilhoWidget::editarArgumento(int idx_lin)
 
 void GatilhoWidget::hideEvent(QHideEvent *evento)
 {
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 
  exp_condicional_txt->clear();
  coluna_cmb->clear();
@@ -207,7 +207,7 @@ void GatilhoWidget::hideEvent(QHideEvent *evento)
  sel_tabela_ref->removerObjetoSelecionado();
 }
 
-void GatilhoWidget::definirAtributos(DatabaseModel *modelo, Table *tabela_pai, OperationList *lista_op, Trigger *gatilho)
+void GatilhoWidget::setAttributes(DatabaseModel *modelo, Table *tabela_pai, OperationList *lista_op, Trigger *gatilho)
 {
  unsigned qtd=0, i;
  Column *coluna=NULL;
@@ -216,7 +216,7 @@ void GatilhoWidget::definirAtributos(DatabaseModel *modelo, Table *tabela_pai, O
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, gatilho, tabela_pai);
+ BaseObjectWidget::setAttributes(modelo, lista_op, gatilho, tabela_pai);
 
  //Define o modelo de banco de dados dos seletores de objetos
  sel_tabela_ref->definirModelo(modelo);
@@ -269,7 +269,7 @@ void GatilhoWidget::definirAtributos(DatabaseModel *modelo, Table *tabela_pai, O
  atualizarComboColunas();
 }
 
-void GatilhoWidget::aplicarConfiguracao(void)
+void GatilhoWidget::applyConfiguration(void)
 {
  try
  {
@@ -277,10 +277,10 @@ void GatilhoWidget::aplicarConfiguracao(void)
   unsigned i, qtd;
   Column *coluna=NULL;
 
-  iniciarConfiguracao<Trigger>();
+  startConfiguration<Trigger>();
 
   //Obtém a referência ao gatilho que está sendo criado/editado
-  gatilho=dynamic_cast<Trigger *>(this->objeto);
+  gatilho=dynamic_cast<Trigger *>(this->object);
 
   //Configura no gatilhos todos os atributos preenchidos no formulário
   gatilho->setFiringType(FiringType(tipo_disparo_cmb->currentText()));
@@ -314,15 +314,15 @@ void GatilhoWidget::aplicarConfiguracao(void)
   }
 
   //Aplica as configurações básicas
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

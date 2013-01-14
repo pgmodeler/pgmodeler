@@ -23,20 +23,20 @@
 #define CODIGOFONTE_WIDGET_H
 
 #include "ui_codigofontewidget.h"
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 
-class CodigoFonteWidget: public ObjetoBaseWidget, public Ui::CodigoFonteWidget {
+class CodigoFonteWidget: public BaseObjectWidget, public Ui::CodigoFonteWidget {
  Q_OBJECT
  private:
    DestaqueSintaxe *destaque_sql,
                    *destaque_xml;
 
-   void aplicarConfiguracao(void){}
+   void applyConfiguration(void){}
 
  public:
    CodigoFonteWidget(QWidget * parent = 0);
    void hideEvent(QHideEvent *evento);
-   void definirAtributos(DatabaseModel *modelo, BaseObject *objeto=NULL);
+   void setAttributes(DatabaseModel *model, BaseObject *object=NULL);
 
  private slots:
    void gerarCodigoFonteObjeto(int=0);

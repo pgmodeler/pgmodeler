@@ -1,34 +1,34 @@
 #include "listaobjetoswidget.h"
 
-ListaObjetosWidget::ListaObjetosWidget(QWidget *parent): ObjetoBaseWidget(parent)
+ListaObjetosWidget::ListaObjetosWidget(QWidget *parent): BaseObjectWidget(parent)
 {
  Ui_ListaObjetosWidget::setupUi(this);
- configurarLayouFormulario(listaobjetos_grid, BASE_OBJECT);
+ configureFormLayout(listaobjetos_grid, BASE_OBJECT);
 
  //Define os atributos do formulários e da janela pai
- janela_pai->setWindowTitle(trUtf8("Dependeces / References of Object"));
- janela_pai->definirBotoes(CaixaMensagem::BOTAO_OK);
- janela_pai->setMinimumSize(550, 300);
+ parent_form->setWindowTitle(trUtf8("Dependeces / References of Object"));
+ parent_form->definirBotoes(CaixaMensagem::BOTAO_OK);
+ parent_form->setMinimumSize(550, 300);
 
  //Conecta o botão ok do formulário pai com o método de fechamento do formulário
- connect(janela_pai->aplicar_ok_btn, SIGNAL(clicked(bool)), janela_pai, SLOT(close(void)));
+ connect(parent_form->aplicar_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 }
 
-void ListaObjetosWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto, BaseObject *objeto_pai)
+void ListaObjetosWidget::setAttributes(DatabaseModel *modelo, BaseObject *objeto, BaseObject *objeto_pai)
 {
  vector<BaseObject *> vet_objs;
 
- ObjetoBaseWidget::definirAtributos(modelo, NULL, objeto, objeto_pai);
+ BaseObjectWidget::setAttributes(modelo, NULL, objeto, objeto_pai);
 
- this->nome_edt->setReadOnly(true);
- this->janela_pai->aplicar_ok_btn->setEnabled(true);
- this->obj_protegido_frm->setVisible(false);
- this->comentario_edt->setVisible(false);
- this->comentario_lbl->setVisible(false);
+ this->name_edt->setReadOnly(true);
+ this->parent_form->aplicar_ok_btn->setEnabled(true);
+ this->protected_obj_frm->setVisible(false);
+ this->comment_edt->setVisible(false);
+ this->comment_lbl->setVisible(false);
 
  //Configura o icone do objeto a ser exibido
- iconeobj_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
-                                 BaseObject::getSchemaName(objeto->getObjectType()) + QString(".png")));
+ obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +
+                         BaseObject::getSchemaName(objeto->getObjectType()) + QString(".png")));
 
  //Carrega as dependências e referências do objeto
  modelo->getObjectDependecies(objeto, vet_objs);
@@ -49,7 +49,7 @@ void ListaObjetosWidget::hideEvent(QHideEvent *evento)
  while(referencias_tbw->rowCount() > 0)
   referencias_tbw->removeRow(0);
 
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
 void ListaObjetosWidget::atualizarListaObjetos(vector<BaseObject *> &objetos, QTableWidget *listaobjetos_tbw)
@@ -65,7 +65,7 @@ void ListaObjetosWidget::atualizarListaObjetos(vector<BaseObject *> &objetos, QT
  {
   /* Caso o objeto da lista for o mesmo do objeto de origem (o qual ser que exibir
      as refs. e deps.) este será ignorado */
-  if(objetos[i]!=this->objeto)
+  if(objetos[i]!=this->object)
   {
    listaobjetos_tbw->insertRow(id_lin);
 
@@ -83,13 +83,13 @@ void ListaObjetosWidget::atualizarListaObjetos(vector<BaseObject *> &objetos, QT
 
    //Aloca o item do objeto pai do objeto de ref/dep
    item_tab=new QTableWidgetItem;
-   objeto=objetos[i];
+   object=objetos[i];
    if(dynamic_cast<TableObject *>(objetos[i]))
     obj_pai=dynamic_cast<TableObject *>(objetos[i])->getParentTable();
    else if(objetos[i]->getSchema())
     obj_pai=objetos[i]->getSchema();
    else
-    obj_pai=this->modelo;
+    obj_pai=this->model;
 
    //Aloca o item de tipo do objeto pai do objeto de ref/dep
    item_tab->setText(QString::fromUtf8(obj_pai->getName()));

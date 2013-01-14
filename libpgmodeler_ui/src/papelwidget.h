@@ -22,11 +22,11 @@
 #ifndef PAPEL_WIDGET_H
 #define PAPEL_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_papelwidget.h"
 #include "tabelaobjetoswidget.h"
 
-class PapelWidget: public ObjetoBaseWidget, public Ui::PapelWidget {
+class PapelWidget: public BaseObjectWidget, public Ui::PapelWidget {
  Q_OBJECT
 
  private:
@@ -44,7 +44,7 @@ class PapelWidget: public ObjetoBaseWidget, public Ui::PapelWidget {
    PapelWidget(QWidget * parent = 0);
 
    void hideEvent(QHideEvent *);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Role *papel);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Role *papel);
 
  private slots:
    /* Preenche com informações relacionadas ao papel selecionado
@@ -61,7 +61,7 @@ class PapelWidget: public ObjetoBaseWidget, public Ui::PapelWidget {
    void configurarSelecaoPapeis(void);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

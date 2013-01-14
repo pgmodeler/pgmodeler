@@ -1,6 +1,6 @@
 #include "visaowidget.h"
 
-VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_VIEW)
+VisaoWidget::VisaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 {
  try
  {
@@ -37,7 +37,7 @@ VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_VIEW)
   tab_referencias->definirRotuloCabecalho(trUtf8("SF FW AW"),3);
 
   //Gera o frame de informação sobre a referência a todas as colunas da tabela
-  frame_info=gerarFrameInformacao(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[tablel].*</strong></em>"));
+  frame_info=generateInformationFrame(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[tablel].*</strong></em>"));
 
   //grid=dynamic_cast<QGridLayout *>(referencias_gb->layout());
   referencias_grid->addWidget(sel_tabela, 2,1,1,2);
@@ -45,9 +45,9 @@ VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_VIEW)
   referencias_grid->addWidget(frame_info, 6, 0, 1, 0);
   referencias_grid->addWidget(tab_referencias, 7,0,2,0);
 
-  configurarLayouFormulario(visao_grid, OBJ_VIEW);
+  configureFormLayout(visao_grid, OBJ_VIEW);
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
   connect(tipo_ref_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selecionarTipoReferencia(void)));
 
   connect(sel_coluna, SIGNAL(s_objetoSelecionado(void)), this, SLOT(exibirNomeObjeto(void)));
@@ -67,7 +67,7 @@ VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_VIEW)
 
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(atualizarPrevisaoCodigo(void)));
 
-  janela_pai->setMinimumSize(650, 630);
+  parent_form->setMinimumSize(650, 630);
   selecionarTipoReferencia();
  }
  catch(Exception &e)
@@ -80,7 +80,7 @@ VisaoWidget::VisaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_VIEW)
 void VisaoWidget::hideEvent(QHideEvent *evento)
 {
  tab_referencias->removerLinhas();
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
 void VisaoWidget::limparFormReferencia(void)
@@ -340,10 +340,10 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
   visao_aux.removeReferences();
 
   //Configura o nome da visão com o que está no formulário
-  visao_aux.BaseObject::setName(nome_edt->text());
+  visao_aux.BaseObject::setName(name_edt->text());
 
   //Configura o esquema da visão com o que está no formulário
-  visao_aux.setSchema(sel_esquema->obterObjeto());
+  visao_aux.setSchema(schema_sel->obterObjeto());
 
   /* Insere as referências da tabela na visão auxiliar
      porém estas são inseridas conforme a string de
@@ -377,14 +377,14 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
  }
 }
 
-void VisaoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, View *visao, float px, float py)
+void VisaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, View *visao, float px, float py)
 {
  unsigned i, qtd;
  bool sel_from, from_where, apos_where;
  Reference refer;
 
  //Preenchendo os campos básicos do formulário com os atributos da visão
- ObjetoBaseWidget::definirAtributos(modelo,lista_op, visao, NULL, px, py);
+ BaseObjectWidget::setAttributes(modelo,lista_op, visao, NULL, px, py);
 
  //Configurado o modelo de banco de dados referênciado pelos widget seletores
  sel_coluna->definirModelo(modelo);
@@ -421,16 +421,16 @@ void VisaoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_o
  }
 }
 
-void VisaoWidget::aplicarConfiguracao(void)
+void VisaoWidget::applyConfiguration(void)
 {
  try
  {
   View *visao=NULL;
 
-  iniciarConfiguracao<View>();
+  startConfiguration<View>();
 
   //Obtém a referêni   visao que está sendo editada/criada
-  visao=dynamic_cast<View *>(this->objeto);
+  visao=dynamic_cast<View *>(this->object);
 
   //Faz a cópia da visão auxiliar para a visão que está sendo editada
   (*visao)=visao_aux;
@@ -439,17 +439,17 @@ void VisaoWidget::aplicarConfiguracao(void)
   //visao->definirPosicaoObjeto(QPointF(this->px_objeto, this->py_objeto));
 
   //Finaliza a configuração da função de agregação
-  ObjetoBaseWidget::aplicarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
 
-  this->modelo->updateViewRelationships(visao);
-  finalizarConfiguracao();
+  this->model->updateViewRelationships(visao);
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

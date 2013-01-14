@@ -22,21 +22,21 @@
 #ifndef ESQUEMA_WIDGET_H
 #define ESQUEMA_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 
-class EsquemaWidget: public ObjetoBaseWidget {
+class EsquemaWidget: public BaseObjectWidget {
  Q_OBJECT
 
  private:
 
  public:
    EsquemaWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Schema *esquema);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *esquema);
 
  private slots:
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

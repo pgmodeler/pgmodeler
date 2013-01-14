@@ -22,7 +22,7 @@
 #ifndef INDICE_WIDGET_H
 #define INDICE_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_indicewidget.h"
 #include "tabelaobjetoswidget.h"
 
@@ -36,7 +36,7 @@
 #include <QMetaType>
 Q_DECLARE_METATYPE(IndexElement);
 
-class IndiceWidget: public ObjetoBaseWidget, public Ui::IndiceWidget {
+class IndiceWidget: public BaseObjectWidget, public Ui::IndiceWidget {
  Q_OBJECT
 
  private:
@@ -58,7 +58,7 @@ class IndiceWidget: public ObjetoBaseWidget, public Ui::IndiceWidget {
 
  public:
    IndiceWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, Table *tabela_pai, OperationList *lista_op, Index *indice);
+   void setAttributes(DatabaseModel *model, Table *tabela_pai, OperationList *op_list, Index *indice);
 
  private slots:
   void hideEvent(QHideEvent *);
@@ -69,7 +69,7 @@ class IndiceWidget: public ObjetoBaseWidget, public Ui::IndiceWidget {
   void editarElemento(int idx_elem);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

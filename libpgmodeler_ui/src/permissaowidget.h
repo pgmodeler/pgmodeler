@@ -22,11 +22,11 @@
 #ifndef PERMISSAO_WIDGET_H
 #define PERMISSAO_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_permissaowidget.h"
 #include "tabelaobjetoswidget.h"
 
-class PermissaoWidget: public ObjetoBaseWidget, public Ui::PermissaoWidget {
+class PermissaoWidget: public BaseObjectWidget, public Ui::PermissaoWidget {
  Q_OBJECT
 
  private:
@@ -37,7 +37,7 @@ class PermissaoWidget: public ObjetoBaseWidget, public Ui::PermissaoWidget {
 
  public:
    PermissaoWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, BaseObject *objeto_pai, BaseObject *objeto);
+   void setAttributes(DatabaseModel *model, BaseObject *objeto_pai, BaseObject *object);
 
  private slots:
    //Exibe a janela de seleção de objetos do modelo

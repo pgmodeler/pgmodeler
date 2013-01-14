@@ -3,7 +3,7 @@
 
 extern CaixaMensagem *caixa_msg;
 
-RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_CONSTRAINT)
+RestricaoWidget::RestricaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CONSTRAINT)
 {
  try
  {
@@ -50,8 +50,8 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_
   dynamic_cast<QGridLayout *>(colunas_tbw->widget(1)->layout())->addWidget(sel_tabela_ref, 0,1,1,2);
   dynamic_cast<QGridLayout *>(colunas_tbw->widget(1)->layout())->addWidget(tab_colunas_ref, 3,0,1,3);
 
-  configurarLayouFormulario(restricao_grid, OBJ_CONSTRAINT);
-  janela_pai->setMinimumSize(580, 520);
+  configureFormLayout(restricao_grid, OBJ_CONSTRAINT);
+  parent_form->setMinimumSize(580, 520);
 
   //Configurando o combo de tipo de restrição com os tipos disponíveis
   ConstraintType::getTypes(lista);
@@ -72,12 +72,12 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_
   acao_update_cmb->addItems(lista);
 
   //Gera o frame de informação
-  frame_info=gerarFrameInformacao(trUtf8("Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they will be ignored. To create primary key using columns included by relationship use the feature attributes, constraints and primary key on the relationship form."));
+  frame_info=generateInformationFrame(trUtf8("Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they will be ignored. To create primary key using columns included by relationship use the feature attributes, constraints and primary key on the relationship form."));
 
   restricao_grid->addWidget(frame_info, restricao_grid->count()+1, 0, 1, 0);
   frame_info->setParent(this);
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
   connect(tipo_rest_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selecionarTipoRestricao(void)));
   connect(postergavel_chk, SIGNAL(toggled(bool)), tipo_postergacao_cmb, SLOT(setEnabled(bool)));
   connect(postergavel_chk, SIGNAL(toggled(bool)), tipo_postergacao_lbl, SLOT(setEnabled(bool)));
@@ -225,16 +225,16 @@ void RestricaoWidget::atualizarComboColunas(unsigned tipo_cmb)
       indica que o usuário está editando uma restrição pertencente
       a uma tabela sendo assim usa como referência a tabela
       ligada a esta */
-   if(!this->relacionamento)
+   if(!this->relationship)
    {
-    tabela=this->tabela;
+    tabela=this->table;
     qtd_col=tabela->getColumnCount();
    }
    /* Caso o relacionamento esteja especificado usa o mesmo como
       referência para obtenção das colunas */
    else
    {
-    relacao=this->relacionamento;
+    relacao=this->relationship;
     qtd_col=relacao->getAttributeCount();
    }
   }
@@ -326,7 +326,7 @@ void RestricaoWidget::hideEvent(QHideEvent *evento)
 
  sel_tabela_ref->removerObjetoSelecionado();
 
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
 void RestricaoWidget::selecionarTipoRestricao(void)
@@ -338,10 +338,10 @@ void RestricaoWidget::selecionarTipoRestricao(void)
  ConstraintType tipo_rest=ConstraintType(tipo_rest_cmb->currentText());
 
  //Campos exibidos somente para chaves primárias e únicas
- esptabela_lbl->setVisible(tipo_rest==ConstraintType::primary_key || tipo_rest==ConstraintType::unique);
- sel_esptabela->setVisible(tipo_rest==ConstraintType::primary_key || tipo_rest==ConstraintType::unique);
+ tablespace_lbl->setVisible(tipo_rest==ConstraintType::primary_key || tipo_rest==ConstraintType::unique);
+ tablespace_sel->setVisible(tipo_rest==ConstraintType::primary_key || tipo_rest==ConstraintType::unique);
 
- if(!sel_esptabela->isVisible()) sel_esptabela->removerObjetoSelecionado();
+ if(!tablespace_sel->isVisible()) tablespace_sel->removerObjetoSelecionado();
 
  //Campos exibidos somente para restrições de checagem
  exp_checagem_lbl->setVisible(tipo_rest==ConstraintType::check);
@@ -373,7 +373,7 @@ void RestricaoWidget::selecionarTipoRestricao(void)
   colunas_tbw->addTab(tab, rot_tab);
 }
 
-void RestricaoWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto_pai, OperationList *lista_op, Constraint *restricao)
+void RestricaoWidget::setAttributes(DatabaseModel *modelo, BaseObject *objeto_pai, OperationList *lista_op, Constraint *restricao)
 {
  ObjectType tipo_obj;
  unsigned qtd, i, lin_tab;
@@ -384,9 +384,9 @@ void RestricaoWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, restricao, objeto_pai);
+ BaseObjectWidget::setAttributes(modelo, lista_op, restricao, objeto_pai);
 
- frame_info->setVisible(this->tabela!=NULL);
+ frame_info->setVisible(this->table!=NULL);
 
  //Define o modelo de banco de dados do seletor de tabela referenciada
  sel_tabela_ref->definirModelo(modelo);
@@ -396,9 +396,9 @@ void RestricaoWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto
 
  //Obtém a quantidade de colunas existentes no objeto pai
  if(tipo_obj==OBJ_TABLE)
-  qtd=tabela->getColumnCount();
+  qtd=table->getColumnCount();
  else
-  qtd=relacionamento->getAttributeCount();
+  qtd=relationship->getAttributeCount();
 
  //Adiciona as colunas de origem da tabela pai na tabela de colunas do formulário
  tab_colunas->blockSignals(true);
@@ -407,11 +407,11 @@ void RestricaoWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto
   /* Caso o objeto pai seja uma tabela usa a referênci  tabela pai
      para obter a coluna atual */
   if(tipo_obj==OBJ_TABLE)
-   coluna=tabela->getColumn(i);
+   coluna=table->getColumn(i);
   /* Caso contrário usa a referência ao relacionamento pai
      para obter a coluna atual */
   else
-   coluna=relacionamento->getAttribute(i);
+   coluna=relationship->getAttribute(i);
 
   /* Caso a restrição naõ seja nova, ou seja, esteja sendo editada e a coluna atual
      está sendo referenciada por ela */
@@ -476,7 +476,7 @@ void RestricaoWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto
  }
 }
 
-void RestricaoWidget::aplicarConfiguracao(void)
+void RestricaoWidget::applyConfiguration(void)
 {
  try
  {
@@ -485,10 +485,10 @@ void RestricaoWidget::aplicarConfiguracao(void)
   Column *coluna=NULL;
   TabelaObjetosWidget *tab_obj_aux=NULL;
 
-  iniciarConfiguracao<Constraint>();
+  startConfiguration<Constraint>();
 
   //Obtém a referêni   restrição que está sendo criada/editada
-  restricao=dynamic_cast<Constraint *>(this->objeto);
+  restricao=dynamic_cast<Constraint *>(this->object);
 
   //Preenche os atributos básicos da restição com os valores configurados no formulário
   restricao->setConstraintType(ConstraintType(tipo_rest_cmb->currentText()));
@@ -522,7 +522,7 @@ void RestricaoWidget::aplicarConfiguracao(void)
   }
 
   //Aplica as configurações básicas
-  ObjetoBaseWidget::aplicarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
 
   /* Dispara um erro caso o tipo da restrição seja um que exija o uso
      de colunas de origem e/ou de referência (para chaves primárias e estrangeiras) */
@@ -533,19 +533,19 @@ void RestricaoWidget::aplicarConfiguracao(void)
       restricao->getColumnCount(Constraint::REFERENCED_COLS)==0))
    throw Exception(ERR_CONSTR_NO_COLUMNS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-  finalizarConfiguracao();
+  finishConfiguration();
 
   /* Caso seja uma chave estrangeira atualiza os relacionamentos da tabela pai,
      criando um novo caso seja necessário (relacionamento originário de chave estrangeira) */
   if(restricao->getConstraintType()==ConstraintType::foreign_key)
-   this->modelo->updateTableFKRelationships(this->tabela);
+   this->model->updateTableFKRelationships(this->table);
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
 
   /** BUG: Foi notado que quando uma exceção é encaminhada a partir daqui para o método Aplicacao::notify()
            o software falha devido a um segmentation fault sem causa conhecida. E a falha acontece SOMENTE neste

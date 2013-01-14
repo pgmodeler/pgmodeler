@@ -22,11 +22,11 @@
 #ifndef DOMINIO_WIDGET_H
 #define DOMINIO_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_dominiowidget.h"
 #include "tipopgsqlwidget.h"
 
-class DominioWidget: public ObjetoBaseWidget, public Ui::DominioWidget {
+class DominioWidget: public BaseObjectWidget, public Ui::DominioWidget {
  Q_OBJECT
 
  private:
@@ -35,13 +35,13 @@ class DominioWidget: public ObjetoBaseWidget, public Ui::DominioWidget {
 
  public:
    DominioWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Domain *dominio);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Domain *dominio);
 
  private slots:
   void hideEvent(QHideEvent *);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

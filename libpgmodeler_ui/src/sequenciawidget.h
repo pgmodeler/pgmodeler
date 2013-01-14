@@ -22,10 +22,10 @@
 #ifndef SEQUENCIA_WIDGET_H
 #define SEQUENCIA_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_sequenciawidget.h"
 
-class SequenciaWidget: public ObjetoBaseWidget, public Ui::SequenciaWidget {
+class SequenciaWidget: public BaseObjectWidget, public Ui::SequenciaWidget {
  Q_OBJECT
 
  private:
@@ -33,13 +33,13 @@ class SequenciaWidget: public ObjetoBaseWidget, public Ui::SequenciaWidget {
 
  public:
    SequenciaWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Sequence *sequencia);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Sequence *sequencia);
 
  private slots:
   void hideEvent(QHideEvent *);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

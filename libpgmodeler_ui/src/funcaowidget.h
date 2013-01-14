@@ -22,12 +22,12 @@
 #ifndef FUNCAO_WIDGET_H
 #define FUNCAO_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_funcaowidget.h"
 #include "tipopgsqlwidget.h"
 #include "tabelaobjetoswidget.h"
 
-class FuncaoWidget: public ObjetoBaseWidget, public Ui::FuncaoWidget  {
+class FuncaoWidget: public BaseObjectWidget, public Ui::FuncaoWidget  {
  Q_OBJECT
 
  private:
@@ -56,7 +56,7 @@ class FuncaoWidget: public ObjetoBaseWidget, public Ui::FuncaoWidget  {
 
  public:
    FuncaoWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Function *funcao);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Function *funcao);
 
  private slots:
    void alternarTiposRetorno(void);
@@ -76,7 +76,7 @@ class FuncaoWidget: public ObjetoBaseWidget, public Ui::FuncaoWidget  {
    void hideEvent(QHideEvent *);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

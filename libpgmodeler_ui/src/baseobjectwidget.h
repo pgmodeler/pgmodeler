@@ -28,7 +28,7 @@
 #include "operationlist.h"
 #include "formbasico.h"
 #include "seletorobjetowidget.h"
-#include "ui_objetobasewidget.h"
+#include "ui_baseobjectwidget.h"
 
 /* Declarando a classe TipoPgSQL como metatype para que esta
  possa ser usada em conjunto com a classe QVariant (vide documentação
@@ -40,7 +40,7 @@
 #include <QMetaType>
 Q_DECLARE_METATYPE(PgSQLType)
 
-class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
+class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
  Q_OBJECT
 
  private:
@@ -57,53 +57,53 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
                  COR_TEXTO_LIN_INCREL;
 
    //Janela que sustenta todos os widgets do formulário
-   FormBasico *janela_pai;
+   FormBasico *parent_form;
 
    //Modelo de banco de dados de referência
-   DatabaseModel *modelo;
+   DatabaseModel *model;
 
    //Tabela de referência (usado em formulário de objeto de tabela)
-   Table *tabela;
+   Table *table;
 
-   QString nome_ant;
+   QString prev_name;
 
    /* Relacionamento de referência (pode ser usado em formulários
       de coluna e restrição relacionamentos tabela-tabela podem
       ter colunas (atributos) e restriões nos atributos */
-   Relationship *relacionamento;
+   Relationship *relationship;
 
    //Lista de operações de referência
-   OperationList *lista_op;
+   OperationList *op_list;
 
    //Objeto que está sendo editado ou criado
-   BaseObject *objeto;
+   BaseObject *object;
 
    /* Armazena a posição do objeto no momento da chamado do
       formulário (apenas para objetos gráficos) */
-   float px_objeto, py_objeto;
+   float object_px, object_py;
 
-   QGridLayout *objetobase_grid;
+   QGridLayout *baseobject_grid;
 
    /* Indica se o objeto é novo (que não se trata de um objeto já
       existente e não está sendo editado) */
-   bool novo_obj;
+   bool new_object;
 
    /* Armazena o destacador de sintaxe que é usado para destacar
       o nome do objeto pai */
-   DestaqueSintaxe *dest_nomepai_txt;
+   DestaqueSintaxe *hl_parentname_txt;
 
    //Seletores de esquema, dono e espaço de tabela
-   SeletorObjetoWidget *sel_esquema,
-                       *sel_dono,
-                       *sel_esptabela;
+   SeletorObjetoWidget *schema_sel,
+                       *owner_sel,
+                       *tablespace_sel;
 
    /* Constantes usadas para gerar strings intervalos de versões.
       Estas constantes deve ser aplicadas ao método gerarIntervaloVersoes()
       pois é um metodo que gera chaves para os mapas de campos passados
       para o método gerarFrameAlertaVersao() */
-   static const unsigned ATE_VERSAO=0,
-                         INTER_VERSOES=1,
-                         APOS_VERSAO=2;
+   static const unsigned UNTIL_VERSION=0,
+                         VERSIONS_INTERVAL=1,
+                         AFTER_VERSION=2;
 
    /* Gera strings de intervalos de versões para servirem de informativo ao
       usuário no método gerarFrameAlertaVersao().
@@ -112,16 +112,16 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
       * ver_ini <= ver_fim - Intervalo de versões
       * <= ver_ini - Até a versão indicada
       * >= ver_ini - Igual ou após a versão indicada. */
-   static QString gerarIntervaloVersoes(unsigned tipo_intervalo, const QString &ver_ini, const QString &ver_fim="");
+   static QString generateVersionsInterval(unsigned tipo_intervalo, const QString &ver_ini, const QString &ver_fim="");
 
    /* Gera o frame de alerta dos campos específicos das versões do pgsql.
       Os mapas de campos manipulados por este método devem ter como chaves
       as versões do pgsql os quais os campos são obrigatório. Recomenda-se
       o uso das constantes de versão da classe ParserEsquema */
-   QFrame *gerarFrameAlertaVersao(map<QString, vector<QWidget *> > &campos, map<QWidget *, vector<QString> > *valores=NULL);
+   QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &campos, map<QWidget *, vector<QString> > *valores=NULL);
 
    //Gera um frame informativo com icone de informação e a mensagem
-   QFrame *gerarFrameInformacao(const QString &mensagem);
+   QFrame *generateInformationFrame(const QString &mensagem);
 
    /* Faz a mesclagem dos layouts de formulário desta classe base (objetobase_grid)
       com os formulários das classes filhas desta no caso o parâmetro 'grid'.
@@ -129,40 +129,42 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
       pertencem a esta classe estejam acessíveis. O parâmetro 'tipo_obj' é usado
       para esconder alguns campos do formulário básico quando estes não se aplicam
       ao tipo de objeto informado */
-   void configurarLayouFormulario(QGridLayout *grid=NULL, ObjectType tipo_obj=BASE_OBJECT);
+   void configureFormLayout(QGridLayout *grid=NULL, ObjectType tipo_obj=BASE_OBJECT);
 
    /* Este método se aplica aos tipos de objetos diferentes do tipo OBJETO_BANCO_DADOS
       e que são passíveis de alocação e e desalocação, pois este método faz a cópia do
       objeto em edição para a lista de operação no caso de edição ou aloca um novo
       objeto no caso de criação de um novo elemento.*/
    template<class Classe>
-   void iniciarConfiguracao(void);
+   void startConfiguration(void);
 
    /* Finaliza a edição/criação do objeto, inserindo o mesmo na lista de operações
       para possibilitar a reversão da criação do mesmo. Além disso, procede
       com a emissão do sinal de objeto manipulado e fechamento do formulário.*/
-   void finalizarConfiguracao(void);
+   void finishConfiguration(void);
 
    /* Aborta a configuração do objeto, desalocando o mesmo em caso de novo objeto,
       restaurando o objeto a seu estado original antes da edição
       e removendo a operação de lista de operações referente a este objeto */
-   void cancelarConfiguracao(void);
+   virtual void cancelConfiguration(void);
 
    /* Aplica as configurações básicas (nome, esquema, comentario, espaço tabela e dono)
       ao objeto que está sendo modificado */
-   void aplicarConfiguracao(void);
+   virtual void applyConfiguration(void);
 
  public:
-   ObjetoBaseWidget(QWidget * parent = 0, ObjectType tipo_obj=BASE_OBJECT);
-  ~ObjetoBaseWidget(void);
+   BaseObjectWidget(QWidget * parent = 0, ObjectType tipo_obj=BASE_OBJECT);
+   virtual ~BaseObjectWidget(void);
+
    void hideEvent(QHideEvent *);
    void showEvent(QShowEvent *);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op,
-                         BaseObject *objeto, BaseObject *objeto_pai=NULL,
-                         float px_objeto=NAN, float py_objeto=NAN);
+
+   virtual void setAttributes(DatabaseModel *model, OperationList *op_list,
+                              BaseObject *object, BaseObject *objeto_pai=NULL,
+                              float object_px=NAN, float object_py=NAN);
 
  protected slots:
-   void editarPermissoes(void);
+   void editPermissions(void);
 
  public slots:
    void show(void);
@@ -172,30 +174,30 @@ class ObjetoBaseWidget: public QDialog, public Ui::ObjetoBaseWidget {
 };
 
 template<class Classe>
-void ObjetoBaseWidget::iniciarConfiguracao(void)
+void BaseObjectWidget::startConfiguration(void)
 {
  try
  {
   Classe *novo_obj_tmpl=NULL;
 
-  if(this->objeto && lista_op &&
-     this->objeto->getObjectType()!=OBJ_DATABASE)
+  if(this->object && op_list &&
+     this->object->getObjectType()!=OBJ_DATABASE)
   {
-   if(this->tabela)
-    lista_op->registerObject(this->objeto, Operation::OBJECT_MODIFIED, -1, this->tabela);
+   if(this->table)
+    op_list->registerObject(this->object, Operation::OBJECT_MODIFIED, -1, this->table);
    else
-    lista_op->registerObject(this->objeto, Operation::OBJECT_MODIFIED, -1, this->relacionamento);
-   novo_obj=false;
+    op_list->registerObject(this->object, Operation::OBJECT_MODIFIED, -1, this->relationship);
+   new_object=false;
   }
   /* Caso o formulário esteja sendo usado para criar um novo
     objeto ou seja o ponteiro this->objeto está nulo */
-  else if(!this->objeto)
+  else if(!this->object)
   {
    //Aloca um novo esquema e o atribui ao objeto this->objeto
    novo_obj_tmpl=new Classe;
-   this->objeto=novo_obj_tmpl;
+   this->object=novo_obj_tmpl;
    //Marca o flag indicando que um novo objeto foi criado
-   novo_obj=true;
+   new_object=true;
   }
  }
  catch(Exception &e)

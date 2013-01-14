@@ -22,11 +22,11 @@
 #ifndef GATILHO_WIDGET_H
 #define GATILHO_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_gatilhowidget.h"
 #include "tabelaobjetoswidget.h"
 
-class GatilhoWidget: public ObjetoBaseWidget, public Ui::GatilhoWidget {
+class GatilhoWidget: public BaseObjectWidget, public Ui::GatilhoWidget {
  Q_OBJECT
 
  private:
@@ -46,7 +46,7 @@ class GatilhoWidget: public ObjetoBaseWidget, public Ui::GatilhoWidget {
 
  public:
    GatilhoWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, Table *tabela_pai, OperationList *lista_op, Trigger *restricao);
+   void setAttributes(DatabaseModel *model, Table *tabela_pai, OperationList *op_list, Trigger *restricao);
 
  private slots:
   void hideEvent(QHideEvent *);
@@ -57,7 +57,7 @@ class GatilhoWidget: public ObjetoBaseWidget, public Ui::GatilhoWidget {
   void definirGratilhoRestricao(bool valor);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

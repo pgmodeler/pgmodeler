@@ -22,23 +22,23 @@
 #ifndef ESPACOTABELA_WIDGET_H
 #define ESPACOTABELA_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_espacotabelawidget.h"
 
-class EspacoTabelaWidget: public ObjetoBaseWidget, public Ui::EspacoTabelaWidget {
+class EspacoTabelaWidget: public BaseObjectWidget, public Ui::EspacoTabelaWidget {
  Q_OBJECT
 
  private:
 
  public:
    EspacoTabelaWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Tablespace *espaco_tab);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Tablespace *espaco_tab);
 
  private slots:
    void hideEvent(QHideEvent *);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

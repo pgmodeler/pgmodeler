@@ -3,7 +3,7 @@
 
 extern ParametroWidget *parametro_wgt;
 
-TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TYPE)
+TipoWidget::TipoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 {
  try
  {
@@ -15,7 +15,7 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TYPE)
   unsigned i;
 
   Ui_TipoWidget::setupUi(this);
-  configurarLayouFormulario(tipo_grid, OBJ_TYPE);
+  configureFormLayout(tipo_grid, OBJ_TYPE);
 
   //Aloca os widgets de configuração de tipos
   tipo_copia=NULL;
@@ -62,21 +62,21 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TYPE)
   atributos_gb->setVisible(false);
 
   //Configura um alerta de versão com os campos específicos das versões
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_83)].push_back(enumeracao_rb);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(categoria_lbl);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(preferido_lbl);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(tipo_copia);
-  frame=gerarFrameAlertaVersao(mapa_campos);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(enumeracao_rb);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(categoria_lbl);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(preferido_lbl);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(tipo_copia);
+  frame=generateVersionWarningFrame(mapa_campos);
   tipo_grid->addWidget(frame, tipo_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 
   //Gera o frame de informação
   grid=dynamic_cast<QGridLayout *>(atrib_base_twg->widget(1)->layout());
-  frame=gerarFrameInformacao(trUtf8("The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:<br/>  <table>   <tr>    <td><strong>INPUT:</strong> <em>any function(cstring, oid, integer)</em></td>    <td><strong>OUTPUT:</strong> <em>cstring function(any)</em></td>   </tr>   <tr>    <td><strong>SEND:</strong> <em>byta function(any)</em></td>    <td><strong>RECV:</strong> <em>any function(internal, oid, integer)</em></td>   </tr>   <tr>    <td><strong>TPMOD_IN:</strong> <em>integer function(cstring[])</em></td>    <td><strong>TPMOD_OUT:</strong> <em>cstring function(integer)</em></td>   </tr>   <tr>    <td><strong>ANALYZE:</strong> <em>boolean function(internal)</em></td>    <tr>  </table>"));
+  frame=generateInformationFrame(trUtf8("The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:<br/>  <table>   <tr>    <td><strong>INPUT:</strong> <em>any function(cstring, oid, integer)</em></td>    <td><strong>OUTPUT:</strong> <em>cstring function(any)</em></td>   </tr>   <tr>    <td><strong>SEND:</strong> <em>byta function(any)</em></td>    <td><strong>RECV:</strong> <em>any function(internal, oid, integer)</em></td>   </tr>   <tr>    <td><strong>TPMOD_IN:</strong> <em>integer function(cstring[])</em></td>    <td><strong>TPMOD_OUT:</strong> <em>cstring function(integer)</em></td>   </tr>   <tr>    <td><strong>ANALYZE:</strong> <em>boolean function(internal)</em></td>    <tr>  </table>"));
   grid->addWidget(frame, grid->count()+1, 0, 1, 0);
   frame->setParent(atrib_base_twg->widget(1));
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
   connect(tipo_base_rb, SIGNAL(toggled(bool)), this, SLOT(selecionarConfiguracaoTipo(void)));
   connect(composto_rb, SIGNAL(toggled(bool)), this, SLOT(selecionarConfiguracaoTipo(void)));
   connect(enumeracao_rb, SIGNAL(toggled(bool)), this, SLOT(selecionarConfiguracaoTipo(void)));
@@ -87,7 +87,7 @@ TipoWidget::TipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TYPE)
   connect(tab_atributos, SIGNAL(s_linhaAdicionada(int)), this, SLOT(exibirFormAtributo(void)));
   connect(tab_atributos, SIGNAL(s_linhaEditada(int)), this, SLOT(exibirFormAtributo(void)));
 
-  janela_pai->setMinimumSize(625, 765);
+  parent_form->setMinimumSize(625, 765);
 
   //Preenche o combo box com os tipos de armazenamento disponíveis
   StorageType::getTypes(lista);
@@ -144,7 +144,7 @@ void TipoWidget::hideEvent(QHideEvent *evento)
  disconnect(parametro_wgt,NULL,this,NULL);
 
  //Executa o método que trata o evento de esconder da classe superior
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
 void TipoWidget::selecionarConfiguracaoTipo(void)
@@ -215,12 +215,12 @@ void TipoWidget::exibirFormAtributo(void)
  if(idx_lin >= 0)
   /* Preenche o formulário de edição de parâmetros com os dados do atributo
      especificado na linha selecionada */
-  parametro_wgt->definirAtributos(tab_atributos->obterDadoLinha(idx_lin).value<Parameter>(), this->modelo);
+  parametro_wgt->setAttributes(tab_atributos->obterDadoLinha(idx_lin).value<Parameter>(), this->model);
 
  parametro_wgt->show();
 }
 
-void TipoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Type *tipo)
+void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Type *tipo)
 {
  PgSQLType tp_copia, tp_elem;
  unsigned conf_tipo, i, qtd;
@@ -230,7 +230,7 @@ void TipoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op
  connect(parametro_wgt, SIGNAL(finished(int)), this, SLOT(manipularAtributo(int)));
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, tipo);
+ BaseObjectWidget::setAttributes(modelo, lista_op, tipo);
 
  //Define o modelo de dados de referência dos seletores de função
  for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
@@ -330,17 +330,17 @@ void TipoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op
  tipo_elemento->definirAtributos(tp_elem, modelo);
 }
 
-void TipoWidget::aplicarConfiguracao(void)
+void TipoWidget::applyConfiguration(void)
 {
  try
  {
   Type *tipo=NULL;
   unsigned i, qtd;
 
-  iniciarConfiguracao<Type>();
+  startConfiguration<Type>();
 
   //Obtém a referência ao tipo que está sendo configurado
-  tipo=dynamic_cast<Type *>(this->objeto);
+  tipo=dynamic_cast<Type *>(this->object);
 
   //Caso o mesmo seja marcado como uma enumeração no formulário
   if(enumeracao_rb->isChecked())
@@ -391,15 +391,15 @@ void TipoWidget::aplicarConfiguracao(void)
     tipo->setFunction(i, dynamic_cast<Function *>(sel_funcoes[i]->obterObjeto()));
   }
 
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

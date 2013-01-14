@@ -22,7 +22,7 @@
 #ifndef CLASSEOPERADORES_WIDGET_H
 #define CLASSEOPERADORES_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_classeoperadoreswidget.h"
 #include "tipopgsqlwidget.h"
 #include "tabelaobjetoswidget.h"
@@ -35,7 +35,7 @@
 #include <QMetaType>
 Q_DECLARE_METATYPE(OperatorClassElement)
 
-class ClasseOperadoresWidget: public ObjetoBaseWidget, public Ui::ClasseOperadoresWidget {
+class ClasseOperadoresWidget: public BaseObjectWidget, public Ui::ClasseOperadoresWidget {
  Q_OBJECT
 
  private:
@@ -51,7 +51,7 @@ class ClasseOperadoresWidget: public ObjetoBaseWidget, public Ui::ClasseOperador
 
  public:
    ClasseOperadoresWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, OperatorClass *classe_op);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, OperatorClass *classe_op);
 
  private slots:
    void hideEvent(QHideEvent *);
@@ -72,7 +72,7 @@ class ClasseOperadoresWidget: public ObjetoBaseWidget, public Ui::ClasseOperador
    void editarElemento(int idx_linha);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

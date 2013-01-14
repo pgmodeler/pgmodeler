@@ -1176,93 +1176,93 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
   switch(tipo_obj)
   {
    case OBJ_SCHEMA:
-    esquema_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Schema *>(objeto));
+    esquema_wgt->setAttributes(modelo, lista_op, dynamic_cast<Schema *>(objeto));
     esquema_wgt->show();
    break;
 
    case OBJ_ROLE:
-    papel_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Role *>(objeto));
+    papel_wgt->setAttributes(modelo, lista_op, dynamic_cast<Role *>(objeto));
     papel_wgt->show();
    break;
 
    case OBJ_TABLESPACE:
-    espacotabela_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Tablespace *>(objeto));
+    espacotabela_wgt->setAttributes(modelo, lista_op, dynamic_cast<Tablespace *>(objeto));
     espacotabela_wgt->show();
    break;
 
    case OBJ_LANGUAGE:
-    linguagem_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Language *>(objeto));
+    linguagem_wgt->setAttributes(modelo, lista_op, dynamic_cast<Language *>(objeto));
     linguagem_wgt->show();
    break;
 
    case OBJ_FUNCTION:
-    funcao_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Function *>(objeto));
+    funcao_wgt->setAttributes(modelo, lista_op, dynamic_cast<Function *>(objeto));
     funcao_wgt->show();
    break;
 
    case OBJ_CAST:
-    convtipo_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Cast *>(objeto));
+    convtipo_wgt->setAttributes(modelo, lista_op, dynamic_cast<Cast *>(objeto));
     convtipo_wgt->show();
    break;
 
    case OBJ_CONVERSION:
-    convcodif_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Conversion *>(objeto));
+    convcodif_wgt->setAttributes(modelo, lista_op, dynamic_cast<Conversion *>(objeto));
     convcodif_wgt->show();
    break;
 
    case OBJ_DOMAIN:
-    dominio_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Domain *>(objeto));
+    dominio_wgt->setAttributes(modelo, lista_op, dynamic_cast<Domain *>(objeto));
     dominio_wgt->show();
    break;
 
    case OBJ_AGGREGATE:
-    funcaoag_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Aggregate *>(objeto));
+    funcaoag_wgt->setAttributes(modelo, lista_op, dynamic_cast<Aggregate *>(objeto));
     funcaoag_wgt->show();
    break;
 
    case OBJ_SEQUENCE:
-    sequencia_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Sequence *>(objeto));
+    sequencia_wgt->setAttributes(modelo, lista_op, dynamic_cast<Sequence *>(objeto));
     sequencia_wgt->show();
    break;
 
    case OBJ_OPERATOR:
-    operador_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Operator *>(objeto));
+    operador_wgt->setAttributes(modelo, lista_op, dynamic_cast<Operator *>(objeto));
     operador_wgt->show();
    break;
 
    case OBJ_OPFAMILY:
-    familiaop_wgt->definirAtributos(modelo, lista_op, dynamic_cast<OperatorFamily *>(objeto));
+    familiaop_wgt->setAttributes(modelo, lista_op, dynamic_cast<OperatorFamily *>(objeto));
     familiaop_wgt->show();
    break;
 
    case OBJ_OPCLASS:
-    classeop_wgt->definirAtributos(modelo, lista_op, dynamic_cast<OperatorClass *>(objeto));
+    classeop_wgt->setAttributes(modelo, lista_op, dynamic_cast<OperatorClass *>(objeto));
     classeop_wgt->show();
    break;
 
    case OBJ_TYPE:
-    tipo_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Type *>(objeto));
+    tipo_wgt->setAttributes(modelo, lista_op, dynamic_cast<Type *>(objeto));
     tipo_wgt->show();
    break;
 
    case OBJ_VIEW:
     View *visao;
     visao=dynamic_cast<View *>(objeto);
-    visao_wgt->definirAtributos(modelo, lista_op, visao, pos.x(), pos.y());
+    visao_wgt->setAttributes(modelo, lista_op, visao, pos.x(), pos.y());
     visao_wgt->show();
    break;
 
    case OBJ_TEXTBOX:
     Textbox *caixa;
     caixa=dynamic_cast<Textbox *>(objeto);
-    caixatexto_wgt->definirAtributos(modelo, lista_op, caixa, pos.x(), pos.y());
+    caixatexto_wgt->setAttributes(modelo, lista_op, caixa, pos.x(), pos.y());
     caixatexto_wgt->show();
    break;
 
    case OBJ_COLUMN:
     Column *coluna;
     coluna=dynamic_cast<Column *>(objeto);
-    coluna_wgt->definirAtributos(modelo, objeto_pai, lista_op, coluna);
+    coluna_wgt->setAttributes(modelo, objeto_pai, lista_op, coluna);
     coluna_wgt->show();
 
     //Valida os relacionamento para refletirem as modificações na coluna
@@ -1275,7 +1275,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    case OBJ_CONSTRAINT:
     Constraint *restricao;
     restricao=dynamic_cast<Constraint *>(objeto);
-    restricao_wgt->definirAtributos(modelo, dynamic_cast<Table *>(objeto_pai), lista_op, restricao);
+    restricao_wgt->setAttributes(modelo, dynamic_cast<Table *>(objeto_pai), lista_op, restricao);
     restricao_wgt->show();
 
     //Valida os relacionamento para refletirem as modificações na restrição
@@ -1286,17 +1286,17 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
    break;
 
    case OBJ_RULE:
-    regra_wgt->definirAtributos(modelo, dynamic_cast<Table *>(objeto_pai), lista_op, dynamic_cast<Rule *>(objeto));
+    regra_wgt->setAttributes(modelo, dynamic_cast<Table *>(objeto_pai), lista_op, dynamic_cast<Rule *>(objeto));
     regra_wgt->show();
    break;
 
    case OBJ_TRIGGER:
-    gatilho_wgt->definirAtributos(modelo, dynamic_cast<Table *>(objeto_pai), lista_op, dynamic_cast<Trigger *>(objeto));
+    gatilho_wgt->setAttributes(modelo, dynamic_cast<Table *>(objeto_pai), lista_op, dynamic_cast<Trigger *>(objeto));
     gatilho_wgt->show();
    break;
 
    case OBJ_INDEX:
-    indice_wgt->definirAtributos(modelo, dynamic_cast<Table *>(objeto_pai), lista_op, dynamic_cast<Index *>(objeto));
+    indice_wgt->setAttributes(modelo, dynamic_cast<Table *>(objeto_pai), lista_op, dynamic_cast<Index *>(objeto));
     indice_wgt->show();
    break;
 
@@ -1312,22 +1312,22 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
      Table *tab1=dynamic_cast<Table *>(objs_selecionados[0]),
             *tab2=(objs_selecionados.size()==2 ?
                        dynamic_cast<Table *>(objs_selecionados[1]) : tab1);
-     relacao_wgt->definirAtributos(modelo, lista_op, tab1, tab2, tipo_rel);
+     relacao_wgt->setAttributes(modelo, lista_op, tab1, tab2, tipo_rel);
     }
     else
-     relacao_wgt->definirAtributos(modelo, lista_op, dynamic_cast<BaseRelationship *>(objeto));
+     relacao_wgt->setAttributes(modelo, lista_op, dynamic_cast<BaseRelationship *>(objeto));
 
     relacao_wgt->show();
    break;
 
    case OBJ_TABLE:
-    tabela_wgt->definirAtributos(modelo, lista_op, dynamic_cast<Table *>(objeto), pos.x(), pos.y());
+    tabela_wgt->setAttributes(modelo, lista_op, dynamic_cast<Table *>(objeto), pos.x(), pos.y());
     tabela_wgt->show();
    break;
 
    default:
    case OBJ_DATABASE:
-    bancodados_wgt->definirAtributos(modelo);
+    bancodados_wgt->setAttributes(modelo);
     bancodados_wgt->show();
    break;
   }
@@ -1352,7 +1352,7 @@ void ModeloWidget::exibirDepsRefs(void)
   if(objeto)
   {
    //Exibe o formulário de dependências / referências
-   deps_refs_wgt->definirAtributos(this->modelo, objeto);
+   deps_refs_wgt->setAttributes(this->modelo, objeto);
    deps_refs_wgt->show();
   }
  }
@@ -1370,7 +1370,7 @@ void ModeloWidget::exibirCodigoFonte(void)
   if(objeto)
   {
    //Exibe o formulário de código fonte do mesmo
-   codigofonte_wgt->definirAtributos(this->modelo, objeto);
+   codigofonte_wgt->setAttributes(this->modelo, objeto);
    codigofonte_wgt->show();
   }
  }
@@ -1458,7 +1458,7 @@ void ModeloWidget::editarPermissoes(void)
  QAction *act=dynamic_cast<QAction *>(sender());
  BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
 
- permissao_wgt->definirAtributos(this->modelo, NULL, obj);
+ permissao_wgt->setAttributes(this->modelo, NULL, obj);
  permissao_wgt->show();
 }
 

@@ -1,6 +1,6 @@
 #include "regrawidget.h"
 
-RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_RULE)
+RegraWidget::RegraWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 {
  try
  {
@@ -30,12 +30,12 @@ RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_RULE)
   dynamic_cast<QGridLayout *>(comandos_gb->layout())->addWidget(tab_comandos, 1, 0, 1, 2);
 
   //Gera o frame de informação
-  frame=gerarFrameInformacao(trUtf8("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
+  frame=generateInformationFrame(trUtf8("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
   regra_grid->addWidget(frame, regra_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 
-  configurarLayouFormulario(regra_grid, OBJ_RULE);
-  janela_pai->setMinimumSize(550, 520);
+  configureFormLayout(regra_grid, OBJ_RULE);
+  parent_form->setMinimumSize(550, 520);
 
   //Configurando o combo de tipo de evento com os tipos disponíveis
   EventType::getTypes(lista);
@@ -45,7 +45,7 @@ RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_RULE)
   ExecutionType::getTypes(lista);
   tipo_execucao_cmb->addItems(lista);
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
   connect(tab_comandos, SIGNAL(s_linhaAdicionada(int)), this, SLOT(manipularComando(int)));
   connect(tab_comandos, SIGNAL(s_linhaAtualizada(int)), this, SLOT(manipularComando(int)));
   connect(tab_comandos, SIGNAL(s_linhaEditada(int)), this, SLOT(editarComando(int)));
@@ -59,7 +59,7 @@ RegraWidget::RegraWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_RULE)
 
 void RegraWidget::hideEvent(QHideEvent *evento)
 {
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
  comando_txt->clear();
  tab_comandos->removerLinhas();
  tipo_evento_cmb->setCurrentIndex(0);
@@ -87,7 +87,7 @@ void RegraWidget::manipularComando(int idx_lin)
   tab_comandos->removerLinha(idx_lin);
 }
 
-void RegraWidget::definirAtributos(DatabaseModel *modelo, Table *tabela_pai, OperationList *lista_op, Rule *regra)
+void RegraWidget::setAttributes(DatabaseModel *modelo, Table *tabela_pai, OperationList *lista_op, Rule *regra)
 {
  unsigned qtd, i;
 
@@ -95,7 +95,7 @@ void RegraWidget::definirAtributos(DatabaseModel *modelo, Table *tabela_pai, Ope
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, regra, tabela_pai);
+ BaseObjectWidget::setAttributes(modelo, lista_op, regra, tabela_pai);
 
  if(regra)
  {
@@ -116,17 +116,17 @@ void RegraWidget::definirAtributos(DatabaseModel *modelo, Table *tabela_pai, Ope
  }
 }
 
-void RegraWidget::aplicarConfiguracao(void)
+void RegraWidget::applyConfiguration(void)
 {
  try
  {
   Rule *regra=NULL;
   unsigned qtd, i;
 
-  iniciarConfiguracao<Rule>();
+  startConfiguration<Rule>();
 
   //Obtém a referêni   regra que está sendo criada/editada
-  regra=dynamic_cast<Rule *>(this->objeto);
+  regra=dynamic_cast<Rule *>(this->object);
 
   //Configura a regra com base nos atributos preenchidos no formulário
   regra->setEventType(EventType(tipo_evento_cmb->currentText()));
@@ -143,15 +143,15 @@ void RegraWidget::aplicarConfiguracao(void)
    regra->addCommand(tab_comandos->obterTextoCelula(i,0));
 
   //Aplica as configurações básicas
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

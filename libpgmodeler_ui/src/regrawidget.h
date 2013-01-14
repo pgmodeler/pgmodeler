@@ -22,11 +22,11 @@
 #ifndef REGRA_WIDGET_H
 #define REGRA_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_regrawidget.h"
 #include "tabelaobjetoswidget.h"
 
-class RegraWidget: public ObjetoBaseWidget, public Ui::RegraWidget {
+class RegraWidget: public BaseObjectWidget, public Ui::RegraWidget {
  Q_OBJECT
 
  private:
@@ -39,7 +39,7 @@ class RegraWidget: public ObjetoBaseWidget, public Ui::RegraWidget {
 
  public:
    RegraWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, Table *tabela_pai, OperationList *lista_op, Rule *regra);
+   void setAttributes(DatabaseModel *model, Table *tabela_pai, OperationList *op_list, Rule *regra);
 
  private slots:
   void hideEvent(QHideEvent *);
@@ -49,7 +49,7 @@ class RegraWidget: public ObjetoBaseWidget, public Ui::RegraWidget {
   void editarComando(int idx_lin);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

@@ -23,14 +23,14 @@
 #define LISTA_OBJETOS_WIDGET_H
 
 #include "ui_listaobjetoswidget.h"
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "baseobjectview.h"
 
-class ListaObjetosWidget: public ObjetoBaseWidget, public Ui::ListaObjetosWidget {
+class ListaObjetosWidget: public BaseObjectWidget, public Ui::ListaObjetosWidget {
  Q_OBJECT
 
  private:
-  void aplicarConfiguracao(void){}
+  void applyConfiguration(void){}
 
   //Carrega os widgets que contém as referências e dependências do objeto
   void atualizarListaObjetos(vector<BaseObject *> &objetos, QTableWidget *tabela_wgt);
@@ -40,7 +40,7 @@ class ListaObjetosWidget: public ObjetoBaseWidget, public Ui::ListaObjetosWidget
 
  public:
   ListaObjetosWidget(QWidget * parent = 0);
-  void definirAtributos(DatabaseModel *modelo, BaseObject *objeto, BaseObject *objeto_pai=NULL);
+  void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *objeto_pai=NULL);
 };
 
 #endif

@@ -22,23 +22,23 @@
 #ifndef FAMILIAOPERADORES_WIDGET_H
 #define FAMILIAOPERADORES_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_familiaoperadoreswidget.h"
 
-class FamiliaOperadoresWidget: public ObjetoBaseWidget, public Ui::FamiliaOperadoresWidget {
+class FamiliaOperadoresWidget: public BaseObjectWidget, public Ui::FamiliaOperadoresWidget {
  Q_OBJECT
 
  private:
 
  public:
    FamiliaOperadoresWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, OperatorFamily *familia_op);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, OperatorFamily *familia_op);
 
  private slots:
    void hideEvent(QHideEvent *);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

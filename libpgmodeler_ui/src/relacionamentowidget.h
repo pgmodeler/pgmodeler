@@ -22,11 +22,11 @@
 #ifndef RELACIONAMENTO_WIDGET_H
 #define RELACIONAMENTO_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_relacionamentowidget.h"
 #include "tabelaobjetoswidget.h"
 
-class RelacionamentoWidget: public ObjetoBaseWidget, public Ui::RelacionamentoWidget {
+class RelacionamentoWidget: public BaseObjectWidget, public Ui::RelacionamentoWidget {
  private:
   Q_OBJECT
    /* Quantidade de elementos na lista de operações antes do relacionamento
@@ -52,14 +52,14 @@ class RelacionamentoWidget: public ObjetoBaseWidget, public Ui::RelacionamentoWi
    void listarObjetosAvancados(void);
 
    //Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
-   void exibirDadosObjeto(TableObject *objeto, int idx_lin);
+   void exibirDadosObjeto(TableObject *object, int idx_lin);
 
  protected:
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Table *tab_orig, Table *tab_dest, unsigned tipo_rel);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Table *tab_orig, Table *tab_dest, unsigned tipo_rel);
 
  public:
    RelacionamentoWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, BaseRelationship *relacao);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *relacao);
 
  private slots:
   void hideEvent(QHideEvent *);
@@ -80,8 +80,8 @@ class RelacionamentoWidget: public ObjetoBaseWidget, public Ui::RelacionamentoWi
   void exibirObjetoAvancado(int idx);
 
  public slots:
-   void aplicarConfiguracao(void);
-   void cancelarConfiguracao(void);
+   void applyConfiguration(void);
+   void cancelConfiguration(void);
 
  friend class ModeloWidget;
 };

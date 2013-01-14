@@ -1,35 +1,35 @@
 #include "esquemawidget.h"
 
-EsquemaWidget::EsquemaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_SCHEMA)
+EsquemaWidget::EsquemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA)
 {
- configurarLayouFormulario(NULL, OBJ_SCHEMA);
+ configureFormLayout(NULL, OBJ_SCHEMA);
 
- connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+ connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
- janela_pai->setMinimumSize(500, 220);
- janela_pai->setMaximumSize(16777215, 220);
+ parent_form->setMinimumSize(500, 220);
+ parent_form->setMaximumSize(16777215, 220);
 }
 
-void EsquemaWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Schema *esquema)
+void EsquemaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Schema *esquema)
 {
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, esquema);
+ BaseObjectWidget::setAttributes(modelo, lista_op, esquema);
 }
 
-void EsquemaWidget::aplicarConfiguracao(void)
+void EsquemaWidget::applyConfiguration(void)
 {
  try
  {
-  iniciarConfiguracao<Schema>();
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  startConfiguration<Schema>();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

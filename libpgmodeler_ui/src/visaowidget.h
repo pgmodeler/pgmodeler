@@ -23,7 +23,7 @@
 #define VISAO_WIDGET_H
 
 #include <QtGui>
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_visaowidget.h"
 #include "tabelaobjetoswidget.h"
 
@@ -37,7 +37,7 @@
 #include <QMetaType>
 Q_DECLARE_METATYPE(Reference)
 
-class VisaoWidget: public ObjetoBaseWidget, public Ui::VisaoWidget {
+class VisaoWidget: public BaseObjectWidget, public Ui::VisaoWidget {
  Q_OBJECT
 
  private:
@@ -69,7 +69,7 @@ class VisaoWidget: public ObjetoBaseWidget, public Ui::VisaoWidget {
 
  public:
    VisaoWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, View *visao, float px, float py);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, View *visao, float px, float py);
 
  private slots:
   void hideEvent(QHideEvent *);
@@ -95,7 +95,7 @@ class VisaoWidget: public ObjetoBaseWidget, public Ui::VisaoWidget {
   void atualizarPrevisaoCodigo(void);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

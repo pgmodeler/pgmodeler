@@ -2,7 +2,7 @@
 #include "parametrowidget.h"
 extern ParametroWidget *parametro_wgt;
 
-FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_FUNCTION)
+FuncaoWidget::FuncaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FUNCTION)
 {
  try
  {
@@ -12,9 +12,9 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_FUNCTI
   QFrame *frame=NULL;
 
   Ui_FuncaoWidget::setupUi(this);
-  configurarLayouFormulario(funcao_grid, OBJ_FUNCTION);
+  configureFormLayout(funcao_grid, OBJ_FUNCTION);
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
   //Aloca um destacador de código fonte para o campo de definição da função
   destaque_codigo=new DestaqueSintaxe(codigofonte_txt, true);
@@ -62,15 +62,15 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_FUNCTI
   tabela_ret_gb->setVisible(false);
 
   //Define os campos exclusivos para cada versão
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(tabela_rb);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(func_janela_lbl);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(tabela_rb);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(func_janela_lbl);
 
   //Gera o frame de alerta
-  frame=gerarFrameAlertaVersao(mapa_campos);
+  frame=generateVersionWarningFrame(mapa_campos);
   grid->addWidget(frame, grid->count()+1, 0, 1, 0);
   frame->setParent(funcaowidget_twg->widget(0));
 
-  janela_pai->setMinimumSize(645, 715);
+  parent_form->setMinimumSize(645, 715);
 
   //Configura o combo de tipos de segurança da função
   SecurityType::getTypes(tipos);
@@ -175,7 +175,7 @@ void FuncaoWidget::exibirFormParametro(void)
    param_aux=obterParametro(tabela, idx_lin);
 
   //Exibe o formulário de parâmetros
-  parametro_wgt->definirAtributos(param_aux, modelo);
+  parametro_wgt->setAttributes(param_aux, model);
   parametro_wgt->show();
  }
 }
@@ -248,7 +248,7 @@ void FuncaoWidget::exibirDadosParametro(Parameter param, TabelaObjetosWidget *ta
  }
 }
 
-void FuncaoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Function *funcao)
+void FuncaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Function *funcao)
 {
  vector<BaseObject *> linguagens;
  Language *ling=NULL;
@@ -261,7 +261,7 @@ void FuncaoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_
  connect(parametro_wgt, SIGNAL(finished(int)), this, SLOT(manipularParametro(int)));
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, funcao);
+ BaseObjectWidget::setAttributes(modelo, lista_op, funcao);
 
 //Obtém todas as linguagens criadas no modelo para armazená-las num combo
  linguagens=modelo->getObjects(OBJ_LANGUAGE);
@@ -390,7 +390,7 @@ void FuncaoWidget::hideEvent(QHideEvent *evento)
  biblioteca_edt->clear();
  funcaowidget_twg->setCurrentIndex(0);
  disconnect(parametro_wgt,NULL, this, NULL);
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
 void FuncaoWidget::alternarTiposRetorno(void)
@@ -452,14 +452,14 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
                            OBJ_LANGUAGE, OBJ_OPERATOR, OBJ_TYPE };
 
  //Obtém a referência para a função recém configurada
- funcao=dynamic_cast<Function *>(this->objeto);
+ funcao=dynamic_cast<Function *>(this->object);
 
  try
  {
   for(i=0; i < 7; i++)
   {
    //Obtém a lista de objetos do tipo atual
-   lista_obj=modelo->getObjectList(tipos[i]);
+   lista_obj=model->getObjectList(tipos[i]);
    itr=lista_obj->begin();
    itr_end=lista_obj->end();
 
@@ -559,7 +559,7 @@ void FuncaoWidget::validarFuncaoConfigurada(void)
  }
 }
 
-void FuncaoWidget::aplicarConfiguracao(void)
+void FuncaoWidget::applyConfiguration(void)
 {
  try
  {
@@ -569,13 +569,13 @@ void FuncaoWidget::aplicarConfiguracao(void)
   QString str_aux;
 
   //Inicia a configuração da função
-  iniciarConfiguracao<Function>();
+  startConfiguration<Function>();
 
   //Faz a conversão do objeto editado (genérico) para o tipo função
-  func=dynamic_cast<Function *>(this->objeto);
+  func=dynamic_cast<Function *>(this->object);
 
   //Atribui os valores básicos configurados no formulário para a função
-  func->setLanguage(modelo->getObject(linguagem_cmb->currentText(), OBJ_LANGUAGE));
+  func->setLanguage(model->getObject(linguagem_cmb->currentText(), OBJ_LANGUAGE));
   func->setFunctionType(tipo_func_cmb->currentText());
   func->setWindowFunction(func_janela_chk->isChecked());
   func->setExecutionCost(custo_exec_spb->value());
@@ -649,21 +649,21 @@ void FuncaoWidget::aplicarConfiguracao(void)
   }
 
   //Finaliza a configuração da função
-  ObjetoBaseWidget::aplicarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
 
   /* Executa a validação da função em relação aos objetos das classes
      ConversaoCodificacao, ConversaoTipo, ElemClasseOperadores, FuncaoAgregada,
      Gatilho, Linguagem, Operador, Tipo */
   validarFuncaoConfigurada();
 
-  finalizarConfiguracao();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

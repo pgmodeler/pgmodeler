@@ -23,21 +23,21 @@
 #define BANCODADOS_WIDGET_H
 
 #include "ui_bancodadoswidget.h"
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 
-class BancoDadosWidget: public ObjetoBaseWidget, public Ui::BancoDadosWidget {
+class BancoDadosWidget: public BaseObjectWidget, public Ui::BancoDadosWidget {
  Q_OBJECT
 
  private:
 
  public:
    BancoDadosWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo);
+   void setAttributes(DatabaseModel *model);
 
  private slots:
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

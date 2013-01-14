@@ -1,6 +1,6 @@
 #include "dominiowidget.h"
 
-DominioWidget::DominioWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_DOMAIN)
+DominioWidget::DominioWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN)
 {
  try
  {
@@ -18,11 +18,11 @@ DominioWidget::DominioWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_DOMA
   tipo_dominio=new TipoPgSQLWidget(this);
   dominio_grid->addWidget(tipo_dominio,4,0,1,2);
 
-  configurarLayouFormulario(dominio_grid, OBJ_DOMAIN);
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  configureFormLayout(dominio_grid, OBJ_DOMAIN);
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-  janela_pai->setMinimumSize(530, 450);
-  janela_pai->setMaximumHeight(450);
+  parent_form->setMinimumSize(530, 450);
+  parent_form->setMaximumHeight(450);
  }
  catch(Exception &e)
  {
@@ -37,15 +37,15 @@ void DominioWidget::hideEvent(QHideEvent *evento)
  expr_checagem_txt->clear();
  nome_rest_edt->clear();
  nao_nulo_chk->setChecked(false);
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
-void DominioWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Domain *dominio)
+void DominioWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Domain *dominio)
 {
  PgSQLType tipo;
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, dominio);
+ BaseObjectWidget::setAttributes(modelo, lista_op, dominio);
 
  //Caso o domínio passado esteja alocado
  if(dominio)
@@ -62,15 +62,15 @@ void DominioWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista
  tipo_dominio->definirAtributos(tipo, modelo);
 }
 
-void DominioWidget::aplicarConfiguracao(void)
+void DominioWidget::applyConfiguration(void)
 {
  try
  {
   Domain *dominio=NULL;
-  iniciarConfiguracao<Domain>();
+  startConfiguration<Domain>();
 
   //Obtém a referência ao domínio que está sendo editado/criado
-  dominio=dynamic_cast<Domain *>(this->objeto);
+  dominio=dynamic_cast<Domain *>(this->object);
 
   //Configura os atributos do mesmo com os valores definidos no formulário
   dominio->setType(tipo_dominio->obterTipoPgSQL());
@@ -79,15 +79,15 @@ void DominioWidget::aplicarConfiguracao(void)
   dominio->setConstraintName(nome_rest_edt->text());
   dominio->setNotNull(nao_nulo_chk->isChecked());
 
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

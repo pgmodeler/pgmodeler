@@ -22,11 +22,11 @@
 #ifndef OPERADOR_WIDGET_H
 #define OPERADOR_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "tipopgsqlwidget.h"
 #include "ui_operadorwidget.h"
 
-class OperadorWidget: public ObjetoBaseWidget, public Ui::OperadorWidget {
+class OperadorWidget: public BaseObjectWidget, public Ui::OperadorWidget {
  Q_OBJECT
 
  private:
@@ -36,13 +36,13 @@ class OperadorWidget: public ObjetoBaseWidget, public Ui::OperadorWidget {
 
  public:
    OperadorWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Operator *operador);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Operator *operador);
 
  private slots:
   void hideEvent(QHideEvent *);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

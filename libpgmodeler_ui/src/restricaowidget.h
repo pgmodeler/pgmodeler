@@ -22,11 +22,11 @@
 #ifndef RESTRICAO_WIDGET_H
 #define RESTRICAO_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_restricaowidget.h"
 #include "tabelaobjetoswidget.h"
 
-class RestricaoWidget: public ObjetoBaseWidget, public Ui::RestricaoWidget {
+class RestricaoWidget: public BaseObjectWidget, public Ui::RestricaoWidget {
  Q_OBJECT
 
  private:
@@ -51,7 +51,7 @@ class RestricaoWidget: public ObjetoBaseWidget, public Ui::RestricaoWidget {
 
  public:
    RestricaoWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, BaseObject *objeto_pai, OperationList *lista_op, Constraint *restricao);
+   void setAttributes(DatabaseModel *model, BaseObject *objeto_pai, OperationList *op_list, Constraint *restricao);
 
  private slots:
   void hideEvent(QHideEvent *);
@@ -69,7 +69,7 @@ class RestricaoWidget: public ObjetoBaseWidget, public Ui::RestricaoWidget {
   void removerColunas(void);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

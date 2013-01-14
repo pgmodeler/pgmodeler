@@ -27,7 +27,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="bdmodelo_lbl">
+    <widget class="QLabel" name="templatedb_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -46,7 +46,7 @@
     </widget>
    </item>
    <item row="0" column="1" colspan="3">
-    <widget class="QLineEdit" name="bdmodelo_edt">
+    <widget class="QLineEdit" name="templatedb_edt">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -56,7 +56,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="autor_lbl">
+    <widget class="QLabel" name="author_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -69,7 +69,7 @@
     </widget>
    </item>
    <item row="1" column="1" colspan="3">
-    <widget class="QLineEdit" name="autor_edt">
+    <widget class="QLineEdit" name="author_edt">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -79,7 +79,7 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="codificacao_lbl">
+    <widget class="QLabel" name="encoding_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -98,7 +98,7 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QComboBox" name="codificacao_cmb">
+    <widget class="QComboBox" name="encoding_cmb">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -147,7 +147,7 @@
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="limconexao_lbl">
+    <widget class="QLabel" name="connlim_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -173,7 +173,7 @@
     </widget>
    </item>
    <item row="3" column="1">
-    <widget class="QSpinBox" name="limconexao_sb">
+    <widget class="QSpinBox" name="connlim_sb">
      <property name="minimumSize">
       <size>
        <width>0</width>

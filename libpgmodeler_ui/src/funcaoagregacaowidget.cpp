@@ -1,6 +1,6 @@
 #include "funcaoagregacaowidget.h"
 
-FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_AGGREGATE)
+FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_AGGREGATE)
 {
  try
  {
@@ -59,15 +59,15 @@ FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): ObjetoBaseWidget(
   tipos_entrada_estado_twg->widget(1)->setLayout(grid);
 
   //Gera o frame de informação sobre a criação de funções agregadas
-  frame=gerarFrameInformacao(trUtf8("An aggregate function that accepts the types <em><strong>typeA</strong></em> and <em><strong>typeB</strong></em> as input types and which type of state is <em><strong>state_type</strong></em>, must obey the following rules: <br/><br/> <strong> &nbsp;&nbsp;&nbsp;• Final Function:</strong> <em>void final_function(<strong>state_type</strong>)</em><br/>  <strong> &nbsp;&nbsp;&nbsp;• Transition Function:</strong> <em><strong>state_type</strong> transition_function(<strong>state_type</strong>, <strong>typeA</strong>, <strong>typeB</strong>)</em>"));
+  frame=generateInformationFrame(trUtf8("An aggregate function that accepts the types <em><strong>typeA</strong></em> and <em><strong>typeB</strong></em> as input types and which type of state is <em><strong>state_type</strong></em>, must obey the following rules: <br/><br/> <strong> &nbsp;&nbsp;&nbsp;• Final Function:</strong> <em>void final_function(<strong>state_type</strong>)</em><br/>  <strong> &nbsp;&nbsp;&nbsp;• Transition Function:</strong> <em><strong>state_type</strong> transition_function(<strong>state_type</strong>, <strong>typeA</strong>, <strong>typeB</strong>)</em>"));
   funcaoagregacao_grid->addWidget(frame, funcaoagregacao_grid->count()+1, 0, 1, 2);
   frame->setParent(this);
 
-  configurarLayouFormulario(funcaoagregacao_grid, OBJ_AGGREGATE);
+  configureFormLayout(funcaoagregacao_grid, OBJ_AGGREGATE);
 
-  janela_pai->setMinimumSize(645, 750);
+  parent_form->setMinimumSize(645, 750);
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
   connect(tab_tipos_entrada, SIGNAL(s_linhaAdicionada(int)), this, SLOT(manipularTipoDado(int)));
   connect(tab_tipos_entrada, SIGNAL(s_linhaAtualizada(int)), this, SLOT(manipularTipoDado(int)));
  }
@@ -85,16 +85,16 @@ void FuncaoAgregacaoWidget::hideEvent(QHideEvent *evento)
  sel_op_ordenacao->removerObjetoSelecionado();
  tab_tipos_entrada->removerLinhas();
  cond_inicial_txt->clear();
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
-void FuncaoAgregacaoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Aggregate *funcao_ag)
+void FuncaoAgregacaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Aggregate *funcao_ag)
 {
  unsigned qtd, i;
  PgSQLType tipo;
 
  //Preenchendo os campos básicos do formulário com os atributos da função de agregação
- ObjetoBaseWidget::definirAtributos(modelo,lista_op,funcao_ag);
+ BaseObjectWidget::setAttributes(modelo,lista_op,funcao_ag);
 
  //Configurado o modelo de banco de dados referênciado pelos widget seletores
  tipo_entrada->definirAtributos(tipo, modelo);
@@ -144,17 +144,17 @@ void FuncaoAgregacaoWidget::manipularTipoDado(int linha)
  tab_tipos_entrada->definirTextoCelula(QString::fromUtf8(*tipo),linha,0);
 }
 //---------------------------------------------------------
-void FuncaoAgregacaoWidget::aplicarConfiguracao(void)
+void FuncaoAgregacaoWidget::applyConfiguration(void)
 {
  try
  {
   Aggregate *funcao_ag=NULL;
   unsigned qtd, i;
 
-  iniciarConfiguracao<Aggregate>();
+  startConfiguration<Aggregate>();
 
   //Obtém a referêni   função de agregação que está sendo editada/criada
-  funcao_ag=dynamic_cast<Aggregate *>(this->objeto);
+  funcao_ag=dynamic_cast<Aggregate *>(this->object);
 
   //Configura os atributos do mesmo com os valores definidos no formulário
   funcao_ag->setInitialCondition(cond_inicial_txt->toPlainText());
@@ -177,15 +177,15 @@ void FuncaoAgregacaoWidget::aplicarConfiguracao(void)
   funcao_ag->setSortOperator(dynamic_cast<Operator *>(sel_op_ordenacao->obterObjeto()));
 
   //Finaliza a configuração da função de agregação
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

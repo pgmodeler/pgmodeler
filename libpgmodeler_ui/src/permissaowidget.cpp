@@ -2,7 +2,7 @@
 #include "visaoobjetoswidget.h"
 extern VisaoObjetosWidget *selecaoobjetos_wgt;
 
-PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_PERMISSION)
+PermissaoWidget::PermissaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_PERMISSION)
 {
  QGridLayout *grid=NULL;
  QFont fonte;
@@ -21,14 +21,14 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_
 
  /* Configura a janela pai inserindo o formulário de
     edição de permissões como filho */
- janela_pai->widgetgeral_wgt->insertWidget(0, this);
- janela_pai->widgetgeral_wgt->setCurrentIndex(0);
- janela_pai->definirBotoes(CaixaMensagem::BOTAO_OK);
- connect(janela_pai->aplicar_ok_btn, SIGNAL(clicked(bool)), janela_pai, SLOT(close(void)));
+ parent_form->widgetgeral_wgt->insertWidget(0, this);
+ parent_form->widgetgeral_wgt->setCurrentIndex(0);
+ parent_form->definirBotoes(CaixaMensagem::BOTAO_OK);
+ connect(parent_form->aplicar_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 
  //Configura a dimensão da janela pai
- janela_pai->setMinimumSize(670, 500);
- janela_pai->resize(670, 500);
+ parent_form->setMinimumSize(670, 500);
+ parent_form->resize(670, 500);
 
  /* Alterando o texto do label de comentário para 'Tipo:'.
     como este formulário é herdado do formulário padrão, o
@@ -36,16 +36,16 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_
     tipo do objeto o qual se está configurando as permissões.
     Além disso o campo nome e comentario são marcados como
     read-only pois o usuário não tem acesso a esses campos. */
- comentario_lbl->setText(trUtf8("Type:"));
- fonte=nome_edt->font();
+ comment_lbl->setText(trUtf8("Type:"));
+ fonte=name_edt->font();
  fonte.setItalic(true);
- comentario_edt->setFont(fonte);
- comentario_edt->setReadOnly(true);
- nome_edt->setFont(fonte);
- nome_edt->setReadOnly(true);
+ comment_edt->setFont(fonte);
+ comment_edt->setReadOnly(true);
+ name_edt->setFont(fonte);
+ name_edt->setReadOnly(true);
 
  //Configura o formulário adicionando os campos de edição de permissão
- configurarLayouFormulario(permissao_grid, OBJ_PERMISSION);
+ configureFormLayout(permissao_grid, OBJ_PERMISSION);
 
  //Cria a tabela de papéis com os botões de inserir, remover e editar item
  tab_papeis=new TabelaObjetosWidget(TabelaObjetosWidget::BTN_INSERIR_ITEM |
@@ -127,14 +127,14 @@ void PermissaoWidget::hideEvent(QHideEvent *evento)
  tab_permissoes->blockSignals(false);
 
  //Executa o método que trata o evento de esconder da classe superior
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
-void PermissaoWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto_pai, BaseObject *objeto)
+void PermissaoWidget::setAttributes(DatabaseModel *modelo, BaseObject *objeto_pai, BaseObject *objeto)
 {
  /* Chama o método de definição de atributos da classe Pai para depois
     configurar os atributos relacionados   classe PermissaoWidget */
- ObjetoBaseWidget::definirAtributos(modelo,NULL,objeto,objeto_pai);
+ BaseObjectWidget::setAttributes(modelo,NULL,objeto,objeto_pai);
 
  if(objeto)
  {
@@ -147,8 +147,8 @@ void PermissaoWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto
   connect(tab_permissoes, SIGNAL(s_linhasRemovidas(void)), this, SLOT(removerPermissoes(void)));
 
   //Preenche os campos do formulario com os atributos do objeto
-  nome_edt->setText(QString::fromUtf8(objeto->getName(true)));
-  comentario_edt->setText(QString::fromUtf8(objeto->getTypeName()));
+  name_edt->setText(QString::fromUtf8(objeto->getName(true)));
+  comment_edt->setText(QString::fromUtf8(objeto->getTypeName()));
   tipo_obj=objeto->getObjectType();
 
   /* Faz uma varredura usando os privilégios disponíveis para os objetos.
@@ -211,7 +211,7 @@ void PermissaoWidget::definirAtributos(DatabaseModel *modelo, BaseObject *objeto
 void PermissaoWidget::selecionarPapel(void)
 {
  selecaoobjetos_wgt->definirObjetoVisivel(OBJ_ROLE, true);
- selecaoobjetos_wgt->definirModelo(this->modelo);
+ selecaoobjetos_wgt->definirModelo(this->model);
  selecaoobjetos_wgt->show();
 }
 
@@ -225,7 +225,7 @@ void PermissaoWidget::selecionarPermissao(int idx_perm)
 
 void PermissaoWidget::listarPermissoes(void)
 {
- if(modelo)
+ if(model)
  {
   vector<Permission *> permissoes;
   Permission *perm=NULL;
@@ -233,7 +233,7 @@ void PermissaoWidget::listarPermissoes(void)
   QString str_aux;
 
   //Obtém as permissões relacionadas ao objeto armazenando em uma lista
-  modelo->getPermissions(this->objeto, permissoes);
+  model->getPermissions(this->object, permissoes);
   qtd=permissoes.size();
 
   /* Disconecta o sinal linhasRemovidas da tabela de permissões para remover
@@ -330,13 +330,13 @@ void PermissaoWidget::adicionarPermissao(void)
  try
  {
   //Aloca uma permissão para o objeto
-  perm_aux=new Permission(this->objeto);
+  perm_aux=new Permission(this->object);
 
   //Configura a nova permissão criada
   configurarPermissao(perm_aux);
 
   //Adiciona a permissão ao modelo
-  modelo->addPermission(perm_aux);
+  model->addPermission(perm_aux);
 
   //Atualiza a lista de permissões
   listarPermissoes();
@@ -353,7 +353,7 @@ void PermissaoWidget::adicionarPermissao(void)
      desalocada da memória */
   if(perm_aux)
   {
-   modelo->removePermission(perm_aux);
+   model->removePermission(perm_aux);
    delete(perm_aux);
   }
 
@@ -375,12 +375,12 @@ void PermissaoWidget::atualizarPermissao(void)
  try
  {
   //Aloca uma nova permissão para ser configurada
-  perm_aux=new Permission(this->objeto);
+  perm_aux=new Permission(this->object);
 
   /* Cria uma permissão de backup. Esta receberá os
      os valores atuais da permissão que está sendo editada
      pois em caso de erro seus atributos originais são restaurados */
-  perm_bkp=new Permission(this->objeto);
+  perm_bkp=new Permission(this->object);
   (*perm_bkp)=(*permissao);
 
   //Configura a nova permissão com os atributos preenchidos no formulário
@@ -389,13 +389,13 @@ void PermissaoWidget::atualizarPermissao(void)
   /* Tenta obter o índice de uma permissão no modelo na qual
      suas configurações conincidam com as configurações da
      permissão recém configurada (perm_aux) */
-  idx_perm=modelo->getPermissionIndex(perm_aux);
+  idx_perm=model->getPermissionIndex(perm_aux);
 
   /* Caso o índice seja negativo isso indica que a configuração da permissão auxiliar (perm_aux) não
      se assemelha a nehuma permissão no modelo. Já se o índice for positivo e a permissão no
      índice seja a mesma que está sendo edita (permissao) isso indica que a permissão auxiliar é
      igual   permissão atual, podendo claramente ser atualizada. */
-  if(idx_perm < 0 || (idx_perm >=0 && modelo->getObject(idx_perm,OBJ_PERMISSION)==permissao))
+  if(idx_perm < 0 || (idx_perm >=0 && model->getObject(idx_perm,OBJ_PERMISSION)==permissao))
   {
    /* Copia os atributos da permissão auxiliar para a permissão atual
       efetivando as alterações */
@@ -489,7 +489,7 @@ void PermissaoWidget::editarPermissao(void)
 void PermissaoWidget::removerPermissao(void)
 {
  //Remove a permissão atualmente selecionada
- modelo->removePermission(permissao);
+ model->removePermission(permissao);
  //Limpa o formulário e desabilita os botões de edição
  cancelarOperacao();
  permissao=NULL;
@@ -502,7 +502,7 @@ void PermissaoWidget::removerPermissao(void)
 void PermissaoWidget::removerPermissoes(void)
 {
  //Remove todas as permissões relacionadas ao objeto
- modelo->removePermissions(objeto);
+ model->removePermissions(object);
  cancelarOperacao();
 }
 

@@ -1,6 +1,6 @@
 #include "indicewidget.h"
 
-IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_INDEX)
+IndiceWidget::IndiceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 {
  try
  {
@@ -42,25 +42,25 @@ IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_INDEX)
   grid->addWidget(sel_classe_op, 2,1,1,3);
   grid->addWidget(tab_elementos, 5,0,1,4);
 
-  configurarLayouFormulario(indice_grid, OBJ_INDEX);
-  janela_pai->setMinimumSize(600, 640);
+  configureFormLayout(indice_grid, OBJ_INDEX);
+  parent_form->setMinimumSize(600, 640);
 
   IndexingType::getTypes(lista);
   tipo_index_cmb->addItems(lista);
 
   //Define os campos exclusivos para cada versão
-  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, SchemaParser::PGSQL_VERSION_81)].push_back(tipo_index_lbl);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_82)].push_back(concorrente_chk);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_83)].push_back(ordenacao_lbl);
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(atual_rapida_chk);
+  mapa_campos[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_81)].push_back(tipo_index_lbl);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(concorrente_chk);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(ordenacao_lbl);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(atual_rapida_chk);
   mapa_valores[tipo_index_lbl].push_back(~IndexingType(IndexingType::rtree));
 
   //Gera o frame de alerta
-  frame=gerarFrameAlertaVersao(mapa_campos, &mapa_valores);
+  frame=generateVersionWarningFrame(mapa_campos, &mapa_valores);
   indice_grid->addWidget(frame, indice_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
   connect(tab_elementos, SIGNAL(s_linhaAdicionada(int)), this, SLOT(manipularElemento(int)));
   connect(tab_elementos, SIGNAL(s_linhaAtualizada(int)), this, SLOT(manipularElemento(int)));
   connect(tab_elementos, SIGNAL(s_linhaEditada(int)), this, SLOT(editarElemento(int)));
@@ -76,7 +76,7 @@ IndiceWidget::IndiceWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_INDEX)
 
 void IndiceWidget::hideEvent(QHideEvent *evento)
 {
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 
  exp_condicional_txt->clear();
  coluna_cmb->clear();
@@ -106,10 +106,10 @@ void IndiceWidget::atualizarComboColunas(void)
 
   /* Varre a lista de colunas da tabela inserindo-as
      no combo box do formulário */
-  qtd_col=tabela->getColumnCount();
+  qtd_col=table->getColumnCount();
   for(i=0; i < qtd_col; i++)
   {
-   coluna=tabela->getColumn(i);
+   coluna=table->getColumn(i);
    coluna_cmb->addItem(QString::fromUtf8(coluna->getName()),
                        QVariant::fromValue<void *>(coluna));
   }
@@ -257,7 +257,7 @@ void IndiceWidget::selecionarObjetoElemento(void)
  expressao_rb->blockSignals(false);
 }
 
-void IndiceWidget::definirAtributos(DatabaseModel *modelo, Table *tabela_pai, OperationList *lista_op, Index *indice)
+void IndiceWidget::setAttributes(DatabaseModel *modelo, Table *tabela_pai, OperationList *lista_op, Index *indice)
 {
  unsigned i, qtd;
 
@@ -265,7 +265,7 @@ void IndiceWidget::definirAtributos(DatabaseModel *modelo, Table *tabela_pai, Op
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, indice, tabela_pai);
+ BaseObjectWidget::setAttributes(modelo, lista_op, indice, tabela_pai);
 
  //Define o modelo de banco de dados do seletor de classe de operadores
  sel_classe_op->definirModelo(modelo);
@@ -297,7 +297,7 @@ void IndiceWidget::definirAtributos(DatabaseModel *modelo, Table *tabela_pai, Op
  }
 }
 
-void IndiceWidget::aplicarConfiguracao(void)
+void IndiceWidget::applyConfiguration(void)
 {
  try
  {
@@ -305,10 +305,10 @@ void IndiceWidget::aplicarConfiguracao(void)
   unsigned i, qtd;
   IndexElement elem;
 
-  iniciarConfiguracao<Index>();
+  startConfiguration<Index>();
 
   //Obtém a referência ao índice que está sendo criado/editado
-  indice=dynamic_cast<Index *>(this->objeto);
+  indice=dynamic_cast<Index *>(this->object);
 
   //Configura no índice os valores preenchidos no formulário
   indice->setIndexAttribute(Index::FAST_UPDATE, atual_rapida_chk->isChecked());
@@ -341,15 +341,15 @@ void IndiceWidget::aplicarConfiguracao(void)
   }
 
   //Aplica as configurações básicas
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

@@ -1,13 +1,13 @@
 #include "caixatextowidget.h"
 
-CaixaTextoWidget::CaixaTextoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_TEXTBOX)
+CaixaTextoWidget::CaixaTextoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TEXTBOX)
 {
  Ui_CaixaTextoWidget::setupUi(this);
- configurarLayouFormulario(caixatexto_grid, OBJ_TEXTBOX);
- connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+ configureFormLayout(caixatexto_grid, OBJ_TEXTBOX);
+ connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
  connect(sel_cor_tb, SIGNAL(clicked(void)), this, SLOT(selecionarCorTexto(void)));
- janela_pai->definirBotoes(CaixaMensagem::BOTAO_OK_CANCELAR);
- janela_pai->setMinimumSize(500,250);
+ parent_form->definirBotoes(CaixaMensagem::BOTAO_OK_CANCELAR);
+ parent_form->setMinimumSize(500,250);
 }
 
 void CaixaTextoWidget::hideEvent(QHideEvent *evento)
@@ -24,10 +24,10 @@ void CaixaTextoWidget::hideEvent(QHideEvent *evento)
  sel_cor_tb->setPalette(palette);
 
  //Executa o método que trata o evento de esconder da classe superior
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
-void CaixaTextoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Textbox *caixa_texto, float px_objeto, float py_objeto)
+void CaixaTextoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Textbox *caixa_texto, float px_objeto, float py_objeto)
 {
  /* Caso a caixa de texto esteja alocada, preenche o formulário
     com os valores deste objeto */
@@ -44,7 +44,7 @@ void CaixaTextoWidget::definirAtributos(DatabaseModel *modelo, OperationList *li
  }
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, caixa_texto, NULL, px_objeto, py_objeto);
+ BaseObjectWidget::setAttributes(modelo, lista_op, caixa_texto, NULL, px_objeto, py_objeto);
 }
 
 void CaixaTextoWidget::selecionarCorTexto(void)
@@ -62,15 +62,15 @@ void CaixaTextoWidget::selecionarCorTexto(void)
  }
 }
 
-void CaixaTextoWidget::aplicarConfiguracao(void)
+void CaixaTextoWidget::applyConfiguration(void)
 {
  try
  {
   Textbox *caixa=NULL;
 
-  iniciarConfiguracao<Textbox>();
+  startConfiguration<Textbox>();
 
-  caixa=dynamic_cast<Textbox *>(this->objeto);
+  caixa=dynamic_cast<Textbox *>(this->object);
   //caixa->definirPosicaoObjeto(QPointF(this->px_objeto, this->py_objeto));
   caixa->setComment(texto_txt->toPlainText());
   caixa->setTextAttribute(Textbox::ITALIC_TXT, italico_chk->isChecked());
@@ -78,15 +78,15 @@ void CaixaTextoWidget::aplicarConfiguracao(void)
   caixa->setTextAttribute(Textbox::UNDERLINE_TXT, sublinhado_chk->isChecked());
   caixa->setTextColor(sel_cor_tb->palette().color(QPalette::Button));
 
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

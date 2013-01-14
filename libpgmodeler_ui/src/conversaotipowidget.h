@@ -22,11 +22,11 @@
 #ifndef CONVERSAOTIPO_WIDGET_H
 #define CONVERSAOTIPO_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "tipopgsqlwidget.h"
 #include "ui_conversaotipowidget.h"
 
-class ConversaoTipoWidget: public ObjetoBaseWidget, public Ui::ConversaoTipoWidget {
+class ConversaoTipoWidget: public BaseObjectWidget, public Ui::ConversaoTipoWidget {
  Q_OBJECT
 
  private:
@@ -39,13 +39,13 @@ class ConversaoTipoWidget: public ObjetoBaseWidget, public Ui::ConversaoTipoWidg
 
  public:
    ConversaoTipoWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Cast *conv_tipo);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Cast *conv_tipo);
 
  private slots:
    void hideEvent(QHideEvent *);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

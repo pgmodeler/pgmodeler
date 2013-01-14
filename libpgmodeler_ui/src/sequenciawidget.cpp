@@ -1,6 +1,6 @@
 #include "sequenciawidget.h"
 
-SequenciaWidget::SequenciaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_SEQUENCE)
+SequenciaWidget::SequenciaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SEQUENCE)
 {
  try
  {
@@ -15,21 +15,21 @@ SequenciaWidget::SequenciaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_
   sequencia_grid->addWidget(sel_coluna,3,1,1,3);
 
   //Define os campos exclusivos para cada versão
-  mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_83)].push_back(possuidora_lbl);
+  mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(possuidora_lbl);
 
   //Gera o frame de alerta
-  frame=gerarFrameAlertaVersao(mapa_campos);
+  frame=generateVersionWarningFrame(mapa_campos);
   sequencia_grid->addWidget(frame, sequencia_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 
-  configurarLayouFormulario(sequencia_grid, OBJ_SEQUENCE);
+  configureFormLayout(sequencia_grid, OBJ_SEQUENCE);
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-  janela_pai->resize(540, 410);
-  janela_pai->setMinimumWidth(540);
-  janela_pai->setMinimumHeight(430);
-  janela_pai->setMaximumHeight(430);
+  parent_form->resize(540, 410);
+  parent_form->setMinimumWidth(540);
+  parent_form->setMinimumHeight(430);
+  parent_form->setMaximumHeight(430);
  }
  catch(Exception &e)
  {
@@ -41,10 +41,10 @@ SequenciaWidget::SequenciaWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_
 void SequenciaWidget::hideEvent(QHideEvent *evento)
 {
  sel_coluna->removerObjetoSelecionado();
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
-void SequenciaWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Sequence *sequencia)
+void SequenciaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Sequence *sequencia)
 {
  sel_coluna->definirModelo(modelo);
 
@@ -69,18 +69,18 @@ void SequenciaWidget::definirAtributos(DatabaseModel *modelo, OperationList *lis
  }
 
  //Preenchendo os campos básicos do formulário com os atributos da sequência
- ObjetoBaseWidget::definirAtributos(modelo,lista_op,sequencia);
+ BaseObjectWidget::setAttributes(modelo,lista_op,sequencia);
 }
 //---------------------------------------------------------
-void SequenciaWidget::aplicarConfiguracao(void)
+void SequenciaWidget::applyConfiguration(void)
 {
  try
  {
   Sequence *sequencia=NULL;
-  iniciarConfiguracao<Sequence>();
+  startConfiguration<Sequence>();
 
   //Obtém a referêni   sequência que está sendo editada/criada
-  sequencia=dynamic_cast<Sequence *>(this->objeto);
+  sequencia=dynamic_cast<Sequence *>(this->object);
 
   sequencia->setCycle(ciclica_chk->isChecked());
   sequencia->setValues(minimo_edt->text(), maximo_edt->text(), incremento_edt->text(),
@@ -88,15 +88,15 @@ void SequenciaWidget::aplicarConfiguracao(void)
   sequencia->setOwnerColumn(dynamic_cast<Column *>(sel_coluna->obterObjeto()));
 
   //Finaliza a configuração
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

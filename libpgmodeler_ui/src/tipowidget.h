@@ -22,7 +22,7 @@
 #ifndef TIPO_WIDGET_H
 #define TIPO_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_tipowidget.h"
 #include "tipopgsqlwidget.h"
 #include "tabelaobjetoswidget.h"
@@ -37,7 +37,7 @@
 #include <QMetaType>
 Q_DECLARE_METATYPE(Parameter)
 
-class TipoWidget: public ObjetoBaseWidget, public Ui::TipoWidget {
+class TipoWidget: public BaseObjectWidget, public Ui::TipoWidget {
  Q_OBJECT
 
  private:
@@ -55,7 +55,7 @@ class TipoWidget: public ObjetoBaseWidget, public Ui::TipoWidget {
  public:
    TipoWidget(QWidget * parent = 0);
    //~TipoWidget(void);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Type *tipo);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Type *tipo);
 
  private slots:
    void hideEvent(QHideEvent *);
@@ -73,7 +73,7 @@ class TipoWidget: public ObjetoBaseWidget, public Ui::TipoWidget {
    void manipularAtributo(int res);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

@@ -1,6 +1,6 @@
 #include "bancodadoswidget.h"
 
-BancoDadosWidget::BancoDadosWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_DATABASE)
+BancoDadosWidget::BancoDadosWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DATABASE)
 {
  map<QString, vector<QWidget *> > mapa_campos;
  QFrame *frame=NULL;
@@ -10,27 +10,27 @@ BancoDadosWidget::BancoDadosWidget(QWidget *parent): ObjetoBaseWidget(parent, OB
 
  Ui_BancoDadosWidget::setupUi(this);
 
- connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
- configurarLayouFormulario(bancodados_grid, OBJ_DATABASE);
+ connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+ configureFormLayout(bancodados_grid, OBJ_DATABASE);
 
  //Define os campos exclusivos para cada versão
- mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_83)].push_back(limconexao_lbl);
- mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(lccollate_lbl);
- mapa_campos[gerarIntervaloVersoes(APOS_VERSAO, SchemaParser::PGSQL_VERSION_84)].push_back(lcctype_lbl);
+ mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(connlim_lbl);
+ mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(lccollate_lbl);
+ mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(lcctype_lbl);
 
  //Gera o frame de alerta
- frame=gerarFrameAlertaVersao(mapa_campos);
+ frame=generateVersionWarningFrame(mapa_campos);
  bancodados_grid->addWidget(frame, bancodados_grid->count()+1, 0, 1, 0);
  frame->setParent(this);
 
  //Define as alturas mínimas e máxima do formulário
- janela_pai->setMinimumWidth(530);
- janela_pai->setMinimumHeight(420);
- janela_pai->setMaximumHeight(420);
+ parent_form->setMinimumWidth(530);
+ parent_form->setMinimumHeight(420);
+ parent_form->setMaximumHeight(420);
 
  //Obtém os nomes das codificações e as insere no combo de codificação
  EncodingType::getTypes(codificacoes);
- codificacao_cmb->addItems(codificacoes);
+ encoding_cmb->addItems(codificacoes);
 
  //Obtém todas as localizações padrão e as armazena em uma lista de QString
  for(i=QLocale::C; i <= QLocale::Chewa; i++)
@@ -54,21 +54,21 @@ BancoDadosWidget::BancoDadosWidget(QWidget *parent): ObjetoBaseWidget(parent, OB
  lcctype_cmb->addItems(lista_loc);
 }
 
-void BancoDadosWidget::definirAtributos(DatabaseModel *modelo)
+void BancoDadosWidget::setAttributes(DatabaseModel *modelo)
 {
  if(modelo)
  {
   int idx;
 
   //Configura os atributos de limite de conexão, banco modelo e autor
-  limconexao_sb->setValue(modelo->getConnectionLimit());
-  bdmodelo_edt->setText(QString::fromUtf8(modelo->getTemplateDB()));
-  autor_edt->setText(QString::fromUtf8(modelo->getAuthor()));
+  connlim_sb->setValue(modelo->getConnectionLimit());
+  templatedb_edt->setText(QString::fromUtf8(modelo->getTemplateDB()));
+  author_edt->setText(QString::fromUtf8(modelo->getAuthor()));
 
   //Configura o combo de codificação com a codificação atual
-  idx=codificacao_cmb->findText(~modelo->getEncoding());
+  idx=encoding_cmb->findText(~modelo->getEncoding());
   if(idx < 0) idx=0;
-  codificacao_cmb->setCurrentIndex(idx);
+  encoding_cmb->setCurrentIndex(idx);
 
   //Configura as localizações LC_COLLATE E LC_CTYPE de acordo com a conf. atual
   idx=lccollate_cmb->findText(modelo->getLocalization(LC_COLLATE));
@@ -80,39 +80,39 @@ void BancoDadosWidget::definirAtributos(DatabaseModel *modelo)
   lcctype_cmb->setCurrentIndex(idx);
 
   //Define os atributos do formulários e da janela pai
-  ObjetoBaseWidget::definirAtributos(modelo, NULL, modelo);
+  BaseObjectWidget::setAttributes(modelo, NULL, modelo);
  }
 }
 
-void BancoDadosWidget::aplicarConfiguracao(void)
+void BancoDadosWidget::applyConfiguration(void)
 {
  try
  {
   //Aplica as configurações básicas do objeto
-  ObjetoBaseWidget::aplicarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
 
   //Define o autor do modelo
-  modelo->setAuthor(autor_edt->text().toUtf8());
+  model->setAuthor(author_edt->text().toUtf8());
 
   /* Define a condificação do modelo de acordo com a selecionada no formulário
      caso a codifição 'Padrão' seja selecionada o modelo usará a codificação padrão
      do SGBD em que for executado o script sql gerado */
-  modelo->setEncoding(EncodingType(codificacao_cmb->currentText()));
+  model->setEncoding(EncodingType(encoding_cmb->currentText()));
 
   /* Define as localização LC_COLLATE e LC_CTYPE do modelo de acordo com a selecionada
      no formulário caso a localização 'Padrão' seja selecionada o modelo usará a localização
      padrão do SGBD em que for executado o script sql gerado */
   if(lccollate_cmb->currentIndex() > 0)
-   modelo->setLocalization(LC_COLLATE, lccollate_cmb->currentText());
+   model->setLocalization(LC_COLLATE, lccollate_cmb->currentText());
   else
-   modelo->setLocalization(LC_COLLATE, "");
+   model->setLocalization(LC_COLLATE, "");
 
   if(lcctype_cmb->currentIndex() > 0)
-   modelo->setLocalization(LC_CTYPE, lcctype_cmb->currentText());
+   model->setLocalization(LC_CTYPE, lcctype_cmb->currentText());
   else
-   modelo->setLocalization(LC_CTYPE, "");
+   model->setLocalization(LC_CTYPE, "");
 
-  finalizarConfiguracao();
+  finishConfiguration();
  }
  catch(Exception &e)
  {

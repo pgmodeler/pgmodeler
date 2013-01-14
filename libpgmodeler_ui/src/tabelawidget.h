@@ -22,12 +22,12 @@
 #ifndef TABELA_WIDGET_H
 #define TABELA_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_tabelawidget.h"
 #include "tabelaobjetoswidget.h"
 #include "tableview.h"
 
-class TabelaWidget: public ObjetoBaseWidget, public Ui::TabelaWidget {
+class TabelaWidget: public BaseObjectWidget, public Ui::TabelaWidget {
  Q_OBJECT
 
  private:
@@ -45,7 +45,7 @@ class TabelaWidget: public ObjetoBaseWidget, public Ui::TabelaWidget {
    void listarObjetos(ObjectType tipo_obj);
 
    //Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
-   void exibirDadosObjeto(TableObject *objeto, int idx_lin);
+   void exibirDadosObjeto(TableObject *object, int idx_lin);
 
    //Seleciona a tabela de objetos de acordo com o tipo passado
    TabelaObjetosWidget *selecionarTabelaObjetos(ObjectType tipo_obj);
@@ -58,7 +58,7 @@ class TabelaWidget: public ObjetoBaseWidget, public Ui::TabelaWidget {
 
  public:
    TabelaWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Table *tabela, float pos_x, float pos_y);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Table *table, float pos_x, float pos_y);
 
  private slots:
   void hideEvent(QHideEvent *);
@@ -73,8 +73,8 @@ class TabelaWidget: public ObjetoBaseWidget, public Ui::TabelaWidget {
   void moverObjetos(int idx1, int idx2);
 
  public slots:
-   void aplicarConfiguracao(void);
-   void cancelarConfiguracao(void);
+   void applyConfiguration(void);
+   void cancelConfiguration(void);
 };
 
 #endif

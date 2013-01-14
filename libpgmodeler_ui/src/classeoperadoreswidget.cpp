@@ -1,6 +1,6 @@
 #include "classeoperadoreswidget.h"
 
-ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_OPCLASS)
+ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OPCLASS)
 {
  try
  {
@@ -47,7 +47,7 @@ ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidge
   grid->addWidget(tipo_dado,4,0,1,5);
   grid->addWidget(elementos_grp,5,0,1,5);
   this->setLayout(grid);
-  configurarLayouFormulario(grid, OBJ_OPCLASS);
+  configureFormLayout(grid, OBJ_OPCLASS);
 
   grid=dynamic_cast<QGridLayout *>(elementos_grp->layout());
   grid->addWidget(sel_funcao, 1,1,1,4);
@@ -55,7 +55,7 @@ ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidge
   grid->addWidget(tipo_armazenamento, 5,0,1,5);
   grid->addWidget(tab_elementos, 6,0,1,4);
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
   connect(tipo_elem_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selecionarTipoElemento(int)));
 
   //Conectando os sinais emitidos pela tabela de elementos ao slots de manipulação de elementos
@@ -63,7 +63,7 @@ ClasseOperadoresWidget::ClasseOperadoresWidget(QWidget *parent): ObjetoBaseWidge
   connect(tab_elementos, SIGNAL(s_linhaAtualizada(int)), this, SLOT(manipularElemento(int)));
   connect(tab_elementos, SIGNAL(s_linhaEditada(int)), this, SLOT(editarElemento(int)));
 
-  janela_pai->setMinimumSize(540, 590);
+  parent_form->setMinimumSize(540, 590);
   selecionarTipoElemento(0);
 
   //Configura o combobox do formulário listando todos os tipos de indexação do PostgreSQL
@@ -88,7 +88,7 @@ void ClasseOperadoresWidget::hideEvent(QHideEvent *evento)
  selecionarTipoElemento(0);
 
  //Executa o método que trata o evento de esconder da classe superior
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
 void ClasseOperadoresWidget::selecionarTipoElemento(int tipo)
@@ -127,7 +127,7 @@ void ClasseOperadoresWidget::editarElemento(int idx_linha)
  sel_operador->definirObjeto(elem.getOperator());
  rechecar_chk->setChecked(elem.isRecheck());
  num_suporte_sb->setValue(elem.getStrategyNumber());
- tipo_armazenamento->definirAtributos(elem.getStorage(),this->modelo);
+ tipo_armazenamento->definirAtributos(elem.getStorage(),this->model);
 }
 
 void ClasseOperadoresWidget::exibirDadosElemento(OperatorClassElement elem, int idx_linha)
@@ -230,13 +230,13 @@ void ClasseOperadoresWidget::manipularElemento(int idx_linha)
  }
 }
 
-void ClasseOperadoresWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, OperatorClass *classe_op)
+void ClasseOperadoresWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, OperatorClass *classe_op)
 {
  PgSQLType tipo;
  unsigned i, qtd;
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, classe_op);
+ BaseObjectWidget::setAttributes(modelo, lista_op, classe_op);
 
  //Configura o modelo de objetos de referência dos widgets
  sel_familiaop->definirModelo(modelo);
@@ -275,17 +275,17 @@ void ClasseOperadoresWidget::definirAtributos(DatabaseModel *modelo, OperationLi
  tipo_dado->definirAtributos(tipo, modelo);
 }
 
-void ClasseOperadoresWidget::aplicarConfiguracao(void)
+void ClasseOperadoresWidget::applyConfiguration(void)
 {
  try
  {
   OperatorClass *classe_op=NULL;
   unsigned i, qtd;
 
-  iniciarConfiguracao<OperatorClass>();
+  startConfiguration<OperatorClass>();
 
   //Obtém a referência    classe de objetos que está sendo manipulada
-  classe_op=dynamic_cast<OperatorClass *>(this->objeto);
+  classe_op=dynamic_cast<OperatorClass *>(this->object);
 
   //Atribui os valores configurados no formulário    classe de operadores
   classe_op->setDefault(classe_op->isDefault());
@@ -302,15 +302,15 @@ void ClasseOperadoresWidget::aplicarConfiguracao(void)
    classe_op->addElement(tab_elementos->obterDadoLinha(i).value<OperatorClassElement>());
 
   //Aplica e finaliza a configuração da classe de operadores
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

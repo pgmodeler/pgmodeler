@@ -1,6 +1,6 @@
 #include "parametrowidget.h"
 
-ParametroWidget::ParametroWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_PARAMETER)
+ParametroWidget::ParametroWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_PARAMETER)
 {
  try
  {
@@ -23,11 +23,11 @@ ParametroWidget::ParametroWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_
   parametro_grid->addItem(hspacer, 1, 3, 1, 1);
   parametro_grid->addWidget(tipo_pgsql,2,0,1,4);
 
-  configurarLayouFormulario(parametro_grid, OBJ_PARAMETER);
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  configureFormLayout(parametro_grid, OBJ_PARAMETER);
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-  janela_pai->setMinimumSize(500, 270);
-  janela_pai->setMaximumSize(16777215, 270);
+  parent_form->setMinimumSize(500, 270);
+  parent_form->setMaximumSize(16777215, 270);
  }
  catch(Exception &e)
  {
@@ -42,10 +42,10 @@ void ParametroWidget::hideEvent(QHideEvent *evento)
  param_in_chk->setChecked(false);
  param_out_chk->setChecked(false);
  valorpadrao_edt->clear();
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
-void ParametroWidget::definirAtributos(Parameter param, DatabaseModel *modelo)
+void ParametroWidget::setAttributes(Parameter param, DatabaseModel *modelo)
 {
  this->parametro=param;
 
@@ -55,10 +55,10 @@ void ParametroWidget::definirAtributos(Parameter param, DatabaseModel *modelo)
  valorpadrao_edt->setText(QString::fromUtf8(param.getDefaultValue()));
  tipo_pgsql->definirAtributos(param.getType(), modelo);
 
- ObjetoBaseWidget::definirAtributos(modelo,NULL,&this->parametro);
+ BaseObjectWidget::setAttributes(modelo,NULL,&this->parametro);
 }
 
-void ParametroWidget::aplicarConfiguracao(void)
+void ParametroWidget::applyConfiguration(void)
 {
  try
  {
@@ -72,12 +72,12 @@ void ParametroWidget::aplicarConfiguracao(void)
 
   /* Efetiva as configurações chamando o método de
      aplicação das configurações da classe pai */
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

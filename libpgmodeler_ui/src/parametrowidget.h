@@ -23,11 +23,11 @@
 #define PARAMETRO_WIDGET_H
 
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_parametrowidget.h"
 #include "tipopgsqlwidget.h"
 
-class ParametroWidget: public ObjetoBaseWidget, public Ui::ParametroWidget {
+class ParametroWidget: public BaseObjectWidget, public Ui::ParametroWidget {
  Q_OBJECT
 
  private:
@@ -38,7 +38,7 @@ class ParametroWidget: public ObjetoBaseWidget, public Ui::ParametroWidget {
 
  public:
    ParametroWidget(QWidget * parent = 0);
-   void definirAtributos(Parameter parametro, DatabaseModel *modelo);
+   void setAttributes(Parameter parametro, DatabaseModel *model);
 
    /* Retorna a cópia do parâmetro configurado. Este método deve
       ser usado para se ter acesso ao parâmetro configurado */
@@ -48,7 +48,7 @@ class ParametroWidget: public ObjetoBaseWidget, public Ui::ParametroWidget {
    void hideEvent(QHideEvent *);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

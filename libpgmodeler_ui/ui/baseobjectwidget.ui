@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ObjetoBaseWidget</class>
- <widget class="QWidget" name="ObjetoBaseWidget">
+ <class>BaseObjectWidget</class>
+ <widget class="QWidget" name="BaseObjectWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLabel" name="nome_lbl">
+  <widget class="QLabel" name="name_lbl">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -38,7 +38,7 @@
     <string>Name:</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="nome_edt">
+  <widget class="QLineEdit" name="name_edt">
    <property name="geometry">
     <rect>
      <x>82</x>
@@ -63,7 +63,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="iconeobj_lbl">
+  <widget class="QLabel" name="obj_icon_lbl">
    <property name="geometry">
     <rect>
      <x>200</x>
@@ -100,7 +100,7 @@
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="comentario_lbl">
+  <widget class="QLabel" name="comment_lbl">
    <property name="geometry">
     <rect>
      <x>8</x>
@@ -125,7 +125,7 @@
     <string>Comment:</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="comentario_edt">
+  <widget class="QLineEdit" name="comment_edt">
    <property name="geometry">
     <rect>
      <x>80</x>
@@ -160,7 +160,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QLabel" name="esptabela_lbl">
+  <widget class="QLabel" name="tablespace_lbl">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -173,7 +173,7 @@
     <string>Tablespace:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="dono_lbl">
+  <widget class="QLabel" name="owner_lbl">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -186,7 +186,7 @@
     <string>Owner:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="esquema_lbl">
+  <widget class="QLabel" name="schema_lbl">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -218,7 +218,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QLabel" name="permissoes_lbl">
+  <widget class="QLabel" name="permissions_lbl">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -231,7 +231,7 @@
     <string>Permissions:</string>
    </property>
   </widget>
-  <widget class="QToolButton" name="edt_permissoes_tb">
+  <widget class="QToolButton" name="edt_perms_tb">
    <property name="geometry">
     <rect>
      <x>90</x>
@@ -275,7 +275,7 @@
     </size>
    </property>
   </widget>
-  <widget class="QFrame" name="obj_protegido_frm">
+  <widget class="QFrame" name="protected_obj_frm">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -354,7 +354,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QLabel" name="objeto_pai_lbl">
+  <widget class="QLabel" name="parent_obj_lbl">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -367,7 +367,7 @@
     <string>Parent Object:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="iconeobjpai_lbl">
+  <widget class="QLabel" name="parent_obj_icon_lbl">
    <property name="geometry">
     <rect>
      <x>230</x>
@@ -404,7 +404,7 @@
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QTextEdit" name="objeto_pai_txt">
+  <widget class="QTextEdit" name="parent_obj_txt">
    <property name="geometry">
     <rect>
      <x>80</x>

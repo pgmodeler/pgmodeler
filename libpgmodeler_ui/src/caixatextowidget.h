@@ -23,9 +23,9 @@
 #define CAIXATEXTO_WIDGET_H
 
 #include "ui_caixatextowidget.h"
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 
-class CaixaTextoWidget: public ObjetoBaseWidget, public Ui::CaixaTextoWidget {
+class CaixaTextoWidget: public BaseObjectWidget, public Ui::CaixaTextoWidget {
  Q_OBJECT
 
  private:
@@ -33,13 +33,13 @@ class CaixaTextoWidget: public ObjetoBaseWidget, public Ui::CaixaTextoWidget {
  public:
    CaixaTextoWidget(QWidget * parent = 0);
    void hideEvent(QHideEvent *evento);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Textbox *caixa_texto=NULL, float px_objeto=NAN, float py_objeto=NAN);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *caixa_texto=NULL, float object_px=NAN, float object_py=NAN);
 
  private slots:
   void selecionarCorTexto(void);
 
  public slots:
-  void aplicarConfiguracao(void);
+  void applyConfiguration(void);
 };
 
 #endif

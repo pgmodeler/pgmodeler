@@ -26,7 +26,7 @@
 #define TABELA_OBJETOS_WIDGET_H
 
 #include "ui_tabelaobjetoswidget.h"
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 
 class TabelaObjetosWidget: public QWidget, public Ui::TabelaObjetosWidget {
  Q_OBJECT

@@ -22,11 +22,11 @@
 #ifndef COLUNA_WIDGET_H
 #define COLUNA_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_colunawidget.h"
 #include "tipopgsqlwidget.h"
 
-class ColunaWidget: public ObjetoBaseWidget, public Ui::ColunaWidget {
+class ColunaWidget: public BaseObjectWidget, public Ui::ColunaWidget {
  Q_OBJECT
 
  private:
@@ -38,13 +38,13 @@ class ColunaWidget: public ObjetoBaseWidget, public Ui::ColunaWidget {
 
  public:
    ColunaWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, BaseObject *objeto_pai, OperationList *lista_op, Column *coluna);
+   void setAttributes(DatabaseModel *model, BaseObject *objeto_pai, OperationList *op_list, Column *coluna);
 
  private slots:
   void hideEvent(QHideEvent *);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

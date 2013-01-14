@@ -23,12 +23,12 @@
 #define FUNCAO_AGREGADA_WIDGET_H
 
 #include <QtGui>
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_funcaoagregacaowidget.h"
 #include "tipopgsqlwidget.h"
 #include "tabelaobjetoswidget.h"
 
-class FuncaoAgregacaoWidget: public ObjetoBaseWidget, public Ui::FuncaoAgregacaoWidget {
+class FuncaoAgregacaoWidget: public BaseObjectWidget, public Ui::FuncaoAgregacaoWidget {
  Q_OBJECT
 
  private:          //Widget de seleção de tipo de entrada da função
@@ -51,7 +51,7 @@ class FuncaoAgregacaoWidget: public ObjetoBaseWidget, public Ui::FuncaoAgregacao
 
  public:
    FuncaoAgregacaoWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Aggregate *funcao_ag);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Aggregate *funcao_ag);
 
  private slots:
   void hideEvent(QHideEvent *);
@@ -60,7 +60,7 @@ class FuncaoAgregacaoWidget: public ObjetoBaseWidget, public Ui::FuncaoAgregacao
   void manipularTipoDado(int linha);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif

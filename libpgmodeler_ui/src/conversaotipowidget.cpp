@@ -1,6 +1,6 @@
 #include "conversaotipowidget.h"
 
-ConversaoTipoWidget::ConversaoTipoWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_CAST)
+ConversaoTipoWidget::ConversaoTipoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 {
  try
  {
@@ -24,24 +24,24 @@ ConversaoTipoWidget::ConversaoTipoWidget(QWidget *parent): ObjetoBaseWidget(pare
   convtipo_grid->addWidget(tipo_dado_orig,2,0,1,4);
   convtipo_grid->addWidget(tipo_dado_dest,3,0,1,4);
 
-  configurarLayouFormulario(convtipo_grid, OBJ_CAST);
+  configureFormLayout(convtipo_grid, OBJ_CAST);
 
   /* Deixa como somente-leitura o campo de nome do objeto pois,
      o nome de conversões de tipo são geradas automaticamente */
-  nome_edt->setReadOnly(true);
-  fonte=nome_edt->font();
+  name_edt->setReadOnly(true);
+  fonte=name_edt->font();
   fonte.setItalic(true);
-  nome_edt->setFont(fonte);
+  name_edt->setFont(fonte);
 
   //Gera o frame de informação
-  frame=gerarFrameInformacao(trUtf8("The function to be assigned to a cast from <em><strong>typeA</strong></em> to <em><strong>typeB</strong></em> must have the following signature: <em><strong>typeB</strong> function(<strong>typeA</strong>, integer, boolean)</em>."));
+  frame=generateInformationFrame(trUtf8("The function to be assigned to a cast from <em><strong>typeA</strong></em> to <em><strong>typeB</strong></em> must have the following signature: <em><strong>typeB</strong> function(<strong>typeA</strong>, integer, boolean)</em>."));
   convtipo_grid->addWidget(frame, convtipo_grid->count()+1, 0, 1, 0);
   frame->setParent(this);
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-  janela_pai->setMinimumSize(530, 500);
-  janela_pai->setMaximumSize(16777215, 500);
+  parent_form->setMinimumSize(530, 500);
+  parent_form->setMaximumSize(16777215, 500);
  }
  catch(Exception &e)
  {
@@ -57,15 +57,15 @@ void ConversaoTipoWidget::hideEvent(QHideEvent *evento)
  sel_funcao_conv->removerObjetoSelecionado();
 
  //Executa o método que trata o evento de esconder da classe superior
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 //---------------------------------------------------------
-void ConversaoTipoWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Cast *conv_tipo)
+void ConversaoTipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Cast *conv_tipo)
 {
  PgSQLType tipo_orig, tipo_dest;
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, conv_tipo);
+ BaseObjectWidget::setAttributes(modelo, lista_op, conv_tipo);
  sel_funcao_conv->definirModelo(modelo);
 
  //Caso a conversão de tipo esteja alocada
@@ -93,16 +93,16 @@ void ConversaoTipoWidget::definirAtributos(DatabaseModel *modelo, OperationList 
  tipo_dado_dest->definirAtributos(tipo_dest,modelo);
 }
 
-void ConversaoTipoWidget::aplicarConfiguracao(void)
+void ConversaoTipoWidget::applyConfiguration(void)
 {
  try
  {
   Cast *conv_tipo=NULL;
 
-  iniciarConfiguracao<Cast>();
+  startConfiguration<Cast>();
 
   //Obtém a conversão a partir da refência ao objeto configurado
-  conv_tipo=dynamic_cast<Cast *>(this->objeto);
+  conv_tipo=dynamic_cast<Cast *>(this->object);
 
   //Configura os tipos de dados da conversão obtendo-os dos widgets de configuração de tipos
   conv_tipo->setDataType(Cast::SRC_TYPE, tipo_dado_orig->obterTipoPgSQL());
@@ -122,15 +122,15 @@ void ConversaoTipoWidget::aplicarConfiguracao(void)
   conv_tipo->setCastFunction(dynamic_cast<Function*>(sel_funcao_conv->obterObjeto()));
 
   //Aplica as configurações básicas
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

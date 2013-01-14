@@ -2,16 +2,16 @@
 #include "visaoobjetoswidget.h"
 extern VisaoObjetosWidget *selecaoobjetos_wgt;
 
-PapelWidget::PapelWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_ROLE)
+PapelWidget::PapelWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 {
  TabelaObjetosWidget *tab_obj=NULL;
  QGridLayout *grid=NULL;
  unsigned i;
 
  Ui_PapelWidget::setupUi(this);
- configurarLayouFormulario(papel_grid, OBJ_ROLE);
+ configureFormLayout(papel_grid, OBJ_ROLE);
 
- connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+ connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
  connect(membros_twg, SIGNAL(currentChanged(int)), this, SLOT(configurarSelecaoPapeis(void)));
 
  //Alocação e configuração das tabela de papéis membros
@@ -59,7 +59,7 @@ PapelWidget::PapelWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_ROLE)
   membros_twg->widget(i)->setLayout(grid);
  }
 
- janela_pai->setMinimumSize(500, 530);
+ parent_form->setMinimumSize(500, 530);
 }
 
 void PapelWidget::configurarSelecaoPapeis(void)
@@ -82,7 +82,7 @@ void PapelWidget::configurarSelecaoPapeis(void)
 void PapelWidget::selecionarPapelMembro(void)
 {
  selecaoobjetos_wgt->definirObjetoVisivel(OBJ_ROLE, true);
- selecaoobjetos_wgt->definirModelo(this->modelo);
+ selecaoobjetos_wgt->definirModelo(this->model);
  selecaoobjetos_wgt->show();
 }
 
@@ -117,10 +117,10 @@ void PapelWidget::hideEvent(QHideEvent *evento)
  senhacripto_chk->setChecked(false);
 
  //Executa o método que trata o evento de esconder da classe superior
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
-void PapelWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Role *papel)
+void PapelWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Role *papel)
 {
  if(papel)
  {
@@ -142,7 +142,7 @@ void PapelWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_o
  }
 
  //Define os atributos do formulários e da janela pai
- ObjetoBaseWidget::definirAtributos(modelo, lista_op, papel);
+ BaseObjectWidget::setAttributes(modelo, lista_op, papel);
 
  //Preenche a tabela de membros do papel
  preencherTabelaMembros();
@@ -199,7 +199,7 @@ void PapelWidget::exibirDadosPapel(Role *papel, unsigned idx_tabela, unsigned li
 void PapelWidget::preencherTabelaMembros(void)
 {
  //Caso exista um objeto a ser editado
- if(this->objeto)
+ if(this->object)
  {
   QString str_aux;
   Role *papel_aux=NULL, *papel=NULL;
@@ -207,7 +207,7 @@ void PapelWidget::preencherTabelaMembros(void)
            tipo_papeis[3]={ Role::REF_ROLE, Role::MEMBER_ROLE, Role::ADMIN_ROLE };
 
   //Converte a referência do objeto a ser editado em um referência a um papel
-  papel=dynamic_cast<Role *>(this->objeto);
+  papel=dynamic_cast<Role *>(this->object);
 
   /* O processo de preenchimento das tabelas se dá da seguinte forma:
       * Os membros do papel em cada tipo (PAPEL_REF, PAPEL_MEMBRO, PAPEL_ADMIN)
@@ -267,11 +267,11 @@ void PapelWidget::exibirDadosPapelSelecionado(void)
  /* Caso o objeto da seleção seja o mesmo do objeto sendo editado
     um erro será disparado pois o objeto não pode referenciar
     a ele mesmo */
- if(obj_sel && obj_sel==this->objeto)
+ if(obj_sel && obj_sel==this->object)
  {
   throw Exception(Exception::getErrorMessage(ERR_ROLE_REF_REDUNDANCY)
                                .arg(QString::fromUtf8(obj_sel->getName()))
-                               .arg(QString::fromUtf8(nome_edt->text())),
+                               .arg(QString::fromUtf8(name_edt->text())),
                  ERR_ROLE_REF_REDUNDANCY,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  //Se o objeto da seleção não existir na tabela exibe seus dados
@@ -292,13 +292,13 @@ void PapelWidget::exibirDadosPapelSelecionado(void)
   {
    throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_ROLE)
                                .arg(QString::fromUtf8(obj_sel->getName()))
-                               .arg(QString::fromUtf8(nome_edt->text())),
+                               .arg(QString::fromUtf8(name_edt->text())),
                  ERR_INS_DUPLIC_ROLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
   }
  }
 }
 
-void PapelWidget::aplicarConfiguracao(void)
+void PapelWidget::applyConfiguration(void)
 {
  Role *papel=NULL, *papel_aux=NULL;
  unsigned qtd, i, id_tipo,
@@ -307,11 +307,11 @@ void PapelWidget::aplicarConfiguracao(void)
  try
  {
   //Inicia configuração do papel, alocando-o caso seja um novo objeto
-  iniciarConfiguracao<Role>();
+  startConfiguration<Role>();
 
   /* Converte o objeto em edição para o tipo Papel, para se ter acesso
      ao métodos específicos da classe */
-  papel=dynamic_cast<Role *>(this->objeto);
+  papel=dynamic_cast<Role *>(this->object);
 
   //Configura o papel com os valores informados no formulário
   papel->setSysid(sysid_sb->value());
@@ -344,12 +344,12 @@ void PapelWidget::aplicarConfiguracao(void)
   }
 
   //Aplica a configuração ao objeto
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

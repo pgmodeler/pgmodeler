@@ -1,6 +1,6 @@
 #include "operadorwidget.h"
 
-OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_OPERATOR)
+OperadorWidget::OperadorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OPERATOR)
 {
  try
  {
@@ -23,7 +23,7 @@ OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_OP
   grid->addWidget(tipo_args[1],1,0);
 
   //Gera o frame de informação sobre a criação de operador unário
-  frame=gerarFrameInformacao(trUtf8("To create a unary operator it is necessary to specify as <strong><em>'any'</em></strong> one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator."));
+  frame=generateInformationFrame(trUtf8("To create a unary operator it is necessary to specify as <strong><em>'any'</em></strong> one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator."));
   grid->addWidget(frame, 2, 0);
   atributos_twg->widget(0)->setLayout(grid);
 
@@ -46,21 +46,21 @@ OperadorWidget::OperadorWidget(QWidget *parent): ObjetoBaseWidget(parent, OBJ_OP
   }
 
   //Gera o frame de alerta com os campos que são exclusivos para versões do postgresql
-  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, SchemaParser::PGSQL_VERSION_82)].push_back(op_ordenacao1_lbl);
-  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, SchemaParser::PGSQL_VERSION_82)].push_back(op_ordenacao2_lbl);
-  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, SchemaParser::PGSQL_VERSION_82)].push_back(op_menorque_lbl);
-  mapa_campos[gerarIntervaloVersoes(ATE_VERSAO, SchemaParser::PGSQL_VERSION_82)].push_back(op_maiorque_lbl);
-  frame=gerarFrameAlertaVersao(mapa_campos);
+  mapa_campos[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(op_ordenacao1_lbl);
+  mapa_campos[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(op_ordenacao2_lbl);
+  mapa_campos[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(op_menorque_lbl);
+  mapa_campos[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(op_maiorque_lbl);
+  frame=generateVersionWarningFrame(mapa_campos);
   grid->addWidget(frame, grid->count()+1, 0, 1, 0);
   frame->setParent(atributos_twg->widget(2));
 
-  configurarLayouFormulario(operador_grid, OBJ_OPERATOR);
+  configureFormLayout(operador_grid, OBJ_OPERATOR);
 
-  connect(janela_pai->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(aplicarConfiguracao(void)));
+  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-  janela_pai->resize(530, 560);
-  janela_pai->setMinimumWidth(530);
-  janela_pai->setMinimumHeight(560);
+  parent_form->resize(530, 560);
+  parent_form->setMinimumWidth(530);
+  parent_form->setMinimumHeight(560);
   //janela_pai->setMaximumHeight(560);
  }
  catch(Exception &e)
@@ -87,16 +87,16 @@ void OperadorWidget::hideEvent(QHideEvent *evento)
   sel_operadores[i]->removerObjetoSelecionado();
 
  atributos_twg->setCurrentIndex(0);
- ObjetoBaseWidget::hideEvent(evento);
+ BaseObjectWidget::hideEvent(evento);
 }
 
-void OperadorWidget::definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Operator *operador)
+void OperadorWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Operator *operador)
 {
  unsigned i;
  PgSQLType tipo_esq, tipo_dir;
 
  //Preenchendo os campos básicos do formulário com os atributos do operador
- ObjetoBaseWidget::definirAtributos(modelo,lista_op,operador);
+ BaseObjectWidget::setAttributes(modelo,lista_op,operador);
 
  //Define o modelo de objetos usado pelos seletores de função e operador
  for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
@@ -129,16 +129,16 @@ void OperadorWidget::definirAtributos(DatabaseModel *modelo, OperationList *list
  tipo_args[1]->definirAtributos(tipo_dir, modelo);
 }
 //---------------------------------------------------------
-void OperadorWidget::aplicarConfiguracao(void)
+void OperadorWidget::applyConfiguration(void)
 {
  try
  {
   unsigned i;
   Operator *operador=NULL;
-  iniciarConfiguracao<Operator>();
+  startConfiguration<Operator>();
 
   //Obtém a referêni   sequência que está sendo editada/criada
-  operador=dynamic_cast<Operator *>(this->objeto);
+  operador=dynamic_cast<Operator *>(this->object);
 
   /* Atribui os valores configurados no formulári  instância do
      operador que está sendo configurado */
@@ -158,15 +158,15 @@ void OperadorWidget::aplicarConfiguracao(void)
    operador->setOperator(dynamic_cast<Operator *>(sel_operadores[i]->obterObjeto()), i);
 
   //Finaliza a configuração
-  ObjetoBaseWidget::aplicarConfiguracao();
-  finalizarConfiguracao();
+  BaseObjectWidget::applyConfiguration();
+  finishConfiguration();
  }
  catch(Exception &e)
  {
   /* Cancela a configuração o objeto removendo a ultima operação adicionada
      referente ao objeto editado/criado e desaloca o objeto
      caso o mesmo seja novo */
-  cancelarConfiguracao();
+  cancelConfiguration();
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }

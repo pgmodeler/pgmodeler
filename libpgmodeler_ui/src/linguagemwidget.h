@@ -22,10 +22,10 @@
 #ifndef LINGUAGEM_WIDGET_H
 #define LINGUAGEM_WIDGET_H
 
-#include "objetobasewidget.h"
+#include "baseobjectwidget.h"
 #include "ui_linguagemwidget.h"
 
-class LinguagemWidget: public ObjetoBaseWidget, public Ui::LinguagemWidget {
+class LinguagemWidget: public BaseObjectWidget, public Ui::LinguagemWidget {
  Q_OBJECT
 
  private:
@@ -34,13 +34,13 @@ class LinguagemWidget: public ObjetoBaseWidget, public Ui::LinguagemWidget {
                        *sel_func_inline;
  public:
    LinguagemWidget(QWidget * parent = 0);
-   void definirAtributos(DatabaseModel *modelo, OperationList *lista_op, Language *linguagem);
+   void setAttributes(DatabaseModel *model, OperationList *op_list, Language *linguagem);
 
  private slots:
    void hideEvent(QHideEvent *);
 
  public slots:
-   void aplicarConfiguracao(void);
+   void applyConfiguration(void);
 };
 
 #endif
