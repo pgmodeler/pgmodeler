@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libpgsqldbm_ui
+# Sub-project: pgModeler UI library (libpgmodeler_ui)
 # Classe: TabelaObjetosWidget
 # Description:Definição da classe que implementa uma tabela para manipulação
 #            vários objetos em uma grade. Incluíndo funções de inclusão e exclusão

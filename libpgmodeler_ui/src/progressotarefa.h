@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libpgsqldbm_ui
+# Sub-project: pgModeler UI library (libpgmodeler_ui)
 # Classe: ProgressaoTarefa
 # Description:Definição da classe que implementa um widget que sinaliza a progressão
 #           de execução de tarefas

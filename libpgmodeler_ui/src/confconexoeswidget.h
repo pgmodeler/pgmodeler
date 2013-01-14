@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libpgsqldbm_ui
+# Sub-project: pgModeler UI library (libpgmodeler_ui)
 # Classe: ConfConexoesWidget
 # Description:Implementa o widget de configurações de conexões com o sgbd.
 #

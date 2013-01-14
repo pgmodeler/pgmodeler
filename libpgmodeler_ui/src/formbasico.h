@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libpgsqldbm_ui
+# Sub-project: pgModeler UI library (libpgmodeler_ui)
 # Classe: FormBasico
 # Description:Definição da classe que um container de widgets de configuração
 #            de objetos no modelo de banco de dados.

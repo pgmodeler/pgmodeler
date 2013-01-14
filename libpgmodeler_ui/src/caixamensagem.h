@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libpgsqldbm_ui
+# Sub-project: pgModeler UI library (libpgmodeler_ui)
 # Classe: CaixaMensagem
 # Description:Definição da classe usada para exibição de caixas
 #            de mensagens personalizadas, como exibição de pilha

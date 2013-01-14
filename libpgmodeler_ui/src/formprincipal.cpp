@@ -205,32 +205,32 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 
  /* Conectando os sinais de objetos manipulados disparados pelos formulários de criação de objetos
     para forçar a atualização da visão de objetos */
- connect(bancodados_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(bancodados_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(atualizarNomeAba(void)));
+ connect(bancodados_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(bancodados_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(atualizarNomeAba(void)));
 
- connect(esquema_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(papel_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(caixatexto_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(espacotabela_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(linguagem_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(funcao_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(convtipo_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(convcodif_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(dominio_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(funcaoag_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(sequencia_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(operador_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(familiaop_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(classeop_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(tipo_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(visao_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(coluna_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(restricao_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(regra_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(gatilho_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(indice_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(relacao_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(tabela_wgt, SIGNAL(s_objetoManipulado(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(esquema_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(papel_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(caixatexto_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(espacotabela_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(linguagem_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(funcao_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(convtipo_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(convcodif_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(dominio_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(funcaoag_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(sequencia_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(operador_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(familiaop_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(classeop_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(tipo_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(visao_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(coluna_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(restricao_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(regra_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(gatilho_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(indice_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(relacao_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(tabela_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
 
  connect(lista_oper, SIGNAL(s_operacaoExecutada(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
  connect(fconfiguracao, SIGNAL(finished(int)), this, SLOT(atualizarModelos(void)));

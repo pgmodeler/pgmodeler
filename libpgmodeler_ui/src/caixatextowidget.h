@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libpgsqldbm_ui
+# Sub-project: pgModeler UI library (libpgmodeler_ui)
 # Classe: CaixaTextoWidget
 # Description:Definição da classe que implementa o formulário de criação e
 #            edição de caixa de texto no modelo de banco de dados.

@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libpgsqldbm_ui
+# Sub-project: pgModeler UI library (libpgmodeler_ui)
 # Classe: TipoPgSQLWidget
 # Description:Definição da classe que implementa o formulário de
 #            edição de tipos nativos do PostgreSQL. Este formulário

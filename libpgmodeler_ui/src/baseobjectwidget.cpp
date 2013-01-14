@@ -5,12 +5,12 @@
 extern VisaoObjetosWidget *selecaoobjetos_wgt;
 extern PermissaoWidget *permissao_wgt;
 
-const QColor BaseObjectWidget::COR_FUNDO_LIN_PROT=QColor(255,180,180);
-const QColor BaseObjectWidget::COR_TEXTO_LIN_PROT=QColor(80,80,80);
-const QColor BaseObjectWidget::COR_FUNDO_LIN_INCREL=QColor(164,249,176);
-const QColor BaseObjectWidget::COR_TEXTO_LIN_INCREL=QColor(80,80,80);
+const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
+const QColor BaseObjectWidget::PROT_LINE_FGCOLOR=QColor(80,80,80);
+const QColor BaseObjectWidget::RELINC_LINE_BGCOLOR=QColor(164,249,176);
+const QColor BaseObjectWidget::RELINC_LINE_FGCOLOR=QColor(80,80,80);
 
-BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType tipo_obj): QDialog(parent)
+BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialog(parent)
 {
  try
  {
@@ -22,8 +22,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType tipo_obj): QDialo
   object=NULL;
   object_px=NAN;
   object_py=NAN;
-  alt_min_jp=-1;
-  alt_max_jp=-1;
+  pf_min_height=-1;
+  pf_max_height=-1;
   hl_parentname_txt=NULL;
   parent_form=NULL;
   schema_sel=NULL;
@@ -40,7 +40,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType tipo_obj): QDialo
                                      GlobalAttributes::CONFIGURATION_EXT);
 
   parent_form=new FormBasico(NULL, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
-  parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(tipo_obj));
+  parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(obj_type));
   parent_form->widgetgeral_wgt->insertWidget(0, this);
   parent_form->widgetgeral_wgt->setCurrentIndex(0);
   parent_form->definirBotoes(CaixaMensagem::BOTAO_OK_CANCELAR);
@@ -111,26 +111,26 @@ void BaseObjectWidget::showEvent(QShowEvent *)
  /* Na primeira exibição do formulário a altura minima e máxima
     da janela pai não foi armazenada, sendo assim, os atributos
     são configurados com as alturas da janela */
- if(alt_min_jp < 0)
+ if(pf_min_height < 0)
  {
-  alt_min_jp=parent_form->minimumHeight();
-  alt_max_jp=parent_form->maximumHeight();
+  pf_min_height=parent_form->minimumHeight();
+  pf_max_height=parent_form->maximumHeight();
  }
 
  //Caso o frame de objeto protegido esteja visível
  if(protected_obj_frm->isVisible())
  {
   //Redimensiona a janela pai para que o frame seja exibido
-  parent_form->setMinimumHeight(alt_min_jp + protected_obj_frm->height() + 10);
-  parent_form->setMaximumHeight(alt_max_jp + protected_obj_frm->height() + 10);
+  parent_form->setMinimumHeight(pf_min_height + protected_obj_frm->height() + 10);
+  parent_form->setMaximumHeight(pf_max_height + protected_obj_frm->height() + 10);
   parent_form->resize(parent_form->minimumWidth(),parent_form->minimumHeight());
  }
- else if(alt_min_jp > 0)
+ else if(pf_min_height > 0)
  {
   //Retorna a janela pai ao seu tamanho original caso o frame de alerta esteja invisível
-  parent_form->setMinimumHeight(alt_min_jp);
-  parent_form->setMaximumHeight(alt_max_jp);
-  parent_form->resize(parent_form->minimumWidth(), alt_min_jp);
+  parent_form->setMinimumHeight(pf_min_height);
+  parent_form->setMaximumHeight(pf_max_height);
+  parent_form->resize(parent_form->minimumWidth(), pf_min_height);
  }
 }
 
@@ -149,43 +149,43 @@ void BaseObjectWidget::hideEvent(QHideEvent *)
  parent_form->blockSignals(false);
 }
 
-void BaseObjectWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, BaseObject *objeto, BaseObject *objeto_pai, float px_objeto, float py_objeto)
+void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *object, BaseObject *parent_obj, float obj_px, float obj_py)
 {
- ObjectType tipo_obj, tipo_obj_pai=BASE_OBJECT;
+ ObjectType obj_type, parent_type=BASE_OBJECT;
 
- if(!modelo)
+ if(!model)
   throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- this->model=modelo;
+ this->model=model;
 
- if(objeto_pai)
+ if(parent_obj)
  {
-  tipo_obj_pai=objeto_pai->getObjectType();
+  parent_type=parent_obj->getObjectType();
 
-  if(tipo_obj_pai==OBJ_TABLE)
-   this->table=dynamic_cast<Table *>(objeto_pai);
-  else if(tipo_obj_pai==OBJ_RELATIONSHIP)
-   this->relationship=dynamic_cast<Relationship *>(objeto_pai);
-  else if(tipo_obj_pai!=OBJ_DATABASE)
+  if(parent_type==OBJ_TABLE)
+   this->table=dynamic_cast<Table *>(parent_obj);
+  else if(parent_type==OBJ_RELATIONSHIP)
+   this->relationship=dynamic_cast<Relationship *>(parent_obj);
+  else if(parent_type!=OBJ_DATABASE)
    throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  }
  else
  {
-  TableObject *obj_tab=dynamic_cast<TableObject *>(objeto);
+  TableObject *tab_obj=dynamic_cast<TableObject *>(object);
 
-  if(objeto && objeto->getSchema())
-   objeto_pai=objeto->getSchema();
-  else if(obj_tab && obj_tab->getParentTable())
-   objeto_pai=obj_tab->getParentTable();
+  if(object && object->getSchema())
+   parent_obj=object->getSchema();
+  else if(tab_obj && tab_obj->getParentTable())
+   parent_obj=tab_obj->getParentTable();
   else
-   objeto_pai=modelo;
+   parent_obj=model;
  }
 
- if(dynamic_cast<BaseGraphicObject *>(objeto))
-  dynamic_cast<BaseGraphicObject *>(objeto)->setModified(false);
+ if(dynamic_cast<BaseGraphicObject *>(object))
+  dynamic_cast<BaseGraphicObject *>(object)->setModified(false);
 
- this->op_list=lista_op;
- this->object=objeto;
+ this->op_list=op_list;
+ this->object=object;
 
  if(this->table)
  {
@@ -194,41 +194,41 @@ void BaseObjectWidget::setAttributes(DatabaseModel *modelo, OperationList *lista
  }
  else
  {
-  this->object_px=px_objeto;
-  this->object_py=py_objeto;
+  this->object_px=obj_px;
+  this->object_py=obj_py;
  }
 
  name_edt->setFocus();
- edt_perms_tb->setEnabled(objeto!=NULL);
- parent_obj_txt->setPlainText(QString::fromUtf8(objeto_pai->getName(true)));
+ edt_perms_tb->setEnabled(object!=NULL);
+ parent_obj_txt->setPlainText(QString::fromUtf8(parent_obj->getName(true)));
 
- parent_obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + objeto_pai->getSchemaName() + QString(".png")));
- parent_obj_icon_lbl->setToolTip(objeto_pai->getTypeName());
+ parent_obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + parent_obj->getSchemaName() + QString(".png")));
+ parent_obj_icon_lbl->setToolTip(parent_obj->getTypeName());
 
  /* Configura os seletores de dono/esquema/espaço de tabela somente quando
     um modelo está definido */
- owner_sel->definirModelo(modelo);
- schema_sel->definirModelo(modelo);
- tablespace_sel->definirModelo(modelo);
+ owner_sel->definirModelo(model);
+ schema_sel->definirModelo(model);
+ tablespace_sel->definirModelo(model);
 
  //Caso o objeto a ser editado esteja alocado configura os campos básicos do formulário
- if(objeto)
+ if(object)
  {
-  bool protegido;
+  bool prot;
 
   //Configura os campos de nome e comentário
-  name_edt->setText(QString::fromUtf8(objeto->getName()));
-  comment_edt->setText(QString::fromUtf8(objeto->getComment()));
+  name_edt->setText(QString::fromUtf8(object->getName()));
+  comment_edt->setText(QString::fromUtf8(object->getComment()));
 
-  owner_sel->definirObjeto(objeto->getOwner());
+  owner_sel->definirObjeto(object->getOwner());
 
   //Caso o objeto não possua um esquema, preenche o campo com o esquema public
-  if(!objeto->getSchema())
-   schema_sel->definirObjeto(modelo->getObject("public", OBJ_SCHEMA));
+  if(!object->getSchema())
+   schema_sel->definirObjeto(model->getObject("public", OBJ_SCHEMA));
   else
-   schema_sel->definirObjeto(objeto->getSchema());
+   schema_sel->definirObjeto(object->getSchema());
 
-  tablespace_sel->definirObjeto(objeto->getTablespace());
+  tablespace_sel->definirObjeto(object->getTablespace());
 
   /* Exibe o frame de objeto protegido caso o mesmo esteja protegido
      ou seja incluído por relacionamento (coluna ou restrição).
@@ -236,39 +236,39 @@ void BaseObjectWidget::setAttributes(DatabaseModel *modelo, OperationList *lista
      é desconsiderado pois quando conectado o relacionamento marca as flags citadas, e para
      permitir que o usuário edite uma restrição ou atributo do relacionamento é necessária
      essa exceção */
-  tipo_obj=objeto->getObjectType();
-  protegido=(tipo_obj_pai!=OBJ_RELATIONSHIP &&
-             (objeto->isProtected() ||
-              ((tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT) &&
-               dynamic_cast<TableObject *>(objeto)->isAddedByRelationship())));
-  protected_obj_frm->setVisible(protegido);
+  obj_type=object->getObjectType();
+  prot=(parent_type!=OBJ_RELATIONSHIP &&
+             (object->isProtected() ||
+              ((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT) &&
+               dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
+  protected_obj_frm->setVisible(prot);
 
-  parent_form->aplicar_ok_btn->setEnabled(!protegido);
+  parent_form->aplicar_ok_btn->setEnabled(!prot);
  }
  else
  {
   protected_obj_frm->setVisible(false);
-  schema_sel->definirObjeto(modelo->getObject("public", OBJ_SCHEMA));
+  schema_sel->definirObjeto(model->getObject("public", OBJ_SCHEMA));
  }
 }
 
-void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType tipo_obj)
+void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_type)
 {
- bool exibir_esq, exibir_dono, exibir_esptab, exibir_coment, exibir_obj_pai;
+ bool show_schem, show_owner, show_tabspc, show_comment, show_parent;
 
  if(grid)
  {
   QLayoutItem *item=NULL;
-  int lin, col, col_span,row_span, id_item, qtd_item;
+  int lin, col, col_span,row_span, item_id, item_count;
 
   /* Move todos os itens do layout passado uma linha para baixo
     isso permite que o layout do formulário básico seja incluído
     no início do formulário passado */
-  qtd_item=grid->count();
-  for(id_item=qtd_item-1; id_item >= 0; id_item--)
+  item_count=grid->count();
+  for(item_id=item_count-1; item_id >= 0; item_id--)
   {
-   item=grid->itemAt(id_item);
-   grid->getItemPosition(id_item, &lin, &col, &row_span, &col_span);
+   item=grid->itemAt(item_id);
+   grid->getItemPosition(item_id, &lin, &col, &row_span, &col_span);
    grid->removeItem(item);
    grid->addItem(item, lin+1, col, row_span, col_span);
   }
@@ -283,92 +283,92 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType tipo_ob
  baseobject_grid->setContentsMargins(4, 4, 4, 4);
 
  //Definindo a exibição do campo de configuração de esquema dos objetos de acordo com o tipo passado
- exibir_esq=(tipo_obj==OBJ_FUNCTION || tipo_obj==OBJ_TABLE || tipo_obj==OBJ_VIEW ||
-             tipo_obj==OBJ_DOMAIN || tipo_obj==OBJ_AGGREGATE || tipo_obj==OBJ_OPERATOR ||
-             tipo_obj==OBJ_SEQUENCE || tipo_obj==OBJ_CONVERSION || tipo_obj==OBJ_TYPE ||
-             tipo_obj==OBJ_OPFAMILY || tipo_obj==OBJ_OPCLASS);
+ show_schem=(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW ||
+             obj_type==OBJ_DOMAIN || obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
+             obj_type==OBJ_SEQUENCE || obj_type==OBJ_CONVERSION || obj_type==OBJ_TYPE ||
+             obj_type==OBJ_OPFAMILY || obj_type==OBJ_OPCLASS);
 
  //Definindo a exibição do campo de configuração de dono dos objetos de acordo com o tipo passado
- exibir_dono=(tipo_obj==OBJ_FUNCTION || tipo_obj==OBJ_TABLE || tipo_obj==OBJ_DOMAIN ||
-              tipo_obj==OBJ_SCHEMA || tipo_obj==OBJ_AGGREGATE || tipo_obj==OBJ_OPERATOR ||
-              tipo_obj==OBJ_CONVERSION || tipo_obj==OBJ_LANGUAGE || tipo_obj==OBJ_TYPE ||
-              tipo_obj==OBJ_TABLESPACE || tipo_obj==OBJ_OPFAMILY || tipo_obj==OBJ_DATABASE);
+ show_owner=(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE || obj_type==OBJ_DOMAIN ||
+              obj_type==OBJ_SCHEMA || obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
+              obj_type==OBJ_CONVERSION || obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
+              obj_type==OBJ_TABLESPACE || obj_type==OBJ_OPFAMILY || obj_type==OBJ_DATABASE);
 
  //Definindo a exibição do campo de configuração de espaço dos objetos de acordo com o tipo passado
- exibir_esptab=(tipo_obj==OBJ_CONSTRAINT || tipo_obj==OBJ_INDEX || tipo_obj==OBJ_TABLE || tipo_obj==OBJ_DATABASE);
+ show_tabspc=(obj_type==OBJ_CONSTRAINT || obj_type==OBJ_INDEX || obj_type==OBJ_TABLE || obj_type==OBJ_DATABASE);
 
  //Definindo a exibição do campo de configuração de comentário dos objetos de acordo com o tipo passado
- exibir_coment=(tipo_obj!=OBJ_RELATIONSHIP && tipo_obj!=OBJ_TEXTBOX &&
-                tipo_obj!=OBJ_PARAMETER);
+ show_comment=(obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TEXTBOX &&
+                obj_type!=OBJ_PARAMETER);
 
  //Definindo a exibição do campo de objeto pai
- exibir_obj_pai=(tipo_obj!=OBJ_PARAMETER && tipo_obj!=OBJ_DATABASE &&
-                 tipo_obj!=OBJ_PERMISSION && tipo_obj!=BASE_OBJECT);
+ show_parent=(obj_type!=OBJ_PARAMETER && obj_type!=OBJ_DATABASE &&
+                 obj_type!=OBJ_PERMISSION && obj_type!=BASE_OBJECT);
 
- if(tipo_obj!=OBJ_TABLE && tipo_obj!=OBJ_COLUMN && tipo_obj!=OBJ_VIEW &&
-    tipo_obj!=OBJ_SEQUENCE && tipo_obj!=OBJ_DATABASE && tipo_obj!=OBJ_FUNCTION &&
-    tipo_obj!=OBJ_AGGREGATE && tipo_obj!=OBJ_LANGUAGE && tipo_obj!=OBJ_SCHEMA &&
-    tipo_obj!=OBJ_TABLESPACE)
+ if(obj_type!=OBJ_TABLE && obj_type!=OBJ_COLUMN && obj_type!=OBJ_VIEW &&
+    obj_type!=OBJ_SEQUENCE && obj_type!=OBJ_DATABASE && obj_type!=OBJ_FUNCTION &&
+    obj_type!=OBJ_AGGREGATE && obj_type!=OBJ_LANGUAGE && obj_type!=OBJ_SCHEMA &&
+    obj_type!=OBJ_TABLESPACE)
  {
   permissions_lbl->setVisible(false);
   edt_perms_tb->setVisible(false);
  }
 
- schema_lbl->setVisible(exibir_esq);
- schema_sel->setVisible(exibir_esq);
+ schema_lbl->setVisible(show_schem);
+ schema_sel->setVisible(show_schem);
 
- owner_lbl->setVisible(exibir_dono);
- owner_sel->setVisible(exibir_dono);
+ owner_lbl->setVisible(show_owner);
+ owner_sel->setVisible(show_owner);
 
- tablespace_lbl->setVisible(exibir_esptab);
- tablespace_sel->setVisible(exibir_esptab);
+ tablespace_lbl->setVisible(show_tabspc);
+ tablespace_sel->setVisible(show_tabspc);
 
- comment_edt->setVisible(exibir_coment);
- comment_lbl->setVisible(exibir_coment);
+ comment_edt->setVisible(show_comment);
+ comment_lbl->setVisible(show_comment);
 
- parent_obj_lbl->setVisible(exibir_obj_pai);
- parent_obj_txt->setVisible(exibir_obj_pai);
- parent_obj_icon_lbl->setVisible(exibir_obj_pai);
+ parent_obj_lbl->setVisible(show_parent);
+ parent_obj_txt->setVisible(show_parent);
+ parent_obj_icon_lbl->setVisible(show_parent);
 
- div1_ln->setVisible(exibir_obj_pai && tipo_obj!=OBJ_TABLE &&
-                                       tipo_obj!=OBJ_SCHEMA &&
-                                       tipo_obj!=OBJ_RELATIONSHIP &&
-                                       tipo_obj!=BASE_RELATIONSHIP);
+ div1_ln->setVisible(show_parent && obj_type!=OBJ_TABLE &&
+                                    obj_type!=OBJ_SCHEMA &&
+                                    obj_type!=OBJ_RELATIONSHIP &&
+                                    obj_type!=BASE_RELATIONSHIP);
 
  //Configura o ícone de acordo com o tipo de objeto
- if(tipo_obj!=BASE_OBJECT)
+ if(obj_type!=BASE_OBJECT)
  {
-  obj_icon_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/") + BaseObject::getSchemaName(tipo_obj) + QString(".png")));
-  obj_icon_lbl->setToolTip(BaseObject::getTypeName(tipo_obj));
+  obj_icon_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+  obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
  }
 }
 
-QString BaseObjectWidget::generateVersionsInterval(unsigned tipo_intervalo, const QString &ver_ini, const QString &ver_fim)
+QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
 {
- if(tipo_intervalo==UNTIL_VERSION && !ver_ini.isEmpty())
-   return(XMLParser::CHAR_LT + QString("= ") + ver_ini);
- else if(tipo_intervalo==VERSIONS_INTERVAL && !ver_ini.isEmpty() && !ver_fim.isEmpty())
-   return(XMLParser::CHAR_GT + QString("= ") + ver_ini + XMLParser::CHAR_AMP + XMLParser::CHAR_LT + QString("= ") + ver_fim);
- else if(tipo_intervalo==AFTER_VERSION &&  !ver_ini.isEmpty())
-   return(XMLParser::CHAR_GT + QString("= ") + ver_ini);
+ if(ver_interv_id==UNTIL_VERSION && !ini_ver.isEmpty())
+   return(XMLParser::CHAR_LT + QString("= ") + ini_ver);
+ else if(ver_interv_id==VERSIONS_INTERVAL && !ini_ver.isEmpty() && !end_ver.isEmpty())
+   return(XMLParser::CHAR_GT + QString("= ") + ini_ver + XMLParser::CHAR_AMP + XMLParser::CHAR_LT + QString("= ") + end_ver);
+ else if(ver_interv_id==AFTER_VERSION &&  !ini_ver.isEmpty())
+   return(XMLParser::CHAR_GT + QString("= ") + ini_ver);
  else
    return("");
 }
 
-QFrame *BaseObjectWidget::generateInformationFrame(const QString &mensagem)
+QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 {
  QFrame *info_frm=NULL;
  QGridLayout *grid=NULL;
- QLabel *icone_lbl=NULL, *mensagem_lbl=NULL;
- QFont fonte;
+ QLabel *ico_lbl=NULL, *msg_lbl=NULL;
+ QFont font;
 
  //Aloca o frame de alerta
  info_frm = new QFrame;
 
- fonte.setPointSize(8);
- fonte.setItalic(false);
- fonte.setBold(false);
- info_frm->setFont(fonte);
+ font.setPointSize(8);
+ font.setItalic(false);
+ font.setBold(false);
+ info_frm->setFont(font);
 
  info_frm->setObjectName(QString::fromUtf8("info_frm"));
  info_frm->setFrameShape(QFrame::Box);
@@ -380,133 +380,133 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &mensagem)
  grid->setObjectName(QString::fromUtf8("grid"));
 
  //Configura o icone de alerta
- icone_lbl = new QLabel(info_frm);
- icone_lbl->setObjectName(QString::fromUtf8("icone_lbl"));
- icone_lbl->setMinimumSize(QSize(32, 32));
- icone_lbl->setMaximumSize(QSize(32, 32));
- icone_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/msgbox_info.png")));
- icone_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
+ ico_lbl = new QLabel(info_frm);
+ ico_lbl->setObjectName(QString::fromUtf8("icone_lbl"));
+ ico_lbl->setMinimumSize(QSize(32, 32));
+ ico_lbl->setMaximumSize(QSize(32, 32));
+ ico_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/msgbox_info.png")));
+ ico_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
 
  //Adiciona-o ao layout
- grid->addWidget(icone_lbl, 0, 0, 1, 1);
+ grid->addWidget(ico_lbl, 0, 0, 1, 1);
 
  //Cria o label o qual levará a mensagem de alerta
- mensagem_lbl = new QLabel(info_frm);
- mensagem_lbl->setObjectName(QString::fromUtf8("mensagelm_lb"));
- mensagem_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
- mensagem_lbl->setWordWrap(true);
+ msg_lbl = new QLabel(info_frm);
+ msg_lbl->setObjectName(QString::fromUtf8("mensagelm_lb"));
+ msg_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+ msg_lbl->setWordWrap(true);
 
  //Configura a mensagem de alerta
- mensagem_lbl->setText(mensagem);
+ msg_lbl->setText(msg);
 
  //Adiciona o o label de mensagem ao layout
- grid->addWidget(mensagem_lbl, 0, 1, 1, 1);
+ grid->addWidget(msg_lbl, 0, 1, 1, 1);
  grid->setContentsMargins(4,4,4,4);
 
  return(info_frm);
 }
 
-QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidget *> > &campos,
-                                                 map< QWidget *, vector<QString> > *valores)
+QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields,
+                                                      map< QWidget *, vector<QString> > *values)
 {
- QFrame *alerta_frm=NULL;
+ QFrame *alert_frm=NULL;
  QGridLayout *grid=NULL;
- QLabel *icone_lbl=NULL, *mensagem_lbl=NULL;
- QString nome_cmp, str_aux;
- QFont fonte;
+ QLabel *ico_lbl=NULL, *msg_lbl=NULL;
+ QString field_name;
+ QFont font;
  QWidget *wgt=NULL;
  map<QString, vector<QWidget *> >::iterator itr, itr_end;
- vector<QString> vet_valores;
- unsigned i, qtd, qtd1, i1;
+ vector<QString> values_vect;
+ unsigned i, count, count1, i1;
 
- itr=campos.begin();
- itr_end=campos.end();
+ itr=fields.begin();
+ itr_end=fields.end();
 
  while(itr!=itr_end)
  {
-  qtd=itr->second.size();
+  count=itr->second.size();
 
   /* Monta a string com os nomes dos campos removendo o ':', além disso a fonte dos labels
     é modificada para denotar a particularidade do campo */
-  for(i=0; i < qtd; i++)
+  for(i=0; i < count; i++)
   {
    wgt=itr->second.at(i);
-   if(valores && valores->count(wgt) > 0)
+   if(values && values->count(wgt) > 0)
    {
-    vet_valores=valores->at(wgt);
-    qtd1=vet_valores.size();
+    values_vect=values->at(wgt);
+    count1=values_vect.size();
 
-    nome_cmp+=QString("<br/>") + trUtf8("Value(s)") + QString(": (");
-    for(i1=0; i1 < qtd1; i1++)
+    field_name+=QString("<br/>") + trUtf8("Value(s)") + QString(": (");
+    for(i1=0; i1 < count1; i1++)
     {
-     nome_cmp+=vet_valores.at(i1);
-     if(i1 < qtd1-1) nome_cmp+=", ";
+     field_name+=values_vect.at(i1);
+     if(i1 < count1-1) field_name+=", ";
     }
-    nome_cmp+=")";
+    field_name+=")";
    }
 
-   fonte=wgt->font();
-   fonte.setBold(true);
-   fonte.setItalic(true);
-   wgt->setFont(fonte);
+   font=wgt->font();
+   font.setBold(true);
+   font.setItalic(true);
+   wgt->setFont(font);
    wgt->setToolTip(QString::fromUtf8("<em style='font-size: 8pt'>") + trUtf8("Version") +
-                   itr->first + QString::fromUtf8(" %1</em>").arg(nome_cmp));
+                   itr->first + QString::fromUtf8(" %1</em>").arg(field_name));
   }
   itr++;
  }
 
 
  //Aloca o frame de alerta
- alerta_frm = new QFrame;
+ alert_frm = new QFrame;
 
- fonte.setPointSize(8);
- fonte.setItalic(false);
- fonte.setBold(false);
- alerta_frm->setFont(fonte);
+ font.setPointSize(8);
+ font.setItalic(false);
+ font.setBold(false);
+ alert_frm->setFont(font);
 
- alerta_frm->setObjectName(QString::fromUtf8("alerta_frm"));
- alerta_frm->setFrameShape(QFrame::Box);
- alerta_frm->setFrameShadow(QFrame::Sunken);
+ alert_frm->setObjectName(QString::fromUtf8("alerta_frm"));
+ alert_frm->setFrameShape(QFrame::Box);
+ alert_frm->setFrameShadow(QFrame::Sunken);
 
  //Aloca o layout em grade para disposição dos demais objetos dentro do frame de alerta
- grid = new QGridLayout(alerta_frm);
+ grid = new QGridLayout(alert_frm);
  grid->setObjectName(QString::fromUtf8("grid"));
 
  //Configura o icone de alerta
- icone_lbl = new QLabel(alerta_frm);
- icone_lbl->setObjectName(QString::fromUtf8("icone_lbl"));
- icone_lbl->setMinimumSize(QSize(32, 32));
- icone_lbl->setMaximumSize(QSize(32, 32));
- icone_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/msgbox_alerta.png")));
- icone_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
+ ico_lbl = new QLabel(alert_frm);
+ ico_lbl->setObjectName(QString::fromUtf8("icone_lbl"));
+ ico_lbl->setMinimumSize(QSize(32, 32));
+ ico_lbl->setMaximumSize(QSize(32, 32));
+ ico_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/msgbox_alerta.png")));
+ ico_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
 
  //Adiciona-o ao layout
- grid->addWidget(icone_lbl, 0, 0, 1, 1);
+ grid->addWidget(ico_lbl, 0, 0, 1, 1);
 
  //Cria o label o qual levará a mensagem de alerta
- mensagem_lbl = new QLabel(alerta_frm);
- mensagem_lbl->setObjectName(QString::fromUtf8("mensagelm_lb"));
- mensagem_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
- mensagem_lbl->setWordWrap(true);
+ msg_lbl = new QLabel(alert_frm);
+ msg_lbl->setObjectName(QString::fromUtf8("mensagelm_lb"));
+ msg_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
+ msg_lbl->setWordWrap(true);
 
  //Configura a mensagem de alerta
- mensagem_lbl->setText(trUtf8("The field(s) or value(s) highlighted on the form is(are) for the exclusive use and/or mandatory in specific versions of PostgreSQL. Failure to complete that may cause errors in the generation of SQL code for each version shown in tool tips of the highlighted fields."));
+ msg_lbl->setText(trUtf8("The field(s) or value(s) highlighted on the form is(are) for the exclusive use and/or mandatory in specific versions of PostgreSQL. Failure to complete that may cause errors in the generation of SQL code for each version shown in tool tips of the highlighted fields."));
 
  //Adiciona o o label de mensagem ao layout
- grid->addWidget(mensagem_lbl, 0, 1, 1, 1);
+ grid->addWidget(msg_lbl, 0, 1, 1, 1);
  grid->setContentsMargins(4,4,4,4);
 
- return(alerta_frm);
+ return(alert_frm);
 }
 
 void BaseObjectWidget::editPermissions(void)
 {
- BaseObject *objeto_pai=NULL;
+ BaseObject *parent_obj=NULL;
 
  if(this->relationship)
-  objeto_pai=this->relationship;
+  parent_obj=this->relationship;
 
- permissao_wgt->setAttributes(this->model, objeto_pai, this->object);
+ permissao_wgt->setAttributes(this->model, parent_obj, this->object);
  permissao_wgt->show();
 }
 
@@ -516,17 +516,16 @@ void BaseObjectWidget::applyConfiguration(void)
  {
   try
   {
-   BaseObject *obj_aux=NULL, *obj_aux1=NULL, *obj_pai=NULL;
-   //ObjetoGraficoBase *obj_graf=dynamic_cast<ObjetoGraficoBase *>(objeto);
-   bool novo_obj;
-   ObjectType tipo_obj;
-   QString nome_obj;
+   BaseObject *aux_obj=NULL, *aux_obj1=NULL, *parent_obj=NULL;
+   bool new_obj;
+   ObjectType obj_type;
+   QString obj_name;
 
-   tipo_obj=object->getObjectType();
-   nome_obj=BaseObject::formatName(name_edt->text().toUtf8(), tipo_obj==OBJ_OPERATOR);
+   obj_type=object->getObjectType();
+   obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
 
    if(schema_sel->obterObjeto())
-    nome_obj=schema_sel->obterObjeto()->getName(true) + "." + nome_obj;
+    obj_name=schema_sel->obterObjeto()->getName(true) + "." + obj_name;
 
    /* Caso o tipo do objeto nao seja um dos três da condição  faz a verificação
       de duplicidade de objetos.
@@ -537,56 +536,56 @@ void BaseObjectWidget::applyConfiguration(void)
 
       Para o Modelo de Banco de dados também não é validado a duplicidade pois ele
       é uma instância única */
-   if(tipo_obj!=OBJ_DATABASE && tipo_obj!=OBJ_PERMISSION && tipo_obj!=OBJ_PARAMETER)
+   if(obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_PARAMETER)
    {
     if(table)
     {
      //Validação do objeto em relação a sua tabela pai
-     obj_pai=table;
-     obj_aux=table->getObject(nome_obj,tipo_obj);
-     obj_aux1=table->getObject(object->getName(),tipo_obj);
-     novo_obj=(!obj_aux && !obj_aux1);
+     parent_obj=table;
+     aux_obj=table->getObject(obj_name,obj_type);
+     aux_obj1=table->getObject(object->getName(),obj_type);
+     new_obj=(!aux_obj && !aux_obj1);
      //obj_graf=tabela;
     }
     else if(relationship)
     {
      //Validação do objeto em relação a sua tabela pai
-     obj_pai=relationship;
-     obj_aux=relationship->getObject(nome_obj,tipo_obj);
-     obj_aux1=relationship->getObject(object->getName(),tipo_obj);
-     novo_obj=(!obj_aux && !obj_aux1);
+     parent_obj=relationship;
+     aux_obj=relationship->getObject(obj_name,obj_type);
+     aux_obj1=relationship->getObject(object->getName(),obj_type);
+     new_obj=(!aux_obj && !aux_obj1);
      //obj_graf=relacionamento;
     }
     //Valida o nome do objeto em relação aos objetos presentes no modelo
     else
     {
-     obj_pai=model;
-     obj_aux=model->getObject(nome_obj,tipo_obj);
+     parent_obj=model;
+     aux_obj=model->getObject(obj_name,obj_type);
 
-     if(tipo_obj==OBJ_FUNCTION)
-      obj_aux1=model->getObject(dynamic_cast<Function *>(object)->getSignature(),tipo_obj);
-     else if(tipo_obj==OBJ_OPERATOR)
-      obj_aux1=model->getObject(dynamic_cast<Operator *>(object)->getSignature(),tipo_obj);
+     if(obj_type==OBJ_FUNCTION)
+      aux_obj1=model->getObject(dynamic_cast<Function *>(object)->getSignature(),obj_type);
+     else if(obj_type==OBJ_OPERATOR)
+      aux_obj1=model->getObject(dynamic_cast<Operator *>(object)->getSignature(),obj_type);
      else
-      obj_aux1=model->getObject(object->getName(),tipo_obj);
+      aux_obj1=model->getObject(object->getName(),obj_type);
 
-     novo_obj=(!obj_aux && !obj_aux1);
+     new_obj=(!aux_obj && !aux_obj1);
     }
 
-    if(!novo_obj && obj_aux && obj_aux!=object)
+    if(!new_obj && aux_obj && aux_obj!=object)
     {
      throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-                   .arg(QString::fromUtf8(nome_obj))
-                   .arg(QString::fromUtf8(BaseObject::getTypeName(tipo_obj)))
-                   .arg(QString::fromUtf8(obj_pai->getName(true)))
-                   .arg(QString::fromUtf8(obj_pai->getTypeName())),
+                   .arg(QString::fromUtf8(obj_name))
+                   .arg(QString::fromUtf8(BaseObject::getTypeName(obj_type)))
+                   .arg(QString::fromUtf8(parent_obj->getName(true)))
+                   .arg(QString::fromUtf8(parent_obj->getTypeName())),
                     ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     }
    }
 
    /* Executa a nomeção do objeto chamando o método
       de acordo com a classe referente ao tipo de objeto */
-   if(tipo_obj!=OBJ_CAST)
+   if(obj_type!=OBJ_CAST)
    {
     prev_name=object->getName();
     /* Caso o objeto ser renomeado não seja de nenhum dos tipos acima
@@ -635,22 +634,22 @@ void BaseObjectWidget::finishConfiguration(void)
 {
  if(this->object)
  {
-  ObjectType tipo_obj=this->object->getObjectType();
-  BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(this->object);
-  TableObject *obj_tab=dynamic_cast<TableObject *>(this->object);
+  ObjectType obj_type=this->object->getObjectType();
+  BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(this->object);
+  TableObject *tab_obj=dynamic_cast<TableObject *>(this->object);
 
   /* Caso o objeto seja novo, é necessário adicion-o   lista
      de operações como objeto criado para permitir sua remoção
      quando o usuário executar a operação de desfazer */
   if(new_object)
   {
-   if(table && (tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_RULE ||
-                 tipo_obj==OBJ_TRIGGER ||
-                 tipo_obj==OBJ_INDEX || tipo_obj==OBJ_CONSTRAINT))
+   if(table && (obj_type==OBJ_COLUMN || obj_type==OBJ_RULE ||
+                 obj_type==OBJ_TRIGGER ||
+                 obj_type==OBJ_INDEX || obj_type==OBJ_CONSTRAINT))
     table->addObject(this->object);
-   else if(relationship && (tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT))
+   else if(relationship && (obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT))
     relationship->addObject(dynamic_cast<TableObject *>(this->object));
-   else if(tipo_obj!=OBJ_PARAMETER)
+   else if(obj_type!=OBJ_PARAMETER)
     model->addObject(this->object);
 
    if(op_list)
@@ -659,7 +658,7 @@ void BaseObjectWidget::finishConfiguration(void)
      op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->table);
     /* Relacionamento não são adicionao   lista de operações por este trecho de código.
        Isso é tratado no método definirAtributos() da classe RelacionamentoWidget */
-    else if(tipo_obj!=OBJ_RELATIONSHIP && tipo_obj!=OBJ_TABLE)
+    else if(obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TABLE)
      op_list->registerObject(this->object, Operation::OBJECT_CREATED, -1, this->relationship);
    }
    new_object=false;
@@ -674,111 +673,50 @@ void BaseObjectWidget::finishConfiguration(void)
      forçar o redimensionamento dos mesmos, pois se o esquema tem o nome modificado
      consequentimente os objetos citados tem seus tamanhos mudados pois o nome
      do esquema é exibido nos objtos. */
-  if(tipo_obj==OBJ_SCHEMA)
-  {
+  if(obj_type==OBJ_SCHEMA)
    model->validateSchemaRenaming(dynamic_cast<Schema *>(this->object), this->prev_name);
-   /*vector<BaseObject *> *lista_obj=NULL;
-   vector<BaseObject *>::iterator itr, itr_end;
-   ObjectType tipos[]={ OBJ_TABLE, OBJ_VIEW,
-                        OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
-   unsigned i;
-   BaseGraphicObject *obj=NULL, *obj1=NULL;
-   BaseRelationship *rel=NULL;
-
-   for(i=0; i < 4; i++)
-   {
-    //Obtém a lista do tipo de objeto atual
-    lista_obj=modelo->getObjectList(tipos[i]);
-    itr=lista_obj->begin();
-    itr_end=lista_obj->end();
-
-    //Faz a varredura da lista obtida
-    while(itr!=itr_end)
-    {
-     //Obtém o objeto do iterador atual
-     obj=dynamic_cast<BaseGraphicObject *>(*itr);
-     itr++;
-
-     //Caso o objeto seja um relacionamento
-     if(obj->getObjectType()==OBJ_RELATIONSHIP ||
-        obj->getObjectType()==BASE_RELATIONSHIP)
-     {
-      //Converte o objeto para relacionamento básico
-      rel=dynamic_cast<BaseRelationship *>(obj);
-
-      // Obtém as tabelas participantes do relacionamento para
-      //   verificar se uma delas referencia o esquema modificado,
-      //   caso isso seja verdadeiro as tabelas e o relacionamento
-      //   serão marcados como modificados
-      obj=rel->getTable(BaseRelationship::SRC_TABLE);
-      obj1=rel->getTable(BaseRelationship::DST_TABLE);
-     }
-
-     //Caso o objeto referencia o esquema, marca como modificado
-     if(obj->getSchema()==this->objeto)
-      obj->setModified(true);
-
-     // Caso o objeto1, neste caso sempre será uma tabela participante
-     //   de um relacionamento quando alocado, referencia o esquema, marca-o como
-     //   modificado *
-     if(obj1 && obj1->getSchema()==this->objeto)
-      obj1->setModified(true);
-
-     // Caso o relacionamento esteja alocado, sinal de que o objeto atual é um relacionamento
-     //   verifica uma das tabelas participantes estão modificadas, caso seja veradeiro
-     //   o próprio relacionamento é marcado como modificado
-     if(rel && (obj->isModified() || (obj1 && obj1->isModified())))
-     {
-      rel->setModified(true);
-      obj1=NULL;
-      rel=NULL;
-     }
-    }
-   } */
-  }
 
   //Seta o resultado como Accepted para indicar que o objeto foi criado/editado com sucesso
   this->accept();
   parent_form->hide();
 
-
   //Atualiza o objeto gráfico
-  if(obj_graf || obj_tab)
+  if(graph_obj || tab_obj)
   {
    /* Caso o objeto editado seja um objeto de tabela (exceto um parâmetro de função,
    pois este herda a classe Coluna), atualiza a tabela pai */
-   if(!obj_graf && obj_tab && obj_tab->getObjectType()!=OBJ_PARAMETER)
+   if(!graph_obj && tab_obj && tab_obj->getObjectType()!=OBJ_PARAMETER)
    {
     if(this->table)
-     obj_graf=dynamic_cast<BaseGraphicObject *>(this->table);
+     graph_obj=dynamic_cast<BaseGraphicObject *>(this->table);
     else
-     obj_graf=dynamic_cast<BaseGraphicObject *>(this->relationship);
+     graph_obj=dynamic_cast<BaseGraphicObject *>(this->relationship);
 
-    obj_graf->setModified(true);
+    graph_obj->setModified(true);
    }
    //Caso não seja um objeto de tabela atualiza o próprio objeto
-   else if(obj_graf)
+   else if(graph_obj)
    {
     if(!isnan(object_px) && !isnan(object_py))
-     obj_graf->setPosition(QPointF(object_px, object_py));
+     graph_obj->setPosition(QPointF(object_px, object_py));
 
     //Força o redesenho do objeto gráfico marcando-o como modificado
-    obj_graf->setModified(true);
+    graph_obj->setModified(true);
    }
   }
 
   /* Emite um sinal indicando que o objeto foi manipulado com sucesso
      isso faz com que a lista de operações e objetos do modelo assim
      como a visão geral do modelo seja atualizada */
-  emit s_objetoManipulado();
+  emit s_objectManipulated();
  }
 }
 
 void BaseObjectWidget::cancelConfiguration(void)
 {
- ObjectType tipo_obj;
+ ObjectType obj_type;
 
- tipo_obj=this->object->getObjectType();
+ obj_type=this->object->getObjectType();
 
  /* Cancela a configuração do objeto caso o mesmo seja um novo objeto
     e não seja do tipo banco de dados, pois este tipo de objeto
@@ -804,7 +742,7 @@ void BaseObjectWidget::cancelConfiguration(void)
 
   /* Desaloca o objeto, porém tabelas e relacionamentos, que são casos especiais,
      não são desalocados */
-  if(tipo_obj!=OBJ_TABLE && tipo_obj!=OBJ_RELATIONSHIP)
+  if(obj_type!=OBJ_TABLE && obj_type!=OBJ_RELATIONSHIP)
   {
    delete(this->object);
    this->object=NULL;
@@ -818,8 +756,8 @@ void BaseObjectWidget::cancelConfiguration(void)
     desfazendo a operação de modificação do mesmo na lista
     de operações */
  if(!new_object &&
-    op_list && tipo_obj!=OBJ_DATABASE &&
-                tipo_obj!=OBJ_PERMISSION)
+    op_list && obj_type!=OBJ_DATABASE &&
+                obj_type!=OBJ_PERMISSION)
  {
   try
   {
@@ -834,6 +772,6 @@ void BaseObjectWidget::cancelConfiguration(void)
   /* Emite um sinal indicando que o objeto foi manipulado de modo que
      seu estado anterior   edição foi restaurado e assim como a lista
      de operações sofreu modificações */
-  emit s_objetoManipulado();
+  emit s_objectManipulated();
 }
 

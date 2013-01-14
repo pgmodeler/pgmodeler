@@ -1,10 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libpgsqldbm_ui
-# Classe: ObjetoBaseWidget
-# Description:Definição da classe que implementa operações básicas
-#            dos formulários de criação e edição de objetos no modelo
-#            de banco de dados.
+# Sub-project: pgModeler UI library (libpgmodeler_ui)
+# Class: BaseObjectWidget
+# Description: Implements the basic operations to create/edit database objects via form.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -20,8 +18,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef OBJETO_BASE_WIDGET_H
-#define OBJETO_BASE_WIDGET_H
+#ifndef BASE_OBJECT_WIDGET_H
+#define BASE_OBJECT_WIDGET_H
 
 #include <QtGui>
 #include "databasemodel.h"
@@ -48,13 +46,13 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
       Estes atributos são usados para controlar a exibição do
       frame de alerta de objeto protegido e redimensionamento
       da janela pai quando este está visível */
-   int alt_min_jp, alt_max_jp;
+   int pf_min_height, pf_max_height;
 
  protected:
-   static const QColor COR_FUNDO_LIN_PROT,
-                       COR_TEXTO_LIN_PROT,
-                 COR_FUNDO_LIN_INCREL,
-                 COR_TEXTO_LIN_INCREL;
+   static const QColor PROT_LINE_BGCOLOR,
+                       PROT_LINE_FGCOLOR,
+                       RELINC_LINE_BGCOLOR,
+                       RELINC_LINE_FGCOLOR;
 
    //Janela que sustenta todos os widgets do formulário
    FormBasico *parent_form;
@@ -112,16 +110,16 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
       * ver_ini <= ver_fim - Intervalo de versões
       * <= ver_ini - Até a versão indicada
       * >= ver_ini - Igual ou após a versão indicada. */
-   static QString generateVersionsInterval(unsigned tipo_intervalo, const QString &ver_ini, const QString &ver_fim="");
+   static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver="");
 
    /* Gera o frame de alerta dos campos específicos das versões do pgsql.
       Os mapas de campos manipulados por este método devem ter como chaves
       as versões do pgsql os quais os campos são obrigatório. Recomenda-se
       o uso das constantes de versão da classe ParserEsquema */
-   QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &campos, map<QWidget *, vector<QString> > *valores=NULL);
+   QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=NULL);
 
    //Gera um frame informativo com icone de informação e a mensagem
-   QFrame *generateInformationFrame(const QString &mensagem);
+   QFrame *generateInformationFrame(const QString &msg);
 
    /* Faz a mesclagem dos layouts de formulário desta classe base (objetobase_grid)
       com os formulários das classes filhas desta no caso o parâmetro 'grid'.
@@ -129,7 +127,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
       pertencem a esta classe estejam acessíveis. O parâmetro 'tipo_obj' é usado
       para esconder alguns campos do formulário básico quando estes não se aplicam
       ao tipo de objeto informado */
-   void configureFormLayout(QGridLayout *grid=NULL, ObjectType tipo_obj=BASE_OBJECT);
+   void configureFormLayout(QGridLayout *grid=NULL, ObjectType obj_type=BASE_OBJECT);
 
    /* Este método se aplica aos tipos de objetos diferentes do tipo OBJETO_BANCO_DADOS
       e que são passíveis de alocação e e desalocação, pois este método faz a cópia do
@@ -153,15 +151,15 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
    virtual void applyConfiguration(void);
 
  public:
-   BaseObjectWidget(QWidget * parent = 0, ObjectType tipo_obj=BASE_OBJECT);
+   BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=BASE_OBJECT);
    virtual ~BaseObjectWidget(void);
 
    void hideEvent(QHideEvent *);
    void showEvent(QShowEvent *);
 
    virtual void setAttributes(DatabaseModel *model, OperationList *op_list,
-                              BaseObject *object, BaseObject *objeto_pai=NULL,
-                              float object_px=NAN, float object_py=NAN);
+                              BaseObject *object, BaseObject *parent_obj=NULL,
+                              float obj_px=NAN, float obj_py=NAN);
 
  protected slots:
    void editPermissions(void);
@@ -170,7 +168,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
    void show(void);
 
  signals:
-   void s_objetoManipulado(void);
+   void s_objectManipulated(void);
 };
 
 template<class Classe>

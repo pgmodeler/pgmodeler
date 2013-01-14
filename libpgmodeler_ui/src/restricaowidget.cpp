@@ -196,9 +196,9 @@ void RestricaoWidget::adicionarColuna(Column *coluna, unsigned tipo_col, int idx
    fonte.setItalic(true);
 
    if(coluna->isProtected())
-    tabela_wgt->definirFonteLinha(idx_lin, fonte, COR_TEXTO_LIN_PROT, COR_FUNDO_LIN_PROT);
+    tabela_wgt->definirFonteLinha(idx_lin, fonte, PROT_LINE_FGCOLOR, PROT_LINE_BGCOLOR);
    else
-    tabela_wgt->definirFonteLinha(idx_lin, fonte, COR_TEXTO_LIN_INCREL, COR_FUNDO_LIN_INCREL);
+    tabela_wgt->definirFonteLinha(idx_lin, fonte, RELINC_LINE_FGCOLOR, RELINC_LINE_BGCOLOR);
   }
  }
 }

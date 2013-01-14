@@ -1,6 +1,6 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Biblioteca libpgsqldbm_ui
+# Sub-project: pgModeler UI library (libpgmodeler_ui)
 # Classe: DestaqueSintaxe
 # Description:Definição da classe que implementa um destacador de sintaxe de
 #            linguagens (código fonte) com padrões de marcação definidos pelo usuário.

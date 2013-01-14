@@ -452,9 +452,9 @@ void TabelaWidget::exibirDadosObjeto(TableObject *objeto, int idx_lin)
   fonte.setItalic(true);
 
   if(objeto->isProtected())
-   tab->definirFonteLinha(idx_lin, fonte, COR_TEXTO_LIN_PROT, COR_FUNDO_LIN_PROT);
+   tab->definirFonteLinha(idx_lin, fonte, PROT_LINE_FGCOLOR, PROT_LINE_BGCOLOR);
   else
-   tab->definirFonteLinha(idx_lin, fonte, COR_TEXTO_LIN_INCREL, COR_FUNDO_LIN_INCREL);
+   tab->definirFonteLinha(idx_lin, fonte, RELINC_LINE_FGCOLOR, RELINC_LINE_BGCOLOR);
  }
 
  //Define como dado da linha o próprio objeto para facilitar referências ao mesmo
