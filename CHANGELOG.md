@@ -1,16 +1,31 @@
 Complete pgModeler Change Log
 -----------------------------
 
-[ v0.4.0-alpha2 ]
+[ v0.4.0-beta ]
 
-Attention: The v0.4.0 is in alpha stage so the change log can be modified at any moment when new bug fixes / features are implemented. The stable 0.4.0 has no release date yet because all the code is being refactored meaning that the new version will be completely decoupled from previous versions.
+Attention: The v0.4.0 is in beta stage so the change log can be modified at any moment when new bug fixes is created. New features will not be implemented, instead, they will be marked to be coded starting from the v0.4.1.
+The stable 0.4.0 has no release date yet because all the code is being refactored meaning that the new version will be completely decoupled from previous ones.
 
+* [New]: introduced the 'Quick actions' menu that permits: rename, move to another schema, change onwer and edit permissions.
 * [New]: the relationship editing form gained an "advanced" tab which shows the objects generated and/or represents the relatioship itself.
 * [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
 * [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
+* [Change]: 'Objects of Model' when used as object picker now expand all the nodes by default.
+* [Change]: 'Objects of Model' now memorizes the tree state when update an object and / or opening another model.
+* [Change]: PostGiS 'geometry' type can have a free assigned SRID value.
+* [Change]: editing forms when shown set the focus on the first field, generally, the object name.
+* [Change]: 'Objects of Model' widget displays the nodes in alphabetical order.
 * [Change]: the printing options for the model were moved to the general configuration form.
 * [Change]: relationship validation method now removes fk relationships when the foreign keys that gerenates is no longer exists.
 * [Change]: copy/cut/delete commands does not manipulates system objects like schema public and languages C, SQL and plpgsql.
+* [Change]: pgModeler startup scripts are now path location free meaning that software can be installed where the user desires.
+* [Fix]: shortcuts and popup menu now works correctly when selection an object on 'Objects of Model' tree.
+* [Fix]: the pgsql base types (represented by tables, sequences, user defined types and domains) are now updated correctly when the related schema is renamed.
+* [Fix]: corrected some weird SRID value on non spatial types.
+* [Fix]: corrected bug on objects table when move rows to last / first.
+* [Fix]: typos corrections on some error messages and dialog titles.
+* [Fix]: 'referenced columns' combobox on constraint editing form are filled correctly when the dialog is shown in a second time.
+* [Fix]: pgModeler no longer crashes when creating many-to-many relationships.
 * [Fix]: pgModeler no longer crashes when the user activates the print dialog.
 * [Fix]: corrected bug that was removing fk relationships when pasting objects.
 * [Fix]: corrected SQL syntax error of 'timestamp with time zone'.

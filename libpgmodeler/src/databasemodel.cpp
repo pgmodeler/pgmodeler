@@ -6840,7 +6840,7 @@ void DatabaseModel::validateSchemaRenaming(Schema *schema, const QString &prev_s
   throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  //Get all the objects on the informed schema
- for(unsigned i; i < 5; i++)
+ for(unsigned i=0; i < 5; i++)
  {
   vet=getObjects(types[i], schema);
   list.insert(list.end(), vet.begin(), vet.end());

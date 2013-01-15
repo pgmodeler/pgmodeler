@@ -51,7 +51,7 @@ void QuickRenameWidget::hideEvent(QHideEvent *)
 
 void QuickRenameWidget::applyRenaming(void)
 {
- ObjectType obj_type;
+ ObjectType obj_type=BASE_OBJECT;
 
  try
  {

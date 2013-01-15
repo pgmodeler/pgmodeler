@@ -12,7 +12,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for details.
+See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/code-refactoring/LICENSE) for details.
 
 Donate to pgModeler
 -------------------
@@ -26,12 +26,12 @@ If you like the project and think it deserves a contribution please donate any a
 Compiling/Installation
 ----------------------
 
-For details about installation process from source code see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md). If you don't want to compile pgModeler there are binaries available for download at [Downloads](https://github.com/pgmodeler/pgmodeler/downloads) section.
+For details about installation process from source code see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/code-refactoring/COMPILING.md). If you don't want to compile pgModeler there are binaries available for download at [Downloads](https://github.com/pgmodeler/pgmodeler/downloads) section.
 
 Running pgModeler
 -----------------
 
-The pgModeler can be executed directly from de executable but it is necessary change some environment variables, see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md). For convinience there are two scripts used to startup pgModeler.
+The pgModeler can be executed directly from de executable but it is necessary change some environment variables, see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/code-refactoring/COMPILING.md). For convinience there are two scripts used to startup pgModeler.
 
 * Windows users: use the ```start-pgmodeler.bat``` script. By default this script consider that pgModeler is installed on ```c:\pgmodeler``` if you desire to set other location edit the script and change the PGMODELER_* environment variables.
 
@@ -41,20 +41,36 @@ Known bugs
 ----------
 
 * Broken compilation process on MacOSX. ([issue#10](https://github.com/pgmodeler/pgmodeler/issues/10))
+* pgModeler in some situations can crash when undo / redoing operations. This is still in a deep investigation but the causes were not yet discovered.
 
 Change Log
 ----------
 
-[ v0.4.0-alpha2 ]
+[ v0.4.0-beta ]
 
-Attention: The v0.4.0 is in alpha stage so the change log can be modified at any moment when new bug fixes / features are implemented. The stable 0.4.0 has no release date yet because all the code is being refactored meaning that the new version will be completely decoupled from previous versions.
+Attention: The v0.4.0 is in beta stage so the change log can be modified at any moment when new bug fixes is created. New features will not be implemented now, instead, they will be marked to be coded starting from the v0.4.1.
+The stable 0.4.0 has no release date yet because all the code is being refactored (almost done!) meaning that the new version will be completely decoupled from previous ones.
 
+* [New]: introduced the 'Quick actions' menu that permits: rename, move to another schema, change onwer and edit permissions.
 * [New]: the relationship editing form gained an "advanced" tab which shows the objects generated and/or represents the relatioship itself.
 * [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
 * [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
+* [Change]: 'Objects of Model' when used as object picker now expand all the nodes by default.
+* [Change]: 'Objects of Model' now memorizes the tree state when update an object and / or opening another model.
+* [Change]: PostGiS 'geometry' type can have a free assigned SRID value.
+* [Change]: editing forms when shown set the focus on the first field, generally, the object name.
+* [Change]: 'Objects of Model' widget displays the nodes in alphabetical order.
 * [Change]: the printing options for the model were moved to the general configuration form.
 * [Change]: relationship validation method now removes fk relationships when the foreign keys that gerenates is no longer exists.
 * [Change]: copy/cut/delete commands does not manipulates system objects like schema public and languages C, SQL and plpgsql.
+* [Change]: pgModeler startup scripts are now path location free meaning that software can be installed where the user desires.
+* [Fix]: shortcuts and popup menu now works correctly when selection an object on 'Objects of Model' tree.
+* [Fix]: the pgsql base types (represented by tables, sequences, user defined types and domains) are now updated correctly when the related schema is renamed.
+* [Fix]: corrected some weird SRID value on non spatial types.
+* [Fix]: corrected bug on objects table when move rows to last / first.
+* [Fix]: typos corrections on some error messages and dialog titles.
+* [Fix]: 'referenced columns' combobox on constraint editing form are filled correctly when the dialog is shown in a second time.
+* [Fix]: pgModeler no longer crashes when creating many-to-many relationships.
 * [Fix]: pgModeler no longer crashes when the user activates the print dialog.
 * [Fix]: corrected bug that was removing fk relationships when pasting objects.
 * [Fix]: corrected SQL syntax error of 'timestamp with time zone'.
@@ -67,7 +83,7 @@ Attention: The v0.4.0 is in alpha stage so the change log can be modified at any
 * [Fix]: corrected bug on column comment code generation.
 * [Fix]: corrected bug that was deleting two tables at once.
 
-The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
+The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/code-refactoring/CHANGELOG.md) file.
 
 Older Releases/Code
 -------------------

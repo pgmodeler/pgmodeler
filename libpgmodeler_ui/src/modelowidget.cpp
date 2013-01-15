@@ -2002,7 +2002,7 @@ void ModeloWidget::colarObjetos(void)
 void ModeloWidget::excluirObjetos(void)
 {
  int idx_obj=-1;
- unsigned qtd, qtd_op;
+ unsigned qtd, qtd_op=0;
  Table *tabela=NULL;
  BaseTable *tab_orig=NULL, *tab_dest=NULL;
  BaseRelationship *relac=NULL;
@@ -2261,7 +2261,7 @@ void ModeloWidget::configurarSubMenu(BaseObject *obj)
    QMenu *menus[]={ &menu_esquemas, &menu_donos };
    ObjectType types[]={ OBJ_SCHEMA, OBJ_ROLE };
 
-   for(unsigned i; i < 2; i++)
+   for(unsigned i=0; i < 2; i++)
    {
     menus[i]->clear();
 
