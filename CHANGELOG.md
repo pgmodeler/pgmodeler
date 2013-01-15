@@ -3,7 +3,7 @@ Complete pgModeler Change Log
 
 [ v0.4.0-beta ]
 
-Attention: The v0.4.0 is in beta stage so the change log can be modified at any moment when new bug fixes is created. New features will not be implemented, instead, they will be marked to be coded starting from the v0.4.1.
+Attention: The v0.4.0 is in beta stage so the change log can be modified at any moment when new bug fixes is created. New features will not be implemented now, instead, they will be marked to be coded starting from the v0.4.1.
 The stable 0.4.0 has no release date yet because all the code is being refactored meaning that the new version will be completely decoupled from previous ones.
 
 * [New]: introduced the 'Quick actions' menu that permits: rename, move to another schema, change onwer and edit permissions.

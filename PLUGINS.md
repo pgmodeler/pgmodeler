@@ -10,7 +10,7 @@ To be used as a plugin your class must:
 
 * Inherit the class "PgModelerPlugin"
 * Use the macro Q_INTERFACES in its declaration.
-* Overloadthe methods PgModelerPlugin::obterRotuloPlugin(void) and PgModelerPlugin::executarPlugin(ModeloWidget *model)
+* Overloadthe methods PgModelerPlugin::getPluginLabel(void) and PgModelerPlugin::executePlugin(ModeloWidget *model)
 
 Plugin directory structure
 --------------------------
