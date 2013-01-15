@@ -28,13 +28,8 @@
 #include "seletorobjetowidget.h"
 #include "ui_baseobjectwidget.h"
 
-/* Declarando a classe TipoPgSQL como metatype para que esta
- possa ser usada em conjunto com a classe QVariant (vide documentação
- da classe QVariant e QMetaType). Esta declaração é uma macro específica
- do Qt e está sendo usada para facilitar o uso com classes que necessitam
- armazenar Tipos pgsql em seus containeres (TabelaObjetosWidget).
- Essa declaração não afeta o comportamento das demais classes que de algum
- modo referenciam a classe TipoPgSQL.*/
+/* Declaring the PgSQLType class as a Qt metatype in order to permit
+   that instances of the class be used as data of QVariant and QMetaType */
 #include <QMetaType>
 Q_DECLARE_METATYPE(PgSQLType)
 
@@ -42,10 +37,8 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
  Q_OBJECT
 
  private:
-   /* Armazena a altura mínima e máxima da janela pai.
-      Estes atributos são usados para controlar a exibição do
-      frame de alerta de objeto protegido e redimensionamento
-      da janela pai quando este está visível */
+   /* Stores the minimum and maximum height of the parent form, in order
+      to control the exhibition of the alert frame when the object is protected */
    int pf_min_height, pf_max_height;
 
  protected:
@@ -54,100 +47,80 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
                        RELINC_LINE_BGCOLOR,
                        RELINC_LINE_FGCOLOR;
 
-   //Janela que sustenta todos os widgets do formulário
+   //Parent form used to show the widget as a dialog.
    FormBasico *parent_form;
 
-   //Modelo de banco de dados de referência
+   //Reference database model
    DatabaseModel *model;
 
-   //Tabela de referência (usado em formulário de objeto de tabela)
+   //Reference table (used only when editing table objects)
    Table *table;
 
+   //Used to store the object previous name (used to validate schema renaming)
    QString prev_name;
 
-   /* Relacionamento de referência (pode ser usado em formulários
-      de coluna e restrição relacionamentos tabela-tabela podem
-      ter colunas (atributos) e restriões nos atributos */
+   //Reference relationship (used only when editing relationship attributes)
    Relationship *relationship;
 
-   //Lista de operações de referência
+   //Reference operation list where all modifications in the form are registered
    OperationList *op_list;
 
-   //Objeto que está sendo editado ou criado
+   //Object that is being edited / created
    BaseObject *object;
 
-   /* Armazena a posição do objeto no momento da chamado do
-      formulário (apenas para objetos gráficos) */
+   /* Stores the object position (generally the mouse position) when the dialog was called
+      (used only when creating graphical objects) */
    float object_px, object_py;
 
+   //Grid layout used to organize the widgets over the form
    QGridLayout *baseobject_grid;
 
-   /* Indica se o objeto é novo (que não se trata de um objeto já
-      existente e não está sendo editado) */
+   //Indicates if the object is a new one or is being edited
    bool new_object;
 
-   /* Armazena o destacador de sintaxe que é usado para destacar
-      o nome do objeto pai */
+   //Syntax highlighter used on the parent object name widget
    DestaqueSintaxe *hl_parentname_txt;
 
-   //Seletores de esquema, dono e espaço de tabela
+   //Object selectors for schema, owner an tablespace
    SeletorObjetoWidget *schema_sel,
                        *owner_sel,
                        *tablespace_sel;
 
-   /* Constantes usadas para gerar strings intervalos de versões.
-      Estas constantes deve ser aplicadas ao método gerarIntervaloVersoes()
-      pois é um metodo que gera chaves para os mapas de campos passados
-      para o método gerarFrameAlertaVersao() */
+   //Constants used to generate version intervals for version alert frame
    static const unsigned UNTIL_VERSION=0,
                          VERSIONS_INTERVAL=1,
                          AFTER_VERSION=2;
 
-   /* Gera strings de intervalos de versões para servirem de informativo ao
-      usuário no método gerarFrameAlertaVersao().
-      Os intervalos gerados têm um dos seguinte formatos:
-
-      * ver_ini <= ver_fim - Intervalo de versões
-      * <= ver_ini - Até a versão indicada
-      * >= ver_ini - Igual ou após a versão indicada. */
+   //Generates a string containing the specified version interval
    static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver="");
 
-   /* Gera o frame de alerta dos campos específicos das versões do pgsql.
-      Os mapas de campos manipulados por este método devem ter como chaves
-      as versões do pgsql os quais os campos são obrigatório. Recomenda-se
-      o uso das constantes de versão da classe ParserEsquema */
+   /* Generates a alert frame highlighting the fields of exclusive use on the specified
+      PostgreSQL versions. On the first map (fields) the key is the PostgreSQL versions and
+      the values are the reference to the widget. The second map is used to specify the values
+      of widgets specific for each version. */
    QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=NULL);
 
-   //Gera um frame informativo com icone de informação e a mensagem
+   //Generates a informative frame containing the specified message
    QFrame *generateInformationFrame(const QString &msg);
 
-   /* Faz a mesclagem dos layouts de formulário desta classe base (objetobase_grid)
-      com os formulários das classes filhas desta no caso o parâmetro 'grid'.
-      Isso é feito para que os campos comuns a todas as classes filhas os quais
-      pertencem a esta classe estejam acessíveis. O parâmetro 'tipo_obj' é usado
-      para esconder alguns campos do formulário básico quando estes não se aplicam
-      ao tipo de objeto informado */
+   /* Merges the specified grid layout with the 'baseobject_grid' creating a single form.
+      The obj_type parameter must be specified to show the object type icon */
    void configureFormLayout(QGridLayout *grid=NULL, ObjectType obj_type=BASE_OBJECT);
 
-   /* Este método se aplica aos tipos de objetos diferentes do tipo OBJETO_BANCO_DADOS
-      e que são passíveis de alocação e e desalocação, pois este método faz a cópia do
-      objeto em edição para a lista de operação no caso de edição ou aloca um novo
-      objeto no caso de criação de um novo elemento.*/
-   template<class Classe>
+   /* Starts a object configuration, alocating a new one if necessary, registering
+      the object on the operation list. This method doens't applies to database model edition */
+   template<class Class>
    void startConfiguration(void);
 
-   /* Finaliza a edição/criação do objeto, inserindo o mesmo na lista de operações
-      para possibilitar a reversão da criação do mesmo. Além disso, procede
-      com a emissão do sinal de objeto manipulado e fechamento do formulário.*/
+   /* Finishes the edition / creation of object, registering it on the operation list
+      and inserts is on the parent object */
    void finishConfiguration(void);
 
-   /* Aborta a configuração do objeto, desalocando o mesmo em caso de novo objeto,
-      restaurando o objeto a seu estado original antes da edição
-      e removendo a operação de lista de operações referente a este objeto */
+   /* Aborts the object configuration, deallocation it if necessary or restoring it to
+      its previous configuration */
    virtual void cancelConfiguration(void);
 
-   /* Aplica as configurações básicas (nome, esquema, comentario, espaço tabela e dono)
-      ao objeto que está sendo modificado */
+   //Apply the basic configurations to the object (name, schema, comment, owner, tablespace)
    virtual void applyConfiguration(void);
 
  public:
@@ -168,16 +141,18 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
    void show(void);
 
  signals:
+   //Signal emitted whenever a object is created / edited using the form
    void s_objectManipulated(void);
 };
 
-template<class Classe>
+template<class Class>
 void BaseObjectWidget::startConfiguration(void)
 {
  try
  {
-  Classe *novo_obj_tmpl=NULL;
+  Class *new_tmpl_obj=NULL;
 
+  //If the object is already allocated
   if(this->object && op_list &&
      this->object->getObjectType()!=OBJ_DATABASE)
   {
@@ -187,14 +162,11 @@ void BaseObjectWidget::startConfiguration(void)
     op_list->registerObject(this->object, Operation::OBJECT_MODIFIED, -1, this->relationship);
    new_object=false;
   }
-  /* Caso o formulário esteja sendo usado para criar um novo
-    objeto ou seja o ponteiro this->objeto está nulo */
+  //If there is need to allocate the object
   else if(!this->object)
   {
-   //Aloca um novo esquema e o atribui ao objeto this->objeto
-   novo_obj_tmpl=new Classe;
-   this->object=novo_obj_tmpl;
-   //Marca o flag indicando que um novo objeto foi criado
+   new_tmpl_obj=new Class;
+   this->object=new_tmpl_obj;
    new_object=true;
   }
  }
