@@ -4,12 +4,13 @@ Complete pgModeler Change Log
 [ v0.4.0-beta ]
 
 Attention: The v0.4.0 is in beta stage so the change log can be modified at any moment when new bug fixes is created. New features will not be implemented now, instead, they will be marked to be coded starting from the v0.4.1.
-The stable 0.4.0 has no release date yet because all the code is being refactored meaning that the new version will be completely decoupled from previous ones.
+The stable 0.4.0 has no release date yet because all the code is being refactored (almost done!) meaning that the new version will be completely decoupled from previous ones.
 
 * [New]: introduced the 'Quick actions' menu that permits: rename, move to another schema, change onwer and edit permissions.
 * [New]: the relationship editing form gained an "advanced" tab which shows the objects generated and/or represents the relatioship itself.
 * [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
 * [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
+* [Change]: french UI translation reviewed and updated (provided by [babs](https://github.com/babs)).
 * [Change]: 'Objects of Model' when used as object picker now expand all the nodes by default.
 * [Change]: 'Objects of Model' now memorizes the tree state when update an object and / or opening another model.
 * [Change]: PostGiS 'geometry' type can have a free assigned SRID value.

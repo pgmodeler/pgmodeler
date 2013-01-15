@@ -55,6 +55,7 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [New]: the relationship editing form gained an "advanced" tab which shows the objects generated and/or represents the relatioship itself.
 * [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
 * [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
+* [Change]: french UI translation reviewed and updated (provided by [babs](https://github.com/babs)).
 * [Change]: 'Objects of Model' when used as object picker now expand all the nodes by default.
 * [Change]: 'Objects of Model' now memorizes the tree state when update an object and / or opening another model.
 * [Change]: PostGiS 'geometry' type can have a free assigned SRID value.
