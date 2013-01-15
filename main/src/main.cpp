@@ -48,7 +48,7 @@ void startCrashHandler(int)
    free(symbols);
   #else
     lin=QString("** Stack trace unavailable on Windows system **");
-    saida.write(lin.toStdString().c_str(), lin.size());
+    output.write(lin.toStdString().c_str(), lin.size());
   #endif
 
   output.close();
