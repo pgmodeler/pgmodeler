@@ -16,50 +16,6 @@
     </message>
 </context>
 <context>
-    <name>BancoDadosWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/bancodadoswidget.ui" line="+67"/>
-        <source>Model Author:</source>
-        <translation>Auteur du modèle:</translation>
-    </message>
-    <message>
-        <location line="+29"/>
-        <source>Encoding:</source>
-        <translation>Encodage:</translation>
-    </message>
-    <message>
-        <location line="+75"/>
-        <source>Connections:</source>
-        <translation>Connexions:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/bancodadoswidget.cpp" line="+51"/>
-        <location line="+1"/>
-        <source>Default</source>
-        <translation>Défaut</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/bancodadoswidget.ui" line="-151"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+24"/>
-        <source>Template DB:</source>
-        <translation>Modèle de BDD:</translation>
-    </message>
-    <message>
-        <location line="+88"/>
-        <source>LC_COLLATE:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+84"/>
-        <source>LC_CTYPE:</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
     <name>BaseObject</name>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="+19"/>
@@ -200,82 +156,82 @@
     </message>
 </context>
 <context>
-    <name>CaixaMensagem</name>
+    <name>BaseObjectWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/caixamensagem.ui" line="+125"/>
-        <source>Show/hide exceptions stack.</source>
-        <translation>Afficher/cacher la pile d&apos;exceptions.</translation>
+        <location filename="../libpgmodeler_ui/ui/baseobjectwidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+285"/>
-        <location filename="../libpgmodeler_ui/src/caixamensagem.cpp" line="+191"/>
-        <location line="+11"/>
-        <source>&amp;Yes</source>
-        <translation>&amp;Oui</translation>
+        <location line="+18"/>
+        <source>Name:</source>
+        <translation>Nom:</translation>
     </message>
     <message>
-        <location line="+29"/>
-        <location filename="../libpgmodeler_ui/src/caixamensagem.cpp" line="-12"/>
-        <location line="+11"/>
-        <source>&amp;No</source>
-        <translation>&amp;Non</translation>
+        <location line="+56"/>
+        <location line="+304"/>
+        <source>icone</source>
+        <translation>icône</translation>
     </message>
     <message>
-        <location line="+17"/>
-        <source>Cancel</source>
-        <translation>Annuler</translation>
+        <location line="-273"/>
+        <source>Comment:</source>
+        <translation>Commentaire:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/caixamensagem.cpp" line="-45"/>
-        <source>Error</source>
-        <translation>Erreur</translation>
+        <location line="+48"/>
+        <source>Tablespace:</source>
+        <translation>Tablespace:</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Alert</source>
-        <translation>Alerte</translation>
+        <location line="+13"/>
+        <source>Owner:</source>
+        <translation>Propriétaire:</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Information</source>
-        <translation>Information</translation>
+        <location line="+13"/>
+        <source>Schema:</source>
+        <translation>Schéma:</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Permissions:</source>
+        <translation>Permissions:</translation>
     </message>
     <message>
         <location line="+31"/>
-        <location line="+5"/>
-        <source>&amp;Cancel</source>
-        <translation>&amp;Annuler</translation>
+        <source>Edit Permissions</source>
+        <translation>Editer les permissions</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/caixamensagem.ui" line="-427"/>
-        <source>Dialog</source>
-        <translation>Dialogue</translation>
+        <location line="+86"/>
+        <source>This object is protected thus no change in form will be applied to it.</source>
+        <translation>L&apos;objet est vérouillé, par conséquent aucun changement dans le formulaire ne lui sera appliqué.</translation>
     </message>
     <message>
-        <location line="+99"/>
-        <source>...</source>
-        <translation>...</translation>
+        <location line="+19"/>
+        <source>Parent Object:</source>
+        <translation>Objet Parent:</translation>
     </message>
     <message>
-        <location line="+113"/>
-        <source>msg</source>
-        <translation>message</translation>
+        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="+40"/>
+        <source>Create / Edit: </source>
+        <translation>Créer / Éditer: </translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/caixamensagem.cpp" line="-4"/>
-        <location line="+11"/>
-        <source>&amp;Ok</source>
-        <translation>Ok</translation>
+        <location line="+359"/>
+        <source>Value(s)</source>
+        <translation>Valeur(s)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/caixamensagem.ui" line="+98"/>
-        <source>Exceptions</source>
-        <translation>Exceptions</translation>
+        <location line="+13"/>
+        <source>Version</source>
+        <translation>Version</translation>
     </message>
     <message>
-        <location line="-243"/>
-        <source>Show excpetion stack in text format (useful to report errors).</source>
-        <translation>Afficher la pile d&apos;exception au format texte (utile pour les rapports d&apos;erreur).</translation>
+        <location line="+35"/>
+        <source>The field(s) or value(s) highlighted on the form is(are) for the exclusive use and/or mandatory in specific versions of PostgreSQL. Failure to complete that may cause errors in the generation of SQL code for each version shown in tool tips of the highlighted fields.</source>
+        <translation>Le(s) champs ou valeur(s) mis en évidence dans le formulaire est(sont) dépendants de la version de PostgreSQL. Le non respect de ces dépendances peut provoquer des erreurs dans la génération du code SQL qui sont affichées dans l&apos;info-bulles de ces champs.</translation>
     </message>
 </context>
 <context>
@@ -1420,6 +1376,50 @@ Taille: %2 bytes
     </message>
 </context>
 <context>
+    <name>DatabaseWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/databasewidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Template DB:</source>
+        <translation>Modèle de BDD:</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Model Author:</source>
+        <translation>Auteur du modèle:</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Encoding:</source>
+        <translation>Encodage:</translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>LC_COLLATE:</source>
+        <translation>LC_COLLATE:</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Connections:</source>
+        <translation>Connexions:</translation>
+    </message>
+    <message>
+        <location line="+45"/>
+        <source>LC_CTYPE:</source>
+        <translation>LC_CTYPE:</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="+47"/>
+        <location line="+1"/>
+        <source>Default</source>
+        <translation>Défaut</translation>
+    </message>
+</context>
+<context>
     <name>DominioWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/dominiowidget.ui" line="+40"/>
@@ -1501,7 +1501,7 @@ Taille: %2 bytes
         <location line="+1"/>
         <source>Assignment of not allocated object!</source>
         <translatorcomment>Indefini ?</translatorcomment>
-        <translation type="unfinished">Affectation d&apos;un objet non alloué!</translation>
+        <translation type="unfinished">Utilisation d&apos;un objet non alloué!</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2683,7 +2683,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>A propos de pgModeler</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+3"/>
+        <source>F1</source>
+        <translation>F1</translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Print</source>
         <translation>Imprimer</translation>
     </message>
@@ -2734,7 +2739,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Configuration</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/formprincipal.cpp" line="+457"/>
+        <location filename="../libpgmodeler_ui/src/formprincipal.cpp" line="+462"/>
         <source>Save all models</source>
         <translation>Enregistrer tous les modèles</translation>
     </message>
@@ -2744,7 +2749,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Certains modèles ont été modifiés! Voulez vous les sauvegarder avant de quitter pgModeler?</translation>
     </message>
     <message>
-        <location line="+490"/>
+        <location line="+516"/>
         <source>Save &apos;%1&apos; as...</source>
         <translation>Enregistrer &apos;%1&apos; sous...</translation>
     </message>
@@ -2851,17 +2856,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+12"/>
         <source>Ctrl+Q</source>
         <translation>Ctrl+Q</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>F2</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+15"/>
+        <location line="+30"/>
         <source>Ctrl+P</source>
         <translation></translation>
     </message>
@@ -2962,7 +2962,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Modèle de base de donnée (*.dbm);; Tous les fichiers (*.*)</translation>
     </message>
     <message>
-        <location line="-202"/>
+        <location line="-208"/>
         <source>Save model</source>
         <translation>Enregistrer le modèle</translation>
     </message>
@@ -3661,9 +3661,88 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
+    <name>MessageBox</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/messagebox.ui" line="+29"/>
+        <source>Dialog</source>
+        <translation>Dialogue</translation>
+    </message>
+    <message>
+        <location line="+67"/>
+        <source>Show excpetion stack in text format (useful to report errors).</source>
+        <translation>Afficher la pile d&apos;exception au format texte (utile pour les rapports d&apos;erreur).</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Show/hide exceptions stack.</source>
+        <translation>Afficher/cacher la pile d&apos;exceptions.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <location line="+113"/>
+        <source>msg</source>
+        <translation>message</translation>
+    </message>
+    <message>
+        <location line="+98"/>
+        <source>Exceptions</source>
+        <translation>Exceptions</translation>
+    </message>
+    <message>
+        <location line="+71"/>
+        <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="+170"/>
+        <location line="+11"/>
+        <source>&amp;Yes</source>
+        <translation>&amp;Oui</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="-12"/>
+        <location line="+11"/>
+        <source>&amp;No</source>
+        <translation>&amp;Non</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="-42"/>
+        <source>Error</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Alert</source>
+        <translation>Alerte</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Information</source>
+        <translation>Information</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <location line="+5"/>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Annuler</translation>
+    </message>
+    <message>
+        <location line="-4"/>
+        <location line="+11"/>
+        <source>&amp;Ok</source>
+        <translation>&amp;Ok</translation>
+    </message>
+</context>
+<context>
     <name>ModeloWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelowidget.cpp" line="+72"/>
+        <location filename="../libpgmodeler_ui/src/modelowidget.cpp" line="+76"/>
         <source>Generalization</source>
         <translation>Généralisation</translation>
     </message>
@@ -3674,40 +3753,40 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+38"/>
-        <location line="+2182"/>
+        <location line="+2378"/>
         <source>Source code</source>
         <translation>Code source</translation>
     </message>
     <message>
-        <location line="-2180"/>
+        <location line="-2376"/>
         <source>Show object source code</source>
         <translation>Afficher le code source de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2171"/>
+        <location line="+2367"/>
         <source>Properties</source>
         <translation>Propriétés</translation>
     </message>
     <message>
-        <location line="-2169"/>
+        <location line="-2365"/>
         <source>Edit the object properties</source>
         <translation>Editer les propriétés de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2196"/>
+        <location line="+2392"/>
         <source>Protect</source>
         <translation>Vérrouiller</translation>
     </message>
     <message>
-        <location line="-2195"/>
-        <location line="+2190"/>
+        <location line="-2391"/>
+        <location line="+2386"/>
         <source>Unprotect</source>
         <translation>Déverrouiller</translation>
     </message>
     <message>
-        <location line="-2189"/>
+        <location line="-2385"/>
         <source>Pretects the object(s) against modifications</source>
         <translation>Empêcher l(es)&apos;objet(s) d&apos;être modifiés</translation>
     </message>
@@ -3718,12 +3797,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2198"/>
+        <location line="+2394"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location line="-2196"/>
+        <location line="-2392"/>
         <source>Delete the selected object(s)</source>
         <translation>Supprimer les objets sélectionnés</translation>
     </message>
@@ -3784,7 +3863,48 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Ajouter un nouvel objet dans le modèle</translation>
     </message>
     <message>
-        <location line="+625"/>
+        <location line="+2"/>
+        <source>Quick actions</source>
+        <translation>Actions rapides</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Rename</source>
+        <translation>Renommer</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Quick rename the object</source>
+        <translation>Renommage rapide de l&apos;objet</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Move to schema</source>
+        <translation type="unfinished">Déplacer vers le schema</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Move the object to another schema</source>
+        <translation>Déplacer l&apos;objet vers un autre schéma</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Edit permissions</source>
+        <translation>Editer les permissions</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+4"/>
+        <source>Edit object&apos;s permissions</source>
+        <translation>Editer les permissions de l&apos;objet</translation>
+    </message>
+    <message>
+        <location line="-1"/>
+        <source>Change owner</source>
+        <translation>Changer le propriétaire</translation>
+    </message>
+    <message>
+        <location line="+640"/>
         <source>Loading database model</source>
         <translation>Ouverture du modèle de base de données</translation>
     </message>
@@ -3795,24 +3915,24 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="-396"/>
-        <location line="+860"/>
-        <location line="+398"/>
+        <location line="+912"/>
+        <location line="+407"/>
         <location line="+6"/>
         <source>Confirmation</source>
         <translation>Confirmation</translation>
     </message>
     <message>
-        <location line="-403"/>
+        <location line="-412"/>
         <source>Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model.</source>
         <translation>Copier également les dépendences des objets sélectionnés? Ceci minimise la perte des références lorsque les objets copiés sont collés dans un autre modèle.</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+110"/>
         <source>Pasting objects...</source>
         <translation>Collage des objets...</translation>
     </message>
     <message>
-        <location line="+225"/>
+        <location line="+231"/>
         <source>Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!</source>
         <translation>Tous les objets n&apos;ont pas été collés dans le modèle à cause d&apos;erreurs retournés durant le processus! Se référer à la pile d&apos;erreurs pour plus de détails</translation>
     </message>
@@ -3822,17 +3942,22 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Souhaitez vous réellement supprimer l&apos;objet sélectionné?</translation>
     </message>
     <message>
-        <location line="+449"/>
+        <location line="+235"/>
+        <source>(no objects)</source>
+        <translation>(aucun objet)</translation>
+    </message>
+    <message>
+        <location line="+317"/>
         <source>Constraints</source>
         <translation>Contraintes</translation>
     </message>
     <message>
-        <location line="-1713"/>
+        <location line="-1877"/>
         <source>Convert a relationship is an irreversible operation and causes the deletion of all operation history! Do you want to continue?</source>
         <translation>Convertir une relation est une opération irréversible qui cause la suppression de tout l&apos;historique des opérations? Souhaitez vous continuer?</translation>
     </message>
     <message>
-        <location line="-491"/>
+        <location line="-523"/>
         <source>Convert rel. n-n</source>
         <translation>Convertir rel n-n</translation>
     </message>
@@ -3847,103 +3972,24 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation></translation>
     </message>
     <message>
-        <location line="+1734"/>
+        <location line="+1827"/>
         <source>CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?</source>
         <translation>ATTENTION: Supprimer plusieur objets en une seule fois provoque des invalidation irréversible sur les autres objets du modèle. Souhaitez vous réllement supprimer TOUS les objets sélectionnés?</translation>
     </message>
     <message>
-        <location line="-275"/>
+        <location line="-281"/>
         <source>Validating object: %1 (%2)</source>
         <translation>Validaiont de l&apos;objet: %1 (%2)</translation>
     </message>
     <message>
-        <location line="+172"/>
+        <location line="+173"/>
         <source>Pasting object: %1 (%2)</source>
         <translation>Collage de l&apos;objet: %1 (%2)</translation>
     </message>
     <message>
-        <location line="-57"/>
+        <location line="-58"/>
         <source>Generating XML code of object: %1 (%2)</source>
         <translation>Génération du code XML de l&apos;objet : %1 (%2)</translation>
-    </message>
-</context>
-<context>
-    <name>ObjetoBaseWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/objetobasewidget.ui" line="+38"/>
-        <source>Name:</source>
-        <translation>Nom:</translation>
-    </message>
-    <message>
-        <location line="+87"/>
-        <source>Comment:</source>
-        <translation>Commentaire:</translation>
-    </message>
-    <message>
-        <location line="+48"/>
-        <source>Tablespace:</source>
-        <translation>Tablespace:</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Owner:</source>
-        <translation>Propriétaire:</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Schema:</source>
-        <translation>Schéma:</translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>Permissions:</source>
-        <translation>Permissions:</translation>
-    </message>
-    <message>
-        <location line="+99"/>
-        <source>This object is protected thus no change in form will be applied to it.</source>
-        <translation>L&apos;objet est vérouillé, par conséquent aucun changement dans le formulaire ne lui sera appliqué.</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Parent Object:</source>
-        <translation>Objet Parent:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/objetobasewidget.cpp" line="+43"/>
-        <source>Create / Edit: </source>
-        <translation>Créer / Éditer: </translation>
-    </message>
-    <message>
-        <location line="+396"/>
-        <source>Value(s)</source>
-        <translation>Valeur(s)</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Version</source>
-        <translation>Version</translation>
-    </message>
-    <message>
-        <location line="+41"/>
-        <source>The field(s) or value(s) highlighted on the form is(are) for the exclusive use and/or mandatory in specific versions of PostgreSQL. Failure to complete that may cause errors in the generation of SQL code for each version shown in tool tips of the highlighted fields.</source>
-        <translation>Le(s) champs ou valeur(s) mis en évidence dans le formulaire est(sont) dépendants de la version de PostgreSQL. Le non respect de ces dépendances peut provoquer des erreurs dans la génération du code SQL qui sont affichées dans l&apos;info-bulles de ces champs.</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/objetobasewidget.ui" line="-329"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+74"/>
-        <location line="+286"/>
-        <source>icone</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-130"/>
-        <source>Edit Permissions</source>
-        <translation>Editer les permissions</translation>
     </message>
 </context>
 <context>
@@ -4190,29 +4236,29 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>PermissaoWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/permissaowidget.ui" line="+116"/>
-        <location filename="../libpgmodeler_ui/src/permissaowidget.cpp" line="+71"/>
+        <location filename="../libpgmodeler_ui/ui/permissaowidget.ui" line="+56"/>
+        <location filename="../libpgmodeler_ui/src/permissaowidget.cpp" line="+72"/>
         <source>Roles</source>
         <translation>Rôles</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+214"/>
         <location filename="../libpgmodeler_ui/src/permissaowidget.cpp" line="+2"/>
         <source>Privileges</source>
         <translation>Privilèges</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="-53"/>
         <source>Cancel Operation</source>
         <translation>Annuler l&apos;opération</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="-29"/>
         <source>Update Permission</source>
         <translation>Actualiser Permission</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="-29"/>
         <source>Add Permission</source>
         <translation>Ajouter Permission</translation>
     </message>
@@ -4227,22 +4273,22 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Rôle</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/permissaowidget.ui" line="-208"/>
+        <location filename="../libpgmodeler_ui/ui/permissaowidget.ui" line="-133"/>
         <source>Form</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+51"/>
         <source>ID:</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+51"/>
         <source>Permissions</source>
         <translation>Permissions</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+175"/>
         <source>GRANT OPTION</source>
         <translation></translation>
     </message>
@@ -4307,6 +4353,35 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location line="+156"/>
         <source>%1 (line: %2)</source>
         <translation>%1 (ligne: %2)</translation>
+    </message>
+</context>
+<context>
+    <name>QuickRenameWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/quickrenamewidget.ui" line="+26"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+108"/>
+        <source>....</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>to:</source>
+        <translation>en:</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <location line="+55"/>
+        <source>Rename</source>
+        <translation>Renommer</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
     </message>
 </context>
 <context>
@@ -4688,17 +4763,17 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>SeletorObjetoWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/seletorobjetowidget.ui" line="+86"/>
+        <location filename="../libpgmodeler_ui/ui/seletorobjetowidget.ui" line="+92"/>
         <source>Clear field</source>
         <translation>Nettoyer le champs</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+32"/>
         <source>Select Object</source>
         <translation>Sélectionner Objet</translation>
     </message>
     <message>
-        <location line="-80"/>
+        <location line="-98"/>
         <source>Form</source>
         <translation></translation>
     </message>
@@ -4749,47 +4824,47 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>TabelaObjetosWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tabelaobjetoswidget.ui" line="+50"/>
+        <location filename="../libpgmodeler_ui/ui/tabelaobjetoswidget.ui" line="+56"/>
         <source>Add Item</source>
         <translation>Ajouter Item</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Remove Item</source>
         <translation>Supprimer Item</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Update Item</source>
         <translation>Actualiser Item</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Remove All</source>
         <translation>Tout supprimer</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Edit Item</source>
         <translation>Editer Item</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Move Up</source>
         <translation>Déplacer vers le haut</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Move Down</source>
         <translation>Déplacer vers le bas</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Move to start</source>
         <translation>Déplacer au début</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Move to end</source>
         <translation>Déplacer à la fin</translation>
     </message>
@@ -4804,52 +4879,52 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Souhaitez vous réellement supprimer tous les items?</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tabelaobjetoswidget.ui" line="-244"/>
+        <location filename="../libpgmodeler_ui/ui/tabelaobjetoswidget.ui" line="-346"/>
         <source>Form</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+58"/>
         <source>Ins</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Del</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Alt+R</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Shift+Del</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Space</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Ctrl+Up</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Ctrl+Down</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Ctrl+Home</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Ctrl+End, Ctrl+S</source>
         <translation></translation>
     </message>
@@ -5274,54 +5349,54 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Types d&apos;Objets Visibles</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+61"/>
         <source>Select All</source>
         <translation>Tout Sélectionner</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+13"/>
         <source>Clear All</source>
         <translation>Tout Effacer</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+56"/>
         <source>Select</source>
         <translation>Selectionner</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+32"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+32"/>
         <source>Objects view configuration</source>
         <translation>Configuration de la vue des objets</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+38"/>
         <source>Tree view</source>
         <translation>Vue Arborescente</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+41"/>
         <source>List view</source>
         <translation>Vue en Liste</translation>
     </message>
     <message>
-        <location line="-344"/>
+        <location line="-398"/>
         <source>1</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+280"/>
-        <location line="+35"/>
-        <location line="+32"/>
+        <location line="+322"/>
+        <location line="+41"/>
+        <location line="+38"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-272"/>
+        <location line="-326"/>
         <source>Object</source>
         <translation>Objet</translation>
     </message>
