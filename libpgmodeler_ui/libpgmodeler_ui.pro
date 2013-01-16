@@ -16,7 +16,7 @@ windows:RCC_DIR += src
 SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/modelowidget.cpp \
            $$PWD/src/formsobre.cpp \
-           $$PWD/src/caixamensagem.cpp \
+           $$PWD/src/messagebox.cpp \
            $$PWD/src/caixatextowidget.cpp \
            $$PWD/src/baseobjectwidget.cpp \
            $$PWD/src/listaoperacoeswidget.cpp \
@@ -67,7 +67,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
 HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/modelowidget.h \
            $$PWD/src/formsobre.h \
-           $$PWD/src/caixamensagem.h \
+           $$PWD/src/messagebox.h \
            $$PWD/src/baseobjectwidget.h \
            $$PWD/src/caixatextowidget.h \
            $$PWD/src/listaoperacoeswidget.h \
@@ -119,7 +119,7 @@ HEADERS += $$PWD/src/formprincipal.h \
 FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/formsobre.ui \
          $$PWD/ui/caixatextowidget.ui \
-         $$PWD/ui/caixamensagem.ui \
+         $$PWD/ui/messagebox.ui \
          $$PWD/ui/listaoperacoeswidget.ui \
          $$PWD/ui/visaoobjetoswidget.ui \
          $$PWD/ui/formbasico.ui \

@@ -7,7 +7,7 @@ ListaObjetosWidget::ListaObjetosWidget(QWidget *parent): BaseObjectWidget(parent
 
  //Define os atributos do formulários e da janela pai
  parent_form->setWindowTitle(trUtf8("Dependeces / References of Object"));
- parent_form->definirBotoes(CaixaMensagem::BOTAO_OK);
+ parent_form->definirBotoes(MessageBox::OK_BUTTON);
  parent_form->setMinimumSize(550, 300);
 
  //Conecta o botão ok do formulário pai com o método de fechamento do formulário

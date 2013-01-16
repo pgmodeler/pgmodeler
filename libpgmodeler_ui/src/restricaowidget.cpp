@@ -1,7 +1,7 @@
 #include "restricaowidget.h"
-#include "caixamensagem.h"
+#include "messagebox.h"
 
-extern CaixaMensagem *caixa_msg;
+extern MessageBox *caixa_msg;
 
 RestricaoWidget::RestricaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CONSTRAINT)
 {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CaixaMensagem</class>
- <widget class="QDialog" name="CaixaMensagem">
+ <class>MessageBox</class>
+ <widget class="QDialog" name="MessageBox">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -85,7 +85,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QToolButton" name="exibir_exec_txt_tb">
+         <widget class="QToolButton" name="show_errors_txt_tb">
           <property name="minimumSize">
            <size>
             <width>30</width>
@@ -114,7 +114,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QToolButton" name="exibir_exec_tb">
+         <widget class="QToolButton" name="show_errors_tb">
           <property name="minimumSize">
            <size>
             <width>30</width>
@@ -145,7 +145,7 @@
        </layout>
       </item>
       <item row="0" column="0">
-       <widget class="QStackedWidget" name="grupo_objs_wgt">
+       <widget class="QStackedWidget" name="objs_group_wgt">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
           <horstretch>0</horstretch>
@@ -181,7 +181,7 @@
              <number>2</number>
             </property>
             <item row="0" column="0">
-             <widget class="QLabel" name="icone_lb">
+             <widget class="QLabel" name="icon_lbl">
               <property name="minimumSize">
                <size>
                 <width>40</width>
@@ -206,7 +206,7 @@
              </widget>
             </item>
             <item row="0" column="1" rowspan="2">
-             <widget class="QLabel" name="texto_lb">
+             <widget class="QLabel" name="msg_lbl">
               <property name="enabled">
                <bool>true</bool>
               </property>
@@ -295,7 +295,7 @@
            <number>0</number>
           </property>
           <item row="0" column="0">
-           <widget class="QTreeWidget" name="excecoes_trw">
+           <widget class="QTreeWidget" name="exceptions_trw">
             <property name="font">
              <font>
               <pointsize>8</pointsize>
@@ -349,7 +349,7 @@
            <number>2</number>
           </property>
           <item row="0" column="0">
-           <widget class="QTextBrowser" name="excecoes_txt">
+           <widget class="QTextBrowser" name="exceptions_txt">
             <property name="font">
              <font>
               <family>DejaVu Sans Mono</family>
@@ -393,7 +393,7 @@
          <number>0</number>
         </property>
         <item row="0" column="0">
-         <widget class="QPushButton" name="sim_ok_btn">
+         <widget class="QPushButton" name="yes_ok_btn">
           <property name="minimumSize">
            <size>
             <width>90</width>
@@ -422,7 +422,7 @@
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QPushButton" name="nao_btn">
+         <widget class="QPushButton" name="no_btn">
           <property name="minimumSize">
            <size>
             <width>90</width>
@@ -445,7 +445,7 @@
          </widget>
         </item>
         <item row="0" column="3">
-         <widget class="QPushButton" name="cancelar_btn">
+         <widget class="QPushButton" name="cancel_btn">
           <property name="minimumSize">
            <size>
             <width>90</width>

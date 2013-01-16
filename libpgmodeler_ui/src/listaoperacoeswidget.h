@@ -25,7 +25,7 @@
 #include <QtGui>
 #include "ui_listaoperacoeswidget.h"
 #include "modelowidget.h"
-#include "caixamensagem.h"
+#include "messagebox.h"
 
 class ListaOperacoesWidget: public QDockWidget, public Ui::ListaOperacoesWidget {
  Q_OBJECT

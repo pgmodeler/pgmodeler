@@ -25,7 +25,7 @@
 #include <QtGui>
 #include "ui_visaoobjetoswidget.h"
 #include "modelowidget.h"
-#include "caixamensagem.h"
+#include "messagebox.h"
 
 class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
  Q_OBJECT

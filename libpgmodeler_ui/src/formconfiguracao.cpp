@@ -1,7 +1,7 @@
 #include "formconfiguracao.h"
-#include "caixamensagem.h"
+#include "messagebox.h"
 
-extern CaixaMensagem *caixa_msg;
+extern MessageBox *caixa_msg;
 
 FormConfiguracao::FormConfiguracao(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -81,8 +81,8 @@ void FormConfiguracao::restaurarPadroes(void)
 {
  caixa_msg->show(trUtf8("Confirmation"),
                  trUtf8("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
-                 CaixaMensagem::ICONE_CONFIRM,
-                 CaixaMensagem::BOTAO_SIM_NAO);
+                 MessageBox::CONFIRM_ICON,
+                 MessageBox::YES_NO_BUTTONS);
 
  if(caixa_msg->result()==QDialog::Accepted)
  {

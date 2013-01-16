@@ -1,11 +1,11 @@
 #include "formexportacao.h"
 #include "progressotarefa.h"
 #include "formconfiguracao.h"
-#include "caixamensagem.h"
+#include "messagebox.h"
 
 extern ProgressoTarefa *prog_tarefa;
 extern FormConfiguracao *fconfiguracao;
-extern CaixaMensagem *caixa_msg;
+extern MessageBox *caixa_msg;
 
 FormExportacao::FormExportacao(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {

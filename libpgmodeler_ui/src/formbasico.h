@@ -25,7 +25,7 @@
 #include <QtGui>
 #include "ui_formbasico.h"
 #include "exception.h"
-#include "caixamensagem.h"
+#include "messagebox.h"
 
 class FormBasico: public QDialog, public Ui::FormBasico {
  Q_OBJECT
@@ -35,7 +35,7 @@ class FormBasico: public QDialog, public Ui::FormBasico {
  public:
    FormBasico(QWidget * parent = 0, Qt::WindowFlags f = 0);
   ~FormBasico(void){}
-  void definirBotoes(unsigned conf_botoes=CaixaMensagem::BOTAO_OK_CANCELAR);
+  void definirBotoes(unsigned conf_botoes=MessageBox::OK_CANCEL_BUTTONS);
 
  public slots:
 };

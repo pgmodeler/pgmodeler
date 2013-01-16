@@ -1,6 +1,6 @@
 #include "tabelaobjetoswidget.h"
-#include "caixamensagem.h"
-extern CaixaMensagem *caixa_msg;
+#include "messagebox.h"
+extern MessageBox *caixa_msg;
 
 TabelaObjetosWidget::TabelaObjetosWidget(unsigned conf_botoes, bool conf_exclusoes, QWidget *parent): QWidget(parent)
 {
@@ -433,7 +433,7 @@ void TabelaObjetosWidget::removerLinha(void)
   {
    if(conf_exclusoes)
     caixa_msg->show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the selected item?"),
-                    CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
+                    MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 
    if(!conf_exclusoes || (conf_exclusoes && caixa_msg->result()==QDialog::Accepted))
    {
@@ -464,7 +464,7 @@ void TabelaObjetosWidget::removerLinhas(void)
      da tabela para reuso. */
   if(conf_exclusoes && obj_sender==remover_todas_tb)
    caixa_msg->show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the all items?"),
-                   CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
+                   MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 
   if(!conf_exclusoes || (conf_exclusoes && obj_sender!=remover_todas_tb) ||
     (conf_exclusoes &&  obj_sender==remover_todas_tb && caixa_msg->result()==QDialog::Accepted))

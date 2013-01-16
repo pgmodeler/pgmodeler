@@ -19,7 +19,7 @@ FormBasico::FormBasico(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 
 void FormBasico::definirBotoes(unsigned conf_botoes)
 {
- if(conf_botoes==CaixaMensagem::BOTAO_OK_CANCELAR)
+ if(conf_botoes==MessageBox::OK_CANCEL_BUTTONS)
  {
   aplicar_ok_btn->setText(trUtf8("&Apply"));
   cancelar_btn->setVisible(true);

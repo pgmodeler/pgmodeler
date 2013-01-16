@@ -40,7 +40,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
   parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(obj_type));
   parent_form->widgetgeral_wgt->insertWidget(0, this);
   parent_form->widgetgeral_wgt->setCurrentIndex(0);
-  parent_form->definirBotoes(CaixaMensagem::BOTAO_OK_CANCELAR);
+  parent_form->definirBotoes(MessageBox::OK_CANCEL_BUTTONS);
 
   connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
   connect(parent_form->cancelar_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));

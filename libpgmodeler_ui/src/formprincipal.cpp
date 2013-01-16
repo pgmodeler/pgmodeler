@@ -38,7 +38,7 @@
    de se instanciar cada um toda vez em que forem usados.
    O formulário principal é o responsável por alocar e desalocar esses objetos. */
 FormSobre *fsobre=NULL;
-CaixaMensagem *caixa_msg=NULL;
+MessageBox *caixa_msg=NULL;
 VisaoObjetosWidget *selecaoobjetos_wgt=NULL;
 CaixaTextoWidget *caixatexto_wgt=NULL;
 CodigoFonteWidget *codigofonte_wgt=NULL;
@@ -98,7 +98,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  setupUi(this);
 
  //Alocando os formulários globais
- caixa_msg=new CaixaMensagem(this, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
+ caixa_msg=new MessageBox(this, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
 
  try
  {
@@ -461,7 +461,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
   {
    caixa_msg->show(trUtf8("Save all models"),
                    trUtf8("Some models were modified! Do you want to save them before finish the pgModeler?"),
-                   CaixaMensagem::ICONE_CONFIRM,CaixaMensagem::BOTAO_SIM_NAO);
+                   MessageBox::CONFIRM_ICON,MessageBox::YES_NO_BUTTONS);
 
    if(caixa_msg->result()==QDialog::Accepted)
     this->salvarTodosModelos();
@@ -880,7 +880,7 @@ void FormPrincipal::fecharModelo(int idx_modelo)
   {
    caixa_msg->show(trUtf8("Save model"),
                    trUtf8("The model were modified! Do you want to save it before close?"),
-                   CaixaMensagem::ICONE_CONFIRM,CaixaMensagem::BOTAO_SIM_NAO);
+                   MessageBox::CONFIRM_ICON,MessageBox::YES_NO_BUTTONS);
 
    if(caixa_msg->result()==QDialog::Accepted)
     this->salvarModelo(modelo);
@@ -1054,10 +1054,10 @@ void FormPrincipal::imprimirModelo(void)
     //Exibe a caixa de confirmação de impressão ao usuário
     caixa_msg->show(trUtf8("Confirmation"),
     trUtf8("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
-    CaixaMensagem::ICONE_ALERTA, CaixaMensagem::BOTAO_SIM_NAO_CANCELAR);
+    MessageBox::ALERT_ICON, MessageBox::ALL_BUTTONS);
    }
 
-   if(!caixa_msg->caixaCanceleda())
+   if(!caixa_msg->isCancelled())
    {
     //Caso o usuário rejeite as configurações personalizada
     if(caixa_msg->result()==QDialog::Rejected)

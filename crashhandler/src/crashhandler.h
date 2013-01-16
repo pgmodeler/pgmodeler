@@ -27,7 +27,7 @@
 #include "globalattributes.h"
 #include "ui_crashhandler.h"
 #include "destaquesintaxe.h"
-#include "caixamensagem.h"
+#include "messagebox.h"
 
 #include <iostream>
 #include <fstream>

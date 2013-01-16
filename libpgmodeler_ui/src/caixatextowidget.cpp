@@ -6,7 +6,7 @@ CaixaTextoWidget::CaixaTextoWidget(QWidget *parent): BaseObjectWidget(parent, OB
  configureFormLayout(caixatexto_grid, OBJ_TEXTBOX);
  connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
  connect(sel_cor_tb, SIGNAL(clicked(void)), this, SLOT(selecionarCorTexto(void)));
- parent_form->definirBotoes(CaixaMensagem::BOTAO_OK_CANCELAR);
+ parent_form->definirBotoes(MessageBox::OK_CANCEL_BUTTONS);
  parent_form->setMinimumSize(500,250);
 }
 

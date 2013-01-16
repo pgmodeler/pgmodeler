@@ -26,7 +26,7 @@
 #include "ui_formprincipal.h"
 #include "modelowidget.h"
 #include "formsobre.h"
-#include "caixamensagem.h"
+#include "messagebox.h"
 #include "formbasico.h"
 #include "formrestauracaomodelo.h"
 #include "listaoperacoeswidget.h"

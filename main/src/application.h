@@ -25,9 +25,9 @@
 
 #include <QApplication>
 #include <QMessageBox>
-#include "caixamensagem.h"
+#include "messagebox.h"
 
-extern CaixaMensagem *caixa_msg;
+extern MessageBox *caixa_msg;
 
 class Application: public QApplication {
  private:
@@ -49,7 +49,7 @@ class Application: public QApplication {
    }
    catch(...)
    {
-    caixa_msg->show(trUtf8("Error"),trUtf8("Unknown exception caught!"), CaixaMensagem::ICONE_ERRO);
+    caixa_msg->show(trUtf8("Error"),trUtf8("Unknown exception caught!"), MessageBox::ERROR_ICON);
     return(false);
    }
   }

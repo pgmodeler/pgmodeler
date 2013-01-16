@@ -1,7 +1,7 @@
 #include "confconexoeswidget.h"
-#include "caixamensagem.h"
+#include "messagebox.h"
 
-extern CaixaMensagem *caixa_msg;
+extern MessageBox *caixa_msg;
 
 ConfConexoesWidget::ConfConexoesWidget(QWidget * parent) : QWidget(parent)
 {
@@ -356,7 +356,7 @@ void ConfConexoesWidget::testarConexao(void)
   conexao.connect();
 
   //Exibe a mensagem de sucesso
-  caixa_msg->show(trUtf8("Success"), trUtf8("Connection successfuly stablished!"), CaixaMensagem::ICONE_INFO);
+  caixa_msg->show(trUtf8("Success"), trUtf8("Connection successfuly stablished!"), MessageBox::INFO_ICON);
  }
  catch(Exception &e)
  {

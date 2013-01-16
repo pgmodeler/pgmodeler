@@ -2,12 +2,12 @@
 #include "restricaowidget.h"
 #include "colunawidget.h"
 #include "tabelawidget.h"
-#include "caixamensagem.h"
+#include "messagebox.h"
 
 extern RestricaoWidget *restricao_wgt;
 extern ColunaWidget *coluna_wgt;
 extern TabelaWidget *tabela_wgt;
-extern CaixaMensagem *caixa_msg;
+extern MessageBox *caixa_msg;
 
 RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
 {

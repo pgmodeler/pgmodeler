@@ -29,7 +29,7 @@
 #include "quickrenamewidget.h"
 #include "permissaowidget.h"
 
-extern CaixaMensagem *caixa_msg;
+extern MessageBox *caixa_msg;
 extern DatabaseWidget *database_wgt;
 extern EsquemaWidget *esquema_wgt;
 extern PapelWidget *papel_wgt;
@@ -713,7 +713,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
   {
    caixa_msg->show(trUtf8("Confirmation"),
                    trUtf8("Convert a relationship is an irreversible operation and causes the deletion of all operation history! Do you want to continue?"),
-                   CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
+                   MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 
    if(caixa_msg->result()==QDialog::Accepted)
    {
@@ -1625,7 +1625,7 @@ void ModeloWidget::copiarObjetos(void)
  //Solicia a confirmação ao usuário se o mesmo deseja copiar as dependências dos objetos
  caixa_msg->show(trUtf8("Confirmation"),
                  trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
-                 CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
+                 MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 
  itr=objs_selecionados.begin();
  itr_end=objs_selecionados.end();
@@ -1966,7 +1966,7 @@ void ModeloWidget::colarObjetos(void)
  if(erro.getErrorType()!=ERR_CUSTOM)
   caixa_msg->show(erro,
                   trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
-                  CaixaMensagem::ICONE_ALERTA);
+                  MessageBox::ALERT_ICON);
 
  //Caso não seja uma operação de recorte
  if(!ModeloWidget::op_recortar)
@@ -2032,13 +2032,13 @@ void ModeloWidget::excluirObjetos(void)
    {
     caixa_msg->show(trUtf8("Confirmation"),
                     trUtf8("CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?"),
-                    CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
+                    MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
    }
    else
    {
     caixa_msg->show(trUtf8("Confirmation"),
                     trUtf8("Do you really want to delete the selected object?"),
-                    CaixaMensagem::ICONE_CONFIRM, CaixaMensagem::BOTAO_SIM_NAO);
+                    MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
    }
   }
 

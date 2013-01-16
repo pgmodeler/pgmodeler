@@ -73,7 +73,7 @@ void CrashHandler::loadReport(const QString &filename)
  ifstream input;
  QFileInfo fi;
  char *buf=NULL;
- CaixaMensagem msgbox;
+ MessageBox msgbox;
 
  fi.setFile(filename);
  input.open(filename);
@@ -84,7 +84,7 @@ void CrashHandler::loadReport(const QString &filename)
 
  //Raises an error if the file could not be opened
  if(!input.is_open())
-  msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(filename), CaixaMensagem::ICONE_ERRO);
+  msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(filename), MessageBox::ERROR_ICON);
  else
  {
   QByteArray uncomp_buf;
@@ -128,7 +128,7 @@ void CrashHandler::loadReport(const QString &filename)
 
 void CrashHandler::generateReport(void)
 {
- CaixaMensagem msgbox;
+ MessageBox msgbox;
  QByteArray buf, comp_buf;
  ofstream output;
 
@@ -141,7 +141,7 @@ void CrashHandler::generateReport(void)
  output.open(crash_file);
 
  if(!output.is_open())
-  msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(crash_file), CaixaMensagem::ICONE_ERRO);
+  msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(crash_file), MessageBox::ERROR_ICON);
  else
  {
   buf.append(actions_txt->toPlainText().toUtf8());
@@ -161,7 +161,7 @@ void CrashHandler::generateReport(void)
   output.write(comp_buf.data(), comp_buf.size());
   output.close();
 
-  msgbox.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file '%1' to %2 in order be debugged. Thank you for the collaboration!").arg(crash_file).arg("rkhaotix@gmail.com"), CaixaMensagem::ICONE_INFO);
+  msgbox.show(trUtf8("Information"), trUtf8("Crash report successfuly generated! Please send the file '%1' to %2 in order be debugged. Thank you for the collaboration!").arg(crash_file).arg("rkhaotix@gmail.com"), MessageBox::INFO_ICON);
   this->close();
  }
 }

@@ -23,7 +23,7 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
     edição de permissões como filho */
  parent_form->widgetgeral_wgt->insertWidget(0, this);
  parent_form->widgetgeral_wgt->setCurrentIndex(0);
- parent_form->definirBotoes(CaixaMensagem::BOTAO_OK);
+ parent_form->definirBotoes(MessageBox::OK_BUTTON);
  connect(parent_form->aplicar_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 
  //Configura a dimensão da janela pai

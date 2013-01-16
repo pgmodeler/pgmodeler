@@ -1,6 +1,6 @@
 #include "dummyplugin.h"
 #include "exception.h"
-#include "caixamensagem.h"
+#include "messagebox.h"
 
 DummyPlugin::DummyPlugin(void)
 {
@@ -23,10 +23,10 @@ QString DummyPlugin::getPluginLabel(void)
 
 void DummyPlugin::executePlugin(ModeloWidget *)
 {
- CaixaMensagem msgbox;
+ MessageBox msgbox;
  msgbox.show(trUtf8("Plugin successfully loaded!"),
                 trUtf8("Plugin successfully loaded! Check the file PLUGINS.md to know how to create your own plugins."),
-                CaixaMensagem::ICONE_INFO);
+                MessageBox::INFO_ICON);
 }
 
 Q_EXPORT_PLUGIN2(dummyplugin, DummyPlugin)

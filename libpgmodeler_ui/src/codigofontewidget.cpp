@@ -31,7 +31,7 @@ CodigoFonteWidget::CodigoFonteWidget(QWidget *parent): BaseObjectWidget(parent)
 
   //Define os atributos do formulários e da janela pai
   parent_form->setWindowTitle(trUtf8("Source code visualization"));
-  parent_form->definirBotoes(CaixaMensagem::BOTAO_OK);
+  parent_form->definirBotoes(MessageBox::OK_BUTTON);
   parent_form->setMinimumSize(550, 450);
 
   //Conecta o botão ok do formulário pai com o método de fechamento do formulário

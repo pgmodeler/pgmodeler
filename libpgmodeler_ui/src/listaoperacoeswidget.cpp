@@ -1,7 +1,7 @@
 #include "listaoperacoeswidget.h"
 #include "progressotarefa.h"
 
-extern CaixaMensagem *caixa_msg;
+extern MessageBox *caixa_msg;
 extern ProgressoTarefa *prog_tarefa;
 
 ListaOperacoesWidget::ListaOperacoesWidget(QWidget *parent, Qt::WindowFlags f) : QDockWidget(parent, f)
@@ -212,8 +212,8 @@ void ListaOperacoesWidget::excluirOperacoes(void)
  //Exibe a mensagem de confirmação ao usuário
  caixa_msg->show(trUtf8("Operation history exclusion"),
                  trUtf8("Delete the executed operations history is an irreversible action, do you want to continue?"),
-                 CaixaMensagem::ICONE_CONFIRM,
-                 CaixaMensagem::BOTAO_SIM_NAO);
+                 MessageBox::CONFIRM_ICON,
+                 MessageBox::YES_NO_BUTTONS);
 
  //Caso o usuário confirme a exclusão a lista é limpa e atualizada
  if(caixa_msg->result()==QDialog::Accepted)

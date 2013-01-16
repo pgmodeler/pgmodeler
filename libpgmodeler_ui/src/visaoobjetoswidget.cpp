@@ -25,7 +25,7 @@
 #include "relacionamentowidget.h"
 #include "tabelawidget.h"
 
-extern CaixaMensagem *caixa_msg;
+extern MessageBox *caixa_msg;
 extern DatabaseWidget *database_wgt;
 extern EsquemaWidget *esquema_wgt;
 extern PapelWidget *papel_wgt;

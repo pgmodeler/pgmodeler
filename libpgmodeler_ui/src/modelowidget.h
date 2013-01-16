@@ -26,7 +26,7 @@
 #include <QtGui>
 #include "databasemodel.h"
 #include "operationlist.h"
-#include "caixamensagem.h"
+#include "messagebox.h"
 #include "formbasico.h"
 #include "objectsscene.h"
 #include "progressotarefa.h"
