@@ -123,12 +123,12 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
    //Apply the basic configurations to the object (name, schema, comment, owner, tablespace)
    virtual void applyConfiguration(void);
 
+   void hideEvent(QHideEvent *);
+   void showEvent(QShowEvent *);
+
  public:
    BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=BASE_OBJECT);
    virtual ~BaseObjectWidget(void);
-
-   void hideEvent(QHideEvent *);
-   void showEvent(QShowEvent *);
 
    virtual void setAttributes(DatabaseModel *model, OperationList *op_list,
                               BaseObject *object, BaseObject *parent_obj=NULL,

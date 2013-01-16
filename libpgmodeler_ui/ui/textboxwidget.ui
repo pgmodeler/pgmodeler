@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CaixaTextoWidget</class>
- <widget class="QWidget" name="CaixaTextoWidget">
+ <class>TextboxWidget</class>
+ <widget class="QWidget" name="TextboxWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -23,21 +23,21 @@
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QCheckBox" name="negrito_chk">
+      <widget class="QCheckBox" name="bold_chk">
        <property name="text">
         <string>Bold</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="italico_chk">
+      <widget class="QCheckBox" name="italic_chk">
        <property name="text">
         <string>Italic</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="sublinhado_chk">
+      <widget class="QCheckBox" name="underline_chk">
        <property name="text">
         <string>Underline</string>
        </property>
@@ -59,14 +59,14 @@
     </spacer>
    </item>
    <item row="1" column="0" colspan="5">
-    <widget class="QPlainTextEdit" name="texto_txt">
+    <widget class="QPlainTextEdit" name="text_txt">
      <property name="plainText">
       <string/>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QToolButton" name="sel_cor_tb">
+    <widget class="QToolButton" name="color_select_tb">
      <property name="minimumSize">
       <size>
        <width>45</width>

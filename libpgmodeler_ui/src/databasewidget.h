@@ -30,6 +30,7 @@ class DatabaseWidget: public BaseObjectWidget, public Ui::DatabaseWidget {
 
  public:
    DatabaseWidget(QWidget * parent = 0);
+
    void setAttributes(DatabaseModel *model);
 
  public slots:

@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: CaixaTextoWidget
-# Description:Definição da classe que implementa o formulário de criação e
-#            edição de caixa de texto no modelo de banco de dados.
+# Class: TextboxWidget
+# Description: Implements the operations to create/edit textboxes via form.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,24 +18,24 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef CAIXATEXTO_WIDGET_H
-#define CAIXATEXTO_WIDGET_H
+#ifndef TEXTBOX_WIDGET_H
+#define TEXTBOX_WIDGET_H
 
-#include "ui_caixatextowidget.h"
+#include "ui_textboxwidget.h"
 #include "baseobjectwidget.h"
 
-class CaixaTextoWidget: public BaseObjectWidget, public Ui::CaixaTextoWidget {
- Q_OBJECT
-
+class TextboxWidget: public BaseObjectWidget, public Ui::TextboxWidget {
  private:
+  Q_OBJECT
+  void hideEvent(QHideEvent *event);
 
  public:
-   CaixaTextoWidget(QWidget * parent = 0);
-   void hideEvent(QHideEvent *evento);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *caixa_texto=NULL, float object_px=NAN, float object_py=NAN);
+  TextboxWidget(QWidget * parent = 0);
+
+  void setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox=NULL, float obj_px=NAN, float obj_py=NAN);
 
  private slots:
-  void selecionarCorTexto(void);
+  void selectTextColor(void);
 
  public slots:
   void applyConfiguration(void);

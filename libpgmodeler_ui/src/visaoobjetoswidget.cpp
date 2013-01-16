@@ -16,7 +16,7 @@
 #include "classeoperadoreswidget.h"
 #include "tipowidget.h"
 #include "visaowidget.h"
-#include "caixatextowidget.h"
+#include "textboxwidget.h"
 #include "colunawidget.h"
 #include "restricaowidget.h"
 #include "regrawidget.h"
@@ -43,7 +43,7 @@ extern FamiliaOperadoresWidget *familiaop_wgt;
 extern ClasseOperadoresWidget *classeop_wgt;
 extern TipoWidget *tipo_wgt;
 extern VisaoWidget *visao_wgt;
-extern CaixaTextoWidget *caixatexto_wgt;
+extern TextboxWidget *caixatexto_wgt;
 extern ColunaWidget *coluna_wgt;
 extern RestricaoWidget *restricao_wgt;
 extern RegraWidget *regra_wgt;

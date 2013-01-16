@@ -17,7 +17,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/modelowidget.cpp \
            $$PWD/src/formsobre.cpp \
            $$PWD/src/messagebox.cpp \
-           $$PWD/src/caixatextowidget.cpp \
+           $$PWD/src/textboxwidget.cpp \
            $$PWD/src/baseobjectwidget.cpp \
            $$PWD/src/listaoperacoeswidget.cpp \
            $$PWD/src/visaoobjetoswidget.cpp \
@@ -69,7 +69,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/formsobre.h \
            $$PWD/src/messagebox.h \
            $$PWD/src/baseobjectwidget.h \
-           $$PWD/src/caixatextowidget.h \
+           $$PWD/src/textboxwidget.h \
            $$PWD/src/listaoperacoeswidget.h \
            $$PWD/src/visaoobjetoswidget.h \
            $$PWD/src/formbasico.h \
@@ -118,7 +118,7 @@ HEADERS += $$PWD/src/formprincipal.h \
 
 FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/formsobre.ui \
-         $$PWD/ui/caixatextowidget.ui \
+         $$PWD/ui/textboxwidget.ui \
          $$PWD/ui/messagebox.ui \
          $$PWD/ui/listaoperacoeswidget.ui \
          $$PWD/ui/visaoobjetoswidget.ui \

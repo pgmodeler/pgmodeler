@@ -1,6 +1,6 @@
 #include "formprincipal.h"
 
-#include "caixatextowidget.h"
+#include "textboxwidget.h"
 #include "codigofontewidget.h"
 #include "databasewidget.h"
 #include "esquemawidget.h"
@@ -40,7 +40,7 @@
 FormSobre *fsobre=NULL;
 MessageBox *caixa_msg=NULL;
 VisaoObjetosWidget *selecaoobjetos_wgt=NULL;
-CaixaTextoWidget *caixatexto_wgt=NULL;
+TextboxWidget *caixatexto_wgt=NULL;
 CodigoFonteWidget *codigofonte_wgt=NULL;
 DatabaseWidget *database_wgt=NULL;
 EsquemaWidget *esquema_wgt=NULL;
@@ -120,7 +120,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   //*** CRIAÇÃO DOS FORMULÁRIOS GLOBAIS ***
   permissao_wgt=new PermissaoWidget(this);
   codigofonte_wgt=new CodigoFonteWidget(this);
-  caixatexto_wgt=new CaixaTextoWidget(this);
+  caixatexto_wgt=new TextboxWidget(this);
   database_wgt=new DatabaseWidget(this);
   esquema_wgt=new EsquemaWidget(this);
   papel_wgt=new PapelWidget(this);
@@ -911,7 +911,7 @@ void FormPrincipal::fecharModelo(int idx_modelo)
 void FormPrincipal::atualizarNomeAba(void)
 {
  if(modelo_atual && modelo_atual->modelo->getName()!=modelos_tab->tabText(modelos_tab->currentIndex()))
-  modelos_tab->setTabText(modelos_tab->currentIndex(), modelo_atual->modelo->getName());
+  modelos_tab->setTabText(modelos_tab->currentIndex(), QString::fromUtf8(modelo_atual->modelo->getName()));
 }
 
 void FormPrincipal::atualizarModelos(void)
