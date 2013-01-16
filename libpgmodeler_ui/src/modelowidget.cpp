@@ -1,6 +1,6 @@
 #include "modelowidget.h"
 #include "codigofontewidget.h"
-#include "bancodadoswidget.h"
+#include "databasewidget.h"
 #include "esquemawidget.h"
 #include "papelwidget.h"
 #include "espacotabelawidget.h"
@@ -30,7 +30,7 @@
 #include "permissaowidget.h"
 
 extern CaixaMensagem *caixa_msg;
-extern BancoDadosWidget *bancodados_wgt;
+extern DatabaseWidget *database_wgt;
 extern EsquemaWidget *esquema_wgt;
 extern PapelWidget *papel_wgt;
 extern EspacoTabelaWidget *espacotabela_wgt;
@@ -1327,8 +1327,8 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
 
    default:
    case OBJ_DATABASE:
-    bancodados_wgt->setAttributes(modelo);
-    bancodados_wgt->show();
+    database_wgt->setAttributes(modelo);
+    database_wgt->show();
    break;
   }
  }

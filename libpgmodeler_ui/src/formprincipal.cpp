@@ -2,7 +2,7 @@
 
 #include "caixatextowidget.h"
 #include "codigofontewidget.h"
-#include "bancodadoswidget.h"
+#include "databasewidget.h"
 #include "esquemawidget.h"
 #include "papelwidget.h"
 #include "permissaowidget.h"
@@ -42,7 +42,7 @@ CaixaMensagem *caixa_msg=NULL;
 VisaoObjetosWidget *selecaoobjetos_wgt=NULL;
 CaixaTextoWidget *caixatexto_wgt=NULL;
 CodigoFonteWidget *codigofonte_wgt=NULL;
-BancoDadosWidget *bancodados_wgt=NULL;
+DatabaseWidget *database_wgt=NULL;
 EsquemaWidget *esquema_wgt=NULL;
 PapelWidget *papel_wgt=NULL;
 PermissaoWidget *permissao_wgt=NULL;
@@ -121,7 +121,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   permissao_wgt=new PermissaoWidget(this);
   codigofonte_wgt=new CodigoFonteWidget(this);
   caixatexto_wgt=new CaixaTextoWidget(this);
-  bancodados_wgt=new BancoDadosWidget(this);
+  database_wgt=new DatabaseWidget(this);
   esquema_wgt=new EsquemaWidget(this);
   papel_wgt=new PapelWidget(this);
   espacotabela_wgt=new EspacoTabelaWidget(this);
@@ -205,8 +205,8 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 
  /* Conectando os sinais de objetos manipulados disparados pelos formulários de criação de objetos
     para forçar a atualização da visão de objetos */
- connect(bancodados_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
- connect(bancodados_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(atualizarNomeAba(void)));
+ connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
+ connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(atualizarNomeAba(void)));
 
  connect(esquema_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
  connect(papel_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));

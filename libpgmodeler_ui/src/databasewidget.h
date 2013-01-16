@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: BancoDadosWidget
-# Description:Definição da classe que implementa o formulário de
-#            edição dos atributos do banco de dados.
+# Class: DatabaseWidget
+# Description: Implements the operations to create/edit database attributes via form.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,22 +18,19 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef BANCODADOS_WIDGET_H
-#define BANCODADOS_WIDGET_H
+#ifndef DATABASE_WIDGET_H
+#define DATABASE_WIDGET_H
 
-#include "ui_bancodadoswidget.h"
+#include "ui_databasewidget.h"
 #include "baseobjectwidget.h"
 
-class BancoDadosWidget: public BaseObjectWidget, public Ui::BancoDadosWidget {
- Q_OBJECT
-
+class DatabaseWidget: public BaseObjectWidget, public Ui::DatabaseWidget {
  private:
+  Q_OBJECT
 
  public:
-   BancoDadosWidget(QWidget * parent = 0);
+   DatabaseWidget(QWidget * parent = 0);
    void setAttributes(DatabaseModel *model);
-
- private slots:
 
  public slots:
    void applyConfiguration(void);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>BancoDadosWidget</class>
- <widget class="QWidget" name="BancoDadosWidget">
+ <class>DatabaseWidget</class>
+ <widget class="QWidget" name="DatabaseWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="bancodados_grid">
+  <layout class="QGridLayout" name="database_grid">
    <property name="margin">
     <number>2</number>
    </property>

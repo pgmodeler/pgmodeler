@@ -1,6 +1,6 @@
 #include "visaoobjetoswidget.h"
 #include "codigofontewidget.h"
-#include "bancodadoswidget.h"
+#include "databasewidget.h"
 #include "esquemawidget.h"
 #include "papelwidget.h"
 #include "espacotabelawidget.h"
@@ -26,7 +26,7 @@
 #include "tabelawidget.h"
 
 extern CaixaMensagem *caixa_msg;
-extern BancoDadosWidget *bancodados_wgt;
+extern DatabaseWidget *database_wgt;
 extern EsquemaWidget *esquema_wgt;
 extern PapelWidget *papel_wgt;
 extern EspacoTabelaWidget *espacotabela_wgt;
