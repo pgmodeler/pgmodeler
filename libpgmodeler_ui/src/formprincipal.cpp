@@ -20,7 +20,7 @@
 #include "operatorclasswidget.h"
 #include "tipowidget.h"
 #include "visaowidget.h"
-#include "colunawidget.h"
+#include "columnwidget.h"
 #include "restricaowidget.h"
 #include "regrawidget.h"
 #include "gatilhowidget.h"
@@ -60,7 +60,7 @@ FamiliaOperadoresWidget *familiaop_wgt=NULL;
 OperatorClassWidget *classeop_wgt=NULL;
 TipoWidget *tipo_wgt=NULL;
 VisaoWidget *visao_wgt=NULL;
-ColunaWidget *coluna_wgt=NULL;
+ColumnWidget *coluna_wgt=NULL;
 RestricaoWidget *restricao_wgt=NULL;
 RegraWidget *regra_wgt=NULL;
 GatilhoWidget *gatilho_wgt=NULL;
@@ -84,7 +84,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  map<QString, QToolBar *> toolbars;
  QString tipo;
  QStringList arq_sessao_ant;
- ConfBaseWidget *conf_wgt=NULL;
+ BaseConfigWidget *conf_wgt=NULL;
  ObjectType tipos[27]={
           BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
           OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_INDEX, OBJ_CONSTRAINT,
@@ -138,7 +138,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   classeop_wgt=new OperatorClassWidget(this);
   tipo_wgt=new TipoWidget(this);
   visao_wgt=new VisaoWidget(this);
-  coluna_wgt=new ColunaWidget(this);
+  coluna_wgt=new ColumnWidget(this);
   restricao_wgt=new RestricaoWidget(this);
   regra_wgt=new RegraWidget(this);
   gatilho_wgt=new GatilhoWidget(this);
@@ -290,7 +290,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 
   //Aplicando as configurações carregadas
   conf_wgt=fconfiguracao->obterWidgetConfiguracao(0);
-  confs=conf_wgt->obterParamsConfiguracao();
+  confs=conf_wgt->getConfigurationParams();
 
   itr=confs.begin();
   itr_end=confs.end();
@@ -469,8 +469,8 @@ void FormPrincipal::closeEvent(QCloseEvent *)
  }
 
  conf_wgt=dynamic_cast<ConfGeralWidget *>(fconfiguracao->obterWidgetConfiguracao(0));
- confs=conf_wgt->obterParamsConfiguracao();
- conf_wgt->excluirParamsConfiguracao();
+ confs=conf_wgt->getConfigurationParams();
+ conf_wgt->removeConfigurationParams();
 
  //Caso seja preciso salvar a posição dos widgets
  if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS].isEmpty())
@@ -522,7 +522,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
    else
     atribs[ParsersAttributes::POSITION]=areas_toolbar[this->toolBarArea(toolbar)];
 
-   conf_wgt->adicionarParamConfiguracao(id_param, atribs);
+   conf_wgt->addConfigurationParam(id_param, atribs);
    atribs.clear();
   }
  }
@@ -545,7 +545,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
     id_param=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
     atribs[ParsersAttributes::ID]=id_param;
     atribs[ParsersAttributes::PATH]=modelo->getNameArquivo();
-    conf_wgt->adicionarParamConfiguracao(id_param, atribs);
+    conf_wgt->addConfigurationParam(id_param, atribs);
     atribs.clear();
    }
   }
@@ -553,7 +553,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
  }
 
  if(salvar_conf)
-  conf_wgt->salvarConfiguracao();
+  conf_wgt->saveConfiguration();
 }
 
 void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)

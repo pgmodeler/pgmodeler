@@ -17,7 +17,7 @@
 #include "tipowidget.h"
 #include "visaowidget.h"
 #include "textboxwidget.h"
-#include "colunawidget.h"
+#include "columnwidget.h"
 #include "restricaowidget.h"
 #include "regrawidget.h"
 #include "gatilhowidget.h"
@@ -48,7 +48,7 @@ extern OperatorClassWidget *classeop_wgt;
 extern TipoWidget *tipo_wgt;
 extern VisaoWidget *visao_wgt;
 extern TextboxWidget *caixatexto_wgt;
-extern ColunaWidget *coluna_wgt;
+extern ColumnWidget *coluna_wgt;
 extern RestricaoWidget *restricao_wgt;
 extern RegraWidget *regra_wgt;
 extern GatilhoWidget *gatilho_wgt;

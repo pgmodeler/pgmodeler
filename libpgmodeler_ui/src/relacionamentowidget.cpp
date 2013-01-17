@@ -1,11 +1,11 @@
 #include "relacionamentowidget.h"
 #include "restricaowidget.h"
-#include "colunawidget.h"
+#include "columnwidget.h"
 #include "tabelawidget.h"
 #include "messagebox.h"
 
 extern RestricaoWidget *restricao_wgt;
-extern ColunaWidget *coluna_wgt;
+extern ColumnWidget *coluna_wgt;
 extern TabelaWidget *tabela_wgt;
 extern MessageBox *caixa_msg;
 

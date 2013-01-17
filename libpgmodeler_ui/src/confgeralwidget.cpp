@@ -18,21 +18,21 @@ ConfGeralWidget::ConfGeralWidget(QWidget * parent) : QWidget(parent)
  connect(unidade_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(converterUnidadeMargem(void)));
  connect(salvar_mod_chk, SIGNAL(toggled(bool)), salvar_mod_spb, SLOT(setEnabled(bool)));
 
- params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]="";
- params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]="";
- params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]="";
- params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]="";
- params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]="";
- params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]="";
- params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]="";
- params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS]="";
- params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
- params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGET]="";
- params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]="";
- params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]="";
+ config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]="";
+ config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]="";
+ config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]="";
+ config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]="";
+ config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]="";
+ config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]="";
+ config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]="";
+ config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS]="";
+ config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
+ config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGET]="";
+ config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]="";
+ config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]="";
 }
 
-void ConfGeralWidget::carregarConfiguracao(void)
+void ConfGeralWidget::loadConfiguration(void)
 {
  QStringList margem;
  vector<QString> atribs_chave;
@@ -42,28 +42,28 @@ void ConfGeralWidget::carregarConfiguracao(void)
  atribs_chave.push_back(ParsersAttributes::ID);
 
  //Carrega as configurações
- ConfBaseWidget::carregarConfiguracao(GlobalAttributes::GENERAL_CONF, atribs_chave);
+ BaseConfigWidget::loadConfiguration(GlobalAttributes::GENERAL_CONF, atribs_chave);
 
  //Repassa os valores obtidos no arquivo de configuração para os widgets do formulário
- tam_grade_spb->setValue((params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]).toUInt());
- tam_lista_spb->setValue((params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]).toUInt());
+ tam_grade_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]).toUInt());
+ tam_lista_spb->setValue((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]).toUInt());
 
- interv=(params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]).toUInt();
+ interv=(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]).toUInt();
  salvar_mod_chk->setChecked(interv > 0);
  salvar_mod_spb->setValue(interv);
  salvar_mod_spb->setEnabled(salvar_mod_chk->isChecked());
 
- salvar_wgts_chk->setChecked(params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS]==ParsersAttributes::_TRUE_);
- salvar_sessao_chk->setChecked(params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]==ParsersAttributes::_TRUE_);
+ salvar_wgts_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS]==ParsersAttributes::_TRUE_);
+ salvar_sessao_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]==ParsersAttributes::_TRUE_);
 
- print_grid_chk->setChecked(params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
- print_pg_num_chk->setChecked(params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]==ParsersAttributes::_TRUE_);
+ print_grid_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]==ParsersAttributes::_TRUE_);
+ print_pg_num_chk->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]==ParsersAttributes::_TRUE_);
 
- papel_cmb->setCurrentIndex((params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]).toUInt());
- retrato_rb->setChecked(params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::PORTRAIT);
- paisagem_rb->setChecked(params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::LANDSCAPE);
+ papel_cmb->setCurrentIndex((config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]).toUInt());
+ retrato_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::PORTRAIT);
+ paisagem_rb->setChecked(config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]==ParsersAttributes::LANDSCAPE);
 
- margem=params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(",");
+ margem=config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN].split(",");
 
  marg_esq->setValue((margem.count() >= 1 ? margem[0].toFloat() : 10));
  marg_topo->setValue((margem.count()>= 2 ? margem[1].toFloat() : 10));
@@ -74,7 +74,7 @@ void ConfGeralWidget::carregarConfiguracao(void)
  this->aplicarConfiguracao();
 }
 
-void ConfGeralWidget::salvarConfiguracao()
+void ConfGeralWidget::saveConfiguration()
 {
  try
  {
@@ -97,28 +97,28 @@ void ConfGeralWidget::salvarConfiguracao()
               GlobalAttributes::SCHEMA_EXT;
 
   //Armazena no mapa de parâmetros de configuração os valores dos widgets no formulário
-  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString("%1").arg(tam_grade_spb->value());
-  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString("%1").arg(tam_lista_spb->value());
-  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]=QString("%1").arg(salvar_mod_chk->isChecked() ? salvar_mod_spb->value() : 0);
-  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]=QString("%1").arg(papel_cmb->currentIndex());
-  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]=(retrato_rb->isChecked() ? ParsersAttributes::PORTRAIT : ParsersAttributes::LANDSCAPE);
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::GRID_SIZE]=QString("%1").arg(tam_grade_spb->value());
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::OP_LIST_SIZE]=QString("%1").arg(tam_lista_spb->value());
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL]=QString("%1").arg(salvar_mod_chk->isChecked() ? salvar_mod_spb->value() : 0);
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_TYPE]=QString("%1").arg(papel_cmb->currentIndex());
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_ORIENTATION]=(retrato_rb->isChecked() ? ParsersAttributes::PORTRAIT : ParsersAttributes::LANDSCAPE);
 
   unidade_cmb->setCurrentIndex(0);
-  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(marg_esq->value())
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PAPER_MARGIN]=QString("%1,%2,%3,%4").arg(marg_esq->value())
                                                                              .arg(marg_topo->value())
                                                                              .arg(marg_dir->value())
                                                                              .arg(marg_base->value());
 
-  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]=(salvar_sessao_chk->isChecked() ? "1" : "");
-  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS]=(salvar_wgts_chk->isChecked() ? "1" : "");
-  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? "1" : "");
-  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]=(print_grid_chk->isChecked() ? "1" : "");
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION]=(salvar_sessao_chk->isChecked() ? "1" : "");
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS]=(salvar_wgts_chk->isChecked() ? "1" : "");
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_PG_NUM]=(print_pg_num_chk->isChecked() ? "1" : "");
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::PRINT_GRID]=(print_grid_chk->isChecked() ? "1" : "");
 
-  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
-  params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGET]="";
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]="";
+  config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGET]="";
 
-  itr=params_config.begin();
-  itr_end=params_config.end();
+  itr=config_params.begin();
+  itr_end=config_params.end();
 
   //Salvando as configurações da sessão e dos widgets
   while(itr!=itr_end)
@@ -128,7 +128,7 @@ void ConfGeralWidget::salvarConfiguracao()
                            ParsersAttributes::_FILE_ +
                            QString(")([0-9]+)"))))
    {
-    params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]+=
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::_FILE_]+=
     SchemaParser::getCodeDefinition(sch_arquivo, itr->second);
    }
    else if(salvar_wgts_chk->isChecked() &&
@@ -136,7 +136,7 @@ void ConfGeralWidget::salvarConfiguracao()
                            ParsersAttributes::WIDGET +
                            QString(")([0-9]+)"))))
    {
-    params_config[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGET]+=
+    config_params[ParsersAttributes::CONFIGURATION][ParsersAttributes::WIDGET]+=
     SchemaParser::getCodeDefinition(sch_widget, itr->second);
    }
 
@@ -144,7 +144,7 @@ void ConfGeralWidget::salvarConfiguracao()
   }
 
   //Salva a configuração em arquivo
-  ConfBaseWidget::salvarConfiguracao(GlobalAttributes::GENERAL_CONF);
+  BaseConfigWidget::saveConfiguration(GlobalAttributes::GENERAL_CONF);
  }
  catch(Exception &e)
  {
@@ -167,13 +167,13 @@ void ConfGeralWidget::aplicarConfiguracao(void)
  OperationList::setMaximumSize(tam_lista_spb->value());
 }
 
-void ConfGeralWidget::restaurarPadroes(void)
+void ConfGeralWidget::restoreDefaults(void)
 {
  try
  {
   //Restaura as configurações padrão e recarrega o arquivo restaurado
-  ConfBaseWidget::restaurarPadroes(GlobalAttributes::GENERAL_CONF);
-  this->carregarConfiguracao();
+  BaseConfigWidget::restoreDefaults(GlobalAttributes::GENERAL_CONF);
+  this->loadConfiguration();
  }
  catch(Exception &e)
  {

@@ -36,7 +36,7 @@ ConfConexoesWidget::~ConfConexoesWidget(void)
   this->removerConexao();
 }
 
-void ConfConexoesWidget::carregarConfiguracao(void)
+void ConfConexoesWidget::loadConfiguration(void)
 {
  vector<QString> atribs_chave;
  map<QString, map<QString, QString> >::iterator itr, itr_end;
@@ -49,10 +49,10 @@ void ConfConexoesWidget::carregarConfiguracao(void)
  atribs_chave.push_back(ParsersAttributes::ALIAS);
 
  //Carrega as configurações
- ConfBaseWidget::carregarConfiguracao(GlobalAttributes::CONNECTIONS_CONF, atribs_chave);
+ BaseConfigWidget::loadConfiguration(GlobalAttributes::CONNECTIONS_CONF, atribs_chave);
 
- itr=params_config.begin();
- itr_end=params_config.end();
+ itr=config_params.begin();
+ itr_end=config_params.end();
 
  while(itr!=itr_end)
  {
@@ -364,19 +364,19 @@ void ConfConexoesWidget::testarConexao(void)
  }
 }
 
-void ConfConexoesWidget::restaurarPadroes(void)
+void ConfConexoesWidget::restoreDefaults(void)
 {
  try
  {
   //Restaura as configurações padrão e recarrega o arquivo restaurado
-  ConfBaseWidget::restaurarPadroes(GlobalAttributes::CONNECTIONS_CONF);
+  BaseConfigWidget::restoreDefaults(GlobalAttributes::CONNECTIONS_CONF);
 
   //Remove as conexões atuais
   while(conexoes_cmb->count() > 0)
    this->removerConexao();
 
   //Recarrega a configuração de conexões
-  this->carregarConfiguracao();
+  this->loadConfiguration();
  }
  catch(Exception &e)
  {
@@ -384,7 +384,7 @@ void ConfConexoesWidget::restaurarPadroes(void)
  }
 }
 
-void ConfConexoesWidget::salvarConfiguracao(void)
+void ConfConexoesWidget::saveConfiguration(void)
 {
  try
  {
@@ -392,14 +392,14 @@ void ConfConexoesWidget::salvarConfiguracao(void)
   DBConnection *conexao=NULL;
   map<QString, QString> atribs;
 
-  params_config[GlobalAttributes::CONNECTIONS_CONF].clear();
+  config_params[GlobalAttributes::CONNECTIONS_CONF].clear();
   qtd=conexoes_cmb->count();
 
   /* Workaround: Quando não existem conexões, para se gravar um arquivo vazio, é necessário
      preencher o atributo 'params_config[AtributosGlobais::CONF_CONEXOES][AtributosParsers::CONEXOES]'
      espaços */
   if(qtd==0)
-   params_config[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]="  ";
+   config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]="  ";
   else
   {
    /* Quando se tem conexões no combo, os atributos de cada uma são obtidos e é
@@ -426,7 +426,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
     SchemaParser::setIgnoreUnkownAttributes(true);
 
     //Gera o esquema da conexão e contatena    demais geradas
-    params_config[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
+    config_params[GlobalAttributes::CONNECTIONS_CONF][ParsersAttributes::CONNECTIONS]+=
     SchemaParser::getCodeDefinition(GlobalAttributes::CONFIGURATIONS_DIR +
                                         GlobalAttributes::DIR_SEPARATOR +
                                         GlobalAttributes::SCHEMAS_DIR +
@@ -439,7 +439,7 @@ void ConfConexoesWidget::salvarConfiguracao(void)
   }
 
   //Gera o arquivo de configuração completo
-  ConfBaseWidget::salvarConfiguracao(GlobalAttributes::CONNECTIONS_CONF);
+  BaseConfigWidget::saveConfiguration(GlobalAttributes::CONNECTIONS_CONF);
  }
  catch(Exception &e)
  {

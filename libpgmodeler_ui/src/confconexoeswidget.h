@@ -22,10 +22,10 @@
 #define CONF_CONEXOES_WIDGET_H
 
 #include "ui_confconexoeswidget.h"
-#include "confbasewidget.h"
+#include "baseconfigwidget.h"
 #include "dbconnection.h"
 
-class ConfConexoesWidget: public QWidget, public Ui::ConfConexoesWidget, public ConfBaseWidget {
+class ConfConexoesWidget: public QWidget, public Ui::ConfConexoesWidget, public BaseConfigWidget {
  private:
   Q_OBJECT
 
@@ -36,14 +36,14 @@ class ConfConexoesWidget: public QWidget, public Ui::ConfConexoesWidget, public 
   ConfConexoesWidget(QWidget * parent=0);
   ~ConfConexoesWidget(void);
 
-  void salvarConfiguracao(void);
-  void carregarConfiguracao(void);
+  void saveConfiguration(void);
+  void loadConfiguration(void);
 
   //Preenche um mapa com as conexões carregadas no formulário
   void obterConexoes(map<QString, DBConnection *> &conexoes);
 
  public slots:
-  void restaurarPadroes(void);
+  void restoreDefaults(void);
 
  private slots:
    //Limpa o formulário para criação de uma nova conexão

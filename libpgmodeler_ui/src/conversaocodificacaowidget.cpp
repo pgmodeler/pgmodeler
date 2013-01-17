@@ -47,7 +47,7 @@ void ConversaoCodificacaoWidget::hideEvent(QHideEvent *evento)
  //Executa o método que trata o evento de esconder da classe superior
  BaseObjectWidget::hideEvent(evento);
 }
-//---------------------------------------------------------
+
 void ConversaoCodificacaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Conversion *conv_cod)
 {
  //Define os atributos do formulários e da janela pai

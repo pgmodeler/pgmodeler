@@ -22,12 +22,12 @@
 #define CONF_APARENCIA_WIDGET_H
 
 #include "ui_confaparenciawidget.h"
-#include "confbasewidget.h"
+#include "baseconfigwidget.h"
 #include "objectsscene.h"
 #include "databasemodel.h"
 #include <algorithm>
 
-class ConfAparenciaWidget: public QWidget, public Ui::ConfAparenciaWidget, public ConfBaseWidget {
+class ConfAparenciaWidget: public QWidget, public Ui::ConfAparenciaWidget, public BaseConfigWidget {
  private:
   Q_OBJECT
 
@@ -62,8 +62,8 @@ class ConfAparenciaWidget: public QWidget, public Ui::ConfAparenciaWidget, publi
   ConfAparenciaWidget(QWidget * parent=0);
   ~ConfAparenciaWidget(void);
 
-  void salvarConfiguracao(void);
-  void carregarConfiguracao(void);
+  void saveConfiguration(void);
+  void loadConfiguration(void);
 
  private slots:
   //Habilita os itens do formulário conforme o elemento selecionado no combobox 'elemento_cmb'
@@ -80,7 +80,7 @@ class ConfAparenciaWidget: public QWidget, public Ui::ConfAparenciaWidget, publi
   void aplicarConfiguracao(void){}
 
  public slots:
-  void restaurarPadroes(void);
+  void restoreDefaults(void);
 };
 
 #endif

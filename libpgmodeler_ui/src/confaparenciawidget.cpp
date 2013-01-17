@@ -141,7 +141,7 @@ void ConfAparenciaWidget::criarObjetosExemplo(void)
  }
 }
 
-void ConfAparenciaWidget::carregarConfiguracao(void)
+void ConfAparenciaWidget::loadConfiguration(void)
 {
  try
  {
@@ -185,7 +185,7 @@ void ConfAparenciaWidget::carregarConfiguracao(void)
  }
 }
 
-void ConfAparenciaWidget::salvarConfiguracao(void)
+void ConfAparenciaWidget::saveConfiguration(void)
 {
  try
  {
@@ -248,10 +248,10 @@ void ConfAparenciaWidget::salvarConfiguracao(void)
   }
 
   //Especifica aos parâmetros de configuração de estilo de objetos os atributos configurados acima
-  params_config[GlobalAttributes::OBJECTS_STYLE_CONF]=atribs;
+  config_params[GlobalAttributes::OBJECTS_STYLE_CONF]=atribs;
 
   //Salva a configuração em arquivo
-  ConfBaseWidget::salvarConfiguracao(GlobalAttributes::OBJECTS_STYLE_CONF);
+  BaseConfigWidget::saveConfiguration(GlobalAttributes::OBJECTS_STYLE_CONF);
  }
  catch(Exception &e)
  {
@@ -410,13 +410,13 @@ void ConfAparenciaWidget::aplicarEstiloFonte(void)
  cena->update();
 }
 
-void ConfAparenciaWidget::restaurarPadroes(void)
+void ConfAparenciaWidget::restoreDefaults(void)
 {
  try
  {
   //Restaura as configurações padrão e recarrega o arquivo restaurado
-  ConfBaseWidget::restaurarPadroes(GlobalAttributes::OBJECTS_STYLE_CONF);
-  this->carregarConfiguracao();
+  BaseConfigWidget::restoreDefaults(GlobalAttributes::OBJECTS_STYLE_CONF);
+  this->loadConfiguration();
  }
  catch(Exception &e)
  {

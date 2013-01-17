@@ -1,117 +1,117 @@
-#include "confbasewidget.h"
+#include "baseconfigwidget.h"
 
-void ConfBaseWidget::adicionarParamConfiguracao(const QString &param, const map<QString, QString> &atributos)
+void BaseConfigWidget::addConfigurationParam(const QString &param, const map<QString, QString> &attribs)
 {
  //Adiciona um parâmetro somente se o identificador 'param' e os atributos não estejam vazio
- if(!param.isEmpty() && !atributos.empty())
-  params_config[param]=atributos;
+ if(!param.isEmpty() && !attribs.empty())
+  config_params[param]=attribs;
 }
 
-map<QString, map<QString, QString> > ConfBaseWidget::obterParamsConfiguracao(void)
+map<QString, map<QString, QString> > BaseConfigWidget::getConfigurationParams(void)
 {
- return(params_config);
+ return(config_params);
 }
 
-void ConfBaseWidget::excluirParamConfiguracao(const QString &param)
+void BaseConfigWidget::removeConfigurationParam(const QString &param)
 {
- params_config.erase(param);
+ config_params.erase(param);
 }
 
-void ConfBaseWidget::excluirParamsConfiguracao(void)
+void BaseConfigWidget::removeConfigurationParams(void)
 {
- params_config.clear();
+ config_params.clear();
 }
 
-void ConfBaseWidget::salvarConfiguracao(const QString &id_conf)
+void BaseConfigWidget::saveConfiguration(const QString &conf_id)
 {
  QString buf,
          //Configura o nome do arquivo de modelo (esquema) de configuração
-         nome_arq_sch=GlobalAttributes::CONFIGURATIONS_DIR +
+         sch_filename=GlobalAttributes::CONFIGURATIONS_DIR +
                       GlobalAttributes::DIR_SEPARATOR +
                       GlobalAttributes::SCHEMAS_DIR +
                       GlobalAttributes::DIR_SEPARATOR +
-                      id_conf +
+                      conf_id +
                       GlobalAttributes::SCHEMA_EXT,
          //Configura o nome do arquivo de configuração
-         nome_arq=GlobalAttributes::CONFIGURATIONS_DIR +
-                  GlobalAttributes::DIR_SEPARATOR +
-                  id_conf +
-                  GlobalAttributes::CONFIGURATION_EXT;
- QFile saida(nome_arq);
- map<QString, QString> atribs;
+         cfg_filename=GlobalAttributes::CONFIGURATIONS_DIR +
+                      GlobalAttributes::DIR_SEPARATOR +
+                      conf_id +
+                      GlobalAttributes::CONFIGURATION_EXT;
+ QFile output(cfg_filename);
+ map<QString, QString> attribs;
  map<QString, map<QString, QString> >::iterator itr, itr_end;
 
  try
  {
-  itr=params_config.begin();
-  itr_end=params_config.end();
+  itr=config_params.begin();
+  itr_end=config_params.end();
 
   while(itr!=itr_end)
   {
-   atribs.insert((itr->second).begin(), (itr->second).end());
+   attribs.insert((itr->second).begin(), (itr->second).end());
    itr++;
   }
 
   //Gera o modelo de configuração com base nos parâmetros atuais
-  buf=SchemaParser::getCodeDefinition(nome_arq_sch, atribs);
+  buf=SchemaParser::getCodeDefinition(sch_filename, attribs);
 
   //Abre o arquivo de configuração para gravação
-  saida.open(QFile::WriteOnly);
+  output.open(QFile::WriteOnly);
 
   //Caso não consiga abrir o arquivo para gravação
-  if(!saida.isOpen())
-   throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(QString::fromUtf8(nome_arq)),
+  if(!output.isOpen())
+   throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(QString::fromUtf8(cfg_filename)),
                  ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   //Grava o buffer gerado no arquivo
-  saida.write(buf.toStdString().c_str(), buf.size());
-  saida.close();
+  output.write(buf.toStdString().c_str(), buf.size());
+  output.close();
  }
  catch(Exception &e)
  {
-  if(saida.isOpen()) saida.close();
-  throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(QString::fromUtf8(nome_arq)),
+  if(output.isOpen()) output.close();
+  throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTER_INV_DEF).arg(QString::fromUtf8(cfg_filename)),
                 ERR_FILE_NOT_WRITTER_INV_DEF,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
-void ConfBaseWidget::restaurarPadroes(const QString &id_conf)
+void BaseConfigWidget::restoreDefaults(const QString &conf_id)
 {
- QString arq_atual, arq_orig;
+ QString current_file, original_file;
 
  //Monta o caminho para o arquivo de configuração atual (conf/arquivo.conf)
- arq_atual=GlobalAttributes::CONFIGURATIONS_DIR +
+ current_file=GlobalAttributes::CONFIGURATIONS_DIR +
            GlobalAttributes::DIR_SEPARATOR +
-           id_conf +
+           conf_id +
            GlobalAttributes::CONFIGURATION_EXT;
 
  //Monta o caminho para o arquivo de configuração original (padrão) (conf/defaults/arquivo.conf)
- arq_orig=GlobalAttributes::CONFIGURATIONS_DIR +
-          GlobalAttributes::DIR_SEPARATOR +
-          GlobalAttributes::DEFAULT_CONFS_DIR+
-          GlobalAttributes::DIR_SEPARATOR +
-          id_conf +
-          GlobalAttributes::CONFIGURATION_EXT;
+ original_file=GlobalAttributes::CONFIGURATIONS_DIR +
+               GlobalAttributes::DIR_SEPARATOR +
+               GlobalAttributes::DEFAULT_CONFS_DIR+
+               GlobalAttributes::DIR_SEPARATOR +
+               conf_id +
+               GlobalAttributes::CONFIGURATION_EXT;
 
  //Verifica a existência do arquivo padrão, caso não existe emite uma exceção e a restauração é abortada
- if(!QFile::exists(arq_orig))
-  throw Exception(Exception::getErrorMessage(ERR_DEFAULT_CONFIG_NOT_REST).arg(QString::fromUtf8(arq_orig)),
+ if(!QFile::exists(original_file))
+  throw Exception(Exception::getErrorMessage(ERR_DEFAULT_CONFIG_NOT_REST).arg(QString::fromUtf8(original_file)),
                 ERR_DEFAULT_CONFIG_NOT_REST,__PRETTY_FUNCTION__,__FILE__,__LINE__);
  else
  {
   //Remove o arquivo atual
-  QFile::remove(arq_atual);
+  QFile::remove(current_file);
   //Copia o arquivo original no lugar do arquivo atual
-  QFile::copy(arq_orig, arq_atual);
+  QFile::copy(original_file, current_file);
  }
 }
 
-void ConfBaseWidget::carregarConfiguracao(const QString &id_conf, const vector<QString> &atribs_chave)
+void BaseConfigWidget::loadConfiguration(const QString &conf_id, const vector<QString> &key_attribs)
 {
  try
  {
   //Limpa os parâmetros de configuração atuais
-  params_config.clear();
+  config_params.clear();
 
   //Reinicia o parser XML para a leitura do arquivo
   XMLParser::restartParser();
@@ -120,13 +120,13 @@ void ConfBaseWidget::carregarConfiguracao(const QString &id_conf, const vector<Q
                                GlobalAttributes::DIR_SEPARATOR +
                                GlobalAttributes::OBJECT_DTD_DIR +
                                GlobalAttributes::DIR_SEPARATOR +
-                               id_conf +
+                               conf_id +
                                GlobalAttributes::OBJECT_DTD_EXT,
-                               id_conf);
+                               conf_id);
 
   XMLParser::loadXMLFile(GlobalAttributes::CONFIGURATIONS_DIR +
                                 GlobalAttributes::DIR_SEPARATOR +
-                                id_conf +
+                                conf_id +
                                 GlobalAttributes::CONFIGURATION_EXT);
 
   if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
@@ -137,7 +137,7 @@ void ConfBaseWidget::carregarConfiguracao(const QString &id_conf, const vector<Q
       qualquer outro tipo de objeto xml será ignorado */
     if(XMLParser::getElementType()==XML_ELEMENT_NODE)
     {
-     this->obterParamsConfiguracao(atribs_chave);
+     this->getConfigurationParams(key_attribs);
 
      if(XMLParser::hasElement(XMLParser::CHILD_ELEMENT))
      {
@@ -146,7 +146,7 @@ void ConfBaseWidget::carregarConfiguracao(const QString &id_conf, const vector<Q
 
       do
       {
-       this->obterParamsConfiguracao(atribs_chave);
+       this->getConfigurationParams(key_attribs);
       }
       while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 
@@ -164,34 +164,34 @@ void ConfBaseWidget::carregarConfiguracao(const QString &id_conf, const vector<Q
  }
 }
 
-void ConfBaseWidget::obterParamsConfiguracao(const vector<QString> &atribs_chave)
+void BaseConfigWidget::getConfigurationParams(const vector<QString> &key_attribs)
 {
- map<QString, QString> atrib_aux;
+ map<QString, QString> aux_attribs;
  map<QString, QString>::iterator itr, itr_end;
- QString chave;
+ QString key;
 
  //Obtém os atributos do elemento atual
- XMLParser::getElementAttributes(atrib_aux);
+ XMLParser::getElementAttributes(aux_attribs);
 
- itr=atrib_aux.begin();
- itr_end=atrib_aux.end();
+ itr=aux_attribs.begin();
+ itr_end=aux_attribs.end();
 
  //Substituindo a chave pelo atributo chave passado
- while(itr!=itr_end && chave.isEmpty())
+ while(itr!=itr_end && key.isEmpty())
  {
   //Caso o atributo chave seja encontrado em um dos atributos obtidos do elemento
-  if(chave.isEmpty() && find(atribs_chave.begin(), atribs_chave.end(), itr->first)!=atribs_chave.end())
+  if(key.isEmpty() && find(key_attribs.begin(), key_attribs.end(), itr->first)!=key_attribs.end())
    //A chave passa a ser o valor do atributo encontrado
-   chave=itr->second;
+   key=itr->second;
   itr++;
  }
 
  //Caso a chave não foi definida, a chave padrão será o nome do elemento
- if(chave.isEmpty())
-  chave=XMLParser::getElementName();
+ if(key.isEmpty())
+  key=XMLParser::getElementName();
 
  //Atribui os dados obtidos do elemento atual   chave do mapa de parâmetros de configuração
- if(!atrib_aux.empty())
-  params_config[chave]=atrib_aux;
+ if(!aux_attribs.empty())
+  config_params[key]=aux_attribs;
 }
 

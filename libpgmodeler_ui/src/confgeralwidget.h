@@ -22,23 +22,23 @@
 #define CONF_GERAL_WIDGET_H
 
 #include "ui_confgeralwidget.h"
-#include "confbasewidget.h"
+#include "baseconfigwidget.h"
 #include "objectsscene.h"
 #include "operationlist.h"
 
-class ConfGeralWidget: public QWidget, public Ui::ConfGeralWidget, public ConfBaseWidget {
+class ConfGeralWidget: public QWidget, public Ui::ConfGeralWidget, public BaseConfigWidget {
  private:
  Q_OBJECT
 
  public:
   ConfGeralWidget(QWidget * parent=0);
 
-  void salvarConfiguracao(void);
-  void carregarConfiguracao(void);
+  void saveConfiguration(void);
+  void loadConfiguration(void);
 
  public slots:
   void aplicarConfiguracao(void);
-  void restaurarPadroes(void);
+  void restoreDefaults(void);
 
  private slots:
    //Faz a conversão dos valores das margens para a unidade selecionada

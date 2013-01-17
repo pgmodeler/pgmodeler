@@ -39,7 +39,7 @@ class FormConfiguracao: public QDialog, public Ui::FormConfiguracao {
                    WGT_CONF_APARENCIA=1,
                    WGT_CONF_CONEXOES=2;
   FormConfiguracao(QWidget * parent = 0, Qt::WindowFlags f = 0);
-  ConfBaseWidget *obterWidgetConfiguracao(unsigned idx);
+  BaseConfigWidget *obterWidgetConfiguracao(unsigned idx);
 
  public slots:
   void aplicarConfiguracao(void);

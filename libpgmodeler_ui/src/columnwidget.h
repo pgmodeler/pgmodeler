@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: ColunaWidget
-# Description:Definição da classe que implementa o formulário de
-#            edição dos atributos de colunas.
+# Class: ColumnWidget
+# Description: Implements the operations to create/edit columns via form.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,29 +18,27 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef COLUNA_WIDGET_H
-#define COLUNA_WIDGET_H
+#ifndef COLUMN_WIDGET_H
+#define COLUMN_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_colunawidget.h"
+#include "ui_columnwidget.h"
 #include "tipopgsqlwidget.h"
 
-class ColunaWidget: public BaseObjectWidget, public Ui::ColunaWidget {
- Q_OBJECT
-
+class ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
  private:
-   //Destacador de sintaxe para o campo de valor padrão da coluna
-   DestaqueSintaxe *dest_valor_padrao;
+  Q_OBJECT
 
-   //Seletor de tipo da coluna
-   TipoPgSQLWidget *tipo_col;
+  DestaqueSintaxe *hl_default_value;
+  TipoPgSQLWidget *data_type;
+
+  void hideEvent(QHideEvent *event);
 
  public:
-   ColunaWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, BaseObject *objeto_pai, OperationList *op_list, Column *coluna);
+  ColumnWidget(QWidget * parent = 0);
+  void setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Column *column);
 
  private slots:
-  void hideEvent(QHideEvent *);
 
  public slots:
    void applyConfiguration(void);

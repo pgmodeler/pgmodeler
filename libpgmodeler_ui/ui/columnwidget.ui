@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ColunaWidget</class>
- <widget class="QWidget" name="ColunaWidget">
+ <class>ColumnWidget</class>
+ <widget class="QWidget" name="ColumnWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="coluna_grid">
+  <layout class="QGridLayout" name="column_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -21,7 +21,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="valorpadrao_lbl">
+    <widget class="QLabel" name="def_value_lbl">
      <property name="minimumSize">
       <size>
        <width>90</width>
@@ -40,7 +40,7 @@
     </widget>
    </item>
    <item row="0" column="1" colspan="2">
-    <widget class="QTextEdit" name="valor_padrao_txt">
+    <widget class="QTextEdit" name="def_value_txt">
      <property name="maximumSize">
       <size>
        <width>16777215</width>
@@ -74,14 +74,14 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="notnull_lbl">
      <property name="text">
       <string>Not Null:</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QCheckBox" name="nao_nulo_chk">
+    <widget class="QCheckBox" name="notnull_chk">
      <property name="text">
       <string/>
      </property>

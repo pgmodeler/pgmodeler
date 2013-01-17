@@ -45,7 +45,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/operatorclasswidget.cpp \
            $$PWD/src/tipowidget.cpp \
            $$PWD/src/visaowidget.cpp \
-           $$PWD/src/colunawidget.cpp \
+           $$PWD/src/columnwidget.cpp \
            $$PWD/src/restricaowidget.cpp \
            $$PWD/src/regrawidget.cpp \
            $$PWD/src/gatilhowidget.cpp \
@@ -58,7 +58,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/confaparenciawidget.cpp \
            $$PWD/src/confconexoeswidget.cpp \
            $$PWD/src/formconfiguracao.cpp \
-           $$PWD/src/confbasewidget.cpp \
+           $$PWD/src/baseconfigwidget.cpp \
            $$PWD/src/formexportacao.cpp \
            $$PWD/src/visaogeralwidget.cpp \
            $$PWD/src/formrestauracaomodelo.cpp \
@@ -96,7 +96,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/operatorclasswidget.h \
            $$PWD/src/tipowidget.h \
            $$PWD/src/visaowidget.h \
-           $$PWD/src/colunawidget.h \
+           $$PWD/src/columnwidget.h \
            $$PWD/src/restricaowidget.h \
            $$PWD/src/regrawidget.h \
            $$PWD/src/gatilhowidget.h \
@@ -109,7 +109,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/formconfiguracao.h \
            $$PWD/src/confconexoeswidget.h \
            $$PWD/src/confaparenciawidget.h \
-           $$PWD/src/confbasewidget.h \
+           $$PWD/src/baseconfigwidget.h \
            $$PWD/src/formexportacao.h \
            $$PWD/src/pgmodelerplugin.h \
            $$PWD/src/visaogeralwidget.h \
@@ -145,7 +145,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/operatorclasswidget.ui \
          $$PWD/ui/tipowidget.ui \
          $$PWD/ui/visaowidget.ui \
-         $$PWD/ui/colunawidget.ui \
+         $$PWD/ui/columnwidget.ui \
          $$PWD/ui/restricaowidget.ui \
          $$PWD/ui/regrawidget.ui \
          $$PWD/ui/gatilhowidget.ui \
