@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ClasseOperadoresWidget</class>
- <widget class="QWidget" name="ClasseOperadoresWidget">
+ <class>OperatorClassWidget</class>
+ <widget class="QWidget" name="OperatorClassWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QCheckBox" name="classepadrao_chk">
+  <widget class="QCheckBox" name="def_class_chk">
    <property name="geometry">
     <rect>
      <x>85</x>
@@ -32,7 +32,7 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="classepadrao_lbl">
+  <widget class="QLabel" name="def_class_lbl">
    <property name="geometry">
     <rect>
      <x>4</x>
@@ -57,7 +57,7 @@
     <string>Default Class:</string>
    </property>
   </widget>
-  <widget class="QLabel" name="tipo_index_lbl">
+  <widget class="QLabel" name="indexing_lbl">
    <property name="geometry">
     <rect>
      <x>114</x>
@@ -82,7 +82,7 @@
     <string>Indexing:</string>
    </property>
   </widget>
-  <widget class="QComboBox" name="tipo_index_cmb">
+  <widget class="QComboBox" name="indexing_cmb">
    <property name="geometry">
     <rect>
      <x>178</x>
@@ -92,7 +92,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QGroupBox" name="elementos_grp">
+  <widget class="QGroupBox" name="elements_grp">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -112,14 +112,14 @@
      <number>6</number>
     </property>
     <item row="0" column="0">
-     <widget class="QLabel" name="tipo_elem_lbl">
+     <widget class="QLabel" name="elem_type_lbl">
       <property name="text">
        <string>Elemente Type:</string>
       </property>
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QComboBox" name="tipo_elem_cmb">
+     <widget class="QComboBox" name="elem_type_cmb">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -157,35 +157,35 @@
      </spacer>
     </item>
     <item row="1" column="0">
-     <widget class="QLabel" name="funcao_lbl">
+     <widget class="QLabel" name="function_lbl">
       <property name="text">
        <string>Function:</string>
       </property>
      </widget>
     </item>
     <item row="2" column="0">
-     <widget class="QLabel" name="operador_lbl">
+     <widget class="QLabel" name="operator_lbl">
       <property name="text">
        <string>Operator:</string>
       </property>
      </widget>
     </item>
     <item row="4" column="0">
-     <widget class="QLabel" name="num_suporte_lbl">
+     <widget class="QLabel" name="stg_num_lbl">
       <property name="text">
        <string>Support/Strategy:</string>
       </property>
      </widget>
     </item>
     <item row="4" column="1">
-     <widget class="QSpinBox" name="num_suporte_sb">
+     <widget class="QSpinBox" name="stg_num_sb">
       <property name="minimum">
        <number>1</number>
       </property>
      </widget>
     </item>
     <item row="4" column="2" colspan="2">
-     <widget class="QCheckBox" name="rechecar_chk">
+     <widget class="QCheckBox" name="recheck_chk">
       <property name="text">
        <string>Recheck</string>
       </property>
@@ -193,7 +193,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QLabel" name="familia_lbl">
+  <widget class="QLabel" name="family_lbl">
    <property name="geometry">
     <rect>
      <x>4</x>

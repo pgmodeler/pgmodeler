@@ -13,7 +13,7 @@
 #include "sequenciawidget.h"
 #include "operadorwidget.h"
 #include "familiaoperadoreswidget.h"
-#include "classeoperadoreswidget.h"
+#include "operatorclasswidget.h"
 #include "tipowidget.h"
 #include "visaowidget.h"
 #include "textboxwidget.h"
@@ -40,7 +40,7 @@ extern FuncaoAgregacaoWidget *funcaoag_wgt;
 extern SequenciaWidget *sequencia_wgt;
 extern OperadorWidget *operador_wgt;
 extern FamiliaOperadoresWidget *familiaop_wgt;
-extern ClasseOperadoresWidget *classeop_wgt;
+extern OperatorClassWidget *classeop_wgt;
 extern TipoWidget *tipo_wgt;
 extern VisaoWidget *visao_wgt;
 extern TextboxWidget *caixatexto_wgt;

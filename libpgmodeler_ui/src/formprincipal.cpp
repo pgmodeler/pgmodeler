@@ -17,7 +17,7 @@
 #include "sequenciawidget.h"
 #include "operadorwidget.h"
 #include "familiaoperadoreswidget.h"
-#include "classeoperadoreswidget.h"
+#include "operatorclasswidget.h"
 #include "tipowidget.h"
 #include "visaowidget.h"
 #include "colunawidget.h"
@@ -57,7 +57,7 @@ FuncaoAgregacaoWidget *funcaoag_wgt=NULL;
 SequenciaWidget *sequencia_wgt=NULL;
 OperadorWidget *operador_wgt=NULL;
 FamiliaOperadoresWidget *familiaop_wgt=NULL;
-ClasseOperadoresWidget *classeop_wgt=NULL;
+OperatorClassWidget *classeop_wgt=NULL;
 TipoWidget *tipo_wgt=NULL;
 VisaoWidget *visao_wgt=NULL;
 ColunaWidget *coluna_wgt=NULL;
@@ -135,7 +135,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   sequencia_wgt=new SequenciaWidget(this);
   operador_wgt=new OperadorWidget(this);
   familiaop_wgt=new FamiliaOperadoresWidget(this);
-  classeop_wgt=new ClasseOperadoresWidget(this);
+  classeop_wgt=new OperatorClassWidget(this);
   tipo_wgt=new TipoWidget(this);
   visao_wgt=new VisaoWidget(this);
   coluna_wgt=new ColunaWidget(this);
