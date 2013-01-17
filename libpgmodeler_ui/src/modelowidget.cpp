@@ -1,5 +1,5 @@
 #include "modelowidget.h"
-#include "codigofontewidget.h"
+#include "sourcecodewidget.h"
 #include "databasewidget.h"
 #include "esquemawidget.h"
 #include "papelwidget.h"
@@ -35,7 +35,7 @@ extern EsquemaWidget *esquema_wgt;
 extern PapelWidget *papel_wgt;
 extern EspacoTabelaWidget *espacotabela_wgt;
 extern LinguagemWidget *linguagem_wgt;
-extern CodigoFonteWidget *codigofonte_wgt;
+extern SourceCodeWidget *codigofonte_wgt;
 extern FuncaoWidget *funcao_wgt;
 extern ConversaoTipoWidget *convtipo_wgt;
 extern ConversaoCodificacaoWidget *convcodif_wgt;

@@ -1,7 +1,7 @@
 #include "formprincipal.h"
 
 #include "textboxwidget.h"
-#include "codigofontewidget.h"
+#include "sourcecodewidget.h"
 #include "databasewidget.h"
 #include "esquemawidget.h"
 #include "papelwidget.h"
@@ -41,7 +41,7 @@ FormSobre *fsobre=NULL;
 MessageBox *caixa_msg=NULL;
 VisaoObjetosWidget *selecaoobjetos_wgt=NULL;
 TextboxWidget *caixatexto_wgt=NULL;
-CodigoFonteWidget *codigofonte_wgt=NULL;
+SourceCodeWidget *codigofonte_wgt=NULL;
 DatabaseWidget *database_wgt=NULL;
 EsquemaWidget *esquema_wgt=NULL;
 PapelWidget *papel_wgt=NULL;
@@ -119,7 +119,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 
   //*** CRIAÇÃO DOS FORMULÁRIOS GLOBAIS ***
   permissao_wgt=new PermissaoWidget(this);
-  codigofonte_wgt=new CodigoFonteWidget(this);
+  codigofonte_wgt=new SourceCodeWidget(this);
   caixatexto_wgt=new TextboxWidget(this);
   database_wgt=new DatabaseWidget(this);
   esquema_wgt=new EsquemaWidget(this);

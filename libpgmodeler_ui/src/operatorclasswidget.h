@@ -63,9 +63,6 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
       the configured element  is shown on the specified line on table */
    void handleElement(int lin_idx);
 
-   /* Preenche o formulário de elemento com os dados do elemento selecionado na tabela para
-      permitir uma posterior atualização dos atributos */
-
    //Fill the form fields with the element data on the specified table line
    void editElement(int lin_idx);
 

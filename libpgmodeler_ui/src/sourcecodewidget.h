@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: CodigoFonteWidget
-# Description:Definição da classe que implementa o formulário de visualização
-#            do código SQL/XML de um dado objeto.
+# Class: SourceCodeWidget
+# Description: Implements the operation to visualize object's source code.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -22,25 +21,25 @@
 #ifndef CODIGOFONTE_WIDGET_H
 #define CODIGOFONTE_WIDGET_H
 
-#include "ui_codigofontewidget.h"
+#include "ui_sourcecodewidget.h"
 #include "baseobjectwidget.h"
 
-class CodigoFonteWidget: public BaseObjectWidget, public Ui::CodigoFonteWidget {
- Q_OBJECT
+class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
  private:
-   DestaqueSintaxe *destaque_sql,
-                   *destaque_xml;
+  Q_OBJECT
+  DestaqueSintaxe *hl_sqlcode,
+                  *hl_xmlcode;
 
-   void applyConfiguration(void){}
+  void applyConfiguration(void){}
+  void hideEvent(QHideEvent *event);
 
  public:
-   CodigoFonteWidget(QWidget * parent = 0);
-   void hideEvent(QHideEvent *evento);
-   void setAttributes(DatabaseModel *model, BaseObject *object=NULL);
+  SourceCodeWidget(QWidget * parent = 0);
+  void setAttributes(DatabaseModel *model, BaseObject *object=NULL);
 
  private slots:
-   void gerarCodigoFonteObjeto(int=0);
-   void definirAbaCodigoFonte(int=0);
+  void generateSourceCode(int=0);
+  void setSourceCodeTab(int=0);
 };
 
 #endif
