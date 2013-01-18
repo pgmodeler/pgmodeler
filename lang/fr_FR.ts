@@ -235,199 +235,19 @@
     </message>
 </context>
 <context>
-    <name>CaixaTextoWidget</name>
+    <name>ColumnWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/caixatextowidget.ui" line="+28"/>
-        <source>Bold</source>
-        <translation>Gras</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Italic</source>
-        <translation>Italique</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/caixatextowidget.cpp" line="+55"/>
-        <source>Select text color</source>
-        <translation>Selection de la couleur de texte</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/caixatextowidget.ui" line="-21"/>
+        <location filename="../libpgmodeler_ui/ui/columnwidget.ui" line="+14"/>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+28"/>
-        <source>Underline</source>
-        <translation>Souligné</translation>
-    </message>
-</context>
-<context>
-    <name>ClasseOperadoresWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/classeoperadoreswidget.ui" line="+57"/>
-        <source>Default Class:</source>
-        <translation>Classe par défaut:</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Indexing:</source>
-        <translation>Indexation:</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Elements</source>
-        <translation>Elements</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Elemente Type:</source>
-        <translation>Type d&apos;Elément:</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Operator</source>
-        <translation>Operateur</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Function</source>
-        <translation>Fonction</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Storage</source>
-        <translation>Stockage</translation>
-    </message>
-    <message>
-        <location line="+21"/>
-        <source>Function:</source>
-        <translation>Fonction:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Operator:</source>
-        <translation>Opérateur:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Support/Strategy:</source>
-        <translation>Support/Stratégie:</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <location filename="../libpgmodeler_ui/src/classeoperadoreswidget.cpp" line="+36"/>
-        <source>Recheck</source>
-        <translation>Revérifier</translation>
-    </message>
-    <message>
-        <location line="+22"/>
-        <source>Family:</source>
-        <translation>Famille:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/classeoperadoreswidget.cpp" line="-13"/>
-        <source>Storage Type</source>
-        <translation>Type de Stockage</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Object</source>
-        <translation>Object</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Support/Strategy</source>
-        <translation>Support/Stratégie</translation>
-    </message>
-    <message>
-        <location line="+141"/>
-        <source>Yes</source>
-        <translation>Oui</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>No</source>
-        <translation>Non</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/classeoperadoreswidget.ui" line="-192"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
-    <name>CodigoFonteWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/codigofontewidget.ui" line="+40"/>
-        <source>Version:</source>
-        <translation>Version:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/codigofontewidget.cpp" line="+14"/>
-        <source>Type:</source>
-        <translation>Type:</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Source code visualization</source>
-        <translation>Visualisation du code source</translation>
-    </message>
-    <message>
-        <location line="+86"/>
-        <source>Generating source code...</source>
-        <translation>Génération du code source...</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>-- SQL code unavailable for this type of object --</source>
-        <translation>-- Code SQL non disponible pour ce type d&apos;objet. --</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/codigofontewidget.ui" line="-26"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+72"/>
-        <source>PostgreSQL</source>
-        <translation>PostgreSQL</translation>
-    </message>
-    <message>
-        <location line="+51"/>
-        <source>iconecodigo</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>SQL</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+35"/>
-        <source>XML</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
-    <name>ColunaWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/colunawidget.ui" line="+38"/>
+        <location line="+24"/>
         <source>Default Value:</source>
         <translation>Valeur par défaut:</translation>
     </message>
     <message>
-        <location line="-24"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+65"/>
+        <location line="+41"/>
         <source>Not Null:</source>
         <translation>Non Null:</translation>
     </message>
@@ -4104,6 +3924,105 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
+    <name>OperatorClassWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/operatorclasswidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>Default Class:</source>
+        <translation>Classe par défaut:</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Indexing:</source>
+        <translation>Indexation:</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Elements</source>
+        <translation>Élements</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Elemente Type:</source>
+        <translation>Type d&apos;Élément:</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Operator</source>
+        <translation>Operateur</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Function</source>
+        <translation>Fonction</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Storage</source>
+        <translation>Stockage</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Function:</source>
+        <translation>Fonction:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Operator:</source>
+        <translation>Opérateur:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Support/Strategy:</source>
+        <translation>Support/Stratégie:</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="+34"/>
+        <source>Recheck</source>
+        <translation>Revérifier</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Family:</source>
+        <translation>Famille:</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="-11"/>
+        <source>Storage Type</source>
+        <translation>Type de Stockage</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Object</source>
+        <translation>Objet</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Type</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Support/Strategy</source>
+        <translation>Support/Stratégie</translation>
+    </message>
+    <message>
+        <location line="+113"/>
+        <source>Yes</source>
+        <translation>Oui</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>No</source>
+        <translation>Non</translation>
+    </message>
+</context>
+<context>
     <name>PapelWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/papelwidget.ui" line="+20"/>
@@ -4822,6 +4741,59 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
+    <name>SourceCodeWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/sourcecodewidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Version:</source>
+        <translation>Version:</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>PostgreSQL</source>
+        <translation>PostgreSQL</translation>
+    </message>
+    <message>
+        <location line="+51"/>
+        <source>iconecodigo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>SQL</source>
+        <translation>SQL</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>XML</source>
+        <translation>XML</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="+14"/>
+        <source>Type:</source>
+        <translation>Type:</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Source code visualization</source>
+        <translation>Visualisation du code source</translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>Generating source code...</source>
+        <translation>Génération du code source...</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>-- SQL code unavailable for this type of object --</source>
+        <translation>-- Code SQL non disponible pour ce type d&apos;objet. --</translation>
+    </message>
+</context>
+<context>
     <name>TabelaObjetosWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/tabelaobjetoswidget.ui" line="+56"/>
@@ -5059,6 +5031,34 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location filename="../libpgmodeler/src/table.cpp" line="+13"/>
         <source>new_table</source>
         <translation>nouvelle_table</translation>
+    </message>
+</context>
+<context>
+    <name>TextboxWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/textboxwidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Bold</source>
+        <translation>Gras</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Italic</source>
+        <translation>Italique</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Underline</source>
+        <translation type="unfinished">Souligné</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/textboxwidget.cpp" line="+50"/>
+        <source>Select text color</source>
+        <translation>Sélection de la couleur de texte</translation>
     </message>
 </context>
 <context>
@@ -5310,17 +5310,17 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <location line="+2"/>
         <source>Element Type</source>
-        <translation type="unfinished">Type Element</translation>
+        <translation type="unfinished">Type d&apos;Élement</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Name</source>
-        <translation type="unfinished">Nom</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Type</source>
-        <translation type="unfinished">Type</translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location line="+20"/>
