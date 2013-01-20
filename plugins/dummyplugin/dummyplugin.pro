@@ -18,8 +18,8 @@ TRANSLATIONS += $$PWD/lang/$$TARGET.en_US.ts
 
 CODECFORTR = UTF8
 
-unix: CONFIG += link_pkgconfig
-unix: PKGCONFIG += libxml-2.0 libpq
+#unix: CONFIG += link_pkgconfig
+#unix: PKGCONFIG += libxml-2.0 libpq
 
 DEPENDPATH = ". res src ui moc obj"
 MOC_DIR = moc
@@ -27,7 +27,7 @@ OBJECTS_DIR = obj
 UI_DIR = src
 DESTDIR = build
 
-LIBS = $$PGMODELER_LIB_DIR/$$LIBUTIL \
+LIBS += $$PGMODELER_LIB_DIR/$$LIBUTIL \
        $$PGMODELER_LIB_DIR/$$LIBPARSERS \
        $$PGMODELER_LIB_DIR/$$LIBDBCONNECT \
        $$PGMODELER_LIB_DIR/$$LIBPGMODELER \
