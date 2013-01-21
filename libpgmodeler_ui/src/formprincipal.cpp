@@ -1210,14 +1210,14 @@ void FormPrincipal::carregarPlugins(void)
    lib=dir_plugins + nome_plugin +
        GlobalAttributes::DIR_SEPARATOR  +
        nome_plugin + QString(".dll"); //Sufixo em Windows
-  #elif Q_OS_LINUX
-   lib=dir_plugins + nome_plugin +
-       GlobalAttributes::DIR_SEPARATOR  +
-       QString("lib") + nome_plugin + QString(".so"); //Sufixo em Unix/Linux
-  #else
+  #elif Q_OS_DARWIN
    lib=dir_plugins + nome_plugin +
        GlobalAttributes::DIR_SEPARATOR  +
        QString("lib") + nome_plugin + QString(".dylib"); //Sufixo em Mac
+  #else
+    lib=dir_plugins + nome_plugin +
+        GlobalAttributes::DIR_SEPARATOR  +
+        QString("lib") + nome_plugin + QString(".so"); //Sufixo em Unix/Linux
   #endif
 
   //Carrega a biblioteca
