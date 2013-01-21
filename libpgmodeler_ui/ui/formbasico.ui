@@ -85,10 +85,19 @@
         <property name="leftMargin">
          <number>4</number>
         </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
         <property name="bottomMargin">
          <number>0</number>
         </property>
-        <property name="spacing">
+        <property name="horizontalSpacing">
+         <number>10</number>
+        </property>
+        <property name="verticalSpacing">
          <number>0</number>
         </property>
         <item row="0" column="0">
@@ -121,6 +130,12 @@
         </item>
         <item row="0" column="1">
          <widget class="QPushButton" name="aplicar_ok_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>90</width>
@@ -129,7 +144,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>90</width>
+            <width>16777215</width>
             <height>16777215</height>
            </size>
           </property>
@@ -156,6 +171,12 @@
         </item>
         <item row="0" column="2">
          <widget class="QPushButton" name="cancelar_btn">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>90</width>
@@ -164,7 +185,7 @@
           </property>
           <property name="maximumSize">
            <size>
-            <width>90</width>
+            <width>16777215</width>
             <height>16777215</height>
            </size>
           </property>

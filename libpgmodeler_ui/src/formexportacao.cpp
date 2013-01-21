@@ -32,7 +32,7 @@ FormExportacao::FormExportacao(QWidget *parent, Qt::WindowFlags f) : QDialog(par
 
  /** ticket#2 **/
  //Fix específico para Windows: força a aparência do frame para WinPanel
- #if defined(Q_OS_WIN)
+ #ifdef Q_OS_WIN
   this->frame->setFrameShape(QFrame::WinPanel);
  #endif
 }
