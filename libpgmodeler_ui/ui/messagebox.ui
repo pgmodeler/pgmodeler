@@ -296,11 +296,6 @@
           </property>
           <item row="0" column="0">
            <widget class="QTreeWidget" name="exceptions_trw">
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
             <property name="lineWidth">
              <number>1</number>
             </property>

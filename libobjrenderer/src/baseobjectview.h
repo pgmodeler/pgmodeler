@@ -68,7 +68,7 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
   static const float VERT_SPACING=2.0f,
                      HORIZ_SPACING=2.0f,
-                     DEFAULT_FONT_SIZE=8.0f,
+                     DEFAULT_FONT_SIZE=9.0f,
                      OBJ_BORDER_WIDTH=0.80f;
 
   //Resizes to the specified dimension the passed polygon

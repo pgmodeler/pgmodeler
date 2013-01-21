@@ -102,11 +102,6 @@
              </disabled>
             </palette>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>9</pointsize>
-            </font>
-           </property>
            <property name="frameShadow">
             <enum>QFrame::Sunken</enum>
            </property>
@@ -188,11 +183,6 @@
           <widget class="QTableWidget" name="listaobjetos_tbw">
            <property name="enabled">
             <bool>true</bool>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>9</pointsize>
-            </font>
            </property>
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>

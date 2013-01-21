@@ -73,11 +73,6 @@
         </disabled>
        </palette>
       </property>
-      <property name="font">
-       <font>
-        <pointsize>8</pointsize>
-       </font>
-      </property>
       <property name="frameShadow">
        <enum>QFrame::Sunken</enum>
       </property>
