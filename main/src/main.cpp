@@ -20,7 +20,12 @@ void startCrashHandler(int)
 
   stack_size = backtrace(stack, 20);
   symbols = backtrace_symbols(stack, stack_size);
-  cmd="crashhandler";
+
+  #ifdef Q_OS_LINUX
+   cmd="crashhandler";
+  #else
+   cmd="crashhandler.app";
+  #endif
  #else
   cmd="crashhandler.exe";
  #endif
@@ -60,6 +65,13 @@ void startCrashHandler(int)
 
  //Executes the crashhandler command (which must be on the same directory as the pgModeler executable)
  cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + cmd;
+
+ //Mac OSX little fix: configure the correct path to call crashhandler.app
+ #ifndef Q_OS_DARWIN
+  cmd.replace("pgmodeler.app/Contents/MacOS/","");
+  cmd=QString("open ") + cmd;
+ #endif
+
  system(cmd.toStdString().c_str());
  exit(1);
 }

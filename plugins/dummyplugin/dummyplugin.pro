@@ -39,6 +39,7 @@ SOURCES += src/dummyplugin.cpp
 
 dummy.files = res/dummyplugin.png lang
 unix:dummy.files += build/libdummyplugin.so
+mac:dummy.files += build/libdummyplugin.dylib
 windows:dummy.files += build/dummyplugin.dll build/libdummyplugin.a
 dummy.path = $$PGMODELER_PLUGIN_DIR/$$TARGET
 INSTALLS += dummy

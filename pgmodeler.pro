@@ -14,6 +14,13 @@ unix {
  XML_LIB = /usr/lib64/libxml2.so
 }
 
+mac {
+ PGSQL_LIB = /Library/PostgreSQL/9.2/lib/libpq.dylib
+ PGSQL_INC = /Library/PostgreSQL/9.2/include
+ XML_INC = /usr/include/libxml2
+ XML_LIB = /usr/lib/libxml2.dylib
+}
+
 windows {
  PGSQL_LIB = C:/PostgreSQL/9.2/bin/libpq.dll
  PGSQL_INC = C:/PostgreSQL/9.2/include
@@ -58,8 +65,10 @@ CONFIG += ordered qt stl rtti exceptions warn_on
 unix:CONFIG += x11
 windows:CONFIG += windows
 unix:LIB_PREFIX = lib
+
 unix:LIB_EXT = so
 windows:LIB_EXT = dll
+mac:LIB_EXT = dylib
 
 SUBDIRS = libutil \
           libparsers \
@@ -98,6 +107,7 @@ LIBS = $$XML_LIB $$PGSQL_LIB
 
 sources.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
 unix:sources.files += start-pgmodeler.sh
+mac:sources.files += start-pgmodeler-mac.sh
 windows:sources.files += start-pgmodeler.bat
 sources.path = build/
 INSTALLS += sources
