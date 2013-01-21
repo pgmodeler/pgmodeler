@@ -13,7 +13,7 @@ void startCrashHandler(int)
 
  /** At the moment the backtrace function does not exists on MingW (Windows) this way
      the code that generates the stacktrace is available only on Linux/Unix systems */
- #ifndef Q_OS_WIN
+ #if !defined(Q_OS_WIN)
   void *stack[20];
   size_t stack_size, i;
   char **symbols=NULL;
@@ -21,10 +21,10 @@ void startCrashHandler(int)
   stack_size = backtrace(stack, 20);
   symbols = backtrace_symbols(stack, stack_size);
 
-  #ifdef Q_OS_LINUX
-   cmd="crashhandler";
-  #else
+  #if defined(Q_OS_MAC)
    cmd="crashhandler.app";
+  #else
+   cmd="crashhandler";
   #endif
  #else
   cmd="crashhandler.exe";
@@ -48,7 +48,7 @@ void startCrashHandler(int)
 
   output.write(lin.toStdString().c_str(), lin.size());
 
-  #ifndef Q_OS_WIN
+  #if !defined(Q_OS_WIN)
    for(i=0; i < stack_size; i++)
    {
     lin=QString(symbols[i]) + QString("\n");
@@ -67,7 +67,7 @@ void startCrashHandler(int)
  cmd=QApplication::applicationDirPath() + GlobalAttributes::DIR_SEPARATOR + cmd;
 
  //Mac OSX little fix: configure the correct path to call crashhandler.app
- #ifndef Q_OS_DARWIN
+ #if defined(Q_OS_MAC)
   cmd.replace("pgmodeler.app/Contents/MacOS/","");
   cmd=QString("open ") + cmd;
  #endif

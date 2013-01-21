@@ -8,7 +8,7 @@ FormBasico::FormBasico(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
  /* Fix específico para Windows: permite que janelas passíveis de
     maximização exibam o botão maximizar, adicionalmente, os diálogos de
     edição de objetos ficam AlwayOnTop forçadamente */
- #ifdef Q_OS_WIN
+ #if defined(Q_OS_WIN)
   this->setWindowFlags(this->windowFlags() |
                        Qt::Dialog |
                        Qt::WindowMaximizeButtonHint);
