@@ -307,7 +307,6 @@ void RelacionamentoWidget::setAttributes(DatabaseModel *modelo, OperationList *l
     relacao_aux->connectRelationship();
     //vet_cols=relacao_aux->getRelationshipColumnsNames();
     vet_cols=relacao_aux->getGeneratedColumns();
-    relacao_aux->disconnectRelationship();
    }
    else
     //vet_cols=relacao_aux->getRelationshipColumnsNames();
@@ -334,6 +333,9 @@ void RelacionamentoWidget::setAttributes(DatabaseModel *modelo, OperationList *l
     if(vet_id_cols[i] < static_cast<unsigned>(coluna_rel_lst->count()))
      coluna_rel_lst->item(vet_id_cols[i])->setCheckState(Qt::Checked);
    }
+
+   if(this->new_object)
+    relacao_aux->disconnectRelationship();
   }
  }
 
