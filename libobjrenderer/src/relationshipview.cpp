@@ -620,6 +620,8 @@ void RelationshipView::configureDescriptor(void)
  obj_selection->setPolygon(pol);
  obj_selection->setTransformOriginPoint(obj_selection->boundingRect().center());
  obj_selection->setPos(x,y);
+ obj_selection->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
+ obj_selection->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
 
  obj_shadow->setPolygon(pol);
  obj_shadow->setTransformOriginPoint(obj_shadow->boundingRect().center());

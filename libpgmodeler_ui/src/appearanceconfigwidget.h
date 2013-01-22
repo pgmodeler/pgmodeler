@@ -21,59 +21,59 @@
 #ifndef CONF_APARENCIA_WIDGET_H
 #define CONF_APARENCIA_WIDGET_H
 
-#include "ui_confaparenciawidget.h"
+#include "ui_appearanceconfigwidget.h"
 #include "baseconfigwidget.h"
 #include "objectsscene.h"
 #include "databasemodel.h"
 #include <algorithm>
 
-class ConfAparenciaWidget: public QWidget, public Ui::ConfAparenciaWidget, public BaseConfigWidget {
+class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget, public BaseConfigWidget {
  private:
   Q_OBJECT
 
   //Classe auxiliar que armazena os dados da formatação de cada elemento
-  class ItemConfAparencia {
+  class AppearanceConfigItem {
    public:
-    QString id_conf;
-    QTextCharFormat fmt_fonte;
-    QColor cores[3];
-    bool conf_obj;
+    QString conf_id;
+    QTextCharFormat font_fmt;
+    QColor colors[3];
+    bool obj_conf;
   };
 
   //Diálogo de seleção de cor
-  QColorDialog cor_dlg;
+  QColorDialog color_dlg;
 
   //Viewport que mostra o modelo de exemplo
   QGraphicsView *viewp;
 
   //Cena que armazena os objetos do modelo de exemplo
-  ObjectsScene *cena;
+  ObjectsScene *scene;
 
   //Modelo de objetos exemplo
-  DatabaseModel *modelo;
+  DatabaseModel *model;
 
   //Vetor o qual armazena cada elemento de configuração de aparência do modelo
-  vector<ItemConfAparencia> itens_conf;
+  vector<AppearanceConfigItem> conf_items;
 
   //Carrega o modelo de exemplo
-  void criarObjetosExemplo(void);
+  void loadExampleObjects(void);
 
  public:
-  ConfAparenciaWidget(QWidget * parent=0);
-  ~ConfAparenciaWidget(void);
+  AppearanceConfigWidget(QWidget * parent=0);
+  ~AppearanceConfigWidget(void);
 
   void saveConfiguration(void);
   void loadConfiguration(void);
 
  private slots:
   //Habilita os itens do formulário conforme o elemento selecionado no combobox 'elemento_cmb'
-  void habilitarElemConfiguracao(void);
+  void enableConfigElement(void);
 
   //Aplica o estilo de fonte ao elemento atual
-  void aplicarEstiloFonte(void);
+  void applyFontStyle(void);
 
   //Aplica o estilo de cor ao elemento atual
-  void aplicarCorElemento(void);
+  void applyElementColor(void);
 
   /* Este método não é usado nesta classe pois as modificações são aplicadas diretamente
      ao arquivo, operação esta tratada pelo método salvarConfiguracao() */

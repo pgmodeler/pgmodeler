@@ -271,7 +271,7 @@
       <item row="2" column="0" colspan="2">
        <widget class="QLabel" name="label_20">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -328,7 +328,7 @@ Special thanks to friends of the software development team of the Legislative As
       <item row="4" column="0" colspan="2">
        <widget class="QLabel" name="label_8">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -362,7 +362,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
          <bool>true</bool>
         </property>
         <property name="textInteractionFlags">
-         <set>Qt::NoTextInteraction</set>
+         <set>Qt::TextSelectableByMouse</set>
         </property>
        </widget>
       </item>

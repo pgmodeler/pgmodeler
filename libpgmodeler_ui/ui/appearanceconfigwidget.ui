@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ConfAparenciaWidget</class>
- <widget class="QWidget" name="ConfAparenciaWidget">
+ <class>AppearanceConfigWidget</class>
+ <widget class="QWidget" name="AppearanceConfigWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="confaparencia_grid">
+  <layout class="QGridLayout" name="appearanceconfig_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -21,7 +21,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="elemento_lbl">
+    <widget class="QLabel" name="element_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -34,7 +34,7 @@
     </widget>
    </item>
    <item row="0" column="1" colspan="4">
-    <widget class="QComboBox" name="elemento_cmb">
+    <widget class="QComboBox" name="element_cmb">
      <item>
       <property name="text">
        <string>Global: Font style</string>
@@ -263,7 +263,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="fonte_lbl">
+    <widget class="QLabel" name="font_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -276,7 +276,7 @@
     </widget>
    </item>
    <item row="1" column="1" colspan="4">
-    <widget class="QFontComboBox" name="fonte_cmb">
+    <widget class="QFontComboBox" name="font_cmb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -291,7 +291,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QDoubleSpinBox" name="tam_fonte_spb">
+      <widget class="QDoubleSpinBox" name="font_size_spb">
        <property name="decimals">
         <number>1</number>
        </property>
@@ -310,7 +310,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="unidade_lbl">
+      <widget class="QLabel" name="unity_lbl">
        <property name="text">
         <string> pt</string>
        </property>
@@ -319,7 +319,7 @@
     </layout>
    </item>
    <item row="2" column="2">
-    <widget class="QCheckBox" name="negrito_chk">
+    <widget class="QCheckBox" name="bold_chk">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -338,7 +338,7 @@
     </widget>
    </item>
    <item row="2" column="3">
-    <widget class="QCheckBox" name="italico_chk">
+    <widget class="QCheckBox" name="italic_chk">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -357,7 +357,7 @@
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="cores_lbl">
+    <widget class="QLabel" name="colors_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -372,7 +372,7 @@
    <item row="3" column="1" colspan="4">
     <layout class="QHBoxLayout" name="horizontalLayout_5">
      <item>
-      <widget class="QToolButton" name="cor1_tb">
+      <widget class="QToolButton" name="color1_tb">
        <property name="minimumSize">
         <size>
          <width>60</width>
@@ -394,7 +394,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="cor2_tb">
+      <widget class="QToolButton" name="color2_tb">
        <property name="minimumSize">
         <size>
          <width>60</width>
@@ -416,7 +416,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="cor3_tb">
+      <widget class="QToolButton" name="color3_tb">
        <property name="minimumSize">
         <size>
          <width>60</width>
@@ -453,7 +453,7 @@
     </layout>
    </item>
    <item row="2" column="4">
-    <widget class="QCheckBox" name="sublinhado_chk">
+    <widget class="QCheckBox" name="underline_chk">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>

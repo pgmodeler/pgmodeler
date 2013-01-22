@@ -1,10 +1,10 @@
 ###########################################################
 # XML / PostgreSQL variables configuration                #
 #                                                         #
-# PGSQL_LIB -> Full path to libpq.(so | dll)              #
+# PGSQL_LIB -> Full path to libpq.(so | dll | dylib)      #
 # PGSQL_INC -> Root path were PgSQL includes can be found #
 #                                                         #
-# XML_LIB   -> Full path to libxml2.(so | dll)            #
+# XML_LIB   -> Full path to libxml2.(so | dll | dylib)    #
 # XML_INC   -> Root path were XML2 includes can be found  #
 ###########################################################
 unix {

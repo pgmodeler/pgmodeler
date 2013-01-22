@@ -22,7 +22,7 @@
 #define FORM_CONFIGURACAO_H
 
 #include "ui_formconfiguracao.h"
-#include "confaparenciawidget.h"
+#include "appearanceconfigwidget.h"
 #include "confgeralwidget.h"
 #include "confconexoeswidget.h"
 
@@ -31,7 +31,7 @@ class FormConfiguracao: public QDialog, public Ui::FormConfiguracao {
   Q_OBJECT
 
   ConfGeralWidget *conf_geral;
-  ConfAparenciaWidget *conf_aparencia;
+  AppearanceConfigWidget *conf_aparencia;
   ConfConexoesWidget *conf_conexoes;
 
  public:

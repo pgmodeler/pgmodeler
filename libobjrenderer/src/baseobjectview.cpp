@@ -100,8 +100,6 @@ void BaseObjectView::setSourceObject(BaseObject *object)
    this->addToGroup(obj_selection);
   }
 
-  obj_selection->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
-  obj_selection->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
   obj_selection->setVisible(false);
   obj_selection->setZValue(4);
 
@@ -432,6 +430,8 @@ void BaseObjectView::configureObjectSelection(void)
   pol.append(ret.bottomLeft());
   obj_selection->setPolygon(pol);
   obj_selection->setPos(0,0);
+  obj_selection->setBrush(this->getFillStyle(ParsersAttributes::OBJ_SELECTION));
+  obj_selection->setPen(this->getBorderStyle(ParsersAttributes::OBJ_SELECTION));
  }
 }
 void BaseObjectView::configureProtectedIcon(void)

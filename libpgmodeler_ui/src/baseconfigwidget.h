@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: ConfBaseWidget
-# Description:Implementa operações básicas para gravação de arquios  e cesso  s configuraçoẽs
-#            nos widgets de configurações.
+# Class: BaseConfigWidget
+# Description: Implements base operations to load/save XML based configuration files.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -29,39 +28,40 @@
 
 class BaseConfigWidget {
  protected:
-  //Mapa que armazena os parâmetros de configuração carregados do arquivos
+  /* Stores the configuration params, the main key is the xml element name
+     and the value is a map where the key is the attribute name and the value
+     is the current attribute value */
   map<QString, map<QString, QString> > config_params;
 
-  /* Salva as configurações em arquivo. O parâmetro 'id_conf' indica qual o
-     tipo da configuração a ser salva. (vide AtributosGlobais::CONF_???) */
+  /* Saves the configuration on file. The conf_id param indicates the type of
+     configuration to be saved. (see GlobalAttributes::*_CONF) */
   void saveConfiguration(const QString &conf_id);
 
-  /* Carrega as configurações do arquivo. O vetor 'atribs_chaves' é usado para especificar o nome de elementos
-     considerados chave do mapa de configuração */
+  /* Loads a configuration from file. The vector key_attribs is used to specify the xml element name
+     considered as a key on the configuration map */
   void loadConfiguration(const QString &conf_id, const vector<QString> &key_attribs=vector<QString>());
 
-  //Obtém um parâmetro do arquivo de configuração carregado pelo ParserXML
+  //Get a configuratoin key from the xml parser
   void getConfigurationParams(const vector<QString> &key_attribs);
 
-  //Restaura as configurações padrão carregando-as do arquivo original (na pasta conf/defaults)
+  //Restore the configuration specified by conf_in loading them from the original file (conf/defaults)
   void restoreDefaults(const QString &conf_id);
 
  public:
   BaseConfigWidget(void){}
 
-  //Adiciona um parâmetro de configuração ao mapa de configurações. Caso o mesmo já existe seus valores são substituídos
+  //Adds a configuration param to the configuration map. Replaces the values if the param already exists.
   void addConfigurationParam(const QString &param, const map<QString, QString> &attribs);
 
-  //Obtém os parâmetros carregados do arquivo
+  //Gets the parameters loaded from file
   map<QString, map<QString, QString> > getConfigurationParams(void);
 
-  //Exclui os valores de um dado parâmetro de configuração
+  //Removes the values for the specified configuration parameter
   void removeConfigurationParam(const QString &param);
 
-  //Exclui todos os parâmetros de configuração
+  //Removes all the configuration params
   void removeConfigurationParams(void);
 
-  //Aplica as configurações padrão
   virtual void aplicarConfiguracao(void)=0;
 };
 
