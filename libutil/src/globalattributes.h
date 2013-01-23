@@ -81,7 +81,7 @@ static const QString
    SQL_HIGHLIGHT_CONF="sql-highlight", //Configuration file for SQL language highlight
    XML_HIGHLIGHT_CONF="xml-highlight", //Configuration file for XML language highlight
 
-   EXAMPLE_MODEL="example.pgmodel"; //Default name for the sample model loaded on appearence configuration form
+   EXAMPLE_MODEL="example.dbm"; //Default name for the sample model loaded on appearence configuration form
 }
 
 #endif

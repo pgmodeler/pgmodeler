@@ -62,7 +62,7 @@ class BaseConfigWidget {
   //Removes all the configuration params
   void removeConfigurationParams(void);
 
-  virtual void aplicarConfiguracao(void)=0;
+  virtual void applyConfiguration(void)=0;
 };
 
 #endif

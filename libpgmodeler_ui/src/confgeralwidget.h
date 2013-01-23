@@ -37,7 +37,7 @@ class ConfGeralWidget: public QWidget, public Ui::ConfGeralWidget, public BaseCo
   void loadConfiguration(void);
 
  public slots:
-  void aplicarConfiguracao(void);
+  void applyConfiguration(void);
   void restoreDefaults(void);
 
  private slots:

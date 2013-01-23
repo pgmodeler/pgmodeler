@@ -69,7 +69,7 @@ class ConfConexoesWidget: public QWidget, public Ui::ConfConexoesWidget, public 
 
    /* Este método não é usado nesta classe pois as modificações são aplicadas diretamente
       ao arquivo, operação esta tratada pelo método salvarConfiguracao() */
-   void aplicarConfiguracao(void){}
+   void applyConfiguration(void){}
 };
 
 #endif

@@ -4,7 +4,6 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
 {
  setupUi(this);
 
- //Armazena cada id de elemento no arquivo de configuração
  QString conf_ids[]={
   ParsersAttributes::GLOBAL, ParsersAttributes::CONSTRAINTS, ParsersAttributes::OBJ_SELECTION,
   ParsersAttributes::POSITION_INFO, ParsersAttributes::POSITION_INFO,
@@ -23,12 +22,11 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
   ParsersAttributes::NN_COLUMN, ParsersAttributes::RELATIONSHIP, ParsersAttributes::LABEL,
   ParsersAttributes::LABEL, ParsersAttributes::ATTRIBUTE, ParsersAttributes::ATTRIBUTE };
   int i, count=element_cmb->count(),
-     //Este vetor armazena os índices dos elementos os quais referem-se a configuraçao de cor de objetos
+     //This auxiliary vector stores the id of elements that represents color/font conf. of objects
      obj_conf_ids_vect[]={ 2, 4, 6, 7, 10, 11, 12, 14, 16, 18, 21, 22,
-                     26, 27, 29, 33, 35, 37, 39, 40, 42, 44 };
+                           26, 27, 29, 33, 35, 37, 39, 40, 42, 44 };
  vector<int> conf_obj_ids(obj_conf_ids_vect, obj_conf_ids_vect + sizeof(obj_conf_ids_vect) / sizeof(int));
 
- //Aloca o vetor de itens de configuração e atribui cada id de configuração aos elementos
  conf_items.resize(count);
  for(i=0; i < count; i++)
  {
@@ -40,22 +38,16 @@ AppearanceConfigWidget::AppearanceConfigWidget(QWidget * parent) : QWidget(paren
  scene=new ObjectsScene;
  scene->setSceneRect(QRectF(0,0,500,500));
 
- //Aloca o viewport com algumas opções de otimização na renderização
+
  viewp=new QGraphicsView(scene);
  viewp->setEnabled(false);
  viewp->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
  viewp->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
  viewp->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
- //Ativa o antialiasing de fonte e objetos
  viewp->setRenderHint(QPainter::Antialiasing);
  viewp->setRenderHint(QPainter::TextAntialiasing);
  viewp->setRenderHint(QPainter::SmoothPixmapTransform);
-
- //Força a cena a ser desenhada da esquerda para a direita e de cima para baixo
  viewp->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-
- //Otimizações: Cache do background (grade) e atualização mínima do viewport
  viewp->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
  viewp->centerOn(0,0);
 
@@ -80,7 +72,7 @@ AppearanceConfigWidget::~AppearanceConfigWidget(void)
  delete(model);
 }
 
-void AppearanceConfigWidget::loadExampleObjects(void)
+void AppearanceConfigWidget::loadExampleModel(void)
 {
  try
  {
@@ -90,7 +82,6 @@ void AppearanceConfigWidget::loadExampleObjects(void)
   GraphicalView *view=NULL;
   unsigned count, i;
 
-  //Caso não existam objetos no modelo faz o carregamento do arquivo
   if(model->getObjectCount()==0)
   {
    model->loadModel(GlobalAttributes::CONFIGURATIONS_DIR +
@@ -147,35 +138,22 @@ void AppearanceConfigWidget::loadConfiguration(void)
  {
   int i, count=conf_items.size();
 
-  //Carrega o arquivo de estilo de objetos
   BaseObjectView::loadObjectsStyle();
+  this->loadExampleModel();
 
-  //Cria os objetos de exemplo
-  this->loadExampleObjects();
-
-  //Obtém cada estilo carregado do arquivo e os atribui ao itens de configuração
   for(i=0; i < count; i++)
   {
-   //Caso o item de configuração atual refere-se a cores de um objeto
    if(conf_items[i].obj_conf)
    {
-    //Obtém o estilo de preenchimento e da borda e os armazena no item atual
-    BaseObjectView::getFillStyle(conf_items[i].conf_id,
-                                            conf_items[i].colors[0], conf_items[i].colors[1]);
+    BaseObjectView::getFillStyle(conf_items[i].conf_id, conf_items[i].colors[0], conf_items[i].colors[1]);
     conf_items[i].colors[2]=BaseObjectView::getBorderStyle(conf_items[i].conf_id).color();
    }
    else
-    //Caso o item atual seja um elemento de configuração de fonte, obtém o estilo de fonte respectivo
     conf_items[i].font_fmt=BaseObjectView::getFontStyle(conf_items[i].conf_id);
   }
 
-  //Inicializa o formulário de configuração de aparência
   this->enableConfigElement();
-
-  //Marca no combo de fontes, a fonte global
   font_cmb->setCurrentFont(BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font());
-
-  //Define todos os objetos do modelo de exemplo como modificados, forçando seu redesenho
   model->setObjectsModified();
   scene->update();
  }
@@ -203,32 +181,29 @@ void AppearanceConfigWidget::saveConfiguration(void)
    item=(*itr);
    itr++;
 
-   //Caso o item atual refere-se a um elemento de cor de objeto
+   //If the item is a object color config
    if(item.obj_conf)
    {
-    //Cria um atributo o qual armazena a cor de preenchimento
+    //Creates an attribute that stores the fill color
     attrib_id=item.conf_id + QString("-color");
     if(item.colors[0]==item.colors[1])
      attribs[attrib_id]=item.colors[0].name();
     else
      attribs[attrib_id]=item.colors[0].name() + QString(",") + item.colors[1].name();
 
-    //Cria um atributo o qual armazena a cor da borda
+    //Creates an attribute that stores the border color
     attrib_id=item.conf_id + QString("-bcolor");
     attribs[attrib_id]=item.colors[2].name();
    }
-   /* Caso o item atual seja um elemento de fonte do objeto porém não seja o
-      elemento de configuração global de fonte */
+   //If the item is a font config
    else if(item.conf_id!=ParsersAttributes::GLOBAL && !item.obj_conf)
    {
-    //Obtém a fonte do item
     font=item.font_fmt.font();
 
-    //Cria um atributo que armazena a cor da fonte
+    //Creates an attribute to store the font color
     attrib_id=item.conf_id + QString("-fcolor");
     attribs[attrib_id]=item.font_fmt.foreground().color().name();
 
-    //Cria um atributo que armazena se a fonte está em itálico, negrito e sublinhado
     attrib_id=item.conf_id + QString("-") + ParsersAttributes::ITALIC;
     attribs[attrib_id]=(font.italic() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
 
@@ -238,19 +213,15 @@ void AppearanceConfigWidget::saveConfiguration(void)
     attrib_id=item.conf_id + QString("-") + ParsersAttributes::UNDERLINE;
     attribs[attrib_id]=(font.underline() ? ParsersAttributes::_TRUE_ : ParsersAttributes::_FALSE_);
    }
-   //Caso o item atual seja o elemento global de fonte
+   //Special case: treating the global font element
    else
    {
-    //Cria dois atributos que armazenam o nome e o tamanho da fonte global do modelo
     attribs["font-name"]=QFontInfo(item.font_fmt.font()).family();
     attribs["font-size"]=QString("%1").arg(item.font_fmt.font().pointSizeF());
    }
   }
 
-  //Especifica aos parâmetros de configuração de estilo de objetos os atributos configurados acima
   config_params[GlobalAttributes::OBJECTS_STYLE_CONF]=attribs;
-
-  //Salva a configuração em arquivo
   BaseConfigWidget::saveConfiguration(GlobalAttributes::OBJECTS_STYLE_CONF);
  }
  catch(Exception &e)
@@ -264,27 +235,24 @@ void AppearanceConfigWidget::enableConfigElement(void)
  QPalette pal;
  int idx=element_cmb->currentIndex();
 
- //Widgets que ficam habilitados somente quando o elemento global de fonte está selecionado
+ //Widgets enabled only when the global font element is selected (idx==0)
  font_cmb->setEnabled(idx==0);
  font_lbl->setEnabled(idx==0);
  font_size_spb->setEnabled(idx==0);
  unity_lbl->setEnabled(idx==0);
 
- /* Widgets que ficam habilitados somente quando o elemento atual não é o global e o
-    mesmo também não é elemento de cor de objetos */
+ //Widgets enabled when a font configuration element is selected
  underline_chk->setEnabled(idx!=0 && !conf_items[idx].obj_conf);
  bold_chk->setEnabled(idx!=0 && !conf_items[idx].obj_conf);
  italic_chk->setEnabled(idx!=0 && !conf_items[idx].obj_conf);
 
- //Estes elementos ficam visíveis quando o elemento global não está selecionado
  colors_lbl->setVisible(idx!=0);
  color1_tb->setVisible(idx!=0);
 
- //Estes widgets ficam visíveis somente quando o elemento atual é referente a cor de objetos
+ //Widgets visible when a object configuration element is selected
  color2_tb->setVisible(conf_items[idx].obj_conf);
  color3_tb->setVisible(conf_items[idx].obj_conf);
 
- //Bloqueia os sinais de todos os widgets para evitar que slots sejam executados antes do tempo
  color1_tb->blockSignals(true);
  color2_tb->blockSignals(true);
  color3_tb->blockSignals(true);
@@ -294,8 +262,6 @@ void AppearanceConfigWidget::enableConfigElement(void)
  font_cmb->blockSignals(true);
  font_size_spb->blockSignals(true);
 
- /* Caso o elemento atual refere-se a uma configuração de fonte,
-    preenche os widgets com os dados da fonte */
  if(!conf_items[idx].obj_conf)
  {
   QTextCharFormat fmt=BaseObjectView::getFontStyle(conf_items[idx].conf_id);
@@ -307,8 +273,6 @@ void AppearanceConfigWidget::enableConfigElement(void)
   font_cmb->setCurrentFont(fmt.font());
   font_size_spb->setValue(fmt.font().pointSizeF());
  }
- /* Caso o elemento atual seja de configuração de cor do objeto,
-    preenche os botões de cores com as cores configuradas ao elemento */
  else
  {
   QColor color1, color2;
@@ -329,7 +293,6 @@ void AppearanceConfigWidget::enableConfigElement(void)
   bold_chk->setChecked(false);
  }
 
- //Desbloqueia os sinais dos widgets
  color1_tb->blockSignals(false);
  color2_tb->blockSignals(false);
  color3_tb->blockSignals(false);
@@ -349,40 +312,31 @@ void AppearanceConfigWidget::applyElementColor(void)
   QPalette pal;
   unsigned color_idx;
 
-  //Executa o diálogo de seleção de cores
   pal=btn->palette();
   color_dlg.setCurrentColor(pal.color(QPalette::Button));
   color_dlg.exec();
 
-  //Caso o usuário selecionou uma cor
   if(color_dlg.result()==QDialog::Accepted)
   {
-   //Preenche o botão acionado com a cor escolhida do diálogo de cores
    pal.setColor(QPalette::Button, color_dlg.selectedColor());
    btn->setPalette(pal);
 
-   //Caso seja uma configuração de cor de objetos
    if(conf_items[element_cmb->currentIndex()].obj_conf)
    {
-    //Conforme o botão acionado define-se o índice da cor a ser configurada
     if(btn==color1_tb) color_idx=0;
     else if(btn==color2_tb) color_idx=1;
     else color_idx=2;
 
-    //Atribui a cor configurada ao elemento atual
     conf_items[element_cmb->currentIndex()].colors[color_idx]=color_dlg.selectedColor();
     BaseObjectView::setElementColor(conf_items[element_cmb->currentIndex()].conf_id, color_dlg.selectedColor(), color_idx);
    }
-   //Caso seja uma configuração de fonte
    else
    {
-    //Atribui a cor selecionada   cor da fonte do elemento atual
     conf_items[element_cmb->currentIndex()].font_fmt.setForeground(color_dlg.selectedColor());
     BaseObjectView::setFontStyle(conf_items[element_cmb->currentIndex()].conf_id,
-                                      conf_items[element_cmb->currentIndex()].font_fmt);
+                                 conf_items[element_cmb->currentIndex()].font_fmt);
    }
 
-   //Atualiza o modelo de exemplo para exibir as modificações de aparência
    model->setObjectsModified();
    scene->update();
   }
@@ -393,19 +347,16 @@ void AppearanceConfigWidget::applyFontStyle(void)
 {
  QFont font;
 
- //Configura uma fonte com os dados configurados no formulário
  font=font_cmb->currentFont();
  font.setBold(bold_chk->isChecked());
  font.setItalic(italic_chk->isChecked());
  font.setUnderline(underline_chk->isChecked());
  font.setPointSizeF(font_size_spb->value());
 
- //Atribui a fonte configurada ao elemento
  conf_items[element_cmb->currentIndex()].font_fmt.setFont(font);
  BaseObjectView::setFontStyle(conf_items[element_cmb->currentIndex()].conf_id,
-                                   conf_items[element_cmb->currentIndex()].font_fmt);
+                              conf_items[element_cmb->currentIndex()].font_fmt);
 
- //Atualiza o modelo de exemplo para exibir as modificações de aparência
  model->setObjectsModified();
  scene->update();
 }
@@ -414,7 +365,6 @@ void AppearanceConfigWidget::restoreDefaults(void)
 {
  try
  {
-  //Restaura as configurações padrão e recarrega o arquivo restaurado
   BaseConfigWidget::restoreDefaults(GlobalAttributes::OBJECTS_STYLE_CONF);
   this->loadConfiguration();
  }

@@ -57,7 +57,7 @@ void FormConfiguracao::close(void)
 void FormConfiguracao::aplicarConfiguracao(void)
 {
  conf_geral->saveConfiguration();
- conf_geral->aplicarConfiguracao();
+ conf_geral->applyConfiguration();
  conf_aparencia->saveConfiguration();
  conf_conexoes->saveConfiguration();
  this->close();

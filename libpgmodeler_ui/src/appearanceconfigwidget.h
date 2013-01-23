@@ -1,8 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: ConfAparenciaWidget
-# Description:Implementa o widget de configurações de aparência dos objetos do modelo.
+# Class: AppearanceConfigWidget
+# Description: Implements the operations to manage graphical objects appearance configuration.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,8 +18,8 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef CONF_APARENCIA_WIDGET_H
-#define CONF_APARENCIA_WIDGET_H
+#ifndef APPEARANCE_CONFIG_WIDGET_H
+#define APPEARANCE_CONFIG_WIDGET_H
 
 #include "ui_appearanceconfigwidget.h"
 #include "baseconfigwidget.h"
@@ -31,7 +31,7 @@ class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget,
  private:
   Q_OBJECT
 
-  //Classe auxiliar que armazena os dados da formatação de cada elemento
+  //Auxiliary class that stores the formating data of each element
   class AppearanceConfigItem {
    public:
     QString conf_id;
@@ -40,44 +40,41 @@ class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget,
     bool obj_conf;
   };
 
-  //Diálogo de seleção de cor
+  //Color picker dialog
   QColorDialog color_dlg;
 
-  //Viewport que mostra o modelo de exemplo
+  //Viewport used to show the example model
   QGraphicsView *viewp;
 
-  //Cena que armazena os objetos do modelo de exemplo
+  //Object scene used to store the graphical objects
   ObjectsScene *scene;
 
-  //Modelo de objetos exemplo
+  //Database model used to store the example base objects
   DatabaseModel *model;
 
-  //Vetor o qual armazena cada elemento de configuração de aparência do modelo
+  //Stores the element configuration items
   vector<AppearanceConfigItem> conf_items;
 
-  //Carrega o modelo de exemplo
-  void loadExampleObjects(void);
+  //Loads the example model from file (conf/exampledb.dbm)
+  void loadExampleModel(void);
 
  public:
   AppearanceConfigWidget(QWidget * parent=0);
   ~AppearanceConfigWidget(void);
 
+  //Saves the configuration to file
   void saveConfiguration(void);
+
+  //Loads the configuration from file
   void loadConfiguration(void);
 
  private slots:
-  //Habilita os itens do formulário conforme o elemento selecionado no combobox 'elemento_cmb'
   void enableConfigElement(void);
-
-  //Aplica o estilo de fonte ao elemento atual
   void applyFontStyle(void);
-
-  //Aplica o estilo de cor ao elemento atual
   void applyElementColor(void);
 
-  /* Este método não é usado nesta classe pois as modificações são aplicadas diretamente
-     ao arquivo, operação esta tratada pelo método salvarConfiguracao() */
-  void aplicarConfiguracao(void){}
+  /* Disabled method */
+  void applyConfiguration(void){}
 
  public slots:
   void restoreDefaults(void);

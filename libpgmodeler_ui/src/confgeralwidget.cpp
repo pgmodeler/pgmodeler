@@ -71,7 +71,7 @@ void ConfGeralWidget::loadConfiguration(void)
  marg_base->setValue((margem.count() >= 4 ? margem[3].toFloat() : 10));
 
  //Efetiva as configurações do formulário aplicano-s  s classes interessadas
- this->aplicarConfiguracao();
+ this->applyConfiguration();
 }
 
 void ConfGeralWidget::saveConfiguration()
@@ -152,7 +152,7 @@ void ConfGeralWidget::saveConfiguration()
  }
 }
 
-void ConfGeralWidget::aplicarConfiguracao(void)
+void ConfGeralWidget::applyConfiguration(void)
 {
  //Aplica as configurações de pae   cena
  ObjectsScene::setPageConfiguration(static_cast<QPrinter::PaperSize>(papel_cmb->itemData(papel_cmb->currentIndex()).toInt()),
