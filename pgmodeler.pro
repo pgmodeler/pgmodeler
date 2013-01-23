@@ -7,7 +7,7 @@
 # XML_LIB   -> Full path to libxml2.(so | dll | dylib)    #
 # XML_INC   -> Root path were XML2 includes can be found  #
 ###########################################################
-unix & !macx {
+!macx & !windows {
  CONFIG += link_pkgconfig
  PKGCONFIG = libpq libxml-2.0
  PGSQL_LIB = -lpq
@@ -115,9 +115,10 @@ INCLUDEPATH += $$XML_INC \
 
 LIBS = $$XML_LIB $$PGSQL_LIB
 
-sources.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
-unix & !macx:sources.files += start-pgmodeler.sh
+pgmodeler.path = $$PWD/build/
+pgmodeler.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
+!windows & !unix:pgmodeler.files += start-pgmodeler.sh
 macx:sources.files += start-pgmodeler-mac.sh
-windows:sources.files += start-pgmodeler.bat
-sources.path = build/
-INSTALLS += sources
+windows:pgmodeler.files += start-pgmodeler.bat
+
+INSTALLS += pgmodeler
