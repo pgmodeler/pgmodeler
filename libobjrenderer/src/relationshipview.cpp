@@ -11,9 +11,9 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
   if(rel->getLabel(i))
   {
    rel->getLabel(i)->setTextColor(BaseObjectView::getFontStyle(ParsersAttributes::LABEL).foreground());
-   labels[i]=new TextboxView(rel->getLabel(i),
+   labels[i]=new TextboxView(rel->getLabel(i), true);/*,
                                BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
-                               BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
+                               BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));*/
    labels[i]->setZValue(1);
    this->addToGroup(labels[i]);
   }
@@ -780,6 +780,9 @@ void RelationshipView::configureLabels(void)
  }
 
  labels[BaseRelationship::LABEL_REL_NAME]->setPos(x,y);
+ labels[BaseRelationship::LABEL_REL_NAME]->setFontStyle(BaseObjectView::getFontStyle(ParsersAttributes::LABEL));
+ labels[BaseRelationship::LABEL_REL_NAME]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
+                                                         BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
  dynamic_cast<Textbox *>(labels[BaseRelationship::LABEL_REL_NAME]->getSourceObject())->setModified(true);
 
  if(rel_type!=BaseRelationship::RELATIONSHIP_GEN &&
@@ -883,6 +886,9 @@ void RelationshipView::configureLabels(void)
     }
 
    labels[label_ids[idx]]->setPos(x,y);
+   labels[label_ids[idx]]->setFontStyle(BaseObjectView::getFontStyle(ParsersAttributes::LABEL));
+   labels[label_ids[idx]]->setColorStyle(BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
+                                         BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));
    dynamic_cast<Textbox *>(labels[label_ids[idx]]->getSourceObject())->setModified(true);
   }
  }
