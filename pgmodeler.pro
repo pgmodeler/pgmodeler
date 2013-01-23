@@ -7,14 +7,14 @@
 # XML_LIB   -> Full path to libxml2.(so | dll | dylib)    #
 # XML_INC   -> Root path were XML2 includes can be found  #
 ###########################################################
-unix {
+unix & !macx {
  CONFIG += link_pkgconfig
  PKGCONFIG = libpq libxml-2.0
  PGSQL_LIB = -lpq
  XML_LIB = -lxml2
 }
 
-mac {
+macx {
  PGSQL_LIB = /Library/PostgreSQL/9.2/lib/libpq.dylib
  PGSQL_INC = /Library/PostgreSQL/9.2/include
  XML_INC = /usr/include/libxml2
@@ -28,34 +28,44 @@ windows {
  XML_LIB = C:/QtSDK/mingw/bin/libxml2.dll
 }
 
-!unix:!exists($$PGSQL_LIB) {
-  PKG_ERROR = "PostgreSQL libraries"
-  VARIABLE = "PGSQL_LIB"
-  VALUE = $$PGSQL_LIB
+macx | windows {
+  !exists($$PGSQL_LIB) {
+    PKG_ERROR = "PostgreSQL libraries"
+    VARIABLE = "PGSQL_LIB"
+    VALUE = $$PGSQL_LIB
+  }
 }
 
-!unix:!exists($$PGSQL_INC/libpq-fe.h) {
-  PKG_ERROR = "PostgreSQL headers"
-  VARIABLE = "PGSQL_INC"
-  VALUE = $$PGSQL_INC
+macx | windows {
+  !exists($$PGSQL_INC/libpq-fe.h) {
+    PKG_ERROR = "PostgreSQL headers"
+    VARIABLE = "PGSQL_INC"
+    VALUE = $$PGSQL_INC
+  }
 }
 
-!unix:!exists($$XML_LIB) {
-  PKG_ERROR = "XML2 libraries"
-  VARIABLE = "XML_LIB"
-  VALUE = $$XML_LIB
+macx | windows {
+ !exists($$XML_LIB) {
+    PKG_ERROR = "XML2 libraries"
+    VARIABLE = "XML_LIB"
+    VALUE = $$XML_LIB
+ }
 }
 
-!unix:!exists($$XML_INC) {
-  PKG_ERROR = "XML2 headers"
-  VARIABLE = "XML_INC"
-  VALUE = $$XML_INC
+macx | windows {
+ !exists($$XML_INC) {
+   PKG_ERROR = "XML2 headers"
+   VARIABLE = "XML_INC"
+   VALUE = $$XML_INC
+ }
 }
 
-!isEmpty(PKG_ERROR) {
-  warning("$$PKG_ERROR were not found at \"$$VALUE\"!")
-  warning("Please correct the value of $$VARIABLE and try again!")
-  error("pgModeler compilation aborted.")
+macx | windows {
+ !isEmpty(PKG_ERROR) {
+    warning("$$PKG_ERROR were not found at \"$$VALUE\"!")
+    warning("Please correct the value of $$VARIABLE and try again!")
+    error("pgModeler compilation aborted.")
+ }
 }
 
 ###########################
@@ -68,7 +78,7 @@ unix:LIB_PREFIX = lib
 
 unix:LIB_EXT = so
 windows:LIB_EXT = dll
-mac:LIB_EXT = dylib
+macx:LIB_EXT = dylib
 
 SUBDIRS = libutil \
           libparsers \
@@ -106,8 +116,8 @@ INCLUDEPATH += $$XML_INC \
 LIBS = $$XML_LIB $$PGSQL_LIB
 
 sources.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
-unix:sources.files += start-pgmodeler.sh
-mac:sources.files += start-pgmodeler-mac.sh
+unix & !macx:sources.files += start-pgmodeler.sh
+macx:sources.files += start-pgmodeler-mac.sh
 windows:sources.files += start-pgmodeler.bat
 sources.path = build/
 INSTALLS += sources
