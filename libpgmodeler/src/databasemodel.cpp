@@ -774,7 +774,6 @@ void DatabaseModel::removeSequence(Sequence *sequence, int obj_idx)
  if(sequence)
  {
   removeUserType(sequence, obj_idx);
-  __removeObject(sequence, obj_idx);
  }
 }
 
