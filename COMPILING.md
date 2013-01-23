@@ -29,6 +29,22 @@ If an error is returned check the installation of PostgreSQL and libXML2. The co
 
 * Note to Mac OSX: Unfortunately the build process is broken in this system and cannot be deeply tested because the lack a Mac computer. ** HELP NEEDED! **
 
+* Note to Ubuntu: If you are experiencing linkage errors related to libpq even having PostgreSQL correctly installed try to create the file "/usr/lib/pkgconfig/libpq.pc" with the following content:
+
+```
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: LibPQ
+Version: 5.0.0
+Description: Library PQ
+Requires:
+Libs: -L${libdir} -lpq
+Cflags: -I${includedir}/postgresql
+```
+
 To compile the pgModeler type (in the root folder of the source code):
 
      $ qmake pgmodeler.pro

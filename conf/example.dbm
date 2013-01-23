@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-ATENÇÃO: Não modifique este arquivo a não ser que você saiba
-         o que está fazendo. Resultados inesperados podem acontecer
-         caso o código seja alterado deliberadamente.
-
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
 <dbmodel author="Raphael Araújo e Silva">
-<schema name="public">
-</schema>
-
 <database name="exampledb" encoding="UTF8">
 	<comment>Example Database Model</comment>
 </database>
 
-	<language name="testlang" protected="true"/>
+<schema name="public">
+</schema>
+
 <function name="trigger_func"
 		window-func="false"
 		returns-setof="false"
@@ -25,7 +20,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		execution-cost="20"
 		row-amount="2500">
 	<schema name="public"/>
-	<language name="testlang"/>
+	<language name="testlang" protected="true"/>
 	<return-type>
 	<type name="trigger"/>
 	</return-type>
@@ -35,6 +30,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<definition>SELECT 1+1;</definition>
 </function>
 
+	<language name="testlang" protected="true"/>
 <table name="table" oids="false">
 	<schema name="public"/>
 	<position x="20" y="20"/>
@@ -68,42 +64,42 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</index>
 </table>
 
-<table name="table1" oids="false" protected="true">
+<table name="table1" oids="false">
 	<schema name="public"/>
-	<position x="422" y="24"/>
-	<column name="column" not-null="true" protected="true">
+	<position x="627" y="41"/>
+	<column name="column" not-null="true">
 		<type name="serial"/>
 	</column>
-	<column name="column1" protected="true">
+	<column name="column1">
 		<type name="text"/>
 	</column>
-	<column name="column2" not-null="true" protected="true">
+	<column name="column2" not-null="true">
 		<type name="integer"/>
 	</column>
-	<column name="column3" protected="true">
+	<column name="column3">
 		<type name="text"/>
 	</column>
-	<constraint name="table_pk" type="pk-constr" factor="10" protected="true" table="public.table1">
+	<constraint name="table_pk" type="pk-constr" factor="10" table="public.table1">
 		<columns names="column" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="table_uq" type="uq-constr" factor="10" protected="true" table="public.table1">
+	<constraint name="table_uq" type="uq-constr" factor="10" table="public.table1">
 		<columns names="column1" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="table_ck" type="ck-constr" protected="true" table="public.table1">
+	<constraint name="table_ck" type="ck-constr" table="public.table1">
 			<expression> column1 &gt; 0 </expression>
 	</constraint>
 	<rule name="rule1" event-type="ON INSERT"
-		 exec-type="ALSO" protected="true">
+		 exec-type="ALSO">
 		<condition>column1 = 0</condition>
 		<commands>UPDATE public.table1 SET column1 = 1</commands>
 	</rule>
 	<trigger name="trigger1" firing-type="BEFORE" per-line="false"
-		 ins-event="true" del-event="true" upd-event="true" trunc-event="false" protected="true">
+		 ins-event="true" del-event="true" upd-event="true" trunc-event="false">
 		<function signature="public.trigger_func(integer)"/>
 	</trigger>
 </table>
 
-<relationship name="relationship"
+<relationship name="table1_has_many_table"
 	 type="rel1n" protected="true"
 	 src-required="false" dst-required="false"
 	 table-name="relationship"
@@ -112,19 +108,17 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="attribute">
 		<type name="integer"/>
 	</column>
-        <column name="attribute1">
+	<column name="attribute1">
 		<type name="integer"/>
 	</column>
-	        <column name="attribute2">
+	<column name="attribute2">
 		<type name="integer"/>
 	</column>
-	
-	
 </relationship>
 
-<view name="view" protected="true">
+<view name="view">
 	<schema name="public"/>
-	<position x="320" y="250"/>
+	<position x="616" y="334"/>
 	<reference table="public.table" column="column1" alias="t1" column-alias="col1"/>
 	<reference table="public.table1" column="column2" alias="t2" column-alias="col2"/>
 	<reference alias="expr">
@@ -148,13 +142,57 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.table1"/>
 
 <textbox name="textbox">
-	<position x="20" y="250"/>
+	<position x="229" y="240"/>
 	<comment>Selected Textbox</comment>
 </textbox>
 
 <textbox name="textbox1" protected="true">
-	<position x="20" y="300"/>
+	<position x="351" y="343"/>
 	<comment>Protected Textbox</comment>
 </textbox>
+
+<table name="table2" oids="true">
+	<schema name="public"/>
+	<position x="24" y="341"/>
+	<column name="column" not-null="true">
+		<type name="serial"/>
+	</column>
+	<column name="column1">
+		<type name="text"/>
+	</column>
+	<column name="column2" not-null="true">
+		<type name="integer"/>
+	</column>
+	<column name="column3">
+		<type name="text"/>
+	</column>
+	<constraint name="table_pk" type="pk-constr" factor="10" table="public.table2">
+		<columns names="column" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="table_uq" type="uq-constr" factor="10" table="public.table2">
+		<columns names="column1" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="table_ck" type="ck-constr" table="public.table2">
+			<expression> column1 &gt; 0 </expression>
+	</constraint>
+	<index name="index" table="public.table2"
+		 concurrent="true" unique="true" fast-update="false"
+		 index-type="hash" factor="90">
+	<idxelement nulls-first="false" asc-order="false">
+		<column name="column1"/>
+	</idxelement>
+	</index>
+</table>
+
+<constraint name="table2_fk" type="fk-constr"	 comparison-type="MATCH FULL"
+	 upd-action="NO ACTION" del-action="NO ACTION" ref-table="public.table" table="public.table2">
+	<columns names="column2" ref-type="src-columns"/>
+	<columns names="column" ref-type="dst-columns"/>
+</constraint>
+<relationship name="rel_table2_table"
+	 type="relfk"
+	 src-required="false" dst-required="false"
+	 src-table="public.table2"
+	 dst-table="public.table"/>
 
 </dbmodel>
