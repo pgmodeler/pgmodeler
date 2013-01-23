@@ -3,6 +3,289 @@
 <TS version="2.0" language="fr" sourcelanguage="en_US">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
+    <name>AppearanceConfigWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Element:</source>
+        <translation>Élement:</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Global: Font style</source>
+        <translation>Global: style de police</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Global: Constraints descriptor</source>
+        <translation>Global: Marqueurs de contraintes</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Global: Object selection</source>
+        <translation>Global: Selection d&apos;objet</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Global: Position hint text</source>
+        <translation>Global: Texte de la boite de coordonées</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Global: Position hint box</source>
+        <translation>Global: Fond de la boite de coordonées</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Global: Objects type</source>
+        <translation>Global: Type de colonne</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Global: Lock arc</source>
+        <translation>Global: Cadenas (objet vérouillé, couleur de l&apos;arceau)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Global: Lock body</source>
+        <translation>Global: Cadenas (objet vérouillé, couleur du corps)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Table: Schema name</source>
+        <translation>Table: Nom du schema</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Table: Table name</source>
+        <translation>Table: Nom de la table</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Table: Columns box</source>
+        <translation>Table: Zone des colonnes</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Table: Extended attributes box</source>
+        <translation>Table: Zone d&apos;attributs étendus</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Table: Title box</source>
+        <translation>Table: Zone de titre</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Rule: Name</source>
+        <translation>Règle: Nom</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Rule: Descriptor</source>
+        <translation>Règle: Couleur de l&apos;icône</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Index: Name</source>
+        <translation>Index: Nom</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Index: Descriptor</source>
+        <translation>Index: Couleur de l&apos;icône</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Trigger: Name</source>
+        <translation>Déclencheur: Nom</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Trigger: Descriptor</source>
+        <translation>Déclencheur: Couleur de l&apos;icône</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>View: Schema name</source>
+        <translation>Vue: Nom du schema</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>View: View name</source>
+        <translation>Vue: Nom de la vue</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>View: References box</source>
+        <translation>Vue: Couleur d&apos;arriere plan</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>View: Title box</source>
+        <translation>Vue:  Couleur d&apos;arriere plan de la barre de titre</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>View: Table / columns alias</source>
+        <translation>Vue: Alias de table / colonne</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>View: Referenced column</source>
+        <translation>Vue: Colonne référencée</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>View: Referenced table</source>
+        <translation>Vue: Table référencée</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>View: Reference descriptor</source>
+        <translation>Vue: Couleur de l&apos;icône des références</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Textbox: Body</source>
+        <translation>Zone de texte: Corps</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Column: Column name</source>
+        <translation>Colonne: Nom de la colonne</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Column: Descriptor</source>
+        <translation>Colonne: Couleur de l&apos;icône</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Column: Included / Inherited by relationship</source>
+        <translation>Colonne: Incluses / Héritées par relations</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Column: Protected</source>
+        <translation>Colonne: Protégée</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Column (pk): Column name</source>
+        <translation>Colonne (pk): Nom de la colonne</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Column (pk): Descriptor</source>
+        <translation>Colonne (pk): Couleur de l&apos;icône</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Column (fk): Column name</source>
+        <translation>Colonne (fk): Nom de la colonne</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Column (fk): Descriptor</source>
+        <translation>Colonne (fk): Couleur de l&apos;icône</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Column (uq): Column name</source>
+        <translation>Colonne (uq): Nom de la colonne</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Column (uq): Descriptor</source>
+        <translation>Colonne (uq): Couleur de l&apos;icône</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Column (nn): Column name</source>
+        <translation>Colonne (nn): Nom de la colonne</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Column (nn): Descriptor</source>
+        <translation>Colnne (nn): Couleur de l&apos;icône</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Relationship: Descriptor</source>
+        <translation>Relations: Couleur de l&apos;icône</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Relationship: Label text</source>
+        <translation>Relations: Texte de l&apos;étiquette</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Relationship: Label box</source>
+        <translation>Relations: Arrière plan de l&apos;étiquette</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Relationship: Attribute text</source>
+        <translation>Relations: Texte des attributs</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Relationship: Attribute descriptor</source>
+        <translation>Relations: Couleur de l&apos;icône des attributs</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Font:</source>
+        <translation>Police:</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source> pt</source>
+        <translation> pt</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Bold</source>
+        <translation>Gras</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Italic</source>
+        <translation>Italique</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Colors:</source>
+        <translation>Couleur:</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Font color / Fill color 1</source>
+        <translation>Couleur de police / Couleur de remplissage 1</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Fill color 2</source>
+        <translation>Couleur de remplissage 2</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Border color</source>
+        <translation>Couleur de la bordure</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Underline</source>
+        <translation>Souligné</translation>
+    </message>
+</context>
+<context>
     <name>Application</name>
     <message>
         <location filename="../main/src/application.h" line="+52"/>
@@ -169,12 +452,12 @@
     </message>
     <message>
         <location line="+56"/>
-        <location line="+304"/>
+        <location line="+303"/>
         <source>icone</source>
         <translation>icône</translation>
     </message>
     <message>
-        <location line="-273"/>
+        <location line="-272"/>
         <source>Comment:</source>
         <translation>Commentaire:</translation>
     </message>
@@ -204,7 +487,7 @@
         <translation>Editer les permissions</translation>
     </message>
     <message>
-        <location line="+86"/>
+        <location line="+85"/>
         <source>This object is protected thus no change in form will be applied to it.</source>
         <translation>L&apos;objet est vérouillé, par conséquent aucun changement dans le formulaire ne lui sera appliqué.</translation>
     </message>
@@ -250,289 +533,6 @@
         <location line="+41"/>
         <source>Not Null:</source>
         <translation>Non Null:</translation>
-    </message>
-</context>
-<context>
-    <name>ConfAparenciaWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/confaparenciawidget.ui" line="+32"/>
-        <source>Element:</source>
-        <translation>Element:</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Global: Font style</source>
-        <translation>Global: style de police</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Global: Constraints descriptor</source>
-        <translation>Global: Descripteur de contraintes</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Global: Object selection</source>
-        <translation>Global: Selection d&apos;objet</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Global: Position hint text</source>
-        <translation>Global: Position de la zone de texte</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Global: Position hint box</source>
-        <translation>Global: Position de la boîte d&apos;information</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Global: Objects type</source>
-        <translation>Global: Type d&apos;objets</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Global: Lock arc</source>
-        <translation>Global: Verrrouillage de l&apos;arc</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Global: Lock body</source>
-        <translation>Global: Verrouillage du corps</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Table: Schema name</source>
-        <translation>Table: Nom du schema</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Table: Table name</source>
-        <translation>Table: Nom de la table</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Table: Columns box</source>
-        <translation>Table: Zone des colonnes</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Table: Extended attributes box</source>
-        <translation>Table: Zone des extensions d&apos;attributs</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Table: Title box</source>
-        <translation>Table: Zone de titre</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Index: Descriptor</source>
-        <translation>Index: Descripteur</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Trigger: Descriptor</source>
-        <translation>Déclencheur: Descripteur</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>View: Schema name</source>
-        <translation>Vue: Nom du schema</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>View: View name</source>
-        <translation>Vue: Nom de la vue</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>View: References box</source>
-        <translation>Vue: Zone de références</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>View: Title box</source>
-        <translation>Vue: Zone de titre</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>View: Table / columns alias</source>
-        <translation>Vue: Alias de table / colonne</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>View: Referenced column</source>
-        <translation>Vue: Colonne référencée</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>View: Referenced table</source>
-        <translation>Vue: Table référencée</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>View: Reference descriptor</source>
-        <translation>Vue: Descripteur référencé</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Textbox: Body</source>
-        <translation>Zone de texte: Corps</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Column: Column name</source>
-        <translation>Colonne: Nom de la colonne</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Column: Descriptor</source>
-        <translation>Colonne: Descripteur</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Column: Included / Inherited by relationship</source>
-        <translation>Colonne: Inclus / Hérités par relations</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Column: Protected</source>
-        <translation>Colonne: Protégée</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Column (pk): Column name</source>
-        <translation>Colonne (pk): Nom de la colonne</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Column (pk): Descriptor</source>
-        <translation>Colonne (pk): Descripteur</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Column (fk): Column name</source>
-        <translation>Colonne (fk): Nom de la colonne</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Column (fk): Descriptor</source>
-        <translation>Colonne (fk): Descripteur</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Column (uq): Column name</source>
-        <translation>Colonne (uq): Nom de la colonne</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Column (uq): Descriptor</source>
-        <translation>Colonne (uq): Descripteur</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Column (nn): Column name</source>
-        <translation>Colonne (nn): Nom de la colonne</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Column (nn): Descriptor</source>
-        <translation>Colnne (nn): Descripteur</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Relationship: Descriptor</source>
-        <translation>Relations: Descripteur</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Relationship: Label text</source>
-        <translation>Relations: Texte de l&apos;étiquette</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Relationship: Label box</source>
-        <translation>Relations: Zone de l&apos;étiquette</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Relationship: Attribute text</source>
-        <translation>Relations: Text de l&apos;attribut</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Relationship: Attribute descriptor</source>
-        <translation>Relations: Description de l&apos;attribut</translation>
-    </message>
-    <message>
-        <location line="+76"/>
-        <source>Bold</source>
-        <translation>Gras</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Italic</source>
-        <translation>Italique</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Colors:</source>
-        <translation>Couleur:</translation>
-    </message>
-    <message>
-        <location line="+21"/>
-        <source>Font color / Fill color 1</source>
-        <translation>Couleur de police / Couleur de remplissage 1</translation>
-    </message>
-    <message>
-        <location line="+22"/>
-        <source>Fill color 2</source>
-        <translation>Couleur de remplissage 2</translation>
-    </message>
-    <message>
-        <location line="+22"/>
-        <source>Border color</source>
-        <translation>Couleur de la bordure</translation>
-    </message>
-    <message>
-        <location line="+31"/>
-        <source>Underline</source>
-        <translation>Souligner</translation>
-    </message>
-    <message>
-        <location line="-450"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+91"/>
-        <source>Rule: Name</source>
-        <translation>Règle: Nom</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Rule: Descriptor</source>
-        <translation>Règle: Descriptionr</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Index: Name</source>
-        <translation>Index: Nom</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Trigger: Name</source>
-        <translation>Déclencheur: Nom</translation>
-    </message>
-    <message>
-        <location line="+149"/>
-        <source>Font:</source>
-        <translation>Police:</translation>
-    </message>
-    <message>
-        <location line="+41"/>
-        <source> pt</source>
-        <translation></translation>
     </message>
 </context>
 <context>
@@ -1185,7 +1185,7 @@ Taille: %2 bytes
 <context>
     <name>DatabaseModel</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="+2549"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="+2548"/>
         <source>Loading object: %1 (%2)</source>
         <translation>Chargement de l&apos;objet: %1 (%2)</translation>
     </message>
@@ -2192,18 +2192,18 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>FormBasico</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/formbasico.ui" line="+143"/>
+        <location filename="../libpgmodeler_ui/ui/formbasico.ui" line="+158"/>
         <location filename="../libpgmodeler_ui/src/formbasico.cpp" line="+24"/>
         <source>&amp;Apply</source>
         <translation>&amp;Appliquer</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+41"/>
         <source>&amp;Cancel</source>
         <translation>A&amp;nnuler</translation>
     </message>
     <message>
-        <location line="-155"/>
+        <location line="-176"/>
         <source>Dialog</source>
         <translation></translation>
     </message>
@@ -2451,7 +2451,7 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>FormPrincipal</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="+174"/>
+        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="+171"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
@@ -2461,7 +2461,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Editer</translation>
     </message>
     <message>
-        <location line="+91"/>
+        <location line="+97"/>
         <source>New</source>
         <translation>Nouveau</translation>
     </message>
@@ -2594,12 +2594,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>Afficher la vue d&apos;ensemble du modèle</translation>
     </message>
     <message>
-        <location line="-678"/>
+        <location line="-681"/>
         <source>pgModeler - PostgreSQL Database Modeler</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location line="+73"/>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
@@ -2634,7 +2634,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Extensions</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+27"/>
         <source>Ctrl+N</source>
         <translation></translation>
     </message>
@@ -2766,7 +2766,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Des modifications ont été détectées dans les définitions du papier/marges du modèle ce qui pourrait causer une mauvaise impression des objets. Souhaitez vous continuer l&apos;impression aves les nouveaux paramètres? Pour utiliser les paramètres par défaut cliquez sur &apos;Non&apos; ou &apos;Annuler&apos; pour interrompre l&apos;impression.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="-473"/>
+        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="-479"/>
         <source>View</source>
         <translation>Vue</translation>
     </message>
@@ -3389,7 +3389,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Opérations Exécutées</translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+112"/>
         <source>Operations:</source>
         <translation>Opérations:</translation>
     </message>
@@ -3508,7 +3508,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>message</translation>
     </message>
     <message>
-        <location line="+98"/>
+        <location line="+93"/>
         <source>Exceptions</source>
         <translation>Exceptions</translation>
     </message>
@@ -4238,12 +4238,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5299"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5298"/>
         <source>new_database</source>
         <translation>nouvelle_base</translation>
     </message>
     <message>
-        <location line="+2563"/>
+        <location line="+2562"/>
         <location line="+44"/>
         <location line="+291"/>
         <location line="+26"/>
@@ -4768,7 +4768,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>SQL</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+34"/>
         <source>XML</source>
         <translation>XML</translation>
     </message>
@@ -5053,7 +5053,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <location line="+7"/>
         <source>Underline</source>
-        <translation type="unfinished">Souligné</translation>
+        <translation>Souligné</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/textboxwidget.cpp" line="+50"/>
@@ -5344,7 +5344,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Objets du Modèle</translation>
     </message>
     <message>
-        <location line="+273"/>
+        <location line="+263"/>
         <source>Visible Objects Type</source>
         <translation>Types d&apos;Objets Visibles</translation>
     </message>
@@ -5384,12 +5384,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Vue en Liste</translation>
     </message>
     <message>
-        <location line="-398"/>
+        <location line="-393"/>
         <source>1</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+322"/>
+        <location line="+317"/>
         <location line="+41"/>
         <location line="+38"/>
         <source>...</source>
