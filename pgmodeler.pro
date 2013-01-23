@@ -7,11 +7,11 @@
 # XML_LIB   -> Full path to libxml2.(so | dll | dylib)    #
 # XML_INC   -> Root path were XML2 includes can be found  #
 ###########################################################
-!macx & !windows {
- CONFIG += link_pkgconfig
- PKGCONFIG = libpq libxml-2.0
- PGSQL_LIB = -lpq
- XML_LIB = -lxml2
+unix {
+ !macx:CONFIG += link_pkgconfig
+ !macx:PKGCONFIG = libpq libxml-2.0
+ !macx:PGSQL_LIB = -lpq
+ !macx:XML_LIB = -lxml2
 }
 
 macx {
