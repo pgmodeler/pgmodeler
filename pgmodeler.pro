@@ -8,10 +8,8 @@
 # XML_INC   -> Root path were XML2 includes can be found  #
 ###########################################################
 unix {
- PGSQL_LIB = /usr/lib64/libpq.so
- PGSQL_INC = /usr/include
- XML_INC = /usr/include/libxml2
- XML_LIB = /usr/lib64/libxml2.so
+ CONFIG += link_pkgconfig
+ PKGCONFIG = libpq libxml-2.0
 }
 
 mac {
@@ -28,25 +26,25 @@ windows {
  XML_LIB = C:/QtSDK/mingw/bin/libxml2.dll
 }
 
-!exists($$PGSQL_LIB) {
+!unix:!exists($$PGSQL_LIB) {
   PKG_ERROR = "PostgreSQL libraries"
   VARIABLE = "PGSQL_LIB"
   VALUE = $$PGSQL_LIB
 }
 
-!exists($$PGSQL_INC/libpq-fe.h) {
+!unix:!exists($$PGSQL_INC/libpq-fe.h) {
   PKG_ERROR = "PostgreSQL headers"
   VARIABLE = "PGSQL_INC"
   VALUE = $$PGSQL_INC
 }
 
-!exists($$XML_LIB) {
+!unix:!exists($$XML_LIB) {
   PKG_ERROR = "XML2 libraries"
   VARIABLE = "XML_LIB"
   VALUE = $$XML_LIB
 }
 
-!exists($$XML_INC) {
+!unix:!exists($$XML_INC) {
   PKG_ERROR = "XML2 headers"
   VARIABLE = "XML_INC"
   VALUE = $$XML_INC
