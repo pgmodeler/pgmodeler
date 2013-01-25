@@ -48,7 +48,7 @@ void FormExportacao::show(ModeloWidget *modelo)
   /* Atualiza a lista de conexões ao exibir o formulário de exportação, obtendo-as
      do widget de configuração de conexões */
   this->modelo_wgt=modelo;
-  dynamic_cast<ConfConexoesWidget *>(fconfiguracao->obterWidgetConfiguracao(FormConfiguracao::WGT_CONF_CONEXOES))->obterConexoes(conexoes);
+  dynamic_cast<ConnectionsConfigWidget *>(fconfiguracao->obterWidgetConfiguracao(FormConfiguracao::WGT_CONF_CONEXOES))->getConnections(conexoes);
 
   conexoes_cmb->clear();
   itr=conexoes.begin();

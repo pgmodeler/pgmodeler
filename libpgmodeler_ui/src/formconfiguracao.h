@@ -24,7 +24,7 @@
 #include "ui_formconfiguracao.h"
 #include "appearanceconfigwidget.h"
 #include "confgeralwidget.h"
-#include "confconexoeswidget.h"
+#include "connectionsconfigwidget.h"
 
 class FormConfiguracao: public QDialog, public Ui::FormConfiguracao {
  private:
@@ -32,7 +32,7 @@ class FormConfiguracao: public QDialog, public Ui::FormConfiguracao {
 
   ConfGeralWidget *conf_geral;
   AppearanceConfigWidget *conf_aparencia;
-  ConfConexoesWidget *conf_conexoes;
+  ConnectionsConfigWidget *conf_conexoes;
 
  public:
   static const int WGT_CONF_GERAL=0,

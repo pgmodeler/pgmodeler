@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ConfConexoesWidget</class>
- <widget class="QWidget" name="ConfConexoesWidget">
+ <class>ConnectionsConfigWidget</class>
+ <widget class="QWidget" name="ConnectionsConfigWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -21,7 +21,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="conexoes_lbl">
+    <widget class="QLabel" name="connections_lbl">
      <property name="text">
       <string>Connections:</string>
      </property>
@@ -33,14 +33,14 @@
       <number>6</number>
      </property>
      <item>
-      <widget class="QComboBox" name="conexoes_cmb">
+      <widget class="QComboBox" name="connections_cmb">
        <property name="insertPolicy">
         <enum>QComboBox::InsertAlphabetically</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="nova_tb">
+      <widget class="QToolButton" name="new_tb">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -63,7 +63,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="cancelar_tb">
+      <widget class="QToolButton" name="cancel_tb">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -86,7 +86,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="editar_tb">
+      <widget class="QToolButton" name="edit_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -109,7 +109,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="excluir_tb">
+      <widget class="QToolButton" name="remove_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -176,7 +176,7 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="2">
-    <widget class="QLabel" name="bd_conexao_lbl">
+    <widget class="QLabel" name="conn_db_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -189,7 +189,7 @@
     </widget>
    </item>
    <item row="3" column="2" colspan="2">
-    <widget class="QLineEdit" name="bd_conexao_edt">
+    <widget class="QLineEdit" name="conn_db_edt">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -236,7 +236,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="porta_sbp">
+      <widget class="QSpinBox" name="port_sbp">
        <property name="minimum">
         <number>1025</number>
        </property>
@@ -251,7 +251,7 @@
     </layout>
    </item>
    <item row="5" column="0">
-    <widget class="QLabel" name="usuario_lbl">
+    <widget class="QLabel" name="user_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -264,7 +264,7 @@
     </widget>
    </item>
    <item row="5" column="2" colspan="2">
-    <widget class="QLineEdit" name="usuario_edt">
+    <widget class="QLineEdit" name="user_edt">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -280,7 +280,7 @@
     </widget>
    </item>
    <item row="6" column="0">
-    <widget class="QLabel" name="senha_lbl">
+    <widget class="QLabel" name="passwd_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -293,7 +293,7 @@
     </widget>
    </item>
    <item row="6" column="2" colspan="2">
-    <widget class="QLineEdit" name="senha_edt"/>
+    <widget class="QLineEdit" name="passwd_edt"/>
    </item>
    <item row="7" column="0">
     <widget class="QLabel" name="timeout_lbl">
@@ -318,7 +318,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="segundos_lbl">
+      <widget class="QLabel" name="seconds_lbl">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -333,7 +333,7 @@
     </layout>
    </item>
    <item row="8" column="0">
-    <widget class="QLabel" name="modo_ssl_lbl">
+    <widget class="QLabel" name="ssl_mode_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -346,7 +346,7 @@
     </widget>
    </item>
    <item row="8" column="2">
-    <widget class="QComboBox" name="modo_ssl_cmb">
+    <widget class="QComboBox" name="ssl_mode_cmb">
      <property name="minimumSize">
       <size>
        <width>200</width>
@@ -394,7 +394,7 @@
     </spacer>
    </item>
    <item row="9" column="0" colspan="2">
-    <widget class="QLabel" name="cert_cliente_lbl">
+    <widget class="QLabel" name="client_cert_lbl">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -410,7 +410,7 @@
     </widget>
    </item>
    <item row="9" column="2" colspan="2">
-    <widget class="QLineEdit" name="cert_cliente_edt">
+    <widget class="QLineEdit" name="client_cert_edt">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -423,7 +423,7 @@
     </widget>
    </item>
    <item row="10" column="0" colspan="2">
-    <widget class="QLabel" name="chave_cli_lbl">
+    <widget class="QLabel" name="client_key_lbl">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -439,7 +439,7 @@
     </widget>
    </item>
    <item row="10" column="2" colspan="2">
-    <widget class="QLineEdit" name="chave_cli_edt">
+    <widget class="QLineEdit" name="client_key_edt">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -452,7 +452,7 @@
     </widget>
    </item>
    <item row="11" column="0" colspan="2">
-    <widget class="QLabel" name="cert_raiz_lbl">
+    <widget class="QLabel" name="root_cert_lbl">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -468,7 +468,7 @@
     </widget>
    </item>
    <item row="11" column="2" colspan="2">
-    <widget class="QLineEdit" name="cert_raiz_edt">
+    <widget class="QLineEdit" name="root_cert_edt">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -510,7 +510,7 @@
     </widget>
    </item>
    <item row="13" column="0" colspan="2">
-    <widget class="QLabel" name="serv_kerberus_lbl">
+    <widget class="QLabel" name="krb_server_lbl">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -528,14 +528,14 @@
    <item row="13" column="2" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QLineEdit" name="serv_kerberus_edt">
+      <widget class="QLineEdit" name="krb_server_edt">
        <property name="enabled">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="aut_gssapi_chk">
+      <widget class="QCheckBox" name="gssapi_auth_chk">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -550,7 +550,7 @@
     </layout>
    </item>
    <item row="14" column="0">
-    <widget class="QLabel" name="opcoes_lbl">
+    <widget class="QLabel" name="options_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -563,7 +563,7 @@
     </widget>
    </item>
    <item row="14" column="2" colspan="2">
-    <widget class="QLineEdit" name="opcoes_edt"/>
+    <widget class="QLineEdit" name="options_edt"/>
    </item>
    <item row="15" column="0" colspan="4">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -581,9 +581,15 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="adicionar_tb">
+      <widget class="QPushButton" name="add_tb">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <property name="minimumSize">
         <size>
@@ -593,8 +599,8 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>90</width>
-         <height>25</height>
+         <width>16777215</width>
+         <height>16777215</height>
         </size>
        </property>
        <property name="text">
@@ -607,9 +613,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="atualizar_tb">
+      <widget class="QPushButton" name="update_tb">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <property name="minimumSize">
         <size>
@@ -633,9 +645,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="testar_tb">
+      <widget class="QPushButton" name="test_tb">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <property name="minimumSize">
         <size>

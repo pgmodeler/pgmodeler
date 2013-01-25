@@ -15,7 +15,7 @@ FormConfiguracao::FormConfiguracao(QWidget *parent, Qt::WindowFlags f) : QDialog
 
  conf_geral=new ConfGeralWidget(this);
  conf_aparencia=new AppearanceConfigWidget(this);
- conf_conexoes=new ConfConexoesWidget(this);
+ conf_conexoes=new ConnectionsConfigWidget(this);
 
  layout=new QGridLayout;
  layout->setContentsMargins(2,2,2,2);
@@ -97,7 +97,7 @@ void FormConfiguracao::restaurarPadroes(void)
    break;
 
    case WGT_CONF_CONEXOES:
-    dynamic_cast<ConfConexoesWidget *>(this->obterWidgetConfiguracao(2))->restoreDefaults();
+    dynamic_cast<ConnectionsConfigWidget *>(this->obterWidgetConfiguracao(2))->restoreDefaults();
    break;
 
    default:
