@@ -36,7 +36,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/tipopgsqlwidget.cpp \
            $$PWD/src/parametrowidget.cpp \
            $$PWD/src/conversaotipowidget.cpp \
-           $$PWD/src/conversaocodificacaowidget.cpp \
+           $$PWD/src/conversionwidget.cpp \
            $$PWD/src/dominiowidget.cpp \
            $$PWD/src/funcaoagregacaowidget.cpp \
            $$PWD/src/sequenciawidget.cpp \
@@ -87,7 +87,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/tipopgsqlwidget.h \
            $$PWD/src/parametrowidget.h \
            $$PWD/src/conversaotipowidget.h \
-           $$PWD/src/conversaocodificacaowidget.h \
+           $$PWD/src/conversionwidget.h \
            $$PWD/src/dominiowidget.h \
            $$PWD/src/funcaoagregacaowidget.h \
            $$PWD/src/sequenciawidget.h \
@@ -136,7 +136,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/tipopgsqlwidget.ui \
          $$PWD/ui/parametrowidget.ui \
          $$PWD/ui/conversaotipowidget.ui \
-         $$PWD/ui/conversaocodificacaowidget.ui \
+         $$PWD/ui/conversionwidget.ui \
          $$PWD/ui/dominiowidget.ui \
          $$PWD/ui/funcaoagregacaowidget.ui \
          $$PWD/ui/sequenciawidget.ui \

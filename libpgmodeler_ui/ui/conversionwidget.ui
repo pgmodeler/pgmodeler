@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ConversaoCodificacaoWidget</class>
- <widget class="QWidget" name="ConversaoCodificacaoWidget">
+ <class>ConversionWidget</class>
+ <widget class="QWidget" name="ConversionWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -27,9 +27,9 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="cod_orig_lbl">
+    <widget class="QLabel" name="src_encoding_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -52,7 +52,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QComboBox" name="cod_orig_cmb">
+    <widget class="QComboBox" name="src_encoding_cmb">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -65,9 +65,9 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QLabel" name="cod_dest_lbl">
+    <widget class="QLabel" name="trg_encoding_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -90,7 +90,7 @@
     </widget>
    </item>
    <item row="0" column="3">
-    <widget class="QComboBox" name="cod_dest_cmb">
+    <widget class="QComboBox" name="trg_encoding_cmb">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -103,9 +103,9 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="funcconv_lbl">
+    <widget class="QLabel" name="conv_func_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -141,9 +141,9 @@
     </spacer>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="convpadrao_lbl">
+    <widget class="QLabel" name="default_conv_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -166,7 +166,7 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QCheckBox" name="conv_padrao_chk">
+    <widget class="QCheckBox" name="default_conv_chk">
      <property name="text">
       <string/>
      </property>

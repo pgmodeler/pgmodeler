@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: ConversaoCodificacaoWidget
-# Description:Definição da classe que implementa o formulário de
-#            edição dos atributos de conversão de codificação.
+# Class: ConversionWidget
+# Description: Implements the operations to create/edit encoding conversions via form.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,28 +18,26 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef CONVERSAOCODIFICACAO_WIDGET_H
-#define CONVERSAOCODIFICACAO_WIDGET_H
+#ifndef CONVERSION_WIDGET_H
+#define CONVERSION_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_conversaocodificacaowidget.h"
+#include "ui_conversionwidget.h"
 
-class ConversaoCodificacaoWidget: public BaseObjectWidget, public Ui::ConversaoCodificacaoWidget {
- Q_OBJECT
-
+class ConversionWidget: public BaseObjectWidget, public Ui::ConversionWidget {
  private:
-   //Widget seletor da função de conversão
-   SeletorObjetoWidget *sel_funcao_conv;
+  Q_OBJECT
+  SeletorObjetoWidget *sel_funcao_conv;
 
  public:
-   ConversaoCodificacaoWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Conversion *conv_cod);
+  ConversionWidget(QWidget * parent = 0);
+  void setAttributes(DatabaseModel *model, OperationList *op_list, Conversion *conv);
 
  private slots:
-   void hideEvent(QHideEvent *);
+  void hideEvent(QHideEvent *event);
 
  public slots:
-   void applyConfiguration(void);
+  void applyConfiguration(void);
 };
 
 #endif

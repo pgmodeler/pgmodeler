@@ -7,7 +7,7 @@
 #include "linguagemwidget.h"
 #include "funcaowidget.h"
 #include "conversaotipowidget.h"
-#include "conversaocodificacaowidget.h"
+#include "conversionwidget.h"
 #include "dominiowidget.h"
 #include "funcaoagregacaowidget.h"
 #include "sequenciawidget.h"
@@ -34,7 +34,7 @@ extern LinguagemWidget *linguagem_wgt;
 extern SourceCodeWidget *codigofonte_wgt;
 extern FuncaoWidget *funcao_wgt;
 extern ConversaoTipoWidget *convtipo_wgt;
-extern ConversaoCodificacaoWidget *convcodif_wgt;
+extern ConversionWidget *convcodif_wgt;
 extern DominioWidget *dominio_wgt;
 extern FuncaoAgregacaoWidget *funcaoag_wgt;
 extern SequenciaWidget *sequencia_wgt;

@@ -11,7 +11,7 @@
 #include "funcaowidget.h"
 #include "parametrowidget.h"
 #include "conversaotipowidget.h"
-#include "conversaocodificacaowidget.h"
+#include "conversionwidget.h"
 #include "dominiowidget.h"
 #include "funcaoagregacaowidget.h"
 #include "sequenciawidget.h"
@@ -51,7 +51,7 @@ LinguagemWidget *linguagem_wgt=NULL;
 ParametroWidget *parametro_wgt=NULL;
 FuncaoWidget *funcao_wgt=NULL;
 ConversaoTipoWidget *convtipo_wgt=NULL;
-ConversaoCodificacaoWidget *convcodif_wgt=NULL;
+ConversionWidget *convcodif_wgt=NULL;
 DominioWidget *dominio_wgt=NULL;
 FuncaoAgregacaoWidget *funcaoag_wgt=NULL;
 SequenciaWidget *sequencia_wgt=NULL;
@@ -129,7 +129,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   parametro_wgt=new ParametroWidget(this);
   funcao_wgt=new FuncaoWidget(this);
   convtipo_wgt=new ConversaoTipoWidget(this);
-  convcodif_wgt=new ConversaoCodificacaoWidget(this);
+  convcodif_wgt=new ConversionWidget(this);
   dominio_wgt=new DominioWidget(this);
   funcaoag_wgt=new FuncaoAgregacaoWidget(this);
   sequencia_wgt=new SequenciaWidget(this);
