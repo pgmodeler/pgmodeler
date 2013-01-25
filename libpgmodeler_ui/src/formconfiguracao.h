@@ -23,14 +23,14 @@
 
 #include "ui_formconfiguracao.h"
 #include "appearanceconfigwidget.h"
-#include "confgeralwidget.h"
+#include "generalconfigwidget.h"
 #include "connectionsconfigwidget.h"
 
 class FormConfiguracao: public QDialog, public Ui::FormConfiguracao {
  private:
   Q_OBJECT
 
-  ConfGeralWidget *conf_geral;
+  GeneralConfigWidget *conf_geral;
   AppearanceConfigWidget *conf_aparencia;
   ConnectionsConfigWidget *conf_conexoes;
 

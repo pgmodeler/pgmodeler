@@ -13,7 +13,7 @@ FormConfiguracao::FormConfiguracao(QWidget *parent, Qt::WindowFlags f) : QDialog
  conf_aparencia=NULL;
  conf_conexoes=NULL;
 
- conf_geral=new ConfGeralWidget(this);
+ conf_geral=new GeneralConfigWidget(this);
  conf_aparencia=new AppearanceConfigWidget(this);
  conf_conexoes=new ConnectionsConfigWidget(this);
 
@@ -89,7 +89,7 @@ void FormConfiguracao::restaurarPadroes(void)
   switch(stackedWidget->currentIndex())
   {
    case WGT_CONF_GERAL:
-    dynamic_cast<ConfGeralWidget *>(this->obterWidgetConfiguracao(0))->restoreDefaults();
+    dynamic_cast<GeneralConfigWidget *>(this->obterWidgetConfiguracao(0))->restoreDefaults();
    break;
 
    case WGT_CONF_APARENCIA:

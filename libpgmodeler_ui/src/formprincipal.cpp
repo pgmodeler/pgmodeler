@@ -443,7 +443,7 @@ void FormPrincipal::showEvent(QShowEvent *)
 
 void FormPrincipal::closeEvent(QCloseEvent *)
 {
- ConfGeralWidget *conf_wgt=NULL;
+ GeneralConfigWidget *conf_wgt=NULL;
  map<QString, map<QString, QString> > confs;
  bool salvar_conf=false, modificado=false;
  int i=0;
@@ -468,7 +468,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
   }
  }
 
- conf_wgt=dynamic_cast<ConfGeralWidget *>(fconfiguracao->obterWidgetConfiguracao(0));
+ conf_wgt=dynamic_cast<GeneralConfigWidget *>(fconfiguracao->obterWidgetConfiguracao(0));
  confs=conf_wgt->getConfigurationParams();
  conf_wgt->removeConfigurationParams();
 
@@ -916,14 +916,14 @@ void FormPrincipal::atualizarNomeAba(void)
 
 void FormPrincipal::atualizarModelos(void)
 {
- ConfGeralWidget *conf_wgt=NULL;
+ GeneralConfigWidget *conf_wgt=NULL;
  int qtd, i;
 
  //Obtém o widget de configuração geral
- conf_wgt=dynamic_cast<ConfGeralWidget *>(fconfiguracao->obterWidgetConfiguracao(0));
+ conf_wgt=dynamic_cast<GeneralConfigWidget *>(fconfiguracao->obterWidgetConfiguracao(0));
 
  //Caso a opção de salvamento do modelo não esteja marcada
- if(!conf_wgt->salvar_mod_chk->isChecked())
+ if(!conf_wgt->autosave_interv_chk->isChecked())
  {
   //Interrompe o timer de salvamento
   interv_salvar=0;
@@ -932,7 +932,7 @@ void FormPrincipal::atualizarModelos(void)
  //Caso contrário configura o intervalo de salvamento
  else
  {
-  interv_salvar=conf_wgt->salvar_mod_spb->value() * 60000;
+  interv_salvar=conf_wgt->autosave_interv_spb->value() * 60000;
   tm_salvamento.start(interv_salvar, false);
  }
 
@@ -1020,7 +1020,7 @@ void FormPrincipal::imprimirModelo(void)
   QPrinter::Orientation orientacao, orient_atual;
   QRectF margens;
   unsigned ml,mt,mr,mb, ml1, mt1, mr1, mb1;
-  ConfGeralWidget *conf_wgt=dynamic_cast<ConfGeralWidget *>(fconfiguracao->obterWidgetConfiguracao(0));
+  GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(fconfiguracao->obterWidgetConfiguracao(0));
 
   print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
   print_dlg.setWindowTitle(trUtf8("Database model printing"));

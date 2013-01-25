@@ -1,8 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: ConfGeralWidget
-# Description:Implementa o widget de configurações gerais do modelo.
+# Class: GeneralConfigWidget
+# Description: Implements the operations to manage general configurations.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -21,17 +21,17 @@
 #ifndef CONF_GERAL_WIDGET_H
 #define CONF_GERAL_WIDGET_H
 
-#include "ui_confgeralwidget.h"
+#include "ui_generalconfigwidget.h"
 #include "baseconfigwidget.h"
 #include "objectsscene.h"
 #include "operationlist.h"
 
-class ConfGeralWidget: public QWidget, public Ui::ConfGeralWidget, public BaseConfigWidget {
+class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, public BaseConfigWidget {
  private:
  Q_OBJECT
 
  public:
-  ConfGeralWidget(QWidget * parent=0);
+  GeneralConfigWidget(QWidget * parent=0);
 
   void saveConfiguration(void);
   void loadConfiguration(void);
@@ -41,8 +41,7 @@ class ConfGeralWidget: public QWidget, public Ui::ConfGeralWidget, public BaseCo
   void restoreDefaults(void);
 
  private slots:
-   //Faz a conversão dos valores das margens para a unidade selecionada
-   void converterUnidadeMargem(void);
+   void convertMarginUnity(void);
 };
 
 #endif

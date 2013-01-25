@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ConfGeralWidget</class>
- <widget class="QWidget" name="ConfGeralWidget">
+ <class>GeneralConfigWidget</class>
+ <widget class="QWidget" name="GeneralConfigWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -34,9 +34,9 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="2">
-    <widget class="QCheckBox" name="salvar_wgts_chk">
+    <widget class="QCheckBox" name="save_wgts_chk">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -53,7 +53,7 @@
     </widget>
    </item>
    <item row="10" column="1">
-    <widget class="QComboBox" name="unidade_cmb">
+    <widget class="QComboBox" name="unity_cmb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -86,9 +86,9 @@
     </widget>
    </item>
    <item row="4" column="0" colspan="2">
-    <widget class="QCheckBox" name="salvar_sessao_chk">
+    <widget class="QCheckBox" name="save_session_chk">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -105,7 +105,7 @@
     </widget>
    </item>
    <item row="7" column="1" colspan="4">
-    <widget class="QComboBox" name="papel_cmb">
+    <widget class="QComboBox" name="paper_cmb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -295,9 +295,9 @@
     </widget>
    </item>
    <item row="7" column="0">
-    <widget class="QLabel" name="papel_lbl">
+    <widget class="QLabel" name="paper_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -308,9 +308,9 @@
     </widget>
    </item>
    <item row="9" column="0">
-    <widget class="QLabel" name="orientacao_lbl">
+    <widget class="QLabel" name="orientation_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -321,9 +321,9 @@
     </widget>
    </item>
    <item row="10" column="0">
-    <widget class="QLabel" name="margens_lbl">
+    <widget class="QLabel" name="margins_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -334,9 +334,9 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
-    <widget class="QCheckBox" name="salvar_mod_chk">
+    <widget class="QCheckBox" name="autosave_interv_chk">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -353,9 +353,9 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="tam_grade_lbl">
+    <widget class="QLabel" name="grid_size_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -372,9 +372,9 @@
     </widget>
    </item>
    <item row="1" column="0" colspan="2">
-    <widget class="QLabel" name="tam_lista_lbl">
+    <widget class="QLabel" name="oplist_size_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -435,14 +435,14 @@
    <item row="10" column="2" rowspan="2" colspan="3">
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="left_lbl">
        <property name="text">
         <string>Left:</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QDoubleSpinBox" name="marg_esq">
+      <widget class="QDoubleSpinBox" name="left_marg">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -464,14 +464,14 @@
       </widget>
      </item>
      <item row="0" column="2">
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="top_lbl">
        <property name="text">
         <string>Top:</string>
        </property>
       </widget>
      </item>
      <item row="0" column="3">
-      <widget class="QDoubleSpinBox" name="marg_topo">
+      <widget class="QDoubleSpinBox" name="top_marg">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -493,14 +493,14 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="right_lbl">
        <property name="text">
         <string>Right:</string>
        </property>
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QDoubleSpinBox" name="marg_dir">
+      <widget class="QDoubleSpinBox" name="right_marg">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -522,14 +522,14 @@
       </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QLabel" name="label_5">
+      <widget class="QLabel" name="bottom_lbl">
        <property name="text">
         <string>Bottom:</string>
        </property>
       </widget>
      </item>
      <item row="1" column="3">
-      <widget class="QDoubleSpinBox" name="marg_base">
+      <widget class="QDoubleSpinBox" name="bottom_marg">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -553,7 +553,7 @@
     </layout>
    </item>
    <item row="9" column="1">
-    <widget class="QRadioButton" name="paisagem_rb">
+    <widget class="QRadioButton" name="landscape_rb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -569,7 +569,7 @@
     </widget>
    </item>
    <item row="9" column="2" colspan="2">
-    <widget class="QRadioButton" name="retrato_rb">
+    <widget class="QRadioButton" name="portrait_rb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -600,7 +600,7 @@
    <item row="2" column="2" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QSpinBox" name="salvar_mod_spb">
+      <widget class="QSpinBox" name="autosave_interv_spb">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -622,7 +622,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="min_lbl">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -651,7 +651,7 @@
    <item row="1" column="2" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QSpinBox" name="tam_lista_spb">
+      <widget class="QSpinBox" name="oplist_size_spb">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -673,7 +673,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_8">
+      <widget class="QLabel" name="items_lbl">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -702,7 +702,7 @@
    <item row="0" column="2" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
-      <widget class="QSpinBox" name="tam_grade_spb">
+      <widget class="QSpinBox" name="grid_size_spb">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -730,7 +730,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_9">
+      <widget class="QLabel" name="pixels_lbl">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
