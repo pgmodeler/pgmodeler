@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ConversaoTipoWidget</class>
- <widget class="QWidget" name="ConversaoTipoWidget">
+ <class>CastWidget</class>
+ <widget class="QWidget" name="CastWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -27,9 +27,9 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="tipoconv_lbl">
+    <widget class="QLabel" name="cast_type_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -42,17 +42,17 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>121</width>
+       <width>16777215</width>
        <height>16777215</height>
       </size>
      </property>
      <property name="text">
-      <string>Conversion Type:</string>
+      <string>Cast Type:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QRadioButton" name="implicita_rb">
+    <widget class="QRadioButton" name="implicit_rb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -80,7 +80,7 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QRadioButton" name="atribuicao_rb">
+    <widget class="QRadioButton" name="assignment_rb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -89,13 +89,13 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>90</width>
+       <width>100</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>80</width>
+       <width>16777215</width>
        <height>16777215</height>
       </size>
      </property>
@@ -105,7 +105,7 @@
     </widget>
    </item>
    <item row="0" column="3">
-    <widget class="QCheckBox" name="entradasaida_chk">
+    <widget class="QCheckBox" name="input_output_chk">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -118,9 +118,9 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="funcconv_lbl">
+    <widget class="QLabel" name="conv_func_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -138,7 +138,7 @@
       </size>
      </property>
      <property name="text">
-      <string>Convertion Function:</string>
+      <string>Conversion Function:</string>
      </property>
     </widget>
    </item>

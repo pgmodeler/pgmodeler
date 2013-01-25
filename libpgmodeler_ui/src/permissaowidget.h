@@ -25,6 +25,7 @@
 #include "baseobjectwidget.h"
 #include "ui_permissaowidget.h"
 #include "tabelaobjetoswidget.h"
+#include "visaoobjetoswidget.h"
 
 class PermissaoWidget: public BaseObjectWidget, public Ui::PermissaoWidget {
  Q_OBJECT
@@ -35,8 +36,11 @@ class PermissaoWidget: public BaseObjectWidget, public Ui::PermissaoWidget {
    //Conteineres de papéis e de permissões
    TabelaObjetosWidget *tab_papeis, *tab_permissoes;
 
+   VisaoObjetosWidget *selecaoobjetos_wgt;
+
  public:
    PermissaoWidget(QWidget * parent = 0);
+   ~PermissaoWidget(void);
    void setAttributes(DatabaseModel *model, BaseObject *objeto_pai, BaseObject *object);
 
  private slots:

@@ -1,56 +1,4 @@
 #include "visaoobjetoswidget.h"
-#include "sourcecodewidget.h"
-#include "databasewidget.h"
-#include "esquemawidget.h"
-#include "papelwidget.h"
-#include "espacotabelawidget.h"
-#include "linguagemwidget.h"
-#include "funcaowidget.h"
-#include "conversaotipowidget.h"
-#include "conversionwidget.h"
-#include "dominiowidget.h"
-#include "funcaoagregacaowidget.h"
-#include "sequenciawidget.h"
-#include "operadorwidget.h"
-#include "familiaoperadoreswidget.h"
-#include "operatorclasswidget.h"
-#include "tipowidget.h"
-#include "visaowidget.h"
-#include "textboxwidget.h"
-#include "columnwidget.h"
-#include "restricaowidget.h"
-#include "regrawidget.h"
-#include "gatilhowidget.h"
-#include "indicewidget.h"
-#include "relacionamentowidget.h"
-#include "tabelawidget.h"
-
-extern MessageBox *caixa_msg;
-extern DatabaseWidget *database_wgt;
-extern EsquemaWidget *esquema_wgt;
-extern PapelWidget *papel_wgt;
-extern EspacoTabelaWidget *espacotabela_wgt;
-extern LinguagemWidget *linguagem_wgt;
-extern SourceCodeWidget *codigofonte_wgt;
-extern FuncaoWidget *funcao_wgt;
-extern ConversaoTipoWidget *convtipo_wgt;
-extern ConversionWidget *convcodif_wgt;
-extern DominioWidget *dominio_wgt;
-extern FuncaoAgregacaoWidget *funcaoag_wgt;
-extern SequenciaWidget *sequencia_wgt;
-extern OperadorWidget *operador_wgt;
-extern FamiliaOperadoresWidget *familiaop_wgt;
-extern OperatorClassWidget *classeop_wgt;
-extern TipoWidget *tipo_wgt;
-extern VisaoWidget *visao_wgt;
-extern TextboxWidget *caixatexto_wgt;
-extern ColumnWidget *coluna_wgt;
-extern RestricaoWidget *restricao_wgt;
-extern RegraWidget *regra_wgt;
-extern GatilhoWidget *gatilho_wgt;
-extern IndiceWidget *indice_wgt;
-extern RelacionamentoWidget *relacao_wgt;
-extern TabelaWidget *tabela_wgt;
 
 VisaoObjetosWidget::VisaoObjetosWidget(bool visao_simplificada, QWidget *parent, Qt::WindowFlags f) : QDockWidget(parent, f)
 {
@@ -129,9 +77,9 @@ VisaoObjetosWidget::VisaoObjetosWidget(bool visao_simplificada, QWidget *parent,
  {
   setWindowModality(Qt::ApplicationModal);
   setAllowedAreas(Qt::NoDockWidgetArea);
-  setWindowFlags(Qt::Dialog |  Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
-  setFeatures(QDockWidget::DockWidgetMovable);
+  setWindowFlags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowStaysOnTopHint | Qt::WindowTitleHint);
   setFeatures(QDockWidget::DockWidgetClosable);
+  setFloating(true);
 
   connect(arvoreobjetos_tw,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this, SLOT(close(void)));
   connect(listaobjetos_tbw,SIGNAL(itemDoubleClicked(QTableWidgetItem*)),this, SLOT(close(void)));
@@ -1144,6 +1092,25 @@ void VisaoObjetosWidget::definirModelo(DatabaseModel *modelo_bd)
  visaoobjetos_stw->setEnabled(true);
 }
 
+void VisaoObjetosWidget::showEvent(QShowEvent *)
+{
+ if(visao_simplificada)
+ {
+  QWidget *wgt=QApplication::activeWindow();
+
+  /* Corrigindo a posição do widget em relação a janela ativa da aplicação.
+     A visão de objetos quando usada em modo simplificado sempre é mostrada
+     ao centro da janela ativa */
+  if(wgt)
+  {
+   int x, y;
+   x = wgt->pos().x() + abs((wgt->width() - this->width()) / 2);
+   y = wgt->pos().y() + abs((wgt->height() - this->height()) / 2);
+   this->setGeometry(QRect(QPoint(x,y), this->size()));
+  }
+ }
+}
+
 void VisaoObjetosWidget::closeEvent(QCloseEvent *)
 {
  /* Quando usado de forma simplificada, ao esconder o dock todos
@@ -1155,8 +1122,14 @@ void VisaoObjetosWidget::closeEvent(QCloseEvent *)
 
   itr=map_objs_visiveis.begin();
   itr_end=map_objs_visiveis.end();
+
   while(itr!=itr_end)
-  { itr->second=false; itr++; }
+  {
+   itr->second=false;
+   itr++;
+  }
+
+  this->resize(this->minimumSize());
  }
 
  emit s_visibilityChanged(objeto_selecao, !this->isVisible());

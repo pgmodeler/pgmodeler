@@ -1,6 +1,6 @@
 #include "permissaowidget.h"
-#include "visaoobjetoswidget.h"
-extern VisaoObjetosWidget *selecaoobjetos_wgt;
+//#include "visaoobjetoswidget.h"
+//extern VisaoObjetosWidget *selecaoobjetos_wgt;
 
 PermissaoWidget::PermissaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_PERMISSION)
 {
@@ -16,6 +16,8 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
                         ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
 
  Ui_PermissaoWidget::setupUi(this);
+
+ selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
  permissao=NULL;
 
@@ -112,6 +114,11 @@ PermissaoWidget::PermissaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
  connect(cancelar_tb, SIGNAL(clicked(bool)), this, SLOT(cancelarOperacao(void)));
  connect(inserir_perm_tb, SIGNAL(clicked(bool)), this, SLOT(adicionarPermissao(void)));
  connect(atualizar_perm_tb, SIGNAL(clicked(bool)), this, SLOT(atualizarPermissao(void)));
+}
+
+PermissaoWidget::~PermissaoWidget(void)
+{
+ delete(selecaoobjetos_wgt);
 }
 
 void PermissaoWidget::hideEvent(QHideEvent *evento)

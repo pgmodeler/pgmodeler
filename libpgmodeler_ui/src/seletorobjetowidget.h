@@ -28,12 +28,15 @@
 #include <QtGui>
 #include "databasemodel.h"
 #include "destaquesintaxe.h"
+#include "visaoobjetoswidget.h"
 #include "ui_seletorobjetowidget.h"
 
 class SeletorObjetoWidget: public QWidget, public Ui::SeletorObjetoWidget {
  Q_OBJECT
 
  private:
+   VisaoObjetosWidget *selecaoobjetos_wgt;
+
    /* Armazena o seletor que está focalizado atualmente. Este atributo é usado
       para que outro seletor em um mesmo formulário não recebe o
       valor selecionado para o seletor que realmente deve mostrar o nome
@@ -59,6 +62,8 @@ class SeletorObjetoWidget: public QWidget, public Ui::SeletorObjetoWidget {
    /* Um seletor deve sempre ser instanciado com um rótulo e o tipo de objeto
       que o seletor aceita */
    SeletorObjetoWidget(ObjectType tipo_obj_seletor, bool inst_destaque_txt, QWidget * parent = 0);
+
+   ~SeletorObjetoWidget(void);
 
   //Retorna o objeto selecionado pelo usuário
   BaseObject *obterObjeto(void);

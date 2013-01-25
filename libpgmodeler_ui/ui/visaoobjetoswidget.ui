@@ -9,13 +9,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>281</width>
-    <height>343</height>
+    <width>250</width>
+    <height>350</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>250</width>
+    <height>350</height>
+   </size>
   </property>
   <property name="windowIcon">
    <iconset resource="../res/resources.qrc">
     <normaloff>:/icones/icones/pgsqlModeler48x48.png</normaloff>:/icones/icones/pgsqlModeler48x48.png</iconset>
+  </property>
+  <property name="floating">
+   <bool>false</bool>
+  </property>
+  <property name="features">
+   <set>QDockWidget::AllDockWidgetFeatures</set>
   </property>
   <property name="allowedAreas">
    <set>Qt::AllDockWidgetAreas</set>

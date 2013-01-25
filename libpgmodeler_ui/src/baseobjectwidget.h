@@ -25,6 +25,7 @@
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "formbasico.h"
+#include "visaoobjetoswidget.h"
 #include "seletorobjetowidget.h"
 #include "ui_baseobjectwidget.h"
 
@@ -42,6 +43,8 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
    int pf_min_height, pf_max_height;
 
  protected:
+   VisaoObjetosWidget *selecaoobjetos_wgt;
+
    static const QColor PROT_LINE_BGCOLOR,
                        PROT_LINE_FGCOLOR,
                        RELINC_LINE_BGCOLOR,

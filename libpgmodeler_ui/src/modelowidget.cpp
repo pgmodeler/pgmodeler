@@ -6,7 +6,7 @@
 #include "espacotabelawidget.h"
 #include "linguagemwidget.h"
 #include "funcaowidget.h"
-#include "conversaotipowidget.h"
+#include "castwidget.h"
 #include "conversionwidget.h"
 #include "dominiowidget.h"
 #include "funcaoagregacaowidget.h"
@@ -37,7 +37,7 @@ extern EspacoTabelaWidget *espacotabela_wgt;
 extern LinguagemWidget *linguagem_wgt;
 extern SourceCodeWidget *codigofonte_wgt;
 extern FuncaoWidget *funcao_wgt;
-extern ConversaoTipoWidget *convtipo_wgt;
+extern CastWidget *convtipo_wgt;
 extern ConversionWidget *convcodif_wgt;
 extern DominioWidget *dominio_wgt;
 extern FuncaoAgregacaoWidget *funcaoag_wgt;

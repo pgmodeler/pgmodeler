@@ -10,7 +10,7 @@
 #include "linguagemwidget.h"
 #include "funcaowidget.h"
 #include "parametrowidget.h"
-#include "conversaotipowidget.h"
+#include "castwidget.h"
 #include "conversionwidget.h"
 #include "dominiowidget.h"
 #include "funcaoagregacaowidget.h"
@@ -39,7 +39,7 @@
    O formulário principal é o responsável por alocar e desalocar esses objetos. */
 FormSobre *fsobre=NULL;
 MessageBox *caixa_msg=NULL;
-VisaoObjetosWidget *selecaoobjetos_wgt=NULL;
+//VisaoObjetosWidget *selecaoobjetos_wgt=NULL;
 TextboxWidget *caixatexto_wgt=NULL;
 SourceCodeWidget *codigofonte_wgt=NULL;
 DatabaseWidget *database_wgt=NULL;
@@ -50,7 +50,7 @@ EspacoTabelaWidget *espacotabela_wgt=NULL;
 LinguagemWidget *linguagem_wgt=NULL;
 ParametroWidget *parametro_wgt=NULL;
 FuncaoWidget *funcao_wgt=NULL;
-ConversaoTipoWidget *convtipo_wgt=NULL;
+CastWidget *convtipo_wgt=NULL;
 ConversionWidget *convcodif_wgt=NULL;
 DominioWidget *dominio_wgt=NULL;
 FuncaoAgregacaoWidget *funcaoag_wgt=NULL;
@@ -110,7 +110,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   fsobre=new FormSobre;
   fconfiguracao=new FormConfiguracao(this);
   fexportacao=new FormExportacao(this);
-  selecaoobjetos_wgt=new VisaoObjetosWidget(true);
+  //selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
   frestmodelo=new FormRestauracaoModelo(this);
   lista_oper=new ListaOperacoesWidget;
@@ -128,7 +128,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   linguagem_wgt=new LinguagemWidget(this);
   parametro_wgt=new ParametroWidget(this);
   funcao_wgt=new FuncaoWidget(this);
-  convtipo_wgt=new ConversaoTipoWidget(this);
+  convtipo_wgt=new CastWidget(this);
   convcodif_wgt=new ConversionWidget(this);
   dominio_wgt=new DominioWidget(this);
   funcaoag_wgt=new FuncaoAgregacaoWidget(this);

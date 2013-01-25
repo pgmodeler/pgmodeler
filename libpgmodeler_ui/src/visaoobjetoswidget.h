@@ -91,8 +91,8 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
 
   //Implementa a movimentação da janela quando esta é exibida de forma simplificada
   void mouseMoveEvent(QMouseEvent *);
-
   void closeEvent(QCloseEvent *);
+  void showEvent(QShowEvent *);
 
  public:
   VisaoObjetosWidget(bool visao_simplificada=false, QWidget * parent = 0, Qt::WindowFlags f = 0);

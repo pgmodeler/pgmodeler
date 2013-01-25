@@ -1,8 +1,8 @@
 #include "baseobjectwidget.h"
-#include "visaoobjetoswidget.h"
+//#include "visaoobjetoswidget.h"
 #include "permissaowidget.h"
 
-extern VisaoObjetosWidget *selecaoobjetos_wgt;
+//extern VisaoObjetosWidget *selecaoobjetos_wgt;
 extern PermissaoWidget *permissao_wgt;
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
@@ -29,6 +29,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
   schema_sel=NULL;
   owner_sel=NULL;
   tablespace_sel=NULL;
+
+  selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
   hl_parentname_txt=new DestaqueSintaxe(parent_obj_txt, false);
   hl_parentname_txt->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
@@ -90,6 +92,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 
 BaseObjectWidget::~BaseObjectWidget(void)
 {
+ delete(selecaoobjetos_wgt);
  delete(parent_form);
 }
 

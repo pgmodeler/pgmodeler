@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: ConversaoTipoWidget
-# Description:Definição da classe que implementa o formulário de
-#            edição dos atributos de conversão de tipos.
+# Class: CastWidget
+# Description: Implements the operations to create/edit type casts via form.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -24,28 +23,26 @@
 
 #include "baseobjectwidget.h"
 #include "tipopgsqlwidget.h"
-#include "ui_conversaotipowidget.h"
+#include "ui_castwidget.h"
 
-class ConversaoTipoWidget: public BaseObjectWidget, public Ui::ConversaoTipoWidget {
- Q_OBJECT
-
+class CastWidget: public BaseObjectWidget, public Ui::CastWidget {
  private:
-   /* Widgets de configuração dos tipos de dados (origem / destino)
-      da conversão */
-   TipoPgSQLWidget *tipo_dado_orig, *tipo_dado_dest;
+  Q_OBJECT
 
-   //Widget seletor da função de conversão
-   SeletorObjetoWidget *sel_funcao_conv;
+  //Datatype configurations
+  TipoPgSQLWidget *src_datatype, *dst_datatype;
+
+  //Conversion function selector
+  SeletorObjetoWidget *conv_func_sel;
+
+  void hideEvent(QHideEvent *event);
 
  public:
-   ConversaoTipoWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Cast *conv_tipo);
-
- private slots:
-   void hideEvent(QHideEvent *);
+  CastWidget(QWidget * parent = 0);
+  void setAttributes(DatabaseModel *model, OperationList *op_list, Cast *cast);
 
  public slots:
-   void applyConfiguration(void);
+  void applyConfiguration(void);
 };
 
 #endif

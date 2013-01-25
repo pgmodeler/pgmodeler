@@ -1,6 +1,6 @@
 #include "seletorobjetowidget.h"
-#include "visaoobjetoswidget.h"
-extern VisaoObjetosWidget *selecaoobjetos_wgt;
+//#include "visaoobjetoswidget.h"
+//extern VisaoObjetosWidget *selecaoobjetos_wgt;
 
 QObject *SeletorObjetoWidget::seletor_atual=NULL;
 
@@ -9,6 +9,8 @@ SeletorObjetoWidget::SeletorObjetoWidget(ObjectType tipo_obj_seletor, bool inst_
  try
  {
   Ui_SeletorObjetoWidget::setupUi(this);
+
+  selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
   modelo=NULL;
   objeto=NULL;
@@ -40,6 +42,11 @@ SeletorObjetoWidget::SeletorObjetoWidget(ObjectType tipo_obj_seletor, bool inst_
   //Redireciona o erro
   throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
+}
+
+SeletorObjetoWidget::~SeletorObjetoWidget(void)
+{
+ delete(selecaoobjetos_wgt);
 }
 
 BaseObject *SeletorObjetoWidget::obterObjeto(void)
