@@ -2,10 +2,11 @@
 
 PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : QWidget(parent)
 {
+ setupUi(this);
+
  QGridLayout *grid=new QGridLayout(loaded_plugins_gb);
  QDir dir=QDir(GlobalAttributes::PLUGINS_DIR);
 
- setupUi(this);
  root_dir_edt->setText(dir.absolutePath());
 
  plugins_tab=new TabelaObjetosWidget(TabelaObjetosWidget::BTN_EDITAR_ITEM, false, this);
