@@ -86,7 +86,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
    map<QString, QTextCharFormat> formats;
 
    //Armazena as grupos que possuem de combinação parcial
-   map<QString, bool> partial_comb;
+   map<QString, bool> partial_match;
 
    //Armazena as grupos que possuem de combinação parcial
    map<QString, QChar> lookup_char;
@@ -132,19 +132,19 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
       combina com o grupo através dos parâmetros idx_comb e comp_combinacao, que são
       respectivamente o índice inicial da combinação e o comprimento em caracteres da
       combinação */
-   QString identifyWordGroup(const QString &palavra, const QChar &chk_lookup, int idx, int &idx_comb, int &comp_combinacao);
+   QString identifyWordGroup(const QString &palavra, const QChar &chk_lookup, int idx, int &match_idx, int &match_len);
 
    /* Retorna a informção de multilinha em que o bloco atual se encontra caso o mesmo
       esteja dentro de um bloco multilinha. Caso contrário retorna uma informação
       multilinha vazia */
-   MultiLineInfo *getMultiLineInfo(int col_ini, int col_fim, int bloco);
+   MultiLineInfo *getMultiLineInfo(int col_ini, int end_col, int block);
 
    //Remove as informações de multilinha de um dado bloco
-   void removeMultiLineInfo(int bloco);
+   void removeMultiLineInfo(int block);
 
    /* Retorna a quantiade de informações de multilinha relacionadas a um
       determinado bloco */
-   unsigned getMultiLineInfoCount(int bloco);
+   unsigned getMultiLineInfoCount(int block);
 
  public:
    SyntaxHighlighter(QTextDocument *parent, bool auto_rehighlight);
@@ -153,7 +153,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
   /* Faz o carregamento do arquivo XML o qual armazena todas as definições
      dos grupos de expressões responsáveis pelo destaque das palavras
      do código fonte. */
-  void loadConfiguration(const QString &nome_arq);
+  void loadConfiguration(const QString &filename);
 
   //Retorna se a configuração foi carregada
   bool isConfigurationLoaded(void);
@@ -169,7 +169,7 @@ class SyntaxHighlighter: public QSyntaxHighlighter {
   /* Faz a validação das modificações de texto promovidas pelo usuário. Este slot
      é ligado ao sinal contentsChange() do documento, pois é nele que são
      capturados a quantidade de caracteres removidos e inseridos pelo usuário */
-  void validateTextModification(int,int,int);
+  void validateTextModification(int, int removed, int added);
 
   /* Limpa todas as configurações e atributos de destaque obtidos de
      um carregamento prévio das configurações */

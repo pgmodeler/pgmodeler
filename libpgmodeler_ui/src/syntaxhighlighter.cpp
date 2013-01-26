@@ -1,14 +1,14 @@
 #include "syntaxhighlighter.h"
 
-SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent, bool auto_redestaque) : QSyntaxHighlighter(parent)
+SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent, bool auto_rehighlight) : QSyntaxHighlighter(parent)
 {
- this->auto_rehighlight=auto_redestaque;
+ this->auto_rehighlight=auto_rehighlight;
  configureAttributes();
 }
 
-SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_redestaque) : QSyntaxHighlighter(parent)
+SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight) : QSyntaxHighlighter(parent)
 {
- this->auto_rehighlight=auto_redestaque;
+ this->auto_rehighlight=auto_rehighlight;
  configureAttributes();
 }
 
@@ -25,12 +25,12 @@ void SyntaxHighlighter::configureAttributes(void)
  }
 }
 
-void SyntaxHighlighter::validateTextModification(int, int rem, int ins)
+void SyntaxHighlighter::validateTextModification(int, int removed, int added)
 {
- unsigned qtd;
+ unsigned count;
 
  //Obtém a quantidade de informações de multilinha do bloco atual
- qtd=getMultiLineInfoCount(current_block);
+ count=getMultiLineInfoCount(current_block);
 
  /* Caso a quantidade obtida seja diferente da quantidade capturada
     antes da entrada do texto pelo usuário, ou se não exista nenhuma
@@ -39,21 +39,21 @@ void SyntaxHighlighter::validateTextModification(int, int rem, int ins)
     completo pois os caracteres removidos ou inseridos podem interferir
     na forma de apresentação do destaque e por isso o documento como
     um todo precisa ser redestacado */
- if(qtd!=curr_blk_info_count ||
-   (/*qtd==0 && qtd_info_bloco_atual==qtd &&*/ (ins > 0 || rem > 0)))
+ if(count!=curr_blk_info_count ||
+   (/*qtd==0 && qtd_info_bloco_atual==qtd &&*/ (added > 0 || removed > 0)))
   rehighlight();
 }
 
-SyntaxHighlighter::MultiLineInfo *SyntaxHighlighter::getMultiLineInfo(int col_ini, int col_fim, int bloco)
+SyntaxHighlighter::MultiLineInfo *SyntaxHighlighter::getMultiLineInfo(int start_col, int end_col, int block)
 {
- unsigned i, qtd;
- bool enc=false;
+ unsigned i, count;
+ bool found=false;
  MultiLineInfo *info=NULL;
 
  /* Varre o vetor de informações de multilinha a fim de verificar se
     os parâmetros passados estão dentro de um bloco (informação) multilinha */
- qtd=multi_line_infos.size();
- for(i=0; i < qtd; i++)
+ count=multi_line_infos.size();
+ for(i=0; i < count; i++)
  {
   //Obtém uma informação
   info=multi_line_infos[i];
@@ -65,7 +65,7 @@ SyntaxHighlighter::MultiLineInfo *SyntaxHighlighter::getMultiLineInfo(int col_in
      bloco_fim e col_fim da informação de multilinha possuirão o valor -1 até
      que o usuário feche o multilinha e o destacador identifique em que parte
      do texto se encontra esse fechamento */
-  if(bloco >= info->start_block && (info->end_block < 0 || bloco <= info->end_block))
+  if(block >= info->start_block && (info->end_block < 0 || block <= info->end_block))
   {
    /* A seguir várias condições são testadas a fim de verificar se os parâmetros
       passados estão dentro de um bloco multilinha.*/
@@ -75,24 +75,24 @@ SyntaxHighlighter::MultiLineInfo *SyntaxHighlighter::getMultiLineInfo(int col_in
                   de texto (info->bloco_ini==info->bloco_fim), será verificado
                   se o parâmetro col_ini e col_fim estão nos limites estabelecidos
                   pelas colunas inicial e final do informação */
-   if(bloco==info->start_block && info->start_block==info->end_block)
-    enc=(col_ini >= info->start_col && col_fim <= info->end_col);
+   if(block==info->start_block && info->start_block==info->end_block)
+    found=(start_col >= info->start_col && end_col <= info->end_col);
 
    /* Condição 2: O bloco passado é o mesmo da informação atual e a informação
                   atual trata de um multilinha em aberto. Testa apenas se
                   a coluna inicial do parâmetro está após da coluna inicial da
                   informação. Isso indica que o texto digitado está após a
                   abertura do multilinha e consequentemente dentro do mesmo */
-   else if(bloco == info->start_block)
-    enc=(col_ini >= info->start_col);
+   else if(block == info->start_block)
+    found=(start_col >= info->start_col);
 
    /* Condição 3: O bloco passado é o mesmo do bloco final da informação atual
                   e a informação atual trata de um multilinha fechado. Testa
                   apenas se a coluna final do parâmetro está antes da coluna
                   final da informação multilinha atual indicando que o texto
                   inserido está dentro do bloco multilinha */
-   else if(info->end_block >=0 && bloco == info->end_block)
-    enc=(col_fim <= info->end_col);
+   else if(info->end_block >=0 && block == info->end_block)
+    found=(end_col <= info->end_col);
 
   /* Condição 4: A informação atual trata de um multilinha em aberto. Testa
                   apenas se o bloco passado está no mesmo bloco inicial da informação
@@ -101,7 +101,7 @@ SyntaxHighlighter::MultiLineInfo *SyntaxHighlighter::getMultiLineInfo(int col_in
                   após o bloco de abertura, e como o bloco está em aberto, todo texto
                   inserido após o bloco de aberto será considerado um multibloco */
    else if(info->end_block < 0)
-    enc=(bloco >= info->start_block);
+    found=(block >= info->start_block);
 
   /* Condição 5: A informação atual trata de um multilinha fechado. Testa
                  apenas se o bloco passado está no meio do intervalo estabelecido
@@ -110,17 +110,17 @@ SyntaxHighlighter::MultiLineInfo *SyntaxHighlighter::getMultiLineInfo(int col_in
                  abertura e antes do fechamento a linha do texto como um todo
                  é considerada um multibloco */
    else if(info->end_block >=0 && info->start_block!=info->end_block)
-    enc=(bloco >= info->start_block && bloco <= info->end_block);
+    found=(block >= info->start_block && block <= info->end_block);
   }
  }
 
- if(enc)
+ if(found)
   return(info);
  else
   return(NULL);
 }
 
-void SyntaxHighlighter::removeMultiLineInfo(int bloco)
+void SyntaxHighlighter::removeMultiLineInfo(int block)
 {
  vector<MultiLineInfo *>::iterator itr, itr_end;
 
@@ -131,7 +131,7 @@ void SyntaxHighlighter::removeMultiLineInfo(int bloco)
  while(itr!=itr_end)
  {
   //Caso a info atual tenha como bloco inicial o mesmo bloco passado
-  if((*itr)->start_block==bloco)
+  if((*itr)->start_block==block)
   {
    //Remove a informação da memória
    delete(*itr);
@@ -145,10 +145,10 @@ void SyntaxHighlighter::removeMultiLineInfo(int bloco)
  }
 }
 
-unsigned SyntaxHighlighter::getMultiLineInfoCount(int bloco)
+unsigned SyntaxHighlighter::getMultiLineInfoCount(int block)
 {
  vector<MultiLineInfo *>::iterator itr, itr_end;
- unsigned qtd=0;
+ unsigned count=0;
 
  itr=multi_line_infos.begin();
  itr_end=multi_line_infos.end();
@@ -157,21 +157,21 @@ unsigned SyntaxHighlighter::getMultiLineInfoCount(int bloco)
     aquelas as quais tem como bloco inicial o bloco passado */
  while(itr!=itr_end)
  {
-  if((*itr)->start_block==bloco) qtd++;
+  if((*itr)->start_block==block) count++;
   itr++;
  }
 
- return(qtd);
+ return(count);
 }
 
-QString SyntaxHighlighter::identifyWordGroup(const QString &palavra, const QChar &chr_lookup, int idx, int &idx_comb, int &comp_combinacao)
+QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &chr_lookup, int idx, int &match_idx, int &match_len)
 {
  QRegExp expr;
  vector<QString>::iterator itr, itr_end;
  vector<QRegExp>::iterator itr_exp, itr_exp_end;
  vector<QRegExp> *vet_expr=NULL;
- QString grupo;
- bool combina=false, comb_parcial=false;
+ QString group;
+ bool match=false, part_mach=false;
  MultiLineInfo *info=NULL;
 
  //Tenta obter uma informação de multilinha do bloco atual
@@ -184,30 +184,30 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &palavra, const QChar
     do grupo deve ser interrompido após a palavra em questão */
  if(info)
  {
-  grupo=info->group;
+  group=info->group;
 
   /* Varre as expresões finais exclusivamente do grupo atual
      para verificar se a palavra em questão naõ é a de finalização
      do destaque do grupo */
-  itr_exp=final_exprs[grupo].begin();
-  itr_exp_end=final_exprs[grupo].end();
-  comb_parcial=partial_comb[grupo];
+  itr_exp=final_exprs[group].begin();
+  itr_exp_end=final_exprs[group].end();
+  part_mach=partial_match[group];
 
-  while(itr_exp!=itr_exp_end && !combina)
+  while(itr_exp!=itr_exp_end && !match)
   {
    //Obtém a expressão do iterador atual
    expr=(*itr_exp);
 
     //Caso a expressão esteja configurara para combinação parcial
-    if(comb_parcial)
+    if(part_mach)
     {
      //Obtém o índice inicial na palavra onde a expressão combina
-     idx_comb=palavra.indexOf(expr);
+     match_idx=word.indexOf(expr);
      //Obtém o comprimento da combinação
-     comp_combinacao=expr.matchedLength();
+     match_len=expr.matchedLength();
      /* Para se saber se a expressão combinou parcialmente com a palavra
         verifica se o indice da combinação é igual ou superior a zero */
-     combina=(idx_comb >= 0);
+     match=(match_idx >= 0);
     }
     else
     {
@@ -217,20 +217,20 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &palavra, const QChar
        a comparação feita é de string com string o que acaba se tornando
        mais rápido */
      if(expr.patternSyntax()==QRegExp::FixedString)
-      combina=((expr.pattern().compare(palavra, expr.caseSensitivity())==0));
+      match=((expr.pattern().compare(word, expr.caseSensitivity())==0));
      else
       //Combina a expressão regular com a palavra
-      combina=expr.exactMatch(palavra);
+      match=expr.exactMatch(word);
 
-     if(combina)
+     if(match)
      {
-      idx_comb=0;
-      comp_combinacao=palavra.length();
+      match_idx=0;
+      match_len=word.length();
      }
     }
 
-   if(combina && lookup_char.count(grupo) > 0 && chr_lookup!=lookup_char.at(grupo))
-    combina=false;
+   if(match && lookup_char.count(group) > 0 && chr_lookup!=lookup_char.at(group))
+    match=false;
 
    itr_exp++;
   }
@@ -238,9 +238,9 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &palavra, const QChar
   /* Caso a palavra combina com uma das expressões finais do grupo
      marca a informação multilinha obtida e configura a coluna final
      e bloco final da informção de bloco multilinha. */
-  if(combina)
+  if(match)
   {
-   info->end_col=idx + idx_comb + comp_combinacao-1;
+   info->end_col=idx + match_idx + match_len-1;
    info->end_block=current_block;
   }
   /* Caso o destacador permaneça num bloco de multilinha o índice
@@ -250,11 +250,11 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &palavra, const QChar
      se encontra no bloco deste tipo */
   else
   {
-   idx_comb=0;
-   comp_combinacao=palavra.length();
+   match_idx=0;
+   match_len=word.length();
   }
 
-  return(grupo);
+  return(group);
  }
  else
  {
@@ -265,34 +265,34 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &palavra, const QChar
   itr=groups_order.begin();
   itr_end=groups_order.end();
 
-  while(itr!=itr_end && !combina)
+  while(itr!=itr_end && !match)
   {
    //Obtém o grupo a partir do iterador
-   grupo=(*itr);
+   group=(*itr);
    //Obtém o vetor de expressões iniciais do grupo
-   vet_expr=&initial_exprs[grupo];
+   vet_expr=&initial_exprs[group];
    itr++;
 
    //Varre a lista de expressões comparando com a palavra atual
    itr_exp=vet_expr->begin();
    itr_exp_end=vet_expr->end();
-   comb_parcial=partial_comb[grupo];
+   part_mach=partial_match[group];
 
-   while(itr_exp!=itr_exp_end && !combina)
+   while(itr_exp!=itr_exp_end && !match)
    {
     //Obtém a expressão a partir do iterador atual
     expr=(*itr_exp);
 
     //Caso a expressão esteja configurara para combinação parcial
-    if(comb_parcial)
+    if(part_mach)
     {
      //Obtém o índice inicial na palavra onde a expressão combina
-     idx_comb=palavra.indexOf(expr);
+     match_idx=word.indexOf(expr);
      //Obtém o comprimento da combinação
-     comp_combinacao=expr.matchedLength();
+     match_len=expr.matchedLength();
      /* Para se saber se a expressão combinou parcialmente com a palavra
         verifica se o indice da combinação é igual ou superior a zero */
-     combina=(idx_comb >= 0);
+     match=(match_idx >= 0);
     }
     else
     {
@@ -302,20 +302,20 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &palavra, const QChar
        a comparação feita é de string com string o que acaba se tornando
        mais rápido */
      if(expr.patternSyntax()==QRegExp::FixedString)
-      combina=((expr.pattern().compare(palavra, expr.caseSensitivity())==0));
+      match=((expr.pattern().compare(word, expr.caseSensitivity())==0));
      else
       //Combina a expressão regular com a palavra
-      combina=expr.exactMatch(palavra);
+      match=expr.exactMatch(word);
 
-     if(combina)
+     if(match)
      {
-      idx_comb=0;
-      comp_combinacao=palavra.length();
+      match_idx=0;
+      match_len=word.length();
      }
     }
 
-   if(combina && lookup_char.count(grupo) > 0 && chr_lookup!=lookup_char.at(grupo))
-    combina=false;
+   if(match && lookup_char.count(group) > 0 && chr_lookup!=lookup_char.at(group))
+    match=false;
 
     itr_exp++;
    }
@@ -326,13 +326,13 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &palavra, const QChar
       que o destaque do grupo se extende além da linha atual até
       um delimitador final do grupo ser encontrado. Desta
       forma aloca uma informção de multilinha com configurações iniciais */
-   if(combina && final_exprs.count(grupo))
+   if(match && final_exprs.count(group))
    {
     if(!info)
     {
      info=new MultiLineInfo;
-     info->group=grupo;
-     info->start_col=idx + idx_comb + comp_combinacao;
+     info->group=group;
+     info->start_col=idx + match_idx + match_len;
      info->start_block=current_block;
      multi_line_infos.push_back(info);
     }
@@ -342,9 +342,9 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &palavra, const QChar
   /* Caso a palavra não combine com nenhuma expressão de nenhum
      grupo força o método a retornar um nome de grupo vazio
      indicando que a palavra não combina com grupo algum */
-  if(!combina) grupo="";
+  if(!match) group="";
 
-  return(grupo);
+  return(group);
  }
 }
 
@@ -374,14 +374,14 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
 
  if(!txt.isEmpty())
  {
-  QString palavra, grupo, texto;
-  unsigned i=0, tam, idx=0, i1;
-  int idx_comb, comp_comb, tam_aux, col_ini;
+  QString word, group, text;
+  unsigned i=0, len, idx=0, i1;
+  int match_idx, match_len, aux_len, start_col;
   QChar chr_delim, chr_lookup;
 
   //Obtém o tamanho total do bloco de texto
-  texto=txt + '\n';
-  tam=texto.length();
+  text=txt + '\n';
+  len=text.length();
 
   /* Remove as informações de multilinha do bloco atual
      para forçar a identifição de novas informações
@@ -392,43 +392,43 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
   {
    /* Remove os caracteres que constam na lista de caracteres
       ignorandos enquanto estes aparecerem no texto */
-   while(i < tam && ignored_chars.indexOf(texto[i])>=0) i++;
+   while(i < len && ignored_chars.indexOf(text[i])>=0) i++;
 
    //Caso o fim do texto não tenha sido alcançado
-   if(i < tam)
+   if(i < len)
    {
     /* Armazena a posição atual no texto pois é a partir dela que será
        feito o destaque da palavra extraída nas iterações abaixo */
     idx=i;
 
     //Caso o caractere atual seja um caractere separador de palavras
-    if(word_separators.indexOf(texto[i])>=0)
+    if(word_separators.indexOf(text[i])>=0)
     {
      /* Enquanto o caractere for um separado, o mesmo é concatenada junto
         com os demais separadores */
-     while(i < tam && word_separators.indexOf(texto[i])>=0)
-      palavra+=texto[i++];
+     while(i < len && word_separators.indexOf(text[i])>=0)
+      word+=text[i++];
     }
     //Caso o caractere atual seja um delimitador de palavras
-    else if(word_delimiters.indexOf(texto[i])>=0)
+    else if(word_delimiters.indexOf(text[i])>=0)
     {
      //Armazena o caractere delimitador
-     chr_delim=texto[i++];
+     chr_delim=text[i++];
      //Adiciona-o na palavra que está sendo extraída
-     palavra+=chr_delim;
+     word+=chr_delim;
 
      /* Extrai todos os próximos caracteres concatenando-o  palavra,
         idenpendente da categoria destes, enquanto o caractere final
         delimitador de palavra não seja encontrado ou o fim do texto
         seja alcançado. */
-     while(i < tam && chr_delim!=texto[i])
-      palavra+=texto[i++];
+     while(i < len && chr_delim!=text[i])
+      word+=text[i++];
 
      /* Caso o caractere delimitador final for encontrado concatena-o   palavra
         formando a palavra delimitada como um todo */
-     if(i < tam && texto[i]==chr_delim)
+     if(i < len && text[i]==chr_delim)
      {
-      palavra+=chr_delim;
+      word+=chr_delim;
       i++;
      }
     }
@@ -438,51 +438,51 @@ void SyntaxHighlighter::highlightBlock(const QString &txt)
        ou um caractere a ser ignorado */
     else
     {
-     while(i < tam &&
-           word_separators.indexOf(texto[i]) < 0 &&
-           word_delimiters.indexOf(texto[i]) < 0 &&
-           ignored_chars.indexOf(texto[i]) < 0)
+     while(i < len &&
+           word_separators.indexOf(text[i]) < 0 &&
+           word_delimiters.indexOf(text[i]) < 0 &&
+           ignored_chars.indexOf(text[i]) < 0)
      {
-      palavra+=texto[i++];
+      word+=text[i++];
      }
     }
    }
 
    /* Caso a palavra não esteja vazia, tenta localizar o grupo
       ao qual ela pertence */
-   if(!palavra.isEmpty())
+   if(!word.isEmpty())
    {
     i1=i;
-    while(i1 < tam && ignored_chars.indexOf(texto[i1])>=0) i1++;
+    while(i1 < len && ignored_chars.indexOf(text[i1])>=0) i1++;
 
-    if(i1 < tam)
-     chr_lookup=texto[i1];
+    if(i1 < len)
+     chr_lookup=text[i1];
     else
      chr_lookup='\0';
 
     //Obtém o grupo ao qual a palavra faz parte
-    idx_comb=-1;
-    comp_comb=0;
-    grupo=identifyWordGroup(palavra,chr_lookup, idx, idx_comb, comp_comb);
+    match_idx=-1;
+    match_len=0;
+    group=identifyWordGroup(word,chr_lookup, idx, match_idx, match_len);
 
     /* Caso o grupo foi identificado faz o destaque da palavra
        usando a posição inicial da palavra com o comprimento
        da mesma */
-    if(!grupo.isEmpty())
+    if(!group.isEmpty())
     {
-     col_ini=idx + idx_comb;
-     setFormat(col_ini, comp_comb, formats[grupo]);
+     start_col=idx + match_idx;
+     setFormat(start_col, match_len, formats[group]);
     }
 
-    tam_aux=(idx_comb + comp_comb);
-    if(idx_comb >=0 &&  tam_aux != palavra.length())
-     i-=palavra.length() - tam_aux;
+    aux_len=(match_idx + match_len);
+    if(match_idx >=0 &&  aux_len != word.length())
+     i-=word.length() - aux_len;
 
     //Limpa a palavra atual para obter uma nova
-    palavra="";
+    word="";
    }
   }
-  while(i < tam);
+  while(i < len);
 
   /* Armazena a quantidade de informação de multilinhas no bloco atual,
      pois este atributo é usado para se saber se o documento passará
@@ -501,7 +501,7 @@ void SyntaxHighlighter::clearConfiguration(void)
  initial_exprs.clear();
  final_exprs.clear();
  formats.clear();
- partial_comb.clear();
+ partial_match.clear();
  groups_order.clear();
  word_sep_groups.clear();
  word_separators.clear();
@@ -512,18 +512,18 @@ void SyntaxHighlighter::clearConfiguration(void)
  configureAttributes();
 }
 
-void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
+void SyntaxHighlighter::loadConfiguration(const QString &filename)
 {
- if(nome_arq!="")
+ if(filename!="")
  {
-  map<QString, QString> atributos;
-  QString elem, tipo_exp, grupo;
-  bool decl_grupos=false, sensivel_chr=false,
-       negrito=false, italico=false,
-       sublinhado=false, comb_parcial=false;
-  QTextCharFormat formatacao;
-  QRegExp exp_regular;
-  QColor cor_fundo, cor_fonte;
+  map<QString, QString> attribs;
+  QString elem, expr_type, group;
+  bool groups_decl=false, chr_sensitive=false,
+       bold=false, italic=false,
+       underline=false, partial_match=false;
+  QTextCharFormat format;
+  QRegExp regexp;
+  QColor bg_color, fg_color;
   vector<QString>::iterator itr, itr_end;
 
   try
@@ -546,7 +546,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
                                 GlobalAttributes::CODE_HIGHLIGHT_CONF);
 
    //Carrega o arquivo validando-o de acordo com a DTD informada
-   XMLParser::loadXMLFile(nome_arq);
+   XMLParser::loadXMLFile(filename);
 
    //Acessa o elemento inicial do arquivo de destaque de código fonte
    if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
@@ -562,22 +562,22 @@ void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
       if(elem==ParsersAttributes::WORD_SEPARATORS)
       {
        //Obtém os atributos do mesmo
-       XMLParser::getElementAttributes(atributos);
-       word_separators=atributos[ParsersAttributes::VALUE];
+       XMLParser::getElementAttributes(attribs);
+       word_separators=attribs[ParsersAttributes::VALUE];
       }
 
       //Obtém os delimitadores de palavras da linguagem
       else if(elem==ParsersAttributes::WORD_DELIMITERS)
       {
        //Obtém os atributos do mesmo
-       XMLParser::getElementAttributes(atributos);
-       word_delimiters=atributos[ParsersAttributes::VALUE];
+       XMLParser::getElementAttributes(attribs);
+       word_delimiters=attribs[ParsersAttributes::VALUE];
       }
       else if(elem==ParsersAttributes::IGNORED_CHARS)
       {
        //Obtém os atributos do mesmo
-       XMLParser::getElementAttributes(atributos);
-       ignored_chars=atributos[ParsersAttributes::VALUE];
+       XMLParser::getElementAttributes(attribs);
+       ignored_chars=attribs[ParsersAttributes::VALUE];
       }
 
       /* Caso o elemento seja o que define a ordem de aplicação dos grupos
@@ -588,7 +588,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
       else if(elem==ParsersAttributes::HIGHLIGHT_ORDER)
       {
        //Marca a flag indicando que os grupos estão sendo declarados
-       decl_grupos=true;
+       groups_decl=true;
        //Salva a posição atual do parser xml
        XMLParser::savePosition();
        /* Acesso o primeiro elemento filho da tag de ordem de destaque que
@@ -602,13 +602,13 @@ void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
       if(elem==ParsersAttributes::GROUP)
       {
        //Obtém os atributos do mesmo
-       XMLParser::getElementAttributes(atributos);
+       XMLParser::getElementAttributes(attribs);
        //Armazena seu nome em uma variável auxiliar
-       grupo=atributos[ParsersAttributes::NAME];
+       group=attribs[ParsersAttributes::NAME];
 
        /* Caso o parser estiver no bloco de declaração de grupos e não no bloco
           de construção dos mesmos, algumas validações serão executadas. */
-       if(decl_grupos)
+       if(groups_decl)
        {
         /* 1ª Validação: Verifica se o grupo já não foi declarando anteriormente,
                          para isso o mesmo é buscado na lista que armazena a ordem
@@ -616,10 +616,10 @@ void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
                          encontrado um erro é disparado. Um grupo é dito como localizado
                          na lista quando a chamada a função find() retorna o iterador
                          diferente do iterador final da lista 'ordem_grupos.end()' */
-        if(find(groups_order.begin(), groups_order.end(), grupo)!=groups_order.end())
+        if(find(groups_order.begin(), groups_order.end(), group)!=groups_order.end())
         {
          //Dispara o erro indicado que o grupo está sendo redeclarado
-         throw Exception(Exception::getErrorMessage(ERR_REDECL_HL_GROUP).arg(grupo),
+         throw Exception(Exception::getErrorMessage(ERR_REDECL_HL_GROUP).arg(group),
                        ERR_REDECL_HL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
         /* 2ª Validação: Verifica se o grupo está sendo declarado e construído ao mesmo tempo no
@@ -627,16 +627,16 @@ void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
                          formato <group name='nome'/>, qualquer construção diferente da apresentada
                          seja com mais atributos ou elementos filhos é considerado que o grupo está
                          sendo construído em local inválido */
-        else if(atributos.size() > 1 || XMLParser::hasElement(XMLParser::CHILD_ELEMENT))
+        else if(attribs.size() > 1 || XMLParser::hasElement(XMLParser::CHILD_ELEMENT))
         {
          throw Exception(Exception::getErrorMessage(ERR_DEF_INV_GROUP_DECL)
-                       .arg(grupo).arg(ParsersAttributes::HIGHLIGHT_ORDER),
+                       .arg(group).arg(ParsersAttributes::HIGHLIGHT_ORDER),
                        ERR_REDECL_HL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
 
         /* Caso nenhum erro for disparado o grupo é adicionad  lista de
            ordem de aplicação dos grupos */
-        groups_order.push_back(grupo);
+        groups_order.push_back(group);
        }
        /* Caso o parser estiver no bloco de construção de grupos e não no bloco
           de declaração dos mesmos, algumas validações iniciais serão executadas. */
@@ -647,10 +647,10 @@ void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
                          em alguma iteração anterior. Caso exista essa ocorrencia indica
                          que o grupo já foi construído anteriormente,
                          desta forma um erro será disparado ao usuário */
-        if(initial_exprs.count(grupo)!=0)
+        if(initial_exprs.count(group)!=0)
         {
          //Dispara o erro ao usuário indicando construção duplicada
-         throw Exception(Exception::getErrorMessage(ERR_DEF_DUPLIC_GROUP).arg(grupo),
+         throw Exception(Exception::getErrorMessage(ERR_DEF_DUPLIC_GROUP).arg(group),
                        ERR_DEF_DUPLIC_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
         /* 2ª Validação: Verifica se o grupo está sendo construído sem ter sido declarado.
@@ -658,11 +658,11 @@ void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
                          na lista de ordem de aplicação de grupos. Um grupo é dito como
                          não localizado na lista quando a chamada a função find() retorna
                          o iterador final da lista 'ordem_grupos.end() */
-        else if(find(groups_order.begin(), groups_order.end(), grupo)==groups_order.end())
+        else if(find(groups_order.begin(), groups_order.end(), group)==groups_order.end())
         {
          //Dispara o erro indicando que o grupo foi construído e não declarado
          throw Exception(Exception::getErrorMessage(ERR_DEF_NOT_DECL_GROUP)
-                       .arg(grupo).arg(ParsersAttributes::HIGHLIGHT_ORDER),
+                       .arg(group).arg(ParsersAttributes::HIGHLIGHT_ORDER),
                        ERR_DEF_NOT_DECL_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
         /* 3ª Validação: Verifica se o grupo possui elementos filhos. No bloco de construção
@@ -670,34 +670,34 @@ void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
                          Caso ele não possua elementos deste tipo um erro é retornado ao usuário */
         else if(!XMLParser::hasElement(XMLParser::CHILD_ELEMENT))
         {
-         throw Exception(Exception::getErrorMessage(ERR_DEF_EMPTY_GROUP).arg(grupo),
+         throw Exception(Exception::getErrorMessage(ERR_DEF_EMPTY_GROUP).arg(group),
                        ERR_DEF_EMPTY_GROUP,__PRETTY_FUNCTION__,__FILE__,__LINE__);
         }
 
         //Obtém e armazena em variáveis os atributos do grupo que está sendo construído
-        sensivel_chr=(atributos[ParsersAttributes::CASE_SENSITIVE]==ParsersAttributes::_TRUE_);
-        italico=(atributos[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
-        negrito=(atributos[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
-        sublinhado=(atributos[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
-        comb_parcial=(atributos[ParsersAttributes::PARTIAL_MATCH]==ParsersAttributes::_TRUE_);
-        cor_fonte.setNamedColor(atributos[ParsersAttributes::FOREGROUND_COLOR]);
-        cor_fundo.setNamedColor(atributos[ParsersAttributes::BACKGROUND_COLOR]);
+        chr_sensitive=(attribs[ParsersAttributes::CASE_SENSITIVE]==ParsersAttributes::_TRUE_);
+        italic=(attribs[ParsersAttributes::ITALIC]==ParsersAttributes::_TRUE_);
+        bold=(attribs[ParsersAttributes::BOLD]==ParsersAttributes::_TRUE_);
+        underline=(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
+        partial_match=(attribs[ParsersAttributes::PARTIAL_MATCH]==ParsersAttributes::_TRUE_);
+        fg_color.setNamedColor(attribs[ParsersAttributes::FOREGROUND_COLOR]);
+        bg_color.setNamedColor(attribs[ParsersAttributes::BACKGROUND_COLOR]);
 
-        if(!atributos[ParsersAttributes::LOOKUP_CHAR].isEmpty())
-         lookup_char[grupo]=atributos[ParsersAttributes::LOOKUP_CHAR][0];
+        if(!attribs[ParsersAttributes::LOOKUP_CHAR].isEmpty())
+         lookup_char[group]=attribs[ParsersAttributes::LOOKUP_CHAR][0];
 
         //Configura a formatação do grupo de acordo com os atributos obtidos
-        formatacao.setFontItalic(italico);
-        formatacao.setFontUnderline(sublinhado);
+        format.setFontItalic(italic);
+        format.setFontUnderline(underline);
 
-        if(negrito)
-         formatacao.setFontWeight(QFont::Bold);
+        if(bold)
+         format.setFontWeight(QFont::Bold);
         else
-         formatacao.setFontWeight(QFont::Normal);
+         format.setFontWeight(QFont::Normal);
 
-        formatacao.setForeground(cor_fonte);
-        formatacao.setBackground(cor_fundo);
-        formats[grupo]=formatacao;
+        format.setForeground(fg_color);
+        format.setBackground(bg_color);
+        formats[group]=format;
 
         //Salva a posição atual do parser e acesso os elementos filhos do grupo
         XMLParser::savePosition();
@@ -706,38 +706,38 @@ void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
         /* Configura a variável de expressão regular para ser sensível a
            caracteres (case sensitive) de acordo com o mesmo atributo
            obtido do xml */
-        if(sensivel_chr)
-         exp_regular.setCaseSensitivity(Qt::CaseSensitive);
+        if(chr_sensitive)
+         regexp.setCaseSensitivity(Qt::CaseSensitive);
         else
-         exp_regular.setCaseSensitivity(Qt::CaseInsensitive);
+         regexp.setCaseSensitivity(Qt::CaseInsensitive);
 
-        partial_comb[grupo]=comb_parcial;
+        this->partial_match[group]=partial_match;
 
         do
         {
          if(XMLParser::getElementType()==XML_ELEMENT_NODE)
          {
           //Obtém os atributos do elemento filho do grupo
-          XMLParser::getElementAttributes(atributos);
+          XMLParser::getElementAttributes(attribs);
           //Obtém o tipo do elemento
-          tipo_exp=atributos[ParsersAttributes::TYPE];
+          expr_type=attribs[ParsersAttributes::TYPE];
 
           //Configura a expressão regular com o valor presente no atributo 'value' do elemento
-          exp_regular.setPattern(atributos[ParsersAttributes::VALUE]);
+          regexp.setPattern(attribs[ParsersAttributes::VALUE]);
 
-          if(atributos[ParsersAttributes::REGULAR_EXP]==ParsersAttributes::_TRUE_)
-           exp_regular.setPatternSyntax(QRegExp::RegExp);
+          if(attribs[ParsersAttributes::REGULAR_EXP]==ParsersAttributes::_TRUE_)
+           regexp.setPatternSyntax(QRegExp::RegExp);
           else
-           exp_regular.setPatternSyntax(QRegExp::FixedString);
+           regexp.setPatternSyntax(QRegExp::FixedString);
 
           /* A expressão regular configura será inserida na lista de expressões
              de acordo com o tipo do elemento */
-          if(tipo_exp=="" ||
-             tipo_exp==ParsersAttributes::EXP_SIMPLES ||
-             tipo_exp==ParsersAttributes::INITIAL_EXP)
-           initial_exprs[grupo].push_back(exp_regular);
+          if(expr_type=="" ||
+             expr_type==ParsersAttributes::EXP_SIMPLES ||
+             expr_type==ParsersAttributes::INITIAL_EXP)
+           initial_exprs[group].push_back(regexp);
           else
-           final_exprs[grupo].push_back(exp_regular);
+           final_exprs[group].push_back(regexp);
          }
         }
         while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
@@ -752,9 +752,9 @@ void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
         declarados. Caso não existe, desmarca a flag de declaração de grupos
         e restaura a posição do parser para que o restante do arquivo possa
         ser lido */
-     if(decl_grupos && !XMLParser::hasElement(XMLParser::NEXT_ELEMENT))
+     if(groups_decl && !XMLParser::hasElement(XMLParser::NEXT_ELEMENT))
      {
-      decl_grupos=false;
+      groups_decl=false;
       XMLParser::restorePosition();
      }
 
@@ -772,14 +772,14 @@ void SyntaxHighlighter::loadConfiguration(const QString &nome_arq)
 
    while(itr!=itr_end)
    {
-    grupo=(*itr);
+    group=(*itr);
     itr++;
 
     //Caso o número de expressões do grupo seja zero
-    if(initial_exprs[grupo].size()==0)
+    if(initial_exprs[group].size()==0)
     {
      //Dispara o erro indicando que o grupo foi declarado porém não construído
-     throw Exception(Exception::getErrorMessage(ERR_GROUP_DECL_NOT_DEFINED).arg(grupo),
+     throw Exception(Exception::getErrorMessage(ERR_GROUP_DECL_NOT_DEFINED).arg(group),
                    ERR_GROUP_DECL_NOT_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
     }
    }
