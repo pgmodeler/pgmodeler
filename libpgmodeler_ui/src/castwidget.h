@@ -30,7 +30,7 @@ class CastWidget: public BaseObjectWidget, public Ui::CastWidget {
   Q_OBJECT
 
   //Datatype configurations
-  TipoPgSQLWidget *src_datatype, *dst_datatype;
+  TipoPgSQLWidget *src_datatype, *trg_datatype;
 
   //Conversion function selector
   SeletorObjetoWidget *conv_func_sel;

@@ -30,7 +30,7 @@ class DominioWidget: public BaseObjectWidget, public Ui::DominioWidget {
  Q_OBJECT
 
  private:
-   DestaqueSintaxe *destaque_expr;
+   SyntaxHighlighter *destaque_expr;
    TipoPgSQLWidget *tipo_dominio;
 
  public:

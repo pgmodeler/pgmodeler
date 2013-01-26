@@ -82,7 +82,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
    bool new_object;
 
    //Syntax highlighter used on the parent object name widget
-   DestaqueSintaxe *hl_parentname_txt;
+   SyntaxHighlighter *hl_parentname_txt;
 
    //Object selectors for schema, owner an tablespace
    SeletorObjetoWidget *schema_sel,

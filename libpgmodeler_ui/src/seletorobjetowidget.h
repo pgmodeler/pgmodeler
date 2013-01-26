@@ -27,7 +27,7 @@
 
 #include <QtGui>
 #include "databasemodel.h"
-#include "destaquesintaxe.h"
+#include "syntaxhighlighter.h"
 #include "visaoobjetoswidget.h"
 #include "ui_seletorobjetowidget.h"
 
@@ -45,7 +45,7 @@ class SeletorObjetoWidget: public QWidget, public Ui::SeletorObjetoWidget {
 
    /* Armazena o destacador de sintaxe que pode ser usado
       para colorir o texto do seletor de acordo com a sintaxe SQL */
-   DestaqueSintaxe *destaque_txt;
+   SyntaxHighlighter *destaque_txt;
 
    //Armazena o objeto selecionado pelo usuário
    BaseObject *objeto;

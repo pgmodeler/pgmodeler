@@ -15,10 +15,10 @@ TipoPgSQLWidget::TipoPgSQLWidget(QWidget *parent, const QString &rotulo) : QWidg
 
   //Aloca um destacador de código fonte para o campo de formato do tipo
   destaque_fmt=NULL;
-  destaque_fmt=new DestaqueSintaxe(formato_txt, false);
+  destaque_fmt=new SyntaxHighlighter(formato_txt, false);
 
   //A configuração padrão carregada é a de destaque de código SQL
-  destaque_fmt->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  destaque_fmt->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                      GlobalAttributes::DIR_SEPARATOR +
                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                      GlobalAttributes::CONFIGURATION_EXT);

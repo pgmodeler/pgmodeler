@@ -34,8 +34,8 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
   connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode(int)));
   connect(sourcecode_twg, SIGNAL(currentChanged(int)), this, SLOT(setSourceCodeTab(int)));
 
-  hl_sqlcode=new DestaqueSintaxe(sqlcode_txt, false);
-  hl_xmlcode=new DestaqueSintaxe(xmlcode_txt, false);
+  hl_sqlcode=new SyntaxHighlighter(sqlcode_txt, false);
+  hl_xmlcode=new SyntaxHighlighter(xmlcode_txt, false);
  }
  catch(Exception &e)
  {
@@ -134,17 +134,17 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 
    comment_edt->setText(object->getTypeName());
 
-   if(!hl_sqlcode->configuracaoCarregada())
+   if(!hl_sqlcode->isConfigurationLoaded())
    {
-    hl_sqlcode->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+    hl_sqlcode->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                        GlobalAttributes::DIR_SEPARATOR +
                                        GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                        GlobalAttributes::CONFIGURATION_EXT);
    }
 
-   if(!hl_xmlcode->configuracaoCarregada())
+   if(!hl_xmlcode->isConfigurationLoaded())
    {
-    hl_xmlcode->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+    hl_xmlcode->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                        GlobalAttributes::DIR_SEPARATOR +
                                        GlobalAttributes::XML_HIGHLIGHT_CONF +
                                        GlobalAttributes::CONFIGURATION_EXT);

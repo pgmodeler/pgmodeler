@@ -36,7 +36,7 @@ class RelacionamentoWidget: public BaseObjectWidget, public Ui::RelacionamentoWi
    unsigned qtd_operacoes;
 
    //Destacadores de sintaxe para os campos de nome da tabela de origem e destino
-   DestaqueSintaxe *dest_tab_orig,
+   SyntaxHighlighter *dest_tab_orig,
                    *dest_tab_dest;
 
    //Tabela as quais armazenam os atributos e restrições do relacionamento

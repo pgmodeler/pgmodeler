@@ -31,7 +31,7 @@ class RegraWidget: public BaseObjectWidget, public Ui::RegraWidget {
 
  private:
   //Destacadores de sintaxe dos campos de expressão condicional e comando sql
-  DestaqueSintaxe *dest_exp_condicional,
+  SyntaxHighlighter *dest_exp_condicional,
                   *dest_comando;
 
   //Tabela que armazena os comandos sql da regra

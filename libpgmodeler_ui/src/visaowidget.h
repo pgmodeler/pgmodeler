@@ -53,7 +53,7 @@ class VisaoWidget: public BaseObjectWidget, public Ui::VisaoWidget {
   TabelaObjetosWidget *tab_referencias;
 
                    //Destacador de sintaxe usado no campo de expressão e de código fonte da visão
-   DestaqueSintaxe *destaque_expr,
+   SyntaxHighlighter *destaque_expr,
                    *destaque_codigo;
 
                   //Seletores de tabela e coluna relacionados   visao

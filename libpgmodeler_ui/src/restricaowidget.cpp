@@ -13,8 +13,8 @@ RestricaoWidget::RestricaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 
   //Cria um destacador de sintaxe no campo de expressão de checagem
   dest_exp_checagem=NULL;
-  dest_exp_checagem=new DestaqueSintaxe(exp_checagem_txt, false);
-  dest_exp_checagem->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  dest_exp_checagem=new SyntaxHighlighter(exp_checagem_txt, false);
+  dest_exp_checagem->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                       GlobalAttributes::DIR_SEPARATOR +
                                       GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                       GlobalAttributes::CONFIGURATION_EXT);

@@ -28,7 +28,7 @@
 #include <QtGui>
 #include "ui_tipopgsqlwidget.h"
 #include "pgsqltypes.h"
-#include "destaquesintaxe.h"
+#include "syntaxhighlighter.h"
 #include "databasemodel.h"
 
 class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
@@ -39,7 +39,7 @@ class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
    PgSQLType tipo;
 
    //Destacador de sintaxe usado para destacar o formato do tipo
-   DestaqueSintaxe *destaque_fmt;
+   SyntaxHighlighter *destaque_fmt;
 
  public:
    TipoPgSQLWidget(QWidget * parent = 0, const QString &rotulo="");

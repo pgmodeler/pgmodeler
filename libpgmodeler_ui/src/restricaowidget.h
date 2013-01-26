@@ -33,7 +33,7 @@ class RestricaoWidget: public BaseObjectWidget, public Ui::RestricaoWidget {
    QFrame *frame_info;
 
    //Destaque de sintaxe do campo de expressão de checagem
-   DestaqueSintaxe *dest_exp_checagem;
+   SyntaxHighlighter *dest_exp_checagem;
 
    //Tabelas de objetos para controlar colunas referenciadas na restrição
    TabelaObjetosWidget *tab_colunas,

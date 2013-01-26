@@ -17,7 +17,7 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FUNCTI
   connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
   //Aloca um destacador de código fonte para o campo de definição da função
-  destaque_codigo=new DestaqueSintaxe(codigofonte_txt, true);
+  destaque_codigo=new SyntaxHighlighter(codigofonte_txt, true);
 
   //Aloca o widget de configuração de tipo de retorno simples
   tipo_ret=new TipoPgSQLWidget(this);
@@ -412,7 +412,7 @@ void FuncaoWidget::selecionarLinguagem(void)
  {
   try
   {
-   destaque_codigo->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+   destaque_codigo->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                          GlobalAttributes::DIR_SEPARATOR +
                                          linguagem_cmb->currentText() +
                                          GlobalAttributes::HIGHLIGHT_FILE_SUF +
@@ -420,7 +420,7 @@ void FuncaoWidget::selecionarLinguagem(void)
   }
   catch(Exception &e)
   {
-   destaque_codigo->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+   destaque_codigo->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                          GlobalAttributes::DIR_SEPARATOR +
                                          GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                          GlobalAttributes::CONFIGURATION_EXT);

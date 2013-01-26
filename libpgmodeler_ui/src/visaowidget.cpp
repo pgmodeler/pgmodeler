@@ -9,15 +9,15 @@ VisaoWidget::VisaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
   //Cria um destacador de sintaxe no campo de expressão e código fonte
   destaque_expr=NULL;
-  destaque_expr=new DestaqueSintaxe(expressao_txt, false);
-  destaque_expr->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  destaque_expr=new SyntaxHighlighter(expressao_txt, false);
+  destaque_expr->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                      GlobalAttributes::DIR_SEPARATOR +
                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                      GlobalAttributes::CONFIGURATION_EXT);
 
   destaque_codigo=NULL;
-  destaque_codigo=new DestaqueSintaxe(codigo_txt, false);
-  destaque_codigo->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  destaque_codigo=new SyntaxHighlighter(codigo_txt, false);
+  destaque_codigo->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                      GlobalAttributes::DIR_SEPARATOR +
                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                      GlobalAttributes::CONFIGURATION_EXT);

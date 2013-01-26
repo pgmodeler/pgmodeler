@@ -11,8 +11,8 @@ FuncaoAgregacaoWidget::FuncaoAgregacaoWidget(QWidget *parent): BaseObjectWidget(
 
   //Cria um destacador de sintaxe no campo de condição inicial da função
   destaque_cond=NULL;
-  destaque_cond=new DestaqueSintaxe(cond_inicial_txt, false);
-  destaque_cond->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  destaque_cond=new SyntaxHighlighter(cond_inicial_txt, false);
+  destaque_cond->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                       GlobalAttributes::DIR_SEPARATOR +
                                       GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                       GlobalAttributes::CONFIGURATION_EXT);

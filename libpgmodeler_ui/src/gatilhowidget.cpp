@@ -12,8 +12,8 @@ GatilhoWidget::GatilhoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
   Ui_GatilhoWidget::setupUi(this);
 
   //Cria um destacador de sintaxe no campo de expressão de checagem
-  dest_exp_condicional=new DestaqueSintaxe(exp_condicional_txt, false);
-  dest_exp_condicional->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  dest_exp_condicional=new SyntaxHighlighter(exp_condicional_txt, false);
+  dest_exp_condicional->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                      GlobalAttributes::DIR_SEPARATOR +
                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                      GlobalAttributes::CONFIGURATION_EXT);

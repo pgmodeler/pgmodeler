@@ -24,10 +24,10 @@ SeletorObjetoWidget::SeletorObjetoWidget(ObjectType tipo_obj_seletor, bool inst_
   if(inst_destaque_txt)
   {
    //Aloca um destacador de código fonte
-   destaque_txt=new DestaqueSintaxe(nome_objeto_txt, false);
+   destaque_txt=new SyntaxHighlighter(nome_objeto_txt, false);
 
    //A configuração padrão carregada é a de destaque de código SQL
-   destaque_txt->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+   destaque_txt->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                       GlobalAttributes::DIR_SEPARATOR +
                                       GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                       GlobalAttributes::CONFIGURATION_EXT);

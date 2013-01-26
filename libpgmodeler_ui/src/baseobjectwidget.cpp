@@ -32,8 +32,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 
   selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
-  hl_parentname_txt=new DestaqueSintaxe(parent_obj_txt, false);
-  hl_parentname_txt->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  hl_parentname_txt=new SyntaxHighlighter(parent_obj_txt, false);
+  hl_parentname_txt->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                           GlobalAttributes::DIR_SEPARATOR +
                                           GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                           GlobalAttributes::CONFIGURATION_EXT);

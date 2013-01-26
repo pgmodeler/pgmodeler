@@ -42,7 +42,7 @@ class FuncaoAgregacaoWidget: public BaseObjectWidget, public Ui::FuncaoAgregacao
   TabelaObjetosWidget *tab_tipos_entrada;
 
                    //Destacador de sintaxe usado no campo de expressão condicional
-   DestaqueSintaxe *destaque_cond;
+   SyntaxHighlighter *destaque_cond;
 
                   //Seletores de funções e operador relacionao   função de agregação
    SeletorObjetoWidget *sel_op_ordenacao,

@@ -26,7 +26,7 @@
 #include "exception.h"
 #include "globalattributes.h"
 #include "ui_crashhandler.h"
-#include "destaquesintaxe.h"
+#include "syntaxhighlighter.h"
 #include "messagebox.h"
 
 #include <iostream>
@@ -38,7 +38,7 @@ class CrashHandler : public QDialog, Ui::CrashHandler
   Q_OBJECT
 
   //Syntax highlight for model text widget
-  DestaqueSintaxe *hl_model_txt;
+  SyntaxHighlighter *hl_model_txt;
 
   //Delimiter character which separates the sections of the compressed file
   const static char CHR_DELIMITER;

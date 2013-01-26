@@ -8,8 +8,8 @@ DominioWidget::DominioWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMA
 
   //Cria um destacador de sintaxe no campo de expressão de checagem do domínio
   destaque_expr=NULL;
-  destaque_expr=new DestaqueSintaxe(expr_checagem_txt, false);
-  destaque_expr->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  destaque_expr=new SyntaxHighlighter(expr_checagem_txt, false);
+  destaque_expr->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                      GlobalAttributes::DIR_SEPARATOR +
                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                      GlobalAttributes::CONFIGURATION_EXT);

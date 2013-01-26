@@ -27,7 +27,7 @@
 class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
  private:
   Q_OBJECT
-  DestaqueSintaxe *hl_sqlcode,
+  SyntaxHighlighter *hl_sqlcode,
                   *hl_xmlcode;
 
   void applyConfiguration(void){}

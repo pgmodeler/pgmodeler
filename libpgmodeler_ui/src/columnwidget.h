@@ -29,7 +29,7 @@ class ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
  private:
   Q_OBJECT
 
-  DestaqueSintaxe *hl_default_value;
+  SyntaxHighlighter *hl_default_value;
   TipoPgSQLWidget *data_type;
 
   void hideEvent(QHideEvent *event);

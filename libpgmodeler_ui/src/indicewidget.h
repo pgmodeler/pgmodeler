@@ -41,7 +41,7 @@ class IndiceWidget: public BaseObjectWidget, public Ui::IndiceWidget {
 
  private:
    //Destaque de sintaxe do campo de expressão condicional
-   DestaqueSintaxe *dest_exp_condicional,
+   SyntaxHighlighter *dest_exp_condicional,
                    *dest_exp_elemento;
 
    //Tabelas de objetos para controlar elementos do índice

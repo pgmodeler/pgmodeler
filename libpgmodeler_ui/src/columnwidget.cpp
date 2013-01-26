@@ -7,8 +7,8 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
   Ui_ColumnWidget::setupUi(this);
 
   hl_default_value=NULL;
-  hl_default_value=new DestaqueSintaxe(def_value_txt, false);
-  hl_default_value->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  hl_default_value=new SyntaxHighlighter(def_value_txt, false);
+  hl_default_value->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                       GlobalAttributes::DIR_SEPARATOR +
                                       GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                       GlobalAttributes::CONFIGURATION_EXT);

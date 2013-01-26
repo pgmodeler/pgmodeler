@@ -11,14 +11,14 @@ RegraWidget::RegraWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 
   /* Alocando os destacadores de sintaxe para o campo de expressão
      condicional e de comando sql */
-  dest_exp_condicional=new DestaqueSintaxe(exp_condicional_txt, false);
-  dest_exp_condicional->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  dest_exp_condicional=new SyntaxHighlighter(exp_condicional_txt, false);
+  dest_exp_condicional->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                       GlobalAttributes::DIR_SEPARATOR +
                                       GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                       GlobalAttributes::CONFIGURATION_EXT);
 
-  dest_comando=new DestaqueSintaxe(comando_txt, false);
-  dest_comando->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  dest_comando=new SyntaxHighlighter(comando_txt, false);
+  dest_comando->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                      GlobalAttributes::DIR_SEPARATOR +
                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                      GlobalAttributes::CONFIGURATION_EXT);

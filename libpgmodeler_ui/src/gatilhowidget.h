@@ -31,7 +31,7 @@ class GatilhoWidget: public BaseObjectWidget, public Ui::GatilhoWidget {
 
  private:
    //Destaque de sintaxe do campo de expressão condicional
-   DestaqueSintaxe *dest_exp_condicional;
+   SyntaxHighlighter *dest_exp_condicional;
 
    //Tabelas de objetos para controlar colunas e argumentos
    TabelaObjetosWidget *tab_colunas,

@@ -35,8 +35,8 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
  stack_txt->setPlainText(buf);
 
  //Installs a syntax highlighter on model_txt widget
- hl_model_txt=new DestaqueSintaxe(model_txt, false);
- hl_model_txt->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+ hl_model_txt=new SyntaxHighlighter(model_txt, false);
+ hl_model_txt->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                        GlobalAttributes::DIR_SEPARATOR +
                                        GlobalAttributes::XML_HIGHLIGHT_CONF +
                                        GlobalAttributes::CONFIGURATION_EXT);

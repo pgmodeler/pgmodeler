@@ -13,14 +13,14 @@ IndiceWidget::IndiceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
   Ui_IndiceWidget::setupUi(this);
 
   //Cria um destacador de sintaxe no campo de expressão de checagem
-  dest_exp_condicional=new DestaqueSintaxe(exp_condicional_txt, false);
-  dest_exp_condicional->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  dest_exp_condicional=new SyntaxHighlighter(exp_condicional_txt, false);
+  dest_exp_condicional->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                      GlobalAttributes::DIR_SEPARATOR +
                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                      GlobalAttributes::CONFIGURATION_EXT);
 
-  dest_exp_elemento=new DestaqueSintaxe(exp_elemento_txt, false);
-  dest_exp_elemento->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  dest_exp_elemento=new SyntaxHighlighter(exp_elemento_txt, false);
+  dest_exp_elemento->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                      GlobalAttributes::DIR_SEPARATOR +
                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                      GlobalAttributes::CONFIGURATION_EXT);

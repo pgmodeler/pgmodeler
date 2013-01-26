@@ -23,7 +23,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/visaoobjetoswidget.cpp \
            $$PWD/src/formbasico.cpp \
            $$PWD/src/sourcecodewidget.cpp \
-           $$PWD/src/destaquesintaxe.cpp \
+           $$PWD/src/syntaxhighlighter.cpp \
            $$PWD/src/databasewidget.cpp \
            $$PWD/src/esquemawidget.cpp \
            $$PWD/src/tabelaobjetoswidget.cpp \
@@ -75,7 +75,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/visaoobjetoswidget.h \
            $$PWD/src/formbasico.h \
            $$PWD/src/sourcecodewidget.h \
-           $$PWD/src/destaquesintaxe.h \
+           $$PWD/src/syntaxhighlighter.h \
            $$PWD/src/databasewidget.h \
            $$PWD/src/esquemawidget.h \
            $$PWD/src/tabelaobjetoswidget.h \

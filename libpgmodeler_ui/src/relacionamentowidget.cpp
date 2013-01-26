@@ -21,15 +21,15 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): BaseObjectWidget(pa
   //Alocando e configurando os destcadores de nomes das tabelas
   dest_tab_orig=NULL;
   qtd_operacoes=0;
-  dest_tab_orig=new DestaqueSintaxe(tabela_orig_txt, false);
-  dest_tab_orig->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  dest_tab_orig=new SyntaxHighlighter(tabela_orig_txt, false);
+  dest_tab_orig->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                      GlobalAttributes::DIR_SEPARATOR +
                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                      GlobalAttributes::CONFIGURATION_EXT);
 
   dest_tab_dest=NULL;
-  dest_tab_dest=new DestaqueSintaxe(tabela_dest_txt, false);
-  dest_tab_dest->carregarConfiguracao(GlobalAttributes::CONFIGURATIONS_DIR +
+  dest_tab_dest=new SyntaxHighlighter(tabela_dest_txt, false);
+  dest_tab_dest->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
                                      GlobalAttributes::DIR_SEPARATOR +
                                      GlobalAttributes::SQL_HIGHLIGHT_CONF +
                                      GlobalAttributes::CONFIGURATION_EXT);

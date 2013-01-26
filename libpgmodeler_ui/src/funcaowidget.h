@@ -33,7 +33,7 @@ class FuncaoWidget: public BaseObjectWidget, public Ui::FuncaoWidget  {
  private:
    /* Destaque de código-fonte usado para destacar o código da função
       definido pelo usuário */
-   DestaqueSintaxe *destaque_codigo;
+   SyntaxHighlighter *destaque_codigo;
 
    //Widget de tipo Pgsql usado para configurar o tipo de retorno da função
    TipoPgSQLWidget *tipo_ret;
