@@ -33,16 +33,16 @@ If an error is returned check the installation of PostgreSQL and libXML2. The co
 
 ```
 prefix=/usr
-exec_prefix=${prefix}
-libdir=${prefix}/lib
-includedir=${prefix}/include
+libdir=${prefix}/lib/postgresql/[VERSION]/lib
+includedir=${prefix}/include/postgresql
 
 Name: LibPQ
 Version: 5.0.0
 Description: Library PQ
 Requires:
-Libs: -L${libdir} -lpq
-Cflags: -I${includedir}/postgresql
+Libs: -L${libdir}/libpq.so -lpq
+Cflags: -I${includedir}
+
 ```
 
 To compile the pgModeler type (in the root folder of the source code):
