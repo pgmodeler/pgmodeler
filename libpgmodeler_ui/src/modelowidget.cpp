@@ -2617,3 +2617,7 @@ bool ModeloWidget::modeloModificado(void)
  return(modificado);
 }
 
+DatabaseModel *ModeloWidget::getModel(void)
+{
+ return(modelo);
+}

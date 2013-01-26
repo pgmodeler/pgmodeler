@@ -168,6 +168,9 @@ class ModeloWidget: public QWidget {
   //Retorna se o modelo foi modificado ou não
   bool modeloModificado(void);
 
+  //Returns the database model object
+  DatabaseModel *getModel(void);
+
  private slots:
   /* Os slots manipular*() gerenciam os sinais enviados pela cena e modelo para execução
      de operações adicionais como incluir objetos modificados na lista de operações, criar

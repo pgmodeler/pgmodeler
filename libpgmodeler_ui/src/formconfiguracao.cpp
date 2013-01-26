@@ -9,30 +9,32 @@ FormConfiguracao::FormConfiguracao(QWidget *parent, Qt::WindowFlags f) : QDialog
 
  setupUi(this);
 
- conf_geral=NULL;
- conf_aparencia=NULL;
- conf_conexoes=NULL;
-
  conf_geral=new GeneralConfigWidget(this);
  conf_aparencia=new AppearanceConfigWidget(this);
  conf_conexoes=new ConnectionsConfigWidget(this);
+ conf_plugins=new PluginsConfigWidget(this);
 
  layout=new QGridLayout;
  layout->setContentsMargins(2,2,2,2);
  layout->addWidget(conf_geral);
- geral_frm->setLayout(layout);
+ confs_stw->widget(WGT_CONF_GERAL)->setLayout(layout);
 
  layout=new QGridLayout;
  layout->setContentsMargins(2,2,2,2);
  layout->addWidget(conf_aparencia);
- aparencia_frm->setLayout(layout);
+ confs_stw->widget(WGT_CONF_APARENCIA)->setLayout(layout);
 
  layout=new QGridLayout;
  layout->setContentsMargins(2,2,2,2);
  layout->addWidget(conf_conexoes);
- conexoes_frm->setLayout(layout);
+ confs_stw->widget(WGT_CONF_CONEXOES)->setLayout(layout);
 
- connect(lista_ico_lst, SIGNAL(currentRowChanged(int)), stackedWidget, SLOT(setCurrentIndex(int)));
+ layout=new QGridLayout;
+ layout->setContentsMargins(2,2,2,2);
+ layout->addWidget(conf_plugins);
+ confs_stw->widget(WGT_CONF_PLUGINS)->setLayout(layout);
+
+ connect(lista_ico_lst, SIGNAL(currentRowChanged(int)), confs_stw, SLOT(setCurrentIndex(int)));
  connect(cancelar_btn, SIGNAL(clicked(void)), this, SLOT(close(void)));
  connect(aplicar_btn, SIGNAL(clicked(void)), this, SLOT(aplicarConfiguracao(void)));
  connect(padroes_btn, SIGNAL(clicked(void)), this, SLOT(restaurarPadroes(void)));
@@ -70,10 +72,14 @@ void FormConfiguracao::carregarConfiguracao(void)
   conf_geral->loadConfiguration();
   conf_aparencia->loadConfiguration();
   conf_conexoes->loadConfiguration();
+  conf_plugins->loadPlugins();
  }
  catch(Exception &e)
  {
-  throw Exception(ERR_CONFIG_NOT_LOADED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+  if(e.getErrorType()==ERR_PLUGINS_NOT_LOADED)
+   caixa_msg->show(e);
+  else
+   throw Exception(ERR_CONFIG_NOT_LOADED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
  }
 }
 
@@ -86,7 +92,7 @@ void FormConfiguracao::restaurarPadroes(void)
 
  if(caixa_msg->result()==QDialog::Accepted)
  {
-  switch(stackedWidget->currentIndex())
+  switch(confs_stw->currentIndex())
   {
    case WGT_CONF_GERAL:
     dynamic_cast<GeneralConfigWidget *>(this->obterWidgetConfiguracao(0))->restoreDefaults();
@@ -108,7 +114,7 @@ void FormConfiguracao::restaurarPadroes(void)
 
 BaseConfigWidget *FormConfiguracao::obterWidgetConfiguracao(unsigned idx)
 {
- if(idx >= static_cast<unsigned>(stackedWidget->count()))
+ if(idx >= static_cast<unsigned>(confs_stw->count()))
   return(NULL);
  else
  {
@@ -116,8 +122,10 @@ BaseConfigWidget *FormConfiguracao::obterWidgetConfiguracao(unsigned idx)
   {
    case WGT_CONF_GERAL: return(dynamic_cast<BaseConfigWidget *>(conf_geral)); break;
    case WGT_CONF_APARENCIA: return(dynamic_cast<BaseConfigWidget *>(conf_aparencia)); break;
-   default:
    case WGT_CONF_CONEXOES: return(dynamic_cast<BaseConfigWidget *>(conf_conexoes)); break;
+   default:
+    return(dynamic_cast<BaseConfigWidget *>(conf_plugins));
+   break;
   }
  }
 }

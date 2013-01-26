@@ -14,11 +14,42 @@ DummyPlugin::DummyPlugin(void)
                 QString("lang"));
 
  QCoreApplication::installTranslator(translator);
+
+ configurePluginInfo(getPluginTitle(),
+                     getPluginVersion(),
+                     getPluginAuthor(),
+                     getPluginDescription(),
+
+                     GlobalAttributes::PLUGINS_DIR +
+                     GlobalAttributes::DIR_SEPARATOR +
+                     QString("dummyplugin") +
+                     GlobalAttributes::DIR_SEPARATOR + "dummyplugin.png");
 }
 
-QString DummyPlugin::getPluginLabel(void)
+QString DummyPlugin::getPluginTitle(void)
 {
  return(trUtf8("Dummy Plugin"));
+}
+
+
+QString DummyPlugin::getPluginVersion(void)
+{
+ return("0.1");
+}
+
+QString DummyPlugin::getPluginAuthor(void)
+{
+ return("Raphael A. Silva");
+}
+
+QString DummyPlugin::getPluginDescription(void)
+{
+ return(trUtf8("A dummy plugin only to test the pgModeler plugin structure."));
+}
+
+void PgModelerPlugin::showPluginInfo(void)
+{
+ plugin_info_frm->show();
 }
 
 void DummyPlugin::executePlugin(ModeloWidget *)

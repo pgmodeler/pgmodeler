@@ -36,16 +36,38 @@
   Obs.: Plugins podem fazer uso de subdiretórios mas qualquer referência a estes devem ser feitas
         manualmente pelo criado do plugin.
 */
-class PgModelerPlugin {
+class PgModelerPlugin: public QObject {
+ private:
+  Q_OBJECT
+  FormBasico *plugin_info_frm;
+
+  QLabel *icon_lbl,
+         *title_lbl,
+         *author_lbl,
+         *version_lbl,
+         *description_lbl;
+
  public:
-  PgModelerPlugin(void) {}
-  virtual ~PgModelerPlugin(void) {}
+  PgModelerPlugin(void);
+  virtual ~PgModelerPlugin(void);
 
   //Método que executa o plugin
   virtual void executePlugin(ModeloWidget *modelo)=0;
 
   //Retorna o texto que é exibido na ação que executa o plugin
-  virtual QString getPluginLabel(void)=0;
+  virtual QString getPluginTitle(void)=0;
+
+  virtual QString getPluginAuthor(void)=0;
+
+  virtual QString getPluginVersion(void)=0;
+
+  virtual QString getPluginDescription(void)=0;
+
+  void configurePluginInfo(const QString &title, const QString &version, const QString &author,
+                           const QString &description, const QString &ico_filename);
+
+ public slots:
+  virtual void showPluginInfo(void);
 };
 
 /* Declara a classe PgModelerPlugin como interface, ou seja, a base para

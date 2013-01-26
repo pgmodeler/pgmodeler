@@ -73,12 +73,6 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
   //Armazena o intevalo de salvamento automático do modelo
   int interv_salvar;
 
-  //Mapa de plugins carregados
-  map<QString, PgModelerPlugin *> plugins;
-
-  //Armazena as ações criadas para cada plugin
-  vector<QAction *> acoes_plugins;
-
   //Sobrecarga do closeEvent(): Salva as configurações antes do encerramento do aplicativo
   void closeEvent(QCloseEvent *);
 
@@ -87,9 +81,6 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
 
   //Carrega os plugins no diretório plugins/
   void carregarPlugins(void);
-
-  //Destrói todos os plugins carregados
-  void destruirPlugins(void);
 
  public:
    FormPrincipal(QWidget *parent = 0, Qt::WindowFlags flags = 0);

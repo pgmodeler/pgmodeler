@@ -171,36 +171,25 @@
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <property name="margin">
-       <number>2</number>
-      </property>
-      <property name="spacing">
-       <number>2</number>
-      </property>
       <item row="0" column="0">
        <widget class="QListWidget" name="lista_ico_lst">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="minimumSize">
          <size>
-          <width>100</width>
+          <width>140</width>
           <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>100</width>
+          <width>140</width>
           <height>16777215</height>
          </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>9</pointsize>
-         </font>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -214,6 +203,9 @@
         <property name="autoScroll">
          <bool>false</bool>
         </property>
+        <property name="autoScrollMargin">
+         <number>16</number>
+        </property>
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>
@@ -223,8 +215,14 @@
         <property name="dragDropMode">
          <enum>QAbstractItemView::NoDragDrop</enum>
         </property>
+        <property name="defaultDropAction">
+         <enum>Qt::IgnoreAction</enum>
+        </property>
         <property name="alternatingRowColors">
          <bool>false</bool>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectItems</enum>
         </property>
         <property name="iconSize">
          <size>
@@ -236,7 +234,7 @@
          <enum>Qt::ElideLeft</enum>
         </property>
         <property name="movement">
-         <enum>QListView::Static</enum>
+         <enum>QListView::Snap</enum>
         </property>
         <property name="flow">
          <enum>QListView::TopToBottom</enum>
@@ -245,16 +243,22 @@
          <bool>false</bool>
         </property>
         <property name="resizeMode">
-         <enum>QListView::Fixed</enum>
+         <enum>QListView::Adjust</enum>
         </property>
         <property name="layoutMode">
          <enum>QListView::SinglePass</enum>
         </property>
         <property name="spacing">
-         <number>8</number>
+         <number>5</number>
+        </property>
+        <property name="gridSize">
+         <size>
+          <width>0</width>
+          <height>45</height>
+         </size>
         </property>
         <property name="viewMode">
-         <enum>QListView::IconMode</enum>
+         <enum>QListView::ListMode</enum>
         </property>
         <property name="modelColumn">
          <number>0</number>
@@ -279,7 +283,7 @@
           <string>General</string>
          </property>
          <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+          <set>AlignLeft|AlignVCenter</set>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -294,7 +298,7 @@
           <string>Style</string>
          </property>
          <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+          <set>AlignLeft|AlignVCenter</set>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -309,7 +313,7 @@
           <string>Connetions</string>
          </property>
          <property name="textAlignment">
-          <set>AlignHCenter|AlignVCenter|AlignCenter</set>
+          <set>AlignLeft|AlignVCenter</set>
          </property>
          <property name="icon">
           <iconset resource="../res/resources.qrc">
@@ -319,10 +323,25 @@
           <set>ItemIsSelectable|ItemIsEnabled</set>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Plug-ins</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignLeft|AlignVCenter</set>
+         </property>
+         <property name="icon">
+          <iconset resource="../res/resources.qrc">
+           <normaloff>:/icones/icones/plugins.png</normaloff>:/icones/icones/plugins.png</iconset>
+         </property>
+         <property name="flags">
+          <set>ItemIsSelectable|ItemIsEnabled</set>
+         </property>
+        </item>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QStackedWidget" name="stackedWidget">
+       <widget class="QStackedWidget" name="confs_stw">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -348,71 +367,21 @@
          <number>0</number>
         </property>
         <widget class="QWidget" name="geral_pg">
-         <layout class="QGridLayout" name="gridLayout_2">
-          <property name="margin">
-           <number>1</number>
-          </property>
-          <item row="1" column="0">
-           <widget class="QFrame" name="geral_frm">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>420</width>
-              <height>250</height>
-             </size>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::Box</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Sunken</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
         </widget>
-        <widget class="QWidget" name="aparencia_pg">
-         <layout class="QGridLayout" name="gridLayout_3">
-          <property name="margin">
-           <number>1</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="QFrame" name="aparencia_frm">
-            <property name="frameShape">
-             <enum>QFrame::Box</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Sunken</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="conexoes_pg">
-         <layout class="QGridLayout" name="gridLayout_4">
-          <property name="margin">
-           <number>1</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="QFrame" name="conexoes_frm">
-            <property name="frameShape">
-             <enum>QFrame::Box</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Sunken</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+        <widget class="QWidget" name="aparencia_pg"/>
+        <widget class="QWidget" name="conexoes_pg"/>
+        <widget class="QWidget" name="plugins_pg"/>
        </widget>
       </item>
      </layout>
+     <zorder>lista_ico_lst</zorder>
+     <zorder>confs_stw</zorder>
     </widget>
    </item>
   </layout>

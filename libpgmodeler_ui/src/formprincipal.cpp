@@ -85,6 +85,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  QString tipo;
  QStringList arq_sessao_ant;
  BaseConfigWidget *conf_wgt=NULL;
+ PluginsConfigWidget *conf_plugins_wgt=NULL;
  ObjectType tipos[27]={
           BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
           OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_INDEX, OBJ_CONSTRAINT,
@@ -98,7 +99,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  setupUi(this);
 
  //Alocando os formulários globais
- caixa_msg=new MessageBox(this, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
+ caixa_msg=new MessageBox(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 
  try
  {
@@ -108,7 +109,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
    dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
   fsobre=new FormSobre;
-  fconfiguracao=new FormConfiguracao(this);
+  fconfiguracao=new FormConfiguracao(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
   fexportacao=new FormExportacao(this);
   //selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
@@ -256,20 +257,13 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
  this->addDockWidget(Qt::RightDockWidgetArea, visao_objs);
  this->addDockWidget(Qt::RightDockWidgetArea, lista_oper);
 
- //Faz o carregamento dos plugins
- try
- {
-  this->carregarPlugins();
- }
- catch(Exception &e)
- {
-  caixa_msg->show(e);
- }
-
  //Faz o carregamento das configurações
  try
  {
   fconfiguracao->carregarConfiguracao();
+
+  conf_plugins_wgt=dynamic_cast<PluginsConfigWidget *>(fconfiguracao->obterWidgetConfiguracao(FormConfiguracao::WGT_CONF_PLUGINS));
+  conf_plugins_wgt->installPluginsActions(plugins_tb, menuPlugins, this, SLOT(executarPlugin(void)));
 
   areas_dock[ParsersAttributes::LEFT]=Qt::LeftDockWidgetArea;
   areas_dock[ParsersAttributes::RIGHT]=Qt::RightDockWidgetArea;
@@ -289,7 +283,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
   toolbars[ParsersAttributes::MODEL_TOOLBAR]=modelo_tb;
 
   //Aplicando as configurações carregadas
-  conf_wgt=fconfiguracao->obterWidgetConfiguracao(0);
+  conf_wgt=fconfiguracao->obterWidgetConfiguracao(FormConfiguracao::WGT_CONF_GERAL);
   confs=conf_wgt->getConfigurationParams();
 
   itr=confs.begin();
@@ -315,7 +309,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
            tipo==ParsersAttributes::PLUGINS_TOOLBAR)
    {
     if(toolbars[tipo]==plugins_tb)
-     toolbars[tipo]->setVisible(atribs[ParsersAttributes::VISIBLE]==ParsersAttributes::_TRUE_ && !plugins.empty());
+     toolbars[tipo]->setVisible(atribs[ParsersAttributes::VISIBLE]==ParsersAttributes::_TRUE_ && !plugins_tb->actions().isEmpty());
     else
      toolbars[tipo]->setVisible(atribs[ParsersAttributes::VISIBLE]==ParsersAttributes::_TRUE_);
     this->addToolBar(areas_toolbar[atribs[ParsersAttributes::POSITION]], toolbars[tipo]);
@@ -402,9 +396,6 @@ FormPrincipal::~FormPrincipal(void)
  //Exclui todos os arquivos temporários
  frestmodelo->excluirModelosTemporarios();
 
- //Destrói os plugins carregados
- this->destruirPlugins();
-
  //Desalocando os formulários globais
  delete(icone_op);
  delete(nome_op);
@@ -421,13 +412,13 @@ void FormPrincipal::showEvent(QShowEvent *)
     no método carrgarPlugins() mas a barra ficava visível enquanto o
     splash screen estava ativo, então, a inserção das ações foi movida
     para o evento Show da janela principal */
- vector<QAction *>::iterator itr=acoes_plugins.begin();
- while(itr!=acoes_plugins.end())
- {
-  plugins_tb->addAction(*itr);
-  menuPlugins->addAction(*itr);
-  itr++;
- }
+ //vector<QAction *>::iterator itr=acoes_plugins.begin();
+ //while(itr!=acoes_plugins.end())
+ //{
+ // plugins_tb->addAction(*itr);
+ // menuPlugins->addAction(*itr);
+ // itr++;
+ //}
 
  //Caso não haja nenhum modelo pré-carregado (sessão restaurada) adiciona um novo
  //if(!modelo_atual)
@@ -1173,124 +1164,19 @@ void FormPrincipal::__atualizarDockWidgets(void)
  visao_objs->atualizarVisaoObjetos();
 }
 
-void FormPrincipal::carregarPlugins(void)
-{
- vector<Exception> vet_erros;
- QString lib, nome_plugin,
-         dir_plugins=GlobalAttributes::PLUGINS_DIR +
-                     GlobalAttributes::DIR_SEPARATOR;
- QPluginLoader pl;
- QStringList lista_dirs;
- PgModelerPlugin *plugin=NULL;
- QAction *acao_plugin=NULL;
- QPixmap ico_acao;
-
- //O QPluginLoader deve resolver todos os símbolos da biblioteca
- pl.setLoadHints(QLibrary::ResolveAllSymbolsHint);
-
- if(GlobalAttributes::PLUGINS_DIR.isEmpty())
-  dir_plugins="." + GlobalAttributes::DIR_SEPARATOR;
-
- /* Configura uma instância de QDir para manipular as entradas no diretório raiz
-    de plugins. O pgModeler obterá somente diretórios, caso o usuário crie um plugin
-    e não o coloque em uma pasta o pgModeler ignora tal arquivo */
- lista_dirs=QDir(dir_plugins, "*", QDir::Name, QDir::AllDirs | QDir::NoDotAndDotDot).entryList();
-
- while(!lista_dirs.isEmpty())
- {
-  //Armazena o nome do plugin
-  nome_plugin=lista_dirs.front();
-
-  /* Monta o caminho básico para a biblioteca.
-     O pgModeler configura o caminho da seguinte forma:
-
-     [DIR. RAIZ PLUGINS]/[NOME PLUGIN]/lib[NOME PLUGIN].[SUFIXO] */
-  //Resolve do o sufixo da biblioteca em tempo de compilação
-  #ifdef Q_OS_WIN
-   lib=dir_plugins + nome_plugin +
-       GlobalAttributes::DIR_SEPARATOR  +
-       nome_plugin + QString(".dll"); //Sufixo em Windows
-  #else
-    #ifdef Q_OS_MAC
-     lib=dir_plugins + nome_plugin +
-         GlobalAttributes::DIR_SEPARATOR  +
-         QString("lib") + nome_plugin + QString(".dylib"); //Sufixo em Mac
-    #else
-     lib=dir_plugins + nome_plugin +
-         GlobalAttributes::DIR_SEPARATOR  +
-         QString("lib") + nome_plugin + QString(".so"); //Sufixo em Unix/Linux
-    #endif
-  #endif
-
-  //Carrega a biblioteca
-  pl.setFileName(lib);
-  if(pl.load())
-  {
-   //Caso carregada com sucesso, insere uma instância do plugin no vetor de plugins
-   plugin=qobject_cast<PgModelerPlugin *>(pl.instance());
-   plugins[nome_plugin]=plugin;
-
-   //Cria a ação que é usada para disparar o plugin
-   acao_plugin=new QAction(this);
-   acao_plugin->setText(plugin->getPluginLabel());
-
-   /* O nome da ação é setado como o nome do plugin para que este possa ser
-      referenciado no mapa de plugins quando o método FormPrincipal::executarPlugin()
-      for executado */
-   acao_plugin->setName(nome_plugin.toStdString().c_str());
-
-   ico_acao.load(dir_plugins + nome_plugin +
-                 GlobalAttributes::DIR_SEPARATOR  +
-                 nome_plugin + QString(".png"));
-   acao_plugin->setIcon(ico_acao);
-
-   //Conecta a ação ao método do form principal que executa o plugin
-   connect(acao_plugin, SIGNAL(triggered(void)), this, SLOT(executarPlugin(void)));
-
-   //Adiciona a ação no vetor de ações para que estas seja inseridas na toolbar no evento showEvent()
-   acoes_plugins.push_back(acao_plugin);
-  }
-  else
-  {
-   //Caso o plugin não foi carregado, armazena o erro para posterior exibição
-   vet_erros.push_back(Exception(Exception::getErrorMessage(ERR_PLUGIN_NOT_LOADED)
-                               .arg(QString::fromUtf8(lista_dirs.front()))
-                               .arg(QString::fromUtf8(lib))
-                               .arg(pl.errorString()),
-                               ERR_PLUGIN_NOT_LOADED, __PRETTY_FUNCTION__,__FILE__,__LINE__));
-  }
-  lista_dirs.pop_front();
- }
-
- //Caso algum erro foi disparado no carregamento, redireciona o erro
- if(!vet_erros.empty())
-  throw Exception(ERR_PLUGINS_NOT_LOADED,__PRETTY_FUNCTION__,__FILE__,__LINE__, vet_erros);
-}
-
-void FormPrincipal::destruirPlugins(void)
-{
- map<QString, PgModelerPlugin *>::iterator itr;
-
- //Varre o mapa de plugins destruindo cada instância (itr->second)
- itr=plugins.begin();
- while(itr!=plugins.end())
- {
-  delete(itr->second);
-  itr->second=NULL;
-  itr++;
- }
-
- plugins.clear();
-}
-
 void FormPrincipal::executarPlugin(void)
 {
  QAction *acao=dynamic_cast<QAction *>(sender());
 
  /* Um plugin só será executado caso um modelo esteja aberto
     e ação tenha o nome de um plugin registrado  */
- if(modelo_atual && acao && plugins.count(acao->name())==1)
-  plugins[acao->name()]->executePlugin(modelo_atual);
+ if(modelo_atual && acao)
+ {
+  PgModelerPlugin *plugin=reinterpret_cast<PgModelerPlugin *>(acao->data().value<void *>());
+
+  if(plugin)
+   plugin->executePlugin(modelo_atual);
+ }
 }
 
 void FormPrincipal::salvarModeloTemporario(void)

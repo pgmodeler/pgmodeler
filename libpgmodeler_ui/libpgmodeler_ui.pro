@@ -62,7 +62,9 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/formexportacao.cpp \
            $$PWD/src/visaogeralwidget.cpp \
            $$PWD/src/formrestauracaomodelo.cpp \
-           $$PWD/src/quickrenamewidget.cpp
+           $$PWD/src/quickrenamewidget.cpp \
+           $$PWD/src/pgmodelerplugin.cpp \
+           $$PWD/src/pluginsconfigwidget.cpp
 
 
 HEADERS += $$PWD/src/formprincipal.h \
@@ -115,7 +117,8 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/pgmodelerplugin.h \
            $$PWD/src/visaogeralwidget.h \
            $$PWD/src/formrestauracaomodelo.h \
-           $$PWD/src/quickrenamewidget.h
+           $$PWD/src/quickrenamewidget.h \
+           $$PWD/src/pluginsconfigwidget.h
 
 FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/formsobre.ui \
@@ -162,4 +165,5 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/connectionsconfigwidget.ui \
          $$PWD/ui/visaogeralwidget.ui \
          $$PWD/ui/formrestauracaomodelo.ui \
-         $$PWD/ui/quickrenamewidget.ui
+         $$PWD/ui/quickrenamewidget.ui \
+         $$PWD/ui/pluginsconfigwidget.ui
