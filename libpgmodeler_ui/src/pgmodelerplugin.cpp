@@ -11,7 +11,7 @@ PgModelerPlugin::PgModelerPlugin(void)
  plugin_info_frm->definirBotoes(MessageBox::OK_BUTTON);
  plugin_info_frm->connect(plugin_info_frm->aplicar_ok_btn, SIGNAL(clicked(void)), plugin_info_frm, SLOT(close(void)));
 
- gridLayout=new QGridLayout(plugin_info_frm);
+ gridLayout=new QGridLayout;
 
  widget=new QWidget(plugin_info_frm);
  plugin_info_frm->widgetgeral_wgt->insertWidget(0, widget);

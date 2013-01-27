@@ -63,10 +63,10 @@ class PgModelerPlugin {
 
   virtual QString getPluginDescription(void)=0;
 
+  virtual void showPluginInfo(void) = 0;
+
   void configurePluginInfo(const QString &title, const QString &version, const QString &author,
                            const QString &description, const QString &ico_filename);
-
-  virtual void showPluginInfo(void) = 0;
 };
 
 /* Declara a classe PgModelerPlugin como interface, ou seja, a base para
