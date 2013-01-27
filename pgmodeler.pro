@@ -118,7 +118,7 @@ LIBS = $$XML_LIB $$PGSQL_LIB
 pgmodeler.path = $$PWD/build/
 pgmodeler.files = samples schemas lang conf README.md COMPILING.md PLUGINS.md CHANGELOG.md LICENSE libpgmodeler_ui/res/imagens/pgmodeler_logo.png
 
-!macx & unix {
+!macx & !windows {
  pgmodeler.files += start-pgmodeler.sh
 }
 

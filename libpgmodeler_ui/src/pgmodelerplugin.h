@@ -36,11 +36,11 @@
   Obs.: Plugins podem fazer uso de subdiretórios mas qualquer referência a estes devem ser feitas
         manualmente pelo criado do plugin.
 */
-class PgModelerPlugin: public QObject {
- private:
-  Q_OBJECT
+class PgModelerPlugin {
+ protected:
   FormBasico *plugin_info_frm;
 
+ private:
   QLabel *icon_lbl,
          *title_lbl,
          *author_lbl,
@@ -66,8 +66,7 @@ class PgModelerPlugin: public QObject {
   void configurePluginInfo(const QString &title, const QString &version, const QString &author,
                            const QString &description, const QString &ico_filename);
 
- public slots:
-  virtual void showPluginInfo(void);
+  virtual void showPluginInfo(void) = 0;
 };
 
 /* Declara a classe PgModelerPlugin como interface, ou seja, a base para

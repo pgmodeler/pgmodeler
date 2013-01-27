@@ -11,15 +11,12 @@ PGMODELER_PLUGIN_DIR=$$PGMODELER_SRC_DIR/build/plugins
 include($$PGMODELER_SRC_DIR/pgmodeler.pro)
 
 CONFIG += plugin qt warn_on uitools uic4
-QT += core gui #qt3support
+QT += core gui
 TEMPLATE = lib
 TARGET = dummyplugin
 TRANSLATIONS += $$PWD/lang/$$TARGET.en_US.ts
 
 CODECFORTR = UTF8
-
-#unix: CONFIG += link_pkgconfig
-#unix: PKGCONFIG += libxml-2.0 libpq
 
 DEPENDPATH = ". res src ui moc obj"
 MOC_DIR = moc

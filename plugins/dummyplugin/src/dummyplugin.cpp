@@ -47,7 +47,7 @@ QString DummyPlugin::getPluginDescription(void)
  return(trUtf8("A dummy plugin only to test the pgModeler plugin structure."));
 }
 
-void PgModelerPlugin::showPluginInfo(void)
+void DummyPlugin::showPluginInfo(void)
 {
  plugin_info_frm->show();
 }

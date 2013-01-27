@@ -23,7 +23,7 @@
 
 #include "pgmodelerplugin.h"
 
-class DummyPlugin: public PgModelerPlugin {
+class DummyPlugin: public QObject, public PgModelerPlugin {
  private:
   Q_OBJECT
   //Declares the interface which is used to implement the plugin
@@ -37,6 +37,9 @@ class DummyPlugin: public PgModelerPlugin {
   QString getPluginAuthor(void);
   QString getPluginDescription(void);
   void executePlugin(ModeloWidget *);
+
+ public slots:
+  void showPluginInfo(void);
 };
 
 #endif
