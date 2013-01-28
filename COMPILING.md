@@ -1,5 +1,5 @@
-PostgreSQL Database Modeler - pgModeler
----------------------------------------
+Compiling
+---------
 
 This document describes a simple way how to compile and run the pgModeler. Please read it carefully so that no step is forgotten and compromising the entire process.
 
@@ -12,8 +12,8 @@ Compiling Requirements
 * libpq library (www.postgresql.org)
 * pgModeler source (github.com/pgmodeler/pgmodeler/tags)
 
-Compiling
-----------
+The process
+-----------
 
 * Note to Unix: The compilation script make use of 'pkgconfig' tool to find the correct path to PostgreSQL and libXML2 include/libs so make sure that executing the commands below will produce a similar result as follow:
 

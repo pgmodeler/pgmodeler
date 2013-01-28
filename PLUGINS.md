@@ -1,5 +1,5 @@
-Plug-in How-to
----------------------------------------
+Plug-ins
+--------
 
 This document describes a simple way to create third party plugins on pgModeler. ATTENTION: Any plugin must be compiled using the most current source and libs of pgModeler.
 
@@ -10,7 +10,7 @@ To be used as a plugin your class must:
 
 * Inherit the class "PgModelerPlugin"
 * Use the macro Q_INTERFACES in its declaration.
-* Overloadthe methods PgModelerPlugin::getPluginLabel(void) and PgModelerPlugin::executePlugin(ModeloWidget *model)
+* Overload all pure virtual methods from PgModelerPlugin
 
 Plugin directory structure
 --------------------------
