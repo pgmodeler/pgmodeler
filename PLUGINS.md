@@ -1,4 +1,4 @@
-PostgreSQL Database Modeler - pgModeler
+Plug-in How-to
 ---------------------------------------
 
 This document describes a simple way to create third party plugins on pgModeler. ATTENTION: Any plugin must be compiled using the most current source and libs of pgModeler.

@@ -1,5 +1,5 @@
-PostgreSQL Database Modeler - pgModeler
----------------------------------------
+Introduction
+------------
 
 PostgreSQL Database Modeler, or simply, pgModeler is an open source tool for modeling databases that merges the classical concepts of entity-relationship diagrams with specific features that only PostgreSQL implements. The pgModeler translates the models created by the user to SQL code and apply them onto database clusters from version 8.0 to 9.1.
 

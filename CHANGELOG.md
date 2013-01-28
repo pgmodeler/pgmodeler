@@ -1,5 +1,5 @@
-Complete pgModeler Change Log
------------------------------
+Changelog
+---------
 
 [ v0.4.0-beta ]
 
