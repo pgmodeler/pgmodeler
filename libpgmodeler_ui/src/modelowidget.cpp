@@ -643,6 +643,10 @@ void ModeloWidget::manipularModificacaoObjeto(BaseGraphicObject *objeto)
  //Adciona o objeto modificado   lista de operações
  lista_op->registerObject(objeto, Operation::OBJECT_MODIFIED);
  this->modificado=true;
+
+ if(objeto->getSchema())
+  dynamic_cast<Schema *>(objeto->getSchema())->setModified(true);
+
  //Emite um sinal indicando que um objeto foi modificado
  emit s_objetoModificado();
 }
