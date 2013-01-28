@@ -29,71 +29,71 @@
 
 class OperatorClassElement {
  private:
-  /* Type of the operator class element.
+  /** Type of the operator class element.
      This can have 3 possible values:
      0 -> OPERATOR_ELEM
      1 -> FUNCTION_ELEM
      2 -> STORAGE_ELEM */
   unsigned element_type;
 
-  //Function used by the element (only for type FUNCTION_ELEM)
+  /// Function used by the element (only for type FUNCTION_ELEM)
   Function *function;
 
-  //Operator used by the element (only for type OPERATOR_ELEM)
+  /// Operator used by the element (only for type OPERATOR_ELEM)
   Operator *_operator;
 
-  /* PostgreSQL type used in the indexing method of operator class.
+  /** PostgreSQL type used in the indexing method of operator class.
      (only for type STORAGE_ELEM) */
   PgSQLType storage;
 
-  //Inicates that the rechecking of retrieved lines is mandatory (only for OPERATOR_ELEM)
+  /// Inicates that the rechecking of retrieved lines is mandatory (only for OPERATOR_ELEM)
   bool recheck;
 
-  /* Strategy number (or support number for functions). This attribute
+  /** Strategy number (or support number for functions). This attribute
      must have a value greater than 0 (only for OPERATOR_ELEM and FUNCTION_ELEM) */
   unsigned strategy_number;
 
  public:
-  //Constants used to reference the element types
+  /// Constants used to reference the element types
   static const unsigned OPERATOR_ELEM=0,
                         FUNCTION_ELEM=1,
                         STORAGE_ELEM=2;
 
   OperatorClassElement(void);
 
-  //Defines the element as a function clause
+  /// Defines the element as a function clause
   void setFunction(Function *func, unsigned stg_number);
 
-  //Defines the element as an operator clause
+  /// Defines the element as an operator clause
   void setOperator(Operator *oper, unsigned stg_number, bool recheck);
 
-  //Defines the element as a storage clause
+  /// Defines the element as a storage clause
   void setStorage(PgSQLType storage);
 
-  //Returns the element type
+  /// Returns the element type
   unsigned getElementType(void);
 
-  /* Returns the current assigned function.
+  /** Returns the current assigned function.
      This method returns NULL when the element is not an FUNCTION_ELEM */
   Function *getFunction(void);
 
-  /* Returns the current assigned operator.
+  /** Returns the current assigned operator.
      This method returns NULL when the element is not an OPERATOR_ELEM */
   Operator *getOperator(void);
 
-  //Storage type of the element
+  /// Storage type of the element
   PgSQLType getStorage(void);
 
-  //Returns whether the elements is to be rechecked or not
+  /// Returns whether the elements is to be rechecked or not
   bool isRecheck(void);
 
-  //Returns the strategy (support) number of the element
+  /// Returns the strategy (support) number of the element
   unsigned getStrategyNumber(void);
 
-  //Returns the SQL / XML code definition for the element
+  /// Returns the SQL / XML code definition for the element
   QString getCodeDefinition(unsigned def_type);
 
-  //Operator to compare two elements, returns true when all atributes has the same configuration
+  /// Operator to compare two elements, returns true when all atributes has the same configuration
   bool operator == (OperatorClassElement &elem);
 };
 

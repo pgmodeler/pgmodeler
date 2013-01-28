@@ -27,54 +27,54 @@
 
 class Domain: public BaseObject{
  private:
-  //Constraint name used by the domain
+  /// Constraint name used by the domain
   QString constraint_name,
-         //Validation expression used by domain (check) constraint
+         /// Validation expression used by domain (check) constraint
          expression,
-         //Domain default data type value
+         /// Domain default data type value
          default_value;
 
-  //Indicates that the domains accepts null values or not
+  /// Indicates that the domains accepts null values or not
   bool not_null;
 
-  //Domain data type
+  /// Domain data type
   PgSQLType type;
 
  public:
   Domain(void);
   ~Domain(void);
 
-  //Sets the domain's constraint name
+  /// Sets the domain's constraint name
   void setConstraintName(const QString &constr_name);
 
-  //Sets the check expression of the domain
+  /// Sets the check expression of the domain
   void setExpression(const QString &expr);
 
-  //Sets the default value of the domain
+  /// Sets the default value of the domain
   void setDefaultValue(const QString &default_val);
 
-  //Defines whether the domain accepts null values or not
+  /// Defines whether the domain accepts null values or not
   void setNotNull(bool value);
 
-  //Defines the domain data type
+  /// Defines the domain data type
   void setType(PgSQLType type);
 
-  /* Overloaded BaseObject name definition method.
+  /** Overloaded BaseObject name definition method.
      Updates the reference of the domain as a PostgreSQL data type */
   void setName(const QString &name);
 
-  /* Overloaded BaseObject schema definition method.
+  /** Overloaded BaseObject schema definition method.
      Updates the reference of the domain as a PostgreSQL data type */
   void setSchema(BaseObject *schema);
 
-  //Methods to access domain's attributes
+  /// Methods to access domain's attributes
   QString getConstraintName(void);
   QString getExpression(void);
   QString getDefaultValue(void);
   bool isNotNull(void);
   PgSQLType getType(void);
 
-  //Returns the SQL / XML code definition for the domain
+  /// Returns the SQL / XML code definition for the domain
   QString getCodeDefinition(unsigned tipo_def);
 
   void operator = (Domain &domain);

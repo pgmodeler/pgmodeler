@@ -30,11 +30,11 @@ class RegraWidget: public BaseObjectWidget, public Ui::RegraWidget {
  Q_OBJECT
 
  private:
-  //Destacadores de sintaxe dos campos de expressão condicional e comando sql
+  /// Destacadores de sintaxe dos campos de expressão condicional e comando sql
   SyntaxHighlighter *dest_exp_condicional,
                   *dest_comando;
 
-  //Tabela que armazena os comandos sql da regra
+  /// Tabela que armazena os comandos sql da regra
   TabelaObjetosWidget *tab_comandos;
 
  public:
@@ -43,9 +43,9 @@ class RegraWidget: public BaseObjectWidget, public Ui::RegraWidget {
 
  private slots:
   void hideEvent(QHideEvent *);
-  //Exibe o comando digitado no campo de comando sql na tabela, na linha idx_lin
+  /// Exibe o comando digitado no campo de comando sql na tabela, na linha idx_lin
   void manipularComando(int idx_lin);
-  //Exibe o dado da linha da tabela (idx_lin) no campo de comando sql
+  /// Exibe o dado da linha da tabela (idx_lin) no campo de comando sql
   void editarComando(int idx_lin);
 
  public slots:

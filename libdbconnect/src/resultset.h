@@ -29,7 +29,7 @@
 
 class ResultSet {
  private:
-  /* Indicates whether the result was copied, this flag is used
+  /** Indicates whether the result was copied, this flag is used
      to avoid segmentation faults when calling the destructor.
      As the pointer 'sql_result' is copied
      to other elements if it is destroyed can cause
@@ -40,22 +40,22 @@ class ResultSet {
   void destroyResultSet(void);
 
  protected:
-  //Stores the current tuple index, just for navigation
+  /// Stores the current tuple index, just for navigation
   int current_tuple;
 
-  /* Indicates that the result was generated from a command
+  /** Indicates that the result was generated from a command
      which generates no tuples. Example: INSERT, DELETE, CREATE .. */
   bool empty_result;
 
-  //Stores the result object of a SQL command
+  /// Stores the result object of a SQL command
   PGresult *sql_result;
 
-  /* This class may be constructed from a
+  /** This class may be constructed from a
      result of SQL command generated in DBConnection class */
   ResultSet(PGresult *sql_result);
 
  public:
-   //Constants used to navigate through the resultset
+   /// Constants used to navigate through the resultset
    static const unsigned FIRST_TUPLE=0,
                          LAST_TUPLE=1,
                          PREVIOUS_TUPLE=2,
@@ -64,39 +64,39 @@ class ResultSet {
    ResultSet(void);
   ~ResultSet(void);
 
-  //Returns the value of a column (searching by name or index)
+  /// Returns the value of a column (searching by name or index)
   char *getColumnValue(const QString &column_name);
   char *getColumnValue(int column_idx);
 
-  //Returns the data allocated size of a column (searching by name or index)
+  /// Returns the data allocated size of a column (searching by name or index)
   int getColumnSize(const QString &column_name);
   int getColumnSize(int column_idx);
 
-  /* Returns the number of rows affected by the command that generated
+  /** Returns the number of rows affected by the command that generated
      the result if it is an INSERT, DELETE, UPDATE or the number of
      tuples returned if the command was a SELECT */
   int getTupleCount(void);
 
-  //Returns the column count present in one tuple
+  /// Returns the column count present in one tuple
   int getColumnCount(void);
 
-  //Returns the name of the column specified by it's index
+  /// Returns the name of the column specified by it's index
   QString getColumnName(int column_idx);
 
-  //Returns the index of the column specified by it's name
+  /// Returns the index of the column specified by it's name
   int getColumnIndex(const QString &column_name);
 
-  //Returns the current tuple where the navigation is
+  /// Returns the current tuple where the navigation is
   int getCurrentTuple(void);
 
-  //Informs if the column is in binary format
+  /// Informs if the column is in binary format
   bool isColumnBinaryFormat(const QString &column_name);
   bool isColumnBinaryFormat(int column_idx);
 
-  //Access on tuple on result set via navigation constants
+  /// Access on tuple on result set via navigation constants
   bool accessTuple(unsigned tuple_type);
 
-  //Make a copy between two resultsets
+  /// Make a copy between two resultsets
   void operator = (ResultSet &res);
 
   friend class DBConnection;

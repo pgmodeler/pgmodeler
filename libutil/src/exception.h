@@ -225,42 +225,42 @@ enum ErrorType {
 
 class Exception {
  private:
-  /* Stores other exceptions before raise the 'this' exception.
+  /** Stores other exceptions before raise the 'this' exception.
      This structure can be used to simulate a stack trace to improve the debug */
   deque<Exception> exceptions;
 
-  //Stores the error messages and codes (names of errors) in string format
+  /// Stores the error messages and codes (names of errors) in string format
   static QString messages[ERROR_COUNT][2];
 
-  //Constants used to access the error details
+  /// Constants used to access the error details
   static const unsigned ERROR_CODE=0,
                         ERROR_MESSAGE=1;
 
-  //Error type related to the exception
+  /// Error type related to the exception
   ErrorType error_type;
 
-  //Formated error message
+  /// Formated error message
   QString error_msg,
-        /* Holds the class name and method which was
+        /** Holds the class name and method which was
            triggered the exception. For this to be possible, at the time
            instantiation of this class the  G++ macro __ PRETTY_FUNCTION__
            must be passed. This macro contains the format [RETURN][CLASS]::[METHOD][PARAMS] */
          method,
 
-         //File where the exception was generated (Macro __ FILE__)
+         /// File where the exception was generated (Macro __ FILE__)
          file,
 
-         /* Additional information (optional) may store any other
+         /** Additional information (optional) may store any other
             type of information that is interesting on attempt to resolve the error */
          extra_info;
 
-  //Line of file where the exception were generated (Macro __LINE__)
+  /// Line of file where the exception were generated (Macro __LINE__)
   int line;
 
-  //Configures the basic attributes of exception
+  /// Configures the basic attributes of exception
   void configureException(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, const QString &extra_info);
 
-  //Adds a exception to the list of exceptions
+  /// Adds a exception to the list of exceptions
   void addException(Exception &exception);
 
  public:
@@ -280,10 +280,10 @@ class Exception {
   ErrorType getErrorType(void);
   QString getExtraInfo(void);
 
-  //Gets the full exception stack
+  /// Gets the full exception stack
   void getExceptionsList(deque<Exception> &list);
 
-  //Gets the exception stack in a formatted text
+  /// Gets the exception stack in a formatted text
   QString getExceptionsText(void);
 };
 

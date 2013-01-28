@@ -29,50 +29,50 @@ class RelationshipView: public BaseObjectView {
  private:
   Q_OBJECT
 
-  //Graphical point radius
+  /// Graphical point radius
   static const float GRAPHIC_PNT_RADIUS=2.5f;
 
-  /* Indicate that the line is being configured/updated. This flag is used to evict
+  /** Indicate that the line is being configured/updated. This flag is used to evict
      that the configureLine() method is exceedingly called during the table moving. */
   bool configuring_line;
 
-  //Stores the graphical representation for labels
+  /// Stores the graphical representation for labels
   TextboxView *labels[3];
 
-  //Stores the graphical representation for the participant tables
+  /// Stores the graphical representation for the participant tables
   BaseTableView *tables[2];
 
-  //Graphical representation for the user added points
+  /// Graphical representation for the user added points
   vector<QGraphicsPolygonItem *> graph_points;
 
-  //Lines that represent the relationship
+  /// Lines that represent the relationship
   vector<QGraphicsLineItem *> lines;
 
-  //Stores the graphical representation for relationship attributes
+  /// Stores the graphical representation for relationship attributes
   vector<QGraphicsItemGroup *> attributes;
 
-  //Relationship descriptor (lozenge -> (1,n)-(1,n) relationship, triangle -> inheritance)
+  /// Relationship descriptor (lozenge -> (1,n)-(1,n) relationship, triangle -> inheritance)
   QGraphicsPolygonItem *descriptor;
 
-  //Stores the current hovered child object
+  /// Stores the current hovered child object
   QGraphicsItem *sel_object;
 
-  //Stores the initial (default) labels position
+  /// Stores the initial (default) labels position
   QPointF labels_ini_pos[3];
 
-  //Stores the selected child object index
+  /// Stores the selected child object index
   int sel_object_idx;
 
-  //Configures the labels positioning
+  /// Configures the labels positioning
   void configureLabels(void);
 
-  //Configures the descriptor form and positioning
+  /// Configures the descriptor form and positioning
   void configureDescriptor(void);
 
-  //Configures the attributes positioning
+  /// Configures the attributes positioning
   void configureAttributes(void);
 
-  //Configures the position info object
+  /// Configures the position info object
   void configurePositionInfo(void);
 
  protected:
@@ -83,27 +83,27 @@ class RelationshipView: public BaseObjectView {
   void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *){}
 
  public slots:
-  //Configures the relationship line
+  /// Configures the relationship line
   void configureLine(void);
 
-  //Returns the label through its index
+  /// Returns the label through its index
   TextboxView *getLabel(unsigned lab_idx);
 
  private slots:
-  //Makes the comple relationship configuration
+  /// Makes the comple relationship configuration
   void configureObject(void);
 
  public:
   RelationshipView(BaseRelationship *rel);
   ~RelationshipView(void);
 
-  //Calculates the relationship bounding rect considering all the children objects dimension
+  /// Calculates the relationship bounding rect considering all the children objects dimension
   QRectF __boundingRect(void);
 
-  //Returns the relationship that generates the graphical representation
+  /// Returns the relationship that generates the graphical representation
   BaseRelationship *getSourceObject(void);
 
-  //Disconnects the signal handled by the relationship which senders are the tables
+  /// Disconnects the signal handled by the relationship which senders are the tables
   void disconnectTables(void);
 
  signals:

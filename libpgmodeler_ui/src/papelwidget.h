@@ -30,14 +30,14 @@ class PapelWidget: public BaseObjectWidget, public Ui::PapelWidget {
  Q_OBJECT
 
  private:
-   /* Armazena as referência s tabelas de membros do papel para que sejam
+   /** Armazena as referência s tabelas de membros do papel para que sejam
       referenciados nos demais métodos de forma mais eficaz */
    TabelaObjetosWidget *tab_membros[3];
 
-   //Preenche as tabelas de membros do papel
+   /// Preenche as tabelas de membros do papel
    void preencherTabelaMembros(void);
 
-   //Exibe o dado do papel na tabela especificada
+   /// Exibe o dado do papel na tabela especificada
    void exibirDadosPapel(Role *papel, unsigned idx_tabela, unsigned lin);
 
  public:
@@ -47,16 +47,16 @@ class PapelWidget: public BaseObjectWidget, public Ui::PapelWidget {
    void setAttributes(DatabaseModel *model, OperationList *op_list, Role *papel);
 
  private slots:
-   /* Preenche com informações relacionadas ao papel selecionado
+   /** Preenche com informações relacionadas ao papel selecionado
       na linha atual da tabela em foco */
    void exibirDadosPapelSelecionado(void);
 
-   /* Seleciona um papel membro para ser inserido na tabela de membro
+   /** Seleciona um papel membro para ser inserido na tabela de membro
       atualmente em foco. Este slot é usando tanto para adicionar
       um membro na tabela quanto para editar um membro selecionado */
    void selecionarPapelMembro(void);
 
-   /* Faz a conexão de sinais-slots para cada tabela de objetos
+   /** Faz a conexão de sinais-slots para cada tabela de objetos
         medida que a tabela em foco mude */
    void configurarSelecaoPapeis(void);
 

@@ -31,38 +31,38 @@ class ObjectsScene: public QGraphicsScene {
  private:
   Q_OBJECT
 
-  //Object alignemnt, grid showing, page delimiter showing options
+  /// Object alignemnt, grid showing, page delimiter showing options
   static bool align_objs_grid, show_grid, show_page_delim;
 
-  //Scene grid size
+  /// Scene grid size
   static unsigned grid_size;
 
-  //Paper size, used to segmentate the view (via page delimiters) and printing the model
+  /// Paper size, used to segmentate the view (via page delimiters) and printing the model
   static QPrinter::PaperSize paper_size;
 
-  //Page orientation (landscape / portrait)
+  /// Page orientation (landscape / portrait)
   static QPrinter::Orientation page_orientation;
 
-  //Page margins (applied to paper total size)
+  /// Page margins (applied to paper total size)
   static QRectF page_margins;
 
-  //Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
+  /// Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
   bool moving_objs;
 
-  //Initial point of selection rectangle
+  /// Initial point of selection rectangle
   QPointF sel_ini_pnt;
 
-  //Rectangle used to select several objects on the scene
+  /// Rectangle used to select several objects on the scene
   QGraphicsPolygonItem *selection_rect;
 
-  //Line used as a guide when inserting new relationship
+  /// Line used as a guide when inserting new relationship
   QGraphicsLineItem *rel_line;
 
-  //Aligns the specified point in relation to the grid
+  /// Aligns the specified point in relation to the grid
   static QPointF alignPointToGrid(const QPointF &pnt);
 
  protected:
-  //Brush used to draw the grid over the scene
+  /// Brush used to draw the grid over the scene
   static QBrush grid;
 
   void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -70,7 +70,7 @@ class ObjectsScene: public QGraphicsScene {
   void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
   void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
-  //Draws a line from the point 'p_start' to the cursor position and simulates the relationship creation
+  /// Draws a line from the point 'p_start' to the cursor position and simulates the relationship creation
   void showRelationshipLine(bool value, const QPointF &p_start=QPointF(NAN,NAN));
 
  public:
@@ -93,29 +93,29 @@ class ObjectsScene: public QGraphicsScene {
   void update(void);
 
  private slots:
-  //Handles and redirects the signal emitted by the modified object
+  /// Handles and redirects the signal emitted by the modified object
   void emitObjectModification(BaseGraphicObject *object);
 
-  //Handles and redirects the signal emitted by the selected child object
+  /// Handles and redirects the signal emitted by the selected child object
   void emitChildObjectSelection(TableObject *child_obj);
 
-  //Handles and redirects the signal emitted by the selected object
+  /// Handles and redirects the signal emitted by the selected object
   void emitObjectSelection(BaseGraphicObject *object, bool selected);
 
  signals:
-  //Signal emitted when the user start or finalizes a object movement.
+  /// Signal emitted when the user start or finalizes a object movement.
   void s_objectsMoved(bool end_moviment);
 
-  //Signal emitted when a object is modified on scene
+  /// Signal emitted when a object is modified on scene
   void s_objectModified(BaseGraphicObject *objeto);
 
-  //Signal emitted when the user right-click the scene requesting the popup menu
+  /// Signal emitted when the user right-click the scene requesting the popup menu
   void s_popupMenuRequested(vector<BaseObject *>);
 
-  //Signal emitted when the user double-click a object
+  /// Signal emitted when the user double-click a object
   void s_objectDoubleClicked(BaseGraphicObject *objeto);
 
-  //Signal emitted when a object is selected
+  /// Signal emitted when a object is selected
   void s_objectSelected(BaseGraphicObject *objeto, bool selecionado);
 
   friend class ModeloWidget;

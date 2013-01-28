@@ -26,7 +26,7 @@
 #include "tipopgsqlwidget.h"
 #include "tabelaobjetoswidget.h"
 
-/* Declaring the OperatorClassElement class as a Qt metatype in order to permit
+/** Declaring the OperatorClassElement class as a Qt metatype in order to permit
    that instances of the class be used as data of QVariant and QMetaType */
 #include <QMetaType>
 Q_DECLARE_METATYPE(OperatorClassElement)
@@ -35,7 +35,7 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
   private:
    Q_OBJECT
 
-   //Family, funciton and operator selectors
+   /// Family, funciton and operator selectors
    SeletorObjetoWidget *family_sel,
                        *function_sel,
                        *operator_sel;
@@ -43,7 +43,7 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
    TipoPgSQLWidget *data_type,
                    *storage_type;
 
-   //Stores the elements of operator class
+   /// Stores the elements of operator class
    TabelaObjetosWidget *elements_tab;
 
    void hideEvent(QHideEvent *event);
@@ -53,17 +53,17 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
    void setAttributes(DatabaseModel *model, OperationList *op_list, OperatorClass *op_class);
 
  private slots:
-   //Configures the element form according to the passed element type
+   /// Configures the element form according to the passed element type
    void selectElementType(int elem_type);
 
-   //Shows the data from the passed element on the element table
+   /// Shows the data from the passed element on the element table
    void showElementData(OperatorClassElement elem, int lin_idx);
 
-   /* Configures an instance of OperatorClassElement using the data on the form, additionally
+   /** Configures an instance of OperatorClassElement using the data on the form, additionally
       the configured element  is shown on the specified line on table */
    void handleElement(int lin_idx);
 
-   //Fill the form fields with the element data on the specified table line
+   /// Fill the form fields with the element data on the specified table line
    void editElement(int lin_idx);
 
  public slots:

@@ -24,7 +24,7 @@
 
 #include "modelowidget.h"
 
-/* Os plugins no pgModeler deve estar dentro da pasta "plugins"
+/** Os plugins no pgModeler deve estar dentro da pasta "plugins"
    em um diretório próprio (recomenda-se usar o mesmo nome do plugin)
    e deve possuir a seguinte estrutura básica:
 
@@ -51,10 +51,10 @@ class PgModelerPlugin {
   PgModelerPlugin(void);
   virtual ~PgModelerPlugin(void);
 
-  //Método que executa o plugin
+  /// Método que executa o plugin
   virtual void executePlugin(ModeloWidget *modelo)=0;
 
-  //Retorna o texto que é exibido na ação que executa o plugin
+  /// Retorna o texto que é exibido na ação que executa o plugin
   virtual QString getPluginTitle(void)=0;
 
   virtual QString getPluginAuthor(void)=0;
@@ -69,7 +69,7 @@ class PgModelerPlugin {
                            const QString &description, const QString &ico_filename);
 };
 
-/* Declara a classe PgModelerPlugin como interface, ou seja, a base para
+/** Declara a classe PgModelerPlugin como interface, ou seja, a base para
    implementação de plugins. Todo plugin deve herdar esta classe e usar a
    diretiva Q_INTERFACE em sua construção */
 Q_DECLARE_INTERFACE(PgModelerPlugin,"pgmodelerplugin")

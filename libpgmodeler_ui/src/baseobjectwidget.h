@@ -29,7 +29,7 @@
 #include "seletorobjetowidget.h"
 #include "ui_baseobjectwidget.h"
 
-/* Declaring the PgSQLType class as a Qt metatype in order to permit
+/** Declaring the PgSQLType class as a Qt metatype in order to permit
    that instances of the class be used as data of QVariant and QMetaType */
 #include <QMetaType>
 Q_DECLARE_METATYPE(PgSQLType)
@@ -38,7 +38,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
  Q_OBJECT
 
  private:
-   /* Stores the minimum and maximum height of the parent form, in order
+   /** Stores the minimum and maximum height of the parent form, in order
       to control the exhibition of the alert frame when the object is protected */
    int pf_min_height, pf_max_height;
 
@@ -50,83 +50,83 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
                        RELINC_LINE_BGCOLOR,
                        RELINC_LINE_FGCOLOR;
 
-   //Parent form used to show the widget as a dialog.
+   /// Parent form used to show the widget as a dialog.
    FormBasico *parent_form;
 
-   //Reference database model
+   /// Reference database model
    DatabaseModel *model;
 
-   //Reference table (used only when editing table objects)
+   /// Reference table (used only when editing table objects)
    Table *table;
 
-   //Stores the object previous name (used to validate schema renaming)
+   /// Stores the object previous name (used to validate schema renaming)
    QString prev_name;
 
-   //Store the object previous schema (used to update the schemas when moving tables/views from one to another)
+   /// Store the object previous schema (used to update the schemas when moving tables/views from one to another)
    Schema *prev_schema;
 
-   //Reference relationship (used only when editing relationship attributes)
+   /// Reference relationship (used only when editing relationship attributes)
    Relationship *relationship;
 
-   //Reference operation list where all modifications in the form are registered
+   /// Reference operation list where all modifications in the form are registered
    OperationList *op_list;
 
-   //Object that is being edited / created
+   /// Object that is being edited / created
    BaseObject *object;
 
-   /* Stores the object position (generally the mouse position) when the dialog was called
+   /** Stores the object position (generally the mouse position) when the dialog was called
       (used only when creating graphical objects) */
    float object_px, object_py;
 
-   //Grid layout used to organize the widgets over the form
+   /// Grid layout used to organize the widgets over the form
    QGridLayout *baseobject_grid;
 
-   //Indicates if the object is a new one or is being edited
+   /// Indicates if the object is a new one or is being edited
    bool new_object;
 
-   //Syntax highlighter used on the parent object name widget
+   /// Syntax highlighter used on the parent object name widget
    SyntaxHighlighter *hl_parentname_txt;
 
-   //Object selectors for schema, owner an tablespace
+   /// Object selectors for schema, owner an tablespace
    SeletorObjetoWidget *schema_sel,
                        *owner_sel,
                        *tablespace_sel;
 
-   //Constants used to generate version intervals for version alert frame
+   /// Constants used to generate version intervals for version alert frame
    static const unsigned UNTIL_VERSION=0,
                          VERSIONS_INTERVAL=1,
                          AFTER_VERSION=2;
 
-   //Generates a string containing the specified version interval
+   /// Generates a string containing the specified version interval
    static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver="");
 
-   /* Generates a alert frame highlighting the fields of exclusive use on the specified
+   /** Generates a alert frame highlighting the fields of exclusive use on the specified
       PostgreSQL versions. On the first map (fields) the key is the PostgreSQL versions and
       the values are the reference to the widget. The second map is used to specify the values
       of widgets specific for each version. */
    QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=NULL);
 
-   //Generates a informative frame containing the specified message
+   /// Generates a informative frame containing the specified message
    QFrame *generateInformationFrame(const QString &msg);
 
-   /* Merges the specified grid layout with the 'baseobject_grid' creating a single form.
+   /** Merges the specified grid layout with the 'baseobject_grid' creating a single form.
       The obj_type parameter must be specified to show the object type icon */
    void configureFormLayout(QGridLayout *grid=NULL, ObjectType obj_type=BASE_OBJECT);
 
-   /* Starts a object configuration, alocating a new one if necessary, registering
+   /** Starts a object configuration, alocating a new one if necessary, registering
       the object on the operation list. This method doens't applies to database model edition */
    template<class Class>
    void startConfiguration(void);
 
-   /* Finishes the edition / creation of object, registering it on the operation list
+   /** Finishes the edition / creation of object, registering it on the operation list
       and inserts is on the parent object */
    void finishConfiguration(void);
 
-   /* Aborts the object configuration, deallocation it if necessary or restoring it to
+   /** Aborts the object configuration, deallocation it if necessary or restoring it to
       its previous configuration */
    virtual void cancelConfiguration(void);
 
-   //Apply the basic configurations to the object (name, schema, comment, owner, tablespace)
+   /// Apply the basic configurations to the object (name, schema, comment, owner, tablespace)
    virtual void applyConfiguration(void);
 
    void hideEvent(QHideEvent *);
@@ -147,7 +147,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
    void show(void);
 
  signals:
-   //Signal emitted whenever a object is created / edited using the form
+   /// Signal emitted whenever a object is created / edited using the form
    void s_objectManipulated(void);
 };
 
@@ -158,7 +158,7 @@ void BaseObjectWidget::startConfiguration(void)
  {
   Class *new_tmpl_obj=NULL;
 
-  //If the object is already allocated
+  /// If the object is already allocated
   if(this->object && op_list &&
      this->object->getObjectType()!=OBJ_DATABASE)
   {
@@ -168,7 +168,7 @@ void BaseObjectWidget::startConfiguration(void)
     op_list->registerObject(this->object, Operation::OBJECT_MODIFIED, -1, this->relationship);
    new_object=false;
   }
-  //If there is need to allocate the object
+  /// If there is need to allocate the object
   else if(!this->object)
   {
    new_tmpl_obj=new Class;

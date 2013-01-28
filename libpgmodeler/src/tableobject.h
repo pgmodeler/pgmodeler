@@ -27,54 +27,54 @@
 
 class TableObject: public BaseObject {
  protected:
-   //Stores the table that owns this object
+   /// Stores the table that owns this object
    BaseTable *parent_table;
 
-  /* Indicates that the object was included automaticaly by "one to many",
+  /** Indicates that the object was included automaticaly by "one to many",
      "one to many", "many to many" relationships */
   bool add_by_linking;
 
-  /* Indicates that the object was included automaticaly by "one to many",
+  /** Indicates that the object was included automaticaly by "one to many",
      "generalization" relationships */
   bool add_by_generalization;
 
-  /* Indicates that the object was included automaticaly by "one to many",
+  /** Indicates that the object was included automaticaly by "one to many",
      "copy" relationships */
   bool add_by_copy;
 
-  //Defines that the object is included by relationship (1-1, 1-n, n-n)
+  /// Defines that the object is included by relationship (1-1, 1-n, n-n)
   void setAddedByLinking(bool value);
 
-  //Defines that the object is included by generalization relationship
+  /// Defines that the object is included by generalization relationship
   void setAddedByGeneralization(bool value);
 
-  //Defines that the object is include by copy relationship
+  /// Defines that the object is include by copy relationship
   void setAddedByCopy(bool value);
 
  public:
   TableObject(void);
 
-  //Defines the parent table for the object
+  /// Defines the parent table for the object
   void setParentTable(BaseTable *table);
 
-  //Returns the object parent table
+  /// Returns the object parent table
   BaseTable *getParentTable(void);
 
-  /* This method is purely virtual to force the derived classes
+  /** This method is purely virtual to force the derived classes
   overload this method. This also makes class TableObject
   not instantiable */
   virtual QString getCodeDefinition(unsigned def_type)=0;
 
-  //Returns whether the object was added by relationship 1-1, 1-n, n-n
+  /// Returns whether the object was added by relationship 1-1, 1-n, n-n
   bool isAddedByLinking(void);
 
-  //Returns whether the object was added by generalization
+  /// Returns whether the object was added by generalization
   bool isAddedByGeneralization(void);
 
-  //Returns whether the object was added by copy relationship
+  /// Returns whether the object was added by copy relationship
   bool isAddedByCopy(void);
 
-  /* Returns whether the object was added by relationship (covering all the
+  /** Returns whether the object was added by relationship (covering all the
      possible relationship types) */
   bool isAddedByRelationship(void);
 

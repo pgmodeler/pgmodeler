@@ -29,43 +29,43 @@
 
 class Conversion: public BaseObject {
  private:
-  /* Encoding types vector:
+  /** Encoding types vector:
      0 -> Source encoding
      1 -> Destination encoding */
   EncodingType encodings[2];
 
-  //Function used to perform the conversion between the encodings
+  /// Function used to perform the conversion between the encodings
   Function *conversion_func;
 
-  //Indicates whether the conversion is the default for the envolved encodings
+  /// Indicates whether the conversion is the default for the envolved encodings
   bool is_default;
 
  public:
-  //Constants used to access the conversion encodings
+  /// Constants used to access the conversion encodings
   static const unsigned SRC_ENCODING=0,
                         DST_ENCODING=1;
 
   Conversion(void);
 
-  //Defines whether the conversion is the default for the encodings
+  /// Defines whether the conversion is the default for the encodings
   void setDefault(bool value);
 
-  //Sets one of the conversion encodings (using the encoding index constants)
+  /// Sets one of the conversion encodings (using the encoding index constants)
   void setEncoding(unsigned encoding_idx, EncodingType encoding_type);
 
-  //Sets the conversion function used to convert character between encodings
+  /// Sets the conversion function used to convert character between encodings
   void setConversionFunction(Function *conv_func);
 
-  //Returns the encoding related to the index (using the encoding index constants)
+  /// Returns the encoding related to the index (using the encoding index constants)
   EncodingType getEncoding(unsigned encoding_idx);
 
-  //Returns the current used conversion function
+  /// Returns the current used conversion function
   Function *getConversionFunction(void);
 
-  //Returns if the conversion is the default for the envolved encodings
+  /// Returns if the conversion is the default for the envolved encodings
   bool isDefault(void);
 
-  //Returns the SQL/XML code definition for the conversion
+  /// Returns the SQL/XML code definition for the conversion
   QString getCodeDefinition(unsigned def_type);
 };
 

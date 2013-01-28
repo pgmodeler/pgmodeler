@@ -26,7 +26,7 @@
 #include "ui_indicewidget.h"
 #include "tabelaobjetoswidget.h"
 
-/* Declarando a classe ElementoIndice como metatype para que esta
+/** Declarando a classe ElementoIndice como metatype para que esta
  possa ser usada em conjunto com a classe QVariant (vide documentação
  da classe QVariant e QMetaType). Esta declaração é uma macro específica
  do Qt e está sendo usada para facilitar o uso com classes que necessitam
@@ -40,20 +40,20 @@ class IndiceWidget: public BaseObjectWidget, public Ui::IndiceWidget {
  Q_OBJECT
 
  private:
-   //Destaque de sintaxe do campo de expressão condicional
+   /// Destaque de sintaxe do campo de expressão condicional
    SyntaxHighlighter *dest_exp_condicional,
                    *dest_exp_elemento;
 
-   //Tabelas de objetos para controlar elementos do índice
+   /// Tabelas de objetos para controlar elementos do índice
    TabelaObjetosWidget *tab_elementos;
 
-   //Seletor de classe de operadores dos elementos
+   /// Seletor de classe de operadores dos elementos
    SeletorObjetoWidget *sel_classe_op;
 
-   //Atualiza o combo de colunas com as existentes na tabela
+   /// Atualiza o combo de colunas com as existentes na tabela
    void atualizarComboColunas(void);
 
-   //Exibe o dado de um elemento na linha especificada da tabela
+   /// Exibe o dado de um elemento na linha especificada da tabela
    void exibirDadosElemento(IndexElement elem, int idx_elem);
 
  public:
@@ -64,7 +64,7 @@ class IndiceWidget: public BaseObjectWidget, public Ui::IndiceWidget {
   void hideEvent(QHideEvent *);
   void selecionarObjetoElemento(void);
 
-  //Métodos de manipulação dos elementos do índice
+  /// Métodos de manipulação dos elementos do índice
   void manipularElemento(int idx_elem);
   void editarElemento(int idx_elem);
 

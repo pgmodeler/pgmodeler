@@ -26,18 +26,18 @@
 
 class Column: public TableObject{
  protected:
-  /* Stores the previous name of the column before its name has changed.
+  /** Stores the previous name of the column before its name has changed.
      This attribute assists in the process of reference columns added
      by relationships. */
   QString old_name;
 
-  //Indicate that the column accpets null values or not
+  /// Indicate that the column accpets null values or not
   bool not_null;
 
-  //Data type of the column
+  /// Data type of the column
   PgSQLType type;
 
-  /* Default value of the column.
+  /** Default value of the column.
      Note: The user must format the default value in
            accordance with the requirements for each data type.
            E.g.: for a varchar(10) default value should be 'abcdef' (including apostrophe)
@@ -47,45 +47,45 @@ class Column: public TableObject{
  public:
   Column(void);
 
-  //Defines if the column accepts null values or not
+  /// Defines if the column accepts null values or not
   void setNotNull(bool value);
 
-  //Defines the column data type
+  /// Defines the column data type
   void setType(PgSQLType type);
 
-  /* Sets the default value of the column. Must be informed together with the value
+  /** Sets the default value of the column. Must be informed together with the value
      the particularities of each type, such as quotation marks, hyphens, etc. */
   void setDefaultValue(const QString &value);
 
-    /* Define o nome da coluna. Este método mantém o último nome da coluna
+    /** Define o nome da coluna. Este método mantém o último nome da coluna
      armazenado para auxiliar os métodos de relacionamento de colunas
      adicionadas por relacionamentos com restrições/indices e sequencias */
 
-  /* Defines the column name. This method keeps the last column name
+  /** Defines the column name. This method keeps the last column name
      stored to assist the objects like constraints / indixes and sequences
      that is referencing the column by its old name. */
   void setName(const QString &name);
 
-  //Returns the not null state of the column
+  /// Returns the not null state of the column
   bool isNotNull(void);
 
-  //Returns the data type of the column
+  /// Returns the data type of the column
   PgSQLType getType(void);
 
-  //Returns the default value of the column
+  /// Returns the default value of the column
   QString getDefaultValue(void);
 
-  //Returns the SQL/XML code definition for the column
+  /// Returns the SQL/XML code definition for the column
   QString getCodeDefinition(unsigned def_type);
 
-  /* Returns the old column name. The parameter 'format' indicates
+  /** Returns the old column name. The parameter 'format' indicates
      whether the name must be formatted or not */
   QString getOldName(bool format=false);
 
-  //Returns the reference to the column type in the form [schema].table.column_name%TYPE
+  /// Returns the reference to the column type in the form [schema].table.column_name%TYPE
   QString getTypeReference(void);
 
-  //Copies on column to other
+  /// Copies on column to other
   void operator = (Column &col);
 
   friend class Tabela;

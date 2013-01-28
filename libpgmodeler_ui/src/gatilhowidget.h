@@ -30,18 +30,18 @@ class GatilhoWidget: public BaseObjectWidget, public Ui::GatilhoWidget {
  Q_OBJECT
 
  private:
-   //Destaque de sintaxe do campo de expressão condicional
+   /// Destaque de sintaxe do campo de expressão condicional
    SyntaxHighlighter *dest_exp_condicional;
 
-   //Tabelas de objetos para controlar colunas e argumentos
+   /// Tabelas de objetos para controlar colunas e argumentos
    TabelaObjetosWidget *tab_colunas,
                        *tab_argumentos;
 
-   //Seletor de tabela referenciada e função executada pelo gatilho
+   /// Seletor de tabela referenciada e função executada pelo gatilho
    SeletorObjetoWidget *sel_tabela_ref,
                        *sel_funcao;
 
-   //Adiciona uma coluna   tabelade colunas referenciadas pelo gatilho
+   /// Adiciona uma coluna   tabelade colunas referenciadas pelo gatilho
    void adicionarColuna(Column *coluna, int idx_lin);
 
  public:

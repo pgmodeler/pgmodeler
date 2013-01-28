@@ -31,19 +31,19 @@
 class VisaoGeralWidget: public QWidget, public Ui::VisaoGeralWidget {
  Q_OBJECT
  private:
-  //Modelo usado para exibição na visão geral
+  /// Modelo usado para exibição na visão geral
   ModeloWidget *modelo;
 
-  //Armazena a cena a qual será desenhada na visão geral
-  //CenaObjetos *cena;
+  /// Armazena a cena a qual será desenhada na visão geral
+  /// CenaObjetos *cena;
 
-  //Armazena o viewport o qual está exibindo a cena
-  //QGraphicsView *viewp;
+  /// Armazena o viewport o qual está exibindo a cena
+  /// QGraphicsView *viewp;
 
-  //Fator de zoom da cena
+  /// Fator de zoom da cena
   float fator_zoom;
 
-  //Fator de redimensionamento dos widgets (20% do tamanho da cena)
+  /// Fator de redimensionamento dos widgets (20% do tamanho da cena)
   const static float FATOR_REDIM=0.20f;
 
   void mouseDoubleClickEvent(QMouseEvent *);
@@ -51,7 +51,7 @@ class VisaoGeralWidget: public QWidget, public Ui::VisaoGeralWidget {
   void mouseReleaseEvent(QMouseEvent *evento);
   void mouseMoveEvent(QMouseEvent *evento);
 
-  /* Atualiza a exibição da visão geral com a última modificação na cena, o parâmetro
+  /** Atualiza a exibição da visão geral com a última modificação na cena, o parâmetro
      'forcar_atual' força a atualização mesmo que o widget não esteja visível */
   void atualizarVisaoGeral(bool forcar_atual);
 
@@ -59,27 +59,27 @@ class VisaoGeralWidget: public QWidget, public Ui::VisaoGeralWidget {
   VisaoGeralWidget(QWidget *parent = 0);
 
  public slots:
-  //Atualiza a visão geral (caso o widiget esteja visível)
+  /// Atualiza a visão geral (caso o widiget esteja visível)
   void atualizarVisaoGeral(void);
 
-  //Redimensiona a geometria do frame de janela do mundo
+  /// Redimensiona a geometria do frame de janela do mundo
   void redimensionarFrameJanela(void);
 
-  //Redimensiona todo o widget de visão geral
+  /// Redimensiona todo o widget de visão geral
   void redimensionarVisaoGeral(void);
 
-  //Atualiza o fator de zoom da cena
+  /// Atualiza o fator de zoom da cena
   void atualizarFatorZoom(float zoom);
 
-  //Define o modelo a ser exibido na visão geral
+  /// Define o modelo a ser exibido na visão geral
   void show(ModeloWidget *modelo);
 
-  //Sobrecarga dos metodos de manipulação dos eventos de abertura e fechamento da janela
+  /// Sobrecarga dos metodos de manipulação dos eventos de abertura e fechamento da janela
   void closeEvent(QCloseEvent *evento);
   void showEvent(QShowEvent *evento);
 
   signals:
-   //Sinal emitido quando a janela é aberta ou fechada (o parâmetro indica se a janela está ou não visível)
+   /// Sinal emitido quando a janela é aberta ou fechada (o parâmetro indica se a janela está ou não visível)
    void s_visaoGeralVisivel(bool);
 };
 

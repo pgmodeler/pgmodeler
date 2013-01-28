@@ -30,13 +30,13 @@ class PluginsConfigWidget: public QWidget, public Ui::PluginsConfigWidget, publi
  private:
   Q_OBJECT
 
-  //Loaded plugins
+  /// Loaded plugins
   vector<PgModelerPlugin *> plugins;
 
-  //Stores the actions assigned for each plugin
+  /// Stores the actions assigned for each plugin
   vector<QAction *> plugins_actions;
 
-  //Table used to show the loaded plugins
+  /// Table used to show the loaded plugins
   TabelaObjetosWidget *plugins_tab;
 
   void applyConfiguration(void){}
@@ -47,7 +47,7 @@ class PluginsConfigWidget: public QWidget, public Ui::PluginsConfigWidget, publi
 
   void loadPlugins(void);
 
-  /* Install the created actions on menu and toolbars. Additionally the user must specify the
+  /** Install the created actions on menu and toolbars. Additionally the user must specify the
      receiver object and slot executed when the actions is activated */
   void installPluginsActions(QToolBar *toolbar, QMenu *menu, QObject *recv, const char *slot);
 

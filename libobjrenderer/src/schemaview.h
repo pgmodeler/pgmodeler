@@ -32,18 +32,18 @@ class SchemaView: public BaseObjectView
   QGraphicsSimpleTextItem *sch_name;
   QGraphicsPolygonItem *box;
 
-  //Stores the views and tables that belongs to this schema
+  /// Stores the views and tables that belongs to this schema
   QList<BaseObjectView *> children;
 
   void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
-  //Fills the children vector
+  /// Fills the children vector
   void fetchChildren(void);
 
  public:
   SchemaView(Schema *schema);
 
-  //Visually selects all the schema children
+  /// Visually selects all the schema children
   void selectChildren(void);
 
  public slots:

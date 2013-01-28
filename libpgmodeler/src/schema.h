@@ -1,4 +1,4 @@
-/* 
+/** 
 # PostgreSQL Database Modeler (pgModeler)
 # Sub-project: Core library (libpgmodeler)
 # Class: Schema

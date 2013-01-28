@@ -32,17 +32,17 @@ class FormRestauracaoModelo: public QDialog, public Ui::FormRestauracaoModelos {
  public:
   FormRestauracaoModelo(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
-  //Obtém a lista de arquivos temporários
+  /// Obtém a lista de arquivos temporários
   QStringList obterModelosTemporarios(void);
 
-  //Obtém a lista de arquivos temporários selecionados para restauração
+  /// Obtém a lista de arquivos temporários selecionados para restauração
   QStringList obterModelosSelecionados(void);
 
  public slots:
   void exec(void);
-  //Exclui todos os arquivos temporários da pasta tmp
+  /// Exclui todos os arquivos temporários da pasta tmp
   void excluirModelosTemporarios(void);
-  //Retorna se existe arquivos temporários na pasta
+  /// Retorna se existe arquivos temporários na pasta
   bool existeModelosTemporarios(void);
 
  private slots:

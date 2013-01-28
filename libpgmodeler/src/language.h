@@ -28,16 +28,16 @@
 
 class Language: public BaseObject{
  private:
- /* Indicates whether the language is trusted on the database which means
+ /** Indicates whether the language is trusted on the database which means
     that the object can be used by an unprivileged user without compromise
     the entire database security */
   bool is_trusted;
 
-  //Functions that defines the language behavior
+  /// Functions that defines the language behavior
   Function *functions[3];
 
  public:
-  /* Constants used to reference the language's functions:
+  /** Constants used to reference the language's functions:
       > VALIDATOR: Function that validates the code written in the language's syntax
       > HANDLER: Function that executes the functions written in the language's syntax
       > INLINE: Function that executes inline instructions (DO's) (only on PostgreSQL 9.x) */
@@ -47,22 +47,22 @@ class Language: public BaseObject{
 
   Language(void);
 
-  //Sets the language name
+  /// Sets the language name
   void setName(const QString &name);
 
-  //Sets whether the language is trusted or not
+  /// Sets whether the language is trusted or not
   void setTrusted(bool value);
 
-  //Sets one of the language auxiliary functions
+  /// Sets one of the language auxiliary functions
   void setFunction(Function *func, unsigned func_type);
 
-  //Returs the trusted state of the language
+  /// Returs the trusted state of the language
   bool isTrusted(void);
 
-  //Returns one of the auxiliary functions
+  /// Returns one of the auxiliary functions
   Function *getFunction(unsigned func_type);
 
-  //Returns the SQL / XML code definition for the language
+  /// Returns the SQL / XML code definition for the language
   QString getCodeDefinition(unsigned def_type, bool reduced_form);
   QString getCodeDefinition(unsigned def_type);
 };

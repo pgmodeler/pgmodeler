@@ -31,7 +31,7 @@ class ListaOperacoesWidget: public QDockWidget, public Ui::ListaOperacoesWidget 
  Q_OBJECT
 
  private:
-  //Armazena o modelo atual o qual será exibido na visão geral
+  /// Armazena o modelo atual o qual será exibido na visão geral
   ModeloWidget *modelo_wgt;
 
   void atualizarModeloObjetos(void);
@@ -50,7 +50,7 @@ class ListaOperacoesWidget: public QDockWidget, public Ui::ListaOperacoesWidget 
    void selecionarItem(QTreeWidgetItem *item, int coluna);
 
  signals:
-   /* Sinal emitido pelo widget quando uma operação sobre
+   /** Sinal emitido pelo widget quando uma operação sobre
       a lista é executada */
    void s_operacaoExecutada(void);
    void s_listaOperacoesAtualizada(void);

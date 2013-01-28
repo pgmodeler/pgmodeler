@@ -28,7 +28,7 @@
 
 class Aggregate: public BaseObject {
  private:
-  /* List of types with which the aggregate operates.
+  /** List of types with which the aggregate operates.
      If it is empty will be considered all possible types '*'
 
      To maintain compatibility with the old syntax,
@@ -39,55 +39,55 @@ class Aggregate: public BaseObject {
      be of type 'any' */
   vector<PgSQLType> data_types;
 
-  /* Function that defines the aggregate behavior
+  /** Function that defines the aggregate behavior
      0 -> Final function
      1 -> Transition function */
   Function *functions[2];
 
-  //Data type used as aggregate's state
+  /// Data type used as aggregate's state
   PgSQLType state_type;
 
-  //Initial condition for the aggregate
+  /// Initial condition for the aggregate
   QString initial_condition;
 
-  //Sort operator used by the aggregate
+  /// Sort operator used by the aggregate
   Operator *sort_operator;
 
-  //Formats the data types to be used as attribute by the SchemaParser
+  /// Formats the data types to be used as attribute by the SchemaParser
   void setTypesAttribute(unsigned def_type);
 
-  //Checks if the passed function is valid according to the rule of aggregate definition
+  /// Checks if the passed function is valid according to the rule of aggregate definition
   bool isValidFunction(unsigned func_idx, Function *func);
 
  public:
-  //Constants used to reference the functions used by the aggregate
+  /// Constants used to reference the functions used by the aggregate
   static const unsigned FINAL_FUNC=0,
                         TRANSITION_FUNC=1;
 
   Aggregate(void);
 
-  //Defines one of the functions used by the aggregate
+  /// Defines one of the functions used by the aggregate
   void setFunction(unsigned func_idx, Function *func);
 
-  //Defines the state data type of the aggregate
+  /// Defines the state data type of the aggregate
   void setStateType(PgSQLType state_type);
 
-  //Defines the initial condition for the aggregate
+  /// Defines the initial condition for the aggregate
   void setInitialCondition(const QString &cond);
 
-  //Defines the sort operator used by the aggregate
+  /// Defines the sort operator used by the aggregate
   void setSortOperator(Operator *sort_op);
 
-  //Adds a data type in the group that is accepted by the aggregate
+  /// Adds a data type in the group that is accepted by the aggregate
   void addDataType(PgSQLType type);
 
-  //Removes one aggregate accepted data type
+  /// Removes one aggregate accepted data type
   void removeDataType(unsigned type_idx);
 
-  //Removes all accepted data types from aggregate
+  /// Removes all accepted data types from aggregate
   void removeDataTypes(void);
 
-  //Checks whether the passed type exists in the aggregate's set of data types
+  /// Checks whether the passed type exists in the aggregate's set of data types
   bool isDataTypeExist(PgSQLType type);
 
   Function *getFunction(unsigned func_idx);
@@ -97,7 +97,7 @@ class Aggregate: public BaseObject {
   PgSQLType getDataType(unsigned type_idx);
   unsigned getDataTypeCount(void);
 
-  //Returns the SQL / XML code definition for the aggregate
+  /// Returns the SQL / XML code definition for the aggregate
   QString getCodeDefinition(unsigned def_type);
 };
 

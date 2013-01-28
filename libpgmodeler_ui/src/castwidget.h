@@ -29,10 +29,10 @@ class CastWidget: public BaseObjectWidget, public Ui::CastWidget {
  private:
   Q_OBJECT
 
-  //Datatype configurations
+  /// Datatype configurations
   TipoPgSQLWidget *src_datatype, *trg_datatype;
 
-  //Conversion function selector
+  /// Conversion function selector
   SeletorObjetoWidget *conv_func_sel;
 
   void hideEvent(QHideEvent *event);

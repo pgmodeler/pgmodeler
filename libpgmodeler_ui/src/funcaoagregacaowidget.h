@@ -31,20 +31,20 @@
 class FuncaoAgregacaoWidget: public BaseObjectWidget, public Ui::FuncaoAgregacaoWidget {
  Q_OBJECT
 
- private:          //Widget de seleção de tipo de entrada da função
+ private:          /// Widget de seleção de tipo de entrada da função
    TipoPgSQLWidget *tipo_entrada,
-                   //Widget de tipo de estado da função
+                   /// Widget de tipo de estado da função
                    *tipo_estado;
 
-                   /* Tabela de listagem de tipos de entrada da função.
+                   /** Tabela de listagem de tipos de entrada da função.
                       Os elementos desta tabela são convertidos em TipoPgSQL e
                       atribuídos como tipos de entrada da função agregada */
   TabelaObjetosWidget *tab_tipos_entrada;
 
-                   //Destacador de sintaxe usado no campo de expressão condicional
+                   /// Destacador de sintaxe usado no campo de expressão condicional
    SyntaxHighlighter *destaque_cond;
 
-                  //Seletores de funções e operador relacionao   função de agregação
+                  /// Seletores de funções e operador relacionao   função de agregação
    SeletorObjetoWidget *sel_op_ordenacao,
                        *sel_func_final,
                        *sel_func_transicao;
@@ -56,7 +56,7 @@ class FuncaoAgregacaoWidget: public BaseObjectWidget, public Ui::FuncaoAgregacao
  private slots:
   void hideEvent(QHideEvent *);
 
-  //Adiciona ou atualiza o tipo selecionado no widget 'tipo_entrada'   tabela de tipos de entrada
+  /// Adiciona ou atualiza o tipo selecionado no widget 'tipo_entrada'   tabela de tipos de entrada
   void manipularTipoDado(int linha);
 
  public slots:

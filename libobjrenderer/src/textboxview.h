@@ -28,23 +28,23 @@ class TextboxView: public BaseObjectView {
  private:
   Q_OBJECT
 
-  //Graphical item that represent the box
+  /// Graphical item that represent the box
   QGraphicsPolygonItem *box;
 
-  //Graphical item that represent the text
+  /// Graphical item that represent the text
   QGraphicsSimpleTextItem *text;
 
-  //Indicates the the font / color styles will be overriden (need to call setColorStyle, setFontStyle)
+  /// Indicates the the font / color styles will be overriden (need to call setColorStyle, setFontStyle)
   bool override_style;
 
  public:
   TextboxView(Textbox *txtbox, bool override_style=false);
 
-  /* Sets the fill and border color for the text box. This method has effect only when
+  /** Sets the fill and border color for the text box. This method has effect only when
      the style can be overriden (via constructor) */
   void setColorStyle(const QBrush &fill_style, const QPen &border_style);
 
-  /* Sets the font style for the text box. This method has effect only when
+  /** Sets the font style for the text box. This method has effect only when
      the style can be overriden (via constructor) */
   void setFontStyle(const QTextCharFormat &fmt);
 
