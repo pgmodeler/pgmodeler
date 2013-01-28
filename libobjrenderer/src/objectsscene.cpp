@@ -458,6 +458,7 @@ void ObjectsScene::alignObjectsToGrid(void)
  BaseTableView *tab=NULL;
  TextboxView *lab=NULL;
  vector<QPointF> points;
+ vector<Schema *> schemas;
  unsigned i, count, i1, count1;
 
  count=items.size();
@@ -493,9 +494,18 @@ void ObjectsScene::alignObjectsToGrid(void)
       lab->setPos(this->alignPointToGrid(lab->pos()));
     }
    }
-   else
+   else if(!dynamic_cast<SchemaView *>(items[i]))
     items[i]->setPos(this->alignPointToGrid(items[i]->pos()));
+   else
+    schemas.push_back(dynamic_cast<Schema *>(dynamic_cast<BaseObjectView *>(items[i])->getSourceObject()));
   }
+ }
+
+ //Updating schemas dimensions
+ while(!schemas.empty())
+ {
+  schemas.back()->setModified(true);
+  schemas.pop_back();
  }
 }
 

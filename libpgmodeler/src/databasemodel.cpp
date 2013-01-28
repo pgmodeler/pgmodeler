@@ -399,6 +399,8 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
    obj_list->push_back(object);
  }
 
+ object->setDatabase(this);
+
  if(!signalsBlocked())
   emit s_objectAdded(object);
 }
@@ -435,6 +437,8 @@ void DatabaseModel::__removeObject(BaseObject *object, int obj_idx)
     obj_list->erase(obj_list->begin() + obj_idx);
    }
   }
+
+  object->setDatabase(NULL);
 
   if(!signalsBlocked())
    emit s_objectRemoved(object);
@@ -680,6 +684,8 @@ void DatabaseModel::addTable(Table *table, int obj_idx)
   PgSQLType::addUserType(table->getName(true), table, this, UserTypeConfig::TABLE_TYPE);
 
   updateTableFKRelationships(table);
+
+  dynamic_cast<Schema *>(table->getSchema())->setModified(true);
  }
  catch(Exception &e)
  {
@@ -785,6 +791,7 @@ void DatabaseModel::addView(View *view, int obj_idx)
   {
    __addObject(view, obj_idx);
    updateViewRelationships(view);
+   dynamic_cast<Schema *>(view->getSchema())->setModified(true);
   }
   catch(Exception &e)
   {
@@ -1031,6 +1038,8 @@ void DatabaseModel::validateRelationships(void)
  map<unsigned, Exception> error_map;
  map<unsigned, Exception>::iterator itr2, itr2_end;
  unsigned idx;
+ vector<Schema *> schemas;
+ BaseTable *tab1=NULL, *tab2=NULL;
 
  itr=relationships.begin();
  itr_end=relationships.end();
@@ -1100,6 +1109,17 @@ void DatabaseModel::validateRelationships(void)
     {
      //Try to connect the relationship
      rel->connectRelationship();
+
+     //Storing the schemas on a auxiliary vector to update them later
+     tab1=rel->getTable(BaseRelationship::SRC_TABLE);
+     tab2=rel->getTable(BaseRelationship::DST_TABLE);
+
+     if(std::find(schemas.begin(), schemas.end(), tab1->getSchema())==schemas.end())
+      schemas.push_back(dynamic_cast<Schema *>(tab1->getSchema()));
+     else if(tab2!=tab1 &&
+             std::find(schemas.begin(), schemas.end(), tab1->getSchema())==schemas.end())
+      schemas.push_back(dynamic_cast<Schema *>(tab2->getSchema()));
+
      idx++;
     }
     /* Case some error is raised during the connection the relationship is
@@ -1165,6 +1185,13 @@ void DatabaseModel::validateRelationships(void)
  }
  //The validation continues until there is some invalid relationship
  while(found_inval_rel);
+
+ //Updates the schemas to ajdust its sizes due to the tables resizings
+ while(!schemas.empty())
+ {
+  schemas.back()->setModified(true);
+  schemas.pop_back();
+ }
 
  //Stores the errors related to creation of special objects on the general error vector
  itr2=error_map.begin();
@@ -2944,11 +2971,15 @@ Tablespace *DatabaseModel::createTablespace(void)
 Schema *DatabaseModel::createSchema(void)
 {
  Schema *schema=NULL;
+ map<QString, QString> attribs;
 
  try
  {
   schema=new Schema;
+  XMLParser::getElementAttributes(attribs);
   setBasicAttributes(schema);
+  schema->setFillColor(QColor(attribs[ParsersAttributes::FILL_COLOR]));
+  schema->setRectVisible(attribs[ParsersAttributes::RECT_VISIBLE]==ParsersAttributes::_TRUE_);
  }
  catch(Exception &e)
  {
@@ -5351,8 +5382,8 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
     //The "public" schema does not have the SQL code definition generated
     if(object->getObjectType()!=OBJ_SCHEMA ||
-       (object->getObjectType()==OBJ_SCHEMA &&
-        object->getName()!="public"))
+       (object->getObjectType()==OBJ_SCHEMA && object->getName()!="public") ||
+       (object->getObjectType()==OBJ_SCHEMA && object->getName()=="public" && def_type==SchemaParser::XML_DEFINITION))
     {
      //Generates the code definition and concatenates to the others
      attribs_aux[attrib]+=validateObjectDefinition(object, def_type);
@@ -6768,14 +6799,14 @@ void DatabaseModel::setObjectsModified(void)
 {
  ObjectType obj_types[]={OBJ_TABLE, OBJ_VIEW,
                          OBJ_RELATIONSHIP, BASE_RELATIONSHIP,
-                         OBJ_TEXTBOX};
+                         OBJ_TEXTBOX, OBJ_SCHEMA };
  vector<BaseObject *>::iterator itr, itr_end;
  vector<BaseObject *> *obj_list=NULL;
  Textbox *label=NULL;
  BaseRelationship *rel=NULL;
  unsigned i, i1;
 
- for(i=0; i < 5; i++)
+ for(i=0; i < 6; i++)
  {
   obj_list=getObjectList(obj_types[i]);
   itr=obj_list->begin();

@@ -18,6 +18,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
   model=NULL;
   table=NULL;
   relationship=NULL;
+  prev_schema=NULL;
   op_list=NULL;
   object=NULL;
   object_px=NAN;
@@ -553,6 +554,7 @@ void BaseObjectWidget::applyConfiguration(void)
    if(schema_sel->isVisible())
    {
     Schema *esquema=dynamic_cast<Schema *>(schema_sel->obterObjeto());
+    this->prev_schema=dynamic_cast<Schema *>(object->getSchema());
     object->setSchema(esquema);
    }
   }
@@ -599,10 +601,6 @@ void BaseObjectWidget::finishConfiguration(void)
    //If the object is being updated, validates its SQL definition
    model->validateObjectDefinition(this->object, SchemaParser::SQL_DEFINITION);
 
-  //If the current object is a schema, validates its renaming
-  if(obj_type==OBJ_SCHEMA)
-   model->validateSchemaRenaming(dynamic_cast<Schema *>(this->object), this->prev_name);
-
   this->accept();
   parent_form->hide();
 
@@ -624,6 +622,13 @@ void BaseObjectWidget::finishConfiguration(void)
      graph_obj->setPosition(QPointF(object_px, object_py));
 
     graph_obj->setModified(true);
+   }
+
+   //Updates the visual schemas when the objects is moved to another
+   if(object->getSchema() != prev_schema)
+   {
+    prev_schema->setModified(true);
+    dynamic_cast<Schema *>(object->getSchema())->setModified(true);
    }
   }
 

@@ -12,6 +12,14 @@
    [ protected=] "true"
   %end
 
+  %if @{rect-visible} %then 
+   [ rect-visible=] "true"
+  %end
+
+  %if @{fill-color} %then 
+   [ fill-color=] "@{fill-color}"
+  %end
+  
   > $br
 
   %if @{owner} %then @{owner} %end

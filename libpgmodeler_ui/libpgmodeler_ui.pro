@@ -166,4 +166,5 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/visaogeralwidget.ui \
          $$PWD/ui/formrestauracaomodelo.ui \
          $$PWD/ui/quickrenamewidget.ui \
-         $$PWD/ui/pluginsconfigwidget.ui
+         $$PWD/ui/pluginsconfigwidget.ui \
+         $$PWD/ui/schemawidget.ui

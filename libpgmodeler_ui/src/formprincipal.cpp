@@ -574,9 +574,12 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
  layout->setContentsMargins(4,4,4,4);
 
  //Cria objetos do sistema (esquema public e linguagens c, sql e plpgsql)
- esq_publico=new Schema;
- esq_publico->setName("public");
- tab_modelo->modelo->addObject(esq_publico);
+ if(nome_arq.isEmpty())
+ {
+  esq_publico=new Schema;
+  esq_publico->setName("public");
+  tab_modelo->modelo->addObject(esq_publico);
+ }
 
  ling=new Language;
  ling->BaseObject::setName(~LanguageType(LanguageType::c));

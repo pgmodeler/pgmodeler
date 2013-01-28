@@ -15,7 +15,8 @@ HEADERS +=  $$PWD/src/baseobjectview.h \
             $$PWD/src/tabletitleview.h \
             $$PWD/src/tableobjectview.h \
             $$PWD/src/basetableview.h \
-            $$PWD/src/objectsscene.h
+            $$PWD/src/objectsscene.h \
+    src/schemaview.h
 
 SOURCES +=  $$PWD/src/baseobjectview.cpp \
             $$PWD/src/textboxview.cpp \
@@ -25,4 +26,5 @@ SOURCES +=  $$PWD/src/baseobjectview.cpp \
             $$PWD/src/tabletitleview.cpp \
             $$PWD/src/tableobjectview.cpp \
             $$PWD/src/basetableview.cpp \
-            $$PWD/src/objectsscene.cpp
+            $$PWD/src/objectsscene.cpp \
+    src/schemaview.cpp

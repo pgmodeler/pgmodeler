@@ -339,7 +339,8 @@ static const QString
   COLS_COMMENT="cols-comment",
   PRINT_GRID="print-grid",
   PRINT_PG_NUM="print-pg-num",
-  SRID="srid";
+  SRID="srid",
+  RECT_VISIBLE="rect-visible";
 }
 
 #endif

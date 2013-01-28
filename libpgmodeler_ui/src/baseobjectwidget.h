@@ -59,8 +59,11 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
    //Reference table (used only when editing table objects)
    Table *table;
 
-   //Used to store the object previous name (used to validate schema renaming)
+   //Stores the object previous name (used to validate schema renaming)
    QString prev_name;
+
+   //Store the object previous schema (used to update the schemas when moving tables/views from one to another)
+   Schema *prev_schema;
 
    //Reference relationship (used only when editing relationship attributes)
    Relationship *relationship;

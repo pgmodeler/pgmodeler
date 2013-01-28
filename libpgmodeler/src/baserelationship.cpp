@@ -229,7 +229,7 @@ void BaseRelationship::connectRelationship(void)
 {
  if(!connected)
  {
-  connected=true;
+  connected=true;  
   src_table->setModified(true);
   dst_table->setModified(true);
   this->setModified(true);

@@ -22,15 +22,30 @@
 #ifndef SCHEMA_H
 #define SCHEMA_H
 
-#include "baseobject.h"
+#include "basegraphicobject.h"
+#include <QColor>
 
-class Schema: public BaseObject {
+class Schema: public BaseGraphicObject {
  private:
   static unsigned schema_id;
 
+  QColor fill_color;
+
+  bool rect_visible;
+
  public:
   Schema(void);
+
   void setName(const QString &name);
+
+  void setFillColor(const QColor &color);
+
+  QColor getFillColor(void);
+
+  void setRectVisible(bool value);
+
+  bool isRectVisible(void);
+
   QString getCodeDefinition(unsigned def_type);
 };
 

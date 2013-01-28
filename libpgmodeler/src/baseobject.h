@@ -67,7 +67,11 @@ enum ObjectType {
 };
 
 class BaseObject {
-protected:
+ private:
+  //Stores the database wich the object belongs
+  BaseObject *database;
+
+ protected:
  /* This static attribute is used to generate the unique identifier for objects.
      As object instances are created this value ​​are incremented. In some classes
      like Schema, DBModel, Tablespace, Role, Type and Function id generators are
@@ -136,9 +140,18 @@ protected:
      This is the real implementation of the virtual method getCodeDefinition(unsigned). */
  virtual QString __getCodeDefinition(unsigned def_type);
 
+ /* Set the database that owns the object
+    ATTENTION: calling this method with a NULL parameter doesn't means that the object will
+               be removed from the database, only the attribute will be set as NULL and
+               if the user calls getDatabase() in further operations may result in crash */
+ void setDatabase(BaseObject *db);
+
 public:
  BaseObject(void);
  virtual ~BaseObject(void){}
+
+ //Returns the reference to the database that owns the object
+ BaseObject *getDatabase(void);
 
  /* Defines a specific attribute in the attribute list used to generate the code definition.
      This method can be used when a class needs to directly write some attributes of

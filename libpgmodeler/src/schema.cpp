@@ -6,6 +6,11 @@ Schema::Schema(void)
 {
  obj_type=OBJ_SCHEMA;
  object_id=Schema::schema_id++;
+ fill_color=QColor(225,225,225, 80);
+ rect_visible=true;
+
+ attributes[ParsersAttributes::FILL_COLOR]="";
+ attributes[ParsersAttributes::RECT_VISIBLE]="";
 }
 
 void Schema::setName(const QString &name)
@@ -21,8 +26,29 @@ void Schema::setName(const QString &name)
  BaseObject::setName(name);
 }
 
-QString Schema::getCodeDefinition(unsigned def_type)
+void Schema::setFillColor(const QColor &color)
 {
- return(BaseObject::__getCodeDefinition(def_type));
+ this->fill_color=color;
 }
 
+QColor Schema::getFillColor(void)
+{
+ return(fill_color);
+}
+
+void Schema::setRectVisible(bool value)
+{
+ rect_visible=value;
+}
+
+bool Schema::isRectVisible(void)
+{
+ return(rect_visible);
+}
+
+QString Schema::getCodeDefinition(unsigned def_type)
+{
+ attributes[ParsersAttributes::FILL_COLOR]=fill_color.name();
+ attributes[ParsersAttributes::RECT_VISIBLE]=(rect_visible ? "1" : "");
+ return(BaseObject::__getCodeDefinition(def_type));
+}

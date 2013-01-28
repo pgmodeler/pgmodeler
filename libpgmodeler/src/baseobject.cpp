@@ -52,6 +52,7 @@ BaseObject::BaseObject(void)
  schema=NULL;
  owner=NULL;
  tablespace=NULL;
+ database=NULL;
  attributes[ParsersAttributes::NAME]="";
  attributes[ParsersAttributes::COMMENT]="";
  attributes[ParsersAttributes::OWNER]="";
@@ -263,6 +264,17 @@ bool BaseObject::isValidName(const QString &name)
 
   return(valid);
  }
+}
+
+void BaseObject::setDatabase(BaseObject *db)
+{
+ if((db && db->getObjectType()==OBJ_DATABASE) || !db)
+  this->database=db;
+}
+
+BaseObject *BaseObject::getDatabase(void)
+{
+ return(this->database);
 }
 
 void BaseObject::setProtected(bool value)
@@ -654,6 +666,7 @@ void BaseObject::operator = (BaseObject &obj)
  this->owner=obj.owner;
  this->schema=obj.schema;
  this->tablespace=obj.tablespace;
+ this->database=obj.database;
  this->comment=obj.comment;
  this->obj_name=obj.obj_name;
  this->obj_type=obj.obj_type;

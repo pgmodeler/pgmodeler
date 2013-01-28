@@ -486,7 +486,8 @@ void BaseObjectView::__configureObject(void)
  if(graph_obj)
  {
   this->setPos(graph_obj->getPosition());
-  this->setToolTip(QString::fromUtf8(graph_obj->getName(true)));
+  this->setToolTip(QString::fromUtf8(graph_obj->getName(true)) +
+                   " (" + QString::fromUtf8(graph_obj->getTypeName()) + ")");
   this->configurePositionInfo(graph_obj->getPosition());
   this->configureProtectedIcon();
  }

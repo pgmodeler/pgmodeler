@@ -12,6 +12,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment>Example Database Model</comment>
 </database>
 
+<schema name="public" rect-visible="false" fill-color="#ffc0c0">
+</schema>
+
 	<language name="testlang" protected="true"/>
 <function name="trigger_func"
 		window-func="false"

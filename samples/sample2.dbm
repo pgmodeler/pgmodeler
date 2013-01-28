@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-ATENÇÃO: Não modifique este arquivo a não ser que você saiba
-         o que está fazendo. Resultados inesperados podem acontecer
-         caso o código seja alterado deliberadamente.
-
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
 <dbmodel author="raphael">
-<role name="њљadminњљ"	 sysid="150" superuser="true" createdb="true"
+<role name="admin1"	 sysid="150" superuser="true" createdb="true"
 	 createrole="true" inherit="true" login="true"
 	 encrypted="true" connlimit="500" validity="2008-10-10 10:00"
 	 password="123456">
@@ -16,7 +12,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 </role>
 
-<role name="peba"	 sysid="151" superuser="true" createdb="true"
+<role name="user3"	 sysid="151" superuser="true" createdb="true"
 	 createrole="true" inherit="true" login="true"
 	 encrypted="true" connlimit="500" validity="2008-10-10 13:00"
 	 password="123456">
@@ -24,7 +20,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 </role>
 
-<role name="joao"	 sysid="152" superuser="true" createdb="true"
+<role name="user2"	 sysid="152" superuser="true" createdb="true"
 	 createrole="true" inherit="true" login="true"
 	 encrypted="true" connlimit="500" validity="2008-10-10 15:00"
 	 password="123456">
@@ -32,38 +28,47 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 </role>
 
-<role name="araujo"	 sysid="153" superuser="true" createdb="true"
+<role name="user1"	 sysid="153" superuser="true" createdb="true"
 	 createrole="true" inherit="true" login="true"
 	 encrypted="true" connlimit="500" validity="2008-10-10 23:59"
 	 password="123456">
 	<comment>comentario no papel teste</comment>
 
-	<roles names="&quot;њљadminњљ&quot;" role-type="member" />
+	<roles names="admin1" role-type="member" />
 </role>
 
-<role name="usuario"	 sysid="150" superuser="true" createdb="true"
+<role name="user4"	 sysid="150" superuser="true" createdb="true"
 	 createrole="true" inherit="true" login="true"
 	 encrypted="true" connlimit="500" validity="2008-10-10 09:00"
 	 password="123456">
 	<comment>comentario no papel teste</comment>
 
-	<roles names="peba,joao" role-type="refer" />
-	<roles names="&quot;њљadminњљ&quot;" role-type="member" />
-	<roles names="araujo" role-type="admin" />
+	<roles names="user3,user2" role-type="refer" />
+	<roles names="admin1" role-type="member" />
+	<roles names="user1" role-type="admin" />
 </role>
 
 <tablespace name="espaco_tabelaњљ" directory="'/home/postgres/tbspace'">
-	<role name="&quot;њљadminњљ&quot;"/>
+	<role name="admin1"/>
 	<comment>comentario no espaco tabela teste</comment>
 </tablespace>
 
-<schema name="њљesquema_testeњљ">
-	<role name="&quot;њљadminњљ&quot;"/>
+<schema name="public" rect-visible="true" fill-color="#ffc0c0">
+</schema>
+
+<schema name="schema_B" rect-visible="true" fill-color="#c0c0ff">
+	<role name="admin1"/>
 	<comment>comentario no esquema</comment>
 </schema>
 
-<database name="ЩЦbanco_dados_testeњљ" encoding="UTF8" template="template1" connlimit="10" lc-collate="pt_BR" lc-ctype="pt_BR">
-	<role name="&quot;њљadminњљ&quot;"/>
+<schema name="schema_A" rect-visible="true" fill-color="#00c0c0">
+</schema>
+
+<schema name="schema_C" rect-visible="true" fill-color="#ffdca8">
+</schema>
+
+<database name="sampledb" encoding="UTF8" template="template1" connlimit="10" lc-collate="pt_BR" lc-ctype="pt_BR">
+	<role name="admin1"/>
 	<tablespace name="&quot;espaco_tabelaњљ&quot;"/>
 	<comment>comentario no banco de dados teste</comment>
 </database>
@@ -76,8 +81,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função  validator</comment>
 	<language name="c"/>
 	<return-type>
@@ -97,8 +102,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função handler</comment>
 	<language name="c"/>
 	<return-type>
@@ -115,8 +120,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função input</comment>
 	<language name="c"/>
 	<return-type>
@@ -142,8 +147,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função output</comment>
 	<language name="c"/>
 	<return-type>
@@ -163,8 +168,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função recv</comment>
 	<language name="c"/>
 	<return-type>
@@ -190,8 +195,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função send</comment>
 	<language name="c"/>
 	<return-type>
@@ -211,8 +216,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função tpmodin</comment>
 	<language name="c"/>
 	<return-type>
@@ -232,8 +237,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função tpmodout</comment>
 	<language name="c"/>
 	<return-type>
@@ -253,8 +258,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função analyze</comment>
 	<language name="c"/>
 	<return-type>
@@ -274,8 +279,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função cast</comment>
 	<language name="plpgsql"/>
 	<return-type>
@@ -301,8 +306,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função conversion</comment>
 	<language name="c"/>
 	<return-type>
@@ -334,8 +339,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função operator</comment>
 	<language name="c"/>
 	<return-type>
@@ -358,8 +363,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função operator</comment>
 	<language name="c"/>
 	<return-type>
@@ -382,8 +387,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função operator</comment>
 	<language name="c"/>
 	<return-type>
@@ -412,8 +417,8 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		security-type="SECURITY INVOKER"
 		execution-cost="100"
 		row-amount="1000">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Comentário na função final</comment>
 	<language name="c"/>
 	<return-type>
@@ -459,75 +464,75 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		 alignment="integer" storage="plain"
 		 element="integer" delimiter=","
 		 default-value="1000"		 category="U">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>Coment�rio no tipo_usr_base</comment>
-	<function ref-type="input" signature="&quot;њљesquema_testeњљ&quot;.funcao_input(cstring,oid,integer)"/>
-	<function ref-type="output" signature="&quot;њљesquema_testeњљ&quot;.funcao_output(any)"/>
-	<function ref-type="receive" signature="&quot;њљesquema_testeњљ&quot;.funcao_recv(internal,oid,integer)"/>
-	<function ref-type="send" signature="&quot;њљesquema_testeњљ&quot;.funcao_send(any)"/>
-	<function ref-type="tpmodin" signature="&quot;њљesquema_testeњљ&quot;.funcao_tpmodin(cstring[])"/>
-	<function ref-type="tpmodout" signature="&quot;њљesquema_testeњљ&quot;.funcao_tpmodout(integer)"/>
-	<function ref-type="analyze" signature="&quot;њљesquema_testeњљ&quot;.funcao_analyze(internal)"/>
+	<function ref-type="input" signature="&quot;schema_B&quot;.funcao_input(cstring,oid,integer)"/>
+	<function ref-type="output" signature="&quot;schema_B&quot;.funcao_output(any)"/>
+	<function ref-type="receive" signature="&quot;schema_B&quot;.funcao_recv(internal,oid,integer)"/>
+	<function ref-type="send" signature="&quot;schema_B&quot;.funcao_send(any)"/>
+	<function ref-type="tpmodin" signature="&quot;schema_B&quot;.funcao_tpmodin(cstring[])"/>
+	<function ref-type="tpmodout" signature="&quot;schema_B&quot;.funcao_tpmodout(integer)"/>
+	<function ref-type="analyze" signature="&quot;schema_B&quot;.funcao_analyze(internal)"/>
 </usertype>
 
 <language name="lingteste" trusted="true">
-	<role name="&quot;њљadminњљ&quot;"/>
+	<role name="admin1"/>
 	<comment>comentario na lingteste</comment>
-	<function ref-type="handler" signature="&quot;њљesquema_testeњљ&quot;.funcao_handler()"/>
-	<function ref-type="validator" signature="&quot;њљesquema_testeњљ&quot;.funcao_validator(oid)"/>
+	<function ref-type="handler" signature="&quot;schema_B&quot;.funcao_handler()"/>
+	<function ref-type="validator" signature="&quot;schema_B&quot;.funcao_validator(oid)"/>
 </language>
 
 <cast cast-type="assignment">
 	<comment>comentario na conversao</comment>
 	<type name="integer"/>
 	<type name="float"/>
-	<function signature="&quot;њљesquema_testeњљ&quot;.funcao_cast(integer,integer,boolean)"/>
+	<function signature="&quot;schema_B&quot;.funcao_cast(integer,integer,boolean)"/>
 </cast>
 
 <conversion name="conversao_teste" src-encoding="UTF8" dst-encoding="BIG5">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>comentario na conversao teste</comment>
-	<function signature="&quot;њљesquema_testeњљ&quot;.funcao_conversion(integer,integer,cstring,internal,integer)"/>
+	<function signature="&quot;schema_B&quot;.funcao_conversion(integer,integer,cstring,internal,integer)"/>
 </conversion>
 
 <operator name="%?!*-/!%=">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>comentario no operador teste</comment>
 	<type name="integer" ref-type="left-type"/>
 	<type name="text" ref-type="right-type"/>
-	<function ref-type="operfunc" signature="&quot;њљesquema_testeњљ&quot;.funcao_operator(integer,text)"/>
+	<function ref-type="operfunc" signature="&quot;schema_B&quot;.funcao_operator(integer,text)"/>
 </operator>
 
 <operator name="-?==">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>comentario no operador teste1</comment>
 	<type name="text" ref-type="left-type"/>
 	<type name="integer" ref-type="right-type"/>
-	<operator ref-type="commutator-op" signature="&quot;њљesquema_testeњљ&quot;.%?!*-/!%=(integer,text)"/>
-	<function ref-type="operfunc" signature="&quot;њљesquema_testeњљ&quot;.funcao_operator_1(text,integer)"/>
+	<operator ref-type="commutator-op" signature="&quot;schema_B&quot;.%?!*-/!%=(integer,text)"/>
+	<function ref-type="operfunc" signature="&quot;schema_B&quot;.funcao_operator_1(text,integer)"/>
 </operator>
 
 <opfamily name="familia_teste" index-type="btree">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>comentario na familia de operadores teste1</comment>
 </opfamily>
 
 <opclass name="classeop_teste" index-type="gist" default="true">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>comentario na classe de operadores teste1</comment>
-	<opfamily name="&quot;њљesquema_testeњљ&quot;.familia_teste"/>
+	<opfamily name="&quot;schema_B&quot;.familia_teste"/>
 	<type name="text"/>
 	<element type="function" stg-number="1">
-		<function signature="&quot;њљesquema_testeњљ&quot;.funcao_operator(integer,text)"/>
+		<function signature="&quot;schema_B&quot;.funcao_operator(integer,text)"/>
 	</element>
 	<element type="operator" stg-number="2" recheck="true">
-		<operator  signature="&quot;њљesquema_testeњљ&quot;.%?!*-/!%=(integer,text)"/>
+		<operator  signature="&quot;schema_B&quot;.%?!*-/!%=(integer,text)"/>
 	</element>
 	<element type="storage">
 		<type name="integer"/>
@@ -535,27 +540,27 @@ CAUTION: Do not modify this file unless you know what you are doing.
 </opclass>
 
 <aggregate name="funcao_agregada_teste" initial-cond="0">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>comentario na funcao agregada teste</comment>
 	<type name="text"/>
 	<type name="varchar" length="50"/>
 	<type name="char"/>
 	<type name="integer" ref-type="state-type"/>
-	<function ref-type="transition" signature="&quot;њљesquema_testeњљ&quot;.funcao_transition(integer,text,varchar,char)"/>
-	<function ref-type="final" signature="&quot;њљesquema_testeњљ&quot;.funcao_final(integer)"/>
+	<function ref-type="transition" signature="&quot;schema_B&quot;.funcao_transition(integer,text,varchar,char)"/>
+	<function ref-type="final" signature="&quot;schema_B&quot;.funcao_final(integer)"/>
 </aggregate>
 
 <domain name="dominio_teste" constraint="rest_teste" not-null="true">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<role name="&quot;њљadminњљ&quot;"/>
+	<schema name="&quot;schema_B&quot;"/>
+	<role name="admin1"/>
 	<comment>comentario no " dominio teste</comment>
 		<type name="text"/>
 </domain>
 
-<table name="tabela_B_2" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="733.333" y="764.444"/>
+<table name="table_A1" oids="false">
+	<schema name="&quot;schema_A&quot;"/>
+	<position x="121" y="827.4"/>
 	<column name="coluna_B_">
 		<type name="serial"/>
 	</column>
@@ -571,20 +576,20 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_Teste">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_2&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A1&quot;">
 		<columns names="coluna_B_" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_2&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A1&quot;">
 		<columns names="coluna_B2_" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_2&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_A&quot;.&quot;table_A1&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
-<table name="tabela_B_3" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="463.222" y="1068.89"/>
+<table name="table_A2" oids="false">
+	<schema name="&quot;schema_A&quot;"/>
+	<position x="91" y="1168.8"/>
 	<column name="њcoluna_Bњ">
 		<type name="serial"/>
 	</column>
@@ -597,13 +602,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="њcoluna_B3њ">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_3&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A2&quot;">
 		<columns names="њcoluna_Bњ" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_3&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A2&quot;">
 		<columns names="њcoluna_B2њ" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_3&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_A&quot;.&quot;table_A2&quot;">
 			<expression> &quot;Ɽcoluna_B2Ɽ&quot; &gt; 0 </expression>
 	</constraint>
 	<rule name="regra_teste" event-type="ON INSERT"
@@ -635,9 +640,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</trigger>
 </table>
 
-<table name="tabela_B_4" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="1724.44" y="560"/>
+<table name="table_C1" oids="false">
+	<schema name="&quot;schema_C&quot;"/>
+	<position x="1728" y="514.2"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -650,20 +655,20 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_B3">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C1&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C1&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_C&quot;.&quot;table_C1&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
 <table name="tabela_B_4a" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="1128.22" y="755.889"/>
+	<schema name="public"/>
+	<position x="1052" y="770"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -676,20 +681,20 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_B3">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4a&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="public.&quot;tabela_B_4a&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4a&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="public.&quot;tabela_B_4a&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4a&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="public.&quot;tabela_B_4a&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
-<table name="tabela_B_4b" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="628.889" y="326.667"/>
+<table name="table_B1" oids="false">
+	<schema name="&quot;schema_B&quot;"/>
+	<position x="633.889" y="348.667"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -702,20 +707,20 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_B3">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4b&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B1&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4b&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B1&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4b&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_B&quot;.&quot;table_B1&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
 <table name="tabela_B_4c" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="1122.22" y="1098.44"/>
+	<schema name="public"/>
+	<position x="1062" y="1189.4"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -728,20 +733,20 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_B3">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4c&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="public.&quot;tabela_B_4c&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4c&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="public.&quot;tabela_B_4c&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4c&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="public.&quot;tabela_B_4c&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
-<table name="tabela_B_4d" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="1713.33" y="53.3331"/>
+<table name="table_C2" oids="false">
+	<schema name="&quot;schema_C&quot;"/>
+	<position x="1698" y="70.4"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -754,17 +759,17 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_B3">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4d&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C2&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4d&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_C&quot;.&quot;table_C2&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
-<table name="tabela_B_4e" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="55.5554" y="1137.78"/>
+<table name="table_A3" oids="false">
+	<schema name="&quot;schema_A&quot;"/>
+	<position x="609" y="1024"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -780,20 +785,20 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_Teste">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4e&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A3&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4e&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A3&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4e&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_A&quot;.&quot;table_A3&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
-<table name="tabela_B_4f" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="1068.89" y="53.3329"/>
+<table name="table_C3" oids="false">
+	<schema name="&quot;schema_C&quot;"/>
+	<position x="1082" y="62"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -806,20 +811,20 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_B3">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4f&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C3&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4f&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C3&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4f&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_C&quot;.&quot;table_C3&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
-<table name="tabela_B_4g" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="51.1111" y="837.778"/>
+<table name="table_A4" oids="false">
+	<schema name="&quot;schema_A&quot;"/>
+	<position x="637" y="828"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -835,20 +840,20 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_Teste">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4g&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A4&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4g&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_A&quot;.&quot;table_A4&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4g&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_A&quot;.&quot;table_A4&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
-<table name="tabela_B_4h" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="1066.67" y="502.222"/>
+<table name="table_C4" oids="false">
+	<schema name="&quot;schema_C&quot;"/>
+	<position x="1110" y="473.8"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -861,19 +866,19 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_B3">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4h&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C4&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4h&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_C&quot;.&quot;table_C4&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4h&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_C&quot;.&quot;table_C4&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
-<table name="tabela_B_4i" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
+<table name="table_B2" oids="false">
+	<schema name="&quot;schema_B&quot;"/>
 	<position x="484.444" y="513.333"/>
 	<column name="coluna_B">
 		<type name="serial"/>
@@ -887,19 +892,19 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_B3">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4i&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B2&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4i&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B2&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4i&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_B&quot;.&quot;table_B2&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
-<table name="tabela_B_4j" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
+<table name="table_B4" oids="false">
+	<schema name="&quot;schema_B&quot;"/>
 	<position x="99.4444" y="553.667"/>
 	<column name="coluna_B">
 		<type name="serial"/>
@@ -913,19 +918,19 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_B3">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4j&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B4&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4j&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B4&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4j&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_B&quot;.&quot;table_B4&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
-<table name="tabela_B_4k" oids="false">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
+<table name="table_B3" oids="false">
+	<schema name="&quot;schema_B&quot;"/>
 	<position x="633.333" y="48.8888"/>
 	<column name="coluna_B">
 		<type name="serial"/>
@@ -939,21 +944,21 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="coluna_B3">
 		<type name="float"/>
 	</column>
-	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4k&quot;">
+	<constraint name="tabela_B_pk" type="pk-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B3&quot;">
 		<tablespace name="&quot;espaco_tabelaњљ&quot;"/>
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4k&quot;">
+	<constraint name="tabela_B_uq" type="uq-constr" factor="100" table="&quot;schema_B&quot;.&quot;table_B3&quot;">
 		<columns names="coluna_B2" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4k&quot;">
+	<constraint name="tabela_B_ck" type="ck-constr" table="&quot;schema_B&quot;.&quot;table_B3&quot;">
 			<expression> &quot;coluna_B2&quot; &gt; 0 </expression>
 	</constraint>
 </table>
 
 <table name="tabela_B_4z" oids="true">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
-	<position x="1497.78" y="1133.33"/>
+	<schema name="public"/>
+	<position x="1375" y="1003.6"/>
 	<column name="coluna_B">
 		<type name="serial"/>
 	</column>
@@ -967,23 +972,23 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="float"/>
 	</column>
 	<column name="coluna_USR_TESTE">
-		<type name="&quot;њљesquema_testeњљ&quot;.tipo_usr_base"/>
+		<type name="&quot;schema_B&quot;.tipo_usr_base"/>
 	</column>
-	<constraint name="tabela_B_4z_pk" type="pk-constr" factor="10" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4z&quot;">
+	<constraint name="tabela_B_4z_pk" type="pk-constr" factor="10" table="public.&quot;tabela_B_4z&quot;">
 		<columns names="coluna_B" ref-type="src-columns"/>
 	</constraint>
 </table>
 
-<view name="visao_teste">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
+<view name="view_B1">
+	<schema name="&quot;schema_B&quot;"/>
 	<comment>comentario na visao teste</comment>
 	<position x="88.3332" y="45.6667"/>
-	<reference table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4k&quot;" column="coluna_B" alias="tp" column-alias="codusr"/>
-	<reference table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4j&quot;" column="coluna_B3" alias="tp" column-alias="dtemiss"/>
+	<reference table="&quot;schema_B&quot;.&quot;table_B3&quot;" column="coluna_B" alias="tp" column-alias="codusr"/>
+	<reference table="&quot;schema_B&quot;.&quot;table_B4&quot;" column="coluna_B3" alias="tp" column-alias="dtemiss"/>
 	<reference alias="conta">
 		<expression>now() + ((1+2) * 5) + extract(month from now())</expression>
 	</reference>
-	<reference table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4i&quot;" alias="tt" column-alias="cod"/>
+	<reference table="&quot;schema_B&quot;.&quot;table_B2&quot;" alias="tt" column-alias="cod"/>
 <expression type="select-exp">0,1,2,3</expression>
 <expression type="from-exp">3,0</expression>
 </view>
@@ -991,26 +996,32 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <relationship name="rel_visao_teste_tabela_B_4k"
 	 type="reltv"
 	 src-required="false" dst-required="false"
-	 src-table="&quot;њљesquema_testeњљ&quot;.visao_teste"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4k&quot;"/>
+	 src-table="&quot;schema_B&quot;.&quot;view_B1&quot;"
+	 dst-table="&quot;schema_B&quot;.&quot;table_B3&quot;"/>
 
 <relationship name="rel_visao_teste_tabela_B_4j"
 	 type="reltv"
 	 src-required="false" dst-required="false"
-	 src-table="&quot;њљesquema_testeњљ&quot;.visao_teste"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4j&quot;"/>
+	 src-table="&quot;schema_B&quot;.&quot;view_B1&quot;"
+	 dst-table="&quot;schema_B&quot;.&quot;table_B4&quot;"/>
 
 <relationship name="rel_visao_teste_tabela_B_4i"
 	 type="reltv"
 	 src-required="false" dst-required="false"
-	 src-table="&quot;њљesquema_testeњљ&quot;.visao_teste"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4i&quot;"/>
+	 src-table="&quot;schema_B&quot;.&quot;view_B1&quot;"
+	 dst-table="&quot;schema_B&quot;.&quot;table_B2&quot;">
+	<line>
+		<position x="366" y="252"/>
+	<position x="368" y="319"/>
+	<position x="370" y="564"/>
+	</line>
+</relationship>
 
 <sequence name="sequencia_teste"
 	 start="2" increment="1"
 	 min-value="0" max-value="9223372036854775807"
-	 cache="1" cycle="true" owner="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4k&quot;.&quot;coluna_B1&quot;">
-	<schema name="&quot;њљesquema_testeњљ&quot;"/>
+	 cache="1" cycle="true" owner="&quot;schema_B&quot;.&quot;table_B3&quot;.&quot;coluna_B1&quot;">
+	<schema name="&quot;schema_B&quot;"/>
 	<comment>Comentário na sequencia teste</comment>
 </sequence>
 
@@ -1019,80 +1030,98 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment>Caixa X:0 Y:0</comment>
 </textbox>
 
-<relationship name="relacao_teste"
+<relationship name="table_A1_has_one_table_A2"
 	 type="rel11"
 	 src-required="false" dst-required="true"
 	 auto-sufix="true"
 	 table-name="relacao_teste"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_3&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_2&quot;"/>
+	 src-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
+	 dst-table="&quot;schema_A&quot;.&quot;table_A1&quot;"/>
 
-<relationship name="relacao_teste_2"
+<relationship name="table_A4_inherits_table_B2"
 	 type="relgen"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
 	 table-name="relacao_teste_2"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4i&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4g&quot;"/>
+	 src-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
+	 dst-table="&quot;schema_A&quot;.&quot;table_A4&quot;"/>
 
-<relationship name="relacao_teste_2a"
+<relationship name="table_A3_inherits_table_B2"
 	 type="relgen"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
 	 table-name="relacao_teste_2a"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4i&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4e&quot;"/>
+	 src-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
+	 dst-table="&quot;schema_A&quot;.&quot;table_A3&quot;">
+	<line>
+		<position x="558" y="731"/>
+	<position x="560" y="1073"/>
+	</line>
+</relationship>
 
-<relationship name="relacao_teste_2b"
+<relationship name="table_B2_copies_table_A1"
 	 type="reldep"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
 	 table-name="relacao_teste_2b"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_2&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4i&quot;">
+	 src-table="&quot;schema_A&quot;.&quot;table_A1&quot;"
+	 dst-table="&quot;schema_B&quot;.&quot;table_B2&quot;">
+	<line>
+		<position x="247" y="732"/>
+	<position x="462" y="733"/>
+	</line>
 	<special-pk-cols indexes="4"/>
 </relationship>
 
-<relationship name="relacao_teste_3"
+<relationship name="table_B2_has_one_table_B2"
 	 type="rel11"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
 	 table-name="relacao_teste_3"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4i&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4i&quot;">
+	 src-table="&quot;schema_B&quot;.&quot;table_B2&quot;"
+	 dst-table="&quot;schema_B&quot;.&quot;table_B2&quot;">
 	<line>
-		<position x="747.444" y="553.493"/>
-	<position x="747.444" y="503.333"/>
-	<position x="653.111" y="503.333"/>
+		<position x="750.444" y="556.293"/>
+	<position x="750.444" y="503.333"/>
+	<position x="655.111" y="503.333"/>
 	</line>
 </relationship>
 
-<relationship name="relacao_teste_4"
+<relationship name="table_A3_has_many_table_A2"
 	 type="rel1n"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
 	 table-name="relacao_teste_4"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4e&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_3&quot;"/>
+	 src-table="&quot;schema_A&quot;.&quot;table_A3&quot;"
+	 dst-table="&quot;schema_A&quot;.&quot;table_A2&quot;">
+	<line>
+		<position x="720" y="1183"/>
+	<position x="468" y="1185"/>
+	</line>
+</relationship>
 
-<relationship name="relacao_teste_5"
+<relationship name="table_C1_has_many_table_C2"
 	 type="rel1n"
 	 src-required="true" dst-required="false"
 	 auto-sufix="true"
 	 identifier="true"
 	 table-name="relacao_teste_5"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4d&quot;"/>
+	 src-table="&quot;schema_C&quot;.&quot;table_C1&quot;"
+	 dst-table="&quot;schema_C&quot;.&quot;table_C2&quot;"/>
 
-<relationship name="relacao_teste_6"
+<relationship name="table_C2_has_many_table_C4"
 	 type="rel1n"
 	 src-required="true" dst-required="false"
 	 auto-sufix="true"
 	 identifier="true"
 	 table-name="relacao_teste_6"
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4d&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4h&quot;">
+	 src-table="&quot;schema_C&quot;.&quot;table_C2&quot;"
+	 dst-table="&quot;schema_C&quot;.&quot;table_C4&quot;">
+	<line>
+		<position x="1558" y="270"/>
+	<position x="1561" y="539"/>
+	</line>
 	<column name="coluna_Teste1">
 		<type name="integer"/>
 	</column>
@@ -1107,14 +1136,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </relationship>
 
-<relationship name="relacao_teste_7"
+<relationship name="table_A2_has_many_tabela_B_4c"
 	 type="rel1n"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
 	 table-name="relacao_teste_7"
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_3&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4c&quot;">
+	 src-table="&quot;schema_A&quot;.&quot;table_A2&quot;"
+	 dst-table="public.&quot;tabela_B_4c&quot;">
 	<column name="coluna_B11">
 		<type name="integer"/>
 	</column>
@@ -1129,66 +1158,57 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </relationship>
 
-<relationship name="relacao_teste_9"
+<relationship name="tabela_B_4c_has_many_tabela_B_4a"
 	 type="rel1n"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
 	 table-name="relacao_teste_9"
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4c&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4a&quot;"/>
+	 src-table="public.&quot;tabela_B_4c&quot;"
+	 dst-table="public.&quot;tabela_B_4a&quot;"/>
 
-<index name="indice_teste" table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_3&quot;"
-	 concurrent="true" unique="true" fast-update="false"
-	 index-type="hash" factor="90">
-		<comment>comentario indice_teste</comment>
-	<idxelement nulls-first="false" asc-order="false">
-		<column name="&quot;coluna_B_tabela_B_4e&quot;"/>
-	</idxelement>
-	<condition>bla</condition>
-</index>
-<relationship name="relacao_teste_10"
+<relationship name="many_table_B1_has_many_table_B3"
 	 type="relnn"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
 	 table-name="&quot;tabela_REL_NN&quot;"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4b&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4k&quot;"/>
+	 src-table="&quot;schema_B&quot;.&quot;table_B1&quot;"
+	 dst-table="&quot;schema_B&quot;.&quot;table_B3&quot;"/>
 
-<relationship name="relacao_teste_11"
+<relationship name="table_C3_has_many_table_C2"
 	 type="rel1n"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
 	 table-name="relacao_teste_11"
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4f&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4d&quot;"/>
+	 src-table="&quot;schema_C&quot;.&quot;table_C3&quot;"
+	 dst-table="&quot;schema_C&quot;.&quot;table_C2&quot;"/>
 
 <trigger name="gatilho_restricao_teste_4c" firing-type="AFTER" per-line="true"
 	 ins-event="false" del-event="false" upd-event="true" trunc-event="false"
-	 deferrable="true" defer-type="INITIALLY DEFERRED" ref-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_2&quot;"
-	 table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4c&quot;">
+	 deferrable="true" defer-type="INITIALLY DEFERRED" ref-table="&quot;schema_A&quot;.&quot;table_A1&quot;"
+	 table="public.&quot;tabela_B_4c&quot;">
 		<comment>Gatilho teste na tabela teste</comment>
 		<function signature="public.funcao_teste(integer[],integer,integer,integer)"/>
 	<columns names="&quot;coluna_Teste2&quot;"/>
 </trigger>
-<relationship name="relacao_teste_8"
+<relationship name="table_C4_has_many_table_C3"
 	 type="rel1n"
 	 src-required="false" dst-required="false"
 	 auto-sufix="true"
 	 table-name="relacao_teste_8"
 	 deferrable="true" defer-type="INITIALLY IMMEDIATE"
-	 src-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4h&quot;"
-	 dst-table="&quot;њљesquema_testeњљ&quot;.&quot;tabela_B_4f&quot;"/>
+	 src-table="&quot;schema_C&quot;.&quot;table_C4&quot;"
+	 dst-table="&quot;schema_C&quot;.&quot;table_C3&quot;"/>
 
 <grant>
-	<object name="&quot;ЩЦbanco_dados_testeњљ&quot;" type="database"/>
-	<roles names="peba,joao"/>
+	<object name="sampledb" type="database"/>
+	<roles names="user3,user2"/>
 	<privileges create="true" connect="grant-op" temporary="grant-op"/>
 </grant>
 <grant>
-	<object name="&quot;ЩЦbanco_dados_testeњљ&quot;" type="database"/>
-	<roles names="usuario"/>
+	<object name="sampledb" type="database"/>
+	<roles names="user4"/>
 	<privileges create="true" connect="grant-op" temporary="grant-op"/>
 </grant>
 </dbmodel>

@@ -25,6 +25,7 @@
 #include "relationshipview.h"
 #include "graphicalview.h"
 #include "tableview.h"
+#include "schemaview.h"
 
 class ObjectsScene: public QGraphicsScene {
  private:

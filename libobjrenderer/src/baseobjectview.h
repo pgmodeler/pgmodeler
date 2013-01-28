@@ -66,11 +66,6 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
   //Stores the object colors configuration
   static map<QString, QColor*> color_config;
 
-  static const float VERT_SPACING=2.0f,
-                     HORIZ_SPACING=2.0f,
-                     DEFAULT_FONT_SIZE=9.0f,
-                     OBJ_BORDER_WIDTH=0.80f;
-
   //Resizes to the specified dimension the passed polygon
   void resizePolygon(QPolygonF &pol, float width, float height);
 
@@ -87,6 +82,11 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
   void configureProtectedIcon(void);
 
  public:
+  static const float VERT_SPACING=2.0f,
+                     HORIZ_SPACING=2.0f,
+                     DEFAULT_FONT_SIZE=9.0f,
+                     OBJ_BORDER_WIDTH=0.80f;
+
   BaseObjectView(BaseObject *object=NULL);
   ~BaseObjectView(void);
 

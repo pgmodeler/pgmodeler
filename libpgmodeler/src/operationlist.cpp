@@ -861,22 +861,35 @@ void OperationList::executeOperation(Operation *oper, bool redo)
       obj_type==BASE_RELATIONSHIP || obj_type==OBJ_RELATIONSHIP ||
       obj_type==OBJ_TEXTBOX)
    {
-    BaseGraphicObject *obj_grafico=dynamic_cast<BaseGraphicObject *>(object);
+    BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
     if(oper->op_type==Operation::OBJECT_MODIFIED ||
        oper->op_type==Operation::OBJECT_MOVED)
-     obj_grafico->setModified(true);
+     graph_obj->setModified(true);
 
     //Case the object is a view is necessary to update the table-view relationships on the model
     if(obj_type==OBJ_VIEW && oper->op_type==Operation::OBJECT_MODIFIED)
-     model->updateViewRelationships(dynamic_cast<View *>(obj_grafico));
+     model->updateViewRelationships(dynamic_cast<View *>(graph_obj));
     else if((obj_type==OBJ_RELATIONSHIP ||
              (obj_type==OBJ_TABLE && model->getRelationship(dynamic_cast<BaseTable *>(object), NULL))) &&
             oper->op_type==Operation::OBJECT_MODIFIED)
      model->validateRelationships();
+
+    //If a object had its schema restored is necessary to update the envolved schemas
+    if((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) &&
+        ((graph_obj->getSchema()!=bkp_obj->getSchema() &&
+          oper->op_type==Operation::OBJECT_MODIFIED) ||
+         oper->op_type==Operation::OBJECT_MOVED))
+    {
+     dynamic_cast<BaseGraphicObject *>(graph_obj->getSchema())->setModified(true);
+     dynamic_cast<BaseGraphicObject *>(bkp_obj->getSchema())->setModified(oper->op_type==Operation::OBJECT_MODIFIED);
+    }
    }
    else if(obj_type==OBJ_SCHEMA && oper->op_type==Operation::OBJECT_MODIFIED)
+   {
     model->validateSchemaRenaming(dynamic_cast<Schema *>(object), bkp_obj->getName());
+    dynamic_cast<Schema *>(object)->setModified(true);
+   }
   }
 }
 

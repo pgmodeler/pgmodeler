@@ -291,6 +291,7 @@ void TableView::configureObject(void)
  BaseObjectView::__configureObject();
  BaseObjectView::configureObjectShadow();
  BaseObjectView::configureObjectSelection();
- this->setToolTip(QString::fromUtf8(table->getName(true)));
+ this->setToolTip(QString::fromUtf8(table->getName(true)) +
+                  " (" + QString::fromUtf8(table->getTypeName()) + ")");
 }
 

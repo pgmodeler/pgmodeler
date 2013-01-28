@@ -106,7 +106,15 @@ void QuickRenameWidget::applyRenaming(void)
 
    //If the renamed object is a graphical one, set as modified to force its redraw
    if(obj_graph)
+   {
     obj_graph->setModified(true);
+
+    if(obj_graph->getObjectType()==OBJ_TABLE ||
+       obj_graph->getObjectType()==OBJ_VIEW)
+    {
+     dynamic_cast<Schema *>(obj_graph->getSchema())->setModified(true);
+    }
+   }
    else if(tab_obj)
    {
     Table *tab=dynamic_cast<Table *>(tab_obj->getParentTable());
@@ -118,9 +126,14 @@ void QuickRenameWidget::applyRenaming(void)
      model->validateRelationships();
     else
      tab->setModified(true);
+
+    dynamic_cast<Schema *>(tab->getSchema())->setModified(true);
    }
    else if(object->getObjectType()==OBJ_SCHEMA)
+   {
     model->validateSchemaRenaming(dynamic_cast<Schema *>(object), obj_name_lbl->text().toUtf8());
+    dynamic_cast<Schema *>(object)->setModified(true);
+   }
 
    accept();
   }

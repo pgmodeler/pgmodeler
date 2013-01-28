@@ -1,9 +1,8 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: EsquemaWidget
-# Description:Definição da classe que implementa o formulário de
-#            edição dos atributos de esquemas.
+# Sub-project: Graphical objects renderer (libobjrenderer)
+# Class: TextboxView
+# Description: Represents the textbox in a graphical way on the object scene
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,25 +18,36 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef ESQUEMA_WIDGET_H
-#define ESQUEMA_WIDGET_H
+#ifndef SCHEMA_VIEW_H
+#define SCHEMA_VIEW_H
 
-#include "baseobjectwidget.h"
-#include "ui_schemawidget.h"
+#include "schema.h"
+#include "databasemodel.h"
+#include "baseobjectview.h"
 
-class EsquemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {
+class SchemaView: public BaseObjectView
+{
  private:
   Q_OBJECT
+  QGraphicsSimpleTextItem *sch_name;
+  QGraphicsPolygonItem *box;
+
+  //Stores the views and tables that belongs to this schema
+  QList<BaseObjectView *> children;
+
+  void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
+  //Fills the children vector
+  void fetchChildren(void);
 
  public:
-  EsquemaWidget(QWidget * parent = 0);
-  void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *esquema);
+  SchemaView(Schema *schema);
+
+  //Visually selects all the schema children
+  void selectChildren(void);
 
  public slots:
-   void applyConfiguration(void);
-
- private slots:
-   void selectFillColor(void);
+  void configureObject(void);
 };
 
 #endif

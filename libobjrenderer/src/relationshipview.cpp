@@ -360,6 +360,7 @@ void RelationshipView::configureLine(void)
   QPen pen;
   QGraphicsPolygonItem *pol=NULL;
   QPolygonF pol_aux;
+  QString tool_tip;
   int i, i1, count, idx_lin_desc=0;
 
   configuring_line=true;
@@ -538,15 +539,18 @@ void RelationshipView::configureLine(void)
   this->configureLabels();
   this->configureProtectedIcon();
   configuring_line=false;
-  this->setToolTip(QString::fromUtf8(base_rel->getName(true)));
+
+  tool_tip=QString::fromUtf8(base_rel->getName(true)) +
+           " (" + QString::fromUtf8(base_rel->getTypeName()) + ")";
+  this->setToolTip(tool_tip);
 
   for(i=0; i < 3; i++)
   {
    if(labels[i])
-    labels[i]->setToolTip(QString::fromUtf8(base_rel->getName(true)));
+    labels[i]->setToolTip(tool_tip);
   }
 
-  descriptor->setToolTip(QString::fromUtf8(base_rel->getName(true)));
+  descriptor->setToolTip(tool_tip);
  }
 }
 

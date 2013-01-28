@@ -8,7 +8,6 @@ TextboxView::TextboxView(Textbox *txtbox, bool override_style) : BaseObjectView(
  text=new QGraphicsSimpleTextItem;
 
  this->override_style=override_style;
- //this->setColorStyle(fill_style, border_style);
  this->addToGroup(text);
  this->addToGroup(box);
  this->configureObject();

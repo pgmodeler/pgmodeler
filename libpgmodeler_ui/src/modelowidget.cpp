@@ -229,6 +229,9 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  action_change_owner->setToolTip(trUtf8("Edit object's permissions"));
  action_change_owner->setMenu(&menu_donos);
 
+ action_sel_sch_children=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select children"), this);
+ action_sel_sch_children->setToolTip(trUtf8("Selects all the children graphical objects on the selected schema"));
+
  //Aloca as ações de criação de novo objeto
  for(i=0; i < qtd; i++)
  {
@@ -277,6 +280,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
  connect(action_recortar, SIGNAL(triggered(bool)),this,SLOT(recortarObjetos(void)));
  connect(action_rename, SIGNAL(triggered(bool)), this, SLOT(renomearObjeto(void)));
  connect(action_edit_perms, SIGNAL(triggered(bool)), this, SLOT(editarPermissoes(void)));
+ connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selecionarFilhosEsquema(void)));
 
  connect(modelo, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(manipularAdicaoObjeto(BaseObject *)));
  connect(modelo, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(manipularRemocaoObjeto(BaseObject *)));
@@ -483,6 +487,10 @@ void ModeloWidget::manipularAdicaoObjeto(BaseObject *objeto)
      item=new RelationshipView(dynamic_cast<BaseRelationship *>(obj_graf)); break;
    break;
 
+   case OBJ_SCHEMA:
+     item=new SchemaView(dynamic_cast<Schema *>(obj_graf)); break;
+   break;
+
    default:
     item=new TextboxView(dynamic_cast<Textbox *>(obj_graf)); break;
    break;
@@ -490,6 +498,14 @@ void ModeloWidget::manipularAdicaoObjeto(BaseObject *objeto)
 
   //Após a criação do objeto o mesmo é inserido na cena
   cena->addItem(item);
+
+  if(tipo_obj==OBJ_TABLE || tipo_obj==OBJ_VIEW)
+  {
+   //Schema *schema=dynamic_cast<Schema *>(obj_graf->getSchema());
+   //dynamic_cast<SchemaView *>(schema->getReceiverObject())->fetchChildren();
+   //schema->setModified(true);
+   dynamic_cast<Schema *>(obj_graf->getSchema())->setModified(true);
+  }
  }
 
  this->modificado=true;
@@ -541,8 +557,19 @@ void ModeloWidget::manipularRemocaoObjeto(BaseObject *objeto)
 
  //Caso o objeto seja gráfico remove-o da cena
  if(obj_graf)
+ {
   //Remove o objeto obtendo a referência ao objeto receptor (representação gráfico do mesmo na cena)
   cena->removeItem(dynamic_cast<QGraphicsItem *>(obj_graf->getReceiverObject()));
+
+  if(obj_graf->getSchema() &&
+     (obj_graf->getObjectType()==OBJ_TABLE || obj_graf->getObjectType()==OBJ_VIEW))
+  {
+   //Schema *schema=dynamic_cast<Schema *>(obj_graf->getSchema());
+   //dynamic_cast<SchemaView *>(schema->getReceiverObject())->fetchChildren();
+   //schema->setModified(true);
+   dynamic_cast<Schema *>(obj_graf->getSchema())->setModified(true);
+  }
+ }
 
  this->modificado=true;
 }
@@ -555,18 +582,18 @@ void ModeloWidget::manipularDuploCliqueObjeto(BaseGraphicObject *objeto)
 
 void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
 {
+ vector<BaseObject *> ::iterator itr, itr_end;
+ BaseGraphicObject *obj=NULL;
+
+ itr=objs_selecionados.begin();
+ itr_end=objs_selecionados.end();
+
  /* O parâmetro fim_movimento indica se a operação de movimentação de objetos
     foi finalizada. Quando este parâmetro é false, indica que a movimentação
     foi iniciada, desta forma os objetos são adicionado  lista de operações
     antes do movimento acontecer */
  if(!fim_movimento)
  {
-  vector<BaseObject *> ::iterator itr, itr_end;
-  BaseGraphicObject *obj=NULL;
-
-  itr=objs_selecionados.begin();
-  itr_end=objs_selecionados.end();
-
   //Inicia um encadeamento de operações
   lista_op->startOperationChain();
 
@@ -574,7 +601,10 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
   while(itr!=itr_end)
   {
    obj=dynamic_cast<BaseGraphicObject *>(*itr);
-   if(!dynamic_cast<BaseRelationship *>(obj) && (obj && !obj->isProtected()))
+
+   if(!dynamic_cast<BaseRelationship *>(obj) &&
+      !dynamic_cast<Schema *>(obj) &&
+      (obj && !obj->isProtected()))
     lista_op->registerObject(obj, Operation::OBJECT_MOVED);
 
    itr++;
@@ -582,6 +612,24 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
  }
  else
  {
+  vector<Schema *> schemas;
+
+  while(itr!=itr_end)
+  {
+   obj=dynamic_cast<BaseGraphicObject *>(*itr);
+   itr++;
+
+   if(obj->getObjectType()==OBJ_TABLE || obj->getObjectType()==OBJ_VIEW)
+   {
+    Schema *schema=dynamic_cast<Schema *>(dynamic_cast<BaseTable *>(obj)->getSchema());
+    if(std::find(schemas.begin(),schemas.end(),schema)==schemas.end())
+    {
+     schema->setModified(true);
+     schemas.push_back(schema);
+    }
+   }
+  }
+
   //Caso seja o final do movimento finaliza o encadeamento de operações
   lista_op->finishOperationChain();
   this->modificado=true;
@@ -1168,9 +1216,10 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
   if(objeto && dynamic_cast<BaseGraphicObject *>(objeto))
    pos=dynamic_cast<BaseGraphicObject *>(objeto)->getPosition();
 
-  /* O esquema 'public' e as linguagens C e SQL não pode ser manipuladas
-     por serem do sistema, caso o usuário tente esta operação um erro será disparado */
-  if(isReservedObject(objeto))
+  /* O esquema 'public' pode ser exibido no formulário mas as linguagens C e SQL não pode ser manipuladas
+     por serem do sistema, caso o usuário tente esta operação um erro será disparado. Para o esquema
+     public o formulário é exibido mas não pode ter seu nome e permissões modificados */
+  if(isReservedObject(objeto) && objeto->getName()!="public")
     throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
   switch(tipo_obj)
@@ -1409,7 +1458,8 @@ void ModeloWidget::renomearObjeto(void)
 void ModeloWidget::moverParaEsquema(void)
 {
  QAction *act=dynamic_cast<QAction *>(sender());
- BaseObject *schema=reinterpret_cast<BaseObject *>(act->data().value<void *>());
+ Schema *schema=dynamic_cast<Schema *>(reinterpret_cast<BaseObject *>(act->data().value<void *>())),
+        *prev_schema=dynamic_cast<Schema *>(objs_selecionados[0]->getSchema());
  BaseGraphicObject *obj_graph=NULL;
 
  try
@@ -1419,7 +1469,18 @@ void ModeloWidget::moverParaEsquema(void)
   obj_graph=dynamic_cast<BaseGraphicObject *>(objs_selecionados[0]);
 
   if(obj_graph)
+  {
+   SchemaView *dst_schema=dynamic_cast<SchemaView *>(schema->getReceiverObject());
+   QPointF p;
+
+   p.setX(dst_schema->pos().x());
+   p.setY(dst_schema->pos().y() + dst_schema->boundingRect().height() + BaseObjectView::VERT_SPACING);
+
+   dynamic_cast<BaseObjectView *>(obj_graph->getReceiverObject())->setPos(p);
    obj_graph->setModified(true);
+   schema->setModified(true);
+   prev_schema->setModified(true);
+  }
 
   emit s_objetoModificado();
  }
@@ -1435,6 +1496,9 @@ void ModeloWidget::alterarDono(void)
  QAction *act=dynamic_cast<QAction *>(sender());
  BaseObject *owner=reinterpret_cast<BaseObject *>(act->data().value<void *>()),
             *obj=(!objs_selecionados.empty() ? objs_selecionados[0] : this->modelo);
+
+ if(isReservedObject(objs_selecionados[0]))
+   throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  try
  {
@@ -1457,6 +1521,9 @@ void ModeloWidget::editarPermissoes(void)
 {
  QAction *act=dynamic_cast<QAction *>(sender());
  BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
+
+ if(isReservedObject(obj))
+   throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
  permissao_wgt->setAttributes(this->modelo, NULL, obj);
  permissao_wgt->show();
@@ -1483,6 +1550,21 @@ void ModeloWidget::editarObjeto(void)
  if(objeto)
   exibirFormObjeto(objeto->getObjectType(), objeto,
                   (obj_tab ? obj_tab->getParentTable() : NULL));
+}
+
+void ModeloWidget::selecionarFilhosEsquema(void)
+{
+ QObject *obj_sender=dynamic_cast<QAction *>(sender());
+ Schema *esquema=NULL;
+
+ esquema=dynamic_cast<Schema *>(
+          reinterpret_cast<BaseObject *>(
+           dynamic_cast<QAction *>(obj_sender)->data().value<void *>()));
+
+ cena->clearSelection();
+
+ dynamic_cast<SchemaView *>(
+    dynamic_cast<BaseObjectView *>(esquema->getReceiverObject()))->selectChildren();
 }
 
 void ModeloWidget::protegerObjeto(void)
@@ -2328,6 +2410,12 @@ void ModeloWidget::configurarSubMenu(BaseObject *obj)
   {
    menu_acoes_rapidas.addAction(action_edit_perms);
    action_edit_perms->setData(QVariant::fromValue<void *>(obj));
+  }
+
+  if(obj->getObjectType()==OBJ_SCHEMA)
+  {
+   menu_acoes_rapidas.addAction(action_sel_sch_children);
+   action_sel_sch_children->setData(QVariant::fromValue<void *>(obj));
   }
 
   menu_popup.addAction(action_acoes_rapidas);

@@ -30,7 +30,6 @@
 #include "formbasico.h"
 #include "objectsscene.h"
 #include "progressotarefa.h"
-//#include "visaogeralwidget.h"
 
 class ModeloWidget: public QWidget {
  Q_OBJECT
@@ -45,7 +44,6 @@ class ModeloWidget: public QWidget {
   bool isReservedObject(BaseObject *obj);
 
   void configurarSubMenu(BaseObject *obj);
-
 
   /* Flag que indica se o modelo está em uma operação de recorte.
      Essa flag modifica o funcionamento dos métodos colarObjetos, excluirObjeto e
@@ -92,7 +90,8 @@ class ModeloWidget: public QWidget {
           *action_moveto_schema,
           *action_edit_perms,
           *action_change_owner,
-          *action_acoes_rapidas;
+          *action_acoes_rapidas,
+          *action_sel_sch_children;
 
   //Ações de inserção de novos objetos no modelo
   map<ObjectType, QAction *> acoes_ins_objs;
@@ -204,6 +203,8 @@ class ModeloWidget: public QWidget {
   void alterarDono(void);
 
   void editarPermissoes(void);
+
+  void selecionarFilhosEsquema(void);
 
   //Exclui os objetos selecionados
   void excluirObjetos(void);

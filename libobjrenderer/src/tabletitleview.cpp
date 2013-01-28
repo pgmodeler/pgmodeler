@@ -31,6 +31,7 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
  QTextCharFormat fmt;
  QString name_attrib, schema_name_attrib, title_color_attrib;
  QPen pen;
+ Schema *schema=dynamic_cast<Schema *>(object->getSchema());
 
  //Raises an error if the object related to the title is not allocated
  if(!object)
@@ -56,7 +57,11 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
  fmt=font_config[schema_name_attrib];
  schema_name->setFont(fmt.font());
  schema_name->setBrush(fmt.foreground());
- schema_name->setText(QString::fromUtf8(object->getSchema()->getName() + "."));
+
+ if(schema->isRectVisible())
+  schema_name->setText(" ");
+ else
+  schema_name->setText(QString::fromUtf8(schema->getName() + "."));
 
  fmt=font_config[name_attrib];
  obj_name->setFont(fmt.font());
@@ -71,8 +76,12 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 
  box->setPen(pen);
 
- this->resizeTitle(obj_name->boundingRect().width() + schema_name->boundingRect().width() + (2 * HORIZ_SPACING),
-                   schema_name->boundingRect().height() + (2 * VERT_SPACING));
+ if(schema->isRectVisible())
+  this->resizeTitle(obj_name->boundingRect().width()  + (2 * HORIZ_SPACING),
+                    obj_name->boundingRect().height() + (2 * VERT_SPACING));
+ else
+  this->resizeTitle(obj_name->boundingRect().width() + schema_name->boundingRect().width() + (2 * HORIZ_SPACING),
+                    schema_name->boundingRect().height() + (2 * VERT_SPACING));
 }
 
 void TableTitleView::resizeTitle(float width, float height)
@@ -91,8 +100,14 @@ void TableTitleView::resizeTitle(float width, float height)
  this->resizePolygon(pol, width, height);
  box->setPolygon(pol);
 
- schema_name->setPos((box->boundingRect().width() - (schema_name->boundingRect().width() + obj_name->boundingRect().width()))/2.0f, VERT_SPACING);
- obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), VERT_SPACING);
+ if(schema_name->text()==" ")
+  obj_name->setPos((box->boundingRect().width() - obj_name->boundingRect().width())/2.0f, VERT_SPACING);
+ else
+ {
+  schema_name->setPos((box->boundingRect().width() - (schema_name->boundingRect().width() + obj_name->boundingRect().width()))/2.0f, VERT_SPACING);
+  obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), VERT_SPACING);
+  obj_name->setPos(schema_name->pos().x() + schema_name->boundingRect().width(), VERT_SPACING);
+ }
 
  this->bounding_rect.setTopLeft(this->pos());
  this->bounding_rect.setSize(QSizeF(box->boundingRect().width(), box->boundingRect().height()));
