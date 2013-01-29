@@ -32,14 +32,14 @@ class ProgressoTarefa: public QDialog, public Ui::ProgressoTarefa
  private:
   Q_OBJECT
 
-  /** Armazena os icones que são exibidos conforme os tokes dos icones
+  /** @details Armazena os icones que são exibidos conforme os tokes dos icones
      'id_icone' no slot executarProgresso() são enviados */
   map<unsigned, QIcon> icones;
 
  public:
   ProgressoTarefa(QWidget *parent=0, Qt::WindowFlags f=0);
 
-  /// Adiciona um ícone identificado pelo código 'id'
+  /// @details Adiciona um ícone identificado pelo código 'id'
   void adicionarIcone(unsigned id, const QIcon &ico);
 
  public slots:

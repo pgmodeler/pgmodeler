@@ -31,9 +31,9 @@ class PermissaoWidget: public BaseObjectWidget, public Ui::PermissaoWidget {
  Q_OBJECT
 
  private:
-   /// Armazena a permissão selecionada atualmente para edição
+   /// @details Armazena a permissão selecionada atualmente para edição
    Permission *permissao;
-   /// Conteineres de papéis e de permissões
+   /// @details Conteineres de papéis e de permissões
    TabelaObjetosWidget *tab_papeis, *tab_permissoes;
 
    VisaoObjetosWidget *selecaoobjetos_wgt;
@@ -44,49 +44,49 @@ class PermissaoWidget: public BaseObjectWidget, public Ui::PermissaoWidget {
    void setAttributes(DatabaseModel *model, BaseObject *objeto_pai, BaseObject *object);
 
  private slots:
-   /// Exibe a janela de seleção de objetos do modelo
+   /// @details Exibe a janela de seleção de objetos do modelo
    void selecionarPapel(void);
 
-   /// Seleciona uma permissão cujo índice é especificado no parâmetro
+   /// @details Seleciona uma permissão cujo índice é especificado no parâmetro
    void selecionarPermissao(int idx_perm);
 
-   /// Adiciona ao modelo a permissão configurada no formulário
+   /// @details Adiciona ao modelo a permissão configurada no formulário
    void adicionarPermissao(void);
 
-   /** Método de configuração de uma permissão. Este método
+   /** @details Método de configuração de uma permissão. Este método
       faz a atribuição dos valores preenchidos no formulário
         permissão do parâmetro. Este método é compartilhado
       entre as ações de adição e atualização de permissão */
    void configurarPermissao(Permission *permissao);
 
-   /** Preenche o formulário com os dados da permissão selecionada
+   /** @details Preenche o formulário com os dados da permissão selecionada
       na tabela de permissões para uma posterior edição */
    void editarPermissao(void);
 
-   /// Remove a permissão selecionada na tabela de permissões
+   /// @details Remove a permissão selecionada na tabela de permissões
    void removerPermissao(void);
 
-   /// Remove todas as permissões da tabela de permissão
+   /// @details Remove todas as permissões da tabela de permissão
    void removerPermissoes(void);
 
-   /// Atualiza os dados da permissão atualmente em edição
+   /// @details Atualiza os dados da permissão atualmente em edição
    void atualizarPermissao(void);
 
-   /// Lista todas as permissões relacionadas ao objeto atual
+   /// @details Lista todas as permissões relacionadas ao objeto atual
    void listarPermissoes(void);
 
-   /** Cancela a operação de criação/edição de uma permissão
+   /** @details Cancela a operação de criação/edição de uma permissão
       limpando o formulário e bloqueando os botões relacionados */
    void cancelarOperacao(void);
 
-   /// Exibe os dados do papel selecionado na tabela de papéis
+   /// @details Exibe os dados do papel selecionado na tabela de papéis
    void exibirDadosPapelSelecionado(void);
 
-   /** Habilita ou desabilita os botões de edição com base
+   /** @details Habilita ou desabilita os botões de edição com base
       nos dados preenchidos ou não no formulário */
    void habilitarBotoesEdicao(void);
 
-   /** Selecionao checkbox relacionados a um privilégio na
+   /** @details Selecionao checkbox relacionados a um privilégio na
       tabela de privilégios */
    void marcarPrivilegio(void);
 

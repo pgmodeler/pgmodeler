@@ -28,44 +28,44 @@
 
 class Textbox: public BaseGraphicObject{
  private:
-  /// Stores the status of text attributes (bold / italic / underline)
+  /// @details Stores the status of text attributes (bold / italic / underline)
   bool text_attributes[3];
 
-  /// Color used to draw the text
+  /// @details Color used to draw the text
   QColor text_color;
 
-  /** Since textboxes doesn't has SQL code definition the base class method that
+  /** @details Since textboxes doesn't has SQL code definition the base class method that
      generates SQL or XML code is hidden. In replacement the method
      getCodeDefinition(void) must be used in order to get the XML code definition
      of this type of object */
   QString getCodeDefinition(unsigned){ return(""); }
 
  public:
-  /// Constants used to configure the text attributes
+  /// @details Constants used to configure the text attributes
   static const unsigned ITALIC_TXT=0,
                         BOLD_TXT=1,
                         UNDERLINE_TXT=2;
 
-  /** To define the content of the textboxes
+  /** @details To define the content of the textboxes
      the method setComment() must be used and the getComment()
      method used to get the current text */
   Textbox(void);
 
-  /// Sets the attributes of the text
+  /// @details Sets the attributes of the text
   void setTextAttribute(unsigned attrib, bool value);
 
-  /// Sets the color used to draw the text of textbox
+  /// @details Sets the color used to draw the text of textbox
   void setTextColor(const QColor &color);
 
-  /// Returns the XML code definition of the textbox
+  /// @details Returns the XML code definition of the textbox
   QString getCodeDefinition(void);
 
-  /// Returns the current state of the passed text attribute
+  /// @details Returns the current state of the passed text attribute
   bool getTextAttribute(unsigned attrib);
 
   QColor getTextColor(void);
 
-  /// Copies the attributes between textboxes
+  /// @details Copies the attributes between textboxes
   void operator = (Textbox &txtbox);
 };
 

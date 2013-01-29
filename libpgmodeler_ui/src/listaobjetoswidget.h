@@ -32,7 +32,7 @@ class ListaObjetosWidget: public BaseObjectWidget, public Ui::ListaObjetosWidget
  private:
   void applyConfiguration(void){}
 
-  /// Carrega os widgets que contém as referências e dependências do objeto
+  /// @details Carrega os widgets que contém as referências e dependências do objeto
   void atualizarListaObjetos(vector<BaseObject *> &objetos, QTableWidget *tabela_wgt);
 
  protected slots:

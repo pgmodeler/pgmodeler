@@ -27,22 +27,22 @@
 
 class Index: public TableObject{
  private:
-  /// Stores the elements that defines the index
+  /// @details Stores the elements that defines the index
   vector<IndexElement> elements;
 
-  /// Conditional expression for the index
+  /// @details Conditional expression for the index
   QString conditional_expr;
 
-  /// Fill factor used by the index
+  /// @details Fill factor used by the index
   unsigned fill_factor;
 
-  /// Indexing method used by the index
+  /// @details Indexing method used by the index
   IndexingType indexing_type;
 
-  /// Boolean attributes that define some index features  (UNIQUE, CONCURRENT, FAST UPDATE)
+  /// @details Boolean attributes that define some index features  (UNIQUE, CONCURRENT, FAST UPDATE)
   bool index_attribs[3];
 
-  /// Formats the elements string used by the SchemaParser
+  /// @details Formats the elements string used by the SchemaParser
   void setElementsAttribute(unsigned def_type);
 
  public:
@@ -52,61 +52,61 @@ class Index: public TableObject{
 
   Index(void);
 
-  /// Adds an element to the index using an column
+  /// @details Adds an element to the index using an column
   void addElement(Column *column, OperatorClass *op_class, bool asc_order, bool nulls_first);
 
-  /// Adds an element to the index using an expression
+  /// @details Adds an element to the index using an expression
   void addElement(const QString &expr, OperatorClass *op_class, bool asc_order, bool nulls_first);
 
-  /// Adds an element to the index using other pre-configured element
+  /// @details Adds an element to the index using other pre-configured element
   void addElement(IndexElement elem);
 
-  /// Returns the element index if it exists or -1 if not
+  /// @details Returns the element index if it exists or -1 if not
   int isElementExists(Column *column);
-  /// Returns the element index if it exists or -1 if not
+  /// @details Returns the element index if it exists or -1 if not
   int isElementExists(const QString &expr);
 
-  /// Returns one element using its index
+  /// @details Returns one element using its index
   IndexElement getElement(unsigned elem_idx);
 
-  /// Remove an element using its index
+  /// @details Remove an element using its index
   void removeElement(unsigned idx_elem);
 
-  /// Remove all elements from the index
+  /// @details Remove all elements from the index
   void removeElements(void);
 
-  /// Defines the conditional expression used by the index
+  /// @details Defines the conditional expression used by the index
   void setConditionalExpression(const QString &expr);
 
-  /// Defines the indexing method used by the index
+  /// @details Defines the indexing method used by the index
   void setIndexingType(IndexingType idx_type);
 
-  /** Configures the attributes for the indexs. These attributes can be
+  /** @details Configures the attributes for the indexs. These attributes can be
      referencede using the UNIQUE, CONCURRENT and FAST_UPDATE constants */
   void setIndexAttribute(unsigned attrib_id, bool value);
 
-  /// Defines the index fill factor
+  /// @details Defines the index fill factor
   void setFillFactor(unsigned factor);
 
-  /// Gets the index conditional expression
+  /// @details Gets the index conditional expression
   QString getConditionalExpression(void);
 
-  /// Gets the index element count
+  /// @details Gets the index element count
   unsigned getElementCount(void);
 
-  /// Returns the indexing method used by the index
+  /// @details Returns the indexing method used by the index
   IndexingType getIndexingType(void);
 
-  /// Returns the current state of one index attribute (UNIQUE, CONCURRENT, FAST UPDATE)
+  /// @details Returns the current state of one index attribute (UNIQUE, CONCURRENT, FAST UPDATE)
   bool getIndexAttribute(unsigned attrib_id);
 
-  /// Returns the index fill factor
+  /// @details Returns the index fill factor
   unsigned getFillFactor(void);
 
-  /// Returns the SQL / XML definition for the index
+  /// @details Returns the SQL / XML definition for the index
   QString getCodeDefinition(unsigned tipo_def);
 
-  /** Returns whether the index references columns added
+  /** @details Returns whether the index references columns added
      by relationship. This method is used as auxiliary
      to control which index reference columns added by the
      relationship in order to avoid referece breaking due constants

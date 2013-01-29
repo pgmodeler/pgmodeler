@@ -31,29 +31,29 @@ class TabelaWidget: public BaseObjectWidget, public Ui::TabelaWidget {
  Q_OBJECT
 
  private:
-   /** Quantidade de elementos na lista de operações antes da tabela
+   /** @details Quantidade de elementos na lista de operações antes da tabela
       ser editada. Este atributo é usado para se saber, em caso de cancelamento
       da edição da tabela, a quantidade de operações relacionadas ao
       objeto que necessitam ser removidas. Vide: cancelarConfiguracao() */
    unsigned qtd_operacoes;
 
-   /// Armazena as tabelas de objetos filhos da tabela (colunas, restrições, índices, etc)
+   /// @details Armazena as tabelas de objetos filhos da tabela (colunas, restrições, índices, etc)
    map<ObjectType, TabelaObjetosWidget *> mapa_tab_objetos;
 
-   /** Lista os objetos do relacionamento na tabela respectiva, de acordo
+   /** @details Lista os objetos do relacionamento na tabela respectiva, de acordo
       com o tipo do objeto passado */
    void listarObjetos(ObjectType tipo_obj);
 
-   /// Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
+   /// @details Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
    void exibirDadosObjeto(TableObject *object, int idx_lin);
 
-   /// Seleciona a tabela de objetos de acordo com o tipo passado
+   /// @details Seleciona a tabela de objetos de acordo com o tipo passado
    TabelaObjetosWidget *selecionarTabelaObjetos(ObjectType tipo_obj);
 
-   /// Seleciona o tipo de objeto de acordo com o objeto sender informado
+   /// @details Seleciona o tipo de objeto de acordo com o objeto sender informado
    ObjectType selecionarTipoObjeto(QObject *tab_sender);
 
-   /// Exibe o formulário de edição de objetos de tabela conforme o tipo passado
+   /// @details Exibe o formulário de edição de objetos de tabela conforme o tipo passado
    void exibirFormObjetoTabela(ObjectType tipo_obj);
 
  public:
@@ -63,13 +63,13 @@ class TabelaWidget: public BaseObjectWidget, public Ui::TabelaWidget {
  private slots:
   void hideEvent(QHideEvent *);
 
-  /// Adiciona ou edita um objeto da tabela a qual aciona o método
+  /// @details Adiciona ou edita um objeto da tabela a qual aciona o método
   void manipularObjeto(void);
-  /// Remove um objeto selecionado  na tabela a qual aciona o método
+  /// @details Remove um objeto selecionado  na tabela a qual aciona o método
   void removerObjeto(int idx_lin);
-  /// Remove todos os objetos da tabela a qual aciona o método
+  /// @details Remove todos os objetos da tabela a qual aciona o método
   void removerObjetos(void);
-  /// Faz a movimentação entre dois objetos da tabela
+  /// @details Faz a movimentação entre dois objetos da tabela
   void moverObjetos(int idx1, int idx2);
 
  public slots:

@@ -27,132 +27,132 @@
 
 class Trigger: public TableObject{
  protected:
-  /// Arguments passed to the function that trigger executes
+  /// @details Arguments passed to the function that trigger executes
   vector<QString> arguments;
 
-  /** Column list used as the trigger firing condition. This attribute was
+  /** @details Column list used as the trigger firing condition. This attribute was
      introduced in PostgreSQL 9.1 and it is used only when the UPDATE event
      is assigned to trigger. */
   vector<Column *> upd_columns;
 
-  /// Function that is excuted when the trigger is activated
+  /// @details Function that is excuted when the trigger is activated
   Function *function;
 
-  /// Condition that guarantees the trigger's execution
+  /// @details Condition that guarantees the trigger's execution
   QString condition;
 
-  /// Trigger firing mode (BEFORE, AFTER, INSTEAD OF)
+  /// @details Trigger firing mode (BEFORE, AFTER, INSTEAD OF)
   FiringType firing_type;
 
-  /// Map that marks which events activates the trigger
+  /// @details Map that marks which events activates the trigger
   map<EventType, bool> events;
 
-  /// Flag that indicates whether the function must be executed by row
+  /// @details Flag that indicates whether the function must be executed by row
   bool is_exec_per_row;
 
-  /// Table referecend by the trigger (only for constraint trigger)
+  /// @details Table referecend by the trigger (only for constraint trigger)
   BaseObject *referenced_table;
 
-  /// Indicates whether the trigger is deferrable (only for constraint trigger)
+  /// @details Indicates whether the trigger is deferrable (only for constraint trigger)
   bool is_deferrable;
 
-  /// Deferral type for the trigger (only for constraint trigger)
+  /// @details Deferral type for the trigger (only for constraint trigger)
   DeferralType deferral_type;
 
-  /// Formats the basic trigger attributes to be used by SchemaParser
+  /// @details Formats the basic trigger attributes to be used by SchemaParser
   void setBasicAttributes(unsigned def_type);
 
-  /// Format the function arguments to be used by the SchemaParser
+  /// @details Format the function arguments to be used by the SchemaParser
   void setArgumentAttribute(unsigned tipo_def);
 
 
  public:
   Trigger(void);
 
-  /** Adds a column as a firing condition (only when the event UPDATE is used).
+  /** @details Adds a column as a firing condition (only when the event UPDATE is used).
      The columns added by this method must belongs to the trigger owner table. */
   void addColumn(Column *column);
 
-  /// Adds an argument to the trigger
+  /// @details Adds an argument to the trigger
   void addArgument(const QString &arg);
 
-  /// Defines in which events the trigger is executed
+  /// @details Defines in which events the trigger is executed
   void setEvent(EventType event, bool value);
 
-  /// Defines the function to be executed by the trigger
+  /// @details Defines the function to be executed by the trigger
   void setFunction(Function *func);
 
-  /// Defines the firing condition for trigger
+  /// @details Defines the firing condition for trigger
   void setCondition(const QString &cond);
 
-  /// Defines the referenced table (only for constraint trigger)
+  /// @details Defines the referenced table (only for constraint trigger)
   void setReferecendTable(BaseObject *ref_table);
 
-  /// Defines the deferral type
+  /// @details Defines the deferral type
   void setDeferralType(DeferralType tipo);
 
-  /// Defines whether the trigger is deferrable or not
+  /// @details Defines whether the trigger is deferrable or not
   void setDeferrable(bool valor);
 
-  /// Changes the specified trigger agument replacing the current argument by the 'new_arg'
+  /// @details Changes the specified trigger agument replacing the current argument by the 'new_arg'
   void editArgument(unsigned arg_idx, const QString &new_arg);
 
-  /// Defines the moment when the trigger must be executed
+  /// @details Defines the moment when the trigger must be executed
   void setFiringType(FiringType firing_type);
 
-  /// Define wheter the trigger executes per row
+  /// @details Define wheter the trigger executes per row
   void setExecutePerRow(bool value);
 
-  /// Returns true if the trigger executes on the passed event
+  /// @details Returns true if the trigger executes on the passed event
   bool isExecuteOnEvent(EventType event);
 
-  /// Gets one reference column by its index
+  /// @details Gets one reference column by its index
   Column *getColumn(unsigned col_idx);
 
-  /// Gets one argument by its index
+  /// @details Gets one argument by its index
   QString getArgument(unsigned arg_idx);
 
-  /// Gets the trigger firing condition
+  /// @details Gets the trigger firing condition
   QString getCondition(void);
 
-  /// Returns the function executed by the trigger
+  /// @details Returns the function executed by the trigger
   Function *getFunction(void);
 
-  /// Returns the trigger argument count
+  /// @details Returns the trigger argument count
   unsigned getArgumentCount(void);
 
-  /// Returns the reference column count
+  /// @details Returns the reference column count
   unsigned getColumnCount(void);
 
-  /// Returns when the trigger executes
+  /// @details Returns when the trigger executes
   FiringType getFiringType(void);
 
-  /// Remove an argument using its index
+  /// @details Remove an argument using its index
   void removeArgument(unsigned arg_idx);
 
-  /// Remove all arguments
+  /// @details Remove all arguments
   void removeArguments(void);
 
-  /// Remove all referenced columns
+  /// @details Remove all referenced columns
   void removeColumns(void);
 
-  /// Returns the referenced table
+  /// @details Returns the referenced table
   BaseObject *getReferencedTable(void);
 
-  /// Returns the deferral type of the constraint trigger
+  /// @details Returns the deferral type of the constraint trigger
   DeferralType getDeferralType(void);
 
-  /// Returns if the constraint trigger is deferrable or not
+  /// @details Returns if the constraint trigger is deferrable or not
   bool isDeferrable(void);
 
-  /** Returns whether the trigger references columns added
+  /** @details Returns whether the trigger references columns added
      by relationship. This method is used as auxiliary
      to control which triggers reference columns added by the
      relationship in order to avoid referece breaking due constants
      connections and disconnections of relationships */
   bool isReferRelationshipAddedColumn(void);
 
-  /// Returns the SQL / XML definition for the trigger
+  /// @details Returns the SQL / XML definition for the trigger
   QString getCodeDefinition(unsigned def_type);
 };
 

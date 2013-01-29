@@ -35,45 +35,45 @@ class ModeloWidget: public QWidget {
  Q_OBJECT
 
  private:
-  /// Fator de zoom atual da cena de objetos
+  /// @details Fator de zoom atual da cena de objetos
   float zoom_atual;
 
-  /// Indica que o modelo foi modificado por alguma operação
+  /// @details Indica que o modelo foi modificado por alguma operação
   bool modificado;
 
   bool isReservedObject(BaseObject *obj);
 
   void configurarSubMenu(BaseObject *obj);
 
-  /** Flag que indica se o modelo está em uma operação de recorte.
+  /** @details Flag que indica se o modelo está em uma operação de recorte.
      Essa flag modifica o funcionamento dos métodos colarObjetos, excluirObjeto e
      copiarObjetos() */
   static bool op_recortar;
 
-  /// Armazena a nível de classe o modelo que deu origem a operação de copia/recorte
+  /// @details Armazena a nível de classe o modelo que deu origem a operação de copia/recorte
   static ModeloWidget *modelo_orig;
 
-  /// Objetos copiados no modelo de origem
+  /// @details Objetos copiados no modelo de origem
   static vector<BaseObject *> objs_copiados;
 
-  /// Frame que indica que o modelo está protegido
+  /// @details Frame que indica que o modelo está protegido
   QFrame *modelo_protegido_frm;
 
-  /// Cena de objetos gráficos do modelo
+  /// @details Cena de objetos gráficos do modelo
   ObjectsScene *cena;
 
-  /// Viewport que gerencia a cena de objetos
+  /// @details Viewport que gerencia a cena de objetos
   QGraphicsView *viewport;
 
-        /// Menu popup geral do modelo
+        /// @details Menu popup geral do modelo
   QMenu menu_popup,
-        /// Menu de inserção de novo objeto no modelo
+        /// @details Menu de inserção de novo objeto no modelo
         menu_novo_obj,
         menu_acoes_rapidas,
         menu_esquemas,
         menu_donos;
 
-  /// Ações do menu popup
+  /// @details Ações do menu popup
   QAction *action_codigo_fonte,
           *action_editar,
           *action_proteger,
@@ -93,32 +93,32 @@ class ModeloWidget: public QWidget {
           *action_acoes_rapidas,
           *action_sel_sch_children;
 
-  /// Ações de inserção de novos objetos no modelo
+  /// @details Ações de inserção de novos objetos no modelo
   map<ObjectType, QAction *> acoes_ins_objs;
 
-  /// Armazena os objetos do modelo selecionados na cena
+  /// @details Armazena os objetos do modelo selecionados na cena
   vector<BaseObject *> objs_selecionados;
 
-  /// Tipo do objeto a ser inserido no modelo
+  /// @details Tipo do objeto a ser inserido no modelo
   ObjectType tipo_novo_obj;
 
-  /// Lista de operações executadas sobre os objetos do modelo
+  /// @details Lista de operações executadas sobre os objetos do modelo
   OperationList *lista_op;
 
-  /// Modelo de objetos do widget
+  /// @details Modelo de objetos do widget
   DatabaseModel *modelo;
 
-  /// Armazena o nome do arquivo de modelo carregado no widget
+  /// @details Armazena o nome do arquivo de modelo carregado no widget
   QString nome_arquivo,
           nome_arquivo_tmp;
 
  protected:
-  /// Constantes usadas nas operações de zoom
+  /// @details Constantes usadas nas operações de zoom
   static const float ZOOM_MINIMO=0.35f,
                      ZOOM_MAXIMO=4.0f,
                      INC_ZOOM=0.05f;
 
-  /** Configura a cena alinhando os objetos e a redimensionando quandos
+  /** @details Configura a cena alinhando os objetos e a redimensionando quandos
      os objetos extrapolam o tamanho máximo dela */
   void ajustarTamanhoCena(void);
 
@@ -128,19 +128,19 @@ class ModeloWidget: public QWidget {
   void focusInEvent(QFocusEvent *evento);
   void keyReleaseEvent(QKeyEvent *evento);
 
-  /// Modifica o zoom do viewport quando se pressiona CONTROL e utiliza o wheel do mouse
+  /// @details Modifica o zoom do viewport quando se pressiona CONTROL e utiliza o wheel do mouse
   void wheelEvent(QWheelEvent * evento);
 
-  /** Filtro de eventos usados quando é necessário desviar eventos de objetos filhos.
+  /** @details Filtro de eventos usados quando é necessário desviar eventos de objetos filhos.
      Um desses desvios é o tratamento do WheelEvent das barras de rolagens do viewport
      pelo modelo widget, isso faz com que o WheelEvent seja executado no Modelo e não
      nas barras */
   bool eventFilter(QObject *objeto, QEvent *evento);
 
-  /// Cancela a operação de adição de novo objeto (valido apenas para objetos gráficos)
+  /// @details Cancela a operação de adição de novo objeto (valido apenas para objetos gráficos)
   void cancelarAdicaoObjeto(void);
 
-  /// Desabilita as ações do modelo quando uma ação de adição de objeto gráfica está ativa
+  /// @details Desabilita as ações do modelo quando uma ação de adição de objeto gráfica está ativa
   void desabilitarAcoesModelo(void);
 
  public:
@@ -149,29 +149,29 @@ class ModeloWidget: public QWidget {
 
   void definirModificado(bool valor);
 
-  /// Obtém o nome do arquivo que deu origem ao modelo
+  /// @details Obtém o nome do arquivo que deu origem ao modelo
   QString getNameArquivo(void);
 
-  /// Obtém o nome temporário do arquivo usado para salvar uma cópia de segurança na pasta tmp do pgModeler
+  /// @details Obtém o nome temporário do arquivo usado para salvar uma cópia de segurança na pasta tmp do pgModeler
   QString getNameArquivoTemp(void);
 
-  /// Exibe o formulário de edição do objeto conforme o tipo passado
+  /// @details Exibe o formulário de edição do objeto conforme o tipo passado
   void exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto=NULL, BaseObject *objeto_pai=NULL, QPointF pos=QPointF(NAN, NAN));
 
-  /// Aplica um zoom ao modelo
+  /// @details Aplica um zoom ao modelo
   void aplicarZoom(float zoom);
 
-  /// Retorna o zoom atual em que se encontra o modelo
+  /// @details Retorna o zoom atual em que se encontra o modelo
   float zoomAtual(void);
 
-  /// Retorna se o modelo foi modificado ou não
+  /// @details Retorna se o modelo foi modificado ou não
   bool modeloModificado(void);
 
-  /// Returns the database model object
+  /// @details Returns the database model object
   DatabaseModel *getModel(void);
 
  private slots:
-  /** Os slots manipular*() gerenciam os sinais enviados pela cena e modelo para execução
+  /** @details Os slots manipular*() gerenciam os sinais enviados pela cena e modelo para execução
      de operações adicionais como incluir objetos modificados na lista de operações, criar
      objetos na cena e remover objetos da cena de forma automática */
   void manipularAdicaoObjeto(BaseObject *objeto);
@@ -180,22 +180,22 @@ class ModeloWidget: public QWidget {
   void manipularModificacaoObjeto(BaseGraphicObject *objeto);
   void manipularDuploCliqueObjeto(BaseGraphicObject *objeto);
 
-  /// Configura o menu popup conforme a lista de objetos passada
+  /// @details Configura o menu popup conforme a lista de objetos passada
   void configurarMenuPopup(vector<BaseObject *> objs_selecionados=vector<BaseObject *>());
 
-  /// Exibe um menu popup específico para objetos de tabela
+  /// @details Exibe um menu popup específico para objetos de tabela
   void exibirMenuObjetoTabela(vector<BaseObject *> objs_selecionados);
 
-  /// Exibe as dependências e referências do objeto
+  /// @details Exibe as dependências e referências do objeto
   void exibirDepsRefs(void);
 
-  /// Exibe o formulário de edição do objeto selecionado
+  /// @details Exibe o formulário de edição do objeto selecionado
   void editarObjeto(void);
 
-  /// Protege os objetos selecionados
+  /// @details Protege os objetos selecionados
   void protegerObjeto(void);
 
-  /// Executa o widget de renomeio de objeto
+  /// @details Executa o widget de renomeio de objeto
   void renomearObjeto(void);
 
   void moverParaEsquema(void);
@@ -206,55 +206,55 @@ class ModeloWidget: public QWidget {
 
   void selecionarFilhosEsquema(void);
 
-  /// Exclui os objetos selecionados
+  /// @details Exclui os objetos selecionados
   void excluirObjetos(void);
 
-  /// Seleciona todos os objetos no modelo
+  /// @details Seleciona todos os objetos no modelo
   void selecionarTodos(void);
 
-  /// Copia todos os objetos selecionados no modelo
+  /// @details Copia todos os objetos selecionados no modelo
   void copiarObjetos(void);
 
-  /// Cola todos os objetos no modelo
+  /// @details Cola todos os objetos no modelo
   void colarObjetos(void);
 
-  /** Recorta os objetos selecionados no modelo. Este método executa
+  /** @details Recorta os objetos selecionados no modelo. Este método executa
      apenas a cópia de objetos, marcando a flag op_recortar e setando
      o modelo de origem. O restante da operação de recorte que é exlcuir
      os objetos selecionados é executado no método colarObjetos() */
   void recortarObjetos(void);
 
-  /// Faz a conversão de um relacionamento n-n
+  /// @details Faz a conversão de um relacionamento n-n
   void converterRelacionamentoNN(void);
 
-  /// Exibe o código fonte do objeto selecionado
+  /// @details Exibe o código fonte do objeto selecionado
   void exibirCodigoFonte(void);
 
-  /// Adiciona um novo objeto ao modelo ou tabela selecionada
+  /// @details Adiciona um novo objeto ao modelo ou tabela selecionada
   void adicionarNovoObjeto(void);
 
-  /** Configura a lista de objetos selecionados toda vez que o
+  /** @details Configura a lista de objetos selecionados toda vez que o
      sinal selectionChanged() vindo da cena é disparado */
   void configurarSelecaoObjetos(void);
 
-  /** Retorna um vetor com as dimensões das páginas que contém objetos
+  /** @details Retorna um vetor com as dimensões das páginas que contém objetos
      para serem impressos */
   vector<QRectF> obterPaginasImpressao(const QSizeF &tam_papel, unsigned &qtd_pag_h, unsigned &qtd_pag_v);
 
-  /// Exibe o widget de visão geral. Para fechá-la o usuário pode dar um duplo-clique ou pressionar esc.
-  /// void exibirVisaoGeral(bool exibir);
+  /// @details Exibe o widget de visão geral. Para fechá-la o usuário pode dar um duplo-clique ou pressionar esc.
+  /// @details void exibirVisaoGeral(bool exibir);
 
  public slots:
    void carregarModelo(const QString &nome_arq);
    void salvarModelo(const QString &nome_arq);
    void salvarModelo(void);
 
-   /** Imprime o modelo no objeto QPrinter passado. Os dois parâmetros bool
+   /** @details Imprime o modelo no objeto QPrinter passado. Os dois parâmetros bool
       são usados para exibir ou não a grade e número de páginas na impressão */
    void imprimirModelo(QPrinter *printer, bool exibir_grade_imp, bool imp_num_pag);
 
  signals:
-  /** Sinais personalizados usados para sinalizarem
+  /** @details Sinais personalizados usados para sinalizarem
      a modificação do modelo. Este sinal é capturado pelo
      form principal para atualizar as ferramentas */
   void s_objetoModificado(void);

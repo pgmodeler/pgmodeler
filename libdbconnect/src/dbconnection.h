@@ -28,20 +28,20 @@
 
 class DBConnection {
  private:
-  /// Database connection descriptor
+  /// @details Database connection descriptor
   PGconn *connection;
 
-  /// Parameters map used to generate the connection string
+  /// @details Parameters map used to generate the connection string
   map<QString, QString> connection_params;
 
-  /// Formated connection string
+  /// @details Formated connection string
   QString connection_str;
 
-  /// Generates the connection string based on the parameter map
+  /// @details Generates the connection string based on the parameter map
   void generateConnectionString(void);
 
  public:
-  /// Constants used to reference the connections parameters
+  /// @details Constants used to reference the connections parameters
   static const QString PARAM_SERVER_FQDN,
                        PARAM_SERVER_IP,
                        PARAM_PORT,
@@ -68,44 +68,44 @@ class DBConnection {
   DBConnection(const QString &servidor, const QString &porta, const QString &usuario, const QString &passwd, const QString &db_name);
   ~DBConnection(void);
 
-  /** Sets one connection parameter. This method can only be called before
+  /** @details Sets one connection parameter. This method can only be called before
      the connection to the database */
   void setConnectionParam(const QString &param, const QString &value);
 
-  /// Open the connection to the database
+  /// @details Open the connection to the database
   void connect(void);
 
-  /// Resets the database connection
+  /// @details Resets the database connection
   void reset(void);
 
-  /// Close the opened connection
+  /// @details Close the opened connection
   void close(void);
 
-  /// Returns the value of specified parameter name
+  /// @details Returns the value of specified parameter name
   QString getConnectionParam(const QString &param);
 
-  /// Returns the full parameter map
+  /// @details Returns the full parameter map
   map<QString, QString> getConnectionParams(void);
 
-  /// Returns the connection string used to connect to de database
+  /// @details Returns the connection string used to connect to de database
   QString getConnectionString(void);
 
-  /// Returns the DBMS version in format XX.YY.ZZ
+  /// @details Returns the DBMS version in format XX.YY.ZZ
   QString getDBMSVersion(void);
 
-  /// Returns if the connections is stablished
+  /// @details Returns if the connections is stablished
   bool isStablished(void);
 
-  /** Executes a DML command on the server using the opened connection.
+  /** @details Executes a DML command on the server using the opened connection.
      Its mandatory to specify the object to receive the returned resultset. */
   void executeDMLCommand(const QString &sql, ResultSet &result);
 
-  /** Executes a DDL command on the server using the opened connection.
+  /** @details Executes a DDL command on the server using the opened connection.
      The user don't need to specify the resultset since the commando executed is intended
      to be an data definition one  */
   void executeDDLCommand(const QString &sql);
 
-  /// Makes an copy between two connections
+  /// @details Makes an copy between two connections
   void operator = (DBConnection &conn);
 };
 

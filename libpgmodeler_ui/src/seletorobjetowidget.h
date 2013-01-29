@@ -37,60 +37,60 @@ class SeletorObjetoWidget: public QWidget, public Ui::SeletorObjetoWidget {
  private:
    VisaoObjetosWidget *selecaoobjetos_wgt;
 
-   /** Armazena o seletor que está focalizado atualmente. Este atributo é usado
+   /** @details Armazena o seletor que está focalizado atualmente. Este atributo é usado
       para que outro seletor em um mesmo formulário não recebe o
       valor selecionado para o seletor que realmente deve mostrar o nome
       do objeto */
    static QObject *seletor_atual;
 
-   /** Armazena o destacador de sintaxe que pode ser usado
+   /** @details Armazena o destacador de sintaxe que pode ser usado
       para colorir o texto do seletor de acordo com a sintaxe SQL */
    SyntaxHighlighter *destaque_txt;
 
-   /// Armazena o objeto selecionado pelo usuário
+   /// @details Armazena o objeto selecionado pelo usuário
    BaseObject *objeto;
 
-   /// Armazena o tipo de objeto que deve ser selecionado pelo seletor
+   /// @details Armazena o tipo de objeto que deve ser selecionado pelo seletor
    ObjectType tipo_obj_seletor;
 
-   /** Armazena o modelo usado como referencia para seleção dos objetos
+   /** @details Armazena o modelo usado como referencia para seleção dos objetos
       se este objeto não estive definido o seletor de objetos não
       será exibido ficando inativo */
    DatabaseModel *modelo;
 
  public:
-   /** Um seletor deve sempre ser instanciado com um rótulo e o tipo de objeto
+   /** @details Um seletor deve sempre ser instanciado com um rótulo e o tipo de objeto
       que o seletor aceita */
    SeletorObjetoWidget(ObjectType tipo_obj_seletor, bool inst_destaque_txt, QWidget * parent = 0);
 
    ~SeletorObjetoWidget(void);
 
-  /// Retorna o objeto selecionado pelo usuário
+  /// @details Retorna o objeto selecionado pelo usuário
   BaseObject *obterObjeto(void);
 
-  /// Define o objeto inicial a ser exibido no seletor
+  /// @details Define o objeto inicial a ser exibido no seletor
   void definirObjeto(BaseObject *objeto);
 
-  /// Define o modelo o qual o seletor de objeto buscará os objetos
+  /// @details Define o modelo o qual o seletor de objeto buscará os objetos
   void definirModelo(DatabaseModel *modelo);
 
  private slots:
-   /// Preenche um dos campos os quais referenciam um esquema, espaço tabela ou dono.
+   /// @details Preenche um dos campos os quais referenciam um esquema, espaço tabela ou dono.
    void exibirObjetoSelecionado(BaseObject *obj_sel, bool=false);
 
-   /// Exibe o formulário de seleção de objetos
+   /// @details Exibe o formulário de seleção de objetos
    void exibirSelecaoObjetos(void);
 
  public slots:
-   /// Remove o objeto selecionado, limpando o campo do nome e anulando a referência ao objeto
+   /// @details Remove o objeto selecionado, limpando o campo do nome e anulando a referência ao objeto
    void removerObjetoSelecionado(void);
 
  signals:
-   /** Sinal disparando quando um objeto é selecionado
+   /** @details Sinal disparando quando um objeto é selecionado
       e tem seu nome exibido na caixa de texto. */
    void s_objetoSelecionado(void);
 
-   /// Sinal disparando quando um objeto é deselecionado (removido)
+   /// @details Sinal disparando quando um objeto é deselecionado (removido)
    void s_objetoRemovido(void);
 };
 

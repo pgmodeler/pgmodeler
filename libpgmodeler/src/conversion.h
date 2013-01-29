@@ -29,43 +29,43 @@
 
 class Conversion: public BaseObject {
  private:
-  /** Encoding types vector:
+  /** @details Encoding types vector:
      0 -> Source encoding
      1 -> Destination encoding */
   EncodingType encodings[2];
 
-  /// Function used to perform the conversion between the encodings
+  /// @details Function used to perform the conversion between the encodings
   Function *conversion_func;
 
-  /// Indicates whether the conversion is the default for the envolved encodings
+  /// @details Indicates whether the conversion is the default for the envolved encodings
   bool is_default;
 
  public:
-  /// Constants used to access the conversion encodings
+  /// @details Constants used to access the conversion encodings
   static const unsigned SRC_ENCODING=0,
                         DST_ENCODING=1;
 
   Conversion(void);
 
-  /// Defines whether the conversion is the default for the encodings
+  /// @details Defines whether the conversion is the default for the encodings
   void setDefault(bool value);
 
-  /// Sets one of the conversion encodings (using the encoding index constants)
+  /// @details Sets one of the conversion encodings (using the encoding index constants)
   void setEncoding(unsigned encoding_idx, EncodingType encoding_type);
 
-  /// Sets the conversion function used to convert character between encodings
+  /// @details Sets the conversion function used to convert character between encodings
   void setConversionFunction(Function *conv_func);
 
-  /// Returns the encoding related to the index (using the encoding index constants)
+  /// @details Returns the encoding related to the index (using the encoding index constants)
   EncodingType getEncoding(unsigned encoding_idx);
 
-  /// Returns the current used conversion function
+  /// @details Returns the current used conversion function
   Function *getConversionFunction(void);
 
-  /// Returns if the conversion is the default for the envolved encodings
+  /// @details Returns if the conversion is the default for the envolved encodings
   bool isDefault(void);
 
-  /// Returns the SQL/XML code definition for the conversion
+  /// @details Returns the SQL/XML code definition for the conversion
   QString getCodeDefinition(unsigned def_type);
 };
 

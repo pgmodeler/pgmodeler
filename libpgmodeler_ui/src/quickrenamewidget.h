@@ -30,13 +30,13 @@ class QuickRenameWidget: public QDialog, public Ui::QuickRenameWidget {
  private:
   Q_OBJECT
 
-  /// Object to be renamed
+  /// @details Object to be renamed
   BaseObject *object;
 
-  /// Operation list used to register the modification over object
+  /// @details Operation list used to register the modification over object
   OperationList *op_list;
 
-  /// Model used to made duplicity name validations
+  /// @details Model used to made duplicity name validations
   DatabaseModel *model;
 
   void hideEvent(QHideEvent *);

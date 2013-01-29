@@ -31,7 +31,7 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
  Q_OBJECT
 
  private:
-   /** Indica que a visão de objetos é usada de forma simplificada como
+   /** @details Indica que a visão de objetos é usada de forma simplificada como
       seletora de objetos auxiliar de outros formulários. Interações
       como excluir, destacar, editar e exibir código dos objetos
       são desabilitadas */
@@ -39,15 +39,15 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
 
         salvar_arvore;
 
-   /** Armazena o endereço do objeto relacionado ao item marcado na árvore
+   /** @details Armazena o endereço do objeto relacionado ao item marcado na árvore
      ou na lista de objetos */
    BaseObject *objeto_selecao;
 
-  /** Menu popup o qual contém as ações: destacar objeto no modelo,
+  /** @details Menu popup o qual contém as ações: destacar objeto no modelo,
      excluir do modelo, edição do objeto */
   QMenu *menu_popup;
 
-  /** Armazena a configuração de tamanho inicial do splitter para
+  /** @details Armazena a configuração de tamanho inicial do splitter para
      para uso em conjunto com o botão de exibição das configurações
      da visão de objetos.
      Armazena a configuração de posição da slider da barra de rolagem
@@ -55,41 +55,41 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
      sempre que a mesma sofrer atualizações */
   QSettings config_widgets;
 
-  /// Widget de Modelo de objetos o qual é acessado
+  /// @details Widget de Modelo de objetos o qual é acessado
   ModeloWidget *modelo_wgt;
 
-  /// Modelo o qual é acessado quando um modelo widget não é especificado
+  /// @details Modelo o qual é acessado quando um modelo widget não é especificado
   DatabaseModel *modelo_bd;
 
-  /// Armazena quais os tipos de objetos são visíveis na visão
+  /// @details Armazena quais os tipos de objetos são visíveis na visão
   map<ObjectType, bool> map_objs_visiveis;
 
-  /// Atualiza a árvore inteira do banco de dados
+  /// @details Atualiza a árvore inteira do banco de dados
   void atualizarSubBancoDados(void);
 
-  /// Atualiza somente a árvore de esquema e seus subitens
+  /// @details Atualiza somente a árvore de esquema e seus subitens
   void atualizarSubArvoreEsquema(QTreeWidgetItem *raiz);
 
-  /// Atualiza somente a árvore de tabelas em um determinado esquema
+  /// @details Atualiza somente a árvore de tabelas em um determinado esquema
   void atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObject *esquema);
 
-  /// Atualiza a arvore de objetos
+  /// @details Atualiza a arvore de objetos
   void atualizarArvoreObjetos(void);
 
-  /// Atualiza a lista de objetos
+  /// @details Atualiza a lista de objetos
   void atualizarListaObjetos(void);
 
-  /// Retorna um item da árvore relacionado ao objeto passado
+  /// @details Retorna um item da árvore relacionado ao objeto passado
   QTreeWidgetItem *obterItemArvore(BaseObject *objeto);
 
-  /** Gera um valor em um objeto QVariant para armazenamento dos
+  /** @details Gera um valor em um objeto QVariant para armazenamento dos
      endereços dos objetos do modelo para armazenamento em
      itens de QTreeWidgets e QListWidgetItem para permitir
      a interação entre direta como os objetos sem selecioná-los
      no modelo */
   QVariant gerarValorItem(BaseObject *objeto);
 
-  /// Implementa a movimentação da janela quando esta é exibida de forma simplificada
+  /// @details Implementa a movimentação da janela quando esta é exibida de forma simplificada
   void mouseMoveEvent(QMouseEvent *);
   void closeEvent(QCloseEvent *);
   void showEvent(QShowEvent *);
@@ -99,13 +99,13 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
   BaseObject *obterObjetoSelecao(void);
 
  protected:
-   /// Salva os itens atualmente expandidos na árvore no vetor passado
+   /// @details Salva os itens atualmente expandidos na árvore no vetor passado
    void salvarEstadoArvore(vector<BaseObject *> &itens_arv);
 
-   /// Restaura a árvore ao estado anterior expandindo os itens do vetor passado
+   /// @details Restaura a árvore ao estado anterior expandindo os itens do vetor passado
    void restaurarEstadoArvore(vector<BaseObject *> &itens_arv);
 
-   /// Indica ao widget que o estado da árvore de objetos deve ser salvo/restaurado automaticamente
+   /// @details Indica ao widget que o estado da árvore de objetos deve ser salvo/restaurado automaticamente
    void salvarEstadoArvore(bool valor);
 
  public slots:
@@ -124,7 +124,7 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
    void editarObjeto(void);
 
   signals:
-  /** Sinais personalizados usados para sinalizarem
+  /** @details Sinais personalizados usados para sinalizarem
      a modificação da visão de objetos. Este sinal é capturado pelo
      form principal para atualizar as ferramentas */
   void s_visaoObjetosModificada(void);

@@ -30,23 +30,23 @@
                                                                                                                                                       
 class OperatorClass: public BaseObject {
  private:                                                                                                                                                                                                          
-  /// Data type witch the operator class acts on
+  /// @details Data type witch the operator class acts on
   PgSQLType data_type;
 
-  /// Operator family that the operator class is part
+  /// @details Operator family that the operator class is part
   OperatorFamily *family;
 
-  /// Indexing type (method) adopted by the operator class
+  /// @details Indexing type (method) adopted by the operator class
   IndexingType indexing_type;
 
-  /** Indicates if the operator class is the default for the
+  /** @details Indicates if the operator class is the default for the
      specified data type */
   bool is_default;
 
-  /// Operator class attributes list
+  /// @details Operator class attributes list
   vector<OperatorClassElement> elements;
 
-  /** Formats the elements string used by the SchemaParser on the
+  /** @details Formats the elements string used by the SchemaParser on the
      SQL/XML code definition for operator classes */
   void setElementsAttribute(unsigned def_type);
 
@@ -54,33 +54,33 @@ class OperatorClass: public BaseObject {
   OperatorClass(void);
   ~OperatorClass(void);
 
-  /// Sets the data type that the operator class works on
+  /// @details Sets the data type that the operator class works on
   void setDataType(PgSQLType data_type);
 
-  /// Sets the operator family that the operator class is part
+  /// @details Sets the operator family that the operator class is part
   void setFamily(OperatorFamily *family);
 
-  /// Set the indexing type used by the operator class
+  /// @details Set the indexing type used by the operator class
   void setIndexingType(IndexingType index_type);
 
-  /// Sets if the opertor class is default for the specified data type
+  /// @details Sets if the opertor class is default for the specified data type
   void setDefault(bool value);
 
-  /// Methods used to manipulate the elements FUNCTION, OPERATOR and STORAGE
+  /// @details Methods used to manipulate the elements FUNCTION, OPERATOR and STORAGE
   void addElement(OperatorClassElement elem);
   void removeElement(unsigned elem_idx);
   OperatorClassElement getElement(unsigned elem_idx);
   bool isElementExists(OperatorClassElement elem);
   void removeElements(void);
 
-  /// Methods used to obtain the class attributes
+  /// @details Methods used to obtain the class attributes
   PgSQLType getDataType(void);
   OperatorFamily *getFamily(void);
   IndexingType getIndexingType(void);
   bool isDefault(void);
   unsigned getElementCount(void);
 
-  /// Returns the SQL/XML code definition for operator class
+  /// @details Returns the SQL/XML code definition for operator class
   QString getCodeDefinition(unsigned def_type, bool reduced_form);
   QString getCodeDefinition(unsigned def_type);
 };

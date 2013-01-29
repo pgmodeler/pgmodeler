@@ -27,7 +27,7 @@
 #include "ui_visaowidget.h"
 #include "tabelaobjetoswidget.h"
 
-/** Declarando a classe Referencia como metatype para que esta
+/** @details Declarando a classe Referencia como metatype para que esta
  possa ser usada em conjunto com a classe QVariant (vide documentação
  da classe QVariant e QMetaType). Esta declaração é uma macro específica
  do Qt e está sendo usada para facilitar o uso com classes que necessitam
@@ -41,30 +41,30 @@ class VisaoWidget: public BaseObjectWidget, public Ui::VisaoWidget {
  Q_OBJECT
 
  private:
-   /// Frame usado como dica para criação de uma referência a todas as colunas de uma tabela
+   /// @details Frame usado como dica para criação de uma referência a todas as colunas de uma tabela
    QFrame *frame_info;
 
-  /** Esta instância de visão é usada para receber todos os atributos configurados no formulário.
+  /** @details Esta instância de visão é usada para receber todos os atributos configurados no formulário.
      Uma vez atribuídos os dados e validados a mesma tem seus atributos copiados para a visão
      que realemente precisa ser modificada/criada (this->objeto) */
   View visao_aux;
 
-                   /// Tabela de listagem das referências cadastradas para a visão
+                   /// @details Tabela de listagem das referências cadastradas para a visão
   TabelaObjetosWidget *tab_referencias;
 
-                   /// Destacador de sintaxe usado no campo de expressão e de código fonte da visão
+                   /// @details Destacador de sintaxe usado no campo de expressão e de código fonte da visão
    SyntaxHighlighter *destaque_expr,
                    *destaque_codigo;
 
-                  /// Seletores de tabela e coluna relacionados   visao
+                  /// @details Seletores de tabela e coluna relacionados   visao
    SeletorObjetoWidget *sel_tabela,
                        *sel_coluna;
 
-   /// Exibe os dados de uma dada referência na tabela de referências
+   /// @details Exibe os dados de uma dada referência na tabela de referências
    void exibirDadosReferencia(Reference refer, bool selec_from, bool from_where,
                               bool apos_where, unsigned idx_ref);
 
-   /// Método auxiliar que limpa os campos do formulário de referências
+   /// @details Método auxiliar que limpa os campos do formulário de referências
    void limparFormReferencia(void);
 
  public:
@@ -74,23 +74,23 @@ class VisaoWidget: public BaseObjectWidget, public Ui::VisaoWidget {
  private slots:
   void hideEvent(QHideEvent *);
 
-  /** Exibe os campos necessários no formulário conforme o
+  /** @details Exibe os campos necessários no formulário conforme o
      tipo de referencia selecionado */
   void selecionarTipoReferencia(void);
 
-  /** Cria uma referência com base no que está no formulário
+  /** @details Cria uma referência com base no que está no formulário
      e a exibe na tabela no índice informado no parâmetro */
   void manipularReferencia(int);
 
-  /** Obtém a referência na linha especificada no parâmetro
+  /** @details Obtém a referência na linha especificada no parâmetro
      e exibe seus dados no formulário para edição */
   void editarReferencia(int);
 
-  /** Controla a forma como é exibida os nomes da tabela e coluna
+  /** @details Controla a forma como é exibida os nomes da tabela e coluna
      selecionada na referência */
   void exibirNomeObjeto(void);
 
-  /** Atualiza o campo de código fonte da visão. Este campo
+  /** @details Atualiza o campo de código fonte da visão. Este campo
      é preenchido com o código gerado pelo atributo 'visao_aux' */
   void atualizarPrevisaoCodigo(void);
 

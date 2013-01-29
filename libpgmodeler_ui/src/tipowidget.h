@@ -27,7 +27,7 @@
 #include "tipopgsqlwidget.h"
 #include "tabelaobjetoswidget.h"
 
-/** Declarando a classe Parametro como metatype para que esta
+/** @details Declarando a classe Parametro como metatype para que esta
  possa ser usada em conjunto com a classe QVariant (vide documentação
  da classe QVariant e QMetaType). Esta declaração é uma macro específica
  do Qt e está sendo usada para facilitar o uso com classes que necessitam
@@ -41,35 +41,35 @@ class TipoWidget: public BaseObjectWidget, public Ui::TipoWidget {
  Q_OBJECT
 
  private:
-   /// Widgets seletores de funções do tipo
+   /// @details Widgets seletores de funções do tipo
    SeletorObjetoWidget *sel_funcoes[7];
 
-   /// Widgets de configuração de tipo cópia e tipo de elemento
+   /// @details Widgets de configuração de tipo cópia e tipo de elemento
    TipoPgSQLWidget *tipo_copia,
                    *tipo_elemento;
 
-   /// Tabelas para armazenamento das enumerações e atributos de tipos compostos
+   /// @details Tabelas para armazenamento das enumerações e atributos de tipos compostos
    TabelaObjetosWidget *tab_enumeracoes,
                        *tab_atributos;
 
  public:
    TipoWidget(QWidget * parent = 0);
-   /// ~TipoWidget(void);
+   /// @details ~TipoWidget(void);
    void setAttributes(DatabaseModel *model, OperationList *op_list, Type *tipo);
 
  private slots:
    void hideEvent(QHideEvent *);
 
-   /** Manipula o formulário exibindo os campos de acordo com a configuração
+   /** @details Manipula o formulário exibindo os campos de acordo com a configuração
       de tipo selecionada */
    void selecionarConfiguracaoTipo(void);
 
-   /// Manipula as enumerações do tipo
+   /// @details Manipula as enumerações do tipo
    void manipularEnumeracao(int idx_linha);
 
-   /// Exibe o form de parâmetros usado como editor de atributos de tipos compostos
+   /// @details Exibe o form de parâmetros usado como editor de atributos de tipos compostos
    void exibirFormAtributo(void);
-   /// Exibe os atributos do tipo composto na tabela de atributos
+   /// @details Exibe os atributos do tipo composto na tabela de atributos
    void manipularAtributo(int res);
 
  public slots:

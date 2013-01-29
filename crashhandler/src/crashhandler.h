@@ -37,16 +37,16 @@ class CrashHandler : public QDialog, Ui::CrashHandler
  private:
   Q_OBJECT
 
-  /// Syntax highlight for model text widget
+  /// @details Syntax highlight for model text widget
   SyntaxHighlighter *hl_model_txt;
 
-  /// Delimiter character which separates the sections of the compressed file
+  /// @details Delimiter character which separates the sections of the compressed file
   const static char CHR_DELIMITER;
 
  public:
   CrashHandler(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
-  /// Load a report file showing its contents on the form
+  /// @details Load a report file showing its contents on the form
   void loadReport(const QString &filename);
 
  public slots:

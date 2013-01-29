@@ -31,7 +31,7 @@ class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget,
  private:
   Q_OBJECT
 
-  /// Auxiliary class that stores the formating data of each element
+  /// @details Auxiliary class that stores the formating data of each element
   class AppearanceConfigItem {
    public:
     QString conf_id;
@@ -40,32 +40,32 @@ class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget,
     bool obj_conf;
   };
 
-  /// Color picker dialog
+  /// @details Color picker dialog
   QColorDialog color_dlg;
 
-  /// Viewport used to show the example model
+  /// @details Viewport used to show the example model
   QGraphicsView *viewp;
 
-  /// Object scene used to store the graphical objects
+  /// @details Object scene used to store the graphical objects
   ObjectsScene *scene;
 
-  /// Database model used to store the example base objects
+  /// @details Database model used to store the example base objects
   DatabaseModel *model;
 
-  /// Stores the element configuration items
+  /// @details Stores the element configuration items
   vector<AppearanceConfigItem> conf_items;
 
-  /// Loads the example model from file (conf/exampledb.dbm)
+  /// @details Loads the example model from file (conf/exampledb.dbm)
   void loadExampleModel(void);
 
  public:
   AppearanceConfigWidget(QWidget * parent=0);
   ~AppearanceConfigWidget(void);
 
-  /// Saves the configuration to file
+  /// @details Saves the configuration to file
   void saveConfiguration(void);
 
-  /// Loads the configuration from file
+  /// @details Loads the configuration from file
   void loadConfiguration(void);
 
  private slots:
@@ -73,7 +73,7 @@ class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget,
   void applyFontStyle(void);
   void applyElementColor(void);
 
-  /** Disabled method */
+  /** @details Disabled method */
   void applyConfiguration(void){}
 
  public slots:

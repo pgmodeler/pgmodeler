@@ -35,16 +35,16 @@ class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
  Q_OBJECT
 
  private:
-   /// Tipo configurado pelo formulário
+   /// @details Tipo configurado pelo formulário
    PgSQLType tipo;
 
-   /// Destacador de sintaxe usado para destacar o formato do tipo
+   /// @details Destacador de sintaxe usado para destacar o formato do tipo
    SyntaxHighlighter *destaque_fmt;
 
  public:
    TipoPgSQLWidget(QWidget * parent = 0, const QString &rotulo="");
 
-   /** Método utilitário disponibilizado para as demais classes o qual
+   /** @details Método utilitário disponibilizado para as demais classes o qual
       obtém a lista de tipos do modelo em questão dando a possiblidade
       de quais tipos obter */
    static void obterTiposPgSQL(QComboBox *combo, DatabaseModel *modelo,
@@ -52,7 +52,7 @@ class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
                                bool tipo_oid=true, bool pseudo=true);
 
  private slots:
-   /** Atualiza o formato do tipo   medida que os campos
+   /** @details Atualiza o formato do tipo   medida que os campos
       do formulário são modificados */
    void atualizarFormatoTipo(void);
 
@@ -61,7 +61,7 @@ class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
                          unsigned conf_tipo_usr=UserTypeConfig::ALL_USER_TYPES,
                          bool tipo_oid=true, bool pseudo=true);
 
-   /// Obtém o tipo configurado no formulário
+   /// @details Obtém o tipo configurado no formulário
    PgSQLType obterTipoPgSQL(void);
 };
 

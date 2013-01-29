@@ -31,25 +31,25 @@ class FuncaoWidget: public BaseObjectWidget, public Ui::FuncaoWidget  {
  Q_OBJECT
 
  private:
-   /** Destaque de código-fonte usado para destacar o código da função
+   /** @details Destaque de código-fonte usado para destacar o código da função
       definido pelo usuário */
    SyntaxHighlighter *destaque_codigo;
 
-   /// Widget de tipo Pgsql usado para configurar o tipo de retorno da função
+   /// @details Widget de tipo Pgsql usado para configurar o tipo de retorno da função
    TipoPgSQLWidget *tipo_ret;
 
-                       /// Tabela que representa a tabela de retorno da função
+                       /// @details Tabela que representa a tabela de retorno da função
    TabelaObjetosWidget *tab_retorno,
-                       /// Tabela de parâmetros da função
+                       /// @details Tabela de parâmetros da função
                        *tab_parametros;
 
-   /// Converte os dados da linha da tabela informada em um parâmetro
+   /// @details Converte os dados da linha da tabela informada em um parâmetro
    Parameter obterParametro(TabelaObjetosWidget *tab, unsigned idx_lin);
 
-   /// Exibe os dados do parâmetro na tabela e linha selecionadas
+   /// @details Exibe os dados do parâmetro na tabela e linha selecionadas
    void exibirDadosParametro(Parameter param, TabelaObjetosWidget *tab, unsigned idx_lin);
 
-   /** Valida a nova configuração da função em relação a demais objetos que a referenciam.
+   /** @details Valida a nova configuração da função em relação a demais objetos que a referenciam.
      A exemplo disso temos objetos das classes ConversaoCodificacao, ConversaoTipo,
      FuncaoAgregada, Gatilho, Linguagem, Operador, Tipo */
    void validarFuncaoConfigurada(void);
@@ -61,15 +61,15 @@ class FuncaoWidget: public BaseObjectWidget, public Ui::FuncaoWidget  {
  private slots:
    void alternarTiposRetorno(void);
 
-   /** Seleciona a linguagem de definição da função, e caso disponível,
+   /** @details Seleciona a linguagem de definição da função, e caso disponível,
       carrega o arquivo de destaque de sintaxe referênt  linguagem
       selecionada */
    void selecionarLinguagem(void);
 
-   /// Exibe a janela de configuração de parâmetros
+   /// @details Exibe a janela de configuração de parâmetros
    void exibirFormParametro(void);
 
-   /** Manipula um parâmetro que foi configurado pelo form. de parâmetro
+   /** @details Manipula um parâmetro que foi configurado pelo form. de parâmetro
       exibindo seus dados na tabela da parâmetros correta */
    void manipularParametro(int);
 

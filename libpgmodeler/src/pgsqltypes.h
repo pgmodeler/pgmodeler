@@ -36,20 +36,20 @@ class BaseType{
  protected:
   static QString type_list[types_count];
 
-  /// Index of the type on the type_list vector
+  /// @details Index of the type on the type_list vector
   unsigned type_idx;
 
-  /** Sets an id to the type according to the limit stablished by the attribute
+  /** @details Sets an id to the type according to the limit stablished by the attribute
      offset and type_count from each class */
   void setType(unsigned type_id, unsigned offset, unsigned count);
 
-  /// Checks if the type id is valid according to the offset/count for the class
+  /// @details Checks if the type id is valid according to the offset/count for the class
   bool isTypeValid(unsigned type_id, unsigned offset, unsigned count);
 
-  /// Returns the string list for all types on the specified interval (offset-count)
+  /// @details Returns the string list for all types on the specified interval (offset-count)
   static void getTypes(QStringList &types, unsigned offset, unsigned count);
 
-  /// Returns the type id searching by its name. Returns BaseType::null when not found
+  /// @details Returns the type id searching by its name. Returns BaseType::null when not found
   static unsigned getType(const QString &type_name, unsigned offset, unsigned count);
 
  public:
@@ -57,10 +57,10 @@ class BaseType{
 
   BaseType(void);
 
-  /// Returns the name of the type
+  /// @details Returns the name of the type
   QString operator ~ (void);
 
-  /// Returns the code (id) of the type
+  /// @details Returns the code (id) of the type
   unsigned operator ! (void);
 
   bool operator == (BaseType &type);
@@ -73,10 +73,10 @@ class BaseType{
 
 class ActionType: public BaseType{
  private:
-  /// Initial position of the names related to the class on BaseType::type_list
+  /// @details Initial position of the names related to the class on BaseType::type_list
   static const unsigned offset=1;
 
-  /// Type count for the class related to the list
+  /// @details Type count for the class related to the list
   static const unsigned types_count=5;
 
  public:
@@ -136,7 +136,7 @@ class EventType: public BaseType{
   unsigned operator = (unsigned type_id);
   unsigned operator = (const QString &type_name);
 
-  /** These two operators where created to permit the use the
+  /** @details These two operators where created to permit the use the
      class EventType on STL containers (specially maps) */
   bool operator < (EventType type) const;
   bool operator < (unsigned type_id) const;
@@ -235,7 +235,7 @@ class SpatialType: public BaseType{
   static const unsigned offset=182;
   static const unsigned types_count=7;
 
-  /** Used in conjunction with spatial_type, and denotes the SRID value
+  /** @details Used in conjunction with spatial_type, and denotes the SRID value
      for the spatial type. For geometry type this value goes from -1 to n
      and for geography only the value 4326 is accepted. */
   int srid;
@@ -268,31 +268,31 @@ class SpatialType: public BaseType{
   QString operator * (void);
 };
 
-/** This class stores the user defined type configureation.
+/** @details This class stores the user defined type configureation.
    When the user creates a Type, Sequence, Domain, even a Table,
    it can be used as a type on certain configurations so this
    class implements a basic structure to control these types */
 class UserTypeConfig {
   protected:
-   /// Pointer to the instance of the user defined type
+   /// @details Pointer to the instance of the user defined type
    void *ptype;
 
-   /// Pointer to the model that the type belongs to
+   /// @details Pointer to the model that the type belongs to
    void *pmodel;
 
-   /// Name of the type
+   /// @details Name of the type
    QString name;
 
-   /// Type configuration id (refer to ???_TYPE constants)
+   /// @details Type configuration id (refer to ???_TYPE constants)
    unsigned type_conf;
 
   public:
-   static const unsigned BASE_TYPE=1, /// The type refers to a user-defined base type (class Type)
-                         DOMAIN_TYPE=2, /// The type refers to a domain
-                         TABLE_TYPE=4, /// The type refers to a table
-                         SEQUENCE_TYPE=8, /// The type refers to a sequence
+   static const unsigned BASE_TYPE=1, /// @details The type refers to a user-defined base type (class Type)
+                         DOMAIN_TYPE=2, /// @details The type refers to a domain
+                         TABLE_TYPE=4, /// @details The type refers to a table
+                         SEQUENCE_TYPE=8, /// @details The type refers to a sequence
 
-                         /// This constant refers to all types above and must be used only on type searches
+                         /// @details This constant refers to all types above and must be used only on type searches
                          ALL_USER_TYPES=15;
 
    UserTypeConfig(void)
@@ -306,47 +306,47 @@ class PgSQLType: public BaseType{
   static const unsigned offset=25;
   static const unsigned types_count=66;
 
-  /// Offset for oid types
+  /// @details Offset for oid types
   static const unsigned oid_start=67;
   static const unsigned oid_end=78;
 
-  /// Offset for pseudo types
+  /// @details Offset for pseudo types
   static const unsigned pseudo_start=79;
   static const unsigned pseudo_end=90;
 
-  /// Configuration for user defined types
+  /// @details Configuration for user defined types
   static vector<UserTypeConfig> user_types;
 
-  /// Dimension of the type if it's configured as array
+  /// @details Dimension of the type if it's configured as array
   unsigned dimension,
 
-           /// Type's length (used for types like varchar, date e bit)
+           /// @details Type's length (used for types like varchar, date e bit)
            length;
 
-  /// Type's precison (used by numeric/decimal)
+  /// @details Type's precison (used by numeric/decimal)
   int precision;
 
-  /** Indicates that the type (when used as timestamp or time) must
+  /** @details Indicates that the type (when used as timestamp or time) must
      considers timezones */
   bool with_timezone;
 
-  /// Time interval used by 'interval' type
+  /// @details Time interval used by 'interval' type
   IntervalType interval_type;
 
-  /// Spatial type used by the PostGiS types
+  /// @details Spatial type used by the PostGiS types
   SpatialType spatial_type;
 
  protected:
-  /// Adds a new reference to the user defined type
+  /// @details Adds a new reference to the user defined type
   static void addUserType(const QString &type_name, void *ptype, void *pmodel, unsigned type_conf);
 
-  /// Removes a reference to the user defined type
+  /// @details Removes a reference to the user defined type
   static void removeUserType(const QString &type_name, void *ptype);
 
-  /// Renames a user defined type
+  /// @details Renames a user defined type
   static void renameUserType(const QString &type_name, void *ptype, const QString &new_name);
 
-  /// Returns the name of the type using its id
+  /// @details Returns the name of the type using its id
   static QString getUserTypeName(unsigned type_id);
 
   void setUserType(unsigned type_id);
@@ -403,7 +403,7 @@ class PgSQLType: public BaseType{
 
   QString operator ~ (void);
 
-  /// Retorns the SQL definition for the type
+  /// @details Retorns the SQL definition for the type
   QString operator * (void);
 
   unsigned operator << (void *ptype);
@@ -417,11 +417,11 @@ class PgSQLType: public BaseType{
   bool operator != (PgSQLType type);
   bool operator != (unsigned type_idx);
 
-  /** Returns the pointer to the user defined type which denotes the
+  /** @details Returns the pointer to the user defined type which denotes the
      the pgsql type */
   void *getUserTypeReference(void);
 
-  /// Returns the configuration id for the user defined type
+  /// @details Returns the configuration id for the user defined type
   unsigned getUserTypeConfig(void);
 
   friend class Type;

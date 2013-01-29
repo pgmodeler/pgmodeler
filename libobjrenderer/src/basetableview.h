@@ -31,10 +31,10 @@ class BaseTableView: public BaseObjectView {
   Q_OBJECT
 
  protected:
-  /// Polygonal object that defines the table body
+  /// @details Polygonal object that defines the table body
   QGraphicsPolygonItem *body;
 
-  /// Table title
+  /// @details Table title
   TableTitleView *title;
 
   QVariant itemChange(GraphicsItemChange change, const QVariant &value);
@@ -44,7 +44,7 @@ class BaseTableView: public BaseObjectView {
   ~BaseTableView(void);
 
  signals:
-  /// Signal emitted when a table is moved over the scene
+  /// @details Signal emitted when a table is moved over the scene
   void s_objectMoved(void);
 };
 

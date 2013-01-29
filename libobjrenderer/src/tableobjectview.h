@@ -31,10 +31,10 @@ class TableObjectView: public BaseObjectView
  private:
   Q_OBJECT
 
-  /// Table object descriptor
+  /// @details Table object descriptor
   QGraphicsItem *descriptor;
 
-  /// Labels used to show objects informatoni (name, type, constraints/aliases)
+  /// @details Labels used to show objects informatoni (name, type, constraints/aliases)
   QGraphicsSimpleTextItem *lables[3];
 
   static const QString CONSTR_DELIM_END,
@@ -46,7 +46,7 @@ class TableObjectView: public BaseObjectView
                        TXT_PRIMARY_KEY,
                        TXT_UNIQUE;
 
-  /** Configures the descriptor object according to the source object.
+  /** @details Configures the descriptor object according to the source object.
      The constraint type parameter is only used when the source object is a
      column  and is used to format the descriptor indication that the column
      has a constraint */
@@ -61,19 +61,19 @@ class TableObjectView: public BaseObjectView
   TableObjectView(TableObject *object=NULL);
   ~TableObjectView(void);
 
-  /// Configures the object as a view reference
+  /// @details Configures the object as a view reference
   void configureObject(Reference reference);
 
-  /// Configures the object as a table object
+  /// @details Configures the object as a table object
   void configureObject(void);
 
-  /// Sets the horizontal position of the specified child object (index)
+  /// @details Sets the horizontal position of the specified child object (index)
   void setChildObjectXPos(unsigned obj_idx, float px);
 
-  /// Returns the child object at the specified index
+  /// @details Returns the child object at the specified index
   QGraphicsItem *getChildObject(unsigned obj_idx);
 
-  /** Returns a formatted string containing the keywords indicating the constraints
+  /** @details Returns a formatted string containing the keywords indicating the constraints
      that is applyed to the passed column */
   static QString getConstraintString(Column *column);
 };

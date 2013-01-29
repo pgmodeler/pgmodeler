@@ -29,29 +29,29 @@
 class RelacionamentoWidget: public BaseObjectWidget, public Ui::RelacionamentoWidget {
  private:
   Q_OBJECT
-   /** Quantidade de elementos na lista de operações antes do relacionamento
+   /** @details Quantidade de elementos na lista de operações antes do relacionamento
       ser editado. Este atributo é usado para se saber, em caso de cancelamento
       da edição do relacionamento, a quantidade de operações relacionada ao
       objeto que necessitam ser removidas. Vide: cancelarConfiguracao() */
    unsigned qtd_operacoes;
 
-   /// Destacadores de sintaxe para os campos de nome da tabela de origem e destino
+   /// @details Destacadores de sintaxe para os campos de nome da tabela de origem e destino
    SyntaxHighlighter *dest_tab_orig,
                    *dest_tab_dest;
 
-   /// Tabela as quais armazenam os atributos e restrições do relacionamento
+   /// @details Tabela as quais armazenam os atributos e restrições do relacionamento
    TabelaObjetosWidget *tab_atributos,
                        *tab_restricoes,
                        *tab_objs_avancados;
 
-   /** Lista os objetos do relacionamento na tabela respectiva, de acordo
+   /** @details Lista os objetos do relacionamento na tabela respectiva, de acordo
       com o tipo do objeto passado */
    void listarObjetos(ObjectType tipo_obj);
 
-   /// Lista os objetos avançados
+   /// @details Lista os objetos avançados
    void listarObjetosAvancados(void);
 
-   /// Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
+   /// @details Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
    void exibirDadosObjeto(TableObject *object, int idx_lin);
 
  protected:
@@ -64,19 +64,19 @@ class RelacionamentoWidget: public BaseObjectWidget, public Ui::RelacionamentoWi
  private slots:
   void hideEvent(QHideEvent *);
 
-  /// Adiciona um objeto   tabela a qual aciona o método
+  /// @details Adiciona um objeto   tabela a qual aciona o método
   void adicionarObjeto(void);
 
-  /// Edita um objeto selecionado  na tabela a qual aciona o método
+  /// @details Edita um objeto selecionado  na tabela a qual aciona o método
   void editarObjeto(int idx_lin);
 
-  /// Remove um objeto selecionado  na tabela a qual aciona o método
+  /// @details Remove um objeto selecionado  na tabela a qual aciona o método
   void removerObjeto(int idx_lin);
 
-  /// Remove todos os objetos da tabela a qual aciona o método
+  /// @details Remove todos os objetos da tabela a qual aciona o método
   void removerObjetos(void);
 
-  /// Exibe o formulário referente ao objeto criado ou que representa o relationamento
+  /// @details Exibe o formulário referente ao objeto criado ou que representa o relationamento
   void exibirObjetoAvancado(int idx);
 
  public slots:
