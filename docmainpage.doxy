@@ -1,0 +1,31 @@
+/** 
+ * \defgroup libpgmodeler Core library (libpgmodeler)
+ * \defgroup libutil Shared utility classes / namespaces library (libutil)
+ * \defgroup libparsers Schema file and XML parsers library (libparsers)
+ * \defgroup libobjrenderer Graphical objects renderer library (libobjrenderer)
+ * \defgroup libpgmodeler_ui pgModeler user interface library (libpgmodeler_ui)
+ * \defgroup libdbconnect Database connection and query library (libdbconnect)
+ * \defgroup main pgModeler main executable
+ * \defgroup crashhandler pgModeler crash handler
+ * \defgroup dummyplugin Dummy plugin
+ * 
+ * 
+ * \mainpage
+ * 
+ * <h2>This is a experimental resource for developers who wants to know more about pgModeler's source code and/or implements their own plug-ins.</h2>
+ * 
+ * \section help Help Wanted!
+ * 
+ * pgModeler is growing and the development needs contributors. If you know <em>C++ language</em> and <em>Qt framework</em> why not give your contribution to the project? You are welcome to join me on development!
+ *
+ * Even not being developer you can collaborate. pgModeler doesn't own a User's Manual and my reduce spare time does not permit me to write one. If you are interested in write a user's manual please contact me.
+ * 
+ * 
+ * 
+ * 
+ * Hope you enjoy! ;)
+ * 
+ * <em><strong>Raphael A. Silva</strong></em><br/>
+ * </em>(rkhaotix at gmail dot com)</em>
+ */ 
+
