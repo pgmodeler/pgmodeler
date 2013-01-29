@@ -1,9 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: DestaqueSintaxe
-# Description:Definição da classe que implementa um destacador de sintaxe de
-#            linguagens (código fonte) com padrões de marcação definidos pelo usuário.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,6 +15,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler_ui
+\class DestaqueSintaxe
+\brief Definição da classe que implementa um destacador de sintaxe de
+ linguagens (código fonte) com padrões de marcação definidos pelo usuário.
+*/
+
 #ifndef DESTAQUE_SINTAXE_H
 #define DESTAQUE_SINTAXE_H
 

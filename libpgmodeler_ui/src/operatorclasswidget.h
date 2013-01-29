@@ -1,8 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Class: OperatorClassWidget
-# Description: Implements the operations to create/edit operator class via form.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler_ui
+\class OperatorClassWidget
+\brief Implements the operations to create/edit operator class via form.
+*/
+
 #ifndef OPERATOR_CLASS_WIDGET_H
 #define OPERATOR_CLASS_WIDGET_H
 

@@ -1,12 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: TabelaObjetosWidget
-# Description:Definição da classe que implementa uma tabela para manipulação
-#            vários objetos em uma grade. Incluíndo funções de inclusão e exclusão
-#            de objeto e movimentação dos mesmos nas linhas da tabela. Esta classe
-#            é usada como auxiliar em formulários os quais trabalham com vários objetos
-#            filhos de um objeto pai único (ex.: Tabelas, Indices, Restrições).
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -22,6 +15,17 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler_ui
+\class TabelaObjetosWidget
+\brief Definição da classe que implementa uma tabela para manipulação
+ vários objetos em uma grade. Incluíndo funções de inclusão e exclusão
+ de objeto e movimentação dos mesmos nas linhas da tabela. Esta classe
+ é usada como auxiliar em formulários os quais trabalham com vários objetos
+ filhos de um objeto pai único (ex.: Tabelas, Indices, Restrições).
+*/
+
 #ifndef TABELA_OBJETOS_WIDGET_H
 #define TABELA_OBJETOS_WIDGET_H
 

@@ -1,9 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: ListaOperacoesWidget
-# Description:Definição da classe que implementa a arvore de operações executadas
-#            no modelo de banco de dados.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler_ui
+\class ListaOperacoesWidget
+\brief Definição da classe que implementa a arvore de operações executadas no modelo de banco de dados.
+*/
+
 #ifndef LISTA_OPERACOES_WIDGET_H
 #define LISTA_OPERACOES_WIDGET_H
 

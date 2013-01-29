@@ -1,13 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: libutil library
-# Description: Definition of parsers attributes namespace which
-#              stores a series of static strings constants used
-#              to reference the attributes of objects in SQL/XML
-#              generation methods.
-#              Each string stores the name of the attribute used
-#              in the schema file "sch" of the respective objects.
-# Creation date: 23/09/2008
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -23,6 +15,16 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libutil
+\namespace ParsersAttributes
+\brief Definition of parsers attributes namespace which stores a series of static strings constants used
+ to reference the attributes of objects in SQL/XML generation methods.
+ Each string stores the name of the attribute used in the schema file "sch" of the respective objects.
+\note <strong>Creation date:</strong> 23/09/2008
+*/
+
 #ifndef PARSERS_ATTRIBUTES_H
 #define PARSERS_ATTRIBUTES_H
 

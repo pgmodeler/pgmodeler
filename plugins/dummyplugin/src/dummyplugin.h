@@ -1,8 +1,5 @@
 /*
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgModeler)
-# Sub-projeto: Biblioteca libobjrenderer
-# Classe: DummyPlugin
-# Descrição: Example plugin for pgModeler (does not execute any operation)
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup dummyplugin
+\class DummyPlugin
+\brief Example plugin for pgModeler (does not execute any complex operation)
+*/
+
 #ifndef DUMMY_PLUGIN_H
 #define DUMMY_PLUGIN_H
 

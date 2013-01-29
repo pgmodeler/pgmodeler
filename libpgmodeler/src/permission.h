@@ -1,9 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: Permission
-# Description: Implements the operations to manipulate object permissions.
-# Creation date: 16/09/2010
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,6 +15,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class Permission
+\brief Implements the operations to manipulate object permissions.
+\note <strong>Creation date:</strong> 16/09/2010
+*/
+
 #ifndef PERMISSION_H
 #define PERMISSION_H
 

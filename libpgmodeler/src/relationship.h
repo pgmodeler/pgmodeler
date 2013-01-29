@@ -1,10 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: Relationship
-# Description: This class implements the operations to create relationship between tables
-#              also generates the SQL code definition to represente the table link on PostgreSQL.
-# Creation date: 20/11/2006
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -20,6 +15,15 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class Relationship
+\brief This class implements the operations to create relationship between tables
+also generates the SQL code definition to represente the table link on PostgreSQL.
+\note <strong>Creation date:</strong> 20/11/2006
+*/
+
 #ifndef RELATIONSHIP_H
 #define RELATIONSHIP_H
 

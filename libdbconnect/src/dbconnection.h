@@ -1,10 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: libdbconnect library
-# Class: DBConnection
-# Description: This class encapsulates some connection manipulation functions
-#              implemented by the PostgreSQL libpq
-# Creation date: 13/07/2009
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -20,6 +15,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libdbconnect
+\class DBConnection
+\brief This class encapsulates some connection manipulation functions implemented by the PostgreSQL libpq
+\note <strong>Creation date:</strong> 13/07/2009
+*/
+
 #ifndef DBCONNECTION_H
 #define DBCONNECTION_H
 

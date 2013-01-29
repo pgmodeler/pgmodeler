@@ -1,8 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Graphical objects renderer (libobjrenderer)
-# Class: RelationshipView
-# Description: Implements the graphical representation for relationships
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libobjrenderer
+\class RelationshipView
+\brief Implements the graphical representation for relationships
+*/
+
 #ifndef RELATIONSHIP_VIEW_H
 #define RELATIONSHIP_VIEW_H
 

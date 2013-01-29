@@ -1,9 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: Reference
-# Description: This auxiliary class is used to define SQL/XML for views
-# Creation date: 05/09/2008
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,6 +15,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class Reference
+\brief This auxiliary class is used to define SQL/XML for views
+\note <strong>Creation date:</strong> 05/09/2008
+*/
+
 #ifndef REFERENCE_H
 #define REFERENCE_H
 

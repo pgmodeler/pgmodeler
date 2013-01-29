@@ -1,8 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: FormPrincipal
-# Description:Definição da classe que implementa a caixa de informações do software.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler_ui
+\class FormPrincipal
+\brief Definição da classe que implementa a caixa de informações do software.
+*/
+
 #ifndef FORM_SOBRE_H
 #define FORM_SOBRE_H
 

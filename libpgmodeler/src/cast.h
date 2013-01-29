@@ -1,10 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: Cast
-# Description: Implements the operations to manipulate data type cast
-#              on the database
-# Creation date: 03/06/2008
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -20,6 +15,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class Cast
+\brief Implements the operations to manipulate data type cast on the database
+\note <strong>Creation date:</strong> 03/06/2008
+*/
+
 #ifndef CAST_H
 #define CAST_H
 

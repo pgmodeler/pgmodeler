@@ -1,10 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: TableObject
-# Descritpoin: This class serves as a base class for objects that are embedded on tables
-#              like columns, rules, triggers, indexes, constraints.
-# Creation date: 24/07/2008
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -20,6 +15,15 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class TableObject
+\brief This class serves as a base class for objects that are embedded on tables
+like columns, rules, triggers, indexes, constraints.
+\note <strong>Creation date:</strong> 24/07/2008
+*/
+
 #ifndef TABLE_OBJECT_H
 #define TABLE_OBJECT_H
 

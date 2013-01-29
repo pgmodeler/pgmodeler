@@ -1,12 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: SeletorObjetoWidget
-# Description:Definição da classe que implementa um seletor de objetos simples
-#            o qual integra o formulário de visão de objetos onde o usuário
-#            pode selecionar o objeto a ser exibido e alguns botões de controle
-#            do próprio seletor, usados para limpar o campo e para abrir a janela
-#            de seleção.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -22,6 +15,16 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler_ui
+\class SeletorObjetoWidget
+\brief Definição da classe que implementa um seletor de objetos simples
+ o qual integra o formulário de visão de objetos onde o usuário
+ pode selecionar o objeto a ser exibido e alguns botões de controle
+ do próprio seletor, usados para limpar o campo e para abrir a janela de seleção.
+*/
+
 #ifndef SELETOR_OBJETO_WIDGET_H
 #define SELETOR_OBJETO_WIDGET_H
 

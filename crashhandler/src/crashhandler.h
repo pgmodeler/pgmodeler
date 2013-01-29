@@ -1,9 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: crashhandler
-# Classe: CrashHandler
-# Description: Implements the pgModeler's crash handler enabling the generation an analysis
-#              of crash report files.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup crashhandler
+\class CrashHandler
+\brief Implements the pgModeler's crash handler enabling the generation an analysis of crash report files.
+*/
+
 #ifndef CRASH_HANDLER_H
 #define CRASH_HANDLER_H
 

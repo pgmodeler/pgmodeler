@@ -1,9 +1,5 @@
 /*
 # Projeto: Modelador de Banco de Dados PostgreSQL (pgsqlDBM)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: PgModelerLibrary
-# Description:Definição da classe que  implementa  a base para suporte de plugins de terceiros,
-#            baseados em bibliotecas compartilhadas.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,12 +15,19 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler_ui
+\class PgModelerLibrary
+\brief Definição da classe que  implementa  a base para suporte de plugins de terceiros, baseados em bibliotecas compartilhadas.
+*/
+
 #ifndef PGMODELER_PLUGIN_H
 #define PGMODELER_PLUGIN_H
 
 #include "modelowidget.h"
 
-/** @details Os plugins no pgModeler deve estar dentro da pasta "plugins"
+/* Os plugins no pgModeler deve estar dentro da pasta "plugins"
    em um diretório próprio (recomenda-se usar o mesmo nome do plugin)
    e deve possuir a seguinte estrutura básica:
 

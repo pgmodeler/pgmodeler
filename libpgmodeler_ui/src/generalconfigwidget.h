@@ -1,8 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Class: GeneralConfigWidget
-# Description: Implements the operations to manage general configurations.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,8 +15,15 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef CONF_GERAL_WIDGET_H
-#define CONF_GERAL_WIDGET_H
+
+/**
+\ingroup libpgmodeler_ui
+\class GeneralConfigWidget
+\brief Implements the operations to manage general configurations.
+*/
+
+#ifndef GENERAL_CONFIG_WIDGET_H
+#define GENERAL_CONFIG_WIDGET_H
 
 #include "ui_generalconfigwidget.h"
 #include "baseconfigwidget.h"

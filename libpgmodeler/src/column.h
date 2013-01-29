@@ -1,9 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: Column
-# Description: Implements basic operations to manipulate table columns.
-# Creation date: 12/09/2006
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,6 +15,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class Column
+\brief Implements basic operations to manipulate table columns.
+\note <strong>Creation date:</strong> 12/09/2006
+*/
+
 #ifndef COLUMN_H
 #define COLUMN_H
 

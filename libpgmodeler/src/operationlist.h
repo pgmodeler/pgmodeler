@@ -1,12 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: OperationList
-# Description: Implements the operations to maintain a list of modifications made
-#              by the user on database model objects. This class permits that user
-#              undo / redo all the operations made.
-#
-# Creation date: 17/07/2006
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -22,6 +15,16 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class OperationList
+\brief Implements the operations to maintain a list of modifications made
+by the user on database model objects. This class permits that user
+undo / redo all the operations made.
+\note <strong>Creation date:</strong> 17/07/2006
+*/
+
 #ifndef OPERATIONLIST_H
 #define OPERATIONLIST_H
 

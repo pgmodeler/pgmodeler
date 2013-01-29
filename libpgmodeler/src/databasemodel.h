@@ -1,11 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: DatabaseModel
-# Description: This class reunites and manages all the other object types.
-#              Additionally, this class, saves, loads and generates the
-#              XML/SQL definition of a complete database.
-# Creation date: 20/10/2006
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -21,6 +15,15 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class DatabaseModel
+\brief This class reunites and manages all the other object types.
+Additionally, this class, saves, loads and generates the XML/SQL definition of a complete database.
+\note <strong>Creation date:</strong> 20/10/2006
+*/
+
 #ifndef DATABASE_MODEL_H
 #define DATABASE_MODEL_H
 

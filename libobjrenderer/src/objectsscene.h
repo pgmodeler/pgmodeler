@@ -1,8 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Graphical objects renderer (libobjrenderer)
-# Class: ObjectsScene
-# Description: Implements the basic operations to visualize and manipulate the graphical objects.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libobjrenderer
+\class ObjectsScene
+\brief Implements the basic operations to visualize and manipulate the graphical objects.
+*/
+
 #ifndef OBJECTS_SCENE_H
 #define OBJECTS_SCENE_H
 

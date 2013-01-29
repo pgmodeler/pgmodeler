@@ -1,8 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Description: Class definitions for the basic object/actions types on PostgreSQL
-# Creation date: 31/08/2006
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\brief Class definitions for the basic object/actions types on PostgreSQL
+\note <strong>Creation date:</strong> 31/08/2006
+*/
+
 #ifndef PGSQL_TYPES_H
 #define PGSQL_TYPES_H
 

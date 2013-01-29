@@ -1,9 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: BaseRelationship
-# Description: Implements the basic operations to manipulate relationships between tables
-# Creation date: 09/04/2008
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,6 +15,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class BaseRelationship
+\brief Implements the basic operations to manipulate relationships between tables
+\note <strong>Creation date:</strong> 09/04/2008
+*/
+
 #ifndef BASE_RELATIONSHIP_H
 #define BASE_RELATIONSHIP_H
 

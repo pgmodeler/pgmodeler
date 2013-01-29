@@ -1,8 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: libutil library
-# Classe: Exception
-# Creation date: 10/07/2006
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,6 +15,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libutil
+\class Exception
+\brief Catalogs all the errors raised by pgModeler
+\note <strong>Creation date:</strong> 10/07/2006
+*/
+
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 

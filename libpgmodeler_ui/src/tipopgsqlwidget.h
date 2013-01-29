@@ -1,12 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: TipoPgSQLWidget
-# Description:Definição da classe que implementa o formulário de
-#            edição de tipos nativos do PostgreSQL. Este formulário
-#            é compartilhado por vários outros por isso a necessidade
-#            de se criar esta classe com esse fim específico evitando
-#            a redundância de código e de objetos gráficos.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -22,6 +15,17 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler_ui
+\class TipoPgSQLWidget
+\brief Definição da classe que implementa o formulário de
+ edição de tipos nativos do PostgreSQL. Este formulário
+ é compartilhado por vários outros por isso a necessidade
+ de se criar esta classe com esse fim específico evitando
+ a redundância de código e de objetos gráficos.
+*/
+
 #ifndef TIPOPGSQL_WIDGET_H
 #define TIPOPGSQL_WIDGET_H
 

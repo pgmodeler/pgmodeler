@@ -1,11 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: libutil library
-# Description: Definition of GlobalAttributes namespace wich
-#              stores a series of static strings constants used
-#              to reference the global configuration attributes of
-#              the software.
-# Creation date: 14/05/2010
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -21,6 +15,15 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libutil
+\namespace GlobalAttributes
+\brief Definition of GlobalAttributes namespace wich stores a series of static strings constants used
+ to reference the global configuration attributes of the software.
+\note <strong>Creation date:</strong> 14/05/2010
+*/
+
 #ifndef GLOBAL_ATTRIBUTES_H
 #define GLOBAL_ATTRIBUTES_H
 

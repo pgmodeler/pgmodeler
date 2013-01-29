@@ -1,10 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: ModeloWidget
-# Description:Definição da classe que implementa o modelo de banco de dados
-#            em sua forma de widget, ou seja, que permite a interação do usuário
-#            para criação de objetos gráficos e outras operações sobre os mesmos.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -20,6 +15,15 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler_ui
+\class ModeloWidget
+\brief Definição da classe que implementa o modelo de banco de dados
+  em sua forma de widget, ou seja, que permite a interação do usuário
+  para criação de objetos gráficos e outras operações sobre os mesmos.
+*/
+
 #ifndef MODELO_WIDGET_H
 #define MODELO_WIDGET_H
 

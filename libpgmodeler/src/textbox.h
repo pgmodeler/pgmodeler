@@ -1,10 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: Textbox
-# Description: This class is used to represent informative textboxes over the
-#              model also used to represent relationship labels.
-# Creation date: 05/09/2007
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -20,6 +15,15 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class Textbox
+\brief This class is used to represent informative textboxes over the
+model also used to represent relationship labels.
+\note <strong>Creation date:</strong> 05/09/2007
+*/
+
 #ifndef TEXTBOX_H
 #define TEXTBOX_H
 

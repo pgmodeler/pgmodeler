@@ -1,8 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Description: Implements the operations to manipulate index elements.
-# Creation date: 26/05/2010
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,8 +15,15 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
-#ifndef ELEMENTO_INDICE_H
-#define ELEMENTO_INDICE_H
+
+/**
+\ingroup libpgmodeler
+\brief Implements the operations to manipulate index elements.
+\note <strong>Creation date:</strong> 26/05/2010
+*/
+
+#ifndef INDEX_ELEMENT_H
+#define INDEX_ELEMENT_H
 
 #include "column.h"
 #include "operatorclass.h"

@@ -1,9 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Parsers library (libparsers)
-# Description: ParserEsquema class definition used to create SQL definition
-#              for model objects from schemas files (stored on disk).
-# Creation date: 19/06/2008
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libparsers
+\brief ParserEsquema class definition used to create SQL definition for model objects from schemas files (stored on disk).
+\note <strong>Creation date:</strong> 19/06/2008
+*/
+
 #ifndef SCHEMA_PARSER_H
 #define SCHEMA_PARSER_H
 

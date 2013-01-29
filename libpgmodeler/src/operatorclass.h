@@ -1,11 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: OperatorClass
-# Description: This class is used to generate the XML/SQL code related to PostgreSQL
-#              operator classes. This type of object indicates to RDBMS how a data type
-#              can be used in a particular indexing method.
-# Creation date: 08/07/2008
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -21,6 +15,16 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class OperatorClass
+\brief This class is used to generate the XML/SQL code related to PostgreSQL
+operator classes. This type of object indicates to RDBMS how a data type
+can be used in a particular indexing method.
+\note <strong>Creation date:</strong> 08/07/2008
+*/
+
 #ifndef OPERATOR_CLASS_H
 #define OPERATOR_CLASS_H
                                                                                                                                                                                                                    

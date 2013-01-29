@@ -1,8 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler User Interface Library (libpgmodeler_ui)
-# Classe: QuickRenameWidget
-# Description: Widget used to quickly rename objects without open the editing form
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\note <strong>Sub-project:</strong> pgModeler User Interface Library (libpgmodeler_ui)
+\class QuickRenameWidget
+\brief Widget used to quickly rename objects without open the editing form
+*/
+
 #ifndef QUICK_RENAME_WIDGET_H
 #define QUICK_RENAME_WIDGET_H
 

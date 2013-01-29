@@ -1,11 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: BaseObject
-# Description: Implements the most important operations to define,
-#              maintain and generate code (SQL or XML) of database objects
-# Creation date: 12/09/2006
-#
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -20,6 +14,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\class BaseObject
+\brief Implements the most important operations to define, maintain and generate code (SQL or XML) of database objects
+\note <strong>Creation date:</strong> 12/09/2006
+\ingroup libpgmodeler
+*/
+
 #ifndef BASE_OBJECT_H
 #define BASE_OBJECT_H
 

@@ -1,8 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Graphical objects renderer (libobjrenderer)
-# Class: BaseObjectView
-# Description: Implements the basic routines to graphically represent the objects: table, relationship, textbox, view
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libobjrenderer
+\class BaseObjectView
+\brief Implements the basic routines to graphically represent the objects: table, relationship, textbox, view.
+*/
+
 #ifndef BASE_OBJECT_VIEW_H
 #define BASE_OBJECT_VIEW_H
 

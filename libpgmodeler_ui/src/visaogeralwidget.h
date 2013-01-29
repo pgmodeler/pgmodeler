@@ -1,8 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: VisaoGeralWidget
-# Description:Definição da classe que implementa o widget de visão geral do modelo.
 #
 # Copyright (C) 2006-2012 - Raphael Araujo e Silva <rkhaotix@gmail.com>
 #
@@ -20,6 +17,13 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
+
+/**
+\ingroup libpgmodeler_ui
+\class VisaoGeralWidget
+\brief Definição da classe que implementa o widget de visão geral do modelo.
+*/
+
 #ifndef VISAO_GERAL_WIDGET_H
 #define VISAO_GERAL_WIDGET_H
 

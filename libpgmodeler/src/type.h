@@ -1,9 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: Type
-# Description: Implements the operations to manipulate user defined types on database.
-# Creation date: 05/06/2008
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,6 +15,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class Type
+\brief Implements the operations to manipulate user defined types on database.
+\note <strong>Creation date:</strong> 05/06/2008
+*/
+
 #ifndef TYPE_H
 #define TYPE_H
 

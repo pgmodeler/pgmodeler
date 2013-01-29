@@ -1,10 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Parsers library (libparsers)
-# Classe: XMLParser
-# Description: This class implements basic operations of an xml analyzer
-#              encapsulating some functions implemented by libxml2 library
-# Creation date: 02/04/2008
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -20,6 +15,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libparsers
+\class XMLParser
+\brief This class implements basic operations of a xml analyzer encapsulating some functions implemented by libxml2 library
+\note <strong>Creation date:</strong> 02/04/2008
+*/
+
 #ifndef XML_PARSER_H
 #define XML_PARSER_H
 

@@ -1,9 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Classe: LinguagemWidget
-# Description:Definição da classe que implementa o formulário de
-#            edição dos atributos de linguagens.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler_ui
+\class LinguagemWidget
+\brief Definição da classe que implementa o formulário de edição dos atributos de linguagens.
+*/
+
 #ifndef LINGUAGEM_WIDGET_H
 #define LINGUAGEM_WIDGET_H
 

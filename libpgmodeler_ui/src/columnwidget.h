@@ -1,8 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: pgModeler UI library (libpgmodeler_ui)
-# Class: ColumnWidget
-# Description: Implements the operations to create/edit columns via form.
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -18,6 +15,13 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler_ui
+\class ColumnWidget
+\brief Implements the operations to create/edit columns via form.
+*/
+
 #ifndef COLUMN_WIDGET_H
 #define COLUMN_WIDGET_H
 

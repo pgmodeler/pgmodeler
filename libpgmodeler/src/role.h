@@ -1,9 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: Role
-# Description: Implements the operations to manipulate roles on the database.
-# Creation date: 12/05/2008
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -19,6 +15,14 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class Role
+\brief Implements the operations to manipulate roles on the database.
+\note <strong>Creation date:</strong> 12/05/2008
+*/
+
 #ifndef ROLE_H
 #define ROLE_H
 

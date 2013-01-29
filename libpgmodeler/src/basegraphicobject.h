@@ -1,12 +1,5 @@
 /*
 # PostgreSQL Database Modeler (pgModeler)
-# Sub-project: Core library (libpgmodeler)
-# Class: BaseGraphicObject
-# Description: This is a basic implementation to control graphical objects such as
-#              tables, relationships, textboxes, views.
-#              The full graphical representation of these objects are made in an separated layer
-#              this is treated in the GraphicObject class on libobjrenderer library
-# Creation date: 17/09/2006
 #
 # Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
 #
@@ -22,6 +15,16 @@
 # The complete text of GPLv3 is at LICENSE file on source code root directory.
 # Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
 */
+
+/**
+\ingroup libpgmodeler
+\class BaseGraphicObject
+\brief This is a basic implementation to control graphical objects such as tables, relationships, textboxes, views.
+The full graphical representation of these objects are made in an separated layer
+this is treated in the BaseObjectView class on libobjrenderer library
+\note <strong>Creation date:</strong> 17/09/2006
+*/
+
 #ifndef BASE_GRAPHIC_OBJECT_H
 #define BASE_GRAPHIC_OBJECT_H
 
