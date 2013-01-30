@@ -27,66 +27,66 @@ can be used in a particular indexing method.
 
 #ifndef OPERATOR_CLASS_H
 #define OPERATOR_CLASS_H
-                                                                                                                                                                                                                   
+
 #include "baseobject.h"                                                                                                                                                                                            
 #include "operatorclasselement.h"                                                                                                                                                                                  
 #include "operatorfamily.h"
-                                                                                                                                                      
+
 class OperatorClass: public BaseObject {
- private:                                                                                                                                                                                                          
-  /// @details Data type witch the operator class acts on
-  PgSQLType data_type;
+	private:
+		//! @details Data type witch the operator class acts on
+		PgSQLType data_type;
 
-  /// @details Operator family that the operator class is part
-  OperatorFamily *family;
+		//! @details Operator family that the operator class is part
+		OperatorFamily *family;
 
-  /// @details Indexing type (method) adopted by the operator class
-  IndexingType indexing_type;
+		//! @details Indexing type (method) adopted by the operator class
+		IndexingType indexing_type;
 
-  /** @details Indicates if the operator class is the default for the
-     specified data type */
-  bool is_default;
+		/*! @details Indicates if the operator class is the default for the
+		 specified data type */
+		bool is_default;
 
-  /// @details Operator class attributes list
-  vector<OperatorClassElement> elements;
+		//! @details Operator class attributes list
+		vector<OperatorClassElement> elements;
 
-  /** @details Formats the elements string used by the SchemaParser on the
-     SQL/XML code definition for operator classes */
-  void setElementsAttribute(unsigned def_type);
+		/*! @details Formats the elements string used by the SchemaParser on the
+		 SQL/XML code definition for operator classes */
+		void setElementsAttribute(unsigned def_type);
 
- public:
-  OperatorClass(void);
-  ~OperatorClass(void);
+	public:
+		OperatorClass(void);
+		~OperatorClass(void);
 
-  /// @details Sets the data type that the operator class works on
-  void setDataType(PgSQLType data_type);
+		//! @details Sets the data type that the operator class works on
+		void setDataType(PgSQLType data_type);
 
-  /// @details Sets the operator family that the operator class is part
-  void setFamily(OperatorFamily *family);
+		//! @details Sets the operator family that the operator class is part
+		void setFamily(OperatorFamily *family);
 
-  /// @details Set the indexing type used by the operator class
-  void setIndexingType(IndexingType index_type);
+		//! @details Set the indexing type used by the operator class
+		void setIndexingType(IndexingType index_type);
 
-  /// @details Sets if the opertor class is default for the specified data type
-  void setDefault(bool value);
+		//! @details Sets if the opertor class is default for the specified data type
+		void setDefault(bool value);
 
-  /// @details Methods used to manipulate the elements FUNCTION, OPERATOR and STORAGE
-  void addElement(OperatorClassElement elem);
-  void removeElement(unsigned elem_idx);
-  OperatorClassElement getElement(unsigned elem_idx);
-  bool isElementExists(OperatorClassElement elem);
-  void removeElements(void);
+		//! @details Methods used to manipulate the elements FUNCTION, OPERATOR and STORAGE
+		void addElement(OperatorClassElement elem);
+		void removeElement(unsigned elem_idx);
+		OperatorClassElement getElement(unsigned elem_idx);
+		bool isElementExists(OperatorClassElement elem);
+		void removeElements(void);
 
-  /// @details Methods used to obtain the class attributes
-  PgSQLType getDataType(void);
-  OperatorFamily *getFamily(void);
-  IndexingType getIndexingType(void);
-  bool isDefault(void);
-  unsigned getElementCount(void);
+		//! @details Methods used to obtain the class attributes
+		PgSQLType getDataType(void);
+		OperatorFamily *getFamily(void);
+		IndexingType getIndexingType(void);
+		bool isDefault(void);
+		unsigned getElementCount(void);
 
-  /// @details Returns the SQL/XML code definition for operator class
-  QString getCodeDefinition(unsigned def_type, bool reduced_form);
-  QString getCodeDefinition(unsigned def_type);
+		//! @details Returns the SQL/XML code definition for operator class
+		QString getCodeDefinition(unsigned def_type, bool reduced_form);
+		QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

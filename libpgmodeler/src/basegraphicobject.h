@@ -33,73 +33,73 @@ this is treated in the BaseObjectView class on libobjrenderer library
 #include "baseobject.h"
 
 class BaseGraphicObject: public QObject, public BaseObject {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  /** @details Stores the position of the object on the model. This attribute is used only
-     to memorize the position of the object in xml code generation */
-  QPointF position;
+		/*! @details Stores the position of the object on the model. This attribute is used only
+		 to memorize the position of the object in xml code generation */
+		QPointF position;
 
-  /** @details Indicates that the object structure was modified somehow
-     and it is needed to be updated or specially treated */
-  bool is_modified;
+		/*! @details Indicates that the object structure was modified somehow
+		 and it is needed to be updated or specially treated */
+		bool is_modified;
 
-  /** @details Stores a reference to the object which is currently the receiver
-     of signals emitted by the instance of this class. The receiver is an object that
-     represents the 'this' object in the QGraphicsScene. This attribute breaks
-     some concepts of OO but is required for some cases when is necessary to
-     recover the graphical object in a fast way (rather than find
-     it in the QGraphcisScene) */
-  QObject *receiver_object;
+		/*! @details Stores a reference to the object which is currently the receiver
+		 of signals emitted by the instance of this class. The receiver is an object that
+		 represents the 'this' object in the QGraphicsScene. This attribute breaks
+		 some concepts of OO but is required for some cases when is necessary to
+		 recover the graphical object in a fast way (rather than find
+		 it in the QGraphcisScene) */
+		QObject *receiver_object;
 
- protected:
-  /** @details Method that defines the objects position attributes used in generation
-     of XML code definition */
-  void setPositionAttribute(void);
+	protected:
+		/*! @details Method that defines the objects position attributes used in generation
+		 of XML code definition */
+		void setPositionAttribute(void);
 
-  /// @details Defines the receveir objects that represents the 'this' object on the QGraphicsScene
-  void setReceiverObject(QObject *obj);
+		//! @details Defines the receveir objects that represents the 'this' object on the QGraphicsScene
+		void setReceiverObject(QObject *obj);
 
- public:
-  BaseGraphicObject(void);
-  ~BaseGraphicObject(void){}
+	public:
+		BaseGraphicObject(void);
+		~BaseGraphicObject(void){}
 
-  /** @details Sets whether the object is protected or not (method overloading
-     from base class BaseObject) the difference is that this method
-     emits the signal s_objectProtected() */
-  virtual void setProtected(bool value);
+		/*! @details Sets whether the object is protected or not (method overloading
+		 from base class BaseObject) the difference is that this method
+		 emits the signal s_objectProtected() */
+		virtual void setProtected(bool value);
 
-  /// @details Sets the object's position
-  void setPosition(QPointF pos);
+		//! @details Sets the object's position
+		void setPosition(QPointF pos);
 
-  /** @details Sets if the objects is modified or not.
-     This method emits the signal s_objectModified() */
-  virtual void setModified(bool value);
+		/*! @details Sets if the objects is modified or not.
+		 This method emits the signal s_objectModified() */
+		virtual void setModified(bool value);
 
-  /// @details Returns the modified status of the object
-  bool isModified(void);
+		//! @details Returns the modified status of the object
+		bool isModified(void);
 
-  /// @details Returns the current position of the object
-  QPointF getPosition();
+		//! @details Returns the current position of the object
+		QPointF getPosition();
 
-  /// @details Assigns on object to other mading the correct attribute copy
-  void operator = (BaseGraphicObject &obj);
+		//! @details Assigns on object to other mading the correct attribute copy
+		void operator = (BaseGraphicObject &obj);
 
-  /// @details Gets the current receiver object that graphically represents the 'this' object
-  QObject *getReceiverObject(void);
+		//! @details Gets the current receiver object that graphically represents the 'this' object
+		QObject *getReceiverObject(void);
 
-  /// @details Returns the code definition of the object
-  virtual QString getCodeDefinition(unsigned tipo_def)=0;
+		//! @details Returns the code definition of the object
+		virtual QString getCodeDefinition(unsigned tipo_def)=0;
 
- signals:
-  /// @details Signal emitted when the user calls the setModified() method
-  void s_objectModified(void);
-  /// @details Signal emitted when the user calls the setProtected() method
-  void s_objectProtected(bool);
+	signals:
+		//! @details Signal emitted when the user calls the setModified() method
+		void s_objectModified(void);
+		//! @details Signal emitted when the user calls the setProtected() method
+		void s_objectProtected(bool);
 
-  friend class CenaObjetos;
-  friend class BaseObjectView;
-  friend class DatabaseModel;
+		friend class CenaObjetos;
+		friend class BaseObjectView;
+		friend class DatabaseModel;
 };
 
 #endif

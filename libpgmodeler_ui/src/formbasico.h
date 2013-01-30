@@ -31,16 +31,15 @@
 #include "messagebox.h"
 
 class FormBasico: public QDialog, public Ui::FormBasico {
- Q_OBJECT
+	private:
+		Q_OBJECT
 
- private:
+	public:
+		FormBasico(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		~FormBasico(void){}
+		void definirBotoes(unsigned conf_botoes=MessageBox::OK_CANCEL_BUTTONS);
 
- public:
-   FormBasico(QWidget * parent = 0, Qt::WindowFlags f = 0);
-  ~FormBasico(void){}
-  void definirBotoes(unsigned conf_botoes=MessageBox::OK_CANCEL_BUTTONS);
-
- public slots:
+	public slots:
 };
 
 #endif

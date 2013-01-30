@@ -31,46 +31,46 @@ model also used to represent relationship labels.
 #include <QColor>
 
 class Textbox: public BaseGraphicObject{
- private:
-  /// @details Stores the status of text attributes (bold / italic / underline)
-  bool text_attributes[3];
+	private:
+		//! @details Stores the status of text attributes (bold / italic / underline)
+		bool text_attributes[3];
 
-  /// @details Color used to draw the text
-  QColor text_color;
+		//! @details Color used to draw the text
+		QColor text_color;
 
-  /** @details Since textboxes doesn't has SQL code definition the base class method that
-     generates SQL or XML code is hidden. In replacement the method
-     getCodeDefinition(void) must be used in order to get the XML code definition
-     of this type of object */
-  QString getCodeDefinition(unsigned){ return(""); }
+		/*! @details Since textboxes doesn't has SQL code definition the base class method that
+		 generates SQL or XML code is hidden. In replacement the method
+		 getCodeDefinition(void) must be used in order to get the XML code definition
+		 of this type of object */
+		QString getCodeDefinition(unsigned){ return(""); }
 
- public:
-  /// @details Constants used to configure the text attributes
-  static const unsigned ITALIC_TXT=0,
-                        BOLD_TXT=1,
-                        UNDERLINE_TXT=2;
+	public:
+		//! @details Constants used to configure the text attributes
+		static const unsigned ITALIC_TXT=0,
+													BOLD_TXT=1,
+													UNDERLINE_TXT=2;
 
-  /** @details To define the content of the textboxes
-     the method setComment() must be used and the getComment()
-     method used to get the current text */
-  Textbox(void);
+		/*! @details To define the content of the textboxes
+		 the method setComment() must be used and the getComment()
+		 method used to get the current text */
+		Textbox(void);
 
-  /// @details Sets the attributes of the text
-  void setTextAttribute(unsigned attrib, bool value);
+		//! @details Sets the attributes of the text
+		void setTextAttribute(unsigned attrib, bool value);
 
-  /// @details Sets the color used to draw the text of textbox
-  void setTextColor(const QColor &color);
+		//! @details Sets the color used to draw the text of textbox
+		void setTextColor(const QColor &color);
 
-  /// @details Returns the XML code definition of the textbox
-  QString getCodeDefinition(void);
+		//! @details Returns the XML code definition of the textbox
+		QString getCodeDefinition(void);
 
-  /// @details Returns the current state of the passed text attribute
-  bool getTextAttribute(unsigned attrib);
+		//! @details Returns the current state of the passed text attribute
+		bool getTextAttribute(unsigned attrib);
 
-  QColor getTextColor(void);
+		QColor getTextColor(void);
 
-  /// @details Copies the attributes between textboxes
-  void operator = (Textbox &txtbox);
+		//! @details Copies the attributes between textboxes
+		void operator = (Textbox &txtbox);
 };
 
 #endif

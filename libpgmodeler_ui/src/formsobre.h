@@ -30,15 +30,15 @@
 #include "globalattributes.h"
 
 class FormSobre: public QWidget, public Ui::FormSobre {
- Q_OBJECT
+		Q_OBJECT
 
- private:
+	private:
 
- public:
-   FormSobre(QWidget *parent = 0);
-  ~FormSobre(void){}
+	public:
+		FormSobre(QWidget *parent = 0);
+		~FormSobre(void){}
 
- private slots:
+	private slots:
 };
 
 #endif

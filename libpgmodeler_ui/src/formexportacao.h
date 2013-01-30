@@ -30,22 +30,22 @@
 #include "modelowidget.h"
 
 class FormExportacao: public QDialog, public Ui::FormExportacao {
- private:
-  Q_OBJECT
-  ModeloWidget *modelo_wgt;
+	private:
+		Q_OBJECT
+		ModeloWidget *modelo_wgt;
 
- public:
-  FormExportacao(QWidget * parent = 0, Qt::WindowFlags f = 0);
+	public:
+		FormExportacao(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
- public slots:
-  void show(ModeloWidget *modelo);
-  void hideEvent(QHideEvent *);
+	public slots:
+		void show(ModeloWidget *modelo);
+		void hideEvent(QHideEvent *);
 
- private slots:
-  void habilitarTipoExportacao(void);
-  void exportarModelo(void);
-  void selecionarArquivoDestino(void);
-  void ocultarProgressoExportacao(void);
+	private slots:
+		void habilitarTipoExportacao(void);
+		void exportarModelo(void);
+		void selecionarArquivoDestino(void);
+		void ocultarProgressoExportacao(void);
 };
 
 #endif

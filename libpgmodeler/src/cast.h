@@ -30,61 +30,61 @@
 #include "function.h"
 
 class Cast: public BaseObject {
- private:
-  /** @details Data types used on the cast:
-    0 -> Source data type
-    1 -> Destination data type */
-  PgSQLType types[2];
+	private:
+		/*! @details Data types used on the cast:
+		0 -> Source data type
+		1 -> Destination data type */
+		PgSQLType types[2];
 
-  /// @details Conversion type (ASSIGNMENT or IMPLICIT)
-  unsigned cast_type;
+		//! @details Conversion type (ASSIGNMENT or IMPLICIT)
+		unsigned cast_type;
 
-  /// @details Function used to do the type cast
-  Function *cast_function;
+		//! @details Function used to do the type cast
+		Function *cast_function;
 
-  /** @details Indicates that the type cast is inout, this means that
-     the function used to cast the types will be the 'output'
-     function of the source data type */
-  bool is_in_out;
+		/*! @details Indicates that the type cast is inout, this means that
+		 the function used to cast the types will be the 'output'
+		 function of the source data type */
+		bool is_in_out;
 
- public:
-  /// @details Constants used to access the data types envolved in the cast
-  static const unsigned SRC_TYPE=0,
-                        DST_TYPE=1,
-  /// @details Constants used to define the cast type
-                        ASSIGNMENT=10,
-                        IMPLICIT=20;
-  Cast(void);
+	public:
+		//! @details Constants used to access the data types envolved in the cast
+		static const unsigned SRC_TYPE=0,
+													DST_TYPE=1,
+													//! @details Constants used to define the cast type
+													ASSIGNMENT=10,
+													IMPLICIT=20;
+		Cast(void);
 
-  /** @details Defines one of the data types envolved on the cast
-     (using constants SRC_TYPE | DST_TYPE) */
-  void setDataType(unsigned type_idx, PgSQLType type);
+		/*! @details Defines one of the data types envolved on the cast
+		 (using constants SRC_TYPE | DST_TYPE) */
+		void setDataType(unsigned type_idx, PgSQLType type);
 
-  /// @details Defines the cast type (using constants ASSINGMENT | IMPLICIT)
-  void setCastType(unsigned cast_type);
+		//! @details Defines the cast type (using constants ASSINGMENT | IMPLICIT)
+		void setCastType(unsigned cast_type);
 
-  /// @details Defines the function used to do the type cast
-  void setCastFunction(Function *cast_func);
+		//! @details Defines the function used to do the type cast
+		void setCastFunction(Function *cast_func);
 
-  /** @details Defines if the conversion is inout. If so the conversion function
-     assigned to the cast is  ignored since the PostgreSQL will use
-     the output function of the source type. */
-  void setInOut(bool value);
+		/*! @details Defines if the conversion is inout. If so the conversion function
+		 assigned to the cast is  ignored since the PostgreSQL will use
+		 the output function of the source type. */
+		void setInOut(bool value);
 
-  /// @details Returns one of the cast envolved data types
-  PgSQLType getDataType(unsigned type_idx);
+		//! @details Returns one of the cast envolved data types
+		PgSQLType getDataType(unsigned type_idx);
 
-  /// @details Returns the cast type
-  unsigned getCastType(void);
+		//! @details Returns the cast type
+		unsigned getCastType(void);
 
-  /// @details Returns the cast function
-  Function *getCastFunction(void);
+		//! @details Returns the cast function
+		Function *getCastFunction(void);
 
-  /// @details Returs whether the cast is inout or not
-  bool isInOut(void);
+		//! @details Returs whether the cast is inout or not
+		bool isInOut(void);
 
-  /// @details Returns the SQL/XML code definition for the cast
-  QString getCodeDefinition(unsigned def_type);
+		//! @details Returns the SQL/XML code definition for the cast
+		QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

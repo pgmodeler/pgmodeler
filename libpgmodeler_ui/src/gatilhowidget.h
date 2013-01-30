@@ -30,37 +30,37 @@
 #include "tabelaobjetoswidget.h"
 
 class GatilhoWidget: public BaseObjectWidget, public Ui::GatilhoWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-   /// @details Destaque de sintaxe do campo de expressão condicional
-   SyntaxHighlighter *dest_exp_condicional;
+	private:
+		//! @details Destaque de sintaxe do campo de expressão condicional
+		SyntaxHighlighter *dest_exp_condicional;
 
-   /// @details Tabelas de objetos para controlar colunas e argumentos
-   TabelaObjetosWidget *tab_colunas,
-                       *tab_argumentos;
+		//! @details Tabelas de objetos para controlar colunas e argumentos
+		TabelaObjetosWidget *tab_colunas,
+												*tab_argumentos;
 
-   /// @details Seletor de tabela referenciada e função executada pelo gatilho
-   SeletorObjetoWidget *sel_tabela_ref,
-                       *sel_funcao;
+		//! @details Seletor de tabela referenciada e função executada pelo gatilho
+		SeletorObjetoWidget *sel_tabela_ref,
+												*sel_funcao;
 
-   /// @details Adiciona uma coluna   tabelade colunas referenciadas pelo gatilho
-   void adicionarColuna(Column *coluna, int idx_lin);
+		//! @details Adiciona uma coluna   tabelade colunas referenciadas pelo gatilho
+		void adicionarColuna(Column *coluna, int idx_lin);
 
- public:
-   GatilhoWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, Table *tabela_pai, OperationList *op_list, Trigger *restricao);
+	public:
+		GatilhoWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, Table *tabela_pai, OperationList *op_list, Trigger *restricao);
 
- private slots:
-  void hideEvent(QHideEvent *);
-  void adicionarColuna(int idx_lin);
-  void manipularArgumento(int idx_lin);
-  void editarArgumento(int idx_lin);
-  void atualizarComboColunas(void);
-  void definirGratilhoRestricao(bool valor);
+	private slots:
+		void hideEvent(QHideEvent *);
+		void adicionarColuna(int idx_lin);
+		void manipularArgumento(int idx_lin);
+		void editarArgumento(int idx_lin);
+		void atualizarComboColunas(void);
+		void definirGratilhoRestricao(bool valor);
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

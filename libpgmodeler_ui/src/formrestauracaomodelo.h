@@ -30,27 +30,27 @@
 #include "ui_formrestauracaomodelo.h"
 
 class FormRestauracaoModelo: public QDialog, public Ui::FormRestauracaoModelos {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
- public:
-  FormRestauracaoModelo(QWidget * parent = 0, Qt::WindowFlags f = 0);
+	public:
+		FormRestauracaoModelo(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
-  /// @details Obtém a lista de arquivos temporários
-  QStringList obterModelosTemporarios(void);
+		//! @details Obtém a lista de arquivos temporários
+		QStringList obterModelosTemporarios(void);
 
-  /// @details Obtém a lista de arquivos temporários selecionados para restauração
-  QStringList obterModelosSelecionados(void);
+		//! @details Obtém a lista de arquivos temporários selecionados para restauração
+		QStringList obterModelosSelecionados(void);
 
- public slots:
-  void exec(void);
-  /// @details Exclui todos os arquivos temporários da pasta tmp
-  void excluirModelosTemporarios(void);
-  /// @details Retorna se existe arquivos temporários na pasta
-  bool existeModelosTemporarios(void);
+	public slots:
+		void exec(void);
+		//! @details Exclui todos os arquivos temporários da pasta tmp
+		void excluirModelosTemporarios(void);
+		//! @details Retorna se existe arquivos temporários na pasta
+		bool existeModelosTemporarios(void);
 
- private slots:
-  void habilitarRestauracao(void);
+	private slots:
+		void habilitarRestauracao(void);
 };
 
 #endif

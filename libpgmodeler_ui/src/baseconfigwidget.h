@@ -31,42 +31,42 @@
 #include <algorithm>
 
 class BaseConfigWidget {
- protected:
-  /** @details Stores the configuration params, the main key is the xml element name
-     and the value is a map where the key is the attribute name and the value
-     is the current attribute value */
-  map<QString, map<QString, QString> > config_params;
+	protected:
+		/*! @details Stores the configuration params, the main key is the xml element name
+		 and the value is a map where the key is the attribute name and the value
+		 is the current attribute value */
+		map<QString, map<QString, QString> > config_params;
 
-  /** @details Saves the configuration on file. The conf_id param indicates the type of
-     configuration to be saved. (see GlobalAttributes::*_CONF) */
-  void saveConfiguration(const QString &conf_id);
+		/*! @details Saves the configuration on file. The conf_id param indicates the type of
+		 configuration to be saved. (see GlobalAttributes::*_CONF) */
+		void saveConfiguration(const QString &conf_id);
 
-  /** @details Loads a configuration from file. The vector key_attribs is used to specify the xml element name
-     considered as a key on the configuration map */
-  void loadConfiguration(const QString &conf_id, const vector<QString> &key_attribs=vector<QString>());
+		/*! @details Loads a configuration from file. The vector key_attribs is used to specify the xml element name
+		 considered as a key on the configuration map */
+		void loadConfiguration(const QString &conf_id, const vector<QString> &key_attribs=vector<QString>());
 
-  /// @details Get a configuratoin key from the xml parser
-  void getConfigurationParams(const vector<QString> &key_attribs);
+		//! @details Get a configuratoin key from the xml parser
+		void getConfigurationParams(const vector<QString> &key_attribs);
 
-  /// @details Restore the configuration specified by conf_in loading them from the original file (conf/defaults)
-  void restoreDefaults(const QString &conf_id);
+		//! @details Restore the configuration specified by conf_in loading them from the original file (conf/defaults)
+		void restoreDefaults(const QString &conf_id);
 
- public:
-  BaseConfigWidget(void){}
+	public:
+		BaseConfigWidget(void){}
 
-  /// @details Adds a configuration param to the configuration map. Replaces the values if the param already exists.
-  void addConfigurationParam(const QString &param, const map<QString, QString> &attribs);
+		//! @details Adds a configuration param to the configuration map. Replaces the values if the param already exists.
+		void addConfigurationParam(const QString &param, const map<QString, QString> &attribs);
 
-  /// @details Gets the parameters loaded from file
-  map<QString, map<QString, QString> > getConfigurationParams(void);
+		//! @details Gets the parameters loaded from file
+		map<QString, map<QString, QString> > getConfigurationParams(void);
 
-  /// @details Removes the values for the specified configuration parameter
-  void removeConfigurationParam(const QString &param);
+		//! @details Removes the values for the specified configuration parameter
+		void removeConfigurationParam(const QString &param);
 
-  /// @details Removes all the configuration params
-  void removeConfigurationParams(void);
+		//! @details Removes all the configuration params
+		void removeConfigurationParams(void);
 
-  virtual void applyConfiguration(void)=0;
+		virtual void applyConfiguration(void)=0;
 };
 
 #endif

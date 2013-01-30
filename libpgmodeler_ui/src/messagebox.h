@@ -29,34 +29,34 @@
 #include "exception.h"
 
 class MessageBox: public QDialog, public Ui::MessageBox {
- private:
-  Q_OBJECT
-  bool cancelled;
+	private:
+		Q_OBJECT
+		bool cancelled;
 
- public:
-   /// @details Constants used to define the message icon
-   static const unsigned NO_ICON=10,
-                         ERROR_ICON=11,
-                         INFO_ICON=12,
-                         ALERT_ICON=13,
-                         CONFIRM_ICON=14;
+	public:
+		//! @details Constants used to define the message icon
+		static const unsigned NO_ICON=10,
+													ERROR_ICON=11,
+													INFO_ICON=12,
+													ALERT_ICON=13,
+													CONFIRM_ICON=14;
 
-   /// @details Constants used to configure the visible buttons
-   static const unsigned YES_NO_BUTTONS=0,
-                         OK_CANCEL_BUTTONS=1,
-                         OK_BUTTON=2,
-                         ALL_BUTTONS=3;
+		//! @details Constants used to configure the visible buttons
+		static const unsigned YES_NO_BUTTONS=0,
+													OK_CANCEL_BUTTONS=1,
+													OK_BUTTON=2,
+													ALL_BUTTONS=3;
 
-   MessageBox(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		MessageBox(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
-   void show(const QString &title, const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON);
-   void show(Exception e, const QString &msg="", unsigned icon_type=ERROR_ICON);
-   bool isCancelled(void);
+		void show(const QString &title, const QString &msg, unsigned icon_type=NO_ICON, unsigned buttons=OK_BUTTON);
+		void show(Exception e, const QString &msg="", unsigned icon_type=ERROR_ICON);
+		bool isCancelled(void);
 
- private slots:
-   void handleYesOkClick(void);
-   void handleNoCancelClick(void);
-   void showExceptionList(void);
+	private slots:
+		void handleYesOkClick(void);
+		void handleNoCancelClick(void);
+		void showExceptionList(void);
 };
 
 #endif

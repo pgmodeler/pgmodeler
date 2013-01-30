@@ -2,331 +2,331 @@
 
 Permission::Permission(BaseObject *obj)
 {
- unsigned priv_id;
+	unsigned priv_id;
 
- //Initializes all the privileges as unchecked
- for(priv_id=PRIV_SELECT; priv_id<=PRIV_USAGE; priv_id++)
-  privileges[priv_id]=grant_option[priv_id]=false;
+	//Initializes all the privileges as unchecked
+	for(priv_id=PRIV_SELECT; priv_id<=PRIV_USAGE; priv_id++)
+		privileges[priv_id]=grant_option[priv_id]=false;
 
- //Raises an error if the object associated to the permission is no allocated
- if(!obj)
-  throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	//Raises an error if the object associated to the permission is no allocated
+	if(!obj)
+		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- /* Raises an error if the object type to be associated to the permission is
-    invalid according to the rule (see class definition) */
- if(!objectAcceptsPermission(obj->getObjectType()))
-  throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	/* Raises an error if the object type to be associated to the permission is
+		invalid according to the rule (see class definition) */
+	if(!objectAcceptsPermission(obj->getObjectType()))
+		throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- this->object=obj;
- this->obj_type=OBJ_PERMISSION;
+	this->object=obj;
+	this->obj_type=OBJ_PERMISSION;
 
- attributes[ParsersAttributes::OBJECT]="";
- attributes[ParsersAttributes::TYPE]="";
- attributes[ParsersAttributes::PARENT]="";
- attributes[ParsersAttributes::GRANT_OP]="";
- attributes[ParsersAttributes::ROLES]="";
- attributes[ParsersAttributes::PRIVILEGES]="";
- attributes[ParsersAttributes::PRIVILEGES_GOP]="";
+	attributes[ParsersAttributes::OBJECT]="";
+	attributes[ParsersAttributes::TYPE]="";
+	attributes[ParsersAttributes::PARENT]="";
+	attributes[ParsersAttributes::GRANT_OP]="";
+	attributes[ParsersAttributes::ROLES]="";
+	attributes[ParsersAttributes::PRIVILEGES]="";
+	attributes[ParsersAttributes::PRIVILEGES_GOP]="";
 }
 
 bool Permission::objectAcceptsPermission(ObjectType obj_type)
 {
- return(obj_type==OBJ_TABLE || obj_type==OBJ_COLUMN || obj_type==OBJ_VIEW ||
-        obj_type==OBJ_SEQUENCE || obj_type==OBJ_DATABASE || obj_type==OBJ_FUNCTION ||
-        obj_type==OBJ_AGGREGATE || obj_type==OBJ_LANGUAGE || obj_type==OBJ_SCHEMA ||
-        obj_type==OBJ_TABLESPACE);
+	return(obj_type==OBJ_TABLE || obj_type==OBJ_COLUMN || obj_type==OBJ_VIEW ||
+				 obj_type==OBJ_SEQUENCE || obj_type==OBJ_DATABASE || obj_type==OBJ_FUNCTION ||
+				 obj_type==OBJ_AGGREGATE || obj_type==OBJ_LANGUAGE || obj_type==OBJ_SCHEMA ||
+				 obj_type==OBJ_TABLESPACE);
 }
 
 bool Permission::isRoleExists(Role *role)
 {
- vector<Role *>::iterator itr, itr_end;
- bool found=false;
+	vector<Role *>::iterator itr, itr_end;
+	bool found=false;
 
- itr=roles.begin();
- itr_end=roles.end();
+	itr=roles.begin();
+	itr_end=roles.end();
 
- while(itr!=itr_end && !found)
- {
-  found=(*itr)==role;
-  itr++;
- }
+	while(itr!=itr_end && !found)
+	{
+		found=(*itr)==role;
+		itr++;
+	}
 
- return(found);
+	return(found);
 }
 
 void Permission::addRole(Role *role)
 {
- //Raises an error if the role is not allocated
- if(!role)
-  throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	//Raises an error if the role is not allocated
+	if(!role)
+		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- //Raises an error if the role already exists in the permission
- if(isRoleExists(role))
-   throw Exception(ERR_INS_DUP_ROLE_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	//Raises an error if the role already exists in the permission
+	if(isRoleExists(role))
+		throw Exception(ERR_INS_DUP_ROLE_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- roles.push_back(role);
+	roles.push_back(role);
 
- //Updates the permission Id
- generatePermissionId();
+	//Updates the permission Id
+	generatePermissionId();
 }
 
 void Permission::setPrivilege(unsigned priv_id, bool value, bool grant_op)
 {
- ObjectType obj_type;
+	ObjectType obj_type;
 
- //Caso o tipo de privilégio sejá inválido dispara uma exceção
- if(priv_id > PRIV_USAGE)
-  throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	//Caso o tipo de privilégio sejá inválido dispara uma exceção
+	if(priv_id > PRIV_USAGE)
+		throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- obj_type=object->getObjectType();
+	obj_type=object->getObjectType();
 
- /* Some privileges are valid only for certain types
-    of objects. If the user try to assign a privilege P
-    for an object that does not accept this privilege the same
-    is ignored. The schema below shows the privileges for
-    each object:
+	/* Some privileges are valid only for certain types
+		of objects. If the user try to assign a privilege P
+		for an object that does not accept this privilege the same
+		is ignored. The schema below shows the privileges for
+		each object:
 
-    Table:   SELECT | INSERT | UPDATE | DELETE | TRUNCATE | REFERENCES | TRIGGER
-    Column:   SELECT | INSERT | UPDATE | REFERENCES
-    Sequence:  USAGE | SELECT | UPDATE
-    Database: CREATE | CONNECT | TEMPORARY | TEMP
-    Function: EXECUTE
-    Aggregate: EXECUTE
-    Linguage: USAGE
-    Schema: CREATE | USAGE
-    Tablespace: CREATE
-    View: SELECT */
- if((obj_type==OBJ_TABLE && priv_id!=PRIV_SELECT && priv_id!=PRIV_INSERT &&
-                                priv_id!=PRIV_UPDATE && priv_id!=PRIV_DELETE &&
-                                priv_id!=PRIV_TRUNCATE && priv_id!=PRIV_REFERENCES &&
-                                priv_id!=PRIV_TRIGGER) ||
+		Table:   SELECT | INSERT | UPDATE | DELETE | TRUNCATE | REFERENCES | TRIGGER
+		Column:   SELECT | INSERT | UPDATE | REFERENCES
+		Sequence:  USAGE | SELECT | UPDATE
+		Database: CREATE | CONNECT | TEMPORARY | TEMP
+		Function: EXECUTE
+		Aggregate: EXECUTE
+		Linguage: USAGE
+		Schema: CREATE | USAGE
+		Tablespace: CREATE
+		View: SELECT */
+	if((obj_type==OBJ_TABLE && priv_id!=PRIV_SELECT && priv_id!=PRIV_INSERT &&
+			priv_id!=PRIV_UPDATE && priv_id!=PRIV_DELETE &&
+			priv_id!=PRIV_TRUNCATE && priv_id!=PRIV_REFERENCES &&
+			priv_id!=PRIV_TRIGGER) ||
 
-    (obj_type==OBJ_COLUMN && priv_id!=PRIV_SELECT && priv_id!=PRIV_INSERT &&
-                                priv_id!=PRIV_UPDATE && priv_id!=PRIV_REFERENCES) ||
+		 (obj_type==OBJ_COLUMN && priv_id!=PRIV_SELECT && priv_id!=PRIV_INSERT &&
+			priv_id!=PRIV_UPDATE && priv_id!=PRIV_REFERENCES) ||
 
-    (obj_type==OBJ_SEQUENCE && priv_id!=PRIV_USAGE && priv_id!=PRIV_SELECT &&
-                                   priv_id!=PRIV_UPDATE) ||
+		 (obj_type==OBJ_SEQUENCE && priv_id!=PRIV_USAGE && priv_id!=PRIV_SELECT &&
+			priv_id!=PRIV_UPDATE) ||
 
-    (obj_type==OBJ_DATABASE && priv_id!=PRIV_CREATE && priv_id!=PRIV_CONNECT &&
-                                     priv_id!=PRIV_TEMPORARY) ||
+		 (obj_type==OBJ_DATABASE && priv_id!=PRIV_CREATE && priv_id!=PRIV_CONNECT &&
+			priv_id!=PRIV_TEMPORARY) ||
 
-    ((obj_type==OBJ_FUNCTION || obj_type==OBJ_AGGREGATE) && priv_id!=PRIV_EXECUTE) ||
+		 ((obj_type==OBJ_FUNCTION || obj_type==OBJ_AGGREGATE) && priv_id!=PRIV_EXECUTE) ||
 
-    (obj_type==OBJ_LANGUAGE && priv_id!=PRIV_USAGE) ||
+		 (obj_type==OBJ_LANGUAGE && priv_id!=PRIV_USAGE) ||
 
-    (obj_type==OBJ_SCHEMA && priv_id!=PRIV_USAGE && priv_id!=PRIV_CREATE) ||
+		 (obj_type==OBJ_SCHEMA && priv_id!=PRIV_USAGE && priv_id!=PRIV_CREATE) ||
 
-    (obj_type==OBJ_TABLESPACE && priv_id!=PRIV_CREATE) ||
+		 (obj_type==OBJ_TABLESPACE && priv_id!=PRIV_CREATE) ||
 
-    (obj_type==OBJ_VIEW && priv_id!=PRIV_SELECT))
+		 (obj_type==OBJ_VIEW && priv_id!=PRIV_SELECT))
 
-   //Raises an error if the privilege is invalid according to the object type
-   throw Exception(ERR_ASG_INCOMP_PRIV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		//Raises an error if the privilege is invalid according to the object type
+		throw Exception(ERR_ASG_INCOMP_PRIV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- privileges[priv_id]=value;
- this->grant_option[priv_id]=grant_op;
+	privileges[priv_id]=value;
+	this->grant_option[priv_id]=grant_op;
 }
 
 void Permission::removeRole(unsigned role_idx)
 {
- if(role_idx > roles.size())
-  throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(role_idx > roles.size())
+		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- generatePermissionId();
+	generatePermissionId();
 }
 
 void Permission::removeRoles(void)
 {
- roles.clear();
- generatePermissionId();
+	roles.clear();
+	generatePermissionId();
 }
 
 Role *Permission::getRole(unsigned role_idx)
 {
- if(role_idx > roles.size())
-  throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	if(role_idx > roles.size())
+		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(roles[role_idx]);
+	return(roles[role_idx]);
 }
 
 unsigned Permission::getRoleCount(void)
 {
- return(roles.size());
+	return(roles.size());
 }
 
 BaseObject *Permission::getObject(void)
 {
- return(object);
+	return(object);
 }
 
 bool Permission::getPrivilege(unsigned priv_id)
 {
- //Raises an error if the privilege is invalid
- if(priv_id > PRIV_USAGE)
-  throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	//Raises an error if the privilege is invalid
+	if(priv_id > PRIV_USAGE)
+		throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(privileges[priv_id]);
+	return(privileges[priv_id]);
 }
 
 bool Permission::getGrantOption(unsigned priv_id)
 {
- //Raises an error if the privilege is invalid
- if(priv_id > PRIV_USAGE)
-  throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	//Raises an error if the privilege is invalid
+	if(priv_id > PRIV_USAGE)
+		throw Exception(ERR_REF_INV_PRIVILEGE_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
- return(grant_option[priv_id]);
+	return(grant_option[priv_id]);
 }
 
 QString Permission::getPrivilegeString(void)
 {
- unsigned char priv_codes[13]="rawdDxtCcTXU";
- QString str_priv;
- unsigned i;
+	unsigned char priv_codes[13]="rawdDxtCcTXU";
+	QString str_priv;
+	unsigned i;
 
- /* Schema to build the privilege string:
+	/* Schema to build the privilege string:
 
-    rolename=xxxx -- privileges granted to a role
-            =xxxx -- privileges granted to PUBLIC
+		rolename=xxxx -- privileges granted to a role
+						=xxxx -- privileges granted to PUBLIC
 
-            r -- SELECT ("read")
-            a -- INSERT ("append")
-            w -- UPDATE ("write")
-            d -- DELETE
-            D -- TRUNCATE
-            x -- REFERENCES
-            t -- TRIGGER
-            C -- CREATE
-            c -- CONNECT
-            T -- TEMPORARY
-            X -- EXECUTE
-            U -- USAGE
+						r -- SELECT ("read")
+						a -- INSERT ("append")
+						w -- UPDATE ("write")
+						d -- DELETE
+						D -- TRUNCATE
+						x -- REFERENCES
+						t -- TRIGGER
+						C -- CREATE
+						c -- CONNECT
+						T -- TEMPORARY
+						X -- EXECUTE
+						U -- USAGE
 
-      arwdDxt -- ALL PRIVILEGES (for tables, varies for other objects)
-            * -- grant option for preceding privilege
-        /yyyy -- role that granted this privilege  */
- for(i=0; i < 12; i++)
- {
-  if(privileges[i])
-   str_priv.append(priv_codes[i]);
+			arwdDxt -- ALL PRIVILEGES (for tables, varies for other objects)
+						* -- grant option for preceding privilege
+				/yyyy -- role that granted this privilege  */
+	for(i=0; i < 12; i++)
+	{
+		if(privileges[i])
+			str_priv.append(priv_codes[i]);
 
-  if(grant_option[i])
-  str_priv.append(QChar('*'));
- }
+		if(grant_option[i])
+			str_priv.append(QChar('*'));
+	}
 
- return(str_priv);
+	return(str_priv);
 }
 
 void Permission::generatePermissionId(void)
 {
- vector<Role *>::iterator itr, itr_end;
- vector<QString> addr_vect;
- Role *role=NULL;
- QString str_aux;
- QString addr;
- unsigned i, count;
- QTextStream stream(&addr);
+	vector<Role *>::iterator itr, itr_end;
+	vector<QString> addr_vect;
+	Role *role=NULL;
+	QString str_aux;
+	QString addr;
+	unsigned i, count;
+	QTextStream stream(&addr);
 
- //Generates the id only when there is associated roles to the permission
- if(roles.size() > 0)
- {
-  itr=roles.begin();
-  itr_end=roles.end();
+	//Generates the id only when there is associated roles to the permission
+	if(roles.size() > 0)
+	{
+		itr=roles.begin();
+		itr_end=roles.end();
 
-  while(itr!=itr_end)
-  {
-   role=(*itr);
-   //Convertes the role address to string and use it as the id for the permission
-   stream << reinterpret_cast<unsigned *>(role);
-   addr_vect.push_back(addr.mid(2));
-   itr++;
-  }
+		while(itr!=itr_end)
+		{
+			role=(*itr);
+			//Convertes the role address to string and use it as the id for the permission
+			stream << reinterpret_cast<unsigned *>(role);
+			addr_vect.push_back(addr.mid(2));
+			itr++;
+		}
 
-  sort(addr_vect.begin(), addr_vect.end());
-  count=addr_vect.size();
+		sort(addr_vect.begin(), addr_vect.end());
+		count=addr_vect.size();
 
-  for(i=0; i < count; i++)
-  {
-   str_aux+=QString("%1").arg(addr_vect[i]);
-   if(i < count-1) str_aux+=".";
-  }
+		for(i=0; i < count; i++)
+		{
+			str_aux+=QString("%1").arg(addr_vect[i]);
+			if(i < count-1) str_aux+=".";
+		}
 
- }
- /* If no role is associated with permissions (public)
-    generates an identifier with zeros indicating that permission
-    is not linked directly to any role on the model */
- else
-   str_aux="000000";
+	}
+	/* If no role is associated with permissions (public)
+		generates an identifier with zeros indicating that permission
+		is not linked directly to any role on the model */
+	else
+		str_aux="000000";
 
- /* Configures the permission name as the following:
-    grant_[OBJECT_ID]_([ROLE1_ADDR].[ROLEN_ADDR])
+	/* Configures the permission name as the following:
+		grant_[OBJECT_ID]_([ROLE1_ADDR].[ROLEN_ADDR])
 
-    With this name format its possible create an unique id for the permission.
-    Generating errors when the user try to create a second permission
-    with the same configuration as the first. */
- this->obj_name=QString(ParsersAttributes::PERMISSION + "_%1.%2")
-            .arg(object->getObjectId())
-            .arg(str_aux);
+		With this name format its possible create an unique id for the permission.
+		Generating errors when the user try to create a second permission
+		with the same configuration as the first. */
+	this->obj_name=QString(ParsersAttributes::PERMISSION + "_%1.%2")
+								 .arg(object->getObjectId())
+								 .arg(str_aux);
 }
 
 QString Permission::getCodeDefinition(unsigned def_type)
 {
- unsigned i, count;
- ObjectType obj_type;
- QString priv_vect[12]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
-                         ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
-                         ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
-                         ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
-                         ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
-                         ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
+	unsigned i, count;
+	ObjectType obj_type;
+	QString priv_vect[12]={ ParsersAttributes::SELECT_PRIV, ParsersAttributes::INSERT_PRIV,
+													ParsersAttributes::UPDATE_PRIV, ParsersAttributes::DELETE_PRIV,
+													ParsersAttributes::TRUNCATE_PRIV, ParsersAttributes::REFERENCES_PRIV,
+													ParsersAttributes::TRIGGER_PRIV, ParsersAttributes::CREATE_PRIV,
+													ParsersAttributes::CONNECT_PRIV, ParsersAttributes::TEMPORARY_PRIV,
+													ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
 
- obj_type=object->getObjectType();
+	obj_type=object->getObjectType();
 
- if(obj_type==OBJ_FUNCTION)
-  attributes[ParsersAttributes::OBJECT]=dynamic_cast<Function *>(object)->getSignature();
- else
-  attributes[ParsersAttributes::OBJECT]=object->getName(true);
+	if(obj_type==OBJ_FUNCTION)
+		attributes[ParsersAttributes::OBJECT]=dynamic_cast<Function *>(object)->getSignature();
+	else
+		attributes[ParsersAttributes::OBJECT]=object->getName(true);
 
- if(def_type==SchemaParser::SQL_DEFINITION)
-  attributes[ParsersAttributes::TYPE]=BaseObject::getSQLName(object->getObjectType());
- else
-  attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(object->getObjectType());
+	if(def_type==SchemaParser::SQL_DEFINITION)
+		attributes[ParsersAttributes::TYPE]=BaseObject::getSQLName(object->getObjectType());
+	else
+		attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(object->getObjectType());
 
- if(obj_type==OBJ_COLUMN)
-  attributes[ParsersAttributes::PARENT]=dynamic_cast<Column *>(object)->getParentTable()->getName(true);
+	if(obj_type==OBJ_COLUMN)
+		attributes[ParsersAttributes::PARENT]=dynamic_cast<Column *>(object)->getParentTable()->getName(true);
 
- if(def_type==SchemaParser::XML_DEFINITION)
- {
-  for(i=0; i < 12; i++)
-  {
-   if(privileges[i] && grant_option[i])
-    attributes[priv_vect[i]]=ParsersAttributes::GRANT_OP;
-   else if(privileges[i])
-    attributes[priv_vect[i]]=ParsersAttributes::_TRUE_;
-   else
-    attributes[priv_vect[i]]="";
-  }
- }
- else
- {
-  for(i=0; i < 12; i++)
-  {
-   if(privileges[i] && !grant_option[i])
-    attributes[ParsersAttributes::PRIVILEGES]+=priv_vect[i].toUpper() + ",";
-   else if(grant_option[i])
-    attributes[ParsersAttributes::PRIVILEGES_GOP]+=priv_vect[i].toUpper() + ",";
-  }
+	if(def_type==SchemaParser::XML_DEFINITION)
+	{
+		for(i=0; i < 12; i++)
+		{
+			if(privileges[i] && grant_option[i])
+				attributes[priv_vect[i]]=ParsersAttributes::GRANT_OP;
+			else if(privileges[i])
+				attributes[priv_vect[i]]=ParsersAttributes::_TRUE_;
+			else
+				attributes[priv_vect[i]]="";
+		}
+	}
+	else
+	{
+		for(i=0; i < 12; i++)
+		{
+			if(privileges[i] && !grant_option[i])
+				attributes[ParsersAttributes::PRIVILEGES]+=priv_vect[i].toUpper() + ",";
+			else if(grant_option[i])
+				attributes[ParsersAttributes::PRIVILEGES_GOP]+=priv_vect[i].toUpper() + ",";
+		}
 
-  attributes[ParsersAttributes::PRIVILEGES].remove(attributes[ParsersAttributes::PRIVILEGES].size()-1,1);
-  attributes[ParsersAttributes::PRIVILEGES_GOP].remove(attributes[ParsersAttributes::PRIVILEGES_GOP].size()-1,1);
- }
+		attributes[ParsersAttributes::PRIVILEGES].remove(attributes[ParsersAttributes::PRIVILEGES].size()-1,1);
+		attributes[ParsersAttributes::PRIVILEGES_GOP].remove(attributes[ParsersAttributes::PRIVILEGES_GOP].size()-1,1);
+	}
 
- count=roles.size();
+	count=roles.size();
 
- for(i=0; i < count; i++)
-  attributes[ParsersAttributes::ROLES]+=roles[i]->getName(true) + ",";
+	for(i=0; i < count; i++)
+		attributes[ParsersAttributes::ROLES]+=roles[i]->getName(true) + ",";
 
- attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);
+	attributes[ParsersAttributes::ROLES].remove(attributes[ParsersAttributes::ROLES].size()-1,1);
 
- return(BaseObject::__getCodeDefinition(def_type));
+	return(BaseObject::__getCodeDefinition(def_type));
 }
 

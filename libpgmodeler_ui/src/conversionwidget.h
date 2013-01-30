@@ -29,19 +29,19 @@
 #include "ui_conversionwidget.h"
 
 class ConversionWidget: public BaseObjectWidget, public Ui::ConversionWidget {
- private:
-  Q_OBJECT
-  SeletorObjetoWidget *sel_funcao_conv;
+	private:
+		Q_OBJECT
+		SeletorObjetoWidget *sel_funcao_conv;
 
- public:
-  ConversionWidget(QWidget * parent = 0);
-  void setAttributes(DatabaseModel *model, OperationList *op_list, Conversion *conv);
+	public:
+		ConversionWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Conversion *conv);
 
- private slots:
-  void hideEvent(QHideEvent *event);
+	private slots:
+		void hideEvent(QHideEvent *event);
 
- public slots:
-  void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

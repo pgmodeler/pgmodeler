@@ -36,37 +36,37 @@
 #include "databasemodel.h"
 
 class TipoPgSQLWidget: public QWidget, public Ui::TipoPgSQLWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-   /// @details Tipo configurado pelo formulário
-   PgSQLType tipo;
+	private:
+		//! @details Tipo configurado pelo formulário
+		PgSQLType tipo;
 
-   /// @details Destacador de sintaxe usado para destacar o formato do tipo
-   SyntaxHighlighter *destaque_fmt;
+		//! @details Destacador de sintaxe usado para destacar o formato do tipo
+		SyntaxHighlighter *destaque_fmt;
 
- public:
-   TipoPgSQLWidget(QWidget * parent = 0, const QString &rotulo="");
+	public:
+		TipoPgSQLWidget(QWidget * parent = 0, const QString &rotulo="");
 
-   /** @details Método utilitário disponibilizado para as demais classes o qual
-      obtém a lista de tipos do modelo em questão dando a possiblidade
-      de quais tipos obter */
-   static void obterTiposPgSQL(QComboBox *combo, DatabaseModel *modelo,
-                               unsigned conf_tipo_usr=UserTypeConfig::ALL_USER_TYPES,
-                               bool tipo_oid=true, bool pseudo=true);
+		/*! @details Método utilitário disponibilizado para as demais classes o qual
+			obtém a lista de tipos do modelo em questão dando a possiblidade
+			de quais tipos obter */
+		static void obterTiposPgSQL(QComboBox *combo, DatabaseModel *modelo,
+																unsigned conf_tipo_usr=UserTypeConfig::ALL_USER_TYPES,
+																bool tipo_oid=true, bool pseudo=true);
 
- private slots:
-   /** @details Atualiza o formato do tipo   medida que os campos
-      do formulário são modificados */
-   void atualizarFormatoTipo(void);
+	private slots:
+		/*! @details Atualiza o formato do tipo   medida que os campos
+			do formulário são modificados */
+		void atualizarFormatoTipo(void);
 
- public slots:
-   void definirAtributos(PgSQLType tipo, DatabaseModel *modelo,
-                         unsigned conf_tipo_usr=UserTypeConfig::ALL_USER_TYPES,
-                         bool tipo_oid=true, bool pseudo=true);
+	public slots:
+		void definirAtributos(PgSQLType tipo, DatabaseModel *modelo,
+													unsigned conf_tipo_usr=UserTypeConfig::ALL_USER_TYPES,
+													bool tipo_oid=true, bool pseudo=true);
 
-   /// @details Obtém o tipo configurado no formulário
-   PgSQLType obterTipoPgSQL(void);
+		//! @details Obtém o tipo configurado no formulário
+		PgSQLType obterTipoPgSQL(void);
 };
 
 #endif

@@ -29,18 +29,18 @@
 #include "ui_schemawidget.h"
 
 class EsquemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
- public:
-  EsquemaWidget(QWidget * parent = 0);
-  void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *esquema);
+	public:
+		EsquemaWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *esquema);
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 
- private slots:
-   void selectFillColor(void);
+	private slots:
+		void selectFillColor(void);
 };
 
 #endif

@@ -29,48 +29,48 @@
 #include "operatorclass.h"
 
 class IndexElement {
- private:
-  /** @details Column referenced by the index element. This attribute is
-     mutually exclusive with the expression attribute, this means,
-     when one is set the other has empty (null) value */
-  Column *column;
+	private:
+		/*! @details Column referenced by the index element. This attribute is
+		 mutually exclusive with the expression attribute, this means,
+		 when one is set the other has empty (null) value */
+		Column *column;
 
-  /** @details Expression referenced by the index element. This attribute is
-     mutually exclusive with the column attribute, this means
-     when one is set the other has empty (null) value */
-  QString expression;
+		/*! @details Expression referenced by the index element. This attribute is
+		 mutually exclusive with the column attribute, this means
+		 when one is set the other has empty (null) value */
+		QString expression;
 
-  /// @details Operator class used by the index element
-  OperatorClass *operator_class;
+		//! @details Operator class used by the index element
+		OperatorClass *operator_class;
 
-  /** @details Sorting attributes of the element (ASC|DESC, NULLS [FIRST|LAST])
-     This attibutes can be configured used the constants ASC_ORDER and NULLS_FIRST */
-  bool sort_attibutes[2];
+		/*! @details Sorting attributes of the element (ASC|DESC, NULLS [FIRST|LAST])
+		 This attibutes can be configured used the constants ASC_ORDER and NULLS_FIRST */
+		bool sort_attibutes[2];
 
- public:
-  /// @details Constants used to reference the sorting method of the element
-  const static unsigned ASC_ORDER=0,
-                        NULLS_FIRST=1;
+	public:
+		//! @details Constants used to reference the sorting method of the element
+		const static unsigned ASC_ORDER=0,
+													NULLS_FIRST=1;
 
-   IndexElement(void);
+		IndexElement(void);
 
-   /// @details Element configuration methods
-   void setColumn(Column *column);
-   void setExpression(const QString &expression);
-   void setOperatorClass(OperatorClass *oper_class);
+		//! @details Element configuration methods
+		void setColumn(Column *column);
+		void setExpression(const QString &expression);
+		void setOperatorClass(OperatorClass *oper_class);
 
-   /// @details Sets the state of one of the element sorting method
-   void setSortAttribute(unsigned attrib, bool value);
+		//! @details Sets the state of one of the element sorting method
+		void setSortAttribute(unsigned attrib, bool value);
 
-   /// @details Gets the curret state of the element sorting attribute
-   bool getSortAttribute(unsigned attrib);
+		//! @details Gets the curret state of the element sorting attribute
+		bool getSortAttribute(unsigned attrib);
 
-   Column *getColumn(void);
-   QString getExpression(void);
-   OperatorClass *getOperatorClass(void);
+		Column *getColumn(void);
+		QString getExpression(void);
+		OperatorClass *getOperatorClass(void);
 
-   /// @details Returns the SQL / XML code definition for the index element
-   QString getCodeDefinition(unsigned def_type);
+		//! @details Returns the SQL / XML code definition for the index element
+		QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

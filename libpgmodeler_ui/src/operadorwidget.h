@@ -30,22 +30,23 @@
 #include "ui_operadorwidget.h"
 
 class OperadorWidget: public BaseObjectWidget, public Ui::OperadorWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-   TipoPgSQLWidget *tipo_args[2];
-   SeletorObjetoWidget *sel_funcoes[3],
-                       *sel_operadores[6];
+	private:
+		TipoPgSQLWidget *tipo_args[2];
 
- public:
-   OperadorWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Operator *operador);
+		SeletorObjetoWidget *sel_funcoes[3],
+												*sel_operadores[6];
 
- private slots:
-  void hideEvent(QHideEvent *);
+	public:
+		OperadorWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Operator *operador);
 
- public slots:
-   void applyConfiguration(void);
+	private slots:
+		void hideEvent(QHideEvent *);
+
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

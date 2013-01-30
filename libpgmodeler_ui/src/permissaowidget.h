@@ -31,70 +31,71 @@
 #include "visaoobjetoswidget.h"
 
 class PermissaoWidget: public BaseObjectWidget, public Ui::PermissaoWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-   /// @details Armazena a permissão selecionada atualmente para edição
-   Permission *permissao;
-   /// @details Conteineres de papéis e de permissões
-   TabelaObjetosWidget *tab_papeis, *tab_permissoes;
+	private:
+		//! @details Armazena a permissão selecionada atualmente para edição
+		Permission *permissao;
 
-   VisaoObjetosWidget *selecaoobjetos_wgt;
+		//! @details Conteineres de papéis e de permissões
+		TabelaObjetosWidget *tab_papeis, *tab_permissoes;
 
- public:
-   PermissaoWidget(QWidget * parent = 0);
-   ~PermissaoWidget(void);
-   void setAttributes(DatabaseModel *model, BaseObject *objeto_pai, BaseObject *object);
+		VisaoObjetosWidget *selecaoobjetos_wgt;
 
- private slots:
-   /// @details Exibe a janela de seleção de objetos do modelo
-   void selecionarPapel(void);
+	public:
+		PermissaoWidget(QWidget * parent = 0);
+		~PermissaoWidget(void);
+		void setAttributes(DatabaseModel *model, BaseObject *objeto_pai, BaseObject *object);
 
-   /// @details Seleciona uma permissão cujo índice é especificado no parâmetro
-   void selecionarPermissao(int idx_perm);
+	private slots:
+		//! @details Exibe a janela de seleção de objetos do modelo
+		void selecionarPapel(void);
 
-   /// @details Adiciona ao modelo a permissão configurada no formulário
-   void adicionarPermissao(void);
+		//! @details Seleciona uma permissão cujo índice é especificado no parâmetro
+		void selecionarPermissao(int idx_perm);
 
-   /** @details Método de configuração de uma permissão. Este método
-      faz a atribuição dos valores preenchidos no formulário
-        permissão do parâmetro. Este método é compartilhado
-      entre as ações de adição e atualização de permissão */
-   void configurarPermissao(Permission *permissao);
+		//! @details Adiciona ao modelo a permissão configurada no formulário
+		void adicionarPermissao(void);
 
-   /** @details Preenche o formulário com os dados da permissão selecionada
-      na tabela de permissões para uma posterior edição */
-   void editarPermissao(void);
+		/*! @details Método de configuração de uma permissão. Este método
+			faz a atribuição dos valores preenchidos no formulário
+				permissão do parâmetro. Este método é compartilhado
+			entre as ações de adição e atualização de permissão */
+		void configurarPermissao(Permission *permissao);
 
-   /// @details Remove a permissão selecionada na tabela de permissões
-   void removerPermissao(void);
+		/*! @details Preenche o formulário com os dados da permissão selecionada
+			na tabela de permissões para uma posterior edição */
+		void editarPermissao(void);
 
-   /// @details Remove todas as permissões da tabela de permissão
-   void removerPermissoes(void);
+		//! @details Remove a permissão selecionada na tabela de permissões
+		void removerPermissao(void);
 
-   /// @details Atualiza os dados da permissão atualmente em edição
-   void atualizarPermissao(void);
+		//! @details Remove todas as permissões da tabela de permissão
+		void removerPermissoes(void);
 
-   /// @details Lista todas as permissões relacionadas ao objeto atual
-   void listarPermissoes(void);
+		//! @details Atualiza os dados da permissão atualmente em edição
+		void atualizarPermissao(void);
 
-   /** @details Cancela a operação de criação/edição de uma permissão
-      limpando o formulário e bloqueando os botões relacionados */
-   void cancelarOperacao(void);
+		//! @details Lista todas as permissões relacionadas ao objeto atual
+		void listarPermissoes(void);
 
-   /// @details Exibe os dados do papel selecionado na tabela de papéis
-   void exibirDadosPapelSelecionado(void);
+		/*! @details Cancela a operação de criação/edição de uma permissão
+			limpando o formulário e bloqueando os botões relacionados */
+		void cancelarOperacao(void);
 
-   /** @details Habilita ou desabilita os botões de edição com base
-      nos dados preenchidos ou não no formulário */
-   void habilitarBotoesEdicao(void);
+		//! @details Exibe os dados do papel selecionado na tabela de papéis
+		void exibirDadosPapelSelecionado(void);
 
-   /** @details Selecionao checkbox relacionados a um privilégio na
-      tabela de privilégios */
-   void marcarPrivilegio(void);
+		/*! @details Habilita ou desabilita os botões de edição com base
+			nos dados preenchidos ou não no formulário */
+		void habilitarBotoesEdicao(void);
 
- public slots:
-   void hideEvent(QHideEvent *);
+		/*! @details Selecionao checkbox relacionados a um privilégio na
+			tabela de privilégios */
+		void marcarPrivilegio(void);
+
+	public slots:
+		void hideEvent(QHideEvent *);
 };
 
 #endif

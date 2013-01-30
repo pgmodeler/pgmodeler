@@ -34,29 +34,29 @@
 extern MessageBox *caixa_msg;
 
 class Application: public QApplication {
- private:
- public:
+	private:
+	public:
 
-  Application(int & argc, char ** argv) : QApplication(argc,argv)
-  {}
+		Application(int & argc, char ** argv) : QApplication(argc,argv)
+		{}
 
-  bool notify(QObject * receiver, QEvent * event)
-  {
-   try
-   {
-    return(QApplication::notify(receiver,event));
-   }
-   catch(Exception &e)
-   {
-    caixa_msg->show(e);
-    return(false);
-   }
-   catch(...)
-   {
-    caixa_msg->show(trUtf8("Error"),trUtf8("Unknown exception caught!"), MessageBox::ERROR_ICON);
-    return(false);
-   }
-  }
+		bool notify(QObject * receiver, QEvent * event)
+		{
+			try
+			{
+				return(QApplication::notify(receiver,event));
+			}
+			catch(Exception &e)
+			{
+				caixa_msg->show(e);
+				return(false);
+			}
+			catch(...)
+			{
+				caixa_msg->show(trUtf8("Error"),trUtf8("Unknown exception caught!"), MessageBox::ERROR_ICON);
+				return(false);
+			}
+		}
 };
 
 #endif

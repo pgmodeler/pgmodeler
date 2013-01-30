@@ -30,7 +30,7 @@
 #include "tipopgsqlwidget.h"
 #include "tabelaobjetoswidget.h"
 
-/** @details Declarando a classe Parametro como metatype para que esta
+/*! @details Declarando a classe Parametro como metatype para que esta
  possa ser usada em conjunto com a classe QVariant (vide documentação
  da classe QVariant e QMetaType). Esta declaração é uma macro específica
  do Qt e está sendo usada para facilitar o uso com classes que necessitam
@@ -41,42 +41,42 @@
 Q_DECLARE_METATYPE(Parameter)
 
 class TipoWidget: public BaseObjectWidget, public Ui::TipoWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-   /// @details Widgets seletores de funções do tipo
-   SeletorObjetoWidget *sel_funcoes[7];
+	private:
+		//! @details Widgets seletores de funções do tipo
+		SeletorObjetoWidget *sel_funcoes[7];
 
-   /// @details Widgets de configuração de tipo cópia e tipo de elemento
-   TipoPgSQLWidget *tipo_copia,
-                   *tipo_elemento;
+		//! @details Widgets de configuração de tipo cópia e tipo de elemento
+		TipoPgSQLWidget *tipo_copia,
+										*tipo_elemento;
 
-   /// @details Tabelas para armazenamento das enumerações e atributos de tipos compostos
-   TabelaObjetosWidget *tab_enumeracoes,
-                       *tab_atributos;
+		//! @details Tabelas para armazenamento das enumerações e atributos de tipos compostos
+		TabelaObjetosWidget *tab_enumeracoes,
+												*tab_atributos;
 
- public:
-   TipoWidget(QWidget * parent = 0);
-   /// @details ~TipoWidget(void);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Type *tipo);
+	public:
+		TipoWidget(QWidget * parent = 0);
+		//! @details ~TipoWidget(void);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Type *tipo);
 
- private slots:
-   void hideEvent(QHideEvent *);
+	private slots:
+		void hideEvent(QHideEvent *);
 
-   /** @details Manipula o formulário exibindo os campos de acordo com a configuração
-      de tipo selecionada */
-   void selecionarConfiguracaoTipo(void);
+		/*! @details Manipula o formulário exibindo os campos de acordo com a configuração
+			de tipo selecionada */
+		void selecionarConfiguracaoTipo(void);
 
-   /// @details Manipula as enumerações do tipo
-   void manipularEnumeracao(int idx_linha);
+		//! @details Manipula as enumerações do tipo
+		void manipularEnumeracao(int idx_linha);
 
-   /// @details Exibe o form de parâmetros usado como editor de atributos de tipos compostos
-   void exibirFormAtributo(void);
-   /// @details Exibe os atributos do tipo composto na tabela de atributos
-   void manipularAtributo(int res);
+		//! @details Exibe o form de parâmetros usado como editor de atributos de tipos compostos
+		void exibirFormAtributo(void);
+		//! @details Exibe os atributos do tipo composto na tabela de atributos
+		void manipularAtributo(int res);
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

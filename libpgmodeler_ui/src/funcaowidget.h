@@ -31,55 +31,55 @@
 #include "tabelaobjetoswidget.h"
 
 class FuncaoWidget: public BaseObjectWidget, public Ui::FuncaoWidget  {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-   /** @details Destaque de código-fonte usado para destacar o código da função
-      definido pelo usuário */
-   SyntaxHighlighter *destaque_codigo;
+	private:
+		/*! @details Destaque de código-fonte usado para destacar o código da função
+			definido pelo usuário */
+		SyntaxHighlighter *destaque_codigo;
 
-   /// @details Widget de tipo Pgsql usado para configurar o tipo de retorno da função
-   TipoPgSQLWidget *tipo_ret;
+		//! @details Widget de tipo Pgsql usado para configurar o tipo de retorno da função
+		TipoPgSQLWidget *tipo_ret;
 
-                       /// @details Tabela que representa a tabela de retorno da função
-   TabelaObjetosWidget *tab_retorno,
-                       /// @details Tabela de parâmetros da função
-                       *tab_parametros;
+		//! @details Tabela que representa a tabela de retorno da função
+		TabelaObjetosWidget *tab_retorno,
+												//! @details Tabela de parâmetros da função
+												*tab_parametros;
 
-   /// @details Converte os dados da linha da tabela informada em um parâmetro
-   Parameter obterParametro(TabelaObjetosWidget *tab, unsigned idx_lin);
+		//! @details Converte os dados da linha da tabela informada em um parâmetro
+		Parameter obterParametro(TabelaObjetosWidget *tab, unsigned idx_lin);
 
-   /// @details Exibe os dados do parâmetro na tabela e linha selecionadas
-   void exibirDadosParametro(Parameter param, TabelaObjetosWidget *tab, unsigned idx_lin);
+		//! @details Exibe os dados do parâmetro na tabela e linha selecionadas
+		void exibirDadosParametro(Parameter param, TabelaObjetosWidget *tab, unsigned idx_lin);
 
-   /** @details Valida a nova configuração da função em relação a demais objetos que a referenciam.
-     A exemplo disso temos objetos das classes ConversaoCodificacao, ConversaoTipo,
-     FuncaoAgregada, Gatilho, Linguagem, Operador, Tipo */
-   void validarFuncaoConfigurada(void);
+		/*! @details Valida a nova configuração da função em relação a demais objetos que a referenciam.
+		 A exemplo disso temos objetos das classes ConversaoCodificacao, ConversaoTipo,
+		 FuncaoAgregada, Gatilho, Linguagem, Operador, Tipo */
+		void validarFuncaoConfigurada(void);
 
- public:
-   FuncaoWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Function *funcao);
+	public:
+		FuncaoWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Function *funcao);
 
- private slots:
-   void alternarTiposRetorno(void);
+	private slots:
+		void alternarTiposRetorno(void);
 
-   /** @details Seleciona a linguagem de definição da função, e caso disponível,
-      carrega o arquivo de destaque de sintaxe referênt  linguagem
-      selecionada */
-   void selecionarLinguagem(void);
+		/*! @details Seleciona a linguagem de definição da função, e caso disponível,
+			carrega o arquivo de destaque de sintaxe referênt  linguagem
+			selecionada */
+		void selecionarLinguagem(void);
 
-   /// @details Exibe a janela de configuração de parâmetros
-   void exibirFormParametro(void);
+		//! @details Exibe a janela de configuração de parâmetros
+		void exibirFormParametro(void);
 
-   /** @details Manipula um parâmetro que foi configurado pelo form. de parâmetro
-      exibindo seus dados na tabela da parâmetros correta */
-   void manipularParametro(int);
+		/*! @details Manipula um parâmetro que foi configurado pelo form. de parâmetro
+			exibindo seus dados na tabela da parâmetros correta */
+		void manipularParametro(int);
 
-   void hideEvent(QHideEvent *);
+		void hideEvent(QHideEvent *);
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

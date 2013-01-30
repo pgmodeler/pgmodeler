@@ -31,21 +31,21 @@
 #include "operationlist.h"
 
 class GeneralConfigWidget: public QWidget, public Ui::GeneralConfigWidget, public BaseConfigWidget {
- private:
- Q_OBJECT
+	private:
+		Q_OBJECT
 
- public:
-  GeneralConfigWidget(QWidget * parent=0);
+	public:
+		GeneralConfigWidget(QWidget * parent=0);
 
-  void saveConfiguration(void);
-  void loadConfiguration(void);
+		void saveConfiguration(void);
+		void loadConfiguration(void);
 
- public slots:
-  void applyConfiguration(void);
-  void restoreDefaults(void);
+	public slots:
+		void applyConfiguration(void);
+		void restoreDefaults(void);
 
- private slots:
-   void convertMarginUnity(void);
+	private slots:
+		void convertMarginUnity(void);
 };
 
 #endif

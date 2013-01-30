@@ -30,34 +30,34 @@
 #include "dbconnection.h"
 
 class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidget, public BaseConfigWidget {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  /// @details Configures the passed connection setting it's attributes using the values from the form
-  void configurarConexao(DBConnection *conn);
+		//! @details Configures the passed connection setting it's attributes using the values from the form
+		void configurarConexao(DBConnection *conn);
 
- public:
-  ConnectionsConfigWidget(QWidget * parent=0);
-  ~ConnectionsConfigWidget(void);
+	public:
+		ConnectionsConfigWidget(QWidget * parent=0);
+		~ConnectionsConfigWidget(void);
 
-  void saveConfiguration(void);
-  void loadConfiguration(void);
+		void saveConfiguration(void);
+		void loadConfiguration(void);
 
-  /// @details Fills the passed map with all the loaded connections
-  void getConnections(map<QString, DBConnection *> &conns);
+		//! @details Fills the passed map with all the loaded connections
+		void getConnections(map<QString, DBConnection *> &conns);
 
- public slots:
-  void restoreDefaults(void);
+	public slots:
+		void restoreDefaults(void);
 
- private slots:
-   void newConnection(void);
-   void handleConnection(void);
-   void editConnection(void);
-   void testConnection(void);
-   void removeConexao(void);
-   void enableCertificates(void);
-   void enableConnectionTest(void);
-   void applyConfiguration(void){}
+	private slots:
+		void newConnection(void);
+		void handleConnection(void);
+		void editConnection(void);
+		void testConnection(void);
+		void removeConexao(void);
+		void enableCertificates(void);
+		void enableConnectionTest(void);
+		void applyConfiguration(void){}
 };
 
 #endif

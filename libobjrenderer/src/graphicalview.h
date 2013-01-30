@@ -29,16 +29,16 @@
 #include "basetableview.h"
 
 class GraphicalView: public BaseTableView {
- private:
-  Q_OBJECT
-  QGraphicsItemGroup *references;
+	private:
+		Q_OBJECT
+		QGraphicsItemGroup *references;
 
- public:
-  GraphicalView(View *view);
-  ~GraphicalView(void);
+	public:
+		GraphicalView(View *view);
+		~GraphicalView(void);
 
- private slots:
-  void configureObject(void);
+	private slots:
+		void configureObject(void);
 };
 
 #endif

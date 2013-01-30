@@ -32,30 +32,31 @@
 #include "pluginsconfigwidget.h"
 
 class FormConfiguracao: public QDialog, public Ui::FormConfiguracao {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  GeneralConfigWidget *conf_geral;
-  AppearanceConfigWidget *conf_aparencia;
-  ConnectionsConfigWidget *conf_conexoes;
-  PluginsConfigWidget *conf_plugins;
+		GeneralConfigWidget *conf_geral;
+		AppearanceConfigWidget *conf_aparencia;
+		ConnectionsConfigWidget *conf_conexoes;
+		PluginsConfigWidget *conf_plugins;
 
 
- public:
-  static const int WGT_CONF_GERAL=0,
-                   WGT_CONF_APARENCIA=1,
-                   WGT_CONF_CONEXOES=2,
-                   WGT_CONF_PLUGINS=3;
-  FormConfiguracao(QWidget * parent = 0, Qt::WindowFlags f = 0);
-  BaseConfigWidget *obterWidgetConfiguracao(unsigned idx);
+	public:
+		static const int	WGT_CONF_GERAL=0,
+											WGT_CONF_APARENCIA=1,
+											WGT_CONF_CONEXOES=2,
+											WGT_CONF_PLUGINS=3;
 
- public slots:
-  void aplicarConfiguracao(void);
-  void carregarConfiguracao(void);
-  void close(void);
+		FormConfiguracao(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		BaseConfigWidget *obterWidgetConfiguracao(unsigned idx);
 
- private slots:
-  void restaurarPadroes(void);
+	public slots:
+		void aplicarConfiguracao(void);
+		void carregarConfiguracao(void);
+		void close(void);
+
+	private slots:
+		void restaurarPadroes(void);
 };
 
 #endif

@@ -31,27 +31,27 @@
 
 class SchemaView: public BaseObjectView
 {
- private:
-  Q_OBJECT
-  QGraphicsSimpleTextItem *sch_name;
-  QGraphicsPolygonItem *box;
+	private:
+		Q_OBJECT
+		QGraphicsSimpleTextItem *sch_name;
+		QGraphicsPolygonItem *box;
 
-  /// @details Stores the views and tables that belongs to this schema
-  QList<BaseObjectView *> children;
+		//! @details Stores the views and tables that belongs to this schema
+		QList<BaseObjectView *> children;
 
-  void mousePressEvent(QGraphicsSceneMouseEvent *event);
+		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
-  /// @details Fills the children vector
-  void fetchChildren(void);
+		//! @details Fills the children vector
+		void fetchChildren(void);
 
- public:
-  SchemaView(Schema *schema);
+	public:
+		SchemaView(Schema *schema);
 
-  /// @details Visually selects all the schema children
-  void selectChildren(void);
+		//! @details Visually selects all the schema children
+		void selectChildren(void);
 
- public slots:
-  void configureObject(void);
+	public slots:
+		void configureObject(void);
 };
 
 #endif

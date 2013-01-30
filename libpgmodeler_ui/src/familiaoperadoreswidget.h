@@ -29,19 +29,19 @@
 #include "ui_familiaoperadoreswidget.h"
 
 class FamiliaOperadoresWidget: public BaseObjectWidget, public Ui::FamiliaOperadoresWidget {
- Q_OBJECT
+	Q_OBJECT
 
- private:
+	private:
 
- public:
-   FamiliaOperadoresWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, OperatorFamily *familia_op);
+	public:
+		FamiliaOperadoresWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, OperatorFamily *familia_op);
 
- private slots:
-   void hideEvent(QHideEvent *);
+	private slots:
+		void hideEvent(QHideEvent *);
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

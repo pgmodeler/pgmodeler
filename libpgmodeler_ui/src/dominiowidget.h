@@ -30,21 +30,21 @@
 #include "tipopgsqlwidget.h"
 
 class DominioWidget: public BaseObjectWidget, public Ui::DominioWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-   SyntaxHighlighter *destaque_expr;
-   TipoPgSQLWidget *tipo_dominio;
+	private:
+		SyntaxHighlighter *destaque_expr;
+		TipoPgSQLWidget *tipo_dominio;
 
- public:
-   DominioWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Domain *dominio);
+	public:
+		DominioWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Domain *dominio);
 
- private slots:
-  void hideEvent(QHideEvent *);
+	private slots:
+		void hideEvent(QHideEvent *);
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

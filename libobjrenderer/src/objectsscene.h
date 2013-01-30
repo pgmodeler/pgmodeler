@@ -32,97 +32,97 @@
 #include "schemaview.h"
 
 class ObjectsScene: public QGraphicsScene {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  /// @details Object alignemnt, grid showing, page delimiter showing options
-  static bool align_objs_grid, show_grid, show_page_delim;
+		//! @details Object alignemnt, grid showing, page delimiter showing options
+		static bool align_objs_grid, show_grid, show_page_delim;
 
-  /// @details Scene grid size
-  static unsigned grid_size;
+		//! @details Scene grid size
+		static unsigned grid_size;
 
-  /// @details Paper size, used to segmentate the view (via page delimiters) and printing the model
-  static QPrinter::PaperSize paper_size;
+		//! @details Paper size, used to segmentate the view (via page delimiters) and printing the model
+		static QPrinter::PaperSize paper_size;
 
-  /// @details Page orientation (landscape / portrait)
-  static QPrinter::Orientation page_orientation;
+		//! @details Page orientation (landscape / portrait)
+		static QPrinter::Orientation page_orientation;
 
-  /// @details Page margins (applied to paper total size)
-  static QRectF page_margins;
+		//! @details Page margins (applied to paper total size)
+		static QRectF page_margins;
 
-  /// @details Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
-  bool moving_objs;
+		//! @details Indicates that there are objects being moved and the signal s_objectsMoved must be emitted
+		bool moving_objs;
 
-  /// @details Initial point of selection rectangle
-  QPointF sel_ini_pnt;
+		//! @details Initial point of selection rectangle
+		QPointF sel_ini_pnt;
 
-  /// @details Rectangle used to select several objects on the scene
-  QGraphicsPolygonItem *selection_rect;
+		//! @details Rectangle used to select several objects on the scene
+		QGraphicsPolygonItem *selection_rect;
 
-  /// @details Line used as a guide when inserting new relationship
-  QGraphicsLineItem *rel_line;
+		//! @details Line used as a guide when inserting new relationship
+		QGraphicsLineItem *rel_line;
 
-  /// @details Aligns the specified point in relation to the grid
-  static QPointF alignPointToGrid(const QPointF &pnt);
+		//! @details Aligns the specified point in relation to the grid
+		static QPointF alignPointToGrid(const QPointF &pnt);
 
- protected:
-  /// @details Brush used to draw the grid over the scene
-  static QBrush grid;
+	protected:
+		//! @details Brush used to draw the grid over the scene
+		static QBrush grid;
 
-  void mousePressEvent(QGraphicsSceneMouseEvent *event);
-  void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-  void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-  void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+		void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
-  /// @details Draws a line from the point 'p_start' to the cursor position and simulates the relationship creation
-  void showRelationshipLine(bool value, const QPointF &p_start=QPointF(NAN,NAN));
+		//! @details Draws a line from the point 'p_start' to the cursor position and simulates the relationship creation
+		void showRelationshipLine(bool value, const QPointF &p_start=QPointF(NAN,NAN));
 
- public:
-  ObjectsScene(void);
-  ~ObjectsScene(void);
+	public:
+		ObjectsScene(void);
+		~ObjectsScene(void);
 
-  static void setGridSize(unsigned size);
-  static void setGridOptions(bool show_grd, bool align_objs_grd, bool show_page_dlm);
-  static void getGridOptions(bool &show_grd, bool &align_objs_grd, bool &show_pag_dlm);
+		static void setGridSize(unsigned size);
+		static void setGridOptions(bool show_grd, bool align_objs_grd, bool show_page_dlm);
+		static void getGridOptions(bool &show_grd, bool &align_objs_grd, bool &show_pag_dlm);
 
-  static void setPageConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins);
-  static void getPageConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins);
+		static void setPageConfiguration(QPrinter::PaperSize paper_sz, QPrinter::Orientation orient, QRectF margins);
+		static void getPageConfiguration(QPrinter::PaperSize &paper_sz, QPrinter::Orientation &orient, QRectF &margins);
 
-  void addItem(QGraphicsItem *item);
-  void removeItem(QGraphicsItem *item);
-  void setSceneRect(const QRectF &rect);
+		void addItem(QGraphicsItem *item);
+		void removeItem(QGraphicsItem *item);
+		void setSceneRect(const QRectF &rect);
 
- public slots:
-  void alignObjectsToGrid(void);
-  void update(void);
+	public slots:
+		void alignObjectsToGrid(void);
+		void update(void);
 
- private slots:
-  /// @details Handles and redirects the signal emitted by the modified object
-  void emitObjectModification(BaseGraphicObject *object);
+	private slots:
+		//! @details Handles and redirects the signal emitted by the modified object
+		void emitObjectModification(BaseGraphicObject *object);
 
-  /// @details Handles and redirects the signal emitted by the selected child object
-  void emitChildObjectSelection(TableObject *child_obj);
+		//! @details Handles and redirects the signal emitted by the selected child object
+		void emitChildObjectSelection(TableObject *child_obj);
 
-  /// @details Handles and redirects the signal emitted by the selected object
-  void emitObjectSelection(BaseGraphicObject *object, bool selected);
+		//! @details Handles and redirects the signal emitted by the selected object
+		void emitObjectSelection(BaseGraphicObject *object, bool selected);
 
- signals:
-  /// @details Signal emitted when the user start or finalizes a object movement.
-  void s_objectsMoved(bool end_moviment);
+	signals:
+		//! @details Signal emitted when the user start or finalizes a object movement.
+		void s_objectsMoved(bool end_moviment);
 
-  /// @details Signal emitted when a object is modified on scene
-  void s_objectModified(BaseGraphicObject *objeto);
+		//! @details Signal emitted when a object is modified on scene
+		void s_objectModified(BaseGraphicObject *objeto);
 
-  /// @details Signal emitted when the user right-click the scene requesting the popup menu
-  void s_popupMenuRequested(vector<BaseObject *>);
+		//! @details Signal emitted when the user right-click the scene requesting the popup menu
+		void s_popupMenuRequested(vector<BaseObject *>);
 
-  /// @details Signal emitted when the user double-click a object
-  void s_objectDoubleClicked(BaseGraphicObject *objeto);
+		//! @details Signal emitted when the user double-click a object
+		void s_objectDoubleClicked(BaseGraphicObject *objeto);
 
-  /// @details Signal emitted when a object is selected
-  void s_objectSelected(BaseGraphicObject *objeto, bool selecionado);
+		//! @details Signal emitted when a object is selected
+		void s_objectSelected(BaseGraphicObject *objeto, bool selecionado);
 
-  friend class ModeloWidget;
+		friend class ModeloWidget;
 };
 
 #endif

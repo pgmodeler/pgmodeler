@@ -32,22 +32,22 @@ using namespace std;
 
 class ProgressoTarefa: public QDialog, public Ui::ProgressoTarefa
 {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  /** @details Armazena os icones que são exibidos conforme os tokes dos icones
-     'id_icone' no slot executarProgresso() são enviados */
-  map<unsigned, QIcon> icones;
+		/*! @details Armazena os icones que são exibidos conforme os tokes dos icones
+		 'id_icone' no slot executarProgresso() são enviados */
+		map<unsigned, QIcon> icones;
 
- public:
-  ProgressoTarefa(QWidget *parent=0, Qt::WindowFlags f=0);
+	public:
+		ProgressoTarefa(QWidget *parent=0, Qt::WindowFlags f=0);
 
-  /// @details Adiciona um ícone identificado pelo código 'id'
-  void adicionarIcone(unsigned id, const QIcon &ico);
+		//! @details Adiciona um ícone identificado pelo código 'id'
+		void adicionarIcone(unsigned id, const QIcon &ico);
 
- public slots:
-  void close(void);
-  void executarProgesso(int progresso, const QString &texto, unsigned id_ico);
+	public slots:
+		void close(void);
+		void executarProgesso(int progresso, const QString &texto, unsigned id_ico);
 };
 
 #endif

@@ -29,33 +29,33 @@
 #include "baseobjectview.h"
 
 class TextboxView: public BaseObjectView {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  /// @details Graphical item that represent the box
-  QGraphicsPolygonItem *box;
+		//! @details Graphical item that represent the box
+		QGraphicsPolygonItem *box;
 
-  /// @details Graphical item that represent the text
-  QGraphicsSimpleTextItem *text;
+		//! @details Graphical item that represent the text
+		QGraphicsSimpleTextItem *text;
 
-  /// @details Indicates the the font / color styles will be overriden (need to call setColorStyle, setFontStyle)
-  bool override_style;
+		//! @details Indicates the the font / color styles will be overriden (need to call setColorStyle, setFontStyle)
+		bool override_style;
 
- public:
-  TextboxView(Textbox *txtbox, bool override_style=false);
+	public:
+		TextboxView(Textbox *txtbox, bool override_style=false);
 
-  /** @details Sets the fill and border color for the text box. This method has effect only when
-     the style can be overriden (via constructor) */
-  void setColorStyle(const QBrush &fill_style, const QPen &border_style);
+		/*! @details Sets the fill and border color for the text box. This method has effect only when
+		 the style can be overriden (via constructor) */
+		void setColorStyle(const QBrush &fill_style, const QPen &border_style);
 
-  /** @details Sets the font style for the text box. This method has effect only when
-     the style can be overriden (via constructor) */
-  void setFontStyle(const QTextCharFormat &fmt);
+		/*! @details Sets the font style for the text box. This method has effect only when
+		 the style can be overriden (via constructor) */
+		void setFontStyle(const QTextCharFormat &fmt);
 
-  ~TextboxView(void);
+		~TextboxView(void);
 
- protected slots:
-  void configureObject(void);
+	protected slots:
+		void configureObject(void);
 };
 
 #endif

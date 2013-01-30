@@ -18,9 +18,8 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class DestaqueSintaxe
-\brief Definição da classe que implementa um destacador de sintaxe de
- linguagens (código fonte) com padrões de marcação definidos pelo usuário.
+\class SyntaxHighlighter
+\brief Implements a syntax hightlighter with user-defined markup patterns (xml configuration).
 */
 
 #ifndef DESTAQUE_SINTAXE_H
@@ -36,150 +35,153 @@
 #include <algorithm>
 
 class SyntaxHighlighter: public QSyntaxHighlighter {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  /** @details Classe auxiliar do destacador que indica em qual bloco e
-     coluna se inicia e termina um determinado grupo de destaque multi linha */
-  class MultiLineInfo: public QTextBlockUserData {
-   public:
-    int start_col, /// @details Coluna onde se inicia a info multilinha
-        start_block, /// @details Bloco (linha) onde se inicia a info multilinha
+		/*! @details Auxiliary class used by the highlighter that stores informations
+	about multiline code blocks */
+		class MultiLineInfo: public QTextBlockUserData {
+			public:
+				//! @details Column where starts the multiline info
+				int start_col,
 
-        /** @details Coluna onde termina a info multilinha (pode ser -1)
-           enquanto o destacador não localizar o terminador de multilinha */
-        end_col,
+						//! @details Block (line) where the multiline starts
+						start_block,
 
-        /** @details Bloco (linha) onde termina a info multilinha (pode ser -1)
-           enquanto o destacador não localizar o terminador de multilinha */
-        end_block;
+						/*! @details Coluna onde termina a info multilinha (pode ser -1)
+						 enquanto o destacador não localizar o terminador de multilinha */
+						end_col,
 
-    /// @details Grupo de destaque usado entre a coluna inicial e final
-    QString group;
+						/*! @details Bloco (linha) onde termina a info multilinha (pode ser -1)
+						enquanto o destacador não localizar o terminador de multilinha */
+						end_block;
 
-    /// @details Constrói uma instância de informação de bloco
-    MultiLineInfo(void)
-    {
-     this->group="";
-     this->start_col=-1;
-     this->start_block=-1;
-     this->end_col=-1;
-     this->end_block=-1;
-    }
-   };
+				//! @details Grupo de destaque usado entre a coluna inicial e final
+				QString group;
 
-   /** @details Vetor o qual armazena as informações de multi linha para se saber
-      quando um texto digita pelo usuário está em um bloco multi linha
-      ou não fazendo assim os destaques corretos */
-   vector<MultiLineInfo *> multi_line_infos;
+				//! @details Constrói uma instância de informação de bloco
+				MultiLineInfo(void)
+				{
+					this->group="";
+					this->start_col=-1;
+					this->start_block=-1;
+					this->end_col=-1;
+					this->end_block=-1;
+				}
+		};
 
-   /** @details Armazena as expressões regulares simples, ou seja, expressões
-      que indicam que o elemento a identificar é encontrado em uma
-      linha apenas. Usado para identificar elementos como palavras-chave,
-      identificadores, strings, números. Armazena também expressões iniciais
-      as quais identificam o começo de um bloco do grupo o qual pode aparecer
-      em mais de uma linha */
-   map<QString, vector<QRegExp> > initial_exprs;
+		/*! @details Vetor o qual armazena as informações de multi linha para se saber
+			quando um texto digita pelo usuário está em um bloco multi linha
+			ou não fazendo assim os destaques corretos */
+		vector<MultiLineInfo *> multi_line_infos;
 
-   /** @details Armazenam as expressões finais que indicam o término
-      do bloco do grupo. Estas expressões são usadas para identificar
-      principalmente comentários os quais possuem mais de uma linha */
-   map<QString, vector<QRegExp> > final_exprs;
+		/*! @details Armazena as expressões regulares simples, ou seja, expressões
+			que indicam que o elemento a identificar é encontrado em uma
+			linha apenas. Usado para identificar elementos como palavras-chave,
+			identificadores, strings, números. Armazena também expressões iniciais
+			as quais identificam o começo de um bloco do grupo o qual pode aparecer
+			em mais de uma linha */
+		map<QString, vector<QRegExp> > initial_exprs;
 
-   /// @details Armazena as formatações de texto para cada grupo
-   map<QString, QTextCharFormat> formats;
+		/*! @details Armazenam as expressões finais que indicam o término
+			do bloco do grupo. Estas expressões são usadas para identificar
+			principalmente comentários os quais possuem mais de uma linha */
+		map<QString, vector<QRegExp> > final_exprs;
 
-   /// @details Armazena as grupos que possuem de combinação parcial
-   map<QString, bool> partial_match;
+		//! @details Armazena as formatações de texto para cada grupo
+		map<QString, QTextCharFormat> formats;
 
-   /// @details Armazena as grupos que possuem de combinação parcial
-   map<QString, QChar> lookup_char;
+		//! @details Armazena as grupos que possuem de combinação parcial
+		map<QString, bool> partial_match;
 
-   /// @details Armazena a ordem em que os grupos devem ser aplicados
-   vector<QString> groups_order;
-   vector<QString> word_sep_groups;
+		//! @details Armazena as grupos que possuem de combinação parcial
+		map<QString, QChar> lookup_char;
 
-   /// @details Indica se a configuração foi carregada ou não
-   bool conf_loaded,
-         /** @details Indica que o código deve ser redestacado conforme as
-            modificações executada pelo usuário. Este atributo é útil
-            para economizar processamento, pois, o auto redestaque só é
-            necessário quando o usuário está digitando o código fonte,
-            em casos em que o usuário já insere um codigo pronto na caixa
-            de texto, o código é destacado neste momento.
+		//! @details Armazena a ordem em que os grupos devem ser aplicados
+		vector<QString> groups_order;
+		vector<QString> word_sep_groups;
 
-            Caso este atributo esteja marcado como false, o usuário deve
-            chamar o método rehighlight() para forçar o redestaque */
-        auto_rehighlight;
+		//! @details Indica se a configuração foi carregada ou não
+		bool conf_loaded,
+					/*! @details Indica que o código deve ser redestacado conforme as
+							modificações executada pelo usuário. Este atributo é útil
+							para economizar processamento, pois, o auto redestaque só é
+							necessário quando o usuário está digitando o código fonte,
+							em casos em que o usuário já insere um codigo pronto na caixa
+							de texto, o código é destacado neste momento.
 
-            /// @details Armazena os caracteres indicativos de separador de palavras
-   QString word_separators,
-           /// @details Armazena os caracteres indicativos de delimitadores de palavras
-           word_delimiters,
-           /** @details Armazena os caracteres os quais não são processados durante
-              a leitura das palavras */
-           ignored_chars;
+							Caso este atributo esteja marcado como false, o usuário deve
+							chamar o método rehighlight() para forçar o redestaque */
+					auto_rehighlight;
 
-   /// @details Bloco atual no qual o destacador se encontra
-   int current_block;
+		//! @details Armazena os caracteres indicativos de separador de palavras
+		QString word_separators,
 
-   /** @details Quantidade de informações de multilinha no bloco atual.
-      Este atributo é usado para se saber quando o destacador
-      deve chamar o método rehighlight para destacar o documento
-      inteiro novamente */
-   unsigned curr_blk_info_count;
+						//! @details Armazena os caracteres indicativos de delimitadores de palavras
+						word_delimiters,
+						/*! @details Armazena os caracteres os quais não são processados durante
+								a leitura das palavras */
+						ignored_chars;
 
-   /// @details Configura os atributos iniciais do destaque de sintaxe
-   void configureAttributes(void);
+						//! @details Bloco atual no qual o destacador se encontra
+						int current_block;
 
-   /** @details Identifica o grupo ao qual a palavra pertence. Informa ainda em que parte da palavra
-      combina com o grupo através dos parâmetros idx_comb e comp_combinacao, que são
-      respectivamente o índice inicial da combinação e o comprimento em caracteres da
-      combinação */
-   QString identifyWordGroup(const QString &palavra, const QChar &chk_lookup, int idx, int &match_idx, int &match_len);
+		/*! @details Quantidade de informações de multilinha no bloco atual.
+			Este atributo é usado para se saber quando o destacador
+			deve chamar o método rehighlight para destacar o documento
+			inteiro novamente */
+		unsigned curr_blk_info_count;
 
-   /** @details Retorna a informção de multilinha em que o bloco atual se encontra caso o mesmo
-      esteja dentro de um bloco multilinha. Caso contrário retorna uma informação
-      multilinha vazia */
-   MultiLineInfo *getMultiLineInfo(int col_ini, int end_col, int block);
+		//! @details Configura os atributos iniciais do destaque de sintaxe
+		void configureAttributes(void);
 
-   /// @details Remove as informações de multilinha de um dado bloco
-   void removeMultiLineInfo(int block);
+		/*! @details Identifica o grupo ao qual a palavra pertence. Informa ainda em que parte da palavra
+			combina com o grupo através dos parâmetros idx_comb e comp_combinacao, que são
+			respectivamente o índice inicial da combinação e o comprimento em caracteres da
+			combinação */
+		QString identifyWordGroup(const QString &palavra, const QChar &chk_lookup, int idx, int &match_idx, int &match_len);
 
-   /** @details Retorna a quantiade de informações de multilinha relacionadas a um
-      determinado bloco */
-   unsigned getMultiLineInfoCount(int block);
+		/*! @details Retorna a informção de multilinha em que o bloco atual se encontra caso o mesmo
+			esteja dentro de um bloco multilinha. Caso contrário retorna uma informação
+			multilinha vazia */
+		MultiLineInfo *getMultiLineInfo(int col_ini, int end_col, int block);
 
- public:
-   SyntaxHighlighter(QTextDocument *parent, bool auto_rehighlight);
-   SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight);
+		//! @details Remove as informações de multilinha de um dado bloco
+		void removeMultiLineInfo(int block);
 
-  /** @details Faz o carregamento do arquivo XML o qual armazena todas as definições
-     dos grupos de expressões responsáveis pelo destaque das palavras
-     do código fonte. */
-  void loadConfiguration(const QString &filename);
+		/*! @details Retorna a quantiade de informações de multilinha relacionadas a um
+			determinado bloco */
+		unsigned getMultiLineInfoCount(int block);
 
-  /// @details Retorna se a configuração foi carregada
-  bool isConfigurationLoaded(void);
+	public:
+		SyntaxHighlighter(QTextDocument *parent, bool auto_rehighlight);
+		SyntaxHighlighter(QTextEdit *parent, bool auto_rehighlight);
 
- public slots:
-  /// @details Método resposável pelo destaque do texto completo
-  void rehighlight(void);
+		/*! @details Faz o carregamento do arquivo XML o qual armazena todas as definições
+		 dos grupos de expressões responsáveis pelo destaque das palavras
+		 do código fonte. */
+		void loadConfiguration(const QString &filename);
 
- private slots:
-  /// @details Método resposável pelo destaque de uma linha de texto
-  void highlightBlock(const QString &txt);
+		//! @details Retorna se a configuração foi carregada
+		bool isConfigurationLoaded(void);
 
-  /** @details Faz a validação das modificações de texto promovidas pelo usuário. Este slot
-     é ligado ao sinal contentsChange() do documento, pois é nele que são
-     capturados a quantidade de caracteres removidos e inseridos pelo usuário */
-  void validateTextModification(int, int removed, int added);
+	public slots:
+		//! @details Método resposável pelo destaque do texto completo
+		void rehighlight(void);
 
-  /** @details Limpa todas as configurações e atributos de destaque obtidos de
-     um carregamento prévio das configurações */
-  void clearConfiguration(void);
+	private slots:
+		//! @details Método resposável pelo destaque de uma linha de texto
+		void highlightBlock(const QString &txt);
+
+		/*! @details Faz a validação das modificações de texto promovidas pelo usuário. Este slot
+		 é ligado ao sinal contentsChange() do documento, pois é nele que são
+		 capturados a quantidade de caracteres removidos e inseridos pelo usuário */
+		void validateTextModification(int, int removed, int added);
+
+		/*! @details Limpa todas as configurações e atributos de destaque obtidos de
+		 um carregamento prévio das configurações */
+		void clearConfiguration(void);
 };
 
 #endif
-
 

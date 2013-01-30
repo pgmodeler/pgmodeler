@@ -30,29 +30,31 @@
 #include "tabelaobjetoswidget.h"
 
 class RegraWidget: public BaseObjectWidget, public Ui::RegraWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-  /// @details Destacadores de sintaxe dos campos de expressão condicional e comando sql
-  SyntaxHighlighter *dest_exp_condicional,
-                  *dest_comando;
+	private:
+		//! @details Destacadores de sintaxe dos campos de expressão condicional e comando sql
+		SyntaxHighlighter *dest_exp_condicional,
+											*dest_comando;
 
-  /// @details Tabela que armazena os comandos sql da regra
-  TabelaObjetosWidget *tab_comandos;
+		//! @details Tabela que armazena os comandos sql da regra
+		TabelaObjetosWidget *tab_comandos;
 
- public:
-   RegraWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, Table *tabela_pai, OperationList *op_list, Rule *regra);
+	public:
+		RegraWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, Table *tabela_pai, OperationList *op_list, Rule *regra);
 
- private slots:
-  void hideEvent(QHideEvent *);
-  /// @details Exibe o comando digitado no campo de comando sql na tabela, na linha idx_lin
-  void manipularComando(int idx_lin);
-  /// @details Exibe o dado da linha da tabela (idx_lin) no campo de comando sql
-  void editarComando(int idx_lin);
+	private slots:
+		void hideEvent(QHideEvent *);
 
- public slots:
-   void applyConfiguration(void);
+		//! @details Exibe o comando digitado no campo de comando sql na tabela, na linha idx_lin
+		void manipularComando(int idx_lin);
+
+		//! @details Exibe o dado da linha da tabela (idx_lin) no campo de comando sql
+		void editarComando(int idx_lin);
+
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

@@ -30,22 +30,22 @@
 #include "tipopgsqlwidget.h"
 
 class ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  SyntaxHighlighter *hl_default_value;
-  TipoPgSQLWidget *data_type;
+		SyntaxHighlighter *hl_default_value;
+		TipoPgSQLWidget *data_type;
 
-  void hideEvent(QHideEvent *event);
+		void hideEvent(QHideEvent *event);
 
- public:
-  ColumnWidget(QWidget * parent = 0);
-  void setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Column *column);
+	public:
+		ColumnWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Column *column);
 
- private slots:
+	private slots:
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

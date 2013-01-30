@@ -29,20 +29,20 @@
 #include "ui_sequenciawidget.h"
 
 class SequenciaWidget: public BaseObjectWidget, public Ui::SequenciaWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-   SeletorObjetoWidget *sel_coluna;
+	private:
+		SeletorObjetoWidget *sel_coluna;
 
- public:
-   SequenciaWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Sequence *sequencia);
+	public:
+		SequenciaWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Sequence *sequencia);
 
- private slots:
-  void hideEvent(QHideEvent *);
+	private slots:
+		void hideEvent(QHideEvent *);
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

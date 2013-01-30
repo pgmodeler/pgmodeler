@@ -32,56 +32,56 @@
 #include <algorithm>
 
 class AppearanceConfigWidget: public QWidget, public Ui::AppearanceConfigWidget, public BaseConfigWidget {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  /// @details Auxiliary class that stores the formating data of each element
-  class AppearanceConfigItem {
-   public:
-    QString conf_id;
-    QTextCharFormat font_fmt;
-    QColor colors[3];
-    bool obj_conf;
-  };
+		//! @details Auxiliary class that stores the formating data of each element
+		class AppearanceConfigItem {
+			public:
+				QString conf_id;
+				QTextCharFormat font_fmt;
+				QColor colors[3];
+				bool obj_conf;
+		};
 
-  /// @details Color picker dialog
-  QColorDialog color_dlg;
+		//! @details Color picker dialog
+		QColorDialog color_dlg;
 
-  /// @details Viewport used to show the example model
-  QGraphicsView *viewp;
+		//! @details Viewport used to show the example model
+		QGraphicsView *viewp;
 
-  /// @details Object scene used to store the graphical objects
-  ObjectsScene *scene;
+		//! @details Object scene used to store the graphical objects
+		ObjectsScene *scene;
 
-  /// @details Database model used to store the example base objects
-  DatabaseModel *model;
+		//! @details Database model used to store the example base objects
+		DatabaseModel *model;
 
-  /// @details Stores the element configuration items
-  vector<AppearanceConfigItem> conf_items;
+		//! @details Stores the element configuration items
+		vector<AppearanceConfigItem> conf_items;
 
-  /// @details Loads the example model from file (conf/exampledb.dbm)
-  void loadExampleModel(void);
+		//! @details Loads the example model from file (conf/exampledb.dbm)
+		void loadExampleModel(void);
 
- public:
-  AppearanceConfigWidget(QWidget * parent=0);
-  ~AppearanceConfigWidget(void);
+	public:
+		AppearanceConfigWidget(QWidget * parent=0);
+		~AppearanceConfigWidget(void);
 
-  /// @details Saves the configuration to file
-  void saveConfiguration(void);
+		//! @details Saves the configuration to file
+		void saveConfiguration(void);
 
-  /// @details Loads the configuration from file
-  void loadConfiguration(void);
+		//! @details Loads the configuration from file
+		void loadConfiguration(void);
 
- private slots:
-  void enableConfigElement(void);
-  void applyFontStyle(void);
-  void applyElementColor(void);
+	private slots:
+		void enableConfigElement(void);
+		void applyFontStyle(void);
+		void applyElementColor(void);
 
-  /** @details Disabled method */
-  void applyConfiguration(void){}
+		/*! @details Disabled method */
+		void applyConfiguration(void){}
 
- public slots:
-  void restoreDefaults(void);
+	public slots:
+		void restoreDefaults(void);
 };
 
 #endif

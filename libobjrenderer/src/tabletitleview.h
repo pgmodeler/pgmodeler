@@ -31,24 +31,24 @@
 
 class TableTitleView: public BaseObjectView
 {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  /// @details Polygonal object that defines the title border
-  QGraphicsPolygonItem *box;
+		//! @details Polygonal object that defines the title border
+		QGraphicsPolygonItem *box;
 
-  /// @details Graphical texts that is used to store the object name and schema name
-  QGraphicsSimpleTextItem *obj_name,
-                          *schema_name;
+		//! @details Graphical texts that is used to store the object name and schema name
+		QGraphicsSimpleTextItem *obj_name,
+		*schema_name;
 
-  void configureObject(void){}
+		void configureObject(void){}
 
- public:
-  TableTitleView(void);
-  ~TableTitleView(void);
+	public:
+		TableTitleView(void);
+		~TableTitleView(void);
 
-  void configureObject(BaseGraphicObject *object);
-  void resizeTitle(float width, float height);
+		void configureObject(BaseGraphicObject *object);
+		void resizeTitle(float width, float height);
 };
 
 #endif

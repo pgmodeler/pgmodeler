@@ -29,12 +29,12 @@
 #include "basegraphicobject.h"
 
 class BaseTable: public BaseGraphicObject {
- public:
-  BaseTable(void);
-  virtual QString getCodeDefinition(unsigned tipo_def)=0;
+	public:
+		BaseTable(void);
+		virtual QString getCodeDefinition(unsigned tipo_def)=0;
 
-  friend class RelacionamentoBase;
-  friend class DatabaseModel;
+		friend class RelacionamentoBase;
+		friend class DatabaseModel;
 };
 
 #endif

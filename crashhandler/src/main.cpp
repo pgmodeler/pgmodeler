@@ -4,28 +4,28 @@
 
 int main(int argc, char **argv)
 {
- try
- {
-  QApplication app(argc,argv);
-  QTranslator translator;
+	try
+	{
+		QApplication app(argc,argv);
+		QTranslator translator;
 
-  //Loads the ui translation for crashhandler
-  translator.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
-  app.installTranslator(&translator);
+		//Loads the ui translation for crashhandler
+		translator.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);
+		app.installTranslator(&translator);
 
-  CrashHandler crashhandler;
-  app.setMainWidget(&crashhandler);
+		CrashHandler crashhandler;
+		app.setMainWidget(&crashhandler);
 
-  if(argc > 1)
-   crashhandler.loadReport(argv[1]);
+		if(argc > 1)
+			crashhandler.loadReport(argv[1]);
 
-  crashhandler.show();
-  app.exec();
+		crashhandler.show();
+		app.exec();
 
-  return(0);
- }
- catch(Exception &e)
- {
-  return(e.getErrorType());
- }
+		return(0);
+	}
+	catch(Exception &e)
+	{
+		return(e.getErrorType());
+	}
 }

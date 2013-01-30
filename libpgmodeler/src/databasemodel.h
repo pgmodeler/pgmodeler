@@ -52,338 +52,338 @@ Additionally, this class, saves, loads and generates the XML/SQL definition of a
 #include <locale.h>
 
 class DatabaseModel:  public QObject, public BaseObject {
- private:
-  Q_OBJECT
-
-  static unsigned dbmodel_id;
-
-  /// @details Database encoding
-  EncodingType encoding;
-
-  /// @details Template database
-  QString template_db,
-          /// @details Model's author
-          author,
-          /// @details Database localizations (LC_CTYPE, LC_COLLATE)
-          localizations[2];
+	private:
+		Q_OBJECT
+
+		static unsigned dbmodel_id;
+
+		//! @details Database encoding
+		EncodingType encoding;
+
+		//! @details Template database
+		QString template_db,
+						//! @details Model's author
+						author,
+						//! @details Database localizations (LC_CTYPE, LC_COLLATE)
+						localizations[2];
 
-  /// @details Maximum number of connections
-  int conn_limit;
+		//! @details Maximum number of connections
+		int conn_limit;
 
-  /// @details Vectors that stores all the objects types
-  vector<BaseObject *> textboxes;
-  vector<BaseObject *> relationships;
-  vector<BaseObject *> base_relationships;
-  vector<BaseObject *> functions;
-  vector<BaseObject *> schemas;
-  vector<BaseObject *> views;
-  vector<BaseObject *> tables;
-  vector<BaseObject *> types;
-  vector<BaseObject *> roles;
-  vector<BaseObject *> tablespaces;
-  vector<BaseObject *> languages;
-  vector<BaseObject *> aggregates;
-  vector<BaseObject *> casts;
-  vector<BaseObject *> conversions;
-  vector<BaseObject *> operators;
-  vector<BaseObject *> op_classes;
-  vector<BaseObject *> op_families;
-  vector<BaseObject *> domains;
-  vector<BaseObject *> sequences;
-  vector<BaseObject *> permissions;
+		//! @details Vectors that stores all the objects types
+		vector<BaseObject *> textboxes;
+		vector<BaseObject *> relationships;
+		vector<BaseObject *> base_relationships;
+		vector<BaseObject *> functions;
+		vector<BaseObject *> schemas;
+		vector<BaseObject *> views;
+		vector<BaseObject *> tables;
+		vector<BaseObject *> types;
+		vector<BaseObject *> roles;
+		vector<BaseObject *> tablespaces;
+		vector<BaseObject *> languages;
+		vector<BaseObject *> aggregates;
+		vector<BaseObject *> casts;
+		vector<BaseObject *> conversions;
+		vector<BaseObject *> operators;
+		vector<BaseObject *> op_classes;
+		vector<BaseObject *> op_families;
+		vector<BaseObject *> domains;
+		vector<BaseObject *> sequences;
+		vector<BaseObject *> permissions;
 
-  /** @details Stores the xml definition for special objects. This map is used
-     when revalidating the relationships */
-  map<unsigned, QString> xml_special_objs;
+		/*! @details Stores the xml definition for special objects. This map is used
+		 when revalidating the relationships */
+		map<unsigned, QString> xml_special_objs;
 
-  /// @details Indicates if the model is being loaded
-  bool loading_model;
+		//! @details Indicates if the model is being loaded
+		bool loading_model;
 
-  /** @details Returns an object seaching it by its name and type. The third parameter stores
-     the object index */
-  BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
+		/*! @details Returns an object seaching it by its name and type. The third parameter stores
+		 the object index */
+		BaseObject *getObject(const QString &name, ObjectType obj_type, int &obj_idx);
 
-  /// @details Generic method that adds an object to the model
-  void __addObject(BaseObject *object, int obj_idx=-1);
+		//! @details Generic method that adds an object to the model
+		void __addObject(BaseObject *object, int obj_idx=-1);
 
-  /// @details Generic method that removes an object to the model
-  void __removeObject(BaseObject *object, int obj_idx=-1);
+		//! @details Generic method that removes an object to the model
+		void __removeObject(BaseObject *object, int obj_idx=-1);
 
-  /// @details Recreates the special object from the passed xml code buffer
-  void createSpecialObject(const QString &xml_def, unsigned obj_id=0);
+		//! @details Recreates the special object from the passed xml code buffer
+		void createSpecialObject(const QString &xml_def, unsigned obj_id=0);
 
-  /// @details Removes an user defined type (domain or type)
-  void removeUserType(BaseObject *object, int obj_idx);
+		//! @details Removes an user defined type (domain or type)
+		void removeUserType(BaseObject *object, int obj_idx);
 
-  /** @details Returns the object on the model that represents the base pgsql type. The possible
-     returned object can be: table, sequence, domain or type */
-  BaseObject *getObjectPgSQLType(PgSQLType type);
+		/*! @details Returns the object on the model that represents the base pgsql type. The possible
+		 returned object can be: table, sequence, domain or type */
+		BaseObject *getObjectPgSQLType(PgSQLType type);
 
- public:
-  DatabaseModel(void);
-  ~DatabaseModel(void);
+	public:
+		DatabaseModel(void);
+		~DatabaseModel(void);
 
-  /// @details Returns the complete object list according to the type
-  vector<BaseObject *> *getObjectList(ObjectType obj_type);
+		//! @details Returns the complete object list according to the type
+		vector<BaseObject *> *getObjectList(ObjectType obj_type);
 
-  /// @details Disconnects all the relationships in a ordered way
-  void disconnectRelationships(void);
+		//! @details Disconnects all the relationships in a ordered way
+		void disconnectRelationships(void);
 
-  /** @details Detects and stores the XML for special objects (that is referencing columns created
-     by relationship) in order to be reconstructed in a posterior moment */
-  void storeSpecialObjectsXML(void);
+		/*! @details Detects and stores the XML for special objects (that is referencing columns created
+		 by relationship) in order to be reconstructed in a posterior moment */
+		void storeSpecialObjectsXML(void);
 
-  /// @details Validates all the relationship, propagating all column modifications over the tables
-  void validateRelationships(void);
+		//! @details Validates all the relationship, propagating all column modifications over the tables
+		void validateRelationships(void);
 
-  /// @details Validates the code definition for the passed object
-  static QString validateObjectDefinition(BaseObject *object, unsigned def_type);
+		//! @details Validates the code definition for the passed object
+		static QString validateObjectDefinition(BaseObject *object, unsigned def_type);
 
-  /// @details Returns the list of objects that belongs to the passed schema
-  vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=NULL);
+		//! @details Returns the list of objects that belongs to the passed schema
+		vector<BaseObject *> getObjects(ObjectType obj_type, BaseObject *schema=NULL);
 
-  /// @details Returns the object index searching by its name
-  int getObjectIndex(const QString &name, ObjectType obj_type);
+		//! @details Returns the object index searching by its name
+		int getObjectIndex(const QString &name, ObjectType obj_type);
 
-  /// @details Retuns the passed object index
-  int getObjectIndex(BaseObject *object);
+		//! @details Retuns the passed object index
+		int getObjectIndex(BaseObject *object);
 
-  /// @details Adds an object to the model
-  void addObject(BaseObject *object, int obj_idx=-1);
+		//! @details Adds an object to the model
+		void addObject(BaseObject *object, int obj_idx=-1);
 
-  /// @details Removes an object from the model
-  void removeObject(BaseObject *object, int obj_idx=-1);
+		//! @details Removes an object from the model
+		void removeObject(BaseObject *object, int obj_idx=-1);
 
-  /// @details Removes an object using its index and type
-  void removeObject(unsigned obj_idx, ObjectType obj_type);
+		//! @details Removes an object using its index and type
+		void removeObject(unsigned obj_idx, ObjectType obj_type);
 
-  /// @details Returns an object from the model using its index and type
-  BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
+		//! @details Returns an object from the model using its index and type
+		BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
 
-  /// @details Loads a database model from a file
-  void loadModel(const QString &filename);
+		//! @details Loads a database model from a file
+		void loadModel(const QString &filename);
 
-  /// @details Sets the database encoding
-  void setEncoding(EncodingType encod);
+		//! @details Sets the database encoding
+		void setEncoding(EncodingType encod);
 
-  /// @details Sets the database localizations
-  void setLocalization(int localiz_id, const QString &value);
+		//! @details Sets the database localizations
+		void setLocalization(int localiz_id, const QString &value);
 
-  /// @details Sets the connections limit
-  void setConnectionLimit(int conn_lim);
+		//! @details Sets the connections limit
+		void setConnectionLimit(int conn_lim);
 
-  /// @details Sets the template database
-  void setTemplateDB(const QString &temp_db);
+		//! @details Sets the template database
+		void setTemplateDB(const QString &temp_db);
 
-  /// @details Sets the model's author
-  void setAuthor(const QString &author);
+		//! @details Sets the model's author
+		void setAuthor(const QString &author);
 
-  /// @details Sets the protection for all objects on the model
-  void setProtected(bool value);
+		//! @details Sets the protection for all objects on the model
+		void setProtected(bool value);
 
-  /// @details Destroys all the objects
-  void destroyObjects(void);
+		//! @details Destroys all the objects
+		void destroyObjects(void);
 
-  /// @details Returns the object count for the specified type
-  unsigned getObjectCount(ObjectType obj_type);
+		//! @details Returns the object count for the specified type
+		unsigned getObjectCount(ObjectType obj_type);
 
-  /// @details Returns the object count for all object types
-  unsigned getObjectCount(void);
+		//! @details Returns the object count for all object types
+		unsigned getObjectCount(void);
 
-  /// @details Retuns the specified localization value
-  QString getLocalization(int localiz_id);
+		//! @details Retuns the specified localization value
+		QString getLocalization(int localiz_id);
 
-  /// @details Returns the connection limit
-  int getConnectionLimit(void);
+		//! @details Returns the connection limit
+		int getConnectionLimit(void);
 
-  /// @details Returns the template database
-  QString getTemplateDB(void);
+		//! @details Returns the template database
+		QString getTemplateDB(void);
 
-  /// @details Returns the model's author
-  QString getAuthor(void);
+		//! @details Returns the model's author
+		QString getAuthor(void);
 
-  /// @details Returns the database enconding
-  EncodingType getEncoding(void);
+		//! @details Returns the database enconding
+		EncodingType getEncoding(void);
 
-  /// @details Saves the specified code definition for the model on the specified filename
-  void saveModel(const QString &filename, unsigned def_type);
+		//! @details Saves the specified code definition for the model on the specified filename
+		void saveModel(const QString &filename, unsigned def_type);
 
-  /** @details Returns the complete SQL/XML defintion for the entire model (including all the other objects).
-     The parameter 'export_file' is used to format the generated code in a way that can be saved
-     in na SQL file and executed later on the DBMS server. This parameter is only used for SQL definition. */
-  QString getCodeDefinition(unsigned def_type, bool export_file);
+		/*! @details Returns the complete SQL/XML defintion for the entire model (including all the other objects).
+		 The parameter 'export_file' is used to format the generated code in a way that can be saved
+		 in na SQL file and executed later on the DBMS server. This parameter is only used for SQL definition. */
+		QString getCodeDefinition(unsigned def_type, bool export_file);
 
-  /// @details Returns the complete SQL/XML definition for the entire model (including all the other objects).
-  QString getCodeDefinition(unsigned def_type);
+		//! @details Returns the complete SQL/XML definition for the entire model (including all the other objects).
+		QString getCodeDefinition(unsigned def_type);
 
-  /// @details Returns the code definition only for the database (excluding the definition of the other objects)
-  QString __getCodeDefinition(unsigned def_type);
+		//! @details Returns the code definition only for the database (excluding the definition of the other objects)
+		QString __getCodeDefinition(unsigned def_type);
 
-  void addRelationship(BaseRelationship *rel, int obj_idx=-1);
-  void removeRelationship(BaseRelationship *rel, int obj_idx=-1);
-  BaseRelationship *getRelationship(unsigned obj_idx, ObjectType rel_type);
+		void addRelationship(BaseRelationship *rel, int obj_idx=-1);
+		void removeRelationship(BaseRelationship *rel, int obj_idx=-1);
+		BaseRelationship *getRelationship(unsigned obj_idx, ObjectType rel_type);
 
-  /** @details Searchs and returns the relationship between the specified tables. If the second parameter
-     is ommited (NULL), the method returns the first relationship where the source table is
-     participating */
-  BaseRelationship *getRelationship(BaseTable *src_tab, BaseTable *dst_tab);
+		/*! @details Searchs and returns the relationship between the specified tables. If the second parameter
+		 is ommited (NULL), the method returns the first relationship where the source table is
+		 participating */
+		BaseRelationship *getRelationship(BaseTable *src_tab, BaseTable *dst_tab);
 
-  void addTextbox(Textbox *txtbox, int obj_idx=-1);
-  void removeTextbox(Textbox *txtbox, int obj_idx=-1);
-  Textbox *getTextbox(unsigned obj_idx);
+		void addTextbox(Textbox *txtbox, int obj_idx=-1);
+		void removeTextbox(Textbox *txtbox, int obj_idx=-1);
+		Textbox *getTextbox(unsigned obj_idx);
 
-  void addFunction(Function *func, int obj_idx=-1);
-  void removeFunction(Function *func, int obj_idx=-1);
-  Function *getFunction(unsigned obj_idx);
+		void addFunction(Function *func, int obj_idx=-1);
+		void removeFunction(Function *func, int obj_idx=-1);
+		Function *getFunction(unsigned obj_idx);
 
-  void addSchema(Schema *schema, int obj_idx=-1);
-  void removeSchema(Schema *schema, int obj_idx=-1);
-  Schema *getSchema(unsigned obj_idx);
-
-  void addView(View *view, int obj_idx=-1);
-  void removeView(View *view, int obj_idx=-1);
-  View *getView(unsigned obj_idx);
+		void addSchema(Schema *schema, int obj_idx=-1);
+		void removeSchema(Schema *schema, int obj_idx=-1);
+		Schema *getSchema(unsigned obj_idx);
+
+		void addView(View *view, int obj_idx=-1);
+		void removeView(View *view, int obj_idx=-1);
+		View *getView(unsigned obj_idx);
 
-  void addTable(Table *table, int obj_idx=-1);
-  void removeTable(Table *table, int obj_idx=-1);
-  Table *getTable(unsigned obj_idx);
+		void addTable(Table *table, int obj_idx=-1);
+		void removeTable(Table *table, int obj_idx=-1);
+		Table *getTable(unsigned obj_idx);
 
-  void addType(Type *type, int obj_idx=-1);
-  void removeType(Type *type, int obj_idx=-1);
-  Type *getType(unsigned obj_idx);
+		void addType(Type *type, int obj_idx=-1);
+		void removeType(Type *type, int obj_idx=-1);
+		Type *getType(unsigned obj_idx);
 
-  void addRole(Role *role, int obj_idx=-1);
-  void removeRole(Role *role, int obj_idx=-1);
-  Role *getRole(unsigned obj_idx);
+		void addRole(Role *role, int obj_idx=-1);
+		void removeRole(Role *role, int obj_idx=-1);
+		Role *getRole(unsigned obj_idx);
 
-  void addTablespace(Tablespace *tabspc, int obj_idx=-1);
-  void removeTablespace(Tablespace *tabspc, int obj_idx=-1);
-  Tablespace *getTablespace(unsigned obj_idx);
+		void addTablespace(Tablespace *tabspc, int obj_idx=-1);
+		void removeTablespace(Tablespace *tabspc, int obj_idx=-1);
+		Tablespace *getTablespace(unsigned obj_idx);
 
-  void addLanguage(Language *lang, int obj_idx=-1);
-  void removeLanguage(Language *lang, int obj_idx=-1);
-  Language *getLanguage(unsigned obj_idx);
+		void addLanguage(Language *lang, int obj_idx=-1);
+		void removeLanguage(Language *lang, int obj_idx=-1);
+		Language *getLanguage(unsigned obj_idx);
 
-  void addAggregate(Aggregate *aggreg, int obj_idx=-1);
-  void removeAggregate(Aggregate *aggreg, int obj_idx=-1);
-  Aggregate *getAggregate(unsigned obj_idx);
+		void addAggregate(Aggregate *aggreg, int obj_idx=-1);
+		void removeAggregate(Aggregate *aggreg, int obj_idx=-1);
+		Aggregate *getAggregate(unsigned obj_idx);
 
-  void addCast(Cast *cast, int obj_idx=-1);
-  void removeCast(Cast *cast, int obj_idx=-1);
-  Cast *getCast(unsigned obj_idx);
+		void addCast(Cast *cast, int obj_idx=-1);
+		void removeCast(Cast *cast, int obj_idx=-1);
+		Cast *getCast(unsigned obj_idx);
 
-  void addConversion(Conversion *conv, int obj_idx=-1);
-  void removeConversion(Conversion *conv, int obj_idx=-1);
-  Conversion *getConversion(unsigned obj_idx);
+		void addConversion(Conversion *conv, int obj_idx=-1);
+		void removeConversion(Conversion *conv, int obj_idx=-1);
+		Conversion *getConversion(unsigned obj_idx);
 
-  void addOperator(Operator *oper, int obj_idx=-1);
-  void removeOperator(Operator *oper, int obj_idx=-1);
-  Operator *getOperator(unsigned obj_idx);
+		void addOperator(Operator *oper, int obj_idx=-1);
+		void removeOperator(Operator *oper, int obj_idx=-1);
+		Operator *getOperator(unsigned obj_idx);
 
-  void addOperatorClass(OperatorClass *op_class, int obj_idx=-1);
-  void removeOperatorClass(OperatorClass *op_class, int obj_idx=-1);
-  OperatorClass *getOperatorClass(unsigned obj_idx);
+		void addOperatorClass(OperatorClass *op_class, int obj_idx=-1);
+		void removeOperatorClass(OperatorClass *op_class, int obj_idx=-1);
+		OperatorClass *getOperatorClass(unsigned obj_idx);
 
-  void addOperatorFamily(OperatorFamily *familia_op, int obj_idx=-1);
-  void removeOperatorFamily(OperatorFamily *op_family, int obj_idx=-1);
-  OperatorFamily *getOperatorFamily(unsigned obj_idx);
+		void addOperatorFamily(OperatorFamily *familia_op, int obj_idx=-1);
+		void removeOperatorFamily(OperatorFamily *op_family, int obj_idx=-1);
+		OperatorFamily *getOperatorFamily(unsigned obj_idx);
 
-  void addDomain(Domain *domain, int obj_idx=-1);
-  void removeDomain(Domain *dominio, int obj_idx=-1);
-  Domain *getDomain(unsigned obj_idx);
+		void addDomain(Domain *domain, int obj_idx=-1);
+		void removeDomain(Domain *dominio, int obj_idx=-1);
+		Domain *getDomain(unsigned obj_idx);
 
-  void addSequence(Sequence *sequence, int obj_idx=-1);
-  void removeSequence(Sequence *sequence, int obj_idx=-1);
-  Sequence *getSequence(unsigned obj_idx);
+		void addSequence(Sequence *sequence, int obj_idx=-1);
+		void removeSequence(Sequence *sequence, int obj_idx=-1);
+		Sequence *getSequence(unsigned obj_idx);
 
-  void addPermission(Permission *perm);
-  void removePermission(Permission *perm);
-  int getPermissionIndex(Permission *perm);
+		void addPermission(Permission *perm);
+		void removePermission(Permission *perm);
+		int getPermissionIndex(Permission *perm);
 
-  /// @details Removes all the permission related to the passed object
-  void removePermissions(BaseObject *object);
+		//! @details Removes all the permission related to the passed object
+		void removePermissions(BaseObject *object);
 
-  /// @details Returns all the permissions related to the passed object
-  void getPermissions(BaseObject *object, vector<Permission *> &perms);
+		//! @details Returns all the permissions related to the passed object
+		void getPermissions(BaseObject *object, vector<Permission *> &perms);
 
-  /// @details Returns the object searching by its name and type
-  BaseObject *getObject(const QString &name, ObjectType obj_type);
+		//! @details Returns the object searching by its name and type
+		BaseObject *getObject(const QString &name, ObjectType obj_type);
 
-  ObjectType getObjectType(const QString &type_name);
-  void setBasicAttributes(BaseObject *object);
+		ObjectType getObjectType(const QString &type_name);
+		void setBasicAttributes(BaseObject *object);
 
-  PgSQLType createPgSQLType(void);
-  BaseObject *createObject(ObjectType obj_type);
-  Role *createRole(void);
-  Tablespace *createTablespace(void);
-  Schema *createSchema(void);
-  Language *createLanguage(void);
-  Function *createFunction(void);
-  Parameter createParameter(void);
-  Type *createType(void);
-  Domain *createDomain(void);
-  Cast *createCast(void);
-  Conversion *createConversion(void);
-  Operator *createOperator(void);
-  OperatorFamily *createOperatorFamily(void);
-  OperatorClass *createOperatorClass(void);
-  Aggregate *createAggregate(void);
-  Table *createTable(void);
-  Column *createColumn(void);
-  Rule *createRule(void);
-  Sequence *createSequence(bool ignore_onwer=false);
-  View *createView(void);
-  Permission *createPermission(void);
-  Textbox *createTextbox(void);
-  BaseRelationship *createRelationship(void);
-  Constraint *createConstraint(BaseObject *parent_obj);
-  Index *createIndex(Table *table);
-  Trigger *createTrigger(Table *table);
+		PgSQLType createPgSQLType(void);
+		BaseObject *createObject(ObjectType obj_type);
+		Role *createRole(void);
+		Tablespace *createTablespace(void);
+		Schema *createSchema(void);
+		Language *createLanguage(void);
+		Function *createFunction(void);
+		Parameter createParameter(void);
+		Type *createType(void);
+		Domain *createDomain(void);
+		Cast *createCast(void);
+		Conversion *createConversion(void);
+		Operator *createOperator(void);
+		OperatorFamily *createOperatorFamily(void);
+		OperatorClass *createOperatorClass(void);
+		Aggregate *createAggregate(void);
+		Table *createTable(void);
+		Column *createColumn(void);
+		Rule *createRule(void);
+		Sequence *createSequence(bool ignore_onwer=false);
+		View *createView(void);
+		Permission *createPermission(void);
+		Textbox *createTextbox(void);
+		BaseRelationship *createRelationship(void);
+		Constraint *createConstraint(BaseObject *parent_obj);
+		Index *createIndex(Table *table);
+		Trigger *createTrigger(Table *table);
 
-  /// @details Creates/removes the relationship between the passed view and the referecend tables
-  void updateViewRelationships(View *view);
+		//! @details Creates/removes the relationship between the passed view and the referecend tables
+		void updateViewRelationships(View *view);
 
-  /// @details Creates/removes the relationship between the passed table and the referecend tables on its foreign keys
-  void updateTableFKRelationships(Table *table);
+		//! @details Creates/removes the relationship between the passed table and the referecend tables on its foreign keys
+		void updateTableFKRelationships(Table *table);
 
-  /** @details Validates the removal of the specified column raising errors when the passed object
-     is still being referecend */
-  void validateColumnRemoval(Column *column);
+		/*! @details Validates the removal of the specified column raising errors when the passed object
+		 is still being referecend */
+		void validateColumnRemoval(Column *column);
 
-  /// @details Validates the relationship to reflect the modifications on the column/constraint of the passed table
-  void validateRelationships(TableObject *object, Table *parent_tab);
+		//! @details Validates the relationship to reflect the modifications on the column/constraint of the passed table
+		void validateRelationships(TableObject *object, Table *parent_tab);
 
-  /** @details Checks if from the passed relationship some redundacy is found. Redundancy generates infinite column
-     propagation over the tables. This method raises an error when found some. */
-  void checkRelationshipRedundancy(Relationship *rel);
+		/*! @details Checks if from the passed relationship some redundacy is found. Redundancy generates infinite column
+		 propagation over the tables. This method raises an error when found some. */
+		void checkRelationshipRedundancy(Relationship *rel);
 
-  /** @details Returns all the objects that the object depends on. The boolean paramenter is used to include the
-     indirect dependencies on the search. Indirect dependencies are objects that is not linked directly to
-     the informed object, e.g., a schema linked to a table that is referenced in a view */
-  void getObjectDependecies(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
+		/*! @details Returns all the objects that the object depends on. The boolean paramenter is used to include the
+		 indirect dependencies on the search. Indirect dependencies are objects that is not linked directly to
+		 the informed object, e.g., a schema linked to a table that is referenced in a view */
+		void getObjectDependecies(BaseObject *objeto, vector<BaseObject *> &vet_deps, bool inc_indirect_deps=false);
 
-  /** @details Returns all the objects that references the passed object. The boolean paramenter is used to performance purpose,
-     generally applied when excluding objects, this means that the method will stop the search when the first
-     reference is found */
-  void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false);
+		/*! @details Returns all the objects that references the passed object. The boolean paramenter is used to performance purpose,
+		 generally applied when excluding objects, this means that the method will stop the search when the first
+		 reference is found */
+		void getObjectReferences(BaseObject *object, vector<BaseObject *> &refs, bool exclusion_mode=false);
 
-  /// @details Marks all the graphical objects as modified forcing their redraw
-  void setObjectsModified(void);
+		//! @details Marks all the graphical objects as modified forcing their redraw
+		void setObjectsModified(void);
 
-  /** @details Updates the user type names which belongs to the passed schema. This method must be executed whenever
-     the schema is renamed to propagate the new name to the user types on the PgSQLTypes list. Additionally
-     the previous schema name must be informed in order to rename the types correctly */
-  void validateSchemaRenaming(Schema *schema, const QString &prev_sch_name);
+		/*! @details Updates the user type names which belongs to the passed schema. This method must be executed whenever
+		 the schema is renamed to propagate the new name to the user types on the PgSQLTypes list. Additionally
+		 the previous schema name must be informed in order to rename the types correctly */
+		void validateSchemaRenaming(Schema *schema, const QString &prev_sch_name);
 
- signals:
-  /// @details Signal emitted when a new object is added to the model
-  void s_objectAdded(BaseObject *objeto);
+	signals:
+		//! @details Signal emitted when a new object is added to the model
+		void s_objectAdded(BaseObject *objeto);
 
-  /// @details Signal emitted when an object is removed from the model
-  void s_objectRemoved(BaseObject *objeto);
+		//! @details Signal emitted when an object is removed from the model
+		void s_objectRemoved(BaseObject *objeto);
 
-  /// @details Signal emitted when an object is created from a xml code
-  void s_objectLoaded(int progresso, QString object_id, unsigned id_icone);
+		//! @details Signal emitted when an object is created from a xml code
+		void s_objectLoaded(int progresso, QString object_id, unsigned id_icone);
 };
 
 #endif

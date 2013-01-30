@@ -30,63 +30,63 @@
 #include "tabelaobjetoswidget.h"
 
 class RelacionamentoWidget: public BaseObjectWidget, public Ui::RelacionamentoWidget {
- private:
-  Q_OBJECT
-   /** @details Quantidade de elementos na lista de operações antes do relacionamento
-      ser editado. Este atributo é usado para se saber, em caso de cancelamento
-      da edição do relacionamento, a quantidade de operações relacionada ao
-      objeto que necessitam ser removidas. Vide: cancelarConfiguracao() */
-   unsigned qtd_operacoes;
+	private:
+		Q_OBJECT
+		/*! @details Quantidade de elementos na lista de operações antes do relacionamento
+			ser editado. Este atributo é usado para se saber, em caso de cancelamento
+			da edição do relacionamento, a quantidade de operações relacionada ao
+			objeto que necessitam ser removidas. Vide: cancelarConfiguracao() */
+		unsigned qtd_operacoes;
 
-   /// @details Destacadores de sintaxe para os campos de nome da tabela de origem e destino
-   SyntaxHighlighter *dest_tab_orig,
-                   *dest_tab_dest;
+		//! @details Destacadores de sintaxe para os campos de nome da tabela de origem e destino
+		SyntaxHighlighter *dest_tab_orig,
+											*dest_tab_dest;
 
-   /// @details Tabela as quais armazenam os atributos e restrições do relacionamento
-   TabelaObjetosWidget *tab_atributos,
-                       *tab_restricoes,
-                       *tab_objs_avancados;
+		//! @details Tabela as quais armazenam os atributos e restrições do relacionamento
+		TabelaObjetosWidget *tab_atributos,
+												*tab_restricoes,
+												*tab_objs_avancados;
 
-   /** @details Lista os objetos do relacionamento na tabela respectiva, de acordo
-      com o tipo do objeto passado */
-   void listarObjetos(ObjectType tipo_obj);
+		/*! @details Lista os objetos do relacionamento na tabela respectiva, de acordo
+			com o tipo do objeto passado */
+		void listarObjetos(ObjectType tipo_obj);
 
-   /// @details Lista os objetos avançados
-   void listarObjetosAvancados(void);
+		//! @details Lista os objetos avançados
+		void listarObjetosAvancados(void);
 
-   /// @details Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
-   void exibirDadosObjeto(TableObject *object, int idx_lin);
+		//! @details Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
+		void exibirDadosObjeto(TableObject *object, int idx_lin);
 
- protected:
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Table *tab_orig, Table *tab_dest, unsigned tipo_rel);
+	protected:
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Table *tab_orig, Table *tab_dest, unsigned tipo_rel);
 
- public:
-   RelacionamentoWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *relacao);
+	public:
+		RelacionamentoWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *relacao);
 
- private slots:
-  void hideEvent(QHideEvent *);
+	private slots:
+		void hideEvent(QHideEvent *);
 
-  /// @details Adiciona um objeto   tabela a qual aciona o método
-  void adicionarObjeto(void);
+		//! @details Adiciona um objeto   tabela a qual aciona o método
+		void adicionarObjeto(void);
 
-  /// @details Edita um objeto selecionado  na tabela a qual aciona o método
-  void editarObjeto(int idx_lin);
+		//! @details Edita um objeto selecionado  na tabela a qual aciona o método
+		void editarObjeto(int idx_lin);
 
-  /// @details Remove um objeto selecionado  na tabela a qual aciona o método
-  void removerObjeto(int idx_lin);
+		//! @details Remove um objeto selecionado  na tabela a qual aciona o método
+		void removerObjeto(int idx_lin);
 
-  /// @details Remove todos os objetos da tabela a qual aciona o método
-  void removerObjetos(void);
+		//! @details Remove todos os objetos da tabela a qual aciona o método
+		void removerObjetos(void);
 
-  /// @details Exibe o formulário referente ao objeto criado ou que representa o relationamento
-  void exibirObjetoAvancado(int idx);
+		//! @details Exibe o formulário referente ao objeto criado ou que representa o relationamento
+		void exibirObjetoAvancado(int idx);
 
- public slots:
-   void applyConfiguration(void);
-   void cancelConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
+		void cancelConfiguration(void);
 
- friend class ModeloWidget;
+		friend class ModeloWidget;
 };
 
 #endif

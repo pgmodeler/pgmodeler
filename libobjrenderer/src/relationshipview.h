@@ -30,88 +30,88 @@
 #include "relationship.h"
 
 class RelationshipView: public BaseObjectView {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  /// @details Graphical point radius
-  static const float GRAPHIC_PNT_RADIUS=2.5f;
+		//! @details Graphical point radius
+		static const float GRAPHIC_PNT_RADIUS=2.5f;
 
-  /** @details Indicate that the line is being configured/updated. This flag is used to evict
-     that the configureLine() method is exceedingly called during the table moving. */
-  bool configuring_line;
+		/*! @details Indicate that the line is being configured/updated. This flag is used to evict
+		 that the configureLine() method is exceedingly called during the table moving. */
+		bool configuring_line;
 
-  /// @details Stores the graphical representation for labels
-  TextboxView *labels[3];
+		//! @details Stores the graphical representation for labels
+		TextboxView *labels[3];
 
-  /// @details Stores the graphical representation for the participant tables
-  BaseTableView *tables[2];
+		//! @details Stores the graphical representation for the participant tables
+		BaseTableView *tables[2];
 
-  /// @details Graphical representation for the user added points
-  vector<QGraphicsPolygonItem *> graph_points;
+		//! @details Graphical representation for the user added points
+		vector<QGraphicsPolygonItem *> graph_points;
 
-  /// @details Lines that represent the relationship
-  vector<QGraphicsLineItem *> lines;
+		//! @details Lines that represent the relationship
+		vector<QGraphicsLineItem *> lines;
 
-  /// @details Stores the graphical representation for relationship attributes
-  vector<QGraphicsItemGroup *> attributes;
+		//! @details Stores the graphical representation for relationship attributes
+		vector<QGraphicsItemGroup *> attributes;
 
-  /// @details Relationship descriptor (lozenge -> (1,n)-(1,n) relationship, triangle -> inheritance)
-  QGraphicsPolygonItem *descriptor;
+		//! @details Relationship descriptor (lozenge -> (1,n)-(1,n) relationship, triangle -> inheritance)
+		QGraphicsPolygonItem *descriptor;
 
-  /// @details Stores the current hovered child object
-  QGraphicsItem *sel_object;
+		//! @details Stores the current hovered child object
+		QGraphicsItem *sel_object;
 
-  /// @details Stores the initial (default) labels position
-  QPointF labels_ini_pos[3];
+		//! @details Stores the initial (default) labels position
+		QPointF labels_ini_pos[3];
 
-  /// @details Stores the selected child object index
-  int sel_object_idx;
+		//! @details Stores the selected child object index
+		int sel_object_idx;
 
-  /// @details Configures the labels positioning
-  void configureLabels(void);
+		//! @details Configures the labels positioning
+		void configureLabels(void);
 
-  /// @details Configures the descriptor form and positioning
-  void configureDescriptor(void);
+		//! @details Configures the descriptor form and positioning
+		void configureDescriptor(void);
 
-  /// @details Configures the attributes positioning
-  void configureAttributes(void);
+		//! @details Configures the attributes positioning
+		void configureAttributes(void);
 
-  /// @details Configures the position info object
-  void configurePositionInfo(void);
+		//! @details Configures the position info object
+		void configurePositionInfo(void);
 
- protected:
-  QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-  void mousePressEvent(QGraphicsSceneMouseEvent *event);
-  void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-  void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-  void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *){}
+	protected:
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+		void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+		void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+		void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *){}
 
- public slots:
-  /// @details Configures the relationship line
-  void configureLine(void);
+	public slots:
+		//! @details Configures the relationship line
+		void configureLine(void);
 
-  /// @details Returns the label through its index
-  TextboxView *getLabel(unsigned lab_idx);
+		//! @details Returns the label through its index
+		TextboxView *getLabel(unsigned lab_idx);
 
- private slots:
-  /// @details Makes the comple relationship configuration
-  void configureObject(void);
+	private slots:
+		//! @details Makes the comple relationship configuration
+		void configureObject(void);
 
- public:
-  RelationshipView(BaseRelationship *rel);
-  ~RelationshipView(void);
+	public:
+		RelationshipView(BaseRelationship *rel);
+		~RelationshipView(void);
 
-  /// @details Calculates the relationship bounding rect considering all the children objects dimension
-  QRectF __boundingRect(void);
+		//! @details Calculates the relationship bounding rect considering all the children objects dimension
+		QRectF __boundingRect(void);
 
-  /// @details Returns the relationship that generates the graphical representation
-  BaseRelationship *getSourceObject(void);
+		//! @details Returns the relationship that generates the graphical representation
+		BaseRelationship *getSourceObject(void);
 
-  /// @details Disconnects the signal handled by the relationship which senders are the tables
-  void disconnectTables(void);
+		//! @details Disconnects the signal handled by the relationship which senders are the tables
+		void disconnectTables(void);
 
- signals:
-  void s_relationshipModified(BaseGraphicObject *rel);
+	signals:
+		void s_relationshipModified(BaseGraphicObject *rel);
 };
 
 #endif

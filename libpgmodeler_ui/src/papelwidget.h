@@ -30,41 +30,41 @@
 #include "tabelaobjetoswidget.h"
 
 class PapelWidget: public BaseObjectWidget, public Ui::PapelWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-   /** @details Armazena as referência s tabelas de membros do papel para que sejam
-      referenciados nos demais métodos de forma mais eficaz */
-   TabelaObjetosWidget *tab_membros[3];
+	private:
+		/*! @details Armazena as referência s tabelas de membros do papel para que sejam
+			referenciados nos demais métodos de forma mais eficaz */
+		TabelaObjetosWidget *tab_membros[3];
 
-   /// @details Preenche as tabelas de membros do papel
-   void preencherTabelaMembros(void);
+		//! @details Preenche as tabelas de membros do papel
+		void preencherTabelaMembros(void);
 
-   /// @details Exibe o dado do papel na tabela especificada
-   void exibirDadosPapel(Role *papel, unsigned idx_tabela, unsigned lin);
+		//! @details Exibe o dado do papel na tabela especificada
+		void exibirDadosPapel(Role *papel, unsigned idx_tabela, unsigned lin);
 
- public:
-   PapelWidget(QWidget * parent = 0);
+	public:
+		PapelWidget(QWidget * parent = 0);
 
-   void hideEvent(QHideEvent *);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Role *papel);
+		void hideEvent(QHideEvent *);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Role *papel);
 
- private slots:
-   /** @details Preenche com informações relacionadas ao papel selecionado
-      na linha atual da tabela em foco */
-   void exibirDadosPapelSelecionado(void);
+	private slots:
+		/*! @details Preenche com informações relacionadas ao papel selecionado
+			na linha atual da tabela em foco */
+		void exibirDadosPapelSelecionado(void);
 
-   /** @details Seleciona um papel membro para ser inserido na tabela de membro
-      atualmente em foco. Este slot é usando tanto para adicionar
-      um membro na tabela quanto para editar um membro selecionado */
-   void selecionarPapelMembro(void);
+		/*! @details Seleciona um papel membro para ser inserido na tabela de membro
+			atualmente em foco. Este slot é usando tanto para adicionar
+			um membro na tabela quanto para editar um membro selecionado */
+		void selecionarPapelMembro(void);
 
-   /** @details Faz a conexão de sinais-slots para cada tabela de objetos
-        medida que a tabela em foco mude */
-   void configurarSelecaoPapeis(void);
+		/*! @details Faz a conexão de sinais-slots para cada tabela de objetos
+				medida que a tabela em foco mude */
+		void configurarSelecaoPapeis(void);
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

@@ -29,19 +29,19 @@
 #include "ui_espacotabelawidget.h"
 
 class EspacoTabelaWidget: public BaseObjectWidget, public Ui::EspacoTabelaWidget {
- Q_OBJECT
+	Q_OBJECT
 
- private:
+	private:
 
- public:
-   EspacoTabelaWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Tablespace *espaco_tab);
+	public:
+		EspacoTabelaWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Tablespace *espaco_tab);
 
- private slots:
-   void hideEvent(QHideEvent *);
+	private slots:
+		void hideEvent(QHideEvent *);
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

@@ -30,20 +30,20 @@
 #include "baseobjectview.h"
 
 class ListaObjetosWidget: public BaseObjectWidget, public Ui::ListaObjetosWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-  void applyConfiguration(void){}
+	private:
+		void applyConfiguration(void){}
 
-  /// @details Carrega os widgets que contém as referências e dependências do objeto
-  void atualizarListaObjetos(vector<BaseObject *> &objetos, QTableWidget *tabela_wgt);
+		//! @details Carrega os widgets que contém as referências e dependências do objeto
+		void atualizarListaObjetos(vector<BaseObject *> &objetos, QTableWidget *tabela_wgt);
 
- protected slots:
-  void hideEvent(QHideEvent *);
+	protected slots:
+		void hideEvent(QHideEvent *);
 
- public:
-  ListaObjetosWidget(QWidget * parent = 0);
-  void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *objeto_pai=NULL);
+	public:
+		ListaObjetosWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *objeto_pai=NULL);
 };
 
 #endif

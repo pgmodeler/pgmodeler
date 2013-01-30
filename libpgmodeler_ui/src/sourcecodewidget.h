@@ -29,21 +29,22 @@
 #include "baseobjectwidget.h"
 
 class SourceCodeWidget: public BaseObjectWidget, public Ui::SourceCodeWidget {
- private:
-  Q_OBJECT
-  SyntaxHighlighter *hl_sqlcode,
-                  *hl_xmlcode;
+	private:
+		Q_OBJECT
 
-  void applyConfiguration(void){}
-  void hideEvent(QHideEvent *event);
+		SyntaxHighlighter *hl_sqlcode,
+											*hl_xmlcode;
 
- public:
-  SourceCodeWidget(QWidget * parent = 0);
-  void setAttributes(DatabaseModel *model, BaseObject *object=NULL);
+		void applyConfiguration(void){}
+		void hideEvent(QHideEvent *event);
 
- private slots:
-  void generateSourceCode(int=0);
-  void setSourceCodeTab(int=0);
+	public:
+		SourceCodeWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, BaseObject *object=NULL);
+
+	private slots:
+		void generateSourceCode(int=0);
+		void setSourceCodeTab(int=0);
 };
 
 #endif

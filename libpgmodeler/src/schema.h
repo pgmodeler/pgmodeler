@@ -30,27 +30,25 @@
 #include <QColor>
 
 class Schema: public BaseGraphicObject {
- private:
-  static unsigned schema_id;
+	private:
+		static unsigned schema_id;
 
-  QColor fill_color;
+		QColor fill_color;
 
-  bool rect_visible;
+		bool rect_visible;
 
- public:
-  Schema(void);
+	public:
+		Schema(void);
 
-  void setName(const QString &name);
+		void setName(const QString &name);
 
-  void setFillColor(const QColor &color);
+		void setFillColor(const QColor &color);
+		QColor getFillColor(void);
 
-  QColor getFillColor(void);
+		void setRectVisible(bool value);
+		bool isRectVisible(void);
 
-  void setRectVisible(bool value);
-
-  bool isRectVisible(void);
-
-  QString getCodeDefinition(unsigned def_type);
+		QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

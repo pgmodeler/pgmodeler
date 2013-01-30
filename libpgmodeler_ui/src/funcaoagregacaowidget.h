@@ -33,38 +33,40 @@
 #include "tabelaobjetoswidget.h"
 
 class FuncaoAgregacaoWidget: public BaseObjectWidget, public Ui::FuncaoAgregacaoWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:          /// @details Widget de seleção de tipo de entrada da função
-   TipoPgSQLWidget *tipo_entrada,
-                   /// @details Widget de tipo de estado da função
-                   *tipo_estado;
+	private:
+		//! @details Widget de seleção de tipo de entrada da função
+		TipoPgSQLWidget *tipo_entrada,
 
-                   /** @details Tabela de listagem de tipos de entrada da função.
-                      Os elementos desta tabela são convertidos em TipoPgSQL e
-                      atribuídos como tipos de entrada da função agregada */
-  TabelaObjetosWidget *tab_tipos_entrada;
+										//! @details Widget de tipo de estado da função
+										*tipo_estado;
 
-                   /// @details Destacador de sintaxe usado no campo de expressão condicional
-   SyntaxHighlighter *destaque_cond;
+		/*! @details Tabela de listagem de tipos de entrada da função.
+		Os elementos desta tabela são convertidos em TipoPgSQL e
+		atribuídos como tipos de entrada da função agregada */
+		TabelaObjetosWidget *tab_tipos_entrada;
 
-                  /// @details Seletores de funções e operador relacionao   função de agregação
-   SeletorObjetoWidget *sel_op_ordenacao,
-                       *sel_func_final,
-                       *sel_func_transicao;
+		//! @details Destacador de sintaxe usado no campo de expressão condicional
+		SyntaxHighlighter *destaque_cond;
 
- public:
-   FuncaoAgregacaoWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Aggregate *funcao_ag);
+		//! @details Seletores de funções e operador relacionao   função de agregação
+		SeletorObjetoWidget *sel_op_ordenacao,
+												*sel_func_final,
+												*sel_func_transicao;
 
- private slots:
-  void hideEvent(QHideEvent *);
+	public:
+		FuncaoAgregacaoWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Aggregate *funcao_ag);
 
-  /// @details Adiciona ou atualiza o tipo selecionado no widget 'tipo_entrada'   tabela de tipos de entrada
-  void manipularTipoDado(int linha);
+	private slots:
+		void hideEvent(QHideEvent *);
 
- public slots:
-   void applyConfiguration(void);
+		//! @details Adiciona ou atualiza o tipo selecionado no widget 'tipo_entrada'   tabela de tipos de entrada
+		void manipularTipoDado(int linha);
+
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

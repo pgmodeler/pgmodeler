@@ -29,25 +29,25 @@
 #include "baseobject.h"
 
 class Tablespace: public BaseObject{
- private:
-  static unsigned tabspace_id;
+	private:
+		static unsigned tabspace_id;
 
-  /// @details Directory where the tablespace resides
-  QString directory;
+		//! @details Directory where the tablespace resides
+		QString directory;
 
- public:
-  Tablespace(void);
+	public:
+		Tablespace(void);
 
-  void setName(const QString &name);
+		void setName(const QString &name);
 
-  /// @details Sets the directory where tablespace resides
-  void setDirectory(const QString &dir);
+		//! @details Sets the directory where tablespace resides
+		void setDirectory(const QString &dir);
 
-  /// @details Returns the directory where the tablespace resides
-  QString getDirectory(void);
+		//! @details Returns the directory where the tablespace resides
+		QString getDirectory(void);
 
-  /// @details Returns the SQL / XML code for the tablespace
-  QString getCodeDefinition(unsigned def_type);
+		//! @details Returns the SQL / XML code for the tablespace
+		QString getCodeDefinition(unsigned def_type);
 };
 
 #endif

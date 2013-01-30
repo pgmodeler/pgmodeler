@@ -29,7 +29,7 @@
 #include "ui_indicewidget.h"
 #include "tabelaobjetoswidget.h"
 
-/** @details Declarando a classe ElementoIndice como metatype para que esta
+/*! @details Declarando a classe ElementoIndice como metatype para que esta
  possa ser usada em conjunto com a classe QVariant (vide documentação
  da classe QVariant e QMetaType). Esta declaração é uma macro específica
  do Qt e está sendo usada para facilitar o uso com classes que necessitam
@@ -40,39 +40,39 @@
 Q_DECLARE_METATYPE(IndexElement);
 
 class IndiceWidget: public BaseObjectWidget, public Ui::IndiceWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-   /// @details Destaque de sintaxe do campo de expressão condicional
-   SyntaxHighlighter *dest_exp_condicional,
-                   *dest_exp_elemento;
+	private:
+		//! @details Destaque de sintaxe do campo de expressão condicional
+		SyntaxHighlighter *dest_exp_condicional,
+											*dest_exp_elemento;
 
-   /// @details Tabelas de objetos para controlar elementos do índice
-   TabelaObjetosWidget *tab_elementos;
+		//! @details Tabelas de objetos para controlar elementos do índice
+		TabelaObjetosWidget *tab_elementos;
 
-   /// @details Seletor de classe de operadores dos elementos
-   SeletorObjetoWidget *sel_classe_op;
+		//! @details Seletor de classe de operadores dos elementos
+		SeletorObjetoWidget *sel_classe_op;
 
-   /// @details Atualiza o combo de colunas com as existentes na tabela
-   void atualizarComboColunas(void);
+		//! @details Atualiza o combo de colunas com as existentes na tabela
+		void atualizarComboColunas(void);
 
-   /// @details Exibe o dado de um elemento na linha especificada da tabela
-   void exibirDadosElemento(IndexElement elem, int idx_elem);
+		//! @details Exibe o dado de um elemento na linha especificada da tabela
+		void exibirDadosElemento(IndexElement elem, int idx_elem);
 
- public:
-   IndiceWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, Table *tabela_pai, OperationList *op_list, Index *indice);
+	public:
+		IndiceWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, Table *tabela_pai, OperationList *op_list, Index *indice);
 
- private slots:
-  void hideEvent(QHideEvent *);
-  void selecionarObjetoElemento(void);
+	private slots:
+		void hideEvent(QHideEvent *);
+		void selecionarObjetoElemento(void);
 
-  /// @details Métodos de manipulação dos elementos do índice
-  void manipularElemento(int idx_elem);
-  void editarElemento(int idx_elem);
+		//! @details Métodos de manipulação dos elementos do índice
+		void manipularElemento(int idx_elem);
+		void editarElemento(int idx_elem);
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

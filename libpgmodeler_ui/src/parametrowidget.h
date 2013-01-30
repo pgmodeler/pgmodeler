@@ -30,27 +30,27 @@
 #include "tipopgsqlwidget.h"
 
 class ParametroWidget: public BaseObjectWidget, public Ui::ParametroWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-   TipoPgSQLWidget *tipo_pgsql;
+	private:
+		TipoPgSQLWidget *tipo_pgsql;
 
-   /// @details Armazena a cópia do parâmetro configurado
-   Parameter parametro;
+		//! @details Armazena a cópia do parâmetro configurado
+		Parameter parametro;
 
- public:
-   ParametroWidget(QWidget * parent = 0);
-   void setAttributes(Parameter parametro, DatabaseModel *model);
+	public:
+		ParametroWidget(QWidget * parent = 0);
+		void setAttributes(Parameter parametro, DatabaseModel *model);
 
-   /** @details Retorna a cópia do parâmetro configurado. Este método deve
-      ser usado para se ter acesso ao parâmetro configurado */
-   Parameter obterParametro(void);
+		/*! @details Retorna a cópia do parâmetro configurado. Este método deve
+			ser usado para se ter acesso ao parâmetro configurado */
+		Parameter obterParametro(void);
 
- private slots:
-   void hideEvent(QHideEvent *);
+	private slots:
+		void hideEvent(QHideEvent *);
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

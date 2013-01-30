@@ -31,78 +31,78 @@
 #include "role.h"
 
 class Operator: public BaseObject {
- private:
-  /// @details Stores the functions that defines the operator
-  Function *functions[3];
+	private:
+		//! @details Stores the functions that defines the operator
+		Function *functions[3];
 
-  /// @details Stores the arguments types (left and right) used by the operator
-  PgSQLType argument_types[2];
+		//! @details Stores the arguments types (left and right) used by the operator
+		PgSQLType argument_types[2];
 
-  /// @details Stores the auxiliary operators
-  Operator *operators[6];
+		//! @details Stores the auxiliary operators
+		Operator *operators[6];
 
-  bool hashes, /// @details Indicates that the operator can execute a hash join
-       merges;  /// @details Indicates that the operator can execute a merge join
+		bool	hashes, //! @details Indicates that the operator can execute a hash join
+					merges;  //! @details Indicates that the operator can execute a merge join
 
- public:
-  static const unsigned FUNC_OPERATOR=0,
-                        FUNC_JOIN=1,
-                        FUNC_RESTRICTION=2,
+	public:
+		static const unsigned FUNC_OPERATOR=0,
+													FUNC_JOIN=1,
+													FUNC_RESTRICTION=2,
 
-                        LEFT_ARG=0,
-                        RIGHT_ARG=1,
+													LEFT_ARG=0,
+													RIGHT_ARG=1,
 
-                        OPER_COMMUTATOR=0,
-                        OPER_NEGATOR=1,
-                        OPER_SORT1=2,
-                        OPER_SORT2=3,
-                        OPER_LESS=4,
-                        OPER_GREATER=5;
+													OPER_COMMUTATOR=0,
+													OPER_NEGATOR=1,
+													OPER_SORT1=2,
+													OPER_SORT2=3,
+													OPER_LESS=4,
+													OPER_GREATER=5;
 
-  Operator(void);
+		Operator(void);
 
-  /// @details Defines the name of the operator
-  void setName(const QString &name);
+		//! @details Defines the name of the operator
+		void setName(const QString &name);
 
-  /// @details Defines the function used by the operator (constants FUNC_[OPERATOR | JOIN | RESTRICTION])
-  void setFunction(Function *func, unsigned func_type);
+		//! @details Defines the function used by the operator (constants FUNC_[OPERATOR | JOIN | RESTRICTION])
+		void setFunction(Function *func, unsigned func_type);
 
-  /// @details Defines the argument data type for operator (constants ARG_[LEFT | RIGHT])
-  void setArgumentType(PgSQLType arg_type, unsigned arg_id);
+		//! @details Defines the argument data type for operator (constants ARG_[LEFT | RIGHT])
+		void setArgumentType(PgSQLType arg_type, unsigned arg_id);
 
-  /// @details Defines the auxiliary operators (constants OPER_[COMMUTATOR | NEGATOR | SORT1 | SORT2 | LESS | GREATER])
-  void setOperator(Operator *oper, unsigned op_type);
+		//! @details Defines the auxiliary operators (constants OPER_[COMMUTATOR | NEGATOR | SORT1 | SORT2 | LESS | GREATER])
+		void setOperator(Operator *oper, unsigned op_type);
 
-  /// @details Defines that the operator accepts hash join
-  void setHashes(bool value);
+		//! @details Defines that the operator accepts hash join
+		void setHashes(bool value);
 
-  /// @details Defines that the operator accepts merge join
-  void setMerges(bool value);
+		//! @details Defines that the operator accepts merge join
+		void setMerges(bool value);
 
-  /// @details Returns the function used by the operator referencing it by its type
-  Function *getFunction(unsigned func_type);
+		//! @details Returns the function used by the operator referencing it by its type
+		Function *getFunction(unsigned func_type);
 
-  /// @details Returns the type of the passed argument id
-  PgSQLType getArgumentType(unsigned arg_id);
+		//! @details Returns the type of the passed argument id
+		PgSQLType getArgumentType(unsigned arg_id);
 
-  /// @details Returns on of the auxiliary operators
-  Operator *getOperator(unsigned op_type);
+		//! @details Returns on of the auxiliary operators
+		Operator *getOperator(unsigned op_type);
 
-  /// @details Returns whether the operator accepts hash join
-  bool isHashes(void);
+		//! @details Returns whether the operator accepts hash join
+		bool isHashes(void);
 
-  /// @details Returns whether the operator accepts merge join
-  bool isMerges(void);
+		//! @details Returns whether the operator accepts merge join
+		bool isMerges(void);
 
-  /// @details Validates the passed name using the naming rule for operators
-  static bool isValidName(const QString &name);
+		//! @details Validates the passed name using the naming rule for operators
+		static bool isValidName(const QString &name);
 
-  /// @details Returns the SQL / XML definition for the operator
-  QString getCodeDefinition(unsigned def_type, bool reduced_form);
-  QString getCodeDefinition(unsigned def_type);
+		//! @details Returns the SQL / XML definition for the operator
+		QString getCodeDefinition(unsigned def_type, bool reduced_form);
+		QString getCodeDefinition(unsigned def_type);
 
-  /// @details Returns the operator signature
-  QString getSignature(bool format_name=true);
+		//! @details Returns the operator signature
+		QString getSignature(bool format_name=true);
 };
 
 #endif

@@ -28,22 +28,22 @@
 #include "pgmodelerplugin.h"
 
 class DummyPlugin: public QObject, public PgModelerPlugin {
- private:
-  Q_OBJECT
-  /// @details Declares the interface which is used to implement the plugin
-  Q_INTERFACES(PgModelerPlugin)
+	private:
+		Q_OBJECT
+		//! @details Declares the interface which is used to implement the plugin
+		Q_INTERFACES(PgModelerPlugin)
 
- public:
-  DummyPlugin(void);
+	public:
+		DummyPlugin(void);
 
-  QString getPluginTitle(void);
-  QString getPluginVersion(void);
-  QString getPluginAuthor(void);
-  QString getPluginDescription(void);
-  void executePlugin(ModeloWidget *);
+		QString getPluginTitle(void);
+		QString getPluginVersion(void);
+		QString getPluginAuthor(void);
+		QString getPluginDescription(void);
+		void executePlugin(ModeloWidget *);
 
- public slots:
-  void showPluginInfo(void);
+	public slots:
+		void showPluginInfo(void);
 };
 
 #endif

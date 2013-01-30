@@ -31,33 +31,33 @@
 #include "tableobjectview.h"
 
 class TableView: public BaseTableView {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  /// @details Extended table attributes (indexes, rules, triggers) section body
-  QGraphicsPolygonItem  *ext_attribs_body;
+		//! @details Extended table attributes (indexes, rules, triggers) section body
+		QGraphicsPolygonItem  *ext_attribs_body;
 
-  /// @details Item groups that stores columns and extended attributes, respectively
-  QGraphicsItemGroup *columns, *ext_attribs;
+		//! @details Item groups that stores columns and extended attributes, respectively
+		QGraphicsItemGroup *columns, *ext_attribs;
 
-  /// @details Stores the reference to the child object currently selected on table
-  TableObject *sel_child_obj;
+		//! @details Stores the reference to the child object currently selected on table
+		TableObject *sel_child_obj;
 
-  void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
-  void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
-  void mousePressEvent(QGraphicsSceneMouseEvent *event);
-  QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+		void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
+		void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
- public:
-  TableView(Table *table);
-  ~TableView(void);
+	public:
+		TableView(Table *table);
+		~TableView(void);
 
- private slots:
-  void configureObject(void);
+	private slots:
+		void configureObject(void);
 
- signals:
-  /// @details Signal emitted when the user right-click a focused table child object
-  void s_childObjectSelected(TableObject *);
+	signals:
+		//! @details Signal emitted when the user right-click a focused table child object
+		void s_childObjectSelected(TableObject *);
 };
 
 #endif

@@ -31,119 +31,119 @@
 #include "xmlparser.h"
 
 class BaseObjectView: public QObject, public QGraphicsItemGroup {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
- protected:
-  /** @details Stores the global selection order of objects. This attributes
-     is incremented each time an object is selected. */
-  static unsigned global_sel_order;
+	protected:
+		/*! @details Stores the global selection order of objects. This attributes
+		 is incremented each time an object is selected. */
+		static unsigned global_sel_order;
 
-  /** @details Stores the selection order of the current object. This attribute is used to
-     know when an item was selected before another in the scene because the implementation of
-     the method QGraphicsScene :: selectedItem() the selected objects are returned without
-     any sort, but for the database model objects is the ESSENTIAL to know the selection order
-     mainly when creating relationships between tables. */
-  unsigned sel_order;
+		/*! @details Stores the selection order of the current object. This attribute is used to
+		 know when an item was selected before another in the scene because the implementation of
+		 the method QGraphicsScene :: selectedItem() the selected objects are returned without
+		 any sort, but for the database model objects is the ESSENTIAL to know the selection order
+		 mainly when creating relationships between tables. */
+		unsigned sel_order;
 
-  /// @details Graphical text for the position info
-  QGraphicsSimpleTextItem *pos_info_txt;
+		//! @details Graphical text for the position info
+		QGraphicsSimpleTextItem *pos_info_txt;
 
-  /// @details Graphical object (rectangle) of the position info
-  QGraphicsPolygonItem *pos_info_pol;
+		//! @details Graphical object (rectangle) of the position info
+		QGraphicsPolygonItem *pos_info_pol;
 
-  /// @details Stores the objects bounding rect
-  QRectF bounding_rect;
+		//! @details Stores the objects bounding rect
+		QRectF bounding_rect;
 
-  /// @details Graphical object that represents the object selection
-  QGraphicsPolygonItem *obj_selection;
+		//! @details Graphical object that represents the object selection
+		QGraphicsPolygonItem *obj_selection;
 
-  /// @details Icon that represent the object protection
-  QGraphicsItemGroup *protected_icon;
+		//! @details Icon that represent the object protection
+		QGraphicsItemGroup *protected_icon;
 
-  /// @details Graphical object that represents the current object shadow
-  QGraphicsPolygonItem *obj_shadow;
+		//! @details Graphical object that represents the current object shadow
+		QGraphicsPolygonItem *obj_shadow;
 
-  /// @details Stores the object font configuration
-  static map<QString, QTextCharFormat> font_config;
+		//! @details Stores the object font configuration
+		static map<QString, QTextCharFormat> font_config;
 
-  /// @details Stores the object colors configuration
-  static map<QString, QColor*> color_config;
+		//! @details Stores the object colors configuration
+		static map<QString, QColor*> color_config;
 
-  /// @details Resizes to the specified dimension the passed polygon
-  void resizePolygon(QPolygonF &pol, float width, float height);
+		//! @details Resizes to the specified dimension the passed polygon
+		void resizePolygon(QPolygonF &pol, float width, float height);
 
-  /// @details Configures the objects shadow polygon
-  void configureObjectShadow(void);
+		//! @details Configures the objects shadow polygon
+		void configureObjectShadow(void);
 
-  /// @details Configures the object selection polygon
-  void configureObjectSelection(void);
+		//! @details Configures the object selection polygon
+		void configureObjectSelection(void);
 
-  /// @details Configures the polygons used to show the current object position
-  void configurePositionInfo(QPointF pos);
+		//! @details Configures the polygons used to show the current object position
+		void configurePositionInfo(QPointF pos);
 
-  /// @details Configures the icon that denotes the object's protection
-  void configureProtectedIcon(void);
+		//! @details Configures the icon that denotes the object's protection
+		void configureProtectedIcon(void);
 
- public:
-  static const float VERT_SPACING=2.0f,
-                     HORIZ_SPACING=2.0f,
-                     DEFAULT_FONT_SIZE=9.0f,
-                     OBJ_BORDER_WIDTH=0.80f;
+	public:
+		static const float	VERT_SPACING=2.0f,
+												HORIZ_SPACING=2.0f,
+												DEFAULT_FONT_SIZE=9.0f,
+												OBJ_BORDER_WIDTH=0.80f;
 
-  BaseObjectView(BaseObject *object=NULL);
-  ~BaseObjectView(void);
+		BaseObjectView(BaseObject *object=NULL);
+		~BaseObjectView(void);
 
-  /// @details Returns the object selection order
-  unsigned getSelectionOrder(void);
+		//! @details Returns the object selection order
+		unsigned getSelectionOrder(void);
 
-  /// @details Controls the changes during the object's selection and moving
-  QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+		//! @details Controls the changes during the object's selection and moving
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
-  /// @details Returns the object that is representend by the graphical object
-  BaseObject *getSourceObject(void);
+		//! @details Returns the object that is representend by the graphical object
+		BaseObject *getSourceObject(void);
 
-  /// @details Loads the font / color styels for the objects from a XML configuration file
-  static void loadObjectsStyle(void);
+		//! @details Loads the font / color styels for the objects from a XML configuration file
+		static void loadObjectsStyle(void);
 
-  /// @details Returns the objects bounding rect in local coordination
-  QRectF boundingRect(void) const;
+		//! @details Returns the objects bounding rect in local coordination
+		QRectF boundingRect(void) const;
 
-  /// @details Returns the fill style in a form of gradient for the specified element id
-  static QLinearGradient getFillStyle(const QString &id);
+		//! @details Returns the fill style in a form of gradient for the specified element id
+		static QLinearGradient getFillStyle(const QString &id);
 
-  /** @details Returns fill style storing the colors on the specified parameters color1 and color2
-     for the specified element id */
-  static void getFillStyle(const QString &id, QColor &color1, QColor &color2);
+		/*! @details Returns fill style storing the colors on the specified parameters color1 and color2
+		 for the specified element id */
+		static void getFillStyle(const QString &id, QColor &color1, QColor &color2);
 
-  /// @details Returns the border style for the specified element id
-  static QPen getBorderStyle(const QString &id);
+		//! @details Returns the border style for the specified element id
+		static QPen getBorderStyle(const QString &id);
 
-  /// @details Returns the font style for the specified element id
-  static QTextCharFormat getFontStyle(const QString &id);
+		//! @details Returns the font style for the specified element id
+		static QTextCharFormat getFontStyle(const QString &id);
 
-  /// @details Sets the  font style for the specified element id
-  static void setFontStyle(const QString &id, QTextCharFormat font_fmt);
+		//! @details Sets the  font style for the specified element id
+		static void setFontStyle(const QString &id, QTextCharFormat font_fmt);
 
-  /// @details Sets the color for the specified element id (used to set color for objects and font)
-  static void setElementColor(const QString &id, QColor color, unsigned color_id);
+		//! @details Sets the color for the specified element id (used to set color for objects and font)
+		static void setElementColor(const QString &id, QColor color, unsigned color_id);
 
-  /// @details Defines the object that the view represents
-  void setSourceObject(BaseObject *object);
+		//! @details Defines the object that the view represents
+		void setSourceObject(BaseObject *object);
 
-  /// @details Pure virtual object (the derived classes must implement it)
-  virtual void configureObject(void)=0;
+		//! @details Pure virtual object (the derived classes must implement it)
+		virtual void configureObject(void)=0;
 
- protected slots:
-  /// @details Make the basic object operations
-  void __configureObject(void);
+	protected slots:
+		//! @details Make the basic object operations
+		void __configureObject(void);
 
-  /// @details Toggles the protection icon
-  void toggleProtectionIcon(bool value);
+		//! @details Toggles the protection icon
+		void toggleProtectionIcon(bool value);
 
- signals:
-  /// @details Signal emmited when the object is (un)selected
-  void s_objectSelected(BaseGraphicObject *object, bool selected);
+	signals:
+		//! @details Signal emmited when the object is (un)selected
+		void s_objectSelected(BaseGraphicObject *object, bool selected);
 };
 
 #endif

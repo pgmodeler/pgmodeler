@@ -33,58 +33,58 @@
 
 namespace GlobalAttributes {
 
-/** @details Variables used to reference the pgModeler directories.
-   By default, it searches the directories conf/, schemas/, lang/, plugins/ and tmp/ on
-   the working dir. But these values ​​can be overwritten using the
-   environment variables:
+	/*! @details Variables used to reference the pgModeler directories.
+	 By default, it searches the directories conf/, schemas/, lang/, plugins/ and tmp/ on
+	 the working dir. But these values ​​can be overwritten using the
+	 environment variables:
 
-     PGMODELER_SCHEMAS_DIR
-     PGMODELER_CONF_DIR
-     PGMODELER_LANG_DIR
-     PGMODELER_PLUGINS_DIR
-     PGMODELER_TMP_DIR
+		 PGMODELER_SCHEMAS_DIR
+		 PGMODELER_CONF_DIR
+		 PGMODELER_LANG_DIR
+		 PGMODELER_PLUGINS_DIR
+		 PGMODELER_TMP_DIR
 */
 
-static const QString
-  /** @details According to the libxml documentation , the paths used by the parser are
-     in URI format (eg file:/// @details a/b/c) then, in Windows, the paths are shaped
-     C:\a\b\c, this caused the error in the parser that could not find
-     the DTD's. The solution to this problem is to replace the '\' by the way '/' */
+	static const QString
+	/*! @details According to the libxml documentation , the paths used by the parser are
+		 in URI format (eg file://a/b/c) then, in Windows, the paths are shaped
+		 C:\a\b\c, this caused the error in the parser that could not find
+		 the DTD's. The solution to this problem is to replace the '\' by the way '/' */
 
-  /** @details If the variable is not specified, pgModeler searches the required folder in the current directory "." */
-  SCHEMAS_ROOT_DIR=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString("./schemas")),
-  CONFIGURATIONS_DIR=(getenv("PGMODELER_CONF_DIR") ? QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") : QString("./conf")),
-  LANGUAGES_DIR=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString("./lang")),
-  PLUGINS_DIR=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins")),
-  TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp"));
+	/*! @details If the variable is not specified, pgModeler searches the required folder in the current directory "." */
+	SCHEMAS_ROOT_DIR=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString("./schemas")),
+	CONFIGURATIONS_DIR=(getenv("PGMODELER_CONF_DIR") ? QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") : QString("./conf")),
+	LANGUAGES_DIR=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString("./lang")),
+	PLUGINS_DIR=(getenv("PGMODELER_PLUGINS_DIR") ? QString(getenv("PGMODELER_PLUGINS_DIR")).replace("\\","/") : QString("./plugins")),
+	TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp"));
 
-static const QString
-   PGMODELER_VERSION="0.4.0-beta",
-   CRASH_HANDLER_FILE="pgmodeler%1.crash",
-   STACKTRACE_FILE=".stacktrace",
+	static const QString
+	PGMODELER_VERSION="0.4.0-beta",
+	CRASH_HANDLER_FILE="pgmodeler%1.crash",
+	STACKTRACE_FILE=".stacktrace",
 
-   DIR_SEPARATOR="/",
-   DEFAULT_CONFS_DIR="defaults", /// @details Directory name which holds the default pgModeler configuration
-   SCHEMAS_DIR="schemas", /// @details Default name for the schemas directory
-   SQL_SCHEMA_DIR="sql", /// @details Default name for the sql schemas directory
-   XML_SCHEMA_DIR="xml", /// @details Default name for the xml schemas directory
-   COMMON_SCHEMA_DIR="common", /// @details Default name for the commom schemas directory
-   SCHEMA_EXT=".sch", /// @details Default extension for schema files
-   OBJECT_DTD_DIR="dtd", /// @details Default directory for dtd files
-   OBJECT_DTD_EXT=".dtd", /// @details Default extension for dtd files
-   ROOT_DTD="dbmodel", /// @details Root DTD of model xml files
-   CONFIGURATION_EXT=".conf", /// @details Default extension for configuration files
-   HIGHLIGHT_FILE_SUF="-highlight", /// @details Suffix of language highlight configuration files
+	DIR_SEPARATOR="/",
+	DEFAULT_CONFS_DIR="defaults", //! @details Directory name which holds the default pgModeler configuration
+	SCHEMAS_DIR="schemas", //! @details Default name for the schemas directory
+	SQL_SCHEMA_DIR="sql", //! @details Default name for the sql schemas directory
+	XML_SCHEMA_DIR="xml", //! @details Default name for the xml schemas directory
+	COMMON_SCHEMA_DIR="common", //! @details Default name for the commom schemas directory
+	SCHEMA_EXT=".sch", //! @details Default extension for schema files
+	OBJECT_DTD_DIR="dtd", //! @details Default directory for dtd files
+	OBJECT_DTD_EXT=".dtd", //! @details Default extension for dtd files
+	ROOT_DTD="dbmodel", //! @details Root DTD of model xml files
+	CONFIGURATION_EXT=".conf", //! @details Default extension for configuration files
+	HIGHLIGHT_FILE_SUF="-highlight", //! @details Suffix of language highlight configuration files
 
-   CODE_HIGHLIGHT_CONF="source-code-highlight", /// @details Default name for the language highlight dtd
-   OBJECTS_STYLE_CONF="objects-style", /// @details Default name for the object style configuration file
-   GENERAL_CONF="pgmodeler", /// @details Default name for the general pgModeler configuration
-   CONNECTIONS_CONF="connections", /// @details Default name for the DBMS connection configuration file
+	CODE_HIGHLIGHT_CONF="source-code-highlight", //! @details Default name for the language highlight dtd
+	OBJECTS_STYLE_CONF="objects-style", //! @details Default name for the object style configuration file
+	GENERAL_CONF="pgmodeler", //! @details Default name for the general pgModeler configuration
+	CONNECTIONS_CONF="connections", //! @details Default name for the DBMS connection configuration file
 
-   SQL_HIGHLIGHT_CONF="sql-highlight", /// @details Configuration file for SQL language highlight
-   XML_HIGHLIGHT_CONF="xml-highlight", /// @details Configuration file for XML language highlight
+	SQL_HIGHLIGHT_CONF="sql-highlight", //! @details Configuration file for SQL language highlight
+	XML_HIGHLIGHT_CONF="xml-highlight", //! @details Configuration file for XML language highlight
 
-   EXAMPLE_MODEL="example.dbm"; /// @details Default name for the sample model loaded on appearence configuration form
+	EXAMPLE_MODEL="example.dbm"; //! @details Default name for the sample model loaded on appearence configuration form
 }
 
 #endif

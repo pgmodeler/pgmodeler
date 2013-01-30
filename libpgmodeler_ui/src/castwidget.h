@@ -30,23 +30,23 @@
 #include "ui_castwidget.h"
 
 class CastWidget: public BaseObjectWidget, public Ui::CastWidget {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
-  /// @details Datatype configurations
-  TipoPgSQLWidget *src_datatype, *trg_datatype;
+		//! @details Datatype configurations
+		TipoPgSQLWidget *src_datatype, *trg_datatype;
 
-  /// @details Conversion function selector
-  SeletorObjetoWidget *conv_func_sel;
+		//! @details Conversion function selector
+		SeletorObjetoWidget *conv_func_sel;
 
-  void hideEvent(QHideEvent *event);
+		void hideEvent(QHideEvent *event);
 
- public:
-  CastWidget(QWidget * parent = 0);
-  void setAttributes(DatabaseModel *model, OperationList *op_list, Cast *cast);
+	public:
+		CastWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Cast *cast);
 
- public slots:
-  void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

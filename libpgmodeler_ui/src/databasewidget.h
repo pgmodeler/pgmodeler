@@ -29,16 +29,16 @@
 #include "baseobjectwidget.h"
 
 class DatabaseWidget: public BaseObjectWidget, public Ui::DatabaseWidget {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
- public:
-   DatabaseWidget(QWidget * parent = 0);
+	public:
+		DatabaseWidget(QWidget * parent = 0);
 
-   void setAttributes(DatabaseModel *model);
+		void setAttributes(DatabaseModel *model);
 
- public slots:
-   void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

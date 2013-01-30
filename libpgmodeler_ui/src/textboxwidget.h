@@ -29,20 +29,20 @@
 #include "baseobjectwidget.h"
 
 class TextboxWidget: public BaseObjectWidget, public Ui::TextboxWidget {
- private:
-  Q_OBJECT
-  void hideEvent(QHideEvent *event);
+	private:
+		Q_OBJECT
+		void hideEvent(QHideEvent *event);
 
- public:
-  TextboxWidget(QWidget * parent = 0);
+	public:
+		TextboxWidget(QWidget * parent = 0);
 
-  void setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox=NULL, float obj_px=NAN, float obj_py=NAN);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Textbox *txtbox=NULL, float obj_px=NAN, float obj_py=NAN);
 
- private slots:
-  void selectTextColor(void);
+	private slots:
+		void selectTextColor(void);
 
- public slots:
-  void applyConfiguration(void);
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif

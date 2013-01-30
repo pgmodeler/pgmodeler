@@ -31,25 +31,25 @@
 #include "tableobjectview.h"
 
 class BaseTableView: public BaseObjectView {
- private:
-  Q_OBJECT
+	private:
+		Q_OBJECT
 
- protected:
-  /// @details Polygonal object that defines the table body
-  QGraphicsPolygonItem *body;
+	protected:
+		//! @details Polygonal object that defines the table body
+		QGraphicsPolygonItem *body;
 
-  /// @details Table title
-  TableTitleView *title;
+		//! @details Table title
+		TableTitleView *title;
 
-  QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
- public:
-  BaseTableView(BaseTable *base_tab);
-  ~BaseTableView(void);
+	public:
+		BaseTableView(BaseTable *base_tab);
+		~BaseTableView(void);
 
- signals:
-  /// @details Signal emitted when a table is moved over the scene
-  void s_objectMoved(void);
+	signals:
+		//! @details Signal emitted when a table is moved over the scene
+		void s_objectMoved(void);
 };
 
 #endif

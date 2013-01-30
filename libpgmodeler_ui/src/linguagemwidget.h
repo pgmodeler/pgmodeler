@@ -29,21 +29,22 @@
 #include "ui_linguagemwidget.h"
 
 class LinguagemWidget: public BaseObjectWidget, public Ui::LinguagemWidget {
- Q_OBJECT
+		Q_OBJECT
 
- private:
-   SeletorObjetoWidget *sel_func_handler,
-                       *sel_func_validator,
-                       *sel_func_inline;
- public:
-   LinguagemWidget(QWidget * parent = 0);
-   void setAttributes(DatabaseModel *model, OperationList *op_list, Language *linguagem);
+	private:
+		SeletorObjetoWidget *sel_func_handler,
+												*sel_func_validator,
+												*sel_func_inline;
 
- private slots:
-   void hideEvent(QHideEvent *);
+	public:
+		LinguagemWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Language *linguagem);
 
- public slots:
-   void applyConfiguration(void);
+	private slots:
+		void hideEvent(QHideEvent *);
+
+	public slots:
+		void applyConfiguration(void);
 };
 
 #endif
