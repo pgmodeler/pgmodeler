@@ -30,7 +30,7 @@
 class DummyPlugin: public QObject, public PgModelerPlugin {
 	private:
 		Q_OBJECT
-		//! @details Declares the interface which is used to implement the plugin
+		//! \brief Declares the interface which is used to implement the plugin
 		Q_INTERFACES(PgModelerPlugin)
 
 	public:

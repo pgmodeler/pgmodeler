@@ -30,7 +30,7 @@
 #include "tipopgsqlwidget.h"
 #include "tabelaobjetoswidget.h"
 
-/*! @details Declaring the OperatorClassElement class as a Qt metatype in order to permit
+/*! \brief Declaring the OperatorClassElement class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
 #include <QMetaType>
 Q_DECLARE_METATYPE(OperatorClassElement)
@@ -39,7 +39,7 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
 	private:
 		Q_OBJECT
 
-		//! @details Family, funciton and operator selectors
+		//! \brief Family, funciton and operator selectors
 		SeletorObjetoWidget *family_sel,
 												*function_sel,
 												*operator_sel;
@@ -47,7 +47,7 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
 		TipoPgSQLWidget *data_type,
 										*storage_type;
 
-		//! @details Stores the elements of operator class
+		//! \brief Stores the elements of operator class
 		TabelaObjetosWidget *elements_tab;
 
 		void hideEvent(QHideEvent *event);
@@ -57,17 +57,17 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
 		void setAttributes(DatabaseModel *model, OperationList *op_list, OperatorClass *op_class);
 
 	private slots:
-		//! @details Configures the element form according to the passed element type
+		//! \brief Configures the element form according to the passed element type
 		void selectElementType(int elem_type);
 
-		//! @details Shows the data from the passed element on the element table
+		//! \brief Shows the data from the passed element on the element table
 		void showElementData(OperatorClassElement elem, int lin_idx);
 
-		/*! @details Configures an instance of OperatorClassElement using the data on the form, additionally
+		/*! \brief Configures an instance of OperatorClassElement using the data on the form, additionally
 			the configured element  is shown on the specified line on table */
 		void handleElement(int lin_idx);
 
-		//! @details Fill the form fields with the element data on the specified table line
+		//! \brief Fill the form fields with the element data on the specified table line
 		void editElement(int lin_idx);
 
 	public slots:

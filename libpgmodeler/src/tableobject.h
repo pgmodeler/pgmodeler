@@ -31,54 +31,54 @@ like columns, rules, triggers, indexes, constraints.
 
 class TableObject: public BaseObject {
 	protected:
-		//! @details Stores the table that owns this object
+		//! \brief Stores the table that owns this object
 		BaseTable *parent_table;
 
-		/*! @details Indicates that the object was included automaticaly by "one to many",
+		/*! \brief Indicates that the object was included automaticaly by "one to many",
 		 "one to many", "many to many" relationships */
 		bool add_by_linking;
 
-		/*! @details Indicates that the object was included automaticaly by "one to many",
+		/*! \brief Indicates that the object was included automaticaly by "one to many",
 		 "generalization" relationships */
 		bool add_by_generalization;
 
-		/*! @details Indicates that the object was included automaticaly by "one to many",
+		/*! \brief Indicates that the object was included automaticaly by "one to many",
 		 "copy" relationships */
 		bool add_by_copy;
 
-		//! @details Defines that the object is included by relationship (1-1, 1-n, n-n)
+		//! \brief Defines that the object is included by relationship (1-1, 1-n, n-n)
 		void setAddedByLinking(bool value);
 
-		//! @details Defines that the object is included by generalization relationship
+		//! \brief Defines that the object is included by generalization relationship
 		void setAddedByGeneralization(bool value);
 
-		//! @details Defines that the object is include by copy relationship
+		//! \brief Defines that the object is include by copy relationship
 		void setAddedByCopy(bool value);
 
 	public:
 		TableObject(void);
 
-		//! @details Defines the parent table for the object
+		//! \brief Defines the parent table for the object
 		void setParentTable(BaseTable *table);
 
-		//! @details Returns the object parent table
+		//! \brief Returns the object parent table
 		BaseTable *getParentTable(void);
 
-		/*! @details This method is purely virtual to force the derived classes
+		/*! \brief This method is purely virtual to force the derived classes
 	overload this method. This also makes class TableObject
 	not instantiable */
 		virtual QString getCodeDefinition(unsigned def_type)=0;
 
-		//! @details Returns whether the object was added by relationship 1-1, 1-n, n-n
+		//! \brief Returns whether the object was added by relationship 1-1, 1-n, n-n
 		bool isAddedByLinking(void);
 
-		//! @details Returns whether the object was added by generalization
+		//! \brief Returns whether the object was added by generalization
 		bool isAddedByGeneralization(void);
 
-		//! @details Returns whether the object was added by copy relationship
+		//! \brief Returns whether the object was added by copy relationship
 		bool isAddedByCopy(void);
 
-		/*! @details Returns whether the object was added by relationship (covering all the
+		/*! \brief Returns whether the object was added by relationship (covering all the
 		 possible relationship types) */
 		bool isAddedByRelationship(void);
 

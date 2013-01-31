@@ -249,7 +249,7 @@ namespace ParsersAttributes {
 	WORD_SEPARATORS="word-separators",
 	WORD_DELIMITERS="word-delimiters",
 	IGNORED_CHARS="ignored-chars",
-	LOOKUP_CHAR="lookup-char",
+	LOOKAHEAD_CHAR="lookahead-char",
 	PARTIAL_MATCH="partial-match",
 	IO_CAST="io-cast",
 	WINDOW_FUNC="window-func",

@@ -164,7 +164,7 @@ unsigned SyntaxHighlighter::getMultiLineInfoCount(int block)
 	return(count);
 }
 
-QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &chr_lookup, int idx, int &match_idx, int &match_len)
+QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &lookahead_chr, int idx, int &match_idx, int &match_len)
 {
 	QRegExp expr;
 	vector<QString>::iterator itr, itr_end;
@@ -229,7 +229,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &c
 				}
 			}
 
-			if(match && lookup_char.count(group) > 0 && chr_lookup!=lookup_char.at(group))
+			if(match && lookahead_char.count(group) > 0 && lookahead_chr!=lookahead_char.at(group))
 				match=false;
 
 			itr_exp++;
@@ -314,7 +314,7 @@ QString SyntaxHighlighter::identifyWordGroup(const QString &word, const QChar &c
 					}
 				}
 
-				if(match && lookup_char.count(group) > 0 && chr_lookup!=lookup_char.at(group))
+				if(match && lookahead_char.count(group) > 0 && lookahead_chr!=lookahead_char.at(group))
 					match=false;
 
 				itr_exp++;
@@ -503,11 +503,10 @@ void SyntaxHighlighter::clearConfiguration(void)
 	formats.clear();
 	partial_match.clear();
 	groups_order.clear();
-	word_sep_groups.clear();
 	word_separators.clear();
 	word_delimiters.clear();
 	ignored_chars.clear();
-	lookup_char.clear();
+	lookahead_char.clear();
 
 	configureAttributes();
 }
@@ -683,8 +682,8 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								fg_color.setNamedColor(attribs[ParsersAttributes::FOREGROUND_COLOR]);
 								bg_color.setNamedColor(attribs[ParsersAttributes::BACKGROUND_COLOR]);
 
-								if(!attribs[ParsersAttributes::LOOKUP_CHAR].isEmpty())
-									lookup_char[group]=attribs[ParsersAttributes::LOOKUP_CHAR][0];
+								if(!attribs[ParsersAttributes::LOOKAHEAD_CHAR].isEmpty())
+									lookahead_char[group]=attribs[ParsersAttributes::LOOKAHEAD_CHAR][0];
 
 								//Configura a formatação do grupo de acordo com os atributos obtidos
 								format.setFontItalic(italic);

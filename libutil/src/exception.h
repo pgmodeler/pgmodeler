@@ -230,42 +230,42 @@ enum ErrorType {
 
 class Exception {
 	private:
-		/*! @details Stores other exceptions before raise the 'this' exception.
+		/*! \brief Stores other exceptions before raise the 'this' exception.
 		 This structure can be used to simulate a stack trace to improve the debug */
 		deque<Exception> exceptions;
 
-		//! @details Stores the error messages and codes (names of errors) in string format
+		//! \brief Stores the error messages and codes (names of errors) in string format
 		static QString messages[ERROR_COUNT][2];
 
-		//! @details Constants used to access the error details
+		//! \brief Constants used to access the error details
 		static const unsigned ERROR_CODE=0,
 													ERROR_MESSAGE=1;
 
-		//! @details Error type related to the exception
+		//! \brief Error type related to the exception
 		ErrorType error_type;
 
-		//! @details Formated error message
+		//! \brief Formated error message
 		QString error_msg,
-						/*! @details Holds the class name and method which was
+						/*! \brief Holds the class name and method which was
 						triggered the exception. For this to be possible, at the time
 						instantiation of this class the  G++ macro __ PRETTY_FUNCTION__
 						must be passed. This macro contains the format [RETURN][CLASS]::[METHOD][PARAMS] */
 						method,
 
-						//! @details File where the exception was generated (Macro __ FILE__)
+						//! \brief File where the exception was generated (Macro __ FILE__)
 						file,
 
-						/*! @details Additional information (optional) may store any other
+						/*! \brief Additional information (optional) may store any other
 						type of information that is interesting on attempt to resolve the error */
 						extra_info;
 
-		//! @details Line of file where the exception were generated (Macro __LINE__)
+		//! \brief Line of file where the exception were generated (Macro __LINE__)
 		int line;
 
-		//! @details Configures the basic attributes of exception
+		//! \brief Configures the basic attributes of exception
 		void configureException(const QString &msg, ErrorType error_type, const QString &method, const QString &file, int line, const QString &extra_info);
 
-		//! @details Adds a exception to the list of exceptions
+		//! \brief Adds a exception to the list of exceptions
 		void addException(Exception &exception);
 
 	public:
@@ -285,10 +285,10 @@ class Exception {
 		ErrorType getErrorType(void);
 		QString getExtraInfo(void);
 
-		//! @details Gets the full exception stack
+		//! \brief Gets the full exception stack
 		void getExceptionsList(deque<Exception> &list);
 
-		//! @details Gets the exception stack in a formatted text
+		//! \brief Gets the exception stack in a formatted text
 		QString getExceptionsText(void);
 };
 

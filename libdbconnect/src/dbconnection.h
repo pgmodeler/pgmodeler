@@ -31,20 +31,20 @@
 
 class DBConnection {
 	private:
-		//! @details Database connection descriptor
+		//! \brief Database connection descriptor
 		PGconn *connection;
 
-		//! @details Parameters map used to generate the connection string
+		//! \brief Parameters map used to generate the connection string
 		map<QString, QString> connection_params;
 
-		//! @details Formated connection string
+		//! \brief Formated connection string
 		QString connection_str;
 
-		//! @details Generates the connection string based on the parameter map
+		//! \brief Generates the connection string based on the parameter map
 		void generateConnectionString(void);
 
 	public:
-		//! @details Constants used to reference the connections parameters
+		//! \brief Constants used to reference the connections parameters
 		static const QString	PARAM_SERVER_FQDN,
 													PARAM_SERVER_IP,
 													PARAM_PORT,
@@ -71,44 +71,44 @@ class DBConnection {
 		DBConnection(const QString &servidor, const QString &porta, const QString &usuario, const QString &passwd, const QString &db_name);
 		~DBConnection(void);
 
-		/*! @details Sets one connection parameter. This method can only be called before
+		/*! \brief Sets one connection parameter. This method can only be called before
 		 the connection to the database */
 		void setConnectionParam(const QString &param, const QString &value);
 
-		//! @details Open the connection to the database
+		//! \brief Open the connection to the database
 		void connect(void);
 
-		//! @details Resets the database connection
+		//! \brief Resets the database connection
 		void reset(void);
 
-		//! @details Close the opened connection
+		//! \brief Close the opened connection
 		void close(void);
 
-		//! @details Returns the value of specified parameter name
+		//! \brief Returns the value of specified parameter name
 		QString getConnectionParam(const QString &param);
 
-		//! @details Returns the full parameter map
+		//! \brief Returns the full parameter map
 		map<QString, QString> getConnectionParams(void);
 
-		//! @details Returns the connection string used to connect to de database
+		//! \brief Returns the connection string used to connect to de database
 		QString getConnectionString(void);
 
-		//! @details Returns the DBMS version in format XX.YY.ZZ
+		//! \brief Returns the DBMS version in format XX.YY.ZZ
 		QString getDBMSVersion(void);
 
-		//! @details Returns if the connections is stablished
+		//! \brief Returns if the connections is stablished
 		bool isStablished(void);
 
-		/*! @details Executes a DML command on the server using the opened connection.
+		/*! \brief Executes a DML command on the server using the opened connection.
 		 Its mandatory to specify the object to receive the returned resultset. */
 		void executeDMLCommand(const QString &sql, ResultSet &result);
 
-		/*! @details Executes a DDL command on the server using the opened connection.
+		/*! \brief Executes a DDL command on the server using the opened connection.
 		 The user don't need to specify the resultset since the commando executed is intended
 		 to be an data definition one  */
 		void executeDDLCommand(const QString &sql);
 
-		//! @details Makes an copy between two connections
+		//! \brief Makes an copy between two connections
 		void operator = (DBConnection &conn);
 };
 

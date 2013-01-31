@@ -32,7 +32,7 @@
 
 class Aggregate: public BaseObject {
 	private:
-		/*! @details List of types with which the aggregate operates.
+		/*! \brief List of types with which the aggregate operates.
 		 If it is empty will be considered all possible types '*'
 
 		 To maintain compatibility with the old syntax,
@@ -43,55 +43,55 @@ class Aggregate: public BaseObject {
 		 be of type 'any' */
 		vector<PgSQLType> data_types;
 
-		/*! @details Function that defines the aggregate behavior
+		/*! \brief Function that defines the aggregate behavior
 		 0 -> Final function
 		 1 -> Transition function */
 		Function *functions[2];
 
-		//! @details Data type used as aggregate's state
+		//! \brief Data type used as aggregate's state
 		PgSQLType state_type;
 
-		//! @details Initial condition for the aggregate
+		//! \brief Initial condition for the aggregate
 		QString initial_condition;
 
-		//! @details Sort operator used by the aggregate
+		//! \brief Sort operator used by the aggregate
 		Operator *sort_operator;
 
-		//! @details Formats the data types to be used as attribute by the SchemaParser
+		//! \brief Formats the data types to be used as attribute by the SchemaParser
 		void setTypesAttribute(unsigned def_type);
 
-		//! @details Checks if the passed function is valid according to the rule of aggregate definition
+		//! \brief Checks if the passed function is valid according to the rule of aggregate definition
 		bool isValidFunction(unsigned func_idx, Function *func);
 
 	public:
-		//! @details Constants used to reference the functions used by the aggregate
+		//! \brief Constants used to reference the functions used by the aggregate
 		static const unsigned FINAL_FUNC=0,
 													TRANSITION_FUNC=1;
 
 		Aggregate(void);
 
-		//! @details Defines one of the functions used by the aggregate
+		//! \brief Defines one of the functions used by the aggregate
 		void setFunction(unsigned func_idx, Function *func);
 
-		//! @details Defines the state data type of the aggregate
+		//! \brief Defines the state data type of the aggregate
 		void setStateType(PgSQLType state_type);
 
-		//! @details Defines the initial condition for the aggregate
+		//! \brief Defines the initial condition for the aggregate
 		void setInitialCondition(const QString &cond);
 
-		//! @details Defines the sort operator used by the aggregate
+		//! \brief Defines the sort operator used by the aggregate
 		void setSortOperator(Operator *sort_op);
 
-		//! @details Adds a data type in the group that is accepted by the aggregate
+		//! \brief Adds a data type in the group that is accepted by the aggregate
 		void addDataType(PgSQLType type);
 
-		//! @details Removes one aggregate accepted data type
+		//! \brief Removes one aggregate accepted data type
 		void removeDataType(unsigned type_idx);
 
-		//! @details Removes all accepted data types from aggregate
+		//! \brief Removes all accepted data types from aggregate
 		void removeDataTypes(void);
 
-		//! @details Checks whether the passed type exists in the aggregate's set of data types
+		//! \brief Checks whether the passed type exists in the aggregate's set of data types
 		bool isDataTypeExist(PgSQLType type);
 
 		Function *getFunction(unsigned func_idx);
@@ -101,7 +101,7 @@ class Aggregate: public BaseObject {
 		PgSQLType getDataType(unsigned type_idx);
 		unsigned getDataTypeCount(void);
 
-		//! @details Returns the SQL / XML code definition for the aggregate
+		//! \brief Returns the SQL / XML code definition for the aggregate
 		QString getCodeDefinition(unsigned def_type);
 };
 

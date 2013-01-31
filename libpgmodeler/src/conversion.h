@@ -32,43 +32,43 @@
 
 class Conversion: public BaseObject {
 	private:
-		/*! @details Encoding types vector:
+		/*! \brief Encoding types vector:
 		 0 -> Source encoding
 		 1 -> Destination encoding */
 		EncodingType encodings[2];
 
-		//! @details Function used to perform the conversion between the encodings
+		//! \brief Function used to perform the conversion between the encodings
 		Function *conversion_func;
 
-		//! @details Indicates whether the conversion is the default for the envolved encodings
+		//! \brief Indicates whether the conversion is the default for the envolved encodings
 		bool is_default;
 
 	public:
-		//! @details Constants used to access the conversion encodings
+		//! \brief Constants used to access the conversion encodings
 		static const unsigned SRC_ENCODING=0,
 													DST_ENCODING=1;
 
 		Conversion(void);
 
-		//! @details Defines whether the conversion is the default for the encodings
+		//! \brief Defines whether the conversion is the default for the encodings
 		void setDefault(bool value);
 
-		//! @details Sets one of the conversion encodings (using the encoding index constants)
+		//! \brief Sets one of the conversion encodings (using the encoding index constants)
 		void setEncoding(unsigned encoding_idx, EncodingType encoding_type);
 
-		//! @details Sets the conversion function used to convert character between encodings
+		//! \brief Sets the conversion function used to convert character between encodings
 		void setConversionFunction(Function *conv_func);
 
-		//! @details Returns the encoding related to the index (using the encoding index constants)
+		//! \brief Returns the encoding related to the index (using the encoding index constants)
 		EncodingType getEncoding(unsigned encoding_idx);
 
-		//! @details Returns the current used conversion function
+		//! \brief Returns the current used conversion function
 		Function *getConversionFunction(void);
 
-		//! @details Returns if the conversion is the default for the envolved encodings
+		//! \brief Returns if the conversion is the default for the envolved encodings
 		bool isDefault(void);
 
-		//! @details Returns the SQL/XML code definition for the conversion
+		//! \brief Returns the SQL/XML code definition for the conversion
 		QString getCodeDefinition(unsigned def_type);
 };
 

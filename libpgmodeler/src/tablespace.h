@@ -32,7 +32,7 @@ class Tablespace: public BaseObject{
 	private:
 		static unsigned tabspace_id;
 
-		//! @details Directory where the tablespace resides
+		//! \brief Directory where the tablespace resides
 		QString directory;
 
 	public:
@@ -40,13 +40,13 @@ class Tablespace: public BaseObject{
 
 		void setName(const QString &name);
 
-		//! @details Sets the directory where tablespace resides
+		//! \brief Sets the directory where tablespace resides
 		void setDirectory(const QString &dir);
 
-		//! @details Returns the directory where the tablespace resides
+		//! \brief Returns the directory where the tablespace resides
 		QString getDirectory(void);
 
-		//! @details Returns the SQL / XML code for the tablespace
+		//! \brief Returns the SQL / XML code for the tablespace
 		QString getCodeDefinition(unsigned def_type);
 };
 

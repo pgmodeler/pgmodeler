@@ -14,7 +14,7 @@
 <!ATTLIST group name CDATA #REQUIRED>
 <!ATTLIST group background-color CDATA #IMPLIED>
 <!ATTLIST group foreground-color CDATA #IMPLIED>
-<!ATTLIST group lookup-char CDATA #IMPLIED>
+<!ATTLIST group lookahead-char CDATA #IMPLIED>
 <!ATTLIST group case-sensitive (false|true) "false">
 <!ATTLIST group bold (false|true) "false">
 <!ATTLIST group italic (false|true) "false">

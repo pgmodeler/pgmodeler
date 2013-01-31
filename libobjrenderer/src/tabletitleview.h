@@ -34,10 +34,10 @@ class TableTitleView: public BaseObjectView
 	private:
 		Q_OBJECT
 
-		//! @details Polygonal object that defines the title border
+		//! \brief Polygonal object that defines the title border
 		QGraphicsPolygonItem *box;
 
-		//! @details Graphical texts that is used to store the object name and schema name
+		//! \brief Graphical texts that is used to store the object name and schema name
 		QGraphicsSimpleTextItem *obj_name,
 		*schema_name;
 

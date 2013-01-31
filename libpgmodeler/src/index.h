@@ -31,22 +31,22 @@
 
 class Index: public TableObject{
 	private:
-		//! @details Stores the elements that defines the index
+		//! \brief Stores the elements that defines the index
 		vector<IndexElement> elements;
 
-		//! @details Conditional expression for the index
+		//! \brief Conditional expression for the index
 		QString conditional_expr;
 
-		//! @details Fill factor used by the index
+		//! \brief Fill factor used by the index
 		unsigned fill_factor;
 
-		//! @details Indexing method used by the index
+		//! \brief Indexing method used by the index
 		IndexingType indexing_type;
 
-		//! @details Boolean attributes that define some index features  (UNIQUE, CONCURRENT, FAST UPDATE)
+		//! \brief Boolean attributes that define some index features  (UNIQUE, CONCURRENT, FAST UPDATE)
 		bool index_attribs[3];
 
-		//! @details Formats the elements string used by the SchemaParser
+		//! \brief Formats the elements string used by the SchemaParser
 		void setElementsAttribute(unsigned def_type);
 
 	public:
@@ -56,61 +56,61 @@ class Index: public TableObject{
 
 		Index(void);
 
-		//! @details Adds an element to the index using an column
+		//! \brief Adds an element to the index using an column
 		void addElement(Column *column, OperatorClass *op_class, bool asc_order, bool nulls_first);
 
-		//! @details Adds an element to the index using an expression
+		//! \brief Adds an element to the index using an expression
 		void addElement(const QString &expr, OperatorClass *op_class, bool asc_order, bool nulls_first);
 
-		//! @details Adds an element to the index using other pre-configured element
+		//! \brief Adds an element to the index using other pre-configured element
 		void addElement(IndexElement elem);
 
-		//! @details Returns the element index if it exists or -1 if not
+		//! \brief Returns the element index if it exists or -1 if not
 		int isElementExists(Column *column);
-		//! @details Returns the element index if it exists or -1 if not
+		//! \brief Returns the element index if it exists or -1 if not
 		int isElementExists(const QString &expr);
 
-		//! @details Returns one element using its index
+		//! \brief Returns one element using its index
 		IndexElement getElement(unsigned elem_idx);
 
-		//! @details Remove an element using its index
+		//! \brief Remove an element using its index
 		void removeElement(unsigned idx_elem);
 
-		//! @details Remove all elements from the index
+		//! \brief Remove all elements from the index
 		void removeElements(void);
 
-		//! @details Defines the conditional expression used by the index
+		//! \brief Defines the conditional expression used by the index
 		void setConditionalExpression(const QString &expr);
 
-		//! @details Defines the indexing method used by the index
+		//! \brief Defines the indexing method used by the index
 		void setIndexingType(IndexingType idx_type);
 
-		/*! @details Configures the attributes for the indexs. These attributes can be
+		/*! \brief Configures the attributes for the indexs. These attributes can be
 		 referencede using the UNIQUE, CONCURRENT and FAST_UPDATE constants */
 		void setIndexAttribute(unsigned attrib_id, bool value);
 
-		//! @details Defines the index fill factor
+		//! \brief Defines the index fill factor
 		void setFillFactor(unsigned factor);
 
-		//! @details Gets the index conditional expression
+		//! \brief Gets the index conditional expression
 		QString getConditionalExpression(void);
 
-		//! @details Gets the index element count
+		//! \brief Gets the index element count
 		unsigned getElementCount(void);
 
-		//! @details Returns the indexing method used by the index
+		//! \brief Returns the indexing method used by the index
 		IndexingType getIndexingType(void);
 
-		//! @details Returns the current state of one index attribute (UNIQUE, CONCURRENT, FAST UPDATE)
+		//! \brief Returns the current state of one index attribute (UNIQUE, CONCURRENT, FAST UPDATE)
 		bool getIndexAttribute(unsigned attrib_id);
 
-		//! @details Returns the index fill factor
+		//! \brief Returns the index fill factor
 		unsigned getFillFactor(void);
 
-		//! @details Returns the SQL / XML definition for the index
+		//! \brief Returns the SQL / XML definition for the index
 		QString getCodeDefinition(unsigned tipo_def);
 
-		/*! @details Returns whether the index references columns added
+		/*! \brief Returns whether the index references columns added
 		 by relationship. This method is used as auxiliary
 		 to control which index reference columns added by the
 		 relationship in order to avoid referece breaking due constants

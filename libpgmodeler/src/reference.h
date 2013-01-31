@@ -31,62 +31,62 @@
 
 class Reference {
 	private:
-		//! @details Stores the table used by the reference
+		//! \brief Stores the table used by the reference
 		Table *table;
 
-		//! @details Stores the column used by the reference
+		//! \brief Stores the column used by the reference
 		Column *column;
 
-		//! @details Stores the expression that defines one reference
+		//! \brief Stores the expression that defines one reference
 		QString expression,
-		//! @details Stores the alias to the expression or table
+		//! \brief Stores the alias to the expression or table
 		alias,
-		//! @details Stores only the alias for the column
+		//! \brief Stores only the alias for the column
 		column_alias;
 
 	public:
-		//! @details Constants used to define the reference type
-		static const unsigned REFER_COLUMN=0, //! @details The reference is based on a table column
-													REFER_EXPRESSION=1; //! @details The reference is based on an expression
+		//! \brief Constants used to define the reference type
+		static const unsigned REFER_COLUMN=0, //! \brief The reference is based on a table column
+													REFER_EXPRESSION=1; //! \brief The reference is based on an expression
 
-		//! @details Constants used on the view code generation
+		//! \brief Constants used on the view code generation
 		static const unsigned SQL_REFER_WHERE=10,
 													SQL_REFER_SELECT=20,
 													SQL_REFER_FROM=30;
 
 		Reference(void);
 
-		//! @details Creates a reference based on a table column
+		//! \brief Creates a reference based on a table column
 		Reference(Table *table, Column *column, const QString &tab_alias, const QString &col_alias);
 
-		//! @details Creates a reference based on a expression
+		//! \brief Creates a reference based on a expression
 		Reference(const QString &expression, const QString &expr_alias);
 
-		//! @details Gets the referenced table
+		//! \brief Gets the referenced table
 		Table *getTable(void);
 
-		//! @details Gets the referenced column
+		//! \brief Gets the referenced column
 		Column *getColumn(void);
 
-		//! @details Returns the alias for the referenced column
+		//! \brief Returns the alias for the referenced column
 		QString getColumnAlias(void);
 
-		//! @details Returs the reference for the table or expression
+		//! \brief Returs the reference for the table or expression
 		QString getAlias(void);
 
-		//! @details Returns the expression for the reference
+		//! \brief Returns the expression for the reference
 		QString getExpression(void);
 
-		//! @details Returns the reference typ (see REFER_??? constants)
+		//! \brief Returns the reference typ (see REFER_??? constants)
 		unsigned getReferenceType(void);
 
-		//! @details Returns the SQL code definition
+		//! \brief Returns the SQL code definition
 		QString getSQLDefinition(unsigned sql_type);
 
-		//! @details Returns the XML code definition
+		//! \brief Returns the XML code definition
 		QString getXMLDefinition(void);
 
-		/*! @details Compare the attributes of two references returning true
+		/*! \brief Compare the attributes of two references returning true
 		 when they have the same values */
 		bool operator == (Reference &refer);
 };

@@ -32,16 +32,16 @@
 
 class Language: public BaseObject{
 	private:
-		/*! @details Indicates whether the language is trusted on the database which means
+		/*! \brief Indicates whether the language is trusted on the database which means
 		that the object can be used by an unprivileged user without compromise
 		the entire database security */
 		bool is_trusted;
 
-		//! @details Functions that defines the language behavior
+		//! \brief Functions that defines the language behavior
 		Function *functions[3];
 
 	public:
-		/*! @details Constants used to reference the language's functions:
+		/*! \brief Constants used to reference the language's functions:
 			> VALIDATOR: Function that validates the code written in the language's syntax
 			> HANDLER: Function that executes the functions written in the language's syntax
 			> INLINE: Function that executes inline instructions (DO's) (only on PostgreSQL 9.x) */
@@ -51,22 +51,22 @@ class Language: public BaseObject{
 
 		Language(void);
 
-		//! @details Sets the language name
+		//! \brief Sets the language name
 		void setName(const QString &name);
 
-		//! @details Sets whether the language is trusted or not
+		//! \brief Sets whether the language is trusted or not
 		void setTrusted(bool value);
 
-		//! @details Sets one of the language auxiliary functions
+		//! \brief Sets one of the language auxiliary functions
 		void setFunction(Function *func, unsigned func_type);
 
-		//! @details Returs the trusted state of the language
+		//! \brief Returs the trusted state of the language
 		bool isTrusted(void);
 
-		//! @details Returns one of the auxiliary functions
+		//! \brief Returns one of the auxiliary functions
 		Function *getFunction(unsigned func_type);
 
-		//! @details Returns the SQL / XML code definition for the language
+		//! \brief Returns the SQL / XML code definition for the language
 		QString getCodeDefinition(unsigned def_type, bool reduced_form);
 		QString getCodeDefinition(unsigned def_type);
 };

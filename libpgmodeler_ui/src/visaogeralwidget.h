@@ -35,13 +35,13 @@
 class VisaoGeralWidget: public QWidget, public Ui::VisaoGeralWidget {
 		Q_OBJECT
 	private:
-		//! @details Modelo usado para exibição na visão geral
+		//! \brief Modelo usado para exibição na visão geral
 		ModeloWidget *modelo;
 
-		//! @details Fator de zoom da cena
+		//! \brief Fator de zoom da cena
 		float fator_zoom;
 
-		//! @details Fator de redimensionamento dos widgets (20% do tamanho da cena)
+		//! \brief Fator de redimensionamento dos widgets (20% do tamanho da cena)
 		const static float FATOR_REDIM=0.20f;
 
 		void mouseDoubleClickEvent(QMouseEvent *);
@@ -49,7 +49,7 @@ class VisaoGeralWidget: public QWidget, public Ui::VisaoGeralWidget {
 		void mouseReleaseEvent(QMouseEvent *evento);
 		void mouseMoveEvent(QMouseEvent *evento);
 
-		/*! @details Atualiza a exibição da visão geral com a última modificação na cena, o parâmetro
+		/*! \brief Atualiza a exibição da visão geral com a última modificação na cena, o parâmetro
 		 'forcar_atual' força a atualização mesmo que o widget não esteja visível */
 		void atualizarVisaoGeral(bool forcar_atual);
 
@@ -57,27 +57,27 @@ class VisaoGeralWidget: public QWidget, public Ui::VisaoGeralWidget {
 		VisaoGeralWidget(QWidget *parent = 0);
 
 	public slots:
-		//! @details Atualiza a visão geral (caso o widiget esteja visível)
+		//! \brief Atualiza a visão geral (caso o widiget esteja visível)
 		void atualizarVisaoGeral(void);
 
-		//! @details Redimensiona a geometria do frame de janela do mundo
+		//! \brief Redimensiona a geometria do frame de janela do mundo
 		void redimensionarFrameJanela(void);
 
-		//! @details Redimensiona todo o widget de visão geral
+		//! \brief Redimensiona todo o widget de visão geral
 		void redimensionarVisaoGeral(void);
 
-		//! @details Atualiza o fator de zoom da cena
+		//! \brief Atualiza o fator de zoom da cena
 		void atualizarFatorZoom(float zoom);
 
-		//! @details Define o modelo a ser exibido na visão geral
+		//! \brief Define o modelo a ser exibido na visão geral
 		void show(ModeloWidget *modelo);
 
-		//! @details Sobrecarga dos metodos de manipulação dos eventos de abertura e fechamento da janela
+		//! \brief Sobrecarga dos metodos de manipulação dos eventos de abertura e fechamento da janela
 		void closeEvent(QCloseEvent *evento);
 		void showEvent(QShowEvent *evento);
 
 	signals:
-		//! @details Sinal emitido quando a janela é aberta ou fechada (o parâmetro indica se a janela está ou não visível)
+		//! \brief Sinal emitido quando a janela é aberta ou fechada (o parâmetro indica se a janela está ou não visível)
 		void s_visaoGeralVisivel(bool);
 };
 

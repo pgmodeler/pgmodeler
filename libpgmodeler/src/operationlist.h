@@ -33,48 +33,48 @@ undo / redo all the operations made.
 
 class Operation {
 	protected:
-		/*! @details Reference to the parent object of the original object that has suffered the operation,
+		/*! \brief Reference to the parent object of the original object that has suffered the operation,
 		This attribute is used only in the case of table objects such as columns, indexes,
 		constraints, rules. For other object types there is no need to use this attribute
 		because the parent object for other objects is always the database model */
 		BaseObject *parent_obj;
 
-		//! @details Reference (on the pool) to the copy of the original object
+		//! \brief Reference (on the pool) to the copy of the original object
 		BaseObject *pool_obj;
 
-		//! @details Reference to the original object that generates the operation.
+		//! \brief Reference to the original object that generates the operation.
 		BaseObject *original_obj;
 
-		/*! @details Stores the XML definition of the special objects this means the objects
+		/*! \brief Stores the XML definition of the special objects this means the objects
 		 that reference columns added by relationship. This is the case of triggers,
 		 indexes, sequences, constraints. */
 		QString xml_definition;
 
-		//! @details Operation type (Constants OBJECT_[MODIFIED | CREATED | REMOVED | MOVED]
+		//! \brief Operation type (Constants OBJECT_[MODIFIED | CREATED | REMOVED | MOVED]
 		unsigned op_type;
 
-		//! @details Operation chain type. This attribute is used to redo/undo several operations at once
+		//! \brief Operation chain type. This attribute is used to redo/undo several operations at once
 		unsigned chain_type;
 
-		//! @details Object index inside the list on its parent object
+		//! \brief Object index inside the list on its parent object
 		int object_idx;
 
 	public:
-		//! @details Constants used to reference the type of operations
+		//! \brief Constants used to reference the type of operations
 		static const unsigned OBJECT_MODIFIED=0,
 													OBJECT_CREATED=1,
 													OBJECT_REMOVED=2,
-													/*! @details This type of operation has the same effect of operation OBJECT_MODIFIED
+													/*! \brief This type of operation has the same effect of operation OBJECT_MODIFIED
 													 except that it not (re)validate relationships as happens with operations.
 													 This type of operation (OBJECT_MOVED) is useful to undo position changes of
 													 graphical objects without executing unnecessary revalidations of relationships */
 													OBJECT_MOVED=3;
 
-		//! @details Operation chain types
-		static const unsigned NO_CHAIN=10, //! @details The operation is not part of a chain
-													CHAIN_START=11, //! @details The operation is the head of the chain
-													CHAIN_MIDDLE=12, //! @details The operation is in the middle of the chain
-													CHAIN_END=13; //! @details The operation is the last on the chain
+		//! \brief Operation chain types
+		static const unsigned NO_CHAIN=10, //! \brief The operation is not part of a chain
+													CHAIN_START=11, //! \brief The operation is the head of the chain
+													CHAIN_MIDDLE=12, //! \brief The operation is in the middle of the chain
+													CHAIN_END=13; //! \brief The operation is the last on the chain
 
 
 		Operation(void)
@@ -88,73 +88,73 @@ class OperationList: public QObject {
 	private:
 		Q_OBJECT
 
-		//! @details Inidcates that operation chaining is ignored temporarily
+		//! \brief Inidcates that operation chaining is ignored temporarily
 		bool ignore_chain;
 
-		//! @details List of objects that were removed / modified on the model
+		//! \brief List of objects that were removed / modified on the model
 		vector<BaseObject *> object_pool;
 
-		/*! @details List of objects that at the time of deletion from pool were still referenced
+		/*! \brief List of objects that at the time of deletion from pool were still referenced
 		 somehow on the model. The object is stored in this secondary list and
 		 deleted when the whole list of operations is destroyed */
 		vector<BaseObject *> not_removed_objs;
 
-		//! @details Stores the operations executed by the user
+		//! \brief Stores the operations executed by the user
 		vector<Operation *> operations;
 
-		//! @details Database model that is linked with this operation list
+		//! \brief Database model that is linked with this operation list
 		DatabaseModel *model;
 
-		//! @details Maximum number of stored operations (global)
+		//! \brief Maximum number of stored operations (global)
 		static unsigned max_size;
 
-		/*! @details Stores the type of chain to the next operation to be stored
+		/*! \brief Stores the type of chain to the next operation to be stored
 		 in the list. This attribute is used in conjunction with the chaining
 		 initialization / finalization methods. */
 		unsigned next_op_chain;
 
-		//! @details Current operation index
+		//! \brief Current operation index
 		int current_index;
 
-		/*! @details Validates operations by checking whether they have registered objects in the pool.
+		/*! \brief Validates operations by checking whether they have registered objects in the pool.
 		 If found any operation whose object is not in the pool it will be removed
 		 because an object outside the pool does not give a guarantee that is being
 		 referenced in the model. */
 		void validateOperations(void);
 
-		//! @details Checks whether the passed object is in the pool
+		//! \brief Checks whether the passed object is in the pool
 		bool isObjectOnPool(BaseObject *object);
 
-		//! @details Adds the object on the pool according to the operation type passed
+		//! \brief Adds the object on the pool according to the operation type passed
 		void addToPool(BaseObject *object, unsigned op_type);
 
-		/*! @details Removes one object from the pool using its index and deallocating
+		/*! \brief Removes one object from the pool using its index and deallocating
 		 it in case the object is not referenced on the model */
 		void removeFromPool(unsigned obj_idx);
 
-		/*! @details Executes the passed operation. The default behavior is the 'undo' if
+		/*! \brief Executes the passed operation. The default behavior is the 'undo' if
 		 the user passes the parameter 'redo=true' the method executes the
 		 redo function */
 		void executeOperation(Operation *operacao, bool redo);
 
-		//! @details Returns the chain size from the current element
+		//! \brief Returns the chain size from the current element
 		unsigned getChainSize(void);
 
 	public:
 		OperationList(DatabaseModel *model);
 		~OperationList(void);
 
-		/*! @details Starts chaining operations.
+		/*! \brief Starts chaining operations.
 		 This means that all operations added after calling this
 		 method will be considered to be performed all at once
 		 with a single call to the redoOperation / undoOperation methods */
 		void startOperationChain(void);
 
-		/*! @details Finalizes the chaining marking the last operation on the list
+		/*! \brief Finalizes the chaining marking the last operation on the list
 		 as the end of operation chain */
 		void finishOperationChain(void);
 
-		/*! @details Cancels the execution of operations in the form of chaining,
+		/*! \brief Cancels the execution of operations in the form of chaining,
 		 but if the list is open with chaining operations included will be chained too.
 		 This method helps in situations where is necessary to remove operations or
 		 execute them one by one but keeping the chaining created earlier.
@@ -164,25 +164,25 @@ class OperationList: public QObject {
 					 happens the operations will be created chained indefinitely */
 		void ignoreOperationChain(bool value);
 
-		//! @details Returns if the operation chaining where started
+		//! \brief Returns if the operation chaining where started
 		bool isOperationChainStarted(void);
 
-		//! @details Undo the current operation on the list
+		//! \brief Undo the current operation on the list
 		void undoOperation(void);
 
-		//! @details Redo the current operation on the list
+		//! \brief Redo the current operation on the list
 		void redoOperation(void);
 
-		//! @details Removes all the operations from the list
+		//! \brief Removes all the operations from the list
 		void removeOperations(void);
 
-		//! @details Gets the data from the operation with specified index
+		//! \brief Gets the data from the operation with specified index
 		void getOperationData(unsigned oper_idx, unsigned &oper_type, QString &obj_name, ObjectType &obj_type);
 
-		//! @details Sets the maximum size for the list
+		//! \brief Sets the maximum size for the list
 		static void setMaximumSize(unsigned max);
 
-		/*! @details Registers in the list of operations that the object passed suffered some kind
+		/*! \brief Registers in the list of operations that the object passed suffered some kind
 		 of modification (modified, removed, inserted, moved) in addition the method stores
 		 its original content.
 		 This method should ALWAYS be called before the object in question
@@ -191,22 +191,22 @@ class OperationList: public QObject {
 		 segmentations fault. */
 		void registerObject(BaseObject *object, unsigned op_type, int object_idx=-1, BaseObject *parent_obj=NULL);
 
-		//! @details Gets the maximum size for the operation list
+		//! \brief Gets the maximum size for the operation list
 		unsigned getMaximumSize(void);
 
-		//! @details Gets the current size for the operation list
+		//! \brief Gets the current size for the operation list
 		unsigned getCurrentSize(void);
 
-		//! @details Gets the current operation index
+		//! \brief Gets the current operation index
 		int getCurrentIndex(void);
 
-		//! @details Returns if the list is prepared to execute redo operations
+		//! \brief Returns if the list is prepared to execute redo operations
 		bool isRedoAvailable(void);
 
-		//! @details Returns if the list is prepared to execute undo operations
+		//! \brief Returns if the list is prepared to execute undo operations
 		bool isUndoAvailable(void);
 
-		/*! @details Removes the last operation from the list. This method should be used with
+		/*! \brief Removes the last operation from the list. This method should be used with
 		 care as it can break the chain of operations. It should be
 		 used only when an exception is thrown after adding
 		 some object on the list and if the user wants to discard this operation due
@@ -217,7 +217,7 @@ class OperationList: public QObject {
 		 restored so this method can not be used deliberately. */
 		void removeLastOperation(void);
 
-		/*! @details Updates the index of the object when it suffers a movement in the parente object.
+		/*! \brief Updates the index of the object when it suffers a movement in the parente object.
 		 Generally this method need not be called manually but in the case of table objects
 		 (like columns, rules, constraints, indexes and triggers) which can be moved
 		 (to have their position changed in the parent object). This method updates the index
@@ -226,19 +226,19 @@ class OperationList: public QObject {
 		void updateObjectIndex(BaseObject *object, unsigned new_idx);
 
 	signals:
-		//! @details Signal emitted when one operation is executed
+		//! \brief Signal emitted when one operation is executed
 		void s_operationExecuted(int progress, QString object_id, unsigned icon_id);
 };
 
 
-/*! @details Template function that makes a copy from 'copy_obj' to 'psrc_obj' doing the cast to the
+/*! \brief Template function that makes a copy from 'copy_obj' to 'psrc_obj' doing the cast to the
 	 correct object type. If the source object (psrc_obj) is not allocated the function allocates the attributes
 	 before copying. Both objects must be the same type if both are allocated.
 	 -- Brainfuck syntax style! :p -- */
 template <class Classe>
 void copyObject(BaseObject **psrc_obj, Classe *copy_obj);
 
-/*! @details This functions is a second way to make a copy between two objects. It simply calls
+/*! \brief This functions is a second way to make a copy between two objects. It simply calls
 	 the template function above. */
 void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type);
 

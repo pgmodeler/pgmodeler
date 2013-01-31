@@ -33,7 +33,7 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 	private:
 		Q_OBJECT
 
-		//! @details Configures the passed connection setting it's attributes using the values from the form
+		//! \brief Configures the passed connection setting it's attributes using the values from the form
 		void configurarConexao(DBConnection *conn);
 
 	public:
@@ -43,7 +43,7 @@ class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidge
 		void saveConfiguration(void);
 		void loadConfiguration(void);
 
-		//! @details Fills the passed map with all the loaded connections
+		//! \brief Fills the passed map with all the loaded connections
 		void getConnections(map<QString, DBConnection *> &conns);
 
 	public slots:

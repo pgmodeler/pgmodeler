@@ -54,10 +54,10 @@ class PgModelerPlugin {
 		PgModelerPlugin(void);
 		virtual ~PgModelerPlugin(void);
 
-		//! @details Método que executa o plugin
+		//! \brief Método que executa o plugin
 		virtual void executePlugin(ModeloWidget *modelo)=0;
 
-		//! @details Retorna o texto que é exibido na ação que executa o plugin
+		//! \brief Retorna o texto que é exibido na ação que executa o plugin
 		virtual QString getPluginTitle(void)=0;
 
 		virtual QString getPluginAuthor(void)=0;
@@ -72,7 +72,7 @@ class PgModelerPlugin {
 														 const QString &description, const QString &ico_filename);
 };
 
-/*! @details Declara a classe PgModelerPlugin como interface, ou seja, a base para
+/*! \brief Declara a classe PgModelerPlugin como interface, ou seja, a base para
 	 implementação de plugins. Todo plugin deve herdar esta classe e usar a
 	 diretiva Q_INTERFACE em sua construção */
 Q_DECLARE_INTERFACE(PgModelerPlugin,"pgmodelerplugin")

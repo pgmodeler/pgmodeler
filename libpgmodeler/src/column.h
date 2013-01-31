@@ -30,18 +30,18 @@
 
 class Column: public TableObject{
 	protected:
-		/*! @details Stores the previous name of the column before its name has changed.
+		/*! \brief Stores the previous name of the column before its name has changed.
 		 This attribute assists in the process of reference columns added
 		 by relationships. */
 		QString old_name;
 
-		//! @details Indicate that the column accpets null values or not
+		//! \brief Indicate that the column accpets null values or not
 		bool not_null;
 
-		//! @details Data type of the column
+		//! \brief Data type of the column
 		PgSQLType type;
 
-		/*! @details Default value of the column.
+		/*! \brief Default value of the column.
 		 Note: The user must format the default value in
 					 accordance with the requirements for each data type.
 					 E.g.: for a varchar(10) default value should be 'abcdef' (including apostrophe)
@@ -51,41 +51,41 @@ class Column: public TableObject{
 	public:
 		Column(void);
 
-		//! @details Defines if the column accepts null values or not
+		//! \brief Defines if the column accepts null values or not
 		void setNotNull(bool value);
 
-		//! @details Defines the column data type
+		//! \brief Defines the column data type
 		void setType(PgSQLType type);
 
-		/*! @details Sets the default value of the column. Must be informed together with the value
+		/*! \brief Sets the default value of the column. Must be informed together with the value
 		 the particularities of each type, such as quotation marks, hyphens, etc. */
 		void setDefaultValue(const QString &value);
 
-		/*! @details Defines the column name. This method keeps the last column name
+		/*! \brief Defines the column name. This method keeps the last column name
 		 stored to assist the objects like constraints / indixes and sequences
 		 that is referencing the column by its old name. */
 		void setName(const QString &name);
 
-		//! @details Returns the not null state of the column
+		//! \brief Returns the not null state of the column
 		bool isNotNull(void);
 
-		//! @details Returns the data type of the column
+		//! \brief Returns the data type of the column
 		PgSQLType getType(void);
 
-		//! @details Returns the default value of the column
+		//! \brief Returns the default value of the column
 		QString getDefaultValue(void);
 
-		//! @details Returns the SQL/XML code definition for the column
+		//! \brief Returns the SQL/XML code definition for the column
 		QString getCodeDefinition(unsigned def_type);
 
-		/*! @details Returns the old column name. The parameter 'format' indicates
+		/*! \brief Returns the old column name. The parameter 'format' indicates
 		 whether the name must be formatted or not */
 		QString getOldName(bool format=false);
 
-		//! @details Returns the reference to the column type in the form [schema].table.column_name%TYPE
+		//! \brief Returns the reference to the column type in the form [schema].table.column_name%TYPE
 		QString getTypeReference(void);
 
-		//! @details Copies on column to other
+		//! \brief Copies on column to other
 		void operator = (Column &col);
 
 		friend class Tabela;

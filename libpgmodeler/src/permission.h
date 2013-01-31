@@ -33,7 +33,7 @@
 #include <QTextStream>
 
 class Permission: public BaseObject {
-		/*! @details Permissions on PostgreSQL are only applied to the following
+		/*! \brief Permissions on PostgreSQL are only applied to the following
 				object type:
 
 				* table
@@ -50,30 +50,30 @@ class Permission: public BaseObject {
 				* schema
 				* tablespace */
 	private:
-		//! @details Object which the permission is applied
+		//! \brief Object which the permission is applied
 		BaseObject *object;
 
-		/*! @details Roles that has permissions over the object. This vector can be
+		/*! \brief Roles that has permissions over the object. This vector can be
 			empty indicating that all roles on the cluster has permission over
 			the object. */
 		vector<Role *> roles;
 
-		//! @details Privileges set applied to the object (Accessed via constants PRIV_???)
+		//! \brief Privileges set applied to the object (Accessed via constants PRIV_???)
 		bool privileges[13];
 
-		/*! @details Indicates whether a privilege with given index can be assigned to other roles
+		/*! \brief Indicates whether a privilege with given index can be assigned to other roles
 			over the same object (WITH GRANT OPTION). This attribute is not applicable
 			when there is no specified role (PUBLIC). This attribute is ignored
 			when there is no defined role as holder of the privilege. */
 		bool grant_option[13];
 
-		/*! @details Generates a unique identifier for permission using the attribute
+		/*! \brief Generates a unique identifier for permission using the attribute
 			'name' of base class BaseObject. This is only used to avoid
 			 duplicate permissions in the model */
 		void generatePermissionId(void);
 
 	public:
-		//! @details Constants used to reference the privileges
+		//! \brief Constants used to reference the privileges
 		static const unsigned PRIV_SELECT=0,
 													PRIV_INSERT=1,
 													PRIV_UPDATE=2,
@@ -87,50 +87,50 @@ class Permission: public BaseObject {
 													PRIV_EXECUTE=10,
 													PRIV_USAGE=11;
 
-		/*! @details In the constructor is required to specify which object will receive
+		/*! \brief In the constructor is required to specify which object will receive
 		 the permissions this can not be changed after the object instance of
 		 the class is created. */
 		Permission(BaseObject *obj);
 
-		//! @details Adds a role that will have privileges over the object
+		//! \brief Adds a role that will have privileges over the object
 		void addRole(Role *role);
 
-		//! @details Sets the state of one permission's privilege (Accessed via constants PRIV_???)
+		//! \brief Sets the state of one permission's privilege (Accessed via constants PRIV_???)
 		void setPrivilege(unsigned priv_id, bool value, bool grant_op);
 
-		//! @details Remove a role using its index
+		//! \brief Remove a role using its index
 		void removeRole(unsigned role_idx);
 
-		//! @details Remove all roles from the permission
+		//! \brief Remove all roles from the permission
 		void removeRoles(void);
 
-		//! @details Gets the role count associated to the permission
+		//! \brief Gets the role count associated to the permission
 		unsigned getRoleCount(void);
 
-		//! @details Gets one role from permission using its index
+		//! \brief Gets one role from permission using its index
 		Role *getRole(unsigned role_idx);
 
-		//! @details Gets the object that is subject to the privileges
+		//! \brief Gets the object that is subject to the privileges
 		BaseObject *getObject(void);
 
-		//! @details Gets the actual state of the GRANT OPTION for the given privilege
+		//! \brief Gets the actual state of the GRANT OPTION for the given privilege
 		bool getGrantOption(unsigned priv_id);
 
-		//! @details Gets the current state for the given privilege
+		//! \brief Gets the current state for the given privilege
 		bool getPrivilege(unsigned priv_id);
 
-		/*! @details Returns a string containing all the privileges
+		/*! \brief Returns a string containing all the privileges
 		 configured as the internal format of permissions
 		 as documented on PostgreSQL GRANT command */
 		QString getPrivilegeString(void);
 
-		//! @details Indicates whether the role is present on the permission
+		//! \brief Indicates whether the role is present on the permission
 		bool isRoleExists(Role *role);
 
-		//! @details Returns if the passed object type accepts permission
+		//! \brief Returns if the passed object type accepts permission
 		static bool objectAcceptsPermission(ObjectType obj_type);
 
-		//! @details Returns the SQL / XML definition for the permission
+		//! \brief Returns the SQL / XML definition for the permission
 		QString getCodeDefinition(unsigned def_type);
 };
 

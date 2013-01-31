@@ -34,10 +34,10 @@ class TableObjectView: public BaseObjectView
 	private:
 		Q_OBJECT
 
-		//! @details Table object descriptor
+		//! \brief Table object descriptor
 		QGraphicsItem *descriptor;
 
-		//! @details Labels used to show objects informatoni (name, type, constraints/aliases)
+		//! \brief Labels used to show objects informatoni (name, type, constraints/aliases)
 		QGraphicsSimpleTextItem *lables[3];
 
 		static const QString	CONSTR_DELIM_END,
@@ -49,7 +49,7 @@ class TableObjectView: public BaseObjectView
 													TXT_PRIMARY_KEY,
 													TXT_UNIQUE;
 
-		/*! @details Configures the descriptor object according to the source object.
+		/*! \brief Configures the descriptor object according to the source object.
 		 The constraint type parameter is only used when the source object is a
 		 column  and is used to format the descriptor indication that the column
 		 has a constraint */
@@ -64,19 +64,19 @@ class TableObjectView: public BaseObjectView
 		TableObjectView(TableObject *object=NULL);
 		~TableObjectView(void);
 
-		//! @details Configures the object as a view reference
+		//! \brief Configures the object as a view reference
 		void configureObject(Reference reference);
 
-		//! @details Configures the object as a table object
+		//! \brief Configures the object as a table object
 		void configureObject(void);
 
-		//! @details Sets the horizontal position of the specified child object (index)
+		//! \brief Sets the horizontal position of the specified child object (index)
 		void setChildObjectXPos(unsigned obj_idx, float px);
 
-		//! @details Returns the child object at the specified index
+		//! \brief Returns the child object at the specified index
 		QGraphicsItem *getChildObject(unsigned obj_idx);
 
-		/*! @details Returns a formatted string containing the keywords indicating the constraints
+		/*! \brief Returns a formatted string containing the keywords indicating the constraints
 		 that is applyed to the passed column */
 		static QString getConstraintString(Column *column);
 };

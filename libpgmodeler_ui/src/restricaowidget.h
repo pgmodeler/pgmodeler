@@ -35,20 +35,20 @@ class RestricaoWidget: public BaseObjectWidget, public Ui::RestricaoWidget {
 	private:
 		QFrame *frame_info;
 
-		//! @details Destaque de sintaxe do campo de expressão de checagem
+		//! \brief Destaque de sintaxe do campo de expressão de checagem
 		SyntaxHighlighter *dest_exp_checagem;
 
-		//! @details Tabelas de objetos para controlar colunas referenciadas na restrição
+		//! \brief Tabelas de objetos para controlar colunas referenciadas na restrição
 		TabelaObjetosWidget *tab_colunas,
 												*tab_colunas_ref;
 
-		//! @details Seletor de tabela referenciada
+		//! \brief Seletor de tabela referenciada
 		SeletorObjetoWidget *sel_tabela_ref;
 
-		//! @details Atualiza o combo de colunas do tipo especificado (Origem ou Referenciadas)
+		//! \brief Atualiza o combo de colunas do tipo especificado (Origem ou Referenciadas)
 		void atualizarComboColunas(unsigned tipo_cmb);
 
-		/*! @details Adiciona uma coluna   tabela de tipo especificado (origem ou referenciada)
+		/*! \brief Adiciona uma coluna   tabela de tipo especificado (origem ou referenciada)
 			na linha especificada */
 		void adicionarColuna(Column *coluna, unsigned tipo_col, int idx_lin);
 
@@ -59,14 +59,14 @@ class RestricaoWidget: public BaseObjectWidget, public Ui::RestricaoWidget {
 	private slots:
 		void hideEvent(QHideEvent *);
 
-		//! @details Exibe os campos pertinentes ao tipo da restição selecionado
+		//! \brief Exibe os campos pertinentes ao tipo da restição selecionado
 		void selecionarTipoRestricao(void);
 
-		/*! @details Atualiza o combo de colunas referenciadas conforme o usuário
+		/*! \brief Atualiza o combo de colunas referenciadas conforme o usuário
 		 manipule o seletor de tabela referenciada */
 		void selecionarTabelaReferenciada(void);
 
-		//! @details Métodos de manipulação das tabelas de colunas
+		//! \brief Métodos de manipulação das tabelas de colunas
 		void adicionarColuna(int idx_lin);
 		void removerColuna(int idx_lin);
 		void removerColunas(void);

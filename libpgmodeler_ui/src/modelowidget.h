@@ -39,45 +39,45 @@ class ModeloWidget: public QWidget {
 		Q_OBJECT
 
 	private:
-		//! @details Fator de zoom atual da cena de objetos
+		//! \brief Fator de zoom atual da cena de objetos
 		float zoom_atual;
 
-		//! @details Indica que o modelo foi modificado por alguma operação
+		//! \brief Indica que o modelo foi modificado por alguma operação
 		bool modificado;
 
 		bool isReservedObject(BaseObject *obj);
 
 		void configurarSubMenu(BaseObject *obj);
 
-		/*! @details Flag que indica se o modelo está em uma operação de recorte.
+		/*! \brief Flag que indica se o modelo está em uma operação de recorte.
 		 Essa flag modifica o funcionamento dos métodos colarObjetos, excluirObjeto e
 		 copiarObjetos() */
 		static bool op_recortar;
 
-		//! @details Armazena a nível de classe o modelo que deu origem a operação de copia/recorte
+		//! \brief Armazena a nível de classe o modelo que deu origem a operação de copia/recorte
 		static ModeloWidget *modelo_orig;
 
-		//! @details Objetos copiados no modelo de origem
+		//! \brief Objetos copiados no modelo de origem
 		static vector<BaseObject *> objs_copiados;
 
-		//! @details Frame que indica que o modelo está protegido
+		//! \brief Frame que indica que o modelo está protegido
 		QFrame *modelo_protegido_frm;
 
-		//! @details Cena de objetos gráficos do modelo
+		//! \brief Cena de objetos gráficos do modelo
 		ObjectsScene *cena;
 
-		//! @details Viewport que gerencia a cena de objetos
+		//! \brief Viewport que gerencia a cena de objetos
 		QGraphicsView *viewport;
 
-		//! @details Menu popup geral do modelo
+		//! \brief Menu popup geral do modelo
 		QMenu menu_popup,
-					//! @details Menu de inserção de novo objeto no modelo
+					//! \brief Menu de inserção de novo objeto no modelo
 					menu_novo_obj,
 					menu_acoes_rapidas,
 					menu_esquemas,
 					menu_donos;
 
-		//! @details Ações do menu popup
+		//! \brief Ações do menu popup
 		QAction *action_codigo_fonte,
 						*action_editar,
 						*action_proteger,
@@ -97,32 +97,32 @@ class ModeloWidget: public QWidget {
 						*action_acoes_rapidas,
 						*action_sel_sch_children;
 
-		//! @details Ações de inserção de novos objetos no modelo
+		//! \brief Ações de inserção de novos objetos no modelo
 		map<ObjectType, QAction *> acoes_ins_objs;
 
-		//! @details Armazena os objetos do modelo selecionados na cena
+		//! \brief Armazena os objetos do modelo selecionados na cena
 		vector<BaseObject *> objs_selecionados;
 
-		//! @details Tipo do objeto a ser inserido no modelo
+		//! \brief Tipo do objeto a ser inserido no modelo
 		ObjectType tipo_novo_obj;
 
-		//! @details Lista de operações executadas sobre os objetos do modelo
+		//! \brief Lista de operações executadas sobre os objetos do modelo
 		OperationList *lista_op;
 
-		//! @details Modelo de objetos do widget
+		//! \brief Modelo de objetos do widget
 		DatabaseModel *modelo;
 
-		//! @details Armazena o nome do arquivo de modelo carregado no widget
+		//! \brief Armazena o nome do arquivo de modelo carregado no widget
 		QString nome_arquivo,
 						nome_arquivo_tmp;
 
 	protected:
-		//! @details Constantes usadas nas operações de zoom
+		//! \brief Constantes usadas nas operações de zoom
 		static const float	ZOOM_MINIMO=0.35f,
 												ZOOM_MAXIMO=4.0f,
 												INC_ZOOM=0.05f;
 
-		/*! @details Configura a cena alinhando os objetos e a redimensionando quandos
+		/*! \brief Configura a cena alinhando os objetos e a redimensionando quandos
 		 os objetos extrapolam o tamanho máximo dela */
 		void ajustarTamanhoCena(void);
 
@@ -132,19 +132,19 @@ class ModeloWidget: public QWidget {
 		void focusInEvent(QFocusEvent *evento);
 		void keyReleaseEvent(QKeyEvent *evento);
 
-		//! @details Modifica o zoom do viewport quando se pressiona CONTROL e utiliza o wheel do mouse
+		//! \brief Modifica o zoom do viewport quando se pressiona CONTROL e utiliza o wheel do mouse
 		void wheelEvent(QWheelEvent * evento);
 
-		/*! @details Filtro de eventos usados quando é necessário desviar eventos de objetos filhos.
+		/*! \brief Filtro de eventos usados quando é necessário desviar eventos de objetos filhos.
 		 Um desses desvios é o tratamento do WheelEvent das barras de rolagens do viewport
 		 pelo modelo widget, isso faz com que o WheelEvent seja executado no Modelo e não
 		 nas barras */
 		bool eventFilter(QObject *objeto, QEvent *evento);
 
-		//! @details Cancela a operação de adição de novo objeto (valido apenas para objetos gráficos)
+		//! \brief Cancela a operação de adição de novo objeto (valido apenas para objetos gráficos)
 		void cancelarAdicaoObjeto(void);
 
-		//! @details Desabilita as ações do modelo quando uma ação de adição de objeto gráfica está ativa
+		//! \brief Desabilita as ações do modelo quando uma ação de adição de objeto gráfica está ativa
 		void desabilitarAcoesModelo(void);
 
 	public:
@@ -153,29 +153,29 @@ class ModeloWidget: public QWidget {
 
 		void definirModificado(bool valor);
 
-		//! @details Obtém o nome do arquivo que deu origem ao modelo
+		//! \brief Obtém o nome do arquivo que deu origem ao modelo
 		QString getNameArquivo(void);
 
-		//! @details Obtém o nome temporário do arquivo usado para salvar uma cópia de segurança na pasta tmp do pgModeler
+		//! \brief Obtém o nome temporário do arquivo usado para salvar uma cópia de segurança na pasta tmp do pgModeler
 		QString getNameArquivoTemp(void);
 
-		//! @details Exibe o formulário de edição do objeto conforme o tipo passado
+		//! \brief Exibe o formulário de edição do objeto conforme o tipo passado
 		void exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto=NULL, BaseObject *objeto_pai=NULL, QPointF pos=QPointF(NAN, NAN));
 
-		//! @details Aplica um zoom ao modelo
+		//! \brief Aplica um zoom ao modelo
 		void aplicarZoom(float zoom);
 
-		//! @details Retorna o zoom atual em que se encontra o modelo
+		//! \brief Retorna o zoom atual em que se encontra o modelo
 		float zoomAtual(void);
 
-		//! @details Retorna se o modelo foi modificado ou não
+		//! \brief Retorna se o modelo foi modificado ou não
 		bool modeloModificado(void);
 
-		//! @details Returns the database model object
+		//! \brief Returns the database model object
 		DatabaseModel *getModel(void);
 
 	private slots:
-		/*! @details Os slots manipular*() gerenciam os sinais enviados pela cena e modelo para execução
+		/*! \brief Os slots manipular*() gerenciam os sinais enviados pela cena e modelo para execução
 		 de operações adicionais como incluir objetos modificados na lista de operações, criar
 		 objetos na cena e remover objetos da cena de forma automática */
 		void manipularAdicaoObjeto(BaseObject *objeto);
@@ -184,22 +184,22 @@ class ModeloWidget: public QWidget {
 		void manipularModificacaoObjeto(BaseGraphicObject *objeto);
 		void manipularDuploCliqueObjeto(BaseGraphicObject *objeto);
 
-		//! @details Configura o menu popup conforme a lista de objetos passada
+		//! \brief Configura o menu popup conforme a lista de objetos passada
 		void configurarMenuPopup(vector<BaseObject *> objs_selecionados=vector<BaseObject *>());
 
-		//! @details Exibe um menu popup específico para objetos de tabela
+		//! \brief Exibe um menu popup específico para objetos de tabela
 		void exibirMenuObjetoTabela(vector<BaseObject *> objs_selecionados);
 
-		//! @details Exibe as dependências e referências do objeto
+		//! \brief Exibe as dependências e referências do objeto
 		void exibirDepsRefs(void);
 
-		//! @details Exibe o formulário de edição do objeto selecionado
+		//! \brief Exibe o formulário de edição do objeto selecionado
 		void editarObjeto(void);
 
-		//! @details Protege os objetos selecionados
+		//! \brief Protege os objetos selecionados
 		void protegerObjeto(void);
 
-		//! @details Executa o widget de renomeio de objeto
+		//! \brief Executa o widget de renomeio de objeto
 		void renomearObjeto(void);
 
 		void moverParaEsquema(void);
@@ -210,55 +210,55 @@ class ModeloWidget: public QWidget {
 
 		void selecionarFilhosEsquema(void);
 
-		//! @details Exclui os objetos selecionados
+		//! \brief Exclui os objetos selecionados
 		void excluirObjetos(void);
 
-		//! @details Seleciona todos os objetos no modelo
+		//! \brief Seleciona todos os objetos no modelo
 		void selecionarTodos(void);
 
-		//! @details Copia todos os objetos selecionados no modelo
+		//! \brief Copia todos os objetos selecionados no modelo
 		void copiarObjetos(void);
 
-		//! @details Cola todos os objetos no modelo
+		//! \brief Cola todos os objetos no modelo
 		void colarObjetos(void);
 
-		/*! @details Recorta os objetos selecionados no modelo. Este método executa
+		/*! \brief Recorta os objetos selecionados no modelo. Este método executa
 		 apenas a cópia de objetos, marcando a flag op_recortar e setando
 		 o modelo de origem. O restante da operação de recorte que é exlcuir
 		 os objetos selecionados é executado no método colarObjetos() */
 		void recortarObjetos(void);
 
-		//! @details Faz a conversão de um relacionamento n-n
+		//! \brief Faz a conversão de um relacionamento n-n
 		void converterRelacionamentoNN(void);
 
-		//! @details Exibe o código fonte do objeto selecionado
+		//! \brief Exibe o código fonte do objeto selecionado
 		void exibirCodigoFonte(void);
 
-		//! @details Adiciona um novo objeto ao modelo ou tabela selecionada
+		//! \brief Adiciona um novo objeto ao modelo ou tabela selecionada
 		void adicionarNovoObjeto(void);
 
-		/*! @details Configura a lista de objetos selecionados toda vez que o
+		/*! \brief Configura a lista de objetos selecionados toda vez que o
 		 sinal selectionChanged() vindo da cena é disparado */
 		void configurarSelecaoObjetos(void);
 
-		/*! @details Retorna um vetor com as dimensões das páginas que contém objetos
+		/*! \brief Retorna um vetor com as dimensões das páginas que contém objetos
 		 para serem impressos */
 		vector<QRectF> obterPaginasImpressao(const QSizeF &tam_papel, unsigned &qtd_pag_h, unsigned &qtd_pag_v);
 
-		//! @details Exibe o widget de visão geral. Para fechá-la o usuário pode dar um duplo-clique ou pressionar esc.
-		//! @details void exibirVisaoGeral(bool exibir);
+		//! \brief Exibe o widget de visão geral. Para fechá-la o usuário pode dar um duplo-clique ou pressionar esc.
+		//! \brief void exibirVisaoGeral(bool exibir);
 
 	public slots:
 		void carregarModelo(const QString &nome_arq);
 		void salvarModelo(const QString &nome_arq);
 		void salvarModelo(void);
 
-		/*! @details Imprime o modelo no objeto QPrinter passado. Os dois parâmetros bool
+		/*! \brief Imprime o modelo no objeto QPrinter passado. Os dois parâmetros bool
 			são usados para exibir ou não a grade e número de páginas na impressão */
 		void imprimirModelo(QPrinter *printer, bool exibir_grade_imp, bool imp_num_pag);
 
 	signals:
-		/*! @details Sinais personalizados usados para sinalizarem
+		/*! \brief Sinais personalizados usados para sinalizarem
 		 a modificação do modelo. Este sinal é capturado pelo
 		 form principal para atualizar as ferramentas */
 		void s_objetoModificado(void);

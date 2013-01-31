@@ -31,54 +31,54 @@
 
 class Domain: public BaseObject{
 	private:
-		//! @details Constraint name used by the domain
+		//! \brief Constraint name used by the domain
 		QString constraint_name,
-						//! @details Validation expression used by domain (check) constraint
+						//! \brief Validation expression used by domain (check) constraint
 						expression,
-						//! @details Domain default data type value
+						//! \brief Domain default data type value
 						default_value;
 
-		//! @details Indicates that the domains accepts null values or not
+		//! \brief Indicates that the domains accepts null values or not
 		bool not_null;
 
-		//! @details Domain data type
+		//! \brief Domain data type
 		PgSQLType type;
 
 	public:
 		Domain(void);
 		~Domain(void);
 
-		//! @details Sets the domain's constraint name
+		//! \brief Sets the domain's constraint name
 		void setConstraintName(const QString &constr_name);
 
-		//! @details Sets the check expression of the domain
+		//! \brief Sets the check expression of the domain
 		void setExpression(const QString &expr);
 
-		//! @details Sets the default value of the domain
+		//! \brief Sets the default value of the domain
 		void setDefaultValue(const QString &default_val);
 
-		//! @details Defines whether the domain accepts null values or not
+		//! \brief Defines whether the domain accepts null values or not
 		void setNotNull(bool value);
 
-		//! @details Defines the domain data type
+		//! \brief Defines the domain data type
 		void setType(PgSQLType type);
 
-		/*! @details Overloaded BaseObject name definition method.
+		/*! \brief Overloaded BaseObject name definition method.
 		 Updates the reference of the domain as a PostgreSQL data type */
 		void setName(const QString &name);
 
-		/*! @details Overloaded BaseObject schema definition method.
+		/*! \brief Overloaded BaseObject schema definition method.
 		 Updates the reference of the domain as a PostgreSQL data type */
 		void setSchema(BaseObject *schema);
 
-		//! @details Methods to access domain's attributes
+		//! \brief Methods to access domain's attributes
 		QString getConstraintName(void);
 		QString getExpression(void);
 		QString getDefaultValue(void);
 		bool isNotNull(void);
 		PgSQLType getType(void);
 
-		//! @details Returns the SQL / XML code definition for the domain
+		//! \brief Returns the SQL / XML code definition for the domain
 		QString getCodeDefinition(unsigned tipo_def);
 
 		void operator = (Domain &domain);

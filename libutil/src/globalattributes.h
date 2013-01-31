@@ -33,7 +33,7 @@
 
 namespace GlobalAttributes {
 
-	/*! @details Variables used to reference the pgModeler directories.
+	/*! \brief Variables used to reference the pgModeler directories.
 	 By default, it searches the directories conf/, schemas/, lang/, plugins/ and tmp/ on
 	 the working dir. But these values ​​can be overwritten using the
 	 environment variables:
@@ -46,12 +46,12 @@ namespace GlobalAttributes {
 */
 
 	static const QString
-	/*! @details According to the libxml documentation , the paths used by the parser are
+	/*! \brief According to the libxml documentation , the paths used by the parser are
 		 in URI format (eg file://a/b/c) then, in Windows, the paths are shaped
 		 C:\a\b\c, this caused the error in the parser that could not find
 		 the DTD's. The solution to this problem is to replace the '\' by the way '/' */
 
-	/*! @details If the variable is not specified, pgModeler searches the required folder in the current directory "." */
+	/*! \brief If the variable is not specified, pgModeler searches the required folder in the current directory "." */
 	SCHEMAS_ROOT_DIR=(getenv("PGMODELER_SCHEMAS_DIR") ? QString(getenv("PGMODELER_SCHEMAS_DIR")).replace("\\","/") : QString("./schemas")),
 	CONFIGURATIONS_DIR=(getenv("PGMODELER_CONF_DIR") ? QString(getenv("PGMODELER_CONF_DIR")).replace("\\","/") : QString("./conf")),
 	LANGUAGES_DIR=(getenv("PGMODELER_LANG_DIR") ? QString(getenv("PGMODELER_LANG_DIR")).replace("\\","/") : QString("./lang")),
@@ -64,27 +64,27 @@ namespace GlobalAttributes {
 	STACKTRACE_FILE=".stacktrace",
 
 	DIR_SEPARATOR="/",
-	DEFAULT_CONFS_DIR="defaults", //! @details Directory name which holds the default pgModeler configuration
-	SCHEMAS_DIR="schemas", //! @details Default name for the schemas directory
-	SQL_SCHEMA_DIR="sql", //! @details Default name for the sql schemas directory
-	XML_SCHEMA_DIR="xml", //! @details Default name for the xml schemas directory
-	COMMON_SCHEMA_DIR="common", //! @details Default name for the commom schemas directory
-	SCHEMA_EXT=".sch", //! @details Default extension for schema files
-	OBJECT_DTD_DIR="dtd", //! @details Default directory for dtd files
-	OBJECT_DTD_EXT=".dtd", //! @details Default extension for dtd files
-	ROOT_DTD="dbmodel", //! @details Root DTD of model xml files
-	CONFIGURATION_EXT=".conf", //! @details Default extension for configuration files
-	HIGHLIGHT_FILE_SUF="-highlight", //! @details Suffix of language highlight configuration files
+	DEFAULT_CONFS_DIR="defaults", //! \brief Directory name which holds the default pgModeler configuration
+	SCHEMAS_DIR="schemas", //! \brief Default name for the schemas directory
+	SQL_SCHEMA_DIR="sql", //! \brief Default name for the sql schemas directory
+	XML_SCHEMA_DIR="xml", //! \brief Default name for the xml schemas directory
+	COMMON_SCHEMA_DIR="common", //! \brief Default name for the commom schemas directory
+	SCHEMA_EXT=".sch", //! \brief Default extension for schema files
+	OBJECT_DTD_DIR="dtd", //! \brief Default directory for dtd files
+	OBJECT_DTD_EXT=".dtd", //! \brief Default extension for dtd files
+	ROOT_DTD="dbmodel", //! \brief Root DTD of model xml files
+	CONFIGURATION_EXT=".conf", //! \brief Default extension for configuration files
+	HIGHLIGHT_FILE_SUF="-highlight", //! \brief Suffix of language highlight configuration files
 
-	CODE_HIGHLIGHT_CONF="source-code-highlight", //! @details Default name for the language highlight dtd
-	OBJECTS_STYLE_CONF="objects-style", //! @details Default name for the object style configuration file
-	GENERAL_CONF="pgmodeler", //! @details Default name for the general pgModeler configuration
-	CONNECTIONS_CONF="connections", //! @details Default name for the DBMS connection configuration file
+	CODE_HIGHLIGHT_CONF="source-code-highlight", //! \brief Default name for the language highlight dtd
+	OBJECTS_STYLE_CONF="objects-style", //! \brief Default name for the object style configuration file
+	GENERAL_CONF="pgmodeler", //! \brief Default name for the general pgModeler configuration
+	CONNECTIONS_CONF="connections", //! \brief Default name for the DBMS connection configuration file
 
-	SQL_HIGHLIGHT_CONF="sql-highlight", //! @details Configuration file for SQL language highlight
-	XML_HIGHLIGHT_CONF="xml-highlight", //! @details Configuration file for XML language highlight
+	SQL_HIGHLIGHT_CONF="sql-highlight", //! \brief Configuration file for SQL language highlight
+	XML_HIGHLIGHT_CONF="xml-highlight", //! \brief Configuration file for XML language highlight
 
-	EXAMPLE_MODEL="example.dbm"; //! @details Default name for the sample model loaded on appearence configuration form
+	EXAMPLE_MODEL="example.dbm"; //! \brief Default name for the sample model loaded on appearence configuration form
 }
 
 #endif

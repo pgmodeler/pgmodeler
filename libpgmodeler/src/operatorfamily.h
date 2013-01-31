@@ -30,19 +30,19 @@
 
 class OperatorFamily: public BaseObject {
 	private:
-		//! @details Indexing type used by the operator family
+		//! \brief Indexing type used by the operator family
 		IndexingType indexing_type;
 
 	public:
 		OperatorFamily(void);
 
-		//! @details Sets the indexing type of the operator family
+		//! \brief Sets the indexing type of the operator family
 		void setIndexingType(IndexingType idx_type);
 
-		//! @details Returns the indexing type of the operator family
+		//! \brief Returns the indexing type of the operator family
 		IndexingType getIndexingType(void);
 
-		//! @details Returns the SQL / XML code definition for the operator family
+		//! \brief Returns the SQL / XML code definition for the operator family
 		QString getCodeDefinition(unsigned def_type, bool reduced_form);
 		QString getCodeDefinition(unsigned def_type);
 };

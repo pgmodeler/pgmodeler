@@ -34,14 +34,14 @@ class MessageBox: public QDialog, public Ui::MessageBox {
 		bool cancelled;
 
 	public:
-		//! @details Constants used to define the message icon
+		//! \brief Constants used to define the message icon
 		static const unsigned NO_ICON=10,
 													ERROR_ICON=11,
 													INFO_ICON=12,
 													ALERT_ICON=13,
 													CONFIRM_ICON=14;
 
-		//! @details Constants used to configure the visible buttons
+		//! \brief Constants used to configure the visible buttons
 		static const unsigned YES_NO_BUTTONS=0,
 													OK_CANCEL_BUTTONS=1,
 													OK_BUTTON=2,

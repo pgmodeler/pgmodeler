@@ -35,14 +35,14 @@ class ParametroWidget: public BaseObjectWidget, public Ui::ParametroWidget {
 	private:
 		TipoPgSQLWidget *tipo_pgsql;
 
-		//! @details Armazena a cópia do parâmetro configurado
+		//! \brief Armazena a cópia do parâmetro configurado
 		Parameter parametro;
 
 	public:
 		ParametroWidget(QWidget * parent = 0);
 		void setAttributes(Parameter parametro, DatabaseModel *model);
 
-		/*! @details Retorna a cópia do parâmetro configurado. Este método deve
+		/*! \brief Retorna a cópia do parâmetro configurado. Este método deve
 			ser usado para se ter acesso ao parâmetro configurado */
 		Parameter obterParametro(void);
 

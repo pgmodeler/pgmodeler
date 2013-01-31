@@ -34,13 +34,13 @@ class TableView: public BaseTableView {
 	private:
 		Q_OBJECT
 
-		//! @details Extended table attributes (indexes, rules, triggers) section body
+		//! \brief Extended table attributes (indexes, rules, triggers) section body
 		QGraphicsPolygonItem  *ext_attribs_body;
 
-		//! @details Item groups that stores columns and extended attributes, respectively
+		//! \brief Item groups that stores columns and extended attributes, respectively
 		QGraphicsItemGroup *columns, *ext_attribs;
 
-		//! @details Stores the reference to the child object currently selected on table
+		//! \brief Stores the reference to the child object currently selected on table
 		TableObject *sel_child_obj;
 
 		void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
@@ -56,7 +56,7 @@ class TableView: public BaseTableView {
 		void configureObject(void);
 
 	signals:
-		//! @details Signal emitted when the user right-click a focused table child object
+		//! \brief Signal emitted when the user right-click a focused table child object
 		void s_childObjectSelected(TableObject *);
 };
 
