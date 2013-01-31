@@ -12,7 +12,7 @@
 #include "parametrowidget.h"
 #include "castwidget.h"
 #include "conversionwidget.h"
-#include "dominiowidget.h"
+#include "domainwidget.h"
 #include "funcaoagregacaowidget.h"
 #include "sequenciawidget.h"
 #include "operadorwidget.h"
@@ -52,7 +52,7 @@ ParametroWidget *parametro_wgt=NULL;
 FuncaoWidget *funcao_wgt=NULL;
 CastWidget *convtipo_wgt=NULL;
 ConversionWidget *convcodif_wgt=NULL;
-DominioWidget *dominio_wgt=NULL;
+DomainWidget *dominio_wgt=NULL;
 FuncaoAgregacaoWidget *funcaoag_wgt=NULL;
 SequenciaWidget *sequencia_wgt=NULL;
 OperadorWidget *operador_wgt=NULL;
@@ -131,7 +131,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		funcao_wgt=new FuncaoWidget(this);
 		convtipo_wgt=new CastWidget(this);
 		convcodif_wgt=new ConversionWidget(this);
-		dominio_wgt=new DominioWidget(this);
+		dominio_wgt=new DomainWidget(this);
 		funcaoag_wgt=new FuncaoAgregacaoWidget(this);
 		sequencia_wgt=new SequenciaWidget(this);
 		operador_wgt=new OperadorWidget(this);

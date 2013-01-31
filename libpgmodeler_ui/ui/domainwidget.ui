@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DominioWidget</class>
- <widget class="QWidget" name="DominioWidget">
+ <class>DomainWidget</class>
+ <widget class="QWidget" name="DomainWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="dominio_grid">
+  <layout class="QGridLayout" name="domain_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -21,48 +21,48 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="nao_nulo_lbl">
+    <widget class="QLabel" name="not_null_lbl">
      <property name="text">
       <string>Not Null:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QCheckBox" name="nao_nulo_chk">
+    <widget class="QCheckBox" name="not_null_chk">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="valor_padrao_lbl">
+    <widget class="QLabel" name="def_value_lbl">
      <property name="text">
       <string>Default Value:</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QLineEdit" name="valor_padrao_edt"/>
+    <widget class="QLineEdit" name="def_value_edt"/>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="nome_rest_lbl">
+    <widget class="QLabel" name="constr_name_lbl">
      <property name="text">
       <string>Constraint Name:</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QLineEdit" name="nome_rest_edt"/>
+    <widget class="QLineEdit" name="constr_name_edt"/>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="expr_checagem_lbl">
+    <widget class="QLabel" name="check_expr_lbl">
      <property name="text">
       <string>Check Expression:</string>
      </property>
     </widget>
    </item>
    <item row="3" column="1">
-    <widget class="QTextEdit" name="expr_checagem_txt">
+    <widget class="QTextEdit" name="check_expr_txt">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>

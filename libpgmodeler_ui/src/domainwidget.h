@@ -22,26 +22,26 @@
 \brief Definição da classe que implementa o formulário de edição dos atributos de esquemas.
 */
 
-#ifndef DOMINIO_WIDGET_H
-#define DOMINIO_WIDGET_H
+#ifndef DOMAIN_WIDGET_H
+#define DOMAIN_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_dominiowidget.h"
+#include "ui_domainwidget.h"
 #include "tipopgsqlwidget.h"
 
-class DominioWidget: public BaseObjectWidget, public Ui::DominioWidget {
+class DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
+	private:
 		Q_OBJECT
 
-	private:
-		SyntaxHighlighter *destaque_expr;
-		TipoPgSQLWidget *tipo_dominio;
+		SyntaxHighlighter *check_expr_hl;
+		TipoPgSQLWidget *data_type;
 
 	public:
-		DominioWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Domain *dominio);
+		DomainWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Domain *domain);
 
 	private slots:
-		void hideEvent(QHideEvent *);
+		void hideEvent(QHideEvent *event);
 
 	public slots:
 		void applyConfiguration(void);

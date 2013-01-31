@@ -37,7 +37,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/parametrowidget.cpp \
            $$PWD/src/castwidget.cpp \
            $$PWD/src/conversionwidget.cpp \
-           $$PWD/src/dominiowidget.cpp \
+	   $$PWD/src/domainwidget.cpp \
            $$PWD/src/funcaoagregacaowidget.cpp \
            $$PWD/src/sequenciawidget.cpp \
            $$PWD/src/operadorwidget.cpp \
@@ -91,7 +91,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/parametrowidget.h \
            $$PWD/src/castwidget.h \
            $$PWD/src/conversionwidget.h \
-           $$PWD/src/dominiowidget.h \
+	   $$PWD/src/domainwidget.h \
            $$PWD/src/funcaoagregacaowidget.h \
            $$PWD/src/sequenciawidget.h \
            $$PWD/src/operadorwidget.h \
@@ -140,8 +140,8 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/tipopgsqlwidget.ui \
          $$PWD/ui/parametrowidget.ui \
          $$PWD/ui/castwidget.ui \
-         $$PWD/ui/conversionwidget.ui \
-         $$PWD/ui/dominiowidget.ui \
+	 $$PWD/ui/conversionwidget.ui \
+	 $$PWD/ui/domainwidget.ui \
          $$PWD/ui/funcaoagregacaowidget.ui \
          $$PWD/ui/sequenciawidget.ui \
          $$PWD/ui/operadorwidget.ui \

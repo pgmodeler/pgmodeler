@@ -8,7 +8,7 @@
 #include "funcaowidget.h"
 #include "castwidget.h"
 #include "conversionwidget.h"
-#include "dominiowidget.h"
+#include "domainwidget.h"
 #include "funcaoagregacaowidget.h"
 #include "sequenciawidget.h"
 #include "operadorwidget.h"
@@ -39,7 +39,7 @@ extern SourceCodeWidget *codigofonte_wgt;
 extern FuncaoWidget *funcao_wgt;
 extern CastWidget *convtipo_wgt;
 extern ConversionWidget *convcodif_wgt;
-extern DominioWidget *dominio_wgt;
+extern DomainWidget *dominio_wgt;
 extern FuncaoAgregacaoWidget *funcaoag_wgt;
 extern SequenciaWidget *sequencia_wgt;
 extern OperadorWidget *operador_wgt;
