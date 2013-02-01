@@ -42,7 +42,7 @@ Important Note
 
 Since the beta release the model files has suffered changes on its structure. So if you are experiencing the error "Assignment of a not allocated schema to object [NAME]" during the loading process of models generated in version below 0.4.0-beta you need to manually create the schema "public".
 
-To do it, open the .dbm file on your preferred text editor and add the code below right before the <database> tag.
+To do it, open the .dbm file on your preferred text editor and add the code below right before the "database" tag.
 
 ```
 <schema name="public" rect-visible="true" fill-color="#f0f0f0">
