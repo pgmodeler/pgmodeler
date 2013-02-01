@@ -877,12 +877,13 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 
 			//If a object had its schema restored is necessary to update the envolved schemas
 			if((obj_type==OBJ_TABLE || obj_type==OBJ_VIEW) &&
-				 ((graph_obj->getSchema()!=bkp_obj->getSchema() &&
-					 oper->op_type==Operation::OBJECT_MODIFIED) ||
+				 ((bkp_obj && graph_obj->getSchema()!=bkp_obj->getSchema() && oper->op_type==Operation::OBJECT_MODIFIED) ||
 					oper->op_type==Operation::OBJECT_MOVED))
 			{
 				dynamic_cast<BaseGraphicObject *>(graph_obj->getSchema())->setModified(true);
-				dynamic_cast<BaseGraphicObject *>(bkp_obj->getSchema())->setModified(oper->op_type==Operation::OBJECT_MODIFIED);
+
+				if(bkp_obj)
+				 dynamic_cast<BaseGraphicObject *>(bkp_obj->getSchema())->setModified(oper->op_type==Operation::OBJECT_MODIFIED);
 			}
 		}
 		else if(obj_type==OBJ_SCHEMA && oper->op_type==Operation::OBJECT_MODIFIED)

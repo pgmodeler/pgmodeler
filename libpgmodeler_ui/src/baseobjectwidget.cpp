@@ -627,7 +627,7 @@ void BaseObjectWidget::finishConfiguration(void)
 			//Updates the visual schemas when the objects is moved to another
 			if(object->getSchema() != prev_schema)
 			{
-				prev_schema->setModified(true);
+				if(prev_schema) prev_schema->setModified(true);
 				dynamic_cast<Schema *>(object->getSchema())->setModified(true);
 			}
 		}

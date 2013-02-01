@@ -37,16 +37,27 @@ The pgModeler can be executed directly from de executable but it is necessary ch
 
 * Linux/Unix users: use the ```start-pgmodeler.sh``` script. By default this script consider that pgModeler is installed on current working directory AKA ```pwd``` if you desire to set other location edit the script and change the PGMODELER_* environment variables.
 
+Important Note
+--------------
+
+Since the beta release the model files has suffered changes on its structure. So if you are experiencing the error "Assignment of a not allocated schema to object [NAME]" during the loading process of models generated in version below 0.4.0-beta you need to manually create the schema "public".
+
+To do it, open the .dbm file on your preferred text editor and add the code below right before the <database> tag.
+
+```
+<schema name="public" rect-visible="true" fill-color="#f0f0f0">
+</schema>
+```
+
 Known bugs
 ----------
 
-* Broken compilation process on MacOSX. ([issue#10](https://github.com/pgmodeler/pgmodeler/issues/10))
 * pgModeler in some situations can crash when undo / redoing operations. This is still in a deep investigation but the causes were not yet discovered.
 
 Change Log
 ----------
 
-[ v0.4.0-beta ]
+[ v0.4.0-rc ]
 
 Attention: The v0.4.0 is in beta stage so the change log can be modified at any moment when new bug fixes is created. New features will not be implemented now, instead, they will be marked to be coded starting from the v0.4.1.
 The stable 0.4.0 has no release date yet because all the code is being refactored (almost done!) meaning that the new version will be completely decoupled from previous ones.
