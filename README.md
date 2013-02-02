@@ -44,10 +44,8 @@ Since the beta release the model files has suffered changes on its structure. So
 
 To do it, open the .dbm file on your preferred text editor and add the code below right before the "database" tag.
 
-```
-<schema name="public" rect-visible="true" fill-color="#f0f0f0">
-</schema>
-```
+    <schema name="public" rect-visible="true" fill-color="#f0f0f0">
+    </schema>
 
 Known bugs
 ----------
@@ -57,15 +55,20 @@ Known bugs
 Change Log
 ----------
 
-[ v0.4.0-rc ]
+<em>Release date: February 1st, 2013 </em>
 
-Attention: The v0.4.0 is in beta stage so the change log can be modified at any moment when new bug fixes is created. New features will not be implemented now, instead, they will be marked to be coded starting from the v0.4.1.
+Attention: The v0.4.0 is in release-candidate stage so the change log can be modified at any moment when new bug fixes is created. New features will not be implemented now, instead, they will be marked to be coded starting from the v0.4.1.
 The stable 0.4.0 has no release date yet because all the code is being refactored (almost done!) meaning that the new version will be completely decoupled from previous ones.
 
+* [New]: tables and view are now graphically separated by colored rectangles representing its schemas.
+* [New]: compiling pgModeler now works perfectly on Mac OSX system.
 * [New]: introduced the 'Quick actions' menu that permits: rename, move to another schema, change onwer and edit permissions.
 * [New]: the relationship editing form gained an "advanced" tab which shows the objects generated and/or represents the relatioship itself.
 * [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
 * [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
+* [Change]: minor improvements on plugin base class: PgModelerPlugin.
+* [Change]: widget size adjustments to better showing on Mac OSX system.
+* [Change]: crashhandler now shows the compiled and running versions of Qt.
 * [Change]: french UI translation reviewed and updated (provided by [babs](https://github.com/babs)).
 * [Change]: 'Objects of Model' when used as object picker now expand all the nodes by default.
 * [Change]: 'Objects of Model' now memorizes the tree state when update an object and / or opening another model.
@@ -76,6 +79,11 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [Change]: relationship validation method now removes fk relationships when the foreign keys that gerenates is no longer exists.
 * [Change]: copy/cut/delete commands does not manipulates system objects like schema public and languages C, SQL and plpgsql.
 * [Change]: pgModeler startup scripts are now path location free meaning that software can be installed where the user desires.
+* [Fix]: pgModeler no longer crashes when editing objects style.
+* [Fix]: corrected bug that was deleting two sequeces at once.
+* [Fix]: pgModeler no longer crashes when removing (disconnecting) relationship that has special primary keys.
+* [Fix]: minor fixes on the startup scripts on all platforms.
+* [Fix]: corrected an incorrect reference to output stream on Windows system.
 * [Fix]: shortcuts and popup menu now works correctly when selection an object on 'Objects of Model' tree.
 * [Fix]: the pgsql base types (represented by tables, sequences, user defined types and domains) are now updated correctly when the related schema is renamed.
 * [Fix]: corrected some weird SRID value on non spatial types.

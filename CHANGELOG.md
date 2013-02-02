@@ -1,15 +1,23 @@
 Changelog
 ---------
 
-[ v0.4.0-beta ]
+v0.4.0-rc
+---------
 
-Attention: The v0.4.0 is in beta stage so the change log can be modified at any moment when new bug fixes is created. New features will not be implemented now, instead, they will be marked to be coded starting from the v0.4.1.
+<em>Release date: February 1st, 2013 </em>
+
+Attention: The v0.4.0 is in release-candidate stage so the change log can be modified at any moment when new bug fixes is created. New features will not be implemented now, instead, they will be marked to be coded starting from the v0.4.1.
 The stable 0.4.0 has no release date yet because all the code is being refactored (almost done!) meaning that the new version will be completely decoupled from previous ones.
 
+* [New]: tables and view are now graphically separated by colored rectangles representing its schemas.
+* [New]: compiling pgModeler now works perfectly on Mac OSX system.
 * [New]: introduced the 'Quick actions' menu that permits: rename, move to another schema, change onwer and edit permissions.
 * [New]: the relationship editing form gained an "advanced" tab which shows the objects generated and/or represents the relatioship itself.
 * [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
 * [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
+* [Change]: minor improvements on plugin base class: PgModelerPlugin.
+* [Change]: widget size adjustments to better showing on Mac OSX system.
+* [Change]: crashhandler now shows the compiled and running versions of Qt.
 * [Change]: french UI translation reviewed and updated (provided by [babs](https://github.com/babs)).
 * [Change]: 'Objects of Model' when used as object picker now expand all the nodes by default.
 * [Change]: 'Objects of Model' now memorizes the tree state when update an object and / or opening another model.
@@ -20,6 +28,11 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [Change]: relationship validation method now removes fk relationships when the foreign keys that gerenates is no longer exists.
 * [Change]: copy/cut/delete commands does not manipulates system objects like schema public and languages C, SQL and plpgsql.
 * [Change]: pgModeler startup scripts are now path location free meaning that software can be installed where the user desires.
+* [Fix]: pgModeler no longer crashes when editing objects style.
+* [Fix]: corrected bug that was deleting two sequeces at once.
+* [Fix]: pgModeler no longer crashes when removing (disconnecting) relationship that has special primary keys.
+* [Fix]: minor fixes on the startup scripts on all platforms.
+* [Fix]: corrected an incorrect reference to output stream on Windows system.
 * [Fix]: shortcuts and popup menu now works correctly when selection an object on 'Objects of Model' tree.
 * [Fix]: the pgsql base types (represented by tables, sequences, user defined types and domains) are now updated correctly when the related schema is renamed.
 * [Fix]: corrected some weird SRID value on non spatial types.
@@ -39,7 +52,10 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [Fix]: corrected bug on column comment code generation.
 * [Fix]: corrected bug that was deleting two tables at once.
 
-[ v0.3.4 ]
+v0.3.4
+------
+
+<em>Release date: October 17, 2012</em>
 
 * [New]: added chinese UI translation (provided by [gjunming](https://github.com/gjunming)).
 * [New]: added basic support for PostGiS 2.0 only data types: box2d, box3d, geometry and geography (suggested by [george-silva](https://github.com/george-silva) on [issue#28](https://github.com/pgmodeler/pgmodeler/issues/28))(EXPERIMENTAL). Note: when using these data types make sure that PostGiS extension is installed on database cluster since pgModeler WILL NOT install it automatically or generate the command to do it!
@@ -58,7 +74,10 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [Fix]: corrected a bug that was causing crash where user try to edit protected objects.
 * [Fix]: corrected the exhibition of UTF-8 messages on ```throw``` statements.
 
-[ v0.3.3 ]
+v0.3.3
+------
+
+<em>Release date: October 09, 2012</em>
 
 * [Change]: pgModeler license were update to GPLv3.
 * [Change]: Error massages and entire UI were translated to en_US. Now people can contribute more easily with translation files. [(issue#8)](https://github.com/pgmodeler/pgmodeler/issues/8)
@@ -68,7 +87,10 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [Fix]: Compilation process and execution is working correctly on Windows system. [(issue#11)](https://github.com/pgmodeler/pgmodeler/issues/11)
 * [Fix]: No more crashes when dealing with relationships that have special triggers/indexes/columns. [(issue#8)](https://github.com/pgmodeler/pgmodeler/issues/8) [(issue#24)](https://github.com/pgmodeler/pgmodeler/issues/24)
 
-[ v0.3.2 ]
+v0.3.2
+------
+
+<em>Release date: September 27, 2012</em>
 
 * [Change]: The default extension for the models now stands for ".dbm" [(issue#9)](https://github.com/pgmodeler/pgmodeler/issues/9)
 * [Change]: Tables and sequences now can be used as function return type as well parameter type. This is valid for other objects that make use of base types (except for table columns).
@@ -80,7 +102,10 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [Fix]: Corrected the reference to the plugins directory. [(issue#7)](https://github.com/pgmodeler/pgmodeler/issues/7)
 * [Fix]: The action "New Object -> Tablespace" now is displayed properly.
 
-[ v0.3.1 ]
+v0.3.1
+------
+
+<em>Release date: September 18, 2012</em>
 
 * [New]: Relationships generates column suffixes automaticaly. This behavior can be changed on the relationship editing form.
 * [New]: Added two samples to pgModeler.
@@ -89,14 +114,20 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [Fix]: Class CenaObjetos now doesn't delete objects twice.
 * [Fix]: Eliminated bug that caused crashing on pgModeler when closing a model.
 
-[ v0.3.0 ]
+v0.3.0
+------
+
+<em>Release date: September 12, 2012</em>
 
 * [New]: Added a model overview widget.
 * [New]: Added export feature that generates PNG image of the models.
 * [Fix]: Corrected the naming of columns generated by many-to-many relationships.
 * [Fix]: Corrected generation of XML/SQL code by the model.
 
-[ v0.2.0 ]
+v0.2.0
+------
+
+<em>Release date: August 31, 2012</em>
 
 * [New]: Added an interface to implement third party plugins. Check [PLUGINS.md] (https://github.com/pgmodeler/pgmodeler/blob/master/PLUGINS.md) for details.
 * [New]: Added a short cut to easily control the zoom on the model. Use Crtl + Mouse wheel up (zoom up) or Crtl + Mouse wheel down (zoom down).
@@ -104,7 +135,10 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [Fix]: No more crashes when removing an primary-key of a table which has relationship with other tables. [(issue#2)](https://github.com/pgmodeler/pgmodeler/issues/2)
 * [Fix]: Adjusted the semantics of one-to-one relationships.
 
-[ v0.1.2 ]
+v0.1.2
+------
+
+<em>Release date: August 24, 2012</em>
 
 * [New]: Added a functionality to save modified models before closing the software.
 * [Change]: Updated the en_US dictionary with the texts of the above functionality.
@@ -117,10 +151,20 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [Fix]: Eliminated segmentation fault when editing relationships and/or undoing an operation involving a relationship.
 * [Fix]: Identifiers relationships now correctly display the thick line beside the weak entity.
 
-[ v0.1.1 ]
+v0.1.1
+------
+
+<em>Release date: August 14, 2012</em>
 
 * [Fix]: Correction of the actions for inserting graphic objects (table, text box, vision and relationship) in Windows environment.
 * [Fix]: Correction on the display of the maximize button in the window decoration in Windows environment.
 * [Fix]: Adjust on the position and spacing of widgets in editing forms.
 * [Fix]: The XML parser can now correctly read DTD files in Windows environment.
 * [Fix]: The compilation method is no longer in the form of shared libraries + executable and passed to be as standalone executable only.
+
+v0.1.0
+------
+
+<em>Release date: August 9, 2012</em>
+
+* First pgModeler release.
