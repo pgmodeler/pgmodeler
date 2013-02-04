@@ -5,7 +5,7 @@
 #include "papelwidget.h"
 #include "tablespacewidget.h"
 #include "linguagemwidget.h"
-#include "funcaowidget.h"
+#include "functionwidget.h"
 #include "castwidget.h"
 #include "conversionwidget.h"
 #include "domainwidget.h"

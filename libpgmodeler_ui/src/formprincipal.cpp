@@ -8,7 +8,7 @@
 #include "permissaowidget.h"
 #include "tablespacewidget.h"
 #include "linguagemwidget.h"
-#include "funcaowidget.h"
+#include "functionwidget.h"
 #include "parametrowidget.h"
 #include "castwidget.h"
 #include "conversionwidget.h"
