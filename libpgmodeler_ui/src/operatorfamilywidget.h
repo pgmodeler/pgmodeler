@@ -18,29 +18,29 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class EsquemaWidget
-\brief Definição da classe que implementa o formulário de edição dos atributos de esquemas.
+\class OperatorFamilyWidget
+\brief Implements the operations to create/edit operator family via form.
 */
 
-#ifndef ESQUEMA_WIDGET_H
-#define ESQUEMA_WIDGET_H
+#ifndef OPERATOR_FAMILY_WIDGET_H
+#define OPERATOR_FAMILY_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_schemawidget.h"
+#include "ui_operatorfamilywidget.h"
 
-class EsquemaWidget: public BaseObjectWidget, public Ui::SchemaWidget {
+class OperatorFamilyWidget: public BaseObjectWidget, public Ui::OperatorFamilyWidget {
 	private:
 		Q_OBJECT
 
 	public:
-		EsquemaWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *esquema);
+		OperatorFamilyWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, OperatorFamily *op_family);
+
+	private slots:
+		void hideEvent(QHideEvent *event);
 
 	public slots:
 		void applyConfiguration(void);
-
-	private slots:
-		void selectFillColor(void);
 };
 
 #endif

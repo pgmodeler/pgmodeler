@@ -19,26 +19,25 @@
 /**
 \ingroup libpgmodeler_ui
 \class EspacoTabelaWidget
-\brief Definição da classe que implementa o formulário de edição dos atributos de espaços de tabela.
+\brief Implements the operations to create/edit tablespaces via form.
 */
 
-#ifndef ESPACOTABELA_WIDGET_H
-#define ESPACOTABELA_WIDGET_H
+#ifndef TABLESPACE_WIDGET_H
+#define TABLESPACE_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_espacotabelawidget.h"
+#include "ui_tablespacewidget.h"
 
-class EspacoTabelaWidget: public BaseObjectWidget, public Ui::EspacoTabelaWidget {
-	Q_OBJECT
-
+class TablespaceWidget: public BaseObjectWidget, public Ui::TablespaceWidget {
 	private:
+		Q_OBJECT
 
 	public:
-		EspacoTabelaWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Tablespace *espaco_tab);
+		TablespaceWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Tablespace *tablespc);
 
 	private slots:
-		void hideEvent(QHideEvent *);
+		void hideEvent(QHideEvent *event);
 
 	public slots:
 		void applyConfiguration(void);

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>EspacoTabelaWidget</class>
- <widget class="QWidget" name="EspacoTabelaWidget">
+ <class>TablespaceWidget</class>
+ <widget class="QWidget" name="TablespaceWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>239</width>
-    <height>37</height>
+    <height>29</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="espacotabela_grid">
+  <layout class="QGridLayout" name="tablespace_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -27,14 +27,14 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="dono_lbl">
+    <widget class="QLabel" name="directory_lbl">
      <property name="text">
       <string>Directory:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="diretorio_edt">
+    <widget class="QLineEdit" name="directory_edt">
      <property name="minimumSize">
       <size>
        <width>0</width>

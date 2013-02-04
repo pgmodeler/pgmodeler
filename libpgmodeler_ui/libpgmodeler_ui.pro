@@ -25,23 +25,23 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/sourcecodewidget.cpp \
            $$PWD/src/syntaxhighlighter.cpp \
            $$PWD/src/databasewidget.cpp \
-           $$PWD/src/esquemawidget.cpp \
+	   $$PWD/src/schemawidget.cpp \
            $$PWD/src/tabelaobjetoswidget.cpp \
            $$PWD/src/papelwidget.cpp \
            $$PWD/src/permissaowidget.cpp \
-           $$PWD/src/espacotabelawidget.cpp \
+	   $$PWD/src/tablespacewidget.cpp \
            $$PWD/src/linguagemwidget.cpp \
            $$PWD/src/seletorobjetowidget.cpp \
-           $$PWD/src/funcaowidget.cpp \
+	   $$PWD/src/functionwidget.cpp \
            $$PWD/src/tipopgsqlwidget.cpp \
            $$PWD/src/parametrowidget.cpp \
            $$PWD/src/castwidget.cpp \
            $$PWD/src/conversionwidget.cpp \
 	   $$PWD/src/domainwidget.cpp \
-           $$PWD/src/funcaoagregacaowidget.cpp \
+	   $$PWD/src/aggregatewidget.cpp \
            $$PWD/src/sequenciawidget.cpp \
            $$PWD/src/operadorwidget.cpp \
-           $$PWD/src/familiaoperadoreswidget.cpp \
+	   $$PWD/src/operatorfamilywidget.cpp \
            $$PWD/src/operatorclasswidget.cpp \
            $$PWD/src/tipowidget.cpp \
            $$PWD/src/visaowidget.cpp \
@@ -79,23 +79,23 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/sourcecodewidget.h \
            $$PWD/src/syntaxhighlighter.h \
            $$PWD/src/databasewidget.h \
-           $$PWD/src/esquemawidget.h \
+	   $$PWD/src/schemawidget.h \
            $$PWD/src/tabelaobjetoswidget.h \
            $$PWD/src/papelwidget.h \
            $$PWD/src/permissaowidget.h \
-           $$PWD/src/espacotabelawidget.h \
+	   $$PWD/src/tablespacewidget.h \
            $$PWD/src/linguagemwidget.h \
            $$PWD/src/seletorobjetowidget.h \
-           $$PWD/src/funcaowidget.h \
+	   $$PWD/src/functionwidget.h \
            $$PWD/src/tipopgsqlwidget.h \
            $$PWD/src/parametrowidget.h \
            $$PWD/src/castwidget.h \
            $$PWD/src/conversionwidget.h \
 	   $$PWD/src/domainwidget.h \
-           $$PWD/src/funcaoagregacaowidget.h \
+	   $$PWD/src/aggregatewidget.h \
            $$PWD/src/sequenciawidget.h \
            $$PWD/src/operadorwidget.h \
-           $$PWD/src/familiaoperadoreswidget.h \
+	   $$PWD/src/operatorfamilywidget.h \
            $$PWD/src/operatorclasswidget.h \
            $$PWD/src/tipowidget.h \
            $$PWD/src/visaowidget.h \
@@ -133,19 +133,19 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/tabelaobjetoswidget.ui \
          $$PWD/ui/papelwidget.ui \
          $$PWD/ui/permissaowidget.ui \
-         $$PWD/ui/espacotabelawidget.ui \
+	 $$PWD/ui/tablespacewidget.ui \
          $$PWD/ui/linguagemwidget.ui \
          $$PWD/ui/seletorobjetowidget.ui \
-         $$PWD/ui/funcaowidget.ui \
+	 $$PWD/ui/functionwidget.ui \
          $$PWD/ui/tipopgsqlwidget.ui \
          $$PWD/ui/parametrowidget.ui \
          $$PWD/ui/castwidget.ui \
 	 $$PWD/ui/conversionwidget.ui \
 	 $$PWD/ui/domainwidget.ui \
-         $$PWD/ui/funcaoagregacaowidget.ui \
+	 $$PWD/ui/aggregatewidget.ui \
          $$PWD/ui/sequenciawidget.ui \
          $$PWD/ui/operadorwidget.ui \
-         $$PWD/ui/familiaoperadoreswidget.ui \
+	 $$PWD/ui/operatorfamilywidget.ui \
          $$PWD/ui/operatorclasswidget.ui \
          $$PWD/ui/tipowidget.ui \
          $$PWD/ui/visaowidget.ui \

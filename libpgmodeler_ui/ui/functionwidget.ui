@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FuncaoWidget</class>
- <widget class="QWidget" name="FuncaoWidget">
+ <class>FunctionWidget</class>
+ <widget class="QWidget" name="FunctionWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -33,7 +33,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QTabWidget" name="funcaowidget_twg">
+    <widget class="QTabWidget" name="func_config_twg">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -61,10 +61,10 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="QLabel" name="linguagem_lbl">
+        <widget class="QLabel" name="language_lbl">
          <property name="maximumSize">
           <size>
-           <width>110</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -74,7 +74,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QComboBox" name="linguagem_cmb"/>
+        <widget class="QComboBox" name="language_cmb"/>
        </item>
        <item row="1" column="0" colspan="4">
         <widget class="QFrame" name="frame_2">
@@ -87,10 +87,10 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="tipo_func_lbl">
+        <widget class="QLabel" name="func_type_lbl">
          <property name="maximumSize">
           <size>
-           <width>110</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -100,13 +100,13 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="tipo_func_cmb"/>
+        <widget class="QComboBox" name="func_type_cmb"/>
        </item>
        <item row="2" column="2">
-        <widget class="QLabel" name="func_janela_lbl">
+        <widget class="QLabel" name="window_func_lbl">
          <property name="maximumSize">
           <size>
-           <width>110</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -116,14 +116,14 @@
         </widget>
        </item>
        <item row="2" column="3">
-        <widget class="QCheckBox" name="func_janela_chk">
+        <widget class="QCheckBox" name="window_func_chk">
          <property name="text">
           <string/>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="custo_exec_lbl">
+        <widget class="QLabel" name="exec_cost_lbl">
          <property name="minimumSize">
           <size>
            <width>125</width>
@@ -132,7 +132,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>110</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -142,7 +142,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QSpinBox" name="custo_exec_spb">
+        <widget class="QSpinBox" name="exec_cost_spb">
          <property name="minimum">
           <number>1</number>
          </property>
@@ -152,10 +152,10 @@
         </widget>
        </item>
        <item row="3" column="2">
-        <widget class="QLabel" name="linhas_ret_lbl">
+        <widget class="QLabel" name="return_rows_lbl">
          <property name="maximumSize">
           <size>
-           <width>110</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -165,17 +165,17 @@
         </widget>
        </item>
        <item row="3" column="3">
-        <widget class="QSpinBox" name="linhas_ret_sbp">
+        <widget class="QSpinBox" name="rows_ret_spb">
          <property name="maximum">
           <number>1000000000</number>
          </property>
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="comportamento_lbl">
+        <widget class="QLabel" name="behavior_lbl">
          <property name="maximumSize">
           <size>
-           <width>110</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -185,13 +185,13 @@
         </widget>
        </item>
        <item row="4" column="1" colspan="3">
-        <widget class="QComboBox" name="comportamento_cmb"/>
+        <widget class="QComboBox" name="behavior_cmb"/>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel" name="seguranca_lbl">
+        <widget class="QLabel" name="security_lbl">
          <property name="maximumSize">
           <size>
-           <width>110</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -201,7 +201,7 @@
         </widget>
        </item>
        <item row="5" column="1" colspan="3">
-        <widget class="QComboBox" name="seguranca_cmb"/>
+        <widget class="QComboBox" name="security_cmb"/>
        </item>
        <item row="6" column="0" colspan="4">
         <widget class="QFrame" name="frame">
@@ -214,7 +214,7 @@
         </widget>
        </item>
        <item row="7" column="0">
-        <widget class="QLabel" name="metodo_ret_lbl">
+        <widget class="QLabel" name="ret_method_lbl">
          <property name="maximumSize">
           <size>
            <width>110</width>
@@ -229,7 +229,7 @@
        <item row="7" column="1" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QRadioButton" name="simples_rb">
+          <widget class="QRadioButton" name="simple_rb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -248,7 +248,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="conjunto_rb">
+          <widget class="QRadioButton" name="set_rb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -264,7 +264,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="tabela_rb">
+          <widget class="QRadioButton" name="table_rb">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -295,7 +295,7 @@
         </spacer>
        </item>
        <item row="8" column="0" colspan="4">
-        <widget class="QGroupBox" name="tabela_ret_gb">
+        <widget class="QGroupBox" name="ret_table_gb">
          <property name="title">
           <string>Return Table</string>
          </property>
@@ -335,7 +335,7 @@
            <number>6</number>
           </property>
           <item row="0" column="0" colspan="3">
-           <widget class="QLabel" name="biblioteca1_lbl">
+           <widget class="QLabel" name="dy_library_lbl">
             <property name="text">
              <string>Dynamic Library:</string>
             </property>
@@ -371,7 +371,7 @@
            </spacer>
           </item>
           <item row="1" column="1">
-           <widget class="QLabel" name="simbolo_lbl">
+           <widget class="QLabel" name="symbol_lbl">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -387,7 +387,7 @@
            </widget>
           </item>
           <item row="1" column="2" colspan="2">
-           <widget class="QLineEdit" name="simbolo_edt">
+           <widget class="QLineEdit" name="symbol_edt">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -400,7 +400,7 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLabel" name="biblioteca_lbl">
+           <widget class="QLabel" name="library_lbl">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -416,7 +416,7 @@
            </widget>
           </item>
           <item row="2" column="2" colspan="2">
-           <widget class="QLineEdit" name="biblioteca_edt">
+           <widget class="QLineEdit" name="library_edt">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -460,7 +460,7 @@
            <number>6</number>
           </property>
           <item row="0" column="0">
-           <widget class="QLabel" name="codigofonte_lbl">
+           <widget class="QLabel" name="sourc_code_lbl">
             <property name="text">
              <string>Source code:</string>
             </property>
@@ -480,7 +480,7 @@
            </spacer>
           </item>
           <item row="1" column="0" colspan="2">
-           <widget class="QTextEdit" name="codigofonte_txt"/>
+           <widget class="QTextEdit" name="source_code_txt"/>
           </item>
          </layout>
         </widget>

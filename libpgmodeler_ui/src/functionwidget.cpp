@@ -1,4 +1,4 @@
-#include "funcaowidget.h"
+#include "functionwidget.h"
 #include "parametrowidget.h"
 extern ParametroWidget *parametro_wgt;
 
@@ -11,88 +11,88 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FUNCTI
 		map<QString, vector<QWidget *> > mapa_campos;
 		QFrame *frame=NULL;
 
-		Ui_FuncaoWidget::setupUi(this);
+		Ui_FunctionWidget::setupUi(this);
 		configureFormLayout(funcao_grid, OBJ_FUNCTION);
 
 		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
 		//Aloca um destacador de código fonte para o campo de definição da função
-		destaque_codigo=new SyntaxHighlighter(codigofonte_txt, true);
+		source_code_hl=new SyntaxHighlighter(source_code_txt, true);
 
 		//Aloca o widget de configuração de tipo de retorno simples
-		tipo_ret=new TipoPgSQLWidget(this);
+		ret_type=new TipoPgSQLWidget(this);
 
 		/* Aloca a tabela que armazena as colunas da tabela de retorno.
 		 Esta tabela possui 2 colunas que são o Nome da coluna e o tipo de dado */
-		tab_retorno=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
+		return_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
 																				TabelaObjetosWidget::BTN_ATUALIZAR_ITEM, true, this);
-		tab_retorno->definirNumColunas(2);
-		tab_retorno->definirRotuloCabecalho(trUtf8("Column"), 0);
-		tab_retorno->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-		tab_retorno->definirRotuloCabecalho(trUtf8("Type"), 1);
-		tab_retorno->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+		return_tab->definirNumColunas(2);
+		return_tab->definirRotuloCabecalho(trUtf8("Column"), 0);
+		return_tab->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
+		return_tab->definirRotuloCabecalho(trUtf8("Type"), 1);
+		return_tab->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
 
 		/* Aloca a tabela que armazena os parâmetros da função.
 		 Esta tabela possui 4 colunas que são:
 		 Nome do parâmetro, tipo do parâmetro, comportamento do parâmetro (IN/OUT),
 		 valor padrâo do parâmetro */
-		tab_parametros=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
+		parameters_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
 																					 TabelaObjetosWidget::BTN_ATUALIZAR_ITEM, true, this);
-		tab_parametros->definirNumColunas(4);
-		tab_parametros->definirRotuloCabecalho(trUtf8("Name"),0);
-		tab_parametros->definirIconeCabecalho(QPixmap(":/icones/icones/parameter.png"),0);
-		tab_parametros->definirRotuloCabecalho(trUtf8("Type"),1);
-		tab_parametros->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
-		tab_parametros->definirRotuloCabecalho(trUtf8("IN/OUT"),2);
-		tab_parametros->definirRotuloCabecalho(trUtf8("Default Value"),3);
+		parameters_tab->definirNumColunas(4);
+		parameters_tab->definirRotuloCabecalho(trUtf8("Name"),0);
+		parameters_tab->definirIconeCabecalho(QPixmap(":/icones/icones/parameter.png"),0);
+		parameters_tab->definirRotuloCabecalho(trUtf8("Type"),1);
+		parameters_tab->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+		parameters_tab->definirRotuloCabecalho(trUtf8("IN/OUT"),2);
+		parameters_tab->definirRotuloCabecalho(trUtf8("Default Value"),3);
 
 		grid=new QGridLayout;
-		grid->addWidget(tab_parametros,0,0,1,1);
+		grid->addWidget(parameters_tab,0,0,1,1);
 		grid->setContentsMargins(2,2,2,2);
-		funcaowidget_twg->widget(1)->setLayout(grid);
+		func_config_twg->widget(1)->setLayout(grid);
 
-		grid=dynamic_cast<QGridLayout *>(funcaowidget_twg->widget(0)->layout());
-		grid->addWidget(tipo_ret, grid->count(), 0, 1, 4);
-		grid->addWidget(tabela_ret_gb, grid->count()-1, 0, 1, 4);
+		grid=dynamic_cast<QGridLayout *>(func_config_twg->widget(0)->layout());
+		grid->addWidget(ret_type, grid->count(), 0, 1, 4);
+		grid->addWidget(ret_table_gb, grid->count()-1, 0, 1, 4);
 
 		grid1=new QGridLayout;
-		grid1->addWidget(tab_retorno, 0, 0, 1, 1);
+		grid1->addWidget(return_tab, 0, 0, 1, 1);
 		grid1->setContentsMargins(2,2,2,2);
-		tabela_ret_gb->setLayout(grid1);
-		tabela_ret_gb->setVisible(false);
+		ret_table_gb->setLayout(grid1);
+		ret_table_gb->setVisible(false);
 
 		//Define os campos exclusivos para cada versão
-		mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(tabela_rb);
-		mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(func_janela_lbl);
+		mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(table_rb);
+		mapa_campos[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(window_func_lbl);
 
 		//Gera o frame de alerta
 		frame=generateVersionWarningFrame(mapa_campos);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
-		frame->setParent(funcaowidget_twg->widget(0));
+		frame->setParent(func_config_twg->widget(0));
 
 		parent_form->setMinimumSize(645, 715);
 
 		//Configura o combo de tipos de segurança da função
 		SecurityType::getTypes(tipos);
-		seguranca_cmb->addItems(tipos);
+		security_cmb->addItems(tipos);
 
 		//Configura o combo de tipo da função
 		FunctionType::getTypes(tipos);
-		tipo_func_cmb->addItems(tipos);
+		func_type_cmb->addItems(tipos);
 
 		//Configura o combo de tipo de comportamento da função
 		BehaviorType::getTypes(tipos);
-		comportamento_cmb->addItems(tipos);
+		behavior_cmb->addItems(tipos);
 
-		connect(simples_rb, SIGNAL(clicked(bool)), this, SLOT(alternarTiposRetorno(void)));
-		connect(conjunto_rb, SIGNAL(clicked(bool)), this, SLOT(alternarTiposRetorno(void)));
-		connect(tabela_rb, SIGNAL(clicked(bool)), this, SLOT(alternarTiposRetorno(void)));
-		connect(linguagem_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selecionarLinguagem(void)));
+		connect(simple_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
+		connect(set_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
+		connect(table_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
+		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage(void)));
 
-		connect(tab_parametros, SIGNAL(s_linhaAdicionada(int)), this, SLOT(exibirFormParametro()));
-		connect(tab_parametros, SIGNAL(s_linhaEditada(int)), this, SLOT(exibirFormParametro()));
-		connect(tab_retorno, SIGNAL(s_linhaAdicionada(int)), this, SLOT(exibirFormParametro()));
-		connect(tab_retorno, SIGNAL(s_linhaEditada(int)), this, SLOT(exibirFormParametro()));
+		connect(parameters_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(showParameterForm()));
+		connect(parameters_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(showParameterForm()));
+		connect(return_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(showParameterForm()));
+		connect(return_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(showParameterForm()));
 	}
 	catch(Exception &e)
 	{
@@ -101,7 +101,7 @@ FuncaoWidget::FuncaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FUNCTI
 	}
 }
 
-void FuncaoWidget::manipularParametro(int res)
+void FuncaoWidget::handleParameter(int res)
 {
 	int qtd_lin, lin;
 	QString str_aux;
@@ -109,12 +109,12 @@ void FuncaoWidget::manipularParametro(int res)
 
 	/* Seleciona a tabela a ser manipulado o parâmetro de
 	* acordo com a visibilidade da mesma */
-	if(tab_parametros->isVisible())
+	if(parameters_tab->isVisible())
 		//Seleciona a tabela de parâmetros caso esta esteja visível (em foco)
-		tabela=tab_parametros;
+		tabela=parameters_tab;
 	else
 		//Seleciona a tabela de retorno caso esta esteja visível (em foco)
-		tabela=tab_retorno;
+		tabela=return_tab;
 
 	//Obtém a quantidade de linhas da tabela selecionada
 	qtd_lin=tabela->obterNumLinhas();
@@ -134,7 +134,7 @@ void FuncaoWidget::manipularParametro(int res)
 
 		/* Exibe os dados do parâmetro configurado no formulário de prâmetros
 		 na tabela selecionada na linha selecionada */
-		exibirDadosParametro(parametro_wgt->obterParametro(), tabela, lin);
+		showParameterData(parametro_wgt->obterParametro(), tabela, lin);
 	}
 	//Caso o usuário clique no botão 'cancelar' da janela de conf. de parâmetro
 	else if(res==QDialog::Rejected)
@@ -145,7 +145,7 @@ void FuncaoWidget::manipularParametro(int res)
 	}
 }
 
-void FuncaoWidget::exibirFormParametro(void)
+void FuncaoWidget::showParameterForm(void)
 {
 	QObject *obj_sender=sender();
 	TabelaObjetosWidget *tabela=NULL;
@@ -154,16 +154,16 @@ void FuncaoWidget::exibirFormParametro(void)
 
 	/* O formulário de conf. de parâmetro só será exibido
 	 se o sender for uma das tabelas de parâmetros */
-	if(obj_sender==tab_parametros || obj_sender==tab_retorno)
+	if(obj_sender==parameters_tab || obj_sender==return_tab)
 	{
 		tabela=dynamic_cast<TabelaObjetosWidget *>(obj_sender);
 
 		/* Desabilita alguns campos do formulário de parâmetro quando
 		se tratar de um parametro da tabela de retorno da função,
 		pois são atributos não usados na declaração SQL */
-		parametro_wgt->param_in_chk->setEnabled(obj_sender==tab_parametros);
-		parametro_wgt->param_out_chk->setEnabled(obj_sender==tab_parametros);
-		parametro_wgt->valorpadrao_edt->setEnabled(obj_sender==tab_parametros);
+		parametro_wgt->param_in_chk->setEnabled(obj_sender==parameters_tab);
+		parametro_wgt->param_out_chk->setEnabled(obj_sender==parameters_tab);
+		parametro_wgt->valorpadrao_edt->setEnabled(obj_sender==parameters_tab);
 
 		//Obtém a linha selecionada da tabela
 		idx_lin=tabela->obterLinhaSelecionada();
@@ -172,7 +172,7 @@ void FuncaoWidget::exibirFormParametro(void)
 		 para que seus dados sejam exibidos no formulário de manipulação
 		 de parâmetro */
 		if(idx_lin >= 0 && !tabela->obterTextoCelula(idx_lin, 0).isEmpty())
-			param_aux=obterParametro(tabela, idx_lin);
+			param_aux=getParameter(tabela, idx_lin);
 
 		//Exibe o formulário de parâmetros
 		parametro_wgt->setAttributes(param_aux, model);
@@ -180,7 +180,7 @@ void FuncaoWidget::exibirFormParametro(void)
 	}
 }
 
-Parameter FuncaoWidget::obterParametro(TabelaObjetosWidget *tab, unsigned idx_lin)
+Parameter FuncaoWidget::getParameter(TabelaObjetosWidget *tab, unsigned idx_lin)
 {
 	Parameter param;
 	QString str_aux;
@@ -197,7 +197,7 @@ Parameter FuncaoWidget::obterParametro(TabelaObjetosWidget *tab, unsigned idx_li
 			param.setType(tab->obterDadoLinha(idx_lin).value<PgSQLType>());
 
 			//Obtendo informações específicas quando se trata da tabela de parâmetros
-			if(tab==tab_parametros)
+			if(tab==parameters_tab)
 			{
 				//Marcando se o parâmetro é de entrada/saída de acordo com o texto da coluna da tabela
 				str_aux=tab->obterTextoCelula(idx_lin, 2);
@@ -217,7 +217,7 @@ Parameter FuncaoWidget::obterParametro(TabelaObjetosWidget *tab, unsigned idx_li
 	return(param);
 }
 
-void FuncaoWidget::exibirDadosParametro(Parameter param, TabelaObjetosWidget *tab, unsigned idx_lin)
+void FuncaoWidget::showParameterData(Parameter param, TabelaObjetosWidget *tab, unsigned idx_lin)
 {
 	if(tab)
 	{
@@ -235,7 +235,7 @@ void FuncaoWidget::exibirDadosParametro(Parameter param, TabelaObjetosWidget *ta
 
 		/* Caso a tabela passada seja a de parâmetro configura as demais
 		 colunas com os demais atributos do parâmetro */
-		if(tab==tab_parametros)
+		if(tab==parameters_tab)
 		{
 			//Exibe se o parâmetro é de entrada/saída
 			if(param.isIn()) str_aux="IN";
@@ -258,7 +258,7 @@ void FuncaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op,
 	QString str_aux;
 	PgSQLType tipo_aux;
 
-	connect(parametro_wgt, SIGNAL(finished(int)), this, SLOT(manipularParametro(int)));
+	connect(parametro_wgt, SIGNAL(finished(int)), this, SLOT(handleParameter(int)));
 
 	//Define os atributos do formulários e da janela pai
 	BaseObjectWidget::setAttributes(modelo, lista_op, funcao);
@@ -276,44 +276,44 @@ void FuncaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op,
 
 	//Ordena e insere as linguagens num combobox
 	lista.sort();
-	linguagem_cmb->addItems(lista);
+	language_cmb->addItems(lista);
 
 	if(funcao)
 	{
 		tipo_aux=funcao->getReturnType();
 
 		//Seleciona no combobox a linguagem configurada para a função
-		linguagem_cmb->setCurrentIndex(linguagem_cmb->findText(funcao->getLanguage()->getName()));
+		language_cmb->setCurrentIndex(language_cmb->findText(funcao->getLanguage()->getName()));
 
 		//Seleciona no combobox o tipo da função
-		tipo_func_cmb->setCurrentIndex(tipo_func_cmb->findText(~funcao->getFunctionType()));
+		func_type_cmb->setCurrentIndex(func_type_cmb->findText(~funcao->getFunctionType()));
 
 		//Marca o checkbox se a função é janela ou não de acordo com o configurado na instância de função
-		func_janela_chk->setChecked(funcao->isWindowFunction());
+		window_func_chk->setChecked(funcao->isWindowFunction());
 
 		//Exibe o custo de execução da função no formulário
-		custo_exec_spb->setValue(funcao->getExecutionCost());
+		exec_cost_spb->setValue(funcao->getExecutionCost());
 
 		//Exibe a quantidade de linhas retornadas pela função
-		linhas_ret_sbp->setValue(funcao->getRowAmount());
+		rows_ret_spb->setValue(funcao->getRowAmount());
 
 		//Seleciona no combo o comportamento da função de acordo com o configurado na instância
-		comportamento_cmb->setCurrentIndex(comportamento_cmb->findText(~funcao->getBehaviorType()));
+		behavior_cmb->setCurrentIndex(behavior_cmb->findText(~funcao->getBehaviorType()));
 
 		//Seleciona no combo tipo de segurança da função de acordo com o configurado na instância
-		seguranca_cmb->setCurrentIndex(seguranca_cmb->findText(~funcao->getSecurityType()));
+		security_cmb->setCurrentIndex(security_cmb->findText(~funcao->getSecurityType()));
 
 		//Configura no formulário o tipo de retorno da função
 		//Caso a função retorne um conjunto de dados marca o radiobox respecitivo
 		if(funcao->isReturnSetOf())
-			conjunto_rb->setChecked(true);
+			set_rb->setChecked(true);
 		/* Caso a função retorna uma tabela marca o radiobox respectivo isso
 		 também faz com que o widget que armazena os detalhes da tabela de
 		 retorno seja exibido */
 		else if(funcao->isReturnTable())
-			tabela_rb->setChecked(true);
+			table_rb->setChecked(true);
 		else
-			simples_rb->setChecked(true);
+			simple_rb->setChecked(true);
 
 		//Obtém o número de parâmetros da função
 		qtd=funcao->getParameterCount();
@@ -325,17 +325,17 @@ void FuncaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op,
 		 executar os slots ligados a estas duas tabelas, isso deve acontecer
 		 somente quando o usuário interagir (via mouse ou teclado) com
 		 esses widgets */
-		tab_parametros->blockSignals(true);
-		tab_retorno->blockSignals(true);
+		parameters_tab->blockSignals(true);
+		return_tab->blockSignals(true);
 
 		//Preenche a tabela de parâmetros com os parâmetros da função
 		for(i=0; i < qtd; i++)
 		{
-			tab_parametros->adicionarLinha();
+			parameters_tab->adicionarLinha();
 			param=funcao->getParameter(i);
-			exibirDadosParametro(param,tab_parametros,i);
+			showParameterData(param,parameters_tab,i);
 		}
-		tab_parametros->limparSelecao();
+		parameters_tab->limparSelecao();
 
 		/* Obtém a quantidade de colunas na tabela de retorno.
 		 caso exista algum a tabela é exibida e as colunas
@@ -343,68 +343,68 @@ void FuncaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op,
 		qtd=funcao->getReturnedTableColumnCount();
 		if(qtd > 0)
 		{
-			tabela_ret_gb->setVisible(true);
-			tipo_ret->setVisible(false);
+			ret_table_gb->setVisible(true);
+			ret_type->setVisible(false);
 
 			//Exibindo as colunas da tabela de retorno no widget
 			for(i=0; i < qtd; i++)
 			{
-				tab_retorno->adicionarLinha();
+				return_tab->adicionarLinha();
 				param=funcao->getReturnedTableColumn(i);
-				exibirDadosParametro(param,tab_retorno,i);
+				showParameterData(param,return_tab,i);
 			}
 		}
-		tab_retorno->limparSelecao();
+		return_tab->limparSelecao();
 
 
 		//Caso a função referencie (esteja definida) uma biblioteca
 		if(!funcao->getLibrary().isEmpty())
 		{
 			//Exibe o nome do símbolo e caminho para a biblioteca no sistema de arquivos
-			simbolo_edt->setText(funcao->getSymbol());
-			biblioteca_edt->setText(funcao->getLibrary());
+			symbol_edt->setText(funcao->getSymbol());
+			library_edt->setText(funcao->getLibrary());
 		}
 		//Caso a função esteja definida por um código fonte
 		else
 		{
 			//Exibe o código fonte da função na caixa de destaque de código fonte
-			codigofonte_txt->setPlainText(QString::fromUtf8(funcao->getSourceCode()));
+			source_code_txt->setPlainText(QString::fromUtf8(funcao->getSourceCode()));
 		}
 
 		/* Desbloqueia os sinais dos widgets de tabela para que o usuário possa
 		 interagir com estes */
-		tab_parametros->blockSignals(false);
-		tab_retorno->blockSignals(false);
+		parameters_tab->blockSignals(false);
+		return_tab->blockSignals(false);
 	}
 
-	tipo_ret->definirAtributos(tipo_aux, modelo);
+	ret_type->definirAtributos(tipo_aux, modelo);
 }
 
 void FuncaoWidget::hideEvent(QHideEvent *evento)
 {
-	linguagem_cmb->clear();
-	tab_parametros->removerLinhas();
-	tab_retorno->removerLinhas();
-	codigofonte_txt->clear();
-	simbolo_edt->clear();
-	biblioteca_edt->clear();
-	funcaowidget_twg->setCurrentIndex(0);
+	language_cmb->clear();
+	parameters_tab->removerLinhas();
+	return_tab->removerLinhas();
+	source_code_txt->clear();
+	symbol_edt->clear();
+	library_edt->clear();
+	func_config_twg->setCurrentIndex(0);
 	disconnect(parametro_wgt,NULL, this, NULL);
 	BaseObjectWidget::hideEvent(evento);
 }
 
-void FuncaoWidget::alternarTiposRetorno(void)
+void FuncaoWidget::alternateReturnTypes(void)
 {
 	QObject *obj_sender=sender();
-	tabela_ret_gb->setVisible(obj_sender==tabela_rb);
-	tipo_ret->setVisible(!tabela_ret_gb->isVisible());
+	ret_table_gb->setVisible(obj_sender==table_rb);
+	ret_type->setVisible(!ret_table_gb->isVisible());
 }
 
-void FuncaoWidget::selecionarLinguagem(void)
+void FuncaoWidget::selectLanguage(void)
 {
 	bool ling_c;
 
-	ling_c=(linguagem_cmb->currentText()==~LanguageType(LanguageType::c));
+	ling_c=(language_cmb->currentText()==~LanguageType(LanguageType::c));
 	codigofonte_frm->setVisible(!ling_c);
 	biblioteca_frm->setVisible(ling_c);
 
@@ -412,25 +412,25 @@ void FuncaoWidget::selecionarLinguagem(void)
 	{
 		try
 		{
-			destaque_codigo->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+			source_code_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																				 GlobalAttributes::DIR_SEPARATOR +
-																				 linguagem_cmb->currentText() +
+																				 language_cmb->currentText() +
 																				 GlobalAttributes::HIGHLIGHT_FILE_SUF +
 																				 GlobalAttributes::CONFIGURATION_EXT);
 		}
 		catch(Exception &e)
 		{
-			destaque_codigo->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+			source_code_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																				 GlobalAttributes::DIR_SEPARATOR +
 																				 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																				 GlobalAttributes::CONFIGURATION_EXT);
 		}
 
-		destaque_codigo->rehighlight();
+		source_code_hl->rehighlight();
 	}
 }
 
-void FuncaoWidget::validarFuncaoConfigurada(void)
+void FuncaoWidget::validateConfiguredFunction(void)
 {
 	vector<BaseObject *> *lista_obj;
 	vector<BaseObject *>::iterator itr, itr_end;
@@ -575,33 +575,33 @@ void FuncaoWidget::applyConfiguration(void)
 		func=dynamic_cast<Function *>(this->object);
 
 		//Atribui os valores básicos configurados no formulário para a função
-		func->setLanguage(model->getObject(linguagem_cmb->currentText(), OBJ_LANGUAGE));
-		func->setFunctionType(tipo_func_cmb->currentText());
-		func->setWindowFunction(func_janela_chk->isChecked());
-		func->setExecutionCost(custo_exec_spb->value());
-		func->setRowAmount(linhas_ret_sbp->value());
-		func->setBehaviorType(comportamento_cmb->currentText());
-		func->setSecurityType(seguranca_cmb->currentText());
+		func->setLanguage(model->getObject(language_cmb->currentText(), OBJ_LANGUAGE));
+		func->setFunctionType(func_type_cmb->currentText());
+		func->setWindowFunction(window_func_chk->isChecked());
+		func->setExecutionCost(exec_cost_spb->value());
+		func->setRowAmount(rows_ret_spb->value());
+		func->setBehaviorType(behavior_cmb->currentText());
+		func->setSecurityType(security_cmb->currentText());
 
 		/* Remove todos os parâmetros da função para adicionar os que foram
 		 configurados no formulário */
 		func->removeParameters();
 
 		//Obtém a quantidade de parâmetros configurados no formulário
-		qtd=tab_parametros->obterNumLinhas();
+		qtd=parameters_tab->obterNumLinhas();
 
 		for(i=0; i < qtd; i++)
 		{
 			/* Cria um parâmetro auxiliar e os configura de acordo com os valores
 			do parâmetro atual (i) na tabela */
-			param.setName(tab_parametros->obterTextoCelula(i,0));
-			param.setType(tab_parametros->obterDadoLinha(i).value<PgSQLType>());
+			param.setName(parameters_tab->obterTextoCelula(i,0));
+			param.setType(parameters_tab->obterDadoLinha(i).value<PgSQLType>());
 
-			str_aux=tab_parametros->obterTextoCelula(i,2);
+			str_aux=parameters_tab->obterTextoCelula(i,2);
 			param.setIn(str_aux.indexOf("IN") >= 0);
 			param.setOut(str_aux.indexOf("OUT") >= 0);
 
-			param.setDefaultValue(tab_parametros->obterTextoCelula(i,3));
+			param.setDefaultValue(parameters_tab->obterTextoCelula(i,3));
 
 			//Uma vez configurado esse parâmetro e inserido na função
 			func->addParameter(param);
@@ -612,39 +612,39 @@ void FuncaoWidget::applyConfiguration(void)
 		 indica que a função está definida em uma biblioteca externa
 		 para tanto os valores dos campos biblioteca e simbolo
 		 serão atribuío   função que está sendo configurada */
-		if(linguagem_cmb->currentText()==~LanguageType(LanguageType::c))
+		if(language_cmb->currentText()==~LanguageType(LanguageType::c))
 		{
-			func->setLibrary(biblioteca_edt->text());
-			func->setSymbol(simbolo_edt->text());
+			func->setLibrary(library_edt->text());
+			func->setSymbol(symbol_edt->text());
 		}
 		/* Caso a linguagem seja diferente de C atribui o código fonte
 		 definido no destacador de código do formulário */
 		else
-			func->setSourceCode(codigofonte_txt->toPlainText());
+			func->setSourceCode(source_code_txt->toPlainText());
 
 		//Caso o tipo de retorno configurado no formulário seja simples ou conjunto
-		if(simples_rb->isChecked() || conjunto_rb->isChecked())
+		if(simple_rb->isChecked() || set_rb->isChecked())
 		{
 			/* Define o tipo de retorno da função obtendo o tipo definido no widget de
 			configuração de tipos pgsql */
-			func->setReturnType(tipo_ret->obterTipoPgSQL());
+			func->setReturnType(ret_type->obterTipoPgSQL());
 
 			/* Marca na função se a mesma retorna um conjunto de dados de acordo
-			com o estado do radiobox 'conjunto_rb' */
-			func->setReturnSetOf(conjunto_rb->isChecked());
+			com o estado do radiobox 'set_rb' */
+			func->setReturnSetOf(set_rb->isChecked());
 		}
 		//Caso a função retorna uma tabela, a mesma é atrua   função
 		else
 		{
 			func->removeReturnedTableColumns();
-			qtd=tab_retorno->obterNumLinhas();
+			qtd=return_tab->obterNumLinhas();
 
 			/* Adiciona uma coluna na tabela de retorno com os dados configurados na tabela
 			respectiva do formulário */
 			for(i=0; i<qtd; i++)
 			{
-				func->addReturnedTableColumn(tab_retorno->obterTextoCelula(i,0),
-																		 tab_retorno->obterDadoLinha(i).value<PgSQLType>());
+				func->addReturnedTableColumn(return_tab->obterTextoCelula(i,0),
+																		 return_tab->obterDadoLinha(i).value<PgSQLType>());
 			}
 		}
 
@@ -654,7 +654,7 @@ void FuncaoWidget::applyConfiguration(void)
 		/* Executa a validação da função em relação aos objetos das classes
 		 ConversaoCodificacao, ConversaoTipo, ElemClasseOperadores, FuncaoAgregada,
 		 Gatilho, Linguagem, Operador, Tipo */
-		validarFuncaoConfigurada();
+		validateConfiguredFunction();
 
 		finishConfiguration();
 	}
