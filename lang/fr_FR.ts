@@ -3,6 +3,59 @@
 <TS version="2.0" language="fr" sourcelanguage="en_US">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
+    <name>AggregateWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Final Function:</source>
+        <translation>Fonction finale:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Transition Function:</source>
+        <translation>Fonction de transition:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Sort Operator:</source>
+        <translation>Opérateur de tri:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Initial Condition:</source>
+        <translation>Condition initiale:</translation>
+    </message>
+    <message>
+        <location line="+48"/>
+        <source>Funtion Inputs</source>
+        <translation>Entrées de la fonction</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Function State</source>
+        <translation>État de la fonction</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/aggregatewidget.cpp" line="+22"/>
+        <source>Input Data Type</source>
+        <translation>Type de donnée en entrée</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>State Data Type</source>
+        <translation>Type de donnée d&apos;état</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>An aggregate function that accepts the types &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; and &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; as input types and which type of state is &lt;em&gt;&lt;strong&gt;state_type&lt;/strong&gt;&lt;/em&gt;, must obey the following rules: &lt;br/&gt;&lt;br/&gt; &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Final Function:&lt;/strong&gt; &lt;em&gt;void final_function(&lt;strong&gt;state_type&lt;/strong&gt;)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Transition Function:&lt;/strong&gt; &lt;em&gt;&lt;strong&gt;state_type&lt;/strong&gt; transition_function(&lt;strong&gt;state_type&lt;/strong&gt;, &lt;strong&gt;typeA&lt;/strong&gt;, &lt;strong&gt;typeB&lt;/strong&gt;)&lt;/em&gt;</source>
+        <translation>Une fonction d&apos;agrégation qui accepte les types &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; et &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; comme types d&apos;entrées et dont le type d&apos;état est &lt;em&gt;&lt;strong&gt;type_etat&lt;/strong&gt;&lt;/em&gt;, doit obéir aux règles suivantes:&lt;br/&gt;&lt;br/&gt; &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Fonction Finale:&lt;/strong&gt; &lt;em&gt;void fonction_finale(&lt;strong&gt;type_etat&lt;/strong&gt;)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Fonction de Transition,:&lt;/strong&gt; &lt;em&gt;&lt;strong&gt;type_etat&lt;/strong&gt; fonction_transition(&lt;strong&gt;type_etat&lt;/strong&gt;, &lt;strong&gt;typeA&lt;/strong&gt;, &lt;strong&gt;typeB&lt;/strong&gt;)&lt;/em&gt;</translation>
+    </message>
+</context>
+<context>
     <name>AppearanceConfigWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/appearanceconfigwidget.ui" line="+14"/>
@@ -965,27 +1018,6 @@ Taille: %2 bytes
     </message>
 </context>
 <context>
-    <name>EspacoTabelaWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/espacotabelawidget.ui" line="+32"/>
-        <source>Directory:</source>
-        <translation>Dossier:</translation>
-    </message>
-    <message>
-        <location line="-12"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
-    <name>EsquemaWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/src/esquemawidget.cpp" line="+47"/>
-        <source>Select fill color</source>
-        <translation>Choisissez une couleur de remplissage</translation>
-    </message>
-</context>
-<context>
     <name>Exception</name>
     <message>
         <location filename="../libutil/src/exception.cpp" line="+6"/>
@@ -1882,19 +1914,6 @@ Message retourné par le SGBD: %1</translation>
     </message>
 </context>
 <context>
-    <name>FamiliaOperadoresWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/familiaoperadoreswidget.ui" line="+44"/>
-        <source>Indexing:</source>
-        <translation>Indexation:</translation>
-    </message>
-    <message>
-        <location line="-24"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
     <name>FormBasico</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/formbasico.ui" line="+148"/>
@@ -2599,62 +2618,43 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
-    <name>FuncaoAgregacaoWidget</name>
+    <name>FuncaoWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/funcaoagregacaowidget.ui" line="+32"/>
-        <source>Final Function:</source>
-        <translation>Fonction finale:</translation>
+        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="+30"/>
+        <source>Column</source>
+        <translation>Colonne</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Transition Function:</source>
-        <translation>Fonction de transition:</translation>
+        <location line="+2"/>
+        <location line="+12"/>
+        <source>Type</source>
+        <translation>Type</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Sort Operator:</source>
-        <translation>Opérateur de tri:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Final Condition:</source>
-        <translation>Condition finale:</translation>
-    </message>
-    <message>
-        <location line="+48"/>
-        <source>Funtion Inputs</source>
-        <translation>Entrées de fonction</translation>
+        <location line="-2"/>
+        <source>Name</source>
+        <translation>Nom</translation>
     </message>
     <message>
         <location line="+5"/>
-        <source>Function State</source>
-        <translation>Sorties de fonction</translation>
+        <source>Default Value</source>
+        <translation>Nom par défaut</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/funcaoagregacaowidget.cpp" line="+33"/>
-        <source>Input Data Type</source>
-        <translation>Type de donnée en entrée</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>State Data Type</source>
-        <translation>Type de donnée en sortie</translation>
-    </message>
-    <message>
-        <location line="+28"/>
-        <source>An aggregate function that accepts the types &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; and &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; as input types and which type of state is &lt;em&gt;&lt;strong&gt;state_type&lt;/strong&gt;&lt;/em&gt;, must obey the following rules: &lt;br/&gt;&lt;br/&gt; &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Final Function:&lt;/strong&gt; &lt;em&gt;void final_function(&lt;strong&gt;state_type&lt;/strong&gt;)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Transition Function:&lt;/strong&gt; &lt;em&gt;&lt;strong&gt;state_type&lt;/strong&gt; transition_function(&lt;strong&gt;state_type&lt;/strong&gt;, &lt;strong&gt;typeA&lt;/strong&gt;, &lt;strong&gt;typeB&lt;/strong&gt;)&lt;/em&gt;</source>
-        <translation>Une fonction d&apos;agrégation qui accepte les types &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; et &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; comme types d&apos;entrées et dont le type d&apos;état est &lt;em&gt;&lt;strong&gt;type_etat&lt;/strong&gt;&lt;/em&gt;, doit obéir aux règles suivantes:&lt;br/&gt;&lt;br/&gt; &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Fonction Finale:&lt;/strong&gt; &lt;em&gt;void fonction_finale(&lt;strong&gt;type_etat&lt;/strong&gt;)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;• Fonction de Transition,:&lt;/strong&gt; &lt;em&gt;&lt;strong&gt;type_etat&lt;/strong&gt; fonction_transition(&lt;strong&gt;type_etat&lt;/strong&gt;, &lt;strong&gt;typeA&lt;/strong&gt;, &lt;strong&gt;typeB&lt;/strong&gt;)&lt;/em&gt;</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/funcaoagregacaowidget.ui" line="-86"/>
-        <source>Form</source>
-        <translation></translation>
+        <location line="-1"/>
+        <source>IN/OUT</source>
+        <translation>IN/OUT</translation>
     </message>
 </context>
 <context>
-    <name>FuncaoWidget</name>
+    <name>FunctionWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/funcaowidget.ui" line="+54"/>
+        <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="+26"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+28"/>
         <source>Attributes</source>
         <translation>Attributs</translation>
     </message>
@@ -2681,7 +2681,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <location line="+23"/>
         <source>Rows Returned:</source>
-        <translation>Lignes Retournées:</translation>
+        <translation>Lignes retournées:</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -2714,7 +2714,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Table</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="+25"/>
+        <source>Return Table</source>
+        <translation>Table de retour</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>Parameters</source>
         <translation>Arguments</translation>
     </message>
@@ -2726,7 +2731,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <location line="+27"/>
         <source>Dynamic Library:</source>
-        <translation>Librairie Dynamique:</translation>
+        <translation>Bibliotèque dynamique:</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -2736,48 +2741,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <location line="+29"/>
         <source>Library:</source>
-        <translation>Librairie:</translation>
+        <translation>Bibliotèque:</translation>
     </message>
     <message>
         <location line="+51"/>
         <source>Source code:</source>
         <translation>Code source:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/funcaowidget.cpp" line="+30"/>
-        <source>Column</source>
-        <translation>Colonne</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <location line="+12"/>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <location line="-2"/>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Default Value</source>
-        <translation>Nom par défaut</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/funcaowidget.ui" line="-439"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+274"/>
-        <source>Return Table</source>
-        <translation>Table de retour</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/funcaowidget.cpp" line="-1"/>
-        <source>IN/OUT</source>
-        <translation>IN/OUT</translation>
     </message>
 </context>
 <context>
@@ -4046,6 +4015,19 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
+    <name>OperatorFamilyWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/operatorfamilywidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Indexing:</source>
+        <translation>Indexation:</translation>
+    </message>
+</context>
+<context>
     <name>PapelWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/papelwidget.ui" line="+20"/>
@@ -4780,6 +4762,11 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <source>Fill color:</source>
         <translation>Couleur de remplissage:</translation>
     </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/schemawidget.cpp" line="+46"/>
+        <source>Select fill color</source>
+        <translation>Choisissez une couleur de remplissage</translation>
+    </message>
 </context>
 <context>
     <name>SeletorObjetoWidget</name>
@@ -5133,6 +5120,19 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location filename="../libpgmodeler/src/table.cpp" line="+13"/>
         <source>new_table</source>
         <translation>nouvelle_table</translation>
+    </message>
+</context>
+<context>
+    <name>TablespaceWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/tablespacewidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation type="unfinished">Formulaire</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Directory:</source>
+        <translation type="unfinished">Dossier:</translation>
     </message>
 </context>
 <context>
