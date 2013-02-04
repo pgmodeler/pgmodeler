@@ -1,6 +1,6 @@
-#include "esquemawidget.h"
+#include "schemawidget.h"
 
-EsquemaWidget::EsquemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA)
+SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA)
 {
 	Ui_SchemaWidget::setupUi(this);
 	configureFormLayout(NULL, OBJ_SCHEMA);
@@ -13,16 +13,15 @@ EsquemaWidget::EsquemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHE
 	connect(fill_color_tb, SIGNAL(clicked(void)), this, SLOT(selectFillColor(void)));
 
 	parent_form->setMinimumSize(500, 250);
-	parent_form->setMaximumSize(16777215, 250);
+	parent_form->setMaximumHeight(250);
 }
 
-void EsquemaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Schema *esquema)
+void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema)
 {
 	bool enable=false;
 	QPalette palette;
 
-	//Define os atributos do formulários e da janela pai
-	BaseObjectWidget::setAttributes(modelo, lista_op, esquema);
+	BaseObjectWidget::setAttributes(model, op_list, schema);
 
 	enable=!(this->object && this->object->getName()=="public");
 	edt_perms_tb->setEnabled(enable);
@@ -30,16 +29,16 @@ void EsquemaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op
 	comment_edt->setEnabled(enable);
 	owner_sel->setEnabled(enable);
 
-	if(esquema)
-		palette.setColor(QPalette::Button, esquema->getFillColor());
+	if(schema)
+		palette.setColor(QPalette::Button, schema->getFillColor());
 	else
 		palette.setColor(QPalette::Button, QColor(225,225,225));
 
 	fill_color_tb->setPalette(palette);
-	show_rect_chk->setChecked(esquema && esquema->isRectVisible());
+	show_rect_chk->setChecked(schema && schema->isRectVisible());
 }
 
-void EsquemaWidget::selectFillColor(void)
+void SchemaWidget::selectFillColor(void)
 {
 	QColorDialog color_dlg;
 	QPalette palette;
@@ -54,7 +53,7 @@ void EsquemaWidget::selectFillColor(void)
 	}
 }
 
-void EsquemaWidget::applyConfiguration(void)
+void SchemaWidget::applyConfiguration(void)
 {
 	try
 	{
@@ -72,9 +71,6 @@ void EsquemaWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
-		/* Cancela a configuração o objeto removendo a ultima operação adicionada
-		 referente ao objeto editado/criado e desaloca o objeto
-		 caso o mesmo seja novo */
 		cancelConfiguration();
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}

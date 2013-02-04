@@ -19,7 +19,7 @@
 /**
 \ingroup libpgmodeler_ui
 \class DominioWidget
-\brief Definição da classe que implementa o formulário de edição dos atributos de esquemas.
+\brief Implements the operations to create/edit domains via form.
 */
 
 #ifndef DOMAIN_WIDGET_H

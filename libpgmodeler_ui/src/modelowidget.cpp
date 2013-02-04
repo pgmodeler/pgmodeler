@@ -1,9 +1,9 @@
 #include "modelowidget.h"
 #include "sourcecodewidget.h"
 #include "databasewidget.h"
-#include "esquemawidget.h"
+#include "schemawidget.h"
 #include "papelwidget.h"
-#include "espacotabelawidget.h"
+#include "tablespacewidget.h"
 #include "linguagemwidget.h"
 #include "funcaowidget.h"
 #include "castwidget.h"
@@ -12,7 +12,7 @@
 #include "funcaoagregacaowidget.h"
 #include "sequenciawidget.h"
 #include "operadorwidget.h"
-#include "familiaoperadoreswidget.h"
+#include "operatorfamilywidget.h"
 #include "operatorclasswidget.h"
 #include "tipowidget.h"
 #include "visaowidget.h"
@@ -31,9 +31,9 @@
 
 extern MessageBox *caixa_msg;
 extern DatabaseWidget *database_wgt;
-extern EsquemaWidget *esquema_wgt;
+extern SchemaWidget *esquema_wgt;
 extern PapelWidget *papel_wgt;
-extern EspacoTabelaWidget *espacotabela_wgt;
+extern TablespaceWidget *espacotabela_wgt;
 extern LinguagemWidget *linguagem_wgt;
 extern SourceCodeWidget *codigofonte_wgt;
 extern FuncaoWidget *funcao_wgt;
@@ -43,7 +43,7 @@ extern DomainWidget *dominio_wgt;
 extern FuncaoAgregacaoWidget *funcaoag_wgt;
 extern SequenciaWidget *sequencia_wgt;
 extern OperadorWidget *operador_wgt;
-extern FamiliaOperadoresWidget *familiaop_wgt;
+extern OperatorFamilyWidget *familiaop_wgt;
 extern OperatorClassWidget *classeop_wgt;
 extern TipoWidget *tipo_wgt;
 extern VisaoWidget *visao_wgt;

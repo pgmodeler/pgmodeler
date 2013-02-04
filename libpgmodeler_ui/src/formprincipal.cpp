@@ -3,10 +3,10 @@
 #include "textboxwidget.h"
 #include "sourcecodewidget.h"
 #include "databasewidget.h"
-#include "esquemawidget.h"
+#include "schemawidget.h"
 #include "papelwidget.h"
 #include "permissaowidget.h"
-#include "espacotabelawidget.h"
+#include "tablespacewidget.h"
 #include "linguagemwidget.h"
 #include "funcaowidget.h"
 #include "parametrowidget.h"
@@ -16,7 +16,7 @@
 #include "funcaoagregacaowidget.h"
 #include "sequenciawidget.h"
 #include "operadorwidget.h"
-#include "familiaoperadoreswidget.h"
+#include "operatorfamilywidget.h"
 #include "operatorclasswidget.h"
 #include "tipowidget.h"
 #include "visaowidget.h"
@@ -43,10 +43,10 @@ MessageBox *caixa_msg=NULL;
 TextboxWidget *caixatexto_wgt=NULL;
 SourceCodeWidget *codigofonte_wgt=NULL;
 DatabaseWidget *database_wgt=NULL;
-EsquemaWidget *esquema_wgt=NULL;
+SchemaWidget *esquema_wgt=NULL;
 PapelWidget *papel_wgt=NULL;
 PermissaoWidget *permissao_wgt=NULL;
-EspacoTabelaWidget *espacotabela_wgt=NULL;
+TablespaceWidget *espacotabela_wgt=NULL;
 LinguagemWidget *linguagem_wgt=NULL;
 ParametroWidget *parametro_wgt=NULL;
 FuncaoWidget *funcao_wgt=NULL;
@@ -56,7 +56,7 @@ DomainWidget *dominio_wgt=NULL;
 FuncaoAgregacaoWidget *funcaoag_wgt=NULL;
 SequenciaWidget *sequencia_wgt=NULL;
 OperadorWidget *operador_wgt=NULL;
-FamiliaOperadoresWidget *familiaop_wgt=NULL;
+OperatorFamilyWidget *familiaop_wgt=NULL;
 OperatorClassWidget *classeop_wgt=NULL;
 TipoWidget *tipo_wgt=NULL;
 VisaoWidget *visao_wgt=NULL;
@@ -123,9 +123,9 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		codigofonte_wgt=new SourceCodeWidget(this);
 		caixatexto_wgt=new TextboxWidget(this);
 		database_wgt=new DatabaseWidget(this);
-		esquema_wgt=new EsquemaWidget(this);
+		esquema_wgt=new SchemaWidget(this);
 		papel_wgt=new PapelWidget(this);
-		espacotabela_wgt=new EspacoTabelaWidget(this);
+		espacotabela_wgt=new TablespaceWidget(this);
 		linguagem_wgt=new LinguagemWidget(this);
 		parametro_wgt=new ParametroWidget(this);
 		funcao_wgt=new FuncaoWidget(this);
@@ -135,7 +135,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		funcaoag_wgt=new FuncaoAgregacaoWidget(this);
 		sequencia_wgt=new SequenciaWidget(this);
 		operador_wgt=new OperadorWidget(this);
-		familiaop_wgt=new FamiliaOperadoresWidget(this);
+		familiaop_wgt=new OperatorFamilyWidget(this);
 		classeop_wgt=new OperatorClassWidget(this);
 		tipo_wgt=new TipoWidget(this);
 		visao_wgt=new VisaoWidget(this);
