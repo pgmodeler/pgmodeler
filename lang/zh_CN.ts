@@ -2214,7 +2214,7 @@ Message returned by the DBMS: %1</source>
     </message>
     <message>
         <source>Database model (*.dbm);;All files (*.*)</source>
-        <translation>数据库模型（*.dbm）;; 所有文件（*.*）</translation>
+        <translation>数据库模型 (*.dbm);; 所有文件 (*.*)</translation>
     </message>
     <message>
         <source>Save model</source>
