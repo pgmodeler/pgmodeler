@@ -288,7 +288,7 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../main/src/application.h" line="+52"/>
+        <location filename="../main/src/application.h" line="+56"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
@@ -497,12 +497,12 @@
         <translation>Objet Parent:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="+40"/>
+        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="+43"/>
         <source>Create / Edit: </source>
         <translation>Créer / Éditer: </translation>
     </message>
     <message>
-        <location line="+359"/>
+        <location line="+360"/>
         <source>Value(s)</source>
         <translation>Valeur(s)</translation>
     </message>
@@ -515,6 +515,54 @@
         <location line="+35"/>
         <source>The field(s) or value(s) highlighted on the form is(are) for the exclusive use and/or mandatory in specific versions of PostgreSQL. Failure to complete that may cause errors in the generation of SQL code for each version shown in tool tips of the highlighted fields.</source>
         <translation>Le(s) champs ou valeur(s) mis en évidence dans le formulaire est(sont) dépendants de la version de PostgreSQL. Le non respect de ces dépendances peut provoquer des erreurs dans la génération du code SQL qui sont affichées dans l&apos;info-bulles de ces champs.</translation>
+    </message>
+</context>
+<context>
+    <name>CastWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/castwidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Cast Type:</source>
+        <translation>Conversion de type:</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Implicit</source>
+        <translation>Implicite</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Assignment</source>
+        <translation>Affectation</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Input / Output</source>
+        <translation>Entrée / Sortie</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Conversion Function:</source>
+        <translation>Fonction de conversion:</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/castwidget.cpp" line="+12"/>
+        <source>Source data type</source>
+        <translation>Type de donnée source</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Target data type</source>
+        <translation>Type de donnée cible</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>The function to be assigned to a cast from &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; to &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; must have the following signature: &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt; function(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</source>
+        <translation>La fonction à affecter à une convertion de &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; vers &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; doit avoir la signature suivante: &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt; fonction(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</translation>
     </message>
 </context>
 <context>
@@ -536,9 +584,14 @@
     </message>
 </context>
 <context>
-    <name>ConfConexoesWidget</name>
+    <name>ConnectionsConfigWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/confconexoeswidget.ui" line="+26"/>
+        <location filename="../libpgmodeler_ui/ui/connectionsconfigwidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Connections:</source>
         <translation>Connexions:</translation>
     </message>
@@ -558,7 +611,12 @@
         <translation>Editer la connexion sélectionnée</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+23"/>
+        <source>Delete selected connection</source>
+        <translation>Supprimer la connexion sélectionnée</translation>
+    </message>
+    <message>
+        <location line="+38"/>
         <source>Connection Alias:</source>
         <translation>Alias de la connexion:</translation>
     </message>
@@ -585,7 +643,7 @@
     <message>
         <location line="+16"/>
         <source>Timeout:</source>
-        <translation>Délai de réponse:</translation>
+        <translation>Délai d&apos;expiration:</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -623,17 +681,47 @@
         <translation>Vérification complète</translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+30"/>
+        <source>Client Certificate:</source>
+        <translation>Certificat Client:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>~/.postgresql/postgresql.crt</source>
+        <translation>~/.postgresql/postgresql.crt</translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Client Key:</source>
-        <translation>Clef du client:</translation>
+        <translation>Clef client:</translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+10"/>
+        <source>~/.postgresql/postgresql.key</source>
+        <translation>~/.postgresql/postgresql.key</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Root Certificate:</source>
+        <translation>Certificat racine:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>~/.postgresql/root.crt</source>
+        <translation>~/.postgresql/root.crt</translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Revoked Certs.:</source>
-        <translation>Cert. Révoqués:</translation>
+        <translation>Liste de révocations:</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+10"/>
+        <source>~/.postgresql/root.crl</source>
+        <translation>~/.postgresql/root.crl</translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Kerberus Server:</source>
         <translation>Serveur Kerberos:</translation>
     </message>
@@ -648,378 +736,40 @@
         <translation>Options:</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+46"/>
         <source>Add</source>
         <translation>Ajouter</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+32"/>
         <source>Update</source>
         <translation>Mettre à jour</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+32"/>
         <source>Test</source>
         <translation>Tester</translation>
     </message>
     <message>
-        <location line="-639"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+109"/>
-        <source>Delete selected connection</source>
-        <translation>Supprimer la connexion sélectionnée</translation>
-    </message>
-    <message>
-        <location line="+285"/>
-        <source>Client Certificate:</source>
-        <translation>Certificat Client:</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>~/.postgresql/postgresql.crt</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+29"/>
-        <source>~/.postgresql/postgresql.key</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Root Certificate:</source>
-        <translation>Certificat Racine:</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>~/.postgresql/root.crt</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+29"/>
-        <source>~/.postgresql/root.crl</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/confconexoeswidget.cpp" line="+359"/>
+        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="+308"/>
         <source>Success</source>
         <translation>Succès</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Connection successfuly stablished!</source>
-        <translation>Connexion établie!</translation>
+        <translation>Connexion établie avec succès !</translation>
     </message>
 </context>
 <context>
-    <name>ConfGeralWidget</name>
+    <name>ConversionWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/confgeralwidget.ui" line="+370"/>
-        <source>Grid size:</source>
-        <translation>Taille de la grille:</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Operation history:</source>
-        <translation>Historique des opérations:</translation>
-    </message>
-    <message>
-        <location line="+307"/>
-        <source>items</source>
-        <translation>entrées</translation>
-    </message>
-    <message>
-        <location line="-51"/>
-        <source>minute(s)</source>
-        <translation>minute(s)</translation>
-    </message>
-    <message>
-        <location line="-594"/>
-        <source>Save widgets position</source>
-        <translation>Enregistrer la position des widget</translation>
-    </message>
-    <message>
-        <location line="+52"/>
-        <source>Save current session</source>
-        <translation>Enregistrer la session courante</translation>
-    </message>
-    <message>
-        <location line="+203"/>
-        <source>Paper:</source>
-        <translation>Papier:</translation>
-    </message>
-    <message>
-        <location line="-30"/>
-        <source>Custom (Based on margins)</source>
-        <translation>Personnalisation (Selon les marges)</translation>
-    </message>
-    <message>
-        <location line="+43"/>
-        <source>Orientation:</source>
-        <translation>Orientation:</translation>
-    </message>
-    <message>
-        <location line="+261"/>
-        <source>Portrait</source>
-        <translation>Portrait</translation>
-    </message>
-    <message>
-        <location line="-16"/>
-        <source>Landscape</source>
-        <translation>Paysage</translation>
-    </message>
-    <message>
-        <location line="-232"/>
-        <source>Margins:</source>
-        <translation>Marges:</translation>
-    </message>
-    <message>
-        <location line="-264"/>
-        <source>Milimeters</source>
-        <translation>Millimètres</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Inches</source>
-        <translation>Pouces</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Centimeter</source>
-        <translation>Centimètres</translation>
-    </message>
-    <message>
-        <location line="+357"/>
-        <source>Left:</source>
-        <translation>Gauche:</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Left margin</source>
-        <translation>Marge gauche</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Top:</source>
-        <translation>Haut:</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Top margin</source>
-        <translation>Marge haute</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Right:</source>
-        <translation>Droite:</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Right margin</source>
-        <translation>Marge droite</translation>
-    </message>
-    <message>
-        <location line="-497"/>
+        <location filename="../libpgmodeler_ui/ui/conversionwidget.ui" line="+20"/>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+733"/>
-        <source>pixels</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-627"/>
-        <source>A0 (841 x 1189 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>A1 (594 x 841 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>A2 (420 x 594 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>A3 (297 x 420 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>A4 (210 x 297 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>A5 (148 x 210 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>A6 (105 x 148 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>A7 (74 x 105 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>A8 (52 x 74 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>A9 (37 x 52 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>B0 (1030 x 1456 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>B1 (728 x 1030 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>B10 (32 x 45 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>B2 (515 x 728 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>B3 (364 x 515 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>B4 (257 x 364 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>B5 (182 x 257 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>B6 (128 x 182 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>B7 (91 x 128 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>B8 (64 x 91 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>B9 (45 x 64 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>C5E (163 x 229 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Comm10E (105 x 241 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>DLE (110 x 220 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Executive (191 x 254 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Folio (210 x 330 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Ledger (432 x 279 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Legal (216 x 356 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Letter (216 x 279 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Tabloid (279 x 432 mm)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-198"/>
-        <source>Pixels</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+454"/>
-        <source>Bottom:</source>
-        <translation>Bas:</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Bottom margin</source>
-        <translation>Marge basse</translation>
-    </message>
-    <message>
-        <location line="-514"/>
-        <source>Printing Options:</source>
-        <translation>Options d&apos;impression:</translation>
-    </message>
-    <message>
-        <location line="+319"/>
-        <source>Autosave interval:</source>
-        <translation>Interval d&apos;auto-enregistrement</translation>
-    </message>
-    <message>
-        <location line="+77"/>
-        <source>Print grid</source>
-        <translation>Imprimer la grille</translation>
-    </message>
-    <message>
-        <location line="+165"/>
-        <source>Print page numbers</source>
-        <translation>Imprimer les numéros de page</translation>
-    </message>
-</context>
-<context>
-    <name>ConversaoCodificacaoWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/conversaocodificacaowidget.ui" line="+50"/>
+        <location line="+30"/>
         <source>Source Encoding:</source>
         <translation>Encodage de la source:</translation>
     </message>
@@ -1030,8 +780,8 @@
     </message>
     <message>
         <location line="+38"/>
-        <source>Convertion Function:</source>
-        <translation>Fonction de convertion:</translation>
+        <source>Conversion Function:</source>
+        <translation>Fonction de conversion:</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -1039,62 +789,9 @@
         <translation>Convertion par défaut:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/conversaocodificacaowidget.cpp" line="+20"/>
+        <location filename="../libpgmodeler_ui/src/conversionwidget.cpp" line="+17"/>
         <source>The function to be assigned to an encoding conversion must have the following signature: &lt;em&gt;void function(integer, integer, cstring, internal, integer)&lt;/em&gt;.</source>
         <translation>La fonction à affecter à une convertion d&apos;encodage doit avoir la signature suivante: &lt;em&gt;void function(integer, integer, cstring, internal, integer)&lt;/em&gt;.</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/conversaocodificacaowidget.ui" line="-144"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
-    <name>ConversaoTipoWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/conversaotipowidget.ui" line="+20"/>
-        <source>Form</source>
-        <translation>Formulaire</translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Conversion Type:</source>
-        <translation>Type de convertion:</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Implicit</source>
-        <translation>Implicite</translation>
-    </message>
-    <message>
-        <location line="+28"/>
-        <source>Assignment</source>
-        <translation>Affectation</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Input / Output</source>
-        <translation>Entrée / Sortie</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Convertion Function:</source>
-        <translation>Fonction de convertion:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/conversaotipowidget.cpp" line="+17"/>
-        <source>Source data type</source>
-        <translation>Type de donnée source</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Target data type</source>
-        <translation>Type de donnée cible</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>The function to be assigned to a cast from &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; to &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; must have the following signature: &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt; function(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</source>
-        <translation>La fonction à affecter à une convertion de &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; vers &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; doit avoir la signature suivante: &lt;em&gt;&lt;strong&gt;type&lt;/strong&gt; fonction(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</translation>
     </message>
 </context>
 <context>
@@ -1107,7 +804,7 @@
     <message>
         <location line="+57"/>
         <source>Oops! pgModeler just crashed!</source>
-        <translation>Oup&apos;s! pgModeler a été brutalement arrêté!</translation>
+        <translation>Oups! pgModeler s&apos;est brutalement et innopinément arrêté!</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -1142,7 +839,7 @@
     <message>
         <location line="+9"/>
         <source>Attach the below database model file that possibly generates the crash.</source>
-        <translation>Ci-joint le fichier du modèle de donnée qui a probablement génére le crash .</translation>
+        <translation type="unfinished">Ci-joint le fichier du modèle de donnée qui a probablement génére le crash.</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -1185,12 +882,12 @@ Taille: %2 bytes
 <context>
     <name>DatabaseModel</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="+2548"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="+2575"/>
         <source>Loading object: %1 (%2)</source>
         <translation>Chargement de l&apos;objet: %1 (%2)</translation>
     </message>
     <message>
-        <location line="+2760"/>
+        <location line="+2764"/>
         <source>Generating %1 of the object: %2 (%3)</source>
         <translation>Génération %1 de l&apos;objet : %2 (%3)</translation>
     </message>
@@ -1240,9 +937,19 @@ Taille: %2 bytes
     </message>
 </context>
 <context>
-    <name>DominioWidget</name>
+    <name>DomainWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/dominiowidget.ui" line="+40"/>
+        <location filename="../libpgmodeler_ui/ui/domainwidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Not Null:</source>
+        <translation>Non Null:</translation>
+    </message>
+    <message>
+        <location line="+14"/>
         <source>Default Value:</source>
         <translation>Valeur par défaut:</translation>
     </message>
@@ -1254,17 +961,7 @@ Taille: %2 bytes
     <message>
         <location line="+10"/>
         <source>Check Expression:</source>
-        <translation>Vérification de l&apos;expression:</translation>
-    </message>
-    <message>
-        <location line="-46"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Not Null:</source>
-        <translation>Non Null:</translation>
+        <translation>Expression de vérification:</translation>
     </message>
 </context>
 <context>
@@ -1278,6 +975,14 @@ Taille: %2 bytes
         <location line="-12"/>
         <source>Form</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>EsquemaWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/src/esquemawidget.cpp" line="+47"/>
+        <source>Select fill color</source>
+        <translation>Choisissez une couleur de remplissage</translation>
     </message>
 </context>
 <context>
@@ -2192,8 +1897,8 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>FormBasico</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/formbasico.ui" line="+158"/>
-        <location filename="../libpgmodeler_ui/src/formbasico.cpp" line="+24"/>
+        <location filename="../libpgmodeler_ui/ui/formbasico.ui" line="+148"/>
+        <location filename="../libpgmodeler_ui/src/formbasico.cpp" line="+23"/>
         <source>&amp;Apply</source>
         <translation>&amp;Appliquer</translation>
     </message>
@@ -2203,7 +1908,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>A&amp;nnuler</translation>
     </message>
     <message>
-        <location line="-176"/>
+        <location line="-166"/>
         <source>Dialog</source>
         <translation></translation>
     </message>
@@ -2236,7 +1941,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Défauts</translation>
     </message>
     <message>
-        <location line="+149"/>
+        <location line="+153"/>
         <source>General</source>
         <translation>Général</translation>
     </message>
@@ -2251,7 +1956,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>Connexions</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/formconfiguracao.cpp" line="+82"/>
+        <location line="+15"/>
+        <source>Plug-ins</source>
+        <translation>Extensions</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/formconfiguracao.cpp" line="+88"/>
         <source>Confirmation</source>
         <translation>Confirmation</translation>
     </message>
@@ -2559,7 +2269,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Configuration</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/formprincipal.cpp" line="+462"/>
+        <location filename="../libpgmodeler_ui/src/formprincipal.cpp" line="+453"/>
         <source>Save all models</source>
         <translation>Enregistrer tous les modèles</translation>
     </message>
@@ -2569,7 +2279,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Certains modèles ont été modifiés! Voulez vous les sauvegarder avant de quitter pgModeler?</translation>
     </message>
     <message>
-        <location line="+516"/>
+        <location line="+519"/>
         <source>Save &apos;%1&apos; as...</source>
         <translation>Enregistrer &apos;%1&apos; sous...</translation>
     </message>
@@ -3179,6 +2889,309 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
+    <name>GeneralConfigWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/generalconfigwidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Printing Options:</source>
+        <translation>Options d&apos;impression:</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Save widgets position</source>
+        <translation>Enregistrer la position des widget</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Milimeters</source>
+        <translation>Millimètres</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Pixels</source>
+        <translation>Pixels</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Inches</source>
+        <translation>Pouces</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Centimeter</source>
+        <translation>Centimètres</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Save current session</source>
+        <translation>Enregistrer la session courante</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>A0 (841 x 1189 mm)</source>
+        <translation>A0 (841 x 1189 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>A1 (594 x 841 mm)</source>
+        <translation>A1 (594 x 841 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>A2 (420 x 594 mm)</source>
+        <translation>A2 (420 x 594 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>A3 (297 x 420 mm)</source>
+        <translation>A3 (297 x 420 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>A4 (210 x 297 mm)</source>
+        <translation>A4 (210 x 297 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>A5 (148 x 210 mm)</source>
+        <translation>A5 (148 x 210 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>A6 (105 x 148 mm)</source>
+        <translation>A6 (105 x 148 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>A7 (74 x 105 mm)</source>
+        <translation>A7 (74 x 105 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>A8 (52 x 74 mm)</source>
+        <translation>A8 (52 x 74 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>A9 (37 x 52 mm)</source>
+        <translation>A9 (37 x 52 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>B0 (1030 x 1456 mm)</source>
+        <translation>B0 (1030 x 1456 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>B1 (728 x 1030 mm)</source>
+        <translation>B1 (728 x 1030 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>B10 (32 x 45 mm)</source>
+        <translation>B10 (32 x 45 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>B2 (515 x 728 mm)</source>
+        <translation>B2 (515 x 728 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>B3 (364 x 515 mm)</source>
+        <translation>B3 (364 x 515 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>B4 (257 x 364 mm)</source>
+        <translation>B4 (257 x 364 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>B5 (182 x 257 mm)</source>
+        <translation>B5 (182 x 257 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>B6 (128 x 182 mm)</source>
+        <translation>B6 (128 x 182 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>B7 (91 x 128 mm)</source>
+        <translation>B7 (91 x 128 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>B8 (64 x 91 mm)</source>
+        <translation>B8 (64 x 91 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>B9 (45 x 64 mm)</source>
+        <translation>B9 (45 x 64 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>C5E (163 x 229 mm)</source>
+        <translation>C5E (163 x 229 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Comm10E (105 x 241 mm)</source>
+        <translation>Comm10E (105 x 241 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>DLE (110 x 220 mm)</source>
+        <translation>DLE (110 x 220 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Executive (191 x 254 mm)</source>
+        <translation>Executive (191 x 254 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Folio (210 x 330 mm)</source>
+        <translation>Folio (210 x 330 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Ledger (432 x 279 mm)</source>
+        <translation>Ledger (432 x 279 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Legal (216 x 356 mm)</source>
+        <translation>Legal (216 x 356 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Letter (216 x 279 mm)</source>
+        <translation>Letter (216 x 279 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Tabloid (279 x 432 mm)</source>
+        <translation>Tabloid (279 x 432 mm)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Custom (Based on margins)</source>
+        <translation>Personnalis&amp;eacute; (Selon les marges)</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Paper:</source>
+        <translation>Papier:</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Orientation:</source>
+        <translation>Orientation:</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Margins:</source>
+        <translation>Marges:</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Autosave interval:</source>
+        <translation>Interval d&apos;auto-enregistrement:</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Grid size:</source>
+        <translation>Taille de la grille:</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Operation history:</source>
+        <translation>Historique des opérations:</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Print grid</source>
+        <translation>Imprimer la grille</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Left:</source>
+        <translation>Gauche:</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Left margin</source>
+        <translation>Marge gauche</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Top:</source>
+        <translation>Haut:</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Top margin</source>
+        <translation>Marge haute</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Right:</source>
+        <translation>Droite:</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Right margin</source>
+        <translation>Marge droite</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Bottom:</source>
+        <translation>Bas:</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Bottom margin</source>
+        <translation>Marge basse</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Landscape</source>
+        <translation>Paysage</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Portrait</source>
+        <translation>Portrait</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Print page numbers</source>
+        <translation>Imprimer les numéros de page</translation>
+    </message>
+    <message>
+        <location line="+52"/>
+        <source>minute(s)</source>
+        <translation>minute(s)</translation>
+    </message>
+    <message>
+        <location line="+51"/>
+        <source>items</source>
+        <translation>entrées</translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>pixels</source>
+        <translation>pixels</translation>
+    </message>
+</context>
+<context>
     <name>IndiceWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/indicewidget.ui" line="+57"/>
@@ -3573,40 +3586,40 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+38"/>
-        <location line="+2378"/>
+        <location line="+2470"/>
         <source>Source code</source>
         <translation>Code source</translation>
     </message>
     <message>
-        <location line="-2376"/>
+        <location line="-2468"/>
         <source>Show object source code</source>
         <translation>Afficher le code source de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2367"/>
+        <location line="+2459"/>
         <source>Properties</source>
         <translation>Propriétés</translation>
     </message>
     <message>
-        <location line="-2365"/>
+        <location line="-2457"/>
         <source>Edit the object properties</source>
         <translation>Editer les propriétés de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2392"/>
+        <location line="+2484"/>
         <source>Protect</source>
         <translation>Vérrouiller</translation>
     </message>
     <message>
-        <location line="-2391"/>
-        <location line="+2386"/>
+        <location line="-2483"/>
+        <location line="+2478"/>
         <source>Unprotect</source>
         <translation>Déverrouiller</translation>
     </message>
     <message>
-        <location line="-2385"/>
+        <location line="-2477"/>
         <source>Pretects the object(s) against modifications</source>
         <translation>Empêcher l(es)&apos;objet(s) d&apos;être modifiés</translation>
     </message>
@@ -3617,12 +3630,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2394"/>
+        <location line="+2486"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location line="-2392"/>
+        <location line="-2484"/>
         <source>Delete the selected object(s)</source>
         <translation>Supprimer les objets sélectionnés</translation>
     </message>
@@ -3700,7 +3713,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <location line="+2"/>
         <source>Move to schema</source>
-        <translation type="unfinished">Déplacer vers le schema</translation>
+        <translation>Déplacer vers le schema</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -3724,7 +3737,17 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Changer le propriétaire</translation>
     </message>
     <message>
-        <location line="+640"/>
+        <location line="+4"/>
+        <source>Select children</source>
+        <translation>Sélectionnez les &amp;eacute;l&amp;eacute;ments</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Selects all the children graphical objects on the selected schema</source>
+        <translation>Sélectionne tout les &amp;eacute;l&amp;eacute;ments graphiques du sch&amp;eacute;ma actuellement s&amp;eacute;lectionné</translation>
+    </message>
+    <message>
+        <location line="+687"/>
         <source>Loading database model</source>
         <translation>Ouverture du modèle de base de données</translation>
     </message>
@@ -3735,7 +3758,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="-396"/>
-        <location line="+912"/>
+        <location line="+946"/>
         <location line="+407"/>
         <location line="+6"/>
         <source>Confirmation</source>
@@ -3767,17 +3790,17 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>(aucun objet)</translation>
     </message>
     <message>
-        <location line="+317"/>
+        <location line="+323"/>
         <source>Constraints</source>
         <translation>Contraintes</translation>
     </message>
     <message>
-        <location line="-1877"/>
+        <location line="-1917"/>
         <source>Convert a relationship is an irreversible operation and causes the deletion of all operation history! Do you want to continue?</source>
         <translation>Convertir une relation est une opération irréversible qui cause la suppression de tout l&apos;historique des opérations? Souhaitez vous continuer?</translation>
     </message>
     <message>
-        <location line="-523"/>
+        <location line="-575"/>
         <source>Convert rel. n-n</source>
         <translation>Convertir rel n-n</translation>
     </message>
@@ -3792,7 +3815,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation></translation>
     </message>
     <message>
-        <location line="+1827"/>
+        <location line="+1913"/>
         <source>CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?</source>
         <translation>ATTENTION: Supprimer plusieur objets en une seule fois provoque des invalidation irréversible sur les autres objets du modèle. Souhaitez vous réllement supprimer TOUS les objets sélectionnés?</translation>
     </message>
@@ -4156,7 +4179,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <name>PermissaoWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/permissaowidget.ui" line="+56"/>
-        <location filename="../libpgmodeler_ui/src/permissaowidget.cpp" line="+72"/>
+        <location filename="../libpgmodeler_ui/src/permissaowidget.cpp" line="+74"/>
         <source>Roles</source>
         <translation>Rôles</translation>
     </message>
@@ -4223,6 +4246,67 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
+    <name>PgModelerPlugin</name>
+    <message>
+        <location filename="../libpgmodeler_ui/src/pgmodelerplugin.cpp" line="+19"/>
+        <source>Plugin Information</source>
+        <translation>Information de l&apos;extension</translation>
+    </message>
+    <message>
+        <location line="+54"/>
+        <source>Version: %1</source>
+        <translation>Version: %1</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Author: %1</source>
+        <translation>Auteur: %1</translation>
+    </message>
+</context>
+<context>
+    <name>PluginsConfigWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/pluginsconfigwidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Plug-ins root directory:</source>
+        <translation>R&amp;eacute;pertoire racine des extentions:</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Open in file manager</source>
+        <translation>Ouvrir dans le getionnaire de fichier</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Loaded plug-ins</source>
+        <translation>Extensions chargées</translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>Details about plugins development and installation can be found at PLUGINS.md file. &lt;strong&gt;Note:&lt;/strong&gt; plugin installation requires pgModeler to be restarted.</source>
+        <translation>Les informations &amp;agrave; propos du d&amp;eacute;veloppement des extensions et leur installation se trouvent dans le fichier PLUGINS.md. &lt;strong&gt;Note:&lt;/strong&gt; l&apos;installation d&apos;extensions requi&amp;egrave;re le red&amp;eacute;marrage de pgModeler.</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/pluginsconfigwidget.cpp" line="+14"/>
+        <source>Plugin</source>
+        <translation>Extension</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Version</source>
+        <translation>Version</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Library</source>
+        <translation>Bibliothèque</translation>
+    </message>
+</context>
+<context>
     <name>ProgressoTarefa</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/progressotarefa.ui" line="+110"/>
@@ -4238,16 +4322,16 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5298"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5329"/>
         <source>new_database</source>
         <translation>nouvelle_base</translation>
     </message>
     <message>
-        <location line="+2562"/>
+        <location line="+2589"/>
         <location line="+44"/>
         <location line="+291"/>
         <location line="+26"/>
-        <location line="+23"/>
+        <location line="+27"/>
         <location line="+80"/>
         <location line="+143"/>
         <location line="+59"/>
@@ -4677,6 +4761,24 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location filename="../libpgmodeler_ui/src/restricaowidget.cpp" line="+29"/>
         <source>Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they will be ignored. To create primary key using columns included by relationship use the feature attributes, constraints and primary key on the relationship form.</source>
         <translation>Les colonnes qui sont incluses par relation ne peuvent être ajoutées /supprimées manuellement depuis la clef primaire. Ces changements sont ignorés. Pour créer la clef primaire en utilisant les colonnes incluses dans la relation utilisez la fonctionnalité d&apos;attributs, de contraintes et de clef primaire dans le formulaire de relation</translation>
+    </message>
+</context>
+<context>
+    <name>SchemaWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/schemawidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+80"/>
+        <source>Show rectangle</source>
+        <translation>Afficher le rectangle</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Fill color:</source>
+        <translation>Couleur de remplissage:</translation>
     </message>
 </context>
 <context>
@@ -5325,7 +5427,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <location line="+20"/>
         <source>The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any function(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring function(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta function(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any function(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer function(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring function(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean function(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</source>
-        <translation type="unfinished">La fonction assignée à un type devrait être écrite en langage C et possède, respectivement les signatures suivantes::&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any fonction(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring fonction(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta fonction(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any fonction(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer fonction(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring fonction(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean fonction(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</translation>
+        <translation>La fonction assignée à un type devrait être écrite en langage C et possèder, les signatures respective suivantes:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any fonction(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring fonction(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta fonction(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any fonction(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer fonction(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring fonction(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean fonction(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</translation>
     </message>
 </context>
 <context>
@@ -5339,7 +5441,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>VisaoObjetosWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/visaoobjetoswidget.ui" line="+24"/>
+        <location filename="../libpgmodeler_ui/ui/visaoobjetoswidget.ui" line="+36"/>
         <source>Objects of Model</source>
         <translation>Objets du Modèle</translation>
     </message>
