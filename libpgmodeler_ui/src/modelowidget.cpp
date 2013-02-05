@@ -20,7 +20,7 @@
 #include "columnwidget.h"
 #include "restricaowidget.h"
 #include "regrawidget.h"
-#include "gatilhowidget.h"
+#include "triggerwidget.h"
 #include "indicewidget.h"
 #include "relacionamentowidget.h"
 #include "tabelawidget.h"
@@ -36,7 +36,7 @@ extern PapelWidget *papel_wgt;
 extern TablespaceWidget *espacotabela_wgt;
 extern LinguagemWidget *linguagem_wgt;
 extern SourceCodeWidget *codigofonte_wgt;
-extern FuncaoWidget *funcao_wgt;
+extern FunctionWidget *funcao_wgt;
 extern CastWidget *convtipo_wgt;
 extern ConversionWidget *convcodif_wgt;
 extern DomainWidget *dominio_wgt;
@@ -51,7 +51,7 @@ extern TextboxWidget *caixatexto_wgt;
 extern ColumnWidget *coluna_wgt;
 extern RestricaoWidget *restricao_wgt;
 extern RegraWidget *regra_wgt;
-extern GatilhoWidget *gatilho_wgt;
+extern TriggerWidget *gatilho_wgt;
 extern IndiceWidget *indice_wgt;
 extern RelacionamentoWidget *relacao_wgt;
 extern TabelaWidget *tabela_wgt;

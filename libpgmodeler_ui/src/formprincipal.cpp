@@ -23,7 +23,7 @@
 #include "columnwidget.h"
 #include "restricaowidget.h"
 #include "regrawidget.h"
-#include "gatilhowidget.h"
+#include "triggerwidget.h"
 #include "indicewidget.h"
 #include "relacionamentowidget.h"
 #include "tabelawidget.h"
@@ -49,7 +49,7 @@ PermissaoWidget *permissao_wgt=NULL;
 TablespaceWidget *espacotabela_wgt=NULL;
 LinguagemWidget *linguagem_wgt=NULL;
 ParametroWidget *parametro_wgt=NULL;
-FuncaoWidget *funcao_wgt=NULL;
+FunctionWidget *funcao_wgt=NULL;
 CastWidget *convtipo_wgt=NULL;
 ConversionWidget *convcodif_wgt=NULL;
 DomainWidget *dominio_wgt=NULL;
@@ -63,7 +63,7 @@ VisaoWidget *visao_wgt=NULL;
 ColumnWidget *coluna_wgt=NULL;
 RestricaoWidget *restricao_wgt=NULL;
 RegraWidget *regra_wgt=NULL;
-GatilhoWidget *gatilho_wgt=NULL;
+TriggerWidget *gatilho_wgt=NULL;
 IndiceWidget *indice_wgt=NULL;
 RelacionamentoWidget *relacao_wgt=NULL;
 TabelaWidget *tabela_wgt=NULL;
@@ -128,7 +128,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		espacotabela_wgt=new TablespaceWidget(this);
 		linguagem_wgt=new LinguagemWidget(this);
 		parametro_wgt=new ParametroWidget(this);
-		funcao_wgt=new FuncaoWidget(this);
+		funcao_wgt=new FunctionWidget(this);
 		convtipo_wgt=new CastWidget(this);
 		convcodif_wgt=new ConversionWidget(this);
 		dominio_wgt=new DomainWidget(this);
@@ -142,7 +142,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		coluna_wgt=new ColumnWidget(this);
 		restricao_wgt=new RestricaoWidget(this);
 		regra_wgt=new RegraWidget(this);
-		gatilho_wgt=new GatilhoWidget(this);
+		gatilho_wgt=new TriggerWidget(this);
 		indice_wgt=new IndiceWidget(this);
 		relacao_wgt=new RelacionamentoWidget(this);
 		tabela_wgt=new TabelaWidget(this);

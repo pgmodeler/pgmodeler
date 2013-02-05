@@ -107,7 +107,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Loading object: [object] (type)</string>
+           <string>Waiting task to start...</string>
           </property>
          </widget>
         </item>
