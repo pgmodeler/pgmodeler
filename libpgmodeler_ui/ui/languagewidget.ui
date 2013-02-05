@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>LinguagemWidget</class>
- <widget class="QWidget" name="LinguagemWidget">
+ <class>LanguageWidget</class>
+ <widget class="QWidget" name="LanguageWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="linguagem_grid">
+  <layout class="QGridLayout" name="language_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -27,16 +27,16 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="confiavel_lbl">
+    <widget class="QLabel" name="trusted_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>100</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
@@ -46,7 +46,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QCheckBox" name="confiavel_chk">
+    <widget class="QCheckBox" name="trusted_chk">
      <property name="text">
       <string/>
      </property>
@@ -55,14 +55,14 @@
    <item row="1" column="0">
     <widget class="QLabel" name="func_handler_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>100</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
@@ -74,14 +74,14 @@
    <item row="2" column="0">
     <widget class="QLabel" name="func_validator_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>100</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
@@ -93,14 +93,14 @@
    <item row="3" column="0">
     <widget class="QLabel" name="func_inline_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>100</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>

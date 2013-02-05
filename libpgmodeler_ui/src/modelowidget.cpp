@@ -4,7 +4,7 @@
 #include "schemawidget.h"
 #include "papelwidget.h"
 #include "tablespacewidget.h"
-#include "linguagemwidget.h"
+#include "languagewidget.h"
 #include "functionwidget.h"
 #include "castwidget.h"
 #include "conversionwidget.h"
@@ -21,7 +21,7 @@
 #include "restricaowidget.h"
 #include "regrawidget.h"
 #include "triggerwidget.h"
-#include "indicewidget.h"
+#include "indexwidget.h"
 #include "relacionamentowidget.h"
 #include "tabelawidget.h"
 #include "progressotarefa.h"
@@ -34,7 +34,7 @@ extern DatabaseWidget *database_wgt;
 extern SchemaWidget *esquema_wgt;
 extern PapelWidget *papel_wgt;
 extern TablespaceWidget *espacotabela_wgt;
-extern LinguagemWidget *linguagem_wgt;
+extern LanguageWidget *linguagem_wgt;
 extern SourceCodeWidget *codigofonte_wgt;
 extern FunctionWidget *funcao_wgt;
 extern CastWidget *convtipo_wgt;
@@ -52,7 +52,7 @@ extern ColumnWidget *coluna_wgt;
 extern RestricaoWidget *restricao_wgt;
 extern RegraWidget *regra_wgt;
 extern TriggerWidget *gatilho_wgt;
-extern IndiceWidget *indice_wgt;
+extern IndexWidget *indice_wgt;
 extern RelacionamentoWidget *relacao_wgt;
 extern TabelaWidget *tabela_wgt;
 extern ProgressoTarefa *prog_tarefa;

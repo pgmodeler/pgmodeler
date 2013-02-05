@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>IndiceWidget</class>
- <widget class="QWidget" name="IndiceWidget">
+ <class>IndexWidget</class>
+ <widget class="QWidget" name="IndexWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="indice_grid">
+  <layout class="QGridLayout" name="index_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -27,7 +27,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="tipo_index_lbl">
+    <widget class="QLabel" name="indexing_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -54,12 +54,12 @@
       </font>
      </property>
      <property name="text">
-      <string>Indexing Type:</string>
+      <string>Indexing:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QComboBox" name="tipo_index_cmb">
+    <widget class="QComboBox" name="indexing_cmb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -81,7 +81,7 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QLabel" name="fator_preenc_lbl">
+    <widget class="QLabel" name="fill_factor_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -117,7 +117,7 @@
     </widget>
    </item>
    <item row="0" column="3">
-    <widget class="QSpinBox" name="fator_preenc_sb">
+    <widget class="QSpinBox" name="fill_factor_sb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -145,7 +145,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="opcoes_lbl">
+    <widget class="QLabel" name="options_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -171,10 +171,13 @@
    </item>
    <item row="1" column="1" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>6</number>
+     </property>
      <item>
-      <widget class="QCheckBox" name="concorrente_chk">
+      <widget class="QCheckBox" name="concurrent_chk">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -197,32 +200,32 @@
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="unico_chk">
+      <widget class="QCheckBox" name="unique_chk">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
        <property name="minimumSize">
         <size>
-         <width>140</width>
+         <width>100</width>
          <height>0</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>128</width>
+         <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>
        <property name="text">
-        <string>Check duplicates</string>
+        <string>Unique</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="atual_rapida_chk">
+      <widget class="QCheckBox" name="fast_update_chk">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -249,7 +252,7 @@
     </layout>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="exp_condicional_lbl">
+    <widget class="QLabel" name="cond_expr_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -274,7 +277,7 @@
     </widget>
    </item>
    <item row="2" column="1" colspan="3">
-    <widget class="QTextEdit" name="exp_condicional_txt">
+    <widget class="QTextEdit" name="cond_expr_txt">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -320,7 +323,7 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="4">
-    <widget class="QGroupBox" name="elementos_grp">
+    <widget class="QGroupBox" name="elements_grp">
      <property name="title">
       <string>Elements</string>
      </property>
@@ -332,7 +335,7 @@
        <number>6</number>
       </property>
       <item row="0" column="0">
-       <widget class="QRadioButton" name="coluna_rb">
+       <widget class="QRadioButton" name="column_rb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -363,7 +366,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="coluna_cmb">
+       <widget class="QComboBox" name="column_cmb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -385,7 +388,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QRadioButton" name="expressao_rb">
+       <widget class="QRadioButton" name="expression_rb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -416,7 +419,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QTextEdit" name="exp_elemento_txt">
+       <widget class="QTextEdit" name="elem_expr_txt">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -465,7 +468,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="classe_op_lbl">
+       <widget class="QLabel" name="op_class_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -490,7 +493,7 @@
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="ordenacao_lbl">
+       <widget class="QLabel" name="sorting_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -517,7 +520,7 @@
       <item row="3" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QRadioButton" name="ascendente_rb">
+         <widget class="QRadioButton" name="ascending_rb">
           <property name="text">
            <string>Ascending</string>
           </property>
@@ -527,14 +530,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="descendente_rb">
+         <widget class="QRadioButton" name="descending_rb">
           <property name="text">
            <string>Descending</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="nulos_primeiro_chk">
+         <widget class="QCheckBox" name="nulls_first_chk">
           <property name="text">
            <string>Nulls first</string>
           </property>

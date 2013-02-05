@@ -7,7 +7,7 @@
 #include "papelwidget.h"
 #include "permissaowidget.h"
 #include "tablespacewidget.h"
-#include "linguagemwidget.h"
+#include "languagewidget.h"
 #include "functionwidget.h"
 #include "parametrowidget.h"
 #include "castwidget.h"
@@ -24,7 +24,7 @@
 #include "restricaowidget.h"
 #include "regrawidget.h"
 #include "triggerwidget.h"
-#include "indicewidget.h"
+#include "indexwidget.h"
 #include "relacionamentowidget.h"
 #include "tabelawidget.h"
 #include "progressotarefa.h"
@@ -47,7 +47,7 @@ SchemaWidget *esquema_wgt=NULL;
 PapelWidget *papel_wgt=NULL;
 PermissaoWidget *permissao_wgt=NULL;
 TablespaceWidget *espacotabela_wgt=NULL;
-LinguagemWidget *linguagem_wgt=NULL;
+LanguageWidget *linguagem_wgt=NULL;
 ParametroWidget *parametro_wgt=NULL;
 FunctionWidget *funcao_wgt=NULL;
 CastWidget *convtipo_wgt=NULL;
@@ -64,7 +64,7 @@ ColumnWidget *coluna_wgt=NULL;
 RestricaoWidget *restricao_wgt=NULL;
 RegraWidget *regra_wgt=NULL;
 TriggerWidget *gatilho_wgt=NULL;
-IndiceWidget *indice_wgt=NULL;
+IndexWidget *indice_wgt=NULL;
 RelacionamentoWidget *relacao_wgt=NULL;
 TabelaWidget *tabela_wgt=NULL;
 ProgressoTarefa *prog_tarefa=NULL;
@@ -126,7 +126,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		esquema_wgt=new SchemaWidget(this);
 		papel_wgt=new PapelWidget(this);
 		espacotabela_wgt=new TablespaceWidget(this);
-		linguagem_wgt=new LinguagemWidget(this);
+		linguagem_wgt=new LanguageWidget(this);
 		parametro_wgt=new ParametroWidget(this);
 		funcao_wgt=new FunctionWidget(this);
 		convtipo_wgt=new CastWidget(this);
@@ -143,7 +143,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		restricao_wgt=new RestricaoWidget(this);
 		regra_wgt=new RegraWidget(this);
 		gatilho_wgt=new TriggerWidget(this);
-		indice_wgt=new IndiceWidget(this);
+		indice_wgt=new IndexWidget(this);
 		relacao_wgt=new RelacionamentoWidget(this);
 		tabela_wgt=new TabelaWidget(this);
 		prog_tarefa=new ProgressoTarefa();

@@ -30,7 +30,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/papelwidget.cpp \
            $$PWD/src/permissaowidget.cpp \
 	   $$PWD/src/tablespacewidget.cpp \
-           $$PWD/src/linguagemwidget.cpp \
+	   $$PWD/src/languagewidget.cpp \
            $$PWD/src/seletorobjetowidget.cpp \
 	   $$PWD/src/functionwidget.cpp \
            $$PWD/src/tipopgsqlwidget.cpp \
@@ -49,7 +49,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/restricaowidget.cpp \
            $$PWD/src/regrawidget.cpp \
 	   $$PWD/src/triggerwidget.cpp \
-           $$PWD/src/indicewidget.cpp \
+	   $$PWD/src/indexwidget.cpp \
            $$PWD/src/relacionamentowidget.cpp \
            $$PWD/src/tabelawidget.cpp \
            $$PWD/src/progressotarefa.cpp \
@@ -84,7 +84,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/papelwidget.h \
            $$PWD/src/permissaowidget.h \
 	   $$PWD/src/tablespacewidget.h \
-           $$PWD/src/linguagemwidget.h \
+	   $$PWD/src/languagewidget.h \
            $$PWD/src/seletorobjetowidget.h \
 	   $$PWD/src/functionwidget.h \
            $$PWD/src/tipopgsqlwidget.h \
@@ -103,7 +103,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/restricaowidget.h \
            $$PWD/src/regrawidget.h \
 	   $$PWD/src/triggerwidget.h \
-           $$PWD/src/indicewidget.h \
+	   $$PWD/src/indexwidget.h \
            $$PWD/src/relacionamentowidget.h \
            $$PWD/src/tabelawidget.h \
            $$PWD/src/progressotarefa.h \
@@ -134,7 +134,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/papelwidget.ui \
          $$PWD/ui/permissaowidget.ui \
 	 $$PWD/ui/tablespacewidget.ui \
-         $$PWD/ui/linguagemwidget.ui \
+	 $$PWD/ui/languagewidget.ui \
          $$PWD/ui/seletorobjetowidget.ui \
 	 $$PWD/ui/functionwidget.ui \
          $$PWD/ui/tipopgsqlwidget.ui \
@@ -153,7 +153,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/restricaowidget.ui \
          $$PWD/ui/regrawidget.ui \
 	 $$PWD/ui/triggerwidget.ui \
-         $$PWD/ui/indicewidget.ui \
+	 $$PWD/ui/indexwidget.ui \
          $$PWD/ui/relacionamentowidget.ui \
          $$PWD/ui/tabelawidget.ui \
          $$PWD/ui/progressotarefa.ui \

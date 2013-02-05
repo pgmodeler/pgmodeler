@@ -58,7 +58,7 @@ class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 		void addColumn(int lin_idx);
 		void handleArgument(int lin_idx);
 		void editArgument(int lin_idx);
-		void updateColumnCombo(void);
+		void updateColumnsCombo(void);
 		void setConstraintTrigger(bool value);
 
 	public slots:

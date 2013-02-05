@@ -60,8 +60,8 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_lbl, SLOT(setEnabled(bool)));
 		connect(columns_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(addColumn(int)));
-		connect(columns_tab, SIGNAL(s_linhaRemovida(int)), this, SLOT(updateColumnCombo(void)));
-		connect(columns_tab, SIGNAL(s_linhasRemovidas(void)), this, SLOT(updateColumnCombo(void)));
+		connect(columns_tab, SIGNAL(s_linhaRemovida(int)), this, SLOT(updateColumnsCombo(void)));
+		connect(columns_tab, SIGNAL(s_linhasRemovidas(void)), this, SLOT(updateColumnsCombo(void)));
 		connect(arguments_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(handleArgument(int)));
 		connect(arguments_tab, SIGNAL(s_linhaAtualizada(int)), this, SLOT(handleArgument(int)));
 		connect(arguments_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(editArgument(int)));
@@ -111,7 +111,7 @@ void TriggerWidget::addColumn(Column *column, int lin_idx)
 	}
 }
 
-void TriggerWidget::updateColumnCombo(void)
+void TriggerWidget::updateColumnsCombo(void)
 {
 	Column *column=NULL;
 	unsigned i, col_count=0;
@@ -235,7 +235,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, Table *parent_table, Ope
 		columns_tab->blockSignals(false);
 	}
 
-	updateColumnCombo();
+	updateColumnsCombo();
 }
 
 void TriggerWidget::applyConfiguration(void)

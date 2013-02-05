@@ -18,30 +18,30 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class LinguagemWidget
-\brief Definição da classe que implementa o formulário de edição dos atributos de linguagens.
+\class LanguageWidget
+\brief Implements the operations to create/edit languages via form.
 */
 
-#ifndef LINGUAGEM_WIDGET_H
-#define LINGUAGEM_WIDGET_H
+#ifndef LANGUAGE_WIDGET_H
+#define LANGUAGE_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_linguagemwidget.h"
+#include "ui_languagewidget.h"
 
-class LinguagemWidget: public BaseObjectWidget, public Ui::LinguagemWidget {
+class LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
+	private:
 		Q_OBJECT
 
-	private:
-		SeletorObjetoWidget *sel_func_handler,
-												*sel_func_validator,
-												*sel_func_inline;
+		SeletorObjetoWidget *func_handler_sel,
+												*func_validator_sel,
+												*func_inline_sel;
+
+		void hideEvent(QHideEvent *event);
 
 	public:
-		LinguagemWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Language *linguagem);
+		LanguageWidget(QWidget * parent = 0);
 
-	private slots:
-		void hideEvent(QHideEvent *);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Language *language);
 
 	public slots:
 		void applyConfiguration(void);

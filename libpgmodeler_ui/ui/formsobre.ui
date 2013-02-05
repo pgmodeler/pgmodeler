@@ -61,7 +61,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="ok_btn">
+      <widget class="QPushButton" name="close_btn">
        <property name="minimumSize">
         <size>
          <width>90</width>
@@ -376,7 +376,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
  </resources>
  <connections>
   <connection>
-   <sender>ok_btn</sender>
+   <sender>close_btn</sender>
    <signal>clicked()</signal>
    <receiver>FormSobre</receiver>
    <slot>close()</slot>
