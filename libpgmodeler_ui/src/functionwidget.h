@@ -18,65 +18,62 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class FuncaoWidget
-\brief Definição da classe que implementa o formulário de edição dos atributos de funções.
+\class FunctionWidget
+\brief Implements the operations to create/edit type functions via form.
 */
 
-#ifndef FUNCAO_WIDGET_H
-#define FUNCAO_WIDGET_H
+#ifndef FUNCTION_WIDGET_H
+#define FUNCTION_WIDGET_H
 
 #include "baseobjectwidget.h"
 #include "ui_functionwidget.h"
 #include "tipopgsqlwidget.h"
 #include "tabelaobjetoswidget.h"
 
-class FuncaoWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
+class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 	private:
 		Q_OBJECT
 
-		/*! \brief Destaque de código-fonte usado para destacar o código da função
-			definido pelo usuário */
+		//! \brief Function source code highlighter
 		SyntaxHighlighter *source_code_hl;
 
-		//! \brief Widget de tipo Pgsql usado para configurar o tipo de retorno da função
+		//! \brief Widget used to configure the function's return type
 		TipoPgSQLWidget *ret_type;
 
-		//! \brief Tabela que representa a tabela de retorno da função
+		//! \brief Table that represents the table returned by the function
 		TabelaObjetosWidget *return_tab,
-												//! \brief Tabela de parâmetros da função
+
+												//! \brief Table used to store the function's parameters
 												*parameters_tab;
 
-		//! \brief Converte os dados da linha da tabela informada em um parâmetro
-		Parameter getParameter(TabelaObjetosWidget *tab, unsigned idx_lin);
+		//! \brief Returns a parameter configured based upon the specified table and line
+		Parameter getParameter(TabelaObjetosWidget *tab, unsigned lin_idx);
 
-		//! \brief Exibe os dados do parâmetro na tabela e linha selecionadas
-		void showParameterData(Parameter param, TabelaObjetosWidget *tab, unsigned idx_lin);
+		//! \brief Shows the parameter data on the specified table at the specified line
+		void showParameterData(Parameter param, TabelaObjetosWidget *tab, unsigned lin_idx);
 
-		/*! \brief Valida a nova configuração da função em relação a demais objetos que a referenciam.
-		 A exemplo disso temos objetos das classes ConversaoCodificacao, ConversaoTipo,
-		 FuncaoAgregada, Gatilho, Linguagem, Operador, Tipo */
+		//! \brief Validates the new function configuration in relation to the other objects that references it.
 		void validateConfiguredFunction(void);
 
+		void hideEvent(QHideEvent *event);
+
 	public:
-		FuncaoWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Function *funcao);
+		FunctionWidget(QWidget * parent = 0);
+
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Function *func);
 
 	private slots:
 		void alternateReturnTypes(void);
 
-		/*! \brief Seleciona a linguagem de definição da função, e caso disponível,
-			carrega o arquivo de destaque de sintaxe referênt  linguagem
-			selecionada */
+		/*! \brief Selects the language used by the function and if available loads the
+		syntax highlight configuration for the selected language. */
 		void selectLanguage(void);
 
-		//! \brief Exibe a janela de configuração de parâmetros
+		//! \brief Shows the parameter configuration form
 		void showParameterForm(void);
 
-		/*! \brief Manipula um parâmetro que foi configurado pelo form. de parâmetro
-			exibindo seus dados na tabela da parâmetros correta */
-		void handleParameter(int);
-
-		void hideEvent(QHideEvent *);
+		//! \brief Shows the configured parameter on the table that called the form
+		void handleParameter(int result);
 
 	public slots:
 		void applyConfiguration(void);

@@ -36,7 +36,7 @@ extern PapelWidget *papel_wgt;
 extern TablespaceWidget *espacotabela_wgt;
 extern LinguagemWidget *linguagem_wgt;
 extern SourceCodeWidget *codigofonte_wgt;
-extern FuncaoWidget *funcao_wgt;
+extern FunctionWidget *funcao_wgt;
 extern CastWidget *convtipo_wgt;
 extern ConversionWidget *convcodif_wgt;
 extern DomainWidget *dominio_wgt;

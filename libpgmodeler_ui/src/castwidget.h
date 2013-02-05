@@ -22,8 +22,8 @@
 \brief Implements the operations to create/edit type casts via form.
 */
 
-#ifndef CONVERSAOTIPO_WIDGET_H
-#define CONVERSAOTIPO_WIDGET_H
+#ifndef CAST_WIDGET_H
+#define CAST_WIDGET_H
 
 #include "baseobjectwidget.h"
 #include "tipopgsqlwidget.h"

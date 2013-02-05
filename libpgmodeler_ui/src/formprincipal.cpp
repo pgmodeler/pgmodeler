@@ -49,7 +49,7 @@ PermissaoWidget *permissao_wgt=NULL;
 TablespaceWidget *espacotabela_wgt=NULL;
 LinguagemWidget *linguagem_wgt=NULL;
 ParametroWidget *parametro_wgt=NULL;
-FuncaoWidget *funcao_wgt=NULL;
+FunctionWidget *funcao_wgt=NULL;
 CastWidget *convtipo_wgt=NULL;
 ConversionWidget *convcodif_wgt=NULL;
 DomainWidget *dominio_wgt=NULL;
@@ -128,7 +128,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		espacotabela_wgt=new TablespaceWidget(this);
 		linguagem_wgt=new LinguagemWidget(this);
 		parametro_wgt=new ParametroWidget(this);
-		funcao_wgt=new FuncaoWidget(this);
+		funcao_wgt=new FunctionWidget(this);
 		convtipo_wgt=new CastWidget(this);
 		convcodif_wgt=new ConversionWidget(this);
 		dominio_wgt=new DomainWidget(this);
