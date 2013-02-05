@@ -23,7 +23,7 @@
 #include "columnwidget.h"
 #include "restricaowidget.h"
 #include "regrawidget.h"
-#include "gatilhowidget.h"
+#include "triggerwidget.h"
 #include "indicewidget.h"
 #include "relacionamentowidget.h"
 #include "tabelawidget.h"
@@ -63,7 +63,7 @@ VisaoWidget *visao_wgt=NULL;
 ColumnWidget *coluna_wgt=NULL;
 RestricaoWidget *restricao_wgt=NULL;
 RegraWidget *regra_wgt=NULL;
-GatilhoWidget *gatilho_wgt=NULL;
+TriggerWidget *gatilho_wgt=NULL;
 IndiceWidget *indice_wgt=NULL;
 RelacionamentoWidget *relacao_wgt=NULL;
 TabelaWidget *tabela_wgt=NULL;
@@ -142,7 +142,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		coluna_wgt=new ColumnWidget(this);
 		restricao_wgt=new RestricaoWidget(this);
 		regra_wgt=new RegraWidget(this);
-		gatilho_wgt=new GatilhoWidget(this);
+		gatilho_wgt=new TriggerWidget(this);
 		indice_wgt=new IndiceWidget(this);
 		relacao_wgt=new RelacionamentoWidget(this);
 		tabela_wgt=new TabelaWidget(this);

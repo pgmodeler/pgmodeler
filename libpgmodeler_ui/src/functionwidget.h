@@ -19,7 +19,7 @@
 /**
 \ingroup libpgmodeler_ui
 \class FunctionWidget
-\brief Implements the operations to create/edit type functions via form.
+\brief Implements the operations to create/edit functions via form.
 */
 
 #ifndef FUNCTION_WIDGET_H

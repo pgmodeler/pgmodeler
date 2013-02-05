@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GatilhoWidget</class>
- <widget class="QWidget" name="GatilhoWidget">
+ <class>TriggerWidget</class>
+ <widget class="QWidget" name="TriggerWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gatilho_grid">
+  <layout class="QGridLayout" name="trigger_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -27,37 +27,37 @@
     <number>6</number>
    </property>
    <item row="1" column="0">
-    <widget class="QLabel" name="tipo_disparo_lbl">
+    <widget class="QLabel" name="firing_mode_lbl">
      <property name="enabled">
       <bool>true</bool>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>110</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>110</width>
+       <width>16777215</width>
        <height>16777215</height>
       </size>
      </property>
      <property name="text">
-      <string>Triggering Mode:</string>
+      <string>Firing Mode:</string>
      </property>
     </widget>
    </item>
    <item row="1" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QComboBox" name="tipo_disparo_cmb">
+      <widget class="QComboBox" name="firing_mode_cmb">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -103,7 +103,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QCheckBox" name="exec_por_linha_chk">
+      <widget class="QCheckBox" name="exec_per_row_chk">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -132,20 +132,20 @@
    <item row="2" column="0">
     <widget class="QLabel" name="evento_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>110</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>110</width>
+       <width>16777215</width>
        <height>16777215</height>
       </size>
      </property>
@@ -262,9 +262,9 @@
     </layout>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="postergavel_lbl">
+    <widget class="QLabel" name="deferrable_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -289,7 +289,7 @@
    <item row="3" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QCheckBox" name="postergavel_chk">
+      <widget class="QCheckBox" name="deferrable_chk">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -314,7 +314,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="tipo_postergacao_lbl">
+      <widget class="QLabel" name="deferral_type_lbl">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -342,7 +342,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="tipo_postergacao_cmb">
+      <widget class="QComboBox" name="deferral_type_cmb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -369,25 +369,25 @@
     </layout>
    </item>
    <item row="6" column="0">
-    <widget class="QLabel" name="tab_referenciada_lbl">
+    <widget class="QLabel" name="ref_table_lbl">
      <property name="enabled">
       <bool>true</bool>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>110</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>110</width>
+       <width>16777215</width>
        <height>16777215</height>
       </size>
      </property>
@@ -397,22 +397,22 @@
     </widget>
    </item>
    <item row="7" column="0">
-    <widget class="QLabel" name="exp_condicional_lbl">
+    <widget class="QLabel" name="cond_expr_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>110</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>110</width>
+       <width>16777215</width>
        <height>16777215</height>
       </size>
      </property>
@@ -422,7 +422,7 @@
     </widget>
    </item>
    <item row="7" column="2">
-    <widget class="QTextEdit" name="exp_condicional_txt">
+    <widget class="QTextEdit" name="cond_expr_txt">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -481,7 +481,7 @@
         <number>2</number>
        </property>
        <item row="0" column="0">
-        <widget class="QLabel" name="coluna_lbl">
+        <widget class="QLabel" name="column_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -500,7 +500,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QComboBox" name="coluna_cmb">
+        <widget class="QComboBox" name="column_cmb">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -532,14 +532,14 @@
         <number>2</number>
        </property>
        <item row="0" column="0">
-        <widget class="QLabel" name="argumento_lbl">
+        <widget class="QLabel" name="argument_lbl">
          <property name="text">
           <string>Argument:</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="argumento_edt">
+        <widget class="QLineEdit" name="argument_edt">
          <property name="minimumSize">
           <size>
            <width>180</width>
@@ -553,25 +553,25 @@
     </widget>
    </item>
    <item row="5" column="0">
-    <widget class="QLabel" name="funcao_lbl">
+    <widget class="QLabel" name="function_lbl">
      <property name="enabled">
       <bool>true</bool>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>110</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>110</width>
+       <width>16777215</width>
        <height>16777215</height>
       </size>
      </property>
@@ -581,14 +581,32 @@
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="QLabel" name="gat_rest_lbl">
+    <widget class="QLabel" name="constr_trig_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="text">
       <string>Constraint Trigger:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QCheckBox" name="gat_rest_chk">
+    <widget class="QCheckBox" name="constr_trig_chk">
      <property name="text">
       <string/>
      </property>

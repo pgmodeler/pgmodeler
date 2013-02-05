@@ -3,14 +3,14 @@
 #include "restricaowidget.h"
 #include "regrawidget.h"
 #include "indicewidget.h"
-#include "gatilhowidget.h"
+#include "triggerwidget.h"
 #include "messagebox.h"
 
 extern RestricaoWidget *restricao_wgt;
 extern ColumnWidget *coluna_wgt;
 extern RegraWidget *regra_wgt;
 extern IndiceWidget *indice_wgt;
-extern GatilhoWidget *gatilho_wgt;
+extern TriggerWidget *gatilho_wgt;
 extern MessageBox *caixa_msg;
 
 TabelaWidget::TabelaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
