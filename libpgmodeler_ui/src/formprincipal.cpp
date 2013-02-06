@@ -27,7 +27,7 @@
 #include "indexwidget.h"
 #include "relacionamentowidget.h"
 #include "tabelawidget.h"
-#include "progressotarefa.h"
+#include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
 #include "formconfiguracao.h"
 #include "formexportacao.h"
@@ -67,7 +67,10 @@ TriggerWidget *gatilho_wgt=NULL;
 IndexWidget *indice_wgt=NULL;
 RelacionamentoWidget *relacao_wgt=NULL;
 TabelaWidget *tabela_wgt=NULL;
-ProgressoTarefa *prog_tarefa=NULL;
+
+//! \brief Global widget used to show loading/generation tasks progress
+TaskProgressWidget *task_prog_wgt=NULL;
+
 ObjectDepsRefsWidget *deps_refs_wgt=NULL;
 FormConfiguracao *fconfiguracao=NULL;
 FormExportacao *fexportacao=NULL;
@@ -146,7 +149,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		indice_wgt=new IndexWidget(this);
 		relacao_wgt=new RelacionamentoWidget(this);
 		tabela_wgt=new TabelaWidget(this);
-		prog_tarefa=new ProgressoTarefa();
+		task_prog_wgt=new TaskProgressWidget();
 		deps_refs_wgt=new ObjectDepsRefsWidget(this);
 		quickrename_wgt=new QuickRenameWidget(this);
 	}
@@ -156,7 +159,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 	}
 
 	for(unsigned i=0; i < 27; i++)
-		prog_tarefa->adicionarIcone(tipos[i],
+		task_prog_wgt->addIcon(tipos[i],
 																QIcon(QString(":/icones/icones/") +
 																			BaseObject::getSchemaName(tipos[i]) +
 																			QString(".png")));

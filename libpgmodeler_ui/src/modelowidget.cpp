@@ -24,7 +24,7 @@
 #include "indexwidget.h"
 #include "relacionamentowidget.h"
 #include "tabelawidget.h"
-#include "progressotarefa.h"
+#include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
 #include "quickrenamewidget.h"
 #include "permissaowidget.h"
@@ -55,7 +55,7 @@ extern TriggerWidget *gatilho_wgt;
 extern IndexWidget *indice_wgt;
 extern RelacionamentoWidget *relacao_wgt;
 extern TabelaWidget *tabela_wgt;
-extern ProgressoTarefa *prog_tarefa;
+extern TaskProgressWidget *task_prog_wgt;
 extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern QuickRenameWidget *quickrename_wgt;
 extern PermissaoWidget *permissao_wgt;
@@ -916,9 +916,9 @@ void ModeloWidget::carregarModelo(const QString &nome_arq)
 	try
 	{
 		//Configura o widget de progresso para exibir o progresso de carregamento do modelo
-		connect(modelo, SIGNAL(s_objectLoaded(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
-		prog_tarefa->setWindowTitle(trUtf8("Loading database model"));
-		prog_tarefa->show();
+		connect(modelo, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		task_prog_wgt->setWindowTitle(trUtf8("Loading database model"));
+		task_prog_wgt->show();
 
 		//Carrega o arquivo
 		modelo->loadModel(nome_arq);
@@ -927,16 +927,16 @@ void ModeloWidget::carregarModelo(const QString &nome_arq)
 		//Ajusta o tamanho da cena
 		this->ajustarTamanhoCena();
 
-		prog_tarefa->close();
-		disconnect(modelo, NULL, prog_tarefa, NULL);
+		task_prog_wgt->close();
+		disconnect(modelo, NULL, task_prog_wgt, NULL);
 
 		modelo_protegido_frm->setVisible(modelo->isProtected());
 		this->modificado=false;
 	}
 	catch(Exception &e)
 	{
-		prog_tarefa->close();
-		disconnect(modelo, NULL, prog_tarefa, NULL);
+		task_prog_wgt->close();
+		disconnect(modelo, NULL, task_prog_wgt, NULL);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -1158,17 +1158,17 @@ void ModeloWidget::salvarModelo(const QString &nome_arq)
 	try
 	{
 		//Configura o widget de progresso de tarefa para exibir o progresso do salvamento do arquivo
-		connect(modelo, SIGNAL(s_objectLoaded(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
-		prog_tarefa->setWindowTitle(trUtf8("Saving database model"));
-		prog_tarefa->show();
+		connect(modelo, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		task_prog_wgt->setWindowTitle(trUtf8("Saving database model"));
+		task_prog_wgt->show();
 
 		//Salva o modelo em arquivo
 		modelo->saveModel(nome_arq, SchemaParser::XML_DEFINITION);
 		this->nome_arquivo=nome_arq;
 
 		//Fecha o widget de progresso de tarefa
-		prog_tarefa->close();
-		disconnect(modelo, NULL, prog_tarefa, NULL);
+		task_prog_wgt->close();
+		disconnect(modelo, NULL, task_prog_wgt, NULL);
 		this->modificado=false;
 	}
 	catch(Exception &e)
@@ -1820,8 +1820,8 @@ void ModeloWidget::colarObjetos(void)
 	unsigned idx=1, pos=0;
 
 	//Exibe o progresso de tarefas pois a operação de colagem
-	prog_tarefa->setWindowTitle(trUtf8("Pasting objects..."));
-	prog_tarefa->show();
+	task_prog_wgt->setWindowTitle(trUtf8("Pasting objects..."));
+	task_prog_wgt->show();
 
 	itr=objs_copiados.begin();
 	itr_end=objs_copiados.end();
@@ -1835,7 +1835,7 @@ void ModeloWidget::colarObjetos(void)
 
 		//Atualiza a mensagem do widget de progresso de tarefa
 		pos++;
-		prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
+		task_prog_wgt->updateProgress((pos/static_cast<float>(objs_copiados.size()))*100,
 																	trUtf8("Validating object: %1 (%2)").arg(objeto->getName())
 																	.arg(objeto->getTypeName()),
 																	objeto->getObjectType());
@@ -1950,7 +1950,7 @@ void ModeloWidget::colarObjetos(void)
 
 		//Atualiza a mensagem do widget de progresso de tarefa
 		pos++;
-		prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
+		task_prog_wgt->updateProgress((pos/static_cast<float>(objs_copiados.size()))*100,
 																	trUtf8("Generating XML code of object: %1 (%2)").arg(objeto->getName())
 																	.arg(objeto->getTypeName()),
 																	objeto->getObjectType());
@@ -2008,7 +2008,7 @@ void ModeloWidget::colarObjetos(void)
 
 			//Atualiza a mensagem do widget de progresso de tarefa
 			pos++;
-			prog_tarefa->executarProgesso((pos/static_cast<float>(objs_copiados.size()))*100,
+			task_prog_wgt->updateProgress((pos/static_cast<float>(objs_copiados.size()))*100,
 																		trUtf8("Pasting object: %1 (%2)").arg(objeto->getName())
 																		.arg(objeto->getTypeName()),
 																		objeto->getObjectType());
@@ -2045,7 +2045,7 @@ void ModeloWidget::colarObjetos(void)
 	this->ajustarTamanhoCena();
 
 	//Fecha o progresso de tarefas
-	prog_tarefa->close();
+	task_prog_wgt->close();
 
 	/* Caso algum erro foi capturado durante a colagem o mesmo é mostrado ao usuário acompanhado
 		de um alerta */

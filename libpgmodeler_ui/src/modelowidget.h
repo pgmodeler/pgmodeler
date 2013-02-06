@@ -33,7 +33,7 @@
 #include "messagebox.h"
 #include "formbasico.h"
 #include "objectsscene.h"
-#include "progressotarefa.h"
+#include "taskprogresswidget.h"
 
 class ModeloWidget: public QWidget {
 		Q_OBJECT

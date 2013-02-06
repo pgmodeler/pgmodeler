@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ProgressoTarefa</class>
- <widget class="QDialog" name="ProgressoTarefa">
+ <class>TaskProgressWidget</class>
+ <widget class="QDialog" name="TaskProgressWidget">
   <property name="windowModality">
    <enum>Qt::WindowModal</enum>
   </property>
@@ -94,7 +94,7 @@
       <item>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="1" colspan="3">
-         <widget class="QLabel" name="texto_lbl">
+         <widget class="QLabel" name="text_lbl">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -112,9 +112,9 @@
          </widget>
         </item>
         <item row="1" column="0" colspan="4">
-         <widget class="QProgressBar" name="progresso_pb">
+         <widget class="QProgressBar" name="progress_pb">
           <property name="value">
-           <number>50</number>
+           <number>0</number>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -128,7 +128,7 @@
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="icone_lbl">
+         <widget class="QLabel" name="icon_lbl">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>

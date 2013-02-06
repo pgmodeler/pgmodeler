@@ -1,6 +1,6 @@
 #include "sourcecodewidget.h"
-#include "progressotarefa.h"
-extern ProgressoTarefa *prog_tarefa;
+#include "taskprogresswidget.h"
+extern TaskProgressWidget *task_prog_wgt;
 
 SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 {
@@ -92,10 +92,10 @@ void SourceCodeWidget::generateSourceCode(int)
 		{
 			if(obj_type==OBJ_DATABASE)
 			{
-				prog_tarefa->setWindowTitle(trUtf8("Generating source code..."));
-				prog_tarefa->show();
+				task_prog_wgt->setWindowTitle(trUtf8("Generating source code..."));
+				task_prog_wgt->show();
 				connect(this->model, SIGNAL(s_objectLoaded(int,QString,unsigned)),
-								prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
+								task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
 			}
 
 			SchemaParser::setPgSQLVersion(version_cmb->currentText());
@@ -108,13 +108,13 @@ void SourceCodeWidget::generateSourceCode(int)
 		xmlcode_txt->setPlainText(QString::fromUtf8(DatabaseModel::validateObjectDefinition(object, SchemaParser::XML_DEFINITION)));
 
 		setSourceCodeTab();
-		prog_tarefa->close();
-		disconnect(this->model, NULL, prog_tarefa, NULL);
+		task_prog_wgt->close();
+		disconnect(this->model, NULL, task_prog_wgt, NULL);
 	}
 	catch(Exception &e)
 	{
-		prog_tarefa->close();
-		disconnect(this->model, NULL, prog_tarefa, NULL);
+		task_prog_wgt->close();
+		disconnect(this->model, NULL, task_prog_wgt, NULL);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

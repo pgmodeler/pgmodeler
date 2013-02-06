@@ -18,36 +18,35 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class ProgressaoTarefa
-\brief Definição da classe que implementa um widget que sinaliza a progressão de execução de tarefas
+\class TaskProgressWidget
+\brief Implements a widget that shows the progress of executed operations (e.g. loading a model file, generation source code)
 */
 
-#ifndef PROGRESSO_TAREFA_H
-#define PROGRESSO_TAREFA_H
+#ifndef TASK_PROGRESS_WIDGET_H
+#define TASK_PROGRESS_WIDGET_H
 
 #include <QtGui>
-#include "ui_progressotarefa.h"
+#include "ui_taskprogresswidget.h"
 #include <map>
 using namespace std;
 
-class ProgressoTarefa: public QDialog, public Ui::ProgressoTarefa
+class TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget
 {
 	private:
 		Q_OBJECT
 
-		/*! \brief Armazena os icones que são exibidos conforme os tokes dos icones
-		 'id_icone' no slot executarProgresso() são enviados */
-		map<unsigned, QIcon> icones;
+		//! \brief Stores the icons that are shown as the icons tokens are send via	updateProgress() slot
+		map<unsigned, QIcon> icons;
 
 	public:
-		ProgressoTarefa(QWidget *parent=0, Qt::WindowFlags f=0);
+		TaskProgressWidget(QWidget *parent=0, Qt::WindowFlags f=0);
 
-		//! \brief Adiciona um ícone identificado pelo código 'id'
-		void adicionarIcone(unsigned id, const QIcon &ico);
+		void addIcon(unsigned id, const QIcon &ico);
 
 	public slots:
 		void close(void);
-		void executarProgesso(int progresso, const QString &texto, unsigned id_ico);
+
+		void updateProgress(int progress, const QString &text, unsigned icon_id);
 };
 
 #endif

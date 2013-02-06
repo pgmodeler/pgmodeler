@@ -1,8 +1,8 @@
 #include "operationlistwidget.h"
-#include "progressotarefa.h"
+#include "taskprogresswidget.h"
 
 extern MessageBox *caixa_msg;
-extern ProgressoTarefa *prog_tarefa;
+extern TaskProgressWidget *task_prog_wgt;
 
 OperationListWidget::OperationListWidget(QWidget *parent, Qt::WindowFlags f) : QDockWidget(parent, f)
 {
@@ -132,14 +132,14 @@ void OperationListWidget::undoOperation(void)
 {
 	try
 	{
-		connect(modelo_wgt->lista_op, SIGNAL(s_operationExecuted(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
-		prog_tarefa->setWindowTitle(trUtf8("Undoing operations..."));
-		prog_tarefa->show();
+		connect(modelo_wgt->lista_op, SIGNAL(s_operationExecuted(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		task_prog_wgt->setWindowTitle(trUtf8("Undoing operations..."));
+		task_prog_wgt->show();
 
 		modelo_wgt->lista_op->undoOperation();
 
-		prog_tarefa->close();
-		disconnect(modelo_wgt->lista_op, NULL, prog_tarefa, NULL);
+		task_prog_wgt->close();
+		disconnect(modelo_wgt->lista_op, NULL, task_prog_wgt, NULL);
 
 		notifyUpdateOnModel();
 
@@ -147,8 +147,8 @@ void OperationListWidget::undoOperation(void)
 	}
 	catch(Exception &e)
 	{
-		prog_tarefa->close();
-		disconnect(modelo_wgt->lista_op, NULL, prog_tarefa, NULL);
+		task_prog_wgt->close();
+		disconnect(modelo_wgt->lista_op, NULL, task_prog_wgt, NULL);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -157,14 +157,14 @@ void OperationListWidget::redoOperation(void)
 {
 	try
 	{
-		connect(modelo_wgt->lista_op, SIGNAL(s_operationExecuted(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
-		prog_tarefa->setWindowTitle(trUtf8("Redoing operations..."));
-		prog_tarefa->show();
+		connect(modelo_wgt->lista_op, SIGNAL(s_operationExecuted(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		task_prog_wgt->setWindowTitle(trUtf8("Redoing operations..."));
+		task_prog_wgt->show();
 
 		modelo_wgt->lista_op->redoOperation();
 
-		prog_tarefa->close();
-		disconnect(modelo_wgt->lista_op, NULL, prog_tarefa, NULL);
+		task_prog_wgt->close();
+		disconnect(modelo_wgt->lista_op, NULL, task_prog_wgt, NULL);
 
 		notifyUpdateOnModel();
 
@@ -172,8 +172,8 @@ void OperationListWidget::redoOperation(void)
 	}
 	catch(Exception &e)
 	{
-		prog_tarefa->close();
-		disconnect(modelo_wgt->lista_op, NULL, prog_tarefa, NULL);
+		task_prog_wgt->close();
+		disconnect(modelo_wgt->lista_op, NULL, task_prog_wgt, NULL);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

@@ -1,9 +1,9 @@
 #include "formexportacao.h"
-#include "progressotarefa.h"
+#include "taskprogresswidget.h"
 #include "formconfiguracao.h"
 #include "messagebox.h"
 
-extern ProgressoTarefa *prog_tarefa;
+extern TaskProgressWidget *task_prog_wgt;
 extern FormConfiguracao *fconfiguracao;
 extern MessageBox *caixa_msg;
 
@@ -160,10 +160,10 @@ void FormExportacao::exportarModelo(void)
 					vet_cod_erros.push_back(cod_erros[i]);
 
 				//Configura o widget de progresso para capturar o progresso da geração do código
-				prog_tarefa->setWindowTitle(trUtf8("Generating source code..."));
-				prog_tarefa->show();
+				task_prog_wgt->setWindowTitle(trUtf8("Generating source code..."));
+				task_prog_wgt->show();
 				connect(this->modelo_wgt->modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)),
-								prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
+								task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
 
 				rot_prog_lbl->setText(trUtf8("Initializing model export..."));
 				rot_prog_lbl->repaint();
@@ -329,15 +329,15 @@ void FormExportacao::exportarModelo(void)
 					}
 				}
 
-				prog_tarefa->close();
-				disconnect(this->modelo_wgt->modelo, NULL, prog_tarefa, NULL);
+				task_prog_wgt->close();
+				disconnect(this->modelo_wgt->modelo, NULL, task_prog_wgt, NULL);
 			}
 			catch(Exception &e)
 			{
 				QString drop_cmd=QString("DROP %1 %2;");
 
-				prog_tarefa->close();
-				disconnect(this->modelo_wgt->modelo, NULL, prog_tarefa, NULL);
+				task_prog_wgt->close();
+				disconnect(this->modelo_wgt->modelo, NULL, task_prog_wgt, NULL);
 
 				/* Caso os algum objeto tenha sido criado é preciso excluí-los do banco.
 		 Para isso, os mesmos são removidos na ordem contrária de criação:
