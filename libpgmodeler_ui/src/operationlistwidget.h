@@ -18,45 +18,43 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class ListaOperacoesWidget
-\brief Definição da classe que implementa a arvore de operações executadas no modelo de banco de dados.
+\class OperationListWidget
+\brief Implements the widget representation for the operation list, giving access to the undo/redo action over the model.
 */
 
-#ifndef LISTA_OPERACOES_WIDGET_H
-#define LISTA_OPERACOES_WIDGET_H
+#ifndef OPERATION_LIST_WIDGET_H
+#define OPERATION_LIST_WIDGET_H
 
 #include <QtGui>
-#include "ui_listaoperacoeswidget.h"
+#include "ui_operationlistwidget.h"
 #include "modelowidget.h"
 #include "messagebox.h"
 
-class ListaOperacoesWidget: public QDockWidget, public Ui::ListaOperacoesWidget {
+class OperationListWidget: public QDockWidget, public Ui::OperationListWidget {
+	private:
 		Q_OBJECT
 
-	private:
-		//! \brief Armazena o modelo atual o qual será exibido na visão geral
 		ModeloWidget *modelo_wgt;
 
-		void atualizarModeloObjetos(void);
+		//! \brief Updates the operation list and emits the signal s_operationListUpdated to the connected objects
+		void notifyUpdateOnModel(void);
 
 	public:
-		ListaOperacoesWidget(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		OperationListWidget(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 	public slots:
-		void atualizarListaOperacoes(void);
-		void definirModelo(ModeloWidget *modelo);
-		void desfazerOperacao(void);
-		void refazerOperacao(void);
-		void excluirOperacoes(void);
+		void updateOperationList(void);
+		void setModelWidget(ModeloWidget *model);
+		void undoOperation(void);
+		void redoOperation(void);
+		void removeOperations(void);
 
 	private slots:
-		void selecionarItem(QTreeWidgetItem *item, int coluna);
+		void selectItem(QTreeWidgetItem *item, int coluna);
 
 	signals:
-		/*! \brief Sinal emitido pelo widget quando uma operação sobre
-			a lista é executada */
-		void s_operacaoExecutada(void);
-		void s_listaOperacoesAtualizada(void);
+		void s_operationExecuted(void);
+		void s_operationListUpdated(void);
 };
 
 #endif

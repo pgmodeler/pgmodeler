@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ListaObjetosWidget</class>
- <widget class="QWidget" name="ListaObjetosWidget">
+ <class>ObjectDepsRefsWidget</class>
+ <widget class="QWidget" name="ObjectDepsRefsWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    <iconset resource="../res/resources.qrc">
     <normaloff>:/icones/icones/pgsqlModeler48x48.png</normaloff>:/icones/icones/pgsqlModeler48x48.png</iconset>
   </property>
-  <layout class="QGridLayout" name="listaobjetos_grid">
+  <layout class="QGridLayout" name="objectdepsrefs_grid">
    <property name="horizontalSpacing">
     <number>0</number>
    </property>
@@ -38,7 +38,7 @@
        <height>22</height>
       </size>
      </property>
-     <widget class="QWidget" name="dependncias_tab">
+     <widget class="QWidget" name="dependnces_tab">
       <attribute name="title">
        <string>Dependencies</string>
       </attribute>
@@ -50,7 +50,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="QTableWidget" name="dependencias_tbw">
+        <widget class="QTableWidget" name="dependences_tbw">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -153,7 +153,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="referencias_tab">
+     <widget class="QWidget" name="references_tab">
       <attribute name="title">
        <string>References</string>
       </attribute>
@@ -165,7 +165,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="QTableWidget" name="referencias_tbw">
+        <widget class="QTableWidget" name="references_tbw">
          <property name="enabled">
           <bool>true</bool>
          </property>

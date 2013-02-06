@@ -18,32 +18,31 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class ListaObjetosWidget
-\brief Definição da classe que implementa o formulário de exibição das dependências e referências a um objeto
+\class ObjectDepsRefsWidget
+\brief Implements the form to show the object's dependeces and references
 */
 
-#ifndef LISTA_OBJETOS_WIDGET_H
-#define LISTA_OBJETOS_WIDGET_H
+#ifndef OBJECT_DEPS_REFS_WIDGET_H
+#define OBJECT_DEPS_REFS_WIDGET_H
 
-#include "ui_listaobjetoswidget.h"
+#include "ui_objectdepsrefswidget.h"
 #include "baseobjectwidget.h"
 #include "baseobjectview.h"
 
-class ListaObjetosWidget: public BaseObjectWidget, public Ui::ListaObjetosWidget {
+class ObjectDepsRefsWidget: public BaseObjectWidget, public Ui::ObjectDepsRefsWidget {
+	private:
 		Q_OBJECT
 
-	private:
+		void hideEvent(QHideEvent *event);
+
 		void applyConfiguration(void){}
 
-		//! \brief Carrega os widgets que contém as referências e dependências do objeto
-		void atualizarListaObjetos(vector<BaseObject *> &objetos, QTableWidget *tabela_wgt);
-
-	protected slots:
-		void hideEvent(QHideEvent *);
+		void updateTableWidget(vector<BaseObject *> &objs, QTableWidget *tab_wgt);
 
 	public:
-		ListaObjetosWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *objeto_pai=NULL);
+		ObjectDepsRefsWidget(QWidget * parent = 0);
+
+		void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj=NULL);
 };
 
 #endif

@@ -25,7 +25,7 @@
 #include "relacionamentowidget.h"
 #include "tabelawidget.h"
 #include "progressotarefa.h"
-#include "listaobjetoswidget.h"
+#include "objectdepsrefswidget.h"
 #include "quickrenamewidget.h"
 #include "permissaowidget.h"
 
@@ -56,7 +56,7 @@ extern IndexWidget *indice_wgt;
 extern RelacionamentoWidget *relacao_wgt;
 extern TabelaWidget *tabela_wgt;
 extern ProgressoTarefa *prog_tarefa;
-extern ListaObjetosWidget *deps_refs_wgt;
+extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern QuickRenameWidget *quickrename_wgt;
 extern PermissaoWidget *permissao_wgt;
 

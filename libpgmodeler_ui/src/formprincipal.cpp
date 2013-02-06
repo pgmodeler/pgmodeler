@@ -28,7 +28,7 @@
 #include "relacionamentowidget.h"
 #include "tabelawidget.h"
 #include "progressotarefa.h"
-#include "listaobjetoswidget.h"
+#include "objectdepsrefswidget.h"
 #include "formconfiguracao.h"
 #include "formexportacao.h"
 #include "quickrenamewidget.h"
@@ -68,7 +68,7 @@ IndexWidget *indice_wgt=NULL;
 RelacionamentoWidget *relacao_wgt=NULL;
 TabelaWidget *tabela_wgt=NULL;
 ProgressoTarefa *prog_tarefa=NULL;
-ListaObjetosWidget *deps_refs_wgt=NULL;
+ObjectDepsRefsWidget *deps_refs_wgt=NULL;
 FormConfiguracao *fconfiguracao=NULL;
 FormExportacao *fexportacao=NULL;
 QuickRenameWidget *quickrename_wgt=NULL;
@@ -114,7 +114,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		//selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
 		frestmodelo=new FormRestauracaoModelo(this);
-		lista_oper=new ListaOperacoesWidget;
+		lista_oper=new OperationListWidget;
 		visao_objs=new VisaoObjetosWidget;
 		visaogeral_wgt=new VisaoGeralWidget;
 
@@ -147,7 +147,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		relacao_wgt=new RelacionamentoWidget(this);
 		tabela_wgt=new TabelaWidget(this);
 		prog_tarefa=new ProgressoTarefa();
-		deps_refs_wgt=new ListaObjetosWidget(this);
+		deps_refs_wgt=new ObjectDepsRefsWidget(this);
 		quickrename_wgt=new QuickRenameWidget(this);
 	}
 	catch(Exception &e)
@@ -193,10 +193,10 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 	connect(action_salvar_como,SIGNAL(triggered(bool)),this,SLOT(salvarModelo()));
 	connect(action_salvar_tudo,SIGNAL(triggered(bool)),this,SLOT(salvarTodosModelos()));
 
-	connect(lista_oper, SIGNAL(s_operacaoExecutada(void)), this, SLOT(__atualizarDockWidgets(void)));
-	connect(lista_oper, SIGNAL(s_listaOperacoesAtualizada(void)), this, SLOT(__atualizarEstadoFerramentas(void)));
-	connect(action_desfazer,SIGNAL(triggered(bool)),lista_oper,SLOT(desfazerOperacao()));
-	connect(action_refazer,SIGNAL(triggered(bool)),lista_oper,SLOT(refazerOperacao()));
+	connect(lista_oper, SIGNAL(s_operationExecuted(void)), this, SLOT(__atualizarDockWidgets(void)));
+	connect(lista_oper, SIGNAL(s_operationListUpdated(void)), this, SLOT(__atualizarEstadoFerramentas(void)));
+	connect(action_desfazer,SIGNAL(triggered(bool)),lista_oper,SLOT(undoOperation(void)));
+	connect(action_refazer,SIGNAL(triggered(bool)),lista_oper,SLOT(redoOperation(void)));
 
 	connect(action_tela_cheia, SIGNAL(toggled(bool)), this, SLOT(exibirTelaCheia(bool)));
 	connect(modelos_tab, SIGNAL(tabCloseRequested(int)), this, SLOT(fecharModelo(int)));
@@ -233,7 +233,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 	connect(relacao_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
 	connect(tabela_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
 
-	connect(lista_oper, SIGNAL(s_operacaoExecutada(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
+	connect(lista_oper, SIGNAL(s_operationExecuted(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
 	connect(fconfiguracao, SIGNAL(finished(int)), this, SLOT(atualizarModelos(void)));
 	connect(&tm_salvamento, SIGNAL(timeout(void)), this, SLOT(salvarTodosModelos(void)));
 	connect(&tm_salvamento_tmp, SIGNAL(timeout(void)), this, SLOT(salvarModeloTemporario(void)));
@@ -698,10 +698,10 @@ void FormPrincipal::definirModeloAtual(void)
 			//Caso o modelo atual venha de um arquivo, concatena o caminho para o arquivo
 			this->setWindowTitle(titulo_janela + " - " + QDir::toNativeSeparators(modelo_atual->getNameArquivo()));
 
-		connect(modelo_atual, SIGNAL(s_objetoModificado(void)),lista_oper, SLOT(atualizarListaOperacoes(void)));
-		connect(modelo_atual, SIGNAL(s_objetoCriado(void)),lista_oper, SLOT(atualizarListaOperacoes(void)));
-		connect(modelo_atual, SIGNAL(s_objetoRemovido(void)),lista_oper, SLOT(atualizarListaOperacoes(void)));
-		connect(modelo_atual, SIGNAL(s_objetosMovimentados(void)),lista_oper, SLOT(atualizarListaOperacoes(void)));
+		connect(modelo_atual, SIGNAL(s_objetoModificado(void)),lista_oper, SLOT(updateOperationList(void)));
+		connect(modelo_atual, SIGNAL(s_objetoCriado(void)),lista_oper, SLOT(updateOperationList(void)));
+		connect(modelo_atual, SIGNAL(s_objetoRemovido(void)),lista_oper, SLOT(updateOperationList(void)));
+		connect(modelo_atual, SIGNAL(s_objetosMovimentados(void)),lista_oper, SLOT(updateOperationList(void)));
 
 		connect(modelo_atual, SIGNAL(s_objetoModificado(void)),visao_objs, SLOT(atualizarVisaoObjetos(void)));
 		connect(modelo_atual, SIGNAL(s_objetoCriado(void)),visao_objs, SLOT(atualizarVisaoObjetos(void)));
@@ -730,7 +730,7 @@ void FormPrincipal::definirModeloAtual(void)
 	atualizarEstadoFerramentas();
 
 	//Atualiza os dockwidgets com os dados do modelo atual
-	lista_oper->definirModelo(modelo_atual);
+	lista_oper->setModelWidget(modelo_atual);
 	visao_objs->definirModelo(modelo_atual);
 
 	if(modelo_atual)
@@ -893,7 +893,7 @@ void FormPrincipal::fecharModelo(int idx_modelo)
 		modelo_atual=NULL;
 		this->exibirTelaCheia(false);
 		visao_objs->definirModelo(static_cast<DatabaseModel *>(NULL));
-		lista_oper->definirModelo(static_cast<ModeloWidget *>(NULL));
+		lista_oper->setModelWidget(static_cast<ModeloWidget *>(NULL));
 		atualizarEstadoFerramentas(true);
 	}
 	else
@@ -1156,14 +1156,14 @@ void FormPrincipal::atualizarDockWidgets(void)
 {
 	if(modelo_atual)
 	{
-		lista_oper->atualizarListaOperacoes();
+		lista_oper->updateOperationList();
 		__atualizarEstadoFerramentas();
 	}
 }
 
 void FormPrincipal::__atualizarDockWidgets(void)
 {
-	lista_oper->atualizarListaOperacoes();
+	lista_oper->updateOperationList();
 	visao_objs->atualizarVisaoObjetos();
 }
 

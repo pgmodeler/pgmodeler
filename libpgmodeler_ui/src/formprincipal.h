@@ -33,7 +33,7 @@
 #include "messagebox.h"
 #include "formbasico.h"
 #include "formrestauracaomodelo.h"
-#include "listaoperacoeswidget.h"
+#include "operationlistwidget.h"
 #include "visaoobjetoswidget.h"
 #include "pgmodelerplugin.h"
 #include "visaogeralwidget.h"
@@ -55,7 +55,7 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
 		FormRestauracaoModelo *frestmodelo;
 
 		//! \brief Dockwidget o qual exibe as operações executadas sobre os objetos
-		ListaOperacoesWidget *lista_oper;
+		OperationListWidget *lista_oper;
 
 		//! \brief Dockwidget o qual exibe todos os objetos do modelo em forma de árvore/lista
 		VisaoObjetosWidget *visao_objs;

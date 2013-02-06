@@ -19,7 +19,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/messagebox.cpp \
            $$PWD/src/textboxwidget.cpp \
            $$PWD/src/baseobjectwidget.cpp \
-           $$PWD/src/listaoperacoeswidget.cpp \
+	   $$PWD/src/operationlistwidget.cpp \
            $$PWD/src/visaoobjetoswidget.cpp \
            $$PWD/src/formbasico.cpp \
            $$PWD/src/sourcecodewidget.cpp \
@@ -53,7 +53,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/relacionamentowidget.cpp \
            $$PWD/src/tabelawidget.cpp \
            $$PWD/src/progressotarefa.cpp \
-           $$PWD/src/listaobjetoswidget.cpp \
+	   $$PWD/src/objectdepsrefswidget.cpp \
            $$PWD/src/generalconfigwidget.cpp \
            $$PWD/src/appearanceconfigwidget.cpp \
            $$PWD/src/connectionsconfigwidget.cpp \
@@ -73,7 +73,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/messagebox.h \
            $$PWD/src/baseobjectwidget.h \
            $$PWD/src/textboxwidget.h \
-           $$PWD/src/listaoperacoeswidget.h \
+	   $$PWD/src/operationlistwidget.h \
            $$PWD/src/visaoobjetoswidget.h \
            $$PWD/src/formbasico.h \
            $$PWD/src/sourcecodewidget.h \
@@ -107,7 +107,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/relacionamentowidget.h \
            $$PWD/src/tabelawidget.h \
            $$PWD/src/progressotarefa.h \
-           $$PWD/src/listaobjetoswidget.h \
+	   $$PWD/src/objectdepsrefswidget.h \
            $$PWD/src/generalconfigwidget.h \
            $$PWD/src/formconfiguracao.h \
            $$PWD/src/connectionsconfigwidget.h \
@@ -124,7 +124,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/formsobre.ui \
          $$PWD/ui/textboxwidget.ui \
          $$PWD/ui/messagebox.ui \
-         $$PWD/ui/listaoperacoeswidget.ui \
+	 $$PWD/ui/operationlistwidget.ui \
          $$PWD/ui/visaoobjetoswidget.ui \
          $$PWD/ui/formbasico.ui \
          $$PWD/ui/sourcecodewidget.ui \
@@ -157,7 +157,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/relacionamentowidget.ui \
          $$PWD/ui/tabelawidget.ui \
          $$PWD/ui/progressotarefa.ui \
-         $$PWD/ui/listaobjetoswidget.ui \
+	 $$PWD/ui/objectdepsrefswidget.ui \
          $$PWD/ui/formexportacao.ui \
          $$PWD/ui/formconfiguracao.ui \
          $$PWD/ui/generalconfigwidget.ui \

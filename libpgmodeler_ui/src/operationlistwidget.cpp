@@ -1,0 +1,201 @@
+#include "operationlistwidget.h"
+#include "progressotarefa.h"
+
+extern MessageBox *caixa_msg;
+extern ProgressoTarefa *prog_tarefa;
+
+OperationListWidget::OperationListWidget(QWidget *parent, Qt::WindowFlags f) : QDockWidget(parent, f)
+{
+	setupUi(this);
+	modelo_wgt=NULL;
+	operations_tw->headerItem()->setHidden(true);
+	connect(undo_tb,SIGNAL(clicked()),this,SLOT(undoOperation(void)));
+	connect(redo_tb,SIGNAL(clicked()),this,SLOT(redoOperation(void)));
+	connect(rem_operations_tb,SIGNAL(clicked()),this,SLOT(removeOperations(void)));
+	connect(operations_tw,SIGNAL(itemClicked(QTreeWidgetItem *, int)),
+					this,SLOT(selectItem(QTreeWidgetItem *, int)));
+}
+
+void OperationListWidget::selectItem(QTreeWidgetItem *item, int)
+{
+	operations_tw->clearSelection();
+
+	if(item)
+	{
+		if(item->parent())
+			item=item->parent();
+
+		item->setSelected(true);
+		operations_tw->setCurrentItem(item);
+	}
+}
+
+void OperationListWidget::updateOperationList(void)
+{
+	if(!modelo_wgt)
+	{
+		operations_tw->clear();
+		dockWidgetContents->setEnabled(false);
+		op_count_lbl->setText("-");
+		current_pos_lbl->setText("-");
+	}
+	else
+	{
+		unsigned count, i, op_type;
+		ObjectType obj_type;
+		QString obj_name, str_aux, op_name, op_icon;
+		QTreeWidgetItem *item=NULL,*item1=NULL, *item2=NULL;
+		QFont font=this->font();
+		bool value=false;
+
+		dockWidgetContents->setEnabled(true);
+		op_count_lbl->setText(QString("%1").arg(modelo_wgt->lista_op->getCurrentSize()));
+		current_pos_lbl->setText(QString("%1").arg(modelo_wgt->lista_op->getCurrentIndex()));
+		redo_tb->setEnabled(modelo_wgt->lista_op->isRedoAvailable());
+		undo_tb->setEnabled(modelo_wgt->lista_op->isUndoAvailable());
+
+		count=modelo_wgt->lista_op->getCurrentSize();
+
+		operations_tw->clear();
+		rem_operations_tb->setEnabled(count > 0);
+
+		for(i=0; i < count; i++)
+		{
+			modelo_wgt->lista_op->getOperationData(i,op_type,obj_name,obj_type);
+
+			value=(i==static_cast<unsigned>(modelo_wgt->lista_op->getCurrentIndex()-1));
+			font.setBold(value);
+			font.setItalic(value);
+
+			item=new QTreeWidgetItem;
+			str_aux=QString(BaseObject::getSchemaName(obj_type));
+			item->setData(0, Qt::UserRole, QVariant(obj_type));
+
+			if(obj_type==BASE_RELATIONSHIP)
+				str_aux+="tv";
+
+			item->setIcon(0,QPixmap(QString(":/icones/icones/") + str_aux + QString(".png")));
+
+			operations_tw->insertTopLevelItem(i,item);
+			item->setFont(0,font);
+			item->setText(0,trUtf8("Object: %1").arg(BaseObject::getTypeName(obj_type)));
+
+			item2=new QTreeWidgetItem(item);
+			item2->setIcon(0,QPixmap(QString(":/icones/icones/uid.png")));
+			item2->setFont(0,font);
+			item2->setText(0,QString::fromUtf8(trUtf8("Name: %1").arg(obj_name)));
+
+			if(op_type==Operation::OBJECT_CREATED)
+			{
+				op_icon="criado";
+				op_name=trUtf8("created");
+			}
+			else if(op_type==Operation::OBJECT_REMOVED)
+			{
+				op_icon="removido";
+				op_name=trUtf8("removed");
+			}
+			else if(op_type==Operation::OBJECT_MODIFIED)
+			{
+				op_icon="modificado";
+				op_name=trUtf8("modified");
+			}
+			else if(op_type==Operation::OBJECT_MOVED)
+			{
+				op_icon="movimentado";
+				op_name=trUtf8("moved");
+			}
+
+			item1=new QTreeWidgetItem(item);
+			item1->setIcon(0,QPixmap(QString(":/icones/icones/") + op_icon + QString(".png")));
+			item1->setFont(0,font);
+			item1->setText(0,trUtf8("Operation: %1").arg(op_name));
+
+			operations_tw->expandItem(item);
+
+			if(value)
+				operations_tw->scrollToItem(item1);
+		}
+	}
+
+	emit s_operationListUpdated();
+}
+
+void OperationListWidget::setModelWidget(ModeloWidget *model)
+{
+	operations_tw->clear();
+	this->modelo_wgt=model;
+	updateOperationList();
+}
+
+void OperationListWidget::undoOperation(void)
+{
+	try
+	{
+		connect(modelo_wgt->lista_op, SIGNAL(s_operationExecuted(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
+		prog_tarefa->setWindowTitle(trUtf8("Undoing operations..."));
+		prog_tarefa->show();
+
+		modelo_wgt->lista_op->undoOperation();
+
+		prog_tarefa->close();
+		disconnect(modelo_wgt->lista_op, NULL, prog_tarefa, NULL);
+
+		notifyUpdateOnModel();
+
+		modelo_wgt->cena->clearSelection();
+	}
+	catch(Exception &e)
+	{
+		prog_tarefa->close();
+		disconnect(modelo_wgt->lista_op, NULL, prog_tarefa, NULL);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void OperationListWidget::redoOperation(void)
+{
+	try
+	{
+		connect(modelo_wgt->lista_op, SIGNAL(s_operationExecuted(int,QString,unsigned)), prog_tarefa, SLOT(executarProgesso(int,QString,unsigned)));
+		prog_tarefa->setWindowTitle(trUtf8("Redoing operations..."));
+		prog_tarefa->show();
+
+		modelo_wgt->lista_op->redoOperation();
+
+		prog_tarefa->close();
+		disconnect(modelo_wgt->lista_op, NULL, prog_tarefa, NULL);
+
+		notifyUpdateOnModel();
+
+		modelo_wgt->cena->clearSelection();
+	}
+	catch(Exception &e)
+	{
+		prog_tarefa->close();
+		disconnect(modelo_wgt->lista_op, NULL, prog_tarefa, NULL);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void OperationListWidget::removeOperations(void)
+{
+	caixa_msg->show(trUtf8("Operation history exclusion"),
+									trUtf8("Delete the executed operations history is an irreversible action, do you want to continue?"),
+									MessageBox::CONFIRM_ICON,
+									MessageBox::YES_NO_BUTTONS);
+
+	if(caixa_msg->result()==QDialog::Accepted)
+	{
+		modelo_wgt->lista_op->removeOperations();
+		updateOperationList();
+		rem_operations_tb->setEnabled(false);
+	}
+}
+
+void OperationListWidget::notifyUpdateOnModel(void)
+{
+	updateOperationList();
+	emit s_operationExecuted();
+}
+
