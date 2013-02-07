@@ -63,7 +63,7 @@ Four environment variables are used by pgModeler to access the folders schemas/,
 
 Additionally, pgModeler needs to know where to find the libraries required for execution (Qt Library, LibXML, and libpq) for which you should enter the full path in the variable LD_LIBRARY_PATH (Unix) or PATH (Windows), if not already configured.
 
-To provide the interface translation pgModeler checks the variable LANG (Unix). To use a specific translation, change the value of this variable. pgModeler only supports the U.S. English (en_US) language currently.
+To provide the interface translation pgModeler checks the variable LANG (Unix). To use a specific translation, change the value of this variable. pgModeler fully supports U.S. English (en_US) language and partially the Brazilian Portuguese (pt_BR), French (fr_FR) and Chinese (zh_CN) languages.
 
 Finally, as a convenience, the script 'start-pgmodeler.(sh | bat)' is provided to assist the initialization of pgModeler so it is not necessary to call the executable directly or change the environment variables on your operating system.
 
