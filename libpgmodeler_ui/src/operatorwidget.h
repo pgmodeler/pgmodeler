@@ -18,32 +18,33 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class OperadorWidget
-\brief Definição da classe que implementa o formulário de edição dos atributos de operadores.
+\class OperatorWidget
+\brief Implements the operations to create/edit operators via form.
 */
 
-#ifndef OPERADOR_WIDGET_H
-#define OPERADOR_WIDGET_H
+#ifndef OPERATOR_WIDGET_H
+#define OPERATOR_WIDGET_H
 
 #include "baseobjectwidget.h"
 #include "tipopgsqlwidget.h"
-#include "ui_operadorwidget.h"
+#include "ui_operatorwidget.h"
 
-class OperadorWidget: public BaseObjectWidget, public Ui::OperadorWidget {
+class OperatorWidget: public BaseObjectWidget, public Ui::OperatorWidget {
+	private:
 		Q_OBJECT
 
-	private:
-		TipoPgSQLWidget *tipo_args[2];
+		TipoPgSQLWidget *arg_types[2];
 
-		SeletorObjetoWidget *sel_funcoes[3],
-												*sel_operadores[6];
+		SeletorObjetoWidget *functions_sel[3],
+												*operators_sel[6];
 
 	public:
-		OperadorWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Operator *operador);
+		OperatorWidget(QWidget * parent = 0);
+
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Operator *oper);
 
 	private slots:
-		void hideEvent(QHideEvent *);
+		void hideEvent(QHideEvent *event);
 
 	public slots:
 		void applyConfiguration(void);

@@ -2,7 +2,7 @@
 #include "sourcecodewidget.h"
 #include "databasewidget.h"
 #include "schemawidget.h"
-#include "papelwidget.h"
+#include "rolewidget.h"
 #include "tablespacewidget.h"
 #include "languagewidget.h"
 #include "functionwidget.h"
@@ -11,7 +11,7 @@
 #include "domainwidget.h"
 #include "aggregatewidget.h"
 #include "sequenciawidget.h"
-#include "operadorwidget.h"
+#include "operatorwidget.h"
 #include "operatorfamilywidget.h"
 #include "operatorclasswidget.h"
 #include "tipowidget.h"
@@ -32,7 +32,7 @@
 extern MessageBox *caixa_msg;
 extern DatabaseWidget *database_wgt;
 extern SchemaWidget *esquema_wgt;
-extern PapelWidget *papel_wgt;
+extern RoleWidget *papel_wgt;
 extern TablespaceWidget *espacotabela_wgt;
 extern LanguageWidget *linguagem_wgt;
 extern SourceCodeWidget *codigofonte_wgt;
@@ -42,7 +42,7 @@ extern ConversionWidget *convcodif_wgt;
 extern DomainWidget *dominio_wgt;
 extern AggregateWidget *funcaoag_wgt;
 extern SequenciaWidget *sequencia_wgt;
-extern OperadorWidget *operador_wgt;
+extern OperatorWidget *operador_wgt;
 extern OperatorFamilyWidget *familiaop_wgt;
 extern OperatorClassWidget *classeop_wgt;
 extern TipoWidget *tipo_wgt;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PapelWidget</class>
- <widget class="QWidget" name="PapelWidget">
+ <class>RoleWidget</class>
+ <widget class="QWidget" name="RoleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="papel_grid">
+  <layout class="QGridLayout" name="role_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -53,24 +53,24 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QLabel" name="senha_lbl">
+    <widget class="QLabel" name="passwd_lbl">
      <property name="text">
       <string>Password:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="3">
-    <widget class="QLineEdit" name="senha_edt"/>
+    <widget class="QLineEdit" name="passwd_edt"/>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="validade_lbl">
+    <widget class="QLabel" name="validity_lbl">
      <property name="text">
       <string>Validity:</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QDateTimeEdit" name="validade_dte">
+    <widget class="QDateTimeEdit" name="validity_dte">
      <property name="displayFormat">
       <string>yyyy-MMM-dd hh:mm</string>
      </property>
@@ -80,7 +80,7 @@
     </widget>
    </item>
    <item row="1" column="2">
-    <widget class="QLabel" name="limconexao_lbl">
+    <widget class="QLabel" name="conn_limit_lbl">
      <property name="font">
       <font>
        <weight>50</weight>
@@ -94,7 +94,7 @@
     </widget>
    </item>
    <item row="1" column="3">
-    <widget class="QSpinBox" name="limconexao_sb">
+    <widget class="QSpinBox" name="conn_limit_sb">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -113,7 +113,7 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="4">
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="attributes_gb">
      <property name="title">
       <string>Attributes</string>
      </property>
@@ -132,35 +132,35 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QCheckBox" name="herdarperm_chk">
+       <widget class="QCheckBox" name="inh_perm_chk">
         <property name="text">
          <string>Inherit Permissions</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QCheckBox" name="criarbd_chk">
+       <widget class="QCheckBox" name="create_db_chk">
         <property name="text">
          <string>Create Database</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QCheckBox" name="permitirlogin_chk">
+       <widget class="QCheckBox" name="can_login_chk">
         <property name="text">
          <string>Can Login</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QCheckBox" name="criarusr_chk">
+       <widget class="QCheckBox" name="create_user_chk">
         <property name="text">
          <string>Create Users/Groups</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QCheckBox" name="senhacripto_chk">
+       <widget class="QCheckBox" name="encrypt_pass_chk">
         <property name="text">
          <string>Encrypted Password</string>
         </property>
@@ -170,21 +170,21 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="4">
-    <widget class="QTabWidget" name="membros_twg">
+    <widget class="QTabWidget" name="members_twg">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="membros_tab">
+     <widget class="QWidget" name="members_tab">
       <attribute name="title">
        <string>Members</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="membro_tab">
+     <widget class="QWidget" name="member_of_tab">
       <attribute name="title">
        <string>Member of</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="membros_adm_tab">
+     <widget class="QWidget" name="adm_members_tab">
       <attribute name="title">
        <string>Members (Admin.)</string>
       </attribute>

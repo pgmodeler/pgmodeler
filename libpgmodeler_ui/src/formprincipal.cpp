@@ -4,7 +4,7 @@
 #include "sourcecodewidget.h"
 #include "databasewidget.h"
 #include "schemawidget.h"
-#include "papelwidget.h"
+#include "rolewidget.h"
 #include "permissaowidget.h"
 #include "tablespacewidget.h"
 #include "languagewidget.h"
@@ -15,7 +15,7 @@
 #include "domainwidget.h"
 #include "aggregatewidget.h"
 #include "sequenciawidget.h"
-#include "operadorwidget.h"
+#include "operatorwidget.h"
 #include "operatorfamilywidget.h"
 #include "operatorclasswidget.h"
 #include "tipowidget.h"
@@ -44,7 +44,7 @@ TextboxWidget *caixatexto_wgt=NULL;
 SourceCodeWidget *codigofonte_wgt=NULL;
 DatabaseWidget *database_wgt=NULL;
 SchemaWidget *esquema_wgt=NULL;
-PapelWidget *papel_wgt=NULL;
+RoleWidget *papel_wgt=NULL;
 PermissaoWidget *permissao_wgt=NULL;
 TablespaceWidget *espacotabela_wgt=NULL;
 LanguageWidget *linguagem_wgt=NULL;
@@ -55,7 +55,7 @@ ConversionWidget *convcodif_wgt=NULL;
 DomainWidget *dominio_wgt=NULL;
 AggregateWidget *funcaoag_wgt=NULL;
 SequenciaWidget *sequencia_wgt=NULL;
-OperadorWidget *operador_wgt=NULL;
+OperatorWidget *operador_wgt=NULL;
 OperatorFamilyWidget *familiaop_wgt=NULL;
 OperatorClassWidget *classeop_wgt=NULL;
 TipoWidget *tipo_wgt=NULL;
@@ -127,7 +127,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		caixatexto_wgt=new TextboxWidget(this);
 		database_wgt=new DatabaseWidget(this);
 		esquema_wgt=new SchemaWidget(this);
-		papel_wgt=new PapelWidget(this);
+		papel_wgt=new RoleWidget(this);
 		espacotabela_wgt=new TablespaceWidget(this);
 		linguagem_wgt=new LanguageWidget(this);
 		parametro_wgt=new ParametroWidget(this);
@@ -137,7 +137,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		dominio_wgt=new DomainWidget(this);
 		funcaoag_wgt=new AggregateWidget(this);
 		sequencia_wgt=new SequenciaWidget(this);
-		operador_wgt=new OperadorWidget(this);
+		operador_wgt=new OperatorWidget(this);
 		familiaop_wgt=new OperatorFamilyWidget(this);
 		classeop_wgt=new OperatorClassWidget(this);
 		tipo_wgt=new TipoWidget(this);

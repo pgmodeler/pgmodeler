@@ -1,0 +1,145 @@
+#include "operatorwidget.h"
+
+OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OPERATOR)
+{
+	try
+	{
+		QGridLayout *grid=NULL;
+		unsigned i;
+		map<QString, vector<QWidget *> > field_map;
+		QFrame *frame=NULL;
+
+		Ui_OperatorWidget::setupUi(this);
+
+		arg_types[0]=NULL;
+		arg_types[0]=new TipoPgSQLWidget(this, trUtf8("Right Argument Type"));
+		arg_types[1]=NULL;
+		arg_types[1]=new TipoPgSQLWidget(this, trUtf8("Left Argument Type"));
+
+		grid=new QGridLayout;
+		grid->setContentsMargins(2,2,2,2);
+		grid->addWidget(arg_types[0],0,0);
+		grid->addWidget(arg_types[1],1,0);
+
+		frame=generateInformationFrame(trUtf8("To create a unary operator it is necessary to specify as <strong><em>'any'</em></strong> one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator."));
+		grid->addWidget(frame, 2, 0);
+		attributes_twg->widget(0)->setLayout(grid);
+
+		grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(1)->layout());
+		for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
+		{
+			functions_sel[i]=NULL;
+			functions_sel[i]=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
+			grid->addWidget(functions_sel[i],i,1,1,1);
+		}
+
+		grid=dynamic_cast<QGridLayout *>(attributes_twg->widget(2)->layout());
+		for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
+		{
+			operators_sel[i]=NULL;
+			operators_sel[i]=new SeletorObjetoWidget(OBJ_OPERATOR, true, this);
+			grid->addWidget(operators_sel[i],i,1,1,1);
+		}
+
+		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(sort1_op_lbl);
+		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(sort2_op_lbl);
+		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(lessthan_op_lbl);
+		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(greaterthan_op_lbl);
+		frame=generateVersionWarningFrame(field_map);
+		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
+		frame->setParent(attributes_twg->widget(2));
+
+		configureFormLayout(operator_grid, OBJ_OPERATOR);
+
+		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+
+		parent_form->resize(530, 590);
+		parent_form->setMinimumWidth(530);
+		parent_form->setMinimumHeight(590);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void OperatorWidget::hideEvent(QHideEvent *event)
+{
+	unsigned i;
+
+	hashes_chk->setChecked(false);
+	merges_chk->setChecked(false);
+
+	for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
+		functions_sel[i]->removerObjetoSelecionado();
+
+	for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
+		operators_sel[i]->removerObjetoSelecionado();
+
+	attributes_twg->setCurrentIndex(0);
+	BaseObjectWidget::hideEvent(event);
+}
+
+void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Operator *oper)
+{
+	unsigned i;
+	PgSQLType left_type, right_type;
+
+	BaseObjectWidget::setAttributes(model,op_list,oper);
+
+	for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
+		functions_sel[i]->definirModelo(model);
+
+	for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
+		operators_sel[i]->definirModelo(model);
+
+	if(oper)
+	{
+		hashes_chk->setChecked(oper->isHashes());
+		merges_chk->setChecked(oper->isMerges());
+
+		for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
+			functions_sel[i]->definirObjeto(oper->getFunction(i));
+
+		for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
+			operators_sel[i]->definirObjeto(oper->getOperator(i));
+
+		left_type=oper->getArgumentType(Operator::LEFT_ARG);
+		right_type=oper->getArgumentType(Operator::RIGHT_ARG);
+	}
+
+	arg_types[0]->definirAtributos(left_type, model);
+	arg_types[1]->definirAtributos(right_type, model);
+}
+
+void OperatorWidget::applyConfiguration(void)
+{
+	try
+	{
+		unsigned i;
+		Operator *oper=NULL;
+		startConfiguration<Operator>();
+
+		oper=dynamic_cast<Operator *>(this->object);
+		oper->setHashes(hashes_chk->isChecked());
+		oper->setMerges(merges_chk->isChecked());
+
+		for(i=Operator::LEFT_ARG; i <= Operator::RIGHT_ARG; i++)
+			oper->setArgumentType(arg_types[i]->obterTipoPgSQL(), i);
+
+		for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
+			oper->setFunction(dynamic_cast<Function *>(functions_sel[i]->obterObjeto()), i);
+
+		for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
+			oper->setOperator(dynamic_cast<Operator *>(operators_sel[i]->obterObjeto()), i);
+
+		BaseObjectWidget::applyConfiguration();
+		finishConfiguration();
+	}
+	catch(Exception &e)
+	{
+		cancelConfiguration();
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+

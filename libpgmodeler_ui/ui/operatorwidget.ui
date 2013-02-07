@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>OperadorWidget</class>
- <widget class="QWidget" name="OperadorWidget">
+ <class>OperatorWidget</class>
+ <widget class="QWidget" name="OperatorWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="operador_grid">
+  <layout class="QGridLayout" name="operator_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -21,7 +21,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="label_10">
+    <widget class="QLabel" name="options_lbl">
      <property name="minimumSize">
       <size>
        <width>70</width>
@@ -61,16 +61,16 @@
     </spacer>
    </item>
    <item row="1" column="0" colspan="4">
-    <widget class="QTabWidget" name="atributos_twg">
+    <widget class="QTabWidget" name="attributes_twg">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="argumentos_tab">
+     <widget class="QWidget" name="arguments_tab">
       <attribute name="title">
        <string>Arguments</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="funcoes_tab">
+     <widget class="QWidget" name="functions_tab">
       <attribute name="title">
        <string>Functions</string>
       </attribute>
@@ -82,16 +82,16 @@
         <number>6</number>
        </property>
        <item row="1" column="0">
-        <widget class="QLabel" name="func_juncao_lbl">
+        <widget class="QLabel" name="join_func_lbl">
          <property name="text">
           <string>Join:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="func_restricao_lbl">
+        <widget class="QLabel" name="constr_func_lbl">
          <property name="text">
-          <string>Constraints:</string>
+          <string>Constraint:</string>
          </property>
         </widget>
        </item>
@@ -109,7 +109,7 @@
         </spacer>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="func_operador_lbl">
+        <widget class="QLabel" name="operator_func_lbl">
          <property name="text">
           <string>Operator:</string>
          </property>
@@ -117,7 +117,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="operadores_tab">
+     <widget class="QWidget" name="operators_tab">
       <attribute name="title">
        <string>Operators</string>
       </attribute>
@@ -129,42 +129,42 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="QLabel" name="op_comutacao_lbl">
+        <widget class="QLabel" name="commutation_op_lbl">
          <property name="text">
           <string>Commutation:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="op_negacao_lbl">
+        <widget class="QLabel" name="negation_op_lbl">
          <property name="text">
           <string>Negation:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="op_ordenacao1_lbl">
+        <widget class="QLabel" name="sort1_op_lbl">
          <property name="text">
           <string>Sort (1):</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="op_ordenacao2_lbl">
+        <widget class="QLabel" name="sort2_op_lbl">
          <property name="text">
           <string>Sort (2):</string>
          </property>
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="op_menorque_lbl">
+        <widget class="QLabel" name="lessthan_op_lbl">
          <property name="text">
           <string>Less than:</string>
          </property>
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel" name="op_maiorque_lbl">
+        <widget class="QLabel" name="greaterthan_op_lbl">
          <property name="text">
           <string>Greater then:</string>
          </property>

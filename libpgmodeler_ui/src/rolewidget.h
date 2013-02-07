@@ -22,46 +22,47 @@
 \brief Definição da classe que implementa o formulário de edição dos atributos de esquemas.
 */
 
-#ifndef PAPEL_WIDGET_H
-#define PAPEL_WIDGET_H
+#ifndef ROLE_WIDGET_H
+#define ROLE_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_papelwidget.h"
+#include "ui_rolewidget.h"
 #include "tabelaobjetoswidget.h"
 
-class PapelWidget: public BaseObjectWidget, public Ui::PapelWidget {
+class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
+	private:
 		Q_OBJECT
 
-	private:
 		/*! \brief Armazena as referência s tabelas de membros do papel para que sejam
 			referenciados nos demais métodos de forma mais eficaz */
-		TabelaObjetosWidget *tab_membros[3];
+		TabelaObjetosWidget *members_tab[3];
 
 		//! \brief Preenche as tabelas de membros do papel
-		void preencherTabelaMembros(void);
+		void fillMembersTable(void);
 
 		//! \brief Exibe o dado do papel na tabela especificada
-		void exibirDadosPapel(Role *papel, unsigned idx_tabela, unsigned lin);
+		void showRoleData(Role *papel, unsigned idx_tabela, unsigned lin);
+
+		void hideEvent(QHideEvent *event);
 
 	public:
-		PapelWidget(QWidget * parent = 0);
+		RoleWidget(QWidget * parent = 0);
 
-		void hideEvent(QHideEvent *);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Role *papel);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Role *role);
 
 	private slots:
 		/*! \brief Preenche com informações relacionadas ao papel selecionado
 			na linha atual da tabela em foco */
-		void exibirDadosPapelSelecionado(void);
+		void showSelectedRoleData(void);
 
 		/*! \brief Seleciona um papel membro para ser inserido na tabela de membro
 			atualmente em foco. Este slot é usando tanto para adicionar
 			um membro na tabela quanto para editar um membro selecionado */
-		void selecionarPapelMembro(void);
+		void selectMemberRole(void);
 
 		/*! \brief Faz a conexão de sinais-slots para cada tabela de objetos
 				medida que a tabela em foco mude */
-		void configurarSelecaoPapeis(void);
+		void configureRoleSelection(void);
 
 	public slots:
 		void applyConfiguration(void);

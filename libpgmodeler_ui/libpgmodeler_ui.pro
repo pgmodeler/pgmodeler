@@ -27,7 +27,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/databasewidget.cpp \
 	   $$PWD/src/schemawidget.cpp \
            $$PWD/src/tabelaobjetoswidget.cpp \
-           $$PWD/src/papelwidget.cpp \
+	   $$PWD/src/rolewidget.cpp \
            $$PWD/src/permissaowidget.cpp \
 	   $$PWD/src/tablespacewidget.cpp \
 	   $$PWD/src/languagewidget.cpp \
@@ -40,7 +40,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
 	   $$PWD/src/domainwidget.cpp \
 	   $$PWD/src/aggregatewidget.cpp \
            $$PWD/src/sequenciawidget.cpp \
-           $$PWD/src/operadorwidget.cpp \
+	   $$PWD/src/operatorwidget.cpp \
 	   $$PWD/src/operatorfamilywidget.cpp \
            $$PWD/src/operatorclasswidget.cpp \
            $$PWD/src/tipowidget.cpp \
@@ -81,7 +81,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/databasewidget.h \
 	   $$PWD/src/schemawidget.h \
            $$PWD/src/tabelaobjetoswidget.h \
-           $$PWD/src/papelwidget.h \
+	   $$PWD/src/rolewidget.h \
            $$PWD/src/permissaowidget.h \
 	   $$PWD/src/tablespacewidget.h \
 	   $$PWD/src/languagewidget.h \
@@ -94,7 +94,7 @@ HEADERS += $$PWD/src/formprincipal.h \
 	   $$PWD/src/domainwidget.h \
 	   $$PWD/src/aggregatewidget.h \
            $$PWD/src/sequenciawidget.h \
-           $$PWD/src/operadorwidget.h \
+	   $$PWD/src/operatorwidget.h \
 	   $$PWD/src/operatorfamilywidget.h \
            $$PWD/src/operatorclasswidget.h \
            $$PWD/src/tipowidget.h \
@@ -131,7 +131,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/databasewidget.ui \
          $$PWD/ui/baseobjectwidget.ui \
          $$PWD/ui/tabelaobjetoswidget.ui \
-         $$PWD/ui/papelwidget.ui \
+	 $$PWD/ui/rolewidget.ui \
          $$PWD/ui/permissaowidget.ui \
 	 $$PWD/ui/tablespacewidget.ui \
 	 $$PWD/ui/languagewidget.ui \
@@ -144,7 +144,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
 	 $$PWD/ui/domainwidget.ui \
 	 $$PWD/ui/aggregatewidget.ui \
          $$PWD/ui/sequenciawidget.ui \
-         $$PWD/ui/operadorwidget.ui \
+	 $$PWD/ui/operatorwidget.ui \
 	 $$PWD/ui/operatorfamilywidget.ui \
          $$PWD/ui/operatorclasswidget.ui \
          $$PWD/ui/tipowidget.ui \
