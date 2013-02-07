@@ -144,7 +144,7 @@ void FunctionWidget::showParameterForm(void)
 	}
 }
 
-Parameter FunctionWidget::getParameter(TabelaObjetosWidget *tab, unsigned lin_idx)
+Parameter FunctionWidget::getParameter(TabelaObjetosWidget *tab, unsigned row)
 {
 	Parameter param;
 	QString str_aux;
@@ -153,15 +153,15 @@ Parameter FunctionWidget::getParameter(TabelaObjetosWidget *tab, unsigned lin_id
 	{
 		try
 		{
-			param.setName(tab->obterTextoCelula(lin_idx,0));
-			param.setType(tab->obterDadoLinha(lin_idx).value<PgSQLType>());
+			param.setName(tab->obterTextoCelula(row,0));
+			param.setType(tab->obterDadoLinha(row).value<PgSQLType>());
 
 			if(tab==parameters_tab)
 			{
-				str_aux=tab->obterTextoCelula(lin_idx, 2);
+				str_aux=tab->obterTextoCelula(row, 2);
 				param.setIn(str_aux.contains("IN"));
 				param.setOut(str_aux.contains("OUT"));
-				param.setDefaultValue(tab->obterTextoCelula(lin_idx,3));
+				param.setDefaultValue(tab->obterTextoCelula(row,3));
 			}
 		}
 		catch(Exception &e)
@@ -173,23 +173,23 @@ Parameter FunctionWidget::getParameter(TabelaObjetosWidget *tab, unsigned lin_id
 	return(param);
 }
 
-void FunctionWidget::showParameterData(Parameter param, TabelaObjetosWidget *tab, unsigned lin_idx)
+void FunctionWidget::showParameterData(Parameter param, TabelaObjetosWidget *tab, unsigned row)
 {
 	if(tab)
 	{
 		QString str_aux;
 
-		tab->definirTextoCelula(QString::fromUtf8(param.getName()),lin_idx,0);
-		tab->definirTextoCelula(QString::fromUtf8(*param.getType()),lin_idx,1);
-		tab->definirDadoLinha(QVariant::fromValue<PgSQLType>(param.getType()), lin_idx);
+		tab->definirTextoCelula(QString::fromUtf8(param.getName()),row,0);
+		tab->definirTextoCelula(QString::fromUtf8(*param.getType()),row,1);
+		tab->definirDadoLinha(QVariant::fromValue<PgSQLType>(param.getType()), row);
 
 		if(tab==parameters_tab)
 		{
 			if(param.isIn()) str_aux="IN";
 			if(param.isOut()) str_aux+="OUT";
 
-			tab->definirTextoCelula(str_aux,lin_idx,2);
-			tab->definirTextoCelula(QString::fromUtf8(param.getDefaultValue()),lin_idx,3);
+			tab->definirTextoCelula(str_aux,row,2);
+			tab->definirTextoCelula(QString::fromUtf8(param.getDefaultValue()),row,3);
 		}
 	}
 }

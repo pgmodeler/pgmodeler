@@ -101,13 +101,13 @@ void TriggerWidget::addColumn(int lin_idx)
 	}
 }
 
-void TriggerWidget::addColumn(Column *column, int lin_idx)
+void TriggerWidget::addColumn(Column *column, int row)
 {
-	if(column && lin_idx >= 0)
+	if(column && row >= 0)
 	{
-		columns_tab->definirTextoCelula(QString::fromUtf8(column->getName()),lin_idx,0);
-		columns_tab->definirTextoCelula(QString::fromUtf8(~column->getType()),lin_idx,1);
-		columns_tab->definirDadoLinha(QVariant::fromValue<void *>(column), lin_idx);
+		columns_tab->definirTextoCelula(QString::fromUtf8(column->getName()),row,0);
+		columns_tab->definirTextoCelula(QString::fromUtf8(~column->getType()),row,1);
+		columns_tab->definirDadoLinha(QVariant::fromValue<void *>(column), row);
 	}
 }
 

@@ -47,10 +47,10 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 												*parameters_tab;
 
 		//! \brief Returns a parameter configured based upon the specified table and line
-		Parameter getParameter(TabelaObjetosWidget *tab, unsigned lin_idx);
+		Parameter getParameter(TabelaObjetosWidget *tab, unsigned row);
 
 		//! \brief Shows the parameter data on the specified table at the specified line
-		void showParameterData(Parameter param, TabelaObjetosWidget *tab, unsigned lin_idx);
+		void showParameterData(Parameter param, TabelaObjetosWidget *tab, unsigned row);
 
 		//! \brief Validates the new function configuration in relation to the other objects that references it.
 		void validateConfiguredFunction(void);

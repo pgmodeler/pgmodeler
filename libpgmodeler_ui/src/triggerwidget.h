@@ -45,7 +45,7 @@ class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 												*function_sel;
 
 		//! \brief Adds a column to the referenced columns table
-		void addColumn(Column *column, int lin_idx);
+		void addColumn(Column *column, int row);
 
 		void hideEvent(QHideEvent *event);
 

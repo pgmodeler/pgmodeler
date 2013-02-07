@@ -18,8 +18,8 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class PapelWidget
-\brief Definição da classe que implementa o formulário de edição dos atributos de esquemas.
+\class RoleWidget
+\brief Implements the operations to create/edit roles via form.
 */
 
 #ifndef ROLE_WIDGET_H
@@ -33,15 +33,14 @@ class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 	private:
 		Q_OBJECT
 
-		/*! \brief Armazena as referência s tabelas de membros do papel para que sejam
-			referenciados nos demais métodos de forma mais eficaz */
+		//! \brief Store the table widgets used to reference the member roles
 		TabelaObjetosWidget *members_tab[3];
 
-		//! \brief Preenche as tabelas de membros do papel
+		//! \brief Fills the tables with to member roles of the editing role
 		void fillMembersTable(void);
 
-		//! \brief Exibe o dado do papel na tabela especificada
-		void showRoleData(Role *papel, unsigned idx_tabela, unsigned lin);
+		//! \brief Show the specified role data on the specified table index at the specified row
+		void showRoleData(Role *role, unsigned table_id, unsigned row);
 
 		void hideEvent(QHideEvent *event);
 
@@ -51,17 +50,10 @@ class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Role *role);
 
 	private slots:
-		/*! \brief Preenche com informações relacionadas ao papel selecionado
-			na linha atual da tabela em foco */
 		void showSelectedRoleData(void);
-
-		/*! \brief Seleciona um papel membro para ser inserido na tabela de membro
-			atualmente em foco. Este slot é usando tanto para adicionar
-			um membro na tabela quanto para editar um membro selecionado */
 		void selectMemberRole(void);
 
-		/*! \brief Faz a conexão de sinais-slots para cada tabela de objetos
-				medida que a tabela em foco mude */
+		//! \brief Configures the signals/slots to each role table related to object selection
 		void configureRoleSelection(void);
 
 	public slots:
