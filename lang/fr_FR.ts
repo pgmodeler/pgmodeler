@@ -4589,18 +4589,36 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+14"/>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="+48"/>
         <source>Members</source>
         <translation>Membres</translation>
     </message>
     <message>
         <location line="+5"/>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="-3"/>
         <source>Member of</source>
         <translation>Membre de</translation>
     </message>
     <message>
         <location line="+5"/>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="+6"/>
         <source>Members (Admin.)</source>
         <translation>Membres (Admin.)</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="-15"/>
+        <source>Role</source>
+        <translation>Rôle</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>SysID</source>
+        <translation>Identifiant</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Validity</source>
+        <translation>Validité</translation>
     </message>
 </context>
 <context>
