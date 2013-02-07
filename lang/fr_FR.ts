@@ -892,7 +892,7 @@
     <message>
         <location line="+9"/>
         <source>Attach the below database model file that possibly generates the crash.</source>
-        <translation type="unfinished">Ci-joint le fichier du modèle de donnée qui a probablement génére le crash.</translation>
+        <translation>Joindre le fichier du modèle qui a potentiellement génére le crash.</translation>
     </message>
     <message>
         <location line="+33"/>
@@ -2288,7 +2288,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Configuration</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/formprincipal.cpp" line="+453"/>
+        <location filename="../libpgmodeler_ui/src/formprincipal.cpp" line="+456"/>
         <source>Save all models</source>
         <translation>Enregistrer tous les modèles</translation>
     </message>
@@ -2618,35 +2618,6 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
-    <name>FuncaoWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="+30"/>
-        <source>Column</source>
-        <translation>Colonne</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <location line="+12"/>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <location line="-2"/>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Default Value</source>
-        <translation>Nom par défaut</translation>
-    </message>
-    <message>
-        <location line="-1"/>
-        <source>IN/OUT</source>
-        <translation>IN/OUT</translation>
-    </message>
-</context>
-<context>
     <name>FunctionWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="+26"/>
@@ -2748,113 +2719,31 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <source>Source code:</source>
         <translation>Code source:</translation>
     </message>
-</context>
-<context>
-    <name>GatilhoWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/gatilhowidget.ui" line="+53"/>
-        <source>Triggering Mode:</source>
-        <translation>Mode déclencheur:</translation>
-    </message>
-    <message>
-        <location line="+73"/>
-        <source>Execute per row</source>
-        <translation>Exécuter par ligne</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>Event:</source>
-        <translation>Evénement:</translation>
-    </message>
-    <message>
-        <location line="+132"/>
-        <source>Deferrable:</source>
-        <translation>Deferrable:</translation>
-    </message>
-    <message>
-        <location line="+55"/>
-        <source>Deferral:</source>
-        <translation>Report:</translation>
-    </message>
-    <message>
-        <location line="+55"/>
-        <source>Referenced Table:</source>
-        <translation>Table référencée:</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>Conditional Expr.:</source>
-        <translation>Expr. Conditionnelle:</translation>
-    </message>
-    <message>
-        <location line="+57"/>
-        <source>Columns</source>
-        <translation>Colonnes</translation>
-    </message>
-    <message>
-        <location line="+21"/>
-        <source>Column:</source>
-        <translation>Colonne:</translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Arguments</source>
-        <translation>Arguments</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Argument:</source>
-        <translation>Argument:</translation>
-    </message>
-    <message>
-        <location line="+42"/>
-        <source>Function:</source>
-        <translation>Fonction:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/gatilhowidget.cpp" line="+36"/>
+        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="+25"/>
         <source>Column</source>
         <translation>Colonne</translation>
     </message>
     <message>
         <location line="+2"/>
+        <location line="+8"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/gatilhowidget.ui" line="-559"/>
-        <source>Form</source>
-        <translation></translation>
+        <location line="-2"/>
+        <source>Name</source>
+        <translation>Nom</translation>
     </message>
     <message>
-        <location line="+64"/>
-        <source>INSTEAD OF</source>
-        <translation></translation>
+        <location line="+4"/>
+        <source>IN/OUT</source>
+        <translation>IN/OUT</translation>
     </message>
     <message>
-        <location line="+99"/>
-        <source>INSERT</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>DELETE</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>UPDATE</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <source>TRUNCATE</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+328"/>
-        <source>Constraint Trigger:</source>
-        <translation>Déclencheur contraint:</translation>
+        <location line="+1"/>
+        <source>Default Value</source>
+        <translation>Valeur par défaut</translation>
     </message>
 </context>
 <context>
@@ -3161,11 +3050,16 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
-    <name>IndiceWidget</name>
+    <name>IndexWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indicewidget.ui" line="+57"/>
-        <source>Indexing Type:</source>
-        <translation>Type d&apos;indexation:</translation>
+        <location filename="../libpgmodeler_ui/ui/indexwidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>Indexing:</source>
+        <translation>Indexation:</translation>
     </message>
     <message>
         <location line="+55"/>
@@ -3178,14 +3072,14 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Options:</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+30"/>
         <source>Concurrent</source>
         <translation>Concurrent</translation>
     </message>
     <message>
         <location line="+25"/>
-        <source>Check duplicates</source>
-        <translation>Vérifier les doublons</translation>
+        <source>Unique</source>
+        <translation>Unique</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -3195,12 +3089,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <location line="+27"/>
         <source>Conditional Expr.:</source>
-        <translation>Expr. Conditionnelle:</translation>
+        <translation>Expr. conditionnelle:</translation>
     </message>
     <message>
         <location line="+53"/>
         <source>Elements</source>
-        <translation>Elements</translation>
+        <translation>Élements</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -3215,7 +3109,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <location line="+80"/>
         <source>Operator Class:</source>
-        <translation>Classe d&apos;Opérateurs:</translation>
+        <translation>Classe d&apos;opérateurs:</translation>
     </message>
     <message>
         <location line="+25"/>
@@ -3238,14 +3132,19 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Null en premier</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/indicewidget.cpp" line="+34"/>
+        <location filename="../libpgmodeler_ui/src/indexwidget.cpp" line="+32"/>
+        <source>Element</source>
+        <translation>Élement</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Operator Class</source>
-        <translation>Classe d&apos;Operateurs</translation>
+        <translation>Classe d&apos;operateurs</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3253,27 +3152,17 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Tri</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/indicewidget.ui" line="-519"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/indicewidget.cpp" line="-6"/>
-        <source>Element</source>
-        <translation>Element</translation>
-    </message>
-    <message>
-        <location line="+7"/>
+        <location line="+1"/>
         <source>Nulls First</source>
         <translation>Null en premier</translation>
     </message>
     <message>
-        <location line="+98"/>
+        <location line="+89"/>
         <source>Expressão</source>
         <translation>Expression</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+14"/>
         <source>Sim</source>
         <translation>Oui</translation>
     </message>
@@ -3284,11 +3173,16 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
-    <name>LinguagemWidget</name>
+    <name>LanguageWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/linguagemwidget.ui" line="+44"/>
+        <location filename="../libpgmodeler_ui/ui/languagewidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>Trusted:</source>
-        <translation>Confiance:</translation>
+        <translation>De confiance:</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -3303,163 +3197,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <location line="+19"/>
         <source>Inline Function:</source>
-        <translation>Fonction incluse:</translation>
+        <translation>Fonction Inline:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/linguagemwidget.cpp" line="+28"/>
+        <location filename="../libpgmodeler_ui/src/languagewidget.cpp" line="+27"/>
         <source>The functions to be assigned to the language should have, respectively, the following signatures:&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Handler Function:&lt;/strong&gt; &lt;em&gt;language_handler function()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Validator Function:&lt;/strong&gt; &lt;em&gt;void function(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Inline Function:&lt;/strong&gt; &lt;em&gt;void function(internal)&lt;/em&gt;</source>
-        <translation>Les fonctions attribuées au langage doivent avoir espectivement les signatures suivantes:&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Fonction de management:&lt;/strong&gt; &lt;em&gt;language_handler fonction()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Fonction de validation:&lt;/strong&gt; &lt;em&gt;void fonction(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Fonction incluse:&lt;/strong&gt; &lt;em&gt;void fonction(internal)&lt;/em&gt;</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/linguagemwidget.ui" line="-88"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
-    <name>ListaObjetosWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/listaobjetoswidget.ui" line="+43"/>
-        <source>Dependencies</source>
-        <translation>Dependences</translation>
-    </message>
-    <message>
-        <location line="+75"/>
-        <location line="+109"/>
-        <source>Object</source>
-        <translation>Objet</translation>
-    </message>
-    <message>
-        <location line="-100"/>
-        <location line="+109"/>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <location line="-100"/>
-        <location line="+109"/>
-        <source>Parent Object</source>
-        <translation>Objet Parent</translation>
-    </message>
-    <message>
-        <location line="-100"/>
-        <location line="+109"/>
-        <source>Parent Type</source>
-        <translation>Type Parent</translation>
-    </message>
-    <message>
-        <location line="-96"/>
-        <source>References</source>
-        <translation>Références</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/listaobjetoswidget.cpp" line="+9"/>
-        <source>Dependeces / References of Object</source>
-        <translation>Dépendences / Références d&apos;Objet</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/listaobjetoswidget.ui" line="-144"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
-    <name>ListaOperacoesWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/listaoperacoeswidget.ui" line="+24"/>
-        <source>Executed Operations</source>
-        <translation>Opérations Exécutées</translation>
-    </message>
-    <message>
-        <location line="+112"/>
-        <source>Operations:</source>
-        <translation>Opérations:</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Position:</source>
-        <translation>Position:</translation>
-    </message>
-    <message>
-        <location line="+37"/>
-        <source>Delete operation history</source>
-        <translation>Supprimer l&apos;historique des opérations</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Undo</source>
-        <translation>Annuler</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Redo</source>
-        <translation>Rétablir</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/listaoperacoeswidget.cpp" line="+103"/>
-        <source>Object: %1</source>
-        <translation>Objet: %1</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Name: %1</source>
-        <translation>Nome: %1</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>removed</source>
-        <translation>supprimé</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>modified</source>
-        <translation>modifié</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>moved</source>
-        <translation>déplacé</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Operation: %1</source>
-        <translation>Opération: %1</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Undoing operations...</source>
-        <translation>Annulation des opérations...</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>Redoing operations...</source>
-        <translation>Réexécutions des opérations...</translation>
-    </message>
-    <message>
-        <location line="+24"/>
-        <source>Operation history exclusion</source>
-        <translation>Exclusion de l&apos;hisotrique des opérations</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Delete the executed operations history is an irreversible action, do you want to continue?</source>
-        <translation>Supprimer l&apos;historique des opérations exécutées est une action irréversible, souhaitez vous continuer?</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/listaoperacoeswidget.ui" line="-122"/>
-        <source>1</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <location line="+20"/>
-        <source>0</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/listaoperacoeswidget.cpp" line="-99"/>
-        <source>created</source>
-        <translation>créé</translation>
+        <translation>Les fonctions attribuées au langage doivent avoir espectivement les signatures suivantes:&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Fonction de management:&lt;/strong&gt; &lt;em&gt;language_handler fonction()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Fonction de validation:&lt;/strong&gt; &lt;em&gt;void fonction(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Fonction Inline:&lt;/strong&gt; &lt;em&gt;void fonction(internal)&lt;/em&gt;</translation>
     </message>
 </context>
 <context>
@@ -3805,101 +3548,50 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
-    <name>OperadorWidget</name>
+    <name>ObjectDepsRefsWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/operadorwidget.ui" line="+32"/>
-        <source>Options:</source>
-        <translation>Options:</translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Arguments</source>
-        <translation>Arguments</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Functions</source>
-        <translation>Fonctions</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>Constraints:</source>
-        <translation>Contraintes:</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Operator:</source>
-        <translation>Opérateur:</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Operators</source>
-        <translation>Opérateurs</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Commutation:</source>
-        <translation>Commutation:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Negation:</source>
-        <translation>Négation:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Sort (1):</source>
-        <translation>Tri (1):</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Sort (2):</source>
-        <translation>Tri (2):</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Less than:</source>
-        <translation>Moins que:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Greater then:</source>
-        <translation>Plus que:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/operadorwidget.cpp" line="+16"/>
-        <source>Right Argument Type</source>
-        <translation>Type Argument Droit</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Left Argument Type</source>
-        <translation>Type Argument Gauche</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>To create a unary operator it is necessary to specify as &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator.</source>
-        <translation>Pour créer un opérateur unaire il est nécessaire de spécifier &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; comme l&apos;un de ses arguments. De plus, la fonction qui définit l&apos;opérateur doit avoir seulement un paramètre et celui-ci doit avoir le même type de donnée que l&apos;argument de l&apos;opératuer unaire.</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/operadorwidget.ui" line="-155"/>
+        <location filename="../libpgmodeler_ui/ui/objectdepsrefswidget.ui" line="+14"/>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+25"/>
-        <source>MERGES</source>
-        <translation></translation>
+        <location line="+29"/>
+        <source>Dependencies</source>
+        <translation>Dépendances</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>HASHES</source>
-        <translation></translation>
+        <location line="+75"/>
+        <location line="+109"/>
+        <source>Object</source>
+        <translation>Objet</translation>
     </message>
     <message>
-        <location line="+41"/>
-        <source>Join:</source>
-        <translation>Joindre:</translation>
+        <location line="-100"/>
+        <location line="+109"/>
+        <source>Type</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <location line="-100"/>
+        <location line="+109"/>
+        <source>Parent Object</source>
+        <translation>Objet parent</translation>
+    </message>
+    <message>
+        <location line="-100"/>
+        <location line="+109"/>
+        <source>Parent Type</source>
+        <translation>Type parent</translation>
+    </message>
+    <message>
+        <location line="-96"/>
+        <source>References</source>
+        <translation>Références</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/objectdepsrefswidget.cpp" line="+8"/>
+        <source>Dependences / References of Object</source>
+        <translation>Dépendances et références d&apos;objets</translation>
     </message>
 </context>
 <context>
@@ -3913,6 +3605,106 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location line="+63"/>
         <source>Redoing operation on object:: %1 (%2)</source>
         <translation>Refaire les opération sur l&apos;ojet: %1 (%2)</translation>
+    </message>
+</context>
+<context>
+    <name>OperationListWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/operationlistwidget.ui" line="+24"/>
+        <source>Executed Operations</source>
+        <translation>Opérations exécutées</translation>
+    </message>
+    <message>
+        <location line="+99"/>
+        <source>1</source>
+        <translation>1</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Operations:</source>
+        <translation>Opérations:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <location line="+20"/>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <location line="-10"/>
+        <source>Position:</source>
+        <translation>Position:</translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>Delete operation history</source>
+        <translation>Supprimer l&apos;historique des opérations</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Undo</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Redo</source>
+        <translation>Rétablir</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="+81"/>
+        <source>Object: %1</source>
+        <translation>Objet: %1</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Name: %1</source>
+        <translation>Nom: %1</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>created</source>
+        <translation>créé</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>removed</source>
+        <translation>supprimé</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>modified</source>
+        <translation>modifié</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>moved</source>
+        <translation>déplacé</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Operation: %1</source>
+        <translation>Opération: %1</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Undoing operations...</source>
+        <translation>Annulation des opérations...</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Redoing operations...</source>
+        <translation>Rétablissement des opérations...</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Operation history exclusion</source>
+        <translatorcomment>?? À controler dans le contexte ??</translatorcomment>
+        <translation type="unfinished">Exclusion de l&apos;hisotrique des opérations</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Delete the executed operations history is an irreversible action, do you want to continue?</source>
+        <translation>Supprimer l&apos;historique des opérations exécutées est une action irréversible, souhaitez vous continuer?</translation>
     </message>
 </context>
 <context>
@@ -4028,105 +3820,101 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
-    <name>PapelWidget</name>
+    <name>OperatorWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/papelwidget.ui" line="+20"/>
+        <location filename="../libpgmodeler_ui/ui/operatorwidget.ui" line="+14"/>
         <source>Form</source>
         <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>SysID:</source>
-        <translation>Identifiant système:</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Password:</source>
-        <translation>Mot de passe:</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Validity:</source>
-        <translation>Validité:</translation>
+        <location line="+18"/>
+        <source>Options:</source>
+        <translation>Options:</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>yyyy-MMM-dd hh:mm</source>
-        <translatorcomment>si c&apos;est un format de tate, ne pas traduire</translatorcomment>
-        <translation>yyyy-MMM-dd hh:mm</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Connections:</source>
-        <translation>Connexions:</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Attributes</source>
-        <translation>Attributs</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Superuser</source>
-        <translation>Superutilisateur</translation>
+        <source>MERGES</source>
+        <translation>MERGES</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>Inherit Permissions</source>
-        <translation>Hériter des Permissions</translation>
+        <source>HASHES</source>
+        <translation>HASHES</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Create Database</source>
-        <translation>Créer des bases de données</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Can Login</source>
-        <translation>Peut s&apos;authentifier</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Create Users/Groups</source>
-        <translation>Créer Utilisateurs/Groupes</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Encrypted Password</source>
-        <translation>Mot de passe crypté</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <location filename="../libpgmodeler_ui/src/papelwidget.cpp" line="+48"/>
-        <source>Members</source>
-        <translation>Membres</translation>
+        <location line="+24"/>
+        <source>Arguments</source>
+        <translation>Arguments</translation>
     </message>
     <message>
         <location line="+5"/>
-        <location filename="../libpgmodeler_ui/src/papelwidget.cpp" line="-3"/>
-        <source>Member of</source>
-        <translation>Membre de</translation>
+        <source>Functions</source>
+        <translation>Fonctions</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location filename="../libpgmodeler_ui/src/papelwidget.cpp" line="+6"/>
-        <source>Members (Admin.)</source>
-        <translation>Membres (Admin.)</translation>
+        <location line="+12"/>
+        <source>Join:</source>
+        <translation>Jointure:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/papelwidget.cpp" line="-15"/>
-        <source>Role</source>
-        <translation>Rôle</translation>
+        <location line="+7"/>
+        <source>Constraint:</source>
+        <translation>Contrainte:</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>SysID</source>
-        <translation>Identifiant système</translation>
+        <location line="+20"/>
+        <source>Operator:</source>
+        <translation>Opérateur:</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Validity</source>
-        <translation>Validité</translation>
+        <location line="+8"/>
+        <source>Operators</source>
+        <translation>Opérateurs</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Commutation:</source>
+        <translation>Commutation:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Negation:</source>
+        <translation>Négation:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Sort (1):</source>
+        <translation>Tri (1):</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Sort (2):</source>
+        <translation>Tri (2):</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Less than:</source>
+        <translation>Moins que:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Greater then:</source>
+        <translation>Plus que:</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="+15"/>
+        <source>Right Argument Type</source>
+        <translation>Type argument à droite</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Left Argument Type</source>
+        <translation>Type d&apos;argument à gauche</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>To create a unary operator it is necessary to specify as &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator.</source>
+        <translation>Pour créer un opérateur unaire il est nécessaire de spécifier &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; comme l&apos;un de ses arguments. De plus, la fonction qui définit l&apos;opérateur doit avoir seulement un paramètre et celui-ci doit avoir le même type de donnée que l&apos;argument de l&apos;opérateur unaire.</translation>
     </message>
 </context>
 <context>
@@ -4286,19 +4074,6 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location line="+1"/>
         <source>Library</source>
         <translation>Bibliothèque</translation>
-    </message>
-</context>
-<context>
-    <name>ProgressoTarefa</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/progressotarefa.ui" line="+110"/>
-        <source>Loading object: [object] (type)</source>
-        <translation>Chargement de l&apos;objet: [object] (type)</translation>
-    </message>
-    <message>
-        <location line="-81"/>
-        <source>Executing tasks</source>
-        <translation>Exécution des tâches</translation>
     </message>
 </context>
 <context>
@@ -4746,6 +4521,89 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
+    <name>RoleWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>SysID:</source>
+        <translation>Identifiant:</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Password:</source>
+        <translation>Mot de passe:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Validity:</source>
+        <translation>Validité:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>yyyy-MMM-dd hh:mm</source>
+        <translation>yyyy-MMM-dd hh:mm</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Connections:</source>
+        <translation>Connexions:</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Attributes</source>
+        <translation>Attributs</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Superuser</source>
+        <translation>Super utilisateur</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Inherit Permissions</source>
+        <translation>Hériter des permissions</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Create Database</source>
+        <translation>Créer des bases de données</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Can Login</source>
+        <translation>Peut s&apos;authentifier</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Create Users/Groups</source>
+        <translation>Créer utilisateurs/groupes</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Encrypted Password</source>
+        <translation>Mot de passe crypté</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Members</source>
+        <translation>Membres</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Member of</source>
+        <translation>Membre de</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Members (Admin.)</source>
+        <translation>Membres (Admin.)</translation>
+    </message>
+</context>
+<context>
     <name>SchemaWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/schemawidget.ui" line="+14"/>
@@ -5127,12 +4985,25 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <location filename="../libpgmodeler_ui/ui/tablespacewidget.ui" line="+20"/>
         <source>Form</source>
-        <translation type="unfinished">Formulaire</translation>
+        <translation>Formulaire</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Directory:</source>
-        <translation type="unfinished">Dossier:</translation>
+        <translation>Dossier:</translation>
+    </message>
+</context>
+<context>
+    <name>TaskProgressWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/taskprogresswidget.ui" line="+29"/>
+        <source>Executing tasks</source>
+        <translation>Exécution des tâches</translation>
+    </message>
+    <message>
+        <location line="+81"/>
+        <source>Waiting task to start...</source>
+        <translation>En attente du démarrage de la tâche ...</translation>
     </message>
 </context>
 <context>
@@ -5428,6 +5299,114 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location line="+20"/>
         <source>The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any function(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring function(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta function(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any function(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer function(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring function(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean function(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</source>
         <translation>La fonction assignée à un type devrait être écrite en langage C et possèder, les signatures respective suivantes:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any fonction(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring fonction(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta fonction(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any fonction(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer fonction(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring fonction(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean fonction(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>TriggerWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Firing Mode:</source>
+        <translation>Mode de déclenchement:</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>INSTEAD OF</source>
+        <translation>INSTEAD OF</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Execute per row</source>
+        <translation>Exécuter par ligne</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Event:</source>
+        <translation>Evènement:</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>INSERT</source>
+        <translation>INSERT</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>DELETE</source>
+        <translation>DELETE</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>UPDATE</source>
+        <translation>UPDATE</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>TRUNCATE</source>
+        <translation>TRUNCATE</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Deferrable:</source>
+        <translation>Différable:</translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>Deferral:</source>
+        <translation>Report:</translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>Referenced Table:</source>
+        <translation>Table référencée:</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Conditional Expr.:</source>
+        <translation>Expr. conditionnelle:</translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>Columns</source>
+        <translation>Colonnes</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Column:</source>
+        <translation>Colonne:</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Arguments</source>
+        <translation>Arguments</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Argument:</source>
+        <translation>Argument:</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Function:</source>
+        <translation>Fonction:</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Constraint Trigger:</source>
+        <translation>Déclencheur contraint:</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/triggerwidget.cpp" line="+32"/>
+        <source>Column</source>
+        <translation>Colonne</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Type</source>
+        <translation>Type</translation>
     </message>
 </context>
 <context>
