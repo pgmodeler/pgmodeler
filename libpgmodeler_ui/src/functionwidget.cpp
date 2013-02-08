@@ -1,6 +1,7 @@
 #include "functionwidget.h"
-#include "parametrowidget.h"
-extern ParametroWidget *parametro_wgt;
+#include "parameterwidget.h"
+
+extern ParameterWidget *parametro_wgt;
 
 FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FUNCTION)
 {
@@ -109,7 +110,7 @@ void FunctionWidget::handleParameter(int result)
 		considered in the table will always be the last recently included */
 		if(lin < 0) lin=lin_cnt-1;
 
-		showParameterData(parametro_wgt->obterParametro(), table, lin);
+		showParameterData(parametro_wgt->getParameter(), table, lin);
 	}
 	else if(result==QDialog::Rejected)
 	{
@@ -132,7 +133,7 @@ void FunctionWidget::showParameterForm(void)
 
 		parametro_wgt->param_in_chk->setEnabled(obj_sender==parameters_tab);
 		parametro_wgt->param_out_chk->setEnabled(obj_sender==parameters_tab);
-		parametro_wgt->valorpadrao_edt->setEnabled(obj_sender==parameters_tab);
+		parametro_wgt->default_value_edt->setEnabled(obj_sender==parameters_tab);
 
 		lin_idx=table->obterLinhaSelecionada();
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PermissaoWidget</class>
- <widget class="QWidget" name="PermissaoWidget">
+ <class>PermissionWidget</class>
+ <widget class="QWidget" name="PermissionWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="permissao_grid">
+  <layout class="QGridLayout" name="permission_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -33,7 +33,7 @@
     <number>6</number>
    </property>
    <item row="1" column="0">
-    <widget class="QGroupBox" name="papeis_gb">
+    <widget class="QGroupBox" name="roles_gb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -60,7 +60,7 @@
    <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="nome_lbl">
+      <widget class="QLabel" name="id_lbl">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -79,7 +79,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="id_perm_edt">
+      <widget class="QLineEdit" name="perm_id_edt">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -105,7 +105,7 @@
     </layout>
    </item>
    <item row="0" column="1" rowspan="4">
-    <widget class="QGroupBox" name="permissoes_gb">
+    <widget class="QGroupBox" name="permissions_gb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -145,7 +145,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QToolButton" name="inserir_perm_tb">
+      <widget class="QToolButton" name="add_perm_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -174,7 +174,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="atualizar_perm_tb">
+      <widget class="QToolButton" name="upd_perm_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -203,7 +203,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="cancelar_tb">
+      <widget class="QToolButton" name="cancel_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -247,7 +247,7 @@
     </layout>
    </item>
    <item row="2" column="0">
-    <widget class="QGroupBox" name="privilegios_gb">
+    <widget class="QGroupBox" name="privileges_gb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -277,7 +277,7 @@
        <number>6</number>
       </property>
       <item row="0" column="0">
-       <widget class="QTableWidget" name="privilegios_tbw">
+       <widget class="QTableWidget" name="privileges_tbw">
         <property name="selectionMode">
          <enum>QAbstractItemView::SingleSelection</enum>
         </property>

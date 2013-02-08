@@ -28,13 +28,13 @@ SOURCES += $$PWD/src/formprincipal.cpp \
 	   $$PWD/src/schemawidget.cpp \
            $$PWD/src/tabelaobjetoswidget.cpp \
 	   $$PWD/src/rolewidget.cpp \
-           $$PWD/src/permissaowidget.cpp \
+	   $$PWD/src/permissionwidget.cpp \
 	   $$PWD/src/tablespacewidget.cpp \
 	   $$PWD/src/languagewidget.cpp \
            $$PWD/src/seletorobjetowidget.cpp \
 	   $$PWD/src/functionwidget.cpp \
            $$PWD/src/tipopgsqlwidget.cpp \
-           $$PWD/src/parametrowidget.cpp \
+	   $$PWD/src/parameterwidget.cpp \
            $$PWD/src/castwidget.cpp \
            $$PWD/src/conversionwidget.cpp \
 	   $$PWD/src/domainwidget.cpp \
@@ -82,13 +82,13 @@ HEADERS += $$PWD/src/formprincipal.h \
 	   $$PWD/src/schemawidget.h \
            $$PWD/src/tabelaobjetoswidget.h \
 	   $$PWD/src/rolewidget.h \
-           $$PWD/src/permissaowidget.h \
+	   $$PWD/src/permissionwidget.h \
 	   $$PWD/src/tablespacewidget.h \
 	   $$PWD/src/languagewidget.h \
            $$PWD/src/seletorobjetowidget.h \
 	   $$PWD/src/functionwidget.h \
            $$PWD/src/tipopgsqlwidget.h \
-           $$PWD/src/parametrowidget.h \
+	   $$PWD/src/parameterwidget.h \
            $$PWD/src/castwidget.h \
            $$PWD/src/conversionwidget.h \
 	   $$PWD/src/domainwidget.h \
@@ -132,13 +132,13 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/baseobjectwidget.ui \
          $$PWD/ui/tabelaobjetoswidget.ui \
 	 $$PWD/ui/rolewidget.ui \
-         $$PWD/ui/permissaowidget.ui \
+	 $$PWD/ui/permissionwidget.ui \
 	 $$PWD/ui/tablespacewidget.ui \
 	 $$PWD/ui/languagewidget.ui \
          $$PWD/ui/seletorobjetowidget.ui \
 	 $$PWD/ui/functionwidget.ui \
          $$PWD/ui/tipopgsqlwidget.ui \
-         $$PWD/ui/parametrowidget.ui \
+	 $$PWD/ui/parameterwidget.ui \
          $$PWD/ui/castwidget.ui \
 	 $$PWD/ui/conversionwidget.ui \
 	 $$PWD/ui/domainwidget.ui \

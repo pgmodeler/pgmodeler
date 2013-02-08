@@ -27,7 +27,7 @@
 #include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
 #include "quickrenamewidget.h"
-#include "permissaowidget.h"
+#include "permissionwidget.h"
 
 extern MessageBox *caixa_msg;
 extern DatabaseWidget *database_wgt;
@@ -58,7 +58,7 @@ extern TabelaWidget *tabela_wgt;
 extern TaskProgressWidget *task_prog_wgt;
 extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern QuickRenameWidget *quickrename_wgt;
-extern PermissaoWidget *permissao_wgt;
+extern PermissionWidget *permissao_wgt;
 
 vector<BaseObject *> ModeloWidget::objs_copiados;
 bool ModeloWidget::op_recortar=false;

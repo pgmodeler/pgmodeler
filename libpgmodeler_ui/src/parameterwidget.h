@@ -19,35 +19,29 @@
 /**
 \ingroup libpgmodeler_ui
 \class ParametroWidget
-\brief Definição da classe que implementa o formulário de edição de parâmetro de funções.
+\brief Implements the operations to create/edit function parameters via form.
 */
 
-#ifndef PARAMETRO_WIDGET_H
-#define PARAMETRO_WIDGET_H
+#ifndef PARAMETER_WIDGET_H
+#define PARAMETER_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_parametrowidget.h"
+#include "ui_parameterwidget.h"
 #include "tipopgsqlwidget.h"
 
-class ParametroWidget: public BaseObjectWidget, public Ui::ParametroWidget {
+class ParameterWidget: public BaseObjectWidget, public Ui::ParameterWidget {
+	private:
 		Q_OBJECT
 
-	private:
-		TipoPgSQLWidget *tipo_pgsql;
+		TipoPgSQLWidget *data_type;
+		Parameter parameter;
 
-		//! \brief Armazena a cópia do parâmetro configurado
-		Parameter parametro;
+		void hideEvent(QHideEvent *event);
 
 	public:
-		ParametroWidget(QWidget * parent = 0);
-		void setAttributes(Parameter parametro, DatabaseModel *model);
-
-		/*! \brief Retorna a cópia do parâmetro configurado. Este método deve
-			ser usado para se ter acesso ao parâmetro configurado */
-		Parameter obterParametro(void);
-
-	private slots:
-		void hideEvent(QHideEvent *);
+		ParameterWidget(QWidget * parent = 0);
+		void setAttributes(Parameter parameter, DatabaseModel *model);
+		Parameter getParameter(void);
 
 	public slots:
 		void applyConfiguration(void);

@@ -5,11 +5,11 @@
 #include "databasewidget.h"
 #include "schemawidget.h"
 #include "rolewidget.h"
-#include "permissaowidget.h"
+#include "permissionwidget.h"
 #include "tablespacewidget.h"
 #include "languagewidget.h"
 #include "functionwidget.h"
-#include "parametrowidget.h"
+#include "parameterwidget.h"
 #include "castwidget.h"
 #include "conversionwidget.h"
 #include "domainwidget.h"
@@ -45,10 +45,10 @@ SourceCodeWidget *codigofonte_wgt=NULL;
 DatabaseWidget *database_wgt=NULL;
 SchemaWidget *esquema_wgt=NULL;
 RoleWidget *papel_wgt=NULL;
-PermissaoWidget *permissao_wgt=NULL;
+PermissionWidget *permissao_wgt=NULL;
 TablespaceWidget *espacotabela_wgt=NULL;
 LanguageWidget *linguagem_wgt=NULL;
-ParametroWidget *parametro_wgt=NULL;
+ParameterWidget *parametro_wgt=NULL;
 FunctionWidget *funcao_wgt=NULL;
 CastWidget *convtipo_wgt=NULL;
 ConversionWidget *convcodif_wgt=NULL;
@@ -122,7 +122,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		visaogeral_wgt=new VisaoGeralWidget;
 
 		//*** CRIAÇÃO DOS FORMULÁRIOS GLOBAIS ***
-		permissao_wgt=new PermissaoWidget(this);
+		permissao_wgt=new PermissionWidget(this);
 		codigofonte_wgt=new SourceCodeWidget(this);
 		caixatexto_wgt=new TextboxWidget(this);
 		database_wgt=new DatabaseWidget(this);
@@ -130,7 +130,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		papel_wgt=new RoleWidget(this);
 		espacotabela_wgt=new TablespaceWidget(this);
 		linguagem_wgt=new LanguageWidget(this);
-		parametro_wgt=new ParametroWidget(this);
+		parametro_wgt=new ParameterWidget(this);
 		funcao_wgt=new FunctionWidget(this);
 		convtipo_wgt=new CastWidget(this);
 		convcodif_wgt=new ConversionWidget(this);

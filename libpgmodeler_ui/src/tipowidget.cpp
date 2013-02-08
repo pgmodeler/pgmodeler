@@ -1,7 +1,7 @@
 #include "tipowidget.h"
-#include "parametrowidget.h"
+#include "parameterwidget.h"
 
-extern ParametroWidget *parametro_wgt;
+extern ParameterWidget *parametro_wgt;
 
 TipoWidget::TipoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 {
@@ -182,7 +182,7 @@ void TipoWidget::manipularAtributo(int res)
 	if(res==QDialog::Accepted)
 	{
 		//Obtém o parâmetro configurado
-		param=parametro_wgt->obterParametro();
+		param=parametro_wgt->getParameter();
 		//Insere-o na tabela de atributos
 		tab_atributos->definirTextoCelula(QString::fromUtf8(param.getName()), lin, 0);
 		tab_atributos->definirTextoCelula(QString::fromUtf8(*param.getType()), lin, 1);
@@ -206,7 +206,7 @@ void TipoWidget::exibirFormAtributo(void)
 		ao atributos de um tipo */
 	parametro_wgt->param_in_chk->setEnabled(false);
 	parametro_wgt->param_out_chk->setEnabled(false);
-	parametro_wgt->valorpadrao_edt->setEnabled(false);
+	parametro_wgt->default_value_edt->setEnabled(false);
 
 	//Obtém a linha selecionada na tabela
 	idx_lin=tab_atributos->obterLinhaSelecionada();

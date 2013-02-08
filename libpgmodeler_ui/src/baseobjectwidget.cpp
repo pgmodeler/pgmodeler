@@ -1,9 +1,9 @@
 #include "baseobjectwidget.h"
 //#include "visaoobjetoswidget.h"
-#include "permissaowidget.h"
+#include "permissionwidget.h"
 
 //extern VisaoObjetosWidget *selecaoobjetos_wgt;
-extern PermissaoWidget *permissao_wgt;
+extern PermissionWidget *permissao_wgt;
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
 const QColor BaseObjectWidget::PROT_LINE_FGCOLOR=QColor(80,80,80);

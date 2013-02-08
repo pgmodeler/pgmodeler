@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ParametroWidget</class>
- <widget class="QWidget" name="ParametroWidget">
+ <class>ParameterWidget</class>
+ <widget class="QWidget" name="ParameterWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QLabel" name="valorpadrao_lbl">
+  <widget class="QLabel" name="default_value_lbl">
    <property name="geometry">
     <rect>
      <x>4</x>
@@ -44,7 +44,7 @@
     <string>Default Value:</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="valorpadrao_edt">
+  <widget class="QLineEdit" name="default_value_edt">
    <property name="geometry">
     <rect>
      <x>83</x>
@@ -54,7 +54,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QLabel" name="modo_lbl">
+  <widget class="QLabel" name="mode_lbl">
    <property name="geometry">
     <rect>
      <x>4</x>
