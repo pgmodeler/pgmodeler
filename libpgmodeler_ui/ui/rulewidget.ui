@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>RegraWidget</class>
- <widget class="QWidget" name="RegraWidget">
+ <class>RuleWidget</class>
+ <widget class="QWidget" name="RuleWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>407</width>
+    <width>408</width>
     <height>194</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="regra_grid">
+  <layout class="QGridLayout" name="rule_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -27,9 +27,9 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="tipo_evento_lbl">
+    <widget class="QLabel" name="event_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -48,7 +48,7 @@
    <item row="0" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QComboBox" name="tipo_evento_cmb">
+      <widget class="QComboBox" name="event_cmb">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -73,9 +73,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="tipo_execucao_lbl">
+      <widget class="QLabel" name="exec_type_lbl">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -98,7 +98,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="tipo_execucao_cmb">
+      <widget class="QComboBox" name="exec_type_cmb">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -125,9 +125,9 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="exp_checagem_lbl">
+    <widget class="QLabel" name="cond_expr_lbl">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -144,7 +144,7 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QTextEdit" name="exp_condicional_txt">
+    <widget class="QTextEdit" name="cond_expr_txt">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -190,7 +190,7 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="2">
-    <widget class="QGroupBox" name="comandos_gb">
+    <widget class="QGroupBox" name="commands_gb">
      <property name="title">
       <string>Executed Commands</string>
      </property>
@@ -204,7 +204,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="comando_lbl">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>

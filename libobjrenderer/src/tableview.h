@@ -43,6 +43,9 @@ class TableView: public BaseTableView {
 		//! \brief Stores the reference to the child object currently selected on table
 		TableObject *sel_child_obj;
 
+		//! \brief Stores the original table's tool tip
+		QString table_tooltip;
+
 		void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
 		void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);

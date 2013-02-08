@@ -1,14 +1,14 @@
 #include "tabelawidget.h"
 #include "columnwidget.h"
 #include "restricaowidget.h"
-#include "regrawidget.h"
+#include "rulewidget.h"
 #include "indexwidget.h"
 #include "triggerwidget.h"
 #include "messagebox.h"
 
 extern RestricaoWidget *restricao_wgt;
 extern ColumnWidget *coluna_wgt;
-extern RegraWidget *regra_wgt;
+extern RuleWidget *regra_wgt;
 extern IndexWidget *indice_wgt;
 extern TriggerWidget *gatilho_wgt;
 extern MessageBox *caixa_msg;

@@ -45,7 +45,10 @@ void TableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 QVariant TableView::itemChange(GraphicsItemChange change, const QVariant &value)
 {
 	if(change==ItemSelectedHasChanged)
+	{
+		this->setToolTip(this->table_tooltip);
 		BaseObjectView::configureObjectSelection();
+	}
 
 	return(BaseTableView::itemChange(change, value));
 }
@@ -82,7 +85,10 @@ void TableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 		//If the index is invalid clears the selection
 		if(item_idx < 0 || item_idx >= items.size())
+		{
 			this->hoverLeaveEvent(event);
+			this->setToolTip(this->table_tooltip);
+		}
 		else if(!items.isEmpty())
 		{
 			QPolygonF pol;
@@ -107,6 +113,7 @@ void TableView::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 			//Stores the selected child object
 			sel_child_obj=dynamic_cast<TableObject *>(item->getSourceObject());
+			this->setToolTip(item->toolTip());
 		}
 	}
 }
@@ -291,7 +298,10 @@ void TableView::configureObject(void)
 	BaseObjectView::__configureObject();
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();
-	this->setToolTip(QString::fromUtf8(table->getName(true)) +
-									 " (" + QString::fromUtf8(table->getTypeName()) + ")");
+
+	this->table_tooltip=QString::fromUtf8(table->getName(true)) +
+											" (" + QString::fromUtf8(table->getTypeName()) + ")";
+
+	this->setToolTip(this->table_tooltip);
 }
 

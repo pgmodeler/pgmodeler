@@ -22,36 +22,30 @@
 \brief Definição da classe que implementa o formulário de edição dos atributos de regras.
 */
 
-#ifndef REGRA_WIDGET_H
-#define REGRA_WIDGET_H
+#ifndef RULE_WIDGET_H
+#define RULE_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_regrawidget.h"
+#include "ui_rulewidget.h"
 #include "tabelaobjetoswidget.h"
 
-class RegraWidget: public BaseObjectWidget, public Ui::RegraWidget {
+class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
+	private:
 		Q_OBJECT
 
-	private:
-		//! \brief Destacadores de sintaxe dos campos de expressão condicional e comando sql
-		SyntaxHighlighter *dest_exp_condicional,
-											*dest_comando;
+		SyntaxHighlighter *cond_expr_hl,
+											*command_hl;
 
-		//! \brief Tabela que armazena os comandos sql da regra
-		TabelaObjetosWidget *tab_comandos;
+		TabelaObjetosWidget *commands_tab;
 
 	public:
-		RegraWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, Table *tabela_pai, OperationList *op_list, Rule *regra);
+		RuleWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, Table *parent_tab, OperationList *op_list, Rule *rule);
 
 	private slots:
-		void hideEvent(QHideEvent *);
-
-		//! \brief Exibe o comando digitado no campo de comando sql na tabela, na linha idx_lin
-		void manipularComando(int idx_lin);
-
-		//! \brief Exibe o dado da linha da tabela (idx_lin) no campo de comando sql
-		void editarComando(int idx_lin);
+		void hideEvent(QHideEvent *event);
+		void handleCommand(int row);
+		void editCommand(int row);
 
 	public slots:
 		void applyConfiguration(void);

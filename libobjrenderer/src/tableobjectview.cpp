@@ -163,10 +163,12 @@ void TableObjectView::configureObject(void)
 	{
 		QTextCharFormat fmt;
 		float px;
-		QString str_constr;
+		QString str_constr, tooltip, atribs_tip;
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->getSourceObject());
 		Column *column=dynamic_cast<Column *>(tab_obj);
 		ConstraintType constr_type=ConstraintType::null;
+
+		tooltip=QString::fromUtf8(tab_obj->getName() + " (" + QString::fromUtf8(tab_obj->getTypeName()) + ")");
 
 		if(column)
 		{
@@ -196,6 +198,18 @@ void TableObjectView::configureObject(void)
 				fmt=font_config[ParsersAttributes::INH_COLUMN];
 			else if(column->isProtected())
 				fmt=font_config[ParsersAttributes::PROT_COLUMN];
+
+			if(str_constr.find(TXT_PRIMARY_KEY)>=0)
+				atribs_tip+=(~ConstraintType(ConstraintType::primary_key)).toLower() + ", ";
+
+			if(str_constr.find(TXT_FOREIGN_KEY)>=0)
+				atribs_tip+=(~ConstraintType(ConstraintType::foreign_key)).toLower() + ", ";
+
+			if(str_constr.find(TXT_UNIQUE)>=0)
+				atribs_tip+=(~ConstraintType(ConstraintType::unique)).toLower() + ", ";
+
+			if(str_constr.find(TXT_NOT_NULL)>=0)
+				atribs_tip+="not null";
 		}
 		else
 			fmt=font_config[tab_obj->getSchemaName()];
@@ -238,9 +252,13 @@ void TableObjectView::configureObject(void)
 
 			if(rule)
 			{
-				str_constr+=(~rule->getEventType()).mid(3,1);
-				str_constr+=CONSTR_SEPARATOR;
 				str_constr+=(~rule->getExecutionType()).mid(0,1);
+				atribs_tip+=(~rule->getExecutionType()).toLower() + ", ";
+
+				str_constr+=CONSTR_SEPARATOR;
+
+				str_constr+=(~rule->getEventType()).mid(3,1);
+				atribs_tip+=(~rule->getEventType()).toLower();
 				str_constr=str_constr.lower();
 			}
 			else if(trigger)
@@ -248,30 +266,51 @@ void TableObjectView::configureObject(void)
 				str_constr+=(~trigger->getFiringType()).mid(0,1);
 				str_constr+=CONSTR_SEPARATOR;
 
+				atribs_tip+=(~trigger->getFiringType()).toLower() + ", ";
+
 				for(unsigned i=EventType::on_insert; i < EventType::on_truncate; i++)
 				{
 					if(trigger->isExecuteOnEvent(EventType(i)))
+					{
 						str_constr+=(~EventType(i)).mid(3,1);
+						atribs_tip+=(~EventType(i)).toLower() + ", ";
+					}
 				}
 				str_constr=str_constr.lower();
 			}
 			else if(index)
 			{
 				if(index->getIndexAttribute(Index::UNIQUE))
+				{
 					str_constr+="u";
+					atribs_tip += QString("unique") + ", ";
+				}
 
 				if(index->getIndexAttribute(Index::CONCURRENT))
+				{
 					str_constr+="c";
+					atribs_tip += QString("concurrent") + ", ";
+				}
 
 				if(index->getIndexAttribute(Index::FAST_UPDATE))
+				{
 					str_constr+="f";
+					atribs_tip += "fast updated";
+				}
 			}
 
 			if(!str_constr.isEmpty())
 				lables[2]->setText(QString::fromUtf8(CONSTR_DELIM_START + " " +
 																						 str_constr + " " +
 																						 CONSTR_DELIM_END));
+		}
 
+		if(!atribs_tip.isEmpty())
+		{
+			if(atribs_tip.at(atribs_tip.length()-1)==' ')
+				atribs_tip.remove(atribs_tip.length()-2, 2);
+
+			atribs_tip=QString::fromUtf8("\n" + CONSTR_DELIM_START + " " + atribs_tip + " " + CONSTR_DELIM_END);
 		}
 
 		lables[2]->setFont(fmt.font());
@@ -287,6 +326,8 @@ void TableObjectView::configureObject(void)
 			bounding_rect.setBottomRight(QPointF(lables[1]->boundingRect().right(), lables[0]->boundingRect().bottom()));
 		else
 			bounding_rect.setBottomRight(QPointF(lables[2]->boundingRect().right(), lables[0]->boundingRect().bottom()));
+
+		this->setToolTip(tooltip + atribs_tip);
 	}
 }
 
