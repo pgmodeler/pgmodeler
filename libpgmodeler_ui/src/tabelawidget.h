@@ -61,7 +61,7 @@ class TabelaWidget: public BaseObjectWidget, public Ui::TabelaWidget {
 
 	public:
 		TabelaWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Table *table, float pos_x, float pos_y);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, float pos_x, float pos_y);
 
 	private slots:
 		void hideEvent(QHideEvent *);

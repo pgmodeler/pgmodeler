@@ -54,7 +54,7 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
 
 	public:
 		OperatorClassWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, OperatorClass *op_class);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, OperatorClass *op_class);
 
 	private slots:
 		//! \brief Configures the element form according to the passed element type

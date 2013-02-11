@@ -288,20 +288,11 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 	connect(cena, SIGNAL(s_objectsMoved(bool)), this, SLOT(manipularMovimentoObjetos(bool)));
 	connect(cena, SIGNAL(s_objectModified(BaseGraphicObject*)), this, SLOT(manipularModificacaoObjeto(BaseGraphicObject*)));
 	connect(cena, SIGNAL(s_objectDoubleClicked(BaseGraphicObject*)), this, SLOT(manipularDuploCliqueObjeto(BaseGraphicObject*)));
-	connect(cena, SIGNAL(s_popupMenuRequested(vector<BaseObject*>)), this, SLOT(exibirMenuObjetoTabela(vector<BaseObject *>)));
+	//connect(cena, SIGNAL(s_popupMenuRequested(vector<BaseObject*>)), this, SLOT(exibirMenuObjetoTabela(vector<BaseObject *>)));
+	connect(cena, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(exibirMenuObjeto(BaseObject *)));
+	connect(cena, SIGNAL(s_popupMenuRequested(void)), this, SLOT(exibirMenuObjeto(void)));
 	connect(cena, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
-
-	/*
- connect(this, SIGNAL(s_objetoCriado(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
- connect(this, SIGNAL(s_objetoRemovido(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
- connect(this, SIGNAL(s_objetosMovimentados(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
- connect(this, SIGNAL(s_objetoModificado(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
- connect(this, SIGNAL(s_zoomModificado(float)), visaogeral_wgt, SLOT(atualizarFatorZoom(float)));
- connect(viewport->horizontalScrollBar(), SIGNAL(actionTriggered(int)), visaogeral_wgt, SLOT(redimensionarFrameJanela(void)));
- connect(viewport->verticalScrollBar(), SIGNAL(actionTriggered(int)), visaogeral_wgt, SLOT(redimensionarFrameJanela(void)));
- connect(cena, SIGNAL(selectionChanged(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
- connect(cena, SIGNAL(sceneRectChanged(QRectF)),visaogeral_wgt, SLOT(redimensionarVisaoGeral(void)));
- connect(cena, SIGNAL(sceneRectChanged(QRectF)),visaogeral_wgt, SLOT(atualizarVisaoGeral(void))); */
+	connect(cena, SIGNAL(selectionChanged(void)), this, SLOT(configurarSelecaoObjetos(void)));
 }
 
 ModeloWidget::~ModeloWidget(void)
@@ -527,15 +518,35 @@ void ModeloWidget::adicionarNovoObjeto(void)
 		 tabela que receberá o objeto, sendo assim o referência 'objeto_pai' recebe
 		 a própria tabela */
 		if(objs_selecionados.size()==1 &&
-			 (tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT ||
-				tipo_obj==OBJ_TRIGGER || tipo_obj==OBJ_INDEX ||
-				tipo_obj==OBJ_RULE))
+			 ((tipo_obj==OBJ_COLUMN || tipo_obj==OBJ_CONSTRAINT ||
+				 tipo_obj==OBJ_TRIGGER || tipo_obj==OBJ_INDEX ||
+				 tipo_obj==OBJ_RULE) ||
+				objs_selecionados[0]->getObjectType()==OBJ_SCHEMA))
 			objeto_pai=objs_selecionados[0];
 
 		/* Caso o tipo de objeto a ser inserido não seja visão, tabela ou caixa de texto
 		 exibe o formulário de criação do objeto */
-		if(tipo_obj!=OBJ_TABLE && tipo_obj!=OBJ_VIEW &&
-			 tipo_obj!=OBJ_TEXTBOX && tipo_obj <= BASE_TABLE)
+
+		if(objeto_pai && objeto_pai->getObjectType()==OBJ_SCHEMA &&
+			 (tipo_obj==OBJ_TABLE || tipo_obj==OBJ_VIEW))
+		{
+			BaseObjectView *sch_graph=dynamic_cast<BaseObjectView *>(dynamic_cast<Schema *>(objeto_pai)->getReceiverObject());
+			QSizeF size = sch_graph->boundingRect().size();
+			QPointF pos, menu_pos = viewport->mapToScene(this->mapFromGlobal(menu_popup.pos()));
+			QRectF rect = QRectF(sch_graph->pos(), size);
+
+			//Uses the popup menu position if it is inside the bounding rectangle
+			if(rect.contains(menu_pos))
+				pos=menu_pos;
+			//Otherwise inserts the new object at the middle of bounding rect
+			else
+				pos=QPointF(sch_graph->pos().x() + (size.width()/2.0f),
+										sch_graph->pos().y() + (size.height()/2.0f));
+
+			this->exibirFormObjeto(tipo_obj, NULL, objeto_pai, pos);
+		}
+		else if(tipo_obj!=OBJ_TABLE && tipo_obj!=OBJ_VIEW &&
+						tipo_obj!=OBJ_TEXTBOX && tipo_obj <= BASE_TABLE)
 			this->exibirFormObjeto(tipo_obj, NULL, objeto_pai);
 		else
 		{
@@ -1192,6 +1203,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
 	try
 	{
 		unsigned tipo_rel=0;
+		Schema *sel_schema=dynamic_cast<Schema *>(objeto_pai);
 
 		/* Caso o tipo_obj seja maior que o ultimo código de tipo de objeto, indica
 		 que se trata de um tipo específico de relacionamento (1-1, 1-n, n-n, gen, dep).
@@ -1249,7 +1261,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
 			break;
 
 			case OBJ_FUNCTION:
-				funcao_wgt->setAttributes(modelo, lista_op, dynamic_cast<Function *>(objeto));
+				funcao_wgt->setAttributes(modelo, lista_op, sel_schema, dynamic_cast<Function *>(objeto));
 				funcao_wgt->show();
 			break;
 
@@ -1259,49 +1271,49 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
 			break;
 
 			case OBJ_CONVERSION:
-				convcodif_wgt->setAttributes(modelo, lista_op, dynamic_cast<Conversion *>(objeto));
+				convcodif_wgt->setAttributes(modelo, lista_op, sel_schema, dynamic_cast<Conversion *>(objeto));
 				convcodif_wgt->show();
 			break;
 
 			case OBJ_DOMAIN:
-				dominio_wgt->setAttributes(modelo, lista_op, dynamic_cast<Domain *>(objeto));
+				dominio_wgt->setAttributes(modelo, lista_op, sel_schema, dynamic_cast<Domain *>(objeto));
 				dominio_wgt->show();
 			break;
 
 			case OBJ_AGGREGATE:
-				funcaoag_wgt->setAttributes(modelo, lista_op, dynamic_cast<Aggregate *>(objeto));
+				funcaoag_wgt->setAttributes(modelo, lista_op, sel_schema, dynamic_cast<Aggregate *>(objeto));
 				funcaoag_wgt->show();
 			break;
 
 			case OBJ_SEQUENCE:
-				sequencia_wgt->setAttributes(modelo, lista_op, dynamic_cast<Sequence *>(objeto));
+				sequencia_wgt->setAttributes(modelo, lista_op, sel_schema, dynamic_cast<Sequence *>(objeto));
 				sequencia_wgt->show();
 			break;
 
 			case OBJ_OPERATOR:
-				operador_wgt->setAttributes(modelo, lista_op, dynamic_cast<Operator *>(objeto));
+				operador_wgt->setAttributes(modelo, lista_op, sel_schema, dynamic_cast<Operator *>(objeto));
 				operador_wgt->show();
 			break;
 
 			case OBJ_OPFAMILY:
-				familiaop_wgt->setAttributes(modelo, lista_op, dynamic_cast<OperatorFamily *>(objeto));
+				familiaop_wgt->setAttributes(modelo, lista_op, sel_schema, dynamic_cast<OperatorFamily *>(objeto));
 				familiaop_wgt->show();
 			break;
 
 			case OBJ_OPCLASS:
-				classeop_wgt->setAttributes(modelo, lista_op, dynamic_cast<OperatorClass *>(objeto));
+				classeop_wgt->setAttributes(modelo, lista_op, sel_schema, dynamic_cast<OperatorClass *>(objeto));
 				classeop_wgt->show();
 			break;
 
 			case OBJ_TYPE:
-				tipo_wgt->setAttributes(modelo, lista_op, dynamic_cast<Type *>(objeto));
+				tipo_wgt->setAttributes(modelo, lista_op, sel_schema, dynamic_cast<Type *>(objeto));
 				tipo_wgt->show();
 			break;
 
 			case OBJ_VIEW:
 				View *visao;
 				visao=dynamic_cast<View *>(objeto);
-				visao_wgt->setAttributes(modelo, lista_op, visao, pos.x(), pos.y());
+				visao_wgt->setAttributes(modelo, lista_op, sel_schema, visao, pos.x(), pos.y());
 				visao_wgt->show();
 			break;
 
@@ -1374,7 +1386,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
 			break;
 
 			case OBJ_TABLE:
-				tabela_wgt->setAttributes(modelo, lista_op, dynamic_cast<Table *>(objeto), pos.x(), pos.y());
+				tabela_wgt->setAttributes(modelo, lista_op, sel_schema, dynamic_cast<Table *>(objeto), pos.x(), pos.y());
 				tabela_wgt->show();
 			break;
 
@@ -2311,10 +2323,21 @@ void ModeloWidget::excluirObjetos(void)
 	}
 }
 
-void ModeloWidget::exibirMenuObjetoTabela(vector<BaseObject *> objs_selecionados)
+void ModeloWidget::exibirMenuObjeto(void)
 {
-	this->configurarMenuPopup(objs_selecionados);
 	menu_popup.exec(QCursor::pos());
+}
+
+void ModeloWidget::exibirMenuObjeto(BaseObject *obj_sel)
+{
+	vector<BaseObject *> vet;
+	vet.push_back(obj_sel);
+
+	this->configurarMenuPopup(vet);
+	menu_popup.exec(QCursor::pos());
+
+	this->objs_selecionados.clear();
+	this->configurarMenuPopup();
 }
 
 void ModeloWidget::desabilitarAcoesModelo(void)
@@ -2493,11 +2516,14 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 			Relationship *rel=dynamic_cast<Relationship *>(obj);
 			ObjectType obj_type=obj->getObjectType(),
 					tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
-										OBJ_RULE, OBJ_INDEX/*, OBJETO_RELACAO */ };
+										OBJ_RULE, OBJ_INDEX },
+					tipos_esq[]={ OBJ_AGGREGATE, OBJ_CONVERSION, OBJ_DOMAIN,
+												OBJ_FUNCTION, OBJ_OPERATOR, OBJ_OPCLASS, OBJ_OPFAMILY,
+												OBJ_SEQUENCE, OBJ_TABLE, OBJ_TYPE, OBJ_VIEW };
 
 			//Se o objeto não está protegido e o mesmo seja um relacionamento ou tabela
 			if(!obj->isProtected() &&
-				 (obj_type==OBJ_TABLE ||obj_type==OBJ_RELATIONSHIP))
+				 (obj_type==OBJ_TABLE ||obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA))
 			{
 				//Caso seja tabela, inclui a ação de adição de objetos de tabela
 				if(obj_type == OBJ_TABLE)
@@ -2519,6 +2545,13 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 						action_converter_relnn->setData(QVariant::fromValue<void *>(rel));
 						menu_popup.addAction(action_converter_relnn);
 					}
+				}
+				//Caso seja tabela, inclui a ação de adição de objetos de tabela
+				else if(obj_type == OBJ_SCHEMA)
+				{
+					for(i=0; i < 11; i++)
+						menu_novo_obj.addAction(acoes_ins_objs[tipos_esq[i]]);
+					action_novo_obj->setMenu(&menu_novo_obj);
 				}
 
 				menu_popup.addAction(action_novo_obj);

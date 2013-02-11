@@ -37,9 +37,18 @@ void TableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 	//Emit a signal containing the select child object if the user right-click the focused item
 	if(!this->isSelected() && event->buttons()==Qt::RightButton && sel_child_obj)
+	{
+		//this->setEnabled(false);
+
+		if(this->scene())
+		 this->scene()->clearSelection();
+
 		emit s_childObjectSelected(sel_child_obj);
 
-	BaseObjectView::mousePressEvent(event);
+		//this->setEnabled(true);
+	}
+	else
+		BaseObjectView::mousePressEvent(event);
 }
 
 QVariant TableView::itemChange(GraphicsItemChange change, const QVariant &value)

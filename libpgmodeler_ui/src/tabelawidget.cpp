@@ -201,7 +201,7 @@ ObjectType TabelaWidget::selecionarTipoObjeto(QObject *tab_sender)
 	return(tipo_obj);
 }
 
-void TabelaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Table *tabela, float pos_x, float pos_y)
+void TabelaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Schema *schema, Table *tabela, float pos_x, float pos_y)
 {
 	unsigned i, qtd;
 	ObjectType tipos[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
@@ -216,10 +216,11 @@ void TabelaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op,
 
 	if(!tabela)
 	{
-		//QString nome;
-		//nome=trUtf8("new_table");
 		//Aloca a nova tabela
 		tabela=new Table;
+
+		if(schema)
+			tabela->setSchema(schema);
 
 		/* Marca como novo objeto o relacionamento gerado, assim o mesmo é tratado
 		 de forma diferente nos métodos de configuração da classe superior */
@@ -230,7 +231,7 @@ void TabelaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op,
 	}
 
 	//Define os atributos do formulários e da janela pai
-	BaseObjectWidget::setAttributes(modelo, lista_op, tabela, NULL, pos_x, pos_y);
+	BaseObjectWidget::setAttributes(modelo, lista_op, tabela, schema, pos_x, pos_y);
 
 	//Lista todos os objetos da tabela
 	for(i=0; i < 5; i++)

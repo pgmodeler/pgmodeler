@@ -188,7 +188,9 @@ class ModeloWidget: public QWidget {
 		void configurarMenuPopup(vector<BaseObject *> objs_selecionados=vector<BaseObject *>());
 
 		//! \brief Exibe um menu popup específico para objetos de tabela
-		void exibirMenuObjetoTabela(vector<BaseObject *> objs_selecionados);
+		//void exibirMenuObjetoTabela(vector<BaseObject *> objs_selecionados);
+		void exibirMenuObjeto(BaseObject *obj_sel);
+		void exibirMenuObjeto(void);
 
 		//! \brief Exibe as dependências e referências do objeto
 		void exibirDepsRefs(void);

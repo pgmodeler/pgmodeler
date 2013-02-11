@@ -58,7 +58,7 @@ class TipoWidget: public BaseObjectWidget, public Ui::TipoWidget {
 	public:
 		TipoWidget(QWidget * parent = 0);
 		//! \brief ~TipoWidget(void);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Type *tipo);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Type *tipo);
 
 	private slots:
 		void hideEvent(QHideEvent *);

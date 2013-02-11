@@ -220,7 +220,7 @@ void TipoWidget::exibirFormAtributo(void)
 	parametro_wgt->show();
 }
 
-void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Type *tipo)
+void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Schema *schema, Type *tipo)
 {
 	PgSQLType tp_copia, tp_elem;
 	unsigned conf_tipo, i, qtd;
@@ -230,7 +230,7 @@ void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, T
 	connect(parametro_wgt, SIGNAL(finished(int)), this, SLOT(manipularAtributo(int)));
 
 	//Define os atributos do formulários e da janela pai
-	BaseObjectWidget::setAttributes(modelo, lista_op, tipo);
+	BaseObjectWidget::setAttributes(modelo, lista_op, schema, tipo);
 
 	//Define o modelo de dados de referência dos seletores de função
 	for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)

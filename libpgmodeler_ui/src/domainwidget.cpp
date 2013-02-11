@@ -38,11 +38,11 @@ void DomainWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 }
 
-void DomainWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Domain *domain)
+void DomainWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Domain *domain)
 {
 	PgSQLType type;
 
-	BaseObjectWidget::setAttributes(model, op_list, domain);
+	BaseObjectWidget::setAttributes(model, op_list, domain, schema);
 
 	if(domain)
 	{

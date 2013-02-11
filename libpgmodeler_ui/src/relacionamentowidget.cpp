@@ -577,8 +577,8 @@ void RelacionamentoWidget::exibirObjetoAvancado(int idx)
 			tab=reinterpret_cast<Table *>(objeto);
 
 			tab->setProtected(true);
-			tabela_wgt->setAttributes(this->model, this->op_list, tab,
-																tab->getPosition().x(), tab->getPosition().y());
+			tabela_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
+																tab,	tab->getPosition().x(), tab->getPosition().y());
 			tabela_wgt->show();
 			tab->setProtected(false);
 		break;

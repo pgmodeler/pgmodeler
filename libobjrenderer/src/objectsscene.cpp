@@ -234,11 +234,7 @@ void ObjectsScene::emitChildObjectSelection(TableObject *child_obj)
 	/* Treats the TableView::s_childObjectSelect() only when there is no
 		other object selected on the scene */
 	if(this->selectedItems().isEmpty())
-	{
-		vector<BaseObject *> vet;
-		vet.push_back(child_obj);
-		emit s_popupMenuRequested(vet);
-	}
+		emit s_popupMenuRequested(child_obj);
 }
 
 void ObjectsScene::emitObjectSelection(BaseGraphicObject *object, bool selected)
@@ -310,8 +306,10 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-	if(event->buttons()==Qt::LeftButton ||
-		 (event->buttons()==Qt::RightButton && this->selectedItems().isEmpty()))
+	QGraphicsScene::mousePressEvent(event);
+
+	if(event->buttons()==Qt::LeftButton)// ||
+		 //(event->buttons()==Qt::RightButton && this->selectedItems().isEmpty()))
 	{
 		//Gets the item at mouse position
 		QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y());
@@ -319,9 +317,9 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		//Selects the object (without press control) if the user is creating a relationship
 		if(item && item->isEnabled() &&  rel_line->isVisible())
 			item->setSelected(!item->isSelected());
-
-		QGraphicsScene::mousePressEvent(event);
 	}
+	else if(event->buttons()==Qt::RightButton && !this->selectedItems().isEmpty())
+		emit s_popupMenuRequested();
 
 	if(this->selectedItems().isEmpty() && event->buttons()==Qt::LeftButton)
 	{

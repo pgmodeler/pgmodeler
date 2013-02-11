@@ -72,12 +72,12 @@ void AggregateWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 }
 
-void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Aggregate *aggregate)
+void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Aggregate *aggregate)
 {
 	unsigned count, i;
 	PgSQLType type;
 
-	BaseObjectWidget::setAttributes(model,op_list,aggregate);
+	BaseObjectWidget::setAttributes(model,op_list, aggregate, schema);
 
 	input_type->definirAtributos(type, model);
 	state_type->definirAtributos(type, model);

@@ -56,7 +56,7 @@ class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 
 	public:
 		AggregateWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Aggregate *aggregate);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Aggregate *aggregate);
 
 	private slots:
 		void hideEvent(QHideEvent *event);

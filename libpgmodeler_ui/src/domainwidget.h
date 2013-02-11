@@ -38,7 +38,7 @@ class DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
 
 	public:
 		DomainWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Domain *domain);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Domain *domain);
 
 	private slots:
 		void hideEvent(QHideEvent *event);

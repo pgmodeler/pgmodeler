@@ -72,7 +72,7 @@ class VisaoWidget: public BaseObjectWidget, public Ui::VisaoWidget {
 
 	public:
 		VisaoWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, View *visao, float px, float py);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *visao, float px, float py);
 
 	private slots:
 		void hideEvent(QHideEvent *);

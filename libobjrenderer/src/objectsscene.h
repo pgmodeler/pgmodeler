@@ -114,7 +114,9 @@ class ObjectsScene: public QGraphicsScene {
 		void s_objectModified(BaseGraphicObject *objeto);
 
 		//! \brief Signal emitted when the user right-click the scene requesting the popup menu
-		void s_popupMenuRequested(vector<BaseObject *>);
+		//void s_popupMenuRequested(vetor<BaseObject *>);
+		void s_popupMenuRequested(BaseObject *);
+		void s_popupMenuRequested(void);
 
 		//! \brief Signal emitted when the user double-click a object
 		void s_objectDoubleClicked(BaseGraphicObject *objeto);

@@ -40,9 +40,9 @@ void ConversionWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 }
 
-void ConversionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Conversion *conv)
+void ConversionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Conversion *conv)
 {
-	BaseObjectWidget::setAttributes(model, op_list, conv);
+	BaseObjectWidget::setAttributes(model, op_list, conv, schema);
 	sel_funcao_conv->definirModelo(model);
 
 	if(conv)

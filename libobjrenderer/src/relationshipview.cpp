@@ -97,8 +97,6 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		if(value.toBool())
 			this->sel_order=++BaseObjectView::global_sel_order;
 
-		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()), value.toBool());
-
 		pos_info_pol->setVisible(value.toBool());
 		pos_info_txt->setVisible(value.toBool());
 		obj_selection->setVisible(value.toBool());
@@ -140,6 +138,10 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		count=attributes.size();
 		for(i=0; i < count; i++)
 			attributes[i]->children().at(3)->setVisible(value.toBool());
+
+
+		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),
+													value.toBool());
 	}
 
 	return(value);

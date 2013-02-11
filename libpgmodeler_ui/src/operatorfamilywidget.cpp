@@ -22,9 +22,9 @@ void OperatorFamilyWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 }
 
-void OperatorFamilyWidget::setAttributes(DatabaseModel *model, OperationList *op_list, OperatorFamily *op_family)
+void OperatorFamilyWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, OperatorFamily *op_family)
 {
-	BaseObjectWidget::setAttributes(model, op_list, op_family);
+	BaseObjectWidget::setAttributes(model, op_list, op_family, schema);
 
 	if(op_family)
 		indexing_cmb->setCurrentIndex(indexing_cmb->findText(~(op_family->getIndexingType())));

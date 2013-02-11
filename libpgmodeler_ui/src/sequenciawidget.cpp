@@ -44,7 +44,7 @@ void SequenciaWidget::hideEvent(QHideEvent *evento)
 	BaseObjectWidget::hideEvent(evento);
 }
 
-void SequenciaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Sequence *sequencia)
+void SequenciaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Schema *schema, Sequence *sequencia)
 {
 	sel_coluna->definirModelo(modelo);
 
@@ -69,7 +69,7 @@ void SequenciaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_
 	}
 
 	//Preenchendo os campos básicos do formulário com os atributos da sequência
-	BaseObjectWidget::setAttributes(modelo,lista_op,sequencia);
+	BaseObjectWidget::setAttributes(modelo,lista_op,sequencia,schema);
 }
 //---------------------------------------------------------
 void SequenciaWidget::applyConfiguration(void)

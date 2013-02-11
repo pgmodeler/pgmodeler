@@ -80,12 +80,12 @@ void OperatorWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 }
 
-void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Operator *oper)
+void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Operator *oper)
 {
 	unsigned i;
 	PgSQLType left_type, right_type;
 
-	BaseObjectWidget::setAttributes(model,op_list,oper);
+	BaseObjectWidget::setAttributes(model,op_list, oper, schema);
 
 	for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
 		functions_sel[i]->definirModelo(model);

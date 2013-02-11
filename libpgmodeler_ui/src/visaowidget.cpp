@@ -377,14 +377,14 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
 	}
 }
 
-void VisaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, View *visao, float px, float py)
+void VisaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Schema *schema, View *visao, float px, float py)
 {
 	unsigned i, qtd;
 	bool sel_from, from_where, apos_where;
 	Reference refer;
 
 	//Preenchendo os campos básicos do formulário com os atributos da visão
-	BaseObjectWidget::setAttributes(modelo,lista_op, visao, NULL, px, py);
+	BaseObjectWidget::setAttributes(modelo,lista_op, visao, schema, px, py);
 
 	//Configurado o modelo de banco de dados referênciado pelos widget seletores
 	sel_coluna->definirModelo(modelo);

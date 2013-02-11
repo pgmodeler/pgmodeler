@@ -188,12 +188,12 @@ void OperatorClassWidget::handleElement(int lin_idx)
 	}
 }
 
-void OperatorClassWidget::setAttributes(DatabaseModel *model, OperationList *op_list, OperatorClass *op_class)
+void OperatorClassWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, OperatorClass *op_class)
 {
 	PgSQLType type;
 	unsigned i, count;
 
-	BaseObjectWidget::setAttributes(model, op_list, op_class);
+	BaseObjectWidget::setAttributes(model, op_list, op_class, schema);
 
 	family_sel->definirModelo(model);
 	function_sel->definirModelo(model);

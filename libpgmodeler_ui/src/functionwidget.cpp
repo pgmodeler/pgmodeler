@@ -195,7 +195,7 @@ void FunctionWidget::showParameterData(Parameter param, TabelaObjetosWidget *tab
 	}
 }
 
-void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Function *func)
+void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Function *func)
 {
 	vector<BaseObject *> languages;
 	Language *lang=NULL;
@@ -206,7 +206,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 
 	connect(parametro_wgt, SIGNAL(finished(int)), this, SLOT(handleParameter(int)));
 
-	BaseObjectWidget::setAttributes(model, op_list, func);
+	BaseObjectWidget::setAttributes(model, op_list, func, schema);
 	languages=model->getObjects(OBJ_LANGUAGE);
 
 	while(!languages.empty())

@@ -35,7 +35,7 @@ class ConversionWidget: public BaseObjectWidget, public Ui::ConversionWidget {
 
 	public:
 		ConversionWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Conversion *conv);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Conversion *conv);
 
 	private slots:
 		void hideEvent(QHideEvent *event);

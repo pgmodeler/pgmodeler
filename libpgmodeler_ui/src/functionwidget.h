@@ -60,7 +60,7 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 	public:
 		FunctionWidget(QWidget * parent = 0);
 
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Function *func);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Function *func);
 
 	private slots:
 		void alternateReturnTypes(void);

@@ -41,7 +41,7 @@ class OperatorWidget: public BaseObjectWidget, public Ui::OperatorWidget {
 	public:
 		OperatorWidget(QWidget * parent = 0);
 
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Operator *oper);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Operator *oper);
 
 	private slots:
 		void hideEvent(QHideEvent *event);

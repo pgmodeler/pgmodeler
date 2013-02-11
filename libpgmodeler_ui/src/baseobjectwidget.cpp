@@ -157,7 +157,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 			this->table=dynamic_cast<Table *>(parent_obj);
 		else if(parent_type==OBJ_RELATIONSHIP)
 			this->relationship=dynamic_cast<Relationship *>(parent_obj);
-		else if(parent_type!=OBJ_DATABASE)
+		else if(parent_type!=OBJ_DATABASE && parent_type!=OBJ_SCHEMA)
 			throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 	else
@@ -228,7 +228,11 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	else
 	{
 		protected_obj_frm->setVisible(false);
-		schema_sel->definirObjeto(model->getObject("public", OBJ_SCHEMA));
+
+		if(parent_obj && parent_obj->getObjectType()==OBJ_SCHEMA)
+			schema_sel->definirObjeto(parent_obj);
+		else
+			schema_sel->definirObjeto(model->getObject("public", OBJ_SCHEMA));
 	}
 }
 
@@ -625,11 +629,11 @@ void BaseObjectWidget::finishConfiguration(void)
 			}
 
 			//Updates the visual schemas when the objects is moved to another
-			if(object->getSchema() != prev_schema)
-			{
-				if(prev_schema) prev_schema->setModified(true);
+			if(object->getSchema())
 				dynamic_cast<Schema *>(object->getSchema())->setModified(true);
-			}
+
+			if(prev_schema && object->getSchema()!=prev_schema)
+				prev_schema->setModified(true);
 		}
 
 		emit s_objectManipulated();
