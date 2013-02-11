@@ -2720,7 +2720,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Code source:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="+25"/>
+        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="+26"/>
         <source>Column</source>
         <translation>Colonne</translation>
     </message>
@@ -3918,9 +3918,14 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
-    <name>ParametroWidget</name>
+    <name>ParameterWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/parametrowidget.ui" line="+44"/>
+        <location filename="../libpgmodeler_ui/ui/parameterwidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>Default Value:</source>
         <translation>Valeur par défaut:</translation>
     </message>
@@ -3930,69 +3935,33 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Mode:</translation>
     </message>
     <message>
-        <location line="-53"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+72"/>
+        <location line="+19"/>
         <source>IN</source>
-        <translation></translation>
+        <translation>IN</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>OUT</source>
-        <translation></translation>
+        <translation>OUT</translation>
     </message>
 </context>
 <context>
-    <name>PermissaoWidget</name>
+    <name>PermissionWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/permissaowidget.ui" line="+56"/>
-        <location filename="../libpgmodeler_ui/src/permissaowidget.cpp" line="+74"/>
+        <location filename="../libpgmodeler_ui/ui/permissionwidget.ui" line="+26"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="+57"/>
         <source>Roles</source>
         <translation>Rôles</translation>
     </message>
     <message>
-        <location line="+214"/>
-        <location filename="../libpgmodeler_ui/src/permissaowidget.cpp" line="+2"/>
-        <source>Privileges</source>
-        <translation>Privilèges</translation>
-    </message>
-    <message>
-        <location line="-53"/>
-        <source>Cancel Operation</source>
-        <translation>Annuler l&apos;opération</translation>
-    </message>
-    <message>
-        <location line="-29"/>
-        <source>Update Permission</source>
-        <translation>Actualiser Permission</translation>
-    </message>
-    <message>
-        <location line="-29"/>
-        <source>Add Permission</source>
-        <translation>Ajouter Permission</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/permissaowidget.cpp" line="-35"/>
-        <source>Type:</source>
-        <translation>Type:</translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>Role</source>
-        <translation>Rôle</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/permissaowidget.ui" line="-133"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+51"/>
+        <location line="+21"/>
         <source>ID:</source>
-        <translation></translation>
+        <translation>Identifiant:</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -4000,19 +3969,50 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Permissions</translation>
     </message>
     <message>
-        <location line="+175"/>
-        <source>GRANT OPTION</source>
-        <translation></translation>
+        <location line="+31"/>
+        <source>Add Permission</source>
+        <translation>Ajouter permission</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/permissaowidget.cpp" line="+15"/>
-        <source>Id</source>
-        <translation></translation>
+        <location line="+29"/>
+        <source>Update Permission</source>
+        <translation>Actualiser permission</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/permissaowidget.ui" line="-5"/>
+        <location line="+29"/>
+        <source>Cancel Operation</source>
+        <translation>Annuler l&apos;opération</translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="+2"/>
+        <source>Privileges</source>
+        <translation>Privilèges</translation>
+    </message>
+    <message>
+        <location line="+28"/>
         <source>Privilege</source>
         <translation>Privilège</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>GRANT OPTION</source>
+        <translation>GRANT OPTION</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="-30"/>
+        <source>Type:</source>
+        <translation>Type:</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Role</source>
+        <translation>Rôle</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Id</source>
+        <translation>Identifiant</translation>
     </message>
 </context>
 <context>
@@ -4142,49 +4142,6 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location line="+32"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
-    </message>
-</context>
-<context>
-    <name>RegraWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/regrawidget.ui" line="+44"/>
-        <source>Event:</source>
-        <translation>Evènement:</translation>
-    </message>
-    <message>
-        <location line="+52"/>
-        <source>Execution Type:</source>
-        <translation>Type d&apos;exécution:</translation>
-    </message>
-    <message>
-        <location line="+46"/>
-        <source>Conditional Expr.:</source>
-        <translation>Expr. Conditionnelle:</translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>Executed Commands</source>
-        <translation>Commandes Exécutées</translation>
-    </message>
-    <message>
-        <location line="+24"/>
-        <source>SQL Command:</source>
-        <translation>Commandes SQL:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/regrawidget.cpp" line="+33"/>
-        <source>To create a rule that does not perform any action (&lt;strong&gt;DO NOTHING&lt;/strong&gt;) simply do not specify commands in the SQL commands table.</source>
-        <translation>Pour créer un rôle qui ne peut éxécuter aucune action (&lt;strong&gt;DO NOTHING&lt;/strong&gt;) ne pas spécifier de commandes dans la table des commandes SQL.</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/regrawidget.ui" line="-199"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/regrawidget.cpp" line="-5"/>
-        <source>SQL command</source>
-        <translation>Commande SQL</translation>
     </message>
 </context>
 <context>
@@ -4589,7 +4546,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+14"/>
-        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="+48"/>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="+38"/>
         <source>Members</source>
         <translation>Membres</translation>
     </message>
@@ -4619,6 +4576,49 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location line="+3"/>
         <source>Validity</source>
         <translation>Validité</translation>
+    </message>
+</context>
+<context>
+    <name>RuleWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/rulewidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Event:</source>
+        <translation>Evènement:</translation>
+    </message>
+    <message>
+        <location line="+52"/>
+        <source>Execution Type:</source>
+        <translation>Type d&apos;exécution:</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Conditional Expr.:</source>
+        <translation>Expr. conditionnelle:</translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>Executed Commands</source>
+        <translation>Commandes éxécutées</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>SQL Command:</source>
+        <translation>Commandes SQL:</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/rulewidget.cpp" line="+25"/>
+        <source>SQL command</source>
+        <translation>Commande SQL</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>To create a rule that does not perform any action (&lt;strong&gt;DO NOTHING&lt;/strong&gt;) simply do not specify commands in the SQL commands table.</source>
+        <translation>Pour créer une règle qui n&apos;éxécute aucune action (&lt;strong&gt;DO NOTHING&lt;/strong&gt;), ne spécifiez aucune commandes dans le champs des commandes SQL.</translation>
     </message>
 </context>
 <context>
