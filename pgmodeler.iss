@@ -3,7 +3,7 @@
 ; Created with Inno Setup (http://www.jrsoftware.org/isinfo.php)
 
 #define MyAppName "pgModeler - PostgreSQL Database Modeler"
-#define MyAppVersion "v0.4.0-rc"
+#define MyAppVersion "v0.4.0-rc1"
 #define MyAppPublisher "pgModeler Project"
 #define MyAppURL "http://www.pgmodeler.com.br/"
 #define MyAppExeName "pgmodeler.exe"
@@ -20,7 +20,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName={pf}\pgmodeler
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 LicenseFile=.\build\LICENSE
@@ -32,8 +32,8 @@ ChangesEnvironment=true
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
-Name: "french"; MessagesFile: "compiler:Languages\French.isl"
-Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
+;Name: "french"; MessagesFile: "compiler:Languages\French.isl"
+;Name: "portuguese"; MessagesFile: "compiler:Languages\Portuguese.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
