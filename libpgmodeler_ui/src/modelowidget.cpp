@@ -289,7 +289,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 	connect(cena, SIGNAL(s_objectModified(BaseGraphicObject*)), this, SLOT(manipularModificacaoObjeto(BaseGraphicObject*)));
 	connect(cena, SIGNAL(s_objectDoubleClicked(BaseGraphicObject*)), this, SLOT(manipularDuploCliqueObjeto(BaseGraphicObject*)));
 	//connect(cena, SIGNAL(s_popupMenuRequested(vector<BaseObject*>)), this, SLOT(exibirMenuObjetoTabela(vector<BaseObject *>)));
-	connect(cena, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(exibirMenuObjeto(BaseObject *)));
+	connect(cena, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(configurarMenuObjeto(BaseObject *)));
 	connect(cena, SIGNAL(s_popupMenuRequested(void)), this, SLOT(exibirMenuObjeto(void)));
 	connect(cena, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
 	connect(cena, SIGNAL(selectionChanged(void)), this, SLOT(configurarSelecaoObjetos(void)));
@@ -387,7 +387,7 @@ void ModeloWidget::mousePressEvent(QMouseEvent *evento)
 	//Caso o usuário pressione o botão direito exibe o menu popup na posição do cursor
 	if(evento->buttons()==Qt::RightButton)
 	{
-		menu_popup.exec(QCursor::pos());
+		//menu_popup.exec(QCursor::pos());
 		//cancelarAdicaoObjeto();
 	}
 	//Caso o usuário pressione o botão esquerdo
@@ -2328,16 +2328,11 @@ void ModeloWidget::exibirMenuObjeto(void)
 	menu_popup.exec(QCursor::pos());
 }
 
-void ModeloWidget::exibirMenuObjeto(BaseObject *obj_sel)
+void ModeloWidget::configurarMenuObjeto(BaseObject *obj_sel)
 {
 	vector<BaseObject *> vet;
 	vet.push_back(obj_sel);
-
 	this->configurarMenuPopup(vet);
-	menu_popup.exec(QCursor::pos());
-
-	this->objs_selecionados.clear();
-	this->configurarMenuPopup();
 }
 
 void ModeloWidget::desabilitarAcoesModelo(void)
@@ -2445,7 +2440,8 @@ void ModeloWidget::configurarSubMenu(BaseObject *obj)
 			action_sel_sch_children->setData(QVariant::fromValue<void *>(obj));
 		}
 
-		menu_popup.addAction(action_acoes_rapidas);
+		if(!menu_acoes_rapidas.isEmpty())
+			menu_popup.addAction(action_acoes_rapidas);
 	}
 }
 

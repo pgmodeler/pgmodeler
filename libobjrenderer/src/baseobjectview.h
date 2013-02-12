@@ -85,6 +85,8 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 		//! \brief Configures the icon that denotes the object's protection
 		void configureProtectedIcon(void);
 
+		void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
 	public:
 		static const float	VERT_SPACING=2.0f,
 												HORIZ_SPACING=2.0f,

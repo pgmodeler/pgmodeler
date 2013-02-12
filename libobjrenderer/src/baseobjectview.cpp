@@ -20,6 +20,19 @@ BaseObjectView::~BaseObjectView(void)
 	setSourceObject(NULL);
 }
 
+void BaseObjectView::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+	if(event->button()==Qt::RightButton && !this->isSelected())
+	{
+		if(this->scene()->selectedItems().count()==1)
+			this->scene()->clearSelection();
+
+		this->setSelected(true);
+	}
+	else
+		QGraphicsItemGroup::mousePressEvent(event);
+}
+
 void BaseObjectView::setSourceObject(BaseObject *object)
 {
 	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);

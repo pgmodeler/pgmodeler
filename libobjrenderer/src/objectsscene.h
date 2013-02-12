@@ -113,9 +113,10 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Signal emitted when a object is modified on scene
 		void s_objectModified(BaseGraphicObject *objeto);
 
-		//! \brief Signal emitted when the user right-click the scene requesting the popup menu
-		//void s_popupMenuRequested(vetor<BaseObject *>);
+		//! \brief Signal emitted when the user right-click a specific object on the scene requesting the popup menu
 		void s_popupMenuRequested(BaseObject *);
+
+		//! \brief Signal emitted when the user right-click one or more objects on the scene requesting the popup menu
 		void s_popupMenuRequested(void);
 
 		//! \brief Signal emitted when the user double-click a object
