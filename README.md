@@ -55,17 +55,23 @@ Known bugs
 Change Log
 ----------
 
-<em>Release date: February 1st, 2013 </em>
+v0.4.0-rc1
+---------
+
+<em>Release date: February 12, 2013 </em>
 
 Attention: The v0.4.0 is in release-candidate stage so the change log can be modified at any moment when new bug fixes is created. New features will not be implemented now, instead, they will be marked to be coded starting from the v0.4.1.
 The stable 0.4.0 has no release date yet because all the code is being refactored (almost done!) meaning that the new version will be completely decoupled from previous ones.
 
+* [New]: introduce a "New object" submenu when activating the schema context menu (right-click)
 * [New]: tables and view are now graphically separated by colored rectangles representing its schemas.
 * [New]: compiling pgModeler now works perfectly on Mac OSX system.
 * [New]: introduced the 'Quick actions' menu that permits: rename, move to another schema, change onwer and edit permissions.
 * [New]: the relationship editing form gained an "advanced" tab which shows the objects generated and/or represents the relatioship itself.
 * [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
 * [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
+* [Change]: field semantics adjustments on relationship editing form.
+* [Change]: graphical object can be now selected and have the context menu activated only with a single right-click.
 * [Change]: minor improvements on plugin base class: PgModelerPlugin.
 * [Change]: widget size adjustments to better showing on Mac OSX system.
 * [Change]: crashhandler now shows the compiled and running versions of Qt.
@@ -79,6 +85,9 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [Change]: relationship validation method now removes fk relationships when the foreign keys that gerenates is no longer exists.
 * [Change]: copy/cut/delete commands does not manipulates system objects like schema public and languages C, SQL and plpgsql.
 * [Change]: pgModeler startup scripts are now path location free meaning that software can be installed where the user desires.
+* [Fix]: corrected some bugs that was causing crash when removing all operations from operation list.
+* [Fix]: minor bug fixes related to object selection over the model.
+* [Fix]: corrected a bug on load model dialog filter (chinese UI only).
 * [Fix]: pgModeler no longer crashes when editing objects style.
 * [Fix]: corrected bug that was deleting two sequeces at once.
 * [Fix]: pgModeler no longer crashes when removing (disconnecting) relationship that has special primary keys.
