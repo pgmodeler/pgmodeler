@@ -21,14 +21,14 @@ RelacionamentoWidget::RelacionamentoWidget(QWidget *parent): BaseObjectWidget(pa
 		//Alocando e configurando os destcadores de nomes das tabelas
 		dest_tab_orig=NULL;
 		qtd_operacoes=0;
-		dest_tab_orig=new SyntaxHighlighter(tabela_orig_txt, false);
+		dest_tab_orig=new SyntaxHighlighter(tabela_ref_txt, false);
 		dest_tab_orig->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																		 GlobalAttributes::DIR_SEPARATOR +
 																		 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																		 GlobalAttributes::CONFIGURATION_EXT);
 
 		dest_tab_dest=NULL;
-		dest_tab_dest=new SyntaxHighlighter(tabela_dest_txt, false);
+		dest_tab_dest=new SyntaxHighlighter(tabela_recep_txt, false);
 		dest_tab_dest->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
 																		 GlobalAttributes::DIR_SEPARATOR +
 																		 GlobalAttributes::SQL_HIGHLIGHT_CONF +
@@ -191,7 +191,13 @@ void RelacionamentoWidget::setAttributes(DatabaseModel *modelo, OperationList *l
 
 		//Aloca o novo relacionamento
 		//rel=new Relacionamento(nome, tipo_rel, tab_orig, tab_dest);
-		rel=new Relationship(tipo_rel, tab_orig, tab_dest);
+
+		if(tipo_rel==BaseRelationship::RELATIONSHIP_GEN ||
+			 tipo_rel==BaseRelationship::RELATIONSHIP_DEP)
+			rel=new Relationship(tipo_rel, tab_dest, tab_orig);
+		else
+			rel=new Relationship(tipo_rel, tab_orig, tab_dest);
+
 
 		/* Marca como novo objeto o relacionamento gerado, assim o mesmo é tratado
 		 de forma diferente nos métodos de configuração da classe superior */
@@ -257,12 +263,23 @@ void RelacionamentoWidget::setAttributes(DatabaseModel *modelo, OperationList *l
 		case BaseRelationship::RELATIONSHIP_DEP: rel_dep_rb->setChecked(true); break;
 	}
 
-	//Exibe o nome das tabelas participantes relacionamento no formulário
-	tabela_orig_txt->setPlainText(QString::fromUtf8(relacao->getTable(BaseRelationship::SRC_TABLE)->getName(true)));
-	tabela_dest_txt->setPlainText(QString::fromUtf8(relacao->getTable(BaseRelationship::DST_TABLE)->getName(true)));
+	//Converte o objeto para relacionamento entre tabelas para acessar os atributos
+	relacao_aux=dynamic_cast<Relationship *>(relacao);
+
+	if(relacao->getObjectType()==BASE_RELATIONSHIP ||
+		 (relacao_aux && relacao_aux->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN))
+	{
+		tabela_ref_lbl->setText(trUtf8("Table 1:"));
+		tabela_ref_txt->setPlainText(QString::fromUtf8(relacao->getTable(BaseRelationship::SRC_TABLE)->getName(true)));
+		tabela_recep_lbl->setText(trUtf8("Table 2:"));
+		tabela_recep_txt->setPlainText(QString::fromUtf8(relacao->getTable(BaseRelationship::DST_TABLE)->getName(true)));
+	}
+
+	tab_orig_obrig_chk->setText(QString::fromUtf8(relacao->getTable(BaseRelationship::SRC_TABLE)->getName()) + trUtf8(" is required"));
+	tab_dest_obrig_chk->setText(QString::fromUtf8(relacao->getTable(BaseRelationship::DST_TABLE)->getName()) + trUtf8(" is required"));
 
 	//Caso o relacionamento seja entre tabelas
-	if(relacao->getObjectType()==OBJ_RELATIONSHIP)
+	if(relacao_aux)
 	{
 		//vector<QString> vet_cols;
 		vector<Column *> vet_cols;
@@ -270,8 +287,14 @@ void RelacionamentoWidget::setAttributes(DatabaseModel *modelo, OperationList *l
 		int qtd, i;
 		QListWidgetItem *item=NULL;
 
-		//Converte o objeto para relacionamento entre tabelas para acessar os atributos
-		relacao_aux=dynamic_cast<Relationship *>(relacao);
+		//Exibe o nome das tabelas participantes relacionamento no formulário
+		if(tipo_rel!=BaseRelationship::RELATIONSHIP_NN)
+		{
+			tabela_ref_lbl->setText(trUtf8("Reference Table:"));
+			tabela_ref_txt->setPlainText(QString::fromUtf8(relacao_aux->getReferenceTable()->getName(true)));
+			tabela_recep_lbl->setText(trUtf8("Receiver Table:"));
+			tabela_recep_txt->setPlainText(QString::fromUtf8(relacao_aux->getReceiverTable()->getName(true)));
+		}
 
 		//Preenche os campos do formulário com os valores presentes no relacionamento
 		sufixo_auto_chk->setChecked(relacao_aux->isAutomaticSuffix());

@@ -307,7 +307,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="tabela_orig_lbl">
+        <widget class="QLabel" name="tabela_ref_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -327,12 +327,12 @@
           </size>
          </property>
          <property name="text">
-          <string>Source Table:</string>
+          <string>Table 1:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1" colspan="2">
-        <widget class="QTextEdit" name="tabela_orig_txt">
+        <widget class="QTextEdit" name="tabela_ref_txt">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -371,7 +371,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="tabela_dest_lbl">
+        <widget class="QLabel" name="tabela_recep_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -391,12 +391,12 @@
           </size>
          </property>
          <property name="text">
-          <string>Target Table:</string>
+          <string>Table 2:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1" colspan="2">
-        <widget class="QTextEdit" name="tabela_dest_txt">
+        <widget class="QTextEdit" name="tabela_recep_txt">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -470,7 +470,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Source Required</string>
+            <string>[SRC] is required</string>
            </property>
           </widget>
          </item>
@@ -483,7 +483,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Target Required</string>
+            <string>[DST] is required</string>
            </property>
           </widget>
          </item>

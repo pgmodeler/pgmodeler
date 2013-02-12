@@ -76,7 +76,6 @@ void startCrashHandler(int)
 	exit(1);
 }
 
-
 int main(int argc, char **argv)
 {
 	try
@@ -103,9 +102,7 @@ int main(int argc, char **argv)
 		//Draws the current version code on the splash
 		QFont fnt;
 		QPainter p;
-		//fnt.setFamily("Dejavu Sans");
 		fnt.setBold(true);
-		//fnt.setPointSize(7.5f);
 
 		QFontMetrics fm(fnt);
 		QString str_ver=QString("v%1").arg(GlobalAttributes::PGMODELER_VERSION);

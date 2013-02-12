@@ -291,7 +291,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 	//connect(cena, SIGNAL(s_popupMenuRequested(vector<BaseObject*>)), this, SLOT(exibirMenuObjetoTabela(vector<BaseObject *>)));
 	connect(cena, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(configurarMenuObjeto(BaseObject *)));
 	connect(cena, SIGNAL(s_popupMenuRequested(void)), this, SLOT(exibirMenuObjeto(void)));
-	connect(cena, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
+	//connect(cena, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
 	connect(cena, SIGNAL(selectionChanged(void)), this, SLOT(configurarSelecaoObjetos(void)));
 }
 
@@ -743,6 +743,7 @@ void ModeloWidget::configurarSelecaoObjetos(void)
 			{
 				//Exibe o form de edição de relacionamento
 				this->exibirFormObjeto(tipo_novo_obj);
+				cena->clearSelection();
 				//Cancela a operação restaurando o estado original das ações
 				this->cancelarAdicaoObjeto();
 			}

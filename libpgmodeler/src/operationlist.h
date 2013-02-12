@@ -99,6 +99,10 @@ class OperationList: public QObject {
 		 deleted when the whole list of operations is destroyed */
 		vector<BaseObject *> not_removed_objs;
 
+		/*! \brief Stores the objects that were unallocated on the removeOperations() method. This maps
+		is used in order to avoid double delete on pointers. */
+		map<BaseObject *, bool> unallocated_objs;
+
 		//! \brief Stores the operations executed by the user
 		vector<Operation *> operations;
 

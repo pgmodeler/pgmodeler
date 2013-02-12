@@ -54,12 +54,12 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 		else
 			str_aux=QApplication::translate("Relationship","%1_copies_%2","",QApplication::UnicodeUTF8);
 
-		if(rel_type!=RELATIONSHIP_NN)
-			str_aux=str_aux.arg(this->getReferenceTable()->getName())
-							.arg(this->getReceiverTable()->getName());
-		else
+		if(rel_type==RELATIONSHIP_NN)
 			str_aux=str_aux.arg(this->src_table->getName())
 							.arg(this->dst_table->getName());
+		else
+			str_aux=str_aux.arg(this->getReceiverTable()->getName())
+										 .arg(this->getReferenceTable()->getName());
 
 		setName(str_aux);
 

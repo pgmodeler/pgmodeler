@@ -309,16 +309,24 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	//Gets the item at mouse position
 	QGraphicsItem* item=this->itemAt(event->scenePos().x(), event->scenePos().y());
 
+	/* If the relationship line is visible, indicates that the user is in the middle of
+		 a relationship creation, thus is needed to inform to the scene to activate the
+		 the multiselection to be able to select two tables and link them. By default,
+		 the multiselection modifier is the Control key */
+	if(rel_line->isVisible())
+		event->setModifiers(Qt::ControlModifier);
+
 	QGraphicsScene::mousePressEvent(event);
 
 	if(event->buttons()==Qt::LeftButton)
 	{
 		//Selects the object (without press control) if the user is creating a relationship
-		if(item && item->isEnabled() &&  rel_line->isVisible())
-			item->setSelected(!item->isSelected());
+		if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
+			item->setSelected(true);
 	}
-	else if(event->buttons()==Qt::RightButton)// && !this->selectedItems().isEmpty())
+	else if(event->buttons()==Qt::RightButton)
 	{
+		//Case there is no item at the mouse position clears the selection on the scene
 		if(!item)
 			this->clearSelection();
 

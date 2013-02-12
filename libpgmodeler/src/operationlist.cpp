@@ -281,23 +281,37 @@ void OperationList::removeOperations(void)
 	while(!not_removed_objs.empty())
 	{
 		object=not_removed_objs.back();
-		tab_obj=dynamic_cast<TableObject *>(object);
 
-		//Deletes the object if its not referenced on the model
-		if(!tab_obj && model->getObjectIndex(object) < 0)
-			delete(object);
-		else if(tab_obj)
+		if(unallocated_objs.count(object)==0)
+			tab_obj=dynamic_cast<TableObject *>(object);
+
+		//Deletes the object if its not unallocated already or referenced on the model
+		if(unallocated_objs.count(object)==0 &&
+			 (!tab_obj && model->getObjectIndex(object) < 0))
 		{
-			//Deletes the object if its not referenced by some table
+			unallocated_objs[object]=true;
+			delete(object);
+		}
+		else if(tab_obj && unallocated_objs.count(tab_obj)==0)
+		{
 			tab=dynamic_cast<Table *>(tab_obj->getParentTable());
-			if(!tab || (tab && tab->getObjectIndex(tab_obj)) < 0)
+
+			//Deletes the object if its not unallocated already or referenced by some table
+			if(!tab ||
+				 (unallocated_objs.count(tab)==1) ||
+				 (tab && unallocated_objs.count(tab)==0 && tab->getObjectIndex(tab_obj) < 0))
+			{
+				unallocated_objs[tab_obj]=true;
 				delete(tab_obj);
+			}
 		}
 
 		not_removed_objs.pop_back();
+		tab_obj=NULL;
 	}
 
 	current_index=0;
+	unallocated_objs.clear();
 }
 
 void OperationList::validateOperations(void)
