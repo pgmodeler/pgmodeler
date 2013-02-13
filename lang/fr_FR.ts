@@ -555,7 +555,7 @@
         <translation>Créer / Éditer: </translation>
     </message>
     <message>
-        <location line="+360"/>
+        <location line="+364"/>
         <source>Value(s)</source>
         <translation>Valeur(s)</translation>
     </message>
@@ -3298,40 +3298,40 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+38"/>
-        <location line="+2470"/>
+        <location line="+2500"/>
         <source>Source code</source>
         <translation>Code source</translation>
     </message>
     <message>
-        <location line="-2468"/>
+        <location line="-2498"/>
         <source>Show object source code</source>
         <translation>Afficher le code source de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2459"/>
+        <location line="+2489"/>
         <source>Properties</source>
         <translation>Propriétés</translation>
     </message>
     <message>
-        <location line="-2457"/>
+        <location line="-2487"/>
         <source>Edit the object properties</source>
         <translation>Editer les propriétés de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2484"/>
+        <location line="+2514"/>
         <source>Protect</source>
         <translation>Vérrouiller</translation>
     </message>
     <message>
-        <location line="-2483"/>
-        <location line="+2478"/>
+        <location line="-2513"/>
+        <location line="+2508"/>
         <source>Unprotect</source>
         <translation>Déverrouiller</translation>
     </message>
     <message>
-        <location line="-2477"/>
+        <location line="-2507"/>
         <source>Pretects the object(s) against modifications</source>
         <translation>Empêcher l(es)&apos;objet(s) d&apos;être modifiés</translation>
     </message>
@@ -3342,12 +3342,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2486"/>
+        <location line="+2516"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location line="-2484"/>
+        <location line="-2514"/>
         <source>Delete the selected object(s)</source>
         <translation>Supprimer les objets sélectionnés</translation>
     </message>
@@ -3459,7 +3459,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Sélectionne tout les &amp;eacute;l&amp;eacute;ments graphiques du sch&amp;eacute;ma actuellement s&amp;eacute;lectionné</translation>
     </message>
     <message>
-        <location line="+687"/>
+        <location line="+699"/>
         <source>Loading database model</source>
         <translation>Ouverture du modèle de base de données</translation>
     </message>
@@ -3470,7 +3470,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="-396"/>
-        <location line="+946"/>
+        <location line="+947"/>
         <location line="+407"/>
         <location line="+6"/>
         <source>Confirmation</source>
@@ -3497,22 +3497,22 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Souhaitez vous réellement supprimer l&apos;objet sélectionné?</translation>
     </message>
     <message>
-        <location line="+235"/>
+        <location line="+241"/>
         <source>(no objects)</source>
         <translation>(aucun objet)</translation>
     </message>
     <message>
-        <location line="+323"/>
+        <location line="+334"/>
         <source>Constraints</source>
         <translation>Contraintes</translation>
     </message>
     <message>
-        <location line="-1917"/>
+        <location line="-1935"/>
         <source>Convert a relationship is an irreversible operation and causes the deletion of all operation history! Do you want to continue?</source>
         <translation>Convertir une relation est une opération irréversible qui cause la suppression de tout l&apos;historique des opérations? Souhaitez vous continuer?</translation>
     </message>
     <message>
-        <location line="-575"/>
+        <location line="-587"/>
         <source>Convert rel. n-n</source>
         <translation>Convertir rel n-n</translation>
     </message>
@@ -3527,7 +3527,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation></translation>
     </message>
     <message>
-        <location line="+1913"/>
+        <location line="+1926"/>
         <source>CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?</source>
         <translation>ATTENTION: Supprimer plusieur objets en une seule fois provoque des invalidation irréversible sur les autres objets du modèle. Souhaitez vous réllement supprimer TOUS les objets sélectionnés?</translation>
     </message>
@@ -3597,7 +3597,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>OperationList</name>
     <message>
-        <location filename="../libpgmodeler/src/operationlist.cpp" line="+622"/>
+        <location filename="../libpgmodeler/src/operationlist.cpp" line="+636"/>
         <source>Undoing operation on object: %1 (%2)</source>
         <translation>Défaire les opération sur l&apos;objet: %1 (%2)</translation>
     </message>
@@ -4190,32 +4190,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation> Identifiant</translation>
     </message>
     <message>
-        <location line="+25"/>
-        <source>Source Table:</source>
-        <translation>Table Source:</translation>
-    </message>
-    <message>
-        <location line="+64"/>
-        <source>Target Table:</source>
-        <translation>Table Cible:</translation>
-    </message>
-    <message>
-        <location line="+64"/>
+        <location line="+153"/>
         <source>Cardinality:</source>
         <translation>Cardinalité:</translation>
     </message>
     <message>
-        <location line="+15"/>
-        <source>Source Required</source>
-        <translation>Source requise</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Target Required</source>
-        <translation>Cible requise</translation>
-    </message>
-    <message>
-        <location line="+27"/>
+        <location line="+55"/>
         <location line="+10"/>
         <source>Name of the table generated from many to many relationship</source>
         <translation>Nom de la table générée d&apos;une relation plusieurs à plusieurs</translation>
@@ -4278,6 +4258,22 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Editer les attributs d&apos;une relation existante est autorisée, cependant celà doit être fait avec attention car les références de colonnes peuvent être cassées et causer l&apos;invalidation des objets tels que les déclencheurs, les index, les contraintes et les séquences.</translation>
     </message>
     <message>
+        <location line="+196"/>
+        <location line="+1"/>
+        <source> is required</source>
+        <translation> est requis</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Reference Table:</source>
+        <translation>Table de référence:</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Receiver Table:</source>
+        <translation>Table de destination:</translation>
+    </message>
+    <message>
         <location filename="../libpgmodeler_ui/ui/relacionamentowidget.ui" line="-21"/>
         <source>Automatic Suffix</source>
         <translation>Suffixe automatique</translation>
@@ -4313,7 +4309,29 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation></translation>
     </message>
     <message>
-        <location line="+291"/>
+        <location line="+70"/>
+        <location filename="../libpgmodeler_ui/src/relacionamentowidget.cpp" line="-23"/>
+        <source>Table 1:</source>
+        <translation>Table 1:</translation>
+    </message>
+    <message>
+        <location line="+64"/>
+        <location filename="../libpgmodeler_ui/src/relacionamentowidget.cpp" line="+2"/>
+        <source>Table 2:</source>
+        <translation>Table 2:</translation>
+    </message>
+    <message>
+        <location line="+79"/>
+        <source>[SRC] is required</source>
+        <translation>[SRC] est requis</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>[DST] is required</source>
+        <translation>[DST] est requis</translation>
+    </message>
+    <message>
+        <location line="+65"/>
         <source>Source Suffix:</source>
         <translation>Suffixe Source:</translation>
     </message>
@@ -4343,7 +4361,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Avancé</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/relacionamentowidget.cpp" line="-20"/>
+        <location filename="../libpgmodeler_ui/src/relacionamentowidget.cpp" line="-212"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
