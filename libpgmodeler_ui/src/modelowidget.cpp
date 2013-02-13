@@ -2327,6 +2327,25 @@ void ModeloWidget::excluirObjetos(void)
 void ModeloWidget::exibirMenuObjeto(void)
 {
 	menu_popup.exec(QCursor::pos());
+
+	/* When the popup is hidden check if there is a table object (colum, constraint, etc) selected,
+		 if so, is necessary to reenable the table view deactivated before the menu activation */
+	if(this->objs_selecionados.size()==1)
+	{
+		//Get the selected table object
+		TableObject *tab_obj=dynamic_cast<TableObject *>(this->objs_selecionados[0]);
+
+		//If the table object has a parent table
+		if(tab_obj && tab_obj->getParentTable())
+		{
+			//Get the graphical representation for table
+			TableView *tab=dynamic_cast<TableView *>(tab_obj->getParentTable()->getReceiverObject());
+			//Reacitvates the table
+			tab->setEnabled(true);
+			//Calls the hoverLeaveEvent in order to hide the child selection
+			tab->hoverLeaveEvent(NULL);
+		}
+	}
 }
 
 void ModeloWidget::configurarMenuObjeto(BaseObject *obj_sel)

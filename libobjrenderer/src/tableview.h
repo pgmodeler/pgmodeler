@@ -46,14 +46,15 @@ class TableView: public BaseTableView {
 		//! \brief Stores the original table's tool tip
 		QString table_tooltip;
 
-		void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
-		void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
-		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 		QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 	public:
 		TableView(Table *table);
 		~TableView(void);
+
+		void hoverLeaveEvent(QGraphicsSceneHoverEvent *);
+		void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 	private slots:
 		void configureObject(void);

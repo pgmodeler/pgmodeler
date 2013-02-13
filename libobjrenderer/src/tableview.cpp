@@ -38,14 +38,14 @@ void TableView::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	//Emit a signal containing the select child object if the user right-click the focused item
 	if(!this->isSelected() && event->buttons()==Qt::RightButton && sel_child_obj)
 	{
-		//this->setEnabled(false);
-
 		if(this->scene())
 		 this->scene()->clearSelection();
 
-		emit s_childObjectSelected(sel_child_obj);
+		/* Deactivate the table in order not to hide the child object selection.
+			 The table object is reativated when the context menu is hidden */
+		this->setEnabled(false);
 
-		//this->setEnabled(true);
+		emit s_childObjectSelected(sel_child_obj);
 	}
 	else
 		BaseObjectView::mousePressEvent(event);

@@ -230,7 +230,7 @@ void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, S
 	connect(parametro_wgt, SIGNAL(finished(int)), this, SLOT(manipularAtributo(int)));
 
 	//Define os atributos do formulários e da janela pai
-	BaseObjectWidget::setAttributes(modelo, lista_op, schema, tipo);
+	BaseObjectWidget::setAttributes(modelo, lista_op, tipo, schema);
 
 	//Define o modelo de dados de referência dos seletores de função
 	for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)

@@ -249,7 +249,6 @@ void RelacionamentoWidget::setAttributes(DatabaseModel *modelo, OperationList *l
 		qtd_operacoes=lista_op->getCurrentSize();
 	}
 
-
 	tipo_rel=relacao->getRelationshipType();
 
 	//Marcado o radiobox que indica o tipo do relacionamento
