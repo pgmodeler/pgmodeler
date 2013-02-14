@@ -238,8 +238,9 @@ class Table: public BaseTable {
 		Constraint *getPrimaryKey(void);
 
 		/*! \brief Stores on the specified vector 'fks' the foreign key present on table. The
-		 boolean paramenter is used to include those foreign keys includes by relationship. */
-		void getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel=false);
+		 boolean paramenter is used to include those foreign keys includes by relationship. The third parameter
+		is used to filter the search, including only the foreign keys that references the specified table */
+		void getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel=false, Table *ref_table=NULL);
 
 		//! \brief Returns if the table is configured with oids
 		bool isWithOIDs(void);

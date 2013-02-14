@@ -1566,7 +1566,9 @@ void DatabaseModel::removeRelationship(BaseRelationship *rel, int obj_idx)
 				disconnectRelationships();
 			}
 			else if(rel->getObjectType()==BASE_RELATIONSHIP)
+			{
 				rel->disconnectRelationship();
+			}
 
 			__removeObject(rel, obj_idx);
 

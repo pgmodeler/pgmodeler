@@ -535,22 +535,16 @@ void RelacionamentoWidget::listarObjetosAvancados(void)
 		}
 		else if(rel_base->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
 		{
-			//Listando as chaves estrangeiras da tabela receptora
-			dynamic_cast<Table *>(rel_base->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs);
 			tab=dynamic_cast<Table *>(rel_base->getTable(BaseRelationship::DST_TABLE));
+			dynamic_cast<Table *>(rel_base->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false,tab);
 			qtd=constrs.size();
 
-			for(i=0, i1=tab_objs_avancados->obterNumLinhas(); i < qtd; i++)
+			for(i=0, i1=tab_objs_avancados->obterNumLinhas(); i < qtd; i++, i1++)
 			{
-				//Lista apenas as fks que referenciam a tabela de destino do relacionamento
-				if(constrs[i]->getReferencedTable()==tab)
-				{
-					tab_objs_avancados->adicionarLinha();
-					tab_objs_avancados->definirTextoCelula(QString::fromUtf8(constrs[i]->getName()),i1,0);
-					tab_objs_avancados->definirTextoCelula(QString::fromUtf8(constrs[i]->getTypeName()),i1,1);
-					tab_objs_avancados->definirDadoLinha(QVariant::fromValue<void *>(constrs[i]), i1);
-					i1++;
-				}
+				tab_objs_avancados->adicionarLinha();
+				tab_objs_avancados->definirTextoCelula(QString::fromUtf8(constrs[i]->getName()),i1,0);
+				tab_objs_avancados->definirTextoCelula(QString::fromUtf8(constrs[i]->getTypeName()),i1,1);
+				tab_objs_avancados->definirDadoLinha(QVariant::fromValue<void *>(constrs[i]), i1);
 			}
 		}
 

@@ -927,7 +927,7 @@ Constraint *Table::getPrimaryKey(void)
 	return(pk);
 }
 
-void Table::getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel)
+void Table::getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel, Table *ref_table)
 {
 	unsigned count,i;
 	Constraint *constr=NULL;
@@ -938,6 +938,7 @@ void Table::getForeignKeys(vector<Constraint *> &fks, bool inc_added_by_rel)
 		constr=dynamic_cast<Constraint *>(constraints[i]);
 
 		if(constr->getConstraintType()==ConstraintType::foreign_key &&
+			 (!ref_table || (ref_table && constr->getReferencedTable()==ref_table)) &&
 			 (!constr->isAddedByLinking() ||
 				(constr->isAddedByLinking() && inc_added_by_rel)))
 			fks.push_back(constr);

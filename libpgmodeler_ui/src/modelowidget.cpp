@@ -2113,6 +2113,7 @@ void ModeloWidget::excluirObjetos(void)
 	vector<BaseObject *> vet_aux;
 	vector<unsigned> vet_ids;
 	vector<unsigned>::reverse_iterator itr1, itr1_end;
+	vector<Constraint *> constrs;
 	map<unsigned, BaseObject *> mapa_objs;
 	QAction *obj_sender=dynamic_cast<QAction *>(sender());
 
@@ -2157,8 +2158,35 @@ void ModeloWidget::excluirObjetos(void)
 					while(itr!=itr_end)
 					{
 						objeto=(*itr);
-						mapa_objs[objeto->getObjectId()]=objeto;
-						vet_ids.push_back(objeto->getObjectId());
+
+						//Se o objeto for um relationamento FK ao invés de remove-lo, remove as chaves primárias que o representam
+						if(objeto->getObjectType()==BASE_RELATIONSHIP)
+						{
+							relac=dynamic_cast<BaseRelationship *>(objeto);
+
+							//Checa se o relacionamento é fk
+							if(relac->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+							{
+								//Obtém a tabela referenciada
+								tabela=dynamic_cast<Table *>(relac->getTable(BaseRelationship::DST_TABLE));
+								//Obtém as chaves estrangeiras da tabela de origem as quais referenciam a tabela acima
+								dynamic_cast<Table *>(relac->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false,tabela);
+
+								//Adiciona as restrições ao mapa de objetos a ser removidos
+								while(!constrs.empty())
+								{
+									objeto_tab=constrs.back();
+									mapa_objs[objeto_tab->getObjectId()]=objeto_tab;
+									vet_ids.push_back(objeto_tab->getObjectId());
+									constrs.pop_back();
+								}
+							}
+						}
+						else
+						{
+							mapa_objs[objeto->getObjectId()]=objeto;
+							vet_ids.push_back(objeto->getObjectId());
+						}
 						itr++;
 					}
 
@@ -2213,7 +2241,7 @@ void ModeloWidget::excluirObjetos(void)
 							try
 							{
 								/* Caso seja uma coluna valida a sua remoção verificando se outros objetos
-					 não estão referenciando a mesma */
+								não estão referenciando a mesma */
 								if(tipo_obj==OBJ_COLUMN)
 									modelo->validateColumnRemoval(dynamic_cast<Column *>(objeto_tab));
 
@@ -2640,7 +2668,9 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 		menu_popup.addAction(action_colar);
 
 	//Caso haja objeto selecionado adiciona a ação de excluir
-	if((!(objs_sel.size()==1 && (objs_sel[0]==modelo || objs_sel[0]->getObjectType()==BASE_RELATIONSHIP)) &&
+	if((!(objs_sel.size()==1 && (objs_sel[0]==modelo ||
+															 (objs_sel[0]->getObjectType()==BASE_RELATIONSHIP &&
+																dynamic_cast<BaseRelationship *>(objs_sel[0])->getRelationshipType()!=BaseRelationship::RELATIONSHIP_FK))) &&
 			!objs_sel.empty()) || obj_tab)
 		menu_popup.addAction(action_excluir);
 
