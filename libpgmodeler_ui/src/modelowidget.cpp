@@ -291,8 +291,8 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 	//connect(cena, SIGNAL(s_popupMenuRequested(vector<BaseObject*>)), this, SLOT(exibirMenuObjetoTabela(vector<BaseObject *>)));
 	connect(cena, SIGNAL(s_popupMenuRequested(BaseObject*)), this, SLOT(configurarMenuObjeto(BaseObject *)));
 	connect(cena, SIGNAL(s_popupMenuRequested(void)), this, SLOT(exibirMenuObjeto(void)));
-	//connect(cena, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
-	connect(cena, SIGNAL(selectionChanged(void)), this, SLOT(configurarSelecaoObjetos(void)));
+	connect(cena, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)), this, SLOT(configurarSelecaoObjetos(void)));
+	//connect(cena, SIGNAL(selectionChanged(void)), this, SLOT(configurarSelecaoObjetos(void)));
 }
 
 ModeloWidget::~ModeloWidget(void)
@@ -1384,6 +1384,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
 					relacao_wgt->setAttributes(modelo, lista_op, dynamic_cast<BaseRelationship *>(objeto));
 
 				relacao_wgt->show();
+				cena->clearSelection();
 			break;
 
 			case OBJ_TABLE:
@@ -2354,7 +2355,7 @@ void ModeloWidget::excluirObjetos(void)
 
 void ModeloWidget::exibirMenuObjeto(void)
 {
-	menu_popup.exec(QCursor::pos());
+	TableView *tab=NULL;
 
 	/* When the popup is hidden check if there is a table object (colum, constraint, etc) selected,
 		 if so, is necessary to reenable the table view deactivated before the menu activation */
@@ -2363,16 +2364,20 @@ void ModeloWidget::exibirMenuObjeto(void)
 		//Get the selected table object
 		TableObject *tab_obj=dynamic_cast<TableObject *>(this->objs_selecionados[0]);
 
-		//If the table object has a parent table
 		if(tab_obj && tab_obj->getParentTable())
-		{
 			//Get the graphical representation for table
-			TableView *tab=dynamic_cast<TableView *>(tab_obj->getParentTable()->getReceiverObject());
-			//Reacitvates the table
-			tab->setEnabled(true);
-			//Calls the hoverLeaveEvent in order to hide the child selection
-			tab->hoverLeaveEvent(NULL);
-		}
+			tab=dynamic_cast<TableView *>(tab_obj->getParentTable()->getReceiverObject());
+	}
+
+	menu_popup.exec(QCursor::pos());
+
+	//If the table object has a parent table
+	if(tab)
+	{
+		//Reacitvates the table
+		tab->setEnabled(true);
+		//Calls the hoverLeaveEvent in order to hide the child selection
+		tab->hoverLeaveEvent(NULL);
 	}
 }
 

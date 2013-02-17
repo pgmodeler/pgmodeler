@@ -52,7 +52,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, O
 		def_value_txt->setPlainText(QString::fromUtf8(column->getDefaultValue()));
 	}
 
-	data_type->definirAtributos(type, model, UserTypeConfig::BASE_TYPE | UserTypeConfig::DOMAIN_TYPE);
+	data_type->definirAtributos(type, model, UserTypeConfig::BASE_TYPE | UserTypeConfig::DOMAIN_TYPE,true,false);
 }
 
 void ColumnWidget::applyConfiguration(void)

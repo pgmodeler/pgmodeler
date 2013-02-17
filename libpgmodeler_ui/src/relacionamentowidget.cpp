@@ -184,7 +184,7 @@ void RelacionamentoWidget::setAttributes(DatabaseModel *modelo, OperationList *l
 
 	try
 	{
-		QString nome;
+		//QString nome;
 
 		//Cria um nome temporário para o relacionamento
 		//nome=QString("rel_") + tab_orig->getName() + QString("_") + tab_dest->getName();
@@ -192,10 +192,10 @@ void RelacionamentoWidget::setAttributes(DatabaseModel *modelo, OperationList *l
 		//Aloca o novo relacionamento
 		//rel=new Relacionamento(nome, tipo_rel, tab_orig, tab_dest);
 
-		if(tipo_rel==BaseRelationship::RELATIONSHIP_GEN ||
-			 tipo_rel==BaseRelationship::RELATIONSHIP_DEP)
-			rel=new Relationship(tipo_rel, tab_dest, tab_orig);
-		else
+		//if(tipo_rel==BaseRelationship::RELATIONSHIP_GEN ||
+		//	 tipo_rel==BaseRelationship::RELATIONSHIP_DEP ||)
+		//	rel=new Relationship(tipo_rel, tab_dest, tab_orig);
+		//else
 			rel=new Relationship(tipo_rel, tab_orig, tab_dest);
 
 
@@ -219,7 +219,8 @@ void RelacionamentoWidget::setAttributes(DatabaseModel *modelo, OperationList *l
 	}
 	catch(Exception &e)
 	{
-		if(rel) delete(rel);
+		lista_op->removeLastOperation();
+		//if(rel) delete(rel);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }

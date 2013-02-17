@@ -294,7 +294,7 @@ void ObjectsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
 	QGraphicsScene::mouseDoubleClickEvent(event);
 
-	if(this->selectedItems().size()==1 && event->buttons()==Qt::LeftButton)
+	if(this->selectedItems().size()==1 && event->buttons()==Qt::LeftButton && !rel_line->isVisible())
 	{
 		//Gets the selected graphical object
 		BaseObjectView *obj=dynamic_cast<BaseObjectView *>(this->selectedItems().at(0));
@@ -323,6 +323,12 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		//Selects the object (without press control) if the user is creating a relationship
 		if(item && item->isEnabled() && !item->isSelected() &&  rel_line->isVisible())
 			item->setSelected(true);
+		else if(this->selectedItems().isEmpty())
+		{
+			sel_ini_pnt=event->scenePos();
+			selection_rect->setVisible(true);
+			emit s_objectSelected(NULL,false);
+		}
 	}
 	else if(event->buttons()==Qt::RightButton)
 	{
@@ -331,13 +337,6 @@ void ObjectsScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 			this->clearSelection();
 
 		emit s_popupMenuRequested();
-	}
-
-	if(this->selectedItems().isEmpty() && event->buttons()==Qt::LeftButton)
-	{
-		sel_ini_pnt=event->scenePos();
-		selection_rect->setVisible(true);
-		emit s_objectSelected(NULL,false);
 	}
 }
 

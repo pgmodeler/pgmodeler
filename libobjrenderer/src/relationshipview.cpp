@@ -94,8 +94,9 @@ QVariant RelationshipView::itemChange(GraphicsItemChange change, const QVariant 
 		QPen pen;
 		QColor color;
 
-		if(value.toBool())
-			this->sel_order=++BaseObjectView::global_sel_order;
+		//if(!this->isSelected() && value.toBool())
+		//	this->sel_order=++BaseObjectView::global_sel_order;
+		this->setSelectionOrder(value.toBool());
 
 		pos_info_pol->setVisible(value.toBool());
 		pos_info_txt->setVisible(value.toBool());

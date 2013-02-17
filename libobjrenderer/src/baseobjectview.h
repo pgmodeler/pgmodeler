@@ -87,6 +87,8 @@ class BaseObjectView: public QObject, public QGraphicsItemGroup {
 
 		void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
+		void setSelectionOrder(bool selected);
+
 	public:
 		static const float	VERT_SPACING=2.0f,
 												HORIZ_SPACING=2.0f,

@@ -617,7 +617,30 @@ int Table::getObjectIndex(TableObject *obj)
 	if(!obj)
 		return(-1);
 	else
-		return(getObjectIndex(obj->getName(true), obj->getObjectType()));
+	{
+		if(obj->getParentTable()!=this)
+			return(-1);
+		else
+		{
+			vector<TableObject *> *obj_list = this->getObjectList(obj->getObjectType());
+			vector<TableObject *>::iterator itr, itr_end;
+			bool found=false;
+
+			itr=obj_list->begin();
+			itr_end=obj_list->end();
+
+			while(itr!=itr_end && !found)
+			{
+				found=((*itr)==obj);
+				if(!found) itr++;
+			}
+
+			if(found)
+				return(itr-obj_list->begin());
+			else
+				return(-1);
+		}
+	}
 }
 
 BaseObject *Table::getObject(const QString &name, ObjectType obj_type)

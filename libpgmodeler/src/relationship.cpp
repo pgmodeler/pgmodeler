@@ -57,6 +57,9 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 		if(rel_type==RELATIONSHIP_NN)
 			str_aux=str_aux.arg(this->src_table->getName())
 							.arg(this->dst_table->getName());
+		else if(rel_type==RELATIONSHIP_1N)
+			str_aux=str_aux.arg(this->getReferenceTable()->getName())
+										 .arg(this->getReceiverTable()->getName());
 		else
 			str_aux=str_aux.arg(this->getReceiverTable()->getName())
 										 .arg(this->getReferenceTable()->getName());

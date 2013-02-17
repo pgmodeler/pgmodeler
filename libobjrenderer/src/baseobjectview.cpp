@@ -355,19 +355,25 @@ QVariant BaseObjectView::itemChange(GraphicsItemChange change, const QVariant &v
 	}
 	else if(change==ItemSelectedHasChanged && obj_selection)
 	{
-		if(value.toBool())
-			this->sel_order=++BaseObjectView::global_sel_order;
-
+		this->setSelectionOrder(value.toBool());
 		pos_info_pol->setVisible(value.toBool());
 		pos_info_txt->setVisible(value.toBool());
 		obj_selection->setVisible(value.toBool());
 		this->configurePositionInfo(this->pos());
-/*
+
 		emit s_objectSelected(dynamic_cast<BaseGraphicObject *>(this->getSourceObject()),
-													value.toBool()); */
+													value.toBool());
 	}
 
 	return(value);
+}
+
+void BaseObjectView::setSelectionOrder(bool selected)
+{
+	if(this->sel_order==0 && selected)
+		this->sel_order=++BaseObjectView::global_sel_order;
+	else if(!selected)
+		this->sel_order=0;
 }
 
 QRectF BaseObjectView::boundingRect(void) const
