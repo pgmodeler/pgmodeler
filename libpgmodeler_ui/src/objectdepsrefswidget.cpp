@@ -16,7 +16,7 @@ void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *objec
 {
 	vector<BaseObject *> objs;
 
-	BaseObjectWidget::setAttributes(model, NULL, object, parent_obj);
+	BaseObjectWidget::setAttributes(model, object, parent_obj);
 
 	this->name_edt->setReadOnly(true);
 	this->parent_form->aplicar_ok_btn->setEnabled(true);

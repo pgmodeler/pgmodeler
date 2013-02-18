@@ -65,16 +65,16 @@ void RoleWidget::configureRoleSelection(void)
 
 void RoleWidget::selectMemberRole(void)
 {
-	selecaoobjetos_wgt->definirObjetoVisivel(OBJ_ROLE, true);
-	selecaoobjetos_wgt->definirModelo(this->model);
-	selecaoobjetos_wgt->show();
+	object_selection_wgt->definirObjetoVisivel(OBJ_ROLE, true);
+	object_selection_wgt->definirModelo(this->model);
+	object_selection_wgt->show();
 }
 
 void RoleWidget::hideEvent(QHideEvent *event)
 {
 	unsigned i;
 
-	disconnect(selecaoobjetos_wgt,0,this,0);
+	disconnect(object_selection_wgt,0,this,0);
 
 	for(i=0; i < 3; i++)
 		members_tab[i]->blockSignals(true);
@@ -118,7 +118,7 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 	BaseObjectWidget::setAttributes(model, op_list, role);
 
 	fillMembersTable();
-	connect(selecaoobjetos_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
+	connect(object_selection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
 	configureRoleSelection();
 }
 
@@ -191,7 +191,7 @@ void RoleWidget::showSelectedRoleData(void)
 	BaseObject *obj_sel=NULL;
 
 	//Get the selected role
-	obj_sel=selecaoobjetos_wgt->obterObjetoSelecao();
+	obj_sel=object_selection_wgt->obterObjetoSelecao();
 
 	//Gets the index of the table where the role data is displayed
 	idx_tab=members_twg->currentIndex();

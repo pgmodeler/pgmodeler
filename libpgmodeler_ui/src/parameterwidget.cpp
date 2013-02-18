@@ -51,7 +51,7 @@ void ParameterWidget::setAttributes(Parameter param, DatabaseModel *model)
 	default_value_edt->setText(QString::fromUtf8(param.getDefaultValue()));
 	data_type->definirAtributos(param.getType(), model);
 
-	BaseObjectWidget::setAttributes(model,NULL,&this->parameter);
+	BaseObjectWidget::setAttributes(model,&this->parameter, NULL);
 }
 
 void ParameterWidget::applyConfiguration(void)

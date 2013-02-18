@@ -31,7 +31,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		owner_sel=NULL;
 		tablespace_sel=NULL;
 
-		selecaoobjetos_wgt=new VisaoObjetosWidget(true);
+		object_selection_wgt=new VisaoObjetosWidget(true);
 
 		hl_parentname_txt=new SyntaxHighlighter(parent_obj_txt, false);
 		hl_parentname_txt->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
@@ -93,7 +93,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 
 BaseObjectWidget::~BaseObjectWidget(void)
 {
-	delete(selecaoobjetos_wgt);
+	delete(object_selection_wgt);
 	delete(parent_form);
 }
 
@@ -140,11 +140,16 @@ void BaseObjectWidget::hideEvent(QHideEvent *)
 	parent_form->blockSignals(false);
 }
 
-void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *object, BaseObject *parent_obj, float obj_px, float obj_py)
+void BaseObjectWidget::setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj)
+{
+	setAttributes(model, NULL, object, parent_obj, NAN, NAN, false);
+}
+
+void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_list, BaseObject *object, BaseObject *parent_obj, float obj_px, float obj_py, bool uses_op_list)
 {
 	ObjectType obj_type, parent_type=BASE_OBJECT;
 
-	if(!model)
+	if(!model || (uses_op_list && !op_list))
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->model=model;

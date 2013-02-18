@@ -52,7 +52,7 @@ void Constraint::setCheckExpression(const QString &expr)
 bool Constraint::isColumnExists(Column *column, unsigned col_type)
 {
 	vector<Column *>::iterator itr, itr_end;
-	Column *col_aux=NULL;
+	//Column *col_aux=NULL;
 	bool found=false;
 
 	//Raises an error if the column is not allocated
@@ -74,8 +74,9 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 	//Tries to find the column  on the internal list
 	while(itr!=itr_end && !found)
 	{
-		col_aux=(*itr);
-		found=(col_aux==column || col_aux->getName()==column->getName());
+		//col_aux=(*itr);
+		//found=(col_aux==column || col_aux->getName()==column->getName());
+		found=((*itr)==column);
 		itr++;
 	}
 

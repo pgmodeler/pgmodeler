@@ -72,7 +72,7 @@ void DatabaseWidget::setAttributes(DatabaseModel *model)
 		if(idx < 0) idx=0;
 		lcctype_cmb->setCurrentIndex(idx);
 
-		BaseObjectWidget::setAttributes(model, NULL, model);
+		BaseObjectWidget::setAttributes(model, model, NULL);
 	}
 }
 

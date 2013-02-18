@@ -18,8 +18,8 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class RestricaoWidget
-\brief Definição da classe que implementa o formulário de edição dos atributos de relacionamentos.
+\class RelationshipWidget
+\brief Implements the operations to create/edit relationships via form.
 */
 
 #ifndef RELATIONSHIP_WIDGET_H
@@ -32,29 +32,28 @@
 class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
 	private:
 		Q_OBJECT
-		/*! \brief Quantidade de elementos na lista de operações antes do relacionamento
-			ser editado. Este atributo é usado para se saber, em caso de cancelamento
-			da edição do relacionamento, a quantidade de operações relacionada ao
-			objeto que necessitam ser removidas. Vide: cancelarConfiguracao() */
+
+		/*! \brief Operation list element count before editing the relationship. This attribute
+		is used to know, in case of cancel the edition, the operation (count) that is needed to
+		be removed. See: cancelConfiguration() */
 		unsigned operation_count;
 
-		//! \brief Destacadores de sintaxe para os campos de nome da tabela de origem e destino
 		SyntaxHighlighter *table1_hl,
 											*table2_hl;
 
-		//! \brief Tabela as quais armazenam os atributos e restrições do relacionamento
+		//! \brief Table widgets that stores the attributes, constraint and advanced objects of relationship
 		TabelaObjetosWidget *attributes_tab,
 												*constraints_tab,
 												*advanced_objs_tab;
 
-		/*! \brief Lista os objetos do relacionamento na tabela respectiva, de acordo
-			com o tipo do objeto passado */
+		//! \brief Lists the objects of relationship (attributes/constraints) on the respective table widget
 		void listObjects(ObjectType obj_type);
 
-		//! \brief Lista os objetos avançados
+		//! \brief Lists the advanced objects in the repective table widget
 		void listAdvancedObjects(void);
 
-		//! \brief Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
+		/*! \brief Shows the object data in the specified table row. The table widget is idenfied by
+		 the current object type */
 		void showObjectData(TableObject *object, int row);
 
 	protected:
@@ -62,26 +61,16 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 
 	public:
 		RelationshipWidget(QWidget * parent = 0);
-
 		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel);
 
 	private slots:
 		void hideEvent(QHideEvent *event);
 
-		//! \brief Adiciona um objeto   tabela a qual aciona o método
 		void addObject(void);
-
-		//! \brief Edita um objeto selecionado  na tabela a qual aciona o método
 		void editObject(int row);
-
-		//! \brief Remove um objeto selecionado  na tabela a qual aciona o método
 		void removeObject(int row);
-
-		//! \brief Remove todos os objetos da tabela a qual aciona o método
 		void removeObjects(void);
-
-		//! \brief Exibe o formulário referente ao objeto criado ou que representa o relationamento
-		void showAdvancedObject(int idx);
+		void showAdvancedObject(int row);
 
 	public slots:
 		void applyConfiguration(void);

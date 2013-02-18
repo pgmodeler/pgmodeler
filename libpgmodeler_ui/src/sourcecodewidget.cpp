@@ -125,7 +125,8 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 	{
 		try
 		{
-			BaseObjectWidget::setAttributes(model, NULL, object);
+			BaseObjectWidget::setAttributes(model, object, NULL);
+
 			this->parent_form->aplicar_ok_btn->setEnabled(true);
 			this->protected_obj_frm->setVisible(false);
 

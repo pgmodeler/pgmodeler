@@ -110,7 +110,7 @@ void PermissionWidget::hideEvent(QHideEvent *event)
 
 void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, BaseObject *object)
 {
-	BaseObjectWidget::setAttributes(model,NULL,object,parent_obj);
+	BaseObjectWidget::setAttributes(model,object,parent_obj);
 
 	if(object)
 	{

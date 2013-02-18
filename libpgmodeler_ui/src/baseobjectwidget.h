@@ -47,7 +47,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		int pf_min_height, pf_max_height;
 
 	protected:
-		VisaoObjetosWidget *selecaoobjetos_wgt;
+		VisaoObjetosWidget *object_selection_wgt;
 
 		static const QColor PROT_LINE_BGCOLOR,
 												PROT_LINE_FGCOLOR,
@@ -136,13 +136,18 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		void hideEvent(QHideEvent *);
 		void showEvent(QShowEvent *);
 
+		virtual void setAttributes(DatabaseModel *model, OperationList *op_list,
+															 BaseObject *object, BaseObject *parent_obj=NULL,
+															 float obj_px=NAN, float obj_py=NAN, bool uses_op_list=true);
+
+		/*! \brief This method is a simplification of the original setAttributes. This method must be used
+		only on forms that does not make use of operaton list and not treat graphical objects, since it calls
+		this original one whit the op_list=NULL and obj_px=NAN, obj_py=NAN */
+		virtual void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
+
 	public:
 		BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=BASE_OBJECT);
 		virtual ~BaseObjectWidget(void);
-
-		virtual void setAttributes(DatabaseModel *model, OperationList *op_list,
-															 BaseObject *object, BaseObject *parent_obj=NULL,
-															 float obj_px=NAN, float obj_py=NAN);
 
 	protected slots:
 		void editPermissions(void);
