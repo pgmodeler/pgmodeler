@@ -40,7 +40,7 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
 		Q_OBJECT
 
 		//! \brief Family, funciton and operator selectors
-		SeletorObjetoWidget *family_sel,
+		ObjectSelectorWidget *family_sel,
 												*function_sel,
 												*operator_sel;
 

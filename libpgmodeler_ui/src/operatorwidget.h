@@ -35,7 +35,7 @@ class OperatorWidget: public BaseObjectWidget, public Ui::OperatorWidget {
 
 		TipoPgSQLWidget *arg_types[2];
 
-		SeletorObjetoWidget *functions_sel[3],
+		ObjectSelectorWidget *functions_sel[3],
 												*operators_sel[6];
 
 	public:

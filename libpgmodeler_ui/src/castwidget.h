@@ -37,7 +37,7 @@ class CastWidget: public BaseObjectWidget, public Ui::CastWidget {
 		TipoPgSQLWidget *src_datatype, *trg_datatype;
 
 		//! \brief Conversion function selector
-		SeletorObjetoWidget *conv_func_sel;
+		ObjectSelectorWidget *conv_func_sel;
 
 		void hideEvent(QHideEvent *event);
 

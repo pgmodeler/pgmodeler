@@ -23,8 +23,8 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 
 		arguments_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
 
-		ref_table_sel=new SeletorObjetoWidget(OBJ_TABLE, true, this);
-		function_sel=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
+		ref_table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
+		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		trigger_grid->addWidget(function_sel, 5, 1, 1, 2);
 		trigger_grid->addWidget(ref_table_sel, 6, 1, 1, 2);
 
@@ -80,7 +80,7 @@ void TriggerWidget::setConstraintTrigger(bool value)
 	ref_table_sel->setEnabled(value);
 
 	if(!value)
-		ref_table_sel->removerObjetoSelecionado();
+		ref_table_sel->clearSelector();
 }
 
 void TriggerWidget::addColumn(int lin_idx)
@@ -180,8 +180,8 @@ void TriggerWidget::hideEvent(QHideEvent *event)
 	delete_chk->setChecked(false);
 	truncate_chk->setChecked(false);
 
-	function_sel->removerObjetoSelecionado();
-	ref_table_sel->removerObjetoSelecionado();
+	function_sel->clearSelector();
+	ref_table_sel->clearSelector();
 }
 
 void TriggerWidget::setAttributes(DatabaseModel *model, Table *parent_table, OperationList *op_list, Trigger *trigger)
@@ -194,8 +194,8 @@ void TriggerWidget::setAttributes(DatabaseModel *model, Table *parent_table, Ope
 
 	BaseObjectWidget::setAttributes(model, op_list, trigger, parent_table);
 
-	ref_table_sel->definirModelo(model);
-	function_sel->definirModelo(model);
+	ref_table_sel->setModel(model);
+	function_sel->setModel(model);
 
 	if(trigger)
 	{
@@ -209,8 +209,8 @@ void TriggerWidget::setAttributes(DatabaseModel *model, Table *parent_table, Ope
 		delete_chk->setChecked(trigger->isExecuteOnEvent(EventType::on_delete));
 		update_chk->setChecked(trigger->isExecuteOnEvent(EventType::on_update));
 		truncate_chk->setChecked(trigger->isExecuteOnEvent(EventType::on_truncate));
-		ref_table_sel->definirObjeto(trigger->getReferencedTable());
-		function_sel->definirObjeto(trigger->getFunction());
+		ref_table_sel->setSelectedObject(trigger->getReferencedTable());
+		function_sel->setSelectedObject(trigger->getFunction());
 
 		columns_tab->blockSignals(true);
 		arguments_tab->blockSignals(true);
@@ -254,8 +254,8 @@ void TriggerWidget::applyConfiguration(void)
 		trigger->setDeferrable(deferrable_chk->isChecked());
 		trigger->setDeferralType(DeferralType(deferral_type_cmb->currentText()));
 		trigger->setCondition(cond_expr_txt->toPlainText());
-		trigger->setFunction(dynamic_cast<Function *>(function_sel->obterObjeto()));
-		trigger->setReferecendTable(dynamic_cast<Table *>(ref_table_sel->obterObjeto()));
+		trigger->setFunction(dynamic_cast<Function *>(function_sel->getSelectedObject()));
+		trigger->setReferecendTable(dynamic_cast<Table *>(ref_table_sel->getSelectedObject()));
 		trigger->setEvent(EventType::on_insert, insert_chk->isChecked());
 		trigger->setEvent(EventType::on_update, update_chk->isChecked());
 		trigger->setEvent(EventType::on_delete, delete_chk->isChecked());

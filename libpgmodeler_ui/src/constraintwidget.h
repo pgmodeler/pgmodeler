@@ -42,7 +42,7 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 												*ref_columns_tab;
 
 		//! \brief Referenced table selector
-		SeletorObjetoWidget *ref_table_sel;
+		ObjectSelectorWidget *ref_table_sel;
 
 		//! \brief Updates the column combo according to the column id. (Constraint::[SOURCE_COLS | REFERENCED_COLS])
 		void updateColumnsCombo(unsigned col_id);

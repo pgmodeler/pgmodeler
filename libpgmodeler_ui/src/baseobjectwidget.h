@@ -30,7 +30,7 @@
 #include "operationlist.h"
 #include "formbasico.h"
 #include "visaoobjetoswidget.h"
-#include "seletorobjetowidget.h"
+#include "objectselectorwidget.h"
 #include "ui_baseobjectwidget.h"
 
 /*! \brief Declaring the PgSQLType class as a Qt metatype in order to permit
@@ -92,7 +92,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		SyntaxHighlighter *hl_parentname_txt;
 
 		//! \brief Object selectors for schema, owner an tablespace
-		SeletorObjetoWidget *schema_sel,
+		ObjectSelectorWidget *schema_sel,
 		*owner_sel,
 		*tablespace_sel;
 

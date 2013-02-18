@@ -50,7 +50,7 @@ class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 		SyntaxHighlighter *initial_cond_hl;
 
 		//! \brief Aggregate functions selectors
-		SeletorObjetoWidget *sort_op_sel,
+		ObjectSelectorWidget *sort_op_sel,
 												*final_func_sel,
 												*transition_func_sel;
 

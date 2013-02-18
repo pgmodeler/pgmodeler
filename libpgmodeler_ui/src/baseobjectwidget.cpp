@@ -49,9 +49,9 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		connect(parent_form->cancelar_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 		connect(parent_form, SIGNAL(rejected()), this, SLOT(reject()));
 
-		schema_sel=new SeletorObjetoWidget(OBJ_SCHEMA, true, this);
-		owner_sel=new SeletorObjetoWidget(OBJ_ROLE, true, this);
-		tablespace_sel=new SeletorObjetoWidget(OBJ_TABLESPACE, true, this);
+		schema_sel=new ObjectSelectorWidget(OBJ_SCHEMA, true, this);
+		owner_sel=new ObjectSelectorWidget(OBJ_ROLE, true, this);
+		tablespace_sel=new ObjectSelectorWidget(OBJ_TABLESPACE, true, this);
 
 		baseobject_grid = new QGridLayout;
 		baseobject_grid->setObjectName(QString::fromUtf8("objetobase_grid"));
@@ -131,9 +131,9 @@ void BaseObjectWidget::hideEvent(QHideEvent *)
 	comment_edt->clear();
 	parent_obj_txt->clear();
 
-	tablespace_sel->removerObjetoSelecionado();
-	schema_sel->removerObjetoSelecionado();
-	owner_sel->removerObjetoSelecionado();
+	tablespace_sel->clearSelector();
+	schema_sel->clearSelector();
+	owner_sel->clearSelector();
 
 	parent_form->blockSignals(true);
 	parent_form->close();
@@ -201,9 +201,9 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	parent_obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + parent_obj->getSchemaName() + QString(".png")));
 	parent_obj_icon_lbl->setToolTip(parent_obj->getTypeName());
 
-	owner_sel->definirModelo(model);
-	schema_sel->definirModelo(model);
-	tablespace_sel->definirModelo(model);
+	owner_sel->setModel(model);
+	schema_sel->setModel(model);
+	tablespace_sel->setModel(model);
 
 	if(object)
 	{
@@ -211,15 +211,15 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 		name_edt->setText(QString::fromUtf8(object->getName()));
 		comment_edt->setText(QString::fromUtf8(object->getComment()));
-		owner_sel->definirObjeto(object->getOwner());
+		owner_sel->setSelectedObject(object->getOwner());
 
 		//if there is no schema assigned to object, set the "public" as the default
 		if(!object->getSchema())
-			schema_sel->definirObjeto(model->getObject("public", OBJ_SCHEMA));
+			schema_sel->setSelectedObject(model->getObject("public", OBJ_SCHEMA));
 		else
-			schema_sel->definirObjeto(object->getSchema());
+			schema_sel->setSelectedObject(object->getSchema());
 
-		tablespace_sel->definirObjeto(object->getTablespace());
+		tablespace_sel->setSelectedObject(object->getTablespace());
 
 		obj_type=object->getObjectType();
 		prot=(parent_type!=OBJ_RELATIONSHIP &&
@@ -235,9 +235,9 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		protected_obj_frm->setVisible(false);
 
 		if(parent_obj && parent_obj->getObjectType()==OBJ_SCHEMA)
-			schema_sel->definirObjeto(parent_obj);
+			schema_sel->setSelectedObject(parent_obj);
 		else
-			schema_sel->definirObjeto(model->getObject("public", OBJ_SCHEMA));
+			schema_sel->setSelectedObject(model->getObject("public", OBJ_SCHEMA));
 	}
 }
 
@@ -490,8 +490,8 @@ void BaseObjectWidget::applyConfiguration(void)
 			obj_type=object->getObjectType();
 			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
 
-			if(schema_sel->obterObjeto())
-				obj_name=schema_sel->obterObjeto()->getName(true) + "." + obj_name;
+			if(schema_sel->getSelectedObject())
+				obj_name=schema_sel->getSelectedObject()->getName(true) + "." + obj_name;
 
 			//Checking the object duplicity
 			if(obj_type!=OBJ_DATABASE && obj_type!=OBJ_PERMISSION && obj_type!=OBJ_PARAMETER)
@@ -553,16 +553,16 @@ void BaseObjectWidget::applyConfiguration(void)
 
 			//Sets the object's tablespace
 			if(tablespace_sel->isVisible())
-				object->setTablespace(tablespace_sel->obterObjeto());
+				object->setTablespace(tablespace_sel->getSelectedObject());
 
 			//Sets the object's comment
 			if(owner_sel->isVisible())
-				object->setOwner(owner_sel->obterObjeto());
+				object->setOwner(owner_sel->getSelectedObject());
 
 			//Sets the object's schema
 			if(schema_sel->isVisible())
 			{
-				Schema *esquema=dynamic_cast<Schema *>(schema_sel->obterObjeto());
+				Schema *esquema=dynamic_cast<Schema *>(schema_sel->getSelectedObject());
 				this->prev_schema=dynamic_cast<Schema *>(object->getSchema());
 				object->setSchema(esquema);
 			}

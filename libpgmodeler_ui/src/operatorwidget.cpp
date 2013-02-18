@@ -29,7 +29,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 		for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
 		{
 			functions_sel[i]=NULL;
-			functions_sel[i]=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
+			functions_sel[i]=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 			grid->addWidget(functions_sel[i],i,1,1,1);
 		}
 
@@ -37,7 +37,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 		for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
 		{
 			operators_sel[i]=NULL;
-			operators_sel[i]=new SeletorObjetoWidget(OBJ_OPERATOR, true, this);
+			operators_sel[i]=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
 			grid->addWidget(operators_sel[i],i,1,1,1);
 		}
 
@@ -71,10 +71,10 @@ void OperatorWidget::hideEvent(QHideEvent *event)
 	merges_chk->setChecked(false);
 
 	for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
-		functions_sel[i]->removerObjetoSelecionado();
+		functions_sel[i]->clearSelector();
 
 	for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
-		operators_sel[i]->removerObjetoSelecionado();
+		operators_sel[i]->clearSelector();
 
 	attributes_twg->setCurrentIndex(0);
 	BaseObjectWidget::hideEvent(event);
@@ -88,10 +88,10 @@ void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	BaseObjectWidget::setAttributes(model,op_list, oper, schema);
 
 	for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
-		functions_sel[i]->definirModelo(model);
+		functions_sel[i]->setModel(model);
 
 	for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
-		operators_sel[i]->definirModelo(model);
+		operators_sel[i]->setModel(model);
 
 	if(oper)
 	{
@@ -99,10 +99,10 @@ void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		merges_chk->setChecked(oper->isMerges());
 
 		for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
-			functions_sel[i]->definirObjeto(oper->getFunction(i));
+			functions_sel[i]->setSelectedObject(oper->getFunction(i));
 
 		for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
-			operators_sel[i]->definirObjeto(oper->getOperator(i));
+			operators_sel[i]->setSelectedObject(oper->getOperator(i));
 
 		left_type=oper->getArgumentType(Operator::LEFT_ARG);
 		right_type=oper->getArgumentType(Operator::RIGHT_ARG);
@@ -128,10 +128,10 @@ void OperatorWidget::applyConfiguration(void)
 			oper->setArgumentType(arg_types[i]->obterTipoPgSQL(), i);
 
 		for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
-			oper->setFunction(dynamic_cast<Function *>(functions_sel[i]->obterObjeto()), i);
+			oper->setFunction(dynamic_cast<Function *>(functions_sel[i]->getSelectedObject()), i);
 
 		for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
-			oper->setOperator(dynamic_cast<Operator *>(operators_sel[i]->obterObjeto()), i);
+			oper->setOperator(dynamic_cast<Operator *>(operators_sel[i]->getSelectedObject()), i);
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

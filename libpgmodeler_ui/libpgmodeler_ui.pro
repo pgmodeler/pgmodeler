@@ -31,7 +31,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
 	   $$PWD/src/permissionwidget.cpp \
 	   $$PWD/src/tablespacewidget.cpp \
 	   $$PWD/src/languagewidget.cpp \
-           $$PWD/src/seletorobjetowidget.cpp \
+	   $$PWD/src/objectselectorwidget.cpp \
 	   $$PWD/src/functionwidget.cpp \
            $$PWD/src/tipopgsqlwidget.cpp \
 	   $$PWD/src/parameterwidget.cpp \
@@ -85,7 +85,7 @@ HEADERS += $$PWD/src/formprincipal.h \
 	   $$PWD/src/permissionwidget.h \
 	   $$PWD/src/tablespacewidget.h \
 	   $$PWD/src/languagewidget.h \
-           $$PWD/src/seletorobjetowidget.h \
+	   $$PWD/src/objectselectorwidget.h \
 	   $$PWD/src/functionwidget.h \
            $$PWD/src/tipopgsqlwidget.h \
 	   $$PWD/src/parameterwidget.h \
@@ -135,7 +135,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
 	 $$PWD/ui/permissionwidget.ui \
 	 $$PWD/ui/tablespacewidget.ui \
 	 $$PWD/ui/languagewidget.ui \
-         $$PWD/ui/seletorobjetowidget.ui \
+	 $$PWD/ui/objectselectorwidget.ui \
 	 $$PWD/ui/functionwidget.ui \
          $$PWD/ui/tipopgsqlwidget.ui \
 	 $$PWD/ui/parameterwidget.ui \

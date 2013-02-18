@@ -25,7 +25,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 																						(TabelaObjetosWidget::BTN_EDITAR_ITEM |
 																						 TabelaObjetosWidget::BTN_ATUALIZAR_ITEM), true, this);
 
-		ref_table_sel=new SeletorObjetoWidget(OBJ_TABLE, true, this);
+		ref_table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 
 		columns_tab->definirNumColunas(2);
 		columns_tab->definirRotuloCabecalho(trUtf8("Column"), 0);
@@ -75,8 +75,8 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(ref_columns_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(addColumn(int)));
 		connect(ref_columns_tab, SIGNAL(s_linhaRemovida(int)), this, SLOT(removeColumn(int)));
 		connect(ref_columns_tab, SIGNAL(s_linhasRemovidas(void)), this, SLOT(removeColumns(void)));
-		connect(ref_table_sel, SIGNAL(s_objetoRemovido(void)), this, SLOT(selectReferencedTable(void)));
-		connect(ref_table_sel, SIGNAL(s_objetoSelecionado(void)), this, SLOT(selectReferencedTable(void)));
+		connect(ref_table_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(selectReferencedTable(void)));
+		connect(ref_table_sel, SIGNAL(s_objectSelected(void)), this, SLOT(selectReferencedTable(void)));
 	}
 	catch(Exception &e)
 	{
@@ -205,7 +205,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 		{
 			combo=ref_column_cmb;
 			aux_col_tab=ref_columns_tab;
-			table=dynamic_cast<Table *>(ref_table_sel->obterObjeto());
+			table=dynamic_cast<Table *>(ref_table_sel->getSelectedObject());
 
 			if(table)
 				count=table->getColumnCount();
@@ -235,7 +235,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 
 void ConstraintWidget::selectReferencedTable(void)
 {
-	Table *table=dynamic_cast<Table *>(ref_table_sel->obterObjeto());
+	Table *table=dynamic_cast<Table *>(ref_table_sel->getSelectedObject());
 
 	if(!table)
 	{
@@ -272,7 +272,7 @@ void ConstraintWidget::hideEvent(QHideEvent *event)
 	columns_tab->blockSignals(false);
 	ref_columns_tab->blockSignals(false);
 
-	ref_table_sel->removerObjetoSelecionado();
+	ref_table_sel->clearSelector();
 
 	BaseObjectWidget::hideEvent(event);
 }
@@ -287,7 +287,7 @@ void ConstraintWidget::selectConstraintType(void)
 	tablespace_lbl->setVisible(tipo_rest==ConstraintType::primary_key || tipo_rest==ConstraintType::unique);
 	tablespace_sel->setVisible(tipo_rest==ConstraintType::primary_key || tipo_rest==ConstraintType::unique);
 
-	if(!tablespace_sel->isVisible()) tablespace_sel->removerObjetoSelecionado();
+	if(!tablespace_sel->isVisible()) tablespace_sel->clearSelector();
 
 	check_expr_lbl->setVisible(tipo_rest==ConstraintType::check);
 	check_expr_txt->setVisible(tipo_rest==ConstraintType::check);
@@ -327,7 +327,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 	BaseObjectWidget::setAttributes(model, op_list, constr, parent_obj);
 
 	info_frm->setVisible(this->table!=NULL);
-	ref_table_sel->definirModelo(model);
+	ref_table_sel->setModel(model);
 
 	obj_type=parent_obj->getObjectType();
 
@@ -374,7 +374,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		if(ref_table)
 		{
 			ref_columns_tab->blockSignals(true);
-			ref_table_sel->definirObjeto(ref_table);
+			ref_table_sel->setSelectedObject(ref_table);
 
 			count=ref_table->getColumnCount();
 			for(i=0, row=0; i < count; i++)
@@ -417,7 +417,7 @@ void ConstraintWidget::applyConfiguration(void)
 		constr->setActionType(ActionType(on_update_cmb->currentText()),true);
 
 		if(constr->getConstraintType()==ConstraintType::foreign_key)
-			constr->setReferencedTable(ref_table_sel->obterObjeto());
+			constr->setReferencedTable(ref_table_sel->getSelectedObject());
 
 		constr->removeColumns();
 		for(col_id=Constraint::SOURCE_COLS; col_id <= Constraint::REFERENCED_COLS; col_id++)

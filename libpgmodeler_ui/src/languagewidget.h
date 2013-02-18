@@ -32,7 +32,7 @@ class LanguageWidget: public BaseObjectWidget, public Ui::LanguageWidget {
 	private:
 		Q_OBJECT
 
-		SeletorObjetoWidget *func_handler_sel,
+		ObjectSelectorWidget *func_handler_sel,
 												*func_validator_sel,
 												*func_inline_sel;
 

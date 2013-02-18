@@ -41,7 +41,7 @@ class TriggerWidget: public BaseObjectWidget, public Ui::TriggerWidget {
 												*arguments_tab;
 
 		//! \brief Selectors for reference table and trigger function
-		SeletorObjetoWidget *ref_table_sel,
+		ObjectSelectorWidget *ref_table_sel,
 												*function_sel;
 
 		//! \brief Adds a column to the referenced columns table

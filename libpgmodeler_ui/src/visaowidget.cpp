@@ -24,9 +24,9 @@ VisaoWidget::VisaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		//Alocando os seletores de objetos (tabela e coluna) que são atribuío  s referências da visão
 		sel_tabela=NULL;
-		sel_tabela=new SeletorObjetoWidget(OBJ_TABLE, true, this);
+		sel_tabela=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 		sel_coluna=NULL;
-		sel_coluna=new SeletorObjetoWidget(OBJ_COLUMN, true, this);
+		sel_coluna=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
 
 		//Alocando a tabela que armazena todas as referências da visão
 		tab_referencias=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
@@ -50,9 +50,9 @@ VisaoWidget::VisaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(tipo_ref_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selecionarTipoReferencia(void)));
 
-		connect(sel_coluna, SIGNAL(s_objetoSelecionado(void)), this, SLOT(exibirNomeObjeto(void)));
-		connect(sel_coluna, SIGNAL(s_objetoRemovido(void)), this, SLOT(exibirNomeObjeto(void)));
-		connect(sel_tabela, SIGNAL(s_objetoSelecionado(void)), this, SLOT(exibirNomeObjeto(void)));
+		connect(sel_coluna, SIGNAL(s_objectSelected(void)), this, SLOT(exibirNomeObjeto(void)));
+		connect(sel_coluna, SIGNAL(s_selectorCleared(void)), this, SLOT(exibirNomeObjeto(void)));
+		connect(sel_tabela, SIGNAL(s_objectSelected(void)), this, SLOT(exibirNomeObjeto(void)));
 
 		connect(tab_referencias, SIGNAL(s_linhaAdicionada(int)), this, SLOT(manipularReferencia(int)));
 		connect(tab_referencias, SIGNAL(s_linhaAtualizada(int)), this, SLOT(manipularReferencia(int)));
@@ -85,8 +85,8 @@ void VisaoWidget::hideEvent(QHideEvent *evento)
 
 void VisaoWidget::limparFormReferencia(void)
 {
-	sel_coluna->removerObjetoSelecionado();
-	sel_tabela->removerObjetoSelecionado();
+	sel_coluna->clearSelector();
+	sel_tabela->clearSelector();
 	alias_col_edt->clear();
 	alias_exp_edt->clear();
 	alias_tab_edt->clear();
@@ -133,8 +133,8 @@ void VisaoWidget::manipularReferencia(int idx_ref)
 		{
 			/* Chama o método de construtor de referência informando os parâmetros necessários
 			para relacioná-la a uma coluna de tabela */
-			ref=Reference(dynamic_cast<Table *>(sel_tabela->obterObjeto()),
-										dynamic_cast<Column *>(sel_coluna->obterObjeto()),
+			ref=Reference(dynamic_cast<Table *>(sel_tabela->getSelectedObject()),
+										dynamic_cast<Column *>(sel_coluna->getSelectedObject()),
 										alias_tab_edt->text(), alias_col_edt->text());
 		}
 		/* Se o combo de tipo de referência estiver selecionado como referência a uma expressão
@@ -192,11 +192,11 @@ void VisaoWidget::editarReferencia(int idx_ref)
 		if(ref.getColumn())
 			/* Define o objeto no seletor de coluna e automaticamente o seletor
 			de tabelas é definido com o objeto pai da coluna */
-			sel_coluna->definirObjeto(ref.getColumn());
+			sel_coluna->setSelectedObject(ref.getColumn());
 		else
 			/* Caso a refência esteja ligada a todas a colunas da tabela (*)
 			configura o seletor de tabelas com  a tabela usada na referência */
-			sel_tabela->definirObjeto(ref.getTable());
+			sel_tabela->setSelectedObject(ref.getTable());
 
 		//Configura os campos de alias de tabela e coluna com os valores da referência
 		alias_col_edt->setText(QString::fromUtf8(ref.getColumnAlias()));
@@ -238,7 +238,7 @@ void VisaoWidget::exibirNomeObjeto(void)
 		sel_coluna->blockSignals(true);
 		/* Define como NULL o objeto no seletor de coluna indicado
 		 que nenhuma coluna específica deve ser referenciada (*) */
-		sel_coluna->removerObjetoSelecionado();
+		sel_coluna->clearSelector();
 		//Reativa os sinais do seletor de coluna
 		sel_coluna->blockSignals(false);
 	}
@@ -247,7 +247,7 @@ void VisaoWidget::exibirNomeObjeto(void)
 	else
 	{
 		//Obtém a coluna do seletor
-		col=dynamic_cast<Column *>(sel_coluna->obterObjeto());
+		col=dynamic_cast<Column *>(sel_coluna->getSelectedObject());
 
 		/* Bloqueia os sinais do seletor de tabela pois qualquer
 		 alteração sem bloqueio de sinal pode causar a chamada indefinida
@@ -257,9 +257,9 @@ void VisaoWidget::exibirNomeObjeto(void)
 		/* Caso a coluna esteja alocada, o seletor de tabela recebe automaticamente
 		 o nome da tabela pai desta coluna */
 		if(col)
-			sel_tabela->definirObjeto(col->getParentTable());
+			sel_tabela->setSelectedObject(col->getParentTable());
 		else
-			sel_tabela->removerObjetoSelecionado();
+			sel_tabela->clearSelector();
 
 		//Reativa os sinais do seletor de tabela
 		sel_tabela->blockSignals(false);
@@ -343,7 +343,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
 		visao_aux.BaseObject::setName(name_edt->text());
 
 		//Configura o esquema da visão com o que está no formulário
-		visao_aux.setSchema(schema_sel->obterObjeto());
+		visao_aux.setSchema(schema_sel->getSelectedObject());
 
 		/* Insere as referências da tabela na visão auxiliar
 		 porém estas são inseridas conforme a string de
@@ -387,8 +387,8 @@ void VisaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, 
 	BaseObjectWidget::setAttributes(modelo,lista_op, visao, schema, px, py);
 
 	//Configurado o modelo de banco de dados referênciado pelos widget seletores
-	sel_coluna->definirModelo(modelo);
-	sel_tabela->definirModelo(modelo);
+	sel_coluna->setModel(modelo);
+	sel_tabela->setModel(modelo);
 
 	//Caso a visão esteja alocada (sendo editada)
 	if(visao)

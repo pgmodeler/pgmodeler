@@ -32,7 +32,7 @@ class SequenciaWidget: public BaseObjectWidget, public Ui::SequenciaWidget {
 		Q_OBJECT
 
 	private:
-		SeletorObjetoWidget *sel_coluna;
+		ObjectSelectorWidget *sel_coluna;
 
 	public:
 		SequenciaWidget(QWidget * parent = 0);

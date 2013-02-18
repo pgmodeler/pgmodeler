@@ -31,7 +31,7 @@
 class ConversionWidget: public BaseObjectWidget, public Ui::ConversionWidget {
 	private:
 		Q_OBJECT
-		SeletorObjetoWidget *sel_funcao_conv;
+		ObjectSelectorWidget *sel_funcao_conv;
 
 	public:
 		ConversionWidget(QWidget * parent = 0);

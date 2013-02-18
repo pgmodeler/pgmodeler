@@ -11,7 +11,7 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 
 		src_datatype=new TipoPgSQLWidget(this, trUtf8("Source data type"));
 		trg_datatype=new TipoPgSQLWidget(this, trUtf8("Target data type"));
-		conv_func_sel=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
+		conv_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 
 		convtipo_grid->addWidget(conv_func_sel,1,1,1,3);
 		convtipo_grid->addWidget(src_datatype,2,0,1,4);
@@ -43,7 +43,7 @@ void CastWidget::hideEvent(QHideEvent *event)
 {
 	input_output_chk->setChecked(false);
 	implicit_rb->setChecked(true);
-	conv_func_sel->removerObjetoSelecionado();
+	conv_func_sel->clearSelector();
 	BaseObjectWidget::hideEvent(event);
 }
 
@@ -52,14 +52,14 @@ void CastWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Cas
 	PgSQLType src_type, trg_type;
 
 	BaseObjectWidget::setAttributes(model, op_list, cast);
-	conv_func_sel->definirModelo(model);
+	conv_func_sel->setModel(model);
 
 	if(cast)
 	{
 		src_type=cast->getDataType(Cast::SRC_TYPE);
 		trg_type=cast->getDataType(Cast::DST_TYPE);
 
-		conv_func_sel->definirObjeto(cast->getCastFunction());
+		conv_func_sel->setSelectedObject(cast->getCastFunction());
 		input_output_chk->setChecked(cast->isInOut());
 		implicit_rb->setChecked(cast->getCastType()==Cast::IMPLICIT);
 		assignment_rb->setChecked(!implicit_rb->isChecked());
@@ -87,7 +87,7 @@ void CastWidget::applyConfiguration(void)
 		else
 			cast->setCastType(Cast::ASSIGNMENT);
 
-		cast->setCastFunction(dynamic_cast<Function*>(conv_func_sel->obterObjeto()));
+		cast->setCastFunction(dynamic_cast<Function*>(conv_func_sel->getSelectedObject()));
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

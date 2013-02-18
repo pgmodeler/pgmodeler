@@ -60,7 +60,7 @@ class VisaoWidget: public BaseObjectWidget, public Ui::VisaoWidget {
 											*destaque_codigo;
 
 		//! \brief Seletores de tabela e coluna relacionados   visao
-		SeletorObjetoWidget *sel_tabela,
+		ObjectSelectorWidget *sel_tabela,
 												*sel_coluna;
 
 		//! \brief Exibe os dados de uma dada referência na tabela de referências

@@ -9,7 +9,7 @@ SequenciaWidget::SequenciaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 
 		Ui_SequenciaWidget::setupUi(this);
 		sel_coluna=NULL;
-		sel_coluna=new SeletorObjetoWidget(OBJ_COLUMN, true, this);
+		sel_coluna=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
 
 		//Adicionando os objetos recém alocados no layout do formulário
 		sequencia_grid->addWidget(sel_coluna,3,1,1,3);
@@ -40,17 +40,17 @@ SequenciaWidget::SequenciaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 
 void SequenciaWidget::hideEvent(QHideEvent *evento)
 {
-	sel_coluna->removerObjetoSelecionado();
+	sel_coluna->clearSelector();
 	BaseObjectWidget::hideEvent(evento);
 }
 
 void SequenciaWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, Schema *schema, Sequence *sequencia)
 {
-	sel_coluna->definirModelo(modelo);
+	sel_coluna->setModel(modelo);
 
 	if(sequencia)
 	{
-		sel_coluna->definirObjeto(sequencia->getOwnerColumn());
+		sel_coluna->setSelectedObject(sequencia->getOwnerColumn());
 		ciclica_chk->setChecked(sequencia->isCycle());
 		inicio_edt->setText(sequencia->getStart());
 		maximo_edt->setText(sequencia->getMaxValue());
@@ -85,7 +85,7 @@ void SequenciaWidget::applyConfiguration(void)
 		sequencia->setCycle(ciclica_chk->isChecked());
 		sequencia->setValues(minimo_edt->text(), maximo_edt->text(), incremento_edt->text(),
 												 inicio_edt->text(), cache_edt->text());
-		sequencia->setOwnerColumn(dynamic_cast<Column *>(sel_coluna->obterObjeto()));
+		sequencia->setOwnerColumn(dynamic_cast<Column *>(sel_coluna->getSelectedObject()));
 
 		//Finaliza a configuração
 		BaseObjectWidget::applyConfiguration();

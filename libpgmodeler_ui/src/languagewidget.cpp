@@ -14,9 +14,9 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 		func_validator_sel=NULL;
 		func_inline_sel=NULL;
 
-		func_handler_sel=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
-		func_validator_sel=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
-		func_inline_sel=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
+		func_handler_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+		func_validator_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+		func_inline_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 
 		language_grid->addWidget(func_handler_sel,1,1,1,2);
 		language_grid->addWidget(func_validator_sel,2,1,1,2);
@@ -49,9 +49,9 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 
 void LanguageWidget::hideEvent(QHideEvent *event)
 {
-	func_handler_sel->removerObjetoSelecionado();
-	func_validator_sel->removerObjetoSelecionado();
-	func_inline_sel->removerObjetoSelecionado();
+	func_handler_sel->clearSelector();
+	func_validator_sel->clearSelector();
+	func_inline_sel->clearSelector();
 	trusted_chk->setChecked(false);
 	BaseObjectWidget::hideEvent(event);
 }
@@ -60,16 +60,16 @@ void LanguageWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 {
 	BaseObjectWidget::setAttributes(model, op_list, language);
 
-	func_handler_sel->definirModelo(model);
-	func_validator_sel->definirModelo(model);
-	func_inline_sel->definirModelo(model);
+	func_handler_sel->setModel(model);
+	func_validator_sel->setModel(model);
+	func_inline_sel->setModel(model);
 
 	if(language)
 	{
 		trusted_chk->setChecked(language->isTrusted());
-		func_handler_sel->definirObjeto(language->getFunction(Language::HANDLER_FUNC));
-		func_validator_sel->definirObjeto(language->getFunction(Language::VALIDATOR_FUNC));
-		func_inline_sel->definirObjeto(language->getFunction(Language::INLINE_FUNC));
+		func_handler_sel->setSelectedObject(language->getFunction(Language::HANDLER_FUNC));
+		func_validator_sel->setSelectedObject(language->getFunction(Language::VALIDATOR_FUNC));
+		func_inline_sel->setSelectedObject(language->getFunction(Language::INLINE_FUNC));
 	}
 }
 
@@ -84,9 +84,9 @@ void LanguageWidget::applyConfiguration(void)
 		language=dynamic_cast<Language *>(this->object);
 		language->setTrusted(trusted_chk->isChecked());
 
-		language->setFunction(dynamic_cast<Function *>(func_handler_sel->obterObjeto()), Language::HANDLER_FUNC);
-		language->setFunction(dynamic_cast<Function *>(func_validator_sel->obterObjeto()), Language::VALIDATOR_FUNC);
-		language->setFunction(dynamic_cast<Function *>(func_inline_sel->obterObjeto()), Language::INLINE_FUNC);
+		language->setFunction(dynamic_cast<Function *>(func_handler_sel->getSelectedObject()), Language::HANDLER_FUNC);
+		language->setFunction(dynamic_cast<Function *>(func_validator_sel->getSelectedObject()), Language::VALIDATOR_FUNC);
+		language->setFunction(dynamic_cast<Function *>(func_inline_sel->getSelectedObject()), Language::INLINE_FUNC);
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

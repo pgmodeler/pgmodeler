@@ -35,7 +35,7 @@ TipoWidget::TipoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
 		{
 			sel_funcoes[i]=NULL;
-			sel_funcoes[i]=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
+			sel_funcoes[i]=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 			grid->addWidget(sel_funcoes[i],i,1,1,1);
 		}
 
@@ -123,7 +123,7 @@ void TipoWidget::hideEvent(QHideEvent *evento)
 
 	//Limpa os valores dos seletores de funções
 	for(unsigned i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
-		sel_funcoes[i]->removerObjetoSelecionado();
+		sel_funcoes[i]->clearSelector();
 
 	//Reinicia os demais campos do formulário para seus valores padrão
 	tipo_base_rb->setChecked(true);
@@ -234,7 +234,7 @@ void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, S
 
 	//Define o modelo de dados de referência dos seletores de função
 	for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
-		sel_funcoes[i]->definirModelo(modelo);
+		sel_funcoes[i]->setModel(modelo);
 
 	//Caso o tipo esteja especificado
 	if(tipo)
@@ -320,7 +320,7 @@ void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, S
 
 			//Atribui aos seletores de funções todas as funções configuradas na instância
 			for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
-				sel_funcoes[i]->definirObjeto(tipo->getFunction(i));
+				sel_funcoes[i]->setSelectedObject(tipo->getFunction(i));
 		}
 	}
 
@@ -388,7 +388,7 @@ void TipoWidget::applyConfiguration(void)
 
 			//Atribui todas as funções definidas nos seletoe   instância de tipo
 			for(i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
-				tipo->setFunction(i, dynamic_cast<Function *>(sel_funcoes[i]->obterObjeto()));
+				tipo->setFunction(i, dynamic_cast<Function *>(sel_funcoes[i]->getSelectedObject()));
 		}
 
 		BaseObjectWidget::applyConfiguration();

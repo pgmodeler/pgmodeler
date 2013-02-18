@@ -16,9 +16,9 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		storage_type=NULL;
 		elements_tab=NULL;
 
-		family_sel=new SeletorObjetoWidget(OBJ_OPFAMILY, false, this);
-		operator_sel=new SeletorObjetoWidget(OBJ_OPERATOR, true, this);
-		function_sel=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
+		family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, false, this);
+		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
+		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		data_type=new TipoPgSQLWidget(this);
 		storage_type=new TipoPgSQLWidget(this, trUtf8("Storage Type"));
 		elements_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
@@ -72,8 +72,8 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 
 void OperatorClassWidget::hideEvent(QHideEvent *event)
 {
-	function_sel->removerObjetoSelecionado();
-	operator_sel->removerObjetoSelecionado();
+	function_sel->clearSelector();
+	operator_sel->clearSelector();
 	stg_num_sb->setValue(1);
 	recheck_chk->setChecked(false);
 	elements_tab->removerLinhas();
@@ -106,8 +106,8 @@ void OperatorClassWidget::editElement(int lin_idx)
 	elem=elements_tab->obterDadoLinha(lin_idx).value<OperatorClassElement>();
 
 	elem_type_cmb->setCurrentIndex(elem.getElementType());
-	function_sel->definirObjeto(elem.getFunction());
-	operator_sel->definirObjeto(elem.getOperator());
+	function_sel->setSelectedObject(elem.getFunction());
+	operator_sel->setSelectedObject(elem.getOperator());
 	recheck_chk->setChecked(elem.isRecheck());
 	stg_num_sb->setValue(elem.getStrategyNumber());
 	storage_type->definirAtributos(elem.getStorage(),this->model);
@@ -164,16 +164,16 @@ void OperatorClassWidget::handleElement(int lin_idx)
 	try
 	{
 		if(elem_type==OperatorClassElement::FUNCTION_ELEM)
-			elem.setFunction(dynamic_cast<Function *>(function_sel->obterObjeto()), stg_num_sb->value());
+			elem.setFunction(dynamic_cast<Function *>(function_sel->getSelectedObject()), stg_num_sb->value());
 		else  if(elem_type==OperatorClassElement::OPERATOR_ELEM)
-			elem.setOperator(dynamic_cast<Operator *>(operator_sel->obterObjeto()), stg_num_sb->value(), recheck_chk->isChecked());
+			elem.setOperator(dynamic_cast<Operator *>(operator_sel->getSelectedObject()), stg_num_sb->value(), recheck_chk->isChecked());
 		else
 			elem.setStorage(storage_type->obterTipoPgSQL());
 
 		showElementData(elem, lin_idx);
 
-		function_sel->removerObjetoSelecionado();
-		operator_sel->removerObjetoSelecionado();
+		function_sel->clearSelector();
+		operator_sel->clearSelector();
 		stg_num_sb->setValue(1);
 		recheck_chk->setChecked(false);
 		elements_tab->limparSelecao();
@@ -195,15 +195,15 @@ void OperatorClassWidget::setAttributes(DatabaseModel *model, OperationList *op_
 
 	BaseObjectWidget::setAttributes(model, op_list, op_class, schema);
 
-	family_sel->definirModelo(model);
-	function_sel->definirModelo(model);
-	operator_sel->definirModelo(model);
+	family_sel->setModel(model);
+	function_sel->setModel(model);
+	operator_sel->setModel(model);
 	storage_type->definirAtributos(type, model);
 
 	if(op_class)
 	{
 		type=op_class->getDataType();
-		family_sel->definirObjeto(op_class->getFamily());
+		family_sel->setSelectedObject(op_class->getFamily());
 		def_class_chk->setChecked(op_class->isDefault());
 		indexing_cmb->setCurrentIndex(indexing_cmb->findText(~(op_class->getIndexingType())));
 
@@ -232,7 +232,7 @@ void OperatorClassWidget::applyConfiguration(void)
 
 		op_class=dynamic_cast<OperatorClass *>(this->object);
 		op_class->setDefault(op_class->isDefault());
-		op_class->setFamily(dynamic_cast<OperatorFamily *>(family_sel->obterObjeto()));
+		op_class->setFamily(dynamic_cast<OperatorFamily *>(family_sel->getSelectedObject()));
 		op_class->setIndexingType(IndexingType(indexing_cmb->currentText()));
 		op_class->setDataType(data_type->obterTipoPgSQL());
 

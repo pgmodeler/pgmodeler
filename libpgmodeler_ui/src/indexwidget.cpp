@@ -26,7 +26,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 																				 GlobalAttributes::CONFIGURATION_EXT);
 
 		elements_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
-		op_class_sel=new SeletorObjetoWidget(OBJ_OPCLASS, true, this);
+		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
 
 		elements_tab->definirNumColunas(5);
 		elements_tab->definirRotuloCabecalho(trUtf8("Element"), 0);
@@ -86,7 +86,7 @@ void IndexWidget::hideEvent(QHideEvent *event)
 	elements_tab->removerLinhas();
 	elements_tab->blockSignals(false);
 
-	op_class_sel->removerObjetoSelecionado();
+	op_class_sel->clearSelector();
 	elem_expr_txt->clear();
 	ascending_rb->setChecked(true);
 	column_rb->setChecked(true);
@@ -155,7 +155,7 @@ void IndexWidget::handleElement(int elem_idx)
 
 		elem.setSortAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
 		elem.setSortAttribute(IndexElement::ASC_ORDER, ascending_rb->isChecked());
-		elem.setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->obterObjeto()));
+		elem.setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->getSelectedObject()));
 
 		if(expression_rb->isChecked())
 			elem.setExpression(elem_expr_txt->toPlainText());
@@ -166,7 +166,7 @@ void IndexWidget::handleElement(int elem_idx)
 
 		elem_expr_txt->clear();
 		ascending_rb->setChecked(true);
-		op_class_sel->removerObjetoSelecionado();
+		op_class_sel->clearSelector();
 		nulls_first_chk->setChecked(false);
 	}
 	else if(elements_tab->obterTextoCelula(elem_idx,0).isEmpty())
@@ -196,7 +196,7 @@ void IndexWidget::editElement(int elem_idx)
 		descending_rb->setChecked(true);
 	nulls_first_chk->setChecked(elem.getSortAttribute(IndexElement::NULLS_FIRST));
 
-	op_class_sel->definirObjeto(elem.getOperatorClass());
+	op_class_sel->setSelectedObject(elem.getOperatorClass());
 }
 
 void IndexWidget::selectElementObject(void)
@@ -235,7 +235,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 
 	BaseObjectWidget::setAttributes(model, op_list, index, parent_obj);
 
-	op_class_sel->definirModelo(model);
+	op_class_sel->setModel(model);
 	updateColumnsCombo();
 
 	if(index)

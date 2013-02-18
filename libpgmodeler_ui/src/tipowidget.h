@@ -45,7 +45,7 @@ class TipoWidget: public BaseObjectWidget, public Ui::TipoWidget {
 
 	private:
 		//! \brief Widgets seletores de funções do tipo
-		SeletorObjetoWidget *sel_funcoes[7];
+		ObjectSelectorWidget *sel_funcoes[7];
 
 		//! \brief Widgets de configuração de tipo cópia e tipo de elemento
 		TipoPgSQLWidget *tipo_copia,

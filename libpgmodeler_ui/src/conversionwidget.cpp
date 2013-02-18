@@ -10,7 +10,7 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		Ui_ConversionWidget::setupUi(this);
 
 		sel_funcao_conv=NULL;
-		sel_funcao_conv=new SeletorObjetoWidget(OBJ_FUNCTION, true, this);
+		sel_funcao_conv=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		convcod_grid->addWidget(sel_funcao_conv,1,1,1,3);
 
 		configureFormLayout(convcod_grid, OBJ_CONVERSION);
@@ -35,7 +35,7 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 void ConversionWidget::hideEvent(QHideEvent *event)
 {
-	sel_funcao_conv->removerObjetoSelecionado();
+	sel_funcao_conv->clearSelector();
 	default_conv_chk->setChecked(false);
 	BaseObjectWidget::hideEvent(event);
 }
@@ -43,11 +43,11 @@ void ConversionWidget::hideEvent(QHideEvent *event)
 void ConversionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Conversion *conv)
 {
 	BaseObjectWidget::setAttributes(model, op_list, conv, schema);
-	sel_funcao_conv->definirModelo(model);
+	sel_funcao_conv->setModel(model);
 
 	if(conv)
 	{
-		sel_funcao_conv->definirObjeto(conv->getConversionFunction());
+		sel_funcao_conv->setSelectedObject(conv->getConversionFunction());
 		conv->setDefault(default_conv_chk->isChecked());
 		src_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::SRC_ENCODING))));
 		trg_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::DST_ENCODING))));
@@ -68,7 +68,7 @@ void ConversionWidget::applyConfiguration(void)
 		conv->setEncoding(Conversion::SRC_ENCODING, src_encoding_cmb->currentText());
 		conv->setEncoding(Conversion::DST_ENCODING, trg_encoding_cmb->currentText());
 		conv->setDefault(default_conv_chk->isChecked());
-		conv->setConversionFunction(dynamic_cast<Function*>(sel_funcao_conv->obterObjeto()));
+		conv->setConversionFunction(dynamic_cast<Function*>(sel_funcao_conv->getSelectedObject()));
 
 		finishConfiguration();
 	}
