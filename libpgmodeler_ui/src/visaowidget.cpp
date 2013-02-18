@@ -142,7 +142,7 @@ void VisaoWidget::manipularReferencia(int idx_ref)
 		else
 		{
 			//Chama o método de construção de uma referência a uma expressão
-			ref=Reference(expressao_txt->toPlainText(), alias_tab_edt->text());
+			ref=Reference(expressao_txt->toPlainText(), alias_exp_edt->text());
 		}
 
 		/* Obrigatoriamente, a referência deve possuir um aplicação SQL
