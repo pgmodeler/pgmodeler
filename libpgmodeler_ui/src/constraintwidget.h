@@ -18,8 +18,8 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class RestricaoWidget
-\brief Definição da classe que implementa o formulário de edição dos atributos de restrições.
+\class ConstraintWidget
+\brief Implements the operations to create/edit constraints via form.
 */
 
 #ifndef CONSTRAINT_WIDGET_H
@@ -34,22 +34,20 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 		Q_OBJECT
 
 		QFrame *info_frm;
-
-		//! \brief Destaque de sintaxe do campo de expressão de checagem
 		SyntaxHighlighter *check_expr_hl;
 
-		//! \brief Tabelas de objetos para controlar colunas referenciadas na restrição
+		/*! \brief Table widgets used to store the columns that forms the constraint as well the
+		referenced columns (only for foreign keys) */
 		TabelaObjetosWidget *columns_tab,
 												*ref_columns_tab;
 
-		//! \brief Seletor de tabela referenciada
+		//! \brief Referenced table selector
 		SeletorObjetoWidget *ref_table_sel;
 
-		//! \brief Atualiza o combo de colunas do tipo especificado (Origem ou Referenciadas)
+		//! \brief Updates the column combo according to the column id. (Constraint::[SOURCE_COLS | REFERENCED_COLS])
 		void updateColumnsCombo(unsigned col_id);
 
-		/*! \brief Adiciona uma coluna   tabela de tipo especificado (origem ou referenciada)
-			na linha especificada */
+		//! \brief Adds the column to the column's table at the specified row
 		void addColumn(Column *column, unsigned col_id, int row);
 
 		void hideEvent(QHideEvent *event);
@@ -59,16 +57,14 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Constraint *constr);
 
 	private slots:
-		//! \brief Exibe os campos pertinentes ao tipo da restição selecionado
+		//! \brief Shows only the fields related to the selected constraint type
 		void selectConstraintType(void);
 
-		/*! \brief Atualiza o combo de colunas referenciadas conforme o usuário
-		 manipule o seletor de tabela referenciada */
+		//! \brief Selects the referenced table as well updates the combo containing the referenced table columns
 		void selectReferencedTable(void);
 
-		//! \brief Métodos de manipulação das tabelas de colunas
 		void addColumn(int row);
-		void removeColumn(int idx_lin);
+		void removeColumn(int);
 		void removeColumns(void);
 
 	public slots:
