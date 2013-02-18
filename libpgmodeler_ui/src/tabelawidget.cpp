@@ -1,12 +1,12 @@
 #include "tabelawidget.h"
 #include "columnwidget.h"
-#include "restricaowidget.h"
+#include "constraintwidget.h"
 #include "rulewidget.h"
 #include "indexwidget.h"
 #include "triggerwidget.h"
 #include "messagebox.h"
 
-extern RestricaoWidget *restricao_wgt;
+extern ConstraintWidget *restricao_wgt;
 extern ColumnWidget *coluna_wgt;
 extern RuleWidget *regra_wgt;
 extern IndexWidget *indice_wgt;

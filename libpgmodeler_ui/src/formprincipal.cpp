@@ -21,7 +21,7 @@
 #include "tipowidget.h"
 #include "visaowidget.h"
 #include "columnwidget.h"
-#include "restricaowidget.h"
+#include "constraintwidget.h"
 #include "rulewidget.h"
 #include "triggerwidget.h"
 #include "indexwidget.h"
@@ -61,7 +61,7 @@ OperatorClassWidget *classeop_wgt=NULL;
 TipoWidget *tipo_wgt=NULL;
 VisaoWidget *visao_wgt=NULL;
 ColumnWidget *coluna_wgt=NULL;
-RestricaoWidget *restricao_wgt=NULL;
+ConstraintWidget *restricao_wgt=NULL;
 RuleWidget *regra_wgt=NULL;
 TriggerWidget *gatilho_wgt=NULL;
 IndexWidget *indice_wgt=NULL;
@@ -143,7 +143,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		tipo_wgt=new TipoWidget(this);
 		visao_wgt=new VisaoWidget(this);
 		coluna_wgt=new ColumnWidget(this);
-		restricao_wgt=new RestricaoWidget(this);
+		restricao_wgt=new ConstraintWidget(this);
 		regra_wgt=new RuleWidget(this);
 		gatilho_wgt=new TriggerWidget(this);
 		indice_wgt=new IndexWidget(this);

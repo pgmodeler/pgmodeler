@@ -22,54 +22,54 @@
 \brief Definição da classe que implementa o formulário de edição dos atributos de restrições.
 */
 
-#ifndef RESTRICAO_WIDGET_H
-#define RESTRICAO_WIDGET_H
+#ifndef CONSTRAINT_WIDGET_H
+#define CONSTRAINT_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_restricaowidget.h"
+#include "ui_constraintwidget.h"
 #include "tabelaobjetoswidget.h"
 
-class RestricaoWidget: public BaseObjectWidget, public Ui::RestricaoWidget {
+class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
+	private:
 		Q_OBJECT
 
-	private:
-		QFrame *frame_info;
+		QFrame *info_frm;
 
 		//! \brief Destaque de sintaxe do campo de expressão de checagem
-		SyntaxHighlighter *dest_exp_checagem;
+		SyntaxHighlighter *check_expr_hl;
 
 		//! \brief Tabelas de objetos para controlar colunas referenciadas na restrição
-		TabelaObjetosWidget *tab_colunas,
-												*tab_colunas_ref;
+		TabelaObjetosWidget *columns_tab,
+												*ref_columns_tab;
 
 		//! \brief Seletor de tabela referenciada
-		SeletorObjetoWidget *sel_tabela_ref;
+		SeletorObjetoWidget *ref_table_sel;
 
 		//! \brief Atualiza o combo de colunas do tipo especificado (Origem ou Referenciadas)
-		void atualizarComboColunas(unsigned tipo_cmb);
+		void updateColumnsCombo(unsigned col_id);
 
 		/*! \brief Adiciona uma coluna   tabela de tipo especificado (origem ou referenciada)
 			na linha especificada */
-		void adicionarColuna(Column *coluna, unsigned tipo_col, int idx_lin);
+		void addColumn(Column *column, unsigned col_id, int row);
+
+		void hideEvent(QHideEvent *event);
 
 	public:
-		RestricaoWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, BaseObject *objeto_pai, OperationList *op_list, Constraint *restricao);
+		ConstraintWidget(QWidget * parent = 0);
+		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Constraint *constr);
 
 	private slots:
-		void hideEvent(QHideEvent *);
-
 		//! \brief Exibe os campos pertinentes ao tipo da restição selecionado
-		void selecionarTipoRestricao(void);
+		void selectConstraintType(void);
 
 		/*! \brief Atualiza o combo de colunas referenciadas conforme o usuário
 		 manipule o seletor de tabela referenciada */
-		void selecionarTabelaReferenciada(void);
+		void selectReferencedTable(void);
 
 		//! \brief Métodos de manipulação das tabelas de colunas
-		void adicionarColuna(int idx_lin);
-		void removerColuna(int idx_lin);
-		void removerColunas(void);
+		void addColumn(int row);
+		void removeColumn(int idx_lin);
+		void removeColumns(void);
 
 	public slots:
 		void applyConfiguration(void);

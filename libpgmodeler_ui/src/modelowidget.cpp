@@ -18,7 +18,7 @@
 #include "visaowidget.h"
 #include "textboxwidget.h"
 #include "columnwidget.h"
-#include "restricaowidget.h"
+#include "constraintwidget.h"
 #include "rulewidget.h"
 #include "triggerwidget.h"
 #include "indexwidget.h"
@@ -49,7 +49,7 @@ extern TipoWidget *tipo_wgt;
 extern VisaoWidget *visao_wgt;
 extern TextboxWidget *caixatexto_wgt;
 extern ColumnWidget *coluna_wgt;
-extern RestricaoWidget *restricao_wgt;
+extern ConstraintWidget *restricao_wgt;
 extern RuleWidget *regra_wgt;
 extern TriggerWidget *gatilho_wgt;
 extern IndexWidget *indice_wgt;

@@ -46,7 +46,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/tipowidget.cpp \
            $$PWD/src/visaowidget.cpp \
            $$PWD/src/columnwidget.cpp \
-           $$PWD/src/restricaowidget.cpp \
+	   $$PWD/src/constraintwidget.cpp \
 	   $$PWD/src/rulewidget.cpp \
 	   $$PWD/src/triggerwidget.cpp \
 	   $$PWD/src/indexwidget.cpp \
@@ -100,7 +100,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/tipowidget.h \
            $$PWD/src/visaowidget.h \
            $$PWD/src/columnwidget.h \
-           $$PWD/src/restricaowidget.h \
+	   $$PWD/src/constraintwidget.h \
 	   $$PWD/src/rulewidget.h \
 	   $$PWD/src/triggerwidget.h \
 	   $$PWD/src/indexwidget.h \
@@ -150,7 +150,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/tipowidget.ui \
          $$PWD/ui/visaowidget.ui \
          $$PWD/ui/columnwidget.ui \
-         $$PWD/ui/restricaowidget.ui \
+	 $$PWD/ui/constraintwidget.ui \
 	 $$PWD/ui/rulewidget.ui \
 	 $$PWD/ui/triggerwidget.ui \
 	 $$PWD/ui/indexwidget.ui \

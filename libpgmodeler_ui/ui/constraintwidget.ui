@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>RestricaoWidget</class>
- <widget class="QWidget" name="RestricaoWidget">
+ <class>ConstraintWidget</class>
+ <widget class="QWidget" name="ConstraintWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="restricao_grid">
+  <layout class="QGridLayout" name="constraint_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -27,7 +27,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="tipo_rest_lbl">
+    <widget class="QLabel" name="constr_type_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -46,7 +46,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QComboBox" name="tipo_rest_cmb">
+    <widget class="QComboBox" name="constr_type_cmb">
      <property name="minimumSize">
       <size>
        <width>100</width>
@@ -69,7 +69,7 @@
     </spacer>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="exp_checagem_lbl">
+    <widget class="QLabel" name="check_expr_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -88,7 +88,7 @@
     </widget>
    </item>
    <item row="1" column="1" colspan="3">
-    <widget class="QTextEdit" name="exp_checagem_txt">
+    <widget class="QTextEdit" name="check_expr_txt">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -134,7 +134,7 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="fator_preenc_lbl">
+    <widget class="QLabel" name="fill_factor_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -153,7 +153,7 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QSpinBox" name="fator_preenc_sb">
+    <widget class="QSpinBox" name="fill_factor_sb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -169,7 +169,7 @@
     </widget>
    </item>
    <item row="2" column="2">
-    <widget class="QLabel" name="tipo_comparacao_lbl">
+    <widget class="QLabel" name="match_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -189,12 +189,12 @@
       </size>
      </property>
      <property name="text">
-      <string>Comparison:</string>
+      <string>Match:</string>
      </property>
     </widget>
    </item>
    <item row="2" column="3">
-    <widget class="QComboBox" name="tipo_comparacao_cmb">
+    <widget class="QComboBox" name="match_cmb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -210,7 +210,7 @@
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="postergavel_lbl">
+    <widget class="QLabel" name="deferrable_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -229,7 +229,7 @@
     </widget>
    </item>
    <item row="3" column="1">
-    <widget class="QCheckBox" name="postergavel_chk">
+    <widget class="QCheckBox" name="deferrable_chk">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -242,7 +242,7 @@
     </widget>
    </item>
    <item row="3" column="2">
-    <widget class="QLabel" name="tipo_postergacao_lbl">
+    <widget class="QLabel" name="deferral_lbl">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -270,7 +270,7 @@
     </widget>
    </item>
    <item row="3" column="3">
-    <widget class="QComboBox" name="tipo_postergacao_cmb">
+    <widget class="QComboBox" name="deferral_cmb">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -289,7 +289,7 @@
     </widget>
    </item>
    <item row="4" column="0">
-    <widget class="QLabel" name="acao_delete_lbl">
+    <widget class="QLabel" name="on_delete_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -308,7 +308,7 @@
     </widget>
    </item>
    <item row="4" column="1">
-    <widget class="QComboBox" name="acao_delete_cmb">
+    <widget class="QComboBox" name="on_delete_cmb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -324,7 +324,7 @@
     </widget>
    </item>
    <item row="4" column="2">
-    <widget class="QLabel" name="acao_update_lbl">
+    <widget class="QLabel" name="on_update_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -349,7 +349,7 @@
     </widget>
    </item>
    <item row="4" column="3">
-    <widget class="QComboBox" name="acao_update_cmb">
+    <widget class="QComboBox" name="on_update_cmb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -365,7 +365,7 @@
     </widget>
    </item>
    <item row="6" column="0" colspan="4">
-    <widget class="QTabWidget" name="colunas_tbw">
+    <widget class="QTabWidget" name="columns_tbw">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -381,7 +381,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="QLabel" name="coluna_lbl">
+        <widget class="QLabel" name="column_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -394,7 +394,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QComboBox" name="coluna_cmb">
+        <widget class="QComboBox" name="column_cmb">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -423,7 +423,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0" colspan="2">
-        <widget class="QLabel" name="tab_ref_lbl">
+        <widget class="QLabel" name="ref_table_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -436,7 +436,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="coluna_ref_lbl">
+        <widget class="QLabel" name="ref_column_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -455,7 +455,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="coluna_ref_cmb">
+        <widget class="QComboBox" name="ref_column_cmb">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
