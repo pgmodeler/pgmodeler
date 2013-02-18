@@ -22,7 +22,7 @@
 #include "rulewidget.h"
 #include "triggerwidget.h"
 #include "indexwidget.h"
-#include "relacionamentowidget.h"
+#include "relationshipwidget.h"
 #include "tabelawidget.h"
 #include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
@@ -53,7 +53,7 @@ extern RestricaoWidget *restricao_wgt;
 extern RuleWidget *regra_wgt;
 extern TriggerWidget *gatilho_wgt;
 extern IndexWidget *indice_wgt;
-extern RelacionamentoWidget *relacao_wgt;
+extern RelationshipWidget *relacao_wgt;
 extern TabelaWidget *tabela_wgt;
 extern TaskProgressWidget *task_prog_wgt;
 extern ObjectDepsRefsWidget *deps_refs_wgt;

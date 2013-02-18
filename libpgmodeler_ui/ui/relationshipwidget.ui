@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>RelacionamentoWidget</class>
- <widget class="QWidget" name="RelacionamentoWidget">
+ <class>RelationshipWidget</class>
+ <widget class="QWidget" name="RelationshipWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>865</width>
+    <width>695</width>
     <height>370</height>
    </rect>
   </property>
@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="relacionamento_grid">
+  <layout class="QGridLayout" name="relationship_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -33,7 +33,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QTabWidget" name="atributosrel_tbw">
+    <widget class="QTabWidget" name="rel_attribs_tbw">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -55,7 +55,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="QLabel" name="tipo_rel_lbl">
+        <widget class="QLabel" name="rel_type_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -294,7 +294,7 @@
         </layout>
        </item>
        <item row="0" column="2">
-        <widget class="QCheckBox" name="identificador_chk">
+        <widget class="QCheckBox" name="identifier_chk">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -307,7 +307,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="tabela_ref_lbl">
+        <widget class="QLabel" name="ref_table_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -332,7 +332,7 @@
         </widget>
        </item>
        <item row="1" column="1" colspan="2">
-        <widget class="QTextEdit" name="tabela_ref_txt">
+        <widget class="QTextEdit" name="ref_table_txt">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -371,7 +371,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="tabela_recep_lbl">
+        <widget class="QLabel" name="recv_table_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -396,7 +396,7 @@
         </widget>
        </item>
        <item row="2" column="1" colspan="2">
-        <widget class="QTextEdit" name="tabela_recep_txt">
+        <widget class="QTextEdit" name="recv_table_txt">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -462,7 +462,7 @@
        <item row="3" column="1" colspan="2">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QCheckBox" name="tab_orig_obrig_chk">
+          <widget class="QCheckBox" name="table1_mand_chk">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -475,7 +475,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="tab_dest_obrig_chk">
+          <widget class="QCheckBox" name="table2_mand_chk">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -490,7 +490,7 @@
         </layout>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="nome_tab_relnn_lbl">
+        <widget class="QLabel" name="relnn_tab_name_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -518,14 +518,14 @@
         </widget>
        </item>
        <item row="4" column="1" colspan="2">
-        <widget class="QLineEdit" name="nome_tab_relnn_edt">
+        <widget class="QLineEdit" name="relnn_tab_name_edt">
          <property name="toolTip">
           <string>Name of the table generated from many to many relationship</string>
          </property>
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel" name="sufixo_orig_lbl">
+        <widget class="QLabel" name="src_suffix_lbl">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -553,7 +553,7 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QLineEdit" name="sufixo_orig_edt">
+        <widget class="QLineEdit" name="src_suffix_edt">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -566,7 +566,7 @@
         </widget>
        </item>
        <item row="6" column="0">
-        <widget class="QLabel" name="sufixo_dest_lbl">
+        <widget class="QLabel" name="dst_suffix_lbl">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -594,7 +594,7 @@
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="QLineEdit" name="sufixo_dest_edt">
+        <widget class="QLineEdit" name="dst_suffix_edt">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -607,7 +607,7 @@
         </widget>
        </item>
        <item row="7" column="0" colspan="3">
-        <widget class="QGroupBox" name="chave_estrang_gb">
+        <widget class="QGroupBox" name="foreign_key_gb">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -625,7 +625,7 @@
            <number>6</number>
           </property>
           <item row="0" column="0">
-           <widget class="QLabel" name="postergavel_lbl">
+           <widget class="QLabel" name="deferrable_lbl">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -650,7 +650,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QCheckBox" name="postergavel_chk">
+           <widget class="QCheckBox" name="deferrable_chk">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -675,12 +675,12 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="tipo_postergacao_lbl">
+           <widget class="QLabel" name="deferral_lbl">
             <property name="enabled">
              <bool>false</bool>
             </property>
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -703,7 +703,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="tipo_postergacao_cmb">
+           <widget class="QComboBox" name="deferral_cmb">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -747,7 +747,7 @@
         </spacer>
        </item>
        <item row="5" column="2" rowspan="2">
-        <widget class="QCheckBox" name="sufixo_auto_chk">
+        <widget class="QCheckBox" name="auto_suffix_chk">
          <property name="text">
           <string>Automatic Suffix</string>
          </property>
@@ -780,7 +780,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="QListWidget" name="coluna_rel_lst">
+        <widget class="QListWidget" name="rel_columns_lst">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>

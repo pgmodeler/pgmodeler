@@ -434,7 +434,7 @@ class Relationship: public BaseRelationship {
 		void operator = (Relationship &rel);
 
 		friend class DatabaseModel;
-		friend class RelacionamentoWidget;
+		friend class RelationshipWidget;
 };
 
 #endif

@@ -22,65 +22,66 @@
 \brief Definição da classe que implementa o formulário de edição dos atributos de relacionamentos.
 */
 
-#ifndef RELACIONAMENTO_WIDGET_H
-#define RELACIONAMENTO_WIDGET_H
+#ifndef RELATIONSHIP_WIDGET_H
+#define RELATIONSHIP_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_relacionamentowidget.h"
+#include "ui_relationshipwidget.h"
 #include "tabelaobjetoswidget.h"
 
-class RelacionamentoWidget: public BaseObjectWidget, public Ui::RelacionamentoWidget {
+class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
 	private:
 		Q_OBJECT
 		/*! \brief Quantidade de elementos na lista de operações antes do relacionamento
 			ser editado. Este atributo é usado para se saber, em caso de cancelamento
 			da edição do relacionamento, a quantidade de operações relacionada ao
 			objeto que necessitam ser removidas. Vide: cancelarConfiguracao() */
-		unsigned qtd_operacoes;
+		unsigned operation_count;
 
 		//! \brief Destacadores de sintaxe para os campos de nome da tabela de origem e destino
-		SyntaxHighlighter *dest_tab_orig,
-											*dest_tab_dest;
+		SyntaxHighlighter *table1_hl,
+											*table2_hl;
 
 		//! \brief Tabela as quais armazenam os atributos e restrições do relacionamento
-		TabelaObjetosWidget *tab_atributos,
-												*tab_restricoes,
-												*tab_objs_avancados;
+		TabelaObjetosWidget *attributes_tab,
+												*constraints_tab,
+												*advanced_objs_tab;
 
 		/*! \brief Lista os objetos do relacionamento na tabela respectiva, de acordo
 			com o tipo do objeto passado */
-		void listarObjetos(ObjectType tipo_obj);
+		void listObjects(ObjectType obj_type);
 
 		//! \brief Lista os objetos avançados
-		void listarObjetosAvancados(void);
+		void listAdvancedObjects(void);
 
 		//! \brief Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
-		void exibirDadosObjeto(TableObject *object, int idx_lin);
+		void showObjectData(TableObject *object, int row);
 
 	protected:
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Table *tab_orig, Table *tab_dest, unsigned tipo_rel);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Table *src_tab, Table *dst_tab, unsigned rel_type);
 
 	public:
-		RelacionamentoWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *relacao);
+		RelationshipWidget(QWidget * parent = 0);
+
+		void setAttributes(DatabaseModel *model, OperationList *op_list, BaseRelationship *base_rel);
 
 	private slots:
-		void hideEvent(QHideEvent *);
+		void hideEvent(QHideEvent *event);
 
 		//! \brief Adiciona um objeto   tabela a qual aciona o método
-		void adicionarObjeto(void);
+		void addObject(void);
 
 		//! \brief Edita um objeto selecionado  na tabela a qual aciona o método
-		void editarObjeto(int idx_lin);
+		void editObject(int row);
 
 		//! \brief Remove um objeto selecionado  na tabela a qual aciona o método
-		void removerObjeto(int idx_lin);
+		void removeObject(int row);
 
 		//! \brief Remove todos os objetos da tabela a qual aciona o método
-		void removerObjetos(void);
+		void removeObjects(void);
 
 		//! \brief Exibe o formulário referente ao objeto criado ou que representa o relationamento
-		void exibirObjetoAvancado(int idx);
+		void showAdvancedObject(int idx);
 
 	public slots:
 		void applyConfiguration(void);
