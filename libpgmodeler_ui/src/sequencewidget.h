@@ -19,27 +19,27 @@
 /**
 \ingroup libpgmodeler_ui
 \class SequenciaWidget
-\brief Definição da classe que implementa o formulário de edição dos atributos de sequências.
+\brief Implements the operations to create/edit sequences via form.
 */
 
-#ifndef SEQUENCIA_WIDGET_H
-#define SEQUENCIA_WIDGET_H
+#ifndef SEQUENCE_WIDGET_H
+#define SEQUENCE_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_sequenciawidget.h"
+#include "ui_sequencewidget.h"
 
-class SequenciaWidget: public BaseObjectWidget, public Ui::SequenciaWidget {
+class SequenceWidget: public BaseObjectWidget, public Ui::SequenceWidget {
+	private:
 		Q_OBJECT
 
-	private:
-		ObjectSelectorWidget *sel_coluna;
+		ObjectSelectorWidget *column_sel;
+
+		void hideEvent(QHideEvent *event);
 
 	public:
-		SequenciaWidget(QWidget * parent = 0);
-		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Sequence *sequencia);
+		SequenceWidget(QWidget * parent = 0);
 
-	private slots:
-		void hideEvent(QHideEvent *);
+		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Sequence *sequence);
 
 	public slots:
 		void applyConfiguration(void);

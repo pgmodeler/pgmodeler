@@ -8,7 +8,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install
 	{
 		Ui_ObjectSelectorWidget::setupUi(this);
 
-		obj_picker_wgt=new VisaoObjetosWidget(true);
+		obj_view_wgt=new VisaoObjetosWidget(true);
 
 		model=NULL;
 		selected_obj=NULL;
@@ -25,9 +25,9 @@ ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install
 																			GlobalAttributes::CONFIGURATION_EXT);
 		}
 
-		connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectPicker(void)));
+		connect(sel_object_tb, SIGNAL(clicked(bool)), this, SLOT(showObjectView(void)));
 		connect(rem_object_tb, SIGNAL(clicked(bool)), this, SLOT(clearSelector(void)));
-		connect(obj_picker_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedObject(BaseObject*, bool)));
+		connect(obj_view_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedObject(BaseObject*, bool)));
 	}
 	catch(Exception &e)
 	{
@@ -37,7 +37,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install
 
 ObjectSelectorWidget::~ObjectSelectorWidget(void)
 {
-	delete(obj_picker_wgt);
+	delete(obj_view_wgt);
 }
 
 BaseObject *ObjectSelectorWidget::getSelectedObject(void)
@@ -101,11 +101,11 @@ void ObjectSelectorWidget::clearSelector(void)
 	emit s_selectorCleared();
 }
 
-void ObjectSelectorWidget::showObjectPicker(void)
+void ObjectSelectorWidget::showObjectView(void)
 {
 	ObjectSelectorWidget::current_selector=this;
-	obj_picker_wgt->definirObjetoVisivel(sel_obj_type, true);
-	obj_picker_wgt->definirModelo(this->model);
-	obj_picker_wgt->show();
+	obj_view_wgt->definirObjetoVisivel(sel_obj_type, true);
+	obj_view_wgt->definirModelo(this->model);
+	obj_view_wgt->show();
 }
 

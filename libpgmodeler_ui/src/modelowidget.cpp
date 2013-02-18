@@ -10,7 +10,7 @@
 #include "conversionwidget.h"
 #include "domainwidget.h"
 #include "aggregatewidget.h"
-#include "sequenciawidget.h"
+#include "sequencewidget.h"
 #include "operatorwidget.h"
 #include "operatorfamilywidget.h"
 #include "operatorclasswidget.h"
@@ -41,7 +41,7 @@ extern CastWidget *convtipo_wgt;
 extern ConversionWidget *convcodif_wgt;
 extern DomainWidget *dominio_wgt;
 extern AggregateWidget *funcaoag_wgt;
-extern SequenciaWidget *sequencia_wgt;
+extern SequenceWidget *sequencia_wgt;
 extern OperatorWidget *operador_wgt;
 extern OperatorFamilyWidget *familiaop_wgt;
 extern OperatorClassWidget *classeop_wgt;

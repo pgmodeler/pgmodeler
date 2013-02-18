@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SequenciaWidget</class>
- <widget class="QWidget" name="SequenciaWidget">
+ <class>SequenceWidget</class>
+ <widget class="QWidget" name="SequenceWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="sequencia_grid">
+  <layout class="QGridLayout" name="sequence_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -33,28 +33,28 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="ciclica_lbl">
+    <widget class="QLabel" name="cyclic_lbl">
      <property name="text">
       <string>Cyclic:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QCheckBox" name="ciclica_chk">
+    <widget class="QCheckBox" name="cyclic_chk">
      <property name="text">
       <string/>
      </property>
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QLabel" name="inicio_lbl">
+    <widget class="QLabel" name="start_lbl">
      <property name="text">
       <string>Start:</string>
      </property>
     </widget>
    </item>
    <item row="0" column="3">
-    <widget class="QLineEdit" name="inicio_edt">
+    <widget class="QLineEdit" name="start_edt">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -75,14 +75,14 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="maximo_lbl">
+    <widget class="QLabel" name="maximum_lbl">
      <property name="text">
       <string>Maximum:</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QLineEdit" name="maximo_edt">
+    <widget class="QLineEdit" name="maximum_edt">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -103,14 +103,14 @@
     </widget>
    </item>
    <item row="1" column="2">
-    <widget class="QLabel" name="minimo_lbl">
+    <widget class="QLabel" name="minimum_lbl">
      <property name="text">
       <string>Minimum:</string>
      </property>
     </widget>
    </item>
    <item row="1" column="3">
-    <widget class="QLineEdit" name="minimo_edt">
+    <widget class="QLineEdit" name="minimum_edt">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -131,14 +131,14 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="incremento_lbl">
+    <widget class="QLabel" name="increment_lbl">
      <property name="text">
       <string>Increment:</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QLineEdit" name="incremento_edt">
+    <widget class="QLineEdit" name="increment_edt">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -187,7 +187,7 @@
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="possuidora_lbl">
+    <widget class="QLabel" name="owner_col_lbl">
      <property name="text">
       <string>Owner:</string>
      </property>

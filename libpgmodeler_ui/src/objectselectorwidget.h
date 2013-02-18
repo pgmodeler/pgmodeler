@@ -19,7 +19,7 @@
 /**
 \ingroup libpgmodeler_ui
 \class ObjectSelectorWidget
-\brief Implements a simple object picker integrated to the object view widget.
+\brief Implements a simple object picker based upon the object view widget.
 */
 
 #ifndef OBJECT_SELECTOR_WIDGET_H
@@ -36,7 +36,7 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		Q_OBJECT
 
 		//! \brief An object view widget instance used as object picker
-		VisaoObjetosWidget *obj_picker_wgt;
+		VisaoObjetosWidget *obj_view_wgt;
 
 		/*! \brief Stores the selector instance currently focused. This attribute is used to
 		prevent other selector in a same form to receive the selected object */
@@ -71,7 +71,7 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		void showSelectedObject(BaseObject *obj_sel, bool=false);
 
 		//! \brief Shows the object view widget (picker)
-		void showObjectPicker(void);
+		void showObjectView(void);
 
 	public slots:
 		void clearSelector(void);

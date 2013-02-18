@@ -14,7 +14,7 @@
 #include "conversionwidget.h"
 #include "domainwidget.h"
 #include "aggregatewidget.h"
-#include "sequenciawidget.h"
+#include "sequencewidget.h"
 #include "operatorwidget.h"
 #include "operatorfamilywidget.h"
 #include "operatorclasswidget.h"
@@ -54,7 +54,7 @@ CastWidget *convtipo_wgt=NULL;
 ConversionWidget *convcodif_wgt=NULL;
 DomainWidget *dominio_wgt=NULL;
 AggregateWidget *funcaoag_wgt=NULL;
-SequenciaWidget *sequencia_wgt=NULL;
+SequenceWidget *sequencia_wgt=NULL;
 OperatorWidget *operador_wgt=NULL;
 OperatorFamilyWidget *familiaop_wgt=NULL;
 OperatorClassWidget *classeop_wgt=NULL;
@@ -136,7 +136,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		convcodif_wgt=new ConversionWidget(this);
 		dominio_wgt=new DomainWidget(this);
 		funcaoag_wgt=new AggregateWidget(this);
-		sequencia_wgt=new SequenciaWidget(this);
+		sequencia_wgt=new SequenceWidget(this);
 		operador_wgt=new OperatorWidget(this);
 		familiaop_wgt=new OperatorFamilyWidget(this);
 		classeop_wgt=new OperatorClassWidget(this);

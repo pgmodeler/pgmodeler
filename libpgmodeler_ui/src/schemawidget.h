@@ -18,7 +18,7 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class EsquemaWidget
+\class SchemaWidget
 \brief Implements the operations to create/edit schemas via form.
 */
 

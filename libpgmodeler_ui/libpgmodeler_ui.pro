@@ -39,7 +39,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/conversionwidget.cpp \
 	   $$PWD/src/domainwidget.cpp \
 	   $$PWD/src/aggregatewidget.cpp \
-           $$PWD/src/sequenciawidget.cpp \
+	   $$PWD/src/sequencewidget.cpp \
 	   $$PWD/src/operatorwidget.cpp \
 	   $$PWD/src/operatorfamilywidget.cpp \
            $$PWD/src/operatorclasswidget.cpp \
@@ -93,7 +93,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/conversionwidget.h \
 	   $$PWD/src/domainwidget.h \
 	   $$PWD/src/aggregatewidget.h \
-           $$PWD/src/sequenciawidget.h \
+	   $$PWD/src/sequencewidget.h \
 	   $$PWD/src/operatorwidget.h \
 	   $$PWD/src/operatorfamilywidget.h \
            $$PWD/src/operatorclasswidget.h \
@@ -143,7 +143,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
 	 $$PWD/ui/conversionwidget.ui \
 	 $$PWD/ui/domainwidget.ui \
 	 $$PWD/ui/aggregatewidget.ui \
-         $$PWD/ui/sequenciawidget.ui \
+	 $$PWD/ui/sequencewidget.ui \
 	 $$PWD/ui/operatorwidget.ui \
 	 $$PWD/ui/operatorfamilywidget.ui \
          $$PWD/ui/operatorclasswidget.ui \
