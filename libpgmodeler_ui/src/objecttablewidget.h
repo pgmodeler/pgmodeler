@@ -26,8 +26,8 @@
  filhos de um objeto pai único (ex.: Tabelas, Indices, Restrições).
 */
 
-#ifndef TABELA_OBJETOS_WIDGET_H
-#define TABELA_OBJETOS_WIDGET_H
+#ifndef OBJECT_TABLE_WIDGET_H
+#define OBJECT_TABLE_WIDGET_H
 
 #include "ui_objecttablewidget.h"
 #include "baseobjectwidget.h"
@@ -51,28 +51,28 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 													ALL_BUTTONS=63,
 													NO_BUTTONS=0;
 
-		ObjectTableWidget(unsigned conf_botoes=ALL_BUTTONS,
+		ObjectTableWidget(unsigned button_conf=ALL_BUTTONS,
 											bool conf_exclusion=false, QWidget * parent = 0);
 
 		//! \brief Define o número de colunas da tabela
-		void setColumnCount(unsigned num_colunas);
+		void setColumnCount(unsigned col_count);
 
 		//! \brief Define o rótulo do cabeçalho de uma coluna
-		void setHeaderLabel(const QString &rotulo, unsigned idx_col);
+		void setHeaderLabel(const QString &label, unsigned col_idx);
 
 		//! \brief Define o ícone do rótulo de uma coluna
-		void setHeaderIcon(const QIcon &icone, unsigned idx_col);
+		void setHeaderIcon(const QIcon &icon, unsigned col_idx);
 
 		//! \brief Define o ícone de uma dada célula
-		void setCellIcon(const QIcon &icone, unsigned idx_lin, unsigned idx_col);
+		void setCellIcon(const QIcon &icon, unsigned row_idx, unsigned col_idx);
 
 		//! \brief Define o texto de uma dada célula
-		void setCellText(const QString &texto, unsigned idx_lin, unsigned idx_col);
+		void setCellText(const QString &text, unsigned row_idx, unsigned col_idx);
 
 		//! \brief Define o dado que uma linha armazena
-		void setRowData(const QVariant &dado, unsigned idx_lin);
+		void setRowData(const QVariant &data, unsigned row_idx);
 
-		void setRowFont(int idx_lin, const QFont &fonte, const QColor &cor_texto, const QColor &cor_fundo);
+		void setRowFont(int row_idx, const QFont &font, const QColor &fg_color, const QColor &bg_color);
 
 		//! \brief Retorna o número de colunas definidas na tabela
 		unsigned getColumnCount(void);
@@ -81,19 +81,19 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		unsigned getRowCount(void);
 
 		//! \brief Retorna o rótulo de um cabeçalho de colun
-		QString getHeaderLabel(unsigned idx_col);
+		QString getHeaderLabel(unsigned col_idx);
 
 		//! \brief Retorna o texto de uma célula
-		QString getCellText(unsigned idx_lin, unsigned idx_col);
+		QString getCellText(unsigned row_idx, unsigned col_idx);
 
 		//! \brief Retorna o dado armazenado numa linha
-		QVariant getRowData(unsigned idx_lin);
+		QVariant getRowData(unsigned row_idx);
 
 		//! \brief Remove uma coluna através de seu índice
-		void removeColumn(unsigned idx_col);
+		void removeColumn(unsigned col_idx);
 
 		//! \brief Adiciona uma coluna no índice especificado
-		void addColumn(unsigned idx_col);
+		void addColumn(unsigned col_idx);
 
 		//! \brief Retorna o índice da linha selecionada na tabela
 		int getSelectedRow(void);
@@ -101,12 +101,12 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		/*! \brief Retorna o índice da linha buscando-a através do dado
 			que ela armazena. Caso este não seja encontrada
 			o método retorna -1 */
-		int getRowIndex(const QVariant &dado);
+		int getRowIndex(const QVariant &data);
 
 		//! \brief Define os botões disponíveis para controle da tabela
-		void setButtonConfiguration(unsigned botoes);
+		void setButtonConfiguration(unsigned button_conf);
 
-		void addRow(unsigned idx);
+		void addRow(unsigned lin_idx);
 
 	private slots:
 		/*! \brief Move a linha selecionada para cima ou para baixo de acordo com o
@@ -141,16 +141,16 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		void removeRows(void);
 
 		//! \brief Remove uma linha na posição selecionada
-		void removeRow(unsigned idx_lin);
+		void removeRow(unsigned row_idx);
 
 		//! \brief Limpa a seleção da tabela desmarcando cada linha selecionada
 		void clearSelection(void);
 
 		//! \brief Seleciona a linha cujo indice está especificado
-		void selectRow(int idx_lin);
+		void selectRow(int lin_idx);
 
 		//! \brief Define o estado de habilitação dos botãos especificados
-		void enableButtons(unsigned conf_botoes, bool valor);
+		void enableButtons(unsigned button_conf, bool value);
 
 	signals:
 		/*! \brief Sinal disparando quando uma linha é adicionada.
