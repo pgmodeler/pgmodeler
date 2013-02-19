@@ -29,6 +29,7 @@
 #include "ui_quickrenamewidget.h"
 #include "databasemodel.h"
 #include "operationlist.h"
+#include "messagebox.h"
 
 class QuickRenameWidget: public QDialog, public Ui::QuickRenameWidget {
 	private:

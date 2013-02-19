@@ -29,7 +29,6 @@
 #include "quickrenamewidget.h"
 #include "permissionwidget.h"
 
-extern MessageBox *caixa_msg;
 extern DatabaseWidget *database_wgt;
 extern SchemaWidget *esquema_wgt;
 extern RoleWidget *papel_wgt;
@@ -775,11 +774,11 @@ void ModeloWidget::converterRelacionamentoNN(void)
 		//Só converte o relacionamento caso este seja n-n
 		if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
 		{
-			caixa_msg->show(trUtf8("Confirmation"),
+			msg_box.show(trUtf8("Confirmation"),
 											trUtf8("Convert a relationship is an irreversible operation and causes the deletion of all operation history! Do you want to continue?"),
 											MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 
-			if(caixa_msg->result()==QDialog::Accepted)
+			if(msg_box.result()==QDialog::Accepted)
 			{
 				try
 				{
@@ -1402,7 +1401,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
 	catch(Exception &e)
 	{
 		//throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-		caixa_msg->show(e);
+		msg_box.show(e);
 	}
 }
 
@@ -1723,7 +1722,7 @@ void ModeloWidget::copiarObjetos(void)
 	}
 
 	//Solicia a confirmação ao usuário se o mesmo deseja copiar as dependências dos objetos
-	caixa_msg->show(trUtf8("Confirmation"),
+	msg_box.show(trUtf8("Confirmation"),
 									trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
 									MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 
@@ -1739,7 +1738,7 @@ void ModeloWidget::copiarObjetos(void)
 		if(objeto->getObjectType()!=BASE_RELATIONSHIP)
 		{
 			//Obtém as dependências do objeto atual caso o usuário tenha confirmado a obtenção das mesmas
-			modelo->getObjectDependecies(objeto, vet_deps, caixa_msg->result()==QDialog::Accepted);
+			modelo->getObjectDependecies(objeto, vet_deps, msg_box.result()==QDialog::Accepted);
 
 			/* Caso especial para tabelas: É preciso copiar para a lista os objetos especiais
 			(indices, gatilhos e restrições) que referenciam colunas incluídas por relacionamento.
@@ -2064,7 +2063,7 @@ void ModeloWidget::colarObjetos(void)
 	/* Caso algum erro foi capturado durante a colagem o mesmo é mostrado ao usuário acompanhado
 		de um alerta */
 	if(erro.getErrorType()!=ERR_CUSTOM)
-		caixa_msg->show(erro,
+		msg_box.show(erro,
 										trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
 										MessageBox::ALERT_ICON);
 
@@ -2131,20 +2130,20 @@ void ModeloWidget::excluirObjetos(void)
 			sobre a exclusão de multiplos objetos e a invalidação de objetos */
 			if(objs_selecionados.size() > 1)
 			{
-				caixa_msg->show(trUtf8("Confirmation"),
+				msg_box.show(trUtf8("Confirmation"),
 												trUtf8("CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?"),
 												MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 			}
 			else
 			{
-				caixa_msg->show(trUtf8("Confirmation"),
+				msg_box.show(trUtf8("Confirmation"),
 												trUtf8("Do you really want to delete the selected object?"),
 												MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 			}
 		}
 
 		//Caso o usuário tenha confirmado a exclusão ou a operação de recortar esteja ativa
-		if(caixa_msg->result()==QDialog::Accepted || ModeloWidget::op_recortar)
+		if(msg_box.result()==QDialog::Accepted || ModeloWidget::op_recortar)
 		{
 			try
 			{
@@ -2347,7 +2346,7 @@ void ModeloWidget::excluirObjetos(void)
 				/* Aparentemente redirencionando a exceção neste ponto é provocado um segmentation fault sem causa conhecida.
 			 Uma solução alternativa é chamar a caixa de mensagem exibindo a exceção capturada. */
 				//throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-				caixa_msg->show(e);
+				msg_box.show(e);
 			}
 		}
 	}

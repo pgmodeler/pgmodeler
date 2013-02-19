@@ -48,6 +48,8 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
 		QTimer tm_salvamento,
 		tm_salvamento_tmp;
 
+		MessageBox msg_box;
+
 		//! \brief Widget de visão geral do modelo
 		VisaoGeralWidget *visaogeral_wgt;
 

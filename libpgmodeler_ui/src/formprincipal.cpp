@@ -38,7 +38,7 @@
 	 de se instanciar cada um toda vez em que forem usados.
 	 O formulário principal é o responsável por alocar e desalocar esses objetos. */
 FormSobre *fsobre=NULL;
-MessageBox *caixa_msg=NULL;
+//MessageBox *caixa_msg=NULL;
 //VisaoObjetosWidget *selecaoobjetos_wgt=NULL;
 TextboxWidget *caixatexto_wgt=NULL;
 SourceCodeWidget *codigofonte_wgt=NULL;
@@ -102,7 +102,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 	setupUi(this);
 
 	//Alocando os formulários globais
-	caixa_msg=new MessageBox(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+	//caixa_msg=new MessageBox(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 
 	try
 	{
@@ -155,7 +155,8 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 	}
 	catch(Exception &e)
 	{
-		caixa_msg->show(e);
+		//caixa_msg->show(e);
+		msg_box.show(e);
 	}
 
 	for(unsigned i=0; i < 27; i++)
@@ -327,7 +328,8 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 				}
 				catch(Exception &e)
 				{
-					caixa_msg->show(e);
+					//caixa_msg->show(e);
+					msg_box.show(e);
 				}
 			}
 
@@ -336,7 +338,8 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 	}
 	catch(Exception &e)
 	{
-		caixa_msg->show(e);
+		//caixa_msg->show(e);
+		msg_box.show(e);
 	}
 
 	//Restaura os arquivos temporários (se houver)
@@ -366,7 +369,8 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 			}
 			catch(Exception &e)
 			{
-				caixa_msg->show(e);
+				//caixa_msg->show(e);
+				msg_box.show(e);
 			}
 		}
 
@@ -386,7 +390,8 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		}
 		catch(Exception &e)
 		{
-			caixa_msg->show(e);
+			//caixa_msg->show(e);
+			msg_box.show(e);
 		}
 	}
 
@@ -453,11 +458,12 @@ void FormPrincipal::closeEvent(QCloseEvent *)
 		//Se algum modelo foi encontrado como modificado
 		if(modificado)
 		{
-			caixa_msg->show(trUtf8("Save all models"),
+			//caixa_msg->
+			msg_box.show(trUtf8("Save all models"),
 											trUtf8("Some models were modified! Do you want to save them before finish the pgModeler?"),
 											MessageBox::CONFIRM_ICON,MessageBox::YES_NO_BUTTONS);
 
-			if(caixa_msg->result()==QDialog::Accepted)
+			if(msg_box.result()==QDialog::Accepted)
 				this->salvarTodosModelos();
 		}
 	}
@@ -875,11 +881,11 @@ void FormPrincipal::fecharModelo(int idx_modelo)
 		//Se o modelo foi modificado então solicita o salvamento ao usuário
 		if(modelo->modeloModificado())
 		{
-			caixa_msg->show(trUtf8("Save model"),
+			msg_box.show(trUtf8("Save model"),
 											trUtf8("The model were modified! Do you want to save it before close?"),
 											MessageBox::CONFIRM_ICON,MessageBox::YES_NO_BUTTONS);
 
-			if(caixa_msg->result()==QDialog::Accepted)
+			if(msg_box.result()==QDialog::Accepted)
 				this->salvarModelo(modelo);
 		}
 
@@ -1049,15 +1055,15 @@ void FormPrincipal::imprimirModelo(void)
 				 orientacao!=orient_atual || tam_papel_atual!=tam_papel)
 			{
 				//Exibe a caixa de confirmação de impressão ao usuário
-				caixa_msg->show(trUtf8("Confirmation"),
+				msg_box.show(trUtf8("Confirmation"),
 												trUtf8("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
 												MessageBox::ALERT_ICON, MessageBox::ALL_BUTTONS);
 			}
 
-			if(!caixa_msg->isCancelled())
+			if(!msg_box.isCancelled())
 			{
 				//Caso o usuário rejeite as configurações personalizada
-				if(caixa_msg->result()==QDialog::Rejected)
+				if(msg_box.result()==QDialog::Rejected)
 				{
 					//Reverte para as configurações originais da cena
 					printer->setPaperSize(tam_papel);

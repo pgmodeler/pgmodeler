@@ -18,30 +18,30 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class TabelaObjetosWidget
-\brief Definição da classe que implementa uma tabela para manipulação
- vários objetos em uma grade. Incluíndo funções de inclusão e exclusão
- de objeto e movimentação dos mesmos nas linhas da tabela. Esta classe
- é usada como auxiliar em formulários os quais trabalham com vários objetos
- filhos de um objeto pai único (ex.: Tabelas, Indices, Restrições).
+\class ObjectTableWidget
+\brief Implements a basic table (grid) which can be used commonly to store
+objects references and show information about them on it's rows. This
+class also implements operations to handle insertion/deletion/update/movements
+of rows on the table.
 */
 
 #ifndef OBJECT_TABLE_WIDGET_H
 #define OBJECT_TABLE_WIDGET_H
 
 #include "ui_objecttablewidget.h"
+#include "messagebox.h"
 #include "baseobjectwidget.h"
 
 class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 	private:
 		Q_OBJECT
 
-		/*! \brief Indica se caixas de confirmação serão exibidas a cada exclusão de
-			itens da tabela, por padrão as exclusões são feitas sem confirmação */
+		/*! \brief Indicates that a confirmation message must be shown when the user try
+		to remove an element from table. By default, the exclusions are made without confirmation */
 		bool conf_exclusion;
 
 	public:
-		//! \brief Constantes usadas ativa/desativa um conjunto de botões da tabela
+		//! \brief Constants used to configure the table buttons
 		const static unsigned ADD_BUTTON=1,
 													REMOVE_BUTTON=2,
 													UPDATE_BUTTON=4,
@@ -54,138 +54,126 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		ObjectTableWidget(unsigned button_conf=ALL_BUTTONS,
 											bool conf_exclusion=false, QWidget * parent = 0);
 
-		//! \brief Define o número de colunas da tabela
+		//! \brief Sets the table's column count
 		void setColumnCount(unsigned col_count);
 
-		//! \brief Define o rótulo do cabeçalho de uma coluna
+		//! \brief Sets the specified column header label
 		void setHeaderLabel(const QString &label, unsigned col_idx);
 
-		//! \brief Define o ícone do rótulo de uma coluna
+		//! \brief Sets the specified column header icon
 		void setHeaderIcon(const QIcon &icon, unsigned col_idx);
 
-		//! \brief Define o ícone de uma dada célula
+		//! \brief Sets the icon of the specified cell
 		void setCellIcon(const QIcon &icon, unsigned row_idx, unsigned col_idx);
 
-		//! \brief Define o texto de uma dada célula
+		//! \brief Sets the text of the specified cell
 		void setCellText(const QString &text, unsigned row_idx, unsigned col_idx);
 
-		//! \brief Define o dado que uma linha armazena
+		//! \brief Sets the data which the specified row stores
 		void setRowData(const QVariant &data, unsigned row_idx);
 
+		//! \brief Sets a individual font configuration for the specified row
 		void setRowFont(int row_idx, const QFont &font, const QColor &fg_color, const QColor &bg_color);
 
-		//! \brief Retorna o número de colunas definidas na tabela
+		//! \brief Returns the table column count
 		unsigned getColumnCount(void);
 
-		//! \brief Retorna o número de linhas atuais na tabela
+		//! \brief Returns the table row count
 		unsigned getRowCount(void);
 
-		//! \brief Retorna o rótulo de um cabeçalho de colun
+		//! \brief Returns the specified column header label
 		QString getHeaderLabel(unsigned col_idx);
 
-		//! \brief Retorna o texto de uma célula
+		//! \brief Returns the specified cell text
 		QString getCellText(unsigned row_idx, unsigned col_idx);
 
-		//! \brief Retorna o dado armazenado numa linha
+		//! \brief Returns the data relative to the specified row
 		QVariant getRowData(unsigned row_idx);
 
-		//! \brief Remove uma coluna através de seu índice
+		//! \brief Remove the specified column from table
 		void removeColumn(unsigned col_idx);
 
-		//! \brief Adiciona uma coluna no índice especificado
+		//! \brief Adds a new column at the specified index
 		void addColumn(unsigned col_idx);
 
-		//! \brief Retorna o índice da linha selecionada na tabela
-		int getSelectedRow(void);
-
-		/*! \brief Retorna o índice da linha buscando-a através do dado
-			que ela armazena. Caso este não seja encontrada
-			o método retorna -1 */
-		int getRowIndex(const QVariant &data);
-
-		//! \brief Define os botões disponíveis para controle da tabela
-		void setButtonConfiguration(unsigned button_conf);
-
+		//! \brief Adds a new row at the specified index
 		void addRow(unsigned lin_idx);
 
+		//! \brief Returns the row index currently selected
+		int getSelectedRow(void);
+
+		/*! \brief Returns the row index search it through the specified row data. If
+		no row is found returns -1 */
+		int getRowIndex(const QVariant &data);
+
+		//! \brief Sets the table button configuration. Use the constants ???_BUTTON combined via bitwise operation.
+		void setButtonConfiguration(unsigned button_conf);
+
 	private slots:
-		/*! \brief Move a linha selecionada para cima ou para baixo de acordo com o
-		 botão de movimentação acionado pelo usuário */
+		//! \brief Moves a row up or down according to the button that triggers the slot
 		void moveRows(void);
 
-		//! \brief Remove a linha selecionada atualmente
+		//! \brief Removes the currently selected line
 		void removeRow(void);
 
-		/*! \brief Dispara um sinal indicando que uma linha está preparada para edição.
-		 A edição da linha deve ser manipulada/implementada no objeto o qual
-		 fizer uso da tabela de objetos pois por ser tratar de um procedimento
-		 especifico não foi implementado nesta classe, por isso o método apenas
-		 dispara o sinal de edição da linha. */
+		/*! \brief This method does not execute any action, only emit a signal indicating that the row
+		is ready to the edition. The edit operation must be implemented by the user and be connected to
+		the emitted signal. */
 		void editRow(void);
 
-		/*! \brief Dispara um sinal indicando que uma linha está preparada para atualização.
-		 A atualização da linha deve ser manipulada/implementada no objeto o qual
-		 fizer uso da tabela de objetos pois por ser tratar de um procedimento
-		 especifico não foi implementado nesta classe, por isso o método apenas
-		 dispara o sinal de atualização da linha. */
+		/*! \brief This method does not execute any action, only emit a signal indicating that the row
+		is ready to the update. The update operation must be implemented by the user and be connected to
+		the emitted signal. */
 		void updateRow(void);
 
-		//! \brief Habilita os botões de acordo com  a linha selecionada na tabela
+		//! \brief Enables the handle buttons according to the selected row
 		void enableButtons(void);
 
 	public slots:
-		//! \brief Adiciona uma linha ao final da tabela
+		//! \brief Adds a new row at the end of the table
 		void addRow(void);
 
-		//! \brief Remove todas as lista da tabela
+		//! \brief Removes all the rows from table
 		void removeRows(void);
 
-		//! \brief Remove uma linha na posição selecionada
+		//! \brief Remove the specified row
 		void removeRow(unsigned row_idx);
 
-		//! \brief Limpa a seleção da tabela desmarcando cada linha selecionada
+		//! \brief Clears the row selection disabling the buttons if necessary
 		void clearSelection(void);
 
-		//! \brief Seleciona a linha cujo indice está especificado
+		//! \brief Selects the specified row
 		void selectRow(int lin_idx);
 
-		//! \brief Define o estado de habilitação dos botãos especificados
+		//! \brief Controls the enable state of each button
 		void enableButtons(unsigned button_conf, bool value);
 
 	signals:
-		/*! \brief Sinal disparando quando uma linha é adicionada.
-			O índice da linha adicionada é enviado com o sinal. */
+		//! \brief Signal emitted when a new row is added. The new row index is send with the signal
 		void s_rowAdded(int);
 
-		/*! \brief Sinal disparado quando duas linhas tem suas posições trocadas.
-			O índice das linhas trocadas são enviado com o sinal. */
+		//! \brief Signal emitted when two rows are swapped. The rows indexes are send together with the signal
 		void s_rowsMoved(int,int);
 
-		//! \brief Sinal disparado quano todas as linhas da tabela são excluídas
+		//! \brief Signal emitted when all rows are removed from table
 		void s_rowsRemoved(void);
 
-		/*! \brief Sinal disparado quando uma dada linha é removida. O índice da linha
-			removida é enviado com o sinal. */
+		//! \brief Signal emitted when a single row is removed. The row index is send together with the signal
 		void s_rowRemoved(int);
 
-		/*! \brief Sinal disparado quando uma dada linha é selecionada. O índice da linha
-			selecionada é enviado com o sinal. */
+		//! \brief Signal emitted when a row is selected. The row index is send together with the signal
 		void s_rowSelected(int);
 
-		/*! \brief Sinal disparado quando uma dada linha é editada.
-			O índice da linha editada é enviado com o sinal. */
+		//! \brief Signal emitted when a row is edited. The row index is send together with the signal
 		void s_rowEdited(int);
 
-		/*! \brief Sinal disparado quando o botão de atualizar a linha e acionado.
-			O índice da linha atualizada é enviado com o sinal. */
+		//! \brief Signal emitted when a row is updated. The row index is send together with the signal
 		void s_rowUpdated(int);
 
-		/*! \brief Sinal disparado quando uma dada coluna é removida.
-			O índice da coluna removida é enviado com o sinal. */
+		//! \brief Signal emitted when a column is removed. The column index is send together with the signal
 		void s_columnRemoved(int);
 
-		/*! \brief Sinal disparado quando uma dada coluna é adicionada.
-			O índice da coluna adicionada é enviado com o sinal. */
+		//! \brief Signal emitted when a column is added. The column index is send together with the signal
 		void s_columnAdded(int);
 };
 

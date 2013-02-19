@@ -39,6 +39,8 @@ class ModeloWidget: public QWidget {
 		Q_OBJECT
 
 	private:
+		MessageBox msg_box;
+
 		//! \brief Fator de zoom atual da cena de objetos
 		float zoom_atual;
 

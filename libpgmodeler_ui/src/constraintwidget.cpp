@@ -1,7 +1,4 @@
 #include "constraintwidget.h"
-#include "messagebox.h"
-
-extern MessageBox *caixa_msg;
 
 ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CONSTRAINT)
 {
@@ -451,8 +448,10 @@ void ConstraintWidget::applyConfiguration(void)
 	}
 	catch(Exception &e)
 	{
+		MessageBox msg_box;
+
 		cancelConfiguration();
-		caixa_msg->show(e);
+		msg_box.show(e);
 	}
 }
 

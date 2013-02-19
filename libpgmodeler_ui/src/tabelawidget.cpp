@@ -4,14 +4,12 @@
 #include "rulewidget.h"
 #include "indexwidget.h"
 #include "triggerwidget.h"
-#include "messagebox.h"
 
 extern ConstraintWidget *restricao_wgt;
 extern ColumnWidget *coluna_wgt;
 extern RuleWidget *regra_wgt;
 extern IndexWidget *indice_wgt;
 extern TriggerWidget *gatilho_wgt;
-extern MessageBox *caixa_msg;
 
 TabelaWidget::TabelaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
@@ -636,12 +634,13 @@ void TabelaWidget::applyConfiguration(void)
 		}
 		catch(Exception &e)
 		{
+			MessageBox msg_box;
 			/* O único erro que é desconsiderado é o de invalidação de objetos, pois,
 			mesmo com a restauração do estado original da tabela estes
 			objetos não são recuperados */
 			if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
 				//Exibe uma mensagem de erro com o conteúdo da exceção
-				caixa_msg->show(e);
+				msg_box.show(e);
 			//Para os demais erros a exceção é encaminhada
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

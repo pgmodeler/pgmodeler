@@ -2,12 +2,10 @@
 #include "constraintwidget.h"
 #include "columnwidget.h"
 #include "tabelawidget.h"
-#include "messagebox.h"
 
 extern ConstraintWidget *restricao_wgt;
 extern ColumnWidget *coluna_wgt;
 extern TabelaWidget *tabela_wgt;
-extern MessageBox *caixa_msg;
 
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
 {
@@ -748,8 +746,10 @@ void RelationshipWidget::applyConfiguration(void)
 			}
 			catch(Exception &e)
 			{
+				MessageBox msg_box;
+
 				if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
-					caixa_msg->show(e);
+					msg_box.show(e);
 				else
 					throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			}

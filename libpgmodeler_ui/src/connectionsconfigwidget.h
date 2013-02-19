@@ -28,6 +28,7 @@
 #include "ui_connectionsconfigwidget.h"
 #include "baseconfigwidget.h"
 #include "dbconnection.h"
+#include "messagebox.h"
 
 class ConnectionsConfigWidget: public QWidget, public Ui::ConnectionsConfigWidget, public BaseConfigWidget {
 	private:

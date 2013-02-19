@@ -1,11 +1,9 @@
 #include "formexportacao.h"
 #include "taskprogresswidget.h"
 #include "formconfiguracao.h"
-#include "messagebox.h"
 
 extern TaskProgressWidget *task_prog_wgt;
 extern FormConfiguracao *fconfiguracao;
-extern MessageBox *caixa_msg;
 
 FormExportacao::FormExportacao(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -396,6 +394,8 @@ void FormExportacao::exportarModelo(void)
 	}
 	catch(Exception &e)
 	{
+		MessageBox msg_box;
+
 		//Exibe no progresso a mensagem de falha
 		rot_prog_lbl->setText(trUtf8("Error on export!"));
 		rot_prog_lbl->repaint();
@@ -404,7 +404,7 @@ void FormExportacao::exportarModelo(void)
 
 		//Oculta os widgets de progresso após 10 segundos
 		QTimer::singleShot(5000, this, SLOT(ocultarProgressoExportacao(void)));
-		caixa_msg->show(e);
+		msg_box.show(e);
 	}
 }
 

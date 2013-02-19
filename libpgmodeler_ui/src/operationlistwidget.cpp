@@ -1,7 +1,6 @@
 #include "operationlistwidget.h"
 #include "taskprogresswidget.h"
 
-extern MessageBox *caixa_msg;
 extern TaskProgressWidget *task_prog_wgt;
 
 OperationListWidget::OperationListWidget(QWidget *parent, Qt::WindowFlags f) : QDockWidget(parent, f)
@@ -180,12 +179,14 @@ void OperationListWidget::redoOperation(void)
 
 void OperationListWidget::removeOperations(void)
 {
-	caixa_msg->show(trUtf8("Operation history exclusion"),
+	MessageBox msg_box;
+
+	msg_box.show(trUtf8("Operation history exclusion"),
 									trUtf8("Delete the executed operations history is an irreversible action, do you want to continue?"),
 									MessageBox::CONFIRM_ICON,
 									MessageBox::YES_NO_BUTTONS);
 
-	if(caixa_msg->result()==QDialog::Accepted)
+	if(msg_box.result()==QDialog::Accepted)
 	{
 		modelo_wgt->lista_op->removeOperations();
 		updateOperationList();

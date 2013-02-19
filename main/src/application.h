@@ -31,10 +31,10 @@
 #include <QMessageBox>
 #include "messagebox.h"
 
-extern MessageBox *caixa_msg;
-
 class Application: public QApplication {
 	private:
+		MessageBox msg_box;
+
 	public:
 
 		Application(int & argc, char ** argv) : QApplication(argc,argv)
@@ -48,12 +48,12 @@ class Application: public QApplication {
 			}
 			catch(Exception &e)
 			{
-				caixa_msg->show(e);
+				msg_box.show(e);
 				return(false);
 			}
 			catch(...)
 			{
-				caixa_msg->show(trUtf8("Error"),trUtf8("Unknown exception caught!"), MessageBox::ERROR_ICON);
+				msg_box.show(trUtf8("Error"),trUtf8("Unknown exception caught!"), MessageBox::ERROR_ICON);
 				return(false);
 			}
 		}

@@ -1,7 +1,4 @@
 #include "formconfiguracao.h"
-#include "messagebox.h"
-
-extern MessageBox *caixa_msg;
 
 FormConfiguracao::FormConfiguracao(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -77,7 +74,7 @@ void FormConfiguracao::carregarConfiguracao(void)
 	catch(Exception &e)
 	{
 		if(e.getErrorType()==ERR_PLUGINS_NOT_LOADED)
-			caixa_msg->show(e);
+			msg_box.show(e);
 		else
 			throw Exception(ERR_CONFIG_NOT_LOADED,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -85,12 +82,12 @@ void FormConfiguracao::carregarConfiguracao(void)
 
 void FormConfiguracao::restaurarPadroes(void)
 {
-	caixa_msg->show(trUtf8("Confirmation"),
+	msg_box.show(trUtf8("Confirmation"),
 									trUtf8("Any modification made until now in the current section will be lost! Do you really want to restore default settings?"),
 									MessageBox::CONFIRM_ICON,
 									MessageBox::YES_NO_BUTTONS);
 
-	if(caixa_msg->result()==QDialog::Accepted)
+	if(msg_box.result()==QDialog::Accepted)
 	{
 		switch(confs_stw->currentIndex())
 		{

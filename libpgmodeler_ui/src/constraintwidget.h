@@ -28,6 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_constraintwidget.h"
 #include "objecttablewidget.h"
+#include "messagebox.h"
 
 class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 	private:

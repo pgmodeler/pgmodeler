@@ -1,7 +1,4 @@
 #include "quickrenamewidget.h"
-#include "messagebox.h"
-
-extern MessageBox *caixa_msg;
 
 QuickRenameWidget::QuickRenameWidget(QWidget * parent) : QDialog(parent)
 {
@@ -140,9 +137,11 @@ void QuickRenameWidget::applyRenaming(void)
 	}
 	catch(Exception &e)
 	{
+		MessageBox msg_box;
+
 		if(obj_type!=OBJ_DATABASE)
 			op_list->removeLastOperation();
 
-		caixa_msg->show(e);
+		msg_box.show(e);
 	}
 }

@@ -1,7 +1,4 @@
 #include "connectionsconfigwidget.h"
-#include "messagebox.h"
-
-extern MessageBox *caixa_msg;
 
 ConnectionsConfigWidget::ConnectionsConfigWidget(QWidget * parent) : QWidget(parent)
 {
@@ -300,12 +297,13 @@ void ConnectionsConfigWidget::configurarConexao(DBConnection *conn)
 void ConnectionsConfigWidget::testConnection(void)
 {
 	DBConnection conn;
+	MessageBox msg_box;
 
 	try
 	{
 		this->configurarConexao(&conn);
 		conn.connect();
-		caixa_msg->show(trUtf8("Success"), trUtf8("Connection successfuly stablished!"), MessageBox::INFO_ICON);
+		msg_box.show(trUtf8("Success"), trUtf8("Connection successfuly stablished!"), MessageBox::INFO_ICON);
 	}
 	catch(Exception &e)
 	{

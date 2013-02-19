@@ -1,6 +1,4 @@
 #include "objecttablewidget.h"
-#include "messagebox.h"
-extern MessageBox *caixa_msg;
 
 ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, QWidget *parent): QWidget(parent)
 {
@@ -397,6 +395,7 @@ void ObjectTableWidget::removeRow(void)
 		da linha atual seja igual ou superior a zero */
 	if(table_tbw->currentRow()>=0)
 	{
+		MessageBox msg_box;
 		unsigned 	row_idx=table_tbw->currentRow();
 		//Obtém o item selecionado na linha atual
 		QTableWidgetItem *item=table_tbw->currentItem();
@@ -404,10 +403,10 @@ void ObjectTableWidget::removeRow(void)
 		if(item->isSelected())
 		{
 			if(conf_exclusion)
-				caixa_msg->show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the selected item?"),
+				msg_box.show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the selected item?"),
 												MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 
-			if(!conf_exclusion || (conf_exclusion && caixa_msg->result()==QDialog::Accepted))
+			if(!conf_exclusion || (conf_exclusion && msg_box.result()==QDialog::Accepted))
 			{
 				//Remove a linha atual
 				table_tbw->removeRow(row_idx);
@@ -426,6 +425,7 @@ void ObjectTableWidget::removeRows(void)
 	if(table_tbw->rowCount() > 0)
 	{
 		QObject *sender_obj=sender();
+		MessageBox msg_box;
 
 		/* A caixa de mensagem só é exibida caso a confirmação de exclusão esteja configurada
 		 e o objeto sender esteja setado para o botão "remover todas".
@@ -435,11 +435,11 @@ void ObjectTableWidget::removeRows(void)
 		 independente da confirmação estar configurada ou não. Isto é util no caso de uma limpeza
 		 da tabela para reuso. */
 		if(conf_exclusion && sender_obj==remove_all_tb)
-			caixa_msg->show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the all items?"),
+			msg_box.show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the all items?"),
 											MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 
 		if(!conf_exclusion || (conf_exclusion && sender_obj!=remove_all_tb) ||
-			 (conf_exclusion &&  sender_obj==remove_all_tb && caixa_msg->result()==QDialog::Accepted))
+			 (conf_exclusion &&  sender_obj==remove_all_tb && msg_box.result()==QDialog::Accepted))
 		{
 			//Remove as linhas enquanto a quantidade não atinge zero
 			while(table_tbw->rowCount() > 0)
