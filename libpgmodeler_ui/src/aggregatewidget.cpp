@@ -22,9 +22,9 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		input_type=new TipoPgSQLWidget(this, trUtf8("Input Data Type"));
 		state_type=new TipoPgSQLWidget(this, trUtf8("State Data Type"));
 
-		input_types_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
-																						TabelaObjetosWidget::BTN_EDITAR_ITEM, true, this);
-		input_types_tab->definirNumColunas(1);
+		input_types_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
+																						ObjectTableWidget::EDIT_BUTTON, true, this);
+		input_types_tab->setColumnCount(1);
 
 		funcaoagregacao_grid->addWidget(final_func_sel,0,1,1,1);
 		funcaoagregacao_grid->addWidget(transition_func_sel,1,1,1,1);
@@ -67,7 +67,7 @@ void AggregateWidget::hideEvent(QHideEvent *event)
 	final_func_sel->clearSelector();
 	transition_func_sel->clearSelector();
 	sort_op_sel->clearSelector();
-	input_types_tab->removerLinhas();
+	input_types_tab->removeRows();
 	initial_cond_txt->clear();
 	BaseObjectWidget::hideEvent(event);
 }
@@ -97,13 +97,13 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 
 		for(i=0; i < count; i++)
 		{
-			input_types_tab->adicionarLinha();
+			input_types_tab->addRow();
 			type=aggregate->getDataType(i);
-			input_types_tab->definirDadoLinha(QVariant::fromValue<PgSQLType>(type), i);
-			input_types_tab->definirTextoCelula(QString::fromUtf8(*type),i,0);
+			input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), i);
+			input_types_tab->setCellText(QString::fromUtf8(*type),i,0);
 		}
 		input_types_tab->blockSignals(false);
-		input_types_tab->limparSelecao();
+		input_types_tab->clearSelection();
 
 		state_type->definirAtributos(aggregate->getStateType(), model);
 	}
@@ -114,8 +114,8 @@ void AggregateWidget::handleDataType(int linha)
 	PgSQLType type;
 
 	type=input_type->obterTipoPgSQL();
-	input_types_tab->definirDadoLinha(QVariant::fromValue<PgSQLType>(type), linha);
-	input_types_tab->definirTextoCelula(QString::fromUtf8(*type),linha,0);
+	input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), linha);
+	input_types_tab->setCellText(QString::fromUtf8(*type),linha,0);
 }
 
 void AggregateWidget::applyConfiguration(void)
@@ -132,10 +132,10 @@ void AggregateWidget::applyConfiguration(void)
 		aggregate->setStateType(state_type->obterTipoPgSQL());
 
 		aggregate->removeDataTypes();
-		count=input_types_tab->obterNumLinhas();
+		count=input_types_tab->getRowCount();
 
 		for(i=0; i < count; i++)
-			aggregate->addDataType(input_types_tab->obterDadoLinha(i).value<PgSQLType>());
+			aggregate->addDataType(input_types_tab->getRowData(i).value<PgSQLType>());
 
 		aggregate->setFunction(Aggregate::TRANSITION_FUNC, dynamic_cast<Function *>(transition_func_sel->getSelectedObject()));
 		aggregate->setFunction(Aggregate::FINAL_FUNC, dynamic_cast<Function *>(final_func_sel->getSelectedObject()));

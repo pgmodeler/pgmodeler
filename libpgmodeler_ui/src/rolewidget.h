@@ -27,14 +27,14 @@
 
 #include "baseobjectwidget.h"
 #include "ui_rolewidget.h"
-#include "tabelaobjetoswidget.h"
+#include "objecttablewidget.h"
 
 class RoleWidget: public BaseObjectWidget, public Ui::RoleWidget {
 	private:
 		Q_OBJECT
 
 		//! \brief Store the table widgets used to reference the member roles
-		TabelaObjetosWidget *members_tab[3];
+		ObjectTableWidget *members_tab[3];
 
 		//! \brief Fills the tables with to member roles of the editing role
 		void fillMembersTable(void);

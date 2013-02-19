@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_tabelawidget.h"
-#include "tabelaobjetoswidget.h"
+#include "objecttablewidget.h"
 #include "tableview.h"
 
 class TabelaWidget: public BaseObjectWidget, public Ui::TabelaWidget {
@@ -41,7 +41,7 @@ class TabelaWidget: public BaseObjectWidget, public Ui::TabelaWidget {
 		unsigned qtd_operacoes;
 
 		//! \brief Armazena as tabelas de objetos filhos da tabela (colunas, restrições, índices, etc)
-		map<ObjectType, TabelaObjetosWidget *> mapa_tab_objetos;
+		map<ObjectType, ObjectTableWidget *> mapa_tab_objetos;
 
 		/*! \brief Lista os objetos do relacionamento na tabela respectiva, de acordo
 			com o tipo do objeto passado */
@@ -51,7 +51,7 @@ class TabelaWidget: public BaseObjectWidget, public Ui::TabelaWidget {
 		void exibirDadosObjeto(TableObject *object, int idx_lin);
 
 		//! \brief Seleciona a tabela de objetos de acordo com o tipo passado
-		TabelaObjetosWidget *selecionarTabelaObjetos(ObjectType tipo_obj);
+		ObjectTableWidget *selecionarTabelaObjetos(ObjectType tipo_obj);
 
 		//! \brief Seleciona o tipo de objeto de acordo com o objeto sender informado
 		ObjectType selecionarTipoObjeto(QObject *tab_sender);

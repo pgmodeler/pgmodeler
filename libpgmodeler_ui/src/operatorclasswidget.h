@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_operatorclasswidget.h"
 #include "tipopgsqlwidget.h"
-#include "tabelaobjetoswidget.h"
+#include "objecttablewidget.h"
 
 /*! \brief Declaring the OperatorClassElement class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -48,7 +48,7 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
 										*storage_type;
 
 		//! \brief Stores the elements of operator class
-		TabelaObjetosWidget *elements_tab;
+		ObjectTableWidget *elements_tab;
 
 		void hideEvent(QHideEvent *event);
 

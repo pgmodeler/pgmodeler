@@ -9,12 +9,12 @@ PluginsConfigWidget::PluginsConfigWidget(QWidget *parent) : QWidget(parent)
 
 	root_dir_edt->setText(dir.absolutePath());
 
-	plugins_tab=new TabelaObjetosWidget(TabelaObjetosWidget::BTN_EDITAR_ITEM, false, this);
-	plugins_tab->definirNumColunas(3);
-	plugins_tab->definirRotuloCabecalho(trUtf8("Plugin"),0);
-	plugins_tab->definirIconeCabecalho(QPixmap(":/icones/icones/plugins.png"),0);
-	plugins_tab->definirRotuloCabecalho(trUtf8("Version"),1);
-	plugins_tab->definirRotuloCabecalho(trUtf8("Library"),2);
+	plugins_tab=new ObjectTableWidget(ObjectTableWidget::EDIT_BUTTON, false, this);
+	plugins_tab->setColumnCount(3);
+	plugins_tab->setHeaderLabel(trUtf8("Plugin"),0);
+	plugins_tab->setHeaderIcon(QPixmap(":/icones/icones/plugins.png"),0);
+	plugins_tab->setHeaderLabel(trUtf8("Version"),1);
+	plugins_tab->setHeaderLabel(trUtf8("Library"),2);
 
 	connect(plugins_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(showPluginInfo(int)));
 	connect(open_fm_tb, SIGNAL(clicked(void)), this, SLOT(openRootPluginDiretory(void)));
@@ -110,10 +110,10 @@ void PluginsConfigWidget::loadPlugins(void)
 			plugin_action->setIcon(icon);
 
 			plugins_actions.push_back(plugin_action);
-			plugins_tab->adicionarLinha();
-			plugins_tab->definirTextoCelula(plugin->getPluginTitle(), plugins_tab->obterNumLinhas()-1, 0);
-			plugins_tab->definirTextoCelula(plugin->getPluginVersion(), plugins_tab->obterNumLinhas()-1, 1);
-			plugins_tab->definirTextoCelula(fi.fileName(), plugins_tab->obterNumLinhas()-1, 2);
+			plugins_tab->addRow();
+			plugins_tab->setCellText(plugin->getPluginTitle(), plugins_tab->getRowCount()-1, 0);
+			plugins_tab->setCellText(plugin->getPluginVersion(), plugins_tab->getRowCount()-1, 1);
+			plugins_tab->setCellText(fi.fileName(), plugins_tab->getRowCount()-1, 2);
 		}
 		else
 		{
@@ -124,7 +124,7 @@ void PluginsConfigWidget::loadPlugins(void)
 																 ERR_PLUGIN_NOT_LOADED, __PRETTY_FUNCTION__,__FILE__,__LINE__));
 		}
 		dir_list.pop_front();
-		plugins_tab->limparSelecao();
+		plugins_tab->clearSelection();
 	}
 
 	if(!errors.empty())

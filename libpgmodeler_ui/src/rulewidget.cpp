@@ -21,9 +21,9 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 																		GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																		GlobalAttributes::CONFIGURATION_EXT);
 
-		commands_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
-		commands_tab->definirRotuloCabecalho(trUtf8("SQL command"),0);
-		commands_tab->definirIconeCabecalho(QPixmap(":/icones/icones/codigosql.png"),0);
+		commands_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		commands_tab->setHeaderLabel(trUtf8("SQL command"),0);
+		commands_tab->setHeaderIcon(QPixmap(":/icones/icones/codigosql.png"),0);
 		dynamic_cast<QGridLayout *>(commands_gb->layout())->addWidget(commands_tab, 1, 0, 1, 2);
 
 		frame=generateInformationFrame(trUtf8("To create a rule that does not perform any action (<strong>DO NOTHING</strong>) simply do not specify commands in the SQL commands table."));
@@ -54,25 +54,25 @@ void RuleWidget::hideEvent(QHideEvent *event)
 {
 	BaseObjectWidget::hideEvent(event);
 	comando_txt->clear();
-	commands_tab->removerLinhas();
+	commands_tab->removeRows();
 	event_cmb->setCurrentIndex(0);
 	exec_type_cmb->setCurrentIndex(0);
 }
 
 void RuleWidget::editCommand(int row)
 {
-	comando_txt->setPlainText(commands_tab->obterTextoCelula(row,0));
+	comando_txt->setPlainText(commands_tab->getCellText(row,0));
 }
 
 void RuleWidget::handleCommand(int row)
 {
 	if(!comando_txt->toPlainText().isEmpty())
 	{
-		commands_tab->definirTextoCelula(comando_txt->toPlainText(),row,0);
+		commands_tab->setCellText(comando_txt->toPlainText(),row,0);
 		comando_txt->clear();
 	}
-	else if(commands_tab->obterTextoCelula(row,0).isEmpty())
-		commands_tab->removerLinha(row);
+	else if(commands_tab->getCellText(row,0).isEmpty())
+		commands_tab->removeRow(row);
 }
 
 void RuleWidget::setAttributes(DatabaseModel *model, Table *parent_tab, OperationList *op_list, Rule *rule)
@@ -94,8 +94,8 @@ void RuleWidget::setAttributes(DatabaseModel *model, Table *parent_tab, Operatio
 		qtd=rule->getCommandCount();
 		for(i=0; i < qtd; i++)
 		{
-			commands_tab->adicionarLinha();
-			commands_tab->definirTextoCelula(rule->getCommand(i),i,0);
+			commands_tab->addRow();
+			commands_tab->setCellText(rule->getCommand(i),i,0);
 		}
 		commands_tab->blockSignals(false);
 	}
@@ -116,10 +116,10 @@ void RuleWidget::applyConfiguration(void)
 		rule->setConditionalExpression(cond_expr_txt->toPlainText());
 		rule->removeCommands();
 
-		count=commands_tab->obterNumLinhas();
+		count=commands_tab->getRowCount();
 
 		for(i=0; i < count; i++)
-			rule->addCommand(commands_tab->obterTextoCelula(i,0));
+			rule->addCommand(commands_tab->getCellText(i,0));
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

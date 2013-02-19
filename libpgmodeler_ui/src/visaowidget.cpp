@@ -29,12 +29,12 @@ VisaoWidget::VisaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		sel_coluna=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
 
 		//Alocando a tabela que armazena todas as referências da visão
-		tab_referencias=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
-		tab_referencias->definirNumColunas(4);
-		tab_referencias->definirRotuloCabecalho(trUtf8("Col./Expr."),0);
-		tab_referencias->definirRotuloCabecalho(trUtf8("Alias"),1);
-		tab_referencias->definirRotuloCabecalho(trUtf8("Alias Col."),2);
-		tab_referencias->definirRotuloCabecalho(trUtf8("SF FW AW"),3);
+		tab_referencias=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
+		tab_referencias->setColumnCount(4);
+		tab_referencias->setHeaderLabel(trUtf8("Col./Expr."),0);
+		tab_referencias->setHeaderLabel(trUtf8("Alias"),1);
+		tab_referencias->setHeaderLabel(trUtf8("Alias Col."),2);
+		tab_referencias->setHeaderLabel(trUtf8("SF FW AW"),3);
 
 		//Gera o frame de informação sobre a referência a todas as colunas da tabela
 		frame_info=generateInformationFrame(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[tablel].*</strong></em>"));
@@ -79,7 +79,7 @@ VisaoWidget::VisaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 void VisaoWidget::hideEvent(QHideEvent *evento)
 {
-	tab_referencias->removerLinhas();
+	tab_referencias->removeRows();
 	BaseObjectWidget::hideEvent(evento);
 }
 
@@ -160,16 +160,16 @@ void VisaoWidget::manipularReferencia(int idx_ref)
 
 		//Limpa o formulário e a seleção de linha na tabela
 		limparFormReferencia();
-		tab_referencias->limparSelecao();
+		tab_referencias->clearSelection();
 	}
 	catch(Exception &e)
 	{
 		/* Caso o método esteja no meio de uma inserção de nova referência,
 		 e um erro seja disparado, a nova linha da tabela precisa será
 		 removida pois não será inserida nenhuma referência */
-		if(tab_referencias->obterTextoCelula(idx_ref, 0).isEmpty())
+		if(tab_referencias->getCellText(idx_ref, 0).isEmpty())
 			//Remove a linha da tabela
-			tab_referencias->removerLinha(idx_ref);
+			tab_referencias->removeRow(idx_ref);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -180,7 +180,7 @@ void VisaoWidget::editarReferencia(int idx_ref)
 	QString str_aux;
 
 	//Obtém a referência da linha especificada por 'idx_ref'
-	ref=tab_referencias->obterDadoLinha(idx_ref).value<Reference>();
+	ref=tab_referencias->getRowData(idx_ref).value<Reference>();
 	//Seleciona o tipo de referência no formulário de acordo com o tipo da referência obtida
 	tipo_ref_cmb->setCurrentIndex(ref.getReferenceType());
 
@@ -217,7 +217,7 @@ void VisaoWidget::editarReferencia(int idx_ref)
 
 		[SELECT-FROM] [FROM-WHERE] [APÓS-WHERE]
 				0|1            0|1         0|1      */
-	str_aux=tab_referencias->obterTextoCelula(idx_ref,3);
+	str_aux=tab_referencias->getCellText(idx_ref,3);
 	select_from_chk->setChecked(str_aux[0]=='1');
 	from_where_chk->setChecked(str_aux[1]=='1');
 	apos_where_chk->setChecked(str_aux[2]=='1');
@@ -283,43 +283,43 @@ void VisaoWidget::exibirDadosReferencia(Reference refer, bool selec_from, bool f
 		 será para todas as colunas (*), para isso exibe uma string
 		 no formatdo: [NOME_ESQUEMA].[NOME_TABELA].*  */
 		if(tab && !col)
-			tab_referencias->definirTextoCelula(QString::fromUtf8(tab->getName(true) + QString(".*")),idx_lin,0);
+			tab_referencias->setCellText(QString::fromUtf8(tab->getName(true) + QString(".*")),idx_lin,0);
 		/* Caso a tabela e coluna estejam alocadas indica que a referência
 		 será para a coluna em questão para isso exibe uma string
 		 no formatdo: [NOME_ESQUEMA].[NOME_TABELA].[NOME_COLUNA]  */
 		else
-			tab_referencias->definirTextoCelula(QString::fromUtf8(tab->getName(true) + QString(".") + col->getName(true)),idx_lin,0);
+			tab_referencias->setCellText(QString::fromUtf8(tab->getName(true) + QString(".") + col->getName(true)),idx_lin,0);
 
 		//Exibe o alias da tabela e a exibe na segunda coluna da linha
-		tab_referencias->definirTextoCelula(QString::fromUtf8(refer.getAlias()),idx_lin,1);
+		tab_referencias->setCellText(QString::fromUtf8(refer.getAlias()),idx_lin,1);
 
 		/* Caso a coluna esteja alocada, exibe o alias da mesma na terceira coluna da linha
 		 caso contrário exibe um '-' */
 		if(col)
-			tab_referencias->definirTextoCelula(QString::fromUtf8(refer.getColumnAlias()),idx_lin,2);
+			tab_referencias->setCellText(QString::fromUtf8(refer.getColumnAlias()),idx_lin,2);
 		else
-			tab_referencias->definirTextoCelula(QString("-"),idx_lin,2);
+			tab_referencias->setCellText(QString("-"),idx_lin,2);
 	}
 	//Caso seja uma referência a uma expressão
 	else
 	{
 		//Exibe a expressão na primeira coluna da linha
-		tab_referencias->definirTextoCelula(QString::fromUtf8(refer.getExpression()),idx_lin,0);
+		tab_referencias->setCellText(QString::fromUtf8(refer.getExpression()),idx_lin,0);
 		//Exibe o alias da expressão na segunda coluna da linha
-		tab_referencias->definirTextoCelula(QString::fromUtf8(refer.getAlias()),idx_lin,1);
+		tab_referencias->setCellText(QString::fromUtf8(refer.getAlias()),idx_lin,1);
 		/* Exibe um '-' na terceira coluna que armazena o alias da coluna por este campo
 		 não se aplicar a uma expressão */
-		tab_referencias->definirTextoCelula(QString("-"),idx_lin,2);
+		tab_referencias->setCellText(QString("-"),idx_lin,2);
 	}
 
 	//Configura a string de aplicação SQL e exibe na quarta coluna
 	str_aux+=(selec_from ? "1" : "0");
 	str_aux+=(from_where ? "1" : "0");
 	str_aux+=(apos_where ? "1" : "0");
-	tab_referencias->definirTextoCelula(str_aux,idx_lin,3);
+	tab_referencias->setCellText(str_aux,idx_lin,3);
 
 	//Define a referência obtida como dado da linha
-	tab_referencias->definirDadoLinha(QVariant::fromValue<Reference>(refer), idx_lin);
+	tab_referencias->setRowData(QVariant::fromValue<Reference>(refer), idx_lin);
 
 	/* Atualiza a previsão de código para exibir a nova referência
 		no código SQL da visão */
@@ -348,13 +348,13 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
 		/* Insere as referências da tabela na visão auxiliar
 		 porém estas são inseridas conforme a string de
 		 aplicação sql */
-		qtd=tab_referencias->obterNumLinhas();
+		qtd=tab_referencias->getRowCount();
 		for(i=0; i < qtd; i++)
 		{
 			//Obtém a referência da tabela
-			refer=tab_referencias->obterDadoLinha(i).value<Reference>();
+			refer=tab_referencias->getRowData(i).value<Reference>();
 			//Obtém a string de aplicação
-			str_aux=tab_referencias->obterTextoCelula(i,3);
+			str_aux=tab_referencias->getCellText(i,3);
 
 			//Varre a string de aplicação.
 			for(i1=0; i1 < 3; i1++)
@@ -401,7 +401,7 @@ void VisaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, 
 		tab_referencias->blockSignals(true);
 		for(i=0; i < qtd; i++)
 		{
-			tab_referencias->adicionarLinha();
+			tab_referencias->addRow();
 
 			//Obtém a referência da visão
 			refer=visao->getReference(i);
@@ -417,7 +417,7 @@ void VisaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, 
 		//Desbloqueia os sinais da tabela
 		tab_referencias->blockSignals(false);
 		//Limpa a seleção da tabela
-		tab_referencias->limparSelecao();
+		tab_referencias->clearSelection();
 	}
 }
 

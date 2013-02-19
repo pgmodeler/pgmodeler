@@ -4,7 +4,7 @@ extern VisaoObjetosWidget *selecaoobjetos_wgt;
 
 RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 {
-	TabelaObjetosWidget *obj_tab=NULL;
+	ObjectTableWidget *obj_tab=NULL;
 	QGridLayout *grid=NULL;
 	unsigned i;
 
@@ -17,29 +17,29 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
 	{
-		obj_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
-																		TabelaObjetosWidget::BTN_ATUALIZAR_ITEM, true, this);
+		obj_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
+																		ObjectTableWidget::UPDATE_BUTTON, true, this);
 		members_tab[i]=obj_tab;
 
-		obj_tab->definirNumColunas(6);
+		obj_tab->setColumnCount(6);
 
-		obj_tab->definirRotuloCabecalho(trUtf8("Role"),0);
-		obj_tab->definirIconeCabecalho(QPixmap(":/icones/icones/role.png"),0);
+		obj_tab->setHeaderLabel(trUtf8("Role"),0);
+		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),0);
 
-		obj_tab->definirRotuloCabecalho(trUtf8("SysID"),1);
-		obj_tab->definirIconeCabecalho(QPixmap(":/icones/icones/uid.png"),1);
+		obj_tab->setHeaderLabel(trUtf8("SysID"),1);
+		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),1);
 
-		obj_tab->definirRotuloCabecalho(trUtf8("Validity"),2);
-		obj_tab->definirIconeCabecalho(QPixmap(":/icones/icones/validade.png"),2);
+		obj_tab->setHeaderLabel(trUtf8("Validity"),2);
+		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/validade.png"),2);
 
-		obj_tab->definirRotuloCabecalho(trUtf8("Member of"),3);
-		obj_tab->definirIconeCabecalho(QPixmap(":/icones/icones/role.png"),3);
+		obj_tab->setHeaderLabel(trUtf8("Member of"),3);
+		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),3);
 
-		obj_tab->definirRotuloCabecalho(trUtf8("Members"),4);
-		obj_tab->definirIconeCabecalho(QPixmap(":/icones/icones/role.png"),4);
+		obj_tab->setHeaderLabel(trUtf8("Members"),4);
+		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),4);
 
-		obj_tab->definirRotuloCabecalho(trUtf8("Members (Admin.)"),5);
-		obj_tab->definirIconeCabecalho(QPixmap(":/icones/icones/role.png"),5);
+		obj_tab->setHeaderLabel(trUtf8("Members (Admin.)"),5);
+		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),5);
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);
@@ -81,7 +81,7 @@ void RoleWidget::hideEvent(QHideEvent *event)
 
 	for(i=0; i < 3; i++)
 	{
-		members_tab[i]->removerLinhas();
+		members_tab[i]->removeRows();
 		members_tab[i]->blockSignals(false);
 	}
 
@@ -134,10 +134,10 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 		if(table_id > 3)
 			throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		members_tab[table_id]->definirDadoLinha(QVariant::fromValue(reinterpret_cast<void *>(role)), row);
-		members_tab[table_id]->definirTextoCelula(QString::fromUtf8(role->getName()), row, 0);
-		members_tab[table_id]->definirTextoCelula(QString("%1").arg(role->getSysid()), row, 1);
-		members_tab[table_id]->definirTextoCelula(role->getValidity(), row, 2);
+		members_tab[table_id]->setRowData(QVariant::fromValue(reinterpret_cast<void *>(role)), row);
+		members_tab[table_id]->setCellText(QString::fromUtf8(role->getName()), row, 0);
+		members_tab[table_id]->setCellText(QString("%1").arg(role->getSysid()), row, 1);
+		members_tab[table_id]->setCellText(role->getValidity(), row, 2);
 
 		for(type_id=0; type_id < 3; type_id++)
 		{
@@ -150,7 +150,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 				if(i < count-1) str_aux+=", ";
 			}
 
-			members_tab[table_id]->definirTextoCelula(QString::fromUtf8(str_aux), row, 3 + type_id);
+			members_tab[table_id]->setCellText(QString::fromUtf8(str_aux), row, 3 + type_id);
 			str_aux.clear();
 		}
 	}
@@ -174,12 +174,12 @@ void RoleWidget::fillMembersTable(void)
 			for(i=0; i < count; i++)
 			{
 				aux_role=role->getRole(role_types[type_id], i);
-				members_tab[type_id]->adicionarLinha();
+				members_tab[type_id]->addRow();
 				showRoleData(aux_role, type_id, i);
 			}
 
 			members_tab[type_id]->blockSignals(true);
-			members_tab[type_id]->limparSelecao();
+			members_tab[type_id]->clearSelection();
 		}
 	}
 }
@@ -195,10 +195,10 @@ void RoleWidget::showSelectedRoleData(void)
 
 	//Gets the index of the table where the role data is displayed
 	idx_tab=members_twg->currentIndex();
-	lin=members_tab[idx_tab]->obterLinhaSelecionada();
+	lin=members_tab[idx_tab]->getSelectedRow();
 
 	if(obj_sel)
-		idx_lin=members_tab[idx_tab]->obterIndiceLinha(QVariant::fromValue<void *>(dynamic_cast<void *>(obj_sel)));
+		idx_lin=members_tab[idx_tab]->getRowIndex(QVariant::fromValue<void *>(dynamic_cast<void *>(obj_sel)));
 
 	//Raises an error if the user try to assign the role as member of itself
 	if(obj_sel && obj_sel==this->object)
@@ -215,8 +215,8 @@ void RoleWidget::showSelectedRoleData(void)
 	{
 		/* If the current row does not has a value indicates that it is recently added and does not have
 			 data, in this case it will be removed */
-		if(!members_tab[idx_tab]->obterDadoLinha(lin).value<void *>())
-			members_tab[idx_tab]->removerLinha(lin);
+		if(!members_tab[idx_tab]->getRowData(lin).value<void *>())
+			members_tab[idx_tab]->removeRow(lin);
 
 		//Raises an error if the role already is in the table
 		if(obj_sel && idx_lin >= 0)
@@ -254,12 +254,12 @@ void RoleWidget::applyConfiguration(void)
 
 		for(type_id=0; type_id < 3; type_id++)
 		{
-			count=members_tab[type_id]->obterNumLinhas();
+			count=members_tab[type_id]->getRowCount();
 			if(count > 0) role->removeRoles(role_types[type_id]);
 
 			for(i=0; i < count; i++)
 			{
-				aux_role=reinterpret_cast<Role *>(members_tab[type_id]->obterDadoLinha(i).value<void *>());
+				aux_role=reinterpret_cast<Role *>(members_tab[type_id]->getRowData(i).value<void *>());
 				role->addRole(role_types[type_id], aux_role);
 			}
 		}

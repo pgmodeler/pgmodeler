@@ -36,28 +36,28 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 	configureFormLayout(permission_grid, OBJ_PERMISSION);
 
-	roles_tab=new TabelaObjetosWidget(TabelaObjetosWidget::BTN_INSERIR_ITEM |
-																		 TabelaObjetosWidget::BTN_REMOVER_ITEM |
-																		 TabelaObjetosWidget::BTN_EDITAR_ITEM, false, this);
-	roles_tab->definirNumColunas(1);
-	roles_tab->definirRotuloCabecalho(trUtf8("Role"),0);
-	roles_tab->definirIconeCabecalho(QPixmap(":/icones/icones/role.png"),0);
+	roles_tab=new ObjectTableWidget(ObjectTableWidget::ADD_BUTTON |
+																		 ObjectTableWidget::REMOVE_BUTTON |
+																		 ObjectTableWidget::EDIT_BUTTON, false, this);
+	roles_tab->setColumnCount(1);
+	roles_tab->setHeaderLabel(trUtf8("Role"),0);
+	roles_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),0);
 
 	grid=new QGridLayout;
 	grid->addWidget(roles_tab,0,0,1,1);
 	grid->setContentsMargins(2,2,2,2);
 	roles_gb->setLayout(grid);
 
-	permissions_tab=new TabelaObjetosWidget(TabelaObjetosWidget::BTN_REMOVER_ITEM |
-																				 TabelaObjetosWidget::BTN_EDITAR_ITEM |
-																				 TabelaObjetosWidget::BTN_LIMPAR_ITENS, true, this);
-	permissions_tab->definirNumColunas(3);
-	permissions_tab->definirRotuloCabecalho(trUtf8("Id"),0);
-	permissions_tab->definirIconeCabecalho(QPixmap(":/icones/icones/uid.png"),0);
-	permissions_tab->definirRotuloCabecalho(trUtf8("Roles"),1);
-	permissions_tab->definirIconeCabecalho(QPixmap(":/icones/icones/role.png"),1);
-	permissions_tab->definirRotuloCabecalho(trUtf8("Privileges"),2);
-	permissions_tab->definirIconeCabecalho(QPixmap(":/icones/icones/grant.png"),2);
+	permissions_tab=new ObjectTableWidget(ObjectTableWidget::REMOVE_BUTTON |
+																				 ObjectTableWidget::EDIT_BUTTON |
+																				 ObjectTableWidget::REMOVE_ALL_BUTTON, true, this);
+	permissions_tab->setColumnCount(3);
+	permissions_tab->setHeaderLabel(trUtf8("Id"),0);
+	permissions_tab->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+	permissions_tab->setHeaderLabel(trUtf8("Roles"),1);
+	permissions_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),1);
+	permissions_tab->setHeaderLabel(trUtf8("Privileges"),2);
+	permissions_tab->setHeaderIcon(QPixmap(":/icones/icones/grant.png"),2);
 
 	grid=new QGridLayout;
 	grid->addWidget(permissions_tab,0,0,1,1);
@@ -102,7 +102,7 @@ void PermissionWidget::hideEvent(QHideEvent *event)
 	cancelOperation();
 
 	permissions_tab->blockSignals(true);
-	permissions_tab->removerLinhas();
+	permissions_tab->removeRows();
 	permissions_tab->blockSignals(false);
 
 	BaseObjectWidget::hideEvent(event);
@@ -172,7 +172,7 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 
 		listPermissions();
-		permissions_tab->limparSelecao();
+		permissions_tab->clearSelection();
 	}
 }
 
@@ -186,7 +186,7 @@ void PermissionWidget::selectRole(void)
 void PermissionWidget::selectPermission(int perm_id)
 {
 	if(perm_id >= 0)
-		permission=reinterpret_cast<Permission *>(permissions_tab->obterDadoLinha(perm_id).value<void *>());
+		permission=reinterpret_cast<Permission *>(permissions_tab->getRowData(perm_id).value<void *>());
 	else
 		permission=NULL;
 }
@@ -204,17 +204,17 @@ void PermissionWidget::listPermissions(void)
 		count=permissions.size();
 
 		permissions_tab->blockSignals(true);
-		permissions_tab->removerLinhas();
+		permissions_tab->removeRows();
 		permissions_tab->blockSignals(false);
 
 		for(i=0; i < count; i++)
 		{
 			perm=permissions[i];
 
-			permissions_tab->adicionarLinha();
-			permissions_tab->definirDadoLinha(QVariant::fromValue<void *>(reinterpret_cast<void *>(perm)),i);
-			permissions_tab->definirTextoCelula(perm->getName(),i,0);
-			permissions_tab->definirTextoCelula(perm->getPrivilegeString(),i,2);
+			permissions_tab->addRow();
+			permissions_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void *>(perm)),i);
+			permissions_tab->setCellText(perm->getName(),i,0);
+			permissions_tab->setCellText(perm->getPrivilegeString(),i,2);
 
 			count1=perm->getRoleCount();
 			for(i1=0; i1 < count1; i1++)
@@ -223,7 +223,7 @@ void PermissionWidget::listPermissions(void)
 				str_aux+=",";
 			}
 			str_aux.remove(str_aux.size()-1,1);
-			permissions_tab->definirTextoCelula(str_aux,i,1);
+			permissions_tab->setCellText(str_aux,i,1);
 			str_aux.clear();
 		}
 	}
@@ -235,21 +235,21 @@ void PermissionWidget::showSelectedRoleData(void)
 	Role *role=NULL;
 
 	role=dynamic_cast<Role *>(objectselection_wgt->obterObjetoSelecao());
-	row=roles_tab->obterLinhaSelecionada();
+	row=roles_tab->getSelectedRow();
 
 
 	if(role)
-		row_idx=roles_tab->obterIndiceLinha(QVariant::fromValue<void *>(dynamic_cast<void *>(role)));
+		row_idx=roles_tab->getRowIndex(QVariant::fromValue<void *>(dynamic_cast<void *>(role)));
 
 	if(role && row_idx < 0)
 	{
-		roles_tab->definirTextoCelula(QString::fromUtf8(role->getName()), row, 0);
-		roles_tab->definirDadoLinha(QVariant::fromValue<void *>(dynamic_cast<void *>(role)), row);
+		roles_tab->setCellText(QString::fromUtf8(role->getName()), row, 0);
+		roles_tab->setRowData(QVariant::fromValue<void *>(dynamic_cast<void *>(role)), row);
 	}
 	else
 	{
-		if(!roles_tab->obterDadoLinha(row).value<void *>())
-			roles_tab->removerLinha(row);
+		if(!roles_tab->getRowData(row).value<void *>())
+			roles_tab->removeRow(row);
 
 		//Raise an error if the role already exists on selected role table
 		if(role && row_idx >= 0)
@@ -345,17 +345,17 @@ void PermissionWidget::editPermission(void)
 		Role *role=NULL;
 
 		roles_tab->blockSignals(true);
-		roles_tab->removerLinhas();
+		roles_tab->removeRows();
 
 		perm_id_edt->setText(permission->getName());
 
 		count=permission->getRoleCount();
 		for(i=0; i < count; i++)
 		{
-			roles_tab->adicionarLinha();
+			roles_tab->addRow();
 			role=permission->getRole(i);
-			roles_tab->definirDadoLinha(QVariant::fromValue<void *>(reinterpret_cast<void *>(role)), i);
-			roles_tab->definirTextoCelula(QString::fromUtf8(role->getName()),i,0);
+			roles_tab->setRowData(QVariant::fromValue<void *>(reinterpret_cast<void *>(role)), i);
+			roles_tab->setCellText(QString::fromUtf8(role->getName()),i,0);
 		}
 
 		roles_tab->blockSignals(false);
@@ -378,7 +378,7 @@ void PermissionWidget::removePermission(void)
 	model->removePermission(permission);
 	cancelOperation();
 	permission=NULL;
-	permissions_tab->limparSelecao();
+	permissions_tab->clearSelection();
 }
 
 void PermissionWidget::removePermissions(void)
@@ -395,10 +395,10 @@ void PermissionWidget::configurePermission(Permission *perm)
 		QCheckBox *chk=NULL, *chk1=NULL;
 
 		perm->removeRoles();
-		count=roles_tab->obterNumLinhas();
+		count=roles_tab->getRowCount();
 
 		for(i=0; i < count; i++)
-			perm->addRole(reinterpret_cast<Role *>(roles_tab->obterDadoLinha(i).value<void *>()));
+			perm->addRole(reinterpret_cast<Role *>(roles_tab->getRowData(i).value<void *>()));
 
 		for(priv=Permission::PRIV_SELECT; priv <= Permission::PRIV_USAGE; priv++)
 		{
@@ -427,11 +427,11 @@ void PermissionWidget::cancelOperation(void)
 		chk->setChecked(false);
 	}
 
-	roles_tab->removerLinhas();
+	roles_tab->removeRows();
 	perm_id_edt->clear();
 	enableEditButtons();
 	cancel_tb->setEnabled(false);
-	permissions_tab->limparSelecao();
+	permissions_tab->clearSelection();
 }
 
 void PermissionWidget::checkPrivilege(void)
@@ -479,8 +479,8 @@ void PermissionWidget::enableEditButtons(void)
 		checked_privs=(chk->isChecked() || chk1->isChecked());
 	}
 
-	upd_perm_tb->setEnabled(checked_privs && roles_tab->obterNumLinhas() > 0 && permission!=NULL);
-	add_perm_tb->setEnabled(checked_privs && roles_tab->obterNumLinhas() > 0);
-	cancel_tb->setEnabled(add_perm_tb->isEnabled() || upd_perm_tb->isEnabled() || permissions_tab->obterNumLinhas() > 0);
+	upd_perm_tb->setEnabled(checked_privs && roles_tab->getRowCount() > 0 && permission!=NULL);
+	add_perm_tb->setEnabled(checked_privs && roles_tab->getRowCount() > 0);
+	cancel_tb->setEnabled(add_perm_tb->isEnabled() || upd_perm_tb->isEnabled() || permissions_tab->getRowCount() > 0);
 }
 

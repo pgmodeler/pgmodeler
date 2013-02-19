@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_functionwidget.h"
 #include "tipopgsqlwidget.h"
-#include "tabelaobjetoswidget.h"
+#include "objecttablewidget.h"
 
 class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 	private:
@@ -41,16 +41,16 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 		TipoPgSQLWidget *ret_type;
 
 		//! \brief Table that represents the table returned by the function
-		TabelaObjetosWidget *return_tab,
+		ObjectTableWidget *return_tab,
 
 												//! \brief Table used to store the function's parameters
 												*parameters_tab;
 
 		//! \brief Returns a parameter configured based upon the specified table and line
-		Parameter getParameter(TabelaObjetosWidget *tab, unsigned row);
+		Parameter getParameter(ObjectTableWidget *tab, unsigned row);
 
 		//! \brief Shows the parameter data on the specified table at the specified line
-		void showParameterData(Parameter param, TabelaObjetosWidget *tab, unsigned row);
+		void showParameterData(Parameter param, ObjectTableWidget *tab, unsigned row);
 
 		//! \brief Validates the new function configuration in relation to the other objects that references it.
 		void validateConfiguredFunction(void);

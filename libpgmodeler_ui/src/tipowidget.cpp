@@ -40,20 +40,20 @@ TipoWidget::TipoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		}
 
 		//Aloca a tabela de enumerações e a insere no layout do grupo de atributos de enumerações
-		tab_enumeracoes=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
-																						TabelaObjetosWidget::BTN_EDITAR_ITEM, false, this);
+		tab_enumeracoes=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
+																						ObjectTableWidget::EDIT_BUTTON, false, this);
 		grid=dynamic_cast<QGridLayout *>(enumeracoes_gb->layout());
 		grid->addWidget(tab_enumeracoes,1,0,1,2);
 		enumeracoes_gb->setVisible(false);
 
 		//Aloca a tabela de atributos e a insere no layout do grupo de atributos de tipo composto
-		tab_atributos=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
-																					TabelaObjetosWidget::BTN_ATUALIZAR_ITEM, false, this);
-		tab_atributos->definirNumColunas(2);
-		tab_atributos->definirRotuloCabecalho(trUtf8("Name"),0);
-		tab_atributos->definirIconeCabecalho(QPixmap(":/icones/icones/uid.png"),0);
-		tab_atributos->definirRotuloCabecalho(trUtf8("Type"),1);
-		tab_atributos->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+		tab_atributos=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
+																					ObjectTableWidget::UPDATE_BUTTON, false, this);
+		tab_atributos->setColumnCount(2);
+		tab_atributos->setHeaderLabel(trUtf8("Name"),0);
+		tab_atributos->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+		tab_atributos->setHeaderLabel(trUtf8("Type"),1);
+		tab_atributos->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(2,2,2,2);
@@ -118,8 +118,8 @@ TipoWidget::TipoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 void TipoWidget::hideEvent(QHideEvent *evento)
 {
 	//Limpa as tabelas
-	tab_enumeracoes->removerLinhas();
-	tab_atributos->removerLinhas();
+	tab_enumeracoes->removeRows();
+	tab_atributos->removeRows();
 
 	//Limpa os valores dos seletores de funções
 	for(unsigned i=Type::INPUT_FUNC; i <= Type::ANALYZE_FUNC; i++)
@@ -160,14 +160,14 @@ void TipoWidget::manipularEnumeracao(int idx_linha)
 	if(!nome_enum_edt->text().isEmpty())
 	{
 		//Insere o nome na tabela e limpa o campo de nome
-		tab_enumeracoes->definirTextoCelula(nome_enum_edt->text(), idx_linha, 0);
+		tab_enumeracoes->setCellText(nome_enum_edt->text(), idx_linha, 0);
 		nome_enum_edt->clear();
 	}
 	//Caso o nome esteja vazio mas o usuário tente inserir mesmo assim
-	else if(tab_enumeracoes->obterTextoCelula(idx_linha, 0).isEmpty())
+	else if(tab_enumeracoes->getCellText(idx_linha, 0).isEmpty())
 		/* Remove a linha inserido para que a tabela não fique com
 		 uma linha em branco */
-		tab_enumeracoes->removerLinha(idx_linha);
+		tab_enumeracoes->removeRow(idx_linha);
 }
 
 void TipoWidget::manipularAtributo(int res)
@@ -176,7 +176,7 @@ void TipoWidget::manipularAtributo(int res)
 	Parameter param;
 
 	//Obtém a linha selecionada da tabela.
-	lin=tab_atributos->obterLinhaSelecionada();
+	lin=tab_atributos->getSelectedRow();
 
 	//Caso o usuário clique no botão 'aplicar' da janela de conf. de parâmetro
 	if(res==QDialog::Accepted)
@@ -184,16 +184,16 @@ void TipoWidget::manipularAtributo(int res)
 		//Obtém o parâmetro configurado
 		param=parametro_wgt->getParameter();
 		//Insere-o na tabela de atributos
-		tab_atributos->definirTextoCelula(QString::fromUtf8(param.getName()), lin, 0);
-		tab_atributos->definirTextoCelula(QString::fromUtf8(*param.getType()), lin, 1);
-		tab_atributos->definirDadoLinha(QVariant::fromValue<Parameter>(param), lin);
+		tab_atributos->setCellText(QString::fromUtf8(param.getName()), lin, 0);
+		tab_atributos->setCellText(QString::fromUtf8(*param.getType()), lin, 1);
+		tab_atributos->setRowData(QVariant::fromValue<Parameter>(param), lin);
 	}
 	//Caso o usuário clique no botão 'cancelar' da janela de conf. de parâmetro
 	else if(res==QDialog::Rejected)
 	{
 		//Remove a última linha da tabela quando se tratar de adição de novo parâmetro
-		if(tab_atributos->obterTextoCelula(lin,0).isEmpty())
-			tab_atributos->removerLinha(lin);
+		if(tab_atributos->getCellText(lin,0).isEmpty())
+			tab_atributos->removeRow(lin);
 	}
 }
 
@@ -209,13 +209,13 @@ void TipoWidget::exibirFormAtributo(void)
 	parametro_wgt->default_value_edt->setEnabled(false);
 
 	//Obtém a linha selecionada na tabela
-	idx_lin=tab_atributos->obterLinhaSelecionada();
+	idx_lin=tab_atributos->getSelectedRow();
 
 	//Caso haja uma linha selecionada
 	if(idx_lin >= 0)
 		/* Preenche o formulário de edição de parâmetros com os dados do atributo
 		 especificado na linha selecionada */
-		parametro_wgt->setAttributes(tab_atributos->obterDadoLinha(idx_lin).value<Parameter>(), this->model);
+		parametro_wgt->setAttributes(tab_atributos->getRowData(idx_lin).value<Parameter>(), this->model);
 
 	parametro_wgt->show();
 }
@@ -260,20 +260,20 @@ void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, S
 			for(i=0; i < qtd; i++)
 			{
 				//Adiciona uma linha na tabela
-				tab_atributos->adicionarLinha();
+				tab_atributos->addRow();
 				//Obtém um atributo do tipo
 				param=tipo->getAttribute(i);
 				//Exibe os dados do atributo na tabela
-				tab_atributos->definirTextoCelula(QString::fromUtf8(param.getName()), i, 0);
-				tab_atributos->definirTextoCelula(QString::fromUtf8(*param.getType()), i, 1);
+				tab_atributos->setCellText(QString::fromUtf8(param.getName()), i, 0);
+				tab_atributos->setCellText(QString::fromUtf8(*param.getType()), i, 1);
 				//Armazena o próprio atributo na linha da tabela
-				tab_atributos->definirDadoLinha(QVariant::fromValue<Parameter>(param), i);
+				tab_atributos->setRowData(QVariant::fromValue<Parameter>(param), i);
 			}
 
 			//Desbloqueia os sinais da tabela de atributos
 			tab_atributos->blockSignals(false);
 			//Limpa a seleção da tabela
-			tab_atributos->limparSelecao();
+			tab_atributos->clearSelection();
 		}
 		//Caso o tipo seja enumeração
 		else if(conf_tipo==Type::ENUMERATION_TYPE)
@@ -289,12 +289,12 @@ void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, S
 			//Insere todos as enumerações do tipo na tabela
 			for(i=0; i < qtd; i++)
 			{
-				tab_enumeracoes->adicionarLinha();
-				tab_enumeracoes->definirTextoCelula(QString::fromUtf8(tipo->getEnumeration(i)), i, 0);
+				tab_enumeracoes->addRow();
+				tab_enumeracoes->setCellText(QString::fromUtf8(tipo->getEnumeration(i)), i, 0);
 			}
 			//Desbloqueia os sinais da tabela de enumerações
 			tab_enumeracoes->blockSignals(false);
-			tab_enumeracoes->limparSelecao();
+			tab_enumeracoes->clearSelection();
 		}
 		//Caso o tipo seja base
 		else
@@ -351,9 +351,9 @@ void TipoWidget::applyConfiguration(void)
 			tipo->removeEnumerations();
 
 			//Insere na instância de tipo as enumerações configuradas no formulário
-			qtd=tab_enumeracoes->obterNumLinhas();
+			qtd=tab_enumeracoes->getRowCount();
 			for(i=0; i < qtd; i++)
-				tipo->addEnumeration(tab_enumeracoes->obterTextoCelula(i,0).toUtf8());
+				tipo->addEnumeration(tab_enumeracoes->getCellText(i,0).toUtf8());
 		}
 		//Caso o mesmo seja marcado como  um tipo composto no formulário
 		else if(composto_rb->isChecked())
@@ -364,9 +364,9 @@ void TipoWidget::applyConfiguration(void)
 			tipo->removeAttributes();
 
 			//Insere na instância de tipo os atributos configurados no formulário
-			qtd=tab_atributos->obterNumLinhas();
+			qtd=tab_atributos->getRowCount();
 			for(i=0; i < qtd; i++)
-				tipo->addAttribute(tab_atributos->obterDadoLinha(i).value<Parameter>());
+				tipo->addAttribute(tab_atributos->getRowData(i).value<Parameter>());
 		}
 		//Caso o mesmo seja marcado como um tipo base no formulário
 		else

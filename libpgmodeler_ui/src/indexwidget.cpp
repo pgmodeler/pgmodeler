@@ -25,18 +25,18 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 																				 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																				 GlobalAttributes::CONFIGURATION_EXT);
 
-		elements_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
+		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
 
-		elements_tab->definirNumColunas(5);
-		elements_tab->definirRotuloCabecalho(trUtf8("Element"), 0);
-		elements_tab->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-		elements_tab->definirRotuloCabecalho(trUtf8("Type"), 1);
-		elements_tab->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
-		elements_tab->definirRotuloCabecalho(trUtf8("Operator Class"), 2);
-		elements_tab->definirIconeCabecalho(QPixmap(":/icones/icones/opclass.png"),2);
-		elements_tab->definirRotuloCabecalho(trUtf8("Sorting"), 3);
-		elements_tab->definirRotuloCabecalho(trUtf8("Nulls First"), 4);
+		elements_tab->setColumnCount(5);
+		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
+		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+		elements_tab->setHeaderLabel(trUtf8("Type"), 1);
+		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+		elements_tab->setHeaderLabel(trUtf8("Operator Class"), 2);
+		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/opclass.png"),2);
+		elements_tab->setHeaderLabel(trUtf8("Sorting"), 3);
+		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 4);
 
 		grid=dynamic_cast<QGridLayout *>(elements_grp->layout());
 		grid->addWidget(op_class_sel, 2,1,1,3);
@@ -83,7 +83,7 @@ void IndexWidget::hideEvent(QHideEvent *event)
 	fill_factor_sb->setValue(fill_factor_sb->minimum());
 
 	elements_tab->blockSignals(true);
-	elements_tab->removerLinhas();
+	elements_tab->removeRows();
 	elements_tab->blockSignals(false);
 
 	op_class_sel->clearSelector();
@@ -119,31 +119,31 @@ void IndexWidget::showElementData(IndexElement elem, int elem_idx)
 {
 	if(elem.getColumn())
 	{
-		elements_tab->definirTextoCelula(QString::fromUtf8(elem.getColumn()->getName()), elem_idx, 0);
-		elements_tab->definirTextoCelula(QString::fromUtf8(elem.getColumn()->getTypeName()), elem_idx, 1);
+		elements_tab->setCellText(QString::fromUtf8(elem.getColumn()->getName()), elem_idx, 0);
+		elements_tab->setCellText(QString::fromUtf8(elem.getColumn()->getTypeName()), elem_idx, 1);
 	}
 	else
 	{
-		elements_tab->definirTextoCelula(QString::fromUtf8(elem.getExpression()), elem_idx, 0);
-		elements_tab->definirTextoCelula(trUtf8("Expressão"), elem_idx, 1);
+		elements_tab->setCellText(QString::fromUtf8(elem.getExpression()), elem_idx, 0);
+		elements_tab->setCellText(trUtf8("Expressão"), elem_idx, 1);
 	}
 
 	if(elem.getOperatorClass())
-		elements_tab->definirTextoCelula(QString::fromUtf8(elem.getOperatorClass()->getName(true)), elem_idx, 2);
+		elements_tab->setCellText(QString::fromUtf8(elem.getOperatorClass()->getName(true)), elem_idx, 2);
 	else
-		elements_tab->definirTextoCelula("-", elem_idx, 2);
+		elements_tab->setCellText("-", elem_idx, 2);
 
 	if(elem.getSortAttribute(IndexElement::ASC_ORDER))
-		elements_tab->definirTextoCelula(ascending_rb->text(), elem_idx, 3);
+		elements_tab->setCellText(ascending_rb->text(), elem_idx, 3);
 	else
-		elements_tab->definirTextoCelula(descending_rb->text(), elem_idx, 3);
+		elements_tab->setCellText(descending_rb->text(), elem_idx, 3);
 
 	if(elem.getSortAttribute(IndexElement::NULLS_FIRST))
-		elements_tab->definirTextoCelula(trUtf8("Sim"), elem_idx, 4);
+		elements_tab->setCellText(trUtf8("Sim"), elem_idx, 4);
 	else
-		elements_tab->definirTextoCelula(trUtf8("Não"), elem_idx, 4);
+		elements_tab->setCellText(trUtf8("Não"), elem_idx, 4);
 
-	elements_tab->definirDadoLinha(QVariant::fromValue<IndexElement>(elem), elem_idx);
+	elements_tab->setRowData(QVariant::fromValue<IndexElement>(elem), elem_idx);
 }
 
 void IndexWidget::handleElement(int elem_idx)
@@ -169,15 +169,15 @@ void IndexWidget::handleElement(int elem_idx)
 		op_class_sel->clearSelector();
 		nulls_first_chk->setChecked(false);
 	}
-	else if(elements_tab->obterTextoCelula(elem_idx,0).isEmpty())
-		elements_tab->removerLinha(elem_idx);
+	else if(elements_tab->getCellText(elem_idx,0).isEmpty())
+		elements_tab->removeRow(elem_idx);
 }
 
 void IndexWidget::editElement(int elem_idx)
 {
 	IndexElement elem;
 
-	elem=elements_tab->obterDadoLinha(elem_idx).value<IndexElement>();
+	elem=elements_tab->getRowData(elem_idx).value<IndexElement>();
 
 	if(elem.getColumn())
 	{
@@ -251,7 +251,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 		count=index->getElementCount();
 		for(i=0; i < count; i++)
 		{
-			elements_tab->adicionarLinha();
+			elements_tab->addRow();
 			showElementData(index->getElement(i), i);
 		}
 		elements_tab->blockSignals(false);
@@ -277,11 +277,11 @@ void IndexWidget::applyConfiguration(void)
 		index->setFillFactor(fill_factor_sb->value());
 
 		index->removeElements();
-		count=elements_tab->obterNumLinhas();
+		count=elements_tab->getRowCount();
 
 		for(i=0; i < count; i++)
 		{
-			elem=elements_tab->obterDadoLinha(i).value<IndexElement>();
+			elem=elements_tab->getRowData(i).value<IndexElement>();
 
 			if(elem.getColumn())
 				index->addElement(elem.getColumn(), elem.getOperatorClass(),

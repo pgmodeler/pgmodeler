@@ -21,17 +21,17 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		data_type=new TipoPgSQLWidget(this);
 		storage_type=new TipoPgSQLWidget(this, trUtf8("Storage Type"));
-		elements_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
+		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 
-		elements_tab->definirNumColunas(4);
-		elements_tab->definirRotuloCabecalho(trUtf8("Object"),0);
-		elements_tab->definirIconeCabecalho(QPixmap(":/icones/icones/table.png"),0);
+		elements_tab->setColumnCount(4);
+		elements_tab->setHeaderLabel(trUtf8("Object"),0);
+		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/table.png"),0);
 
-		elements_tab->definirRotuloCabecalho(trUtf8("Type"),1);
-		elements_tab->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+		elements_tab->setHeaderLabel(trUtf8("Type"),1);
+		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 
-		elements_tab->definirRotuloCabecalho(trUtf8("Support/Strategy"),2);
-		elements_tab->definirRotuloCabecalho(trUtf8("Recheck"),3);
+		elements_tab->setHeaderLabel(trUtf8("Support/Strategy"),2);
+		elements_tab->setHeaderLabel(trUtf8("Recheck"),3);
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(0,0,0,0);
@@ -76,7 +76,7 @@ void OperatorClassWidget::hideEvent(QHideEvent *event)
 	operator_sel->clearSelector();
 	stg_num_sb->setValue(1);
 	recheck_chk->setChecked(false);
-	elements_tab->removerLinhas();
+	elements_tab->removeRows();
 	selectElementType(0);
 	BaseObjectWidget::hideEvent(event);
 }
@@ -103,7 +103,7 @@ void OperatorClassWidget::editElement(int lin_idx)
 	OperatorClassElement elem;
 
 	//Get the element from the selected line
-	elem=elements_tab->obterDadoLinha(lin_idx).value<OperatorClassElement>();
+	elem=elements_tab->getRowData(lin_idx).value<OperatorClassElement>();
 
 	elem_type_cmb->setCurrentIndex(elem.getElementType());
 	function_sel->setSelectedObject(elem.getFunction());
@@ -121,37 +121,37 @@ void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx
 
 	if(elem_type==OperatorClassElement::FUNCTION_ELEM)
 	{
-		elements_tab->definirTextoCelula(QString::fromUtf8(elem.getFunction()->getSignature()), lin_idx, 0);
-		elements_tab->definirTextoCelula(QString::fromUtf8(elem.getFunction()->getTypeName()), lin_idx, 1);
+		elements_tab->setCellText(QString::fromUtf8(elem.getFunction()->getSignature()), lin_idx, 0);
+		elements_tab->setCellText(QString::fromUtf8(elem.getFunction()->getTypeName()), lin_idx, 1);
 	}
 	else if(elem_type==OperatorClassElement::OPERATOR_ELEM)
 	{
-		elements_tab->definirTextoCelula(QString::fromUtf8(elem.getOperator()->getSignature()), lin_idx, 0);
-		elements_tab->definirTextoCelula(QString::fromUtf8(elem.getOperator()->getTypeName()), lin_idx, 1);
+		elements_tab->setCellText(QString::fromUtf8(elem.getOperator()->getSignature()), lin_idx, 0);
+		elements_tab->setCellText(QString::fromUtf8(elem.getOperator()->getTypeName()), lin_idx, 1);
 	}
 	else
 	{
-		elements_tab->definirTextoCelula(*elem.getStorage(), lin_idx, 0);
-		elements_tab->definirTextoCelula(QString::fromUtf8(BaseObject::getTypeName(OBJ_TYPE)), lin_idx, 1);
+		elements_tab->setCellText(*elem.getStorage(), lin_idx, 0);
+		elements_tab->setCellText(QString::fromUtf8(BaseObject::getTypeName(OBJ_TYPE)), lin_idx, 1);
 	}
 
 	if(elem_type!=OperatorClassElement::STORAGE_ELEM)
-		elements_tab->definirTextoCelula(QString("%1").arg(elem.getStrategyNumber()), lin_idx, 2);
+		elements_tab->setCellText(QString("%1").arg(elem.getStrategyNumber()), lin_idx, 2);
 	else
-		elements_tab->definirTextoCelula("-", lin_idx, 2);
+		elements_tab->setCellText("-", lin_idx, 2);
 
 	if(elem_type==OperatorClassElement::OPERATOR_ELEM)
 	{
 		if(elem.isRecheck())
-			elements_tab->definirTextoCelula(trUtf8("Yes"), lin_idx, 3);
+			elements_tab->setCellText(trUtf8("Yes"), lin_idx, 3);
 		else
-			elements_tab->definirTextoCelula(trUtf8("No"), lin_idx, 3);
+			elements_tab->setCellText(trUtf8("No"), lin_idx, 3);
 	}
 	else
-		elements_tab->definirTextoCelula("-", lin_idx, 3);
+		elements_tab->setCellText("-", lin_idx, 3);
 
 	//Define as the line data the element itself
-	elements_tab->definirDadoLinha(QVariant::fromValue<OperatorClassElement>(elem), lin_idx);
+	elements_tab->setRowData(QVariant::fromValue<OperatorClassElement>(elem), lin_idx);
 }
 
 void OperatorClassWidget::handleElement(int lin_idx)
@@ -176,13 +176,13 @@ void OperatorClassWidget::handleElement(int lin_idx)
 		operator_sel->clearSelector();
 		stg_num_sb->setValue(1);
 		recheck_chk->setChecked(false);
-		elements_tab->limparSelecao();
+		elements_tab->clearSelection();
 	}
 	catch(Exception &e)
 	{
 		//In case of error removes the recently added table line
-		if(elements_tab->obterTextoCelula(lin_idx, 0).isEmpty())
-			elements_tab->removerLinha(lin_idx);
+		if(elements_tab->getCellText(lin_idx, 0).isEmpty())
+			elements_tab->removeRow(lin_idx);
 
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -211,11 +211,11 @@ void OperatorClassWidget::setAttributes(DatabaseModel *model, OperationList *op_
 		count=op_class->getElementCount();
 		for(i=0; i < count; i++)
 		{
-			elements_tab->adicionarLinha();
+			elements_tab->addRow();
 			showElementData(op_class->getElement(i), i);
 		}
 		elements_tab->blockSignals(false);
-		elements_tab->limparSelecao();
+		elements_tab->clearSelection();
 	}
 
 	data_type->definirAtributos(type, model);
@@ -237,10 +237,10 @@ void OperatorClassWidget::applyConfiguration(void)
 		op_class->setDataType(data_type->obterTipoPgSQL());
 
 		op_class->removeElements();
-		count=elements_tab->obterNumLinhas();
+		count=elements_tab->getRowCount();
 
 		for(i=0; i < count; i++)
-			op_class->addElement(elements_tab->obterDadoLinha(i).value<OperatorClassElement>());
+			op_class->addElement(elements_tab->getRowData(i).value<OperatorClassElement>());
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

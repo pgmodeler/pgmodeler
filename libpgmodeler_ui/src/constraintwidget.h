@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_constraintwidget.h"
-#include "tabelaobjetoswidget.h"
+#include "objecttablewidget.h"
 
 class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 	private:
@@ -38,7 +38,7 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 
 		/*! \brief Table widgets used to store the columns that forms the constraint as well the
 		referenced columns (only for foreign keys) */
-		TabelaObjetosWidget *columns_tab,
+		ObjectTableWidget *columns_tab,
 												*ref_columns_tab;
 
 		//! \brief Referenced table selector

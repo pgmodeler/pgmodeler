@@ -17,22 +17,22 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 																						GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																						GlobalAttributes::CONFIGURATION_EXT);
 
-		columns_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
-																				(TabelaObjetosWidget::BTN_EDITAR_ITEM |
-																				 TabelaObjetosWidget::BTN_ATUALIZAR_ITEM), true, this);
+		columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
+																				(ObjectTableWidget::EDIT_BUTTON |
+																				 ObjectTableWidget::UPDATE_BUTTON), true, this);
 
-		arguments_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES, true, this);
+		arguments_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 
 		ref_table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		trigger_grid->addWidget(function_sel, 5, 1, 1, 2);
 		trigger_grid->addWidget(ref_table_sel, 6, 1, 1, 2);
 
-		columns_tab->definirNumColunas(2);
-		columns_tab->definirRotuloCabecalho(trUtf8("Column"), 0);
-		columns_tab->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-		columns_tab->definirRotuloCabecalho(trUtf8("Type"), 1);
-		columns_tab->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+		columns_tab->setColumnCount(2);
+		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
+		columns_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
+		columns_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(0)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(arg_cols_tbw->widget(1)->layout())->addWidget(arguments_tab, 1,0,1,3);
@@ -92,11 +92,11 @@ void TriggerWidget::addColumn(int lin_idx)
 		column=reinterpret_cast<Column *>(column_cmb->itemData(column_cmb->currentIndex(),Qt::UserRole).value<void *>());
 		column_cmb->removeItem(column_cmb->currentIndex());
 		addColumn(column, lin_idx);
-		columns_tab->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (column_cmb->count()!=0));
+		columns_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 	}
 	catch(Exception &e)
 	{
-		columns_tab->removerLinha(lin_idx);
+		columns_tab->removeRow(lin_idx);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -105,9 +105,9 @@ void TriggerWidget::addColumn(Column *column, int row)
 {
 	if(column && row >= 0)
 	{
-		columns_tab->definirTextoCelula(QString::fromUtf8(column->getName()),row,0);
-		columns_tab->definirTextoCelula(QString::fromUtf8(~column->getType()),row,1);
-		columns_tab->definirDadoLinha(QVariant::fromValue<void *>(column), row);
+		columns_tab->setCellText(QString::fromUtf8(column->getName()),row,0);
+		columns_tab->setCellText(QString::fromUtf8(~column->getType()),row,1);
+		columns_tab->setRowData(QVariant::fromValue<void *>(column), row);
 	}
 }
 
@@ -125,14 +125,14 @@ void TriggerWidget::updateColumnsCombo(void)
 		{
 			column=table->getColumn(i);
 
-			if(columns_tab->obterIndiceLinha(QVariant::fromValue<void *>(column)) < 0)
+			if(columns_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
 			{
 				column_cmb->addItem(QString::fromUtf8(column->getName()) + " (" + ~column->getType() +")",
 														QVariant::fromValue<void *>(column));
 			}
 		}
 
-		columns_tab->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (column_cmb->count()!=0));
+		columns_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -144,16 +144,16 @@ void TriggerWidget::handleArgument(int lin_idx)
 {
 	if(!argument_edt->text().isEmpty())
 	{
-		arguments_tab->definirTextoCelula(argument_edt->text(), lin_idx, 0);
+		arguments_tab->setCellText(argument_edt->text(), lin_idx, 0);
 		argument_edt->clear();
 	}
-	else if(arguments_tab->obterTextoCelula(lin_idx, 0).isEmpty())
-		arguments_tab->removerLinha(lin_idx);
+	else if(arguments_tab->getCellText(lin_idx, 0).isEmpty())
+		arguments_tab->removeRow(lin_idx);
 }
 
 void TriggerWidget::editArgument(int lin_idx)
 {
-	argument_edt->setText(arguments_tab->obterTextoCelula(lin_idx, 0));
+	argument_edt->setText(arguments_tab->getCellText(lin_idx, 0));
 }
 
 void TriggerWidget::hideEvent(QHideEvent *event)
@@ -170,8 +170,8 @@ void TriggerWidget::hideEvent(QHideEvent *event)
 
 	columns_tab->blockSignals(true);
 	arguments_tab->blockSignals(true);
-	columns_tab->removerLinhas();
-	arguments_tab->removerLinhas();
+	columns_tab->removeRows();
+	arguments_tab->removeRows();
 	columns_tab->blockSignals(false);
 	arguments_tab->blockSignals(false);
 
@@ -219,18 +219,18 @@ void TriggerWidget::setAttributes(DatabaseModel *model, Table *parent_table, Ope
 		for(i=0; i < count; i++)
 		{
 			column=trigger->getColumn(i);
-			columns_tab->adicionarLinha();
+			columns_tab->addRow();
 			addColumn(column, i);
 		}
 
 		count=trigger->getArgumentCount();
 		for(i=0; i < count; i++)
 		{
-			arguments_tab->adicionarLinha();
-			arguments_tab->definirTextoCelula(trigger->getArgument(i), i, 0);
+			arguments_tab->addRow();
+			arguments_tab->setCellText(trigger->getArgument(i), i, 0);
 		}
 
-		columns_tab->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (column_cmb->count()!=0));
+		columns_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 		arguments_tab->blockSignals(false);
 		columns_tab->blockSignals(false);
 	}
@@ -263,14 +263,14 @@ void TriggerWidget::applyConfiguration(void)
 		trigger->removeArguments();
 		trigger->removeColumns();
 
-		count=arguments_tab->obterNumLinhas();
+		count=arguments_tab->getRowCount();
 		for(i=0; i < count; i++)
-			trigger->addArgument(arguments_tab->obterTextoCelula(i, 0));
+			trigger->addArgument(arguments_tab->getCellText(i, 0));
 
-		count=columns_tab->obterNumLinhas();
+		count=columns_tab->getRowCount();
 		for(i=0; i < count; i++)
 		{
-			column=reinterpret_cast<Column *>(columns_tab->obterDadoLinha(i).value<void *>());
+			column=reinterpret_cast<Column *>(columns_tab->getRowData(i).value<void *>());
 			trigger->addColumn(column);
 		}
 

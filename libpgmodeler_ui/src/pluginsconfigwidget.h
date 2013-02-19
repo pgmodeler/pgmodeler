@@ -27,7 +27,7 @@
 
 #include "baseconfigwidget.h"
 #include "ui_pluginsconfigwidget.h"
-#include "tabelaobjetoswidget.h"
+#include "objecttablewidget.h"
 #include "pgmodelerplugin.h"
 
 class PluginsConfigWidget: public QWidget, public Ui::PluginsConfigWidget, public BaseConfigWidget {
@@ -41,7 +41,7 @@ class PluginsConfigWidget: public QWidget, public Ui::PluginsConfigWidget, publi
 		vector<QAction *> plugins_actions;
 
 		//! \brief Table used to show the loaded plugins
-		TabelaObjetosWidget *plugins_tab;
+		ObjectTableWidget *plugins_tab;
 
 		void applyConfiguration(void){}
 

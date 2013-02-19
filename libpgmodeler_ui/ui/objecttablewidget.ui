@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TabelaObjetosWidget</class>
- <widget class="QWidget" name="TabelaObjetosWidget">
+ <class>ObjectTableWidget</class>
+ <widget class="QWidget" name="ObjectTableWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -36,7 +36,7 @@
    <item row="0" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QToolButton" name="adicionar_tb">
+      <widget class="QToolButton" name="add_tb">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -74,7 +74,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="remover_tb">
+      <widget class="QToolButton" name="remove_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -112,7 +112,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="atualizar_tb">
+      <widget class="QToolButton" name="update_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -150,7 +150,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="remover_todas_tb">
+      <widget class="QToolButton" name="remove_all_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -188,7 +188,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="editar_tb">
+      <widget class="QToolButton" name="edit_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -226,7 +226,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="mover_cima_tb">
+      <widget class="QToolButton" name="move_up_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -264,7 +264,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="mover_baixo_tb">
+      <widget class="QToolButton" name="move_down_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -302,7 +302,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="mover_primeiro_tb">
+      <widget class="QToolButton" name="move_first_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -340,7 +340,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="mover_ultimo_tb">
+      <widget class="QToolButton" name="move_last_tb">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -393,7 +393,7 @@
     </spacer>
    </item>
    <item row="1" column="0" colspan="3">
-    <widget class="QTableWidget" name="tabela_tbw">
+    <widget class="QTableWidget" name="table_tbw">
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>

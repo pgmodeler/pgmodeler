@@ -28,7 +28,7 @@
 #include <QtGui>
 #include "baseobjectwidget.h"
 #include "ui_visaowidget.h"
-#include "tabelaobjetoswidget.h"
+#include "objecttablewidget.h"
 
 /*! \brief Declarando a classe Referencia como metatype para que esta
  possa ser usada em conjunto com a classe QVariant (vide documentação
@@ -53,7 +53,7 @@ class VisaoWidget: public BaseObjectWidget, public Ui::VisaoWidget {
 		View visao_aux;
 
 		//! \brief Tabela de listagem das referências cadastradas para a visão
-		TabelaObjetosWidget *tab_referencias;
+		ObjectTableWidget *tab_referencias;
 
 		//! \brief Destacador de sintaxe usado no campo de expressão e de código fonte da visão
 		SyntaxHighlighter *destaque_expr,

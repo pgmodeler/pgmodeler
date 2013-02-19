@@ -32,33 +32,33 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 																		 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																		 GlobalAttributes::CONFIGURATION_EXT);
 
-		attributes_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
-																					(TabelaObjetosWidget::BTN_ATUALIZAR_ITEM |
-																					 TabelaObjetosWidget::BTN_MOVER_ITENS), true, this);
+		attributes_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
+																					(ObjectTableWidget::UPDATE_BUTTON |
+																					 ObjectTableWidget::MOVE_BUTTONS), true, this);
 
-		constraints_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES  ^
-																					 (TabelaObjetosWidget::BTN_ATUALIZAR_ITEM |
-																						TabelaObjetosWidget::BTN_MOVER_ITENS), true, this);
+		constraints_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS  ^
+																					 (ObjectTableWidget::UPDATE_BUTTON |
+																						ObjectTableWidget::MOVE_BUTTONS), true, this);
 
-		advanced_objs_tab=new TabelaObjetosWidget(TabelaObjetosWidget::BTN_EDITAR_ITEM, true, this);
+		advanced_objs_tab=new ObjectTableWidget(ObjectTableWidget::EDIT_BUTTON, true, this);
 
-		attributes_tab->definirNumColunas(2);
-		attributes_tab->definirRotuloCabecalho(trUtf8("Attribute"), 0);
-		attributes_tab->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-		attributes_tab->definirRotuloCabecalho(trUtf8("Type"), 1);
-		attributes_tab->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+		attributes_tab->setColumnCount(2);
+		attributes_tab->setHeaderLabel(trUtf8("Attribute"), 0);
+		attributes_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+		attributes_tab->setHeaderLabel(trUtf8("Type"), 1);
+		attributes_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 
-		constraints_tab->definirNumColunas(2);
-		constraints_tab->definirRotuloCabecalho(trUtf8("Constraint"), 0);
-		constraints_tab->definirIconeCabecalho(QPixmap(":/icones/icones/constraint.png"),0);
-		constraints_tab->definirRotuloCabecalho(trUtf8("Type"), 1);
-		constraints_tab->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+		constraints_tab->setColumnCount(2);
+		constraints_tab->setHeaderLabel(trUtf8("Constraint"), 0);
+		constraints_tab->setHeaderIcon(QPixmap(":/icones/icones/constraint.png"),0);
+		constraints_tab->setHeaderLabel(trUtf8("Type"), 1);
+		constraints_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 
-		advanced_objs_tab->definirNumColunas(2);
-		advanced_objs_tab->definirRotuloCabecalho(trUtf8("Name"), 0);
-		advanced_objs_tab->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-		advanced_objs_tab->definirRotuloCabecalho(trUtf8("Type"), 1);
-		advanced_objs_tab->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+		advanced_objs_tab->setColumnCount(2);
+		advanced_objs_tab->setHeaderLabel(trUtf8("Name"), 0);
+		advanced_objs_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+		advanced_objs_tab->setHeaderLabel(trUtf8("Type"), 1);
+		advanced_objs_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 
 		connect(advanced_objs_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(showAdvancedObject(int)));
 
@@ -145,8 +145,8 @@ void RelationshipWidget::hideEvent(QHideEvent *event)
 
 	attributes_tab->blockSignals(true);
 	constraints_tab->blockSignals(true);
-	attributes_tab->removerLinhas();
-	constraints_tab->removerLinhas();
+	attributes_tab->removeRows();
+	constraints_tab->removeRows();
 	attributes_tab->blockSignals(false);
 	constraints_tab->blockSignals(false);
 
@@ -252,8 +252,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		deferrable_chk->setChecked(aux_rel->isDeferrable());
 		relnn_tab_name_edt->setText(aux_rel->getTableNameRelNN());
 
-		attributes_tab->habilitarBotoes(TabelaObjetosWidget::TODOS_BOTOES, !aux_rel->isProtected());
-		constraints_tab->habilitarBotoes(TabelaObjetosWidget::TODOS_BOTOES, !aux_rel->isProtected());
+		attributes_tab->enableButtons(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
+		constraints_tab->enableButtons(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
 
 		//Lists the relationship attributes
 		listObjects(OBJ_COLUMN);
@@ -349,7 +349,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 
 void RelationshipWidget::listObjects(ObjectType obj_type)
 {
-	TabelaObjetosWidget *tab=NULL;
+	ObjectTableWidget *tab=NULL;
 	Relationship *rel=NULL;
 	unsigned count, i;
 
@@ -363,19 +363,19 @@ void RelationshipWidget::listObjects(ObjectType obj_type)
 		rel=dynamic_cast<Relationship *>(this->object);
 
 		tab->blockSignals(true);
-		tab->removerLinhas();
+		tab->removeRows();
 
 		count=rel->getObjectCount(obj_type);
 		for(i=0; i < count; i++)
 		{
-			tab->adicionarLinha();
+			tab->addRow();
 			showObjectData(rel->getObject(i, obj_type), i);
 		}
-		tab->limparSelecao();
+		tab->clearSelection();
 		tab->blockSignals(false);
 
-		constraints_tab->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM,
-																		attributes_tab->obterNumLinhas() > 0);
+		constraints_tab->enableButtons(ObjectTableWidget::ADD_BUTTON,
+																		attributes_tab->getRowCount() > 0);
 	}
 	catch(Exception &e)
 	{
@@ -398,7 +398,7 @@ void RelationshipWidget::listAdvancedObjects(void)
 		rel=dynamic_cast<Relationship *>(base_rel);
 
 		advanced_objs_tab->blockSignals(true);
-		advanced_objs_tab->removerLinhas();
+		advanced_objs_tab->removeRows();
 
 		if(rel)
 		{
@@ -409,21 +409,21 @@ void RelationshipWidget::listAdvancedObjects(void)
 
 				for(i=0; i < count; i++)
 				{
-					advanced_objs_tab->adicionarLinha();
-					advanced_objs_tab->definirTextoCelula(QString::fromUtf8(cols[i]->getName()),i,0);
-					advanced_objs_tab->definirTextoCelula(QString::fromUtf8(cols[i]->getTypeName()),i,1);
-					advanced_objs_tab->definirDadoLinha(QVariant::fromValue<void *>(cols[i]), i);
+					advanced_objs_tab->addRow();
+					advanced_objs_tab->setCellText(QString::fromUtf8(cols[i]->getName()),i,0);
+					advanced_objs_tab->setCellText(QString::fromUtf8(cols[i]->getTypeName()),i,1);
+					advanced_objs_tab->setRowData(QVariant::fromValue<void *>(cols[i]), i);
 				}
 
 				constrs=rel->getGeneratedConstraints();
 				count=constrs.size();
 
-				for(i=0, i1=advanced_objs_tab->obterNumLinhas(); i < count; i++,i1++)
+				for(i=0, i1=advanced_objs_tab->getRowCount(); i < count; i++,i1++)
 				{
-					advanced_objs_tab->adicionarLinha();
-					advanced_objs_tab->definirTextoCelula(QString::fromUtf8(constrs[i]->getName()),i1,0);
-					advanced_objs_tab->definirTextoCelula(QString::fromUtf8(constrs[i]->getTypeName()),i1,1);
-					advanced_objs_tab->definirDadoLinha(QVariant::fromValue<void *>(constrs[i]), i1);
+					advanced_objs_tab->addRow();
+					advanced_objs_tab->setCellText(QString::fromUtf8(constrs[i]->getName()),i1,0);
+					advanced_objs_tab->setCellText(QString::fromUtf8(constrs[i]->getTypeName()),i1,1);
+					advanced_objs_tab->setRowData(QVariant::fromValue<void *>(constrs[i]), i1);
 				}
 			}
 			else
@@ -431,10 +431,10 @@ void RelationshipWidget::listAdvancedObjects(void)
 				tab=rel->getGeneratedTable();
 				if(tab)
 				{
-					advanced_objs_tab->adicionarLinha();
-					advanced_objs_tab->definirTextoCelula(QString::fromUtf8(tab->getName()),0,0);
-					advanced_objs_tab->definirTextoCelula(QString::fromUtf8(tab->getTypeName()),0,1);
-					advanced_objs_tab->definirDadoLinha(QVariant::fromValue<void *>(tab), 0);
+					advanced_objs_tab->addRow();
+					advanced_objs_tab->setCellText(QString::fromUtf8(tab->getName()),0,0);
+					advanced_objs_tab->setCellText(QString::fromUtf8(tab->getTypeName()),0,1);
+					advanced_objs_tab->setRowData(QVariant::fromValue<void *>(tab), 0);
 				}
 			}
 		}
@@ -444,16 +444,16 @@ void RelationshipWidget::listAdvancedObjects(void)
 			dynamic_cast<Table *>(base_rel->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false,tab);
 			count=constrs.size();
 
-			for(i=0, i1=advanced_objs_tab->obterNumLinhas(); i < count; i++, i1++)
+			for(i=0, i1=advanced_objs_tab->getRowCount(); i < count; i++, i1++)
 			{
-				advanced_objs_tab->adicionarLinha();
-				advanced_objs_tab->definirTextoCelula(QString::fromUtf8(constrs[i]->getName()),i1,0);
-				advanced_objs_tab->definirTextoCelula(QString::fromUtf8(constrs[i]->getTypeName()),i1,1);
-				advanced_objs_tab->definirDadoLinha(QVariant::fromValue<void *>(constrs[i]), i1);
+				advanced_objs_tab->addRow();
+				advanced_objs_tab->setCellText(QString::fromUtf8(constrs[i]->getName()),i1,0);
+				advanced_objs_tab->setCellText(QString::fromUtf8(constrs[i]->getTypeName()),i1,1);
+				advanced_objs_tab->setRowData(QVariant::fromValue<void *>(constrs[i]), i1);
 			}
 		}
 
-		advanced_objs_tab->limparSelecao();
+		advanced_objs_tab->clearSelection();
 		advanced_objs_tab->blockSignals(false);
 
 	}
@@ -465,7 +465,7 @@ void RelationshipWidget::listAdvancedObjects(void)
 
 void RelationshipWidget::showAdvancedObject(int row)
 {
-	BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->obterDadoLinha(row).value<void *>());
+	BaseObject *object=reinterpret_cast<BaseObject *>(advanced_objs_tab->getRowData(row).value<void *>());
 	bool prot=true;
 	Table *tab=NULL;
 	Constraint *constr=NULL;
@@ -552,13 +552,13 @@ void RelationshipWidget::editObject(int row)
 		if(sender()==attributes_tab)
 		{
 			coluna_wgt->setAttributes(this->model, this->object, this->op_list,
-																reinterpret_cast<Column *>(attributes_tab->obterDadoLinha(row).value<void *>()));
+																reinterpret_cast<Column *>(attributes_tab->getRowData(row).value<void *>()));
 			coluna_wgt->show();
 		}
 		else
 		{
 			restricao_wgt->setAttributes(this->model, this->object, this->op_list,
-																	 reinterpret_cast<Constraint *>(constraints_tab->obterDadoLinha(row).value<void *>()));
+																	 reinterpret_cast<Constraint *>(constraints_tab->getRowData(row).value<void *>()));
 			restricao_wgt->show();
 		}
 
@@ -573,21 +573,21 @@ void RelationshipWidget::editObject(int row)
 
 void RelationshipWidget::showObjectData(TableObject *object, int row)
 {
-	TabelaObjetosWidget *tab=NULL;
+	ObjectTableWidget *tab=NULL;
 
 	if(object->getObjectType()==OBJ_COLUMN)
 	{
 		tab=attributes_tab;
-		attributes_tab->definirTextoCelula(QString::fromUtf8(~dynamic_cast<Column *>(object)->getType()),row,1);
+		attributes_tab->setCellText(QString::fromUtf8(~dynamic_cast<Column *>(object)->getType()),row,1);
 	}
 	else
 	{
 		tab=constraints_tab;
-		constraints_tab->definirTextoCelula(QString::fromUtf8(~dynamic_cast<Constraint *>(object)->getConstraintType()),row,1);
+		constraints_tab->setCellText(QString::fromUtf8(~dynamic_cast<Constraint *>(object)->getConstraintType()),row,1);
 	}
 
-	tab->definirTextoCelula(QString::fromUtf8(object->getName()),row,0);
-	tab->definirDadoLinha(QVariant::fromValue<void *>(object), row);
+	tab->setCellText(QString::fromUtf8(object->getName()),row,0);
+	tab->setRowData(QVariant::fromValue<void *>(object), row);
 }
 
 void RelationshipWidget::removeObjects(void)

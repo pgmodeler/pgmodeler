@@ -1,72 +1,72 @@
-#include "tabelaobjetoswidget.h"
+#include "objecttablewidget.h"
 #include "messagebox.h"
 extern MessageBox *caixa_msg;
 
-TabelaObjetosWidget::TabelaObjetosWidget(unsigned conf_botoes, bool conf_exclusoes, QWidget *parent): QWidget(parent)
+ObjectTableWidget::ObjectTableWidget(unsigned conf_botoes, bool conf_exclusoes, QWidget *parent): QWidget(parent)
 {
 	setupUi(this);
-	connect(mover_baixo_tb, SIGNAL(clicked(bool)), this, SLOT(moverLinhas(void)));
-	connect(mover_cima_tb, SIGNAL(clicked(bool)), this, SLOT(moverLinhas(void)));
-	connect(mover_primeiro_tb, SIGNAL(clicked(bool)), this, SLOT(moverLinhas(void)));
-	connect(mover_ultimo_tb, SIGNAL(clicked(bool)), this, SLOT(moverLinhas(void)));
-	connect(adicionar_tb, SIGNAL(clicked(bool)), this, SLOT(adicionarLinha(void)));
-	connect(remover_tb, SIGNAL(clicked(bool)), this, SLOT(removerLinha(void)));
-	connect(editar_tb, SIGNAL(clicked(bool)), this, SLOT(editarLinha(void)));
-	connect(atualizar_tb, SIGNAL(clicked(bool)), this, SLOT(atualizarLinha(void)));
-	connect(remover_todas_tb, SIGNAL(clicked(bool)), this, SLOT(removerLinhas(void)));
-	connect(tabela_tbw, SIGNAL(cellClicked(int,int)), this, SLOT(habilitarBotoes(void)));
-	connect(tabela_tbw, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(editarLinha(void)));
+	connect(move_down_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows(void)));
+	connect(move_up_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows(void)));
+	connect(move_first_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows(void)));
+	connect(move_last_tb, SIGNAL(clicked(bool)), this, SLOT(moveRows(void)));
+	connect(add_tb, SIGNAL(clicked(bool)), this, SLOT(addRow(void)));
+	connect(remove_tb, SIGNAL(clicked(bool)), this, SLOT(removeRow(void)));
+	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editRow(void)));
+	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(updateRow(void)));
+	connect(remove_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeRows(void)));
+	connect(table_tbw, SIGNAL(cellClicked(int,int)), this, SLOT(enableButtons(void)));
+	connect(table_tbw, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(editRow(void)));
 
-	this->conf_exclusoes=conf_exclusoes;
-	definirConfiguracaoBotoes(conf_botoes);
+	this->conf_exclusion=conf_exclusoes;
+	setButtonConfiguration(conf_botoes);
 
-	definirNumColunas(1);
+	setColumnCount(1);
 
-	adicionar_tb->setToolTip(adicionar_tb->toolTip() + QString(" (%1)").arg(adicionar_tb->shortcut().toString()));
-	remover_tb->setToolTip(remover_tb->toolTip() + QString(" (%1)").arg(remover_tb->shortcut().toString()));
-	remover_todas_tb->setToolTip(remover_todas_tb->toolTip() + QString(" (%1)").arg(remover_todas_tb->shortcut().toString()));
-	atualizar_tb->setToolTip(atualizar_tb->toolTip() + QString(" (%1)").arg(atualizar_tb->shortcut().toString()));
-	editar_tb->setToolTip(editar_tb->toolTip() + QString(" (%1)").arg(editar_tb->shortcut().toString()));
-	mover_ultimo_tb->setToolTip(mover_ultimo_tb->toolTip() + QString(" (%1)").arg(mover_ultimo_tb->shortcut().toString()));
-	mover_primeiro_tb->setToolTip(mover_primeiro_tb->toolTip() + QString(" (%1)").arg(mover_primeiro_tb->shortcut().toString()));
-	mover_cima_tb->setToolTip(mover_cima_tb->toolTip() + QString(" (%1)").arg(mover_cima_tb->shortcut().toString()));
-	mover_baixo_tb->setToolTip(mover_baixo_tb->toolTip() + QString(" (%1)").arg(mover_baixo_tb->shortcut().toString()));
+	add_tb->setToolTip(add_tb->toolTip() + QString(" (%1)").arg(add_tb->shortcut().toString()));
+	remove_tb->setToolTip(remove_tb->toolTip() + QString(" (%1)").arg(remove_tb->shortcut().toString()));
+	remove_all_tb->setToolTip(remove_all_tb->toolTip() + QString(" (%1)").arg(remove_all_tb->shortcut().toString()));
+	update_tb->setToolTip(update_tb->toolTip() + QString(" (%1)").arg(update_tb->shortcut().toString()));
+	edit_tb->setToolTip(edit_tb->toolTip() + QString(" (%1)").arg(edit_tb->shortcut().toString()));
+	move_last_tb->setToolTip(move_last_tb->toolTip() + QString(" (%1)").arg(move_last_tb->shortcut().toString()));
+	move_first_tb->setToolTip(move_first_tb->toolTip() + QString(" (%1)").arg(move_first_tb->shortcut().toString()));
+	move_up_tb->setToolTip(move_up_tb->toolTip() + QString(" (%1)").arg(move_up_tb->shortcut().toString()));
+	move_down_tb->setToolTip(move_down_tb->toolTip() + QString(" (%1)").arg(move_down_tb->shortcut().toString()));
 }
 
-void TabelaObjetosWidget::definirConfiguracaoBotoes(unsigned conf_botoes)
+void ObjectTableWidget::setButtonConfiguration(unsigned conf_botoes)
 {
 	bool btn_mover, btn_edt, btn_ins, btn_limpar, btn_rem, btn_atual;
 
 	/* Verificando, através de operações bit a bit, a presença de cada tipo de
 		botão na configuração passada */
-	btn_mover=(conf_botoes & BTN_MOVER_ITENS) == BTN_MOVER_ITENS;
-	btn_edt=(conf_botoes & BTN_EDITAR_ITEM) == BTN_EDITAR_ITEM;
-	btn_ins=(conf_botoes & BTN_INSERIR_ITEM) == BTN_INSERIR_ITEM;
-	btn_rem=(conf_botoes & BTN_REMOVER_ITEM) == BTN_REMOVER_ITEM;
-	btn_limpar=(conf_botoes & BTN_LIMPAR_ITENS) == BTN_LIMPAR_ITENS;
-	btn_atual=(conf_botoes & BTN_ATUALIZAR_ITEM) == BTN_ATUALIZAR_ITEM;
+	btn_mover=(conf_botoes & MOVE_BUTTONS) == MOVE_BUTTONS;
+	btn_edt=(conf_botoes & EDIT_BUTTON) == EDIT_BUTTON;
+	btn_ins=(conf_botoes & ADD_BUTTON) == ADD_BUTTON;
+	btn_rem=(conf_botoes & REMOVE_BUTTON) == REMOVE_BUTTON;
+	btn_limpar=(conf_botoes & REMOVE_ALL_BUTTON) == REMOVE_ALL_BUTTON;
+	btn_atual=(conf_botoes & UPDATE_BUTTON) == UPDATE_BUTTON;
 
 	//Seta os btões visíveis de acordo com a presença dos mesmos na configuração de botões
-	mover_baixo_tb->setVisible(btn_mover);
-	mover_cima_tb->setVisible(btn_mover);
-	mover_primeiro_tb->setVisible(btn_mover);
-	mover_ultimo_tb->setVisible(btn_mover);
+	move_down_tb->setVisible(btn_mover);
+	move_up_tb->setVisible(btn_mover);
+	move_first_tb->setVisible(btn_mover);
+	move_last_tb->setVisible(btn_mover);
 
-	editar_tb->setVisible(btn_edt);
-	remover_todas_tb->setVisible(btn_limpar);
+	edit_tb->setVisible(btn_edt);
+	remove_all_tb->setVisible(btn_limpar);
 
-	adicionar_tb->setVisible(btn_ins);
-	remover_tb->setVisible(btn_rem);
-	atualizar_tb->setVisible(btn_atual);
+	add_tb->setVisible(btn_ins);
+	remove_tb->setVisible(btn_rem);
+	update_tb->setVisible(btn_atual);
 
 	if(!btn_edt && !btn_mover && !btn_ins && !btn_limpar && !btn_rem && !btn_atual)
 	{
-		tabelaobj_grid->removeWidget(tabela_tbw);
-		tabelaobj_grid->addWidget(tabela_tbw,0,0,1,10);
+		tabelaobj_grid->removeWidget(table_tbw);
+		tabelaobj_grid->addWidget(table_tbw,0,0,1,10);
 	}
 }
 
-void TabelaObjetosWidget::definirNumColunas(unsigned num_colunas)
+void ObjectTableWidget::setColumnCount(unsigned num_colunas)
 {
 	if(num_colunas > 0)
 	{
@@ -75,194 +75,194 @@ void TabelaObjetosWidget::definirNumColunas(unsigned num_colunas)
 
 		/* A adição dos rótulos de cabeçalhos das colunas se iniciará
 		 a partir da ultima coluna */
-		i=tabela_tbw->columnCount();
+		i=table_tbw->columnCount();
 		//Define o novo número de colunas da tabela
-		tabela_tbw->setColumnCount(num_colunas);
+		table_tbw->setColumnCount(num_colunas);
 
 		/* Adiciona novos rótulos caso o número de colunas do parâmetro
 		 seja superior ao número de colunas atual da tabela */
 		for(;i < num_colunas; i++)
 		{
 			item=new QTableWidgetItem;
-			tabela_tbw->setHorizontalHeaderItem(static_cast<int>(i),item);
+			table_tbw->setHorizontalHeaderItem(static_cast<int>(i),item);
 		}
 	}
 }
 
-void TabelaObjetosWidget::definirRotuloCabecalho(const QString &rotulo, unsigned idx_col)
+void ObjectTableWidget::setHeaderLabel(const QString &rotulo, unsigned idx_col)
 {
 	QTableWidgetItem *item=NULL;
 
 	/* Caso o índice da coluna do cabeçalho referenciada seja inválida
 		dispara um erro indicando a situação */
-	if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
+	if(idx_col >= static_cast<unsigned>(table_tbw->columnCount()))
 		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Obtém o item que representa o cabeçalho na coluna indicada
-	item=tabela_tbw->horizontalHeaderItem(idx_col);
+	item=table_tbw->horizontalHeaderItem(idx_col);
 	//Define o rótulo do item
 	item->setText(rotulo);
 }
 
-void TabelaObjetosWidget::definirIconeCabecalho(const QIcon &icone, unsigned idx_col)
+void ObjectTableWidget::setHeaderIcon(const QIcon &icone, unsigned idx_col)
 {
 	QTableWidgetItem *item=NULL;
 
 	/* Caso o índice da coluna do cabeçalho referenciada seja inválida
 		dispara um erro indicando a situação */
-	if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
+	if(idx_col >= static_cast<unsigned>(table_tbw->columnCount()))
 		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Obtém o item que representa o cabeçalho na coluna indicada
-	item=tabela_tbw->horizontalHeaderItem(idx_col);
+	item=table_tbw->horizontalHeaderItem(idx_col);
 	//Define o ícone do item obtido
 	item->setIcon(icone);
 }
 
-void TabelaObjetosWidget::definirIconeCelula(const QIcon &icone, unsigned idx_lin, unsigned idx_col)
+void ObjectTableWidget::setCellIcon(const QIcon &icone, unsigned idx_lin, unsigned idx_col)
 {
 	QTableWidgetItem *item=NULL;
 
 	/* Caso o índice da linha da célula a ser referenciada seja inválida
 		dispara um erro indicando a situação */
-	if(idx_lin >= static_cast<unsigned>(tabela_tbw->rowCount()))
+	if(idx_lin >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	/* Caso o índice da coluna da célula a ser referenciada seja inválida
 		dispara um erro indicando a situação */
-	if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
+	if(idx_col >= static_cast<unsigned>(table_tbw->columnCount()))
 		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Obtém o item o qual representa a célula
-	item=tabela_tbw->item(idx_lin, idx_col);
+	item=table_tbw->item(idx_lin, idx_col);
 	//Define o ícone da célula
 	item->setIcon(icone);
 }
 
-void TabelaObjetosWidget::definirTextoCelula(const QString &texto, unsigned idx_lin, unsigned idx_col)
+void ObjectTableWidget::setCellText(const QString &texto, unsigned idx_lin, unsigned idx_col)
 {
 	QTableWidgetItem *item=NULL;
 
 	/* Caso o índice da linha da célula a ser referenciada seja inválida
 		dispara um erro indicando a situação */
-	if(idx_lin >= static_cast<unsigned>(tabela_tbw->rowCount()))
+	if(idx_lin >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	/* Caso o índice da coluna da célula a ser referenciada seja inválida
 		dispara um erro indicando a situação */
-	if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
+	if(idx_col >= static_cast<unsigned>(table_tbw->columnCount()))
 		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Obtém o item o qual representa a célula
-	item=tabela_tbw->item(idx_lin,idx_col);
+	item=table_tbw->item(idx_lin,idx_col);
 	//Define o texto da célula
 	item->setText(texto);
 }
 
-void TabelaObjetosWidget::definirFonteLinha(int idx_lin, const QFont &fonte, const QColor &cor_texto, const QColor &cor_fundo)
+void ObjectTableWidget::setRowFont(int idx_lin, const QFont &fonte, const QColor &cor_texto, const QColor &cor_fundo)
 {
 	QTableWidgetItem *item=NULL;
 	int qtd_col, i;
 
 	/* Caso o índice da linha da célula a ser referenciada seja inválida
 		dispara um erro indicando a situação */
-	if(idx_lin >= tabela_tbw->rowCount())
+	if(idx_lin >= table_tbw->rowCount())
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	qtd_col=tabela_tbw->columnCount();
+	qtd_col=table_tbw->columnCount();
 	for(i=0; i < qtd_col; i++)
 	{
-		item=tabela_tbw->item(idx_lin, i);
+		item=table_tbw->item(idx_lin, i);
 		item->setFont(fonte);
 		item->setForeground(cor_texto);
 		item->setBackgroundColor(cor_fundo);
 	}
 }
 
-void TabelaObjetosWidget::definirDadoLinha(const QVariant &dado, unsigned idx_lin)
+void ObjectTableWidget::setRowData(const QVariant &dado, unsigned idx_lin)
 {
 	QTableWidgetItem *item=NULL;
 
 	/* Caso o índice da linha da célula a ser referenciada seja inválida
 		dispara um erro indicando a situação */
-	if(idx_lin >= static_cast<unsigned>(tabela_tbw->rowCount()))
+	if(idx_lin >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	/* Obtém o ítem que representa o cabeçalho vertical da linha.
 		Este cabeçalho é usado para armazenar o dado que a linha guarda.
 		Os dados são guardados em forma de um QVariant. */
-	item=tabela_tbw->verticalHeaderItem(idx_lin);
+	item=table_tbw->verticalHeaderItem(idx_lin);
 	//Armazena dentro do item o dado passado no parâmetro
 	item->setData(Qt::UserRole, dado);
 }
 
-unsigned TabelaObjetosWidget::obterNumColunas(void)
+unsigned ObjectTableWidget::getColumnCount(void)
 {
 	//Retorna o número de colunas do objeto tabela
-	return(tabela_tbw->columnCount());
+	return(table_tbw->columnCount());
 }
 
-unsigned TabelaObjetosWidget::obterNumLinhas(void)
+unsigned ObjectTableWidget::getRowCount(void)
 {
 	//Retorna o número de linhas do objeto tabela
-	return(tabela_tbw->rowCount());
+	return(table_tbw->rowCount());
 }
 
-QString TabelaObjetosWidget::obterRotuloCabecalho(unsigned idx_col)
+QString ObjectTableWidget::getHeaderLabel(unsigned idx_col)
 {
 	QTableWidgetItem *item=NULL;
 
 	/* Caso o índice da coluna do cabeçalho a ser referenciado seja inválida
 		dispara um erro indicando a situação */
-	if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
+	if(idx_col >= static_cast<unsigned>(table_tbw->columnCount()))
 		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Obtém o cabeçalho e retorna seu texto
-	item=tabela_tbw->horizontalHeaderItem(idx_col);
+	item=table_tbw->horizontalHeaderItem(idx_col);
 	return(item->text());
 }
 
-QString TabelaObjetosWidget::obterTextoCelula(unsigned idx_lin, unsigned idx_col)
+QString ObjectTableWidget::getCellText(unsigned idx_lin, unsigned idx_col)
 {
 	QTableWidgetItem *item=NULL;
 
 	/* Caso o índice da linha da célula a ser referenciada seja inválida
 		dispara um erro indicando a situação */
-	if(idx_lin >= static_cast<unsigned>(tabela_tbw->rowCount()))
+	if(idx_lin >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	/* Caso o índice da coluna da célula a ser referenciada seja inválida
 		dispara um erro indicando a situação */
-	if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
+	if(idx_col >= static_cast<unsigned>(table_tbw->columnCount()))
 		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	/* Obtém o item que representa a célula na linha e coluna especificadas
 		e procede com o retorno do seu texto */
-	item=tabela_tbw->item(idx_lin,idx_col);
+	item=table_tbw->item(idx_lin,idx_col);
 	return(item->text());
 }
 
-QVariant TabelaObjetosWidget::obterDadoLinha(unsigned idx_lin)
+QVariant ObjectTableWidget::getRowData(unsigned idx_lin)
 {
 	QTableWidgetItem *item=NULL;
 
 	/* Caso o índice da linha a ser referenciada seja inválida
 		dispara um erro indicando a situação */
-	if(idx_lin >= static_cast<unsigned>(tabela_tbw->rowCount()))
+	if(idx_lin >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Obtém o cabeçalho vertical da linha o qual armazena o dado desta
-	item=tabela_tbw->verticalHeaderItem(idx_lin);
+	item=table_tbw->verticalHeaderItem(idx_lin);
 	//Retorna o dado armazenado pelo item
 	return(item->data(Qt::UserRole));
 }
 
-int TabelaObjetosWidget::obterLinhaSelecionada(void)
+int ObjectTableWidget::getSelectedRow(void)
 {
-	return(tabela_tbw->currentRow());
+	return(table_tbw->currentRow());
 }
 
-int TabelaObjetosWidget::obterIndiceLinha(const QVariant &dado)
+int ObjectTableWidget::getRowIndex(const QVariant &dado)
 {
 	unsigned i, qtd;
 	QTableWidgetItem *item=NULL;
@@ -270,14 +270,14 @@ int TabelaObjetosWidget::obterIndiceLinha(const QVariant &dado)
 	QVariant dado_aux;
 
 	//Obtém a quantidade de linhas da tabela
-	qtd=tabela_tbw->rowCount();
+	qtd=table_tbw->rowCount();
 
 	/* Varre as linhas da tabela comparando o dado armazenado
 		em cada uma delas com o dado vindo do parâmetro */
 	for(i=0; !enc && i < qtd; i++)
 	{
 		//Obtém o item que armazena o dado da linha
-		item=tabela_tbw->verticalHeaderItem(i);
+		item=table_tbw->verticalHeaderItem(i);
 
 		//Faz a comparação entre os valores do mesmo e do parâmetro
 		enc=(item &&
@@ -293,48 +293,48 @@ int TabelaObjetosWidget::obterIndiceLinha(const QVariant &dado)
 		return(i);
 }
 
-void TabelaObjetosWidget::adicionarColuna(unsigned idx_col)
+void ObjectTableWidget::addColumn(unsigned idx_col)
 {
 	/* Caso o índice da coluna anterio  coluna a ser adcionada seja inválido
 		adiciona a coluna ao final da lista de colunas */
-	if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
-		idx_col=tabela_tbw->columnCount();
+	if(idx_col >= static_cast<unsigned>(table_tbw->columnCount()))
+		idx_col=table_tbw->columnCount();
 
 	//Adiciona a coluna
-	tabela_tbw->insertColumn(idx_col);
-	tabela_tbw->clearSelection();
-	habilitarBotoes();
+	table_tbw->insertColumn(idx_col);
+	table_tbw->clearSelection();
+	enableButtons();
 
 	//Emite um sinal indicando em qual índice foi adicionada uma coluna
 	emit s_colunaAdicionada(idx_col);
 }
 
-void TabelaObjetosWidget::selecionarLinha(int idx_lin)
+void ObjectTableWidget::selectRow(int idx_lin)
 {
 	QTableWidgetItem *item=NULL;
 
-	item=tabela_tbw->item(0,idx_lin);
+	item=table_tbw->item(0,idx_lin);
 
 	if(item)
 	{
-		item=tabela_tbw->item(idx_lin,0);
+		item=table_tbw->item(idx_lin,0);
 		item->setSelected(true);
-		tabela_tbw->setCurrentItem(item);
-		habilitarBotoes();
+		table_tbw->setCurrentItem(item);
+		enableButtons();
 	}
 }
 
-void TabelaObjetosWidget::adicionarLinha(unsigned idx_lin)
+void ObjectTableWidget::addRow(unsigned idx_lin)
 {
 	QTableWidgetItem *item=NULL;
-	unsigned i, qtd_col=tabela_tbw->columnCount();
+	unsigned i, qtd_col=table_tbw->columnCount();
 
-	tabela_tbw->insertRow(idx_lin);
+	table_tbw->insertRow(idx_lin);
 
 	//Cria o cabeçalho vertical da linha adicionada
 	item=new QTableWidgetItem;
 	item->setText(QString("%1").arg(idx_lin+1));
-	tabela_tbw->setVerticalHeaderItem(idx_lin,item);
+	table_tbw->setVerticalHeaderItem(idx_lin,item);
 
 	/* Após inserida a linha as colunas da nova linha
 		precisam ser criadas */
@@ -343,28 +343,28 @@ void TabelaObjetosWidget::adicionarLinha(unsigned idx_lin)
 		//Cria um item que representa a coluna atual da nova linha
 		item=new QTableWidgetItem;
 		//Insere o item criado na coluna atual (i)
-		tabela_tbw->setItem(idx_lin,i,item);
+		table_tbw->setItem(idx_lin,i,item);
 	}
 
 	//Seleciona os itens da linha inserida
-	item=tabela_tbw->item(idx_lin,0);
+	item=table_tbw->item(idx_lin,0);
 	item->setSelected(true);
-	tabela_tbw->setCurrentItem(item);
+	table_tbw->setCurrentItem(item);
 }
 
-void TabelaObjetosWidget::adicionarLinha(void)
+void ObjectTableWidget::addRow(void)
 {
 	/*QTableWidgetItem *item=NULL;
- unsigned i, lin, qtd_col=tabela_tbw->columnCount();
+ unsigned i, lin, qtd_col=table_tbw->columnCount();
 
  //A nova linha será inserida após a última linha
- lin=tabela_tbw->rowCount();
- tabela_tbw->insertRow(lin);
+ lin=table_tbw->rowCount();
+ table_tbw->insertRow(lin);
 
  //Cria o cabeçalho vertical da linha adicionada
  item=new QTableWidgetItem;
  item->setText(QString("%1").arg(lin+1));
- tabela_tbw->setVerticalHeaderItem(lin,item);*/
+ table_tbw->setVerticalHeaderItem(lin,item);*/
 
 	/* Após inserida a linha as colunas da nova linha
 		precisam ser criadas */
@@ -373,74 +373,74 @@ void TabelaObjetosWidget::adicionarLinha(void)
 	//Cria um item que representa a coluna atual da nova linha
 	item=new QTableWidgetItem;
 	//Insere o item criado na coluna atual (i)
-	tabela_tbw->setItem(lin,i,item);
+	table_tbw->setItem(lin,i,item);
  }
 
  //Seleciona os itens da linha inserida
- item=tabela_tbw->item(lin,0);
+ item=table_tbw->item(lin,0);
  item->setSelected(true);
- tabela_tbw->setCurrentItem(item);*/
+ table_tbw->setCurrentItem(item);*/
 
-	this->adicionarLinha(tabela_tbw->rowCount());
+	this->addRow(table_tbw->rowCount());
 
 	/* Executa o método de habilitação dos botões de acordo
 		com a linha atual */
-	habilitarBotoes();
+	enableButtons();
 	//Emite um sinal com o índice da linha adicionada
-	emit s_linhaAdicionada(tabela_tbw->rowCount()-1);
+	emit s_linhaAdicionada(table_tbw->rowCount()-1);
 }
 
-void TabelaObjetosWidget::removerLinha(unsigned idx_lin)
+void ObjectTableWidget::removeRow(unsigned idx_lin)
 {
 	unsigned i, qtd;
 	bool conf;
 
 	/* Caso o índice da linha da célula a ser referenciada seja inválida
 		dispara um erro indicando a situação */
-	if(idx_lin >= static_cast<unsigned>(tabela_tbw->rowCount()))
+	if(idx_lin >= static_cast<unsigned>(table_tbw->rowCount()))
 		throw Exception(ERR_REF_LIN_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Limpa a seleção da linha atual
-	tabela_tbw->clearSelection();
-	qtd=tabela_tbw->columnCount();
+	table_tbw->clearSelection();
+	qtd=table_tbw->columnCount();
 
 	//Seleciona todas a colunas da linha a ser removida
 	for(i=0; i < qtd; i++)
-		tabela_tbw->item(idx_lin, i)->setSelected(true);
+		table_tbw->item(idx_lin, i)->setSelected(true);
 
 	//Marca a linha cujo índice é idx_lin como sendo a linha atual da tabela
-	tabela_tbw->setCurrentItem(tabela_tbw->item(idx_lin,0));
+	table_tbw->setCurrentItem(table_tbw->item(idx_lin,0));
 
-	conf=conf_exclusoes;
-	conf_exclusoes=false;
+	conf=conf_exclusion;
+	conf_exclusion=false;
 	//Remove a linha selecionada
-	removerLinha();
-	conf_exclusoes=conf;
+	removeRow();
+	conf_exclusion=conf;
 }
 
-void TabelaObjetosWidget::removerLinha(void)
+void ObjectTableWidget::removeRow(void)
 {
 	/* Caso haja alguma linha selecionada ou seja o índice
 		da linha atual seja igual ou superior a zero */
-	if(tabela_tbw->currentRow()>=0)
+	if(table_tbw->currentRow()>=0)
 	{
 		unsigned /*qtd_lin,*/
-				idx_lin=tabela_tbw->currentRow();
+				idx_lin=table_tbw->currentRow();
 		//Obtém o item selecionado na linha atual
-		QTableWidgetItem *item=tabela_tbw->currentItem();
+		QTableWidgetItem *item=table_tbw->currentItem();
 
 		if(item->isSelected())
 		{
-			if(conf_exclusoes)
+			if(conf_exclusion)
 				caixa_msg->show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the selected item?"),
 												MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 
-			if(!conf_exclusoes || (conf_exclusoes && caixa_msg->result()==QDialog::Accepted))
+			if(!conf_exclusion || (conf_exclusion && caixa_msg->result()==QDialog::Accepted))
 			{
 				//Remove a linha atual
-				tabela_tbw->removeRow(idx_lin);
-				tabela_tbw->setCurrentItem(NULL);
-				habilitarBotoes();
+				table_tbw->removeRow(idx_lin);
+				table_tbw->setCurrentItem(NULL);
+				enableButtons();
 
 				//Emite o sinal de linha removida com o índice da linha excluída
 				emit s_linhaRemovida(idx_lin);
@@ -449,9 +449,9 @@ void TabelaObjetosWidget::removerLinha(void)
 	}
 }
 
-void TabelaObjetosWidget::removerLinhas(void)
+void ObjectTableWidget::removeRows(void)
 {
-	if(tabela_tbw->rowCount() > 0)
+	if(table_tbw->rowCount() > 0)
 	{
 		QObject *obj_sender=sender();
 
@@ -462,18 +462,18 @@ void TabelaObjetosWidget::removerLinhas(void)
 		 sem ser através de outro objeto, desta forma, todos os itens são removidos sem confirmação
 		 independente da confirmação estar configurada ou não. Isto é util no caso de uma limpeza
 		 da tabela para reuso. */
-		if(conf_exclusoes && obj_sender==remover_todas_tb)
+		if(conf_exclusion && obj_sender==remove_all_tb)
 			caixa_msg->show(trUtf8("Confirmação"),trUtf8("Do you really want to remove the all items?"),
 											MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
 
-		if(!conf_exclusoes || (conf_exclusoes && obj_sender!=remover_todas_tb) ||
-			 (conf_exclusoes &&  obj_sender==remover_todas_tb && caixa_msg->result()==QDialog::Accepted))
+		if(!conf_exclusion || (conf_exclusion && obj_sender!=remove_all_tb) ||
+			 (conf_exclusion &&  obj_sender==remove_all_tb && caixa_msg->result()==QDialog::Accepted))
 		{
 			//Remove as linhas enquanto a quantidade não atinge zero
-			while(tabela_tbw->rowCount() > 0)
-				tabela_tbw->removeRow(0);
+			while(table_tbw->rowCount() > 0)
+				table_tbw->removeRow(0);
 
-			habilitarBotoes();
+			enableButtons();
 
 			// Emite o sinal indicando que as linhas da tabela foram removidas caso
 			emit s_linhasRemovidas();
@@ -481,68 +481,68 @@ void TabelaObjetosWidget::removerLinhas(void)
 	}
 }
 
-void TabelaObjetosWidget::removerColuna(unsigned idx_col)
+void ObjectTableWidget::removeColumn(unsigned idx_col)
 {
 	/* Caso o índice da coluna a ser removida seja inválido retorna um erro
 		e aborta a operação */
-	if(idx_col >= static_cast<unsigned>(tabela_tbw->columnCount()))
+	if(idx_col >= static_cast<unsigned>(table_tbw->columnCount()))
 		throw Exception(ERR_REF_COL_OBJTAB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Remove a coluna no indice especificado e limpa a seleção
-	tabela_tbw->removeColumn(idx_col);
-	tabela_tbw->clearSelection();
-	habilitarBotoes();
+	table_tbw->removeColumn(idx_col);
+	table_tbw->clearSelection();
+	enableButtons();
 	//Emite o sinal indicando a coluna removida
 	emit s_colunaRemovida(idx_col);
 }
 
-void TabelaObjetosWidget::moverLinhas(void)
+void ObjectTableWidget::moveRows(void)
 {
 	QObject *obj_sender=sender();
 	QTableWidgetItem *item=NULL, *item1=NULL;
 	int lin=-1, lin1=-1;
-	unsigned col, qtd_col=tabela_tbw->columnCount();
+	unsigned col, qtd_col=table_tbw->columnCount();
 	QVariant dado_aux;
 
 	/* Obtém o índice da linha atual. É com base nesse índice
 		que será verificado com qual linha será trocada a posição
 		da linha selecionada */
-	lin=tabela_tbw->currentRow();
+	lin=table_tbw->currentRow();
 
 	/* Caso o botão de mover uma linha para baixo for acionado
 		a linha selecionada terá sua posição trocada com a linha
 		imediatamente abaixo dela */
-	if(obj_sender==mover_baixo_tb)
+	if(obj_sender==move_down_tb)
 		lin1=lin+1;
 	/* Caso o botão de mover uma linha para cima for acionado
 		a linha selecionada terá sua posição trocada com a linha
 		imediatamente acima dela */
-	else if(obj_sender==mover_cima_tb)
+	else if(obj_sender==move_up_tb)
 		lin1=lin-1;
 	/* Caso o botão de mover para a primeira linha for acionado
 		a linha selecionada terá sua posição trocada com a
 		primeira linha da tabela */
-	else if(obj_sender==mover_primeiro_tb)
+	else if(obj_sender==move_first_tb)
 	{
-		this->adicionarLinha(0);
+		this->addRow(0);
 		lin1=0;
 		lin++;
 	}
 	/* Caso o botão de mover para a última linha for acionado
 		a linha selecionada terá sua posição trocada com a
 		última linha da tabela */
-	else if(obj_sender==mover_ultimo_tb)
+	else if(obj_sender==move_last_tb)
 	{
-		this->adicionarLinha(tabela_tbw->rowCount());
-		lin1=tabela_tbw->rowCount()-1;
+		this->addRow(table_tbw->rowCount());
+		lin1=table_tbw->rowCount()-1;
 	}
 
 
 	/* Verifica se os índices da linhas a serem trocadas são válidos
 		ou seja, são diferentes entre si e não ultrapassam o limite de
 		linhas presentes na tabela */
-	if(lin >= 0 && lin < tabela_tbw->rowCount() &&
-		 lin1 >= 0 && lin1 < tabela_tbw->rowCount() &&
+	if(lin >= 0 && lin < table_tbw->rowCount() &&
+		 lin1 >= 0 && lin1 < table_tbw->rowCount() &&
 		 lin != lin1)
 	{
 		/* Para se trocar a posição da linhas é necessário trocar coluna por coluna
@@ -552,31 +552,31 @@ void TabelaObjetosWidget::moverLinhas(void)
 		{
 			/* Obtém uma coluna da linha atual e em seguida remove
 			a mesma sem desalocá-la */
-			item=tabela_tbw->item(lin, col);
-			tabela_tbw->takeItem(lin, col);
+			item=table_tbw->item(lin, col);
+			table_tbw->takeItem(lin, col);
 
 			/* Obtém uma coluna da linha que será trocada com atual
 		 e em seguida remove a mesma sem desalocá-la */
-			item1=tabela_tbw->item(lin1, col);
-			tabela_tbw->takeItem(lin1, col);
+			item1=table_tbw->item(lin1, col);
+			table_tbw->takeItem(lin1, col);
 
 			/* Efetiva a troca das linhas, onde o item obtido da linha atual
 			passa a pertencer a linha vizinha e o item da linha vizinha
 			passa a fazer parte da linha atual */
-			tabela_tbw->setItem(lin, col, item1);
-			tabela_tbw->setItem(lin1, col, item);
+			table_tbw->setItem(lin, col, item1);
+			table_tbw->setItem(lin1, col, item);
 
 			item1->setSelected(false);
 			item->setSelected(true);
 		}
 
-		tabela_tbw->setCurrentItem(item);
+		table_tbw->setCurrentItem(item);
 
 		/* Fazendo a troca dos dados das linhas. Para isso
 	 é necessário obter os cabeçalhos verticais os quais
 	 guardam a informação em si da linha da tabela */
-		item=tabela_tbw->verticalHeaderItem(lin);
-		item1=tabela_tbw->verticalHeaderItem(lin1);
+		item=table_tbw->verticalHeaderItem(lin);
+		item1=table_tbw->verticalHeaderItem(lin1);
 
 		if(item && item1)
 		{
@@ -587,54 +587,54 @@ void TabelaObjetosWidget::moverLinhas(void)
 		}
 
 		//Caso especial para botões de mover para ultimo e primeiro
-		if(obj_sender==mover_ultimo_tb || obj_sender==mover_primeiro_tb)
+		if(obj_sender==move_last_tb || obj_sender==move_first_tb)
 		{
 			//Remove a linha selecionada
-			tabela_tbw->removeRow(lin);
+			table_tbw->removeRow(lin);
 
 			/* Para o botão de mover para o primeiro, os índices das linhas precisam ser
 			invertidos para que o método de troca de índices na tabela entenda que
 			elemento selecionado passou a ser o primeiro da lista */
-			if(obj_sender==mover_primeiro_tb)
+			if(obj_sender==move_first_tb)
 			{
 				lin1=lin-1;
-				lin=tabela_tbw->rowCount();
+				lin=table_tbw->rowCount();
 			}
 		}
 
-		habilitarBotoes();
+		enableButtons();
 		emit s_linhasMovidas(lin, lin1);
 	}
 }
 
-void TabelaObjetosWidget::editarLinha(void)
+void ObjectTableWidget::editRow(void)
 {
 	/* Para este método nada é executado apenas um sinal é emitido
 		com o índice da linha a ser editada. Quem deve tratar a edição
 		da linha é o objeto externo o qual faz uso da tabela. */
-	emit s_linhaEditada(tabela_tbw->currentRow());
+	emit s_linhaEditada(table_tbw->currentRow());
 }
 
-void TabelaObjetosWidget::atualizarLinha(void)
+void ObjectTableWidget::updateRow(void)
 {
 	/* Para este método nada é executado apenas um sinal é emitido
 		com o índice da linha a ser editada. Quem deve tratar a edição
 		da linha é o objeto externo o qual faz uso da tabela. */
-	emit s_linhaAtualizada(tabela_tbw->currentRow());
+	emit s_linhaAtualizada(table_tbw->currentRow());
 }
 
-void TabelaObjetosWidget::limparSelecao(void)
+void ObjectTableWidget::clearSelection(void)
 {
-	tabela_tbw->clearSelection();
-	tabela_tbw->setCurrentItem(NULL);
-	habilitarBotoes();
+	table_tbw->clearSelection();
+	table_tbw->setCurrentItem(NULL);
+	enableButtons();
 }
 
-void TabelaObjetosWidget::habilitarBotoes(unsigned conf_botoes, bool valor)
+void ObjectTableWidget::enableButtons(unsigned conf_botoes, bool valor)
 {
 	int lin=-1;
 	//Obtém o item atual caso haja algum selecionado
-	QTableWidgetItem *item=tabela_tbw->currentItem();
+	QTableWidgetItem *item=table_tbw->currentItem();
 
 	//Obtém a linha a qual o item pertence
 	if(item)
@@ -642,47 +642,47 @@ void TabelaObjetosWidget::habilitarBotoes(unsigned conf_botoes, bool valor)
 
 	/* Atribui o valor booleano passado caso o botão esteja presente
 		na configuração de botões informada */
-	if((conf_botoes & BTN_MOVER_ITENS) == BTN_MOVER_ITENS)
+	if((conf_botoes & MOVE_BUTTONS) == MOVE_BUTTONS)
 	{
 		/* O botão de mover uma linha para cima deve ser habilitado
 		 caso a linha selecionada não seja a primeira linha */
-		mover_cima_tb->setEnabled(valor && lin > 0);
+		move_up_tb->setEnabled(valor && lin > 0);
 
 		/* O botão de mover uma linha para baixo deve ser habilitado
 		 caso a linha selecionada não seja a última linha */
-		mover_baixo_tb->setEnabled(valor && lin >= 0 && lin < tabela_tbw->rowCount()-1);
+		move_down_tb->setEnabled(valor && lin >= 0 && lin < table_tbw->rowCount()-1);
 
 		/* O botão de mover para última linha deve ser habilitado
 		 caso a linha selecionada não seja a última */
-		mover_primeiro_tb->setEnabled(valor && lin > 0 && lin<=tabela_tbw->rowCount()-1);
+		move_first_tb->setEnabled(valor && lin > 0 && lin<=table_tbw->rowCount()-1);
 
 		/* O botão de mover para primeira linha deve ser habilitado
 		 caso a linha selecionada não seja a primeira */
-		mover_ultimo_tb->setEnabled(valor && lin >=0 && lin < tabela_tbw->rowCount()-1);
+		move_last_tb->setEnabled(valor && lin >=0 && lin < table_tbw->rowCount()-1);
 	}
 
-	if((conf_botoes & BTN_EDITAR_ITEM) == BTN_EDITAR_ITEM)
-		editar_tb->setEnabled(valor && lin >= 0);
+	if((conf_botoes & EDIT_BUTTON) == EDIT_BUTTON)
+		edit_tb->setEnabled(valor && lin >= 0);
 
-	if((conf_botoes & BTN_INSERIR_ITEM) == BTN_INSERIR_ITEM)
-		adicionar_tb->setEnabled(valor);
+	if((conf_botoes & ADD_BUTTON) == ADD_BUTTON)
+		add_tb->setEnabled(valor);
 
-	if((conf_botoes & BTN_REMOVER_ITEM) == BTN_REMOVER_ITEM)
-		remover_tb->setEnabled(valor && lin >= 0);
+	if((conf_botoes & REMOVE_BUTTON) == REMOVE_BUTTON)
+		remove_tb->setEnabled(valor && lin >= 0);
 
-	if((conf_botoes & BTN_LIMPAR_ITENS) == BTN_LIMPAR_ITENS)
-		remover_todas_tb->setEnabled(valor && tabela_tbw->rowCount() > 0);
+	if((conf_botoes & REMOVE_ALL_BUTTON) == REMOVE_ALL_BUTTON)
+		remove_all_tb->setEnabled(valor && table_tbw->rowCount() > 0);
 
-	if((conf_botoes & BTN_ATUALIZAR_ITEM) == BTN_ATUALIZAR_ITEM)
-		atualizar_tb->setEnabled(valor && lin >= 0);
+	if((conf_botoes & UPDATE_BUTTON) == UPDATE_BUTTON)
+		update_tb->setEnabled(valor && lin >= 0);
 }
 
-void TabelaObjetosWidget::habilitarBotoes(void)
+void ObjectTableWidget::enableButtons(void)
 {
 	//Obtém o item atual caso haja algum selecionado
-	QTableWidgetItem *item=tabela_tbw->currentItem();
+	QTableWidgetItem *item=table_tbw->currentItem();
 
-	habilitarBotoes(TODOS_BOTOES, true);
+	enableButtons(ALL_BUTTONS, true);
 
 	/* Caso uma linha esteja selecionada emite o sinal indicativo de seleção de linha,
 		este sinal é interessante quando se quer ter acesso diret  linha selecionada

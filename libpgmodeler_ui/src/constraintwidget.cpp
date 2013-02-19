@@ -17,28 +17,28 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 																				 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																				 GlobalAttributes::CONFIGURATION_EXT);
 
-		columns_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
-																				(TabelaObjetosWidget::BTN_EDITAR_ITEM |
-																				 TabelaObjetosWidget::BTN_ATUALIZAR_ITEM), true, this);
+		columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
+																				(ObjectTableWidget::EDIT_BUTTON |
+																				 ObjectTableWidget::UPDATE_BUTTON), true, this);
 
-		ref_columns_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
-																						(TabelaObjetosWidget::BTN_EDITAR_ITEM |
-																						 TabelaObjetosWidget::BTN_ATUALIZAR_ITEM), true, this);
+		ref_columns_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
+																						(ObjectTableWidget::EDIT_BUTTON |
+																						 ObjectTableWidget::UPDATE_BUTTON), true, this);
 
 		ref_table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 
-		columns_tab->definirNumColunas(2);
-		columns_tab->definirRotuloCabecalho(trUtf8("Column"), 0);
-		columns_tab->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-		columns_tab->definirRotuloCabecalho(trUtf8("Type"), 1);
-		columns_tab->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+		columns_tab->setColumnCount(2);
+		columns_tab->setHeaderLabel(trUtf8("Column"), 0);
+		columns_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+		columns_tab->setHeaderLabel(trUtf8("Type"), 1);
+		columns_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 
 		ref_columns_tab->setEnabled(false);
-		ref_columns_tab->definirNumColunas(2);
-		ref_columns_tab->definirRotuloCabecalho(trUtf8("Column"), 0);
-		ref_columns_tab->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-		ref_columns_tab->definirRotuloCabecalho(trUtf8("Type"), 1);
-		ref_columns_tab->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+		ref_columns_tab->setColumnCount(2);
+		ref_columns_tab->setHeaderLabel(trUtf8("Column"), 0);
+		ref_columns_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+		ref_columns_tab->setHeaderLabel(trUtf8("Type"), 1);
+		ref_columns_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(0)->layout())->addWidget(columns_tab, 1,0,1,3);
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_table_sel, 0,1,1,2);
@@ -87,7 +87,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 void ConstraintWidget::addColumn(int row)
 {
 	QObject *sender_obj=sender();
-	TabelaObjetosWidget *aux_col_tab=NULL;
+	ObjectTableWidget *aux_col_tab=NULL;
 	QComboBox *combo=NULL;
 	Column *column=NULL;
 	unsigned col_id;
@@ -117,11 +117,11 @@ void ConstraintWidget::addColumn(int row)
 		addColumn(column, col_id, row);
 
 		//When there is no items con the combo the insert button of the table is disabled
-		aux_col_tab->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (combo->count()!=0));
+		aux_col_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (combo->count()!=0));
 	}
 	catch(Exception &e)
 	{
-		aux_col_tab->removerLinha(row);
+		aux_col_tab->removeRow(row);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -144,7 +144,7 @@ void ConstraintWidget::removeColumns(void)
 
 void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 {
-	TabelaObjetosWidget *table_wgt=NULL;
+	ObjectTableWidget *table_wgt=NULL;
 
 	if(column && row >= 0)
 	{
@@ -153,9 +153,9 @@ void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 		else
 			table_wgt=ref_columns_tab;
 
-		table_wgt->definirTextoCelula(QString::fromUtf8(column->getName()),row,0);
-		table_wgt->definirTextoCelula(QString::fromUtf8(~column->getType()),row,1);
-		table_wgt->definirDadoLinha(QVariant::fromValue<void *>(column), row);
+		table_wgt->setCellText(QString::fromUtf8(column->getName()),row,0);
+		table_wgt->setCellText(QString::fromUtf8(~column->getType()),row,1);
+		table_wgt->setRowData(QVariant::fromValue<void *>(column), row);
 
 		//Change the table row background color if the column is protected or added by relationship
 		if(column->isAddedByRelationship() || column->isProtected())
@@ -165,16 +165,16 @@ void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 			fonte.setItalic(true);
 
 			if(column->isProtected())
-				table_wgt->definirFonteLinha(row, fonte, PROT_LINE_FGCOLOR, PROT_LINE_BGCOLOR);
+				table_wgt->setRowFont(row, fonte, PROT_LINE_FGCOLOR, PROT_LINE_BGCOLOR);
 			else
-				table_wgt->definirFonteLinha(row, fonte, RELINC_LINE_FGCOLOR, RELINC_LINE_BGCOLOR);
+				table_wgt->setRowFont(row, fonte, RELINC_LINE_FGCOLOR, RELINC_LINE_BGCOLOR);
 		}
 	}
 }
 
 void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 {
-	TabelaObjetosWidget *aux_col_tab=NULL;
+	ObjectTableWidget *aux_col_tab=NULL;
 	Column *column=NULL;
 	Table *table=NULL;
 	QComboBox *combo=NULL;
@@ -221,11 +221,11 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 				column=table->getColumn(i);
 
 			//If the column does not exists on the column's table, adds it
-			if(aux_col_tab->obterIndiceLinha(QVariant::fromValue<void *>(column)) < 0)
+			if(aux_col_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
 				combo->addItem(QString::fromUtf8(column->getName()) + " (" + ~column->getType() +")", QVariant::fromValue<void *>(column));
 		}
 
-		aux_col_tab->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (combo->count()!=0));
+		aux_col_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (combo->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -241,7 +241,7 @@ void ConstraintWidget::selectReferencedTable(void)
 	{
 		ref_column_cmb->clear();
 		ref_columns_tab->blockSignals(true);
-		ref_columns_tab->removerLinhas();
+		ref_columns_tab->removeRows();
 		ref_columns_tab->setEnabled(false);
 		ref_columns_tab->blockSignals(false);
 	}
@@ -267,8 +267,8 @@ void ConstraintWidget::hideEvent(QHideEvent *event)
 
 	columns_tab->blockSignals(true);
 	ref_columns_tab->blockSignals(true);
-	columns_tab->removerLinhas();
-	ref_columns_tab->removerLinhas();
+	columns_tab->removeRows();
+	ref_columns_tab->removeRows();
 	columns_tab->blockSignals(false);
 	ref_columns_tab->blockSignals(false);
 
@@ -346,14 +346,14 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 		if(constr && constr->isColumnExists(column, Constraint::SOURCE_COLS))
 		{
-			columns_tab->adicionarLinha();
+			columns_tab->addRow();
 			addColumn(column, Constraint::SOURCE_COLS, row);
 			row++;
 		}
 	}
 
 	updateColumnsCombo(Constraint::SOURCE_COLS);
-	columns_tab->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (column_cmb->count()!=0));
+	columns_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 	columns_tab->blockSignals(false);
 
 	if(constr)
@@ -382,14 +382,14 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 				column=ref_table->getColumn(i);
 				if(constr->isColumnExists(column, Constraint::REFERENCED_COLS))
 				{
-					ref_columns_tab->adicionarLinha();
+					ref_columns_tab->addRow();
 					addColumn(column, Constraint::REFERENCED_COLS, row);
 					row++;
 				}
 			}
 
 			updateColumnsCombo(Constraint::REFERENCED_COLS);
-			ref_columns_tab->habilitarBotoes(TabelaObjetosWidget::BTN_INSERIR_ITEM, (column_cmb->count()!=0));
+			ref_columns_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 			ref_columns_tab->blockSignals(false);
 		}
 	}
@@ -402,7 +402,7 @@ void ConstraintWidget::applyConfiguration(void)
 		Constraint *constr=NULL;
 		unsigned i, col_id, count;
 		Column *column=NULL;
-		TabelaObjetosWidget *aux_col_tab=NULL;
+		ObjectTableWidget *aux_col_tab=NULL;
 
 		startConfiguration<Constraint>();
 
@@ -424,10 +424,10 @@ void ConstraintWidget::applyConfiguration(void)
 		{
 			aux_col_tab=(col_id==Constraint::SOURCE_COLS ? columns_tab : ref_columns_tab);
 
-			count=aux_col_tab->obterNumLinhas();
+			count=aux_col_tab->getRowCount();
 			for(i=0; i < count; i++)
 			{
-				column=reinterpret_cast<Column *>(aux_col_tab->obterDadoLinha(i).value<void *>());
+				column=reinterpret_cast<Column *>(aux_col_tab->getRowData(i).value<void *>());
 				constr->addColumn(column, col_id);
 			}
 		}

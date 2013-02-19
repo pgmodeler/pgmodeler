@@ -26,7 +26,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/syntaxhighlighter.cpp \
            $$PWD/src/databasewidget.cpp \
 	   $$PWD/src/schemawidget.cpp \
-           $$PWD/src/tabelaobjetoswidget.cpp \
+	   $$PWD/src/objecttablewidget.cpp \
 	   $$PWD/src/rolewidget.cpp \
 	   $$PWD/src/permissionwidget.cpp \
 	   $$PWD/src/tablespacewidget.cpp \
@@ -80,7 +80,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/syntaxhighlighter.h \
            $$PWD/src/databasewidget.h \
 	   $$PWD/src/schemawidget.h \
-           $$PWD/src/tabelaobjetoswidget.h \
+	   $$PWD/src/objecttablewidget.h \
 	   $$PWD/src/rolewidget.h \
 	   $$PWD/src/permissionwidget.h \
 	   $$PWD/src/tablespacewidget.h \
@@ -130,7 +130,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
          $$PWD/ui/sourcecodewidget.ui \
          $$PWD/ui/databasewidget.ui \
          $$PWD/ui/baseobjectwidget.ui \
-         $$PWD/ui/tabelaobjetoswidget.ui \
+	 $$PWD/ui/objecttablewidget.ui \
 	 $$PWD/ui/rolewidget.ui \
 	 $$PWD/ui/permissionwidget.ui \
 	 $$PWD/ui/tablespacewidget.ui \

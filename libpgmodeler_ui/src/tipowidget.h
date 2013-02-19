@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_tipowidget.h"
 #include "tipopgsqlwidget.h"
-#include "tabelaobjetoswidget.h"
+#include "objecttablewidget.h"
 
 /*! \brief Declarando a classe Parametro como metatype para que esta
  possa ser usada em conjunto com a classe QVariant (vide documentação
@@ -52,7 +52,7 @@ class TipoWidget: public BaseObjectWidget, public Ui::TipoWidget {
 										*tipo_elemento;
 
 		//! \brief Tabelas para armazenamento das enumerações e atributos de tipos compostos
-		TabelaObjetosWidget *tab_enumeracoes,
+		ObjectTableWidget *tab_enumeracoes,
 												*tab_atributos;
 
 	public:

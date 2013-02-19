@@ -20,23 +20,23 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		source_code_hl=new SyntaxHighlighter(source_code_txt, true);
 		ret_type=new TipoPgSQLWidget(this);
 
-		return_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
-																			 TabelaObjetosWidget::BTN_ATUALIZAR_ITEM, true, this);
-		return_tab->definirNumColunas(2);
-		return_tab->definirRotuloCabecalho(trUtf8("Column"), 0);
-		return_tab->definirIconeCabecalho(QPixmap(":/icones/icones/column.png"),0);
-		return_tab->definirRotuloCabecalho(trUtf8("Type"), 1);
-		return_tab->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
+		return_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
+																			 ObjectTableWidget::UPDATE_BUTTON, true, this);
+		return_tab->setColumnCount(2);
+		return_tab->setHeaderLabel(trUtf8("Column"), 0);
+		return_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+		return_tab->setHeaderLabel(trUtf8("Type"), 1);
+		return_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 
-		parameters_tab=new TabelaObjetosWidget(TabelaObjetosWidget::TODOS_BOTOES ^
-																					 TabelaObjetosWidget::BTN_ATUALIZAR_ITEM, true, this);
-		parameters_tab->definirNumColunas(4);
-		parameters_tab->definirRotuloCabecalho(trUtf8("Name"),0);
-		parameters_tab->definirIconeCabecalho(QPixmap(":/icones/icones/parameter.png"),0);
-		parameters_tab->definirRotuloCabecalho(trUtf8("Type"),1);
-		parameters_tab->definirIconeCabecalho(QPixmap(":/icones/icones/usertype.png"),1);
-		parameters_tab->definirRotuloCabecalho(trUtf8("IN/OUT"),2);
-		parameters_tab->definirRotuloCabecalho(trUtf8("Default Value"),3);
+		parameters_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
+																					 ObjectTableWidget::UPDATE_BUTTON, true, this);
+		parameters_tab->setColumnCount(4);
+		parameters_tab->setHeaderLabel(trUtf8("Name"),0);
+		parameters_tab->setHeaderIcon(QPixmap(":/icones/icones/parameter.png"),0);
+		parameters_tab->setHeaderLabel(trUtf8("Type"),1);
+		parameters_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
+		parameters_tab->setHeaderLabel(trUtf8("IN/OUT"),2);
+		parameters_tab->setHeaderLabel(trUtf8("Default Value"),3);
 
 		grid=new QGridLayout;
 		grid->addWidget(parameters_tab,0,0,1,1);
@@ -90,7 +90,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 void FunctionWidget::handleParameter(int result)
 {
 	int lin_cnt, lin;
-	TabelaObjetosWidget *table=NULL;
+	ObjectTableWidget *table=NULL;
 
 	//Selects the table to be handled according to its visibility
 	if(parameters_tab->isVisible())
@@ -98,12 +98,12 @@ void FunctionWidget::handleParameter(int result)
 	else
 		table=return_tab;
 
-	lin_cnt=table->obterNumLinhas();
+	lin_cnt=table->getRowCount();
 
 	//Case the user applied the configuration on the parameter editing form
 	if(result==QDialog::Accepted)
 	{
-		lin=table->obterLinhaSelecionada();
+		lin=table->getSelectedRow();
 
 		/* If the row index is negative indicates the line in question is empty, e.g.,
 		the user is not editingan existing line, but adding a new, so the line to be
@@ -115,29 +115,29 @@ void FunctionWidget::handleParameter(int result)
 	else if(result==QDialog::Rejected)
 	{
 		//Removes the last line from table
-		if(lin_cnt > 0 && table->obterTextoCelula(lin_cnt-1,0).isEmpty())
-			table->removerLinha(lin_cnt-1);
+		if(lin_cnt > 0 && table->getCellText(lin_cnt-1,0).isEmpty())
+			table->removeRow(lin_cnt-1);
 	}
 }
 
 void FunctionWidget::showParameterForm(void)
 {
 	QObject *obj_sender=sender();
-	TabelaObjetosWidget *table=NULL;
+	ObjectTableWidget *table=NULL;
 	Parameter aux_param;
 	int lin_idx;
 
 	if(obj_sender==parameters_tab || obj_sender==return_tab)
 	{
-		table=dynamic_cast<TabelaObjetosWidget *>(obj_sender);
+		table=dynamic_cast<ObjectTableWidget *>(obj_sender);
 
 		parametro_wgt->param_in_chk->setEnabled(obj_sender==parameters_tab);
 		parametro_wgt->param_out_chk->setEnabled(obj_sender==parameters_tab);
 		parametro_wgt->default_value_edt->setEnabled(obj_sender==parameters_tab);
 
-		lin_idx=table->obterLinhaSelecionada();
+		lin_idx=table->getSelectedRow();
 
-		if(lin_idx >= 0 && !table->obterTextoCelula(lin_idx, 0).isEmpty())
+		if(lin_idx >= 0 && !table->getCellText(lin_idx, 0).isEmpty())
 			aux_param=getParameter(table, lin_idx);
 
 		parametro_wgt->setAttributes(aux_param, model);
@@ -145,7 +145,7 @@ void FunctionWidget::showParameterForm(void)
 	}
 }
 
-Parameter FunctionWidget::getParameter(TabelaObjetosWidget *tab, unsigned row)
+Parameter FunctionWidget::getParameter(ObjectTableWidget *tab, unsigned row)
 {
 	Parameter param;
 	QString str_aux;
@@ -154,15 +154,15 @@ Parameter FunctionWidget::getParameter(TabelaObjetosWidget *tab, unsigned row)
 	{
 		try
 		{
-			param.setName(tab->obterTextoCelula(row,0));
-			param.setType(tab->obterDadoLinha(row).value<PgSQLType>());
+			param.setName(tab->getCellText(row,0));
+			param.setType(tab->getRowData(row).value<PgSQLType>());
 
 			if(tab==parameters_tab)
 			{
-				str_aux=tab->obterTextoCelula(row, 2);
+				str_aux=tab->getCellText(row, 2);
 				param.setIn(str_aux.contains("IN"));
 				param.setOut(str_aux.contains("OUT"));
-				param.setDefaultValue(tab->obterTextoCelula(row,3));
+				param.setDefaultValue(tab->getCellText(row,3));
 			}
 		}
 		catch(Exception &e)
@@ -174,23 +174,23 @@ Parameter FunctionWidget::getParameter(TabelaObjetosWidget *tab, unsigned row)
 	return(param);
 }
 
-void FunctionWidget::showParameterData(Parameter param, TabelaObjetosWidget *tab, unsigned row)
+void FunctionWidget::showParameterData(Parameter param, ObjectTableWidget *tab, unsigned row)
 {
 	if(tab)
 	{
 		QString str_aux;
 
-		tab->definirTextoCelula(QString::fromUtf8(param.getName()),row,0);
-		tab->definirTextoCelula(QString::fromUtf8(*param.getType()),row,1);
-		tab->definirDadoLinha(QVariant::fromValue<PgSQLType>(param.getType()), row);
+		tab->setCellText(QString::fromUtf8(param.getName()),row,0);
+		tab->setCellText(QString::fromUtf8(*param.getType()),row,1);
+		tab->setRowData(QVariant::fromValue<PgSQLType>(param.getType()), row);
 
 		if(tab==parameters_tab)
 		{
 			if(param.isIn()) str_aux="IN";
 			if(param.isOut()) str_aux+="OUT";
 
-			tab->definirTextoCelula(str_aux,row,2);
-			tab->definirTextoCelula(QString::fromUtf8(param.getDefaultValue()),row,3);
+			tab->setCellText(str_aux,row,2);
+			tab->setCellText(QString::fromUtf8(param.getDefaultValue()),row,3);
 		}
 	}
 }
@@ -245,11 +245,11 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 
 		for(i=0; i < count; i++)
 		{
-			parameters_tab->adicionarLinha();
+			parameters_tab->addRow();
 			param=func->getParameter(i);
 			showParameterData(param,parameters_tab,i);
 		}
-		parameters_tab->limparSelecao();
+		parameters_tab->clearSelection();
 
 		count=func->getReturnedTableColumnCount();
 		if(count > 0)
@@ -259,12 +259,12 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 
 			for(i=0; i < count; i++)
 			{
-				return_tab->adicionarLinha();
+				return_tab->addRow();
 				param=func->getReturnedTableColumn(i);
 				showParameterData(param,return_tab,i);
 			}
 		}
-		return_tab->limparSelecao();
+		return_tab->clearSelection();
 
 
 		if(!func->getLibrary().isEmpty())
@@ -287,8 +287,8 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 void FunctionWidget::hideEvent(QHideEvent *event)
 {
 	language_cmb->clear();
-	parameters_tab->removerLinhas();
-	return_tab->removerLinhas();
+	parameters_tab->removeRows();
+	return_tab->removeRows();
 	source_code_txt->clear();
 	symbol_edt->clear();
 	library_edt->clear();
@@ -477,18 +477,18 @@ void FunctionWidget::applyConfiguration(void)
 		func->setSecurityType(security_cmb->currentText());
 		func->removeParameters();
 
-		count=parameters_tab->obterNumLinhas();
+		count=parameters_tab->getRowCount();
 
 		for(i=0; i < count; i++)
 		{
-			param.setName(parameters_tab->obterTextoCelula(i,0));
-			param.setType(parameters_tab->obterDadoLinha(i).value<PgSQLType>());
+			param.setName(parameters_tab->getCellText(i,0));
+			param.setType(parameters_tab->getRowData(i).value<PgSQLType>());
 
-			str_aux=parameters_tab->obterTextoCelula(i,2);
+			str_aux=parameters_tab->getCellText(i,2);
 			param.setIn(str_aux.indexOf("IN") >= 0);
 			param.setOut(str_aux.indexOf("OUT") >= 0);
 
-			param.setDefaultValue(parameters_tab->obterTextoCelula(i,3));
+			param.setDefaultValue(parameters_tab->getCellText(i,3));
 
 			func->addParameter(param);
 		}
@@ -510,12 +510,12 @@ void FunctionWidget::applyConfiguration(void)
 		else
 		{
 			func->removeReturnedTableColumns();
-			count=return_tab->obterNumLinhas();
+			count=return_tab->getRowCount();
 
 			for(i=0; i<count; i++)
 			{
-				func->addReturnedTableColumn(return_tab->obterTextoCelula(i,0),
-																		 return_tab->obterDadoLinha(i).value<PgSQLType>());
+				func->addReturnedTableColumn(return_tab->getCellText(i,0),
+																		 return_tab->getRowData(i).value<PgSQLType>());
 			}
 		}
 

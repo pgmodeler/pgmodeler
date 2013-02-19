@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_rulewidget.h"
-#include "tabelaobjetoswidget.h"
+#include "objecttablewidget.h"
 
 class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
 	private:
@@ -36,7 +36,7 @@ class RuleWidget: public BaseObjectWidget, public Ui::RuleWidget {
 		SyntaxHighlighter *cond_expr_hl,
 											*command_hl;
 
-		TabelaObjetosWidget *commands_tab;
+		ObjectTableWidget *commands_tab;
 
 	public:
 		RuleWidget(QWidget * parent = 0);

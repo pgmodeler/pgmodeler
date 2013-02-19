@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_relationshipwidget.h"
-#include "tabelaobjetoswidget.h"
+#include "objecttablewidget.h"
 
 class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget {
 	private:
@@ -42,7 +42,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 											*table2_hl;
 
 		//! \brief Table widgets that stores the attributes, constraint and advanced objects of relationship
-		TabelaObjetosWidget *attributes_tab,
+		ObjectTableWidget *attributes_tab,
 												*constraints_tab,
 												*advanced_objs_tab;
 

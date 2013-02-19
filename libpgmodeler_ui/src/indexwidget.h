@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_indexwidget.h"
-#include "tabelaobjetoswidget.h"
+#include "objecttablewidget.h"
 
 /*! \brief Declaring the IndexElement class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -45,7 +45,7 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 											*elem_expr_hl;
 
 		//! \brief Table widget used to control the index elements
-		TabelaObjetosWidget *elements_tab;
+		ObjectTableWidget *elements_tab;
 
 		//! \brief Operator class selector
 		ObjectSelectorWidget *op_class_sel;
