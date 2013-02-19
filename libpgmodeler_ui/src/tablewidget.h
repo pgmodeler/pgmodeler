@@ -18,62 +18,66 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class RestricaoWidget
+\class TableWidget
 \brief Definição da classe que implementa o formulário de edição dos atributos de tabela.
 */
 
-#ifndef TABELA_WIDGET_H
-#define TABELA_WIDGET_H
+#ifndef TABLE_WIDGET_H
+#define TABLE_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "ui_tabelawidget.h"
+#include "ui_tablewidget.h"
 #include "objecttablewidget.h"
 #include "tableview.h"
 
-class TabelaWidget: public BaseObjectWidget, public Ui::TabelaWidget {
+class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
+	private:
 		Q_OBJECT
 
-	private:
 		/*! \brief Quantidade de elementos na lista de operações antes da tabela
 			ser editada. Este atributo é usado para se saber, em caso de cancelamento
 			da edição da tabela, a quantidade de operações relacionadas ao
 			objeto que necessitam ser removidas. Vide: cancelarConfiguracao() */
-		unsigned qtd_operacoes;
+		unsigned operation_count;
 
 		//! \brief Armazena as tabelas de objetos filhos da tabela (colunas, restrições, índices, etc)
-		map<ObjectType, ObjectTableWidget *> mapa_tab_objetos;
+		map<ObjectType, ObjectTableWidget *> objects_tab_map;
 
 		/*! \brief Lista os objetos do relacionamento na tabela respectiva, de acordo
 			com o tipo do objeto passado */
-		void listarObjetos(ObjectType tipo_obj);
+		void listObjects(ObjectType obj_type);
 
 		//! \brief Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
-		void exibirDadosObjeto(TableObject *object, int idx_lin);
+		void showObjectData(TableObject *object, int row);
 
 		//! \brief Seleciona a tabela de objetos de acordo com o tipo passado
-		ObjectTableWidget *selecionarTabelaObjetos(ObjectType tipo_obj);
+		ObjectTableWidget *selectObjectTable(ObjectType obj_type);
 
 		//! \brief Seleciona o tipo de objeto de acordo com o objeto sender informado
-		ObjectType selecionarTipoObjeto(QObject *tab_sender);
+		ObjectType selectObjectType(QObject *sender);
 
 		//! \brief Exibe o formulário de edição de objetos de tabela conforme o tipo passado
-		void exibirFormObjetoTabela(ObjectType tipo_obj);
+		void showTableObjectForm(ObjectType obj_type);
+
+		void hideEvent(QHideEvent *event);
 
 	public:
-		TabelaWidget(QWidget * parent = 0);
+		TableWidget(QWidget * parent = 0);
+
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, float pos_x, float pos_y);
 
 	private slots:
-		void hideEvent(QHideEvent *);
-
 		//! \brief Adiciona ou edita um objeto da tabela a qual aciona o método
-		void manipularObjeto(void);
+		void handleObject(void);
+
 		//! \brief Remove um objeto selecionado  na tabela a qual aciona o método
-		void removerObjeto(int idx_lin);
+		void removeObject(int row);
+
 		//! \brief Remove todos os objetos da tabela a qual aciona o método
-		void removerObjetos(void);
+		void removeObjects(void);
+
 		//! \brief Faz a movimentação entre dois objetos da tabela
-		void moverObjetos(int idx1, int idx2);
+		void moveObjects(int idx1, int idx2);
 
 	public slots:
 		void applyConfiguration(void);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TabelaWidget</class>
- <widget class="QWidget" name="TabelaWidget">
+ <class>TableWidget</class>
+ <widget class="QWidget" name="TableWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="tabela_grid">
+  <layout class="QGridLayout" name="table_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -21,7 +21,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="aceita_oids_lbl">
+    <widget class="QLabel" name="with_oids_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -46,7 +46,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QCheckBox" name="aceita_oids_chk">
+    <widget class="QCheckBox" name="with_oids_chk">
      <property name="text">
       <string/>
      </property>
@@ -56,7 +56,7 @@
     </widget>
    </item>
    <item row="1" column="0" colspan="2">
-    <widget class="QTabWidget" name="atributos_tbw">
+    <widget class="QTabWidget" name="attributes_tbw">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -101,14 +101,14 @@
          <widget class="QWidget" name="layoutWidget1">
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <widget class="QLabel" name="label">
+            <widget class="QLabel" name="ancestor_lbl">
              <property name="text">
               <string>Ancestor Tables:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QListWidget" name="tabs_ancestrais_lst">
+            <widget class="QListWidget" name="ancestor_tabs_lst">
              <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
              </property>
@@ -134,14 +134,14 @@
          <widget class="QWidget" name="layoutWidget">
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QLabel" name="label_2">
+            <widget class="QLabel" name="copied_lbl">
              <property name="text">
               <string>Copied Tables:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QListWidget" name="tabs_copiadas_lst">
+            <widget class="QListWidget" name="copied_tabs_lst">
              <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
              </property>

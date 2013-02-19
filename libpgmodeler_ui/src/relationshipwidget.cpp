@@ -1,11 +1,11 @@
 #include "relationshipwidget.h"
 #include "constraintwidget.h"
 #include "columnwidget.h"
-#include "tabelawidget.h"
+#include "tablewidget.h"
 
 extern ConstraintWidget *restricao_wgt;
 extern ColumnWidget *coluna_wgt;
-extern TabelaWidget *tabela_wgt;
+extern TableWidget *tabela_wgt;
 
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
 {

@@ -26,7 +26,7 @@
 #include "triggerwidget.h"
 #include "indexwidget.h"
 #include "relationshipwidget.h"
-#include "tabelawidget.h"
+#include "tablewidget.h"
 #include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
 #include "formconfiguracao.h"
@@ -66,7 +66,7 @@ RuleWidget *regra_wgt=NULL;
 TriggerWidget *gatilho_wgt=NULL;
 IndexWidget *indice_wgt=NULL;
 RelationshipWidget *relacao_wgt=NULL;
-TabelaWidget *tabela_wgt=NULL;
+TableWidget *tabela_wgt=NULL;
 
 //! \brief Global widget used to show loading/generation tasks progress
 TaskProgressWidget *task_prog_wgt=NULL;
@@ -148,7 +148,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		gatilho_wgt=new TriggerWidget(this);
 		indice_wgt=new IndexWidget(this);
 		relacao_wgt=new RelationshipWidget(this);
-		tabela_wgt=new TabelaWidget(this);
+		tabela_wgt=new TableWidget(this);
 		task_prog_wgt=new TaskProgressWidget();
 		deps_refs_wgt=new ObjectDepsRefsWidget(this);
 		quickrename_wgt=new QuickRenameWidget(this);

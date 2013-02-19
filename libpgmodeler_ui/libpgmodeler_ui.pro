@@ -51,7 +51,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
 	   $$PWD/src/triggerwidget.cpp \
 	   $$PWD/src/indexwidget.cpp \
 	   $$PWD/src/relationshipwidget.cpp \
-           $$PWD/src/tabelawidget.cpp \
+	   $$PWD/src/tablewidget.cpp \
 	   $$PWD/src/taskprogresswidget.cpp \
 	   $$PWD/src/objectdepsrefswidget.cpp \
            $$PWD/src/generalconfigwidget.cpp \
@@ -105,7 +105,7 @@ HEADERS += $$PWD/src/formprincipal.h \
 	   $$PWD/src/triggerwidget.h \
 	   $$PWD/src/indexwidget.h \
 	   $$PWD/src/relationshipwidget.h \
-           $$PWD/src/tabelawidget.h \
+	   $$PWD/src/tablewidget.h \
 	   $$PWD/src/taskprogresswidget.h \
 	   $$PWD/src/objectdepsrefswidget.h \
            $$PWD/src/generalconfigwidget.h \
@@ -155,7 +155,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
 	 $$PWD/ui/triggerwidget.ui \
 	 $$PWD/ui/indexwidget.ui \
 	 $$PWD/ui/relationshipwidget.ui \
-         $$PWD/ui/tabelawidget.ui \
+	 $$PWD/ui/tablewidget.ui \
 	 $$PWD/ui/taskprogresswidget.ui \
 	 $$PWD/ui/objectdepsrefswidget.ui \
          $$PWD/ui/formexportacao.ui \
