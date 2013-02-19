@@ -76,10 +76,10 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		connect(table_rb, SIGNAL(clicked(bool)), this, SLOT(alternateReturnTypes(void)));
 		connect(language_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectLanguage(void)));
 
-		connect(parameters_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(showParameterForm()));
-		connect(parameters_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(showParameterForm()));
-		connect(return_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(showParameterForm()));
-		connect(return_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(showParameterForm()));
+		connect(parameters_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
+		connect(parameters_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
+		connect(return_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
+		connect(return_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
 	}
 	catch(Exception &e)
 	{

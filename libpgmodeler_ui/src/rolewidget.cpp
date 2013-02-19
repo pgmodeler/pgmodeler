@@ -59,8 +59,8 @@ void RoleWidget::configureRoleSelection(void)
 		disconnect(members_tab[i],0,this,0);
 
 	//Connects the signal/slots only on the current table
-	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_linhaAdicionada(int)), this, SLOT(selectMemberRole(void)));
-	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_linhaEditada(int)), this, SLOT(selectMemberRole(void)));
+	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowAdded(int)), this, SLOT(selectMemberRole(void)));
+	connect(members_tab[members_twg->currentIndex()], SIGNAL(s_rowEdited(int)), this, SLOT(selectMemberRole(void)));
 }
 
 void RoleWidget::selectMemberRole(void)

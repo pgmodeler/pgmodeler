@@ -40,9 +40,9 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		exec_type_cmb->addItems(list);
 
 		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		connect(commands_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(handleCommand(int)));
-		connect(commands_tab, SIGNAL(s_linhaAtualizada(int)), this, SLOT(handleCommand(int)));
-		connect(commands_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(editCommand(int)));
+		connect(commands_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleCommand(int)));
+		connect(commands_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleCommand(int)));
+		connect(commands_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editCommand(int)));
 	}
 	catch(Exception &e)
 	{

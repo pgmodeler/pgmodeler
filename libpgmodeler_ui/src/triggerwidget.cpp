@@ -59,12 +59,12 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_type_lbl, SLOT(setEnabled(bool)));
-		connect(columns_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(addColumn(int)));
-		connect(columns_tab, SIGNAL(s_linhaRemovida(int)), this, SLOT(updateColumnsCombo(void)));
-		connect(columns_tab, SIGNAL(s_linhasRemovidas(void)), this, SLOT(updateColumnsCombo(void)));
-		connect(arguments_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(handleArgument(int)));
-		connect(arguments_tab, SIGNAL(s_linhaAtualizada(int)), this, SLOT(handleArgument(int)));
-		connect(arguments_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(editArgument(int)));
+		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
+		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(updateColumnsCombo(void)));
+		connect(columns_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(updateColumnsCombo(void)));
+		connect(arguments_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleArgument(int)));
+		connect(arguments_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleArgument(int)));
+		connect(arguments_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editArgument(int)));
 		connect(constr_trig_chk, SIGNAL(toggled(bool)), this, SLOT(setConstraintTrigger(bool)));
 	}
 	catch(Exception &e)

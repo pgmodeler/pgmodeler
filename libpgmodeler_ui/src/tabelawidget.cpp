@@ -41,11 +41,11 @@ TabelaWidget::TabelaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 		atributos_tbw->widget(i)->setLayout(grid);
 
 		//Conecta os sinais/slots na tabela alocada
-		connect(tab, SIGNAL(s_linhasRemovidas(void)), this, SLOT(removerObjetos(void)));
-		connect(tab, SIGNAL(s_linhaRemovida(int)), this, SLOT(removerObjeto(int)));
-		connect(tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(manipularObjeto(void)));
-		connect(tab, SIGNAL(s_linhaEditada(int)), this, SLOT(manipularObjeto(void)));
-		connect(tab, SIGNAL(s_linhasMovidas(int,int)), this, SLOT(moverObjetos(int,int)));
+		connect(tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removerObjetos(void)));
+		connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removerObjeto(int)));
+		connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(manipularObjeto(void)));
+		connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(manipularObjeto(void)));
+		connect(tab, SIGNAL(s_rowsMoved(int,int)), this, SLOT(moverObjetos(int,int)));
 	}
 
 	//Configura as colunas e rótulos das tabelas de objetos

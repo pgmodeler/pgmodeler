@@ -81,11 +81,11 @@ TipoWidget::TipoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		connect(composto_rb, SIGNAL(toggled(bool)), this, SLOT(selecionarConfiguracaoTipo(void)));
 		connect(enumeracao_rb, SIGNAL(toggled(bool)), this, SLOT(selecionarConfiguracaoTipo(void)));
 
-		connect(tab_enumeracoes, SIGNAL(s_linhaAdicionada(int)), this, SLOT(manipularEnumeracao(int)));
-		connect(tab_enumeracoes, SIGNAL(s_linhaAtualizada(int)), this, SLOT(manipularEnumeracao(int)));
+		connect(tab_enumeracoes, SIGNAL(s_rowAdded(int)), this, SLOT(manipularEnumeracao(int)));
+		connect(tab_enumeracoes, SIGNAL(s_rowUpdated(int)), this, SLOT(manipularEnumeracao(int)));
 
-		connect(tab_atributos, SIGNAL(s_linhaAdicionada(int)), this, SLOT(exibirFormAtributo(void)));
-		connect(tab_atributos, SIGNAL(s_linhaEditada(int)), this, SLOT(exibirFormAtributo(void)));
+		connect(tab_atributos, SIGNAL(s_rowAdded(int)), this, SLOT(exibirFormAtributo(void)));
+		connect(tab_atributos, SIGNAL(s_rowEdited(int)), this, SLOT(exibirFormAtributo(void)));
 
 		parent_form->setMinimumSize(625, 765);
 

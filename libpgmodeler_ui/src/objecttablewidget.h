@@ -155,38 +155,38 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 	signals:
 		/*! \brief Sinal disparando quando uma linha é adicionada.
 			O índice da linha adicionada é enviado com o sinal. */
-		void s_linhaAdicionada(int);
+		void s_rowAdded(int);
 
 		/*! \brief Sinal disparado quando duas linhas tem suas posições trocadas.
 			O índice das linhas trocadas são enviado com o sinal. */
-		void s_linhasMovidas(int,int);
+		void s_rowsMoved(int,int);
 
 		//! \brief Sinal disparado quano todas as linhas da tabela são excluídas
-		void s_linhasRemovidas(void);
+		void s_rowsRemoved(void);
 
 		/*! \brief Sinal disparado quando uma dada linha é removida. O índice da linha
 			removida é enviado com o sinal. */
-		void s_linhaRemovida(int);
+		void s_rowRemoved(int);
 
 		/*! \brief Sinal disparado quando uma dada linha é selecionada. O índice da linha
 			selecionada é enviado com o sinal. */
-		void s_linhaSelecionada(int);
+		void s_rowSelected(int);
 
 		/*! \brief Sinal disparado quando uma dada linha é editada.
 			O índice da linha editada é enviado com o sinal. */
-		void s_linhaEditada(int);
+		void s_rowEdited(int);
 
 		/*! \brief Sinal disparado quando o botão de atualizar a linha e acionado.
 			O índice da linha atualizada é enviado com o sinal. */
-		void s_linhaAtualizada(int);
+		void s_rowUpdated(int);
 
 		/*! \brief Sinal disparado quando uma dada coluna é removida.
 			O índice da coluna removida é enviado com o sinal. */
-		void s_colunaRemovida(int);
+		void s_columnRemoved(int);
 
 		/*! \brief Sinal disparado quando uma dada coluna é adicionada.
 			O índice da coluna adicionada é enviado com o sinal. */
-		void s_colunaAdicionada(int);
+		void s_columnAdded(int);
 };
 
 #endif

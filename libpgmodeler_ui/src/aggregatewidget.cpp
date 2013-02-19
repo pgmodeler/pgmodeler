@@ -53,8 +53,8 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		parent_form->setMinimumSize(645, 750);
 
 		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		connect(input_types_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(handleDataType(int)));
-		connect(input_types_tab, SIGNAL(s_linhaAtualizada(int)), this, SLOT(handleDataType(int)));
+		connect(input_types_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleDataType(int)));
+		connect(input_types_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleDataType(int)));
 	}
 	catch(Exception &e)
 	{

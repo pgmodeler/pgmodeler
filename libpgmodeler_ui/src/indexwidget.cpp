@@ -59,9 +59,9 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		frame->setParent(this);
 
 		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		connect(elements_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(handleElement(int)));
-		connect(elements_tab, SIGNAL(s_linhaAtualizada(int)), this, SLOT(handleElement(int)));
-		connect(elements_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(editElement(int)));
+		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleElement(int)));
+		connect(elements_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleElement(int)));
+		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
 		connect(column_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject(void)));
 		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject(void)));
 	}

@@ -78,13 +78,13 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(check, SIGNAL(clicked(bool)), this, SLOT(checkPrivilege(void)));
 	}
 
-	connect(roles_tab, SIGNAL(s_linhaAdicionada(int)), roles_tab, SLOT(selecionarLinha(int)));
-	connect(roles_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(selectRole(void)));
-	connect(roles_tab, SIGNAL(s_linhaRemovida(int)), this, SLOT(enableEditButtons(void)));
+	connect(roles_tab, SIGNAL(s_rowAdded(int)), roles_tab, SLOT(selectRow(int)));
+	connect(roles_tab, SIGNAL(s_rowEdited(int)), this, SLOT(selectRole(void)));
+	connect(roles_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(enableEditButtons(void)));
 
-	connect(permissions_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(editPermission(void)));
-	connect(permissions_tab, SIGNAL(s_linhaSelecionada(int)), this, SLOT(selectPermission(int)));
-	connect(permissions_tab, SIGNAL(s_linhaRemovida(int)), this, SLOT(removePermission(void)));
+	connect(permissions_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editPermission(void)));
+	connect(permissions_tab, SIGNAL(s_rowSelected(int)), this, SLOT(selectPermission(int)));
+	connect(permissions_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removePermission(void)));
 
 	connect(cancel_tb, SIGNAL(clicked(bool)), this, SLOT(cancelOperation(void)));
 	connect(add_perm_tb, SIGNAL(clicked(bool)), this, SLOT(addPermission(void)));
@@ -119,8 +119,8 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		ObjectType obj_type;
 
 		connect(objectselection_wgt, SIGNAL(s_visibilityChanged(BaseObject*,bool)), this, SLOT(showSelectedRoleData(void)));
-		connect(roles_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(selectRole(void)));
-		connect(permissions_tab, SIGNAL(s_linhasRemovidas(void)), this, SLOT(removePermissions(void)));
+		connect(roles_tab, SIGNAL(s_rowAdded(int)), this, SLOT(selectRole(void)));
+		connect(permissions_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removePermissions(void)));
 
 		name_edt->setText(QString::fromUtf8(object->getName(true)));
 		comment_edt->setText(QString::fromUtf8(object->getTypeName()));

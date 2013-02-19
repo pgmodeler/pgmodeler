@@ -54,9 +54,9 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 
 		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(elem_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectElementType(int)));
-		connect(elements_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(handleElement(int)));
-		connect(elements_tab, SIGNAL(s_linhaAtualizada(int)), this, SLOT(handleElement(int)));
-		connect(elements_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(editElement(int)));
+		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleElement(int)));
+		connect(elements_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleElement(int)));
+		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
 
 		parent_form->setMinimumSize(540, 590);
 		selectElementType(0);

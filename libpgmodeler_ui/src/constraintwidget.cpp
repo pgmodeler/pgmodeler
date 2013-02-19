@@ -69,12 +69,12 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(constr_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectConstraintType(void)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_lbl, SLOT(setEnabled(bool)));
-		connect(columns_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(addColumn(int)));
-		connect(columns_tab, SIGNAL(s_linhaRemovida(int)), this, SLOT(removeColumn(int)));
-		connect(columns_tab, SIGNAL(s_linhasRemovidas(void)), this, SLOT(removeColumns(void)));
-		connect(ref_columns_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(addColumn(int)));
-		connect(ref_columns_tab, SIGNAL(s_linhaRemovida(int)), this, SLOT(removeColumn(int)));
-		connect(ref_columns_tab, SIGNAL(s_linhasRemovidas(void)), this, SLOT(removeColumns(void)));
+		connect(columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
+		connect(columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeColumn(int)));
+		connect(columns_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeColumns(void)));
+		connect(ref_columns_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addColumn(int)));
+		connect(ref_columns_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeColumn(int)));
+		connect(ref_columns_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeColumns(void)));
 		connect(ref_table_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(selectReferencedTable(void)));
 		connect(ref_table_sel, SIGNAL(s_objectSelected(void)), this, SLOT(selectReferencedTable(void)));
 	}

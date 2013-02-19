@@ -306,7 +306,7 @@ void ObjectTableWidget::addColumn(unsigned idx_col)
 	enableButtons();
 
 	//Emite um sinal indicando em qual índice foi adicionada uma coluna
-	emit s_colunaAdicionada(idx_col);
+	emit s_columnAdded(idx_col);
 }
 
 void ObjectTableWidget::selectRow(int idx_lin)
@@ -387,7 +387,7 @@ void ObjectTableWidget::addRow(void)
 		com a linha atual */
 	enableButtons();
 	//Emite um sinal com o índice da linha adicionada
-	emit s_linhaAdicionada(table_tbw->rowCount()-1);
+	emit s_rowAdded(table_tbw->rowCount()-1);
 }
 
 void ObjectTableWidget::removeRow(unsigned idx_lin)
@@ -443,7 +443,7 @@ void ObjectTableWidget::removeRow(void)
 				enableButtons();
 
 				//Emite o sinal de linha removida com o índice da linha excluída
-				emit s_linhaRemovida(idx_lin);
+				emit s_rowRemoved(idx_lin);
 			}
 		}
 	}
@@ -476,7 +476,7 @@ void ObjectTableWidget::removeRows(void)
 			enableButtons();
 
 			// Emite o sinal indicando que as linhas da tabela foram removidas caso
-			emit s_linhasRemovidas();
+			emit s_rowsRemoved();
 		}
 	}
 }
@@ -493,7 +493,7 @@ void ObjectTableWidget::removeColumn(unsigned idx_col)
 	table_tbw->clearSelection();
 	enableButtons();
 	//Emite o sinal indicando a coluna removida
-	emit s_colunaRemovida(idx_col);
+	emit s_columnRemoved(idx_col);
 }
 
 void ObjectTableWidget::moveRows(void)
@@ -603,7 +603,7 @@ void ObjectTableWidget::moveRows(void)
 		}
 
 		enableButtons();
-		emit s_linhasMovidas(lin, lin1);
+		emit s_rowsMoved(lin, lin1);
 	}
 }
 
@@ -612,7 +612,7 @@ void ObjectTableWidget::editRow(void)
 	/* Para este método nada é executado apenas um sinal é emitido
 		com o índice da linha a ser editada. Quem deve tratar a edição
 		da linha é o objeto externo o qual faz uso da tabela. */
-	emit s_linhaEditada(table_tbw->currentRow());
+	emit s_rowEdited(table_tbw->currentRow());
 }
 
 void ObjectTableWidget::updateRow(void)
@@ -620,7 +620,7 @@ void ObjectTableWidget::updateRow(void)
 	/* Para este método nada é executado apenas um sinal é emitido
 		com o índice da linha a ser editada. Quem deve tratar a edição
 		da linha é o objeto externo o qual faz uso da tabela. */
-	emit s_linhaAtualizada(table_tbw->currentRow());
+	emit s_rowUpdated(table_tbw->currentRow());
 }
 
 void ObjectTableWidget::clearSelection(void)
@@ -688,6 +688,6 @@ void ObjectTableWidget::enableButtons(void)
 		este sinal é interessante quando se quer ter acesso diret  linha selecionada
 		sem ter que chamar o método de obterLinhaSelecionada() */
 	if(item && item->row() >= 0)
-		emit s_linhaSelecionada(item->row());
+		emit s_rowSelected(item->row());
 }
 

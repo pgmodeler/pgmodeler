@@ -60,7 +60,7 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		advanced_objs_tab->setHeaderLabel(trUtf8("Type"), 1);
 		advanced_objs_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 
-		connect(advanced_objs_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(showAdvancedObject(int)));
+		connect(advanced_objs_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showAdvancedObject(int)));
 
 		grid=new QGridLayout;
 		grid->addWidget(attributes_tab, 0,0,1,1);
@@ -112,15 +112,15 @@ RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent
 		connect(identifier_chk, SIGNAL(toggled(bool)), table1_mand_chk, SLOT(setDisabled(bool)));
 		connect(identifier_chk, SIGNAL(toggled(bool)), table2_mand_chk, SLOT(setDisabled(bool)));
 
-		connect(attributes_tab, SIGNAL(s_linhasRemovidas(void)), this, SLOT(removeObjects(void)));
-		connect(attributes_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(addObject(void)));
-		connect(attributes_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(editObject(int)));
-		connect(attributes_tab, SIGNAL(s_linhaRemovida(int)), this, SLOT(removeObject(int)));
+		connect(attributes_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
+		connect(attributes_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObject(void)));
+		connect(attributes_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObject(int)));
+		connect(attributes_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
 
-		connect(constraints_tab, SIGNAL(s_linhasRemovidas(void)), this, SLOT(removeObjects(void)));
-		connect(constraints_tab, SIGNAL(s_linhaAdicionada(int)), this, SLOT(addObject(void)));
-		connect(constraints_tab, SIGNAL(s_linhaEditada(int)), this, SLOT(editObject(int)));
-		connect(constraints_tab, SIGNAL(s_linhaRemovida(int)), this, SLOT(removeObject(int)));
+		connect(constraints_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
+		connect(constraints_tab, SIGNAL(s_rowAdded(int)), this, SLOT(addObject(void)));
+		connect(constraints_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editObject(int)));
+		connect(constraints_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
 
 	}
 	catch(Exception &e)

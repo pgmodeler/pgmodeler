@@ -54,14 +54,14 @@ VisaoWidget::VisaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		connect(sel_coluna, SIGNAL(s_selectorCleared(void)), this, SLOT(exibirNomeObjeto(void)));
 		connect(sel_tabela, SIGNAL(s_objectSelected(void)), this, SLOT(exibirNomeObjeto(void)));
 
-		connect(tab_referencias, SIGNAL(s_linhaAdicionada(int)), this, SLOT(manipularReferencia(int)));
-		connect(tab_referencias, SIGNAL(s_linhaAtualizada(int)), this, SLOT(manipularReferencia(int)));
-		connect(tab_referencias, SIGNAL(s_linhaEditada(int)), this, SLOT(editarReferencia(int)));
+		connect(tab_referencias, SIGNAL(s_rowAdded(int)), this, SLOT(manipularReferencia(int)));
+		connect(tab_referencias, SIGNAL(s_rowUpdated(int)), this, SLOT(manipularReferencia(int)));
+		connect(tab_referencias, SIGNAL(s_rowEdited(int)), this, SLOT(editarReferencia(int)));
 		/*
-	connect(tab_referencias, SIGNAL(s_linhaAtualizada(int)), this, SLOT(atualizarPrevisaoCodigo(void)));
-	connect(tab_referencias, SIGNAL(s_linhasMovidas(int,int)), this, SLOT(atualizarPrevisaoCodigo(void)));
-	connect(tab_referencias, SIGNAL(s_linhasRemovidas(void)), this, SLOT(atualizarPrevisaoCodigo(void)));
-	connect(tab_referencias, SIGNAL(s_linhaRemovida(int)), this, SLOT(atualizarPrevisaoCodigo(void)));
+	connect(tab_referencias, SIGNAL(s_rowUpdated(int)), this, SLOT(atualizarPrevisaoCodigo(void)));
+	connect(tab_referencias, SIGNAL(s_rowsMoved(int,int)), this, SLOT(atualizarPrevisaoCodigo(void)));
+	connect(tab_referencias, SIGNAL(s_rowsRemoved(void)), this, SLOT(atualizarPrevisaoCodigo(void)));
+	connect(tab_referencias, SIGNAL(s_rowRemoved(int)), this, SLOT(atualizarPrevisaoCodigo(void)));
 	connect(sel_esquema, SIGNAL(s_objetoSelecionado(void)), this, SLOT(atualizarPrevisaoCodigo(void)));
 	connect(sel_esquema, SIGNAL(s_objetoRemovido(void)), this, SLOT(atualizarPrevisaoCodigo(void)));*/
 
