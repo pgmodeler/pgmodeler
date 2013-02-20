@@ -57,7 +57,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/generalconfigwidget.cpp \
            $$PWD/src/appearanceconfigwidget.cpp \
            $$PWD/src/connectionsconfigwidget.cpp \
-           $$PWD/src/formconfiguracao.cpp \
+	   $$PWD/src/configurationform.cpp \
            $$PWD/src/baseconfigwidget.cpp \
            $$PWD/src/formexportacao.cpp \
            $$PWD/src/visaogeralwidget.cpp \
@@ -109,7 +109,7 @@ HEADERS += $$PWD/src/formprincipal.h \
 	   $$PWD/src/taskprogresswidget.h \
 	   $$PWD/src/objectdepsrefswidget.h \
            $$PWD/src/generalconfigwidget.h \
-           $$PWD/src/formconfiguracao.h \
+	   $$PWD/src/configurationform.h \
            $$PWD/src/connectionsconfigwidget.h \
            $$PWD/src/appearanceconfigwidget.h \
            $$PWD/src/baseconfigwidget.h \
@@ -159,7 +159,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
 	 $$PWD/ui/taskprogresswidget.ui \
 	 $$PWD/ui/objectdepsrefswidget.ui \
          $$PWD/ui/formexportacao.ui \
-         $$PWD/ui/formconfiguracao.ui \
+	 $$PWD/ui/configurationform.ui \
          $$PWD/ui/generalconfigwidget.ui \
          $$PWD/ui/appearanceconfigwidget.ui \
          $$PWD/ui/connectionsconfigwidget.ui \

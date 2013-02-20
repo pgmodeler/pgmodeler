@@ -29,7 +29,7 @@
 #include "tablewidget.h"
 #include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
-#include "formconfiguracao.h"
+#include "configurationform.h"
 #include "formexportacao.h"
 #include "quickrenamewidget.h"
 
@@ -72,7 +72,7 @@ TableWidget *tabela_wgt=NULL;
 TaskProgressWidget *task_prog_wgt=NULL;
 
 ObjectDepsRefsWidget *deps_refs_wgt=NULL;
-FormConfiguracao *fconfiguracao=NULL;
+ConfigurationForm *fconfiguracao=NULL;
 FormExportacao *fexportacao=NULL;
 QuickRenameWidget *quickrename_wgt=NULL;
 
@@ -112,7 +112,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 			dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
 		fsobre=new AboutForm;
-		fconfiguracao=new FormConfiguracao(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
+		fconfiguracao=new ConfigurationForm(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 		fexportacao=new FormExportacao(this);
 		//selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
@@ -264,9 +264,9 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 	//Faz o carregamento das configurações
 	try
 	{
-		fconfiguracao->carregarConfiguracao();
+		fconfiguracao->loadConfiguration();
 
-		conf_plugins_wgt=dynamic_cast<PluginsConfigWidget *>(fconfiguracao->obterWidgetConfiguracao(FormConfiguracao::WGT_CONF_PLUGINS));
+		conf_plugins_wgt=dynamic_cast<PluginsConfigWidget *>(fconfiguracao->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
 		conf_plugins_wgt->installPluginsActions(plugins_tb, menuPlugins, this, SLOT(executarPlugin(void)));
 
 		areas_dock[ParsersAttributes::LEFT]=Qt::LeftDockWidgetArea;
@@ -287,7 +287,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		toolbars[ParsersAttributes::MODEL_TOOLBAR]=modelo_tb;
 
 		//Aplicando as configurações carregadas
-		conf_wgt=fconfiguracao->obterWidgetConfiguracao(FormConfiguracao::WGT_CONF_GERAL);
+		conf_wgt=fconfiguracao->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
 		confs=conf_wgt->getConfigurationParams();
 
 		itr=confs.begin();
@@ -468,7 +468,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
 		}
 	}
 
-	conf_wgt=dynamic_cast<GeneralConfigWidget *>(fconfiguracao->obterWidgetConfiguracao(0));
+	conf_wgt=dynamic_cast<GeneralConfigWidget *>(fconfiguracao->getConfigurationWidget(0));
 	confs=conf_wgt->getConfigurationParams();
 	conf_wgt->removeConfigurationParams();
 
@@ -923,7 +923,7 @@ void FormPrincipal::atualizarModelos(void)
 	int qtd, i;
 
 	//Obtém o widget de configuração geral
-	conf_wgt=dynamic_cast<GeneralConfigWidget *>(fconfiguracao->obterWidgetConfiguracao(0));
+	conf_wgt=dynamic_cast<GeneralConfigWidget *>(fconfiguracao->getConfigurationWidget(0));
 
 	//Caso a opção de salvamento do modelo não esteja marcada
 	if(!conf_wgt->autosave_interv_chk->isChecked())
@@ -1023,7 +1023,7 @@ void FormPrincipal::imprimirModelo(void)
 		QPrinter::Orientation orientacao, orient_atual;
 		QRectF margens;
 		unsigned ml,mt,mr,mb, ml1, mt1, mr1, mb1;
-		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(fconfiguracao->obterWidgetConfiguracao(0));
+		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(fconfiguracao->getConfigurationWidget(0));
 
 		print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
 		print_dlg.setWindowTitle(trUtf8("Database model printing"));

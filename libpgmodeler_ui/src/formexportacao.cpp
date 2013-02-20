@@ -1,9 +1,9 @@
 #include "formexportacao.h"
 #include "taskprogresswidget.h"
-#include "formconfiguracao.h"
+#include "configurationform.h"
 
 extern TaskProgressWidget *task_prog_wgt;
-extern FormConfiguracao *fconfiguracao;
+extern ConfigurationForm *fconfiguracao;
 
 FormExportacao::FormExportacao(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 {
@@ -46,7 +46,7 @@ void FormExportacao::show(ModeloWidget *modelo)
 		/* Atualiza a lista de conexões ao exibir o formulário de exportação, obtendo-as
 		 do widget de configuração de conexões */
 		this->modelo_wgt=modelo;
-		dynamic_cast<ConnectionsConfigWidget *>(fconfiguracao->obterWidgetConfiguracao(FormConfiguracao::WGT_CONF_CONEXOES))->getConnections(conexoes);
+		dynamic_cast<ConnectionsConfigWidget *>(fconfiguracao->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->getConnections(conexoes);
 
 		conexoes_cmb->clear();
 		itr=conexoes.begin();

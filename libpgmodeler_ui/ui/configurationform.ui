@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FormConfiguracao</class>
- <widget class="QDialog" name="FormConfiguracao">
+ <class>ConfigurationForm</class>
+ <widget class="QDialog" name="ConfigurationForm">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -40,7 +40,7 @@
     <number>4</number>
    </property>
    <item row="1" column="0">
-    <layout class="QGridLayout" name="botoes_lt">
+    <layout class="QGridLayout" name="buttons_grid">
      <property name="leftMargin">
       <number>2</number>
      </property>
@@ -61,7 +61,7 @@
       </widget>
      </item>
      <item row="0" column="4">
-      <widget class="QPushButton" name="aplicar_btn">
+      <widget class="QPushButton" name="apply_btn">
        <property name="minimumSize">
         <size>
          <width>90</width>
@@ -87,7 +87,7 @@
       </widget>
      </item>
      <item row="0" column="5">
-      <widget class="QPushButton" name="cancelar_btn">
+      <widget class="QPushButton" name="cancel_btn">
        <property name="minimumSize">
         <size>
          <width>90</width>
@@ -113,7 +113,7 @@
       </widget>
      </item>
      <item row="0" column="2">
-      <widget class="QPushButton" name="padroes_btn">
+      <widget class="QPushButton" name="defaults_btn">
        <property name="minimumSize">
         <size>
          <width>90</width>
@@ -172,7 +172,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="QListWidget" name="lista_ico_lst">
+       <widget class="QListWidget" name="icons_lst">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -213,7 +213,7 @@
          <bool>false</bool>
         </property>
         <property name="dragDropMode">
-         <enum>QAbstractItemView::NoDragDrop</enum>
+         <enum>QAbstractItemView::DragOnly</enum>
         </property>
         <property name="defaultDropAction">
          <enum>Qt::IgnoreAction</enum>
@@ -366,7 +366,7 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="geral_pg">
+        <widget class="QWidget" name="general_pg">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -374,14 +374,12 @@
           </sizepolicy>
          </property>
         </widget>
-        <widget class="QWidget" name="aparencia_pg"/>
-        <widget class="QWidget" name="conexoes_pg"/>
+        <widget class="QWidget" name="style_pg"/>
+        <widget class="QWidget" name="connections_pg"/>
         <widget class="QWidget" name="plugins_pg"/>
        </widget>
       </item>
      </layout>
-     <zorder>lista_ico_lst</zorder>
-     <zorder>confs_stw</zorder>
     </widget>
    </item>
   </layout>

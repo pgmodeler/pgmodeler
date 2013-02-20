@@ -19,45 +19,46 @@
 /**
 \ingroup libpgmodeler_ui
 \class FormConfiguracao
-\brief Formulario que reúne todos os widgets de configuração.
+\brief Reunites in a single form all available configuration widgets.
 */
 
-#ifndef FORM_CONFIGURACAO_H
-#define FORM_CONFIGURACAO_H
+#ifndef CONFIGURATION_FORM_H
+#define CONFIGURATION_FORM_H
 
-#include "ui_formconfiguracao.h"
+#include "ui_configurationform.h"
 #include "appearanceconfigwidget.h"
 #include "generalconfigwidget.h"
 #include "connectionsconfigwidget.h"
 #include "pluginsconfigwidget.h"
 
-class FormConfiguracao: public QDialog, public Ui::FormConfiguracao {
+class ConfigurationForm: public QDialog, public Ui::ConfigurationForm {
 	private:
 		Q_OBJECT
 
 		MessageBox msg_box;
-		GeneralConfigWidget *conf_geral;
-		AppearanceConfigWidget *conf_aparencia;
-		ConnectionsConfigWidget *conf_conexoes;
-		PluginsConfigWidget *conf_plugins;
+		GeneralConfigWidget *general_conf;
+		AppearanceConfigWidget *appearance_conf;
+		ConnectionsConfigWidget *connections_conf;
+		PluginsConfigWidget *plugins_conf;
 
 
 	public:
-		static const int	WGT_CONF_GERAL=0,
-											WGT_CONF_APARENCIA=1,
-											WGT_CONF_CONEXOES=2,
-											WGT_CONF_PLUGINS=3;
+		static const int	GENERAL_CONF_WGT=0,
+											APPEARANCE_CONF_WGT=1,
+											CONNECTIONS_CONF_WGT=2,
+											PLUGINS_CONF_WGT=3;
 
-		FormConfiguracao(QWidget * parent = 0, Qt::WindowFlags f = 0);
-		BaseConfigWidget *obterWidgetConfiguracao(unsigned idx);
+		ConfigurationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
+
+		BaseConfigWidget *getConfigurationWidget(unsigned idx);
 
 	public slots:
-		void aplicarConfiguracao(void);
-		void carregarConfiguracao(void);
+		void applyConfiguration(void);
+		void loadConfiguration(void);
 		void close(void);
 
 	private slots:
-		void restaurarPadroes(void);
+		void restoreDefaults(void);
 };
 
 #endif
