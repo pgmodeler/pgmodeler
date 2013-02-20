@@ -18,27 +18,26 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class FormPrincipal
-\brief Definição da classe que implementa a caixa de informações do software.
+\class BaseForm
+\brief A basic form implementation, contains only an apply and a cancel button.
 */
 
-#ifndef FORM_SOBRE_H
-#define FORM_SOBRE_H
+#ifndef BASE_FORM_H
+#define BASE_FORM_H
 
-#include <QWidget>
-#include "ui_formsobre.h"
-#include "globalattributes.h"
+#include <QtGui>
+#include "ui_baseform.h"
+#include "exception.h"
+#include "messagebox.h"
 
-class FormSobre: public QWidget, public Ui::FormSobre {
+class BaseForm: public QDialog, public Ui::BaseForm {
+	private:
 		Q_OBJECT
 
-	private:
-
 	public:
-		FormSobre(QWidget *parent = 0);
-		~FormSobre(void){}
+		BaseForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
-	private slots:
+		void setButtonConfiguration(unsigned button_conf=MessageBox::OK_CANCEL_BUTTONS);
 };
 
 #endif

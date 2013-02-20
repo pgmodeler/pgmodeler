@@ -35,7 +35,7 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 		language_grid->addWidget(frame, language_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 
-		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
 		parent_form->setMinimumSize(550, 510);
 		parent_form->setMaximumSize(16777215, 510);

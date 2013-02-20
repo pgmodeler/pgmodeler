@@ -11,7 +11,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	Ui_RoleWidget::setupUi(this);
 	configureFormLayout(role_grid, OBJ_ROLE);
 
-	connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(members_twg, SIGNAL(currentChanged(int)), this, SLOT(configureRoleSelection(void)));
 
 	//Alocation of the member role tables

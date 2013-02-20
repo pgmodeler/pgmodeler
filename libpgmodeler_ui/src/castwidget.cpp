@@ -28,7 +28,7 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 		convtipo_grid->addWidget(frame, convtipo_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 
-		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
 		parent_form->setMinimumSize(530, 500);
 		parent_form->setMaximumHeight(500);

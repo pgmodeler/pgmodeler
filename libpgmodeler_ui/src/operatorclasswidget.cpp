@@ -52,7 +52,7 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		grid->addWidget(storage_type, 5,0,1,5);
 		grid->addWidget(elements_tab, 6,0,1,4);
 
-		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(elem_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectElementType(int)));
 		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleElement(int)));
 		connect(elements_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleElement(int)));

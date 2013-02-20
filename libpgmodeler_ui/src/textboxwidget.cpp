@@ -4,9 +4,9 @@ TextboxWidget::TextboxWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TEXT
 {
 	Ui_TextboxWidget::setupUi(this);
 	configureFormLayout(caixatexto_grid, OBJ_TEXTBOX);
-	connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(color_select_tb, SIGNAL(clicked(void)), this, SLOT(selectTextColor(void)));
-	parent_form->definirBotoes(MessageBox::OK_CANCEL_BUTTONS);
+	parent_form->setButtonConfiguration(MessageBox::OK_CANCEL_BUTTONS);
 	parent_form->setMinimumSize(500,250);
 }
 

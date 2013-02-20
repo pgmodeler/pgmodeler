@@ -37,7 +37,7 @@
 	 compartilhados e usados em outros arquivos não havendo a necessidade
 	 de se instanciar cada um toda vez em que forem usados.
 	 O formulário principal é o responsável por alocar e desalocar esses objetos. */
-FormSobre *fsobre=NULL;
+AboutForm *fsobre=NULL;
 //MessageBox *caixa_msg=NULL;
 //VisaoObjetosWidget *selecaoobjetos_wgt=NULL;
 TextboxWidget *caixatexto_wgt=NULL;
@@ -111,7 +111,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
 			dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
-		fsobre=new FormSobre;
+		fsobre=new AboutForm;
 		fconfiguracao=new FormConfiguracao(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 		fexportacao=new FormExportacao(this);
 		//selecaoobjetos_wgt=new VisaoObjetosWidget(true);

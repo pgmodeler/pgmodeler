@@ -51,7 +51,7 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 
 		configureFormLayout(operator_grid, OBJ_OPERATOR);
 
-		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
 		parent_form->resize(530, 590);
 		parent_form->setMinimumWidth(530);

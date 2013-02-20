@@ -47,7 +47,7 @@ VisaoWidget::VisaoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 
 		configureFormLayout(visao_grid, OBJ_VIEW);
 
-		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(tipo_ref_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selecionarTipoReferencia(void)));
 
 		connect(sel_coluna, SIGNAL(s_objectSelected(void)), this, SLOT(exibirNomeObjeto(void)));

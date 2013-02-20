@@ -9,7 +9,7 @@ SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA
 	baseobject_grid->addWidget(fill_color_tb, baseobject_grid->count()-1, 1, 1, 1);
 	baseobject_grid->addWidget(show_rect_chk, baseobject_grid->count()-2, 2, 1, 1);
 
-	connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(fill_color_tb, SIGNAL(clicked(void)), this, SLOT(selectFillColor(void)));
 
 	parent_form->setMinimumSize(500, 250);

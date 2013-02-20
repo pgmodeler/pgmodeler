@@ -18,7 +18,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 		column_grid->addWidget(data_type,3,0,1,0);
 
 		configureFormLayout(column_grid, OBJ_COLUMN);
-		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
 		parent_form->setMinimumSize(530, 380);
 		parent_form->setMaximumHeight(380);

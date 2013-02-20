@@ -6,10 +6,10 @@ ObjectDepsRefsWidget::ObjectDepsRefsWidget(QWidget *parent): BaseObjectWidget(pa
 	configureFormLayout(objectdepsrefs_grid, BASE_OBJECT);
 
 	parent_form->setWindowTitle(trUtf8("Dependences / References of Object"));
-	parent_form->definirBotoes(MessageBox::OK_BUTTON);
+	parent_form->setButtonConfiguration(MessageBox::OK_BUTTON);
 	parent_form->setMinimumSize(550, 300);
 
-	connect(parent_form->aplicar_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
+	connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 }
 
 void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj)
@@ -19,7 +19,7 @@ void ObjectDepsRefsWidget::setAttributes(DatabaseModel *model, BaseObject *objec
 	BaseObjectWidget::setAttributes(model, object, parent_obj);
 
 	this->name_edt->setReadOnly(true);
-	this->parent_form->aplicar_ok_btn->setEnabled(true);
+	this->parent_form->apply_ok_btn->setEnabled(true);
 	this->protected_obj_frm->setVisible(false);
 	this->comment_edt->setVisible(false);
 	this->comment_lbl->setVisible(false);

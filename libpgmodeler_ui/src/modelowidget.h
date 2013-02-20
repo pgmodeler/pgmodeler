@@ -31,7 +31,7 @@
 #include "databasemodel.h"
 #include "operationlist.h"
 #include "messagebox.h"
-#include "formbasico.h"
+#include "baseform.h"
 #include "objectsscene.h"
 #include "taskprogresswidget.h"
 

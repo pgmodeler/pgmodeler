@@ -29,9 +29,9 @@
 #include <QtGui>
 #include "ui_formprincipal.h"
 #include "modelowidget.h"
-#include "formsobre.h"
+#include "aboutform.h"
 #include "messagebox.h"
-#include "formbasico.h"
+#include "baseform.h"
 #include "formrestauracaomodelo.h"
 #include "operationlistwidget.h"
 #include "visaoobjetoswidget.h"

@@ -7,7 +7,7 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	Ui_OperatorFamilyWidget::setupUi(this);
 	configureFormLayout(opfamily_grid, OBJ_OPFAMILY);
 
-	connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
 	IndexingType::getTypes(tipos);
 	indexing_cmb->addItems(tipos);

@@ -10,7 +10,7 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 
 	Ui_DatabaseWidget::setupUi(this);
 
-	connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	configureFormLayout(database_grid, OBJ_DATABASE);
 
 	//Defines the fields used on specific PostgreSQL versions

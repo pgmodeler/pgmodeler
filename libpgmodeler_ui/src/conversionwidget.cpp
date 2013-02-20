@@ -22,7 +22,7 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		src_encoding_cmb->addItems(encodings);
 		trg_encoding_cmb->addItems(encodings);
 
-		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
 		parent_form->setMinimumSize(600, 390);
 		parent_form->setMaximumHeight(390);

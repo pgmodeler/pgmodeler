@@ -27,10 +27,10 @@ SourceCodeWidget::SourceCodeWidget(QWidget *parent): BaseObjectWidget(parent)
 		version_cmb->addItems(QStringList(QList<QString>::fromVector(QVector<QString>::fromStdVector(versions))));
 
 		parent_form->setWindowTitle(trUtf8("Source code visualization"));
-		parent_form->definirBotoes(MessageBox::OK_BUTTON);
+		parent_form->setButtonConfiguration(MessageBox::OK_BUTTON);
 		parent_form->setMinimumSize(550, 450);
 
-		connect(parent_form->aplicar_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
+		connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 		connect(version_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(generateSourceCode(int)));
 		connect(sourcecode_twg, SIGNAL(currentChanged(int)), this, SLOT(setSourceCodeTab(int)));
 
@@ -127,7 +127,7 @@ void SourceCodeWidget::setAttributes(DatabaseModel *model, BaseObject *object)
 		{
 			BaseObjectWidget::setAttributes(model, object, NULL);
 
-			this->parent_form->aplicar_ok_btn->setEnabled(true);
+			this->parent_form->apply_ok_btn->setEnabled(true);
 			this->protected_obj_frm->setVisible(false);
 
 			obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") +

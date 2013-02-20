@@ -28,7 +28,7 @@
 #include <QtGui>
 #include "databasemodel.h"
 #include "operationlist.h"
-#include "formbasico.h"
+#include "baseform.h"
 #include "visaoobjetoswidget.h"
 #include "objectselectorwidget.h"
 #include "ui_baseobjectwidget.h"
@@ -55,7 +55,7 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 												RELINC_LINE_FGCOLOR;
 
 		//! \brief Parent form used to show the widget as a dialog.
-		FormBasico *parent_form;
+		BaseForm *parent_form;
 
 		//! \brief Reference database model
 		DatabaseModel *model;

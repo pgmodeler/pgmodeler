@@ -18,10 +18,10 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	objectselection_wgt=new VisaoObjetosWidget(true);
 	permission=NULL;
 
-	parent_form->widgetgeral_wgt->insertWidget(0, this);
-	parent_form->widgetgeral_wgt->setCurrentIndex(0);
-	parent_form->definirBotoes(MessageBox::OK_BUTTON);
-	connect(parent_form->aplicar_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
+	parent_form->generalwidget_wgt->insertWidget(0, this);
+	parent_form->generalwidget_wgt->setCurrentIndex(0);
+	parent_form->setButtonConfiguration(MessageBox::OK_BUTTON);
+	connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 
 	parent_form->setMinimumSize(670, 500);
 	parent_form->resize(670, 500);

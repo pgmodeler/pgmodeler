@@ -20,7 +20,7 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SE
 		frame->setParent(this);
 
 		configureFormLayout(sequence_grid, OBJ_SEQUENCE);
-		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
 		parent_form->resize(540, 410);
 		parent_form->setMinimumWidth(540);

@@ -76,7 +76,7 @@ TipoWidget::TipoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
 		frame->setParent(atrib_base_twg->widget(1));
 
-		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
+		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(tipo_base_rb, SIGNAL(toggled(bool)), this, SLOT(selecionarConfiguracaoTipo(void)));
 		connect(composto_rb, SIGNAL(toggled(bool)), this, SLOT(selecionarConfiguracaoTipo(void)));
 		connect(enumeracao_rb, SIGNAL(toggled(bool)), this, SLOT(selecionarConfiguracaoTipo(void)));

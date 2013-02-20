@@ -39,14 +39,14 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 																				 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																				 GlobalAttributes::CONFIGURATION_EXT);
 
-		parent_form=new FormBasico(NULL, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
+		parent_form=new BaseForm(NULL, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
 		parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(obj_type));
-		parent_form->widgetgeral_wgt->insertWidget(0, this);
-		parent_form->widgetgeral_wgt->setCurrentIndex(0);
-		parent_form->definirBotoes(MessageBox::OK_CANCEL_BUTTONS);
+		parent_form->generalwidget_wgt->insertWidget(0, this);
+		parent_form->generalwidget_wgt->setCurrentIndex(0);
+		parent_form->setButtonConfiguration(MessageBox::OK_CANCEL_BUTTONS);
 
 		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
-		connect(parent_form->cancelar_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
+		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 		connect(parent_form, SIGNAL(rejected()), this, SLOT(reject()));
 
 		schema_sel=new ObjectSelectorWidget(OBJ_SCHEMA, true, this);
@@ -228,7 +228,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 												 dynamic_cast<TableObject *>(object)->isAddedByRelationship())));
 		protected_obj_frm->setVisible(prot);
 
-		parent_form->aplicar_ok_btn->setEnabled(!prot);
+		parent_form->apply_ok_btn->setEnabled(!prot);
 	}
 	else
 	{

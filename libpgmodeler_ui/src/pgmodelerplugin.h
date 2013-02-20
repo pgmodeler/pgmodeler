@@ -41,7 +41,7 @@
 */
 class PgModelerPlugin {
 	protected:
-		FormBasico *plugin_info_frm;
+		BaseForm *plugin_info_frm;
 
 	private:
 		QLabel	*icon_lbl,

@@ -15,13 +15,13 @@ windows:RCC_DIR += src
 
 SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/modelowidget.cpp \
-           $$PWD/src/formsobre.cpp \
+	   $$PWD/src/aboutform.cpp \
            $$PWD/src/messagebox.cpp \
            $$PWD/src/textboxwidget.cpp \
            $$PWD/src/baseobjectwidget.cpp \
 	   $$PWD/src/operationlistwidget.cpp \
            $$PWD/src/visaoobjetoswidget.cpp \
-           $$PWD/src/formbasico.cpp \
+	   $$PWD/src/baseform.cpp \
            $$PWD/src/sourcecodewidget.cpp \
            $$PWD/src/syntaxhighlighter.cpp \
            $$PWD/src/databasewidget.cpp \
@@ -69,13 +69,13 @@ SOURCES += $$PWD/src/formprincipal.cpp \
 
 HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/modelowidget.h \
-           $$PWD/src/formsobre.h \
+	   $$PWD/src/aboutform.h \
            $$PWD/src/messagebox.h \
            $$PWD/src/baseobjectwidget.h \
            $$PWD/src/textboxwidget.h \
 	   $$PWD/src/operationlistwidget.h \
            $$PWD/src/visaoobjetoswidget.h \
-           $$PWD/src/formbasico.h \
+	   $$PWD/src/baseform.h \
            $$PWD/src/sourcecodewidget.h \
            $$PWD/src/syntaxhighlighter.h \
            $$PWD/src/databasewidget.h \
@@ -121,12 +121,12 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/pluginsconfigwidget.h
 
 FORMS += $$PWD/ui/formprincipal.ui \
-         $$PWD/ui/formsobre.ui \
+	 $$PWD/ui/aboutform.ui \
          $$PWD/ui/textboxwidget.ui \
          $$PWD/ui/messagebox.ui \
 	 $$PWD/ui/operationlistwidget.ui \
          $$PWD/ui/visaoobjetoswidget.ui \
-         $$PWD/ui/formbasico.ui \
+	 $$PWD/ui/baseform.ui \
          $$PWD/ui/sourcecodewidget.ui \
          $$PWD/ui/databasewidget.ui \
          $$PWD/ui/baseobjectwidget.ui \

@@ -18,28 +18,23 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class FormBasico
-\brief Definição da classe que um container de widgets de configuração de objetos no modelo de banco de dados.
+\class FormPrincipal
+\brief Definição da classe que implementa a caixa de informações do software.
 */
 
-#ifndef FROM_BASICO_H
-#define FROM_BASICO_H
+#ifndef ABOUT_FORM_H
+#define ABOUT_FORM_H
 
-#include <QtGui>
-#include "ui_formbasico.h"
-#include "exception.h"
-#include "messagebox.h"
+#include <QWidget>
+#include "ui_aboutform.h"
+#include "globalattributes.h"
 
-class FormBasico: public QDialog, public Ui::FormBasico {
+class AboutForm: public QWidget, public Ui::AboutForm {
 	private:
 		Q_OBJECT
 
 	public:
-		FormBasico(QWidget * parent = 0, Qt::WindowFlags f = 0);
-		~FormBasico(void){}
-		void definirBotoes(unsigned conf_botoes=MessageBox::OK_CANCEL_BUTTONS);
-
-	public slots:
+		AboutForm(QWidget *parent = 0);
 };
 
 #endif

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FormBasico</class>
- <widget class="QDialog" name="FormBasico">
+ <class>BaseForm</class>
+ <widget class="QDialog" name="BaseForm">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -31,7 +31,7 @@
     <number>2</number>
    </property>
    <item row="0" column="0">
-    <widget class="QStackedWidget" name="widgetgeral_wgt">
+    <widget class="QStackedWidget" name="generalwidget_wgt">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -71,7 +71,7 @@
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <layout class="QGridLayout" name="botoes_lt">
+       <layout class="QGridLayout" name="buttons_lt">
         <property name="leftMargin">
          <number>4</number>
         </property>
@@ -119,7 +119,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QPushButton" name="aplicar_ok_btn">
+         <widget class="QPushButton" name="apply_ok_btn">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -160,7 +160,7 @@
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QPushButton" name="cancelar_btn">
+         <widget class="QPushButton" name="cancel_btn">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>

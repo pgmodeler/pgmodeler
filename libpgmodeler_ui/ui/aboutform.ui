@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FormSobre</class>
- <widget class="QWidget" name="FormSobre">
+ <class>AboutForm</class>
+ <widget class="QWidget" name="AboutForm">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -378,7 +378,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
   <connection>
    <sender>close_btn</sender>
    <signal>clicked()</signal>
-   <receiver>FormSobre</receiver>
+   <receiver>AboutForm</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel">
