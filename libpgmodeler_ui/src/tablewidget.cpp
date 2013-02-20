@@ -13,24 +13,20 @@ extern TriggerWidget *gatilho_wgt;
 
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
-	//QStringList lista;
 	QGridLayout *grid=NULL;
 	ObjectTableWidget *tab=NULL;
-	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
-											 OBJ_RULE, OBJ_INDEX };
+	ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 
 	Ui_TableWidget::setupUi(this);
 
 	operation_count=0;
 
-	//Configura as tabelas que armazenam os objetos da tabela
+	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
 	for(unsigned i=0; i < 5; i++)
 	{
-		//Aloca a tabela do tipo atual
 		tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 															(ObjectTableWidget::UPDATE_BUTTON), true, this);
-		/* Armazena sua referência no mapa para facilitar as operações onde
-		 se precisa obter a tabela de um tipo de objeto de tabela específico */
+
 		objects_tab_map[types[i]]=tab;
 
 		grid=new QGridLayout;
@@ -38,15 +34,13 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 		grid->setContentsMargins(2,2,2,2);
 		attributes_tbw->widget(i)->setLayout(grid);
 
-		//Conecta os sinais/slots na tabela alocada
 		connect(tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
 		connect(tab, SIGNAL(s_rowRemoved(int)), this, SLOT(removeObject(int)));
 		connect(tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleObject(void)));
 		connect(tab, SIGNAL(s_rowEdited(int)), this, SLOT(handleObject(void)));
-		connect(tab, SIGNAL(s_rowsMoved(int,int)), this, SLOT(moveObjects(int,int)));
+		connect(tab, SIGNAL(s_rowsMoved(int,int)), this, SLOT(swapObjects(int,int)));
 	}
 
-	//Configura as colunas e rótulos das tabelas de objetos
 	objects_tab_map[OBJ_COLUMN]->setColumnCount(4);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Name"), 0);
 	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
@@ -100,7 +94,6 @@ void TableWidget::hideEvent(QHideEvent *event)
 	ancestor_tabs_lst->clear();
 	copied_tabs_lst->clear();
 
-	//Varre o mapa de tabelas e remove as linhas de cada uma
 	itr=objects_tab_map.begin();
 	itr_end=objects_tab_map.end();
 	while(itr!=itr_end)
@@ -120,21 +113,18 @@ void TableWidget::hideEvent(QHideEvent *event)
 void TableWidget::showTableObjectForm(ObjectType obj_type)
 {
 	TableObject *object=NULL;
-	ObjectTableWidget *tab_obj=NULL;
+	ObjectTableWidget *obj_table=NULL;
 	Table *table=NULL;
 
-	//Seleciona a tabela de objeto conforme o tipo passado
-	tab_obj=selectObjectTable(obj_type);
+	//Selects the object table based upon the passed object type
+	obj_table=getObjectTable(obj_type);
 
-	/* Caso haja um item selecionado na tabela, obtém a referência ao objeto
-		de tabela que ela representa */
-	if(tab_obj->getSelectedRow()>=0)
-		object=reinterpret_cast<TableObject *>(tab_obj->getRowData(tab_obj->getSelectedRow()).value<void *>());
+	//Gets the object reference if there is an item select on table
+	if(obj_table->getSelectedRow()>=0)
+		object=reinterpret_cast<TableObject *>(obj_table->getRowData(obj_table->getSelectedRow()).value<void *>());
 
-	//Obtém a referência a tabela que é dona do objeto a ser editado
 	table=dynamic_cast<Table *>(this->object);
 
-	//Exibe o formulário correto de acordo com o tipo de objeto de tabela
 	switch(obj_type)
 	{
 		case OBJ_COLUMN:
@@ -165,7 +155,7 @@ void TableWidget::showTableObjectForm(ObjectType obj_type)
 	}
 }
 
-ObjectTableWidget *TableWidget::selectObjectTable(ObjectType obj_type)
+ObjectTableWidget *TableWidget::getObjectTable(ObjectType obj_type)
 {
 	if(objects_tab_map.count(obj_type) > 0)
 		return(objects_tab_map[obj_type]);
@@ -173,7 +163,7 @@ ObjectTableWidget *TableWidget::selectObjectTable(ObjectType obj_type)
 		return(NULL);
 }
 
-ObjectType TableWidget::selectObjectType(QObject *sender)
+ObjectType TableWidget::getObjectType(QObject *sender)
 {
 	ObjectType obj_type=BASE_OBJECT;
 
@@ -181,9 +171,6 @@ ObjectType TableWidget::selectObjectType(QObject *sender)
 	{
 		map<ObjectType, ObjectTableWidget *>::iterator itr, itr_end;
 
-		/* Varre o mapa de tabelas caso o sender no parâmetro seja
-		 igual a alguma tabela dentro do mapa retorna a chave
-		 do mapa para a tabela encontrada */
 		itr=objects_tab_map.begin();
 		itr_end=objects_tab_map.end();
 
@@ -204,46 +191,37 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	try
 	{
 		unsigned i, count;
-		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER,
-												 OBJ_RULE, OBJ_INDEX };
+		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 
 		if(!table)
 		{
-			//Aloca a nova tabela
 			table=new Table;
 
 			if(schema)
 				table->setSchema(schema);
 
-			/* Marca como novo objeto o relacionamento gerado, assim o mesmo é tratado
-		 de forma diferente nos métodos de configuração da classe superior */
+			/* Sets the 'new_object' flag as true indicating that the alocated table must be treated
+				 as a recently created object */
 			this->new_object=true;
 		}
 
-		//Define os atributos do formulários e da janela pai
 		BaseObjectWidget::setAttributes(model, op_list, table, schema, pos_x, pos_y);
 
-
-		/* Inicia o encademanento de operações, assim todo objeto editado dentro
-		da tabela será encadeado na lista, desta forma quando o usuário
-		necessitar desfazer as modificações da tabela, os objetos da
-		tabela também serão restaurados */
 		op_list->startOperationChain();
 		operation_count=op_list->getCurrentSize();
 
 		if(this->new_object)
-			//Adiciona o relacionamento criado   lista de operações
 			op_list->registerObject(table, Operation::OBJECT_CREATED);
 
-		//Lista todos os objetos da tabela
+		/* Listing all objects (column, constraint, trigger, index, rule) on the
+		respective table objects */
 		for(i=0; i < 5; i++)
 		{
 			listObjects(types[i]);
 
-			/* Caso o tipo atual seja um coluna ou restrição:
-		 Desabilita (esconde) os botões de mover objetos na tabela
-		 pois esta movimentação só pode ser feita antes da ligação de
-		 relacionamentos   tabela */
+			/* if the type is COLUMN or CONSTRAINT disable the move buttons for the two tables
+			 because columns/constraints only can be moved when the table does not reference
+			 objects created by relationship */
 			if(types[i]==OBJ_COLUMN || types[i]==OBJ_CONSTRAINT)
 			{
 				if(this->new_object || !table->isReferRelationshipAddedObject())
@@ -256,12 +234,12 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 			}
 		}
 
-		//Lista a as tabelas ancestrais da tabela em edição
+		//Listing the ancestor tables
 		count=table->getAncestorTable();
 		for(i=0; i < count; i++)
 			ancestor_tabs_lst->addItem(QString::fromUtf8(table->getAncestorTable(i)->getName(true)));
 
-		//Lista a as tabelas copiadas pela tabela em edição
+		//Listing the copied tables
 		count=table->getCopyTable();
 		for(i=0; i < count; i++)
 			copied_tabs_lst->addItem(QString::fromUtf8(table->getCopyTable(i)->getName(true)));
@@ -283,31 +261,26 @@ void TableWidget::listObjects(ObjectType obj_type)
 
 	try
 	{
-		//Obtém a tabela de objetos referente ao tipo passado
+		//Gets the object table related to the object type
 		tab=objects_tab_map[obj_type];
 
-		//Obtém a referêni   tabela em edição
 		table=dynamic_cast<Table *>(this->object);
 
-		//Remove as linhas da tabela antes da exibição dos elementos
 		tab->blockSignals(true);
 		tab->removeRows();
 
-		//Obtém a quantidade de elementos a serem exibidos
 		count=table->getObjectCount(obj_type);
 		for(i=0; i < count; i++)
 		{
-			//Adicionar uma linha
 			tab->addRow();
-			//Exibe o objeto atual na linha atual da tabela
 			showObjectData(dynamic_cast<TableObject*>(table->getObject(i, obj_type)), i);
 		}
 		tab->clearSelection();
 		tab->blockSignals(false);
 
+		//Enables the add button on the constraints, triggers and index tab only when there is columns created
 		if(obj_type==OBJ_COLUMN)
 		{
-			//Habilita o botão de inserção de restrições, gatilhos e índices somente quando há colunas na tabela
 			objects_tab_map[OBJ_CONSTRAINT]->enableButtons(ObjectTableWidget::ADD_BUTTON,
 																											objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
 			objects_tab_map[OBJ_TRIGGER]->enableButtons(ObjectTableWidget::ADD_BUTTON,
@@ -328,13 +301,8 @@ void TableWidget::handleObject(void)
 
 	try
 	{
-		//Obtém o tipo de objetos referênte a tabela sender
-		obj_type=selectObjectType(sender());
-
-		//Exibe o formulário de edição de objetos conforme o tipo do objeto obtido
+		obj_type=getObjectType(sender());
 		showTableObjectForm(obj_type);
-
-		//Atualiza a lista de objetos exibindo o objeto recém criado
 		listObjects(obj_type);
 	}
 	catch(Exception &e)
@@ -365,27 +333,25 @@ void TableWidget::showObjectData(TableObject *object, int row)
 											 EventType::on_truncate,	EventType::on_update };
 
 	obj_type=object->getObjectType();
-
-	//Obtém a tabela referênte ao tipo do objeto
 	tab=objects_tab_map[obj_type];
 
-	//Coluna 0: Nome do objeto
+	//Column 0: Object name
 	tab->setCellText(QString::fromUtf8(object->getName()),row,0);
 
-	/* Para cada tipo de objeto existe uma rotina
-		de exibição do objeto na respectiva tabela. */
+	//For each object type there is a use for the columns from 1 to 3
 	if(obj_type==OBJ_COLUMN)
 	{
 		column=dynamic_cast<Column *>(object);
-		//Coluna 1: Tipo da coluna
+
+		//Column 1: Column data type
 		tab->setCellText(QString::fromUtf8(~column->getType()),row,1);
 
-		//Coluna 2: Valor padrão da coluna
+		//Column 2: Column defaul value
 		str_aux=column->getDefaultValue();
 		if(str_aux.isEmpty()) str_aux="-";
 		tab->setCellText(str_aux,row,2);
 
-		//Coluna 3: Atributos da coluna (restrições a qual ela pertence)
+		//Column 3: Column attributes (constraints which belongs)
 		str_aux=QString::fromUtf8(TableObjectView::getConstraintString(column));
 		for(i=0; i < 5; i++)
 		{
@@ -401,14 +367,16 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	else if(obj_type==OBJ_CONSTRAINT)
 	{
 		constr=dynamic_cast<Constraint *>(object);
-		//Coluna 1: Tipo de comparação da restrição
+
+		//Column 1: Constraint type
 		tab->setCellText(~constr->getConstraintType(),row,1);
 
 		if(constr->getConstraintType()==ConstraintType::foreign_key)
 		{
-			//Coluna 2: Tipo de ação ON UPDATE da restrição
+			//Column 2: ON DELETE action
 			tab->setCellText(~constr->getActionType(false),row,2);
-			//Coluna 3: Tipo de ação ON UPDATE da restrição
+
+			//Column 3: ON UPDATE action
 			tab->setCellText(~constr->getActionType(true),row,3);
 		}
 		else
@@ -420,16 +388,17 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	else if(obj_type==OBJ_TRIGGER)
 	{
 		trigger=dynamic_cast<Trigger *>(object);
-		//Coluna 2: Tipo de disparo do gatilho
-		tab->setCellText(~trigger->getFiringType(),row,2);
 
-		//Coluna 1: Tabela referenciada pelo gatilho
+		//Column 1: Table referenced by the trigger (constraint trigger)
 		if(trigger->getReferencedTable())
 			tab->setCellText(QString::fromUtf8(trigger->getReferencedTable()->getName(true)),row,1);
 		else
 			tab->setCellText(QString("-"),row,1);
 
-		//Coluna 3: Eventos que disparam o gatilho
+		//Column 2: Trigger firing type
+		tab->setCellText(~trigger->getFiringType(),row,2);
+
+		//Column 3: Events that fires the trigger
 		for(i=0; i < 4; i++)
 		{
 			if(trigger->isExecuteOnEvent(events[i]))
@@ -441,20 +410,22 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	else if(obj_type==OBJ_RULE)
 	{
 		rule=dynamic_cast<Rule *>(object);
-		//Coluna 1: Tipo de execução da regra
+
+		//Column 1: Rule execution type
 		tab->setCellText(~rule->getExecutionType(),row,1);
-		//Coluna 2: Tipo de evento que dispara a regra
+
+		//Column 2: Rule event type
 		tab->setCellText(~rule->getEventType(),row,2);
 	}
 	else
 	{
 		index=dynamic_cast<Index *>(object);
-		//Coluna 1: Tipo de indexação do índice
+
+		//Coluna 1: Indexing type
 		tab->setCellText(~index->getIndexingType(),row,1);
 	}
 
-	/* Caso o objeto esteja protegido ou foi incluído por relacionamento
-		muda a coloração da linha para denotar o fato */
+	//Changes the foreground/background color of the table row if the object is protected or added by relationship
 	if(object->isAddedByRelationship() || object->isProtected())
 	{
 		font=tab->font();
@@ -466,7 +437,6 @@ void TableWidget::showObjectData(TableObject *object, int row)
 			tab->setRowFont(row, font, RELINC_LINE_FGCOLOR, RELINC_LINE_BGCOLOR);
 	}
 
-	//Define como dado da linha o próprio objeto para facilitar referências ao mesmo
 	tab->setRowData(QVariant::fromValue<void *>(object), row);
 }
 
@@ -480,27 +450,19 @@ void TableWidget::removeObjects(void)
 	try
 	{
 		table=dynamic_cast<Table *>(this->object);
-		obj_type=selectObjectType(sender());
-		count=table->getObjectCount(obj_type);
 
-		/* Armazena a quantidade de operações antes da remoção de objetos.
-		 Caso um erro seja gerado e a quantidade de operações na lista
-		 seja diferente do valor na variável 'qtd_op' indica que operações
-		 foram inseridas na lista e precisam ser removidas */
+		obj_type=getObjectType(sender());
+		count=table->getObjectCount(obj_type);
 		op_count=op_list->getCurrentSize();
 
 		for(i=0; i < count; i++)
 		{
-			//Obtém o objeto da tabela
 			object=table->getObject(0, obj_type);
 
 			if(!object->isProtected() &&
 				 !dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 			{
-				//Tenta removê-lo da tabela
 				table->removeObject(object);
-
-				//Adiciona o objeto removido na lista de operações para ser restaurado se necessário
 				op_list->registerObject(object, Operation::OBJECT_REMOVED, 0, this->object);
 			}
 			else
@@ -512,31 +474,22 @@ void TableWidget::removeObjects(void)
 	}
 	catch(Exception &e)
 	{
-		/* Caso a quantidade de operações seja diferente da quantidade inicial
-		 obtida antes da remoção dos objetos */
 		if(op_count < op_list->getCurrentSize())
 		{
-			//Obtém a quantidade de operações que necessitam ser removidas
 			count=op_list->getCurrentSize()-op_count;
-
-			/* Anula o encadeamento de operações para que as mesmas seja
-			desfeitas uma a uma ignorando o encadeamento */
 			op_list->ignoreOperationChain(true);
 
-			/* Desfaz as operações na quantidade calculada e remove a
-			operação da lista */
 			for(i=0; i < count; i++)
 			{
 				op_list->undoOperation();
 				op_list->removeLastOperation();
 			}
 
-			//Desfaz a anulação do encadeamento
 			op_list->ignoreOperationChain(false);
 		}
 
-		//Atualiza a lista de objeto da tabela
 		listObjects(obj_type);
+
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -550,18 +503,14 @@ void TableWidget::removeObject(int row)
 	try
 	{
 		table=dynamic_cast<Table *>(this->object);
-		obj_type=selectObjectType(sender());
+		obj_type=getObjectType(sender());
 
-		//Obtém o objeto da tabela
 		object=table->getObject(row, obj_type);
 
 		if(!object->isProtected() &&
 			 !dynamic_cast<TableObject *>(object)->isAddedByRelationship())
 		{
-			//Tenta removê-lo da tabela
 			table->removeObject(object);
-
-			//Adiciona o objeto removido na lista de operações para ser restaurado se necessário
 			op_list->registerObject(object, Operation::OBJECT_REMOVED, row, this->object);
 		}
 		else
@@ -572,13 +521,12 @@ void TableWidget::removeObject(int row)
 	}
 	catch(Exception &e)
 	{
-		//Atualiza a lista de objeto da tabela
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
 
-void TableWidget::TableWidget::moveObjects(int idx1, int idx2)
+void TableWidget::TableWidget::swapObjects(int idx1, int idx2)
 {
 	ObjectType obj_type=BASE_OBJECT;
 	Table *table=NULL;
@@ -586,21 +534,18 @@ void TableWidget::TableWidget::moveObjects(int idx1, int idx2)
 
 	try
 	{
-		obj_type=selectObjectType(sender());
+		obj_type=getObjectType(sender());
 		table=dynamic_cast<Table *>(this->object);
 		count=table->getObjectCount(obj_type);
 
 		if(idx1 >= count)
-			/* Caso especial 1: Caso o objeto foi movido para o início da lista
-			seu índice será trocado para 0 */
+			//Special case 1: the object was moved to the first row, its index is swapped with index 0
 			op_list->updateObjectIndex(table->getObject(idx2, obj_type), 0);
 		else if(idx2 >= count)
-			/* Caso especial 2: Caso o objeto foi movido para o final da lista seu
-			índice será trocado para qtd-1 */
+			//Special case 2: the object was moved to the last row, its index is swapped with index count-1
 			op_list->updateObjectIndex(table->getObject(idx1, obj_type), count-1);
 		else
 		{
-			//Atualizando o índice dos objetos na lista de operações
 			op_list->updateObjectIndex(table->getObject(idx1, obj_type), idx2);
 			op_list->updateObjectIndex(table->getObject(idx2, obj_type), idx1);
 		}
@@ -609,7 +554,6 @@ void TableWidget::TableWidget::moveObjects(int idx1, int idx2)
 	}
 	catch(Exception &e)
 	{
-		//Atualiza a lista de objeto do relacionamento
 		listObjects(obj_type);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
@@ -622,22 +566,16 @@ void TableWidget::applyConfiguration(void)
 		Table *table=NULL;
 
 		if(!this->new_object)
-		{
-			//Adiciona o relacionamento   lista de operações antes de ser modificado
 			op_list->registerObject(this->object, Operation::OBJECT_MODIFIED);
-		}
 
 		table=dynamic_cast<Table *>(this->object);
 		table->setWithOIDs(with_oids_chk->isChecked());
 
-		//Aplica as configurações básicas
 		BaseObjectWidget::applyConfiguration();
 
 		try
 		{
 			if(model->getRelationship(table, NULL))
-				/* Faz a validação dos relacionamentos para refletir a nova configuração
-			 da tabela */
 				model->validateRelationships();
 
 			model->updateTableFKRelationships(table);
@@ -645,28 +583,18 @@ void TableWidget::applyConfiguration(void)
 		catch(Exception &e)
 		{
 			MessageBox msg_box;
-			/* O único erro que é desconsiderado é o de invalidação de objetos, pois,
-			mesmo com a restauração do estado original da tabela estes
-			objetos não são recuperados */
+
 			if(e.getErrorType()==ERR_INVALIDATED_OBJECTS)
-				//Exibe uma mensagem de erro com o conteúdo da exceção
 				msg_box.show(e);
-			//Para os demais erros a exceção é encaminhada
 			else
 				throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		}
 
-		//Finaliza o encademanto de operações aberto
 		op_list->finishOperationChain();
-
-		//Finaliza a configuração da tabela
 		finishConfiguration();
 	}
 	catch(Exception &e)
 	{
-		/* Cancela a configuração o objeto removendo a ultima operação adicionada
-		 referente ao objeto editado/criado e desaloca o objeto
-		 caso o mesmo seja novo */
 		op_list->ignoreOperationChain(true);
 		this->cancelConfiguration();
 		op_list->ignoreOperationChain(false);
@@ -679,10 +607,7 @@ void TableWidget::cancelConfiguration(void)
 	if(op_list->isOperationChainStarted())
 		op_list->finishOperationChain();
 
-	//Caso a lista de operações sofreu modificações
 	if(operation_count < op_list->getCurrentSize())
-		/* Executa o cancelamento da configuração e remove as operações
-		 adicionadas durante a edição da tabela */
 		BaseObjectWidget::cancelConfiguration();
 }
 

@@ -19,7 +19,7 @@
 /**
 \ingroup libpgmodeler_ui
 \class TableWidget
-\brief Definição da classe que implementa o formulário de edição dos atributos de tabela.
+\brief  Implements the operations to create/edit tables via form.
 */
 
 #ifndef TABLE_WIDGET_H
@@ -34,29 +34,27 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 	private:
 		Q_OBJECT
 
-		/*! \brief Quantidade de elementos na lista de operações antes da tabela
-			ser editada. Este atributo é usado para se saber, em caso de cancelamento
-			da edição da tabela, a quantidade de operações relacionadas ao
-			objeto que necessitam ser removidas. Vide: cancelarConfiguracao() */
+		/*! \brief Operation list element count before editing the table. This attribute
+		is used to know, in case of cancel the edition, the operation (count) that is needed to
+		be removed. See: cancelConfiguration() */
 		unsigned operation_count;
 
-		//! \brief Armazena as tabelas de objetos filhos da tabela (colunas, restrições, índices, etc)
+		//! \brief Stores the objects tables used to handle columns, constraints, indexes, rules and triggers
 		map<ObjectType, ObjectTableWidget *> objects_tab_map;
 
-		/*! \brief Lista os objetos do relacionamento na tabela respectiva, de acordo
-			com o tipo do objeto passado */
+		//! \brief Lists (on the correct object table) the table objects according to the specified type
 		void listObjects(ObjectType obj_type);
 
-		//! \brief Exibe os dados de um objeto do relacionamento na lista específica de sua tabela
+		//! \brief Shows the specified object data at the correct object table, at specified row
 		void showObjectData(TableObject *object, int row);
 
-		//! \brief Seleciona a tabela de objetos de acordo com o tipo passado
-		ObjectTableWidget *selectObjectTable(ObjectType obj_type);
+		//! \brief Returns the object table according with the child type
+		ObjectTableWidget *getObjectTable(ObjectType obj_type);
 
-		//! \brief Seleciona o tipo de objeto de acordo com o objeto sender informado
-		ObjectType selectObjectType(QObject *sender);
+		//! \brief Returns the object type according to the widget (in this case a object table) that called the method
+		ObjectType getObjectType(QObject *sender);
 
-		//! \brief Exibe o formulário de edição de objetos de tabela conforme o tipo passado
+		//! \brief Shows the table object editing form according to the specified object type
 		void showTableObjectForm(ObjectType obj_type);
 
 		void hideEvent(QHideEvent *event);
@@ -67,17 +65,17 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Table *table, float pos_x, float pos_y);
 
 	private slots:
-		//! \brief Adiciona ou edita um objeto da tabela a qual aciona o método
+		//! \brief Adds or edit a object on the object table that calls the slot
 		void handleObject(void);
 
-		//! \brief Remove um objeto selecionado  na tabela a qual aciona o método
+		//! \brief Removes the selected object from the table that calls the slot
 		void removeObject(int row);
 
-		//! \brief Remove todos os objetos da tabela a qual aciona o método
+		//! \brief Removes all objects from the table that calls the slot
 		void removeObjects(void);
 
-		//! \brief Faz a movimentação entre dois objetos da tabela
-		void moveObjects(int idx1, int idx2);
+		//! \brief Swap the index between two rows of the table that calls the slot
+		void swapObjects(int idx1, int idx2);
 
 	public slots:
 		void applyConfiguration(void);
