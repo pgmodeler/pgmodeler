@@ -14,7 +14,7 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 																		 GlobalAttributes::CONFIGURATION_EXT);
 
 		data_type=NULL;
-		data_type=new TipoPgSQLWidget(this);
+		data_type=new PgSQLTypeWidget(this);
 		domain_grid->addWidget(data_type,4,0,1,2);
 
 		configureFormLayout(domain_grid, OBJ_DOMAIN);
@@ -53,7 +53,7 @@ void DomainWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 		not_null_chk->setChecked(domain->isNotNull());
 	}
 
-	data_type->definirAtributos(type, model);
+	data_type->setAttributes(type, model);
 }
 
 void DomainWidget::applyConfiguration(void)
@@ -64,7 +64,7 @@ void DomainWidget::applyConfiguration(void)
 		startConfiguration<Domain>();
 
 		domain=dynamic_cast<Domain *>(this->object);
-		domain->setType(data_type->obterTipoPgSQL());
+		domain->setType(data_type->getPgSQLType());
 		domain->setDefaultValue(def_value_edt->text());
 		domain->setExpression(check_expr_txt->toPlainText());
 		domain->setConstraintName(constr_name_edt->text());

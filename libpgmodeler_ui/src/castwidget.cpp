@@ -9,8 +9,8 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 
 		Ui_CastWidget::setupUi(this);
 
-		src_datatype=new TipoPgSQLWidget(this, trUtf8("Source data type"));
-		trg_datatype=new TipoPgSQLWidget(this, trUtf8("Target data type"));
+		src_datatype=new PgSQLTypeWidget(this, trUtf8("Source data type"));
+		trg_datatype=new PgSQLTypeWidget(this, trUtf8("Target data type"));
 		conv_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 
 		convtipo_grid->addWidget(conv_func_sel,1,1,1,3);
@@ -65,8 +65,8 @@ void CastWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Cas
 		assignment_rb->setChecked(!implicit_rb->isChecked());
 	}
 
-	src_datatype->definirAtributos(src_type,model);
-	trg_datatype->definirAtributos(trg_type,model);
+	src_datatype->setAttributes(src_type,model);
+	trg_datatype->setAttributes(trg_type,model);
 }
 
 void CastWidget::applyConfiguration(void)
@@ -78,8 +78,8 @@ void CastWidget::applyConfiguration(void)
 		startConfiguration<Cast>();
 
 		cast=dynamic_cast<Cast *>(this->object);
-		cast->setDataType(Cast::SRC_TYPE, src_datatype->obterTipoPgSQL());
-		cast->setDataType(Cast::DST_TYPE, trg_datatype->obterTipoPgSQL());
+		cast->setDataType(Cast::SRC_TYPE, src_datatype->getPgSQLType());
+		cast->setDataType(Cast::DST_TYPE, trg_datatype->getPgSQLType());
 		cast->setInOut(input_output_chk->isChecked());
 
 		if(implicit_rb->isChecked())

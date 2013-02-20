@@ -33,7 +33,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
 	   $$PWD/src/languagewidget.cpp \
 	   $$PWD/src/objectselectorwidget.cpp \
 	   $$PWD/src/functionwidget.cpp \
-           $$PWD/src/tipopgsqlwidget.cpp \
+	   $$PWD/src/pgsqltypewidget.cpp \
 	   $$PWD/src/parameterwidget.cpp \
            $$PWD/src/castwidget.cpp \
            $$PWD/src/conversionwidget.cpp \
@@ -87,7 +87,7 @@ HEADERS += $$PWD/src/formprincipal.h \
 	   $$PWD/src/languagewidget.h \
 	   $$PWD/src/objectselectorwidget.h \
 	   $$PWD/src/functionwidget.h \
-           $$PWD/src/tipopgsqlwidget.h \
+	   $$PWD/src/pgsqltypewidget.h \
 	   $$PWD/src/parameterwidget.h \
            $$PWD/src/castwidget.h \
            $$PWD/src/conversionwidget.h \
@@ -137,7 +137,7 @@ FORMS += $$PWD/ui/formprincipal.ui \
 	 $$PWD/ui/languagewidget.ui \
 	 $$PWD/ui/objectselectorwidget.ui \
 	 $$PWD/ui/functionwidget.ui \
-         $$PWD/ui/tipopgsqlwidget.ui \
+	 $$PWD/ui/pgsqltypewidget.ui \
 	 $$PWD/ui/parameterwidget.ui \
          $$PWD/ui/castwidget.ui \
 	 $$PWD/ui/conversionwidget.ui \

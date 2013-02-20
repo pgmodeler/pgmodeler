@@ -19,8 +19,8 @@ OperatorClassWidget::OperatorClassWidget(QWidget *parent): BaseObjectWidget(pare
 		family_sel=new ObjectSelectorWidget(OBJ_OPFAMILY, false, this);
 		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
 		function_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-		data_type=new TipoPgSQLWidget(this);
-		storage_type=new TipoPgSQLWidget(this, trUtf8("Storage Type"));
+		data_type=new PgSQLTypeWidget(this);
+		storage_type=new PgSQLTypeWidget(this, trUtf8("Storage Type"));
 		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 
 		elements_tab->setColumnCount(4);
@@ -110,7 +110,7 @@ void OperatorClassWidget::editElement(int lin_idx)
 	operator_sel->setSelectedObject(elem.getOperator());
 	recheck_chk->setChecked(elem.isRecheck());
 	stg_num_sb->setValue(elem.getStrategyNumber());
-	storage_type->definirAtributos(elem.getStorage(),this->model);
+	storage_type->setAttributes(elem.getStorage(),this->model);
 }
 
 void OperatorClassWidget::showElementData(OperatorClassElement elem, int lin_idx)
@@ -168,7 +168,7 @@ void OperatorClassWidget::handleElement(int lin_idx)
 		else  if(elem_type==OperatorClassElement::OPERATOR_ELEM)
 			elem.setOperator(dynamic_cast<Operator *>(operator_sel->getSelectedObject()), stg_num_sb->value(), recheck_chk->isChecked());
 		else
-			elem.setStorage(storage_type->obterTipoPgSQL());
+			elem.setStorage(storage_type->getPgSQLType());
 
 		showElementData(elem, lin_idx);
 
@@ -198,7 +198,7 @@ void OperatorClassWidget::setAttributes(DatabaseModel *model, OperationList *op_
 	family_sel->setModel(model);
 	function_sel->setModel(model);
 	operator_sel->setModel(model);
-	storage_type->definirAtributos(type, model);
+	storage_type->setAttributes(type, model);
 
 	if(op_class)
 	{
@@ -218,7 +218,7 @@ void OperatorClassWidget::setAttributes(DatabaseModel *model, OperationList *op_
 		elements_tab->clearSelection();
 	}
 
-	data_type->definirAtributos(type, model);
+	data_type->setAttributes(type, model);
 }
 
 void OperatorClassWidget::applyConfiguration(void)
@@ -234,7 +234,7 @@ void OperatorClassWidget::applyConfiguration(void)
 		op_class->setDefault(op_class->isDefault());
 		op_class->setFamily(dynamic_cast<OperatorFamily *>(family_sel->getSelectedObject()));
 		op_class->setIndexingType(IndexingType(indexing_cmb->currentText()));
-		op_class->setDataType(data_type->obterTipoPgSQL());
+		op_class->setDataType(data_type->getPgSQLType());
 
 		op_class->removeElements();
 		count=elements_tab->getRowCount();

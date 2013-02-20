@@ -27,13 +27,13 @@
 
 #include "baseobjectwidget.h"
 #include "ui_parameterwidget.h"
-#include "tipopgsqlwidget.h"
+#include "pgsqltypewidget.h"
 
 class ParameterWidget: public BaseObjectWidget, public Ui::ParameterWidget {
 	private:
 		Q_OBJECT
 
-		TipoPgSQLWidget *data_type;
+		PgSQLTypeWidget *data_type;
 		Parameter parameter;
 
 		void hideEvent(QHideEvent *event);

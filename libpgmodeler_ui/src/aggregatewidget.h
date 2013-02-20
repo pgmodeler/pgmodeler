@@ -28,7 +28,7 @@
 #include <QtGui>
 #include "baseobjectwidget.h"
 #include "ui_aggregatewidget.h"
-#include "tipopgsqlwidget.h"
+#include "pgsqltypewidget.h"
 #include "objecttablewidget.h"
 
 class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
@@ -36,7 +36,7 @@ class AggregateWidget: public BaseObjectWidget, public Ui::AggregateWidget {
 		Q_OBJECT
 
 		//! \brief Function input data type widget
-		TipoPgSQLWidget *input_type,
+		PgSQLTypeWidget *input_type,
 
 										//! \brief Function state type widget
 										*state_type;

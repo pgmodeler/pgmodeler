@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_tipowidget.h"
-#include "tipopgsqlwidget.h"
+#include "pgsqltypewidget.h"
 #include "objecttablewidget.h"
 
 /*! \brief Declarando a classe Parametro como metatype para que esta
@@ -48,7 +48,7 @@ class TipoWidget: public BaseObjectWidget, public Ui::TipoWidget {
 		ObjectSelectorWidget *sel_funcoes[7];
 
 		//! \brief Widgets de configuração de tipo cópia e tipo de elemento
-		TipoPgSQLWidget *tipo_copia,
+		PgSQLTypeWidget *tipo_copia,
 										*tipo_elemento;
 
 		//! \brief Tabelas para armazenamento das enumerações e atributos de tipos compostos

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TipoPgSQLWidget</class>
- <widget class="QWidget" name="TipoPgSQLWidget">
+ <class>PgSQLTypeWidget</class>
+ <widget class="QWidget" name="PgSQLTypeWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -31,7 +31,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="tipopgsql_grid">
+  <layout class="QGridLayout" name="pgsqltype_grid">
    <property name="leftMargin">
     <number>2</number>
    </property>
@@ -66,7 +66,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="1" colspan="4">
-       <widget class="QComboBox" name="tipo_interv_cmb">
+       <widget class="QComboBox" name="interval_cmb">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -88,7 +88,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QComboBox" name="tipo_cmb">
+       <widget class="QComboBox" name="type_cmb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -134,7 +134,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="variacao_lbl">
+         <widget class="QLabel" name="variation_lbl">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -192,7 +192,7 @@
        </layout>
       </item>
       <item row="0" column="6">
-       <widget class="QSpinBox" name="precisao_sb">
+       <widget class="QSpinBox" name="precision_sb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -232,7 +232,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="tipo_esp_lbl">
+       <widget class="QLabel" name="spatial_lbl">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -268,7 +268,7 @@
        </widget>
       </item>
       <item row="0" column="8">
-       <widget class="QSpinBox" name="dimensao_sb">
+       <widget class="QSpinBox" name="dimension_sb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -302,7 +302,7 @@
        </widget>
       </item>
       <item row="4" column="0">
-       <widget class="QLabel" name="formato_lbl">
+       <widget class="QLabel" name="format_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -362,7 +362,7 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QComboBox" name="tipo_esp_cmb">
+       <widget class="QComboBox" name="spatial_cmb">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -384,7 +384,7 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="tipo_lbl">
+       <widget class="QLabel" name="type_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -412,7 +412,7 @@
        </widget>
       </item>
       <item row="0" column="4" colspan="2">
-       <widget class="QLabel" name="precisao_lbl">
+       <widget class="QLabel" name="precision_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -448,7 +448,7 @@
        </widget>
       </item>
       <item row="4" column="1" colspan="8">
-       <widget class="QTextEdit" name="formato_txt">
+       <widget class="QTextEdit" name="format_txt">
         <property name="maximumSize">
          <size>
           <width>16777215</width>
@@ -482,7 +482,7 @@
        </widget>
       </item>
       <item row="0" column="3">
-       <widget class="QSpinBox" name="comprimento_sb">
+       <widget class="QSpinBox" name="length_sb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -519,7 +519,7 @@
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QLabel" name="comprimento_lbl">
+       <widget class="QLabel" name="length_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -555,7 +555,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="tipo_interv_lbl">
+       <widget class="QLabel" name="interval_lbl">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -591,7 +591,7 @@
        </widget>
       </item>
       <item row="0" column="7">
-       <widget class="QLabel" name="dimensao_lbl">
+       <widget class="QLabel" name="dimension_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -627,24 +627,22 @@
        </widget>
       </item>
      </layout>
-     <zorder>tipo_lbl</zorder>
-     <zorder>tipo_cmb</zorder>
-     <zorder>comprimento_lbl</zorder>
-     <zorder>comprimento_sb</zorder>
-     <zorder>precisao_lbl</zorder>
-     <zorder>precisao_sb</zorder>
-     <zorder>dimensao_lbl</zorder>
-     <zorder>dimensao_sb</zorder>
-     <zorder>tipo_interv_lbl</zorder>
-     <zorder>tipo_esp_lbl</zorder>
+     <zorder>type_lbl</zorder>
+     <zorder>type_cmb</zorder>
+     <zorder>length_lbl</zorder>
+     <zorder>length_sb</zorder>
+     <zorder>precision_lbl</zorder>
+     <zorder>precision_sb</zorder>
+     <zorder>dimension_lbl</zorder>
+     <zorder>dimension_sb</zorder>
+     <zorder>interval_lbl</zorder>
+     <zorder>spatial_lbl</zorder>
      <zorder>timezone_lbl</zorder>
      <zorder>timezone_chk</zorder>
-     <zorder>formato_lbl</zorder>
-     <zorder>formato_txt</zorder>
-     <zorder>tipo_esp_cmb</zorder>
-     <zorder>tipo_interv_cmb</zorder>
-     <zorder>srid_lbl</zorder>
-     <zorder>srid_spb</zorder>
+     <zorder>format_lbl</zorder>
+     <zorder>format_txt</zorder>
+     <zorder>spatial_cmb</zorder>
+     <zorder>interval_cmb</zorder>
     </widget>
    </item>
   </layout>

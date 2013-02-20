@@ -18,7 +18,7 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		connect(parent_form->aplicar_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
 		source_code_hl=new SyntaxHighlighter(source_code_txt, true);
-		ret_type=new TipoPgSQLWidget(this);
+		ret_type=new PgSQLTypeWidget(this);
 
 		return_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 																			 ObjectTableWidget::UPDATE_BUTTON, true, this);
@@ -281,7 +281,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		return_tab->blockSignals(false);
 	}
 
-	ret_type->definirAtributos(aux_type, model);
+	ret_type->setAttributes(aux_type, model);
 }
 
 void FunctionWidget::hideEvent(QHideEvent *event)
@@ -504,7 +504,7 @@ void FunctionWidget::applyConfiguration(void)
 
 		if(simple_rb->isChecked() || set_rb->isChecked())
 		{
-			func->setReturnType(ret_type->obterTipoPgSQL());
+			func->setReturnType(ret_type->getPgSQLType());
 			func->setReturnSetOf(set_rb->isChecked());
 		}
 		else

@@ -26,7 +26,7 @@
 #define CAST_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "tipopgsqlwidget.h"
+#include "pgsqltypewidget.h"
 #include "ui_castwidget.h"
 
 class CastWidget: public BaseObjectWidget, public Ui::CastWidget {
@@ -34,7 +34,7 @@ class CastWidget: public BaseObjectWidget, public Ui::CastWidget {
 		Q_OBJECT
 
 		//! \brief Datatype configurations
-		TipoPgSQLWidget *src_datatype, *trg_datatype;
+		PgSQLTypeWidget *src_datatype, *trg_datatype;
 
 		//! \brief Conversion function selector
 		ObjectSelectorWidget *conv_func_sel;

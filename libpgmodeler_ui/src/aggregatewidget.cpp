@@ -19,8 +19,8 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		transition_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 		sort_op_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
 
-		input_type=new TipoPgSQLWidget(this, trUtf8("Input Data Type"));
-		state_type=new TipoPgSQLWidget(this, trUtf8("State Data Type"));
+		input_type=new PgSQLTypeWidget(this, trUtf8("Input Data Type"));
+		state_type=new PgSQLTypeWidget(this, trUtf8("State Data Type"));
 
 		input_types_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS ^
 																						ObjectTableWidget::EDIT_BUTTON, true, this);
@@ -79,8 +79,8 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 
 	BaseObjectWidget::setAttributes(model,op_list, aggregate, schema);
 
-	input_type->definirAtributos(type, model);
-	state_type->definirAtributos(type, model);
+	input_type->setAttributes(type, model);
+	state_type->setAttributes(type, model);
 	final_func_sel->setModel(model);
 	transition_func_sel->setModel(model);
 	sort_op_sel->setModel(model);
@@ -105,7 +105,7 @@ void AggregateWidget::setAttributes(DatabaseModel *model, OperationList *op_list
 		input_types_tab->blockSignals(false);
 		input_types_tab->clearSelection();
 
-		state_type->definirAtributos(aggregate->getStateType(), model);
+		state_type->setAttributes(aggregate->getStateType(), model);
 	}
 }
 
@@ -113,7 +113,7 @@ void AggregateWidget::handleDataType(int linha)
 {
 	PgSQLType type;
 
-	type=input_type->obterTipoPgSQL();
+	type=input_type->getPgSQLType();
 	input_types_tab->setRowData(QVariant::fromValue<PgSQLType>(type), linha);
 	input_types_tab->setCellText(QString::fromUtf8(*type),linha,0);
 }
@@ -129,7 +129,7 @@ void AggregateWidget::applyConfiguration(void)
 
 		aggregate=dynamic_cast<Aggregate *>(this->object);
 		aggregate->setInitialCondition(initial_cond_txt->toPlainText());
-		aggregate->setStateType(state_type->obterTipoPgSQL());
+		aggregate->setStateType(state_type->getPgSQLType());
 
 		aggregate->removeDataTypes();
 		count=input_types_tab->getRowCount();

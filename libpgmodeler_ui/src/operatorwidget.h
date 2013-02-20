@@ -26,14 +26,14 @@
 #define OPERATOR_WIDGET_H
 
 #include "baseobjectwidget.h"
-#include "tipopgsqlwidget.h"
+#include "pgsqltypewidget.h"
 #include "ui_operatorwidget.h"
 
 class OperatorWidget: public BaseObjectWidget, public Ui::OperatorWidget {
 	private:
 		Q_OBJECT
 
-		TipoPgSQLWidget *arg_types[2];
+		PgSQLTypeWidget *arg_types[2];
 
 		ObjectSelectorWidget *functions_sel[3],
 												*operators_sel[6];

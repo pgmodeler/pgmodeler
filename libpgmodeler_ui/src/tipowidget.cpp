@@ -19,9 +19,9 @@ TipoWidget::TipoWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 
 		//Aloca os widgets de configuração de tipos
 		tipo_copia=NULL;
-		tipo_copia=new TipoPgSQLWidget(this, trUtf8("Copy Type"));
+		tipo_copia=new PgSQLTypeWidget(this, trUtf8("Copy Type"));
 		tipo_elemento=NULL;
-		tipo_elemento=new TipoPgSQLWidget(this, trUtf8("Element Type"));
+		tipo_elemento=new PgSQLTypeWidget(this, trUtf8("Element Type"));
 
 		//Cria um layout e insere os widgets de tipo
 		grid=dynamic_cast<QGridLayout *>(atrib_base_twg->widget(0)->layout());
@@ -325,9 +325,9 @@ void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, S
 	}
 
 	//Configura o widget de tipo de cópia com o tipo obtido da instância de tipo
-	tipo_copia->definirAtributos(tp_copia, modelo);
+	tipo_copia->setAttributes(tp_copia, modelo);
 	//Configura o widget de tipo de elemento com o tipo obtido da instância de tipo
-	tipo_elemento->definirAtributos(tp_elem, modelo);
+	tipo_elemento->setAttributes(tp_elem, modelo);
 }
 
 void TipoWidget::applyConfiguration(void)
@@ -375,8 +375,8 @@ void TipoWidget::applyConfiguration(void)
 			tipo->setConfiguration(Type::BASE_TYPE);
 
 			//Atribui todos os valores configurados no formulári  instância de tipo
-			tipo->setLikeType(tipo_copia->obterTipoPgSQL());
-			tipo->setElement(tipo_elemento->obterTipoPgSQL());
+			tipo->setLikeType(tipo_copia->getPgSQLType());
+			tipo->setElement(tipo_elemento->getPgSQLType());
 			tipo->setInternalLength(comp_int_sb->value());
 			tipo->setByValue(por_valor_chk->isChecked());
 			tipo->setPreferred(preferido_chk->isChecked());

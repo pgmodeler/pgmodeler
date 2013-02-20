@@ -27,14 +27,14 @@
 
 #include "baseobjectwidget.h"
 #include "ui_domainwidget.h"
-#include "tipopgsqlwidget.h"
+#include "pgsqltypewidget.h"
 
 class DomainWidget: public BaseObjectWidget, public Ui::DomainWidget {
 	private:
 		Q_OBJECT
 
 		SyntaxHighlighter *check_expr_hl;
-		TipoPgSQLWidget *data_type;
+		PgSQLTypeWidget *data_type;
 
 	public:
 		DomainWidget(QWidget * parent = 0);

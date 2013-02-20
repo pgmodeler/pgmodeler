@@ -12,9 +12,9 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 		Ui_OperatorWidget::setupUi(this);
 
 		arg_types[0]=NULL;
-		arg_types[0]=new TipoPgSQLWidget(this, trUtf8("Right Argument Type"));
+		arg_types[0]=new PgSQLTypeWidget(this, trUtf8("Right Argument Type"));
 		arg_types[1]=NULL;
-		arg_types[1]=new TipoPgSQLWidget(this, trUtf8("Left Argument Type"));
+		arg_types[1]=new PgSQLTypeWidget(this, trUtf8("Left Argument Type"));
 
 		grid=new QGridLayout;
 		grid->setContentsMargins(2,2,2,2);
@@ -108,8 +108,8 @@ void OperatorWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		right_type=oper->getArgumentType(Operator::RIGHT_ARG);
 	}
 
-	arg_types[0]->definirAtributos(left_type, model);
-	arg_types[1]->definirAtributos(right_type, model);
+	arg_types[0]->setAttributes(left_type, model);
+	arg_types[1]->setAttributes(right_type, model);
 }
 
 void OperatorWidget::applyConfiguration(void)
@@ -125,7 +125,7 @@ void OperatorWidget::applyConfiguration(void)
 		oper->setMerges(merges_chk->isChecked());
 
 		for(i=Operator::LEFT_ARG; i <= Operator::RIGHT_ARG; i++)
-			oper->setArgumentType(arg_types[i]->obterTipoPgSQL(), i);
+			oper->setArgumentType(arg_types[i]->getPgSQLType(), i);
 
 		for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
 			oper->setFunction(dynamic_cast<Function *>(functions_sel[i]->getSelectedObject()), i);

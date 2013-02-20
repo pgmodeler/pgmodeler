@@ -27,14 +27,14 @@
 
 #include "baseobjectwidget.h"
 #include "ui_columnwidget.h"
-#include "tipopgsqlwidget.h"
+#include "pgsqltypewidget.h"
 
 class ColumnWidget: public BaseObjectWidget, public Ui::ColumnWidget {
 	private:
 		Q_OBJECT
 
 		SyntaxHighlighter *hl_default_value;
-		TipoPgSQLWidget *data_type;
+		PgSQLTypeWidget *data_type;
 
 		void hideEvent(QHideEvent *event);
 

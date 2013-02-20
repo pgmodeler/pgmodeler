@@ -9,7 +9,7 @@ ParameterWidget::ParameterWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 
 		Ui_ParameterWidget::setupUi(this);
 
-		data_type=new TipoPgSQLWidget(this);
+		data_type=new PgSQLTypeWidget(this);
 		parameter_grid=new QGridLayout(this);
 		hspacer=new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 		parameter_grid->setContentsMargins(0, 0, 0, 0);
@@ -49,7 +49,7 @@ void ParameterWidget::setAttributes(Parameter param, DatabaseModel *model)
 	param_in_chk->setChecked(param.isIn());
 	param_out_chk->setChecked(param.isOut());
 	default_value_edt->setText(QString::fromUtf8(param.getDefaultValue()));
-	data_type->definirAtributos(param.getType(), model);
+	data_type->setAttributes(param.getType(), model);
 
 	BaseObjectWidget::setAttributes(model,&this->parameter, NULL);
 }
@@ -61,7 +61,7 @@ void ParameterWidget::applyConfiguration(void)
 		parameter.setIn(param_in_chk->isChecked());
 		parameter.setOut(param_out_chk->isChecked());
 		parameter.setDefaultValue(default_value_edt->text());
-		parameter.setType(data_type->obterTipoPgSQL());
+		parameter.setType(data_type->getPgSQLType());
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

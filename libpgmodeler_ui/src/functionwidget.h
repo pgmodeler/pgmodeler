@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_functionwidget.h"
-#include "tipopgsqlwidget.h"
+#include "pgsqltypewidget.h"
 #include "objecttablewidget.h"
 
 class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
@@ -38,7 +38,7 @@ class FunctionWidget: public BaseObjectWidget, public Ui::FunctionWidget  {
 		SyntaxHighlighter *source_code_hl;
 
 		//! \brief Widget used to configure the function's return type
-		TipoPgSQLWidget *ret_type;
+		PgSQLTypeWidget *ret_type;
 
 		//! \brief Table that represents the table returned by the function
 		ObjectTableWidget *return_tab,

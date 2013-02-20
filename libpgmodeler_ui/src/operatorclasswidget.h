@@ -27,7 +27,7 @@
 
 #include "baseobjectwidget.h"
 #include "ui_operatorclasswidget.h"
-#include "tipopgsqlwidget.h"
+#include "pgsqltypewidget.h"
 #include "objecttablewidget.h"
 
 /*! \brief Declaring the OperatorClassElement class as a Qt metatype in order to permit
@@ -44,7 +44,7 @@ class OperatorClassWidget: public BaseObjectWidget, public Ui::OperatorClassWidg
 												*function_sel,
 												*operator_sel;
 
-		TipoPgSQLWidget *data_type,
+		PgSQLTypeWidget *data_type,
 										*storage_type;
 
 		//! \brief Stores the elements of operator class

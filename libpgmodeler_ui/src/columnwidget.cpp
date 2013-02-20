@@ -14,7 +14,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 																				GlobalAttributes::CONFIGURATION_EXT);
 
 		data_type=NULL;
-		data_type=new TipoPgSQLWidget(this);
+		data_type=new PgSQLTypeWidget(this);
 		column_grid->addWidget(data_type,3,0,1,0);
 
 		configureFormLayout(column_grid, OBJ_COLUMN);
@@ -52,7 +52,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, O
 		def_value_txt->setPlainText(QString::fromUtf8(column->getDefaultValue()));
 	}
 
-	data_type->definirAtributos(type, model, UserTypeConfig::BASE_TYPE | UserTypeConfig::DOMAIN_TYPE,true,false);
+	data_type->setAttributes(type, model, UserTypeConfig::BASE_TYPE | UserTypeConfig::DOMAIN_TYPE,true,false);
 }
 
 void ColumnWidget::applyConfiguration(void)
@@ -66,7 +66,7 @@ void ColumnWidget::applyConfiguration(void)
 		column=dynamic_cast<Column *>(this->object);
 		column->setNotNull(notnull_chk->isChecked());
 		column->setDefaultValue(def_value_txt->toPlainText());
-		column->setType(data_type->obterTipoPgSQL());
+		column->setType(data_type->getPgSQLType());
 
 		BaseObjectWidget::applyConfiguration();
 
