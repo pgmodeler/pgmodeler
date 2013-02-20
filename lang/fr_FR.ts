@@ -555,7 +555,7 @@
         <translation>Créer / Éditer: </translation>
     </message>
     <message>
-        <location line="+364"/>
+        <location line="+369"/>
         <source>Value(s)</source>
         <translation>Valeur(s)</translation>
     </message>
@@ -804,7 +804,7 @@
         <translation>Tester</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="+308"/>
+        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="+306"/>
         <source>Success</source>
         <translation>Succès</translation>
     </message>
@@ -812,6 +812,93 @@
         <location line="+0"/>
         <source>Connection successfuly stablished!</source>
         <translation>Connexion établie avec succès !</translation>
+    </message>
+</context>
+<context>
+    <name>ConstraintWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/constraintwidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Constraint Type:</source>
+        <translation>Type de contrainte:</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Check Expr.:</source>
+        <translation>Expression de vérification:</translation>
+    </message>
+    <message>
+        <location line="+65"/>
+        <source>Fill Factor:</source>
+        <translation>Taux de remplissage:</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Match:</source>
+        <translation>Comparaison:</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Deferrable:</source>
+        <translation>Différable:</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Deferral:</source>
+        <translation>Report:</translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>ON DELETE:</source>
+        <translation>ON DELETE:</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>ON UPDATE:</source>
+        <translation>ON UPDATE:</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Columns</source>
+        <translation>Colonnes</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <location line="+61"/>
+        <source>Column:</source>
+        <translation>Colonne:</translation>
+    </message>
+    <message>
+        <location line="-37"/>
+        <source>Referenced Columns</source>
+        <translation>Colonnes référencées</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Table:</source>
+        <translation>Table:</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="+28"/>
+        <location line="+7"/>
+        <source>Column</source>
+        <translation>Colonne</translation>
+    </message>
+    <message>
+        <location line="-5"/>
+        <location line="+7"/>
+        <source>Type</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they will be ignored. To create primary key using columns included by relationship use the feature attributes, constraints and primary key on the relationship form.</source>
+        <translatorcomment>À contrôler</translatorcomment>
+        <translation type="unfinished">Les colonnes qui sont incluses par relation ne peuvent être ajoutées / supprimées manuellement depuis la clef primaire. Tout changement sera ignoré. Pour créer la clef primaire en utilisant les colonnes incluses dans la relation utilisez les fonctionnalités d&apos;attributs, de contraintes et de clef primaire dans le formulaire de la relation.</translation>
     </message>
 </context>
 <context>
@@ -935,7 +1022,7 @@ Taille: %2 bytes
 <context>
     <name>DatabaseModel</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="+2575"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="+2577"/>
         <source>Loading object: %1 (%2)</source>
         <translation>Chargement de l&apos;objet: %1 (%2)</translation>
     </message>
@@ -1980,7 +2067,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Extensions</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/formconfiguracao.cpp" line="+88"/>
+        <location filename="../libpgmodeler_ui/src/formconfiguracao.cpp" line="+85"/>
         <source>Confirmation</source>
         <translation>Confirmation</translation>
     </message>
@@ -2070,7 +2157,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>&amp;Fermer</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/formexportacao.cpp" line="+163"/>
+        <location filename="../libpgmodeler_ui/src/formexportacao.cpp" line="+161"/>
         <source>Generating source code...</source>
         <translation>Génération du code source...</translation>
     </message>
@@ -2110,7 +2197,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Processus d&apos;export finalisé avec succès!</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+13"/>
         <source>Error on export!</source>
         <translation>Erreur lors de l&apos;export!</translation>
     </message>
@@ -2288,7 +2375,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Configuration</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/formprincipal.cpp" line="+456"/>
+        <location filename="../libpgmodeler_ui/src/formprincipal.cpp" line="+462"/>
         <source>Save all models</source>
         <translation>Enregistrer tous les modèles</translation>
     </message>
@@ -3287,7 +3374,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>ModeloWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelowidget.cpp" line="+76"/>
+        <location filename="../libpgmodeler_ui/src/modelowidget.cpp" line="+75"/>
         <source>Generalization</source>
         <translation>Généralisation</translation>
     </message>
@@ -3298,40 +3385,40 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+38"/>
-        <location line="+2500"/>
+        <location line="+2554"/>
         <source>Source code</source>
         <translation>Code source</translation>
     </message>
     <message>
-        <location line="-2498"/>
+        <location line="-2552"/>
         <source>Show object source code</source>
         <translation>Afficher le code source de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2489"/>
+        <location line="+2543"/>
         <source>Properties</source>
         <translation>Propriétés</translation>
     </message>
     <message>
-        <location line="-2487"/>
+        <location line="-2541"/>
         <source>Edit the object properties</source>
         <translation>Editer les propriétés de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2514"/>
+        <location line="+2568"/>
         <source>Protect</source>
         <translation>Vérrouiller</translation>
     </message>
     <message>
-        <location line="-2513"/>
-        <location line="+2508"/>
+        <location line="-2567"/>
+        <location line="+2562"/>
         <source>Unprotect</source>
         <translation>Déverrouiller</translation>
     </message>
     <message>
-        <location line="-2507"/>
+        <location line="-2561"/>
         <source>Pretects the object(s) against modifications</source>
         <translation>Empêcher l(es)&apos;objet(s) d&apos;être modifiés</translation>
     </message>
@@ -3342,12 +3429,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2516"/>
+        <location line="+2570"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location line="-2514"/>
+        <location line="-2568"/>
         <source>Delete the selected object(s)</source>
         <translation>Supprimer les objets sélectionnés</translation>
     </message>
@@ -3470,14 +3557,14 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="-396"/>
-        <location line="+947"/>
-        <location line="+407"/>
+        <location line="+948"/>
+        <location line="+408"/>
         <location line="+6"/>
         <source>Confirmation</source>
         <translation>Confirmation</translation>
     </message>
     <message>
-        <location line="-412"/>
+        <location line="-413"/>
         <source>Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model.</source>
         <translation>Copier également les dépendences des objets sélectionnés? Ceci minimise la perte des références lorsque les objets copiés sont collés dans un autre modèle.</translation>
     </message>
@@ -3492,22 +3579,22 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Tous les objets n&apos;ont pas été collés dans le modèle à cause d&apos;erreurs retournés durant le processus! Se référer à la pile d&apos;erreurs pour plus de détails</translation>
     </message>
     <message>
-        <location line="+72"/>
+        <location line="+73"/>
         <source>Do you really want to delete the selected object?</source>
         <translation>Souhaitez vous réellement supprimer l&apos;objet sélectionné?</translation>
     </message>
     <message>
-        <location line="+241"/>
+        <location line="+291"/>
         <source>(no objects)</source>
         <translation>(aucun objet)</translation>
     </message>
     <message>
-        <location line="+334"/>
+        <location line="+336"/>
         <source>Constraints</source>
         <translation>Contraintes</translation>
     </message>
     <message>
-        <location line="-1935"/>
+        <location line="-1989"/>
         <source>Convert a relationship is an irreversible operation and causes the deletion of all operation history! Do you want to continue?</source>
         <translation>Convertir une relation est une opération irréversible qui cause la suppression de tout l&apos;historique des opérations? Souhaitez vous continuer?</translation>
     </message>
@@ -3527,12 +3614,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation></translation>
     </message>
     <message>
-        <location line="+1926"/>
+        <location line="+1928"/>
         <source>CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?</source>
         <translation>ATTENTION: Supprimer plusieur objets en une seule fois provoque des invalidation irréversible sur les autres objets du modèle. Souhaitez vous réllement supprimer TOUS les objets sélectionnés?</translation>
     </message>
     <message>
-        <location line="-281"/>
+        <location line="-282"/>
         <source>Validating object: %1 (%2)</source>
         <translation>Validaiont de l&apos;objet: %1 (%2)</translation>
     </message>
@@ -3595,6 +3682,138 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
+    <name>ObjectSelectorWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/objectselectorwidget.ui" line="+26"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>Clear field</source>
+        <translation>Effeacer le champs</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Select Object</source>
+        <translation>Sélectionner un objet</translation>
+    </message>
+</context>
+<context>
+    <name>ObjectTableWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/objecttablewidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Add Item</source>
+        <translation>Ajouter un élément</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Ins</source>
+        <translation>Ins</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Remove Item</source>
+        <translation>Supprimer un élément</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Del</source>
+        <translation>Suppr.</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Update Item</source>
+        <translation>Actualiser les éléments</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Alt+R</source>
+        <translation>Alt+R</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Remove All</source>
+        <translation>Tout supprimer</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Shift+Del</source>
+        <translation>Shift+Del</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Edit Item</source>
+        <translation>Editer l&apos;élément</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Space</source>
+        <translation>Espace</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Move Up</source>
+        <translation>Déplacer vers le haut</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Ctrl+Up</source>
+        <translation>Ctrl+Haut</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Move Down</source>
+        <translation>Déplacer vers le bas</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Ctrl+Down</source>
+        <translation>Ctrl+Bas</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Move to start</source>
+        <translation>Déplacer au début</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Ctrl+Home</source>
+        <translation>Ctrl+début</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Move to end</source>
+        <translation>Déplacer à la fin</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Ctrl+End, Ctrl+S</source>
+        <translation>Ctrl+Fin, Ctrl+S</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="+329"/>
+        <location line="+25"/>
+        <source>Confirmação</source>
+        <translation>Confirmation</translation>
+    </message>
+    <message>
+        <location line="-25"/>
+        <source>Do you really want to remove the selected item?</source>
+        <translation>Souhaitez vous réellement supprimer l&apos;élément sélectionné?</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Do you really want to remove the all items?</source>
+        <translation>Souhaitez vous réellement supprimer tous les éléments?</translation>
+    </message>
+</context>
+<context>
     <name>OperationList</name>
     <message>
         <location filename="../libpgmodeler/src/operationlist.cpp" line="+636"/>
@@ -3651,7 +3870,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Rétablir</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="+81"/>
+        <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="+80"/>
         <source>Object: %1</source>
         <translation>Objet: %1</translation>
     </message>
@@ -3696,7 +3915,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Rétablissement des opérations...</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+24"/>
         <source>Operation history exclusion</source>
         <translatorcomment>?? À controler dans le contexte ??</translatorcomment>
         <translation type="unfinished">Exclusion de l&apos;hisotrique des opérations</translation>
@@ -4079,12 +4298,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5329"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5331"/>
         <source>new_database</source>
         <translation>nouvelle_base</translation>
     </message>
     <message>
-        <location line="+2589"/>
+        <location line="+2591"/>
         <location line="+44"/>
         <location line="+291"/>
         <location line="+26"/>
@@ -4153,230 +4372,6 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
-    <name>RelacionamentoWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/relacionamentowidget.ui" line="+48"/>
-        <source>General</source>
-        <translation>Général</translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Relationship:</source>
-        <translation>Relation:</translation>
-    </message>
-    <message>
-        <location line="+35"/>
-        <source>One to one relationship</source>
-        <translation>Relation un à un</translation>
-    </message>
-    <message>
-        <location line="+36"/>
-        <source>One to many relationship</source>
-        <translation>Relation un à plusieurs</translation>
-    </message>
-    <message>
-        <location line="+36"/>
-        <source>Many to many relationship</source>
-        <translation>Relation plusieurs à plusieurs</translation>
-    </message>
-    <message>
-        <location line="+36"/>
-        <source>Generalization relationship (inheritance)</source>
-        <translation>Relation de généralisation (héritage)</translation>
-    </message>
-    <message>
-        <location line="+84"/>
-        <source>Identifier</source>
-        <translation> Identifiant</translation>
-    </message>
-    <message>
-        <location line="+153"/>
-        <source>Cardinality:</source>
-        <translation>Cardinalité:</translation>
-    </message>
-    <message>
-        <location line="+55"/>
-        <location line="+10"/>
-        <source>Name of the table generated from many to many relationship</source>
-        <translation>Nom de la table générée d&apos;une relation plusieurs à plusieurs</translation>
-    </message>
-    <message>
-        <location line="-7"/>
-        <source>Table Name:</source>
-        <translation>Nom de table. N-N:</translation>
-    </message>
-    <message>
-        <location line="+102"/>
-        <source>Foreign key</source>
-        <translation>Clef étrangère</translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Deferrable:</source>
-        <translation>Deferrable:</translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>Deferral:</source>
-        <translation>Report:</translation>
-    </message>
-    <message>
-        <location line="+62"/>
-        <source>Attributes</source>
-        <translation>Attributs</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Constraints</source>
-        <translation>Contraintes</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Primary key</source>
-        <translation>Clef primaire</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/relacionamentowidget.cpp" line="+50"/>
-        <source>Attribute</source>
-        <translation>Attribut</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <location line="+6"/>
-        <location line="+6"/>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <location line="-8"/>
-        <source>Constraint</source>
-        <translation>Contrainte</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Editing attributes of an existing relationship is allowed, but must be done carefully because it may break references to columns and cause invalidation of objects such as triggers, indexes, constraints and sequences.</source>
-        <translation>Editer les attributs d&apos;une relation existante est autorisée, cependant celà doit être fait avec attention car les références de colonnes peuvent être cassées et causer l&apos;invalidation des objets tels que les déclencheurs, les index, les contraintes et les séquences.</translation>
-    </message>
-    <message>
-        <location line="+196"/>
-        <location line="+1"/>
-        <source> is required</source>
-        <translation> est requis</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Reference Table:</source>
-        <translation>Table de référence:</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Receiver Table:</source>
-        <translation>Table de destination:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/relacionamentowidget.ui" line="-21"/>
-        <source>Automatic Suffix</source>
-        <translation>Suffixe automatique</translation>
-    </message>
-    <message>
-        <location line="-726"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+90"/>
-        <source>1-1</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+36"/>
-        <source>1-n</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+36"/>
-        <source>n-n</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+36"/>
-        <source>gen</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+36"/>
-        <source>dep</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+70"/>
-        <location filename="../libpgmodeler_ui/src/relacionamentowidget.cpp" line="-23"/>
-        <source>Table 1:</source>
-        <translation>Table 1:</translation>
-    </message>
-    <message>
-        <location line="+64"/>
-        <location filename="../libpgmodeler_ui/src/relacionamentowidget.cpp" line="+2"/>
-        <source>Table 2:</source>
-        <translation>Table 2:</translation>
-    </message>
-    <message>
-        <location line="+79"/>
-        <source>[SRC] is required</source>
-        <translation>[SRC] est requis</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>[DST] is required</source>
-        <translation>[DST] est requis</translation>
-    </message>
-    <message>
-        <location line="+65"/>
-        <source>Source Suffix:</source>
-        <translation>Suffixe Source:</translation>
-    </message>
-    <message>
-        <location line="+41"/>
-        <source>Target Suffix:</source>
-        <translation>Suffixe Cible:</translation>
-    </message>
-    <message>
-        <location line="-335"/>
-        <source>Dependency / Copy relationship</source>
-        <translation>Relation de dépendance / copie</translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Relationship generated via foreign key</source>
-        <translation>Relation générée par une clef étrangère</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>fk</source>
-        <translation>fk</translation>
-    </message>
-    <message>
-        <location line="+512"/>
-        <source>Advanced</source>
-        <translation>Avancé</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/relacionamentowidget.cpp" line="-212"/>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Use the special primary key if you want to include a primary key containing inherited / copied columns to the receiving table. This is a feature available only for generalization / copy relationships.</source>
-        <translation>Utilisez une clef primaire spécifique si vous souhaitez inclure une clef primaire héritée ou copiée de la table de destination. Cette fonctionnalité n&apos;est disponnible que pour les relations généralisation / copie.</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>This advanced tab shows the objects (columns or table) auto created by the relationship&apos;s connection as well the foreign keys that represents the link between the participant tables.</source>
-        <translation>Cet onglet avancé montre les objets (colonnes ou tables) générés automatiquement par la relation ainsi que les clefs étrangères qui forment le(s) lien(s) entre les tables.</translation>
-    </message>
-</context>
-<context>
     <name>Relationship</name>
     <message>
         <location filename="../libpgmodeler/src/relationship.cpp" line="+47"/>
@@ -4410,89 +4405,228 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
-    <name>RestricaoWidget</name>
+    <name>RelationshipWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/restricaowidget.ui" line="+44"/>
-        <source>Constraint Type:</source>
-        <translation>Type de contrainte:</translation>
+        <location filename="../libpgmodeler_ui/ui/relationshipwidget.ui" line="+26"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+42"/>
-        <source>Check Expr.:</source>
-        <translation>Vérifier Expr.:</translation>
+        <location line="+22"/>
+        <source>General</source>
+        <translation>Général</translation>
     </message>
     <message>
-        <location line="+65"/>
-        <source>Fill Factor:</source>
-        <translation>Taux de remplissage:</translation>
-    </message>
-    <message>
-        <location line="+41"/>
-        <source>Comparison:</source>
-        <translation>Comparaison:</translation>
+        <location line="+30"/>
+        <source>Relationship:</source>
+        <translation>Relation:</translation>
     </message>
     <message>
         <location line="+35"/>
-        <source>Deferrable:</source>
-        <translation>Deferrable:</translation>
+        <source>One to one relationship</source>
+        <translation>Relation un à un</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>1-1</source>
+        <translation>1-1</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>One to many relationship</source>
+        <translation>Relation un à plusieurs</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>1-n</source>
+        <translation>1-n</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Many to many relationship</source>
+        <translation>Relation plusieurs à plusieurs</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>n-n</source>
+        <translation>n-n</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Generalization relationship (inheritance)</source>
+        <translation>Relation de généralisation (héritage)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>gen</source>
+        <translation>gen</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Dependency / Copy relationship</source>
+        <translation>Relation de dépendance / copie</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>dep</source>
+        <translation>dep</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Relationship generated via foreign key</source>
+        <translation>Relation générée par une clef étrangère</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>fk</source>
+        <translation>fk</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Identifier</source>
+        <translation>Identifiant</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="+216"/>
+        <source>Table 1:</source>
+        <translation>Table 1:</translation>
+    </message>
+    <message>
+        <location line="+64"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="+2"/>
+        <source>Table 2:</source>
+        <translation>Table 2:</translation>
+    </message>
+    <message>
+        <location line="+64"/>
+        <source>Cardinality:</source>
+        <translation>Cardinalité:</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>[SRC] is required</source>
+        <translation>[SRC] est requis</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>[DST] is required</source>
+        <translation>[DST] est requis</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <location line="+10"/>
+        <source>Name of the table generated from many to many relationship</source>
+        <translation>Nom de la table générée par une relation plusieurs à plusieurs</translation>
+    </message>
+    <message>
+        <location line="-7"/>
+        <source>Table Name:</source>
+        <translation>Nom de table:</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Source Suffix:</source>
+        <translation>Suffixe source:</translation>
     </message>
     <message>
         <location line="+41"/>
+        <source>Target Suffix:</source>
+        <translation>Suffixe cible:</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Foreign key</source>
+        <translation>Clef étrangère</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Deferrable:</source>
+        <translation>Différable:</translation>
+    </message>
+    <message>
+        <location line="+53"/>
         <source>Deferral:</source>
         <translation>Report:</translation>
     </message>
     <message>
-        <location line="+106"/>
-        <source>Columns</source>
-        <translation>Colonnes</translation>
+        <location line="+51"/>
+        <source>Automatic Suffix</source>
+        <translation>Suffixe automatique</translation>
     </message>
     <message>
-        <location line="+18"/>
-        <location line="+61"/>
-        <source>Column:</source>
-        <translation>Colonne:</translation>
+        <location line="+11"/>
+        <source>Attributes</source>
+        <translation>Attributs</translation>
     </message>
     <message>
-        <location line="-37"/>
-        <source>Referenced Columns</source>
-        <translation>Colonnes Référencées</translation>
+        <location line="+5"/>
+        <source>Constraints</source>
+        <translation>Contraintes</translation>
     </message>
     <message>
-        <location line="+18"/>
-        <source>Table:</source>
-        <translation>Table:</translation>
+        <location line="+5"/>
+        <source>Primary key</source>
+        <translation>Clef primaire</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/restricaowidget.cpp" line="+37"/>
-        <location line="+7"/>
-        <source>Column</source>
-        <translation>Colonne</translation>
+        <location line="+29"/>
+        <source>Advanced</source>
+        <translation>Avancé</translation>
     </message>
     <message>
-        <location line="-5"/>
-        <location line="+7"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="-174"/>
+        <source>Attribute</source>
+        <translation>Attribut</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+6"/>
+        <location line="+6"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/ui/restricaowidget.ui" line="-414"/>
-        <source>Form</source>
-        <translation></translation>
+        <location line="-8"/>
+        <source>Constraint</source>
+        <translation>Contrainte</translation>
     </message>
     <message>
-        <location line="+286"/>
-        <source>ON DELETE:</source>
-        <translation></translation>
+        <location line="+6"/>
+        <source>Name</source>
+        <translation>Nom</translation>
     </message>
     <message>
-        <location line="+41"/>
-        <source>ON UPDATE:</source>
-        <translation></translation>
+        <location line="+18"/>
+        <source>Editing attributes of an existing relationship is allowed, but must be done carefully because it may break references to columns and cause invalidation of objects such as triggers, indexes, constraints and sequences.</source>
+        <translation>Éditer les attributs d&apos;une relation existante est autorisée, cependant cela doit être fait avec prudence car cela peut casser des références aux colonnes et causer l&apos;invalidation d&apos;objets tels que déclencheurs, index, contraintes et séquences.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/restricaowidget.cpp" line="+29"/>
-        <source>Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they will be ignored. To create primary key using columns included by relationship use the feature attributes, constraints and primary key on the relationship form.</source>
-        <translation>Les colonnes qui sont incluses par relation ne peuvent être ajoutées /supprimées manuellement depuis la clef primaire. Ces changements sont ignorés. Pour créer la clef primaire en utilisant les colonnes incluses dans la relation utilisez la fonctionnalité d&apos;attributs, de contraintes et de clef primaire dans le formulaire de relation</translation>
+        <location line="+5"/>
+        <source>Use the special primary key if you want to include a primary key containing inherited / copied columns to the receiving table. This is a feature available only for generalization / copy relationships.</source>
+        <translatorcomment>Doutes</translatorcomment>
+        <translation type="unfinished">Utilisez une clef primaire spécifique si vous souhaitez inclure une clef primaire héritée ou copiée de la table de destination. Cette fonctionnalité n&apos;est disponnible que pour les relations généralisation / copie.</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>This advanced tab shows the objects (columns or table) auto created by the relationship&apos;s connection as well the foreign keys that represents the link between the participant tables.</source>
+        <translation>Cet onglet avancé montre les objets (colonnes ou tables) générés automatiquement par la relation ainsi que les clefs étrangères qui forment le(s) lien(s) entre les tables.</translation>
+    </message>
+    <message>
+        <location line="+133"/>
+        <location line="+1"/>
+        <source> is required</source>
+        <translation> est requis</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Reference Table:</source>
+        <translation>Table de référence:</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Receiver Table:</source>
+        <translation>Table de destination:</translation>
     </message>
 </context>
 <context>
@@ -4663,27 +4797,14 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
-    <name>SeletorObjetoWidget</name>
+    <name>SequenceWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/seletorobjetowidget.ui" line="+92"/>
-        <source>Clear field</source>
-        <translation>Nettoyer le champs</translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>Select Object</source>
-        <translation>Sélectionner Objet</translation>
-    </message>
-    <message>
-        <location line="-98"/>
+        <location filename="../libpgmodeler_ui/ui/sequencewidget.ui" line="+26"/>
         <source>Form</source>
-        <translation></translation>
+        <translation>Formulaire</translation>
     </message>
-</context>
-<context>
-    <name>SequenciaWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/sequenciawidget.ui" line="+38"/>
+        <location line="+12"/>
         <source>Cyclic:</source>
         <translation>Cyclique:</translation>
     </message>
@@ -4716,11 +4837,6 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location line="+28"/>
         <source>Owner:</source>
         <translation>Propriétaire:</translation>
-    </message>
-    <message>
-        <location line="-166"/>
-        <source>Form</source>
-        <translation></translation>
     </message>
 </context>
 <context>
@@ -4777,123 +4893,27 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
-    <name>TabelaObjetosWidget</name>
+    <name>Table</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tabelaobjetoswidget.ui" line="+56"/>
-        <source>Add Item</source>
-        <translation>Ajouter Item</translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Remove Item</source>
-        <translation>Supprimer Item</translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Update Item</source>
-        <translation>Actualiser Item</translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Remove All</source>
-        <translation>Tout supprimer</translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Edit Item</source>
-        <translation>Editer Item</translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Move Up</source>
-        <translation>Déplacer vers le haut</translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Move Down</source>
-        <translation>Déplacer vers le bas</translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Move to start</source>
-        <translation>Déplacer au début</translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Move to end</source>
-        <translation>Déplacer à la fin</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/tabelaobjetoswidget.cpp" line="+435"/>
-        <source>Do you really want to remove the selected item?</source>
-        <translation>Souhaitez vous réellement supprimer l&apos;item sélectionné?</translation>
-    </message>
-    <message>
-        <location line="+31"/>
-        <source>Do you really want to remove the all items?</source>
-        <translation>Souhaitez vous réellement supprimer tous les items?</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/tabelaobjetoswidget.ui" line="-346"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+58"/>
-        <source>Ins</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Del</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Alt+R</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Shift+Del</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Space</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Ctrl+Up</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Ctrl+Down</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Ctrl+Home</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>Ctrl+End, Ctrl+S</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/tabelaobjetoswidget.cpp" line="-31"/>
-        <location line="+31"/>
-        <source>Confirmação</source>
-        <translation>Confirmation</translation>
+        <location filename="../libpgmodeler/src/table.cpp" line="+13"/>
+        <source>new_table</source>
+        <translation>nouvelle_table</translation>
     </message>
 </context>
 <context>
-    <name>TabelaWidget</name>
+    <name>TableWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tabelawidget.ui" line="+65"/>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>With OIDs:</source>
+        <translation>Avec OIDs:</translation>
+    </message>
+    <message>
+        <location line="+21"/>
         <source>Columns</source>
         <translation>Colonnes</translation>
     </message>
@@ -4930,10 +4950,10 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     <message>
         <location line="+33"/>
         <source>Copied Tables:</source>
-        <translation>Tables Copiées:</translation>
+        <translation>Tables copiées:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tabelawidget.cpp" line="+53"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="+51"/>
         <location line="+8"/>
         <location line="+8"/>
         <location line="+9"/>
@@ -4953,12 +4973,32 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Valeur par défaut</translation>
     </message>
     <message>
-        <location line="+14"/>
-        <source>Refer. Table</source>
-        <translation>Tab. Refer.</translation>
+        <location line="+1"/>
+        <source>Attribute</source>
+        <translation>Attribut</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+7"/>
+        <source>ON DELETE</source>
+        <translation>ON DELETE</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>ON UPDATE</source>
+        <translation>ON UPDATE</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Refer. Table</source>
+        <translation>Table référ.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Firing</source>
+        <translation>Déclencheur</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Events</source>
         <translation>Evènements</translation>
     </message>
@@ -4976,44 +5016,6 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location line="+5"/>
         <source>Indexing</source>
         <translation>Indexation</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/tabelawidget.ui" line="-125"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>With OIDs:</source>
-        <translation>Avec OIDs:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/tabelawidget.cpp" line="-28"/>
-        <source>Attribute</source>
-        <translation>Attribut</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>ON DELETE</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>ON UPDATE</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Firing</source>
-        <translation>Tir</translation>
-    </message>
-</context>
-<context>
-    <name>Table</name>
-    <message>
-        <location filename="../libpgmodeler/src/table.cpp" line="+13"/>
-        <source>new_table</source>
-        <translation>nouvelle_table</translation>
     </message>
 </context>
 <context>
@@ -5350,12 +5352,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Mode de déclenchement:</translation>
     </message>
     <message>
-        <location line="+31"/>
-        <source>INSTEAD OF</source>
-        <translation>INSTEAD OF</translation>
-    </message>
-    <message>
-        <location line="+42"/>
+        <location line="+68"/>
         <source>Execute per row</source>
         <translation>Exécuter par ligne</translation>
     </message>
