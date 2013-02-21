@@ -75,19 +75,19 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 		QSize size;
 		QPixmap pix;
 
-		//Cria um pixmap com o tamanho da cena
+		//Creates a pixmap with the size of the scene
 		pix.resize(this->model->cena->sceneRect().size().toSize());
 
-		//Cria um QSize com 20% do tamanho da cena
+		//Configures a QSize instance with 20% of the scene size
 		size=this->model->cena->sceneRect().size().toSize();
 		size.setWidth(size.width() * RESIZE_FACTOR);
 		size.setHeight(size.height() * RESIZE_FACTOR);
 
-		///Desenha a cena no pixmap
+		//Draw the scene onto the pixmap
 		QPainter p(&pix);
 		this->model->cena->render(&p, pix.rect(), this->model->cena->sceneRect().toRect());
 
-		//Exibe o pixmap no label redimensionado com o QSize criado anteriormente
+		//Resizes the pixmap to the previous configured QSize
 		label->setPixmap(pix.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 		label->resize(size);
 	}
@@ -99,13 +99,13 @@ void ModelOverviewWidget::resizeWindowFrame(void)
 	{
 		QSizeF size;
 
-		//Redimensiona o frame da janela conforme as dimensões do viewport
+		//Resizes the window frame based upon the model's viewport dimensions
 		size=this->model->viewport->geometry().size();
 		size.setWidth(size.width() * RESIZE_FACTOR * 1/zoom_factor);
 		size.setHeight(size.height() * RESIZE_FACTOR * 1/zoom_factor);
 		window_frm->resize(size.toSize());
 
-		//Posiciona a janela conforme os valores das barras de rolagem
+		//Set the frame position based upon the viewport scroll bar values
 		window_frm->move(QPoint(this->model->viewport->horizontalScrollBar()->value() * RESIZE_FACTOR,
 														this->model->viewport->verticalScrollBar()->value() * RESIZE_FACTOR));
 	}
@@ -117,7 +117,6 @@ void ModelOverviewWidget::resizeOverview(void)
 	{
 		QSizeF size;
 
-		//Redimensiona o widget conforme as dimensões da cena
 		size=this->model->cena->sceneRect().size();
 		size.setWidth(size.width() * RESIZE_FACTOR);
 		size.setHeight(size.height() * RESIZE_FACTOR);
@@ -145,12 +144,10 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 		QRect rect=window_frm->geometry(), rect1;
 		int width, height, x=event->x(), y=event->y();
 
-		//Obtém a largura do frame da janela do mundo, na visão geral
 		width=rect.width()/2;
 		height=rect.height()/2;
 
-		/* Configura um retangulo contendo como ponto central
-		 o x,y do evento */
+		//Configures a rectangle having as central point the event position
 		rect.setLeft(x - width);
 		rect.setTop(y - height);
 		rect.setRight(x + width);
@@ -158,21 +155,12 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 
 		rect1=frame->geometry();
 
-		/* Fazendo validações na posição do retângulo
-		 para que o mesmo não vaze para uma posiãço negativa
-		 ou uma posição além do frame que contém a janela da visão geral */
 		if(rect.left() < 0)
 			rect.translate(abs(rect.left()),0);
 
 		if(rect.top() < 0)
 			rect.translate(0, abs(rect.top()));
 
-		/* Nas duas condições a seguir é necessário descontar
-		 a posição inicial do frame principal (ret1.left() e ret1.top())
-		 para que o calculo da posição do frame da janela do mundo
-		 esteja correto, uma vez que posição inicial do frame da janela
-		 do mundo não se inicia na origem (0,0) mas sim após a posição
-		 inicial do frame da visão geral (ret1.left(), ret1.top()) */
 		if(rect.right() >= rect1.right())
 			rect.translate((rect1.right() - rect.right())-rect1.left(),0);
 

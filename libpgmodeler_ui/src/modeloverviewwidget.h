@@ -21,7 +21,7 @@
 /**
 \ingroup libpgmodeler_ui
 \class ModelOverviewWidget
-\brief Definição da classe que implementa o widget de visão geral do modelo.
+\brief Implements the model overview widget operations.
 */
 
 #ifndef MODEL_OVERVIEW_WIDGET_H
@@ -36,13 +36,13 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 	private:
 		Q_OBJECT
 
-		//! \brief Modelo usado para exibição na visão geral
+		//! \brief Model which object are drawn on the overview widget
 		ModeloWidget *model;
 
-		//! \brief Fator de zoom da cena
+		//! \brief Zoom factor applied to the visualization
 		float zoom_factor;
 
-		//! \brief Fator de redimensionamento dos widgets (20% do tamanho da cena)
+		//! \brief Resize factor applied to overview widgets (default: 20% of the scene original size)
 		const static float RESIZE_FACTOR=0.20f;
 
 		void mouseDoubleClickEvent(QMouseEvent *);
@@ -52,31 +52,31 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		void closeEvent(QCloseEvent *event);
 		void showEvent(QShowEvent *event);
 
-		/*! \brief Atualiza a exibição da visão geral com a última modificação na cena, o parâmetro
-		 'forcar_atual' força a atualização mesmo que o widget não esteja visível */
+		/*! \brief Updates the overview with the last modifications on the scene. The bool parameter
+		is used to force the update even if the overview widget is not visible */
 		void updateOverview(bool force_update);
 
 	public:
 		ModelOverviewWidget(QWidget *parent = 0);
 
 	public slots:
-		//! \brief Atualiza a visão geral (caso o widiget esteja visível)
+		//! \brief Updates the overview (only if the widget is visible)
 		void updateOverview(void);
 
-		//! \brief Redimensiona a geometria do frame de janela do mundo
+		//! \brief Resizes the frame that represents the visualization window
 		void resizeWindowFrame(void);
 
-		//! \brief Redimensiona todo o widget de visão geral
+		//! \brief Resizes the whole overview widget
 		void resizeOverview(void);
 
-		//! \brief Atualiza o fator de zoom da cena
+		//! \brief Updates the overview zoom factor
 		void updateZoomFactor(float zoom);
 
-		//! \brief Define o modelo a ser exibido na visão geral
+		//! \brief Shows the overview specifying the model to be drawn
 		void show(ModeloWidget *model);
 
 	signals:
-		//! \brief Sinal emitido quando a janela é aberta ou fechada (o parâmetro indica se a janela está ou não visível)
+		//! \brief Signal emitted whenever the overview window change the visibility
 		void s_overviewVisible(bool);
 };
 
