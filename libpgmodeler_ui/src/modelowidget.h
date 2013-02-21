@@ -277,7 +277,7 @@ class ModeloWidget: public QWidget {
 		friend class FormExportacao;
 		friend class OperationListWidget;
 		friend class VisaoObjetosWidget;
-		friend class VisaoGeralWidget;
+		friend class ModelOverviewWidget;
 };
 
 #endif

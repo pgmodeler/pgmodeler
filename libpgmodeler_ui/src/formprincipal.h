@@ -32,11 +32,11 @@
 #include "aboutform.h"
 #include "messagebox.h"
 #include "baseform.h"
-#include "formrestauracaomodelo.h"
+#include "modelrestorationform.h"
 #include "operationlistwidget.h"
 #include "visaoobjetoswidget.h"
 #include "pgmodelerplugin.h"
-#include "visaogeralwidget.h"
+#include "modeloverviewwidget.h"
 
 using namespace std;
 
@@ -51,10 +51,10 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
 		MessageBox msg_box;
 
 		//! \brief Widget de visão geral do modelo
-		VisaoGeralWidget *visaogeral_wgt;
+		ModelOverviewWidget *visaogeral_wgt;
 
 		//! \brief Formulário de restauração de modelos
-		FormRestauracaoModelo *frestmodelo;
+		ModelRestorationForm *frestmodelo;
 
 		//! \brief Dockwidget o qual exibe as operações executadas sobre os objetos
 		OperationListWidget *lista_oper;

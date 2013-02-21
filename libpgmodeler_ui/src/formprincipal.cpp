@@ -116,10 +116,10 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		fexportacao=new FormExportacao(this);
 		//selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
-		frestmodelo=new FormRestauracaoModelo(this);
+		frestmodelo=new ModelRestorationForm(this);
 		lista_oper=new OperationListWidget;
 		visao_objs=new VisaoObjetosWidget;
-		visaogeral_wgt=new VisaoGeralWidget;
+		visaogeral_wgt=new ModelOverviewWidget;
 
 		//*** CRIAÇÃO DOS FORMULÁRIOS GLOBAIS ***
 		permissao_wgt=new PermissionWidget(this);
@@ -343,7 +343,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 	}
 
 	//Restaura os arquivos temporários (se houver)
-	if(frestmodelo->existeModelosTemporarios())
+	if(frestmodelo->hasTemporaryModels())
 	{
 		frestmodelo->exec();
 
@@ -352,7 +352,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 			ModeloWidget *modelo=NULL;
 			try
 			{
-				QStringList arq_temps=frestmodelo->obterModelosSelecionados();
+				QStringList arq_temps=frestmodelo->getSelectedModels();
 				while(!arq_temps.isEmpty())
 				{
 					this->adicionarNovoModelo(arq_temps.front());
@@ -374,7 +374,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 			}
 		}
 
-		frestmodelo->excluirModelosTemporarios();
+		frestmodelo->removeTemporaryModels();
 	}
 
 	//Carregando arquivos da sessão anterior
@@ -402,7 +402,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 FormPrincipal::~FormPrincipal(void)
 {
 	//Exclui todos os arquivos temporários
-	frestmodelo->excluirModelosTemporarios();
+	frestmodelo->removeTemporaryModels();
 
 	//Desalocando os formulários globais
 	delete(icone_op);
@@ -725,7 +725,7 @@ void FormPrincipal::definirModeloAtual(void)
 		connect(action_exibir_lim_paginas, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));
 
 		connect(action_visao_geral, SIGNAL(toggled(bool)), this, SLOT(exibirVisaoGeral(bool)));
-		connect(visaogeral_wgt, SIGNAL(s_visaoGeralVisivel(bool)), action_visao_geral, SLOT(setChecked(bool)));
+		connect(visaogeral_wgt, SIGNAL(s_overviewVisible(bool)), action_visao_geral, SLOT(setChecked(bool)));
 
 		if(action_visao_geral->isChecked())
 			visaogeral_wgt->show(modelo_atual);

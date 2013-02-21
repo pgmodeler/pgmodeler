@@ -1,0 +1,205 @@
+#include "modeloverviewwidget.h"
+#include "modelowidget.h"
+
+ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint)
+{
+	setupUi(this);
+	this->model=NULL;
+	zoom_factor=1;
+	this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+}
+
+void ModelOverviewWidget::show(ModeloWidget *model)
+{
+	if(this->model)
+	{
+		disconnect(this->model, NULL, this, NULL);
+		disconnect(this->model->viewport, NULL,  this, NULL);
+		disconnect(this->model->cena, NULL,  this, NULL);
+	}
+
+	this->model=model;
+
+	if(this->model)
+	{
+		connect(this->model, SIGNAL(s_objetoCriado(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_objetoRemovido(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_objetosMovimentados(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_objetoModificado(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_zoomModificado(float)), this, SLOT(updateZoomFactor(float)));
+
+		connect(this->model, SIGNAL(s_modeloRedimensionado(void)), this, SLOT(resizeOverview(void)));
+		connect(this->model, SIGNAL(s_modeloRedimensionado(void)), this, SLOT(resizeWindowFrame(void)));
+		connect(this->model, SIGNAL(s_modeloRedimensionado(void)), this, SLOT(updateOverview(void)));
+
+		connect(this->model->viewport->horizontalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(resizeWindowFrame(void)));
+		connect(this->model->viewport->verticalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(resizeWindowFrame(void)));
+
+		connect(this->model->cena, SIGNAL(selectionChanged(void)), this, SLOT(updateOverview(void)));
+		connect(this->model->cena, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(resizeOverview(void)));
+		connect(this->model->cena, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(updateOverview(void)));
+
+		this->resizeOverview();
+		this->resizeWindowFrame();
+		this->updateOverview(true);
+
+		this->move(this->model->geometry().right() - this->width(),
+							 this->model->geometry().bottom() - this->height());
+	}
+
+	this->raise();
+	QWidget::show();
+}
+
+void ModelOverviewWidget::closeEvent(QCloseEvent *event)
+{
+	emit s_overviewVisible(false);
+	QWidget::closeEvent(event);
+}
+
+void ModelOverviewWidget::showEvent(QShowEvent *event)
+{
+	emit s_overviewVisible(true);
+	QWidget::showEvent(event);
+}
+
+void ModelOverviewWidget::updateOverview(void)
+{
+	this->updateOverview(false);
+}
+
+void ModelOverviewWidget::updateOverview(bool force_update)
+{
+	if(this->model && (this->isVisible() || force_update))
+	{
+		QSize size;
+		QPixmap pix;
+
+		//Cria um pixmap com o tamanho da cena
+		pix.resize(this->model->cena->sceneRect().size().toSize());
+
+		//Cria um QSize com 20% do tamanho da cena
+		size=this->model->cena->sceneRect().size().toSize();
+		size.setWidth(size.width() * RESIZE_FACTOR);
+		size.setHeight(size.height() * RESIZE_FACTOR);
+
+		///Desenha a cena no pixmap
+		QPainter p(&pix);
+		this->model->cena->render(&p, pix.rect(), this->model->cena->sceneRect().toRect());
+
+		//Exibe o pixmap no label redimensionado com o QSize criado anteriormente
+		label->setPixmap(pix.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+		label->resize(size);
+	}
+}
+
+void ModelOverviewWidget::resizeWindowFrame(void)
+{
+	if(this->model)
+	{
+		QSizeF size;
+
+		//Redimensiona o frame da janela conforme as dimensões do viewport
+		size=this->model->viewport->geometry().size();
+		size.setWidth(size.width() * RESIZE_FACTOR * 1/zoom_factor);
+		size.setHeight(size.height() * RESIZE_FACTOR * 1/zoom_factor);
+		window_frm->resize(size.toSize());
+
+		//Posiciona a janela conforme os valores das barras de rolagem
+		window_frm->move(QPoint(this->model->viewport->horizontalScrollBar()->value() * RESIZE_FACTOR,
+														this->model->viewport->verticalScrollBar()->value() * RESIZE_FACTOR));
+	}
+}
+
+void ModelOverviewWidget::resizeOverview(void)
+{
+	if(this->model)
+	{
+		QSizeF size;
+
+		//Redimensiona o widget conforme as dimensões da cena
+		size=this->model->cena->sceneRect().size();
+		size.setWidth(size.width() * RESIZE_FACTOR);
+		size.setHeight(size.height() * RESIZE_FACTOR);
+		this->resize(size.toSize());
+		this->setMaximumSize(size.toSize());
+		this->setMinimumSize(size.toSize());
+	}
+}
+
+void ModelOverviewWidget::updateZoomFactor(float zoom)
+{
+	this->zoom_factor=zoom;
+	this->resizeWindowFrame();
+}
+
+void ModelOverviewWidget::mouseDoubleClickEvent(QMouseEvent *)
+{
+	this->close();
+}
+
+void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
+{
+	if(event->buttons()==Qt::LeftButton)
+	{
+		QRect rect=window_frm->geometry(), rect1;
+		int width, height, x=event->x(), y=event->y();
+
+		//Obtém a largura do frame da janela do mundo, na visão geral
+		width=rect.width()/2;
+		height=rect.height()/2;
+
+		/* Configura um retangulo contendo como ponto central
+		 o x,y do evento */
+		rect.setLeft(x - width);
+		rect.setTop(y - height);
+		rect.setRight(x + width);
+		rect.setBottom(y + height);
+
+		rect1=frame->geometry();
+
+		/* Fazendo validações na posição do retângulo
+		 para que o mesmo não vaze para uma posiãço negativa
+		 ou uma posição além do frame que contém a janela da visão geral */
+		if(rect.left() < 0)
+			rect.translate(abs(rect.left()),0);
+
+		if(rect.top() < 0)
+			rect.translate(0, abs(rect.top()));
+
+		/* Nas duas condições a seguir é necessário descontar
+		 a posição inicial do frame principal (ret1.left() e ret1.top())
+		 para que o calculo da posição do frame da janela do mundo
+		 esteja correto, uma vez que posição inicial do frame da janela
+		 do mundo não se inicia na origem (0,0) mas sim após a posição
+		 inicial do frame da visão geral (ret1.left(), ret1.top()) */
+		if(rect.right() >= rect1.right())
+			rect.translate((rect1.right() - rect.right())-rect1.left(),0);
+
+		if(rect.bottom() >= rect1.bottom())
+			rect.translate(0,(rect1.bottom() - rect.bottom())-rect1.top());
+
+		window_frm->setGeometry(rect);
+		this->model->viewport->horizontalScrollBar()->setValue(ceilf(zoom_factor * this->model->cena->sceneRect().width() * (rect.x()/static_cast<float>(rect1.width()))));
+		this->model->viewport->verticalScrollBar()->setValue(ceilf(zoom_factor * this->model->cena->sceneRect().height() * (rect.y()/static_cast<float>(rect1.height()))));
+	}
+}
+
+void ModelOverviewWidget::mousePressEvent(QMouseEvent *event)
+{
+	if(event->button()==Qt::LeftButton)
+	{
+		window_frm->setCursor(QCursor(Qt::OpenHandCursor));
+		this->setCursor(QCursor(Qt::OpenHandCursor));
+	}
+}
+
+void ModelOverviewWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+	if(event->button()==Qt::LeftButton)
+	{
+		window_frm->setCursor(QCursor(Qt::ArrowCursor));
+		this->setCursor(QCursor(Qt::ArrowCursor));
+	}
+}
+

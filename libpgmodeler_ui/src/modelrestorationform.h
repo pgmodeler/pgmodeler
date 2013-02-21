@@ -18,39 +18,41 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class FormRestrauracaoModelos
-\brief Formulário de restauração de modelos temporários
+\class ModelRestorationForm
+\brief Temporary model restoration form
 */
 
-#ifndef FORM_RESTAURACAO_MODELOS_H
-#define FORM_RESTAURACAO_MODELOS_H
+#ifndef MODEL_RESTORATION_FORM_H
+#define MODEL_RESTORATION_FORM_H
 
 #include <QtGui>
 #include "globalattributes.h"
-#include "ui_formrestauracaomodelo.h"
+#include "ui_modelrestorationform.h"
 
-class FormRestauracaoModelo: public QDialog, public Ui::FormRestauracaoModelos {
+class ModelRestorationForm: public QDialog, public Ui::ModelRestorationForm {
 	private:
 		Q_OBJECT
 
 	public:
-		FormRestauracaoModelo(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		ModelRestorationForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
-		//! \brief Obtém a lista de arquivos temporários
-		QStringList obterModelosTemporarios(void);
+		//! \brief Returns the list of temporary files existant on tmp/ dir
+		QStringList getTemporaryModels(void);
 
-		//! \brief Obtém a lista de arquivos temporários selecionados para restauração
-		QStringList obterModelosSelecionados(void);
+		//! \brief Returns the list of temporary files selected to be restored
+		QStringList getSelectedModels(void);
 
 	public slots:
 		void exec(void);
-		//! \brief Exclui todos os arquivos temporários da pasta tmp
-		void excluirModelosTemporarios(void);
-		//! \brief Retorna se existe arquivos temporários na pasta
-		bool existeModelosTemporarios(void);
+
+		//! \brief Clears the tmp/ dir removing all temporary files
+		void removeTemporaryModels(void);
+
+		//! \brief Checks if there is at least one temporary file on tmp/ dir
+		bool hasTemporaryModels(void);
 
 	private slots:
-		void habilitarRestauracao(void);
+		void enableRestoration(void);
 };
 
 #endif

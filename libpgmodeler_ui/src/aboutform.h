@@ -18,8 +18,8 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class FormPrincipal
-\brief Definição da classe que implementa a caixa de informações do software.
+\class AboutForm
+\brief Form that contains information about software authoring and licensing.
 */
 
 #ifndef ABOUT_FORM_H
