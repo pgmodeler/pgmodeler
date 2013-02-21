@@ -274,7 +274,7 @@ class ModeloWidget: public QWidget {
 		void s_modeloRedimensionado(void);
 
 		friend class FormPrincipal;
-		friend class FormExportacao;
+		friend class ModelExportForm;
 		friend class OperationListWidget;
 		friend class VisaoObjetosWidget;
 		friend class ModelOverviewWidget;

@@ -30,7 +30,7 @@
 #include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
 #include "configurationform.h"
-#include "formexportacao.h"
+#include "modelexportform.h"
 #include "quickrenamewidget.h"
 
 /* Formulários globais. Como são formulários os mesmos podem ser
@@ -73,7 +73,7 @@ TaskProgressWidget *task_prog_wgt=NULL;
 
 ObjectDepsRefsWidget *deps_refs_wgt=NULL;
 ConfigurationForm *fconfiguracao=NULL;
-FormExportacao *fexportacao=NULL;
+ModelExportForm *fexportacao=NULL;
 QuickRenameWidget *quickrename_wgt=NULL;
 
 FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
@@ -113,7 +113,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 
 		fsobre=new AboutForm;
 		fconfiguracao=new ConfigurationForm(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
-		fexportacao=new FormExportacao(this);
+		fexportacao=new ModelExportForm(this);
 		//selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
 		frestmodelo=new ModelRestorationForm(this);

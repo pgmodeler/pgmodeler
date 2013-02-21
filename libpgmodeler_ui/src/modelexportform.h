@@ -18,34 +18,35 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class FormExportacao
-\brief Formulário de exportação do modelo
+\class ModelExportForm
+\brief Implements the operations to export a model to a file, image or directly to DBMS.
 */
 
-#ifndef FORM_EXPORTACAO_H
-#define FORM_EXPORTACAO_H
+#ifndef MODEL_EXPORT_FORM_H
+#define MODEL_EXPORT_FORM_H
 
-#include "ui_formexportacao.h"
+#include "ui_modelexportform.h"
 #include "schemaparser.h"
 #include "modelowidget.h"
 
-class FormExportacao: public QDialog, public Ui::FormExportacao {
+class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:
 		Q_OBJECT
-		ModeloWidget *modelo_wgt;
+
+		ModeloWidget *model;
 
 	public:
-		FormExportacao(QWidget * parent = 0, Qt::WindowFlags f = 0);
+		ModelExportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 	public slots:
-		void show(ModeloWidget *modelo);
+		void show(ModeloWidget *model);
 		void hideEvent(QHideEvent *);
 
 	private slots:
-		void habilitarTipoExportacao(void);
-		void exportarModelo(void);
-		void selecionarArquivoDestino(void);
-		void ocultarProgressoExportacao(void);
+		void enableExportType(void);
+		void exportModel(void);
+		void selectOutputFile(void);
+		void hideExportProgress(void);
 };
 
 #endif

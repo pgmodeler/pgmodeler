@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FormExportacao</class>
- <widget class="QDialog" name="FormExportacao">
+ <class>ModelExportForm</class>
+ <widget class="QDialog" name="ModelExportForm">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -38,7 +38,7 @@
    <iconset resource="../res/resources.qrc">
     <normaloff>:/icones/icones/pgsqlModeler48x48.png</normaloff>:/icones/icones/pgsqlModeler48x48.png</iconset>
   </property>
-  <layout class="QGridLayout" name="formexportacao_grid">
+  <layout class="QGridLayout" name="export_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -67,7 +67,7 @@
        <number>4</number>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="titulo_lbl">
+       <widget class="QLabel" name="title_lbl">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -108,14 +108,14 @@
          <number>15</number>
         </property>
         <item row="0" column="1" colspan="3">
-         <widget class="QLabel" name="exportacao_arq_lbl">
+         <widget class="QLabel" name="export_to_file_lbl">
           <property name="text">
            <string>Export to SQL file:</string>
           </property>
          </widget>
         </item>
         <item row="1" column="2">
-         <widget class="QLabel" name="arquivo_lbl">
+         <widget class="QLabel" name="file_lbl">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -136,7 +136,7 @@
         <item row="1" column="3">
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
-           <widget class="QLineEdit" name="arquivo_edt">
+           <widget class="QLineEdit" name="file_edt">
             <property name="dragEnabled">
              <bool>false</bool>
             </property>
@@ -146,7 +146,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="sel_arquivo_tb">
+           <widget class="QToolButton" name="select_file_tb">
             <property name="minimumSize">
              <size>
               <width>30</width>
@@ -174,7 +174,7 @@
          </layout>
         </item>
         <item row="1" column="1" rowspan="3">
-         <widget class="QLabel" name="modelo_sql_lbl">
+         <widget class="QLabel" name="model_sql_lbl">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -274,7 +274,7 @@
          </layout>
         </item>
         <item row="1" column="0" rowspan="3">
-         <widget class="QRadioButton" name="exportacao_arq_rb">
+         <widget class="QRadioButton" name="export_to_file_rb">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -308,7 +308,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="dica_lbl">
+           <widget class="QLabel" name="hint_lbl">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -377,14 +377,14 @@
          <number>15</number>
         </property>
         <item row="0" column="1" colspan="3">
-         <widget class="QLabel" name="exportacao_arq_lbl_2">
+         <widget class="QLabel" name="export_to_img_lbl">
           <property name="text">
            <string>Export to PNG image:</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1" rowspan="4">
-         <widget class="QLabel" name="modelo_png_lbl">
+         <widget class="QLabel" name="model_png_lbl">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -415,7 +415,7 @@
          </widget>
         </item>
         <item row="1" column="2">
-         <widget class="QLabel" name="imagem_lbl">
+         <widget class="QLabel" name="image_lbl">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -439,7 +439,7 @@
         <item row="1" column="3">
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
-           <widget class="QLineEdit" name="imagem_edt">
+           <widget class="QLineEdit" name="image_edt">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -452,7 +452,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="sel_imagem_tb">
+           <widget class="QToolButton" name="select_img_tb">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -483,7 +483,7 @@
          </layout>
         </item>
         <item row="2" column="2" rowspan="2">
-         <widget class="QLabel" name="opcoes_lbl">
+         <widget class="QLabel" name="options_lbl">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -518,7 +518,7 @@
         <item row="2" column="3" rowspan="2">
          <layout class="QHBoxLayout" name="horizontalLayout_8">
           <item>
-           <widget class="QCheckBox" name="grade_chk">
+           <widget class="QCheckBox" name="show_grid_chk">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -534,7 +534,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="lim_paginas_chk">
+           <widget class="QCheckBox" name="show_delim_chk">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -546,7 +546,7 @@
          </layout>
         </item>
         <item row="1" column="0" rowspan="4">
-         <widget class="QRadioButton" name="exportacao_png_rb">
+         <widget class="QRadioButton" name="export_to_img_rb">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -580,7 +580,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="dica3_lbl">
+           <widget class="QLabel" name="hint1_lbl">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -652,7 +652,7 @@
       <item row="4" column="0">
        <layout class="QGridLayout" name="gridLayout">
         <item row="1" column="2" colspan="2">
-         <widget class="QLabel" name="conexoes_lbl">
+         <widget class="QLabel" name="connections_lbl">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -674,7 +674,7 @@
          </widget>
         </item>
         <item row="1" column="4" colspan="2">
-         <widget class="QComboBox" name="conexoes_cmb">
+         <widget class="QComboBox" name="connections_cmb">
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -790,7 +790,7 @@
          </spacer>
         </item>
         <item row="1" column="0" rowspan="4">
-         <widget class="QRadioButton" name="exportacao_sgbd_rb">
+         <widget class="QRadioButton" name="export_to_dbms_rb">
           <property name="enabled">
            <bool>true</bool>
           </property>
@@ -824,7 +824,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="dica1_lbl">
+           <widget class="QLabel" name="hint2_lbl">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -895,26 +895,13 @@
                <bool>false</bool>
               </property>
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
               <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="ignorar_dup_lbl">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
                <string>Ignore object duplicity</string>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -939,7 +926,7 @@
              </spacer>
             </item>
             <item>
-             <widget class="QLabel" name="dica2_lbl">
+             <widget class="QLabel" name="hint3_lbl">
               <property name="enabled">
                <bool>false</bool>
               </property>
@@ -1003,7 +990,7 @@
          </layout>
         </item>
         <item row="0" column="1" colspan="5">
-         <widget class="QLabel" name="exportacao_sgbd_lbl">
+         <widget class="QLabel" name="export_dbms_lbl">
           <property name="font">
            <font>
             <weight>50</weight>
@@ -1040,7 +1027,7 @@
          <number>4</number>
         </property>
         <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="rot_prog_lbl">
+         <widget class="QLabel" name="progress_lbl">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -1053,7 +1040,7 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QProgressBar" name="prog_pb">
+         <widget class="QProgressBar" name="progress_pb">
           <property name="value">
            <number>0</number>
           </property>
@@ -1133,7 +1120,7 @@
       </spacer>
      </item>
      <item row="0" column="2">
-      <widget class="QPushButton" name="exportar_btn">
+      <widget class="QPushButton" name="export_btn">
        <property name="minimumSize">
         <size>
          <width>90</width>
@@ -1159,7 +1146,7 @@
       </widget>
      </item>
      <item row="0" column="3">
-      <widget class="QPushButton" name="fechar_btn">
+      <widget class="QPushButton" name="close_btn">
        <property name="minimumSize">
         <size>
          <width>90</width>
