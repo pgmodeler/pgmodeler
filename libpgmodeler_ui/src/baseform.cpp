@@ -11,7 +11,7 @@ BaseForm::BaseForm(QWidget *parent, Qt::WindowFlags f) : QDialog(parent, f)
 												 Qt::Dialog |
 												 Qt::WindowMaximizeButtonHint);
 
-		this->widgetgeral_wgt->setFrameShape(QFrame::WinPanel);
+		this->generalwidget_wgt->setFrameShape(QFrame::WinPanel);
 	#endif
 }
 
