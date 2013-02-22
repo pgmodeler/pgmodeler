@@ -3,6 +3,70 @@
 <TS version="2.0" language="fr" sourcelanguage="en_US">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
+    <name>AboutForm</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/aboutform.ui" line="+35"/>
+        <source>About pgModeler</source>
+        <translation>À propos de pgModeler</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Close</source>
+        <translation>Fermer</translation>
+    </message>
+    <message>
+        <location line="+83"/>
+        <source>PostgreSQL Database Modeler</source>
+        <translation>PostgreSQL Database Modeler</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Design, configure, deploy</source>
+        <translation>Concevoir, configurer, déployer</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>0.0.0.0</source>
+        <translation>0.0.0.0</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location line="+49"/>
+        <source>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
+
+The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.
+
+Special thanks to friends of the software development team of the Legislative Assembly, Tocantins, Brazil: Michel de Almeida, Felipe Santana, Jonas Nepomuceno, Ricardo Ishibashi and Álvaro Nunes.</source>
+        <translation>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
+
+Le projet pgModeler est un outil de CASE (computer-aided software engineering ou génie logiciel assisté par ordinateur) dédié à la modélisation de bases de données relationnelles pour PostgreSQL utilisant les techniques de modélisation des diagrammes de relantion entre les entités, ainsi que les concepts implémentés dans PostgreSQL.
+
+Remerciement spéciaux aux amis de l&apos;équipe de développement de l&apos;Assemblée Législative, Tocantins, Brésil: Michel de Almeida, Felipe Santana, Jonas Nepomuceno, Ricardo Ishibashi et Álvaro Nunes.</translation>
+    </message>
+    <message>
+        <location line="+60"/>
+        <source>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation version 3.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+The complete text of GPLv3 is at LICENSE file on source code root directory. Also, you can get the complete GNU General Public License at &lt;http://www.gnu.org/licenses/&gt;</source>
+        <translation>Ce programme est un logiciel libre : vous pouvez le redistribuer et/ou le modifier sous les termes de la licence &quot;GNU General Public License v3&quot; publié par la Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+The complete text of GPLv3 is at LICENSE file on source code root directory. Also, you can get the complete GNU General Public License at &lt;http://www.gnu.org/licenses/&gt;</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/aboutform.cpp" line="+6"/>
+        <source>Version %1</source>
+        <translation>Version %1</translation>
+    </message>
+</context>
+<context>
     <name>AggregateWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/aggregatewidget.ui" line="+20"/>
@@ -352,6 +416,30 @@
     </message>
 </context>
 <context>
+    <name>BaseForm</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/baseform.ui" line="+23"/>
+        <source>Dialog</source>
+        <translation>Dialogue</translation>
+    </message>
+    <message>
+        <location line="+125"/>
+        <location filename="../libpgmodeler_ui/src/baseform.cpp" line="+22"/>
+        <source>&amp;Apply</source>
+        <translation>&amp;Appliquer</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>&amp;Cancel</source>
+        <translation>A&amp;nnuler</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/baseform.cpp" line="+5"/>
+        <source>&amp;Ok</source>
+        <translation>&amp;Ok</translation>
+    </message>
+</context>
+<context>
     <name>BaseObject</name>
     <message>
         <location filename="../libpgmodeler/src/baseobject.cpp" line="+19"/>
@@ -634,6 +722,59 @@
         <location line="+41"/>
         <source>Not Null:</source>
         <translation>Non Null:</translation>
+    </message>
+</context>
+<context>
+    <name>ConfigurationForm</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/configurationform.ui" line="+29"/>
+        <source>pgModeler Configuration</source>
+        <translation>Configuration de pgModeler</translation>
+    </message>
+    <message>
+        <location line="+49"/>
+        <source>&amp;Apply</source>
+        <translation>&amp;Appliquer</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>&amp;Cancel</source>
+        <translation>A&amp;nnuler</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Defaults</source>
+        <translation>Défauts</translation>
+    </message>
+    <message>
+        <location line="+153"/>
+        <source>General</source>
+        <translation>Général</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Style</source>
+        <translation>Style</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Connetions</source>
+        <translation>Connexions</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Plug-ins</source>
+        <translation>Extensions</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/configurationform.cpp" line="+85"/>
+        <source>Confirmation</source>
+        <translation>Confirmation</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Any modification made until now in the current section will be lost! Do you really want to restore default settings?</source>
+        <translation>Toutes les modifications réalisées jusqu&apos;à présent dans la section actuelle seront perdues! Souhaitez vous réellement restaurer les paramètres par défaut?</translation>
     </message>
 </context>
 <context>
@@ -2001,270 +2142,6 @@ Message retourné par le SGBD: %1</translation>
     </message>
 </context>
 <context>
-    <name>FormBasico</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/formbasico.ui" line="+148"/>
-        <location filename="../libpgmodeler_ui/src/formbasico.cpp" line="+23"/>
-        <source>&amp;Apply</source>
-        <translation>&amp;Appliquer</translation>
-    </message>
-    <message>
-        <location line="+41"/>
-        <source>&amp;Cancel</source>
-        <translation>A&amp;nnuler</translation>
-    </message>
-    <message>
-        <location line="-166"/>
-        <source>Dialog</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/formbasico.cpp" line="+5"/>
-        <source>&amp;Ok</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
-    <name>FormConfiguracao</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/formconfiguracao.ui" line="+29"/>
-        <source>pgModeler Configuration</source>
-        <translation>Configuration de pgModeler</translation>
-    </message>
-    <message>
-        <location line="+49"/>
-        <source>&amp;Apply</source>
-        <translation>&amp;Appliquer</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>&amp;Cancel</source>
-        <translation>A&amp;nnuler</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Defaults</source>
-        <translation>Défauts</translation>
-    </message>
-    <message>
-        <location line="+153"/>
-        <source>General</source>
-        <translation>Général</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Style</source>
-        <translation>Style</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Connetions</source>
-        <translation>Connexions</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Plug-ins</source>
-        <translation>Extensions</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/formconfiguracao.cpp" line="+85"/>
-        <source>Confirmation</source>
-        <translation>Confirmation</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Any modification made until now in the current section will be lost! Do you really want to restore default settings?</source>
-        <translation>Toutes les modifications réalisées jusqu&apos;à présent dans la section actuelle seront perdues! Souhaitez vous réellement restaurer les paramètres par défaut?</translation>
-    </message>
-</context>
-<context>
-    <name>FormExportacao</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/formexportacao.ui" line="+35"/>
-        <source>Model Export</source>
-        <translation>Export du modèle</translation>
-    </message>
-    <message>
-        <location line="+50"/>
-        <source>Select the export type:</source>
-        <translation>Sélectionner le type d&apos;export:</translation>
-    </message>
-    <message>
-        <location line="+47"/>
-        <source>File:</source>
-        <translation>Fichier:</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <location line="+309"/>
-        <source>Select target file</source>
-        <translation>Sélectionner le fichier cible</translation>
-    </message>
-    <message>
-        <location line="-212"/>
-        <location line="+518"/>
-        <source>PostgreSQL version in which the SQL code should be generated</source>
-        <translation>Version de PostgreSQL pour laquelle le code SQL doit être généré</translation>
-    </message>
-    <message>
-        <location line="-412"/>
-        <source>Check if the system user has write permission on target folder.</source>
-        <translation>Vérifiez que l&apos;utilisateur système à les droits d&apos;écriture sur le dossier cible.</translation>
-    </message>
-    <message>
-        <location line="+154"/>
-        <source>Options:</source>
-        <translation>Options:</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Show grid</source>
-        <translation>Afficher la grille</translation>
-    </message>
-    <message>
-        <location line="+382"/>
-        <source>Ignore object duplicity</source>
-        <translation>Ignorer les objets dupliqués</translation>
-    </message>
-    <message>
-        <location line="+77"/>
-        <source>The pgModeler ignores errors generated by duplicate objects and creates only model objects that do not exist in the database. This option may be used when an object was created after a later model export.</source>
-        <translation>pgModeler ignore les erreurs générées par les objets dupliqués et créé seulement les objets modèle qui n&apos;existent pas en base. Cette option peut être utilisée quand un objet a été créé après un export de modèle</translation>
-    </message>
-    <message>
-        <location line="+24"/>
-        <source>Export to DBMS:</source>
-        <translation>Exporter vers le SGBD:</translation>
-    </message>
-    <message>
-        <location line="-343"/>
-        <source>Connection:</source>
-        <translation>Connexion:</translation>
-    </message>
-    <message>
-        <location line="+204"/>
-        <source>It is recommended to select this option only when the version of the DBMS, somehow, is not identifiable or if you need to generate a specific version of SQL code for testing.</source>
-        <translation>Il est recoomandé de sélectionner cette option seulement lorsque la version du SGBD n&apos;est pas indentifiable ou si vous avez besoin de générer une version spécifique du code SQL à des fins de tests</translation>
-    </message>
-    <message>
-        <location line="+274"/>
-        <source>&amp;Export</source>
-        <translation>&amp;Exporter</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>&amp;Close</source>
-        <translation>&amp;Fermer</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/formexportacao.cpp" line="+161"/>
-        <source>Generating source code...</source>
-        <translation>Génération du code source...</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Initializing model export...</source>
-        <translation>Initialisation de l&apos;export de modèle...</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Saving file &apos;%1&apos;</source>
-        <translation>Enregistrement du fichier &apos;%1&apos;</translation>
-    </message>
-    <message>
-        <location line="+31"/>
-        <source>Creating object &apos;%1&apos; (%2)...</source>
-        <translation>Création de l&apos;objet &apos;%1&apos; (%2)...</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>Creating database &apos;%1&apos;...</source>
-        <translation>Création de la base de données &apos;%1&apos;...</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Connecting to database &apos;%1&apos;...</source>
-        <translation>Connexion à la base de données &apos;%1&apos;...</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Creating objects on database &apos;%1&apos;...</source>
-        <translation>Création des objets dans la base de données &apos;%1&apos;...</translation>
-    </message>
-    <message>
-        <location line="+122"/>
-        <source>Exporting process sucessfuly ended!</source>
-        <translation>Processus d&apos;export finalisé avec succès!</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Error on export!</source>
-        <translation>Erreur lors de l&apos;export!</translation>
-    </message>
-    <message>
-        <location line="+63"/>
-        <source>Export model as...</source>
-        <translation>Exporter le modèle sous...</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>SQL code (*.sql);;All files (*.*)</source>
-        <translation>Code SQL (*.sql);;Tous les fichiers (*.*)</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>PNG image (*.png);;All files (*.*)</source>
-        <translation>Image PNG (*.png);;Tous les fichiers (*.*)</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/formexportacao.ui" line="-1063"/>
-        <source>Export to SQL file:</source>
-        <translation>Exporter dans un fichier SQL:</translation>
-    </message>
-    <message>
-        <location line="+269"/>
-        <source>Export to PNG image:</source>
-        <translation>Exporter dans une image PNG:</translation>
-    </message>
-    <message>
-        <location line="+53"/>
-        <source>Image:</source>
-        <translation>Image:</translation>
-    </message>
-    <message>
-        <location line="+107"/>
-        <source>Show the page delimiters</source>
-        <translation>Afficher les délimitations de la page</translation>
-    </message>
-    <message>
-        <location line="+96"/>
-        <source>Check if the system user has write permission on image target folder.</source>
-        <translation>Vérifiez que l&apos;utilisateur système possède les droits d&apos;écriture sur le dossier d&apos;images cible.</translation>
-    </message>
-    <message>
-        <location line="-478"/>
-        <location line="+309"/>
-        <source>...</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-239"/>
-        <location line="+508"/>
-        <source>PostgreSQL:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+313"/>
-        <source>Progress label...</source>
-        <translation>Etiquette de progression...</translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>ico</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
     <name>FormPrincipal</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="+171"/>
@@ -2606,102 +2483,6 @@ Message retourné par le SGBD: %1</translation>
         <location line="+1"/>
         <source>The model were modified! Do you want to save it before close?</source>
         <translation>Le modèle a été modifié? Souhaitez vous le sauvegarder avant de le fermer?</translation>
-    </message>
-</context>
-<context>
-    <name>FormRestauracaoModelo</name>
-    <message>
-        <location filename="../libpgmodeler_ui/src/formrestauracaomodelo.cpp" line="+33"/>
-        <source>Modified: %1</source>
-        <translation>Modifié: %1</translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>yyyy-MM-dd hh:mm:ss</source>
-        <translation>dd/MM/yyyy hh:mm:ss</translation>
-    </message>
-</context>
-<context>
-    <name>FormRestauracaoModelos</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/formrestauracaomodelo.ui" line="+35"/>
-        <source>Model restoration</source>
-        <translation>Restauration de modèle</translation>
-    </message>
-    <message>
-        <location line="+55"/>
-        <source>&amp;Restore</source>
-        <translation>&amp;Restaurer</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>&amp;Cancel</source>
-        <translation>&amp;Annuler</translation>
-    </message>
-    <message>
-        <location line="+107"/>
-        <source>pgModeler was not closed properly in a previous execution and some models were still being edited. Click &apos;Restore&apos; to reopen the models or &apos;Cancel&apos; to abort the restoration.</source>
-        <translation>pgModeler n&apos;a pas été fermé correctement lors de précédente exécution, certains modèles étaient toujouts en cours d&quot;édition. Cliquez sur &apos;Restaurer&apos; pour réouvrir les modèles pi &apos;Annuler&apos; pour interrompre la restauration.</translation>
-    </message>
-</context>
-<context>
-    <name>FormSobre</name>
-    <message>
-        <location filename="../libpgmodeler_ui/src/formsobre.cpp" line="+6"/>
-        <source>Version %1</source>
-        <translation>Version %1</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/formsobre.ui" line="+78"/>
-        <source>Close</source>
-        <translation>Fermer</translation>
-    </message>
-    <message>
-        <location line="+83"/>
-        <source>PostgreSQL Database Modeler</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+64"/>
-        <source>0.0.0.0</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+49"/>
-        <source>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
-
-The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.
-
-Special thanks to friends of the software development team of the Legislative Assembly, Tocantins, Brazil: Michel de Almeida, Felipe Santana, Jonas Nepomuceno, Ricardo Ishibashi and Álvaro Nunes.</source>
-        <translation>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
-
-Le projet pgModeler est un outil CASE dédié à la modélisation de bases de données relationnelles sous PostgreSQL qui utilise les techniques de modélisation des diagrammes entité-relation, ainsi que les concepts implémentés dans PostgreSQL.
-
-Remerciement spéciaux aux amis de l&apos;équipe de développement de l&apos;Assemblée Législative, Tocantins, Brésil: Michel de Almeida, Felipe Santana, Jonas Nepomuceno, Ricardo Ishibashi et Álvaro Nunes.</translation>
-    </message>
-    <message>
-        <location line="+60"/>
-        <source>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation version 3.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-The complete text of GPLv3 is at LICENSE file on source code root directory. Also, you can get the complete GNU General Public License at &lt;http://www.gnu.org/licenses/&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-311"/>
-        <source>About pgModeler</source>
-        <translation>A propos de pgModeler</translation>
-    </message>
-    <message>
-        <location line="+157"/>
-        <source>Design, configure, deploy</source>
-        <translation>Concevoir, configurer, déployer</translation>
     </message>
 </context>
 <context>
@@ -3326,7 +3107,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+71"/>
-        <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="+170"/>
+        <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="+169"/>
         <location line="+11"/>
         <source>&amp;Yes</source>
         <translation>&amp;Oui</translation>
@@ -3369,6 +3150,234 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location line="+11"/>
         <source>&amp;Ok</source>
         <translation>&amp;Ok</translation>
+    </message>
+</context>
+<context>
+    <name>ModelExportForm</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="+35"/>
+        <source>Model Export</source>
+        <translation>Exportation du modèle</translation>
+    </message>
+    <message>
+        <location line="+50"/>
+        <source>Select the export type:</source>
+        <translation>Sélectionner le type d&apos;exportation:</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Export to SQL file:</source>
+        <translation>Exporter dans un fichier SQL:</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>File:</source>
+        <translation>Fichier:</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <location line="+309"/>
+        <source>Select target file</source>
+        <translation>Sélectionner le fichier cible</translation>
+    </message>
+    <message>
+        <location line="-306"/>
+        <location line="+309"/>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <location line="-239"/>
+        <location line="+508"/>
+        <source>PostgreSQL:</source>
+        <translation>PostgreSQL:</translation>
+    </message>
+    <message>
+        <location line="-484"/>
+        <location line="+518"/>
+        <source>PostgreSQL version in which the SQL code should be generated</source>
+        <translation>Version de PostgreSQL pour laquelle le code SQL doit être généré</translation>
+    </message>
+    <message>
+        <location line="-412"/>
+        <source>Check if the system user has write permission on target folder.</source>
+        <translation>Vérifiez que vous avez les droits d&apos;écriture pour le dossier de destination.</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Export to PNG image:</source>
+        <translation>Exporter en une image PNG:</translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>Image:</source>
+        <translation>Image:</translation>
+    </message>
+    <message>
+        <location line="+79"/>
+        <source>Options:</source>
+        <translation>Options:</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Show grid</source>
+        <translation>Afficher la grille</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Show the page delimiters</source>
+        <translation>Afficher les délimiteurs de page</translation>
+    </message>
+    <message>
+        <location line="+96"/>
+        <source>Check if the system user has write permission on image target folder.</source>
+        <translation>Vérifiez que vous avez les droits d&apos;écriture pour le dossier de destination.</translation>
+    </message>
+    <message>
+        <location line="+34"/>
+        <source>Connection:</source>
+        <translation>Connexion:</translation>
+    </message>
+    <message>
+        <location line="+204"/>
+        <source>It is recommended to select this option only when the version of the DBMS, somehow, is not identifiable or if you need to generate a specific version of SQL code for testing.</source>
+        <translation>Il est recoomandé de sélectionner cette option seulement lorsque la version du SGBD n&apos;est pas indentifiable ou si vous avez besoin de générer une version spécifique du code SQL à des fins de tests.</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Ignore object duplicity</source>
+        <translation>Ignorer les objets dupliqués</translation>
+    </message>
+    <message>
+        <location line="+74"/>
+        <source>The pgModeler ignores errors generated by duplicate objects and creates only model objects that do not exist in the database. This option may be used when an object was created after a later model export.</source>
+        <translation>pgModeler ignore les erreurs générées par les objets dupliqués et créé seulement les objets du modèle qui n&apos;existent pas dans la base de données. Cette option peut être utilisée quand un objet a été créé après un export du modèle.</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Export to DBMS:</source>
+        <translation>Exporter vers le SGBD:</translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Progress label...</source>
+        <translation>Indicateur de progression...</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>ico</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+67"/>
+        <source>&amp;Export</source>
+        <translation>&amp;Exporter</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>&amp;Close</source>
+        <translation>&amp;Fermer</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="+140"/>
+        <source>Generating source code...</source>
+        <translation>Génération du code source...</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Initializing model export...</source>
+        <translation>Initialisation de l&apos;exportation du modèle...</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Saving file &apos;%1&apos;</source>
+        <translation>Enregistrement du fichier &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Creating object &apos;%1&apos; (%2)...</source>
+        <translation>Création de l&apos;objet &apos;%1&apos; (%2)...</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Creating database &apos;%1&apos;...</source>
+        <translation>Création de la base de données &apos;%1&apos;...</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Connecting to database &apos;%1&apos;...</source>
+        <translation>Connexion à la base de données &apos;%1&apos;...</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Creating objects on database &apos;%1&apos;...</source>
+        <translation>Création des objets dans la base de données &apos;%1&apos;...</translation>
+    </message>
+    <message>
+        <location line="+105"/>
+        <source>Exporting process sucessfuly ended!</source>
+        <translation>Processus d&apos;exportation terminé avec succès!</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Error on export!</source>
+        <translation>Erreur lors de l&apos;exportation!</translation>
+    </message>
+    <message>
+        <location line="+58"/>
+        <source>Export model as...</source>
+        <translation>Exporter le modèle sous...</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>SQL code (*.sql);;All files (*.*)</source>
+        <translation>Code SQL (*.sql);;Tous les fichiers (*.*)</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>PNG image (*.png);;All files (*.*)</source>
+        <translation>Image PNG (*.png);;Tous les fichiers (*.*)</translation>
+    </message>
+</context>
+<context>
+    <name>ModelOverviewWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modeloverviewwidget.ui" line="+41"/>
+        <source>Model overview</source>
+        <translation>Vue générale du modèle</translation>
+    </message>
+</context>
+<context>
+    <name>ModelRestorationForm</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelrestorationform.ui" line="+35"/>
+        <source>Model restoration</source>
+        <translation>Restauration de modèle</translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>&amp;Restore</source>
+        <translation>&amp;Restaurer</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>&amp;Cancel</source>
+        <translation>A&amp;nnuler</translation>
+    </message>
+    <message>
+        <location line="+107"/>
+        <source>pgModeler was not closed properly in a previous execution and some models were still being edited. Click &apos;Restore&apos; to reopen the models or &apos;Cancel&apos; to abort the restoration.</source>
+        <translation>pgModeler n&apos;a pas été fermé correctement lors de sa précédente exécution, certains modèles étaient toujouts en cours d&apos;édition. Cliquez sur &apos;Restaurer&apos; pour réouvrir les modèles ou &apos;Annuler&apos; pour interrompre la restauration.</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/modelrestorationform.cpp" line="+31"/>
+        <source>Modified: %1</source>
+        <translation>Modifié: %1</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>yyyy-MM-dd hh:mm:ss</source>
+        <translation>yyyy-MMM-dd hh:mm</translation>
     </message>
 </context>
 <context>
@@ -4253,6 +4262,98 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
+    <name>PgSQLTypeWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/pgsqltypewidget.ui" line="+32"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Data Type</source>
+        <translation>Type de donnée</translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>SRID:</source>
+        <translation>SRID:</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Variation:</source>
+        <translation>Variation:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Z</source>
+        <translation>Z</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>M</source>
+        <translation>M</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <location line="+225"/>
+        <source>Precision</source>
+        <translation>Précision</translation>
+    </message>
+    <message>
+        <location line="-174"/>
+        <source>Spatial:</source>
+        <translation>Spatial:</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <location line="+328"/>
+        <source>Dimension</source>
+        <translation>Dimension</translation>
+    </message>
+    <message>
+        <location line="-291"/>
+        <source>Format:</source>
+        <translation>Format:</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Timezone:</source>
+        <translation>Fuseau horaire:</translation>
+    </message>
+    <message>
+        <location line="+50"/>
+        <source>Type:</source>
+        <translation>Type:</translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>P:</source>
+        <translation>P:</translation>
+    </message>
+    <message>
+        <location line="+59"/>
+        <location line="+42"/>
+        <source>Length</source>
+        <translatorcomment>Taille ?</translatorcomment>
+        <translation>Longueur</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>L:</source>
+        <translation>L:</translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Interval:</source>
+        <translation>Intervalle:</translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>[ ]:</source>
+        <translation>[ ]:</translation>
+    </message>
+</context>
+<context>
     <name>PluginsConfigWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/pluginsconfigwidget.ui" line="+14"/>
@@ -4903,7 +5004,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>TableWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="+14"/>
+        <location filename="../libpgmodeler_ui/ui/tablewidget.ui" line="+20"/>
         <source>Form</source>
         <translation>Formulaire</translation>
     </message>
@@ -4953,7 +5054,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Tables copiées:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="+51"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="+45"/>
         <location line="+8"/>
         <location line="+8"/>
         <location line="+9"/>
@@ -5070,97 +5171,6 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location filename="../libpgmodeler_ui/src/textboxwidget.cpp" line="+50"/>
         <source>Select text color</source>
         <translation>Sélection de la couleur de texte</translation>
-    </message>
-</context>
-<context>
-    <name>TipoPgSQLWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/tipopgsqlwidget.ui" line="+32"/>
-        <source>Form</source>
-        <translation>Formulaire</translation>
-    </message>
-    <message>
-        <location line="+33"/>
-        <source>Data Type</source>
-        <translation>Type de donnée</translation>
-    </message>
-    <message>
-        <location line="+57"/>
-        <source>SRID:</source>
-        <translation>SRID:</translation>
-    </message>
-    <message>
-        <location line="+288"/>
-        <source>Type:</source>
-        <translation>Type:</translation>
-    </message>
-    <message>
-        <location line="+95"/>
-        <location line="+42"/>
-        <source>Length</source>
-        <translation>Longueur</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>L:</source>
-        <translation>L:</translation>
-    </message>
-    <message>
-        <location line="-338"/>
-        <location line="+225"/>
-        <source>Precision</source>
-        <translation>Précision</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>P:</source>
-        <translation>P:</translation>
-    </message>
-    <message>
-        <location line="-155"/>
-        <location line="+328"/>
-        <source>Dimension</source>
-        <translation>Dimension</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>[ ]:</source>
-        <translation>[ ]:</translation>
-    </message>
-    <message>
-        <location line="-36"/>
-        <source>Interval:</source>
-        <translation>Intervalle:</translation>
-    </message>
-    <message>
-        <location line="-323"/>
-        <source>Spatial:</source>
-        <translation>Spatial:</translation>
-    </message>
-    <message>
-        <location line="+94"/>
-        <source>Timezone:</source>
-        <translation>Fuseau horaire:</translation>
-    </message>
-    <message>
-        <location line="-32"/>
-        <source>Format:</source>
-        <translation>Format:</translation>
-    </message>
-    <message>
-        <location line="-160"/>
-        <source>Variation:</source>
-        <translation>Variation:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Z</source>
-        <translation>Z</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>M</source>
-        <translation>M</translation>
     </message>
 </context>
 <context>
@@ -5443,14 +5453,6 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
 </context>
 <context>
-    <name>VisaoGeralWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/visaogeralwidget.ui" line="+41"/>
-        <source>Model overview</source>
-        <translation>Vision générale du modèle</translation>
-    </message>
-</context>
-<context>
     <name>VisaoObjetosWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/visaoobjetoswidget.ui" line="+36"/>
@@ -5603,7 +5605,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Pour référence toutes les colonnes dans une table (*) ne pas remplir le champs  &lt;strong&gt;Colonne&lt;/strong&gt;, ce qui es équivalent à écrire &lt;em&gt;&lt;strong&gt;[schéma].[table].*&lt;/strong&gt;&lt;/em&gt;</translation>
     </message>
     <message>
-        <location line="+336"/>
+        <location line="+337"/>
         <source>-- Could not generate the code. Make sure all attributes are correctly filled! --</source>
         <translation>-- Impossible de générer le code. Assurez vous que tous les attributs sont correctement renseignés! --</translation>
     </message>
@@ -5623,7 +5625,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation></translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/visaowidget.cpp" line="-342"/>
+        <location filename="../libpgmodeler_ui/src/visaowidget.cpp" line="-343"/>
         <source>Col./Expr.</source>
         <translation></translation>
     </message>
