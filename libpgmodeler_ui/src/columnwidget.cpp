@@ -5,6 +5,8 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 	try
 	{
 		Ui_ColumnWidget::setupUi(this);
+        
+		def_value_txt->setTabChangesFocus(true);
 
 		hl_default_value=NULL;
 		hl_default_value=new SyntaxHighlighter(def_value_txt, false);
