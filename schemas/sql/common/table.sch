@@ -10,11 +10,11 @@
 %if @{constraints} %then , $br @{constraints} %end
 $br ) $br
 
+[WITH (OIDS=] %if @{oids} %then TRUE %else FALSE %end )
 %if @{tablespace} %then
- [TABLESPACE ] @{tablespace} $br
+ $br [TABLESPACE ] @{tablespace}
 %end
-
-[WITH (OIDS=] %if @{oids} %then TRUE %else FALSE %end ); $br $br
+; $br $br
 
 %if @{indexes} %then @{indexes} $br %end
 %if @{triggers} %then @{triggers} $br %end

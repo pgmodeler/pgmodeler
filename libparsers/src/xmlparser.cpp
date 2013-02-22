@@ -113,13 +113,17 @@ void XMLParser::loadXMLBuffer(const QString &xml_buf)
 
 void XMLParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 {
+	QString fmt_dtd_file;
+
 	if(dtd_file.isEmpty())
 		throw Exception(ERR_ASG_EMPTY_DTD_FILE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(dtd_name.isEmpty())
 		throw Exception(ERR_ASG_EMPTY_DTD_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	dtd_decl="<!DOCTYPE " + dtd_name + " SYSTEM " + "\"" +  dtd_file + "\">\n";
+	//Formats the dtd file path in order to replace spaces by %20 (url format)
+	fmt_dtd_file="file://" + dtd_file;
+	dtd_decl="<!DOCTYPE " + dtd_name + " SYSTEM " + "\"" +  fmt_dtd_file.replace(QString(" "),QString("%20")) + "\">\n";
 }
 
 void XMLParser::readBuffer(void)

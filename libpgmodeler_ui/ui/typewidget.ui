@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TipoWidget</class>
- <widget class="QWidget" name="TipoWidget">
+ <class>TypeWidget</class>
+ <widget class="QWidget" name="TypeWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>491</width>
+    <width>545</width>
     <height>502</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="tipo_grid">
+  <layout class="QGridLayout" name="type_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -27,7 +27,7 @@
     <number>6</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="configuracao_lbl">
+    <widget class="QLabel" name="configuration_lbl">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -40,7 +40,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QRadioButton" name="tipo_base_rb">
+    <widget class="QRadioButton" name="base_type_rb">
      <property name="minimumSize">
       <size>
        <width>80</width>
@@ -56,7 +56,7 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QRadioButton" name="enumeracao_rb">
+    <widget class="QRadioButton" name="enumeration_rb">
      <property name="minimumSize">
       <size>
        <width>95</width>
@@ -69,7 +69,13 @@
     </widget>
    </item>
    <item row="0" column="3">
-    <widget class="QRadioButton" name="composto_rb">
+    <widget class="QRadioButton" name="composite_rb">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>80</width>
@@ -81,21 +87,14 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="4">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>92</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="1" column="0" colspan="5">
-    <widget class="QGroupBox" name="enumeracoes_gb">
+    <widget class="QGroupBox" name="enumerations_gb">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -113,22 +112,22 @@
        <number>6</number>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="nome_enum_lbl">
+       <widget class="QLabel" name="enum_name_lbl">
         <property name="text">
          <string>Enumeration:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="nome_enum_edt"/>
+       <widget class="QLineEdit" name="enum_name_edt"/>
       </item>
      </layout>
     </widget>
    </item>
    <item row="2" column="0" colspan="5">
-    <widget class="QGroupBox" name="atributos_gb">
+    <widget class="QGroupBox" name="attributes_gb">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -145,7 +144,7 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="5">
-    <widget class="QTabWidget" name="atrib_base_twg">
+    <widget class="QTabWidget" name="base_attribs_twg">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -161,14 +160,14 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="QLabel" name="comp_int_lbl">
+        <widget class="QLabel" name="internal_len_lbl">
          <property name="text">
           <string>Internal Length:</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QSpinBox" name="comp_int_sb">
+        <widget class="QSpinBox" name="internal_len_sb">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -184,24 +183,24 @@
         </widget>
        </item>
        <item row="0" column="2">
-        <widget class="QLabel" name="armazenamento_lbl">
+        <widget class="QLabel" name="storage_lbl">
          <property name="text">
           <string>Storage:</string>
          </property>
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="QComboBox" name="armazenamento_cmb"/>
+        <widget class="QComboBox" name="storage_cmb"/>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="por_valor_lbl">
+        <widget class="QLabel" name="by_value_lbl">
          <property name="text">
           <string>By Value:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QCheckBox" name="por_valor_chk">
+        <widget class="QCheckBox" name="by_value_chk">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -214,24 +213,24 @@
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QLabel" name="categoria_lbl">
+        <widget class="QLabel" name="category_lbl">
          <property name="text">
           <string>Category:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="3">
-        <widget class="QComboBox" name="categoria_cmb"/>
+        <widget class="QComboBox" name="category_cmb"/>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="preferido_lbl">
+        <widget class="QLabel" name="preferred_lbl">
          <property name="text">
           <string>Preferred:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QCheckBox" name="preferido_chk">
+        <widget class="QCheckBox" name="preferred_chk">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -244,28 +243,28 @@
         </widget>
        </item>
        <item row="2" column="2">
-        <widget class="QLabel" name="delimitador_lbl">
+        <widget class="QLabel" name="delimiter_lbl">
          <property name="text">
           <string>Delimiter:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="3">
-        <widget class="QLineEdit" name="delimitador_edt">
+        <widget class="QLineEdit" name="delimiter_edt">
          <property name="maxLength">
           <number>1</number>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="alinhamento_lbl">
+        <widget class="QLabel" name="alignment_lbl">
          <property name="text">
           <string>Alignment:</string>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QComboBox" name="alinhamento_cmb">
+        <widget class="QComboBox" name="alignment_cmb">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -301,14 +300,14 @@
         </widget>
        </item>
        <item row="3" column="2">
-        <widget class="QLabel" name="valor_padrao_lbl">
+        <widget class="QLabel" name="default_value_lbl">
          <property name="text">
           <string>Default Value:</string>
          </property>
         </widget>
        </item>
        <item row="3" column="3">
-        <widget class="QLineEdit" name="valor_padrao_edt"/>
+        <widget class="QLineEdit" name="default_value_edt"/>
        </item>
       </layout>
      </widget>

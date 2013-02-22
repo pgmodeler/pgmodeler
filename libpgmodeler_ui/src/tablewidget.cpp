@@ -243,6 +243,8 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		count=table->getCopyTable();
 		for(i=0; i < count; i++)
 			copied_tabs_lst->addItem(Utf8String::create(table->getCopyTable(i)->getName(true)));
+
+		with_oids_chk->setChecked(table->isWithOIDs());
 	}
 	catch(Exception &e)
 	{

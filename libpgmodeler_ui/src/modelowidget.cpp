@@ -14,7 +14,7 @@
 #include "operatorwidget.h"
 #include "operatorfamilywidget.h"
 #include "operatorclasswidget.h"
-#include "tipowidget.h"
+#include "typewidget.h"
 #include "visaowidget.h"
 #include "textboxwidget.h"
 #include "columnwidget.h"
@@ -44,7 +44,7 @@ extern SequenceWidget *sequencia_wgt;
 extern OperatorWidget *operador_wgt;
 extern OperatorFamilyWidget *familiaop_wgt;
 extern OperatorClassWidget *classeop_wgt;
-extern TipoWidget *tipo_wgt;
+extern TypeWidget *tipo_wgt;
 extern VisaoWidget *visao_wgt;
 extern TextboxWidget *caixatexto_wgt;
 extern ColumnWidget *coluna_wgt;
