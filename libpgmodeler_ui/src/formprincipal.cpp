@@ -19,7 +19,7 @@
 #include "operatorfamilywidget.h"
 #include "operatorclasswidget.h"
 #include "typewidget.h"
-#include "visaowidget.h"
+#include "viewwidget.h"
 #include "columnwidget.h"
 #include "constraintwidget.h"
 #include "rulewidget.h"
@@ -59,7 +59,7 @@ OperatorWidget *operador_wgt=NULL;
 OperatorFamilyWidget *familiaop_wgt=NULL;
 OperatorClassWidget *classeop_wgt=NULL;
 TypeWidget *tipo_wgt=NULL;
-VisaoWidget *visao_wgt=NULL;
+ViewWidget *visao_wgt=NULL;
 ColumnWidget *coluna_wgt=NULL;
 ConstraintWidget *restricao_wgt=NULL;
 RuleWidget *regra_wgt=NULL;
@@ -141,7 +141,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 		familiaop_wgt=new OperatorFamilyWidget(this);
 		classeop_wgt=new OperatorClassWidget(this);
 		tipo_wgt=new TypeWidget(this);
-		visao_wgt=new VisaoWidget(this);
+		visao_wgt=new ViewWidget(this);
 		coluna_wgt=new ColumnWidget(this);
 		restricao_wgt=new ConstraintWidget(this);
 		regra_wgt=new RuleWidget(this);

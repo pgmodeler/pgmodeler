@@ -260,6 +260,12 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 			grid->getItemPosition(item_id, &lin, &col, &row_span, &col_span);
 			grid->removeItem(item);
 			grid->addItem(item, lin+1, col, row_span, col_span);
+
+			/* Configuring QTextEdit to accept tabs as focus changes. This code
+			only applies to widgets directly linked to the layout. If there is some
+			QTextEdit nested in some child widget this is not applied */
+			if(dynamic_cast<QTextEdit *>(item->widget()))
+				dynamic_cast<QTextEdit *>(item->widget())->setTabChangesFocus(true);
 		}
 
 		//Adding the base layout on the top
@@ -314,9 +320,9 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	parent_obj_icon_lbl->setVisible(show_parent);
 
 	div1_ln->setVisible(show_parent && obj_type!=OBJ_TABLE &&
-																							 obj_type!=OBJ_SCHEMA &&
-																												 obj_type!=OBJ_RELATIONSHIP &&
-																																	 obj_type!=BASE_RELATIONSHIP);
+	obj_type!=OBJ_SCHEMA &&
+	obj_type!=OBJ_RELATIONSHIP &&
+	obj_type!=BASE_RELATIONSHIP);
 
 	if(obj_type!=BASE_OBJECT)
 	{

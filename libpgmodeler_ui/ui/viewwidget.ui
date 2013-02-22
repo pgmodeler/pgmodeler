@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>VisaoWidget</class>
- <widget class="QWidget" name="VisaoWidget">
+ <class>ViewWidget</class>
+ <widget class="QWidget" name="ViewWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="visao_grid">
+  <layout class="QGridLayout" name="view_grid">
    <property name="margin">
     <number>2</number>
    </property>
@@ -37,14 +37,14 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="QLabel" name="tipo_ref_lbl">
+        <widget class="QLabel" name="ref_type_lbl">
          <property name="text">
           <string>Type:</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QComboBox" name="tipo_ref_cmb">
+        <widget class="QComboBox" name="ref_type_cmb">
          <item>
           <property name="text">
            <string>Column</string>
@@ -71,7 +71,7 @@
         </spacer>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="tipo_ref_lbl_2">
+        <widget class="QLabel" name="used_in_lbl">
          <property name="text">
           <string>Used in:</string>
          </property>
@@ -94,7 +94,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="apos_where_chk">
+          <widget class="QCheckBox" name="after_where_chk">
            <property name="text">
             <string>After WHERE</string>
            </property>
@@ -103,14 +103,14 @@
         </layout>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="tabela_lbl">
+        <widget class="QLabel" name="table_lbl">
          <property name="text">
           <string>Table:</string>
          </property>
         </widget>
        </item>
        <item row="2" column="3">
-        <widget class="QLabel" name="alias_tab_lbl">
+        <widget class="QLabel" name="tab_alias_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -123,7 +123,7 @@
         </widget>
        </item>
        <item row="2" column="4">
-        <widget class="QLineEdit" name="alias_tab_edt">
+        <widget class="QLineEdit" name="tab_alias_edt">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -133,14 +133,14 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="coluna_lbl">
+        <widget class="QLabel" name="column_lbl">
          <property name="text">
           <string>Column:</string>
          </property>
         </widget>
        </item>
        <item row="3" column="3">
-        <widget class="QLabel" name="alias_col_lbl">
+        <widget class="QLabel" name="col_alias_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -153,7 +153,7 @@
         </widget>
        </item>
        <item row="3" column="4">
-        <widget class="QLineEdit" name="alias_col_edt">
+        <widget class="QLineEdit" name="col_alias_edt">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -163,14 +163,14 @@
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="expressao_lbl">
+        <widget class="QLabel" name="expression_lbl">
          <property name="text">
           <string>Expression:</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1" colspan="4">
-        <widget class="QTextEdit" name="expressao_txt">
+        <widget class="QTextEdit" name="expression_txt">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -198,7 +198,7 @@
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel" name="alias_exp_lbl">
+        <widget class="QLabel" name="expr_alias_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -211,7 +211,7 @@
         </widget>
        </item>
        <item row="5" column="1" colspan="2">
-        <widget class="QLineEdit" name="alias_exp_edt">
+        <widget class="QLineEdit" name="expr_alias_edt">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -247,7 +247,7 @@
         <number>6</number>
        </property>
        <item row="0" column="0">
-        <widget class="QTextEdit" name="codigo_txt">
+        <widget class="QTextEdit" name="code_txt">
          <property name="font">
           <font>
            <family>DejaVu Sans Mono</family>

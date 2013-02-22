@@ -50,14 +50,14 @@ class TypeWidget: public BaseObjectWidget, public Ui::TypeWidget {
 		ObjectTableWidget *enumerations_tab,
 											*attributes_tab;
 
+		void hideEvent(QHideEvent *event);
+
 	public:
 		TypeWidget(QWidget * parent = 0);
 
 		void setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Type *type);
 
 	private slots:
-		void hideEvent(QHideEvent *event);
-
 		//! \brief Handles the form showing the fields according to the selected type configuration (base, composite, enumaration)
 		void selectTypeConfiguration(void);
 

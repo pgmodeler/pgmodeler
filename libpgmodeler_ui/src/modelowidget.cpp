@@ -15,7 +15,7 @@
 #include "operatorfamilywidget.h"
 #include "operatorclasswidget.h"
 #include "typewidget.h"
-#include "visaowidget.h"
+#include "viewwidget.h"
 #include "textboxwidget.h"
 #include "columnwidget.h"
 #include "constraintwidget.h"
@@ -45,7 +45,7 @@ extern OperatorWidget *operador_wgt;
 extern OperatorFamilyWidget *familiaop_wgt;
 extern OperatorClassWidget *classeop_wgt;
 extern TypeWidget *tipo_wgt;
-extern VisaoWidget *visao_wgt;
+extern ViewWidget *visao_wgt;
 extern TextboxWidget *caixatexto_wgt;
 extern ColumnWidget *coluna_wgt;
 extern ConstraintWidget *restricao_wgt;

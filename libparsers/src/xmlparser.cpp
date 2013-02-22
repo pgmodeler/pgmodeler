@@ -122,7 +122,7 @@ void XMLParser::setDTDFile(const QString &dtd_file, const QString &dtd_name)
 		throw Exception(ERR_ASG_EMPTY_DTD_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Formats the dtd file path in order to replace spaces by %20 (url format)
-	fmt_dtd_file="file://" + dtd_file;
+	fmt_dtd_file="file://" + QFileInfo(dtd_file).absoluteFilePath();
 	dtd_decl="<!DOCTYPE " + dtd_name + " SYSTEM " + "\"" +  fmt_dtd_file.replace(QString(" "),QString("%20")) + "\">\n";
 }
 
