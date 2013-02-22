@@ -27,18 +27,23 @@
 
 #include "modelowidget.h"
 
-/* Os plugins no pgModeler deve estar dentro da pasta "plugins"
-	 em um diretório próprio (recomenda-se usar o mesmo nome do plugin)
-	 e deve possuir a seguinte estrutura básica:
+/*	The plugins in pgModeler must be within the "plugins" folder in its own
+		directory and must have the following basic structure:
 
-	 pgmodeler_root/plugins/
-												 +- pluginA
-																	+---(lib)*(pluginA.)(so|dll) (biblioteca que represnta o plugin)
-																	+---pluginA.png              (ícone que representa o plugin, deve possuir o mesmo nome
 
-	Obs.: Plugins podem fazer uso de subdiretórios mas qualquer referência a estes devem ser feitas
-				manualmente pelo criado do plugin.
-*/
+		 [PGMODELER_PLUGINS_DIR]/
+					|
+					+ - pluginA/
+							 |
+							 + ---- (lib)*(pluginA.)(so|dylib|dll) (library)
+							 |
+							 + ---- pluginA.png (icon)
+
+		> Library: it is the shared object that represents the plugin. The prefix (lib) and suffix (so|dylib|dll) are plataform dependent.
+		> Icon: it is a PNG image that represents the plugin on the plugins toolbar.
+
+		Note: Plugins can have subdirectories but any reference to them must be made programatically by the plugin author. */
+
 class PgModelerPlugin {
 	protected:
 		BaseForm *plugin_info_frm;
@@ -52,29 +57,35 @@ class PgModelerPlugin {
 
 	public:
 		PgModelerPlugin(void);
+
 		virtual ~PgModelerPlugin(void);
 
-		//! \brief Método que executa o plugin
+		//! \brief Executes the plugins having a ModelWidget as input parameter.
 		virtual void executePlugin(ModeloWidget *modelo)=0;
 
-		//! \brief Retorna o texto que é exibido na ação que executa o plugin
+		//! \brief Returns the plugin's title, this same text is used as action's text on plugins toolbar.
 		virtual QString getPluginTitle(void)=0;
 
+		//! \brief Returns the plugin's author
 		virtual QString getPluginAuthor(void)=0;
 
+		//! \brief Returns the plugin's version
 		virtual QString getPluginVersion(void)=0;
 
+		//! \brief Returns the plugin's complete description
 		virtual QString getPluginDescription(void)=0;
 
+		//! \brief Shows the plugin's information dialog
 		virtual void showPluginInfo(void) = 0;
 
+		//! \brief Sets the plugin's all attributes at once.
 		void configurePluginInfo(const QString &title, const QString &version, const QString &author,
 														 const QString &description, const QString &ico_filename);
 };
 
-/*! \brief Declara a classe PgModelerPlugin como interface, ou seja, a base para
-	 implementação de plugins. Todo plugin deve herdar esta classe e usar a
-	 diretiva Q_INTERFACE em sua construção */
+/* Declares the class PgModelerPlugin as interface, this means that the class is a base
+	 for plugin implementation. All plugin must inherit this class and use the Q_INTERFACE
+	 directive in its declaration  */
 Q_DECLARE_INTERFACE(PgModelerPlugin,"pgmodelerplugin")
 
 #endif
