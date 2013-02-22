@@ -18,7 +18,7 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class DominioWidget
+\class DomainWidget
 \brief Implements the operations to create/edit domains via form.
 */
 

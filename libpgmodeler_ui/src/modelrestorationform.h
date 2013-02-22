@@ -19,7 +19,7 @@
 /**
 \ingroup libpgmodeler_ui
 \class ModelRestorationForm
-\brief Temporary model restoration form
+\brief Implements the operation to retore models before a unexpected crash.
 */
 
 #ifndef MODEL_RESTORATION_FORM_H

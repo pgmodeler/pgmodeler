@@ -72,7 +72,7 @@ QString BaseObject::getTypeName(ObjectType obj_type)
 		/* Due to the class BaseObject not be derived from QObject the function tr() is inefficient to
 		 translate the type names thus the method called to do the translation is from the application
 		 specifying the context (BaseObject) in the ts file and the text to be translated */
-		return(QApplication::translate("BaseObject",obj_type_names[obj_type],"",QApplication::UnicodeUTF8));
+		return(QApplication::translate("BaseObject",obj_type_names[obj_type].toStdString().c_str(),"",QApplication::UnicodeUTF8, -1));
 	else
 		return("");
 }
@@ -325,7 +325,7 @@ void BaseObject::setSchema(BaseObject *schema)
 {
 	if(!schema)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_SCHEMA)
-										.arg(QString::fromUtf8(this->obj_name)).arg(this->getTypeName()),
+										.arg(Utf8String::create(this->obj_name)).arg(this->getTypeName()),
 										ERR_ASG_NOT_ALOC_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(schema && schema->getObjectType()!=OBJ_SCHEMA)
 		throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);

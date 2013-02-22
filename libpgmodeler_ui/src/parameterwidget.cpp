@@ -48,7 +48,7 @@ void ParameterWidget::setAttributes(Parameter param, DatabaseModel *model)
 
 	param_in_chk->setChecked(param.isIn());
 	param_out_chk->setChecked(param.isOut());
-	default_value_edt->setText(QString::fromUtf8(param.getDefaultValue()));
+	default_value_edt->setText(Utf8String::create(param.getDefaultValue()));
 	data_type->setAttributes(param.getType(), model);
 
 	BaseObjectWidget::setAttributes(model,&this->parameter, NULL);

@@ -168,28 +168,28 @@ void TableObjectView::configureObject(void)
 		Column *column=dynamic_cast<Column *>(tab_obj);
 		ConstraintType constr_type=ConstraintType::null;
 
-		tooltip=QString::fromUtf8(tab_obj->getName() + " (" + QString::fromUtf8(tab_obj->getTypeName()) + ")");
+		tooltip=Utf8String::create(tab_obj->getName() + " (" + Utf8String::create(tab_obj->getTypeName()) + ")");
 
 		if(column)
 		{
 			str_constr=this->getConstraintString(column);
 
-			if(str_constr.find(TXT_PRIMARY_KEY)>=0)
+			if(str_constr.indexOf(TXT_PRIMARY_KEY)>=0)
 			{
 				fmt=font_config[ParsersAttributes::PK_COLUMN];
 				constr_type=ConstraintType::primary_key;
 			}
-			else if(str_constr.find(TXT_FOREIGN_KEY)>=0)
+			else if(str_constr.indexOf(TXT_FOREIGN_KEY)>=0)
 			{
 				fmt=font_config[ParsersAttributes::FK_COLUMN];
 				constr_type=ConstraintType::foreign_key;
 			}
-			else if(str_constr.find(TXT_UNIQUE)>=0)
+			else if(str_constr.indexOf(TXT_UNIQUE)>=0)
 			{
 				fmt=font_config[ParsersAttributes::UQ_COLUMN];
 				constr_type=ConstraintType::unique;
 			}
-			else if(str_constr.find(TXT_NOT_NULL)>=0)
+			else if(str_constr.indexOf(TXT_NOT_NULL)>=0)
 				fmt=font_config[ParsersAttributes::NN_COLUMN];
 			else
 				fmt=font_config[ParsersAttributes::COLUMN];
@@ -199,16 +199,16 @@ void TableObjectView::configureObject(void)
 			else if(column->isProtected())
 				fmt=font_config[ParsersAttributes::PROT_COLUMN];
 
-			if(str_constr.find(TXT_PRIMARY_KEY)>=0)
+			if(str_constr.indexOf(TXT_PRIMARY_KEY)>=0)
 				atribs_tip+=(~ConstraintType(ConstraintType::primary_key)).toLower() + ", ";
 
-			if(str_constr.find(TXT_FOREIGN_KEY)>=0)
+			if(str_constr.indexOf(TXT_FOREIGN_KEY)>=0)
 				atribs_tip+=(~ConstraintType(ConstraintType::foreign_key)).toLower() + ", ";
 
-			if(str_constr.find(TXT_UNIQUE)>=0)
+			if(str_constr.indexOf(TXT_UNIQUE)>=0)
 				atribs_tip+=(~ConstraintType(ConstraintType::unique)).toLower() + ", ";
 
-			if(str_constr.find(TXT_NOT_NULL)>=0)
+			if(str_constr.indexOf(TXT_NOT_NULL)>=0)
 				atribs_tip+="not null";
 		}
 		else
@@ -222,7 +222,7 @@ void TableObjectView::configureObject(void)
 
 		//Configuring the labels as follow: [object name] [type] [constraints]
 		//Configuring tha name label
-		lables[0]->setText(QString::fromUtf8(tab_obj->getName()));
+		lables[0]->setText(Utf8String::create(tab_obj->getName()));
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
 		lables[0]->setPos(px, 0);
@@ -231,9 +231,9 @@ void TableObjectView::configureObject(void)
 		//Configuring the type label
 		fmt=font_config[ParsersAttributes::OBJECT_TYPE];
 		if(column)
-			lables[1]->setText(QString::fromUtf8(TYPE_SEPARATOR + (*column->getType())));
+			lables[1]->setText(Utf8String::create(TYPE_SEPARATOR + (*column->getType())));
 		else
-			lables[1]->setText(QString::fromUtf8(TYPE_SEPARATOR + tab_obj->getSchemaName()));
+			lables[1]->setText(Utf8String::create(TYPE_SEPARATOR + tab_obj->getSchemaName()));
 
 		lables[1]->setFont(fmt.font());
 		lables[1]->setBrush(fmt.foreground());
@@ -243,7 +243,7 @@ void TableObjectView::configureObject(void)
 		//Configuring the constraints label
 		fmt=font_config[ParsersAttributes::CONSTRAINTS];
 		if(column)
-			lables[2]->setText(QString::fromUtf8(str_constr));
+			lables[2]->setText(Utf8String::create(str_constr));
 		else
 		{
 			Rule *rule=dynamic_cast<Rule *>(tab_obj);
@@ -259,7 +259,7 @@ void TableObjectView::configureObject(void)
 
 				str_constr+=(~rule->getEventType()).mid(3,1);
 				atribs_tip+=(~rule->getEventType()).toLower();
-				str_constr=str_constr.lower();
+				str_constr=str_constr.toLower();
 			}
 			else if(trigger)
 			{
@@ -276,7 +276,7 @@ void TableObjectView::configureObject(void)
 						atribs_tip+=(~EventType(i)).toLower() + ", ";
 					}
 				}
-				str_constr=str_constr.lower();
+				str_constr=str_constr.toLower();
 			}
 			else if(index)
 			{
@@ -300,7 +300,7 @@ void TableObjectView::configureObject(void)
 			}
 
 			if(!str_constr.isEmpty())
-				lables[2]->setText(QString::fromUtf8(CONSTR_DELIM_START + " " +
+				lables[2]->setText(Utf8String::create(CONSTR_DELIM_START + " " +
 																						 str_constr + " " +
 																						 CONSTR_DELIM_END));
 		}
@@ -310,7 +310,7 @@ void TableObjectView::configureObject(void)
 			if(atribs_tip.at(atribs_tip.length()-1)==' ')
 				atribs_tip.remove(atribs_tip.length()-2, 2);
 
-			atribs_tip=QString::fromUtf8("\n" + CONSTR_DELIM_START + " " + atribs_tip + " " + CONSTR_DELIM_END);
+			atribs_tip=Utf8String::create("\n" + CONSTR_DELIM_START + " " + atribs_tip + " " + CONSTR_DELIM_END);
 		}
 
 		lables[2]->setFont(fmt.font());
@@ -345,7 +345,7 @@ void TableObjectView::configureObject(Reference reference)
 	{
 		//Configures the name label as: [table].[column]
 		fmt=font_config[ParsersAttributes::REF_TABLE];
-		lables[0]->setText(reference.getTable()->getName() + ".");
+		lables[0]->setText(Utf8String::create(reference.getTable()->getName() + "."));
 		lables[0]->setFont(fmt.font());
 		lables[0]->setBrush(fmt.foreground());
 		lables[0]->setPos(px, 0);
@@ -353,7 +353,7 @@ void TableObjectView::configureObject(Reference reference)
 
 		fmt=font_config[ParsersAttributes::REF_COLUMN];
 		if(reference.getColumn())
-			lables[1]->setText(reference.getColumn()->getName());
+			lables[1]->setText(Utf8String::create(reference.getColumn()->getName()));
 		else
 			lables[1]->setText("*");
 
@@ -388,7 +388,7 @@ void TableObjectView::configureObject(Reference reference)
 
 		str_aux=" (" + str_aux + ") ";
 		fmt=font_config[ParsersAttributes::ALIAS];
-		lables[2]->setText(str_aux);
+		lables[2]->setText(Utf8String::create(str_aux));
 		lables[2]->setFont(fmt.font());
 		lables[2]->setBrush(fmt.foreground());
 		lables[2]->setPos(px, 0);

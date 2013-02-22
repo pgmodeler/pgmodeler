@@ -73,7 +73,7 @@ void ObjectSelectorWidget::setSelectedObject(BaseObject *object)
 
 	if(object && obj_type==sel_obj_type)
 	{
-		obj_name_txt->setPlainText(QString::fromUtf8(obj_name));
+		obj_name_txt->setPlainText(Utf8String::create(obj_name));
 		rem_object_tb->setEnabled(object);
 		this->selected_obj=object;
 		emit s_objectSelected();

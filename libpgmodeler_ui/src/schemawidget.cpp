@@ -44,7 +44,9 @@ void SchemaWidget::selectFillColor(void)
 	QPalette palette;
 
 	color_dlg.setWindowTitle(trUtf8("Select fill color"));
+	color_dlg.setCurrentColor(fill_color_tb->palette().color(QPalette::Button));
 	color_dlg.exec();
+
 
 	if(color_dlg.result()==QDialog::Accepted)
 	{

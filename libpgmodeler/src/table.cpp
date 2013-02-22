@@ -403,7 +403,7 @@ void Table::addObject(BaseObject *obj, int obj_idx, bool copy_tab)
 		{
 			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-												.arg(QString::fromUtf8(obj->getName()))
+												.arg(Utf8String::create(obj->getName()))
 												.arg(obj->getTypeName()),
 												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 			else
@@ -520,11 +520,11 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 			if(!refs.empty())
 			{
 				throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
-												.arg(QString::fromUtf8(column->getName()))
+												.arg(Utf8String::create(column->getName()))
 												.arg(column->getTypeName())
-												.arg(QString::fromUtf8(refs[0]->getName()))
+												.arg(Utf8String::create(refs[0]->getName()))
 						.arg(refs[0]->getTypeName())
-						.arg(QString::fromUtf8(this->getName(true)))
+						.arg(Utf8String::create(this->getName(true)))
 						.arg(this->getTypeName()),
 						ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}

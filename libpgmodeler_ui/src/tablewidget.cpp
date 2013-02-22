@@ -237,12 +237,12 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		//Listing the ancestor tables
 		count=table->getAncestorTable();
 		for(i=0; i < count; i++)
-			ancestor_tabs_lst->addItem(QString::fromUtf8(table->getAncestorTable(i)->getName(true)));
+			ancestor_tabs_lst->addItem(Utf8String::create(table->getAncestorTable(i)->getName(true)));
 
 		//Listing the copied tables
 		count=table->getCopyTable();
 		for(i=0; i < count; i++)
-			copied_tabs_lst->addItem(QString::fromUtf8(table->getCopyTable(i)->getName(true)));
+			copied_tabs_lst->addItem(Utf8String::create(table->getCopyTable(i)->getName(true)));
 	}
 	catch(Exception &e)
 	{
@@ -336,7 +336,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 	tab=objects_tab_map[obj_type];
 
 	//Column 0: Object name
-	tab->setCellText(QString::fromUtf8(object->getName()),row,0);
+	tab->setCellText(Utf8String::create(object->getName()),row,0);
 
 	//For each object type there is a use for the columns from 1 to 3
 	if(obj_type==OBJ_COLUMN)
@@ -344,7 +344,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		column=dynamic_cast<Column *>(object);
 
 		//Column 1: Column data type
-		tab->setCellText(QString::fromUtf8(~column->getType()),row,1);
+		tab->setCellText(Utf8String::create(~column->getType()),row,1);
 
 		//Column 2: Column defaul value
 		str_aux=column->getDefaultValue();
@@ -352,7 +352,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 		tab->setCellText(str_aux,row,2);
 
 		//Column 3: Column attributes (constraints which belongs)
-		str_aux=QString::fromUtf8(TableObjectView::getConstraintString(column));
+		str_aux=Utf8String::create(TableObjectView::getConstraintString(column));
 		for(i=0; i < 5; i++)
 		{
 			if(str_aux.indexOf(constr_codes[i]) >= 0)
@@ -391,7 +391,7 @@ void TableWidget::showObjectData(TableObject *object, int row)
 
 		//Column 1: Table referenced by the trigger (constraint trigger)
 		if(trigger->getReferencedTable())
-			tab->setCellText(QString::fromUtf8(trigger->getReferencedTable()->getName(true)),row,1);
+			tab->setCellText(Utf8String::create(trigger->getReferencedTable()->getName(true)),row,1);
 		else
 			tab->setCellText(QString("-"),row,1);
 
@@ -467,7 +467,7 @@ void TableWidget::removeObjects(void)
 			}
 			else
 				throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
-												.arg(QString::fromUtf8(object->getName()))
+												.arg(Utf8String::create(object->getName()))
 												.arg(object->getTypeName()),
 												ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
@@ -515,7 +515,7 @@ void TableWidget::removeObject(int row)
 		}
 		else
 			throw Exception(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT)
-											.arg(QString::fromUtf8(object->getName()))
+											.arg(Utf8String::create(object->getName()))
 											.arg(object->getTypeName()),
 											ERR_REM_PROTECTED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}

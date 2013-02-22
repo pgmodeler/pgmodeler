@@ -214,13 +214,13 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		 (aux_rel && aux_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_NN))
 	{
 		ref_table_lbl->setText(trUtf8("Table 1:"));
-		ref_table_txt->setPlainText(QString::fromUtf8(base_rel->getTable(BaseRelationship::SRC_TABLE)->getName(true)));
+		ref_table_txt->setPlainText(Utf8String::create(base_rel->getTable(BaseRelationship::SRC_TABLE)->getName(true)));
 		recv_table_lbl->setText(trUtf8("Table 2:"));
-		recv_table_txt->setPlainText(QString::fromUtf8(base_rel->getTable(BaseRelationship::DST_TABLE)->getName(true)));
+		recv_table_txt->setPlainText(Utf8String::create(base_rel->getTable(BaseRelationship::DST_TABLE)->getName(true)));
 	}
 
-	table1_mand_chk->setText(QString::fromUtf8(base_rel->getTable(BaseRelationship::SRC_TABLE)->getName()) + trUtf8(" is required"));
-	table2_mand_chk->setText(QString::fromUtf8(base_rel->getTable(BaseRelationship::DST_TABLE)->getName()) + trUtf8(" is required"));
+	table1_mand_chk->setText(Utf8String::create(base_rel->getTable(BaseRelationship::SRC_TABLE)->getName()) + trUtf8(" is required"));
+	table2_mand_chk->setText(Utf8String::create(base_rel->getTable(BaseRelationship::DST_TABLE)->getName()) + trUtf8(" is required"));
 
 	if(aux_rel)
 	{
@@ -232,16 +232,16 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		if(rel_type!=BaseRelationship::RELATIONSHIP_NN)
 		{
 			ref_table_lbl->setText(trUtf8("Reference Table:"));
-			ref_table_txt->setPlainText(QString::fromUtf8(aux_rel->getReferenceTable()->getName(true)));
+			ref_table_txt->setPlainText(Utf8String::create(aux_rel->getReferenceTable()->getName(true)));
 			recv_table_lbl->setText(trUtf8("Receiver Table:"));
-			recv_table_txt->setPlainText(QString::fromUtf8(aux_rel->getReceiverTable()->getName(true)));
+			recv_table_txt->setPlainText(Utf8String::create(aux_rel->getReceiverTable()->getName(true)));
 		}
 
 		auto_suffix_chk->setChecked(aux_rel->isAutomaticSuffix());
 		if(!auto_suffix_chk->isChecked())
 		{
-			src_suffix_edt->setText(QString::fromUtf8(aux_rel->getTableSuffix(BaseRelationship::SRC_TABLE)));
-			dst_suffix_edt->setText(QString::fromUtf8(aux_rel->getTableSuffix(BaseRelationship::DST_TABLE)));
+			src_suffix_edt->setText(Utf8String::create(aux_rel->getTableSuffix(BaseRelationship::SRC_TABLE)));
+			dst_suffix_edt->setText(Utf8String::create(aux_rel->getTableSuffix(BaseRelationship::DST_TABLE)));
 		}
 
 		table1_mand_chk->setChecked(aux_rel->isTableMandatory(BaseRelationship::SRC_TABLE));
@@ -279,7 +279,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 			for(i=0; i < count; i++)
 			{
 				rel_columns_lst->addItem(cols[i]->getName().toUtf8() +
-																" (" + QString::fromUtf8(*cols[i]->getType()) + ")");
+																" (" + Utf8String::create(*cols[i]->getType()) + ")");
 				item=rel_columns_lst->item(i);
 				item->setCheckState(Qt::Unchecked);
 			}
@@ -408,8 +408,8 @@ void RelationshipWidget::listAdvancedObjects(void)
 				for(i=0; i < count; i++)
 				{
 					advanced_objs_tab->addRow();
-					advanced_objs_tab->setCellText(QString::fromUtf8(cols[i]->getName()),i,0);
-					advanced_objs_tab->setCellText(QString::fromUtf8(cols[i]->getTypeName()),i,1);
+					advanced_objs_tab->setCellText(Utf8String::create(cols[i]->getName()),i,0);
+					advanced_objs_tab->setCellText(Utf8String::create(cols[i]->getTypeName()),i,1);
 					advanced_objs_tab->setRowData(QVariant::fromValue<void *>(cols[i]), i);
 				}
 
@@ -419,8 +419,8 @@ void RelationshipWidget::listAdvancedObjects(void)
 				for(i=0, i1=advanced_objs_tab->getRowCount(); i < count; i++,i1++)
 				{
 					advanced_objs_tab->addRow();
-					advanced_objs_tab->setCellText(QString::fromUtf8(constrs[i]->getName()),i1,0);
-					advanced_objs_tab->setCellText(QString::fromUtf8(constrs[i]->getTypeName()),i1,1);
+					advanced_objs_tab->setCellText(Utf8String::create(constrs[i]->getName()),i1,0);
+					advanced_objs_tab->setCellText(Utf8String::create(constrs[i]->getTypeName()),i1,1);
 					advanced_objs_tab->setRowData(QVariant::fromValue<void *>(constrs[i]), i1);
 				}
 			}
@@ -430,8 +430,8 @@ void RelationshipWidget::listAdvancedObjects(void)
 				if(tab)
 				{
 					advanced_objs_tab->addRow();
-					advanced_objs_tab->setCellText(QString::fromUtf8(tab->getName()),0,0);
-					advanced_objs_tab->setCellText(QString::fromUtf8(tab->getTypeName()),0,1);
+					advanced_objs_tab->setCellText(Utf8String::create(tab->getName()),0,0);
+					advanced_objs_tab->setCellText(Utf8String::create(tab->getTypeName()),0,1);
 					advanced_objs_tab->setRowData(QVariant::fromValue<void *>(tab), 0);
 				}
 			}
@@ -445,8 +445,8 @@ void RelationshipWidget::listAdvancedObjects(void)
 			for(i=0, i1=advanced_objs_tab->getRowCount(); i < count; i++, i1++)
 			{
 				advanced_objs_tab->addRow();
-				advanced_objs_tab->setCellText(QString::fromUtf8(constrs[i]->getName()),i1,0);
-				advanced_objs_tab->setCellText(QString::fromUtf8(constrs[i]->getTypeName()),i1,1);
+				advanced_objs_tab->setCellText(Utf8String::create(constrs[i]->getName()),i1,0);
+				advanced_objs_tab->setCellText(Utf8String::create(constrs[i]->getTypeName()),i1,1);
 				advanced_objs_tab->setRowData(QVariant::fromValue<void *>(constrs[i]), i1);
 			}
 		}
@@ -576,15 +576,15 @@ void RelationshipWidget::showObjectData(TableObject *object, int row)
 	if(object->getObjectType()==OBJ_COLUMN)
 	{
 		tab=attributes_tab;
-		attributes_tab->setCellText(QString::fromUtf8(~dynamic_cast<Column *>(object)->getType()),row,1);
+		attributes_tab->setCellText(Utf8String::create(~dynamic_cast<Column *>(object)->getType()),row,1);
 	}
 	else
 	{
 		tab=constraints_tab;
-		constraints_tab->setCellText(QString::fromUtf8(~dynamic_cast<Constraint *>(object)->getConstraintType()),row,1);
+		constraints_tab->setCellText(Utf8String::create(~dynamic_cast<Constraint *>(object)->getConstraintType()),row,1);
 	}
 
-	tab->setCellText(QString::fromUtf8(object->getName()),row,0);
+	tab->setCellText(Utf8String::create(object->getName()),row,0);
 	tab->setRowData(QVariant::fromValue<void *>(object), row);
 }
 

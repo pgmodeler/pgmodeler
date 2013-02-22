@@ -184,8 +184,8 @@ void TipoWidget::manipularAtributo(int res)
 		//Obtém o parâmetro configurado
 		param=parametro_wgt->getParameter();
 		//Insere-o na tabela de atributos
-		tab_atributos->setCellText(QString::fromUtf8(param.getName()), lin, 0);
-		tab_atributos->setCellText(QString::fromUtf8(*param.getType()), lin, 1);
+		tab_atributos->setCellText(Utf8String::create(param.getName()), lin, 0);
+		tab_atributos->setCellText(Utf8String::create(*param.getType()), lin, 1);
 		tab_atributos->setRowData(QVariant::fromValue<Parameter>(param), lin);
 	}
 	//Caso o usuário clique no botão 'cancelar' da janela de conf. de parâmetro
@@ -264,8 +264,8 @@ void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, S
 				//Obtém um atributo do tipo
 				param=tipo->getAttribute(i);
 				//Exibe os dados do atributo na tabela
-				tab_atributos->setCellText(QString::fromUtf8(param.getName()), i, 0);
-				tab_atributos->setCellText(QString::fromUtf8(*param.getType()), i, 1);
+				tab_atributos->setCellText(Utf8String::create(param.getName()), i, 0);
+				tab_atributos->setCellText(Utf8String::create(*param.getType()), i, 1);
 				//Armazena o próprio atributo na linha da tabela
 				tab_atributos->setRowData(QVariant::fromValue<Parameter>(param), i);
 			}
@@ -290,7 +290,7 @@ void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, S
 			for(i=0; i < qtd; i++)
 			{
 				tab_enumeracoes->addRow();
-				tab_enumeracoes->setCellText(QString::fromUtf8(tipo->getEnumeration(i)), i, 0);
+				tab_enumeracoes->setCellText(Utf8String::create(tipo->getEnumeration(i)), i, 0);
 			}
 			//Desbloqueia os sinais da tabela de enumerações
 			tab_enumeracoes->blockSignals(false);
@@ -313,7 +313,7 @@ void TipoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, S
 			por_valor_chk->setChecked(tipo->isByValue());
 			preferido_chk->setChecked(tipo->isPreferred());
 			delimitador_edt->setText(QString(tipo->getDelimiter()));
-			valor_padrao_edt->setText(QString::fromUtf8(tipo->getDefaultValue()));
+			valor_padrao_edt->setText(Utf8String::create(tipo->getDefaultValue()));
 			categoria_cmb->setCurrentIndex(categoria_cmb->findText(~tipo->getCategory()));
 			armazenamento_cmb->setCurrentIndex(armazenamento_cmb->findText(~tipo->getStorage()));
 			alinhamento_cmb->setCurrentIndex(alinhamento_cmb->findText(~tipo->getAlignment()));

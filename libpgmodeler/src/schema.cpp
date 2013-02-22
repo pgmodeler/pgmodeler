@@ -19,7 +19,7 @@ void Schema::setName(const QString &name)
 		raises an error */
 	if(name.mid(0,3)=="pg_")
 		throw Exception(Exception::getErrorMessage(ERR_ASG_RESERVED_NAME)
-										.arg(QString::fromUtf8(this->getName()))
+										.arg(Utf8String::create(this->getName()))
 										.arg(BaseObject::getTypeName(OBJ_SCHEMA)),
 										ERR_ASG_RESERVED_NAME,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

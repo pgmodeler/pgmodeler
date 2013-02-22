@@ -82,7 +82,7 @@ void OperationListWidget::updateOperationList(void)
 			item2=new QTreeWidgetItem(item);
 			item2->setIcon(0,QPixmap(QString(":/icones/icones/uid.png")));
 			item2->setFont(0,font);
-			item2->setText(0,QString::fromUtf8(trUtf8("Name: %1").arg(obj_name)));
+			item2->setText(0,Utf8String::create(trUtf8("Name: %1").arg(obj_name)));
 
 			if(op_type==Operation::OBJECT_CREATED)
 			{

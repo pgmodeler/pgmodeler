@@ -135,14 +135,15 @@ void VisaoWidget::manipularReferencia(int idx_ref)
 			para relacioná-la a uma coluna de tabela */
 			ref=Reference(dynamic_cast<Table *>(sel_tabela->getSelectedObject()),
 										dynamic_cast<Column *>(sel_coluna->getSelectedObject()),
-										alias_tab_edt->text(), alias_col_edt->text());
+										alias_tab_edt->text().toUtf8(), alias_col_edt->text().toUtf8());
 		}
 		/* Se o combo de tipo de referência estiver selecionado como referência a uma expressão
 		 cria uma referência como tal */
 		else
 		{
 			//Chama o método de construção de uma referência a uma expressão
-			ref=Reference(expressao_txt->toPlainText(), alias_exp_edt->text());
+			ref=Reference(expressao_txt->toPlainText(),
+										alias_exp_edt->text().toUtf8());
 		}
 
 		/* Obrigatoriamente, a referência deve possuir um aplicação SQL
@@ -199,16 +200,16 @@ void VisaoWidget::editarReferencia(int idx_ref)
 			sel_tabela->setSelectedObject(ref.getTable());
 
 		//Configura os campos de alias de tabela e coluna com os valores da referência
-		alias_col_edt->setText(QString::fromUtf8(ref.getColumnAlias()));
-		alias_tab_edt->setText(QString::fromUtf8(ref.getAlias()));
+		alias_col_edt->setText(Utf8String::create(ref.getColumnAlias()));
+		alias_tab_edt->setText(Utf8String::create(ref.getAlias()));
 	}
 	//Caso seja uma referência a uma expressão
 	else
 	{
 		//Configura a caixa de texto de expressão com a expressão usada na referência
-		expressao_txt->setPlainText(QString::fromUtf8(ref.getExpression()));
+		expressao_txt->setPlainText(Utf8String::create(ref.getExpression()));
 		//Configura o campo de alias de expressão com o valor presente na referência
-		alias_exp_edt->setText(QString::fromUtf8(ref.getAlias()));
+		alias_exp_edt->setText(Utf8String::create(ref.getAlias()));
 	}
 
 	/* Configura uma string de acordo com as aplicações SQL da referência.
@@ -283,20 +284,20 @@ void VisaoWidget::exibirDadosReferencia(Reference refer, bool selec_from, bool f
 		 será para todas as colunas (*), para isso exibe uma string
 		 no formatdo: [NOME_ESQUEMA].[NOME_TABELA].*  */
 		if(tab && !col)
-			tab_referencias->setCellText(QString::fromUtf8(tab->getName(true) + QString(".*")),idx_lin,0);
+			tab_referencias->setCellText(Utf8String::create(tab->getName(true) + QString(".*")),idx_lin,0);
 		/* Caso a tabela e coluna estejam alocadas indica que a referência
 		 será para a coluna em questão para isso exibe uma string
 		 no formatdo: [NOME_ESQUEMA].[NOME_TABELA].[NOME_COLUNA]  */
 		else
-			tab_referencias->setCellText(QString::fromUtf8(tab->getName(true) + QString(".") + col->getName(true)),idx_lin,0);
+			tab_referencias->setCellText(Utf8String::create(tab->getName(true) + QString(".") + col->getName(true)),idx_lin,0);
 
 		//Exibe o alias da tabela e a exibe na segunda coluna da linha
-		tab_referencias->setCellText(QString::fromUtf8(refer.getAlias()),idx_lin,1);
+		tab_referencias->setCellText(Utf8String::create(refer.getAlias()),idx_lin,1);
 
 		/* Caso a coluna esteja alocada, exibe o alias da mesma na terceira coluna da linha
 		 caso contrário exibe um '-' */
 		if(col)
-			tab_referencias->setCellText(QString::fromUtf8(refer.getColumnAlias()),idx_lin,2);
+			tab_referencias->setCellText(Utf8String::create(refer.getColumnAlias()),idx_lin,2);
 		else
 			tab_referencias->setCellText(QString("-"),idx_lin,2);
 	}
@@ -304,9 +305,9 @@ void VisaoWidget::exibirDadosReferencia(Reference refer, bool selec_from, bool f
 	else
 	{
 		//Exibe a expressão na primeira coluna da linha
-		tab_referencias->setCellText(QString::fromUtf8(refer.getExpression()),idx_lin,0);
+		tab_referencias->setCellText(Utf8String::create(refer.getExpression()),idx_lin,0);
 		//Exibe o alias da expressão na segunda coluna da linha
-		tab_referencias->setCellText(QString::fromUtf8(refer.getAlias()),idx_lin,1);
+		tab_referencias->setCellText(Utf8String::create(refer.getAlias()),idx_lin,1);
 		/* Exibe um '-' na terceira coluna que armazena o alias da coluna por este campo
 		 não se aplicar a uma expressão */
 		tab_referencias->setCellText(QString("-"),idx_lin,2);
@@ -340,7 +341,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
 		visao_aux.removeReferences();
 
 		//Configura o nome da visão com o que está no formulário
-		visao_aux.BaseObject::setName(name_edt->text());
+		visao_aux.BaseObject::setName(name_edt->text().toUtf8());
 
 		//Configura o esquema da visão com o que está no formulário
 		visao_aux.setSchema(schema_sel->getSelectedObject());
@@ -367,7 +368,7 @@ void VisaoWidget::atualizarPrevisaoCodigo(void)
 			}
 		}
 		//Exibe o código fonte da visão auxliar, para refletir a configuração atual da mesma
-		codigo_txt->setPlainText(QString::fromUtf8(visao_aux.getCodeDefinition(SchemaParser::SQL_DEFINITION)));
+		codigo_txt->setPlainText(Utf8String::create(visao_aux.getCodeDefinition(SchemaParser::SQL_DEFINITION)));
 	}
 	catch(Exception &e)
 	{
@@ -414,6 +415,7 @@ void VisaoWidget::setAttributes(DatabaseModel *modelo, OperationList *lista_op, 
 			//Exibe a referência na tabela
 			exibirDadosReferencia(refer, sel_from, from_where, apos_where, i);
 		}
+
 		//Desbloqueia os sinais da tabela
 		tab_referencias->blockSignals(false);
 		//Limpa a seleção da tabela

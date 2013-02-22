@@ -88,7 +88,7 @@ void Constraint::addColumn(Column *column, unsigned col_type)
 	//Raises an error if the column is not allocated
 	if(!column)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
-										.arg(QString::fromUtf8(this->getName()))
+										.arg(Utf8String::create(this->getName()))
 										.arg(BaseObject::getTypeName(OBJ_CONSTRAINT)),
 										ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(constr_type!=ConstraintType::check)

@@ -265,7 +265,7 @@ void AppearanceConfigWidget::enableConfigElement(void)
 	if(!conf_items[idx].obj_conf)
 	{
 		QTextCharFormat fmt=BaseObjectView::getFontStyle(conf_items[idx].conf_id);
-		pal.setColor(QPalette::Button, fmt.foreground());
+		pal.setColor(QPalette::Button, fmt.foreground().color());
 		color1_tb->setPalette(pal);
 		underline_chk->setChecked(fmt.font().underline());
 		italic_chk->setChecked(fmt.font().italic());

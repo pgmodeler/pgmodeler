@@ -108,7 +108,7 @@ void SchemaView::configureObject(void)
 		}
 
 		//Configures the schema name at the top
-		sch_name->setText(QString::fromUtf8(schema->getName()));
+		sch_name->setText(Utf8String::create(schema->getName()));
 		font=BaseObjectView::getFontStyle(ParsersAttributes::GLOBAL).font();
 		font.setItalic(true);
 		font.setBold(true);

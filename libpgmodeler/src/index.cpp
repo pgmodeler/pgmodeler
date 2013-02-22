@@ -109,7 +109,7 @@ void Index::addElement(Column *column, OperatorClass *op_class, bool asc_order, 
 	if(!column)
 	{
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
-										.arg(QString::fromUtf8(this->getName()))
+										.arg(Utf8String::create(this->getName()))
 										.arg(BaseObject::getTypeName(OBJ_INDEX)),
 										ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}

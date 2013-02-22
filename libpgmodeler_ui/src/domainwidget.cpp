@@ -47,9 +47,9 @@ void DomainWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 	if(domain)
 	{
 		type=domain->getType();
-		def_value_edt->setText(QString::fromUtf8(domain->getDefaultValue()));
-		check_expr_txt->setPlainText(QString::fromUtf8(domain->getExpression()));
-		constr_name_edt->setText(QString::fromUtf8(domain->getConstraintName()));
+		def_value_edt->setText(Utf8String::create(domain->getDefaultValue()));
+		check_expr_txt->setPlainText(Utf8String::create(domain->getExpression()));
+		constr_name_edt->setText(Utf8String::create(domain->getConstraintName()));
 		not_null_chk->setChecked(domain->isNotNull());
 	}
 

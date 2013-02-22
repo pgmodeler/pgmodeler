@@ -70,7 +70,7 @@ void ConnectionsConfigWidget::loadConfiguration(void)
 		conn->setConnectionParam(DBConnection::PARAM_KERBEROS_SERVER, itr->second[DBConnection::PARAM_KERBEROS_SERVER]);
 		conn->setConnectionParam(DBConnection::PARAM_OPTIONS, itr->second[DBConnection::PARAM_OPTIONS]);
 
-		connections_cmb->addItem(QString::fromUtf8(itr->second[ParsersAttributes::ALIAS]),
+		connections_cmb->addItem(Utf8String::create(itr->second[ParsersAttributes::ALIAS]),
 				QVariant::fromValue<void *>(reinterpret_cast<void *>(conn)));
 
 		itr++;

@@ -28,11 +28,11 @@
 
 #include <QObject>
 #include <exception>
-#include <QString>
 #include <signal.h>
 #include <iostream>
 #include <vector>
 #include <deque>
+#include "utf8string.h"
 
 using namespace std;
 

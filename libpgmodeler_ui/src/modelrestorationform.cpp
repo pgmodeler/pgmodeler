@@ -74,7 +74,7 @@ QStringList ModelRestorationForm::getSelectedModels(void)
 
 	while(!items.isEmpty())
 	{
-		list.push_back(items.front()->data(Qt::UserRole).asString());
+		list.push_back(items.front()->data(Qt::UserRole).toString());
 		items.pop_front();
 	}
 

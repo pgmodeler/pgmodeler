@@ -180,8 +180,8 @@ void FunctionWidget::showParameterData(Parameter param, ObjectTableWidget *tab, 
 	{
 		QString str_aux;
 
-		tab->setCellText(QString::fromUtf8(param.getName()),row,0);
-		tab->setCellText(QString::fromUtf8(*param.getType()),row,1);
+		tab->setCellText(Utf8String::create(param.getName()),row,0);
+		tab->setCellText(Utf8String::create(*param.getType()),row,1);
 		tab->setRowData(QVariant::fromValue<PgSQLType>(param.getType()), row);
 
 		if(tab==parameters_tab)
@@ -190,7 +190,7 @@ void FunctionWidget::showParameterData(Parameter param, ObjectTableWidget *tab, 
 			if(param.isOut()) str_aux+="OUT";
 
 			tab->setCellText(str_aux,row,2);
-			tab->setCellText(QString::fromUtf8(param.getDefaultValue()),row,3);
+			tab->setCellText(Utf8String::create(param.getDefaultValue()),row,3);
 		}
 	}
 }
@@ -274,7 +274,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 		}
 		else
 		{
-			source_code_txt->setPlainText(QString::fromUtf8(func->getSourceCode()));
+			source_code_txt->setPlainText(Utf8String::create(func->getSourceCode()));
 		}
 
 		parameters_tab->blockSignals(false);
@@ -448,7 +448,7 @@ void FunctionWidget::validateConfiguredFunction(void)
 	catch(Exception &e)
 	{
 		throw Exception(Exception::getErrorMessage(ERR_FUNC_CONFIG_INV_OBJECT)
-										.arg(QString::fromUtf8(object->getName(true)))
+										.arg(Utf8String::create(object->getName(true)))
 										.arg(object->getTypeName()),
 										ERR_FUNC_CONFIG_INV_OBJECT,
 										__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);

@@ -102,7 +102,7 @@ void PgSQLTypeWidget::updateTypeFormat(void)
 		type.setIntervalType(interval_cmb->currentText());
 		type.setWithTimezone(timezone_chk->isChecked());
 
-		format_txt->setPlainText(QString::fromUtf8(*type));
+		format_txt->setPlainText(Utf8String::create(*type));
 	}
 	catch(Exception &e)
 	{
@@ -125,7 +125,7 @@ void PgSQLTypeWidget::listPgSQLTypes(QComboBox *combo, DatabaseModel *model, uns
 		count=types.size();
 
 		for(idx=0; idx < count; idx++)
-			combo->addItem(QString::fromUtf8(types[idx]), QVariant(PgSQLType::getUserTypeIndex(types[idx],NULL,model)));
+			combo->addItem(Utf8String::create(types[idx]), QVariant(PgSQLType::getUserTypeIndex(types[idx],NULL,model)));
 
 		//Getting the built-in type adding them into the combo
 		PgSQLType::getTypes(types, oid_types, pseudo_types);
@@ -145,7 +145,7 @@ void PgSQLTypeWidget::setAttributes(PgSQLType type, DatabaseModel *model,  unsig
 		type_cmb->blockSignals(false);
 
 		//Get the passed type index
-		idx=type_cmb->findText(QString::fromUtf8(~type));
+		idx=type_cmb->findText(Utf8String::create(~type));
 
 		//Select the type on the combo
 		type_cmb->setCurrentIndex(idx);

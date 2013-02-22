@@ -195,7 +195,7 @@ Exception::Exception(ErrorType error_type, const QString &method, const QString 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
-	configureException(QApplication::translate("Exception",messages[error_type][ERROR_MESSAGE],"",QApplication::UnicodeUTF8),
+	configureException(QApplication::translate("Exception",messages[error_type][ERROR_MESSAGE].toStdString().c_str(),"",QApplication::UnicodeUTF8, -1),
 										 error_type, method, file, line, extra_info);
 
 	if(exception) addException(*exception);
@@ -214,7 +214,7 @@ Exception::Exception(ErrorType error_type, const QString &method, const QString 
 	/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		so the translation method is called  directly from the application specifying the
 		context (Exception) in the ts file and the text to be translated */
-	configureException(QApplication::translate("Exception",messages[error_type][ERROR_MESSAGE],"",QApplication::UnicodeUTF8),
+	configureException(QApplication::translate("Exception",messages[error_type][ERROR_MESSAGE].toStdString().c_str(),"",QApplication::UnicodeUTF8,-1),
 										 error_type, method, file, line, extra_info);
 
 	itr=exceptions.begin();
@@ -262,7 +262,7 @@ QString Exception::getErrorMessage(ErrorType error_type)
 		/* Because the Exception class is not derived from QObject the function tr() is inefficient to translate messages
 		 so the translation method is called  directly from the application specifying the
 		 context (Exception) in the ts file and the text to be translated */
-		return(QApplication::translate("Exception",messages[error_type][ERROR_MESSAGE],"", QApplication::UnicodeUTF8));
+		return(QApplication::translate("Exception",messages[error_type][ERROR_MESSAGE].toStdString().c_str(),"", QApplication::UnicodeUTF8, -1));
 	else
 		return("");
 }

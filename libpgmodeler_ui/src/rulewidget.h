@@ -18,8 +18,8 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class RegraWidget
-\brief Definição da classe que implementa o formulário de edição dos atributos de regras.
+\class RuleWidget
+\brief Implements the operations to create/edit rules via form.
 */
 
 #ifndef RULE_WIDGET_H

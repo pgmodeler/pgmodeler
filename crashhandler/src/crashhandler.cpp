@@ -13,9 +13,9 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	connect(actions_txt, SIGNAL(textChanged(void)), this, SLOT(enableGeneration(void)));
 
 	//Open for reading the stack trace file generated on the last crash
-	input.open(GlobalAttributes::TEMPORARY_DIR +
-						 GlobalAttributes::DIR_SEPARATOR +
-						 GlobalAttributes::STACKTRACE_FILE);
+	input.open((GlobalAttributes::TEMPORARY_DIR +
+							GlobalAttributes::DIR_SEPARATOR +
+							GlobalAttributes::STACKTRACE_FILE).toStdString().c_str());
 
 	while(input.is_open() && !input.eof())
 	{
@@ -48,8 +48,8 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 	if(!lista.isEmpty())
 	{
 		//Opens the last modified model file showing it on the proper widget
-		input.open(GlobalAttributes::TEMPORARY_DIR +
-							 GlobalAttributes::DIR_SEPARATOR + lista[0]);
+		input.open((GlobalAttributes::TEMPORARY_DIR +
+								GlobalAttributes::DIR_SEPARATOR + lista[0]).toStdString().c_str());
 
 		buf.clear();
 		while(input.is_open() && !input.eof())
@@ -59,13 +59,13 @@ CrashHandler::CrashHandler(QWidget *parent, Qt::WindowFlags f) : QDialog(parent,
 		}
 
 		input.close();
-		model_txt->setPlainText(QString::fromUtf8(buf));
+		model_txt->setPlainText(Utf8String::create(buf));
 	}
 }
 
 void CrashHandler::enableGeneration(void)
 {
-	create_btn->setEnabled(!actions_txt->text().isEmpty());
+	create_btn->setEnabled(!actions_txt->toPlainText().isEmpty());
 }
 
 void CrashHandler::loadReport(const QString &filename)
@@ -76,7 +76,7 @@ void CrashHandler::loadReport(const QString &filename)
 	MessageBox msgbox;
 
 	fi.setFile(filename);
-	input.open(filename);
+	input.open(filename.toStdString().c_str());
 
 	title_lbl->setText(trUtf8("pgModeler crash file analysis"));
 	create_btn->setVisible(false);
@@ -114,11 +114,11 @@ void CrashHandler::loadReport(const QString &filename)
 		//Showing the sections of the uncompressed buffer on the respective widgets
 		while(i < buf_aux.size() && idx <= 2)
 		{
-			if(buf_aux.at(i).ascii()!=CHR_DELIMITER)
+			if(buf_aux.at(i).toAscii()!=CHR_DELIMITER)
 				str_aux.append(buf_aux.at(i));
 			else
 			{
-				txt_widgets[idx++]->setPlainText(QString::fromUtf8(str_aux));
+				txt_widgets[idx++]->setPlainText(Utf8String::create(str_aux));
 				str_aux.clear();
 			}
 			i++;
@@ -138,7 +138,7 @@ void CrashHandler::generateReport(void)
 											GlobalAttributes::CRASH_HANDLER_FILE).arg(QDateTime::currentDateTime().toString("_yyyyMMdd_hhmm"));
 
 	//Opens the file for writting
-	output.open(crash_file);
+	output.open(crash_file.toStdString().c_str());
 
 	if(!output.is_open())
 		msgbox.show(trUtf8("Error"), Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(crash_file), MessageBox::ERROR_ICON);

@@ -47,7 +47,7 @@ bool Operator::isValidName(const QString &name)
 		 1) The name has only the chars defined in 'valid_chars' */
 	len=name.size();
 	for(pos=0; pos < len && valid; pos++)
-		valid=!(valid_chars.find(name[pos]) < 0);
+		valid=!(valid_chars.indexOf(name[pos]) < 0);
 
 	//2) The name doesn't has sequences like -- or /* that defines SQL comments
 	if(valid) valid=(name.indexOf("--") < 0);
@@ -88,14 +88,14 @@ void Operator::setFunction(Function *func, unsigned func_type)
 		//Raises an error if the function is not allocated
 		if(!func)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-											.arg(QString::fromUtf8(this->getName(true)))
+											.arg(Utf8String::create(this->getName(true)))
 											.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
 											ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		/* Raises an error if the parameter count is invalid. To be used by the operator
 		 the function must own 1 or 2 parameters */
 		else if(func->getParameterCount()==0 || func->getParameterCount() > 2)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-											.arg(QString::fromUtf8(this->getName()))
+											.arg(Utf8String::create(this->getName()))
 											.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		else
@@ -161,8 +161,8 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 		if(oper && op_type==OPER_COMMUTATOR && argument_types[LEFT_ARG]!=oper->argument_types[RIGHT_ARG])
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_COM_OPEERATOR)
-											.arg(QString::fromUtf8(oper->getSignature(true)))
-											.arg(QString::fromUtf8(this->getSignature(true))),
+											.arg(Utf8String::create(oper->getSignature(true)))
+											.arg(Utf8String::create(this->getSignature(true))),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		/* Validating Negator OP: According to the PostgreSQL documentation the negator
@@ -175,8 +175,8 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 						 argument_types[RIGHT_ARG]!=oper->argument_types[RIGHT_ARG]))
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_INV_NEG_OPERATOR)
-											.arg(QString::fromUtf8(oper->getSignature(true)))
-											.arg(QString::fromUtf8(this->getSignature(true))),
+											.arg(Utf8String::create(oper->getSignature(true)))
+											.arg(Utf8String::create(this->getSignature(true))),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 		else

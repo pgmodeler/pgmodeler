@@ -76,7 +76,7 @@ void BaseRelationship::configureRelationship(void)
 			//Raises an error if one of the tables is not allocated
 			if(!src_table || !dst_table)
 				throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_TABLE)
-												.arg(QString::fromUtf8(this->getName()))
+												.arg(Utf8String::create(this->getName()))
 												.arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
 												ERR_ASG_NOT_ALOC_TABLE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

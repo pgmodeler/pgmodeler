@@ -33,7 +33,7 @@ void TextboxWidget::setAttributes(DatabaseModel *model, OperationList *op_list, 
 		palette.setColor(QPalette::Button, txtbox->getTextColor());
 		color_select_tb->setPalette(palette);
 
-		text_txt->setPlainText(QString::fromUtf8(txtbox->getComment()));
+		text_txt->setPlainText(Utf8String::create(txtbox->getComment()));
 		bold_chk->setChecked(txtbox->getTextAttribute(Textbox::BOLD_TXT));
 		italic_chk->setChecked(txtbox->getTextAttribute(Textbox::ITALIC_TXT));
 		underline_chk->setChecked(txtbox->getTextAttribute(Textbox::UNDERLINE_TXT));
@@ -48,6 +48,7 @@ void TextboxWidget::selectTextColor(void)
 	QPalette palette;
 
 	color_dlg.setWindowTitle(trUtf8("Select text color"));
+	color_dlg.setCurrentColor(color_select_tb->palette().color(QPalette::Button));
 	color_dlg.exec();
 
 	if(color_dlg.result()==QDialog::Accepted)

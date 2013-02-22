@@ -49,7 +49,7 @@ void ColumnWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, O
 	{
 		type=column->getType();
 		notnull_chk->setChecked(column->isNotNull());
-		def_value_txt->setPlainText(QString::fromUtf8(column->getDefaultValue()));
+		def_value_txt->setPlainText(Utf8String::create(column->getDefaultValue()));
 	}
 
 	data_type->setAttributes(type, model, UserTypeConfig::BASE_TYPE | UserTypeConfig::DOMAIN_TYPE,true,false);

@@ -18,7 +18,7 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class EspacoTabelaWidget
+\class TablespaceWidget
 \brief Implements the operations to create/edit tablespaces via form.
 */
 

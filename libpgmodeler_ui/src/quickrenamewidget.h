@@ -17,7 +17,7 @@
 */
 
 /**
-\note <strong>Sub-project:</strong> pgModeler User Interface Library (libpgmodeler_ui)
+\ingroup libpgmodeler_ui
 \class QuickRenameWidget
 \brief Widget used to quickly rename objects without open the editing form
 */

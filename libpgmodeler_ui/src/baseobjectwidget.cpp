@@ -54,7 +54,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		tablespace_sel=new ObjectSelectorWidget(OBJ_TABLESPACE, true, this);
 
 		baseobject_grid = new QGridLayout;
-		baseobject_grid->setObjectName(QString::fromUtf8("objetobase_grid"));
+		baseobject_grid->setObjectName(Utf8String::create("objetobase_grid"));
 
 		baseobject_grid->addWidget(protected_obj_frm, 0, 0, 1, 0);
 		baseobject_grid->addWidget(name_lbl, 1, 0, 1, 1);
@@ -196,7 +196,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 	name_edt->setFocus();
 	edt_perms_tb->setEnabled(object!=NULL);
-	parent_obj_txt->setPlainText(QString::fromUtf8(parent_obj->getName(true)));
+	parent_obj_txt->setPlainText(Utf8String::create(parent_obj->getName(true)));
 
 	parent_obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + parent_obj->getSchemaName() + QString(".png")));
 	parent_obj_icon_lbl->setToolTip(parent_obj->getTypeName());
@@ -209,8 +209,8 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	{
 		bool prot;
 
-		name_edt->setText(QString::fromUtf8(object->getName()));
-		comment_edt->setText(QString::fromUtf8(object->getComment()));
+		name_edt->setText(Utf8String::create(object->getName()));
+		comment_edt->setText(Utf8String::create(object->getComment()));
 		owner_sel->setSelectedObject(object->getOwner());
 
 		//if there is no schema assigned to object, set the "public" as the default
@@ -320,7 +320,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 	if(obj_type!=BASE_OBJECT)
 	{
-		obj_icon_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
+		obj_icon_lbl->setPixmap(QPixmap(Utf8String::create(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
 	}
 }
@@ -351,25 +351,25 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	font.setBold(false);
 	info_frm->setFont(font);
 
-	info_frm->setObjectName(QString::fromUtf8("info_frm"));
+	info_frm->setObjectName(Utf8String::create("info_frm"));
 	info_frm->setFrameShape(QFrame::Box);
 	info_frm->setFrameShadow(QFrame::Sunken);
 
 	grid = new QGridLayout(info_frm);
 	grid->setContentsMargins(4, 4, 4, 4);
-	grid->setObjectName(QString::fromUtf8("grid"));
+	grid->setObjectName(Utf8String::create("grid"));
 
 	ico_lbl = new QLabel(info_frm);
-	ico_lbl->setObjectName(QString::fromUtf8("icone_lbl"));
+	ico_lbl->setObjectName(Utf8String::create("icone_lbl"));
 	ico_lbl->setMinimumSize(QSize(32, 32));
 	ico_lbl->setMaximumSize(QSize(32, 32));
-	ico_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/msgbox_info.png")));
+	ico_lbl->setPixmap(QPixmap(Utf8String::create(":/icones/icones/msgbox_info.png")));
 	ico_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);
 
 	msg_lbl = new QLabel(info_frm);
-	msg_lbl->setObjectName(QString::fromUtf8("message_lbl"));
+	msg_lbl->setObjectName(Utf8String::create("message_lbl"));
 	msg_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
 
@@ -422,8 +422,8 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 			font.setBold(true);
 			font.setItalic(true);
 			wgt->setFont(font);
-			wgt->setToolTip(QString::fromUtf8("<em style='font-size: 8pt'>") + trUtf8("Version") +
-											itr->first + QString::fromUtf8(" %1</em>").arg(field_name));
+			wgt->setToolTip(Utf8String::create("<em style='font-size: 8pt'>") + trUtf8("Version") +
+											itr->first + Utf8String::create(" %1</em>").arg(field_name));
 		}
 		itr++;
 	}
@@ -436,24 +436,24 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	font.setBold(false);
 	alert_frm->setFont(font);
 
-	alert_frm->setObjectName(QString::fromUtf8("alerta_frm"));
+	alert_frm->setObjectName(Utf8String::create("alerta_frm"));
 	alert_frm->setFrameShape(QFrame::Box);
 	alert_frm->setFrameShadow(QFrame::Sunken);
 
 	grid = new QGridLayout(alert_frm);
-	grid->setObjectName(QString::fromUtf8("grid"));
+	grid->setObjectName(Utf8String::create("grid"));
 
 	ico_lbl = new QLabel(alert_frm);
-	ico_lbl->setObjectName(QString::fromUtf8("icone_lbl"));
+	ico_lbl->setObjectName(Utf8String::create("icone_lbl"));
 	ico_lbl->setMinimumSize(QSize(32, 32));
 	ico_lbl->setMaximumSize(QSize(32, 32));
-	ico_lbl->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/msgbox_alerta.png")));
+	ico_lbl->setPixmap(QPixmap(Utf8String::create(":/icones/icones/msgbox_alerta.png")));
 	ico_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop);
 
 	grid->addWidget(ico_lbl, 0, 0, 1, 1);
 
 	msg_lbl = new QLabel(alert_frm);
-	msg_lbl->setObjectName(QString::fromUtf8("mensagelm_lb"));
+	msg_lbl->setObjectName(Utf8String::create("mensagelm_lb"));
 	msg_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
 
@@ -532,10 +532,10 @@ void BaseObjectWidget::applyConfiguration(void)
 				if(!new_obj && aux_obj && aux_obj!=object)
 				{
 					throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-													.arg(QString::fromUtf8(obj_name))
-													.arg(QString::fromUtf8(BaseObject::getTypeName(obj_type)))
-													.arg(QString::fromUtf8(parent_obj->getName(true)))
-													.arg(QString::fromUtf8(parent_obj->getTypeName())),
+													.arg(Utf8String::create(obj_name))
+													.arg(Utf8String::create(BaseObject::getTypeName(obj_type)))
+													.arg(Utf8String::create(parent_obj->getName(true)))
+													.arg(Utf8String::create(parent_obj->getTypeName())),
 													ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}

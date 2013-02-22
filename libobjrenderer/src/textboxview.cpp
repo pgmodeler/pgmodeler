@@ -72,7 +72,7 @@ void TextboxView::configureObject(void)
 		text->setBrush(txtbox->getTextColor());
 	}
 
-	text->setText(QString::fromUtf8(txtbox->getComment()));
+	text->setText(Utf8String::create(txtbox->getComment()));
 	text->setPos(HORIZ_SPACING, VERT_SPACING);
 	this->resizePolygon(polygon, roundf(text->boundingRect().width() + (2 * HORIZ_SPACING)),
 											roundf(text->boundingRect().height() + (2* VERT_SPACING)));

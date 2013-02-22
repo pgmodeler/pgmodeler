@@ -135,7 +135,7 @@ void SchemaParser::loadFile(const QString &file)
 			if(str_aux[0]==CHR_COMMENT) comment_count++;
 
 			//Looking for the position of other comment characters for deletion
-			pos=str_aux.find(CHR_COMMENT);
+			pos=str_aux.indexOf(CHR_COMMENT);
 
 			//Removes the characters from the found position
 			if(pos >= 0)

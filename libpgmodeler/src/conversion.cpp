@@ -19,7 +19,7 @@ void Conversion::setEncoding(unsigned encoding_idx, EncodingType encoding_type)
 		//If the passed enconding type is null an error is raised
 		if((~encoding_type)=="")
 			throw Exception(Exception::getErrorMessage(ERR_ASG_NULL_TYPE_OBJECT)
-											.arg(QString::fromUtf8(this->getName()))
+											.arg(Utf8String::create(this->getName()))
 											.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
 											ERR_ASG_NULL_TYPE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -36,14 +36,14 @@ void Conversion::setConversionFunction(Function *conv_func)
 	//Raises an error in case the passed conversion function is null
 	if(!conv_func)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-										.arg(QString::fromUtf8(this->getName(true)))
+										.arg(Utf8String::create(this->getName(true)))
 										.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
 										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	/* The conversion function must have 5 parameters if it's not the case
 		raises an error. */
 	else if(conv_func->getParameterCount()!=5)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-										.arg(QString::fromUtf8(this->getName(true)))
+										.arg(Utf8String::create(this->getName(true)))
 										.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
 										ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	/* Raises an error if the function parameters does not following the type order:
@@ -54,13 +54,13 @@ void Conversion::setConversionFunction(Function *conv_func)
 					conv_func->getParameter(3).getType()!="internal" ||
 					conv_func->getParameter(4).getType()!="integer")
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
-										.arg(QString::fromUtf8(this->getName(true)))
+										.arg(Utf8String::create(this->getName(true)))
 										.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
 										ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the conversion function return type is not 'void'
 	else if(conv_func->getReturnType()!="void")
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
-										.arg(QString::fromUtf8(this->getName(true)))
+										.arg(Utf8String::create(this->getName(true)))
 										.arg(BaseObject::getTypeName(OBJ_CONVERSION)),
 										ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 

@@ -61,13 +61,13 @@ void ObjectDepsRefsWidget::updateTableWidget(vector<BaseObject *> &objs, QTableW
 			tab_wgt->insertRow(lin_idx);
 
 			tab_item=new QTableWidgetItem;
-			tab_item->setText(QString::fromUtf8(objs[i]->getName()));
+			tab_item->setText(Utf8String::create(objs[i]->getName()));
 			tab_item->setIcon(QPixmap(QString(":/icones/icones/") +
 																BaseObject::getSchemaName(objs[i]->getObjectType())+ QString(".png")));
 			tab_wgt->setItem(lin_idx, 0, tab_item);
 
 			tab_item=new QTableWidgetItem;
-			tab_item->setText(QString::fromUtf8(objs[i]->getTypeName()));
+			tab_item->setText(Utf8String::create(objs[i]->getTypeName()));
 			tab_wgt->setItem(lin_idx, 1, tab_item);
 
 			tab_item=new QTableWidgetItem;
@@ -79,13 +79,13 @@ void ObjectDepsRefsWidget::updateTableWidget(vector<BaseObject *> &objs, QTableW
 			else
 				parent_obj=this->model;
 
-			tab_item->setText(QString::fromUtf8(parent_obj->getName()));
+			tab_item->setText(Utf8String::create(parent_obj->getName()));
 			tab_item->setIcon(QPixmap(QString(":/icones/icones/") +
 																BaseObject::getSchemaName(parent_obj->getObjectType())+ QString(".png")));
 			tab_wgt->setItem(lin_idx, 2, tab_item);
 
 			tab_item=new QTableWidgetItem;
-			tab_item->setText(QString::fromUtf8(parent_obj->getTypeName()));
+			tab_item->setText(Utf8String::create(parent_obj->getTypeName()));
 			tab_wgt->setItem(lin_idx, 3, tab_item);
 
 			lin_idx++;

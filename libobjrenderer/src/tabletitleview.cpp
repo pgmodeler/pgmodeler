@@ -61,12 +61,12 @@ void TableTitleView::configureObject(BaseGraphicObject *object)
 	if(schema->isRectVisible())
 		schema_name->setText(" ");
 	else
-		schema_name->setText(QString::fromUtf8(schema->getName() + "."));
+		schema_name->setText(Utf8String::create(schema->getName() + "."));
 
 	fmt=font_config[name_attrib];
 	obj_name->setFont(fmt.font());
 	obj_name->setBrush(fmt.foreground());
-	obj_name->setText(QString::fromUtf8(object->getName()));
+	obj_name->setText(Utf8String::create(object->getName()));
 
 	box->setBrush(this->getFillStyle(title_color_attrib));
 	pen=this->getBorderStyle(title_color_attrib);

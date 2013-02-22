@@ -91,7 +91,7 @@ void Type::addAttribute(Parameter attrib)
 		throw Exception(ERR_INS_INV_TYPE_ATTRIB,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the passed attribute has the same type as the defining type (this)
 	else if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !attrib.getType())
-		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
+		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error when the attribute already exists
 	else if(isAttributeExists(attrib.getName()))
@@ -209,7 +209,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 		because this function is mandatory for base types */
 	if(!func && (func_id==INPUT_FUNC || func_id==OUTPUT_FUNC))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_FUNCTION)
-										.arg(QString::fromUtf8(this->getName(true)))
+										.arg(Utf8String::create(this->getName(true)))
 										.arg(BaseObject::getTypeName(OBJ_TYPE)),
 										ERR_ASG_NOT_ALOC_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -229,7 +229,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 							func_id==TPMOD_IN_FUNC || func_id==TPMOD_OUT_FUNC ||
 							func_id==ANALYZE_FUNC)))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_INV_PARAM_COUNT)
-											.arg(QString::fromUtf8(this->getName()))
+											.arg(Utf8String::create(this->getName()))
 											.arg(BaseObject::getTypeName(OBJ_TYPE)),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		/* Checking the return types of function in relation to type.
@@ -247,7 +247,7 @@ void Type::setFunction(unsigned func_id, Function *func)
 						(func_id==TPMOD_OUT_FUNC && func->getReturnType()!="cstring") ||
 						(func_id==ANALYZE_FUNC && func->getReturnType()!="boolean"))
 			throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_RET_TYPE)
-											.arg(QString::fromUtf8(this->getName()))
+											.arg(Utf8String::create(this->getName()))
 											.arg(BaseObject::getTypeName(OBJ_TYPE)),
 											ERR_ASG_FUNCTION_INV_RET_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -339,7 +339,7 @@ void Type::setAlignment(PgSQLType type)
 
 	//Raises an error if the type assigned to the alignment is invalid according to the rule
 	if(tp!="char" && tp!="smallint" && tp!="integer" && tp!="double precision")
-		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ALIGNMENT_TYPE).arg(QString::fromUtf8(this->getName(true))),
+		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ALIGNMENT_TYPE).arg(Utf8String::create(this->getName(true))),
 										ERR_ASG_INV_ALIGNMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
@@ -356,12 +356,12 @@ void Type::setDefaultValue(const QString &value)
 void Type::setElement(PgSQLType elem)
 {
 	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !elem)
-		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
+		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(elem!="any" &&
 					(elem.isOIDType() || elem.isPseudoType() ||
 					 elem.isUserType() || elem.isArrayType()))
-		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ELEMENT_TYPE).arg(QString::fromUtf8(this->getName(true))),
+		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_ELEMENT_TYPE).arg(Utf8String::create(this->getName(true))),
 										ERR_ASG_INV_ELEMENT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->element=elem;
@@ -429,7 +429,7 @@ void Type::setPreferred(bool value)
 void Type::setLikeType(PgSQLType like_type)
 {
 	if(PgSQLType::getUserTypeIndex(this->getName(true), this) == !like_type)
-		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(QString::fromUtf8(this->getName(true))),
+		throw Exception(Exception::getErrorMessage(ERR_USER_TYPE_SELF_REFERENCE).arg(Utf8String::create(this->getName(true))),
 										ERR_USER_TYPE_SELF_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->like_type=like_type;

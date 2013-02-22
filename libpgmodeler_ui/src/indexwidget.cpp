@@ -105,7 +105,7 @@ void IndexWidget::updateColumnsCombo(void)
 		for(i=0; i < col_count; i++)
 		{
 			column=table->getColumn(i);
-			column_cmb->addItem(QString::fromUtf8(column->getName()),
+			column_cmb->addItem(Utf8String::create(column->getName()),
 													QVariant::fromValue<void *>(column));
 		}
 	}
@@ -119,17 +119,17 @@ void IndexWidget::showElementData(IndexElement elem, int elem_idx)
 {
 	if(elem.getColumn())
 	{
-		elements_tab->setCellText(QString::fromUtf8(elem.getColumn()->getName()), elem_idx, 0);
-		elements_tab->setCellText(QString::fromUtf8(elem.getColumn()->getTypeName()), elem_idx, 1);
+		elements_tab->setCellText(Utf8String::create(elem.getColumn()->getName()), elem_idx, 0);
+		elements_tab->setCellText(Utf8String::create(elem.getColumn()->getTypeName()), elem_idx, 1);
 	}
 	else
 	{
-		elements_tab->setCellText(QString::fromUtf8(elem.getExpression()), elem_idx, 0);
+		elements_tab->setCellText(Utf8String::create(elem.getExpression()), elem_idx, 0);
 		elements_tab->setCellText(trUtf8("Expressão"), elem_idx, 1);
 	}
 
 	if(elem.getOperatorClass())
-		elements_tab->setCellText(QString::fromUtf8(elem.getOperatorClass()->getName(true)), elem_idx, 2);
+		elements_tab->setCellText(Utf8String::create(elem.getOperatorClass()->getName(true)), elem_idx, 2);
 	else
 		elements_tab->setCellText("-", elem_idx, 2);
 
@@ -182,7 +182,7 @@ void IndexWidget::editElement(int elem_idx)
 	if(elem.getColumn())
 	{
 		column_rb->setChecked(true);
-		column_cmb->setCurrentIndex(column_cmb->findText(QString::fromUtf8(elem.getColumn()->getName())));
+		column_cmb->setCurrentIndex(column_cmb->findText(Utf8String::create(elem.getColumn()->getName())));
 	}
 	else
 	{

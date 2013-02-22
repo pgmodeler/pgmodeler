@@ -80,7 +80,6 @@ void MessageBox::show(Exception e, const QString &msg, unsigned icon_type)
 
 	itr=list.rbegin();
 	itr_end=list.rend();
-	//font.setPointSize(8);
 
 	while(itr!=itr_end)
 	{

@@ -98,7 +98,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 	//Executa o método open para que o arquivo seja criado
 	tf.open();
 	//Armazena o nome temporário
-	nome_arquivo_tmp=tf.name();
+	nome_arquivo_tmp=tf.fileName();
 	//Fecha o arquivo temporário
 	tf.close();
 
@@ -113,7 +113,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 	label=new QLabel(modelo_protegido_frm);
 	label->setMinimumSize(QSize(32, 32));
 	label->setMaximumSize(QSize(32, 32));
-	label->setPixmap(QPixmap(QString::fromUtf8(":/icones/icones/msgbox_alerta.png")));
+	label->setPixmap(QPixmap(Utf8String::create(":/icones/icones/msgbox_alerta.png")));
 
 	grid=new QGridLayout;
 	grid->addWidget(label, 0, 0, 1, 1);
@@ -553,7 +553,7 @@ void ModeloWidget::adicionarNovoObjeto(void)
 			diferente: o usuário precisa clicar no ícone do objeto (no meno novo objeto)
 			e clicar no modelo. Ao clicar no menu o cursor do mouse é modificado com
 			o ícone do tipo de objeto a ser criado */
-			viewport->setCursor(QCursor(acao->icon().pixmap(),0,0));
+			viewport->setCursor(QCursor(acao->icon().pixmap(QSize(32,32)),0,0));
 			//Armazena o tipo do objeto a ser criado pois este é referenciado no mousePressEvent() */
 			this->tipo_novo_obj=tipo_obj;
 			this->desabilitarAcoesModelo();
@@ -2435,7 +2435,7 @@ void ModeloWidget::configurarSubMenu(BaseObject *obj)
 					{
 						while(!obj_list.empty())
 						{
-							act=new QAction(QString::fromUtf8(obj_list.back()->getName()), menus[i]);
+							act=new QAction(Utf8String::create(obj_list.back()->getName()), menus[i]);
 							act->setIcon(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(types[i]) + QString(".png")));
 							act->setCheckable(true);
 
@@ -2710,7 +2710,7 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 					submenu=new QMenu(&menu_popup);
 					submenu->setIcon(QPixmap(QString(":/icones/icones/") +
 																	 BaseObject::getSchemaName(OBJ_CONSTRAINT) + str_aux + QString(".png")));
-					submenu->setTitle(QString::fromUtf8(rest->getName()));
+					submenu->setTitle(Utf8String::create(rest->getName()));
 
 					acao=new QAction(dynamic_cast<QObject *>(submenu));
 					acao->setIcon(QPixmap(QString(":/icones/icones/editar.png")));

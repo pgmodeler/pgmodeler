@@ -76,7 +76,7 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 		QPixmap pix;
 
 		//Creates a pixmap with the size of the scene
-		pix.resize(this->model->cena->sceneRect().size().toSize());
+		pix=QPixmap(this->model->cena->sceneRect().size().toSize());
 
 		//Configures a QSize instance with 20% of the scene size
 		size=this->model->cena->sceneRect().size().toSize();

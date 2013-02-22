@@ -57,8 +57,8 @@ void DatabaseWidget::setAttributes(DatabaseModel *model)
 		int idx;
 
 		connlim_sb->setValue(model->getConnectionLimit());
-		templatedb_edt->setText(QString::fromUtf8(model->getTemplateDB()));
-		author_edt->setText(QString::fromUtf8(model->getAuthor()));
+		templatedb_edt->setText(Utf8String::create(model->getTemplateDB()));
+		author_edt->setText(Utf8String::create(model->getAuthor()));
 
 		idx=encoding_cmb->findText(~model->getEncoding());
 		if(idx < 0) idx=0;

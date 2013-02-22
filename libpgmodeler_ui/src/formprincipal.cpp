@@ -237,7 +237,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 	connect(relacao_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
 	connect(tabela_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__atualizarDockWidgets(void)));
 
-	connect(lista_oper, SIGNAL(s_operationExecuted(void)), visaogeral_wgt, SLOT(atualizarVisaoGeral(void)));
+	connect(lista_oper, SIGNAL(s_operationExecuted(void)), visaogeral_wgt, SLOT(updateOverview(void)));
 	connect(fconfiguracao, SIGNAL(finished(int)), this, SLOT(atualizarModelos(void)));
 	connect(&tm_salvamento, SIGNAL(timeout(void)), this, SLOT(salvarTodosModelos(void)));
 	connect(&tm_salvamento_tmp, SIGNAL(timeout(void)), this, SLOT(salvarModeloTemporario(void)));
@@ -434,10 +434,10 @@ void FormPrincipal::showEvent(QShowEvent *)
 
 	//Caso o intervalo de salvamento esteja setado inicializa o timer
 	if(interv_salvar > 0)
-		tm_salvamento.start(interv_salvar, false);
+		tm_salvamento.start(interv_salvar);
 
 	//O intervalo de salvamento do arquivo temporário será a cada 1 minuto.
-	tm_salvamento_tmp.start(60000, false);
+	tm_salvamento_tmp.start(60000);
 }
 
 void FormPrincipal::closeEvent(QCloseEvent *)
@@ -573,11 +573,11 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
 	nome_tab=nome_obj;
 
 	tab_modelo = new ModeloWidget(modelos_tab);
-	tab_modelo->setObjectName(QString::fromUtf8(nome_obj));
+	tab_modelo->setObjectName(Utf8String::create(nome_obj));
 
 	//Adiciona a aba criada ao conjuto de abas existentes
 	nome_obj=tab_modelo->modelo->getName();
-	modelos_tab->addTab(tab_modelo, QString::fromUtf8(nome_obj));
+	modelos_tab->addTab(tab_modelo, Utf8String::create(nome_obj));
 	modelos_tab->setCurrentIndex(modelos_tab->count()-1);
 	layout=modelos_tab->currentWidget()->layout();
 	layout->setContentsMargins(4,4,4,4);
@@ -609,7 +609,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
 			//Carrega o modelo caso o nome do arquivo esteja especificado
 			tab_modelo->carregarModelo(nome_arq);
 			modelos_tab->setTabText(modelos_tab->currentIndex(),
-															QString::fromUtf8(tab_modelo->modelo->getName()));
+															Utf8String::create(tab_modelo->modelo->getName()));
 		}
 		catch(Exception &e)
 		{
@@ -914,7 +914,7 @@ void FormPrincipal::fecharModelo(int idx_modelo)
 void FormPrincipal::atualizarNomeAba(void)
 {
 	if(modelo_atual && modelo_atual->modelo->getName()!=modelos_tab->tabText(modelos_tab->currentIndex()))
-		modelos_tab->setTabText(modelos_tab->currentIndex(), QString::fromUtf8(modelo_atual->modelo->getName()));
+		modelos_tab->setTabText(modelos_tab->currentIndex(), Utf8String::create(modelo_atual->modelo->getName()));
 }
 
 void FormPrincipal::atualizarModelos(void)
@@ -936,7 +936,7 @@ void FormPrincipal::atualizarModelos(void)
 	else
 	{
 		interv_salvar=conf_wgt->autosave_interv_spb->value() * 60000;
-		tm_salvamento.start(interv_salvar, false);
+		tm_salvamento.start(interv_salvar);
 	}
 
 	//Força a atualização de todos os modelos abertos
@@ -1022,7 +1022,7 @@ void FormPrincipal::imprimirModelo(void)
 		QPrinter::PageSize tam_papel, tam_papel_atual;
 		QPrinter::Orientation orientacao, orient_atual;
 		QRectF margens;
-		unsigned ml,mt,mr,mb, ml1, mt1, mr1, mb1;
+		qreal ml,mt,mr,mb, ml1, mt1, mr1, mb1;
 		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(fconfiguracao->getConfigurationWidget(0));
 
 		print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
@@ -1038,7 +1038,7 @@ void FormPrincipal::imprimirModelo(void)
 		printer->setPaperSize(tam_papel);
 		printer->setOrientation(orientacao);
 		printer->setPageMargins(margens.left(), margens.top(), margens.right(), margens.bottom(), QPrinter::Millimeter);
-		printer->margins(&mt,&ml,&mb,&mr);
+		printer->getPageMargins(&mt,&ml,&mb,&mr,QPrinter::Millimeter);
 		print_dlg.exec();
 
 		//Caso o usuário confirme a impressão do modelo
@@ -1047,7 +1047,7 @@ void FormPrincipal::imprimirModelo(void)
 			/* Caso o usuário modifique as configurações da impressora este será alertado de
 			que as configurações divergem daquelas setadas na Cena, e assim a impressão
 			pode ser prejudicada */
-			printer->margins(&mt1,&ml1,&mb1,&mr1);
+			printer->getPageMargins(&mt1,&ml1,&mb1,&mr1,QPrinter::Millimeter);
 			orient_atual=print_dlg.printer()->orientation();
 			tam_papel_atual=print_dlg.printer()->paperSize();
 

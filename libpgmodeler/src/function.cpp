@@ -119,8 +119,8 @@ void Function::addParameter(Parameter param)
 	//If a duplicated parameter is found an error is raised
 	if(found)
 		throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PARAM_FUNCTION)
-										.arg(QString::fromUtf8(param.getName()))
-										.arg(QString::fromUtf8(this->signature)),
+										.arg(Utf8String::create(param.getName()))
+										.arg(Utf8String::create(this->signature)),
 										ERR_ASG_DUPLIC_PARAM_FUNCTION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	//Inserts the parameter in the function
@@ -153,8 +153,8 @@ void Function::addReturnedTableColumn(const QString &name, PgSQLType type)
 	//Raises an error if the column is duplicated
 	if(found)
 		throw Exception(Exception::getErrorMessage(ERR_INS_DUPLIC_RET_TAB_TYPE)
-										.arg(QString::fromUtf8(name))
-										.arg(QString::fromUtf8(this->signature)),
+										.arg(Utf8String::create(name))
+										.arg(Utf8String::create(this->signature)),
 										ERR_INS_DUPLIC_RET_TAB_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	Parameter p;
@@ -211,7 +211,7 @@ void Function::setLibrary(const QString &library)
 {
 	if(language->getName().toLower()!=~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
-										.arg(QString::fromUtf8(this->getSignature())),
+										.arg(Utf8String::create(this->getSignature())),
 										ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->library=library;
@@ -221,7 +221,7 @@ void Function::setSymbol(const QString &symbol)
 {
 	if(language->getName().toLower()!=~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_FUNC_REFLIB_LANG_NOT_C)
-										.arg(QString::fromUtf8(this->getSignature())),
+										.arg(Utf8String::create(this->getSignature())),
 										ERR_ASG_FUNC_REFLIB_LANG_NOT_C,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->symbol=symbol;
@@ -273,7 +273,7 @@ void Function::setSourceCode(const QString &src_code)
 {
 	if(language->getName().toLower()==~LanguageType("c"))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_CODE_FUNC_C_LANGUAGE)
-										.arg(QString::fromUtf8(this->getSignature())),
+										.arg(Utf8String::create(this->getSignature())),
 										ERR_ASG_CODE_FUNC_C_LANGUAGE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->source_code=src_code;

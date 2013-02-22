@@ -150,8 +150,8 @@ void ConstraintWidget::addColumn(Column *column, unsigned col_id, int row)
 		else
 			table_wgt=ref_columns_tab;
 
-		table_wgt->setCellText(QString::fromUtf8(column->getName()),row,0);
-		table_wgt->setCellText(QString::fromUtf8(~column->getType()),row,1);
+		table_wgt->setCellText(Utf8String::create(column->getName()),row,0);
+		table_wgt->setCellText(Utf8String::create(~column->getType()),row,1);
 		table_wgt->setRowData(QVariant::fromValue<void *>(column), row);
 
 		//Change the table row background color if the column is protected or added by relationship
@@ -219,7 +219,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 
 			//If the column does not exists on the column's table, adds it
 			if(aux_col_tab->getRowIndex(QVariant::fromValue<void *>(column)) < 0)
-				combo->addItem(QString::fromUtf8(column->getName()) + " (" + ~column->getType() +")", QVariant::fromValue<void *>(column));
+				combo->addItem(Utf8String::create(column->getName()) + " (" + ~column->getType() +")", QVariant::fromValue<void *>(column));
 		}
 
 		aux_col_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (combo->count()!=0));
@@ -359,7 +359,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		constr_type_cmb->setEnabled(false);
 		constr_type_lbl->setEnabled(false);
 
-		check_expr_txt->setPlainText(QString::fromUtf8(constr->getCheckExpression()));
+		check_expr_txt->setPlainText(Utf8String::create(constr->getCheckExpression()));
 		deferrable_chk->setChecked(constr->isDeferrable());
 		deferral_cmb->setCurrentIndex(deferral_cmb->findText(~constr->getDeferralType()));
 		match_cmb->setCurrentIndex(match_cmb->findText(~constr->getMatchType()));

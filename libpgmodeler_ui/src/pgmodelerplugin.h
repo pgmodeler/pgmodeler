@@ -19,7 +19,7 @@
 /**
 \ingroup libpgmodeler_ui
 \class PgModelerPlugin
-\brief Definição da classe que  implementa  a base para suporte de plugins de terceiros, baseados em bibliotecas compartilhadas.
+\brief Implements the basic operations to create third party plugins based upon shared libraries.
 */
 
 #ifndef PGMODELER_PLUGIN_H

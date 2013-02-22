@@ -308,8 +308,8 @@ void TableView::configureObject(void)
 	BaseObjectView::configureObjectShadow();
 	BaseObjectView::configureObjectSelection();
 
-	this->table_tooltip=QString::fromUtf8(table->getName(true)) +
-											" (" + QString::fromUtf8(table->getTypeName()) + ")";
+	this->table_tooltip=Utf8String::create(table->getName(true)) +
+											" (" + Utf8String::create(table->getTypeName()) + ")";
 
 	this->setToolTip(this->table_tooltip);
 }

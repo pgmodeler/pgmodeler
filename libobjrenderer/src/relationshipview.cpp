@@ -10,7 +10,7 @@ RelationshipView::RelationshipView(BaseRelationship *rel) : BaseObjectView(rel)
 	{
 		if(rel->getLabel(i))
 		{
-			rel->getLabel(i)->setTextColor(BaseObjectView::getFontStyle(ParsersAttributes::LABEL).foreground());
+			rel->getLabel(i)->setTextColor(BaseObjectView::getFontStyle(ParsersAttributes::LABEL).foreground().color());
 			labels[i]=new TextboxView(rel->getLabel(i), true);/*,
 															 BaseObjectView::getFillStyle(ParsersAttributes::LABEL),
 															 BaseObjectView::getBorderStyle(ParsersAttributes::LABEL));*/
@@ -543,8 +543,8 @@ void RelationshipView::configureLine(void)
 		this->configureProtectedIcon();
 		configuring_line=false;
 
-		tool_tip=QString::fromUtf8(base_rel->getName(true)) +
-						 " (" + QString::fromUtf8(base_rel->getTypeName()) + ")";
+		tool_tip=Utf8String::create(base_rel->getName(true)) +
+						 " (" + Utf8String::create(base_rel->getTypeName()) + ")";
 		this->setToolTip(tool_tip);
 
 		for(i=0; i < 3; i++)
@@ -727,7 +727,7 @@ void RelationshipView::configureAttributes(void)
 
 			attrib->setPos(px, py);
 
-			text->setText(QString::fromUtf8(col->getName()));
+			text->setText(Utf8String::create(col->getName()));
 			text->setPos(QPointF(desc->pos().x() + desc->boundingRect().width() + (HORIZ_SPACING * factor), 0));
 			desc->setPos(0, VERT_SPACING * factor);
 

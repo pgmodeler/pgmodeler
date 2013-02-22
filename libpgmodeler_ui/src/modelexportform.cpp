@@ -92,8 +92,9 @@ void ModelExportForm::exportModel(void)
 			ObjectsScene::getGridOptions(exibir_grade, alin_objs, exibir_lim);
 			ObjectsScene::setGridOptions(show_grid_chk->isChecked(), false, show_delim_chk->isChecked());
 
-			pix.resize(ret.size().toSize());
+			pix=QPixmap(ret.size().toSize());
 			QPainter p(&pix);
+			model->cena->clearSelection();
 			model->cena->update();
 			model->cena->render(&p, QRectF(QPointF(0,0), pix.size()), ret);
 
@@ -101,7 +102,7 @@ void ModelExportForm::exportModel(void)
 			model->cena->update();
 
 			if(!pix.save(image_edt->text()))
-				throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(QString::fromUtf8(image_edt->text())),
+				throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(Utf8String::create(image_edt->text())),
 												ERR_FILE_NOT_WRITTEN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 
@@ -176,7 +177,7 @@ void ModelExportForm::exportModel(void)
 						for(i=0; i < count; i++)
 						{
 							object=model->modelo->getObject(i, types[type_id]);
-							progress_lbl->setText(trUtf8("Creating object '%1' (%2)...").arg(QString::fromUtf8(object->getName())).arg(object->getTypeName()));
+							progress_lbl->setText(trUtf8("Creating object '%1' (%2)...").arg(Utf8String::create(object->getName())).arg(object->getTypeName()));
 							progress_lbl->repaint();
 
 							try
@@ -200,7 +201,7 @@ void ModelExportForm::exportModel(void)
 					}
 
 					//Creating the database on the DBMS
-					progress_lbl->setText(trUtf8("Creating database '%1'...").arg(QString::fromUtf8(model->modelo->getName())));
+					progress_lbl->setText(trUtf8("Creating database '%1'...").arg(Utf8String::create(model->modelo->getName())));
 					progress_lbl->repaint();
 
 					try
@@ -223,13 +224,13 @@ void ModelExportForm::exportModel(void)
 
 					new_db_conn=(*conn);
 					new_db_conn.setConnectionParam(DBConnection::PARAM_DB_NAME, model->modelo->getName());
-					progress_lbl->setText(trUtf8("Connecting to database '%1'...").arg(QString::fromUtf8(model->modelo->getName())));
+					progress_lbl->setText(trUtf8("Connecting to database '%1'...").arg(Utf8String::create(model->modelo->getName())));
 					progress_lbl->repaint();
 					new_db_conn.connect();
 					progress_pb->setValue(50);
 
 					//Creating the other object types
-					progress_lbl->setText(trUtf8("Creating objects on database '%1'...").arg(QString::fromUtf8(model->modelo->getName())));
+					progress_lbl->setText(trUtf8("Creating objects on database '%1'...").arg(Utf8String::create(model->modelo->getName())));
 					progress_lbl->repaint();
 
 					//Gera o código SQL de todo o banco
@@ -274,7 +275,7 @@ void ModelExportForm::exportModel(void)
 							if(!ignorar_dup_chk->isChecked() ||
 								 (ignorar_dup_chk->isChecked() &&
 									std::find(err_codes_vect.begin(), err_codes_vect.end(), e.getExtraInfo())==err_codes_vect.end()))
-								throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE).arg(QString::fromUtf8(sql_cmd)),
+								throw Exception(Exception::getErrorMessage(ERR_EXPORT_FAILURE).arg(Utf8String::create(sql_cmd)),
 																ERR_EXPORT_FAILURE,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 							else
 								errors.push_back(e);
@@ -416,13 +417,17 @@ void ModelExportForm::selectOutputFile(void)
 
 	if(file_dlg.exec()==QFileDialog::Accepted)
 	{
+		QString file;
+
+		if(!file_dlg.selectedFiles().isEmpty())
+			file = file_dlg.selectedFiles().at(0);
+
 		if(export_to_file_rb->isChecked())
-			file_edt->setText(file_dlg.selectedFile());
+			file_edt->setText(file);
 		else
-			image_edt->setText(file_dlg.selectedFile());
+			image_edt->setText(file);
 	}
 
-	export_btn->setEnabled(!file_edt->text().isEmpty() ||
-													 !image_edt->text().isEmpty());
+	export_btn->setEnabled(!file_edt->text().isEmpty() || !image_edt->text().isEmpty());
 }
 

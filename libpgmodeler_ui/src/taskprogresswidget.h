@@ -28,6 +28,8 @@
 #include <QtGui>
 #include "ui_taskprogresswidget.h"
 #include <map>
+#include "utf8string.h"
+
 using namespace std;
 
 class TaskProgressWidget: public QDialog, public Ui::TaskProgressWidget

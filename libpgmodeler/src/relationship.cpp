@@ -28,9 +28,9 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 				!this->getReferenceTable()->getPrimaryKey()) ||
 			 (rel_type==RELATIONSHIP_NN && (!src_tab->getPrimaryKey() || !dst_tab->getPrimaryKey())))
 			throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
-											.arg(QString::fromUtf8(obj_name))
-											.arg(QString::fromUtf8(src_tab->getName(true)))
-											.arg(QString::fromUtf8(dst_tab->getName(true))),
+											.arg(Utf8String::create(obj_name))
+											.arg(Utf8String::create(src_tab->getName(true)))
+											.arg(Utf8String::create(dst_tab->getName(true))),
 											ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->src_suffix=src_suffix;
@@ -101,7 +101,7 @@ void Relationship::setTableSuffix(unsigned table_id, const QString &suffix)
 
 	if(!suffix.isEmpty() && !BaseObject::isValidName(suffix))
 		throw Exception(Exception::getErrorMessage(ERR_ASG_INV_SUFFIX_REL)
-										.arg(QString::fromUtf8(this->getName())),
+										.arg(Utf8String::create(this->getName())),
 										ERR_ASG_INV_SUFFIX_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	if(table_id==SRC_TABLE)
@@ -151,7 +151,7 @@ void Relationship::setSpecialPrimaryKeyCols(vector<unsigned> &cols)
 		relationship type is n-n or identifier or self relationship */
 	if(isSelfRelationship() || isIdentifier() || rel_type==RELATIONSHIP_NN)
 		throw Exception(Exception::getErrorMessage(ERR_INV_USE_ESPECIAL_PK)
-										.arg(QString::fromUtf8(this->getName())),
+										.arg(Utf8String::create(this->getName())),
 										ERR_INV_USE_ESPECIAL_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->column_ids_pk_rel=cols;
@@ -369,7 +369,7 @@ void Relationship::addObject(TableObject *tab_obj, int obj_idx)
 	{
 		if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-											.arg(QString::fromUtf8(tab_obj->getName()))
+											.arg(Utf8String::create(tab_obj->getName()))
 											.arg(tab_obj->getTypeName()),
 											ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 		else
@@ -436,11 +436,11 @@ void Relationship::removeObject(unsigned obj_id, ObjectType obj_type)
 		//Raises an error if the column to be removed is referenced by a relationship constraint
 		if(refer)
 			throw Exception(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE)
-											.arg(QString::fromUtf8(col->getName()))
+											.arg(Utf8String::create(col->getName()))
 											.arg(col->getTypeName())
-											.arg(QString::fromUtf8(constr->getName()))
+											.arg(Utf8String::create(constr->getName()))
 											.arg(constr->getTypeName())
-											.arg(QString::fromUtf8(this->getName(true)))
+											.arg(Utf8String::create(this->getName(true)))
 											.arg(this->getTypeName()),
 											ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
@@ -1247,9 +1247,9 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 		if((!src_pk && (rel_type==RELATIONSHIP_1N || rel_type==RELATIONSHIP_11)) ||
 			 (!src_pk && !dst_pk && rel_type==RELATIONSHIP_NN))
 			throw Exception(Exception::getErrorMessage(ERR_LINK_TABLES_NO_PK)
-											.arg(QString::fromUtf8(this->obj_name))
-											.arg(QString::fromUtf8(ref_tab->getName(true)))
-											.arg(QString::fromUtf8(recv_tab->getName(true))),
+											.arg(Utf8String::create(this->obj_name))
+											.arg(Utf8String::create(ref_tab->getName(true)))
+											.arg(Utf8String::create(recv_tab->getName(true))),
 											ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		count=pk->getColumnCount(Constraint::SOURCE_COLS);

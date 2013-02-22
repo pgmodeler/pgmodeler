@@ -14,7 +14,6 @@ int main(int argc, char **argv)
 		app.installTranslator(&translator);
 
 		CrashHandler crashhandler;
-		app.setMainWidget(&crashhandler);
 
 		if(argc > 1)
 			crashhandler.loadReport(argv[1]);

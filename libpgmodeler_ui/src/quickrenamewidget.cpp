@@ -27,8 +27,8 @@ void QuickRenameWidget::setAttributes(BaseObject *object, DatabaseModel *model, 
 	obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + object->getSchemaName() + QString(".png")));
 	obj_icon_lbl->setToolTip(object->getTypeName());
 
-	obj_name_lbl->setText(QString::fromUtf8(object->getName()));
-	new_name_edt->setText(QString::fromUtf8(object->getName()));
+	obj_name_lbl->setText(Utf8String::create(object->getName()));
+	new_name_edt->setText(Utf8String::create(object->getName()));
 }
 
 void QuickRenameWidget::exec(void)
@@ -91,10 +91,10 @@ void QuickRenameWidget::applyRenaming(void)
 				if(aux_obj && aux_obj!=object)
 				{
 					throw Exception(QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-													.arg(QString::fromUtf8(fmt_name))
-													.arg(QString::fromUtf8(object->getTypeName()))
-													.arg(QString::fromUtf8(parent_obj->getName(true)))
-													.arg(QString::fromUtf8(parent_obj->getTypeName())),
+													.arg(Utf8String::create(fmt_name))
+													.arg(Utf8String::create(object->getTypeName()))
+													.arg(Utf8String::create(parent_obj->getName(true)))
+													.arg(Utf8String::create(parent_obj->getTypeName())),
 													ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
 			}

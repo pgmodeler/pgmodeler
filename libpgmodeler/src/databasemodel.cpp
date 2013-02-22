@@ -131,7 +131,7 @@ QString DatabaseModel::validateObjectDefinition(BaseObject *object, unsigned def
 		{
 			if(e.getErrorType()==ERR_UNDEF_ATTRIB_VALUE)
 				throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-												.arg(QString::fromUtf8(object->getName(true)))
+												.arg(Utf8String::create(object->getName(true)))
 												.arg(object->getTypeName()),
 												ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 			else
@@ -348,7 +348,7 @@ void DatabaseModel::__addObject(BaseObject *object, int obj_idx)
 			if(tabspc->getDirectory()==aux_tabspc->getDirectory())
 			{
 				throw Exception(Exception::getErrorMessage(ERR_ASG_DUP_TABLESPACE_DIR)
-												.arg(QString::fromUtf8(tabspc->getName()))
+												.arg(Utf8String::create(tabspc->getName()))
 												.arg(aux_tabspc->getName()),
 												ERR_ASG_DUP_TABLESPACE_DIR,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			}
@@ -721,10 +721,10 @@ void DatabaseModel::removeTable(Table *table, int obj_idx)
 				{
 					err_type=ERR_REM_DIRECT_REFERENCE;
 					str_aux=QString(Exception::getErrorMessage(err_type))
-									.arg(table->getName(true))
-									.arg(table->getTypeName())
-									.arg(refs[0]->getName(true))
-							.arg(refs[0]->getTypeName());
+									.arg(Utf8String::create(table->getName(true)))
+									.arg(Utf8String::create(table->getTypeName()))
+									.arg(Utf8String::create(refs[0]->getName(true)))
+									.arg(Utf8String::create(refs[0]->getTypeName()));
 
 					throw Exception(str_aux, err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				}
@@ -736,12 +736,12 @@ void DatabaseModel::removeTable(Table *table, int obj_idx)
 					{
 						err_type=ERR_REM_INDIRECT_REFERENCE;
 						str_aux=QString(Exception::getErrorMessage(err_type))
-										.arg(table->getName(true))
-										.arg(table->getTypeName())
-										.arg(refs[0]->getName(true))
-								.arg(refs[0]->getTypeName())
-								.arg(ref_obj_parent->getName(true))
-								.arg(ref_obj_parent->getTypeName());
+										.arg(Utf8String::create(table->getName(true)))
+										.arg(Utf8String::create(table->getTypeName()))
+										.arg(Utf8String::create(refs[0]->getName(true)))
+								.arg(Utf8String::create(refs[0]->getTypeName()))
+								.arg(Utf8String::create(ref_obj_parent->getName(true)))
+								.arg(Utf8String::create(ref_obj_parent->getTypeName()));
 
 						throw Exception(str_aux, err_type,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
@@ -2158,9 +2158,9 @@ void DatabaseModel::addType(Type *type, int obj_idx)
 		if(found)
 		{
 			str_aux=QString(Exception::getErrorMessage(ERR_ASG_DUPLIC_OBJECT))
-							.arg(type->getName(true))
+							.arg(Utf8String::create(type->getName(true)))
 							.arg(type->getTypeName())
-							.arg(this->getName(true))
+							.arg(Utf8String::create(this->getName(true)))
 							.arg(this->getTypeName());
 			throw Exception(str_aux, ERR_ASG_DUPLIC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
@@ -2213,9 +2213,9 @@ void DatabaseModel::removeUserType(BaseObject *object, int obj_idx)
 			{
 				err_type=ERR_REM_DIRECT_REFERENCE;
 				str_aux=QString(Exception::getErrorMessage(err_type))
-								.arg(object->getName(true))
+								.arg(Utf8String::create(object->getName(true)))
 								.arg(object->getTypeName())
-								.arg(refs[0]->getName(true))
+								.arg(Utf8String::create(refs[0]->getName(true)))
 						.arg(refs[0]->getTypeName());
 			}
 			else
@@ -2224,11 +2224,11 @@ void DatabaseModel::removeUserType(BaseObject *object, int obj_idx)
 
 				err_type=ERR_REM_INDIRECT_REFERENCE;
 				str_aux=QString(Exception::getErrorMessage(err_type))
-								.arg(object->getName(true))
+								.arg(Utf8String::create(object->getName(true)))
 								.arg(object->getTypeName())
-								.arg(refs[0]->getName(true))
+								.arg(Utf8String::create(refs[0]->getName(true)))
 						.arg(refs[0]->getTypeName())
-						.arg(obj_ref_pai->getName(true))
+						.arg(Utf8String::create(obj_ref_pai->getName(true)))
 						.arg(obj_ref_pai->getTypeName());
 			}
 
@@ -2252,7 +2252,7 @@ void DatabaseModel::addPermission(Permission *perm)
 		if(getPermissionIndex(perm) >=0)
 		{
 			throw Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
-											.arg(QString::fromUtf8(perm->getObject()->getName()))
+											.arg(Utf8String::create(perm->getObject()->getName()))
 											.arg(perm->getObject()->getTypeName()),
 											ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
@@ -2264,7 +2264,7 @@ void DatabaseModel::addPermission(Permission *perm)
 		if(e.getErrorType()==ERR_ASG_DUPLIC_OBJECT)
 			throw
 			Exception(Exception::getErrorMessage(ERR_ASG_DUPLIC_PERMISSION)
-								.arg(QString::fromUtf8(perm->getObject()->getName()))
+								.arg(Utf8String::create(perm->getObject()->getName()))
 								.arg(perm->getObject()->getTypeName()),
 								ERR_ASG_DUPLIC_PERMISSION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 
@@ -2575,7 +2575,7 @@ void DatabaseModel::loadModel(const QString &filename)
 										{
 											emit s_objectLoaded(XMLParser::getCurrentBufferLine()/XMLParser::getBufferLineCount(),
 																					trUtf8("Loading object: %1 (%2)")
-																					.arg(QString::fromUtf8(object->getName()))
+																					.arg(Utf8String::create(object->getName()))
 																					.arg(object->getTypeName()),
 																					obj_type);
 										}
@@ -2817,9 +2817,9 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	if(has_error)
 	{
 		throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-										.arg(QString::fromUtf8(object->getName()))
+										.arg(Utf8String::create(object->getName()))
 										.arg(object->getTypeName())
-										.arg(QString::fromUtf8(attribs_aux[ParsersAttributes::NAME]))
+										.arg(Utf8String::create(attribs_aux[ParsersAttributes::NAME]))
 				.arg(BaseObject::getTypeName(obj_type)),
 				ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
@@ -2832,7 +2832,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 					 obj_type_aux==OBJ_OPCLASS))
 	{
 		throw Exception(Exception::getErrorMessage(ERR_ALOC_OBJECT_NO_SCHEMA)
-										.arg(QString::fromUtf8(object->getName()))
+										.arg(Utf8String::create(object->getName()))
 										.arg(object->getTypeName()),
 										ERR_ALOC_OBJECT_NO_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
@@ -2915,9 +2915,9 @@ Role *DatabaseModel::createRole(void)
 							if(!ref_role)
 							{
 								throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-																.arg(QString::fromUtf8(role->getName()))
+																.arg(Utf8String::create(role->getName()))
 																.arg(BaseObject::getTypeName(OBJ_ROLE))
-																.arg(QString::fromUtf8(list[i]))
+																.arg(Utf8String::create(list[i]))
 																.arg(BaseObject::getTypeName(OBJ_ROLE)),
 																ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 							}
@@ -3039,9 +3039,9 @@ Language *DatabaseModel::createLanguage(void)
 							//Raises an error if the function doesn't exists
 							if(!func)
 								throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-																.arg(QString::fromUtf8(lang->getName()))
+																.arg(Utf8String::create(lang->getName()))
 																.arg(lang->getTypeName())
-																.arg(QString::fromUtf8(signature))
+																.arg(Utf8String::create(signature))
 																.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
 																ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -3171,9 +3171,9 @@ Function *DatabaseModel::createFunction(void)
 						//Raises an error if the function doesn't exisits
 						if(!object)
 							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-															.arg(QString::fromUtf8(func->getName()))
+															.arg(Utf8String::create(func->getName()))
 															.arg(func->getTypeName())
-															.arg(QString::fromUtf8(attribs[ParsersAttributes::NAME]))
+															.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
 								.arg(BaseObject::getTypeName(OBJ_LANGUAGE)),
 								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -3220,7 +3220,7 @@ Function *DatabaseModel::createFunction(void)
 
 		if(e.getErrorType()==ERR_REF_INEXIST_USER_TYPE)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-											.arg(QString::fromUtf8(str_aux))
+											.arg(Utf8String::create(str_aux))
 											.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
 											ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, extra_info);
 		else
@@ -3428,9 +3428,9 @@ Type *DatabaseModel::createType(void)
 						//Raises an error if the function doesn't exists
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
 							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-															.arg(QString::fromUtf8(type->getName()))
+															.arg(Utf8String::create(type->getName()))
 															.arg(type->getTypeName())
-															.arg(QString::fromUtf8(attribs[ParsersAttributes::SIGNATURE]))
+															.arg(Utf8String::create(attribs[ParsersAttributes::SIGNATURE]))
 								.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
 								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 						//Raises an error if the function type is invalid
@@ -3459,7 +3459,7 @@ Type *DatabaseModel::createType(void)
 
 		if(e.getErrorType()==ERR_REF_INEXIST_USER_TYPE)
 			throw Exception(Exception::getErrorMessage(ERR_ASG_OBJ_INV_DEFINITION)
-											.arg(QString::fromUtf8(str_aux))
+											.arg(Utf8String::create(str_aux))
 											.arg(type->getTypeName()),
 											ERR_ASG_OBJ_INV_DEFINITION,__PRETTY_FUNCTION__,__FILE__,__LINE__,&e, extra_info);
 		else
@@ -3578,9 +3578,9 @@ Cast *DatabaseModel::createCast(void)
 						//Raises an error if the function doesn't exists
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
 							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-															.arg(QString::fromUtf8(cast->getName()))
+															.arg(Utf8String::create(cast->getName()))
 															.arg(cast->getTypeName())
-															.arg(QString::fromUtf8(attribs[ParsersAttributes::SIGNATURE]))
+															.arg(Utf8String::create(attribs[ParsersAttributes::SIGNATURE]))
 								.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
 								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -3640,9 +3640,9 @@ Conversion *DatabaseModel::createConversion(void)
 						//Raises an error if the function doesn't exists
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
 							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-															.arg(QString::fromUtf8(conv->getName()))
+															.arg(Utf8String::create(conv->getName()))
 															.arg(conv->getTypeName())
-															.arg(QString::fromUtf8(attribs[ParsersAttributes::SIGNATURE]))
+															.arg(Utf8String::create(attribs[ParsersAttributes::SIGNATURE]))
 								.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
 								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -3714,9 +3714,9 @@ Operator *DatabaseModel::createOperator(void)
 						//Raises an error if the auxiliary operator doesn't exists
 						if(!oper_aux && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
 							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-															.arg(QString::fromUtf8(oper->getSignature(true)))
+															.arg(Utf8String::create(oper->getSignature(true)))
 															.arg(oper->getTypeName())
-															.arg(QString::fromUtf8(attribs[ParsersAttributes::SIGNATURE]))
+															.arg(Utf8String::create(attribs[ParsersAttributes::SIGNATURE]))
 								.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
 								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -3743,9 +3743,9 @@ Operator *DatabaseModel::createOperator(void)
 						//Raises an error if the function doesn't exists on the model
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
 							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-															.arg(QString::fromUtf8(oper->getName()))
+															.arg(Utf8String::create(oper->getName()))
 															.arg(oper->getTypeName())
-															.arg(QString::fromUtf8(attribs[ParsersAttributes::SIGNATURE]))
+															.arg(Utf8String::create(attribs[ParsersAttributes::SIGNATURE]))
 								.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
 								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -3811,9 +3811,9 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 						//Raises an error if the operator family doesn't exists
 						if(!object && !attribs[ParsersAttributes::NAME].isEmpty())
 							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-															.arg(QString::fromUtf8(op_class->getName()))
+															.arg(Utf8String::create(op_class->getName()))
 															.arg(op_class->getTypeName())
-															.arg(QString::fromUtf8(attribs[ParsersAttributes::NAME]))
+															.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
 								.arg(BaseObject::getTypeName(OBJ_OPFAMILY)),
 								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -3943,9 +3943,9 @@ Aggregate *DatabaseModel::createAggregate(void)
 						//Raises an error if the function doesn't exists on the model
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
 							throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-															.arg(QString::fromUtf8(aggreg->getName()))
+															.arg(Utf8String::create(aggreg->getName()))
 															.arg(aggreg->getTypeName())
-															.arg(QString::fromUtf8(attribs[ParsersAttributes::SIGNATURE]))
+															.arg(Utf8String::create(attribs[ParsersAttributes::SIGNATURE]))
 								.arg(BaseObject::getTypeName(OBJ_FUNCTION)),
 								ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -4128,9 +4128,9 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			if(!table)
 			{
 				str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-								.arg(QString::fromUtf8(attribs[ParsersAttributes::NAME]))
+								.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
 						.arg(BaseObject::getTypeName(OBJ_CONSTRAINT))
-						.arg(QString::fromUtf8(attribs[ParsersAttributes::TABLE]))
+						.arg(Utf8String::create(attribs[ParsersAttributes::TABLE]))
 						.arg(BaseObject::getTypeName(OBJ_TABLE));
 
 				throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4159,7 +4159,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		//Raises an error if the constraint is a primary key and no parent object is specified
 		if(!parent_obj && constr_type==ConstraintType::primary_key)
 			throw Exception(Exception::getErrorMessage(ERR_INV_PRIM_KEY_ALOCATION)
-											.arg(QString::fromUtf8(constr->getName())),
+											.arg(Utf8String::create(constr->getName())),
 											ERR_INV_PRIM_KEY_ALOCATION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		if(constr_type==ConstraintType::foreign_key)
@@ -4188,9 +4188,9 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			if(!ref_table)
 			{
 				str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-								.arg(QString::fromUtf8(constr->getName()))
+								.arg(Utf8String::create(constr->getName()))
 								.arg(constr->getTypeName())
-								.arg(QString::fromUtf8(attribs[ParsersAttributes::REF_TABLE]))
+								.arg(Utf8String::create(attribs[ParsersAttributes::REF_TABLE]))
 						.arg(BaseObject::getTypeName(OBJ_TABLE));
 
 				throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4308,9 +4308,9 @@ Index *DatabaseModel::createIndex(Table *table)
 			if(!table)
 			{
 				str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-								.arg(QString::fromUtf8(attribs[ParsersAttributes::NAME]))
+								.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
 						.arg(BaseObject::getTypeName(OBJ_INDEX))
-						.arg(QString::fromUtf8(attribs[ParsersAttributes::TABLE]))
+						.arg(Utf8String::create(attribs[ParsersAttributes::TABLE]))
 						.arg(BaseObject::getTypeName(OBJ_TABLE));
 
 				throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4358,9 +4358,9 @@ Index *DatabaseModel::createIndex(Table *table)
 									if(!op_class)
 									{
 										str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-														.arg(QString::fromUtf8(index->getName()))
+														.arg(Utf8String::create(index->getName()))
 														.arg(BaseObject::getTypeName(OBJ_INDEX))
-														.arg(QString::fromUtf8(attribs[ParsersAttributes::OP_CLASS]))
+														.arg(Utf8String::create(attribs[ParsersAttributes::OP_CLASS]))
 												.arg(BaseObject::getTypeName(OBJ_OPCLASS));
 
 										throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4513,9 +4513,9 @@ Trigger *DatabaseModel::createTrigger(Table *table)
 			table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
 			if(!table)
 				throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-												.arg(QString::fromUtf8(attribs[ParsersAttributes::NAME]))
+												.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
 					.arg(BaseObject::getTypeName(OBJ_TRIGGER))
-					.arg(QString::fromUtf8(attribs[ParsersAttributes::TABLE]))
+					.arg(Utf8String::create(attribs[ParsersAttributes::TABLE]))
 					.arg(BaseObject::getTypeName(OBJ_TABLE)),
 					ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
@@ -4580,9 +4580,9 @@ Trigger *DatabaseModel::createTrigger(Table *table)
 						if(!func && !attribs[ParsersAttributes::SIGNATURE].isEmpty())
 						{
 							str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-											.arg(QString::fromUtf8(trigger->getName()))
+											.arg(Utf8String::create(trigger->getName()))
 											.arg(trigger->getTypeName())
-											.arg(QString::fromUtf8(attribs[ParsersAttributes::SIGNATURE]))
+											.arg(Utf8String::create(attribs[ParsersAttributes::SIGNATURE]))
 									.arg(BaseObject::getTypeName(OBJ_FUNCTION));
 
 							throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4686,9 +4686,9 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 			if(!table)
 			{
 				str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-								.arg(QString::fromUtf8(sequence->getName()))
+								.arg(Utf8String::create(sequence->getName()))
 								.arg(BaseObject::getTypeName(OBJ_SEQUENCE))
-								.arg(QString::fromUtf8(tab_name))
+								.arg(Utf8String::create(tab_name))
 								.arg(BaseObject::getTypeName(OBJ_TABLE));
 
 				throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4702,7 +4702,7 @@ Sequence *DatabaseModel::createSequence(bool ignore_onwer)
 			//Raises an error if the column doesn't exists
 			if(!column && !ignore_onwer)
 				throw Exception(Exception::getErrorMessage(ERR_ASG_INEXIST_OWNER_COL_SEQ)
-												.arg(QString::fromUtf8(sequence->getName(true))),
+												.arg(Utf8String::create(sequence->getName(true))),
 												ERR_ASG_INEXIST_OWNER_COL_SEQ,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 			sequence->setOwnerColumn(column);
@@ -4760,9 +4760,9 @@ View *DatabaseModel::createView(void)
 							if(!table)
 							{
 								str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-												.arg(QString::fromUtf8(view->getName()))
+												.arg(Utf8String::create(view->getName()))
 												.arg(BaseObject::getTypeName(OBJ_VIEW))
-												.arg(QString::fromUtf8(attribs[ParsersAttributes::TABLE]))
+												.arg(Utf8String::create(attribs[ParsersAttributes::TABLE]))
 										.arg(BaseObject::getTypeName(OBJ_TABLE));
 
 								throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4779,10 +4779,10 @@ View *DatabaseModel::createView(void)
 								if(!column)
 								{
 									str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-													.arg(QString::fromUtf8(view->getName()))
+													.arg(Utf8String::create(view->getName()))
 													.arg(BaseObject::getTypeName(OBJ_VIEW))
-													.arg(QString::fromUtf8(attribs[ParsersAttributes::TABLE]) + "." +
-													QString::fromUtf8(attribs[ParsersAttributes::COLUMN]))
+													.arg(Utf8String::create(attribs[ParsersAttributes::TABLE]) + "." +
+													Utf8String::create(attribs[ParsersAttributes::COLUMN]))
 											.arg(BaseObject::getTypeName(OBJ_COLUMN));
 
 									throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4929,9 +4929,9 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			if(!tables[i])
 			{
 				str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-								.arg(QString::fromUtf8(attribs[ParsersAttributes::NAME]))
+								.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
 						.arg(BaseObject::getTypeName(obj_rel_type))
-						.arg(QString::fromUtf8(attribs[tab_attribs[i]]))
+						.arg(Utf8String::create(attribs[tab_attribs[i]]))
 						.arg(BaseObject::getTypeName(table_types[i]));
 
 				throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -4944,9 +4944,9 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 
 			if(!base_rel)
 				throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
-												.arg(QString::fromUtf8(this->getName()))
+												.arg(Utf8String::create(this->getName()))
 												.arg(this->getTypeName())
-												.arg(QString::fromUtf8(attribs[ParsersAttributes::NAME]))
+												.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
 					.arg(BaseObject::getTypeName(BASE_RELATIONSHIP)),
 					ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -5133,7 +5133,7 @@ Permission *DatabaseModel::createPermission(void)
 		//Raises an error if the permission references an object that does not exists
 		if(!object)
 			throw Exception(Exception::getErrorMessage(ERR_PERM_REF_INEXIST_OBJECT)
-											.arg(QString::fromUtf8(obj_name))
+											.arg(Utf8String::create(obj_name))
 											.arg(BaseObject::getTypeName(obj_type)),
 											ERR_PERM_REF_INEXIST_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -5157,9 +5157,9 @@ Permission *DatabaseModel::createPermission(void)
 					{
 						//Dispara a exceção
 						throw Exception(Exception::getErrorMessage(ERR_PERM_REF_INEXIST_OBJECT)
-														.arg(QString::fromUtf8(object->getName()))
+														.arg(Utf8String::create(object->getName()))
 														.arg(object->getTypeName())
-														.arg(QString::fromUtf8(list[i]))
+														.arg(Utf8String::create(list[i]))
 														.arg(BaseObject::getTypeName(OBJ_ROLE)),
 														ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -5240,9 +5240,9 @@ void DatabaseModel::validateColumnRemoval(Column *column)
 		//Raises an error if there are objects referencing the column
 		if(!refs.empty())
 			throw Exception(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE)
-											.arg(QString::fromUtf8(column->getParentTable()->getName(true)) + "." + QString::fromUtf8(column->getName(true)))
+											.arg(Utf8String::create(column->getParentTable()->getName(true)) + "." + Utf8String::create(column->getName(true)))
 											.arg(column->getTypeName())
-											.arg(QString::fromUtf8(refs[0]->getName(true)))
+											.arg(Utf8String::create(refs[0]->getName(true)))
 				.arg(refs[0]->getTypeName()),
 				ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
@@ -5396,7 +5396,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 					{
 						emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
 																msg.arg(def_type_str)
-																.arg(QString::fromUtf8(object->getName()))
+																.arg(Utf8String::create(object->getName()))
 																.arg(object->getTypeName()),
 																object->getObjectType());
 					}
@@ -5628,7 +5628,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			{
 				emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
 														msg.arg(def_type_str)
-														.arg(QString::fromUtf8(object->getName()))
+														.arg(Utf8String::create(object->getName()))
 														.arg(object->getTypeName()),
 														object->getObjectType());
 			}
@@ -5658,7 +5658,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			{
 				emit s_objectLoaded((gen_defs_count/general_obj_cnt) * 100,
 														msg.arg(def_type_str)
-														.arg(QString::fromUtf8((*itr)->getName()))
+														.arg(Utf8String::create((*itr)->getName()))
 														.arg(object->getTypeName()),
 														object->getObjectType());
 			}

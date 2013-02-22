@@ -31,9 +31,9 @@ void startCrashHandler(int)
 	#endif
 
 	//Creates the stacktrace file
-	output.open(GlobalAttributes::TEMPORARY_DIR +
-							GlobalAttributes::DIR_SEPARATOR +
-							GlobalAttributes::STACKTRACE_FILE);
+	output.open((GlobalAttributes::TEMPORARY_DIR +
+							 GlobalAttributes::DIR_SEPARATOR +
+							 GlobalAttributes::STACKTRACE_FILE).toStdString().c_str());
 
 	if(output.is_open())
 	{
@@ -121,7 +121,6 @@ int main(int argc, char **argv)
 
 		//Creates the main form
 		FormPrincipal fmain;
-		app.setMainWidget(&fmain);
 
 		//Indicating that the splash screen must be closed when the main window is shown
 		splash.finish(&fmain);
