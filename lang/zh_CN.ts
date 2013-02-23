@@ -1969,6 +1969,30 @@ Message returned by the DBMS: %1</source>
 <context>
     <name>FormPrincipal</name>
     <message>
+        <source>&amp;File</source>
+        <translation>文件(&amp;F)</translation>
+    </message>
+    <message>
+        <source>&amp;Edit</source>
+        <translation>编辑(&amp;E)</translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
+        <translation>帮助(&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;Show</source>
+        <translation>视图(&amp;S)</translation>
+    </message>
+    <message>
+        <source>&amp;Tools</source>
+        <translation>工具(&amp;T)</translation>
+    </message>
+    <message>
+        <source>&amp;Plugins</source>
+        <translation>插件(&amp;P)</translation>
+    </message>
+    <message>
         <source>File</source>
         <translation>文件</translation>
     </message>
