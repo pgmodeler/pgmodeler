@@ -19,7 +19,7 @@
 /**
 \ingroup libpgmodeler_ui
 \class ModelObjectsWidget
-\brief Definição da classe que implementa a arvore e lista de objetos no modelo de banco de dados.
+\brief Implements a widget that permits an tree and list view of all model objects.
 */
 
 #ifndef MODEL_OBJECTS_WIDGET_H
@@ -34,61 +34,49 @@ class ModelObjectsWidget: public QDockWidget, public Ui::ModelObjectsWidget {
 	private:
 		Q_OBJECT
 
-		/*! \brief Indica que a visão de objetos é usada de forma simplificada como
-			seletora de objetos auxiliar de outros formulários. Interações
-			como excluir, destacar, editar e exibir código dos objetos
-			são desabilitadas */
+		/*! \brief Indicates if the widget must be used as a simplified view (without the most interactions).
+		The purpose to use it as simplified view is to be serve as a object pick commonly used on the
+		object selectors. See ObjectSelectorWidget for details. */
 		bool	simplified_view,
 
+					/*! \brief Indicates if the object tree state must be saved, this means, that the current item
+					expansion is memorized and can be restored at any moment via restoreTreeState() method */
 					save_tree_state;
 
-		/*! \brief Armazena o endereço do objeto relacionado ao item marcado na árvore
-		 ou na lista de objetos */
+		//! \brief Stores the reference to the object currently selected on the tree/list
 		BaseObject *selected_object;
 
-		/*! \brief Armazena a configuração de tamanho inicial do splitter para
-		 para uso em conjunto com o botão de exibição das configurações
-		 da visão de objetos.
-		 Armazena a configuração de posição da slider da barra de rolagem
-		 vertical da árvore de objetos para que a mesma seja restaurada
-		 sempre que a mesma sofrer atualizações */
+		/*! \brief Stores the  initial splitter size to be used in conjunction with the
+		object type visualization buttons */
 		QSettings widgets_conf;
 
-		//! \brief Widget de Modelo de objetos o qual é acessado
+		//! \brief Reference model widget. This is the object used to populate the tree and list
 		ModeloWidget *model_wgt;
 
-		//! \brief Modelo o qual é acessado quando um modelo widget não é especificado
+		//! \brief Reference database model. This is the object used to populate the tree and list
 		DatabaseModel *db_model;
 
-		//! \brief Armazena quais os tipos de objetos são visíveis na visão
+		//! \brief Stores which object types are visible on the view
 		map<ObjectType, bool> visible_objs_map;
 
-		//! \brief Atualiza a árvore inteira do banco de dados
-		void updateDatabaseTree(void);
-
-		//! \brief Atualiza somente a árvore de esquema e seus subitens
+		//! \brief Updates only a schema tree starting from the 'root' item
 		void updatedSchemaTree(QTreeWidgetItem *root);
 
-		//! \brief Atualiza somente a árvore de tabelas em um determinado esquema
+		//! \brief Updates only a table tree starting from the 'root' item
 		void updateTableTree(QTreeWidgetItem *root, BaseObject *schema);
 
-		//! \brief Atualiza a arvore de objetos
-		void updateObjectsTree(void);
+		//! \brief Updates the whole database object tree
+		void updateDatabaseTree(void);
 
-		//! \brief Atualiza a lista de objetos
+		//! \brief Updates the whole object list
 		void updateObjectsList(void);
 
-		//! \brief Retorna um item da árvore relacionado ao objeto passado
+		//! \brief Returns an item from the tree related to the specified object reference
 		QTreeWidgetItem *getTreeItem(BaseObject *object);
 
-		/*! \brief Gera um valor em um objeto QVariant para armazenamento dos
-		 endereços dos objetos do modelo para armazenamento em
-		 itens de QTreeWidgets e QListWidgetItem para permitir
-		 a interação entre direta como os objetos sem selecioná-los
-		 no modelo */
+		//! \brief Generates a QVariant containing the passed object reference as data
 		QVariant generateItemValue(BaseObject *object);
 
-		//! \brief Implementa a movimentação da janela quando esta é exibida de forma simplificada
 		void mouseMoveEvent(QMouseEvent *);
 		void closeEvent(QCloseEvent *);
 		void showEvent(QShowEvent *);
@@ -99,13 +87,13 @@ class ModelObjectsWidget: public QDockWidget, public Ui::ModelObjectsWidget {
 		BaseObject *getSelectedObject(void);
 
 	protected:
-		//! \brief Salva os itens atualmente expandidos na árvore no vetor passado
+		//! \brief Saves the currently expanded items on the specified vector
 		void saveTreeState(vector<BaseObject *> &tree_items);
 
-		//! \brief Restaura a árvore ao estado anterior expandindo os itens do vetor passado
+		//! \brief Restores the tree at a previous state when the specified items were expanded
 		void restoreTreeState(vector<BaseObject *> &tree_items);
 
-		//! \brief Indica ao widget que o estado da árvore de objetos deve ser salvo/restaurado automaticamente
+		//! \brief Defines if the widget must save/restore the tree state automaticaly
 		void saveTreeState(bool value);
 
 	public slots:
