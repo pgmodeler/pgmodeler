@@ -168,7 +168,7 @@ void TableObjectView::configureObject(void)
 		Column *column=dynamic_cast<Column *>(tab_obj);
 		ConstraintType constr_type=ConstraintType::null;
 
-		tooltip=Utf8String::create(tab_obj->getName() + " (" + Utf8String::create(tab_obj->getTypeName()) + ")");
+		tooltip=Utf8String::create(tab_obj->getName()) + " (" + tab_obj->getTypeName() + ")";
 
 		if(column)
 		{

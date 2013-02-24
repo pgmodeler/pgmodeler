@@ -544,7 +544,7 @@ void RelationshipView::configureLine(void)
 		configuring_line=false;
 
 		tool_tip=Utf8String::create(base_rel->getName(true)) +
-						 " (" + Utf8String::create(base_rel->getTypeName()) + ")";
+						 " (" + base_rel->getTypeName() + ")";
 		this->setToolTip(tool_tip);
 
 		for(i=0; i < 3; i++)

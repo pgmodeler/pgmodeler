@@ -309,8 +309,7 @@ void TableView::configureObject(void)
 	BaseObjectView::configureObjectSelection();
 
 	this->table_tooltip=Utf8String::create(table->getName(true)) +
-											" (" + Utf8String::create(table->getTypeName()) + ")";
+											" (" + table->getTypeName() + ")";
 
 	this->setToolTip(this->table_tooltip);
 }
-
