@@ -118,7 +118,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 
 		frestmodelo=new ModelRestorationForm(this);
 		lista_oper=new OperationListWidget;
-		visao_objs=new VisaoObjetosWidget;
+		visao_objs=new ModelObjectsWidget;
 		visaogeral_wgt=new ModelOverviewWidget;
 
 		//*** CRIAÇÃO DOS FORMULÁRIOS GLOBAIS ***
@@ -655,10 +655,10 @@ void FormPrincipal::definirModeloAtual(void)
 
 	/* Inibe o salvamento automatico do estado da árvore para que
 		a árvore do modelo atual seja restaurada */
-	visao_objs->salvarEstadoArvore(false);
+	visao_objs->saveTreeState(false);
 
 	if(modelo_atual)
-		visao_objs->salvarEstadoArvore(confs_arv_objs[modelo_atual]);
+		visao_objs->saveTreeState(confs_arv_objs[modelo_atual]);
 
 	//O modelo atual obtido a partir da aba atual no 'modelos_tab'
 	modelo_atual=dynamic_cast<ModeloWidget *>(modelos_tab->currentWidget());
@@ -712,9 +712,9 @@ void FormPrincipal::definirModeloAtual(void)
 		connect(modelo_atual, SIGNAL(s_objetoRemovido(void)),lista_oper, SLOT(updateOperationList(void)));
 		connect(modelo_atual, SIGNAL(s_objetosMovimentados(void)),lista_oper, SLOT(updateOperationList(void)));
 
-		connect(modelo_atual, SIGNAL(s_objetoModificado(void)),visao_objs, SLOT(atualizarVisaoObjetos(void)));
-		connect(modelo_atual, SIGNAL(s_objetoCriado(void)),visao_objs, SLOT(atualizarVisaoObjetos(void)));
-		connect(modelo_atual, SIGNAL(s_objetoRemovido(void)),visao_objs, SLOT(atualizarVisaoObjetos(void)));
+		connect(modelo_atual, SIGNAL(s_objetoModificado(void)),visao_objs, SLOT(updateObjectsView(void)));
+		connect(modelo_atual, SIGNAL(s_objetoCriado(void)),visao_objs, SLOT(updateObjectsView(void)));
+		connect(modelo_atual, SIGNAL(s_objetoRemovido(void)),visao_objs, SLOT(updateObjectsView(void)));
 
 		connect(modelo_atual, SIGNAL(s_zoomModificado(float)), this, SLOT(atualizarEstadoFerramentas(void)));
 		connect(modelo_atual, SIGNAL(s_objetoModificado(void)), this, SLOT(atualizarNomeAba(void)));
@@ -740,13 +740,13 @@ void FormPrincipal::definirModeloAtual(void)
 
 	//Atualiza os dockwidgets com os dados do modelo atual
 	lista_oper->setModelWidget(modelo_atual);
-	visao_objs->definirModelo(modelo_atual);
+	visao_objs->setModel(modelo_atual);
 
 	if(modelo_atual)
-		visao_objs->restaurarEstadoArvore(confs_arv_objs[modelo_atual]);
+		visao_objs->restoreTreeState(confs_arv_objs[modelo_atual]);
 
 	//Reativa o salvamento automático do estado da árvore
-	visao_objs->salvarEstadoArvore(true);
+	visao_objs->saveTreeState(true);
 
 	//Salva o arquivo temporário referente ao modelo
 	this->salvarModeloTemporario();
@@ -901,7 +901,7 @@ void FormPrincipal::fecharModelo(int idx_modelo)
 	{
 		modelo_atual=NULL;
 		this->exibirTelaCheia(false);
-		visao_objs->definirModelo(static_cast<DatabaseModel *>(NULL));
+		visao_objs->setModel(static_cast<DatabaseModel *>(NULL));
 		lista_oper->setModelWidget(static_cast<ModeloWidget *>(NULL));
 		atualizarEstadoFerramentas(true);
 	}
@@ -1173,7 +1173,7 @@ void FormPrincipal::atualizarDockWidgets(void)
 void FormPrincipal::__atualizarDockWidgets(void)
 {
 	lista_oper->updateOperationList();
-	visao_objs->atualizarVisaoObjetos();
+	visao_objs->updateObjectsView();
 }
 
 void FormPrincipal::executarPlugin(void)

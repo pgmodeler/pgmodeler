@@ -15,7 +15,7 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 	Ui_PermissionWidget::setupUi(this);
 
-	objectselection_wgt=new VisaoObjetosWidget(true);
+	objectselection_wgt=new ModelObjectsWidget(true);
 	permission=NULL;
 
 	parent_form->generalwidget_wgt->insertWidget(0, this);
@@ -178,8 +178,8 @@ void PermissionWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 void PermissionWidget::selectRole(void)
 {
-	objectselection_wgt->definirObjetoVisivel(OBJ_ROLE, true);
-	objectselection_wgt->definirModelo(this->model);
+	objectselection_wgt->setObjectVisible(OBJ_ROLE, true);
+	objectselection_wgt->setModel(this->model);
 	objectselection_wgt->show();
 }
 
@@ -234,7 +234,7 @@ void PermissionWidget::showSelectedRoleData(void)
 	int row, row_idx=-1;
 	Role *role=NULL;
 
-	role=dynamic_cast<Role *>(objectselection_wgt->obterObjetoSelecao());
+	role=dynamic_cast<Role *>(objectselection_wgt->getSelectedObject());
 	row=roles_tab->getSelectedRow();
 
 

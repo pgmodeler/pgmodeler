@@ -1,6 +1,6 @@
 #include "rolewidget.h"
-#include "visaoobjetoswidget.h"
-extern VisaoObjetosWidget *selecaoobjetos_wgt;
+#include "modelobjectswidget.h"
+extern ModelObjectsWidget *selecaoobjetos_wgt;
 
 RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 {
@@ -65,8 +65,8 @@ void RoleWidget::configureRoleSelection(void)
 
 void RoleWidget::selectMemberRole(void)
 {
-	object_selection_wgt->definirObjetoVisivel(OBJ_ROLE, true);
-	object_selection_wgt->definirModelo(this->model);
+	object_selection_wgt->setObjectVisible(OBJ_ROLE, true);
+	object_selection_wgt->setModel(this->model);
 	object_selection_wgt->show();
 }
 
@@ -191,7 +191,7 @@ void RoleWidget::showSelectedRoleData(void)
 	BaseObject *obj_sel=NULL;
 
 	//Get the selected role
-	obj_sel=object_selection_wgt->obterObjetoSelecao();
+	obj_sel=object_selection_wgt->getSelectedObject();
 
 	//Gets the index of the table where the role data is displayed
 	idx_tab=members_twg->currentIndex();

@@ -18,37 +18,33 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class VisaoObjetosWidget
+\class ModelObjectsWidget
 \brief Definição da classe que implementa a arvore e lista de objetos no modelo de banco de dados.
 */
 
-#ifndef VISAO_OBJETOS_WIDGET_H
-#define VISAO_OBJETOS_WIDGET_H
+#ifndef MODEL_OBJECTS_WIDGET_H
+#define MODEL_OBJECTS_WIDGET_H
 
 #include <QtGui>
-#include "ui_visaoobjetoswidget.h"
+#include "ui_modelobjectswidget.h"
 #include "modelowidget.h"
 #include "messagebox.h"
 
-class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
+class ModelObjectsWidget: public QDockWidget, public Ui::ModelObjectsWidget {
+	private:
 		Q_OBJECT
 
-	private:
 		/*! \brief Indica que a visão de objetos é usada de forma simplificada como
 			seletora de objetos auxiliar de outros formulários. Interações
 			como excluir, destacar, editar e exibir código dos objetos
 			são desabilitadas */
-		bool	visao_simplificada,
+		bool	simplified_view,
 
-					salvar_arvore;
+					save_tree_state;
 
 		/*! \brief Armazena o endereço do objeto relacionado ao item marcado na árvore
 		 ou na lista de objetos */
-		BaseObject *objeto_selecao;
-
-		/*! \brief Menu popup o qual contém as ações: destacar objeto no modelo,
-		 excluir do modelo, edição do objeto */
-		QMenu *menu_popup;
+		BaseObject *selected_object;
 
 		/*! \brief Armazena a configuração de tamanho inicial do splitter para
 		 para uso em conjunto com o botão de exibição das configurações
@@ -56,41 +52,41 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
 		 Armazena a configuração de posição da slider da barra de rolagem
 		 vertical da árvore de objetos para que a mesma seja restaurada
 		 sempre que a mesma sofrer atualizações */
-		QSettings config_widgets;
+		QSettings widgets_conf;
 
 		//! \brief Widget de Modelo de objetos o qual é acessado
-		ModeloWidget *modelo_wgt;
+		ModeloWidget *model_wgt;
 
 		//! \brief Modelo o qual é acessado quando um modelo widget não é especificado
-		DatabaseModel *modelo_bd;
+		DatabaseModel *db_model;
 
 		//! \brief Armazena quais os tipos de objetos são visíveis na visão
-		map<ObjectType, bool> map_objs_visiveis;
+		map<ObjectType, bool> visible_objs_map;
 
 		//! \brief Atualiza a árvore inteira do banco de dados
-		void atualizarSubBancoDados(void);
+		void updateDatabaseTree(void);
 
 		//! \brief Atualiza somente a árvore de esquema e seus subitens
-		void atualizarSubArvoreEsquema(QTreeWidgetItem *raiz);
+		void updatedSchemaTree(QTreeWidgetItem *root);
 
 		//! \brief Atualiza somente a árvore de tabelas em um determinado esquema
-		void atualizarSubArvoreTabela(QTreeWidgetItem *raiz, BaseObject *esquema);
+		void updateTableTree(QTreeWidgetItem *root, BaseObject *schema);
 
 		//! \brief Atualiza a arvore de objetos
-		void atualizarArvoreObjetos(void);
+		void updateObjectsTree(void);
 
 		//! \brief Atualiza a lista de objetos
-		void atualizarListaObjetos(void);
+		void updateObjectsList(void);
 
 		//! \brief Retorna um item da árvore relacionado ao objeto passado
-		QTreeWidgetItem *obterItemArvore(BaseObject *objeto);
+		QTreeWidgetItem *getTreeItem(BaseObject *object);
 
 		/*! \brief Gera um valor em um objeto QVariant para armazenamento dos
 		 endereços dos objetos do modelo para armazenamento em
 		 itens de QTreeWidgets e QListWidgetItem para permitir
 		 a interação entre direta como os objetos sem selecioná-los
 		 no modelo */
-		QVariant gerarValorItem(BaseObject *objeto);
+		QVariant generateItemValue(BaseObject *object);
 
 		//! \brief Implementa a movimentação da janela quando esta é exibida de forma simplificada
 		void mouseMoveEvent(QMouseEvent *);
@@ -98,39 +94,36 @@ class VisaoObjetosWidget: public QDockWidget, public Ui::VisaoObjetosWidget {
 		void showEvent(QShowEvent *);
 
 	public:
-		VisaoObjetosWidget(bool visao_simplificada=false, QWidget * parent = 0, Qt::WindowFlags f = 0);
-		BaseObject *obterObjetoSelecao(void);
+		ModelObjectsWidget(bool simplified_view=false, QWidget * parent = 0, Qt::WindowFlags f = 0);
+
+		BaseObject *getSelectedObject(void);
 
 	protected:
 		//! \brief Salva os itens atualmente expandidos na árvore no vetor passado
-		void salvarEstadoArvore(vector<BaseObject *> &itens_arv);
+		void saveTreeState(vector<BaseObject *> &tree_items);
 
 		//! \brief Restaura a árvore ao estado anterior expandindo os itens do vetor passado
-		void restaurarEstadoArvore(vector<BaseObject *> &itens_arv);
+		void restoreTreeState(vector<BaseObject *> &tree_items);
 
 		//! \brief Indica ao widget que o estado da árvore de objetos deve ser salvo/restaurado automaticamente
-		void salvarEstadoArvore(bool valor);
+		void saveTreeState(bool value);
 
 	public slots:
-		void definirModelo(ModeloWidget *modelo_wgt);
-		void definirModelo(DatabaseModel *modelo_bd);
-		void mudarVisaoObjetos(void);
-		void atualizarVisaoObjetos(void);
-		void definirObjetoVisivel(ObjectType tipo_obj, bool visivel);
+		void setModel(ModeloWidget *model_wgt);
+		void setModel(DatabaseModel *db_model);
+		void changeObjectsView(void);
+		void updateObjectsView(void);
+		void setObjectVisible(ObjectType obj_type, bool visible);
 		void close(void);
 
 	private slots:
-		void definirObjetoVisivel(QListWidgetItem *item);
-		void definirTodosObjetosVisiveis(bool);
-		void selecionarObjeto(void);
-		void exibirMenuObjeto(void);
-		void editarObjeto(void);
+		void setObjectVisible(QListWidgetItem *item);
+		void setAllObjectsVisible(bool);
+		void selectObject(void);
+		void showObjectMenu(void);
+		void editObject(void);
 
 	signals:
-		/*! \brief Sinais personalizados usados para sinalizarem
-		 a modificação da visão de objetos. Este sinal é capturado pelo
-		 form principal para atualizar as ferramentas */
-		void s_visaoObjetosModificada(void);
 		void s_visibilityChanged(BaseObject *,bool);
 
 		friend class FormPrincipal;

@@ -34,7 +34,7 @@
 #include "baseform.h"
 #include "modelrestorationform.h"
 #include "operationlistwidget.h"
-#include "visaoobjetoswidget.h"
+#include "modelobjectswidget.h"
 #include "pgmodelerplugin.h"
 #include "modeloverviewwidget.h"
 
@@ -60,7 +60,7 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
 		OperationListWidget *lista_oper;
 
 		//! \brief Dockwidget o qual exibe todos os objetos do modelo em forma de árvore/lista
-		VisaoObjetosWidget *visao_objs;
+		ModelObjectsWidget *visao_objs;
 
 		//! \brief Armazena a referência para o modelo atualmente aberto
 		ModeloWidget *modelo_atual;

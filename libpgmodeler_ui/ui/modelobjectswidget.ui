@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>VisaoObjetosWidget</class>
- <widget class="QDockWidget" name="VisaoObjetosWidget">
+ <class>ModelObjectsWidget</class>
+ <widget class="QDockWidget" name="ModelObjectsWidget">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>250</width>
+    <width>308</width>
     <height>350</height>
    </rect>
   </property>
@@ -33,7 +33,7 @@
    <set>Qt::AllDockWidgetAreas</set>
   </property>
   <property name="windowTitle">
-   <string>Objects of Model</string>
+   <string>Model Objects</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <property name="enabled">
@@ -73,7 +73,7 @@
           <number>0</number>
          </property>
          <item row="0" column="0">
-          <widget class="QTreeWidget" name="arvoreobjetos_tw">
+          <widget class="QTreeWidget" name="objectstree_tw">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -192,7 +192,7 @@
           <number>0</number>
          </property>
          <item row="0" column="0">
-          <widget class="QTableWidget" name="listaobjetos_tbw">
+          <widget class="QTableWidget" name="objectslist_tbw">
            <property name="enabled">
             <bool>true</bool>
            </property>
@@ -288,7 +288,7 @@
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QGroupBox" name="objetosvisiveis_grp">
+         <widget class="QGroupBox" name="visibleobjects_grp">
           <property name="maximumSize">
            <size>
             <width>16777215</width>
@@ -296,7 +296,7 @@
            </size>
           </property>
           <property name="title">
-           <string>Visible Objects Type</string>
+           <string>Visible Object Types</string>
           </property>
           <property name="flat">
            <bool>false</bool>
@@ -306,7 +306,7 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
            <item row="0" column="0" colspan="3">
-            <widget class="QListWidget" name="objetosvisiveis_lst">
+            <widget class="QListWidget" name="visibleobjects_lst">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -349,7 +349,7 @@
            <item row="1" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
-              <widget class="QToolButton" name="marcar_tb">
+              <widget class="QToolButton" name="select_all_tb">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -362,7 +362,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QToolButton" name="desmarcar_tb">
+              <widget class="QToolButton" name="clear_all_tb">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -412,7 +412,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="selecionar_tb">
+       <widget class="QToolButton" name="select_tb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -444,7 +444,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="cancelar_tb">
+       <widget class="QToolButton" name="cancel_tb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -476,7 +476,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="opcoesvisao_tb">
+       <widget class="QToolButton" name="options_tb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -514,7 +514,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="visaoarvore_tb">
+       <widget class="QToolButton" name="tree_view_tb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -555,7 +555,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="visaolista_tb">
+       <widget class="QToolButton" name="list_view_tb">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>

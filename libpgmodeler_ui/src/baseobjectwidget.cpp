@@ -1,5 +1,5 @@
 #include "baseobjectwidget.h"
-//#include "visaoobjetoswidget.h"
+//#include "modelobjectswidget.h"
 #include "permissionwidget.h"
 
 //extern VisaoObjetosWidget *selecaoobjetos_wgt;
@@ -31,7 +31,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		owner_sel=NULL;
 		tablespace_sel=NULL;
 
-		object_selection_wgt=new VisaoObjetosWidget(true);
+		object_selection_wgt=new ModelObjectsWidget(true);
 
 		hl_parentname_txt=new SyntaxHighlighter(parent_obj_txt, false);
 		hl_parentname_txt->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +

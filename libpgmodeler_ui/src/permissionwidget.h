@@ -28,7 +28,7 @@
 #include "baseobjectwidget.h"
 #include "ui_permissionwidget.h"
 #include "objecttablewidget.h"
-#include "visaoobjetoswidget.h"
+#include "modelobjectswidget.h"
 
 class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 	private:
@@ -44,7 +44,7 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 												*permissions_tab;
 
 		//! \brief Widget used to select roles on the database model
-		VisaoObjetosWidget *objectselection_wgt;
+		ModelObjectsWidget *objectselection_wgt;
 
 		void hideEvent(QHideEvent *event);
 

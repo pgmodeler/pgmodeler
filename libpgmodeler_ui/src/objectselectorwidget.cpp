@@ -8,7 +8,7 @@ ObjectSelectorWidget::ObjectSelectorWidget(ObjectType sel_obj_type, bool install
 	{
 		Ui_ObjectSelectorWidget::setupUi(this);
 
-		obj_view_wgt=new VisaoObjetosWidget(true);
+		obj_view_wgt=new ModelObjectsWidget(true);
 
 		model=NULL;
 		selected_obj=NULL;
@@ -104,8 +104,8 @@ void ObjectSelectorWidget::clearSelector(void)
 void ObjectSelectorWidget::showObjectView(void)
 {
 	ObjectSelectorWidget::current_selector=this;
-	obj_view_wgt->definirObjetoVisivel(sel_obj_type, true);
-	obj_view_wgt->definirModelo(this->model);
+	obj_view_wgt->setObjectVisible(sel_obj_type, true);
+	obj_view_wgt->setModel(this->model);
 	obj_view_wgt->show();
 }
 

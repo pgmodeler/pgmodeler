@@ -28,7 +28,7 @@
 #include <QtGui>
 #include "databasemodel.h"
 #include "syntaxhighlighter.h"
-#include "visaoobjetoswidget.h"
+#include "modelobjectswidget.h"
 #include "ui_objectselectorwidget.h"
 
 class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
@@ -36,7 +36,7 @@ class ObjectSelectorWidget: public QWidget, public Ui::ObjectSelectorWidget {
 		Q_OBJECT
 
 		//! \brief An object view widget instance used as object picker
-		VisaoObjetosWidget *obj_view_wgt;
+		ModelObjectsWidget *obj_view_wgt;
 
 		/*! \brief Stores the selector instance currently focused. This attribute is used to
 		prevent other selector in a same form to receive the selected object */
