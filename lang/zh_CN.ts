@@ -3,7 +3,7 @@
 <TS version="2.0" language="zh_CN" sourcelanguage="en_US">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
-    <name>Aplicacao</name>
+    <name>Application</name>
     <message>
         <source>Error</source>
         <translation>错误</translation>
@@ -14,7 +14,7 @@
     </message>
 </context>
 <context>
-    <name>BancoDadosWidget</name>
+    <name>DatabaseWidget</name>
     <message>
         <source>Model Author:</source>
         <translation>模型作者：</translation>
@@ -49,7 +49,7 @@
     </message>
 </context>
 <context>
-    <name>CaixaMensagem</name>
+    <name>MessageBox</name>
     <message>
         <source>Show/hide exceptions stack.</source>
         <translation>显示/隐藏异常堆栈。</translation>
@@ -108,7 +108,7 @@
     </message>
 </context>
 <context>
-    <name>CaixaTextoWidget</name>
+    <name>TextboxWidget</name>
     <message>
         <source>Bold</source>
         <translation>粗体</translation>
@@ -131,7 +131,7 @@
     </message>
 </context>
 <context>
-    <name>ClasseOperadoresWidget</name>
+    <name>OperatorClassWidget</name>
     <message>
         <source>Default Class:</source>
         <translation>默认类：</translation>
@@ -210,7 +210,7 @@
     </message>
 </context>
 <context>
-    <name>CodigoFonteWidget</name>
+    <name>SourceCodeWidget</name>
     <message>
         <source>Version:</source>
         <translation>版本：</translation>
@@ -253,7 +253,7 @@
     </message>
 </context>
 <context>
-    <name>ColunaWidget</name>
+    <name>ColumnWidget</name>
     <message>
         <source>Default Value:</source>
         <translation>默认值：</translation>
@@ -268,7 +268,7 @@
     </message>
 </context>
 <context>
-    <name>ConfAparenciaWidget</name>
+    <name>AppearanceConfigWidget</name>
     <message>
         <source>Element:</source>
         <translation>元素：</translation>
@@ -495,7 +495,7 @@
     </message>
 </context>
 <context>
-    <name>ConfConexoesWidget</name>
+    <name>ConnectionsConfigWidget</name>
     <message>
         <source>Connections:</source>
         <translation>连接：</translation>
@@ -638,7 +638,7 @@
     </message>
 </context>
 <context>
-    <name>ConfGeralWidget</name>
+    <name>GeneralConfigWidget</name>
     <message>
         <source>Grid size:</source>
         <translation>网格大小：</translation>
@@ -869,7 +869,7 @@
     </message>
 </context>
 <context>
-    <name>ConversaoCodificacaoWidget</name>
+    <name>ConversionWidget</name>
     <message>
         <source>Source Encoding:</source>
         <translation>原始编码：</translation>
@@ -1004,7 +1004,7 @@ Size: %2 bytes
     </message>
 </context>
 <context>
-    <name>DominioWidget</name>
+    <name>DomainWidget</name>
     <message>
         <source>Default Value:</source>
         <translation>默认值：</translation>
@@ -1027,7 +1027,7 @@ Size: %2 bytes
     </message>
 </context>
 <context>
-    <name>EspacoTabelaWidget</name>
+    <name>TablespaceWidget</name>
     <message>
         <source>Directory:</source>
         <translation>字典：</translation>
@@ -1038,7 +1038,7 @@ Size: %2 bytes
     </message>
 </context>
 <context>
-    <name>Excecao</name>
+    <name>Exception</name>
     <message>
         <source>Insufficient memory space to allocate the object!</source>
         <translation>内存不足，无法分配对象！</translation>
@@ -1751,7 +1751,7 @@ Message returned by the DBMS: %1</source>
     </message>
 </context>
 <context>
-    <name>FamiliaOperadoresWidget</name>
+    <name>OperatorFamilyWidget</name>
     <message>
         <source>Indexing:</source>
         <translation>正在建立索引：</translation>
@@ -1762,7 +1762,7 @@ Message returned by the DBMS: %1</source>
     </message>
 </context>
 <context>
-    <name>FormBasico</name>
+    <name>BaseForm</name>
     <message>
         <source>&amp;Apply</source>
         <translation>应用(&amp;A)</translation>
@@ -1781,7 +1781,7 @@ Message returned by the DBMS: %1</source>
     </message>
 </context>
 <context>
-    <name>FormConfiguracao</name>
+    <name>ConfigurationForm</name>
     <message>
         <source>pgModeler Configuration</source>
         <translation>pgModeler 配置</translation>
@@ -1820,7 +1820,7 @@ Message returned by the DBMS: %1</source>
     </message>
 </context>
 <context>
-    <name>FormExportacao</name>
+    <name>ModelExportForm</name>
     <message>
         <source>Model Export</source>
         <translation>导出模型</translation>
@@ -2250,7 +2250,7 @@ Message returned by the DBMS: %1</source>
     </message>
 </context>
 <context>
-    <name>FormRestauracaoModelo</name>
+    <name>ModelRestorationForm</name>
     <message>
         <source>Modified: %1</source>
         <translation>修改：%1</translation>
@@ -2261,7 +2261,7 @@ Message returned by the DBMS: %1</source>
     </message>
 </context>
 <context>
-    <name>FormRestauracaoModelos</name>
+    <name>ModelRestorationForm</name>
     <message>
         <source>Model restoration</source>
         <translation>模型恢复</translation>
@@ -2280,7 +2280,7 @@ Message returned by the DBMS: %1</source>
     </message>
 </context>
 <context>
-    <name>FormSobre</name>
+    <name>AboutForm</name>
     <message>
         <source>Version %1</source>
         <translation>版本 %1</translation>
@@ -2335,7 +2335,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>FuncaoAgregacaoWidget</name>
+    <name>AggregateWidget</name>
     <message>
         <source>Final Function:</source>
         <translation>最终处理函数：</translation>
@@ -2378,7 +2378,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>FuncaoWidget</name>
+    <name>FunctionWidget</name>
     <message>
         <source>Attributes</source>
         <translation>属性</translation>
@@ -2481,7 +2481,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>GatilhoWidget</name>
+    <name>TriggerWidget</name>
     <message>
         <source>Triggering Mode:</source>
         <translation>触发器模式：</translation>
@@ -2568,7 +2568,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>IndiceWidget</name>
+    <name>IndexWidget</name>
     <message>
         <source>Indexing Type:</source>
         <translation>索引类型：</translation>
@@ -2667,7 +2667,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>LinguagemWidget</name>
+    <name>LanguageWidget</name>
     <message>
         <source>Trusted:</source>
         <translation>可信：</translation>
@@ -2694,7 +2694,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>ListaObjetosWidget</name>
+    <name>ObjectDepsRefsWidget</name>
     <message>
         <source>Dependencies</source>
         <translation>依赖</translation>
@@ -2729,7 +2729,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>ListaOperacoes</name>
+    <name>OperationList</name>
     <message>
         <source>Undoing operation on object: %1 (%2)</source>
         <translation>正在撤销对象操作： %1 (%2)</translation>
@@ -2740,7 +2740,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>ListaOperacoesWidget</name>
+    <name>OperationListWidget</name>
     <message>
         <source>Executed Operations</source>
         <translation>执行的操作</translation>
@@ -2819,7 +2819,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>ModeloBD</name>
+    <name>DatabaseModel</name>
     <message>
         <source>Loading object: %1 (%2)</source>
         <translation>正在载入对象：%1 (%2)</translation>
@@ -2997,7 +2997,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>ObjetoBase</name>
+    <name>BaseObject</name>
     <message>
         <source>Column</source>
         <translation>列</translation>
@@ -3108,7 +3108,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>ObjetoBaseWidget</name>
+    <name>BaseObjectWidget</name>
     <message>
         <source>Name:</source>
         <translation>名称：</translation>
@@ -3171,7 +3171,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>OperadorWidget</name>
+    <name>OperatorWidget</name>
     <message>
         <source>Options:</source>
         <translation>选项：</translation>
@@ -3250,7 +3250,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>PapelWidget</name>
+    <name>RoleWidget</name>
     <message>
         <source>Password:</source>
         <translation>密码：</translation>
@@ -3329,7 +3329,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>ParametroWidget</name>
+    <name>ParameterWidget</name>
     <message>
         <source>Default Value:</source>
         <translation>默认值：</translation>
@@ -3352,7 +3352,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>PermissaoWidget</name>
+    <name>PermissionWidget</name>
     <message>
         <source>Roles</source>
         <translation>角色</translation>
@@ -3407,7 +3407,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>ProgressoTarefa</name>
+    <name>TaskProgressWidget</name>
     <message>
         <source>Loading object: [object] (type)</source>
         <translation>载入对象：[对象] (类型)</translation>
@@ -3429,7 +3429,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>RegraWidget</name>
+    <name>RuleWidget</name>
     <message>
         <source>Event:</source>
         <translation>事件：</translation>
@@ -3464,7 +3464,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>RelacionamentoWidget</name>
+    <name>RelationshipWidget</name>
     <message>
         <source>General</source>
         <translation>常规</translation>
@@ -3607,7 +3607,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>RestricaoWidget</name>
+    <name>ConstraintWidget</name>
     <message>
         <source>Constraint Type:</source>
         <translation>约束类型：</translation>
@@ -3674,7 +3674,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>SeletorObjetoWidget</name>
+    <name>ObjectSelectorWidget</name>
     <message>
         <source>Clear field</source>
         <translation>清空字段</translation>
@@ -3689,7 +3689,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>SequenciaWidget</name>
+    <name>SequenceWidget</name>
     <message>
         <source>Cyclic:</source>
         <translation>循环：</translation>
@@ -3724,7 +3724,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>TabelaObjetosWidget</name>
+    <name>ObjectTableWidget</name>
     <message>
         <source>Add Item</source>
         <translation>添加项目</translation>
@@ -3815,7 +3815,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>TabelaWidget</name>
+    <name>TableWidget</name>
     <message>
         <source>Columns</source>
         <translation>列</translation>
@@ -3906,7 +3906,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>TipoPgSQLWidget</name>
+    <name>PgSQLTypeWidget</name>
     <message>
         <source>Data Type</source>
         <translation>数据类型</translation>
@@ -4108,7 +4108,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>VisaoGeralWidget</name>
+    <name>ModelOverviewWidget</name>
     <message>
         <source>Model overview</source>
         <translation>模型概览</translation>
