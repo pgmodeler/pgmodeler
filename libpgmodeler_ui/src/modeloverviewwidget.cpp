@@ -15,7 +15,7 @@ void ModelOverviewWidget::show(ModelWidget *model)
 	{
 		disconnect(this->model, NULL, this, NULL);
 		disconnect(this->model->viewport, NULL,  this, NULL);
-		disconnect(this->model->cena, NULL,  this, NULL);
+		disconnect(this->model->scene, NULL,  this, NULL);
 	}
 
 	this->model=model;
@@ -35,9 +35,9 @@ void ModelOverviewWidget::show(ModelWidget *model)
 		connect(this->model->viewport->horizontalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(resizeWindowFrame(void)));
 		connect(this->model->viewport->verticalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(resizeWindowFrame(void)));
 
-		connect(this->model->cena, SIGNAL(selectionChanged(void)), this, SLOT(updateOverview(void)));
-		connect(this->model->cena, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(resizeOverview(void)));
-		connect(this->model->cena, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(updateOverview(void)));
+		connect(this->model->scene, SIGNAL(selectionChanged(void)), this, SLOT(updateOverview(void)));
+		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(resizeOverview(void)));
+		connect(this->model->scene, SIGNAL(sceneRectChanged(QRectF)),this, SLOT(updateOverview(void)));
 
 		this->resizeOverview();
 		this->resizeWindowFrame();
@@ -76,16 +76,16 @@ void ModelOverviewWidget::updateOverview(bool force_update)
 		QPixmap pix;
 
 		//Creates a pixmap with the size of the scene
-		pix=QPixmap(this->model->cena->sceneRect().size().toSize());
+		pix=QPixmap(this->model->scene->sceneRect().size().toSize());
 
 		//Configures a QSize instance with 20% of the scene size
-		size=this->model->cena->sceneRect().size().toSize();
+		size=this->model->scene->sceneRect().size().toSize();
 		size.setWidth(size.width() * RESIZE_FACTOR);
 		size.setHeight(size.height() * RESIZE_FACTOR);
 
 		//Draw the scene onto the pixmap
 		QPainter p(&pix);
-		this->model->cena->render(&p, pix.rect(), this->model->cena->sceneRect().toRect());
+		this->model->scene->render(&p, pix.rect(), this->model->scene->sceneRect().toRect());
 
 		//Resizes the pixmap to the previous configured QSize
 		label->setPixmap(pix.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -117,7 +117,7 @@ void ModelOverviewWidget::resizeOverview(void)
 	{
 		QSizeF size;
 
-		size=this->model->cena->sceneRect().size();
+		size=this->model->scene->sceneRect().size();
 		size.setWidth(size.width() * RESIZE_FACTOR);
 		size.setHeight(size.height() * RESIZE_FACTOR);
 		this->resize(size.toSize());
@@ -168,8 +168,8 @@ void ModelOverviewWidget::mouseMoveEvent(QMouseEvent *event)
 			rect.translate(0,(rect1.bottom() - rect.bottom())-rect1.top());
 
 		window_frm->setGeometry(rect);
-		this->model->viewport->horizontalScrollBar()->setValue(ceilf(zoom_factor * this->model->cena->sceneRect().width() * (rect.x()/static_cast<float>(rect1.width()))));
-		this->model->viewport->verticalScrollBar()->setValue(ceilf(zoom_factor * this->model->cena->sceneRect().height() * (rect.y()/static_cast<float>(rect1.height()))));
+		this->model->viewport->horizontalScrollBar()->setValue(ceilf(zoom_factor * this->model->scene->sceneRect().width() * (rect.x()/static_cast<float>(rect1.width()))));
+		this->model->viewport->verticalScrollBar()->setValue(ceilf(zoom_factor * this->model->scene->sceneRect().height() * (rect.y()/static_cast<float>(rect1.height()))));
 	}
 }
 

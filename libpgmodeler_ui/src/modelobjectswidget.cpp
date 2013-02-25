@@ -85,13 +85,13 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent, Qt
 void ModelObjectsWidget::showObjectMenu(void)
 {
 	if(selected_object && QApplication::mouseButtons()==Qt::RightButton && model_wgt && !simplified_view)
-		model_wgt->menu_popup.exec(QCursor::pos());
+		model_wgt->popup_menu.exec(QCursor::pos());
 }
 
 void ModelObjectsWidget::editObject(void)
 {
 	if(selected_object && model_wgt && !simplified_view)
-		model_wgt->editarObjeto();
+		model_wgt->editObject();
 }
 
 void ModelObjectsWidget::selectObject(void)
@@ -116,8 +116,8 @@ void ModelObjectsWidget::selectObject(void)
 		vector<BaseObject *> vect;
 
 		vect.push_back(selected_object);
-		model_wgt->cena->clearSelection();
-		model_wgt->configurarMenuPopup(vect);
+		model_wgt->scene->clearSelection();
+		model_wgt->configurePopupMenu(vect);
 
 		showObjectMenu();
 	}
@@ -978,7 +978,7 @@ void ModelObjectsWidget::setModel(ModelWidget *model_wgt)
 	this->model_wgt=model_wgt;
 
 	if(model_wgt)
-		setModel(model_wgt->modelo);
+		setModel(model_wgt->db_model);
 }
 
 void ModelObjectsWidget::setModel(DatabaseModel *db_model)

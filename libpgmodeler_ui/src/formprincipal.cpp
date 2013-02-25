@@ -362,8 +362,8 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 					/* Define-o como modificado e limpa o nome do arquivo temporário, isso
 				forçará o usuário a salvá-lo quando o timer de salvamento automático for atingido ou
 				se o pgModeler for fechado */
-					modelo->modificado=true;
-					modelo->nome_arquivo.clear();
+					modelo->modified=true;
+					modelo->filename.clear();
 					arq_temps.pop_front();
 				}
 			}
@@ -453,7 +453,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
 		//Varre os modelos e obtém o estado da modificação
 		i=0;
 		while(i < modelos_tab->count() && !modificado)
-			modificado=dynamic_cast<ModelWidget *>(modelos_tab->widget(i++))->modeloModificado();
+			modificado=dynamic_cast<ModelWidget *>(modelos_tab->widget(i++))->isModified();
 
 		//Se algum modelo foi encontrado como modificado
 		if(modificado)
@@ -540,11 +540,11 @@ void FormPrincipal::closeEvent(QCloseEvent *)
 		{
 			modelo=dynamic_cast<ModelWidget *>(modelos_tab->widget(i));
 
-			if(!modelo->getNameArquivo().isEmpty())
+			if(!modelo->getFilename().isEmpty())
 			{
 				id_param=QString("%1%2").arg(ParsersAttributes::_FILE_).arg(i);
 				atribs[ParsersAttributes::ID]=id_param;
-				atribs[ParsersAttributes::PATH]=modelo->getNameArquivo();
+				atribs[ParsersAttributes::PATH]=modelo->getFilename();
 				conf_wgt->addConfigurationParam(id_param, atribs);
 				atribs.clear();
 			}
@@ -576,7 +576,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
 	tab_modelo->setObjectName(Utf8String::create(nome_obj));
 
 	//Adiciona a aba criada ao conjuto de abas existentes
-	nome_obj=tab_modelo->modelo->getName();
+	nome_obj=tab_modelo->db_model->getName();
 	modelos_tab->addTab(tab_modelo, Utf8String::create(nome_obj));
 	modelos_tab->setCurrentIndex(modelos_tab->count()-1);
 	layout=modelos_tab->currentWidget()->layout();
@@ -587,29 +587,29 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
 	{
 		esq_publico=new Schema;
 		esq_publico->setName("public");
-		tab_modelo->modelo->addObject(esq_publico);
+		tab_modelo->db_model->addObject(esq_publico);
 	}
 
 	ling=new Language;
 	ling->BaseObject::setName(~LanguageType(LanguageType::c));
-	tab_modelo->modelo->addObject(ling);
+	tab_modelo->db_model->addObject(ling);
 
 	ling=new Language;
 	ling->BaseObject::setName(~LanguageType(LanguageType::sql));
-	tab_modelo->modelo->addObject(ling);
+	tab_modelo->db_model->addObject(ling);
 
 	ling=new Language;
 	ling->BaseObject::setName(~LanguageType(LanguageType::plpgsql));
-	tab_modelo->modelo->addObject(ling);
+	tab_modelo->db_model->addObject(ling);
 
 	if(!nome_arq.isEmpty())
 	{
 		try
 		{
 			//Carrega o modelo caso o nome do arquivo esteja especificado
-			tab_modelo->carregarModelo(nome_arq);
+			tab_modelo->loadModel(nome_arq);
 			modelos_tab->setTabText(modelos_tab->currentIndex(),
-															Utf8String::create(tab_modelo->modelo->getName()));
+															Utf8String::create(tab_modelo->db_model->getName()));
 		}
 		catch(Exception &e)
 		{
@@ -617,7 +617,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
 		}
 	}
 
-	tab_modelo->definirModificado(false);
+	tab_modelo->setModified(false);
 	definirModeloAtual();
 }
 
@@ -672,40 +672,40 @@ void FormPrincipal::definirModeloAtual(void)
 		//Focaliza o modelo
 		modelo_atual->setFocus(Qt::OtherFocusReason);
 		//Cancela qualquer operação que possa ter sido ativada pelo usuário antes de abrir o modelo atual
-		modelo_atual->cancelarAdicaoObjeto();
+		modelo_atual->cancelObjectAddition();
 
 		//Configura a barra de ferramentas do modelo conforme as ações respectivas no modelo atual
-		modelo_tb->addAction(modelo_atual->action_novo_obj);
+		modelo_tb->addAction(modelo_atual->action_new_object);
 		//Seta o modo de popup do menu para "InstantPopup" assim o usuário não precisa pressionar a setinha para ativar o popup
-		dynamic_cast<QToolButton *>(modelo_tb->widgetForAction(modelo_atual->action_novo_obj))->setPopupMode(QToolButton::InstantPopup);
+		dynamic_cast<QToolButton *>(modelo_tb->widgetForAction(modelo_atual->action_new_object))->setPopupMode(QToolButton::InstantPopup);
 
-		modelo_tb->addAction(modelo_atual->action_acoes_rapidas);
-		dynamic_cast<QToolButton *>(modelo_tb->widgetForAction(modelo_atual->action_acoes_rapidas))->setPopupMode(QToolButton::InstantPopup);
+		modelo_tb->addAction(modelo_atual->action_quick_actions);
+		dynamic_cast<QToolButton *>(modelo_tb->widgetForAction(modelo_atual->action_quick_actions))->setPopupMode(QToolButton::InstantPopup);
 
-		modelo_tb->addAction(modelo_atual->action_editar);
-		modelo_tb->addAction(modelo_atual->action_codigo_fonte);
-		modelo_tb->addAction(modelo_atual->action_converter_relnn);
+		modelo_tb->addAction(modelo_atual->action_edit);
+		modelo_tb->addAction(modelo_atual->action_source_code);
+		modelo_tb->addAction(modelo_atual->action_convert_relnn);
 		modelo_tb->addAction(modelo_atual->action_deps_refs);
-		modelo_tb->addAction(modelo_atual->action_proteger);
-		modelo_tb->addAction(modelo_atual->action_desproteger);
-		modelo_tb->addAction(modelo_atual->action_selecionar_todos);
+		modelo_tb->addAction(modelo_atual->action_protect);
+		modelo_tb->addAction(modelo_atual->action_unprotect);
+		modelo_tb->addAction(modelo_atual->action_select_all);
 
-		edicao_tb->addAction(modelo_atual->action_copiar);
-		edicao_tb->addAction(modelo_atual->action_recortar);
-		edicao_tb->addAction(modelo_atual->action_colar);
-		edicao_tb->addAction(modelo_atual->action_excluir);
+		edicao_tb->addAction(modelo_atual->action_copy);
+		edicao_tb->addAction(modelo_atual->action_cut);
+		edicao_tb->addAction(modelo_atual->action_paste);
+		edicao_tb->addAction(modelo_atual->action_remove);
 
-		menuEditar->addAction(modelo_atual->action_copiar);
-		menuEditar->addAction(modelo_atual->action_recortar);
-		menuEditar->addAction(modelo_atual->action_colar);
-		menuEditar->addAction(modelo_atual->action_excluir);
+		menuEditar->addAction(modelo_atual->action_copy);
+		menuEditar->addAction(modelo_atual->action_cut);
+		menuEditar->addAction(modelo_atual->action_paste);
+		menuEditar->addAction(modelo_atual->action_remove);
 
 		//Configura o titulo da janela da aplicação
-		if(modelo_atual->getNameArquivo().isEmpty())
+		if(modelo_atual->getFilename().isEmpty())
 			this->setWindowTitle(titulo_janela);
 		else
 			//Caso o modelo atual venha de um arquivo, concatena o caminho para o arquivo
-			this->setWindowTitle(titulo_janela + " - " + QDir::toNativeSeparators(modelo_atual->getNameArquivo()));
+			this->setWindowTitle(titulo_janela + " - " + QDir::toNativeSeparators(modelo_atual->getFilename()));
 
 		connect(modelo_atual, SIGNAL(s_objetoModificado(void)),lista_oper, SLOT(updateOperationList(void)));
 		connect(modelo_atual, SIGNAL(s_objetoCriado(void)),lista_oper, SLOT(updateOperationList(void)));
@@ -765,10 +765,10 @@ void FormPrincipal::definirOpcoesGrade(void)
 		/* Caso o alinhamento de objetos esteja ativado, chama o método de
 		 alinhamento da cena do modelo */
 		if(action_alin_objs_grade->isChecked())
-			modelo_atual->cena->alignObjectsToGrid();
+			modelo_atual->scene->alignObjectsToGrid();
 
 		//Atualiza a cena do modelo
-		modelo_atual->cena->update();
+		modelo_atual->scene->update();
 		//modelo_atual->visaogeral_wgt->atualizarVisaoGeral();
 	}
 }
@@ -778,18 +778,18 @@ void FormPrincipal::aplicarZoom(void)
 	if(modelo_atual)
 	{
 		//Obtém o zoom atual do modelo
-		float zoom=modelo_atual->zoomAtual();
+		float zoom=modelo_atual->currentZoom();
 
 		//Configura a aplicação do zoom conforme a ação qu disparou o método
 		if(sender()==action_zoom_normal)
 			zoom=1;
-		else if(sender()==action_ampliar_zoom && zoom < ModelWidget::ZOOM_MAXIMO)
-			zoom+=ModelWidget::INC_ZOOM;
-		else if(sender()==action_diminuir_zoom && zoom > ModelWidget::ZOOM_MINIMO)
-			zoom-=ModelWidget::INC_ZOOM;
+		else if(sender()==action_ampliar_zoom && zoom < ModelWidget::MAXIMUM_ZOOM)
+			zoom+=ModelWidget::ZOOM_INCREMENT;
+		else if(sender()==action_diminuir_zoom && zoom > ModelWidget::MINIMUM_ZOOM)
+			zoom-=ModelWidget::ZOOM_INCREMENT;
 
 		//Aplica o zoom configurado
-		modelo_atual->aplicarZoom(zoom);
+		modelo_atual->applyZoom(zoom);
 	}
 }
 
@@ -876,10 +876,10 @@ void FormPrincipal::fecharModelo(int idx_modelo)
 
 		//Remove o arquivo temporário relacionado ao modelo
 		QDir arq_tmp;
-		arq_tmp.remove(modelo->getNameArquivoTemp());
+		arq_tmp.remove(modelo->getTempFilename());
 
 		//Se o modelo foi modificado então solicita o salvamento ao usuário
-		if(modelo->modeloModificado())
+		if(modelo->isModified())
 		{
 			msg_box.show(trUtf8("Save model"),
 											trUtf8("The model were modified! Do you want to save it before close?"),
@@ -913,8 +913,8 @@ void FormPrincipal::fecharModelo(int idx_modelo)
 
 void FormPrincipal::atualizarNomeAba(void)
 {
-	if(modelo_atual && modelo_atual->modelo->getName()!=modelos_tab->tabText(modelos_tab->currentIndex()))
-		modelos_tab->setTabText(modelos_tab->currentIndex(), Utf8String::create(modelo_atual->modelo->getName()));
+	if(modelo_atual && modelo_atual->db_model->getName()!=modelos_tab->tabText(modelos_tab->currentIndex()))
+		modelos_tab->setTabText(modelos_tab->currentIndex(), Utf8String::create(modelo_atual->db_model->getName()));
 }
 
 void FormPrincipal::atualizarModelos(void)
@@ -942,7 +942,7 @@ void FormPrincipal::atualizarModelos(void)
 	//Força a atualização de todos os modelos abertos
 	qtd=modelos_tab->count();
 	for(i=0; i < qtd; i++)
-		dynamic_cast<ModelWidget *>(modelos_tab->widget(i))->modelo->setObjectsModified();
+		dynamic_cast<ModelWidget *>(modelos_tab->widget(i))->db_model->setObjectsModified();
 }
 
 void FormPrincipal::salvarTodosModelos(void)
@@ -974,12 +974,12 @@ void FormPrincipal::salvarModelo(ModelWidget *modelo)
 		if(modelo)
 		{
 			//Caso a ação que disparou o método foi o de 'Salvar como'
-			if(sender()==action_salvar_como || modelo->nome_arquivo.isEmpty())
+			if(sender()==action_salvar_como || modelo->filename.isEmpty())
 			{
 				QFileDialog arquivo_dlg;
 
 				//Exibe o diálogo de salvamento do arquivo
-				arquivo_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(modelo->modelo->getName()));
+				arquivo_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(modelo->db_model->getName()));
 
 				/** issue#9 **/
 				//Ateração da extensão dos modelos de .pgmodel para .dbm
@@ -992,12 +992,12 @@ void FormPrincipal::salvarModelo(ModelWidget *modelo)
 				if(arquivo_dlg.exec()==QFileDialog::Accepted)
 				{
 					if(!arquivo_dlg.selectedFiles().isEmpty())
-						modelo->salvarModelo(arquivo_dlg.selectedFiles().at(0));
+						modelo->saveModel(arquivo_dlg.selectedFiles().at(0));
 				}
 			}
 			else
 				//Caso o usuário acione a ação de salvamento comum, executa direto o método do modelo
-				modelo->salvarModelo();
+				modelo->saveModel();
 		}
 	}
 	catch(Exception &e)
@@ -1072,7 +1072,7 @@ void FormPrincipal::imprimirModelo(void)
 				}
 
 				//Imprime o modelo com as configurações setadas
-				modelo_atual->imprimirModelo(printer, conf_wgt->print_grid_chk->isChecked(), conf_wgt->print_pg_num_chk->isChecked());
+				modelo_atual->printModel(printer, conf_wgt->print_grid_chk->isChecked(), conf_wgt->print_pg_num_chk->isChecked());
 			}
 		}
 	}
@@ -1149,12 +1149,12 @@ void FormPrincipal::atualizarEstadoFerramentas(bool modelo_fechado)
 																modelos_tab->count() > 1);
 		action_proximo->setEnabled(modelos_tab->currentIndex() >= 0 &&
 															 modelos_tab->currentIndex()!=(modelos_tab->count()-1));
-		action_desfazer->setEnabled(modelo_atual->lista_op->isUndoAvailable());
-		action_refazer->setEnabled(modelo_atual->lista_op->isRedoAvailable());
+		action_desfazer->setEnabled(modelo_atual->op_list->isUndoAvailable());
+		action_refazer->setEnabled(modelo_atual->op_list->isRedoAvailable());
 
-		action_ampliar_zoom->setEnabled(modelo_atual->zoomAtual() <= ModelWidget::ZOOM_MAXIMO - ModelWidget::INC_ZOOM);
-		action_zoom_normal->setEnabled(modelo_atual->zoomAtual()!=0);
-		action_diminuir_zoom->setEnabled(modelo_atual->zoomAtual() >= ModelWidget::ZOOM_MINIMO + ModelWidget::INC_ZOOM);
+		action_ampliar_zoom->setEnabled(modelo_atual->currentZoom() <= ModelWidget::MAXIMUM_ZOOM - ModelWidget::ZOOM_INCREMENT);
+		action_zoom_normal->setEnabled(modelo_atual->currentZoom()!=0);
+		action_diminuir_zoom->setEnabled(modelo_atual->currentZoom() >= ModelWidget::MINIMUM_ZOOM + ModelWidget::ZOOM_INCREMENT);
 	}
 
 	plugins_tb->setEnabled(modelos_tab->count() > 0);
@@ -1194,7 +1194,7 @@ void FormPrincipal::executarPlugin(void)
 void FormPrincipal::salvarModeloTemporario(void)
 {
 	if(modelo_atual)
-		modelo_atual->modelo->saveModel(modelo_atual->getNameArquivoTemp(), SchemaParser::XML_DEFINITION);
+		modelo_atual->db_model->saveModel(modelo_atual->getTempFilename(), SchemaParser::XML_DEFINITION);
 }
 
 void FormPrincipal::exibirVisaoGeral(bool exibir)

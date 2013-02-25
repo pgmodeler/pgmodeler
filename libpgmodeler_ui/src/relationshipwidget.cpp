@@ -319,7 +319,7 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	table2_mand_chk->setEnabled(rel_type==BaseRelationship::RELATIONSHIP_11);
 	table2_mand_chk->setVisible(rel1n);
 
-	identifier_chk->setVisible(rel1n && base_rel->isSelfRelationship());
+	identifier_chk->setVisible(rel1n && !base_rel->isSelfRelationship());
 	foreign_key_gb->setVisible(rel1n);
 
 	relnn_tab_name_lbl->setVisible(relnn);

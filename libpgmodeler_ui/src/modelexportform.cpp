@@ -86,7 +86,7 @@ void ModelExportForm::exportModel(void)
 		if(export_to_img_rb->isChecked())
 		{
 			QPixmap pix;
-			QRectF ret=model->cena->itemsBoundingRect();
+			QRectF ret=model->scene->itemsBoundingRect();
 			bool exibir_grade, exibir_lim, alin_objs;
 
 			ObjectsScene::getGridOptions(exibir_grade, alin_objs, exibir_lim);
@@ -94,12 +94,12 @@ void ModelExportForm::exportModel(void)
 
 			pix=QPixmap(ret.size().toSize());
 			QPainter p(&pix);
-			model->cena->clearSelection();
-			model->cena->update();
-			model->cena->render(&p, QRectF(QPointF(0,0), pix.size()), ret);
+			model->scene->clearSelection();
+			model->scene->update();
+			model->scene->render(&p, QRectF(QPointF(0,0), pix.size()), ret);
 
 			ObjectsScene::setGridOptions(exibir_grade, alin_objs, exibir_lim);
-			model->cena->update();
+			model->scene->update();
 
 			if(!pix.save(image_edt->text()))
 				throw Exception(Exception::getErrorMessage(ERR_FILE_NOT_WRITTEN).arg(Utf8String::create(image_edt->text())),
@@ -139,7 +139,7 @@ void ModelExportForm::exportModel(void)
 
 				task_prog_wgt->setWindowTitle(trUtf8("Generating source code..."));
 				task_prog_wgt->show();
-				connect(this->model->modelo, SIGNAL(s_objetoCarregado(int,QString,unsigned)),
+				connect(this->model->db_model, SIGNAL(s_objetoCarregado(int,QString,unsigned)),
 								task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
 
 				progress_lbl->setText(trUtf8("Initializing model export..."));
@@ -150,7 +150,7 @@ void ModelExportForm::exportModel(void)
 					//Sets the SQL version for the output code
 					SchemaParser::setPgSQLVersion(pgsqlvers_cmb->currentText());
 					progress_lbl->setText(trUtf8("Saving file '%1'").arg(file_edt->text()));
-					model->modelo->saveModel(file_edt->text(), SchemaParser::SQL_DEFINITION);
+					model->db_model->saveModel(file_edt->text(), SchemaParser::SQL_DEFINITION);
 					progress_pb->setValue(25);
 				}
 				//Exporting directly to DBMS
@@ -173,10 +173,10 @@ void ModelExportForm::exportModel(void)
 					//Creates the roles and tablespaces separately from the other objects
 					for(type_id=0; type_id < 2; type_id++)
 					{
-						count=model->modelo->getObjectCount(types[type_id]);
+						count=model->db_model->getObjectCount(types[type_id]);
 						for(i=0; i < count; i++)
 						{
-							object=model->modelo->getObject(i, types[type_id]);
+							object=model->db_model->getObject(i, types[type_id]);
 							progress_lbl->setText(trUtf8("Creating object '%1' (%2)...").arg(Utf8String::create(object->getName())).arg(object->getTypeName()));
 							progress_lbl->repaint();
 
@@ -201,12 +201,12 @@ void ModelExportForm::exportModel(void)
 					}
 
 					//Creating the database on the DBMS
-					progress_lbl->setText(trUtf8("Creating database '%1'...").arg(Utf8String::create(model->modelo->getName())));
+					progress_lbl->setText(trUtf8("Creating database '%1'...").arg(Utf8String::create(model->db_model->getName())));
 					progress_lbl->repaint();
 
 					try
 					{
-						conn->executeDDLCommand(model->modelo->__getCodeDefinition(SchemaParser::SQL_DEFINITION));
+						conn->executeDDLCommand(model->db_model->__getCodeDefinition(SchemaParser::SQL_DEFINITION));
 						db_created=true;
 					}
 					catch(Exception &e)
@@ -223,18 +223,18 @@ void ModelExportForm::exportModel(void)
 					progress_pb->setValue(30);
 
 					new_db_conn=(*conn);
-					new_db_conn.setConnectionParam(DBConnection::PARAM_DB_NAME, model->modelo->getName());
-					progress_lbl->setText(trUtf8("Connecting to database '%1'...").arg(Utf8String::create(model->modelo->getName())));
+					new_db_conn.setConnectionParam(DBConnection::PARAM_DB_NAME, model->db_model->getName());
+					progress_lbl->setText(trUtf8("Connecting to database '%1'...").arg(Utf8String::create(model->db_model->getName())));
 					progress_lbl->repaint();
 					new_db_conn.connect();
 					progress_pb->setValue(50);
 
 					//Creating the other object types
-					progress_lbl->setText(trUtf8("Creating objects on database '%1'...").arg(Utf8String::create(model->modelo->getName())));
+					progress_lbl->setText(trUtf8("Creating objects on database '%1'...").arg(Utf8String::create(model->db_model->getName())));
 					progress_lbl->repaint();
 
 					//Gera o código SQL de todo o banco
-					sql_buf=model->modelo->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);
+					sql_buf=model->db_model->getCodeDefinition(SchemaParser::SQL_DEFINITION, false);
 
 					/* Extract each SQL command from the buffer and execute them separately. This is done
 					 to permit the user, in case of error, identify what object is wrongly configured. */
@@ -284,14 +284,14 @@ void ModelExportForm::exportModel(void)
 				}
 
 				task_prog_wgt->close();
-				disconnect(this->model->modelo, NULL, task_prog_wgt, NULL);
+				disconnect(this->model->db_model, NULL, task_prog_wgt, NULL);
 			}
 			catch(Exception &e)
 			{
 				QString drop_cmd=QString("DROP %1 %2;");
 
 				task_prog_wgt->close();
-				disconnect(this->model->modelo, NULL, task_prog_wgt, NULL);
+				disconnect(this->model->db_model, NULL, task_prog_wgt, NULL);
 
 				//In case of error during the export all created object are removed
 				if(db_created || objs_idx[0] >= 0 || objs_idx[1] >= 0)
@@ -301,14 +301,14 @@ void ModelExportForm::exportModel(void)
 
 					if(db_created)
 						conn->executeDDLCommand(drop_cmd
-																			 .arg(model->modelo->getSQLName())
-																			 .arg(model->modelo->getName(true)));
+																			 .arg(model->db_model->getSQLName())
+																			 .arg(model->db_model->getName(true)));
 
 					for(type_id=1; type_id >=0; type_id--)
 					{
 						while(objs_idx[type_id] >= 0)
 						{
-							object=model->modelo->getObject(objs_idx[type_id], types[type_id]);
+							object=model->db_model->getObject(objs_idx[type_id], types[type_id]);
 
 							try
 							{
