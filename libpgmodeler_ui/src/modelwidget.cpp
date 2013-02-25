@@ -234,17 +234,17 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	//Aloca as ações de criação de novo objeto
 	for(i=0; i < obj_cnt; i++)
 	{
-		actions_ins_objects[types[i]]=new QAction(QIcon(QString(":/icones/icones/") +
+		actions_new_objects[types[i]]=new QAction(QIcon(QString(":/icones/icones/") +
 																							 BaseObject::getSchemaName(types[i]) + QString(".png")),
 																				 BaseObject::getTypeName(types[i]), this);
-		actions_ins_objects[types[i]]->setData(QVariant(types[i]));
-		connect(actions_ins_objects[types[i]], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
+		actions_new_objects[types[i]]->setData(QVariant(types[i]));
+		connect(actions_new_objects[types[i]], SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
 	}
 
 
 	//Caso especial, criando um submenu de criação de relacionamentos.
 	rels_menu=new QMenu(this);
-	actions_ins_objects[OBJ_RELATIONSHIP]->setMenu(rels_menu);
+	actions_new_objects[OBJ_RELATIONSHIP]->setMenu(rels_menu);
 
 	for(i=0; i < 5; i++)
 	{
@@ -328,7 +328,7 @@ void ModelWidget::resizeEvent(QResizeEvent *)
 	//Reconfigura o tamanho da cena
 	scene->setSceneRect(ret);
 
-	emit s_modeloRedimensionado();
+	emit s_modelResized();
 }
 
 bool ModelWidget::eventFilter(QObject *object, QEvent *event)
@@ -423,7 +423,7 @@ void ModelWidget::applyZoom(float zoom)
 		viewport->centerOn(0,0);
 		//Armazena o zoom aplicado como atual
 		this->current_zoom=zoom;
-		emit s_zoomModificado(zoom);
+		emit s_zoomModified(zoom);
 	}
 }
 
@@ -616,7 +616,7 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 		op_list->finishOperationChain();
 		this->modified=true;
 		//Emite um sinal indicando que objetos foram movimentados
-		emit s_objetosMovimentados();
+		emit s_objectsMoved();
 	}
 }
 
@@ -630,7 +630,7 @@ void ModelWidget::handleObjectModification(BaseGraphicObject *object)
 		dynamic_cast<Schema *>(object->getSchema())->setModified(true);
 
 	//Emite um sinal indicando que um objeto foi modificado
-	emit s_objetoModificado();
+	emit s_objectModified();
 }
 
 void ModelWidget::configureObjectSelection(void)
@@ -858,7 +858,7 @@ void ModelWidget::convertRelationshipNN(void)
 					//Finaliza o encademanento de operações
 					op_list->finishOperationChain();
 
-					emit s_objetoCriado();
+					emit s_objectCreated();
 				}
 				catch(Exception &e)
 				{
@@ -1435,7 +1435,7 @@ void ModelWidget::renameObject(void)
 	if(quickrename_wgt->result()==QDialog::Accepted)
 	{
 		this->modified=true;
-		emit s_objetoModificado();
+		emit s_objectModified();
 	}
 }
 
@@ -1466,7 +1466,7 @@ void ModelWidget::moveToSchema(void)
 			prev_schema->setModified(true);
 		}
 
-		emit s_objetoModificado();
+		emit s_objectModified();
 	}
 	catch(Exception &e)
 	{
@@ -1490,7 +1490,7 @@ void ModelWidget::changeOwner(void)
 			op_list->registerObject(obj, Operation::OBJECT_MODIFIED, -1);
 
 		obj->setOwner(owner);
-		emit s_objetoModificado();
+		emit s_objectModified();
 	}
 	catch(Exception &e)
 	{
@@ -1644,7 +1644,7 @@ void ModelWidget::protectObject(void)
 		scene->clearSelection();
 
 		//Emite um sinal indica que vários objetos foram modificados
-		emit s_objetoModificado();
+		emit s_objectModified();
 	}
 	catch(Exception &e)
 	{
@@ -2013,7 +2013,7 @@ void ModelWidget::pasteObjects(void)
 	{
 		//Limpa a lista de objetos copiados e emite um sinal indicando que objetos foram criados no modelo
 		copied_objects.clear();
-		emit s_objetoCriado();
+		emit s_objectCreated();
 	}
 	//Caso seja a operação de recorte
 	else
@@ -2251,7 +2251,7 @@ void ModelWidget::removeObjects(void)
 				scene->clearSelection();
 				this->configurePopupMenu();
 				this->modified=true;
-				emit s_objetoRemovido();
+				emit s_objectRemoved();
 			}
 			catch(Exception &e)
 			{
@@ -2282,7 +2282,7 @@ void ModelWidget::removeObjects(void)
 				}
 
 				scene->clearSelection();
-				emit s_objetoRemovido();
+				emit s_objectRemoved();
 
 				/** issue #24**/
 				/* Aparentemente redirencionando a exceção neste ponto é provocado um segmentation fault sem causa conhecida.
@@ -2474,7 +2474,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 			//Configura o menu de inserção de novos objetos com os tipos do vetor 'tipos[]'
 			for(i=0; i < 18; i++)
-				new_object_menu.addAction(actions_ins_objects[types[i]]);
+				new_object_menu.addAction(actions_new_objects[types[i]]);
 
 			//Adiciona o menu configurado   ação de novo objeto
 			action_new_object->setMenu(&new_object_menu);
@@ -2519,14 +2519,14 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				if(obj_type == OBJ_TABLE)
 				{
 					for(i=0; i < 5; i++)
-						new_object_menu.addAction(actions_ins_objects[types[i]]);
+						new_object_menu.addAction(actions_new_objects[types[i]]);
 					action_new_object->setMenu(&new_object_menu);
 				}
 				//Caso seja tabela, inclui a ação de adição de atributos e restrições ao relacionamento
 				else if(obj_type==OBJ_RELATIONSHIP)
 				{
 					for(i=0; i < 2; i++)
-						new_object_menu.addAction(actions_ins_objects[types[i]]);
+						new_object_menu.addAction(actions_new_objects[types[i]]);
 					action_new_object->setMenu(&new_object_menu);
 
 					//Caso seja um relacionametno N-N inclui a ação de conversão do relacionamento
@@ -2540,7 +2540,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				else if(obj_type == OBJ_SCHEMA)
 				{
 					for(i=0; i < 11; i++)
-						new_object_menu.addAction(actions_ins_objects[sch_types[i]]);
+						new_object_menu.addAction(actions_new_objects[sch_types[i]]);
 					action_new_object->setMenu(&new_object_menu);
 				}
 

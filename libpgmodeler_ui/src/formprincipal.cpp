@@ -707,17 +707,17 @@ void FormPrincipal::definirModeloAtual(void)
 			//Caso o modelo atual venha de um arquivo, concatena o caminho para o arquivo
 			this->setWindowTitle(titulo_janela + " - " + QDir::toNativeSeparators(modelo_atual->getFilename()));
 
-		connect(modelo_atual, SIGNAL(s_objetoModificado(void)),lista_oper, SLOT(updateOperationList(void)));
-		connect(modelo_atual, SIGNAL(s_objetoCriado(void)),lista_oper, SLOT(updateOperationList(void)));
-		connect(modelo_atual, SIGNAL(s_objetoRemovido(void)),lista_oper, SLOT(updateOperationList(void)));
-		connect(modelo_atual, SIGNAL(s_objetosMovimentados(void)),lista_oper, SLOT(updateOperationList(void)));
+		connect(modelo_atual, SIGNAL(s_objectModified(void)),lista_oper, SLOT(updateOperationList(void)));
+		connect(modelo_atual, SIGNAL(s_objectCreated(void)),lista_oper, SLOT(updateOperationList(void)));
+		connect(modelo_atual, SIGNAL(s_objectRemoved(void)),lista_oper, SLOT(updateOperationList(void)));
+		connect(modelo_atual, SIGNAL(s_objectsMoved(void)),lista_oper, SLOT(updateOperationList(void)));
 
-		connect(modelo_atual, SIGNAL(s_objetoModificado(void)),visao_objs, SLOT(updateObjectsView(void)));
-		connect(modelo_atual, SIGNAL(s_objetoCriado(void)),visao_objs, SLOT(updateObjectsView(void)));
-		connect(modelo_atual, SIGNAL(s_objetoRemovido(void)),visao_objs, SLOT(updateObjectsView(void)));
+		connect(modelo_atual, SIGNAL(s_objectModified(void)),visao_objs, SLOT(updateObjectsView(void)));
+		connect(modelo_atual, SIGNAL(s_objectCreated(void)),visao_objs, SLOT(updateObjectsView(void)));
+		connect(modelo_atual, SIGNAL(s_objectRemoved(void)),visao_objs, SLOT(updateObjectsView(void)));
 
-		connect(modelo_atual, SIGNAL(s_zoomModificado(float)), this, SLOT(atualizarEstadoFerramentas(void)));
-		connect(modelo_atual, SIGNAL(s_objetoModificado(void)), this, SLOT(atualizarNomeAba(void)));
+		connect(modelo_atual, SIGNAL(s_zoomModified(float)), this, SLOT(atualizarEstadoFerramentas(void)));
+		connect(modelo_atual, SIGNAL(s_objectModified(void)), this, SLOT(atualizarNomeAba(void)));
 
 
 		connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(definirOpcoesGrade(void)));

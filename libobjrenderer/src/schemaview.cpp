@@ -149,6 +149,9 @@ void SchemaView::configureObject(void)
 		this->configureProtectedIcon();
 		this->configurePositionInfo(this->pos());
 
+		this->setToolTip(Utf8String::create(schema->getName(true)) +  " (" + schema->getTypeName() + ")");
+		sch_name->setToolTip(this->toolTip());
+
 		this->protected_icon->setPos(QPointF(sch_name->pos().x() + sch_name->boundingRect().width() + sp_h,
 																				 sch_name->pos().y()));
 	}
