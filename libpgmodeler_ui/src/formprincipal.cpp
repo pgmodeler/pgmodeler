@@ -349,7 +349,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 
 		if(frestmodelo->result()==QDialog::Accepted)
 		{
-			ModeloWidget *modelo=NULL;
+			ModelWidget *modelo=NULL;
 			try
 			{
 				QStringList arq_temps=frestmodelo->getSelectedModels();
@@ -357,7 +357,7 @@ FormPrincipal::FormPrincipal(QWidget *parent, Qt::WindowFlags flags) : QMainWind
 				{
 					this->adicionarNovoModelo(arq_temps.front());
 					//Obtém o modelo gerado a partir do arquivo temporário
-					modelo=dynamic_cast<ModeloWidget *>(modelos_tab->widget(modelos_tab->count()-1));
+					modelo=dynamic_cast<ModelWidget *>(modelos_tab->widget(modelos_tab->count()-1));
 
 					/* Define-o como modificado e limpa o nome do arquivo temporário, isso
 				forçará o usuário a salvá-lo quando o timer de salvamento automático for atingido ou
@@ -453,7 +453,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
 		//Varre os modelos e obtém o estado da modificação
 		i=0;
 		while(i < modelos_tab->count() && !modificado)
-			modificado=dynamic_cast<ModeloWidget *>(modelos_tab->widget(i++))->modeloModificado();
+			modificado=dynamic_cast<ModelWidget *>(modelos_tab->widget(i++))->modeloModificado();
 
 		//Se algum modelo foi encontrado como modificado
 		if(modificado)
@@ -531,14 +531,14 @@ void FormPrincipal::closeEvent(QCloseEvent *)
 	if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION].isEmpty())
 	{
 		int i, qtd;
-		ModeloWidget *modelo=NULL;
+		ModelWidget *modelo=NULL;
 		QString id_param;
 		map<QString, QString> atribs;
 
 		qtd=modelos_tab->count();
 		for(i=0; i < qtd; i++)
 		{
-			modelo=dynamic_cast<ModeloWidget *>(modelos_tab->widget(i));
+			modelo=dynamic_cast<ModelWidget *>(modelos_tab->widget(i));
 
 			if(!modelo->getNameArquivo().isEmpty())
 			{
@@ -558,7 +558,7 @@ void FormPrincipal::closeEvent(QCloseEvent *)
 
 void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
 {
-	ModeloWidget *tab_modelo;
+	ModelWidget *tab_modelo;
 	QString nome_obj, nome_tab, str_aux;
 	Schema *esq_publico=NULL;
 	Language *ling=NULL;
@@ -572,7 +572,7 @@ void FormPrincipal::adicionarNovoModelo(const QString &nome_arq)
 	nome_obj+=str_aux;
 	nome_tab=nome_obj;
 
-	tab_modelo = new ModeloWidget(modelos_tab);
+	tab_modelo = new ModelWidget(modelos_tab);
 	tab_modelo->setObjectName(Utf8String::create(nome_obj));
 
 	//Adiciona a aba criada ao conjuto de abas existentes
@@ -661,7 +661,7 @@ void FormPrincipal::definirModeloAtual(void)
 		visao_objs->saveTreeState(confs_arv_objs[modelo_atual]);
 
 	//O modelo atual obtido a partir da aba atual no 'modelos_tab'
-	modelo_atual=dynamic_cast<ModeloWidget *>(modelos_tab->currentWidget());
+	modelo_atual=dynamic_cast<ModelWidget *>(modelos_tab->currentWidget());
 
 	//Caso haja um modelo
 	if(modelo_atual)
@@ -783,10 +783,10 @@ void FormPrincipal::aplicarZoom(void)
 		//Configura a aplicação do zoom conforme a ação qu disparou o método
 		if(sender()==action_zoom_normal)
 			zoom=1;
-		else if(sender()==action_ampliar_zoom && zoom < ModeloWidget::ZOOM_MAXIMO)
-			zoom+=ModeloWidget::INC_ZOOM;
-		else if(sender()==action_diminuir_zoom && zoom > ModeloWidget::ZOOM_MINIMO)
-			zoom-=ModeloWidget::INC_ZOOM;
+		else if(sender()==action_ampliar_zoom && zoom < ModelWidget::ZOOM_MAXIMO)
+			zoom+=ModelWidget::INC_ZOOM;
+		else if(sender()==action_diminuir_zoom && zoom > ModelWidget::ZOOM_MINIMO)
+			zoom-=ModelWidget::INC_ZOOM;
 
 		//Aplica o zoom configurado
 		modelo_atual->aplicarZoom(zoom);
@@ -864,7 +864,7 @@ void FormPrincipal::fecharModelo(int idx_modelo)
 
 	if(tab)
 	{
-		ModeloWidget *modelo=dynamic_cast<ModeloWidget *>(tab);
+		ModelWidget *modelo=dynamic_cast<ModelWidget *>(tab);
 
 		confs_arv_objs.erase(modelo);
 
@@ -902,7 +902,7 @@ void FormPrincipal::fecharModelo(int idx_modelo)
 		modelo_atual=NULL;
 		this->exibirTelaCheia(false);
 		visao_objs->setModel(static_cast<DatabaseModel *>(NULL));
-		lista_oper->setModelWidget(static_cast<ModeloWidget *>(NULL));
+		lista_oper->setModelWidget(static_cast<ModelWidget *>(NULL));
 		atualizarEstadoFerramentas(true);
 	}
 	else
@@ -942,7 +942,7 @@ void FormPrincipal::atualizarModelos(void)
 	//Força a atualização de todos os modelos abertos
 	qtd=modelos_tab->count();
 	for(i=0; i < qtd; i++)
-		dynamic_cast<ModeloWidget *>(modelos_tab->widget(i))->modelo->setObjectsModified();
+		dynamic_cast<ModelWidget *>(modelos_tab->widget(i))->modelo->setObjectsModified();
 }
 
 void FormPrincipal::salvarTodosModelos(void)
@@ -950,20 +950,20 @@ void FormPrincipal::salvarTodosModelos(void)
 	//Caso o intervalo de salvamento esteja setado
 	if(interv_salvar > 0)
 	{
-		ModeloWidget *modelo=NULL;
+		ModelWidget *modelo=NULL;
 		int i, qtd;
 
 		//Executa o método de salvamento em todos os modelos abertos
 		qtd=modelos_tab->count();
 		for(i=0; i < qtd; i++)
 		{
-			modelo=dynamic_cast<ModeloWidget *>(modelos_tab->widget(i));
+			modelo=dynamic_cast<ModelWidget *>(modelos_tab->widget(i));
 			this->salvarModelo(modelo);
 		}
 	}
 }
 
-void FormPrincipal::salvarModelo(ModeloWidget *modelo)
+void FormPrincipal::salvarModelo(ModelWidget *modelo)
 {
 	try
 	{
@@ -1152,9 +1152,9 @@ void FormPrincipal::atualizarEstadoFerramentas(bool modelo_fechado)
 		action_desfazer->setEnabled(modelo_atual->lista_op->isUndoAvailable());
 		action_refazer->setEnabled(modelo_atual->lista_op->isRedoAvailable());
 
-		action_ampliar_zoom->setEnabled(modelo_atual->zoomAtual() <= ModeloWidget::ZOOM_MAXIMO - ModeloWidget::INC_ZOOM);
+		action_ampliar_zoom->setEnabled(modelo_atual->zoomAtual() <= ModelWidget::ZOOM_MAXIMO - ModelWidget::INC_ZOOM);
 		action_zoom_normal->setEnabled(modelo_atual->zoomAtual()!=0);
-		action_diminuir_zoom->setEnabled(modelo_atual->zoomAtual() >= ModeloWidget::ZOOM_MINIMO + ModeloWidget::INC_ZOOM);
+		action_diminuir_zoom->setEnabled(modelo_atual->zoomAtual() >= ModelWidget::ZOOM_MINIMO + ModelWidget::INC_ZOOM);
 	}
 
 	plugins_tb->setEnabled(modelos_tab->count() > 0);

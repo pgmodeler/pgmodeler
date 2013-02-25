@@ -27,7 +27,7 @@
 
 #include <QtGui>
 #include "ui_modelobjectswidget.h"
-#include "modelowidget.h"
+#include "modelwidget.h"
 #include "messagebox.h"
 
 class ModelObjectsWidget: public QDockWidget, public Ui::ModelObjectsWidget {
@@ -51,7 +51,7 @@ class ModelObjectsWidget: public QDockWidget, public Ui::ModelObjectsWidget {
 		QSettings widgets_conf;
 
 		//! \brief Reference model widget. This is the object used to populate the tree and list
-		ModeloWidget *model_wgt;
+		ModelWidget *model_wgt;
 
 		//! \brief Reference database model. This is the object used to populate the tree and list
 		DatabaseModel *db_model;
@@ -97,7 +97,7 @@ class ModelObjectsWidget: public QDockWidget, public Ui::ModelObjectsWidget {
 		void saveTreeState(bool value);
 
 	public slots:
-		void setModel(ModeloWidget *model_wgt);
+		void setModel(ModelWidget *model_wgt);
 		void setModel(DatabaseModel *db_model);
 		void changeObjectsView(void);
 		void updateObjectsView(void);

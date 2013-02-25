@@ -29,7 +29,7 @@
 #include "ui_indexwidget.h"
 #include "objecttablewidget.h"
 
-/*! \brief Declaring the IndexElement class as a Qt metatype in order to permit
+/* Declaring the IndexElement class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
 #include <QMetaType>
 Q_DECLARE_METATYPE(IndexElement)

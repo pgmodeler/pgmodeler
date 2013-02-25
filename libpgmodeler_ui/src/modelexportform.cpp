@@ -30,7 +30,7 @@ ModelExportForm::ModelExportForm(QWidget *parent, Qt::WindowFlags f) : QDialog(p
 	#endif
 }
 
-void ModelExportForm::show(ModeloWidget *model)
+void ModelExportForm::show(ModelWidget *model)
 {
 	if(model)
 	{

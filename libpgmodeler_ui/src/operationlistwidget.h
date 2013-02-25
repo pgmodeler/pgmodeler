@@ -27,14 +27,14 @@
 
 #include <QtGui>
 #include "ui_operationlistwidget.h"
-#include "modelowidget.h"
+#include "modelwidget.h"
 #include "messagebox.h"
 
 class OperationListWidget: public QDockWidget, public Ui::OperationListWidget {
 	private:
 		Q_OBJECT
 
-		ModeloWidget *modelo_wgt;
+		ModelWidget *modelo_wgt;
 
 		//! \brief Updates the operation list and emits the signal s_operationListUpdated to the connected objects
 		void notifyUpdateOnModel(void);
@@ -44,7 +44,7 @@ class OperationListWidget: public QDockWidget, public Ui::OperationListWidget {
 
 	public slots:
 		void updateOperationList(void);
-		void setModelWidget(ModeloWidget *model);
+		void setModelWidget(ModelWidget *model);
 		void undoOperation(void);
 		void redoOperation(void);
 		void removeOperations(void);

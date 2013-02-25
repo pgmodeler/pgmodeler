@@ -25,7 +25,7 @@
 #ifndef PGMODELER_PLUGIN_H
 #define PGMODELER_PLUGIN_H
 
-#include "modelowidget.h"
+#include "modelwidget.h"
 
 /*	The plugins in pgModeler must be within the "plugins" folder in its own
 		directory and must have the following basic structure:
@@ -61,7 +61,7 @@ class PgModelerPlugin {
 		virtual ~PgModelerPlugin(void);
 
 		//! \brief Executes the plugins having a ModelWidget as input parameter.
-		virtual void executePlugin(ModeloWidget *modelo)=0;
+		virtual void executePlugin(ModelWidget *modelo)=0;
 
 		//! \brief Returns the plugin's title, this same text is used as action's text on plugins toolbar.
 		virtual QString getPluginTitle(void)=0;

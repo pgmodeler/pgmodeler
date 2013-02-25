@@ -52,7 +52,7 @@ void DummyPlugin::showPluginInfo(void)
 	plugin_info_frm->show();
 }
 
-void DummyPlugin::executePlugin(ModeloWidget *)
+void DummyPlugin::executePlugin(ModelWidget *)
 {
 	MessageBox msgbox;
 	msgbox.show(trUtf8("Plugin successfully loaded!"),

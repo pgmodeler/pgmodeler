@@ -28,7 +28,7 @@
 
 #include <QtGui>
 #include "ui_formprincipal.h"
-#include "modelowidget.h"
+#include "modelwidget.h"
 #include "aboutform.h"
 #include "messagebox.h"
 #include "baseform.h"
@@ -63,9 +63,9 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
 		ModelObjectsWidget *visao_objs;
 
 		//! \brief Armazena a referência para o modelo atualmente aberto
-		ModeloWidget *modelo_atual;
+		ModelWidget *modelo_atual;
 
-		map<ModeloWidget *, vector<BaseObject *> > confs_arv_objs;
+		map<ModelWidget *, vector<BaseObject *> > confs_arv_objs;
 
 		//! \brief Armazena o nome da operação atualmente selecionada
 		QLabel *nome_op;
@@ -122,7 +122,7 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
 		void carregarModelo(void);
 
 		//! \brief Salva um determinado ModeloWidget
-		void salvarModelo(ModeloWidget *modelo=NULL);
+		void salvarModelo(ModelWidget *modelo=NULL);
 
 		//! \brief Salva todos os modelos abertos
 		void salvarTodosModelos(void);

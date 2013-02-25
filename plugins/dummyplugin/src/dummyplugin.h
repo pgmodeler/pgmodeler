@@ -40,7 +40,7 @@ class DummyPlugin: public QObject, public PgModelerPlugin {
 		QString getPluginVersion(void);
 		QString getPluginAuthor(void);
 		QString getPluginDescription(void);
-		void executePlugin(ModeloWidget *);
+		void executePlugin(ModelWidget *);
 
 	public slots:
 		void showPluginInfo(void);

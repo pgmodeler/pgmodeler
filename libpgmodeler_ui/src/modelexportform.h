@@ -27,19 +27,19 @@
 
 #include "ui_modelexportform.h"
 #include "schemaparser.h"
-#include "modelowidget.h"
+#include "modelwidget.h"
 
 class ModelExportForm: public QDialog, public Ui::ModelExportForm {
 	private:
 		Q_OBJECT
 
-		ModeloWidget *model;
+		ModelWidget *model;
 
 	public:
 		ModelExportForm(QWidget * parent = 0, Qt::WindowFlags f = 0);
 
 	public slots:
-		void show(ModeloWidget *model);
+		void show(ModelWidget *model);
 		void hideEvent(QHideEvent *);
 
 	private slots:

@@ -1,4 +1,4 @@
-#include "modelowidget.h"
+#include "modelwidget.h"
 #include "sourcecodewidget.h"
 #include "databasewidget.h"
 #include "schemawidget.h"
@@ -59,11 +59,11 @@ extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern QuickRenameWidget *quickrename_wgt;
 extern PermissionWidget *permissao_wgt;
 
-vector<BaseObject *> ModeloWidget::objs_copiados;
-bool ModeloWidget::op_recortar=false;
-ModeloWidget *ModeloWidget::modelo_orig=NULL;
+vector<BaseObject *> ModelWidget::objs_copiados;
+bool ModelWidget::op_recortar=false;
+ModelWidget *ModelWidget::modelo_orig=NULL;
 
-ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
+ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 {
 	QFont fonte;
 	QLabel *label=NULL;
@@ -294,7 +294,7 @@ ModeloWidget::ModeloWidget(QWidget *parent) : QWidget(parent)
 	//connect(cena, SIGNAL(selectionChanged(void)), this, SLOT(configurarSelecaoObjetos(void)));
 }
 
-ModeloWidget::~ModeloWidget(void)
+ModelWidget::~ModelWidget(void)
 {
 	//objs_copiados.clear();
 	//delete(visaogeral_wgt);
@@ -304,7 +304,7 @@ ModeloWidget::~ModeloWidget(void)
 	delete(modelo);
 }
 
-bool ModeloWidget::isReservedObject(BaseObject *obj)
+bool ModelWidget::isReservedObject(BaseObject *obj)
 {
 	return(obj &&
 				 ((obj->getObjectType()==OBJ_LANGUAGE &&
@@ -315,12 +315,12 @@ bool ModeloWidget::isReservedObject(BaseObject *obj)
 					 obj->getName()=="public")));
 }
 
-void ModeloWidget::definirModificado(bool valor)
+void ModelWidget::definirModificado(bool valor)
 {
 	this->modificado=valor;
 }
 
-void ModeloWidget::resizeEvent(QResizeEvent *)
+void ModelWidget::resizeEvent(QResizeEvent *)
 {
 	//Obtém o tamanho da cena
 	QRectF ret=cena->sceneRect();
@@ -342,7 +342,7 @@ void ModeloWidget::resizeEvent(QResizeEvent *)
 	//visaogeral_wgt->atualizarVisaoGeral();
 }
 
-bool ModeloWidget::eventFilter(QObject *objeto, QEvent *evento)
+bool ModelWidget::eventFilter(QObject *objeto, QEvent *evento)
 {
 	//Filtra o evento Wheel caso seja disparado pelas barras de rolagem do viewport
 	if(evento->type() == QEvent::Wheel &&
@@ -357,7 +357,7 @@ bool ModeloWidget::eventFilter(QObject *objeto, QEvent *evento)
 		return(QWidget::eventFilter(objeto, evento));
 }
 
-void ModeloWidget::keyReleaseEvent(QKeyEvent *evento)
+void ModelWidget::keyReleaseEvent(QKeyEvent *evento)
 {
 	if(evento->key()==Qt::Key_Control)
 	{
@@ -366,7 +366,7 @@ void ModeloWidget::keyReleaseEvent(QKeyEvent *evento)
 	}
 }
 
-void ModeloWidget::keyPressEvent(QKeyEvent *evento)
+void ModelWidget::keyPressEvent(QKeyEvent *evento)
 {
 	//Cancela a ação de inserção do objeto quando ESC é pressionado
 	if(evento->key()==Qt::Key_Escape)
@@ -381,7 +381,7 @@ void ModeloWidget::keyPressEvent(QKeyEvent *evento)
 	}
 }
 
-void ModeloWidget::mousePressEvent(QMouseEvent *evento)
+void ModelWidget::mousePressEvent(QMouseEvent *evento)
 {
 	//Caso o usuário pressione o botão direito exibe o menu popup na posição do cursor
 	if(evento->buttons()==Qt::RightButton)
@@ -406,13 +406,13 @@ void ModeloWidget::mousePressEvent(QMouseEvent *evento)
 	}
 }
 
-void ModeloWidget::focusInEvent(QFocusEvent *evento)
+void ModelWidget::focusInEvent(QFocusEvent *evento)
 {
 	cena->update();
 	QWidget::focusInEvent(evento);
 }
 
-void ModeloWidget::wheelEvent(QWheelEvent * evento)
+void ModelWidget::wheelEvent(QWheelEvent * evento)
 {
 	if(evento->modifiers()==Qt::ControlModifier)
 	{
@@ -428,7 +428,7 @@ void ModeloWidget::wheelEvent(QWheelEvent * evento)
 	}
 }
 
-void ModeloWidget::aplicarZoom(float zoom)
+void ModelWidget::aplicarZoom(float zoom)
 {
 	//Aplica o zoom somente se este for válido
 	if(zoom >= ZOOM_MINIMO && zoom <= ZOOM_MAXIMO)
@@ -445,12 +445,12 @@ void ModeloWidget::aplicarZoom(float zoom)
 	}
 }
 
-float ModeloWidget::zoomAtual(void)
+float ModelWidget::zoomAtual(void)
 {
 	return(zoom_atual);
 }
 
-void ModeloWidget::manipularAdicaoObjeto(BaseObject *objeto)
+void ModelWidget::manipularAdicaoObjeto(BaseObject *objeto)
 {
 	//Converte o objeto base para objeto gráfico
 	BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(objeto);
@@ -501,7 +501,7 @@ void ModeloWidget::manipularAdicaoObjeto(BaseObject *objeto)
 	this->modificado=true;
 }
 
-void ModeloWidget::adicionarNovoObjeto(void)
+void ModelWidget::adicionarNovoObjeto(void)
 {
 	//Obtém a ação de chamou o slot
 	QAction *acao=dynamic_cast<QAction *>(sender());
@@ -561,7 +561,7 @@ void ModeloWidget::adicionarNovoObjeto(void)
 	}
 }
 
-void ModeloWidget::manipularRemocaoObjeto(BaseObject *objeto)
+void ModelWidget::manipularRemocaoObjeto(BaseObject *objeto)
 {
 	BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(objeto);
 
@@ -584,13 +584,13 @@ void ModeloWidget::manipularRemocaoObjeto(BaseObject *objeto)
 	this->modificado=true;
 }
 
-void ModeloWidget::manipularDuploCliqueObjeto(BaseGraphicObject *objeto)
+void ModelWidget::manipularDuploCliqueObjeto(BaseGraphicObject *objeto)
 {
 	if(objeto)
 		this->exibirFormObjeto(objeto->getObjectType(), objeto, NULL, objeto->getPosition());
 }
 
-void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
+void ModelWidget::manipularMovimentoObjetos(bool fim_movimento)
 {
 	vector<BaseObject *> ::iterator itr, itr_end;
 	BaseGraphicObject *obj=NULL;
@@ -648,7 +648,7 @@ void ModeloWidget::manipularMovimentoObjetos(bool fim_movimento)
 	}
 }
 
-void ModeloWidget::manipularModificacaoObjeto(BaseGraphicObject *objeto)
+void ModelWidget::manipularModificacaoObjeto(BaseGraphicObject *objeto)
 {
 	//Adciona o objeto modificado   lista de operações
 	lista_op->registerObject(objeto, Operation::OBJECT_MODIFIED);
@@ -661,7 +661,7 @@ void ModeloWidget::manipularModificacaoObjeto(BaseGraphicObject *objeto)
 	emit s_objetoModificado();
 }
 
-void ModeloWidget::configurarSelecaoObjetos(void)
+void ModelWidget::configurarSelecaoObjetos(void)
 {
 	QList<QGraphicsItem *> itens=cena->selectedItems();
 	BaseObjectView *item=NULL;
@@ -752,7 +752,7 @@ void ModeloWidget::configurarSelecaoObjetos(void)
 		this->configurarMenuPopup(objs_selecionados);
 }
 
-void ModeloWidget::selecionarTodos(void)
+void ModelWidget::selecionarTodos(void)
 {
 	QPainterPath pth;
 	/* Cria um QPainterPath com as dimensões do tamanho total da cena,
@@ -762,7 +762,7 @@ void ModeloWidget::selecionarTodos(void)
 	cena->setSelectionArea(pth);
 }
 
-void ModeloWidget::converterRelacionamentoNN(void)
+void ModelWidget::converterRelacionamentoNN(void)
 {
 	//Obtém o relacionamento a ser convertido da ação que disparou o método
 	Relationship *rel=reinterpret_cast<Relationship *>(action_converter_relnn->data().value<void *>());
@@ -922,7 +922,7 @@ void ModeloWidget::converterRelacionamentoNN(void)
 	}
 }
 
-void ModeloWidget::carregarModelo(const QString &nome_arq)
+void ModelWidget::carregarModelo(const QString &nome_arq)
 {
 	try
 	{
@@ -952,7 +952,7 @@ void ModeloWidget::carregarModelo(const QString &nome_arq)
 	}
 }
 
-void ModeloWidget::ajustarTamanhoCena(void)
+void ModelWidget::ajustarTamanhoCena(void)
 {
 	QRectF ret_cena, ret_objs;
 	bool alin_objs, exibir_grade, exibir_lim_pag;
@@ -979,7 +979,7 @@ void ModeloWidget::ajustarTamanhoCena(void)
 		cena->alignObjectsToGrid();
 }
 
-vector<QRectF> ModeloWidget::obterPaginasImpressao(const QSizeF &tam_papel, unsigned &qtd_pag_h, unsigned &qtd_pag_v)
+vector<QRectF> ModelWidget::obterPaginasImpressao(const QSizeF &tam_papel, unsigned &qtd_pag_h, unsigned &qtd_pag_v)
 {
 	vector<QRectF> paginas;
 	QRectF ret_pagina, ret_pmax;
@@ -1028,7 +1028,7 @@ vector<QRectF> ModeloWidget::obterPaginasImpressao(const QSizeF &tam_papel, unsi
 	return(paginas);
 }
 
-void ModeloWidget::imprimirModelo(QPrinter *printer, bool exibir_grade_imp, bool imp_num_pag)
+void ModelWidget::imprimirModelo(QPrinter *printer, bool exibir_grade_imp, bool imp_num_pag)
 {
 	if(printer)
 	{
@@ -1159,12 +1159,12 @@ void ModeloWidget::imprimirModelo(QPrinter *printer, bool exibir_grade_imp, bool
 	}
 }
 
-void ModeloWidget::salvarModelo(void)
+void ModelWidget::salvarModelo(void)
 {
 	salvarModelo(this->nome_arquivo);
 }
 
-void ModeloWidget::salvarModelo(const QString &nome_arq)
+void ModelWidget::salvarModelo(const QString &nome_arq)
 {
 	try
 	{
@@ -1188,17 +1188,17 @@ void ModeloWidget::salvarModelo(const QString &nome_arq)
 	}
 }
 
-QString ModeloWidget::getNameArquivo(void)
+QString ModelWidget::getNameArquivo(void)
 {
 	return(this->nome_arquivo);
 }
 
-QString ModeloWidget::getNameArquivoTemp(void)
+QString ModelWidget::getNameArquivoTemp(void)
 {
 	return(this->nome_arquivo_tmp);
 }
 
-void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, BaseObject *objeto_pai, QPointF pos)
+void ModelWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, BaseObject *objeto_pai, QPointF pos)
 {
 	try
 	{
@@ -1405,7 +1405,7 @@ void ModeloWidget::exibirFormObjeto(ObjectType tipo_obj, BaseObject *objeto, Bas
 	}
 }
 
-void ModeloWidget::exibirDepsRefs(void)
+void ModelWidget::exibirDepsRefs(void)
 {
 	QAction *obj_sender=dynamic_cast<QAction *>(sender());
 
@@ -1424,7 +1424,7 @@ void ModeloWidget::exibirDepsRefs(void)
 	}
 }
 
-void ModeloWidget::exibirCodigoFonte(void)
+void ModelWidget::exibirCodigoFonte(void)
 {
 	QAction *obj_sender=dynamic_cast<QAction *>(sender());
 
@@ -1442,7 +1442,7 @@ void ModeloWidget::exibirCodigoFonte(void)
 	}
 }
 
-void ModeloWidget::cancelarAdicaoObjeto(void)
+void ModelWidget::cancelarAdicaoObjeto(void)
 {
 	/* Reinicia o tipo do objeto, isso fará com que o usuário escolha
 		novamente a ferramenta de criação de objeto */
@@ -1454,7 +1454,7 @@ void ModeloWidget::cancelarAdicaoObjeto(void)
 	this->configurarMenuPopup(this->objs_selecionados);
 }
 
-void ModeloWidget::renomearObjeto(void)
+void ModelWidget::renomearObjeto(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
@@ -1472,7 +1472,7 @@ void ModeloWidget::renomearObjeto(void)
 	}
 }
 
-void ModeloWidget::moverParaEsquema(void)
+void ModelWidget::moverParaEsquema(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
 	Schema *schema=dynamic_cast<Schema *>(reinterpret_cast<BaseObject *>(act->data().value<void *>())),
@@ -1508,7 +1508,7 @@ void ModeloWidget::moverParaEsquema(void)
 	}
 }
 
-void ModeloWidget::alterarDono(void)
+void ModelWidget::alterarDono(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *owner=reinterpret_cast<BaseObject *>(act->data().value<void *>()),
@@ -1534,7 +1534,7 @@ void ModeloWidget::alterarDono(void)
 	}
 }
 
-void ModeloWidget::editarPermissoes(void)
+void ModelWidget::editarPermissoes(void)
 {
 	QAction *act=dynamic_cast<QAction *>(sender());
 	BaseObject *obj=reinterpret_cast<BaseObject *>(act->data().value<void *>());
@@ -1546,7 +1546,7 @@ void ModeloWidget::editarPermissoes(void)
 	permissao_wgt->show();
 }
 
-void ModeloWidget::editarObjeto(void)
+void ModelWidget::editarObjeto(void)
 {
 	QObject *obj_sender=dynamic_cast<QAction *>(sender());
 	TableObject *obj_tab=NULL;
@@ -1569,7 +1569,7 @@ void ModeloWidget::editarObjeto(void)
 										 (obj_tab ? obj_tab->getParentTable() : NULL));
 }
 
-void ModeloWidget::selecionarFilhosEsquema(void)
+void ModelWidget::selecionarFilhosEsquema(void)
 {
 	QObject *obj_sender=dynamic_cast<QAction *>(sender());
 	Schema *esquema=NULL;
@@ -1584,7 +1584,7 @@ void ModeloWidget::selecionarFilhosEsquema(void)
 				dynamic_cast<BaseObjectView *>(esquema->getReceiverObject()))->selectChildren();
 }
 
-void ModeloWidget::protegerObjeto(void)
+void ModelWidget::protegerObjeto(void)
 {
 	try
 	{
@@ -1685,21 +1685,21 @@ void ModeloWidget::protegerObjeto(void)
 	}
 }
 
-void ModeloWidget::recortarObjetos(void)
+void ModelWidget::recortarObjetos(void)
 {
 	/* Marca que o modelo de origem da operação de recorte foi o modelo 'this'.
 		Este atributo é usado no método de colagem dos objetos onde pois ao final
 		da execução é preciso excluir os objetos selecionados no modelo de origem */
-	ModeloWidget::modelo_orig=this;
+	ModelWidget::modelo_orig=this;
 
 	//Marca que a operação de recorte foi iniciada
-	ModeloWidget::op_recortar=true;
+	ModelWidget::op_recortar=true;
 
 	//Efetua a cópia dos objetos selecionados
 	this->copiarObjetos();
 }
 
-void ModeloWidget::copiarObjetos(void)
+void ModelWidget::copiarObjetos(void)
 {
 	map<unsigned, BaseObject *> mapa_objs;
 	vector<unsigned> id_objs;
@@ -1816,7 +1816,7 @@ void ModeloWidget::copiarObjetos(void)
 	}
 }
 
-void ModeloWidget::colarObjetos(void)
+void ModelWidget::colarObjetos(void)
 {
 	map<BaseObject *, QString> xml_objs;
 	vector<BaseObject *>::iterator itr, itr_end;
@@ -2068,7 +2068,7 @@ void ModeloWidget::colarObjetos(void)
 										MessageBox::ALERT_ICON);
 
 	//Caso não seja uma operação de recorte
-	if(!ModeloWidget::op_recortar)
+	if(!ModelWidget::op_recortar)
 	{
 		//Limpa a lista de objetos copiados e emite um sinal indicando que objetos foram criados no modelo
 		objs_copiados.clear();
@@ -2078,19 +2078,19 @@ void ModeloWidget::colarObjetos(void)
 	else
 	{
 		//Exclui os objetos selecionados no modelo de origem
-		ModeloWidget::modelo_orig->excluirObjetos();
+		ModelWidget::modelo_orig->excluirObjetos();
 		//Desmarca a flag que indica uma operação de recorte
-		ModeloWidget::op_recortar=false;
+		ModelWidget::op_recortar=false;
 
 		//Limpa a lista de objetos copiados
 		objs_copiados.clear();
 
 		//Reconfigura o menu popup do modelo de origem
-		if(this!=ModeloWidget::modelo_orig)
-			ModeloWidget::modelo_orig->configurarMenuPopup();
+		if(this!=ModelWidget::modelo_orig)
+			ModelWidget::modelo_orig->configurarMenuPopup();
 
 		//Zera a referência ao modelo de origem
-		ModeloWidget::modelo_orig=NULL;
+		ModelWidget::modelo_orig=NULL;
 	}
 
 	//Reconfigura o menu popup do modelo onde os objetos foram colados
@@ -2098,7 +2098,7 @@ void ModeloWidget::colarObjetos(void)
 	this->modificado=true;
 }
 
-void ModeloWidget::excluirObjetos(void)
+void ModelWidget::excluirObjetos(void)
 {
 	int idx_obj=-1;
 	unsigned qtd, qtd_op=0;
@@ -2124,7 +2124,7 @@ void ModeloWidget::excluirObjetos(void)
 	if(!objs_selecionados.empty() || objeto)
 	{
 		//Caso não seja operação de recortar faz a confirmação da exclusão
-		if(!ModeloWidget::op_recortar)
+		if(!ModelWidget::op_recortar)
 		{
 			/* Caso haja mais de 1 objeto selecionado, exibe uma mensagem diferente avisando
 			sobre a exclusão de multiplos objetos e a invalidação de objetos */
@@ -2143,7 +2143,7 @@ void ModeloWidget::excluirObjetos(void)
 		}
 
 		//Caso o usuário tenha confirmado a exclusão ou a operação de recortar esteja ativa
-		if(msg_box.result()==QDialog::Accepted || ModeloWidget::op_recortar)
+		if(msg_box.result()==QDialog::Accepted || ModelWidget::op_recortar)
 		{
 			try
 			{
@@ -2352,7 +2352,7 @@ void ModeloWidget::excluirObjetos(void)
 	}
 }
 
-void ModeloWidget::exibirMenuObjeto(void)
+void ModelWidget::exibirMenuObjeto(void)
 {
 	TableView *tab=NULL;
 
@@ -2380,14 +2380,14 @@ void ModeloWidget::exibirMenuObjeto(void)
 	}
 }
 
-void ModeloWidget::configurarMenuObjeto(BaseObject *obj_sel)
+void ModelWidget::configurarMenuObjeto(BaseObject *obj_sel)
 {
 	vector<BaseObject *> vet;
 	vet.push_back(obj_sel);
 	this->configurarMenuPopup(vet);
 }
 
-void ModeloWidget::desabilitarAcoesModelo(void)
+void ModelWidget::desabilitarAcoesModelo(void)
 {
 	action_codigo_fonte->setEnabled(false);
 	action_editar->setEnabled(false);
@@ -2404,7 +2404,7 @@ void ModeloWidget::desabilitarAcoesModelo(void)
 	action_acoes_rapidas->setEnabled(false);
 }
 
-void ModeloWidget::configurarSubMenu(BaseObject *obj)
+void ModelWidget::configurarSubMenu(BaseObject *obj)
 {
 	if(obj)
 	{
@@ -2497,7 +2497,7 @@ void ModeloWidget::configurarSubMenu(BaseObject *obj)
 	}
 }
 
-void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
+void ModelWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 {
 	QMenu *submenu=NULL;
 	Table *tabela=NULL;
@@ -2787,12 +2787,12 @@ void ModeloWidget::configurarMenuPopup(vector<BaseObject *> objs_sel)
 	}
 }
 
-bool ModeloWidget::modeloModificado(void)
+bool ModelWidget::modeloModificado(void)
 {
 	return(modificado);
 }
 
-DatabaseModel *ModeloWidget::getModel(void)
+DatabaseModel *ModelWidget::getModel(void)
 {
 	return(modelo);
 }

@@ -1,5 +1,5 @@
 #include "modeloverviewwidget.h"
-#include "modelowidget.h"
+#include "modelwidget.h"
 
 ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::WindowCloseButtonHint)
 {
@@ -9,7 +9,7 @@ ModelOverviewWidget::ModelOverviewWidget(QWidget *parent) : QWidget(parent, Qt::
 	this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
-void ModelOverviewWidget::show(ModeloWidget *model)
+void ModelOverviewWidget::show(ModelWidget *model)
 {
 	if(this->model)
 	{

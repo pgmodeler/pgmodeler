@@ -76,7 +76,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		void applyConfiguration(void);
 		void cancelConfiguration(void);
 
-		friend class ModeloWidget;
+		friend class ModelWidget;
 };
 
 #endif

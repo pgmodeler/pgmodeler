@@ -23,9 +23,9 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Sequence"), QT_TR_NOOP("Role"), QT_TR_NOOP("Conversion"),
 	QT_TR_NOOP("Cast"), QT_TR_NOOP("Language"), QT_TR_NOOP("Type"), QT_TR_NOOP("Tablespace"),
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
-	QT_TR_NOOP("Database"), QT_TR_NOOP("Table Relationship"),
+	QT_TR_NOOP("Database"), QT_TR_NOOP("Relationship"),
 	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"),
-	QT_TR_NOOP("Basic Relationship")
+	QT_TR_NOOP("Relationship")
 };
 
 QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={

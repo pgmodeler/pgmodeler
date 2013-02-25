@@ -543,8 +543,15 @@ void RelationshipView::configureLine(void)
 		this->configureProtectedIcon();
 		configuring_line=false;
 
-		tool_tip=Utf8String::create(base_rel->getName(true)) +
-						 " (" + base_rel->getTypeName() + ")";
+		/* Making a little tweak on the foreign key type name. Despite being of class BaseRelationship,
+		for semantics purposes shows the type of this relationship as "Relationship" unlike "Link" */
+		if(base_rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+			tool_tip=Utf8String::create(base_rel->getName(true)) +
+							 " (" + BaseObject::getTypeName(OBJ_RELATIONSHIP) + ")";
+		else
+			tool_tip=Utf8String::create(base_rel->getName(true)) +
+							 " (" + base_rel->getTypeName() + ")";
+
 		this->setToolTip(tool_tip);
 
 		for(i=0; i < 3; i++)

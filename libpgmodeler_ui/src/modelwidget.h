@@ -24,8 +24,8 @@
 	para criação de objetos gráficos e outras operações sobre os mesmos.
 */
 
-#ifndef MODELO_WIDGET_H
-#define MODELO_WIDGET_H
+#ifndef MODEL_WIDGET_H
+#define MODEL_WIDGET_H
 
 #include <QtGui>
 #include "databasemodel.h"
@@ -35,10 +35,10 @@
 #include "objectsscene.h"
 #include "taskprogresswidget.h"
 
-class ModeloWidget: public QWidget {
+class ModelWidget: public QWidget {
+	private:
 		Q_OBJECT
 
-	private:
 		MessageBox msg_box;
 
 		//! \brief Fator de zoom atual da cena de objetos
@@ -57,7 +57,7 @@ class ModeloWidget: public QWidget {
 		static bool op_recortar;
 
 		//! \brief Armazena a nível de classe o modelo que deu origem a operação de copia/recorte
-		static ModeloWidget *modelo_orig;
+		static ModelWidget *modelo_orig;
 
 		//! \brief Objetos copiados no modelo de origem
 		static vector<BaseObject *> objs_copiados;
@@ -150,8 +150,8 @@ class ModeloWidget: public QWidget {
 		void desabilitarAcoesModelo(void);
 
 	public:
-		ModeloWidget(QWidget *parent = 0);
-		~ModeloWidget(void);
+		ModelWidget(QWidget *parent = 0);
+		~ModelWidget(void);
 
 		void definirModificado(bool valor);
 

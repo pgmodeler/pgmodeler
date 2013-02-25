@@ -7,8 +7,8 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent, Qt
 												OBJ_ROLE, OBJ_CONVERSION, OBJ_CAST, OBJ_LANGUAGE,
 												OBJ_TYPE, OBJ_TABLESPACE, OBJ_OPFAMILY, OBJ_OPCLASS,
 												OBJ_RELATIONSHIP, OBJ_TEXTBOX, OBJ_COLUMN, OBJ_CONSTRAINT,
-												OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE, BASE_RELATIONSHIP };
-	int type_id, type_count=25;
+												OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
+	int type_id, type_count=24;
 	QListWidgetItem *item=NULL;
 	QPixmap icon;
 	QString str_aux;
@@ -245,15 +245,16 @@ void ModelObjectsWidget::updateObjectsList(void)
 		QFont font;
 		QString str_aux;
 		unsigned rel_type;
+		vector<BaseObject *> obj_list;
 		ObjectType types[]={  OBJ_DATABASE, OBJ_TABLE, OBJ_FUNCTION, OBJ_VIEW, OBJ_DOMAIN,
 													OBJ_SCHEMA, OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_SEQUENCE,
 													OBJ_ROLE, OBJ_CONVERSION, OBJ_CAST, OBJ_LANGUAGE,
 													OBJ_TYPE, OBJ_TABLESPACE, OBJ_OPFAMILY, OBJ_OPCLASS,
-													OBJ_RELATIONSHIP, OBJ_TEXTBOX, BASE_RELATIONSHIP },
+													OBJ_RELATIONSHIP, OBJ_TEXTBOX/*, BASE_RELATIONSHIP */ },
 				subtypes[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
 										 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
 
-		int type_cnt=20, subtype_cnt=5, type_id, count, count1, row, tab_id;
+		int type_cnt=19, subtype_cnt=5, type_id, count, count1, idx, tab_id;
 
 		try
 		{
@@ -265,23 +266,35 @@ void ModelObjectsWidget::updateObjectsList(void)
 				if(types[type_id]==OBJ_DATABASE)
 					count=1;
 				else
-					//Get the current object count on the database model
-					count=db_model->getObjectCount(types[type_id]);
+				{
+					//Get the current object list from  database model
+					obj_list=(*db_model->getObjectList(types[type_id]));
+
+					//Special case for relationship, merging the base relationship list to the relationship list
+					if(types[type_id]==OBJ_RELATIONSHIP)
+					{
+						vector<BaseObject *> obj_list_aux;
+						obj_list_aux=(*db_model->getObjectList(BASE_RELATIONSHIP));
+						obj_list.insert(obj_list.end(), obj_list_aux.begin(), obj_list_aux.end());
+					}
+
+					count=obj_list.size();
+				}
 
 				//If the current object type is visible and there is at least one object to be showed
-				for(row=0; visible_objs_map[types[type_id]] && row < count; row++)
+				for(idx=0; visible_objs_map[types[type_id]] && idx < count; idx++)
 				{
-					objectslist_tbw->insertRow(row);
+					objectslist_tbw->insertRow(idx);
 
 					if(types[type_id]!=OBJ_DATABASE)
-						object=db_model->getObject(row, types[type_id]);
+						object=obj_list.at(idx);
 					else
 						object=db_model;
 
 					//Creating the table item for the current object
 					tab_item=new QTableWidgetItem;
 					tab_item->setData(Qt::UserRole, generateItemValue(object));
-					objectslist_tbw->setItem(row, 0, tab_item);
+					objectslist_tbw->setItem(idx, 0, tab_item);
 
 					//Changes the item foreground color if the object is protected
 					if(object->isProtected())
@@ -316,12 +329,17 @@ void ModelObjectsWidget::updateObjectsList(void)
 					tab_item=new QTableWidgetItem;
 					tab_item->setData(Qt::UserRole, generateItemValue(object));
 
-					if(types[type_id]==BASE_RELATIONSHIP || types[type_id]==OBJ_RELATIONSHIP)
+					if(types[type_id]==OBJ_RELATIONSHIP)
 					{
 						str_aux=QString(BaseObject::getSchemaName(object->getObjectType()));
 
-						if(types[type_id]==BASE_RELATIONSHIP)
-							str_aux+="tv";
+						if(object->getObjectType()==BASE_RELATIONSHIP)
+						{
+							if(dynamic_cast<BaseRelationship *>(object)->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
+								str_aux+="fk";
+							else
+								str_aux+="tv";
+						}
 						else
 						{
 							rel_type=dynamic_cast<Relationship *>(object)->getRelationshipType();
@@ -342,8 +360,9 @@ void ModelObjectsWidget::updateObjectsList(void)
 
 					icon=QPixmap(QString(":/icones/icones/") + str_aux + QString(".png"));
 
-					objectslist_tbw->setItem(row, 1, tab_item);
+					objectslist_tbw->setItem(idx, 1, tab_item);
 					tab_item->setText(Utf8String::create(object->getTypeName()));
+
 					tab_item->setIcon(icon);
 					font=tab_item->font();
 					font.setItalic(true);
@@ -356,8 +375,8 @@ void ModelObjectsWidget::updateObjectsList(void)
 					font.setItalic(true);
 					tab_item1->setFont(font);
 
-					objectslist_tbw->setItem(row, 2, tab_item);
-					objectslist_tbw->setItem(row, 3, tab_item1);
+					objectslist_tbw->setItem(idx, 2, tab_item);
+					objectslist_tbw->setItem(idx, 3, tab_item1);
 					tab_item->setData(Qt::UserRole, generateItemValue(object));
 					tab_item1->setData(Qt::UserRole, generateItemValue(object));
 
@@ -429,14 +448,14 @@ void ModelObjectsWidget::updateObjectsList(void)
 					//Get the current table object count
 					count1=table->getObjectCount(subtypes[type_id]);
 
-					for(row=0; visible_objs_map[subtypes[type_id]] && row < count1; row++)
+					for(idx=0; visible_objs_map[subtypes[type_id]] && idx < count1; idx++)
 					{
-						objectslist_tbw->insertRow(row);
-						tab_object=dynamic_cast<TableObject *>(table->getObject(row, subtypes[type_id]));
+						objectslist_tbw->insertRow(idx);
+						tab_object=dynamic_cast<TableObject *>(table->getObject(idx, subtypes[type_id]));
 
 						//Creating the item for object name
 						tab_item=new QTableWidgetItem;
-						objectslist_tbw->setItem(row, 0, tab_item);
+						objectslist_tbw->setItem(idx, 0, tab_item);
 						tab_item->setText(Utf8String::create(tab_object->getName()));
 						tab_item->setToolTip(Utf8String::create(tab_object->getName()));
 						tab_item->setData(Qt::UserRole, generateItemValue(tab_object));
@@ -463,7 +482,7 @@ void ModelObjectsWidget::updateObjectsList(void)
 						icon=QPixmap(QString(":/icones/icones/") +
 													QString(BaseObject::getSchemaName(tab_object->getObjectType())) +
 													QString(".png"));
-						objectslist_tbw->setItem(row, 1, tab_item);
+						objectslist_tbw->setItem(idx, 1, tab_item);
 						tab_item->setText(Utf8String::create(tab_object->getTypeName()));
 						tab_item->setIcon(icon);
 						font=tab_item->font();
@@ -489,8 +508,8 @@ void ModelObjectsWidget::updateObjectsList(void)
 							tab_item->setForeground(BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 						}
 
-						objectslist_tbw->setItem(row, 2, tab_item);
-						objectslist_tbw->setItem(row, 3, tab_item1);
+						objectslist_tbw->setItem(idx, 2, tab_item);
+						objectslist_tbw->setItem(idx, 3, tab_item1);
 						tab_item->setText(Utf8String::create(table->getName()));
 						tab_item->setData(Qt::UserRole, generateItemValue(tab_object));
 
@@ -795,11 +814,10 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 		unsigned count, i, i1, rel_type;
 		QTreeWidgetItem *root=NULL,*item1=NULL, *item2=NULL;
 		QFont font;
-		vector<BaseObject *> tree_state;
-
+		vector<BaseObject *> tree_state, obj_list;
 		ObjectType types[]={ OBJ_ROLE, OBJ_TABLESPACE,
 												 OBJ_LANGUAGE, OBJ_CAST, OBJ_TEXTBOX,
-												 OBJ_RELATIONSHIP, BASE_RELATIONSHIP };
+												 OBJ_RELATIONSHIP };
 
 		try
 		{
@@ -830,21 +848,29 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 
 				updatedSchemaTree(root);
 
-				for(i=0; i < 7; i++)
+				for(i=0; i < 6; i++)
 				{
 					if(visible_objs_map[types[i]])
 					{
 						item1=new QTreeWidgetItem(root);
-
-						if(types[i]==BASE_RELATIONSHIP)
-							str_aux=QString(BaseObject::getSchemaName(types[i])) + "tv";
-						else
-							str_aux=QString(BaseObject::getSchemaName(types[i]));
+						str_aux=QString(BaseObject::getSchemaName(types[i]));
 
 						item1->setIcon(0,QPixmap(QString(":/icones/icones/") +
 																		 str_aux + QString("_grp") + QString(".png")));
 
-						count=db_model->getObjectCount(types[i]);
+						obj_list=(*db_model->getObjectList(types[i]));
+
+						//Special case for relationship, merging the base relationship list to the relationship list
+						if(types[i]==OBJ_RELATIONSHIP)
+						{
+							vector<BaseObject *> obj_list_aux;
+							obj_list_aux=(*db_model->getObjectList(BASE_RELATIONSHIP));
+							obj_list.insert(obj_list.end(), obj_list_aux.begin(), obj_list_aux.end());
+						}
+
+						count=obj_list.size();
+
+
 						item1->setText(0,BaseObject::getTypeName(types[i]) +
 													 QString(" (%1)").arg(count));
 						font=item1->font(0);
@@ -853,7 +879,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 
 						for(i1=0; i1 < count; i1++)
 						{
-							object=db_model->getObject(i1,types[i]);
+							object=obj_list.at(i1);
 
 							item2=new QTreeWidgetItem(item1);
 							item2->setText(0,Utf8String::create(object->getName()));
@@ -870,23 +896,27 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 
 							switch(types[i])
 							{
-								case OBJ_RELATIONSHIP:
-									rel_type=dynamic_cast<Relationship *>(object)->getRelationshipType();
-
-									if(rel_type==Relationship::RELATIONSHIP_11)
-										str_aux="11";
-									else if(rel_type==Relationship::RELATIONSHIP_1N)
-										str_aux="1n";
-									else if(rel_type==Relationship::RELATIONSHIP_NN)
-										str_aux="nn";
-									else if(rel_type==Relationship::RELATIONSHIP_DEP)
-										str_aux="dep";
-									else if(rel_type==Relationship::RELATIONSHIP_GEN)
-										str_aux="gen";
-								break;
-
 								case BASE_RELATIONSHIP:
-									str_aux="tv";
+								case OBJ_RELATIONSHIP:
+									rel_type=dynamic_cast<BaseRelationship *>(object)->getRelationshipType();
+
+									if(object->getObjectType()==BASE_RELATIONSHIP)
+									{
+									 if(rel_type==BaseRelationship::RELATIONSHIP_FK)
+										str_aux="fk";
+									 else
+										str_aux="tv";
+									}
+									else if(rel_type==BaseRelationship::RELATIONSHIP_11)
+										str_aux="11";
+									else if(rel_type==BaseRelationship::RELATIONSHIP_1N)
+										str_aux="1n";
+									else if(rel_type==BaseRelationship::RELATIONSHIP_NN)
+										str_aux="nn";
+									else if(rel_type==BaseRelationship::RELATIONSHIP_DEP)
+										str_aux="dep";
+									else if(rel_type==BaseRelationship::RELATIONSHIP_GEN)
+										str_aux="gen";
 								break;
 
 								default:
@@ -943,7 +973,7 @@ void ModelObjectsWidget::close(void)
 	QDockWidget::close();
 }
 
-void ModelObjectsWidget::setModel(ModeloWidget *model_wgt)
+void ModelObjectsWidget::setModel(ModelWidget *model_wgt)
 {
 	this->model_wgt=model_wgt;
 

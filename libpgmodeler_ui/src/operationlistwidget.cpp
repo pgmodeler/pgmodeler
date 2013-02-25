@@ -120,7 +120,7 @@ void OperationListWidget::updateOperationList(void)
 	emit s_operationListUpdated();
 }
 
-void OperationListWidget::setModelWidget(ModeloWidget *model)
+void OperationListWidget::setModelWidget(ModelWidget *model)
 {
 	operations_tw->clear();
 	this->modelo_wgt=model;

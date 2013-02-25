@@ -125,7 +125,7 @@ class ObjectsScene: public QGraphicsScene {
 		//! \brief Signal emitted when a object is selected
 		void s_objectSelected(BaseGraphicObject *objeto, bool selecionado);
 
-		friend class ModeloWidget;
+		friend class ModelWidget;
 };
 
 #endif

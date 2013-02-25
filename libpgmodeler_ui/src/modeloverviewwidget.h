@@ -30,14 +30,14 @@
 #include <QtGui>
 #include "exception.h"
 #include "ui_modeloverviewwidget.h"
-#include "modelowidget.h"
+#include "modelwidget.h"
 
 class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 	private:
 		Q_OBJECT
 
 		//! \brief Model which object are drawn on the overview widget
-		ModeloWidget *model;
+		ModelWidget *model;
 
 		//! \brief Zoom factor applied to the visualization
 		float zoom_factor;
@@ -73,7 +73,7 @@ class ModelOverviewWidget: public QWidget, public Ui::ModelOverviewWidget {
 		void updateZoomFactor(float zoom);
 
 		//! \brief Shows the overview specifying the model to be drawn
-		void show(ModeloWidget *model);
+		void show(ModelWidget *model);
 
 	signals:
 		//! \brief Signal emitted whenever the overview window change the visibility

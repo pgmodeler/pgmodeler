@@ -14,7 +14,7 @@ RESOURCES += res/resources.qrc
 windows:RCC_DIR += src
 
 SOURCES += $$PWD/src/formprincipal.cpp \
-           $$PWD/src/modelowidget.cpp \
+	   $$PWD/src/modelwidget.cpp \
 	   $$PWD/src/aboutform.cpp \
            $$PWD/src/messagebox.cpp \
            $$PWD/src/textboxwidget.cpp \
@@ -68,7 +68,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
 
 
 HEADERS += $$PWD/src/formprincipal.h \
-           $$PWD/src/modelowidget.h \
+	   $$PWD/src/modelwidget.h \
 	   $$PWD/src/aboutform.h \
            $$PWD/src/messagebox.h \
            $$PWD/src/baseobjectwidget.h \

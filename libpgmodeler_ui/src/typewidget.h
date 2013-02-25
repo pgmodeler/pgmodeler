@@ -30,7 +30,7 @@
 #include "pgsqltypewidget.h"
 #include "objecttablewidget.h"
 
-/*! \brief Declaring the Parameter class as a Qt metatype in order to permit
+/* Declaring the Parameter class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
 #include <QMetaType>
 Q_DECLARE_METATYPE(Parameter)
