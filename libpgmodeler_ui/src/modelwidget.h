@@ -19,7 +19,7 @@
 /**
 \ingroup libpgmodeler_ui
 \class ModelWidget
-\brief Implements the widget that permit the direct user interation over the database model.
+\brief Implements the widget that permits the direct user interation over the database model.
 */
 
 #ifndef MODEL_WIDGET_H

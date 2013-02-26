@@ -88,16 +88,13 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	modified=false;
 	new_obj_type=BASE_OBJECT;
 
-	//Gera um nome de arquivo termporário usando a classe QTEmporaryFile
+	//Generating a temporary file name for the model
 	QTemporaryFile tmp_file;
-	/* Seta a másca de geração do mesmo. Caso na máscara tenha um caminho absoluto, o arquivo será
-		gerado na pasta especificada pelo caminho */
+
+	//Configuring the template mask which includes the full path to temporary dir
 	tmp_file.setFileTemplate(GlobalAttributes::TEMPORARY_DIR + GlobalAttributes::DIR_SEPARATOR + QString("modelXXXXXX") + QString(".dbm"));
-	//Executa o método open para que o arquivo seja criado
 	tmp_file.open();
-	//Armazena o nome temporário
 	tmp_filename=tmp_file.fileName();
-	//Fecha o arquivo temporário
 	tmp_file.close();
 
 	protected_model_frm=new QFrame(this);
@@ -132,39 +129,28 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	grid->addWidget(label, 0, 1, 1, 1);
 	protected_model_frm->setLayout(grid);
 
-	//Aloca o modelo e a lista de operações
 	db_model=new DatabaseModel;
 	op_list=new OperationList(db_model);
 	scene=new ObjectsScene;
 	scene->setSceneRect(QRectF(0,0,2000,2000));
 
-	//Aloca o viewport com algumas opções de otimização na renderização
 	viewport=new QGraphicsView(scene);
 	viewport->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-
-	//Ativa o antialiasing de fonte e objetos
 	viewport->setRenderHint(QPainter::Antialiasing);
 	viewport->setRenderHint(QPainter::TextAntialiasing);
 	viewport->setRenderHint(QPainter::SmoothPixmapTransform);
 
-	//Força a cena a ser desenhada da esquerda para a direita e de cima para baixo
+	//Force the scene to be drawn from the left to right and from top to bottom
 	viewport->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-
-	//Otimizações: Cache do background (grade) e atualização mínima do viewport
-	//viewport->setCacheMode(QGraphicsView::CacheBackground);
 	viewport->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
 	viewport->centerOn(0,0);
 	this->applyZoom(1);
 
-	//visaogeral_wgt=new VisaoGeralWidget(cena);
-
-	//Aloca um grid layout para agrupar os widgets que formam o ModeloWidget
 	grid=new QGridLayout;
 	grid->addWidget(protected_model_frm, 0,0,1,1);
 	grid->addWidget(viewport, 1,0,1,1);
 	this->setLayout(grid);
 
-	//Aloca as ações do menu popup
 	action_source_code=new QAction(QIcon(QString(":/icones/icones/codigosql.png")), trUtf8("Source code"), this);
 	action_source_code->setShortcut(QKeySequence("Alt+S"));
 	action_source_code->setToolTip(trUtf8("Show object source code"));
@@ -229,7 +215,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_sel_sch_children=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select children"), this);
 	action_sel_sch_children->setToolTip(trUtf8("Selects all the children graphical objects on the selected schema"));
 
-	//Aloca as ações de criação de novo objeto
+	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)
 	{
 		actions_new_objects[types[i]]=new QAction(QIcon(QString(":/icones/icones/") +
@@ -240,7 +226,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	}
 
 
-	//Caso especial, criando um submenu de criação de relacionamentos.
+	//Creating the relationship submenu
 	rels_menu=new QMenu(this);
 	actions_new_objects[OBJ_RELATIONSHIP]->setMenu(rels_menu);
 
@@ -249,11 +235,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 		str_ico=BaseObject::getSchemaName(OBJ_RELATIONSHIP) + rel_types_cod[i] +  QString(".png");
 		str_txt=rel_labels[i];
 
-		/* Aloca a ação para o tipo de relacionamento. O dado da ação será o tipo do objeto
-		 OBJETO_RELACAO somado ao tipo do relacionamento (1-1,1-n,n-n,dep,gen). O tipo do
-		 relacionamento é obtido posteriormente quando o usuário clica na ação para
-		 criação do tipo desejado de relação, vide implementação de exibirFormObjeto() */
 		action=new QAction(QIcon(QString(":/icones/icones/") + str_ico), str_txt, this);
+
+		//Storing a unique identifier for the relationship type
 		action->setData(QVariant(OBJ_RELATIONSHIP + rel_types_id[i]));
 
 		connect(action, SIGNAL(triggered(bool)), this, SLOT(addNewObject(void)));
@@ -312,18 +296,15 @@ void ModelWidget::setModified(bool value)
 
 void ModelWidget::resizeEvent(QResizeEvent *)
 {
-	//Obtém o tamanho da cena
 	QRectF ret=scene->sceneRect();
 
-	/* Caso a largura/altura do viewport seja maior que a largura/altura é necessário
-		atualiza o tamanho da cena com os maiores valores de largura/altura */
+	//Validating the width and height of the scene, resizing if the dimension is invalid
 	if(viewport->rect().width() > ret.width())
 		ret.setWidth(viewport->rect().width());
 
 	if(viewport->rect().height() > ret.height())
 		ret.setHeight(viewport->rect().height());
 
-	//Reconfigura o tamanho da cena
 	scene->setSceneRect(ret);
 
 	emit s_modelResized();
@@ -331,12 +312,12 @@ void ModelWidget::resizeEvent(QResizeEvent *)
 
 bool ModelWidget::eventFilter(QObject *object, QEvent *event)
 {
-	//Filtra o evento Wheel caso seja disparado pelas barras de rolagem do viewport
+	//Filters the Wheel event if it is raised by the viewport scrollbars
 	if(event->type() == QEvent::Wheel &&
 		 (object==viewport->horizontalScrollBar() ||
 			(object==viewport->verticalScrollBar())))
 	{
-		//Redireciona o evento para o wheelEvent() do modelo
+		//Redirects the event to the wheelEvent() method of the model widget
 		this->wheelEvent(dynamic_cast<QWheelEvent *>(event));
 		return(true);
 	}
@@ -355,12 +336,14 @@ void ModelWidget::keyReleaseEvent(QKeyEvent *event)
 
 void ModelWidget::keyPressEvent(QKeyEvent *event)
 {
-	//Cancela a ação de inserção do objeto quando ESC é pressionado
+	//Cancels the insertion action when ESC is pressed
 	if(event->key()==Qt::Key_Escape)
 	{
 		this->cancelObjectAddition();
 		scene->clearSelection();
 	}
+	/* Install a event filter on the viewport scrollbars when CONTROL
+	is pressed in order to change the zoom using Crtl + Wheel scroll */
 	else if(event->key()==Qt::Key_Control)
 	{
 		viewport->horizontalScrollBar()->installEventFilter(this);
@@ -372,15 +355,11 @@ void ModelWidget::mousePressEvent(QMouseEvent *event)
 {
 	if(event->buttons()==Qt::LeftButton)
 	{
-		/* Se estiver inserindo um novo objeto (tipo_novo_objeto!=OBJETO_BASE),
-		 o clique do mouse indica que o usuário deseja inserir um objeto na posição
-		 do cursor, assim o cursor tem seu ícone alterado para o padrão (ArrowCursor)
-		 e o formulário do tipo de objeto a ser inserido é exibido */
-		if(new_obj_type==OBJ_TABLE || new_obj_type==OBJ_TEXTBOX ||
-			 new_obj_type==OBJ_VIEW)
+		/* If the user is adding a graphical object, the left click will set the initial position and
+		show the editing form related to the object type */
+		if(new_obj_type==OBJ_TABLE || new_obj_type==OBJ_TEXTBOX || new_obj_type==OBJ_VIEW)
 		{
-			this->showObjectForm(new_obj_type, NULL, NULL,
-														 viewport->mapToScene(event->pos()));
+			this->showObjectForm(new_obj_type, NULL, NULL, viewport->mapToScene(event->pos()));
 			this->cancelObjectAddition();
 		}
 	}
@@ -396,15 +375,10 @@ void ModelWidget::wheelEvent(QWheelEvent * event)
 {
 	if(event->modifiers()==Qt::ControlModifier)
 	{
-		//Delta < 0 indica que o usuário rolou o wheel para baixo
 		if(event->delta() < 0)
-			//Diminui o zoom
 			this->applyZoom(this->current_zoom - ZOOM_INCREMENT);
 		else
-			//Aumenta o zoom
 			this->applyZoom(this->current_zoom + ZOOM_INCREMENT);
-
-		//visaogeral_wgt->redimensionarFrameJanela();
 	}
 }
 
@@ -413,13 +387,10 @@ void ModelWidget::applyZoom(float zoom)
 	//Aplica o zoom somente se este for válido
 	if(zoom >= MINIMUM_ZOOM && zoom <= MAXIMUM_ZOOM)
 	{
-		//Reinicia a matriz de tranformação do viewport
 		viewport->resetTransform();
-		//Aplica a matriz de escala para ampliar/reduzir a visão
 		viewport->scale(zoom, zoom);
-
 		viewport->centerOn(0,0);
-		//Armazena o zoom aplicado como atual
+
 		this->current_zoom=zoom;
 		emit s_zoomModified(zoom);
 	}
@@ -432,16 +403,13 @@ float ModelWidget::currentZoom(void)
 
 void ModelWidget::handleObjectAddition(BaseObject *object)
 {
-	//Converte o objeto base para objeto gráfico
 	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
-	//Caso seja um objeto gráfico
 	if(graph_obj)
 	{
 		ObjectType obj_type=graph_obj->getObjectType();
 		QGraphicsItem *item=NULL;
 
-		//Cria um objeto gráfico na cena conforme o tipo do objeto base
 		switch(obj_type)
 		{
 			case OBJ_TABLE:
@@ -466,7 +434,6 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 			break;
 		}
 
-		//Após a criação do objeto o mesmo é inserido na cena
 		scene->addItem(item);
 
 		if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW)
@@ -478,19 +445,17 @@ void ModelWidget::handleObjectAddition(BaseObject *object)
 
 void ModelWidget::addNewObject(void)
 {
-	//Obtém a ação de chamou o slot
 	QAction *action=dynamic_cast<QAction *>(sender());
 
 	if(action)
 	{
 		BaseObject *parent_obj=NULL;
-		//Obtém o tipo do objeto que necessita ser inserido no modelo
 		ObjectType obj_type=static_cast<ObjectType>(action->data().toUInt());
 
-		/* Caso haja um objeto selecionado e o tipo do objeto for um dos
-		 tipos de objetos de tabela, o objeto selecionado é a própria
-		 tabela que receberá o objeto, sendo assim o referência 'objeto_pai' recebe
-		 a própria tabela */
+
+		/* If the user wants to add a table object or a object inside a schema
+		uses as parent object the selected object, because the user only can add
+		these types after select a table or schema, respectively */
 		if(selected_objects.size()==1 &&
 			 ((obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT ||
 				 obj_type==OBJ_TRIGGER || obj_type==OBJ_INDEX ||
@@ -498,11 +463,8 @@ void ModelWidget::addNewObject(void)
 				selected_objects[0]->getObjectType()==OBJ_SCHEMA))
 			parent_obj=selected_objects[0];
 
-		/* Caso o tipo de objeto a ser inserido não seja visão, tabela ou caixa de texto
-		 exibe o formulário de criação do objeto */
-
-		if(parent_obj && parent_obj->getObjectType()==OBJ_SCHEMA &&
-			 (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW))
+		//Creating a table or view inside a schema
+		if(parent_obj && parent_obj->getObjectType()==OBJ_SCHEMA &&	 (obj_type==OBJ_TABLE || obj_type==OBJ_VIEW))
 		{
 			BaseObjectView *sch_graph=dynamic_cast<BaseObjectView *>(dynamic_cast<Schema *>(parent_obj)->getReceiverObject());
 			QSizeF size = sch_graph->boundingRect().size();
@@ -524,12 +486,8 @@ void ModelWidget::addNewObject(void)
 			this->showObjectForm(obj_type, NULL, parent_obj);
 		else
 		{
-			/* Para os tipos tabela, visão e caixa de texto o processo de criação é
-			diferente: o usuário precisa clicar no ícone do objeto (no meno novo objeto)
-			e clicar no modelo. Ao clicar no menu o cursor do mouse é modificado com
-			o ícone do tipo de objeto a ser criado */
+			//For the graphical object, changes the cursor icon until the user click on the model to show the editing form
 			viewport->setCursor(QCursor(action->icon().pixmap(QSize(32,32)),0,0));
-			//Armazena o tipo do objeto a ser criado pois este é referenciado no mousePressEvent() */
 			this->new_obj_type=obj_type;
 			this->disableModelActions();
 		}
@@ -540,12 +498,11 @@ void ModelWidget::handleObjectRemoval(BaseObject *object)
 {
 	BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 
-	//Caso o objeto seja gráfico remove-o da cena
 	if(graph_obj)
 	{
-		//Remove o objeto obtendo a referência ao objeto receptor (representação gráfico do mesmo na cena)
 		scene->removeItem(dynamic_cast<QGraphicsItem *>(graph_obj->getReceiverObject()));
 
+		//Updates the parent schema if the removed object were a table or view
 		if(graph_obj->getSchema() &&
 			 (graph_obj->getObjectType()==OBJ_TABLE || graph_obj->getObjectType()==OBJ_VIEW))
 			dynamic_cast<Schema *>(graph_obj->getSchema())->setModified(true);
@@ -568,16 +525,10 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 	itr=selected_objects.begin();
 	itr_end=selected_objects.end();
 
-	/* O parâmetro fim_movimento indica se a operação de movimentação de objetos
-		foi finalizada. Quando este parâmetro é false, indica que a movimentação
-		foi iniciada, desta forma os objetos são adicionado  lista de operações
-		antes do movimento acontecer */
 	if(!end_moviment)
 	{
-		//Inicia um encadeamento de operações
 		op_list->startOperationChain();
 
-		//Varre a lista de objetos selec
 		while(itr!=itr_end)
 		{
 			obj=dynamic_cast<BaseGraphicObject *>(*itr);
@@ -602,32 +553,33 @@ void ModelWidget::handleObjectsMovement(bool end_moviment)
 			if(obj->getObjectType()==OBJ_TABLE || obj->getObjectType()==OBJ_VIEW)
 			{
 				Schema *schema=dynamic_cast<Schema *>(dynamic_cast<BaseTable *>(obj)->getSchema());
+
+				//Update the schema if this isn't done yet
 				if(std::find(schemas.begin(),schemas.end(),schema)==schemas.end())
 				{
 					schema->setModified(true);
+
+					//Insert the updated schema to a list to avoid a second (unnecessary) update
 					schemas.push_back(schema);
 				}
 			}
 		}
 
-		//Caso seja o final do movimento finaliza o encadeamento de operações
 		op_list->finishOperationChain();
 		this->modified=true;
-		//Emite um sinal indicando que objetos foram movimentados
+
 		emit s_objectsMoved();
 	}
 }
 
 void ModelWidget::handleObjectModification(BaseGraphicObject *object)
 {
-	//Adciona o objeto modificado   lista de operações
 	op_list->registerObject(object, Operation::OBJECT_MODIFIED);
 	this->modified=true;
 
 	if(object->getSchema())
 		dynamic_cast<Schema *>(object->getSchema())->setModified(true);
 
-	//Emite um sinal indicando que um objeto foi modificado
 	emit s_objectModified();
 }
 
@@ -638,20 +590,19 @@ void ModelWidget::configureObjectSelection(void)
 	map<unsigned, QGraphicsItem *> objs_map;
 	deque<unsigned> sort_vect;
 
-	//Limpa a lista atual de objetos selecionados
 	selected_objects.clear();
 
-	//Armazena em um vector os objetos de origem dos objetos gráficos da cena
+	//Stores in a map each selected graphical object on the scene
 	while(!items.isEmpty())
 	{
-		//Obtém um item da lista de objetos da cena
+		//Only store object that can be converted to BaseObjectView
 		item=dynamic_cast<BaseObjectView *>(items.front());
 		items.pop_front();
 
 		if(item)
 		{
-			//Armazena o objeto origem da representação gráfica no mapa para ordenação posterior
 			objs_map[item->getSelectionOrder()]=item;
+			//Storing the selection order of the object to a latter sorting
 			sort_vect.push_front(item->getSelectionOrder());
 		}
 	}
@@ -659,37 +610,32 @@ void ModelWidget::configureObjectSelection(void)
 	//Ordena os ids de seleção obtidos anteriomente
 	std::sort(sort_vect.begin(), sort_vect.end());
 
-	//Armazena os objetos no vetor de objetos selecionados obtendo cada um em ordem se seleção
 	while(!sort_vect.empty())
 	{
-		//Armazena o objeto origem da representação gráfica na lista de objetos selecionados
+		//Create the selected objects list with the object sorted by selection order
 		item=dynamic_cast<BaseObjectView *>(objs_map[sort_vect.front()]);
 		selected_objects.push_back(item->getSourceObject());
 		sort_vect.pop_front();
 	}
 
-	/* Caso o tipo de novo objeto seja um valor acima de OBJETO_TABELA_BASE
-		 indica que o usuário selecionou/deselecionou um objeto usando a ferramenta
-		 de adição de relacionamento */
+	/* Case the new_obj_type is a value greater the BASE_TABLE indicates that the user
+	(un)selected a object using some "Relationship" action */
 	if(new_obj_type > BASE_TABLE)
 	{
 		unsigned count=selected_objects.size();
 		ObjectType obj_type1, obj_type2;
 
-		//Caso haja mais de 2 objeto selecionados, cancela a operação
+		//If there is more than 2 object select cancel the operation
 		if(count > 2 || count==0)
 			this->cancelObjectAddition();
-		//Caso haja 1 ou dois objetos selecionados
 		else if(count >=1 && count <=2)
 		{
-			//Obtém os tipos dos objetos
+			//Get the selected objects types
 			obj_type1=selected_objects[0]->getObjectType();
 			obj_type2=(count==2 ? selected_objects[1]->getObjectType() : BASE_OBJECT);
 
-			//Caso haja apenas 1 objeto selecionado ativa a linha que simula a criação do relacionamento
-			if(count==1 && obj_type1==OBJ_TABLE &&
-				 new_obj_type > BASE_TABLE &&
-				 QApplication::keyboardModifiers()==0)
+			//If there is only one selected object and this is a table, activates the relationship creation
+			if(count==1 && obj_type1==OBJ_TABLE && new_obj_type > BASE_TABLE &&	 QApplication::keyboardModifiers()==0)
 			{
 				BaseGraphicObject *obj_graf=dynamic_cast<BaseGraphicObject *>(selected_objects[0]);
 				BaseObjectView *objeto=dynamic_cast<BaseObjectView *>(obj_graf->getReceiverObject());
@@ -698,22 +644,22 @@ void ModelWidget::configureObjectSelection(void)
 																	 QPointF(objeto->scenePos().x() + objeto->boundingRect().width()/2,
 																					 objeto->scenePos().y() + objeto->boundingRect().height()/2));
 			}
-			//Caso o usuário seleciona objetos que não sejam tabelas cancela a operação
+			//If the user has selected object that are not tables, cancel the operation
 			else if(obj_type1!=OBJ_TABLE ||
 							(obj_type2!=OBJ_TABLE && obj_type2!=BASE_OBJECT))
 			{
 				this->cancelObjectAddition();
 			}
 
-			/* Caso haja apenas 1 objeto selecionado e o SHIFT esteja pressionado, cria um auto relacionamento ou
-			 se houver 2 objetos selecionados (tabelas) cria um relacionamento entre eles */
+			/* Case there is only one selected object (table) and the SHIFT key is pressed too, creates a self-relationship.
+				 Case there is two selected objects, create a relationship between them */
 			else if((count==1 && obj_type1==OBJ_TABLE &&  QApplication::keyboardModifiers()==Qt::ShiftModifier) ||
 							(count==2 && obj_type1==OBJ_TABLE && obj_type2==OBJ_TABLE))
 			{
-				//Exibe o form de edição de relacionamento
 				this->showObjectForm(new_obj_type);
+
+				//Cancels the operation after showing the relationship editing form
 				scene->clearSelection();
-				//Cancela a operação restaurando o estado original das ações
 				this->cancelObjectAddition();
 			}
 		}
@@ -725,21 +671,17 @@ void ModelWidget::configureObjectSelection(void)
 void ModelWidget::selectAllObjects(void)
 {
 	QPainterPath pth;
-	/* Cria um QPainterPath com as dimensões do tamanho total da cena,
-		desta forma todos os objetos dentro do retângulo formado serão
-		selecionados com o método cena->setSelectionArea() */
 	pth.addRect(scene->sceneRect());
 	scene->setSelectionArea(pth);
 }
 
 void ModelWidget::convertRelationshipNN(void)
 {
-	//Obtém o relacionamento a ser convertido da ação que disparou o método
 	Relationship *rel=reinterpret_cast<Relationship *>(action_convert_relnn->data().value<void *>());
 
 	if(rel)
 	{
-		//Só converte o relacionamento caso este seja n-n
+		//Converts only Many-to-Many relationship
 		if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
 		{
 			msg_box.show(trUtf8("Confirmation"),
@@ -765,25 +707,24 @@ void ModelWidget::convertRelationshipNN(void)
 
 					op_count=op_list->getCurrentSize();
 
-					//Obtém o xml que define a tabela do relacionamento
+					//Stores the XML code definition for the table generated by the relationship
 					tab_nn=rel->getReceiverTable();
 					tab_xml=tab_nn->getCodeDefinition(SchemaParser::XML_DEFINITION);
 
-					//Cria a mesma a partir do xml
+					//Creates the table from the xml code
 					XMLParser::restartParser();
 					XMLParser::loadXMLBuffer(tab_xml);
 					tab=db_model->createTable();
 					tab_name=tab->getName();
 
-					/* Caso haja outras tabelas no modelo com o nome da tabela recém criada a mesma terá
-				seu nome alterado até que não existam tabelas com mesmo nome que ela */
+					//Renames the table if there is other with the same name on the model avoiding conflicts
 					while(db_model->getObject(tab->getName(true), OBJ_TABLE))
 					{
 						tab->setName(tab_name + QString("_%1").arg(i));
 						i++;
 					}
 
-					//Copia os atributos do relacionamento n-n para a tabela gerada
+					//Copies the relationship attributes to the created table
 					count=rel->getAttributeCount();
 					for(idx=0; idx < count; idx++)
 					{
@@ -793,7 +734,7 @@ void ModelWidget::convertRelationshipNN(void)
 						tab->addColumn(col);
 					}
 
-					//Copia as restrições  do relacionamento n-n para a tabela gerada
+					//Copies the relationship constraints to the created table
 					count=rel->getConstraintCount();
 					for(idx=0; idx < count; idx++)
 					{
@@ -815,45 +756,34 @@ void ModelWidget::convertRelationshipNN(void)
 						tab->addConstraint(constr);
 					}
 
-					//Inicia o encadeamento de operaçẽos
 					op_list->startOperationChain();
 
-					//Remove o relacionamento n-n do modelo
+					//Removes the many-to-many relationship from the model
 					db_model->removeObject(rel);
-					//Adiciona-o   lista de operações
 					op_list->registerObject(rel, Operation::OBJECT_REMOVED);
 
-					//A posição padrão da tabela originada será o ponto médio entre as tabelas participantes do relacionamento
+					//The default position for the table will be the middle point between the relationship participant tables
 					pnt.setX((src_tab->getPosition().x() + dst_tab->getPosition().x())/2.0f);
 					pnt.setY((src_tab->getPosition().y() + dst_tab->getPosition().y())/2.0f);
 					tab->setPosition(pnt);
 
-					//Adiciona a tabela criada ao modelo
+					//Adds the new table to the model
 					db_model->addObject(tab);
-					//Adiciona uma operaç   lista de operações indicando a criação da tabela
 					op_list->registerObject(tab, Operation::OBJECT_CREATED);
 
-					//Aloca um relacionamento entre a nova tabela e a tabela de origem do relacionamento
-					//nome_rel=QString("rel_") + tab->getName(false) + QString("_") + tab_orig->getName(false);
+					//Creates a one-to-many relationship that links the source table of the many-to-many rel. to the created table
 					rel1=new Relationship(Relationship::RELATIONSHIP_1N,
 																src_tab, tab, src_mand, false, true,
 																"", "", true);
-
-					//Adiciona o relacionamento criado ao modelo e   lista de operações
 					db_model->addRelationship(rel1);
 					op_list->registerObject(rel1, Operation::OBJECT_CREATED);
 
-					//Aloca um relacionamento entre a nova tabela e a tabela de destino do relacionamento
+					//Creates a one-to-many relationship that links the destination table of the many-to-many rel. to the created table
 					rel2=new Relationship(Relationship::RELATIONSHIP_1N,
 																dst_tab, tab, dst_mand, false, true,
 																"", "", true);
-
-
-					//Adiciona o relacionamento criado ao modelo e   lista de operações
 					db_model->addRelationship(rel2);
 					op_list->registerObject(rel2, Operation::OBJECT_CREATED);
-
-					//Finaliza o encademanento de operações
 					op_list->finishOperationChain();
 
 					emit s_objectCreated();
@@ -862,21 +792,15 @@ void ModelWidget::convertRelationshipNN(void)
 				{
 					if(op_count < op_list->getCurrentSize())
 					{
-						//Obtém a quantidade de operações que necessitam ser removidas
 						unsigned qtd=op_list->getCurrentSize()-op_count;
-
-						//Anula o encadeamento de operações para que as mesmas seja
-						//desfeitas uma a uma ignorando o encadeamento
 						op_list->ignoreOperationChain(true);
 
-						//Desfaz as operações na quantidade calculada e remove a operação da lista
 						for(unsigned i=0; i < qtd; i++)
 						{
 							 op_list->undoOperation();
 							 op_list->removeLastOperation();
 						}
 
-						//Desfaz a anulação do encadeamento
 						op_list->ignoreOperationChain(false);
 					}
 
@@ -891,16 +815,12 @@ void ModelWidget::loadModel(const QString &filename)
 {
 	try
 	{
-		//Configura o widget de progresso para exibir o progresso de carregamento do modelo
 		connect(db_model, SIGNAL(s_objectLoaded(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
 		task_prog_wgt->setWindowTitle(trUtf8("Loading database model"));
 		task_prog_wgt->show();
 
-		//Carrega o arquivo
 		db_model->loadModel(filename);
 		this->filename=filename;
-
-		//Ajusta o tamanho da cena
 		this->adjustSceneSize();
 
 		task_prog_wgt->close();
@@ -925,9 +845,6 @@ void ModelWidget::adjustSceneSize(void)
 
 	ObjectsScene::getGridOptions(show_grid, align_objs, show_delims);
 
-	/* Reconfigura o retângulo da cena, para isso obtem-se o boundingRect
-		de todos os itens juntos e caso esse retangulo seja maior que o
-		da cena o mesmo será o novo retângulo da cena */
 	scene_rect=scene->sceneRect();
 	objs_rect=scene->itemsBoundingRect();
 
@@ -940,7 +857,6 @@ void ModelWidget::adjustSceneSize(void)
 	scene->setSceneRect(scene_rect);
 	viewport->centerOn(0,0);
 
-	//Alinha os objetos   grade caso a opção esteja ativa
 	if(align_objs)
 		scene->alignObjectsToGrid();
 }
