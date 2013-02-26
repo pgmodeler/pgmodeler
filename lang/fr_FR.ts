@@ -555,11 +555,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+0"/>
-        <source>Table Relationship</source>
-        <translation>Relation entre tables</translation>
+        <location line="+2"/>
+        <source>Relationship</source>
+        <translation>Relation</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-1"/>
         <source>Textbox</source>
         <translation>Zone de texte</translation>
     </message>
@@ -572,11 +573,6 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location line="+0"/>
         <source>Parameter</source>
         <translation>Paramètre</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Basic Relationship</source>
-        <translation>Relation basique</translation>
     </message>
 </context>
 <context>
@@ -643,7 +639,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Créer / Éditer: </translation>
     </message>
     <message>
-        <location line="+369"/>
+        <location line="+375"/>
         <source>Value(s)</source>
         <translation>Valeur(s)</translation>
     </message>
@@ -3340,6 +3336,86 @@ Message retourné par le SGBD: %1</translation>
     </message>
 </context>
 <context>
+    <name>ModelObjectsWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/modelobjectswidget.ui" line="+36"/>
+        <source>Model Objects</source>
+        <translation>Objets du modèle</translation>
+    </message>
+    <message>
+        <location line="+143"/>
+        <source>1</source>
+        <translation>1</translation>
+    </message>
+    <message>
+        <location line="+70"/>
+        <source>Object</source>
+        <translation>Objet</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Type</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Parent Object</source>
+        <translation>Objet parent</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Parent Type</source>
+        <translation>Type parent</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Visible Object Types</source>
+        <translation>Afficher les objets des types suivants</translation>
+    </message>
+    <message>
+        <location line="+61"/>
+        <source>Select All</source>
+        <translation>Tout sélectionner</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Clear All</source>
+        <translation>Tout effacer</translation>
+    </message>
+    <message>
+        <location line="+56"/>
+        <source>Select</source>
+        <translation>Sélectionner</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Objects view configuration</source>
+        <translation>Filtres d&apos;affichage des objets</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+41"/>
+        <location line="+38"/>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <location line="-44"/>
+        <source>Tree view</source>
+        <translation>Vue en arbre</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>List view</source>
+        <translation>Vue en liste</translation>
+    </message>
+</context>
+<context>
     <name>ModelOverviewWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/modeloverviewwidget.ui" line="+41"/>
@@ -3381,69 +3457,75 @@ Message retourné par le SGBD: %1</translation>
     </message>
 </context>
 <context>
-    <name>ModeloWidget</name>
+    <name>ModelWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelowidget.cpp" line="+75"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="+75"/>
+        <location line="+117"/>
+        <source>Copy</source>
+        <translation>Copie</translation>
+    </message>
+    <message>
+        <location line="-117"/>
         <source>Generalization</source>
         <translation>Généralisation</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+55"/>
         <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; The object model is protected! New objects will be inserted only when the protection is removed!</source>
         <translation>&lt;strong&gt;ATTENTION:&lt;/strong&gt; Le modèle est verrouillé! Les nouveaux objets seront insérés lorsque le vérrou sera enlevé!</translation>
     </message>
     <message>
         <location line="+38"/>
-        <location line="+2554"/>
+        <location line="+2480"/>
         <source>Source code</source>
         <translation>Code source</translation>
     </message>
     <message>
-        <location line="-2552"/>
+        <location line="-2478"/>
         <source>Show object source code</source>
         <translation>Afficher le code source de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2543"/>
+        <location line="+2469"/>
         <source>Properties</source>
         <translation>Propriétés</translation>
     </message>
     <message>
-        <location line="-2541"/>
+        <location line="-2467"/>
         <source>Edit the object properties</source>
         <translation>Editer les propriétés de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2568"/>
+        <location line="+2494"/>
         <source>Protect</source>
         <translation>Vérrouiller</translation>
     </message>
     <message>
-        <location line="-2567"/>
-        <location line="+2562"/>
+        <location line="-2493"/>
+        <location line="+2488"/>
         <source>Unprotect</source>
         <translation>Déverrouiller</translation>
     </message>
     <message>
-        <location line="-2561"/>
-        <source>Pretects the object(s) against modifications</source>
+        <location line="-2487"/>
+        <source>Protects object(s) from modifications</source>
         <translation>Empêcher l(es)&apos;objet(s) d&apos;être modifiés</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Removes from the objetc(s) the protection against modifications</source>
-        <translation>Autoriser le(s) objet(s) à être modfiés</translation>
+        <source>Unprotect objetc(s) from modifications</source>
+        <translation>Libérer l(es)&apos;objet(s) afin d&apos;être modifiés</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2570"/>
+        <location line="+2496"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location line="-2568"/>
+        <location line="-2494"/>
         <source>Delete the selected object(s)</source>
         <translation>Supprimer les objets sélectionnés</translation>
     </message>
@@ -3458,18 +3540,17 @@ Message retourné par le SGBD: %1</translation>
         <translation>Sélectionner tous les objets graphiques du modèle</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
+        <source>Convert rel. n-n</source>
+        <translation>Convertir rel. n-n</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Converts the n-n relationship into table</source>
         <translation>Convertir la relation n-n en table</translation>
     </message>
     <message>
-        <location line="-117"/>
-        <location line="+119"/>
-        <source>Copy</source>
-        <translation>Copier</translation>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Copy the selected objects(s)</source>
         <translation>Copier le(s) objet(s) sélectionné(s)</translation>
     </message>
@@ -3480,8 +3561,8 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Paste the previos copied object(s)</source>
-        <translation>Coller l&apos;(es) objet(s) précédemment copié(s)</translation>
+        <source>Paste the previous copied object(s)</source>
+        <translation>Coller l&apos;(es) objet(s) copié(s)</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3489,9 +3570,19 @@ Message retourné par le SGBD: %1</translation>
         <translation>Couper</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+2"/>
+        <source>Cut the selected object(s)</source>
+        <translation>Couper l&apos;(es) objets(s) selectionnés(s)</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Depend. / Refer.</source>
+        <translation>Dépend. / Référ.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Displays objects that reference and that are dependent of the selected object</source>
-        <translation>Afficher les objets qui référencent et qui sont dépendants des objets sélectionnés</translation>
+        <translation>Afficher les objets qui référencent et/ou qui sont dépendants des objets sélectionnés</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -3555,40 +3646,65 @@ Message retourné par le SGBD: %1</translation>
         <translation>Sélectionne tout les &amp;eacute;l&amp;eacute;ments graphiques du sch&amp;eacute;ma actuellement s&amp;eacute;lectionné</translation>
     </message>
     <message>
-        <location line="+699"/>
-        <source>Loading database model</source>
-        <translation>Ouverture du modèle de base de données</translation>
-    </message>
-    <message>
-        <location line="+242"/>
-        <source>Saving database model</source>
-        <translation>Enregistrement du modèle de base de données</translation>
-    </message>
-    <message>
-        <location line="-396"/>
-        <location line="+948"/>
-        <location line="+408"/>
+        <location line="+515"/>
+        <location line="+945"/>
+        <location line="+383"/>
         <location line="+6"/>
         <source>Confirmation</source>
         <translation>Confirmation</translation>
     </message>
     <message>
-        <location line="-413"/>
+        <location line="-1333"/>
+        <source>Do you really want to convert the relationship?</source>
+        <translation>Souhaitez vous réellement convertir la relation?</translation>
+    </message>
+    <message>
+        <location line="+150"/>
+        <source>Loading database model</source>
+        <translation>Ouverture du modèle de base de données</translation>
+    </message>
+    <message>
+        <location line="+243"/>
+        <source>Saving database model</source>
+        <translation>Enregistrement du modèle de base de données</translation>
+    </message>
+    <message>
+        <location line="+552"/>
         <source>Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model.</source>
         <translation>Copier également les dépendences des objets sélectionnés? Ceci minimise la perte des références lorsque les objets copiés sont collés dans un autre modèle.</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+109"/>
         <source>Pasting objects...</source>
         <translation>Collage des objets...</translation>
     </message>
     <message>
-        <location line="+231"/>
-        <source>Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!</source>
-        <translation>Tous les objets n&apos;ont pas été collés dans le modèle à cause d&apos;erreurs retournés durant le processus! Se référer à la pile d&apos;erreurs pour plus de détails</translation>
+        <location line="+16"/>
+        <source>Validating object: %1 (%2)</source>
+        <translation>Validation de l&apos;objet: %1 (%2)</translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+100"/>
+        <source>Generating XML code of object: %1 (%2)</source>
+        <translation>Génération du code XML de l&apos;objet : %1 (%2)</translation>
+    </message>
+    <message>
+        <location line="+48"/>
+        <source>Pasting object: %1 (%2)</source>
+        <translation>Collage de l&apos;objet: %1 (%2)</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!</source>
+        <translation>Tous les objets n&apos;ont pas été collés dans le modèle à cause d&apos;erreurs retournés durant le processus! Se référer à la pile d&apos;erreurs pour plus de détails!</translation>
+    </message>
+    <message>
+        <location line="+68"/>
+        <source>CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?</source>
+        <translation>ATTENTION: Supprimer plusieur objets en une seule fois provoque des invalidation irréversible sur les autres objets du modèle. Souhaitez vous réllement supprimer TOUS les objets sélectionnés?</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>Do you really want to delete the selected object?</source>
         <translation>Souhaitez vous réellement supprimer l&apos;objet sélectionné?</translation>
     </message>
@@ -3598,49 +3714,9 @@ Message retourné par le SGBD: %1</translation>
         <translation>(aucun objet)</translation>
     </message>
     <message>
-        <location line="+336"/>
+        <location line="+320"/>
         <source>Constraints</source>
         <translation>Contraintes</translation>
-    </message>
-    <message>
-        <location line="-1989"/>
-        <source>Convert a relationship is an irreversible operation and causes the deletion of all operation history! Do you want to continue?</source>
-        <translation>Convertir une relation est une opération irréversible qui cause la suppression de tout l&apos;historique des opérations? Souhaitez vous continuer?</translation>
-    </message>
-    <message>
-        <location line="-587"/>
-        <source>Convert rel. n-n</source>
-        <translation>Convertir rel n-n</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Cut the selected object(s)</source>
-        <translation>Couper l&apos;(es) objets(s) selectionnés(s)</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Depend. / Refer.</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+1928"/>
-        <source>CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?</source>
-        <translation>ATTENTION: Supprimer plusieur objets en une seule fois provoque des invalidation irréversible sur les autres objets du modèle. Souhaitez vous réllement supprimer TOUS les objets sélectionnés?</translation>
-    </message>
-    <message>
-        <location line="-282"/>
-        <source>Validating object: %1 (%2)</source>
-        <translation>Validaiont de l&apos;objet: %1 (%2)</translation>
-    </message>
-    <message>
-        <location line="+173"/>
-        <source>Pasting object: %1 (%2)</source>
-        <translation>Collage de l&apos;objet: %1 (%2)</translation>
-    </message>
-    <message>
-        <location line="-58"/>
-        <source>Generating XML code of object: %1 (%2)</source>
-        <translation>Génération du code XML de l&apos;objet : %1 (%2)</translation>
     </message>
 </context>
 <context>
@@ -4996,7 +5072,7 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>Table</name>
     <message>
-        <location filename="../libpgmodeler/src/table.cpp" line="+13"/>
+        <location filename="../libpgmodeler/src/table.cpp" line="+14"/>
         <source>new_table</source>
         <translation>nouvelle_table</translation>
     </message>
@@ -5174,182 +5250,6 @@ Message retourné par le SGBD: %1</translation>
     </message>
 </context>
 <context>
-    <name>TipoWidget</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/tipowidget.ui" line="+20"/>
-        <source>Form</source>
-        <translation>Formulaire</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Configuration:</source>
-        <translation>Configuration:</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Base Type</source>
-        <translation>Type de base</translation>
-    </message>
-    <message>
-        <location line="+16"/>
-        <source>Enumeration</source>
-        <translation>Enumération</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Composite</source>
-        <translation>Composite</translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>Enumerations</source>
-        <translation>Énumérations</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Enumeration:</source>
-        <translation>Énumeration:</translation>
-    </message>
-    <message>
-        <location line="+25"/>
-        <location line="+11"/>
-        <source>Attributes</source>
-        <translation>Attributs</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Internal Length:</source>
-        <translation>Long. Interne:</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Storage:</source>
-        <translation>Stockage:</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>By Value:</source>
-        <translation>Par valeur: </translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Category:</source>
-        <translation>Catégorie:</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Preferred:</source>
-        <translation>Préféré:</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Delimiter:</source>
-        <translation>Délimiteur:</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Alignment:</source>
-        <translation>Alignement:</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>char</source>
-        <translation>char</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>smallint</source>
-        <translation>smallint</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>integer</source>
-        <translation>integer</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>double precision</source>
-        <translation>double plrecision</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Default Value:</source>
-        <translation>Valeur par défaut:</translation>
-    </message>
-    <message>
-        <location line="+11"/>
-        <source>Functions</source>
-        <translation>Fonctions</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>INPUT:</source>
-        <translatorcomment>Traduction approprié ?</translatorcomment>
-        <translation>INPUT:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>OUTPUT:</source>
-        <translatorcomment>Traduction approprié ?</translatorcomment>
-        <translation>OUTPUT:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>RECV:</source>
-        <translatorcomment>Traduction approprié ?</translatorcomment>
-        <translation>RECV:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>SEND:</source>
-        <translatorcomment>Traduction approprié ?</translatorcomment>
-        <translation>SEND:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>TPMOD_IN:</source>
-        <translatorcomment>Traduction approprié ?</translatorcomment>
-        <translation>TPMOD_IN:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>TPMOD_OUT:</source>
-        <translatorcomment>Traduction approprié ?</translatorcomment>
-        <translation>TPMOD_OUT:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>ANALYZE:</source>
-        <translatorcomment>Traduction approprié ?</translatorcomment>
-        <translation>ANALYZE:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/tipowidget.cpp" line="+22"/>
-        <source>Copy Type</source>
-        <translation type="unfinished">Copy Type</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Element Type</source>
-        <translation type="unfinished">Type d&apos;Élement</translation>
-    </message>
-    <message>
-        <location line="+29"/>
-        <source>Name</source>
-        <translation>Nom</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any function(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring function(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta function(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any function(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer function(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring function(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean function(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</source>
-        <translation>La fonction assignée à un type devrait être écrite en langage C et possèder, les signatures respective suivantes:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any fonction(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring fonction(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta fonction(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any fonction(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer fonction(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring fonction(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean fonction(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</translation>
-    </message>
-</context>
-<context>
     <name>TriggerWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/triggerwidget.ui" line="+20"/>
@@ -5453,91 +5353,185 @@ Message retourné par le SGBD: %1</translation>
     </message>
 </context>
 <context>
-    <name>VisaoObjetosWidget</name>
+    <name>TypeWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/visaoobjetoswidget.ui" line="+36"/>
-        <source>Objects of Model</source>
-        <translation>Objets du Modèle</translation>
+        <location filename="../libpgmodeler_ui/ui/typewidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+263"/>
-        <source>Visible Objects Type</source>
-        <translation>Types d&apos;Objets Visibles</translation>
-    </message>
-    <message>
-        <location line="+61"/>
-        <source>Select All</source>
-        <translation>Tout Sélectionner</translation>
+        <location line="+18"/>
+        <source>Configuration:</source>
+        <translation>Configuration:</translation>
     </message>
     <message>
         <location line="+13"/>
-        <source>Clear All</source>
-        <translation>Tout Effacer</translation>
+        <source>Base Type</source>
+        <translation>Type de base</translation>
     </message>
     <message>
-        <location line="+56"/>
-        <source>Select</source>
-        <translation>Selectionner</translation>
+        <location line="+16"/>
+        <source>Enumeration</source>
+        <translation>Enumération</translation>
     </message>
     <message>
-        <location line="+32"/>
-        <source>Cancel</source>
-        <translation>Annuler</translation>
+        <location line="+19"/>
+        <source>Composite</source>
+        <translation>Composite</translation>
     </message>
     <message>
-        <location line="+32"/>
-        <source>Objects view configuration</source>
-        <translation>Configuration de la vue des objets</translation>
+        <location line="+19"/>
+        <source>Enumerations</source>
+        <translation>Énumérations</translation>
     </message>
     <message>
-        <location line="+38"/>
-        <source>Tree view</source>
-        <translation>Vue Arborescente</translation>
+        <location line="+12"/>
+        <source>Enumeration:</source>
+        <translation>Énumeration:</translation>
     </message>
     <message>
-        <location line="+41"/>
-        <source>List view</source>
-        <translation>Vue en Liste</translation>
+        <location line="+25"/>
+        <location line="+11"/>
+        <source>Attributes</source>
+        <translation>Attributs</translation>
     </message>
     <message>
-        <location line="-393"/>
-        <source>1</source>
-        <translation></translation>
+        <location line="+12"/>
+        <source>Internal Length:</source>
+        <translation>Long. interne:</translation>
     </message>
     <message>
-        <location line="+317"/>
-        <location line="+41"/>
-        <location line="+38"/>
-        <source>...</source>
-        <translation></translation>
+        <location line="+23"/>
+        <source>Storage:</source>
+        <translation>Stockage:</translation>
     </message>
     <message>
-        <location line="-326"/>
-        <source>Object</source>
-        <translation>Objet</translation>
+        <location line="+10"/>
+        <source>By Value:</source>
+        <translation>Par valeur: </translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+20"/>
+        <source>Category:</source>
+        <translation>Catégorie:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Preferred:</source>
+        <translation>Préféré:</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Delimiter:</source>
+        <translation>Délimiteur:</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Alignment:</source>
+        <translation>Alignement:</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>char</source>
+        <translation>char</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>smallint</source>
+        <translation>smallint</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>integer</source>
+        <translation>integer</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>double precision</source>
+        <translation>double precision</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Default Value:</source>
+        <translation>Valeur par défaut:</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Functions</source>
+        <translation>Fonctions</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>INPUT:</source>
+        <translation>INPUT:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>OUTPUT:</source>
+        <translation>OUTPUT:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>RECV:</source>
+        <translation>RECV:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>SEND:</source>
+        <translation>SEND:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>TPMOD_IN:</source>
+        <translation>TPMOD_IN:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>TPMOD_OUT:</source>
+        <translation>TPMOD_OUT:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>ANALYZE:</source>
+        <translation>ANALYZE:</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="+20"/>
+        <source>Like Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Element Type</source>
+        <translation type="unfinished">Type d&apos;Élement</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Name</source>
+        <translation>Nom</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>Parent Object</source>
-        <translation>Objet Parent</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Parent Type</source>
-        <translation>Type Parent</translation>
+        <location line="+18"/>
+        <source>The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any function(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring function(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta function(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any function(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer function(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring function(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean function(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</source>
+        <translation>La fonction assignée à un type devrait être écrite en langage C et possèder, les signatures respective suivantes:&lt;br/&gt;  &lt;table&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;INPUT:&lt;/strong&gt; &lt;em&gt;any fonction(cstring, oid, integer)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;OUTPUT:&lt;/strong&gt; &lt;em&gt;cstring fonction(any)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;SEND:&lt;/strong&gt; &lt;em&gt;byta fonction(any)&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;RECV:&lt;/strong&gt; &lt;em&gt;any fonction(internal, oid, integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_IN:&lt;/strong&gt; &lt;em&gt;integer fonction(cstring[])&lt;/em&gt;&lt;/td&gt;    &lt;td&gt;&lt;strong&gt;TPMOD_OUT:&lt;/strong&gt; &lt;em&gt;cstring fonction(integer)&lt;/em&gt;&lt;/td&gt;   &lt;/tr&gt;   &lt;tr&gt;    &lt;td&gt;&lt;strong&gt;ANALYZE:&lt;/strong&gt; &lt;em&gt;boolean fonction(internal)&lt;/em&gt;&lt;/td&gt;    &lt;tr&gt;  &lt;/table&gt;</translation>
     </message>
 </context>
 <context>
-    <name>VisaoWidget</name>
+    <name>ViewWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/ui/visaowidget.ui" line="+30"/>
+        <location filename="../libpgmodeler_ui/ui/viewwidget.ui" line="+14"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>References</source>
-        <translation>References</translation>
+        <translation>Références</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -5560,7 +5554,17 @@ Message retourné par le SGBD: %1</translation>
         <translation>Utilisé dans:</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+9"/>
+        <source>SELECT-FROM</source>
+        <translation>SELECT-FROM</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>FROM-WHERE</source>
+        <translation>FROM-WHERE</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>After WHERE</source>
         <translation>Après WHERE</translation>
     </message>
@@ -5572,7 +5576,7 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+13"/>
         <source>Table Alias:</source>
-        <translation>Alias Table:</translation>
+        <translation>Alias table:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -5582,7 +5586,7 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+13"/>
         <source>Column Alias:</source>
-        <translation>Alias Colonne:</translation>
+        <translation>Alias colonne:</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -5592,57 +5596,43 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+41"/>
         <source>Expression Alias:</source>
-        <translation>Alias Expression:</translation>
+        <translation>Alias expression:</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>Code Preview</source>
-        <translation>Prévisualisation du Code</translation>
+        <translation>Prévisualisation du code</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/visaowidget.cpp" line="+40"/>
-        <source>To reference all columns in a table (*) just do not fill the field &lt;strong&gt;Column&lt;/strong&gt;, this is the same as write &lt;em&gt;&lt;strong&gt;[schema].[tablel].*&lt;/strong&gt;&lt;/em&gt;</source>
-        <translation>Pour référence toutes les colonnes dans une table (*) ne pas remplir le champs  &lt;strong&gt;Colonne&lt;/strong&gt;, ce qui es équivalent à écrire &lt;em&gt;&lt;strong&gt;[schéma].[table].*&lt;/strong&gt;&lt;/em&gt;</translation>
-    </message>
-    <message>
-        <location line="+337"/>
-        <source>-- Could not generate the code. Make sure all attributes are correctly filled! --</source>
-        <translation>-- Impossible de générer le code. Assurez vous que tous les attributs sont correctement renseignés! --</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/visaowidget.ui" line="-226"/>
-        <source>Form</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+71"/>
-        <source>SELECT-FROM</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>FROM-WHERE</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/visaowidget.cpp" line="-343"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="+26"/>
         <source>Col./Expr.</source>
-        <translation></translation>
+        <translation>Col./Expr.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alias</source>
-        <translation></translation>
+        <translation>Alias</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Alias Col.</source>
-        <translation></translation>
+        <translation>Alias col.</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>SF FW AW</source>
-        <translation></translation>
+        <translatorcomment>?</translatorcomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>To reference all columns in a table (*) just do not fill the field &lt;strong&gt;Column&lt;/strong&gt;, this is the same as write &lt;em&gt;&lt;strong&gt;[schema].[tablel].*&lt;/strong&gt;&lt;/em&gt;</source>
+        <translation>Pour référencer toutes les colonnes dans une table (*) ne remplissez pas le champs &lt;strong&gt;Colonne&lt;/strong&gt;, ceci revient à écrire &lt;em&gt;&lt;strong&gt;[schéma].[table].*&lt;/strong&gt;&lt;/em&gt;</translation>
+    </message>
+    <message>
+        <location line="+250"/>
+        <source>-- Could not generate the code. Make sure all attributes are correctly filled! --</source>
+        <translation>-- Impossible de générer le code. Assurez vous que tous les attributs sont correctement renseignés! --</translation>
     </message>
 </context>
 </TS>
