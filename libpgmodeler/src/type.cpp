@@ -350,7 +350,7 @@ void Type::setStorage(StorageType strg)
 
 void Type::setDefaultValue(const QString &value)
 {
-	this->default_value=value;
+	this->default_value=value.trimmed();
 }
 
 void Type::setElement(PgSQLType elem)

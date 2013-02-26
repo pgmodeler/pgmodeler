@@ -43,7 +43,7 @@ void Column::setType(PgSQLType type)
 
 void Column::setDefaultValue(const QString &value)
 {
-	default_value=value;
+	default_value=value.trimmed();
 }
 
 void Column::setNotNull(bool value)

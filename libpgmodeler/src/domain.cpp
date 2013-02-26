@@ -55,7 +55,7 @@ void Domain::setExpression(const QString &expr)
 
 void Domain::setDefaultValue(const QString &default_val)
 {
-	this->default_value=default_val;
+	this->default_value=default_val.trimmed();
 }
 
 void Domain::setNotNull(bool value)

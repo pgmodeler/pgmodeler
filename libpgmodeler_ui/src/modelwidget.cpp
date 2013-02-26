@@ -88,8 +88,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	modified=false;
 	new_obj_type=BASE_OBJECT;
 
-	//nome_arquivo_tmp=QString(tempnam(AtributosGlobais::DIR_TEMPORARIO, "model")) + QString(".dbm");
-
 	//Gera um nome de arquivo termporário usando a classe QTEmporaryFile
 	QTemporaryFile tmp_file;
 	/* Seta a másca de geração do mesmo. Caso na máscara tenha um caminho absoluto, o arquivo será
