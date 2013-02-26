@@ -285,8 +285,7 @@ bool ModelWidget::isReservedObject(BaseObject *obj)
 					 (obj->getName()==~LanguageType("c") ||
 						obj->getName()==~LanguageType("sql") ||
 						obj->getName()==~LanguageType("plpgsql"))) ||
-					(obj->getObjectType()==OBJ_SCHEMA &&
-					 obj->getName()=="public")));
+					(obj->getObjectType()==OBJ_SCHEMA && obj->getName()=="public")));
 }
 
 void ModelWidget::setModified(bool value)
@@ -868,27 +867,24 @@ vector<QRectF> ModelWidget::getPagesForPrinting(const QSizeF &paper_size, unsign
 	float width, height;
 	unsigned h_page, v_page;
 
-	//Calcula a quantidade de páginas horizontais e verticais com base no tamanho do papel passado
+	//Calculates the horizontal and vertical page count based upon the passed paper size
 	h_page_cnt=roundf(scene->sceneRect().width()/paper_size.width()) + 1;
 	v_page_cnt=roundf(scene->sceneRect().height()/paper_size.height()) + 1;
 
-	//Calcula a quantidade máxima de paginas horizontas e verticais
+	//Calculates the maximum count of horizontal and vertical pages
 	for(v_page=0; v_page < v_page_cnt; v_page++)
 	{
 		for(h_page=0; h_page < h_page_cnt; h_page++)
 		{
-			//Calcula o retângulo da página atual (horizontal x vertical)
+			//Calculates the current page rectangle
 			page_rect=QRectF(QPointF(h_page * paper_size.width(), v_page * paper_size.height()), paper_size);
 
-			//Caso na pagina atual existam items selecionados, recaulcula o tamanho máximo de página
+			//Case there is selected items recalculates the maximum page size
 			if(!scene->items(page_rect).isEmpty())
 			{
-				//Calcula a largura/altura da página atual
 				width=page_rect.left() + page_rect.width();
 				height=page_rect.top() + page_rect.height();
 
-				/* Caso a largura calculada exceda a largura/altura máxima calculada anterior, a mesma passa
-			 a ser usada como largura/altura máxima */
 				if(width > max_rect.width())
 					max_rect.setWidth(width);
 
@@ -898,11 +894,11 @@ vector<QRectF> ModelWidget::getPagesForPrinting(const QSizeF &paper_size, unsign
 		}
 	}
 
-	//Recalcula a quantidade de páginas com base no tamanho de página calculado
+	//Re calculates the maximum page count based upon the maximum page size
 	h_page_cnt=roundf(max_rect.width()/paper_size.width());
 	v_page_cnt=roundf(max_rect.height()/paper_size.height());
 
-	//Adiciona os retângulos de cada página no vetor
+	//Inserts the page rectangles on the list
 	for(v_page=0; v_page < v_page_cnt; v_page++)
 		for(h_page=0; h_page < h_page_cnt; h_page++)
 			pages.push_back(QRectF(QPointF(h_page * paper_size.width(), v_page * paper_size.height()), paper_size));
@@ -923,30 +919,29 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		QPointF top_left, top_right, bottom_left, bottom_right,
 				h_top_mid, h_bottom_mid, v_left_mid, v_right_mid, dx, dy;
 
-		//Faz um backup das configurações de grade da cena
+		//Make a backup of the current grid options
 		ObjectsScene::getGridOptions(show_grid, align_objs, show_delims);
 
-		//Reconfigura a grade do modelo com as opções passadas, escondendo os limites de página
+		//Reconfigure the grid options based upon the passed settings
 		ObjectsScene::setGridOptions(print_grid, align_objs, false);
 
-		//Atualiza o cena e limpa a seleção
 		scene->update();
 		scene->clearSelection();
 
-		//Obtém o tamanho de página com base na configuração da impressora
+		//Get the page size based on the printer settings
 		page_size=printer->pageRect(QPrinter::DevicePixel).size();
 
-		//Obtém a quantinde de páginas com base no tamanho da página
+		//Get the pages rect for printing
 		pages=this->getPagesForPrinting(page_size, h_page_cnt, v_page_cnt);
 
-		//Cria um painter para desenhar direto na impressoa
+		//Creates a painter to draw the model directly on the printer
 		QPainter painter(printer);
 		painter.setRenderHint(QPainter::Antialiasing);
 		font.setPointSizeF(7.5f);
 		pen.setColor(QColor(120,120,120));
 		pen.setWidthF(1.0f);
 
-		//Calcula os pontos auxiliares para desenhar as linhas delmitadores de página
+		//Calculates the auxiliary points to draw the page delimiter lines
 		top_left.setX(01); top_left.setY(0);
 		top_right.setX(page_size.width()); top_right.setY(0);
 		bottom_left.setX(0); bottom_left.setY(page_size.height());
@@ -961,18 +956,17 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 		page_cnt=pages.size();
 		for(page=0, h_pg_id=0, v_pg_id=0; page < page_cnt; page++)
 		{
-			//Desenha a página atual na impressora
+			//Render the current page on the printer
 			scene->render(&painter, QRectF(), pages[page]);
 
-			/* Caso seja para imprimir o número de página
-			a mesma será impressa no canto superoir esquerdo */
+			//Print the current page number is this option is marked
 			if(print_page_nums)
 			{
 				painter.setPen(QColor(120,120,120));
 				painter.drawText(10, 20, QString("%1").arg(page+1));
 			}
 
-			//Imprime as linhas guias de página com base na pagina atual (posição vertical e horizontal)
+			//Print the guide lines at corners of the page
 			painter.setPen(pen);
 			if(h_pg_id==0 && v_pg_id==0)
 			{
@@ -1030,12 +1024,11 @@ void ModelWidget::printModel(QPrinter *printer, bool print_grid, bool print_page
 				v_pg_id++;
 			}
 
-			//Adiciona uma nova página enquanto a página não for a penultmima
 			if(page < page_cnt-1)
 				printer->newPage();
 		}
 
-		//Restaura as opções da grade
+		//Restore the grid option backup
 		ObjectsScene::setGridOptions(show_grid, align_objs, show_delims);
 		scene->update();
 	}
@@ -1087,11 +1080,10 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		unsigned rel_type=0;
 		Schema *sel_schema=dynamic_cast<Schema *>(parent_obj);
 
-		/* Caso o tipo_obj seja maior que o ultimo código de tipo de objeto, indica
-		 que se trata de um tipo específico de relacionamento (1-1, 1-n, n-n, gen, dep).
-		 Para se obter qual o tipo correto do relacionamento, subtrai-se o tipo do objeto
-		 padrão, OBJETO_RELACAO ao tipo_obj, o resultado da subtração será o tipo
-		 específico de relacionamento */
+		/* Case the obj_type is greater than BASE_TABLE indicates that the object type is a
+		 relationship. To get the specific relationship id (1-1, 1-n, n-n, gen, dep) is necessary
+		 to subtract the OBJ_RELATIONSHIP from the obj_type parameter, the result will point
+		 to the BaseRelationship::RELATIONSHIP_??? constant. */
 		if(obj_type > BASE_TABLE)
 		{
 			rel_type=obj_type - OBJ_RELATIONSHIP;
@@ -1100,23 +1092,18 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 
 		if(object && obj_type!=object->getObjectType())
 			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		/* Caso se tente chamar o formulário de criação de um objeto de tabela
-		 sem se especificar a tabela pai (objeto_pai) */
+		//If the user try to call the table object form without specify a parent object
 		else if(!parent_obj &&
 						(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT ||
 						 obj_type==OBJ_TRIGGER || obj_type==OBJ_RULE ||
 						 obj_type==OBJ_INDEX))
 			throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-		/* Caso o objeto esteja alocado e seja gráfico indica que o mesmo será editado,
-		 sendo assim sua posição precisa ser armazena e em seguida informada ao
-		 formulário de edição respectivo */
 		if(object && dynamic_cast<BaseGraphicObject *>(object))
 			pos=dynamic_cast<BaseGraphicObject *>(object)->getPosition();
 
-		/* O esquema 'public' pode ser exibido no formulário mas as linguagens C e SQL não pode ser manipuladas
-		 por serem do sistema, caso o usuário tente esta operação um erro será disparado. Para o esquema
-		 public o formulário é exibido mas não pode ter seu nome e permissões modificados */
+		/* Raises an error if the user try to edit a reserverd object. The only exception is for "public" schema
+		that can be edited only on its fill color an rectangle attributes */
 		if(isReservedObject(object) && object->getName()!="public")
 			throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
@@ -1212,7 +1199,6 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				coluna_wgt->setAttributes(db_model, parent_obj, op_list, col);
 				coluna_wgt->show();
 
-				//Valida os relacionamento para refletirem as modificações na coluna
 				if(col)
 					db_model->validateRelationships(col, dynamic_cast<Table *>(parent_obj));
 				else
@@ -1225,7 +1211,6 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				restricao_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, constr);
 				restricao_wgt->show();
 
-				//Valida os relacionamento para refletirem as modificações na restrição
 				if(constr)
 					db_model->validateRelationships(constr, dynamic_cast<Table *>(parent_obj));
 				else
@@ -1249,9 +1234,6 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 
 			case BASE_RELATIONSHIP:
 			case OBJ_RELATIONSHIP:
-
-				/* Na criação de relacionamentos, o usuário precisa selecionar 2 tabelas ou
-			 1 quando se tratar de autorelacionamento */
 				if(!object && rel_type > 0 &&
 					 selected_objects.size() > 0 &&
 					 selected_objects[0]->getObjectType()==OBJ_TABLE)
@@ -1292,13 +1274,10 @@ void ModelWidget::showDependenciesReferences(void)
 
 	if(obj_sender)
 	{
-		//Obtém o objeto do modelo armazenado na ação
 		BaseObject *object=reinterpret_cast<BaseObject *>(obj_sender->data().value<void *>());
 
-		//Caso haja um objeto vindo da ação
 		if(object)
 		{
-			//Exibe o formulário de dependências / referências
 			deps_refs_wgt->setAttributes(this->db_model, object);
 			deps_refs_wgt->show();
 		}
@@ -1311,12 +1290,10 @@ void ModelWidget::showSourceCode(void)
 
 	if(obj_sender)
 	{
-		//Obtém o objeto do modelo armazenado na ação
 		BaseObject *objeto=reinterpret_cast<BaseObject *>(obj_sender->data().value<void *>());
 
 		if(objeto)
 		{
-			//Exibe o formulário de código fonte do mesmo
 			codigofonte_wgt->setAttributes(this->db_model, objeto);
 			codigofonte_wgt->show();
 		}
@@ -1325,13 +1302,15 @@ void ModelWidget::showSourceCode(void)
 
 void ModelWidget::cancelObjectAddition(void)
 {
-	/* Reinicia o tipo do objeto, isso fará com que o usuário escolha
-		novamente a ferramenta de criação de objeto */
+	//Reset the new object type to a invalid one forcing the user to select a correct type again
 	new_obj_type=BASE_OBJECT;
-	//Restaura o cursor original do mouse
+
+	//Restore the cursor icon
 	viewport->setCursor(QCursor(Qt::ArrowCursor));
-	//Esconde a linha que simula a inserção de relacionamento
+
+	//Hide the line that simulates the relationship creation
 	scene->showRelationshipLine(false);
+
 	this->configurePopupMenu(this->selected_objects);
 }
 
@@ -1433,18 +1412,14 @@ void ModelWidget::editObject(void)
 	TableObject *tab_obj=NULL;
 	BaseObject *object=NULL;
 
-	/* Workaround: Para possibilitar a edição de objetos com duplo clique na visão de objetos
-		o sender é configurado como sendo a ação de editar quando este não está definido */
+	/* Workaround: To permit the object edition via double click on the ModelObjectWidget the sender
+	is configured as the edit action of the model widget */
 	if(!obj_sender)
 		obj_sender=action_edit;
 
-	//Obtém o objeto do modelo contido na ação
 	object=reinterpret_cast<BaseObject *>(dynamic_cast<QAction *>(obj_sender)->data().value<void *>());
-	/* Tenta convertê-lo para objeto de tabela. Caso este seja convertido com sucesso
-		envia para o formulário a tabela possuidora deste objeto */
 	tab_obj=dynamic_cast<TableObject *>(object);
 
-	//Exibe o formulário pra o objeto
 	if(object)
 		showObjectForm(object->getObjectType(), object,
 										 (tab_obj ? tab_obj->getParentTable() : NULL));
@@ -1479,43 +1454,36 @@ void ModelWidget::protectObject(void)
 
 		scene->blockSignals(true);
 
-		//Caso haja apenas um objeto selecionado
 		if(this->selected_objects.size()==1)
 		{
-			//Tenta convertê-lo para objeto de tabela e objeto gráfico
 			tab_obj=dynamic_cast<TableObject *>(this->selected_objects[0]);
 			graph_obj=dynamic_cast<BaseGraphicObject *>(this->selected_objects[0]);
 
-			//Caso seja um objeto gráfico
 			if(graph_obj)
-			{
-				//Caso seja uma tabela, usa o método de proteção/desproteção da tabela
 				graph_obj->setProtected(!graph_obj->isProtected());
-			}
 			else if(tab_obj)
 			{
-				/* Caso seja um objto de tabela protege/desprotege o mesmo e marca como modificada a tabela pai
-			 para forçar o seu redesenho */
 				tab_obj->setProtected(!tab_obj->isProtected());
+
+				//Force the update of the parent table
 				dynamic_cast<Table *>(tab_obj->getParentTable())->setModified(true);
 			}
 			else
 			{
-				/* O esquema 'public' e as linguagens C e SQL não pode ser manipuladas
-			 por serem do sistema, caso o usuário tente esta operação um erro será disparado */
+				//Raise an error if the user try to modify a reserved object protection
 				if(isReservedObject(this->selected_objects[0]))
 					throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 				this->selected_objects[0]->setProtected(!this->selected_objects[0]->isProtected());
 			}
 		}
-		//Caso não haja objetos selecionados faz a proteção/desproteção do modelo
+		//Protects the whole model if there is no selected object
 		else if(this->selected_objects.empty())
 		{
 			if(obj_sender==action_protect || obj_sender==action_unprotect)
 				db_model->setProtected(!db_model->isProtected());
 		}
-		//Caso haja mais de um objeto selecionado, faz a proteção em lote
+		//If there is more than one selected object, make a batch protection/unprotection
 		else
 		{
 			itr=this->selected_objects.begin();
@@ -1528,21 +1496,16 @@ void ModelWidget::protectObject(void)
 				graph_obj=dynamic_cast<BaseGraphicObject *>(object);
 				itr++;
 
-				/* Caso o objeto seja uma coluna ou restrição adicionada automaticamente por um
-			relacionamento, um erro será disparado pois objetos deste tipo não pode
-			ser manipulados diretamente pelo usuário */
 				obj_type=object->getObjectType();
 
-				/* O esquema 'public' e as linguagens C e SQL não pode ser manipuladas
-			 por serem do sistema, caso o usuário tente esta operação um erro será disparado */
 				if(isReservedObject(object))
 					throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				else if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT)
 				{
 					tab_obj=dynamic_cast<TableObject *>(object);
+
 					if(tab_obj->isAddedByRelationship())
 					{
-						//Monta a mensagem de que o objeto não pode ser removido por estar protegido
 						throw Exception(QString(Exception::getErrorMessage(ERR_OPR_REL_INCL_OBJECT))
 														.arg(object->getName()).arg(object->getTypeName()),
 														ERR_OPR_REL_INCL_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -1557,7 +1520,6 @@ void ModelWidget::protectObject(void)
 		scene->blockSignals(false);
 		scene->clearSelection();
 
-		//Emite um sinal indica que vários objetos foram modificados
 		emit s_objectModified();
 	}
 	catch(Exception &e)
@@ -1568,15 +1530,12 @@ void ModelWidget::protectObject(void)
 
 void ModelWidget::cutObjects(void)
 {
-	/* Marca que o modelo de origem da operação de recorte foi o modelo 'this'.
-		Este atributo é usado no método de colagem dos objetos onde pois ao final
-		da execução é preciso excluir os objetos selecionados no modelo de origem */
+	/* Store the source model as 'this'. This attribute is used on the paste method
+	to remove the selected object and updated the source model */
 	ModelWidget::src_model=this;
 
-	//Marca que a operação de recorte foi iniciada
+	//Set the flag indicating that a cut operation started
 	ModelWidget::cut_operation=true;
-
-	//Efetua a cópia dos objetos selecionados
 	this->copyObjects();
 }
 
@@ -1591,18 +1550,17 @@ void ModelWidget::copyObjects(void)
 	TableObject *tab_obj=NULL;
 	Table *table=NULL;
 	Constraint *constr=NULL;
-	ObjectType types[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT }, obj_type;
+	ObjectType types[]={ OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT };
 	unsigned i, type_id, count;
 
 	if(selected_objects.size()==1)
 	{
-		/* O esquema 'public' e as linguagens C e SQL não podem ser manipuladas
-		por serem do sistema, caso o usuário tente esta operação um erro será disparado */
+		//Raise an error if the user try to copy a reserved object
 		if(isReservedObject(selected_objects[0]))
 			throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
 
-	//Solicia a confirmação ao usuário se o mesmo deseja copiar as dependências dos objetos
+	//Ask for confirmation to copy the dependencies of the object(s)
 	msg_box.show(trUtf8("Confirmation"),
 									trUtf8("Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model."),
 									MessageBox::CONFIRM_ICON, MessageBox::YES_NO_BUTTONS);
@@ -1610,38 +1568,34 @@ void ModelWidget::copyObjects(void)
 	itr=selected_objects.begin();
 	itr_end=selected_objects.end();
 
-	//Varre a lista de objetos selecionados
 	while(itr!=itr_end)
 	{
 		object=(*itr);
 
-		//Relacionamentos Tabela-visão não são copiados pois são criados automaticamente pelo modelo
+		//Table-view relationships and FK relationship aren't copied since they are created automatically when pasting the tables/views
 		if(object->getObjectType()!=BASE_RELATIONSHIP)
 		{
-			//Obtém as dependências do objeto atual caso o usuário tenha confirmado a obtenção das mesmas
+			//Get the object dependencies if the user confirmed this situation
 			db_model->getObjectDependecies(object, deps, msg_box.result()==QDialog::Accepted);
 
-			/* Caso especial para tabelas: É preciso copiar para a lista os objetos especiais
-			(indices, gatilhos e restrições) que referenciam colunas incluídas por relacionamento.
-			Para que seja possível a recriação dos mesmos quando colados */
+			/* Copying the special objects (which references columns added by relationship) in order
+			to be correclty created when pasted */
 			if(object->getObjectType()==OBJ_TABLE)
 			{
 				table=dynamic_cast<Table *>(object);
 
 				for(type_id=0; type_id < 3; type_id++)
 				{
-					//Varre cada lista de objetos especiais validando-os e inserindo-os na lista de dependências
 					count=table->getObjectCount(types[type_id]);
 
 					for(i=0; i < count; i++)
 					{
-						//Obtém um objeto especial
 						tab_obj=dynamic_cast<TableObject *>(table->getObject(i, types[type_id]));
 						constr=dynamic_cast<Constraint *>(tab_obj);
 
-						/* O objeto só será incluído na lista se o mesmo não foi incluído por relacionamento mas
-				 referencia colunas incluídas por relacionamento. Caso se tratar de uma restrição, a mesma
-				 não pode ser chave primária pois estas são tratadas separadamente nos relacionamentos */
+						/* The object is only inserted at the list when it was not included by relationship but references
+						columns added by relationship. Case the object is a constraint, it cannot be a primary key because
+						this type of constraint is treated separetely by relationships */
 						if(!tab_obj->isAddedByRelationship() &&
 							 ((constr &&
 								 (constr->getConstraintType()==ConstraintType::foreign_key ||
@@ -1657,13 +1611,10 @@ void ModelWidget::copyObjects(void)
 		itr++;
 	}
 
-	/* Organiza por ordem crescente de id os objetos obtidos. Isso
-		evita a quebra de referências criando, por exemplo um objeto B de id 10
-		antes do A de id 5, sendo que A necessita de B para ser validado */
 	itr=deps.begin();
 	itr_end=deps.end();
 
-	//Armazena os ids dos objetos num vetor numéros
+	//Storing the objects ids in a auxiliary vector
 	while(itr!=itr_end)
 	{
 		object=(*itr);
@@ -1672,25 +1623,18 @@ void ModelWidget::copyObjects(void)
 		itr++;
 	}
 
-	//O vetor é ordenado
+	/* Sort the id vector in order to avoid reference breaking when pasting the objects,
+	creating object with smaller ids first */
 	std::sort(objs_id.begin(), objs_id.end());
 	itr1=objs_id.begin();
 	itr1_end=objs_id.end();
 
-	//Insere na ordem os objetos na lista de objetos copiados
 	while(itr1!=itr1_end)
 	{
 		object=objs_map[(*itr1)];
-		obj_type=object->getObjectType();
 
-		/* Objetos do sistema não são copiados.
-		 Ex.: Esquema public, linguagens C, SQL, PLPGSQL */
-		if((obj_type==OBJ_LANGUAGE &&
-				(object->getName()!=~LanguageType("c") &&
-				 object->getName()!=~LanguageType("sql") &&
-				 object->getName()!=~LanguageType("plpgsql"))) ||
-			 (obj_type==OBJ_SCHEMA && object->getName()!="public") ||
-			 (obj_type!=OBJ_SCHEMA && obj_type!=OBJ_LANGUAGE))
+		//Reserved object aren't copied
+		if(!isReservedObject(object))
 			copied_objects.push_back(object);
 
 		itr1++;
@@ -1712,7 +1656,6 @@ void ModelWidget::pasteObjects(void)
 	Exception error;
 	unsigned idx=1, pos=0;
 
-	//Exibe o progresso de tarefas pois a operação de colagem
 	task_prog_wgt->setWindowTitle(trUtf8("Pasting objects..."));
 	task_prog_wgt->show();
 
@@ -1721,12 +1664,9 @@ void ModelWidget::pasteObjects(void)
 
 	while(itr!=itr_end)
 	{
-		//Obtém um objeto selecionado
 		object=(*itr);
 		obj_type=object->getObjectType();
 		itr++;
-
-		//Atualiza a mensagem do widget de progresso de tarefa
 		pos++;
 		task_prog_wgt->updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 																	trUtf8("Validating object: %1 (%2)").arg(object->getName())
@@ -1734,14 +1674,11 @@ void ModelWidget::pasteObjects(void)
 																	object->getObjectType());
 
 
-		//Caso não seja um objeto de tabela
 		if(!dynamic_cast<TableObject *>(object))
 		{
-			/* A primeira validação a ser feita é checar se o objeto a ser colado
-		 não conflita com algum objeto de mesmo nome no modelo onde se está
-		 colando os novos objetos */
+			/* The first validation is to check if the object to be pasted does not conflict
+			with any other object of the same type on the model */
 
-			//Para isso, no caso de função e operador, checa esse conflito através de sua assinatura
 			if(obj_type==OBJ_FUNCTION)
 			{
 				dynamic_cast<Function *>(object)->createSignature(true);
@@ -1749,40 +1686,38 @@ void ModelWidget::pasteObjects(void)
 			}
 			else if(obj_type==OBJ_OPERATOR)
 				aux_name=dynamic_cast<Operator *>(object)->getSignature();
-			//Para os demais tipos de objeto checa através do nome completo
 			else
 				aux_name=object->getName(true);
 
-			//Tenta obter um objeto de mesmo nome no modelo
+			//Try to find the object on the model
 			if(!dynamic_cast<TableObject *>(object))
 				aux_object=db_model->getObject(aux_name, obj_type);
 
-			/* Segunda operação na colagem: caso um objeto de mesmo nome é encontrado no modelo é necessário
-			validar se as definições XML de ambos são diferentes. Quandos estas são iguais o objeto não é
-			colado no modelo pois o objeto encontrado no modelo pode ser usado seguramente em substituição
-			ao objeto que não foi colado. Essa alternativa não se aplica a objetos gráficos, que idependentemente
-			de terem ou não o mesmo nome ou definição XML serão SEMPRE colados no modelo. */
+			/* The second validation is check, when the object is found on the model, if the XML code of the found object
+			 and the object to be paster are different. When the XML defintion are the same the object isn't pasted because
+			 the found object can be used as substitute of the object to be pasted. This operation is not applied to graphical
+			 objects because they are ALWAYS pasted on the model */
 			if(aux_object &&
 				 (dynamic_cast<BaseGraphicObject *>(object) ||
 					(db_model->validateObjectDefinition(aux_object, SchemaParser::SchemaParser::XML_DEFINITION) !=
 					 db_model->validateObjectDefinition(object, SchemaParser::SchemaParser::XML_DEFINITION))))
 			{
-				//Resolvendo conflitos de nomes
+				//Resolving name conflicts
 				if(obj_type!=OBJ_CAST)
 				{
 					func=NULL; oper=NULL;
-					//Armazena o nome original do objeto em um mapa
+
+					//Store the orignal object name on a map
 					orig_obj_names[object]=object->getName();
 
 					do
 					{
-						//Cria um sufixo para o nome do objeto a ser colado a fim de se resolver conflitos
+						//Creates an name suffix assigned to the object to be pasted in order to resolve conflicts
 						aux_name=QString("_cp%1").arg(idx++);
 
-						/* Para cada tipo a seguir configura o objeto com o nome e o sufixo gerado e o
-				 armazena em uma string ('nome_obj_copia'). Essa string será usada para checar
-				 se existe no modelo um objeto de mesmo tipo e nome. Enquanto o valor de 'nome_obj_copia'
-				 conflitar com algum objeto no modelo, esta validação será executada */
+						/* For each object type as follow configures the name and the suffix and store them on the
+						'copy_obj_name' variable. This string is used to check if there are objects with the same name
+						on model. While the 'copy_obj_name' conflicts with other objects (of same type) this validation is made */
 						if(obj_type==OBJ_FUNCTION)
 						{
 							func=dynamic_cast<Function *>(object);
@@ -1806,7 +1741,7 @@ void ModelWidget::pasteObjects(void)
 					}
 					while(db_model->getObject(copy_obj_name, obj_type));
 
-					//Define o novo nome do objeto concatenando o nome original ao sufixo configurado.
+					//Sets the new object name concatenating the suffix to the original name
 					object->setName(orig_obj_names[object] + aux_name);
 					aux_name.clear();
 					idx=1;
@@ -1815,9 +1750,8 @@ void ModelWidget::pasteObjects(void)
 		}
 	}
 
-	/* O terceiro passo da colagem dos objetos é a obtenção do XML
-		do arquivos copiados. É com eles que são alocados os objetos cópia
-		que serão efetivamente inseridos no modelo */
+	/* The third step is get the XML code definition of the copied objects, is
+	with the xml code that the copied object are created and inserted on the model */
 	itr=copied_objects.begin();
 	itr_end=copied_objects.end();
 	pos=0;
@@ -1826,20 +1760,17 @@ void ModelWidget::pasteObjects(void)
 		object=(*itr);
 		itr++;
 
-		//Atualiza a mensagem do widget de progresso de tarefa
 		pos++;
 		task_prog_wgt->updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 																	trUtf8("Generating XML code of object: %1 (%2)").arg(object->getName())
 																	.arg(object->getTypeName()),
 																	object->getObjectType());
 
-		//Armazena a definição XML do objeto num mapa de buffers xml
+		//Stores the XML definition on a xml buffer map
 		xml_objs[object]=db_model->validateObjectDefinition(object, SchemaParser::XML_DEFINITION);
 	}
 
-	/* O quarto passo da colagem é a restauração dos nomes originais dos objetos
-		copiados. Como estes objetos continuam sendo usados em seu modelo de objetos
-		original os mesmos precisam ter seus nomes originais de volta */
+	//The fourth step is the restoration of original names of the copied objects
 	itr=copied_objects.begin();
 	itr_end=copied_objects.end();
 
@@ -1852,8 +1783,7 @@ void ModelWidget::pasteObjects(void)
 			object->setName(orig_obj_names[object]);
 	}
 
-	/* Último passo da colagem: os objetos são criados a partir dos xmls
-		obtidos no passo anterior */
+	//The last step is create the object from the stored xmls
 	itr=copied_objects.begin();
 	itr_end=copied_objects.end();
 	pos=0;
@@ -1862,33 +1792,28 @@ void ModelWidget::pasteObjects(void)
 
 	while(itr!=itr_end)
 	{
-		//Carrega o parser xml com o buffer
 		XMLParser::restartParser();
 		XMLParser::loadXMLBuffer(xml_objs[*itr]);
 		itr++;
 
 		try
 		{
-			//Cria um objeto com o xml obtido
+			//Creates the object from the XML
 			object=db_model->createObject(db_model->getObjectType(XMLParser::getElementName()));
 			tab_obj=dynamic_cast<TableObject *>(object);
 			constr=dynamic_cast<Constraint *>(tab_obj);
 
-			//Atualiza a mensagem do widget de progresso de tarefa
 			pos++;
 			task_prog_wgt->updateProgress((pos/static_cast<float>(copied_objects.size()))*100,
 																		trUtf8("Pasting object: %1 (%2)").arg(object->getName())
 																		.arg(object->getTypeName()),
 																		object->getObjectType());
 
-			/* Com o objeto criado o mesmo é inserido no modelo, exceto para relacionamentos e objetos
-			de tabelas pois estes são inseridos automaticamente em seus objetos pais */
-			if(object &&
-				 !tab_obj &&
-				 !dynamic_cast<Relationship *>(object))
+			/* Once created, the object is added on the model, except for relationships and table objects
+			because they are inserted automatically */
+			if(object && !tab_obj && !dynamic_cast<Relationship *>(object))
 				db_model->addObject(object);
 
-			//Adiciona o objeto criado   lista de operações
 			if(tab_obj)
 			{
 				if(constr && constr->getConstraintType()==ConstraintType::foreign_key)
@@ -1906,50 +1831,39 @@ void ModelWidget::pasteObjects(void)
 	}
 	op_list->finishOperationChain();
 
-	//Força a validação de relacionamentos para refletir qualquer alteração de colunas não propagadas
+	//Validates the relationships to reflect any modification on the tables structures and not propagated columns
 	db_model->validateRelationships();
 
-	//Ajusta o tamanho da cena para comportar os novos objetos inseridos
 	this->adjustSceneSize();
-
-	//Fecha o progresso de tarefas
 	task_prog_wgt->close();
 
-	/* Caso algum erro foi capturado durante a colagem o mesmo é mostrado ao usuário acompanhado
-		de um alerta */
+	//If some error occur during the process show it to the user
 	if(error.getErrorType()!=ERR_CUSTOM)
 		msg_box.show(error,
-										trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
-										MessageBox::ALERT_ICON);
+								 trUtf8("Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!"),
+								 MessageBox::ALERT_ICON);
 
-	//Caso não seja uma operação de recorte
 	if(!ModelWidget::cut_operation)
 	{
-		//Limpa a lista de objetos copiados e emite um sinal indicando que objetos foram criados no modelo
 		copied_objects.clear();
 		emit s_objectCreated();
 	}
-	//Caso seja a operação de recorte
+	//If its a cut operatoin
 	else
 	{
-		//Exclui os objetos selecionados no modelo de origem
+		//Remove the objects from the source model
 		ModelWidget::src_model->removeObjects();
 
-		//Desmarca a flag que indica uma operação de recorte
+		//Uncheck the cut operation flag
 		ModelWidget::cut_operation=false;
 
-		//Limpa a lista de objetos copiados
 		copied_objects.clear();
-
-		//Reconfigura o menu popup do modelo de origem
 		if(this!=ModelWidget::src_model)
 			ModelWidget::src_model->configurePopupMenu();
 
-		//Zera a referência ao modelo de origem
 		ModelWidget::src_model=NULL;
 	}
 
-	//Reconfigura o menu popup do modelo onde os objetos foram colados
 	this->configurePopupMenu();
 	this->modified=true;
 }
@@ -1976,14 +1890,11 @@ void ModelWidget::removeObjects(void)
 	if(obj_sender)
 		object=reinterpret_cast<BaseObject *>(obj_sender->data().value<void *>());
 
-	//Caso exista pelo menos 1 objeto selecionado
 	if(!selected_objects.empty() || object)
 	{
-		//Caso não seja operação de recortar faz a confirmação da exclusão
+		//If the removal is not due to a cut operation, ask for permission to remove the objects
 		if(!ModelWidget::cut_operation)
 		{
-			/* Caso haja mais de 1 objeto selecionado, exibe uma mensagem diferente avisando
-			sobre a exclusão de multiplos objetos e a invalidação de objetos */
 			if(selected_objects.size() > 1)
 			{
 				msg_box.show(trUtf8("Confirmation"),
@@ -1998,7 +1909,7 @@ void ModelWidget::removeObjects(void)
 			}
 		}
 
-		//Caso o usuário tenha confirmado a exclusão ou a operação de recortar esteja ativa
+		//If the user confirmed the removal or its a cut operation
 		if(msg_box.result()==QDialog::Accepted || ModelWidget::cut_operation)
 		{
 			try
@@ -2008,27 +1919,20 @@ void ModelWidget::removeObjects(void)
 					itr=selected_objects.begin();
 					itr_end=selected_objects.end();
 
-					/* Armazena os objetos em um mapa cuja chave é o id do objeto.
-				Com base neste mapa os objetos são ordenados conforme seus ids
-				pois a exclusão dos mesmos devem seguir uma dada ordem (relacionamentos primeiro) */
 					while(itr!=itr_end)
 					{
 						object=(*itr);
 
-						//Se o objeto for um relationamento FK ao invés de remove-lo, remove as chaves primárias que o representam
+						//If the object is as FK relationship remove the foreign keys that generates it
 						if(object->getObjectType()==BASE_RELATIONSHIP)
 						{
 							rel=dynamic_cast<BaseRelationship *>(object);
-
-							//Checa se o relacionamento é fk
 							if(rel->getRelationshipType()==BaseRelationship::RELATIONSHIP_FK)
 							{
-								//Obtém a tabela referenciada
 								table=dynamic_cast<Table *>(rel->getTable(BaseRelationship::DST_TABLE));
-								//Obtém as chaves estrangeiras da tabela de origem as quais referenciam a tabela acima
 								dynamic_cast<Table *>(rel->getTable(BaseRelationship::SRC_TABLE))->getForeignKeys(constrs,false,table);
 
-								//Adiciona as restrições ao mapa de objetos a ser removidos
+								//Adds the fks to the map of objects to be removed
 								while(!constrs.empty())
 								{
 									tab_obj=constrs.back();
@@ -2046,15 +1950,13 @@ void ModelWidget::removeObjects(void)
 						itr++;
 					}
 
-					//Ordena os ids dos objetos
+					//Sort the object id vector in order to remove object from the last to the first avoiding reference break
 					sort(obj_ids.begin(), obj_ids.end());
 
-					//Varre de forma reversa o vetor de ids pegando do maior para o menor id
 					itr1=obj_ids.rbegin();
 					itr1_end=obj_ids.rend();
 					while(itr1!=itr1_end)
 					{
-						//Obtém um objeto do mapa através do id
 						aux_vect.push_back(objs_map[(*itr1)]);
 						itr1++;
 					}
@@ -2072,14 +1974,12 @@ void ModelWidget::removeObjects(void)
 					if(!object)  object=(*ritr++);
 					obj_type=object->getObjectType();
 
-					//Caso o objeto esteja protegido a exclusão será negada
-					/* O esquema 'public' e as linguagens C e SQL não pode ser manipuladas
-				por serem do sistema, caso o usuário tente esta operação um erro será disparado */
+					//Raises an error if the user try to remove a reserved object
 					if(isReservedObject(object))
 						throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					//Raises an error if the user try to remove a protected object
 					else if(object->isProtected())
 					{
-						//Monta a mensagem de que o objeto não pode ser removido por estar protegido
 						throw Exception(QString(Exception::getErrorMessage(ERR_REM_PROTECTED_OBJECT))
 														.arg(object->getName(true))
 														.arg(object->getTypeName()),
@@ -2096,14 +1996,13 @@ void ModelWidget::removeObjects(void)
 
 							try
 							{
-								/* Caso seja uma coluna valida a sua remoção verificando se outros objetos
-								não estão referenciando a mesma */
+								//If the object is a column validates the column removal before remove it
 								if(obj_type==OBJ_COLUMN)
 									db_model->validateColumnRemoval(dynamic_cast<Column *>(tab_obj));
 
 								db_model->removePermissions(tab_obj);
 
-								//Adiciona o objeto removido   lista de operações e redesenha o modelo
+								//Register the removed object on the operation list
 								op_list->registerObject(tab_obj, Operation::OBJECT_REMOVED, obj_idx, table);
 								table->removeObject(obj_idx, obj_type);
 
@@ -2122,7 +2021,6 @@ void ModelWidget::removeObjects(void)
 						}
 						else
 						{
-							//Remove o objeto do modelo usando seu indice
 							obj_idx=db_model->getObjectIndex(object);
 
 							if(obj_idx >=0 )
@@ -2136,7 +2034,6 @@ void ModelWidget::removeObjects(void)
 
 								try
 								{
-									//Adiciona o objeto removido   lista de operações e redesenha o modelo
 									op_list->registerObject(object, Operation::OBJECT_REMOVED, obj_idx);
 									db_model->removeObject(object, obj_idx);
 								}
@@ -2145,8 +2042,6 @@ void ModelWidget::removeObjects(void)
 									throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 								}
 
-								/* Caso um relacionamento foi removido é necessário redimensionar as tabelas participantes
-					 para o caso de alguma coluna ter sido removido das tabelas */
 								if(rel)
 								{
 									src_table->setModified(true);
@@ -2175,33 +2070,19 @@ void ModelWidget::removeObjects(void)
 				if(op_list->isOperationChainStarted())
 					op_list->finishOperationChain();
 
-				/* Caso a quantidade de operações seja diferente da quantidade inicial
-			 obtida antes da remoção dos objetos */
 				if(op_count < op_list->getCurrentSize())
 				{
-					//Obtém a quantidade de operações que necessitam ser removidas
 					count=op_list->getCurrentSize()-op_count;
-
-					/* Anula o encadeamento de operações para que as mesmas seja
-				desfeitas uma a uma ignorando o encadeamento */
 					op_list->ignoreOperationChain(true);
 
-					/* Desfaz as operações na quantidade calculada e remove a
-				operação da lista */
 					for(unsigned i=0; i < count; i++)
 						op_list->removeLastOperation();
 
-					//Desfaz a anulação do encadeamento
 					op_list->ignoreOperationChain(false);
 				}
 
 				scene->clearSelection();
 				emit s_objectRemoved();
-
-				/** issue #24**/
-				/* Aparentemente redirencionando a exceção neste ponto é provocado um segmentation fault sem causa conhecida.
-			 Uma solução alternativa é chamar a caixa de mensagem exibindo a exceção capturada. */
-				//throw Excecao(e.obterMensagemErro(),e.obterTipoErro(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 				msg_box.show(e);
 			}
 		}
@@ -2365,12 +2246,10 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 	QString str_aux;
 	bool protected_obj=false;
 
-	//Limpa os menus padrão do modelo
 	new_object_menu.clear();
 	quick_actions_menu.clear();
 	popup_menu.clear();
 
-	//Desabilitar as ações padrão do menu popup
 	this->disableModelActions();
 	this->selected_objects=objects;
 
@@ -2378,7 +2257,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 	if(objects.size() <= 1)
 	{
-		//Caso não haja objetos selecionados
+		//Case there is no selected object or the selected object is the database model
 		if(objects.empty() ||
 			 (objects.size()==1 && objects[0]==db_model))
 		{
@@ -2386,11 +2265,10 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 													 OBJ_FUNCTION, OBJ_AGGREGATE, OBJ_LANGUAGE, OBJ_OPCLASS, OBJ_OPERATOR,
 													 OBJ_OPFAMILY, OBJ_ROLE, OBJ_SCHEMA, OBJ_SEQUENCE, OBJ_TYPE, OBJ_TABLESPACE };
 
-			//Configura o menu de inserção de novos objetos com os tipos do vetor 'tipos[]'
+			//Configures the "New object" menu with the types at database level
 			for(i=0; i < 18; i++)
 				new_object_menu.addAction(actions_new_objects[types[i]]);
 
-			//Adiciona o menu configurado   ação de novo objeto
 			action_new_object->setMenu(&new_object_menu);
 			popup_menu.addAction(action_new_object);
 
@@ -2398,13 +2276,11 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 
 			popup_menu.addSeparator();
 
-			//Inclui a ação de edição do modelo e exibição de seu código fonte
 			action_edit->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
 			action_source_code->setData(QVariant::fromValue<void *>(dynamic_cast<BaseObject *>(db_model)));
 			popup_menu.addAction(action_edit);
 			popup_menu.addAction(action_source_code);
 
-			//Caso o modelo esteja protegido exibe a ação de desproteger e vice-versa
 			if(db_model->isProtected())
 				popup_menu.addAction(action_unprotect);
 			else
@@ -2413,7 +2289,6 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			if(scene->items().count() > 1)
 				popup_menu.addAction(action_select_all);
 		}
-		//Caso haja apenas 1 objeto selecionado
 		else if(objects.size()==1)
 		{
 			BaseObject *obj=objects[0];
@@ -2425,32 +2300,27 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 												OBJ_FUNCTION, OBJ_OPERATOR, OBJ_OPCLASS, OBJ_OPFAMILY,
 												OBJ_SEQUENCE, OBJ_TABLE, OBJ_TYPE, OBJ_VIEW };
 
-			//Se o objeto não está protegido e o mesmo seja um relacionamento ou tabela
 			if(!obj->isProtected() &&
 				 (obj_type==OBJ_TABLE ||obj_type==OBJ_RELATIONSHIP || obj_type==OBJ_SCHEMA))
 			{
-				//Caso seja tabela, inclui a ação de adição de objetos de tabela
 				if(obj_type == OBJ_TABLE)
 				{
 					for(i=0; i < 5; i++)
 						new_object_menu.addAction(actions_new_objects[types[i]]);
 					action_new_object->setMenu(&new_object_menu);
 				}
-				//Caso seja tabela, inclui a ação de adição de atributos e restrições ao relacionamento
 				else if(obj_type==OBJ_RELATIONSHIP)
 				{
 					for(i=0; i < 2; i++)
 						new_object_menu.addAction(actions_new_objects[types[i]]);
 					action_new_object->setMenu(&new_object_menu);
 
-					//Caso seja um relacionametno N-N inclui a ação de conversão do relacionamento
 					if(rel->getRelationshipType()==Relationship::RELATIONSHIP_NN)
 					{
 						action_convert_relnn->setData(QVariant::fromValue<void *>(rel));
 						popup_menu.addAction(action_convert_relnn);
 					}
 				}
-				//Caso seja tabela, inclui a ação de adição de objetos de tabela
 				else if(obj_type == OBJ_SCHEMA)
 				{
 					for(i=0; i < 11; i++)
@@ -2464,7 +2334,6 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			configureSubmenu(obj);
 			popup_menu.addSeparator();
 
-			//Adiciona as ações de edição, exibição do código fonte e dependências/referências do objeto
 			action_edit->setData(QVariant::fromValue<void *>(obj));
 			action_source_code->setData(QVariant::fromValue<void *>(obj));
 			action_deps_refs->setData(QVariant::fromValue<void *>(obj));
@@ -2476,11 +2345,8 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		}
 	}
 
-	/* Adiciona a ação de proteger/desproteger quando o objeto selecionado
-		não foi incluído por relacionamento e caso se tratar de um objeto de
-		tabela, a tabela pai não está protegido. Caso o modelo esteja protegido a ação
-		de proteger/desproteger não será exibida pois isso força o usário a desproteger
-		todo o modelo para depois manipular os demais objetos */
+	/* Adds the protect/unprotect action when the selected object was not included by relationship
+	and if its a table object and the parent table is not protected. */
 	if(!objects.empty() &&
 		 !this->db_model->isProtected() &&
 		 (!tab_obj || (tab_obj && !tab_obj->getParentTable()->isProtected() && !tab_obj->isAddedByRelationship())))
@@ -2493,7 +2359,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		popup_menu.addSeparator();
 	}
 
-	//Adiciona a ação de copiar e recortar quando há objetos selecionados
+	//Adding the copy and paste if there is selected objects
 	if(!(objects.size()==1 && (objects[0]==db_model || objects[0]->getObjectType()==BASE_RELATIONSHIP)) &&
 		 !objects.empty() && !tab_obj)
 	{
@@ -2507,7 +2373,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		popup_menu.addAction(action_cut);
 	}
 
-	//Caso haja objetos copiados adiciona a ação de colar objetos
+	//If there is copied object adds the paste action
 	if(!copied_objects.empty())
 		popup_menu.addAction(action_paste);
 
@@ -2518,9 +2384,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			!objects.empty()) || tab_obj)
 		popup_menu.addAction(action_remove);
 
-	/* Caso o objeto seja uma coluna (objeto de tabela) cria um menu
-		especial que permite acesso rápid s retrições que são pertinentes
-		a coluna */
+	//If the table object is a column creates a special menu to acess the constraints that is applied to the column
 	if(tab_obj)
 	{
 		table=dynamic_cast<Table *>(tab_obj->getParentTable());
@@ -2534,10 +2398,6 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				constr=table->getConstraint(i);
 				if(constr->isColumnExists(dynamic_cast<Column *>(tab_obj), Constraint::SOURCE_COLS))
 				{
-					/* Fazendo uma configuração específica de ícone para restrições.
-				Cada tipo de restrição tem seu ícone específico.
-				O sufixos sufixo _pk, _fk, _ck, e _uq, são concatenados
-				ao nome do tipo (constraint) para identificar o ícone */
 					switch(!constr->getConstraintType())
 					{
 						case ConstraintType::primary_key: str_aux="_pk"; break;
@@ -2546,7 +2406,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 						case ConstraintType::unique: str_aux="_uq"; break;
 					}
 
-					//Cria um menu poup para restrição. Para cada restrição as ações de editar, codigo fonte, bloquear/desbloquear e excluir são incluídas
+					//For each constaint is created a menu with the edit, source code, protect/unprotect and delete actions
 					submenu=new QMenu(&popup_menu);
 					submenu->setIcon(QPixmap(QString(":/icones/icones/") +
 																	 BaseObject::getSchemaName(OBJ_CONSTRAINT) + str_aux + QString(".png")));
@@ -2598,9 +2458,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				}
 			}
 
-			/* Caso um submenu de restrições foi adicionado o mesmo é incluído no
-			menu popup principal através de uma ação criada com o nome da restrição
-			a qual o menu popup faz referência */
+			//Adding the constraint submenus to the main popup menu
 			if(!submenus.empty())
 			{
 				submenu=new QMenu(&popup_menu);
@@ -2617,7 +2475,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 		}
 	}
 
-	//Ativa as ações do menu popup principal que estão visíveis
+	//Enable the popup actions that are visible
 	QList<QAction *> actions=popup_menu.actions();
 	actions.append(quick_actions_menu.actions());
 	while(!actions.isEmpty())
