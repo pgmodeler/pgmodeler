@@ -18,16 +18,16 @@
 
 /**
 \ingroup libpgmodeler_ui
-\class FormPrincipal
+\class MainWindow
 \brief Definição da classe que implementa o formulário principal do software,
  Reune e gerencia todas as classes das bibliotecas implementadas.
 */
 
-#ifndef FORM_PRINCIPAL_H
-#define FORM_PRINCIPAL_H
+#ifndef MAIN_WINDOW_H
+#define MAIN_WINDOW_H
 
 #include <QtGui>
-#include "ui_formprincipal.h"
+#include "ui_mainwindow.h"
 #include "modelwidget.h"
 #include "aboutform.h"
 #include "messagebox.h"
@@ -40,44 +40,37 @@
 
 using namespace std;
 
-class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
+class MainWindow: public QMainWindow, public Ui::MainWindow {
+	private:
 		Q_OBJECT
 
-	private:
 		//! \brief Timer de salvamento automático do modelo
-		QTimer tm_salvamento,
-		tm_salvamento_tmp;
+		QTimer model_save_timer,	tmpmodel_save_timer;
 
 		MessageBox msg_box;
 
 		//! \brief Widget de visão geral do modelo
-		ModelOverviewWidget *visaogeral_wgt;
+		ModelOverviewWidget *overview_wgt;
 
 		//! \brief Formulário de restauração de modelos
-		ModelRestorationForm *frestmodelo;
+		ModelRestorationForm *restoration_form;
 
 		//! \brief Dockwidget o qual exibe as operações executadas sobre os objetos
-		OperationListWidget *lista_oper;
+		OperationListWidget *oper_list_wgt;
 
 		//! \brief Dockwidget o qual exibe todos os objetos do modelo em forma de árvore/lista
-		ModelObjectsWidget *visao_objs;
+		ModelObjectsWidget *model_objs_wgt;
 
 		//! \brief Armazena a referência para o modelo atualmente aberto
-		ModelWidget *modelo_atual;
+		ModelWidget *current_model;
 
-		map<ModelWidget *, vector<BaseObject *> > confs_arv_objs;
-
-		//! \brief Armazena o nome da operação atualmente selecionada
-		QLabel *nome_op;
-
-		//! \brief Armazena o nome ícone da operação atualmente selecionada
-		QLabel *icone_op;
+		map<ModelWidget *, vector<BaseObject *> > model_tree_states;
 
 		//! \brief Título da janela principal
-		QString titulo_janela;
+		QString window_title;
 
 		//! \brief Armazena o intevalo de salvamento automático do modelo
-		int interv_salvar;
+		int save_interval;
 
 		//! \brief Sobrecarga do closeEvent(): Salva as configurações antes do encerramento do aplicativo
 		void closeEvent(QCloseEvent *);
@@ -89,70 +82,75 @@ class FormPrincipal: public QMainWindow, public Ui::FormPrincipal {
 		void carregarPlugins(void);
 
 	public:
-		FormPrincipal(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-		~FormPrincipal(void);
+		MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+		~MainWindow(void);
+
+	public slots:
+		/*! \brief Adiciona um novo modelo, caso o parâmetro 'nome_arq' esteja preenchido, o pgModeler
+		 tentará carregar o modelo especificado pelo arquivo */
+		void addModel(const QString &filename="");
+
+		/*! \brief Executa o fechamento do modelo atual, o parâmetro 'idx_modelo' pode ser usado
+		 para fechar um modelo especificado por seu índice */
+		void closeModel(int model_id=-1);
+
+		int getModelCount(void);
+
+		ModelWidget *getModel(int idx);
 
 	private slots:
 		//! \brief Atualiza as definições da grade com base nas ações: Exibir Grade, Alin. Grade e Exibir limites
-		void definirOpcoesGrade(void);
-
-		/*! \brief Adiciona um novo modelo, caso o parâmetro 'nome_arq' esteja preenchido, o pgModeler
-		 tentará carregar o modelo especificado pelo arquivo */
-		void adicionarNovoModelo(const QString &nome_arq="");
+		void setGridOptions(void);
 
 		/*! \brief Atualiza o estado (ativo/inativo) dos botões das barras
 		 de ferramentas de acordo com a ação de abertura ou
 		 fechamento de modelo */
-		void atualizarEstadoFerramentas(bool modelo_fechado=false);
-		void __atualizarEstadoFerramentas(void);
+		void updateToolsState(bool model_closed=false);
+		void __updateToolsState(void);
 
 		/*! \brief Efetua a atualização dos dockwidgets de visão geral,
 		 lista de operações e arvore de objetos */
-		void atualizarDockWidgets(void);
-		void __atualizarDockWidgets(void);
+		void updateDockWidgets(void);
+		void __updateDockWidgets(void);
 
 		//! \brief Atualiza a referência ao modelo atual quando as abas de modelos são ativadas
-		void definirModeloAtual(void);
-
-		/*! \brief Executa o fechamento do modelo atual, o parâmetro 'idx_modelo' pode ser usado
-		 para fechar um modelo especificado por seu índice */
-		void fecharModelo(int idx_modelo=-1);
+		void setCurrentModel(void);
 
 		//! \brief Carrega um modelo a partir do disco
-		void carregarModelo(void);
+		void loadModel(void);
 
 		//! \brief Salva um determinado ModeloWidget
-		void salvarModelo(ModelWidget *modelo=NULL);
+		void saveModel(ModelWidget *model=NULL);
 
 		//! \brief Salva todos os modelos abertos
-		void salvarTodosModelos(void);
+		void saveAllModels(void);
 
 		//! \brief Imprime o modelo atual
-		void imprimirModelo(void);
+		void printModel(void);
 
 		//! \brief Executa a exportação no modelo atual
-		void exportarModelo(void);
+		void exportModel(void);
 
 		//! \brief Atualiza os modelos abertos com as novas configurações
-		void atualizarModelos(void);
+		void updateModels(void);
 
 		//! \brief Aplica o zoom sobre o modelo atual
-		void aplicarZoom(void);
+		void applyZoom(void);
 
 		//! \brief Exibe o pgModeler em tela cheia
-		void exibirTelaCheia(bool tela_cheixa);
+		void showFullScreen(bool fullscreen);
 
 		//! \brief Executa o plugin representado pela ação que disparou o slot
-		void executarPlugin(void);
+		void executePlugin(void);
 
 		//! \brief Salva o modelo atualmente editados na pasta temporária em caso de crash o mesmo pode ser restaurado
-		void salvarModeloTemporario(void);
+		void saveTemporaryModel(void);
 
 		//! \brief Exibe a visão geral do modelo atualmente aberto
-		void exibirVisaoGeral(bool exibir);
+		void showOverview(bool show);
 
 		//! \brief Atualiza o nome da aba do modelo atual caso o nome do banco de dados seja alterado
-		void atualizarNomeAba(void);
+		void updateModelTabName(void);
 };
 
 #endif

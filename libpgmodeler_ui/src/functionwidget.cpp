@@ -1,7 +1,7 @@
 #include "functionwidget.h"
 #include "parameterwidget.h"
 
-extern ParameterWidget *parametro_wgt;
+extern ParameterWidget *parameter_wgt;
 
 FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FUNCTION)
 {
@@ -110,7 +110,7 @@ void FunctionWidget::handleParameter(int result)
 		considered in the table will always be the last recently included */
 		if(lin < 0) lin=lin_cnt-1;
 
-		showParameterData(parametro_wgt->getParameter(), table, lin);
+		showParameterData(parameter_wgt->getParameter(), table, lin);
 	}
 	else if(result==QDialog::Rejected)
 	{
@@ -131,17 +131,17 @@ void FunctionWidget::showParameterForm(void)
 	{
 		table=dynamic_cast<ObjectTableWidget *>(obj_sender);
 
-		parametro_wgt->param_in_chk->setEnabled(obj_sender==parameters_tab);
-		parametro_wgt->param_out_chk->setEnabled(obj_sender==parameters_tab);
-		parametro_wgt->default_value_edt->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt->param_in_chk->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt->param_out_chk->setEnabled(obj_sender==parameters_tab);
+		parameter_wgt->default_value_edt->setEnabled(obj_sender==parameters_tab);
 
 		lin_idx=table->getSelectedRow();
 
 		if(lin_idx >= 0 && !table->getCellText(lin_idx, 0).isEmpty())
 			aux_param=getParameter(table, lin_idx);
 
-		parametro_wgt->setAttributes(aux_param, model);
-		parametro_wgt->show();
+		parameter_wgt->setAttributes(aux_param, model);
+		parameter_wgt->show();
 	}
 }
 
@@ -204,7 +204,7 @@ void FunctionWidget::setAttributes(DatabaseModel *model, OperationList *op_list,
 	Parameter param;
 	PgSQLType aux_type;
 
-	connect(parametro_wgt, SIGNAL(finished(int)), this, SLOT(handleParameter(int)));
+	connect(parameter_wgt, SIGNAL(finished(int)), this, SLOT(handleParameter(int)));
 
 	BaseObjectWidget::setAttributes(model, op_list, func, schema);
 	languages=model->getObjects(OBJ_LANGUAGE);
@@ -293,7 +293,7 @@ void FunctionWidget::hideEvent(QHideEvent *event)
 	symbol_edt->clear();
 	library_edt->clear();
 	func_config_twg->setCurrentIndex(0);
-	disconnect(parametro_wgt,NULL, this, NULL);
+	disconnect(parameter_wgt,NULL, this, NULL);
 	BaseObjectWidget::hideEvent(event);
 }
 

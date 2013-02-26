@@ -13,7 +13,7 @@ LIBS = $$DESTDIR/$$LIBUTIL \
 RESOURCES += res/resources.qrc
 windows:RCC_DIR += src
 
-SOURCES += $$PWD/src/formprincipal.cpp \
+SOURCES += $$PWD/src/mainwindow.cpp \
 	   $$PWD/src/modelwidget.cpp \
 	   $$PWD/src/aboutform.cpp \
            $$PWD/src/messagebox.cpp \
@@ -67,7 +67,7 @@ SOURCES += $$PWD/src/formprincipal.cpp \
            $$PWD/src/pluginsconfigwidget.cpp
 
 
-HEADERS += $$PWD/src/formprincipal.h \
+HEADERS += $$PWD/src/mainwindow.h \
 	   $$PWD/src/modelwidget.h \
 	   $$PWD/src/aboutform.h \
            $$PWD/src/messagebox.h \
@@ -120,7 +120,7 @@ HEADERS += $$PWD/src/formprincipal.h \
            $$PWD/src/quickrenamewidget.h \
            $$PWD/src/pluginsconfigwidget.h
 
-FORMS += $$PWD/ui/formprincipal.ui \
+FORMS += $$PWD/ui/mainwindow.ui \
 	 $$PWD/ui/aboutform.ui \
          $$PWD/ui/textboxwidget.ui \
          $$PWD/ui/messagebox.ui \

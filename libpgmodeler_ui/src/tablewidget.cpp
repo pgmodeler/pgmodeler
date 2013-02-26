@@ -5,11 +5,11 @@
 #include "indexwidget.h"
 #include "triggerwidget.h"
 
-extern ConstraintWidget *restricao_wgt;
-extern ColumnWidget *coluna_wgt;
-extern RuleWidget *regra_wgt;
-extern IndexWidget *indice_wgt;
-extern TriggerWidget *gatilho_wgt;
+extern ConstraintWidget *constraint_wgt;
+extern ColumnWidget *column_wgt;
+extern RuleWidget *rule_wgt;
+extern IndexWidget *index_wgt;
+extern TriggerWidget *trigger_wgt;
 
 TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 {
@@ -128,29 +128,29 @@ void TableWidget::showTableObjectForm(ObjectType obj_type)
 	switch(obj_type)
 	{
 		case OBJ_COLUMN:
-			coluna_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Column *>(object));
-			coluna_wgt->show();
+			column_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Column *>(object));
+			column_wgt->show();
 		break;
 
 		case OBJ_CONSTRAINT:
-			restricao_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Constraint *>(object));
-			restricao_wgt->show();
+			constraint_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Constraint *>(object));
+			constraint_wgt->show();
 		break;
 
 		case OBJ_TRIGGER:
-			gatilho_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Trigger *>(object));
-			gatilho_wgt->show();
+			trigger_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Trigger *>(object));
+			trigger_wgt->show();
 		break;
 
 		case OBJ_INDEX:
-			indice_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Index *>(object));
-			indice_wgt->show();
+			index_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Index *>(object));
+			index_wgt->show();
 		break;
 
 		default:
 		case OBJ_RULE:
-			regra_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Rule *>(object));
-			regra_wgt->show();
+			rule_wgt->setAttributes(this->model, table, this->op_list, dynamic_cast<Rule *>(object));
+			rule_wgt->show();
 		break;
 	}
 }

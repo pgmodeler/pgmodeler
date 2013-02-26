@@ -1,7 +1,7 @@
 #include "typewidget.h"
 #include "parameterwidget.h"
 
-extern ParameterWidget *parametro_wgt;
+extern ParameterWidget *parameter_wgt;
 
 TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 {
@@ -109,7 +109,7 @@ void TypeWidget::hideEvent(QHideEvent *event)
 	alignment_cmb->setCurrentIndex(0);
 	base_attribs_twg->setCurrentIndex(0);
 
-	disconnect(parametro_wgt,NULL,this,NULL);
+	disconnect(parameter_wgt,NULL,this,NULL);
 	BaseObjectWidget::hideEvent(event);
 }
 
@@ -142,7 +142,7 @@ void TypeWidget::showAttributeData(int res)
 	if(res==QDialog::Accepted)
 	{
 		//Get the configured attribute
-		param=parametro_wgt->getParameter();
+		param=parameter_wgt->getParameter();
 
 		//Add some information of it onto table
 		attributes_tab->setCellText(Utf8String::create(param.getName()), row, 0);
@@ -161,15 +161,15 @@ void TypeWidget::showAttributeForm(void)
 	int row;
 
 	//Disables the fields not used for type attributes on the form
-	parametro_wgt->param_in_chk->setEnabled(false);
-	parametro_wgt->param_out_chk->setEnabled(false);
-	parametro_wgt->default_value_edt->setEnabled(false);
+	parameter_wgt->param_in_chk->setEnabled(false);
+	parameter_wgt->param_out_chk->setEnabled(false);
+	parameter_wgt->default_value_edt->setEnabled(false);
 	row=attributes_tab->getSelectedRow();
 
 	if(row >= 0)
-		parametro_wgt->setAttributes(attributes_tab->getRowData(row).value<Parameter>(), this->model);
+		parameter_wgt->setAttributes(attributes_tab->getRowData(row).value<Parameter>(), this->model);
 
-	parametro_wgt->show();
+	parameter_wgt->show();
 }
 
 void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Type *type)
@@ -178,7 +178,7 @@ void TypeWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 	unsigned type_conf, i, count;
 	Parameter param;
 
-	connect(parametro_wgt, SIGNAL(finished(int)), this, SLOT(showAttributeData(int)));
+	connect(parameter_wgt, SIGNAL(finished(int)), this, SLOT(showAttributeData(int)));
 
 	BaseObjectWidget::setAttributes(model, op_list, type, schema);
 

@@ -30,34 +30,34 @@
 #include "permissionwidget.h"
 
 extern DatabaseWidget *database_wgt;
-extern SchemaWidget *esquema_wgt;
-extern RoleWidget *papel_wgt;
-extern TablespaceWidget *espacotabela_wgt;
-extern LanguageWidget *linguagem_wgt;
-extern SourceCodeWidget *codigofonte_wgt;
-extern FunctionWidget *funcao_wgt;
-extern CastWidget *convtipo_wgt;
-extern ConversionWidget *convcodif_wgt;
-extern DomainWidget *dominio_wgt;
-extern AggregateWidget *funcaoag_wgt;
-extern SequenceWidget *sequencia_wgt;
-extern OperatorWidget *operador_wgt;
-extern OperatorFamilyWidget *familiaop_wgt;
-extern OperatorClassWidget *classeop_wgt;
-extern TypeWidget *tipo_wgt;
-extern ViewWidget *visao_wgt;
-extern TextboxWidget *caixatexto_wgt;
-extern ColumnWidget *coluna_wgt;
-extern ConstraintWidget *restricao_wgt;
-extern RuleWidget *regra_wgt;
-extern TriggerWidget *gatilho_wgt;
-extern IndexWidget *indice_wgt;
-extern RelationshipWidget *relacao_wgt;
-extern TableWidget *tabela_wgt;
+extern SchemaWidget *schema_wgt;
+extern RoleWidget *role_wgt;
+extern TablespaceWidget *tablespace_wgt;
+extern LanguageWidget *language_wgt;
+extern SourceCodeWidget *sourcecode_wgt;
+extern FunctionWidget *function_wgt;
+extern CastWidget *cast_wgt;
+extern ConversionWidget *conversion_wgt;
+extern DomainWidget *domain_wgt;
+extern AggregateWidget *aggregate_wgt;
+extern SequenceWidget *sequence_wgt;
+extern OperatorWidget *operator_wgt;
+extern OperatorFamilyWidget *opfamily_wgt;
+extern OperatorClassWidget *opclass_wgt;
+extern TypeWidget *type_wgt;
+extern ViewWidget *view_wgt;
+extern TextboxWidget *textbox_wgt;
+extern ColumnWidget *column_wgt;
+extern ConstraintWidget *constraint_wgt;
+extern RuleWidget *rule_wgt;
+extern TriggerWidget *trigger_wgt;
+extern IndexWidget *index_wgt;
+extern RelationshipWidget *relationship_wgt;
+extern TableWidget *table_wgt;
 extern TaskProgressWidget *task_prog_wgt;
 extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern QuickRenameWidget *quickrename_wgt;
-extern PermissionWidget *permissao_wgt;
+extern PermissionWidget *permission_wgt;
 
 vector<BaseObject *> ModelWidget::copied_objects;
 bool ModelWidget::cut_operation=false;
@@ -486,7 +486,7 @@ void ModelWidget::addNewObject(void)
 		else
 		{
 			//For the graphical object, changes the cursor icon until the user click on the model to show the editing form
-			viewport->setCursor(QCursor(action->icon().pixmap(QSize(32,32)),0,0));
+			viewport->setCursor(QCursor(action->icon().pixmap(QSize(22,22)),0,0));
 			this->new_obj_type=obj_type;
 			this->disableModelActions();
 		}
@@ -1110,94 +1110,94 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 		switch(obj_type)
 		{
 			case OBJ_SCHEMA:
-				esquema_wgt->setAttributes(db_model, op_list, dynamic_cast<Schema *>(object));
-				esquema_wgt->show();
+				schema_wgt->setAttributes(db_model, op_list, dynamic_cast<Schema *>(object));
+				schema_wgt->show();
 			break;
 
 			case OBJ_ROLE:
-				papel_wgt->setAttributes(db_model, op_list, dynamic_cast<Role *>(object));
-				papel_wgt->show();
+				role_wgt->setAttributes(db_model, op_list, dynamic_cast<Role *>(object));
+				role_wgt->show();
 			break;
 
 			case OBJ_TABLESPACE:
-				espacotabela_wgt->setAttributes(db_model, op_list, dynamic_cast<Tablespace *>(object));
-				espacotabela_wgt->show();
+				tablespace_wgt->setAttributes(db_model, op_list, dynamic_cast<Tablespace *>(object));
+				tablespace_wgt->show();
 			break;
 
 			case OBJ_LANGUAGE:
-				linguagem_wgt->setAttributes(db_model, op_list, dynamic_cast<Language *>(object));
-				linguagem_wgt->show();
+				language_wgt->setAttributes(db_model, op_list, dynamic_cast<Language *>(object));
+				language_wgt->show();
 			break;
 
 			case OBJ_FUNCTION:
-				funcao_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Function *>(object));
-				funcao_wgt->show();
+				function_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Function *>(object));
+				function_wgt->show();
 			break;
 
 			case OBJ_CAST:
-				convtipo_wgt->setAttributes(db_model, op_list, dynamic_cast<Cast *>(object));
-				convtipo_wgt->show();
+				cast_wgt->setAttributes(db_model, op_list, dynamic_cast<Cast *>(object));
+				cast_wgt->show();
 			break;
 
 			case OBJ_CONVERSION:
-				convcodif_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Conversion *>(object));
-				convcodif_wgt->show();
+				conversion_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Conversion *>(object));
+				conversion_wgt->show();
 			break;
 
 			case OBJ_DOMAIN:
-				dominio_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Domain *>(object));
-				dominio_wgt->show();
+				domain_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Domain *>(object));
+				domain_wgt->show();
 			break;
 
 			case OBJ_AGGREGATE:
-				funcaoag_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Aggregate *>(object));
-				funcaoag_wgt->show();
+				aggregate_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Aggregate *>(object));
+				aggregate_wgt->show();
 			break;
 
 			case OBJ_SEQUENCE:
-				sequencia_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Sequence *>(object));
-				sequencia_wgt->show();
+				sequence_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Sequence *>(object));
+				sequence_wgt->show();
 			break;
 
 			case OBJ_OPERATOR:
-				operador_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Operator *>(object));
-				operador_wgt->show();
+				operator_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Operator *>(object));
+				operator_wgt->show();
 			break;
 
 			case OBJ_OPFAMILY:
-				familiaop_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorFamily *>(object));
-				familiaop_wgt->show();
+				opfamily_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorFamily *>(object));
+				opfamily_wgt->show();
 			break;
 
 			case OBJ_OPCLASS:
-				classeop_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorClass *>(object));
-				classeop_wgt->show();
+				opclass_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorClass *>(object));
+				opclass_wgt->show();
 			break;
 
 			case OBJ_TYPE:
-				tipo_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Type *>(object));
-				tipo_wgt->show();
+				type_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Type *>(object));
+				type_wgt->show();
 			break;
 
 			case OBJ_VIEW:
 				View *view;
 				view=dynamic_cast<View *>(object);
-				visao_wgt->setAttributes(db_model, op_list, sel_schema, view, pos.x(), pos.y());
-				visao_wgt->show();
+				view_wgt->setAttributes(db_model, op_list, sel_schema, view, pos.x(), pos.y());
+				view_wgt->show();
 			break;
 
 			case OBJ_TEXTBOX:
 				Textbox *txtbox;
 				txtbox=dynamic_cast<Textbox *>(object);
-				caixatexto_wgt->setAttributes(db_model, op_list, txtbox, pos.x(), pos.y());
-				caixatexto_wgt->show();
+				textbox_wgt->setAttributes(db_model, op_list, txtbox, pos.x(), pos.y());
+				textbox_wgt->show();
 			break;
 
 			case OBJ_COLUMN:
 				Column *col;
 				col=dynamic_cast<Column *>(object);
-				coluna_wgt->setAttributes(db_model, parent_obj, op_list, col);
-				coluna_wgt->show();
+				column_wgt->setAttributes(db_model, parent_obj, op_list, col);
+				column_wgt->show();
 
 				if(col)
 					db_model->validateRelationships(col, dynamic_cast<Table *>(parent_obj));
@@ -1208,8 +1208,8 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			case OBJ_CONSTRAINT:
 				Constraint *constr;
 				constr=dynamic_cast<Constraint *>(object);
-				restricao_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, constr);
-				restricao_wgt->show();
+				constraint_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, constr);
+				constraint_wgt->show();
 
 				if(constr)
 					db_model->validateRelationships(constr, dynamic_cast<Table *>(parent_obj));
@@ -1218,18 +1218,18 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			break;
 
 			case OBJ_RULE:
-				regra_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Rule *>(object));
-				regra_wgt->show();
+				rule_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Rule *>(object));
+				rule_wgt->show();
 			break;
 
 			case OBJ_TRIGGER:
-				gatilho_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Trigger *>(object));
-				gatilho_wgt->show();
+				trigger_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Trigger *>(object));
+				trigger_wgt->show();
 			break;
 
 			case OBJ_INDEX:
-				indice_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Index *>(object));
-				indice_wgt->show();
+				index_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Index *>(object));
+				index_wgt->show();
 			break;
 
 			case BASE_RELATIONSHIP:
@@ -1241,18 +1241,18 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 					Table *tab1=dynamic_cast<Table *>(selected_objects[0]),
 							*tab2=(selected_objects.size()==2 ?
 											 dynamic_cast<Table *>(selected_objects[1]) : tab1);
-					relacao_wgt->setAttributes(db_model, op_list, tab1, tab2, rel_type);
+					relationship_wgt->setAttributes(db_model, op_list, tab1, tab2, rel_type);
 				}
 				else
-					relacao_wgt->setAttributes(db_model, op_list, dynamic_cast<BaseRelationship *>(object));
+					relationship_wgt->setAttributes(db_model, op_list, dynamic_cast<BaseRelationship *>(object));
 
-				relacao_wgt->show();
+				relationship_wgt->show();
 				scene->clearSelection();
 			break;
 
 			case OBJ_TABLE:
-				tabela_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Table *>(object), pos.x(), pos.y());
-				tabela_wgt->show();
+				table_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Table *>(object), pos.x(), pos.y());
+				table_wgt->show();
 			break;
 
 			default:
@@ -1294,8 +1294,8 @@ void ModelWidget::showSourceCode(void)
 
 		if(objeto)
 		{
-			codigofonte_wgt->setAttributes(this->db_model, objeto);
-			codigofonte_wgt->show();
+			sourcecode_wgt->setAttributes(this->db_model, objeto);
+			sourcecode_wgt->show();
 		}
 	}
 }
@@ -1402,8 +1402,8 @@ void ModelWidget::editPermissions(void)
 	if(isReservedObject(obj))
 		throw Exception(ERR_OPR_RESERVED_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	permissao_wgt->setAttributes(this->db_model, NULL, obj);
-	permissao_wgt->show();
+	permission_wgt->setAttributes(this->db_model, NULL, obj);
+	permission_wgt->show();
 }
 
 void ModelWidget::editObject(void)

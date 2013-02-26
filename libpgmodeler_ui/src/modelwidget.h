@@ -278,7 +278,7 @@ class ModelWidget: public QWidget {
 		void s_zoomModified(float);
 		void s_modelResized(void);
 
-		friend class FormPrincipal;
+		friend class MainWindow;
 		friend class ModelExportForm;
 		friend class OperationListWidget;
 		friend class ModelObjectsWidget;

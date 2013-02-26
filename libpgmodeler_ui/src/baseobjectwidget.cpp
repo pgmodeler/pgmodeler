@@ -3,7 +3,7 @@
 #include "permissionwidget.h"
 
 //extern VisaoObjetosWidget *selecaoobjetos_wgt;
-extern PermissionWidget *permissao_wgt;
+extern PermissionWidget *permission_wgt;
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
 const QColor BaseObjectWidget::PROT_LINE_FGCOLOR=QColor(80,80,80);
@@ -478,8 +478,8 @@ void BaseObjectWidget::editPermissions(void)
 	if(this->relationship)
 		parent_obj=this->relationship;
 
-	permissao_wgt->setAttributes(this->model, parent_obj, this->object);
-	permissao_wgt->show();
+	permission_wgt->setAttributes(this->model, parent_obj, this->object);
+	permission_wgt->show();
 }
 
 void BaseObjectWidget::applyConfiguration(void)

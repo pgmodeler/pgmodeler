@@ -3,9 +3,9 @@
 #include "columnwidget.h"
 #include "tablewidget.h"
 
-extern ConstraintWidget *restricao_wgt;
-extern ColumnWidget *coluna_wgt;
-extern TableWidget *tabela_wgt;
+extern ConstraintWidget *constraint_wgt;
+extern ColumnWidget *column_wgt;
+extern TableWidget *table_wgt;
 
 RelationshipWidget::RelationshipWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RELATIONSHIP)
 {
@@ -473,8 +473,8 @@ void RelationshipWidget::showAdvancedObject(int row)
 	{
 		case OBJ_COLUMN:
 			col=dynamic_cast<Column *>(object);
-			coluna_wgt->setAttributes(this->model, col->getParentTable(), this->op_list, col);
-			coluna_wgt->show();
+			column_wgt->setAttributes(this->model, col->getParentTable(), this->op_list, col);
+			column_wgt->show();
 		break;
 
 		case OBJ_CONSTRAINT:
@@ -486,8 +486,8 @@ void RelationshipWidget::showAdvancedObject(int row)
 				constr->setProtected(true);
 			}
 
-			restricao_wgt->setAttributes(this->model, constr->getParentTable(), this->op_list, constr);
-			restricao_wgt->show();
+			constraint_wgt->setAttributes(this->model, constr->getParentTable(), this->op_list, constr);
+			constraint_wgt->show();
 			constr->setProtected(prot);
 		break;
 
@@ -496,9 +496,9 @@ void RelationshipWidget::showAdvancedObject(int row)
 			tab=reinterpret_cast<Table *>(object);
 
 			tab->setProtected(true);
-			tabela_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
+			table_wgt->setAttributes(this->model, this->op_list, dynamic_cast<Schema *>(tab->getSchema()),
 																tab,	tab->getPosition().x(), tab->getPosition().y());
-			tabela_wgt->show();
+			table_wgt->show();
 			tab->setProtected(false);
 		break;
 	}
@@ -523,13 +523,13 @@ void RelationshipWidget::addObject(void)
 
 		if(obj_type==OBJ_COLUMN)
 		{
-			coluna_wgt->setAttributes(this->model, this->object, this->op_list, NULL);
-			coluna_wgt->show();
+			column_wgt->setAttributes(this->model, this->object, this->op_list, NULL);
+			column_wgt->show();
 		}
 		else
 		{
-			restricao_wgt->setAttributes(this->model, this->object, this->op_list, NULL);
-			restricao_wgt->show();
+			constraint_wgt->setAttributes(this->model, this->object, this->op_list, NULL);
+			constraint_wgt->show();
 		}
 
 		listObjects(obj_type);
@@ -549,15 +549,15 @@ void RelationshipWidget::editObject(int row)
 
 		if(sender()==attributes_tab)
 		{
-			coluna_wgt->setAttributes(this->model, this->object, this->op_list,
+			column_wgt->setAttributes(this->model, this->object, this->op_list,
 																reinterpret_cast<Column *>(attributes_tab->getRowData(row).value<void *>()));
-			coluna_wgt->show();
+			column_wgt->show();
 		}
 		else
 		{
-			restricao_wgt->setAttributes(this->model, this->object, this->op_list,
+			constraint_wgt->setAttributes(this->model, this->object, this->op_list,
 																	 reinterpret_cast<Constraint *>(constraints_tab->getRowData(row).value<void *>()));
-			restricao_wgt->show();
+			constraint_wgt->show();
 		}
 
 		op_list->ignoreOperationChain(false);

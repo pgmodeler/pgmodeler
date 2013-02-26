@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FormPrincipal</class>
- <widget class="QMainWindow" name="FormPrincipal">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1323</width>
+    <width>1275</width>
     <height>600</height>
    </rect>
   </property>
@@ -87,8 +87,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1323</width>
-     <height>22</height>
+     <width>1275</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="defaultUp">

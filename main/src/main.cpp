@@ -1,4 +1,4 @@
-#include "formprincipal.h"
+#include "mainwindow.h"
 #include "application.h"
 #include <QTranslator>
 
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 		splash.repaint();
 
 		//Creates the main form
-		FormPrincipal fmain;
+		MainWindow fmain;
 
 		//Indicating that the splash screen must be closed when the main window is shown
 		splash.finish(&fmain);

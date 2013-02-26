@@ -114,7 +114,7 @@ class ModelObjectsWidget: public QDockWidget, public Ui::ModelObjectsWidget {
 	signals:
 		void s_visibilityChanged(BaseObject *,bool);
 
-		friend class FormPrincipal;
+		friend class MainWindow;
 };
 
 #endif
