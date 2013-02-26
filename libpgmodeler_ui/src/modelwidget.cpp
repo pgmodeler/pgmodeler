@@ -175,8 +175,8 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_protect=new QAction(QIcon(QString(":/icones/icones/bloqobjeto.png")), trUtf8("Protect"), this);
 	action_unprotect=new QAction(QIcon(QString(":/icones/icones/desbloqobjeto.png")), trUtf8("Unprotect"), this);
-	action_protect->setToolTip(trUtf8("Pretects the object(s) against modifications"));
-	action_unprotect->setToolTip(trUtf8("Removes from the objetc(s) the protection against modifications"));
+	action_protect->setToolTip(trUtf8("Protects object(s) from modifications"));
+	action_unprotect->setToolTip(trUtf8("Unprotect objetc(s) from modifications"));
 
 	action_remove=new QAction(QIcon(QString(":/icones/icones/excluir.png")), trUtf8("Delete"), this);
 	action_remove->setShortcut(QKeySequence("Del"));
@@ -195,7 +195,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 
 	action_paste=new QAction(QIcon(QString(":/icones/icones/colar.png")), trUtf8("Paste"), this);
 	action_paste->setShortcut(QKeySequence("Ctrl+V"));
-	action_paste->setToolTip(trUtf8("Paste the previos copied object(s)"));
+	action_paste->setToolTip(trUtf8("Paste the previous copied object(s)"));
 
 	action_cut=new QAction(QIcon(QString(":/icones/icones/recortar.png")), trUtf8("Cut"), this);
 	action_cut->setShortcut(QKeySequence("Ctrl+X"));

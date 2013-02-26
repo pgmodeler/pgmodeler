@@ -55,7 +55,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_ASG_SEQ_DIF_TABLE_SCHEMA", QT_TR_NOOP("Assignment of a schema to the sequence which differs from the schema of the owner table!")},
 	{"ERR_ASG_INV_VALUE_SEQ_ATTRIBS", QT_TR_NOOP("Assignment of an invalid value to one of the sequence attributes!")},
 	{"ERR_ASG_INV_SEQ_MIN_VALUE", QT_TR_NOOP("Assignment of a minimum value to the sequence which is greater than the maximum value!")},
-	{"ERR_ASG_INV_SEQ_START_VALUE", QT_TR_NOOP("Assignment of a start value to the sequence which is extrapolating the range defined by minimum and maximum values​​!")},
+	{"ERR_ASG_INV_SEQ_START_VALUE", QT_TR_NOOP("Assignment of a start value to the sequence which is extrapolating the range defined by minimum and maximum values!")},
 	{"ERR_ASG_INV_SEQ_INCR_VALUE", QT_TR_NOOP("Assignment of a null increment value to the sequence!")},
 	{"ERR_ASG_INV_SEQ_CACHE_VALUE", QT_TR_NOOP("Assignment of null cache value to the sequence!")},
 	{"ERR_ASG_TAB_DIF_SEQ_SCHEMA", QT_TR_NOOP("Assignment of owner table which is not in the same schema as the sequence '%1'!")},
