@@ -1486,13 +1486,7 @@ Taille: %2 bytes
         <translation>La valeur minimale de la séquence est supérieure à la valeur maximale!</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Assignment of a start value to the sequence which is extrapolating the range defined by minimum and maximum valuesââ!</source>
-        <translatorcomment>À contrôler.</translatorcomment>
-        <translation type="unfinished">Affectation de la valeur de départ de la séquence en dehors des limites de cette dernière (min et max)!</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Assignment of a null increment value to the sequence!</source>
         <translation>La valeur de l&apos;incrément de la séquence est nulle!</translation>
     </message>
@@ -1659,7 +1653,13 @@ Taille: %2 bytes
         <translation>Référence une commande dont l&apos;index est hors des limites de la liste de ces dernières!</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+6"/>
+        <source>Assignment of a start value to the sequence which is extrapolating the range defined by minimum and maximum values!</source>
+        <translatorcomment>À contrôler.</translatorcomment>
+        <translation>Affectation de la valeur de départ de la séquence en dehors des limites de cette dernière (min et max)!</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <source>Reference to a label which index is out of labels list bounds!</source>
         <translation>Référence un label dont l&apos;index est hors des limites de la liste de ces derniers!</translation>
     </message>
