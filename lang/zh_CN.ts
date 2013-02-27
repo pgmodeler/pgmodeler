@@ -879,7 +879,7 @@
         <translation>目标编码：</translation>
     </message>
     <message>
-        <source>Convertion Function:</source>
+        <source>Conversion Function:</source>
         <translation>转换函数：</translation>
     </message>
     <message>
@@ -896,7 +896,7 @@
     </message>
 </context>
 <context>
-    <name>ConversaoTipoWidget</name>
+    <name>CastWidget</name>
     <message>
         <source>Conversion Type:</source>
         <translation>转换类型：</translation>
@@ -914,7 +914,7 @@
         <translation>输入 / 输出</translation>
     </message>
     <message>
-        <source>Convertion Function:</source>
+        <source>Conversion Function:</source>
         <translation>转换函数：</translation>
     </message>
     <message>
@@ -1967,7 +1967,7 @@ Message returned by the DBMS: %1</source>
     </message>
 </context>
 <context>
-    <name>FormPrincipal</name>
+    <name>MainWindow</name>
     <message>
         <source>&amp;File</source>
         <translation>文件(&amp;F)</translation>
@@ -2830,7 +2830,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>ModeloWidget</name>
+    <name>ModelWidget</name>
     <message>
         <source>Generalization</source>
         <translation>泛化</translation>
@@ -2922,6 +2922,50 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     <message>
         <source>Add a new object in the model</source>
         <translation>添加新对象到模型中</translation>
+    </message>
+    <message>
+        <source>Quick actions</source>
+        <translation>快速操作</translation>
+    </message>
+    <message>
+        <source>Rename</source>
+        <translation>重命名</translation>
+    </message>
+    <message>
+        <source>Quick rename the object</source>
+        <translation>快速重命名此对象</translation>
+    </message>
+    <message>
+        <source>Move to schema</source>
+        <translation>移动到模式</translation>
+    </message>
+    <message>
+        <source>Move the object to another schema</source>
+        <translation>将此对象移动到另一个模式</translation>
+    </message>
+    <message>
+        <source>Edit permissions</source>
+        <translation>编辑权限</translation>
+    </message>
+    <message>
+        <source>Edit object's permissions</source>
+        <translation>编辑对象的权限</translation>
+    </message>
+    <message>
+        <source>Change owner</source>
+        <translation>变更所有者</translation>
+    </message>
+    <message>
+        <source>Change object's owner</source>
+        <translation>变更对象的所有者</translation>
+    </message>
+    <message>
+        <source>Select children</source>
+        <translation>选择子对象</translation>
+    </message>
+    <message>
+        <source>Selects all the children graphical objects on the selected schema</source>
+        <translation>选择所选定模式的所有子图形对象</translation>
     </message>
     <message>
         <source>Loading database model</source>
@@ -3973,7 +4017,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>TipoWidget</name>
+    <name>TypeWidget</name>
     <message>
         <source>Configuration:</source>
         <translation>配置：</translation>
@@ -4178,7 +4222,7 @@ GPLv3 的完整内容放在源代码根目录的 LICENSE 文件中。完整的 G
     </message>
 </context>
 <context>
-    <name>VisaoWidget</name>
+    <name>ViewWidget</name>
     <message>
         <source>References</source>
         <translation>引用</translation>

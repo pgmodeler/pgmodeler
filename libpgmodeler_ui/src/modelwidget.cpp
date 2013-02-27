@@ -209,7 +209,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_edit_perms->setShortcut(QKeySequence("Ctrl+E"));
 
 	action_change_owner=new QAction(QIcon(QString(":/icones/icones/changeowner.png")), trUtf8("Change owner"), this);
-	action_change_owner->setToolTip(trUtf8("Edit object's permissions"));
+	action_change_owner->setToolTip(trUtf8("Change object's owner"));
 	action_change_owner->setMenu(&owners_menu);
 
 	action_sel_sch_children=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select children"), this);
