@@ -589,12 +589,11 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+56"/>
-        <location line="+303"/>
         <source>icone</source>
         <translation>icône</translation>
     </message>
     <message>
-        <location line="-272"/>
+        <location line="+31"/>
         <source>Comment:</source>
         <translation>Commentaire:</translation>
     </message>
@@ -629,17 +628,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>L&apos;objet est vérouillé, par conséquent aucun changement dans le formulaire ne lui sera appliqué.</translation>
     </message>
     <message>
-        <location line="+19"/>
-        <source>Parent Object:</source>
-        <translation>Objet Parent:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="+43"/>
+        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="+36"/>
         <source>Create / Edit: </source>
         <translation>Créer / Éditer: </translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+352"/>
         <source>Value(s)</source>
         <translation>Valeur(s)</translation>
     </message>
@@ -687,7 +681,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Fonction de conversion:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/castwidget.cpp" line="+12"/>
+        <location filename="../libpgmodeler_ui/src/castwidget.cpp" line="+13"/>
         <source>Source data type</source>
         <translation>Type de donnée source</translation>
     </message>
@@ -1221,24 +1215,29 @@ Taille: %2 bytes
         <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+16"/>
+        <source>Constraint</source>
+        <translation>Contrainte</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Name:</source>
+        <translation>Nom:</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Not Null:</source>
         <translation>Non Null:</translation>
     </message>
     <message>
         <location line="+14"/>
+        <source>Check Expr.:</source>
+        <translation>Expr. de vérif.:</translation>
+    </message>
+    <message>
+        <location line="-40"/>
         <source>Default Value:</source>
         <translation>Valeur par défaut:</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Constraint Name:</source>
-        <translation>Nom de contrainte:</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>Check Expression:</source>
-        <translation>Expression de vérification:</translation>
     </message>
 </context>
 <context>
@@ -2138,350 +2137,6 @@ Message retourné par le SGBD: %1</translation>
     </message>
 </context>
 <context>
-    <name>FormPrincipal</name>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="+171"/>
-        <source>File</source>
-        <translation>Fichier</translation>
-    </message>
-    <message>
-        <location line="+78"/>
-        <source>Edit</source>
-        <translation>Editer</translation>
-    </message>
-    <message>
-        <location line="+97"/>
-        <source>New</source>
-        <translation>Nouveau</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Save</source>
-        <translation>Enregistrer</translation>
-    </message>
-    <message>
-        <location line="+42"/>
-        <source>Zoom -</source>
-        <translation>Zoom -</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Load</source>
-        <translation>Ouvrir</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <location line="+3"/>
-        <source>Next</source>
-        <translation>Suivant</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <location line="+3"/>
-        <source>Previous</source>
-        <translation>Précédent</translation>
-    </message>
-    <message>
-        <location line="+21"/>
-        <source>Exit</source>
-        <translation>Quitter</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>About pgModeler</source>
-        <translation>A propos de pgModeler</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>F1</source>
-        <translation>F1</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Print</source>
-        <translation>Imprimer</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Undo</source>
-        <translation>Annuler</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Redo</source>
-        <translation>Rétablir</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Export</source>
-        <translation>Exporter</translation>
-    </message>
-    <message>
-        <location line="+21"/>
-        <location line="+3"/>
-        <source>Show grid</source>
-        <translation>Afficher la grille</translation>
-    </message>
-    <message>
-        <location line="+51"/>
-        <source>Align to grid</source>
-        <translation>Aligner sur la grille</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Fullscreen</source>
-        <translation>Plein écran</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Show the model on fullscreen mode</source>
-        <translation>Afficher le modèle en mode plein écran</translation>
-    </message>
-    <message>
-        <location line="+24"/>
-        <source>Show the page delimiters</source>
-        <translation>Afficher les délimiteurs de page</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Configurations</source>
-        <translation>Configuration</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/formprincipal.cpp" line="+462"/>
-        <source>Save all models</source>
-        <translation>Enregistrer tous les modèles</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Some models were modified! Do you want to save them before finish the pgModeler?</source>
-        <translation>Certains modèles ont été modifiés! Voulez vous les sauvegarder avant de quitter pgModeler?</translation>
-    </message>
-    <message>
-        <location line="+519"/>
-        <source>Save &apos;%1&apos; as...</source>
-        <translation>Enregistrer &apos;%1&apos; sous...</translation>
-    </message>
-    <message>
-        <location line="+76"/>
-        <source>Confirmation</source>
-        <translation>Confirmer</translation>
-    </message>
-    <message>
-        <location line="+36"/>
-        <source>Load model</source>
-        <translation>Charger un modèle</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="+25"/>
-        <source>Overview</source>
-        <translation>Vue d&apos;ensemble</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Show the model overview</source>
-        <translation>Afficher la vue d&apos;ensemble du modèle</translation>
-    </message>
-    <message>
-        <location line="-681"/>
-        <source>pgModeler - PostgreSQL Database Modeler</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+73"/>
-        <source>&amp;File</source>
-        <translation>&amp;Fichier</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>&amp;Edit</source>
-        <translation>Édit&amp;er</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>&amp;Help</source>
-        <translation>A&amp;ide</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>&amp;Show</source>
-        <translation>&amp;Afficher</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>&amp;Tools</source>
-        <translation>&amp;Outils</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>&amp;Plugins</source>
-        <translation>E&amp;xtensions</translation>
-    </message>
-    <message>
-        <location line="+168"/>
-        <source>Plugins</source>
-        <translation>Extensions</translation>
-    </message>
-    <message>
-        <location line="+27"/>
-        <source>Ctrl+N</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Ctrl+S</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <location line="+3"/>
-        <source>Zoom in</source>
-        <translation>Zoom +</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Ctrl+=</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <location line="+6"/>
-        <source>Zoom out</source>
-        <translation>Zoom -</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Ctrl+-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Ctrl+O</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+42"/>
-        <source>Save as</source>
-        <translation>Enregistrer sous</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Ctrl+Q</source>
-        <translation>Ctrl+Q</translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Ctrl+P</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Ctrl+Z</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Ctrl+Y</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Ctrl+Shift+S</source>
-        <translation>Ctrl+Shift+S</translation>
-    </message>
-    <message>
-        <location line="+24"/>
-        <source>Ctrl+G</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Close model</source>
-        <translation>Fermer</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Ctrl+W</source>
-        <translation>Ctrl+W</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Normal zoom</source>
-        <translation>Zoom normal</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Ctrl+0</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+21"/>
-        <source>Align objects position to grid</source>
-        <translation>Aligner la position des objets sur la grille</translation>
-    </message>
-    <message>
-        <location line="+21"/>
-        <source>F11</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Show delimiters</source>
-        <translation>Afficher les délimiteurs</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Ctrl+L</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Widgets</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Save all</source>
-        <translation>Tout enregistrer</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/formprincipal.cpp" line="-65"/>
-        <source>Database model printing</source>
-        <translation>Impression du modèle de base de données</translation>
-    </message>
-    <message>
-        <location line="+30"/>
-        <source>Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click &apos;No&apos; or &apos;Cancel&apos; to abort printing.</source>
-        <translation>Des modifications ont été détectées dans les définitions du papier/marges du modèle ce qui pourrait causer une mauvaise impression des objets. Souhaitez vous continuer l&apos;impression aves les nouveaux paramètres? Pour utiliser les paramètres par défaut cliquez sur &apos;Non&apos; ou &apos;Annuler&apos; pour interrompre l&apos;impression.</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/formprincipal.ui" line="-479"/>
-        <source>View</source>
-        <translation>Vue</translation>
-    </message>
-    <message>
-        <location line="+81"/>
-        <source>Model</source>
-        <translation>Modèle</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/formprincipal.cpp" line="-73"/>
-        <location line="+106"/>
-        <source>Database model (*.dbm);;All files (*.*)</source>
-        <translation>Modèle de base de donnée (*.dbm);; Tous les fichiers (*.*)</translation>
-    </message>
-    <message>
-        <location line="-208"/>
-        <source>Save model</source>
-        <translation>Enregistrer le modèle</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>The model were modified! Do you want to save it before close?</source>
-        <translation>Le modèle a été modifié? Souhaitez vous le sauvegarder avant de le fermer?</translation>
-    </message>
-</context>
-<context>
     <name>FunctionWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/ui/functionwidget.ui" line="+26"/>
@@ -2494,47 +2149,47 @@ Message retourné par le SGBD: %1</translation>
         <translation>Attributs</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+119"/>
         <source>Langague:</source>
         <translation>Langage:</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="-13"/>
         <source>Function Type:</source>
         <translation>Type de fonction:</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+107"/>
         <source>Window Function:</source>
         <translation>Fonction window:</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="-160"/>
         <source>Execution Cost:</source>
         <translation>Coût d&apos;exécution:</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="-19"/>
         <source>Rows Returned:</source>
         <translation>Lignes retournées:</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="-13"/>
         <source>Behavior:</source>
         <translation>Comportement:</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+231"/>
         <source>Security:</source>
         <translation>Sécurité:</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="-186"/>
         <source>Return Method:</source>
         <translation>Type de retour:</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+81"/>
         <source>Simple</source>
         <translation>Simple</translation>
     </message>
@@ -2549,12 +2204,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>Table</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+44"/>
         <source>Return Table</source>
         <translation>Table de retour</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+34"/>
         <source>Parameters</source>
         <translation>Arguments</translation>
     </message>
@@ -2805,7 +2460,7 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+5"/>
         <source>Custom (Based on margins)</source>
-        <translation>Personnalis&amp;eacute; (Selon les marges)</translation>
+        <translation>Personnalisé (Selon les marges)</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -3067,6 +2722,350 @@ Message retourné par le SGBD: %1</translation>
         <location filename="../libpgmodeler_ui/src/languagewidget.cpp" line="+27"/>
         <source>The functions to be assigned to the language should have, respectively, the following signatures:&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Handler Function:&lt;/strong&gt; &lt;em&gt;language_handler function()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Validator Function:&lt;/strong&gt; &lt;em&gt;void function(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Inline Function:&lt;/strong&gt; &lt;em&gt;void function(internal)&lt;/em&gt;</source>
         <translation>Les fonctions attribuées au langage doivent avoir espectivement les signatures suivantes:&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Fonction de management:&lt;/strong&gt; &lt;em&gt;language_handler fonction()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Fonction de validation:&lt;/strong&gt; &lt;em&gt;void fonction(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Fonction Inline:&lt;/strong&gt; &lt;em&gt;void fonction(internal)&lt;/em&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>MainWindow</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/mainwindow.ui" line="+26"/>
+        <source>pgModeler - PostgreSQL Database Modeler</source>
+        <translation>pgModeler - PostgreSQL Database Modeler</translation>
+    </message>
+    <message>
+        <location line="+73"/>
+        <source>&amp;File</source>
+        <translation>&amp;Fichier</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>&amp;Edit</source>
+        <translation>Édit&amp;er</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>&amp;Help</source>
+        <translation>A&amp;ide</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&amp;Show</source>
+        <translation>&amp;Afficher</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&amp;Tools</source>
+        <translation>&amp;Outils</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>&amp;Plugins</source>
+        <translation>E&amp;xtensions</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>File</source>
+        <translation>Fichier</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>View</source>
+        <translation>Vue</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Edit</source>
+        <translation>Editer</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Model</source>
+        <translation>Modèle</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Plugins</source>
+        <translation>Extensions</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>New</source>
+        <translation>Nouveau</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+N</source>
+        <translation>Ctrl+N</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Save</source>
+        <translation>Enregistrer</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+S</source>
+        <translation>Ctrl+S</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <location line="+3"/>
+        <source>Zoom in</source>
+        <translation>Zoom +</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+=</source>
+        <translation>Ctrl+=</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <location line="+6"/>
+        <source>Zoom out</source>
+        <translation>Zoom -</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <source>Zoom -</source>
+        <translation>Zoom -</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Ctrl+-</source>
+        <translation>Ctrl+-</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Load</source>
+        <translation>Ouvrir</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+O</source>
+        <translation>Ctrl+O</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <location line="+3"/>
+        <source>Next</source>
+        <translation>Suivant</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <location line="+3"/>
+        <source>Previous</source>
+        <translation>Précédent</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Save as</source>
+        <translation>Enregistrer sous</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Exit</source>
+        <translation>Quitter</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+Q</source>
+        <translation>Ctrl+Q</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>About pgModeler</source>
+        <translation>À propos de pgModeler</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>F1</source>
+        <translation>F1</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Print</source>
+        <translation>Imprimer</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+P</source>
+        <translation>Ctrl+P</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Undo</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+Z</source>
+        <translation>Ctrl+Z</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Redo</source>
+        <translation>Rétablir</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+Y</source>
+        <translation>Ctrl+Y</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Export</source>
+        <translation>Exporter</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+Shift+S</source>
+        <translation>Ctrl+Shift+S</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <location line="+3"/>
+        <source>Show grid</source>
+        <translation>Afficher la grille</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+G</source>
+        <translation>Ctrl+G</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Close model</source>
+        <translation>Fermer</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+W</source>
+        <translation>Ctrl+W</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Normal zoom</source>
+        <translation>Zoom normal</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+0</source>
+        <translation>Ctrl+0</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Align to grid</source>
+        <translation>Aligner sur la grille</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Align objects position to grid</source>
+        <translation>Aligner les objets sur la grille</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Fullscreen</source>
+        <translation>Plein écran</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Show the model on fullscreen mode</source>
+        <translation>Afficher le modèle en mode plein écran</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>F11</source>
+        <translation>F11</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Show delimiters</source>
+        <translation>Afficher les délimiteurs</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Show the page delimiters</source>
+        <translation>Afficher les délimiteurs de page</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+L</source>
+        <translation>Ctrl+L</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Configurations</source>
+        <translation>Configuration</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Widgets</source>
+        <translation>Widgets</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Save all</source>
+        <translation>Tout enregistrer</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Overview</source>
+        <translation>Vue d&apos;ensemble</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Show the model overview</source>
+        <translation>Afficher la vue d&apos;ensemble du modèle</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="+402"/>
+        <source>Save all models</source>
+        <translation>Enregistrer tous les modèles</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Some models were modified! Do you want to save them before finish the pgModeler?</source>
+        <translation>Certains modèles ont été modifiés! Voulez vous les sauvegarder avant de quitter pgModeler?</translation>
+    </message>
+    <message>
+        <location line="+400"/>
+        <source>Save model</source>
+        <translation>Enregistrer le modèle</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The model were modified! Do you want to save it before close?</source>
+        <translation>Le modèle a été modifié! Souhaitez vous le sauvegarder avant de le fermer?</translation>
+    </message>
+    <message>
+        <location line="+91"/>
+        <source>Save &apos;%1&apos; as...</source>
+        <translation>Enregistrer &apos;%1&apos; sous...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+95"/>
+        <source>Database model (*.dbm);;All files (*.*)</source>
+        <translation>Modèle de base de donnée (*.dbm);; Tous les fichiers (*.*)</translation>
+    </message>
+    <message>
+        <location line="-55"/>
+        <source>Database model printing</source>
+        <translation>Impression du modèle de base de données</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Confirmation</source>
+        <translation>Confirmation</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click &apos;No&apos; or &apos;Cancel&apos; to abort printing.</source>
+        <translation>Des modifications ont été détectées dans les définitions du papier ou des marges du modèle ce qui pourrait causer une mauvaise impression des objets. Souhaitez vous continuer l&apos;impression aves les nouveaux paramètres? Pour utiliser les paramètres par défaut cliquez sur &apos;Non&apos; ou &apos;Annuler&apos; pour interrompre l&apos;impression.</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>Load model</source>
+        <translation>Charger un modèle</translation>
     </message>
 </context>
 <context>
@@ -3460,56 +3459,56 @@ Message retourné par le SGBD: %1</translation>
     <name>ModelWidget</name>
     <message>
         <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="+75"/>
-        <location line="+117"/>
+        <location line="+103"/>
         <source>Copy</source>
         <translation>Copie</translation>
     </message>
     <message>
-        <location line="-117"/>
+        <location line="-103"/>
         <source>Generalization</source>
         <translation>Généralisation</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+52"/>
         <source>&lt;strong&gt;CAUTION:&lt;/strong&gt; The object model is protected! New objects will be inserted only when the protection is removed!</source>
         <translation>&lt;strong&gt;ATTENTION:&lt;/strong&gt; Le modèle est verrouillé! Les nouveaux objets seront insérés lorsque le vérrou sera enlevé!</translation>
     </message>
     <message>
-        <location line="+38"/>
-        <location line="+2480"/>
+        <location line="+27"/>
+        <location line="+2270"/>
         <source>Source code</source>
         <translation>Code source</translation>
     </message>
     <message>
-        <location line="-2478"/>
+        <location line="-2268"/>
         <source>Show object source code</source>
         <translation>Afficher le code source de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2469"/>
+        <location line="+2259"/>
         <source>Properties</source>
         <translation>Propriétés</translation>
     </message>
     <message>
-        <location line="-2467"/>
+        <location line="-2257"/>
         <source>Edit the object properties</source>
         <translation>Editer les propriétés de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2494"/>
+        <location line="+2284"/>
         <source>Protect</source>
         <translation>Vérrouiller</translation>
     </message>
     <message>
-        <location line="-2493"/>
-        <location line="+2488"/>
+        <location line="-2283"/>
+        <location line="+2278"/>
         <source>Unprotect</source>
         <translation>Déverrouiller</translation>
     </message>
     <message>
-        <location line="-2487"/>
+        <location line="-2277"/>
         <source>Protects object(s) from modifications</source>
         <translation>Empêcher l(es)&apos;objet(s) d&apos;être modifiés</translation>
     </message>
@@ -3520,12 +3519,12 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2496"/>
+        <location line="+2286"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location line="-2494"/>
+        <location line="-2284"/>
         <source>Delete the selected object(s)</source>
         <translation>Supprimer les objets sélectionnés</translation>
     </message>
@@ -3638,68 +3637,68 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+4"/>
         <source>Select children</source>
-        <translation>Sélectionnez les &amp;eacute;l&amp;eacute;ments</translation>
+        <translation>Sélectionnez les éléments</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Selects all the children graphical objects on the selected schema</source>
-        <translation>Sélectionne tout les &amp;eacute;l&amp;eacute;ments graphiques du sch&amp;eacute;ma actuellement s&amp;eacute;lectionné</translation>
+        <translation>Sélectionne tout les éléments graphiques du schéma actuellement sélectionné</translation>
     </message>
     <message>
-        <location line="+515"/>
-        <location line="+945"/>
-        <location line="+383"/>
+        <location line="+470"/>
+        <location line="+878"/>
+        <location line="+336"/>
         <location line="+6"/>
         <source>Confirmation</source>
         <translation>Confirmation</translation>
     </message>
     <message>
-        <location line="-1333"/>
+        <location line="-1219"/>
         <source>Do you really want to convert the relationship?</source>
         <translation>Souhaitez vous réellement convertir la relation?</translation>
     </message>
     <message>
-        <location line="+150"/>
+        <location line="+131"/>
         <source>Loading database model</source>
         <translation>Ouverture du modèle de base de données</translation>
     </message>
     <message>
-        <location line="+243"/>
+        <location line="+230"/>
         <source>Saving database model</source>
         <translation>Enregistrement du modèle de base de données</translation>
     </message>
     <message>
-        <location line="+552"/>
+        <location line="+517"/>
         <source>Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model.</source>
         <translation>Copier également les dépendences des objets sélectionnés? Ceci minimise la perte des références lorsque les objets copiés sont collés dans un autre modèle.</translation>
     </message>
     <message>
-        <location line="+109"/>
+        <location line="+94"/>
         <source>Pasting objects...</source>
         <translation>Collage des objets...</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+13"/>
         <source>Validating object: %1 (%2)</source>
         <translation>Validation de l&apos;objet: %1 (%2)</translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+93"/>
         <source>Generating XML code of object: %1 (%2)</source>
         <translation>Génération du code XML de l&apos;objet : %1 (%2)</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+43"/>
         <source>Pasting object: %1 (%2)</source>
         <translation>Collage de l&apos;objet: %1 (%2)</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="+35"/>
         <source>Not all objects were pasted to the model due to errors returned during the process! Refer to error stack for more details!</source>
         <translation>Tous les objets n&apos;ont pas été collés dans le modèle à cause d&apos;erreurs retournés durant le processus! Se référer à la pile d&apos;erreurs pour plus de détails!</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+58"/>
         <source>CAUTION: Remove multiple objects at once can cause irreversible invalidations to other objects in the model. Do you really want to delete ALL selected objects?</source>
         <translation>ATTENTION: Supprimer plusieur objets en une seule fois provoque des invalidation irréversible sur les autres objets du modèle. Souhaitez vous réllement supprimer TOUS les objets sélectionnés?</translation>
     </message>
@@ -3709,12 +3708,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>Souhaitez vous réellement supprimer l&apos;objet sélectionné?</translation>
     </message>
     <message>
-        <location line="+291"/>
+        <location line="+261"/>
         <source>(no objects)</source>
         <translation>(aucun objet)</translation>
     </message>
     <message>
-        <location line="+320"/>
+        <location line="+297"/>
         <source>Constraints</source>
         <translation>Contraintes</translation>
     </message>
@@ -4131,7 +4130,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+38"/>
         <source>Options:</source>
         <translation>Options:</translation>
     </message>
@@ -4141,12 +4140,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>MERGES</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-20"/>
         <source>HASHES</source>
         <translation>HASHES</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+31"/>
         <source>Arguments</source>
         <translation>Arguments</translation>
     </message>
@@ -4439,7 +4438,7 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+20"/>
         <source>Plug-ins root directory:</source>
-        <translation>R&amp;eacute;pertoire racine des extentions:</translation>
+        <translation>Répertoire racine des extentions:</translation>
     </message>
     <message>
         <location line="+32"/>
@@ -4454,7 +4453,7 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+66"/>
         <source>Details about plugins development and installation can be found at PLUGINS.md file. &lt;strong&gt;Note:&lt;/strong&gt; plugin installation requires pgModeler to be restarted.</source>
-        <translation>Les informations &amp;agrave; propos du d&amp;eacute;veloppement des extensions et leur installation se trouvent dans le fichier PLUGINS.md. &lt;strong&gt;Note:&lt;/strong&gt; l&apos;installation d&apos;extensions requi&amp;egrave;re le red&amp;eacute;marrage de pgModeler.</translation>
+        <translation>Les informations à propos du développement des extensions et leur installation se trouvent dans le fichier PLUGINS.md. &lt;strong&gt;Note:&lt;/strong&gt; l&apos;installation d&apos;extensions requière le redémarrage de pgModeler.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/pluginsconfigwidget.cpp" line="+14"/>
@@ -5503,7 +5502,7 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+1"/>
         <source>Element Type</source>
-        <translation type="unfinished">Type d&apos;Élement</translation>
+        <translation type="unfinished">Type d&apos;élement</translation>
     </message>
     <message>
         <location line="+25"/>
