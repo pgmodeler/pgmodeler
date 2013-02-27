@@ -12,7 +12,7 @@ This program is free software: you can redistribute it and/or modify it under th
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/code-refactoring/LICENSE) for details.
+See [LICENSE](https://github.com/pgmodeler/pgmodeler/blob/master/LICENSE) for details.
 
 Donate to pgModeler
 -------------------
@@ -32,12 +32,12 @@ pgModeler grow bigger and reached a state that its lonely developer cannot handl
 Compiling/Installation
 ----------------------
 
-For details about installation process from source code see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/code-refactoring/COMPILING.md). If you don't want to compile pgModeler there are binaries available for download at [Downloads](https://github.com/pgmodeler/pgmodeler/downloads) section.
+For details about installation process from source code see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md). If you don't want to compile pgModeler there are binaries available for download at [Downloads](https://github.com/pgmodeler/pgmodeler/downloads) section.
 
 Running pgModeler
 -----------------
 
-The pgModeler can be executed directly from de executable but it is necessary change some environment variables, see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/code-refactoring/COMPILING.md). For convinience there are two scripts used to startup pgModeler.
+The pgModeler can be executed directly from de executable but it is necessary change some environment variables, see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md). For convinience there are two scripts used to startup pgModeler.
 
 * Windows users: use the ```start-pgmodeler.bat``` script. By default this script consider that pgModeler is installed on ```c:\pgmodeler``` if you desire to set other location edit the script and change the PGMODELER_* environment variables.
 
@@ -64,7 +64,7 @@ Change Log
 v0.4.0
 ------
 
-<em>Release date: February 28, 2013 </em>
+<em>Release date: February 27, 2013 </em>
 
 * [New]: introduce a "New object" submenu when activating the schema context menu (right-click)
 * [New]: tables and view are now graphically separated by colored rectangles representing its schemas.
@@ -125,7 +125,7 @@ v0.4.0
 * [Fix]: corrected bug on column comment code generation.
 * [Fix]: corrected bug that was deleting two tables at once.
 
-The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/code-refactoring/CHANGELOG.md) file.
+The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 
 Older Releases/Code
 -------------------

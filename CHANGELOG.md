@@ -4,7 +4,7 @@ Changelog
 v0.4.0
 ------
 
-<em>Release date: February 28, 2013 </em>
+<em>Release date: February 27, 2013 </em>
 
 * [New]: introduce a "New object" submenu when activating the schema context menu (right-click)
 * [New]: tables and view are now graphically separated by colored rectangles representing its schemas.
