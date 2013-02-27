@@ -56,7 +56,7 @@
      <number>6</number>
     </property>
     <item row="0" column="0">
-     <widget class="QTabWidget" name="modelos_tab">
+     <widget class="QTabWidget" name="models_tbw">
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -79,7 +79,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menu_principal_mb">
+  <widget class="QMenuBar" name="main_menu_mb">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -94,59 +94,59 @@
    <property name="defaultUp">
     <bool>false</bool>
    </property>
-   <widget class="QMenu" name="menuArquivo">
+   <widget class="QMenu" name="file_menu">
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="action_novo_modelo"/>
-    <addaction name="action_carregar_modelo"/>
-    <addaction name="action_fechar_modelo"/>
-    <addaction name="action_salvar_modelo"/>
-    <addaction name="action_salvar_como"/>
-    <addaction name="action_salvar_tudo"/>
+    <addaction name="action_new_model"/>
+    <addaction name="action_load_model"/>
+    <addaction name="action_close_model"/>
+    <addaction name="action_save_model"/>
+    <addaction name="action_save_as"/>
+    <addaction name="action_save_all"/>
     <addaction name="separator"/>
-    <addaction name="action_imprimir"/>
+    <addaction name="action_print"/>
     <addaction name="separator"/>
-    <addaction name="action_exportar"/>
+    <addaction name="action_export"/>
     <addaction name="separator"/>
-    <addaction name="action_sair"/>
+    <addaction name="action_exit"/>
    </widget>
-   <widget class="QMenu" name="menuEditar">
+   <widget class="QMenu" name="edit_menu">
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="action_desfazer"/>
-    <addaction name="action_refazer"/>
+    <addaction name="action_undo"/>
+    <addaction name="action_redo"/>
     <addaction name="separator"/>
-    <addaction name="action_configuracoes"/>
+    <addaction name="action_configuration"/>
     <addaction name="separator"/>
    </widget>
-   <widget class="QMenu" name="menuSobre">
+   <widget class="QMenu" name="about_menu">
     <property name="title">
      <string>&amp;Help</string>
     </property>
-    <addaction name="action_sobre"/>
+    <addaction name="action_about"/>
    </widget>
-   <widget class="QMenu" name="menuExibir">
+   <widget class="QMenu" name="show_menu">
     <property name="title">
      <string>&amp;Show</string>
     </property>
-    <widget class="QMenu" name="menuFerramentas">
+    <widget class="QMenu" name="tools_menu">
      <property name="title">
       <string>&amp;Tools</string>
      </property>
     </widget>
-    <addaction name="action_exibir_grade"/>
-    <addaction name="action_exibir_lim_paginas"/>
-    <addaction name="action_tela_cheia"/>
+    <addaction name="action_show_grid"/>
+    <addaction name="action_show_delimiters"/>
+    <addaction name="action_fullscreen"/>
     <addaction name="separator"/>
-    <addaction name="action_zoom_normal"/>
-    <addaction name="action_ampliar_zoom"/>
-    <addaction name="action_diminuir_zoom"/>
+    <addaction name="action_normal_zoom"/>
+    <addaction name="action_inc_zoom"/>
+    <addaction name="action_dec_zoom"/>
     <addaction name="separator"/>
-    <addaction name="menuFerramentas"/>
+    <addaction name="tools_menu"/>
    </widget>
-   <widget class="QMenu" name="menuPlugins">
+   <widget class="QMenu" name="plugins_menu">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -154,14 +154,13 @@
      <string>&amp;Plugins</string>
     </property>
    </widget>
-   <addaction name="menuArquivo"/>
-   <addaction name="menuEditar"/>
-   <addaction name="menuExibir"/>
-   <addaction name="menuPlugins"/>
-   <addaction name="menuSobre"/>
+   <addaction name="file_menu"/>
+   <addaction name="edit_menu"/>
+   <addaction name="show_menu"/>
+   <addaction name="plugins_menu"/>
+   <addaction name="about_menu"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="arquivo_tb">
+  <widget class="QToolBar" name="file_tb">
    <property name="font">
     <font>
      <pointsize>8</pointsize>
@@ -188,16 +187,16 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_novo_modelo"/>
-   <addaction name="action_carregar_modelo"/>
-   <addaction name="action_fechar_modelo"/>
-   <addaction name="action_salvar_modelo"/>
+   <addaction name="action_new_model"/>
+   <addaction name="action_load_model"/>
+   <addaction name="action_close_model"/>
+   <addaction name="action_save_model"/>
    <addaction name="separator"/>
-   <addaction name="action_exportar"/>
+   <addaction name="action_export"/>
    <addaction name="separator"/>
-   <addaction name="action_imprimir"/>
+   <addaction name="action_print"/>
   </widget>
-  <widget class="QToolBar" name="exibicao_tb">
+  <widget class="QToolBar" name="show_tb">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -224,19 +223,19 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_ampliar_zoom"/>
-   <addaction name="action_zoom_normal"/>
-   <addaction name="action_diminuir_zoom"/>
+   <addaction name="action_inc_zoom"/>
+   <addaction name="action_normal_zoom"/>
+   <addaction name="action_dec_zoom"/>
    <addaction name="action_alin_objs_grade"/>
-   <addaction name="action_exibir_grade"/>
-   <addaction name="action_exibir_lim_paginas"/>
-   <addaction name="action_visao_geral"/>
-   <addaction name="action_tela_cheia"/>
+   <addaction name="action_show_grid"/>
+   <addaction name="action_show_delimiters"/>
+   <addaction name="action_overview"/>
+   <addaction name="action_fullscreen"/>
    <addaction name="separator"/>
-   <addaction name="action_anterior"/>
-   <addaction name="action_proximo"/>
+   <addaction name="action_previous"/>
+   <addaction name="action_next"/>
   </widget>
-  <widget class="QToolBar" name="edicao_tb">
+  <widget class="QToolBar" name="edit_tb">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -269,10 +268,10 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_desfazer"/>
-   <addaction name="action_refazer"/>
+   <addaction name="action_undo"/>
+   <addaction name="action_redo"/>
   </widget>
-  <widget class="QToolBar" name="modelo_tb">
+  <widget class="QToolBar" name="model_tb">
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -337,7 +336,7 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <action name="action_novo_modelo">
+  <action name="action_new_model">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
      <normaloff>:/icones/icones/novo.png</normaloff>:/icones/icones/novo.png</iconset>
@@ -349,7 +348,7 @@
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="action_salvar_modelo">
+  <action name="action_save_model">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -364,7 +363,7 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="action_ampliar_zoom">
+  <action name="action_inc_zoom">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -388,7 +387,7 @@
     <enum>QAction::HighPriority</enum>
    </property>
   </action>
-  <action name="action_diminuir_zoom">
+  <action name="action_dec_zoom">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -409,7 +408,7 @@
     <string>Ctrl+-</string>
    </property>
   </action>
-  <action name="action_carregar_modelo">
+  <action name="action_load_model">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
      <normaloff>:/icones/icones/abrir.png</normaloff>:/icones/icones/abrir.png</iconset>
@@ -421,7 +420,7 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="action_proximo">
+  <action name="action_next">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -436,7 +435,7 @@
     <string>Next</string>
    </property>
   </action>
-  <action name="action_anterior">
+  <action name="action_previous">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -451,7 +450,7 @@
     <string>Previous</string>
    </property>
   </action>
-  <action name="action_salvar_como">
+  <action name="action_save_as">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -463,7 +462,7 @@
     <string>Save as</string>
    </property>
   </action>
-  <action name="action_sair">
+  <action name="action_exit">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
      <normaloff>:/icones/icones/sair.png</normaloff>:/icones/icones/sair.png</iconset>
@@ -478,7 +477,7 @@
     <enum>QAction::QuitRole</enum>
    </property>
   </action>
-  <action name="action_sobre">
+  <action name="action_about">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
      <normaloff>:/icones/icones/pgsqlModeler48x48.png</normaloff>:/icones/icones/pgsqlModeler48x48.png</iconset>
@@ -490,7 +489,7 @@
     <string>F1</string>
    </property>
   </action>
-  <action name="action_imprimir">
+  <action name="action_print">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -505,7 +504,7 @@
     <string>Ctrl+P</string>
    </property>
   </action>
-  <action name="action_desfazer">
+  <action name="action_undo">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -520,7 +519,7 @@
     <string>Ctrl+Z</string>
    </property>
   </action>
-  <action name="action_refazer">
+  <action name="action_redo">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -535,7 +534,7 @@
     <string>Ctrl+Y</string>
    </property>
   </action>
-  <action name="action_exportar">
+  <action name="action_export">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -550,7 +549,7 @@
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="action_exibir_grade">
+  <action name="action_show_grid">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -574,7 +573,7 @@
     <string>Ctrl+G</string>
    </property>
   </action>
-  <action name="action_fechar_modelo">
+  <action name="action_close_model">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -589,7 +588,7 @@
     <string>Ctrl+W</string>
    </property>
   </action>
-  <action name="action_zoom_normal">
+  <action name="action_normal_zoom">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -625,7 +624,7 @@
     <string>Align objects position to grid</string>
    </property>
   </action>
-  <action name="action_tela_cheia">
+  <action name="action_fullscreen">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -646,7 +645,7 @@
     <string>F11</string>
    </property>
   </action>
-  <action name="action_exibir_lim_paginas">
+  <action name="action_show_delimiters">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -670,7 +669,7 @@
     <string>Ctrl+L</string>
    </property>
   </action>
-  <action name="action_configuracoes">
+  <action name="action_configuration">
    <property name="icon">
     <iconset resource="../res/resources.qrc">
      <normaloff>:/icones/icones/config.png</normaloff>:/icones/icones/config.png</iconset>
@@ -684,12 +683,12 @@
     <string>Widgets</string>
    </property>
   </action>
-  <action name="action_salvar_tudo">
+  <action name="action_save_all">
    <property name="text">
     <string>Save all</string>
    </property>
   </action>
-  <action name="action_visao_geral">
+  <action name="action_overview">
    <property name="checkable">
     <bool>true</bool>
    </property>

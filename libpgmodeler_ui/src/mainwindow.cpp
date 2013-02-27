@@ -157,34 +157,34 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 																			BaseObject::getSchemaName(obj_types[i]) +
 																			QString(".png")));
 
-	connect(action_sair,SIGNAL(triggered(bool)),this,SLOT(close()));
-	connect(action_novo_modelo,SIGNAL(triggered(bool)),this,SLOT(addModel()));
-	connect(action_fechar_modelo,SIGNAL(triggered(bool)),this,SLOT(closeModel()));
+	connect(action_exit,SIGNAL(triggered(bool)),this,SLOT(close()));
+	connect(action_new_model,SIGNAL(triggered(bool)),this,SLOT(addModel()));
+	connect(action_close_model,SIGNAL(triggered(bool)),this,SLOT(closeModel()));
 
-	connect(modelos_tab,SIGNAL(currentChanged(int)),this,SLOT(setCurrentModel()));
-	connect(action_proximo,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
-	connect(action_anterior,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
-	connect(action_sobre,SIGNAL(triggered(bool)),about_form,SLOT(show()));
+	connect(models_tbw,SIGNAL(currentChanged(int)),this,SLOT(setCurrentModel()));
+	connect(action_next,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
+	connect(action_previous,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
+	connect(action_about,SIGNAL(triggered(bool)),about_form,SLOT(show()));
 
-	connect(action_ampliar_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
-	connect(action_diminuir_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
-	connect(action_zoom_normal,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
+	connect(action_inc_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
+	connect(action_dec_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
+	connect(action_normal_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
 
-	connect(action_carregar_modelo,SIGNAL(triggered(bool)),this,SLOT(loadModel()));
-	connect(action_salvar_modelo,SIGNAL(triggered(bool)),this,SLOT(saveModel()));
-	connect(action_salvar_como,SIGNAL(triggered(bool)),this,SLOT(saveModel()));
-	connect(action_salvar_tudo,SIGNAL(triggered(bool)),this,SLOT(saveAllModels()));
+	connect(action_load_model,SIGNAL(triggered(bool)),this,SLOT(loadModel()));
+	connect(action_save_model,SIGNAL(triggered(bool)),this,SLOT(saveModel()));
+	connect(action_save_as,SIGNAL(triggered(bool)),this,SLOT(saveModel()));
+	connect(action_save_all,SIGNAL(triggered(bool)),this,SLOT(saveAllModels()));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(oper_list_wgt, SIGNAL(s_operationListUpdated(void)), this, SLOT(__updateToolsState(void)));
-	connect(action_desfazer,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(undoOperation(void)));
-	connect(action_refazer,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(redoOperation(void)));
+	connect(action_undo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(undoOperation(void)));
+	connect(action_redo,SIGNAL(triggered(bool)),oper_list_wgt,SLOT(redoOperation(void)));
 
-	connect(action_tela_cheia, SIGNAL(toggled(bool)), this, SLOT(showFullScreen(bool)));
-	connect(modelos_tab, SIGNAL(tabCloseRequested(int)), this, SLOT(closeModel(int)));
+	connect(action_fullscreen, SIGNAL(toggled(bool)), this, SLOT(showFullScreen(bool)));
+	connect(models_tbw, SIGNAL(tabCloseRequested(int)), this, SLOT(closeModel(int)));
 
-	connect(action_imprimir, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
-	connect(action_configuracoes, SIGNAL(triggered(bool)), configuration_form, SLOT(show(void)));
+	connect(action_print, SIGNAL(triggered(bool)), this, SLOT(printModel(void)));
+	connect(action_configuration, SIGNAL(triggered(bool)), configuration_form, SLOT(show(void)));
 
 
 	connect(database_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
@@ -218,16 +218,16 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
 	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), this, SLOT(saveTemporaryModel(void)));
 
-	connect(action_exportar, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
+	connect(action_export, SIGNAL(triggered(bool)), this, SLOT(exportModel(void)));
 
-	menuFerramentas->addAction(model_objs_wgt->toggleViewAction());
-	menuFerramentas->addAction(oper_list_wgt->toggleViewAction());
-	menuFerramentas->addSeparator();
-	menuFerramentas->addAction(arquivo_tb->toggleViewAction());
-	menuFerramentas->addAction(exibicao_tb->toggleViewAction());
-	menuFerramentas->addAction(edicao_tb->toggleViewAction());
-	menuFerramentas->addAction(modelo_tb->toggleViewAction());
-	menuFerramentas->addAction(plugins_tb->toggleViewAction());
+	tools_menu->addAction(model_objs_wgt->toggleViewAction());
+	tools_menu->addAction(oper_list_wgt->toggleViewAction());
+	tools_menu->addSeparator();
+	tools_menu->addAction(file_tb->toggleViewAction());
+	tools_menu->addAction(show_tb->toggleViewAction());
+	tools_menu->addAction(edit_tb->toggleViewAction());
+	tools_menu->addAction(model_tb->toggleViewAction());
+	tools_menu->addAction(plugins_tb->toggleViewAction());
 
 	current_model=NULL;
 
@@ -243,7 +243,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		configuration_form->loadConfiguration();
 
 		plugins_conf_wgt=dynamic_cast<PluginsConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::PLUGINS_CONF_WGT));
-		plugins_conf_wgt->installPluginsActions(plugins_tb, menuPlugins, this, SLOT(executePlugin(void)));
+		plugins_conf_wgt->installPluginsActions(plugins_tb, plugins_menu, this, SLOT(executePlugin(void)));
 
 		dock_areas[ParsersAttributes::LEFT]=Qt::LeftDockWidgetArea;
 		dock_areas[ParsersAttributes::RIGHT]=Qt::RightDockWidgetArea;
@@ -256,11 +256,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		toolbar_areas[ParsersAttributes::RIGHT]=Qt::RightToolBarArea;
 		toolbar_areas[ParsersAttributes::BOTTOM]=Qt::BottomToolBarArea;
 		toolbar_areas[ParsersAttributes::TOP]=Qt::TopToolBarArea;
-		toolbars[ParsersAttributes::FILE_TOOLBAR]=arquivo_tb;
-		toolbars[ParsersAttributes::EDIT_TOOLBAR]=edicao_tb;
-		toolbars[ParsersAttributes::VIEW_TOOLBAR]=exibicao_tb;
+		toolbars[ParsersAttributes::FILE_TOOLBAR]=file_tb;
+		toolbars[ParsersAttributes::EDIT_TOOLBAR]=edit_tb;
+		toolbars[ParsersAttributes::VIEW_TOOLBAR]=show_tb;
 		toolbars[ParsersAttributes::PLUGINS_TOOLBAR]=plugins_tb;
-		toolbars[ParsersAttributes::MODEL_TOOLBAR]=modelo_tb;
+		toolbars[ParsersAttributes::MODEL_TOOLBAR]=model_tb;
 
 		//Aplicando as configurações carregadas
 		conf_wgt=configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
@@ -335,7 +335,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 				{
 					this->addModel(tmp_models.front());
 					//Obtém o modelo gerado a partir do arquivo temporário
-					model=dynamic_cast<ModelWidget *>(modelos_tab->widget(modelos_tab->count()-1));
+					model=dynamic_cast<ModelWidget *>(models_tbw->widget(models_tbw->count()-1));
 
 					/* Define-o como modificado e limpa o nome do arquivo temporário, isso
 				forçará o usuário a salvá-lo quando o timer de salvamento automático for atingido ou
@@ -404,12 +404,12 @@ void MainWindow::closeEvent(QCloseEvent *)
 	int i=0;
 
 	//Checa se existem modelos modificados e pergunta ao usuário se deseja salvá-los antes de sair
-	if(modelos_tab->count() > 0)
+	if(models_tbw->count() > 0)
 	{
 		//Varre os modelos e obtém o estado da modificação
 		i=0;
-		while(i < modelos_tab->count() && !modified)
-			modified=dynamic_cast<ModelWidget *>(modelos_tab->widget(i++))->isModified();
+		while(i < models_tbw->count() && !modified)
+			modified=dynamic_cast<ModelWidget *>(models_tbw->widget(i++))->isModified();
 
 		//Se algum modelo foi encontrado como modificado
 		if(modified)
@@ -437,8 +437,8 @@ void MainWindow::closeEvent(QCloseEvent *)
 		map<Qt::DockWidgetArea, QString> dock_areas;
 		map<Qt::ToolBarArea, QString> toolbar_areas;
 		map<QWidget *, QString> wgts_ids;
-		QWidget *wgts[]={ arquivo_tb, edicao_tb, exibicao_tb,
-											plugins_tb, modelo_tb, model_objs_wgt, oper_list_wgt };
+		QWidget *wgts[]={ file_tb, edit_tb, show_tb,
+											plugins_tb, model_tb, model_objs_wgt, oper_list_wgt };
 		QToolBar *toolbar=NULL;
 		QDockWidget *dock=NULL;
 
@@ -446,11 +446,11 @@ void MainWindow::closeEvent(QCloseEvent *)
 
 		wgts_ids[model_objs_wgt]=ParsersAttributes::OBJECTS_DOCK;
 		wgts_ids[oper_list_wgt]=ParsersAttributes::OPERATIONS_DOCK;
-		wgts_ids[arquivo_tb]=ParsersAttributes::FILE_TOOLBAR;
-		wgts_ids[edicao_tb]=ParsersAttributes::EDIT_TOOLBAR;
-		wgts_ids[exibicao_tb]=ParsersAttributes::VIEW_TOOLBAR;
+		wgts_ids[file_tb]=ParsersAttributes::FILE_TOOLBAR;
+		wgts_ids[edit_tb]=ParsersAttributes::EDIT_TOOLBAR;
+		wgts_ids[show_tb]=ParsersAttributes::VIEW_TOOLBAR;
 		wgts_ids[plugins_tb]=ParsersAttributes::PLUGINS_TOOLBAR;
-		wgts_ids[modelo_tb]=ParsersAttributes::MODEL_TOOLBAR;
+		wgts_ids[model_tb]=ParsersAttributes::MODEL_TOOLBAR;
 
 		dock_areas[Qt::LeftDockWidgetArea]=ParsersAttributes::LEFT;
 		dock_areas[Qt::RightDockWidgetArea]=ParsersAttributes::RIGHT;
@@ -491,10 +491,10 @@ void MainWindow::closeEvent(QCloseEvent *)
 		QString param_id;
 		map<QString, QString> attribs;
 
-		count=modelos_tab->count();
+		count=models_tbw->count();
 		for(i=0; i < count; i++)
 		{
-			model=dynamic_cast<ModelWidget *>(modelos_tab->widget(i));
+			model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 
 			if(!model->getFilename().isEmpty())
 			{
@@ -521,21 +521,21 @@ void MainWindow::addModel(const QString &filename)
 	QLayout *layout=NULL;
 
 	//Converte a quantidade de abas para QString
-	str_aux=QString("%1").arg(modelos_tab->count());
+	str_aux=QString("%1").arg(models_tbw->count());
 
 	//Define o nome da nova aba
 	obj_name="model_";
 	obj_name+=str_aux;
 	tab_name=obj_name;
 
-	model_tab = new ModelWidget(modelos_tab);
+	model_tab = new ModelWidget(models_tbw);
 	model_tab->setObjectName(Utf8String::create(obj_name));
 
 	//Adiciona a aba criada ao conjuto de abas existentes
 	obj_name=model_tab->db_model->getName();
-	modelos_tab->addTab(model_tab, Utf8String::create(obj_name));
-	modelos_tab->setCurrentIndex(modelos_tab->count()-1);
-	layout=modelos_tab->currentWidget()->layout();
+	models_tbw->addTab(model_tab, Utf8String::create(obj_name));
+	models_tbw->setCurrentIndex(models_tbw->count()-1);
+	layout=models_tbw->currentWidget()->layout();
 	layout->setContentsMargins(4,4,4,4);
 
 	//Cria objetos do sistema (esquema public e linguagens c, sql e plpgsql)
@@ -564,7 +564,7 @@ void MainWindow::addModel(const QString &filename)
 		{
 			//Carrega o modelo caso o nome do arquivo esteja especificado
 			model_tab->loadModel(filename);
-			modelos_tab->setTabText(modelos_tab->currentIndex(),
+			models_tbw->setTabText(models_tbw->currentIndex(),
 															Utf8String::create(model_tab->db_model->getName()));
 		}
 		catch(Exception &e)
@@ -579,15 +579,15 @@ void MainWindow::addModel(const QString &filename)
 
 int MainWindow::getModelCount(void)
 {
-	return(modelos_tab->count());
+	return(models_tbw->count());
 }
 
 ModelWidget *MainWindow::getModel(int idx)
 {
-	if(idx < 0 || idx > modelos_tab->count())
+	if(idx < 0 || idx > models_tbw->count())
 		throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(dynamic_cast<ModelWidget *>(modelos_tab->widget(idx)));
+	return(dynamic_cast<ModelWidget *>(models_tbw->widget(idx)));
 }
 
 void MainWindow::setCurrentModel(void)
@@ -597,23 +597,23 @@ void MainWindow::setCurrentModel(void)
 	object=sender();
 
 	//Limpa as barras de edição de de modelo
-	modelo_tb->clear();
-	edicao_tb->clear();
-	menuEditar->clear();
+	model_tb->clear();
+	edit_tb->clear();
+	edit_menu->clear();
 
 	//Adiciona as ações de desfazer/refazer na barra/menu de edição
-	edicao_tb->addAction(action_desfazer);
-	edicao_tb->addAction(action_refazer);
-	edicao_tb->addSeparator();
-	menuEditar->addAction(action_desfazer);
-	menuEditar->addAction(action_refazer);
-	menuEditar->addSeparator();
+	edit_tb->addAction(action_undo);
+	edit_tb->addAction(action_redo);
+	edit_tb->addSeparator();
+	edit_menu->addAction(action_undo);
+	edit_menu->addAction(action_redo);
+	edit_menu->addSeparator();
 
 	//Atualiza os botões de navegação de modelos
-	if(object==action_proximo)
-		modelos_tab->setCurrentIndex(modelos_tab->currentIndex()+1);
-	else if(object==action_anterior)
-		modelos_tab->setCurrentIndex(modelos_tab->currentIndex()-1);
+	if(object==action_next)
+		models_tbw->setCurrentIndex(models_tbw->currentIndex()+1);
+	else if(object==action_previous)
+		models_tbw->setCurrentIndex(models_tbw->currentIndex()-1);
 
 	/* Inibe o salvamento automatico do estado da árvore para que
 		a árvore do modelo atual seja restaurada */
@@ -622,8 +622,8 @@ void MainWindow::setCurrentModel(void)
 	if(current_model)
 		model_objs_wgt->saveTreeState(model_tree_states[current_model]);
 
-	//O modelo atual obtido a partir da aba atual no 'modelos_tab'
-	current_model=dynamic_cast<ModelWidget *>(modelos_tab->currentWidget());
+	//O modelo atual obtido a partir da aba atual no 'models_tbw'
+	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
 
 	//Caso haja um modelo
 	if(current_model)
@@ -637,30 +637,30 @@ void MainWindow::setCurrentModel(void)
 		current_model->cancelObjectAddition();
 
 		//Configura a barra de ferramentas do modelo conforme as ações respectivas no modelo atual
-		modelo_tb->addAction(current_model->action_new_object);
+		model_tb->addAction(current_model->action_new_object);
 		//Seta o modo de popup do menu para "InstantPopup" assim o usuário não precisa pressionar a setinha para ativar o popup
-		dynamic_cast<QToolButton *>(modelo_tb->widgetForAction(current_model->action_new_object))->setPopupMode(QToolButton::InstantPopup);
+		dynamic_cast<QToolButton *>(model_tb->widgetForAction(current_model->action_new_object))->setPopupMode(QToolButton::InstantPopup);
 
-		modelo_tb->addAction(current_model->action_quick_actions);
-		dynamic_cast<QToolButton *>(modelo_tb->widgetForAction(current_model->action_quick_actions))->setPopupMode(QToolButton::InstantPopup);
+		model_tb->addAction(current_model->action_quick_actions);
+		dynamic_cast<QToolButton *>(model_tb->widgetForAction(current_model->action_quick_actions))->setPopupMode(QToolButton::InstantPopup);
 
-		modelo_tb->addAction(current_model->action_edit);
-		modelo_tb->addAction(current_model->action_source_code);
-		modelo_tb->addAction(current_model->action_convert_relnn);
-		modelo_tb->addAction(current_model->action_deps_refs);
-		modelo_tb->addAction(current_model->action_protect);
-		modelo_tb->addAction(current_model->action_unprotect);
-		modelo_tb->addAction(current_model->action_select_all);
+		model_tb->addAction(current_model->action_edit);
+		model_tb->addAction(current_model->action_source_code);
+		model_tb->addAction(current_model->action_convert_relnn);
+		model_tb->addAction(current_model->action_deps_refs);
+		model_tb->addAction(current_model->action_protect);
+		model_tb->addAction(current_model->action_unprotect);
+		model_tb->addAction(current_model->action_select_all);
 
-		edicao_tb->addAction(current_model->action_copy);
-		edicao_tb->addAction(current_model->action_cut);
-		edicao_tb->addAction(current_model->action_paste);
-		edicao_tb->addAction(current_model->action_remove);
+		edit_tb->addAction(current_model->action_copy);
+		edit_tb->addAction(current_model->action_cut);
+		edit_tb->addAction(current_model->action_paste);
+		edit_tb->addAction(current_model->action_remove);
 
-		menuEditar->addAction(current_model->action_copy);
-		menuEditar->addAction(current_model->action_cut);
-		menuEditar->addAction(current_model->action_paste);
-		menuEditar->addAction(current_model->action_remove);
+		edit_menu->addAction(current_model->action_copy);
+		edit_menu->addAction(current_model->action_cut);
+		edit_menu->addAction(current_model->action_paste);
+		edit_menu->addAction(current_model->action_remove);
 
 		//Configura o titulo da janela da aplicação
 		if(current_model->getFilename().isEmpty())
@@ -683,20 +683,20 @@ void MainWindow::setCurrentModel(void)
 
 
 		connect(action_alin_objs_grade, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
-		connect(action_exibir_grade, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
-		connect(action_exibir_lim_paginas, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
+		connect(action_show_grid, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
+		connect(action_show_delimiters, SIGNAL(triggered(bool)), this, SLOT(setGridOptions(void)));
 
-		connect(action_visao_geral, SIGNAL(toggled(bool)), this, SLOT(showOverview(bool)));
-		connect(overview_wgt, SIGNAL(s_overviewVisible(bool)), action_visao_geral, SLOT(setChecked(bool)));
+		connect(action_overview, SIGNAL(toggled(bool)), this, SLOT(showOverview(bool)));
+		connect(overview_wgt, SIGNAL(s_overviewVisible(bool)), action_overview, SLOT(setChecked(bool)));
 
-		if(action_visao_geral->isChecked())
+		if(action_overview->isChecked())
 			overview_wgt->show(current_model);
 	}
 	else
 		this->setWindowTitle(window_title);
 
-	menuEditar->addSeparator();
-	menuEditar->addAction(action_configuracoes);
+	edit_menu->addSeparator();
+	edit_menu->addAction(action_configuration);
 
 	updateToolsState();
 
@@ -717,9 +717,9 @@ void MainWindow::setCurrentModel(void)
 void MainWindow::setGridOptions(void)
 {
 	//Configura, globalmente na cena, as opçoẽs da grade
-	ObjectsScene::setGridOptions(action_exibir_grade->isChecked(),
+	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
 															 action_alin_objs_grade->isChecked(),
-															 action_exibir_lim_paginas->isChecked());
+															 action_show_delimiters->isChecked());
 
 	if(current_model)
 	{
@@ -742,11 +742,11 @@ void MainWindow::applyZoom(void)
 		float zoom=current_model->currentZoom();
 
 		//Configura a aplicação do zoom conforme a ação qu disparou o método
-		if(sender()==action_zoom_normal)
+		if(sender()==action_normal_zoom)
 			zoom=1;
-		else if(sender()==action_ampliar_zoom && zoom < ModelWidget::MAXIMUM_ZOOM)
+		else if(sender()==action_inc_zoom && zoom < ModelWidget::MAXIMUM_ZOOM)
 			zoom+=ModelWidget::ZOOM_INCREMENT;
-		else if(sender()==action_diminuir_zoom && zoom > ModelWidget::MINIMUM_ZOOM)
+		else if(sender()==action_dec_zoom && zoom > ModelWidget::MINIMUM_ZOOM)
 			zoom-=ModelWidget::ZOOM_INCREMENT;
 
 		//Aplica o zoom configurado
@@ -757,53 +757,53 @@ void MainWindow::applyZoom(void)
 void MainWindow::showFullScreen(bool fullscreen)
 {
 	//Barras/Widgets que são escondidas quando o pgModeler está em tela cheia
-	menu_principal_mb->setVisible(!fullscreen);
-	arquivo_tb->setVisible(!fullscreen);
-	edicao_tb->setVisible(!fullscreen);
+	main_menu_mb->setVisible(!fullscreen);
+	file_tb->setVisible(!fullscreen);
+	edit_tb->setVisible(!fullscreen);
 	oper_list_wgt->setVisible(!fullscreen);
 	model_objs_wgt->setVisible(!fullscreen);
 
 	//Caso não esteja em tela cheia, reinsere as barras na área destinada a toolbars
 	if(!fullscreen)
 	{
-		arquivo_tb->setAllowedAreas(Qt::AllToolBarAreas);
-		this->addToolBar(Qt::TopToolBarArea, arquivo_tb);
+		file_tb->setAllowedAreas(Qt::AllToolBarAreas);
+		this->addToolBar(Qt::TopToolBarArea, file_tb);
 
-		edicao_tb->setAllowedAreas(Qt::AllToolBarAreas);
-		this->addToolBar(Qt::TopToolBarArea, edicao_tb);
+		edit_tb->setAllowedAreas(Qt::AllToolBarAreas);
+		this->addToolBar(Qt::TopToolBarArea, edit_tb);
 
-		exibicao_tb->setAllowedAreas(Qt::AllToolBarAreas);
-		this->addToolBar(Qt::TopToolBarArea, exibicao_tb);
+		show_tb->setAllowedAreas(Qt::AllToolBarAreas);
+		this->addToolBar(Qt::TopToolBarArea, show_tb);
 
 		plugins_tb->setAllowedAreas(Qt::AllToolBarAreas);
 		this->addToolBar(Qt::TopToolBarArea, plugins_tb);
 
-		modelo_tb->setAllowedAreas(Qt::AllToolBarAreas);
-		this->addToolBar(Qt::BottomToolBarArea, modelo_tb);
+		model_tb->setAllowedAreas(Qt::AllToolBarAreas);
+		this->addToolBar(Qt::BottomToolBarArea, model_tb);
 	}
 	else
 	{
 		//Caso esteja em tela cheia remove as barras de suas áreas e as torna flutuantes
-		arquivo_tb->setParent(NULL);
-		arquivo_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-		arquivo_tb->setVisible(true);
-		arquivo_tb->setAllowedAreas(Qt::NoToolBarArea);
-		arquivo_tb->adjustSize();
+		file_tb->setParent(NULL);
+		file_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+		file_tb->setVisible(true);
+		file_tb->setAllowedAreas(Qt::NoToolBarArea);
+		file_tb->adjustSize();
 
-		edicao_tb->setParent(NULL);
-		this->removeToolBar(edicao_tb);
+		edit_tb->setParent(NULL);
+		this->removeToolBar(edit_tb);
 
-		modelo_tb->setParent(NULL);
-		modelo_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-		modelo_tb->setVisible(true);
-		modelo_tb->setAllowedAreas(Qt::NoToolBarArea);
-		modelo_tb->adjustSize();
+		model_tb->setParent(NULL);
+		model_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+		model_tb->setVisible(true);
+		model_tb->setAllowedAreas(Qt::NoToolBarArea);
+		model_tb->adjustSize();
 
-		exibicao_tb->setParent(NULL);
-		exibicao_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-		exibicao_tb->setVisible(true);
-		exibicao_tb->setAllowedAreas(Qt::NoToolBarArea);
-		exibicao_tb->adjustSize();
+		show_tb->setParent(NULL);
+		show_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+		show_tb->setVisible(true);
+		show_tb->setAllowedAreas(Qt::NoToolBarArea);
+		show_tb->adjustSize();
 
 		plugins_tb->setParent(NULL);
 		plugins_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
@@ -818,9 +818,9 @@ void MainWindow::closeModel(int model_id)
 	QWidget *tab=NULL;
 
 	if(model_id >= 0)
-		tab=modelos_tab->widget(model_id);
+		tab=models_tbw->widget(model_id);
 	else
-		tab=modelos_tab->currentWidget(); //Obtém a aba em foco
+		tab=models_tbw->currentWidget(); //Obtém a aba em foco
 
 	if(tab)
 	{
@@ -831,8 +831,8 @@ void MainWindow::closeModel(int model_id)
 		disconnect(tab, NULL, oper_list_wgt, NULL);
 		disconnect(tab, NULL, model_objs_wgt, NULL);
 		disconnect(action_alin_objs_grade, NULL, this, NULL);
-		disconnect(action_exibir_grade, NULL, this, NULL);
-		disconnect(action_exibir_lim_paginas, NULL, this, NULL);
+		disconnect(action_show_grid, NULL, this, NULL);
+		disconnect(action_show_delimiters, NULL, this, NULL);
 
 		//Remove o arquivo temporário relacionado ao modelo
 		QDir arq_tmp;
@@ -850,14 +850,14 @@ void MainWindow::closeModel(int model_id)
 		}
 
 		if(model_id >= 0)
-			modelos_tab->removeTab(model_id); //Remove a aba
+			models_tbw->removeTab(model_id); //Remove a aba
 		else
-			modelos_tab->removeTab(modelos_tab->currentIndex()); //Remove a aba
+			models_tbw->removeTab(models_tbw->currentIndex()); //Remove a aba
 
 		delete(model); //Desaloca a aba selecionada
 	}
 
-	if(modelos_tab->count()==0)
+	if(models_tbw->count()==0)
 	{
 		current_model=NULL;
 		this->showFullScreen(false);
@@ -873,8 +873,8 @@ void MainWindow::closeModel(int model_id)
 
 void MainWindow::updateModelTabName(void)
 {
-	if(current_model && current_model->db_model->getName()!=modelos_tab->tabText(modelos_tab->currentIndex()))
-		modelos_tab->setTabText(modelos_tab->currentIndex(), Utf8String::create(current_model->db_model->getName()));
+	if(current_model && current_model->db_model->getName()!=models_tbw->tabText(models_tbw->currentIndex()))
+		models_tbw->setTabText(models_tbw->currentIndex(), Utf8String::create(current_model->db_model->getName()));
 }
 
 void MainWindow::updateModels(void)
@@ -900,9 +900,9 @@ void MainWindow::updateModels(void)
 	}
 
 	//Força a atualização de todos os modelos abertos
-	count=modelos_tab->count();
+	count=models_tbw->count();
 	for(i=0; i < count; i++)
-		dynamic_cast<ModelWidget *>(modelos_tab->widget(i))->db_model->setObjectsModified();
+		dynamic_cast<ModelWidget *>(models_tbw->widget(i))->db_model->setObjectsModified();
 }
 
 void MainWindow::saveAllModels(void)
@@ -914,10 +914,10 @@ void MainWindow::saveAllModels(void)
 		int i, count;
 
 		//Executa o método de salvamento em todos os modelos abertos
-		count=modelos_tab->count();
+		count=models_tbw->count();
 		for(i=0; i < count; i++)
 		{
-			model=dynamic_cast<ModelWidget *>(modelos_tab->widget(i));
+			model=dynamic_cast<ModelWidget *>(models_tbw->widget(i));
 			this->saveModel(model);
 		}
 	}
@@ -934,7 +934,7 @@ void MainWindow::saveModel(ModelWidget *model)
 		if(model)
 		{
 			//Caso a ação que disparou o método foi o de 'Salvar como'
-			if(sender()==action_salvar_como || model->filename.isEmpty())
+			if(sender()==action_save_as || model->filename.isEmpty())
 			{
 				QFileDialog arquivo_dlg;
 
@@ -1071,7 +1071,7 @@ void MainWindow::loadModel(void)
 	}
 	catch(Exception &e)
 	{
-		closeModel(modelos_tab->currentIndex());
+		closeModel(models_tbw->currentIndex());
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -1085,40 +1085,40 @@ void MainWindow::updateToolsState(bool model_closed)
 {
 	bool enabled=!model_closed;
 
-	action_imprimir->setEnabled(enabled);
-	action_salvar_como->setEnabled(enabled);
-	action_salvar_modelo->setEnabled(enabled);
-	action_salvar_tudo->setEnabled(enabled);
-	action_exportar->setEnabled(enabled);
-	action_fechar_modelo->setEnabled(enabled);
-	action_exibir_grade->setEnabled(enabled);
-	action_exibir_lim_paginas->setEnabled(enabled);
-	action_visao_geral->setEnabled(enabled);
+	action_print->setEnabled(enabled);
+	action_save_as->setEnabled(enabled);
+	action_save_model->setEnabled(enabled);
+	action_save_all->setEnabled(enabled);
+	action_export->setEnabled(enabled);
+	action_close_model->setEnabled(enabled);
+	action_show_grid->setEnabled(enabled);
+	action_show_delimiters->setEnabled(enabled);
+	action_overview->setEnabled(enabled);
 
-	action_zoom_normal->setEnabled(enabled);
-	action_ampliar_zoom->setEnabled(enabled);
-	action_diminuir_zoom->setEnabled(enabled);
+	action_normal_zoom->setEnabled(enabled);
+	action_inc_zoom->setEnabled(enabled);
+	action_dec_zoom->setEnabled(enabled);
 	action_alin_objs_grade->setEnabled(enabled);
-	action_tela_cheia->setEnabled(enabled);
-	action_desfazer->setEnabled(enabled);
-	action_refazer->setEnabled(enabled);
+	action_fullscreen->setEnabled(enabled);
+	action_undo->setEnabled(enabled);
+	action_redo->setEnabled(enabled);
 
-	if(!model_closed && current_model && modelos_tab->count() > 0)
+	if(!model_closed && current_model && models_tbw->count() > 0)
 	{
-		action_anterior->setEnabled(modelos_tab->currentIndex() > 0 &&
-																modelos_tab->count() > 1);
-		action_proximo->setEnabled(modelos_tab->currentIndex() >= 0 &&
-															 modelos_tab->currentIndex()!=(modelos_tab->count()-1));
-		action_desfazer->setEnabled(current_model->op_list->isUndoAvailable());
-		action_refazer->setEnabled(current_model->op_list->isRedoAvailable());
+		action_previous->setEnabled(models_tbw->currentIndex() > 0 &&
+																models_tbw->count() > 1);
+		action_next->setEnabled(models_tbw->currentIndex() >= 0 &&
+															 models_tbw->currentIndex()!=(models_tbw->count()-1));
+		action_undo->setEnabled(current_model->op_list->isUndoAvailable());
+		action_redo->setEnabled(current_model->op_list->isRedoAvailable());
 
-		action_ampliar_zoom->setEnabled(current_model->currentZoom() <= ModelWidget::MAXIMUM_ZOOM - ModelWidget::ZOOM_INCREMENT);
-		action_zoom_normal->setEnabled(current_model->currentZoom()!=0);
-		action_diminuir_zoom->setEnabled(current_model->currentZoom() >= ModelWidget::MINIMUM_ZOOM + ModelWidget::ZOOM_INCREMENT);
+		action_inc_zoom->setEnabled(current_model->currentZoom() <= ModelWidget::MAXIMUM_ZOOM - ModelWidget::ZOOM_INCREMENT);
+		action_normal_zoom->setEnabled(current_model->currentZoom()!=0);
+		action_dec_zoom->setEnabled(current_model->currentZoom() >= ModelWidget::MINIMUM_ZOOM + ModelWidget::ZOOM_INCREMENT);
 	}
 
-	plugins_tb->setEnabled(modelos_tab->count() > 0);
-	menuPlugins->setEnabled(modelos_tab->count() > 0);
+	plugins_tb->setEnabled(models_tbw->count() > 0);
+	plugins_menu->setEnabled(models_tbw->count() > 0);
 }
 
 void MainWindow::updateDockWidgets(void)
