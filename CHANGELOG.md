@@ -1,13 +1,10 @@
 Changelog
 ---------
 
-v0.4.0-rc1
----------
+v0.4.0
+------
 
-<em>Release date: February 12, 2013 </em>
-
-Attention: The v0.4.0 is in release-candidate stage so the change log can be modified at any moment when new bug fixes is created. New features will not be implemented now, instead, they will be marked to be coded starting from the v0.4.1.
-The stable 0.4.0 has no release date yet because all the code is being refactored (almost done!) meaning that the new version will be completely decoupled from previous ones.
+<em>Release date: February 28, 2013 </em>
 
 * [New]: introduce a "New object" submenu when activating the schema context menu (right-click)
 * [New]: tables and view are now graphically separated by colored rectangles representing its schemas.
@@ -16,6 +13,9 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [New]: the relationship editing form gained an "advanced" tab which shows the objects generated and/or represents the relatioship itself.
 * [New]: the user now can add relationships only creating foreign keys on tables (fk relationships).
 * [New]: added a french UI translation (provided by [toorpy](https://github.com/toorpy)).
+* [Change]: all relationships type are now grouped together on "Model objects" widget.
+* [Change]: chinese UI translation updated (provided by: [Bumanji](https://github.com/Bumanji)).
+* [Change]: user now can remove fk relationships directly without needing to remove the related foreign keys.
 * [Change]: field semantics adjustments on relationship editing form.
 * [Change]: graphical object can be now selected and have the context menu activated only with a single right-click.
 * [Change]: minor improvements on plugin base class: PgModelerPlugin.
@@ -31,6 +31,13 @@ The stable 0.4.0 has no release date yet because all the code is being refactore
 * [Change]: relationship validation method now removes fk relationships when the foreign keys that gerenates is no longer exists.
 * [Change]: copy/cut/delete commands does not manipulates system objects like schema public and languages C, SQL and plpgsql.
 * [Change]: pgModeler startup scripts are now path location free meaning that software can be installed where the user desires.
+* [Fix]: corrected a bug related  constraint name on domain XML code generation.
+* [Fix]: corrected a bug that was causing crash when click "Apply" on Type editing form with fields not filled.
+* [Fix]: corrected the "invalid constraint name" error on domain editing form.
+* [Fix]: corrected the empty DEFAULT clause for columns, types and domains.
+* [Fix]: corrected a bug related to incorrectly initialized OID attribute when creating tables.
+* [Fix]: corrected a bug when creating a view with WHERE statement.
+* [Fix]: corrected a bug related to one-to-many relationships semantics.
 * [Fix]: corrected some bugs that was causing crash when removing all operations from operation list.
 * [Fix]: minor bug fixes related to object selection over the model.
 * [Fix]: corrected a bug on load model dialog filter (chinese UI only).

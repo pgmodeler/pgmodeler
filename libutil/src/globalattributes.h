@@ -59,7 +59,7 @@ namespace GlobalAttributes {
 	TEMPORARY_DIR=(getenv("PGMODELER_TMP_DIR") ? QString(getenv("PGMODELER_TMP_DIR")).replace("\\","/") : QString("./tmp"));
 
 	static const QString
-	PGMODELER_VERSION="0.4.0-rc1",
+	PGMODELER_VERSION="0.4.0",
 	CRASH_HANDLER_FILE="pgmodeler%1.crash",
 	STACKTRACE_FILE=".stacktrace",
 
