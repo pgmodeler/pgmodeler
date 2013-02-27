@@ -3,7 +3,7 @@
 ; Created with Inno Setup (http://www.jrsoftware.org/isinfo.php)
 
 #define MyAppName "pgModeler - PostgreSQL Database Modeler"
-#define MyAppVersion "v0.4.0-rc1"
+#define MyAppVersion "v0.4.0"
 #define MyAppPublisher "pgModeler Project"
 #define MyAppURL "http://www.pgmodeler.com.br/"
 #define MyAppExeName "pgmodeler.exe"
@@ -25,7 +25,7 @@ DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 LicenseFile=.\build\LICENSE
 OutputDir=.\
-OutputBaseFilename=pgmodeler-{#MyAppVersion}-setup
+OutputBaseFilename=pgmodeler-{#MyAppVersion}-windows
 Compression=lzma
 SolidCompression=yes
 ChangesEnvironment=true
