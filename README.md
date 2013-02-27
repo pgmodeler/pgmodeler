@@ -27,7 +27,7 @@ If you like the project and think it deserves a contribution please donate any a
 Developers and Reviewers wanted!
 --------------------------------
 
-pgModeler grow bigger and reached a state that its lonely developer cannot handle all the modification requests as well create a user's manual. So if you know C++ and Qt framework programming or wants to contribute with a user's manual let me know! I'll be grateful for any help to the project!
+pgModeler grow bigger and reached a state that its lonely developer cannot handle all the modification and new features requests as well to create a user's manual. So if you know C++ and Qt framework programming and wants to contribute with coding or an user's manual let me know! I'll be grateful for any help to the project!
 
 Compiling/Installation
 ----------------------
