@@ -4,6 +4,8 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 {
 	try
 	{
+		QSpacerItem *spacer=new QSpacerItem(10,10,QSizePolicy::Fixed,QSizePolicy::Expanding);
+
 		Ui_ColumnWidget::setupUi(this);
 
 		hl_default_value=NULL;
@@ -16,6 +18,7 @@ ColumnWidget::ColumnWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_COLUMN
 		data_type=NULL;
 		data_type=new PgSQLTypeWidget(this);
 		column_grid->addWidget(data_type,3,0,1,0);
+		column_grid->addItem(spacer,column_grid->count(),0);
 
 		configureFormLayout(column_grid, OBJ_COLUMN);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));

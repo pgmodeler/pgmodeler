@@ -6,7 +6,9 @@
 %if @{reduced-form} %then
   /> $br
 %else
-  [ constraint=] "@{constraint}"
+ %if @{constraint} %then
+   [ constraint=] "@{constraint}"
+  %end
 
   [ not-null=] %if @{not-null} %then "true" %else "false" %end
   %if @{default-value} %then [ default=] "@{default-value}" %end

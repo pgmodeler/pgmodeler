@@ -25,19 +25,12 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		object_py=NAN;
 		pf_min_height=-1;
 		pf_max_height=-1;
-		hl_parentname_txt=NULL;
 		parent_form=NULL;
 		schema_sel=NULL;
 		owner_sel=NULL;
 		tablespace_sel=NULL;
 
 		object_selection_wgt=new ModelObjectsWidget(true);
-
-		hl_parentname_txt=new SyntaxHighlighter(parent_obj_txt, false);
-		hl_parentname_txt->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																				 GlobalAttributes::DIR_SEPARATOR +
-																				 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																				 GlobalAttributes::CONFIGURATION_EXT);
 
 		parent_form=new BaseForm(NULL, (Qt::WindowTitleHint | Qt::WindowSystemMenuHint));
 		parent_form->setWindowTitle(trUtf8("Create / Edit: ") + BaseObject::getTypeName(obj_type));
@@ -55,33 +48,21 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 
 		baseobject_grid = new QGridLayout;
 		baseobject_grid->setObjectName(Utf8String::create("objetobase_grid"));
-
 		baseobject_grid->addWidget(protected_obj_frm, 0, 0, 1, 0);
 		baseobject_grid->addWidget(name_lbl, 1, 0, 1, 1);
 		baseobject_grid->addWidget(name_edt, 1, 1, 1, 3);
 		baseobject_grid->addWidget(obj_icon_lbl, 1, 4, 1, 1);
-
-		baseobject_grid->addWidget(parent_obj_lbl, 2, 0, 1, 1);
-		baseobject_grid->addWidget(parent_obj_txt, 2, 1, 1, 3);
-		baseobject_grid->addWidget(parent_obj_icon_lbl, 2, 4, 1, 1);
-
 		baseobject_grid->addWidget(div_ln, 3, 0, 1, 5);
-
 		baseobject_grid->addWidget(comment_lbl, 4, 0, 1, 1);
 		baseobject_grid->addWidget(comment_edt, 4, 1, 1, 4);
-
 		baseobject_grid->addWidget(tablespace_lbl, 5, 0, 1, 1);
 		baseobject_grid->addWidget(tablespace_sel, 5, 1, 1, 4);
-
 		baseobject_grid->addWidget(owner_lbl, 6, 0, 1, 1);
 		baseobject_grid->addWidget(owner_sel, 6, 1, 1, 4);
-
 		baseobject_grid->addWidget(schema_lbl, 7, 0, 1, 1);
 		baseobject_grid->addWidget(schema_sel, 7, 1, 1, 4);
-
 		baseobject_grid->addWidget(permissions_lbl, 8, 0, 1, 1);
 		baseobject_grid->addWidget(edt_perms_tb, 8, 1, 1, 4);
-
 		baseobject_grid->addWidget(div1_ln, 9, 0, 1, 5);
 	}
 	catch(Exception &e)
@@ -129,7 +110,6 @@ void BaseObjectWidget::hideEvent(QHideEvent *)
 {
 	name_edt->clear();
 	comment_edt->clear();
-	parent_obj_txt->clear();
 
 	tablespace_sel->clearSelector();
 	schema_sel->clearSelector();
@@ -196,10 +176,6 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 	name_edt->setFocus();
 	edt_perms_tb->setEnabled(object!=NULL);
-	parent_obj_txt->setPlainText(Utf8String::create(parent_obj->getName(true)));
-
-	parent_obj_icon_lbl->setPixmap(QPixmap(QString(":/icones/icones/") + parent_obj->getSchemaName() + QString(".png")));
-	parent_obj_icon_lbl->setToolTip(parent_obj->getTypeName());
 
 	owner_sel->setModel(model);
 	schema_sel->setModel(model);
@@ -243,7 +219,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_type)
 {
-	bool show_schema, show_owner, show_tabspc, show_comment, show_parent;
+	bool show_schema, show_owner, show_tabspc, show_comment;
 
 	if(grid)
 	{
@@ -291,9 +267,6 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 	show_comment=(obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_PARAMETER);
 
-	show_parent=(obj_type!=OBJ_PARAMETER && obj_type!=OBJ_DATABASE &&
-																										obj_type!=OBJ_PERMISSION && obj_type!=BASE_OBJECT);
-
 	if(obj_type!=OBJ_TABLE && obj_type!=OBJ_COLUMN && obj_type!=OBJ_VIEW &&
 		 obj_type!=OBJ_SEQUENCE && obj_type!=OBJ_DATABASE && obj_type!=OBJ_FUNCTION &&
 		 obj_type!=OBJ_AGGREGATE && obj_type!=OBJ_LANGUAGE && obj_type!=OBJ_SCHEMA &&
@@ -315,12 +288,9 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	comment_edt->setVisible(show_comment);
 	comment_lbl->setVisible(show_comment);
 
-	parent_obj_lbl->setVisible(show_parent);
-	parent_obj_txt->setVisible(show_parent);
-	parent_obj_icon_lbl->setVisible(show_parent);
-
-	div1_ln->setVisible(show_parent && obj_type!=OBJ_TABLE &&
+	div1_ln->setVisible(obj_type!=OBJ_TABLE &&
 	obj_type!=OBJ_SCHEMA &&
+	obj_type!=OBJ_TEXTBOX &&
 	obj_type!=OBJ_RELATIONSHIP &&
 	obj_type!=BASE_RELATIONSHIP);
 

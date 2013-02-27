@@ -20,8 +20,8 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 		configureFormLayout(domain_grid, OBJ_DOMAIN);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-		parent_form->setMinimumSize(530, 450);
-		parent_form->setMaximumHeight(450);
+		parent_form->setMinimumSize(530, 500);
+		parent_form->setMaximumHeight(500);
 	}
 	catch(Exception &e)
 	{

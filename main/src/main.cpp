@@ -6,7 +6,7 @@
 #include "execinfo.h"
 #endif
 
-void startCrashHandler(int)
+void startCrashHandler(int signal)
 {
 	ofstream output;
 	QString lin, cmd;
@@ -39,7 +39,7 @@ void startCrashHandler(int)
 	{
 		lin=QString("** pgModeler [v%1] crashed after receive signal: %2 **\n\nDate/Time:%3\n")
 				.arg(GlobalAttributes::PGMODELER_VERSION)
-				.arg("SIGSEGV")
+				.arg(signal)
 				.arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
 
 		lin+=QString("Compilation Qt version: %1\nRunning Qt version: %2\n\n")
@@ -80,8 +80,9 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		//Install a signal handler to start crashhandler when SIGSEGV is emitted
+		//Install a signal handler to start crashhandler when SIGSEGV or SIGABRT is emitted
 		signal(SIGSEGV, startCrashHandler);
+		signal(SIGABRT, startCrashHandler);
 
 		Application app(argc,argv);
 		QTranslator translator;

@@ -19,7 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="convtipo_grid">
+  <layout class="QGridLayout" name="cast_grid">
    <property name="margin">
     <number>2</number>
    </property>

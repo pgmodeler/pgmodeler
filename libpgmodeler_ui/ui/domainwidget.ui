@@ -6,93 +6,96 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>434</width>
-    <height>114</height>
+    <width>471</width>
+    <height>187</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="domain_grid">
-   <property name="margin">
-    <number>2</number>
-   </property>
-   <property name="spacing">
-    <number>6</number>
-   </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="not_null_lbl">
-     <property name="text">
-      <string>Not Null:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QCheckBox" name="not_null_chk">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
     <widget class="QLabel" name="def_value_lbl">
      <property name="text">
       <string>Default Value:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="0" column="1">
     <widget class="QLineEdit" name="def_value_edt"/>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="constr_name_lbl">
-     <property name="text">
-      <string>Constraint Name:</string>
+   <item row="1" column="0" colspan="2">
+    <widget class="QGroupBox" name="constraint_gb">
+     <property name="title">
+      <string>Constraint</string>
      </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="constr_name_edt"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="check_expr_lbl">
-     <property name="text">
-      <string>Check Expression:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QTextEdit" name="check_expr_txt">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>25</height>
-      </size>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="documentTitle">
-      <string notr="true"/>
-     </property>
-     <property name="undoRedoEnabled">
-      <bool>true</bool>
-     </property>
-     <property name="lineWrapMode">
-      <enum>QTextEdit::NoWrap</enum>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextEditorInteraction</set>
-     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="constr_name_lbl">
+        <property name="text">
+         <string>Name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="constr_name_edt"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="not_null_lbl">
+        <property name="text">
+         <string>Not Null:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QCheckBox" name="not_null_chk">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="check_expr_lbl">
+        <property name="text">
+         <string>Check Expr.:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" colspan="3">
+       <widget class="QTextEdit" name="check_expr_txt">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>100</height>
+         </size>
+        </property>
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="documentTitle">
+         <string notr="true"/>
+        </property>
+        <property name="undoRedoEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="lineWrapMode">
+         <enum>QTextEdit::NoWrap</enum>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::TextEditorInteraction</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

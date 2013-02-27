@@ -6,6 +6,7 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 	{
 		QFont font;
 		QFrame *frame=NULL;
+		QSpacerItem *spacer=new QSpacerItem(10,1,QSizePolicy::Fixed,QSizePolicy::Expanding);
 
 		Ui_CastWidget::setupUi(this);
 
@@ -13,11 +14,11 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 		trg_datatype=new PgSQLTypeWidget(this, trUtf8("Target data type"));
 		conv_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
 
-		convtipo_grid->addWidget(conv_func_sel,1,1,1,3);
-		convtipo_grid->addWidget(src_datatype,2,0,1,4);
-		convtipo_grid->addWidget(trg_datatype,3,0,1,4);
+		cast_grid->addWidget(conv_func_sel,1,1,1,3);
+		cast_grid->addWidget(src_datatype,2,0,1,4);
+		cast_grid->addWidget(trg_datatype,3,0,1,4);
 
-		configureFormLayout(convtipo_grid, OBJ_CAST);
+		configureFormLayout(cast_grid, OBJ_CAST);
 
 		name_edt->setReadOnly(true);
 		font=name_edt->font();
@@ -25,13 +26,14 @@ CastWidget::CastWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_CAST)
 		name_edt->setFont(font);
 
 		frame=generateInformationFrame(trUtf8("The function to be assigned to a cast from <em><strong>typeA</strong></em> to <em><strong>typeB</strong></em> must have the following signature: <em><strong>typeB</strong> function(<strong>typeA</strong>, integer, boolean)</em>."));
-		convtipo_grid->addWidget(frame, convtipo_grid->count()+1, 0, 1, 0);
+		cast_grid->addWidget(frame, cast_grid->count()+1, 0, 1, 0);
+		cast_grid->addItem(spacer, cast_grid->count()+1, 0, 1, 0);
 		frame->setParent(this);
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-		parent_form->setMinimumSize(530, 500);
-		parent_form->setMaximumHeight(500);
+		parent_form->setMinimumSize(530, 520);
+		parent_form->setMaximumHeight(520);
 	}
 	catch(Exception &e)
 	{

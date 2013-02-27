@@ -13,8 +13,8 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		QFrame *frame=NULL;
 
 		Ui_FunctionWidget::setupUi(this);
-		configureFormLayout(funcao_grid, OBJ_FUNCTION);
 
+		configureFormLayout(function_grid, OBJ_FUNCTION);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
 		source_code_hl=new SyntaxHighlighter(source_code_txt, true);
@@ -55,12 +55,11 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 
 		fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(table_rb);
 		fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(window_func_lbl);
-
 		frame=generateVersionWarningFrame(fields_map);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
 		frame->setParent(func_config_twg->widget(0));
 
-		parent_form->setMinimumSize(645, 715);
+		parent_form->setMinimumSize(645, 675);
 
 		SecurityType::getTypes(types);
 		security_cmb->addItems(types);

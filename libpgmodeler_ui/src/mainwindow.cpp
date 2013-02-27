@@ -33,10 +33,7 @@
 #include "modelexportform.h"
 #include "quickrenamewidget.h"
 
-/* Formulários globais. Como são formulários os mesmos podem ser
-	 compartilhados e usados em outros arquivos não havendo a necessidade
-	 de se instanciar cada um toda vez em que forem usados.
-	 O formulário principal é o responsável por alocar e desalocar esses objetos. */
+//Global forms and widgets
 AboutForm *about_form=NULL;
 TextboxWidget *textbox_wgt=NULL;
 SourceCodeWidget *sourcecode_wgt=NULL;
@@ -99,21 +96,20 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	try
 	{
 		QDir dir;
-		//Checa se o diretório temporário existe. Caso não seja encontrado, o mesmo será criado
+
+		//Check if the temporary dir exists, if not, creates it.
 		if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
 			dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
 
 		about_form=new AboutForm;
 		configuration_form=new ConfigurationForm(this, Qt::WindowTitleHint | Qt::WindowSystemMenuHint);
 		export_form=new ModelExportForm(this);
-		//selecaoobjetos_wgt=new VisaoObjetosWidget(true);
 
 		restoration_form=new ModelRestorationForm(this);
 		oper_list_wgt=new OperationListWidget;
 		model_objs_wgt=new ModelObjectsWidget;
 		overview_wgt=new ModelOverviewWidget;
 
-		//*** CRIAÇÃO DOS FORMULÁRIOS GLOBAIS ***
 		permission_wgt=new PermissionWidget(this);
 		sourcecode_wgt=new SourceCodeWidget(this);
 		textbox_wgt=new TextboxWidget(this);
@@ -147,7 +143,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	}
 	catch(Exception &e)
 	{
-		//caixa_msg->show(e);
 		msg_box.show(e);
 	}
 
@@ -214,7 +209,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(table_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
-	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(updateModels(void)));
+	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(updateModelsConfigurations(void)));
 	connect(&model_save_timer, SIGNAL(timeout(void)), this, SLOT(saveAllModels(void)));
 	connect(&tmpmodel_save_timer, SIGNAL(timeout(void)), this, SLOT(saveTemporaryModel(void)));
 
@@ -231,13 +226,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 
 	current_model=NULL;
 
-	//Inserindo a versão do software na janela principal
 	window_title=this->windowTitle() + " " + GlobalAttributes::PGMODELER_VERSION;
 	this->setWindowTitle(window_title);
 	this->addDockWidget(Qt::RightDockWidgetArea, model_objs_wgt);
 	this->addDockWidget(Qt::RightDockWidgetArea, oper_list_wgt);
 
-	//Faz o carregamento das configurações
 	try
 	{
 		configuration_form->loadConfiguration();
@@ -262,15 +255,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		toolbars[ParsersAttributes::PLUGINS_TOOLBAR]=plugins_tb;
 		toolbars[ParsersAttributes::MODEL_TOOLBAR]=model_tb;
 
-		//Aplicando as configurações carregadas
 		conf_wgt=configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT);
 		confs=conf_wgt->getConfigurationParams();
 
 		itr=confs.begin();
 		itr_end=confs.end();
 
-		/* Configurando a exibição dos widgets conforme as configurações e
-		 carregando arquivos anteriormente abertos */
+		//Configuring the widget visibility according to the configurations
 		while(itr!=itr_end)
 		{
 			attribs=itr->second;
@@ -294,7 +285,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 					toolbars[type]->setVisible(attribs[ParsersAttributes::VISIBLE]==ParsersAttributes::_TRUE_);
 				this->addToolBar(toolbar_areas[attribs[ParsersAttributes::POSITION]], toolbars[type]);
 			}
-			//Carrega a sessão anterior somente se não hoverem arquivos temporários
+			//Store the previous model filenames if there is no temporary models to be loaded
 			else if(attribs.count(ParsersAttributes::PATH)!=0)
 			{
 				try
@@ -304,7 +295,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 				}
 				catch(Exception &e)
 				{
-					//caixa_msg->show(e);
 					msg_box.show(e);
 				}
 			}
@@ -314,11 +304,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	}
 	catch(Exception &e)
 	{
-		//caixa_msg->show(e);
 		msg_box.show(e);
 	}
 
-	//Restaura os arquivos temporários (se houver)
+	//Restore temporary models (if exists)
 	if(restoration_form->hasTemporaryModels())
 	{
 		restoration_form->exec();
@@ -334,12 +323,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 				while(!tmp_models.isEmpty())
 				{
 					this->addModel(tmp_models.front());
-					//Obtém o modelo gerado a partir do arquivo temporário
+
+					//Get the model widget generated from file
 					model=dynamic_cast<ModelWidget *>(models_tbw->widget(models_tbw->count()-1));
 
-					/* Define-o como modificado e limpa o nome do arquivo temporário, isso
-				forçará o usuário a salvá-lo quando o timer de salvamento automático for atingido ou
-				se o pgModeler for fechado */
+					//Set the model as modified forcing the user to save when the autosave timer ends
 					model->modified=true;
 					model->filename.clear();
 					tmp_models.pop_front();
@@ -347,7 +335,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 			}
 			catch(Exception &e)
 			{
-				//caixa_msg->show(e);
 				msg_box.show(e);
 			}
 		}
@@ -355,7 +342,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		restoration_form->removeTemporaryModels();
 	}
 
-	//Carregando arquivos da sessão anterior
+	//Loading the files from the previous session
 	if(!prev_session_files.isEmpty() && restoration_form->result()==QDialog::Rejected)
 	{
 		try
@@ -368,12 +355,11 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		}
 		catch(Exception &e)
 		{
-			//caixa_msg->show(e);
 			msg_box.show(e);
 		}
 	}
 
-	//Inicializa o atributo de tempo de salvamento automático
+	//Initializes the auto save interval (in miliseconds)
 	save_interval=confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::AUTOSAVE_INTERVAL].toInt() * 60000;
 }
 
@@ -388,11 +374,11 @@ MainWindow::~MainWindow(void)
 
 void MainWindow::showEvent(QShowEvent *)
 {
-	//Caso o intervalo de salvamento esteja setado inicializa o timer
+	//Starts the timer if the interval is set
 	if(save_interval > 0)
 		model_save_timer.start(save_interval);
 
-	//O intervalo de salvamento do arquivo temporário será a cada 1 minuto.
+	//The temporary model timer is always of 1 minute
 	tmpmodel_save_timer.start(60000);
 }
 
@@ -403,18 +389,16 @@ void MainWindow::closeEvent(QCloseEvent *)
 	bool save_conf=false, modified=false;
 	int i=0;
 
-	//Checa se existem modelos modificados e pergunta ao usuário se deseja salvá-los antes de sair
+
+	//Checking if there is modified models and ask the user to save them before close the application
 	if(models_tbw->count() > 0)
 	{
-		//Varre os modelos e obtém o estado da modificação
 		i=0;
 		while(i < models_tbw->count() && !modified)
 			modified=dynamic_cast<ModelWidget *>(models_tbw->widget(i++))->isModified();
 
-		//Se algum modelo foi encontrado como modificado
 		if(modified)
 		{
-			//caixa_msg->
 			msg_box.show(trUtf8("Save all models"),
 											trUtf8("Some models were modified! Do you want to save them before finish the pgModeler?"),
 											MessageBox::CONFIRM_ICON,MessageBox::YES_NO_BUTTONS);
@@ -428,7 +412,7 @@ void MainWindow::closeEvent(QCloseEvent *)
 	confs=conf_wgt->getConfigurationParams();
 	conf_wgt->removeConfigurationParams();
 
-	//Caso seja preciso salvar a posição dos widgets
+	//Case the user marked at configurations to save the widget positions
 	if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS].isEmpty())
 	{
 		int i, count=7;
@@ -483,7 +467,7 @@ void MainWindow::closeEvent(QCloseEvent *)
 		}
 	}
 
-	//Caso seja necessário salvar a sessão de arquivos carregados
+	//Case is needed to save the session
 	if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_SESSION].isEmpty())
 	{
 		int i, count;
@@ -520,10 +504,8 @@ void MainWindow::addModel(const QString &filename)
 	Language *lang=NULL;
 	QLayout *layout=NULL;
 
-	//Converte a quantidade de abas para QString
+	//Set a name for the tab widget
 	str_aux=QString("%1").arg(models_tbw->count());
-
-	//Define o nome da nova aba
 	obj_name="model_";
 	obj_name+=str_aux;
 	tab_name=obj_name;
@@ -531,14 +513,14 @@ void MainWindow::addModel(const QString &filename)
 	model_tab = new ModelWidget(models_tbw);
 	model_tab->setObjectName(Utf8String::create(obj_name));
 
-	//Adiciona a aba criada ao conjuto de abas existentes
+	//Add the tab to the tab widget
 	obj_name=model_tab->db_model->getName();
 	models_tbw->addTab(model_tab, Utf8String::create(obj_name));
 	models_tbw->setCurrentIndex(models_tbw->count()-1);
 	layout=models_tbw->currentWidget()->layout();
 	layout->setContentsMargins(4,4,4,4);
 
-	//Cria objetos do sistema (esquema public e linguagens c, sql e plpgsql)
+	//Creating the system objects (public schema and languages C, SQL and pgpgsql)
 	if(filename.isEmpty())
 	{
 		public_sch=new Schema;
@@ -562,7 +544,6 @@ void MainWindow::addModel(const QString &filename)
 	{
 		try
 		{
-			//Carrega o modelo caso o nome do arquivo esteja especificado
 			model_tab->loadModel(filename);
 			models_tbw->setTabText(models_tbw->currentIndex(),
 															Utf8String::create(model_tab->db_model->getName()));
@@ -596,12 +577,10 @@ void MainWindow::setCurrentModel(void)
 
 	object=sender();
 
-	//Limpa as barras de edição de de modelo
 	model_tb->clear();
 	edit_tb->clear();
 	edit_menu->clear();
 
-	//Adiciona as ações de desfazer/refazer na barra/menu de edição
 	edit_tb->addAction(action_undo);
 	edit_tb->addAction(action_redo);
 	edit_tb->addSeparator();
@@ -609,36 +588,27 @@ void MainWindow::setCurrentModel(void)
 	edit_menu->addAction(action_redo);
 	edit_menu->addSeparator();
 
-	//Atualiza os botões de navegação de modelos
+	//Update the navigation buttons
 	if(object==action_next)
 		models_tbw->setCurrentIndex(models_tbw->currentIndex()+1);
 	else if(object==action_previous)
 		models_tbw->setCurrentIndex(models_tbw->currentIndex()-1);
 
-	/* Inibe o salvamento automatico do estado da árvore para que
-		a árvore do modelo atual seja restaurada */
+	//Avoids the tree state saving in order to restore the current model tree state
 	model_objs_wgt->saveTreeState(false);
 
+	//Restore the tree state
 	if(current_model)
 		model_objs_wgt->saveTreeState(model_tree_states[current_model]);
 
-	//O modelo atual obtido a partir da aba atual no 'models_tbw'
 	current_model=dynamic_cast<ModelWidget *>(models_tbw->currentWidget());
-
-	//Caso haja um modelo
 	if(current_model)
 	{
-		//Atualiza o zoom do memos
 		this->applyZoom();
 
-		//Focaliza o modelo
 		current_model->setFocus(Qt::OtherFocusReason);
-		//Cancela qualquer operação que possa ter sido ativada pelo usuário antes de abrir o modelo atual
 		current_model->cancelObjectAddition();
-
-		//Configura a barra de ferramentas do modelo conforme as ações respectivas no modelo atual
 		model_tb->addAction(current_model->action_new_object);
-		//Seta o modo de popup do menu para "InstantPopup" assim o usuário não precisa pressionar a setinha para ativar o popup
 		dynamic_cast<QToolButton *>(model_tb->widgetForAction(current_model->action_new_object))->setPopupMode(QToolButton::InstantPopup);
 
 		model_tb->addAction(current_model->action_quick_actions);
@@ -662,11 +632,9 @@ void MainWindow::setCurrentModel(void)
 		edit_menu->addAction(current_model->action_paste);
 		edit_menu->addAction(current_model->action_remove);
 
-		//Configura o titulo da janela da aplicação
 		if(current_model->getFilename().isEmpty())
 			this->setWindowTitle(window_title);
 		else
-			//Caso o modelo atual venha de um arquivo, concatena o caminho para o arquivo
 			this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(current_model->getFilename()));
 
 		connect(current_model, SIGNAL(s_objectModified(void)),oper_list_wgt, SLOT(updateOperationList(void)));
@@ -700,37 +668,31 @@ void MainWindow::setCurrentModel(void)
 
 	updateToolsState();
 
-	//Atualiza os dockwidgets com os dados do modelo atual
 	oper_list_wgt->setModelWidget(current_model);
 	model_objs_wgt->setModel(current_model);
 
 	if(current_model)
 		model_objs_wgt->restoreTreeState(model_tree_states[current_model]);
 
-	//Reativa o salvamento automático do estado da árvore
 	model_objs_wgt->saveTreeState(true);
-
-	//Salva o arquivo temporário referente ao modelo
 	this->saveTemporaryModel();
 }
 
 void MainWindow::setGridOptions(void)
 {
-	//Configura, globalmente na cena, as opçoẽs da grade
+	//Configures the global settings for the scene grid
 	ObjectsScene::setGridOptions(action_show_grid->isChecked(),
 															 action_alin_objs_grade->isChecked(),
 															 action_show_delimiters->isChecked());
 
 	if(current_model)
 	{
-		/* Caso o alinhamento de objetos esteja ativado, chama o método de
-		 alinhamento da cena do modelo */
+		//Align the object to grid is the option is checked
 		if(action_alin_objs_grade->isChecked())
 			current_model->scene->alignObjectsToGrid();
 
-		//Atualiza a cena do modelo
+		//Redraw the scene to apply the new grid options
 		current_model->scene->update();
-		//modelo_atual->visaogeral_wgt->atualizarVisaoGeral();
 	}
 }
 
@@ -738,10 +700,8 @@ void MainWindow::applyZoom(void)
 {
 	if(current_model)
 	{
-		//Obtém o zoom atual do modelo
 		float zoom=current_model->currentZoom();
 
-		//Configura a aplicação do zoom conforme a ação qu disparou o método
 		if(sender()==action_normal_zoom)
 			zoom=1;
 		else if(sender()==action_inc_zoom && zoom < ModelWidget::MAXIMUM_ZOOM)
@@ -749,21 +709,20 @@ void MainWindow::applyZoom(void)
 		else if(sender()==action_dec_zoom && zoom > ModelWidget::MINIMUM_ZOOM)
 			zoom-=ModelWidget::ZOOM_INCREMENT;
 
-		//Aplica o zoom configurado
 		current_model->applyZoom(zoom);
 	}
 }
 
 void MainWindow::showFullScreen(bool fullscreen)
 {
-	//Barras/Widgets que são escondidas quando o pgModeler está em tela cheia
+	//Toolbars and widgets that are hidden when in fullscreen mode
 	main_menu_mb->setVisible(!fullscreen);
 	file_tb->setVisible(!fullscreen);
 	edit_tb->setVisible(!fullscreen);
 	oper_list_wgt->setVisible(!fullscreen);
 	model_objs_wgt->setVisible(!fullscreen);
 
-	//Caso não esteja em tela cheia, reinsere as barras na área destinada a toolbars
+	//Restore the toolbars when not in fullscreen
 	if(!fullscreen)
 	{
 		file_tb->setAllowedAreas(Qt::AllToolBarAreas);
@@ -783,7 +742,7 @@ void MainWindow::showFullScreen(bool fullscreen)
 	}
 	else
 	{
-		//Caso esteja em tela cheia remove as barras de suas áreas e as torna flutuantes
+		//If in fullscreen configures the toolbars in floating mode
 		file_tb->setParent(NULL);
 		file_tb->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 		file_tb->setVisible(true);
@@ -820,7 +779,7 @@ void MainWindow::closeModel(int model_id)
 	if(model_id >= 0)
 		tab=models_tbw->widget(model_id);
 	else
-		tab=models_tbw->currentWidget(); //Obtém a aba em foco
+		tab=models_tbw->currentWidget();
 
 	if(tab)
 	{
@@ -834,11 +793,11 @@ void MainWindow::closeModel(int model_id)
 		disconnect(action_show_grid, NULL, this, NULL);
 		disconnect(action_show_delimiters, NULL, this, NULL);
 
-		//Remove o arquivo temporário relacionado ao modelo
+		//Remove the temporary file related to the closed model
 		QDir arq_tmp;
 		arq_tmp.remove(model->getTempFilename());
 
-		//Se o modelo foi modificado então solicita o salvamento ao usuário
+		//Ask the user to save the model if its modified
 		if(model->isModified())
 		{
 			msg_box.show(trUtf8("Save model"),
@@ -850,11 +809,11 @@ void MainWindow::closeModel(int model_id)
 		}
 
 		if(model_id >= 0)
-			models_tbw->removeTab(model_id); //Remove a aba
+			models_tbw->removeTab(model_id);
 		else
-			models_tbw->removeTab(models_tbw->currentIndex()); //Remove a aba
+			models_tbw->removeTab(models_tbw->currentIndex());
 
-		delete(model); //Desaloca a aba selecionada
+		delete(model);
 	}
 
 	if(models_tbw->count()==0)
@@ -877,29 +836,27 @@ void MainWindow::updateModelTabName(void)
 		models_tbw->setTabText(models_tbw->currentIndex(), Utf8String::create(current_model->db_model->getName()));
 }
 
-void MainWindow::updateModels(void)
+void MainWindow::updateModelsConfigurations(void)
 {
 	GeneralConfigWidget *conf_wgt=NULL;
 	int count, i;
 
-	//Obtém o widget de configuração geral
 	conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(0));
 
-	//Caso a opção de salvamento do modelo não esteja marcada
+	//Disable the auto save if the option is not checked
 	if(!conf_wgt->autosave_interv_chk->isChecked())
 	{
 		//Interrompe o timer de salvamento
 		save_interval=0;
 		model_save_timer.stop();
 	}
-	//Caso contrário configura o intervalo de salvamento
 	else
 	{
 		save_interval=conf_wgt->autosave_interv_spb->value() * 60000;
 		model_save_timer.start(save_interval);
 	}
 
-	//Força a atualização de todos os modelos abertos
+	//Force the update of all opened models
 	count=models_tbw->count();
 	for(i=0; i < count; i++)
 		dynamic_cast<ModelWidget *>(models_tbw->widget(i))->db_model->setObjectsModified();
@@ -907,13 +864,11 @@ void MainWindow::updateModels(void)
 
 void MainWindow::saveAllModels(void)
 {
-	//Caso o intervalo de salvamento esteja setado
 	if(save_interval > 0)
 	{
 		ModelWidget *model=NULL;
 		int i, count;
 
-		//Executa o método de salvamento em todos os modelos abertos
 		count=models_tbw->count();
 		for(i=0; i < count; i++)
 		{
@@ -927,28 +882,22 @@ void MainWindow::saveModel(ModelWidget *model)
 {
 	try
 	{
-		//Caso nenhum modelo foi especificado toma como base o modelo atual
 		if(!model)
 			model=current_model;
 
 		if(model)
 		{
-			//Caso a ação que disparou o método foi o de 'Salvar como'
+			//If the action that calls the slot were the 'save as' or the model filename isn't set
 			if(sender()==action_save_as || model->filename.isEmpty())
 			{
 				QFileDialog arquivo_dlg;
 
-				//Exibe o diálogo de salvamento do arquivo
 				arquivo_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(model->db_model->getName()));
-
-				/** issue#9 **/
-				//Ateração da extensão dos modelos de .pgmodel para .dbm
 				arquivo_dlg.setFilter(tr("Database model (*.dbm);;All files (*.*)"));
 				arquivo_dlg.setFileMode(QFileDialog::AnyFile);
 				arquivo_dlg.setAcceptMode(QFileDialog::AcceptSave);
 				arquivo_dlg.setModal(true);
 
-				//Caso o usuário confirme o salvamento, executa o método de salvamento do modelo
 				if(arquivo_dlg.exec()==QFileDialog::Accepted)
 				{
 					if(!arquivo_dlg.selectedFiles().isEmpty())
@@ -956,7 +905,6 @@ void MainWindow::saveModel(ModelWidget *model)
 				}
 			}
 			else
-				//Caso o usuário acione a ação de salvamento comum, executa direto o método do modelo
 				model->saveModel();
 		}
 	}
@@ -968,7 +916,6 @@ void MainWindow::saveModel(ModelWidget *model)
 
 void MainWindow::exportModel(void)
 {
-	//Caso haja um modelo aberto exibe o formulário de exportação do modelo
 	if(current_model)
 		export_form->show(current_model);
 }
@@ -988,25 +935,23 @@ void MainWindow::printModel(void)
 		print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
 		print_dlg.setWindowTitle(trUtf8("Database model printing"));
 
-		//Obtém as configurações de impressão da cena
+		//Get the page configuration of the scene
 		ObjectsScene::getPageConfiguration(paper_size, orientation, margins);
 
-		//Obtém a referência   impressora configuada no diálogo de impressão
+		//Get a reference to the printer
 		printer=print_dlg.printer();
 
-		//Atribui as configurações de impressão da cena   impressora
+		//Sets the printer options based upon the configurations from the scene
 		printer->setPaperSize(paper_size);
 		printer->setOrientation(orientation);
 		printer->setPageMargins(margins.left(), margins.top(), margins.right(), margins.bottom(), QPrinter::Millimeter);
 		printer->getPageMargins(&mt,&ml,&mb,&mr,QPrinter::Millimeter);
 		print_dlg.exec();
 
-		//Caso o usuário confirme a impressão do modelo
+		//If the user confirms the printing
 		if(print_dlg.result() == QDialog::Accepted)
 		{
-			/* Caso o usuário modifique as configurações da impressora este será alertado de
-			que as configurações divergem daquelas setadas na Cena, e assim a impressão
-			pode ser prejudicada */
+			//Checking If the user modified the default settings overriding the scene configurations
 			printer->getPageMargins(&mt1,&ml1,&mb1,&mr1,QPrinter::Millimeter);
 			curr_orientation=print_dlg.printer()->orientation();
 			curr_paper_size=print_dlg.printer()->paperSize();
@@ -1014,7 +959,6 @@ void MainWindow::printModel(void)
 			if(ml!=ml1 || mr!=mr1 || mt!=mt1 || mb!=mb1 ||
 				 orientation!=curr_orientation || curr_paper_size!=paper_size)
 			{
-				//Exibe a caixa de confirmação de impressão ao usuário
 				msg_box.show(trUtf8("Confirmation"),
 												trUtf8("Changes were detected in the definitions of paper/margin of the model which may cause the incorrect print of the objects. Do you want to continue printing using the new settings? To use the default settings click 'No' or 'Cancel' to abort printing."),
 												MessageBox::ALERT_ICON, MessageBox::ALL_BUTTONS);
@@ -1022,16 +966,14 @@ void MainWindow::printModel(void)
 
 			if(!msg_box.isCancelled())
 			{
-				//Caso o usuário rejeite as configurações personalizada
 				if(msg_box.result()==QDialog::Rejected)
 				{
-					//Reverte para as configurações originais da cena
+					//Reverting the configurations to the scene defaults
 					printer->setPaperSize(paper_size);
 					printer->setOrientation(orientation);
 					printer->setPageMargins(margins.left(), margins.top(), margins.right(), margins.bottom(), QPrinter::Millimeter);
 				}
 
-				//Imprime o modelo com as configurações setadas
 				current_model->printModel(printer, conf_wgt->print_grid_chk->isChecked(), conf_wgt->print_pg_num_chk->isChecked());
 			}
 		}
@@ -1046,22 +988,17 @@ void MainWindow::loadModel(void)
 
 	try
 	{
-		//Exibe o diálogo de carregamento do arquivo
-		/** issue#9 **/
-		//Ateração da extensão dos modelos de .pgmodel para .dbm
 		file_dlg.setFilter(trUtf8("Database model (*.dbm);;All files (*.*)"));
 		file_dlg.setWindowIcon(QPixmap(QString(":/icones/icones/pgsqlModeler48x48.png")));
 		file_dlg.setWindowTitle(trUtf8("Load model"));
 		file_dlg.setFileMode(QFileDialog::ExistingFiles);
 		file_dlg.setAcceptMode(QFileDialog::AcceptOpen);
 
-		//Caso o usuário confirme o carregamento dos arquivos
 		if(file_dlg.exec()==QFileDialog::Accepted)
 		{
 			list=file_dlg.selectedFiles();
 			count=list.count();
 
-			//Varre a lista de arquivos selecionados e os carrega
 			for(i=0; i < count; i++)
 			{
 				if(QFileInfo(list[i]).isFile())
@@ -1140,8 +1077,6 @@ void MainWindow::executePlugin(void)
 {
 	QAction *action=dynamic_cast<QAction *>(sender());
 
-	/* Um plugin só será executado caso um modelo esteja aberto
-		e ação tenha o nome de um plugin registrado  */
 	if(current_model && action)
 	{
 		PgModelerPlugin *plugin=reinterpret_cast<PgModelerPlugin *>(action->data().value<void *>());

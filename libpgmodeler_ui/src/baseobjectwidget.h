@@ -39,9 +39,9 @@
 Q_DECLARE_METATYPE(PgSQLType)
 
 class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
+	private:
 		Q_OBJECT
 
-	private:
 		/*! \brief Stores the minimum and maximum height of the parent form, in order
 			to control the exhibition of the alert frame when the object is protected */
 		int pf_min_height, pf_max_height;
@@ -87,9 +87,6 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 
 		//! \brief Indicates if the object is a new one or is being edited
 		bool new_object;
-
-		//! \brief Syntax highlighter used on the parent object name widget
-		SyntaxHighlighter *hl_parentname_txt;
 
 		//! \brief Object selectors for schema, owner an tablespace
 		ObjectSelectorWidget *schema_sel,

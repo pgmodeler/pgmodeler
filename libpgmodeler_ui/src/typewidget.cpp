@@ -258,6 +258,8 @@ void TypeWidget::applyConfiguration(void)
 		startConfiguration<Type>();
 		type=dynamic_cast<Type *>(this->object);
 
+		BaseObjectWidget::applyConfiguration();
+
 		//Configuring an enumaration type
 		if(enumeration_rb->isChecked())
 		{
@@ -287,7 +289,10 @@ void TypeWidget::applyConfiguration(void)
 			type->setInternalLength(internal_len_sb->value());
 			type->setByValue(by_value_chk->isChecked());
 			type->setPreferred(preferred_chk->isChecked());
-			type->setDelimiter(delimiter_edt->text().at(0).toAscii());
+
+			if(!delimiter_edt->text().isEmpty())
+				type->setDelimiter(delimiter_edt->text().at(0).toAscii());
+
 			type->setDefaultValue(default_value_edt->text());
 			type->setCategory(CategoryType(category_cmb->currentText()));
 			type->setAlignment(PgSQLType(alignment_cmb->currentText()));
@@ -297,7 +302,6 @@ void TypeWidget::applyConfiguration(void)
 				type->setFunction(i, dynamic_cast<Function *>(functions_sel[i]->getSelectedObject()));
 		}
 
-		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();
 	}
 	catch(Exception &e)
