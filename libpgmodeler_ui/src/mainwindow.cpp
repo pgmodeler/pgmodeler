@@ -389,6 +389,7 @@ void MainWindow::closeEvent(QCloseEvent *)
 	bool save_conf=false, modified=false;
 	int i=0;
 
+	this->overview_wgt->close();
 
 	//Checking if there is modified models and ask the user to save them before close the application
 	if(models_tbw->count() > 0)
