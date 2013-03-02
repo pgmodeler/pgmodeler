@@ -278,7 +278,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 							type==ParsersAttributes::VIEW_TOOLBAR ||
 							type==ParsersAttributes::MODEL_TOOLBAR ||
 							type==ParsersAttributes::PLUGINS_TOOLBAR)
-			{
+            {
 				if(toolbars[type]==plugins_tb)
 					toolbars[type]->setVisible(attribs[ParsersAttributes::VISIBLE]==ParsersAttributes::_TRUE_ && !plugins_tb->actions().isEmpty());
 				else
@@ -890,18 +890,18 @@ void MainWindow::saveModel(ModelWidget *model)
 			//If the action that calls the slot were the 'save as' or the model filename isn't set
 			if(sender()==action_save_as || model->filename.isEmpty())
 			{
-				QFileDialog arquivo_dlg;
+                QFileDialog file_dlg;
 
-				arquivo_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(model->db_model->getName()));
-				arquivo_dlg.setFilter(tr("Database model (*.dbm);;All files (*.*)"));
-				arquivo_dlg.setFileMode(QFileDialog::AnyFile);
-				arquivo_dlg.setAcceptMode(QFileDialog::AcceptSave);
-				arquivo_dlg.setModal(true);
+                file_dlg.setWindowTitle(trUtf8("Save '%1' as...").arg(model->db_model->getName()));
+                file_dlg.setFilter(tr("Database model (*.dbm);;All files (*.*)"));
+                file_dlg.setFileMode(QFileDialog::AnyFile);
+                file_dlg.setAcceptMode(QFileDialog::AcceptSave);
+                file_dlg.setModal(true);
 
-				if(arquivo_dlg.exec()==QFileDialog::Accepted)
+                if(file_dlg.exec()==QFileDialog::Accepted)
 				{
-					if(!arquivo_dlg.selectedFiles().isEmpty())
-						model->saveModel(arquivo_dlg.selectedFiles().at(0));
+                    if(!file_dlg.selectedFiles().isEmpty())
+                        model->saveModel(file_dlg.selectedFiles().at(0));
 				}
 			}
 			else
