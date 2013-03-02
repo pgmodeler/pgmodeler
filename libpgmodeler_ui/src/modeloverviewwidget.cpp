@@ -22,15 +22,15 @@ void ModelOverviewWidget::show(ModelWidget *model)
 
 	if(this->model)
 	{
-		connect(this->model, SIGNAL(s_objetoCriado(void)), this, SLOT(updateOverview(void)));
-		connect(this->model, SIGNAL(s_objetoRemovido(void)), this, SLOT(updateOverview(void)));
-		connect(this->model, SIGNAL(s_objetosMovimentados(void)), this, SLOT(updateOverview(void)));
-		connect(this->model, SIGNAL(s_objetoModificado(void)), this, SLOT(updateOverview(void)));
-		connect(this->model, SIGNAL(s_zoomModificado(float)), this, SLOT(updateZoomFactor(float)));
+		connect(this->model, SIGNAL(s_objectCreated(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_objectRemoved(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_objectsMoved(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_objectModified(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_zoomModified(float)), this, SLOT(updateZoomFactor(float)));
 
-		connect(this->model, SIGNAL(s_modeloRedimensionado(void)), this, SLOT(resizeOverview(void)));
-		connect(this->model, SIGNAL(s_modeloRedimensionado(void)), this, SLOT(resizeWindowFrame(void)));
-		connect(this->model, SIGNAL(s_modeloRedimensionado(void)), this, SLOT(updateOverview(void)));
+		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(resizeOverview(void)));
+		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(resizeWindowFrame(void)));
+		connect(this->model, SIGNAL(s_modelResized(void)), this, SLOT(updateOverview(void)));
 
 		connect(this->model->viewport->horizontalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(resizeWindowFrame(void)));
 		connect(this->model->viewport->verticalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(resizeWindowFrame(void)));
