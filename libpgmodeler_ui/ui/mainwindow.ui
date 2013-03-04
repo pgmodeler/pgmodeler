@@ -685,6 +685,9 @@
    </property>
   </action>
   <action name="action_save_all">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Save all</string>
    </property>
