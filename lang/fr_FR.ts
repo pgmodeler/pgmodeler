@@ -3842,7 +3842,7 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+16"/>
         <source>Space</source>
-        <translation>Espace</translation>
+        <translation>Space</translation>
     </message>
     <message>
         <location line="+22"/>
