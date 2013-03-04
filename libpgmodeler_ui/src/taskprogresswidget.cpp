@@ -17,7 +17,7 @@ void TaskProgressWidget::updateProgress(int progress, const QString &text, unsig
 		progress=progress_pb->maximum();
 
 	progress_pb->setValue(progress);
-	text_lbl->setText(Utf8String::create(text));
+	text_lbl->setText(text);
 
 	if(icons.count(icon_id))
 		icon_lbl->setPixmap(icons[icon_id].pixmap(QSize(32,32)));

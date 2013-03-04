@@ -105,7 +105,8 @@ class ModelWidget: public QWidget {
 						*action_edit_perms,
 						*action_change_owner,
 						*action_quick_actions,
-						*action_sel_sch_children;
+						*action_sel_sch_children,
+						*action_highlight_object;
 
 		//! \brief Actions used to create new objects on the model
 		map<ObjectType, QAction *> actions_new_objects;
@@ -263,6 +264,9 @@ class ModelWidget: public QWidget {
 
 		//! \brief Returns a vector containing all the page rects.
 		vector<QRectF> getPagesForPrinting(const QSizeF &paper_size, unsigned &h_page_cnt, unsigned &v_page_cnt);
+
+		//! \brief Highlights the object stored on the action that triggers the slot
+		void highlightObject(void);
 
 	public slots:
 		void loadModel(const QString &filename);

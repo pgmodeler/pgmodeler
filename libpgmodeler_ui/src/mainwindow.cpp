@@ -835,7 +835,10 @@ void MainWindow::closeModel(int model_id)
 void MainWindow::updateModelTabName(void)
 {
 	if(current_model && current_model->db_model->getName()!=models_tbw->tabText(models_tbw->currentIndex()))
+	{
 		models_tbw->setTabText(models_tbw->currentIndex(), Utf8String::create(current_model->db_model->getName()));
+
+	}
 }
 
 void MainWindow::updateModelsConfigurations(void)
@@ -908,6 +911,8 @@ void MainWindow::saveModel(ModelWidget *model)
 			}
 			else
 				model->saveModel();
+
+			this->setWindowTitle(window_title + " - " + QDir::toNativeSeparators(model->getFilename()));
 		}
 	}
 	catch(Exception &e)

@@ -5635,13 +5635,20 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		}
 
 		//Creates the SQL definition for user added foreign keys
-		if(def_type==SchemaParser::SQL_DEFINITION)
+		/* if(def_type==SchemaParser::SQL_DEFINITION)
 		{
 			while(!fks.empty())
 			{
 				attribs_aux[attrib]+=fks.back()->getCodeDefinition(def_type, true);
 				fks.pop_back();
 			}
+		} */
+
+		//Creates the code definition for user added foreign keys
+		while(!fks.empty())
+		{
+			attribs_aux[attrib]+=fks.back()->getCodeDefinition(def_type, true);
+			fks.pop_back();
 		}
 
 		//Gernerating the SQL/XML code for permissions

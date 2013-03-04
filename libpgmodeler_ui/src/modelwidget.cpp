@@ -215,6 +215,9 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_sel_sch_children=new QAction(QIcon(QString(":/icones/icones/seltodos.png")), trUtf8("Select children"), this);
 	action_sel_sch_children->setToolTip(trUtf8("Selects all the children graphical objects on the selected schema"));
 
+	action_highlight_object=new QAction(QIcon(QString(":/icones/icones/movimentado.png")), trUtf8("Highlight"), this);
+	action_highlight_object->setToolTip(trUtf8("Clears the current selection and centers the model view on the selected object."));
+
 	//Alocatting the object creation actions
 	for(i=0; i < obj_cnt; i++)
 	{
@@ -258,6 +261,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	connect(action_rename, SIGNAL(triggered(bool)), this, SLOT(renameObject(void)));
 	connect(action_edit_perms, SIGNAL(triggered(bool)), this, SLOT(editPermissions(void)));
 	connect(action_sel_sch_children, SIGNAL(triggered(bool)), this, SLOT(selectSchemaChildren(void)));
+	connect(action_highlight_object, SIGNAL(triggered(bool)), this, SLOT(highlightObject(void)));
 
 	connect(db_model, SIGNAL(s_objectAdded(BaseObject*)), this, SLOT(handleObjectAddition(BaseObject *)));
 	connect(db_model, SIGNAL(s_objectRemoved(BaseObject*)), this, SLOT(handleObjectRemoval(BaseObject *)));
@@ -832,7 +836,7 @@ void ModelWidget::loadModel(const QString &filename)
 	{
 		task_prog_wgt->close();
 		disconnect(db_model, NULL, task_prog_wgt, NULL);
-
+		this->modified=false;
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -2331,6 +2335,15 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				popup_menu.addAction(action_new_object);
 			}
 
+			/* Adding the action to highlight the object only when the sender is not one of the
+			the objects that calls this method from inside the ModelWidget instance. This action
+			is mainly used when the user wants to find a graphical object from the ModelObjects dockwidget*/
+			if((sender()!=this && sender()!=scene) && dynamic_cast<BaseGraphicObject *>(obj))
+			{
+				popup_menu.addAction(action_highlight_object);
+				action_highlight_object->setData(QVariant::fromValue<void *>(obj));
+			}
+
 			configureSubmenu(obj);
 			popup_menu.addSeparator();
 
@@ -2493,4 +2506,24 @@ bool ModelWidget::isModified(void)
 DatabaseModel *ModelWidget::getDatabaseModel(void)
 {
 	return(db_model);
+}
+
+void ModelWidget::highlightObject(void)
+{
+	QAction *action=dynamic_cast<QAction *>(sender());
+
+	if(action )
+	{
+		BaseObject *obj=reinterpret_cast<BaseObject *>(action->data().value<void *>());
+		BaseGraphicObject *graph_obj=dynamic_cast<BaseGraphicObject *>(obj);
+
+		if(graph_obj)
+		{
+			BaseObjectView *obj_view=dynamic_cast<BaseObjectView *>(graph_obj->getReceiverObject());
+
+			scene->clearSelection();
+			obj_view->setSelected(true);
+			viewport->centerOn(obj_view);
+		}
+	}
 }
