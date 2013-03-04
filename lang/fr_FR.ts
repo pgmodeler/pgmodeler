@@ -3017,7 +3017,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Afficher la vue d&apos;ensemble du modèle</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="+402"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="+403"/>
         <source>Save all models</source>
         <translation>Enregistrer tous les modèles</translation>
     </message>
@@ -3625,17 +3625,21 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+4"/>
         <source>Edit object&apos;s permissions</source>
         <translation>Editer les permissions de l&apos;objet</translation>
     </message>
     <message>
-        <location line="-1"/>
+        <location line="+3"/>
         <source>Change owner</source>
         <translation>Changer le propriétaire</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+1"/>
+        <source>Change object&apos;s owner</source>
+        <translation>Changer le propriétaire de l&apos;objet</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Select children</source>
         <translation>Sélectionnez les éléments</translation>
     </message>
