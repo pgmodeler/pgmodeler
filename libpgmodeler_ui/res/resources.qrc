@@ -140,6 +140,7 @@
         <file>icones/changeowner.png</file>
         <file>icones/plugins.png</file>
         <file>icones/relationshipfk.png</file>
+        <file>icones/help.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

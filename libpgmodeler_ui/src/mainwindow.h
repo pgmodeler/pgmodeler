@@ -148,6 +148,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 
 		//! \brief Updates the tab name of the currently opened model if the database name is changed
 		void updateModelTabName(void);
+
+		//! \brief Opens the pgModeler Wiki in a web browser window
+		void openWiki(void);
 };
 
 #endif

@@ -126,6 +126,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="action_about"/>
+    <addaction name="action_wiki"/>
    </widget>
    <widget class="QMenu" name="show_menu">
     <property name="title">
@@ -486,7 +487,7 @@
     <string>About pgModeler</string>
    </property>
    <property name="shortcut">
-    <string>F1</string>
+    <string>F2</string>
    </property>
   </action>
   <action name="action_print">
@@ -704,6 +705,18 @@
    </property>
    <property name="toolTip">
     <string>Show the model overview</string>
+   </property>
+  </action>
+  <action name="action_wiki">
+   <property name="icon">
+    <iconset resource="../res/resources.qrc">
+     <normaloff>:/icones/icones/help.png</normaloff>:/icones/icones/help.png</iconset>
+   </property>
+   <property name="text">
+    <string>pgModeler Wiki</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
    </property>
   </action>
  </widget>

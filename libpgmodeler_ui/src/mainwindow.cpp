@@ -160,6 +160,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(action_next,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
 	connect(action_previous,SIGNAL(triggered(bool)),this,SLOT(setCurrentModel()));
 	connect(action_about,SIGNAL(triggered(bool)),about_form,SLOT(show()));
+	connect(action_wiki,SIGNAL(triggered(bool)),this,SLOT(openWiki()));
 
 	connect(action_inc_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
 	connect(action_dec_zoom,SIGNAL(triggered(bool)),this,SLOT(applyZoom()));
@@ -1099,4 +1100,9 @@ void MainWindow::showOverview(bool show)
 		overview_wgt->show(current_model);
 	else if(!show)
 		overview_wgt->close();
+}
+
+void MainWindow::openWiki(void)
+{
+	QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
 }

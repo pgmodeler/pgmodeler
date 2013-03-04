@@ -1,6 +1,15 @@
 Changelog
 ---------
 
+v0.4.0_r1
+---------
+
+<em>Release date: March 04, 2013 </em>
+
+[New]: introducing the "pgModeler Wiki" as the main project's support resource.
+[Fix]: when main windows is closed the overview widget is closed too.
+[Fix]: corrected a bug on operation list widget that was converting an item name to UTF-8 twice.
+
 v0.4.0
 ------
 
