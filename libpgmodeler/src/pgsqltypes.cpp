@@ -58,7 +58,7 @@ QString BaseType::type_list[types_count]=
 	"real", "double precision", "float", "serial", "bigserial", "money",
 	"character varying", "varchar", "character",
 	"char", "text", "bytea",
-	"timestamp", "date", "time","timetz","timestampz",
+	"timestamp", "date", "time","timetz","timestamptz",
 	"interval", "boolean",
 	"point", "line", "lseg", "box", "path",
 	"polygon", "circle", "cidr", "inet",
