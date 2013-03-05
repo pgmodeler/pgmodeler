@@ -1158,7 +1158,7 @@ Taille: %2 bytes
         <translation>Chargement de l&apos;objet: %1 (%2)</translation>
     </message>
     <message>
-        <location line="+2764"/>
+        <location line="+2766"/>
         <source>Generating %1 of the object: %2 (%3)</source>
         <translation>Génération %1 de l&apos;objet : %2 (%3)</translation>
     </message>
@@ -1366,7 +1366,7 @@ Taille: %2 bytes
     <message>
         <location line="+1"/>
         <source>Assignment of not allocated table to object &apos;%1&apos; (%2)!</source>
-        <translation type="unfinished">Une table non définie a été affectée à l&apos;objet &apos;%1&apos; (%2)!</translation>
+        <translation>Une table non définie a été affectée à l&apos;objet &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1531,7 +1531,7 @@ Taille: %2 bytes
     <message>
         <location line="+1"/>
         <source>Assignment of not allocated language!</source>
-        <translation type="unfinished">Utilisation d&apos;un langage non défini!</translation>
+        <translation>Utilisation d&apos;un langage non défini!</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1622,7 +1622,7 @@ Taille: %2 bytes
         <location line="+1"/>
         <source>Assignment of an invalid strategy/support number to an operator class element!</source>
         <translatorcomment>Hum ... numéro de stratégie/support ? -&gt; http://docs.postgresql.fr/9.1/sql-createopclass.html</translatorcomment>
-        <translation type="unfinished">Un numéro de stratégie/procédure invalide a été affecté à un élément de la classe &apos;operator&apos;!</translation>
+        <translation>Un numéro de stratégie/procédure invalide a été affecté à un élément de la classe &apos;operator&apos;!</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1987,12 +1987,12 @@ Taille: %2 bytes
     <message>
         <location line="+1"/>
         <source>Could not load the plugin &apos;%1&apos; from the library &apos;%2&apos;! Message returned by plugin manager: &apos;%3&apos;</source>
-        <translation>Impossible de charger le greffon &apos;%1&apos; à partir de la librairie &apos;%2&apos;! Message retourné par le gestionnaire de greffons: &apos;%3&apos;</translation>
+        <translation>Impossible de charger l&apos;extension &apos;%1&apos; à partir de la librairie &apos;%2&apos;! Message retourné par le gestionnaire d&apos;extensions: &apos;%3&apos;</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.</source>
-        <translation type="unfinished">Un ou plusieurs greffons n&apos;ont pas été activé(s) car des erreurs sont apparues lors du processus de chargement. Pour plus de détails, consultez la pile d&apos;exceptions.</translation>
+        <translation>Une ou plusieurs extensions n&apos;ont pas été activée(s) car des erreurs sont apparues lors du processus de chargement. Pour plus de détails, consultez la pile d&apos;exceptions.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2745,7 +2745,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>A&amp;ide</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+7"/>
         <source>&amp;Show</source>
         <translation>&amp;Afficher</translation>
     </message>
@@ -2875,11 +2875,21 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+3"/>
+        <source>F3</source>
+        <translation>F3</translation>
+    </message>
+    <message>
+        <location line="+229"/>
+        <source>pgModeler Wiki</source>
+        <translation>Wiki pgModeler</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="-220"/>
         <source>Print</source>
         <translation>Imprimer</translation>
     </message>
@@ -3000,7 +3010,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Widgets</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+8"/>
         <source>Save all</source>
         <translation>Tout enregistrer</translation>
     </message>
@@ -3015,7 +3025,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Afficher la vue d&apos;ensemble du modèle</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="+403"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="+404"/>
         <source>Save all models</source>
         <translation>Enregistrer tous les modèles</translation>
     </message>
@@ -3035,13 +3045,13 @@ Message retourné par le SGBD: %1</translation>
         <translation>Le modèle a été modifié! Souhaitez vous le sauvegarder avant de le fermer?</translation>
     </message>
     <message>
-        <location line="+91"/>
+        <location line="+94"/>
         <source>Save &apos;%1&apos; as...</source>
         <translation>Enregistrer &apos;%1&apos; sous...</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+95"/>
+        <location line="+97"/>
         <source>Database model (*.dbm);;All files (*.*)</source>
         <translation>Modèle de base de donnée (*.dbm);; Tous les fichiers (*.*)</translation>
     </message>
@@ -3064,6 +3074,16 @@ Message retourné par le SGBD: %1</translation>
         <location line="+30"/>
         <source>Load model</source>
         <translation>Charger un modèle</translation>
+    </message>
+    <message>
+        <location line="+112"/>
+        <source>Open Wiki pages</source>
+        <translation>Accèder au Wiki</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>This action will open a web browser window! Want to proceed?</source>
+        <translation>Cette action ouvrira votre navigateur web! Souhaitez vous continuer?</translation>
     </message>
 </context>
 <context>
@@ -3440,7 +3460,7 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location line="+107"/>
         <source>pgModeler was not closed properly in a previous execution and some models were still being edited. Click &apos;Restore&apos; to reopen the models or &apos;Cancel&apos; to abort the restoration.</source>
-        <translation>pgModeler n&apos;a pas été fermé correctement lors de sa précédente exécution, certains modèles étaient toujouts en cours d&apos;édition. Cliquez sur &apos;Restaurer&apos; pour réouvrir les modèles ou &apos;Annuler&apos; pour interrompre la restauration.</translation>
+        <translation>pgModeler n&apos;a pas été fermé correctement lors de sa précédente exécution, certains modèles étaient toujours en cours d&apos;édition. Cliquez sur &apos;Restaurer&apos; pour réouvrir les modèles ou &apos;Annuler&apos; pour interrompre la restauration.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/modelrestorationform.cpp" line="+31"/>
@@ -3473,40 +3493,40 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+27"/>
-        <location line="+2270"/>
+        <location line="+2283"/>
         <source>Source code</source>
         <translation>Code source</translation>
     </message>
     <message>
-        <location line="-2268"/>
+        <location line="-2281"/>
         <source>Show object source code</source>
         <translation>Afficher le code source de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2259"/>
+        <location line="+2272"/>
         <source>Properties</source>
         <translation>Propriétés</translation>
     </message>
     <message>
-        <location line="-2257"/>
+        <location line="-2270"/>
         <source>Edit the object properties</source>
         <translation>Editer les propriétés de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2284"/>
+        <location line="+2297"/>
         <source>Protect</source>
         <translation>Vérrouiller</translation>
     </message>
     <message>
-        <location line="-2283"/>
-        <location line="+2278"/>
+        <location line="-2296"/>
+        <location line="+2291"/>
         <source>Unprotect</source>
         <translation>Déverrouiller</translation>
     </message>
     <message>
-        <location line="-2277"/>
+        <location line="-2290"/>
         <source>Protects object(s) from modifications</source>
         <translation>Empêcher l(es)&apos;objet(s) d&apos;être modifiés</translation>
     </message>
@@ -3517,12 +3537,12 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2286"/>
+        <location line="+2299"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location line="-2284"/>
+        <location line="-2297"/>
         <source>Delete the selected object(s)</source>
         <translation>Supprimer les objets sélectionnés</translation>
     </message>
@@ -3647,7 +3667,17 @@ Message retourné par le SGBD: %1</translation>
         <translation>Sélectionne tout les éléments graphiques du schéma actuellement sélectionné</translation>
     </message>
     <message>
-        <location line="+470"/>
+        <location line="+2"/>
+        <source>Highlight</source>
+        <translation type="unfinished">Surligner</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Clears the current selection and centers the model view on the selected object.</source>
+        <translation>Efface la sélection courante et centre la vue du modèle sur l&apos;objet sélectionné</translation>
+    </message>
+    <message>
+        <location line="+471"/>
         <location line="+878"/>
         <location line="+336"/>
         <location line="+6"/>
@@ -3715,7 +3745,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>(aucun objet)</translation>
     </message>
     <message>
-        <location line="+297"/>
+        <location line="+306"/>
         <source>Constraints</source>
         <translation>Contraintes</translation>
     </message>
@@ -4004,7 +4034,7 @@ Message retourné par le SGBD: %1</translation>
         <location line="+24"/>
         <source>Operation history exclusion</source>
         <translatorcomment>?? À controler dans le contexte ??</translatorcomment>
-        <translation type="unfinished">Exclure l&apos;historique des opérations</translation>
+        <translation>Exclure l&apos;historique des opérations</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4454,8 +4484,12 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+66"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Details about plugins development and installation can be found at &lt;a href=&quot;http://www.pgmodeler.com.br/wiki/doku.php?id=plugins&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;pgModeler Wiki&lt;/span&gt;&lt;/a&gt;. &lt;span style=&quot; font-weight:600;&quot;&gt;Note:&lt;/span&gt; plugin installation requires pgModeler to be restarted.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Les informations concernant le développement et l&apos;installation des extensions sont disponibles sur le  &lt;a href=&quot;http://www.pgmodeler.com.br/wiki/doku.php?id=plugins&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;Wiki pgModeler&lt;/span&gt;&lt;/a&gt;. &lt;span style=&quot; font-weight:600;&quot;&gt;Note:&lt;/span&gt; l&apos;installation d&apos;extensions requière le redémarrage de pgModeler.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
         <source>Details about plugins development and installation can be found at PLUGINS.md file. &lt;strong&gt;Note:&lt;/strong&gt; plugin installation requires pgModeler to be restarted.</source>
-        <translation>Les informations à propos du développement des extensions et leur installation se trouvent dans le fichier PLUGINS.md. &lt;strong&gt;Note:&lt;/strong&gt; l&apos;installation d&apos;extensions requière le redémarrage de pgModeler.</translation>
+        <translation type="obsolete">Les informations à propos du développement des extensions et leur installation se trouvent dans le fichier PLUGINS.md. &lt;strong&gt;Note:&lt;/strong&gt; l&apos;installation d&apos;extensions requière le redémarrage de pgModeler.</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/pluginsconfigwidget.cpp" line="+14"/>
@@ -4476,7 +4510,7 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5331"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5333"/>
         <source>new_database</source>
         <translation>nouvelle_base</translation>
     </message>
@@ -4500,7 +4534,7 @@ Message retourné par le SGBD: %1</translation>
         <location line="+61"/>
         <location line="+48"/>
         <location line="+201"/>
-        <location line="+140"/>
+        <location line="+142"/>
         <location line="+66"/>
         <location line="+149"/>
         <location line="+82"/>
