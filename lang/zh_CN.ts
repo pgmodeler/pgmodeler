@@ -652,7 +652,7 @@
         <translation>条</translation>
     </message>
     <message>
-        <source>Save model every:</source>
+        <source>Autosave interval:</source>
         <translation>自动保存的时间间隔：</translation>
     </message>
     <message>
@@ -666,6 +666,18 @@
     <message>
         <source>Save current session</source>
         <translation>保存当前会话</translation>
+    </message>
+    <message>
+        <source>Printing Options:</source>
+        <translation>打印选项：</translation>
+    </message>
+    <message>
+        <source>Print grid</source>
+        <translation>打印网格</translation>
+    </message>
+    <message>
+        <source>Print page numbers</source>
+        <translation>打印页码</translation>
     </message>
     <message>
         <source>Paper:</source>
@@ -866,6 +878,41 @@
     <message>
         <source>Bottom margin</source>
         <translation>下边距</translation>
+    </message>
+</context>
+<context>
+    <name>PluginsConfigWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Form</translation>
+    </message>
+    <message>
+        <source>Plug-ins root directory:</source>
+        <translation>插件根目录：</translation>
+    </message>
+    <message>
+        <source>Open in file manager</source>
+        <translation>在文件管理器中打开</translation>
+    </message>
+    <message>
+        <source>Loaded plug-ins</source>
+        <translation>已加载的插件</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Details about plugins development and installation can be found at &lt;a href=&quot;http://www.pgmodeler.com.br/wiki/doku.php?id=plugins&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;pgModeler Wiki&lt;/span&gt;&lt;/a&gt;. &lt;span style=&quot; font-weight:600;&quot;&gt;Note:&lt;/span&gt; plugin installation requires pgModeler to be restarted.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;关于插件开发和安装的详细信息可以在&lt;a href=&quot;http://www.pgmodeler.com.br/wiki/doku.php?id=plugins&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;pgModeler Wiki&lt;/span&gt;&lt;/a&gt;中找到。 &lt;span style=&quot; font-weight:600;&quot;&gt;注意：&lt;/span&gt; 安装插件需要重启pgModeler。</translation>
+    </message>
+    <message>
+        <source>Plugin</source>
+        <translation>插件</translation>
+    </message>
+    <message>
+        <source>Version</source>
+        <translation>版本</translation>
+    </message>
+    <message>
+        <source>Library</source>
+        <translation>动态链接库</translation>
     </message>
 </context>
 <context>
@@ -1809,6 +1856,10 @@ Message returned by the DBMS: %1</source>
     <message>
         <source>Connetions</source>
         <translation>连接</translation>
+    </message>
+    <message>
+        <source>Plug-ins</source>
+        <translation>插件</translation>
     </message>
     <message>
         <source>Confirmation</source>
