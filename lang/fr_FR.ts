@@ -3170,7 +3170,7 @@ Message retourné par le SGBD: %1</translation>
     <message>
         <location filename="../libpgmodeler_ui/ui/modelexportform.ui" line="+35"/>
         <source>Model Export</source>
-        <translation>Exportation du modèle</translation>
+        <translation>Export du modèle</translation>
     </message>
     <message>
         <location line="+50"/>
