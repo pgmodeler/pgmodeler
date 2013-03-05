@@ -4339,6 +4339,8 @@ Index *DatabaseModel::createIndex(Table *table)
 					{
 						nulls_first=(attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
 						asc_order=(attribs[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
+						column=NULL;
+						expr.clear();
 
 						XMLParser::savePosition();
 						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);

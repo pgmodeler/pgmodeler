@@ -1109,5 +1109,10 @@ void MainWindow::showOverview(bool show)
 
 void MainWindow::openWiki(void)
 {
-	QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
+	msg_box.show(trUtf8("Open Wiki pages"),
+							 trUtf8("This action will open a web browser window! Want to proceed?"),
+							 MessageBox::CONFIRM_ICON,MessageBox::YES_NO_BUTTONS);
+
+	if(msg_box.result()==QDialog::Accepted)
+		QDesktopServices::openUrl(QUrl(GlobalAttributes::PGMODELER_WIKI));
 }
