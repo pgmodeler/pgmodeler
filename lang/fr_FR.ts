@@ -1280,13 +1280,12 @@ Taille: %2 bytes
     <message>
         <location line="+1"/>
         <source>Assignment of not allocated object!</source>
-        <translatorcomment>Indefini ?</translatorcomment>
-        <translation type="unfinished">Utilisation d&apos;un objet non alloué!</translation>
+        <translation>Utilisation d&apos;un objet non défini!</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Assignment of a not allocated schema to object &apos;%1&apos; (%2)!</source>
-        <translation>Affectation à l&apos;objet &apos;%1&apos; (%2) d&apos;un schéma non alloué!</translation>
+        <translation>Un schéma non défini a été affecté à l&apos;objet &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1367,7 +1366,7 @@ Taille: %2 bytes
     <message>
         <location line="+1"/>
         <source>Assignment of not allocated table to object &apos;%1&apos; (%2)!</source>
-        <translation type="unfinished">Affectation à l&apos;objet &apos;%1&apos; (%2) d&apos;une table indéfinie!</translation>
+        <translation type="unfinished">Une table non définie a été affectée à l&apos;objet &apos;%1&apos; (%2)!</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1532,8 +1531,7 @@ Taille: %2 bytes
     <message>
         <location line="+1"/>
         <source>Assignment of not allocated language!</source>
-        <translatorcomment>Indéfini ?</translatorcomment>
-        <translation type="unfinished">Utilisation d&apos;un langage non alloué!</translation>
+        <translation type="unfinished">Utilisation d&apos;un langage non défini!</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1623,8 +1621,8 @@ Taille: %2 bytes
     <message>
         <location line="+1"/>
         <source>Assignment of an invalid strategy/support number to an operator class element!</source>
-        <translatorcomment>Hum ... numéro de stratégie/support ?</translatorcomment>
-        <translation type="unfinished">Affectation d&apos;un numéro de stratégie/support invalide à un élément de la classe &apos;operator&apos;!</translation>
+        <translatorcomment>Hum ... numéro de stratégie/support ? -&gt; http://docs.postgresql.fr/9.1/sql-createopclass.html</translatorcomment>
+        <translation type="unfinished">Un numéro de stratégie/procédure invalide a été affecté à un élément de la classe &apos;operator&apos;!</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1994,7 +1992,7 @@ Taille: %2 bytes
     <message>
         <location line="+1"/>
         <source>One or more plugins were not activated due to errors during the loading process! Check the exception stack for more details.</source>
-        <translation>Un ou plusieurs greffons n&apos;ont pas été activé(s) car des erreurs sont apparues lors du processus de chargment. Pour plus de détails, consultez la pile d&apos;exceptions.</translation>
+        <translation type="unfinished">Un ou plusieurs greffons n&apos;ont pas été activé(s) car des erreurs sont apparues lors du processus de chargement. Pour plus de détails, consultez la pile d&apos;exceptions.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2094,7 +2092,7 @@ Message retourné: &apos;%1&apos;</translation>
         <location line="+1"/>
         <source>Assignment of not allocated SQL command result!</source>
         <translatorcomment>indéfini ?</translatorcomment>
-        <translation type="unfinished">Affectation d&apos;un résultat de commande SQL non alloué!</translation>
+        <translation type="unfinished">Affectation d&apos;un résultat de commande SQL non défini!</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4006,7 +4004,7 @@ Message retourné par le SGBD: %1</translation>
         <location line="+24"/>
         <source>Operation history exclusion</source>
         <translatorcomment>?? À controler dans le contexte ??</translatorcomment>
-        <translation type="unfinished">Exclusion de l&apos;hisotrique des opérations</translation>
+        <translation type="unfinished">Exclure l&apos;historique des opérations</translation>
     </message>
     <message>
         <location line="+1"/>
