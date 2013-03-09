@@ -32,6 +32,8 @@
 #include <map>
 #include <vector>
 #include <QDir>
+#include <QTextStream>
+#include "xmlparser.h"
 
 class SchemaParser {
 	private:
@@ -85,6 +87,10 @@ class SchemaParser {
 		/*! \brief Returns whether a character is special i.e. indicators of attributes
 		 or conditional instructions */
 		static bool isSpecialCharacter(char chr);
+
+		/*! \brief Converts any operator < > " to the respective XML entities. This method is only
+		called when generating XML code */
+		static QString convertXMLEntities(QString buf);
 
 		//! \brief Filename that was loaded by the parser
 		static QString filename;

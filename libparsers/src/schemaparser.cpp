@@ -421,7 +421,8 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, map<QString, Q
 			filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
 							 GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + obj_name +
 							 GlobalAttributes::SCHEMA_EXT;
-			return(getCodeDefinition(filename, attributes));
+
+			return(convertXMLEntities(getCodeDefinition(filename, attributes)));
 		}
 	}
 	else return("");
@@ -431,6 +432,99 @@ void SchemaParser::setIgnoreUnkownAttributes(bool ignore)
 {
 	ignore_unk_atribs=ignore;
 }
+
+QString SchemaParser::convertXMLEntities(QString buf)
+{
+	//Configures a text stream to read the entire buffer line by line
+	QTextStream ts(&buf);
+	QString lin, buf_aux;
+	bool xml_header=false, in_comment=false;
+
+	//Sets the text steam to detect UTF8 encoding
+	ts.setAutoDetectUnicode(true);
+
+	while(!ts.atEnd())
+	{
+		lin=ts.readLine();
+
+		//Checks if the current line is a XML header (<?xml...)
+		xml_header=(lin.indexOf("<?xml") >= 0);
+
+		//Checks if the current line is a comment start tag
+		if(!in_comment)
+			in_comment=(lin.indexOf("<!--") >= 0);
+
+		//Case the line is empty, is a xml header or a comment line and does not treat XML entities on it
+		if(lin.isEmpty() || xml_header || in_comment)
+			lin+="\n";
+		else
+		{
+			QRegExp regexp_vect[]={
+				QRegExp("(=\")+"),
+				QRegExp("(\")(([\r\n\t])+|(\\ )+|(/>)+|(>)+)"),
+				QRegExp("(<)+([a-z])+(>)+"),
+				QRegExp("(</)+([a-z])+(>)+")
+			};
+
+			int pos=0, pos1=0, prev_pos=0, count=0;
+			QString str_aux;
+
+			lin+="\n";
+
+			do
+			{
+				prev_pos=pos1;
+
+				//Try to extract the values using regular expressions
+				pos=regexp_vect[0].indexIn(lin, pos);
+				pos+=regexp_vect[0].matchedLength();
+				pos1=regexp_vect[1].indexIn(lin, pos);
+
+				/* If you can not extract attribute values (pos < 0)
+					uses regular expressions to extract the content from empty tags
+					(without attributes)  e.g.: <comment>,<condition>,<expression> */
+				if(pos < 0)
+				{
+					pos=regexp_vect[2].indexIn(lin, prev_pos);
+					pos+=regexp_vect[2].matchedLength();
+					pos1=regexp_vect[3].indexIn(lin, pos);
+				}
+
+				//Calculates the amount of extracted characters
+				count=(pos > 0 ? (pos1-pos) : 0);
+
+				if(pos >= 0 && count > 0)
+				{
+					//Gets the substring extracted using regexp
+					str_aux=lin.mid(pos, count);
+
+					//Replaces the char by the XML entities
+					str_aux.replace('\"',XMLParser::CHAR_QUOT);
+					str_aux.replace('<',XMLParser::CHAR_LT);
+					str_aux.replace('>',XMLParser::CHAR_GT);
+
+					//Puts on the original XML definition the modified string
+					lin.replace(pos,count,str_aux);
+					pos+=count;
+				}
+			}
+
+			/* Iterates while the positions of the expressions found is valid.
+			 Positions less than 0 indicates that no regular expressions
+			 managed to find values */
+			while(pos >=0 && pos1 >=0);
+		}
+
+		buf_aux+=lin;
+
+		//Reseting the in_comment flag when the current line has a end comment tag
+		if(in_comment && lin.indexOf("-->") >= 0)
+			in_comment=false;
+	}
+
+	return(buf_aux);
+}
+
 
 QString SchemaParser::getCodeDefinition(const QString &filename, map<QString,QString> &attributes)
 {
