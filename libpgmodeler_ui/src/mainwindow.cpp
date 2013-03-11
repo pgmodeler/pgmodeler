@@ -70,6 +70,7 @@ QuickRenameWidget *quickrename_wgt=NULL;
 
 MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
+	int i, count;
 	map<QString, map<QString, QString> >confs;
 	map<QString, map<QString, QString> >::iterator itr, itr_end;
 	map<QString, QString> attribs;
@@ -81,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	QStringList prev_session_files;
 	BaseConfigWidget *conf_wgt=NULL;
 	PluginsConfigWidget *plugins_conf_wgt=NULL;
-	ObjectType obj_types[27]={
+	ObjectType obj_types[]={
 		BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
 		OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_INDEX, OBJ_CONSTRAINT,
 		OBJ_SEQUENCE, OBJ_CONVERSION,
@@ -146,7 +147,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		msg_box.show(e);
 	}
 
-	for(unsigned i=0; i < 27; i++)
+	count=sizeof(obj_types)/sizeof(ObjectType);
+	for(i=0; i < count; i++)
 		task_prog_wgt->addIcon(obj_types[i],
 																QIcon(QString(":/icones/icones/") +
 																			BaseObject::getSchemaName(obj_types[i]) +
@@ -410,14 +412,14 @@ void MainWindow::closeEvent(QCloseEvent *)
 		}
 	}
 
-	conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(0));
+	conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 	confs=conf_wgt->getConfigurationParams();
 	conf_wgt->removeConfigurationParams();
 
 	//Case the user marked at configurations to save the widget positions
 	if(!confs[ParsersAttributes::CONFIGURATION][ParsersAttributes::SAVE_WIDGETS].isEmpty())
 	{
-		int i, count=7;
+		int i, count;
 		QString param_id;
 		map<QString, QString> attribs;
 		map<Qt::DockWidgetArea, QString> dock_areas;
@@ -448,6 +450,7 @@ void MainWindow::closeEvent(QCloseEvent *)
 		toolbar_areas[Qt::BottomToolBarArea]=ParsersAttributes::BOTTOM;
 		toolbar_areas[Qt::TopToolBarArea]=ParsersAttributes::TOP;
 
+		count=sizeof(wgts)/sizeof(QWidget *);
 		for(i=0; i < count; i++)
 		{
 			toolbar=dynamic_cast<QToolBar *>(wgts[i]);
@@ -846,12 +849,12 @@ void MainWindow::updateModelsConfigurations(void)
 	GeneralConfigWidget *conf_wgt=NULL;
 	int count, i;
 
-	conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(0));
+	conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 
 	//Disable the auto save if the option is not checked
 	if(!conf_wgt->autosave_interv_chk->isChecked())
 	{
-		//Interrompe o timer de salvamento
+		//Stop the save timer
 		save_interval=0;
 		model_save_timer.stop();
 	}
@@ -937,7 +940,7 @@ void MainWindow::printModel(void)
 		QPrinter::Orientation orientation, curr_orientation;
 		QRectF margins;
 		qreal ml,mt,mr,mb, ml1, mt1, mr1, mb1;
-		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(0));
+		GeneralConfigWidget *conf_wgt=dynamic_cast<GeneralConfigWidget *>(configuration_form->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT));
 
 		print_dlg.setOption(QAbstractPrintDialog::PrintCurrentPage, false);
 		print_dlg.setWindowTitle(trUtf8("Database model printing"));
