@@ -214,26 +214,33 @@ bool BaseRelationship::isTableMandatory(unsigned table_id)
 		return(dst_mandatory);
 }
 
+void BaseRelationship::setConnected(bool value)
+{
+	connected=value;
+
+	src_table->setModified(true);
+
+	if(dst_table!=src_table)
+	 dst_table->setModified(true);
+
+	dynamic_cast<Schema *>(src_table->getSchema())->setModified(true);
+
+	if(dst_table->getSchema()!=src_table->getSchema())
+		dynamic_cast<Schema *>(dst_table->getSchema())->setModified(true);
+
+	this->setModified(true);
+}
+
 void BaseRelationship::disconnectRelationship(void)
 {
 	if(connected)
-	{
-		connected=false;
-		src_table->setModified(true);
-		dst_table->setModified(true);
-		this->setModified(true);
-	}
+		setConnected(false);
 }
 
 void BaseRelationship::connectRelationship(void)
 {
 	if(!connected)
-	{
-		connected=true;
-		src_table->setModified(true);
-		dst_table->setModified(true);
-		this->setModified(true);
-	}
+		setConnected(true);
 }
 
 Textbox *BaseRelationship::getLabel(unsigned label_id)

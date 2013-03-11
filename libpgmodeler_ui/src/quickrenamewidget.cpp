@@ -121,9 +121,8 @@ void QuickRenameWidget::applyRenaming(void)
 			 the model relationship will be revalidated */
 				if(col && tab->isConstraintRefColumn(col, ConstraintType::primary_key))
 					model->validateRelationships();
-				else
-					tab->setModified(true);
 
+				tab->setModified(true);
 				dynamic_cast<Schema *>(tab->getSchema())->setModified(true);
 			}
 			else if(object->getObjectType()==OBJ_SCHEMA)

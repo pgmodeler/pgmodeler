@@ -28,6 +28,7 @@
 
 #include "basetable.h"
 #include "textbox.h"
+#include "schema.h"
 #include <cmath>
 
 class BaseRelationship: public BaseGraphicObject {
@@ -75,6 +76,9 @@ class BaseRelationship: public BaseGraphicObject {
 
 		//! \brief Uncheck the flag indicating that relationship is disconnected
 		void disconnectRelationship(void);
+
+		//! \brief Toggles the connected flag and forces the tables/schemas/relationship update
+		void setConnected(bool value);
 
 	public:
 		//! \brief Constants used to assign the type to relationship
