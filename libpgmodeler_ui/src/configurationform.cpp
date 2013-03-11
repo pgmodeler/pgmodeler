@@ -92,15 +92,15 @@ void ConfigurationForm::restoreDefaults(void)
 		switch(confs_stw->currentIndex())
 		{
 			case GENERAL_CONF_WGT:
-				dynamic_cast<GeneralConfigWidget *>(this->getConfigurationWidget(0))->restoreDefaults();
+				dynamic_cast<GeneralConfigWidget *>(this->getConfigurationWidget(ConfigurationForm::GENERAL_CONF_WGT))->restoreDefaults();
 			break;
 
 			case APPEARANCE_CONF_WGT:
-				dynamic_cast<AppearanceConfigWidget *>(this->getConfigurationWidget(1))->restoreDefaults();
+				dynamic_cast<AppearanceConfigWidget *>(this->getConfigurationWidget(ConfigurationForm::APPEARANCE_CONF_WGT))->restoreDefaults();
 			break;
 
 			case CONNECTIONS_CONF_WGT:
-				dynamic_cast<ConnectionsConfigWidget *>(this->getConfigurationWidget(2))->restoreDefaults();
+				dynamic_cast<ConnectionsConfigWidget *>(this->getConfigurationWidget(ConfigurationForm::CONNECTIONS_CONF_WGT))->restoreDefaults();
 			break;
 
 			default:
