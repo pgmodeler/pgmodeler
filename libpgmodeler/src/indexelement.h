@@ -45,7 +45,9 @@ class IndexElement {
 
 		/*! \brief Sorting attributes of the element (ASC|DESC, NULLS [FIRST|LAST])
 		 This attibutes can be configured used the constants ASC_ORDER and NULLS_FIRST */
-		bool sort_attibutes[2];
+		bool sorting_attibs[2],
+				 //! \brief Enable the use of the sort attributes
+				 sorting_enabled;
 
 	public:
 		//! \brief Constants used to reference the sorting method of the element
@@ -58,16 +60,18 @@ class IndexElement {
 		void setColumn(Column *column);
 		void setExpression(const QString &expression);
 		void setOperatorClass(OperatorClass *oper_class);
+		void setSortingEnabled(bool value);
 
 		//! \brief Sets the state of one of the element sorting method
-		void setSortAttribute(unsigned attrib, bool value);
+		void setSortingAttribute(unsigned attrib, bool value);
 
 		//! \brief Gets the curret state of the element sorting attribute
-		bool getSortAttribute(unsigned attrib);
+		bool getSortingAttribute(unsigned attrib);
 
 		Column *getColumn(void);
 		QString getExpression(void);
 		OperatorClass *getOperatorClass(void);
+		bool isSortingEnabled(void);
 
 		//! \brief Returns the SQL / XML code definition for the index element
 		QString getCodeDefinition(unsigned def_type);

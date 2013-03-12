@@ -23,7 +23,9 @@ $tb ( @{elements} ) $br
   $tb (@{expression}) $sp 
 %end
 
-$tb [WITH (FILLFACTOR = ] @{factor} [)] $br
+%if @{factor} %then
+ $tb [WITH (FILLFACTOR = ] @{factor} [)] $br
+%end
 
 %if @{tablespace} %then
  $tb [TABLESPACE ] @{tablespace} $br

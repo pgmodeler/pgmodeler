@@ -39,7 +39,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 4);
 
 		grid=dynamic_cast<QGridLayout *>(elements_grp->layout());
-		grid->addWidget(op_class_sel, 2,1,1,3);
+		grid->addWidget(op_class_sel, 2,2);
 		grid->addWidget(elements_tab, 5,0,1,4);
 
 		configureFormLayout(index_grid, OBJ_INDEX);
@@ -50,7 +50,8 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 
 		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_81)].push_back(indexing_lbl);
 		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(concurrent_chk);
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(sorting_lbl);
+		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(fill_factor_chk);
+		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(sorting_chk);
 		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(fast_update_chk);
 		value_map[indexing_lbl].push_back(~IndexingType(IndexingType::rtree));
 
@@ -64,6 +65,12 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
 		connect(column_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject(void)));
 		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject(void)));
+
+		connect(sorting_chk, SIGNAL(toggled(bool)), ascending_rb, SLOT(setEnabled(bool)));
+		connect(sorting_chk, SIGNAL(toggled(bool)), descending_rb, SLOT(setEnabled(bool)));
+		connect(sorting_chk, SIGNAL(toggled(bool)), nulls_first_chk, SLOT(setEnabled(bool)));
+
+		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
 	}
 	catch(Exception &e)
 	{
@@ -80,7 +87,8 @@ void IndexWidget::hideEvent(QHideEvent *event)
 	concurrent_chk->setChecked(false);
 	unique_chk->setChecked(false);
 	indexing_cmb->setCurrentIndex(0);
-	fill_factor_sb->setValue(fill_factor_sb->minimum());
+	fill_factor_sb->setValue(90);
+	sorting_chk->setEnabled(true);
 
 	elements_tab->blockSignals(true);
 	elements_tab->removeRows();
@@ -133,15 +141,23 @@ void IndexWidget::showElementData(IndexElement elem, int elem_idx)
 	else
 		elements_tab->setCellText("-", elem_idx, 2);
 
-	if(elem.getSortAttribute(IndexElement::ASC_ORDER))
-		elements_tab->setCellText(ascending_rb->text(), elem_idx, 3);
-	else
-		elements_tab->setCellText(descending_rb->text(), elem_idx, 3);
+	if(elem.isSortingEnabled())
+	{
+		if(elem.getSortingAttribute(IndexElement::ASC_ORDER))
+			elements_tab->setCellText(ascending_rb->text(), elem_idx, 3);
+		else
+			elements_tab->setCellText(descending_rb->text(), elem_idx, 3);
 
-	if(elem.getSortAttribute(IndexElement::NULLS_FIRST))
-		elements_tab->setCellText(trUtf8("Sim"), elem_idx, 4);
+		if(elem.getSortingAttribute(IndexElement::NULLS_FIRST))
+			elements_tab->setCellText(trUtf8("Sim"), elem_idx, 4);
+		else
+			elements_tab->setCellText(trUtf8("Não"), elem_idx, 4);
+	}
 	else
-		elements_tab->setCellText(trUtf8("Não"), elem_idx, 4);
+	{
+		elements_tab->setCellText("-", elem_idx, 3);
+		elements_tab->setCellText("-", elem_idx, 4);
+	}
 
 	elements_tab->setRowData(QVariant::fromValue<IndexElement>(elem), elem_idx);
 }
@@ -153,8 +169,9 @@ void IndexWidget::handleElement(int elem_idx)
 	{
 		IndexElement elem;
 
-		elem.setSortAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
-		elem.setSortAttribute(IndexElement::ASC_ORDER, ascending_rb->isChecked());
+		elem.setSortingEnabled(sorting_chk->isChecked());
+		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
+		elem.setSortingAttribute(IndexElement::ASC_ORDER, ascending_rb->isChecked());
 		elem.setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->getSelectedObject()));
 
 		if(expression_rb->isChecked())
@@ -166,6 +183,7 @@ void IndexWidget::handleElement(int elem_idx)
 
 		elem_expr_txt->clear();
 		ascending_rb->setChecked(true);
+		sorting_chk->setChecked(true);
 		op_class_sel->clearSelector();
 		nulls_first_chk->setChecked(false);
 	}
@@ -190,12 +208,13 @@ void IndexWidget::editElement(int elem_idx)
 		elem_expr_txt->setPlainText(elem.getExpression());
 	}
 
-	if(elem.getSortAttribute(IndexElement::ASC_ORDER))
+	if(elem.getSortingAttribute(IndexElement::ASC_ORDER))
 		ascending_rb->setChecked(true);
 	else
 		descending_rb->setChecked(true);
-	nulls_first_chk->setChecked(elem.getSortAttribute(IndexElement::NULLS_FIRST));
 
+	nulls_first_chk->setChecked(elem.getSortingAttribute(IndexElement::NULLS_FIRST));
+	sorting_chk->setChecked(elem.isSortingEnabled());
 	op_class_sel->setSelectedObject(elem.getOperatorClass());
 }
 
@@ -241,7 +260,14 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 	if(index)
 	{
 		indexing_cmb->setCurrentIndex(indexing_cmb->findText(~index->getIndexingType()));
-		fill_factor_sb->setValue(index->getFillFactor());
+
+		fill_factor_chk->setChecked(index->getFillFactor() >= 10);
+
+		if(fill_factor_chk->isChecked())
+			fill_factor_sb->setValue(index->getFillFactor());
+		else
+			fill_factor_sb->setValue(90);
+
 		concurrent_chk->setChecked(index->getIndexAttribute(Index::CONCURRENT));
 		fast_update_chk->setChecked(index->getIndexAttribute(Index::FAST_UPDATE));
 		unique_chk->setChecked(index->getIndexAttribute(Index::UNIQUE));
@@ -264,7 +290,6 @@ void IndexWidget::applyConfiguration(void)
 	{
 		Index *index=NULL;
 		unsigned i, count;
-		IndexElement elem;
 
 		startConfiguration<Index>();
 
@@ -274,24 +299,17 @@ void IndexWidget::applyConfiguration(void)
 		index->setIndexAttribute(Index::UNIQUE, unique_chk->isChecked());
 		index->setConditionalExpression(cond_expr_txt->toPlainText());
 		index->setIndexingType(IndexingType(indexing_cmb->currentText()));
-		index->setFillFactor(fill_factor_sb->value());
+
+		if(fill_factor_chk->isChecked())
+			index->setFillFactor(fill_factor_sb->value());
+		else
+			index->setFillFactor(0);
 
 		index->removeElements();
 		count=elements_tab->getRowCount();
 
 		for(i=0; i < count; i++)
-		{
-			elem=elements_tab->getRowData(i).value<IndexElement>();
-
-			if(elem.getColumn())
-				index->addElement(elem.getColumn(), elem.getOperatorClass(),
-													 elem.getSortAttribute(IndexElement::ASC_ORDER),
-													 elem.getSortAttribute(IndexElement::NULLS_FIRST));
-			else
-				index->addElement(elem.getExpression(), elem.getOperatorClass(),
-													 elem.getSortAttribute(IndexElement::ASC_ORDER),
-													 elem.getSortAttribute(IndexElement::NULLS_FIRST));
-		}
+			index->addElement(elements_tab->getRowData(i).value<IndexElement>());
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

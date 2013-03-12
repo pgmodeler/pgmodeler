@@ -57,10 +57,10 @@ class Index: public TableObject{
 		Index(void);
 
 		//! \brief Adds an element to the index using an column
-		void addElement(Column *column, OperatorClass *op_class, bool asc_order, bool nulls_first);
+		void addElement(Column *column, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
 
 		//! \brief Adds an element to the index using an expression
-		void addElement(const QString &expr, OperatorClass *op_class, bool asc_order, bool nulls_first);
+		void addElement(const QString &expr, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
 
 		//! \brief Adds an element to the index using other pre-configured element
 		void addElement(IndexElement elem);

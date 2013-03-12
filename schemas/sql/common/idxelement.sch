@@ -10,14 +10,16 @@
   %end
 %end
 
-%if @{asc-order} %then
- [ ASC ]
-%else
- [ DESC ]
-%end
+%if @{use-sorting} %then
+  %if @{asc-order} %then
+   [ ASC ]
+  %else
+   [ DESC ]
+  %end
 
-%if @{nulls-first} %then
- [NULLS FIRST]
-%else
- [NULLS LAST]
+  %if @{nulls-first} %then
+   [NULLS FIRST]
+  %else
+   [NULLS LAST]
+  %end
 %end

@@ -78,7 +78,21 @@ int Index::isElementExists(const QString &expr)
 	return(idx);
 }
 
-void Index::addElement(const QString &expr, OperatorClass *op_class, bool asc_order, bool nulls_first)
+void Index::addElement(IndexElement elem)
+{
+	if(elem.getColumn())
+	{
+		this->addElement(elem.getColumn(), elem.getOperatorClass(), elem.isSortingEnabled(),
+										 elem.getSortingAttribute(IndexElement::ASC_ORDER),elem.getSortingAttribute(IndexElement::NULLS_FIRST));
+	}
+	else
+	{
+		this->addElement(elem.getExpression(), elem.getOperatorClass(), elem.isSortingEnabled(),
+										 elem.getSortingAttribute(IndexElement::ASC_ORDER),elem.getSortingAttribute(IndexElement::NULLS_FIRST));
+	}
+}
+
+void Index::addElement(const QString &expr, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
 {
 	//Raises an error if the expression is empty
 	if(expr.isEmpty())
@@ -96,14 +110,15 @@ void Index::addElement(const QString &expr, OperatorClass *op_class, bool asc_or
 		//Configures the element
 		elem.setExpression(expr);
 		elem.setOperatorClass(op_class);
-		elem.setSortAttribute(IndexElement::NULLS_FIRST, nulls_first);
-		elem.setSortAttribute(IndexElement::ASC_ORDER, asc_order);
+		elem.setSortingEnabled(use_sorting);
+		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first);
+		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
 
 		elements.push_back(elem);
 	}
 }
 
-void Index::addElement(Column *column, OperatorClass *op_class, bool asc_order, bool nulls_first)
+void Index::addElement(Column *column, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
 {
 	//Case the column is not allocated raises an error
 	if(!column)
@@ -124,8 +139,9 @@ void Index::addElement(Column *column, OperatorClass *op_class, bool asc_order, 
 		//Configures the element
 		elem.setColumn(column);
 		elem.setOperatorClass(op_class);
-		elem.setSortAttribute(IndexElement::NULLS_FIRST, nulls_first);
-		elem.setSortAttribute(IndexElement::ASC_ORDER, asc_order);
+		elem.setSortingEnabled(use_sorting);
+		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first);
+		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
 
 		elements.push_back(elem);
 	}
@@ -237,7 +253,7 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 	if(this->parent_table)
 		attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
-	attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
+	attributes[ParsersAttributes::FACTOR]=(fill_factor >= 10 ? QString("%1").arg(fill_factor) : "");
 
 	/* Case the index doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */

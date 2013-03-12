@@ -4292,7 +4292,7 @@ Index *DatabaseModel::createIndex(Table *table)
 	Column *column=NULL;
 	OperatorClass *op_class=NULL;
 	QString elem, str_aux, expr;
-	bool inc_idx_table=false,
+	bool inc_idx_table=false, use_sorting=false,
 			asc_order=false, nulls_first=false;
 
 	try
@@ -4337,8 +4337,10 @@ Index *DatabaseModel::createIndex(Table *table)
 
 					if(elem==ParsersAttributes::INDEX_ELEMENT)
 					{
+						XMLParser::getElementAttributes(attribs);
 						nulls_first=(attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
 						asc_order=(attribs[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
+						use_sorting=(attribs[ParsersAttributes::USE_SORTING]!=ParsersAttributes::_FALSE_);
 						column=NULL;
 						expr.clear();
 
@@ -4388,9 +4390,9 @@ Index *DatabaseModel::createIndex(Table *table)
 						while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 
 						if(!expr.isEmpty())
-							index->addElement(expr, op_class, asc_order, nulls_first);
+							index->addElement(expr, op_class, use_sorting, asc_order, nulls_first);
 						else
-							index->addElement(column, op_class, asc_order, nulls_first);
+							index->addElement(column, op_class, use_sorting, asc_order, nulls_first);
 
 						XMLParser::restorePosition();
 					}

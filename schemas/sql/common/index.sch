@@ -23,7 +23,9 @@ $tb ( @{elements} ) $br
   $tb (@{expression}) $sp 
 %end
 
-$tb [WITH (FILLFACTOR = ] @{factor} 
+%if @{factor} %then
+ $tb [WITH (FILLFACTOR = ] @{factor}
+%end
 
 %if @{fast-update} %then
 [, FASTUPDATE = ON]

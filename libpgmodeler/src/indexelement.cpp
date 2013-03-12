@@ -4,8 +4,9 @@ IndexElement::IndexElement(void)
 {
 	column=NULL;
 	operator_class=NULL;
-	sort_attibutes[NULLS_FIRST]=false;
-	sort_attibutes[ASC_ORDER]=true;
+	sorting_attibs[NULLS_FIRST]=false;
+	sorting_attibs[ASC_ORDER]=true;
+	sorting_enabled=false;
 }
 
 void IndexElement::setColumn(Column *column)
@@ -31,20 +32,30 @@ void IndexElement::setOperatorClass(OperatorClass *oper_class)
 	this->operator_class=oper_class;
 }
 
-void IndexElement::setSortAttribute(unsigned attrib, bool value)
+void IndexElement::setSortingAttribute(unsigned attrib, bool value)
 {
 	if(attrib > NULLS_FIRST)
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	sort_attibutes[attrib]=value;
+	sorting_attibs[attrib]=value;
 }
 
-bool IndexElement::getSortAttribute(unsigned attrib)
+void IndexElement::setSortingEnabled(bool value)
+{
+	sorting_enabled=value;
+}
+
+bool IndexElement::isSortingEnabled(void)
+{
+	return(sorting_enabled);
+}
+
+bool IndexElement::getSortingAttribute(unsigned attrib)
 {
 	if(attrib > NULLS_FIRST)
 		throw Exception(ERR_REF_ATTRIB_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
-	return(sort_attibutes[attrib]);
+	return(sorting_attibs[attrib]);
 }
 
 Column *IndexElement::getColumn(void)
@@ -70,8 +81,10 @@ QString IndexElement::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::EXPRESSION]="";
 	attributes[ParsersAttributes::OP_CLASS]="";
 
-	attributes[ParsersAttributes::NULLS_FIRST]=(this->sort_attibutes[NULLS_FIRST] ? "1" : "");
-	attributes[ParsersAttributes::ASC_ORDER]=(this->sort_attibutes[ASC_ORDER] ? "1" : "");
+	attributes[ParsersAttributes::USE_SORTING]=(this->sorting_enabled ? "1" : "");
+	attributes[ParsersAttributes::NULLS_FIRST]=(this->sorting_enabled && this->sorting_attibs[NULLS_FIRST] ? "1" : "");
+	attributes[ParsersAttributes::ASC_ORDER]=(this->sorting_enabled && this->sorting_attibs[ASC_ORDER] ? "1" : "");
+
 
 	if(column)
 		attributes[ParsersAttributes::COLUMN]=column->getName(true);

@@ -2,8 +2,14 @@
 # CAUTION: Do not modify this file unless you know what
 #          you are doing.
 $tb <idxelement
+
+ [ use-sorting=] %if @{use-sorting} %then "true" %else "false" %end
+
+%if @{use-sorting} %then
  [ nulls-first=] %if @{nulls-first} %then "true" %else "false" %end
  [ asc-order=] %if @{asc-order} %then "true" %else "false" %end
+%end
+
 > $br
 
 %if @{column} %then
