@@ -23,13 +23,12 @@ $tb ( @{elements} ) $br
   $tb (@{expression}) $sp 
 %end
 
+$tb [WITH (]
 %if @{factor} %then
- $tb [WITH (FILLFACTOR = ] @{factor}
+ [FILLFACTOR = ] @{factor},
 %end
 
-%if @{fast-update} %then
-[, FASTUPDATE = ON]
-%end
+ [FASTUPDATE = ] %if @{fast-update} %then [ON ] %else [OFF ] %end
 
 [)] $br
 

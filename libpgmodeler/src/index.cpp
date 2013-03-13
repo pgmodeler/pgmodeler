@@ -249,11 +249,15 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 	attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? "1" : "");
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
 	attributes[ParsersAttributes::CONDITION]=conditional_expr;
+	attributes[ParsersAttributes::FACTOR]="";
 
 	if(this->parent_table)
 		attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
-	attributes[ParsersAttributes::FACTOR]=(fill_factor >= 10 ? QString("%1").arg(fill_factor) : "");
+	if(fill_factor >= 10)
+		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
+	else if(tipo_def==SchemaParser::XML_DEFINITION)
+		attributes[ParsersAttributes::FACTOR]="0";
 
 	/* Case the index doesn't referece some column added by relationship it will be declared
 		inside the parent table construction by the use of 'decl-in-table' schema attribute */
