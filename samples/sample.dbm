@@ -29,9 +29,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<return-type>
 	<type name="trigger"/>
 	</return-type>
-	<parameter name="param1" in="true">
-		<type name="integer"/>
-	</parameter>
 	<definition>SELECT 1+1;</definition>
 </function>
 
@@ -99,7 +96,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</rule>
 	<trigger name="trigger1" firing-type="BEFORE" per-line="false"
 		 ins-event="true" del-event="true" upd-event="true" trunc-event="false" protected="true">
-		<function signature="public.trigger_func(integer)"/>
+		<function signature="public.trigger_func()"/>
 	</trigger>
 </table>
 

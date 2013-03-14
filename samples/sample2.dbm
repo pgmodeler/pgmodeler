@@ -444,18 +444,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<return-type>
 	<type name="trigger"/>
 	</return-type>
-	<parameter name="p1">
-		<type name="integer" dimension="1"/>
-	</parameter>
-	<parameter name="P2">
-		<type name="integer"/>
-	</parameter>
-	<parameter name="p3">
-		<type name="integer"/>
-	</parameter>
-	<parameter name="p4">
-		<type name="integer"/>
-	</parameter>
 	<definition>SELECT /* */ FROM</definition>
 </function>
 
@@ -626,17 +614,17 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<trigger name="gatilho_teste" firing-type="BEFORE" per-line="false"
 		 ins-event="true" del-event="true" upd-event="true" trunc-event="false" arguments="10,15,20,25">
 		<comment>Gatilho teste na tabela teste</comment>
-		<function signature="public.funcao_teste(integer[],integer,integer,integer)"/>
+		<function signature="public.funcao_teste()"/>
 	</trigger>
 	<trigger name="gatilho_teste1" firing-type="BEFORE" per-line="false"
 		 ins-event="true" del-event="true" upd-event="true" trunc-event="false" arguments="10,15,20,25">
 		<comment>Gatilho teste na tabela teste</comment>
-		<function signature="public.funcao_teste(integer[],integer,integer,integer)"/>
+		<function signature="public.funcao_teste()"/>
 	</trigger>
 	<trigger name="gatilho_teste2" firing-type="BEFORE" per-line="false"
 		 ins-event="true" del-event="true" upd-event="true" trunc-event="false" arguments="10,15,20,25">
 		<comment>Gatilho teste na tabela teste</comment>
-		<function signature="public.funcao_teste(integer[],integer,integer,integer)"/>
+		<function signature="public.funcao_teste()"/>
 	</trigger>
 </table>
 
@@ -1189,7 +1177,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 deferrable="true" defer-type="INITIALLY DEFERRED" ref-table="&quot;schema_A&quot;.&quot;table_A1&quot;"
 	 table="public.&quot;tabela_B_4c&quot;">
 		<comment>Gatilho teste na tabela teste</comment>
-		<function signature="public.funcao_teste(integer[],integer,integer,integer)"/>
+		<function signature="public.funcao_teste()"/>
 	<columns names="&quot;coluna_Teste2&quot;"/>
 </trigger>
 <relationship name="table_C4_has_many_table_C3"
