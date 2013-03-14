@@ -58,7 +58,7 @@
     /> $br
 
   %else
-   $tb <definition>@{definition}</definition> $br
+   $tb <definition><! $ob CDATA $ob @{definition} $cb $cb ></definition> $br
   %end
 
   </function> $br $br

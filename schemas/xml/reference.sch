@@ -19,7 +19,7 @@ $tb <reference
 
 %if @{expression} %then
  > $br
- $tb $tb <expression> @{expression} </expression> $br
+ $tb $tb <expression> <! $ob CDATA $ob @{expression} $cb $cb > </expression> $br
 $tb </reference> $br
 %else
  /> $br

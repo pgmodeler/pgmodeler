@@ -13,10 +13,10 @@ $tb [<rule name=] "@{name}" [ event-type=] "@{event-type}" $br
  %if @{comment} %then $tb @{comment} %end
 
  %if @{condition} %then
-  $tb $tb <condition> @{condition} </condition> $br
+  $tb $tb <condition> <! $ob CDATA $ob @{condition} $cb $cb > </condition> $br
  %end
  %if @{commands} %then
-  $tb $tb <commands> @{commands} </commands> $br
+  $tb $tb <commands> <! $ob CDATA $ob @{commands} $cb $cb > </commands> $br
  %end
 
 $tb </rule> $br

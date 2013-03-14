@@ -38,6 +38,8 @@ const QString SchemaParser::TOKEN_END="end";
 const QString SchemaParser::TOKEN_META_SP="sp";
 const QString SchemaParser::TOKEN_META_BR="br";
 const QString SchemaParser::TOKEN_META_TB="tb";
+const QString SchemaParser::TOKEN_META_OB="ob";
+const QString SchemaParser::TOKEN_META_CB="cb";
 
 const QString SchemaParser::PGSQL_VERSION_80="8.0";
 const QString SchemaParser::PGSQL_VERSION_81="8.1";
@@ -440,7 +442,7 @@ QString SchemaParser::getCodeDefinition(const QString & obj_name, map<QString, Q
 							 GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + obj_name +
 							 GlobalAttributes::SCHEMA_EXT;
 
-			return(convertXMLEntities(getCodeDefinition(filename, attributes)));
+			return(convertCharsToXMLEntities(getCodeDefinition(filename, attributes)));
 		}
 	}
 	else return("");
@@ -451,7 +453,7 @@ void SchemaParser::setIgnoreUnkownAttributes(bool ignore)
 	ignore_unk_atribs=ignore;
 }
 
-QString SchemaParser::convertXMLEntities(QString buf)
+QString SchemaParser::convertCharsToXMLEntities(QString buf)
 {
 	//Configures a text stream to read the entire buffer line by line
 	QTextStream ts(&buf);
@@ -478,10 +480,8 @@ QString SchemaParser::convertXMLEntities(QString buf)
 		else
 		{
 			QRegExp regexp_vect[]={
-				QRegExp("(=\")+"),
-				QRegExp("(\")(([\r\n\t])+|(\\ )+|(/>)+|(>)+)"),
-				QRegExp("(<)+([a-z])+(>)+"),
-				QRegExp("(</)+([a-z])+(>)+")
+				QRegExp("(=\")+"), //Regexp to find the attribute start (attrib=")
+				QRegExp("(\")(([\r\n\t])+|(\\ )+|(/>)+|(>)+)") //Regexp to find the attribute end ("\n|\r|\t/>)
 			};
 
 			int pos=0, pos1=0, prev_pos=0, count=0;
@@ -497,16 +497,6 @@ QString SchemaParser::convertXMLEntities(QString buf)
 				pos=regexp_vect[0].indexIn(lin, pos);
 				pos+=regexp_vect[0].matchedLength();
 				pos1=regexp_vect[1].indexIn(lin, pos);
-
-				/* If you can not extract attribute values (pos < 0)
-					uses regular expressions to extract the content from empty tags
-					(without attributes)  e.g.: <comment>,<condition>,<expression> */
-				if(pos < 0)
-				{
-					pos=regexp_vect[2].indexIn(lin, prev_pos);
-					pos+=regexp_vect[2].matchedLength();
-					pos1=regexp_vect[3].indexIn(lin, pos);
-				}
 
 				//Calculates the amount of extracted characters
 				count=(pos > 0 ? (pos1-pos) : 0);
@@ -595,7 +585,8 @@ QString SchemaParser::getCodeDefinition(const QString &filename, map<QString,QSt
 
 						//Checks whether the extracted token is valid metacharacter
 						if(meta!=TOKEN_META_SP && meta!=TOKEN_META_TB &&
-							 meta!=TOKEN_META_BR)
+							 meta!=TOKEN_META_BR && meta!=TOKEN_META_OB &&
+							 meta!=TOKEN_META_CB)
 						{
 							str_aux=QString(Exception::getErrorMessage(ERR_INV_METACHARACTER))
 											.arg(meta).arg(filename).arg(line + comment_count +1).arg(column+1);
@@ -616,6 +607,8 @@ QString SchemaParser::getCodeDefinition(const QString &filename, map<QString,QSt
 							//Converting the metacharacter drawn to the character that represents this
 							if(meta==TOKEN_META_SP) chr=CHR_SPACE;
 							else if(meta==TOKEN_META_TB) chr=CHR_TABULATION;
+							else if(meta==TOKEN_META_OB) chr=CHR_INI_PURETEXT; //Currently this constant is used since it returns '[' (open bracket)
+							else if(meta==TOKEN_META_CB) chr=CHR_END_PURETEXT; //Currently this constant is used since it returns ']' (close bracket)
 							else chr=CHR_LINE_END;
 
 							meta="";

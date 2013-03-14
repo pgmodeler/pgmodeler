@@ -51,7 +51,7 @@
  %if @{ck-constr} %then
    %if @{expression} %then
     %if @{decl-in-table} %then $tb %end
-    $tb <expression> @{expression} </expression> $br
+    $tb <expression> <! $ob CDATA $ob @{expression} $cb $cb > </expression> $br
    %end
  %end
 

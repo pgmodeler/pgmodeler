@@ -62,7 +62,10 @@ class SchemaParser {
 		//! \brief Tokens related to metacharacters
 		static const QString	TOKEN_META_SP,// $sp (space)
 													TOKEN_META_BR,// $br (line break)
-													TOKEN_META_TB;// $tb (tabulation)
+													TOKEN_META_TB,// $tb (tabulation)
+													TOKEN_META_OB,// $ob (open bracket '[')
+													TOKEN_META_CB;// $cb (close bracket ']')
+
 
 
 		//! \brief Loads a schema file and inserts its line in a buffer
@@ -88,9 +91,9 @@ class SchemaParser {
 		 or conditional instructions */
 		static bool isSpecialCharacter(char chr);
 
-		/*! \brief Converts any operator < > " to the respective XML entities. This method is only
-		called when generating XML code */
-		static QString convertXMLEntities(QString buf);
+		/*! \brief Converts any chars (operators) < > " to the respective XML entities. This method is only
+		called when generating XML code and only tag attributes are treated.*/
+		static QString convertCharsToXMLEntities(QString buf);
 
 		//! \brief Filename that was loaded by the parser
 		static QString filename;

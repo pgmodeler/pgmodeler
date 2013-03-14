@@ -35,7 +35,7 @@
  @{elements}
 
  %if @{condition} %then
-   $tb <condition> @{condition} </condition> $br
+   $tb <condition> <! $ob CDATA $ob @{condition} $cb $cb > </condition> $br
  %end
  
 %if @{decl-in-table} %then $tb %end

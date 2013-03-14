@@ -25,7 +25,7 @@
   $tb @{type}
 
   %if @{expression} %then
-   $tb <expression>@{expression}</expression>$br
+   $tb <expression> <! $ob CDATA $ob @{expression} $cb $cb > </expression>$br
   %end
 
   </domain>  $br $br

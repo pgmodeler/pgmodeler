@@ -16,7 +16,7 @@ $tb <idxelement
   $tb $tb [<column name=] "@{column}" /> $br
 %else
  %if @{expression} %then
-  $tb $tb <expression> @{expression} </expression> $br
+  $tb $tb <expression> <! $ob CDATA $ob @{expression} $cb $cb > </expression> $br
  %end
 %end
 

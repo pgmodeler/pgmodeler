@@ -41,7 +41,7 @@
  %if @{comment} %then $tb @{comment} %end
 
  %if @{condition} %then
-   $tb <condition>@{condition}</condition> $br
+   $tb <condition> <! $ob CDATA $ob @{condition} $cb $cb > </condition> $br
  %end
 
 $tb @{trigger-func}
