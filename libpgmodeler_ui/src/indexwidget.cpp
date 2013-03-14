@@ -83,6 +83,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
 		connect(column_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject(void)));
 		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject(void)));
+		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType(void)));
 
 		connect(sorting_chk, SIGNAL(toggled(bool)), ascending_rb, SLOT(setEnabled(bool)));
 		connect(sorting_chk, SIGNAL(toggled(bool)), descending_rb, SLOT(setEnabled(bool)));
@@ -151,7 +152,7 @@ void IndexWidget::showElementData(IndexElement elem, int elem_idx)
 	else
 	{
 		elements_tab->setCellText(Utf8String::create(elem.getExpression()), elem_idx, 0);
-		elements_tab->setCellText(trUtf8("Expressão"), elem_idx, 1);
+		elements_tab->setCellText(tr("Expression"), elem_idx, 1);
 	}
 
 	if(elem.getOperatorClass())
@@ -167,9 +168,9 @@ void IndexWidget::showElementData(IndexElement elem, int elem_idx)
 			elements_tab->setCellText(descending_rb->text(), elem_idx, 3);
 
 		if(elem.getSortingAttribute(IndexElement::NULLS_FIRST))
-			elements_tab->setCellText(trUtf8("Sim"), elem_idx, 4);
+			elements_tab->setCellText(trUtf8("Yes"), elem_idx, 4);
 		else
-			elements_tab->setCellText(trUtf8("Não"), elem_idx, 4);
+			elements_tab->setCellText(trUtf8("No"), elem_idx, 4);
 	}
 	else
 	{
@@ -263,6 +264,13 @@ void IndexWidget::selectElementObject(void)
 	expression_rb->blockSignals(false);
 }
 
+void IndexWidget::selectIndexingType(void)
+{
+	fast_update_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::gin);
+	fill_factor_chk->setEnabled(IndexingType(indexing_cmb->currentText())==IndexingType::btree);
+	fill_factor_sb->setEnabled(fill_factor_chk->isChecked() && fill_factor_chk->isEnabled());
+}
+
 void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, OperationList *op_list, Index *index)
 {
 	unsigned i, count;
@@ -299,6 +307,8 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 			showElementData(index->getElement(i), i);
 		}
 		elements_tab->blockSignals(false);
+
+		selectIndexingType();
 	}
 }
 

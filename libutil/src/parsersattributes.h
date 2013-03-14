@@ -343,7 +343,8 @@ namespace ParsersAttributes {
 	PRINT_PG_NUM="print-pg-num",
 	SRID="srid",
 	RECT_VISIBLE="rect-visible",
-	USE_SORTING="use-sorting";
+	USE_SORTING="use-sorting",
+	STORAGE_PARAMS="stg-params";
 }
 
 #endif

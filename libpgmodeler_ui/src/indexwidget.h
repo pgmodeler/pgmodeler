@@ -63,6 +63,7 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 	private slots:
 		void hideEvent(QHideEvent *event);
 		void selectElementObject(void);
+		void selectIndexingType(void);
 		void handleElement(int elem_idx);
 		void editElement(int elem_idx);
 

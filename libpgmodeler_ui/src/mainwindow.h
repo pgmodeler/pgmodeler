@@ -43,6 +43,9 @@ class MainWindow: public QMainWindow, public Ui::MainWindow {
 	private:
 		Q_OBJECT
 
+		//! \brief Dialog used to configure printing options.
+		QPrintDialog *print_dlg;
+
 		//! \brief Timer used for auto saving the model and temporary model.
 		QTimer model_save_timer,	tmpmodel_save_timer;
 

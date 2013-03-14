@@ -38,6 +38,7 @@ Index::Index(void)
 	attributes[ParsersAttributes::DECL_IN_TABLE]="";
 	attributes[ParsersAttributes::ELEMENTS]="";
 	attributes[ParsersAttributes::FAST_UPDATE]="";
+	attributes[ParsersAttributes::STORAGE_PARAMS]="";
 }
 
 void Index::setElementsAttribute(unsigned def_type)
@@ -264,16 +265,21 @@ QString Index::getCodeDefinition(unsigned tipo_def)
 	setElementsAttribute(tipo_def);
 	attributes[ParsersAttributes::UNIQUE]=(index_attribs[UNIQUE] ? "1" : "");
 	attributes[ParsersAttributes::CONCURRENT]=(index_attribs[CONCURRENT] ? "1" : "");
-	attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? "1" : "");
 	attributes[ParsersAttributes::INDEX_TYPE]=(~indexing_type);
 	attributes[ParsersAttributes::CONDITION]=conditional_expr;
-	attributes[ParsersAttributes::FACTOR]="";
+	attributes[ParsersAttributes::STORAGE_PARAMS]="";
 
 	if(this->parent_table)
 		attributes[ParsersAttributes::TABLE]=this->parent_table->getName(true);
 
-	if(fill_factor >= 10)
+	if(this->indexing_type==IndexingType::gin)
+		attributes[ParsersAttributes::STORAGE_PARAMS]=attributes[ParsersAttributes::FAST_UPDATE]=(index_attribs[FAST_UPDATE] ? "1" : "");
+
+	if(this->indexing_type==IndexingType::btree && fill_factor >= 10)
+	{
 		attributes[ParsersAttributes::FACTOR]=QString("%1").arg(fill_factor);
+		attributes[ParsersAttributes::STORAGE_PARAMS]="1";
+	}
 	else if(tipo_def==SchemaParser::XML_DEFINITION)
 		attributes[ParsersAttributes::FACTOR]="0";
 

@@ -26,6 +26,7 @@ int main(int argc, char **argv)
 	{
 		QApplication app(argc,argv);
 		QTranslator translator;
+		QPrintDialog print_dlg;
 
 		//Loads the ui translation for crashhandler
 		translator.load(QLocale::system().name(), GlobalAttributes::LANGUAGES_DIR);

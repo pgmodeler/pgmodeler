@@ -23,8 +23,10 @@ $tb ( @{elements} ) $br
   $tb (@{expression}) $sp 
 %end
 
-%if @{factor} %then
- $tb [WITH (FILLFACTOR = ] @{factor} [)] $br
+%if @{stg-params} %then
+ %if@{factor} %then
+   $tb [WITH (FILLFACTOR = ] @{factor} [)] $br
+ %end
 %end
 
 %if @{tablespace} %then

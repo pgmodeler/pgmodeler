@@ -22,7 +22,7 @@ $tb ( @{elements} ) $br
 %end
 
 %if @{condition} %then
- $tb [WHERE (] @{condition} [)] $br
+ $tb [WHERE (] @{condition} [)]
 %end
 ;$br
 

@@ -23,14 +23,19 @@ $tb ( @{elements} ) $br
   $tb (@{expression}) $sp 
 %end
 
-$tb [WITH (]
-%if @{factor} %then
- [FILLFACTOR = ] @{factor},
-%end
+%if @{stg-params} %then
+ $tb [WITH (]
 
- [FASTUPDATE = ] %if @{fast-update} %then [ON ] %else [OFF ] %end
+ %if @{factor} %then
+  [FILLFACTOR = ] @{factor}
+ %end
+
+ %if @{fast-update} %then
+  [FASTUPDATE = ON]
+ %end
 
 [)] $br
+%end
 
 %if @{tablespace} %then
  $tb [TABLESPACE ] @{tablespace} $br
