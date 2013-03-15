@@ -1,6 +1,6 @@
 # XML definition for user defined types
-# CAUTION: Do not modify this file unless you know what
-#          you are doing.
+# CAUTION: Do not modify this file unless you know what you are doing.
+#          Code generation can be broken if incorrect changes are made.
 [<usertype name=] "@{name}"
 
 $sp

@@ -125,6 +125,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		export_form=new ModelExportForm(this);
 
 		restoration_form=new ModelRestorationForm(this);
+
 		oper_list_wgt=new OperationListWidget;
 		model_objs_wgt=new ModelObjectsWidget;
 		overview_wgt=new ModelOverviewWidget;
@@ -691,7 +692,7 @@ void MainWindow::setCurrentModel(void)
 
 	updateToolsState();
 
-	oper_list_wgt->setModelWidget(current_model);
+	oper_list_wgt->setModel(current_model);
 	model_objs_wgt->setModel(current_model);
 
 	if(current_model)
@@ -844,7 +845,7 @@ void MainWindow::closeModel(int model_id)
 		current_model=NULL;
 		this->showFullScreen(false);
 		model_objs_wgt->setModel(static_cast<DatabaseModel *>(NULL));
-		oper_list_wgt->setModelWidget(static_cast<ModelWidget *>(NULL));
+		oper_list_wgt->setModel(static_cast<ModelWidget *>(NULL));
 		updateToolsState(true);
 	}
 	else

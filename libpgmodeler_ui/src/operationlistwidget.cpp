@@ -24,7 +24,8 @@ extern TaskProgressWidget *task_prog_wgt;
 OperationListWidget::OperationListWidget(QWidget *parent, Qt::WindowFlags f) : QDockWidget(parent, f)
 {
 	setupUi(this);
-	modelo_wgt=NULL;
+	setModel(NULL);
+
 	operations_tw->headerItem()->setHidden(true);
 	connect(undo_tb,SIGNAL(clicked()),this,SLOT(undoOperation(void)));
 	connect(redo_tb,SIGNAL(clicked()),this,SLOT(redoOperation(void)));
@@ -49,7 +50,7 @@ void OperationListWidget::selectItem(QTreeWidgetItem *item, int)
 
 void OperationListWidget::updateOperationList(void)
 {
-	if(!modelo_wgt)
+	if(!model_wgt)
 	{
 		operations_tw->clear();
 		dockWidgetContents->setEnabled(false);
@@ -66,21 +67,21 @@ void OperationListWidget::updateOperationList(void)
 		bool value=false;
 
 		dockWidgetContents->setEnabled(true);
-		op_count_lbl->setText(QString("%1").arg(modelo_wgt->op_list->getCurrentSize()));
-		current_pos_lbl->setText(QString("%1").arg(modelo_wgt->op_list->getCurrentIndex()));
-		redo_tb->setEnabled(modelo_wgt->op_list->isRedoAvailable());
-		undo_tb->setEnabled(modelo_wgt->op_list->isUndoAvailable());
+		op_count_lbl->setText(QString("%1").arg(model_wgt->op_list->getCurrentSize()));
+		current_pos_lbl->setText(QString("%1").arg(model_wgt->op_list->getCurrentIndex()));
+		redo_tb->setEnabled(model_wgt->op_list->isRedoAvailable());
+		undo_tb->setEnabled(model_wgt->op_list->isUndoAvailable());
 
-		count=modelo_wgt->op_list->getCurrentSize();
+		count=model_wgt->op_list->getCurrentSize();
 
 		operations_tw->clear();
 		rem_operations_tb->setEnabled(count > 0);
 
 		for(i=0; i < count; i++)
 		{
-			modelo_wgt->op_list->getOperationData(i,op_type,obj_name,obj_type);
+			model_wgt->op_list->getOperationData(i,op_type,obj_name,obj_type);
 
-			value=(i==static_cast<unsigned>(modelo_wgt->op_list->getCurrentIndex()-1));
+			value=(i==static_cast<unsigned>(model_wgt->op_list->getCurrentIndex()-1));
 			font.setBold(value);
 			font.setItalic(value);
 
@@ -138,10 +139,10 @@ void OperationListWidget::updateOperationList(void)
 	emit s_operationListUpdated();
 }
 
-void OperationListWidget::setModelWidget(ModelWidget *model)
+void OperationListWidget::setModel(ModelWidget *model)
 {
 	operations_tw->clear();
-	this->modelo_wgt=model;
+	this->model_wgt=model;
 	updateOperationList();
 }
 
@@ -149,23 +150,23 @@ void OperationListWidget::undoOperation(void)
 {
 	try
 	{
-		connect(modelo_wgt->op_list, SIGNAL(s_operationExecuted(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		connect(model_wgt->op_list, SIGNAL(s_operationExecuted(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
 		task_prog_wgt->setWindowTitle(trUtf8("Undoing operations..."));
 		task_prog_wgt->show();
 
-		modelo_wgt->op_list->undoOperation();
+		model_wgt->op_list->undoOperation();
 
 		task_prog_wgt->close();
-		disconnect(modelo_wgt->op_list, NULL, task_prog_wgt, NULL);
+		disconnect(model_wgt->op_list, NULL, task_prog_wgt, NULL);
 
 		notifyUpdateOnModel();
 
-		modelo_wgt->scene->clearSelection();
+		model_wgt->scene->clearSelection();
 	}
 	catch(Exception &e)
 	{
 		task_prog_wgt->close();
-		disconnect(modelo_wgt->op_list, NULL, task_prog_wgt, NULL);
+		disconnect(model_wgt->op_list, NULL, task_prog_wgt, NULL);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -174,23 +175,23 @@ void OperationListWidget::redoOperation(void)
 {
 	try
 	{
-		connect(modelo_wgt->op_list, SIGNAL(s_operationExecuted(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
+		connect(model_wgt->op_list, SIGNAL(s_operationExecuted(int,QString,unsigned)), task_prog_wgt, SLOT(updateProgress(int,QString,unsigned)));
 		task_prog_wgt->setWindowTitle(trUtf8("Redoing operations..."));
 		task_prog_wgt->show();
 
-		modelo_wgt->op_list->redoOperation();
+		model_wgt->op_list->redoOperation();
 
 		task_prog_wgt->close();
-		disconnect(modelo_wgt->op_list, NULL, task_prog_wgt, NULL);
+		disconnect(model_wgt->op_list, NULL, task_prog_wgt, NULL);
 
 		notifyUpdateOnModel();
 
-		modelo_wgt->scene->clearSelection();
+		model_wgt->scene->clearSelection();
 	}
 	catch(Exception &e)
 	{
 		task_prog_wgt->close();
-		disconnect(modelo_wgt->op_list, NULL, task_prog_wgt, NULL);
+		disconnect(model_wgt->op_list, NULL, task_prog_wgt, NULL);
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
 	}
 }
@@ -206,7 +207,7 @@ void OperationListWidget::removeOperations(void)
 
 	if(msg_box.result()==QDialog::Accepted)
 	{
-		modelo_wgt->op_list->removeOperations();
+		model_wgt->op_list->removeOperations();
 		updateOperationList();
 		rem_operations_tb->setEnabled(false);
 	}

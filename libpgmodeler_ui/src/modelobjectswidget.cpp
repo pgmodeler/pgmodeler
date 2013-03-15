@@ -32,8 +32,11 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent, Qt
 	QString str_aux;
 
 	setupUi(this);
+
 	model_wgt=NULL;
 	db_model=NULL;
+	this->setModel(db_model);
+
 	this->simplified_view=simplified_view;
 	this->save_tree_state=!simplified_view;
 

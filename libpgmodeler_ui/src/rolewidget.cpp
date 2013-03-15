@@ -24,11 +24,20 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 {
 	ObjectTableWidget *obj_tab=NULL;
 	QGridLayout *grid=NULL;
+	QFrame *frame=NULL;
 	unsigned i;
 
 	Ui_RoleWidget::setupUi(this);
 	configureFormLayout(role_grid, OBJ_ROLE);
 
+
+	frame=generateInformationFrame(trUtf8("Assigning <strong><em>-1</em></strong> to <strong><em>SysID</em></strong> let PostgreSQL defines the role's id.<br/>\
+																				 Assigning <strong><em>-1</em></strong> to <strong><em>Connections</em></strong> creates a role without connection limit.<br/>\
+																				 Unchecking <strong><em>Validity</em></strong> creates an role that never expires."));
+	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 5);
+	frame->setParent(this);
+
+	connect(validity_chk, SIGNAL(toggled(bool)), validity_dte, SLOT(setEnabled(bool)));
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(members_twg, SIGNAL(currentChanged(int)), this, SLOT(configureRoleSelection(void)));
 
@@ -65,7 +74,8 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 		members_twg->widget(i)->setLayout(grid);
 	}
 
-	parent_form->setMinimumSize(500, 530);
+
+	parent_form->setMinimumSize(550, 600);
 }
 
 void RoleWidget::configureRoleSelection(void)
@@ -124,7 +134,10 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 		sysid_sb->setValue(role->getSysid());
 		conn_limit_sb->setValue(role->getConnectionLimit());
 		passwd_edt->setText(role->getPassword());
+
+		validity_chk->setChecked(!role->getValidity().isEmpty());
 		validity_dte->setDateTime(QDateTime::fromString(role->getValidity(),"yyyy-MM-dd hh:mm"));
+
 		superusr_chk->setChecked(role->getOption(Role::OP_SUPERUSER));
 		create_db_chk->setChecked(role->getOption(Role::OP_CREATEDB));
 		create_user_chk->setChecked(role->getOption(Role::OP_CREATEROLE));
@@ -261,7 +274,11 @@ void RoleWidget::applyConfiguration(void)
 		role->setSysid(sysid_sb->value());
 		role->setConnectionLimit(conn_limit_sb->value());
 		role->setPassword(passwd_edt->text());
-		role->setValidity(validity_dte->dateTime().toString("yyyy-MM-dd hh:mm"));
+
+		if(validity_chk->isChecked())
+			role->setValidity(validity_dte->dateTime().toString("yyyy-MM-dd hh:mm"));
+		else
+			role->setValidity("");
 
 		role->setOption(Role::OP_SUPERUSER, superusr_chk->isChecked());
 		role->setOption(Role::OP_CREATEDB, create_db_chk->isChecked());

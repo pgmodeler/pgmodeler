@@ -33,7 +33,7 @@ class Role: public BaseObject {
 		static unsigned role_id;
 
 		//! \brief Role id
-		unsigned sysid;
+		int sysid;
 
 		/*! \brief Options for the role (SUPERUSER, CREATEDB, CREATEROLE,
 		 INHERIT, LOGIN, ENCRYPTED) */
@@ -77,7 +77,7 @@ class Role: public BaseObject {
 		Role(void);
 
 		//! \brief Sets the role id
-		void setSysid(unsigned uid);
+		void setSysid(int uid);
 
 		//! \brief Sets one option for the role (Via OP_??? constants)
 		void setOption(unsigned op_type, bool value);
@@ -123,7 +123,7 @@ class Role: public BaseObject {
 		QString getPassword(void);
 
 		//! \brief Returns the role id on the system
-		unsigned getSysid(void);
+		int getSysid(void);
 
 		//! \brief Returns the SQL / XML definition for the role
 		QString getCodeDefinition(unsigned def_type);

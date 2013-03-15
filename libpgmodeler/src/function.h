@@ -49,6 +49,7 @@ class Parameter: public Column {
 
 		//! \brief Returns the SQL / XML code definition for the parameter
 		QString getCodeDefinition(unsigned def_type);
+		QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
 		void operator = (const Parameter &param);
 };

@@ -34,7 +34,7 @@ class OperationListWidget: public QDockWidget, public Ui::OperationListWidget {
 	private:
 		Q_OBJECT
 
-		ModelWidget *modelo_wgt;
+		ModelWidget *model_wgt;
 
 		//! \brief Updates the operation list and emits the signal s_operationListUpdated to the connected objects
 		void notifyUpdateOnModel(void);
@@ -44,7 +44,7 @@ class OperationListWidget: public QDockWidget, public Ui::OperationListWidget {
 
 	public slots:
 		void updateOperationList(void);
-		void setModelWidget(ModelWidget *model);
+		void setModel(ModelWidget *model);
 		void undoOperation(void);
 		void redoOperation(void);
 		void removeOperations(void);

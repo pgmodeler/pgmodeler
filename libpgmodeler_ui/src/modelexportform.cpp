@@ -264,14 +264,14 @@ void ModelExportForm::exportModel(void)
 						try
 						{
 							sql_cmd.clear();
-							sql_cmd=sql_cmd.trimmed();
 
-							//Extract the characters until the end of buffer o a semicolon
+							//Extract the characters until the end of buffer or until the end of ddl-end token
 							while(i < count)
 							{
-								if(sql_buf.at(i)==';' && sql_buf.at(i+1)=='\n')
+								if(sql_cmd.indexOf(ParsersAttributes::DDL_END_TOKEN) >= 0)
 								{
-									sql_cmd+=';';
+									sql_cmd.remove(ParsersAttributes::DDL_END_TOKEN);
+									sql_cmd.simplified();
 									break;
 								}
 								else

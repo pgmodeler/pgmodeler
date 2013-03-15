@@ -1,6 +1,6 @@
 # XML definition for type casts
-# CAUTION: Do not modify this file unless you know what
-#          you are doing.
+# CAUTION: Do not modify this file unless you know what you are doing.
+#          Code generation can be broken if incorrect changes are made.
 [<cast cast-type=] "@{cast-type}" 
 
  %if @{io-cast} %then 

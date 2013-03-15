@@ -1,6 +1,6 @@
 # XML definition for aggregate functions
-# CAUTION: Do not modify this file unless you know what
-#          you are doing.
+# CAUTION: Do not modify this file unless you know what you are doing.
+#          Code generation can be broken if incorrect changes are made.
 [<aggregate name=] "@{name}"
 
 %if @{initial-cond} %then

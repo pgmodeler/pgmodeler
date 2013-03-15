@@ -484,15 +484,13 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 				QRegExp("(\")(([\r\n\t])+|(\\ )+|(/>)+|(>)+)") //Regexp to find the attribute end ("\n|\r|\t/>)
 			};
 
-			int pos=0, pos1=0, prev_pos=0, count=0;
+			int pos=0, pos1=0, count=0;
 			QString str_aux;
 
 			lin+="\n";
 
 			do
 			{
-				prev_pos=pos1;
-
 				//Try to extract the values using regular expressions
 				pos=regexp_vect[0].indexIn(lin, pos);
 				pos+=regexp_vect[0].matchedLength();

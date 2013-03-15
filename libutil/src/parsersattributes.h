@@ -344,7 +344,8 @@ namespace ParsersAttributes {
 	SRID="srid",
 	RECT_VISIBLE="rect-visible",
 	USE_SORTING="use-sorting",
-	STORAGE_PARAMS="stg-params";
+	STORAGE_PARAMS="stg-params",
+	DDL_END_TOKEN="-- ddl-end --";
 }
 
 #endif

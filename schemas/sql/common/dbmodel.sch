@@ -1,7 +1,7 @@
 # SQL definition for database model
 # PostgreSQL Version: 8.x, 9.0
-# CAUTION: Do not modify this file unless you know what
-#          you are doing.
+# CAUTION: Do not modify this file unless you know what you are doing.
+#          Code generation can be broken if incorrect changes are made.
 
 [/*]
 [ Database generated with pgModeler (PostgreSQL Database Modeler).
@@ -15,6 +15,8 @@
 %end
 [ */] $br $br
 
+[SET check_function_bodies = false;] $br
+[-- ddl-end --] $br $br
 
 %if @{export-to-file} %then
 
