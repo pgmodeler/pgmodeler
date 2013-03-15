@@ -132,6 +132,7 @@ void BaseObjectWidget::hideEvent(QHideEvent *)
 	owner_sel->clearSelector();
 
 	parent_form->blockSignals(true);
+	parent_form->apply_ok_btn->setEnabled(true);
 	parent_form->close();
 	parent_form->blockSignals(false);
 }
