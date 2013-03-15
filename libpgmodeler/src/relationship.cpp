@@ -2164,6 +2164,7 @@ void Relationship::setAutomaticSuffix(bool value)
 {
 	this->invalidated=(this->auto_suffix!=value);
 	this->auto_suffix=value;
+	this->src_suffix=this->dst_suffix="";
 }
 
 bool Relationship::isAutomaticSuffix(void)

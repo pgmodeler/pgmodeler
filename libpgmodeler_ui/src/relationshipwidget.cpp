@@ -253,6 +253,13 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 			ref_table_txt->setPlainText(Utf8String::create(aux_rel->getReferenceTable()->getName(true)));
 			recv_table_lbl->setText(trUtf8("Receiver Table:"));
 			recv_table_txt->setPlainText(Utf8String::create(aux_rel->getReceiverTable()->getName(true)));
+
+			src_suffix_lbl->setText(trUtf8("Reference Suffix:"));
+		}
+		else
+		{
+			src_suffix_lbl->setText(Utf8String::create(aux_rel->getTable(BaseRelationship::SRC_TABLE)->getName()) + trUtf8(" Suffix:"));
+			dst_suffix_lbl->setText(Utf8String::create(aux_rel->getTable(BaseRelationship::DST_TABLE)->getName()) + trUtf8(" Suffix:"));
 		}
 
 		auto_suffix_chk->setChecked(aux_rel->isAutomaticSuffix());
@@ -326,8 +333,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 	src_suffix_lbl->setVisible(rel1n || relnn);
 	src_suffix_edt->setVisible(rel1n || relnn);
 
-	dst_suffix_lbl->setVisible(rel1n || relnn);
-	dst_suffix_edt->setVisible(rel1n || relnn);
+	dst_suffix_lbl->setVisible(relnn);
+	dst_suffix_edt->setVisible(relnn);
 
 	auto_suffix_chk->setVisible(rel1n || relnn);
 
@@ -713,9 +720,21 @@ void RelationshipWidget::applyConfiguration(void)
 			rel_type=rel->getRelationshipType();
 			rel->blockSignals(true);
 
-			rel->setTableSuffix(BaseRelationship::SRC_TABLE, src_suffix_edt->text());
-			rel->setTableSuffix(BaseRelationship::DST_TABLE, dst_suffix_edt->text());
 			rel->setAutomaticSuffix(auto_suffix_chk->isChecked());
+
+			if(auto_suffix_chk->isChecked())
+			{
+				src_suffix_edt->clear();
+				dst_suffix_edt->clear();
+			}
+			else
+			{
+				if(!dst_suffix_edt->isVisible())
+					dst_suffix_edt->setText(src_suffix_edt->text());
+
+				rel->setTableSuffix(BaseRelationship::SRC_TABLE, src_suffix_edt->text());
+				rel->setTableSuffix(BaseRelationship::DST_TABLE, dst_suffix_edt->text());
+			}
 
 			rel->setMandatoryTable(BaseRelationship::SRC_TABLE, false);
 			rel->setMandatoryTable(BaseRelationship::DST_TABLE, false);
