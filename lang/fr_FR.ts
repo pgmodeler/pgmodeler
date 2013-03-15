@@ -61,7 +61,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 The complete text of GPLv3 is at LICENSE file on source code root directory. Also, you can get the complete GNU General Public License at &lt;http://www.gnu.org/licenses/&gt;</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/aboutform.cpp" line="+6"/>
+        <location filename="../libpgmodeler_ui/src/aboutform.cpp" line="+24"/>
         <source>Version %1</source>
         <translation>Version %1</translation>
     </message>
@@ -104,7 +104,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>État de la fonction</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/aggregatewidget.cpp" line="+22"/>
+        <location filename="../libpgmodeler_ui/src/aggregatewidget.cpp" line="+40"/>
         <source>Input Data Type</source>
         <translation>Type de donnée en entrée</translation>
     </message>
@@ -424,7 +424,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+125"/>
-        <location filename="../libpgmodeler_ui/src/baseform.cpp" line="+22"/>
+        <location filename="../libpgmodeler_ui/src/baseform.cpp" line="+40"/>
         <source>&amp;Apply</source>
         <translation>&amp;Appliquer</translation>
     </message>
@@ -442,7 +442,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>BaseObject</name>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="+19"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="+37"/>
         <source>Column</source>
         <translation>Colonne</translation>
     </message>
@@ -628,7 +628,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>L&apos;objet est vérouillé, par conséquent aucun changement dans le formulaire ne lui sera appliqué.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="+36"/>
+        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="+52"/>
         <source>Create / Edit: </source>
         <translation>Créer / Éditer: </translation>
     </message>
@@ -681,7 +681,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Fonction de conversion:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/castwidget.cpp" line="+13"/>
+        <location filename="../libpgmodeler_ui/src/castwidget.cpp" line="+31"/>
         <source>Source data type</source>
         <translation>Type de donnée source</translation>
     </message>
@@ -757,7 +757,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Extensions</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/configurationform.cpp" line="+85"/>
+        <location filename="../libpgmodeler_ui/src/configurationform.cpp" line="+103"/>
         <source>Confirmation</source>
         <translation>Confirmation</translation>
     </message>
@@ -935,7 +935,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Tester</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="+306"/>
+        <location filename="../libpgmodeler_ui/src/connectionsconfigwidget.cpp" line="+324"/>
         <source>Success</source>
         <translation>Succès</translation>
     </message>
@@ -1014,7 +1014,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Table:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="+28"/>
+        <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="+46"/>
         <location line="+7"/>
         <source>Column</source>
         <translation>Colonne</translation>
@@ -1060,7 +1060,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Convertion par défaut:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/conversionwidget.cpp" line="+17"/>
+        <location filename="../libpgmodeler_ui/src/conversionwidget.cpp" line="+35"/>
         <source>The function to be assigned to an encoding conversion must have the following signature: &lt;em&gt;void function(integer, integer, cstring, internal, integer)&lt;/em&gt;.</source>
         <translation>La fonction à affecter à une convertion d&apos;encodage doit avoir la signature suivante: &lt;em&gt;void function(integer, integer, cstring, internal, integer)&lt;/em&gt;.</translation>
     </message>
@@ -1118,7 +1118,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Pile d&apos;exécution</translation>
     </message>
     <message>
-        <location filename="../crashhandler/src/crashhandler.cpp" line="+81"/>
+        <location filename="../crashhandler/src/crashhandler.cpp" line="+100"/>
         <source>pgModeler crash file analysis</source>
         <translation>Fichier d&apos;analyse de crash de pgModeler</translation>
     </message>
@@ -1153,12 +1153,12 @@ Taille: %2 bytes
 <context>
     <name>DatabaseModel</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="+2577"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="+2595"/>
         <source>Loading object: %1 (%2)</source>
         <translation>Chargement de l&apos;objet: %1 (%2)</translation>
     </message>
     <message>
-        <location line="+2766"/>
+        <location line="+2768"/>
         <source>Generating %1 of the object: %2 (%3)</source>
         <translation>Génération %1 de l&apos;objet : %2 (%3)</translation>
     </message>
@@ -1201,7 +1201,7 @@ Taille: %2 bytes
         <translation>LC_CTYPE:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="+47"/>
+        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="+65"/>
         <location line="+1"/>
         <source>Default</source>
         <translation>Défaut</translation>
@@ -1243,7 +1243,7 @@ Taille: %2 bytes
 <context>
     <name>Exception</name>
     <message>
-        <location filename="../libutil/src/exception.cpp" line="+6"/>
+        <location filename="../libutil/src/exception.cpp" line="+23"/>
         <source>Insufficient memory space to allocate the object!</source>
         <translation>Espace mémoire insuffisant pour allouer l&apos;objet!</translation>
     </message>
@@ -2237,7 +2237,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Code source:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="+26"/>
+        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="+44"/>
         <source>Column</source>
         <translation>Colonne</translation>
     </message>
@@ -2574,17 +2574,17 @@ Message retourné par le SGBD: %1</translation>
         <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+44"/>
         <source>Indexing:</source>
         <translation>Indexation:</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="-32"/>
         <source>Fill Factor:</source>
         <translation>Taux de remplissage:</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+113"/>
         <source>Options:</source>
         <translation>Options:</translation>
     </message>
@@ -2629,12 +2629,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>Classe d&apos;opérateurs:</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+41"/>
         <source>Sorting:</source>
         <translation>Tri: </translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-32"/>
         <source>Ascending</source>
         <translation>Ascendant</translation>
     </message>
@@ -2649,7 +2649,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Null en premier</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/indexwidget.cpp" line="+32"/>
+        <location filename="../libpgmodeler_ui/src/indexwidget.cpp" line="+50"/>
         <source>Element</source>
         <translation>Élement</translation>
     </message>
@@ -2674,18 +2674,18 @@ Message retourné par le SGBD: %1</translation>
         <translation>Null en premier</translation>
     </message>
     <message>
-        <location line="+89"/>
-        <source>Expressão</source>
+        <location line="+98"/>
+        <source>Expression</source>
         <translation>Expression</translation>
     </message>
     <message>
-        <location line="+14"/>
-        <source>Sim</source>
+        <location line="+16"/>
+        <source>Yes</source>
         <translation>Oui</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Não</source>
+        <source>No</source>
         <translation>Non</translation>
     </message>
 </context>
@@ -2717,7 +2717,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Fonction Inline:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/languagewidget.cpp" line="+27"/>
+        <location filename="../libpgmodeler_ui/src/languagewidget.cpp" line="+45"/>
         <source>The functions to be assigned to the language should have, respectively, the following signatures:&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Handler Function:&lt;/strong&gt; &lt;em&gt;language_handler function()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Validator Function:&lt;/strong&gt; &lt;em&gt;void function(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Inline Function:&lt;/strong&gt; &lt;em&gt;void function(internal)&lt;/em&gt;</source>
         <translation>Les fonctions attribuées au langage doivent avoir espectivement les signatures suivantes:&lt;br/&gt;&lt;br/&gt;  &lt;strong&gt;Fonction de management:&lt;/strong&gt; &lt;em&gt;language_handler fonction()&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Fonction de validation:&lt;/strong&gt; &lt;em&gt;void fonction(oid)&lt;/em&gt;&lt;br/&gt;  &lt;strong&gt;Fonction Inline:&lt;/strong&gt; &lt;em&gt;void fonction(internal)&lt;/em&gt;</translation>
     </message>
@@ -3025,7 +3025,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Afficher la vue d&apos;ensemble du modèle</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="+404"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="+424"/>
         <source>Save all models</source>
         <translation>Enregistrer tous les modèles</translation>
     </message>
@@ -3035,7 +3035,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Certains modèles ont été modifiés! Voulez vous les sauvegarder avant de quitter pgModeler?</translation>
     </message>
     <message>
-        <location line="+400"/>
+        <location line="+401"/>
         <source>Save model</source>
         <translation>Enregistrer le modèle</translation>
     </message>
@@ -3051,7 +3051,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+97"/>
+        <location line="+96"/>
         <source>Database model (*.dbm);;All files (*.*)</source>
         <translation>Modèle de base de donnée (*.dbm);; Tous les fichiers (*.*)</translation>
     </message>
@@ -3120,7 +3120,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+71"/>
-        <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="+169"/>
+        <location filename="../libpgmodeler_ui/src/messagebox.cpp" line="+187"/>
         <location line="+11"/>
         <source>&amp;Yes</source>
         <translation>&amp;Oui</translation>
@@ -3292,7 +3292,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>&amp;Fermer</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="+140"/>
+        <location filename="../libpgmodeler_ui/src/modelexportform.cpp" line="+158"/>
         <source>Generating source code...</source>
         <translation>Génération du code source...</translation>
     </message>
@@ -3463,7 +3463,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>pgModeler n&apos;a pas été fermé correctement lors de sa précédente exécution, certains modèles étaient toujours en cours d&apos;édition. Cliquez sur &apos;Restaurer&apos; pour réouvrir les modèles ou &apos;Annuler&apos; pour interrompre la restauration.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelrestorationform.cpp" line="+31"/>
+        <location filename="../libpgmodeler_ui/src/modelrestorationform.cpp" line="+49"/>
         <source>Modified: %1</source>
         <translation>Modifié: %1</translation>
     </message>
@@ -3476,7 +3476,7 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>ModelWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="+75"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="+93"/>
         <location line="+103"/>
         <source>Copy</source>
         <translation>Copie</translation>
@@ -3792,7 +3792,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Références</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/objectdepsrefswidget.cpp" line="+8"/>
+        <location filename="../libpgmodeler_ui/src/objectdepsrefswidget.cpp" line="+26"/>
         <source>Dependences / References of Object</source>
         <translation>Dépendances et références d&apos;objets</translation>
     </message>
@@ -3913,7 +3913,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Ctrl+Fin, Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="+329"/>
+        <location filename="../libpgmodeler_ui/src/objecttablewidget.cpp" line="+347"/>
         <location line="+25"/>
         <source>Confirmação</source>
         <translation>Confirmation</translation>
@@ -3932,7 +3932,7 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>OperationList</name>
     <message>
-        <location filename="../libpgmodeler/src/operationlist.cpp" line="+636"/>
+        <location filename="../libpgmodeler/src/operationlist.cpp" line="+654"/>
         <source>Undoing operation on object: %1 (%2)</source>
         <translation>Défaire les opération sur l&apos;objet: %1 (%2)</translation>
     </message>
@@ -3986,7 +3986,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Rétablir</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="+80"/>
+        <location filename="../libpgmodeler_ui/src/operationlistwidget.cpp" line="+98"/>
         <source>Object: %1</source>
         <translation>Objet: %1</translation>
     </message>
@@ -4101,7 +4101,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+14"/>
-        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="+34"/>
+        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="+52"/>
         <source>Recheck</source>
         <translation>Revérifier</translation>
     </message>
@@ -4237,7 +4237,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Plus que:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="+15"/>
+        <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="+33"/>
         <source>Right Argument Type</source>
         <translation>Type argument à droite</translation>
     </message>
@@ -4289,7 +4289,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+30"/>
-        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="+57"/>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="+75"/>
         <source>Roles</source>
         <translation>Rôles</translation>
     </message>
@@ -4353,7 +4353,7 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>PgModelerPlugin</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/pgmodelerplugin.cpp" line="+19"/>
+        <location filename="../libpgmodeler_ui/src/pgmodelerplugin.cpp" line="+37"/>
         <source>Plugin Information</source>
         <translation>Information de l&apos;extension</translation>
     </message>
@@ -4488,11 +4488,7 @@ Message retourné par le SGBD: %1</translation>
         <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Les informations concernant le développement et l&apos;installation des extensions sont disponibles sur le  &lt;a href=&quot;http://www.pgmodeler.com.br/wiki/doku.php?id=plugins&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;Wiki pgModeler&lt;/span&gt;&lt;/a&gt;. &lt;span style=&quot; font-weight:600;&quot;&gt;Note:&lt;/span&gt; l&apos;installation d&apos;extensions requière le redémarrage de pgModeler.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Details about plugins development and installation can be found at PLUGINS.md file. &lt;strong&gt;Note:&lt;/strong&gt; plugin installation requires pgModeler to be restarted.</source>
-        <translation type="obsolete">Les informations à propos du développement des extensions et leur installation se trouvent dans le fichier PLUGINS.md. &lt;strong&gt;Note:&lt;/strong&gt; l&apos;installation d&apos;extensions requière le redémarrage de pgModeler.</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/pluginsconfigwidget.cpp" line="+14"/>
+        <location filename="../libpgmodeler_ui/src/pluginsconfigwidget.cpp" line="+32"/>
         <source>Plugin</source>
         <translation>Extension</translation>
     </message>
@@ -4510,7 +4506,7 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5333"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5335"/>
         <source>new_database</source>
         <translation>nouvelle_base</translation>
     </message>
@@ -4534,7 +4530,7 @@ Message retourné par le SGBD: %1</translation>
         <location line="+61"/>
         <location line="+48"/>
         <location line="+201"/>
-        <location line="+142"/>
+        <location line="+144"/>
         <location line="+66"/>
         <location line="+149"/>
         <location line="+82"/>
@@ -4578,7 +4574,7 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>RelacionamentoBase</name>
     <message>
-        <location filename="../libpgmodeler/src/baserelationship.cpp" line="+38"/>
+        <location filename="../libpgmodeler/src/baserelationship.cpp" line="+56"/>
         <source>rel_%1_%2</source>
         <translation>rel_%1_%2</translation>
     </message>
@@ -4586,7 +4582,7 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>Relationship</name>
     <message>
-        <location filename="../libpgmodeler/src/relationship.cpp" line="+47"/>
+        <location filename="../libpgmodeler/src/relationship.cpp" line="+65"/>
         <source>%1_has_one_%2</source>
         <translatorcomment>Traduction approprié ?</translatorcomment>
         <translation>%1_has_one_%2</translation>
@@ -4700,7 +4696,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+25"/>
-        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="+216"/>
+        <location filename="../libpgmodeler_ui/src/relationshipwidget.cpp" line="+234"/>
         <source>Table 1:</source>
         <translation>Table 1:</translation>
     </message>
@@ -4910,7 +4906,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+14"/>
-        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="+38"/>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="+56"/>
         <source>Members</source>
         <translation>Membres</translation>
     </message>
@@ -4975,7 +4971,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Commandes SQL:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/rulewidget.cpp" line="+25"/>
+        <location filename="../libpgmodeler_ui/src/rulewidget.cpp" line="+43"/>
         <source>SQL command</source>
         <translation>Commande SQL</translation>
     </message>
@@ -5003,7 +4999,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Couleur de remplissage:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/schemawidget.cpp" line="+46"/>
+        <location filename="../libpgmodeler_ui/src/schemawidget.cpp" line="+64"/>
         <source>Select fill color</source>
         <translation>Choisissez une couleur de remplissage</translation>
     </message>
@@ -5084,7 +5080,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>XML</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="+14"/>
+        <location filename="../libpgmodeler_ui/src/sourcecodewidget.cpp" line="+32"/>
         <source>Type:</source>
         <translation>Type:</translation>
     </message>
@@ -5107,7 +5103,7 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>Table</name>
     <message>
-        <location filename="../libpgmodeler/src/table.cpp" line="+14"/>
+        <location filename="../libpgmodeler/src/table.cpp" line="+32"/>
         <source>new_table</source>
         <translation>nouvelle_table</translation>
     </message>
@@ -5165,7 +5161,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Tables copiées:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="+45"/>
+        <location filename="../libpgmodeler_ui/src/tablewidget.cpp" line="+63"/>
         <location line="+8"/>
         <location line="+8"/>
         <location line="+9"/>
@@ -5279,7 +5275,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Souligné</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/textboxwidget.cpp" line="+50"/>
+        <location filename="../libpgmodeler_ui/src/textboxwidget.cpp" line="+68"/>
         <source>Select text color</source>
         <translation>Sélection de la couleur de texte</translation>
     </message>
@@ -5377,7 +5373,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Déclencheur contraint:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/triggerwidget.cpp" line="+32"/>
+        <location filename="../libpgmodeler_ui/src/triggerwidget.cpp" line="+50"/>
         <source>Column</source>
         <translation>Colonne</translation>
     </message>
@@ -5531,7 +5527,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>ANALYZE:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="+20"/>
+        <location filename="../libpgmodeler_ui/src/typewidget.cpp" line="+38"/>
         <source>Like Type</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5639,7 +5635,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Prévisualisation du code</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="+26"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="+44"/>
         <source>Col./Expr.</source>
         <translation>Col./Expr.</translation>
     </message>
