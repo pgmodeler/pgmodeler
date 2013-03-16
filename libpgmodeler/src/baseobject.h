@@ -95,7 +95,12 @@ class BaseObject {
 		 (e.g. can not be moved or rotated) can not have your name / text changed,
 		 and deleted. This is only a flag, the cited operations are controled in a
 		 upper class layer */
-		bool is_protected;
+		bool is_protected,
+
+		/*! \brief Indicates if the generated SQL code is disable. When this flag is true
+		the object's SQL code is created normally but is commented. This is useful when using
+		the role only as a reference since it already exists on the destination server. */
+		sql_disabled;
 
 		/*! \brief This map stores the name of each object type associated to a schema file
 		 that generates the object's code definition */
@@ -204,6 +209,12 @@ class BaseObject {
 
 		//! \brief Toggles the object's modify protection
 		virtual void setProtected(bool value);
+
+		//! \brief Disables the SQL code commenting it on generation
+		void setSQLDisabled(bool value);
+
+		//! \brief Returns is the generated SQL is commented
+		bool isSQLDisabled(void);
 
 		/*! \brief Returns the object's name. The parameter 'format' is used to get
 		 the name properly formated (schema qualified and using quotes) */

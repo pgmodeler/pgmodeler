@@ -55,8 +55,8 @@ LanguageWidget::LanguageWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_LA
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-		parent_form->setMinimumSize(550, 540);
-		parent_form->setMaximumHeight(540);
+		parent_form->setMinimumSize(550, 500);
+		parent_form->setMaximumHeight(500);
 	}
 	catch(Exception &e)
 	{

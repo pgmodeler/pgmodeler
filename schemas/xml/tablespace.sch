@@ -11,7 +11,11 @@
 
   %if @{protected} %then 
    [ protected=] "true"
-  %end 
+  %end
+
+  %if @{sql-disabled} %then
+   [ sql-disabled=] "true"
+  %end
 
   > $br
 

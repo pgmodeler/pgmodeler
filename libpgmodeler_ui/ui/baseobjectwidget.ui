@@ -141,25 +141,6 @@
     </size>
    </property>
   </widget>
-  <widget class="Line" name="div_ln">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>130</y>
-     <width>364</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>0</width>
-     <height>5</height>
-    </size>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-  </widget>
   <widget class="QLabel" name="tablespace_lbl">
    <property name="geometry">
     <rect>
@@ -218,30 +199,17 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QLabel" name="permissions_lbl">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>300</y>
-     <width>71</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Permissions:</string>
-   </property>
-  </widget>
   <widget class="QToolButton" name="edt_perms_tb">
    <property name="geometry">
     <rect>
-     <x>90</x>
-     <y>290</y>
-     <width>30</width>
-     <height>30</height>
+     <x>161</x>
+     <y>291</y>
+     <width>148</width>
+     <height>29</height>
     </rect>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -254,7 +222,7 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>30</width>
+     <width>16777215</width>
      <height>30</height>
     </size>
    </property>
@@ -262,7 +230,7 @@
     <string>Edit Permissions</string>
    </property>
    <property name="text">
-    <string/>
+    <string>Edit permissions</string>
    </property>
    <property name="icon">
     <iconset resource="../res/resources.qrc">
@@ -273,6 +241,9 @@
      <width>20</width>
      <height>20</height>
     </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
    </property>
   </widget>
   <widget class="QFrame" name="protected_obj_frm">
@@ -352,6 +323,25 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QCheckBox" name="disable_sql_chk">
+   <property name="geometry">
+    <rect>
+     <x>313</x>
+     <y>295</y>
+     <width>137</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="text">
+    <string>Disable SQL code</string>
+   </property>
   </widget>
  </widget>
  <resources>

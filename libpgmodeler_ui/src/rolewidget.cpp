@@ -74,8 +74,7 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 		members_twg->widget(i)->setLayout(grid);
 	}
 
-
-	parent_form->setMinimumSize(550, 600);
+	parent_form->setMinimumSize(580, 650);
 }
 
 void RoleWidget::configureRoleSelection(void)

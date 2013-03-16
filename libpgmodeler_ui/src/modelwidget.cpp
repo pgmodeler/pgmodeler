@@ -86,7 +86,6 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	QFont font;
 	QLabel *label=NULL;
 	QGridLayout *grid=NULL;
-	QMenu *rels_menu=NULL;
 	QAction *action=NULL;
 	QString str_ico, str_txt,
 			rel_types_cod[]={"11", "1n", "nn", "dep", "gen" },

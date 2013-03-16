@@ -25,8 +25,8 @@ TablespaceWidget::TablespaceWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-	parent_form->setMinimumSize(480, 260);
-	parent_form->setMaximumHeight(260);
+	parent_form->setMinimumSize(500, 230);
+	parent_form->setMaximumHeight(230);
 }
 
 void TablespaceWidget::hideEvent(QHideEvent *event)

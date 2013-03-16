@@ -120,9 +120,37 @@ void ModelObjectsWidget::selectObject(void)
 	if(tree_view_tb->isChecked())
 	{
 		QTreeWidgetItem *tree_item=objectstree_tw->currentItem();
+		ObjectType obj_type;
 
 		if(tree_item)
+		{
 			selected_object=reinterpret_cast<BaseObject *>(tree_item->data(0,Qt::UserRole).value<void *>());
+			obj_type=static_cast<ObjectType>(tree_item->data(1,Qt::UserRole).toUInt());
+		}
+
+		//If user select a group item popups a "New [OBJECT]" menu
+		if(!selected_object && QApplication::mouseButtons()==Qt::RightButton &&
+			 obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT && obj_type!=OBJ_RULE &&
+			 obj_type!=OBJ_INDEX && obj_type!=OBJ_TRIGGER)
+		{
+			QAction act(QPixmap(QString(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")),
+									trUtf8("New") + " " + BaseObject::getTypeName(obj_type), NULL);
+			QMenu popup;
+
+			//If not a relationship, connect the action to the addNewObject method of the model wiget
+			if(obj_type!=OBJ_RELATIONSHIP)
+			{
+				act.setData(QVariant(obj_type));
+				connect(&act, SIGNAL(triggered()), model_wgt, SLOT(addNewObject()));
+			}
+			//Case is a relationship, insert the relationship menu of the model wiget into the action
+			else
+				act.setMenu(model_wgt->rels_menu);
+
+			popup.addAction(&act);
+			popup.exec(QCursor::pos());
+			disconnect(&act,NULL,model_wgt,NULL);
+		}
 	}
 	else
 	{
@@ -582,6 +610,7 @@ void ModelObjectsWidget::updatedSchemaTree(QTreeWidgetItem *root)
 		count=(db_model->getObjectCount(OBJ_SCHEMA));
 		item=new QTreeWidgetItem(root);
 		item->setIcon(0,group_icon);
+		item->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(OBJ_SCHEMA));
 
 		//Create the schema group item
 		item->setText(0,BaseObject::getTypeName(OBJ_SCHEMA) +
@@ -641,6 +670,8 @@ void ModelObjectsWidget::updatedSchemaTree(QTreeWidgetItem *root)
 						item3->setText(0,
 													 BaseObject::getTypeName(types[i1]) +
 													 QString(" (%1)").arg(count2));
+						item3->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(types[i1]));
+
 						font=item3->font(0);
 						font.setItalic(true);
 						item3->setFont(0, font);
@@ -722,6 +753,8 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 			item->setIcon(0,group_icon);
 			item->setText(0,BaseObject::getTypeName(OBJ_TABLE) +
 										QString(" (%1)").arg(obj_list.size()));
+			item->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(OBJ_TABLE));
+
 			font=item->font(0);
 			font.setItalic(true);
 			item->setFont(0, font);
@@ -878,6 +911,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 
 						item1->setIcon(0,QPixmap(QString(":/icones/icones/") +
 																		 str_aux + QString("_grp") + QString(".png")));
+						item1->setData(1, Qt::UserRole, QVariant::fromValue<unsigned>(types[i]));
 
 						obj_list=(*db_model->getObjectList(types[i]));
 

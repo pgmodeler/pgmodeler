@@ -71,12 +71,14 @@ BaseObject::BaseObject(void)
 	owner=NULL;
 	tablespace=NULL;
 	database=NULL;
+	sql_disabled=false;
 	attributes[ParsersAttributes::NAME]="";
 	attributes[ParsersAttributes::COMMENT]="";
 	attributes[ParsersAttributes::OWNER]="";
 	attributes[ParsersAttributes::TABLESPACE]="";
 	attributes[ParsersAttributes::SCHEMA]="";
 	attributes[ParsersAttributes::PROTECTED]="";
+	attributes[ParsersAttributes::SQL_DISABLED]="";
 }
 
 unsigned BaseObject::getGlobalId(void)
@@ -477,6 +479,16 @@ bool BaseObject::operator != (const QString &name)
 	return(this->obj_name!=name);
 }
 
+void BaseObject::setSQLDisabled(bool value)
+{
+	sql_disabled=value;
+}
+
+bool BaseObject::isSQLDisabled(void)
+{
+	return(sql_disabled);
+}
+
 QString BaseObject::__getCodeDefinition(unsigned def_type)
 {
 	return(BaseObject::getCodeDefinition(def_type, false));
@@ -495,11 +507,12 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 	{
 		bool format;
 
+		attributes[ParsersAttributes::SQL_DISABLED]=(sql_disabled ? "1" : "");
+
 		//Formats the object's name in case the SQL definition is being generated
 		format=(def_type==SchemaParser::SQL_DEFINITION ||
 						(def_type==SchemaParser::XML_DEFINITION && reduced_form &&
-						 obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP &&
-																								obj_type!=BASE_RELATIONSHIP));
+						 obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP &&	obj_type!=BASE_RELATIONSHIP));
 		attributes[objs_schemas[obj_type]]="1";
 
 		/* Marking the flag that indicates that the comment form to be generated

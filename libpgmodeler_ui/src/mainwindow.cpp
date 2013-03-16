@@ -116,6 +116,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	{
 		QDir dir;
 
+		this->setFocusPolicy(Qt::WheelFocus);
+
 		//Check if the temporary dir exists, if not, creates it.
 		if(!dir.exists(GlobalAttributes::TEMPORARY_DIR))
 			dir.mkdir(GlobalAttributes::TEMPORARY_DIR);
@@ -125,7 +127,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		export_form=new ModelExportForm(this);
 
 		restoration_form=new ModelRestorationForm(this);
-
 		oper_list_wgt=new OperationListWidget;
 		model_objs_wgt=new ModelObjectsWidget;
 		overview_wgt=new ModelOverviewWidget;
@@ -891,7 +892,10 @@ void MainWindow::updateModelsConfigurations(void)
 
 void MainWindow::saveAllModels(void)
 {
-	if(save_interval > 0)
+	if(models_tbw->count() > 0 &&
+		 ((sender()==action_save_all) ||
+			(sender()==&model_save_timer &&	this->isActiveWindow())))
+
 	{
 		ModelWidget *model=NULL;
 		int i, count;
@@ -1037,7 +1041,8 @@ void MainWindow::loadModel(void)
 	catch(Exception &e)
 	{
 		closeModel(models_tbw->currentIndex());
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		//throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+		msg_box.show(e);
 	}
 }
 
@@ -1116,7 +1121,7 @@ void MainWindow::executePlugin(void)
 
 void MainWindow::saveTemporaryModel(void)
 {
-	if(current_model)
+	if(current_model && this->isActiveWindow())
 		current_model->db_model->saveModel(current_model->getTempFilename(), SchemaParser::XML_DEFINITION);
 }
 

@@ -6,3 +6,4 @@
 <!ATTLIST tablespace name CDATA #REQUIRED>
 <!ATTLIST tablespace directory CDATA #IMPLIED>
 <!ATTLIST tablespace protected (false|true) "false">
+<!ATTLIST tablespace sql-disabled (false|true) "false">

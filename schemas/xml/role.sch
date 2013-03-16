@@ -31,6 +31,9 @@
   [ protected=] "true"
  %end
 
+ %if @{sql-disabled} %then
+  [ sql-disabled=] "true"
+ %end
  > $br
 
  %if @{comment} %then @{comment} $br %end

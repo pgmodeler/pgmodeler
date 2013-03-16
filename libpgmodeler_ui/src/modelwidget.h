@@ -134,6 +134,8 @@ class ModelWidget: public QWidget {
 												MAXIMUM_ZOOM=4.0f,
 												ZOOM_INCREMENT=0.05f;
 
+		QMenu *rels_menu;
+
 		/*! \brief Configures the scene aligning the object to the grid and resizing the scene
 		rect when some object is out of bound */
 		void adjustSceneSize(void);

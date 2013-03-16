@@ -2751,7 +2751,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 	BaseObject *tabspc=NULL, *owner=NULL;
 	Schema *schema=NULL;
 	ObjectType obj_type=BASE_OBJECT, obj_type_aux;
-	bool has_error=false, protected_obj=false;
+	bool has_error=false, protected_obj=false, sql_disabled=false;
 
 	if(!object)
 		throw Exception(ERR_OPR_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -2763,6 +2763,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 		object->setName(attribs[ParsersAttributes::NAME]);
 
 	protected_obj=attribs[ParsersAttributes::PROTECTED]==ParsersAttributes::_TRUE_;
+	sql_disabled=attribs[ParsersAttributes::SQL_DISABLED]==ParsersAttributes::_TRUE_;
 
 	XMLParser::savePosition();
 
@@ -2831,6 +2832,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 
 	XMLParser::restorePosition();
 	object->setProtected(protected_obj);
+	object->setSQLDisabled(sql_disabled);
 
 	if(has_error)
 	{

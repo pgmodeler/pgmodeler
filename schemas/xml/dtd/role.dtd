@@ -15,6 +15,7 @@
 <!ATTLIST role validity CDATA #IMPLIED>
 <!ATTLIST role sysid CDATA #IMPLIED>
 <!ATTLIST role protected (false|true) "false">
+<!ATTLIST role sql-disabled (false|true) "false">
 
 <!ELEMENT roles EMPTY>
 <!ATTLIST roles names CDATA #REQUIRED>

@@ -30,6 +30,9 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 {
 	try
 	{
+		QHBoxLayout *layout=NULL;
+		QSpacerItem *spacer=NULL;
+
 		setupUi(this);
 		model=NULL;
 		table=NULL;
@@ -68,7 +71,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		baseobject_grid->addWidget(name_lbl, 1, 0, 1, 1);
 		baseobject_grid->addWidget(name_edt, 1, 1, 1, 3);
 		baseobject_grid->addWidget(obj_icon_lbl, 1, 4, 1, 1);
-		baseobject_grid->addWidget(div_ln, 3, 0, 1, 5);
+		//baseobject_grid->addWidget(div_ln, 3, 0, 1, 5);
 		baseobject_grid->addWidget(comment_lbl, 4, 0, 1, 1);
 		baseobject_grid->addWidget(comment_edt, 4, 1, 1, 4);
 		baseobject_grid->addWidget(tablespace_lbl, 5, 0, 1, 1);
@@ -77,8 +80,15 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		baseobject_grid->addWidget(owner_sel, 6, 1, 1, 4);
 		baseobject_grid->addWidget(schema_lbl, 7, 0, 1, 1);
 		baseobject_grid->addWidget(schema_sel, 7, 1, 1, 4);
-		baseobject_grid->addWidget(permissions_lbl, 8, 0, 1, 1);
-		baseobject_grid->addWidget(edt_perms_tb, 8, 1, 1, 4);
+
+		layout=new QHBoxLayout;
+		spacer=new QSpacerItem(20,1,QSizePolicy::Expanding);
+
+		layout->addItem(spacer);
+		layout->addWidget(edt_perms_tb);
+		layout->addWidget(disable_sql_chk);
+
+		baseobject_grid->addLayout(layout,8,0,1,5);
 		baseobject_grid->addWidget(div1_ln, 9, 0, 1, 5);
 	}
 	catch(Exception &e)
@@ -130,6 +140,8 @@ void BaseObjectWidget::hideEvent(QHideEvent *)
 	tablespace_sel->clearSelector();
 	schema_sel->clearSelector();
 	owner_sel->clearSelector();
+
+	disable_sql_chk->setChecked(false);
 
 	parent_form->blockSignals(true);
 	parent_form->apply_ok_btn->setEnabled(true);
@@ -222,6 +234,8 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		protected_obj_frm->setVisible(prot);
 
 		parent_form->apply_ok_btn->setEnabled(!prot);
+
+		disable_sql_chk->setChecked(object->isSQLDisabled());
 	}
 	else
 	{
@@ -270,6 +284,9 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 	baseobject_grid->setContentsMargins(4, 4, 4, 4);
 
+	if(obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_ROLE)
+		disable_sql_chk->setVisible(false);
+
 	show_schema=(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW ||
 							 obj_type==OBJ_DOMAIN || obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
 							 obj_type==OBJ_SEQUENCE || obj_type==OBJ_CONVERSION || obj_type==OBJ_TYPE ||
@@ -288,10 +305,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		 obj_type!=OBJ_SEQUENCE && obj_type!=OBJ_DATABASE && obj_type!=OBJ_FUNCTION &&
 		 obj_type!=OBJ_AGGREGATE && obj_type!=OBJ_LANGUAGE && obj_type!=OBJ_SCHEMA &&
 		 obj_type!=OBJ_TABLESPACE)
-	{
-		permissions_lbl->setVisible(false);
 		edt_perms_tb->setVisible(false);
-	}
 
 	schema_lbl->setVisible(show_schema);
 	schema_sel->setVisible(show_schema);
@@ -305,11 +319,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	comment_edt->setVisible(show_comment);
 	comment_lbl->setVisible(show_comment);
 
-	div1_ln->setVisible(obj_type!=OBJ_TABLE &&
-	obj_type!=OBJ_SCHEMA &&
-	obj_type!=OBJ_TEXTBOX &&
-	obj_type!=OBJ_RELATIONSHIP &&
-	obj_type!=BASE_RELATIONSHIP);
+	div1_ln->setVisible(obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP &&obj_type!=BASE_RELATIONSHIP);
 
 	if(obj_type!=BASE_OBJECT)
 	{
@@ -482,6 +492,8 @@ void BaseObjectWidget::applyConfiguration(void)
 
 			obj_type=object->getObjectType();
 			obj_name=BaseObject::formatName(name_edt->text().toUtf8(), obj_type==OBJ_OPERATOR);
+
+			object->setSQLDisabled(disable_sql_chk->isChecked());
 
 			if(schema_sel->getSelectedObject())
 				obj_name=schema_sel->getSelectedObject()->getName(true) + "." + obj_name;

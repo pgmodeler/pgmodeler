@@ -4,6 +4,10 @@
 #          Code generation can be broken if incorrect changes are made.
 [-- object: ] @{name} [ | type: ] @{sql-object} [ -- ] $br
 
+%if @{sql-disabled} %then
+[/* The SQL code for this object was disabled on the editing form.] $br
+%end
+
 %if @{group} %then
 
  [CREATE GROUP ] @{name} [ WITH ] $br
@@ -35,6 +39,10 @@
 ; $br
 
 @{comment}
+
+%if @{sql-disabled} %then
+[*/] $br
+%end
 
 # This is a special token that pgModeler recognizes as end of DDL command
 # when exporting models directly to DBMS. DO NOT REMOVE THIS TOKEN!

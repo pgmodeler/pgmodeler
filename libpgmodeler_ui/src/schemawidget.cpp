@@ -30,8 +30,8 @@ SchemaWidget::SchemaWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SCHEMA
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(fill_color_tb, SIGNAL(clicked(void)), this, SLOT(selectFillColor(void)));
 
-	parent_form->setMinimumSize(500, 250);
-	parent_form->setMaximumHeight(250);
+	parent_form->setMinimumSize(500, 220);
+	parent_form->setMaximumHeight(220);
 }
 
 void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema)

@@ -748,6 +748,12 @@
        </item>
        <item row="5" column="2" rowspan="2">
         <widget class="QCheckBox" name="auto_suffix_chk">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Automatic Suffix</string>
          </property>

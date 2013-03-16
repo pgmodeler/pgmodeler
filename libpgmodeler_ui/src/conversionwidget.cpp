@@ -42,8 +42,8 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 
-		parent_form->setMinimumSize(600, 390);
-		parent_form->setMaximumHeight(390);
+		parent_form->setMinimumSize(600, 350);
+		parent_form->setMaximumHeight(350);
 	}
 	catch(Exception &e)
 	{
