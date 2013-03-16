@@ -1,14 +1,45 @@
 Changelog
 ---------
 
+v0.4.1
+------
+
+<em>Release date: March 16, 2013 </em>
+
+* [New]: introduced the  "Disable SQL code" option for roles/tablespaces.
+* [New]: user now can add objects by right-clicking group items on "Model Objects" dockwidget tree.
+* [New]: added the abbreviation for time and timesptamp data types both with timezone: timetz and timestamptz.
+* [New]: introduced a object highlight action on "model objects" dockwidget.
+* [Change]: major changes on SQL code generation/export. Introduced a token to help export process to identify the end of each DDL command.
+* [Change]: minor improvements on role editing form.
+* [Change]: when generationg XML code empty tags that stores pure texts are now created with a <![CDATA[]]> tag in order to avoid malformed xml code.
+* [Change]: index FASTUPDATE and FILLFACTOR params is now activated according the indexing type.
+* [Change]: index fill factor now is optional.
+* [Change]: chinese, portuguese and french translations update.
+* [Fix]: pgModeler no longer crash when in error state (showing an exception) and try to auto save the models.
+* [Fix]: minor size adjustments on forms.
+* [Fix]: corrected a bug related to one-to-many relationship validation (endless looping) when changing to automatic suffix generation.
+* [Fix]: corrected the "apply button disabled" bug on constraint edit form.
+* [Fix]: IN/OUT keywords now appears on functions signature.
+* [Fix]: corrected translation bypassing on index edit form.
+* [Fix]: pgModeler no longer crash when triggering the print action.
+* [Fix]: triggers no longer complains about assigning a function without parameters.
+* [Fix]: corrected the loading process for indexes.
+* [Fix]: corrected some bugs related to GiST and index sorting.
+* [Fix]: minor fix on quick rename action when renaming a column with primary key.
+* [Fix]: corrected a bug that was causing pgModeler to complain about duplicated elements when loading indexes.
+* [Fix]: corrected a bug related to main window title when save a model with a different filename.
+* [Fix]: fixed a bug related reload a model file after editing a foreign key.
+* [Fix]: corrected a bug related to invalid chars at task progress.
+
 v0.4.0_r1
 ---------
 
 <em>Release date: March 04, 2013 </em>
 
-[New]: introducing the "pgModeler Wiki" as the main project's support resource.
-[Fix]: when main windows is closed the overview widget is closed too.
-[Fix]: corrected a bug on operation list widget that was converting an item name to UTF-8 twice.
+* [New]: introducing the "pgModeler Wiki" as the main project's support resource.
+* [Fix]: when main windows is closed the overview widget is closed too.
+* [Fix]: corrected a bug on operation list widget that was converting an item name to UTF-8 twice.
 
 v0.4.0
 ------
@@ -50,9 +81,9 @@ v0.4.0
 * [Fix]: corrected some bugs that was causing crash when removing all operations from operation list.
 * [Fix]: minor bug fixes related to object selection over the model.
 * [Fix]: corrected a bug on load model dialog filter (chinese UI only).
-* [Fix]: pgModeler no longer crashes when editing objects style.
+* [Fix]: pgModeler no longer crash when editing objects style.
 * [Fix]: corrected bug that was deleting two sequeces at once.
-* [Fix]: pgModeler no longer crashes when removing (disconnecting) relationship that has special primary keys.
+* [Fix]: pgModeler no longer crash when removing (disconnecting) relationship that has special primary keys.
 * [Fix]: minor fixes on the startup scripts on all platforms.
 * [Fix]: corrected an incorrect reference to output stream on Windows system.
 * [Fix]: shortcuts and popup menu now works correctly when selection an object on 'Objects of Model' tree.
@@ -61,8 +92,8 @@ v0.4.0
 * [Fix]: corrected bug on objects table when move rows to last / first.
 * [Fix]: typos corrections on some error messages and dialog titles.
 * [Fix]: 'referenced columns' combobox on constraint editing form are filled correctly when the dialog is shown in a second time.
-* [Fix]: pgModeler no longer crashes when creating many-to-many relationships.
-* [Fix]: pgModeler no longer crashes when the user activates the print dialog.
+* [Fix]: pgModeler no longer crash when creating many-to-many relationships.
+* [Fix]: pgModeler no longer crash when the user activates the print dialog.
 * [Fix]: corrected bug that was removing fk relationships when pasting objects.
 * [Fix]: corrected SQL syntax error of 'timestamp with time zone'.
 * [Fix]: corrected constraint type showing on editing form.
