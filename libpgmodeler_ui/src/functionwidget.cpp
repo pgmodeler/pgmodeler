@@ -517,7 +517,7 @@ void FunctionWidget::applyConfiguration(void)
 			func->setSymbol(symbol_edt->text());
 		}
 		else
-			func->setSourceCode(source_code_txt->toPlainText());
+			func->setSourceCode(source_code_txt->toPlainText().toUtf8());
 
 		if(simple_rb->isChecked() || set_rb->isChecked())
 		{

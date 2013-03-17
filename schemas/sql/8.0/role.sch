@@ -19,7 +19,7 @@
  [CREATE USER ] @{name} [ WITH ] $br
  %if @{sysid} %then $tb [SYSID ] @{sysid} $br %end
  $tb %if @{superuser} %then CREATEUSER %else NOCREATEUSER %end $br
- $tb %if @{createdb} %then CREATEDB %else CREATEDB %end $br
+ $tb %if @{createdb} %then CREATEDB %else NOCREATEDB %end $br
 
  %if @{ref-roles} %then  $tb [IN GROUP ] @{ref-roles} $br %end
 

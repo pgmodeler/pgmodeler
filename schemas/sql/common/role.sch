@@ -11,9 +11,9 @@
 
 [CREATE ROLE ] @{name} [ WITH ] $br
 
-# CREATEUSER | NOCREATEUSER --> Mesmo que SUPERUSER | NOSUPERUSER
+# CREATEUSER | NOCREATEUSER --> Same as SUPERUSER | NOSUPERUSER
 $tb %if @{superuser} %then SUPERUSER %else NOSUPERUSER %end $br
-$tb %if @{createdb} %then CREATEDB %else CREATEDB %end $br
+$tb %if @{createdb} %then CREATEDB %else NOCREATEDB %end $br
 $tb %if @{createrole} %then CREATEROLE %else NOCREATEROLE %end $br
 $tb %if @{inherit} %then INHERIT %else NOINHERIT %end $br
 $tb %if @{login} %then LOGIN %else NOLOGIN %end $br
