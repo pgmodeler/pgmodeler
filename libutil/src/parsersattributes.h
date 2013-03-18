@@ -257,7 +257,7 @@ namespace ParsersAttributes {
 	LC_COLLATE_DB="lc-collate",
 	LC_CTYPE_DB="lc-ctype",
 	INDEX_ELEMENT="idxelement",
-	PERMISSION="grant",
+	PERMISSION="permission",
 	GRANT_OP="grant-op",
 	SELECT_PRIV="select",
 	INSERT_PRIV="insert",
@@ -346,7 +346,9 @@ namespace ParsersAttributes {
 	USE_SORTING="use-sorting",
 	STORAGE_PARAMS="stg-params",
 	DDL_END_TOKEN="-- ddl-end --",
-	SQL_DISABLED="sql-disabled";
+	SQL_DISABLED="sql-disabled",
+	REVOKE="revoke",
+	CASCADE="cascade";
 }
 
 #endif

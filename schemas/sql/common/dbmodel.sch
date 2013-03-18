@@ -38,6 +38,6 @@ $br
 %if @{schema} %then @{schema} %end
 %if @{shell-types} %then @{shell-types} %end
 %if @{objects} %then @{objects} %end
-%if @{grant} %then @{grant} %end
+%if @{permission} %then @{permission} %end
 
 $br

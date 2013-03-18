@@ -2390,7 +2390,8 @@ int DatabaseModel::getPermissionIndex(Permission *perm)
 				}
 			}
 
-			if(perm==perm_aux || ref_role)
+			//If the permissions references the same roles but one is a REVOKE and other GRANT they a considered different
+			if(perm==perm_aux || (ref_role && perm->isRevoke()==perm_aux->isRevoke()))
 				perm_idx=itr-permissions.begin();
 
 			itr++;
@@ -5125,11 +5126,13 @@ Permission *DatabaseModel::createPermission(void)
 	QString parent_name, obj_name;
 	QStringList list;
 	unsigned i, len, priv_type=Permission::PRIV_SELECT;
-	bool priv_value, grant_op;
+	bool priv_value, grant_op, revoke, cascade;
 
 	try
 	{
 		XMLParser::getElementAttributes(priv_attribs);
+		revoke=priv_attribs[ParsersAttributes::REVOKE]==ParsersAttributes::_TRUE_;
+		cascade=priv_attribs[ParsersAttributes::CASCADE]==ParsersAttributes::_TRUE_;
 
 		XMLParser::savePosition();
 		XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
@@ -5162,6 +5165,8 @@ Permission *DatabaseModel::createPermission(void)
 											ERR_PERM_REF_INEXIST_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		perm=new Permission(object);
+		perm->setRevoke(revoke);
+		perm->setCascade(cascade);
 
 		do
 		{

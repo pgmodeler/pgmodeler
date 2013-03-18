@@ -277,6 +277,36 @@
        <number>6</number>
       </property>
       <item row="0" column="0">
+       <widget class="QRadioButton" name="grant_rb">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Grant</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="revoke_rb">
+        <property name="text">
+         <string>Revoke</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="cascade_chk">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Cascade</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="3">
        <widget class="QTableWidget" name="privileges_tbw">
         <property name="selectionMode">
          <enum>QAbstractItemView::SingleSelection</enum>

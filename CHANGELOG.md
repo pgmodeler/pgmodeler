@@ -1,6 +1,13 @@
 Changelog
 ---------
 
+v0.4.1_r1
+---------
+
+* [Change]: improvements on permissions, user now can control GRANTs and REVOKEs via permission editing form.
+* [Fix]: fixed invalid UTF-8 chars on function definition.
+* [Fix]: fixed unavailable "nocreatedb" role option.
+
 v0.4.1
 ------
 

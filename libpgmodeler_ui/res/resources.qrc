@@ -7,7 +7,6 @@
         <file>icones/parameter.png</file>
         <file>icones/uid.png</file>
         <file>icones/database.png</file>
-        <file>icones/grant.png</file>
         <file>icones/validade.png</file>
         <file>icones/editar.png</file>
         <file>icones/moverultimo.png</file>
@@ -141,6 +140,7 @@
         <file>icones/plugins.png</file>
         <file>icones/relationshipfk.png</file>
         <file>icones/help.png</file>
+        <file>icones/permission.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

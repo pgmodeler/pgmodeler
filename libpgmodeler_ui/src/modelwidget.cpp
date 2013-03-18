@@ -221,7 +221,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_moveto_schema->setToolTip(trUtf8("Move the object to another schema"));
 	action_moveto_schema->setMenu(&schemas_menu);
 
-	action_edit_perms=new QAction(QIcon(QString(":/icones/icones/grant.png")), trUtf8("Edit permissions"), this);
+	action_edit_perms=new QAction(QIcon(QString(":/icones/icones/permission.png")), trUtf8("Edit permissions"), this);
 	action_edit_perms->setToolTip(trUtf8("Edit object's permissions"));
 	action_edit_perms->setShortcut(QKeySequence("Ctrl+E"));
 

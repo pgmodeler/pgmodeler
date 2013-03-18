@@ -7,7 +7,15 @@
 
 %if @{privileges} %then
 
-  $br [GRANT ] @{privileges} $br
+  $br
+
+  %if @{revoke} %then
+    [REVOKE ]
+  %else
+    [GRANT ]
+  %end
+
+  @{privileges} $br
 
   %if @{parent} %then
     $sp $sp (@{object}) [ ON TABLE ] @{parent} $br
@@ -15,11 +23,13 @@
     $sp $sp  [ ON ] @{type} $sp @{object} $br
   %end
 
-   $sp $sp  [ TO ] 
+  $sp $sp  %if @{revoke} %then [ FROM ] %else [ TO ] %end
 
-  %if @{roles} %then   
+  %if @{roles} %then
     @{roles}
-  %else 
+
+    %if @{cascade} %then [ CASCADE] %end ; $br
+  %else
     PUBLIC
   %end
   ; $br
@@ -29,14 +39,30 @@
 
 %if @{privileges-gop} %then
 
-  $br [GRANT ] @{privileges-gop} $br
+  $br
+
+  %if @{revoke} %then
+    [REVOKE GRANT OPTION FOR ]
+  %else
+    [GRANT ]
+  %end
+
+  @{privileges-gop} $br
 
   %if @{parent} %then
     $sp $sp (@{object}) [ ON TABLE ] @{parent} $br
   %else
     $sp $sp  [ ON ] @{type} $sp @{object} $br
   %end
-   $sp $sp  [ TO ]  @{roles} [ WITH GRANT OPTION]; $br
+
+  $sp $sp
+
+  %if @{revoke} %then
+   [ FROM ] @{roles}
+   %if @{cascade} %then [ CASCADE] %end ; $br
+  %else
+   [ TO ] @{roles} [ WITH GRANT OPTION]; $br
+  %end
 
 %end
 

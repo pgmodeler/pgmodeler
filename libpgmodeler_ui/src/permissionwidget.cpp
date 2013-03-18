@@ -21,6 +21,7 @@
 PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_PERMISSION)
 {
 	QGridLayout *grid=NULL;
+	QFrame *frame=NULL;
 	QFont font;
 	QCheckBox *check=NULL;
 	unsigned i;
@@ -41,8 +42,8 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	parent_form->setButtonConfiguration(MessageBox::OK_BUTTON);
 	connect(parent_form->apply_ok_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
 
-	parent_form->setMinimumSize(670, 500);
-	parent_form->resize(670, 500);
+	parent_form->setMinimumSize(670, 550);
+	parent_form->resize(670, 550);
 
 	comment_lbl->setText(trUtf8("Type:"));
 	font=name_edt->font();
@@ -92,13 +93,22 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 		check=new QCheckBox;
 		check->setText("GRANT OPTION");
+		check->setEnabled(false);
 		privileges_tbw->setCellWidget(i,1,check);
 		connect(check, SIGNAL(clicked(bool)), this, SLOT(checkPrivilege(void)));
 	}
 
+	frame=generateInformationFrame(trUtf8("Leave the <em><strong>Roles</strong></em> empty to create a permission applicable to <strong><em>PUBLIC</em></strong>."));
+	permission_grid->addWidget(frame, permission_grid->count()+1, 0, 1, 0);
+	frame->setParent(this);
+
 	connect(roles_tab, SIGNAL(s_rowAdded(int)), roles_tab, SLOT(selectRow(int)));
 	connect(roles_tab, SIGNAL(s_rowEdited(int)), this, SLOT(selectRole(void)));
 	connect(roles_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(enableEditButtons(void)));
+	connect(roles_tab, SIGNAL(s_rowAdded(int)), this, SLOT(enableEditButtons(void)));
+
+	connect(roles_tab, SIGNAL(s_rowRemoved(int)), this, SLOT(disableGrantOptions(void)));
+	connect(roles_tab, SIGNAL(s_rowAdded(int)), this, SLOT(disableGrantOptions(void)));
 
 	connect(permissions_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editPermission(void)));
 	connect(permissions_tab, SIGNAL(s_rowSelected(int)), this, SLOT(selectPermission(int)));
@@ -107,6 +117,10 @@ PermissionWidget::PermissionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	connect(cancel_tb, SIGNAL(clicked(bool)), this, SLOT(cancelOperation(void)));
 	connect(add_perm_tb, SIGNAL(clicked(bool)), this, SLOT(addPermission(void)));
 	connect(upd_perm_tb, SIGNAL(clicked(bool)), this, SLOT(updatePermission(void)));
+
+	connect(revoke_rb, SIGNAL(toggled(bool)), cascade_chk, SLOT(setEnabled(bool)));
+	connect(revoke_rb, SIGNAL(toggled(bool)), this, SLOT(disableGrantOptions(void)));
+	connect(grant_rb, SIGNAL(toggled(bool)), this, SLOT(disableGrantOptions(void)));
 }
 
 PermissionWidget::~PermissionWidget(void)
@@ -207,6 +221,25 @@ void PermissionWidget::selectPermission(int perm_id)
 		permission=reinterpret_cast<Permission *>(permissions_tab->getRowData(perm_id).value<void *>());
 	else
 		permission=NULL;
+}
+
+void PermissionWidget::disableGrantOptions(void)
+{
+	QCheckBox *check=NULL;
+
+	for(unsigned i=Permission::PRIV_SELECT; i<=Permission::PRIV_USAGE; i++)
+	{
+		check=dynamic_cast<QCheckBox *>(privileges_tbw->cellWidget(i,1));
+		check->setEnabled(roles_tab->getRowCount() > 0);
+
+		if(!check->isEnabled())
+			check->setChecked(false);
+	}
+
+	cascade_chk->setEnabled(roles_tab->getRowCount() > 0);
+
+	if(!cascade_chk->isEnabled())
+		cascade_chk->setChecked(false);
 }
 
 void PermissionWidget::listPermissions(void)
@@ -366,6 +399,8 @@ void PermissionWidget::editPermission(void)
 		roles_tab->removeRows();
 
 		perm_id_edt->setText(permission->getName());
+		revoke_rb->setChecked(permission->isRevoke());
+		cascade_chk->setChecked(permission->isCascade());
 
 		count=permission->getRoleCount();
 		for(i=0; i < count; i++)
@@ -411,6 +446,9 @@ void PermissionWidget::configurePermission(Permission *perm)
 	{
 		unsigned count, i, priv;
 		QCheckBox *chk=NULL, *chk1=NULL;
+
+		perm->setCascade(cascade_chk->isChecked());
+		perm->setRevoke(revoke_rb->isChecked());
 
 		perm->removeRoles();
 		count=roles_tab->getRowCount();
@@ -497,8 +535,8 @@ void PermissionWidget::enableEditButtons(void)
 		checked_privs=(chk->isChecked() || chk1->isChecked());
 	}
 
-	upd_perm_tb->setEnabled(checked_privs && roles_tab->getRowCount() > 0 && permission!=NULL);
-	add_perm_tb->setEnabled(checked_privs && roles_tab->getRowCount() > 0);
+	upd_perm_tb->setEnabled(checked_privs && permission!=NULL);
+	add_perm_tb->setEnabled(checked_privs);
 	cancel_tb->setEnabled(add_perm_tb->isEnabled() || upd_perm_tb->isEnabled() || permissions_tab->getRowCount() > 0);
 }
 

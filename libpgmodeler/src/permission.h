@@ -59,7 +59,13 @@ class Permission: public BaseObject {
 		vector<Role *> roles;
 
 		//! \brief Privileges set applied to the object (Accessed via constants PRIV_???)
-		bool privileges[13];
+		bool privileges[13],
+
+		//! \brief Indicates if the permission treats a REVOKE command.
+		revoke,
+
+		//! \brief Indicates if the revoke is applied in a cascade way.
+		cascade;
 
 		/*! \brief Indicates whether a privilege with given index can be assigned to other roles
 			over the same object (WITH GRANT OPTION). This attribute is not applicable
@@ -98,6 +104,10 @@ class Permission: public BaseObject {
 		//! \brief Sets the state of one permission's privilege (Accessed via constants PRIV_???)
 		void setPrivilege(unsigned priv_id, bool value, bool grant_op);
 
+		void setRevoke(bool value);
+
+		void setCascade(bool value);
+
 		//! \brief Remove a role using its index
 		void removeRole(unsigned role_idx);
 
@@ -126,6 +136,10 @@ class Permission: public BaseObject {
 
 		//! \brief Indicates whether the role is present on the permission
 		bool isRoleExists(Role *role);
+
+		bool isRevoke(void);
+
+		bool isCascade(void);
 
 		//! \brief Returns if the passed object type accepts permission
 		static bool objectAcceptsPermission(ObjectType obj_type);

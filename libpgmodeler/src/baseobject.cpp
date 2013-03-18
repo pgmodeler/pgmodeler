@@ -29,7 +29,7 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"sequence", "role", "conversion", "cast",
 	"language", "usertype", "tablespace",
 	"opfamily", "opclass", "database","relationship","textbox",
-	"grant","parameter","relationship"
+	"permission","parameter","relationship"
 };
 
 

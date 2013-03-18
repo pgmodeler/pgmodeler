@@ -24,7 +24,7 @@ $tb ( @{elements} ) $br
 %end
 
 %if @{stg-params} %then
- %if@{factor} %then
+ %if @{factor} %then
    $tb [WITH (FILLFACTOR = ] @{factor} [)] $br
  %end
 %end

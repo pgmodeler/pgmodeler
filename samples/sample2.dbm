@@ -1189,14 +1189,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-table="&quot;schema_C&quot;.&quot;table_C4&quot;"
 	 dst-table="&quot;schema_C&quot;.&quot;table_C3&quot;"/>
 
-<grant>
+<permission>
 	<object name="sampledb" type="database"/>
 	<roles names="user3,user2"/>
 	<privileges create="true" connect="grant-op" temporary="grant-op"/>
-</grant>
-<grant>
+</permission>
+<permission>
 	<object name="sampledb" type="database"/>
 	<roles names="user4"/>
 	<privileges create="true" connect="grant-op" temporary="grant-op"/>
-</grant>
+</permission>
 </dbmodel>

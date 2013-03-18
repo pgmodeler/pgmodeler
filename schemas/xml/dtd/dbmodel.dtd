@@ -44,9 +44,8 @@
 %textbox;
 <!ENTITY % relationship SYSTEM "relationship.dtd">
 %relationship;
-
-<!ENTITY % grant SYSTEM "grant.dtd">
-%grant;
+<!ENTITY % permission SYSTEM "permission.dtd">
+%permission;
 
 
 <!ELEMENT dbmodel ANY>

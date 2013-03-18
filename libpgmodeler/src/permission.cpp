@@ -37,6 +37,7 @@ Permission::Permission(BaseObject *obj)
 
 	this->object=obj;
 	this->obj_type=OBJ_PERMISSION;
+	revoke=cascade=false;
 
 	attributes[ParsersAttributes::OBJECT]="";
 	attributes[ParsersAttributes::TYPE]="";
@@ -44,6 +45,7 @@ Permission::Permission(BaseObject *obj)
 	attributes[ParsersAttributes::GRANT_OP]="";
 	attributes[ParsersAttributes::ROLES]="";
 	attributes[ParsersAttributes::PRIVILEGES]="";
+	attributes[ParsersAttributes::CASCADE]="";
 	attributes[ParsersAttributes::PRIVILEGES_GOP]="";
 }
 
@@ -145,6 +147,26 @@ void Permission::setPrivilege(unsigned priv_id, bool value, bool grant_op)
 	this->grant_option[priv_id]=grant_op;
 }
 
+void Permission::setRevoke(bool value)
+{
+	revoke=value;
+}
+
+void Permission::setCascade(bool value)
+{
+	cascade=value;
+}
+
+bool Permission::isRevoke(void)
+{
+	return(revoke);
+}
+
+bool Permission::isCascade(void)
+{
+	return(cascade);
+}
+
 void Permission::removeRole(unsigned role_idx)
 {
 	if(role_idx > roles.size())
@@ -239,8 +261,7 @@ void Permission::generatePermissionId(void)
 	vector<Role *>::iterator itr, itr_end;
 	vector<QString> addr_vect;
 	Role *role=NULL;
-	QString str_aux;
-	QString addr;
+	QString str_aux, addr;
 	unsigned i, count;
 	QTextStream stream(&addr);
 
@@ -276,12 +297,12 @@ void Permission::generatePermissionId(void)
 		str_aux="000000";
 
 	/* Configures the permission name as the following:
-		grant_[OBJECT_ID]_([ROLE1_ADDR].[ROLEN_ADDR])
+		[grant|revoke]_[OBJECT_ID]_([ROLE1_ADDR].[ROLEN_ADDR])
 
 		With this name format its possible create an unique id for the permission.
 		Generating errors when the user try to create a second permission
 		with the same configuration as the first. */
-	this->obj_name=QString(ParsersAttributes::PERMISSION + "_%1.%2")
+	this->obj_name=QString((!revoke ? QString("grant") : QString("revoke")) + "_%1.%2")
 								 .arg(object->getObjectId())
 								 .arg(str_aux);
 }
@@ -298,6 +319,9 @@ QString Permission::getCodeDefinition(unsigned def_type)
 													ParsersAttributes::EXECUTE_PRIV, ParsersAttributes::USAGE_PRIV };
 
 	obj_type=object->getObjectType();
+
+	attributes[ParsersAttributes::REVOKE]=(revoke ? "1" : "");
+	attributes[ParsersAttributes::CASCADE]=(cascade ? "1" : "");
 
 	if(obj_type==OBJ_FUNCTION)
 		attributes[ParsersAttributes::OBJECT]=dynamic_cast<Function *>(object)->getSignature();
@@ -347,4 +371,3 @@ QString Permission::getCodeDefinition(unsigned def_type)
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }
-

@@ -89,7 +89,10 @@ class PermissionWidget: public BaseObjectWidget, public Ui::PermissionWidget {
 		void showSelectedRoleData(void);
 
 		void enableEditButtons(void);
+
 		void checkPrivilege(void);
+
+		void disableGrantOptions(void);
 };
 
 #endif

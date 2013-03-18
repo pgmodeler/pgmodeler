@@ -16,7 +16,9 @@
 <!ATTLIST privileges usage (false|true|grant-op) "false">
 <!ATTLIST privileges grant-op (false|true|grant-op) "false">
 
-<!ELEMENT grant (object,roles?,privileges)>
+<!ELEMENT permission (object,roles?,privileges)>
+<!ATTLIST permission revoke (false|true) "false">
+<!ATTLIST permission cascade (false|true) "false">
 
 <!ELEMENT object EMPTY>
 <!ATTLIST object name CDATA #REQUIRED>

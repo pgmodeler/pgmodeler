@@ -1,7 +1,16 @@
 # XML definition for grants
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
-<grant> $br
+<permission
+
+%if @{revoke} %then
+ [ revoke="true"]
+ %if @{cascade} %then
+   [ cascade="true"]
+ %end
+%end
+
+> $br
 
  $tb [<object name=] "@{object}" 
 
@@ -31,4 +40,4 @@
 
  [/>] $br
 
-</grant> $br
+</permission> $br

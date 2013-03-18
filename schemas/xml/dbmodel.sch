@@ -12,5 +12,5 @@
  %end
  > $br
  %if @{objects} %then @{objects} %end
- %if @{grant} %then @{grant} %end
+ %if @{permission} %then @{permission} %end
  </dbmodel> $br
