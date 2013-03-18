@@ -204,7 +204,7 @@ ModelWidget::ModelWidget(QWidget *parent) : QWidget(parent)
 	action_cut->setShortcut(QKeySequence("Ctrl+X"));
 	action_cut->setToolTip(trUtf8("Cut the selected object(s)"));
 
-	action_deps_refs=new QAction(QIcon(QString(":/icones/icones/depsrefs.png")), trUtf8("Depend. / Refer."), this);
+	action_deps_refs=new QAction(QIcon(QString(":/icones/icones/depsrefs.png")), trUtf8("Dependencies"), this);
 	action_deps_refs->setToolTip(trUtf8("Displays objects that reference and that are dependent of the selected object"));
 
 	action_new_object=new QAction(QIcon(QString(":/icones/icones/novoobjeto.png")), trUtf8("New object"), this);
