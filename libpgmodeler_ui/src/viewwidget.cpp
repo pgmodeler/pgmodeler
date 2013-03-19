@@ -160,6 +160,14 @@ void ViewWidget::handleReference(int ref_idx)
 			 !view_def_chk->isChecked())
 			throw Exception(ERR_SQL_SCOPE_INV_VIEW_REF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
+
+		if(view_def_chk->isChecked())
+		{
+			select_from_chk->setChecked(false);
+			from_where_chk->setChecked(false);
+			after_where_chk->setChecked(false);
+		}
+
 		showReferenceData(ref, select_from_chk->isChecked(), from_where_chk->isChecked(),
 													after_where_chk->isChecked(), view_def_chk->isChecked() ,ref_idx);
 
