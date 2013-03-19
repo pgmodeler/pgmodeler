@@ -42,36 +42,16 @@ Known bugs
 Change Log
 ----------
 
-v0.4.1
-------
+v0.4.1_r1
+---------
 
-<em>Release date: March 16, 2013 </em>
+<em>Release date: March 19, 2013 </em>
 
-* [New]: introduced the  "Disable SQL code" option for roles/tablespaces.
-* [New]: user now can add objects by right-clicking group items on "Model Objects" dockwidget tree.
-* [New]: added the abbreviation for time and timesptamp data types both with timezone: timetz and timestamptz.
-* [New]: introduced a object highlight action on "model objects" dockwidget.
-* [Change]: major changes on SQL code generation/export. Introduced a token to help export process to identify the end of each DDL command.
-* [Change]: minor improvements on role editing form.
-* [Change]: when generationg XML code empty tags that stores pure texts are now created with a <![CDATA[]]> tag in order to avoid malformed xml code.
-* [Change]: index FASTUPDATE and FILLFACTOR params is now activated according the indexing type.
-* [Change]: index fill factor now is optional.
-* [Change]: chinese, portuguese and french translations update.
-* [Fix]: pgModeler no longer crash when in error state (showing an exception) and try to auto save the models.
-* [Fix]: minor size adjustments on forms.
-* [Fix]: corrected a bug related to one-to-many relationship validation (endless looping) when changing to automatic suffix generation.
-* [Fix]: corrected the "apply button disabled" bug on constraint edit form.
-* [Fix]: IN/OUT keywords now appears on functions signature.
-* [Fix]: corrected translation bypassing on index edit form.
-* [Fix]: pgModeler no longer crash when triggering the print action.
-* [Fix]: triggers no longer complains about assigning a function without parameters.
-* [Fix]: corrected the loading process for indexes.
-* [Fix]: corrected some bugs related to GiST and index sorting.
-* [Fix]: minor fix on quick rename action when renaming a column with primary key.
-* [Fix]: corrected a bug that was causing pgModeler to complain about duplicated elements when loading indexes.
-* [Fix]: corrected a bug related to main window title when save a model with a different filename.
-* [Fix]: fixed a bug related reload a model file after editing a foreign key.
-* [Fix]: corrected a bug related to invalid chars at task progress.
+* [Change]: user can now prepend a CTE (commom table expression, a.k.a "with queries") on view's definition.
+* [Change]: user can now create a single reference containing a expression that defines the entire view.
+* [Change]: improvements on permissions, user now can control GRANTs and REVOKEs via permission editing form.
+* [Fix]: fixed invalid UTF-8 chars on function definition.
+* [Fix]: fixed unavailable "nocreatedb" role option.
 
 The complete change log can be found on [CHANGELOG.md](https://github.com/pgmodeler/pgmodeler/blob/master/CHANGELOG.md) file.
 

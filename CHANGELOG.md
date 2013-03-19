@@ -4,6 +4,10 @@ Changelog
 v0.4.1_r1
 ---------
 
+<em>Release date: March 19, 2013 </em>
+
+* [Change]: user can now prepend a CTE (commom table expression, a.k.a "with queries") on view's definition.
+* [Change]: user can now create a single reference containing a expression that defines the entire view.
 * [Change]: improvements on permissions, user now can control GRANTs and REVOKEs via permission editing form.
 * [Fix]: fixed invalid UTF-8 chars on function definition.
 * [Fix]: fixed unavailable "nocreatedb" role option.
