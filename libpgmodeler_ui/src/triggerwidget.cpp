@@ -110,7 +110,7 @@ void TriggerWidget::addColumn(int lin_idx)
 		column=reinterpret_cast<Column *>(column_cmb->itemData(column_cmb->currentIndex(),Qt::UserRole).value<void *>());
 		column_cmb->removeItem(column_cmb->currentIndex());
 		addColumn(column, lin_idx);
-		columns_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+		columns_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -150,7 +150,7 @@ void TriggerWidget::updateColumnsCombo(void)
 			}
 		}
 
-		columns_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+		columns_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -248,7 +248,7 @@ void TriggerWidget::setAttributes(DatabaseModel *model, Table *parent_table, Ope
 			arguments_tab->setCellText(trigger->getArgument(i), i, 0);
 		}
 
-		columns_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+		columns_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 		arguments_tab->blockSignals(false);
 		columns_tab->blockSignals(false);
 	}

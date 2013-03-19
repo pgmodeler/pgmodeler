@@ -30,7 +30,7 @@ ObjectTableWidget::ObjectTableWidget(unsigned button_conf, bool conf_exclusion, 
 	connect(edit_tb, SIGNAL(clicked(bool)), this, SLOT(editRow(void)));
 	connect(update_tb, SIGNAL(clicked(bool)), this, SLOT(updateRow(void)));
 	connect(remove_all_tb, SIGNAL(clicked(bool)), this, SLOT(removeRows(void)));
-	connect(table_tbw, SIGNAL(cellClicked(int,int)), this, SLOT(enableButtons(void)));
+	connect(table_tbw, SIGNAL(cellClicked(int,int)), this, SLOT(setButtonsEnabled(void)));
 	connect(table_tbw, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(editRow(void)));
 
 	this->conf_exclusion=conf_exclusion;
@@ -258,7 +258,7 @@ void ObjectTableWidget::addColumn(unsigned col_idx)
 
 	table_tbw->insertColumn(col_idx);
 	table_tbw->clearSelection();
-	enableButtons();
+	setButtonsEnabled();
 
 	emit s_columnAdded(col_idx);
 }
@@ -274,7 +274,7 @@ void ObjectTableWidget::selectRow(int lin_idx)
 		item=table_tbw->item(lin_idx,0);
 		item->setSelected(true);
 		table_tbw->setCurrentItem(item);
-		enableButtons();
+		setButtonsEnabled();
 	}
 }
 
@@ -303,7 +303,7 @@ void ObjectTableWidget::addRow(unsigned lin_idx)
 void ObjectTableWidget::addRow(void)
 {
 	this->addRow(table_tbw->rowCount());
-	enableButtons();
+	setButtonsEnabled();
 
 	emit s_rowAdded(table_tbw->rowCount()-1);
 }
@@ -351,7 +351,7 @@ void ObjectTableWidget::removeRow(void)
 			{
 				table_tbw->removeRow(row_idx);
 				table_tbw->setCurrentItem(NULL);
-				enableButtons();
+				setButtonsEnabled();
 
 				emit s_rowRemoved(row_idx);
 			}
@@ -378,7 +378,7 @@ void ObjectTableWidget::removeRows(void)
 			while(table_tbw->rowCount() > 0)
 				table_tbw->removeRow(0);
 
-			enableButtons();
+			setButtonsEnabled();
 
 			emit s_rowsRemoved();
 		}
@@ -392,7 +392,7 @@ void ObjectTableWidget::removeColumn(unsigned col_idx)
 
 	table_tbw->removeColumn(col_idx);
 	table_tbw->clearSelection();
-	enableButtons();
+	setButtonsEnabled();
 
 	emit s_columnRemoved(col_idx);
 }
@@ -476,7 +476,7 @@ void ObjectTableWidget::moveRows(void)
 			}
 		}
 
-		enableButtons();
+		setButtonsEnabled();
 		emit s_rowsMoved(row, row1);
 	}
 }
@@ -495,10 +495,10 @@ void ObjectTableWidget::clearSelection(void)
 {
 	table_tbw->clearSelection();
 	table_tbw->setCurrentItem(NULL);
-	enableButtons();
+	setButtonsEnabled();
 }
 
-void ObjectTableWidget::enableButtons(unsigned button_conf, bool value)
+void ObjectTableWidget::setButtonsEnabled(unsigned button_conf, bool value)
 {
 	int lin=-1;
 	QTableWidgetItem *item=table_tbw->currentItem();
@@ -530,11 +530,11 @@ void ObjectTableWidget::enableButtons(unsigned button_conf, bool value)
 		update_tb->setEnabled(value && lin >= 0);
 }
 
-void ObjectTableWidget::enableButtons(void)
+void ObjectTableWidget::setButtonsEnabled(void)
 {
 	QTableWidgetItem *item=table_tbw->currentItem();
 
-	enableButtons(ALL_BUTTONS, true);
+	setButtonsEnabled(ALL_BUTTONS, true);
 
 	if(item && item->row() >= 0)
 		emit s_rowSelected(item->row());

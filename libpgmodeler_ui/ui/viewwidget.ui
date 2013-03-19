@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>473</width>
-    <height>251</height>
+    <width>632</width>
+    <height>462</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,39 +36,31 @@
        <property name="spacing">
         <number>6</number>
        </property>
-       <item row="0" column="0">
-        <widget class="QLabel" name="ref_type_lbl">
-         <property name="text">
-          <string>Type:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="ref_type_cmb">
-         <item>
-          <property name="text">
-           <string>Column</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Expression</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="0" column="2" colspan="3">
+       <item row="0" column="2" colspan="4">
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>249</width>
-           <height>21</height>
+           <width>40</width>
+           <height>20</height>
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="ref_type_lbl">
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Type:</string>
+         </property>
+        </widget>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="used_in_lbl">
@@ -77,10 +69,16 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1" colspan="4">
+       <item row="1" column="1" colspan="5">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QCheckBox" name="select_from_chk">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>SELECT-FROM</string>
            </property>
@@ -88,6 +86,12 @@
          </item>
          <item>
           <widget class="QCheckBox" name="from_where_chk">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>FROM-WHERE</string>
            </property>
@@ -95,8 +99,27 @@
          </item>
          <item>
           <widget class="QCheckBox" name="after_where_chk">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>After WHERE</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="view_def_chk">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>View Definition</string>
            </property>
           </widget>
          </item>
@@ -109,7 +132,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="3">
+       <item row="2" column="4">
         <widget class="QLabel" name="tab_alias_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -122,7 +145,7 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="4">
+       <item row="2" column="5">
         <widget class="QLineEdit" name="tab_alias_edt">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -139,7 +162,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="3">
+       <item row="3" column="4">
         <widget class="QLabel" name="col_alias_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -152,7 +175,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="4">
+       <item row="3" column="5">
         <widget class="QLineEdit" name="col_alias_edt">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -169,7 +192,7 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1" colspan="4">
+       <item row="4" column="1" colspan="5">
         <widget class="QTextEdit" name="expression_txt">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -197,7 +220,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
+       <item row="6" column="0">
         <widget class="QLabel" name="expr_alias_lbl">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -210,7 +233,21 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="1" colspan="2">
+       <item row="0" column="1">
+        <widget class="QComboBox" name="ref_type_cmb">
+         <item>
+          <property name="text">
+           <string>Column</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Expression</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="6" column="1" colspan="2">
         <widget class="QLineEdit" name="expr_alias_edt">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -220,18 +257,22 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="3" colspan="2">
-        <spacer name="horizontalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="CTE">
+      <attribute name="title">
+       <string>Table Expression</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QTextEdit" name="cte_expression_txt">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>203</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+        </widget>
        </item>
       </layout>
      </widget>

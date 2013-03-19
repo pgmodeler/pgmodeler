@@ -25,4 +25,9 @@
  %if @{simple-exp} %then
   [<expression type="simple-exp">] @{simple-exp} </expression> $br
  %end
+
+ %if @{cte-exp} %then
+  [<expression type="cte-exp">] <! $ob CDATA $ob @{cte-exp} $cb $cb ></expression> $br
+ %end
+
 </view> $br $br

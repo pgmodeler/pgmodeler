@@ -3,18 +3,13 @@
 #          Code generation can be broken if incorrect changes are made.
 $tb <reference
 
-
-#%if @{view} %then
-#  [ view=] "@{view}" 
-#%end
-
 %if @{table} %then
   [ table=] "@{table}" 
   %if @{column} %then [ column=] "@{column}" %end
   %if @{alias} %then [ alias=] "@{alias}" %end
   %if @{column-alias} %then [ column-alias=] "@{column-alias}" %end
 %else
-  [ alias=] "@{alias}"
+  %if @{alias} %then [ alias=] "@{alias}" %end
 %end
 
 %if @{expression} %then

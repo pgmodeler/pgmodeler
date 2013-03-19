@@ -38,7 +38,7 @@ void GraphicalView::configureObject(void)
 {
 	View *view=dynamic_cast<View *>(this->getSourceObject());
 	QPolygonF pol;
-	int i, count;
+	int i, count, count1=0;
 	Reference ref;
 	float width;
 	QPen pen;
@@ -51,6 +51,10 @@ void GraphicalView::configureObject(void)
 	//Gets the reference count on SELECT part of the SQL definition
 	count=view->getReferenceCount(Reference::SQL_REFER_SELECT);
 
+	if(count==0)
+		count=count1=view->getReferenceCount(Reference::SQL_VIEW_DEFINITION);
+
+
 	//Moves the references group to the origin to be moved latter
 	references->moveBy(-references->scenePos().x(),
 										 -references->scenePos().y());
@@ -59,7 +63,10 @@ void GraphicalView::configureObject(void)
 
 	for(i=0; i < count; i++)
 	{
-		ref=view->getReference(i, Reference::SQL_REFER_SELECT);
+		if(count1==0)
+			ref=view->getReference(i, Reference::SQL_REFER_SELECT);
+		else
+			ref=view->getReference(i, Reference::SQL_VIEW_DEFINITION);
 
 		//Reuses the subitem if it was allocated before
 		if(!subitems.isEmpty() && i < subitems.size())

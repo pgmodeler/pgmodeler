@@ -34,10 +34,15 @@ class View: public BaseTable {
 		vector<Reference> references;
 
 		/*! \brief Vectors that stores indexes to the view references in each
-		 SQL part: SELECT-FROM, FROM-WHERE and after WHERE */
+		 SQL part: SELECT-FROM, FROM-WHERE, after WHERE*/
 		vector<unsigned>	exp_select,
 											exp_from,
 											exp_where;
+
+		/*! \brief Commom table expression. This is prepend on the views definition.
+		CTE's are available since PostgreSQL 8.4:
+			> http://www.postgresql.org/docs/8.4/interactive/queries-with.html */
+		QString cte_expression;
 
 		//! \brief Sets the declaration attribute used by the SchemaParser
 		void setDeclarationAttribute(void);
@@ -61,7 +66,10 @@ class View: public BaseTable {
 		 new references at the end of the list */
 		void addReference(Reference &refer, unsigned sql_type, int expr_id=-1);
 
-		/*! \brief Remove the reference from the view using its index, removing all the elements
+		//! \brief Sets the commom table expression for the view
+		void setCommomTableExpression(const QString &expr);
+
+			/*! \brief Remove the reference from the view using its index, removing all the elements
 		 from the exp_??? vectors when they make use of the deleted reference. */
 		void removeReference(unsigned ref_id);
 
@@ -70,6 +78,9 @@ class View: public BaseTable {
 
 		//! \brief Removes an element from the expression list specified by the 'sql_type' parameter
 		void removeReference(unsigned expr_id, unsigned sql_type);
+
+		//! \brief Returns the commom table expression
+		QString getCommomTableExpression(void);
 
 		//! \brief Returns the reference count from view
 		unsigned getReferenceCount(void);
@@ -104,6 +115,9 @@ class View: public BaseTable {
 
 		//! \brief Returns if the view is referencing the specified column
 		bool isReferencingColumn(Column *col);
+
+		//! \brief Returns if the view has an reference expression that is used as view definition
+		bool hasDefinitionExpression(void);
 
 		//! \brief Copy the attributes between two views
 		void operator = (View &visao);

@@ -582,7 +582,7 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 											regexp.setPatternSyntax(QRegExp::FixedString);
 
 										if(expr_type=="" ||
-											 expr_type==ParsersAttributes::EXP_SIMPLES ||
+											 expr_type==ParsersAttributes::SIMPLE_EXP ||
 											 expr_type==ParsersAttributes::INITIAL_EXP)
 											initial_exprs[group].push_back(regexp);
 										else

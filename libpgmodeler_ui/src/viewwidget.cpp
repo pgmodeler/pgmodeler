@@ -36,6 +36,12 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 																			 GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																			 GlobalAttributes::CONFIGURATION_EXT);
 
+		cte_expression_hl=new SyntaxHighlighter(cte_expression_txt, false);
+		cte_expression_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
+																			 GlobalAttributes::DIR_SEPARATOR +
+																			 GlobalAttributes::SQL_HIGHLIGHT_CONF +
+																			 GlobalAttributes::CONFIGURATION_EXT);
+
 		table_sel=new ObjectSelectorWidget(OBJ_TABLE, true, this);
 		column_sel=new ObjectSelectorWidget(OBJ_COLUMN, true, this);
 
@@ -44,7 +50,7 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		references_tab->setHeaderLabel(trUtf8("Col./Expr."),0);
 		references_tab->setHeaderLabel(trUtf8("Alias"),1);
 		references_tab->setHeaderLabel(trUtf8("Alias Col."),2);
-		references_tab->setHeaderLabel(trUtf8("SF FW AW"),3);
+		references_tab->setHeaderLabel(trUtf8("Flags: SF FW AW VD"),3);
 
 		frame_info=generateInformationFrame(trUtf8("To reference all columns in a table (*) just do not fill the field <strong>Column</strong>, this is the same as write <em><strong>[schema].[tablel].*</strong></em>"));
 
@@ -65,6 +71,13 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 		connect(references_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editReference(int)));
 		connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(updateCodePreview(void)));
 
+		connect(view_def_chk, SIGNAL(toggled(bool)), select_from_chk, SLOT(setDisabled(bool)));
+		connect(view_def_chk, SIGNAL(toggled(bool)), from_where_chk, SLOT(setDisabled(bool)));
+		connect(view_def_chk, SIGNAL(toggled(bool)), after_where_chk, SLOT(setDisabled(bool)));
+		connect(view_def_chk, SIGNAL(toggled(bool)), expr_alias_edt, SLOT(setDisabled(bool)));
+		connect(view_def_chk, SIGNAL(toggled(bool)), expr_alias_lbl, SLOT(setDisabled(bool)));
+
+
 		parent_form->setMinimumSize(650, 630);
 		selectReferenceType();
 	}
@@ -77,6 +90,9 @@ ViewWidget::ViewWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_VIEW)
 void ViewWidget::hideEvent(QHideEvent *evento)
 {
 	references_tab->removeRows();
+	tabWidget->setCurrentIndex(0);
+	cte_expression_txt->clear();
+	clearReferenceForm();
 	BaseObjectWidget::hideEvent(evento);
 }
 
@@ -108,10 +124,12 @@ void ViewWidget::selectReferenceType(void)
 	tab_alias_lbl->setVisible(ref_obj);
 	frame_info->setVisible(ref_obj);
 
+	view_def_chk->setChecked(false);
 	expression_lbl->setVisible(!ref_obj);
 	expression_txt->setVisible(!ref_obj);
 	expr_alias_edt->setVisible(!ref_obj);
 	expr_alias_lbl->setVisible(!ref_obj);
+	view_def_chk->setVisible(!ref_obj);
 }
 
 void ViewWidget::handleReference(int ref_idx)
@@ -138,11 +156,12 @@ void ViewWidget::handleReference(int ref_idx)
 			 if the user do not check some of these attributes raises an error */
 		if(!select_from_chk->isChecked() &&
 			 !from_where_chk->isChecked() &&
-			 !after_where_chk->isChecked())
+			 !after_where_chk->isChecked() &&
+			 !view_def_chk->isChecked())
 			throw Exception(ERR_SQL_SCOPE_INV_VIEW_REF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		showReferenceData(ref, select_from_chk->isChecked(), from_where_chk->isChecked(),
-													after_where_chk->isChecked(), ref_idx);
+													after_where_chk->isChecked(), view_def_chk->isChecked() ,ref_idx);
 
 		clearReferenceForm();
 		references_tab->clearSelection();
@@ -185,6 +204,7 @@ void ViewWidget::editReference(int ref_idx)
 	select_from_chk->setChecked(str_aux[0]=='1');
 	from_where_chk->setChecked(str_aux[1]=='1');
 	after_where_chk->setChecked(str_aux[2]=='1');
+	view_def_chk->setChecked(str_aux[3]=='1');
 }
 
 void ViewWidget::showObjectName(void)
@@ -217,7 +237,7 @@ void ViewWidget::showObjectName(void)
 	}
 }
 
-void ViewWidget::showReferenceData(Reference refer, bool selec_from, bool from_where, bool after_where, unsigned row)
+void ViewWidget::showReferenceData(Reference refer, bool selec_from, bool from_where, bool after_where, bool view_def, unsigned row)
 {
 	Table *tab=NULL;
 	Column *col=NULL;
@@ -241,22 +261,21 @@ void ViewWidget::showReferenceData(Reference refer, bool selec_from, bool from_w
 
 		if(col)
 			references_tab->setCellText(Utf8String::create(refer.getColumnAlias()),row,2);
-		else
-			references_tab->setCellText(QString("-"),row,2);
 	}
 	else
 	{
 		references_tab->setCellText(Utf8String::create(refer.getExpression()),row,0);
 		references_tab->setCellText(Utf8String::create(refer.getAlias()),row,1);
-		references_tab->setCellText(QString("-"),row,2);
 	}
 
 	//Configures the string that denotes the SQL application for the reference
 	str_aux+=(selec_from ? "1" : "0");
 	str_aux+=(from_where ? "1" : "0");
 	str_aux+=(after_where ? "1" : "0");
+	str_aux+=(view_def ? "1" : "0");
 	references_tab->setCellText(str_aux,row,3);
 
+	refer.setDefinitionExpression(view_def);
 	references_tab->setRowData(QVariant::fromValue<Reference>(refer), row);
 	updateCodePreview();
 }
@@ -265,16 +284,17 @@ void ViewWidget::updateCodePreview(void)
 {
 	Reference refer;
 	QString str_aux;
-	unsigned i, count, i1, expr_type[3]={Reference::SQL_REFER_SELECT,
-																		Reference::SQL_REFER_FROM,
-																		Reference::SQL_REFER_WHERE};
+	unsigned i, count, i1, expr_type[4]={Reference::SQL_REFER_SELECT,
+																			 Reference::SQL_REFER_FROM,
+																			 Reference::SQL_REFER_WHERE,
+																			 Reference::SQL_VIEW_DEFINITION};
 	try
 	{
 		//Clears the auxiliary view
 		aux_view.removeReferences();
-
 		aux_view.BaseObject::setName(name_edt->text().toUtf8());
 		aux_view.setSchema(schema_sel->getSelectedObject());
+		aux_view.setCommomTableExpression(cte_expression_txt->toPlainText().toUtf8());
 
 		count=references_tab->getRowCount();
 		for(i=0; i < count; i++)
@@ -284,7 +304,7 @@ void ViewWidget::updateCodePreview(void)
 			//Get the SQL application string for the current reference
 			str_aux=references_tab->getCellText(i,3);
 
-			for(i1=0; i1 < 3; i1++)
+			for(i1=0; i1 < 4; i1++)
 			{
 				if(str_aux[i1]=='1')
 					aux_view.addReference(refer, expr_type[i1]);
@@ -296,14 +316,16 @@ void ViewWidget::updateCodePreview(void)
 	catch(Exception &e)
 	{
 		//In case of error no code is outputed, showing a error message in the code preview widget
-		code_txt->setPlainText(trUtf8("-- Could not generate the code. Make sure all attributes are correctly filled! --"));
+		str_aux=trUtf8("/* Could not generate the SQL code. Make sure all attributes are correctly filled! ");
+		str_aux+=QString("\n\n>> Returned error(s): \n\n%1*/").arg(e.getExceptionsText());
+		code_txt->setPlainText(str_aux);
 	}
 }
 
 void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, View *view, float px, float py)
 {
 	unsigned i, count;
-	bool sel_from, from_where, after_where;
+	bool sel_from, from_where, after_where, view_def;
 	Reference refer;
 
 	BaseObjectWidget::setAttributes(model,op_list, view, schema, px, py);
@@ -313,9 +335,11 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 
 	if(view)
 	{
-		count=view->getReferenceCount();
+		cte_expression_txt->setPlainText(Utf8String::create(view->getCommomTableExpression()));
 
+		count=view->getReferenceCount();
 		references_tab->blockSignals(true);
+
 		for(i=0; i < count; i++)
 		{
 			references_tab->addRow();
@@ -324,8 +348,9 @@ void ViewWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sch
 			sel_from=(view->getReferenceIndex(refer,Reference::SQL_REFER_SELECT) >= 0);
 			from_where=(view->getReferenceIndex(refer,Reference::SQL_REFER_FROM) >= 0);
 			after_where=(view->getReferenceIndex(refer,Reference::SQL_REFER_WHERE)>= 0);
+			view_def=(view->getReferenceIndex(refer,Reference::SQL_VIEW_DEFINITION)>= 0);
 
-			showReferenceData(refer, sel_from, from_where, after_where, i);
+			showReferenceData(refer, sel_from, from_where, after_where, view_def, i);
 		}
 
 		references_tab->blockSignals(false);

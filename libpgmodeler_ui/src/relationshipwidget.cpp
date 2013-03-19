@@ -275,8 +275,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		deferrable_chk->setChecked(aux_rel->isDeferrable());
 		relnn_tab_name_edt->setText(aux_rel->getTableNameRelNN());
 
-		attributes_tab->enableButtons(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
-		constraints_tab->enableButtons(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
+		attributes_tab->setButtonsEnabled(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
+		constraints_tab->setButtonsEnabled(ObjectTableWidget::ALL_BUTTONS, !aux_rel->isProtected());
 
 		//Lists the relationship attributes
 		listObjects(OBJ_COLUMN);
@@ -397,7 +397,7 @@ void RelationshipWidget::listObjects(ObjectType obj_type)
 		tab->clearSelection();
 		tab->blockSignals(false);
 
-		constraints_tab->enableButtons(ObjectTableWidget::ADD_BUTTON,
+		constraints_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON,
 																		attributes_tab->getRowCount() > 0);
 	}
 	catch(Exception &e)

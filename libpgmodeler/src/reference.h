@@ -44,6 +44,9 @@ class Reference {
 		//! \brief Stores only the alias for the column
 		column_alias;
 
+		//! \brief Indicates if the expression is used as entire view definition
+		bool is_def_expr;
+
 	public:
 		//! \brief Constants used to define the reference type
 		static const unsigned REFER_COLUMN=0, //! \brief The reference is based on a table column
@@ -52,7 +55,8 @@ class Reference {
 		//! \brief Constants used on the view code generation
 		static const unsigned SQL_REFER_WHERE=10,
 													SQL_REFER_SELECT=20,
-													SQL_REFER_FROM=30;
+													SQL_REFER_FROM=30,
+													SQL_VIEW_DEFINITION=40;
 
 		Reference(void);
 
@@ -61,6 +65,10 @@ class Reference {
 
 		//! \brief Creates a reference based on a expression
 		Reference(const QString &expression, const QString &expr_alias);
+
+		/*! \brief Changes the behavior of the expression. Calling this method will cause the
+		reference to be used as the entire view SQL definition */
+		void setDefinitionExpression(bool value);
 
 		//! \brief Gets the referenced table
 		Table *getTable(void);
@@ -85,6 +93,9 @@ class Reference {
 
 		//! \brief Returns the XML code definition
 		QString getXMLDefinition(void);
+
+		//! \brief Indicates if the reference when used as expression defines the entire view (raw sql definition)
+		bool isDefinitionExpression(void);
 
 		/*! \brief Compare the attributes of two references returning true
 		 when they have the same values */

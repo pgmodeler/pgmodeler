@@ -161,7 +161,7 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REF_LIN_OBJTAB_INV_INDEX", QT_TR_NOOP("Reference to a row of the objects table with invalid index!")},
 	{"ERR_OPR_RESERVED_OBJECT", QT_TR_NOOP("The schema public and the languages plpgsql, c and sql can not be manipulated because they are reserved to PostgreSQL! They are present in the model database only as a reference!")},
 	{"ERR_FUNC_CONFIG_INV_OBJECT", QT_TR_NOOP("The new configuration function invalidates the object '%1' (%2)! In this case it is needed to undo the relationship between the affected object and function so that the new configuration of the latter to take effect!")},
-	{"ERR_SQL_SCOPE_INV_VIEW_REF", QT_TR_NOOP("A vision reference must have at least one SQL scope: SELECT, FROM, FROM-WHERE or After WHERE!")},
+	{"ERR_SQL_SCOPE_INV_VIEW_REF", QT_TR_NOOP("A view reference must be used in at least one these SQL scopes: View Definition, SELECT-FROM, FROM-WHERE or After WHERE!")},
 	{"ERR_CONSTR_NO_COLUMNS", QT_TR_NOOP("Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!")},
 	{"ERR_CONFIG_NOT_LOADED", QT_TR_NOOP("Unable to load one or more configuration files! Please check if files exists in the configuration folder and if they are not corrupted to preventing this error to occur again on the next startup!")},
 	{"ERR_DEFAULT_CONFIG_NOT_REST", QT_TR_NOOP("Could not find the default settings file '%1'! To restore default settings check the existence of the file and try again!")},
@@ -194,6 +194,9 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_REF_TUPLE_COL_INV_NAME", QT_TR_NOOP("Reference to a column of tuple with invalid name!")},
 	{"ERR_REF_TUPLANAOEXISTE", QT_TR_NOOP("Reference to a tuple with index invalid or the result is empty (no tuples)!")},
 	{"ERR_CMD_SQL_NOT_EXECUTED", QT_TR_NOOP("Could not execute the SQL command.\n Message returned: %1")},
+	{"ERR_INV_VIEW_DEF_EXPRESSION", QT_TR_NOOP("Invalid use of a view referece as whole SQL definition! The assigned reference must be an expression!")},
+	{"ERR_ASG_SEC_VIEW_DEF_EXPRESSION", QT_TR_NOOP("Assignment of a second definition expression to the view!")},
+	{"ERR_MIX_VIEW_DEF_EXPR_REFS", QT_TR_NOOP("It's not possible mix ordinary references (SELECT-FROM, FROM-WHERE, After WHERE) with references used as view SQL definition!")},
 };
 
 Exception::Exception(void)

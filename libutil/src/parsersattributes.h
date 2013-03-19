@@ -200,7 +200,7 @@ namespace ParsersAttributes {
 	REFERENCE="reference",
 	SELECT_EXP="select-exp",
 	FROM_EXP="from-exp",
-	EXP_SIMPLES="simple-exp",
+	SIMPLE_EXP="simple-exp",
 	ALIAS="alias",
 	COLUMN_ALIAS="column-alias",
 	SRC_REQUIRED="src-required",
@@ -348,7 +348,8 @@ namespace ParsersAttributes {
 	DDL_END_TOKEN="-- ddl-end --",
 	SQL_DISABLED="sql-disabled",
 	REVOKE="revoke",
-	CASCADE="cascade";
+	CASCADE="cascade",
+	CTE_EXPRESSION="cte-exp";
 }
 
 #endif

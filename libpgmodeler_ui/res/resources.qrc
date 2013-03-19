@@ -141,6 +141,7 @@
         <file>icones/relationshipfk.png</file>
         <file>icones/help.png</file>
         <file>icones/permission.png</file>
+        <file>icones/permission_grp.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

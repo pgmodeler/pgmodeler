@@ -48,14 +48,15 @@ class ViewWidget: public BaseObjectWidget, public Ui::ViewWidget {
 		ObjectTableWidget *references_tab;
 
 		SyntaxHighlighter *expression_hl,
-											*code_hl;
+											*code_hl,
+											*cte_expression_hl;
 
 		ObjectSelectorWidget *table_sel,
 												*column_sel;
 
 		//! \brief Shows the reference at the reference's table
 		void showReferenceData(Reference refer, bool selec_from, bool from_where,
-													 bool after_where, unsigned row);
+													 bool after_where, bool view_def, unsigned row);
 
 		void clearReferenceForm(void);
 		void hideEvent(QHideEvent *);

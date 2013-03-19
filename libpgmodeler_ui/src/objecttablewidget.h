@@ -127,7 +127,7 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		void updateRow(void);
 
 		//! \brief Enables the handle buttons according to the selected row
-		void enableButtons(void);
+		void setButtonsEnabled(void);
 
 	public slots:
 		//! \brief Adds a new row at the end of the table
@@ -146,7 +146,7 @@ class ObjectTableWidget: public QWidget, public Ui::ObjectTableWidget {
 		void selectRow(int lin_idx);
 
 		//! \brief Controls the enable state of each button
-		void enableButtons(unsigned button_conf, bool value);
+		void setButtonsEnabled(unsigned button_conf, bool value);
 
 	signals:
 		//! \brief Signal emitted when a new row is added. The new row index is send with the signal

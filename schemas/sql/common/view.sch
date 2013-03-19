@@ -6,7 +6,14 @@
 [-- object: ] @{name} [ | type: ] @{sql-object} [ -- ] $br
 
 [CREATE OR REPLACE VIEW ] @{name} $br
-[AS ] @{declaration}; $br
+[AS ]
+
+#Commom table expression (CTE)
+%if @{cte-exp} %then
+ [WITH ] @{cte-exp}
+%end
+
+@{declaration}; $br
 
 %if @{comment} %then @{comment} %end
 

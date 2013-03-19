@@ -662,21 +662,21 @@ void DatabaseModel::setProtected(bool value)
 
 void DatabaseModel::destroyObjects(void)
 {
-	ObjectType types[20]={
+	ObjectType types[]={
 		BASE_RELATIONSHIP,OBJ_RELATIONSHIP, OBJ_TABLE, OBJ_VIEW,
 		OBJ_AGGREGATE, OBJ_OPERATOR,
 		OBJ_SEQUENCE, OBJ_CONVERSION,
 		OBJ_CAST, OBJ_OPFAMILY, OBJ_OPCLASS,
 		BASE_RELATIONSHIP, OBJ_TEXTBOX,
 		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
-		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE };
+		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE, OBJ_PERMISSION };
 	vector<BaseObject *> *list=NULL;
 	BaseObject *object=NULL;
-	unsigned i;
+	unsigned i, cnt=sizeof(types)/sizeof(ObjectType);
 
 	disconnectRelationships();
 
-	for(i=0; i < 20; i++)
+	for(i=0; i < cnt; i++)
 	{
 		list=getObjectList(types[i]);
 
@@ -4757,6 +4757,7 @@ View *DatabaseModel::createView(void)
 	vector<Reference> refs;
 	unsigned type;
 	int ref_idx, i, count;
+	bool refs_in_expr=false;
 
 	try
 	{
@@ -4835,22 +4836,32 @@ View *DatabaseModel::createView(void)
 					{
 						XMLParser::savePosition();
 						XMLParser::getElementAttributes(attribs);
-
-						if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::SELECT_EXP)
-							type=Reference::SQL_REFER_SELECT;
-						else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FROM_EXP)
-							type=Reference::SQL_REFER_FROM;
-						else
-							type=Reference::SQL_REFER_WHERE;
-
 						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-						list_aux=XMLParser::getElementContent().split(',');
-						count=list_aux.size();
 
-						for(i=0; i < count; i++)
+						if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::CTE_EXPRESSION)
+							view->setCommomTableExpression(XMLParser::getElementContent());
+						else
 						{
-							ref_idx=list_aux[i].toInt();
-							view->addReference(refs[ref_idx],type);
+							if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::SELECT_EXP)
+								type=Reference::SQL_REFER_SELECT;
+							else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FROM_EXP)
+								type=Reference::SQL_REFER_FROM;
+							else
+								type=Reference::SQL_REFER_WHERE;
+
+
+							list_aux=XMLParser::getElementContent().split(',');
+							count=list_aux.size();
+
+							//Indicates that some of the references were used in the expressions
+							if(cout > 0 && !refs_in_expr)
+								refs_in_expr=true;
+
+							for(i=0; i < count; i++)
+							{
+								ref_idx=list_aux[i].toInt();
+								view->addReference(refs[ref_idx],type);
+							}
 						}
 
 						XMLParser::restorePosition();
@@ -4858,6 +4869,28 @@ View *DatabaseModel::createView(void)
 				}
 			}
 			while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+		}
+
+		/** Special case for refereces used as view definition **
+
+			If the flag 'refs_in_expr' isn't set indicates that the user defined a reference
+			but no used to define the view declaration, this way pgModeler will consider these
+			references as View definition expressions and will force the insertion them as
+			Reference::SQL_VIEW_DEFINITION.
+
+		This process can raise errors because if the user defined more than one reference the view
+		cannot accept the two as it's SQL definition, also the defined references MUST be expressions in
+		order to be used as view definition */
+		if(!refs.empty() && !refs_in_expr)
+		{
+			vector<Reference>::iterator itr;
+
+			itr=refs.begin();
+			while(itr!=refs.end())
+			{
+			 view->addReference(*itr, Reference::SQL_VIEW_DEFINITION);
+			 itr++;
+			}
 		}
 	}
 	catch(Exception &e)

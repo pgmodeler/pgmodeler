@@ -10,7 +10,7 @@
 <!ELEMENT condition (#PCDATA)>
 
 <!ELEMENT expression (#PCDATA)>
-<!ATTLIST expression type (none|select-exp|from-exp|simple-exp) "none">
+<!ATTLIST expression type (none|select-exp|from-exp|simple-exp|cte-exp) "none">
 
 <!ELEMENT position EMPTY>
 <!ATTLIST position x CDATA "0">

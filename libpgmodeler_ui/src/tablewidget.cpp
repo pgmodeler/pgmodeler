@@ -301,11 +301,11 @@ void TableWidget::listObjects(ObjectType obj_type)
 		//Enables the add button on the constraints, triggers and index tab only when there is columns created
 		if(obj_type==OBJ_COLUMN)
 		{
-			objects_tab_map[OBJ_CONSTRAINT]->enableButtons(ObjectTableWidget::ADD_BUTTON,
+			objects_tab_map[OBJ_CONSTRAINT]->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON,
 																											objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
-			objects_tab_map[OBJ_TRIGGER]->enableButtons(ObjectTableWidget::ADD_BUTTON,
+			objects_tab_map[OBJ_TRIGGER]->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON,
 																									 objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
-			objects_tab_map[OBJ_INDEX]->enableButtons(ObjectTableWidget::ADD_BUTTON,
+			objects_tab_map[OBJ_INDEX]->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON,
 																								 objects_tab_map[OBJ_COLUMN]->getRowCount() > 0);
 		}
 	}

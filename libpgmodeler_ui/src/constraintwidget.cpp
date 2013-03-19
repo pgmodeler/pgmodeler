@@ -132,7 +132,7 @@ void ConstraintWidget::addColumn(int row)
 		addColumn(column, col_id, row);
 
 		//When there is no items con the combo the insert button of the table is disabled
-		aux_col_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (combo->count()!=0));
+		aux_col_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (combo->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -240,7 +240,7 @@ void ConstraintWidget::updateColumnsCombo(unsigned col_id)
 				combo->addItem(Utf8String::create(column->getName()) + " (" + ~column->getType() +")", QVariant::fromValue<void *>(column));
 		}
 
-		aux_col_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (combo->count()!=0));
+		aux_col_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (combo->count()!=0));
 	}
 	catch(Exception &e)
 	{
@@ -368,7 +368,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 	}
 
 	updateColumnsCombo(Constraint::SOURCE_COLS);
-	columns_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+	columns_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 	columns_tab->blockSignals(false);
 
 	if(constr)
@@ -404,7 +404,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 			}
 
 			updateColumnsCombo(Constraint::REFERENCED_COLS);
-			ref_columns_tab->enableButtons(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
+			ref_columns_tab->setButtonsEnabled(ObjectTableWidget::ADD_BUTTON, (column_cmb->count()!=0));
 			ref_columns_tab->blockSignals(false);
 		}
 	}

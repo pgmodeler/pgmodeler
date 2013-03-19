@@ -145,6 +145,7 @@ void Permission::setPrivilege(unsigned priv_id, bool value, bool grant_op)
 
 	privileges[priv_id]=value;
 	this->grant_option[priv_id]=grant_op;
+	generatePermissionId();
 }
 
 void Permission::setRevoke(bool value)

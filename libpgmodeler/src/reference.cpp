@@ -22,6 +22,7 @@ Reference::Reference(void)
 {
 	this->table=NULL;
 	this->column=NULL;
+	this->is_def_expr=false;
 }
 
 Reference::Reference(Table *table, Column *column, const QString &tab_alias, const QString &col_alias)
@@ -43,6 +44,7 @@ Reference::Reference(Table *table, Column *column, const QString &tab_alias, con
 	this->column=column;
 	this->alias=tab_alias;
 	this->column_alias=col_alias;
+	this->is_def_expr=false;
 }
 
 Reference::Reference(const QString &expression, const QString &expr_alias)
@@ -51,13 +53,24 @@ Reference::Reference(const QString &expression, const QString &expr_alias)
 	if(expression=="")
 		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	//Raises an error if the expression alias has an invalid name
-	else if(!BaseObject::isValidName(expr_alias))
+	else if(!expr_alias.isEmpty() && !BaseObject::isValidName(expr_alias))
 		throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	table=NULL;
 	column=NULL;
 	alias=expr_alias;
 	this->expression=expression;
+	this->is_def_expr=false;
+}
+
+void Reference::setDefinitionExpression(bool value)
+{
+	is_def_expr=value;
+}
+
+bool Reference::isDefinitionExpression(void)
+{
+	return(is_def_expr);
 }
 
 Table *Reference::getTable(void)
@@ -107,16 +120,10 @@ QString Reference::getSQLDefinition(unsigned sql_type)
 		if(refer_type==REFER_COLUMN)
 		{
 			/* Generated SQL definition:
-			{TABLE_NAME|TABLE_ALIAS}.{COLUMN_NAME | *} [AS COLUMN_ALIAS] */
+			[TABLE_ALIAS.]{COLUMN_NAME | *} [AS COLUMN_ALIAS] */
 
-			//Use the real table name when its alias isn't defined
-			if(alias=="")
-				tab_name=table->getName(true);
-			else
-				//Use the table alias when its not empty
-				tab_name=BaseObject::formatName(alias);
-
-			tab_name+=".";
+			if(!alias.isEmpty())
+				tab_name=BaseObject::formatName(alias) + ".";
 
 			/* Case there is no column definede the default behavior is consider
 			all the table columns (e.g. table.*) */
@@ -227,7 +234,8 @@ bool Reference::operator == (Reference &refer)
 		else
 		{
 			return(this->expression==refer.expression &&
-						 this->alias==refer.alias);
+						 this->alias==refer.alias &&
+						 this->is_def_expr==refer.is_def_expr);
 		}
 	}
 	else
