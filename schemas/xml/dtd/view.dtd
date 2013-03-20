@@ -2,7 +2,7 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
            Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT view (schema,comment?,position,reference+,expression+)>
+<!ELEMENT view (schema,comment?,position,reference+,expression*)>
 <!ATTLIST view name CDATA #REQUIRED>
 <!ATTLIST view protected (false|true) "false">
 
