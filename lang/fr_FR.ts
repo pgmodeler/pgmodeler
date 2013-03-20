@@ -1158,12 +1158,12 @@ Taille: %2 bytes
 <context>
     <name>DatabaseModel</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="+2595"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="+2596"/>
         <source>Loading object: %1 (%2)</source>
         <translation>Chargement de l&apos;objet: %1 (%2)</translation>
     </message>
     <message>
-        <location line="+2770"/>
+        <location line="+2807"/>
         <source>Generating %1 of the object: %2 (%3)</source>
         <translation>Génération %1 de l&apos;objet : %2 (%3)</translation>
     </message>
@@ -1635,7 +1635,27 @@ Taille: %2 bytes
         <translation>Insertion d&apos;un élément déjà existant dans la liste des éléments!</translation>
     </message>
     <message>
-        <location line="-66"/>
+        <location line="+57"/>
+        <source>A view reference must be used in at least one these SQL scopes: View Definition, SELECT-FROM, FROM-WHERE or After WHERE!</source>
+        <translation>Un élément constitutif de la vue doit être utilisé au moins dans un des cadres suivants: Définition de la vue, SELECT FROM, FROM WHERE ou Après WHERE!</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Invalid use of a view referece as whole SQL definition! The assigned reference must be an expression!</source>
+        <translation>Utilisation non valide de cette référence en tant que définition SQL! La référence doit être une expression!</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Assignment of a second definition expression to the view!</source>
+        <translation>Assignation d&apos;une seconde expression à la vue!</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>It&apos;s not possible mix ordinary references (SELECT-FROM, FROM-WHERE, After WHERE) with references used as view SQL definition!</source>
+        <translation>Il n&apos;est pas possible de mixer les références habituels (SELECT FROM, FROM WHERE, Après WHERE) avec des référence de définition de vue en SQL!</translation>
+    </message>
+    <message>
+        <location line="-158"/>
         <source>Reference to a parameter which index is out of the parameter list bounds!</source>
         <translation>Référence un paramètre dont l&apos;index est hors des limites de la liste de ces derniers!</translation>
     </message>
@@ -1957,12 +1977,7 @@ Taille: %2 bytes
         <translation>La nouvelle fonction de configuration invalide l&apos;objet &apos;%1&apos; (%2)! Dans ce cas il est nécessaire de supprimer la relation entre les objets concernés et la fonction de manière à ce que ce soit la configuration la plus récente qui soit prise en compte!</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>A vision reference must have at least one SQL scope: SELECT, FROM, FROM-WHERE or After WHERE!</source>
-        <translation>Lors de la définition d&apos;une vue, une référence doit utiliser au moins une des options suivantes:SELECT-FROM, FROM-WHERE ou Après WHERE!</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Constraints like primary key, foreign key or unique must have at least one column related to them! For foreign keys must be selected, in addition, the referenced columns!</source>
         <translation>Les contraintes telles que clef primaire, clef étrangère ou l&apos;unicité doivent avoir au moins une colonne associée! Pour les clefs étrangères, les colonnes référencées doivent également être sélectionnées!</translation>
     </message>
@@ -2853,10 +2868,20 @@ Message retourné par le SGBD: %1</translation>
         <translation>Suivant</translation>
     </message>
     <message>
+        <location line="+3"/>
+        <source>Ctrl+Right</source>
+        <translation>Ctrl+Right</translation>
+    </message>
+    <message>
         <location line="+12"/>
         <location line="+3"/>
         <source>Previous</source>
         <translation>Précédent</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Ctrl+Left</source>
+        <translation>Ctrl+Left</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -2884,7 +2909,17 @@ Message retourné par le SGBD: %1</translation>
         <translation>F3</translation>
     </message>
     <message>
-        <location line="+229"/>
+        <location line="+138"/>
+        <source>Ctrl+H</source>
+        <translation>Ctrl+H</translation>
+    </message>
+    <message>
+        <location line="+88"/>
+        <source>F10</source>
+        <translation>F10</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>pgModeler Wiki</source>
         <translation>Wiki pgModeler</translation>
     </message>
@@ -2894,7 +2929,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>F1</translation>
     </message>
     <message>
-        <location line="-220"/>
+        <location line="-226"/>
         <source>Print</source>
         <translation>Imprimer</translation>
     </message>
@@ -2975,7 +3010,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Aligner les objets sur la grille</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+18"/>
         <source>Fullscreen</source>
         <translation>Plein écran</translation>
     </message>
@@ -3603,8 +3638,8 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Depend. / Refer.</source>
-        <translation>Dépend. / Référ.</translation>
+        <source>Dependencies</source>
+        <translation>Dépendances</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -4299,7 +4334,7 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+30"/>
-        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="+75"/>
+        <location filename="../libpgmodeler_ui/src/permissionwidget.cpp" line="+76"/>
         <source>Roles</source>
         <translation>Rôles</translation>
     </message>
@@ -4335,7 +4370,22 @@ Message retourné par le SGBD: %1</translation>
         <translation>Privilèges</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+15"/>
+        <source>Grant</source>
+        <translation>Grant</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Revoke</source>
+        <translation>Revoke</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Cascade</source>
+        <translation>Cascade</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Privilege</source>
         <translation>Privilège</translation>
     </message>
@@ -4358,6 +4408,11 @@ Message retourné par le SGBD: %1</translation>
         <location line="+12"/>
         <source>Id</source>
         <translation>Identifiant</translation>
+    </message>
+    <message>
+        <location line="+27"/>
+        <source>Leave the &lt;em&gt;&lt;strong&gt;Roles&lt;/strong&gt;&lt;/em&gt; empty to create a permission applicable to &lt;strong&gt;&lt;em&gt;PUBLIC&lt;/em&gt;&lt;/strong&gt;.</source>
+        <translation>Laissez le champ &lt;em&gt;&lt;strong&gt;Roles&lt;/strong&gt;&lt;/em&gt; vide pour créer une permission applicable à &lt;strong&gt;&lt;em&gt;PUBLIC&lt;/em&gt;&lt;/strong&gt;.</translation>
     </message>
 </context>
 <context>
@@ -4516,12 +4571,12 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5337"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5375"/>
         <source>new_database</source>
         <translation>nouvelle_base</translation>
     </message>
     <message>
-        <location line="+2591"/>
+        <location line="+2592"/>
         <location line="+44"/>
         <location line="+293"/>
         <location line="+26"/>
@@ -4544,10 +4599,10 @@ Message retourné par le SGBD: %1</translation>
         <location line="+66"/>
         <location line="+149"/>
         <location line="+82"/>
-        <location line="+127"/>
+        <location line="+160"/>
         <location line="+37"/>
         <location line="+189"/>
-        <location line="+156"/>
+        <location line="+160"/>
         <source>%1 (line: %2)</source>
         <translation>%1 (ligne: %2)</translation>
     </message>
@@ -5587,12 +5642,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>Références</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+31"/>
         <source>Type:</source>
         <translation>Type:</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+179"/>
         <source>Column</source>
         <translation>Colonne</translation>
     </message>
@@ -5602,24 +5657,29 @@ Message retourné par le SGBD: %1</translation>
         <translation>Expression</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="-177"/>
         <source>Used in:</source>
         <translation>Utilisé dans:</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+15"/>
         <source>SELECT-FROM</source>
         <translation>SELECT-FROM</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+13"/>
         <source>FROM-WHERE</source>
         <translation>FROM-WHERE</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+13"/>
         <source>After WHERE</source>
         <translation>Après WHERE</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>View Definition</source>
+        <translation>Définition de la vue</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -5652,12 +5712,17 @@ Message retourné par le SGBD: %1</translation>
         <translation>Alias expression:</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+32"/>
+        <source>Table Expression</source>
+        <translation>CTE</translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Code Preview</source>
         <translation>Prévisualisation du code</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="+44"/>
+        <location filename="../libpgmodeler_ui/src/viewwidget.cpp" line="+50"/>
         <source>Col./Expr.</source>
         <translation>Col./Expr.</translation>
     </message>
@@ -5673,19 +5738,18 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>SF FW AW</source>
-        <translatorcomment>?</translatorcomment>
-        <translation type="unfinished"></translation>
+        <source>Flags: SF FW AW VD</source>
+        <translation>Flags: SF FW AW VD</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+274"/>
+        <source>/* Could not generate the SQL code. Make sure all attributes are correctly filled! </source>
+        <translation>/* Le code SQL ne peut être généré. Vérifiez que les champs sont correctement remplis! </translation>
+    </message>
+    <message>
+        <location line="-272"/>
         <source>To reference all columns in a table (*) just do not fill the field &lt;strong&gt;Column&lt;/strong&gt;, this is the same as write &lt;em&gt;&lt;strong&gt;[schema].[tablel].*&lt;/strong&gt;&lt;/em&gt;</source>
         <translation>Pour référencer toutes les colonnes dans une table (*) ne remplissez pas le champs &lt;strong&gt;Colonne&lt;/strong&gt;, ceci revient à écrire &lt;em&gt;&lt;strong&gt;[schéma].[table].*&lt;/strong&gt;&lt;/em&gt;</translation>
-    </message>
-    <message>
-        <location line="+250"/>
-        <source>-- Could not generate the code. Make sure all attributes are correctly filled! --</source>
-        <translation>-- Impossible de générer le code. Assurez vous que tous les attributs sont correctement renseignés! --</translation>
     </message>
 </context>
 </TS>
