@@ -120,7 +120,7 @@ void ModelObjectsWidget::selectObject(void)
 	if(tree_view_tb->isChecked())
 	{
 		QTreeWidgetItem *tree_item=objectstree_tw->currentItem();
-		ObjectType obj_type;
+		ObjectType obj_type=BASE_OBJECT;
 
 		if(tree_item)
 		{

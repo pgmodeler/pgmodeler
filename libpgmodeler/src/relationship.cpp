@@ -1059,7 +1059,7 @@ void Relationship::addUniqueKey(Table *ref_tab, Table *recv_tab)
 		//Configures the name for the constraint
 		i=1;
 		aux[0]='\0';
-		name=ref_tab->getName() + SUFFIX_SEPARATOR + "uq";
+		name=ref_tab->getName() + SUFFIX_SEPARATOR + QString("%1").arg(uq->getObjectId()) + SUFFIX_SEPARATOR + "uq";
 
 		//Resolves any duplication of the new constraint name on the receiver table
 		while(recv_tab->getConstraint(name + aux))

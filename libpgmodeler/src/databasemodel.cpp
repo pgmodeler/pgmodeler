@@ -5049,6 +5049,7 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 			if(!attribs[ParsersAttributes::TABLE_NAME].isEmpty())
 				rel->setTableNameRelNN(attribs[ParsersAttributes::TABLE_NAME]);
 
+			rel->setName(attribs[ParsersAttributes::NAME]);
 			base_rel=rel;
 		}
 
