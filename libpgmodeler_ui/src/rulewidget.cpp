@@ -106,14 +106,14 @@ void RuleWidget::setAttributes(DatabaseModel *model, Table *parent_tab, Operatio
 	{
 		event_cmb->setCurrentIndex(event_cmb->findText(~rule->getEventType()));
 		exec_type_cmb->setCurrentIndex(exec_type_cmb->findText(~rule->getExecutionType()));
-		cond_expr_txt->setPlainText(rule->getConditionalExpression());
+		cond_expr_txt->setPlainText(Utf8String::create(rule->getConditionalExpression()));
 
 		commands_tab->blockSignals(true);
 		qtd=rule->getCommandCount();
 		for(i=0; i < qtd; i++)
 		{
 			commands_tab->addRow();
-			commands_tab->setCellText(rule->getCommand(i),i,0);
+			commands_tab->setCellText(Utf8String::create(rule->getCommand(i)),i,0);
 		}
 		commands_tab->blockSignals(false);
 	}
@@ -131,13 +131,13 @@ void RuleWidget::applyConfiguration(void)
 		rule=dynamic_cast<Rule *>(this->object);
 		rule->setEventType(EventType(event_cmb->currentText()));
 		rule->setExecutionType(ExecutionType(exec_type_cmb->currentText()));
-		rule->setConditionalExpression(cond_expr_txt->toPlainText());
+		rule->setConditionalExpression(cond_expr_txt->toPlainText().toUtf8());
 		rule->removeCommands();
 
 		count=commands_tab->getRowCount();
 
 		for(i=0; i < count; i++)
-			rule->addCommand(commands_tab->getCellText(i,0));
+			rule->addCommand(commands_tab->getCellText(i,0).toUtf8());
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

@@ -330,7 +330,11 @@ QString Permission::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::OBJECT]=object->getName(true);
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
-		attributes[ParsersAttributes::TYPE]=BaseObject::getSQLName(object->getObjectType());
+	{
+		//Views and Tables uses the same key word when setting permission (TABLE)
+		attributes[ParsersAttributes::TYPE]=
+		 (object->getObjectType()==OBJ_VIEW ? BaseObject::getSQLName(OBJ_TABLE): BaseObject::getSQLName(object->getObjectType()));
+	}
 	else
 		attributes[ParsersAttributes::TYPE]=BaseObject::getSchemaName(object->getObjectType());
 

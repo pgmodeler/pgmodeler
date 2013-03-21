@@ -194,7 +194,7 @@ void IndexWidget::handleElement(int elem_idx)
 		elem.setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->getSelectedObject()));
 
 		if(expression_rb->isChecked())
-			elem.setExpression(elem_expr_txt->toPlainText());
+			elem.setExpression(elem_expr_txt->toPlainText().toUtf8());
 		else
 			elem.setColumn(reinterpret_cast<Column *>(column_cmb->itemData(column_cmb->currentIndex()).value<void *>()));
 
@@ -224,7 +224,7 @@ void IndexWidget::editElement(int elem_idx)
 	else
 	{
 		expression_rb->setChecked(true);
-		elem_expr_txt->setPlainText(elem.getExpression());
+		elem_expr_txt->setPlainText(Utf8String::create(elem.getExpression()));
 	}
 
 	if(elem.getSortingAttribute(IndexElement::ASC_ORDER))
@@ -297,7 +297,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 		concurrent_chk->setChecked(index->getIndexAttribute(Index::CONCURRENT));
 		fast_update_chk->setChecked(index->getIndexAttribute(Index::FAST_UPDATE));
 		unique_chk->setChecked(index->getIndexAttribute(Index::UNIQUE));
-		cond_expr_txt->setPlainText(index->getConditionalExpression());
+		cond_expr_txt->setPlainText(Utf8String::create(index->getConditionalExpression()));
 
 		elements_tab->blockSignals(true);
 		count=index->getElementCount();
@@ -325,7 +325,7 @@ void IndexWidget::applyConfiguration(void)
 		index->setIndexAttribute(Index::FAST_UPDATE, fast_update_chk->isChecked());
 		index->setIndexAttribute(Index::CONCURRENT, concurrent_chk->isChecked());
 		index->setIndexAttribute(Index::UNIQUE, unique_chk->isChecked());
-		index->setConditionalExpression(cond_expr_txt->toPlainText());
+		index->setConditionalExpression(cond_expr_txt->toPlainText().toUtf8());
 		index->setIndexingType(IndexingType(indexing_cmb->currentText()));
 
 		if(fill_factor_chk->isChecked())

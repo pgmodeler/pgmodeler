@@ -85,7 +85,7 @@ void TextboxWidget::applyConfiguration(void)
 		startConfiguration<Textbox>();
 
 		txtbox=dynamic_cast<Textbox *>(this->object);
-		txtbox->setComment(text_txt->toPlainText());
+		txtbox->setComment(text_txt->toPlainText().toUtf8());
 		txtbox->setTextAttribute(Textbox::ITALIC_TXT, italic_chk->isChecked());
 		txtbox->setTextAttribute(Textbox::BOLD_TXT, bold_chk->isChecked());
 		txtbox->setTextAttribute(Textbox::UNDERLINE_TXT, underline_chk->isChecked());
