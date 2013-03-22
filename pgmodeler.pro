@@ -88,8 +88,9 @@ SUBDIRS = libutil \
           libobjrenderer \
           libpgmodeler_ui \
           crashhandler \
-          main \
-          plugins/dummyplugin
+	  main \
+	  plugins/dummyplugin \
+	  tests
 
 
 LIBUTIL=$${LIB_PREFIX}util.$${LIB_EXT}
@@ -132,11 +133,3 @@ windows {
 }
 
 INSTALLS += pgmodeler
-
-OTHER_FILES += \
-    schemas/xml/permission.sch \
-    schemas/sql/common/permission.sch \
-    schemas/sql/9.1/permission.sch \
-    schemas/sql/9.0/permission.sch \
-    schemas/sql/8.4/permission.sch \
-    schemas/xml/dtd/permission.dtd

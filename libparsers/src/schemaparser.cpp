@@ -34,6 +34,9 @@ const QString SchemaParser::TOKEN_IF="if";
 const QString SchemaParser::TOKEN_THEN="then";
 const QString SchemaParser::TOKEN_ELSE="else";
 const QString SchemaParser::TOKEN_END="end";
+const QString SchemaParser::TOKEN_OR="or";
+const QString SchemaParser::TOKEN_AND="and";
+const QString SchemaParser::TOKEN_NOT="not";
 
 const QString SchemaParser::TOKEN_META_SP="sp";
 const QString SchemaParser::TOKEN_META_BR="br";
@@ -48,15 +51,17 @@ const QString SchemaParser::PGSQL_VERSION_83="8.3";
 const QString SchemaParser::PGSQL_VERSION_84="8.4";
 const QString SchemaParser::PGSQL_VERSION_90="9.0";
 const QString SchemaParser::PGSQL_VERSION_91="9.1";
+const QString SchemaParser::PGSQL_VERSION_92="9.2";
 
 vector<QString> SchemaParser::buffer;
+map<QString,QString> SchemaParser::attributes;
 QString SchemaParser::filename="";
 unsigned SchemaParser::line=0;
 unsigned SchemaParser::column=0;
 unsigned SchemaParser::comment_count=0;
 bool SchemaParser::ignore_unk_atribs=false;
 
-QString SchemaParser::pgsql_version=SchemaParser::PGSQL_VERSION_91;
+QString SchemaParser::pgsql_version=SchemaParser::PGSQL_VERSION_92;
 
 void SchemaParser::setPgSQLVersion(const QString &pgsql_version)
 {
@@ -70,42 +75,10 @@ QString SchemaParser::getPgSQLVersion(void)
 
 void SchemaParser::getPgSQLVersions(vector<QString> &versions)
 {
-	QDir directory;
-	QString path, str_aux;
-	QStringList dir_list;
-
-	/* Regular expression that defines the accepted format for directory names which are
-		considered directories containing  object schema files  */
-	QRegExp exp_reg("([0-9]+)(\\.)([0-9]+)((\\.)([0-9]+))*");
-	int count, i;
-
-	//Configures the path to the root SQL schema directory
-	path=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-			 GlobalAttributes::SQL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR;
-
-	//Opens the path
-	directory=QDir(path);
-
-	//Sets the directory filtering to list only subdirectoris
-	directory.setFilter(QDir::Dirs);
-
-	//In case that the directory doesn't exists an error is raised
-	if(!directory.exists())
-	{
-		str_aux=Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(path);
-		throw Exception(str_aux, ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
-
-	//Clears the list of past versions
 	versions.clear();
-
-	//Gets the list of sub-directories filtering according to the regular expression
-	dir_list=directory.entryList().filter(exp_reg);
-
-	//Inserts all elements of the subdirectories list on the versions vector
-	count=dir_list.count();
-	for(i=count-1; i >=0; i--)
-		versions.push_back(dir_list[i]);
+	versions.push_back(PGSQL_VERSION_92);
+	versions.push_back(PGSQL_VERSION_91);
+	versions.push_back(PGSQL_VERSION_90);
 }
 
 void SchemaParser::restartParser(void)
@@ -113,7 +86,49 @@ void SchemaParser::restartParser(void)
 	/* Clears the buffer and resets the counters for line,
 		column and amount of comments */
 	buffer.clear();
+	attributes.clear();
 	line=column=comment_count=0;
+}
+
+void SchemaParser::loadBuffer(const QString &buf)
+{
+	QString buf_aux=buf, lin;
+	QTextStream ts(&buf_aux);
+	int pos=0;
+
+	//Prepares the parser to do new reading
+	restartParser();
+
+	//While the input file doesn't reach the end
+	while(!ts.atEnd())
+	{
+		//Get one line from stream (until the last char before \n)
+		lin=ts.readLine();
+
+		/* Since the method getline discards the \n when the line was just a line break
+		its needed to treat it in order to not lost it */
+		if(lin=="") lin+=CHR_LINE_END;
+
+		//If the entire line is commented out increases the comment lines counter
+		if(lin[0]==CHR_COMMENT) comment_count++;
+
+		//Looking for the position of other comment characters for deletion
+		pos=lin.indexOf(CHR_COMMENT);
+
+		//Removes the characters from the found position
+		if(pos >= 0)
+			lin.remove(pos, lin.size());
+
+		if(lin!="")
+		{
+			//Add a line break in case the last character is not
+			if(lin[lin.size()-1]!=CHR_LINE_END)
+				lin+=CHR_LINE_END;
+
+			//Add the treated line in the buffer
+			buffer.push_back(lin);
+		}
+	}
 }
 
 void SchemaParser::loadFile(const QString &file)
@@ -121,56 +136,27 @@ void SchemaParser::loadFile(const QString &file)
 	if(file!="")
 	{
 		ifstream input;
-		char buf_aux[1025];
-		QString str_aux;
-		int pos;
+		char lin[1025];
+		QString buf;
 
 		//Open the file for reading
 		input.open(file.toStdString().c_str());
 
 		if(!input.is_open())
-		{
-			str_aux=Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(file);
-			throw Exception(str_aux, ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
-
-		//Prepares the parser to do new reading
-		restartParser();
+			throw Exception(Exception::getErrorMessage(ERR_FILE_DIR_NOT_ACCESSED).arg(file),
+											ERR_FILE_DIR_NOT_ACCESSED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		//While the input file doesn't reach the end
 		while(!input.eof())
 		{
-			//Get one line from file (until the last char before \n)
-			input.getline(buf_aux,1024);
-			str_aux=buf_aux;
-
-			/* Since the method getline discards the \n when the line was just a line break
-			its needed to treat it in order to not lost it */
-			if(str_aux=="") str_aux+=CHR_LINE_END;
-
-			/* Caso a linha inteira esteja comentada (iniciada por um caractere
-			de comentário), incrementa o contadore de linhas de comentário. */
-
-			//If the entire line is commented out increases the comment lines counter
-			if(str_aux[0]==CHR_COMMENT) comment_count++;
-
-			//Looking for the position of other comment characters for deletion
-			pos=str_aux.indexOf(CHR_COMMENT);
-
-			//Removes the characters from the found position
-			if(pos >= 0)
-				str_aux.remove(pos, str_aux.size());
-
-			if(str_aux!="")
-			{
-				//Add a line break in case the last character is not
-				if(str_aux[str_aux.size()-1]!=CHR_LINE_END)
-					str_aux+=CHR_LINE_END;
-
-				//Add the treated line in the buffer
-				buffer.push_back(str_aux);
-			}
+			input.getline(lin, 1024);
+			buf+=QString(lin) + CHR_LINE_END;
 		}
+
+		//Loads the parser buffer
+		loadBuffer(buf);
+
+		SchemaParser::filename=file;
 
 		//Close the file stream
 		input.close();
@@ -398,54 +384,149 @@ bool SchemaParser::isSpecialCharacter(char chr)
 				 chr==CHR_END_PURETEXT);
 }
 
-QString SchemaParser::getCodeDefinition(const QString & obj_name, map<QString, QString> &attributes, unsigned def_type)
+bool SchemaParser::evaluateExpression(void)
 {
-	if(obj_name!="")
+	QString current_line, cond, attrib, prev_cond;
+	bool error=false, end_eval=false, expr_is_true=true, attrib_true=true;
+	unsigned attrib_count=0, and_or_count=0;
+
+	try
 	{
-		QString filename;
+		current_line=buffer[line];
 
-		if(def_type==SQL_DEFINITION)
+		while(!end_eval && !error)
 		{
-			try
+			//Eliminates any black space
+			while(current_line[column]==CHR_SPACE) column++;
+
+			switch(current_line[column].toAscii())
 			{
-				//Formats the filename
-				filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-								 GlobalAttributes::SQL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + pgsql_version +
-								 GlobalAttributes::DIR_SEPARATOR + obj_name + GlobalAttributes::SCHEMA_EXT;
+				//Extract the next conditional token
+				case CHR_INI_CONDITIONAL:
+					prev_cond=cond;
+					cond=getConditional();
 
-				//Try to get the object definitin from the specified path
-				return(getCodeDefinition(filename, attributes));
+								//Error 1: %if @{a} %or %or %then
+					error=(cond==prev_cond ||
+								 //Error 2: %if @{a} %and %or %then
+								 (cond==TOKEN_AND && prev_cond==TOKEN_OR) ||
+								 //Error 3: %if @{a} %or %and %then
+								 (cond==TOKEN_OR && prev_cond==TOKEN_AND) ||
+								 //Error 4: %if %and @{a} %then
+								 (attrib_count==0 && (cond==TOKEN_AND || cond==TOKEN_OR)));
+
+					if(cond==TOKEN_THEN)
+					{
+						/* Returns the parser to the token %then because additional
+						operations is done whe this token is found */
+						column-=cond.length()+1;
+						end_eval=true;
+
+									//Error 1: %if @{a} %not %then
+						error=(prev_cond==TOKEN_NOT ||
+									//Error 2: %if %then
+									attrib_count==0 ||
+									//Error 3: %if @{a} %and %then
+									(and_or_count!=attrib_count-1));
+					}
+					else if(cond==TOKEN_OR || cond==TOKEN_AND)
+						and_or_count++;
+				break;
+
+				case CHR_INI_ATTRIB:
+					attrib=getAttribute();
+
+					//Error 1: A conditional token other than %or %not %and if found on conditional expression
+					error=(!cond.isEmpty() && cond!=TOKEN_OR && cond!=TOKEN_AND && cond!=TOKEN_NOT) ||
+								//Error 2: A %not token if found after an attribute: %if @{a} %not %then
+								(attrib_count > 0 && cond==TOKEN_NOT && prev_cond.isEmpty()) ||
+								//Error 3: Two attributes not separated by any conditional token: %if @{a} @{b} %then
+								(attrib_count > 0 && cond.isEmpty());
+
+					//Increments the extracted attribute counter
+					attrib_count++;
+
+					if(!error)
+					{
+						//Appliyng the NOT operator if found
+						attrib_true=(cond==TOKEN_NOT ? attributes[attrib].isEmpty() : !attributes[attrib].isEmpty());
+
+						//Executing the AND operation if the token is found
+						if(cond==TOKEN_AND || prev_cond==TOKEN_AND)
+							expr_is_true=(expr_is_true && attrib_true);
+						else if(cond==TOKEN_OR || prev_cond==TOKEN_OR)
+							expr_is_true=(expr_is_true || attrib_true);
+						else
+							expr_is_true=attrib_true;
+
+						cond.clear();
+						prev_cond.clear();
+					}
+				break;
+
+				default:
+					error=true;
+				break;
 			}
-			catch(Exception &e)
-			{
-				/* If detected the error that the file was not found, the parser
-			 try to fetch the file in the common schema for all versions
-			 postgresql */
-
-				//If the exception is of another type than 'file not loaded' redirects error
-				if(e.getErrorType()!=ERR_FILE_DIR_NOT_ACCESSED)
-					throw Exception(e.getErrorMessage(),e.getErrorType(),
-													__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
-
-				//Reconfigure the name of the file to point to the default directory
-				filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-								 GlobalAttributes::SQL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-								 GlobalAttributes::COMMON_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR +
-								 obj_name + GlobalAttributes::SCHEMA_EXT;
-
-				return(getCodeDefinition(filename, attributes));
-			}
-		}
-		else
-		{
-			filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
-							 GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + obj_name +
-							 GlobalAttributes::SCHEMA_EXT;
-
-			return(convertCharsToXMLEntities(getCodeDefinition(filename, attributes)));
 		}
 	}
-	else return("");
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),	__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+
+	if(error)
+	{
+		throw Exception(QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+										.arg(filename).arg((line + comment_count + 1)).arg((column+1)),
+										ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	}
+
+	return(expr_is_true);
+}
+
+QString SchemaParser::getCodeDefinition(const QString & obj_name, map<QString, QString> &attribs, unsigned def_type)
+{
+	try
+	{
+		if(obj_name!="")
+		{
+			QString filename;
+
+			if(def_type==SQL_DEFINITION)
+			{
+				vector<QString> vers;
+
+				//Formats the filename
+				filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+								 GlobalAttributes::SQL_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + obj_name + GlobalAttributes::SCHEMA_EXT;
+
+				getPgSQLVersions(vers);
+				while(!vers.empty())
+				{
+					//Setting the @{pgsql[VERSION]} attribute
+					attribs[QString("pgsql" + vers.back()).remove(".")]=(vers.back()==pgsql_version ? pgsql_version : "");
+					vers.pop_back();
+				}
+
+				//Try to get the object definitin from the specified path
+				return(getCodeDefinition(filename, attribs));
+			}
+			else
+			{
+				filename=GlobalAttributes::SCHEMAS_ROOT_DIR + GlobalAttributes::DIR_SEPARATOR +
+								 GlobalAttributes::XML_SCHEMA_DIR + GlobalAttributes::DIR_SEPARATOR + obj_name +
+								 GlobalAttributes::SCHEMA_EXT;
+
+				return(convertCharsToXMLEntities(getCodeDefinition(filename, attribs)));
+			}
+		}
+		else return("");
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),	__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 void SchemaParser::setIgnoreUnkownAttributes(bool ignore)
@@ -531,415 +612,409 @@ QString SchemaParser::convertCharsToXMLEntities(QString buf)
 	return(buf_aux);
 }
 
-
-QString SchemaParser::getCodeDefinition(const QString &filename, map<QString,QString> &attributes)
+QString SchemaParser::getCodeDefinition(map<QString,QString> &attribs)
 {
 	QString object_def;
+	unsigned end_cnt, if_cnt;
+	int if_level, prev_if_level;
+	QString atrib, cond, prev_cond, word, meta, str_aux;
+	bool error, if_expr;
+	char chr;
+	vector<bool> vet_expif, vet_tk_if, vet_tk_then, vet_tk_else;
+	map<int, vector<QString> > if_map, else_map;
+	vector<QString>::iterator itr, itr_end;
+	vector<int> vet_prev_level;
+	vector<QString> *vet_aux;
 
-	if(filename!="")
+	//In case the file was successfuly loaded
+	if(buffer.size() > 0)
 	{
-		unsigned end_cnt, if_cnt;
-		int if_level, prev_if_level;
-		QString atrib, cond, prev_cond, word, meta, str_aux;
-		bool error, if_attrib;
-		char chr;
-		vector<bool> vet_expif, vet_tk_if, vet_tk_then, vet_tk_else;
-		map<int, vector<QString> > if_map, else_map;
-		vector<QString>::iterator itr, itr_end;
-		vector<int> vet_prev_level;
-		vector<QString> *vet_aux;
+		//Init the control variables
+		attributes=attribs;
+		error=if_expr=false;
+		if_level=-1;
+		end_cnt=if_cnt=0;
 
-		SchemaParser::filename=filename;
-		loadFile(filename);
-
-		//In case the file was successfuly loaded
-		if(buffer.size() > 0)
+		while(line < buffer.size())
 		{
-			//Init the control variables
-			error=if_attrib=false;
-			if_level=-1;
-			end_cnt=if_cnt=0;
-
-			while(line < buffer.size())
+			chr=buffer[line][column].toAscii();
+			switch(chr)
 			{
-				chr=buffer[line][column].toAscii();
-				switch(chr)
-				{
-					/* Increments the number of rows causing the parser
-			 to get the next line buffer for analysis */
-					case CHR_LINE_END:
-						line++;
-						column=0;
-					break;
+				/* Increments the number of rows causing the parser
+				to get the next line buffer for analysis */
+				case CHR_LINE_END:
+					line++;
+					column=0;
+				break;
 
-					case CHR_SPACE:
-						//The parser will ignore the spaces that are not within pure texts
-						while(buffer[line][column]==CHR_SPACE) column++;
-					break;
+				case CHR_SPACE:
+					//The parser will ignore the spaces that are not within pure texts
+					while(buffer[line][column]==CHR_SPACE) column++;
+				break;
 
-						//Metacharacter extraction
-					case CHR_INI_METACHAR:
-						meta=getMetaCharacter();
+					//Metacharacter extraction
+				case CHR_INI_METACHAR:
+					meta=getMetaCharacter();
 
-						//Checks whether the extracted token is valid metacharacter
-						if(meta!=TOKEN_META_SP && meta!=TOKEN_META_TB &&
-							 meta!=TOKEN_META_BR && meta!=TOKEN_META_OB &&
-							 meta!=TOKEN_META_CB)
-						{
-							str_aux=QString(Exception::getErrorMessage(ERR_INV_METACHARACTER))
-											.arg(meta).arg(filename).arg(line + comment_count +1).arg(column+1);
+					//Checks whether the extracted token is valid metacharacter
+					if(meta!=TOKEN_META_SP && meta!=TOKEN_META_TB &&
+						 meta!=TOKEN_META_BR && meta!=TOKEN_META_OB &&
+						 meta!=TOKEN_META_CB)
+					{
+						str_aux=QString(Exception::getErrorMessage(ERR_INV_METACHARACTER))
+										.arg(meta).arg(filename).arg(line + comment_count +1).arg(column+1);
 
 
-							throw Exception(str_aux,ERR_INV_METACHARACTER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-						}
-						//Checks whether the metacharacter is part of the  'if' expression (this is an error)
-						else if(if_level>=0 && vet_tk_if[if_level] && !vet_tk_then[if_level])
-						{
-							str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-											.arg(filename).arg(line + comment_count +1).arg(column+1);
+						throw Exception(str_aux,ERR_INV_METACHARACTER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+					//Checks whether the metacharacter is part of the  'if' expression (this is an error)
+					else if(if_level>=0 && vet_tk_if[if_level] && !vet_tk_then[if_level])
+					{
+						str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+										.arg(filename).arg(line + comment_count +1).arg(column+1);
 
-							throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-						}
-						else
-						{
-							//Converting the metacharacter drawn to the character that represents this
-							if(meta==TOKEN_META_SP) chr=CHR_SPACE;
-							else if(meta==TOKEN_META_TB) chr=CHR_TABULATION;
-							else if(meta==TOKEN_META_OB) chr=CHR_INI_PURETEXT; //Currently this constant is used since it returns '[' (open bracket)
-							else if(meta==TOKEN_META_CB) chr=CHR_END_PURETEXT; //Currently this constant is used since it returns ']' (close bracket)
-							else chr=CHR_LINE_END;
+						throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+					else
+					{
+						//Converting the metacharacter drawn to the character that represents this
+						if(meta==TOKEN_META_SP) chr=CHR_SPACE;
+						else if(meta==TOKEN_META_TB) chr=CHR_TABULATION;
+						else if(meta==TOKEN_META_OB) chr=CHR_INI_PURETEXT; //Currently this constant is used since it returns '[' (open bracket)
+						else if(meta==TOKEN_META_CB) chr=CHR_END_PURETEXT; //Currently this constant is used since it returns ']' (close bracket)
+						else chr=CHR_LINE_END;
 
-							meta="";
-							meta+=chr;
-
-							//If the parser is inside an 'if / else' extracting tokens
-							if(if_level>=0)
-							{
-								/* If the parser is in 'if' section,
-									 places the metacharacter on the word map of the current 'if' */
-								if(vet_tk_if[if_level] &&
-									 vet_tk_then[if_level] &&
-									 !vet_tk_else[if_level])
-									if_map[if_level].push_back(meta);
-
-								/* If the parser is in 'else' section,
-									 places the metacharacter on the word map of the current 'else'*/
-								else if(vet_tk_else[if_level])
-									else_map[if_level].push_back(meta);
-							}
-							else
-								/* If the parsers is not in a 'if / else', puts the metacharacter
-									 in the definition sql */
-								object_def+=meta;
-						}
-
-					break;
-
-						//Attribute extraction
-					case CHR_INI_ATTRIB:
-					case CHR_MID_ATTRIB:
-					case CHR_END_ATTRIB:
-						atrib=getAttribute();
-
-						//Checks if the attribute extracted belongs to the passed list of attributes
-						if(attributes.count(atrib)==0)
-						{
-							if(!ignore_unk_atribs)
-							{
-								str_aux=QString(Exception::getErrorMessage(ERR_UNK_ATTRIBUTE))
-												.arg(atrib).arg(filename).arg((line + comment_count +1)).arg((column+1));
-								throw Exception(str_aux,ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-							}
-							else
-								attributes[atrib]="";
-						}
+						meta="";
+						meta+=chr;
 
 						//If the parser is inside an 'if / else' extracting tokens
 						if(if_level>=0)
 						{
-							/* If the parser is in the 'if' part of the expression but not yet
-								extracted the attribute */
-							if(!if_attrib && vet_tk_if[if_level] && !vet_tk_then[if_level])
-							{
-								//Mark the flag indicating that an attribute of the if / then has been extracted
-								if_attrib=true;
+							/* If the parser is in 'if' section,
+								 places the metacharacter on the word map of the current 'if' */
+							if(vet_tk_if[if_level] &&
+								 vet_tk_then[if_level] &&
+								 !vet_tk_else[if_level])
+								if_map[if_level].push_back(meta);
 
-								//Checks if the attribute value is empty. If not evaluates as true the conditional expression
-								vet_expif.push_back((attributes[atrib]!=""));
-							}
-
-							/* If the parser is in the part of the 'if' expression and yet
-								extracted the attribute, returns an error because only one attribute
-								may appear if expression */
-							else if(if_attrib && vet_tk_if[if_level] && !vet_tk_then[if_level])
-							{
-								str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-												.arg(filename).arg(line + comment_count +1).arg(column+1);
-
-								throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-							}
-							else
-							{
-								word=atrib;
-								atrib="";
-								atrib+=CHR_INI_ATTRIB;
-								atrib+=CHR_MID_ATTRIB;
-								atrib+=word;
-								atrib+=CHR_END_ATTRIB;
-
-								//If the parser is in the 'if' section
-								if(vet_tk_if[if_level] &&
-									 vet_tk_then[if_level] &&
-									 !vet_tk_else[if_level])
-									//Inserts the attribute value in the map of the words of current the 'if' section
-									if_map[if_level].push_back(atrib);
-								else if(vet_tk_else[if_level])
-									//Inserts the attribute value in the map of the words of current the 'else' section
-									else_map[if_level].push_back(atrib);
-							}
-						}
-						else
-						{
-							if(attributes[atrib]=="")
-							{
-								str_aux=QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
-												.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1);
-
-								throw Exception(str_aux,ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-							}
-
-							/* If the parser is not in an if / else, concatenates the value of the attribute
-								directly in definition in sql */
-							object_def+=attributes[atrib];
-						}
-					break;
-
-						//Conditional instruction extraction
-					case CHR_INI_CONDITIONAL:
-						prev_cond=cond;
-						cond=getConditional();
-
-						//Checks whether the extracted token is a valid conditional
-						if(cond!=TOKEN_IF && cond!=TOKEN_ELSE &&
-							 cond!=TOKEN_THEN && cond!=TOKEN_END)
-						{
-							str_aux=QString(Exception::getErrorMessage(ERR_INV_CONDITIONAL))
-											.arg(cond).arg(filename).arg(line + comment_count +1).arg(column+1);
-							throw Exception(str_aux,ERR_INV_CONDITIONAL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-						}
-						else
-						{
-							//If the toke is an 'if'
-							if(cond==TOKEN_IF)
-							{
-								/* Inserts the value of the current 'if' level  in the previous 'if' levels vector.
-								 This vector is used to know which 'if' the parser was in before entering current if */
-								vet_prev_level.push_back(if_level);
-
-								/* Mark the flags indicating that an  'if' was found and a
-								 'then' and 'else' have not been found yet */
-								vet_tk_if.push_back(true);
-								vet_tk_then.push_back(false);
-								vet_tk_else.push_back(false);
-
-								//Defines the current if level as the size of list 'if' tokens found  -1
-								if_level=(vet_tk_if.size()-1);
-
-								//Increases the number of found 'if's
-								if_cnt++;
-							}
-							//If the parser is in 'if / else' and one 'then' token is found
-							else if(cond==TOKEN_THEN && if_level>=0)
-							{
-								//Marks the then thoke flag of the current 'if'
-								vet_tk_then[if_level]=true;
-
-								/* Clears the  attribute extracted flag from the 'if - then',
-									 so that the parser does not generate an error when it encounters another
-									 'if - then' with an attribute still unextracted */
-								if_attrib=false;
-							}
-							//If the parser is in 'if / else' and a 'else' token is found
-							else if(cond==TOKEN_ELSE && if_level>=0)
-								//Mark the  o flag do token else do if atual
-								vet_tk_else[if_level]=true;
-							//Case the parser is in 'if/else' and a 'end' token was found
-							else if(cond==TOKEN_END && if_level>=0)
-							{
-								//Increments the number of 'end' tokes found
-								end_cnt++;
-
-								//Get the level of the previous 'if' where the parser was
-								prev_if_level=vet_prev_level[if_level];
-
-								//In case the current 'if' be internal (nested) (if_level > 0)
-								if(if_level > 0)
-								{
-									//In case the current 'if' doesn't in the 'else' section of the above 'if' (previous if level)
-									if(!vet_tk_else[prev_if_level])
-										//Get the extracted word vector on the above 'if'
-										vet_aux=&if_map[prev_if_level];
-									else
-										//Get the extracted word vector on the above 'else'
-										vet_aux=&else_map[prev_if_level];
-								}
-								else
-									vet_aux=NULL;
-
-								/* Initializes the iterators to scan
-									 the auxiliary vector if necessary */
-								itr=itr_end=if_map[0].end();
-
-								/* In case the expression of the current 'if' has the value true
-									 then the parser will scan the list of words on the 'if' part of the
-									 current 'if' */
-								if(vet_expif[if_level])
-								{
-									itr=if_map[if_level].begin();
-									itr_end=if_map[if_level].end();
-								}
-								/* Caso a parte else do if atual exista
-									 então o parser varrerá a lista de palavras da parte else
-									 do if atual */
-
-								/* If there is a 'else' part on the current 'if'
-									 then the parser will scan the list of words on the 'else' part */
-								else if(else_map.count(if_level)>0)
-								{
-									itr=else_map[if_level].begin();
-									itr_end=else_map[if_level].end();
-								}
-
-								/* This iteration scans the list of words selected above
-									 inserting them in 'if' part  of the 'if' or 'else' superior to current.
-									 This is done so that only the words extracted based on
-									 ifs expressions of the buffer are embedded in defining sql */
-								while(itr!=itr_end)
-								{
-									//If the auxiliary vector is allocated, inserts the word on above 'if / else'
-									if(vet_aux)
-										vet_aux->push_back((*itr));
-									else
-									{
-										word=(*itr);
-
-										//Check if the work is not an attribute
-										if(word[0]==CHR_INI_ATTRIB)
-										{
-											/* If its an attribute, extracts the name and checks if the same
-											has empty value */
-											atrib=word.mid(2,word.size()-3);
-											word=attributes[atrib];
-
-											//If the attribute has no value set raises an exception
-											if(word=="")
-											{
-												str_aux=QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
-																.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1);
-												throw Exception(str_aux,ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-											}
-										}
-
-										//Else, insert the work directly on the object definition
-										object_def+=word;
-									}
-									itr++;
-								}
-
-								//Case the current if is nested (internal)
-								if(if_level > 0)
-									//Causes the parser to return to the earlier 'if'
-									if_level=prev_if_level;
-
-								/* In case the 'if' be the uppermost (level 0) indicates that all
-									 the if's  has already been checked, so the parser will clear the
-									 used auxiliary structures*/
-								else
-								{
-									if_map.clear();
-									else_map.clear();
-									vet_tk_if.clear();
-									vet_tk_then.clear();
-									vet_tk_else.clear();
-									vet_expif.clear();
-									vet_prev_level.clear();
-
-									//Resets the ifs levels
-									if_level=prev_if_level=-1;
-								}
-							}
-							else
-								error=true;
-
-							if(!error)
-							{
-								/* Verifying that the conditional words appear in a valid  order if not
-								 the parser generates an error. Correct order means IF before THEN,
-								 ELSE after IF and before END */
-								if((prev_cond==TOKEN_IF && cond!=TOKEN_THEN) ||
-									 (prev_cond==TOKEN_ELSE && cond!=TOKEN_IF && cond!=TOKEN_END) ||
-									 (prev_cond==TOKEN_THEN && cond==TOKEN_THEN))
-									error=true;
-							}
-
-							if(error)
-							{
-								str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-												.arg(filename).arg(line + comment_count +1).arg(column+1);
-								throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-							}
-						}
-					break;
-
-						//Extraction of pure text or simple words
-					default:
-						if(chr==CHR_INI_PURETEXT ||
-							 chr==CHR_END_PURETEXT)
-							word=getPureText();
-						else
-							word=getWord();
-
-						//Case the parser is in 'if/else'
-						if(if_level>=0)
-						{
-							/* In case the word/text be inside 'if' expression, the parser returns an error
-							 because only an attribute must be on the 'if' expression  */
-							if(vet_tk_if[if_level] && !vet_tk_then[if_level])
-							{
-								str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-												.arg(filename).arg(line + comment_count +1).arg(column+1);
-								throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-							}
-							//Case the parser is in 'if' section
-							else if(vet_tk_if[if_level] &&
-											vet_tk_then[if_level] &&
-											!vet_tk_else[if_level])
-								//Inserts the word on the words map extracted on 'if' section
-								if_map[if_level].push_back(word);
+							/* If the parser is in 'else' section,
+								 places the metacharacter on the word map of the current 'else'*/
 							else if(vet_tk_else[if_level])
-								//Inserts the word on the words map extracted on 'else' section
-								else_map[if_level].push_back(word);
+								else_map[if_level].push_back(meta);
 						}
 						else
-							//Case the parser is not in 'if/else' concatenates the word/text directly on the object definition
-							object_def+=word;
-					break;
-				}
-			}
+							/* If the parsers is not in a 'if / else', puts the metacharacter
+								 in the definition sql */
+							object_def+=meta;
+					}
 
-			/* If has more 'if' toknes than  'end' tokens, this indicates that some 'if' in code
-			was not closed thus the parser returns an error */
-			if(if_cnt!=end_cnt)
-			{
-				str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
-								.arg(filename).arg(line + comment_count +1).arg(column+1);
-				throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				break;
+
+					//Attribute extraction
+				case CHR_INI_ATTRIB:
+				case CHR_MID_ATTRIB:
+				case CHR_END_ATTRIB:
+					atrib=getAttribute();
+
+					//Checks if the attribute extracted belongs to the passed list of attributes
+					if(attribs.count(atrib)==0)
+					{
+						if(!ignore_unk_atribs)
+						{
+							str_aux=QString(Exception::getErrorMessage(ERR_UNK_ATTRIBUTE))
+											.arg(atrib).arg(filename).arg((line + comment_count +1)).arg((column+1));
+							throw Exception(str_aux,ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						}
+						else
+							attribs[atrib]="";
+					}
+
+					//If the parser is inside an 'if / else' extracting tokens
+					if(if_level>=0)
+					{
+						//If the parser evaluated the 'if' conditional and is inside the current if block
+						if(!(!if_expr && vet_tk_if[if_level] && !vet_tk_then[if_level]))
+						{
+							word=atrib;
+							atrib="";
+							atrib+=CHR_INI_ATTRIB;
+							atrib+=CHR_MID_ATTRIB;
+							atrib+=word;
+							atrib+=CHR_END_ATTRIB;
+
+							//If the parser is in the 'if' section
+							if(vet_tk_if[if_level] &&
+								 vet_tk_then[if_level] &&
+								 !vet_tk_else[if_level])
+								//Inserts the attribute value in the map of the words of current the 'if' section
+								if_map[if_level].push_back(atrib);
+							else if(vet_tk_else[if_level])
+								//Inserts the attribute value in the map of the words of current the 'else' section
+								else_map[if_level].push_back(atrib);
+						}
+					}
+					else
+					{
+						if(attribs[atrib]=="")
+						{
+							str_aux=QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
+											.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1);
+
+							throw Exception(str_aux,ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						}
+
+						/* If the parser is not in an if / else, concatenates the value of the attribute
+							directly in definition in sql */
+						object_def+=attribs[atrib];
+					}
+				break;
+
+					//Conditional instruction extraction
+				case CHR_INI_CONDITIONAL:
+					prev_cond=cond;
+					cond=getConditional();
+
+					//Checks whether the extracted token is a valid conditional
+					if(cond!=TOKEN_IF && cond!=TOKEN_ELSE &&
+						 cond!=TOKEN_THEN && cond!=TOKEN_END &&
+						 cond!=TOKEN_OR && cond!=TOKEN_NOT &&
+						 cond!=TOKEN_AND)
+					{
+						str_aux=QString(Exception::getErrorMessage(ERR_INV_CONDITIONAL))
+										.arg(cond).arg(filename).arg(line + comment_count +1).arg(column+1);
+						throw Exception(str_aux,ERR_INV_CONDITIONAL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+					else
+					{
+						//If the toke is an 'if'
+						if(cond==TOKEN_IF)
+						{
+							//Evaluates the if expression storing the result on the vector
+							if_expr=true;
+							vet_expif.push_back(evaluateExpression());
+
+							/* Inserts the value of the current 'if' level  in the previous 'if' levels vector.
+							 This vector is used to know which 'if' the parser was in before entering current if */
+							vet_prev_level.push_back(if_level);
+
+							/* Mark the flags indicating that an  'if' was found and a
+							 'then' and 'else' have not been found yet */
+							vet_tk_if.push_back(true);
+							vet_tk_then.push_back(false);
+							vet_tk_else.push_back(false);
+
+							//Defines the current if level as the size of list 'if' tokens found  -1
+							if_level=(vet_tk_if.size()-1);
+
+							//Increases the number of found 'if's
+							if_cnt++;
+						}
+						//If the parser is in 'if / else' and one 'then' token is found
+						else if(cond==TOKEN_THEN && if_level>=0)
+						{
+							//Marks the then thoke flag of the current 'if'
+							vet_tk_then[if_level]=true;
+
+							/* Clears the  expression extracted flag from the 'if - then',
+								 so that the parser does not generate an error when it encounters another
+								 'if - then' with an expression still unextracted */
+							if_expr=false;
+						}
+						//If the parser is in 'if / else' and a 'else' token is found
+						else if(cond==TOKEN_ELSE && if_level>=0)
+							//Mark the  o flag do token else do if atual
+							vet_tk_else[if_level]=true;
+						//Case the parser is in 'if/else' and a 'end' token was found
+						else if(cond==TOKEN_END && if_level>=0)
+						{
+							//Increments the number of 'end' tokes found
+							end_cnt++;
+
+							//Get the level of the previous 'if' where the parser was
+							prev_if_level=vet_prev_level[if_level];
+
+							//In case the current 'if' be internal (nested) (if_level > 0)
+							if(if_level > 0)
+							{
+								//In case the current 'if' doesn't in the 'else' section of the above 'if' (previous if level)
+								if(!vet_tk_else[prev_if_level])
+									//Get the extracted word vector on the above 'if'
+									vet_aux=&if_map[prev_if_level];
+								else
+									//Get the extracted word vector on the above 'else'
+									vet_aux=&else_map[prev_if_level];
+							}
+							else
+								vet_aux=NULL;
+
+							/* Initializes the iterators to scan
+								 the auxiliary vector if necessary */
+							itr=itr_end=if_map[0].end();
+
+							/* In case the expression of the current 'if' has the value true
+								 then the parser will scan the list of words on the 'if' part of the
+								 current 'if' */
+							if(vet_expif[if_level])
+							{
+								itr=if_map[if_level].begin();
+								itr_end=if_map[if_level].end();
+							}
+							/* Caso a parte else do if atual exista
+								 então o parser varrerá a lista de palavras da parte else
+								 do if atual */
+
+							/* If there is a 'else' part on the current 'if'
+								 then the parser will scan the list of words on the 'else' part */
+							else if(else_map.count(if_level)>0)
+							{
+								itr=else_map[if_level].begin();
+								itr_end=else_map[if_level].end();
+							}
+
+							/* This iteration scans the list of words selected above
+								 inserting them in 'if' part  of the 'if' or 'else' superior to current.
+								 This is done so that only the words extracted based on
+								 ifs expressions of the buffer are embedded in defining sql */
+							while(itr!=itr_end)
+							{
+								//If the auxiliary vector is allocated, inserts the word on above 'if / else'
+								if(vet_aux)
+									vet_aux->push_back((*itr));
+								else
+								{
+									word=(*itr);
+
+									//Check if the work is not an attribute
+									if(word[0]==CHR_INI_ATTRIB)
+									{
+										/* If its an attribute, extracts the name and checks if the same
+										has empty value */
+										atrib=word.mid(2,word.size()-3);
+										word=attribs[atrib];
+
+										//If the attribute has no value set raises an exception
+										if(word=="")
+										{
+											str_aux=QString(Exception::getErrorMessage(ERR_UNDEF_ATTRIB_VALUE))
+															.arg(atrib).arg(filename).arg(line + comment_count +1).arg(column+1);
+											throw Exception(str_aux,ERR_UNDEF_ATTRIB_VALUE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+										}
+									}
+
+									//Else, insert the work directly on the object definition
+									object_def+=word;
+								}
+								itr++;
+							}
+
+							//Case the current if is nested (internal)
+							if(if_level > 0)
+								//Causes the parser to return to the earlier 'if'
+								if_level=prev_if_level;
+
+							/* In case the 'if' be the uppermost (level 0) indicates that all
+								 the if's  has already been checked, so the parser will clear the
+								 used auxiliary structures*/
+							else
+							{
+								if_map.clear();
+								else_map.clear();
+								vet_tk_if.clear();
+								vet_tk_then.clear();
+								vet_tk_else.clear();
+								vet_expif.clear();
+								vet_prev_level.clear();
+
+								//Resets the ifs levels
+								if_level=prev_if_level=-1;
+							}
+						}
+						else
+							error=true;
+
+						if(!error)
+						{
+							/* Verifying that the conditional words appear in a valid  order if not
+							 the parser generates an error. Correct order means IF before THEN,
+							 ELSE after IF and before END */
+							if((prev_cond==TOKEN_IF && cond!=TOKEN_THEN) ||
+								 (prev_cond==TOKEN_ELSE && cond!=TOKEN_IF && cond!=TOKEN_END) ||
+								 (prev_cond==TOKEN_THEN && cond==TOKEN_THEN))
+								error=true;
+						}
+
+						if(error)
+						{
+							str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+											.arg(filename).arg(line + comment_count +1).arg(column+1);
+							throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						}
+					}
+				break;
+
+					//Extraction of pure text or simple words
+				default:
+					if(chr==CHR_INI_PURETEXT ||
+						 chr==CHR_END_PURETEXT)
+						word=getPureText();
+					else
+						word=getWord();
+
+					//Case the parser is in 'if/else'
+					if(if_level>=0)
+					{
+						/* In case the word/text be inside 'if' expression, the parser returns an error
+						 because only an attribute must be on the 'if' expression  */
+						if(vet_tk_if[if_level] && !vet_tk_then[if_level])
+						{
+							str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+											.arg(filename).arg(line + comment_count +1).arg(column+1);
+							throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+						}
+						//Case the parser is in 'if' section
+						else if(vet_tk_if[if_level] &&
+										vet_tk_then[if_level] &&
+										!vet_tk_else[if_level])
+							//Inserts the word on the words map extracted on 'if' section
+							if_map[if_level].push_back(word);
+						else if(vet_tk_else[if_level])
+							//Inserts the word on the words map extracted on 'else' section
+							else_map[if_level].push_back(word);
+					}
+					else
+						//Case the parser is not in 'if/else' concatenates the word/text directly on the object definition
+						object_def+=word;
+				break;
 			}
 		}
+
+		/* If has more 'if' toknes than  'end' tokens, this indicates that some 'if' in code
+		was not closed thus the parser returns an error */
+		if(if_cnt!=end_cnt)
+		{
+			str_aux=QString(Exception::getErrorMessage(ERR_INVALID_SYNTAX))
+							.arg(filename).arg(line + comment_count +1).arg(column+1);
+			throw Exception(str_aux,ERR_INVALID_SYNTAX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 	}
+
 
 	restartParser();
 	ignore_unk_atribs=false;
 	return(object_def);
+}
+
+
+QString SchemaParser::getCodeDefinition(const QString &filename, map<QString,QString> &attribs)
+{
+	try
+	{
+		loadFile(filename);
+		return(getCodeDefinition(attribs));
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 

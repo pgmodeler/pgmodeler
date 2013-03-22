@@ -20,4 +20,5 @@
   @{state-type}
   @{transition}
   %if @{final} %then @{final} %end
+  %if @{sort-op} %then @{sort-op} %end
 </aggregate>  $br $br

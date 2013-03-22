@@ -37,7 +37,7 @@ class Aggregate: public BaseObject {
 
 		 To maintain compatibility with the old syntax,
 		 where the aggregate function accepts only one data type,
-		 the list of types 'tipo_dados' must have only one element.
+		 the list of types 'data_types' must have only one element.
 		 To declare an aggregate function which works with several
 		 types in the old syntax, the only element of the list must
 		 be of type 'any' */
