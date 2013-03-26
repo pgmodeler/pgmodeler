@@ -73,6 +73,11 @@ AggregateWidget::AggregateWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(input_types_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleDataType(int)));
 		connect(input_types_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleDataType(int)));
+
+		setRequiredField(state_type);
+		setRequiredField(input_type);
+		setRequiredField(transition_func_sel);
+		setRequiredField(transition_func_lbl);
 	}
 	catch(Exception &e)
 	{

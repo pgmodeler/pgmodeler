@@ -61,7 +61,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 		FiringType::getTypes(list);
 		firing_mode_cmb->addItems(list);
 
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(truncate_chk);
+/*		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(truncate_chk);
 		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_90)].push_back(cond_expr_lbl);
 		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_90)].push_back(column_lbl);
 		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_91)].push_back(firing_mode_lbl);
@@ -69,7 +69,7 @@ TriggerWidget::TriggerWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TRIG
 
 		frame=generateVersionWarningFrame(field_map, &value_map);
 		trigger_grid->addWidget(frame, trigger_grid->count()+1, 0, 1, 0);
-		frame->setParent(this);
+		frame->setParent(this); */
 
 		configureFormLayout(trigger_grid, OBJ_TRIGGER);
 		parent_form->setMinimumSize(600, 640);

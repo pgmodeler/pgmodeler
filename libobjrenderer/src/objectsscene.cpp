@@ -277,8 +277,10 @@ void ObjectsScene::addItem(QGraphicsItem *item)
 							this, SLOT(emitChildObjectSelection(TableObject*)));
 
 		if(obj)
+		{
 			connect(obj, SIGNAL(s_objectSelected(BaseGraphicObject*,bool)),
 							this, SLOT(emitObjectSelection(BaseGraphicObject*,bool)));
+		}
 
 		QGraphicsScene::addItem(item);
 	}

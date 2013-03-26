@@ -5677,10 +5677,11 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 			}
 			else
 			{
-				if((obj_type==OBJ_LANGUAGE &&
+				if(object->isSystemObject()
+					 /*(obj_type==OBJ_LANGUAGE &&
 						(object->getName()==~LanguageType("c") ||
 						 object->getName()==~LanguageType("sql") ||
-						 object->getName()==~LanguageType("plpgsql"))))
+						 object->getName()==~LanguageType("plpgsql")))*/)
 					attribs_aux[attrib]+="";
 				else
 					attribs_aux[attrib]+=validateObjectDefinition(object, def_type);
@@ -5875,8 +5876,9 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				BaseObject *usr_type=getObjectPgSQLType(func->getReturnType());
 				unsigned count, i;
 
-				if(func->getLanguage()->getName()!=~LanguageType("c") &&
-					 func->getLanguage()->getName()!=~LanguageType("sql"))
+				/* if(func->getLanguage()->getName()!=~LanguageType("c") &&
+					 func->getLanguage()->getName()!=~LanguageType("sql")) */
+				if(!func->isSystemObject())
 					getObjectDependecies(func->getLanguage(), deps, inc_indirect_deps);
 
 				if(usr_type)

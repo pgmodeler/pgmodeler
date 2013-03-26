@@ -97,6 +97,10 @@ class BaseObject {
 		 upper class layer */
 		bool is_protected,
 
+		/*! \brief This property indicates that the object is a system protected object and cannot be modified
+		by the user. Additionally, the this attribute is true the SQL/XML code for the object is not generated */
+		system_obj,
+
 		/*! \brief Indicates if the generated SQL code is disable. When this flag is true
 		the object's SQL code is created normally but is commented. This is useful when using
 		the role only as a reference since it already exists on the destination server. */
@@ -155,6 +159,7 @@ class BaseObject {
 
 	public:
 		BaseObject(void);
+		BaseObject(bool system_obj);
 		virtual ~BaseObject(void){}
 
 		//! \brief Returns the reference to the database that owns the object
@@ -213,8 +218,14 @@ class BaseObject {
 		//! \brief Disables the SQL code commenting it on generation
 		void setSQLDisabled(bool value);
 
-		//! \brief Returns is the generated SQL is commented
+		//! \brief Returns if the generated SQL is commented
 		bool isSQLDisabled(void);
+
+		//! \brief Defines if the object is a system protected object
+		virtual void setSystemObject(bool value);
+
+		//! \brief Returns if the object is a system protected object
+		bool isSystemObject(void);
 
 		/*! \brief Returns the object's name. The parameter 'format' is used to get
 		 the name properly formated (schema qualified and using quotes) */

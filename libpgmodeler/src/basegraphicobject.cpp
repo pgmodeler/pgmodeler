@@ -29,10 +29,18 @@ BaseGraphicObject::BaseGraphicObject(void)
 
 void BaseGraphicObject::setProtected(bool value)
 {
-	is_protected=value;
+	BaseObject::setProtected(value);
 
 	if(!this->signalsBlocked())
-		emit s_objectProtected(value);
+		emit s_objectProtected(this->isProtected());
+}
+
+void BaseGraphicObject::setSystemObject(bool value)
+{
+	BaseObject::setSystemObject(value);
+
+	 if(!this->signalsBlocked())
+		 emit s_objectProtected(this->isProtected());
 }
 
 void BaseGraphicObject::setModified(bool value)

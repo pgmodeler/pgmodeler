@@ -6,7 +6,7 @@
 [-- object: ] @{name} [ | type: ] @{sql-object} [ -- ] $br
 
 %if @{sql-disabled} %then
-[/* The SQL code for this object was disabled on the editing form.] $br
+[/* The SQL code for this object was disabled.] $br
 %end
 
 [CREATE ROLE ] @{name} [ WITH ] $br

@@ -32,10 +32,10 @@ SequenceWidget::SequenceWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_SE
 
 		sequence_grid->addWidget(column_sel,3,1,1,3);
 
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(owner_col_lbl);
+/*		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(owner_col_lbl);
 		frame=generateVersionWarningFrame(field_map);
 		sequence_grid->addWidget(frame, sequence_grid->count()+1, 0, 1, 0);
-		frame->setParent(this);
+		frame->setParent(this);*/
 
 		configureFormLayout(sequence_grid, OBJ_SEQUENCE);
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));

@@ -550,19 +550,23 @@ void MainWindow::addModel(const QString &filename)
 	{
 		public_sch=new Schema;
 		public_sch->setName("public");
+		public_sch->setSystemObject(true);
 		model_tab->db_model->addObject(public_sch);
 	}
 
 	lang=new Language;
 	lang->BaseObject::setName(~LanguageType(LanguageType::c));
+	lang->setSystemObject(true);
 	model_tab->db_model->addObject(lang);
 
 	lang=new Language;
 	lang->BaseObject::setName(~LanguageType(LanguageType::sql));
+	lang->setSystemObject(true);
 	model_tab->db_model->addObject(lang);
 
 	lang=new Language;
 	lang->BaseObject::setName(~LanguageType(LanguageType::plpgsql));
+	lang->setSystemObject(true);
 	model_tab->db_model->addObject(lang);
 
 	if(!filename.isEmpty())
@@ -570,6 +574,11 @@ void MainWindow::addModel(const QString &filename)
 		try
 		{
 			model_tab->loadModel(filename);
+
+			//Get the "public" schema and set as system object
+			public_sch=dynamic_cast<Schema *>(model_tab->db_model->getObject("public", OBJ_SCHEMA));
+			if(public_sch)	public_sch->setSystemObject(true);
+
 			models_tbw->setTabText(models_tbw->currentIndex(),
 															Utf8String::create(model_tab->db_model->getName()));
 		}
@@ -916,7 +925,7 @@ void MainWindow::saveModel(ModelWidget *model)
 		if(!model)
 			model=current_model;
 
-		if(model)
+		if(model && model->isModified())
 		{
 			//If the action that calls the slot were the 'save as' or the model filename isn't set
 			if(sender()==action_save_as || model->filename.isEmpty())

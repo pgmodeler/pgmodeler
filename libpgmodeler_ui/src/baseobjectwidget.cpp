@@ -19,6 +19,7 @@
 #include "baseobjectwidget.h"
 #include "permissionwidget.h"
 
+
 extern PermissionWidget *permission_wgt;
 
 const QColor BaseObjectWidget::PROT_LINE_BGCOLOR=QColor(255,180,180);
@@ -71,7 +72,6 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		baseobject_grid->addWidget(name_lbl, 1, 0, 1, 1);
 		baseobject_grid->addWidget(name_edt, 1, 1, 1, 3);
 		baseobject_grid->addWidget(obj_icon_lbl, 1, 4, 1, 1);
-		//baseobject_grid->addWidget(div_ln, 3, 0, 1, 5);
 		baseobject_grid->addWidget(comment_lbl, 4, 0, 1, 1);
 		baseobject_grid->addWidget(comment_edt, 4, 1, 1, 4);
 		baseobject_grid->addWidget(tablespace_lbl, 5, 0, 1, 1);
@@ -147,6 +147,44 @@ void BaseObjectWidget::hideEvent(QHideEvent *)
 	parent_form->apply_ok_btn->setEnabled(true);
 	parent_form->close();
 	parent_form->blockSignals(false);
+}
+
+void BaseObjectWidget::setRequiredField(QWidget *widget)
+{
+	if(widget)
+	{
+		QLabel *lbl=dynamic_cast<QLabel *>(widget);
+		QLineEdit *edt=dynamic_cast<QLineEdit *>(widget);
+		QTextEdit *txt=dynamic_cast<QTextEdit *>(widget);
+		ObjectSelectorWidget *sel=dynamic_cast<ObjectSelectorWidget *>(widget);
+		PgSQLTypeWidget *pgtype=dynamic_cast<PgSQLTypeWidget *>(widget);
+		QString str_aux=" <span style='color: #ff0000;'>*</span> ";
+		QColor bgcolor=QColor("#ffffc0");
+
+		QFont fnt=widget->font();
+
+		if(lbl || pgtype)
+		{
+			fnt.setBold(true);
+
+			if(lbl)
+				lbl->setText(str_aux + lbl->text());
+
+			widget->setFont(fnt);
+		}
+		else if(edt || txt || sel)
+		{
+			QPalette pal;
+			pal.setColor(QPalette::Base, bgcolor);
+
+			if(sel)
+				widget=sel->obj_name_txt;
+			widget->setPalette(pal);
+		}
+
+		str_aux=(!widget->toolTip().isEmpty() ? "\n" : "");
+		widget->setToolTip(widget->toolTip() + str_aux + trUtf8("(Required field)"));
+	}
 }
 
 void BaseObjectWidget::setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj)
@@ -325,10 +363,19 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	{
 		obj_icon_lbl->setPixmap(QPixmap(Utf8String::create(":/icones/icones/") + BaseObject::getSchemaName(obj_type) + QString(".png")));
 		obj_icon_lbl->setToolTip(BaseObject::getTypeName(obj_type));
+
+		if(obj_type!=OBJ_PERMISSION)
+		{
+			setRequiredField(name_lbl);
+			setRequiredField(name_edt);
+		}
+
+		setRequiredField(schema_lbl);
+		setRequiredField(schema_sel);
 	}
 }
 
-QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
+/* QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
 {
 	if(ver_interv_id==UNTIL_VERSION && !ini_ver.isEmpty())
 		return(XMLParser::CHAR_LT + QString("= ") + ini_ver);
@@ -338,7 +385,7 @@ QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const
 		return(XMLParser::CHAR_GT + QString("= ") + ini_ver);
 	else
 		return("");
-}
+} */
 
 QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 {
@@ -384,7 +431,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	return(info_frm);
 }
 
-QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields,
+/* QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields,
 																											map< QWidget *, vector<QString> > *values)
 {
 	QFrame *alert_frm=NULL;
@@ -466,7 +513,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	grid->setContentsMargins(4,4,4,4);
 
 	return(alert_frm);
-}
+} */
 
 void BaseObjectWidget::editPermissions(void)
 {

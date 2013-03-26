@@ -59,13 +59,13 @@ OperatorWidget::OperatorWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_OP
 			grid->addWidget(operators_sel[i],i,1,1,1);
 		}
 
-		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(sort1_op_lbl);
+		/*field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(sort1_op_lbl);
 		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(sort2_op_lbl);
 		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(lessthan_op_lbl);
 		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(greaterthan_op_lbl);
 		frame=generateVersionWarningFrame(field_map);
 		grid->addWidget(frame, grid->count()+1, 0, 1, 0);
-		frame->setParent(attributes_twg->widget(2));
+		frame->setParent(attributes_twg->widget(2)); */
 
 		configureFormLayout(operator_grid, OBJ_OPERATOR);
 

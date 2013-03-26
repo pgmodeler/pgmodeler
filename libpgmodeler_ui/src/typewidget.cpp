@@ -72,13 +72,13 @@ TypeWidget::TypeWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TYPE)
 		attributes_gb->setLayout(grid);
 		attributes_gb->setVisible(false);
 
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(enumeration_rb);
+/*		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(enumeration_rb);
 		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(category_lbl);
 		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(preferred_lbl);
 		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(like_type);
 		frame=generateVersionWarningFrame(field_map);
 		type_grid->addWidget(frame, type_grid->count()+1, 0, 1, 0);
-		frame->setParent(this);
+		frame->setParent(this); */
 
 		grid=dynamic_cast<QGridLayout *>(base_attribs_twg->widget(1)->layout());
 		frame=generateInformationFrame(trUtf8("The functions to be assigned to a type should be written in C language and possess, respectively, the following signatures:<br/>  <table>   <tr>    <td><strong>INPUT:</strong> <em>any function(cstring, oid, integer)</em></td>    <td><strong>OUTPUT:</strong> <em>cstring function(any)</em></td>   </tr>   <tr>    <td><strong>SEND:</strong> <em>byta function(any)</em></td>    <td><strong>RECV:</strong> <em>any function(internal, oid, integer)</em></td>   </tr>   <tr>    <td><strong>TPMOD_IN:</strong> <em>integer function(cstring[])</em></td>    <td><strong>TPMOD_OUT:</strong> <em>cstring function(integer)</em></td>   </tr>   <tr>    <td><strong>ANALYZE:</strong> <em>boolean function(internal)</em></td>    <tr>  </table>"));

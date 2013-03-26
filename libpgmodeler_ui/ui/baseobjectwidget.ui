@@ -28,9 +28,15 @@
      <height>16</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="maximumSize">
     <size>
-     <width>50</width>
+     <width>16777215</width>
      <height>16777215</height>
     </size>
    </property>
@@ -109,6 +115,12 @@
      <height>16</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>75</width>
@@ -117,7 +129,7 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>68</width>
+     <width>16777215</width>
      <height>16777215</height>
     </size>
    </property>
@@ -150,6 +162,12 @@
      <height>16</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="text">
     <string>Tablespace:</string>
    </property>
@@ -163,6 +181,12 @@
      <height>16</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="text">
     <string>Owner:</string>
    </property>
@@ -175,6 +199,12 @@
      <width>61</width>
      <height>16</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="text">
     <string>Schema:</string>

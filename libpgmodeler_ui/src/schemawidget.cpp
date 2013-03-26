@@ -41,14 +41,22 @@ void SchemaWidget::setAttributes(DatabaseModel *model, OperationList *op_list, S
 
 	BaseObjectWidget::setAttributes(model, op_list, schema);
 
-	enable=!(this->object && this->object->getName()=="public");
+
+	enable=!(schema && schema->isSystemObject());//this->object->getName()=="public");
 	edt_perms_tb->setEnabled(enable);
 	name_edt->setEnabled(enable);
 	comment_edt->setEnabled(enable);
 	owner_sel->setEnabled(enable);
 
 	if(schema)
+	{
+		if(schema->isSystemObject())
+		{
+			protected_obj_frm->setVisible(false);
+			parent_form->apply_ok_btn->setEnabled(true);
+		}
 		palette.setColor(QPalette::Button, schema->getFillColor());
+	}
 	else
 		palette.setColor(QPalette::Button, QColor(225,225,225));
 

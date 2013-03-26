@@ -32,13 +32,13 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 	configureFormLayout(database_grid, OBJ_DATABASE);
 
 	//Defines the fields used on specific PostgreSQL versions
-	fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(connlim_lbl);
+	/*fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(connlim_lbl);
 	fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(lccollate_lbl);
 	fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(lcctype_lbl);
 
 	frame=generateVersionWarningFrame(fields_map);
 	database_grid->addWidget(frame, database_grid->count()+1, 0, 1, 0);
-	frame->setParent(this);
+	frame->setParent(this);*/
 
 	parent_form->setMinimumWidth(530);
 	parent_form->setMinimumHeight(420);

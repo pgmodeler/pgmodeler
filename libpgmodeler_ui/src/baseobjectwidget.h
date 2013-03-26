@@ -32,6 +32,7 @@
 #include "modelobjectswidget.h"
 #include "objectselectorwidget.h"
 #include "ui_baseobjectwidget.h"
+#include "pgsqltypewidget.h"
 
 /* Declaring the PgSQLType class as a Qt metatype in order to permit
 	 that instances of the class be used as data of QVariant and QMetaType */
@@ -99,13 +100,13 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		AFTER_VERSION=2;
 
 		//! \brief Generates a string containing the specified version interval
-		static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver="");
+		//static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver="");
 
 		/*! \brief Generates a alert frame highlighting the fields of exclusive use on the specified
 			PostgreSQL versions. On the first map (fields) the key is the PostgreSQL versions and
 			the values are the reference to the widget. The second map is used to specify the values
 			of widgets specific for each version. */
-		QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=NULL);
+		//QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=NULL);
 
 		//! \brief Generates a informative frame containing the specified message
 		QFrame *generateInformationFrame(const QString &msg);
@@ -141,6 +142,8 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		only on forms that does not make use of operaton list and not treat graphical objects, since it calls
 		this original one whit the op_list=NULL and obj_px=NAN, obj_py=NAN */
 		virtual void setAttributes(DatabaseModel *model, BaseObject *object, BaseObject *parent_obj);
+
+		void setRequiredField(QWidget *widget);
 
 	public:
 		BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=BASE_OBJECT);

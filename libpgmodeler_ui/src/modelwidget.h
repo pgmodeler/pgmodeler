@@ -48,7 +48,7 @@ class ModelWidget: public QWidget {
 
 		/*! \brief Return if the object is a reserverd one. A reserved object is the "public"
 		schema or the languages C, plpgsql and SQL. */
-		bool isReservedObject(BaseObject *obj);
+		//bool isReservedObject(BaseObject *obj);
 
 		//! \brief Configures the submenu related to the object
 		void configureSubmenu(BaseObject *obj);

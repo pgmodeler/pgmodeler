@@ -69,6 +69,11 @@ class BaseGraphicObject: public QObject, public BaseObject {
 		 emits the signal s_objectProtected() */
 		virtual void setProtected(bool value);
 
+		/*! \brief Sets whether the object is system or not (method overloading
+		 from base class BaseObject) the difference is that this method
+		 emits the same signal s_objectProtected() */
+		virtual void setSystemObject(bool value);
+
 		//! \brief Sets the object's position
 		void setPosition(QPointF pos);
 

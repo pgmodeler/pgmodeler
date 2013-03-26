@@ -540,7 +540,12 @@ void SyntaxHighlighter::loadConfiguration(const QString &filename)
 								underline=(attribs[ParsersAttributes::UNDERLINE]==ParsersAttributes::_TRUE_);
 								partial_match=(attribs[ParsersAttributes::PARTIAL_MATCH]==ParsersAttributes::_TRUE_);
 								fg_color.setNamedColor(attribs[ParsersAttributes::FOREGROUND_COLOR]);
-								bg_color.setNamedColor(attribs[ParsersAttributes::BACKGROUND_COLOR]);
+
+								//If the attribute isn't defined the bg color will be transparent
+								if(attribs[ParsersAttributes::BACKGROUND_COLOR].isEmpty())
+								 bg_color.setRgb(0,0,0,0);
+								else
+								 bg_color.setNamedColor(attribs[ParsersAttributes::BACKGROUND_COLOR]);
 
 								if(!attribs[ParsersAttributes::LOOKAHEAD_CHAR].isEmpty())
 									lookahead_char[group]=attribs[ParsersAttributes::LOOKAHEAD_CHAR][0];

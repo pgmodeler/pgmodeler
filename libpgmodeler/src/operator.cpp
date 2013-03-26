@@ -258,10 +258,14 @@ QString Operator::getSignature(bool format_name)
 	{
 		if(argument_types[i]!="any")
 		{
-			if(argument_types[i]=="any") str_aux+="NONE";
-			else str_aux+=(*argument_types[i]);
-			if(i==0) str_aux+=",";
+			if(argument_types[i]=="any")
+				str_aux+="NONE";
+			else
+				str_aux+=(*argument_types[i]);
 		}
+
+		if(i==0 && argument_types[1]!="any")
+			str_aux+=",";
 	}
 	signature+="(" + str_aux + ")";
 	return(signature);

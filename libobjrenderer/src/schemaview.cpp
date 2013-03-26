@@ -170,8 +170,7 @@ void SchemaView::configureObject(void)
 		this->setToolTip(Utf8String::create(schema->getName(true)) +  " (" + schema->getTypeName() + ")");
 		sch_name->setToolTip(this->toolTip());
 
-		this->protected_icon->setPos(QPointF(sch_name->pos().x() + sch_name->boundingRect().width() + sp_h,
-																				 sch_name->pos().y()));
+		this->protected_icon->setPos(QPointF(this->boundingRect().width() * 0.8, sch_name->pos().y()));
 	}
 	else
 		this->setVisible(false);

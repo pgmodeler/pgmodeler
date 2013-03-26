@@ -65,13 +65,12 @@ unsigned BaseObject::global_id=60000;
 BaseObject::BaseObject(void)
 {
 	object_id=BaseObject::global_id++;
-	is_protected=false;
+	is_protected=system_obj=sql_disabled=false;
 	obj_type=BASE_OBJECT;
 	schema=NULL;
 	owner=NULL;
 	tablespace=NULL;
 	database=NULL;
-	sql_disabled=false;
 	attributes[ParsersAttributes::NAME]="";
 	attributes[ParsersAttributes::COMMENT]="";
 	attributes[ParsersAttributes::OWNER]="";
@@ -299,7 +298,7 @@ BaseObject *BaseObject::getDatabase(void)
 
 void BaseObject::setProtected(bool value)
 {
-	is_protected=value;
+	is_protected=(!system_obj ? value : true);
 }
 
 void BaseObject::setName(const QString &name)
@@ -489,6 +488,16 @@ bool BaseObject::isSQLDisabled(void)
 	return(sql_disabled);
 }
 
+void BaseObject::setSystemObject(bool value)
+{
+	system_obj=sql_disabled=is_protected=value;
+}
+
+bool BaseObject::isSystemObject(void)
+{
+	return(system_obj);
+}
+
 QString BaseObject::__getCodeDefinition(unsigned def_type)
 {
 	return(BaseObject::getCodeDefinition(def_type, false));
@@ -645,5 +654,7 @@ void BaseObject::operator = (BaseObject &obj)
 	this->obj_name=obj.obj_name;
 	this->obj_type=obj.obj_type;
 	this->is_protected=obj.is_protected;
+	this->sql_disabled=obj.sql_disabled;
+	this->system_obj=obj.system_obj;
 }
 

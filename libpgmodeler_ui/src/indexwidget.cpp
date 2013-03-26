@@ -66,7 +66,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		IndexingType::getTypes(list);
 		indexing_cmb->addItems(list);
 
-		field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_81)].push_back(indexing_lbl);
+/*	field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_81)].push_back(indexing_lbl);
 		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(concurrent_chk);
 		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(fill_factor_chk);
 		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(sorting_chk);
@@ -75,7 +75,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 
 		frame=generateVersionWarningFrame(field_map, &value_map);
 		index_grid->addWidget(frame, index_grid->count()+1, 0, 1, 0);
-		frame->setParent(this);
+		frame->setParent(this); */
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleElement(int)));
