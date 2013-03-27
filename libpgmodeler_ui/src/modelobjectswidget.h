@@ -60,7 +60,7 @@ class ModelObjectsWidget: public QDockWidget, public Ui::ModelObjectsWidget {
 		map<ObjectType, bool> visible_objs_map;
 
 		//! \brief Updates only a schema tree starting from the 'root' item
-		void updatedSchemaTree(QTreeWidgetItem *root);
+		void updateSchemaTree(QTreeWidgetItem *root);
 
 		//! \brief Updates only a table tree starting from the 'root' item
 		void updateTableTree(QTreeWidgetItem *root, BaseObject *schema);

@@ -502,6 +502,7 @@ class EncodingType: public BaseType{
 	public:
 		EncodingType(void);
 		EncodingType(const QString &type);
+		EncodingType(const unsigned type_id);
 
 		static void getTypes(QStringList &type_list);
 		unsigned operator = (unsigned type_id);

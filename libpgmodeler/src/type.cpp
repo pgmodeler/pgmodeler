@@ -18,7 +18,7 @@
 
 #include "type.h"
 
-unsigned Type::type_id=50000;
+unsigned Type::type_id=60000;
 
 Type::Type(void)
 {

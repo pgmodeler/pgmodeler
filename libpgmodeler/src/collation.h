@@ -1,0 +1,78 @@
+/*
+# PostgreSQL Database Modeler (pgModeler)
+#
+# Copyright 2006-2013 - Raphael Araújo e Silva <rkhaotix@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation version 3.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# The complete text of GPLv3 is at LICENSE file on source code root directory.
+# Also, you can get the complete GNU General Public License at <http://www.gnu.org/licenses/>
+*/
+
+/**
+\ingroup libpgmodeler
+\class Collation
+\brief Implements the operations to manipulate collations on the database.
+**/
+
+#ifndef COLLATION_H
+#define COLLATION_H
+
+#include "baseobject.h"
+#include "pgsqltypes.h"
+
+class Collation : public BaseObject {
+	private:
+		static unsigned collation_id;
+
+		/*! \brief Base encoding for the collation.
+		When setting the locale or lc_??? attributes the encoding name
+		will be appended to the attributes. Example:
+
+		encoding=UTF8
+		locale=pt_BR
+		LC_TYPE=pt_BR.utf8
+		LC_CTYPE=pt_BR.utf8 */
+		EncodingType base_encoding,
+
+		//! \brief Sets the individual localization charset (encoding). The base encoding is ignored.
+		loc_encoding[2];
+
+		//! \brief LC_CTYPE and LC_COLLATE attributes
+		QString localization[2],
+						/*! \brief This attribute sets at once the localization attribute. Using this attribute
+						user cannot change localization attributes */
+						locale;
+
+	public:
+		Collation(void);
+
+		/*! brief Sets the collation locale and the base encoding. This method specifies at once the LC_CTYPE
+		and LC_COLLATE attributes. When the user calls this method with 'locale' set the use of setLocalization()
+		has no effect. To use custom localizations the user must reset 'locale' to a empty value. */
+		void setlocale(const QString &locale, EncodingType encoding=BaseType::null);
+
+		//! \brief Configures the LC_CTYPE and LC_COLLATE attributes and the default encoding for them.
+		void setlocalization(int lc_id, const QString &lc_name, EncodingType encoding=BaseType::null);
+
+		/*! \brief Sets the collation from which this collation will copy attributes. The use of this method nullifies
+		all the other collation's attributes */
+		void setCollation(Collation *collation);
+
+		void getLocale(QString &locale, EncodingType &encoding);
+		void getLocalization(int lc_id, QString &lc_name, EncodingType &encoding);
+		Collation *getCopyCollation(void);
+
+		//! \brief Returns the SQL / XML definition for the collation.
+		QString getCodeDefinition(unsigned def_type);
+		QString getCodeDefinition(unsigned def_type, bool reduced_form);
+};
+
+#endif

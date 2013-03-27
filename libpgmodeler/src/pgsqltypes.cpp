@@ -1354,6 +1354,11 @@ EncodingType::EncodingType(const QString &type)
 	(*this)=type;
 }
 
+EncodingType::EncodingType(const unsigned type_id)
+{
+	(*this)=type_id;
+}
+
 void EncodingType::getTypes(QStringList &tipos)
 {
 	BaseType::getTypes(tipos,offset,types_count);

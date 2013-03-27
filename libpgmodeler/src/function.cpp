@@ -78,7 +78,7 @@ QString Parameter::getCodeDefinition(unsigned def_type, bool reduced_form)
 	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
 
-unsigned Function::function_id=40000;
+unsigned Function::function_id=50000;
 
 Function::Function(void)
 {

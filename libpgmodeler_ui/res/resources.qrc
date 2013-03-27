@@ -142,6 +142,8 @@
         <file>icones/help.png</file>
         <file>icones/permission.png</file>
         <file>icones/permission_grp.png</file>
+        <file>icones/collation_grp.png</file>
+        <file>icones/collation.png</file>
     </qresource>
     <qresource prefix="/imagens">
         <file>imagens/model2sql.png</file>

@@ -32,7 +32,7 @@ pgModeler grow bigger and reached a state that its lonely developer cannot handl
 Compiling/Installation
 ----------------------
 
-For details about installation process from source code see [COMPILING.md](https://github.com/pgmodeler/pgmodeler/blob/master/COMPILING.md). If you don't want to compile pgModeler there are binaries available for download at [Downloads](https://github.com/pgmodeler/pgmodeler/downloads) section.
+For details about installation process from source code visit thw [Installation](http://www.pgmodeler.com.br/wiki/doku.php?id=installation) section on Wiki. If you don't want to compile pgModeler there are binaries available for download at [official site](http://pgmodeler.com.br).
 
 Known bugs
 ----------

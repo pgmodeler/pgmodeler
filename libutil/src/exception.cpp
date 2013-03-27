@@ -197,6 +197,8 @@ QString Exception::messages[ERROR_COUNT][2]={
 	{"ERR_INV_VIEW_DEF_EXPRESSION", QT_TR_NOOP("Invalid use of a view referece as whole SQL definition! The assigned reference must be an expression!")},
 	{"ERR_ASG_SEC_VIEW_DEF_EXPRESSION", QT_TR_NOOP("Assignment of a second definition expression to the view!")},
 	{"ERR_MIX_VIEW_DEF_EXPR_REFS", QT_TR_NOOP("It's not possible mix ordinary references (SELECT-FROM, FROM-WHERE, After WHERE) with references used as view SQL definition!")},
+	{"ERR_ASG_NOT_ALOC_COLLATION", QT_TR_NOOP("Assignment of a not allocated collation to object '%1' (%2)!")},
+	{"ERR_ASG_INV_COLLATION_OBJECT", QT_TR_NOOP("Assignment of collation object which type is invalid!")},
 };
 
 Exception::Exception(void)

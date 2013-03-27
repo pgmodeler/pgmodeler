@@ -59,6 +59,7 @@ enum ObjectType {
 	OBJ_OPFAMILY,
 	OBJ_OPCLASS,
 	OBJ_DATABASE,
+	OBJ_COLLATION,
 	OBJ_RELATIONSHIP,
 	OBJ_TEXTBOX,
 	OBJ_PERMISSION,
@@ -88,7 +89,7 @@ class BaseObject {
 		unsigned object_id;
 
 		//! \brief Objects type count declared on enum ObjectType.
-		static const int OBJECT_TYPE_COUNT=27;
+		static const int OBJECT_TYPE_COUNT=28;
 
 		/*! \brief Indicates whether the object is protected or not.
 		 A protected object indicates that it can not suffer changes in position
@@ -129,6 +130,10 @@ class BaseObject {
 		/*! \brief Tablespace to which the object is part. Some objects cannot be associated to a tablespace
 		 so if one is assigned to the object an error will be raised */
 		BaseObject *tablespace;
+
+		/*! \brief Collation referenced by the object. Some objects cannot be associated to a collation
+		 so if one is assigned to the object an error will be raised */
+		BaseObject *collation;
 
 		//! \brief Maximum number of characters that an object name on PostgreSQL can have
 		static const int OBJECT_NAME_MAX_LENGTH=63;
@@ -201,19 +206,23 @@ class BaseObject {
 		virtual void setName(const QString &name);
 
 		/*! \brief Defines the schema that the object belongs. An error is raised if the
-		 passed schema is not valid */
+		 passed schema is not valid or the object does not accepts the use of schemas. */
 		virtual void setSchema(BaseObject *schema);
 
 		/*! \brief Defines the owner of the object. An error is raised if the
-		 passed owner is not valid */
+		 passed owner is not valid or the object does not accepts the use of owners. */
 		virtual void setOwner(BaseObject *owner);
 
 		/*! \brief Defines the tablespace which the objects will use. An error is raised if the
-		 passed tablespace is not valid */
+		 passed tablespace is not valid or the object does not accepts the use of tablespaces. */
 		virtual void setTablespace(BaseObject *tablespace);
 
 		//! \brief Toggles the object's modify protection
 		virtual void setProtected(bool value);
+
+		/*! \brief Defines the collation which the objects will use. An error is raised if the
+		 passed collation is not valid or the object does not accepts the use of collations. */
+		virtual void setCollation(BaseObject *collation);
 
 		//! \brief Disables the SQL code commenting it on generation
 		void setSQLDisabled(bool value);
@@ -255,6 +264,9 @@ class BaseObject {
 		//! \brief Returns the tablespace that the object is part
 		BaseObject *getTablespace(void);
 
+		//! \brief Returns the collation that the object makes use
+		BaseObject *getCollation(void);
+
 		//! \brief Returns the object's generated id
 		unsigned getObjectId(void);
 
@@ -282,14 +294,17 @@ class BaseObject {
 		 of the object. See schema file for: functions, schemas, domains, types. */
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
-		//! \brief Returns if the object accepts to has a schema assigned
+		//! \brief Returns if the object accepts to have a schema assigned
 		bool acceptsSchema(void);
 
-		//! \brief Returns if the object accepts to has an owner assigned
+		//! \brief Returns if the object accepts to have an owner assigned
 		bool acceptsOwner(void);
 
-		//! \brief Returns if the object accepts to has a tablespace assigned
+		//! \brief Returns if the object accepts to have a tablespace assigned
 		bool acceptsTablespace(void);
+
+		//! \brief Returns if the object accepts to have a collation assigned
+		bool acceptsCollation(void);
 
 		friend class DatabaseModel;
 };

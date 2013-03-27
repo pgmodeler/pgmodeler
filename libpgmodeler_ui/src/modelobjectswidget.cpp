@@ -25,7 +25,7 @@ ModelObjectsWidget::ModelObjectsWidget(bool simplified_view, QWidget *parent, Qt
 												OBJ_ROLE, OBJ_CONVERSION, OBJ_CAST, OBJ_LANGUAGE,
 												OBJ_TYPE, OBJ_TABLESPACE, OBJ_OPFAMILY, OBJ_OPCLASS,
 												OBJ_RELATIONSHIP, OBJ_TEXTBOX, OBJ_COLUMN, OBJ_CONSTRAINT,
-												OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
+												OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE, OBJ_COLLATION };
 	int type_id, type_count=sizeof(type)/sizeof(ObjectType);
 	QListWidgetItem *item=NULL;
 	QPixmap icon;
@@ -299,7 +299,7 @@ void ModelObjectsWidget::updateObjectsList(void)
 													OBJ_SCHEMA, OBJ_AGGREGATE, OBJ_OPERATOR, OBJ_SEQUENCE,
 													OBJ_ROLE, OBJ_CONVERSION, OBJ_CAST, OBJ_LANGUAGE,
 													OBJ_TYPE, OBJ_TABLESPACE, OBJ_OPFAMILY, OBJ_OPCLASS,
-													OBJ_RELATIONSHIP, OBJ_TEXTBOX },
+													OBJ_RELATIONSHIP, OBJ_TEXTBOX, OBJ_COLLATION },
 				subtypes[]={ OBJ_COLUMN, OBJ_CONSTRAINT,
 										 OBJ_TRIGGER, OBJ_INDEX, OBJ_RULE };
 
@@ -583,7 +583,7 @@ void ModelObjectsWidget::updateObjectsList(void)
 	}
 }
 
-void ModelObjectsWidget::updatedSchemaTree(QTreeWidgetItem *root)
+void ModelObjectsWidget::updateSchemaTree(QTreeWidgetItem *root)
 {
 	if(db_model && visible_objs_map[OBJ_SCHEMA])
 	{
@@ -596,7 +596,7 @@ void ModelObjectsWidget::updatedSchemaTree(QTreeWidgetItem *root)
 		ObjectType types[]={ OBJ_VIEW, OBJ_FUNCTION, OBJ_AGGREGATE,
 												 OBJ_DOMAIN, OBJ_TYPE, OBJ_CONVERSION,
 												 OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
-												 OBJ_SEQUENCE };
+												 OBJ_SEQUENCE, OBJ_COLLATION };
 		int count, count2, type_cnt=sizeof(types)/sizeof(ObjectType), i, i1, i2;
 
 		QPixmap sch_icon=QPixmap(QString(":/icones/icones/") +
@@ -902,7 +902,7 @@ void ModelObjectsWidget::updateDatabaseTree(void)
 					root->setForeground(0,BaseObjectView::getFontStyle(ParsersAttributes::PROT_COLUMN).foreground());
 				}
 
-				updatedSchemaTree(root);
+				updateSchemaTree(root);
 
 				for(i=0; i < type_cnt; i++)
 				{

@@ -28,7 +28,8 @@ QString BaseObject::objs_schemas[OBJECT_TYPE_COUNT]={
 	"domain", "schema", "aggregate", "operator",
 	"sequence", "role", "conversion", "cast",
 	"language", "usertype", "tablespace",
-	"opfamily", "opclass", "database","relationship","textbox",
+	"opfamily", "opclass", "database","collation",
+	"relationship","textbox",
 	"permission","parameter","relationship"
 };
 
@@ -41,7 +42,7 @@ QString BaseObject::obj_type_names[OBJECT_TYPE_COUNT]={
 	QT_TR_NOOP("Sequence"), QT_TR_NOOP("Role"), QT_TR_NOOP("Conversion"),
 	QT_TR_NOOP("Cast"), QT_TR_NOOP("Language"), QT_TR_NOOP("Type"), QT_TR_NOOP("Tablespace"),
 	QT_TR_NOOP("Operator Family"), QT_TR_NOOP("Operator Class"),
-	QT_TR_NOOP("Database"), QT_TR_NOOP("Relationship"),
+	QT_TR_NOOP("Database"), QT_TR_NOOP("Collation"), QT_TR_NOOP("Relationship"),
 	QT_TR_NOOP("Textbox"), QT_TR_NOOP("Permission"), QT_TR_NOOP("Parameter"),
 	QT_TR_NOOP("Relationship")
 };
@@ -52,14 +53,15 @@ QString BaseObject::objs_sql[OBJECT_TYPE_COUNT]={
 	"DOMAIN", "SCHEMA", "AGGREGATE", "OPERATOR",
 	"SEQUENCE", "ROLE", "CONVERSION", "CAST",
 	"LANGUAGE", "TYPE", "TABLESPACE",
-	"OPERATOR FAMILY", "OPERATOR CLASS", "DATABASE"
+	"OPERATOR FAMILY", "OPERATOR CLASS", "DATABASE",
+	"COLLATION"
 };
 
 /* Initializes the global id which is shared between instances
 	 of classes derived from the this class. The value of global_id
-	 starts at 60k because the id ranges 0, 10k, 20k, 30k, 40k and 50k
+	 starts at 70k because the id ranges 0, 10k, 20k, 30k, 40k, 50k, 60k
 	 are respectively assigned to objects of classes Role, Tablespace
-	 DBModel, Schema, Function and Type */
+	 DBModel, Schema, Collation, Function and Type */
 unsigned BaseObject::global_id=60000;
 
 BaseObject::BaseObject(void)
@@ -71,11 +73,13 @@ BaseObject::BaseObject(void)
 	owner=NULL;
 	tablespace=NULL;
 	database=NULL;
+	collation=NULL;
 	attributes[ParsersAttributes::NAME]="";
 	attributes[ParsersAttributes::COMMENT]="";
 	attributes[ParsersAttributes::OWNER]="";
 	attributes[ParsersAttributes::TABLESPACE]="";
 	attributes[ParsersAttributes::SCHEMA]="";
+	attributes[ParsersAttributes::COLLATION]="";
 	attributes[ParsersAttributes::PROTECTED]="";
 	attributes[ParsersAttributes::SQL_DISABLED]="";
 }
@@ -337,7 +341,7 @@ bool BaseObject::acceptsSchema(void)
 				 obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
 				 obj_type==OBJ_SEQUENCE || obj_type==OBJ_CONVERSION ||
 				 obj_type==OBJ_TYPE || obj_type==OBJ_OPCLASS ||
-				 obj_type==OBJ_OPFAMILY);
+				 obj_type==OBJ_OPFAMILY || obj_type==OBJ_COLLATION);
 }
 
 void BaseObject::setSchema(BaseObject *schema)
@@ -348,13 +352,10 @@ void BaseObject::setSchema(BaseObject *schema)
 										ERR_ASG_NOT_ALOC_SCHEMA,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(schema && schema->getObjectType()!=OBJ_SCHEMA)
 		throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-	{
-		if(acceptsSchema())
-			this->schema=schema;
-		else
-			throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
+	else if(!acceptsSchema())
+		throw Exception(ERR_ASG_INV_SCHEMA_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->schema=schema;
 }
 
 bool BaseObject::acceptsOwner(void)
@@ -365,20 +366,18 @@ bool BaseObject::acceptsOwner(void)
 				 obj_type==OBJ_CONVERSION ||
 				 obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
 				 obj_type==OBJ_TABLESPACE || obj_type==OBJ_DATABASE ||
-				 obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY);
+				 obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY ||
+				 obj_type==OBJ_COLLATION);
 }
 
 void BaseObject::setOwner(BaseObject *owner)
 {
 	if(owner && owner->getObjectType()!=OBJ_ROLE)
 		throw Exception(ERR_ASG_INV_ROLE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-	{
-		if(acceptsOwner())
-			this->owner=owner;
-		else
-			throw Exception(ERR_ASG_ROLE_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
+	else if(!acceptsOwner())
+		throw Exception(ERR_ASG_ROLE_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->owner=owner;
 }
 
 bool BaseObject::acceptsTablespace(void)
@@ -393,13 +392,30 @@ void BaseObject::setTablespace(BaseObject *tablespace)
 {
 	if(tablespace && tablespace->getObjectType()!=OBJ_TABLESPACE)
 		throw Exception(ERR_ASG_INV_TABLESPACE_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else
-	{
-		if(acceptsTablespace())
-			this->tablespace=tablespace;
-		else
-			throw Exception(ERR_ASG_TABSPC_INV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
+	else if(!acceptsTablespace())
+		throw Exception(ERR_ASG_TABSPC_INV_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->tablespace=tablespace;
+}
+
+bool BaseObject::acceptsCollation(void)
+{
+	return(obj_type==OBJ_DOMAIN || obj_type==OBJ_INDEX ||
+				 obj_type==OBJ_COLUMN  || obj_type==OBJ_COLLATION);
+}
+
+void BaseObject::setCollation(BaseObject *collation)
+{
+	if(!collation)
+		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLLATION)
+										.arg(Utf8String::create(this->obj_name)).arg(this->getTypeName()),
+										ERR_ASG_NOT_ALOC_COLLATION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(collation && collation->getObjectType()!=OBJ_COLLATION)
+		throw Exception(ERR_ASG_INV_COLLATION_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(!acceptsCollation())
+		throw Exception(ERR_ASG_INV_COLLATION_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	this->collation=collation;
 }
 
 QString BaseObject::getName(bool format)
@@ -436,6 +452,11 @@ BaseObject *BaseObject::getOwner(void)
 BaseObject *BaseObject::getTablespace(void)
 {
 	return(tablespace);
+}
+
+BaseObject *BaseObject::getCollation(void)
+{
+	return(collation);
 }
 
 ObjectType BaseObject::getObjectType(void)
@@ -551,9 +572,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		attributes[ParsersAttributes::SQL_OBJECT]=objs_sql[this->obj_type];
 
 		if(def_type==SchemaParser::XML_DEFINITION && schema)
-		{
 			attributes[ParsersAttributes::SCHEMA]=schema->getCodeDefinition(def_type, true);
-		}
 
 		if(def_type==SchemaParser::XML_DEFINITION)
 			attributes[ParsersAttributes::PROTECTED]=(is_protected ? "1" : "");
@@ -579,6 +598,14 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				attributes[ParsersAttributes::TABLESPACE]=tablespace->getName(format);
 			else
 				attributes[ParsersAttributes::TABLESPACE]=tablespace->getCodeDefinition(def_type, true);
+		}
+
+		if(collation)
+		{
+			if(def_type==SchemaParser::SQL_DEFINITION)
+				attributes[ParsersAttributes::COLLATION]=collation->getName(format);
+			else
+				attributes[ParsersAttributes::COLLATION]=collation->getCodeDefinition(def_type, true);
 		}
 
 		if(owner)

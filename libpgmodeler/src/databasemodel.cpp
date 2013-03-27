@@ -32,8 +32,8 @@ DatabaseModel::DatabaseModel(void)
 	attributes[ParsersAttributes::ENCODING]="";
 	attributes[ParsersAttributes::TEMPLATE_DB]="";
 	attributes[ParsersAttributes::CONN_LIMIT]="";
-	attributes[ParsersAttributes::LC_COLLATE_DB]="";
-	attributes[ParsersAttributes::LC_CTYPE_DB]="";
+	attributes[ParsersAttributes::_LC_COLLATE_]="";
+	attributes[ParsersAttributes::_LC_CTYPE_]="";
 }
 
 DatabaseModel::~DatabaseModel(void)
@@ -49,17 +49,18 @@ void DatabaseModel::setEncoding(EncodingType encod)
 
 void DatabaseModel::setLocalization(int localiz_id, const QString &value)
 {
-	unsigned idx=0;
-
 	switch(localiz_id)
 	{
-		case LC_CTYPE: idx=0; break;
+		case LC_CTYPE:
+			localizations[0]=value;
+		break;
 		case LC_COLLATE:
+			localizations[1]=value;
+		break;
 		default:
-			idx=1;
+			throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;
 	}
-	localizations[idx]=value;
 }
 
 void DatabaseModel::setConnectionLimit(int conn_lim)
@@ -123,6 +124,8 @@ vector<BaseObject *> *DatabaseModel::getObjectList(ObjectType obj_type)
 		return(&relationships);
 	else if(obj_type==OBJ_PERMISSION)
 		return(&permissions);
+	else if(obj_type==OBJ_COLLATION)
+		return(&collations);
 	else
 		return(NULL);
 }
@@ -207,6 +210,8 @@ void DatabaseModel::addObject(BaseObject *object, int obj_idx)
 				addDomain(dynamic_cast<Domain *>(object), obj_idx);
 			else if(obj_type==OBJ_SEQUENCE)
 				addSequence(dynamic_cast<Sequence *>(object), obj_idx);
+			else if(obj_type==OBJ_COLLATION)
+				addCollation(dynamic_cast<Collation *>(object), obj_idx);
 			else if(obj_type==OBJ_PERMISSION)
 				addPermission(dynamic_cast<Permission *>(object));
 		}
@@ -265,6 +270,8 @@ void DatabaseModel::removeObject(BaseObject *object, int obj_idx)
 				removeDomain(dynamic_cast<Domain *>(object), obj_idx);
 			else if(obj_type==OBJ_SEQUENCE)
 				removeSequence(dynamic_cast<Sequence *>(object), obj_idx);
+			else if(obj_type==OBJ_COLLATION)
+				removeCollation(dynamic_cast<Collation *>(object), obj_idx);
 			else if(obj_type==OBJ_PERMISSION)
 				removePermission(dynamic_cast<Permission *>(object));
 		}
@@ -328,6 +335,8 @@ void DatabaseModel::removeObject(unsigned obj_idx, ObjectType obj_type)
 			removeDomain(dynamic_cast<Domain *>(object), obj_idx);
 		else if(obj_type==OBJ_SEQUENCE)
 			removeSequence(dynamic_cast<Sequence *>(object), obj_idx);
+		else if(obj_type==OBJ_COLLATION)
+			removeCollation(dynamic_cast<Collation *>(object), obj_idx);
 		else if(obj_type==OBJ_RELATIONSHIP || obj_type==BASE_RELATIONSHIP)
 			removeRelationship(dynamic_cast<BaseRelationship *>(object), obj_idx);
 		else if(obj_type==OBJ_PERMISSION)
@@ -595,17 +604,17 @@ unsigned DatabaseModel::getObjectCount(void)
 
 QString DatabaseModel::getLocalization(int localiz_id)
 {
-	unsigned idx=0;
-
 	switch(localiz_id)
 	{
-		case LC_CTYPE: idx=0; break;
+		case LC_CTYPE:
+			return(localizations[0]);
+		break;
 		case LC_COLLATE:
+			return(localizations[1]);
 		default:
-			idx=1;
+			throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;
 	}
-	return(localizations[idx]);
 }
 
 int DatabaseModel::getConnectionLimit(void)
@@ -798,6 +807,35 @@ void DatabaseModel::removeSequence(Sequence *sequence, int obj_idx)
 	if(sequence)
 	{
 		removeUserType(sequence, obj_idx);
+	}
+}
+
+void DatabaseModel::addCollation(Collation *collation, int obj_idx)
+{
+	try
+	{
+		__addObject(collation, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
+}
+
+Collation *DatabaseModel::getCollation(unsigned obj_idx)
+{
+	return(dynamic_cast<Collation *>(getObject(obj_idx, OBJ_COLLATION)));
+}
+
+void DatabaseModel::removeCollation(Collation *collation, int obj_idx)
+{
+	try
+	{
+		__removeObject(collation, obj_idx);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
 
@@ -2565,8 +2603,8 @@ void DatabaseModel::loadModel(const QString &filename)
 								XMLParser::getElementAttributes(attribs);
 								encoding=attribs[ParsersAttributes::ENCODING];
 								template_db=attribs[ParsersAttributes::TEMPLATE_DB];
-								localizations[0]=attribs[ParsersAttributes::LC_CTYPE_DB];
-								localizations[1]=attribs[ParsersAttributes::LC_COLLATE_DB];
+								localizations[0]=attribs[ParsersAttributes::_LC_CTYPE_];
+								localizations[1]=attribs[ParsersAttributes::_LC_COLLATE_];
 
 								if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
 									conn_limit=attribs[ParsersAttributes::CONN_LIMIT].toInt();
@@ -4906,6 +4944,11 @@ View *DatabaseModel::createView(void)
 	return(view);
 }
 
+Collation *DatabaseModel::createCollation(void)
+{
+
+}
+
 Textbox *DatabaseModel::createTextbox(void)
 {
 	Textbox *txtbox=NULL;
@@ -5371,16 +5414,16 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::ENCODING]="'" + (~encoding) + "'";
 
 		if(!localizations[1].isEmpty())
-			attributes[ParsersAttributes::LC_COLLATE_DB]="'" + localizations[1] + "'";
+			attributes[ParsersAttributes::_LC_COLLATE_]="'" + localizations[1] + "'";
 
 		if(!localizations[0].isEmpty())
-			attributes[ParsersAttributes::LC_CTYPE_DB]="'" + localizations[0]  + "'";
+			attributes[ParsersAttributes::_LC_CTYPE_]="'" + localizations[0]  + "'";
 	}
 	else
 	{
 		attributes[ParsersAttributes::ENCODING]=(~encoding);
-		attributes[ParsersAttributes::LC_COLLATE_DB]=localizations[1];
-		attributes[ParsersAttributes::LC_CTYPE_DB]=localizations[0];
+		attributes[ParsersAttributes::_LC_COLLATE_]=localizations[1];
+		attributes[ParsersAttributes::_LC_CTYPE_]=localizations[0];
 	}
 
 	attributes[ParsersAttributes::TEMPLATE_DB]=template_db;

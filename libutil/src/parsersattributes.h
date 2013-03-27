@@ -74,6 +74,7 @@ namespace ParsersAttributes {
 	ENUMARATIONS="enumerations",
 	TABLESPACE="tablespace",
 	SCHEMA="schema",
+	COLLATION="collation",
 	EVENTS="events",
 	EXPRESSION="expression",
 	EXPORT_TO_FILE="export-to-file",
@@ -254,8 +255,8 @@ namespace ParsersAttributes {
 	IO_CAST="io-cast",
 	WINDOW_FUNC="window-func",
 	RETURN_TABLE="return-table",
-	LC_COLLATE_DB="lc-collate",
-	LC_CTYPE_DB="lc-ctype",
+	_LC_COLLATE_="lc-collate",
+	_LC_CTYPE_="lc-ctype",
 	INDEX_ELEMENT="idxelement",
 	PERMISSION="permission",
 	GRANT_OP="grant-op",
@@ -349,7 +350,8 @@ namespace ParsersAttributes {
 	SQL_DISABLED="sql-disabled",
 	REVOKE="revoke",
 	CASCADE="cascade",
-	CTE_EXPRESSION="cte-exp";
+	CTE_EXPRESSION="cte-exp",
+	LOCALE="locale";
 }
 
 #endif
