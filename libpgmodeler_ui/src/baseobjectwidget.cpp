@@ -322,7 +322,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 	baseobject_grid->setContentsMargins(4, 4, 4, 4);
 
-	if(obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_ROLE)
+	if(obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_ROLE && obj_type!=OBJ_COLLATION)
 		disable_sql_chk->setVisible(false);
 
 	show_schema=(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW ||

@@ -24,71 +24,60 @@ Collation::Collation(void)
 {
 	object_id=Collation::collation_id++;
 	obj_type=OBJ_COLLATION;
-	base_encoding=BaseType::null;
-	loc_encoding[0]=loc_encoding[1]=BaseType::null;
+	encoding=BaseType::null;
 }
 
-void Collation::setlocale(const QString &locale, EncodingType encoding)
+void Collation::setLocale(const QString &locale)
 {
-	setlocalization(LC_CTYPE, locale, encoding);
-	setlocalization(LC_COLLATE, locale, encoding);
+	setLocalization(LC_CTYPE, locale);
+	setLocalization(LC_COLLATE, locale);
 	this->locale=locale;
 }
 
-void Collation::setlocalization(int lc_id, const QString &lc_name, EncodingType encoding)
+void Collation::setLocalization(int lc_id, const QString &lc_name)
 {
 	if(locale.isEmpty())
 	{
-		unsigned idx;
-
 		switch(lc_id)
 		{
-			case LC_CTYPE: idx=0;	break;
-			case LC_COLLATE: idx=1; break;
+			case LC_CTYPE: localization[0]=	lc_name; break;
+			case LC_COLLATE: localization[1]=	lc_name; break;
 			default:
 				throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 			break;
 		}
-
-		localization[idx]=lc_name;
-		loc_encoding[idx]=encoding;
 	}
+}
+
+void Collation::setEncoding(EncodingType encoding)
+{
+	this->encoding=encoding;
 }
 
 void Collation::setCollation(Collation *collation)
 {
 	BaseObject::setCollation(collation);
-	base_encoding=BaseType::null;
 
+	encoding=BaseType::null;
 	locale.clear();
-	for(unsigned i=0; i < 2; i++)
-	{
-		loc_encoding[i]=BaseType::null;
-		localization[i].clear();
-	}
+	localization[0]=localization[1]="";
 }
 
-void Collation::getLocale(QString &locale, EncodingType &encoding)
+QString Collation::getLocale(void)
 {
- locale=this->locale;
- encoding=this->base_encoding;
+ return(locale);
 }
 
-void Collation::getLocalization(int lc_id, QString &lc_name, EncodingType &encoding)
+QString Collation::getLocalization(int lc_id)
 {
-	unsigned idx;
-
 	switch(lc_id)
 	{
-		case LC_CTYPE: idx=0;	break;
-		case LC_COLLATE: idx=1; break;
+		case LC_CTYPE: return(localization[0]);	break;
+		case LC_COLLATE: return(localization[1]); break;
 		default:
 			throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;
 	}
-
-	lc_name=localization[idx];
-	encoding=loc_encoding[idx];
 }
 
 QString Collation::getCodeDefinition(unsigned def_type)

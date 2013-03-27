@@ -40,13 +40,11 @@ class Collation : public BaseObject {
 		locale=pt_BR
 		LC_TYPE=pt_BR.utf8
 		LC_CTYPE=pt_BR.utf8 */
-		EncodingType base_encoding,
-
-		//! \brief Sets the individual localization charset (encoding). The base encoding is ignored.
-		loc_encoding[2];
+		EncodingType encoding;
 
 		//! \brief LC_CTYPE and LC_COLLATE attributes
 		QString localization[2],
+
 						/*! \brief This attribute sets at once the localization attribute. Using this attribute
 						user cannot change localization attributes */
 						locale;
@@ -57,18 +55,22 @@ class Collation : public BaseObject {
 		/*! brief Sets the collation locale and the base encoding. This method specifies at once the LC_CTYPE
 		and LC_COLLATE attributes. When the user calls this method with 'locale' set the use of setLocalization()
 		has no effect. To use custom localizations the user must reset 'locale' to a empty value. */
-		void setlocale(const QString &locale, EncodingType encoding=BaseType::null);
+		void setLocale(const QString &locale);
 
 		//! \brief Configures the LC_CTYPE and LC_COLLATE attributes and the default encoding for them.
-		void setlocalization(int lc_id, const QString &lc_name, EncodingType encoding=BaseType::null);
+		void setLocalization(int lc_id, const QString &lc_name);
 
 		/*! \brief Sets the collation from which this collation will copy attributes. The use of this method nullifies
 		all the other collation's attributes */
 		void setCollation(Collation *collation);
 
-		void getLocale(QString &locale, EncodingType &encoding);
-		void getLocalization(int lc_id, QString &lc_name, EncodingType &encoding);
+		//! \brief Defines the base encoding for the collation
+		void setEncoding(EncodingType encoding);
+
+		QString getLocale(void);
+		QString getLocalization(int lc_id);
 		Collation *getCopyCollation(void);
+		EncodingType getEncoding(void);
 
 		//! \brief Returns the SQL / XML definition for the collation.
 		QString getCodeDefinition(unsigned def_type);
