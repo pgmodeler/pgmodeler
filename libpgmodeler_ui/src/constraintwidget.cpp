@@ -76,7 +76,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		on_delete_cmb->addItems(list);
 		on_update_cmb->addItems(list);
 
-		info_frm=generateInformationFrame(trUtf8("Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they will be ignored. To create primary key using columns included by relationship use the feature attributes, constraints and primary key on the relationship form."));
+		info_frm=generateInformationFrame(trUtf8("Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they can raise errors. To create primary key using columns included by relationship use the following options: identifier field, attributes & constraints tab or primary key tab on the relationship form."));
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
 
@@ -446,6 +446,11 @@ void ConstraintWidget::applyConfiguration(void)
 				constr->addColumn(column, col_id);
 			}
 		}
+
+		//Raises an error if the user try to create a primary key that has columns added by relationship (not supported)
+		if(constr->getConstraintType()==ConstraintType::primary_key &&
+			 constr->isReferRelationshipAddedColumn())
+			throw Exception(ERR_PK_USING_COLS_ADDED_BY_REL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		BaseObjectWidget::applyConfiguration();
 
