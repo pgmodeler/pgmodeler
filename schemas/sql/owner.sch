@@ -10,7 +10,6 @@
  %if @{opclass} %then @{name} [ USING ] @{index-type} %end
  %if @{opfamily} %then @{name} [ USING ] @{index-type} %end
  %if @{function} %then @{signature} %end
-
 %else
  @{name}
 %end

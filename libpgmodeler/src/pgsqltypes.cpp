@@ -1409,6 +1409,11 @@ bool EncodingType::operator != (EncodingType type)
 	return(this->type_idx!=type.type_idx);
 }
 
+bool EncodingType::operator != (unsigned type_id)
+{
+	return(this->type_idx!=type_id);
+}
+
 /**********************
  * CLASS: StorageType *
  **********************/

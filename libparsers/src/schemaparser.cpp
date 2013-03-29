@@ -195,6 +195,7 @@ QString SchemaParser::getAttribute(void)
 			or attribute is encountered */
 			while(current_line[column]!=CHR_LINE_END &&
 						current_line[column]!=CHR_SPACE &&
+						current_line[column]!=CHR_TABULATION &&
 						!end_attrib && !error)
 			{
 				if(current_line[column]!=CHR_END_ATTRIB)
@@ -240,7 +241,8 @@ QString SchemaParser::getWord(void)
 		 special character */
 		while(current_line[column]!=CHR_LINE_END &&
 					!isSpecialCharacter(current_line[column].toAscii()) &&
-					current_line[column]!=CHR_SPACE)
+					current_line[column]!=CHR_SPACE &&
+					current_line[column]!=CHR_TABULATION)
 		{
 			word+=current_line[column];
 			column++;
@@ -319,7 +321,8 @@ QString SchemaParser::getConditional(void)
 		/* Moves to the next character that is the beginning of
 		 the name of the conditional word */
 		while(current_line[column]!=CHR_LINE_END &&
-					current_line[column]!=CHR_SPACE)
+					current_line[column]!=CHR_SPACE &&
+					current_line[column]!=CHR_TABULATION)
 		{
 			conditional+=current_line[column];
 			column++;
@@ -355,7 +358,8 @@ QString SchemaParser::getMetaCharacter(void)
 
 		//Extracts the metacharacter until doesn't finds a space or end of line
 		while(current_line[column]!=CHR_LINE_END &&
-					current_line[column]!=CHR_SPACE)
+					current_line[column]!=CHR_SPACE &&
+					current_line[column]!=CHR_TABULATION)
 		{
 			meta+=current_line[column];
 			column++;
@@ -397,7 +401,8 @@ bool SchemaParser::evaluateExpression(void)
 		while(!end_eval && !error)
 		{
 			//Eliminates any black space
-			while(current_line[column]==CHR_SPACE) column++;
+			while(current_line[column]==CHR_SPACE ||
+						current_line[column]==CHR_TABULATION) column++;
 
 			switch(current_line[column].toAscii())
 			{
@@ -647,9 +652,11 @@ QString SchemaParser::getCodeDefinition(map<QString,QString> &attribs)
 					column=0;
 				break;
 
+				case CHR_TABULATION:
 				case CHR_SPACE:
 					//The parser will ignore the spaces that are not within pure texts
-					while(buffer[line][column]==CHR_SPACE) column++;
+					while(buffer[line][column]==CHR_SPACE ||
+								buffer[line][column]==CHR_TABULATION) column++;
 				break;
 
 					//Metacharacter extraction

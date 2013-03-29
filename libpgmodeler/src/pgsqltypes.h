@@ -511,6 +511,7 @@ class EncodingType: public BaseType{
 		bool operator == (const char *type_name);
 		bool operator != (const QString &type_name);
 		bool operator != (EncodingType type);
+		bool operator != (unsigned tipo_id);
 };
 
 class StorageType: public BaseType{

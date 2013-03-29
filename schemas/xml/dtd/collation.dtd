@@ -2,9 +2,10 @@
   CAUTION: Do not modify this file directly on it's code unless you know what you are doing.
 	   Unexpected results may occur if the code is changed deliberately.
 -->
-<!ELEMENT collation (schema, comment?)>
+<!ELEMENT collation (schema?,role?,comment?)>
 <!ATTLIST collation name CDATA #REQUIRED>
 <!ATTLIST collation locale CDATA #IMPLIED>
+<!ATTLIST collation encoding CDATA #IMPLIED>
 <!ATTLIST collation lc-ctype CDATA #IMPLIED>
 <!ATTLIST collation lc-collate CDATA #IMPLIED>
-<!ATTLIST collation copy-collation CDATA #IMPLIED>
+<!ATTLIST collation collation CDATA #IMPLIED>

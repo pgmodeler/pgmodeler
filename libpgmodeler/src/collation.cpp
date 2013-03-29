@@ -25,6 +25,11 @@ Collation::Collation(void)
 	object_id=Collation::collation_id++;
 	obj_type=OBJ_COLLATION;
 	encoding=BaseType::null;
+
+	attributes[ParsersAttributes::_LC_CTYPE_]="";
+	attributes[ParsersAttributes::_LC_COLLATE_]="";
+	attributes[ParsersAttributes::LOCALE]="";
+	attributes[ParsersAttributes::ENCODING]="";
 }
 
 void Collation::setLocale(const QString &locale)
@@ -87,7 +92,28 @@ QString Collation::getCodeDefinition(unsigned def_type)
 
 QString Collation::getCodeDefinition(unsigned def_type, bool reduced_form)
 {
-	return(BaseObject::__getCodeDefinition(def_type));
+	if(!locale.isEmpty())
+		attributes[ParsersAttributes::LOCALE]=locale;
+	else if(collation)
+		attributes[ParsersAttributes::COLLATION]=collation->getName(true);
+	else
+	{
+		QString lc_attribs[2]={ ParsersAttributes::_LC_CTYPE_, ParsersAttributes::_LC_COLLATE_ };
+		int lc_ids[2]={ LC_CTYPE, LC_COLLATE };
+
+		if(localization[0].isEmpty() && localization[1].isEmpty())
+			throw Exception(ERR_EMPTY_LOCAL_ATTRIB_COLLATION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		for(int i=0; i < 2; i++)
+		{
+			attributes[lc_attribs[i]]=getLocalization(lc_ids[i]);
+
+			if(def_type==SchemaParser::SQL_DEFINITION && encoding!=BaseType::null &&
+				 !attributes[lc_attribs[i]].isEmpty())
+				attributes[lc_attribs[i]]+="." + (~encoding).toLower();
+		}
+	}
+
+	attributes[ParsersAttributes::ENCODING]=~encoding;
+	return(BaseObject::getCodeDefinition(def_type, reduced_form));
 }
-
-

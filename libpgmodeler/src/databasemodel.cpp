@@ -2778,6 +2778,8 @@ BaseObject *DatabaseModel::createObject(ObjectType obj_type)
 		else if(obj_type==OBJ_RELATIONSHIP ||
 						obj_type==BASE_RELATIONSHIP)
 			object=createRelationship();
+		else if(obj_type==OBJ_COLLATION)
+			object=createCollation();
 	}
 
 	return(object);
@@ -4946,8 +4948,64 @@ View *DatabaseModel::createView(void)
 
 Collation *DatabaseModel::createCollation(void)
 {
+	Collation *collation=NULL;
+	BaseObject *copy_coll=NULL;
+	EncodingType encoding;
+	map<QString, QString> attribs;
 
+	try
+	{
+		collation=new Collation;
+		setBasicAttributes(collation);
+
+		XMLParser::getElementAttributes(attribs);
+
+		encoding=EncodingType(attribs[ParsersAttributes::ENCODING]);
+		collation->setEncoding(encoding);
+
+		//Creating a collation from a base locale
+		if(!attribs[ParsersAttributes::LOCALE].isEmpty())
+			collation->setLocale(attribs[ParsersAttributes::LOCALE]);
+		//Creating a collation from another collation
+		else if(!attribs[ParsersAttributes::COLLATION].isEmpty())
+		{
+			copy_coll=this->getObject(attribs[ParsersAttributes::COLLATION], OBJ_COLLATION);
+
+			//Raises an error if the copy collation doesn't exists
+			if(!copy_coll)
+			{
+				throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+												.arg(Utf8String::create(collation->getName()))
+												.arg(BaseObject::getTypeName(OBJ_COLLATION))
+												.arg(Utf8String::create(attribs[ParsersAttributes::COLLATION]))
+												.arg(BaseObject::getTypeName(OBJ_COLLATION)),
+							ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+
+			collation->setCollation(dynamic_cast<Collation *>(copy_coll));
+		}
+		//Creating a collation using LC_COLLATE and LC_CTYPE params
+		else
+		{
+			collation->setLocalization(LC_COLLATE, attribs[ParsersAttributes::_LC_COLLATE_]);
+			collation->setLocalization(LC_CTYPE, attribs[ParsersAttributes::_LC_CTYPE_]);
+		}
+	}
+	catch(Exception &e)
+	{
+		QString extra_info;
+
+		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+									 .arg(XMLParser::getCurrentElement()->line);
+
+		if(collation) delete(collation);
+
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
+	}
+
+	return(collation);
 }
+
 
 Textbox *DatabaseModel::createTextbox(void)
 {
@@ -4975,13 +5033,13 @@ Textbox *DatabaseModel::createTextbox(void)
 	}
 	catch(Exception &e)
 	{
-		QString info_adicional;
-		info_adicional=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
+		QString extra_info;
+		extra_info=QString(QObject::trUtf8("%1 (line: %2)")).arg(XMLParser::getLoadedFilename())
 									 .arg(XMLParser::getCurrentElement()->line);
 
 		if(txtbox) delete(txtbox);
 
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, info_adicional);
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e, extra_info);
 	}
 
 	return(txtbox);
@@ -5458,7 +5516,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 	Relationship *rel=NULL;
 	ObjectType obj_type,
 			aux_obj_types[]={ OBJ_ROLE, OBJ_TABLESPACE, OBJ_SCHEMA },
-			obj_types[]={ OBJ_LANGUAGE, OBJ_FUNCTION, OBJ_TYPE,
+			obj_types[]={ OBJ_COLLATION, OBJ_LANGUAGE, OBJ_FUNCTION, OBJ_TYPE,
 										OBJ_CAST, OBJ_CONVERSION,
 										OBJ_OPERATOR, OBJ_OPFAMILY, OBJ_OPCLASS,
 										OBJ_AGGREGATE, OBJ_DOMAIN, OBJ_TEXTBOX, BASE_RELATIONSHIP,
@@ -5517,9 +5575,9 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 
 		//Generating the definition for the other objects type
 		if(def_type==SchemaParser::XML_DEFINITION)
-			count=16;
+			count=17;
 		else
-			count=12;
+			count=13;
 
 		for(i=0; i < count; i++)
 		{
@@ -5622,7 +5680,7 @@ QString DatabaseModel::getCodeDefinition(unsigned def_type, bool export_file)
 		{
 			BaseObject *objs[3]={NULL, NULL, NULL};
 			vector<BaseObject *> vet_aux;
-			count=16;
+			//count=17;
 
 			vet_aux=relationships;
 			vet_aux.insert(vet_aux.end(), tables.begin(),tables.end());

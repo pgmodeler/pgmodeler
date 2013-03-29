@@ -543,7 +543,6 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		format=(def_type==SchemaParser::SQL_DEFINITION ||
 						(def_type==SchemaParser::XML_DEFINITION && reduced_form &&
 						 obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP &&	obj_type!=BASE_RELATIONSHIP));
-		attributes[objs_schemas[obj_type]]="1";
 
 		/* Marking the flag that indicates that the comment form to be generated
 		 for the object is specific to it, ignoring the default rule.
@@ -561,6 +560,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			case OBJ_OPCLASS:
 			case OBJ_OPFAMILY:
 				attributes[ParsersAttributes::DIF_SQL]="1";
+				attributes[objs_schemas[obj_type]]="1";
 			break;
 
 			default:
@@ -577,21 +577,6 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 		if(def_type==SchemaParser::XML_DEFINITION)
 			attributes[ParsersAttributes::PROTECTED]=(is_protected ? "1" : "");
 
-		if(comment!="")
-		{
-			attributes[ParsersAttributes::COMMENT]=comment;
-
-			if((def_type==SchemaParser::SQL_DEFINITION &&
-					obj_type!=OBJ_TABLESPACE &&
-					obj_type!=OBJ_DATABASE) ||
-				 def_type==SchemaParser::XML_DEFINITION)
-			{
-				SchemaParser::setIgnoreUnkownAttributes(true);
-				attributes[ParsersAttributes::COMMENT]=
-						SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
-			}
-		}
-
 		if(tablespace)
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
@@ -600,7 +585,7 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 				attributes[ParsersAttributes::TABLESPACE]=tablespace->getCodeDefinition(def_type, true);
 		}
 
-		if(collation)
+		if(collation && attributes[ParsersAttributes::COLLATION].isEmpty())
 		{
 			if(def_type==SchemaParser::SQL_DEFINITION)
 				attributes[ParsersAttributes::COLLATION]=collation->getName(format);
@@ -629,6 +614,21 @@ QString BaseObject::getCodeDefinition(unsigned def_type, bool reduced_form)
 			}
 			else
 				attributes[ParsersAttributes::OWNER]=owner->getCodeDefinition(def_type, true);
+		}
+
+		if(comment!="")
+		{
+			attributes[ParsersAttributes::COMMENT]=comment;
+
+			if((def_type==SchemaParser::SQL_DEFINITION &&
+					obj_type!=OBJ_TABLESPACE &&
+					obj_type!=OBJ_DATABASE) ||
+				 def_type==SchemaParser::XML_DEFINITION)
+			{
+				SchemaParser::setIgnoreUnkownAttributes(true);
+				attributes[ParsersAttributes::COMMENT]=
+						SchemaParser::getCodeDefinition(ParsersAttributes::COMMENT, attributes, def_type);
+			}
 		}
 
 		if(reduced_form)
