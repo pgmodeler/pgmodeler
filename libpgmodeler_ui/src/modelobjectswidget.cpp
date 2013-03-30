@@ -167,7 +167,6 @@ void ModelObjectsWidget::selectObject(void)
 		vect.push_back(selected_object);
 		model_wgt->scene->clearSelection();
 		model_wgt->configurePopupMenu(vect);
-
 		showObjectMenu();
 	}
 }
@@ -191,10 +190,11 @@ void ModelObjectsWidget::setObjectVisible(ObjectType obj_type, bool visible)
 			 obj_type==OBJ_TRIGGER || obj_type==OBJ_INDEX)
 			visible_objs_map[OBJ_TABLE]=visible_objs_map[OBJ_SCHEMA]=true;
 
-		if(obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_FUNCTION ||
+		if(BaseObject::acceptsSchema(obj_type))
+			 /*obj_type==OBJ_TABLE || obj_type==OBJ_VIEW || obj_type==OBJ_FUNCTION ||
 			 obj_type==OBJ_AGGREGATE || obj_type==OBJ_DOMAIN || obj_type==OBJ_TYPE ||
 			 obj_type==OBJ_CONVERSION || obj_type==OBJ_OPERATOR || obj_type==OBJ_OPFAMILY ||
-			 obj_type==OBJ_OPCLASS || obj_type==OBJ_SEQUENCE)
+			 obj_type==OBJ_OPCLASS || obj_type==OBJ_SEQUENCE) */
 			visible_objs_map[OBJ_SCHEMA]=true;
 	}
 }

@@ -334,7 +334,7 @@ void BaseObject::setComment(const QString &comment)
 	this->comment=comment;
 }
 
-bool BaseObject::acceptsSchema(void)
+bool BaseObject::acceptsSchema(ObjectType obj_type)
 {
 	return(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE ||
 				 obj_type==OBJ_VIEW  || obj_type==OBJ_DOMAIN ||
@@ -342,6 +342,52 @@ bool BaseObject::acceptsSchema(void)
 				 obj_type==OBJ_SEQUENCE || obj_type==OBJ_CONVERSION ||
 				 obj_type==OBJ_TYPE || obj_type==OBJ_OPCLASS ||
 				 obj_type==OBJ_OPFAMILY || obj_type==OBJ_COLLATION);
+}
+
+bool BaseObject::acceptsSchema(void)
+{
+	return(BaseObject::acceptsSchema(this->obj_type));
+}
+
+bool BaseObject::acceptsOwner(ObjectType obj_type)
+{
+	return(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE ||
+				 obj_type==OBJ_DOMAIN || obj_type==OBJ_SCHEMA ||
+				 obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
+				 obj_type==OBJ_CONVERSION ||
+				 obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
+				 obj_type==OBJ_TABLESPACE || obj_type==OBJ_DATABASE ||
+				 obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY ||
+				 obj_type==OBJ_COLLATION);
+}
+
+bool BaseObject::acceptsOwner(void)
+{
+	return(BaseObject::acceptsOwner(this->obj_type));
+}
+
+bool BaseObject::acceptsTablespace(ObjectType obj_type)
+{
+	return(obj_type==OBJ_INDEX ||
+				 obj_type==OBJ_TABLE ||
+				 obj_type==OBJ_CONSTRAINT ||
+				 obj_type==OBJ_DATABASE);
+}
+
+bool BaseObject::acceptsTablespace(void)
+{
+	return(BaseObject::acceptsTablespace(this->obj_type));
+}
+
+bool BaseObject::acceptsCollation(ObjectType obj_type)
+{
+	return(obj_type==OBJ_DOMAIN || obj_type==OBJ_INDEX ||
+				 obj_type==OBJ_COLUMN  || obj_type==OBJ_COLLATION);
+}
+
+bool BaseObject::acceptsCollation(void)
+{
+	return(BaseObject::acceptsCollation(this->obj_type));
 }
 
 void BaseObject::setSchema(BaseObject *schema)
@@ -358,18 +404,6 @@ void BaseObject::setSchema(BaseObject *schema)
 	this->schema=schema;
 }
 
-bool BaseObject::acceptsOwner(void)
-{
-	return(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE ||
-				 obj_type==OBJ_DOMAIN || obj_type==OBJ_SCHEMA ||
-				 obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
-				 obj_type==OBJ_CONVERSION ||
-				 obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
-				 obj_type==OBJ_TABLESPACE || obj_type==OBJ_DATABASE ||
-				 obj_type==OBJ_OPCLASS || obj_type==OBJ_OPFAMILY ||
-				 obj_type==OBJ_COLLATION);
-}
-
 void BaseObject::setOwner(BaseObject *owner)
 {
 	if(owner && owner->getObjectType()!=OBJ_ROLE)
@@ -378,14 +412,6 @@ void BaseObject::setOwner(BaseObject *owner)
 		throw Exception(ERR_ASG_ROLE_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->owner=owner;
-}
-
-bool BaseObject::acceptsTablespace(void)
-{
-	return(obj_type==OBJ_INDEX ||
-				 obj_type==OBJ_TABLE ||
-				 obj_type==OBJ_CONSTRAINT ||
-				 obj_type==OBJ_DATABASE);
 }
 
 void BaseObject::setTablespace(BaseObject *tablespace)
@@ -398,21 +424,11 @@ void BaseObject::setTablespace(BaseObject *tablespace)
 	this->tablespace=tablespace;
 }
 
-bool BaseObject::acceptsCollation(void)
-{
-	return(obj_type==OBJ_DOMAIN || obj_type==OBJ_INDEX ||
-				 obj_type==OBJ_COLUMN  || obj_type==OBJ_COLLATION);
-}
-
 void BaseObject::setCollation(BaseObject *collation)
 {
-	if(!collation)
-		throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLLATION)
-										.arg(Utf8String::create(this->obj_name)).arg(this->getTypeName()),
-										ERR_ASG_NOT_ALOC_COLLATION,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(collation && collation->getObjectType()!=OBJ_COLLATION)
+	if(collation && !acceptsCollation())
 		throw Exception(ERR_ASG_INV_COLLATION_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	else if(!acceptsCollation())
+	if(collation && collation->getObjectType()!=OBJ_COLLATION)
 		throw Exception(ERR_ASG_INV_COLLATION_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	this->collation=collation;

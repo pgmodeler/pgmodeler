@@ -65,6 +65,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		schema_sel=new ObjectSelectorWidget(OBJ_SCHEMA, true, this);
 		owner_sel=new ObjectSelectorWidget(OBJ_ROLE, true, this);
 		tablespace_sel=new ObjectSelectorWidget(OBJ_TABLESPACE, true, this);
+		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
 
 		baseobject_grid = new QGridLayout;
 		baseobject_grid->setObjectName(Utf8String::create("objetobase_grid"));
@@ -72,14 +73,16 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		baseobject_grid->addWidget(name_lbl, 1, 0, 1, 1);
 		baseobject_grid->addWidget(name_edt, 1, 1, 1, 3);
 		baseobject_grid->addWidget(obj_icon_lbl, 1, 4, 1, 1);
-		baseobject_grid->addWidget(comment_lbl, 4, 0, 1, 1);
-		baseobject_grid->addWidget(comment_edt, 4, 1, 1, 4);
-		baseobject_grid->addWidget(tablespace_lbl, 5, 0, 1, 1);
-		baseobject_grid->addWidget(tablespace_sel, 5, 1, 1, 4);
-		baseobject_grid->addWidget(owner_lbl, 6, 0, 1, 1);
-		baseobject_grid->addWidget(owner_sel, 6, 1, 1, 4);
-		baseobject_grid->addWidget(schema_lbl, 7, 0, 1, 1);
-		baseobject_grid->addWidget(schema_sel, 7, 1, 1, 4);
+		baseobject_grid->addWidget(schema_lbl, 4, 0, 1, 1);
+		baseobject_grid->addWidget(schema_sel, 4, 1, 1, 4);
+		baseobject_grid->addWidget(collation_lbl, 5, 0, 1, 1);
+		baseobject_grid->addWidget(collation_sel, 5, 1, 1, 4);
+		baseobject_grid->addWidget(tablespace_lbl, 6, 0, 1, 1);
+		baseobject_grid->addWidget(tablespace_sel, 6, 1, 1, 4);
+		baseobject_grid->addWidget(owner_lbl, 7, 0, 1, 1);
+		baseobject_grid->addWidget(owner_sel, 7, 1, 1, 4);
+		baseobject_grid->addWidget(comment_lbl, 8, 0, 1, 1);
+		baseobject_grid->addWidget(comment_edt, 8, 1, 1, 4);
 
 		layout=new QHBoxLayout;
 		spacer=new QSpacerItem(20,1,QSizePolicy::Expanding);
@@ -88,8 +91,8 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		layout->addWidget(edt_perms_tb);
 		layout->addWidget(disable_sql_chk);
 
-		baseobject_grid->addLayout(layout,8,0,1,5);
-		baseobject_grid->addWidget(div1_ln, 9, 0, 1, 5);
+		baseobject_grid->addLayout(layout,9,0,1,5);
+		baseobject_grid->addWidget(div1_ln, 10, 0, 1, 5);
 	}
 	catch(Exception &e)
 	{
@@ -140,6 +143,7 @@ void BaseObjectWidget::hideEvent(QHideEvent *)
 	tablespace_sel->clearSelector();
 	schema_sel->clearSelector();
 	owner_sel->clearSelector();
+	collation_sel->clearSelector();
 
 	disable_sql_chk->setChecked(false);
 
@@ -247,6 +251,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 	owner_sel->setModel(model);
 	schema_sel->setModel(model);
 	tablespace_sel->setModel(model);
+	collation_sel->setModel(model);
 
 	if(object)
 	{
@@ -255,6 +260,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 		name_edt->setText(Utf8String::create(object->getName()));
 		comment_edt->setText(Utf8String::create(object->getComment()));
 		owner_sel->setSelectedObject(object->getOwner());
+		collation_sel->setSelectedObject(object->getCollation());
 
 		//if there is no schema assigned to object, set the "public" as the default
 		if(!object->getSchema())
@@ -288,7 +294,7 @@ void BaseObjectWidget::setAttributes(DatabaseModel *model, OperationList *op_lis
 
 void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_type)
 {
-	bool show_schema, show_owner, show_tabspc, show_comment;
+	bool /*show_schema, show_owner, show_tabspc,*/ show_comment;
 
 	if(grid)
 	{
@@ -325,7 +331,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	if(obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_ROLE && obj_type!=OBJ_COLLATION)
 		disable_sql_chk->setVisible(false);
 
-	show_schema=(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW ||
+	/*show_schema=(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW ||
 							 obj_type==OBJ_DOMAIN || obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
 							 obj_type==OBJ_SEQUENCE || obj_type==OBJ_CONVERSION || obj_type==OBJ_TYPE ||
 							 obj_type==OBJ_OPFAMILY || obj_type==OBJ_OPCLASS);
@@ -335,9 +341,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 							obj_type==OBJ_CONVERSION || obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
 							obj_type==OBJ_TABLESPACE || obj_type==OBJ_OPFAMILY || obj_type==OBJ_DATABASE);
 
-	show_tabspc=(obj_type==OBJ_CONSTRAINT || obj_type==OBJ_INDEX || obj_type==OBJ_TABLE || obj_type==OBJ_DATABASE);
-
-	show_comment=(obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_PARAMETER);
+	show_tabspc=(obj_type==OBJ_CONSTRAINT || obj_type==OBJ_INDEX || obj_type==OBJ_TABLE || obj_type==OBJ_DATABASE); */
 
 	if(obj_type!=OBJ_TABLE && obj_type!=OBJ_COLUMN && obj_type!=OBJ_VIEW &&
 		 obj_type!=OBJ_SEQUENCE && obj_type!=OBJ_DATABASE && obj_type!=OBJ_FUNCTION &&
@@ -345,19 +349,23 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		 obj_type!=OBJ_TABLESPACE)
 		edt_perms_tb->setVisible(false);
 
-	schema_lbl->setVisible(show_schema);
-	schema_sel->setVisible(show_schema);
+	schema_lbl->setVisible(BaseObject::acceptsSchema(obj_type));
+	schema_sel->setVisible(BaseObject::acceptsSchema(obj_type));
 
-	owner_lbl->setVisible(show_owner);
-	owner_sel->setVisible(show_owner);
+	owner_lbl->setVisible(BaseObject::acceptsOwner(obj_type));
+	owner_sel->setVisible(BaseObject::acceptsOwner(obj_type));
 
-	tablespace_lbl->setVisible(show_tabspc);
-	tablespace_sel->setVisible(show_tabspc);
+	tablespace_lbl->setVisible(BaseObject::acceptsTablespace(obj_type));
+	tablespace_sel->setVisible(BaseObject::acceptsTablespace(obj_type));
 
-	comment_edt->setVisible(show_comment);
+	collation_lbl->setVisible(BaseObject::acceptsCollation(obj_type));
+	collation_sel->setVisible(BaseObject::acceptsCollation(obj_type));
+
+	show_comment=obj_type!=OBJ_RELATIONSHIP && obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_PARAMETER;
 	comment_lbl->setVisible(show_comment);
+	comment_edt->setVisible(show_comment);
 
-	div1_ln->setVisible(obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP &&obj_type!=BASE_RELATIONSHIP);
+	div1_ln->setVisible(obj_type!=OBJ_TEXTBOX && obj_type!=OBJ_RELATIONSHIP && obj_type!=BASE_RELATIONSHIP);
 
 	if(obj_type!=BASE_OBJECT)
 	{
@@ -607,9 +615,13 @@ void BaseObjectWidget::applyConfiguration(void)
 			if(tablespace_sel->isVisible())
 				object->setTablespace(tablespace_sel->getSelectedObject());
 
-			//Sets the object's comment
+			//Sets the object's owner
 			if(owner_sel->isVisible())
 				object->setOwner(owner_sel->getSelectedObject());
+
+			//Sets the object's collation
+			if(collation_sel->isVisible())
+				object->setCollation(collation_sel->getSelectedObject());
 
 			//Sets the object's schema
 			if(schema_sel->isVisible())

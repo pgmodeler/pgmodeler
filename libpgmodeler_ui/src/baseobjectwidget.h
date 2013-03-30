@@ -89,10 +89,11 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		//! \brief Indicates if the object is a new one or is being edited
 		bool new_object;
 
-		//! \brief Object selectors for schema, owner an tablespace
+		//! \brief Object selectors for schema, owner, tablespace and collation
 		ObjectSelectorWidget *schema_sel,
 		*owner_sel,
-		*tablespace_sel;
+		*tablespace_sel,
+		*collation_sel;
 
 		//! \brief Constants used to generate version intervals for version alert frame
 		static const unsigned UNTIL_VERSION=0,

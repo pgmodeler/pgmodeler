@@ -294,6 +294,18 @@ class BaseObject {
 		 of the object. See schema file for: functions, schemas, domains, types. */
 		virtual QString getCodeDefinition(unsigned def_type, bool reduced_form);
 
+		//! \brief Returns if the specified type accepts to have a schema assigned
+		static bool acceptsSchema(ObjectType obj_type);
+
+		//! \brief Returns if the specified type accepts to have an owner assigned
+		static bool acceptsOwner(ObjectType obj_type);
+
+		//! \brief Returns if the specified type accepts to have a tablespace assigned
+		static bool acceptsTablespace(ObjectType obj_type);
+
+		//! \brief Returns if the specified type accepts to have a collation assigned
+		static bool acceptsCollation(ObjectType obj_type);
+
 		//! \brief Returns if the object accepts to have a schema assigned
 		bool acceptsSchema(void);
 

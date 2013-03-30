@@ -831,6 +831,34 @@ void DatabaseModel::removeCollation(Collation *collation, int obj_idx)
 {
 	try
 	{
+		vector<BaseObject *> refs;
+
+		getObjectReferences(collation, refs, true);
+
+		//Raises an error indicating the object that is referencing the table
+		if(!dynamic_cast<TableObject *>(refs[0]))
+		{
+			throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
+											.arg(Utf8String::create(collation->getName(true)))
+											.arg(Utf8String::create(collation->getTypeName()))
+											.arg(Utf8String::create(refs[0]->getName(true)))
+											.arg(Utf8String::create(refs[0]->getTypeName())),
+											ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+		else
+		{
+			BaseObject *ref_obj_parent=dynamic_cast<TableObject *>(refs[0])->getParentTable();
+
+			throw Exception(QString(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE))
+												.arg(Utf8String::create(collation->getName(true)))
+												.arg(Utf8String::create(collation->getTypeName()))
+												.arg(Utf8String::create(refs[0]->getName(true)))
+												.arg(Utf8String::create(refs[0]->getTypeName()))
+												.arg(Utf8String::create(ref_obj_parent->getName(true)))
+												.arg(Utf8String::create(ref_obj_parent->getTypeName())),
+												ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
+
 		__removeObject(collation, obj_idx);
 	}
 	catch(Exception &e)
@@ -2789,7 +2817,7 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 {
 	map<QString, QString> attribs, attribs_aux;
 	QString elem_name;
-	BaseObject *tabspc=NULL, *owner=NULL;
+	BaseObject *tabspc=NULL, *owner=NULL, *collation=NULL;
 	Schema *schema=NULL;
 	ObjectType obj_type=BASE_OBJECT, obj_type_aux;
 	bool has_error=false, protected_obj=false, sql_disabled=false;
@@ -2850,6 +2878,15 @@ void DatabaseModel::setBasicAttributes(BaseObject *object)
 					owner=getObject(attribs_aux[ParsersAttributes::NAME], obj_type);
 					object->setOwner(owner);
 					has_error=(!owner && !attribs_aux[ParsersAttributes::NAME].isEmpty());
+				}
+				//Defines the object's schema
+				else if(elem_name==ParsersAttributes::COLLATION)
+				{
+					obj_type=OBJ_COLLATION;
+					XMLParser::getElementAttributes(attribs_aux);
+					collation=getObject(attribs_aux[ParsersAttributes::NAME], obj_type);
+					object->setCollation(collation);
+					has_error=(!collation && !attribs_aux[ParsersAttributes::NAME].isEmpty());
 				}
 				//Defines the object's position (only for graphical objects)
 				else if(elem_name==ParsersAttributes::POSITION)
@@ -5919,13 +5956,13 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 
 			/* if the object has a schema, tablespace and owner applies the
 		 dependecy search in these objects */
-			if(object->getSchema() && inc_indirect_deps)
+			if(object->getSchema() /*&& inc_indirect_deps*/)
 				getObjectDependecies(object->getSchema(), deps, inc_indirect_deps);
 
-			if(object->getTablespace() && inc_indirect_deps)
+			if(object->getTablespace() /*&& inc_indirect_deps*/)
 				getObjectDependecies(object->getTablespace(), deps, inc_indirect_deps);
 
-			if(object->getOwner()  && inc_indirect_deps)
+			if(object->getOwner() /*&& inc_indirect_deps*/)
 				getObjectDependecies(object->getOwner(), deps, inc_indirect_deps);
 
 			//** Getting the dependecies for operator class **
@@ -6886,6 +6923,60 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 				{
 					refer=true;
 					refs.push_back(*itr);
+				}
+				itr++;
+			}
+		}
+
+		if(obj_type==OBJ_COLLATION)
+		{
+			ObjectType  obj_types[]={ OBJ_DOMAIN, OBJ_COLLATION },
+									tab_obj_types[]={OBJ_COLUMN, OBJ_INDEX };
+			unsigned i, count = 2;
+			vector<BaseObject *> *obj_list=NULL;
+			vector<BaseObject *>::iterator itr, itr_end;
+			vector<TableObject *> *tab_obj_list=NULL;
+			vector<TableObject *>::iterator tab_itr, tab_itr_end;
+
+			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+			{
+				obj_list=getObjectList(obj_types[i]);
+				itr=obj_list->begin();
+				itr_end=obj_list->end();
+
+				while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+				{
+					if((*itr)->getCollation()==object)
+					{
+						refer=true;
+						refs.push_back(*itr);
+					}
+
+					itr++;
+				}
+			}
+
+			obj_list=getObjectList(OBJ_TABLE);
+			itr=obj_list->begin();
+			itr_end=obj_list->end();
+
+			while(itr!=itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+			{
+				for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
+				{
+					tab_obj_list=dynamic_cast<Table *>(*itr)->getObjectList(tab_obj_types[i]);
+					tab_itr=tab_obj_list->begin();
+					tab_itr_end=tab_obj_list->end();
+
+					while(tab_itr!=tab_itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
+					{
+						if((*tab_itr)->getCollation()==object)
+						{
+							refer=true;
+							refs.push_back(*tab_itr);
+						}
+						tab_itr++;
+					}
 				}
 				itr++;
 			}
