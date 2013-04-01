@@ -24,7 +24,6 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 	QFrame *frame=NULL;
 	QLocale loc;
 	QStringList loc_list, encodings;
-	unsigned i,i1;
 
 	Ui_DatabaseWidget::setupUi(this);
 
@@ -46,24 +45,21 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 
 	//Configures the encoding combobox
 	EncodingType::getTypes(encodings);
+	encodings.push_front(trUtf8("Default"));
 	encoding_cmb->addItems(encodings);
 
 	//Configures the localizations combobox
-	for(i=QLocale::C; i <= QLocale::Chewa; i++)
+	for(int i=QLocale::C; i <= QLocale::Chewa; i++)
 	{
-		for(i1=QLocale::Afghanistan; i1 <= QLocale::Zimbabwe; i1++)
-		{
-			loc=QLocale(static_cast<QLocale::Language>(i),static_cast<QLocale::Country>(i1));
-			loc_list.append(loc.name());
-		}
+		for(int i1=QLocale::Afghanistan; i1 <= QLocale::Zimbabwe; i1++)
+			loc_list.append(QLocale(static_cast<QLocale::Language>(i),static_cast<QLocale::Country>(i1)).name());
 	}
 
 
 	loc_list.removeDuplicates();
 	loc_list.sort();
+	loc_list.push_front(trUtf8("Default"));
 
-	lccollate_cmb->addItem(trUtf8("Default"));
-	lcctype_cmb->addItem(trUtf8("Default"));
 	lccollate_cmb->addItems(loc_list);
 	lcctype_cmb->addItems(loc_list);
 }
@@ -102,7 +98,9 @@ void DatabaseWidget::applyConfiguration(void)
 		BaseObjectWidget::applyConfiguration();
 
 		model->setAuthor(author_edt->text().toUtf8());
-		model->setEncoding(EncodingType(encoding_cmb->currentText()));
+
+		if(encoding_cmb->currentIndex() > 0)
+			model->setEncoding(EncodingType(encoding_cmb->currentText()));
 
 		if(lccollate_cmb->currentIndex() > 0)
 			model->setLocalization(LC_COLLATE, lccollate_cmb->currentText());

@@ -23,8 +23,9 @@ unsigned DatabaseModel::dbmodel_id=20000;
 DatabaseModel::DatabaseModel(void)
 {
 	object_id=DatabaseModel::dbmodel_id++;
-
 	obj_type=OBJ_DATABASE;
+
+	encoding=BaseType::null;
 	BaseObject::setName(QObject::trUtf8("new_database").toUtf8());
 
 	conn_limit=-1;
@@ -835,28 +836,31 @@ void DatabaseModel::removeCollation(Collation *collation, int obj_idx)
 
 		getObjectReferences(collation, refs, true);
 
-		//Raises an error indicating the object that is referencing the table
-		if(!dynamic_cast<TableObject *>(refs[0]))
+		if(!refs.empty())
 		{
-			throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
-											.arg(Utf8String::create(collation->getName(true)))
-											.arg(Utf8String::create(collation->getTypeName()))
-											.arg(Utf8String::create(refs[0]->getName(true)))
-											.arg(Utf8String::create(refs[0]->getTypeName())),
-											ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-		}
-		else
-		{
-			BaseObject *ref_obj_parent=dynamic_cast<TableObject *>(refs[0])->getParentTable();
-
-			throw Exception(QString(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE))
+			//Raises an error indicating the object that is referencing the table
+			if(!dynamic_cast<TableObject *>(refs[0]))
+			{
+				throw Exception(QString(Exception::getErrorMessage(ERR_REM_DIRECT_REFERENCE))
 												.arg(Utf8String::create(collation->getName(true)))
 												.arg(Utf8String::create(collation->getTypeName()))
 												.arg(Utf8String::create(refs[0]->getName(true)))
-												.arg(Utf8String::create(refs[0]->getTypeName()))
-												.arg(Utf8String::create(ref_obj_parent->getName(true)))
-												.arg(Utf8String::create(ref_obj_parent->getTypeName())),
-												ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+												.arg(Utf8String::create(refs[0]->getTypeName())),
+												ERR_REM_DIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
+			else
+			{
+				BaseObject *ref_obj_parent=dynamic_cast<TableObject *>(refs[0])->getParentTable();
+
+				throw Exception(QString(Exception::getErrorMessage(ERR_REM_INDIRECT_REFERENCE))
+													.arg(Utf8String::create(collation->getName(true)))
+													.arg(Utf8String::create(collation->getTypeName()))
+													.arg(Utf8String::create(refs[0]->getName(true)))
+													.arg(Utf8String::create(refs[0]->getTypeName()))
+													.arg(Utf8String::create(ref_obj_parent->getName(true)))
+													.arg(Utf8String::create(ref_obj_parent->getTypeName())),
+													ERR_REM_INDIRECT_REFERENCE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			}
 		}
 
 		__removeObject(collation, obj_idx);
@@ -5506,7 +5510,8 @@ QString DatabaseModel::__getCodeDefinition(unsigned def_type)
 
 	if(def_type==SchemaParser::SQL_DEFINITION)
 	{
-		attributes[ParsersAttributes::ENCODING]="'" + (~encoding) + "'";
+		if(encoding!=BaseType::null)
+			attributes[ParsersAttributes::ENCODING]="'" + (~encoding) + "'";
 
 		if(!localizations[1].isEmpty())
 			attributes[ParsersAttributes::_LC_COLLATE_]="'" + localizations[1] + "'";

@@ -59,8 +59,14 @@ void Collation::setEncoding(EncodingType encoding)
 	this->encoding=encoding;
 }
 
-void Collation::setCollation(Collation *collation)
+void Collation::setCollation(BaseObject *collation)
 {
+	if(collation==this)
+		throw Exception(Exception::getErrorMessage(ERR_OBJECT_REFERENCING_ITSELF)
+										.arg(Utf8String::create(this->getName(true)))
+										.arg(Utf8String::create(this->getTypeName())),
+										ERR_OBJECT_REFERENCING_ITSELF,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	BaseObject::setCollation(collation);
 
 	encoding=BaseType::null;
@@ -83,6 +89,11 @@ QString Collation::getLocalization(int lc_id)
 			throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;
 	}
+}
+
+EncodingType Collation::getEncoding(void)
+{
+	return(encoding);
 }
 
 QString Collation::getCodeDefinition(unsigned def_type)

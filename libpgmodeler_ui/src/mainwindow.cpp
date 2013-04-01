@@ -44,6 +44,7 @@
 #include "indexwidget.h"
 #include "relationshipwidget.h"
 #include "tablewidget.h"
+#include "collationwidget.h"
 #include "taskprogresswidget.h"
 #include "objectdepsrefswidget.h"
 #include "configurationform.h"
@@ -79,6 +80,7 @@ TriggerWidget *trigger_wgt=NULL;
 IndexWidget *index_wgt=NULL;
 RelationshipWidget *relationship_wgt=NULL;
 TableWidget *table_wgt=NULL;
+CollationWidget *collation_wgt=NULL;
 TaskProgressWidget *task_prog_wgt=NULL;
 ObjectDepsRefsWidget *deps_refs_wgt=NULL;
 ConfigurationForm *configuration_form=NULL;
@@ -107,7 +109,8 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		BASE_RELATIONSHIP, OBJ_TEXTBOX,
 		OBJ_DOMAIN, OBJ_TYPE, OBJ_FUNCTION, OBJ_SCHEMA,
 		OBJ_LANGUAGE, OBJ_TABLESPACE, OBJ_ROLE,
-		OBJ_RULE, OBJ_COLUMN, OBJ_TRIGGER, OBJ_INDEX, OBJ_CONSTRAINT };
+		OBJ_RULE, OBJ_COLUMN, OBJ_TRIGGER, OBJ_INDEX,
+		OBJ_CONSTRAINT, OBJ_COLLATION };
 
 	setupUi(this);
 	print_dlg=new QPrintDialog(this);
@@ -158,6 +161,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 		index_wgt=new IndexWidget(this);
 		relationship_wgt=new RelationshipWidget(this);
 		table_wgt=new TableWidget(this);
+		collation_wgt=new CollationWidget(this);
 		task_prog_wgt=new TaskProgressWidget();
 		deps_refs_wgt=new ObjectDepsRefsWidget(this);
 		quickrename_wgt=new QuickRenameWidget(this);
@@ -230,6 +234,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(par
 	connect(index_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(relationship_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 	connect(table_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
+	connect(collation_wgt, SIGNAL(s_objectManipulated(void)), this, SLOT(__updateDockWidgets(void)));
 
 	connect(oper_list_wgt, SIGNAL(s_operationExecuted(void)), overview_wgt, SLOT(updateOverview(void)));
 	connect(configuration_form, SIGNAL(finished(int)), this, SLOT(updateModelsConfigurations(void)));

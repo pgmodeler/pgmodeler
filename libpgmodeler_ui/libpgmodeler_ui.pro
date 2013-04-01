@@ -64,7 +64,8 @@ SOURCES += $$PWD/src/mainwindow.cpp \
 	   $$PWD/src/modelrestorationform.cpp \
            $$PWD/src/quickrenamewidget.cpp \
            $$PWD/src/pgmodelerplugin.cpp \
-           $$PWD/src/pluginsconfigwidget.cpp
+           $$PWD/src/pluginsconfigwidget.cpp \
+	   $$PWD/src/collationwidget.cpp
 
 
 HEADERS += $$PWD/src/mainwindow.h \
@@ -118,7 +119,8 @@ HEADERS += $$PWD/src/mainwindow.h \
 	   $$PWD/src/modeloverviewwidget.h \
 	   $$PWD/src/modelrestorationform.h \
            $$PWD/src/quickrenamewidget.h \
-           $$PWD/src/pluginsconfigwidget.h
+           $$PWD/src/pluginsconfigwidget.h \
+	   $$PWD/src/collationwidget.h
 
 FORMS += $$PWD/ui/mainwindow.ui \
 	 $$PWD/ui/aboutform.ui \
@@ -167,4 +169,5 @@ FORMS += $$PWD/ui/mainwindow.ui \
 	 $$PWD/ui/modelrestorationform.ui \
          $$PWD/ui/quickrenamewidget.ui \
          $$PWD/ui/pluginsconfigwidget.ui \
-         $$PWD/ui/schemawidget.ui
+         $$PWD/ui/schemawidget.ui \
+	 $$PWD/ui/collationwidget.ui

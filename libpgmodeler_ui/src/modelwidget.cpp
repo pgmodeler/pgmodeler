@@ -46,6 +46,7 @@
 #include "objectdepsrefswidget.h"
 #include "quickrenamewidget.h"
 #include "permissionwidget.h"
+#include "collationwidget.h"
 
 extern DatabaseWidget *database_wgt;
 extern SchemaWidget *schema_wgt;
@@ -72,6 +73,7 @@ extern TriggerWidget *trigger_wgt;
 extern IndexWidget *index_wgt;
 extern RelationshipWidget *relationship_wgt;
 extern TableWidget *table_wgt;
+extern CollationWidget *collation_wgt;
 extern TaskProgressWidget *task_prog_wgt;
 extern ObjectDepsRefsWidget *deps_refs_wgt;
 extern QuickRenameWidget *quickrename_wgt;
@@ -1297,6 +1299,12 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				table_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Table *>(object), pos.x(), pos.y());
 				table_wgt->show();
 				this->modified=(table_wgt->result()==QDialog::Accepted);
+			break;
+
+			case OBJ_COLLATION:
+				collation_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Collation *>(object));
+				collation_wgt->show();
+				this->modified=(collation_wgt->result()==QDialog::Accepted);
 			break;
 
 			default:

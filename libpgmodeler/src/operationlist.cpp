@@ -127,6 +127,9 @@ void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type
 		case OBJ_VIEW:
 			copyObject(psrc_obj, dynamic_cast<View *>(copy_obj));
 		break;
+		case OBJ_COLLATION:
+			copyObject(psrc_obj, dynamic_cast<Collation *>(copy_obj));
+		break;
 		default:
 			throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		break;
@@ -248,34 +251,41 @@ void OperationList::addToPool(BaseObject *object, unsigned op_type)
 {
 	ObjectType obj_type;
 
-	//Raises an error if the object to be added is not allocated
-	if(!object)
-		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	obj_type=object->getObjectType();
-
-	//Stores a copy of the object if its about to be moved or modified
-	if(op_type==Operation::OBJECT_MODIFIED ||
-		 op_type==Operation::OBJECT_MOVED)
+	try
 	{
-		BaseObject *copy_obj=NULL;
 
-		if(obj_type!=BASE_OBJECT && obj_type!=OBJ_DATABASE)
-			copyObject(&copy_obj, object, obj_type);
-		else
-			throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		//Raises an error if the copy fails (returning a null object)
-		if(!copy_obj)
+		//Raises an error if the object to be added is not allocated
+		if(!object)
 			throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		obj_type=object->getObjectType();
+
+		//Stores a copy of the object if its about to be moved or modified
+		if(op_type==Operation::OBJECT_MODIFIED ||
+			 op_type==Operation::OBJECT_MOVED)
+		{
+			BaseObject *copy_obj=NULL;
+
+			if(obj_type!=BASE_OBJECT && obj_type!=OBJ_DATABASE)
+				copyObject(&copy_obj, object, obj_type);
+			else
+				throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+			//Raises an error if the copy fails (returning a null object)
+			if(!copy_obj)
+				throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else
+				//Inserts the copy on the pool
+				object_pool.push_back(copy_obj);
+		}
 		else
-			//Inserts the copy on the pool
-			object_pool.push_back(copy_obj);
-		//object=copy_obj;
+			//Inserts the original object on the pool (in case of adition or deletion operations)
+			object_pool.push_back(object);
 	}
-	else
-		//Inserts the original object on the pool (in case of adition or deletion operations)
-		object_pool.push_back(object);
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
+	}
 }
 
 void OperationList::removeOperations(void)

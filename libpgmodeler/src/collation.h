@@ -62,14 +62,13 @@ class Collation : public BaseObject {
 
 		/*! \brief Sets the collation from which this collation will copy attributes. The use of this method nullifies
 		all the other collation's attributes */
-		void setCollation(Collation *collation);
+		void setCollation(BaseObject *collation);
 
 		//! \brief Defines the base encoding for the collation
 		void setEncoding(EncodingType encoding);
 
 		QString getLocale(void);
 		QString getLocalization(int lc_id);
-		Collation *getCopyCollation(void);
 		EncodingType getEncoding(void);
 
 		//! \brief Returns the SQL / XML definition for the collation.
