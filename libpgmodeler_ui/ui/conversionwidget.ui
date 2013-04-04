@@ -36,7 +36,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>107</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
@@ -56,6 +56,12 @@
      <property name="enabled">
       <bool>true</bool>
      </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -74,7 +80,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>107</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
@@ -87,12 +93,21 @@
      <property name="text">
       <string>Target Encoding:</string>
      </property>
+     <property name="indent">
+      <number>5</number>
+     </property>
     </widget>
    </item>
    <item row="0" column="3">
     <widget class="QComboBox" name="trg_encoding_cmb">
      <property name="enabled">
       <bool>true</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
@@ -112,18 +127,18 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>138</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>121</width>
+       <width>16777215</width>
        <height>16777215</height>
       </size>
      </property>
      <property name="text">
-      <string>Conversion Function:</string>
+      <string>Conversion Func.:</string>
      </property>
     </widget>
    </item>
@@ -150,7 +165,7 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>50</width>
+       <width>0</width>
        <height>0</height>
       </size>
      </property>
@@ -165,8 +180,14 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="2" column="1" colspan="3">
     <widget class="QCheckBox" name="default_conv_chk">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="text">
       <string/>
      </property>

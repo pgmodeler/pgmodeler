@@ -59,7 +59,7 @@ BaseObjectWidget::BaseObjectWidget(QWidget *parent, ObjectType obj_type): QDialo
 		parent_form->setButtonConfiguration(MessageBox::OK_CANCEL_BUTTONS);
 
 		connect(edt_perms_tb, SIGNAL(clicked(bool)),this, SLOT(editPermissions(void)));
-		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(close(void)));
+		connect(parent_form->cancel_btn, SIGNAL(clicked(bool)), parent_form, SLOT(reject(void)));
 		connect(parent_form, SIGNAL(rejected()), this, SLOT(reject()));
 
 		schema_sel=new ObjectSelectorWidget(OBJ_SCHEMA, true, this);
@@ -151,6 +151,8 @@ void BaseObjectWidget::hideEvent(QHideEvent *)
 	parent_form->apply_ok_btn->setEnabled(true);
 	parent_form->close();
 	parent_form->blockSignals(false);
+
+	new_object=false;
 }
 
 void BaseObjectWidget::setRequiredField(QWidget *widget)
@@ -187,7 +189,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		}
 
 		str_aux=(!widget->toolTip().isEmpty() ? "\n" : "");
-		widget->setToolTip(widget->toolTip() + str_aux + trUtf8("(Required field)"));
+		widget->setToolTip(widget->toolTip() + str_aux + trUtf8("Required field. Leaving this empty will raise errors!"));
 	}
 }
 
@@ -383,7 +385,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	}
 }
 
-/* QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
+QString BaseObjectWidget::generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver)
 {
 	if(ver_interv_id==UNTIL_VERSION && !ini_ver.isEmpty())
 		return(XMLParser::CHAR_LT + QString("= ") + ini_ver);
@@ -393,7 +395,7 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 		return(XMLParser::CHAR_GT + QString("= ") + ini_ver);
 	else
 		return("");
-} */
+}
 
 QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 {
@@ -439,7 +441,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	return(info_frm);
 }
 
-/* QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields,
+QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields,
 																											map< QWidget *, vector<QString> > *values)
 {
 	QFrame *alert_frm=NULL;
@@ -448,6 +450,8 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	QString field_name;
 	QFont font;
 	QWidget *wgt=NULL;
+	QPalette pal;
+	QColor color=QColor(0,0,128);
 	map<QString, vector<QWidget *> >::iterator itr, itr_end;
 	vector<QString> values_vect;
 	unsigned i, count, count1, i1;
@@ -477,6 +481,10 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 			}
 
 			font=wgt->font();
+
+			pal.setBrush(QPalette::Active, QPalette::WindowText, color);
+			wgt->setPalette(pal);
+
 			font.setBold(true);
 			font.setItalic(true);
 			wgt->setFont(font);
@@ -515,13 +523,14 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	msg_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
 
-	msg_lbl->setText(trUtf8("The field(s) or value(s) highlighted on the form is(are) for the exclusive use and/or mandatory in specific versions of PostgreSQL. Failure to complete that may cause errors in the generation of SQL code for each version shown in tool tips of the highlighted fields."));
+	msg_lbl->setText(trUtf8("The <em style='color: %1'><strong>highlighted</strong></em> fields  on the form are mandatory and/or available only on specific versions of PostgreSQL. \
+													Errors on the SQL code generation may occur if the specified fields aren't filled. Refer to fields tooltips for details.").arg(color.name()));
 
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);
 	grid->setContentsMargins(4,4,4,4);
 
 	return(alert_frm);
-} */
+}
 
 void BaseObjectWidget::editPermissions(void)
 {

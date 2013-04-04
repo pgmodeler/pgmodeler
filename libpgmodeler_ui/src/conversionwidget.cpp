@@ -27,9 +27,14 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 		Ui_ConversionWidget::setupUi(this);
 
-		sel_funcao_conv=NULL;
-		sel_funcao_conv=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
-		convcod_grid->addWidget(sel_funcao_conv,1,1,1,3);
+		setRequiredField(src_encoding_lbl);
+		setRequiredField(trg_encoding_lbl);
+		setRequiredField(conv_func_lbl);
+		setRequiredField(conv_func_sel);
+
+		conv_func_sel=NULL;
+		conv_func_sel=new ObjectSelectorWidget(OBJ_FUNCTION, true, this);
+		convcod_grid->addWidget(conv_func_sel,1,1,1,3);
 
 		configureFormLayout(convcod_grid, OBJ_CONVERSION);
 		frame=generateInformationFrame(trUtf8("The function to be assigned to an encoding conversion must have the following signature: <em>void function(integer, integer, cstring, internal, integer)</em>."));
@@ -53,7 +58,7 @@ ConversionWidget::ConversionWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 void ConversionWidget::hideEvent(QHideEvent *event)
 {
-	sel_funcao_conv->clearSelector();
+	conv_func_sel->clearSelector();
 	default_conv_chk->setChecked(false);
 	BaseObjectWidget::hideEvent(event);
 }
@@ -61,11 +66,11 @@ void ConversionWidget::hideEvent(QHideEvent *event)
 void ConversionWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Schema *schema, Conversion *conv)
 {
 	BaseObjectWidget::setAttributes(model, op_list, conv, schema);
-	sel_funcao_conv->setModel(model);
+	conv_func_sel->setModel(model);
 
 	if(conv)
 	{
-		sel_funcao_conv->setSelectedObject(conv->getConversionFunction());
+		conv_func_sel->setSelectedObject(conv->getConversionFunction());
 		conv->setDefault(default_conv_chk->isChecked());
 		src_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::SRC_ENCODING))));
 		trg_encoding_cmb->setCurrentIndex(trg_encoding_cmb->findText(~(conv->getEncoding(Conversion::DST_ENCODING))));
@@ -86,7 +91,7 @@ void ConversionWidget::applyConfiguration(void)
 		conv->setEncoding(Conversion::SRC_ENCODING, src_encoding_cmb->currentText());
 		conv->setEncoding(Conversion::DST_ENCODING, trg_encoding_cmb->currentText());
 		conv->setDefault(default_conv_chk->isChecked());
-		conv->setConversionFunction(dynamic_cast<Function*>(sel_funcao_conv->getSelectedObject()));
+		conv->setConversionFunction(dynamic_cast<Function*>(conv_func_sel->getSelectedObject()));
 
 		finishConfiguration();
 	}

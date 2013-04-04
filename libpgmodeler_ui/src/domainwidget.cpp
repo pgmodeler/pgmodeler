@@ -40,6 +40,8 @@ DomainWidget::DomainWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DOMAIN
 
 		parent_form->setMinimumSize(530, 500);
 		parent_form->setMaximumHeight(500);
+
+		setRequiredField(data_type);
 	}
 	catch(Exception &e)
 	{

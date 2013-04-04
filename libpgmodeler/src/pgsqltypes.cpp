@@ -57,13 +57,15 @@ QString BaseType::type_list[types_count]=
 	"INSTEAD",
 
 	//Types used by the class FunctionType
-	//offsets 17 to 19
+	//offsets 17 to 21
 	"VOLATILE",
 	"STABLE",
 	"IMMUTABLE",
+	"LEAKPROOF",
+	"NOT LEAKPROOF",
 
 	//Types used by the class IndexingType
-	//offsets 20 to 24
+	//offsets 22 to 26
 	"btree",
 	"rtree",
 	"gist",
@@ -71,7 +73,7 @@ QString BaseType::type_list[types_count]=
 	"gin",
 
 	//Types used by the class PgSQLType
-	//offsets 25 to 63
+	//offsets 27 to 65
 	"smallint", "integer", "bigint", "decimal", "numeric",
 	"real", "double precision", "float", "serial", "bigserial", "money",
 	"character varying", "varchar", "character",
@@ -83,43 +85,43 @@ QString BaseType::type_list[types_count]=
 	"macaddr", "bit", "bit varying", "varbit", "uuid", "xml",
 
 	//Spatial type specifics for the PostGiS extension
-	//offsets 64 to 68
+	//offsets 66 to 70
 	"box2d","box3d","geometry",
 	"geometry_dump","geography",
 
 	//Object Identification type (OID)
-	//offsets 69 to 80
+	//offsets 71 to 82
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
 	"regtype", "regconfig", "regdictionary",
 	"xid", "cid", "tid",
 
 	//Pseudo-types
-	//offsets 81 to 92
+	//offsets 83 to 94
 	"any","anyarray","anyelement","anyenum",
 	"anynonarray","cstring","internal","language_handler",
 	"record","trigger","void","opaque",
 
 	//Interval types
-	//offsets 93 to 105
+	//offsets 95 to 107
 	"YEAR", "MONTH", "DAY", "HOUR",
 	"MINUTE", "SECOND","YEAR TO MONTH",
 	"DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
 	"HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND",
 
 	//Types used by the class BehaviorType
-	//offsets 106 to 108
+	//offsets 108 to 110
 	"CALLED ON NULL INPUT",
 	"RETURNS NULL ON NULL INPUT",
 	"STRICT",
 
 	//Types used by the class SecurityType
-	//offsets 109 to 110
+	//offsets 111 to 112
 	"SECURITY INVOKER",
 	"SECURITY DEFINER",
 
 	//Types used by the class LanguageType
-	//offsets 111 to 116
+	//offsets 113 to 118
 	"sql",
 	"c",
 	"plpgsql",
@@ -128,7 +130,7 @@ QString BaseType::type_list[types_count]=
 	"plpython",
 
 	//Types used by the class EncodingType
-	//offsets 117 to 157
+	//offsets 119 to 159
 	"UTF8", "BIG5", "EUC_CN",  "EUC_JP", "EUC_JIS_2004", "EUC_KR",
 	"EUC_TW", "GB18030", "GBK", "ISO_8859_5", "ISO_8859_6",
 	"ISO_8859_7", "ISO_8859_8", "JOHAB", "KOI", "LATIN1",
@@ -140,25 +142,25 @@ QString BaseType::type_list[types_count]=
 	"WIN1258",
 
 	//Types used by the class StorageType
-	//offsets 158 to 161
+	//offsets 160 to 163
 	"plain",
 	"external",
 	"extended",
 	"main",
 
 	//Types used by the class MatchType
-	//offsets 162 to 164
+	//offsets 164 to 166
 	"MATCH FULL",
 	"MATCH PARTIAL",
 	"MATCH SIMPLE",
 
 	//Types used by the class DeferralType
-	//offsets 165 to 166
+	//offsets 167 to 168
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED",
 
 	//Types used by the class CategoryType
-	//offsets 167 to 180 - See table 44-43 on PostgreSQL 8.4 documentation
+	//offsets 169 to 182 - See table 44-43 on PostgreSQL 8.4 documentation
 	"U", //User-defined types
 	"A", //Array types
 	"B", //Boolean types
@@ -175,7 +177,7 @@ QString BaseType::type_list[types_count]=
 	"X", //Unknown type
 
 	//Types used by the class FiringType
-	//offsets 181 to 183
+	//offsets 183 to 185
 	"BEFORE",
 	"AFTER",
 	"INSTEAD OF",
@@ -184,7 +186,7 @@ QString BaseType::type_list[types_count]=
 			These types accepts variations Z, M e ZM.
 			 > Example: POINT, POINTZ, POINTM, POINTZM
 			Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-	//offsets 184 to 190
+	//offsets 186 to 192
 	"POINT",
 	"LINESTRING",
 	"POLYGON",
@@ -590,20 +592,20 @@ SpatialType::SpatialType(unsigned type_id, int srid, unsigned var_id)
 SpatialType::SpatialType(void)
 {
 	type_idx=point;
-	variacao=no_var;
+	variation=no_var;
 }
 
 void SpatialType::setVariation(unsigned var)
 {
 	if(var > var_zm)
-		variacao=var_zm;
+		variation=var_zm;
 	else
-		variacao=var;
+		variation=var;
 }
 
 unsigned SpatialType::getVariation(void)
 {
-	return(variacao);
+	return(variation);
 }
 
 void SpatialType::getTypes(QStringList &type_list)
@@ -626,7 +628,7 @@ QString SpatialType::operator * (void)
 {
 	QString var_str;
 
-	switch(variacao)
+	switch(variation)
 	{
 		case var_z: var_str+="Z"; break;
 		case var_m: var_str+="M"; break;

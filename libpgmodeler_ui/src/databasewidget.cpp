@@ -40,8 +40,8 @@ DatabaseWidget::DatabaseWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_DA
 	frame->setParent(this);*/
 
 	parent_form->setMinimumWidth(530);
-	parent_form->setMinimumHeight(420);
-	parent_form->setMaximumHeight(420);
+	parent_form->setMinimumHeight(360);
+	parent_form->setMaximumHeight(360);
 
 	//Configures the encoding combobox
 	EncodingType::getTypes(encodings);

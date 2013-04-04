@@ -6,10 +6,27 @@
 [-- object: ] @{name} [ | type: ] @{sql-object} [ -- ] $br
 
 [CREATE DOMAIN ] @{name} [ AS ] @{type}
-%if @{default-value} %then $br $tb [DEFAULT ] @{default-value} %end
-%if @{constraint} %then $br $tb [CONSTRAINT ] @{constraint} %end
-%if @{not-null}  %then $br $tb [NOT NULL] %end
-%if @{expression} %then  $br $tb [CHECK ] (@{expression}) %end
+
+%if %not @{pgsql90} %and @{collation} %then
+ $br $tb [COLLATE ] @{collation}
+%end
+
+%if @{default-value} %then
+ $br $tb [DEFAULT ] @{default-value}
+%end
+
+%if @{constraint} %then
+ $br $tb [CONSTRAINT ] @{constraint}
+%end
+
+%if @{not-null} %then
+ $br $tb [NOT NULL]
+%end
+
+%if @{expression} %then
+ $br $tb [CHECK ] (@{expression})
+%end
+
 ;$br
 
 %if @{owner} %then @{owner} %end

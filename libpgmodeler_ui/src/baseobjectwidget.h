@@ -101,13 +101,13 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		AFTER_VERSION=2;
 
 		//! \brief Generates a string containing the specified version interval
-		//static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver="");
+		static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver="");
 
 		/*! \brief Generates a alert frame highlighting the fields of exclusive use on the specified
 			PostgreSQL versions. On the first map (fields) the key is the PostgreSQL versions and
 			the values are the reference to the widget. The second map is used to specify the values
 			of widgets specific for each version. */
-		//QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=NULL);
+		QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=NULL);
 
 		//! \brief Generates a informative frame containing the specified message
 		QFrame *generateInformationFrame(const QString &msg);
