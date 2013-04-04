@@ -233,11 +233,11 @@ class Relationship: public BaseRelationship {
 		/*! \brief Adds relationship constraints on the receiver table. If the relationship is
 		 of type n-n, constraints will be added to the created table. If among the constraints
 		 there is a primary key, then it will be merged with the primary key of receiver table */
-		void addConstraints(Table *dst_tab);
+		void addConstraints(Table *recv_tab);
 
 		/*! \brief Executes adicional configurations on receiver table primary key when the
 		 relationship is identifier */
-		void configureIndentifierRel(Table *dst_tab);
+		void configureIndentifierRel(Table *recv_tab);
 
 		/*! \brief Copy the columns from the reference table to the receiver table. The parameter not_null indicates
 		 that the columns must not accept null values */

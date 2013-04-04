@@ -320,7 +320,12 @@ void BaseObject::setName(const QString &name)
 
 		//Raises an error if the passed name is invalid
 		if(!isValidName(aux_name))
-			throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		{
+			if(name.size() > OBJECT_NAME_MAX_LENGTH)
+				throw Exception(ERR_ASG_LONG_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+			else
+				throw Exception(ERR_ASG_INV_NAME_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		}
 		else
 		{
 			aux_name.remove('\"');

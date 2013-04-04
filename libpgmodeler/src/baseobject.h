@@ -135,9 +135,6 @@ class BaseObject {
 		 so if one is assigned to the object an error will be raised */
 		BaseObject *collation;
 
-		//! \brief Maximum number of characters that an object name on PostgreSQL can have
-		static const int OBJECT_NAME_MAX_LENGTH=63;
-
 		//! \brief Comments related to object
 		QString comment,
 						//! \brief Object's name (in PostgreSQL accepted format)
@@ -163,6 +160,9 @@ class BaseObject {
 		void setDatabase(BaseObject *db);
 
 	public:
+		//! \brief Maximum number of characters that an object name on PostgreSQL can have
+		static const int OBJECT_NAME_MAX_LENGTH=63;
+
 		BaseObject(void);
 		BaseObject(bool system_obj);
 		virtual ~BaseObject(void){}

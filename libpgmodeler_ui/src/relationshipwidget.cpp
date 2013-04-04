@@ -258,8 +258,8 @@ void RelationshipWidget::setAttributes(DatabaseModel *model, OperationList *op_l
 		}
 		else
 		{
-			src_suffix_lbl->setText(Utf8String::create(aux_rel->getTable(BaseRelationship::SRC_TABLE)->getName()) + trUtf8(" Suffix:"));
-			dst_suffix_lbl->setText(Utf8String::create(aux_rel->getTable(BaseRelationship::DST_TABLE)->getName()) + trUtf8(" Suffix:"));
+			src_suffix_lbl->setText(Utf8String::create(trUtf8("Table 1 ") + trUtf8(" Suffix:")));
+			dst_suffix_lbl->setText(Utf8String::create(trUtf8("Table 2 ") + trUtf8(" Suffix:")));
 		}
 
 		auto_suffix_chk->setChecked(aux_rel->isAutomaticSuffix());

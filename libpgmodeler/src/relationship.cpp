@@ -82,6 +82,9 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 			str_aux=str_aux.arg(this->getReceiverTable()->getName())
 										 .arg(this->getReferenceTable()->getName());
 
+		if(str_aux.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
+			str_aux.resize(BaseObject::OBJECT_NAME_MAX_LENGTH);
+
 		setName(str_aux);
 
 		//Setting up the n-n relationship table name based on the suffixes, when they are defined
@@ -89,6 +92,9 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 			tab_name_relnn=src_suffix + SUFFIX_SEPARATOR + dst_suffix;
 		else
 			tab_name_relnn=this->obj_name;
+
+		if(tab_name_relnn.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)
+			tab_name_relnn.resize(BaseObject::OBJECT_NAME_MAX_LENGTH);
 
 		rejected_col_count=0;
 		setIdentifier(identifier);
@@ -612,7 +618,7 @@ unsigned Relationship::getObjectCount(ObjectType obj_type)
 		throw Exception(ERR_REF_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Relationship::addConstraints(Table *dst_tab)
+void Relationship::addConstraints(Table *recv_tab)
 {
 	Constraint *constr=NULL, *pk=NULL;
 	unsigned constr_id, constr_cnt, i, count;
@@ -637,7 +643,7 @@ void Relationship::addConstraints(Table *dst_tab)
 
 				//Configures the name of the constraint in order to avoid name duplication errors
 				orig_name=constr->getName();
-				while(dst_tab->getConstraint(orig_name + aux))
+				while(recv_tab->getConstraint(orig_name + aux))
 				{
 					aux=QString("%1").arg(i);
 					name=orig_name + aux;
@@ -647,7 +653,7 @@ void Relationship::addConstraints(Table *dst_tab)
 				if(name!="") constr->setName(name);
 
 				//Adds the constraint to the table
-				dst_tab->addConstraint(constr);
+				recv_tab->addConstraint(constr);
 			}
 			else
 			{
@@ -655,7 +661,7 @@ void Relationship::addConstraints(Table *dst_tab)
 			 table's primary key */
 
 				//Gets the table primary key
-				pk=dst_tab->getPrimaryKey();
+				pk=recv_tab->getPrimaryKey();
 
 				if(pk)
 				{
@@ -668,7 +674,7 @@ void Relationship::addConstraints(Table *dst_tab)
 				}
 				else
 					//Case the table doens't has a primary key the constraint will the be it
-					dst_tab->addConstraint(constr);
+					recv_tab->addConstraint(constr);
 
 				if(constr==pk_special)
 				{
@@ -680,6 +686,14 @@ void Relationship::addConstraints(Table *dst_tab)
 	}
 	catch(Exception &e)
 	{
+		vector<TableObject *>::iterator itr=rel_constraints.begin();
+
+		while(itr!=rel_constraints.end())
+		{
+			recv_tab->removeObject(*itr);
+			itr++;
+		}
+
 		throw Exception(e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -908,6 +922,10 @@ void Relationship::addColumnsRelGen(void)
 	}
 	catch(Exception &e)
 	{
+		//Forcing the relationship as connected to perform the disconnection operations
+		this->connected=true;
+		this->disconnectRelationship();
+
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -972,7 +990,7 @@ void Relationship::connectRelationship(void)
 	}
 }
 
-void Relationship::configureIndentifierRel(Table *dst_tab)
+void Relationship::configureIndentifierRel(Table *recv_tab)
 {
 	Constraint *pk=NULL;
 	unsigned i, count;
@@ -985,7 +1003,7 @@ void Relationship::configureIndentifierRel(Table *dst_tab)
 		 will be merged with the primary key of the reference table (strong entity) */
 
 		//Gets the primary key from the receiver table
-		pk=dst_tab->getPrimaryKey();
+		pk=recv_tab->getPrimaryKey();
 
 		//Case the primary key doesn't exists it'll be created
 		if(!pk)
@@ -1005,10 +1023,10 @@ void Relationship::configureIndentifierRel(Table *dst_tab)
 			i=1;
 			aux[0]='\0';
 			//Configures a basic name for the primary key
-			name=dst_tab->getName() + SUFFIX_SEPARATOR + "pk";
+			name=recv_tab->getName() + SUFFIX_SEPARATOR + "pk";
 
 			//Resolves any duplication of the new constraint name on the receiver table
-			while(dst_tab->getConstraint(name + aux))
+			while(recv_tab->getConstraint(name + aux))
 			{
 				aux=QString("%1").arg(i);
 				i++;
@@ -1024,10 +1042,28 @@ void Relationship::configureIndentifierRel(Table *dst_tab)
 
 		//Inserts the configured primary key on the receiver table (if there is no pk on it)
 		if(new_pk)
-			dst_tab->addConstraint(pk);
+			recv_tab->addConstraint(pk);
 	}
 	catch(Exception &e)
 	{
+		if(pk_relident)
+		{
+			if(new_pk)
+			{
+				recv_tab->removeObject(pk_relident);
+				delete(pk_relident);
+			}
+			else
+			{
+				pk=recv_tab->getPrimaryKey();
+				count=gen_columns.size();
+				for(i=0; i < count; i++)
+					pk->removeColumn(gen_columns[i]->getName(), Constraint::SOURCE_COLS);
+			}
+
+			pk_relident=NULL;
+		}
+
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1073,6 +1109,13 @@ void Relationship::addUniqueKey(Table *ref_tab, Table *recv_tab)
 	}
 	catch(Exception &e)
 	{
+		if(uq_rel11)
+		{
+			recv_tab->removeObject(uq_rel11);
+			delete(uq_rel11);
+			uq_rel11=NULL;
+		}
+
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1174,6 +1217,13 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 	}
 	catch(Exception &e)
 	{
+		if(fk_rel1n)
+		{
+			recv_tab->removeObject(fk_rel1n);
+			delete(fk_rel1n);
+			fk_rel1n=NULL;
+		}
+
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1215,6 +1265,14 @@ void Relationship::addAttributes(Table *recv_tab)
 	}
 	catch(Exception &e)
 	{
+		vector<TableObject *>::iterator itr=rel_attributes.begin();
+
+		while(itr!=rel_attributes.end())
+		{
+			recv_tab->removeObject(*itr);
+			itr++;
+		}
+
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1337,6 +1395,16 @@ void Relationship::copyColumns(Table *ref_tab, Table *recv_tab, bool not_null)
 	}
 	catch(Exception &e)
 	{
+		while(!gen_columns.empty())
+		{
+			recv_tab->removeObject(gen_columns.back());
+			gen_columns.pop_back();
+		}
+
+		prev_ref_col_names.clear();
+		pk_columns.clear();
+		col_suffixes.clear();
+
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1402,6 +1470,10 @@ void Relationship::addColumnsRel11(void)
 	}
 	catch(Exception &e)
 	{
+		//Forcing the relationship as connected to perform the disconnection operations
+		this->connected=true;
+		this->disconnectRelationship();
+
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1464,6 +1536,10 @@ void Relationship::addColumnsRel1n(void)
 	}
 	catch(Exception &e)
 	{
+		//Forcing the relationship as connected to perform the disconnection operations
+		this->connected=true;
+		this->disconnectRelationship();
+
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1507,6 +1583,10 @@ void Relationship::addColumnsRelNn(void)
 	}
 	catch(Exception &e)
 	{
+		//Forcing the relationship as connected to perform the disconnection operations
+		this->connected=true;
+		this->disconnectRelationship();
+
 		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__,&e);
 	}
 }
@@ -1682,20 +1762,23 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				unsigned i, count;
 
 				/* In case of relationship 1-1 and 1-n is necessary remove the
-			 foreign key that represents the relationship furthermore columns
-			 added to primary key (in case of a identifier relationship) must be removed */
+				foreign key that represents the relationship furthermore columns
+				 added to primary key (in case of a identifier relationship) must be removed */
 				if(fk_rel1n && (rel_type==RELATIONSHIP_11 || rel_type==RELATIONSHIP_1N))
 				{
 					/* Gets the table which has a foreign key that represents the
-				relationship (the table where the foreign key was inserted
-				upon connection of the relationship) */
-					table=dynamic_cast<Table *>(fk_rel1n->getParentTable());
+					relationship (the table where the foreign key was inserted
+					upon connection of the relationship) */
+					if(fk_rel1n)
+					{
+						table=dynamic_cast<Table *>(fk_rel1n->getParentTable());
 
-					//Removes the foreign key from table
-					table->removeConstraint(fk_rel1n->getName());
+						//Removes the foreign key from table
+						table->removeConstraint(fk_rel1n->getName());
+					}
 
 					/* Gets the table primary key to check if it is the same as the primary key
-				that defines the identifier relationship */
+					that defines the identifier relationship */
 					pk=table->getPrimaryKey();
 
 					//Removes the relationship created columns from table primary key
@@ -1704,10 +1787,13 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 					if(rem_tab_objs)
 						removeTableObjectsRefCols(table);
 
-					//Destroy the foreign key
-					fk_rel1n->removeColumns();
-					delete(fk_rel1n);
-					fk_rel1n=NULL;
+					if(fk_rel1n)
+					{
+						//Destroy the foreign key
+						fk_rel1n->removeColumns();
+						delete(fk_rel1n);
+						fk_rel1n=NULL;
+					}
 
 					//Destroy the auto created unique key if it exists
 					if(uq_rel11)
@@ -1797,7 +1883,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 			gen_columns.clear();
 			pk_columns.clear();
 			col_suffixes.clear();
-
+			prev_ref_col_names.clear();
 
 			if(table_relnn)
 			{

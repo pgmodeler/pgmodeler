@@ -1225,7 +1225,7 @@ void DatabaseModel::validateRelationships(void)
 					itr_end=rels.end();
 					itr=rels.begin() + idx;
 
-					delete(rel);
+					/* delete(rel); */
 
 					//Stores the error raised in a list
 					errors.push_back(e);
