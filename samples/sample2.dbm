@@ -519,7 +519,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<element type="function" stg-number="1">
 		<function signature="&quot;schema_B&quot;.funcao_operator(integer,text)"/>
 	</element>
-	<element type="operator" stg-number="2" recheck="true">
+	<element type="operator" stg-number="2">
 		<operator  signature="&quot;schema_B&quot;.%?!*-/!%=(integer,text)"/>
 	</element>
 	<element type="storage">

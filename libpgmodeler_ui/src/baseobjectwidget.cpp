@@ -162,6 +162,7 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 		QLabel *lbl=dynamic_cast<QLabel *>(widget);
 		QLineEdit *edt=dynamic_cast<QLineEdit *>(widget);
 		QTextEdit *txt=dynamic_cast<QTextEdit *>(widget);
+		QGroupBox *grp=dynamic_cast<QGroupBox *>(widget);
 		ObjectSelectorWidget *sel=dynamic_cast<ObjectSelectorWidget *>(widget);
 		PgSQLTypeWidget *pgtype=dynamic_cast<PgSQLTypeWidget *>(widget);
 		QString str_aux=" <span style='color: #ff0000;'>*</span> ";
@@ -169,14 +170,17 @@ void BaseObjectWidget::setRequiredField(QWidget *widget)
 
 		QFont fnt=widget->font();
 
-		if(lbl || pgtype)
+		if(lbl || pgtype || grp)
 		{
 			fnt.setBold(true);
 
 			if(lbl)
 				lbl->setText(str_aux + lbl->text());
 
-			widget->setFont(fnt);
+			if(!grp)
+				widget->setFont(fnt);
+			else
+				grp->setStyleSheet("QGroupBox {	font-weight: bold; }");
 		}
 		else if(edt || txt || sel)
 		{

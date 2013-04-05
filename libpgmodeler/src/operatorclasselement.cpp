@@ -23,7 +23,7 @@ OperatorClassElement::OperatorClassElement(void)
 	element_type=OPERATOR_ELEM;
 	function=NULL;
 	_operator=NULL;
-	recheck=false;
+	for_order_by=false;
 	strategy_number=0;
 }
 
@@ -39,6 +39,7 @@ void OperatorClassElement::setFunction(Function *func, unsigned stg_number)
 
 	//Clear the attributes not related to the FUNCTION element type
 	this->_operator=NULL;
+	this->op_family=NULL;
 
 	//Configure the attributes that belongs to the element type
 	this->function=func;
@@ -46,7 +47,7 @@ void OperatorClassElement::setFunction(Function *func, unsigned stg_number)
 	this->element_type=FUNCTION_ELEM;
 }
 
-void OperatorClassElement::setOperator(Operator *oper, unsigned stg_number, bool recheck)
+void OperatorClassElement::setOperator(Operator *oper, unsigned stg_number)
 {
 	//Raises an error in case the operator is not allocated
 	if(!oper)
@@ -62,8 +63,19 @@ void OperatorClassElement::setOperator(Operator *oper, unsigned stg_number, bool
 	//Configure the attributes that belongs to the element type
 	this->_operator=oper;
 	this->strategy_number=stg_number;
-	this->recheck=recheck;
 	this->element_type=OPERATOR_ELEM;
+}
+
+void OperatorClassElement::setOperatorFamily(OperatorFamily *op_family, bool for_order_by)
+{
+	if(this->element_type==OPERATOR_ELEM)
+	{
+		if(op_family && op_family->getIndexingType()!=IndexingType::btree)
+			throw Exception(ERR_ASG_INV_OPFAM_OPCLSELEM,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		this->op_family=op_family;
+		this->for_order_by=for_order_by;
+	}
 }
 
 void OperatorClassElement::setStorage(PgSQLType storage)
@@ -71,6 +83,7 @@ void OperatorClassElement::setStorage(PgSQLType storage)
 	//Clear the attributes not related to the STORAGE element type
 	this->function=NULL;
 	this->_operator=NULL;
+	this->op_family=NULL;
 	this->strategy_number=0;
 
 	//Configure the attributes that belongs to the element type
@@ -93,19 +106,24 @@ Operator *OperatorClassElement::getOperator(void)
 	return(_operator);
 }
 
+OperatorFamily *OperatorClassElement::getOperatorFamily(void)
+{
+	return(op_family);
+}
+
 PgSQLType OperatorClassElement::getStorage(void)
 {
 	return(storage);
 }
 
-bool OperatorClassElement::isRecheck(void)
-{
-	return(recheck);
-}
-
 unsigned OperatorClassElement::getStrategyNumber(void)
 {
 	return(strategy_number);
+}
+
+bool OperatorClassElement::isForOrderBy(void)
+{
+	return(for_order_by);
 }
 
 QString OperatorClassElement::getCodeDefinition(unsigned def_type)
@@ -115,10 +133,11 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 	attributes[ParsersAttributes::TYPE]="";
 	attributes[ParsersAttributes::STRATEGY_NUM]="";
 	attributes[ParsersAttributes::SIGNATURE]="";
-	attributes[ParsersAttributes::RECHECK]="";
 	attributes[ParsersAttributes::FUNCTION]="";
 	attributes[ParsersAttributes::OPERATOR]="";
 	attributes[ParsersAttributes::STORAGE]="";
+	attributes[ParsersAttributes::OP_FAMILY]="";
+	attributes[ParsersAttributes::FOR_ORDER_BY]="";
 	attributes[ParsersAttributes::DEFINITION]="";
 
 	if(element_type==FUNCTION_ELEM && function && strategy_number > 0)
@@ -137,12 +156,22 @@ QString OperatorClassElement::getCodeDefinition(unsigned def_type)
 		//OPERATOR strategy_number operator_name [ ( op_type, op_type ) ] [ RECHECK ]
 		attributes[ParsersAttributes::OPERATOR]="1";
 		attributes[ParsersAttributes::STRATEGY_NUM]=QString("%1").arg(strategy_number);
-		if(recheck) attributes[ParsersAttributes::RECHECK]="1";
+
+		if(for_order_by)
+			attributes[ParsersAttributes::FOR_ORDER_BY]="1";
 
 		if(def_type==SchemaParser::SQL_DEFINITION)
 			attributes[ParsersAttributes::SIGNATURE]=_operator->getSignature();
 		else
 			attributes[ParsersAttributes::DEFINITION]=_operator->getCodeDefinition(def_type,true);
+
+		if(op_family)
+		{
+			if(def_type==SchemaParser::SQL_DEFINITION)
+				attributes[ParsersAttributes::OP_FAMILY]=op_family->getName(true);
+			else
+				attributes[ParsersAttributes::DEFINITION]+=op_family->getCodeDefinition(def_type,true);
+		}
 	}
 	else if(element_type==STORAGE_ELEM && storage!=PgSQLType::null)
 	{

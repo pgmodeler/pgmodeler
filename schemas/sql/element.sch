@@ -8,8 +8,14 @@
 
 %if @{operator} %then
  $tb OPERATOR $tb @{stg-number} $tb @{signature}
- %if @{recheck} %then
-   $tb RECHECK
+
+ %if %not @{pgsql90} %and @{opfamily} %then
+    %if @{for-order-by} %then
+	[ FOR ORDER BY ]
+    %else
+	[ FOR SEARCH ]
+    %end
+    @{opfamily}
  %end
 %end
 

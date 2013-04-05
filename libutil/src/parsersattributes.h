@@ -140,7 +140,7 @@ namespace ParsersAttributes {
 	OWNER_COLUMN="owner",
 	PRECISION="precision",
 	ROW_AMOUNT="row-amount",
-	RECHECK="recheck",
+	//RECHECK="recheck",
 	REFER="refer",
 	RULES="rules",
 	CK_CONSTR="ck-constr",
@@ -351,7 +351,9 @@ namespace ParsersAttributes {
 	REVOKE="revoke",
 	CASCADE="cascade",
 	CTE_EXPRESSION="cte-exp",
-	LOCALE="locale";
+	LOCALE="locale",
+	FOR_ORDER_BY="for-order-by",
+	OP_FAMILY="opfamily";
 }
 
 #endif

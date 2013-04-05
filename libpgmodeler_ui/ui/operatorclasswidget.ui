@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>559</width>
-    <height>194</height>
+    <height>294</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -114,7 +114,7 @@
     <item row="0" column="0">
      <widget class="QLabel" name="elem_type_lbl">
       <property name="text">
-       <string>Elemente Type:</string>
+       <string>Element Type:</string>
       </property>
      </widget>
     </item>
@@ -184,10 +184,23 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="2" colspan="2">
-     <widget class="QCheckBox" name="recheck_chk">
+    <item row="3" column="0">
+     <widget class="QLabel" name="elem_family_lbl">
       <property name="text">
-       <string>Recheck</string>
+       <string>Op. Family:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="3">
+     <widget class="QCheckBox" name="for_order_by_chk">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>FOR ORDER BY</string>
       </property>
      </widget>
     </item>
@@ -209,7 +222,7 @@
     </size>
    </property>
    <property name="text">
-    <string>Family:</string>
+    <string>Op. Family:</string>
    </property>
   </widget>
  </widget>

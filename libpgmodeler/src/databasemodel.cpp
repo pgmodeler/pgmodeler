@@ -3868,14 +3868,14 @@ Operator *DatabaseModel::createOperator(void)
 
 OperatorClass *DatabaseModel::createOperatorClass(void)
 {
-	map<QString, QString> attribs;
+	map<QString, QString> attribs, attribs_aux;
 	map<QString, unsigned> elem_types;
 	BaseObject *object=NULL;
 	QString elem;
 	PgSQLType type;
 	OperatorClass *op_class=NULL;
 	OperatorClassElement class_elem;
-	bool recheck;
+	bool for_order_by;
 	unsigned stg_number, elem_type;
 
 	try
@@ -3925,7 +3925,7 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 					{
 						XMLParser::getElementAttributes(attribs);
 
-						recheck=attribs[ParsersAttributes::RECHECK]==ParsersAttributes::_TRUE_;
+						for_order_by=attribs[ParsersAttributes::FOR_ORDER_BY]==ParsersAttributes::_TRUE_;
 						stg_number=attribs[ParsersAttributes::STRATEGY_NUM].toUInt();
 						elem_type=elem_types[attribs[ParsersAttributes::TYPE]];
 
@@ -3946,7 +3946,27 @@ OperatorClass *DatabaseModel::createOperatorClass(void)
 						else if(elem_type==OperatorClassElement::OPERATOR_ELEM)
 						{
 							object=getObject(attribs[ParsersAttributes::SIGNATURE],OBJ_OPERATOR);
-							class_elem.setOperator(dynamic_cast<Operator *>(object),stg_number,recheck);
+							class_elem.setOperator(dynamic_cast<Operator *>(object),stg_number);
+
+							if(XMLParser::hasElement(XMLParser::NEXT_ELEMENT))
+							{
+								XMLParser::savePosition();
+								XMLParser::accessElement(XMLParser::NEXT_ELEMENT);
+								XMLParser::getElementAttributes(attribs_aux);
+
+								object=getObject(attribs_aux[ParsersAttributes::NAME],OBJ_OPFAMILY);
+
+								if(!object && !attribs_aux[ParsersAttributes::NAME].isEmpty())
+									throw Exception(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL)
+																	.arg(Utf8String::create(op_class->getName()))
+																	.arg(op_class->getTypeName())
+																	.arg(Utf8String::create(attribs_aux[ParsersAttributes::NAME]))
+																	.arg(BaseObject::getTypeName(OBJ_OPFAMILY)),
+										ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+								class_elem.setOperatorFamily(dynamic_cast<OperatorFamily *>(object), for_order_by);
+								XMLParser::restorePosition();
+							}
 						}
 
 						op_class->addElement(class_elem);

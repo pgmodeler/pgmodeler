@@ -30,6 +30,7 @@
 #include "baseobject.h"
 #include "operator.h"
 #include "function.h"
+#include "operatorfamily.h"
 
 class OperatorClassElement {
 	private:
@@ -46,12 +47,15 @@ class OperatorClassElement {
 		//! \brief Operator used by the element (only for type OPERATOR_ELEM)
 		Operator *_operator;
 
+		//! \brief Operator family used by the element (only for type OPERATOR_ELEM)
+		OperatorFamily *op_family;
+
 		/*! \brief PostgreSQL type used in the indexing method of operator class.
 		 (only for type STORAGE_ELEM) */
 		PgSQLType storage;
 
-		//! \brief Inicates that the rechecking of retrieved lines is mandatory (only for OPERATOR_ELEM)
-		bool recheck;
+		//! \brief Specifies if the operator family is used with 'FOR ORDER BY' (only for type OPERATOR_ELEM)
+		bool for_order_by;
 
 		/*! \brief Strategy number (or support number for functions). This attribute
 		 must have a value greater than 0 (only for OPERATOR_ELEM and FUNCTION_ELEM) */
@@ -69,7 +73,10 @@ class OperatorClassElement {
 		void setFunction(Function *func, unsigned stg_number);
 
 		//! \brief Defines the element as an operator clause
-		void setOperator(Operator *oper, unsigned stg_number, bool recheck);
+		void setOperator(Operator *oper, unsigned stg_number);
+
+		//! \brief Defines operator family used by the element (only for Operator elements)
+		void setOperatorFamily(OperatorFamily *op_family, bool for_order_by);
 
 		//! \brief Defines the element as a storage clause
 		void setStorage(PgSQLType storage);
@@ -85,11 +92,15 @@ class OperatorClassElement {
 		 This method returns NULL when the element is not an OPERATOR_ELEM */
 		Operator *getOperator(void);
 
+		/*! \brief Returns the operator family used by element.
+		This method returns NULL when the element is not an OPERATOR_ELEM */
+		OperatorFamily *getOperatorFamily(void);
+
 		//! \brief Storage type of the element
 		PgSQLType getStorage(void);
 
-		//! \brief Returns whether the elements is to be rechecked or not
-		bool isRecheck(void);
+		//! \brief Returns whether the element's operator family is used on FOR ORDER BY clause
+		bool isForOrderBy(void);
 
 		//! \brief Returns the strategy (support) number of the element
 		unsigned getStrategyNumber(void);

@@ -11,8 +11,8 @@ $tb [<element type=]
  [ stg-number=] "@{stg-number}"
 %end
 
-%if @{recheck} %then
- [ recheck=] "true"
+%if @{for-order-by} %then
+ [ for-order-by=] "true"
 %end
 > $br
 $tb @{definition}
