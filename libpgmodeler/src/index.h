@@ -57,16 +57,17 @@ class Index: public TableObject{
 		Index(void);
 
 		//! \brief Adds an element to the index using an column
-		void addElement(Column *column, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
+		void addElement(Column *column, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
 
 		//! \brief Adds an element to the index using an expression
-		void addElement(const QString &expr, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
+		void addElement(const QString &expr, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
 
 		//! \brief Adds an element to the index using other pre-configured element
 		void addElement(IndexElement elem);
 
 		//! \brief Returns the element index if it exists or -1 if not
 		int isElementExists(Column *column);
+
 		//! \brief Returns the element index if it exists or -1 if not
 		int isElementExists(const QString &expr);
 
@@ -116,6 +117,9 @@ class Index: public TableObject{
 		 relationship in order to avoid referece breaking due constants
 		 connections and disconnections of relationships */
 		bool isReferRelationshipAddedColumn(void);
+
+		//! \brief Returns if some index element is referencing the specified collation
+		bool isReferCollation(Collation *collation);
 };
 
 #endif

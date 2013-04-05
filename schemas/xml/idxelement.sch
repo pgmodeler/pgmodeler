@@ -1,7 +1,7 @@
 # XML definition for indexes elements
 # CAUTION: Do not modify this file unless you know what you are doing.
 #          Code generation can be broken if incorrect changes are made.
-$tb <idxelement
+$tb $tb <idxelement
 
  [ use-sorting=] %if @{use-sorting} %then "true" %else "false" %end
 
@@ -13,15 +13,19 @@ $tb <idxelement
 > $br
 
 %if @{column} %then
-  $tb $tb [<column name=] "@{column}" /> $br
+  $tb $tb $tb [<column name=] "@{column}" /> $br
 %else
  %if @{expression} %then
-  $tb $tb <expression> <! $ob CDATA $ob @{expression} $cb $cb > </expression> $br
+  $tb $tb $tb <expression> <! $ob CDATA $ob @{expression} $cb $cb > </expression> $br
  %end
 %end
 
-%if @{opclass} %then
-  $tb $tb @{opclass}
+%if @{collation} %then
+  $tb $tb @{collation}
 %end
 
-$tb </idxelement> $br
+%if @{opclass} %then
+  $tb $tb $tb @{opclass}
+%end
+
+$tb $tb </idxelement> $br

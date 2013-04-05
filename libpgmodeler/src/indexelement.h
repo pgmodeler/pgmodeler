@@ -27,6 +27,7 @@
 
 #include "column.h"
 #include "operatorclass.h"
+#include "collation.h"
 
 class IndexElement {
 	private:
@@ -34,6 +35,9 @@ class IndexElement {
 		 mutually exclusive with the expression attribute, this means,
 		 when one is set the other has empty (null) value */
 		Column *column;
+
+		//! \brief Collation referenced by the element
+		Collation *collation;
 
 		/*! \brief Expression referenced by the index element. This attribute is
 		 mutually exclusive with the column attribute, this means
@@ -61,6 +65,7 @@ class IndexElement {
 		void setExpression(const QString &expression);
 		void setOperatorClass(OperatorClass *oper_class);
 		void setSortingEnabled(bool value);
+		void setCollation(Collation *collation);
 
 		//! \brief Sets the state of one of the element sorting method
 		void setSortingAttribute(unsigned attrib, bool value);
@@ -72,6 +77,7 @@ class IndexElement {
 		QString getExpression(void);
 		OperatorClass *getOperatorClass(void);
 		bool isSortingEnabled(void);
+		Collation *getCollation(void);
 
 		//! \brief Returns the SQL / XML code definition for the index element
 		QString getCodeDefinition(unsigned def_type);

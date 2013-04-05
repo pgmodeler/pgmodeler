@@ -45,23 +45,27 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 
 		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
+		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
 
-		elements_tab->setColumnCount(5);
+		elements_tab->setColumnCount(6);
 		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
 		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
 		elements_tab->setHeaderLabel(trUtf8("Type"), 1);
 		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
-		elements_tab->setHeaderLabel(trUtf8("Operator Class"), 2);
-		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/opclass.png"),2);
-		elements_tab->setHeaderLabel(trUtf8("Sorting"), 3);
-		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 4);
+		elements_tab->setHeaderLabel(trUtf8("Collation"), 2);
+		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/collation.png"),2);
+		elements_tab->setHeaderLabel(trUtf8("Operator Class"), 3);
+		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/opclass.png"),3);
+		elements_tab->setHeaderLabel(trUtf8("Sorting"), 4);
+		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 5);
 
 		grid=dynamic_cast<QGridLayout *>(elements_grp->layout());
-		grid->addWidget(op_class_sel, 2,2);
+		grid->addWidget(collation_sel, 2,2);
+		grid->addWidget(op_class_sel, 3,2);
 		grid->addWidget(elements_tab, 5,0,1,4);
 
 		configureFormLayout(index_grid, OBJ_INDEX);
-		parent_form->setMinimumSize(600, 640);
+		parent_form->setMinimumSize(640, 640);
 
 		IndexingType::getTypes(list);
 		indexing_cmb->addItems(list);
@@ -155,27 +159,30 @@ void IndexWidget::showElementData(IndexElement elem, int elem_idx)
 		elements_tab->setCellText(tr("Expression"), elem_idx, 1);
 	}
 
+
+	if(elem.getCollation())
+		elements_tab->setCellText(Utf8String::create(elem.getCollation()->getName(true)), elem_idx, 2);
+
 	if(elem.getOperatorClass())
-		elements_tab->setCellText(Utf8String::create(elem.getOperatorClass()->getName(true)), elem_idx, 2);
-	else
-		elements_tab->setCellText("-", elem_idx, 2);
+		elements_tab->setCellText(Utf8String::create(elem.getOperatorClass()->getName(true)), elem_idx, 3);
+
 
 	if(elem.isSortingEnabled())
 	{
 		if(elem.getSortingAttribute(IndexElement::ASC_ORDER))
-			elements_tab->setCellText(ascending_rb->text(), elem_idx, 3);
+			elements_tab->setCellText(ascending_rb->text(), elem_idx, 4);
 		else
-			elements_tab->setCellText(descending_rb->text(), elem_idx, 3);
+			elements_tab->setCellText(descending_rb->text(), elem_idx, 4);
 
 		if(elem.getSortingAttribute(IndexElement::NULLS_FIRST))
-			elements_tab->setCellText(trUtf8("Yes"), elem_idx, 4);
+			elements_tab->setCellText(trUtf8("Yes"), elem_idx, 5);
 		else
-			elements_tab->setCellText(trUtf8("No"), elem_idx, 4);
+			elements_tab->setCellText(trUtf8("No"), elem_idx, 5);
 	}
 	else
 	{
-		elements_tab->setCellText("-", elem_idx, 3);
-		elements_tab->setCellText("-", elem_idx, 4);
+		elements_tab->setCellText("", elem_idx, 4);
+		elements_tab->setCellText("", elem_idx, 5);
 	}
 
 	elements_tab->setRowData(QVariant::fromValue<IndexElement>(elem), elem_idx);
@@ -192,6 +199,7 @@ void IndexWidget::handleElement(int elem_idx)
 		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
 		elem.setSortingAttribute(IndexElement::ASC_ORDER, ascending_rb->isChecked());
 		elem.setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->getSelectedObject()));
+		elem.setCollation(dynamic_cast<Collation *>(collation_sel->getSelectedObject()));
 
 		if(expression_rb->isChecked())
 			elem.setExpression(elem_expr_txt->toPlainText().toUtf8());
@@ -204,6 +212,7 @@ void IndexWidget::handleElement(int elem_idx)
 		ascending_rb->setChecked(true);
 		sorting_chk->setChecked(true);
 		op_class_sel->clearSelector();
+		collation_sel->clearSelector();
 		nulls_first_chk->setChecked(false);
 	}
 	else if(elements_tab->getCellText(elem_idx,0).isEmpty())
@@ -235,6 +244,7 @@ void IndexWidget::editElement(int elem_idx)
 	nulls_first_chk->setChecked(elem.getSortingAttribute(IndexElement::NULLS_FIRST));
 	sorting_chk->setChecked(elem.isSortingEnabled());
 	op_class_sel->setSelectedObject(elem.getOperatorClass());
+	collation_sel->setSelectedObject(elem.getCollation());
 }
 
 void IndexWidget::selectElementObject(void)
@@ -281,6 +291,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 	BaseObjectWidget::setAttributes(model, op_list, index, parent_obj);
 
 	op_class_sel->setModel(model);
+	collation_sel->setModel(model);
 	updateColumnsCombo();
 
 	if(index)

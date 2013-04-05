@@ -99,6 +99,12 @@ FunctionWidget::FunctionWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_FU
 		connect(parameters_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
 		connect(return_tab, SIGNAL(s_rowAdded(int)), this, SLOT(showParameterForm()));
 		connect(return_tab, SIGNAL(s_rowEdited(int)), this, SLOT(showParameterForm()));
+
+		setRequiredField(language_lbl);
+		setRequiredField(ret_method_lbl);
+		setRequiredField(symbol_lbl);
+		setRequiredField(library_lbl);
+		setRequiredField(sourc_code_lbl);
 	}
 	catch(Exception &e)
 	{
@@ -443,7 +449,7 @@ void FunctionWidget::validateConfiguredFunction(void)
 				else if(types[i]==OBJ_OPERATOR)
 				{
 					oper=dynamic_cast<Operator *>(object);
-					for(i1=Operator::FUNC_OPERATOR; i1 <= Operator::FUNC_RESTRICTION; i1++)
+					for(i1=Operator::FUNC_OPERATOR; i1 <= Operator::FUNC_RESTRICT; i1++)
 					{
 						if(oper->getFunction(i1)==func)
 							oper->setFunction(func, i1);

@@ -386,8 +386,8 @@ bool BaseObject::acceptsTablespace(void)
 
 bool BaseObject::acceptsCollation(ObjectType obj_type)
 {
-	return(obj_type==OBJ_DOMAIN || obj_type==OBJ_INDEX ||
-				 obj_type==OBJ_COLUMN  || obj_type==OBJ_COLLATION);
+	return(obj_type==OBJ_DOMAIN || obj_type==OBJ_COLUMN  ||
+				 obj_type==OBJ_COLLATION);
 }
 
 bool BaseObject::acceptsCollation(void)

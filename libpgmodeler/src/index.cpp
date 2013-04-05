@@ -101,17 +101,17 @@ void Index::addElement(IndexElement elem)
 {
 	if(elem.getColumn())
 	{
-		this->addElement(elem.getColumn(), elem.getOperatorClass(), elem.isSortingEnabled(),
+		this->addElement(elem.getColumn(), elem.getCollation(), elem.getOperatorClass(), elem.isSortingEnabled(),
 										 elem.getSortingAttribute(IndexElement::ASC_ORDER),elem.getSortingAttribute(IndexElement::NULLS_FIRST));
 	}
 	else
 	{
-		this->addElement(elem.getExpression(), elem.getOperatorClass(), elem.isSortingEnabled(),
+		this->addElement(elem.getExpression(), elem.getCollation(), elem.getOperatorClass(), elem.isSortingEnabled(),
 										 elem.getSortingAttribute(IndexElement::ASC_ORDER),elem.getSortingAttribute(IndexElement::NULLS_FIRST));
 	}
 }
 
-void Index::addElement(const QString &expr, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
+void Index::addElement(const QString &expr, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
 {
 	//Raises an error if the expression is empty
 	if(expr.isEmpty())
@@ -129,6 +129,7 @@ void Index::addElement(const QString &expr, OperatorClass *op_class, bool use_so
 		//Configures the element
 		elem.setExpression(expr);
 		elem.setOperatorClass(op_class);
+		elem.setCollation(coll);
 		elem.setSortingEnabled(use_sorting);
 		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first);
 		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
@@ -137,7 +138,7 @@ void Index::addElement(const QString &expr, OperatorClass *op_class, bool use_so
 	}
 }
 
-void Index::addElement(Column *column, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
+void Index::addElement(Column *column, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
 {
 	//Case the column is not allocated raises an error
 	if(!column)
@@ -158,6 +159,7 @@ void Index::addElement(Column *column, OperatorClass *op_class, bool use_sorting
 		//Configures the element
 		elem.setColumn(column);
 		elem.setOperatorClass(op_class);
+		elem.setCollation(coll);
 		elem.setSortingEnabled(use_sorting);
 		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first);
 		elem.setSortingAttribute(IndexElement::ASC_ORDER, asc_order);
@@ -249,11 +251,29 @@ bool Index::isReferRelationshipAddedColumn(void)
 	itr=elements.begin();
 	itr_end=elements.end();
 
-	//Checks if some o the elements (columns) is added by relationship
+	//Checks if some of the elements if referencing columns added by relationship
 	while(itr!=itr_end && !found)
 	{
 		col=(*itr).getColumn();
 		found=(col && col->isAddedByRelationship());
+		itr++;
+	}
+
+	return(found);
+}
+
+bool Index::isReferCollation(Collation *collation)
+{
+	vector<IndexElement>::iterator itr, itr_end;
+	bool found=false;
+
+	itr=elements.begin();
+	itr_end=elements.end();
+
+	//Checks if some of the elements is referencing the collation
+	while(itr!=itr_end && !found)
+	{
+		found=(collation && (*itr).getCollation());
 		itr++;
 	}
 

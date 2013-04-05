@@ -39,7 +39,7 @@ class Operator: public BaseObject {
 		PgSQLType argument_types[2];
 
 		//! \brief Stores the auxiliary operators
-		Operator *operators[6];
+		Operator *operators[2];
 
 		bool	hashes, //! \brief Indicates that the operator can execute a hash join
 					merges;  //! \brief Indicates that the operator can execute a merge join
@@ -47,30 +47,30 @@ class Operator: public BaseObject {
 	public:
 		static const unsigned FUNC_OPERATOR=0,
 													FUNC_JOIN=1,
-													FUNC_RESTRICTION=2,
+													FUNC_RESTRICT=2,
 
 													LEFT_ARG=0,
 													RIGHT_ARG=1,
 
 													OPER_COMMUTATOR=0,
-													OPER_NEGATOR=1,
-													OPER_SORT1=2,
-													OPER_SORT2=3,
-													OPER_LESS=4,
-													OPER_GREATER=5;
+													OPER_NEGATOR=1;//,
+													//OPER_SORT1=2,
+													//OPER_SORT2=3,
+													//OPER_LESS=4,
+													//OPER_GREATER=5;
 
 		Operator(void);
 
 		//! \brief Defines the name of the operator
 		void setName(const QString &name);
 
-		//! \brief Defines the function used by the operator (constants FUNC_[OPERATOR | JOIN | RESTRICTION])
+		//! \brief Defines the function used by the operator (constants FUNC_[OPERATOR | JOIN | RESTRICT])
 		void setFunction(Function *func, unsigned func_type);
 
 		//! \brief Defines the argument data type for operator (constants ARG_[LEFT | RIGHT])
 		void setArgumentType(PgSQLType arg_type, unsigned arg_id);
 
-		//! \brief Defines the auxiliary operators (constants OPER_[COMMUTATOR | NEGATOR | SORT1 | SORT2 | LESS | GREATER])
+		//! \brief Defines the auxiliary operators (constants OPER_[COMMUTATOR | NEGATOR])
 		void setOperator(Operator *oper, unsigned op_type);
 
 		//! \brief Defines that the operator accepts hash join

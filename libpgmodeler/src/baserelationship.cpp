@@ -54,7 +54,7 @@ BaseRelationship::BaseRelationship(unsigned rel_type, BaseTable *src_tab, BaseTa
 		configureRelationship();
 
 
-		str_aux=QApplication::translate("RelacionamentoBase","rel_%1_%2","",QApplication::UnicodeUTF8)
+		str_aux=QApplication::translate("BaseRelationship","rel_%1_%2","",QApplication::UnicodeUTF8)
 						.arg(src_tab->getName()).arg(dst_tab->getName());
 
 		if(str_aux.size() > BaseObject::OBJECT_NAME_MAX_LENGTH)

@@ -33,13 +33,6 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="transition_func_lbl">
-     <property name="text">
-      <string>Transition Function:</string>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0">
     <widget class="QLabel" name="sort_op_lbl">
      <property name="text">
@@ -106,6 +99,13 @@
        <string>Function State</string>
       </attribute>
      </widget>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="transition_func_lbl">
+     <property name="text">
+      <string>Transition Function:</string>
+     </property>
     </widget>
    </item>
   </layout>

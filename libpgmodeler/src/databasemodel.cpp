@@ -1225,8 +1225,6 @@ void DatabaseModel::validateRelationships(void)
 					itr_end=rels.end();
 					itr=rels.begin() + idx;
 
-					/* delete(rel); */
-
 					//Stores the error raised in a list
 					errors.push_back(e);
 				}
@@ -3791,14 +3789,10 @@ Operator *DatabaseModel::createOperator(void)
 
 		func_types[ParsersAttributes::OPERATOR_FUNC]=Operator::FUNC_OPERATOR;
 		func_types[ParsersAttributes::JOIN_FUNC]=Operator::FUNC_JOIN;
-		func_types[ParsersAttributes::RESTRICTION_FUNC]=Operator::FUNC_RESTRICTION;
+		func_types[ParsersAttributes::RESTRICTION_FUNC]=Operator::FUNC_RESTRICT;
 
 		oper_types[ParsersAttributes::COMMUTATOR_OP]=Operator::OPER_COMMUTATOR;
-		oper_types[ParsersAttributes::GREATER_OP]=Operator::OPER_GREATER;
-		oper_types[ParsersAttributes::LESS_OP]=Operator::OPER_LESS;
 		oper_types[ParsersAttributes::NEGATOR_OP]=Operator::OPER_NEGATOR;
-		oper_types[ParsersAttributes::SORT_OP]=Operator::OPER_SORT1;
-		oper_types[ParsersAttributes::SORT2_OP]=Operator::OPER_SORT2;
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -4393,6 +4387,7 @@ Index *DatabaseModel::createIndex(Table *table)
 	Index *index=NULL;
 	Column *column=NULL;
 	OperatorClass *op_class=NULL;
+	Collation *collation=NULL;
 	QString elem, str_aux, expr;
 	bool inc_idx_table=false, use_sorting=false,
 			asc_order=false, nulls_first=false;
@@ -4466,8 +4461,25 @@ Index *DatabaseModel::createIndex(Table *table)
 										str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
 														.arg(Utf8String::create(index->getName()))
 														.arg(BaseObject::getTypeName(OBJ_INDEX))
-														.arg(Utf8String::create(attribs[ParsersAttributes::OP_CLASS]))
+														.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
 												.arg(BaseObject::getTypeName(OBJ_OPCLASS));
+
+										throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+									}
+								}
+								else if(elem==ParsersAttributes::COLLATION)
+								{
+									XMLParser::getElementAttributes(attribs);
+									collation=dynamic_cast<Collation *>(getObject(attribs[ParsersAttributes::NAME], OBJ_COLLATION));
+
+									//Raises an error if the operator class doesn't exists
+									if(!collation)
+									{
+										str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+														.arg(Utf8String::create(index->getName()))
+														.arg(BaseObject::getTypeName(OBJ_INDEX))
+														.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+												.arg(BaseObject::getTypeName(OBJ_COLLATION));
 
 										throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 									}
@@ -4492,9 +4504,9 @@ Index *DatabaseModel::createIndex(Table *table)
 						while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
 
 						if(!expr.isEmpty())
-							index->addElement(expr, op_class, use_sorting, asc_order, nulls_first);
+							index->addElement(expr, collation, op_class, use_sorting, asc_order, nulls_first);
 						else
-							index->addElement(column, op_class, use_sorting, asc_order, nulls_first);
+							index->addElement(column, collation, op_class, use_sorting, asc_order, nulls_first);
 
 						XMLParser::restorePosition();
 					}
@@ -6090,7 +6102,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				BaseObject *usr_type=NULL;
 				unsigned i;
 
-				for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
+				for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICT; i++)
 				{
 					if(oper->getFunction(i))
 						getObjectDependecies(oper->getFunction(i), deps, inc_indirect_deps);
@@ -6104,7 +6116,7 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 						getObjectDependecies(usr_type, deps, inc_indirect_deps);
 				}
 
-				for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
+				for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_NEGATOR; i++)
 				{
 					if(oper->getOperator(i))
 						getObjectDependecies(oper->getOperator(i), deps, inc_indirect_deps);
@@ -6445,7 +6457,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 
 						if(oper->getFunction(Operator::FUNC_OPERATOR)==func ||
 							 oper->getFunction(Operator::FUNC_JOIN)==func  ||
-							 oper->getFunction(Operator::FUNC_RESTRICTION)==func)
+							 oper->getFunction(Operator::FUNC_RESTRICT)==func)
 						{
 							refer=true;
 							refs.push_back(oper);
@@ -6900,7 +6912,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						oper_aux=dynamic_cast<Operator *>(*itr);
 						itr++;
 
-						for(i1=Operator::OPER_COMMUTATOR; i1 <= Operator::OPER_GREATER &&
+						for(i1=Operator::OPER_COMMUTATOR; i1 <= Operator::OPER_NEGATOR &&
 								(!exclusion_mode || (exclusion_mode && !refer)); i1++)
 						{
 							if(oper_aux->getOperator(i1)==oper)
@@ -6942,6 +6954,7 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 			vector<BaseObject *>::iterator itr, itr_end;
 			vector<TableObject *> *tab_obj_list=NULL;
 			vector<TableObject *>::iterator tab_itr, tab_itr_end;
+			TableObject *tab_obj=NULL;
 
 			for(i=0; i < count && (!exclusion_mode || (exclusion_mode && !refer)); i++)
 			{
@@ -6975,7 +6988,10 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 
 					while(tab_itr!=tab_itr_end && (!exclusion_mode || (exclusion_mode && !refer)))
 					{
-						if((*tab_itr)->getCollation()==object)
+						tab_obj=(*tab_itr);
+						if((tab_obj->getObjectType()==OBJ_COLUMN && tab_obj->getCollation()==object) ||
+							 (tab_obj->getObjectType()==OBJ_INDEX &&
+								dynamic_cast<Index *>(tab_obj)->isReferCollation(dynamic_cast<Collation *>(object))))
 						{
 							refer=true;
 							refs.push_back(*tab_itr);

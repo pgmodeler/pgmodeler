@@ -36,7 +36,7 @@ class OperatorWidget: public BaseObjectWidget, public Ui::OperatorWidget {
 		PgSQLTypeWidget *arg_types[2];
 
 		ObjectSelectorWidget *functions_sel[3],
-												*operators_sel[6];
+												 *operators_sel[2];
 
 	public:
 		OperatorWidget(QWidget * parent = 0);

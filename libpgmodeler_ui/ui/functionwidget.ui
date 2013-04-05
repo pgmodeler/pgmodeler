@@ -219,7 +219,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>110</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -233,7 +233,7 @@
          <item>
           <widget class="QRadioButton" name="simple_rb">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -252,7 +252,7 @@
          <item>
           <widget class="QRadioButton" name="set_rb">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -359,6 +359,9 @@
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
          <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
@@ -464,22 +467,6 @@
             </property>
            </spacer>
           </item>
-          <item row="1" column="0">
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>10</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item row="1" column="1">
            <widget class="QLabel" name="symbol_lbl">
             <property name="enabled">
@@ -487,7 +474,7 @@
             </property>
             <property name="maximumSize">
              <size>
-              <width>60</width>
+              <width>16777215</width>
               <height>16777215</height>
              </size>
             </property>
@@ -516,7 +503,7 @@
             </property>
             <property name="maximumSize">
              <size>
-              <width>60</width>
+              <width>16777215</width>
               <height>16777215</height>
              </size>
             </property>

@@ -5,7 +5,7 @@
 <!ELEMENT operator (schema?,role?,comment?,type*,operator*,function*)>
 <!ATTLIST operator name CDATA #IMPLIED>
 <!ATTLIST operator signature CDATA #IMPLIED>
-<!ATTLIST operator ref-type (none|commutator-op|greater-op|less-op|negator-op|sort-op|sort2-op) "none">
+<!ATTLIST operator ref-type (none|commutator-op|negator-op) "none">
 <!ATTLIST operator hashes (true|false) "false">
 <!ATTLIST operator merges (true|false) "false">
 <!ATTLIST operator protected (false|true) "false">

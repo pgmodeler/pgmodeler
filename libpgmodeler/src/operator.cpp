@@ -24,10 +24,10 @@ Operator::Operator(void)
 
 	obj_type=OBJ_OPERATOR;
 
-	for(i=0; i < 3; i++)
+	for(i=FUNC_OPERATOR; i <= FUNC_RESTRICT; i++)
 		functions[i]=NULL;
 
-	for(i=0; i < 6; i++)
+	for(i=Operator::OPER_COMMUTATOR; i <= OPER_NEGATOR; i++)
 		operators[i]=NULL;
 
 	hashes=merges=false;
@@ -38,10 +38,10 @@ Operator::Operator(void)
 	attributes[ParsersAttributes::RIGHT_TYPE]="";
 	attributes[ParsersAttributes::COMMUTATOR_OP]="";
 	attributes[ParsersAttributes::NEGATOR_OP]="";
-	attributes[ParsersAttributes::SORT_OP]="";
-	attributes[ParsersAttributes::SORT2_OP]="";
-	attributes[ParsersAttributes::LESS_OP]="";
-	attributes[ParsersAttributes::GREATER_OP]="";
+	//attributes[ParsersAttributes::SORT_OP]="";
+	//attributes[ParsersAttributes::SORT2_OP]="";
+	//attributes[ParsersAttributes::LESS_OP]="";
+	//attributes[ParsersAttributes::GREATER_OP]="";
 	attributes[ParsersAttributes::RESTRICTION_FUNC]="";
 	attributes[ParsersAttributes::JOIN_FUNC]="";
 	attributes[ParsersAttributes::OPERATOR_FUNC]="";
@@ -99,7 +99,7 @@ void Operator::setName(const QString &name)
 void Operator::setFunction(Function *func, unsigned func_type)
 {
 	//Raises an error if the function type is invalid
-	if(func_type > FUNC_RESTRICTION)
+	if(func_type > FUNC_RESTRICT)
 		throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else if(func_type==FUNC_OPERATOR)
 	{
@@ -147,7 +147,10 @@ void Operator::setFunction(Function *func, unsigned func_type)
 				 (param_count==1 &&
 					((argument_types[0]!="any" && argument_types[0]!=param_type1) ||
 					 (argument_types[1]!="any" && argument_types[1]!=param_type1))))
-				throw Exception(ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+				throw Exception(Exception::getErrorMessage(ERR_ASG_FUNCTION_INV_PARAMS)
+												.arg(Utf8String::create(this->getName()))
+												.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
+												ERR_ASG_FUNCTION_INV_PARAMS,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
 	}
 
@@ -166,7 +169,7 @@ void Operator::setArgumentType(PgSQLType arg_type, unsigned arg_id)
 void Operator::setOperator(Operator *oper, unsigned op_type)
 {
 	//Raises an error if the operator type is invalid
-	if(op_type > OPER_GREATER)
+	if(op_type > OPER_NEGATOR)
 		throw Exception(ERR_REF_OPER_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	else
 	{
@@ -197,8 +200,8 @@ void Operator::setOperator(Operator *oper, unsigned op_type)
 											.arg(Utf8String::create(this->getSignature(true))),
 											ERR_ASG_FUNC_INV_PARAM_COUNT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 		}
-		else
-			operators[op_type]=oper;
+
+		operators[op_type]=oper;
 	}
 }
 
@@ -215,7 +218,7 @@ void Operator::setMerges(bool value)
 Function *Operator::getFunction(unsigned func_type)
 {
 	//Raises an error if the function type is invalid
-	if(func_type > FUNC_RESTRICTION)
+	if(func_type > FUNC_RESTRICT)
 		throw Exception(ERR_REF_OPER_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(functions[func_type]);
@@ -232,8 +235,9 @@ PgSQLType Operator::getArgumentType(unsigned arg_id)
 Operator *Operator::getOperator(unsigned op_type)
 {
 	//Raises an error if the operator type is invalid
-	if(op_type > OPER_GREATER)
+	if(op_type > OPER_NEGATOR)
 		throw Exception(ERR_REF_FUNCTION_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
 	return(operators[op_type]);
 }
 
@@ -281,11 +285,11 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 	unsigned i;
 	QString atribs_tipos[]={ParsersAttributes::LEFT_TYPE, ParsersAttributes::RIGHT_TYPE},
 			atribs_ops[]={ ParsersAttributes::COMMUTATOR_OP,
-										 ParsersAttributes::NEGATOR_OP,
-										 ParsersAttributes::SORT_OP,
-										 ParsersAttributes::SORT2_OP,
-										 ParsersAttributes::LESS_OP,
-										 ParsersAttributes::GREATER_OP},
+										 ParsersAttributes::NEGATOR_OP },
+										 //ParsersAttributes::SORT_OP,
+										 //ParsersAttributes::SORT2_OP,
+										 //ParsersAttributes::LESS_OP,
+										 //ParsersAttributes::GREATER_OP},
 			atribs_funcoes[]={ParsersAttributes::OPERATOR_FUNC,
 												ParsersAttributes::JOIN_FUNC,
 												ParsersAttributes::RESTRICTION_FUNC};
@@ -304,7 +308,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_GREATER; i++)
+	for(i=Operator::OPER_COMMUTATOR; i <= Operator::OPER_NEGATOR; i++)
 	{
 		if(operators[i])
 		{
@@ -318,7 +322,7 @@ QString Operator::getCodeDefinition(unsigned def_type, bool reduced_form)
 		}
 	}
 
-	for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICTION; i++)
+	for(i=Operator::FUNC_OPERATOR; i <= Operator::FUNC_RESTRICT; i++)
 	{
 		if(functions[i])
 		{

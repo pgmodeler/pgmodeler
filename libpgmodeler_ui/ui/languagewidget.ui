@@ -26,6 +26,19 @@
    <property name="spacing">
     <number>6</number>
    </property>
+   <item row="0" column="1">
+    <widget class="QCheckBox" name="trusted_chk">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="trusted_lbl">
      <property name="sizePolicy">
@@ -45,10 +58,22 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QCheckBox" name="trusted_chk">
+   <item row="2" column="0">
+    <widget class="QLabel" name="func_validator_lbl">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="text">
-      <string/>
+      <string>Validator Function:</string>
      </property>
     </widget>
    </item>
@@ -68,25 +93,6 @@
      </property>
      <property name="text">
       <string>Handler Function:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="func_validator_lbl">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="text">
-      <string>Validator Function:</string>
      </property>
     </widget>
    </item>
