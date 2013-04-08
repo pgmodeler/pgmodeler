@@ -61,6 +61,8 @@ RuleWidget::RuleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_RULE)
 		connect(commands_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleCommand(int)));
 		connect(commands_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleCommand(int)));
 		connect(commands_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editCommand(int)));
+
+		setRequiredField(event_lbl);
 	}
 	catch(Exception &e)
 	{

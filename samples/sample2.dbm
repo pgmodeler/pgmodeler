@@ -4,7 +4,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
 <dbmodel author="raphael">
-<role name="admin1"	 sysid="150" superuser="true" createdb="true"
+<role name="admin1"	 superuser="true" createdb="true"
 	 createrole="true" inherit="true" login="true"
 	 encrypted="true" connlimit="500" validity="2008-10-10 10:00"
 	 password="123456">
@@ -12,7 +12,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 </role>
 
-<role name="user3"	 sysid="151" superuser="true" createdb="true"
+<role name="user3"	 superuser="true" createdb="true"
 	 createrole="true" inherit="true" login="true"
 	 encrypted="true" connlimit="500" validity="2008-10-10 13:00"
 	 password="123456">
@@ -20,7 +20,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 </role>
 
-<role name="user2"	 sysid="152" superuser="true" createdb="true"
+<role name="user2"	  superuser="true" createdb="true"
 	 createrole="true" inherit="true" login="true"
 	 encrypted="true" connlimit="500" validity="2008-10-10 15:00"
 	 password="123456">
@@ -28,7 +28,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 
 </role>
 
-<role name="user1"	 sysid="153" superuser="true" createdb="true"
+<role name="user1"	  superuser="true" createdb="true"
 	 createrole="true" inherit="true" login="true"
 	 encrypted="true" connlimit="500" validity="2008-10-10 23:59"
 	 password="123456">
@@ -37,7 +37,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<roles names="admin1" role-type="member" />
 </role>
 
-<role name="user4"	 sysid="150" superuser="true" createdb="true"
+<role name="user4"	  superuser="true" createdb="true"
 	 createrole="true" inherit="true" login="true"
 	 encrypted="true" connlimit="500" validity="2008-10-10 09:00"
 	 password="123456">

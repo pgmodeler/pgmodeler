@@ -441,6 +441,14 @@ bool SchemaParser::evaluateExpression(void)
 				case CHR_INI_ATTRIB:
 					attrib=getAttribute();
 
+					//Raises an error if the attribute does is unknown
+					if(attributes.count(attrib)==0 && !ignore_unk_atribs)
+					{
+						throw Exception(Exception::getErrorMessage(ERR_UNK_ATTRIBUTE)
+														.arg(attrib).arg(filename).arg((line + comment_count +1)).arg((column+1)),
+														ERR_UNK_ATTRIBUTE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+
 					//Error 1: A conditional token other than %or %not %and if found on conditional expression
 					error=(!cond.isEmpty() && cond!=TOKEN_OR && cond!=TOKEN_AND && cond!=TOKEN_NOT) ||
 								//Error 2: A %not token if found after an attribute: %if @{a} %not %then

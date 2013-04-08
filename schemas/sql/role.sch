@@ -9,18 +9,20 @@
 [/* The SQL code for this object was disabled.] $br
 %end
 
-[CREATE ROLE ] @{name} [ WITH ] $br
+[CREATE ROLE ] @{name} [ WITH ]
 
-# CREATEUSER | NOCREATEUSER --> Same as SUPERUSER | NOSUPERUSER
-$tb %if @{superuser} %then SUPERUSER %else NOSUPERUSER %end $br
-$tb %if @{createdb} %then CREATEDB %else NOCREATEDB %end $br
-$tb %if @{createrole} %then CREATEROLE %else NOCREATEROLE %end $br
-$tb %if @{inherit} %then INHERIT %else NOINHERIT %end $br
-$tb %if @{login} %then LOGIN %else NOLOGIN %end $br
-$tb %if @{connlimit} %then [CONNECTION LIMIT ] @{connlimit} %end $br
+%if @{superuser} %then
+  $br $tb SUPERUSER
+%else
+  %if @{createdb} %then $br $tb CREATEDB %end
+  %if @{createrole} %then $br $tb CREATEROLE %end
+  %if @{inherit} %then $br $tb INHERIT %end
+  %if @{login} %then $br $tb LOGIN %end
+  %if @{replication} %and %not @{pgsql90} %then $br $tb REPLICATION %end
+%end
 
 %if @{password} %then
- $tb
+ $br $tb
  %if @{encrypted} %then
    ENCRYPTED
  %else
@@ -29,15 +31,12 @@ $tb %if @{connlimit} %then [CONNECTION LIMIT ] @{connlimit} %end $br
  [ PASSWORD ] '@{password}'
 %end
 
+%if @{connlimit} %then $br $tb [CONNECTION LIMIT ] @{connlimit} %end
 %if @{validity} %then $br $tb [VALID UNTIL ] '@{validity}' %end
 
-# IN GROUP rolename [, ...] --> Mesmo que IN ROLE
 %if @{ref-roles} %then $br $tb [IN ROLE ] @{ref-roles} %end
-
-# USER rolename [, ...] --> Mesmo que ROLE
 %if @{member-roles} %then $br $tb [ROLE ] @{member-roles} %end
 %if @{admin-roles} %then $br $tb [ADMIN ] @{admin-roles} %end
-%if @{sysid} %then $br $tb [SYSID ] @{sysid} %end
 ; $br
 
 %if @{comment} %then @{comment} %end

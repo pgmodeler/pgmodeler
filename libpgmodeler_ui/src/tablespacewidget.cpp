@@ -27,6 +27,9 @@ TablespaceWidget::TablespaceWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 	parent_form->setMinimumSize(500, 230);
 	parent_form->setMaximumHeight(230);
+
+	setRequiredField(directory_lbl);
+	setRequiredField(directory_edt);
 }
 
 void TablespaceWidget::hideEvent(QHideEvent *event)

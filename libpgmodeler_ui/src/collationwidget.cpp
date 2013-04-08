@@ -24,11 +24,12 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 	QFrame *frame=NULL;
 
 	Ui_CollationWidget::setupUi(this);
-	configureFormLayout(collation_grid, OBJ_COLLATION);
 
 	frame=generateInformationFrame(trUtf8("The fields <strong><em>Collation</em></strong>, <strong><em>Locale</em></strong>, <strong><em>LC_COLLATE & LC_CTYPE</em></strong> are mutually exclusive, so you have to set only one of them in order to properly handle a collation."));
 	collation_grid->addWidget(frame, collation_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
+
+	configureFormLayout(collation_grid, OBJ_COLLATION);
 
 	//Configures the encoding combobox
 	EncodingType::getTypes(encodings);
@@ -50,8 +51,8 @@ CollationWidget::CollationWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_
 	lcctype_cmb->addItems(loc_list);
 	locale_cmb->addItems(loc_list);
 
-	parent_form->setMinimumSize(520, 350);
-	parent_form->setMaximumHeight(350);
+	parent_form->setMinimumSize(520, 415);
+	parent_form->setMaximumHeight(415);
 
 	connect(collation_sel, SIGNAL(s_objectSelected(void)), this, SLOT(resetFields(void)));
 	connect(collation_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(resetFields(void)));

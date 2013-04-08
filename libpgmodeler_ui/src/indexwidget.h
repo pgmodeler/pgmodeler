@@ -51,7 +51,7 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 		ObjectSelectorWidget *op_class_sel;
 
 		//! \brief Collation selector
-		ObjectSelectorWidget *collation_sel;
+		ObjectSelectorWidget *elem_collation_sel;
 
 		//! \brief Updates the column combobox with the existent columns on parent table
 		void updateColumnsCombo(void);

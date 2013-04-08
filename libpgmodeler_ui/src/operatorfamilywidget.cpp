@@ -30,8 +30,10 @@ OperatorFamilyWidget::OperatorFamilyWidget(QWidget *parent): BaseObjectWidget(pa
 	IndexingType::getTypes(tipos);
 	indexing_cmb->addItems(tipos);
 
-	parent_form->setMinimumSize(480, 270);
-	parent_form->setMaximumHeight(270);
+	parent_form->setMinimumSize(520, 240);
+	parent_form->setMaximumHeight(240);
+
+	setRequiredField(indexing_lbl);
 }
 
 void OperatorFamilyWidget::hideEvent(QHideEvent *event)

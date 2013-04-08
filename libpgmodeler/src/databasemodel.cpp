@@ -2950,7 +2950,8 @@ Role *DatabaseModel::createRole(void)
 
 	QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
 												 ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
-												 ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED };
+												 ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
+												 ParsersAttributes::REPLICATION };
 
 	unsigned op_vect[]={ Role::OP_SUPERUSER, Role::OP_CREATEDB,
 											 Role::OP_CREATEROLE, Role::OP_INHERIT,
@@ -2966,9 +2967,6 @@ Role *DatabaseModel::createRole(void)
 
 		role->setPassword(attribs[ParsersAttributes::PASSWORD]);
 		role->setValidity(attribs[ParsersAttributes::VALIDITY]);
-
-		if(!attribs[ParsersAttributes::SYSID].isEmpty())
-			role->setSysid(attribs[ParsersAttributes::SYSID].toInt());
 
 		if(!attribs[ParsersAttributes::CONN_LIMIT].isEmpty())
 			role->setConnectionLimit(attribs[ParsersAttributes::CONN_LIMIT].toInt());

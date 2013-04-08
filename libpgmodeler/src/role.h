@@ -32,12 +32,9 @@ class Role: public BaseObject {
 	private:
 		static unsigned role_id;
 
-		//! \brief Role id
-		int sysid;
-
 		/*! \brief Options for the role (SUPERUSER, CREATEDB, CREATEROLE,
-		 INHERIT, LOGIN, ENCRYPTED) */
-		bool options[6];
+		 INHERIT, LOGIN, ENCRYPTED, REPLICATION) */
+		bool options[7];
 
 		//! \brief Connection limit for the role
 		int conn_limit;
@@ -67,7 +64,8 @@ class Role: public BaseObject {
 													OP_CREATEROLE=2,
 													OP_INHERIT=3,
 													OP_LOGIN=4,
-													OP_ENCRYPTED=5;
+													OP_ENCRYPTED=5,
+													OP_REPLICATION=6;
 
 		//! \brief Constants used to reference the internal role lists of the class
 		static const unsigned REF_ROLE=10,
@@ -75,9 +73,6 @@ class Role: public BaseObject {
 													ADMIN_ROLE=30;
 
 		Role(void);
-
-		//! \brief Sets the role id
-		void setSysid(int uid);
 
 		//! \brief Sets one option for the role (Via OP_??? constants)
 		void setOption(unsigned op_type, bool value);
@@ -121,9 +116,6 @@ class Role: public BaseObject {
 
 		//! \brief Returns the role password
 		QString getPassword(void);
-
-		//! \brief Returns the role id on the system
-		int getSysid(void);
 
 		//! \brief Returns the SQL / XML definition for the role
 		QString getCodeDefinition(unsigned def_type);

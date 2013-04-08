@@ -24,9 +24,8 @@ Role::Role(void)
 {
 	obj_type=OBJ_ROLE;
 	object_id=Role::role_id++;
-	sysid=-1;
 
-	for(unsigned i=0; i < 6; i++)
+	for(unsigned i=0; i <= OP_REPLICATION; i++)
 		options[i]=false;
 
 	conn_limit=-1;
@@ -43,26 +42,21 @@ Role::Role(void)
 	attributes[ParsersAttributes::REF_ROLES]="";
 	attributes[ParsersAttributes::MEMBER_ROLES]="";
 	attributes[ParsersAttributes::ADMIN_ROLES]="";
-	attributes[ParsersAttributes::SYSID]="";
+	attributes[ParsersAttributes::REPLICATION]="";
 	attributes[ParsersAttributes::GROUP]="";
-}
-
-void Role::setSysid(int sysid)
-{
-	//Raises an error if the id is less then 100 (sysid < 100 are system reserved)
-	if(sysid >=0 && sysid < 100)
-		throw Exception(ERR_ASG_INV_ID_USER,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-	this->sysid=sysid;
 }
 
 void Role::setOption(unsigned op_type, bool value)
 {
-	if(op_type <= OP_ENCRYPTED)
-		options[op_type]=value;
-	else
+	if(op_type > OP_REPLICATION)
 		//Raises an error if the option type is invalid
 		throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	//Uncheck all the other options when OP_SUPERUSER is true
+	for(unsigned i=OP_CREATEDB; (op_type==OP_SUPERUSER && value) && i <= OP_REPLICATION; i++)
+		options[i]=false;
+
+	options[op_type]=(!options[OP_SUPERUSER] && value);
 }
 
 void Role::addRole(unsigned role_type, Role *role)
@@ -261,17 +255,12 @@ bool Role::isRoleExists(unsigned role_type, Role *role)
 	return(found);
 }
 
-int Role::getSysid(void)
-{
-	return(sysid);
-}
-
 bool Role::getOption(unsigned op_type)
 {
-	if(op_type <= OP_ENCRYPTED)
-		return(options[op_type]);
-	else
+	if(op_type > OP_REPLICATION)
 		throw Exception(ERR_ASG_VAL_INV_ROLE_OPT_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(options[op_type]);
 }
 
 Role *Role::getRole(unsigned role_type, unsigned role_idx)
@@ -334,13 +323,14 @@ QString Role::getCodeDefinition(unsigned def_type)
 	unsigned i;
 	QString op_attribs[]={ ParsersAttributes::SUPERUSER, ParsersAttributes::CREATEDB,
 												 ParsersAttributes::CREATEROLE, ParsersAttributes::INHERIT,
-												 ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED };
+												 ParsersAttributes::LOGIN, ParsersAttributes::ENCRYPTED,
+												 ParsersAttributes::REPLICATION };
 
 	setRoleAttribute(REF_ROLE);
 	setRoleAttribute(MEMBER_ROLE);
 	setRoleAttribute(ADMIN_ROLE);
 
-	for(i=0; i < 6; i++)
+	for(i=0; i <= OP_REPLICATION; i++)
 		attributes[op_attribs[i]]=(options[i] ? "1" : "");
 
 	attributes[ParsersAttributes::PASSWORD]=password;
@@ -350,8 +340,6 @@ QString Role::getCodeDefinition(unsigned def_type)
 
 	if(conn_limit >= 0)
 		attributes[ParsersAttributes::CONN_LIMIT]=QString("%1").arg(conn_limit);
-
-	attributes[ParsersAttributes::SYSID]=(sysid >=0 ? QString("%1").arg(sysid) : "");
 
 	return(BaseObject::__getCodeDefinition(def_type));
 }

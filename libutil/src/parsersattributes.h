@@ -177,7 +177,7 @@ namespace ParsersAttributes {
 	SECURITY_TYPE="security-type",
 	TYPE="type",
 	TYPES="types",
-	SYSID="sysid",
+	//SYSID="sysid",
 	UNIQUE="unique",
 	VALIDITY="validity",
 	MAX_VALUE="max-value",
@@ -353,7 +353,8 @@ namespace ParsersAttributes {
 	CTE_EXPRESSION="cte-exp",
 	LOCALE="locale",
 	FOR_ORDER_BY="for-order-by",
-	OP_FAMILY="opfamily";
+	OP_FAMILY="opfamily",
+	REPLICATION="replication";
 }
 
 #endif

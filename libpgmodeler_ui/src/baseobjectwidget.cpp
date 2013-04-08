@@ -337,18 +337,6 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 	if(obj_type!=OBJ_TABLESPACE && obj_type!=OBJ_ROLE)// && obj_type!=OBJ_COLLATION)
 		disable_sql_chk->setVisible(false);
 
-	/*show_schema=(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE || obj_type==OBJ_VIEW ||
-							 obj_type==OBJ_DOMAIN || obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
-							 obj_type==OBJ_SEQUENCE || obj_type==OBJ_CONVERSION || obj_type==OBJ_TYPE ||
-							 obj_type==OBJ_OPFAMILY || obj_type==OBJ_OPCLASS);
-
-	show_owner=(obj_type==OBJ_FUNCTION || obj_type==OBJ_TABLE || obj_type==OBJ_DOMAIN ||
-							obj_type==OBJ_SCHEMA || obj_type==OBJ_AGGREGATE || obj_type==OBJ_OPERATOR ||
-							obj_type==OBJ_CONVERSION || obj_type==OBJ_LANGUAGE || obj_type==OBJ_TYPE ||
-							obj_type==OBJ_TABLESPACE || obj_type==OBJ_OPFAMILY || obj_type==OBJ_DATABASE);
-
-	show_tabspc=(obj_type==OBJ_CONSTRAINT || obj_type==OBJ_INDEX || obj_type==OBJ_TABLE || obj_type==OBJ_DATABASE); */
-
 	if(obj_type!=OBJ_TABLE && obj_type!=OBJ_COLUMN && obj_type!=OBJ_VIEW &&
 		 obj_type!=OBJ_SEQUENCE && obj_type!=OBJ_DATABASE && obj_type!=OBJ_FUNCTION &&
 		 obj_type!=OBJ_AGGREGATE && obj_type!=OBJ_LANGUAGE && obj_type!=OBJ_SCHEMA &&
@@ -386,6 +374,16 @@ void BaseObjectWidget::configureFormLayout(QGridLayout *grid, ObjectType obj_typ
 
 		setRequiredField(schema_lbl);
 		setRequiredField(schema_sel);
+	}
+
+	if(BaseObject::acceptsCollation(obj_type))
+	{
+		QFrame *frame=NULL;
+		map<QString, vector<QWidget *> > fields_map;
+		fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_91)].push_back(collation_lbl);
+		frame=generateVersionWarningFrame(fields_map);
+		baseobject_grid->addWidget(frame, baseobject_grid->count()+1, 0, 1, 0);
+		frame->setParent(this);
 	}
 }
 
@@ -527,8 +525,8 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	msg_lbl->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
 	msg_lbl->setWordWrap(true);
 
-	msg_lbl->setText(trUtf8("The <em style='color: %1'><strong>highlighted</strong></em> fields  on the form are mandatory and/or available only on specific versions of PostgreSQL. \
-													Errors on the SQL code generation may occur if the specified fields aren't filled. Refer to fields tooltips for details.").arg(color.name()));
+	msg_lbl->setText(trUtf8("The <em style='color: %1'><strong>highlighted</strong></em> fields on the form are available only on specific PostgreSQL versions. \
+													When generating SQL code for versions other than those specified on field's tooltips pgModeler will ignore it's values.").arg(color.name()));
 
 	grid->addWidget(msg_lbl, 0, 1, 1, 1);
 	grid->setContentsMargins(4,4,4,4);

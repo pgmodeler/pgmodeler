@@ -22,8 +22,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 {
 	try
 	{
-		map<QString, vector<QWidget *> > field_map;
-		map<QWidget *, vector<QString> > value_map;
+		map<QString, vector<QWidget *> > fields_map;
 		QFrame *frame=NULL;
 		QStringList list;
 		QGridLayout *grid=NULL;
@@ -45,7 +44,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 
 		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
-		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
+		elem_collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
 
 		elements_tab->setColumnCount(6);
 		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
@@ -59,27 +58,21 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		elements_tab->setHeaderLabel(trUtf8("Sorting"), 4);
 		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 5);
 
-		grid=dynamic_cast<QGridLayout *>(elements_grp->layout());
-		grid->addWidget(collation_sel, 2,2);
-		grid->addWidget(op_class_sel, 3,2);
-		grid->addWidget(elements_tab, 5,0,1,4);
+		grid=dynamic_cast<QGridLayout *>(tabWidget->widget(1)->layout());
+		grid->addWidget(elem_collation_sel, 2,1,1,2);
+		grid->addWidget(op_class_sel, 3,1,1,2);
+		grid->addWidget(elements_tab, 5,0,1,3);
+
+		fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_91)].push_back(elem_collation_lbl);
+		frame=generateVersionWarningFrame(fields_map);
+		grid->addWidget(frame, grid->count()+1, 0, 1, 3);
+		frame->setParent(tabWidget->widget(1));
 
 		configureFormLayout(index_grid, OBJ_INDEX);
-		parent_form->setMinimumSize(640, 640);
+		parent_form->setMinimumSize(600, 600);
 
 		IndexingType::getTypes(list);
 		indexing_cmb->addItems(list);
-
-/*	field_map[generateVersionsInterval(UNTIL_VERSION, SchemaParser::PGSQL_VERSION_81)].push_back(indexing_lbl);
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(concurrent_chk);
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_82)].push_back(fill_factor_chk);
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_83)].push_back(sorting_chk);
-		field_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_84)].push_back(fast_update_chk);
-		value_map[indexing_lbl].push_back(~IndexingType(IndexingType::rtree));
-
-		frame=generateVersionWarningFrame(field_map, &value_map);
-		index_grid->addWidget(frame, index_grid->count()+1, 0, 1, 0);
-		frame->setParent(this); */
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleElement(int)));
@@ -121,6 +114,8 @@ void IndexWidget::hideEvent(QHideEvent *event)
 	elem_expr_txt->clear();
 	ascending_rb->setChecked(true);
 	column_rb->setChecked(true);
+
+	tabWidget->setCurrentIndex(0);
 }
 
 void IndexWidget::updateColumnsCombo(void)
@@ -199,7 +194,7 @@ void IndexWidget::handleElement(int elem_idx)
 		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
 		elem.setSortingAttribute(IndexElement::ASC_ORDER, ascending_rb->isChecked());
 		elem.setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->getSelectedObject()));
-		elem.setCollation(dynamic_cast<Collation *>(collation_sel->getSelectedObject()));
+		elem.setCollation(dynamic_cast<Collation *>(elem_collation_sel->getSelectedObject()));
 
 		if(expression_rb->isChecked())
 			elem.setExpression(elem_expr_txt->toPlainText().toUtf8());
@@ -212,7 +207,7 @@ void IndexWidget::handleElement(int elem_idx)
 		ascending_rb->setChecked(true);
 		sorting_chk->setChecked(true);
 		op_class_sel->clearSelector();
-		collation_sel->clearSelector();
+		elem_collation_sel->clearSelector();
 		nulls_first_chk->setChecked(false);
 	}
 	else if(elements_tab->getCellText(elem_idx,0).isEmpty())
@@ -244,7 +239,7 @@ void IndexWidget::editElement(int elem_idx)
 	nulls_first_chk->setChecked(elem.getSortingAttribute(IndexElement::NULLS_FIRST));
 	sorting_chk->setChecked(elem.isSortingEnabled());
 	op_class_sel->setSelectedObject(elem.getOperatorClass());
-	collation_sel->setSelectedObject(elem.getCollation());
+	elem_collation_sel->setSelectedObject(elem.getCollation());
 }
 
 void IndexWidget::selectElementObject(void)
@@ -291,7 +286,7 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 	BaseObjectWidget::setAttributes(model, op_list, index, parent_obj);
 
 	op_class_sel->setModel(model);
-	collation_sel->setModel(model);
+	elem_collation_sel->setModel(model);
 	updateColumnsCombo();
 
 	if(index)

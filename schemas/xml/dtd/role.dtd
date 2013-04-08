@@ -7,13 +7,13 @@
 <!ATTLIST role superuser (true|false) "false">
 <!ATTLIST role createrole (true|false) "false">
 <!ATTLIST role createdb (true|false) "false">
+<!ATTLIST role replicate (true|false) "false">
 <!ATTLIST role inherit (true|false) "false">
 <!ATTLIST role login (true|false) "false">
 <!ATTLIST role connlimit CDATA #IMPLIED>
 <!ATTLIST role encrypted (true|false) "false">
 <!ATTLIST role password CDATA #IMPLIED>
 <!ATTLIST role validity CDATA #IMPLIED>
-<!ATTLIST role sysid CDATA #IMPLIED>
 <!ATTLIST role protected (false|true) "false">
 <!ATTLIST role sql-disabled (false|true) "false">
 

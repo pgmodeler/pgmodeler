@@ -25,21 +25,27 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 	ObjectTableWidget *obj_tab=NULL;
 	QGridLayout *grid=NULL;
 	QFrame *frame=NULL;
+	map<QString, vector<QWidget *> > fields_map;
 	unsigned i;
 
 	Ui_RoleWidget::setupUi(this);
 	configureFormLayout(role_grid, OBJ_ROLE);
 
-
-	frame=generateInformationFrame(trUtf8("Assigning <strong><em>-1</em></strong> to <strong><em>SysID</em></strong> let PostgreSQL defines the role's id.<br/>\
-																				 Assigning <strong><em>-1</em></strong> to <strong><em>Connections</em></strong> creates a role without connection limit.<br/>\
+	frame=generateInformationFrame(trUtf8("Assigning <strong><em>-1</em></strong> to <strong><em>Connections</em></strong> creates a role without connection limit.<br/>\
 																				 Unchecking <strong><em>Validity</em></strong> creates an role that never expires."));
+
 	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 5);
+	frame->setParent(this);
+
+	fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_90)].push_back(can_replicate_chk);
+	frame=generateVersionWarningFrame(fields_map);
+	role_grid->addWidget(frame, role_grid->count()+1, 0, 1, 0);
 	frame->setParent(this);
 
 	connect(validity_chk, SIGNAL(toggled(bool)), validity_dte, SLOT(setEnabled(bool)));
 	connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 	connect(members_twg, SIGNAL(currentChanged(int)), this, SLOT(configureRoleSelection(void)));
+	connect(superusr_chk, SIGNAL(toggled(bool)), this, SLOT(uncheckOptions(void)));
 
 	//Alocation of the member role tables
 	for(i=0; i < 3; i++)
@@ -48,25 +54,22 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 																		ObjectTableWidget::UPDATE_BUTTON, true, this);
 		members_tab[i]=obj_tab;
 
-		obj_tab->setColumnCount(6);
+		obj_tab->setColumnCount(5);
 
 		obj_tab->setHeaderLabel(trUtf8("Role"),0);
 		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),0);
 
-		obj_tab->setHeaderLabel(trUtf8("SysID"),1);
-		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),1);
+		obj_tab->setHeaderLabel(trUtf8("Validity"),1);
+		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/validade.png"),1);
 
-		obj_tab->setHeaderLabel(trUtf8("Validity"),2);
-		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/validade.png"),2);
+		obj_tab->setHeaderLabel(trUtf8("Member of"),2);
+		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),2);
 
-		obj_tab->setHeaderLabel(trUtf8("Member of"),3);
+		obj_tab->setHeaderLabel(trUtf8("Members"),3);
 		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),3);
 
-		obj_tab->setHeaderLabel(trUtf8("Members"),4);
+		obj_tab->setHeaderLabel(trUtf8("Members (Admin.)"),4);
 		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),4);
-
-		obj_tab->setHeaderLabel(trUtf8("Members (Admin.)"),5);
-		obj_tab->setHeaderIcon(QPixmap(":/icones/icones/role.png"),5);
 
 		grid=new QGridLayout;
 		grid->addWidget(obj_tab,0,0,1,1);
@@ -76,6 +79,21 @@ RoleWidget::RoleWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_ROLE)
 
 	parent_form->setMinimumSize(580, 650);
 }
+
+void RoleWidget::uncheckOptions(void)
+{
+	can_login_chk->setChecked(false);
+	can_login_chk->setEnabled(!superusr_chk->isChecked());
+	can_replicate_chk->setChecked(false);
+	can_replicate_chk->setEnabled(!superusr_chk->isChecked());
+	inh_perm_chk->setChecked(false);
+	inh_perm_chk->setEnabled(!superusr_chk->isChecked());
+	create_db_chk->setChecked(false);
+	create_db_chk->setEnabled(!superusr_chk->isChecked());
+	create_role_chk->setChecked(false);
+	create_role_chk->setEnabled(!superusr_chk->isChecked());
+}
+
 
 void RoleWidget::configureRoleSelection(void)
 {
@@ -113,14 +131,13 @@ void RoleWidget::hideEvent(QHideEvent *event)
 	}
 
 	members_twg->setCurrentIndex(0);
-	sysid_sb->setValue(sysid_sb->minimum());
 	passwd_edt->clear();
 	conn_limit_sb->setValue(conn_limit_sb->minimum());
 	superusr_chk->setChecked(false);
 	inh_perm_chk->setChecked(false);
 	create_db_chk->setChecked(false);
 	can_login_chk->setChecked(false);
-	create_user_chk->setChecked(false);
+	create_role_chk->setChecked(false);
 	encrypt_pass_chk->setChecked(false);
 
 	BaseObjectWidget::hideEvent(event);
@@ -130,7 +147,6 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 {
 	if(role)
 	{
-		sysid_sb->setValue(role->getSysid());
 		conn_limit_sb->setValue(role->getConnectionLimit());
 		passwd_edt->setText(role->getPassword());
 
@@ -139,10 +155,11 @@ void RoleWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Rol
 
 		superusr_chk->setChecked(role->getOption(Role::OP_SUPERUSER));
 		create_db_chk->setChecked(role->getOption(Role::OP_CREATEDB));
-		create_user_chk->setChecked(role->getOption(Role::OP_CREATEROLE));
+		create_role_chk->setChecked(role->getOption(Role::OP_CREATEROLE));
 		encrypt_pass_chk->setChecked(role->getOption(Role::OP_ENCRYPTED));
 		inh_perm_chk->setChecked(role->getOption(Role::OP_INHERIT));
 		can_login_chk->setChecked(role->getOption(Role::OP_LOGIN));
+		can_replicate_chk->setChecked(role->getOption(Role::OP_REPLICATION));
 	}
 
 	BaseObjectWidget::setAttributes(model, op_list, role);
@@ -166,8 +183,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 
 		members_tab[table_id]->setRowData(QVariant::fromValue(reinterpret_cast<void *>(role)), row);
 		members_tab[table_id]->setCellText(Utf8String::create(role->getName()), row, 0);
-		members_tab[table_id]->setCellText(QString("%1").arg(role->getSysid()), row, 1);
-		members_tab[table_id]->setCellText(role->getValidity(), row, 2);
+		members_tab[table_id]->setCellText(role->getValidity(), row, 1);
 
 		for(type_id=0; type_id < 3; type_id++)
 		{
@@ -180,7 +196,7 @@ void RoleWidget::showRoleData(Role *role, unsigned table_id, unsigned row)
 				if(i < count-1) str_aux+=", ";
 			}
 
-			members_tab[table_id]->setCellText(Utf8String::create(str_aux), row, 3 + type_id);
+			members_tab[table_id]->setCellText(Utf8String::create(str_aux), row, 2 + type_id);
 			str_aux.clear();
 		}
 	}
@@ -270,7 +286,7 @@ void RoleWidget::applyConfiguration(void)
 		startConfiguration<Role>();
 
 		role=dynamic_cast<Role *>(this->object);
-		role->setSysid(sysid_sb->value());
+		//role->setSysid(sysid_sb->value());
 		role->setConnectionLimit(conn_limit_sb->value());
 		role->setPassword(passwd_edt->text());
 
@@ -281,10 +297,11 @@ void RoleWidget::applyConfiguration(void)
 
 		role->setOption(Role::OP_SUPERUSER, superusr_chk->isChecked());
 		role->setOption(Role::OP_CREATEDB, create_db_chk->isChecked());
-		role->setOption(Role::OP_CREATEROLE, create_user_chk->isChecked());
+		role->setOption(Role::OP_CREATEROLE, create_role_chk->isChecked());
 		role->setOption(Role::OP_ENCRYPTED, encrypt_pass_chk->isChecked());
 		role->setOption(Role::OP_INHERIT, inh_perm_chk->isChecked());
 		role->setOption(Role::OP_LOGIN, can_login_chk->isChecked());
+		role->setOption(Role::OP_REPLICATION, can_replicate_chk->isChecked());
 
 		for(type_id=0; type_id < 3; type_id++)
 		{
