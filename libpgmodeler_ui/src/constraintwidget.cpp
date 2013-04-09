@@ -273,6 +273,7 @@ void ConstraintWidget::hideEvent(QHideEvent *event)
 	column_cmb->clear();
 	ref_column_cmb->clear();
 
+	no_inherit_chk->setChecked(false);
 	deferrable_chk->setChecked(false);
 	constr_type_lbl->setEnabled(true);
 	constr_type_cmb->setEnabled(true);
@@ -296,34 +297,35 @@ void ConstraintWidget::selectConstraintType(void)
 {
 	static QWidget *tab=columns_tbw->widget(1);
 	static QString rot_tab=columns_tbw->tabText(1);
+	ConstraintType constr_type=ConstraintType(constr_type_cmb->currentText());
 
-	ConstraintType tipo_rest=ConstraintType(constr_type_cmb->currentText());
-
-	tablespace_lbl->setVisible(tipo_rest==ConstraintType::primary_key || tipo_rest==ConstraintType::unique);
-	tablespace_sel->setVisible(tipo_rest==ConstraintType::primary_key || tipo_rest==ConstraintType::unique);
+	tablespace_lbl->setVisible(constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique);
+	tablespace_sel->setVisible(constr_type==ConstraintType::primary_key || constr_type==ConstraintType::unique);
 
 	if(!tablespace_sel->isVisible()) tablespace_sel->clearSelector();
 
-	check_expr_lbl->setVisible(tipo_rest==ConstraintType::check);
-	check_expr_txt->setVisible(tipo_rest==ConstraintType::check);
+	check_expr_lbl->setVisible(constr_type==ConstraintType::check);
+	check_expr_txt->setVisible(constr_type==ConstraintType::check);
+	no_inherit_chk->setVisible(constr_type==ConstraintType::check);
+	no_inherit_lbl->setVisible(constr_type==ConstraintType::check);
 
-	fill_factor_lbl->setVisible(tipo_rest==ConstraintType::foreign_key || tipo_rest==ConstraintType::primary_key);
-	fill_factor_sb->setVisible(tipo_rest==ConstraintType::foreign_key || tipo_rest==ConstraintType::primary_key);
+	fill_factor_lbl->setVisible(constr_type==ConstraintType::foreign_key || constr_type==ConstraintType::primary_key);
+	fill_factor_sb->setVisible(constr_type==ConstraintType::foreign_key || constr_type==ConstraintType::primary_key);
 
-	deferrable_lbl->setVisible(tipo_rest==ConstraintType::foreign_key);
-	deferrable_chk->setVisible(tipo_rest==ConstraintType::foreign_key);
-	deferral_cmb->setVisible(tipo_rest==ConstraintType::foreign_key);
-	deferral_lbl->setVisible(tipo_rest==ConstraintType::foreign_key);
-	match_lbl->setVisible(tipo_rest==ConstraintType::foreign_key);
-	match_cmb->setVisible(tipo_rest==ConstraintType::foreign_key);
-	on_delete_cmb->setVisible(tipo_rest==ConstraintType::foreign_key);
-	on_delete_lbl->setVisible(tipo_rest==ConstraintType::foreign_key);
-	on_update_cmb->setVisible(tipo_rest==ConstraintType::foreign_key);
-	on_update_lbl->setVisible(tipo_rest==ConstraintType::foreign_key);
+	deferrable_lbl->setVisible(constr_type==ConstraintType::foreign_key);
+	deferrable_chk->setVisible(constr_type==ConstraintType::foreign_key);
+	deferral_cmb->setVisible(constr_type==ConstraintType::foreign_key);
+	deferral_lbl->setVisible(constr_type==ConstraintType::foreign_key);
+	match_lbl->setVisible(constr_type==ConstraintType::foreign_key);
+	match_cmb->setVisible(constr_type==ConstraintType::foreign_key);
+	on_delete_cmb->setVisible(constr_type==ConstraintType::foreign_key);
+	on_delete_lbl->setVisible(constr_type==ConstraintType::foreign_key);
+	on_update_cmb->setVisible(constr_type==ConstraintType::foreign_key);
+	on_update_lbl->setVisible(constr_type==ConstraintType::foreign_key);
 
-	columns_tbw->setVisible(tipo_rest!=ConstraintType::check);
+	columns_tbw->setVisible(constr_type!=ConstraintType::check);
 
-	if(tipo_rest!=ConstraintType::foreign_key)
+	if(constr_type!=ConstraintType::foreign_key)
 		columns_tbw->removeTab(1);
 	else
 		columns_tbw->addTab(tab, rot_tab);
@@ -378,6 +380,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 		constr_type_lbl->setEnabled(false);
 
 		check_expr_txt->setPlainText(Utf8String::create(constr->getCheckExpression()));
+		no_inherit_chk->setChecked(constr->isNoInherit());
 		deferrable_chk->setChecked(constr->isDeferrable());
 		deferral_cmb->setCurrentIndex(deferral_cmb->findText(~constr->getDeferralType()));
 		match_cmb->setCurrentIndex(match_cmb->findText(~constr->getMatchType()));
@@ -430,6 +433,7 @@ void ConstraintWidget::applyConfiguration(void)
 		constr->setDeferralType(DeferralType(deferral_cmb->currentText()));
 		constr->setActionType(ActionType(on_delete_cmb->currentText()),false);
 		constr->setActionType(ActionType(on_update_cmb->currentText()),true);
+		constr->setNoInherit(no_inherit_chk->isChecked());
 
 		if(constr->getConstraintType()==ConstraintType::foreign_key)
 			constr->setReferencedTable(ref_table_sel->getSelectedObject());

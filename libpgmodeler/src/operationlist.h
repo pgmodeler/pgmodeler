@@ -29,6 +29,7 @@ undo / redo all the operations made.
 #define OPERATIONLIST_H
 
 #include "databasemodel.h"
+#include "pgmodeler.h"
 #include <QObject>
 
 class Operation {
@@ -233,17 +234,5 @@ class OperationList: public QObject {
 		//! \brief Signal emitted when one operation is executed
 		void s_operationExecuted(int progress, QString object_id, unsigned icon_id);
 };
-
-
-/*! \brief Template function that makes a copy from 'copy_obj' to 'psrc_obj' doing the cast to the
-	 correct object type. If the source object (psrc_obj) is not allocated the function allocates the attributes
-	 before copying. Both objects must be the same type if both are allocated.
-	 -- Brainfuck syntax style! :p -- */
-template <class Classe>
-void copyObject(BaseObject **psrc_obj, Classe *copy_obj);
-
-/*! \brief This functions is a second way to make a copy between two objects. It simply calls
-	 the template function above. */
-void copyObject(BaseObject **psrc_obj, BaseObject *copy_obj, ObjectType obj_type);
 
 #endif

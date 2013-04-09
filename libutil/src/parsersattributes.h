@@ -147,6 +147,7 @@ namespace ParsersAttributes {
 	FK_CONSTR="fk-constr",
 	PK_CONSTR="pk-constr",
 	UQ_CONSTR="uq-constr",
+	EX_CONSTR="ex-constr",
 	CONSTRAINT="constraint",
 	CONSTRAINTS="constraints",
 	RETURNS_SETOF="returns-setof",
@@ -258,6 +259,7 @@ namespace ParsersAttributes {
 	_LC_COLLATE_="lc-collate",
 	_LC_CTYPE_="lc-ctype",
 	INDEX_ELEMENT="idxelement",
+	EXCLUDE_ELEMENT="excelement",
 	PERMISSION="permission",
 	GRANT_OP="grant-op",
 	SELECT_PRIV="select",
@@ -354,7 +356,8 @@ namespace ParsersAttributes {
 	LOCALE="locale",
 	FOR_ORDER_BY="for-order-by",
 	OP_FAMILY="opfamily",
-	REPLICATION="replication";
+	REPLICATION="replication",
+	NO_INHERIT="no-inherit";
 }
 
 #endif

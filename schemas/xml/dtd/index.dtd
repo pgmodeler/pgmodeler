@@ -12,7 +12,7 @@
 <!ATTLIST index table CDATA #IMPLIED>
 <!ATTLIST index protected (false|true) "false">
 
-<!ELEMENT idxelement ((column|expression),collation?,opclass*)>
+<!ELEMENT idxelement ((column|expression),collation?,opclass?)>
 <!ATTLIST idxelement nulls-first (true | false) "false">
 <!ATTLIST idxelement asc-order (true | false) "true">
 <!ATTLIST idxelement use-sorting (true | false) "true">

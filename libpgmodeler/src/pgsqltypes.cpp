@@ -37,14 +37,15 @@ QString BaseType::type_list[types_count]=
 	"SET DEFAULT",
 
 	//Types used by the class ConstraintType
-	//offsets 6 to 9
+	//offsets 6 to 10
 	"PRIMARY KEY",
 	"FOREIGN KEY",
 	"CHECK",
 	"UNIQUE",
+	"EXCLUDE",
 
 	//Types used by the class EventType
-	//offsets 10 to 14
+	//offsets 11 to 15
 	"ON SELECT",
 	"ON INSERT",
 	"ON DELETE",
@@ -52,12 +53,12 @@ QString BaseType::type_list[types_count]=
 	"ON TRUNCATE",
 
 	//Types used by the class ExecutionType
-	//offsets 15 to 16
+	//offsets 16 to 17
 	"ALSO",
 	"INSTEAD",
 
 	//Types used by the class FunctionType
-	//offsets 17 to 21
+	//offsets 18 to 22
 	"VOLATILE",
 	"STABLE",
 	"IMMUTABLE",
@@ -65,7 +66,7 @@ QString BaseType::type_list[types_count]=
 	"NOT LEAKPROOF",
 
 	//Types used by the class IndexingType
-	//offsets 22 to 26
+	//offsets 23 to 27
 	"btree",
 	"rtree",
 	"gist",
@@ -73,7 +74,7 @@ QString BaseType::type_list[types_count]=
 	"gin",
 
 	//Types used by the class PgSQLType
-	//offsets 27 to 65
+	//offsets 28 to 66
 	"smallint", "integer", "bigint", "decimal", "numeric",
 	"real", "double precision", "float", "serial", "bigserial", "money",
 	"character varying", "varchar", "character",
@@ -85,43 +86,43 @@ QString BaseType::type_list[types_count]=
 	"macaddr", "bit", "bit varying", "varbit", "uuid", "xml",
 
 	//Spatial type specifics for the PostGiS extension
-	//offsets 66 to 70
+	//offsets 67 to 71
 	"box2d","box3d","geometry",
 	"geometry_dump","geography",
 
 	//Object Identification type (OID)
-	//offsets 71 to 82
+	//offsets 72 to 83
 	"oid", "regproc", "regprocedure",
 	"regoper", "regoperator", "regclass",
 	"regtype", "regconfig", "regdictionary",
 	"xid", "cid", "tid",
 
 	//Pseudo-types
-	//offsets 83 to 94
+	//offsets 84 to 95
 	"any","anyarray","anyelement","anyenum",
 	"anynonarray","cstring","internal","language_handler",
 	"record","trigger","void","opaque",
 
 	//Interval types
-	//offsets 95 to 107
+	//offsets 96 to 108
 	"YEAR", "MONTH", "DAY", "HOUR",
 	"MINUTE", "SECOND","YEAR TO MONTH",
 	"DAY TO HOUR","DAY TO MINUTE","DAY TO SECOND",
 	"HOUR TO MINUTE","HOUR TO SECOND","MINUTE TO SECOND",
 
 	//Types used by the class BehaviorType
-	//offsets 108 to 110
+	//offsets 109 to 111
 	"CALLED ON NULL INPUT",
 	"RETURNS NULL ON NULL INPUT",
 	"STRICT",
 
 	//Types used by the class SecurityType
-	//offsets 111 to 112
+	//offsets 112 to 113
 	"SECURITY INVOKER",
 	"SECURITY DEFINER",
 
 	//Types used by the class LanguageType
-	//offsets 113 to 118
+	//offsets 114 to 119
 	"sql",
 	"c",
 	"plpgsql",
@@ -130,7 +131,7 @@ QString BaseType::type_list[types_count]=
 	"plpython",
 
 	//Types used by the class EncodingType
-	//offsets 119 to 159
+	//offsets 120 to 160
 	"UTF8", "BIG5", "EUC_CN",  "EUC_JP", "EUC_JIS_2004", "EUC_KR",
 	"EUC_TW", "GB18030", "GBK", "ISO_8859_5", "ISO_8859_6",
 	"ISO_8859_7", "ISO_8859_8", "JOHAB", "KOI", "LATIN1",
@@ -142,25 +143,25 @@ QString BaseType::type_list[types_count]=
 	"WIN1258",
 
 	//Types used by the class StorageType
-	//offsets 160 to 163
+	//offsets 161 to 164
 	"plain",
 	"external",
 	"extended",
 	"main",
 
 	//Types used by the class MatchType
-	//offsets 164 to 166
+	//offsets 165 to 167
 	"MATCH FULL",
 	"MATCH PARTIAL",
 	"MATCH SIMPLE",
 
 	//Types used by the class DeferralType
-	//offsets 167 to 168
+	//offsets 168 to 169
 	"INITIALLY IMMEDIATE",
 	"INITIALLY DEFERRED",
 
 	//Types used by the class CategoryType
-	//offsets 169 to 182 - See table 44-43 on PostgreSQL 8.4 documentation
+	//offsets 170 to 183 - See table 44-43 on PostgreSQL 8.4 documentation
 	"U", //User-defined types
 	"A", //Array types
 	"B", //Boolean types
@@ -177,7 +178,7 @@ QString BaseType::type_list[types_count]=
 	"X", //Unknown type
 
 	//Types used by the class FiringType
-	//offsets 183 to 185
+	//offsets 184 to 186
 	"BEFORE",
 	"AFTER",
 	"INSTEAD OF",
@@ -186,7 +187,7 @@ QString BaseType::type_list[types_count]=
 			These types accepts variations Z, M e ZM.
 			 > Example: POINT, POINTZ, POINTM, POINTZM
 			Reference: http://postgis.refractions.net/documentation/manual-2.0/using_postgis_dbmanagement.html */
-	//offsets 186 to 192
+	//offsets 187 to 193
 	"POINT",
 	"LINESTRING",
 	"POLYGON",

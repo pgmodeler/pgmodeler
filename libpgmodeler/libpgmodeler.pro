@@ -42,7 +42,9 @@ HEADERS += $$PWD/src/textbox.h \
            $$PWD/src/tableobject.h \
            $$PWD/src/reference.h \
            $$PWD/src/permission.h \
-    src/collation.h
+    src/collation.h \
+    src/pgmodeler.h \
+    src/excludeelement.h
 
 
 SOURCES +=  $$PWD/src/textbox.cpp \
@@ -80,4 +82,6 @@ SOURCES +=  $$PWD/src/textbox.cpp \
             $$PWD/src/tableobject.cpp \
             $$PWD/src/reference.cpp \
             $$PWD/src/permission.cpp \
-    src/collation.cpp
+    src/collation.cpp \
+    src/pgmodeler.cpp \
+    src/excludeelement.cpp

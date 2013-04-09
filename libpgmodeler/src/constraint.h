@@ -29,6 +29,7 @@
 #include "tableobject.h"
 #include "tablespace.h"
 #include "column.h"
+#include "excludeelement.h"
 
 class Constraint: public TableObject{
 	private:
@@ -36,7 +37,10 @@ class Constraint: public TableObject{
 		ConstraintType constr_type;
 
 		//! \brief Indicates if the constraint is deferrable (only for foreign key)
-		bool deferrable;
+		bool deferrable,
+
+				 //! \brief Indicates if the constraint will be copied or not to the child tables of the contraint's table (only for check constraint)
+				 no_inherit;
 
 		//! \brief Deferral type for the constraint (only for foreign key)
 		DeferralType deferral_type;
@@ -59,6 +63,9 @@ class Constraint: public TableObject{
 		//! \brief Stores the referenced columns from the referenced table primary key
 		vector<Column *> ref_columns;
 
+		//! \brief Stores the exclude elements of the exclude constraint
+		vector<ExcludeElement> excl_elements;
+
 		//! \brief Stores the check expression (only for check constraints)
 		QString check_expr;
 
@@ -67,6 +74,9 @@ class Constraint: public TableObject{
 
 		//! \brief Formats the string for constraint columns to be used by the SchemaParser
 		void setColumnsAttribute(unsigned col_type, unsigned def_type, bool inc_addedbyrel=false);
+
+		//! \brief Formats the exclude elements string used by the SchemaParser
+		void setExcludeElementsAttribute(unsigned def_type);
 
 	public:
 		/*! \brief Access the source columns that means the columns that constrais
@@ -113,6 +123,9 @@ class Constraint: public TableObject{
 		//! \brief Defines the constraint fill factor (only for primary keys and unique)
 		void setFillFactor(unsigned factor);
 
+		//! \brief Defines if the constraints is propagated to child tables (only for exclude constraints)
+		void setNoInherit(bool value);
+
 		//! \brief Returns the constraint fill factor
 		unsigned getFillFactor(void);
 
@@ -131,6 +144,9 @@ class Constraint: public TableObject{
 		/*! \brief Returns the column count for one internal list.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */
 		unsigned getColumnCount(unsigned col_type);
+
+		//! \brief Returns the exclude constraint element count
+		unsigned getExcludeElementCount(void);
 
 		/*! \brief Removes one column from internal list using its name.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */
@@ -154,6 +170,9 @@ class Constraint: public TableObject{
 		//! \brief Indicates whether the constraint is deferrable
 		bool isDeferrable(void);
 
+		//! \brief Returns if the constraints will propagated to child tables
+		bool isNoInherit(void);
+
 		/*! \brief Returns whether the constraint references columns added
 		 by relationship. This method is used as auxiliary
 		 to control which constraints reference columns added by the
@@ -175,6 +194,30 @@ class Constraint: public TableObject{
 
 		//! \brief Indicates whether the column exists on the specified internal column list
 		bool isColumnExists(Column *column, unsigned col_type);
+
+		//! \brief Indicates whether the column is referenced in internal column list or exclude element list
+		bool isColumnReferenced(Column *column);
+
+		//! \brief Adds an exclude element to the constraint using an column (only exclude constraint)
+		void addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
+
+		//! \brief Adds an exclude element to the constraint using an expression (only exclude constraint)
+		void addExcludeElement(const QString &expr, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
+
+		//! \brief Adds an exclude element to the constraint using other pre-configured element (only exclude constraint)
+		void addExcludeElement(ExcludeElement elem);
+
+		//! \brief Returns one exclude element using its index
+		ExcludeElement getExcludeElement(unsigned elem_idx);
+
+		//! \brief Returns the exclude element index
+		int getExcludeElementIndex(ExcludeElement elem);
+
+		//! \brief Remove an exclude element using its index
+		void removeExcludeElement(unsigned idx_elem);
+
+		//! \brief Remove all exclude elements from the constraint
+		void removeExcludeElements(void);
 };
 
 #endif

@@ -102,10 +102,8 @@ Collation *IndexElement::getCollation(void)
 	return(collation);
 }
 
-QString IndexElement::getCodeDefinition(unsigned def_type)
+void IndexElement::configureAttributes(map<QString, QString> &attributes, unsigned def_type)
 {
-	map<QString, QString> attributes;
-
 	attributes[ParsersAttributes::COLUMN]="";
 	attributes[ParsersAttributes::EXPRESSION]="";
 	attributes[ParsersAttributes::OP_CLASS]="";
@@ -136,7 +134,19 @@ QString IndexElement::getCodeDefinition(unsigned def_type)
 		else
 			attributes[ParsersAttributes::COLLATION]=collation->getCodeDefinition(def_type, true);
 	}
+}
+
+QString IndexElement::getCodeDefinition(unsigned def_type)
+{
+	map<QString, QString> attributes;
+
+	configureAttributes(attributes, def_type);
 
 	return(SchemaParser::getCodeDefinition(ParsersAttributes::INDEX_ELEMENT,attributes, def_type));
 }
 
+bool IndexElement::operator == (IndexElement &elem)
+{
+	return(this->column == elem.column &&
+				 this->expression == elem.expression);
+}

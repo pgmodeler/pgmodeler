@@ -306,11 +306,11 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 		cond_expr_txt->setPlainText(Utf8String::create(index->getConditionalExpression()));
 
 		elements_tab->blockSignals(true);
-		count=index->getElementCount();
+		count=index->getIndexElementCount();
 		for(i=0; i < count; i++)
 		{
 			elements_tab->addRow();
-			showElementData(index->getElement(i), i);
+			showElementData(index->getIndexElement(i), i);
 		}
 		elements_tab->blockSignals(false);
 
@@ -339,11 +339,11 @@ void IndexWidget::applyConfiguration(void)
 		else
 			index->setFillFactor(0);
 
-		index->removeElements();
+		index->removeIndexElements();
 		count=elements_tab->getRowCount();
 
 		for(i=0; i < count; i++)
-			index->addElement(elements_tab->getRowData(i).value<IndexElement>());
+			index->addIndexElement(elements_tab->getRowData(i).value<IndexElement>());
 
 		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();

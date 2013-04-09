@@ -27,12 +27,12 @@
 #define INDEX_H
 
 #include "tableobject.h"
-#include "indexelement.h"
+#include "pgmodeler.h"
 
 class Index: public TableObject{
 	private:
 		//! \brief Stores the elements that defines the index
-		vector<IndexElement> elements;
+		vector<IndexElement> idx_elements;
 
 		//! \brief Conditional expression for the index
 		QString conditional_expr;
@@ -47,7 +47,7 @@ class Index: public TableObject{
 		bool index_attribs[3];
 
 		//! \brief Formats the elements string used by the SchemaParser
-		void setElementsAttribute(unsigned def_type);
+		void setIndexElementsAttribute(unsigned def_type);
 
 	public:
 		const static unsigned UNIQUE=0,
@@ -57,28 +57,25 @@ class Index: public TableObject{
 		Index(void);
 
 		//! \brief Adds an element to the index using an column
-		void addElement(Column *column, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
+		void addIndexElement(Column *column, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
 
 		//! \brief Adds an element to the index using an expression
-		void addElement(const QString &expr, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
+		void addIndexElement(const QString &expr, Collation *coll, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);
 
 		//! \brief Adds an element to the index using other pre-configured element
-		void addElement(IndexElement elem);
+		void addIndexElement(IndexElement elem);
 
-		//! \brief Returns the element index if it exists or -1 if not
-		int isElementExists(Column *column);
-
-		//! \brief Returns the element index if it exists or -1 if not
-		int isElementExists(const QString &expr);
+		//! \brief Returns the specified element index
+		int getElementIndex(IndexElement elem);
 
 		//! \brief Returns one element using its index
-		IndexElement getElement(unsigned elem_idx);
+		IndexElement getIndexElement(unsigned elem_idx);
 
 		//! \brief Remove an element using its index
-		void removeElement(unsigned idx_elem);
+		void removeIndexElement(unsigned idx_elem);
 
 		//! \brief Remove all elements from the index
-		void removeElements(void);
+		void removeIndexElements(void);
 
 		//! \brief Defines the conditional expression used by the index
 		void setConditionalExpression(const QString &expr);
@@ -97,7 +94,7 @@ class Index: public TableObject{
 		QString getConditionalExpression(void);
 
 		//! \brief Gets the index element count
-		unsigned getElementCount(void);
+		unsigned getIndexElementCount(void);
 
 		//! \brief Returns the indexing method used by the index
 		IndexingType getIndexingType(void);

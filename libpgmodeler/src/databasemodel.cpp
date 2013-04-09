@@ -4213,6 +4213,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 	int count, i;
 	unsigned col_type;
 	ObjectType obj_type;
+	ExcludeElement exc_elem;
 
 	try
 	{
@@ -4236,6 +4237,7 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 		{
 			obj_type=OBJ_TABLE;
 			table=dynamic_cast<Table *>(getObject(attribs[ParsersAttributes::TABLE], OBJ_TABLE));
+			parent_obj=table;
 			ins_constr_table=true;
 
 			//Raises an error if the parent table doesn't exists
@@ -4261,14 +4263,17 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 			constr_type=ConstraintType::primary_key;
 		else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::FK_CONSTR)
 			constr_type=ConstraintType::foreign_key;
-		else
+		else if(attribs[ParsersAttributes::TYPE]==ParsersAttributes::UQ_CONSTR)
 			constr_type=ConstraintType::unique;
+		else
+			constr_type=ConstraintType::exclude;
 
 		constr->setConstraintType(constr_type);
+
 		if(!attribs[ParsersAttributes::FACTOR].isEmpty())
 			constr->setFillFactor(attribs[ParsersAttributes::FACTOR].toUInt());
-		setBasicAttributes(constr);
 
+		setBasicAttributes(constr);
 
 		//Raises an error if the constraint is a primary key and no parent object is specified
 		if(!parent_obj && constr_type==ConstraintType::primary_key)
@@ -4312,6 +4317,11 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 
 			constr->setReferencedTable(ref_table);
 		}
+		else if(constr_type==ConstraintType::check)
+		{
+			constr->setNoInherit(attribs[ParsersAttributes::NO_INHERIT]==ParsersAttributes::_TRUE_);
+		}
+
 
 		if(XMLParser::accessElement(XMLParser::CHILD_ELEMENT))
 		{
@@ -4321,7 +4331,12 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 				{
 					elem=XMLParser::getElementName();
 
-					if(elem==ParsersAttributes::EXPRESSION)
+					if(elem==ParsersAttributes::EXCLUDE_ELEMENT)
+					{
+						createElement(exc_elem, constr, parent_obj);
+						constr->addExcludeElement(exc_elem);
+					}
+					else if(elem==ParsersAttributes::EXPRESSION)
 					{
 						XMLParser::savePosition();
 						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
@@ -4399,16 +4414,140 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 	return(constr);
 }
 
+void DatabaseModel::createElement(IndexElement &elem, TableObject *tab_obj, BaseObject *parent_obj)
+{
+	map<QString, QString> attribs;
+	Column *column=NULL;
+	OperatorClass *op_class=NULL;
+	Operator *oper=NULL;
+	Collation *collation=NULL;
+	QString xml_elem, str_aux;
+
+	xml_elem=XMLParser::getElementName();
+
+	if(xml_elem==ParsersAttributes::INDEX_ELEMENT || xml_elem==ParsersAttributes::EXCLUDE_ELEMENT)
+	{
+		XMLParser::getElementAttributes(attribs);
+
+		elem.setSortingAttribute(IndexElement::ASC_ORDER, attribs[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
+		elem.setSortingAttribute(IndexElement::NULLS_FIRST, attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
+		elem.setSortingEnabled(attribs[ParsersAttributes::USE_SORTING]!=ParsersAttributes::_FALSE_);
+
+		XMLParser::savePosition();
+		XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+
+		do
+		{
+			xml_elem=XMLParser::getElementName();
+
+			if(XMLParser::getElementType()==XML_ELEMENT_NODE)
+			{
+				if(xml_elem==ParsersAttributes::OP_CLASS)
+				{
+					XMLParser::getElementAttributes(attribs);
+					op_class=dynamic_cast<OperatorClass *>(getObject(attribs[ParsersAttributes::NAME], OBJ_OPCLASS));
+
+					//Raises an error if the operator class doesn't exists
+					if(!op_class)
+					{
+						throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+														.arg(Utf8String::create(tab_obj->getName()))
+														.arg(Utf8String::create(tab_obj->getTypeName()))
+														.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+														.arg(BaseObject::getTypeName(OBJ_OPCLASS)),
+														ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+
+					elem.setOperatorClass(op_class);
+				}
+				//Checking if elem is a ExcludeElement to be able to assign an operator to it
+				else if(xml_elem==ParsersAttributes::OPERATOR && dynamic_cast<ExcludeElement *>(&elem))
+				{
+					XMLParser::getElementAttributes(attribs);
+					oper=dynamic_cast<Operator *>(getObject(attribs[ParsersAttributes::SIGNATURE], OBJ_OPERATOR));
+
+					//Raises an error if the operator doesn't exists
+					if(!oper)
+					{
+						throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+														.arg(Utf8String::create(tab_obj->getName()))
+														.arg(Utf8String::create(tab_obj->getTypeName()))
+														.arg(Utf8String::create(attribs[ParsersAttributes::SIGNATURE]))
+														.arg(BaseObject::getTypeName(OBJ_OPERATOR)),
+														ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+
+					dynamic_cast<ExcludeElement &>(elem).setOperator(oper);
+				}
+				else if(xml_elem==ParsersAttributes::COLLATION && !dynamic_cast<ExcludeElement *>(&elem))
+				{
+					XMLParser::getElementAttributes(attribs);
+					collation=dynamic_cast<Collation *>(getObject(attribs[ParsersAttributes::NAME], OBJ_COLLATION));
+
+					//Raises an error if the operator class doesn't exists
+					if(!collation)
+					{
+						throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+														.arg(Utf8String::create(tab_obj->getName()))
+														.arg(Utf8String::create(tab_obj->getTypeName()))
+														.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+														.arg(BaseObject::getTypeName(OBJ_COLLATION)),
+														ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+
+					elem.setCollation(collation);
+				}
+				else if(xml_elem==ParsersAttributes::COLUMN)
+				{
+					XMLParser::getElementAttributes(attribs);
+
+					if(parent_obj->getObjectType()==OBJ_TABLE)
+					{
+						column=dynamic_cast<Table *>(parent_obj)->getColumn(attribs[ParsersAttributes::NAME]);
+
+						if(!column)
+							column=dynamic_cast<Table *>(parent_obj)->getColumn(attribs[ParsersAttributes::NAME], true);
+					}
+					else
+					{
+						column=dynamic_cast<Column *>(dynamic_cast<Relationship *>(parent_obj)->getObject(attribs[ParsersAttributes::NAME], OBJ_COLUMN));
+					}
+
+					//Raises an error if the column doesn't exists
+					if(!column)
+					{
+						throw Exception(QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
+														.arg(Utf8String::create(tab_obj->getName()))
+														.arg(Utf8String::create(tab_obj->getTypeName()))
+														.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
+														.arg(BaseObject::getTypeName(OBJ_COLUMN)),
+														ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+					}
+
+					elem.setColumn(column);
+				}
+				else if(xml_elem==ParsersAttributes::EXPRESSION)
+				{
+					XMLParser::savePosition();
+					XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
+					elem.setExpression(XMLParser::getElementContent());
+					XMLParser::restorePosition();
+				}
+			}
+		}
+		while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
+
+		XMLParser::restorePosition();
+	}
+}
+
 Index *DatabaseModel::createIndex(Table *table)
 {
 	map<QString, QString> attribs;
 	Index *index=NULL;
-	Column *column=NULL;
-	OperatorClass *op_class=NULL;
-	Collation *collation=NULL;
-	QString elem, str_aux, expr;
-	bool inc_idx_table=false, use_sorting=false,
-			asc_order=false, nulls_first=false;
+	QString elem, str_aux;
+	bool inc_idx_table=false;
+	IndexElement idx_elem;
 
 	try
 	{
@@ -4452,81 +4591,8 @@ Index *DatabaseModel::createIndex(Table *table)
 
 					if(elem==ParsersAttributes::INDEX_ELEMENT)
 					{
-						XMLParser::getElementAttributes(attribs);
-						nulls_first=(attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
-						asc_order=(attribs[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
-						use_sorting=(attribs[ParsersAttributes::USE_SORTING]!=ParsersAttributes::_FALSE_);
-						column=NULL;
-						expr.clear();
-
-						XMLParser::savePosition();
-						XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-
-						do
-						{
-							elem=XMLParser::getElementName();
-
-							if(XMLParser::getElementType()==XML_ELEMENT_NODE)
-							{
-								if(elem==ParsersAttributes::OP_CLASS)
-								{
-									XMLParser::getElementAttributes(attribs);
-									op_class=dynamic_cast<OperatorClass *>(getObject(attribs[ParsersAttributes::NAME], OBJ_OPCLASS));
-
-									//Raises an error if the operator class doesn't exists
-									if(!op_class)
-									{
-										str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-														.arg(Utf8String::create(index->getName()))
-														.arg(BaseObject::getTypeName(OBJ_INDEX))
-														.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
-												.arg(BaseObject::getTypeName(OBJ_OPCLASS));
-
-										throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-									}
-								}
-								else if(elem==ParsersAttributes::COLLATION)
-								{
-									XMLParser::getElementAttributes(attribs);
-									collation=dynamic_cast<Collation *>(getObject(attribs[ParsersAttributes::NAME], OBJ_COLLATION));
-
-									//Raises an error if the operator class doesn't exists
-									if(!collation)
-									{
-										str_aux=QString(Exception::getErrorMessage(ERR_REF_OBJ_INEXISTS_MODEL))
-														.arg(Utf8String::create(index->getName()))
-														.arg(BaseObject::getTypeName(OBJ_INDEX))
-														.arg(Utf8String::create(attribs[ParsersAttributes::NAME]))
-												.arg(BaseObject::getTypeName(OBJ_COLLATION));
-
-										throw Exception(str_aux,ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-									}
-								}
-								else if(elem==ParsersAttributes::COLUMN)
-								{
-									XMLParser::getElementAttributes(attribs);
-									column=table->getColumn(attribs[ParsersAttributes::NAME]);
-
-									if(!column)
-										column=table->getColumn(attribs[ParsersAttributes::NAME], true);
-								}
-								else if(elem==ParsersAttributes::EXPRESSION)
-								{
-									XMLParser::savePosition();
-									XMLParser::accessElement(XMLParser::CHILD_ELEMENT);
-									expr=XMLParser::getElementContent();
-									XMLParser::restorePosition();
-								}
-							}
-						}
-						while(XMLParser::accessElement(XMLParser::NEXT_ELEMENT));
-
-						if(!expr.isEmpty())
-							index->addElement(expr, collation, op_class, use_sorting, asc_order, nulls_first);
-						else
-							index->addElement(column, collation, op_class, use_sorting, asc_order, nulls_first);
-
-						XMLParser::restorePosition();
+						createElement(idx_elem, index, table);
+						index->addIndexElement(idx_elem);
 					}
 					else if(elem==ParsersAttributes::CONDITION)
 					{
@@ -6239,15 +6305,15 @@ void DatabaseModel::getObjectDependecies(BaseObject *object, vector<BaseObject *
 				for(i=0; i < count; i++)
 				{
 					index=dynamic_cast<Index *>(tab->getIndex(i));
-					count1=index->getElementCount();
+					count1=index->getIndexElementCount();
 
 					for(i1=0; i1 < count1; i1++)
 					{
-						if(index->getElement(i1).getOperatorClass())
-							getObjectDependecies(index->getElement(i1).getOperatorClass(), deps, inc_indirect_deps);
-						else if(index->getElement(i1).getColumn())
+						if(index->getIndexElement(i1).getOperatorClass())
+							getObjectDependecies(index->getIndexElement(i1).getOperatorClass(), deps, inc_indirect_deps);
+						else if(index->getIndexElement(i1).getColumn())
 						{
-							usr_type=getObjectPgSQLType(index->getElement(i1).getColumn()->getType());
+							usr_type=getObjectPgSQLType(index->getIndexElement(i1).getColumn()->getType());
 
 							if(usr_type)
 								getObjectDependecies(usr_type, deps, inc_indirect_deps);
@@ -7052,12 +7118,14 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						constr_cnt=tab->getConstraintCount();
 						for(idx=0; idx < constr_cnt && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
 						{
-							if(tab->getConstraint(idx)->isColumnExists(column, Constraint::SOURCE_COLS) ||
-								 tab->getConstraint(idx)->isColumnExists(column, Constraint::REFERENCED_COLS))
+							/*if(tab->getConstraint(idx)->isColumnExists(column, Constraint::SOURCE_COLS) ||
+								 tab->getConstraint(idx)->isColumnExists(column, Constraint::REFERENCED_COLS))*/
+							if(tab->getConstraint(idx)->isColumnReferenced(column))
 							{
 								refer=true;
 								refs.push_back(tab->getConstraint(idx));
 							}
+
 						}
 
 						trig_cnt=tab->getTriggerCount();
@@ -7084,8 +7152,9 @@ void DatabaseModel::getObjectReferences(BaseObject *object, vector<BaseObject *>
 						constr_cnt=rel->getConstraintCount();
 						for(idx=0; idx < constr_cnt && (!exclusion_mode || (exclusion_mode && !refer)); idx++)
 						{
-							if(rel->getConstraint(idx)->isColumnExists(column, Constraint::SOURCE_COLS) ||
-								 rel->getConstraint(idx)->isColumnExists(column, Constraint::REFERENCED_COLS))
+							/* if(rel->getConstraint(idx)->isColumnExists(column, Constraint::SOURCE_COLS) ||
+								 rel->getConstraint(idx)->isColumnExists(column, Constraint::REFERENCED_COLS)) */
+							if(rel->getConstraint(idx)->isColumnReferenced(column))
 							{
 								refer=true;
 								refs.push_back(rel);

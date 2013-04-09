@@ -11,13 +11,13 @@
  [ CONCURRENTLY ]
 %end
 
-@{name} [ ON ] @{table} $br
+@{name} [ ON ] @{table}
 
 %if @{index-type} %then
- $tb [USING ] @{index-type} $br
+  $br $tb [USING ] @{index-type}
 %end
 
-$tb ( @{elements} ) $br
+$br $tb ( @{elements} $br $tb )
 
 %if @{expression} %then
   $tb (@{expression}) $sp 
@@ -34,17 +34,17 @@ $tb ( @{elements} ) $br
   [FASTUPDATE = ON]
  %end
 
-[)] $br
+[)]
 %end
 
 %if @{tablespace} %then
- $tb [TABLESPACE ] @{tablespace} $br
+ $br $tb [TABLESPACE ] @{tablespace}
 %end
 
 %if @{condition} %then
- $tb [WHERE (] @{condition} [)] $br
+ $br $tb [WHERE (] @{condition} [)]
 %end
-;$br
+; $br
 
 %if @{comment} %then  @{comment} %end
 

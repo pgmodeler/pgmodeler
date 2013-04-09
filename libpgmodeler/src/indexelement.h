@@ -53,6 +53,9 @@ class IndexElement {
 				 //! \brief Enable the use of the sort attributes
 				 sorting_enabled;
 
+	protected:
+		void configureAttributes(map<QString, QString> &attributes, unsigned def_type);
+
 	public:
 		//! \brief Constants used to reference the sorting method of the element
 		const static unsigned ASC_ORDER=0,
@@ -65,7 +68,7 @@ class IndexElement {
 		void setExpression(const QString &expression);
 		void setOperatorClass(OperatorClass *oper_class);
 		void setSortingEnabled(bool value);
-		void setCollation(Collation *collation);
+		virtual void setCollation(Collation *collation);
 
 		//! \brief Sets the state of one of the element sorting method
 		void setSortingAttribute(unsigned attrib, bool value);
@@ -80,7 +83,9 @@ class IndexElement {
 		Collation *getCollation(void);
 
 		//! \brief Returns the SQL / XML code definition for the index element
-		QString getCodeDefinition(unsigned def_type);
+		virtual QString getCodeDefinition(unsigned def_type);
+
+		bool operator == (IndexElement &elem);
 };
 
 #endif

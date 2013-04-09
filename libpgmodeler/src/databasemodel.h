@@ -121,6 +121,9 @@ class DatabaseModel:  public QObject, public BaseObject {
 		 returned object can be: table, sequence, domain or type */
 		BaseObject *getObjectPgSQLType(PgSQLType type);
 
+		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
+		void createElement(IndexElement &elem, TableObject *tab_obj, BaseObject *parent_obj);
+
 	public:
 		DatabaseModel(void);
 		~DatabaseModel(void);

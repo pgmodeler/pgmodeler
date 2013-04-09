@@ -1025,8 +1025,9 @@ bool Table::isConstraintRefColumn(Column *column, ConstraintType constr_type)
 			constr=dynamic_cast<Constraint *>(*itr);
 			itr++;
 			found=(constr->getConstraintType()==constr_type &&
-						 (constr->isColumnExists(column, Constraint::SOURCE_COLS) ||
-							constr->isColumnExists(column, Constraint::REFERENCED_COLS)));
+						 constr->isColumnReferenced(column));
+						 //(constr->isColumnExists(column, Constraint::SOURCE_COLS) ||
+						//	constr->isColumnExists(column, Constraint::REFERENCED_COLS)));
 		}
 	}
 
@@ -1149,10 +1150,10 @@ void Table::getColumnReferences(Column *column, vector<TableObject *> &refs, boo
 			ind=dynamic_cast<Index *>(*itr);
 			itr++;
 
-			count=ind->getElementCount();
+			count=ind->getIndexElementCount();
 			for(i=0; i < count  && (!exclusion_mode || (exclusion_mode && !found)); i++)
 			{
-				elem=ind->getElement(i);
+				elem=ind->getIndexElement(i);
 				col=elem.getColumn();
 				if(col && col==column)
 				{

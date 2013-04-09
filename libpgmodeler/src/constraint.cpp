@@ -23,12 +23,14 @@ Constraint::Constraint(void)
 	ref_table=NULL;
 	obj_type=OBJ_CONSTRAINT;
 	deferrable=false;
+	no_inherit=false;
 	fill_factor=100;
 
 	attributes[ParsersAttributes::PK_CONSTR]="";
 	attributes[ParsersAttributes::FK_CONSTR]="";
 	attributes[ParsersAttributes::CK_CONSTR]="";
 	attributes[ParsersAttributes::UQ_CONSTR]="";
+	attributes[ParsersAttributes::EX_CONSTR]="";
 	attributes[ParsersAttributes::REF_TABLE]="";
 	attributes[ParsersAttributes::SRC_COLUMNS]="";
 	attributes[ParsersAttributes::DST_COLUMNS]="";
@@ -42,6 +44,8 @@ Constraint::Constraint(void)
 	attributes[ParsersAttributes::TABLE]="";
 	attributes[ParsersAttributes::DECL_IN_TABLE]="";
 	attributes[ParsersAttributes::FACTOR]="";
+	attributes[ParsersAttributes::NO_INHERIT]="";
+	attributes[ParsersAttributes::ELEMENTS]="";
 }
 
 Constraint::~Constraint(void)
@@ -92,10 +96,36 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 	//Tries to find the column  on the internal list
 	while(itr!=itr_end && !found)
 	{
-		//col_aux=(*itr);
-		//found=(col_aux==column || col_aux->getName()==column->getName());
 		found=((*itr)==column);
 		itr++;
+	}
+
+	return(found);
+}
+
+bool Constraint::isColumnReferenced(Column *column)
+{
+	bool found=false;
+	Column *col=NULL;
+	vector<ExcludeElement>::iterator itr, itr_end;
+
+	found=isColumnExists(column, SOURCE_COLS);
+
+	if(!found)
+		found=isColumnExists(column, REFERENCED_COLS);
+
+	if(!found)
+	{
+		//Iterates over the exclude elements
+		itr=excl_elements.begin();
+		itr_end=excl_elements.end();
+
+		while(itr!=itr_end && !found)
+		{
+			col=(*itr).getColumn();
+			found=(col && col->isAddedByRelationship());
+			itr++;
+		}
 	}
 
 	return(found);
@@ -206,6 +236,11 @@ void Constraint::setFillFactor(unsigned factor)
 {
 	if(factor < 10) factor=10;
 	fill_factor=factor;
+}
+
+void Constraint::setNoInherit(bool value)
+{
+	no_inherit=value;
 }
 
 unsigned Constraint::getFillFactor(void)
@@ -325,9 +360,15 @@ bool Constraint::isDeferrable(void)
 	return(deferrable);
 }
 
+bool Constraint::isNoInherit(void)
+{
+	return(no_inherit);
+}
+
 bool Constraint::isReferRelationshipAddedColumn(void)
 {
 	vector<Column *>::iterator itr, itr_end;
+	vector<ExcludeElement>::iterator itr1, itr1_end;
 	Column *col=NULL;
 	bool found=false;
 
@@ -351,12 +392,149 @@ bool Constraint::isReferRelationshipAddedColumn(void)
 		}
 	}
 
+	//Iterates over the exclude elements
+	itr1=excl_elements.begin();
+	itr1_end=excl_elements.end();
+
+	while(itr1!=itr1_end && !found)
+	{
+		col=(*itr1).getColumn();
+		found=(col && col->isAddedByRelationship());
+		itr1++;
+	}
+
 	return(found);
 }
 
 MatchType Constraint::getMatchType(void)
 {
 	return(match_type);
+}
+
+
+int Constraint::getExcludeElementIndex(ExcludeElement elem)
+{
+	int idx=0;
+	bool found=false;
+
+	while(idx < static_cast<int>(excl_elements.size()) && !found)
+	{
+		found=(excl_elements[idx]==elem);
+		if(!found) idx++;
+	}
+
+	return(found ? idx : -1);
+}
+
+void Constraint::addExcludeElement(ExcludeElement elem)
+{
+	if(getExcludeElementIndex(elem) >= 0)
+		throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+	else if(elem.getExpression().isEmpty() && !elem.getColumn())
+		throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	excl_elements.push_back(elem);
+}
+
+void Constraint::addExcludeElement(const QString &expr, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
+{
+	try
+	{
+		ExcludeElement elem;
+
+		//Raises an error if the expression is empty
+		if(expr.isEmpty())
+			throw Exception(ERR_ASG_INV_EXPR_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		//Configures the element
+		elem.setExpression(expr);
+		elem.setOperatorClass(op_class);
+		elem.setOperator(oper);
+		elem.setSortingEnabled(use_sorting);
+		elem.setSortingAttribute(ExcludeElement::NULLS_FIRST, nulls_first);
+		elem.setSortingAttribute(ExcludeElement::ASC_ORDER, asc_order);
+
+		if(getExcludeElementIndex(elem) >= 0)
+			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		excl_elements.push_back(elem);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void Constraint::addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first)
+{
+	try
+	{
+		ExcludeElement elem;
+
+		//Case the column is not allocated raises an error
+		if(!column)
+			throw Exception(Exception::getErrorMessage(ERR_ASG_NOT_ALOC_COLUMN)
+											.arg(Utf8String::create(this->getName())).arg(Utf8String::create(this->getTypeName())),
+											ERR_ASG_NOT_ALOC_COLUMN,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		//Configures the element
+		elem.setColumn(column);
+		elem.setOperatorClass(op_class);
+		elem.setOperator(oper);
+		elem.setSortingEnabled(use_sorting);
+		elem.setSortingAttribute(ExcludeElement::NULLS_FIRST, nulls_first);
+		elem.setSortingAttribute(ExcludeElement::ASC_ORDER, asc_order);
+
+		if(getExcludeElementIndex(elem) >= 0)
+			throw Exception(ERR_INS_DUPLIC_ELEMENT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+		excl_elements.push_back(elem);
+	}
+	catch(Exception &e)
+	{
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
+void Constraint::removeExcludeElement(unsigned elem_idx)
+{
+	if(elem_idx >= excl_elements.size())
+		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	excl_elements.erase(excl_elements.begin() + elem_idx);
+}
+
+void Constraint::removeExcludeElements(void)
+{
+	excl_elements.clear();
+}
+
+ExcludeElement Constraint::getExcludeElement(unsigned elem_idx)
+{
+	if(elem_idx >= excl_elements.size())
+		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return(excl_elements[elem_idx]);
+}
+
+unsigned Constraint::getExcludeElementCount(void)
+{
+	return(excl_elements.size());
+}
+
+void Constraint::setExcludeElementsAttribute(unsigned def_type)
+{
+	QString str_elem;
+	unsigned i, count;
+
+	count=excl_elements.size();
+	for(i=0; i < count; i++)
+	{
+		str_elem+=excl_elements[i].getCodeDefinition(def_type);
+		if(i < (count-1) && def_type==SchemaParser::SQL_DEFINITION) str_elem+=",";
+	}
+
+	attributes[ParsersAttributes::ELEMENTS]=str_elem;
 }
 
 QString Constraint::getCodeDefinition(unsigned def_type)
@@ -372,6 +550,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 	attributes[ParsersAttributes::FK_CONSTR]="";
 	attributes[ParsersAttributes::CK_CONSTR]="";
 	attributes[ParsersAttributes::UQ_CONSTR]="";
+	attributes[ParsersAttributes::EX_CONSTR]="";
 
 	switch(!constr_type)
 	{
@@ -387,6 +566,9 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 		case ConstraintType::unique:
 			attrib=ParsersAttributes::UQ_CONSTR;
 		break;
+		default:
+			attrib=ParsersAttributes::EX_CONSTR;
+		break;
 	}
 	attributes[attrib]="1";
 
@@ -397,7 +579,10 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 
 	if(constr_type!=ConstraintType::check)
 	{
-		setColumnsAttribute(SOURCE_COLS, def_type, inc_addedbyrel);
+		if(constr_type!=ConstraintType::exclude)
+			setColumnsAttribute(SOURCE_COLS, def_type, inc_addedbyrel);
+		else
+			setExcludeElementsAttribute(def_type);
 
 		/* Only generates the definition of the foreign key referenced columns
 		 if the number of columns of the source and referenced cols list are equal,
@@ -410,6 +595,7 @@ QString Constraint::getCodeDefinition(unsigned def_type, bool inc_addedbyrel)
 
 	attributes[ParsersAttributes::REF_TABLE]=(ref_table ? ref_table->getName(true) : "");
 	attributes[ParsersAttributes::DEFERRABLE]=(deferrable ? "1" : "");
+	attributes[ParsersAttributes::NO_INHERIT]=(no_inherit ? "1" : "");
 	attributes[ParsersAttributes::COMPARISON_TYPE]=(~match_type);
 	attributes[ParsersAttributes::DEFER_TYPE]=(~deferral_type);
 

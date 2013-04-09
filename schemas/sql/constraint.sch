@@ -12,17 +12,28 @@
 %end
 
 [CONSTRAINT ] @{name}
-%if @{ck-constr} %then [ CHECK ] (@{expression}) %end
+
+%if @{ck-constr} %then
+  [ CHECK ] (@{expression})
+
+  %if @{no-inherit} %then [ NO INHERIT]  %end
+
+%end
+
 %if @{pk-constr} %then [ PRIMARY KEY ] (@{src-columns}) %end
 %if @{uq-constr} %then [ UNIQUE ] (@{src-columns}) %end
+%if @{ex-constr} %then [ EXCLUDE ] $br $tb ( @{elements} $br $tb ) %end
 
 %if @{tablespace} %then
   $br
   %if @{decl-in-table} %then $tb %end
   [WITH (FILLFACTOR = ] @{factor} [)] $br
   %if @{decl-in-table} %then $tb %end
-  %if @{pk-constr} %then [USING INDEX TABLESPACE ] @{tablespace} %end
-  %if @{uq-constr} %then [USING INDEX TABLESPACE ] @{tablespace} %end
+  %if @{pk-constr} %or @{uq-constr} %or @{ex-constr} %then [USING INDEX TABLESPACE ] @{tablespace} %end
+%end
+
+%if @{ex-constr} %and @{expression} %then
+  $sp WHERE $sp ( @{expression})
 %end
 
 %if @{fk-constr} %then
