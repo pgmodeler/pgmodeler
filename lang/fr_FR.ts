@@ -35,20 +35,14 @@
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://pgmodeler.com.br&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;http://pgmodeler.com.br&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+112"/>
         <source>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
 
-The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.
-
-Special thanks to friends of the software development team of the Legislative Assembly, Tocantins, Brazil: Michel de Almeida, Felipe Santana, Jonas Nepomuceno, Ricardo Ishibashi and Álvaro Nunes.</source>
-        <translation>Copyright 2006-2013 - Raphael Araújo e Silva &lt;rkhaotix@gmail.com&gt;
-
-Le projet pgModeler est un outil de CASE (computer-aided software engineering ou génie logiciel assisté par ordinateur) dédié à la modélisation de bases de données relationnelles pour PostgreSQL utilisant les techniques de modélisation des diagrammes de relantion entre les entités, ainsi que les concepts implémentés dans PostgreSQL.
-
-Remerciement spéciaux aux amis de l&apos;équipe de développement de l&apos;Assemblée Législative, Tocantins, Brésil: Michel de Almeida, Felipe Santana, Jonas Nepomuceno, Ricardo Ishibashi et Álvaro Nunes.</translation>
+The pgModeler project is a CASE tool for modeling relational databases for PostgreSQL DBMS through the use of modeling techniques from entity-relationship diagrams as well merging concepts that PostgreSQL implements.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="-38"/>
         <source>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation version 3.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
@@ -79,12 +73,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Fonction finale:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+75"/>
         <source>Transition Function:</source>
         <translation>Fonction de transition:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-68"/>
         <source>Sort Operator:</source>
         <translation>Opérateur de tri:</translation>
     </message>
@@ -442,7 +436,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
 <context>
     <name>BaseObject</name>
     <message>
-        <location filename="../libpgmodeler/src/baseobject.cpp" line="+37"/>
+        <location filename="../libpgmodeler/src/baseobject.cpp" line="+38"/>
         <source>Column</source>
         <translation>Colonne</translation>
     </message>
@@ -560,7 +554,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Relation</translation>
     </message>
     <message>
-        <location line="-1"/>
+        <location line="-2"/>
+        <source>Collation</source>
+        <translation>Collation</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Textbox</source>
         <translation>Zone de texte</translation>
     </message>
@@ -583,7 +582,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+24"/>
         <source>Name:</source>
         <translation>Nom:</translation>
     </message>
@@ -593,22 +592,22 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>icône</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+37"/>
         <source>Comment:</source>
         <translation>Commentaire:</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+35"/>
         <source>Tablespace:</source>
         <translation>Tablespace:</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+19"/>
         <source>Owner:</source>
         <translation>Propriétaire:</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+19"/>
         <source>Schema:</source>
         <translation>Schéma:</translation>
     </message>
@@ -618,7 +617,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Désactiver le code SQL</translation>
     </message>
     <message>
-        <location line="-113"/>
+        <location line="+19"/>
+        <source>Collation:</source>
+        <translation>Collation:</translation>
+    </message>
+    <message>
+        <location line="-132"/>
         <source>Edit Permissions</source>
         <translation>Editer les permissions</translation>
     </message>
@@ -633,24 +637,37 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>L&apos;objet est vérouillé, par conséquent aucun changement dans le formulaire ne lui sera appliqué.</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="+55"/>
+        <location filename="../libpgmodeler_ui/src/baseobjectwidget.cpp" line="+56"/>
         <source>Create / Edit: </source>
         <translation>Créer / Éditer: </translation>
     </message>
     <message>
-        <location line="+360"/>
+        <location line="+140"/>
+        <source>Required field. Leaving this empty will raise errors!</source>
+        <translation>Champrequis. Laisser ce champ vide génèrera une erreur!</translation>
+    </message>
+    <message>
+        <location line="+280"/>
         <source>Value(s)</source>
         <translation>Valeur(s)</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+17"/>
         <source>Version</source>
         <translation>Version</translation>
     </message>
     <message>
         <location line="+35"/>
-        <source>The field(s) or value(s) highlighted on the form is(are) for the exclusive use and/or mandatory in specific versions of PostgreSQL. Failure to complete that may cause errors in the generation of SQL code for each version shown in tool tips of the highlighted fields.</source>
-        <translation>Le(s) champs ou valeur(s) mis en évidence dans le formulaire est(sont) dépendants de la version de PostgreSQL. Le non respect de ces dépendances peut provoquer des erreurs dans la génération du code SQL qui sont affichées dans l&apos;info-bulles de ces champs.</translation>
+        <source>The &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;highlighted&lt;/strong&gt;&lt;/em&gt; fields on the form are available only on specific PostgreSQL versions. 													When generating SQL code for versions other than those specified on field&apos;s tooltips pgModeler will ignore it&apos;s values.</source>
+        <translation>Les champs en &lt;em style=&apos;color: %1&apos;&gt;&lt;strong&gt;surbrillance&lt;/strong&gt;&lt;/em&gt; dans le formulaire sont disponnibles pour certaine version de PostgreSQL uniquement.													Ils seront ignorés s&apos;il est demandé un export SQL pour une version de PostgreSQL non spécifié dans l&apos;infobule du champ.</translation>
+    </message>
+</context>
+<context>
+    <name>BaseRelationship</name>
+    <message>
+        <location filename="../libpgmodeler/src/baserelationship.cpp" line="+57"/>
+        <source>rel_%1_%2</source>
+        <translation>rel_%1_%2</translation>
     </message>
 </context>
 <context>
@@ -699,6 +716,45 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <location line="+14"/>
         <source>The function to be assigned to a cast from &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; to &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; must have the following signature: &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt; function(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</source>
         <translation>La fonction à affecter à une convertion de &lt;em&gt;&lt;strong&gt;typeA&lt;/strong&gt;&lt;/em&gt; vers &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt;&lt;/em&gt; doit avoir la signature suivante: &lt;em&gt;&lt;strong&gt;typeB&lt;/strong&gt; fonction(&lt;strong&gt;typeA&lt;/strong&gt;, integer, boolean)&lt;/em&gt;.</translation>
+    </message>
+</context>
+<context>
+    <name>CollationWidget</name>
+    <message>
+        <location filename="../libpgmodeler_ui/ui/collationwidget.ui" line="+20"/>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Locale:</source>
+        <translation>Locale:</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Encoding:</source>
+        <translation>Encodage:</translation>
+    </message>
+    <message>
+        <location line="+45"/>
+        <source>LC_COLLATE:</source>
+        <translation>LC_COLLATE:</translation>
+    </message>
+    <message>
+        <location line="+45"/>
+        <source>LC_CTYPE:</source>
+        <translation>LC_CTYPE:</translation>
+    </message>
+    <message>
+        <location filename="../libpgmodeler_ui/src/collationwidget.cpp" line="+28"/>
+        <source>The fields &lt;strong&gt;&lt;em&gt;Collation&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;Locale&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;LC_COLLATE &amp; LC_CTYPE&lt;/em&gt;&lt;/strong&gt; are mutually exclusive, so you have to set only one of them in order to properly handle a collation.</source>
+        <translation>Les champs &lt;strong&gt;&lt;em&gt;Collation&lt;/em&gt;&lt;/strong&gt;, &lt;strong&gt;&lt;em&gt;Locale&lt;/em&gt;&lt;/strong&gt; et &lt;strong&gt;&lt;em&gt;LC_COLLATE &amp; LC_CTYPE&lt;/em&gt;&lt;/strong&gt; sont mutuellement exclusifs, vous ne devez en définir qu&apos;un de manière à gérer correctement la collation.</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <location line="+12"/>
+        <source>Not defined</source>
+        <translation>Non défini</translation>
     </message>
 </context>
 <context>
@@ -988,12 +1044,12 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Report:</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+54"/>
         <source>ON DELETE:</source>
         <translation>ON DELETE:</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+25"/>
         <source>ON UPDATE:</source>
         <translation>ON UPDATE:</translation>
     </message>
@@ -1019,6 +1075,16 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Table:</translation>
     </message>
     <message>
+        <location line="+49"/>
+        <source>Exclude Elements</source>
+        <translation>Élements exclus</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>No inherit:</source>
+        <translation>Pas d&apos;héritage:</translation>
+    </message>
+    <message>
         <location filename="../libpgmodeler_ui/src/constraintwidget.cpp" line="+46"/>
         <location line="+7"/>
         <source>Column</source>
@@ -1032,9 +1098,8 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
     </message>
     <message>
         <location line="+24"/>
-        <source>Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they will be ignored. To create primary key using columns included by relationship use the feature attributes, constraints and primary key on the relationship form.</source>
-        <translatorcomment>À contrôler</translatorcomment>
-        <translation type="unfinished">Les colonnes qui sont incluses par relation ne peuvent être ajoutées / supprimées manuellement depuis la clef primaire. Tout changement sera ignoré. Pour créer la clef primaire en utilisant les colonnes incluses dans la relation utilisez les fonctionnalités d&apos;attributs, de contraintes et de clef primaire dans le formulaire de la relation.</translation>
+        <source>Columns which were included by relationship can not be added / removed manually from the primary key. If done such changes they can raise errors. To create primary key using columns included by relationship use the following options: identifier field, attributes &amp; constraints tab or primary key tab on the relationship form.</source>
+        <translation>Les colonnes inclues dans la relation de peuvent être ajoutées/retirés manuellement de la clef primaire sous peine d’erreur. Pour créer une clef primaire utilisant des colonnes contenues dans une relation, veuillez utiliser une des options suivantes: champ identifiant, l&apos;onglet attributs et contraintes ou l&apos;onglet clef primaire du formulaire de la relation.</translation>
     </message>
 </context>
 <context>
@@ -1050,13 +1115,13 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Encodage de la source:</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+44"/>
         <source>Target Encoding:</source>
         <translation>Encodage de la destination:</translation>
     </message>
     <message>
-        <location line="+38"/>
-        <source>Conversion Function:</source>
+        <location line="+47"/>
+        <source>Conversion Func.:</source>
         <translation>Fonction de conversion:</translation>
     </message>
     <message>
@@ -1065,7 +1130,7 @@ The complete text of GPLv3 is at LICENSE file on source code root directory. Als
         <translation>Convertion par défaut:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/conversionwidget.cpp" line="+35"/>
+        <location filename="../libpgmodeler_ui/src/conversionwidget.cpp" line="+40"/>
         <source>The function to be assigned to an encoding conversion must have the following signature: &lt;em&gt;void function(integer, integer, cstring, internal, integer)&lt;/em&gt;.</source>
         <translation>La fonction à affecter à une convertion d&apos;encodage doit avoir la signature suivante: &lt;em&gt;void function(integer, integer, cstring, internal, integer)&lt;/em&gt;.</translation>
     </message>
@@ -1158,12 +1223,12 @@ Taille: %2 bytes
 <context>
     <name>DatabaseModel</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="+2596"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="+2664"/>
         <source>Loading object: %1 (%2)</source>
         <translation>Chargement de l&apos;objet: %1 (%2)</translation>
     </message>
     <message>
-        <location line="+2807"/>
+        <location line="+2979"/>
         <source>Generating %1 of the object: %2 (%3)</source>
         <translation>Génération %1 de l&apos;objet : %2 (%3)</translation>
     </message>
@@ -1206,8 +1271,8 @@ Taille: %2 bytes
         <translation>LC_CTYPE:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="+65"/>
-        <location line="+1"/>
+        <location filename="../libpgmodeler_ui/src/databasewidget.cpp" line="+48"/>
+        <location line="+13"/>
         <source>Default</source>
         <translation>Défaut</translation>
     </message>
@@ -1384,12 +1449,7 @@ Taille: %2 bytes
         <translation>Affectation d&apos;un nom vide à l&apos;objet!</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Assignment of invalid name to an object!</source>
-        <translation>Le nom associé à l&apos;objet est invalide!</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="+3"/>
         <source>Assignment of schema object which type is invalid!</source>
         <translation>Affectation d&apos;un schema dont le type est invalide!</translation>
     </message>
@@ -1655,7 +1715,7 @@ Taille: %2 bytes
         <translation>Il n&apos;est pas possible de mixer les références habituels (SELECT FROM, FROM WHERE, Après WHERE) avec des référence de définition de vue en SQL!</translation>
     </message>
     <message>
-        <location line="-158"/>
+        <location line="-159"/>
         <source>Reference to a parameter which index is out of the parameter list bounds!</source>
         <translation>Référence un paramètre dont l&apos;index est hors des limites de la liste de ces derniers!</translation>
     </message>
@@ -1665,7 +1725,17 @@ Taille: %2 bytes
         <translation>Référence un argument dont l&apos;index est hors des limites de la liste de ces derniers!</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+3"/>
+        <source>Assignment of a name which contains invalid characters!</source>
+        <translation>Utilisation d&apos;un nom contenant des caractères invalides!</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Assignment of a name which length exceeds the maximum of 63 characters!</source>
+        <translation>Utilisation d&apos;un nom dont la longueur dépasse le maximum de 63 carractères.</translation>
+    </message>
+    <message>
+        <location line="+15"/>
         <source>Reference to a role which index is out of role list bounds!</source>
         <translation>Référence un rôle dont l&apos;index est hors des limites de la liste de ces derniers!</translation>
     </message>
@@ -2153,6 +2223,37 @@ Message retourné par le SGBD: %1</translation>
         <translation>Ne peut exécuter la commande SQL.
  Message retourné: %1</translation>
     </message>
+    <message>
+        <location line="+4"/>
+        <source>Assignment of a not allocated collation to object &apos;%1&apos; (%2)!</source>
+        <translation>Utilisation d&apos;une collation non définie pour l&apos;objet &apos;%1&apos; (%2)!</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Assignment of collation object which type is invalid!</source>
+        <translation>Utilisation d&apos;une collation dont le type est invalide!</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>At the moment pgModeler doesn&apos;t support the creation of primary keys which some columns were generated by relationship connection. To create primary keys with this feature you can use the field &apos;Indentifier&apos; or the tab &apos;Primary key&apos; on relationship editing form!</source>
+        <translation>Actuellement, pgModeler ne supporte pas la création de clef primaire dont certaines colonnes sont générés par une relation. Pour cela vous devez utiliser la fonctionnalité &apos;Identifiant&apos; ou l&apos;onglet &apos;Clef primaire&apos; dans le formulaire d&apos;édition de la relation!</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Collations must be created at least with attributes LC_COLLATE and LC_CTYPE defined!</source>
+        <translation>La collation doit être crée avec, au minimum, les attributs LC_COLLATE et LC_CTYPE définis!</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>The object &apos;%1&apos; (%2) cannot reference itself! This operation is not permitted for this kind of object!</source>
+        <translation>L&apos;élément &apos;%1&apos; (%2) ne peut faire référence à lui-même. Cette opération n&apos;est pas autorisé sur ce genre d&apos;élément!</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Only operator families which uses &apos;btree&apos; as indexing method is accepted by operator class elements!</source>
+        <translatorcomment>Context et contresens ??</translatorcomment>
+        <translation>Seuls les familles d&apos;opérateurs utilisant les indexes &apos;btree&apos; sont acceptés pour les OPERATOR CLASS!</translation>
+    </message>
 </context>
 <context>
     <name>FunctionWidget</name>
@@ -2162,52 +2263,52 @@ Message retourné par le SGBD: %1</translation>
         <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+41"/>
         <source>Attributes</source>
         <translation>Attributs</translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+125"/>
         <source>Langague:</source>
         <translation>Langage:</translation>
     </message>
     <message>
-        <location line="-13"/>
+        <location line="-68"/>
         <source>Function Type:</source>
         <translation>Type de fonction:</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+194"/>
         <source>Window Function:</source>
         <translation>Fonction window:</translation>
     </message>
     <message>
-        <location line="-160"/>
+        <location line="+76"/>
         <source>Execution Cost:</source>
         <translation>Coût d&apos;exécution:</translation>
     </message>
     <message>
-        <location line="-19"/>
+        <location line="-231"/>
         <source>Rows Returned:</source>
         <translation>Lignes retournées:</translation>
     </message>
     <message>
-        <location line="-13"/>
+        <location line="+177"/>
         <source>Behavior:</source>
         <translation>Comportement:</translation>
     </message>
     <message>
-        <location line="+231"/>
+        <location line="-248"/>
         <source>Security:</source>
         <translation>Sécurité:</translation>
     </message>
     <message>
-        <location line="-186"/>
+        <location line="+135"/>
         <source>Return Method:</source>
         <translation>Type de retour:</translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+15"/>
         <source>Simple</source>
         <translation>Simple</translation>
     </message>
@@ -2222,12 +2323,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>Table</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+18"/>
         <source>Return Table</source>
         <translation>Table de retour</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+126"/>
         <source>Parameters</source>
         <translation>Arguments</translation>
     </message>
@@ -2242,7 +2343,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Bibliotèque dynamique:</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+29"/>
         <source>Symbol:</source>
         <translation>Symbole:</translation>
     </message>
@@ -2257,7 +2358,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Code source:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="+44"/>
+        <location filename="../libpgmodeler_ui/src/functionwidget.cpp" line="+45"/>
         <source>Column</source>
         <translation>Colonne</translation>
     </message>
@@ -2594,17 +2695,22 @@ Message retourné par le SGBD: %1</translation>
         <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+16"/>
+        <source>Attributes</source>
+        <translation>Attributs</translation>
+    </message>
+    <message>
+        <location line="+34"/>
         <source>Indexing:</source>
         <translation>Indexation:</translation>
     </message>
     <message>
-        <location line="-32"/>
+        <location line="+45"/>
         <source>Fill Factor:</source>
         <translation>Taux de remplissage:</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+59"/>
         <source>Options:</source>
         <translation>Options:</translation>
     </message>
@@ -2629,12 +2735,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>Expr. conditionnelle:</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+54"/>
         <source>Elements</source>
         <translation>Élements</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+27"/>
         <source>Column:</source>
         <translation>Colonne:</translation>
     </message>
@@ -2644,27 +2750,32 @@ Message retourné par le SGBD: %1</translation>
         <translation>Expression:</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+62"/>
+        <source>Collation:</source>
+        <translation>Collation:</translation>
+    </message>
+    <message>
+        <location line="+87"/>
         <source>Operator Class:</source>
         <translation>Classe d&apos;opérateurs:</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="-74"/>
         <source>Sorting:</source>
         <translation>Tri: </translation>
     </message>
     <message>
-        <location line="-32"/>
+        <location line="+18"/>
         <source>Ascending</source>
         <translation>Ascendant</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+16"/>
         <source>Descending</source>
         <translation>Descendant</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+13"/>
         <source>Nulls first</source>
         <translation>Null en premier</translation>
     </message>
@@ -2677,6 +2788,11 @@ Message retourné par le SGBD: %1</translation>
         <location line="+2"/>
         <source>Type</source>
         <translation>Type</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Collation</source>
+        <translation>Collation</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -2694,12 +2810,12 @@ Message retourné par le SGBD: %1</translation>
         <translation>Null en premier</translation>
     </message>
     <message>
-        <location line="+98"/>
+        <location line="+95"/>
         <source>Expression</source>
         <translation>Expression</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+19"/>
         <source>Yes</source>
         <translation>Oui</translation>
     </message>
@@ -2717,22 +2833,22 @@ Message retourné par le SGBD: %1</translation>
         <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+37"/>
         <source>Trusted:</source>
         <translation>De confiance:</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+38"/>
         <source>Handler Function:</source>
         <translation>Fonction de management:</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="-19"/>
         <source>Validator Function:</source>
         <translation>Fonction de validation:</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+38"/>
         <source>Inline Function:</source>
         <translation>Fonction Inline:</translation>
     </message>
@@ -3065,7 +3181,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Afficher la vue d&apos;ensemble du modèle</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="+426"/>
+        <location filename="../libpgmodeler_ui/src/mainwindow.cpp" line="+431"/>
         <source>Save all models</source>
         <translation>Enregistrer tous les modèles</translation>
     </message>
@@ -3075,7 +3191,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Certains modèles ont été modifiés! Voulez vous les sauvegarder avant de quitter pgModeler?</translation>
     </message>
     <message>
-        <location line="+401"/>
+        <location line="+410"/>
         <source>Save model</source>
         <translation>Enregistrer le modèle</translation>
     </message>
@@ -3521,7 +3637,7 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>ModelWidget</name>
     <message>
-        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="+92"/>
+        <location filename="../libpgmodeler_ui/src/modelwidget.cpp" line="+94"/>
         <location line="+103"/>
         <source>Copy</source>
         <translation>Copie</translation>
@@ -3538,40 +3654,40 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+27"/>
-        <location line="+2283"/>
+        <location line="+2313"/>
         <source>Source code</source>
         <translation>Code source</translation>
     </message>
     <message>
-        <location line="-2281"/>
+        <location line="-2311"/>
         <source>Show object source code</source>
         <translation>Afficher le code source de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2272"/>
+        <location line="+2302"/>
         <source>Properties</source>
         <translation>Propriétés</translation>
     </message>
     <message>
-        <location line="-2270"/>
+        <location line="-2300"/>
         <source>Edit the object properties</source>
         <translation>Editer les propriétés de l&apos;objet</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2297"/>
+        <location line="+2327"/>
         <source>Protect</source>
         <translation>Vérrouiller</translation>
     </message>
     <message>
-        <location line="-2296"/>
-        <location line="+2291"/>
+        <location line="-2326"/>
+        <location line="+2321"/>
         <source>Unprotect</source>
         <translation>Déverrouiller</translation>
     </message>
     <message>
-        <location line="-2290"/>
+        <location line="-2320"/>
         <source>Protects object(s) from modifications</source>
         <translation>Empêcher l(es)&apos;objet(s) d&apos;être modifiés</translation>
     </message>
@@ -3582,12 +3698,12 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+2"/>
-        <location line="+2299"/>
+        <location line="+2329"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location line="-2297"/>
+        <location line="-2327"/>
         <source>Delete the selected object(s)</source>
         <translation>Supprimer les objets sélectionnés</translation>
     </message>
@@ -3723,14 +3839,14 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+471"/>
-        <location line="+878"/>
+        <location line="+908"/>
         <location line="+336"/>
         <location line="+6"/>
         <source>Confirmation</source>
         <translation>Confirmation</translation>
     </message>
     <message>
-        <location line="-1219"/>
+        <location line="-1249"/>
         <source>Do you really want to convert the relationship?</source>
         <translation>Souhaitez vous réellement convertir la relation?</translation>
     </message>
@@ -3745,7 +3861,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Enregistrement du modèle de base de données</translation>
     </message>
     <message>
-        <location line="+517"/>
+        <location line="+547"/>
         <source>Also copy all dependencies of selected objects? This minimizes the breakdown of references when copied objects are pasted into another model.</source>
         <translation>Copier également les dépendences des objets sélectionnés? Ceci minimise la perte des références lorsque les objets copiés sont collés dans un autre modèle.</translation>
     </message>
@@ -3977,7 +4093,7 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>OperationList</name>
     <message>
-        <location filename="../libpgmodeler/src/operationlist.cpp" line="+654"/>
+        <location filename="../libpgmodeler/src/operationlist.cpp" line="+546"/>
         <source>Undoing operation on object: %1 (%2)</source>
         <translation>Défaire les opération sur l&apos;objet: %1 (%2)</translation>
     </message>
@@ -4111,8 +4227,8 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+12"/>
-        <source>Elemente Type:</source>
-        <translation>Type d&apos;Élément:</translation>
+        <source>Element Type:</source>
+        <translation>Type d&apos;élement:</translation>
     </message>
     <message>
         <location line="+14"/>
@@ -4146,14 +4262,15 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+14"/>
-        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="+52"/>
-        <source>Recheck</source>
-        <translation>Revérifier</translation>
+        <location line="+35"/>
+        <source>Op. Family:</source>
+        <translation>Famille d&apos;opérateurs:</translation>
     </message>
     <message>
-        <location line="+22"/>
-        <source>Family:</source>
-        <translation>Famille:</translation>
+        <location line="-22"/>
+        <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="+46"/>
+        <source>FOR ORDER BY</source>
+        <translation>FOR ORDER BY</translation>
     </message>
     <message>
         <location filename="../libpgmodeler_ui/src/operatorclasswidget.cpp" line="-11"/>
@@ -4176,7 +4293,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Support/Stratégie</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+118"/>
         <source>Yes</source>
         <translation>Oui</translation>
     </message>
@@ -4207,92 +4324,67 @@ Message retourné par le SGBD: %1</translation>
         <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+32"/>
         <source>Options:</source>
         <translation>Options:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-20"/>
         <source>MERGES</source>
         <translation>MERGES</translation>
     </message>
     <message>
-        <location line="-20"/>
+        <location line="+7"/>
         <source>HASHES</source>
         <translation>HASHES</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+24"/>
         <source>Arguments</source>
         <translation>Arguments</translation>
     </message>
     <message>
         <location line="+5"/>
-        <source>Functions</source>
-        <translation>Fonctions</translation>
+        <source>Advanced</source>
+        <translation>Avancé</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+16"/>
+        <source>Restrict:</source>
+        <translation>Restriction:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Commutator</source>
+        <translation>Commutateur:</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Negator:</source>
+        <translation>Négateur:</translation>
+    </message>
+    <message>
+        <location line="+50"/>
+        <source>Operator Func.:</source>
+        <translation>Fonction de l&apos;opérateur:</translation>
+    </message>
+    <message>
+        <location line="-71"/>
         <source>Join:</source>
         <translation>Jointure:</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Constraint:</source>
-        <translation>Contrainte:</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Operator:</source>
-        <translation>Opérateur:</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Operators</source>
-        <translation>Opérateurs</translation>
-    </message>
-    <message>
-        <location line="+12"/>
-        <source>Commutation:</source>
-        <translation>Commutation:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Negation:</source>
-        <translation>Négation:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Sort (1):</source>
-        <translation>Tri (1):</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Sort (2):</source>
-        <translation>Tri (2):</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Less than:</source>
-        <translation>Moins que:</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Greater then:</source>
-        <translation>Plus que:</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="+33"/>
+        <location filename="../libpgmodeler_ui/src/operatorwidget.cpp" line="+35"/>
         <source>Right Argument Type</source>
         <translation>Type argument à droite</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-2"/>
         <source>Left Argument Type</source>
         <translation>Type d&apos;argument à gauche</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+9"/>
         <source>To create a unary operator it is necessary to specify as &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; one of its arguments. Additionally, the function that defines the operator must have only one parameter and this, in turn, must have the same data type of the the argument of unary operator.</source>
         <translation>Pour créer un opérateur unaire il est nécessaire de spécifier &lt;strong&gt;&lt;em&gt;&apos;any&apos;&lt;/em&gt;&lt;/strong&gt; comme l&apos;un de ses arguments. De plus, la fonction qui définit l&apos;opérateur doit avoir seulement un paramètre et celui-ci doit avoir le même type de donnée que l&apos;argument de l&apos;opérateur unaire.</translation>
     </message>
@@ -4571,14 +4663,14 @@ Message retourné par le SGBD: %1</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5375"/>
+        <location filename="../libpgmodeler/src/databasemodel.cpp" line="-5614"/>
         <source>new_database</source>
         <translation>nouvelle_base</translation>
     </message>
     <message>
-        <location line="+2592"/>
+        <location line="+2659"/>
         <location line="+44"/>
-        <location line="+293"/>
+        <location line="+302"/>
         <location line="+26"/>
         <location line="+27"/>
         <location line="+80"/>
@@ -4588,20 +4680,21 @@ Message retourné par le SGBD: %1</translation>
         <location line="+70"/>
         <location line="+76"/>
         <location line="+62"/>
-        <location line="+104"/>
-        <location line="+104"/>
+        <location line="+100"/>
+        <location line="+124"/>
         <location line="+26"/>
         <location line="+74"/>
         <location line="+61"/>
         <location line="+48"/>
-        <location line="+201"/>
-        <location line="+144"/>
+        <location line="+216"/>
+        <location line="+213"/>
         <location line="+66"/>
         <location line="+149"/>
         <location line="+82"/>
         <location line="+160"/>
-        <location line="+37"/>
-        <location line="+189"/>
+        <location line="+59"/>
+        <location line="+39"/>
+        <location line="+190"/>
         <location line="+160"/>
         <source>%1 (line: %2)</source>
         <translation>%1 (ligne: %2)</translation>
@@ -4634,14 +4727,6 @@ Message retourné par le SGBD: %1</translation>
         <location line="+32"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
-    </message>
-</context>
-<context>
-    <name>RelacionamentoBase</name>
-    <message>
-        <location filename="../libpgmodeler/src/baserelationship.cpp" line="+56"/>
-        <source>rel_%1_%2</source>
-        <translation>rel_%1_%2</translation>
     </message>
 </context>
 <context>
@@ -4912,6 +4997,16 @@ Message retourné par le SGBD: %1</translation>
         <source> Suffix:</source>
         <translation>Suffix:</translation>
     </message>
+    <message>
+        <location line="-1"/>
+        <source>Table 1 </source>
+        <translation>Table 1 </translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Table 2 </source>
+        <translation>Table 2 </translation>
+    </message>
 </context>
 <context>
     <name>RoleWidget</name>
@@ -4921,22 +5016,17 @@ Message retourné par le SGBD: %1</translation>
         <translation>Formulaire</translation>
     </message>
     <message>
-        <location line="+64"/>
-        <source>SysID:</source>
-        <translation>Identifiant:</translation>
-    </message>
-    <message>
-        <location line="-52"/>
+        <location line="+159"/>
         <source>Password:</source>
         <translation>Mot de passe:</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-135"/>
         <source>yyyy-MMM-dd hh:mm</source>
         <translation>yyyy-MMM-dd hh:mm</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+49"/>
         <source>Connections:</source>
         <translation>Connexions:</translation>
     </message>
@@ -4957,27 +5047,32 @@ Message retourné par le SGBD: %1</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>Create Database</source>
-        <translation>Créer des bases de données</translation>
+        <source>Can create Database</source>
+        <translation>Peut créer des bases de données</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Can create Role</source>
+        <translation>Peut créer des rôles</translation>
     </message>
     <message>
         <location line="+7"/>
+        <source>Can use Replication</source>
+        <translation>Peut utiliser la réplication</translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>Encrypted</source>
+        <translation>Encrypté</translation>
+    </message>
+    <message>
+        <location line="-69"/>
         <source>Can Login</source>
         <translation>Peut s&apos;authentifier</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>Create Users/Groups</source>
-        <translation>Créer utilisateurs/groupes</translation>
-    </message>
-    <message>
-        <location line="+7"/>
-        <source>Encrypted Password</source>
-        <translation>Mot de passe crypté</translation>
-    </message>
-    <message>
-        <location line="+33"/>
-        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="+65"/>
+        <location line="+28"/>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="+68"/>
         <source>Members</source>
         <translation>Membres</translation>
     </message>
@@ -4994,22 +5089,17 @@ Message retourné par le SGBD: %1</translation>
         <translation>Membres (Admin.)</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="-34"/>
-        <source>Assigning &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; to &lt;strong&gt;&lt;em&gt;SysID&lt;/em&gt;&lt;/strong&gt; let PostgreSQL defines the role&apos;s id.&lt;br/&gt;																				 Assigning &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; to &lt;strong&gt;&lt;em&gt;Connections&lt;/em&gt;&lt;/strong&gt; creates a role without connection limit.&lt;br/&gt;																				 Unchecking &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; creates an role that never expires.</source>
-        <translation>Assigner &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; au &lt;strong&gt;&lt;em&gt;SysID&lt;/em&gt;&lt;/strong&gt; laisse postgres le générer.&lt;br/&gt;																				 Assigner &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; au nombre de &lt;strong&gt;&lt;em&gt;Connexions&lt;/em&gt;&lt;/strong&gt; crée le rôle sans limite de connexion.&lt;br/&gt;																				 Dé-sélectionner &lt;strong&gt;&lt;em&gt;Validité&lt;/em&gt;&lt;/strong&gt; crée le rôle sans date d&apos;expiration.</translation>
+        <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="-37"/>
+        <source>Assigning &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; to &lt;strong&gt;&lt;em&gt;Connections&lt;/em&gt;&lt;/strong&gt; creates a role without connection limit.&lt;br/&gt;																				 Unchecking &lt;strong&gt;&lt;em&gt;Validity&lt;/em&gt;&lt;/strong&gt; creates an role that never expires.</source>
+        <translation>Definir &lt;strong&gt;&lt;em&gt;Connexions&lt;/em&gt;&lt;/strong&gt; à &lt;strong&gt;&lt;em&gt;-1&lt;/em&gt;&lt;/strong&gt; créé le rôle sans limite de connexion.&lt;br/&gt;																				 Décocher &lt;strong&gt;&lt;em&gt;Validité&lt;/em&gt;&lt;/strong&gt; créé un rôle qui n&apos;expire jamais.</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+25"/>
         <source>Role</source>
         <translation>Rôle</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>SysID</source>
-        <translation>Identifiant</translation>
-    </message>
-    <message>
-        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="-118"/>
+        <location filename="../libpgmodeler_ui/ui/rolewidget.ui" line="-92"/>
         <location filename="../libpgmodeler_ui/src/rolewidget.cpp" line="+3"/>
         <source>Validity</source>
         <translation>Validité</translation>
@@ -5076,7 +5166,7 @@ Message retourné par le SGBD: %1</translation>
         <translation>Couleur de remplissage:</translation>
     </message>
     <message>
-        <location filename="../libpgmodeler_ui/src/schemawidget.cpp" line="+64"/>
+        <location filename="../libpgmodeler_ui/src/schemawidget.cpp" line="+72"/>
         <source>Select fill color</source>
         <translation>Choisissez une couleur de remplissage</translation>
     </message>
