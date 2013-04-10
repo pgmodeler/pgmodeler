@@ -122,7 +122,7 @@ class DatabaseModel:  public QObject, public BaseObject {
 		BaseObject *getObjectPgSQLType(PgSQLType type);
 
 		//! \brief Creates a IndexElement or ExcludeElement from XML depending on type of the 'elem' param.
-		void createElement(IndexElement &elem, TableObject *tab_obj, BaseObject *parent_obj);
+		void createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj);
 
 	public:
 		DatabaseModel(void);

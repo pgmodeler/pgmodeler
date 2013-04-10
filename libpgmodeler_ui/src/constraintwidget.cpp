@@ -23,6 +23,7 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	try
 	{
 		QStringList list;
+		map<QString, vector<QWidget *> > fields_map;
 
 		Ui_ConstraintWidget::setupUi(this);
 
@@ -64,7 +65,6 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 
 		ConstraintType::getTypes(list);
 		constr_type_cmb->addItems(list);
-		selectConstraintType();
 
 		MatchType::getTypes(list);
 		match_cmb->addItems(list);
@@ -80,6 +80,11 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		constraint_grid->addWidget(info_frm, constraint_grid->count()+1, 0, 1, 0);
 		info_frm->setParent(this);
 
+		fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_92)].push_back(no_inherit_lbl);
+		warn_frm=generateVersionWarningFrame(fields_map);
+		constraint_grid->addWidget(warn_frm, constraint_grid->count()+1, 0, 1, 0);
+		warn_frm->setParent(this);
+
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
 		connect(constr_type_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectConstraintType(void)));
 		connect(deferrable_chk, SIGNAL(toggled(bool)), deferral_cmb, SLOT(setEnabled(bool)));
@@ -92,6 +97,8 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(ref_columns_tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeColumns(void)));
 		connect(ref_table_sel, SIGNAL(s_selectorCleared(void)), this, SLOT(selectReferencedTable(void)));
 		connect(ref_table_sel, SIGNAL(s_objectSelected(void)), this, SLOT(selectReferencedTable(void)));
+
+		selectConstraintType();
 	}
 	catch(Exception &e)
 	{
@@ -308,9 +315,16 @@ void ConstraintWidget::selectConstraintType(void)
 	check_expr_txt->setVisible(constr_type==ConstraintType::check);
 	no_inherit_chk->setVisible(constr_type==ConstraintType::check);
 	no_inherit_lbl->setVisible(constr_type==ConstraintType::check);
+	warn_frm->setVisible(constr_type==ConstraintType::check);
 
-	fill_factor_lbl->setVisible(constr_type==ConstraintType::foreign_key || constr_type==ConstraintType::primary_key);
-	fill_factor_sb->setVisible(constr_type==ConstraintType::foreign_key || constr_type==ConstraintType::primary_key);
+	fill_factor_lbl->setVisible(constr_type==ConstraintType::unique ||
+															constr_type==ConstraintType::primary_key ||
+															constr_type==ConstraintType::exclude);
+	fill_factor_sb->setVisible(constr_type==ConstraintType::unique ||
+														 constr_type==ConstraintType::primary_key ||
+														 constr_type==ConstraintType::exclude);
+
+	info_frm->setVisible(constr_type==ConstraintType::primary_key);
 
 	deferrable_lbl->setVisible(constr_type==ConstraintType::foreign_key);
 	deferrable_chk->setVisible(constr_type==ConstraintType::foreign_key);

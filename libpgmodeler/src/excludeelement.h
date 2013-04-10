@@ -24,14 +24,11 @@
 #ifndef EXCLUDE_ELEMENT_H
 #define EXCLUDE_ELEMENT_H
 
-#include "indexelement.h"
+#include "element.h"
 
-class ExcludeElement: public IndexElement {
+class ExcludeElement: public Element {
 	private:
 		Operator *_operator;
-
-		//Disabled method. Exclude elements does not handles collations.
-		void setCollation(Collation *){}
 
 	public:
 		ExcludeElement(void);
@@ -43,8 +40,6 @@ class ExcludeElement: public IndexElement {
 		Operator *getOperator(void);
 
 		QString getCodeDefinition(unsigned def_type);
-
-		bool operator == (ExcludeElement &elem);
 };
 
 #endif

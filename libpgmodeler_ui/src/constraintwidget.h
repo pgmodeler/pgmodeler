@@ -34,7 +34,8 @@ class ConstraintWidget: public BaseObjectWidget, public Ui::ConstraintWidget {
 	private:
 		Q_OBJECT
 
-		QFrame *info_frm;
+		QFrame *info_frm, *warn_frm;
+
 		SyntaxHighlighter *check_expr_hl;
 
 		/*! \brief Table widgets used to store the columns that forms the constraint as well the

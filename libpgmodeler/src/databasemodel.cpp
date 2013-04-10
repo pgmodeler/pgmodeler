@@ -4414,14 +4414,14 @@ Constraint *DatabaseModel::createConstraint(BaseObject *parent_obj)
 	return(constr);
 }
 
-void DatabaseModel::createElement(IndexElement &elem, TableObject *tab_obj, BaseObject *parent_obj)
+void DatabaseModel::createElement(Element &elem, TableObject *tab_obj, BaseObject *parent_obj)
 {
 	map<QString, QString> attribs;
 	Column *column=NULL;
 	OperatorClass *op_class=NULL;
 	Operator *oper=NULL;
 	Collation *collation=NULL;
-	QString xml_elem, str_aux;
+	QString xml_elem;
 
 	xml_elem=XMLParser::getElementName();
 
@@ -4429,8 +4429,8 @@ void DatabaseModel::createElement(IndexElement &elem, TableObject *tab_obj, Base
 	{
 		XMLParser::getElementAttributes(attribs);
 
-		elem.setSortingAttribute(IndexElement::ASC_ORDER, attribs[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
-		elem.setSortingAttribute(IndexElement::NULLS_FIRST, attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
+		elem.setSortingAttribute(Element::ASC_ORDER, attribs[ParsersAttributes::ASC_ORDER]==ParsersAttributes::_TRUE_);
+		elem.setSortingAttribute(Element::NULLS_FIRST, attribs[ParsersAttributes::NULLS_FIRST]==ParsersAttributes::_TRUE_);
 		elem.setSortingEnabled(attribs[ParsersAttributes::USE_SORTING]!=ParsersAttributes::_FALSE_);
 
 		XMLParser::savePosition();
@@ -4479,7 +4479,7 @@ void DatabaseModel::createElement(IndexElement &elem, TableObject *tab_obj, Base
 
 					dynamic_cast<ExcludeElement &>(elem).setOperator(oper);
 				}
-				else if(xml_elem==ParsersAttributes::COLLATION && !dynamic_cast<ExcludeElement *>(&elem))
+				else if(xml_elem==ParsersAttributes::COLLATION && dynamic_cast<IndexElement *>(&elem))
 				{
 					XMLParser::getElementAttributes(attribs);
 					collation=dynamic_cast<Collation *>(getObject(attribs[ParsersAttributes::NAME], OBJ_COLLATION));
@@ -4495,7 +4495,7 @@ void DatabaseModel::createElement(IndexElement &elem, TableObject *tab_obj, Base
 														ERR_REF_OBJ_INEXISTS_MODEL,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 					}
 
-					elem.setCollation(collation);
+					dynamic_cast<IndexElement &>(elem).setCollation(collation);
 				}
 				else if(xml_elem==ParsersAttributes::COLUMN)
 				{

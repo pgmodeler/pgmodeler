@@ -19,7 +19,6 @@
 /**
 \ingroup libpgmodeler
 \brief Implements the operations to manipulate index elements.
-\note <strong>Creation date:</strong> 26/05/2010
 */
 
 #ifndef INDEX_ELEMENT_H
@@ -28,64 +27,24 @@
 #include "column.h"
 #include "operatorclass.h"
 #include "collation.h"
+#include "element.h"
 
-class IndexElement {
+class IndexElement: public Element {
 	private:
-		/*! \brief Column referenced by the index element. This attribute is
-		 mutually exclusive with the expression attribute, this means,
-		 when one is set the other has empty (null) value */
-		Column *column;
-
 		//! \brief Collation referenced by the element
 		Collation *collation;
 
-		/*! \brief Expression referenced by the index element. This attribute is
-		 mutually exclusive with the column attribute, this means
-		 when one is set the other has empty (null) value */
-		QString expression;
-
-		//! \brief Operator class used by the index element
-		OperatorClass *operator_class;
-
-		/*! \brief Sorting attributes of the element (ASC|DESC, NULLS [FIRST|LAST])
-		 This attibutes can be configured used the constants ASC_ORDER and NULLS_FIRST */
-		bool sorting_attibs[2],
-				 //! \brief Enable the use of the sort attributes
-				 sorting_enabled;
-
-	protected:
-		void configureAttributes(map<QString, QString> &attributes, unsigned def_type);
-
 	public:
-		//! \brief Constants used to reference the sorting method of the element
-		const static unsigned ASC_ORDER=0,
-													NULLS_FIRST=1;
-
 		IndexElement(void);
 
-		//! \brief Element configuration methods
-		void setColumn(Column *column);
-		void setExpression(const QString &expression);
-		void setOperatorClass(OperatorClass *oper_class);
-		void setSortingEnabled(bool value);
-		virtual void setCollation(Collation *collation);
+		//! \brief Defines the collation referenced by the element
+		void setCollation(Collation *collation);
 
-		//! \brief Sets the state of one of the element sorting method
-		void setSortingAttribute(unsigned attrib, bool value);
-
-		//! \brief Gets the curret state of the element sorting attribute
-		bool getSortingAttribute(unsigned attrib);
-
-		Column *getColumn(void);
-		QString getExpression(void);
-		OperatorClass *getOperatorClass(void);
-		bool isSortingEnabled(void);
+		//! \brief Get the collation referenced by the element
 		Collation *getCollation(void);
 
 		//! \brief Returns the SQL / XML code definition for the index element
 		virtual QString getCodeDefinition(unsigned def_type);
-
-		bool operator == (IndexElement &elem);
 };
 
 #endif

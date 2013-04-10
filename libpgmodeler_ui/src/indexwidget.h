@@ -28,36 +28,16 @@
 #include "baseobjectwidget.h"
 #include "ui_indexwidget.h"
 #include "objecttablewidget.h"
-
-/* Declaring the IndexElement class as a Qt metatype in order to permit
-	 that instances of the class be used as data of QVariant and QMetaType */
-#include <QMetaType>
-Q_DECLARE_METATYPE(IndexElement)
+#include "elementswidget.h"
 
 class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 	private:
 		Q_OBJECT
 
 		//! \brief Syntax highlighter for conditional expression
-		SyntaxHighlighter *cond_expr_hl,
+		SyntaxHighlighter *cond_expr_hl;
 
-											//! \brief Syntax highlighter for element expression
-											*elem_expr_hl;
-
-		//! \brief Table widget used to control the index elements
-		ObjectTableWidget *elements_tab;
-
-		//! \brief Operator class selector
-		ObjectSelectorWidget *op_class_sel;
-
-		//! \brief Collation selector
-		ObjectSelectorWidget *elem_collation_sel;
-
-		//! \brief Updates the column combobox with the existent columns on parent table
-		void updateColumnsCombo(void);
-
-		//! \brief Shows the element data on the elements table at the specified line
-		void showElementData(IndexElement elem, int elem_idx);
+		ElementsWidget *elements_wgt;
 
 	public:
 		IndexWidget(QWidget * parent = 0);
@@ -65,10 +45,7 @@ class IndexWidget: public BaseObjectWidget, public Ui::IndexWidget {
 
 	private slots:
 		void hideEvent(QHideEvent *event);
-		void selectElementObject(void);
 		void selectIndexingType(void);
-		void handleElement(int elem_idx);
-		void editElement(int elem_idx);
 
 	public slots:
 		void applyConfiguration(void);

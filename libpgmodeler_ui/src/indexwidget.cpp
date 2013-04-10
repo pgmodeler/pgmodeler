@@ -22,8 +22,6 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 {
 	try
 	{
-		map<QString, vector<QWidget *> > fields_map;
-		QFrame *frame=NULL;
 		QStringList list;
 		QGridLayout *grid=NULL;
 
@@ -36,37 +34,12 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 																						GlobalAttributes::SQL_HIGHLIGHT_CONF +
 																						GlobalAttributes::CONFIGURATION_EXT);
 
-		elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false);
-		elem_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
-																				 GlobalAttributes::DIR_SEPARATOR +
-																				 GlobalAttributes::SQL_HIGHLIGHT_CONF +
-																				 GlobalAttributes::CONFIGURATION_EXT);
+		elements_wgt = new ElementsWidget(this);
 
-		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
-		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
-		elem_collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
-
-		elements_tab->setColumnCount(6);
-		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
-		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
-		elements_tab->setHeaderLabel(trUtf8("Type"), 1);
-		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
-		elements_tab->setHeaderLabel(trUtf8("Collation"), 2);
-		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/collation.png"),2);
-		elements_tab->setHeaderLabel(trUtf8("Operator Class"), 3);
-		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/opclass.png"),3);
-		elements_tab->setHeaderLabel(trUtf8("Sorting"), 4);
-		elements_tab->setHeaderLabel(trUtf8("Nulls First"), 5);
-
-		grid=dynamic_cast<QGridLayout *>(tabWidget->widget(1)->layout());
-		grid->addWidget(elem_collation_sel, 2,1,1,2);
-		grid->addWidget(op_class_sel, 3,1,1,2);
-		grid->addWidget(elements_tab, 5,0,1,3);
-
-		fields_map[generateVersionsInterval(AFTER_VERSION, SchemaParser::PGSQL_VERSION_91)].push_back(elem_collation_lbl);
-		frame=generateVersionWarningFrame(fields_map);
-		grid->addWidget(frame, grid->count()+1, 0, 1, 3);
-		frame->setParent(tabWidget->widget(1));
+		grid=new QGridLayout;
+		grid->setContentsMargins(4,4,4,4);
+		grid->addWidget(elements_wgt,0,0);
+		tabWidget->widget(1)->setLayout(grid);
 
 		configureFormLayout(index_grid, OBJ_INDEX);
 		parent_form->setMinimumSize(600, 600);
@@ -75,17 +48,7 @@ IndexWidget::IndexWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_INDEX)
 		indexing_cmb->addItems(list);
 
 		connect(parent_form->apply_ok_btn,SIGNAL(clicked(bool)), this, SLOT(applyConfiguration(void)));
-		connect(elements_tab, SIGNAL(s_rowAdded(int)), this, SLOT(handleElement(int)));
-		connect(elements_tab, SIGNAL(s_rowUpdated(int)), this, SLOT(handleElement(int)));
-		connect(elements_tab, SIGNAL(s_rowEdited(int)), this, SLOT(editElement(int)));
-		connect(column_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject(void)));
-		connect(expression_rb, SIGNAL(toggled(bool)), this, SLOT(selectElementObject(void)));
 		connect(indexing_cmb, SIGNAL(currentIndexChanged(int)), this, SLOT(selectIndexingType(void)));
-
-		connect(sorting_chk, SIGNAL(toggled(bool)), ascending_rb, SLOT(setEnabled(bool)));
-		connect(sorting_chk, SIGNAL(toggled(bool)), descending_rb, SLOT(setEnabled(bool)));
-		connect(sorting_chk, SIGNAL(toggled(bool)), nulls_first_chk, SLOT(setEnabled(bool)));
-
 		connect(fill_factor_chk, SIGNAL(toggled(bool)), fill_factor_sb, SLOT(setEnabled(bool)));
 	}
 	catch(Exception &e)
@@ -99,174 +62,11 @@ void IndexWidget::hideEvent(QHideEvent *event)
 	BaseObjectWidget::hideEvent(event);
 
 	cond_expr_txt->clear();
-	column_cmb->clear();
 	concurrent_chk->setChecked(false);
 	unique_chk->setChecked(false);
 	indexing_cmb->setCurrentIndex(0);
 	fill_factor_sb->setValue(90);
-	sorting_chk->setEnabled(true);
-
-	elements_tab->blockSignals(true);
-	elements_tab->removeRows();
-	elements_tab->blockSignals(false);
-
-	op_class_sel->clearSelector();
-	elem_expr_txt->clear();
-	ascending_rb->setChecked(true);
-	column_rb->setChecked(true);
-
 	tabWidget->setCurrentIndex(0);
-}
-
-void IndexWidget::updateColumnsCombo(void)
-{
-	Column *column=NULL;
-	unsigned i, col_count=0;
-
-	try
-	{
-		column_cmb->clear();
-
-		col_count=table->getColumnCount();
-		for(i=0; i < col_count; i++)
-		{
-			column=table->getColumn(i);
-			column_cmb->addItem(Utf8String::create(column->getName()),
-													QVariant::fromValue<void *>(column));
-		}
-	}
-	catch(Exception &e)
-	{
-		throw Exception(e.getErrorMessage(),e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
-	}
-}
-
-void IndexWidget::showElementData(IndexElement elem, int elem_idx)
-{
-	if(elem.getColumn())
-	{
-		elements_tab->setCellText(Utf8String::create(elem.getColumn()->getName()), elem_idx, 0);
-		elements_tab->setCellText(Utf8String::create(elem.getColumn()->getTypeName()), elem_idx, 1);
-	}
-	else
-	{
-		elements_tab->setCellText(Utf8String::create(elem.getExpression()), elem_idx, 0);
-		elements_tab->setCellText(tr("Expression"), elem_idx, 1);
-	}
-
-
-	if(elem.getCollation())
-		elements_tab->setCellText(Utf8String::create(elem.getCollation()->getName(true)), elem_idx, 2);
-
-	if(elem.getOperatorClass())
-		elements_tab->setCellText(Utf8String::create(elem.getOperatorClass()->getName(true)), elem_idx, 3);
-
-
-	if(elem.isSortingEnabled())
-	{
-		if(elem.getSortingAttribute(IndexElement::ASC_ORDER))
-			elements_tab->setCellText(ascending_rb->text(), elem_idx, 4);
-		else
-			elements_tab->setCellText(descending_rb->text(), elem_idx, 4);
-
-		if(elem.getSortingAttribute(IndexElement::NULLS_FIRST))
-			elements_tab->setCellText(trUtf8("Yes"), elem_idx, 5);
-		else
-			elements_tab->setCellText(trUtf8("No"), elem_idx, 5);
-	}
-	else
-	{
-		elements_tab->setCellText("", elem_idx, 4);
-		elements_tab->setCellText("", elem_idx, 5);
-	}
-
-	elements_tab->setRowData(QVariant::fromValue<IndexElement>(elem), elem_idx);
-}
-
-void IndexWidget::handleElement(int elem_idx)
-{
-	if(column_rb->isChecked() ||
-		 (expression_rb->isChecked() && !elem_expr_txt->toPlainText().isEmpty()))
-	{
-		IndexElement elem;
-
-		elem.setSortingEnabled(sorting_chk->isChecked());
-		elem.setSortingAttribute(IndexElement::NULLS_FIRST, nulls_first_chk->isChecked());
-		elem.setSortingAttribute(IndexElement::ASC_ORDER, ascending_rb->isChecked());
-		elem.setOperatorClass(dynamic_cast<OperatorClass *>(op_class_sel->getSelectedObject()));
-		elem.setCollation(dynamic_cast<Collation *>(elem_collation_sel->getSelectedObject()));
-
-		if(expression_rb->isChecked())
-			elem.setExpression(elem_expr_txt->toPlainText().toUtf8());
-		else
-			elem.setColumn(reinterpret_cast<Column *>(column_cmb->itemData(column_cmb->currentIndex()).value<void *>()));
-
-		showElementData(elem, elem_idx);
-
-		elem_expr_txt->clear();
-		ascending_rb->setChecked(true);
-		sorting_chk->setChecked(true);
-		op_class_sel->clearSelector();
-		elem_collation_sel->clearSelector();
-		nulls_first_chk->setChecked(false);
-	}
-	else if(elements_tab->getCellText(elem_idx,0).isEmpty())
-		elements_tab->removeRow(elem_idx);
-}
-
-void IndexWidget::editElement(int elem_idx)
-{
-	IndexElement elem;
-
-	elem=elements_tab->getRowData(elem_idx).value<IndexElement>();
-
-	if(elem.getColumn())
-	{
-		column_rb->setChecked(true);
-		column_cmb->setCurrentIndex(column_cmb->findText(Utf8String::create(elem.getColumn()->getName())));
-	}
-	else
-	{
-		expression_rb->setChecked(true);
-		elem_expr_txt->setPlainText(Utf8String::create(elem.getExpression()));
-	}
-
-	if(elem.getSortingAttribute(IndexElement::ASC_ORDER))
-		ascending_rb->setChecked(true);
-	else
-		descending_rb->setChecked(true);
-
-	nulls_first_chk->setChecked(elem.getSortingAttribute(IndexElement::NULLS_FIRST));
-	sorting_chk->setChecked(elem.isSortingEnabled());
-	op_class_sel->setSelectedObject(elem.getOperatorClass());
-	elem_collation_sel->setSelectedObject(elem.getCollation());
-}
-
-void IndexWidget::selectElementObject(void)
-{
-	QObject *obj_sender=sender();
-
-	column_rb->blockSignals(true);
-	expression_rb->blockSignals(true);
-
-	if(obj_sender==column_rb)
-	{
-		elem_expr_txt->clear();
-		column_cmb->setEnabled(true);
-		expression_rb->setChecked(false);
-		column_rb->setChecked(true);
-		elem_expr_txt->setEnabled(false);
-	}
-	else
-	{
-		column_cmb->setEnabled(false);
-		column_rb->setChecked(false);
-		expression_rb->setChecked(true);
-		elem_expr_txt->setEnabled(true);
-	}
-
-	column_rb->blockSignals(false);
-	expression_rb->blockSignals(false);
 }
 
 void IndexWidget::selectIndexingType(void)
@@ -278,16 +78,11 @@ void IndexWidget::selectIndexingType(void)
 
 void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, OperationList *op_list, Index *index)
 {
-	unsigned i, count;
-
 	if(!parent_obj)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, index, parent_obj);
-
-	op_class_sel->setModel(model);
-	elem_collation_sel->setModel(model);
-	updateColumnsCombo();
+	elements_wgt->setAttributes(model, parent_obj, index);
 
 	if(index)
 	{
@@ -305,15 +100,6 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 		unique_chk->setChecked(index->getIndexAttribute(Index::UNIQUE));
 		cond_expr_txt->setPlainText(Utf8String::create(index->getConditionalExpression()));
 
-		elements_tab->blockSignals(true);
-		count=index->getIndexElementCount();
-		for(i=0; i < count; i++)
-		{
-			elements_tab->addRow();
-			showElementData(index->getIndexElement(i), i);
-		}
-		elements_tab->blockSignals(false);
-
 		selectIndexingType();
 	}
 }
@@ -323,11 +109,13 @@ void IndexWidget::applyConfiguration(void)
 	try
 	{
 		Index *index=NULL;
-		unsigned i, count;
 
 		startConfiguration<Index>();
 
 		index=dynamic_cast<Index *>(this->object);
+
+		BaseObjectWidget::applyConfiguration();
+
 		index->setIndexAttribute(Index::FAST_UPDATE, fast_update_chk->isChecked());
 		index->setIndexAttribute(Index::CONCURRENT, concurrent_chk->isChecked());
 		index->setIndexAttribute(Index::UNIQUE, unique_chk->isChecked());
@@ -339,13 +127,8 @@ void IndexWidget::applyConfiguration(void)
 		else
 			index->setFillFactor(0);
 
-		index->removeIndexElements();
-		count=elements_tab->getRowCount();
+		elements_wgt->applyConfiguration();
 
-		for(i=0; i < count; i++)
-			index->addIndexElement(elements_tab->getRowData(i).value<IndexElement>());
-
-		BaseObjectWidget::applyConfiguration();
 		finishConfiguration();
 	}
 	catch(Exception &e)

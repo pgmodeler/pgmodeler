@@ -1,6 +1,6 @@
 #include "excludeelement.h"
 
-ExcludeElement::ExcludeElement(void) : IndexElement()
+ExcludeElement::ExcludeElement(void) : Element()
 {
  _operator=NULL;
 }
@@ -32,9 +32,4 @@ QString ExcludeElement::getCodeDefinition(unsigned def_type)
 	}
 
 	return(SchemaParser::getCodeDefinition(ParsersAttributes::EXCLUDE_ELEMENT, attributes, def_type));
-}
-
-bool ExcludeElement::operator == (ExcludeElement &elem)
-{
-	return((*dynamic_cast<IndexElement *>(this)) == dynamic_cast<IndexElement &>(elem));
 }

@@ -95,23 +95,6 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		*tablespace_sel,
 		*collation_sel;
 
-		//! \brief Constants used to generate version intervals for version alert frame
-		static const unsigned UNTIL_VERSION=0,
-		VERSIONS_INTERVAL=1,
-		AFTER_VERSION=2;
-
-		//! \brief Generates a string containing the specified version interval
-		static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver="");
-
-		/*! \brief Generates a alert frame highlighting the fields of exclusive use on the specified
-			PostgreSQL versions. On the first map (fields) the key is the PostgreSQL versions and
-			the values are the reference to the widget. The second map is used to specify the values
-			of widgets specific for each version. */
-		QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=NULL);
-
-		//! \brief Generates a informative frame containing the specified message
-		QFrame *generateInformationFrame(const QString &msg);
-
 		/*! \brief Merges the specified grid layout with the 'baseobject_grid' creating a single form.
 			The obj_type parameter must be specified to show the object type icon */
 		void configureFormLayout(QGridLayout *grid=NULL, ObjectType obj_type=BASE_OBJECT);
@@ -147,8 +130,26 @@ class BaseObjectWidget: public QDialog, public Ui::BaseObjectWidget {
 		void setRequiredField(QWidget *widget);
 
 	public:
+		//! \brief Constants used to generate version intervals for version alert frame
+		static const unsigned UNTIL_VERSION=0,
+		VERSIONS_INTERVAL=1,
+		AFTER_VERSION=2;
+
 		BaseObjectWidget(QWidget * parent = 0, ObjectType obj_type=BASE_OBJECT);
+
 		virtual ~BaseObjectWidget(void);
+
+		//! \brief Generates a string containing the specified version interval
+		static QString generateVersionsInterval(unsigned ver_interv_id, const QString &ini_ver, const QString &end_ver="");
+
+		/*! \brief Generates a alert frame highlighting the fields of exclusive use on the specified
+			PostgreSQL versions. On the first map (fields) the key is the PostgreSQL versions and
+			the values are the reference to the widget. The second map is used to specify the values
+			of widgets specific for each version. */
+		static QFrame *generateVersionWarningFrame(map<QString, vector<QWidget *> > &fields, map<QWidget *, vector<QString> > *values=NULL);
+
+		//! \brief Generates a informative frame containing the specified message
+		static QFrame *generateInformationFrame(const QString &msg);
 
 	protected slots:
 		void editPermissions(void);
