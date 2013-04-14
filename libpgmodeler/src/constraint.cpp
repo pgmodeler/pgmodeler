@@ -106,7 +106,6 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 bool Constraint::isColumnReferenced(Column *column, bool search_ref_cols)
 {
 	bool found=false;
-	Column *col=NULL;
 	vector<ExcludeElement>::iterator itr, itr_end;
 
 	if(constr_type == ConstraintType::primary_key ||
@@ -126,8 +125,7 @@ bool Constraint::isColumnReferenced(Column *column, bool search_ref_cols)
 
 		while(itr!=itr_end && !found)
 		{
-			col=(*itr).getColumn();
-			found=(col && col->isAddedByRelationship());
+			found=((*itr).getColumn() == column);
 			itr++;
 		}
 	}

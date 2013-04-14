@@ -2465,11 +2465,11 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 				{
 					switch(!constr->getConstraintType())
 					{
-						case ConstraintType::primary_key: str_aux="_pk"; break;
-						case ConstraintType::foreign_key: str_aux="_fk"; break;
-						case ConstraintType::check: str_aux="_ck"; break;
-						case ConstraintType::unique: str_aux="_uq"; break;
-						case ConstraintType::exclude: str_aux="_ex"; break;
+						case ConstraintType::primary_key: str_aux=QString("_%1").arg(TableObjectView::TXT_PRIMARY_KEY); break;
+						case ConstraintType::foreign_key: str_aux=QString("_%1").arg(TableObjectView::TXT_FOREIGN_KEY); break;
+						case ConstraintType::check: str_aux=QString("_%1").arg(TableObjectView::TXT_CHECK); break;
+						case ConstraintType::unique: str_aux=QString("_%1").arg(TableObjectView::TXT_UNIQUE); break;
+						case ConstraintType::exclude: str_aux=QString("_%1").arg(TableObjectView::TXT_EXCLUDE); break;
 					}
 
 					//For each constaint is created a menu with the edit, source code, protect/unprotect and delete actions

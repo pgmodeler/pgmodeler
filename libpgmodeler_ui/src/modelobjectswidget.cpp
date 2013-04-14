@@ -831,13 +831,15 @@ void ModelObjectsWidget::updateTableTree(QTreeWidgetItem *root, BaseObject *sche
 								case OBJ_CONSTRAINT:
 									constr_type=dynamic_cast<Constraint *>(object)->getConstraintType();
 									if(constr_type==ConstraintType::primary_key)
-										str_aux="_pk";
+										str_aux=QString("_%1").arg(TableObjectView::TXT_PRIMARY_KEY);
 									else if(constr_type==ConstraintType::foreign_key)
-										str_aux="_fk";
+										str_aux=QString("_%1").arg(TableObjectView::TXT_FOREIGN_KEY);
 									else if(constr_type==ConstraintType::check)
-										str_aux="_ck";
+										str_aux=QString("_%1").arg(TableObjectView::TXT_CHECK);
 									else if(constr_type==ConstraintType::unique)
-										str_aux="_uq";
+										str_aux=QString("_%1").arg(TableObjectView::TXT_UNIQUE);
+									else if(constr_type==ConstraintType::exclude)
+										str_aux=QString("_%1").arg(TableObjectView::TXT_EXCLUDE);
 								break;
 
 								default:

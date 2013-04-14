@@ -40,16 +40,6 @@ class TableObjectView: public BaseObjectView
 		//! \brief Labels used to show objects informatoni (name, type, constraints/aliases)
 		QGraphicsSimpleTextItem *lables[3];
 
-		static const QString	CONSTR_DELIM_END,
-													CONSTR_DELIM_START,
-													TYPE_SEPARATOR,
-													CONSTR_SEPARATOR,
-													TXT_FOREIGN_KEY,
-													TXT_NOT_NULL,
-													TXT_PRIMARY_KEY,
-													TXT_UNIQUE,
-													TXT_EXCLUDE;
-
 		/*! \brief Configures the descriptor object according to the source object.
 		 The constraint type parameter is only used when the source object is a
 		 column  and is used to format the descriptor indication that the column
@@ -62,6 +52,17 @@ class TableObjectView: public BaseObjectView
 		}
 
 	public:
+		static const QString	CONSTR_DELIM_END,
+													CONSTR_DELIM_START,
+													TYPE_SEPARATOR,
+													CONSTR_SEPARATOR,
+													TXT_FOREIGN_KEY,
+													TXT_NOT_NULL,
+													TXT_PRIMARY_KEY,
+													TXT_UNIQUE,
+													TXT_CHECK,
+													TXT_EXCLUDE;
+
 		TableObjectView(TableObject *object=NULL);
 		~TableObjectView(void);
 
