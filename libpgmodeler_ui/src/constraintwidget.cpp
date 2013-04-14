@@ -24,8 +24,15 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 	{
 		QStringList list;
 		map<QString, vector<QWidget *> > fields_map;
+		QGridLayout *grid=NULL;
 
 		Ui_ConstraintWidget::setupUi(this);
+
+		excl_elems_wgt=new ElementsWidget(this);
+		grid=new QGridLayout;
+		grid->setContentsMargins(4,4,4,4);
+		grid->addWidget(excl_elems_wgt,0,0);
+		excl_elems_grp->setLayout(grid);
 
 		check_expr_hl=new SyntaxHighlighter(check_expr_txt, false);
 		check_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
@@ -61,7 +68,6 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		dynamic_cast<QGridLayout *>(columns_tbw->widget(1)->layout())->addWidget(ref_columns_tab, 3,0,1,3);
 
 		configureFormLayout(constraint_grid, OBJ_CONSTRAINT);
-		parent_form->setMinimumSize(580, 560);
 
 		ConstraintType::getTypes(list);
 		constr_type_cmb->addItems(list);
@@ -99,6 +105,8 @@ ConstraintWidget::ConstraintWidget(QWidget *parent): BaseObjectWidget(parent, OB
 		connect(ref_table_sel, SIGNAL(s_objectSelected(void)), this, SLOT(selectReferencedTable(void)));
 
 		selectConstraintType();
+
+		parent_form->setMinimumSize(600, 640);
 	}
 	catch(Exception &e)
 	{
@@ -296,6 +304,7 @@ void ConstraintWidget::hideEvent(QHideEvent *event)
 	ref_columns_tab->blockSignals(false);
 
 	ref_table_sel->clearSelector();
+	excl_elems_wgt->clear();
 
 	BaseObjectWidget::hideEvent(event);
 }
@@ -337,12 +346,15 @@ void ConstraintWidget::selectConstraintType(void)
 	on_update_cmb->setVisible(constr_type==ConstraintType::foreign_key);
 	on_update_lbl->setVisible(constr_type==ConstraintType::foreign_key);
 
-	columns_tbw->setVisible(constr_type!=ConstraintType::check);
+	columns_tbw->setVisible(constr_type!=ConstraintType::check &&
+													constr_type!=ConstraintType::exclude);
 
 	if(constr_type!=ConstraintType::foreign_key)
 		columns_tbw->removeTab(1);
 	else
 		columns_tbw->addTab(tab, rot_tab);
+
+	excl_elems_grp->setVisible(constr_type==ConstraintType::exclude);
 }
 
 void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, OperationList *op_list, Constraint *constr)
@@ -351,6 +363,7 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 	unsigned count, i, row;
 	Column *column=NULL;
 	Table *ref_table=NULL;
+	vector<ExcludeElement> excl_elems;
 
 	if(!parent_obj)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -389,6 +402,8 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 
 	if(constr)
 	{
+		excl_elems = constr->getExcludeElements();
+
 		constr_type_cmb->setCurrentIndex(constr_type_cmb->findText(~constr->getConstraintType()));
 		constr_type_cmb->setEnabled(false);
 		constr_type_lbl->setEnabled(false);
@@ -425,6 +440,8 @@ void ConstraintWidget::setAttributes(DatabaseModel *model, BaseObject *parent_ob
 			ref_columns_tab->blockSignals(false);
 		}
 	}
+
+	excl_elems_wgt->setAttributes(model, parent_obj, excl_elems);
 }
 
 void ConstraintWidget::applyConfiguration(void)
@@ -435,6 +452,7 @@ void ConstraintWidget::applyConfiguration(void)
 		unsigned i, col_id, count;
 		Column *column=NULL;
 		ObjectTableWidget *aux_col_tab=NULL;
+		vector<ExcludeElement> excl_elems;
 
 		startConfiguration<Constraint>();
 
@@ -464,6 +482,9 @@ void ConstraintWidget::applyConfiguration(void)
 				constr->addColumn(column, col_id);
 			}
 		}
+
+		excl_elems_wgt->getElements(excl_elems);
+		constr->addExcludeElements(excl_elems);
 
 		//Raises an error if the user try to create a primary key that has columns added by relationship (not supported)
 		if(constr->getConstraintType()==ConstraintType::primary_key &&

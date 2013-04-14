@@ -416,6 +416,7 @@ QFrame *BaseObjectWidget::generateInformationFrame(const QString &msg)
 	info_frm->setObjectName(Utf8String::create("info_frm"));
 	info_frm->setFrameShape(QFrame::Box);
 	info_frm->setFrameShadow(QFrame::Sunken);
+	info_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	grid = new QGridLayout(info_frm);
 	grid->setContentsMargins(4, 4, 4, 4);
@@ -507,6 +508,7 @@ QFrame *BaseObjectWidget::generateVersionWarningFrame(map<QString, vector<QWidge
 	alert_frm->setObjectName(Utf8String::create("alerta_frm"));
 	alert_frm->setFrameShape(QFrame::Box);
 	alert_frm->setFrameShadow(QFrame::Sunken);
+	alert_frm->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 	grid = new QGridLayout(alert_frm);
 	grid->setObjectName(Utf8String::create("grid"));

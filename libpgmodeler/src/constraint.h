@@ -94,6 +94,9 @@ class Constraint: public TableObject{
 		 constants SOURCE_COLS or REFERENCED_COLS */
 		void addColumn(Column *column, unsigned col_type);
 
+		//! \brief Adds several elements to the constraint using a defined vector
+		void addExcludeElements(vector<ExcludeElement> &elems);
+
 		//! \brief Defines the constraint type
 		void setConstraintType(ConstraintType constr_type);
 
@@ -148,6 +151,9 @@ class Constraint: public TableObject{
 		//! \brief Returns the exclude constraint element count
 		unsigned getExcludeElementCount(void);
 
+		//! \brief Returns a list of exclude elements
+		vector<ExcludeElement> getExcludeElements(void);
+
 		/*! \brief Removes one column from internal list using its name.
 		 Use the constants SOURCE_COLS or REFERENCED_COLS to access the lists */
 		void removeColumn(const QString &name, unsigned col_type);
@@ -195,8 +201,9 @@ class Constraint: public TableObject{
 		//! \brief Indicates whether the column exists on the specified internal column list
 		bool isColumnExists(Column *column, unsigned col_type);
 
-		//! \brief Indicates whether the column is referenced in internal column list or exclude element list
-		bool isColumnReferenced(Column *column);
+		/*! \brief Indicates whether the column is referenced in internal column list or exclude element list.
+		The second parameter is useful to permit or not the search of column on referenced columns list. */
+		bool isColumnReferenced(Column *column, bool search_ref_cols = true);
 
 		//! \brief Adds an exclude element to the constraint using an column (only exclude constraint)
 		void addExcludeElement(Column *column, Operator *oper, OperatorClass *op_class, bool use_sorting, bool asc_order, bool nulls_first);

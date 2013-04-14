@@ -65,11 +65,17 @@ class Index: public TableObject{
 		//! \brief Adds an element to the index using other pre-configured element
 		void addIndexElement(IndexElement elem);
 
+		//! \brief Adds several elements to the index using a defined vector
+		void addIndexElements(vector<IndexElement> &elems);
+
 		//! \brief Returns the specified element index
 		int getElementIndex(IndexElement elem);
 
 		//! \brief Returns one element using its index
 		IndexElement getIndexElement(unsigned elem_idx);
+
+		//! \brief Returns a list of the index elements
+		vector<IndexElement> getIndexElements(void);
 
 		//! \brief Remove an element using its index
 		void removeIndexElement(unsigned idx_elem);

@@ -27,8 +27,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 
 		setupUi(this);
 
-		table=NULL;
-		tab_object=NULL;
+		parent_obj=NULL;
 
 		elem_expr_hl=new SyntaxHighlighter(elem_expr_txt, false);
 		elem_expr_hl->loadConfiguration(GlobalAttributes::CONFIGURATIONS_DIR +
@@ -39,7 +38,7 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		elements_tab=new ObjectTableWidget(ObjectTableWidget::ALL_BUTTONS, true, this);
 		op_class_sel=new ObjectSelectorWidget(OBJ_OPCLASS, true, this);
 		collation_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
-		operator_sel=new ObjectSelectorWidget(OBJ_COLLATION, true, this);
+		operator_sel=new ObjectSelectorWidget(OBJ_OPERATOR, true, this);
 
 		elements_tab->setColumnCount(6);
 		elements_tab->setHeaderLabel(trUtf8("Element"), 0);
@@ -71,6 +70,10 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 		connect(sorting_chk, SIGNAL(toggled(bool)), nulls_first_chk, SLOT(setEnabled(bool)));
 
 		this->setEnabled(false);
+		collation_sel->setVisible(false);
+		collation_lbl->setVisible(false);
+		operator_sel->setVisible(false);
+		operator_lbl->setVisible(false);
 	}
 	catch(Exception &e)
 	{
@@ -78,78 +81,66 @@ ElementsWidget::ElementsWidget(QWidget *parent) : QWidget(parent)
 	}
 }
 
-void ElementsWidget::setAttributes(DatabaseModel *model, Table *table, TableObject *tab_obj)
+void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj)
 {
-	unsigned i, count;
-	Index *index = dynamic_cast<Index *>(tab_obj);
-	Constraint *constr = dynamic_cast<Constraint *>(tab_obj);
-
-	if(!model || !table || !tab_obj)
+	if(!model || !parent_obj)
 	{
 		this->setEnabled(false);
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 	}
-	else if((!index && !constr) ||
-					(constr && constr->getConstraintType()!=ConstraintType::exclude))
-	{
-		this->setEnabled(false);
+	else if(parent_obj->getObjectType()!=OBJ_TABLE &&
+					parent_obj->getObjectType()!=OBJ_RELATIONSHIP)
 		throw Exception(ERR_OPR_OBJ_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-	}
-	else
-		this->setEnabled(true);
 
-	tab_object=tab_obj;
-	this->table=table;
+	this->setEnabled(true);
+	this->parent_obj=parent_obj;
 
 	op_class_sel->setModel(model);
 	collation_sel->setModel(model);
 	operator_sel->setModel(model);
 
-	collation_sel->setVisible(constr==NULL);
-	collation_lbl->setVisible(constr==NULL);
-	operator_sel->setVisible(constr!=NULL);
-	operator_lbl->setVisible(constr!=NULL);
-
-	//If the table is an index the third column on elements table will be for collation
-	if(index)
-	{
-		elements_tab->setHeaderLabel(trUtf8("Collation"), 2);
-		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/collation.png"),2);
-	}
-	//If the table is an constraint the third column on elements table will be for operator
-	else
-	{
-		elements_tab->setHeaderLabel(trUtf8("Operator"), 2);
-		elements_tab->setHeaderIcon(QPixmap(":/icones/icones/operator.png"),2);
-	}
-
 	updateColumnsCombo();
+}
 
+void ElementsWidget::setAttributes(DatabaseModel *model, Table *table, vector<IndexElement> &elems)
+{
+	setAttributes(model, table);
+	collation_sel->setVisible(true);
+	collation_lbl->setVisible(true);
+
+	elements_tab->setHeaderLabel(trUtf8("Collation"), 2);
+	elements_tab->setHeaderIcon(QPixmap(":/icones/icones/collation.png"),2);
 	elements_tab->blockSignals(true);
 
-	if(index)
+	for(unsigned i=0; i < elems.size(); i++)
 	{
-		count=index->getIndexElementCount();
-		for(i=0; i < count; i++)
-		{
-			elements_tab->addRow();
-			showElementData(index->getIndexElement(i), i);
-		}
-	}
-	else
-	{
-		count=constr->getExcludeElementCount();
-		for(i=0; i < count; i++)
-		{
-			elements_tab->addRow();
-			showElementData(constr->getExcludeElement(i), i);
-		}
+		elements_tab->addRow();
+		showElementData(elems[i], i);
 	}
 
 	elements_tab->blockSignals(false);
 }
 
-void ElementsWidget::hideEvent(QHideEvent *)
+void ElementsWidget::setAttributes(DatabaseModel *model, BaseObject *parent_obj, vector<ExcludeElement> &elems)
+{
+	setAttributes(model, parent_obj);
+	operator_sel->setVisible(true);
+	operator_lbl->setVisible(true);
+
+	elements_tab->setHeaderLabel(trUtf8("Operator"), 2);
+	elements_tab->setHeaderIcon(QPixmap(":/icones/icones/operator.png"),2);
+	elements_tab->blockSignals(true);
+
+	for(unsigned i=0; i < elems.size(); i++)
+	{
+		elements_tab->addRow();
+		showElementData(elems[i], i);
+	}
+
+	elements_tab->blockSignals(false);
+}
+
+void ElementsWidget::clear(void)
 {
 	column_cmb->clear();
 	sorting_chk->setEnabled(true);
@@ -163,10 +154,17 @@ void ElementsWidget::hideEvent(QHideEvent *)
 	elem_expr_txt->clear();
 	ascending_rb->setChecked(true);
 	column_rb->setChecked(true);
+
+	collation_sel->setVisible(false);
+	collation_lbl->setVisible(false);
+	operator_sel->setVisible(false);
+	operator_lbl->setVisible(false);
 }
 
 void ElementsWidget::updateColumnsCombo(void)
 {
+	Table *table = dynamic_cast<Table *>(parent_obj);
+	Relationship *rel = dynamic_cast<Relationship *>(parent_obj);
 	Column *column=NULL;
 	unsigned i, col_count=0;
 
@@ -174,12 +172,25 @@ void ElementsWidget::updateColumnsCombo(void)
 	{
 		column_cmb->clear();
 
-		col_count=table->getColumnCount();
-		for(i=0; i < col_count; i++)
+		if(table)
 		{
-			column=table->getColumn(i);
-			column_cmb->addItem(Utf8String::create(column->getName()),
-													QVariant::fromValue<void *>(column));
+			col_count=table->getColumnCount();
+			for(i=0; i < col_count; i++)
+			{
+				column=table->getColumn(i);
+				column_cmb->addItem(Utf8String::create(column->getName()),
+														QVariant::fromValue<void *>(column));
+			}
+		}
+		else
+		{
+			col_count=rel->getAttributeCount();
+			for(i=0; i < col_count; i++)
+			{
+				column=rel->getAttribute(i);
+				column_cmb->addItem(Utf8String::create(column->getName()),
+														QVariant::fromValue<void *>(column));
+			}
 		}
 	}
 	catch(Exception &e)
@@ -367,23 +378,33 @@ void ElementsWidget::selectElementObject(void)
 	expression_rb->blockSignals(false);
 }
 
-void ElementsWidget::applyConfiguration(void)
+void ElementsWidget::getElements(vector<IndexElement> &elems)
 {
-	Index *index = dynamic_cast<Index *>(tab_object);
-	Constraint *constr = dynamic_cast<Constraint *>(tab_object);
-	unsigned count, i;
+	if(elements_tab->getRowCount() > 0)
+	{
+		//Confirming if the data on elements table is IndexElement
+		if(elements_tab->getRowData(0).canConvert<IndexElement>())
+		{
+			elems.clear();
 
-	count=elements_tab->getRowCount();
-	if(index)
-	{
-		index->removeIndexElements();
-		for(i=0; i < count; i++)
-			index->addIndexElement(elements_tab->getRowData(i).value<IndexElement>());
-	}
-	else
-	{
-		constr->removeExcludeElements();
-		for(i=0; i < count; i++)
-			constr->addExcludeElement(elements_tab->getRowData(i).value<ExcludeElement>());
+			for(unsigned i=0; i < elements_tab->getRowCount(); i++)
+				elems.push_back(elements_tab->getRowData(i).value<IndexElement>());
+		}
 	}
 }
+
+void ElementsWidget::getElements(vector<ExcludeElement> &elems)
+{
+	if(elements_tab->getRowCount() > 0)
+	{
+		//Confirming if the data on elements table is ExcludeElement
+		if(elements_tab->getRowData(0).canConvert<ExcludeElement>())
+		{
+			elems.clear();
+
+			for(unsigned i=0; i < elements_tab->getRowCount(); i++)
+				elems.push_back(elements_tab->getRowData(i).value<ExcludeElement>());
+		}
+	}
+}
+

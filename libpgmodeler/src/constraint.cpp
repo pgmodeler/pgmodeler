@@ -103,18 +103,22 @@ bool Constraint::isColumnExists(Column *column, unsigned col_type)
 	return(found);
 }
 
-bool Constraint::isColumnReferenced(Column *column)
+bool Constraint::isColumnReferenced(Column *column, bool search_ref_cols)
 {
 	bool found=false;
 	Column *col=NULL;
 	vector<ExcludeElement>::iterator itr, itr_end;
 
-	found=isColumnExists(column, SOURCE_COLS);
+	if(constr_type == ConstraintType::primary_key ||
+		 constr_type == ConstraintType::unique ||
+		 constr_type == ConstraintType::foreign_key)
+	{
+		found=isColumnExists(column, SOURCE_COLS);
 
-	if(!found)
-		found=isColumnExists(column, REFERENCED_COLS);
-
-	if(!found)
+		if(constr_type == ConstraintType::foreign_key && !found && search_ref_cols)
+			found=isColumnExists(column, REFERENCED_COLS);
+	}
+	else if(constr_type==ConstraintType::exclude)
 	{
 		//Iterates over the exclude elements
 		itr=excl_elements.begin();
@@ -424,6 +428,29 @@ int Constraint::getExcludeElementIndex(ExcludeElement elem)
 	}
 
 	return(found ? idx : -1);
+}
+
+vector<ExcludeElement> Constraint::getExcludeElements(void)
+{
+	return(excl_elements);
+}
+
+void Constraint::addExcludeElements(vector<ExcludeElement> &elems)
+{
+	vector<ExcludeElement> elems_bkp=excl_elements;
+
+	try
+	{
+		excl_elements.clear();
+
+		for(unsigned i=0; i < elems.size(); i++)
+			addExcludeElement(elems[i]);
+	}
+	catch(Exception &e)
+	{
+		excl_elements = elems_bkp;
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
 }
 
 void Constraint::addExcludeElement(ExcludeElement elem)

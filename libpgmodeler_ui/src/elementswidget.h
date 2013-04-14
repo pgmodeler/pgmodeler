@@ -40,12 +40,8 @@ Q_DECLARE_METATYPE(ExcludeElement)
 class ElementsWidget: public QWidget, public Ui::ElementsWidget {
 	private:
 		Q_OBJECT
-
-		//! \brief Table object which the elements will be created/edited
-		TableObject *tab_object;
-
-		//! \brief Table from which the columns will be referenced on the elements
-		Table *table;
+		//! \brief Parent object (table or relationship) from which the columns will be referenced on the elements
+		BaseObject *parent_obj;
 
 		//! \brief Syntax highlighter for element expression
 		SyntaxHighlighter	*elem_expr_hl;
@@ -69,20 +65,30 @@ class ElementsWidget: public QWidget, public Ui::ElementsWidget {
 		void showElementData(Element *elem, int elem_idx);
 		void showElementData(IndexElement elem, int elem_idx);
 		void showElementData(ExcludeElement elem, int elem_idx);
+		void setAttributes(DatabaseModel *model, BaseObject *parent_obj);
 
 	public:
 		ElementsWidget(QWidget *parent = 0);
 
-		void setAttributes(DatabaseModel *model, Table *table, TableObject *tab_obj);
+		//! \brief Enables the widget to handle index elements
+		void setAttributes(DatabaseModel *model, Table *table, vector<IndexElement> &elems);
+
+		//! \brief Enables the widget to handle exclude constraint elements
+		void setAttributes(DatabaseModel *model, BaseObject *parent_obj, vector<ExcludeElement> &elems);
+
+		//! \brief Copy the current elements into the list
+		void getElements(vector<IndexElement> &elems);
+
+		//! \brief Copy the current elements into the list
+		void getElements(vector<ExcludeElement> &elems);
+
+	public slots:
+		void clear(void);
 
 	private slots:
-		void hideEvent(QHideEvent *);
 		void selectElementObject(void);
 		void handleElement(int elem_idx);
 		void editElement(int elem_idx);
-
-	public slots:
-		void applyConfiguration(void);
 };
 
 #endif

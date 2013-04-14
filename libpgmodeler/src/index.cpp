@@ -140,6 +140,24 @@ void Index::addIndexElement(Column *column, Collation *coll, OperatorClass *op_c
 	}
 }
 
+void Index::addIndexElements(vector<IndexElement> &elems)
+{
+	vector<IndexElement> elems_bkp=idx_elements;
+
+	try
+	{
+		idx_elements.clear();
+
+		for(unsigned i=0; i < elems.size(); i++)
+			addIndexElement(elems[i]);
+	}
+	catch(Exception &e)
+	{
+		idx_elements = elems_bkp;
+		throw Exception(e.getErrorMessage(), e.getErrorType(),__PRETTY_FUNCTION__,__FILE__,__LINE__, &e);
+	}
+}
+
 void Index::removeIndexElement(unsigned idx_elem)
 {
 	if(idx_elem >= idx_elements.size())
@@ -159,6 +177,11 @@ IndexElement Index::getIndexElement(unsigned elem_idx)
 		throw Exception(ERR_REF_ELEM_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	return(idx_elements[elem_idx]);
+}
+
+vector<IndexElement> Index::getIndexElements(void)
+{
+	return(idx_elements);
 }
 
 unsigned Index::getIndexElementCount(void)

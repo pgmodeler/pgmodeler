@@ -67,6 +67,7 @@ void IndexWidget::hideEvent(QHideEvent *event)
 	indexing_cmb->setCurrentIndex(0);
 	fill_factor_sb->setValue(90);
 	tabWidget->setCurrentIndex(0);
+	elements_wgt->clear();
 }
 
 void IndexWidget::selectIndexingType(void)
@@ -78,14 +79,18 @@ void IndexWidget::selectIndexingType(void)
 
 void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, OperationList *op_list, Index *index)
 {
+	vector<IndexElement> idx_elems;
+
 	if(!parent_obj)
 		throw Exception(ERR_ASG_NOT_ALOC_OBJECT,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	BaseObjectWidget::setAttributes(model, op_list, index, parent_obj);
-	elements_wgt->setAttributes(model, parent_obj, index);
+
 
 	if(index)
 	{
+		idx_elems = index->getIndexElements();
+
 		indexing_cmb->setCurrentIndex(indexing_cmb->findText(~index->getIndexingType()));
 
 		fill_factor_chk->setChecked(index->getFillFactor() >= 10);
@@ -102,6 +107,8 @@ void IndexWidget::setAttributes(DatabaseModel *model, Table *parent_obj, Operati
 
 		selectIndexingType();
 	}
+
+	elements_wgt->setAttributes(model, parent_obj, idx_elems);
 }
 
 void IndexWidget::applyConfiguration(void)
@@ -109,6 +116,7 @@ void IndexWidget::applyConfiguration(void)
 	try
 	{
 		Index *index=NULL;
+		vector<IndexElement> idx_elems;
 
 		startConfiguration<Index>();
 
@@ -127,7 +135,8 @@ void IndexWidget::applyConfiguration(void)
 		else
 			index->setFillFactor(0);
 
-		elements_wgt->applyConfiguration();
+		elements_wgt->getElements(idx_elems);
+		index->addIndexElements(idx_elems);
 
 		finishConfiguration();
 	}

@@ -47,7 +47,8 @@ class TableObjectView: public BaseObjectView
 													TXT_FOREIGN_KEY,
 													TXT_NOT_NULL,
 													TXT_PRIMARY_KEY,
-													TXT_UNIQUE;
+													TXT_UNIQUE,
+													TXT_EXCLUDE;
 
 		/*! \brief Configures the descriptor object according to the source object.
 		 The constraint type parameter is only used when the source object is a

@@ -21,6 +21,7 @@
 const QString TableObjectView::TYPE_SEPARATOR(" ");
 const QString TableObjectView::CONSTR_SEPARATOR(" ");
 const QString TableObjectView::TXT_UNIQUE("uq");
+const QString TableObjectView::TXT_EXCLUDE("ex");
 const QString TableObjectView::TXT_PRIMARY_KEY("pk");
 const QString TableObjectView::TXT_FOREIGN_KEY("fk");
 const QString TableObjectView::TXT_NOT_NULL("nn");
@@ -468,16 +469,18 @@ QString TableObjectView::getConstraintString(Column *column)
 			itr++;
 
 			//Check if the column is referecend by the constraint
-			if(constr->getColumn(column->getName(), Constraint::SOURCE_COLS))
+			if(constr->isColumnReferenced(column))
 			{
 				constr_type=constr->getConstraintType();
 
 				if(constr_type==ConstraintType::primary_key)
 					str_constr=TXT_PRIMARY_KEY + CONSTR_SEPARATOR;
-				else if(constr_type==ConstraintType::foreign_key)
+				else if(constr_type==ConstraintType::foreign_key && str_constr.indexOf(TXT_FOREIGN_KEY) < 0)
 					str_constr+=TXT_FOREIGN_KEY + CONSTR_SEPARATOR;
-				else if(constr_type==ConstraintType::unique)
+				else if(constr_type==ConstraintType::unique && str_constr.indexOf(TXT_UNIQUE) < 0)
 					str_constr+=TXT_UNIQUE + CONSTR_SEPARATOR;
+				else if(constr_type==ConstraintType::exclude && str_constr.indexOf(TXT_EXCLUDE) < 0)
+					str_constr+=TXT_EXCLUDE + CONSTR_SEPARATOR;
 			}
 		}
 

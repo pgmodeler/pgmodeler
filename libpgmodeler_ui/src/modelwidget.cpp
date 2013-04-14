@@ -1100,7 +1100,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 {
 	try
 	{
-		unsigned rel_type=0;
+		unsigned rel_type=0, res = QDialog::Rejected;
 		Schema *sel_schema=dynamic_cast<Schema *>(parent_obj);
 
 		/* Case the obj_type is greater than BASE_TABLE indicates that the object type is a
@@ -1135,85 +1135,85 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			case OBJ_SCHEMA:
 				schema_wgt->setAttributes(db_model, op_list, dynamic_cast<Schema *>(object));
 				schema_wgt->show();
-				this->modified=(schema_wgt->result()==QDialog::Accepted);
+				res=(schema_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_ROLE:
 				role_wgt->setAttributes(db_model, op_list, dynamic_cast<Role *>(object));
 				role_wgt->show();
-				this->modified=(role_wgt->result()==QDialog::Accepted);
+				res=(role_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_TABLESPACE:
 				tablespace_wgt->setAttributes(db_model, op_list, dynamic_cast<Tablespace *>(object));
 				tablespace_wgt->show();
-				this->modified=(tablespace_wgt->result()==QDialog::Accepted);
+				res=(tablespace_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_LANGUAGE:
 				language_wgt->setAttributes(db_model, op_list, dynamic_cast<Language *>(object));
 				language_wgt->show();
-				this->modified=(language_wgt->result()==QDialog::Accepted);
+				res=(language_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_FUNCTION:
 				function_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Function *>(object));
 				function_wgt->show();
-				this->modified=(function_wgt->result()==QDialog::Accepted);
+				res=(function_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_CAST:
 				cast_wgt->setAttributes(db_model, op_list, dynamic_cast<Cast *>(object));
 				cast_wgt->show();
-				this->modified=(cast_wgt->result()==QDialog::Accepted);
+				res=(cast_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_CONVERSION:
 				conversion_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Conversion *>(object));
 				conversion_wgt->show();
-				this->modified=(conversion_wgt->result()==QDialog::Accepted);
+				res=(conversion_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_DOMAIN:
 				domain_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Domain *>(object));
 				domain_wgt->show();
-				this->modified=(domain_wgt->result()==QDialog::Accepted);
+				res=(domain_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_AGGREGATE:
 				aggregate_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Aggregate *>(object));
 				aggregate_wgt->show();
-				this->modified=(aggregate_wgt->result()==QDialog::Accepted);
+				res=(aggregate_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_SEQUENCE:
 				sequence_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Sequence *>(object));
 				sequence_wgt->show();
-				this->modified=(sequence_wgt->result()==QDialog::Accepted);
+				res=(sequence_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_OPERATOR:
 				operator_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Operator *>(object));
 				operator_wgt->show();
-				this->modified=(operator_wgt->result()==QDialog::Accepted);
+				res=(operator_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_OPFAMILY:
 				opfamily_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorFamily *>(object));
 				opfamily_wgt->show();
-				this->modified=(opfamily_wgt->result()==QDialog::Accepted);
+				res=(opfamily_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_OPCLASS:
 				opclass_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<OperatorClass *>(object));
 				opclass_wgt->show();
-				this->modified=(opclass_wgt->result()==QDialog::Accepted);
+				res=(opclass_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_TYPE:
 				type_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Type *>(object));
 				type_wgt->show();
-				this->modified=(type_wgt->result()==QDialog::Accepted);
+				res=(type_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_VIEW:
@@ -1221,7 +1221,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				view=dynamic_cast<View *>(object);
 				view_wgt->setAttributes(db_model, op_list, sel_schema, view, pos.x(), pos.y());
 				view_wgt->show();
-				this->modified=(view_wgt->result()==QDialog::Accepted);
+				res=(view_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_TEXTBOX:
@@ -1229,7 +1229,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				txtbox=dynamic_cast<Textbox *>(object);
 				textbox_wgt->setAttributes(db_model, op_list, txtbox, pos.x(), pos.y());
 				textbox_wgt->show();
-				this->modified=(textbox_wgt->result()==QDialog::Accepted);
+				res=(textbox_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_COLUMN:
@@ -1237,7 +1237,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				col=dynamic_cast<Column *>(object);
 				column_wgt->setAttributes(db_model, parent_obj, op_list, col);
 				column_wgt->show();
-				this->modified=(column_wgt->result()==QDialog::Accepted);
+				res=(column_wgt->result()==QDialog::Accepted);
 
 				if(col)
 					db_model->validateRelationships(col, dynamic_cast<Table *>(parent_obj));
@@ -1250,7 +1250,7 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 				constr=dynamic_cast<Constraint *>(object);
 				constraint_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, constr);
 				constraint_wgt->show();
-				this->modified=(constraint_wgt->result()==QDialog::Accepted);
+				res=(constraint_wgt->result()==QDialog::Accepted);
 
 				if(constr)
 					db_model->validateRelationships(constr, dynamic_cast<Table *>(parent_obj));
@@ -1261,19 +1261,19 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 			case OBJ_RULE:
 				rule_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Rule *>(object));
 				rule_wgt->show();
-				this->modified=(rule_wgt->result()==QDialog::Accepted);
+				res=(rule_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_TRIGGER:
 				trigger_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Trigger *>(object));
 				trigger_wgt->show();
-				this->modified=(trigger_wgt->result()==QDialog::Accepted);
+				res=(trigger_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_INDEX:
 				index_wgt->setAttributes(db_model, dynamic_cast<Table *>(parent_obj), op_list, dynamic_cast<Index *>(object));
 				index_wgt->show();
-				this->modified=(index_wgt->result()==QDialog::Accepted);
+				res=(index_wgt->result()==QDialog::Accepted);
 			break;
 
 			case BASE_RELATIONSHIP:
@@ -1292,28 +1292,31 @@ void ModelWidget::showObjectForm(ObjectType obj_type, BaseObject *object, BaseOb
 
 				relationship_wgt->show();
 				scene->clearSelection();
-				this->modified=(relationship_wgt->result()==QDialog::Accepted);
+				res=(relationship_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_TABLE:
 				table_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Table *>(object), pos.x(), pos.y());
 				table_wgt->show();
-				this->modified=(table_wgt->result()==QDialog::Accepted);
+				res=(table_wgt->result()==QDialog::Accepted);
 			break;
 
 			case OBJ_COLLATION:
 				collation_wgt->setAttributes(db_model, op_list, sel_schema, dynamic_cast<Collation *>(object));
 				collation_wgt->show();
-				this->modified=(collation_wgt->result()==QDialog::Accepted);
+				res=(collation_wgt->result()==QDialog::Accepted);
 			break;
 
 			default:
 			case OBJ_DATABASE:
 				database_wgt->setAttributes(db_model);
 				database_wgt->show();
-				this->modified=(database_wgt->result()==QDialog::Accepted);
+				res=(database_wgt->result()==QDialog::Accepted);
 			break;
 		}
+
+		if(!this->modified && res==QDialog::Accepted)
+			this->modified=true;
 	}
 	catch(Exception &e)
 	{
@@ -2458,7 +2461,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 			for(i=0; i < count; i++)
 			{
 				constr=table->getConstraint(i);
-				if(constr->isColumnExists(dynamic_cast<Column *>(tab_obj), Constraint::SOURCE_COLS))
+				if(constr->isColumnReferenced(dynamic_cast<Column *>(tab_obj), false))
 				{
 					switch(!constr->getConstraintType())
 					{
@@ -2466,6 +2469,7 @@ void ModelWidget::configurePopupMenu(vector<BaseObject *> objects)
 						case ConstraintType::foreign_key: str_aux="_fk"; break;
 						case ConstraintType::check: str_aux="_ck"; break;
 						case ConstraintType::unique: str_aux="_uq"; break;
+						case ConstraintType::exclude: str_aux="_ex"; break;
 					}
 
 					//For each constaint is created a menu with the edit, source code, protect/unprotect and delete actions
