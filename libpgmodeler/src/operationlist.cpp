@@ -763,7 +763,7 @@ void OperationList::executeOperation(Operation *oper, bool redo)
 			if(parent_tab)
 				parent_tab->setModified(true);
 			else
-				parent_rel->setModified(true);
+				parent_rel->forceInvalidate();
 
 			if(parent_tab &&
 				 (object->getObjectType()==OBJ_COLUMN ||

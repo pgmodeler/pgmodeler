@@ -71,6 +71,7 @@ class RelationshipWidget: public BaseObjectWidget, public Ui::RelationshipWidget
 		void removeObject(int row);
 		void removeObjects(void);
 		void showAdvancedObject(int row);
+		void selectCopyOptions(void);
 
 	public slots:
 		void applyConfiguration(void);

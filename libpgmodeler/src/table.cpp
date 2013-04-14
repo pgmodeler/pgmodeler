@@ -18,6 +18,86 @@
 
 #include "table.h"
 
+CopyOptions::CopyOptions(void)
+{
+	copy_mode = copy_op_ids = 0;
+}
+
+CopyOptions::CopyOptions(unsigned copy_mode, unsigned copy_op_ids)
+{
+ if((copy_mode!=0 && copy_mode!=INCLUDING && copy_mode!=EXCLUDING) || copy_op_ids > ALL)
+	throw Exception(ERR_REF_INV_LIKE_OP_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+ this->copy_mode = copy_mode;
+ this->copy_op_ids = copy_op_ids;
+}
+
+unsigned CopyOptions::getCopyMode(void)
+{
+	return(copy_mode);
+}
+
+bool CopyOptions::isOptionSet(unsigned op)
+{
+	if(op > ALL)
+		throw Exception(ERR_REF_INV_LIKE_OP_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+
+	return((copy_op_ids & op) == op);
+}
+
+bool CopyOptions::isIncluding(void)
+{
+	return(copy_mode & INCLUDING);
+}
+
+bool CopyOptions::isExcluding(void)
+{
+	return(copy_mode & EXCLUDING);
+}
+
+unsigned CopyOptions::getCopyOptionsIds(void)
+{
+	return(copy_op_ids);
+}
+
+QString CopyOptions::getSQLDefinition(void)
+{
+	QString def, mode, op_name;
+	unsigned op_id,
+					 ids[]={ALL, DEFAULTS, CONSTRAINTS,
+									INDEXES, STORAGE, COMMENTS },
+					 cnt = sizeof(ids) / sizeof(unsigned);
+
+	mode = (copy_mode == INCLUDING ? " INCLUDING" : " EXCLUDING");
+	if(copy_mode!=0 && copy_op_ids!=0)
+	{
+		for(unsigned i=0; i < cnt; i++)
+		{
+			op_id = copy_op_ids & ids[i];
+
+			switch(op_id)
+			{
+				case ALL: op_name=" ALL"; break;
+				case DEFAULTS: op_name=" DEFAULTS"; break;
+				case CONSTRAINTS: op_name=" CONSTRAINTS"; break;
+				case INDEXES: op_name=" INDEXES"; break;
+				case STORAGE: op_name=" STORAGE"; break;
+				case COMMENTS: op_name=" COMMENTS"; break;
+			}
+
+			if(!op_name.isEmpty())
+			{
+				def += mode + op_name;
+				op_name.clear();
+			}
+
+			if(op_id==ALL) break;
+		}
+	}
+
+	return(def);
+}
+
 Table::Table(void) : BaseTable()
 {
 	obj_type=OBJ_TABLE;
@@ -29,6 +109,8 @@ Table::Table(void) : BaseTable()
 	attributes[ParsersAttributes::RULES]="";
 	attributes[ParsersAttributes::OIDS]="";
 	attributes[ParsersAttributes::COLS_COMMENT]="";
+	attributes[ParsersAttributes::COPY_TABLE]="";
+	copy_table=NULL;
 	this->setName(trUtf8("new_table").toUtf8());
 }
 
@@ -48,7 +130,6 @@ Table::~Table(void)
 		}
 	}
 
-	copy_tables.clear();
 	ancestor_tables.clear();
 }
 
@@ -285,7 +366,7 @@ vector<TableObject *> *Table::getObjectList(ObjectType obj_type)
 		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 }
 
-void Table::addObject(BaseObject *obj, int obj_idx, bool copy_tab)
+void Table::addObject(BaseObject *obj, int obj_idx)
 {
 	ObjectType obj_type;
 
@@ -300,13 +381,6 @@ void Table::addObject(BaseObject *obj, int obj_idx, bool copy_tab)
 
 		try
 		{
-
-			/* Case the flag 'copy_tab' is set and the passed object is table indicates
-		 that user wants to add a copy table, so to reference the copy table list
-		 the 'obj_type' must be BASE_TABLE. */
-			if(copy_tab && obj_type==OBJ_TABLE)
-				obj_type=BASE_TABLE;
-
 			//Raises an error if already exists a object with the same name and type
 			if(getObject(obj->getName(),obj_type,idx))
 			{
@@ -404,19 +478,11 @@ void Table::addObject(BaseObject *obj, int obj_idx, bool copy_tab)
 						ancestor_tables.insert((ancestor_tables.begin() + obj_idx), tab);
 				break;
 
-				case BASE_TABLE:
-					Table *tab1;
-					tab1=dynamic_cast<Table *>(obj);
-					if(obj_idx < 0 || obj_idx >= static_cast<int>(copy_tables.size()))
-						copy_tables.push_back(tab1);
-					else
-						copy_tables.insert((copy_tables.begin() + obj_idx), tab1);
-				break;
-
 				default:
 					throw Exception(ERR_ASG_OBJECT_INV_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 				break;
 			}
+
 		}
 		catch(Exception &e)
 		{
@@ -461,15 +527,41 @@ void Table::addAncestorTable(Table *tab, int idx)
 	addObject(tab, idx);
 }
 
-void Table::addCopyTable(Table *tab, int idx)
+void Table::setCopyTable(Table *tab)
 {
-	addObject(tab, idx, true);
+	copy_table=tab;
+
+	if(!copy_table)
+		like_op=CopyOptions(0,0);
+}
+
+void Table::setCopyTableOptions(CopyOptions like_op)
+{
+	if(copy_table)
+		this->like_op=like_op;
+}
+
+Table *Table::getCopyTable(void)
+{
+	return(copy_table);
+}
+
+CopyOptions Table::getCopyTableOptions(void)
+{
+	return(like_op);
 }
 
 void Table::removeObject(BaseObject *obj)
 {
 	if(obj)
-		removeObject(obj->getName(), obj->getObjectType());
+	{
+		TableObject *tab_obj=dynamic_cast<TableObject *>(obj);
+
+		if(tab_obj)
+			removeObject(getObjectIndex(tab_obj), obj->getObjectType());
+		else
+			removeObject(obj->getName(), OBJ_TABLE);
+	}
 }
 
 void Table::removeObject(const QString &name, ObjectType obj_type)
@@ -489,8 +581,7 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 	//Raises an error if the user try to remove a object with invalid type
 	if(obj_type!=OBJ_COLUMN && obj_type!=OBJ_CONSTRAINT &&
 		 obj_type!=OBJ_TRIGGER && obj_type!=OBJ_INDEX &&
-		 obj_type!=OBJ_RULE && obj_type!=OBJ_TABLE &&
-		 obj_type!=BASE_TABLE)
+		 obj_type!=OBJ_RULE && obj_type!=OBJ_TABLE)
 		throw Exception(ERR_REM_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 	else if(obj_type==OBJ_TABLE && obj_idx < ancestor_tables.size())
@@ -499,13 +590,6 @@ void Table::removeObject(unsigned obj_idx, ObjectType obj_type)
 
 		itr=ancestor_tables.begin() + obj_idx;
 		ancestor_tables.erase(itr);
-	}
-	else if(obj_type==BASE_TABLE && obj_idx < copy_tables.size())
-	{
-		vector<Table *>::iterator itr;
-
-		itr=copy_tables.begin() + obj_idx;
-		copy_tables.erase(itr);
 	}
 	else if(obj_type!=OBJ_TABLE && obj_type!=BASE_TABLE)
 	{
@@ -614,16 +698,6 @@ void Table::removeAncestorTable(unsigned idx)
 	removeObject(idx,OBJ_TABLE);
 }
 
-void Table::removeCopyTable(const QString &name)
-{
-	removeObject(name,BASE_TABLE);
-}
-
-void Table::removeCopyTable(unsigned idx)
-{
-	removeObject(idx,BASE_TABLE);
-}
-
 int Table::getObjectIndex(const QString &name, ObjectType obj_type)
 {
 	int idx;
@@ -682,11 +756,11 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 	{
 		vector<TableObject *>::iterator itr, itr_end;
 		vector<TableObject *> *obj_list=NULL;
-		int count;
+		//int count;
 		QString aux_name=name;
 
-		count=aux_name.count(QChar('\0'));
-		if(count >=1) aux_name.chop(count);
+		//count=aux_name.count(QChar('\0'));
+		//if(count >=1) aux_name.chop(count);
 
 		obj_list=getObjectList(obj_type);
 		itr=obj_list->begin();
@@ -706,22 +780,13 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 		}
 		else obj_idx=-1;
 	}
-
-	else if(obj_type==OBJ_TABLE || obj_type==BASE_TABLE)
+	else if(obj_type==OBJ_TABLE)
 	{
 		vector<Table *>::iterator itr_tab, itr_end_tab;
-		vector<Table *> *tables;
-		QString aux_name;
+		QString aux_name=BaseObject::formatName(name);
 
-		aux_name=BaseObject::formatName(name);
-
-		if(obj_type==OBJ_TABLE)
-			tables=&ancestor_tables;
-		else
-			tables=&copy_tables;
-
-		itr_tab=tables->begin();
-		itr_end_tab=tables->end();
+		itr_tab=ancestor_tables.begin();
+		itr_end_tab=ancestor_tables.end();
 
 		while(itr_tab!=itr_end_tab)
 		{
@@ -735,9 +800,10 @@ BaseObject *Table::getObject(const QString &name, ObjectType obj_type, int &obj_
 
 		if(found)
 		{
-			obj_idx=(itr_tab-tables->begin());
+			obj_idx=(itr_tab-ancestor_tables.begin());
 			object=(*itr_tab);
 		}
+		else obj_idx=-1;
 	}
 	else
 		throw Exception(ERR_OBT_OBJ_INVALID_TYPE,__PRETTY_FUNCTION__,__FILE__,__LINE__);
@@ -756,14 +822,6 @@ BaseObject *Table::getObject(unsigned obj_idx, ObjectType obj_type)
 			throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		return(ancestor_tables[obj_idx]);
-	}
-	else if(obj_type==BASE_TABLE)
-	{
-		//Raises an error if the object index is out of bound
-		if(obj_idx >= copy_tables.size())
-			throw Exception(ERR_REF_OBJ_INV_INDEX,__PRETTY_FUNCTION__,__FILE__,__LINE__);
-
-		return(copy_tables[obj_idx]);
 	}
 	else
 	{
@@ -866,17 +924,6 @@ Rule *Table::getRule(unsigned idx)
 	return(dynamic_cast<Rule *>(getObject(idx,OBJ_RULE)));
 }
 
-Table *Table::getCopyTable(const QString &name)
-{
-	int idx;
-	return(dynamic_cast<Table *>(getObject(name,BASE_TABLE,idx)));
-}
-
-Table *Table::getCopyTable(unsigned idx)
-{
-	return(dynamic_cast<Table *>(getObject(idx,BASE_TABLE)));
-}
-
 unsigned Table::getColumnCount(void)
 {
 	return(columns.size());
@@ -902,14 +949,9 @@ unsigned Table::getRuleCount(void)
 	return(rules.size());
 }
 
-unsigned Table::getAncestorTable(void)
+unsigned Table::getAncestorTableCount(void)
 {
 	return(ancestor_tables.size());
-}
-
-unsigned Table::getCopyTable(void)
-{
-	return(copy_tables.size());
 }
 
 unsigned Table::getObjectCount(ObjectType obj_type, bool inc_added_by_rel)
@@ -917,14 +959,11 @@ unsigned Table::getObjectCount(ObjectType obj_type, bool inc_added_by_rel)
 	if(obj_type==OBJ_COLUMN || obj_type==OBJ_CONSTRAINT ||
 		 obj_type==OBJ_TRIGGER ||
 		 obj_type==OBJ_INDEX || obj_type==OBJ_RULE ||
-		 obj_type==OBJ_TABLE || obj_type==BASE_TABLE)
+		 obj_type==OBJ_TABLE)
 	{
-		if(obj_type==OBJ_TABLE || obj_type==BASE_TABLE)
+		if(obj_type==OBJ_TABLE)
 		{
-			if(obj_type==OBJ_TABLE)
-				return(ancestor_tables.size());
-			else
-				return(copy_tables.size());
+			return(ancestor_tables.size());
 		}
 		else
 		{
@@ -1026,8 +1065,6 @@ bool Table::isConstraintRefColumn(Column *column, ConstraintType constr_type)
 			itr++;
 			found=(constr->getConstraintType()==constr_type &&
 						 constr->isColumnReferenced(column));
-						 //(constr->isColumnExists(column, Constraint::SOURCE_COLS) ||
-						//	constr->isColumnExists(column, Constraint::REFERENCED_COLS)));
 		}
 	}
 
@@ -1037,6 +1074,13 @@ bool Table::isConstraintRefColumn(Column *column, ConstraintType constr_type)
 QString Table::getCodeDefinition(unsigned def_type)
 {
 	attributes[ParsersAttributes::OIDS]=(with_oid ? "1" : "");
+	attributes[ParsersAttributes::COPY_TABLE]="";
+
+	if(def_type==SchemaParser::SQL_DEFINITION && copy_table)
+		attributes[ParsersAttributes::COPY_TABLE]=copy_table->getName(true) + like_op.getSQLDefinition();
+
+	(copy_table ? copy_table->getName(true) : "");
+
 	setColumnsAttribute(def_type);
 	setConstraintsAttribute(def_type);
 	setTriggersAttribute(def_type);

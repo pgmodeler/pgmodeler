@@ -39,6 +39,8 @@ class TableWidget: public BaseObjectWidget, public Ui::TableWidget {
 		be removed. See: cancelConfiguration() */
 		unsigned operation_count;
 
+		ObjectTableWidget *parent_tables;
+
 		//! \brief Stores the objects tables used to handle columns, constraints, indexes, rules and triggers
 		map<ObjectType, ObjectTableWidget *> objects_tab_map;
 

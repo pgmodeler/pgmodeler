@@ -32,7 +32,7 @@ Relationship::Relationship(Relationship *rel) : BaseRelationship(rel)
 Relationship::Relationship(unsigned rel_type, Table *src_tab,
 													 Table *dst_tab, bool src_mdtry, bool dst_mdtry,
 													 bool auto_suffix, const QString &src_suffix, const QString &dst_suffix,
-													 bool identifier,  bool deferrable, DeferralType deferral_type) :
+													 bool identifier,  bool deferrable, DeferralType deferral_type, CopyOptions copy_op) :
 	BaseRelationship(rel_type, src_tab, dst_tab, src_mdtry, dst_mdtry)
 {
 	try
@@ -50,11 +50,18 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 											.arg(Utf8String::create(src_tab->getName(true)))
 											.arg(Utf8String::create(dst_tab->getName(true))),
 											ERR_LINK_TABLES_NO_PK,__PRETTY_FUNCTION__,__FILE__,__LINE__);
+		else if(rel_type==RELATIONSHIP_DEP && src_tab->getCopyTable())
+				throw Exception(Exception::getErrorMessage(ERR_COPY_REL_TAB_DEFINED)
+												.arg(Utf8String::create(src_tab->getName(true)))
+												.arg(Utf8String::create(dst_tab->getName(true)))
+												.arg(Utf8String::create(src_tab->getCopyTable()->getName(true))),
+												ERR_COPY_REL_TAB_DEFINED,__PRETTY_FUNCTION__,__FILE__,__LINE__);
 
 		this->src_suffix=src_suffix;
 		this->dst_suffix=dst_suffix;
 		this->auto_suffix=auto_suffix;
 
+		copy_options=copy_op;
 		table_relnn=NULL;
 		fk_rel1n=pk_relident=pk_special=uq_rel11=NULL;
 		this->deferrable=deferrable;
@@ -105,6 +112,8 @@ Relationship::Relationship(unsigned rel_type, Table *src_tab,
 		attributes[ParsersAttributes::RELATIONSHIP_GEN]="";
 		attributes[ParsersAttributes::RELATIONSHIP_1N]="";
 		attributes[ParsersAttributes::ANCESTOR_TABLE]="";
+		attributes[ParsersAttributes::COPY_OPTIONS]="";
+		attributes[ParsersAttributes::COPY_MODE]="";
 	}
 	catch(Exception &e)
 	{
@@ -631,6 +640,7 @@ void Relationship::addConstraints(Table *recv_tab)
 		for(constr_id=0; constr_id < constr_cnt; constr_id++)
 		{
 			constr=dynamic_cast<Constraint *>(rel_constraints[constr_id]);
+			constr->setAddedByLinking(true);
 
 			//Breaks the iteration if the constraist has a parent
 			if(constr->getParentTable())
@@ -638,8 +648,9 @@ void Relationship::addConstraints(Table *recv_tab)
 
 			if(constr->getConstraintType()!=ConstraintType::primary_key)
 			{
-				i=1; aux[0]='\0';
-				name="";
+				i=1;
+				name.clear();
+				aux.clear();
 
 				//Configures the name of the constraint in order to avoid name duplication errors
 				orig_name=constr->getName();
@@ -792,19 +803,31 @@ void Relationship::addColumnsRelGen(void)
 
 						for(i2=0; i2 < 2; i2++)
 						{
-							tab_count=aux_tab->getObjectCount(types[i2]);
-
-							//Checking if the column came from a inheritance or copy relationship
-							for(idx=0; idx < tab_count; idx++)
+							//Checking if the column came from a generalization relationship
+							if(types[i2]==OBJ_TABLE)
 							{
-								parent_tab=dynamic_cast<Table *>(aux_tab->getObject(idx, types[i2]));
-								cond=(parent_tab->getColumn(aux_col->getName()));
+								tab_count=aux_tab->getObjectCount(OBJ_TABLE);
+								for(idx=0; idx < tab_count; idx++)
+								{
+									parent_tab=dynamic_cast<Table *>(aux_tab->getObject(idx, OBJ_TABLE));
+									cond=(aux_col->getParentTable()==parent_tab &&
+												aux_col->isAddedByGeneralization());
+								}
 
-								if(id_tab==0)
-									src_flags[i2]=cond;
-								else
-									dst_flags[i2]=cond;
 							}
+							//Checking if the column came from a copy relationship
+							else
+							{
+								parent_tab=aux_tab->getCopyTable();
+								cond=(parent_tab &&
+											aux_col->getParentTable()==parent_tab &&
+											aux_col->isAddedByGeneralization());
+							}
+
+							if(id_tab==0)
+								src_flags[i2]=cond;
+							else
+								dst_flags[i2]=cond;
 						}
 					}
 
@@ -950,7 +973,8 @@ void Relationship::connectRelationship(void)
 				addColumnsRelGen();
 
 				//The reference table is added as copy table on the receiver
-				getReceiverTable()->addCopyTable(dynamic_cast<Table *>(getReferenceTable()));
+				getReceiverTable()->setCopyTable(dynamic_cast<Table *>(getReferenceTable()));
+				getReceiverTable()->setCopyTableOptions(this->copy_options);
 			}
 			else if(rel_type==RELATIONSHIP_11 ||
 							rel_type==RELATIONSHIP_1N)
@@ -1021,7 +1045,8 @@ void Relationship::configureIndentifierRel(Table *recv_tab)
 
 			new_pk=true;
 			i=1;
-			aux[0]='\0';
+			aux.clear();
+
 			//Configures a basic name for the primary key
 			name=recv_tab->getName() + SUFFIX_SEPARATOR + "pk";
 
@@ -1094,7 +1119,7 @@ void Relationship::addUniqueKey(Table *ref_tab, Table *recv_tab)
 
 		//Configures the name for the constraint
 		i=1;
-		aux[0]='\0';
+		aux.clear();
 		name=ref_tab->getName() + SUFFIX_SEPARATOR + QString("%1").arg(uq->getObjectId()) + SUFFIX_SEPARATOR + "uq";
 
 		//Resolves any duplication of the new constraint name on the receiver table
@@ -1202,7 +1227,7 @@ void Relationship::addForeignKey(Table *ref_tab, Table *recv_tab, ActionType del
 
 		//Configures the foreign key name
 		i=1;
-		aux[0]='\0';
+		aux.clear();
 		name=ref_tab->getName() + SUFFIX_SEPARATOR + "fk";
 
 		//Resolves any duplication of the new constraint name on the receiver table
@@ -1237,7 +1262,6 @@ void Relationship::addAttributes(Table *recv_tab)
 	try
 	{
 		count=rel_attributes.size();
-		aux[0]='\0';
 
 		for(i=0, i1=1; i < count; i++)
 		{
@@ -1258,8 +1282,9 @@ void Relationship::addAttributes(Table *recv_tab)
 			}
 
 			column->setName(name + aux);
-			aux[0]='\0';
+			aux.clear();
 
+			column->setAddedByLinking(true);
 			recv_tab->addColumn(column);
 		}
 	}
@@ -1754,7 +1779,7 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 				if(rel_type==RELATIONSHIP_GEN)
 					table->removeObject(getReferenceTable()->getName(true), OBJ_TABLE);
 				else
-					table->removeObject(getReferenceTable()->getName(true), BASE_TABLE);
+					table->setCopyTable(NULL);
 			}
 			else
 			{
@@ -1854,9 +1879,9 @@ void Relationship::disconnectRelationship(bool rem_tab_objs)
 					tab_obj=(*itr_atrib);
 
 					//Removes the attribute from the table only it were created by this relationship ( getObjectIndex >= 0)
-					if(table && getObjectIndex(tab_obj) >= 0)
+					if(table && getObjectIndex(tab_obj) >= 0 && tab_obj->getParentTable())
 					{
-						table->removeObject(tab_obj->getName(), tab_obj->getObjectType());
+						table->removeObject(tab_obj);
 						tab_obj->setParentTable(NULL);
 					}
 					itr_atrib++;
@@ -1911,6 +1936,19 @@ bool Relationship::isIdentifier(void)
 	return(identifier);
 }
 
+void Relationship::setCopyOptions(CopyOptions copy_op)
+{
+	copy_options=copy_op;
+
+	if(connected)
+		getReceiverTable()->setCopyTableOptions(copy_op);
+}
+
+CopyOptions Relationship::getCopyOptions(void)
+{
+	return(copy_options);
+}
+
 bool Relationship::hasIndentifierAttribute(void)
 {
 	vector<TableObject *>::iterator itr, itr_end;
@@ -1931,6 +1969,11 @@ bool Relationship::hasIndentifierAttribute(void)
 	}
 
 	return(found);
+}
+
+void Relationship::forceInvalidate(void)
+{
+	this->invalidated=true;
 }
 
 bool Relationship::isInvalidated(void)
@@ -2207,7 +2250,8 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 		attributes[ParsersAttributes::AUTO_SUFFIX]=(auto_suffix ? "1" : "");
 		attributes[ParsersAttributes::DEFER_TYPE]=~deferral_type;
 		attributes[ParsersAttributes::TABLE_NAME]=tab_name_relnn;
-
+		attributes[ParsersAttributes::RELATIONSHIP_GEN]=(rel_type==RELATIONSHIP_GEN ? "1" : "");
+		attributes[ParsersAttributes::RELATIONSHIP_DEP]=(rel_type==RELATIONSHIP_DEP ? "1" : "");
 
 		attributes[ParsersAttributes::COLUMNS]="";
 		count=rel_attributes.size();
@@ -2234,6 +2278,12 @@ QString Relationship::getCodeDefinition(unsigned def_type)
 				attributes[ParsersAttributes::SPECIAL_PK_COLS]+=QString("%1").arg(column_ids_pk_rel[i]);
 				if(i < count-1) attributes[ParsersAttributes::SPECIAL_PK_COLS]+=",";
 			}
+		}
+
+		if(copy_options.getCopyMode()!=0)
+		{
+			attributes[ParsersAttributes::COPY_OPTIONS]=QString("%1").arg(copy_options.getCopyOptionsIds());
+			attributes[ParsersAttributes::COPY_MODE]=QString("%1").arg(copy_options.getCopyMode());;
 		}
 
 		reduced_form=(attributes[ParsersAttributes::COLUMNS].isEmpty() &&
@@ -2275,5 +2325,6 @@ void Relationship::operator = (Relationship &rel)
 	this->fk_rel1n=pk_relident=pk_special=NULL;
 	this->gen_columns.clear();
 	this->auto_suffix=rel.auto_suffix;
+	this->copy_options=rel.copy_options;
 }
 

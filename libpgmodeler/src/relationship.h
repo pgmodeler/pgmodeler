@@ -195,6 +195,9 @@ class Relationship: public BaseRelationship {
 		//! \brief Deferral type used by the foreign key when this is deferrable
 		DeferralType deferral_type;
 
+		//! \brief Copy options assinged to receiver table (only copy relationship)
+		CopyOptions copy_options;
+
 		/*! \brief This vector allows the user to define which columns inherited / copied (via its indexes)
 		 will be used on the special primary key in the receiver table */
 		vector<unsigned> column_ids_pk_rel;
@@ -281,7 +284,8 @@ class Relationship: public BaseRelationship {
 								 bool auto_suffix=true,
 								 const QString &src_suffix="", const QString &dst_suffix="",
 								 bool identifier=false, bool deferrable=false,
-								 DeferralType deferral_type=DeferralType::immediate);
+								 DeferralType deferral_type=DeferralType::immediate,
+								 CopyOptions copy_op = CopyOptions(0,0));
 
 		//! \brief  Connects the relationship making the configuration according to its type
 		void connectRelationship(void);
@@ -347,12 +351,24 @@ class Relationship: public BaseRelationship {
 		//! \brief Returns if the relationship is identifier
 		bool isIdentifier(void);
 
+		//! \brief Set the copy options (only for copy relationships)
+		void setCopyOptions(CopyOptions copy_op);
+
+		//! \brief Returns the current copy options
+		CopyOptions getCopyOptions(void);
+
 		/*! \brief Returns if the relationship is invalidated in relation to propagation of columns.
 			This method makes a series of verifications for each type of relationship,
 			and if in any condition this method returns 'true' indicates that the relationship
 			is no longer valid and must be reconnected. The reconnection operation is
 			made on de model class ​​only because it treats all cases of invalidity at once. */
 		bool isInvalidated(void);
+
+		/*! \brief Forces the relationship to go into invalidated state. This method is useful to invalidate the
+		relationship without add/remove attributes from it. Calling this method will cause the model to revalidate
+		the relationship even it's structure does not reflect an invalid state (see isInvalidate).
+		Use this wisely or it can cause huge slow downs or unexpected results. */
+		void forceInvalidate(void);
 
 		//! \brief Adds an attribute or constaint to the relationship.
 		void addObject(TableObject *tab_obj, int obj_idx=-1);

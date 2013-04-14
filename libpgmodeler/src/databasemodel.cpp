@@ -5282,7 +5282,9 @@ BaseRelationship *DatabaseModel::createRelationship(void)
 					src_mand, dst_mand,
 					auto_suffix, attribs[ParsersAttributes::SRC_SUFFIX],
 					attribs[ParsersAttributes::DST_SUFFIX],
-					identifier, deferrable, defer_type);
+					identifier, deferrable, defer_type,
+					CopyOptions(attribs[ParsersAttributes::COPY_MODE].toUInt(),
+											attribs[ParsersAttributes::COPY_OPTIONS].toUInt()));
 
 			if(!attribs[ParsersAttributes::TABLE_NAME].isEmpty())
 				rel->setTableNameRelNN(attribs[ParsersAttributes::TABLE_NAME]);

@@ -124,7 +124,7 @@ char *ResultSet::getColumnValue(const QString &column_name)
 		 a tuple of an empty result or generated from an INSERT, DELETE, UPDATE,
 		 that is, which command do not return lines but only do updates or removal */
 		if(getTupleCount()==0 || empty_result)
-			throw Exception(ERR_REF_TUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+			throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 		//Get the column index through its name
 		col_idx=getColumnIndex(column_name);
@@ -148,7 +148,7 @@ char *ResultSet::getColumnValue(int column_idx)
 		a tuple of an empty result or generated from an INSERT, DELETE, UPDATE,
 		that is, which command do not return lines but only do updates or removal */
 	else if(getTupleCount()==0 || empty_result)
-		throw Exception(ERR_REF_TUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	//Returns the column value on the current tuple
 	return(PQgetvalue(sql_result, current_tuple, column_idx));
@@ -246,7 +246,7 @@ bool ResultSet::accessTuple(unsigned tuple_type)
 		The tuple type to be accessed is invalid, out of
 		set defined by the class */
 	if(tuple_count==0 || empty_result || tuple_type > NEXT_TUPLE)
-		throw Exception(ERR_REF_TUPLANAOEXISTE, __PRETTY_FUNCTION__, __FILE__, __LINE__);
+		throw Exception(ERR_REF_TUPLE_INEXISTENT, __PRETTY_FUNCTION__, __FILE__, __LINE__);
 
 	switch(tuple_type)
 	{

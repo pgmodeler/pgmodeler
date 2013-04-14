@@ -357,7 +357,10 @@ namespace ParsersAttributes {
 	FOR_ORDER_BY="for-order-by",
 	OP_FAMILY="opfamily",
 	REPLICATION="replication",
-	NO_INHERIT="no-inherit";
+	NO_INHERIT="no-inherit",
+	COPY_TABLE="copy-table",
+	COPY_MODE="copy-mode",
+	COPY_OPTIONS="copy-options";
 }
 
 #endif

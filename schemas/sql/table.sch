@@ -10,6 +10,10 @@
 %if @{constraints} %then , $br @{constraints} %end
 $br ) $br
 
+%if @{copy-table} %then
+LIKE $sp @{copy-table} $br
+%end
+
 [WITH (OIDS=] %if @{oids} %then TRUE %else FALSE %end )
 %if @{tablespace} %then
  $br [TABLESPACE ] @{tablespace}

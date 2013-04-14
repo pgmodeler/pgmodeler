@@ -39,6 +39,20 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 
 	operation_count=0;
 
+	parent_tables = new ObjectTableWidget(ObjectTableWidget::NO_BUTTONS, true, this);
+	parent_tables->setColumnCount(3);
+	parent_tables->setHeaderLabel(trUtf8("Name"), 0);
+	parent_tables->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
+	parent_tables->setHeaderLabel(trUtf8("Schema"), 1);
+	parent_tables->setHeaderIcon(QPixmap(":/icones/icones/schema.png"),1);
+	parent_tables->setHeaderLabel(trUtf8("Type"), 2);
+	parent_tables->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),2);
+
+	grid=new QGridLayout;
+	grid->addWidget(parent_tables, 0,0,1,1);
+	grid->setContentsMargins(4,4,4,4);
+	attributes_tbw->widget(5)->setLayout(grid);
+
 	//Configuring the table objects that stores the columns, triggers, constraints, rules and indexes
 	for(unsigned i=0; i < 5; i++)
 	{
@@ -49,7 +63,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 
 		grid=new QGridLayout;
 		grid->addWidget(tab, 0,0,1,1);
-		grid->setContentsMargins(2,2,2,2);
+		grid->setContentsMargins(4,4,4,4);
 		attributes_tbw->widget(i)->setLayout(grid);
 
 		connect(tab, SIGNAL(s_rowsRemoved(void)), this, SLOT(removeObjects(void)));
@@ -61,7 +75,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 
 	objects_tab_map[OBJ_COLUMN]->setColumnCount(4);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Type"), 1);
 	objects_tab_map[OBJ_COLUMN]->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 	objects_tab_map[OBJ_COLUMN]->setHeaderLabel(trUtf8("Default Value"), 2);
@@ -69,7 +83,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 
 	objects_tab_map[OBJ_CONSTRAINT]->setColumnCount(4);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("Type"), 1);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderIcon(QPixmap(":/icones/icones/usertype.png"),1);
 	objects_tab_map[OBJ_CONSTRAINT]->setHeaderLabel(trUtf8("ON DELETE"), 2);
@@ -77,7 +91,7 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 
 	objects_tab_map[OBJ_TRIGGER]->setColumnCount(4);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Refer. Table"), 1);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderIcon(QPixmap(":/icones/icones/table.png"),1);
 	objects_tab_map[OBJ_TRIGGER]->setHeaderLabel(trUtf8("Firing"), 2);
@@ -86,13 +100,13 @@ TableWidget::TableWidget(QWidget *parent): BaseObjectWidget(parent, OBJ_TABLE)
 
 	objects_tab_map[OBJ_RULE]->setColumnCount(3);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+	objects_tab_map[OBJ_RULE]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Execution"), 1);
 	objects_tab_map[OBJ_RULE]->setHeaderLabel(trUtf8("Event"), 2);
 
 	objects_tab_map[OBJ_INDEX]->setColumnCount(2);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Name"), 0);
-	objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(":/icones/icones/column.png"),0);
+	objects_tab_map[OBJ_INDEX]->setHeaderIcon(QPixmap(":/icones/icones/uid.png"),0);
 	objects_tab_map[OBJ_INDEX]->setHeaderLabel(trUtf8("Indexing"), 1);
 
 	configureFormLayout(table_grid, OBJ_TABLE);
@@ -107,10 +121,9 @@ void TableWidget::hideEvent(QHideEvent *event)
 	map<ObjectType, ObjectTableWidget *>::iterator itr, itr_end;
 	Table *tab=dynamic_cast<Table *>(this->object);
 
+	parent_tables->removeRows();
 	with_oids_chk->setChecked(false);
 	attributes_tbw->setCurrentIndex(0);
-	ancestor_tabs_lst->clear();
-	copied_tabs_lst->clear();
 
 	itr=objects_tab_map.begin();
 	itr_end=objects_tab_map.end();
@@ -209,6 +222,7 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 	try
 	{
 		unsigned i, count;
+		Table *aux_tab=NULL;
 		ObjectType types[]={ OBJ_COLUMN, OBJ_CONSTRAINT, OBJ_TRIGGER, OBJ_RULE, OBJ_INDEX };
 
 		if(!table)
@@ -253,15 +267,26 @@ void TableWidget::setAttributes(DatabaseModel *model, OperationList *op_list, Sc
 		}
 
 		//Listing the ancestor tables
-		count=table->getAncestorTable();
+		count=table->getAncestorTableCount();
 		for(i=0; i < count; i++)
-			ancestor_tabs_lst->addItem(Utf8String::create(table->getAncestorTable(i)->getName(true)));
+		{
+			aux_tab=table->getAncestorTable(i);
+			parent_tables->addRow();
+			parent_tables->setCellText(Utf8String::create(aux_tab->getName()), i, 0);
+			parent_tables->setCellText(Utf8String::create(aux_tab->getSchema()->getName()), i, 1);
+			parent_tables->setCellText(trUtf8("Parent"), i, 2);
+		}
 
-		//Listing the copied tables
-		count=table->getCopyTable();
-		for(i=0; i < count; i++)
-			copied_tabs_lst->addItem(Utf8String::create(table->getCopyTable(i)->getName(true)));
+		aux_tab=table->getCopyTable();
+		if(aux_tab)
+		{
+			parent_tables->addRow();
+			parent_tables->setCellText(Utf8String::create(aux_tab->getName()), i, 0);
+			parent_tables->setCellText(Utf8String::create(aux_tab->getSchema()->getName()), i, 1);
+			parent_tables->setCellText(trUtf8("Copy"), i, 2);
+		}
 
+		parent_tables->clearSelection();
 		with_oids_chk->setChecked(table->isWithOIDs());
 	}
 	catch(Exception &e)

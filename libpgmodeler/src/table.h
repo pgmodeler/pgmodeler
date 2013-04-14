@@ -35,6 +35,34 @@
 #include "function.h"
 #include "role.h"
 
+//! \brief Auxiliary class that helps to control LIKE (Copy tables) options
+class CopyOptions {
+	private:
+		unsigned copy_mode, copy_op_ids;
+
+	public:
+		static const unsigned DEFAULTS=1,
+													CONSTRAINTS=2,
+													INDEXES=4,
+													STORAGE=8,
+													COMMENTS=16,
+													ALL=31,
+													INCLUDING=64,
+													EXCLUDING=128;
+
+		CopyOptions(void);
+		CopyOptions(unsigned copy_mode, unsigned copy_op_ids);
+
+		unsigned getCopyMode(void);
+		unsigned getCopyOptionsIds(void);
+
+		bool isOptionSet(unsigned op);
+		bool isIncluding(void);
+		bool isExcluding(void);
+
+		QString getSQLDefinition(void);
+};
+
 class Table: public BaseTable {
 	private:
 		//! \brief Vectors that store basic table attributes
@@ -48,7 +76,14 @@ class Table: public BaseTable {
 		vector<Table *> ancestor_tables;
 
 		//! \brief Stores the tables that 'this' object clones the attributes
-		vector<Table *> copy_tables;
+		//vector<Table *> copy_tables;
+
+		//! \brief Controls the LIKE options for each copy table
+		//map<Table *, LikeOption >  copy_tables;
+
+		Table *copy_table;
+
+		CopyOptions like_op;
 
 		//! \brief Indicates if the table accepts OIDs
 		bool with_oid;
@@ -78,12 +113,6 @@ class Table: public BaseTable {
 		//! \brief Removes an acestor table using its index
 		void removeAncestorTable(unsigned idx);
 
-		//! \brief Removes an copy table using its name
-		void removeCopyTable(const QString &name);
-
-		//! \brief Removes an copy table using its index
-		void removeCopyTable(unsigned idx);
-
 	public:
 		Table(void);
 		~Table(void);
@@ -95,7 +124,7 @@ class Table: public BaseTable {
 		void setWithOIDs(bool value);
 
 		//! \brief Adds an object to the table. It can be inserted at a specified index 'obj_idx'.
-		void addObject(BaseObject *obj, int obj_idx=-1, bool copy_tab=false);
+		void addObject(BaseObject *obj, int obj_idx=-1);
 
 		//! \brief Gets a object from table through its index and type
 		BaseObject *getObject(unsigned obj_idx, ObjectType obj_type);
@@ -126,6 +155,18 @@ class Table: public BaseTable {
 
 		//! \brief Adds a rule to table (optionally the user can add the object at the specified index 'idx')
 		void addRule(Rule *reg, int idx_reg=-1);
+
+		//! \brief Configures the copy table
+		void setCopyTable(Table *tab);
+
+		//! \brief Configures the copy table options
+		void setCopyTableOptions(CopyOptions like_op);
+
+		//! \brief Returns the copy table
+		Table *getCopyTable(void);
+
+		//! \brief Get the copy table options
+		CopyOptions getCopyTableOptions(void);
 
 		/*! \brief Gets a column through its name. The boolean parameter is used
 		 to search columns referencing their old names */
@@ -164,12 +205,6 @@ class Table: public BaseTable {
 		//! \brief Gets a ancestor table through its index
 		Table *getAncestorTable(unsigned idx);
 
-		//! \brief Gets a copy table through its name
-		Table *getCopyTable(const QString &name);
-
-		//! \brief Gets a copy table through its index
-		Table *getCopyTable(unsigned idx);
-
 		//! \brief Gets the column count
 		unsigned getColumnCount(void);
 
@@ -186,10 +221,7 @@ class Table: public BaseTable {
 		unsigned getRuleCount(void);
 
 		//! \brief Gets the ancestor table count
-		unsigned getAncestorTable(void);
-
-		//! \brief Gets the copy tables count
-		unsigned getCopyTable(void);
+		unsigned getAncestorTableCount(void);
 
 		/*! \brief Gets the the count for the specified object type. The boolean parameter indicates
 		 that objects added by relationship must be counted */
